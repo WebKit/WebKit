@@ -2300,6 +2300,169 @@ TEST_P(FramebufferFetchES31, ProgramPipeline_NonCoherent)
                         getFragmentShader(GLSL310_1ATTACHMENT));
 }
 
+// Verify that sample shading is automatically enabled when framebuffer fetch is used with
+// multisampling.
+TEST_P(FramebufferFetchES31, MultiSampled)
+{
+    const bool isCoherent = IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch");
+    ANGLE_SKIP_TEST_IF(!isCoherent &&
+                       !IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch_non_coherent"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_sample_variables"));
+
+    // Create a single-sampled framebuffer as the resolve target
+    GLRenderbuffer resolve;
+    glBindRenderbuffer(GL_RENDERBUFFER, resolve);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kViewportWidth, kViewportHeight);
+    GLFramebuffer resolveFbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, resolveFbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, resolve);
+
+    // Create a multisampled framebuffer
+    GLRenderbuffer rbo;
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, kViewportWidth, kViewportHeight);
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, rbo);
+
+    // Initialize every sample differently with per-sample shading.
+    constexpr char kPrimeFS[] = R"(#version 310 es
+#extension GL_OES_sample_variables : require
+out highp vec4 color;
+void main (void)
+{
+    switch (gl_SampleID)
+    {
+    case 0:
+        color = vec4(1.0, 0.9, 0.8, 0.7);
+        break;
+    case 1:
+        color = vec4(0.0, 0.1, 0.2, 0.3);
+        break;
+    case 2:
+        color = vec4(0.5, 0.25, 0.75, 1.0);
+        break;
+    default:
+        color = vec4(0.4, 0.6, 0.2, 0.8);
+        break;
+    }
+})";
+    ANGLE_GL_PROGRAM(prime, essl31_shaders::vs::Passthrough(), kPrimeFS);
+    glViewport(0, 0, kViewportWidth, kViewportHeight);
+    drawQuad(prime, essl31_shaders::PositionAttrib(), 0.0f);
+
+    // Break the render pass to make sure sample shading is not left enabled by accident.
+    // The expected value is the average of the values set by the shader.
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFbo);
+    glBlitFramebuffer(0, 0, kViewportWidth, kViewportHeight, 0, 0, kViewportWidth, kViewportHeight,
+                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFbo);
+    EXPECT_PIXEL_NEAR(0, 0, 121, 118, 124, 178, 1);
+    ASSERT_GL_NO_ERROR();
+
+    // Use framebuffer fetch to read the value of each sample, and store the square of that value.
+    // Because square is non-linear, applied to the average value it would produce a different
+    // result compared with it being applied to individual samples and then averaged.  The test thus
+    // ensures that framebuffer fetch on a multisampled framebuffer implicitly enables sample
+    // shading.
+    std::ostringstream fs;
+    fs << "#version 310 es\n";
+    if (isCoherent)
+    {
+        fs << "#extension GL_EXT_shader_framebuffer_fetch : require\n";
+    }
+    else
+    {
+        fs << "#extension GL_EXT_shader_framebuffer_fetch_non_coherent : require\n";
+    }
+    fs << R"(inout highp vec4 color;
+void main()
+{
+    color *= color;
+})";
+
+    ANGLE_GL_PROGRAM(square, essl31_shaders::vs::Passthrough(), fs.str().c_str());
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    drawQuad(square, essl31_shaders::PositionAttrib(), 0.0f);
+
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, resolveFbo);
+    glBlitFramebuffer(0, 0, kViewportWidth, kViewportHeight, 0, 0, kViewportWidth, kViewportHeight,
+                      GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, resolveFbo);
+
+    // Verify that the result is average(square(samples)) and not square(average(samples)).
+    EXPECT_PIXEL_NEAR(0, 0, 90, 79, 82, 141, 1);
+
+    // For debugging purposes, the following would be true if framebuffer fetch _didn't_ implicitly
+    // enable sample shading.
+    // EXPECT_PIXEL_NEAR(0, 0, 57, 54, 60, 125, 1);
+
+    ASSERT_GL_NO_ERROR();
+}
+
+// Test recovering a supposedly closed render pass that used framebuffer fetch..
+TEST_P(FramebufferFetchES31, ReopenRenderPass)
+{
+    const bool is_coherent = IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch");
+    ANGLE_SKIP_TEST_IF(!is_coherent &&
+                       !IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch_non_coherent"));
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_sample_variables"));
+
+    // Create two framebuffers
+    GLRenderbuffer color[2];
+    GLFramebuffer fbo[2];
+    for (uint32_t i = 0; i < 2; ++i)
+    {
+        glBindRenderbuffer(GL_RENDERBUFFER, color[i]);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_RGBA8, kViewportWidth, kViewportHeight);
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo[i]);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, color[i]);
+    }
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo[0]);
+    glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Use a framebuffer fetch program.
+    std::ostringstream fs;
+    fs << "#version 310 es\n";
+    if (is_coherent)
+    {
+        fs << "#extension GL_EXT_shader_framebuffer_fetch : require\n";
+    }
+    else
+    {
+        fs << "#extension GL_EXT_shader_framebuffer_fetch_non_coherent : require\n";
+    }
+    fs << R"(inout highp vec4 color;
+void main (void)
+{
+    color += vec4(0.25, 0.125, 0.5, 0.0);
+})";
+
+    ANGLE_GL_PROGRAM(ff, essl31_shaders::vs::Passthrough(), fs.str().c_str());
+    drawQuad(ff, essl31_shaders::PositionAttrib(), 0.0f);
+
+    // Switch to another framebuffer and do a clear.  In the Vulkan backend, the previous render
+    // pass stays around.
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo[1]);
+    glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Switch back to the original framebuffer and do a non-framebuffer fetch draw
+    ANGLE_GL_PROGRAM(drawRed, essl1_shaders::vs::Simple(), essl1_shaders::fs::Red());
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo[0]);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(kViewportWidth / 2, kViewportHeight / 2, kViewportWidth - kViewportWidth / 2,
+              kViewportHeight - kViewportHeight / 2);
+    drawQuad(drawRed, essl31_shaders::PositionAttrib(), 0.0f);
+
+    // Verify the results
+    EXPECT_PIXEL_NEAR(0, 0, 191, 159, 255, 255, 1);
+    EXPECT_PIXEL_COLOR_EQ(kViewportWidth - 1, kViewportHeight - 1, GLColor::red);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Test combination of inout and samplers.
 TEST_P(FramebufferFetchES31, UniformUsageCombinations)
 {
@@ -3406,16 +3569,17 @@ TEST_P(FramebufferFetchES31, BasicTokenUsage_ARM)
     // glIsEnabled(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM);
     // EXPECT_GL_ERROR(GL_INVALID_ENUM);
 
-    // Ensure GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM returns false
+    // Ensure GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM returns consistent values
     glGetBooleanv(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM,
                   &isFragmentShaderFramebufferFetchMrtBool);
-    EXPECT_GL_FALSE(isFragmentShaderFramebufferFetchMrtBool);
     glGetIntegerv(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM,
                   &isFragmentShaderFramebufferFetchMrtInt);
-    ASSERT_EQ(isFragmentShaderFramebufferFetchMrtInt, 0);
+    ASSERT_EQ(isFragmentShaderFramebufferFetchMrtInt,
+              static_cast<GLint>(isFragmentShaderFramebufferFetchMrtBool));
     glGetFloatv(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM,
                 &isFragmentShaderFramebufferFetchMrtFloat);
-    ASSERT_EQ(isFragmentShaderFramebufferFetchMrtFloat, 0.0);
+    ASSERT_EQ(isFragmentShaderFramebufferFetchMrtFloat,
+              static_cast<GLfloat>(isFragmentShaderFramebufferFetchMrtBool));
 
     ASSERT_GL_NO_ERROR();
 }
@@ -3489,6 +3653,12 @@ TEST_P(FramebufferFetchES31, MultipleRenderTarget_Both_FragData)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_draw_buffers"));
+
+    GLboolean isFragmentShaderFramebufferFetchMrt = false;
+    glGetBooleanv(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM,
+                  &isFragmentShaderFramebufferFetchMrt);
+    ANGLE_SKIP_TEST_IF(!isFragmentShaderFramebufferFetchMrt);
+
     setWhichExtension(BOTH);
 
     GLProgram program;
@@ -3506,6 +3676,12 @@ TEST_P(FramebufferFetchES31, MultipleRenderTarget_Both_FragData_Complex)
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_draw_buffers"));
+
+    GLboolean isFragmentShaderFramebufferFetchMrt = false;
+    glGetBooleanv(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM,
+                  &isFragmentShaderFramebufferFetchMrt);
+    ANGLE_SKIP_TEST_IF(!isFragmentShaderFramebufferFetchMrt);
+
     setWhichExtension(BOTH);
 
     GLProgram program;
@@ -3522,6 +3698,12 @@ TEST_P(FramebufferFetchES31, MultipleRenderTarget_Both_Complex)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ARM_shader_framebuffer_fetch"));
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch"));
+
+    GLboolean isFragmentShaderFramebufferFetchMrt = false;
+    glGetBooleanv(GL_FRAGMENT_SHADER_FRAMEBUFFER_FETCH_MRT_ARM,
+                  &isFragmentShaderFramebufferFetchMrt);
+    ANGLE_SKIP_TEST_IF(!isFragmentShaderFramebufferFetchMrt);
+
     setWhichExtension(BOTH);
 
     GLProgram program;
@@ -3530,6 +3712,104 @@ TEST_P(FramebufferFetchES31, MultipleRenderTarget_Both_Complex)
     ASSERT_GL_NO_ERROR();
 
     MultipleRenderTargetTest(program, GLSL310_COMPLEX);
+}
+
+// Test that using the maximum number of color attachments works.
+TEST_P(FramebufferFetchES31, MaximumColorAttachments)
+{
+    const bool isCoherent = IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch");
+    ANGLE_SKIP_TEST_IF(!isCoherent &&
+                       !IsGLExtensionEnabled("GL_EXT_shader_framebuffer_fetch_non_coherent"));
+
+    GLint maxDrawBuffers = 0;
+    glGetIntegerv(GL_MAX_DRAW_BUFFERS, &maxDrawBuffers);
+
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+    std::vector<GLTexture> color(maxDrawBuffers);
+    std::vector<GLenum> buffers(maxDrawBuffers);
+    for (GLint index = 0; index < maxDrawBuffers; ++index)
+    {
+        buffers[index] = GL_COLOR_ATTACHMENT0 + index;
+
+        glBindTexture(GL_TEXTURE_2D, color[index]);
+        glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGBA8, kViewportWidth, kViewportHeight);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, buffers[index], GL_TEXTURE_2D, color[index], 0);
+    }
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    ASSERT_GL_NO_ERROR();
+
+    glDrawBuffers(maxDrawBuffers, buffers.data());
+
+    // Create two programs, one to initialize the attachments and another to read back the contents
+    // with framebuffer fetch and blend.
+    std::ostringstream initFs;
+    std::ostringstream fetchFs;
+    initFs << "#version 310 es\n";
+    if (isCoherent)
+    {
+        initFs << "#extension GL_EXT_shader_framebuffer_fetch : require\n";
+    }
+    else
+    {
+        initFs << "#extension GL_EXT_shader_framebuffer_fetch_non_coherent : require\n";
+    }
+    fetchFs << initFs.str();
+
+    for (GLint index = 0; index < maxDrawBuffers; ++index)
+    {
+        initFs << "layout(location=" << index << ") out highp vec4 color" << index << ";\n";
+        fetchFs << "layout(location=" << index << ") inout highp vec4 color" << index << ";\n";
+    }
+
+    initFs << R"(void main()
+{
+)";
+    fetchFs << R"(void main()
+{
+)";
+
+    for (GLint index = 0; index < maxDrawBuffers; ++index)
+    {
+        initFs << "  color" << index << " = vec4(" << ((index % 5) / 8.0) << ", "
+               << ((index % 4) / 6.0) << ", " << ((index % 3) / 4.0) << ", " << ((index % 2) / 2.0)
+               << ");\n";
+
+        fetchFs << "  color" << index << " += vec4(" << (((index + 1) % 2) / 2.0) << ", "
+                << (((index + 1) % 3) / 4.0) << ", " << (((index + 1) % 4) / 6.0) << ", "
+                << (((index + 1) % 5) / 8.0) << ");\n";
+    }
+
+    initFs << "}\n";
+    fetchFs << "}\n";
+
+    ANGLE_GL_PROGRAM(init, essl31_shaders::vs::Passthrough(), initFs.str().c_str());
+    ANGLE_GL_PROGRAM(fetch, essl31_shaders::vs::Passthrough(), fetchFs.str().c_str());
+
+    drawQuad(init, essl31_shaders::PositionAttrib(), 0.0f);
+    if (!isCoherent)
+    {
+        glFramebufferFetchBarrierEXT();
+    }
+    drawQuad(fetch, essl31_shaders::PositionAttrib(), 0.0f);
+
+    for (GLint index = 0; index < maxDrawBuffers; ++index)
+    {
+        glReadBuffer(buffers[index]);
+
+        uint32_t expectR = (255 * (index % 5) + 4) / 8;
+        uint32_t expectG = (255 * (index % 4) + 3) / 6;
+        uint32_t expectB = (255 * (index % 3) + 2) / 4;
+        uint32_t expectA = (255 * (index % 2) + 1) / 2;
+
+        expectR += (255 * ((index + 1) % 2) + 1) / 2;
+        expectG += (255 * ((index + 1) % 3) + 2) / 4;
+        expectB += (255 * ((index + 1) % 4) + 3) / 6;
+        expectA += (255 * ((index + 1) % 5) + 4) / 8;
+
+        EXPECT_PIXEL_NEAR(0, 0, expectR, expectG, expectB, expectA, 1);
+    }
 }
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(FramebufferFetchES31);

@@ -55,4 +55,4 @@ class IOSurfaceSurfaceMtl : public OffscreenSurfaceMtl
 
 }  // namespace rx
 
-#endif  // LIBANGLE_RENDERER_GL_EAGL_IOSURFACESURFACEEAGL_H_
+#endif  // LIBANGLE_RENDERER_METAL_IOSURFACESURFACEMTL_H_

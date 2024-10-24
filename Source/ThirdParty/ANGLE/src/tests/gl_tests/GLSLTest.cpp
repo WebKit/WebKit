@@ -4159,10 +4159,6 @@ TEST_P(GLSLTest, VaryingMatrixArray)
 // Test that using a centroid varying matrix array is supported.
 TEST_P(GLSLTest_ES3, CentroidVaryingMatrixArray)
 {
-    // TODO(anglebug.com/42264029): Skipping initial failures so we can set up a passing iOS test
-    // bot.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
-
     constexpr char kVS[] =
         "#version 300 es\n"
         "uniform vec2 u_a1;\n"
@@ -4499,6 +4495,30 @@ TEST_P(GLSLTest_ES31, FindMSBAndFindLSBCornerCases)
     ANGLE_GL_PROGRAM(program, essl31_shaders::vs::Simple(), kFS);
     drawQuad(program, essl31_shaders::PositionAttrib(), 0.5f);
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
+}
+
+// Test that reading from a swizzled vector that is dynamically indexed succeeds.
+TEST_P(GLSLTest_ES3, ReadFromDynamicIndexingOfSwizzledVector)
+{
+    constexpr char kFS[] = R"(#version 300 es
+precision highp float;
+
+uniform int index;
+uniform vec4 data;
+
+out vec4 color;
+void main() {
+    color = vec4(vec4(data.x, data.y, data.z, data.w).zyxw[index], 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM(program, essl3_shaders::vs::Simple(), kFS);
+    glUseProgram(program);
+
+    GLint dataLoc = glGetUniformLocation(program, "data");
+    glUniform4f(dataLoc, 0.2, 0.4, 0.6, 0.8);
+    drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
+
+    EXPECT_PIXEL_NEAR(0, 0, 153, 0, 0, 255, 1);
 }
 
 // Test that writing into a swizzled vector that is dynamically indexed succeeds.
@@ -6951,7 +6971,7 @@ TEST_P(GLSLTest, StructsWithSameMembersDisambiguatedByName)
 TEST_P(GLSLTest, InactiveVaryingInVertexActiveInFragment)
 {
     // http://anglebug.com/42263408
-    ANGLE_SKIP_TEST_IF((IsMac() && IsOpenGL()) || (IsIOS() && IsOpenGLES()));
+    ANGLE_SKIP_TEST_IF(IsMac() && IsOpenGL());
 
     constexpr char kVS[] =
         "attribute vec4 inputAttribute;\n"
@@ -7616,9 +7636,6 @@ TEST_P(WebGL2GLSLTest, VaryingStructNotInitializedInVertexShader)
     //
     // http://anglebug.com/42262078
     ANGLE_SKIP_TEST_IF(IsDesktopOpenGL() && (IsMac() || (IsWindows() && !IsNVIDIA())));
-    // TODO(anglebug.com/42264029): iOS thinks that the precision qualifiers don't match on the
-    // struct member. Not sure if it's being overly strict.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     constexpr char kVS[] =
         "#version 300 es\n"
@@ -7650,9 +7667,6 @@ TEST_P(WebGL2GLSLTest, VaryingStructNotInitializedInVertexShader)
 // Test that a varying struct that gets used in the fragment shader works.
 TEST_P(GLSLTest_ES3, VaryingStructUsedInFragmentShader)
 {
-    // TODO(anglebug.com/42264029): iOS thinks that the precision qualifiers don't match on the
-    // struct member. Not sure if it's being overly strict.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
     constexpr char kVS[] =
         "#version 300 es\n"
         "in vec4 inputAttribute;\n"
@@ -7774,9 +7788,6 @@ TEST_P(GLSLTest_ES3, ComplexVaryingStructsUsedInFragmentShader)
     //
     // http://anglebug.com/42261898
     ANGLE_SKIP_TEST_IF(IsVulkan() && IsAndroid());
-    // TODO(anglebug.com/42264029): iOS thinks that the precision qualifiers don't match on the
-    // struct members. Not sure if it's being overly strict.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     constexpr char kVS[] =
         "#version 300 es\n"
@@ -9309,9 +9320,6 @@ void main()
 // Test that a varying struct that's defined as a part of the declaration is handled correctly.
 TEST_P(GLSLTest_ES3, VaryingStructWithInlineDefinition)
 {
-    // TODO(anglebug.com/42264029): iOS thinks that the precision qualifiers don't match on the
-    // struct member. Not sure if it's being overly strict.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
     constexpr char kVS[] = R"(#version 300 es
 in vec4 inputAttribute;
 
@@ -14204,6 +14212,95 @@ void main() { v_varying = a_position.x; gl_Position = a_position; })";
     // Should fail, as precise is a reserved keyword when the extension is not enabled.
     GLuint program = CompileProgram(kVS, kFS);
     EXPECT_EQ(0u, program);
+}
+
+// Regression test for a bug with precise in combination with constructor, swizzle and dynamic
+// index.
+TEST_P(GLSLTest_ES31, PreciseVsVectorConstructorSwizzleAndIndex)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_gpu_shader5"));
+
+    constexpr char kVS[] = R"(#version 310 es
+#extension GL_EXT_gpu_shader5 : require
+
+uniform highp float u;
+
+void main()
+{
+    precise float p = vec4(u, u, u, u).xyz[int(u)];
+    gl_Position = vec4(p);
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+out vec4 oColor;
+void main()
+{
+    oColor = vec4(1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+}
+
+// Regression test for a bug with precise in combination with matrix constructor and column index.
+TEST_P(GLSLTest_ES31, PreciseVsMatrixConstructorAndIndex)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_gpu_shader5"));
+
+    constexpr char kVS[] = R"(#version 310 es
+#extension GL_EXT_gpu_shader5 : require
+
+uniform highp vec4 u;
+
+void main()
+{
+    precise vec4 p = mat4(u,vec4(0),vec4(0),vec4(0))[0];
+    gl_Position = p;
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+out vec4 oColor;
+void main()
+{
+    oColor = vec4(1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
+}
+
+// Regression test for a bug with precise in combination with struct constructor and field
+// selection.
+TEST_P(GLSLTest_ES31, PreciseVsStructConstructorAndFieldSelection)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_gpu_shader5"));
+
+    constexpr char kVS[] = R"(#version 310 es
+#extension GL_EXT_gpu_shader5 : require
+
+struct S
+{
+    float a;
+    float b;
+};
+
+uniform highp float u;
+
+void main()
+{
+    precise float p = S(u, u).b;
+    gl_Position = vec4(p);
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+precision mediump float;
+out vec4 oColor;
+void main()
+{
+    oColor = vec4(1.0);
+})";
+
+    ANGLE_GL_PROGRAM(program, kVS, kFS);
 }
 
 // Test that reusing the same variable name for different uses across stages links fine.  The SPIR-V

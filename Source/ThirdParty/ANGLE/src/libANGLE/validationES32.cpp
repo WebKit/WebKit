@@ -427,6 +427,17 @@ bool ValidateGetObjectLabel(const Context *context,
                             const GLsizei *length,
                             const GLchar *label)
 {
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+
+    if (!ValidateGetObjectLabelBase(context, entryPoint, identifier, name, bufSize, length, label))
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -437,6 +448,17 @@ bool ValidateGetObjectPtrLabel(const Context *context,
                                const GLsizei *length,
                                const GLchar *label)
 {
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+
+    if (!ValidateGetObjectPtrLabelBase(context, entryPoint, ptr, bufSize, length, label))
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -628,6 +650,17 @@ bool ValidateObjectLabel(const Context *context,
                          GLsizei length,
                          const GLchar *label)
 {
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+
+    if (!ValidateObjectLabelBase(context, entryPoint, identifier, name, length, label))
+    {
+        return false;
+    }
+
     return true;
 }
 
@@ -637,6 +670,17 @@ bool ValidateObjectPtrLabel(const Context *context,
                             GLsizei length,
                             const GLchar *label)
 {
+    if (context->getClientVersion() < ES_3_2)
+    {
+        ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kES32Required);
+        return false;
+    }
+
+    if (!ValidateObjectPtrLabelBase(context, entryPoint, ptr, length, label))
+    {
+        return false;
+    }
+
     return true;
 }
 

@@ -1591,28 +1591,20 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
                 AdjustBlitResolveParametersForPreRotation(rotation, srcFramebufferRotation,
                                                           &params);
 
-                // Create depth- and stencil-only views for reading.
-                vk::DeviceScoped<vk::ImageView> depthView(contextVk->getDevice());
-                vk::DeviceScoped<vk::ImageView> stencilView(contextVk->getDevice());
-
-                vk::LevelIndex levelIndex =
-                    depthStencilImage->toVkLevel(readRenderTarget->getLevelIndex());
-                uint32_t layerIndex         = readRenderTarget->getLayerIndex();
-                gl::TextureType textureType = vk::Get2DTextureType(
-                    depthStencilImage->getLayerCount(), depthStencilImage->getSamples());
+                // Get depth- and stencil-only views for reading.
+                const vk::ImageView *depthView   = nullptr;
+                const vk::ImageView *stencilView = nullptr;
 
                 if (blitDepthBuffer)
                 {
-                    ANGLE_TRY(depthStencilImage->initLayerImageView(
-                        contextVk, textureType, VK_IMAGE_ASPECT_DEPTH_BIT, gl::SwizzleState(),
-                        &depthView.get(), levelIndex, 1, layerIndex, 1));
+                    ANGLE_TRY(readRenderTarget->getDepthOrStencilImageViewForCopy(
+                        contextVk, VK_IMAGE_ASPECT_DEPTH_BIT, &depthView));
                 }
 
                 if (blitStencilBuffer)
                 {
-                    ANGLE_TRY(depthStencilImage->initLayerImageView(
-                        contextVk, textureType, VK_IMAGE_ASPECT_STENCIL_BIT, gl::SwizzleState(),
-                        &stencilView.get(), levelIndex, 1, layerIndex, 1));
+                    ANGLE_TRY(readRenderTarget->getDepthOrStencilImageViewForCopy(
+                        contextVk, VK_IMAGE_ASPECT_STENCIL_BIT, &stencilView));
                 }
 
                 // If shader stencil export is not possible, defer stencil blit/resolve to another
@@ -1623,12 +1615,9 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
                 // Blit depth. If shader stencil export is present, blit stencil as well.
                 if (blitDepthBuffer || (blitStencilBuffer && hasShaderStencilExport))
                 {
-                    const vk::ImageView *depth = blitDepthBuffer ? &depthView.get() : nullptr;
-                    const vk::ImageView *stencil =
-                        blitStencilBuffer && hasShaderStencilExport ? &stencilView.get() : nullptr;
-
-                    ANGLE_TRY(utilsVk.depthStencilBlitResolve(contextVk, this, depthStencilImage,
-                                                              depth, stencil, params));
+                    ANGLE_TRY(utilsVk.depthStencilBlitResolve(
+                        contextVk, this, depthStencilImage, depthView,
+                        hasShaderStencilExport ? stencilView : nullptr, params));
                 }
 
                 // If shader stencil export is not present, blit stencil through a different path.
@@ -1639,14 +1628,8 @@ angle::Result FramebufferVk::blit(const gl::Context *context,
                         "Inefficient BlitFramebuffer operation on the stencil aspect "
                         "due to lack of shader stencil export support");
                     ANGLE_TRY(utilsVk.stencilBlitResolveNoShaderExport(
-                        contextVk, this, depthStencilImage, &stencilView.get(), params));
+                        contextVk, this, depthStencilImage, stencilView, params));
                 }
-
-                vk::ImageView depthViewObject   = depthView.release();
-                vk::ImageView stencilViewObject = stencilView.release();
-
-                contextVk->addGarbage(&depthViewObject);
-                contextVk->addGarbage(&stencilViewObject);
             }
         }
     }
@@ -2674,9 +2657,10 @@ void FramebufferVk::updateRenderPassDesc(ContextVk *contextVk)
         }
     }
 
-    if (contextVk->isInFramebufferFetchMode())
+    if (!contextVk->getFeatures().preferDynamicRendering.enabled &&
+        contextVk->isInColorFramebufferFetchMode())
     {
-        mRenderPassDesc.setFramebufferFetchMode(true);
+        mRenderPassDesc.setFramebufferFetchMode(vk::FramebufferFetchMode::Color);
     }
 
     if (contextVk->getFeatures().enableMultisampledRenderToTexture.enabled)
@@ -2961,7 +2945,8 @@ angle::Result FramebufferVk::createNewFramebuffer(
 angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
                                             vk::RenderPassFramebuffer *framebufferOut)
 {
-    ASSERT(mCurrentFramebufferDesc.hasFramebufferFetch() == mRenderPassDesc.hasFramebufferFetch());
+    ASSERT(mCurrentFramebufferDesc.hasColorFramebufferFetch() ==
+           mRenderPassDesc.hasColorFramebufferFetch());
 
     const gl::Extents attachmentsSize = mState.getExtents();
     ASSERT(attachmentsSize.width != 0 && attachmentsSize.height != 0);
@@ -3012,8 +2997,8 @@ angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
             // If there is a backbuffer, query the framebuffer from WindowSurfaceVk instead.
             ANGLE_TRY(mBackbuffer->getCurrentFramebuffer(
                 contextVk,
-                mRenderPassDesc.hasFramebufferFetch() ? FramebufferFetchMode::Enabled
-                                                      : FramebufferFetchMode::Disabled,
+                mRenderPassDesc.hasColorFramebufferFetch() ? vk::FramebufferFetchMode::Color
+                                                           : vk::FramebufferFetchMode::None,
                 *compatibleRenderPass, &framebufferHandle));
         }
     }
@@ -3830,32 +3815,25 @@ angle::Result FramebufferVk::flushDeferredClears(ContextVk *contextVk)
     return contextVk->startRenderPass(getRotatedCompleteRenderArea(contextVk), nullptr, nullptr);
 }
 
-void FramebufferVk::switchToFramebufferFetchMode(ContextVk *contextVk, bool hasFramebufferFetch)
+void FramebufferVk::switchToColorFramebufferFetchMode(ContextVk *contextVk,
+                                                      bool hasColorFramebufferFetch)
 {
+    // Framebuffer fetch use by the shader does not affect the framebuffer object in any way with
+    // dynamic rendering.
+    ASSERT(!contextVk->getFeatures().preferDynamicRendering.enabled);
+
     // The switch happens once, and is permanent.
-    if (mCurrentFramebufferDesc.hasFramebufferFetch() == hasFramebufferFetch)
+    if (mCurrentFramebufferDesc.hasColorFramebufferFetch() == hasColorFramebufferFetch)
     {
         return;
     }
 
-    mCurrentFramebufferDesc.setFramebufferFetchMode(hasFramebufferFetch);
+    mCurrentFramebufferDesc.setColorFramebufferFetchMode(hasColorFramebufferFetch);
 
-    mRenderPassDesc.setFramebufferFetchMode(hasFramebufferFetch);
+    mRenderPassDesc.setFramebufferFetchMode(hasColorFramebufferFetch
+                                                ? vk::FramebufferFetchMode::Color
+                                                : vk::FramebufferFetchMode::None);
     contextVk->onDrawFramebufferRenderPassDescChange(this, nullptr);
-
-    if (contextVk->getFeatures().preferDynamicRendering.enabled)
-    {
-        // Note: with dynamic rendering, |onDrawFramebufferRenderPassDescChange| is really
-        // unnecessary, but is called for simplicity.  The downside is unnecessary recreation of
-        // pipelines, which is mitigated by |permanentlySwitchToFramebufferFetchMode| which is
-        // automatically enabled with |preferDynamicRendering|.
-        //
-        // If |onDrawFramebufferRenderPassDescChange| is to be optimized away, care must be taken
-        // as GraphicsPipelineDesc::mRenderPassDesc::mHasFramebufferFetch can get out of sync with
-        // FramebufferDesc::mHasFramebufferFetch, and
-        // RenderPassCommandBufferHelper::mRenderPassDesc::mHasFramebufferFetch.
-        return;
-    }
 
     // Make sure framebuffer is recreated.
     releaseCurrentFramebuffer(contextVk);
@@ -3863,7 +3841,7 @@ void FramebufferVk::switchToFramebufferFetchMode(ContextVk *contextVk, bool hasF
     // Clear the framebuffer cache, as none of the old framebuffers are usable.
     if (contextVk->getFeatures().permanentlySwitchToFramebufferFetchMode.enabled)
     {
-        ASSERT(hasFramebufferFetch);
+        ASSERT(hasColorFramebufferFetch);
         releaseCurrentFramebuffer(contextVk);
     }
 }

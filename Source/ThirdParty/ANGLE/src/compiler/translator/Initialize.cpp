@@ -85,6 +85,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     {
         extBehavior[TExtension::ARM_shader_framebuffer_fetch] = EBhUndefined;
     }
+    if (resources.ARM_shader_framebuffer_fetch_depth_stencil)
+    {
+        extBehavior[TExtension::ARM_shader_framebuffer_fetch_depth_stencil] = EBhUndefined;
+    }
     if (resources.OVR_multiview)
     {
         extBehavior[TExtension::OVR_multiview] = EBhUndefined;
@@ -164,6 +168,10 @@ void InitExtensionBehavior(const ShBuiltInResources &resources, TExtensionBehavi
     if (resources.EXT_texture_cube_map_array)
     {
         extBehavior[TExtension::EXT_texture_cube_map_array] = EBhUndefined;
+    }
+    if (resources.EXT_texture_query_lod)
+    {
+        extBehavior[TExtension::EXT_texture_query_lod] = EBhUndefined;
     }
     if (resources.EXT_texture_shadow_lod)
     {

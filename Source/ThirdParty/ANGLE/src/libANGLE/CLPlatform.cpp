@@ -24,7 +24,8 @@ bool IsDeviceTypeMatch(DeviceType select, DeviceType type)
     // The type 'DeviceType' is a bitfield, so it matches if any selected bit is set.
     // A custom device is an exception, which only matches if it was explicitely selected, see:
     // https://www.khronos.org/registry/OpenCL/specs/3.0-unified/html/OpenCL_API.html#clGetDeviceIDs
-    return type == CL_DEVICE_TYPE_CUSTOM ? select == CL_DEVICE_TYPE_CUSTOM : type.isSet(select);
+    return type == CL_DEVICE_TYPE_CUSTOM ? select == CL_DEVICE_TYPE_CUSTOM
+                                         : type.intersects(select);
 }
 
 Context::PropArray ParseContextProperties(const cl_context_properties *properties,

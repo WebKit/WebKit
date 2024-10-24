@@ -745,7 +745,7 @@ CommandQueue::CommandQueue(Context &context,
       mImpl(nullptr)
 {
     ANGLE_CL_IMPL_TRY(context.getImpl().createCommandQueue(*this, &mImpl));
-    if (mProperties->isSet(CL_QUEUE_ON_DEVICE_DEFAULT))
+    if (mProperties->intersects(CL_QUEUE_ON_DEVICE_DEFAULT))
     {
         *mDevice->mDefaultCommandQueue = this;
     }

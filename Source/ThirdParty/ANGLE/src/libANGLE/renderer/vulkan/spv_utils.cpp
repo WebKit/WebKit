@@ -679,7 +679,7 @@ void AssignInputAttachmentBindings(const SpvSourceOptions &options,
                                    ShaderInterfaceVariableInfoMap *variableInfoMapOut)
 {
     if (!programExecutable.hasLinkedShaderStage(gl::ShaderType::Fragment) ||
-        !programExecutable.usesFramebufferFetch())
+        !programExecutable.usesColorFramebufferFetch())
     {
         return;
     }
@@ -688,8 +688,9 @@ void AssignInputAttachmentBindings(const SpvSourceOptions &options,
         programInterfaceInfo->currentShaderResourceBindingIndex;
     const gl::ShaderBitSet activeShaders{gl::ShaderType::Fragment};
 
-    static_assert(gl::IMPLEMENTATION_MAX_DRAW_BUFFERS <= 8,
-                  "sh::vk::spirv::ReservedIds supports max 8 draw buffers");
+    // sh::vk::spirv::ReservedIds supports max 8 draw buffers
+    ASSERT(options.maxInputAttachmentCount <= 8);
+    ASSERT(options.maxInputAttachmentCount >= 1);
 
     for (size_t index : programExecutable.getFragmentInoutIndices())
     {
@@ -704,7 +705,7 @@ void AssignInputAttachmentBindings(const SpvSourceOptions &options,
 
     // For input attachment uniform, the descriptor set binding indices are allocated as much as
     // the maximum draw buffers.
-    programInterfaceInfo->currentShaderResourceBindingIndex += gl::IMPLEMENTATION_MAX_DRAW_BUFFERS;
+    programInterfaceInfo->currentShaderResourceBindingIndex += options.maxInputAttachmentCount;
 }
 
 void AssignInterfaceBlockBindings(const SpvSourceOptions &options,
@@ -5164,10 +5165,12 @@ void SpirvVertexAttributeAliasingTransformer::writeExpandedMatrixInitialization(
 }
 }  // anonymous namespace
 
-SpvSourceOptions SpvCreateSourceOptions(const angle::FeaturesVk &features)
+SpvSourceOptions SpvCreateSourceOptions(const angle::FeaturesVk &features,
+                                        uint32_t maxInputAttachmentCount)
 {
     SpvSourceOptions options;
 
+    options.maxInputAttachmentCount = maxInputAttachmentCount;
     options.supportsTransformFeedbackExtension =
         features.supportsTransformFeedbackExtension.enabled;
     options.supportsTransformFeedbackEmulation = features.emulateTransformFeedback.enabled;

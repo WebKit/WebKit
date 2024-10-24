@@ -2160,7 +2160,7 @@ vk::Framebuffer &WindowSurfaceVk::chooseFramebuffer()
     }
 
     // Choose which framebuffer to use based on fetch, so it will have a matching renderpass
-    return mFramebufferFetchMode == FramebufferFetchMode::Enabled
+    return mFramebufferFetchMode == vk::FramebufferFetchMode::Color
                ? mSwapchainImages[mCurrentSwapchainImageIndex].fetchFramebuffer
                : mSwapchainImages[mCurrentSwapchainImageIndex].framebuffer;
 }
@@ -3007,7 +3007,7 @@ EGLint WindowSurfaceVk::getSwapBehavior() const
 }
 
 angle::Result WindowSurfaceVk::getCurrentFramebuffer(ContextVk *contextVk,
-                                                     FramebufferFetchMode fetchMode,
+                                                     vk::FramebufferFetchMode fetchMode,
                                                      const vk::RenderPass &compatibleRenderPass,
                                                      vk::Framebuffer *framebufferOut)
 {

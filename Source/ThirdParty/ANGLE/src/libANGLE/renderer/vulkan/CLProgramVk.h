@@ -279,14 +279,14 @@ class CLProgramVk : public CLProgramImpl
     angle::Result allocateDescriptorSet(const DescriptorSetIndex setIndex,
                                         const vk::DescriptorSetLayout &descriptorSetLayout,
                                         vk::CommandBufferHelperCommon *commandBuffer,
-                                        VkDescriptorSet *descriptorSetOut);
+                                        vk::DescriptorSetPointer *descriptorSetOut);
 
     // Sets the status for given associated device programs
     void setBuildStatus(const cl::DevicePtrs &devices, cl_build_status status);
 
-    vk::RefCountedDescriptorPoolBinding &getDescriptorPoolBinding(DescriptorSetIndex index)
+    vk::DescriptorPoolPointer &getDescriptorPoolPointer(DescriptorSetIndex index)
     {
-        return mDescriptorPoolBindings[index];
+        return mDescriptorPools[index];
     }
 
     vk::MetaDescriptorPool &getMetaDescriptorPool(DescriptorSetIndex index)
@@ -294,9 +294,9 @@ class CLProgramVk : public CLProgramImpl
         return mMetaDescriptorPools[index];
     }
 
-    vk::DescriptorPoolPointer &getDescriptorPoolPointer(DescriptorSetIndex index)
+    vk::DynamicDescriptorPoolPointer &getDynamicDescriptorPoolPointer(DescriptorSetIndex index)
     {
-        return mDescriptorPools[index];
+        return mDynamicDescriptorPools[index];
     }
 
     const angle::HashMap<uint32_t, ClspvPrintfInfo> *getPrintfDescriptors(
@@ -308,8 +308,8 @@ class CLProgramVk : public CLProgramImpl
     vk::RefCounted<vk::ShaderModule> mShader;
     DevicePrograms mAssociatedDevicePrograms;
     vk::DescriptorSetArray<vk::MetaDescriptorPool> mMetaDescriptorPools;
+    vk::DescriptorSetArray<vk::DynamicDescriptorPoolPointer> mDynamicDescriptorPools;
     vk::DescriptorSetArray<vk::DescriptorPoolPointer> mDescriptorPools;
-    vk::DescriptorSetArray<vk::RefCountedDescriptorPoolBinding> mDescriptorPoolBindings;
     angle::SimpleMutex mProgramMutex;
 };
 

@@ -1031,6 +1031,8 @@ bool ValidateReleaseTexturesANGLE(const Context *context,
 
 // GL_ARM_shader_framebuffer_fetch
 
+// GL_ARM_shader_framebuffer_fetch_depth_stencil
+
 // GL_CHROMIUM_bind_uniform_location
 bool ValidateBindUniformLocationCHROMIUM(const Context *context,
                                          angle::EntryPoint entryPoint,
@@ -2043,6 +2045,8 @@ bool ValidateTexBufferRangeEXT(const Context *context,
 // GL_EXT_texture_mirror_clamp_to_edge
 
 // GL_EXT_texture_norm16
+
+// GL_EXT_texture_query_lod
 
 // GL_EXT_texture_rg
 

@@ -106,7 +106,6 @@ class ANGLEPerfTest : public testing::Test, angle::NonCopyable
     void runTrial(double maxRunTime, int maxStepsToRun, RunTrialPolicy runPolicy);
 
     // Overriden in trace perf tests.
-    virtual void saveScreenshot(const std::string &screenshotName) {}
     virtual void computeGPUTime() {}
 
     void calibrateStepsToRun();

@@ -4819,6 +4819,8 @@ void GL_APIENTRY GL_ReleaseTexturesANGLE(GLuint numTextures,
 
 // GL_ARM_shader_framebuffer_fetch
 
+// GL_ARM_shader_framebuffer_fetch_depth_stencil
+
 // GL_CHROMIUM_bind_uniform_location
 void GL_APIENTRY GL_BindUniformLocationCHROMIUM(GLuint program, GLint location, const GLchar *name)
 {
@@ -9951,6 +9953,8 @@ void GL_APIENTRY GL_TexBufferRangeEXT(GLenum target,
 // GL_EXT_texture_mirror_clamp_to_edge
 
 // GL_EXT_texture_norm16
+
+// GL_EXT_texture_query_lod
 
 // GL_EXT_texture_rg
 

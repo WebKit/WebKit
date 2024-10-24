@@ -361,7 +361,9 @@ TEST_P(EGLFeatureControlTest, OverrideFeaturesDependent)
 ANGLE_INSTANTIATE_TEST(EGLFeatureControlTest,
                        WithNoFixture(ES2_D3D9()),
                        WithNoFixture(ES2_D3D11()),
+                       WithNoFixture(ES2_METAL()),
                        WithNoFixture(ES2_OPENGL()),
                        WithNoFixture(ES2_VULKAN()),
                        WithNoFixture(ES3_D3D11()),
+                       WithNoFixture(ES3_METAL()),
                        WithNoFixture(ES3_OPENGL()));

@@ -209,6 +209,38 @@ bool ValidatePushDebugGroupBase(const Context *context,
                                 const GLchar *message);
 bool ValidatePopDebugGroupBase(const Context *context, angle::EntryPoint entryPoint);
 
+// Validation of ObjectLabel
+bool ValidateObjectLabelBase(const Context *context,
+                             angle::EntryPoint entryPoint,
+                             GLenum identifier,
+                             GLuint name,
+                             GLsizei length,
+                             const GLchar *label);
+
+// Validation of GetObjectLabel
+bool ValidateGetObjectLabelBase(const Context *context,
+                                angle::EntryPoint entryPoint,
+                                GLenum identifier,
+                                GLuint name,
+                                GLsizei bufSize,
+                                const GLsizei *length,
+                                const GLchar *label);
+
+// Validation of ObjectPtrLabel
+bool ValidateObjectPtrLabelBase(const Context *context,
+                                angle::EntryPoint entryPoint,
+                                const void *ptr,
+                                GLsizei length,
+                                const GLchar *label);
+
+// Validation of GetObjectPtrLabel
+bool ValidateGetObjectPtrLabelBase(const Context *context,
+                                   angle::EntryPoint entryPoint,
+                                   const void *ptr,
+                                   GLsizei bufSize,
+                                   const GLsizei *length,
+                                   const GLchar *label);
+
 }  // namespace gl
 
 #endif  // LIBANGLE_VALIDATION_ES2_H_

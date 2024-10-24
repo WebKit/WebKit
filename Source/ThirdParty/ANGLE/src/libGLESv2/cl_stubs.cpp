@@ -236,11 +236,12 @@ cl_int RetainCommandQueue(cl_command_queue command_queue)
 cl_int ReleaseCommandQueue(cl_command_queue command_queue)
 {
     CommandQueue &queue = command_queue->cast<CommandQueue>();
+    const cl_int err    = queue.onRelease();
     if (queue.release())
     {
         delete &queue;
     }
-    return CL_SUCCESS;
+    return err;
 }
 
 cl_int GetCommandQueueInfo(cl_command_queue command_queue,

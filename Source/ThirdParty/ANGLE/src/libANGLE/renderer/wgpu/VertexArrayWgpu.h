@@ -34,9 +34,10 @@ class VertexArrayWgpu : public VertexArrayImpl
                                    const gl::AttributesMask &activeAttributesMask,
                                    GLint first,
                                    GLsizei count,
+                                   GLsizei instanceCount,
                                    gl::DrawElementsType drawElementsTypeOrInvalid,
                                    const void *indices,
-                                   GLsizei instanceCount,
+                                   GLint baseVertex,
                                    bool primitiveRestartEnabled,
                                    const void **adjustedIndicesPtr);
 
@@ -48,7 +49,10 @@ class VertexArrayWgpu : public VertexArrayImpl
     angle::Result syncDirtyElementArrayBuffer(ContextWgpu *contextWgpu);
 
     gl::AttribArray<webgpu::PackedVertexAttribute> mCurrentAttribs;
+    gl::AttribArray<webgpu::BufferHelper> mStreamingArrayBuffers;
     gl::AttribArray<webgpu::BufferHelper *> mCurrentArrayBuffers;
+
+    webgpu::BufferHelper mStreamingIndexBuffer;
     webgpu::BufferHelper *mCurrentIndexBuffer = nullptr;
 };
 

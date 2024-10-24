@@ -7216,6 +7216,7 @@ void FrameCaptureShared::updateCopyImageSubData(CallCapture &call)
         case GL_TEXTURE_2D_ARRAY:
         case GL_TEXTURE_3D:
         case GL_TEXTURE_CUBE_MAP:
+        case GL_TEXTURE_EXTERNAL_OES:
         {
             // Convert the GLuint to TextureID
             gl::TextureID srcTextureID = {static_cast<GLuint>(srcName)};
@@ -7245,6 +7246,7 @@ void FrameCaptureShared::updateCopyImageSubData(CallCapture &call)
         case GL_TEXTURE_2D_ARRAY:
         case GL_TEXTURE_3D:
         case GL_TEXTURE_CUBE_MAP:
+        case GL_TEXTURE_EXTERNAL_OES:
         {
             // Convert the GLuint to TextureID
             gl::TextureID dstTextureID = {static_cast<GLuint>(dstName)};

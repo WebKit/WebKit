@@ -293,7 +293,7 @@ bool TSymbolTable::declare(TSymbol *symbol)
 {
     ASSERT(!mTable.empty());
     // The following built-ins may be redeclared by the shader: gl_ClipDistance, gl_CullDistance,
-    // gl_LastFragData, and gl_LastFragColorARM.
+    // gl_LastFragData, gl_LastFragColorARM, gl_LastFragDepthARM and gl_LastFragStencilARM.
     ASSERT(symbol->symbolType() == SymbolType::UserDefined ||
            (symbol->symbolType() == SymbolType::BuiltIn && IsRedeclarableBuiltIn(symbol->name())));
     ASSERT(!symbol->isFunction());

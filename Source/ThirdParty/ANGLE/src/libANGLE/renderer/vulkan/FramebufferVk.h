@@ -105,6 +105,7 @@ class FramebufferVk : public FramebufferImpl
     // Returns render area with deferred clears in consideration. When deferred clear is used
     // in the render pass, the render area must cover the whole framebuffer.
     gl::Rectangle getRenderArea(ContextVk *contextVk) const;
+    uint32_t getLayerCount() const { return mCurrentFramebufferDesc.getLayerCount(); }
 
     const gl::DrawBufferMask &getEmulatedAlphaAttachmentMask() const;
     RenderTargetVk *getColorDrawRenderTarget(size_t colorIndexGL) const;
@@ -124,7 +125,7 @@ class FramebufferVk : public FramebufferImpl
     bool hasDeferredClears() const { return !mDeferredClears.empty(); }
     angle::Result flushDeferredClears(ContextVk *contextVk);
 
-    void switchToFramebufferFetchMode(ContextVk *contextVk, bool hasFramebufferFetch);
+    void switchToColorFramebufferFetchMode(ContextVk *contextVk, bool hasColorFramebufferFetch);
 
     bool updateLegacyDither(ContextVk *contextVk);
 

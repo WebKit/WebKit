@@ -270,12 +270,6 @@ struct ImageAcquireOperation : angle::NonCopyable
 };
 }  // namespace impl
 
-enum class FramebufferFetchMode
-{
-    Disabled,
-    Enabled,
-};
-
 class WindowSurfaceVk : public SurfaceVk
 {
   public:
@@ -334,7 +328,7 @@ class WindowSurfaceVk : public SurfaceVk
     vk::Framebuffer &chooseFramebuffer();
 
     angle::Result getCurrentFramebuffer(ContextVk *context,
-                                        FramebufferFetchMode fetchMode,
+                                        vk::FramebufferFetchMode fetchMode,
                                         const vk::RenderPass &compatibleRenderPass,
                                         vk::Framebuffer *framebufferOut);
 
@@ -547,7 +541,7 @@ class WindowSurfaceVk : public SurfaceVk
     uint64_t mBufferAgeQueryFrameNumber;
 
     // GL_EXT_shader_framebuffer_fetch
-    FramebufferFetchMode mFramebufferFetchMode = FramebufferFetchMode::Disabled;
+    vk::FramebufferFetchMode mFramebufferFetchMode = vk::FramebufferFetchMode::None;
 };
 
 }  // namespace rx

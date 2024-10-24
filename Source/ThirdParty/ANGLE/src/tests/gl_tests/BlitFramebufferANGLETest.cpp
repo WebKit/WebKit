@@ -1202,6 +1202,7 @@ TEST_P(BlitFramebufferANGLETest, BlitDifferentSizes)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test that blit with missing attachments is ignored.
 TEST_P(BlitFramebufferANGLETest, BlitWithMissingAttachments)
 {
     ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_ANGLE_framebuffer_blit"));
@@ -1217,26 +1218,34 @@ TEST_P(BlitFramebufferANGLETest, BlitWithMissingAttachments)
     glClearColor(1.0, 1.0, 1.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    // generate INVALID_OPERATION if the read FBO has no depth attachment
+    // No error if the read FBO has no depth attachment
     glBlitFramebufferANGLE(0, 0, getWindowWidth(), getWindowHeight(), 0, 0, getWindowWidth(),
                            getWindowHeight(), GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT,
                            GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
 
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
-
-    // generate INVALID_OPERATION if the read FBO has no stencil attachment
+    // No error if the read FBO has no stencil attachment
     glBlitFramebufferANGLE(0, 0, getWindowWidth(), getWindowHeight(), 0, 0, getWindowWidth(),
                            getWindowHeight(), GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
                            GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
 
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    // No error if we read from a missing color attachment.  Create a temp attachment as
+    // attachment1, then remove attachment 0.
+    //
+    // The same could be done with glReadBuffer, which requires ES3 (this test runs on ES2).
+    GLTexture tempColor;
+    glBindTexture(GL_TEXTURE_2D, tempColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, getWindowWidth(), getWindowHeight(), 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, tempColor, 0);
+    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_READ_FRAMEBUFFER);
+    EXPECT_GL_NO_ERROR();
 
-    // generate INVALID_OPERATION if we read from a missing color attachment
-    glReadBuffer(GL_COLOR_ATTACHMENT1);
     glBlitFramebufferANGLE(0, 0, getWindowWidth(), getWindowHeight(), 0, 0, getWindowWidth(),
                            getWindowHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
-    EXPECT_GL_ERROR(GL_INVALID_OPERATION);
+    EXPECT_GL_NO_ERROR();
 }
 
 TEST_P(BlitFramebufferANGLETest, BlitStencil)
@@ -1850,6 +1859,64 @@ TEST_P(BlitFramebufferTest, BlitMultisampleStencilToDefault)
     EXPECT_PIXEL_COLOR_EQ(64, 64, GLColor::blue);
 
     ASSERT_GL_NO_ERROR();
+}
+
+// Test blit multisampled framebuffer to MRT framebuffer
+TEST_P(BlitFramebufferTest, BlitMultisampledFramebufferToMRT)
+{
+    // https://issues.angleproject.org/issues/361369302
+
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+    // Prepare multisampled framebuffer to blit from.
+    GLRenderbuffer multiSampleColorbuf;
+    glBindRenderbuffer(GL_RENDERBUFFER, multiSampleColorbuf);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_RGBA8, getWindowWidth(),
+                                     getWindowHeight());
+
+    GLFramebuffer multiSampleFramebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, multiSampleFramebuffer);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER,
+                              multiSampleColorbuf);
+    glCheckFramebufferStatus(GL_FRAMEBUFFER);
+
+    ANGLE_GL_PROGRAM(drawRed, essl3_shaders::vs::Simple(), essl3_shaders::fs::Red());
+    drawQuad(drawRed, essl3_shaders::PositionAttrib(), 0.8f);
+    EXPECT_GL_NO_ERROR();
+
+    // Prepare mrt framebuffer with two attachments to blit to.
+    GLFramebuffer MRTFBO;
+    glBindFramebuffer(GL_FRAMEBUFFER, MRTFBO);
+    GLTexture MRTColorBuffer0;
+    GLTexture MRTColorBuffer1;
+    glBindTexture(GL_TEXTURE_2D, MRTColorBuffer0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, getWindowWidth(), getWindowHeight(), 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, MRTColorBuffer0, 0);
+    glBindTexture(GL_TEXTURE_2D, MRTColorBuffer1);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, getWindowWidth(), getWindowHeight(), 0, GL_RGBA,
+                 GL_UNSIGNED_BYTE, nullptr);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, MRTColorBuffer1, 0);
+
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, multiSampleFramebuffer);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, MRTFBO);
+
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    GLenum drawBuffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, drawBuffers);
+
+    glBlitFramebuffer(0, 0, getWindowWidth(), getWindowHeight(), 0, 0, getWindowWidth(),
+                      getWindowHeight(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    EXPECT_GL_NO_ERROR();
+
+    // Check results
+    glBindFramebuffer(GL_FRAMEBUFFER, MRTFBO);
+    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::red);
+
+    glReadBuffer(GL_COLOR_ATTACHMENT1);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::red);
 }
 
 // Tests clearing a multisampled depth buffer.

@@ -1763,11 +1763,9 @@ bool ValidateBlitFramebufferParameters(const Context *context,
                 return false;
             }
         }
-        // WebGL 2.0 BlitFramebuffer when blitting from a missing attachment
-        // In OpenGL ES it is undefined what happens when an operation tries to blit from a missing
-        // attachment and WebGL defines it to be an error. We do the check unconditionally as the
-        // situation is an application error that would lead to a crash in ANGLE.
-        else if (drawFramebuffer->hasEnabledDrawBuffer())
+        // In OpenGL ES, blits to/from missing attachments are silently ignored.  In WebGL 2.0, this
+        // is defined to be an error.
+        else if (context->isWebGL() && drawFramebuffer->hasEnabledDrawBuffer())
         {
             ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBlitMissingColor);
             return false;
@@ -1806,7 +1804,7 @@ bool ValidateBlitFramebufferParameters(const Context *context,
                 }
             }
             // WebGL 2.0 BlitFramebuffer when blitting from a missing attachment
-            else if (drawBuffer)
+            else if (context->isWebGL() && drawBuffer)
             {
                 ANGLE_VALIDATION_ERROR(GL_INVALID_OPERATION, kBlitMissingDepthOrStencil);
                 return false;
@@ -3276,6 +3274,7 @@ bool ValidateCopyImageSubDataTarget(const Context *context,
         case GL_TEXTURE_2D_ARRAY:
         case GL_TEXTURE_CUBE_MAP:
         case GL_TEXTURE_CUBE_MAP_ARRAY_EXT:
+        case GL_TEXTURE_EXTERNAL_OES:
         {
             TextureID texture = PackParam<TextureID>(name);
             if (!context->isTexture(texture))
@@ -3321,6 +3320,7 @@ bool ValidateCopyImageSubDataLevel(const Context *context,
         case GL_TEXTURE_2D_ARRAY:
         case GL_TEXTURE_CUBE_MAP:
         case GL_TEXTURE_CUBE_MAP_ARRAY_EXT:
+        case GL_TEXTURE_EXTERNAL_OES:
         {
             if (!ValidMipLevel(context, PackParam<TextureType>(target), level))
             {
@@ -3449,6 +3449,7 @@ const InternalFormat &GetTargetFormatInfo(const Context *context,
         case GL_TEXTURE_2D_ARRAY:
         case GL_TEXTURE_CUBE_MAP:
         case GL_TEXTURE_CUBE_MAP_ARRAY_EXT:
+        case GL_TEXTURE_EXTERNAL_OES:
         {
             Texture *texture          = context->getTexture(PackParam<TextureID>(name));
             GLenum textureTargetToUse = target;

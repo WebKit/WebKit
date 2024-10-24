@@ -898,6 +898,8 @@ deqp_khr_common_sources = [
   "$deqp_path/external/openglcts/modules/common/glcExposedExtensionsTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcExtTokens.cpp",
   "$deqp_path/external/openglcts/modules/common/glcExtTokens.hpp",
+  "$deqp_path/external/openglcts/modules/common/glcFragCoordConventionsTests.cpp",
+  "$deqp_path/external/openglcts/modules/common/glcFragCoordConventionsTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcFragDepthTests.cpp",
   "$deqp_path/external/openglcts/modules/common/glcFragDepthTests.hpp",
   "$deqp_path/external/openglcts/modules/common/glcFramebufferBlitTests.cpp",

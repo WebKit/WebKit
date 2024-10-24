@@ -26,7 +26,7 @@ class DriverUniform;
                                     TIntermBlock *root,
                                     TSymbolTable *symbolTable,
                                     SpecConst *specConst,
-                                    DriverUniform *driverUniforms);
+                                    const DriverUniform *driverUniforms);
 }  // namespace sh
 
 #endif  // COMPILER_TRANSLATOR_TREEOPS_SPIRV_EMULATEDITHERING_H_

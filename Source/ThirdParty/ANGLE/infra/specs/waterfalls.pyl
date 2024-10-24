@@ -97,8 +97,6 @@
           'linux_intel_uhd_630_experimental',
         ],
         'test_suites': {
-          'gtest_tests': 'linux_intel_gtests',
-          'isolated_scripts': 'isolated_scripts_group_common',
         },
       },
       'linux-exp-nvidia': {

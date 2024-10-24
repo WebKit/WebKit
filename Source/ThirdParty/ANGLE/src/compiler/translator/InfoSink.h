@@ -90,7 +90,7 @@ class TInfoSinkBase
         {
             stream.unsetf(std::ios::fixed);
             stream.unsetf(std::ios::scientific);
-            stream.precision(8);
+            stream.precision(9);
             stream << f;
         }
         sink.append(stream.str());

@@ -10,6 +10,7 @@
 #define LIBANGLE_CLCOMMANDQUEUE_H_
 
 #include "libANGLE/CLObject.h"
+#include "libANGLE/cl_utils.h"
 #include "libANGLE/renderer/CLCommandQueueImpl.h"
 
 #include "common/SynchronizedValue.h"
@@ -264,6 +265,8 @@ class CommandQueue final : public _cl_command_queue, public Object
     template <typename T = rx::CLCommandQueueImpl>
     T &getImpl() const;
 
+    cl_int onRelease();
+
   private:
     CommandQueue(Context &context,
                  Device &device,
@@ -305,12 +308,12 @@ inline CommandQueueProperties CommandQueue::getProperties() const
 
 inline bool CommandQueue::isOnHost() const
 {
-    return mProperties->isNotSet(CL_QUEUE_ON_DEVICE);
+    return mProperties->excludes(CL_QUEUE_ON_DEVICE);
 }
 
 inline bool CommandQueue::isOnDevice() const
 {
-    return mProperties->isSet(CL_QUEUE_ON_DEVICE);
+    return mProperties->intersects(CL_QUEUE_ON_DEVICE);
 }
 
 inline bool CommandQueue::hasSize() const
@@ -327,6 +330,18 @@ template <typename T>
 inline T &CommandQueue::getImpl() const
 {
     return static_cast<T &>(*mImpl);
+}
+
+inline cl_int CommandQueue::onRelease()
+{
+    // Perform implicit submission on queue release
+    // https://registry.khronos.org/OpenCL/specs/3.0-unified/html/OpenCL_API.html#clReleaseCommandQueue
+    if (IsError(finish()))
+    {
+        WARN() << "Failed to perform implicit submission on queue release!";
+        return CL_OUT_OF_RESOURCES;
+    }
+    return CL_SUCCESS;
 }
 
 }  // namespace cl

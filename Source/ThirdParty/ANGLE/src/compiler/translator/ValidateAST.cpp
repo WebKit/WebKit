@@ -646,7 +646,9 @@ void ValidateAST::visitBuiltInVariable(TIntermSymbol *node)
             (name == "gl_CullDistance" && qualifier != EvqCullDistance) ||
             (name == "gl_FragDepth" && qualifier != EvqFragDepth) ||
             (name == "gl_LastFragData" && qualifier != EvqLastFragData) ||
-            (name == "gl_LastFragColorARM" && qualifier != EvqLastFragColor))
+            (name == "gl_LastFragColorARM" && qualifier != EvqLastFragColor) ||
+            (name == "gl_LastFragDepthARM" && qualifier != EvqLastFragDepth) ||
+            (name == "gl_LastFragStencilARM" && qualifier != EvqLastFragStencil))
         {
             mDiagnostics->error(
                 node->getLine(),

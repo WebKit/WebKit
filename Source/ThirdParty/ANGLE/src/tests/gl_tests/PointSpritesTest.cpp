@@ -458,9 +458,6 @@ TEST_P(PointSpritesTest, PointSizeAboveMaxIsClamped)
     // framebuffer. http://anglebug.com/42260859
     ANGLE_SKIP_TEST_IF(IsAMD() && IsOpenGL());
 
-    // TODO(anglebug.com/42264029)
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
-
     // TODO(anglebug.com/40096805)
     ANGLE_SKIP_TEST_IF(IsMetal() && IsAMD());
 

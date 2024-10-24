@@ -177,25 +177,6 @@ if (angle_enable_cgl) {
   ]
 }
 
-if (angle_enable_eagl) {
-  gl_backend_sources += [
-    "eagl/ContextEAGL.cpp",
-    "eagl/ContextEAGL.h",
-    "eagl/DeviceEAGL.cpp",
-    "eagl/DeviceEAGL.h",
-    "eagl/DisplayEAGL.h",
-    "eagl/DisplayEAGL.mm",
-    "eagl/FunctionsEAGL.h",
-    "eagl/FunctionsEAGL.mm",
-    "eagl/IOSurfaceSurfaceEAGL.h",
-    "eagl/IOSurfaceSurfaceEAGL.mm",
-    "eagl/PbufferSurfaceEAGL.cpp",
-    "eagl/PbufferSurfaceEAGL.h",
-    "eagl/WindowSurfaceEAGL.h",
-    "eagl/WindowSurfaceEAGL.mm",
-  ]
-}
-
 if (angle_enable_gl_null) {
   gl_backend_sources += [
     "null_functions.cpp",

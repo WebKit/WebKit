@@ -341,7 +341,7 @@ class ProgramExecutable final : public angle::Subject
     {
         return !getLinkedTransformFeedbackVaryings().empty();
     }
-    bool usesFramebufferFetch() const { return mPod.fragmentInoutIndices.any(); }
+    bool usesColorFramebufferFetch() const { return mPod.fragmentInoutIndices.any(); }
 
     // Count the number of uniform and storage buffer declarations, counting arrays as one.
     size_t getTransformFeedbackBufferCount() const { return mTransformFeedbackStrides.size(); }

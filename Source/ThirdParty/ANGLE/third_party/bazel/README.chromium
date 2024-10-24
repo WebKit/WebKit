@@ -3,7 +3,8 @@ Short Name: (Components of) Bazel
 URL: https://github.com/bazelbuild/bazel
 License: Apache 2.0
 License File: LICENSE
-Version: Unknown
+Version: N/A
+Revision: DEPS
 Security Critical: no
 Shipped: no
 

@@ -1397,12 +1397,7 @@ static InternalFormatInfoMap BuildInternalFormatInfoMap()
     AddRGBAXFormat(&map, GL_RGBA,           false, FB< 8,  8,  8,  8, 0, 0>(), GL_RGBA,           GL_BYTE,                        GL_SIGNED_NORMALIZED,   false, NeverSupported,                                      NeverSupported,  NeverSupported,                                    NeverSupported, NeverSupported);
     AddRGBAXFormat(&map, GL_SRGB,           false, FB< 8,  8,  8,  0, 0, 0>(), GL_SRGB,           GL_UNSIGNED_BYTE,               GL_UNSIGNED_NORMALIZED, true,  RequireExt<&Extensions::sRGBEXT>,                    AlwaysSupported, NeverSupported,                                    NeverSupported, NeverSupported);
     AddRGBAXFormat(&map, GL_SRGB_ALPHA_EXT, false, FB< 8,  8,  8,  8, 0, 0>(), GL_SRGB_ALPHA_EXT, GL_UNSIGNED_BYTE,               GL_UNSIGNED_NORMALIZED, true,  RequireExt<&Extensions::sRGBEXT>,                    AlwaysSupported, RequireExt<&Extensions::sRGBEXT>,                  NeverSupported, NeverSupported);
-#if ANGLE_ENABLE_EAGL
-    // Using OpenGLES.framework.
-    AddRGBAFormat(&map, GL_BGRA_EXT,       false,  8,  8,  8,  8, 0, GL_BGRA_EXT,       GL_UNSIGNED_BYTE,               GL_UNSIGNED_NORMALIZED, false, RequireES<2, 0>,                                  AlwaysSupported, RequireES<2, 0>,                                NeverSupported, NeverSupported);
-#else
     AddRGBAFormat(&map, GL_BGRA_EXT,       false,  8,  8,  8,  8, 0, GL_BGRA_EXT,       GL_UNSIGNED_BYTE,               GL_UNSIGNED_NORMALIZED, false, RequireExt<&Extensions::textureFormatBGRA8888EXT>,   AlwaysSupported, RequireExt<&Extensions::textureFormatBGRA8888EXT>, NeverSupported, NeverSupported);
-#endif
 
     // Unsized integer formats
     //                 |Internal format |sized | R | G | B | A |S | Format         | Type                          | Component type | SRGB | Texture supported | Filterable    | Texture attachment | Renderbuffer  | Blend

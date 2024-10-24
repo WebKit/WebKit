@@ -194,6 +194,7 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->EXT_shader_framebuffer_fetch_non_coherent      = 0;
     resources->NV_shader_framebuffer_fetch                    = 0;
     resources->ARM_shader_framebuffer_fetch                   = 0;
+    resources->ARM_shader_framebuffer_fetch_depth_stencil     = 0;
     resources->OVR_multiview                                  = 0;
     resources->OVR_multiview2                                 = 0;
     resources->EXT_YUV_target                                 = 0;
@@ -216,6 +217,7 @@ void InitBuiltInResources(ShBuiltInResources *resources)
     resources->APPLE_clip_distance                            = 0;
     resources->OES_texture_cube_map_array                     = 0;
     resources->EXT_texture_cube_map_array                     = 0;
+    resources->EXT_texture_query_lod                          = 0;
     resources->EXT_texture_shadow_lod                         = 0;
     resources->EXT_shadow_samplers                            = 0;
     resources->OES_shader_multisample_interpolation           = 0;

@@ -164,6 +164,7 @@ class UtilsVk : angle::NonCopyable
         int dstOffset[2];
         int srcMip;
         int srcLayer;
+        int srcSampleCount;
         int srcHeight;
         gl::LevelIndex dstMip;
         int dstLayer;
@@ -431,6 +432,7 @@ class UtilsVk : angle::NonCopyable
         int32_t dstOffset[2]            = {};
         int32_t srcMip                  = 0;
         int32_t srcLayer                = 0;
+        int32_t srcSampleCount          = 0;
         uint32_t flipX                  = 0;
         uint32_t flipY                  = 0;
         uint32_t premultiplyAlpha       = 0;
@@ -656,6 +658,7 @@ class UtilsVk : angle::NonCopyable
                                   const gl::Rectangle &renderArea,
                                   const VkImageAspectFlags aspectFlags,
                                   const VkClearValue *clearValue,
+                                  vk::RenderPassSource renderPassSource,
                                   vk::RenderPassCommandBuffer **commandBufferOut);
 
     // Set up descriptor set and call dispatch.
@@ -718,8 +721,8 @@ class UtilsVk : angle::NonCopyable
     GraphicsShaderProgramAndPipelines mImageClearVSOnly;
     GraphicsShaderProgramAndPipelines mImageClear[vk::InternalShader::ImageClear_frag::kArrayLen];
     GraphicsShaderProgramAndPipelines mImageCopy[vk::InternalShader::ImageCopy_frag::kArrayLen];
-    std::unordered_map<vk::SamplerDesc, GraphicsShaderProgramAndPipelines>
-        mImageCopyWithSampler[vk::InternalShader::ImageCopy_frag::kArrayLen];
+    GraphicsShaderProgramAndPipelines mImageCopyFloat;
+    std::unordered_map<vk::SamplerDesc, GraphicsShaderProgramAndPipelines> mImageCopyWithSampler;
     ComputeShaderProgramAndPipelines
         mCopyImageToBuffer[vk::InternalShader::CopyImageToBuffer_comp::kArrayLen];
     GraphicsShaderProgramAndPipelines mBlitResolve[vk::InternalShader::BlitResolve_frag::kArrayLen];
@@ -793,6 +796,8 @@ class LineLoopHelper final : angle::NonCopyable
 
     void release(ContextVk *contextVk);
     void destroy(vk::Renderer *renderer);
+
+    vk::BufferHelper *getCurrentIndexBuffer() { return mDynamicIndexBuffer.getBuffer(); }
 
     static void Draw(uint32_t count,
                      uint32_t baseVertex,

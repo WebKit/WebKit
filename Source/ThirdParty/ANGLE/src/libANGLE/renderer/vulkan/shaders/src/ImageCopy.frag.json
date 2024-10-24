@@ -9,17 +9,16 @@
     "SrcType": [
         "SrcIs2D",
         "SrcIs2DArray",
-        "SrcIs3D",
-        "SrcIsYUV"
+        "SrcIs3D"
     ],
     "SrcFormat": [
         "SrcIsFloat",
         "SrcIsSint",
         "SrcIsUint"
     ],
-    "DestFormat": [
-        "DestIsFloat",
-        "DestIsSint",
-        "DestIsUint"
+    "DstFormat": [
+        "DstIsFloat",
+        "DstIsSint",
+        "DstIsUint"
     ]
 }

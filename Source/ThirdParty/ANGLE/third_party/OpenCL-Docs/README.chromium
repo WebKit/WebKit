@@ -4,7 +4,7 @@ Version: N/A
 URL: https://github.com/KhronosGroup/OpenCL-Docs
 SOURCE CODE: git clone -b OpenCL-Docs https://github.com/KhronosGroup/OpenCL-Docs
 Date: N/A
-Revision: N/A
+Revision: DEPS
 Security Critical: no
 Shipped: yes
 License: Apache 2.0

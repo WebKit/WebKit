@@ -899,6 +899,29 @@
                     }
                 }
             },
+            "ARMShaderFramebufferFetchDepthStencil":{
+                "variables":{
+                    "gl_LastFragDepthARM":{
+                        "essl_level":"COMMON_BUILTINS",
+                        "essl_extension":"ARM_shader_framebuffer_fetch_depth_stencil",
+                        "type":{
+                            "comment": "Precision can be Medium on ESSL1 without GL_FRAGMENT_PRECISION_HIGH, but ANGLE always supports that where this extension is exposed",
+                            "basic":"Float",
+                            "precision":"High",
+                            "qualifier":"LastFragDepth"
+                        }
+                    },
+                    "gl_LastFragStencilARM":{
+                        "essl_level":"COMMON_BUILTINS",
+                        "essl_extension":"ARM_shader_framebuffer_fetch_depth_stencil",
+                        "type":{
+                            "basic":"Int",
+                            "precision":"Low",
+                            "qualifier":"LastFragStencil"
+                        }
+                    }
+                }
+            },
             "GeometryShaderSupported":{
                 "variables":{
                     "gl_PrimitiveID":{

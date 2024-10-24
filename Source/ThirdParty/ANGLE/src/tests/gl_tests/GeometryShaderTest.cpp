@@ -1481,6 +1481,67 @@ void GeometryShaderTest::layeredFramebufferMidRenderClearTest(GLenum colorTarget
                                          kDepthStencilLayers);
 }
 
+// Verify that Geometry Shader's gl_Layer is ineffective when the framebuffer is not layered.
+TEST_P(GeometryShaderTest, GLLayerIneffectiveWithoutLayeredFramebuffer)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_geometry_shader"));
+
+    constexpr char kVS[] = R"(#version 310 es
+in highp vec4 position;
+void main()
+{
+    gl_Position = position;
+})";
+
+    constexpr char kGS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+layout (invocations = 3, triangles) in;
+layout (triangle_strip, max_vertices = 3) out;
+
+void main()
+{
+    for (int n = 0; n < gl_in.length(); n++)
+    {
+        gl_Position = gl_in[n].gl_Position;
+        gl_Layer = gl_InvocationID;
+        EmitVertex();
+    }
+    EndPrimitive();
+})";
+
+    constexpr char kFS[] = R"(#version 310 es
+#extension GL_EXT_geometry_shader : require
+precision mediump float;
+
+layout(location = 0) out mediump vec4 color;
+
+void main()
+{
+    if (gl_Layer == 0)
+        color = vec4(0, 1, 0, 1);
+    else
+        color = vec4(1, 0, 0, 1);
+})";
+
+    ANGLE_GL_PROGRAM_WITH_GS(program, kVS, kGS, kFS);
+    EXPECT_GL_NO_ERROR();
+
+    GLFramebuffer fbo;
+    GLTexture color;
+
+    glBindTexture(GL_TEXTURE_2D_ARRAY, color);
+    glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA8, kWidth, kHeight, 4);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTextureLayer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, color, 0, 1);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    drawQuad(program, "position", 0.3f);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::green);
+    ASSERT_GL_NO_ERROR();
+}
+
 // Verify mid-render clear of layered attachments.  Uses 3D color textures.
 TEST_P(GeometryShaderTest, LayeredFramebufferMidRenderClear3DColor)
 {

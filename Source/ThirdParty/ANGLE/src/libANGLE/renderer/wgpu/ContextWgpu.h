@@ -288,6 +288,9 @@ class ContextWgpu : public ContextImpl
     void invalidateVertexBuffers();
     void invalidateIndexBuffer();
 
+    void ensureCommandEncoderCreated();
+    wgpu::CommandEncoder &getCurrentCommandEncoder();
+
   private:
     // Dirty bits.
     enum DirtyBitType : size_t
@@ -334,6 +337,7 @@ class ContextWgpu : public ContextImpl
                             GLsizei instanceCount,
                             gl::DrawElementsType indexTypeOrInvalid,
                             const void *indices,
+                            GLint baseVertex,
                             uint32_t *outFirstIndex);
 
     angle::Result handleDirtyRenderPipelineDesc(DirtyBits::Iterator *dirtyBitsIterator);

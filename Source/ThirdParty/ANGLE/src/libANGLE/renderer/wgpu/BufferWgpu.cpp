@@ -10,6 +10,7 @@
 #include "libANGLE/renderer/wgpu/BufferWgpu.h"
 
 #include "common/debug.h"
+#include "common/mathutil.h"
 #include "common/utilities.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/angletypes.h"
@@ -168,6 +169,38 @@ angle::Result BufferWgpu::getIndexRange(const gl::Context *context,
                                         bool primitiveRestartEnabled,
                                         gl::IndexRange *outRange)
 {
+    ContextWgpu *contextWgpu = webgpu::GetImpl(context);
+    wgpu::Device device      = webgpu::GetDevice(context);
+
+    if (mBuffer.getMappedState())
+    {
+        ANGLE_TRY(mBuffer.unmap());
+    }
+
+    // Create a staging buffer just big enough for this index range
+    const GLuint typeBytes = gl::GetDrawElementsTypeSize(type);
+    const size_t stagingBufferSize =
+        roundUpPow2(count * typeBytes, webgpu::kBufferCopyToBufferAlignment);
+
+    webgpu::BufferHelper stagingBuffer;
+    ANGLE_TRY(stagingBuffer.initBuffer(device, stagingBufferSize,
+                                       wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::MapRead,
+                                       webgpu::MapAtCreation::No));
+
+    // Copy the source buffer to staging and flush the commands
+    contextWgpu->ensureCommandEncoderCreated();
+    wgpu::CommandEncoder &commandEncoder = contextWgpu->getCurrentCommandEncoder();
+    commandEncoder.CopyBufferToBuffer(mBuffer.getBuffer(), offset, stagingBuffer.getBuffer(), 0,
+                                      stagingBufferSize);
+
+    ANGLE_TRY(contextWgpu->flush(webgpu::RenderPassClosureReason::IndexRangeReadback));
+
+    // Read back from the staging buffer and compute the index range
+    ANGLE_TRY(stagingBuffer.mapImmediate(contextWgpu, wgpu::MapMode::Read, 0, stagingBufferSize));
+    const uint8_t *data = stagingBuffer.getMapReadPointer(0, stagingBufferSize);
+    *outRange           = gl::ComputeIndexRange(type, data, count, primitiveRestartEnabled);
+    ANGLE_TRY(stagingBuffer.unmap());
+
     return angle::Result::Continue;
 }
 

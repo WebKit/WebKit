@@ -1177,9 +1177,6 @@ TEST_P(StateChangeTestES3, SamplerMetadataUpdateOnSetProgram)
 {
     // http://anglebug.com/40096654
     ANGLE_SKIP_TEST_IF(IsAndroid() && IsOpenGLES());
-    // TODO(anglebug.com/42264029) Appears as though there's something wrong with textureSize on iOS
-    // unrelated to switching programs.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
     GLVertexArray vertexArray;
     glBindVertexArray(vertexArray);
 
@@ -7528,9 +7525,6 @@ TEST_P(RobustBufferAccessWebGL2ValidationStateChangeTest, BindZeroSizeBufferThen
 
     // Mali does not support robustness now.
     ANGLE_SKIP_TEST_IF(IsARM());
-
-    // TODO(anglebug.com/42264029)
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     std::vector<GLubyte> data(48, 1);
 

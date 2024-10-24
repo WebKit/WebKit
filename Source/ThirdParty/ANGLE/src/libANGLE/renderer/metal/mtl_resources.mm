@@ -980,7 +980,8 @@ TextureRef Texture::getStencilView()
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case MTLPixelFormatX24_Stencil8:
 #endif
-            return mStencilView = shared_from_this();
+            // This texture is already a stencil texture. Return its ref directly.
+            return shared_from_this();
 #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
         case MTLPixelFormatDepth24Unorm_Stencil8:
             mStencilView = createViewWithDifferentFormat(MTLPixelFormatX24_Stencil8);

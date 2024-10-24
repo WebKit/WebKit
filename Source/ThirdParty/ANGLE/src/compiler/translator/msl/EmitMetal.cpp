@@ -1035,7 +1035,7 @@ void GenMetalTraverser::emitType(const TType &type, const EmitTypeConfig &etConf
         {
             if (type.isArray())
             {
-                mOut << "ANGLE_tensor<";
+                mOut << "metal::array<";
             }
         }
         if (evdConfig.isPointer)
@@ -1054,7 +1054,7 @@ void GenMetalTraverser::emitType(const TType &type, const EmitTypeConfig &etConf
     {
         if (type.isArray())
         {
-            mOut << "ANGLE_tensor<";
+            mOut << "metal::array<";
         }
     }
 

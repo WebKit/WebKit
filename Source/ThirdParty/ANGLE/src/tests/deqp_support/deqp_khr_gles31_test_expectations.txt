@@ -253,6 +253,7 @@
 42264522 PIXEL4ORXL VULKAN : KHR-GLES31.core.sample_variables.mask.rgba8ui.samples_4.mask_6 = SKIP
 42264522 PIXEL4ORXL VULKAN : KHR-GLES31.core.sample_variables.mask.rgba8ui.samples_4.mask_7 = SKIP
 42264522 PIXEL4ORXL VULKAN : KHR-GLES31.core.sample_variables.mask.rgba8ui.samples_4.mask_zero = SKIP
+42264522 PIXEL4ORXL VULKAN : KHR-GLES31.core.frag_coord_conventions.multisample = SKIP
 
 // Slow tests
 42264292 SWIFTSHADER : KHR-GLES31.core.arrays_of_arrays.SizedDeclarationsPrimitive = TIMEOUT

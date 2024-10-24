@@ -745,6 +745,7 @@ class RefCounted : angle::NonCopyable
     }
 
     bool isReferenced() const { return mRefCount != 0; }
+    uint32_t getRefCount() const { return mRefCount; }
 
     T &get() { return mObject; }
     const T &get() const { return mObject; }
@@ -845,6 +846,112 @@ class BindingPointer final : angle::NonCopyable
 
 template <typename T>
 using AtomicBindingPointer = BindingPointer<T, AtomicRefCounted<T>>;
+
+// This is intended to have same interface as std::shared_ptr except this must used in thread safe
+// environment.
+template <typename T>
+class SharedPtr final
+{
+  public:
+    using RefCountedStorage = RefCounted<T>;
+
+    SharedPtr() : mRefCounted(nullptr) {}
+    SharedPtr(T &&object)
+    {
+        mRefCounted = new RefCountedStorage(std::move(object));
+        mRefCounted->addRef();
+    }
+    SharedPtr(RefCountedStorage *refCountedStorage) : mRefCounted(refCountedStorage)
+    {
+        if (mRefCounted)
+        {
+            mRefCounted->addRef();
+        }
+    }
+    ~SharedPtr() { reset(); }
+
+    SharedPtr(const SharedPtr &other) : mRefCounted(nullptr) { *this = other; }
+
+    SharedPtr(SharedPtr &&other) : mRefCounted(nullptr) { *this = std::move(other); }
+
+    void reset()
+    {
+        if (mRefCounted)
+        {
+            releaseRef();
+            mRefCounted = nullptr;
+        }
+    }
+
+    SharedPtr &operator=(SharedPtr &&other)
+    {
+        if (mRefCounted)
+        {
+            releaseRef();
+        }
+        mRefCounted       = other.mRefCounted;
+        other.mRefCounted = nullptr;
+        return *this;
+    }
+
+    SharedPtr &operator=(const SharedPtr &other)
+    {
+        if (mRefCounted)
+        {
+            releaseRef();
+        }
+        mRefCounted = other.mRefCounted;
+        if (mRefCounted)
+        {
+            mRefCounted->addRef();
+        }
+        return *this;
+    }
+
+    operator bool() const { return mRefCounted != nullptr; }
+
+    T &operator*() const
+    {
+        ASSERT(mRefCounted != nullptr);
+        return mRefCounted->get();
+    }
+
+    T *operator->() const { return get(); }
+
+    T *get() const
+    {
+        ASSERT(mRefCounted != nullptr);
+        return &mRefCounted->get();
+    }
+
+    bool unique() const
+    {
+        ASSERT(mRefCounted != nullptr);
+        return mRefCounted->getRefCount() == 1;
+    }
+
+    RefCountedStorage *getRefCountedStorage() const { return mRefCounted; }
+
+  private:
+    void releaseRef()
+    {
+        ASSERT(mRefCounted != nullptr);
+        mRefCounted->releaseRef();
+        if (!mRefCounted->isReferenced())
+        {
+            mRefCounted->get().destroy();
+            SafeDelete(mRefCounted);
+        }
+    }
+
+    RefCountedStorage *mRefCounted;
+};
+template <typename T>
+SharedPtr<T> MakeShared()
+{
+    RefCounted<T> *newRefCountedObject = new RefCounted<T>();
+    return SharedPtr<T>(newRefCountedObject);
+}
 
 // Helper class to share ref-counted Vulkan objects.  Requires that T have a destroy method
 // that takes a VkDevice and returns void.

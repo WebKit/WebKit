@@ -56,6 +56,7 @@ template_autogen_inl = """// GENERATED FILE - DO NOT EDIT.
 //   Queries for typed format information from the ANGLE format enum.
 
 #include "libANGLE/renderer/Format.h"
+#include "libANGLE/cl_types.h"
 
 #include "image_util/copyimage.h"
 #include "image_util/generatemip.h"
@@ -83,6 +84,44 @@ FormatID Format::InternalFormatToID(GLenum internalFormat)
 {angle_format_switch}
     }}
 }}
+
+#if defined(ANGLE_ENABLE_CL)
+// static
+FormatID Format::CLRFormatToID(cl_channel_type internalChannelType)
+{{
+    switch (internalChannelType)
+    {{
+{angle_r_format_switch}
+    }}
+}}
+
+// static
+FormatID Format::CLRGFormatToID(cl_channel_type internalChannelType)
+{{
+    switch (internalChannelType)
+    {{
+{angle_rg_format_switch}
+    }}
+}}
+
+// static
+FormatID Format::CLRGBFormatToID(cl_channel_type internalChannelType)
+{{
+    switch (internalChannelType)
+    {{
+{angle_rgb_format_switch}
+    }}
+}}
+
+// static
+FormatID Format::CLRGBAFormatToID(cl_channel_type internalChannelType)
+{{
+    switch (internalChannelType)
+    {{
+{angle_rgba_format_switch}
+    }}
+}}
+#endif  // ANGLE_ENABLE_CL
 
 const Format *GetFormatInfoTable()
 {{
@@ -422,6 +461,12 @@ def main():
         return 0
 
     gl_to_angle = angle_format.load_forward_table('angle_format_map.json')
+
+    cl_r_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "r")
+    cl_rg_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "rg")
+    cl_rgb_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "rgb")
+    cl_rgba_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "rgba")
+
     angle_to_gl = angle_format.load_inverse_table('angle_format_map.json')
     data_source_name = 'angle_format_data.json'
     json_data = angle_format.load_json(data_source_name)
@@ -429,11 +474,22 @@ def main():
 
     angle_format_cases = parse_angle_format_table(all_angle, json_data, angle_to_gl)
     switch_data = gen_map_switch_string(gl_to_angle)
+
+    cl_r_switch_data = gen_map_switch_string(cl_r_to_angle)
+    cl_rg_switch_data = gen_map_switch_string(cl_rg_to_angle)
+    cl_rgb_switch_data = gen_map_switch_string(cl_rgb_to_angle)
+    cl_rgba_switch_data = gen_map_switch_string(cl_rgba_to_angle)
+
     output_cpp = template_autogen_inl.format(
         script_name=os.path.basename(sys.argv[0]),
         angle_format_info_cases=angle_format_cases,
         angle_format_switch=switch_data,
-        data_source_name=data_source_name)
+        data_source_name=data_source_name,
+        angle_r_format_switch=cl_r_switch_data,
+        angle_rg_format_switch=cl_rg_switch_data,
+        angle_rgb_format_switch=cl_rgb_switch_data,
+        angle_rgba_format_switch=cl_rgba_switch_data)
+
     with open('Format_table_autogen.cpp', 'wt') as out_file:
         out_file.write(output_cpp)
         out_file.close()

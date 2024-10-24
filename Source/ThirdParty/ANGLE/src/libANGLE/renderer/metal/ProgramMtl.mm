@@ -106,7 +106,7 @@ class ProgramMtl::LinkTaskMtl final : public mtl::Context, public LinkTask
         // Forward any errors
         if (mErrorCode != GL_NO_ERROR)
         {
-            mtl::GetImpl(context)->handleError(mErrorCode, mErrorMessage, mErrorFile,
+            mtl::GetImpl(context)->handleError(mErrorCode, mErrorMessage.c_str(), mErrorFile,
                                                mErrorFunction, mErrorLine);
             return angle::Result::Stop;
         }
@@ -152,7 +152,8 @@ class ProgramMtl::LinkTaskMtl final : public mtl::Context, public LinkTask
 
     // Error handling
     GLenum mErrorCode          = GL_NO_ERROR;
-    const char *mErrorMessage  = nullptr;
+    // Error message might be dynamically allocated at the callsite.
+    std::string mErrorMessage;
     const char *mErrorFile     = nullptr;
     const char *mErrorFunction = nullptr;
     unsigned int mErrorLine    = 0;

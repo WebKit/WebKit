@@ -16,6 +16,7 @@
 #include "libANGLE/CLBuffer.h"
 #include "libANGLE/CLContext.h"
 #include "libANGLE/CLEvent.h"
+#include "libANGLE/CLImage.h"
 #include "libANGLE/CLProgram.h"
 #include "libANGLE/cl_utils.h"
 
@@ -109,8 +110,15 @@ angle::Result CLContextVk::createImage(const cl::Image &image,
                                        void *hostPtr,
                                        CLMemoryImpl::Ptr *imageOut)
 {
-    UNIMPLEMENTED();
-    ANGLE_CL_RETURN_ERROR(CL_OUT_OF_RESOURCES);
+    CLImageVk *memory = new (std::nothrow) CLImageVk(image);
+    if (memory == nullptr)
+    {
+        ANGLE_CL_RETURN_ERROR(CL_OUT_OF_HOST_MEMORY);
+    }
+    ANGLE_TRY(memory->create(hostPtr));
+    *imageOut = CLMemoryImpl::Ptr(memory);
+    mAssociatedObjects->mMemories.emplace(image.getNative());
+    return angle::Result::Continue;
 }
 
 angle::Result CLContextVk::getSupportedImageFormats(cl::MemFlags flags,
@@ -209,7 +217,7 @@ angle::Result CLContextVk::linkProgram(const cl::Program &program,
             // Should be valid at this point
             ASSERT(deviceProgramData != nullptr);
 
-            if (libraryOrObject.isSet(deviceProgramData->binaryType))
+            if (libraryOrObject.intersects(deviceProgramData->binaryType))
             {
                 linkPrograms.push_back(deviceProgramData);
             }

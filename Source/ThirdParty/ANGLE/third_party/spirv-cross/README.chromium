@@ -1,7 +1,8 @@
 Name: SPIRV-Cross
 Short Name: SPIRV-Cross
 URL: https://github.com/KhronosGroup/SPIRV-Cross
-Version: Unknown
+Version: N/A
+Revision: DEPS
 Security Critical: yes
 Shipped: no
 License: Apache 2.0

@@ -79,12 +79,6 @@ struct TracePerfParams final : public RenderTestParams
         if (gOffscreen)
         {
             surfaceType = SurfaceType::Offscreen;
-
-            if (!IsAndroid())
-            {
-                windowWidth /= 4;
-                windowHeight /= 4;
-            }
         }
         if (gVsync)
         {
@@ -209,8 +203,14 @@ class TracePerfTest : public ANGLERenderTest
     };
 
     void sampleTime();
-    void saveScreenshot(const std::string &screenshotName) override;
-    void swap();
+
+    enum class ScreenshotType
+    {
+        kFrame,
+        kGrid,  // Grid of frames (framebuffer 0) in offscreen mode
+    };
+    void saveScreenshotIfEnabled(ScreenshotType screenshotType);
+    void saveScreenshot(const std::string &screenshotName);
 
     std::unique_ptr<const TracePerfParams> mParams;
 
@@ -236,6 +236,7 @@ class TracePerfTest : public ANGLERenderTest
     GLuint mReadFramebufferBinding                                      = 0;
     uint32_t mCurrentFrame                                              = 0;
     uint32_t mCurrentIteration                                          = 0;
+    uint32_t mCurrentOffscreenGridIteration                             = 0;
     uint32_t mOffscreenFrameCount                                       = 0;
     uint32_t mTotalFrameCount                                           = 0;
     bool mScreenshotSaved                                               = false;
@@ -687,6 +688,7 @@ angle::GenericProc KHRONOS_APIENTRY TraceLoadProc(const char *procName)
     }
 
     // GLES
+    // TODO(b/370508393): gles1 also requires glBindFramebufferOES, e.g. plague_inc
     if (strcmp(procName, "glBindFramebuffer") == 0)
     {
         return reinterpret_cast<angle::GenericProc>(BindFramebufferProc);
@@ -1834,6 +1836,14 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         }
     }
 
+    if (traceNameIs("going_balls"))
+    {
+        if (isIntelWinANGLE)
+        {
+            skipTest("https://issuetracker.google.com/372513853 Nondeterministic on Windows Intel");
+        }
+    }
+
     if (IsGalaxyS22())
     {
         if (traceNameIs("cod_mobile") || traceNameIs("dota_underlords") ||
@@ -1972,6 +1982,7 @@ void TracePerfTest::initializeBenchmark()
     }
     mCurrentFrame     = mStartFrame;
     mCurrentIteration = mStartFrame;
+    mCurrentOffscreenGridIteration = 0;
 
     if (IsAndroid())
     {
@@ -1982,34 +1993,47 @@ void TracePerfTest::initializeBenchmark()
     // If we're rendering offscreen we set up a default back buffer.
     if (mParams->surfaceType == SurfaceType::Offscreen)
     {
-        if (!IsAndroid())
+        bool gles1 = mParams->traceInfo.contextClientMajorVersion == 1;
+        if (gles1 &&
+            !CheckExtensionExists(reinterpret_cast<const char *>(glGetString(GL_EXTENSIONS)),
+                                  "GL_OES_framebuffer_object"))
         {
-            mWindowWidth *= 4;
-            mWindowHeight *= 4;
+            failTest("GLES1 --offscreen requires GL_OES_framebuffer_object");
+            return;
         }
 
-        glGenRenderbuffers(1, &mOffscreenDepthStencil);
-        glBindRenderbuffer(GL_RENDERBUFFER, mOffscreenDepthStencil);
-        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, mWindowWidth, mWindowHeight);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        auto genRenderbuffers     = gles1 ? glGenRenderbuffersOES : glGenRenderbuffers;
+        auto bindRenderbuffer     = gles1 ? glBindRenderbufferOES : glBindRenderbuffer;
+        auto renderbufferStorage  = gles1 ? glRenderbufferStorageOES : glRenderbufferStorage;
+        auto genFramebuffers      = gles1 ? glGenFramebuffersOES : glGenFramebuffers;
+        auto bindFramebuffer      = gles1 ? glBindFramebufferOES : glBindFramebuffer;
+        auto framebufferTexture2D = gles1 ? glFramebufferTexture2DOES : glFramebufferTexture2D;
+        auto framebufferRenderbuffer =
+            gles1 ? glFramebufferRenderbufferOES : glFramebufferRenderbuffer;
 
-        glGenFramebuffers(mMaxOffscreenBufferCount, mOffscreenFramebuffers.data());
+        genRenderbuffers(1, &mOffscreenDepthStencil);
+        bindRenderbuffer(GL_RENDERBUFFER, mOffscreenDepthStencil);
+        renderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, mWindowWidth, mWindowHeight);
+        bindRenderbuffer(GL_RENDERBUFFER, 0);
+
+        genFramebuffers(mMaxOffscreenBufferCount, mOffscreenFramebuffers.data());
         glGenTextures(mMaxOffscreenBufferCount, mOffscreenTextures.data());
         for (int i = 0; i < mMaxOffscreenBufferCount; i++)
         {
-            glBindFramebuffer(GL_FRAMEBUFFER, mOffscreenFramebuffers[i]);
+            bindFramebuffer(GL_FRAMEBUFFER, mOffscreenFramebuffers[i]);
 
             // Hard-code RGBA8/D24S8. This should be specified in the trace info.
             glBindTexture(GL_TEXTURE_2D, mOffscreenTextures[i]);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mWindowWidth, mWindowHeight, 0, GL_RGBA,
-                         GL_UNSIGNED_BYTE, nullptr);
+            glTexImage2D(GL_TEXTURE_2D, 0,
+                         mParams->colorSpace == EGL_GL_COLORSPACE_SRGB ? GL_SRGB8_ALPHA8 : GL_RGBA,
+                         mWindowWidth, mWindowHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-                                   mOffscreenTextures[i], 0);
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
-                                      mOffscreenDepthStencil);
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-                                      mOffscreenDepthStencil);
+            framebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+                                 mOffscreenTextures[i], 0);
+            framebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
+                                    mOffscreenDepthStencil);
+            framebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
+                                    mOffscreenDepthStencil);
             glBindTexture(GL_TEXTURE_2D, 0);
         }
     }
@@ -2041,10 +2065,14 @@ void TracePerfTest::destroyBenchmark()
         glDeleteTextures(mMaxOffscreenBufferCount, mOffscreenTextures.data());
         mOffscreenTextures.fill(0);
 
-        glDeleteRenderbuffers(1, &mOffscreenDepthStencil);
+        bool gles1               = mParams->traceInfo.contextClientMajorVersion == 1;
+        auto deleteRenderbuffers = gles1 ? glDeleteRenderbuffersOES : glDeleteRenderbuffers;
+        auto deleteFramebuffers  = gles1 ? glDeleteFramebuffersOES : glDeleteFramebuffers;
+
+        deleteRenderbuffers(1, &mOffscreenDepthStencil);
         mOffscreenDepthStencil = 0;
 
-        glDeleteFramebuffers(mMaxOffscreenBufferCount, mOffscreenFramebuffers.data());
+        deleteFramebuffers(mMaxOffscreenBufferCount, mOffscreenFramebuffers.data());
         mOffscreenFramebuffers.fill(0);
     }
 
@@ -2075,14 +2103,12 @@ void TracePerfTest::drawBenchmark()
 {
     constexpr uint32_t kFramesPerX  = 6;
     constexpr uint32_t kFramesPerY  = 4;
-    constexpr uint32_t kFramesPerXY = kFramesPerY * kFramesPerX;
+    constexpr uint32_t kFramesPerSwap = kFramesPerY * kFramesPerX;
 
-    const uint32_t kOffscreenOffsetX =
-        static_cast<uint32_t>(static_cast<double>(mTestParams.windowWidth) / 3.0f);
-    const uint32_t kOffscreenOffsetY =
-        static_cast<uint32_t>(static_cast<double>(mTestParams.windowHeight) / 3.0f);
-    const uint32_t kOffscreenWidth  = kOffscreenOffsetX;
-    const uint32_t kOffscreenHeight = kOffscreenOffsetY;
+    const uint32_t kOffscreenOffsetX = 0;
+    const uint32_t kOffscreenOffsetY = 0;
+    const uint32_t kOffscreenWidth   = mTestParams.windowWidth;
+    const uint32_t kOffscreenHeight  = mTestParams.windowHeight;
 
     const uint32_t kOffscreenFrameWidth = static_cast<uint32_t>(
         static_cast<double>(kOffscreenWidth / static_cast<double>(kFramesPerX)));
@@ -2095,6 +2121,9 @@ void TracePerfTest::drawBenchmark()
         sampleTime();
     }
 
+    bool gles1           = mParams->traceInfo.contextClientMajorVersion == 1;
+    auto bindFramebuffer = gles1 ? glBindFramebufferOES : glBindFramebuffer;
+
     if (mParams->surfaceType == SurfaceType::Offscreen)
     {
         // Some driver (ARM and ANGLE) try to nop or defer the glFlush if it is called within the
@@ -2103,8 +2132,13 @@ void TracePerfTest::drawBenchmark()
         // glFlush call we issued at end of frame will get skipped. To overcome this (and also
         // matches what onscreen double buffering behavior as well), we use two offscreen FBOs and
         // ping pong between them for each frame.
-        glBindFramebuffer(GL_FRAMEBUFFER,
-                          mOffscreenFramebuffers[mTotalFrameCount % mMaxOffscreenBufferCount]);
+        GLuint buffer = mOffscreenFramebuffers[mTotalFrameCount % mMaxOffscreenBufferCount];
+
+        if (gles1 && mOffscreenFrameCount == kFramesPerSwap - 1)
+        {
+            buffer = 0;  // gles1: a single frame is rendered to buffer 0
+        }
+        bindFramebuffer(GL_FRAMEBUFFER, buffer);
 
         GLsync sync = mOffscreenSyncs[mTotalFrameCount % mMaxOffscreenBufferCount];
         if (sync)
@@ -2141,16 +2175,18 @@ void TracePerfTest::drawBenchmark()
         }
         else
         {
+            // TODO(b/370508393): this is not valid for gles1, GL_READ_FRAMEBUFFER_BINDING
+            // isn't supported - only FRAMEBUFFER_BINDING_OES + bind FRAMEBUFFER_OES
             GLint currentDrawFBO, currentReadFBO;
             glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &currentDrawFBO);
             glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &currentReadFBO);
 
-            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-            glBindFramebuffer(GL_READ_FRAMEBUFFER,
-                              mOffscreenFramebuffers[mTotalFrameCount % mMaxOffscreenBufferCount]);
+            bindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+            bindFramebuffer(GL_READ_FRAMEBUFFER,
+                            mOffscreenFramebuffers[mTotalFrameCount % mMaxOffscreenBufferCount]);
 
-            uint32_t frameX  = (mOffscreenFrameCount % kFramesPerXY) % kFramesPerX;
-            uint32_t frameY  = (mOffscreenFrameCount % kFramesPerXY) / kFramesPerX;
+            uint32_t frameX  = (mOffscreenFrameCount % kFramesPerSwap) % kFramesPerX;
+            uint32_t frameY  = (mOffscreenFrameCount % kFramesPerSwap) / kFramesPerX;
             uint32_t windowX = kOffscreenOffsetX + frameX * kOffscreenFrameWidth;
             uint32_t windowY = kOffscreenOffsetY + frameY * kOffscreenFrameHeight;
 
@@ -2162,17 +2198,28 @@ void TracePerfTest::drawBenchmark()
                 glDisable(GL_SCISSOR_TEST);
             }
 
-            mOffscreenSyncs[mTotalFrameCount % mMaxOffscreenBufferCount] =
-                glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+            if (!gles1)  // gles1: no glBlitFramebuffer, a single frame is rendered to buffer 0
+            {
+                mOffscreenSyncs[mTotalFrameCount % mMaxOffscreenBufferCount] =
+                    glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 
-            glBlitFramebuffer(0, 0, mWindowWidth, mWindowHeight, windowX, windowY,
-                              windowX + kOffscreenFrameWidth, windowY + kOffscreenFrameHeight,
-                              GL_COLOR_BUFFER_BIT, GL_NEAREST);
+                glBlitFramebuffer(0, 0, mWindowWidth, mWindowHeight, windowX, windowY,
+                                  windowX + kOffscreenFrameWidth, windowY + kOffscreenFrameHeight,
+                                  GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            }
+
+            // GL_READ_FRAMEBUFFER is already set correctly for glReadPixels
+            saveScreenshotIfEnabled(ScreenshotType::kFrame);
 
             if (frameX == kFramesPerX - 1 && frameY == kFramesPerY - 1)
             {
-                swap();
-                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                bindFramebuffer(GL_FRAMEBUFFER, 0);
+                if (!gles1)  // gles1: no grid, a single frame is rendered to buffer 0
+                {
+                    mCurrentOffscreenGridIteration++;
+                    saveScreenshotIfEnabled(ScreenshotType::kGrid);
+                }
+                getGLWindow()->swap();
                 glClear(GL_COLOR_BUFFER_BIT);
                 mOffscreenFrameCount = 0;
             }
@@ -2186,15 +2233,18 @@ void TracePerfTest::drawBenchmark()
             {
                 glEnable(GL_SCISSOR_TEST);
             }
-            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, currentDrawFBO);
-            glBindFramebuffer(GL_READ_FRAMEBUFFER, currentReadFBO);
+
+            bindFramebuffer(GL_DRAW_FRAMEBUFFER, currentDrawFBO);
+            bindFramebuffer(GL_READ_FRAMEBUFFER, currentReadFBO);
         }
 
         mTotalFrameCount++;
     }
     else
     {
-        swap();
+        bindFramebuffer(GL_FRAMEBUFFER, 0);
+        saveScreenshotIfEnabled(ScreenshotType::kFrame);
+        getGLWindow()->swap();
     }
 
     endInternalTraceEvent(frameName);
@@ -2662,9 +2712,8 @@ void TracePerfTest::onReplayDiscardFramebufferEXT(GLenum target,
     }
 }
 
-void TracePerfTest::swap()
+void TracePerfTest::saveScreenshotIfEnabled(ScreenshotType screenshotType)
 {
-    // Capture a screenshot if enabled.
     if (gScreenshotDir != nullptr && gSaveScreenshots && !mScreenshotSaved &&
         (static_cast<uint32_t>(mScreenshotFrame) == mCurrentIteration ||
          mScreenshotFrame == kAllFrames))
@@ -2676,7 +2725,14 @@ void TracePerfTest::swap()
         // Add a marker to the name for any screenshot that isn't start frame
         if (mStartFrame != static_cast<uint32_t>(mScreenshotFrame))
         {
-            screenshotNameStr << "_frame" << mCurrentIteration;
+            if (screenshotType == ScreenshotType::kFrame)
+            {
+                screenshotNameStr << "_frame" << mCurrentIteration;
+            }
+            else
+            {
+                screenshotNameStr << "_grid" << mCurrentOffscreenGridIteration;
+            }
         }
 
         screenshotNameStr << ".png";
@@ -2687,8 +2743,6 @@ void TracePerfTest::swap()
         // Only set this value if we're capturing a single frame
         mScreenshotSaved = mScreenshotFrame != kAllFrames;
     }
-
-    getGLWindow()->swap();
 }
 
 void TracePerfTest::saveScreenshot(const std::string &screenshotName)
@@ -2698,12 +2752,6 @@ void TracePerfTest::saveScreenshot(const std::string &screenshotName)
     // RGBA 4-byte data.
     uint32_t pixelCount = mTestParams.windowWidth * mTestParams.windowHeight;
     std::vector<uint8_t> pixelData(pixelCount * 4);
-
-    // Only unbind the framebuffer on context versions where it's available.
-    if (mParams->traceInfo.contextClientMajorVersion > 1)
-    {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
 
     glFinish();
 

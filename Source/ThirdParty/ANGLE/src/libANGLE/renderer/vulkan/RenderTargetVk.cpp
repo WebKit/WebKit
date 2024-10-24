@@ -222,6 +222,62 @@ angle::Result RenderTargetVk::getResolveImageView(vk::Context *context,
     return getImageViewImpl(context, *mResolveImage, mResolveImageViews, imageViewOut);
 }
 
+angle::Result RenderTargetVk::getDepthOrStencilImageView(vk::Context *context,
+                                                         VkImageAspectFlagBits aspect,
+                                                         const vk::ImageView **imageViewOut) const
+{
+    ASSERT(mImage);
+    return getDepthOrStencilImageViewImpl(context, *mImage, mImageViews, aspect, imageViewOut);
+}
+
+angle::Result RenderTargetVk::getDepthOrStencilImageViewForCopy(
+    vk::Context *context,
+    VkImageAspectFlagBits aspect,
+    const vk::ImageView **imageViewOut) const
+{
+    return isResolveImageOwnerOfData()
+               ? getResolveDepthOrStencilImageView(context, aspect, imageViewOut)
+               : getDepthOrStencilImageView(context, aspect, imageViewOut);
+}
+
+angle::Result RenderTargetVk::getResolveDepthOrStencilImageView(
+    vk::Context *context,
+    VkImageAspectFlagBits aspect,
+    const vk::ImageView **imageViewOut) const
+{
+    ASSERT(mResolveImage);
+    return getDepthOrStencilImageViewImpl(context, *mResolveImage, mResolveImageViews, aspect,
+                                          imageViewOut);
+}
+
+angle::Result RenderTargetVk::getDepthOrStencilImageViewImpl(
+    vk::Context *context,
+    const vk::ImageHelper &image,
+    vk::ImageViewHelper *imageViews,
+    VkImageAspectFlagBits aspect,
+    const vk::ImageView **imageViewOut) const
+{
+    // If the image has only one aspect, the usual view is sufficient.
+    if (image.getAspectFlags() == aspect)
+    {
+        return getImageViewImpl(context, image, imageViews, imageViewOut);
+    }
+
+    // Otherwise, for images with both the depth and stencil aspects, need to create special views
+    // that select only one such aspect.
+    ASSERT(image.valid() && imageViews);
+    vk::LevelIndex levelVk = image.toVkLevel(getLevelIndexForImage(image));
+    if (mLayerCount == 1)
+    {
+        return imageViews->getLevelLayerDepthOrStencilImageView(context, image, levelVk,
+                                                                mLayerIndex, aspect, imageViewOut);
+    }
+
+    // Layered render targets view the whole level or a handful of layers in case of multiview.
+    return imageViews->getLevelDepthOrStencilImageView(context, image, levelVk, mLayerIndex,
+                                                       mLayerCount, aspect, imageViewOut);
+}
+
 bool RenderTargetVk::isResolveImageOwnerOfData() const
 {
     // If there's a resolve attachment and the image itself is transient, it's the resolve

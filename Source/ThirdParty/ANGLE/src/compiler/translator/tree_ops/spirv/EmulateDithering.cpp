@@ -276,7 +276,7 @@ TIntermNode *EmitDitheringBlock(TCompiler *compiler,
                                 const ShCompileOptions &compileOptions,
                                 TSymbolTable *symbolTable,
                                 SpecConst *specConst,
-                                DriverUniform *driverUniforms,
+                                const DriverUniform *driverUniforms,
                                 const FragmentOutputVariableList &fragmentOutputVariables)
 {
     // Add dithering code.  A specialization constant is taken (dither control) in the following
@@ -438,7 +438,7 @@ bool EmulateDithering(TCompiler *compiler,
                       TIntermBlock *root,
                       TSymbolTable *symbolTable,
                       SpecConst *specConst,
-                      DriverUniform *driverUniforms)
+                      const DriverUniform *driverUniforms)
 {
     FragmentOutputVariableList fragmentOutputVariables;
     GatherFragmentOutputs(root, &fragmentOutputVariables);

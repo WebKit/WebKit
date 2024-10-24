@@ -1213,8 +1213,6 @@ TEST_P(RobustResourceInitTestES3, TextureInit_UIntRGB8)
     ANGLE_SKIP_TEST_IF(!hasGLExtension());
     // http://anglebug.com/42263936
     ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D11());
-    // TODO(anglebug.com/42264029) iOS doesn't like to read this format as UNSIGNED_BYTE.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     testIntegerTextureInit<uint8_t>("u", GL_RGBA8UI, GL_RGB8UI, GL_UNSIGNED_BYTE);
 }
@@ -1230,8 +1228,6 @@ TEST_P(RobustResourceInitTestES3, TextureInit_IntRGB8)
     ANGLE_SKIP_TEST_IF(!hasGLExtension());
     // http://anglebug.com/42263936
     ANGLE_SKIP_TEST_IF(IsAMD() && IsD3D11());
-    // TODO(stianglebug.com/42264029) iOS doesn't like to read this format as BYTE.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     testIntegerTextureInit<int8_t>("i", GL_RGBA8I, GL_RGB8I, GL_BYTE);
 }

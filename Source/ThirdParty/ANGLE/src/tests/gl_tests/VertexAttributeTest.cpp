@@ -3811,6 +3811,75 @@ void main()
     }
 }
 
+// Test that when three vertex attribute indices are enabled, but only two attributes among them
+// include data via glVertexAttribPointer(), there is no crash.
+TEST_P(VertexAttributeTest, VertexAttribPointerCopyBufferFromInvalidAddress)
+{
+    const GLfloat vertices[] = {
+        // position   // color                // texCoord
+        -1.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,  // Lower left corner
+        1.0f,  -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,  // Bottom right corner
+        0.0f,  1.0f,  0.0f, 0.0f, 1.0f, 1.0f, 0.5f, 1.0f   // Top
+    };
+
+    constexpr char kVS[] = R"(
+        attribute highp vec2 position;
+        attribute mediump vec4 color;
+        attribute highp vec2 texCoord;
+        varying mediump vec4 fragColor;
+        varying highp vec2 fragTexCoord;
+        void main() {
+            gl_Position = vec4(position, 0.0, 1.0);
+            fragColor = color;
+            fragTexCoord = texCoord;
+        }
+    )";
+
+    constexpr char kFS[] = R"(
+        precision mediump float;
+        varying mediump vec4 fragColor;
+        varying highp vec2 fragTexCoord;
+        void main() {
+           if (fragTexCoord.x > 0.5) {
+                gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);
+           } else {
+                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+           }
+        }
+    )";
+
+    mProgram = CompileProgram(kVS, kFS);
+    ASSERT_NE(0u, mProgram);
+    glBindAttribLocation(mProgram, 0, "position");
+    glBindAttribLocation(mProgram, 1, "color");
+    glBindAttribLocation(mProgram, 2, "texCoord");
+    glUseProgram(mProgram);
+    EXPECT_GL_NO_ERROR();
+
+    glGenBuffers(1, &mBuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, mBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    EXPECT_GL_NO_ERROR();
+
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    EXPECT_GL_NO_ERROR();
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid *)0);
+    // Missing VertexAttribPointer at index 1
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat),
+                          (GLvoid *)(6 * sizeof(GLfloat)));
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    EXPECT_GL_NO_ERROR();
+
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+    EXPECT_GL_NO_ERROR();
+}
+
 // Test that default unsigned integer attribute works correctly even if there is a gap in
 // attribute locations.
 TEST_P(VertexAttributeTestES3, DefaultUIntAttribWithGap)
@@ -4248,9 +4317,6 @@ TEST_P(VertexAttributeTest, AliasingVectorAttribLocations)
     // http://anglebug.com/42262131
     ANGLE_SKIP_TEST_IF(IsD3D());
 
-    // TODO(anglebug.com/42264029): iOS GLSL compiler rejects attribute aliasing.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
-
     // This test needs 10 total attributes. All backends support this except some old Android
     // devices.
     GLint maxVertexAttribs = 0;
@@ -4413,9 +4479,6 @@ TEST_P(VertexAttributeTest, AliasingMatrixAttribLocations)
 
     // http://anglebug.com/42262131
     ANGLE_SKIP_TEST_IF(IsD3D());
-
-    // TODO(anglebug.com/42264029): iOS GLSL compiler rejects attribute aliasing.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     // This test needs 16 total attributes. All backends support this except some old Android
     // devices.
@@ -4653,9 +4716,6 @@ TEST_P(VertexAttributeTest, AliasingVectorAttribLocationsDifferingPrecisions)
 
     // http://anglebug.com/42262131
     ANGLE_SKIP_TEST_IF(IsD3D());
-
-    // TODO(anglebug.com/42264029): iOS GLSL compiler rejects attribute aliasing.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     constexpr char kVS[] = R"(attribute vec4 position;
 // aliasing attributes.
@@ -5266,9 +5326,6 @@ TEST_P(VertexAttributeTest, AliasingAttribNaming)
     // http://anglebug.com/42262131
     ANGLE_SKIP_TEST_IF(IsD3D());
 
-    // TODO(anglebug.com/42264029): iOS GLSL compiler rejects attribute aliasing.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
-
     // This test needs 16 total attributes. All backends support this except some old Android
     // devices.
     GLint maxVertexAttribs = 0;
@@ -5409,9 +5466,6 @@ TEST_P(VertexAttributeTestES3, AttribNaming)
 
     // http://anglebug.com/42262131
     ANGLE_SKIP_TEST_IF(IsD3D());
-
-    // TODO(anglebug.com/42264029): iOS GLSL compiler rejects attribute aliasing.
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     // This test needs roughly 16 total attributes. All backends support this except some old
     // Android devices.

@@ -74,9 +74,6 @@
 // New failures with latest dEQP roll (2020-04-28)
 42263198 SWIFTSHADER : KHR-GLES3.core.nearest_edge.offset_left = FAIL
 
-// Undefined behvaior in CTS test
-370917919 : KHR-GLES3.framebuffer_blit.multisampled_to_singlesampled_blit = FAIL
-
 // Test is too slow
 42264814 SWIFTSHADER : KHR-GLES3.framebuffer_blit.scissor_blit = TIMEOUT
 

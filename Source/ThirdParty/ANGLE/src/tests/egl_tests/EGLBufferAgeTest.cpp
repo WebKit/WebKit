@@ -654,6 +654,8 @@ TEST_P(EGLBufferAgeTest, SingleBuffer)
 }
 
 ANGLE_INSTANTIATE_TEST(EGLBufferAgeTest,
+                       WithNoFixture(ES2_METAL()),
+                       WithNoFixture(ES3_METAL()),
                        WithNoFixture(ES2_OPENGLES()),
                        WithNoFixture(ES3_OPENGLES()),
                        WithNoFixture(ES2_OPENGL()),
@@ -661,6 +663,8 @@ ANGLE_INSTANTIATE_TEST(EGLBufferAgeTest,
                        WithNoFixture(ES2_VULKAN()),
                        WithNoFixture(ES3_VULKAN()));
 ANGLE_INSTANTIATE_TEST(EGLBufferAgeTest_MSAA,
+                       WithNoFixture(ES2_METAL()),
+                       WithNoFixture(ES3_METAL()),
                        WithNoFixture(ES2_OPENGLES()),
                        WithNoFixture(ES3_OPENGLES()),
                        WithNoFixture(ES2_OPENGL()),
@@ -668,6 +672,8 @@ ANGLE_INSTANTIATE_TEST(EGLBufferAgeTest_MSAA,
                        WithNoFixture(ES2_VULKAN()),
                        WithNoFixture(ES3_VULKAN()));
 ANGLE_INSTANTIATE_TEST(EGLBufferAgeTest_MSAA_DS,
+                       WithNoFixture(ES2_METAL()),
+                       WithNoFixture(ES3_METAL()),
                        WithNoFixture(ES2_OPENGLES()),
                        WithNoFixture(ES3_OPENGLES()),
                        WithNoFixture(ES2_OPENGL()),

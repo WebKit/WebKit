@@ -219,6 +219,44 @@ TEST_P(LineLoopTest, LineLoopUIntIndexBuffer)
     runTest(GL_UNSIGNED_INT, buf, reinterpret_cast<const void *>(sizeof(GLuint)));
 }
 
+// Test that drawing elements between line loop arrays using the same array buffer does not result
+// in incorrect rendering.
+TEST_P(LineLoopTest, DrawTriangleElementsBetweenArrays)
+{
+    // http://anglebug.com/42265165: Disable D3D11 SDK Layers warnings checks.
+    ignoreD3D11SDKLayersWarnings();
+
+    static const GLfloat positions[] = {-0.5f, -0.5f, -0.5f, 0.5f,  0.5f,  0.5f,
+                                        0.5f,  -0.5f, -0.5f, -0.5f, -0.1f, 0.1f,
+                                        -0.1f, -0.1f, 0.1f,  -0.1f, 0.1f,  0.1f};
+    static const GLubyte indices[]   = {5, 6, 7, 5, 7, 8};
+
+    GLBuffer arrayBuffer;
+    glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+
+    GLBuffer indexBuffer;
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    glClear(GL_COLOR_BUFFER_BIT);
+    glUseProgram(mProgram);
+    glEnableVertexAttribArray(mPositionLocation);
+    glVertexAttribPointer(mPositionLocation, 2, GL_FLOAT, GL_FALSE, 0, nullptr);
+    glEnable(GL_BLEND);
+
+    glUniform4f(mColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+    glDrawArrays(GL_LINE_LOOP, 0, 4);
+
+    glUniform4f(mColorLocation, 0.0f, 0.0f, 0.0f, 1.0f);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, nullptr);
+
+    glUniform4f(mColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
+    glDrawArrays(GL_LINE_LOOP, 0, 4);
+
+    checkPixels();
+}
+
 class LineLoopTestES3 : public LineLoopTest
 {};
 

@@ -142,7 +142,7 @@ angle::Result CLEventVk::setStatusAndExecuteCallback(cl_int status)
 angle::Result CLEventVk::setTimestamp(cl_int status)
 {
     if (!isUserEvent() &&
-        mEvent.getCommandQueue()->getProperties().isSet(CL_QUEUE_PROFILING_ENABLE))
+        mEvent.getCommandQueue()->getProperties().intersects(CL_QUEUE_PROFILING_ENABLE))
     {
         // TODO(aannestrand) Just get current CPU timestamp for now, look into Vulkan GPU device
         // timestamp query instead and later make CPU timestamp a fallback if GPU timestamp cannot

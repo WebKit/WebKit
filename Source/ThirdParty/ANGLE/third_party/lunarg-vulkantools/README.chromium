@@ -3,7 +3,7 @@ Short Name: VulkanTools
 Version: N/A
 URL: https://github.com/LunarG/VulkanTools
 SOURCE CODE: git clone https://github.com/LunarG/VulkanTools.git
-Revision: HEAD
+Revision: DEPS
 Security Critical: no
 Shipped: no
 License: Apache 2.0

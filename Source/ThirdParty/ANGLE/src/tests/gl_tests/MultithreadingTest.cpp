@@ -4221,6 +4221,8 @@ void main()
 }
 ANGLE_INSTANTIATE_TEST(
     MultithreadingTest,
+    ES2_METAL(),
+    ES3_METAL(),
     ES2_OPENGL(),
     ES3_OPENGL(),
     ES2_OPENGLES(),

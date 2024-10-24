@@ -31,12 +31,6 @@ config("angle_gl_backend_config") {
         "ANGLE_ENABLE_CGL",
       ]
     }
-    if (angle_enable_eagl) {
-      defines += [
-        "GLES_SILENCE_DEPRECATION",
-        "ANGLE_ENABLE_EAGL",
-      ]
-    }
   }
   if (angle_has_build && (is_linux || is_chromeos)) {
     defines += [ "ANGLE_HAS_LIBDRM" ]
@@ -78,9 +72,7 @@ angle_source_set("angle_gl_backend") {
       "IOSurface.framework",
       "QuartzCore.framework",
     ]
-    if (angle_enable_eagl) {
-      frameworks += [ "OpenGLES.framework" ]
-    } else if (angle_enable_cgl) {
+    if (angle_enable_cgl) {
       frameworks += [ "OpenGL.framework" ]
     }
     if (is_mac) {

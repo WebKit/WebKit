@@ -462,6 +462,8 @@ spv::StorageClass GetStorageClass(const ShCompileOptions &compileOptions,
         case EvqViewIDOVR:
         case EvqLayerIn:
         case EvqLastFragColor:
+        case EvqLastFragDepth:
+        case EvqLastFragStencil:
             return spv::StorageClassInput;
 
         case EvqPosition:
@@ -1034,9 +1036,6 @@ spirv::IdRef OutputSPIRVTraverser::accessChainLoad(NodeData *data,
 
     if (accessChain.dynamicComponent.valid())
     {
-        // Dynamic component in combination with swizzle is already folded.
-        ASSERT(accessChain.swizzles.empty());
-
         // Use OpVectorExtractDynamic to select the component.
         const spirv::IdRef result = mBuilder.getNewId(decorations);
         spirv::WriteVectorExtractDynamic(mBuilder.getSpirvCurrentFunctionBlock(),

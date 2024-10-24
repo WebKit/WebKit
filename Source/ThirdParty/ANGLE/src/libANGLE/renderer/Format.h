@@ -12,6 +12,7 @@
 #ifndef LIBANGLE_RENDERER_FORMAT_H_
 #define LIBANGLE_RENDERER_FORMAT_H_
 
+#include "libANGLE/cl_types.h"
 #include "libANGLE/renderer/FormatID_autogen.h"
 #include "libANGLE/renderer/renderer_utils.h"
 
@@ -50,6 +51,13 @@ struct Format final : private angle::NonCopyable
     static const Format &Get(FormatID id) { return gFormatInfoTable[static_cast<int>(id)]; }
 
     static FormatID InternalFormatToID(GLenum internalFormat);
+
+#if defined(ANGLE_ENABLE_CL)
+    static FormatID CLRFormatToID(cl_channel_type internalChannelType);
+    static FormatID CLRGFormatToID(cl_channel_type internalChannelType);
+    static FormatID CLRGBFormatToID(cl_channel_type internalChannelType);
+    static FormatID CLRGBAFormatToID(cl_channel_type internalChannelType);
+#endif  // ANGLE_ENABLE_CL
 
     constexpr bool hasDepthOrStencilBits() const;
     constexpr bool hasDepthAndStencilBits() const;

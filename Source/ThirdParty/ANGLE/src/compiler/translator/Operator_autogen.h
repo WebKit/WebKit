@@ -325,6 +325,9 @@ enum TOperator : uint16_t
     // Group TextureGatherOffsetsComp
     EOpTextureGatherOffsetsComp,
 
+    // Group TextureQueryLod
+    EOpTextureQueryLOD,
+
     // Group EXT_YUV_target
     EOpRgb_2_yuv,
     EOpYuv_2_rgb,
@@ -473,7 +476,7 @@ static inline bool IsTextureGather(TOperator op)
 }
 static inline bool IsTexture(TOperator op)
 {
-    return op >= EOpTexture2D && op <= EOpTextureGatherOffsetsComp;
+    return op >= EOpTexture2D && op <= EOpTextureQueryLOD;
 }
 static inline bool IsDerivativesFS(TOperator op)
 {

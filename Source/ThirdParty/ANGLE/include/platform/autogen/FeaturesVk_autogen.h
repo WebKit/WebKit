@@ -739,6 +739,13 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo supportsShaderFramebufferFetchDepthStencil = {
+        "supportsShaderFramebufferFetchDepthStencil",
+        FeatureCategory::VulkanFeatures,
+        "Whether the Vulkan backend supports coherent depth/stencil framebuffer fetch",
+        &members,
+    };
+
     FeatureInfo permanentlySwitchToFramebufferFetchMode = {
         "permanentlySwitchToFramebufferFetchMode",
         FeatureCategory::VulkanFeatures,
@@ -1646,9 +1653,16 @@ struct FeaturesVk : FeatureSetBase
     FeatureInfo verifyPipelineCacheInBlobCache = {
         "verifyPipelineCacheInBlobCache",
         FeatureCategory::VulkanFeatures,
-        "Wether need to perform verification of stored PipelineCacheVk data chunks or not. "
+        "Whether need to perform verification of stored PipelineCacheVk data chunks or not. "
         "Relevant, when blob cache does not evict old items first (no LRU) or evicts more old items than required when storing a new item.",
         &members, "https://anglebug.com/42263322"
+    };
+
+    FeatureInfo descriptorSetCache = {
+        "descriptorSetCache",
+        FeatureCategory::VulkanFeatures,
+        "Whether cache the individual descriptorSet or not.",
+        &members, "angleproject:372268711"
     };
 
 };

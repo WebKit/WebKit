@@ -427,13 +427,13 @@ angle::Result CLProgramVk::init(const size_t *lengths,
 
 CLProgramVk::~CLProgramVk()
 {
-    for (vk::BindingPointer<rx::vk::DynamicDescriptorPool> &pool : mDescriptorPools)
+    for (vk::DynamicDescriptorPoolPointer &pool : mDynamicDescriptorPools)
     {
         pool.reset();
     }
-    for (vk::RefCountedDescriptorPoolBinding &binding : mDescriptorPoolBindings)
+    for (vk::DescriptorPoolPointer &pool : mDescriptorPools)
     {
-        binding.reset();
+        pool.reset();
     }
     mShader.get().destroy(mContext->getDevice());
     for (DescriptorSetIndex index : angle::AllEnums<DescriptorSetIndex>())
@@ -974,16 +974,16 @@ angle::spirv::Blob CLProgramVk::stripReflection(const DeviceProgramData *deviceP
 angle::Result CLProgramVk::allocateDescriptorSet(const DescriptorSetIndex setIndex,
                                                  const vk::DescriptorSetLayout &descriptorSetLayout,
                                                  vk::CommandBufferHelperCommon *commandBuffer,
-                                                 VkDescriptorSet *descriptorSetOut)
+                                                 vk::DescriptorSetPointer *descriptorSetOut)
 {
-    if (mDescriptorPools[setIndex].get().valid())
+    if (mDynamicDescriptorPools[setIndex])
     {
-        ANGLE_CL_IMPL_TRY_ERROR(mDescriptorPools[setIndex].get().allocateDescriptorSet(
-                                    mContext, descriptorSetLayout,
-                                    &mDescriptorPoolBindings[setIndex], descriptorSetOut),
+        ANGLE_CL_IMPL_TRY_ERROR(mDynamicDescriptorPools[setIndex]->allocateDescriptorSet(
+                                    mContext, descriptorSetLayout, descriptorSetOut),
                                 CL_INVALID_OPERATION);
-
-        commandBuffer->retainResource(&mDescriptorPoolBindings[setIndex].get());
+        mDescriptorPools[setIndex] = (*descriptorSetOut)->getPool();
+        commandBuffer->retainResource(mDescriptorPools[setIndex].get());
+        commandBuffer->retainResource(descriptorSetOut->get());
     }
     return angle::Result::Continue;
 }

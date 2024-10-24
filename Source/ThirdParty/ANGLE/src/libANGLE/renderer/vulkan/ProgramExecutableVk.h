@@ -219,8 +219,7 @@ class ProgramExecutableVk : public ProgramExecutableImpl
                                               const gl::SamplerBindingVector &samplers,
                                               PipelineType pipelineType,
                                               UpdateDescriptorSetsBuilder *updateBuilder,
-                                              vk::CommandBufferHelperCommon *commandBufferHelper,
-                                              const vk::DescriptorSetDesc &texturesDesc);
+                                              vk::CommandBufferHelperCommon *commandBufferHelper);
 
     angle::Result updateShaderResourcesDescriptorSet(
         vk::Context *context,
@@ -373,7 +372,8 @@ class ProgramExecutableVk : public ProgramExecutableImpl
                                const gl::ProgramState &programState,
                                const gl::ProgramLinkedResources &resources)
     {
-        SpvSourceOptions options = SpvCreateSourceOptions(context->getFeatures());
+        SpvSourceOptions options = SpvCreateSourceOptions(
+            context->getFeatures(), context->getRenderer()->getMaxInputAttachmentCount());
         SpvAssignAllLocations(options, programState, resources, &mVariableInfoMap);
     }
 
@@ -395,7 +395,8 @@ class ProgramExecutableVk : public ProgramExecutableImpl
         const std::vector<gl::AtomicCounterBuffer> &atomicCounterBuffers,
         vk::DescriptorSetLayoutDesc *descOut);
     void addImageDescriptorSetDesc(vk::DescriptorSetLayoutDesc *descOut);
-    void addInputAttachmentDescriptorSetDesc(vk::DescriptorSetLayoutDesc *descOut);
+    void addInputAttachmentDescriptorSetDesc(vk::Context *context,
+                                             vk::DescriptorSetLayoutDesc *descOut);
     angle::Result addTextureDescriptorSetDesc(
         vk::Context *context,
         const gl::ActiveTextureArray<TextureVk *> *activeTextures,
@@ -515,9 +516,9 @@ class ProgramExecutableVk : public ProgramExecutableImpl
     void initializeWriteDescriptorDesc(vk::Context *context);
 
     // Descriptor sets and pools for shader resources for this program.
-    vk::DescriptorSetArray<VkDescriptorSet> mDescriptorSets;
+    vk::DescriptorSetArray<vk::DescriptorSetPointer> mDescriptorSets;
+    vk::DescriptorSetArray<vk::DynamicDescriptorPoolPointer> mDynamicDescriptorPools;
     vk::DescriptorSetArray<vk::DescriptorPoolPointer> mDescriptorPools;
-    vk::DescriptorSetArray<vk::RefCountedDescriptorPoolBinding> mDescriptorPoolBindings;
     vk::BufferSerial mCurrentDefaultUniformBufferSerial;
 
     // We keep a reference to the pipeline and descriptor set layouts. This ensures they don't get

@@ -2737,6 +2737,130 @@ TEST_P(CopyTextureTestES3, CopySubTextureMissingRequiredExtension)
     EXPECT_GL_NO_ERROR();
 }
 
+// Test copying from gles texture to EGLImage
+TEST_P(CopyTextureTestES3, CopyImageSubDataToEGLImage)
+{
+    // GL_OES_EGL_image_external extension is required to use TEXTURE_EXTERNAL_OES
+    // as the texture target.  So if GL_OES_EGL_image_external is not supported,
+    // the error case cannot happen.
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_EGL_image_external"));
+    // GL_EXT_copy_image extension is required to use glCopyImageSubDataEXT to
+    // copy from/to GL_TEXTURE_EXTERNAL_OES texture target. If  GL_EXT_copy_image
+    // is not supported, then no need to test.
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+
+    EGLWindow *window = getEGLWindow();
+    EGLDisplay dpy    = window->getDisplay();
+    // If EGL_KHR_image_base is not supported, then eglImageKHR cannot be used,
+    // and therefore the error case cannot happen
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_image_base"));
+
+    // Prepare test data
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    EXPECT_GL_NO_ERROR();
+    const std::vector<GLColor> kDstColor(4 * 4, GLColor::red);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, kDstColor.data());
+    EXPECT_GL_NO_ERROR();
+
+    // Create the egl image and bind it to target GL_TEXTURE_EXTERNAL_OES
+    constexpr EGLint attribs[] = {
+        EGL_IMAGE_PRESERVED,
+        EGL_TRUE,
+        EGL_NONE,
+    };
+    EGLImageKHR image = eglCreateImageKHR(
+        window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
+        reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(texture)), attribs);
+    EXPECT_GL_NO_ERROR();
+
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, mTextures[0]);
+    EXPECT_GL_NO_ERROR();
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, image);
+    EXPECT_GL_NO_ERROR();
+
+    // Prepare the source texture data
+    glBindTexture(GL_TEXTURE_2D, mTextures[1]);
+    EXPECT_GL_NO_ERROR();
+    const std::vector<GLColor> kSourceColor(4 * 4, GLColor::green);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kSourceColor.data());
+    EXPECT_GL_NO_ERROR();
+
+    // Copy from gles texture to EGLImage.
+    // This copying needs EGLImageExternalEssl3OES and GL_EXT_copy_image extension
+    glCopyImageSubDataEXT(mTextures[1], GL_TEXTURE_2D, 0, 0, 0, 0, mTextures[0],
+                          GL_TEXTURE_EXTERNAL_OES, 0, 0, 0, 0, 4, 4, 1);
+    EXPECT_GL_NO_ERROR();
+
+    // Check the results
+    glBindTexture(GL_TEXTURE_2D, texture);
+    GLFramebuffer framebuffer;
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+    EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    EXPECT_PIXEL_RECT_EQ(0, 0, 4, 4, GLColor::green);
+}
+
+// Test copying from EGLImage to gles texture
+TEST_P(CopyTextureTestES3, CopyImageSubDataFromEGLImage)
+{
+    // GL_OES_EGL_image_external extension is required to use TEXTURE_EXTERNAL_OES
+    // as the texture target.  So if GL_OES_EGL_image_external is not supported,
+    // the error case cannot happen.
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_OES_EGL_image_external"));
+    // GL_EXT_copy_image extension is required to use glCopyImageSubDataEXT to
+    // copy from/to GL_TEXTURE_EXTERNAL_OES texture target. If  GL_EXT_copy_image
+    // is not supported, then no need to test.
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_copy_image"));
+
+    // Prepare test data
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_2D, texture);
+    EXPECT_GL_NO_ERROR();
+    const std::vector<GLColor> kSourceColor(4 * 4, GLColor::green);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+                 kSourceColor.data());
+    EXPECT_GL_NO_ERROR();
+
+    EGLWindow *window = getEGLWindow();
+    EGLDisplay dpy    = window->getDisplay();
+    // If EGL_KHR_image_base is not supported, then eglImageKHR cannot be used,
+    // and therefore the error case cannot happen
+    ANGLE_SKIP_TEST_IF(!IsEGLDisplayExtensionEnabled(dpy, "EGL_KHR_image_base"));
+
+    // Create the egl image and bind it to target GL_TEXTURE_EXTERNAL_OES
+    constexpr EGLint attribs[] = {
+        EGL_IMAGE_PRESERVED,
+        EGL_TRUE,
+        EGL_NONE,
+    };
+    EGLImageKHR image = eglCreateImageKHR(
+        window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
+        reinterpret_cast<EGLClientBuffer>(static_cast<uintptr_t>(texture)), attribs);
+    EXPECT_GL_NO_ERROR();
+    glBindTexture(GL_TEXTURE_EXTERNAL_OES, mTextures[0]);
+    EXPECT_GL_NO_ERROR();
+    glEGLImageTargetTexture2DOES(GL_TEXTURE_EXTERNAL_OES, image);
+    EXPECT_GL_NO_ERROR();
+
+    // Prepare the destination texture
+    glBindTexture(GL_TEXTURE_2D, mTextures[1]);
+    EXPECT_GL_NO_ERROR();
+    const std::vector<GLColor> kDstColor(4 * 4, GLColor::red);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 4, 4, 0, GL_RGBA, GL_UNSIGNED_BYTE, kDstColor.data());
+    EXPECT_GL_NO_ERROR();
+
+    // Copy from egl texture to gles texture.
+    glCopyImageSubDataEXT(mTextures[0], GL_TEXTURE_EXTERNAL_OES, 0, 0, 0, 0, mTextures[1],
+                          GL_TEXTURE_2D, 0, 0, 0, 0, 4, 4, 1);
+    EXPECT_GL_NO_ERROR();
+
+    // Check the results.
+    EXPECT_PIXEL_RECT_EQ(0, 0, 4, 4, GLColor::green);
+}
+
 // Test that copy after invalidate works
 TEST_P(CopyTextureTestES3, InvalidateCopyThenBlend)
 {

@@ -16,6 +16,7 @@
 #include "libANGLE/renderer/CLMemoryImpl.h"
 
 #include "libANGLE/CLMemory.h"
+#include "vulkan/vulkan_core.h"
 
 namespace rx
 {
@@ -29,16 +30,14 @@ class CLMemoryVk : public CLMemoryImpl
     angle::Result createSubBuffer(const cl::Buffer &buffer,
                                   cl::MemFlags flags,
                                   size_t size,
-                                  CLMemoryImpl::Ptr *subBufferOut) override = 0;
-
-    virtual vk::BufferHelper &getBuffer() = 0;
+                                  CLMemoryImpl::Ptr *subBufferOut) override;
 
     angle::Result map(uint8_t *&ptrOut, size_t offset = 0);
     void unmap() { unmapImpl(); }
 
     VkBufferUsageFlags getVkUsageFlags();
     VkMemoryPropertyFlags getVkMemPropertyFlags();
-    size_t getSize() const { return mMemory.getSize(); }
+    virtual size_t getSize() const = 0;
 
     angle::Result copyTo(void *ptr, size_t offset, size_t size);
     angle::Result copyTo(CLMemoryVk *dst, size_t srcOffset, size_t dstOffset, size_t size);
@@ -80,7 +79,7 @@ class CLBufferVk : public CLMemoryVk
                                   size_t size,
                                   CLMemoryImpl::Ptr *subBufferOut) override;
 
-    vk::BufferHelper &getBuffer() override { return mBuffer; }
+    vk::BufferHelper &getBuffer() { return mBuffer; }
     CLBufferVk *getParent() { return static_cast<CLBufferVk *>(mParent); }
 
     angle::Result create(void *hostPtr);
@@ -88,6 +87,7 @@ class CLBufferVk : public CLMemoryVk
     bool isSubBuffer() const { return mParent != nullptr; }
 
     bool isCurrentlyInUse() const override;
+    size_t getSize() const override { return mMemory.getSize(); }
 
   private:
     angle::Result mapImpl() override;
@@ -97,6 +97,42 @@ class CLBufferVk : public CLMemoryVk
 
     vk::BufferHelper mBuffer;
     VkBufferCreateInfo mDefaultBufferCreateInfo;
+};
+
+class CLImageVk : public CLMemoryVk
+{
+  public:
+    CLImageVk(const cl::Image &image);
+    ~CLImageVk() override;
+
+    vk::ImageHelper &getImage() { return mImage; }
+    vk::BufferHelper &getStagingBuffer() { return mStagingBuffer; }
+
+    angle::Result create(void *hostPtr);
+
+    bool isCurrentlyInUse() const override;
+    bool isMapped() { return mMappedMemory != nullptr; }
+    bool containsHostMemExtension();
+
+    angle::Result createStagingBuffer(size_t size);
+    angle::Result copyStagingFrom(void *ptr, size_t offset, size_t size);
+    VkImageUsageFlags getVkImageUsageFlags();
+    VkImageType getVkImageType(const cl::ImageDescriptor &desc);
+    size_t getSize() const override { return mImageSize; }
+
+  private:
+    angle::Result mapImpl() override;
+    void unmapImpl() override;
+    angle::Result setDataImpl(const uint8_t *data, size_t size, size_t offset);
+
+    vk::BufferHelper mStagingBuffer;
+    vk::ImageHelper mImage;
+    VkExtent3D mExtent;
+    angle::FormatID mFormat;
+    uint32_t mArrayLayers;
+    size_t mImageSize;
+    size_t mNumberChannels;
+    size_t mBytesPerChannel;
 };
 
 }  // namespace rx

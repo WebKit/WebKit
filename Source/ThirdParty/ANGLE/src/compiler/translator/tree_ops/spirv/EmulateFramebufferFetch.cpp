@@ -3,8 +3,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
-// EmulateFramebufferFetch.h: Replace input, gl_LastFragData and gl_LastFragColorARM with usages of
-// input attachments.
+// EmulateFramebufferFetch.h: Replace inout, gl_LastFragData, gl_LastFragColorARM,
+// gl_LastFragDepthARM and gl_LastFragStencilARM with usages of input attachments.
 //
 
 #include "compiler/translator/tree_ops/spirv/EmulateFramebufferFetch.h"
@@ -26,19 +26,28 @@ namespace
 {
 using InputAttachmentIndexUsage = angle::BitSet<32>;
 
+struct AttachmentTypes
+{
+    TVector<const TType *> color;
+    const TType *depth   = nullptr;
+    const TType *stencil = nullptr;
+};
+
 // A traverser that looks at which inout variables exist, which gl_LastFragData indices have been
-// used and whether gl_LastFragColorARM is referenced.  It builds a set of indices correspondingly;
-// these are input attachment indices the shader may read from.
+// used and whether gl_LastFragColorARM, gl_LastFragDepthARM or gl_LastFragStencilARM are
+// referenced.  It builds a set of indices correspondingly; these are input attachment indices the
+// shader may read from.
 class InputAttachmentUsageTraverser : public TIntermTraverser
 {
   public:
-    InputAttachmentUsageTraverser(uint32_t maxDrawBuffers, TVector<const TType *> *attachmentTypes)
+    InputAttachmentUsageTraverser(uint32_t maxDrawBuffers)
         : TIntermTraverser(true, false, false),
           mMaxDrawBuffers(maxDrawBuffers),
-          mAttachmentTypes(attachmentTypes),
-          mUsesLastFragColorARM(false)
+          mUsesLastFragColorARM(false),
+          mUsesLastFragDepthARM(false),
+          mUsesLastFragStencilARM(false)
     {
-        mAttachmentTypes->resize(maxDrawBuffers, nullptr);
+        mAttachmentTypes.color.resize(maxDrawBuffers, nullptr);
     }
 
     bool visitDeclaration(Visit visit, TIntermDeclaration *node) override;
@@ -47,21 +56,27 @@ class InputAttachmentUsageTraverser : public TIntermTraverser
 
     InputAttachmentIndexUsage getIndexUsage() const { return mIndexUsage; }
     bool usesLastFragColorARM() const { return mUsesLastFragColorARM; }
+    bool usesLastFragDepthARM() const { return mUsesLastFragDepthARM; }
+    bool usesLastFragStencilARM() const { return mUsesLastFragStencilARM; }
+
+    const AttachmentTypes &getAttachmentTypes() const { return mAttachmentTypes; }
 
   private:
     void setInputAttachmentIndex(uint32_t index, const TType *type);
 
     uint32_t mMaxDrawBuffers;
     InputAttachmentIndexUsage mIndexUsage;
-    TVector<const TType *> *mAttachmentTypes;
+    AttachmentTypes mAttachmentTypes;
     bool mUsesLastFragColorARM;
+    bool mUsesLastFragDepthARM;
+    bool mUsesLastFragStencilARM;
 };
 
 void InputAttachmentUsageTraverser::setInputAttachmentIndex(uint32_t index, const TType *type)
 {
     ASSERT(index < mMaxDrawBuffers);
     mIndexUsage.set(index);
-    (*mAttachmentTypes)[index] = type;
+    mAttachmentTypes.color[index] = type;
 }
 
 bool InputAttachmentUsageTraverser::visitDeclaration(Visit visit, TIntermDeclaration *node)
@@ -143,15 +158,37 @@ bool InputAttachmentUsageTraverser::visitBinary(Visit visit, TIntermBinary *node
 
 void InputAttachmentUsageTraverser::visitSymbol(TIntermSymbol *symbol)
 {
-    if (symbol->getQualifier() != EvqLastFragColor)
+    switch (symbol->getQualifier())
     {
-        return;
-    }
-    ASSERT(symbol->getName() == "gl_LastFragColorARM");
+        case EvqLastFragColor:
+            ASSERT(symbol->getName() == "gl_LastFragColorARM");
 
-    // gl_LastFragColorARM always reads back from location 0.
-    setInputAttachmentIndex(0, &symbol->getType());
-    mUsesLastFragColorARM = true;
+            // gl_LastFragColorARM always reads back from location 0.
+            setInputAttachmentIndex(0, &symbol->getType());
+            mUsesLastFragColorARM = true;
+            break;
+
+        case EvqLastFragDepth:
+            ASSERT(symbol->getName() == "gl_LastFragDepthARM");
+
+            // gl_LastFragDepthARM doesn't need an explicit input attachment index (with
+            // VK_KHR_dynamic_rendering_local_read)
+            mUsesLastFragDepthARM  = true;
+            mAttachmentTypes.depth = &symbol->getType();
+            break;
+
+        case EvqLastFragStencil:
+            ASSERT(symbol->getName() == "gl_LastFragStencilARM");
+
+            // gl_LastFragStencilARM doesn't need an explicit input attachment index (with
+            // VK_KHR_dynamic_rendering_local_read)
+            mUsesLastFragStencilARM  = true;
+            mAttachmentTypes.stencil = &symbol->getType();
+            break;
+
+        default:
+            break;
+    }
 }
 
 ImmutableString GetInputAttachmentName(size_t index)
@@ -177,12 +214,27 @@ TBasicType GetBasicTypeForSubpassInput(TBasicType inputType)
     }
 }
 
-// Declare an input attachment variable at a given index.
-void DeclareInputAttachmentVariable(TSymbolTable *symbolTable,
-                                    const TType &outputType,
-                                    size_t index,
-                                    InputAttachmentMap *inputAttachmentMapOut,
-                                    TIntermSequence *declarationsOut)
+const TVariable *DeclareInputAttachmentVariable(TSymbolTable *symbolTable,
+                                                const TType *type,
+                                                const ImmutableString &name,
+                                                TIntermSequence *declarationsOut)
+{
+    const TVariable *inputAttachmentVar =
+        new TVariable(symbolTable, name, type, SymbolType::AngleInternal);
+
+    TIntermDeclaration *decl = new TIntermDeclaration;
+    decl->appendDeclarator(new TIntermSymbol(inputAttachmentVar));
+    declarationsOut->push_back(decl);
+
+    return inputAttachmentVar;
+}
+
+// Declare a color input attachment variable at a given index.
+void DeclareColorInputAttachmentVariable(TSymbolTable *symbolTable,
+                                         const TType &outputType,
+                                         size_t index,
+                                         InputAttachmentMap *inputAttachmentMapOut,
+                                         TIntermSequence *declarationsOut)
 {
     const TBasicType subpassInputType = GetBasicTypeForSubpassInput(outputType.getBasicType());
 
@@ -192,26 +244,50 @@ void DeclareInputAttachmentVariable(TSymbolTable *symbolTable,
     inputAttachmentQualifier.inputAttachmentIndex = static_cast<int>(index);
     inputAttachmentType->setLayoutQualifier(inputAttachmentQualifier);
 
-    const TVariable *inputAttachmentVar = new TVariable(
-        symbolTable, GetInputAttachmentName(index), inputAttachmentType, SymbolType::AngleInternal);
-    (*inputAttachmentMapOut)[static_cast<uint32_t>(index)] = inputAttachmentVar;
+    const TVariable *inputAttachmentVar = DeclareInputAttachmentVariable(
+        symbolTable, inputAttachmentType, GetInputAttachmentName(index), declarationsOut);
+    inputAttachmentMapOut->color[static_cast<uint32_t>(index)] = inputAttachmentVar;
+}
 
-    TIntermDeclaration *decl = new TIntermDeclaration;
-    decl->appendDeclarator(new TIntermSymbol(inputAttachmentVar));
-    declarationsOut->push_back(decl);
+// Helper to declare a depth or stencil input attachment variable.
+const TVariable *DeclareDepthStencilInputAttachmentVariable(TSymbolTable *symbolTable,
+                                                            const TType *type,
+                                                            const char *variableName,
+                                                            TIntermSequence *declarationsOut)
+{
+    return DeclareInputAttachmentVariable(symbolTable, type, ImmutableString(variableName),
+                                          declarationsOut);
+}
+
+void DeclareDepthInputAttachmentVariable(TSymbolTable *symbolTable,
+                                         const TType *type,
+                                         InputAttachmentMap *inputAttachmentMapOut,
+                                         TIntermSequence *declarationsOut)
+{
+    inputAttachmentMapOut->depth = DeclareDepthStencilInputAttachmentVariable(
+        symbolTable, type, "ANGLEDepthInputAttachment", declarationsOut);
+}
+
+void DeclareStencilInputAttachmentVariable(TSymbolTable *symbolTable,
+                                           const TType *type,
+                                           InputAttachmentMap *inputAttachmentMapOut,
+                                           TIntermSequence *declarationsOut)
+{
+    inputAttachmentMapOut->stencil = DeclareDepthStencilInputAttachmentVariable(
+        symbolTable, type, "ANGLEStencilInputAttachment", declarationsOut);
 }
 
 // Declare a global variable to hold gl_LastFragData/gl_LastFragColorARM
 const TVariable *DeclareLastFragDataGlobalVariable(TCompiler *compiler,
                                                    TIntermBlock *root,
-                                                   const TVector<const TType *> &attachmentTypes,
+                                                   const AttachmentTypes &attachmentTypes,
                                                    TIntermSequence *declarationsOut)
 {
     // Find the first input attachment that is used.  If gl_LastFragColorARM was used, this will be
     // index 0.  Otherwise if this is ES100, any index of gl_LastFragData may be used.  Either way,
     // the global variable is declared the same as gl_LastFragData would have been if used.
     const TType *attachmentType = nullptr;
-    for (const TType *type : attachmentTypes)
+    for (const TType *type : attachmentTypes.color)
     {
         if (type != nullptr)
         {
@@ -243,13 +319,20 @@ const TVariable *DeclareLastFragDataGlobalVariable(TCompiler *compiler,
     return global;
 }
 
+struct InputUsage
+{
+    InputAttachmentIndexUsage indices;
+    bool usesLastFragData;
+    bool usesLastFragDepth;
+    bool usesLastFragStencil;
+};
+
 // Declare an input attachment for each used index.  Additionally, create a global variable for
-// gl_LastFragData and gl_LastFragColorARM if needed.
+// gl_LastFragData, gl_LastFragColorARM, gl_LastFragDepthARM and gl_LastFragStencilARM if needed.
 [[nodiscard]] bool DeclareVariables(TCompiler *compiler,
                                     TIntermBlock *root,
-                                    InputAttachmentIndexUsage indexUsage,
-                                    bool usesLastFragData,
-                                    const TVector<const TType *> &attachmentTypes,
+                                    const InputUsage &inputUsage,
+                                    const AttachmentTypes &attachmentTypes,
                                     InputAttachmentMap *inputAttachmentMapOut,
                                     const TVariable **lastFragDataOut)
 {
@@ -258,11 +341,23 @@ const TVariable *DeclareLastFragDataGlobalVariable(TCompiler *compiler,
     TIntermSequence declarations;
 
     // For every detected index, declare an input attachment variable.
-    for (size_t index : indexUsage)
+    for (size_t index : inputUsage.indices)
     {
-        ASSERT(attachmentTypes[index] != nullptr);
-        DeclareInputAttachmentVariable(symbolTable, *attachmentTypes[index], index,
-                                       inputAttachmentMapOut, &declarations);
+        ASSERT(attachmentTypes.color[index] != nullptr);
+        DeclareColorInputAttachmentVariable(symbolTable, *attachmentTypes.color[index], index,
+                                            inputAttachmentMapOut, &declarations);
+    }
+    // Depth and stencil attachments don't need input attachment indices with
+    // VK_KHR_dynamic_rendering_local_read, so they are not covered by the above loop.
+    if (inputUsage.usesLastFragDepth)
+    {
+        DeclareDepthInputAttachmentVariable(symbolTable, attachmentTypes.depth,
+                                            inputAttachmentMapOut, &declarations);
+    }
+    if (inputUsage.usesLastFragStencil)
+    {
+        DeclareStencilInputAttachmentVariable(symbolTable, attachmentTypes.stencil,
+                                              inputAttachmentMapOut, &declarations);
     }
 
     // If gl_LastFragData or gl_LastFragColorARM is used, declare a global variable to retain that.
@@ -274,7 +369,7 @@ const TVariable *DeclareLastFragDataGlobalVariable(TCompiler *compiler,
     // but gl_LastFrag* needs to be stored in a global variable to retain its value even after
     // gl_Frag* has been overwritten.
     *lastFragDataOut = nullptr;
-    if (usesLastFragData)
+    if (inputUsage.usesLastFragData)
     {
         *lastFragDataOut =
             DeclareLastFragDataGlobalVariable(compiler, root, attachmentTypes, &declarations);
@@ -364,19 +459,19 @@ void InitializeFromInputAttachment(TSymbolTable *symbolTable,
         uint32_t arraySize = type.isArray() ? type.getOutermostArraySize() : 1;
         for (unsigned int index = 0; index < arraySize; index++)
         {
-            ASSERT(inputAttachmentMap.find(baseInputAttachmentIndex + index) !=
-                   inputAttachmentMap.end());
+            ASSERT(inputAttachmentMap.color.find(baseInputAttachmentIndex + index) !=
+                   inputAttachmentMap.color.end());
 
-            InitializeFromInputAttachment(symbolTable, init,
-                                          inputAttachmentMap.at(baseInputAttachmentIndex + index),
-                                          inoutVar, index);
+            InitializeFromInputAttachment(
+                symbolTable, init, inputAttachmentMap.color.at(baseInputAttachmentIndex + index),
+                inoutVar, index);
         }
     }
 
     // Initialize lastFragData, if present
     if (lastFragData != nullptr)
     {
-        for (auto &iter : inputAttachmentMap)
+        for (auto &iter : inputAttachmentMap.color)
         {
             const uint32_t index                = iter.first;
             const TVariable *inputAttachmentVar = iter.second;
@@ -400,7 +495,15 @@ void InitializeFromInputAttachment(TSymbolTable *symbolTable,
     GatherInoutVariables(root, &inoutVariables);
 
     // Generate code that initializes the global variable and the inout variables with corresponding
-    // input attachments.
+    // input attachments.  In particular, this is needed because if the shader writes to the inout
+    // color variables, reading the variable should produce said written values (using |subpassLoad|
+    // on every read would not have made that possible).
+    //
+    // Note that this is not done for depth/stencil.  The extensions recommendation is to read from
+    // these values as late as possible, so preloading them can hurt performance.  Instead, a
+    // |subpassLoad| is issued directly where the values are read from.  Note that unlike color
+    // attachments, the application cannot write to the depth/stencil variables and expect to read
+    // back the shader-written values.
     if (!InitializeFromInputAttachments(compiler, root, inputAttachmentMap, inoutVariables,
                                         lastFragData))
     {
@@ -412,6 +515,8 @@ void InitializeFromInputAttachment(TSymbolTable *symbolTable,
     // - inout to out variables
     // - gl_LastFragData to lastFragData
     // - gl_LastFragColorARM to lastFragData[0]
+    // - gl_LastFragDepthARM to subpassLoad(ANGLEDepthInputAttachment)
+    // - gl_LastFragStencilARM to subpassLoad(ANGLEStencilInputAttachment)
 
     VariableReplacementMap replacementMap;
     for (const TVariable *var : inoutVariables)
@@ -423,7 +528,8 @@ void InitializeFromInputAttachment(TSymbolTable *symbolTable,
         replacementMap[var] = new TIntermSymbol(replacement);
     }
 
-    if (lastFragData != nullptr)
+    if (lastFragData != nullptr || inputAttachmentMap.depth != nullptr ||
+        inputAttachmentMap.stencil != nullptr)
     {
         // Use the user-defined variables if found (and remove their declaration), or the built-in
         // otherwise.
@@ -432,6 +538,8 @@ void InitializeFromInputAttachment(TSymbolTable *symbolTable,
 
         const TVariable *glLastFragData  = nullptr;
         const TVariable *glLastFragColor = nullptr;
+        const TVariable *glLastFragDepth   = nullptr;
+        const TVariable *glLastFragStencil = nullptr;
 
         for (TIntermNode *node : topLevel)
         {
@@ -443,15 +551,22 @@ void InitializeFromInputAttachment(TSymbolTable *symbolTable,
                 TIntermSymbol *symbol = decl->getSequence()->front()->getAsSymbolNode();
                 if (symbol != nullptr)
                 {
-                    if (symbol->getQualifier() == EvqLastFragData)
+                    switch (symbol->getQualifier())
                     {
-                        glLastFragData = &symbol->variable();
-                        continue;
-                    }
-                    if (symbol->getQualifier() == EvqLastFragColor)
-                    {
-                        glLastFragColor = &symbol->variable();
-                        continue;
+                        case EvqLastFragData:
+                            glLastFragData = &symbol->variable();
+                            continue;
+                        case EvqLastFragColor:
+                            glLastFragColor = &symbol->variable();
+                            continue;
+                        case EvqLastFragDepth:
+                            glLastFragDepth = &symbol->variable();
+                            continue;
+                        case EvqLastFragStencil:
+                            glLastFragStencil = &symbol->variable();
+                            continue;
+                        default:
+                            break;
                     }
                 }
             }
@@ -470,10 +585,33 @@ void InitializeFromInputAttachment(TSymbolTable *symbolTable,
             glLastFragColor = static_cast<const TVariable *>(symbolTable->findBuiltIn(
                 ImmutableString("gl_LastFragColorARM"), compiler->getShaderVersion()));
         }
+        if (glLastFragDepth == nullptr)
+        {
+            glLastFragDepth = static_cast<const TVariable *>(symbolTable->findBuiltIn(
+                ImmutableString("gl_LastFragDepthARM"), compiler->getShaderVersion()));
+        }
+        if (glLastFragStencil == nullptr)
+        {
+            glLastFragStencil = static_cast<const TVariable *>(symbolTable->findBuiltIn(
+                ImmutableString("gl_LastFragStencilARM"), compiler->getShaderVersion()));
+        }
 
-        replacementMap[glLastFragData] = new TIntermSymbol(lastFragData);
-        replacementMap[glLastFragColor] =
-            new TIntermBinary(EOpIndexDirect, new TIntermSymbol(lastFragData), CreateIndexNode(0));
+        if (lastFragData != nullptr)
+        {
+            replacementMap[glLastFragData]  = new TIntermSymbol(lastFragData);
+            replacementMap[glLastFragColor] = new TIntermBinary(
+                EOpIndexDirect, new TIntermSymbol(lastFragData), CreateIndexNode(0));
+        }
+        if (inputAttachmentMap.depth != nullptr)
+        {
+            replacementMap[glLastFragDepth] =
+                CreateSubpassLoadFuncCall(symbolTable, inputAttachmentMap.depth);
+        }
+        if (inputAttachmentMap.stencil != nullptr)
+        {
+            replacementMap[glLastFragStencil] =
+                CreateSubpassLoadFuncCall(symbolTable, inputAttachmentMap.stencil);
+        }
     }
 
     // Replace the variables accordingly.
@@ -486,32 +624,36 @@ void InitializeFromInputAttachment(TSymbolTable *symbolTable,
                                            InputAttachmentMap *inputAttachmentMapOut)
 {
     // First, check if input attachments are necessary at all.
-    TVector<const TType *> attachmentTypes;
-    InputAttachmentUsageTraverser usageTraverser(compiler->getBuiltInResources().MaxDrawBuffers,
-                                                 &attachmentTypes);
+    InputAttachmentUsageTraverser usageTraverser(compiler->getBuiltInResources().MaxDrawBuffers);
     root->traverse(&usageTraverser);
 
-    InputAttachmentIndexUsage indexUsage = usageTraverser.getIndexUsage();
-    if (!indexUsage.any())
+    InputUsage inputUsage = {};
+    inputUsage.indices    = usageTraverser.getIndexUsage();
+    inputUsage.usesLastFragData =
+        (compiler->getShaderVersion() == 100 && inputUsage.indices.any()) ||
+        usageTraverser.usesLastFragColorARM();
+    inputUsage.usesLastFragDepth   = usageTraverser.usesLastFragDepthARM();
+    inputUsage.usesLastFragStencil = usageTraverser.usesLastFragStencilARM();
+
+    if (!inputUsage.indices.any() && !inputUsage.usesLastFragDepth &&
+        !inputUsage.usesLastFragStencil)
     {
         return true;
     }
 
-    const bool usesLastFragData =
-        compiler->getShaderVersion() == 100 || usageTraverser.usesLastFragColorARM();
-
     // Declare the necessary variables for emulation; input attachments to read from and global
     // variables to hold last frag data.
     const TVariable *lastFragData = nullptr;
-    if (!DeclareVariables(compiler, root, indexUsage, usesLastFragData, attachmentTypes,
+    if (!DeclareVariables(compiler, root, inputUsage, usageTraverser.getAttachmentTypes(),
                           inputAttachmentMapOut, &lastFragData))
     {
         return false;
     }
 
     // Then replace references to gl_LastFragData with the global, gl_LastFragColorARM with
-    // global[0], replace inout variables with out equivalents and make sure input attachments
-    // initialize the appropriate variables at the beginning of the shader.
+    // global[0], gl_LastFragDepth/StencilARM with the appropriate subpassLoad opreration, replace
+    // inout variables with out equivalents and make sure color input attachments initialize the
+    // appropriate variables at the beginning of the shader.
     if (!ReplaceVariables(compiler, root, *inputAttachmentMapOut, lastFragData))
     {
         return false;

@@ -385,6 +385,22 @@ TIntermTyped *DriverUniform::getAlphaToCoverage() const
                                                &args);
 }
 
+TIntermTyped *DriverUniform::getLayeredFramebuffer() const
+{
+    TIntermTyped *miscRef            = createDriverUniformRef(kMisc);
+    TIntermTyped *layeredFramebuffer = new TIntermBinary(
+        EOpBitShiftRight, miscRef, CreateUIntNode(vk::kDriverUniformsMiscLayeredFramebufferOffset));
+    layeredFramebuffer =
+        new TIntermBinary(EOpBitwiseAnd, layeredFramebuffer,
+                          CreateUIntNode(vk::kDriverUniformsMiscLayeredFramebufferMask));
+
+    TIntermSequence args = {
+        layeredFramebuffer,
+    };
+    return TIntermAggregate::CreateConstructor(*StaticType::GetBasic<EbtBool, EbpUndefined>(),
+                                               &args);
+}
+
 //
 // Class DriverUniformExtended
 //

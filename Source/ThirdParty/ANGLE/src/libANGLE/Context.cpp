@@ -3671,6 +3671,7 @@ Extensions Context::generateSupportedExtensions() const
         supportedExtensions.multiviewMultisampleANGLE    = false;
         supportedExtensions.copyTexture3dANGLE           = false;
         supportedExtensions.textureMultisampleANGLE      = false;
+        supportedExtensions.textureQueryLodEXT           = false;
         supportedExtensions.textureShadowLodEXT          = false;
         supportedExtensions.textureStencil8OES           = false;
         supportedExtensions.conservativeDepthEXT         = false;
@@ -4638,22 +4639,28 @@ void Context::blitFramebuffer(GLint srcX0,
     }
 
     Framebuffer *drawFramebuffer = mState.getDrawFramebuffer();
+    Framebuffer *readFramebuffer = mState.getReadFramebuffer();
     ASSERT(drawFramebuffer);
+    ASSERT(readFramebuffer);
 
     // Note that blitting is called against draw framebuffer.
     // See the code in gl::Context::blitFramebuffer.
-    if ((mask & GL_COLOR_BUFFER_BIT) && !drawFramebuffer->hasEnabledDrawBuffer())
+    if ((mask & GL_COLOR_BUFFER_BIT) && (!drawFramebuffer->hasEnabledDrawBuffer() ||
+                                         readFramebuffer->getReadColorAttachment() == nullptr))
     {
         mask &= ~GL_COLOR_BUFFER_BIT;
     }
 
     if ((mask & GL_STENCIL_BUFFER_BIT) &&
-        drawFramebuffer->getState().getStencilAttachment() == nullptr)
+        (drawFramebuffer->getState().getStencilAttachment() == nullptr ||
+         readFramebuffer->getState().getStencilAttachment() == nullptr))
     {
         mask &= ~GL_STENCIL_BUFFER_BIT;
     }
 
-    if ((mask & GL_DEPTH_BUFFER_BIT) && drawFramebuffer->getState().getDepthAttachment() == nullptr)
+    if ((mask & GL_DEPTH_BUFFER_BIT) &&
+        (drawFramebuffer->getState().getDepthAttachment() == nullptr ||
+         readFramebuffer->getState().getDepthAttachment() == nullptr))
     {
         mask &= ~GL_DEPTH_BUFFER_BIT;
     }
@@ -5045,7 +5052,8 @@ void Context::copyImageSubData(GLuint srcName,
     {
         // Source target is a Texture
         ASSERT(srcTarget == GL_TEXTURE_2D || srcTarget == GL_TEXTURE_2D_ARRAY ||
-               srcTarget == GL_TEXTURE_3D || srcTarget == GL_TEXTURE_CUBE_MAP);
+               srcTarget == GL_TEXTURE_3D || srcTarget == GL_TEXTURE_CUBE_MAP ||
+               srcTarget == GL_TEXTURE_EXTERNAL_OES);
 
         Texture *readTexture = getTexture(PackParam<TextureID>(srcName));
         ANGLE_CONTEXT_TRY(syncTextureForCopy(readTexture));
@@ -5064,7 +5072,8 @@ void Context::copyImageSubData(GLuint srcName,
         {
             // Destination target is a Texture
             ASSERT(dstTarget == GL_TEXTURE_2D || dstTarget == GL_TEXTURE_2D_ARRAY ||
-                   dstTarget == GL_TEXTURE_3D || dstTarget == GL_TEXTURE_CUBE_MAP);
+                   dstTarget == GL_TEXTURE_3D || dstTarget == GL_TEXTURE_CUBE_MAP ||
+                   dstTarget == GL_TEXTURE_EXTERNAL_OES);
 
             Texture *writeTexture = getTexture(PackParam<TextureID>(dstName));
             ANGLE_CONTEXT_TRY(syncTextureForCopy(writeTexture));
@@ -10588,19 +10597,20 @@ void StateCache::updateValidBindTextureTypes(Context *context)
     const Extensions &exts = context->getExtensions();
     bool isGLES3           = context->getClientMajorVersion() >= 3;
     bool isGLES31          = context->getClientVersion() >= Version(3, 1);
+    bool isGLES32          = context->getClientVersion() >= Version(3, 2);
 
     mCachedValidBindTextureTypes = {{
         {TextureType::_2D, true},
         {TextureType::_2DArray, isGLES3},
         {TextureType::_2DMultisample, isGLES31 || exts.textureMultisampleANGLE},
-        {TextureType::_2DMultisampleArray, exts.textureStorageMultisample2dArrayOES},
+        {TextureType::_2DMultisampleArray, isGLES32 || exts.textureStorageMultisample2dArrayOES},
         {TextureType::_3D, isGLES3 || exts.texture3DOES},
         {TextureType::External, exts.EGLImageExternalOES || exts.EGLStreamConsumerExternalNV},
         {TextureType::Rectangle, exts.textureRectangleANGLE},
         {TextureType::CubeMap, true},
-        {TextureType::CubeMapArray, exts.textureCubeMapArrayAny()},
+        {TextureType::CubeMapArray, isGLES32 || exts.textureCubeMapArrayAny()},
         {TextureType::VideoImage, exts.videoTextureWEBGL},
-        {TextureType::Buffer, exts.textureBufferAny()},
+        {TextureType::Buffer, isGLES32 || exts.textureBufferAny()},
     }};
 }
 

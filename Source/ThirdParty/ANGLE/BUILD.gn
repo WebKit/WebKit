@@ -304,6 +304,10 @@ config("internal_config") {
   if (is_win && build_with_chromium) {
     defines += [ "ANGLE_WINDOWS_NO_FUTEX=1" ]
   }
+
+  if (angle_enable_cl) {
+    defines += [ "ANGLE_ENABLE_CL" ]
+  }
 }
 
 config("constructor_and_destructor_warnings") {
@@ -705,9 +709,7 @@ angle_static_library("angle_gpu_info_util") {
       "CoreFoundation.framework",
       "CoreGraphics.framework",
     ]
-    if (angle_enable_eagl) {
-      frameworks += [ "OpenGLES.framework" ]
-    } else if (angle_enable_cgl) {
+    if (angle_enable_cgl) {
       frameworks += [ "OpenGL.framework" ]
     }
     if (is_mac || angle_enable_cgl) {
@@ -737,6 +739,10 @@ template("translator_lib") {
     sources += angle_translator_essl_symbol_table_sources
 
     # Backend support:
+    if (angle_enable_null) {
+      defines += [ "ANGLE_ENABLE_NULL" ]
+    }
+
     if (angle_enable_essl || use_fuzzing_engine) {
       _needs_glsl_base = true
       sources += angle_translator_essl_sources

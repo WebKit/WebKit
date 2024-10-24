@@ -1,6 +1,7 @@
 Name: ANGLE
 URL: http://angleproject.org
-Version: unknown
+Version: N/A
+Revision: DEPS
 License: BSD
 License File: LICENSE
 Shipped: yes

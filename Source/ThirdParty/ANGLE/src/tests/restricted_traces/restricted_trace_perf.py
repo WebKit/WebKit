@@ -543,7 +543,15 @@ def collect_power(done_event, test_fixedtime, results):
 
 def get_thermal_info():
     out = run_adb_command('shell dumpsys android.hardware.thermal.IThermal/default').stdout
-    result = [l for l in out.splitlines() if ('VIRTUAL-SKIN' in l and 'ThrottlingStatus:' in l)]
+    result = []
+    for line in out.splitlines():
+        if 'ThrottlingStatus:' in line:
+            name = re.search('Name: ([^ ]*)', line).group(1)
+            if ('VIRTUAL-SKIN' in name and
+                    '-CHARGE-' not in name and  # only supposed to affect charging speed
+                    '-MODEL-' not in name):  # different units and not used for throttling
+                result.append(line)
+
     if not result:
         logging.error('Unexpected dumpsys IThermal response:\n%s', out)
         raise RuntimeError('Unexpected dumpsys IThermal response, logged above')
@@ -557,8 +565,7 @@ def set_vendor_thermal_control(disabled=None):
         while waiting:
             waiting = False
             for line in get_thermal_info():
-                is_charge = 'VIRTUAL-SKIN-CHARGE-' in line  # Only supposed to affect charging speed
-                if 'ThrottlingStatus: NONE' not in line and not is_charge:
+                if 'ThrottlingStatus: NONE' not in line:
                     logging.info('Waiting for vendor throttling to finish: %s', line.strip())
                     time.sleep(10)
                     waiting = True
@@ -572,9 +579,28 @@ def sleep_until_temps_below(limit_temp):
     while waiting:
         waiting = False
         for line in get_thermal_info():
-            v = float(line.split('CurrentValue:')[1].strip().split(' ')[0])
+            v = float(re.search('CurrentValue: ([^ ]*)', line).group(1))
             if v > limit_temp:
                 logging.info('Waiting for device temps below %.1f: %s', limit_temp, line.strip())
+                time.sleep(5)
+                waiting = True
+                break
+
+
+def sleep_until_temps_below_thermalservice(limit_temp):
+    waiting = True
+    while waiting:
+        waiting = False
+        lines = run_adb_command('shell dumpsys thermalservice').stdout.splitlines()
+        assert 'HAL Ready: true' in lines
+        for l in lines[lines.index('Current temperatures from HAL:') + 1:]:
+            if 'Temperature{' not in l:
+                break
+            v = re.search(r'mValue=([^,}]+)', l).group(1)
+            # Note: on some Pixel devices odd component temps are also reported here
+            # but some other key ones are not (e.g. CPU ODPM controlling cpu freqs)
+            if float(v) > limit_temp:
+                logging.info('Waiting for device temps below %.1f: %s', limit_temp, l.strip())
                 time.sleep(5)
                 waiting = True
                 break
@@ -666,6 +692,10 @@ def main():
     parser.add_argument(
         '--custom-throttling-temp',
         help='Custom thermal throttling with limit set to this temperature (off by default)',
+        type=float)
+    parser.add_argument(
+        '--custom-throttling-thermalservice-temp',
+        help='Custom thermal throttling (thermalservice) with limit set to this temperature (off by default)',
         type=float)
     parser.add_argument(
         '--min-battery-level',
@@ -911,6 +941,7 @@ def run_traces(args):
                         'Deleting Android settings for forcing selection of GLES driver, ' +
                         'allowing system to load the default')
                     run_adb_command('shell settings delete global angle_debug_package')
+                    run_adb_command('shell settings delete global angle_gl_driver_all_angle')
                     run_adb_command('shell settings delete global angle_gl_driver_selection_pkgs')
                     run_adb_command(
                         'shell settings delete global angle_gl_driver_selection_values')
@@ -1034,6 +1065,10 @@ def run_traces(args):
 
                 if args.custom_throttling_temp:
                     sleep_until_temps_below(args.custom_throttling_temp)
+
+                if args.custom_throttling_thermalservice_temp:
+                    sleep_until_temps_below_thermalservice(
+                        args.custom_throttling_thermalservice_temp)
 
                 if args.min_battery_level:
                     sleep_until_battery_level(args.min_battery_level)

@@ -143,11 +143,12 @@ angle::Result CLPlatformVk::createContextFromType(cl::Context &context,
     const VkPhysicalDeviceType &vkPhysicalDeviceType =
         getRenderer()->getPhysicalDeviceProperties().deviceType;
 
-    if (deviceType.isSet(CL_DEVICE_TYPE_CPU) && vkPhysicalDeviceType != VK_PHYSICAL_DEVICE_TYPE_CPU)
+    if (deviceType.intersects(CL_DEVICE_TYPE_CPU) &&
+        vkPhysicalDeviceType != VK_PHYSICAL_DEVICE_TYPE_CPU)
     {
         ANGLE_CL_RETURN_ERROR(CL_DEVICE_NOT_FOUND);
     }
-    else if (deviceType.isSet(CL_DEVICE_TYPE_GPU))
+    else if (deviceType.intersects(CL_DEVICE_TYPE_GPU))
     {
         switch (vkPhysicalDeviceType)
         {
@@ -168,7 +169,7 @@ angle::Result CLPlatformVk::createContextFromType(cl::Context &context,
     for (const auto &platformDevice : mPlatform.getDevices())
     {
         const auto &platformDeviceInfo = platformDevice->getInfo();
-        if (platformDeviceInfo.type.isSet(deviceType))
+        if (platformDeviceInfo.type.intersects(deviceType))
         {
             devices.push_back(platformDevice);
         }

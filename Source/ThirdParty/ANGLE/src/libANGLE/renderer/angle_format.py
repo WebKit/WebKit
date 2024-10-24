@@ -32,8 +32,10 @@ def load_json(path):
         return json.loads(map_file.read(), object_pairs_hook=reject_duplicate_keys)
 
 
-def load_forward_table(path):
+def load_forward_table(path, key=None):
     pairs = load_json(path)
+    if key is not None:
+        pairs = pairs[key]
     reject_duplicate_keys(pairs)
     return {gl: angle for gl, angle in pairs}
 

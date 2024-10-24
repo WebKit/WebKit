@@ -141,7 +141,7 @@ TEST_F(ShCompileTest, TokensSplitInShaderStrings)
 }
 
 // Parsing floats in shaders can run afoul of locale settings.
-// Eg. in de_DE, `strtof("1.9")` will yield `1.0f`. (It's expecting "1,9")
+// Eg. in de_DE, `strtof("1.5")` will yield `1.0f`. (It's expecting "1.5")
 TEST_F(ShCompileTest, DecimalSepLocale)
 {
     // Locale names are platform dependent, add platform-specific names of locales to be tested here
@@ -187,7 +187,7 @@ TEST_F(ShCompileTest, DecimalSepLocale)
     const char kSource[] = R"(
     void main()
     {
-        gl_FragColor = vec4(1.9);
+        gl_FragColor = vec4(1.5);
     })";
     const char *parts[]  = {kSource};
 
@@ -212,7 +212,7 @@ TEST_F(ShCompileTest, DecimalSepLocale)
             std::locale::global(std::locale::classic());
             sh::Compile(mCompiler, parts, 1, compileOptions);
             std::string referenceOut = sh::GetObjectCode(mCompiler);
-            EXPECT_NE(referenceOut.find("1.9"), std::string::npos)
+            EXPECT_NE(referenceOut.find("1.5"), std::string::npos)
                 << "float formatted incorrectly with classic locale";
 
             sh::ClearResults(mCompiler);
@@ -220,7 +220,7 @@ TEST_F(ShCompileTest, DecimalSepLocale)
             std::locale::global(localizedLoc);
             sh::Compile(mCompiler, parts, 1, compileOptions);
             std::string localizedOut = sh::GetObjectCode(mCompiler);
-            EXPECT_NE(localizedOut.find("1.9"), std::string::npos)
+            EXPECT_NE(localizedOut.find("1.5"), std::string::npos)
                 << "float formatted incorrectly with locale (" << localizedLoc.name() << ") set";
 
             ASSERT_EQ(referenceOut, localizedOut)

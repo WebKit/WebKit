@@ -34,10 +34,6 @@ CLKernelVk::CLKernelVk(const cl::Kernel &kernel,
 {
     mShaderProgramHelper.setShader(gl::ShaderType::Compute,
                                    mKernel.getProgram().getImpl<CLProgramVk>().getShaderModule());
-    for (DescriptorSetIndex index : angle::AllEnums<DescriptorSetIndex>())
-    {
-        mDescriptorSets[index] = VK_NULL_HANDLE;
-    }
 }
 
 CLKernelVk::~CLKernelVk()
@@ -298,4 +294,12 @@ bool CLKernelVk::usesPrintf() const
            NonSemanticClspvReflectionMayUsePrintf;
 }
 
+angle::Result CLKernelVk::allocateDescriptorSet(
+    DescriptorSetIndex index,
+    angle::EnumIterator<DescriptorSetIndex> layoutIndex,
+    vk::OutsideRenderPassCommandBufferHelper *computePassCommands)
+{
+    return mProgram->allocateDescriptorSet(index, mDescriptorSetLayouts[*layoutIndex].get(),
+                                           computePassCommands, &mDescriptorSets[index]);
+}
 }  // namespace rx

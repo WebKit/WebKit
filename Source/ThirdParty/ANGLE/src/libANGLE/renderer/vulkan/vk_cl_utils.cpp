@@ -90,7 +90,7 @@ VkMemoryPropertyFlags GetMemoryPropertyFlags(cl::MemFlags memFlags)
     // TODO: http://anglebug.com/8588
     VkMemoryPropertyFlags propFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 
-    if (memFlags.isSet(CL_MEM_USE_HOST_PTR | CL_MEM_ALLOC_HOST_PTR | CL_MEM_COPY_HOST_PTR))
+    if (memFlags.intersects(CL_MEM_USE_HOST_PTR | CL_MEM_ALLOC_HOST_PTR | CL_MEM_COPY_HOST_PTR))
     {
         propFlags |= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
     }

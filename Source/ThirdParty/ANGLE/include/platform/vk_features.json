@@ -791,6 +791,13 @@
             ]
         },
         {
+            "name": "supports_shader_framebuffer_fetch_depth_stencil",
+            "category": "Features",
+            "description": [
+                "Whether the Vulkan backend supports coherent depth/stencil framebuffer fetch"
+            ]
+        },
+        {
             "name": "permanently_switch_to_framebuffer_fetch_mode",
             "category": "Features",
             "description": [
@@ -1807,10 +1814,18 @@
             "name": "verify_pipeline_cache_in_blob_cache",
             "category": "Features",
             "description": [
-                "Wether need to perform verification of stored PipelineCacheVk data chunks or not. ",
+                "Whether need to perform verification of stored PipelineCacheVk data chunks or not. ",
                 "Relevant, when blob cache does not evict old items first (no LRU) or evicts more old items than required when storing a new item."
             ],
             "issue": "https://anglebug.com/42263322"
+        },
+        {
+            "name": "descriptor_set_cache",
+            "category": "Features",
+            "description": [
+                "Whether cache the individual descriptorSet or not."
+            ],
+            "issue": "angleproject:372268711"
         }
     ]
 }

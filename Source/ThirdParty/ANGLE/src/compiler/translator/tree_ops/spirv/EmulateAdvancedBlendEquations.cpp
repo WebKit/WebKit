@@ -212,7 +212,7 @@ void Builder::createSubpassInputVar(TIntermBlock *root)
     subpassInputDecl->appendDeclarator(subpassInputSymbol);
     root->insertStatement(0, subpassInputDecl);
 
-    (*mInputAttachmentMap)[inputAttachmentIndex] = mSubpassInputVar;
+    mInputAttachmentMap->color[inputAttachmentIndex] = mSubpassInputVar;
 }
 
 TIntermTyped *Float(float f)

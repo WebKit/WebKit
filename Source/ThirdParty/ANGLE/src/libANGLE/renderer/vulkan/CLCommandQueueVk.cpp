@@ -89,7 +89,9 @@ angle::Result CLCommandQueueVk::init()
 
 CLCommandQueueVk::~CLCommandQueueVk()
 {
+    ASSERT(mComputePassCommands->empty());
     ASSERT(!mNeedPrintfHandling);
+
     if (mPrintfBuffer)
     {
         mPrintfBuffer->release();
@@ -249,8 +251,8 @@ angle::Result CLCommandQueueVk::enqueueCopyBuffer(const cl::Buffer &srcBuffer,
 
     ANGLE_TRY(processWaitlist(waitEvents));
 
-    CLMemoryVk *srcBufferVk = &srcBuffer.getImpl<CLMemoryVk>();
-    CLMemoryVk *dstBufferVk = &dstBuffer.getImpl<CLMemoryVk>();
+    CLBufferVk *srcBufferVk = &srcBuffer.getImpl<CLBufferVk>();
+    CLBufferVk *dstBufferVk = &dstBuffer.getImpl<CLBufferVk>();
 
     vk::CommandBufferAccess access;
     access.onBufferTransferRead(&srcBufferVk->getBuffer());
@@ -618,14 +620,11 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk,
                 kernelVk.getProgram()->getMetaDescriptorPool(index).bindCachedDescriptorPool(
                     mContext, kernelVk.getDescriptorSetLayoutDesc(index), 1,
                     mContext->getDescriptorSetLayoutCache(),
-                    &kernelVk.getProgram()->getDescriptorPoolPointer(index)),
+                    &kernelVk.getProgram()->getDynamicDescriptorPoolPointer(index)),
                 CL_INVALID_OPERATION);
 
             // Allocate descriptor set
-            ANGLE_TRY(kernelVk.getProgram()->allocateDescriptorSet(
-                index, kernelVk.getDescriptorSetLayouts()[*layoutIndex].get(), mComputePassCommands,
-                &kernelVk.getDescriptorSet(index)));
-
+            ANGLE_TRY(kernelVk.allocateDescriptorSet(index, layoutIndex, mComputePassCommands));
             ++layoutIndex;
         }
     }
@@ -752,7 +751,7 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk,
                 writeDescriptorSet.sType       = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
                 writeDescriptorSet.dstSet =
                     kernelVk.getDescriptorSet(DescriptorSetIndex::KernelArguments);
-                writeDescriptorSet.dstBinding  = arg.descriptorBinding;
+                writeDescriptorSet.dstBinding = arg.descriptorBinding;
                 break;
             }
             case NonSemanticClspvReflectionArgumentPodPushConstant:
@@ -820,9 +819,10 @@ angle::Result CLCommandQueueVk::processKernelResources(CLKernelVk &kernelVk,
                 updateDescriptorSetsBuilders[index].flushDescriptorSetUpdates(
                     mContext->getRenderer()->getDevice());
 
+            VkDescriptorSet descriptorSet = kernelVk.getDescriptorSet(index);
             mComputePassCommands->getCommandBuffer().bindDescriptorSets(
                 kernelVk.getPipelineLayout().get(), VK_PIPELINE_BIND_POINT_COMPUTE,
-                *descriptorSetIndex, 1, &kernelVk.getDescriptorSet(index), 0, nullptr);
+                *descriptorSetIndex, 1, &descriptorSet, 0, nullptr);
 
             ++descriptorSetIndex;
         }
@@ -932,7 +932,7 @@ angle::Result CLCommandQueueVk::createEvent(CLEventImpl::CreateFunc *createFunc)
             // Save a reference to this event
             mAssociatedEvents.push_back(cl::EventPtr{&eventVk->getFrontendObject()});
 
-            if (mCommandQueue.getProperties().isSet(CL_QUEUE_PROFILING_ENABLE))
+            if (mCommandQueue.getProperties().intersects(CL_QUEUE_PROFILING_ENABLE))
             {
                 if (IsError(mCommandQueue.getImpl<CLCommandQueueVk>().flush()))
                 {

@@ -957,7 +957,7 @@ enum TQualifier
     EvqSecondaryFragColorEXT,  // EXT_blend_func_extended
     EvqSecondaryFragDataEXT,   // EXT_blend_func_extended
 
-    EvqViewIDOVR,      // OVR_multiview
+    EvqViewIDOVR,  // OVR_multiview
 
     EvqClipDistance,  // APPLE_clip_distance / EXT_clip_cull_distance / ANGLE_clip_cull_distance
     EvqCullDistance,  // EXT_clip_cull_distance / ANGLE_clip_cull_distance
@@ -965,6 +965,9 @@ enum TQualifier
     // built-ins written by the shader_framebuffer_fetch extension(s)
     EvqLastFragColor,
     EvqLastFragData,
+    // built-ins written by the shader_framebuffer_fetch_depth_stencil extension
+    EvqLastFragDepth,
+    EvqLastFragStencil,
 
     // GLSL ES 3.0 vertex output and fragment input
 
@@ -1533,6 +1536,8 @@ inline const char *getQualifierString(TQualifier q)
     case EvqLayerIn:                   return "LayerIn";
     case EvqLastFragColor:             return "LastFragColor";
     case EvqLastFragData:              return "LastFragData";
+    case EvqLastFragDepth:             return "LastFragDepthARM";
+    case EvqLastFragStencil:           return "LastFragStencilARM";
     case EvqFragmentInOut:             return "inout";
     case EvqSmoothOut:                 return "smooth out";
     case EvqCentroidOut:               return "smooth centroid out";

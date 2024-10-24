@@ -96,6 +96,12 @@ angle::Result StreamVertexData(ContextVk *contextVk,
 {
     vk::Renderer *renderer = contextVk->getRenderer();
 
+    // If the source pointer is null, it should not be accessed.
+    if (srcData == nullptr)
+    {
+        return angle::Result::Continue;
+    }
+
     uint8_t *dst = dstBufferHelper->getMappedMemory() + dstOffset;
 
     if (vertexLoadFunction != nullptr)
@@ -1424,6 +1430,10 @@ angle::Result VertexArrayVk::handleLineLoop(ContextVk *contextVk,
 
         mLineLoopBufferFirstIndex = firstVertex;
         mLineLoopBufferLastIndex  = lastVertex;
+    }
+    else
+    {
+        *indexBufferOut = mLineLoopHelper.getCurrentIndexBuffer();
     }
     *indexCountOut = vertexOrIndexCount + 1;
 

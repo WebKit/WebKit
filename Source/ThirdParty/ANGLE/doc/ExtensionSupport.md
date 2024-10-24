@@ -137,6 +137,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_EXT_separate_shader_objects](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_separate_shader_objects.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_ARM_shader_framebuffer_fetch](https://khronos.org/registry/OpenGL/extensions/ARM/ARM_shader_framebuffer_fetch.txt) |  |  |  |  | &#x2714; |  | &#x2714; |
 | [GL_EXT_shader_framebuffer_fetch](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_framebuffer_fetch.txt) |  |  |  |  | &#x2714; |  | &#x2714; |
+| [GL_ARM_shader_framebuffer_fetch_depth_stencil](https://khronos.org/registry/OpenGL/extensions/ARM/ARM_shader_framebuffer_fetch_depth_stencil.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_shader_framebuffer_fetch_non_coherent](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_framebuffer_fetch_non_coherent.txt) |  |  |  |  | &#x2714; |  |  |
 | [GL_OES_shader_image_atomic](https://khronos.org/registry/OpenGL/extensions/OES/OES_shader_image_atomic.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_shader_io_blocks](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_shader_io_blocks.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
@@ -186,6 +187,7 @@ using data from registry_xml.py and gl.xml.
 | [GL_EXT_texture_mirror_clamp_to_edge](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_mirror_clamp_to_edge.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_texture_norm16](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_norm16.txt) |  | &#x2714; |  | &#x2714; |  |  |  |
 | [GL_OES_texture_npot](https://khronos.org/registry/OpenGL/extensions/OES/OES_texture_npot.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
+| [GL_EXT_texture_query_lod](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_query_lod.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_texture_rg](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_rg.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |
 | [GL_EXT_texture_shadow_lod](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_shadow_lod.txt) |  |  |  |  |  |  |  |
 | [GL_EXT_texture_sRGB_decode](https://khronos.org/registry/OpenGL/extensions/EXT/EXT_texture_sRGB_decode.txt) | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; | &#x2714; |

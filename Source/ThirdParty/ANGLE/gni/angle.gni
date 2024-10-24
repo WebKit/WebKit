@@ -173,7 +173,7 @@ declare_args() {
   angle_enable_gl =
       (ozone_platform_gbm || ozone_platform_wayland || !is_linux ||
        ((angle_use_x11 && !is_chromeos) || angle_use_wayland || is_castos)) &&
-      !is_fuchsia && !angle_is_winuwp && !is_ggp && !is_win_arm64
+      !is_fuchsia && !angle_is_winuwp && !is_ggp && !is_win_arm64 && !is_ios
 
   angle_enable_vulkan =
       angle_has_build &&
@@ -278,11 +278,6 @@ declare_args() {
   # Disable performance counter output by default
   angle_enable_perf_counter_output = false
 
-  # We should use EAGL (ES) on iOS except on Mac Catalyst on Intel CPUs, which uses CGL (desktop GL).
-  angle_enable_eagl = angle_enable_gl && is_ios &&
-                      !(target_environment == "catalyst" &&
-                        (target_cpu == "x86" || target_cpu == "x64"))
-
   # Directory where to find wayland source files
   angle_wayland_dir = "$angle_root/third_party/wayland"
 
@@ -304,8 +299,7 @@ declare_args() {
 }
 
 declare_args() {
-  # TODO(jdarpinian): Support enabling CGL and EAGL at the same time using the soft linking code. Also support disabling both for Metal-only builds.
-  angle_enable_cgl = angle_enable_gl && !angle_enable_eagl && is_apple
+  angle_enable_cgl = angle_enable_gl && is_mac
 
   angle_enable_apple_translator_workarounds =
       is_apple && (angle_enable_glsl || use_fuzzing_engine)

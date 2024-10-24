@@ -58,7 +58,7 @@ struct SkippedSyncvalMessage
     const char *messageId;
     const char *messageContents1;
     const char *messageContents2                      = "";
-    bool isDueToNonConformantCoherentFramebufferFetch = false;
+    bool isDueToNonConformantCoherentColorFramebufferFetch = false;
 };
 
 class ImageMemorySuballocator : angle::NonCopyable
@@ -261,6 +261,7 @@ class Renderer : angle::NonCopyable
     const angle::FeaturesVk &getFeatures() const { return mFeatures; }
     uint32_t getMaxVertexAttribDivisor() const { return mMaxVertexAttribDivisor; }
     VkDeviceSize getMaxVertexAttribStride() const { return mMaxVertexAttribStride; }
+    uint32_t getMaxInputAttachmentCount() const { return mMaxInputAttachmentCount; }
 
     uint32_t getDefaultUniformBufferSize() const { return mDefaultUniformBufferSize; }
 
@@ -370,8 +371,8 @@ class Renderer : angle::NonCopyable
         return mSkippedSyncvalMessages;
     }
 
-    void onFramebufferFetchUsed();
-    bool isFramebufferFetchUsed() const { return mIsFramebufferFetchUsed; }
+    void onColorFramebufferFetchUse() { mIsColorFramebufferFetchUsed = true; }
+    bool isColorFramebufferFetchUsed() const { return mIsColorFramebufferFetchUsed; }
 
     uint64_t getMaxFenceWaitTimeNs() const;
 
@@ -978,9 +979,10 @@ class Renderer : angle::NonCopyable
     angle::PackedEnumMap<gl::ShadingRate, VkSampleCountFlags>
         mSupportedFragmentShadingRateSampleCounts;
     std::vector<VkQueueFamilyProperties> mQueueFamilyProperties;
-    uint32_t mMaxVertexAttribDivisor;
     uint32_t mCurrentQueueFamilyIndex;
+    uint32_t mMaxVertexAttribDivisor;
     VkDeviceSize mMaxVertexAttribStride;
+    mutable uint32_t mMaxInputAttachmentCount;
     uint32_t mDefaultUniformBufferSize;
     VkDevice mDevice;
     VkDeviceSize mMaxCopyBytesUsingCPUWhenPreservingBufferData;
@@ -1046,7 +1048,7 @@ class Renderer : angle::NonCopyable
 
     // Whether framebuffer fetch has been used, for the purposes of more accurate syncval error
     // filtering.
-    bool mIsFramebufferFetchUsed;
+    bool mIsColorFramebufferFetchUsed;
 
     // How close to VkPhysicalDeviceLimits::maxMemoryAllocationCount we allow ourselves to get
     static constexpr double kPercentMaxMemoryAllocationCount = 0.3;

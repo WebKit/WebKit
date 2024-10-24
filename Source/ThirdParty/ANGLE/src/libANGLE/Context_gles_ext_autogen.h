@@ -76,6 +76,7 @@
     /* GL_APPLE_clip_distance */                                                                   \
     /* GL_ARB_sync */                                                                              \
     /* GL_ARM_shader_framebuffer_fetch */                                                          \
+    /* GL_ARM_shader_framebuffer_fetch_depth_stencil */                                            \
     /* GL_EXT_EGL_image_array */                                                                   \
     /* GL_EXT_EGL_image_external_wrap_modes */                                                     \
     /* GL_EXT_EGL_image_storage */                                                                 \
@@ -241,6 +242,7 @@
     /* GL_EXT_texture_format_sRGB_override */                                                      \
     /* GL_EXT_texture_mirror_clamp_to_edge */                                                      \
     /* GL_EXT_texture_norm16 */                                                                    \
+    /* GL_EXT_texture_query_lod */                                                                 \
     /* GL_EXT_texture_rg */                                                                        \
     /* GL_EXT_texture_sRGB_R8 */                                                                   \
     /* GL_EXT_texture_sRGB_RG8 */                                                                  \

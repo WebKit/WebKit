@@ -750,6 +750,8 @@ bool IsBuiltinFragmentInputVariable(TQualifier qualifier)
         case EvqHelperInvocation:
         case EvqLastFragData:
         case EvqLastFragColor:
+        case EvqLastFragDepth:
+        case EvqLastFragStencil:
             return true;
         default:
             break;
@@ -772,6 +774,11 @@ bool IsFragmentOutput(TQualifier qualifier)
         default:
             return false;
     }
+}
+
+bool IsOutputNULL(ShShaderOutput output)
+{
+    return output == SH_NULL_OUTPUT;
 }
 
 bool IsOutputESSL(ShShaderOutput output)
@@ -910,8 +917,9 @@ bool IsPrecisionApplicableToType(TBasicType type)
 bool IsRedeclarableBuiltIn(const ImmutableString &name)
 {
     return name == "gl_ClipDistance" || name == "gl_CullDistance" || name == "gl_FragDepth" ||
-           name == "gl_LastFragData" || name == "gl_LastFragColorARM" || name == "gl_PerVertex" ||
-           name == "gl_Position" || name == "gl_PointSize";
+           name == "gl_LastFragData" || name == "gl_LastFragColorARM" ||
+           name == "gl_LastFragDepthARM" || name == "gl_LastFragStencilARM" ||
+           name == "gl_PerVertex" || name == "gl_Position" || name == "gl_PointSize";
 }
 
 size_t FindFieldIndex(const TFieldList &fieldList, const char *fieldName)

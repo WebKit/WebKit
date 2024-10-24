@@ -129,7 +129,7 @@ def main():
     # Font sizes are chosen such that the sizes form a mip chain.
     font_defs = [('large', 29), ('small', 14)]
     chars = ' !"#$%&\'()*+,-./0123456789:;<=>?' + \
-            '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_' + \
+            '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_' + \
             '`abcdefghijklmnopqrstuvwxyz{|}~'
     char_count = len(chars)
 

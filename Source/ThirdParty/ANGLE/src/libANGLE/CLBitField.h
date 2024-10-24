@@ -32,22 +32,24 @@ class BitField
 
     cl_bitfield get() const { return mBits; }
 
-    bool isSet(cl_bitfield bits) const { return (mBits & bits) != 0u; }
-    bool isSet(const BitField &other) const { return (mBits & other.mBits) != 0u; }
-    bool isNotSet(cl_bitfield bits) const { return (mBits & bits) == 0u; }
-    bool isNotSet(const BitField &other) const { return (mBits & other.mBits) == 0u; }
+    bool intersects(cl_bitfield bits) const { return (mBits & bits) != 0u; }
+    bool intersects(const BitField &other) const { return (mBits & other.mBits) != 0u; }
+    bool excludes(cl_bitfield bits) const { return !intersects(bits); }
+    bool excludes(const BitField &other) const { return !intersects(mBits); }
 
     bool hasOtherBitsThan(cl_bitfield bits) const { return (mBits & ~bits) != 0u; }
     bool hasOtherBitsThan(const BitField &other) const { return (mBits & ~other.mBits) != 0u; }
 
     bool areMutuallyExclusive(cl_bitfield bits1, cl_bitfield bits2) const
     {
-        return (isSet(bits1) ? 1 : 0) + (isSet(bits2) ? 1 : 0) <= 1;
+        return (intersects(bits1) ? 1 : 0) + (intersects(bits2) ? 1 : 0) <= 1;
     }
 
     bool areMutuallyExclusive(cl_bitfield bits1, cl_bitfield bits2, cl_bitfield bits3) const
     {
-        return (isSet(bits1) ? 1 : 0) + (isSet(bits2) ? 1 : 0) + (isSet(bits3) ? 1 : 0) <= 1;
+        return (intersects(bits1) ? 1 : 0) + (intersects(bits2) ? 1 : 0) +
+                   (intersects(bits3) ? 1 : 0) <=
+               1;
     }
 
     BitField mask(cl_bitfield bits) const { return BitField(mBits & bits); }

@@ -34,9 +34,11 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
                                       const gl::ProgramVaryingPacking &varyingPacking)
 {
     ContextVk *contextVk                      = vk::GetImpl(glContext);
+    vk::Renderer *renderer                    = contextVk->getRenderer();
     const gl::ProgramExecutable &glExecutable = mState.getExecutable();
     ProgramExecutableVk *executableVk         = vk::GetImpl(&glExecutable);
-    SpvSourceOptions options                  = SpvCreateSourceOptions(contextVk->getFeatures());
+    SpvSourceOptions options =
+        SpvCreateSourceOptions(contextVk->getFeatures(), renderer->getMaxInputAttachmentCount());
     SpvProgramInterfaceInfo spvProgramInterfaceInfo = {};
 
     reset(contextVk);
@@ -105,8 +107,7 @@ angle::Result ProgramPipelineVk::link(const gl::Context *glContext,
 
     if (contextVk->getFeatures().warmUpPipelineCacheAtLink.enabled)
     {
-        ANGLE_TRY(executableVk->warmUpPipelineCache(contextVk->getRenderer(),
-                                                    contextVk->pipelineRobustness(),
+        ANGLE_TRY(executableVk->warmUpPipelineCache(renderer, contextVk->pipelineRobustness(),
                                                     contextVk->pipelineProtectedAccess()));
     }
 

@@ -617,6 +617,20 @@ GROUP BEGIN Texture {"queryFunction": true}
         GROUP END Comp
       GROUP END Offsets
   GROUP END Gather
+
+  GROUP BEGIN QueryLod {"shader_type": "FRAGMENT"}
+    DEFAULT METADATA {"essl_level": "ESSL3_BUILTINS", "essl_extension": "EXT_texture_query_lod"}
+      vec2 textureQueryLOD(gsampler2D, vec2);
+      vec2 textureQueryLOD(gsampler3D, vec3);
+      vec2 textureQueryLOD(gsamplerCube, vec3);
+      vec2 textureQueryLOD(gsampler2DArray, vec2);
+      vec2 textureQueryLOD(sampler2DShadow, vec2);
+      vec2 textureQueryLOD(samplerCubeShadow, vec3);
+      vec2 textureQueryLOD(sampler2DArrayShadow, vec2);
+    DEFAULT METADATA {"essl_level": "ESSL3_1_BUILTINS", "essl_extension": "EXT_texture_query_lod"}
+      vec2 textureQueryLOD(gsamplerCubeArray, vec3);
+      vec2 textureQueryLOD(samplerCubeArrayShadow, vec3);
+  GROUP END QueryLod
 GROUP END Texture
 
 GROUP BEGIN EXT_YUV_target

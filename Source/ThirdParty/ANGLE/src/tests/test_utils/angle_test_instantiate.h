@@ -133,10 +133,10 @@ struct CombinedPrintToStringParamName
 #    define ANGLE_TEST_PLATFORMS_ES32_SYSTEM_EGL ES32_EGL(),
 #endif
 
-#define ANGLE_ALL_TEST_PLATFORMS_ES1                                                   \
-    ANGLE_TEST_PLATFORMS_ES1_SYSTEM_EGL                                                \
-    ES1_D3D11(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN(), ES1_VULKAN_SWIFTSHADER(), \
-        ES1_VULKAN().enable(Feature::AsyncCommandQueue),                               \
+#define ANGLE_ALL_TEST_PLATFORMS_ES1                                               \
+    ANGLE_TEST_PLATFORMS_ES1_SYSTEM_EGL                                            \
+    ES1_D3D11(), ES1_METAL(), ES1_OPENGL(), ES1_OPENGLES(), ES1_VULKAN(),          \
+        ES1_VULKAN_SWIFTSHADER(), ES1_VULKAN().enable(Feature::AsyncCommandQueue), \
         ES1_VULKAN().enable(Feature::EnableParallelCompileAndLink)
 
 #define ANGLE_ALL_TEST_PLATFORMS_ES2                                                               \

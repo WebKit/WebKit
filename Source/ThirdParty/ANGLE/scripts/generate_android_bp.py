@@ -32,7 +32,7 @@ BLUEPRINT_COMMENT_PROPERTY = '__android_bp_comment'
 
 CURRENT_SDK_VERSION = 'current'
 MIN_SDK_VERSION = '28'
-TARGET_SDK_VERSION = '34'
+TARGET_SDK_VERSION = '35'
 STL = 'libc++_static'
 
 ABI_ARM = 'arm'

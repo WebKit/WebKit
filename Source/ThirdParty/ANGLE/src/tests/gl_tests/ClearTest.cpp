@@ -1137,9 +1137,6 @@ TEST_P(ClearTestES3, MaskedClearHeterogeneousAttachments)
     // http://anglebug.com/40096714
     ANGLE_SKIP_TEST_IF(IsWindows() && IsIntel() && IsVulkan());
 
-    // TODO(anglebug.com/42264029)
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
-
     constexpr uint32_t kSize                              = 16;
     constexpr uint32_t kAttachmentCount                   = 3;
     constexpr float kDepthClearValue                      = 0.256f;
@@ -1261,9 +1258,6 @@ TEST_P(ClearTestES3, ScissoredClearHeterogeneousAttachments)
 
     // http://anglebug.com/42263790
     ANGLE_SKIP_TEST_IF(IsWindows7() && IsD3D11() && IsNVIDIA());
-
-    // TODO(anglebug.com/42264029)
-    ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
 
     constexpr uint32_t kSize                              = 16;
     constexpr uint32_t kHalfSize                          = kSize / 2;

@@ -23,7 +23,7 @@ namespace sh
 using Resources = ShBuiltInResources;
 using TableBase = TSymbolTableBase;
 
-const int TSymbolTable::kLastBuiltInId = 2534;
+const int TSymbolTable::kLastBuiltInId = 2555;
 
 namespace BuiltInName
 {
@@ -122,6 +122,8 @@ constexpr const ImmutableString gl_InvocationID("gl_InvocationID");
 constexpr const ImmutableString gl_LastFragColor("gl_LastFragColor");
 constexpr const ImmutableString gl_LastFragColorARM("gl_LastFragColorARM");
 constexpr const ImmutableString gl_LastFragData("gl_LastFragData");
+constexpr const ImmutableString gl_LastFragDepthARM("gl_LastFragDepthARM");
+constexpr const ImmutableString gl_LastFragStencilARM("gl_LastFragStencilARM");
 constexpr const ImmutableString gl_Layer("gl_Layer");
 constexpr const ImmutableString gl_LocalInvocationID("gl_LocalInvocationID");
 constexpr const ImmutableString gl_LocalInvocationIndex("gl_LocalInvocationIndex");
@@ -364,6 +366,7 @@ constexpr const ImmutableString textureProjGradOffset("textureProjGradOffset");
 constexpr const ImmutableString textureProjLod("textureProjLod");
 constexpr const ImmutableString textureProjLodOffset("textureProjLodOffset");
 constexpr const ImmutableString textureProjOffset("textureProjOffset");
+constexpr const ImmutableString textureQueryLOD("textureQueryLOD");
 constexpr const ImmutableString textureSize("textureSize");
 constexpr const ImmutableString textureSizeExt("textureSize");
 constexpr const ImmutableString textureVideoWEBGL("textureVideoWEBGL");
@@ -506,6 +509,18 @@ constexpr const TVariable kgl_LastFragColorARM(
     SymbolType::BuiltIn,
     std::array<TExtension, 1u>{{TExtension::ARM_shader_framebuffer_fetch}},
     StaticType::Get<EbtFloat, EbpMedium, EvqLastFragColor, 4, 1>());
+constexpr const TVariable kgl_LastFragDepthARM(
+    BuiltInId::gl_LastFragDepthARM,
+    BuiltInName::gl_LastFragDepthARM,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::ARM_shader_framebuffer_fetch_depth_stencil}},
+    StaticType::Get<EbtFloat, EbpHigh, EvqLastFragDepth, 1, 1>());
+constexpr const TVariable kgl_LastFragStencilARM(
+    BuiltInId::gl_LastFragStencilARM,
+    BuiltInName::gl_LastFragStencilARM,
+    SymbolType::BuiltIn,
+    std::array<TExtension, 1u>{{TExtension::ARM_shader_framebuffer_fetch_depth_stencil}},
+    StaticType::Get<EbtInt, EbpLow, EvqLastFragStencil, 1, 1>());
 constexpr const TVariable kgl_Layer(BuiltInId::gl_Layer,
                                     BuiltInName::gl_Layer,
                                     SymbolType::BuiltIn,
@@ -1455,6 +1470,16 @@ const TVariable *gl_LastFragColorARM()
     return &kgl_LastFragColorARM;
 }
 
+const TVariable *gl_LastFragDepthARM()
+{
+    return &kgl_LastFragDepthARM;
+}
+
+const TVariable *gl_LastFragStencilARM()
+{
+    return &kgl_LastFragStencilARM;
+}
+
 const TVariable *gl_Layer()
 {
     return &kgl_Layer;
@@ -1692,7 +1717,7 @@ constexpr const TVariable *p00E00E_o_00E_o_00E[4] = {
     &BuiltInVariable::kpt_o_00E};
 constexpr const TVariable *p00F00F00F[3]    = {&BuiltInVariable::kpt00F, &BuiltInVariable::kpt00F,
                                                &BuiltInVariable::kpt00F};
-constexpr const TVariable *p00G[1]             = {&BuiltInVariable::kpt00G};
+constexpr const TVariable *p00G[1]          = {&BuiltInVariable::kpt00G};
 constexpr const TVariable *p00I00D[2]       = {&BuiltInVariable::kpt00I, &BuiltInVariable::kpt00D};
 constexpr const TVariable *p00I10B00B10D[4] = {&BuiltInVariable::kpt00I, &BuiltInVariable::kpt10B,
                                                &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10D};
@@ -1749,6 +1774,7 @@ constexpr const TVariable *p00K20B00D[3]    = {&BuiltInVariable::kpt00K, &BuiltI
 constexpr const TVariable *p00K20B20B20B[4] = {&BuiltInVariable::kpt00K, &BuiltInVariable::kpt20B,
                                                &BuiltInVariable::kpt20B, &BuiltInVariable::kpt20B};
 constexpr const TVariable *p00L00D[2]       = {&BuiltInVariable::kpt00L, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p00L10B[2]       = {&BuiltInVariable::kpt00L, &BuiltInVariable::kpt10B};
 constexpr const TVariable *p00L20B00B10D[4] = {&BuiltInVariable::kpt00L, &BuiltInVariable::kpt20B,
                                                &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10D};
 constexpr const TVariable *p00L20B00D[3]    = {&BuiltInVariable::kpt00L, &BuiltInVariable::kpt20B,
@@ -1846,6 +1872,7 @@ constexpr const TVariable *p00T20B00D[3]    = {&BuiltInVariable::kpt00T, &BuiltI
 constexpr const TVariable *p00T20B20B20B[4] = {&BuiltInVariable::kpt00T, &BuiltInVariable::kpt20B,
                                                &BuiltInVariable::kpt20B, &BuiltInVariable::kpt20B};
 constexpr const TVariable *p00U00D[2]       = {&BuiltInVariable::kpt00U, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p00U10B[2]       = {&BuiltInVariable::kpt00U, &BuiltInVariable::kpt10B};
 constexpr const TVariable *p00U20B00B10D[4] = {&BuiltInVariable::kpt00U, &BuiltInVariable::kpt20B,
                                                &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10D};
 constexpr const TVariable *p00U20B00D[3]    = {&BuiltInVariable::kpt00U, &BuiltInVariable::kpt20B,
@@ -1922,6 +1949,7 @@ constexpr const TVariable *p00Z20B00D[3]    = {&BuiltInVariable::kpt00Z, &BuiltI
 constexpr const TVariable *p00Z20B20B20B[4] = {&BuiltInVariable::kpt00Z, &BuiltInVariable::kpt20B,
                                                &BuiltInVariable::kpt20B, &BuiltInVariable::kpt20B};
 constexpr const TVariable *p00a00D[2]       = {&BuiltInVariable::kpt00a, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p00a10B[2]       = {&BuiltInVariable::kpt00a, &BuiltInVariable::kpt10B};
 constexpr const TVariable *p00a20B00B10D[4] = {&BuiltInVariable::kpt00a, &BuiltInVariable::kpt20B,
                                                &BuiltInVariable::kpt00B, &BuiltInVariable::kpt10D};
 constexpr const TVariable *p00a20B00D[3]    = {&BuiltInVariable::kpt00a, &BuiltInVariable::kpt20B,
@@ -1968,6 +1996,7 @@ constexpr const TVariable *p00e30B00B[3]    = {&BuiltInVariable::kpt00e, &BuiltI
 constexpr const TVariable *p00e30B20B20B[4] = {&BuiltInVariable::kpt00e, &BuiltInVariable::kpt30B,
                                                &BuiltInVariable::kpt20B, &BuiltInVariable::kpt20B};
 constexpr const TVariable *p00f00D[2]       = {&BuiltInVariable::kpt00f, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p00f10B[2]       = {&BuiltInVariable::kpt00f, &BuiltInVariable::kpt10B};
 constexpr const TVariable *p00f20B00B10Dx4[4] = {&BuiltInVariable::kpt00f, &BuiltInVariable::kpt20B,
                                                  &BuiltInVariable::kpt00B,
                                                  &BuiltInVariable::kpt10Dx4};
@@ -1980,6 +2009,7 @@ constexpr const TVariable *p00f30B10D00B[4] = {&BuiltInVariable::kpt00f, &BuiltI
                                                &BuiltInVariable::kpt10D, &BuiltInVariable::kpt00B};
 constexpr const TVariable *p00g00D[2]       = {&BuiltInVariable::kpt00g, &BuiltInVariable::kpt00D};
 constexpr const TVariable *p00h00D[2]       = {&BuiltInVariable::kpt00h, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p00h20B[2]       = {&BuiltInVariable::kpt00h, &BuiltInVariable::kpt20B};
 constexpr const TVariable *p00h30B00B[3]    = {&BuiltInVariable::kpt00h, &BuiltInVariable::kpt30B,
                                                &BuiltInVariable::kpt00B};
 constexpr const TVariable *p00h30B00D[3]    = {&BuiltInVariable::kpt00h, &BuiltInVariable::kpt30B,
@@ -1987,10 +2017,12 @@ constexpr const TVariable *p00h30B00D[3]    = {&BuiltInVariable::kpt00h, &BuiltI
 constexpr const TVariable *p00h30B20B20B[4] = {&BuiltInVariable::kpt00h, &BuiltInVariable::kpt30B,
                                                &BuiltInVariable::kpt20B, &BuiltInVariable::kpt20B};
 constexpr const TVariable *p00i00D[2]       = {&BuiltInVariable::kpt00i, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p00i20B[2]       = {&BuiltInVariable::kpt00i, &BuiltInVariable::kpt20B};
 constexpr const TVariable *p00i30B00B00B[4] = {&BuiltInVariable::kpt00i, &BuiltInVariable::kpt30B,
                                                &BuiltInVariable::kpt00B, &BuiltInVariable::kpt00B};
 constexpr const TVariable *p00l00D[2]       = {&BuiltInVariable::kpt00l, &BuiltInVariable::kpt00D};
 constexpr const TVariable *p00m00D[2]       = {&BuiltInVariable::kpt00m, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p00m20B[2]       = {&BuiltInVariable::kpt00m, &BuiltInVariable::kpt20B};
 constexpr const TVariable *p00m30B00B[3]    = {&BuiltInVariable::kpt00m, &BuiltInVariable::kpt30B,
                                                &BuiltInVariable::kpt00B};
 constexpr const TVariable *p00m30B00D[3]    = {&BuiltInVariable::kpt00m, &BuiltInVariable::kpt30B,
@@ -1999,6 +2031,7 @@ constexpr const TVariable *p00m30B20B20B[4] = {&BuiltInVariable::kpt00m, &BuiltI
                                                &BuiltInVariable::kpt20B, &BuiltInVariable::kpt20B};
 constexpr const TVariable *p00o00D[2]       = {&BuiltInVariable::kpt00o, &BuiltInVariable::kpt00D};
 constexpr const TVariable *p00p00D[2]       = {&BuiltInVariable::kpt00p, &BuiltInVariable::kpt00D};
+constexpr const TVariable *p00p20B[2]       = {&BuiltInVariable::kpt00p, &BuiltInVariable::kpt20B};
 constexpr const TVariable *p00p30B00B[3]    = {&BuiltInVariable::kpt00p, &BuiltInVariable::kpt30B,
                                                &BuiltInVariable::kpt00B};
 constexpr const TVariable *p00p30B00D[3]    = {&BuiltInVariable::kpt00p, &BuiltInVariable::kpt30B,
@@ -10237,6 +10270,177 @@ constexpr const TFunction textureGatherOffsetsExt_00a20B10Dx400D(
     4,
     StaticType::Get<EbtUInt, EbpUndefined, EvqGlobal, 4, 1>(),
     EOpTextureGatherOffsetsComp,
+    true);
+constexpr const TFunction textureQueryLOD_00I10B(
+    BuiltInId::textureQueryLOD_Sampler2D1_Float2,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00I10B00B10D,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00R10B(
+    BuiltInId::textureQueryLOD_ISampler2D1_Float2,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00R10B00B10D,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00X10B(
+    BuiltInId::textureQueryLOD_USampler2D1_Float2,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00X10B00B10D,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00J20B(
+    BuiltInId::textureQueryLOD_Sampler3D1_Float3,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00J20B00B20D,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00S20B(
+    BuiltInId::textureQueryLOD_ISampler3D1_Float3,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00S20B00B20D,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00Y20B(
+    BuiltInId::textureQueryLOD_USampler3D1_Float3,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00Y20B00B20D,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00K20B(
+    BuiltInId::textureQueryLOD_SamplerCube1_Float3,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00K20B00B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00T20B(
+    BuiltInId::textureQueryLOD_ISamplerCube1_Float3,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00T20B00B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00Z20B(
+    BuiltInId::textureQueryLOD_USamplerCube1_Float3,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00Z20B00B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00L10B(
+    BuiltInId::textureQueryLOD_Sampler2DArray1_Float2,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00L10B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00U10B(
+    BuiltInId::textureQueryLOD_ISampler2DArray1_Float2,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00U10B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00a10B(
+    BuiltInId::textureQueryLOD_USampler2DArray1_Float2,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00a10B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00d10B(
+    BuiltInId::textureQueryLOD_Sampler2DShadow1_Float2,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00d10B00B10Dx4,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00e20B(
+    BuiltInId::textureQueryLOD_SamplerCubeShadow1_Float3,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00e20B00B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00f10B(
+    BuiltInId::textureQueryLOD_Sampler2DArrayShadow1_Float2,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00f10B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00h20B(
+    BuiltInId::textureQueryLOD_SamplerCubeArray1_Float3,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00h20B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00m20B(
+    BuiltInId::textureQueryLOD_ISamplerCubeArray1_Float3,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00m20B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00p20B(
+    BuiltInId::textureQueryLOD_USamplerCubeArray1_Float3,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00p20B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
+    true);
+constexpr const TFunction textureQueryLOD_00i20B(
+    BuiltInId::textureQueryLOD_SamplerCubeArrayShadow1_Float3,
+    BuiltInName::textureQueryLOD,
+    std::array<TExtension, 1u>{{TExtension::EXT_texture_query_lod}},
+    BuiltInParameters::p00i20B,
+    2,
+    StaticType::Get<EbtFloat, EbpUndefined, EvqGlobal, 2, 1>(),
+    EOpTextureQueryLOD,
     true);
 constexpr const TFunction rgb_2_yuv_20B00H(
     BuiltInId::rgb_2_yuv_Float3_YuvCscStandardEXT1,
@@ -22929,6 +23133,25 @@ constexpr SymbolRule kRules[] = {
         &textureGatherOffsetsExt_00a20B10Dx400D),
     Rule::Get<310, Shader::ALL, EXT_INDEX(OES_gpu_shader5)>(
         &textureGatherOffsetsExt_00a20B10Dx400D),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00I10B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00R10B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00X10B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00J20B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00S20B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00Y20B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00K20B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00T20B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00Z20B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00L10B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00U10B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00a10B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00d10B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00e20B),
+    Rule::Get<300, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00f10B),
+    Rule::Get<310, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00h20B),
+    Rule::Get<310, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00m20B),
+    Rule::Get<310, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00p20B),
+    Rule::Get<310, Shader::FRAGMENT, EXT_INDEX(EXT_texture_query_lod)>(&textureQueryLOD_00i20B),
     Rule::Get<300, Shader::ALL, EXT_INDEX(EXT_YUV_target)>(&rgb_2_yuv_20B00H),
     Rule::Get<300, Shader::ALL, EXT_INDEX(EXT_YUV_target)>(&yuv_2_rgb_20B00H),
     Rule::Get<300, Shader::FRAGMENT, 0>(&dFdx_00B),
@@ -24708,6 +24931,10 @@ constexpr SymbolRule kRules[] = {
         &BuiltInVariable::kgl_LastFragColor),
     Rule::Get<0, Shader::FRAGMENT, EXT_INDEX(ARM_shader_framebuffer_fetch)>(
         &BuiltInVariable::kgl_LastFragColorARM),
+    Rule::Get<0, Shader::FRAGMENT, EXT_INDEX(ARM_shader_framebuffer_fetch_depth_stencil)>(
+        &BuiltInVariable::kgl_LastFragDepthARM),
+    Rule::Get<0, Shader::FRAGMENT, EXT_INDEX(ARM_shader_framebuffer_fetch_depth_stencil)>(
+        &BuiltInVariable::kgl_LastFragStencilARM),
     Rule::Get<320, Shader::FRAGMENT, 0>(&BuiltInVariable::kgl_PrimitiveIDES3_2),
     Rule::Get<320, Shader::GEOMETRY_EXT, 0>(&BuiltInVariable::kgl_PrimitiveIDGSES3_2),
     Rule::Get<320, Shader::TESS_CONTROL_EXT, 0>(&BuiltInVariable::kgl_PrimitiveIDTCSES3_2),
@@ -25745,6 +25972,25 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "textureGatherOffsets(00L20B10Dx400D",
                                          "textureGatherOffsets(00U20B10Dx400D",
                                          "textureGatherOffsets(00a20B10Dx400D",
+                                         "textureQueryLOD(00I10B",
+                                         "textureQueryLOD(00R10B",
+                                         "textureQueryLOD(00X10B",
+                                         "textureQueryLOD(00J20B",
+                                         "textureQueryLOD(00S20B",
+                                         "textureQueryLOD(00Y20B",
+                                         "textureQueryLOD(00K20B",
+                                         "textureQueryLOD(00T20B",
+                                         "textureQueryLOD(00Z20B",
+                                         "textureQueryLOD(00L10B",
+                                         "textureQueryLOD(00U10B",
+                                         "textureQueryLOD(00a10B",
+                                         "textureQueryLOD(00d10B",
+                                         "textureQueryLOD(00e20B",
+                                         "textureQueryLOD(00f10B",
+                                         "textureQueryLOD(00h20B",
+                                         "textureQueryLOD(00m20B",
+                                         "textureQueryLOD(00p20B",
+                                         "textureQueryLOD(00i20B",
                                          "rgb_2_yuv(20B00H",
                                          "yuv_2_rgb(20B00H",
                                          "dFdx(00B",
@@ -26521,6 +26767,8 @@ constexpr const char *kMangledNames[] = {"radians(00B",
                                          "gl_LastFragData",
                                          "gl_LastFragColor",
                                          "gl_LastFragColorARM",
+                                         "gl_LastFragDepthARM",
+                                         "gl_LastFragStencilARM",
                                          "gl_PrimitiveID",
                                          "gl_Layer",
                                          "gl_SampleID",
@@ -27410,820 +27658,841 @@ constexpr uint16_t kMangledOffsets[] = {
     950,   // textureGatherOffsets_00L20B10Dx400D
     953,   // textureGatherOffsets_00U20B10Dx400D
     956,   // textureGatherOffsets_00a20B10Dx400D
-    959,   // rgb_2_yuv_20B00H
-    960,   // yuv_2_rgb_20B00H
-    961,   // dFdx_00B
-    963,   // dFdx_10B
-    965,   // dFdx_20B
-    967,   // dFdx_30B
-    969,   // dFdy_00B
-    971,   // dFdy_10B
-    973,   // dFdy_20B
-    975,   // dFdy_30B
-    977,   // fwidth_00B
-    979,   // fwidth_10B
-    981,   // fwidth_20B
-    983,   // fwidth_30B
-    985,   // interpolateAtCentroid_00B
-    987,   // interpolateAtCentroid_10B
-    989,   // interpolateAtCentroid_20B
-    991,   // interpolateAtCentroid_30B
-    993,   // interpolateAtSample_00B00D
-    995,   // interpolateAtSample_10B00D
-    997,   // interpolateAtSample_20B00D
-    999,   // interpolateAtSample_30B00D
-    1001,  // interpolateAtOffset_00B10B
-    1003,  // interpolateAtOffset_10B10B
-    1005,  // interpolateAtOffset_20B10B
-    1007,  // interpolateAtOffset_30B10B
-    1009,  // atomicCounter_00G
-    1010,  // atomicCounterIncrement_00G
-    1011,  // atomicCounterDecrement_00G
-    1012,  // atomicAdd_00E00E
-    1013,  // atomicAdd_00D00D
-    1014,  // atomicMin_00E00E
-    1015,  // atomicMin_00D00D
-    1016,  // atomicMax_00E00E
-    1017,  // atomicMax_00D00D
-    1018,  // atomicAnd_00E00E
-    1019,  // atomicAnd_00D00D
-    1020,  // atomicOr_00E00E
-    1021,  // atomicOr_00D00D
-    1022,  // atomicXor_00E00E
-    1023,  // atomicXor_00D00D
-    1024,  // atomicExchange_00E00E
-    1025,  // atomicExchange_00D00D
-    1026,  // atomicCompSwap_00E00E00E
-    1027,  // atomicCompSwap_00D00D00D
-    1028,  // imageSize_00r
-    1029,  // imageSize_01C
-    1030,  // imageSize_01N
-    1031,  // imageSize_00s
-    1032,  // imageSize_01D
-    1033,  // imageSize_01O
-    1034,  // imageSize_00t
-    1035,  // imageSize_01E
-    1036,  // imageSize_01P
-    1037,  // imageSize_00u
-    1038,  // imageSize_01F
-    1039,  // imageSize_01Q
-    1040,  // imageSize_00z
-    1043,  // imageSize_01K
-    1046,  // imageSize_01V
-    1049,  // imageSize_01B
-    1052,  // imageSize_01M
-    1055,  // imageSize_01X
-    1058,  // imageStore_00r10D30B
-    1059,  // imageStore_01C10D30D
-    1060,  // imageStore_01N10D30E
-    1061,  // imageStore_00s20D30B
-    1062,  // imageStore_01D20D30D
-    1063,  // imageStore_01O20D30E
-    1064,  // imageStore_00t20D30B
-    1065,  // imageStore_01E20D30D
-    1066,  // imageStore_01P20D30E
-    1067,  // imageStore_00u20D30B
-    1068,  // imageStore_01F20D30D
-    1069,  // imageStore_01Q20D30E
-    1070,  // imageStore_00z20D30B
-    1073,  // imageStore_01K20D30D
-    1076,  // imageStore_01V20D30E
-    1079,  // imageStore_01B00D30B
-    1082,  // imageStore_01M00D30D
-    1085,  // imageStore_01X00D30E
-    1088,  // imageLoad_00r10D
-    1089,  // imageLoad_01C10D
-    1090,  // imageLoad_01N10D
-    1091,  // imageLoad_00s20D
-    1092,  // imageLoad_01D20D
-    1093,  // imageLoad_01O20D
-    1094,  // imageLoad_00t20D
-    1095,  // imageLoad_01E20D
-    1096,  // imageLoad_01P20D
-    1097,  // imageLoad_00u20D
-    1098,  // imageLoad_01F20D
-    1099,  // imageLoad_01Q20D
-    1100,  // imageLoad_00z20D
-    1103,  // imageLoad_01K20D
-    1106,  // imageLoad_01V20D
-    1109,  // imageLoad_01B00D
-    1112,  // imageLoad_01M00D
-    1115,  // imageLoad_01X00D
-    1118,  // imageAtomicAdd_00r10D00E
-    1120,  // imageAtomicAdd_01C10D00E
-    1122,  // imageAtomicAdd_01N10D00E
-    1124,  // imageAtomicAdd_00s20D00E
-    1126,  // imageAtomicAdd_01D20D00E
-    1128,  // imageAtomicAdd_01O20D00E
-    1130,  // imageAtomicAdd_00u20D00E
-    1132,  // imageAtomicAdd_01F20D00E
-    1134,  // imageAtomicAdd_01Q20D00E
-    1136,  // imageAtomicAdd_01B00D00E
-    1138,  // imageAtomicAdd_01M00D00E
-    1140,  // imageAtomicAdd_01X00D00E
-    1142,  // imageAtomicAdd_00t20D00E
-    1144,  // imageAtomicAdd_01E20D00E
-    1146,  // imageAtomicAdd_01P20D00E
-    1148,  // imageAtomicAdd_00z20D00E
-    1150,  // imageAtomicAdd_01K20D00E
-    1152,  // imageAtomicAdd_01V20D00E
-    1154,  // imageAtomicAdd_00v00D00E
-    1156,  // imageAtomicAdd_01G00D00E
-    1158,  // imageAtomicAdd_01R00D00E
-    1160,  // imageAtomicAdd_00w10D00E
-    1162,  // imageAtomicAdd_01H10D00E
-    1164,  // imageAtomicAdd_01S10D00E
-    1166,  // imageAtomicAdd_01A10D00E
-    1168,  // imageAtomicAdd_01L10D00E
-    1170,  // imageAtomicAdd_01W10D00E
-    1172,  // imageAtomicAdd_00x10D00D00E
-    1174,  // imageAtomicAdd_01I10D00D00E
-    1176,  // imageAtomicAdd_01T10D00D00E
-    1178,  // imageAtomicAdd_00y20D00D00E
-    1180,  // imageAtomicAdd_01J20D00D00E
-    1182,  // imageAtomicAdd_01U20D00D00E
-    1184,  // imageAtomicAdd_00r10D00D
-    1186,  // imageAtomicAdd_01C10D00D
-    1188,  // imageAtomicAdd_01N10D00D
-    1190,  // imageAtomicAdd_00s20D00D
-    1192,  // imageAtomicAdd_01D20D00D
-    1194,  // imageAtomicAdd_01O20D00D
-    1196,  // imageAtomicAdd_00u20D00D
-    1198,  // imageAtomicAdd_01F20D00D
-    1200,  // imageAtomicAdd_01Q20D00D
-    1202,  // imageAtomicAdd_01B00D00D
-    1204,  // imageAtomicAdd_01M00D00D
-    1206,  // imageAtomicAdd_01X00D00D
-    1208,  // imageAtomicAdd_00t20D00D
-    1210,  // imageAtomicAdd_01E20D00D
-    1212,  // imageAtomicAdd_01P20D00D
-    1214,  // imageAtomicAdd_00z20D00D
-    1216,  // imageAtomicAdd_01K20D00D
-    1218,  // imageAtomicAdd_01V20D00D
-    1220,  // imageAtomicAdd_00v00D00D
-    1222,  // imageAtomicAdd_01G00D00D
-    1224,  // imageAtomicAdd_01R00D00D
-    1226,  // imageAtomicAdd_00w10D00D
-    1228,  // imageAtomicAdd_01H10D00D
-    1230,  // imageAtomicAdd_01S10D00D
-    1232,  // imageAtomicAdd_01A10D00D
-    1234,  // imageAtomicAdd_01L10D00D
-    1236,  // imageAtomicAdd_01W10D00D
-    1238,  // imageAtomicAdd_00x10D00D00D
-    1240,  // imageAtomicAdd_01I10D00D00D
-    1242,  // imageAtomicAdd_01T10D00D00D
-    1244,  // imageAtomicAdd_00y20D00D00D
-    1246,  // imageAtomicAdd_01J20D00D00D
-    1248,  // imageAtomicAdd_01U20D00D00D
-    1250,  // imageAtomicMin_00r10D00E
-    1252,  // imageAtomicMin_01C10D00E
-    1254,  // imageAtomicMin_01N10D00E
-    1256,  // imageAtomicMin_00s20D00E
-    1258,  // imageAtomicMin_01D20D00E
-    1260,  // imageAtomicMin_01O20D00E
-    1262,  // imageAtomicMin_00u20D00E
-    1264,  // imageAtomicMin_01F20D00E
-    1266,  // imageAtomicMin_01Q20D00E
-    1268,  // imageAtomicMin_01B00D00E
-    1270,  // imageAtomicMin_01M00D00E
-    1272,  // imageAtomicMin_01X00D00E
-    1274,  // imageAtomicMin_00t20D00E
-    1276,  // imageAtomicMin_01E20D00E
-    1278,  // imageAtomicMin_01P20D00E
-    1280,  // imageAtomicMin_00z20D00E
-    1282,  // imageAtomicMin_01K20D00E
-    1284,  // imageAtomicMin_01V20D00E
-    1286,  // imageAtomicMin_00v00D00E
-    1288,  // imageAtomicMin_01G00D00E
-    1290,  // imageAtomicMin_01R00D00E
-    1292,  // imageAtomicMin_00w10D00E
-    1294,  // imageAtomicMin_01H10D00E
-    1296,  // imageAtomicMin_01S10D00E
-    1298,  // imageAtomicMin_01A10D00E
-    1300,  // imageAtomicMin_01L10D00E
-    1302,  // imageAtomicMin_01W10D00E
-    1304,  // imageAtomicMin_00x10D00D00E
-    1306,  // imageAtomicMin_01I10D00D00E
-    1308,  // imageAtomicMin_01T10D00D00E
-    1310,  // imageAtomicMin_00y20D00D00E
-    1312,  // imageAtomicMin_01J20D00D00E
-    1314,  // imageAtomicMin_01U20D00D00E
-    1316,  // imageAtomicMin_00r10D00D
-    1318,  // imageAtomicMin_01C10D00D
-    1320,  // imageAtomicMin_01N10D00D
-    1322,  // imageAtomicMin_00s20D00D
-    1324,  // imageAtomicMin_01D20D00D
-    1326,  // imageAtomicMin_01O20D00D
-    1328,  // imageAtomicMin_00u20D00D
-    1330,  // imageAtomicMin_01F20D00D
-    1332,  // imageAtomicMin_01Q20D00D
-    1334,  // imageAtomicMin_01B00D00D
-    1336,  // imageAtomicMin_01M00D00D
-    1338,  // imageAtomicMin_01X00D00D
-    1340,  // imageAtomicMin_00t20D00D
-    1342,  // imageAtomicMin_01E20D00D
-    1344,  // imageAtomicMin_01P20D00D
-    1346,  // imageAtomicMin_00z20D00D
-    1348,  // imageAtomicMin_01K20D00D
-    1350,  // imageAtomicMin_01V20D00D
-    1352,  // imageAtomicMin_00v00D00D
-    1354,  // imageAtomicMin_01G00D00D
-    1356,  // imageAtomicMin_01R00D00D
-    1358,  // imageAtomicMin_00w10D00D
-    1360,  // imageAtomicMin_01H10D00D
-    1362,  // imageAtomicMin_01S10D00D
-    1364,  // imageAtomicMin_01A10D00D
-    1366,  // imageAtomicMin_01L10D00D
-    1368,  // imageAtomicMin_01W10D00D
-    1370,  // imageAtomicMin_00x10D00D00D
-    1372,  // imageAtomicMin_01I10D00D00D
-    1374,  // imageAtomicMin_01T10D00D00D
-    1376,  // imageAtomicMin_00y20D00D00D
-    1378,  // imageAtomicMin_01J20D00D00D
-    1380,  // imageAtomicMin_01U20D00D00D
-    1382,  // imageAtomicMax_00r10D00E
-    1384,  // imageAtomicMax_01C10D00E
-    1386,  // imageAtomicMax_01N10D00E
-    1388,  // imageAtomicMax_00s20D00E
-    1390,  // imageAtomicMax_01D20D00E
-    1392,  // imageAtomicMax_01O20D00E
-    1394,  // imageAtomicMax_00u20D00E
-    1396,  // imageAtomicMax_01F20D00E
-    1398,  // imageAtomicMax_01Q20D00E
-    1400,  // imageAtomicMax_01B00D00E
-    1402,  // imageAtomicMax_01M00D00E
-    1404,  // imageAtomicMax_01X00D00E
-    1406,  // imageAtomicMax_00t20D00E
-    1408,  // imageAtomicMax_01E20D00E
-    1410,  // imageAtomicMax_01P20D00E
-    1412,  // imageAtomicMax_00z20D00E
-    1414,  // imageAtomicMax_01K20D00E
-    1416,  // imageAtomicMax_01V20D00E
-    1418,  // imageAtomicMax_00v00D00E
-    1420,  // imageAtomicMax_01G00D00E
-    1422,  // imageAtomicMax_01R00D00E
-    1424,  // imageAtomicMax_00w10D00E
-    1426,  // imageAtomicMax_01H10D00E
-    1428,  // imageAtomicMax_01S10D00E
-    1430,  // imageAtomicMax_01A10D00E
-    1432,  // imageAtomicMax_01L10D00E
-    1434,  // imageAtomicMax_01W10D00E
-    1436,  // imageAtomicMax_00x10D00D00E
-    1438,  // imageAtomicMax_01I10D00D00E
-    1440,  // imageAtomicMax_01T10D00D00E
-    1442,  // imageAtomicMax_00y20D00D00E
-    1444,  // imageAtomicMax_01J20D00D00E
-    1446,  // imageAtomicMax_01U20D00D00E
-    1448,  // imageAtomicMax_00r10D00D
-    1450,  // imageAtomicMax_01C10D00D
-    1452,  // imageAtomicMax_01N10D00D
-    1454,  // imageAtomicMax_00s20D00D
-    1456,  // imageAtomicMax_01D20D00D
-    1458,  // imageAtomicMax_01O20D00D
-    1460,  // imageAtomicMax_00u20D00D
-    1462,  // imageAtomicMax_01F20D00D
-    1464,  // imageAtomicMax_01Q20D00D
-    1466,  // imageAtomicMax_01B00D00D
-    1468,  // imageAtomicMax_01M00D00D
-    1470,  // imageAtomicMax_01X00D00D
-    1472,  // imageAtomicMax_00t20D00D
-    1474,  // imageAtomicMax_01E20D00D
-    1476,  // imageAtomicMax_01P20D00D
-    1478,  // imageAtomicMax_00z20D00D
-    1480,  // imageAtomicMax_01K20D00D
-    1482,  // imageAtomicMax_01V20D00D
-    1484,  // imageAtomicMax_00v00D00D
-    1486,  // imageAtomicMax_01G00D00D
-    1488,  // imageAtomicMax_01R00D00D
-    1490,  // imageAtomicMax_00w10D00D
-    1492,  // imageAtomicMax_01H10D00D
-    1494,  // imageAtomicMax_01S10D00D
-    1496,  // imageAtomicMax_01A10D00D
-    1498,  // imageAtomicMax_01L10D00D
-    1500,  // imageAtomicMax_01W10D00D
-    1502,  // imageAtomicMax_00x10D00D00D
-    1504,  // imageAtomicMax_01I10D00D00D
-    1506,  // imageAtomicMax_01T10D00D00D
-    1508,  // imageAtomicMax_00y20D00D00D
-    1510,  // imageAtomicMax_01J20D00D00D
-    1512,  // imageAtomicMax_01U20D00D00D
-    1514,  // imageAtomicAnd_00r10D00E
-    1516,  // imageAtomicAnd_01C10D00E
-    1518,  // imageAtomicAnd_01N10D00E
-    1520,  // imageAtomicAnd_00s20D00E
-    1522,  // imageAtomicAnd_01D20D00E
-    1524,  // imageAtomicAnd_01O20D00E
-    1526,  // imageAtomicAnd_00u20D00E
-    1528,  // imageAtomicAnd_01F20D00E
-    1530,  // imageAtomicAnd_01Q20D00E
-    1532,  // imageAtomicAnd_01B00D00E
-    1534,  // imageAtomicAnd_01M00D00E
-    1536,  // imageAtomicAnd_01X00D00E
-    1538,  // imageAtomicAnd_00t20D00E
-    1540,  // imageAtomicAnd_01E20D00E
-    1542,  // imageAtomicAnd_01P20D00E
-    1544,  // imageAtomicAnd_00z20D00E
-    1546,  // imageAtomicAnd_01K20D00E
-    1548,  // imageAtomicAnd_01V20D00E
-    1550,  // imageAtomicAnd_00v00D00E
-    1552,  // imageAtomicAnd_01G00D00E
-    1554,  // imageAtomicAnd_01R00D00E
-    1556,  // imageAtomicAnd_00w10D00E
-    1558,  // imageAtomicAnd_01H10D00E
-    1560,  // imageAtomicAnd_01S10D00E
-    1562,  // imageAtomicAnd_01A10D00E
-    1564,  // imageAtomicAnd_01L10D00E
-    1566,  // imageAtomicAnd_01W10D00E
-    1568,  // imageAtomicAnd_00x10D00D00E
-    1570,  // imageAtomicAnd_01I10D00D00E
-    1572,  // imageAtomicAnd_01T10D00D00E
-    1574,  // imageAtomicAnd_00y20D00D00E
-    1576,  // imageAtomicAnd_01J20D00D00E
-    1578,  // imageAtomicAnd_01U20D00D00E
-    1580,  // imageAtomicAnd_00r10D00D
-    1582,  // imageAtomicAnd_01C10D00D
-    1584,  // imageAtomicAnd_01N10D00D
-    1586,  // imageAtomicAnd_00s20D00D
-    1588,  // imageAtomicAnd_01D20D00D
-    1590,  // imageAtomicAnd_01O20D00D
-    1592,  // imageAtomicAnd_00u20D00D
-    1594,  // imageAtomicAnd_01F20D00D
-    1596,  // imageAtomicAnd_01Q20D00D
-    1598,  // imageAtomicAnd_01B00D00D
-    1600,  // imageAtomicAnd_01M00D00D
-    1602,  // imageAtomicAnd_01X00D00D
-    1604,  // imageAtomicAnd_00t20D00D
-    1606,  // imageAtomicAnd_01E20D00D
-    1608,  // imageAtomicAnd_01P20D00D
-    1610,  // imageAtomicAnd_00z20D00D
-    1612,  // imageAtomicAnd_01K20D00D
-    1614,  // imageAtomicAnd_01V20D00D
-    1616,  // imageAtomicAnd_00v00D00D
-    1618,  // imageAtomicAnd_01G00D00D
-    1620,  // imageAtomicAnd_01R00D00D
-    1622,  // imageAtomicAnd_00w10D00D
-    1624,  // imageAtomicAnd_01H10D00D
-    1626,  // imageAtomicAnd_01S10D00D
-    1628,  // imageAtomicAnd_01A10D00D
-    1630,  // imageAtomicAnd_01L10D00D
-    1632,  // imageAtomicAnd_01W10D00D
-    1634,  // imageAtomicAnd_00x10D00D00D
-    1636,  // imageAtomicAnd_01I10D00D00D
-    1638,  // imageAtomicAnd_01T10D00D00D
-    1640,  // imageAtomicAnd_00y20D00D00D
-    1642,  // imageAtomicAnd_01J20D00D00D
-    1644,  // imageAtomicAnd_01U20D00D00D
-    1646,  // imageAtomicOr_00r10D00E
-    1648,  // imageAtomicOr_01C10D00E
-    1650,  // imageAtomicOr_01N10D00E
-    1652,  // imageAtomicOr_00s20D00E
-    1654,  // imageAtomicOr_01D20D00E
-    1656,  // imageAtomicOr_01O20D00E
-    1658,  // imageAtomicOr_00u20D00E
-    1660,  // imageAtomicOr_01F20D00E
-    1662,  // imageAtomicOr_01Q20D00E
-    1664,  // imageAtomicOr_01B00D00E
-    1666,  // imageAtomicOr_01M00D00E
-    1668,  // imageAtomicOr_01X00D00E
-    1670,  // imageAtomicOr_00t20D00E
-    1672,  // imageAtomicOr_01E20D00E
-    1674,  // imageAtomicOr_01P20D00E
-    1676,  // imageAtomicOr_00z20D00E
-    1678,  // imageAtomicOr_01K20D00E
-    1680,  // imageAtomicOr_01V20D00E
-    1682,  // imageAtomicOr_00v00D00E
-    1684,  // imageAtomicOr_01G00D00E
-    1686,  // imageAtomicOr_01R00D00E
-    1688,  // imageAtomicOr_00w10D00E
-    1690,  // imageAtomicOr_01H10D00E
-    1692,  // imageAtomicOr_01S10D00E
-    1694,  // imageAtomicOr_01A10D00E
-    1696,  // imageAtomicOr_01L10D00E
-    1698,  // imageAtomicOr_01W10D00E
-    1700,  // imageAtomicOr_00x10D00D00E
-    1702,  // imageAtomicOr_01I10D00D00E
-    1704,  // imageAtomicOr_01T10D00D00E
-    1706,  // imageAtomicOr_00y20D00D00E
-    1708,  // imageAtomicOr_01J20D00D00E
-    1710,  // imageAtomicOr_01U20D00D00E
-    1712,  // imageAtomicOr_00r10D00D
-    1714,  // imageAtomicOr_01C10D00D
-    1716,  // imageAtomicOr_01N10D00D
-    1718,  // imageAtomicOr_00s20D00D
-    1720,  // imageAtomicOr_01D20D00D
-    1722,  // imageAtomicOr_01O20D00D
-    1724,  // imageAtomicOr_00u20D00D
-    1726,  // imageAtomicOr_01F20D00D
-    1728,  // imageAtomicOr_01Q20D00D
-    1730,  // imageAtomicOr_01B00D00D
-    1732,  // imageAtomicOr_01M00D00D
-    1734,  // imageAtomicOr_01X00D00D
-    1736,  // imageAtomicOr_00t20D00D
-    1738,  // imageAtomicOr_01E20D00D
-    1740,  // imageAtomicOr_01P20D00D
-    1742,  // imageAtomicOr_00z20D00D
-    1744,  // imageAtomicOr_01K20D00D
-    1746,  // imageAtomicOr_01V20D00D
-    1748,  // imageAtomicOr_00v00D00D
-    1750,  // imageAtomicOr_01G00D00D
-    1752,  // imageAtomicOr_01R00D00D
-    1754,  // imageAtomicOr_00w10D00D
-    1756,  // imageAtomicOr_01H10D00D
-    1758,  // imageAtomicOr_01S10D00D
-    1760,  // imageAtomicOr_01A10D00D
-    1762,  // imageAtomicOr_01L10D00D
-    1764,  // imageAtomicOr_01W10D00D
-    1766,  // imageAtomicOr_00x10D00D00D
-    1768,  // imageAtomicOr_01I10D00D00D
-    1770,  // imageAtomicOr_01T10D00D00D
-    1772,  // imageAtomicOr_00y20D00D00D
-    1774,  // imageAtomicOr_01J20D00D00D
-    1776,  // imageAtomicOr_01U20D00D00D
-    1778,  // imageAtomicXor_00r10D00E
-    1780,  // imageAtomicXor_01C10D00E
-    1782,  // imageAtomicXor_01N10D00E
-    1784,  // imageAtomicXor_00s20D00E
-    1786,  // imageAtomicXor_01D20D00E
-    1788,  // imageAtomicXor_01O20D00E
-    1790,  // imageAtomicXor_00u20D00E
-    1792,  // imageAtomicXor_01F20D00E
-    1794,  // imageAtomicXor_01Q20D00E
-    1796,  // imageAtomicXor_01B00D00E
-    1798,  // imageAtomicXor_01M00D00E
-    1800,  // imageAtomicXor_01X00D00E
-    1802,  // imageAtomicXor_00t20D00E
-    1804,  // imageAtomicXor_01E20D00E
-    1806,  // imageAtomicXor_01P20D00E
-    1808,  // imageAtomicXor_00z20D00E
-    1810,  // imageAtomicXor_01K20D00E
-    1812,  // imageAtomicXor_01V20D00E
-    1814,  // imageAtomicXor_00v00D00E
-    1816,  // imageAtomicXor_01G00D00E
-    1818,  // imageAtomicXor_01R00D00E
-    1820,  // imageAtomicXor_00w10D00E
-    1822,  // imageAtomicXor_01H10D00E
-    1824,  // imageAtomicXor_01S10D00E
-    1826,  // imageAtomicXor_01A10D00E
-    1828,  // imageAtomicXor_01L10D00E
-    1830,  // imageAtomicXor_01W10D00E
-    1832,  // imageAtomicXor_00x10D00D00E
-    1834,  // imageAtomicXor_01I10D00D00E
-    1836,  // imageAtomicXor_01T10D00D00E
-    1838,  // imageAtomicXor_00y20D00D00E
-    1840,  // imageAtomicXor_01J20D00D00E
-    1842,  // imageAtomicXor_01U20D00D00E
-    1844,  // imageAtomicXor_00r10D00D
-    1846,  // imageAtomicXor_01C10D00D
-    1848,  // imageAtomicXor_01N10D00D
-    1850,  // imageAtomicXor_00s20D00D
-    1852,  // imageAtomicXor_01D20D00D
-    1854,  // imageAtomicXor_01O20D00D
-    1856,  // imageAtomicXor_00u20D00D
-    1858,  // imageAtomicXor_01F20D00D
-    1860,  // imageAtomicXor_01Q20D00D
-    1862,  // imageAtomicXor_01B00D00D
-    1864,  // imageAtomicXor_01M00D00D
-    1866,  // imageAtomicXor_01X00D00D
-    1868,  // imageAtomicXor_00t20D00D
-    1870,  // imageAtomicXor_01E20D00D
-    1872,  // imageAtomicXor_01P20D00D
-    1874,  // imageAtomicXor_00z20D00D
-    1876,  // imageAtomicXor_01K20D00D
-    1878,  // imageAtomicXor_01V20D00D
-    1880,  // imageAtomicXor_00v00D00D
-    1882,  // imageAtomicXor_01G00D00D
-    1884,  // imageAtomicXor_01R00D00D
-    1886,  // imageAtomicXor_00w10D00D
-    1888,  // imageAtomicXor_01H10D00D
-    1890,  // imageAtomicXor_01S10D00D
-    1892,  // imageAtomicXor_01A10D00D
-    1894,  // imageAtomicXor_01L10D00D
-    1896,  // imageAtomicXor_01W10D00D
-    1898,  // imageAtomicXor_00x10D00D00D
-    1900,  // imageAtomicXor_01I10D00D00D
-    1902,  // imageAtomicXor_01T10D00D00D
-    1904,  // imageAtomicXor_00y20D00D00D
-    1906,  // imageAtomicXor_01J20D00D00D
-    1908,  // imageAtomicXor_01U20D00D00D
-    1910,  // imageAtomicExchange_00r10D00E
-    1912,  // imageAtomicExchange_01C10D00E
-    1914,  // imageAtomicExchange_01N10D00E
-    1916,  // imageAtomicExchange_00s20D00E
-    1918,  // imageAtomicExchange_01D20D00E
-    1920,  // imageAtomicExchange_01O20D00E
-    1922,  // imageAtomicExchange_00u20D00E
-    1924,  // imageAtomicExchange_01F20D00E
-    1926,  // imageAtomicExchange_01Q20D00E
-    1928,  // imageAtomicExchange_01B00D00E
-    1930,  // imageAtomicExchange_01M00D00E
-    1932,  // imageAtomicExchange_01X00D00E
-    1934,  // imageAtomicExchange_00t20D00E
-    1936,  // imageAtomicExchange_01E20D00E
-    1938,  // imageAtomicExchange_01P20D00E
-    1940,  // imageAtomicExchange_00z20D00E
-    1942,  // imageAtomicExchange_01K20D00E
-    1944,  // imageAtomicExchange_01V20D00E
-    1946,  // imageAtomicExchange_00v00D00E
-    1948,  // imageAtomicExchange_01G00D00E
-    1950,  // imageAtomicExchange_01R00D00E
-    1952,  // imageAtomicExchange_00w10D00E
-    1954,  // imageAtomicExchange_01H10D00E
-    1956,  // imageAtomicExchange_01S10D00E
-    1958,  // imageAtomicExchange_01A10D00E
-    1960,  // imageAtomicExchange_01L10D00E
-    1962,  // imageAtomicExchange_01W10D00E
-    1964,  // imageAtomicExchange_00x10D00D00E
-    1966,  // imageAtomicExchange_01I10D00D00E
-    1968,  // imageAtomicExchange_01T10D00D00E
-    1970,  // imageAtomicExchange_00y20D00D00E
-    1972,  // imageAtomicExchange_01J20D00D00E
-    1974,  // imageAtomicExchange_01U20D00D00E
-    1976,  // imageAtomicExchange_00r10D00D
-    1978,  // imageAtomicExchange_01C10D00D
-    1980,  // imageAtomicExchange_01N10D00D
-    1982,  // imageAtomicExchange_00s20D00D
-    1984,  // imageAtomicExchange_01D20D00D
-    1986,  // imageAtomicExchange_01O20D00D
-    1988,  // imageAtomicExchange_00u20D00D
-    1990,  // imageAtomicExchange_01F20D00D
-    1992,  // imageAtomicExchange_01Q20D00D
-    1994,  // imageAtomicExchange_01B00D00D
-    1996,  // imageAtomicExchange_01M00D00D
-    1998,  // imageAtomicExchange_01X00D00D
-    2000,  // imageAtomicExchange_00t20D00D
-    2002,  // imageAtomicExchange_01E20D00D
-    2004,  // imageAtomicExchange_01P20D00D
-    2006,  // imageAtomicExchange_00z20D00D
-    2008,  // imageAtomicExchange_01K20D00D
-    2010,  // imageAtomicExchange_01V20D00D
-    2012,  // imageAtomicExchange_00v00D00D
-    2014,  // imageAtomicExchange_01G00D00D
-    2016,  // imageAtomicExchange_01R00D00D
-    2018,  // imageAtomicExchange_00w10D00D
-    2020,  // imageAtomicExchange_01H10D00D
-    2022,  // imageAtomicExchange_01S10D00D
-    2024,  // imageAtomicExchange_01A10D00D
-    2026,  // imageAtomicExchange_01L10D00D
-    2028,  // imageAtomicExchange_01W10D00D
-    2030,  // imageAtomicExchange_00x10D00D00D
-    2032,  // imageAtomicExchange_01I10D00D00D
-    2034,  // imageAtomicExchange_01T10D00D00D
-    2036,  // imageAtomicExchange_00y20D00D00D
-    2038,  // imageAtomicExchange_01J20D00D00D
-    2040,  // imageAtomicExchange_01U20D00D00D
-    2042,  // imageAtomicExchange_00r10D00B
-    2044,  // imageAtomicExchange_01C10D00B
-    2046,  // imageAtomicExchange_01N10D00B
-    2048,  // imageAtomicExchange_00s20D00B
-    2050,  // imageAtomicExchange_01D20D00B
-    2052,  // imageAtomicExchange_01O20D00B
-    2054,  // imageAtomicExchange_00u20D00B
-    2056,  // imageAtomicExchange_01F20D00B
-    2058,  // imageAtomicExchange_01Q20D00B
-    2060,  // imageAtomicExchange_01B00D00B
-    2062,  // imageAtomicExchange_01M00D00B
-    2064,  // imageAtomicExchange_01X00D00B
-    2066,  // imageAtomicExchange_00t20D00B
-    2068,  // imageAtomicExchange_01E20D00B
-    2070,  // imageAtomicExchange_01P20D00B
-    2072,  // imageAtomicExchange_00z20D00B
-    2074,  // imageAtomicExchange_01K20D00B
-    2076,  // imageAtomicExchange_01V20D00B
-    2078,  // imageAtomicExchange_00v00D00B
-    2080,  // imageAtomicExchange_01G00D00B
-    2082,  // imageAtomicExchange_01R00D00B
-    2084,  // imageAtomicExchange_00w10D00B
-    2086,  // imageAtomicExchange_01H10D00B
-    2088,  // imageAtomicExchange_01S10D00B
-    2090,  // imageAtomicExchange_01A10D00B
-    2092,  // imageAtomicExchange_01L10D00B
-    2094,  // imageAtomicExchange_01W10D00B
-    2096,  // imageAtomicExchange_00x10D00D00B
-    2098,  // imageAtomicExchange_01I10D00D00B
-    2100,  // imageAtomicExchange_01T10D00D00B
-    2102,  // imageAtomicExchange_00y20D00D00B
-    2104,  // imageAtomicExchange_01J20D00D00B
-    2106,  // imageAtomicExchange_01U20D00D00B
-    2108,  // imageAtomicCompSwap_00r10D00E00E
-    2110,  // imageAtomicCompSwap_01C10D00E00E
-    2112,  // imageAtomicCompSwap_01N10D00E00E
-    2114,  // imageAtomicCompSwap_00s20D00E00E
-    2116,  // imageAtomicCompSwap_01D20D00E00E
-    2118,  // imageAtomicCompSwap_01O20D00E00E
-    2120,  // imageAtomicCompSwap_00u20D00E00E
-    2122,  // imageAtomicCompSwap_01F20D00E00E
-    2124,  // imageAtomicCompSwap_01Q20D00E00E
-    2126,  // imageAtomicCompSwap_01B00D00E00E
-    2128,  // imageAtomicCompSwap_01M00D00E00E
-    2130,  // imageAtomicCompSwap_01X00D00E00E
-    2132,  // imageAtomicCompSwap_00t20D00E00E
-    2134,  // imageAtomicCompSwap_01E20D00E00E
-    2136,  // imageAtomicCompSwap_01P20D00E00E
-    2138,  // imageAtomicCompSwap_00z20D00E00E
-    2140,  // imageAtomicCompSwap_01K20D00E00E
-    2142,  // imageAtomicCompSwap_01V20D00E00E
-    2144,  // imageAtomicCompSwap_00v00D00E00E
-    2146,  // imageAtomicCompSwap_01G00D00E00E
-    2148,  // imageAtomicCompSwap_01R00D00E00E
-    2150,  // imageAtomicCompSwap_00w10D00E00E
-    2152,  // imageAtomicCompSwap_01H10D00E00E
-    2154,  // imageAtomicCompSwap_01S10D00E00E
-    2156,  // imageAtomicCompSwap_01A10D00E00E
-    2158,  // imageAtomicCompSwap_01L10D00E00E
-    2160,  // imageAtomicCompSwap_01W10D00E00E
-    2162,  // imageAtomicCompSwap_00x10D00D00E00E
-    2164,  // imageAtomicCompSwap_01I10D00D00E00E
-    2166,  // imageAtomicCompSwap_01T10D00D00E00E
-    2168,  // imageAtomicCompSwap_00y20D00D00E00E
-    2170,  // imageAtomicCompSwap_01J20D00D00E00E
-    2172,  // imageAtomicCompSwap_01U20D00D00E00E
-    2174,  // imageAtomicCompSwap_00r10D00D00D
-    2176,  // imageAtomicCompSwap_01C10D00D00D
-    2178,  // imageAtomicCompSwap_01N10D00D00D
-    2180,  // imageAtomicCompSwap_00s20D00D00D
-    2182,  // imageAtomicCompSwap_01D20D00D00D
-    2184,  // imageAtomicCompSwap_01O20D00D00D
-    2186,  // imageAtomicCompSwap_00u20D00D00D
-    2188,  // imageAtomicCompSwap_01F20D00D00D
-    2190,  // imageAtomicCompSwap_01Q20D00D00D
-    2192,  // imageAtomicCompSwap_01B00D00D00D
-    2194,  // imageAtomicCompSwap_01M00D00D00D
-    2196,  // imageAtomicCompSwap_01X00D00D00D
-    2198,  // imageAtomicCompSwap_00t20D00D00D
-    2200,  // imageAtomicCompSwap_01E20D00D00D
-    2202,  // imageAtomicCompSwap_01P20D00D00D
-    2204,  // imageAtomicCompSwap_00z20D00D00D
-    2206,  // imageAtomicCompSwap_01K20D00D00D
-    2208,  // imageAtomicCompSwap_01V20D00D00D
-    2210,  // imageAtomicCompSwap_00v00D00D00D
-    2212,  // imageAtomicCompSwap_01G00D00D00D
-    2214,  // imageAtomicCompSwap_01R00D00D00D
-    2216,  // imageAtomicCompSwap_00w10D00D00D
-    2218,  // imageAtomicCompSwap_01H10D00D00D
-    2220,  // imageAtomicCompSwap_01S10D00D00D
-    2222,  // imageAtomicCompSwap_01A10D00D00D
-    2224,  // imageAtomicCompSwap_01L10D00D00D
-    2226,  // imageAtomicCompSwap_01W10D00D00D
-    2228,  // imageAtomicCompSwap_00x10D00D00D00D
-    2230,  // imageAtomicCompSwap_01I10D00D00D00D
-    2232,  // imageAtomicCompSwap_01T10D00D00D00D
-    2234,  // imageAtomicCompSwap_00y20D00D00D00D
-    2236,  // imageAtomicCompSwap_01J20D00D00D00D
-    2238,  // imageAtomicCompSwap_01U20D00D00D00D
-    2240,  // pixelLocalLoadANGLE_01Y
-    2241,  // pixelLocalLoadANGLE_01Z
-    2242,  // pixelLocalLoadANGLE_01a
-    2243,  // pixelLocalStoreANGLE_01Y30B
-    2244,  // pixelLocalStoreANGLE_01Z30D
-    2245,  // pixelLocalStoreANGLE_01a30E
-    2246,  // beginInvocationInterlockNV_
-    2247,  // endInvocationInterlockNV_
-    2248,  // beginFragmentShaderOrderingINTEL_
-    2249,  // beginInvocationInterlockARB_
-    2250,  // endInvocationInterlockARB_
-    2251,  // memoryBarrier_
-    2252,  // memoryBarrierAtomicCounter_
-    2253,  // memoryBarrierBuffer_
-    2254,  // memoryBarrierImage_
-    2255,  // barrier_
-    2259,  // memoryBarrierShared_
-    2260,  // groupMemoryBarrier_
-    2261,  // EmitVertex_
-    2264,  // EndPrimitive_
-    2267,  // subpassLoad_01b
-    2268,  // subpassLoad_01c
-    2269,  // subpassLoad_01d
-    2270,  // subpassLoad_01e00D
-    2271,  // subpassLoad_01f00D
-    2272,  // subpassLoad_01g00D
-    2273,  // numSamples_
-    2274,  // samplePosition_00E
-    2275,  // interpolateAtCenter_00B
-    2276,  // interpolateAtCenter_10B
-    2277,  // interpolateAtCenter_20B
-    2278,  // interpolateAtCenter_30B
-    2279,  // saturate_00B
-    2280,  // saturate_10B
-    2281,  // saturate_20B
-    2282,  // saturate_30B
-    2283,  // gl_DepthRangeParameters
-    2284,  // gl_DepthRange
-    2285,  // gl_NumSamples
-    2287,  // gl_MaxVertexAttribs
-    2288,  // gl_MaxVertexUniformVectors
-    2289,  // gl_MaxVertexTextureImageUnits
-    2290,  // gl_MaxCombinedTextureImageUnits
-    2291,  // gl_MaxTextureImageUnits
-    2292,  // gl_MaxFragmentUniformVectors
-    2293,  // gl_MaxVaryingVectors
-    2294,  // gl_MaxDrawBuffers
-    2295,  // gl_MaxDualSourceDrawBuffersEXT
-    2296,  // gl_MaxVertexOutputVectors
-    2297,  // gl_MaxFragmentInputVectors
-    2298,  // gl_MinProgramTexelOffset
-    2299,  // gl_MaxProgramTexelOffset
-    2300,  // gl_MaxImageUnits
-    2301,  // gl_MaxVertexImageUniforms
-    2302,  // gl_MaxFragmentImageUniforms
-    2303,  // gl_MaxComputeImageUniforms
-    2304,  // gl_MaxCombinedImageUniforms
-    2305,  // gl_MaxCombinedShaderOutputResources
-    2306,  // gl_MaxComputeWorkGroupCount
-    2307,  // gl_MaxComputeWorkGroupSize
-    2308,  // gl_MaxComputeUniformComponents
-    2309,  // gl_MaxComputeTextureImageUnits
-    2310,  // gl_MaxComputeAtomicCounters
-    2311,  // gl_MaxComputeAtomicCounterBuffers
-    2312,  // gl_MaxVertexAtomicCounters
-    2313,  // gl_MaxFragmentAtomicCounters
-    2314,  // gl_MaxCombinedAtomicCounters
-    2315,  // gl_MaxAtomicCounterBindings
-    2316,  // gl_MaxVertexAtomicCounterBuffers
-    2317,  // gl_MaxFragmentAtomicCounterBuffers
-    2318,  // gl_MaxCombinedAtomicCounterBuffers
-    2319,  // gl_MaxAtomicCounterBufferSize
-    2320,  // gl_MaxGeometryInputComponents
-    2323,  // gl_MaxGeometryOutputComponents
-    2326,  // gl_MaxGeometryImageUniforms
-    2329,  // gl_MaxGeometryTextureImageUnits
-    2332,  // gl_MaxGeometryOutputVertices
-    2335,  // gl_MaxGeometryTotalOutputComponents
-    2338,  // gl_MaxGeometryUniformComponents
-    2341,  // gl_MaxGeometryAtomicCounters
-    2344,  // gl_MaxGeometryAtomicCounterBuffers
-    2347,  // gl_MaxTessControlInputComponents
-    2350,  // gl_MaxTessControlOutputComponents
-    2353,  // gl_MaxTessControlTextureImageUnits
-    2356,  // gl_MaxTessControlUniformComponents
-    2359,  // gl_MaxTessControlTotalOutputComponents
-    2362,  // gl_MaxTessControlImageUniforms
-    2365,  // gl_MaxTessControlAtomicCounters
-    2368,  // gl_MaxTessControlAtomicCounterBuffers
-    2371,  // gl_MaxTessPatchComponents
-    2374,  // gl_MaxPatchVertices
-    2377,  // gl_MaxTessGenLevel
-    2380,  // gl_MaxTessEvaluationInputComponents
-    2383,  // gl_MaxTessEvaluationOutputComponents
-    2386,  // gl_MaxTessEvaluationTextureImageUnits
-    2389,  // gl_MaxTessEvaluationUniformComponents
-    2392,  // gl_MaxTessEvaluationImageUniforms
-    2395,  // gl_MaxTessEvaluationAtomicCounters
-    2398,  // gl_MaxTessEvaluationAtomicCounterBuffers
-    2401,  // gl_MaxSamples
-    2403,  // gl_MaxClipDistances
-    2406,  // gl_MaxCullDistances
-    2408,  // gl_MaxCombinedClipAndCullDistances
-    2410,  // gl_FragCoord
-    2412,  // gl_FrontFacing
-    2413,  // gl_PointCoord
-    2414,  // gl_FragColor
-    2415,  // gl_FragData
-    2416,  // gl_FragDepth
-    2417,  // gl_HelperInvocation
-    2418,  // gl_SecondaryFragColorEXT
-    2419,  // gl_SecondaryFragDataEXT
-    2420,  // gl_FragDepthEXT
-    2421,  // gl_LastFragData
-    2424,  // gl_LastFragColor
-    2425,  // gl_LastFragColorARM
-    2426,  // gl_PrimitiveID
-    2438,  // gl_Layer
-    2445,  // gl_SampleID
-    2447,  // gl_SamplePosition
-    2449,  // gl_SampleMaskIn
-    2451,  // gl_SampleMask
-    2453,  // gl_Position
-    2463,  // gl_PointSize
-    2465,  // gl_InstanceID
-    2466,  // gl_InstanceIndex
-    2467,  // gl_VertexID
-    2468,  // gl_VertexIndex
-    2469,  // gl_DrawID
-    2470,  // gl_BaseVertex
-    2471,  // gl_BaseInstance
-    2472,  // angle_BaseVertex
-    2473,  // angle_BaseInstance
-    2474,  // gl_ClipDistance
-    2477,  // gl_NumWorkGroups
-    2478,  // gl_WorkGroupSize
-    2479,  // gl_WorkGroupID
-    2480,  // gl_LocalInvocationID
-    2481,  // gl_GlobalInvocationID
-    2482,  // gl_LocalInvocationIndex
-    2483,  // gl_PrimitiveIDIn
-    2486,  // gl_InvocationID
-    2492,  // gl_PerVertex
-    2501,  // gl_in
-    2510,  // gl_PatchVerticesIn
-    2516,  // gl_TessLevelOuter
-    2522,  // gl_TessLevelInner
-    2528,  // gl_out
-    2534,  // gl_BoundingBox
-    2537,  // gl_BoundingBoxEXT
-    2540,  // gl_BoundingBoxOES
-    2543,  // gl_TessCoord
-    2544,  // gl_ViewID_OVR
-    2545,  // gl_CullDistance
+    959,   // textureQueryLOD_00I10B
+    960,   // textureQueryLOD_00R10B
+    961,   // textureQueryLOD_00X10B
+    962,   // textureQueryLOD_00J20B
+    963,   // textureQueryLOD_00S20B
+    964,   // textureQueryLOD_00Y20B
+    965,   // textureQueryLOD_00K20B
+    966,   // textureQueryLOD_00T20B
+    967,   // textureQueryLOD_00Z20B
+    968,   // textureQueryLOD_00L10B
+    969,   // textureQueryLOD_00U10B
+    970,   // textureQueryLOD_00a10B
+    971,   // textureQueryLOD_00d10B
+    972,   // textureQueryLOD_00e20B
+    973,   // textureQueryLOD_00f10B
+    974,   // textureQueryLOD_00h20B
+    975,   // textureQueryLOD_00m20B
+    976,   // textureQueryLOD_00p20B
+    977,   // textureQueryLOD_00i20B
+    978,   // rgb_2_yuv_20B00H
+    979,   // yuv_2_rgb_20B00H
+    980,   // dFdx_00B
+    982,   // dFdx_10B
+    984,   // dFdx_20B
+    986,   // dFdx_30B
+    988,   // dFdy_00B
+    990,   // dFdy_10B
+    992,   // dFdy_20B
+    994,   // dFdy_30B
+    996,   // fwidth_00B
+    998,   // fwidth_10B
+    1000,  // fwidth_20B
+    1002,  // fwidth_30B
+    1004,  // interpolateAtCentroid_00B
+    1006,  // interpolateAtCentroid_10B
+    1008,  // interpolateAtCentroid_20B
+    1010,  // interpolateAtCentroid_30B
+    1012,  // interpolateAtSample_00B00D
+    1014,  // interpolateAtSample_10B00D
+    1016,  // interpolateAtSample_20B00D
+    1018,  // interpolateAtSample_30B00D
+    1020,  // interpolateAtOffset_00B10B
+    1022,  // interpolateAtOffset_10B10B
+    1024,  // interpolateAtOffset_20B10B
+    1026,  // interpolateAtOffset_30B10B
+    1028,  // atomicCounter_00G
+    1029,  // atomicCounterIncrement_00G
+    1030,  // atomicCounterDecrement_00G
+    1031,  // atomicAdd_00E00E
+    1032,  // atomicAdd_00D00D
+    1033,  // atomicMin_00E00E
+    1034,  // atomicMin_00D00D
+    1035,  // atomicMax_00E00E
+    1036,  // atomicMax_00D00D
+    1037,  // atomicAnd_00E00E
+    1038,  // atomicAnd_00D00D
+    1039,  // atomicOr_00E00E
+    1040,  // atomicOr_00D00D
+    1041,  // atomicXor_00E00E
+    1042,  // atomicXor_00D00D
+    1043,  // atomicExchange_00E00E
+    1044,  // atomicExchange_00D00D
+    1045,  // atomicCompSwap_00E00E00E
+    1046,  // atomicCompSwap_00D00D00D
+    1047,  // imageSize_00r
+    1048,  // imageSize_01C
+    1049,  // imageSize_01N
+    1050,  // imageSize_00s
+    1051,  // imageSize_01D
+    1052,  // imageSize_01O
+    1053,  // imageSize_00t
+    1054,  // imageSize_01E
+    1055,  // imageSize_01P
+    1056,  // imageSize_00u
+    1057,  // imageSize_01F
+    1058,  // imageSize_01Q
+    1059,  // imageSize_00z
+    1062,  // imageSize_01K
+    1065,  // imageSize_01V
+    1068,  // imageSize_01B
+    1071,  // imageSize_01M
+    1074,  // imageSize_01X
+    1077,  // imageStore_00r10D30B
+    1078,  // imageStore_01C10D30D
+    1079,  // imageStore_01N10D30E
+    1080,  // imageStore_00s20D30B
+    1081,  // imageStore_01D20D30D
+    1082,  // imageStore_01O20D30E
+    1083,  // imageStore_00t20D30B
+    1084,  // imageStore_01E20D30D
+    1085,  // imageStore_01P20D30E
+    1086,  // imageStore_00u20D30B
+    1087,  // imageStore_01F20D30D
+    1088,  // imageStore_01Q20D30E
+    1089,  // imageStore_00z20D30B
+    1092,  // imageStore_01K20D30D
+    1095,  // imageStore_01V20D30E
+    1098,  // imageStore_01B00D30B
+    1101,  // imageStore_01M00D30D
+    1104,  // imageStore_01X00D30E
+    1107,  // imageLoad_00r10D
+    1108,  // imageLoad_01C10D
+    1109,  // imageLoad_01N10D
+    1110,  // imageLoad_00s20D
+    1111,  // imageLoad_01D20D
+    1112,  // imageLoad_01O20D
+    1113,  // imageLoad_00t20D
+    1114,  // imageLoad_01E20D
+    1115,  // imageLoad_01P20D
+    1116,  // imageLoad_00u20D
+    1117,  // imageLoad_01F20D
+    1118,  // imageLoad_01Q20D
+    1119,  // imageLoad_00z20D
+    1122,  // imageLoad_01K20D
+    1125,  // imageLoad_01V20D
+    1128,  // imageLoad_01B00D
+    1131,  // imageLoad_01M00D
+    1134,  // imageLoad_01X00D
+    1137,  // imageAtomicAdd_00r10D00E
+    1139,  // imageAtomicAdd_01C10D00E
+    1141,  // imageAtomicAdd_01N10D00E
+    1143,  // imageAtomicAdd_00s20D00E
+    1145,  // imageAtomicAdd_01D20D00E
+    1147,  // imageAtomicAdd_01O20D00E
+    1149,  // imageAtomicAdd_00u20D00E
+    1151,  // imageAtomicAdd_01F20D00E
+    1153,  // imageAtomicAdd_01Q20D00E
+    1155,  // imageAtomicAdd_01B00D00E
+    1157,  // imageAtomicAdd_01M00D00E
+    1159,  // imageAtomicAdd_01X00D00E
+    1161,  // imageAtomicAdd_00t20D00E
+    1163,  // imageAtomicAdd_01E20D00E
+    1165,  // imageAtomicAdd_01P20D00E
+    1167,  // imageAtomicAdd_00z20D00E
+    1169,  // imageAtomicAdd_01K20D00E
+    1171,  // imageAtomicAdd_01V20D00E
+    1173,  // imageAtomicAdd_00v00D00E
+    1175,  // imageAtomicAdd_01G00D00E
+    1177,  // imageAtomicAdd_01R00D00E
+    1179,  // imageAtomicAdd_00w10D00E
+    1181,  // imageAtomicAdd_01H10D00E
+    1183,  // imageAtomicAdd_01S10D00E
+    1185,  // imageAtomicAdd_01A10D00E
+    1187,  // imageAtomicAdd_01L10D00E
+    1189,  // imageAtomicAdd_01W10D00E
+    1191,  // imageAtomicAdd_00x10D00D00E
+    1193,  // imageAtomicAdd_01I10D00D00E
+    1195,  // imageAtomicAdd_01T10D00D00E
+    1197,  // imageAtomicAdd_00y20D00D00E
+    1199,  // imageAtomicAdd_01J20D00D00E
+    1201,  // imageAtomicAdd_01U20D00D00E
+    1203,  // imageAtomicAdd_00r10D00D
+    1205,  // imageAtomicAdd_01C10D00D
+    1207,  // imageAtomicAdd_01N10D00D
+    1209,  // imageAtomicAdd_00s20D00D
+    1211,  // imageAtomicAdd_01D20D00D
+    1213,  // imageAtomicAdd_01O20D00D
+    1215,  // imageAtomicAdd_00u20D00D
+    1217,  // imageAtomicAdd_01F20D00D
+    1219,  // imageAtomicAdd_01Q20D00D
+    1221,  // imageAtomicAdd_01B00D00D
+    1223,  // imageAtomicAdd_01M00D00D
+    1225,  // imageAtomicAdd_01X00D00D
+    1227,  // imageAtomicAdd_00t20D00D
+    1229,  // imageAtomicAdd_01E20D00D
+    1231,  // imageAtomicAdd_01P20D00D
+    1233,  // imageAtomicAdd_00z20D00D
+    1235,  // imageAtomicAdd_01K20D00D
+    1237,  // imageAtomicAdd_01V20D00D
+    1239,  // imageAtomicAdd_00v00D00D
+    1241,  // imageAtomicAdd_01G00D00D
+    1243,  // imageAtomicAdd_01R00D00D
+    1245,  // imageAtomicAdd_00w10D00D
+    1247,  // imageAtomicAdd_01H10D00D
+    1249,  // imageAtomicAdd_01S10D00D
+    1251,  // imageAtomicAdd_01A10D00D
+    1253,  // imageAtomicAdd_01L10D00D
+    1255,  // imageAtomicAdd_01W10D00D
+    1257,  // imageAtomicAdd_00x10D00D00D
+    1259,  // imageAtomicAdd_01I10D00D00D
+    1261,  // imageAtomicAdd_01T10D00D00D
+    1263,  // imageAtomicAdd_00y20D00D00D
+    1265,  // imageAtomicAdd_01J20D00D00D
+    1267,  // imageAtomicAdd_01U20D00D00D
+    1269,  // imageAtomicMin_00r10D00E
+    1271,  // imageAtomicMin_01C10D00E
+    1273,  // imageAtomicMin_01N10D00E
+    1275,  // imageAtomicMin_00s20D00E
+    1277,  // imageAtomicMin_01D20D00E
+    1279,  // imageAtomicMin_01O20D00E
+    1281,  // imageAtomicMin_00u20D00E
+    1283,  // imageAtomicMin_01F20D00E
+    1285,  // imageAtomicMin_01Q20D00E
+    1287,  // imageAtomicMin_01B00D00E
+    1289,  // imageAtomicMin_01M00D00E
+    1291,  // imageAtomicMin_01X00D00E
+    1293,  // imageAtomicMin_00t20D00E
+    1295,  // imageAtomicMin_01E20D00E
+    1297,  // imageAtomicMin_01P20D00E
+    1299,  // imageAtomicMin_00z20D00E
+    1301,  // imageAtomicMin_01K20D00E
+    1303,  // imageAtomicMin_01V20D00E
+    1305,  // imageAtomicMin_00v00D00E
+    1307,  // imageAtomicMin_01G00D00E
+    1309,  // imageAtomicMin_01R00D00E
+    1311,  // imageAtomicMin_00w10D00E
+    1313,  // imageAtomicMin_01H10D00E
+    1315,  // imageAtomicMin_01S10D00E
+    1317,  // imageAtomicMin_01A10D00E
+    1319,  // imageAtomicMin_01L10D00E
+    1321,  // imageAtomicMin_01W10D00E
+    1323,  // imageAtomicMin_00x10D00D00E
+    1325,  // imageAtomicMin_01I10D00D00E
+    1327,  // imageAtomicMin_01T10D00D00E
+    1329,  // imageAtomicMin_00y20D00D00E
+    1331,  // imageAtomicMin_01J20D00D00E
+    1333,  // imageAtomicMin_01U20D00D00E
+    1335,  // imageAtomicMin_00r10D00D
+    1337,  // imageAtomicMin_01C10D00D
+    1339,  // imageAtomicMin_01N10D00D
+    1341,  // imageAtomicMin_00s20D00D
+    1343,  // imageAtomicMin_01D20D00D
+    1345,  // imageAtomicMin_01O20D00D
+    1347,  // imageAtomicMin_00u20D00D
+    1349,  // imageAtomicMin_01F20D00D
+    1351,  // imageAtomicMin_01Q20D00D
+    1353,  // imageAtomicMin_01B00D00D
+    1355,  // imageAtomicMin_01M00D00D
+    1357,  // imageAtomicMin_01X00D00D
+    1359,  // imageAtomicMin_00t20D00D
+    1361,  // imageAtomicMin_01E20D00D
+    1363,  // imageAtomicMin_01P20D00D
+    1365,  // imageAtomicMin_00z20D00D
+    1367,  // imageAtomicMin_01K20D00D
+    1369,  // imageAtomicMin_01V20D00D
+    1371,  // imageAtomicMin_00v00D00D
+    1373,  // imageAtomicMin_01G00D00D
+    1375,  // imageAtomicMin_01R00D00D
+    1377,  // imageAtomicMin_00w10D00D
+    1379,  // imageAtomicMin_01H10D00D
+    1381,  // imageAtomicMin_01S10D00D
+    1383,  // imageAtomicMin_01A10D00D
+    1385,  // imageAtomicMin_01L10D00D
+    1387,  // imageAtomicMin_01W10D00D
+    1389,  // imageAtomicMin_00x10D00D00D
+    1391,  // imageAtomicMin_01I10D00D00D
+    1393,  // imageAtomicMin_01T10D00D00D
+    1395,  // imageAtomicMin_00y20D00D00D
+    1397,  // imageAtomicMin_01J20D00D00D
+    1399,  // imageAtomicMin_01U20D00D00D
+    1401,  // imageAtomicMax_00r10D00E
+    1403,  // imageAtomicMax_01C10D00E
+    1405,  // imageAtomicMax_01N10D00E
+    1407,  // imageAtomicMax_00s20D00E
+    1409,  // imageAtomicMax_01D20D00E
+    1411,  // imageAtomicMax_01O20D00E
+    1413,  // imageAtomicMax_00u20D00E
+    1415,  // imageAtomicMax_01F20D00E
+    1417,  // imageAtomicMax_01Q20D00E
+    1419,  // imageAtomicMax_01B00D00E
+    1421,  // imageAtomicMax_01M00D00E
+    1423,  // imageAtomicMax_01X00D00E
+    1425,  // imageAtomicMax_00t20D00E
+    1427,  // imageAtomicMax_01E20D00E
+    1429,  // imageAtomicMax_01P20D00E
+    1431,  // imageAtomicMax_00z20D00E
+    1433,  // imageAtomicMax_01K20D00E
+    1435,  // imageAtomicMax_01V20D00E
+    1437,  // imageAtomicMax_00v00D00E
+    1439,  // imageAtomicMax_01G00D00E
+    1441,  // imageAtomicMax_01R00D00E
+    1443,  // imageAtomicMax_00w10D00E
+    1445,  // imageAtomicMax_01H10D00E
+    1447,  // imageAtomicMax_01S10D00E
+    1449,  // imageAtomicMax_01A10D00E
+    1451,  // imageAtomicMax_01L10D00E
+    1453,  // imageAtomicMax_01W10D00E
+    1455,  // imageAtomicMax_00x10D00D00E
+    1457,  // imageAtomicMax_01I10D00D00E
+    1459,  // imageAtomicMax_01T10D00D00E
+    1461,  // imageAtomicMax_00y20D00D00E
+    1463,  // imageAtomicMax_01J20D00D00E
+    1465,  // imageAtomicMax_01U20D00D00E
+    1467,  // imageAtomicMax_00r10D00D
+    1469,  // imageAtomicMax_01C10D00D
+    1471,  // imageAtomicMax_01N10D00D
+    1473,  // imageAtomicMax_00s20D00D
+    1475,  // imageAtomicMax_01D20D00D
+    1477,  // imageAtomicMax_01O20D00D
+    1479,  // imageAtomicMax_00u20D00D
+    1481,  // imageAtomicMax_01F20D00D
+    1483,  // imageAtomicMax_01Q20D00D
+    1485,  // imageAtomicMax_01B00D00D
+    1487,  // imageAtomicMax_01M00D00D
+    1489,  // imageAtomicMax_01X00D00D
+    1491,  // imageAtomicMax_00t20D00D
+    1493,  // imageAtomicMax_01E20D00D
+    1495,  // imageAtomicMax_01P20D00D
+    1497,  // imageAtomicMax_00z20D00D
+    1499,  // imageAtomicMax_01K20D00D
+    1501,  // imageAtomicMax_01V20D00D
+    1503,  // imageAtomicMax_00v00D00D
+    1505,  // imageAtomicMax_01G00D00D
+    1507,  // imageAtomicMax_01R00D00D
+    1509,  // imageAtomicMax_00w10D00D
+    1511,  // imageAtomicMax_01H10D00D
+    1513,  // imageAtomicMax_01S10D00D
+    1515,  // imageAtomicMax_01A10D00D
+    1517,  // imageAtomicMax_01L10D00D
+    1519,  // imageAtomicMax_01W10D00D
+    1521,  // imageAtomicMax_00x10D00D00D
+    1523,  // imageAtomicMax_01I10D00D00D
+    1525,  // imageAtomicMax_01T10D00D00D
+    1527,  // imageAtomicMax_00y20D00D00D
+    1529,  // imageAtomicMax_01J20D00D00D
+    1531,  // imageAtomicMax_01U20D00D00D
+    1533,  // imageAtomicAnd_00r10D00E
+    1535,  // imageAtomicAnd_01C10D00E
+    1537,  // imageAtomicAnd_01N10D00E
+    1539,  // imageAtomicAnd_00s20D00E
+    1541,  // imageAtomicAnd_01D20D00E
+    1543,  // imageAtomicAnd_01O20D00E
+    1545,  // imageAtomicAnd_00u20D00E
+    1547,  // imageAtomicAnd_01F20D00E
+    1549,  // imageAtomicAnd_01Q20D00E
+    1551,  // imageAtomicAnd_01B00D00E
+    1553,  // imageAtomicAnd_01M00D00E
+    1555,  // imageAtomicAnd_01X00D00E
+    1557,  // imageAtomicAnd_00t20D00E
+    1559,  // imageAtomicAnd_01E20D00E
+    1561,  // imageAtomicAnd_01P20D00E
+    1563,  // imageAtomicAnd_00z20D00E
+    1565,  // imageAtomicAnd_01K20D00E
+    1567,  // imageAtomicAnd_01V20D00E
+    1569,  // imageAtomicAnd_00v00D00E
+    1571,  // imageAtomicAnd_01G00D00E
+    1573,  // imageAtomicAnd_01R00D00E
+    1575,  // imageAtomicAnd_00w10D00E
+    1577,  // imageAtomicAnd_01H10D00E
+    1579,  // imageAtomicAnd_01S10D00E
+    1581,  // imageAtomicAnd_01A10D00E
+    1583,  // imageAtomicAnd_01L10D00E
+    1585,  // imageAtomicAnd_01W10D00E
+    1587,  // imageAtomicAnd_00x10D00D00E
+    1589,  // imageAtomicAnd_01I10D00D00E
+    1591,  // imageAtomicAnd_01T10D00D00E
+    1593,  // imageAtomicAnd_00y20D00D00E
+    1595,  // imageAtomicAnd_01J20D00D00E
+    1597,  // imageAtomicAnd_01U20D00D00E
+    1599,  // imageAtomicAnd_00r10D00D
+    1601,  // imageAtomicAnd_01C10D00D
+    1603,  // imageAtomicAnd_01N10D00D
+    1605,  // imageAtomicAnd_00s20D00D
+    1607,  // imageAtomicAnd_01D20D00D
+    1609,  // imageAtomicAnd_01O20D00D
+    1611,  // imageAtomicAnd_00u20D00D
+    1613,  // imageAtomicAnd_01F20D00D
+    1615,  // imageAtomicAnd_01Q20D00D
+    1617,  // imageAtomicAnd_01B00D00D
+    1619,  // imageAtomicAnd_01M00D00D
+    1621,  // imageAtomicAnd_01X00D00D
+    1623,  // imageAtomicAnd_00t20D00D
+    1625,  // imageAtomicAnd_01E20D00D
+    1627,  // imageAtomicAnd_01P20D00D
+    1629,  // imageAtomicAnd_00z20D00D
+    1631,  // imageAtomicAnd_01K20D00D
+    1633,  // imageAtomicAnd_01V20D00D
+    1635,  // imageAtomicAnd_00v00D00D
+    1637,  // imageAtomicAnd_01G00D00D
+    1639,  // imageAtomicAnd_01R00D00D
+    1641,  // imageAtomicAnd_00w10D00D
+    1643,  // imageAtomicAnd_01H10D00D
+    1645,  // imageAtomicAnd_01S10D00D
+    1647,  // imageAtomicAnd_01A10D00D
+    1649,  // imageAtomicAnd_01L10D00D
+    1651,  // imageAtomicAnd_01W10D00D
+    1653,  // imageAtomicAnd_00x10D00D00D
+    1655,  // imageAtomicAnd_01I10D00D00D
+    1657,  // imageAtomicAnd_01T10D00D00D
+    1659,  // imageAtomicAnd_00y20D00D00D
+    1661,  // imageAtomicAnd_01J20D00D00D
+    1663,  // imageAtomicAnd_01U20D00D00D
+    1665,  // imageAtomicOr_00r10D00E
+    1667,  // imageAtomicOr_01C10D00E
+    1669,  // imageAtomicOr_01N10D00E
+    1671,  // imageAtomicOr_00s20D00E
+    1673,  // imageAtomicOr_01D20D00E
+    1675,  // imageAtomicOr_01O20D00E
+    1677,  // imageAtomicOr_00u20D00E
+    1679,  // imageAtomicOr_01F20D00E
+    1681,  // imageAtomicOr_01Q20D00E
+    1683,  // imageAtomicOr_01B00D00E
+    1685,  // imageAtomicOr_01M00D00E
+    1687,  // imageAtomicOr_01X00D00E
+    1689,  // imageAtomicOr_00t20D00E
+    1691,  // imageAtomicOr_01E20D00E
+    1693,  // imageAtomicOr_01P20D00E
+    1695,  // imageAtomicOr_00z20D00E
+    1697,  // imageAtomicOr_01K20D00E
+    1699,  // imageAtomicOr_01V20D00E
+    1701,  // imageAtomicOr_00v00D00E
+    1703,  // imageAtomicOr_01G00D00E
+    1705,  // imageAtomicOr_01R00D00E
+    1707,  // imageAtomicOr_00w10D00E
+    1709,  // imageAtomicOr_01H10D00E
+    1711,  // imageAtomicOr_01S10D00E
+    1713,  // imageAtomicOr_01A10D00E
+    1715,  // imageAtomicOr_01L10D00E
+    1717,  // imageAtomicOr_01W10D00E
+    1719,  // imageAtomicOr_00x10D00D00E
+    1721,  // imageAtomicOr_01I10D00D00E
+    1723,  // imageAtomicOr_01T10D00D00E
+    1725,  // imageAtomicOr_00y20D00D00E
+    1727,  // imageAtomicOr_01J20D00D00E
+    1729,  // imageAtomicOr_01U20D00D00E
+    1731,  // imageAtomicOr_00r10D00D
+    1733,  // imageAtomicOr_01C10D00D
+    1735,  // imageAtomicOr_01N10D00D
+    1737,  // imageAtomicOr_00s20D00D
+    1739,  // imageAtomicOr_01D20D00D
+    1741,  // imageAtomicOr_01O20D00D
+    1743,  // imageAtomicOr_00u20D00D
+    1745,  // imageAtomicOr_01F20D00D
+    1747,  // imageAtomicOr_01Q20D00D
+    1749,  // imageAtomicOr_01B00D00D
+    1751,  // imageAtomicOr_01M00D00D
+    1753,  // imageAtomicOr_01X00D00D
+    1755,  // imageAtomicOr_00t20D00D
+    1757,  // imageAtomicOr_01E20D00D
+    1759,  // imageAtomicOr_01P20D00D
+    1761,  // imageAtomicOr_00z20D00D
+    1763,  // imageAtomicOr_01K20D00D
+    1765,  // imageAtomicOr_01V20D00D
+    1767,  // imageAtomicOr_00v00D00D
+    1769,  // imageAtomicOr_01G00D00D
+    1771,  // imageAtomicOr_01R00D00D
+    1773,  // imageAtomicOr_00w10D00D
+    1775,  // imageAtomicOr_01H10D00D
+    1777,  // imageAtomicOr_01S10D00D
+    1779,  // imageAtomicOr_01A10D00D
+    1781,  // imageAtomicOr_01L10D00D
+    1783,  // imageAtomicOr_01W10D00D
+    1785,  // imageAtomicOr_00x10D00D00D
+    1787,  // imageAtomicOr_01I10D00D00D
+    1789,  // imageAtomicOr_01T10D00D00D
+    1791,  // imageAtomicOr_00y20D00D00D
+    1793,  // imageAtomicOr_01J20D00D00D
+    1795,  // imageAtomicOr_01U20D00D00D
+    1797,  // imageAtomicXor_00r10D00E
+    1799,  // imageAtomicXor_01C10D00E
+    1801,  // imageAtomicXor_01N10D00E
+    1803,  // imageAtomicXor_00s20D00E
+    1805,  // imageAtomicXor_01D20D00E
+    1807,  // imageAtomicXor_01O20D00E
+    1809,  // imageAtomicXor_00u20D00E
+    1811,  // imageAtomicXor_01F20D00E
+    1813,  // imageAtomicXor_01Q20D00E
+    1815,  // imageAtomicXor_01B00D00E
+    1817,  // imageAtomicXor_01M00D00E
+    1819,  // imageAtomicXor_01X00D00E
+    1821,  // imageAtomicXor_00t20D00E
+    1823,  // imageAtomicXor_01E20D00E
+    1825,  // imageAtomicXor_01P20D00E
+    1827,  // imageAtomicXor_00z20D00E
+    1829,  // imageAtomicXor_01K20D00E
+    1831,  // imageAtomicXor_01V20D00E
+    1833,  // imageAtomicXor_00v00D00E
+    1835,  // imageAtomicXor_01G00D00E
+    1837,  // imageAtomicXor_01R00D00E
+    1839,  // imageAtomicXor_00w10D00E
+    1841,  // imageAtomicXor_01H10D00E
+    1843,  // imageAtomicXor_01S10D00E
+    1845,  // imageAtomicXor_01A10D00E
+    1847,  // imageAtomicXor_01L10D00E
+    1849,  // imageAtomicXor_01W10D00E
+    1851,  // imageAtomicXor_00x10D00D00E
+    1853,  // imageAtomicXor_01I10D00D00E
+    1855,  // imageAtomicXor_01T10D00D00E
+    1857,  // imageAtomicXor_00y20D00D00E
+    1859,  // imageAtomicXor_01J20D00D00E
+    1861,  // imageAtomicXor_01U20D00D00E
+    1863,  // imageAtomicXor_00r10D00D
+    1865,  // imageAtomicXor_01C10D00D
+    1867,  // imageAtomicXor_01N10D00D
+    1869,  // imageAtomicXor_00s20D00D
+    1871,  // imageAtomicXor_01D20D00D
+    1873,  // imageAtomicXor_01O20D00D
+    1875,  // imageAtomicXor_00u20D00D
+    1877,  // imageAtomicXor_01F20D00D
+    1879,  // imageAtomicXor_01Q20D00D
+    1881,  // imageAtomicXor_01B00D00D
+    1883,  // imageAtomicXor_01M00D00D
+    1885,  // imageAtomicXor_01X00D00D
+    1887,  // imageAtomicXor_00t20D00D
+    1889,  // imageAtomicXor_01E20D00D
+    1891,  // imageAtomicXor_01P20D00D
+    1893,  // imageAtomicXor_00z20D00D
+    1895,  // imageAtomicXor_01K20D00D
+    1897,  // imageAtomicXor_01V20D00D
+    1899,  // imageAtomicXor_00v00D00D
+    1901,  // imageAtomicXor_01G00D00D
+    1903,  // imageAtomicXor_01R00D00D
+    1905,  // imageAtomicXor_00w10D00D
+    1907,  // imageAtomicXor_01H10D00D
+    1909,  // imageAtomicXor_01S10D00D
+    1911,  // imageAtomicXor_01A10D00D
+    1913,  // imageAtomicXor_01L10D00D
+    1915,  // imageAtomicXor_01W10D00D
+    1917,  // imageAtomicXor_00x10D00D00D
+    1919,  // imageAtomicXor_01I10D00D00D
+    1921,  // imageAtomicXor_01T10D00D00D
+    1923,  // imageAtomicXor_00y20D00D00D
+    1925,  // imageAtomicXor_01J20D00D00D
+    1927,  // imageAtomicXor_01U20D00D00D
+    1929,  // imageAtomicExchange_00r10D00E
+    1931,  // imageAtomicExchange_01C10D00E
+    1933,  // imageAtomicExchange_01N10D00E
+    1935,  // imageAtomicExchange_00s20D00E
+    1937,  // imageAtomicExchange_01D20D00E
+    1939,  // imageAtomicExchange_01O20D00E
+    1941,  // imageAtomicExchange_00u20D00E
+    1943,  // imageAtomicExchange_01F20D00E
+    1945,  // imageAtomicExchange_01Q20D00E
+    1947,  // imageAtomicExchange_01B00D00E
+    1949,  // imageAtomicExchange_01M00D00E
+    1951,  // imageAtomicExchange_01X00D00E
+    1953,  // imageAtomicExchange_00t20D00E
+    1955,  // imageAtomicExchange_01E20D00E
+    1957,  // imageAtomicExchange_01P20D00E
+    1959,  // imageAtomicExchange_00z20D00E
+    1961,  // imageAtomicExchange_01K20D00E
+    1963,  // imageAtomicExchange_01V20D00E
+    1965,  // imageAtomicExchange_00v00D00E
+    1967,  // imageAtomicExchange_01G00D00E
+    1969,  // imageAtomicExchange_01R00D00E
+    1971,  // imageAtomicExchange_00w10D00E
+    1973,  // imageAtomicExchange_01H10D00E
+    1975,  // imageAtomicExchange_01S10D00E
+    1977,  // imageAtomicExchange_01A10D00E
+    1979,  // imageAtomicExchange_01L10D00E
+    1981,  // imageAtomicExchange_01W10D00E
+    1983,  // imageAtomicExchange_00x10D00D00E
+    1985,  // imageAtomicExchange_01I10D00D00E
+    1987,  // imageAtomicExchange_01T10D00D00E
+    1989,  // imageAtomicExchange_00y20D00D00E
+    1991,  // imageAtomicExchange_01J20D00D00E
+    1993,  // imageAtomicExchange_01U20D00D00E
+    1995,  // imageAtomicExchange_00r10D00D
+    1997,  // imageAtomicExchange_01C10D00D
+    1999,  // imageAtomicExchange_01N10D00D
+    2001,  // imageAtomicExchange_00s20D00D
+    2003,  // imageAtomicExchange_01D20D00D
+    2005,  // imageAtomicExchange_01O20D00D
+    2007,  // imageAtomicExchange_00u20D00D
+    2009,  // imageAtomicExchange_01F20D00D
+    2011,  // imageAtomicExchange_01Q20D00D
+    2013,  // imageAtomicExchange_01B00D00D
+    2015,  // imageAtomicExchange_01M00D00D
+    2017,  // imageAtomicExchange_01X00D00D
+    2019,  // imageAtomicExchange_00t20D00D
+    2021,  // imageAtomicExchange_01E20D00D
+    2023,  // imageAtomicExchange_01P20D00D
+    2025,  // imageAtomicExchange_00z20D00D
+    2027,  // imageAtomicExchange_01K20D00D
+    2029,  // imageAtomicExchange_01V20D00D
+    2031,  // imageAtomicExchange_00v00D00D
+    2033,  // imageAtomicExchange_01G00D00D
+    2035,  // imageAtomicExchange_01R00D00D
+    2037,  // imageAtomicExchange_00w10D00D
+    2039,  // imageAtomicExchange_01H10D00D
+    2041,  // imageAtomicExchange_01S10D00D
+    2043,  // imageAtomicExchange_01A10D00D
+    2045,  // imageAtomicExchange_01L10D00D
+    2047,  // imageAtomicExchange_01W10D00D
+    2049,  // imageAtomicExchange_00x10D00D00D
+    2051,  // imageAtomicExchange_01I10D00D00D
+    2053,  // imageAtomicExchange_01T10D00D00D
+    2055,  // imageAtomicExchange_00y20D00D00D
+    2057,  // imageAtomicExchange_01J20D00D00D
+    2059,  // imageAtomicExchange_01U20D00D00D
+    2061,  // imageAtomicExchange_00r10D00B
+    2063,  // imageAtomicExchange_01C10D00B
+    2065,  // imageAtomicExchange_01N10D00B
+    2067,  // imageAtomicExchange_00s20D00B
+    2069,  // imageAtomicExchange_01D20D00B
+    2071,  // imageAtomicExchange_01O20D00B
+    2073,  // imageAtomicExchange_00u20D00B
+    2075,  // imageAtomicExchange_01F20D00B
+    2077,  // imageAtomicExchange_01Q20D00B
+    2079,  // imageAtomicExchange_01B00D00B
+    2081,  // imageAtomicExchange_01M00D00B
+    2083,  // imageAtomicExchange_01X00D00B
+    2085,  // imageAtomicExchange_00t20D00B
+    2087,  // imageAtomicExchange_01E20D00B
+    2089,  // imageAtomicExchange_01P20D00B
+    2091,  // imageAtomicExchange_00z20D00B
+    2093,  // imageAtomicExchange_01K20D00B
+    2095,  // imageAtomicExchange_01V20D00B
+    2097,  // imageAtomicExchange_00v00D00B
+    2099,  // imageAtomicExchange_01G00D00B
+    2101,  // imageAtomicExchange_01R00D00B
+    2103,  // imageAtomicExchange_00w10D00B
+    2105,  // imageAtomicExchange_01H10D00B
+    2107,  // imageAtomicExchange_01S10D00B
+    2109,  // imageAtomicExchange_01A10D00B
+    2111,  // imageAtomicExchange_01L10D00B
+    2113,  // imageAtomicExchange_01W10D00B
+    2115,  // imageAtomicExchange_00x10D00D00B
+    2117,  // imageAtomicExchange_01I10D00D00B
+    2119,  // imageAtomicExchange_01T10D00D00B
+    2121,  // imageAtomicExchange_00y20D00D00B
+    2123,  // imageAtomicExchange_01J20D00D00B
+    2125,  // imageAtomicExchange_01U20D00D00B
+    2127,  // imageAtomicCompSwap_00r10D00E00E
+    2129,  // imageAtomicCompSwap_01C10D00E00E
+    2131,  // imageAtomicCompSwap_01N10D00E00E
+    2133,  // imageAtomicCompSwap_00s20D00E00E
+    2135,  // imageAtomicCompSwap_01D20D00E00E
+    2137,  // imageAtomicCompSwap_01O20D00E00E
+    2139,  // imageAtomicCompSwap_00u20D00E00E
+    2141,  // imageAtomicCompSwap_01F20D00E00E
+    2143,  // imageAtomicCompSwap_01Q20D00E00E
+    2145,  // imageAtomicCompSwap_01B00D00E00E
+    2147,  // imageAtomicCompSwap_01M00D00E00E
+    2149,  // imageAtomicCompSwap_01X00D00E00E
+    2151,  // imageAtomicCompSwap_00t20D00E00E
+    2153,  // imageAtomicCompSwap_01E20D00E00E
+    2155,  // imageAtomicCompSwap_01P20D00E00E
+    2157,  // imageAtomicCompSwap_00z20D00E00E
+    2159,  // imageAtomicCompSwap_01K20D00E00E
+    2161,  // imageAtomicCompSwap_01V20D00E00E
+    2163,  // imageAtomicCompSwap_00v00D00E00E
+    2165,  // imageAtomicCompSwap_01G00D00E00E
+    2167,  // imageAtomicCompSwap_01R00D00E00E
+    2169,  // imageAtomicCompSwap_00w10D00E00E
+    2171,  // imageAtomicCompSwap_01H10D00E00E
+    2173,  // imageAtomicCompSwap_01S10D00E00E
+    2175,  // imageAtomicCompSwap_01A10D00E00E
+    2177,  // imageAtomicCompSwap_01L10D00E00E
+    2179,  // imageAtomicCompSwap_01W10D00E00E
+    2181,  // imageAtomicCompSwap_00x10D00D00E00E
+    2183,  // imageAtomicCompSwap_01I10D00D00E00E
+    2185,  // imageAtomicCompSwap_01T10D00D00E00E
+    2187,  // imageAtomicCompSwap_00y20D00D00E00E
+    2189,  // imageAtomicCompSwap_01J20D00D00E00E
+    2191,  // imageAtomicCompSwap_01U20D00D00E00E
+    2193,  // imageAtomicCompSwap_00r10D00D00D
+    2195,  // imageAtomicCompSwap_01C10D00D00D
+    2197,  // imageAtomicCompSwap_01N10D00D00D
+    2199,  // imageAtomicCompSwap_00s20D00D00D
+    2201,  // imageAtomicCompSwap_01D20D00D00D
+    2203,  // imageAtomicCompSwap_01O20D00D00D
+    2205,  // imageAtomicCompSwap_00u20D00D00D
+    2207,  // imageAtomicCompSwap_01F20D00D00D
+    2209,  // imageAtomicCompSwap_01Q20D00D00D
+    2211,  // imageAtomicCompSwap_01B00D00D00D
+    2213,  // imageAtomicCompSwap_01M00D00D00D
+    2215,  // imageAtomicCompSwap_01X00D00D00D
+    2217,  // imageAtomicCompSwap_00t20D00D00D
+    2219,  // imageAtomicCompSwap_01E20D00D00D
+    2221,  // imageAtomicCompSwap_01P20D00D00D
+    2223,  // imageAtomicCompSwap_00z20D00D00D
+    2225,  // imageAtomicCompSwap_01K20D00D00D
+    2227,  // imageAtomicCompSwap_01V20D00D00D
+    2229,  // imageAtomicCompSwap_00v00D00D00D
+    2231,  // imageAtomicCompSwap_01G00D00D00D
+    2233,  // imageAtomicCompSwap_01R00D00D00D
+    2235,  // imageAtomicCompSwap_00w10D00D00D
+    2237,  // imageAtomicCompSwap_01H10D00D00D
+    2239,  // imageAtomicCompSwap_01S10D00D00D
+    2241,  // imageAtomicCompSwap_01A10D00D00D
+    2243,  // imageAtomicCompSwap_01L10D00D00D
+    2245,  // imageAtomicCompSwap_01W10D00D00D
+    2247,  // imageAtomicCompSwap_00x10D00D00D00D
+    2249,  // imageAtomicCompSwap_01I10D00D00D00D
+    2251,  // imageAtomicCompSwap_01T10D00D00D00D
+    2253,  // imageAtomicCompSwap_00y20D00D00D00D
+    2255,  // imageAtomicCompSwap_01J20D00D00D00D
+    2257,  // imageAtomicCompSwap_01U20D00D00D00D
+    2259,  // pixelLocalLoadANGLE_01Y
+    2260,  // pixelLocalLoadANGLE_01Z
+    2261,  // pixelLocalLoadANGLE_01a
+    2262,  // pixelLocalStoreANGLE_01Y30B
+    2263,  // pixelLocalStoreANGLE_01Z30D
+    2264,  // pixelLocalStoreANGLE_01a30E
+    2265,  // beginInvocationInterlockNV_
+    2266,  // endInvocationInterlockNV_
+    2267,  // beginFragmentShaderOrderingINTEL_
+    2268,  // beginInvocationInterlockARB_
+    2269,  // endInvocationInterlockARB_
+    2270,  // memoryBarrier_
+    2271,  // memoryBarrierAtomicCounter_
+    2272,  // memoryBarrierBuffer_
+    2273,  // memoryBarrierImage_
+    2274,  // barrier_
+    2278,  // memoryBarrierShared_
+    2279,  // groupMemoryBarrier_
+    2280,  // EmitVertex_
+    2283,  // EndPrimitive_
+    2286,  // subpassLoad_01b
+    2287,  // subpassLoad_01c
+    2288,  // subpassLoad_01d
+    2289,  // subpassLoad_01e00D
+    2290,  // subpassLoad_01f00D
+    2291,  // subpassLoad_01g00D
+    2292,  // numSamples_
+    2293,  // samplePosition_00E
+    2294,  // interpolateAtCenter_00B
+    2295,  // interpolateAtCenter_10B
+    2296,  // interpolateAtCenter_20B
+    2297,  // interpolateAtCenter_30B
+    2298,  // saturate_00B
+    2299,  // saturate_10B
+    2300,  // saturate_20B
+    2301,  // saturate_30B
+    2302,  // gl_DepthRangeParameters
+    2303,  // gl_DepthRange
+    2304,  // gl_NumSamples
+    2306,  // gl_MaxVertexAttribs
+    2307,  // gl_MaxVertexUniformVectors
+    2308,  // gl_MaxVertexTextureImageUnits
+    2309,  // gl_MaxCombinedTextureImageUnits
+    2310,  // gl_MaxTextureImageUnits
+    2311,  // gl_MaxFragmentUniformVectors
+    2312,  // gl_MaxVaryingVectors
+    2313,  // gl_MaxDrawBuffers
+    2314,  // gl_MaxDualSourceDrawBuffersEXT
+    2315,  // gl_MaxVertexOutputVectors
+    2316,  // gl_MaxFragmentInputVectors
+    2317,  // gl_MinProgramTexelOffset
+    2318,  // gl_MaxProgramTexelOffset
+    2319,  // gl_MaxImageUnits
+    2320,  // gl_MaxVertexImageUniforms
+    2321,  // gl_MaxFragmentImageUniforms
+    2322,  // gl_MaxComputeImageUniforms
+    2323,  // gl_MaxCombinedImageUniforms
+    2324,  // gl_MaxCombinedShaderOutputResources
+    2325,  // gl_MaxComputeWorkGroupCount
+    2326,  // gl_MaxComputeWorkGroupSize
+    2327,  // gl_MaxComputeUniformComponents
+    2328,  // gl_MaxComputeTextureImageUnits
+    2329,  // gl_MaxComputeAtomicCounters
+    2330,  // gl_MaxComputeAtomicCounterBuffers
+    2331,  // gl_MaxVertexAtomicCounters
+    2332,  // gl_MaxFragmentAtomicCounters
+    2333,  // gl_MaxCombinedAtomicCounters
+    2334,  // gl_MaxAtomicCounterBindings
+    2335,  // gl_MaxVertexAtomicCounterBuffers
+    2336,  // gl_MaxFragmentAtomicCounterBuffers
+    2337,  // gl_MaxCombinedAtomicCounterBuffers
+    2338,  // gl_MaxAtomicCounterBufferSize
+    2339,  // gl_MaxGeometryInputComponents
+    2342,  // gl_MaxGeometryOutputComponents
+    2345,  // gl_MaxGeometryImageUniforms
+    2348,  // gl_MaxGeometryTextureImageUnits
+    2351,  // gl_MaxGeometryOutputVertices
+    2354,  // gl_MaxGeometryTotalOutputComponents
+    2357,  // gl_MaxGeometryUniformComponents
+    2360,  // gl_MaxGeometryAtomicCounters
+    2363,  // gl_MaxGeometryAtomicCounterBuffers
+    2366,  // gl_MaxTessControlInputComponents
+    2369,  // gl_MaxTessControlOutputComponents
+    2372,  // gl_MaxTessControlTextureImageUnits
+    2375,  // gl_MaxTessControlUniformComponents
+    2378,  // gl_MaxTessControlTotalOutputComponents
+    2381,  // gl_MaxTessControlImageUniforms
+    2384,  // gl_MaxTessControlAtomicCounters
+    2387,  // gl_MaxTessControlAtomicCounterBuffers
+    2390,  // gl_MaxTessPatchComponents
+    2393,  // gl_MaxPatchVertices
+    2396,  // gl_MaxTessGenLevel
+    2399,  // gl_MaxTessEvaluationInputComponents
+    2402,  // gl_MaxTessEvaluationOutputComponents
+    2405,  // gl_MaxTessEvaluationTextureImageUnits
+    2408,  // gl_MaxTessEvaluationUniformComponents
+    2411,  // gl_MaxTessEvaluationImageUniforms
+    2414,  // gl_MaxTessEvaluationAtomicCounters
+    2417,  // gl_MaxTessEvaluationAtomicCounterBuffers
+    2420,  // gl_MaxSamples
+    2422,  // gl_MaxClipDistances
+    2425,  // gl_MaxCullDistances
+    2427,  // gl_MaxCombinedClipAndCullDistances
+    2429,  // gl_FragCoord
+    2431,  // gl_FrontFacing
+    2432,  // gl_PointCoord
+    2433,  // gl_FragColor
+    2434,  // gl_FragData
+    2435,  // gl_FragDepth
+    2436,  // gl_HelperInvocation
+    2437,  // gl_SecondaryFragColorEXT
+    2438,  // gl_SecondaryFragDataEXT
+    2439,  // gl_FragDepthEXT
+    2440,  // gl_LastFragData
+    2443,  // gl_LastFragColor
+    2444,  // gl_LastFragColorARM
+    2445,  // gl_LastFragDepthARM
+    2446,  // gl_LastFragStencilARM
+    2447,  // gl_PrimitiveID
+    2459,  // gl_Layer
+    2466,  // gl_SampleID
+    2468,  // gl_SamplePosition
+    2470,  // gl_SampleMaskIn
+    2472,  // gl_SampleMask
+    2474,  // gl_Position
+    2484,  // gl_PointSize
+    2486,  // gl_InstanceID
+    2487,  // gl_InstanceIndex
+    2488,  // gl_VertexID
+    2489,  // gl_VertexIndex
+    2490,  // gl_DrawID
+    2491,  // gl_BaseVertex
+    2492,  // gl_BaseInstance
+    2493,  // angle_BaseVertex
+    2494,  // angle_BaseInstance
+    2495,  // gl_ClipDistance
+    2498,  // gl_NumWorkGroups
+    2499,  // gl_WorkGroupSize
+    2500,  // gl_WorkGroupID
+    2501,  // gl_LocalInvocationID
+    2502,  // gl_GlobalInvocationID
+    2503,  // gl_LocalInvocationIndex
+    2504,  // gl_PrimitiveIDIn
+    2507,  // gl_InvocationID
+    2513,  // gl_PerVertex
+    2522,  // gl_in
+    2531,  // gl_PatchVerticesIn
+    2537,  // gl_TessLevelOuter
+    2543,  // gl_TessLevelInner
+    2549,  // gl_out
+    2555,  // gl_BoundingBox
+    2558,  // gl_BoundingBoxEXT
+    2561,  // gl_BoundingBoxOES
+    2564,  // gl_TessCoord
+    2565,  // gl_ViewID_OVR
+    2566,  // gl_CullDistance
 };
 
 using Ext = TExtension;
@@ -28373,6 +28642,8 @@ constexpr UnmangledEntry unmangled[] = {
     {"textureGatherOffset", std::array<TExtension, 1>{{Ext::UNDEFINED}}, 310, Shader::ALL},
     {"textureGatherOffsets",
      std::array<TExtension, 2>{{Ext::EXT_gpu_shader5, Ext::OES_gpu_shader5}}, 310, Shader::ALL},
+    {"textureQueryLOD", std::array<TExtension, 1>{{Ext::EXT_texture_query_lod}}, 310,
+     Shader::FRAGMENT},
     {"rgb_2_yuv", std::array<TExtension, 1>{{Ext::EXT_YUV_target}}, 300, Shader::ALL},
     {"yuv_2_rgb", std::array<TExtension, 1>{{Ext::EXT_YUV_target}}, 300, Shader::ALL},
     {"dFdx", std::array<TExtension, 1>{{Ext::UNDEFINED}}, 300, Shader::FRAGMENT},
@@ -29838,7 +30109,7 @@ namespace
 {
 uint16_t GetNextRuleIndex(uint32_t nameHash)
 {
-    if (nameHash == 1662 - 1)
+    if (nameHash == 1683 - 1)
         return ArraySize(BuiltInArray::kRules);
     return BuiltInArray::kMangledOffsets[nameHash + 1];
 }
@@ -29850,7 +30121,7 @@ const TSymbol *TSymbolTable::findBuiltIn(const ImmutableString &name, int shader
         return nullptr;
 
     uint32_t nameHash = name.mangledNameHash();
-    if (nameHash >= 1662)
+    if (nameHash >= 1683)
         return nullptr;
 
     const char *actualName = BuiltInArray::kMangledNames[nameHash];
@@ -29872,7 +30143,7 @@ bool TSymbolTable::isUnmangledBuiltInName(const ImmutableString &name,
         return false;
 
     uint32_t nameHash = name.unmangledNameHash();
-    if (nameHash >= 178)
+    if (nameHash >= 179)
         return false;
 
     return BuiltInArray::unmangled[nameHash].matches(name, mShaderSpec, shaderVersion, mShaderType,

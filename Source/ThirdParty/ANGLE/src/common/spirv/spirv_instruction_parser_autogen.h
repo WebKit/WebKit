@@ -1249,45 +1249,6 @@ void ParsePtrNotEqual(const uint32_t *_instruction,
                       IdResult *idResult2,
                       IdRef *operand1,
                       IdRef *operand2);
-void ParseSDot(const uint32_t *_instruction,
-               IdResultType *idResultType1,
-               IdResult *idResult2,
-               IdRef *vector1,
-               IdRef *vector2,
-               spv::PackedVectorFormat *packedVectorFormat);
-void ParseUDot(const uint32_t *_instruction,
-               IdResultType *idResultType1,
-               IdResult *idResult2,
-               IdRef *vector1,
-               IdRef *vector2,
-               spv::PackedVectorFormat *packedVectorFormat);
-void ParseSUDot(const uint32_t *_instruction,
-                IdResultType *idResultType1,
-                IdResult *idResult2,
-                IdRef *vector1,
-                IdRef *vector2,
-                spv::PackedVectorFormat *packedVectorFormat);
-void ParseSDotAccSat(const uint32_t *_instruction,
-                     IdResultType *idResultType1,
-                     IdResult *idResult2,
-                     IdRef *vector1,
-                     IdRef *vector2,
-                     IdRef *accumulator,
-                     spv::PackedVectorFormat *packedVectorFormat);
-void ParseUDotAccSat(const uint32_t *_instruction,
-                     IdResultType *idResultType1,
-                     IdResult *idResult2,
-                     IdRef *vector1,
-                     IdRef *vector2,
-                     IdRef *accumulator,
-                     spv::PackedVectorFormat *packedVectorFormat);
-void ParseSUDotAccSat(const uint32_t *_instruction,
-                      IdResultType *idResultType1,
-                      IdResult *idResult2,
-                      IdRef *vector1,
-                      IdRef *vector2,
-                      IdRef *accumulator,
-                      spv::PackedVectorFormat *packedVectorFormat);
 
 }  // namespace spirv
 }  // namespace angle

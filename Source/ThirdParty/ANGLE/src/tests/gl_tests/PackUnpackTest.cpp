@@ -111,9 +111,6 @@ void main()
                             float expect1,
                             float expect2)
     {
-        // TODO(anglebug.com/42264029) iOS doesn't support float32 framebuffers.
-        ANGLE_SKIP_TEST_IF(IsIOS() && IsOpenGLES());
-
         GLint vec2Location = glGetUniformLocation(program, "v");
 
         glUseProgram(program);

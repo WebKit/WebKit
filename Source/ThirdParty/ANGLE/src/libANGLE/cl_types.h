@@ -8,12 +8,13 @@
 #ifndef LIBANGLE_CLTYPES_H_
 #define LIBANGLE_CLTYPES_H_
 
-#include "libANGLE/CLBitField.h"
-#include "libANGLE/CLRefPointer.h"
-#include "libANGLE/Debug.h"
+#if defined(ANGLE_ENABLE_CL)
+#    include "libANGLE/CLBitField.h"
+#    include "libANGLE/CLRefPointer.h"
+#    include "libANGLE/Debug.h"
 
-#include "common/PackedCLEnums_autogen.h"
-#include "common/angleutils.h"
+#    include "common/PackedCLEnums_autogen.h"
+#    include "common/angleutils.h"
 
 // Include frequently used standard headers
 #include <algorithm>
@@ -162,5 +163,7 @@ struct NDRange
 };
 
 }  // namespace cl
+
+#endif  // ANGLE_ENABLE_CL
 
 #endif  // LIBANGLE_CLTYPES_H_

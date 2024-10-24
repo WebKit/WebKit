@@ -27,6 +27,7 @@
     OP(APPLE_clip_distance,                            100, 320) \
     OP(ARB_texture_rectangle,                          100, 320) \
     OP(ARM_shader_framebuffer_fetch,                   100, 320) \
+    OP(ARM_shader_framebuffer_fetch_depth_stencil,     100, 320) \
     OP(EXT_blend_func_extended,                        100, 320) \
     OP(EXT_clip_cull_distance,                         300, 320) \
     OP(EXT_conservative_depth,                         300, 320) \
@@ -50,6 +51,7 @@
     OP(OES_tessellation_shader,                        310, 320) \
     OP(EXT_texture_buffer,                             310, 320) \
     OP(EXT_texture_cube_map_array,                     310, 320) \
+    OP(EXT_texture_query_lod,                          300, 320) \
     OP(EXT_texture_shadow_lod,                         300, 320) \
     OP(EXT_YUV_target,                                 300, 320) \
     OP(KHR_blend_equation_advanced,                    100, 320) \

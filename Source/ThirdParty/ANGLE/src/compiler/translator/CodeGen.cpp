@@ -4,6 +4,10 @@
 // found in the LICENSE file.
 //
 
+#ifdef ANGLE_ENABLE_NULL
+#    include "compiler/translator/null/TranslatorNULL.h"
+#endif  // ANGLE_ENABLE_NULL
+
 #ifdef ANGLE_ENABLE_ESSL
 #    include "compiler/translator/glsl/TranslatorESSL.h"
 #endif  // ANGLE_ENABLE_ESSL
@@ -40,6 +44,13 @@ namespace sh
 //
 TCompiler *ConstructCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
 {
+#ifdef ANGLE_ENABLE_NULL
+    if (IsOutputNULL(output))
+    {
+        return new TranslatorNULL(type, spec);
+    }
+#endif  // ANGLE_ENABLE_NULL
+
 #ifdef ANGLE_ENABLE_ESSL
     if (IsOutputESSL(output))
     {
