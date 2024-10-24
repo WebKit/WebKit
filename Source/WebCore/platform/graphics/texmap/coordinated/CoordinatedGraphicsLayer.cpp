@@ -1093,10 +1093,8 @@ void CoordinatedGraphicsLayer::updateContentBuffers()
 
     // Address the content scale adjustment.
     if (m_pendingContentsScaleAdjustment) {
-        if (layerState.mainBackingStore && layerState.mainBackingStore->contentsScale() != effectiveContentsScale()) {
-            // Discard the CoodinatedBackingStoreProxy object to reconstruct it with new content scale.
-            layerState.mainBackingStore = nullptr;
-        }
+        if (layerState.mainBackingStore && layerState.mainBackingStore->setContentsScale(effectiveContentsScale()))
+            m_pendingVisibleRectAdjustment = true;
         m_pendingContentsScaleAdjustment = false;
     }
 

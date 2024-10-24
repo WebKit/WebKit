@@ -41,6 +41,7 @@ public:
 
     CoordinatedBackingStoreProxyClient& client() { return m_client; }
 
+    bool setContentsScale(float);
     float contentsScale() const { return m_contentsScale; }
 
     void invalidate(const IntRect& dirtyRect);

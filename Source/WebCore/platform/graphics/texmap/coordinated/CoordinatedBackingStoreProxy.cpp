@@ -59,6 +59,23 @@ CoordinatedBackingStoreProxy::CoordinatedBackingStoreProxy(CoordinatedBackingSto
 
 CoordinatedBackingStoreProxy::~CoordinatedBackingStoreProxy() = default;
 
+bool CoordinatedBackingStoreProxy::setContentsScale(float contentsScale)
+{
+    if (m_contentsScale == contentsScale)
+        return false;
+
+    m_contentsScale = contentsScale;
+    m_coverAreaMultiplier = 2;
+    m_pendingTileCreation = false;
+    m_contentsRect = { };
+    m_visibleRect = { };
+    m_coverRect = { };
+    m_keepRect = { };
+    m_previousContentsRect = { };
+
+    return true;
+}
+
 OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, bool shouldCreateAndDestroyTiles, CoordinatedGraphicsLayer& layer)
 {
     if (shouldCreateAndDestroyTiles) {
