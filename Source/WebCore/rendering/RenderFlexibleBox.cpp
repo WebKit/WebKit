@@ -1886,6 +1886,8 @@ static LayoutUnit alignmentOffset(LayoutUnit availableFreeSpace, ItemPosition po
     case ItemPosition::Baseline:
     case ItemPosition::LastBaseline: 
         return maxAscent.value_or(0_lu) - ascent.value_or(0_lu);
+    case ItemPosition::AnchorCenter:
+        return 0; // TODO: Implement - see https://bugs.webkit.org/show_bug.cgi?id=275451.
     }
     return 0;
 }

@@ -2193,7 +2193,7 @@ template<> constexpr CSSBoxType fromCSSValueID(CSSValueID valueID)
 #define TYPE ItemPosition
 #define FOR_EACH(CASE) CASE(Legacy) CASE(Auto) CASE(Normal) CASE(Stretch) CASE(Baseline) \
     CASE(LastBaseline) CASE(Center) CASE(Start) CASE(End) CASE(SelfStart) CASE(SelfEnd) \
-    CASE(FlexStart) CASE(FlexEnd) CASE(Left) CASE(Right)
+    CASE(FlexStart) CASE(FlexEnd) CASE(Left) CASE(Right) CASE(AnchorCenter)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

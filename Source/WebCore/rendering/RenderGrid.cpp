@@ -2044,6 +2044,8 @@ GridAxisPosition RenderGrid::columnAxisPositionForGridItem(const RenderBox& grid
     case ItemPosition::Auto:
     case ItemPosition::Normal:
         break;
+    case ItemPosition::AnchorCenter:
+        return GridAxisPosition::GridAxisStart; // TODO: Implement - see https://bugs.webkit.org/show_bug.cgi?id=275451.
     }
 
     ASSERT_NOT_REACHED();
@@ -2094,6 +2096,8 @@ GridAxisPosition RenderGrid::rowAxisPositionForGridItem(const RenderBox& gridIte
     case ItemPosition::Auto:
     case ItemPosition::Normal:
         break;
+    case ItemPosition::AnchorCenter:
+        return GridAxisPosition::GridAxisStart; // TODO: Implement - see https://bugs.webkit.org/show_bug.cgi?id=275451.
     }
 
     ASSERT_NOT_REACHED();

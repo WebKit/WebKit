@@ -467,7 +467,8 @@ enum class ItemPosition : uint8_t {
     FlexStart,
     FlexEnd,
     Left,
-    Right
+    Right,
+    AnchorCenter,
 };
 
 enum class OverflowAlignment : uint8_t {

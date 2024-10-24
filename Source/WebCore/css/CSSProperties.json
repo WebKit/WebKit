@@ -7293,7 +7293,11 @@
                 "start",
                 "end",
                 "self-start",
-                "self-end"
+                "self-end",
+                {
+                    "value": "anchor-center",
+                    "settings-flag": "cssAnchorPositioningEnabled"
+                }
             ],
             "codegen-properties": {
                 "aliases": [
@@ -7302,7 +7306,7 @@
                 "initial": "initialDefaultAlignment",
                 "converter": "SelfOrDefaultAlignmentData",
                 "parser-function": "consumeAlignItems",
-                "parser-grammar-unused": "normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]",
+                "parser-grammar-unused": "normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ] | anchor-center",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals.",
                 "comment": "Alternate definition in css-flexbox - flex-start | flex-end | center | baseline | stretch"
             },
@@ -7328,7 +7332,11 @@
                 "start",
                 "end",
                 "self-start",
-                "self-end"
+                "self-end",
+                {
+                    "value": "anchor-center",
+                    "settings-flag": "cssAnchorPositioningEnabled"
+                }
             ],
             "codegen-properties": {
                 "aliases": [
@@ -7337,7 +7345,7 @@
                 "initial": "initialSelfAlignment",
                 "converter": "SelfOrDefaultAlignmentData",
                 "parser-function": "consumeAlignSelf",
-                "parser-grammar-unused": "auto | normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ]",
+                "parser-grammar-unused": "auto | normal | stretch | <baseline-position> | [ <overflow-position>? <self-position> ] | anchor-center",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals.",
                 "comment": "Alternate definition in css-flexbox - auto | flex-start | flex-end | center | baseline | stretch"
             },
@@ -7529,7 +7537,7 @@
                 "initial": "initialSelfAlignment",
                 "converter": "SelfOrDefaultAlignmentData",
                 "parser-function": "consumeJustifySelf",
-                "parser-grammar-unused": "auto | normal | stretch | <baseline-position> | [ <overflow-position>? [ <self-position> | left | right ] ]",
+                "parser-grammar-unused": "auto | normal | stretch | <baseline-position> | [ <overflow-position>? [ <self-position> | left | right ] ] | anchor-center",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals."
             },
             "specification": {
@@ -7544,7 +7552,7 @@
                 ],
                 "converter": "SelfOrDefaultAlignmentData",
                 "parser-function": "consumeJustifyItems",
-                "parser-grammar-unused": "[ normal | stretch | <baseline-position> | [ <overflow-position>? [ <self-position> | left | right ] ] | legacy | legacy ] && [ left | right | center ]",
+                "parser-grammar-unused": "[ normal | stretch | anchor-center | <baseline-position> | [ <overflow-position>? [ <self-position> | left | right ] ] | legacy | legacy ] && [ left | right | center | anchor-center ]",
                 "parser-grammar-unused-reason": "Needs support for ordered groups, '&&' groups and optionals."
             },
             "specification": {

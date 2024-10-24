@@ -1,10 +1,10 @@
 
-FAIL e.style['align-self'] = "anchor-center" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['align-items'] = "anchor-center" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['justify-self'] = "anchor-center" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL e.style['justify-items'] = "anchor-center" should set the property value assert_not_equals: property should be set got disallowed value ""
-FAIL Property align-self value 'anchor-center' assert_true: 'anchor-center' is a supported value for align-self. expected true got false
-FAIL Property align-items value 'anchor-center' assert_true: 'anchor-center' is a supported value for align-items. expected true got false
-FAIL Property justify-self value 'anchor-center' assert_true: 'anchor-center' is a supported value for justify-self. expected true got false
-FAIL Property justify-items value 'anchor-center' assert_true: 'anchor-center' is a supported value for justify-items. expected true got false
+PASS e.style['align-self'] = "anchor-center" should set the property value
+PASS e.style['align-items'] = "anchor-center" should set the property value
+PASS e.style['justify-self'] = "anchor-center" should set the property value
+PASS e.style['justify-items'] = "anchor-center" should set the property value
+PASS Property align-self value 'anchor-center'
+PASS Property align-items value 'anchor-center'
+PASS Property justify-self value 'anchor-center'
+PASS Property justify-items value 'anchor-center'
 

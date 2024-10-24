@@ -77,7 +77,7 @@ static bool isContentPositionOrLeftOrRightKeyword(CSSValueID id)
 
 static bool isSelfPositionKeyword(CSSValueID id)
 {
-    return identMatches<CSSValueStart, CSSValueEnd, CSSValueCenter, CSSValueSelfStart, CSSValueSelfEnd, CSSValueFlexStart, CSSValueFlexEnd>(id);
+    return identMatches<CSSValueStart, CSSValueEnd, CSSValueCenter, CSSValueSelfStart, CSSValueSelfEnd, CSSValueFlexStart, CSSValueFlexEnd, CSSValueAnchorCenter>(id);
 }
 
 static bool isSelfPositionOrLeftOrRightKeyword(CSSValueID id)

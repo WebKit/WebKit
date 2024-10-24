@@ -646,6 +646,7 @@ TextStream& operator<<(TextStream& ts, ItemPosition position)
     case ItemPosition::FlexEnd: ts << "flex-end"; break;
     case ItemPosition::Left: ts << "left"; break;
     case ItemPosition::Right: ts << "right"; break;
+    case ItemPosition::AnchorCenter: ts << "anchor-center"; break;
     }
     return ts;
 }
