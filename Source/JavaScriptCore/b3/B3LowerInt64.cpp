@@ -318,7 +318,6 @@ private:
             hi = original;
             lo = original;
         } else {
-            RELEASE_ASSERT(original.distance() == bytesForWidth(Width64));
             hi = HeapRange(original.begin() + bytesForWidth(Width32), original.end());
             lo = HeapRange(original.begin(), original.begin() + bytesForWidth(Width32));
             RELEASE_ASSERT(!hi.overlaps(lo));
