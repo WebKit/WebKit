@@ -150,6 +150,8 @@ private:
 
     WeakPtr<PaymentCoordinator> m_paymentCoordinator;
     WeakRef<Page> m_page;
+    uint64_t m_showCount { 0 };
+    uint64_t m_hideCount { 0 };
     bool m_canMakePayments { true };
     bool m_canMakePaymentsWithActiveCard { true };
     ApplePayPaymentContact m_shippingAddress;
