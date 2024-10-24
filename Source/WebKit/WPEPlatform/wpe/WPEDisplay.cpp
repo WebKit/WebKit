@@ -95,7 +95,10 @@ static void wpeDisplayDispose(GObject* object)
 {
     auto* priv = WPE_DISPLAY(object)->priv;
 
-    g_clear_pointer(&priv->eglDisplay, eglTerminate);
+    if (priv->eglDisplay) {
+        eglTerminate(priv->eglDisplay);
+        priv->eglDisplay = nullptr;
+    }
 
     G_OBJECT_CLASS(wpe_display_parent_class)->dispose(object);
 }
