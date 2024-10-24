@@ -293,7 +293,7 @@ bool EntryPlan::generateWasmToWasmStubs()
             continue;
         dataLogLnIf(WasmEntryPlanInternal::verbose, "Processing import function number "_s, importFunctionIndex, ": "_s, makeString(import->module), ": "_s, makeString(import->field));
 #if ENABLE(JIT)
-        if (Options::useJIT()) {
+        if (Options::useWasmJIT()) {
             auto binding = wasmToWasm(importFunctionIndex);
             if (UNLIKELY(!binding))
                 return false;
@@ -316,7 +316,7 @@ bool EntryPlan::generateWasmToJSStubs()
     for (unsigned importIndex = 0; importIndex < m_moduleInformation->importFunctionCount(); ++importIndex) {
 #if ENABLE(JIT)
         Wasm::TypeIndex typeIndex = m_moduleInformation->importFunctionTypeIndices.at(importIndex);
-        if (Options::useJIT()) {
+        if (Options::useWasmJIT()) {
             auto binding = wasmToJS(typeIndex, importIndex);
             if (UNLIKELY(!binding))
                 return false;

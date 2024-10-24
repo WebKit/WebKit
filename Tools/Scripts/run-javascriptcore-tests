@@ -104,6 +104,7 @@ my $runMozillaTests = RUN_IF_NO_TESTS_SPECIFIED;
 # Instead it is only meaningful for when we want to disable using JIT test configurations
 # on the JSC stress test or mozilla tests.
 my $runJITStressTests = 1;
+my $runJITlessWasm = 0;
 
 my $runCLoopMode = 0;
 my $runQuickMode = 0;
@@ -239,6 +240,7 @@ my $testapiDefault = defaultStringForTestState($runTestAPI);
 my $jscStressDefault = defaultStringForTestState($runJSCStress);
 my $mozillaTestsDefault = defaultStringForTestState($runMozillaTests);
 my $jitStressTestsDefault = $runJITStressTests ? "will run" : " will not run";
+my $jitlessWasmDefault = $runJITlessWasm ? "will run" : " will not run";
 my $quickModeDefault = $runQuickMode ? "some" : "all";
 my $failFastDefault = $failFast ? "fail fast" : "don't fail fast";
 my $coverageDefault = $coverage ? "coverage enabled" : "coverage disabled";
@@ -262,6 +264,7 @@ Usage: $programName [options] [options to pass to build system]
   --[no-]jsc-stress             Only run (or don't run) the JSC stress tests (default: $jscStressDefault)
   --[no-]mozilla-tests          Only run (or don't run) the Mozilla tests (default: $mozillaTestsDefault)
   --[no-]jit-stress-tests       Run (or don't run) the JIT stress tests (default: $jitStressTestsDefault)
+  --[no-]jitless-wasm           Run (or don't run) the JITless Wasm tests (default: $jitlessWasmDefault)
   --[no-]quick                  Run some (or all) of the regular testing modes (default: $quickModeDefault)
                                 If the runner only runs some it will run the default and no-cjit-validate modes.
                                 Note, this will not change the behavior of tests that specify their own modes.
@@ -344,6 +347,7 @@ GetOptions(
     'testdfg!' => \$runTestDFG,
     'testapi!' => \$runTestAPI,
     'jsc-stress!' => \$runJSCStress,
+    'jitless-wasm!' => \$runJITlessWasm,
     'mozilla-tests!' => \$runMozillaTests,
     'jit-stress-tests!' => \$runJITStressTests,
     'cloop' => \$runCLoopMode,
@@ -879,6 +883,9 @@ sub runJSCStressTests
 
     if (!$runJITStressTests) {
         push(@jscStressDriverCmd, "--no-jit");
+    }
+    if ($runJITlessWasm) {
+        push(@jscStressDriverCmd, "--jitless-wasm");
     }
     if ($createTarball) {
         push(@jscStressDriverCmd, "--tarball");

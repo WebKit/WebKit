@@ -474,7 +474,7 @@ CodePtr<JSEntryPtrTag> FunctionSignature::jsToWasmICEntrypoint() const
         return m_jsToWasmICCallee->jsEntrypoint();
     }
 
-    if (Options::forceICFailure() || !Options::useJIT())
+    if (Options::forceICFailure() || !Options::useWasmJIT())
         return nullptr;
 
     Locker locker(m_jitCodeLock);

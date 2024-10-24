@@ -134,7 +134,7 @@ void LLIntPlan::compileFunction(FunctionCodeIndex functionIndex)
         auto callee = LLIntCallee::create(*m_wasmInternalFunctions[functionIndex], functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace));
         ASSERT(!callee->entrypoint());
 
-        if (Options::useJIT()) {
+        if (Options::useWasmJIT()) {
 #if ENABLE(JIT)
             if (m_moduleInformation->usesSIMD(functionIndex))
                 callee->setEntrypoint(LLInt::wasmFunctionEntryThunkSIMD().retaggedCode<WasmEntryPtrTag>());

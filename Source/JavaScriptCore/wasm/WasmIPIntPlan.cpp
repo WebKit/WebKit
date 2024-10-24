@@ -129,7 +129,7 @@ void IPIntPlan::compileFunction(FunctionCodeIndex functionIndex)
         ASSERT(!callee->entrypoint());
 
 #if ENABLE(JIT)
-        if (Options::useJIT())
+        if (Options::useWasmJIT())
             callee->setEntrypoint(LLInt::inPlaceInterpreterEntryThunk().retaggedCode<WasmEntryPtrTag>());
 #else
         if (false);

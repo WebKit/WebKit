@@ -454,7 +454,7 @@ JSEntrypointCallee::JSEntrypointCallee(TypeIndex typeIndex, bool usesSIMD)
     m_frameSize = totalFrameSize;
 
 #if ENABLE(JIT)
-    if (Options::useJIT()) {
+    if (Options::useWasmJIT()) {
 #else
     if (false) {
 #endif
@@ -481,7 +481,7 @@ JSEntrypointCallee::JSEntrypointCallee(TypeIndex typeIndex, bool usesSIMD)
 CodePtr<WasmEntryPtrTag> JSEntrypointCallee::entrypointImpl() const
 {
 #if ENABLE(JIT)
-    if (Options::useJIT())
+    if (Options::useWasmJIT())
         return createJSToWasmJITShared().retaggedCode<WasmEntryPtrTag>();
 #endif
     return LLInt::getCodeFunctionPtr<CFunctionPtrTag>(js_to_wasm_wrapper_entry);
