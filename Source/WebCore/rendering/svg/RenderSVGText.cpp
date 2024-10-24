@@ -109,34 +109,30 @@ static inline void collectLayoutAttributes(RenderObject* text, Vector<SVGTextLay
     }
 }
 
-static inline bool findPreviousAndNextAttributes(RenderElement& start, RenderSVGInlineText* locateElement, bool& stopAfterNext, SVGTextLayoutAttributes*& previous, SVGTextLayoutAttributes*& next)
+static inline bool findPreviousAndNextAttributes(RenderElement& root, RenderSVGInlineText* locateElement, SVGTextLayoutAttributes*& previous, SVGTextLayoutAttributes*& next)
 {
     ASSERT(locateElement);
-    // FIXME: Make this iterative.
-    for (CheckedRef child : childrenOfType<RenderObject>(start)) {
-        if (auto* text = dynamicDowncast<RenderSVGInlineText>(child.get())) {
+    bool stopAfterNext = false;
+    CheckedPtr current = root.firstChild();
+    while (current) {
+        if (auto* text = dynamicDowncast<RenderSVGInlineText>(*current)) {
             if (locateElement != text) {
                 if (stopAfterNext) {
                     next = text->layoutAttributes();
                     return true;
                 }
-
                 previous = text->layoutAttributes();
+            } else
+                stopAfterNext = true;
+        } else if (auto* childSVGInline = dynamicDowncast<RenderSVGInline>(*current)) {
+            // Descend into text content (if possible).
+            if (auto* child = childSVGInline->firstChild()) {
+                current = child;
                 continue;
             }
-
-            stopAfterNext = true;
-            continue;
         }
-
-        auto* childSVGInline = dynamicDowncast<RenderSVGInline>(child.get());
-        if (!childSVGInline)
-            continue;
-
-        if (findPreviousAndNextAttributes(*childSVGInline, locateElement, stopAfterNext, previous, next))
-            return true;
+        current = current->nextInPreOrderAfterChildren(&root);
     }
-
     return false;
 }
 
@@ -178,11 +174,10 @@ void RenderSVGText::subtreeChildWasAdded(RenderObject* child)
         attributes = newLayoutAttributes[i];
         if (m_layoutAttributes.find(attributes) == notFound) {
             // Every time this is invoked, there's only a single new entry in the newLayoutAttributes list, compared to the old in m_layoutAttributes.
-            bool stopAfterNext = false;
             SVGTextLayoutAttributes* previous = 0;
             SVGTextLayoutAttributes* next = 0;
             ASSERT_UNUSED(child, &attributes->context() == child);
-            findPreviousAndNextAttributes(*this, &attributes->context(), stopAfterNext, previous, next);
+            findPreviousAndNextAttributes(*this, &attributes->context(), previous, next);
 
             if (previous)
                 m_layoutAttributesBuilder.buildLayoutAttributesForTextRenderer(previous->context());
@@ -238,11 +233,10 @@ void RenderSVGText::subtreeChildWillBeRemoved(RenderObject* child, Vector<SVGTex
 
     // This logic requires that the 'text' child is still inserted in the tree.
     auto& text = downcast<RenderSVGInlineText>(*child);
-    bool stopAfterNext = false;
     SVGTextLayoutAttributes* previous = nullptr;
     SVGTextLayoutAttributes* next = nullptr;
     if (!renderTreeBeingDestroyed())
-        findPreviousAndNextAttributes(*this, &text, stopAfterNext, previous, next);
+        findPreviousAndNextAttributes(*this, &text, previous, next);
 
     if (previous)
         affectedAttributes.append(previous);
