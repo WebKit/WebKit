@@ -2490,7 +2490,7 @@ ShouldOpenExternalURLsPolicy DocumentLoader::shouldOpenExternalURLsPolicyToPropa
 }
 
 // https://www.w3.org/TR/css-view-transitions-2/#navigation-can-trigger-a-cross-document-view-transition
-bool DocumentLoader::navigationCanTriggerCrossDocumentViewTransition(Document& oldDocument)
+bool DocumentLoader::navigationCanTriggerCrossDocumentViewTransition(Document& oldDocument, bool fromBackForwardCache)
 {
     // FIXME: Consider adding implementation-defined navigation experience step.
 
@@ -2504,7 +2504,7 @@ bool DocumentLoader::navigationCanTriggerCrossDocumentViewTransition(Document& o
     if (!newOrigin->isSameOriginAs(oldDocument.securityOrigin()))
         return false;
 
-    if (const auto* metrics = response().deprecatedNetworkLoadMetricsOrNull()) {
+    if (const auto* metrics = response().deprecatedNetworkLoadMetricsOrNull(); metrics && !fromBackForwardCache) {
         if (metrics->crossOriginRedirect())
             return false;
     }

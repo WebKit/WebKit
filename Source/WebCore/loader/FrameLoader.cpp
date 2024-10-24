@@ -2288,7 +2288,7 @@ void FrameLoader::commitProvisionalLoad()
         bool canTriggerCrossDocumentViewTransition = false;
         RefPtr<NavigationActivation> activation;
         if (pdl) {
-            canTriggerCrossDocumentViewTransition = pdl->navigationCanTriggerCrossDocumentViewTransition(*document);
+            canTriggerCrossDocumentViewTransition = pdl->navigationCanTriggerCrossDocumentViewTransition(*document, !!cachedPage);
 
             RefPtr domWindow = document->domWindow();
             auto navigationAPIType = pdl->triggeringAction().navigationAPIType();
@@ -2301,7 +2301,7 @@ void FrameLoader::commitProvisionalLoad()
                 if (RefPtr page = frame->page(); page && *navigationAPIType != NavigationNavigationType::Reload)
                     newItem = frame->checkedHistory()->createItemWithLoader(page->historyItemClient(), pdl.get());
 
-                activation = domWindow->protectedNavigation()->createForPageswapEvent(newItem.get(), pdl.get());
+                activation = domWindow->protectedNavigation()->createForPageswapEvent(newItem.get(), pdl.get(), !!cachedPage);
             }
         }
         document->dispatchPageswapEvent(canTriggerCrossDocumentViewTransition, WTFMove(activation));

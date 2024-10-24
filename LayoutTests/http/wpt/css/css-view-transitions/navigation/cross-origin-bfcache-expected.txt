@@ -1,0 +1,3 @@
+
+PASS VT object created on the old Document is skipped before persisting in BFCache
+
