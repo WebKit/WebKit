@@ -214,7 +214,7 @@ MediaTime MediaPlayerPrivateGStreamerMSE::duration() const
     if (UNLIKELY(!m_pipeline || m_didErrorOccur))
         return MediaTime();
 
-    return m_mediaTimeDuration;
+    return m_mediaTimeDuration.isValid() ? m_mediaTimeDuration : MediaTime::zeroTime();
 }
 
 void MediaPlayerPrivateGStreamerMSE::seekToTarget(const SeekTarget& target)
