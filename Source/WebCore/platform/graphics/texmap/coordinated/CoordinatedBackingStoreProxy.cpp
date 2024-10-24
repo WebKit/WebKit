@@ -35,6 +35,15 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(CoordinatedBackingStoreProxy);
 
 static const int defaultTileDimension = 512;
 
+static uint32_t generateTileID()
+{
+    static uint32_t id = 0;
+    // We may get a zero ID due to wrap-around on overflow.
+    if (++id)
+        return id;
+    return ++id;
+}
+
 static IntPoint innerBottomRight(const IntRect& rect)
 {
     // Actually, the rect does not contain rect.maxX(). Refer to IntRect::contain.
@@ -69,7 +78,7 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
     // Update the dirty tiles.
     unsigned dirtyTilesCount = 0;
     for (const auto& tile : m_tiles.values()) {
-        if (tile->isDirty())
+        if (tile.isDirty())
             dirtyTilesCount++;
     }
 
@@ -77,21 +86,17 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
 
     unsigned dirtyTileIndex = 0;
     for (auto& tile : m_tiles.values()) {
-        if (!tile->isDirty())
+        if (!tile.isDirty())
             continue;
 
-        tile->ensureTileID();
+        WTFBeginSignpost(this, UpdateTile, "%u/%u, id: %d, rect: %ix%i+%i+%i, dirty: %ix%i+%i+%i", ++dirtyTileIndex, dirtyTilesCount, tile.id,
+            tile.rect.x(), tile.rect.y(), tile.rect.width(), tile.rect.height(), tile.dirtyRect.x(), tile.dirtyRect.y(), tile.dirtyRect.width(), tile.dirtyRect.height());
 
-        auto& tileRect = tile->rect();
-        auto& dirtyRect = tile->dirtyRect();
-        WTFBeginSignpost(this, UpdateTile, "%u/%u, id: %d, rect: %ix%i+%i+%i, dirty: %ix%i+%i+%i", ++dirtyTileIndex, dirtyTilesCount, tile->tileID(),
-            tileRect.x(), tileRect.y(), tileRect.width(), tileRect.height(), dirtyRect.x(), dirtyRect.y(), dirtyRect.width(), dirtyRect.height());
-
-        auto buffer = layer.paintTile(dirtyRect);
-        IntRect updateRect(dirtyRect);
-        updateRect.move(-tileRect.x(), -tileRect.y());
-        m_client.updateTile(tile->tileID(), updateRect, tileRect, WTFMove(buffer));
-        tile->markClean();
+        auto buffer = layer.paintTile(tile.dirtyRect);
+        IntRect updateRect(tile.dirtyRect);
+        updateRect.move(-tile.rect.x(), -tile.rect.y());
+        m_client.updateTile(tile.id, updateRect, tile.rect, WTFMove(buffer));
+        tile.markClean();
         result.add(UpdateResult::BuffersChanged);
 
         WTFEndSignpost(this, UpdateTile);
@@ -115,12 +120,12 @@ void CoordinatedBackingStoreProxy::invalidate(const IntRect& contentsDirtyRect)
 
     for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
         for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
-            auto* tile = m_tiles.get(IntPoint(x, y));
-            if (!tile)
+            auto it = m_tiles.find(IntPoint(x, y));
+            if (it == m_tiles.end())
                 continue;
             // Pass the full rect to each tile as coveredDirtyRect might not
             // contain them completely and we don't want partial tile redraws.
-            tile->invalidate(dirtyRect);
+            it->value.addDirtyRect(dirtyRect);
         }
     }
 }
@@ -219,8 +224,11 @@ void CoordinatedBackingStoreProxy::createTiles(const IntRect& visibleRect, const
 
     // Now construct the tile(s) within the shortest distance.
     unsigned tilesToCreateCount = tilesToCreate.size();
-    for (const auto& position : tilesToCreate)
-        m_tiles.add(position, makeUnique<CoordinatedBackingStoreProxyTile>(*this, position, tileRectForPosition(position)));
+    for (const auto& position : tilesToCreate) {
+        auto tile = Tile(generateTileID(), position, tileRectForPosition(position));
+        m_client.createTile(tile.id, m_contentsScale);
+        m_tiles.add(position, WTFMove(tile));
+    }
     requiredTileCount -= tilesToCreateCount;
 
     // Re-call createTiles on a timer to cover the visible area with the newest shortest distance.
@@ -296,38 +304,33 @@ void CoordinatedBackingStoreProxy::computeCoverAndKeepRect(const IntRect& visibl
 
 void CoordinatedBackingStoreProxy::resizeEdgeTiles()
 {
-    Vector<IntPoint> tilesToRemove;
-    for (auto& tile : m_tiles.values()) {
-        IntPoint tilePosition = tile->position();
-        IntRect tileRect = tile->rect();
-        IntRect expectedTileRect = tileRectForPosition(tilePosition);
-        if (expectedTileRect.isEmpty())
-            tilesToRemove.append(tilePosition);
-        else if (expectedTileRect != tileRect)
-            tile->resize(expectedTileRect.size());
-    }
+    m_tiles.removeIf([&](auto& iter) {
+        auto& tile = iter.value;
+        auto expectedTileRect = tileRectForPosition(tile.position);
+        if (expectedTileRect.isEmpty()) {
+            m_client.removeTile(tile.id);
+            return true;
+        }
 
-    for (auto& positionToRemove : tilesToRemove)
-        m_tiles.remove(positionToRemove);
+        if (expectedTileRect != tile.rect)
+            tile.resize(expectedTileRect.size());
+        return false;
+    });
 }
 
 void CoordinatedBackingStoreProxy::setKeepRect(const IntRect& keepRect)
 {
-    // Drop tiles outside the new keepRect.
-
-    FloatRect keepRectF = keepRect;
-
-    Vector<IntPoint> toRemove;
-    for (auto& tile : m_tiles.values()) {
-        FloatRect tileRect = tile->rect();
-        if (!tileRect.intersects(keepRectF))
-            toRemove.append(tile->position());
-    }
-
-    for (auto& positionToRemove : toRemove)
-        m_tiles.remove(positionToRemove);
-
     m_keepRect = keepRect;
+
+    // Drop tiles outside the new keepRect.
+    m_tiles.removeIf([&](auto& iter) {
+        auto& tile = iter.value;
+        if (!tile.rect.intersects(m_keepRect)) {
+            m_client.removeTile(tile.id);
+            return true;
+        }
+        return false;
+    });
 }
 
 IntRect CoordinatedBackingStoreProxy::mapToContents(const IntRect& rect) const

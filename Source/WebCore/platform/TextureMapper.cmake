@@ -49,7 +49,6 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/coordinated/CoordinatedAnimatedBackingStoreClient.cpp
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.cpp
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreProxy.cpp
-        platform/graphics/texmap/coordinated/CoordinatedBackingStoreProxyTile.cpp
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreTile.cpp
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.cpp
         platform/graphics/texmap/coordinated/CoordinatedImageBackingStore.cpp
@@ -65,7 +64,6 @@ if (USE_COORDINATED_GRAPHICS)
         platform/graphics/texmap/coordinated/CoordinatedBackingStore.h
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreProxy.h
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreProxyClient.h
-        platform/graphics/texmap/coordinated/CoordinatedBackingStoreProxyTile.h
         platform/graphics/texmap/coordinated/CoordinatedBackingStoreTile.h
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h
         platform/graphics/texmap/coordinated/CoordinatedImageBackingStore.h

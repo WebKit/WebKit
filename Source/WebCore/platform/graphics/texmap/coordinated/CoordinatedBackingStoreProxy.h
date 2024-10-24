@@ -20,9 +20,9 @@
 #pragma once
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedBackingStoreProxyTile.h"
 #include "FloatPoint.h"
 #include "IntPoint.h"
+#include "IntPointHash.h"
 #include "IntRect.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
@@ -54,6 +54,48 @@ public:
     OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, bool shouldCreateAndDestroyTiles, CoordinatedGraphicsLayer&);
 
 private:
+    struct Tile {
+        Tile() = default;
+        Tile(uint32_t id, const IntPoint& position, IntRect&& tileRect)
+            : id(id)
+            , position(position)
+            , rect(WTFMove(tileRect))
+            , dirtyRect(rect)
+        {
+        }
+        Tile(const Tile&) = delete;
+        Tile& operator=(const Tile&) = delete;
+        Tile(Tile&&) = default;
+        Tile& operator=(Tile&&) = default;
+
+        void resize(const IntSize& size)
+        {
+            rect.setSize(size);
+            dirtyRect = rect;
+        }
+
+        void addDirtyRect(const IntRect& dirty)
+        {
+            auto tileDirtyRect = intersection(dirty, rect);
+            dirtyRect.unite(tileDirtyRect);
+        }
+
+        bool isDirty() const
+        {
+            return !dirtyRect.isEmpty();
+        }
+
+        void markClean()
+        {
+            dirtyRect = { };
+        }
+
+        uint32_t id { 0 };
+        IntPoint position;
+        IntRect rect;
+        IntRect dirtyRect;
+    };
+
     void createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier);
     void computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const;
 
@@ -71,8 +113,6 @@ private:
 
     CoordinatedBackingStoreProxyClient& m_client;
 
-    UncheckedKeyHashMap<IntPoint, std::unique_ptr<CoordinatedBackingStoreProxyTile>> m_tiles;
-
     float m_contentsScale { 1 };
     IntSize m_tileSize;
     float m_coverAreaMultiplier { 2 };
@@ -82,8 +122,7 @@ private:
     IntRect m_coverRect;
     IntRect m_keepRect;
     IntRect m_previousContentsRect;
-
-    friend class CoordinatedBackingStoreProxyTile;
+    UncheckedKeyHashMap<IntPoint, Tile> m_tiles;
 };
 
 } // namespace WebCore
