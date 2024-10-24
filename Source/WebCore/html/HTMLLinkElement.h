@@ -141,7 +141,7 @@ private:
 
     String debugDescription() const final;
 
-    enum PendingSheetType : uint8_t { Unknown, ActiveSheet, InactiveSheet };
+    enum class PendingSheetType : uint8_t { Unknown, Active, Inactive };
     void addPendingSheet(PendingSheetType);
 
     void removePendingSheet();
