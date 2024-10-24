@@ -326,7 +326,11 @@ void AnimationTimelinesController::registerNamedScrollTimeline(const AtomString&
 
 void AnimationTimelinesController::unregisterNamedScrollTimeline(const AtomString& name)
 {
-    m_nameToScrollTimelineMap.remove(name);
+    auto it = m_nameToScrollTimelineMap.find(name);
+    if (it != m_nameToScrollTimelineMap.end())
+        return;
+    it->value->wasUnregisteredFromStyle();
+    m_nameToScrollTimelineMap.remove(it);
 }
 
 ScrollTimeline* AnimationTimelinesController::scrollTimelineForName(const AtomString& name) const
@@ -362,9 +366,15 @@ void AnimationTimelinesController::unregisterNamedViewTimelineForSubject(const A
         return;
 
     auto& timelines = it->value;
-    timelines.removeFirstMatching([&](auto& timeline) {
+    auto existingTimelineIndex = timelines.findIf([&](auto& timeline) {
         return timeline->subject() == &subject;
     });
+
+    if (existingTimelineIndex == notFound)
+        return;
+
+    timelines[existingTimelineIndex]->wasUnregisteredFromStyle();
+    timelines.remove(existingTimelineIndex);
 
     if (timelines.isEmpty())
         m_nameToViewTimelinesMap.remove(it);

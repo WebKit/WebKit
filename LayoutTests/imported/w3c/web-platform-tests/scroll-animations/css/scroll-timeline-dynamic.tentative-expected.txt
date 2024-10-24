@@ -7,10 +7,10 @@ PASS Changing computed value of animation-timeline changes effective timeline [i
 PASS Changing computed value of animation-timeline changes effective timeline [scroll]
 FAIL Changing to/from animation-timeline:none [immediate] assert_equals: expected "0px" but got "100px"
 FAIL Changing to/from animation-timeline:none [scroll] assert_equals: expected "0px" but got "100px"
-FAIL Reverse animation direction [immediate] assert_equals: expected "0px" but got "190px"
-FAIL Reverse animation direction [scroll] assert_equals: expected "0px" but got "190px"
-FAIL Change to timeline attachment while paused [immediate] assert_equals: expected "0px" but got "100px"
-FAIL Change to timeline attachment while paused [scroll] assert_equals: expected "0px" but got "100px"
+FAIL Reverse animation direction [immediate] assert_equals: expected "0px" but got "180px"
+FAIL Reverse animation direction [scroll] assert_equals: expected "0px" but got "180px"
+FAIL Change to timeline attachment while paused [immediate] assert_equals: expected "0px" but got "120px"
+FAIL Change to timeline attachment while paused [scroll] assert_equals: expected "0px" but got "120px"
 FAIL Switching timelines and pausing at the same time [immediate] assert_equals: expected "100px" but got "120px"
 FAIL Switching timelines and pausing at the same time [scroll] assert_equals: expected "100px" but got "120px"
 

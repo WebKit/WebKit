@@ -34,6 +34,7 @@
 #include "Element.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderView.h"
+#include "WebAnimation.h"
 
 namespace WebCore {
 
@@ -230,6 +231,17 @@ std::optional<WebAnimationTime> ScrollTimeline::currentTime(const TimelineRange&
     auto distance = data.scrollOffset - data.rangeStart;
     auto progress = distance / range;
     return WebAnimationTime::fromPercentage(progress * 100);
+}
+
+void ScrollTimeline::wasUnregisteredFromStyle()
+{
+    // We make sure to copy m_animations here since its content will change
+    // as we set the timeline of each animations in it to null.
+    auto animations = m_animations;
+    for (auto& animation : animations) {
+        ASSERT(animation->timeline() == this);
+        animation->setTimeline(nullptr);
+    }
 }
 
 } // namespace WebCore
