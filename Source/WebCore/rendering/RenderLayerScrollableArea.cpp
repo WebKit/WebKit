@@ -705,7 +705,7 @@ RenderLayer::OverflowControlRects RenderLayerScrollableArea::overflowControlsRec
     bool haveNonOverlayHorizontalScrollbar = isNonOverlayScrollbar(m_hBar.get());
     bool haveNonOverlayVerticalScrollbar = isNonOverlayScrollbar(m_vBar.get());
     bool placeVerticalScrollbarOnTheLeft = shouldPlaceVerticalScrollbarOnLeft();
-    bool haveResizer = renderBox.style().resize() != Resize::None;
+    bool haveResizer = renderBox.style().resize() != Resize::None && renderBox.style().pseudoElementType() == PseudoId::None;
     bool scrollbarsAvoidCorner = ((haveNonOverlayHorizontalScrollbar && haveNonOverlayVerticalScrollbar) || (haveResizer && (haveNonOverlayHorizontalScrollbar || haveNonOverlayVerticalScrollbar))) && renderBox.style().scrollbarWidth() != ScrollbarWidth::None;
 
     IntSize cornerSize;

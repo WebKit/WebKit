@@ -5227,7 +5227,6 @@ webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/text-overflow-rub
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/text-overflow-021.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/webkit-appearance-menulist-button-002.tentative.html [ ImageOnlyFailure ]
 webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-child-will-change-transform.html [ ImageOnlyFailure ]
-webkit.org/b/214299 imported/w3c/web-platform-tests/css/css-ui/resize-generated-content.html [ ImageOnlyFailure ]
 
 webkit.org/b/279302 imported/w3c/web-platform-tests/css/css-ui/negative-outline-offset.html [ ImageOnlyFailure ]
 webkit.org/b/279302 imported/w3c/web-platform-tests/css/css-ui/outline-auto-width-001.html [ ImageOnlyFailure ]

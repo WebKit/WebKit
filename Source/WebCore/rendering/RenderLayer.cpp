@@ -2952,7 +2952,7 @@ RenderLayer::OverflowControlRects RenderLayer::overflowControlsRects() const
     auto overflowControlsPositioningRect = snappedIntRect(renderBox.paddingBoxRectIncludingScrollbar());
 
     bool placeVerticalScrollbarOnTheLeft = renderBox.shouldPlaceVerticalScrollbarOnLeft();
-    bool haveResizer = renderer().style().resize() != Resize::None;
+    bool haveResizer = renderer().style().resize() != Resize::None && renderer().style().pseudoElementType() == PseudoId::None;
 
     OverflowControlRects result;
     auto cornerRect = [&](IntSize cornerSize) {
