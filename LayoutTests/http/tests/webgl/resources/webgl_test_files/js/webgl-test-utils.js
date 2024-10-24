@@ -295,7 +295,7 @@ var setupProgram = function(
     var shader = shaders[ii];
     var shaderType = undefined;
     if (typeof shader == 'string') {
-      var element = document.getElementById(shader);
+      const element = shader != '' && document.getElementById(shader);
       if (element) {
         if (element.type != "x-shader/x-vertex" && element.type != "x-shader/x-fragment")
           shaderType = ii ? gl.FRAGMENT_SHADER : gl.VERTEX_SHADER;

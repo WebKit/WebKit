@@ -323,21 +323,18 @@ function runTestExtension(unpackFlipY) {
                     d01, d01, d11, d11
                 ];
                 expectedMax = expectedMin.slice();
-
-                expectedMin = expectedMin.map(x => x - eps);
-                expectedMax = expectedMax.map(x => x + eps);
             } else {
                 expectedMin = [
-                    d00-eps, d00, d00, d10-eps,
                     d00, d00, d00, d10,
                     d00, d00, d00, d10,
-                    d01-eps, d01, d01, d11-eps,
+                    d00, d00, d00, d10,
+                    d01, d01, d01, d11,
                 ];
                 expectedMax = [
-                    d00+eps, d10, d10, d10+eps,
+                    d00, d10, d10, d10,
                     d01, d11, d11, d11,
                     d01, d11, d11, d11,
-                    d01+eps, d11, d11, d11+eps,
+                    d01, d11, d11, d11,
                 ];
             }
 
@@ -349,7 +346,7 @@ function runTestExtension(unpackFlipY) {
                     const eMax = expectedMax[t];
                     let func = testPassed;
                     const text = `At ${xx},${yy}, expected within [${eMin},${eMax}], was ${was.toFixed(3)}`
-                    if (was <= eMin || was >= eMax) {
+                    if (was <= eMin - eps || was >= eMax + eps) {
                         func = testFailed;
                     }
                     func(text);

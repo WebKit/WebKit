@@ -14,6 +14,11 @@ description("This test ensures various WebGL functions fail when passed invalid 
 debug("");
 debug("Canvas.getContext");
 
+function getDesktopGL(name) {
+  shouldBeDefined(`desktopGL['${name}']`);
+  return desktopGL[name];
+}
+
 var wtu = WebGLTestUtils;
 var gl = wtu.create3DContext("canvas", undefined, contextVersion);
 if (!gl) {
@@ -32,47 +37,47 @@ if (!gl) {
   wtu.glErrorShouldBe(gl, gl.NO_ERROR);
 
   var tests = [
-    "gl.disable(desktopGL['CLIP_PLANE0'])",
-    "gl.disable(desktopGL['POINT_SPRITE'])",
-    "gl.getBufferParameter(gl.ARRAY_BUFFER, desktopGL['PIXEL_PACK_BUFFER'])",
-    "gl.hint(desktopGL['PERSPECTIVE_CORRECTION_HINT'], gl.FASTEST)",
-    "gl.isEnabled(desktopGL['CLIP_PLANE0'])",
-    "gl.isEnabled(desktopGL['POINT_SPRITE'])",
-    "gl.pixelStorei(desktopGL['PACK_SWAP_BYTES'], 1)",
-    "gl.getParameter(desktopGL['NUM_COMPRESSED_TEXTURE_FORMATS'])",
-    "gl.getParameter(desktopGL['EXTENSIONS'])",
-    "gl.getParameter(desktopGL['SHADER_COMPILER'])",
-    "gl.getParameter(desktopGL['SHADER_BINARY_FORMATS'])",
-    "gl.getParameter(desktopGL['NUM_SHADER_BINARY_FORMATS'])",
+    "gl.disable(getDesktopGL('CLIP_PLANE0'))",
+    "gl.disable(getDesktopGL('POINT_SPRITE'))",
+    "gl.getBufferParameter(gl.ARRAY_BUFFER, getDesktopGL('PIXEL_PACK_BUFFER'))",
+    "gl.hint(getDesktopGL('PERSPECTIVE_CORRECTION_HINT'), gl.FASTEST)",
+    "gl.isEnabled(getDesktopGL('CLIP_PLANE0'))",
+    "gl.isEnabled(getDesktopGL('POINT_SPRITE'))",
+    "gl.pixelStorei(getDesktopGL('PACK_SWAP_BYTES'), 1)",
+    "gl.getParameter(getDesktopGL('NUM_COMPRESSED_TEXTURE_FORMATS'))",
+    "gl.getParameter(getDesktopGL('EXTENSIONS'))",
+    "gl.getParameter(getDesktopGL('SHADER_COMPILER'))",
+    "gl.getParameter(getDesktopGL('SHADER_BINARY_FORMATS'))",
+    "gl.getParameter(getDesktopGL('NUM_SHADER_BINARY_FORMATS'))",
   ];
 
   if (contextVersion < 2) {
     tests = tests.concat([
-      "gl.blendEquation(desktopGL['MIN'])",
-      "gl.blendEquation(desktopGL['MAX'])",
-      "gl.blendEquationSeparate(desktopGL['MIN'], gl.FUNC_ADD)",
-      "gl.blendEquationSeparate(desktopGL['MAX'], gl.FUNC_ADD)",
-      "gl.blendEquationSeparate(gl.FUNC_ADD, desktopGL['MIN'])",
-      "gl.blendEquationSeparate(gl.FUNC_ADD, desktopGL['MAX'])",
-      "gl.bufferData(gl.ARRAY_BUFFER, 16, desktopGL['STREAM_READ'])",
-      "gl.bufferData(gl.ARRAY_BUFFER, 16, desktopGL['STREAM_COPY'])",
-      "gl.bufferData(gl.ARRAY_BUFFER, 16, desktopGL['STATIC_READ'])",
-      "gl.bufferData(gl.ARRAY_BUFFER, 16, desktopGL['STATIC_COPY'])",
-      "gl.bufferData(gl.ARRAY_BUFFER, 16, desktopGL['DYNAMIC_READ'])",
-      "gl.bufferData(gl.ARRAY_BUFFER, 16, desktopGL['DYNAMIC_COPY'])",
-      "gl.bindTexture(desktopGL['TEXTURE_2D_ARRAY'], tex)",
-      "gl.bindTexture(desktopGL['TEXTURE_3D'], tex)",
+      "gl.blendEquation(getDesktopGL('MIN'))",
+      "gl.blendEquation(getDesktopGL('MAX'))",
+      "gl.blendEquationSeparate(getDesktopGL('MIN'), gl.FUNC_ADD)",
+      "gl.blendEquationSeparate(getDesktopGL('MAX'), gl.FUNC_ADD)",
+      "gl.blendEquationSeparate(gl.FUNC_ADD, getDesktopGL('MIN'))",
+      "gl.blendEquationSeparate(gl.FUNC_ADD, getDesktopGL('MAX'))",
+      "gl.bufferData(gl.ARRAY_BUFFER, 16, getDesktopGL('STREAM_READ'))",
+      "gl.bufferData(gl.ARRAY_BUFFER, 16, getDesktopGL('STREAM_COPY'))",
+      "gl.bufferData(gl.ARRAY_BUFFER, 16, getDesktopGL('STATIC_READ'))",
+      "gl.bufferData(gl.ARRAY_BUFFER, 16, getDesktopGL('STATIC_COPY'))",
+      "gl.bufferData(gl.ARRAY_BUFFER, 16, getDesktopGL('DYNAMIC_READ'))",
+      "gl.bufferData(gl.ARRAY_BUFFER, 16, getDesktopGL('DYNAMIC_COPY'))",
+      "gl.bindTexture(getDesktopGL('TEXTURE_2D_ARRAY'), tex)",
+      "gl.bindTexture(getDesktopGL('TEXTURE_3D'), tex)",
     ]);
   } else {
     tests = tests.concat([
-      "gl.bindTexture(desktopGL['TEXTURE_RECTANGLE_EXT'], tex)",
-      "gl.enable(desktopGL['PRIMITIVE_RESTART_FIXED_INDEX'])",
-      "gl.getActiveUniforms(program, [0], desktopGL['UNIFORM_NAME_LENGTH'])",
-      "gl.getProgramParameter(program, desktopGL['ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH'])",
-      "gl.getProgramParameter(program, desktopGL['TRANSFORM_FEEDBACK_VARYING_MAX_LENGTH'])",
-      "gl.getProgramParameter(program, desktopGL['PROGRAM_BINARY_RETRIEVABLE_HINT'])",
-      "gl.getProgramParameter(program, desktopGL['PROGRAM_BINARY_LENGTH'])",
-      "gl.getParameter(program, desktopGL['NUM_PROGRAM_BINARY_FORMATS'])",
+      "gl.bindTexture(getDesktopGL('TEXTURE_RECTANGLE_EXT'), tex)",
+      "gl.enable(getDesktopGL('PRIMITIVE_RESTART_FIXED_INDEX'))",
+      "gl.getActiveUniforms(program, [0], getDesktopGL('UNIFORM_NAME_LENGTH'))",
+      "gl.getProgramParameter(program, getDesktopGL('ACTIVE_UNIFORM_BLOCK_MAX_NAME_LENGTH'))",
+      "gl.getProgramParameter(program, getDesktopGL('TRANSFORM_FEEDBACK_VARYING_MAX_LENGTH'))",
+      "gl.getProgramParameter(program, getDesktopGL('PROGRAM_BINARY_RETRIEVABLE_HINT'))",
+      "gl.getProgramParameter(program, getDesktopGL('PROGRAM_BINARY_LENGTH'))",
+      "gl.getParameter(program, getDesktopGL('NUM_PROGRAM_BINARY_FORMATS'))",
     ]);
   }
 
@@ -85,23 +90,23 @@ if (!gl) {
   wtu.glErrorShouldBe(gl, gl.NO_ERROR);
 
   tests = [
-    "gl.getTexParameter(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP'])",
-    "gl.texParameteri(gl.TEXTURE_2D, desktopGL['GENERATE_MIPMAP'], 1)",
-    "gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, desktopGL['CLAMP_TO_BORDER'])",
+    "gl.getTexParameter(gl.TEXTURE_2D, getDesktopGL('GENERATE_MIPMAP'))",
+    "gl.texParameteri(gl.TEXTURE_2D, getDesktopGL('GENERATE_MIPMAP'), 1)",
+    "gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, getDesktopGL('CLAMP_TO_BORDER'))",
   ];
 
   if (contextVersion < 2) {
     tests = tests.concat([
-      "gl.texParameteri(desktopGL['TEXTURE_2D_ARRAY'], gl.TEXTURE_MAG_FILTER, gl.NEAREST)",
-      "gl.texParameteri(desktopGL['TEXTURE_3D'], gl.TEXTURE_MAG_FILTER, gl.NEAREST)",
+      "gl.texParameteri(getDesktopGL('TEXTURE_2D_ARRAY'), gl.TEXTURE_MAG_FILTER, gl.NEAREST)",
+      "gl.texParameteri(getDesktopGL('TEXTURE_3D'), gl.TEXTURE_MAG_FILTER, gl.NEAREST)",
     ]);
   } else {
     tests = tests.concat([
-      "gl.texParameteri(desktopGL['TEXTURE_2D'], desktopGL['TEXTURE_SWIZZLE_R_EXT'], gl.RED)",
-      "gl.texParameteri(desktopGL['TEXTURE_2D'], desktopGL['TEXTURE_SWIZZLE_G_EXT'], gl.RED)",
-      "gl.texParameteri(desktopGL['TEXTURE_2D'], desktopGL['TEXTURE_SWIZZLE_B_EXT'], gl.RED)",
-      "gl.texParameteri(desktopGL['TEXTURE_2D'], desktopGL['TEXTURE_SWIZZLE_A_EXT'], gl.RED)",
-      "gl.texParameteri(desktopGL['TEXTURE_2D'], gl.TEXTURE_WRAP_R, desktopGL['CLAMP_TO_BORDER'])",
+      "gl.texParameteri(getDesktopGL('TEXTURE_2D'), getDesktopGL('TEXTURE_SWIZZLE_R_EXT'), gl.RED)",
+      "gl.texParameteri(getDesktopGL('TEXTURE_2D'), getDesktopGL('TEXTURE_SWIZZLE_G_EXT'), gl.RED)",
+      "gl.texParameteri(getDesktopGL('TEXTURE_2D'), getDesktopGL('TEXTURE_SWIZZLE_B_EXT'), gl.RED)",
+      "gl.texParameteri(getDesktopGL('TEXTURE_2D'), getDesktopGL('TEXTURE_SWIZZLE_A_EXT'), gl.RED)",
+      "gl.texParameteri(getDesktopGL('TEXTURE_2D'), gl.TEXTURE_WRAP_R, getDesktopGL('CLAMP_TO_BORDER'))",
     ]);
   }
 
@@ -114,7 +119,7 @@ if (!gl) {
     gl.linkProgram(uniformBlockProgram);
     shouldBe('gl.getProgramParameter(uniformBlockProgram, gl.LINK_STATUS)', 'true');
     shouldBe('gl.getError()', 'gl.NO_ERROR');
-    gl.getActiveUniformBlockParameter(uniformBlockProgram, 0, desktopGL['UNIFORM_BLOCK_NAME_LENGTH']);
+    gl.getActiveUniformBlockParameter(uniformBlockProgram, 0, getDesktopGL('UNIFORM_BLOCK_NAME_LENGTH'));
     shouldBe('gl.getError()', 'gl.INVALID_ENUM');
   }
 }

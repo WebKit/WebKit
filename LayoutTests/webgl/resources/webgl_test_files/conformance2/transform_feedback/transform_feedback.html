@@ -64,6 +64,8 @@ if (!gl) {
     runUnboundDeleteTest();
     runBoundDeleteTest();
     runOneOutputFeedbackTest();
+    runUnchangedBufferBindingsTest();
+    runNoOutputsTest();
     // Must be the last test, since it's asynchronous and calls finishTest().
     runTwoOutputFeedbackTest();
 }
@@ -636,6 +638,70 @@ function runContextLostOneOutputFeedbackTest() {
     gl.useProgram(program2);
     wtu.glErrorShouldBe(gl, gl.NO_ERROR, "No transform feedback error generated on lost context");
     finishTest();
+}
+
+function runUnchangedBufferBindingsTest() {
+    debug("");
+    debug("Testing that buffer bindings cannot be changed while transform feedback is active");
+
+    program = wtu.setupTransformFeedbackProgram(
+        gl, [wtu.simpleVertexShader, wtu.simpleColorFragmentShader], ['gl_Position'], gl.INTERLEAVED_ATTRIBS);
+
+    tf = gl.createTransformFeedback();
+    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, tf);
+
+    buf = gl.createBuffer();
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, buf);
+
+    gl.beginTransformFeedback(gl.POINTS);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "Transform feedback is active");
+
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, gl.createBuffer());
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "Cannot change the bound buffer while transform feedback is active");
+    shouldBe("gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING, 0)", "buf");
+
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, buf);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "Cannot rebind the same buffer while transform feedback is active");
+
+    gl.bindBufferRange(gl.TRANSFORM_FEEDBACK_BUFFER, 0, gl.createBuffer(), 0, 64);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "Cannot change the bound buffer while transform feedback is active");
+    shouldBe("gl.getIndexedParameter(gl.TRANSFORM_FEEDBACK_BUFFER_BINDING, 0)", "buf");
+
+    gl.bindBufferRange(gl.TRANSFORM_FEEDBACK_BUFFER, 0, buf, 0, 64);
+    wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "Cannot rebind the same buffer while transform feedback is active");
+
+    gl.endTransformFeedback();
+    gl.deleteTransformFeedback(tf);
+    gl.deleteBuffer(buf);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "No extra errors after the test");
+}
+
+function runNoOutputsTest() {
+    debug("");
+    debug("Testing transform feedback with no varyings to record");
+
+    tf = gl.createTransformFeedback();
+    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, tf);
+
+    buf = gl.createBuffer();
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, buf);
+
+    for (const mode of ['SEPARATE_ATTRIBS', 'INTERLEAVED_ATTRIBS']) {
+        program = wtu.setupTransformFeedbackProgram(
+            gl, [wtu.simpleVertexShader, wtu.simpleColorFragmentShader], [], gl[mode]);
+
+        debug(`Testing with ${mode}`);
+        gl.beginTransformFeedback(gl.POINTS);
+        wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "beginTransformFeedback: No varyings to record");
+        gl.useProgram(null);
+        wtu.glErrorShouldBe(gl, gl.NO_ERROR, "useProgram: Transform feedback is not active");
+        gl.endTransformFeedback();
+        wtu.glErrorShouldBe(gl, gl.INVALID_OPERATION, "endTransformFeedback: Transform feedback is not active");
+    }
+
+    gl.deleteTransformFeedback(tf);
+    gl.deleteBuffer(buf);
+    wtu.glErrorShouldBe(gl, gl.NO_ERROR, "No extra errors after the test");
 }
 
 debug("");

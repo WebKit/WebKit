@@ -68,6 +68,10 @@ contextA.stencilMask(1);
 wtu.shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.linkProgram(programS)");
 wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "contextA.uniform1i(locationSx, 3)");
 wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "contextA.getUniform(programS, locationSx)");
+// Make sure that with no current program, uniform location validation doesn't get confused.
+wtu.shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.useProgram(null)");
+wtu.shouldGenerateGLError(contextA, contextA.INVALID_OPERATION, "contextA.uniform1i(locationSx, 3)");
+wtu.shouldGenerateGLError(contextA, contextA.NO_ERROR, "contextA.useProgram(programS)");
 
 // Retrieve the locations again, and they should be good.
 locationSx = contextA.getUniformLocation(programS, "u_struct.x");

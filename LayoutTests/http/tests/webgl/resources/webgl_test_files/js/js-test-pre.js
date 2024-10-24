@@ -129,12 +129,14 @@ function notifyFinishedToHarness() {
   }
 }
 
+// Start buffered, so that our thousands of passing subtests can be buffered.
+// We flush the buffered logs on testFailed and/or finishTest.
 var _bufferedConsoleLogs = [];
 
 function _bufferedLogToConsole(msg)
 {
   if (_bufferedConsoleLogs) {
-    _bufferedConsoleLogs.push(msg);
+    _bufferedConsoleLogs.push('[buffered] ' + msg);
   } else if (window.console) {
     window.console.log(msg);
   }
@@ -774,6 +776,7 @@ function webglHarnessCollectGarbage() {
 }
 
 function finishTest() {
+  _flushBufferedLogsToConsole();
   successfullyParsed = true;
   var epilogue = document.createElement("script");
   var basePath = "";

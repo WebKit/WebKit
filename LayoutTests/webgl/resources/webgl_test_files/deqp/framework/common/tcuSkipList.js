@@ -189,25 +189,6 @@ goog.scope(function() {
         // Also see conformance2/rendering/blitframebuffer-stencil-only.html for 2.0.1 test.
         _skip("blit.depth_stencil.depth24_stencil8_scale");
         _skip("blit.depth_stencil.depth24_stencil8_stencil_only");
-
-        _setReason("Removed from native dEQP mustpass. Not passable on Adreno.");
-        // These tests have been skipped in native dEQP since 2015:
-        // https://android.googlesource.com/platform/external/deqp/+/ea026b329e6bf73f109cda914c90f08d5f7a5b8d
-        // They do not pass on Android/Qualcomm (Google Pixel 1, Pixel 3).
-        // It's not clear if the tests or the hardware are out-of-spec, but there's nothing we can do about it right now.
-        // See also: crbug.com/695679
-        _skip("derivate.dfdy.fbo_float.float_highp");
-        _skip("derivate.dfdy.fbo_float.vec2_highp");
-        _skip("derivate.dfdy.fbo_float.vec3_highp");
-        _skip("derivate.dfdy.fbo_float.vec4_highp");
-        _skip("derivate.dfdy.nicest.fbo_float.float_highp");
-        _skip("derivate.dfdy.nicest.fbo_float.vec2_highp");
-        _skip("derivate.dfdy.nicest.fbo_float.vec3_highp");
-        _skip("derivate.dfdy.nicest.fbo_float.vec4_highp");
-        _skip("derivate.dfdy.fastest.fbo_float.float_highp");
-        _skip("derivate.dfdy.fastest.fbo_float.vec2_highp");
-        _skip("derivate.dfdy.fastest.fbo_float.vec3_highp");
-        _skip("derivate.dfdy.fastest.fbo_float.vec4_highp");
     } // if (!runSkippedTests)
 
     /*

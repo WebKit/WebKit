@@ -88,14 +88,9 @@ function CreateValidFb(gl, formats) {
             continue;
         }
         if (f.length == 3) {
-            let internalFormat = f[0];
-            if (internalFormat === undefined) {
-                internalFormat = f[1];
-            }
-
             const tex = gl.createTexture();
             gl.bindTexture(gl.TEXTURE_2D, tex);
-            gl.texImage2D(gl.TEXTURE_2D, 0, internalFormat, 1,1,0, f[1],f[2], null);
+            gl.texImage2D(gl.TEXTURE_2D, 0, f[0], 1, 1, 0, f[1], f[2], null);
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0+i,
                                     gl.TEXTURE_2D, tex, 0);
             continue;
@@ -146,7 +141,8 @@ const TESTS = [
         debug('Blending for RGBA8:');
 
         const gl = CreateContext();
-        fb = CreateValidFb(gl, [[gl.RGBA8, gl.RGBA, gl.UNSIGNED_BYTE]]);
+        // Do not use RGBA8 enum on WebGL 1.0
+        fb = CreateValidFb(gl, [[gl.texImage3D ? gl.RGBA8 : gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE]]);
         shouldBeNonNull('fb');
 
         // Regardless of the context version and enabled extensions,
@@ -183,7 +179,8 @@ const TESTS = [
             gl.HALF_FLOAT = ext.HALF_FLOAT_OES; // These aren't the same value, but this'll work.
         }
 
-        fb = CreateValidFb(gl, [[gl.RGBA16F, gl.RGBA, gl.HALF_FLOAT]]);
+        // Do not use RGBA16F enum on WebGL 1.0
+        fb = CreateValidFb(gl, [[gl.texImage3D ? gl.RGBA16F : gl.RGBA, gl.RGBA, gl.HALF_FLOAT]]);
         shouldBeNonNull('fb');
         gl.prog.uColor([1, 2, 3, 4]);
 
@@ -223,7 +220,8 @@ const TESTS = [
             }
             gl.getExtension('OES_texture_float');
         }
-        fb = CreateValidFb(gl, [[gl.RGBA32F, gl.RGBA, gl.FLOAT]]);
+        // Do not use RGBA32F enum on WebGL 1.0
+        fb = CreateValidFb(gl, [[gl.texImage3D ? gl.RGBA32F : gl.RGBA, gl.RGBA, gl.FLOAT]]);
         shouldBeNonNull('fb');
         gl.prog.uColor([1, 2, 3, 4]);
 

@@ -1253,11 +1253,13 @@ goog.scope(function() {
         /** @type {tcuTexture.TextureFormat} */ var texFmt = gluTextureUtil.mapGLInternalFormat(this.m_textureSpec.format);
         /** @type {tcuTextureUtil.TextureFormatInfo} */ var fmtInfo = tcuTextureUtil.getTextureFormatInfo(texFmt);
         /** @type {Array<number>} */ var viewportSize = this.getViewportSize();
-        /** @type {boolean} */ var isProj = es3fShaderTextureFunctionTests.functionHasProj(this.m_lookupSpec.func);
+        /** @type {boolean} */ var useProj = es3fShaderTextureFunctionTests.functionHasProj(this.m_lookupSpec.func) &&
+                                             !es3fShaderTextureFunctionTests.functionHasGrad(this.m_lookupSpec.func) &&
+                                             !es3fShaderTextureFunctionTests.functionHasLod(this.m_lookupSpec.func);
         /** @type {boolean} */ var isAutoLod = es3fShaderTextureFunctionTests.functionHasAutoLod(
             this.m_isVertexCase ? gluShaderProgram.shaderType.VERTEX : gluShaderProgram.shaderType.FRAGMENT,
             this.m_lookupSpec.func); // LOD can vary significantly
-        /** @type {number} */ var proj = isProj ?
+        /** @type {number} */ var proj = useProj ?
             1.0 / this.m_lookupSpec.minCoord[this.m_lookupSpec.func === es3fShaderTextureFunctionTests.TexFunction.TEXTUREPROJ3 ? 2 : 3] :
             1.0;
 

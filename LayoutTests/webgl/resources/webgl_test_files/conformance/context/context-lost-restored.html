@@ -239,13 +239,24 @@ function testOESTextureFloat() {
 function testOESVertexArrayObject() {
   if (OES_vertex_array_object) {
     // Extension must still be lost.
-    shouldBeNull("OES_vertex_array_object.createVertexArrayOES()");
+    let vao = OES_vertex_array_object.createVertexArrayOES();
+    assertMsg(vao, "[with extension lost] createVertexArrayOES() -> non-null");
+    assertMsg(!OES_vertex_array_object.isVertexArrayOES(vao), "[with context lost] isVertexArrayOES(createVertexArrayOES()) -> false");
     // Try re-enabling extension
 
     old_OES_vertex_array_object = OES_vertex_array_object;
     OES_vertex_array_object = reGetExtensionAndTestForProperty(gl, "OES_vertex_array_object", false);
-    shouldBeTrue("OES_vertex_array_object.createVertexArrayOES() != null");
-    shouldBeTrue("old_OES_vertex_array_object.createVertexArrayOES() == null");
+
+    vao = OES_vertex_array_object.createVertexArrayOES();
+    assertMsg(vao, "[with new non-lost extension] createVertexArrayOES() -> non-null");
+    assertMsg(!OES_vertex_array_object.isVertexArrayOES(vao), "[with new non-lost extension, before bindVAO] isVertexArrayOES(createVertexArrayOES()) -> false");
+    OES_vertex_array_object.bindVertexArrayOES(vao);
+    OES_vertex_array_object.bindVertexArrayOES(null);
+    assertMsg(OES_vertex_array_object.isVertexArrayOES(vao), "[with new non-lost extension, after bindVAO] isVertexArrayOES(createVertexArrayOES()) -> true");
+
+    vao = old_OES_vertex_array_object.createVertexArrayOES();
+    assertMsg(vao, "[with old lost extension] createVertexArrayOES() -> non-null");
+    assertMsg(!old_OES_vertex_array_object.isVertexArrayOES(vao), "[with old lost extension] isVertexArrayOES(createVertexArrayOES()) -> false");
   }
 }
 
