@@ -182,11 +182,6 @@ bool CoreAudioCaptureSourceFactory::isAudioCaptureUnitRunning()
     return CoreAudioSharedUnit::singleton().isRunning();
 }
 
-void CoreAudioCaptureSourceFactory::whenAudioCaptureUnitIsNotRunning(Function<void()>&& callback)
-{
-    return CoreAudioSharedUnit::singleton().whenAudioCaptureUnitIsNotRunning(WTFMove(callback));
-}
-
 bool CoreAudioCaptureSourceFactory::shouldAudioCaptureUnitRenderAudio()
 {
 #if PLATFORM(IOS_FAMILY)

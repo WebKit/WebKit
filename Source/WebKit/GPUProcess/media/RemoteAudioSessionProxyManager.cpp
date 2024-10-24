@@ -124,15 +124,6 @@ void RemoteAudioSessionProxyManager::updateCategory()
 
 void RemoteAudioSessionProxyManager::updatePreferredBufferSizeForProcess()
 {
-#if ENABLE(MEDIA_STREAM)
-    if (CoreAudioCaptureSourceFactory::singleton().isAudioCaptureUnitRunning()) {
-        CoreAudioCaptureSourceFactory::singleton().whenAudioCaptureUnitIsNotRunning([weakThis = WeakPtr { *this }] {
-            if (weakThis)
-                weakThis->updatePreferredBufferSizeForProcess();
-        });
-        return;
-    }
-#endif
     size_t preferredBufferSize = std::numeric_limits<size_t>::max();
     for (Ref proxy : m_proxies) {
         if (proxy->preferredBufferSize() && proxy->preferredBufferSize() < preferredBufferSize)

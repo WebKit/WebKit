@@ -137,7 +137,6 @@ public:
     WEBCORE_EXPORT void registerSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer&);
     WEBCORE_EXPORT void unregisterSpeakerSamplesProducer(CoreAudioSpeakerSamplesProducer&);
     WEBCORE_EXPORT bool isAudioCaptureUnitRunning();
-    WEBCORE_EXPORT void whenAudioCaptureUnitIsNotRunning(Function<void()>&&);
     WEBCORE_EXPORT bool shouldAudioCaptureUnitRenderAudio();
 
 private:
@@ -147,8 +146,8 @@ private:
 
     // AudioCaptureFactory
     CaptureSourceOrError createAudioCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, const MediaConstraints*, std::optional<PageIdentifier>) override;
-    CaptureDeviceManager& audioCaptureDeviceManager() final;
-    const Vector<CaptureDevice>& speakerDevices() const final;
+    CaptureDeviceManager& audioCaptureDeviceManager() override;
+    const Vector<CaptureDevice>& speakerDevices() const override;
     void enableMutedSpeechActivityEventListener(Function<void()>&&) final;
     void disableMutedSpeechActivityEventListener() final;
 
