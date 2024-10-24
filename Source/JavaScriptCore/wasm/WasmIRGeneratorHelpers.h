@@ -192,6 +192,33 @@ static ALWAYS_INLINE void buildEntryBufferForCatch(Probe::Context& context)
     context.gpr(GPRInfo::argumentGPR2) = bitwise_cast<uintptr_t>(payload);
 }
 
+#if USE(JSVALUE32_64)
+static ALWAYS_INLINE void buildEntryBufferForCatch32(Probe::Context& context)
+{
+    auto savedFPWidth = SavedFPWidth::DontSaveVectors;
+    unsigned valueSize = (savedFPWidth == SavedFPWidth::SaveVectors) ? 2 : 1;
+    CallFrame* callFrame = context.fp<CallFrame*>();
+    CallSiteIndex callSiteIndex = callFrame->callSiteIndex();
+    OptimizingJITCallee* callee = bitwise_cast<OptimizingJITCallee*>(callFrame->callee().asNativeCallee());
+    const StackMap& stackmap = callee->stackmap(callSiteIndex);
+    JSWebAssemblyInstance* instance = context.gpr<JSWebAssemblyInstance*>(GPRInfo::wasmContextInstancePointer);
+    JSValue exception = JSValue(context.gpr<int32_t>(GPRInfo::returnValueGPR2), context.gpr<int32_t>(GPRInfo::returnValueGPR));
+    uint64_t* buffer = instance->vm().wasmContext.scratchBufferForSize(stackmap.size() * valueSize * 8);
+    loadValuesIntoBuffer(context, stackmap, buffer, savedFPWidth);
+
+    JSValue& thrownValue = exception;
+    void* payload = nullptr;
+    if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue))
+        payload = bitwise_cast<void*>(wasmException->payload().span().data());
+
+    context.gpr(GPRInfo::argumentGPR0) = bitwise_cast<uintptr_t>(buffer);
+    context.gpr(GPRInfo::argumentGPR1) = exception.payload();
+    context.gpr(GPRInfo::argumentGPR2) = exception.tag();
+    context.gpr(GPRInfo::argumentGPR3) = bitwise_cast<uintptr_t>(payload);
+
+}
+#endif
+
 static inline void SYSV_ABI buildEntryBufferForCatchSIMD(Probe::Context& context) { buildEntryBufferForCatch<SavedFPWidth::SaveVectors>(context); }
 static inline void SYSV_ABI buildEntryBufferForCatchNoSIMD(Probe::Context& context) { buildEntryBufferForCatch<SavedFPWidth::DontSaveVectors>(context); }
 

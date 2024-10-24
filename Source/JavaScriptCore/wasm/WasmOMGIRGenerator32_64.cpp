@@ -1356,7 +1356,8 @@ void OMGIRGenerator::insertEntrySwitch()
     Ref<B3::Air::PrologueGenerator> catchPrologueGenerator = createSharedTask<B3::Air::PrologueGeneratorFunction>([] (CCallHelpers& jit, B3::Air::Code& code) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
         jit.addPtr(CCallHelpers::TrustedImm32(-code.frameSize()), GPRInfo::callFrameRegister, CCallHelpers::stackPointerRegister);
-        jit.probe(tagCFunction<JITProbePtrTag>(code.usesSIMD() ? buildEntryBufferForCatchSIMD : buildEntryBufferForCatchNoSIMD), nullptr, code.usesSIMD() ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors);
+        RELEASE_ASSERT(!code.usesSIMD());
+        jit.probe(tagCFunction<JITProbePtrTag>(buildEntryBufferForCatch32), nullptr, code.usesSIMD() ? SavedFPWidth::SaveVectors : SavedFPWidth::DontSaveVectors);
     });
 
     m_proc.code().setPrologueForEntrypoint(0, Ref<B3::Air::PrologueGenerator>(*m_prologueGenerator));
@@ -4311,9 +4312,9 @@ Value* OMGIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned
 
     if (ControlType::isTry(data)) {
         if (kind == CatchKind::Catch)
-            data.convertTryToCatch(advanceCallSiteIndex(), m_proc.addVariable(pointerType()));
+            data.convertTryToCatch(advanceCallSiteIndex(), m_proc.addVariable(Int64));
         else
-            data.convertTryToCatchAll(advanceCallSiteIndex(), m_proc.addVariable(pointerType()));
+            data.convertTryToCatchAll(advanceCallSiteIndex(), m_proc.addVariable(Int64));
     }
     // We convert from "try" to "catch" ControlType above. This doesn't
     // happen if ControlType is already a "catch". This can happen when
@@ -4326,8 +4327,10 @@ Value* OMGIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned
     reloadMemoryRegistersFromInstance(m_info.memory, instanceValue(), m_currentBlock);
 
     Value* pointer = m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR0);
-    Value* exception = m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR1);
-    Value* buffer = m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR2);
+    Value* exception = m_currentBlock->appendNew<Value>(m_proc, Stitch, Origin(),
+        m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR1),
+        m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR2));
+    Value* buffer = m_currentBlock->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR3);
 
     unsigned indexInBuffer = 0;
 
@@ -4386,8 +4389,10 @@ auto OMGIRGenerator::emitCatchTableImpl(ControlData& data, const ControlData::Tr
     reloadMemoryRegistersFromInstance(m_info.memory, instanceValue(), m_currentBlock);
 
     Value* pointer = block->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR0);
-    Value* exception = block->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR1);
-    Value* buffer = block->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR2);
+    Value* exception = block->appendNew<Value>(m_proc, Stitch, Origin(),
+        block->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR1),
+        block->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR2));
+    Value* buffer = block->appendNew<ArgumentRegValue>(m_proc, Origin(), GPRInfo::argumentGPR3);
 
     unsigned indexInBuffer = 0;
 
@@ -4493,7 +4498,10 @@ auto OMGIRGenerator::addRethrow(unsigned, ControlType& data) -> PartialResult
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
     Value* exception = get(data.exception());
-    patch->append(exception, ValueRep::reg(GPRInfo::argumentGPR2));
+    Value* exceptionLo = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), exception);
+    Value* exceptionHi = m_currentBlock->appendNew<Value>(m_proc, TruncHigh, origin(), exception);
+    patch->append(exceptionLo, ValueRep::reg(GPRInfo::argumentGPR2));
+    patch->append(exceptionHi, ValueRep::reg(GPRInfo::argumentGPR3));
     PatchpointExceptionHandle handle = preparePatchpointForExceptions(m_currentBlock, patch);
     patch->setGenerator([this, handle] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
         AllowMacroScratchRegisterUsage allowScratch(jit);
@@ -4514,7 +4522,10 @@ auto WARN_UNUSED_RETURN OMGIRGenerator::addThrowRef(ExpressionType exn, Stack&) 
     patch->effects.terminal = true;
     patch->append(instanceValue(), ValueRep::reg(GPRInfo::argumentGPR0));
     Value* exception = get(exn);
-    patch->append(exception , ValueRep::reg(GPRInfo::argumentGPR1));
+    Value* exceptionLo = m_currentBlock->appendNew<Value>(m_proc, Trunc, origin(), exception);
+    Value* exceptionHi = m_currentBlock->appendNew<Value>(m_proc, TruncHigh, origin(), exception);
+    patch->append(exceptionLo, ValueRep::reg(GPRInfo::argumentGPR2));
+    patch->append(exceptionHi, ValueRep::reg(GPRInfo::argumentGPR3));
     CheckValue* check = m_currentBlock->appendNew<CheckValue>(m_proc, Check, origin(),
         m_currentBlock->appendNew<Value>(m_proc, Equal, origin(), exception, constant(Wasm::toB3Type(exnrefType()), JSValue::encode(jsNull()))));
 
