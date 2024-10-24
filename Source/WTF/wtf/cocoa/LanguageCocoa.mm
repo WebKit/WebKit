@@ -54,6 +54,17 @@ size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<St
     return index;
 }
 
+LocaleComponents parseLocale(const String& localeIdentifier)
+{
+    auto locale = retainPtr([NSLocale localeWithLocaleIdentifier:localeIdentifier]);
+
+    return {
+        locale.get().languageCode,
+        locale.get().scriptCode,
+        locale.get().countryCode
+    };
+}
+
 bool canMinimizeLanguages()
 {
     static const bool result = []() -> bool {

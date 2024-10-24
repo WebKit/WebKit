@@ -526,6 +526,9 @@
 /* WKWebExtensionErrorInvalidManifestEntry description for default_icon in browser_action or page_action */
 "Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry." = "Empty or invalid `default_icon` for the `browser_action` or `page_action` manifest entry.";
 
+/* WKWebExtensionErrorInvalidManifestEntry description for default_locale */
+"Empty or invalid `default_locale` manifest entry." = "Empty or invalid `default_locale` manifest entry.";
+
 /* WKWebExtensionErrorInvalidManifestEntry description for invalid command description */
 "Empty or invalid `description` in the `commands` manifest entry." = "Empty or invalid `description` in the `commands` manifest entry.";
 
@@ -1623,6 +1626,9 @@
 
 /* WKWebExtensionErrorResourceNotFound description with invalid file path */
 "Unable to find \"%@\" in the extension’s resources. It is an invalid path." = "Unable to find \"%@\" in the extension’s resources. It is an invalid path.";
+
+/* WKWebExtensionErrorInvalidManifestEntry description for missing default_locale */
+"Unable to find `default_locale` in “_locales” folder." = "Unable to find `default_locale` in “_locales” folder.";
 
 /* WKWebExtensionErrorInvalidDeclarativeNetRequest description */
 "Unable to parse `declarativeNetRequest` rules because of an unexpected error." = "Unable to parse `declarativeNetRequest` rules because of an unexpected error.";

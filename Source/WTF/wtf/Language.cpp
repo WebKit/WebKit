@@ -31,6 +31,7 @@
 #include <wtf/Lock.h>
 #include <wtf/Logging.h>
 #include <wtf/NeverDestroyed.h>
+#include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
@@ -166,57 +167,72 @@ void overrideUserPreferredLanguages(const Vector<String>& override)
 
 static String canonicalLanguageIdentifier(const String& languageCode)
 {
-    String lowercaseLanguageCode = languageCode.convertToASCIILowercase();
-    
-    if (lowercaseLanguageCode.length() >= 3 && lowercaseLanguageCode[2] == '_')
-        lowercaseLanguageCode = makeStringByReplacing(lowercaseLanguageCode, 2, 1, "-"_s);
+    return makeStringByReplacingAll(languageCode.convertToASCIILowercase(), '_', '-');
+}
 
-    return lowercaseLanguageCode;
+LocaleComponents parseLocale(const String& localeIdentifier)
+{
+    // Parse the components of the identifier per BCP47. https://www.ietf.org/rfc/bcp/bcp47.txt
+
+    LocaleComponents result;
+
+    auto components = canonicalLanguageIdentifier(localeIdentifier).split('-');
+    if (components.size() >= 1)
+        result.languageCode = components[0];
+
+    if (components.size() >= 2 && components[1].length() == 4)
+        result.scriptCode = makeString(components[1].left(1).convertToASCIIUppercase(), components[1].substring(1));
+
+    if (components.size() >= 3 && !result.scriptCode)
+        result.countryCode = components[1].convertToASCIIUppercase();
+    else if (components.size() >= 3)
+        result.countryCode = components[2].convertToASCIIUppercase();
+
+    return result;
 }
 
 size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<String>& languageList, bool& exactMatch)
 {
-    String lowercaseLanguage = language.convertToASCIILowercase();
-    String languageWithoutLocaleMatch;
-    String languageMatchButNotLocale;
-    size_t languageWithoutLocaleMatchIndex = 0;
-    size_t languageMatchButNotLocaleMatchIndex = 0;
-    bool canMatchLanguageOnly = (lowercaseLanguage.length() == 2 || (lowercaseLanguage.length() >= 3 && lowercaseLanguage[2] == '-'));
+    exactMatch = false;
+
+    if (language.isEmpty() || languageList.isEmpty())
+        return notFound;
+
+    auto canonicalizedLanguage = canonicalLanguageIdentifier(language);
+    auto components = parseLocale(canonicalizedLanguage);
+
+    auto languageOnlyMatchIndex = notFound;
+    auto partialMatchIndex = notFound;
 
     for (size_t i = 0; i < languageList.size(); ++i) {
-        String canonicalizedLanguageFromList = canonicalLanguageIdentifier(languageList[i]);
-
-        if (lowercaseLanguage == canonicalizedLanguageFromList) {
+        auto canonicalizedLanguageFromList = canonicalLanguageIdentifier(languageList[i]);
+        if (canonicalizedLanguage == canonicalizedLanguageFromList) {
             exactMatch = true;
             return i;
         }
 
-        if (canMatchLanguageOnly && canonicalizedLanguageFromList.length() >= 2) {
-            if (lowercaseLanguage[0] == canonicalizedLanguageFromList[0] && lowercaseLanguage[1] == canonicalizedLanguageFromList[1]) {
-                if (!languageWithoutLocaleMatch.length() && canonicalizedLanguageFromList.length() == 2) {
-                    languageWithoutLocaleMatch = languageList[i];
-                    languageWithoutLocaleMatchIndex = i;
-                }
-                if (!languageMatchButNotLocale.length() && canonicalizedLanguageFromList.length() >= 3) {
-                    languageMatchButNotLocale = languageList[i];
-                    languageMatchButNotLocaleMatchIndex = i;
-                }
-            }
+        auto componentsFromList = parseLocale(canonicalizedLanguageFromList);
+        if (components.languageCode == componentsFromList.languageCode) {
+            // If it's a language-only match, store the first occurrence.
+            if (languageOnlyMatchIndex == notFound && componentsFromList.scriptCode.isEmpty() && componentsFromList.countryCode.isEmpty())
+                languageOnlyMatchIndex = i;
+
+            // If it's a partial match (language and script), store the first occurrence.
+            if (partialMatchIndex == notFound && components.scriptCode == componentsFromList.scriptCode && !componentsFromList.countryCode.isEmpty())
+                partialMatchIndex = i;
         }
     }
 
-    exactMatch = false;
+    // If we have both a language-only match and a language-but-not-locale match, return the
+    // language-only match as it is considered a "better" match. For example, if the list
+    // provided has both "en-GB" and "en" and the user prefers "en-US", we will return "en".
+    if (languageOnlyMatchIndex != notFound)
+        return languageOnlyMatchIndex;
 
-    // If we have both a language-only match and a languge-but-not-locale match, return the
-    // languge-only match as is considered a "better" match. For example, if the list
-    // provided has both "en-GB" and "en" and the user prefers "en-US" we will return "en".
-    if (languageWithoutLocaleMatch.length())
-        return languageWithoutLocaleMatchIndex;
+    if (partialMatchIndex != notFound)
+        return partialMatchIndex;
 
-    if (languageMatchButNotLocale.length())
-        return languageMatchButNotLocaleMatchIndex;
-
-    return languageList.size();
+    return notFound;
 }
 
 #endif // !PLATFORM(COCOA)

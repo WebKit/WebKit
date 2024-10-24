@@ -31,6 +31,7 @@
 #include "WebExtensionPermission.h"
 #include "WebExtensionUtilities.h"
 #include <WebCore/TextResourceDecoder.h>
+#include <wtf/Language.h>
 
 namespace WebKit {
 
@@ -343,6 +344,7 @@ static int toAPI(WebExtension::Error error)
     case WebExtension::Error::InvalidCommands:
     case WebExtension::Error::InvalidContentScripts:
     case WebExtension::Error::InvalidContentSecurityPolicy:
+    case WebExtension::Error::InvalidDefaultLocale:
     case WebExtension::Error::InvalidDescription:
     case WebExtension::Error::InvalidExternallyConnectable:
     case WebExtension::Error::InvalidIcon:
@@ -445,6 +447,10 @@ Ref<API::Error> WebExtension::createError(Error error, const String& customLocal
             localizedDescription = WEB_UI_STRING("Unable to parse `declarativeNetRequest` rules because of an unexpected error.", "WKWebExtensionErrorInvalidDeclarativeNetRequest description");
         break;
 
+    case Error::InvalidDefaultLocale:
+        localizedDescription = WEB_UI_STRING("Empty or invalid `default_locale` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for default_locale");
+        break;
+
     case Error::InvalidDescription:
         localizedDescription = WEB_UI_STRING("Missing or empty `description` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for description");
         break;
@@ -522,6 +528,62 @@ Vector<Ref<API::Error>> WebExtension::errors()
     populateExternallyConnectableIfNeeded();
 
     return m_errors;
+}
+
+const Vector<String>& WebExtension::supportedLocales()
+{
+    if (!m_supportedLocales.isEmpty())
+        return m_supportedLocales;
+
+    auto localesString = "_locales/"_s;
+    auto localeDirectoryPath = resourceFileURLForPath(localesString).fileSystemPath();
+    if (!localeDirectoryPath.isEmpty()) {
+        m_supportedLocales = FileSystem::listDirectory(localeDirectoryPath);
+        return m_supportedLocales;
+    }
+
+    // For tests that don't have a file system location, check the resource cache.
+    auto prefixLength = localesString.length();
+    for (const auto& resourceEntry : m_resources) {
+        auto path = resourceEntry.key;
+        if (!path.startsWith(localesString))
+            continue;
+
+        auto localeEnd = path.find('/', prefixLength);
+        if (localeEnd == notFound)
+            continue;
+
+        auto locale = path.substring(prefixLength, localeEnd - prefixLength);
+        if (!m_supportedLocales.contains(locale))
+            m_supportedLocales.append(locale);
+    }
+
+    return m_supportedLocales;
+}
+
+const String& WebExtension::defaultLocale()
+{
+    if (!manifestParsedSuccessfully())
+        return nullString();
+
+    return m_defaultLocale;
+}
+
+String WebExtension::bestMatchLocale()
+{
+    const auto& supportedLocales = this->supportedLocales();
+    if (supportedLocales.isEmpty())
+        return nullString();
+
+    if (supportedLocales.size() == 1)
+        return supportedLocales.first();
+
+    bool exactMatch = false;
+    auto bestMatchIndex = indexOfBestMatchingLanguageInList(defaultLanguage(ShouldMinimizeLanguages::No), supportedLocales, exactMatch);
+    if (bestMatchIndex != notFound)
+        return supportedLocales[bestMatchIndex];
+
+    return defaultLocale();
 }
 
 const String& WebExtension::displayName()

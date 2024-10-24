@@ -49,6 +49,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashSet.h>
+#import <wtf/Language.h>
 #import <wtf/NeverDestroyed.h>
 #import <wtf/Scope.h>
 #import <wtf/cf/TypeCastsCF.h>
@@ -283,8 +284,19 @@ bool WebExtension::parseManifest(NSData *manifestData)
     // This is needed for localization to properly get the defaultLocale() while we are mid-parse.
     m_manifestJSON = JSON::Object::create();
 
-    auto *defaultLocale = objectForKey<NSString>(m_manifest, defaultLocaleManifestKey);
-    m_defaultLocale = [NSLocale localeWithLocaleIdentifier:defaultLocale];
+    if (id defaultLocaleValue = m_manifest.get()[defaultLocaleManifestKey]) {
+        if (auto *defaultLocale = dynamic_objc_cast<NSString>(defaultLocaleValue)) {
+            auto parsedLocale = parseLocale(defaultLocale);
+            if (!parsedLocale.languageCode.isEmpty()) {
+                if (supportedLocales().contains(String(defaultLocale)))
+                    m_defaultLocale = defaultLocale;
+                else
+                    recordError(createError(Error::InvalidDefaultLocale, WEB_UI_STRING("Unable to find `default_locale` in “_locales” folder.", "WKWebExtensionErrorInvalidManifestEntry description for missing default_locale")));
+            } else
+                recordError(createError(Error::InvalidDefaultLocale));
+        } else
+            recordError(createError(Error::InvalidDefaultLocale));
+    }
 
     m_localization = [[_WKWebExtensionLocalization alloc] initWithWebExtension:*this];
 
@@ -517,14 +529,6 @@ _WKWebExtensionLocalization *WebExtension::localization()
         return nil;
 
     return m_localization.get();
-}
-
-NSLocale *WebExtension::defaultLocale()
-{
-    if (!manifestParsedSuccessfully())
-        return nil;
-
-    return m_defaultLocale.get();
 }
 
 CocoaImage *WebExtension::icon(CGSize size)

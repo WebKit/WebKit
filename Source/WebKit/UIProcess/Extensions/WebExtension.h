@@ -96,6 +96,7 @@ public:
         InvalidContentScripts,
         InvalidContentSecurityPolicy,
         InvalidDeclarativeNetRequest,
+        InvalidDefaultLocale,
         InvalidDescription,
         InvalidExternallyConnectable,
         InvalidIcon,
@@ -197,6 +198,12 @@ public:
         String jsonPath;
     };
 
+    struct LocaleComponents {
+        String languageCode;
+        String scriptCode;
+        String countryCode;
+    };
+
     using CommandsVector = Vector<CommandData>;
     using InjectedContentVector = Vector<InjectedContentData>;
     using WebAccessibleResourcesVector = Vector<WebAccessibleResourceData>;
@@ -232,7 +239,10 @@ public:
     RefPtr<API::Data> resourceDataForPath(const String&, RefPtr<API::Error>&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
 
     _WKWebExtensionLocalization *localization();
-    NSLocale *defaultLocale();
+
+    const Vector<String>& supportedLocales();
+    const String& defaultLocale();
+    String bestMatchLocale();
 
     const String& displayName();
     const String& displayShortName();
@@ -384,7 +394,8 @@ private:
     Ref<const JSON::Value> m_manifestJSON;
     Resources m_resources;
 
-    RetainPtr<NSLocale> m_defaultLocale;
+    String m_defaultLocale;
+    Vector<String> m_supportedLocales;
     RetainPtr<_WKWebExtensionLocalization> m_localization;
 
     Vector<Ref<API::Error>> m_errors;
