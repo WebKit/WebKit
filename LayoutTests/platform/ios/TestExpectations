@@ -7479,6 +7479,9 @@ imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-rep
 
 webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
+# off by 1 pixel (rounding)
+imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-on-non-root-inline-box.html [ Failure ]
+
 webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphenate-character-002.html [ ImageOnlyFailure ]
 
 # webkit.org/b/280553 [ Sequoia+ iOS wk2 release ] 2x http/tests/resourceLoadStatistics/* are flaky failures.

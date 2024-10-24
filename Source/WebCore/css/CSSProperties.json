@@ -3910,7 +3910,7 @@
             ],
             "codegen-properties": {
                 "converter": "TextEdge",
-                "settings-flag": "cssTextBoxTrimEnabled",
+                "settings-flag": "cssLineFitEdgeEnabled",
                 "parser-function": "consumeLineFitEdge",
                 "parser-grammar-unused": "leading | [ [ text | cap | ex | ideographic | ideographic-ink ] [ text | alphabetic | ideographic | ideographic-ink ]? ]",
                 "parser-grammar-unused-reason": "Needs support for 'groups' and 'optional'."

@@ -1273,6 +1273,20 @@ CSSLineClampEnabled:
     WebCore:
       default: false
 
+CSSLineFitEdgeEnabled:
+  type: bool
+  status: unstable
+  category: css
+  humanReadableName: "CSS line-fit-edge"
+  humanReadableDescription: "Enable CSS line-fit-edge"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+
 CSSMarginTrimEnabled:
   type: bool
   status: stable

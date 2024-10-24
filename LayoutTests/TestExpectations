@@ -8066,6 +8066,8 @@ imported/w3c/web-platform-tests/svg/painting/reftests/paint-context-002.svg [ Im
 # re-import css/css-align WPT failure
 webkit.org/b/271692 imported/w3c/web-platform-tests/css/css-align/blocks/align-content-block-break-overflow-020.html [ ImageOnlyFailure ]
 
+webkit.org/b/282024 fast/text/text-box-edge-with-margin-padding-border-simple.html [ ImageOnlyFailure ]
+
 # -- Anchor Positioning -- #
 
 # general failures
