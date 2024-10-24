@@ -104,7 +104,9 @@ public final class PreviewWindowController: NSObject {
                         self.windowOpenedContinuation = continuation
                     }
                 }
+#if USE_APPLE_INTERNAL_SDK
                 try await previewSession?.update(items: [self.item])
+#endif
             } catch UpdateError.newUpdateQueued {
                 PreviewWindowController.logger.debug("WKSPreviewWindowController.updateImage skipped: newer image update queued");
             } catch {
