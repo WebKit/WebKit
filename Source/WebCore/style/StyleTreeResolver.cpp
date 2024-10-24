@@ -390,6 +390,10 @@ std::optional<ElementUpdate> TreeResolver::resolvePseudoElement(Element& element
         return { };
     if (pseudoElementIdentifier.pseudoId == PseudoId::WebKitScrollbar && elementUpdate.style->overflowX() != Overflow::Scroll && elementUpdate.style->overflowY() != Overflow::Scroll)
         return { };
+    if (pseudoElementIdentifier.pseudoId == PseudoId::Before && !element.beforePseudoElement())
+        return { };
+    if (pseudoElementIdentifier.pseudoId == PseudoId::After && !element.afterPseudoElement())
+        return { };
     auto isViewTransitionPseudoElement = pseudoElementIdentifier.pseudoId == PseudoId::ViewTransition
         || pseudoElementIdentifier.pseudoId == PseudoId::ViewTransitionGroup
         || pseudoElementIdentifier.pseudoId == PseudoId::ViewTransitionImagePair
