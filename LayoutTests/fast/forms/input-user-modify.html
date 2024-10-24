@@ -44,36 +44,42 @@ input::-webkit-calendar-picker-indicator {
 </div>
 
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
-    
-function focusAndType(id, key)
+async function focusAndType(id, key)
 {
     if (!window.eventSenver)
         return;
 
     var target = document.getElementById(id);
-    eventSender.mouseMoveTo(target.offsetLeft + 2, target.offsetTop + 2);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(target.offsetLeft + 2, target.offsetTop + 2);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
     eventSender.keyDown(key);
 }
 
-var container = document.getElementById("container");
+onload = async () => {
+    if (!window.testRunner)
+        return;
 
-focusAndType("search", "delete");
-focusAndType("file", "delete");
-focusAndType("range", "delete");
-focusAndType("color", "delete");
-focusAndType("number", "delete");
-focusAndType("placeholder", "delete");
-focusAndType("button", "delete");
-focusAndType("date", "delete");
-focusAndType("video", "delete");
-focusAndType("audio", "delete");
+    testRunner.waitUntilDone();
+    testRunner.dumpAsText();
 
-if (window.testRunner)
+    var container = document.getElementById("container");
+
+    await focusAndType("search", "delete");
+    await focusAndType("file", "delete");
+    await focusAndType("range", "delete");
+    await focusAndType("color", "delete");
+    await focusAndType("number", "delete");
+    await focusAndType("placeholder", "delete");
+    await focusAndType("button", "delete");
+    await focusAndType("date", "delete");
+    await focusAndType("video", "delete");
+    await focusAndType("audio", "delete");
+
     container.innerHTML = "PASS";
+
+    testRunner.notifyDone();
+}
 </script>
 </body>
 </html>

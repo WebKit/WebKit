@@ -7,15 +7,15 @@
                 console.innerHTML = console.innerHTML + msg + "<br>";
             }
             
-            function buttonClick()
+            async function buttonClick()
             {
                 log("<br>clicking button");
 
                 // click the button
                 var button = document.getElementById('button');
-                eventSender.mouseMoveTo(button.offsetLeft + 20, button.offsetTop + 7);
-                eventSender.mouseDown();
-                eventSender.mouseUp();
+                await eventSender.asyncMouseMoveTo(button.offsetLeft + 20, button.offsetTop + 7);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
 
                 testRunner.notifyDone();
             }
@@ -30,7 +30,7 @@
                 setTimeout(buttonClick, 10);
             }
             
-            function drag()
+            async function drag()
             {
                 if (!window.testRunner)
                     return;
@@ -44,8 +44,8 @@
 
                 // drag slider, leave the mouse down
                 log("clicking in cancel");
-                eventSender.mouseMoveTo(x, y);
-                eventSender.mouseDown();
+                await eventSender.asyncMouseMoveTo(x, y);
+                await eventSender.asyncMouseDown();
 
                 setTimeout(deleteSearch, 10);
             }

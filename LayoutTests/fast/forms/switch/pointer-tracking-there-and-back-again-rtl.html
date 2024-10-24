@@ -3,7 +3,8 @@
 <script src="../../../resources/ui-helper.js"></script>
 <input type=checkbox switch onclick=end() dir=rtl>
 <script>
-window.onload = () => {
+window.onload = async () => {
+    testRunner?.waitUntilDone();
     const input = document.querySelector("input");
     const x = input.offsetLeft;
     const y = input.offsetTop;
@@ -17,13 +18,15 @@ window.onload = () => {
             .end()
             .takeResult();
         UIHelper.sendEventStream(eventStreamData);
+        testRunner?.notifyDone();
         return;
     }
-    window.eventSender.mouseMoveTo(x + width - 1, y);
-    window.eventSender.mouseDown();
-    window.eventSender.mouseMoveTo(x, y);
-    window.eventSender.mouseMoveTo(x + width - 1, y);
-    window.eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(x + width - 1, y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseMoveTo(x + width - 1, y);
+    await eventSender.asyncMouseUp();
+    testRunner?.notifyDone();
 }
 function end() {
     setTimeout(() => document.documentElement.removeAttribute("class"), 200);

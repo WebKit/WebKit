@@ -6,12 +6,14 @@
             {
                 document.getElementById("console").appendChild(document.createTextNode(msg + "\n"));
             }
-            function test()
+            async function test()
             {
                 mouseDownCount = 0;
                 
-                if (window.testRunner)
+                if (window.testRunner) {
+                    testRunner.waitUntilDone();
                     testRunner.dumpAsText();
+                }
 
                 var sf = document.getElementById("search");
 
@@ -21,18 +23,19 @@
                 var y = sf.offsetTop + sf.offsetHeight / 2;
 
                 if (window.testRunner) {
-                    eventSender.mouseMoveTo(buttonX, y);
-                    eventSender.mouseDown();
-                    eventSender.mouseUp();
+                    await eventSender.asyncMouseMoveTo(buttonX, y);
+                    await eventSender.asyncMouseDown();
+                    await eventSender.asyncMouseUp();
 
-                    eventSender.mouseMoveTo(middleX, y);
-                    eventSender.mouseDown();
-                    eventSender.mouseUp();
+                    await eventSender.asyncMouseMoveTo(middleX, y);
+                    await eventSender.asyncMouseDown();
+                    await eventSender.asyncMouseUp();
                     
                     if (mouseDownCount == 2)
                         log("Test Passed");
                     else
                         log("Test Failed");
+                    testRunner.notifyDone();
                 }
             }
         </script>

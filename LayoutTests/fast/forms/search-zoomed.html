@@ -21,21 +21,27 @@
         Clicking the (x) button should clear the field.
     </p>
     <script>
-        if (window.testRunner)
+        onload = async () => {
+            if (!window.testRunner)
+                return;
+
             testRunner.dumpAsText();
-        if (window.eventSender) {
-            var target = document.getElementById("target");
-            var cancelPos = searchCancelButtonPosition(target);
-            eventSender.mouseMoveTo(cancelPos.x * 1.2, cancelPos.y * 1.2);
-            eventSender.mouseDown();
-            eventSender.mouseUp();
-            var result = document.getElementById("result");
-            if (target.value == "")
-                result.innerText = "PASS";
-            else
-                result.innerText = "FAIL";
-            
-            target.value = "Some other text";
+            testRunner.waitUntilDone();
+            if (window.eventSender) {
+                var target = document.getElementById("target");
+                var cancelPos = searchCancelButtonPosition(target);
+                await eventSender.asyncMouseMoveTo(cancelPos.x * 1.2, cancelPos.y * 1.2);
+                await eventSender.asyncMouseDown();
+                await eventSender.asyncMouseUp();
+                var result = document.getElementById("result");
+                if (target.value == "")
+                    result.innerText = "PASS";
+                else
+                    result.innerText = "FAIL";
+                
+                target.value = "Some other text";
+            }
+            testRunner.notifyDone();
         }
     </script>
 </body>

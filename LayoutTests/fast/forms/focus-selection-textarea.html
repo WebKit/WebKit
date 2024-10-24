@@ -2,7 +2,7 @@
 <script src="../../resources/js-test-pre.js"></script>
 
 <script>
-function runTest()
+async function runTest()
 {
     if (!window.testRunner)
         return;
@@ -12,6 +12,7 @@ function runTest()
         accessKeyModifiers = ["ctrlKey", "altKey"];
 
     testRunner.dumpEditingCallbacks();
+    testRunner.waitUntilDone();
     testRunner.dumpAsText();
 
     shouldBe("first.selectionStart", "11");
@@ -34,18 +35,18 @@ function runTest()
 
     shouldBe("fourth.selectionStart", "11");
     shouldBe("fourth.selectionEnd", "18");
-    eventSender.mouseMoveTo(fourth.offsetLeft + 4, fourth.offsetTop + 4);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(fourth.offsetLeft + 4, fourth.offsetTop + 4);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
     shouldBe("fourth.selectionStart", "0");
     shouldBe("fourth.selectionEnd", "0");
 
     shouldBe("fifth.selectionStart", "11");
     shouldBe("fifth.selectionEnd", "18");
     var fifthLabel = document.getElementById("fifthLabel");
-    eventSender.mouseMoveTo(fifthLabel.offsetLeft + 4, fifthLabel.offsetTop + 4);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(fifthLabel.offsetLeft + 4, fifthLabel.offsetTop + 4);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
     shouldBe("fifth.selectionStart", "11");
     shouldBe("fifth.selectionEnd", "18");
 
@@ -74,7 +75,7 @@ function runTest()
     eventSender.keyDown("I", accessKeyModifiers);
     shouldBe("ninth.selectionStart", "11");
     shouldBe("ninth.selectionEnd", "18");
-
+    testRunner.notifyDone();
 }
 </script>
 

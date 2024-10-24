@@ -1,12 +1,19 @@
 <input type="text" value="This is a bunch of text.">
 <p>Tests drag-selecting down. If the test succeeds, the text from the center to the end of the text field should be selected.</p>
 <script>
-if (window.eventSender) {
-    eventSender.mouseMoveTo(50, 15);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseDown();
-    eventSender.mouseMoveTo(50, 40);
-    eventSender.mouseUp();
+onload = async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.waitUntilDone();
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(50, 15);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseMoveTo(50, 40);
+        await eventSender.asyncMouseUp();
+    }
+    testRunner.notifyDone();
 }
 </script>

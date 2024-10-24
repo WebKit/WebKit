@@ -9,15 +9,15 @@
 <script>
 description('This tests that deselecting an option won&apos;t cause unnecessary scrolling.');
 
-function mouseDownOnSelect(selId, index, modifier) {
+async function mouseDownOnSelect(selId, index, modifier) {
     var sl = document.getElementById(selId);
     var itemHeight = Math.floor(sl.offsetHeight / sl.size);
     var border = 1;
     var y = border + index * itemHeight - window.pageYOffset;
     if (window.eventSender) {
-        eventSender.mouseMoveTo(sl.offsetLeft + border, sl.offsetTop + y);
-        eventSender.mouseDown(0, [modifier]);
-        eventSender.mouseUp(0, [modifier]);
+        await eventSender.asyncMouseMoveTo(sl.offsetLeft + border, sl.offsetTop + y);
+        await eventSender.asyncMouseDown(0, [modifier]);
+        await eventSender.asyncMouseUp(0, [modifier]);
     }
 }
 
@@ -49,9 +49,18 @@ sl.focus();
 document.execCommand("SelectAll");
 sl.scrollTop = Math.floor(sl.offsetHeight / sl.size) * 4 + 6;
 var scrollBeforeClick = sl.scrollTop;
-mouseDownOnSelect("sl", 3, "addSelectionKey");
-shouldBe('sl.scrollTop', 'scrollBeforeClick');
-shouldBe('selectionPattern(sl)', '"11111110111"');
+
+onload = async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.waitUntilDone();
+
+    await mouseDownOnSelect("sl", 3, "addSelectionKey");
+    shouldBe('sl.scrollTop', 'scrollBeforeClick');
+    shouldBe('selectionPattern(sl)', '"11111110111"');
+    testRunner.notifyDone();
+}
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

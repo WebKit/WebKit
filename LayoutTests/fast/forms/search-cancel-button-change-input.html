@@ -28,12 +28,12 @@ function changeType(e) {
     }, 0);
 }
 
-function clickCancel() {
+async function clickCancel() {
     var cancelButtonPosition = searchCancelButtonPosition(inputElement);
 
-    eventSender.mouseMoveTo(cancelButtonPosition.x, cancelButtonPosition.y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(cancelButtonPosition.x, cancelButtonPosition.y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 }
 
 function runTest() {
@@ -46,8 +46,8 @@ function runTest() {
 
     inputElement.addEventListener("input", changeType);
 
-    setTimeout(function() {
-        clickCancel();
+    setTimeout(async function() {
+        await clickCancel();
     }, 0);
 }
 </script>

@@ -16,17 +16,24 @@ fieldset {
         <p id=log>Clicks: 0</p>
     </fieldset>
 <script>
-if (window.testRunner)
-    testRunner.dumpAsText();
 let index = 0;
 function updateCount() {
     log.innerHTML = `Clicks: ${++index}`;
 }
-button.addEventListener('click', updateCount);
-if (window.eventSender) {
-    eventSender.mouseMoveTo(button.offsetLeft + 5, button.offsetTop + 5)
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+
+onload = async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+    button.addEventListener('click', updateCount);
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(button.offsetLeft + 5, button.offsetTop + 5)
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+    }
+    testRunner.notifyDone();
 }
 </script>
 

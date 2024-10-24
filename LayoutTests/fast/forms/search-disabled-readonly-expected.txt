@@ -4,6 +4,9 @@
 This tests the behavior of a cancel button in search input forms.
 
 
+PASS successfullyParsed is true
+
+TEST COMPLETE
 Test on the input form with disabled=false and readonly=false
 Click the cancel button:
 PASS input.value is ""
@@ -44,7 +47,4 @@ PASS input.value is "foo"
 ... and then input one character:
 PASS input.value is "foo"
 
-PASS successfullyParsed is true
-
-TEST COMPLETE
 

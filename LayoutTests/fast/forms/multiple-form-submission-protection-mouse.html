@@ -7,24 +7,24 @@ if (window.testRunner) {
     testRunner.waitUntilDone();
 }
 
-addEventListener('message', function(e) {
-    simulateClick('button2');
+addEventListener('message', async function(e) {
+    await simulateClick('button2');
 }, false);
 
-function runTest()
+async function runTest()
 {
     if (!eventSender)
         return;
 
-    simulateClick('button1');
+    await simulateClick('button1');
 }
 
-function simulateClick(id)
+async function simulateClick(id)
 {
     var rect = document.getElementById(id).getBoundingClientRect();
-    eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 }
 
 function submitTo(target)

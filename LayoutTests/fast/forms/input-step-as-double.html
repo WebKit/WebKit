@@ -12,17 +12,24 @@ document.body.appendChild(parent);
 parent.innerHTML = '<input type=number id=number value=0 step=".5">';
 var numberInput = document.getElementById('number');
 
-if (window.eventSender) {
-    // Move the cursor on the upper button of the input field.
-    eventSender.mouseMoveTo(numberInput.offsetLeft + numberInput.offsetWidth - 10, numberInput.offsetTop + numberInput.offsetHeight / 4);
+onload = async () => {
+    if (!window.testRunner)
+        return;
 
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    shouldBe('numberInput.value', '"0.5"');
+    testRunner.waitUntilDone();
+    if (window.eventSender) {
+        // Move the cursor on the upper button of the input field.
+        await eventSender.asyncMouseMoveTo(numberInput.offsetLeft + numberInput.offsetWidth - 10, numberInput.offsetTop + numberInput.offsetHeight / 4);
 
-    parent.innerHTML = '';
-} else {
-    document.getElementById('console').innerHTML = '<p>No eventSender. <p>Manual test instruction: Click the upper button of the input field.  Confirm that the input field value is 0.5';
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        shouldBe('numberInput.value', '"0.5"');
+
+        parent.innerHTML = '';
+    } else {
+        document.getElementById('console').innerHTML = '<p>No eventSender. <p>Manual test instruction: Click the upper button of the input field.  Confirm that the input field value is 0.5';
+    }
+    testRunner.notifyDone();
 }
 
 </script>

@@ -7,14 +7,18 @@
 </select>
 
 <script>
-var multiselect = document.getElementById('multiselect');
+onload = async () => {
+    testRunner?.waitUntilDone();
+    var multiselect = document.getElementById('multiselect');
 
-if (window.eventSender) {
-    eventSender.mouseMoveTo(multiselect.offsetLeft + 5, multiselect.offsetTop + 5);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-} else {
-    document.write("To manually test, click on the 'a' option and no focus ring on the selected item should be seen.");
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(multiselect.offsetLeft + 5, multiselect.offsetTop + 5);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+    } else {
+        document.write("To manually test, click on the 'a' option and no focus ring on the selected item should be seen.");
+    }
+    testRunner?.notifyDone();
 }
 </script>
 </body>

@@ -3,12 +3,13 @@
     <title></title>
     <script src="resources/common.js"></script>
     <script>
-        function test()
+        async function test()
         {
             if (!window.testRunner)
                 return;
 
             testRunner.dumpAsText();
+            testRunner.waitUntilDone();
 
             var s1 = document.getElementById("search1");
             var s2 = document.getElementById("search2");
@@ -21,22 +22,22 @@
             var y2 = s2.offsetTop + s2.offsetHeight / 2;
             var y3 = s3.offsetTop + s3.offsetHeight / 2;
 
-            eventSender.mouseMoveTo(buttonX, s1cancelPos.y);
-            eventSender.mouseDown();
-            eventSender.mouseMoveTo(middleX, s1cancelPos.y);
-            eventSender.mouseUp();
+            await eventSender.asyncMouseMoveTo(buttonX, s1cancelPos.y);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseMoveTo(middleX, s1cancelPos.y);
+            await eventSender.asyncMouseUp();
             eventSender.leapForward(1000);
 
-            eventSender.mouseMoveTo(middleX, y2);
-            eventSender.mouseDown();
-            eventSender.mouseMoveTo(buttonX, y2);
-            eventSender.mouseUp();
+            await eventSender.asyncMouseMoveTo(middleX, y2);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseMoveTo(buttonX, y2);
+            await eventSender.asyncMouseUp();
             eventSender.leapForward(1000);
 
-            eventSender.mouseMoveTo(buttonX, y3);
-            eventSender.mouseDown();
-            eventSender.mouseMoveTo(buttonX, y3);
-            eventSender.mouseUp();
+            await eventSender.asyncMouseMoveTo(buttonX, y3);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseMoveTo(buttonX, y3);
+            await eventSender.asyncMouseUp();
 
             var result = document.getElementById("result");
             var values = s1.value + ", " + s2.value + ", " + s3.value;
@@ -44,6 +45,8 @@
                 result.innerText = "PASS";
             else
                 result.innerText = "FAIL (" + values + ")";
+
+            testRunner.notifyDone();
         }
     </script>
 </head>

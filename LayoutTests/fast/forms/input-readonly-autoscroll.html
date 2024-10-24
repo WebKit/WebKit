@@ -8,24 +8,24 @@
                     setTimeout(autoscrollTestPart1, 0);
                 }
             }
-            function autoscrollTestPart1()
+            async function autoscrollTestPart1()
             {
                 var tf = document.getElementById('tf');
                 if (window.eventSender) {
                     tf.scrollIntoView();
                     var h = tf.offsetTop - document.scrollingElement.scrollTop + 10;
                     eventSender.dragMode = false;
-                    eventSender.mouseMoveTo(20, h);
-                    eventSender.mouseDown();
-                    eventSender.mouseMoveTo(20, h);
-                    eventSender.mouseMoveTo(300, h);
+                    await eventSender.asyncMouseMoveTo(20, h);
+                    await eventSender.asyncMouseDown();
+                    await eventSender.asyncMouseMoveTo(20, h);
+                    await eventSender.asyncMouseMoveTo(300, h);
                 }
                 setTimeout(autoscrollTestPart2, 100);
             }
-            function autoscrollTestPart2()
+            async function autoscrollTestPart2()
             {
                 if (window.eventSender)
-                    eventSender.mouseUp();
+                    await eventSender.asyncMouseUp();
                 log("ScrollLeft: " + document.getElementById('tf').scrollLeft);
                 if (window.testRunner)
                     testRunner.notifyDone();

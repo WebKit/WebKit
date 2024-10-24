@@ -1,11 +1,20 @@
 <input type="text" value="word another">
 <p>Tests double-clicking on a word. If the test succeeds, the word "word" should be selected.</p>
 <script>
-if (window.eventSender) {
-    eventSender.mouseMoveTo(15, 15);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+onload = async () => {
+    if (!window.testRunner)
+        return;
+
+    testRunner.waitUntilDone();
+
+    if (window.eventSender) {
+        await eventSender.asyncMouseMoveTo(15, 15);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
+    }
+
+    testRunner.notifyDone();
 }
 </script>

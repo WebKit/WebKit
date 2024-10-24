@@ -14,20 +14,20 @@ async function rafPromise() {
   return new Promise(resolve => requestAnimationFrame(resolve));
 }
 
-function clickOn(element)
+async function clickOn(element)
 {
     var x = element.offsetLeft + element.offsetWidth / 2;
     var y = element.offsetTop + element.offsetHeight / 2;
-    eventSender.mouseMoveTo(x, y);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(x, y);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 }
 
 promise_test(async () => {
   const test = document.getElementById('test');
   test.parentNode.addEventListener('mousedown', () => assert_unreached('mousedown should not be fired.'));
 
-  clickOn(test);
+  await clickOn(test);
 
   await rafPromise();
   await rafPromise();
