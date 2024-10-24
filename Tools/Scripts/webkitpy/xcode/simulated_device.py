@@ -23,6 +23,8 @@
 import atexit
 import json
 import logging
+import os
+import pathlib
 import re
 import time
 
@@ -643,6 +645,11 @@ class SimulatedDevice(object):
     def install_app(self, app_path, env=None):
         # Even after carousel is running, it takes a few seconds for watchOS to allow installs.
         for i in range(self.NUM_INSTALL_RETRIES):
+            # FIXME: remove this workaround when rdar://129789675 has been resolved.
+            eligibility_util = os.path.join(os.path.dirname(app_path), "WebKitEligibilityUtil")
+            exit_code = self.executive.run_command(['xcrun', 'simctl', 'spawn', self.udid, eligibility_util], return_exit_code=True)
+            _log.debug(u'WebKitEligibilityUtil returned {}'.format(exit_code))
+
             exit_code = self.executive.run_command(['xcrun', 'simctl', 'install', self.udid, app_path], return_exit_code=True)
             if exit_code == 0:
                 return True
