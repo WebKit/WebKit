@@ -44,15 +44,13 @@ public:
     bool setContentsScale(float);
     float contentsScale() const { return m_contentsScale; }
 
-    void invalidate(const IntRect& dirtyRect);
-
     const IntRect& coverRect() const { return m_coverRect; }
 
     enum class UpdateResult : uint8_t {
         BuffersChanged = 1 << 0,
         TilesPending =  1 << 1
     };
-    OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, bool shouldCreateAndDestroyTiles, CoordinatedGraphicsLayer&);
+    OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, CoordinatedGraphicsLayer&);
 
 private:
     struct Tile {
@@ -97,6 +95,7 @@ private:
         IntRect dirtyRect;
     };
 
+    void invalidateRegion(const Vector<IntRect, 1>&);
     void createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier);
     void computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const;
 

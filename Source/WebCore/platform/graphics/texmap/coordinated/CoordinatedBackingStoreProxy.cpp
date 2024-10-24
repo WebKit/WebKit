@@ -76,8 +76,10 @@ bool CoordinatedBackingStoreProxy::setContentsScale(float contentsScale)
     return true;
 }
 
-OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, bool shouldCreateAndDestroyTiles, CoordinatedGraphicsLayer& layer)
+OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStoreProxy::updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>& dirtyRegion, CoordinatedGraphicsLayer& layer)
 {
+    invalidateRegion(dirtyRegion);
+
     if (shouldCreateAndDestroyTiles) {
         IntRect contentsRect = mapFromContents(unscaledContentsRect);
         IntRect visibleRect = mapFromContents(unscaledVisibleRect);
@@ -124,25 +126,28 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
     return result;
 }
 
-void CoordinatedBackingStoreProxy::invalidate(const IntRect& contentsDirtyRect)
+void CoordinatedBackingStoreProxy::invalidateRegion(const Vector<IntRect, 1>& dirtyRegion)
 {
-    IntRect dirtyRect(mapFromContents(contentsDirtyRect));
-    IntRect keepRectFitToTileSize = tileRectForPosition(tilePositionForPoint(m_keepRect.location()));
-    keepRectFitToTileSize.unite(tileRectForPosition(tilePositionForPoint(innerBottomRight(m_keepRect))));
+    for (const auto& contentsDirtyRect : dirtyRegion) {
+        IntRect dirtyRect(mapFromContents(contentsDirtyRect));
+        IntRect keepRectFitToTileSize = tileRectForPosition(tilePositionForPoint(m_keepRect.location()));
+        keepRectFitToTileSize.unite(tileRectForPosition(tilePositionForPoint(innerBottomRight(m_keepRect))));
 
-    // Only iterate on the part of the rect that we know we might have tiles.
-    IntRect coveredDirtyRect = intersection(dirtyRect, keepRectFitToTileSize);
-    auto topLeft = tilePositionForPoint(coveredDirtyRect.location());
-    auto bottomRight = tilePositionForPoint(innerBottomRight(coveredDirtyRect));
+        // Only iterate on the part of the rect that we know we might have tiles.
+        IntRect coveredDirtyRect = intersection(dirtyRect, keepRectFitToTileSize);
+        auto topLeft = tilePositionForPoint(coveredDirtyRect.location());
+        auto bottomRight = tilePositionForPoint(innerBottomRight(coveredDirtyRect));
 
-    for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
-        for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
-            auto it = m_tiles.find(IntPoint(x, y));
-            if (it == m_tiles.end())
-                continue;
-            // Pass the full rect to each tile as coveredDirtyRect might not
-            // contain them completely and we don't want partial tile redraws.
-            it->value.addDirtyRect(dirtyRect);
+        for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
+            for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
+                auto it = m_tiles.find(IntPoint(x, y));
+                if (it == m_tiles.end())
+                    continue;
+
+                // Pass the full rect to each tile as coveredDirtyRect might not
+                // contain them completely and we don't want partial tile redraws.
+                it->value.addDirtyRect(dirtyRect);
+            }
         }
     }
 }
