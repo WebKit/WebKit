@@ -458,6 +458,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     LMPlayableViewController *playableViewController = videoPresentationInterface ? videoPresentationInterface->playableViewController() : nil;
     UIViewController *environmentPickerButtonViewController = playableViewController.wks_environmentPickerButtonViewController;
 
+    if (environmentPickerButtonViewController)
+        playableViewController.wks_automaticallyDockOnFullScreenPresentation = YES;
+
     if (_environmentPickerButtonViewController == environmentPickerButtonViewController) {
         ASSERT(!environmentPickerButtonViewController || [[_stackView arrangedSubviews] containsObject:environmentPickerButtonViewController.view]);
         return;
@@ -467,7 +470,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!environmentPickerButtonViewController)
         return;
 
-    playableViewController.wks_automaticallyDockOnFullScreenPresentation = YES;
     playableViewController.wks_dismissFullScreenOnExitingDocking = YES;
 
     [self addChildViewController:environmentPickerButtonViewController];
@@ -999,6 +1001,14 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     RefPtr page = [self._webView _page].get();
     if (!page)
         return;
+
+#if ENABLE(LINEAR_MEDIA_PLAYER)
+    RefPtr videoPresentationManager = page->videoPresentationManager();
+    RefPtr videoPresentationInterface = videoPresentationManager ? videoPresentationManager->controlsManagerInterface() : nullptr;
+
+    LMPlayableViewController *playableViewController = videoPresentationInterface ? videoPresentationInterface->playableViewController() : nil;
+    playableViewController.wks_automaticallyDockOnFullScreenPresentation = NO;
+#endif
 
     page->enterFullscreen();
 }
