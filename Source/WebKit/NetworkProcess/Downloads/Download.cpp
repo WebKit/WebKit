@@ -164,6 +164,11 @@ void Download::didFail(const ResourceError& error, std::span<const uint8_t> resu
     DOWNLOAD_RELEASE_LOG("didFail: (id = %" PRIu64 ", isTimeout = %d, isCancellation = %d, errCode = %d)",
         downloadID().toUInt64(), error.isTimeout(), error.isCancellation(), error.errorCode());
 
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    auto resumeDataWithPlaceholder = updateResumeDataWithPlaceholderURL(m_placeholderURL.get(), resumeData);
+    resumeData = resumeDataWithPlaceholder.span();
+#endif
+
     send(Messages::DownloadProxy::DidFail(error, resumeData));
 
     if (m_sandboxExtension) {
