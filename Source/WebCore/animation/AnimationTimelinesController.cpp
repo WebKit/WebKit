@@ -310,42 +310,43 @@ void AnimationTimelinesController::maybeClearCachedCurrentTime()
         m_cachedCurrentTime = std::nullopt;
 }
 
-void AnimationTimelinesController::registerNamedScrollTimeline(const AtomString& name, Element& source, ScrollAxis axis)
+Vector<Ref<ScrollTimeline>>& AnimationTimelinesController::timelinesForName(const AtomString& name)
 {
-    auto it = m_nameToScrollTimelineMap.find(name);
-    if (it != m_nameToScrollTimelineMap.end()) {
-        auto& existingScrollTimeline = it->value;
-        existingScrollTimeline->setSource(&source);
+    return m_nameToTimelineMap.ensure(name, [] {
+        return Vector<Ref<ScrollTimeline>> { };
+    }).iterator->value;
+}
+
+void AnimationTimelinesController::registerNamedScrollTimeline(const AtomString& name, const Element& source, ScrollAxis axis)
+{
+    auto& timelines = timelinesForName(name);
+
+    auto existingTimelineIndex = timelines.findIf([&](auto& timeline) {
+        return !is<ViewTimeline>(timeline) && timeline->source() == &source;
+    });
+
+    if (existingTimelineIndex != notFound) {
+        Ref existingScrollTimeline = timelines[existingTimelineIndex].get();
         existingScrollTimeline->setAxis(axis);
     } else {
         auto newScrollTimeline = ScrollTimeline::create(name, axis);
         newScrollTimeline->setSource(&source);
-        m_nameToScrollTimelineMap.set(name, WTFMove(newScrollTimeline));
+        timelines.append(WTFMove(newScrollTimeline));
     }
 }
 
-void AnimationTimelinesController::unregisterNamedScrollTimeline(const AtomString& name)
+void AnimationTimelinesController::registerNamedViewTimeline(const AtomString& name, const Element& subject, ScrollAxis axis, ViewTimelineInsets&& insets)
 {
-    m_nameToScrollTimelineMap.remove(name);
-}
-
-ScrollTimeline* AnimationTimelinesController::scrollTimelineForName(const AtomString& name) const
-{
-    return m_nameToScrollTimelineMap.get(name);
-}
-
-void AnimationTimelinesController::registerNamedViewTimeline(const AtomString& name, Element& subject, ScrollAxis axis, ViewTimelineInsets&& insets)
-{
-    auto& timelines = m_nameToViewTimelinesMap.ensure(name, [] {
-        return Vector<Ref<ViewTimeline>> { };
-    }).iterator->value;
+    auto& timelines = timelinesForName(name);
 
     auto existingTimelineIndex = timelines.findIf([&](auto& timeline) {
-        return timeline->subject() == &subject;
+        if (RefPtr viewTimeline = dynamicDowncast<ViewTimeline>(timeline))
+            return viewTimeline->subject() == &subject;
+        return false;
     });
 
     if (existingTimelineIndex != notFound) {
-        auto& existingViewTimeline = timelines[existingTimelineIndex];
+        Ref existingViewTimeline = downcast<ViewTimeline>(timelines[existingTimelineIndex].get());
         existingViewTimeline->setAxis(axis);
         existingViewTimeline->setInsets(WTFMove(insets));
     } else {
@@ -355,35 +356,34 @@ void AnimationTimelinesController::registerNamedViewTimeline(const AtomString& n
     }
 }
 
-void AnimationTimelinesController::unregisterNamedViewTimelineForSubject(const AtomString& name, const Element& subject)
+void AnimationTimelinesController::unregisterNamedTimeline(const AtomString& name, const Element& element)
 {
-    auto it = m_nameToViewTimelinesMap.find(name);
-    if (it == m_nameToViewTimelinesMap.end())
+    auto it = m_nameToTimelineMap.find(name);
+    if (it == m_nameToTimelineMap.end())
         return;
 
     auto& timelines = it->value;
-    timelines.removeFirstMatching([&](auto& timeline) {
-        return timeline->subject() == &subject;
+    timelines.removeFirstMatching([&] (auto& entry) {
+        if (RefPtr viewTimeline = dynamicDowncast<ViewTimeline>(entry))
+            return viewTimeline->subject() == &element;
+        return entry->source() == &element;
     });
-
     if (timelines.isEmpty())
-        m_nameToViewTimelinesMap.remove(it);
+        m_nameToTimelineMap.remove(it);
 }
 
-ViewTimeline* AnimationTimelinesController::viewTimelineForNameAndSubject(const AtomString& name, const Element& subject) const
+AnimationTimeline* AnimationTimelinesController::timelineForName(const AtomString& name, const Element&) const
 {
-    auto it = m_nameToViewTimelinesMap.find(name);
-    if (it == m_nameToViewTimelinesMap.end())
+    auto it = m_nameToTimelineMap.find(name);
+    if (it == m_nameToTimelineMap.end())
         return nullptr;
 
     auto& timelines = it->value;
-    auto existingTimelineIndex = timelines.findIf([&](auto& timeline) {
-        return timeline->subject() == &subject;
-    });
 
-    if (existingTimelineIndex != notFound)
-        return timelines[existingTimelineIndex].ptr();
-    return nullptr;
+    // FIXME: Use tree order to determine the corresponding timeline
+    if (timelines.isEmpty())
+        return nullptr;
+    return timelines.first().ptr();
 }
 
 } // namespace WebCore

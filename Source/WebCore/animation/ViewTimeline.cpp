@@ -137,7 +137,7 @@ ViewTimeline::ViewTimeline(const AtomString& name, ScrollAxis axis, ViewTimeline
 {
 }
 
-void ViewTimeline::setSubject(Element* subject)
+void ViewTimeline::setSubject(const Element* subject)
 {
     if (subject == m_subject)
         return;

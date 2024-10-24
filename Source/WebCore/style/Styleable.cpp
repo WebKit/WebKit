@@ -893,7 +893,7 @@ void Styleable::updateCSSScrollTimelines(const RenderStyle* currentStyle, const 
 
         for (auto& previousTimelineName : currentStyle->scrollTimelineNames()) {
             if (!currentTimelineNames.contains(previousTimelineName))
-                timelinesController->unregisterNamedScrollTimeline(previousTimelineName);
+                timelinesController->unregisterNamedTimeline(previousTimelineName, element);
         }
     };
 
@@ -943,7 +943,7 @@ void Styleable::updateCSSViewTimelines(const RenderStyle* currentStyle, const Re
 
         for (auto& previousTimelineName : currentStyle->viewTimelineNames()) {
             if (!currentTimelineNames.contains(previousTimelineName))
-                timelinesController->unregisterNamedViewTimelineForSubject(previousTimelineName, element);
+                timelinesController->unregisterNamedTimeline(previousTimelineName, element);
         }
     };
 

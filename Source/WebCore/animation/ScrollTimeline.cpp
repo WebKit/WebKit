@@ -101,7 +101,7 @@ ScrollTimeline::ScrollTimeline(Scroller scroller, ScrollAxis axis)
     m_scroller = scroller;
 }
 
-void ScrollTimeline::setSource(Element* source)
+void ScrollTimeline::setSource(const Element* source)
 {
     if (source == m_source)
         return;

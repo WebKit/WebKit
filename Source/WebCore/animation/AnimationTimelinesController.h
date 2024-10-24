@@ -67,22 +67,20 @@ public:
     WEBCORE_EXPORT void resumeAnimations();
     bool animationsAreSuspended() const { return m_isSuspended; }
 
-    void registerNamedScrollTimeline(const AtomString&, Element&, ScrollAxis);
-    void unregisterNamedScrollTimeline(const AtomString&);
-    ScrollTimeline* scrollTimelineForName(const AtomString&) const;
-
-    void registerNamedViewTimeline(const AtomString&, Element&, ScrollAxis, ViewTimelineInsets&&);
-    void unregisterNamedViewTimelineForSubject(const AtomString&, const Element&);
-    ViewTimeline* viewTimelineForNameAndSubject(const AtomString&, const Element&) const;
+    void registerNamedScrollTimeline(const AtomString&, const Element&, ScrollAxis);
+    void registerNamedViewTimeline(const AtomString&, const Element&, ScrollAxis, ViewTimelineInsets&&);
+    void unregisterNamedTimeline(const AtomString&, const Element&);
+    AnimationTimeline* timelineForName(const AtomString&, const Element&) const;
 
 private:
     ReducedResolutionSeconds liveCurrentTime() const;
     void cacheCurrentTime(ReducedResolutionSeconds);
     void maybeClearCachedCurrentTime();
 
+    Vector<Ref<ScrollTimeline>>& timelinesForName(const AtomString&);
+
+    UncheckedKeyHashMap<AtomString, Vector<Ref<ScrollTimeline>>> m_nameToTimelineMap;
     UncheckedKeyHashMap<FramesPerSecond, ReducedResolutionSeconds> m_animationFrameRateToLastTickTimeMap;
-    UncheckedKeyHashMap<AtomString, Ref<ScrollTimeline>> m_nameToScrollTimelineMap;
-    UncheckedKeyHashMap<AtomString, Vector<Ref<ViewTimeline>>> m_nameToViewTimelinesMap;
     WeakHashSet<AnimationTimeline> m_timelines;
     TaskCancellationGroup m_currentTimeClearingTaskCancellationGroup;
     Document& m_document;
