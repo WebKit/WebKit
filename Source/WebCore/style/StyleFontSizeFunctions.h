@@ -40,7 +40,7 @@ namespace Style {
 enum class MinimumFontSizeRule : uint8_t { None, Absolute, AbsoluteAndRelative };
 
 float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, float zoomFactor, MinimumFontSizeRule, const Settings::Values&);
-float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const RenderStyle*, const Document&);
+float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, const RenderStyle*, const Document&);
 float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document&);
 float adjustedFontSize(float size, const FontSizeAdjust&, const FontMetrics&);
 

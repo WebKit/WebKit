@@ -252,7 +252,7 @@ auto Resolver::initializeStateAndStyle(const Element& element, const ResolutionC
         } else
             state.style()->inheritFrom(*state.parentStyle());
     } else {
-        state.setStyle(defaultStyleForElement(&element));
+        state.setStyle(defaultStyleForElement());
         state.setParentStyle(RenderStyle::clonePtr(*state.style()));
     }
 
@@ -515,7 +515,7 @@ std::optional<ResolvedStyle> Resolver::styleForPseudoElement(Element& element, c
         state.setStyle(RenderStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry()));
         state.style()->inheritFrom(*state.parentStyle());
     } else {
-        state.setStyle(defaultStyleForElement(&element));
+        state.setStyle(defaultStyleForElement());
         state.setParentStyle(RenderStyle::clonePtr(*state.style()));
     }
 
@@ -575,7 +575,7 @@ std::unique_ptr<RenderStyle> Resolver::styleForPage(int pageIndex)
     return state.takeStyle();
 }
 
-std::unique_ptr<RenderStyle> Resolver::defaultStyleForElement(const Element* element)
+std::unique_ptr<RenderStyle> Resolver::defaultStyleForElement()
 {
     auto style = RenderStyle::createPtrWithRegisteredInitialValues(document().customPropertyRegistry());
 
@@ -585,7 +585,7 @@ std::unique_ptr<RenderStyle> Resolver::defaultStyleForElement(const Element* ele
 
     auto size = fontSizeForKeyword(CSSValueMedium, false, document());
     fontDescription.setSpecifiedSize(size);
-    fontDescription.setComputedSize(computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), is<SVGElement>(element), style.get(), document()));
+    fontDescription.setComputedSize(computedFontSizeFromSpecifiedSize(size, fontDescription.isAbsoluteSize(), style.get(), document()));
 
     fontDescription.setShouldAllowUserInstalledFonts(settings().shouldAllowUserInstalledFonts() ? AllowUserInstalledFonts::Yes : AllowUserInstalledFonts::No);
     style->setFontDescription(WTFMove(fontDescription));

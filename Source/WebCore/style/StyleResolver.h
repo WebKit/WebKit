@@ -100,7 +100,7 @@ public:
     WEBCORE_EXPORT std::optional<ResolvedStyle> styleForPseudoElement(Element&, const PseudoElementRequest&, const ResolutionContext&);
 
     std::unique_ptr<RenderStyle> styleForPage(int pageIndex);
-    std::unique_ptr<RenderStyle> defaultStyleForElement(const Element*);
+    std::unique_ptr<RenderStyle> defaultStyleForElement();
 
     Document& document();
     const Document& document() const;

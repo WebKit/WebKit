@@ -82,16 +82,13 @@ float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize
     return std::min(maximumAllowedFontSize, zoomedSize);
 }
 
-float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, bool useSVGZoomRules, const RenderStyle* style, const Document& document)
+float computedFontSizeFromSpecifiedSize(float specifiedSize, bool isAbsoluteSize, const RenderStyle* style, const Document& document)
 {
-    float zoomFactor = 1.0f;
-    if (!useSVGZoomRules) {
-        zoomFactor = style->usedZoom();
-        auto* frame = document.frame();
-        if (frame && style->textZoom() != TextZoom::Reset)
-            zoomFactor *= frame->textZoomFactor();
-    }
-    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, useSVGZoomRules ? MinimumFontSizeRule::None : MinimumFontSizeRule::AbsoluteAndRelative, document.settingsValues());
+    float zoomFactor = style->usedZoom();
+    auto* frame = document.frame();
+    if (frame && style->textZoom() != TextZoom::Reset)
+        zoomFactor *= frame->textZoomFactor();
+    return computedFontSizeFromSpecifiedSize(specifiedSize, isAbsoluteSize, zoomFactor, MinimumFontSizeRule::AbsoluteAndRelative, document.settingsValues());
 }
 
 float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, bool isAbsoluteSize, float zoomFactor, const Document& document)
