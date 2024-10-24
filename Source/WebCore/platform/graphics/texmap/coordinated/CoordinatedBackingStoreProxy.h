@@ -96,15 +96,10 @@ private:
     };
 
     void invalidateRegion(const Vector<IntRect, 1>&);
-    void createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier);
-    void computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const;
-
-    void resizeEdgeTiles();
-    void setCoverRect(const IntRect& rect) { m_coverRect = rect; }
-    void setKeepRect(const IntRect&);
+    void createOrDestroyTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier);
+    std::pair<IntRect, IntRect> computeCoverAndKeepRect() const;
 
     void adjustForContentsRect(IntRect&) const;
-    double tileDistance(const IntRect& viewport, const IntPoint&) const;
 
     IntRect mapToContents(const IntRect&) const;
     IntRect mapFromContents(const IntRect&) const;
@@ -121,7 +116,6 @@ private:
     IntRect m_visibleRect;
     IntRect m_coverRect;
     IntRect m_keepRect;
-    IntRect m_previousContentsRect;
     UncheckedKeyHashMap<IntPoint, Tile> m_tiles;
 };
 

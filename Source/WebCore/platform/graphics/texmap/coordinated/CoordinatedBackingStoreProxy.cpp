@@ -71,7 +71,6 @@ bool CoordinatedBackingStoreProxy::setContentsScale(float contentsScale)
     m_visibleRect = { };
     m_coverRect = { };
     m_keepRect = { };
-    m_previousContentsRect = { };
 
     return true;
 }
@@ -84,10 +83,7 @@ OptionSet<CoordinatedBackingStoreProxy::UpdateResult> CoordinatedBackingStorePro
         IntRect contentsRect = mapFromContents(unscaledContentsRect);
         IntRect visibleRect = mapFromContents(unscaledVisibleRect);
         float coverAreaMultiplier = MemoryPressureHandler::singleton().isUnderMemoryPressure() ? 1.0f : 2.0f;
-
-        bool didChange = m_visibleRect != visibleRect || m_contentsRect != contentsRect || m_coverAreaMultiplier != coverAreaMultiplier;
-        if (didChange || m_pendingTileCreation)
-            createTiles(visibleRect, contentsRect, coverAreaMultiplier);
+        createOrDestroyTiles(visibleRect, contentsRect, coverAreaMultiplier);
     }
 
     OptionSet<UpdateResult> result;
@@ -152,28 +148,29 @@ void CoordinatedBackingStoreProxy::invalidateRegion(const Vector<IntRect, 1>& di
     }
 }
 
-double CoordinatedBackingStoreProxy::tileDistance(const IntRect& viewport, const IntPoint& tilePosition) const
+void CoordinatedBackingStoreProxy::createOrDestroyTiles(const IntRect& visibleRect, const IntRect& contentsRect, float coverAreaMultiplier)
 {
-    if (viewport.intersects(tileRectForPosition(tilePosition)))
-        return 0;
-
-    IntPoint viewCenter = viewport.location() + IntSize(viewport.width() / 2, viewport.height() / 2);
-    IntPoint centerPosition = tilePositionForPoint(viewCenter);
-
-    return std::max(std::abs(centerPosition.y() - tilePosition.y()), std::abs(centerPosition.x() - tilePosition.x()));
-}
-
-void CoordinatedBackingStoreProxy::createTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier)
-{
-    // Update our backing store geometry.
-    m_contentsRect = scaledContentsRect;
-    m_visibleRect = visibleRect;
-    m_coverAreaMultiplier = coverAreaMultiplier;
-
-    if (m_contentsRect.isEmpty()) {
-        setCoverRect(IntRect());
-        setKeepRect(IntRect());
+    bool contentsRectChanged = m_contentsRect != contentsRect;
+    bool geometryChanged = contentsRectChanged || m_visibleRect != visibleRect || m_coverAreaMultiplier != coverAreaMultiplier;
+    if (!geometryChanged && !m_pendingTileCreation)
         return;
+
+    if (geometryChanged) {
+        m_contentsRect = contentsRect;
+        m_visibleRect = visibleRect;
+        m_coverAreaMultiplier = coverAreaMultiplier;
+
+        if (m_contentsRect.isEmpty()) {
+            m_coverRect = { };
+            m_keepRect = { };
+            if (m_tiles.isEmpty())
+                return;
+
+            for (const auto& tile : m_tiles.values())
+                m_client.removeTile(tile.id);
+            m_tiles.clear();
+            return;
+        }
     }
 
     /* We must compute cover and keep rects using the visibleRect, instead of the rect intersecting the visibleRect with m_contentsRect,
@@ -197,32 +194,56 @@ void CoordinatedBackingStoreProxy::createTiles(const IntRect& visibleRect, const
      * We must create or keep the tiles in the HERE region.
      */
 
-    IntRect coverRect;
-    IntRect keepRect;
-    computeCoverAndKeepRect(m_visibleRect, coverRect, keepRect);
+    auto [coverRect, keepRect] = computeCoverAndKeepRect();
+    m_coverRect = WTFMove(coverRect);
+    m_keepRect = WTFMove(keepRect);
 
-    setCoverRect(coverRect);
-    setKeepRect(keepRect);
+    // Drop tiles outside the new keepRect.
+    m_tiles.removeIf([&](auto& iter) {
+        auto& tile = iter.value;
+        if (!tile.rect.intersects(m_keepRect)) {
+            m_client.removeTile(tile.id);
+            return true;
+        }
+        return false;
+    });
 
-    if (coverRect.isEmpty())
+    if (m_coverRect.isEmpty())
         return;
 
     // Resize tiles at the edge in case the contents size has changed, but only do so
     // after having dropped tiles outside the keep rect.
-    if (m_previousContentsRect != m_contentsRect) {
-        m_previousContentsRect = m_contentsRect;
-        resizeEdgeTiles();
+    if (contentsRectChanged) {
+        m_tiles.removeIf([&](auto& iter) {
+            auto& tile = iter.value;
+            auto expectedTileRect = tileRectForPosition(tile.position);
+            if (expectedTileRect.isEmpty()) {
+                m_client.removeTile(tile.id);
+                return true;
+            }
+
+            if (expectedTileRect != tile.rect)
+                tile.resize(expectedTileRect.size());
+            return false;
+        });
     }
 
     // Search for the tile position closest to the viewport center that does not yet contain a tile.
     // Which position is considered the closest depends on the tileDistance function.
     double shortestDistance = std::numeric_limits<double>::infinity();
-    Vector<IntPoint> tilesToCreate;
-    unsigned requiredTileCount = 0;
+    IntPoint visibleCenterPosition = tilePositionForPoint(m_visibleRect.center());
+    auto tileDistance = [&] (const IntPoint& tilePosition) -> double {
+        if (m_visibleRect.intersects(tileRectForPosition(tilePosition)))
+            return 0;
+
+        return std::max(std::abs(visibleCenterPosition.y() - tilePosition.y()), std::abs(visibleCenterPosition.x() - tilePosition.x()));
+    };
 
     // Cover areas (in tiles) with minimum distance from the visible rect. If the visible rect is
     // not covered already it will be covered first in one go, due to the distance being 0 for tiles
     // inside the visible rect.
+    Vector<IntPoint> tilesToCreate;
+    unsigned requiredTileCount = 0;
     auto topLeft = tilePositionForPoint(m_coverRect.location());
     auto bottomRight = tilePositionForPoint(innerBottomRight(m_coverRect));
     for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
@@ -232,7 +253,7 @@ void CoordinatedBackingStoreProxy::createTiles(const IntRect& visibleRect, const
                 continue;
 
             ++requiredTileCount;
-            double distance = tileDistance(m_visibleRect, position);
+            double distance = tileDistance(position);
             if (distance > shortestDistance)
                 continue;
 
@@ -244,14 +265,15 @@ void CoordinatedBackingStoreProxy::createTiles(const IntRect& visibleRect, const
         }
     }
 
-    // Now construct the tile(s) within the shortest distance.
-    unsigned tilesToCreateCount = tilesToCreate.size();
-    for (const auto& position : tilesToCreate) {
-        auto tile = Tile(generateTileID(), position, tileRectForPosition(position));
-        m_client.createTile(tile.id, m_contentsScale);
-        m_tiles.add(position, WTFMove(tile));
+    if (requiredTileCount) {
+        requiredTileCount -= tilesToCreate.size();
+
+        for (const auto& position : tilesToCreate) {
+            auto tile = Tile(generateTileID(), position, tileRectForPosition(position));
+            m_client.createTile(tile.id, m_contentsScale);
+            m_tiles.add(position, WTFMove(tile));
+        }
     }
-    requiredTileCount -= tilesToCreateCount;
 
     // Re-call createTiles on a timer to cover the visible area with the newest shortest distance.
     m_pendingTileCreation = requiredTileCount;
@@ -299,16 +321,16 @@ void CoordinatedBackingStoreProxy::adjustForContentsRect(IntRect& rect) const
     rect.intersect(bounds);
 }
 
-void CoordinatedBackingStoreProxy::computeCoverAndKeepRect(const IntRect& visibleRect, IntRect& coverRect, IntRect& keepRect) const
+std::pair<IntRect, IntRect> CoordinatedBackingStoreProxy::computeCoverAndKeepRect() const
 {
-    coverRect = visibleRect;
-    keepRect = visibleRect;
+    IntRect coverRect = m_visibleRect;
+    IntRect keepRect = m_visibleRect;
 
     // If we cover more that the actual viewport we can be smart about which tiles we choose to render.
     if (m_coverAreaMultiplier > 1) {
         // The initial cover area covers equally in each direction, according to the coverAreaMultiplier.
-        coverRect.inflateX(visibleRect.width() * (m_coverAreaMultiplier - 1) / 2);
-        coverRect.inflateY(visibleRect.height() * (m_coverAreaMultiplier - 1) / 2);
+        coverRect.inflateX(m_visibleRect.width() * (m_coverAreaMultiplier - 1) / 2);
+        coverRect.inflateY(m_visibleRect.height() * (m_coverAreaMultiplier - 1) / 2);
         keepRect = coverRect;
         ASSERT(keepRect.contains(coverRect));
     }
@@ -322,37 +344,7 @@ void CoordinatedBackingStoreProxy::computeCoverAndKeepRect(const IntRect& visibl
     keepRect.intersect(m_contentsRect);
 
     ASSERT(coverRect.isEmpty() || keepRect.contains(coverRect));
-}
-
-void CoordinatedBackingStoreProxy::resizeEdgeTiles()
-{
-    m_tiles.removeIf([&](auto& iter) {
-        auto& tile = iter.value;
-        auto expectedTileRect = tileRectForPosition(tile.position);
-        if (expectedTileRect.isEmpty()) {
-            m_client.removeTile(tile.id);
-            return true;
-        }
-
-        if (expectedTileRect != tile.rect)
-            tile.resize(expectedTileRect.size());
-        return false;
-    });
-}
-
-void CoordinatedBackingStoreProxy::setKeepRect(const IntRect& keepRect)
-{
-    m_keepRect = keepRect;
-
-    // Drop tiles outside the new keepRect.
-    m_tiles.removeIf([&](auto& iter) {
-        auto& tile = iter.value;
-        if (!tile.rect.intersects(m_keepRect)) {
-            m_client.removeTile(tile.id);
-            return true;
-        }
-        return false;
-    });
+    return { WTFMove(coverRect), WTFMove(keepRect) };
 }
 
 IntRect CoordinatedBackingStoreProxy::mapToContents(const IntRect& rect) const
