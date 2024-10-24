@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WPEToplevelQtQuick.h"
 
+#include <wtf/glib/WTFGType.h>
+
 /**
  * WPEToplevelQtQuick:
  *

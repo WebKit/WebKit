@@ -84,7 +84,9 @@ void WPEQtView::geometryChange(const QRectF& newGeometry, const QRectF&)
         return;
 
     auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
-    wpe_view_resize(wpeView, d->m_size.width(), d->m_size.height());
+    if (auto* wpeToplevel = wpe_view_get_toplevel(wpeView))
+        wpe_toplevel_resize(wpeToplevel, d->m_size.width(), d->m_size.height());
+
 }
 
 void WPEQtView::configureWindow()
@@ -119,7 +121,9 @@ void WPEQtView::createWebView()
         "settings", settings.get(), nullptr)));
 
     auto* wpeView = webkit_web_view_get_wpe_view(d->m_webView.get());
-    wpe_view_resize(wpeView, d->m_size.width(), d->m_size.height());
+    if (auto* wpeToplevel = wpe_view_get_toplevel(wpeView))
+        wpe_toplevel_resize(wpeToplevel, d->m_size.width(), d->m_size.height());
+
     wpe_view_map(wpeView); // FIXME: unmap when appropriate and implement can_be_mapped if needed.
 
     if (!wpe_view_qtquick_initialize_rendering(WPE_VIEW_QTQUICK(wpeView), this, &error.outPtr())) {
