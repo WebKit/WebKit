@@ -43,6 +43,7 @@
 #include "HTMLSrcsetParser.h"
 #include "InspectorInstrumentation.h"
 #include "JSDOMPromiseDeferred.h"
+#include "JSExecState.h"
 #include "LazyLoadImageObserver.h"
 #include "LegacyRenderSVGImage.h"
 #include "LocalFrame.h"
@@ -52,6 +53,7 @@
 #include "RenderImage.h"
 #include "RenderSVGImage.h"
 #include "Settings.h"
+#include <JavaScriptCore/ScriptCallStackFactory.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/text/MakeString.h>
@@ -145,6 +147,7 @@ ImageLoader::ImageLoader(Element& element)
     , m_imageComplete(true)
     , m_loadManually(false)
     , m_elementIsProtected(false)
+    , m_microtaskQueued(false)
 {
 }
 
@@ -189,6 +192,8 @@ void ImageLoader::clearImageWithoutConsideringPendingLoadEvent()
 
 void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
 {
+    // This is implementing https://html.spec.whatwg.org/#update-the-image-data
+    //
     // If we're not making renderers for the page, then don't load images. We don't want to slow
     // down the raw HTML parsing case by loading images we don't intend to display.
     Ref document = element().document();
@@ -206,106 +211,160 @@ void ImageLoader::updateFromElement(RelevantMutation relevantMutation)
     // Do not load any image if the 'src' attribute is missing or if it is
     // an empty string.
     CachedResourceHandle<CachedImage> newImage;
-    if (!attr.isNull() && !StringView(attr).containsOnly<isASCIIWhitespace<UChar>>()) {
-        ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
-        options.contentSecurityPolicyImposition = protectedElement()->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
-        options.loadedFromPluginElement = is<HTMLPlugInElement>(element()) ? LoadedFromPluginElement::Yes : LoadedFromPluginElement::No;
-        options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
-        options.serviceWorkersMode = is<HTMLPlugInElement>(element()) ? ServiceWorkersMode::None : ServiceWorkersMode::All;
-        RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element());
+    if (attr.isNull() || StringView(attr).containsOnly<isASCIIWhitespace<UChar>>()) {
+        if (!attr.isNull()) {
+            m_failedLoadURL = attr;
+            m_hasPendingErrorEvent = true;
+            loadEventSender().dispatchEventSoon(*this, eventNames().errorEvent);
+        }
+        didUpdateCachedImage(relevantMutation, WTFMove(newImage));
+        return;
+    }
+    ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+    options.contentSecurityPolicyImposition = protectedElement()->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+    options.loadedFromPluginElement = is<HTMLPlugInElement>(element()) ? LoadedFromPluginElement::Yes : LoadedFromPluginElement::No;
+    options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+    options.serviceWorkersMode = is<HTMLPlugInElement>(element()) ? ServiceWorkersMode::None : ServiceWorkersMode::All;
+    RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element());
+    if (imageElement) {
+        options.referrerPolicy = imageElement->referrerPolicy();
+        options.fetchPriorityHint = imageElement->fetchPriorityHint();
+        if (imageElement->usesSrcsetOrPicture())
+            options.initiator = Initiator::Imageset;
+    }
+
+    auto crossOriginAttribute = protectedElement()->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
+
+    // Use URL from original request for same URL loads in order to preserve the original base URL.
+    URL imageURL;
+    if (m_image && attr == m_pendingURL)
+        imageURL = m_image->url();
+    else {
         if (imageElement) {
+            // It is possible that attributes are bulk-set via Element::parserSetAttributes. In that case, it is possible that attribute vectors are already configured,
+            // but corresponding attributeChanged is not called yet. This causes inconsistency in HTMLImageElement. Eventually, we will get the consistent state, but
+            // if "src" attributeChanged is not called yet, imageURL can be null and it does not work well for ResourceRequest.
+            // In this case, we should behave same as attr.isNull().
+            imageURL = imageElement->currentURL();
+            if (!imageURL.isValid()) {
+                didUpdateCachedImage(relevantMutation, WTFMove(newImage));
+                return;
+            }
+        } else
+            imageURL = document->completeURL(attr);
+        m_pendingURL = attr;
+    }
+    ResourceRequest resourceRequest(imageURL);
+    resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(m_element));
+
+    auto request = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), document, crossOriginAttribute);
+    request.setInitiator(element());
+    m_imageComplete = false;
+
+    // https://html.spec.whatwg.org/C#update-the-image-data step 7.4
+    if (!imageElement || imageElement->document().isImageDocument() || (!imageElement->usesSrcsetOrPicture() && canReuseFromListOfAvailableImages(request, document))) {
+        doUpdateFromElement(relevantMutation, WTFMove(request));
+        return;
+    }
+    if (m_microtaskQueued)
+        return;
+
+    if (!document->getCodePosition()) {
+        // Grab the source location here, from the stack. Then store it on the document and extract it on the other end.
+        // This is needed to ensure CSP reports get the right source location, regardless of async image loading.
+        auto codePosition = ContentSecurityPolicy::getCurrentCodePosition();
+        if (codePosition)
+            document->setCodePosition(codePosition.value());
+    }
+    m_microtaskQueued = true;
+    // https://html.spec.whatwg.org/C#update-the-image-data step 8
+    document->eventLoop().queueMicrotask([imageLoader = this, relevantMutation, moved_request = WTFMove(request)] mutable {
+        imageLoader->clearMicrotaskQueuedBool();
+        imageLoader->doUpdateFromElement(relevantMutation, WTFMove(moved_request));
+    });
+}
+
+void ImageLoader::doUpdateFromElement(RelevantMutation relevantMutation, CachedResourceRequest&& request)
+{
+    Ref document = element().document();
+    RefPtr imageElement = dynamicDowncast<HTMLImageElement>(element());
+    AtomString crossOriginAttribute;
+    if (imageElement) {
+        URL imageURL = imageElement->currentURL();
+        if (request.resourceRequest().url() != imageURL) {
+            ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();
+            options.contentSecurityPolicyImposition = protectedElement()->isInUserAgentShadowTree() ? ContentSecurityPolicyImposition::SkipPolicyCheck : ContentSecurityPolicyImposition::DoPolicyCheck;
+            options.loadedFromPluginElement = is<HTMLPlugInElement>(element()) ? LoadedFromPluginElement::Yes : LoadedFromPluginElement::No;
+            options.sameOriginDataURLFlag = SameOriginDataURLFlag::Set;
+            options.serviceWorkersMode = is<HTMLPlugInElement>(element()) ? ServiceWorkersMode::None : ServiceWorkersMode::All;
             options.referrerPolicy = imageElement->referrerPolicy();
             options.fetchPriorityHint = imageElement->fetchPriorityHint();
             if (imageElement->usesSrcsetOrPicture())
                 options.initiator = Initiator::Imageset;
+
+            crossOriginAttribute = protectedElement()->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
+            ResourceRequest resourceRequest(imageURL);
+            resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(m_element));
+
+            request = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), document, crossOriginAttribute);
+            request.setInitiator(element());
         }
+    }
 
-        auto crossOriginAttribute = protectedElement()->attributeWithoutSynchronization(HTMLNames::crossoriginAttr);
-
-        // Use URL from original request for same URL loads in order to preserve the original base URL.
-        URL imageURL;
-        if (m_image && attr == m_pendingURL)
-            imageURL = m_image->url();
-        else {
-            if (imageElement) {
-                // It is possible that attributes are bulk-set via Element::parserSetAttributes. In that case, it is possible that attribute vectors are already configured,
-                // but corresponding attributeChanged is not called yet. This causes inconsistency in HTMLImageElement. Eventually, we will get the consistent state, but
-                // if "src" attributeChanged is not called yet, imageURL can be null and it does not work well for ResourceRequest.
-                // In this case, we should behave same as attr.isNull().
-                imageURL = imageElement->currentURL();
-                if (imageURL.isNull()) {
-                    didUpdateCachedImage(relevantMutation, WTFMove(newImage));
-                    return;
-                }
-            } else
-                imageURL = document->completeURL(attr);
-            m_pendingURL = attr;
-        }
-        ResourceRequest resourceRequest(imageURL);
-        resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(m_element));
-
-        auto request = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), document, crossOriginAttribute);
-        request.setInitiator(element());
-
-        if (m_loadManually) {
-            Ref cachedResourceLoader = document->cachedResourceLoader();
-            bool autoLoadOtherImages = cachedResourceLoader->autoLoadImages();
-            cachedResourceLoader->setAutoLoadImages(false);
-            RefPtr page = m_element->document().page();
-            // FIXME: We shouldn't do an explicit `new` here.
-            newImage = new CachedImage(WTFMove(request), page->sessionID(), &page->cookieJar());
-            newImage->setStatus(CachedResource::Pending);
-            newImage->setLoading(true);
-            cachedResourceLoader->m_documentResources.set(newImage->url().string(), newImage.get());
-            cachedResourceLoader->setAutoLoadImages(autoLoadOtherImages);
-        } else {
+    CachedResourceHandle<CachedImage> newImage;
+    if (m_loadManually) {
+        Ref cachedResourceLoader = document->cachedResourceLoader();
+        bool autoLoadOtherImages = cachedResourceLoader->autoLoadImages();
+        cachedResourceLoader->setAutoLoadImages(false);
+        RefPtr page = m_element->document().page();
+        // FIXME: We shouldn't do an explicit `new` here.
+        newImage = new CachedImage(WTFMove(request), page->sessionID(), &page->cookieJar());
+        newImage->setStatus(CachedResource::Pending);
+        cachedResourceLoader->m_documentResources.set(newImage->url().string(), newImage.get());
+        cachedResourceLoader->setAutoLoadImages(autoLoadOtherImages);
+    } else {
 #if !LOG_DISABLED
-            auto oldState = m_lazyImageLoadState;
+        auto oldState = m_lazyImageLoadState;
 #endif
-            if (m_lazyImageLoadState == LazyImageLoadState::None && imageElement) {
-                if (imageElement->isLazyLoadable() && document->settings().lazyImageLoadingEnabled() && !canReuseFromListOfAvailableImages(request, document)) {
-                    m_lazyImageLoadState = LazyImageLoadState::Deferred;
-                    request.setIgnoreForRequestCount(true);
-                }
+        if (m_lazyImageLoadState == LazyImageLoadState::None && imageElement) {
+            if (imageElement->isLazyLoadable() && document->settings().lazyImageLoadingEnabled() && !canReuseFromListOfAvailableImages(request, document)) {
+                m_lazyImageLoadState = LazyImageLoadState::Deferred;
+                request.setIgnoreForRequestCount(true);
             }
-            auto imageLoading = (m_lazyImageLoadState == LazyImageLoadState::Deferred) ? ImageLoading::DeferredUntilVisible : ImageLoading::Immediate;
-            newImage = document->protectedCachedResourceLoader()->requestImage(WTFMove(request), imageLoading).value_or(nullptr);
-            LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " updateFromElement " << element() << " - state changed from " << oldState << " to " << m_lazyImageLoadState << ", loading is " << imageLoading << " new image " << newImage.get());
         }
+        auto imageLoading = (m_lazyImageLoadState == LazyImageLoadState::Deferred) ? ImageLoading::DeferredUntilVisible : ImageLoading::Immediate;
+        newImage = document->protectedCachedResourceLoader()->requestImage(WTFMove(request), imageLoading).value_or(nullptr);
+        LOG_WITH_STREAM(LazyLoading, stream << "ImageLoader " << this << " updateFromElement " << element() << " - state changed from " << oldState << " to " << m_lazyImageLoadState << ", loading is " << imageLoading << " new image " << newImage.get());
+        document->setCodePosition(std::nullopt);
+    }
 
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-        // Adaptive image glyphs need to load both the high fidelity HEIC and the
-        // fallback PNG resource, as both resources are treated as an atomic unit.
-        if (imageElement && imageElement->isMultiRepresentationHEIC()) {
-            auto fallbackURL = imageElement->src();
-            if (!fallbackURL.isNull()) {
-                ResourceRequest resourceRequest(fallbackURL);
-                resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*imageElement));
+    // Adaptive image glyphs need to load both the high fidelity HEIC and the
+    // fallback PNG resource, as both resources are treated as an atomic unit.
+    if (imageElement && imageElement->isMultiRepresentationHEIC()) {
+        auto fallbackURL = imageElement->src();
+        if (!fallbackURL.isNull()) {
+            ResourceRequest resourceRequest(fallbackURL);
+            resourceRequest.setInspectorInitiatorNodeIdentifier(InspectorInstrumentation::identifierForNode(*imageElement));
 
-                auto request = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), document, crossOriginAttribute);
-                request.setInitiator(*imageElement);
+            auto request = createPotentialAccessControlRequest(WTFMove(resourceRequest), WTFMove(options), document, crossOriginAttribute);
+            request.setInitiator(*imageElement);
 
-                document->protectedCachedResourceLoader()->requestImage(WTFMove(request));
-            }
+            document->protectedCachedResourceLoader()->requestImage(WTFMove(request));
         }
+    }
 #endif
 
-        // If we do not have an image here, it means that a cross-site
-        // violation occurred, or that the image was blocked via Content
-        // Security Policy, or the page is being dismissed. Trigger an
-        // error event if the page is not being dismissed.
-        if (!newImage && !pageIsBeingDismissed(document)) {
-            m_failedLoadURL = attr;
-            m_hasPendingErrorEvent = true;
-            loadEventSender().dispatchEventSoon(*this, eventNames().errorEvent);
-        } else
-            clearFailedLoadURL();
-    } else if (!attr.isNull()) {
-        // Fire an error event if the url is empty.
-        m_failedLoadURL = attr;
+    // If we do not have an image here, it means that a cross-site
+    // violation occurred, or that the image was blocked via Content
+    // Security Policy, or the page is being dismissed. Trigger an
+    // error event if the page is not being dismissed.
+    if (!newImage && !pageIsBeingDismissed(document)) {
+        m_failedLoadURL = element().imageSourceURL();
         m_hasPendingErrorEvent = true;
         loadEventSender().dispatchEventSoon(*this, eventNames().errorEvent);
-    }
+    } else
+        clearFailedLoadURL();
 
     didUpdateCachedImage(relevantMutation, WTFMove(newImage));
 }

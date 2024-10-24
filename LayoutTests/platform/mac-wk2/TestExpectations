@@ -1376,8 +1376,6 @@ webkit.org/b/246357 imported/w3c/web-platform-tests/feature-policy/reporting/pay
 imported/w3c/web-platform-tests/clear-site-data/navigation-insecure.html [ Skip ]
 imported/w3c/web-platform-tests/clear-site-data/resource.html [ Skip ]
 
-webkit.org/b/240987 fast/images/heic-as-background-image.html [ ImageOnlyFailure ]
-
 webkit.org/b/244968 [ arm64 ] imported/w3c/web-platform-tests/web-animations/timing-model/animations/update-playback-rate-zero.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/245007 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/coop-popup-opener-navigates.https.html [ Pass Failure ]
