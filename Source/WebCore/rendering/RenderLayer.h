@@ -1199,7 +1199,7 @@ private:
     
     bool computeHasVisibleContent() const;
 
-    bool has3DTransformedDescendant() const { return m_has3DTransformedDescendant; }
+    bool has3DTransformedDescendant() const { ASSERT(!m_3DTransformedDescendantStatusDirty); return m_has3DTransformedDescendant; }
     bool has3DTransformedAncestor() const { return m_has3DTransformedAncestor; }
 
     bool hasFixedAncestor() const { return m_hasFixedAncestor; }

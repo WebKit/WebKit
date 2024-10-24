@@ -5873,6 +5873,11 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
 
         if (oldStyle->hasZeroOpacity() != renderer().style().hasZeroOpacity())
             setNeedsPositionUpdate();
+
+        if (oldStyle->preserves3D() != preserves3D()) {
+            dirty3DTransformedDescendantStatus();
+            setNeedsPostLayoutCompositingUpdateOnAncestors();
+        }
     }
 
     if (m_scrollableArea) {

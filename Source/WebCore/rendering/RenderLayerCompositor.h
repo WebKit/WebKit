@@ -459,8 +459,8 @@ private:
 
     void updateCompositingLayersTimerFired();
 
-    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, LayerOverlapMap&, CompositingState&, BackingSharingState&, bool& descendantHas3DTransform);
-    void traverseUnchangedSubtree(RenderLayer* ancestorLayer, RenderLayer&, LayerOverlapMap&, CompositingState&, BackingSharingState&, bool& descendantHas3DTransform);
+    void computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer&, LayerOverlapMap&, CompositingState&, BackingSharingState&);
+    void traverseUnchangedSubtree(RenderLayer* ancestorLayer, RenderLayer&, LayerOverlapMap&, CompositingState&, BackingSharingState&);
 
     enum class UpdateLevel {
         AllDescendants          = 1 << 0,
