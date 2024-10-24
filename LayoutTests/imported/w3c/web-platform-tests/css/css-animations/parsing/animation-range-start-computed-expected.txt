@@ -14,8 +14,8 @@ PASS Property animation-range-start value 'cover -42%'
 PASS Property animation-range-start value 'contain 42%'
 PASS Property animation-range-start value 'exit 42%'
 PASS Property animation-range-start value 'exit calc(41% + 1%)'
-FAIL Property animation-range-start value 'exit 1%, cover 2%, contain 0%' assert_true: 'exit 1%, cover 2%, contain 0%' is a supported value for animation-range-start. expected true got false
-FAIL Property animation-range-start value 'exit 1%, cover 2%, contain 100%' assert_true: 'exit 1%, cover 2%, contain 100%' is a supported value for animation-range-start. expected true got false
+PASS Property animation-range-start value 'exit 1%, cover 2%, contain 0%'
+PASS Property animation-range-start value 'exit 1%, cover 2%, contain 100%'
 PASS Property animation-range-start value 'exit-crossing 42%'
 PASS Property animation-range-start value 'entry 42px'
 PASS Property animation-range-start value 'entry-crossing 42px'

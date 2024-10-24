@@ -145,7 +145,7 @@ SingleTimelineRange SingleTimelineRange::parse(TimelineRangeValue&& value, RefPt
         CSSTokenizer tokenizer(rangeString);
         auto tokenRange = tokenizer.tokenRange();
         tokenRange.consumeWhitespace();
-        if (auto consumedRange = type == SingleTimelineRange::Type::Start ? CSSPropertyParserHelpers::consumeAnimationRangeStart(tokenRange, parserContext) : CSSPropertyParserHelpers::consumeAnimationRangeEnd(tokenRange, parserContext))
+        if (auto consumedRange = CSSPropertyParserHelpers::consumeAnimationRange(tokenRange, parserContext, type))
             return range(*consumedRange, type, nullptr, element);
         return SingleTimelineRange { };
     },
@@ -153,7 +153,7 @@ SingleTimelineRange SingleTimelineRange::parse(TimelineRangeValue&& value, RefPt
         CSSTokenizer tokenizer(rangeOffset.rangeName);
         auto tokenRange = tokenizer.tokenRange();
         tokenRange.consumeWhitespace();
-        if (auto consumedRangeName = type == SingleTimelineRange::Type::Start ? CSSPropertyParserHelpers::consumeAnimationRangeStart(tokenRange, parserContext) : CSSPropertyParserHelpers::consumeAnimationRangeEnd(tokenRange, parserContext)) {
+        if (auto consumedRangeName = CSSPropertyParserHelpers::consumeAnimationRange(tokenRange, parserContext, type)) {
             if (rangeOffset.offset)
                 return range(CSSValuePair::createNoncoalescing(*consumedRangeName, *rangeOffset.offset->toCSSValue()), type, nullptr, element);
             return range(*consumedRangeName, type, nullptr, element);

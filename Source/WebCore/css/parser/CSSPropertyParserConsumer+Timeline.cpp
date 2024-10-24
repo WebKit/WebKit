@@ -157,7 +157,7 @@ static bool isAnimationRangeKeyword(CSSValueID id)
     return identMatches<CSSValueNormal, CSSValueCover, CSSValueContain, CSSValueEntry, CSSValueExit, CSSValueEntryCrossing, CSSValueExitCrossing>(id);
 }
 
-static RefPtr<CSSValue> consumeAnimationRange(CSSParserTokenRange& range, const CSSParserContext& context, SingleTimelineRange::Type type)
+RefPtr<CSSValue> consumeAnimationRange(CSSParserTokenRange& range, const CSSParserContext& context, SingleTimelineRange::Type type)
 {
     // https://drafts.csswg.org/scroll-animations-1/#propdef-animation-range-start
     // normal | <length-percentage> | <timeline-range-name> <length-percentage>?
@@ -180,12 +180,16 @@ static RefPtr<CSSValue> consumeAnimationRange(CSSParserTokenRange& range, const 
 
 RefPtr<CSSValue> consumeAnimationRangeStart(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeAnimationRange(range, context, SingleTimelineRange::Type::Start);
+    return consumeCommaSeparatedListWithSingleValueOptimization(range, [&](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+        return consumeAnimationRange(range, context, SingleTimelineRange::Type::Start);
+    });
 }
 
 RefPtr<CSSValue> consumeAnimationRangeEnd(CSSParserTokenRange& range, const CSSParserContext& context)
 {
-    return consumeAnimationRange(range, context, SingleTimelineRange::Type::End);
+    return consumeCommaSeparatedListWithSingleValueOptimization(range, [&](CSSParserTokenRange& range) -> RefPtr<CSSValue> {
+        return consumeAnimationRange(range, context, SingleTimelineRange::Type::End);
+    });
 }
 
 } // namespace CSSPropertyParserHelpers

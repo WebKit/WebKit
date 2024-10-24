@@ -2775,38 +2775,46 @@ bool CSSPropertyParser::consumeWhiteSpaceShorthand(bool important)
 
 bool CSSPropertyParser::consumeAnimationRangeShorthand(bool important)
 {
-    // FIXME: Add extra handling for animation range sequences.
-    RefPtr start = consumeAnimationRangeStart(m_range, m_context);
-    if (!start)
+    CSSValueListBuilder startList;
+    CSSValueListBuilder endList;
+    do {
+        RefPtr start = consumeAnimationRange(m_range, m_context, SingleTimelineRange::Type::Start);
+        if (!start)
+            return false;
+
+        RefPtr<CSSValue> end;
+        m_range.consumeWhitespace();
+        if (m_range.atEnd() || m_range.peek().type() == CommaToken) {
+            // From the spec: If <'animation-range-end'> is omitted and <'animation-range-start'> includes a component, then
+            // animation-range-end is set to that same and 100%. Otherwise, any omitted longhand is set to its initial value.
+            auto rangeEndValueForStartValue = [](const CSSValue& value) {
+                RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
+                if (primitiveValue && SingleTimelineRange::isOffsetValue(downcast<CSSPrimitiveValue>(value)))
+                    return CSSPrimitiveValue::create(CSSValueNormal);
+                return CSSPrimitiveValue::create(value.valueID());
+            };
+
+            if (RefPtr startPrimitiveValue = dynamicDowncast<CSSPrimitiveValue>(start))
+                end = rangeEndValueForStartValue(*startPrimitiveValue);
+            else {
+                RefPtr startPair = downcast<CSSValuePair>(start);
+                end = rangeEndValueForStartValue(startPair->first());
+            }
+        } else {
+            end = consumeAnimationRange(m_range, m_context, SingleTimelineRange::Type::End);
+            m_range.consumeWhitespace();
+            if (!end)
+                return false;
+        }
+        startList.append(start.releaseNonNull());
+        endList.append(end.releaseNonNull());
+    } while (consumeCommaIncludingWhitespace(m_range));
+
+    if (!m_range.atEnd())
         return false;
 
-    RefPtr<CSSValue> end;
-    m_range.consumeWhitespace();
-    if (m_range.atEnd()) {
-        // From the spec: If <'animation-range-end'> is omitted and <'animation-range-start'> includes a component, then
-        // animation-range-end is set to that same and 100%. Otherwise, any omitted longhand is set to its initial value.
-        auto rangeEndValueForStartValue = [](const CSSValue& value) {
-            RefPtr primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value);
-            if (primitiveValue && SingleTimelineRange::isOffsetValue(downcast<CSSPrimitiveValue>(value)))
-                return CSSPrimitiveValue::create(CSSValueNormal);
-            return CSSPrimitiveValue::create(value.valueID());
-        };
-
-        if (RefPtr startPrimitiveValue = dynamicDowncast<CSSPrimitiveValue>(start))
-            end = rangeEndValueForStartValue(*startPrimitiveValue);
-        else {
-            RefPtr startPair = downcast<CSSValuePair>(start);
-            end = rangeEndValueForStartValue(startPair->first());
-        }
-    } else {
-        end = consumeAnimationRangeEnd(m_range, m_context);
-        m_range.consumeWhitespace();
-        if (!m_range.atEnd() || !end)
-            return false;
-    }
-
-    addProperty(CSSPropertyAnimationRangeStart, CSSPropertyAnimationRange, WTFMove(start), important);
-    addProperty(CSSPropertyAnimationRangeEnd, CSSPropertyAnimationRange, WTFMove(end), important);
+    addProperty(CSSPropertyAnimationRangeStart, CSSPropertyAnimationRange, CSSValueList::createCommaSeparated(WTFMove(startList)), important);
+    addProperty(CSSPropertyAnimationRangeEnd, CSSPropertyAnimationRange, CSSValueList::createCommaSeparated(WTFMove(endList)), important);
     return true;
 }
 
