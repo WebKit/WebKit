@@ -46,14 +46,4 @@ WI.TimelineObserver = class TimelineObserver extends InspectorBackend.Dispatcher
     {
         WI.timelineManager.autoCaptureStarted();
     }
-
-    programmaticCaptureStarted()
-    {
-        // COMPATIBILITY (iOS 12.2): Timeline.programmaticCaptureStarted was removed after iOS 12.2.
-    }
-
-    programmaticCaptureStopped()
-    {
-        // COMPATIBILITY (iOS 12.2): Timeline.programmaticCaptureStopped was removed after iOS 12.2.
-    }
 };

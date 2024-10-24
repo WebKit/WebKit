@@ -108,24 +108,20 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
             this.addDOMBreakpoint(breakpoint);
         });
 
-        if (DOMDebuggerManager.supportsEventBreakpoints() || DOMDebuggerManager.supportsEventListenerBreakpoints()) {
-            loadBreakpoints(WI.EventBreakpoint, WI.objectStores.eventBreakpoints, ["event-breakpoints"], (breakpoint) => {
-                this.addEventBreakpoint(breakpoint);
-            });
+        loadBreakpoints(WI.EventBreakpoint, WI.objectStores.eventBreakpoints, ["event-breakpoints"], (breakpoint) => {
+            this.addEventBreakpoint(breakpoint);
+        });
 
-            this._allAnimationFramesBreakpoint ??= loadLegacySpecialBreakpoint("show-all-animation-frames-breakpoint", "break-on-all-animation-frames", (options) => new WI.EventBreakpoint(WI.EventBreakpoint.Type.AnimationFrame, options));
-            this._allIntervalsBreakpoint ??= loadLegacySpecialBreakpoint("show-all-inteverals-breakpoint", "break-on-all-intervals", (options) => new WI.EventBreakpoint(WI.EventBreakpoint.Type.Interval, options));
-            this._allListenersBreakpoint ??= loadLegacySpecialBreakpoint("show-all-listeners-breakpoint", "break-on-all-listeners", (options) => new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, options));
-            this._allTimeoutsBreakpoint ??= loadLegacySpecialBreakpoint("show-all-timeouts-breakpoint", "break-on-all-timeouts", (options) => new WI.EventBreakpoint(WI.EventBreakpoint.Type.Timeout, options));
-        }
+        this._allAnimationFramesBreakpoint ??= loadLegacySpecialBreakpoint("show-all-animation-frames-breakpoint", "break-on-all-animation-frames", (options) => new WI.EventBreakpoint(WI.EventBreakpoint.Type.AnimationFrame, options));
+        this._allIntervalsBreakpoint ??= loadLegacySpecialBreakpoint("show-all-inteverals-breakpoint", "break-on-all-intervals", (options) => new WI.EventBreakpoint(WI.EventBreakpoint.Type.Interval, options));
+        this._allListenersBreakpoint ??= loadLegacySpecialBreakpoint("show-all-listeners-breakpoint", "break-on-all-listeners", (options) => new WI.EventBreakpoint(WI.EventBreakpoint.Type.Listener, options));
+        this._allTimeoutsBreakpoint ??= loadLegacySpecialBreakpoint("show-all-timeouts-breakpoint", "break-on-all-timeouts", (options) => new WI.EventBreakpoint(WI.EventBreakpoint.Type.Timeout, options));
 
-        if (DOMDebuggerManager.supportsURLBreakpoints() || DOMDebuggerManager.supportsXHRBreakpoints()) {
-            loadBreakpoints(WI.URLBreakpoint, WI.objectStores.urlBreakpoints, ["xhr-breakpoints", "url-breakpoints"], (breakpoint) => {
-                this.addURLBreakpoint(breakpoint);
-            });
+        loadBreakpoints(WI.URLBreakpoint, WI.objectStores.urlBreakpoints, ["xhr-breakpoints", "url-breakpoints"], (breakpoint) => {
+            this.addURLBreakpoint(breakpoint);
+        });
 
-            this._allRequestsBreakpoint ??= loadLegacySpecialBreakpoint("show-all-requests-breakpoint", "break-on-all-requests", (options) => new WI.URLBreakpoint(WI.URLBreakpoint.Type.Text, "", options));
-        }
+        this._allRequestsBreakpoint ??= loadLegacySpecialBreakpoint("show-all-requests-breakpoint", "break-on-all-requests", (options) => new WI.URLBreakpoint(WI.URLBreakpoint.Type.Text, "", options));
     }
 
     // Target
@@ -169,39 +165,10 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     // Static
 
-    static supportsEventBreakpoints()
-    {
-        // COMPATIBILITY (iOS 13): DOMDebugger.setEventBreakpoint and DOMDebugger.removeEventBreakpoint did not exist yet.
-        return InspectorBackend.hasCommand("DOMDebugger.setEventBreakpoint")
-            && InspectorBackend.hasCommand("DOMDebugger.removeEventBreakpoint");
-    }
-
-    static supportsEventListenerBreakpoints()
-    {
-        // COMPATIBILITY (iOS 12.2): Replaced by DOMDebugger.setEventBreakpoint and DOMDebugger.removeEventBreakpoint.
-        return InspectorBackend.hasCommand("DOMDebugger.setEventListenerBreakpoint")
-            && InspectorBackend.hasCommand("DOMDebugger.removeEventListenerBreakpoint");
-    }
-
-    static supportsURLBreakpoints()
-    {
-        // COMPATIBILITY (iOS 13): DOMDebugger.setURLBreakpoint and DOMDebugger.removeURLBreakpoint did not exist yet.
-        return InspectorBackend.hasCommand("DOMDebugger.setURLBreakpoint")
-            && InspectorBackend.hasCommand("DOMDebugger.removeURLBreakpoint");
-    }
-
-    static supportsXHRBreakpoints()
-    {
-        // COMPATIBILITY (iOS 13): Replaced by DOMDebugger.setURLBreakpoint and DOMDebugger.removeURLBreakpoint.
-        return InspectorBackend.hasCommand("DOMDebugger.setXHRBreakpoint")
-            && InspectorBackend.hasCommand("DOMDebugger.removeXHRBreakpoint");
-    }
-
     static supportsAllListenersBreakpoint()
     {
         // COMPATIBILITY (iOS 13): DOMDebugger.EventBreakpointType.Interval and DOMDebugger.EventBreakpointType.Timeout did not exist yet.
-        return DOMDebuggerManager.supportsEventBreakpoints()
-            && InspectorBackend.Enum.DOMDebugger.EventBreakpointType.Interval
+        return InspectorBackend.Enum.DOMDebugger.EventBreakpointType.Interval
             && InspectorBackend.Enum.DOMDebugger.EventBreakpointType.Timeout;
     }
 
@@ -706,17 +673,6 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         if (breakpoint === this._allAnimationFramesBreakpoint && target.type === WI.TargetType.Worker)
             return;
 
-        // COMPATIBILITY (iOS 12.0): DOMDebugger.setEventListenerBreakpoint was replaced by DOMDebugger.setEventBreakpoint.
-        if (!target.hasCommand("DOMDebugger.setEventBreakpoint")) {
-            console.assert(breakpoint.type === WI.EventBreakpoint.Type.Listener);
-
-            if (!this._restoringBreakpoints && !WI.debuggerManager.breakpointsDisabledTemporarily)
-                WI.debuggerManager.breakpointsEnabled = true;
-
-            target.DOMDebuggerAgent.setEventListenerBreakpoint(breakpoint.eventName);
-            return;
-        }
-
         let commandArguments = this._commandArgumentsForEventBreakpoint(breakpoint);
 
         if (!this._restoringBreakpoints && !WI.debuggerManager.breakpointsDisabledTemporarily)
@@ -733,13 +689,6 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         if (breakpoint === this._allAnimationFramesBreakpoint && target.type === WI.TargetType.Worker)
             return;
 
-        // COMPATIBILITY (iOS 12.0): DOMDebugger.removeEventListenerBreakpoint was replaced by DOMDebugger.removeEventBreakpoint.
-        if (!target.hasCommand("DOMDebugger.removeEventBreakpoint")) {
-            console.assert(breakpoint.type === WI.EventBreakpoint.Type.Listener);
-            target.DOMDebuggerAgent.removeEventListenerBreakpoint(breakpoint.eventName);
-            return;
-        }
-
         let commandArguments = this._commandArgumentsForEventBreakpoint(breakpoint);
 
         target.DOMDebuggerAgent.removeEventBreakpoint.invoke(commandArguments);
@@ -752,14 +701,6 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
         if (!this._restoringBreakpoints && !WI.debuggerManager.breakpointsDisabledTemporarily)
             WI.debuggerManager.breakpointsEnabled = true;
 
-        // COMPATIBILITY (iOS 12.2): DOMDebugger.setXHRBreakpoint was replaced by DOMDebugger.setURLBreakpoint.
-        if (!target.hasCommand("DOMDebugger.setURLBreakpoint")) {
-            let isRegex = breakpoint.type === WI.URLBreakpoint.Type.RegularExpression;
-            target.DOMDebuggerAgent.setXHRBreakpoint(breakpoint.url, isRegex);
-            return;
-        }
-
-
         target.DOMDebuggerAgent.setURLBreakpoint.invoke({
             url: breakpoint.url,
             isRegex: breakpoint.type === WI.URLBreakpoint.Type.RegularExpression,
@@ -769,12 +710,6 @@ WI.DOMDebuggerManager = class DOMDebuggerManager extends WI.Object
 
     _removeURLBreakpoint(breakpoint, target)
     {
-        // COMPATIBILITY (iOS 12.2): DOMDebugger.removeXHRBreakpoint was replaced by DOMDebugger.removeURLBreakpoint.
-        if (!target.hasCommand("DOMDebugger.removeURLBreakpoint")) {
-            target.DOMDebuggerAgent.removeXHRBreakpoint(breakpoint.url);
-            return;
-        }
-
         target.DOMDebuggerAgent.removeURLBreakpoint.invoke({
             url: breakpoint.url,
             isRegex: breakpoint.type === WI.URLBreakpoint.Type.RegularExpression,

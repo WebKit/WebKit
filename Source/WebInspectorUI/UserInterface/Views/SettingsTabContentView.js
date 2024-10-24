@@ -336,7 +336,7 @@ WI.SettingsTabContentView = class SettingsTabContentView extends WI.TabContentVi
     {
         let consoleSettingsView = new WI.SettingsView("console", WI.UIString("Console"));
 
-        // COMPATIBILITY (iOS 12.2): Runtime.setSavedResultAlias did not exist.
+        // COMPATIBILITY (iOS 13.0): Runtime.setSavedResultAlias did not exist.
         if (InspectorBackend.hasCommand("Runtime.setSavedResultAlias")) {
             let consoleSavedResultAliasEditor = consoleSettingsView.addGroupWithCustomEditor(WI.UIString("Saved Result Alias:"));
 

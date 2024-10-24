@@ -189,42 +189,6 @@ WI.CSSManager = class CSSManager extends WI.Object
 
     static displayNameForPseudoId(pseudoId)
     {
-        // Compatibility (iOS 12.2): CSS.PseudoId did not exist.
-        if (!InspectorBackend.Enum.CSS.PseudoId) {
-            switch (pseudoId) {
-            case 1: // PseudoId.FirstLine
-                return WI.unlocalizedString("::first-line");
-            case 2: // PseudoId.FirstLetter
-                return WI.unlocalizedString("::first-letter");
-            case 3: // PseudoId.Marker
-                return WI.unlocalizedString("::marker");
-            case 4: // PseudoId.Before
-                return WI.unlocalizedString("::before");
-            case 5: // PseudoId.After
-                return WI.unlocalizedString("::after");
-            case 6: // PseudoId.Selection
-                return WI.unlocalizedString("::-webkit-selection");
-            case 7: // PseudoId.Scrollbar
-                return WI.unlocalizedString("::-webkit-scrollbar");
-            case 8: // PseudoId.ScrollbarThumb
-                return WI.unlocalizedString("::-webkit-scrollbar-thumb");
-            case 9: // PseudoId.ScrollbarButton
-                return WI.unlocalizedString("::-webkit-scrollbar-button");
-            case 10: // PseudoId.ScrollbarTrack
-                return WI.unlocalizedString("::-webkit-scrollbar-track");
-            case 11: // PseudoId.ScrollbarTrackPiece
-                return WI.unlocalizedString("::-webkit-scrollbar-track-piece");
-            case 12: // PseudoId.ScrollbarCorner
-                return WI.unlocalizedString("::-webkit-scrollbar-corner");
-            case 13: // PseudoId.Resizer
-                return WI.unlocalizedString("::-webkit-resizer");
-
-            default:
-                console.error("Unknown pseudo id", pseudoId);
-                return "";
-            }
-        }
-
         switch (pseudoId) {
         case CSSManager.PseudoSelectorNames.FirstLine:
             return WI.unlocalizedString("::first-line");
@@ -402,7 +366,7 @@ WI.CSSManager = class CSSManager extends WI.Object
         case WI.CSSManager.ForceablePseudoClass.FocusVisible:
         case WI.CSSManager.ForceablePseudoClass.FocusWithin:
         case WI.CSSManager.ForceablePseudoClass.Target:
-            // COMPATIBILITY (macOS 12.3, iOS 15.4): CSS.ForceablePseudoClass did not exist yet.
+            // COMPATIBILITY (iOS 15.4): CSS.ForceablePseudoClass did not exist yet.
             return !!InspectorBackend.Enum.CSS.ForceablePseudoClass;
         }
 

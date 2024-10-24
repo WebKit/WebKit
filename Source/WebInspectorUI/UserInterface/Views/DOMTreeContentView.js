@@ -31,7 +31,7 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
 
         super(representedObject);
 
-        // COMPATIBILITY (macOS 12.0, iOS 15.0): CSS.nodeLayoutContextTypeChanged did not exist yet.
+        // COMPATIBILITY (iOS 15.0): CSS.nodeLayoutContextTypeChanged did not exist yet.
         // COMPATIBILITY (macOS 13.0, iOS 16.0): CSS.nodeLayoutContextTypeChanged was renamed/expanded to CSS.nodeLayoutFlagsChanged.
         this._configureDOMTreeBadgesNavigationItem = new WI.ButtonNavigationItem("configure-dom-tree-badges", WI.UIString("Badges", "Badges @ Elements Tab", "Label for navigation item that controls what badges are shown in the main DOM tree."));
         this._configureDOMTreeBadgesNavigationItem.tooltip = WI.UIString("Choose which badges are shown in the DOM tree");
@@ -39,7 +39,6 @@ WI.DOMTreeContentView = class DOMTreeContentView extends WI.ContentView
         this._configureDOMTreeBadgesNavigationItem.visibilityPriority = WI.NavigationItem.VisibilityPriority.Low;
         WI.addMouseDownContextMenuHandlers(this._configureDOMTreeBadgesNavigationItem.element, this._populateConfigureDOMTreeBadgesNavigationItemContextMenu.bind(this));
 
-        // COMPATIBILITY (iOS 12)
         WI.settings.showRulers.addEventListener(WI.Setting.Event.Changed, this._showRulersChanged, this);
         this._showRulersButtonNavigationItem = new WI.ActivateButtonNavigationItem("show-rulers", WI.UIString("Show rulers"), WI.UIString("Hide rulers"), "Images/Rulers.svg", 16, 16);
         this._showRulersButtonNavigationItem.addEventListener(WI.ButtonNavigationItem.Event.Clicked, this._toggleShowRulers, this);

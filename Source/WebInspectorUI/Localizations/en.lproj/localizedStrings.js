@@ -218,7 +218,6 @@ localizedStrings["Assertion Failed: %s"] = "Assertion Failed: %s";
 localizedStrings["Assertion Failures @ JavaScript Breakpoint"] = "Assertion Failures";
 localizedStrings["Assertive"] = "Assertive";
 localizedStrings["Associated Data"] = "Associated Data";
-localizedStrings["Async audits are not supported."] = "Async audits are not supported.";
 localizedStrings["Attribute"] = "Attribute";
 /* A submenu item of 'Break On' that breaks (pauses) before DOM attribute is modified */
 localizedStrings["Attribute Modified @ DOM Breakpoint"] = "Attribute Modified";
@@ -2000,7 +1999,6 @@ localizedStrings["Wrap lines to editor width"] = "Wrap lines to editor width";
 localizedStrings["Writable @ Object Tree Property"] = "Writable";
 localizedStrings["XBM"] = "XBM";
 localizedStrings["XHR"] = "XHR";
-localizedStrings["XHR Breakpoint\u2026"] = "XHR Breakpoint\u2026";
 localizedStrings["XHRs"] = "XHRs";
 localizedStrings["XPath"] = "XPath";
 localizedStrings["Yes"] = "Yes";

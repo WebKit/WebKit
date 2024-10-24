@@ -85,13 +85,10 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         }
 
         if (typeof payload[3] !== "number" || isNaN(payload[3]) || (!payload[3] && payload[3] !== 0)) {
-            // COMPATIBILITY (iOS 12.1): "stackTrace" was sent as an array of call frames instead of a single call stack
-            if (!Array.isArray(payload[3])) {
-                if (payload.length > 3)
-                    WI.Recording.synthesizeWarning(WI.UIString("non-number %s").format(WI.unlocalizedString("stackTrace")));
+            if (payload.length > 3)
+                WI.Recording.synthesizeWarning(WI.UIString("non-number %s").format(WI.unlocalizedString("stackTrace")));
 
-                payload[3] = [];
-            }
+            payload[3] = [];
         }
 
         if (typeof payload[4] !== "number" || isNaN(payload[4])) {
@@ -354,16 +351,8 @@ WI.RecordingAction = class RecordingAction extends WI.Object
         let swizzlePromises = [
             recording.swizzle(this._payloadName, WI.Recording.Swizzle.String),
             Promise.all(this._payloadParameters.map(swizzleParameter)),
+            recording.swizzle(this._payloadStackTrace, WI.Recording.Swizzle.CallStack),
         ];
-
-        if (!isNaN(this._payloadStackTrace))
-            swizzlePromises.push(recording.swizzle(this._payloadStackTrace, WI.Recording.Swizzle.CallStack));
-        else {
-            // COMPATIBILITY (iOS 12.1): "stackTrace" was sent as an array of call frames instead of a single call stack
-            let stackTracePromise = Promise.all(this._payloadStackTrace.map((item) => recording.swizzle(item, WI.Recording.Swizzle.CallFramePayload)))
-                .then((callFrames) => WI.StackTrace.fromPayload(WI.assumingMainTarget(), {callFrames}));
-            swizzlePromises.push(stackTracePromise);
-        }
 
         if (this._payloadSnapshot >= 0)
             swizzlePromises.push(recording.swizzle(this._payloadSnapshot, WI.Recording.Swizzle.String));

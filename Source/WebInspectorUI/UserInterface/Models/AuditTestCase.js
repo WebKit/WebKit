@@ -332,15 +332,9 @@ WI.AuditTestCase = class AuditTestCase extends WI.AuditTestBase
             metadata.endTimestamp = new Date;
 
             if (response.result.type === "object" && response.result.className === "Promise") {
-                if (WI.RuntimeManager.supportsAwaitPromise()) {
-                    metadata.asyncTimestamp = metadata.endTimestamp;
-                    response = await target.RuntimeAgent.awaitPromise(response.result.objectId);
-                    metadata.endTimestamp = new Date;
-                } else {
-                    response = null;
-                    addError(WI.UIString("Async audits are not supported."));
-                    setLevel(WI.AuditTestCaseResult.Level.Unsupported);
-                }
+                metadata.asyncTimestamp = metadata.endTimestamp;
+                response = await target.RuntimeAgent.awaitPromise(response.result.objectId);
+                metadata.endTimestamp = new Date;
             }
 
             if (response)
