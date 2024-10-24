@@ -603,11 +603,15 @@ PlatformMouseEvent EventHandler::currentPlatformMouseEvent() const
 void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatPoint& positionInWindow)
 {
     Ref frame = m_frame.get();
+    RefPtr frameView = frame->view();
+    if (!frameView)
+        return;
 
-    m_targetAutoscrollPositionInUnscrolledRootViewCoordinates = frame->view()->contentsToRootView(roundedIntPoint(positionInWindow)) - toIntSize(frame->view()->documentScrollPositionRelativeToViewOrigin());
+    m_targetAutoscrollPositionInRootView = roundedIntPoint(positionInWindow);
+    m_targetAutoscrollPositionInUnscrolledRootView = m_targetAutoscrollPositionInRootView - toIntSize(frameView->documentScrollPositionRelativeToViewOrigin());
 
     if (!m_isAutoscrolling)
-        m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates = m_targetAutoscrollPositionInUnscrolledRootViewCoordinates;
+        m_initialAutoscrollPositionInUnscrolledRootView = m_targetAutoscrollPositionInUnscrolledRootView;
 
     m_isAutoscrolling = true;
     m_autoscrollController->startAutoscrollForSelection(renderer);
@@ -616,7 +620,9 @@ void EventHandler::startSelectionAutoscroll(RenderObject* renderer, const FloatP
 void EventHandler::cancelSelectionAutoscroll()
 {
     m_isAutoscrolling = false;
-    m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates = std::nullopt;
+    m_initialAutoscrollPositionInUnscrolledRootView = std::nullopt;
+    m_targetAutoscrollPositionInRootView = { };
+    m_targetAutoscrollPositionInUnscrolledRootView = { };
     m_autoscrollController->stopAutoscrollTimer();
 }
 
@@ -675,13 +681,16 @@ static IntPoint adjustAutoscrollDestinationForInsetEdges(IntPoint autoscrollPoin
 
     return resultPoint;
 }
-    
+
 IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
 {
     Ref frame = m_frame.get();
-
     if (!frame->view())
         return { };
+
+    if (!frame->isMainFrame())
+        return m_targetAutoscrollPositionInRootView;
+
     Ref frameView = *frame->view();
 
     // All work is done in "unscrolled" root view coordinates (as if delegatesScrolling were off),
@@ -689,12 +698,12 @@ IntPoint EventHandler::targetPositionInWindowForSelectionAutoscroll() const
     // can keep scrolling without the client pushing a new contents-space target position via startSelectionAutoscroll.
     auto scrollPosition = toIntSize(frameView->documentScrollPositionRelativeToViewOrigin());
     
-    FloatRect unobscuredContentRectInUnscrolledRootViewCoordinates = frameView->contentsToRootView(frameView->unobscuredContentRect());
-    unobscuredContentRectInUnscrolledRootViewCoordinates.move(-scrollPosition);
+    FloatRect unobscuredContentRectInUnscrolledRootView = frameView->contentsToRootView(frameView->unobscuredContentRect());
+    unobscuredContentRectInUnscrolledRootView.move(-scrollPosition);
 
-    return adjustAutoscrollDestinationForInsetEdges(m_targetAutoscrollPositionInUnscrolledRootViewCoordinates, m_initialTargetAutoscrollPositionInUnscrolledRootViewCoordinates, unobscuredContentRectInUnscrolledRootViewCoordinates) + scrollPosition;
+    return adjustAutoscrollDestinationForInsetEdges(m_targetAutoscrollPositionInUnscrolledRootView, m_initialAutoscrollPositionInUnscrolledRootView, unobscuredContentRectInUnscrolledRootView) + scrollPosition;
 }
-    
+
 bool EventHandler::shouldUpdateAutoscroll()
 {
     return m_isAutoscrolling;

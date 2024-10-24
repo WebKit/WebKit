@@ -470,6 +470,11 @@ void FocusController::setFocusedFrame(Frame* frame, BroadcastFocusedFrame broadc
         } while (frame);
     }
 
+#if PLATFORM(IOS_FAMILY)
+    if (oldFrame)
+        oldFrame->eventHandler().cancelSelectionAutoscroll();
+#endif
+
     if (newFrame && newFrame->view() && isFocused()) {
         newFrame->selection().setFocused(true);
         newFrame->document()->dispatchWindowEvent(Event::create(eventNames().focusEvent, Event::CanBubble::No, Event::IsCancelable::No));

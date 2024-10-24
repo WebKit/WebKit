@@ -2130,35 +2130,34 @@ void WebPage::moveSelectionByOffset(int32_t offset, CompletionHandler<void()>&& 
     
 void WebPage::startAutoscrollAtPosition(const WebCore::FloatPoint& positionInWindow)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return;
-
-    if (m_focusedElement && m_focusedElement->renderer()) {
-        localMainFrame->eventHandler().startSelectionAutoscroll(m_focusedElement->renderer(), positionInWindow);
-        return;
-    }
-    
     RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
     if (!frame)
         return;
+
+    if (m_focusedElement && m_focusedElement->renderer()) {
+        frame->eventHandler().startSelectionAutoscroll(m_focusedElement->renderer(), positionInWindow);
+        return;
+    }
+
     auto& selection = frame->selection().selection();
     if (!selection.isRange())
         return;
+
     auto range = selection.toNormalizedRange();
     if (!range)
         return;
+
     auto* renderer = range->start.container->renderer();
     if (!renderer)
         return;
 
-    Ref(*localMainFrame)->eventHandler().startSelectionAutoscroll(renderer, positionInWindow);
+    frame->eventHandler().startSelectionAutoscroll(renderer, positionInWindow);
 }
     
 void WebPage::cancelAutoscroll()
 {
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
-        localMainFrame->eventHandler().cancelSelectionAutoscroll();
+    if (RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame())
+        frame->eventHandler().cancelSelectionAutoscroll();
 }
 
 void WebPage::requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<FloatRect>&)>&& reply)
