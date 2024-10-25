@@ -832,7 +832,6 @@ crypto/algorithms/CryptoAlgorithmX25519.cpp
 crypto/algorithms/CryptoAlgorithmHKDF.cpp
 crypto/algorithms/CryptoAlgorithmHMAC.cpp
 crypto/algorithms/CryptoAlgorithmPBKDF2.cpp
-crypto/algorithms/CryptoAlgorithmRSAES_PKCS1_v1_5.cpp
 crypto/algorithms/CryptoAlgorithmRSASSA_PKCS1_v1_5.cpp
 crypto/algorithms/CryptoAlgorithmRSA_OAEP.cpp
 crypto/algorithms/CryptoAlgorithmRSA_PSS.cpp
