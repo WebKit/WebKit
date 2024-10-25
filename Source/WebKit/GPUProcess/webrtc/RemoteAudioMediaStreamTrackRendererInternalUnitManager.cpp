@@ -49,11 +49,9 @@
 namespace WebKit {
 
 class RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit
-    : public RefCounted<RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit>
-    , public CanMakeWeakPtr<RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit>
-    , public WebCore::CoreAudioSpeakerSamplesProducer
+    : public WebCore::CoreAudioSpeakerSamplesProducer
     , public WebCore::AudioSessionInterruptionObserver
-    , private WebCore::AudioMediaStreamTrackRendererInternalUnit::Client {
+    , public WebCore::AudioMediaStreamTrackRendererInternalUnit::Client {
     WTF_MAKE_TZONE_ALLOCATED(RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit);
 public:
     static Ref<RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit> create(
@@ -63,9 +61,6 @@ public:
     }
 
     ~RemoteAudioMediaStreamTrackRendererInternalUnitManagerUnit();
-
-    void ref() const final { RefCounted::ref(); }
-    void deref() const final { RefCounted::deref(); }
 
     void start(ConsumerSharedCARingBuffer::Handle&&, IPC::Semaphore&&);
     void stop();

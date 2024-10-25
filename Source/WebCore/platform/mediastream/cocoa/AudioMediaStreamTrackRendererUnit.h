@@ -54,12 +54,7 @@ class AudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRender
 public:
     WEBCORE_EXPORT static AudioMediaStreamTrackRendererUnit& singleton();
 
-    AudioMediaStreamTrackRendererUnit();
     ~AudioMediaStreamTrackRendererUnit();
-
-    // Since AudioMediaStreamTrackRendererUnit is a singleton, its ref/deref do nothing.
-    void ref() const final { }
-    void deref() const final { }
 
     // AudioMediaStreamTrackRendererInternalUnit
     OSStatus render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&) final;
@@ -74,6 +69,8 @@ public:
     void addResetObserver(ResetObserver& observer) final { m_resetObservers.add(observer); }
 
 private:
+    AudioMediaStreamTrackRendererUnit();
+
     void start();
     void stop();
 

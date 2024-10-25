@@ -35,8 +35,8 @@ namespace WebCore {
 
 AudioMediaStreamTrackRendererUnit& AudioMediaStreamTrackRendererUnit::singleton()
 {
-    static NeverDestroyed<AudioMediaStreamTrackRendererUnit> registry;
-    return registry;
+    static NeverDestroyed<Ref<AudioMediaStreamTrackRendererUnit>> registry { adoptRef(*new AudioMediaStreamTrackRendererUnit()) };
+    return registry.get().get();
 }
 
 AudioMediaStreamTrackRendererUnit::AudioMediaStreamTrackRendererUnit()
@@ -116,9 +116,9 @@ void AudioMediaStreamTrackRendererUnit::reset()
 {
     RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::reset");
     if (!isMainThread()) {
-        callOnMainThread([weakThis = WeakPtr { this }] {
-            if (weakThis)
-                weakThis->reset();
+        callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
+            if (RefPtr strongThis = weakThis.get())
+                strongThis->reset();
         });
         return;
     }

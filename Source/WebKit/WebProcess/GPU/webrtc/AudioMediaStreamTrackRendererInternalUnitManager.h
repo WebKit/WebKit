@@ -57,7 +57,7 @@ public:
     void restartAllUnits();
 
 private:
-    HashMap<AudioMediaStreamTrackRendererInternalUnitIdentifier, WeakPtr<AudioMediaStreamTrackRendererInternalUnitManagerProxy>> m_proxies;
+    HashMap<AudioMediaStreamTrackRendererInternalUnitIdentifier, ThreadSafeWeakPtr<AudioMediaStreamTrackRendererInternalUnitManagerProxy>> m_proxies;
 };
 
 Ref<WebCore::AudioMediaStreamTrackRendererInternalUnit> createRemoteAudioMediaStreamTrackRendererInternalUnitProxy(WebCore::AudioMediaStreamTrackRendererInternalUnit::Client&);

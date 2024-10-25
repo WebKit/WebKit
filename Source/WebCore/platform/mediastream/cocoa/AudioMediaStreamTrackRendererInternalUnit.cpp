@@ -69,7 +69,7 @@ private:
     OSStatus render(AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 sampleCount, AudioBufferList*);
     static OSStatus renderingCallback(void*, AudioUnitRenderActionFlags*, const AudioTimeStamp*, UInt32 inBusNumber, UInt32 sampleCount, AudioBufferList*);
 
-    WeakPtr<Client> m_client;
+    ThreadSafeWeakPtr<Client> m_client;
     std::optional<CAAudioStreamDescription> m_outputDescription;
     AudioComponentInstance m_remoteIOUnit { nullptr };
     bool m_isStarted { false };
