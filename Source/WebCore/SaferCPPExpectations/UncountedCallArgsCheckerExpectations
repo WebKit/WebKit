@@ -1008,7 +1008,6 @@ css/typedom/numeric/CSSMathNegate.cpp
 css/typedom/numeric/CSSMathProduct.cpp
 css/typedom/numeric/CSSMathSum.cpp
 css/typedom/numeric/CSSMathValue.h
-css/typedom/transform/CSSMatrixComponent.cpp
 css/typedom/transform/CSSPerspective.cpp
 css/typedom/transform/CSSRotate.cpp
 css/typedom/transform/CSSScale.cpp
@@ -2035,7 +2034,6 @@ svg/SVGTextPathElement.cpp
 svg/SVGTextPathElement.h
 svg/SVGTextPositioningElement.h
 svg/SVGToOTFFontConversion.cpp
-svg/SVGTransformValue.h
 svg/SVGURIReference.cpp
 svg/SVGURIReference.h
 svg/SVGUseElement.cpp
@@ -2101,7 +2099,6 @@ workers/service/ServiceWorkerRegistration.cpp
 workers/service/ServiceWorkerWindowClient.cpp
 workers/service/background-fetch/BackgroundFetch.cpp
 workers/service/background-fetch/BackgroundFetchEngine.cpp
-workers/service/background-fetch/BackgroundFetchManager.cpp
 workers/service/background-fetch/BackgroundFetchRegistration.cpp
 workers/service/background-fetch/ServiceWorkerRegistrationBackgroundFetchAPI.cpp
 workers/service/context/SWContextManager.cpp

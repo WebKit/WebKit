@@ -1,7 +1,6 @@
 NetworkProcess/Classifier/ResourceLoadStatisticsStore.cpp
 NetworkProcess/NetworkLoad.cpp
 NetworkProcess/NetworkLoadScheduler.cpp
-NetworkProcess/NetworkSession.cpp
 NetworkProcess/PingLoad.h
 NetworkProcess/PrivateClickMeasurement/PrivateClickMeasurementDatabase.cpp
 NetworkProcess/cache/NetworkCache.cpp
@@ -18,7 +17,6 @@ Shared/API/c/cg/WKImageCG.cpp
 Shared/APIWebArchive.mm
 Shared/Cocoa/APIObject.mm
 Shared/ContextMenuContextData.cpp
-Shared/WebBackForwardListFrameItem.cpp
 Shared/WebBackForwardListItem.cpp
 Shared/WebContextMenuItem.cpp
 Shared/WebHitTestResultData.cpp
