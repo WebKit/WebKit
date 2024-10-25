@@ -62,6 +62,30 @@ OTHER_TAPI_FLAGS = $(inherited) $(WK_COMMON_OTHER_TAPI_FLAGS);
 WK_COMMON_WARNING_CFLAGS = -Wall -Wc99-designator -Wconditional-uninitialized -Wextra -Wdeprecated-enum-enum-conversion -Wdeprecated-enum-float-conversion -Wenum-float-conversion -Wfinal-dtor-non-final-class -Wformat=2 -Wmisleading-indentation -Wreorder-init-list -Wundef -Wvla;
 WARNING_CFLAGS = $(inherited) $(WK_COMMON_WARNING_CFLAGS) $(WK_SANITIZER_WARNING_CFLAGS);
 
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL = -Wno-unknown-warning-option -Wno-unsafe-buffer-usage-in-libc-call;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=macosx13*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=macosx14*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=macosx15.0*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=macosx15.1*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=macosx15.2*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=macosx15.3*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=iphone*18.0*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=iphone*18.1*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=iphone*18.2*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=iphone*18.3*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=appletv*18.0*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=appletv*18.1*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=appletv*18.2*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=appletv*18.3*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=watch*11.0*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=watch*11.1*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=watch*11.2*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=watch*11.3*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=xr*2.0*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=xr*2.1*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=xr*2.2*] = ;
+WK_NO_UNSAFE_BUFFER_USAGE_IN_LIBC_CALL[sdk=xr*2.3*] = ;
+
 CLANG_CXX_STANDARD_LIBRARY_HARDENING = extensive;
 
 // Setting CLANG_CXX_STANDARD_LIBRARY_HARDENING is sufficient in recent XCode versions but we want to keep
