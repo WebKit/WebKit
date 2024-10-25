@@ -25,25 +25,25 @@
 
 .timeline-overview {
     --timeline-sidebar-width: 197px;
+    --timeline-header-height: 23px;
+
+    display: grid;
+    grid-template-columns: [timelines-sidebar] var(--timeline-sidebar-width) [timelines-content] minmax(0, 1fr);
+    grid-template-rows: [timelines-header] var(--timeline-header-height) [timelines-content] 1fr;
 }
 
 .timeline-overview > :is(.navigation-bar.timelines, .tree-outline.timelines) {
     border-inline-end: 1px solid var(--border-color);
-    inset-inline-start: 0;
-}
-
-.timeline-overview:not(.frames) > :is(.scroll-container, .timeline-ruler, .graphs-container) {
-    inset-inline-start: var(--timeline-sidebar-width);
+    grid-column: timelines-sidebar;
 }
 
 .timeline-overview > .navigation-bar.timelines {
     box-sizing: border-box;
     justify-content: flex-start;
-    position: absolute;
-    top: 0;
+    grid-row: timelines-header;
     z-index: var(--z-index-header);
     width: var(--timeline-sidebar-width);
-    height: 23px;
+    height: var(--timeline-header-height);
     background-color: var(--background-color);
     border-bottom: 1px solid var(--border-color);
 }
@@ -70,15 +70,9 @@
 }
 
 .timeline-overview > .tree-outline.timelines {
-    position: absolute;
-    top: 23px;
     z-index: var(--z-index-header);
     width: var(--timeline-sidebar-width);
     background-color: var(--panel-background-color);
-}
-
-.timeline-overview.edit-instruments > .tree-outline.timelines {
-    bottom: 0;
 }
 
 .timeline-overview.edit-instruments > .tree-outline.timelines .item.selected {
@@ -121,6 +115,9 @@ body:not(.window-inactive, .window-docked-inactive) .timeline-overview:not(.edit
 }
 
 .timeline-overview > .scroll-container {
+    grid-column: timelines-content;
+    grid-row: timelines-content;
+
     position: absolute;
     right: 0;
     bottom: 0;
@@ -151,11 +148,9 @@ body:not(.window-inactive, .window-docked-inactive) .timeline-overview:not(.edit
 }
 
 .timeline-overview > .timeline-ruler {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    grid-column: timelines-content;
+    grid-row: timelines-header / -1;
+    width: 100%;
 }
 
 .timeline-overview.frames > .timeline-ruler {
@@ -186,11 +181,9 @@ body[dir=rtl] .timeline-overview.frames > .timeline-ruler:not(.both-handles-clam
 }
 
 .timeline-overview > .graphs-container {
-    position: absolute;
-    top: 23px;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    grid-column: timelines-content;
+    grid-row: timelines-content;
+    overflow-x: hidden;
 }
 
 body.mac-platform.legacy .timeline-overview > .graphs-container {
@@ -198,6 +191,7 @@ body.mac-platform.legacy .timeline-overview > .graphs-container {
 }
 
 .timeline-overview > .graphs-container > .timeline-overview-graph {
+    position: relative;
     height: 36px;
 }
 

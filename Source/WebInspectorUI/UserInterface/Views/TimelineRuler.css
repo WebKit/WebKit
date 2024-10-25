@@ -26,6 +26,7 @@
 .timeline-ruler {
     position: relative;
     pointer-events: none;
+    overflow-x: hidden;
 
     --timeline-ruler-marker-translateX: -1px;
 }
