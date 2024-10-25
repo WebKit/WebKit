@@ -420,8 +420,15 @@ std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& buil
     if (elementName.isNull())
         elementName = builderState.style().positionAnchor();
 
-    if (!elementName.isNull())
-        anchorPositionedState.anchorNames.add(elementName);
+    if (!elementName.isNull()) {
+        // Collect anchor names that this element refers to in anchor() or anchor-size()
+        bool isNewAnchorName = anchorPositionedState.anchorNames.add(elementName).isNewEntry;
+
+        // If anchor resolution has progressed past Initial, and we pick up a new anchor name, set the
+        // stage back to Initial. This restarts the resolution process to resolve newly added names.
+        if (isNewAnchorName)
+            anchorPositionedState.stage = AnchorPositionResolutionStage::Initial;
+    }
 
     // An anchor() instance will be ready to be resolved when all referenced anchor-names
     // have been mapped to an actual anchor element in the DOM tree. At that point, we
