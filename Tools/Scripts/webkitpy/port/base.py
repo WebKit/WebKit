@@ -738,6 +738,7 @@ class Port(object):
             # For Linux:
             'ALSA_CARD',
             'DBUS_SESSION_BUS_ADDRESS',
+            'GI_TYPELIB_PATH',
             'LANG',
             'LD_LIBRARY_PATH',
             'TERM',
