@@ -769,6 +769,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     LayerTreeAsTextForTesting(WebCore::FrameIdentifier frameID, size_t baseIndent, OptionSet<WebCore::LayerTreeAsTextOptions> options) -> (String layerTreeDump) Synchronous
     FrameTextForTesting(WebCore::FrameIdentifier frameID) -> (String text) Synchronous
 
+    RequestAllTextAndRects() -> (Vector<std::pair<String, WebCore::FloatRect>> textAndRects)
+
     RequestTargetedElement(struct WebCore::TargetedElementRequest request) -> (Vector<WebCore::TargetedElementInfo> elements)
 
     RequestAllTargetableElements(float hitTestInterval) -> (Vector<Vector<WebCore::TargetedElementInfo>> elements)

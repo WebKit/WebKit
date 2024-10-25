@@ -23,31 +23,41 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
+#import "_WKTextRunInternal.h"
 
-#include "TextExtractionTypes.h"
-#include <wtf/Expected.h>
+#import <WebCore/WebCoreObjCExtras.h>
+#import <wtf/RetainPtr.h>
 
-namespace WebCore {
+@implementation _WKTextRun
 
-class Element;
-class FloatRect;
-class LocalFrame;
-class Page;
-enum class ExceptionCode : uint8_t;
+- (void)dealloc
+{
+    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKTextRun.class, self))
+        return;
+    _textRun->API::TextRun::~TextRun();
+    [super dealloc];
+}
 
-namespace TextExtraction {
+- (API::Object&)_apiObject
+{
+    return *_textRun;
+}
 
-WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
-WEBCORE_EXPORT Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page&);
+- (NSString *)text
+{
+    return _textRun->string();
+}
 
-struct RenderedText {
-    String textWithReplacedContent;
-    String textWithoutReplacedContent;
-    bool hasLargeReplacedDescendant { false };
-};
+- (CGRect)rectInWebView
+{
+    return Ref { *_textRun }->rectInWebView();
+}
 
-RenderedText extractRenderedText(Element&);
+- (NSString *)debugDescription
+{
+    auto rect = self.rectInWebView;
+    return [NSString stringWithFormat:@"'%@' at {{%.0f, %.0f}, {%.0f, %.0f}}", self.text, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height];
+}
 
-} // namespace TextExtraction
-} // namespace WebCore
+@end

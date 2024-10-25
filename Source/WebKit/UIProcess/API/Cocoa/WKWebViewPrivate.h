@@ -141,6 +141,7 @@ typedef NS_ENUM(NSInteger, _WKImmediateActionType) {
 @class _WKTextInputContext;
 @class _WKTextManipulationConfiguration;
 @class _WKTextManipulationItem;
+@class _WKTextRun;
 @class _WKThumbnailView;
 @class _WKWebViewPrintFormatter;
 
@@ -581,6 +582,8 @@ typedef NS_OPTIONS(NSUInteger, WKDisplayCaptureSurfaces) {
 - (BOOL)_allowAnimationControls WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
 - (void)_setStatisticsCrossSiteLoadWithLinkDecorationForTesting:(NSString *)fromHost withToHost:(NSString *)toHost withWasFiltered:(BOOL)wasFiltered withCompletionHandler:(void(^)(void))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
+
+- (void)_requestAllTextWithCompletionHandler:(void(^)(NSArray<_WKTextRun *> *))completionHandler WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 - (void)_requestTargetedElementInfo:(_WKTargetedElementRequest *)request completionHandler:(void(^)(NSArray<_WKTargetedElementInfo *> *))completionHandler WK_API_AVAILABLE(macos(15.0), ios(18.0), visionos(2.0));
 

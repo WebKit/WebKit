@@ -2367,6 +2367,8 @@ private:
     void bindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier, Vector<uint8_t>, CompletionHandler<void(Vector<uint8_t>, int)>&&);
     void updateRemotePageAccessibilityOffset(WebCore::FrameIdentifier, WebCore::IntPoint);
 
+    void requestAllTextAndRects(CompletionHandler<void(Vector<std::pair<String, WebCore::FloatRect>>&&)>&&);
+
     void requestTargetedElement(WebCore::TargetedElementRequest&&, CompletionHandler<void(Vector<WebCore::TargetedElementInfo>&&)>&&);
     void requestAllTargetableElements(float, CompletionHandler<void(Vector<Vector<WebCore::TargetedElementInfo>>&&)>&&);
 

@@ -9762,6 +9762,15 @@ void WebPage::frameTextForTesting(WebCore::FrameIdentifier frameID, CompletionHa
     completionHandler(webFrame->frameTextForTesting(includeSubframes));
 }
 
+void WebPage::requestAllTextAndRects(CompletionHandler<void(Vector<std::pair<String, WebCore::FloatRect>>&&)>&& completion)
+{
+    RefPtr page = corePage();
+    if (!page)
+        return completion({ });
+
+    completion(TextExtraction::extractAllTextAndRects(*page));
+}
+
 void WebPage::requestTargetedElement(TargetedElementRequest&& request, CompletionHandler<void(Vector<WebCore::TargetedElementInfo>&&)>&& completion)
 {
     RefPtr page = corePage();

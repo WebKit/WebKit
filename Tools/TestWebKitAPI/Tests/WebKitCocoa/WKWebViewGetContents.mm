@@ -37,9 +37,11 @@
 #import <WebKit/NSAttributedStringPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
 #import <WebKit/_WKResourceLoadInfo.h>
+#import <WebKit/_WKTextRun.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
+#import <wtf/text/WTFString.h>
 
 @implementation WKWebView (WKWebViewGetContents)
 
@@ -55,7 +57,21 @@
     return result.autorelease();
 }
 
+- (NSArray<_WKTextRun *> *)_allTextRuns
+{
+    __block bool finished = false;
+    __block RetainPtr<NSArray<_WKTextRun *>> result;
+    [self _requestAllTextWithCompletionHandler:^(NSArray<_WKTextRun *> *textRuns) {
+        result = textRuns;
+        finished = true;
+    }];
+    TestWebKitAPI::Util::run(&finished);
+    return result.autorelease();
+}
+
 @end
+
+namespace TestWebKitAPI {
 
 TEST(WKWebView, GetContentsShouldReturnString)
 {
@@ -71,7 +87,7 @@ TEST(WKWebView, GetContentsShouldReturnString)
         finished = true;
     }];
 
-    TestWebKitAPI::Util::run(&finished);
+    Util::run(&finished);
 }
 
 TEST(WKWebView, GetContentsShouldFailWhenClosingPage)
@@ -88,7 +104,7 @@ TEST(WKWebView, GetContentsShouldFailWhenClosingPage)
 
     [webView _close];
 
-    TestWebKitAPI::Util::run(&finished);
+    Util::run(&finished);
 }
 
 TEST(WKWebView, GetContentsOfAllFramesShouldReturnString)
@@ -104,7 +120,7 @@ TEST(WKWebView, GetContentsOfAllFramesShouldReturnString)
         finished = true;
     }];
 
-    TestWebKitAPI::Util::run(&finished);
+    Util::run(&finished);
 }
 
 TEST(WKWebView, GetContentsShouldReturnAttributedString)
@@ -153,7 +169,7 @@ TEST(WKWebView, GetContentsShouldReturnAttributedString)
         finished = true;
     }];
 
-    TestWebKitAPI::Util::run(&finished);
+    Util::run(&finished);
 }
 
 TEST(WKWebView, GetContentsWithOpticallySizedFontShouldReturnAttributedString)
@@ -192,7 +208,7 @@ TEST(WKWebView, GetContentsWithOpticallySizedFontShouldReturnAttributedString)
         finished = true;
     }];
 
-    TestWebKitAPI::Util::run(&finished);
+    Util::run(&finished);
 }
 
 TEST(WKWebView, AttributedStringAccessibilityLabel)
@@ -226,7 +242,7 @@ TEST(WKWebView, AttributedStringAccessibilityLabel)
         finished = true;
     }];
 
-    TestWebKitAPI::Util::run(&finished);
+    Util::run(&finished);
 }
 
 TEST(WKWebView, AttributedStringAttributeTypes)
@@ -270,7 +286,7 @@ TEST(WKWebView, AttributedStringAttributeTypes)
         finished = true;
     }];
 
-    TestWebKitAPI::Util::run(&finished);
+    Util::run(&finished);
 }
 
 TEST(WKWebView, AttributedStringFromTable)
@@ -471,7 +487,7 @@ TEST(WKWebView, AttributedStringWithoutNetworkLoads)
         resultError = error;
         done = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    Util::run(&done);
 
     EXPECT_NULL(resultError);
 
@@ -504,7 +520,7 @@ TEST(WKWebView, AttributedStringWithSourceApplicationBundleID)
         resultError = error;
         done = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    Util::run(&done);
 
     EXPECT_NULL(resultError);
 
@@ -530,7 +546,7 @@ TEST(WKWebView, TextWithWebFontAsAttributedString)
         result = string;
         done = true;
     }];
-    TestWebKitAPI::Util::run(&done);
+    Util::run(&done);
 
     __auto_type whitespaceSet = NSCharacterSet.whitespaceAndNewlineCharacterSet;
     __block Vector<std::pair<RetainPtr<NSString>, WebCore::CocoaFont *>, 3> substringsAndFonts;
@@ -567,7 +583,7 @@ TEST(WKWebView, AttributedStringAndCDATASection)
         finished = true;
     }];
 
-    TestWebKitAPI::Util::run(&finished);
+    Util::run(&finished);
 }
 
 TEST(WKWebView, AttributedStringIncludesUserSelectNoneContent)
@@ -578,3 +594,59 @@ TEST(WKWebView, AttributedStringIncludesUserSelectNoneContent)
     RetainPtr string = [[webView _contentsAsAttributedString] string];
     EXPECT_WK_STREQ("Hello", [string stringByTrimmingCharactersInSet:NSCharacterSet.newlineCharacterSet]);
 }
+
+TEST(WKWebView, RequestAllTextRunsWithSubframes)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 400, 300)]);
+    [webView synchronouslyLoadTestPageNamed:@"subframes"];
+
+    Util::waitForConditionWithLogging([&] -> bool {
+        return [[webView objectByEvaluatingJavaScript:@"subframeLoaded"] boolValue];
+    }, 5, @"Timed out waiting for subframes to load.");
+
+    RetainPtr allTextRuns = [webView _allTextRuns];
+
+    Vector<std::pair<const char*, CGRect>> expectedResults {
+#if PLATFORM(MAC)
+        { "Here's to the crazy", CGRectMake(0, 18, 298, 33) },
+        { "ones.", CGRectMake(0, 18, 298, 33) },
+        { "The round", CGRectMake(9, 84, 160, 64) },
+        { "pegs in", CGRectMake(9, 84, 160, 64) },
+        { "the square", CGRectMake(9, 84, 160, 64) },
+        { "holes.", CGRectMake(9, 84, 160, 64) },
+        { "The", CGRectMake(18, 157, 192, 96) },
+        { "ones", CGRectMake(18, 157, 192, 96) },
+        { "who", CGRectMake(18, 157, 192, 96) },
+        { "see", CGRectMake(18, 157, 192, 96) },
+        { "things", CGRectMake(18, 157, 192, 96) },
+        { "differently.", CGRectMake(18, 157, 192, 96) },
+#else
+        { "Here's to the crazy ones.", CGRectMake(0, 18, 394, 17) },
+        { "The round", CGRectMake(9, 68, 176, 68) },
+        { "pegs in the", CGRectMake(9, 68, 176, 68) },
+        { "square", CGRectMake(9, 68, 176, 68) },
+        { "holes.", CGRectMake(9, 68, 176, 68) },
+        { "The", CGRectMake(18, 145, 192, 102) },
+        { "ones", CGRectMake(18, 145, 192, 102) },
+        { "who", CGRectMake(18, 145, 192, 102) },
+        { "see", CGRectMake(18, 145, 192, 102) },
+        { "things", CGRectMake(18, 145, 192, 102) },
+        { "differently.", CGRectMake(18, 145, 192, 102) },
+#endif
+    };
+
+    EXPECT_EQ([allTextRuns count], expectedResults.size());
+
+    for (size_t i = 0; i < expectedResults.size(); ++i) {
+        auto [expectedString, expectedRect] = expectedResults[i];
+        RetainPtr textRun = [allTextRuns objectAtIndex:i];
+        CGRect rectInWebView = [textRun rectInWebView];
+        EXPECT_EQ(expectedRect.origin.x, rectInWebView.origin.x);
+        EXPECT_EQ(expectedRect.origin.y, rectInWebView.origin.y);
+        EXPECT_EQ(expectedRect.size.width, rectInWebView.size.width);
+        EXPECT_EQ(expectedRect.size.height, rectInWebView.size.height);
+        EXPECT_WK_STREQ(expectedString, [textRun text]);
+    }
+}
+
+} // namespace TestWebKitAPI

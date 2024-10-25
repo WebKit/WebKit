@@ -25,29 +25,24 @@
 
 #pragma once
 
-#include "TextExtractionTypes.h"
-#include <wtf/Expected.h>
+#include "config.h"
+#include "APITextRun.h"
 
-namespace WebCore {
+#include "PageClient.h"
 
-class Element;
-class FloatRect;
-class LocalFrame;
-class Page;
-enum class ExceptionCode : uint8_t;
+namespace API {
 
-namespace TextExtraction {
+WebCore::FloatRect TextRun::rectInWebView() const
+{
+    RefPtr page = m_page.get();
+    if (!page)
+        return { };
 
-WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
-WEBCORE_EXPORT Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page&);
+    RefPtr client = page->protectedPageClient();
+    if (!client)
+        return { };
 
-struct RenderedText {
-    String textWithReplacedContent;
-    String textWithoutReplacedContent;
-    bool hasLargeReplacedDescendant { false };
-};
+    return client->rootViewToWebView(m_rectInRootView);
+}
 
-RenderedText extractRenderedText(Element&);
-
-} // namespace TextExtraction
-} // namespace WebCore
+} // namespace API

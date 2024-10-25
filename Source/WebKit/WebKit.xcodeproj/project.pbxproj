@@ -2533,6 +2533,8 @@
 		F416F1C02C5C3E360085D8DD /* WKScrollViewTrackingTapGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F416F1BE2C5C3E360085D8DD /* WKScrollViewTrackingTapGestureRecognizer.h */; };
 		F41795A62AC61B78007F5F12 /* CompactContextMenuPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = F41795A42AC619A2007F5F12 /* CompactContextMenuPresenter.h */; };
 		F4299507270E234D0032298B /* StreamMessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = F4299506270E234C0032298B /* StreamMessageReceiver.h */; };
+		F42A04712CA1B328000D3118 /* _WKTextRunInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = F42A04702CA1B328000D3118 /* _WKTextRunInternal.h */; };
+		F42A04722CA1B3FC000D3118 /* _WKTextRun.h in Headers */ = {isa = PBXBuildFile; fileRef = F42A046C2CA1B2A4000D3118 /* _WKTextRun.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F42D634122A0EFDF00D2FB3A /* WebAutocorrectionData.h in Headers */ = {isa = PBXBuildFile; fileRef = F42D633F22A0EFD300D2FB3A /* WebAutocorrectionData.h */; };
 		F430E9422247335F005FE053 /* WebsiteMetaViewportPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = F430E941224732A9005FE053 /* WebsiteMetaViewportPolicy.h */; };
 		F430E94422473DFF005FE053 /* WebContentMode.h in Headers */ = {isa = PBXBuildFile; fileRef = F430E94322473DB8005FE053 /* WebContentMode.h */; };
@@ -2574,6 +2576,7 @@
 		F499BAA32947C1A4001241D6 /* RevealFocusedElementDeferrer.h in Headers */ = {isa = PBXBuildFile; fileRef = F499BAA12947C1A4001241D6 /* RevealFocusedElementDeferrer.h */; };
 		F49DC6FE2B76A89600816E73 /* WKTextExtractionItem.h in Headers */ = {isa = PBXBuildFile; fileRef = F49DC6FD2B76A88F00816E73 /* WKTextExtractionItem.h */; };
 		F49EE2212AE87F41003E3C34 /* CoreIPCDate.h in Headers */ = {isa = PBXBuildFile; fileRef = F49EE2202AE87F41003E3C34 /* CoreIPCDate.h */; };
+		F4A0D3BF2CC2D276008A45B0 /* APITextRun.h in Headers */ = {isa = PBXBuildFile; fileRef = F4A0D3BD2CC2D088008A45B0 /* APITextRun.h */; };
 		F4A30A6D2B08255B004E1F24 /* CoreIPCLocale.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4A30A6C2B08254C004E1F24 /* CoreIPCLocale.mm */; };
 		F4ABDB632B018C4B00C5471A /* CoreIPCError.h in Headers */ = {isa = PBXBuildFile; fileRef = F4ABDB602B018C1A00C5471A /* CoreIPCError.h */; };
 		F4ABDB662B01C68F00C5471A /* CoreIPCError.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4ABDB622B018C1B00C5471A /* CoreIPCError.mm */; };
@@ -8190,6 +8193,9 @@
 		F41795A52AC619A2007F5F12 /* CompactContextMenuPresenter.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = CompactContextMenuPresenter.mm; path = ios/CompactContextMenuPresenter.mm; sourceTree = "<group>"; };
 		F425374F2AF9A25A00873864 /* InteractionInformationRequest.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; name = InteractionInformationRequest.serialization.in; path = ios/InteractionInformationRequest.serialization.in; sourceTree = "<group>"; };
 		F4299506270E234C0032298B /* StreamMessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamMessageReceiver.h; sourceTree = "<group>"; };
+		F42A046C2CA1B2A4000D3118 /* _WKTextRun.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextRun.h; sourceTree = "<group>"; };
+		F42A046D2CA1B2A4000D3118 /* _WKTextRun.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextRun.mm; sourceTree = "<group>"; };
+		F42A04702CA1B328000D3118 /* _WKTextRunInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextRunInternal.h; sourceTree = "<group>"; };
 		F42D633F22A0EFD300D2FB3A /* WebAutocorrectionData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebAutocorrectionData.h; path = ios/WebAutocorrectionData.h; sourceTree = "<group>"; };
 		F42FC8702B7ADA5800BAF8D6 /* CoreIPCNSURLProtectionSpace.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CoreIPCNSURLProtectionSpace.serialization.in; sourceTree = "<group>"; };
 		F430E941224732A9005FE053 /* WebsiteMetaViewportPolicy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebsiteMetaViewportPolicy.h; sourceTree = "<group>"; };
@@ -8259,6 +8265,8 @@
 		F49DC6FD2B76A88F00816E73 /* WKTextExtractionItem.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKTextExtractionItem.h; sourceTree = "<group>"; };
 		F49EE21F2AE87ED7003E3C34 /* CoreIPCDate.serialization.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = CoreIPCDate.serialization.in; sourceTree = "<group>"; };
 		F49EE2202AE87F41003E3C34 /* CoreIPCDate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CoreIPCDate.h; sourceTree = "<group>"; };
+		F4A0D3BD2CC2D088008A45B0 /* APITextRun.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = APITextRun.h; sourceTree = "<group>"; };
+		F4A0D3C02CC2D587008A45B0 /* APITextRun.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = APITextRun.cpp; sourceTree = "<group>"; };
 		F4A30A6C2B08254C004E1F24 /* CoreIPCLocale.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCLocale.mm; sourceTree = "<group>"; };
 		F4A318A7291EFCF600F7A903 /* RemoteMediaPlayerState.serialization.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = RemoteMediaPlayerState.serialization.in; sourceTree = "<group>"; };
 		F4A7CE842667EB4E00228685 /* TextRecognitionUpdateResult.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextRecognitionUpdateResult.h; sourceTree = "<group>"; };
@@ -11607,6 +11615,9 @@
 				9B02E0CE235EBB14004044B2 /* _WKTextManipulationToken.mm */,
 				07F327F02CB085A4006D9918 /* _WKTextPreview.h */,
 				07F327F12CB085A4006D9918 /* _WKTextPreview.mm */,
+				F42A046C2CA1B2A4000D3118 /* _WKTextRun.h */,
+				F42A046D2CA1B2A4000D3118 /* _WKTextRun.mm */,
+				F42A04702CA1B328000D3118 /* _WKTextRunInternal.h */,
 				2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */,
 				2D6B371A18A967AD0042AE80 /* _WKThumbnailView.mm */,
 				2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */,
@@ -14398,6 +14409,8 @@
 				F454C12D2BA3AFFD00871551 /* APITargetedElementInfo.h */,
 				F4500D882BE02D6A0081A5F1 /* APITargetedElementRequest.cpp */,
 				F4500D872BE02D6A0081A5F1 /* APITargetedElementRequest.h */,
+				F4A0D3C02CC2D587008A45B0 /* APITextRun.cpp */,
+				F4A0D3BD2CC2D088008A45B0 /* APITextRun.h */,
 				939EF87129D1181600F23AEE /* APIUIClient.cpp */,
 				1A4D664718A2D91A00D82E21 /* APIUIClient.h */,
 				7CB365AF1D31DD1E007158CA /* APIUserInitiatedAction.h */,
@@ -16190,6 +16203,8 @@
 				9B02E0CC235EB957004044B2 /* _WKTextManipulationItem.h in Headers */,
 				9B02E0D7235FC94F004044B2 /* _WKTextManipulationToken.h in Headers */,
 				07F327F22CB09B74006D9918 /* _WKTextPreview.h in Headers */,
+				F42A04722CA1B3FC000D3118 /* _WKTextRun.h in Headers */,
+				F42A04712CA1B328000D3118 /* _WKTextRunInternal.h in Headers */,
 				2D6B371B18A967AD0042AE80 /* _WKThumbnailView.h in Headers */,
 				2DACE64E18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h in Headers */,
 				99E7189C21F79D9E0055E975 /* _WKTouchEventGenerator.h in Headers */,
@@ -16327,6 +16342,7 @@
 				1AFDE6621954E9B100C48FFA /* APISessionState.h in Headers */,
 				F454C1302BA3AFFD00871551 /* APITargetedElementInfo.h in Headers */,
 				F4500D8A2BE02D6A0081A5F1 /* APITargetedElementRequest.h in Headers */,
+				F4A0D3BF2CC2D276008A45B0 /* APITextRun.h in Headers */,
 				1A4D664818A2D91A00D82E21 /* APIUIClient.h in Headers */,
 				BCDB86C11200FB97007254BE /* APIURL.h in Headers */,
 				BCE2315D122C30CA00D5C35A /* APIURLRequest.h in Headers */,

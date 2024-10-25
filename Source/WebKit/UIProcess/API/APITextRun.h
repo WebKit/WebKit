@@ -25,29 +25,36 @@
 
 #pragma once
 
-#include "TextExtractionTypes.h"
-#include <wtf/Expected.h>
+#include "APIObject.h"
 
-namespace WebCore {
+#include "WebPageProxy.h"
+#include <WebCore/FloatRect.h>
+#include <wtf/WeakPtr.h>
+#include <wtf/text/WTFString.h>
 
-class Element;
-class FloatRect;
-class LocalFrame;
-class Page;
-enum class ExceptionCode : uint8_t;
+namespace API {
 
-namespace TextExtraction {
+class TextRun final : public ObjectImpl<Object::Type::TextRun> {
+public:
+    static Ref<TextRun> create(WebKit::WebPageProxy& page, WTF::String&& string, WebCore::FloatRect&& rect)
+    {
+        return adoptRef(*new TextRun(page, WTFMove(string), WTFMove(rect)));
+    }
 
-WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
-WEBCORE_EXPORT Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page&);
+    const WTF::String& string() const { return m_string; }
+    WebCore::FloatRect rectInWebView() const;
 
-struct RenderedText {
-    String textWithReplacedContent;
-    String textWithoutReplacedContent;
-    bool hasLargeReplacedDescendant { false };
+private:
+    explicit TextRun(WebKit::WebPageProxy& page, WTF::String&& string, WebCore::FloatRect&& rect)
+        : m_page { page }
+        , m_string { WTFMove(string) }
+        , m_rectInRootView { WTFMove(rect) }
+    {
+    }
+
+    WeakPtr<WebKit::WebPageProxy> m_page;
+    WTF::String m_string;
+    WebCore::FloatRect m_rectInRootView;
 };
 
-RenderedText extractRenderedText(Element&);
-
-} // namespace TextExtraction
-} // namespace WebCore
+} // namespace API

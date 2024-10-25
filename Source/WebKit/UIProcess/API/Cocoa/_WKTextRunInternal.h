@@ -25,29 +25,20 @@
 
 #pragma once
 
-#include "TextExtractionTypes.h"
-#include <wtf/Expected.h>
+#import "APITextRun.h"
+#import "WKObject.h"
+#import "_WKTextRun.h"
 
-namespace WebCore {
+namespace WebKit {
 
-class Element;
-class FloatRect;
-class LocalFrame;
-class Page;
-enum class ExceptionCode : uint8_t;
-
-namespace TextExtraction {
-
-WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
-WEBCORE_EXPORT Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page&);
-
-struct RenderedText {
-    String textWithReplacedContent;
-    String textWithoutReplacedContent;
-    bool hasLargeReplacedDescendant { false };
+template<> struct WrapperTraits<API::TextRun> {
+    using WrapperClass = _WKTextRun;
 };
 
-RenderedText extractRenderedText(Element&);
+} // namespace WebKit
 
-} // namespace TextExtraction
-} // namespace WebCore
+@interface _WKTextRun () <WKObject> {
+@package
+    API::ObjectStorage<API::TextRun> _textRun;
+}
+@end

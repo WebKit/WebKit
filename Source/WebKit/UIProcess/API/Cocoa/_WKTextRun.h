@@ -23,31 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import <Foundation/Foundation.h>
+#import <WebKit/WKFoundation.h>
 
-#include "TextExtractionTypes.h"
-#include <wtf/Expected.h>
+NS_ASSUME_NONNULL_BEGIN
 
-namespace WebCore {
+NS_SWIFT_SENDABLE
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+@interface _WKTextRun : NSObject
 
-class Element;
-class FloatRect;
-class LocalFrame;
-class Page;
-enum class ExceptionCode : uint8_t;
+@property (nonatomic, readonly, copy) NSString *text;
+@property (nonatomic, readonly) CGRect rectInWebView;
 
-namespace TextExtraction {
+@end
 
-WEBCORE_EXPORT Item extractItem(std::optional<WebCore::FloatRect>&& collectionRectInRootView, Page&);
-WEBCORE_EXPORT Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page&);
-
-struct RenderedText {
-    String textWithReplacedContent;
-    String textWithoutReplacedContent;
-    bool hasLargeReplacedDescendant { false };
-};
-
-RenderedText extractRenderedText(Element&);
-
-} // namespace TextExtraction
-} // namespace WebCore
+NS_ASSUME_NONNULL_END

@@ -90,6 +90,7 @@
 #import "_WKResourceLoadStatisticsThirdPartyInternal.h"
 #import "_WKTargetedElementInfoInternal.h"
 #import "_WKTargetedElementRequestInternal.h"
+#import "_WKTextRunInternal.h"
 #import "_WKUserContentWorldInternal.h"
 #import "_WKUserInitiatedActionInternal.h"
 #import "_WKUserStyleSheetInternal.h"
@@ -385,6 +386,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     case Type::TargetedElementRequest:
         wrapper = [_WKTargetedElementRequest alloc];
+        break;
+
+    case Type::TextRun:
+        wrapper = [_WKTextRun alloc];
         break;
 
     case Type::UserInitiatedAction:

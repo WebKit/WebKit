@@ -75,6 +75,7 @@ class ResourceLoadClient;
 class SerializedScriptValue;
 class TargetedElementInfo;
 class TargetedElementRequest;
+class TextRun;
 class UIClient;
 class URL;
 class URLRequest;
@@ -2451,6 +2452,8 @@ public:
     void resetMediaCapability();
     void updateMediaCapability();
 #endif
+
+    void requestAllTextAndRects(CompletionHandler<void(Vector<Ref<API::TextRun>>&&)>&&);
 
     void requestTargetedElement(const API::TargetedElementRequest&, CompletionHandler<void(const Vector<Ref<API::TargetedElementInfo>>&)>&&);
     void requestAllTargetableElements(float, CompletionHandler<void(Vector<Vector<Ref<API::TargetedElementInfo>>>&&)>&&);

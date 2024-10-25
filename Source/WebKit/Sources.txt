@@ -483,6 +483,7 @@ UIProcess/API/APIOpenPanelParameters.cpp
 UIProcess/API/APISessionState.cpp
 UIProcess/API/APITargetedElementInfo.cpp
 UIProcess/API/APITargetedElementRequest.cpp
+UIProcess/API/APITextRun.cpp
 UIProcess/API/APIUIClient.cpp
 UIProcess/API/APIUserScript.cpp
 UIProcess/API/APIUserStyleSheet.cpp

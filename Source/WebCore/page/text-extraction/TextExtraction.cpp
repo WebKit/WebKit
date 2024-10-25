@@ -33,6 +33,7 @@
 #include "FrameSelection.h"
 #include "HTMLBodyElement.h"
 #include "HTMLButtonElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -622,6 +623,62 @@ RenderedText extractRenderedText(Element& element)
     }
 
     return { textWithReplacedContent.toString(), textWithoutReplacedContent.toString(), hasLargeReplacedDescendant };
+}
+
+static Vector<std::pair<String, FloatRect>> extractAllTextAndRectsRecursive(Document& document)
+{
+    RefPtr bodyElement = document.body();
+    if (!bodyElement)
+        return { };
+
+    RefPtr view = document.view();
+    if (!view)
+        return { };
+
+    ListHashSet<Ref<HTMLFrameOwnerElement>> frameOwners;
+    Vector<std::pair<String, FloatRect>> result;
+    auto fullRange = makeRangeSelectingNodeContents(*bodyElement);
+    for (TextIterator iterator { fullRange, TextIteratorBehavior::EntersTextControls }; !iterator.atEnd(); iterator.advance()) {
+        RefPtr node = iterator.node();
+        if (!node)
+            continue;
+
+        if (RefPtr frameOwner = dynamicDowncast<HTMLFrameOwnerElement>(*node))
+            frameOwners.add(frameOwner.releaseNonNull());
+
+        auto trimmedText = iterator.text().trim(isASCIIWhitespace<UChar>);
+        if (trimmedText.isEmpty())
+            continue;
+
+        CheckedPtr renderer = node->renderer();
+        if (!renderer)
+            continue;
+
+        result.append({ trimmedText.toString(), view->contentsToRootView(renderer->absoluteBoundingBoxRect()) });
+    }
+
+    for (auto& frameOwner : frameOwners) {
+        RefPtr contentDocument = frameOwner->contentDocument();
+        if (!contentDocument)
+            continue;
+
+        result.appendVector(extractAllTextAndRectsRecursive(*contentDocument));
+    }
+
+    return result;
+}
+
+Vector<std::pair<String, FloatRect>> extractAllTextAndRects(Page& page)
+{
+    RefPtr mainFrame = dynamicDowncast<LocalFrame>(page.mainFrame());
+    if (!mainFrame)
+        return { };
+
+    RefPtr document = mainFrame->document();
+    if (!document)
+        return { };
+
+    return extractAllTextAndRectsRecursive(*document);
 }
 
 } // namespace TextExtractor

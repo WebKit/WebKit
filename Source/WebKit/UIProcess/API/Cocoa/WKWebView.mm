@@ -134,6 +134,7 @@
 #import "_WKTextManipulationItem.h"
 #import "_WKTextManipulationToken.h"
 #import "_WKTextPreview.h"
+#import "_WKTextRunInternal.h"
 #import "_WKVisitedLinkStoreInternal.h"
 #import "_WKWarningView.h"
 #import <WebCore/AppHighlight.h>
@@ -3288,6 +3289,19 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
 #if ENABLE(APP_HIGHLIGHTS)
     _page->createAppHighlightInSelectedRange(newGroup ? WebCore::CreateNewGroupForHighlight::Yes : WebCore::CreateNewGroupForHighlight::No, originatedInApp ? WebCore::HighlightRequestOriginatedInApp::Yes : WebCore::HighlightRequestOriginatedInApp::No);
 #endif
+}
+
+- (void)_requestAllTextWithCompletionHandler:(void(^)(NSArray<_WKTextRun *> *))completionHandler
+{
+    _page->requestAllTextAndRects([weakSelf = WeakObjCPtr<WKWebView>(self), completion = makeBlockPtr(completionHandler)](auto&& textRuns) {
+        auto strongSelf = weakSelf.get();
+        if (!strongSelf)
+            return completion(@[ ]);
+
+        completion(createNSArray(WTFMove(textRuns), [](auto&& textRun) {
+            return wrapper(textRun);
+        }).get());
+    });
 }
 
 - (void)_requestTargetedElementInfo:(_WKTargetedElementRequest *)request completionHandler:(void(^)(NSArray<_WKTargetedElementInfo *> *))completion
