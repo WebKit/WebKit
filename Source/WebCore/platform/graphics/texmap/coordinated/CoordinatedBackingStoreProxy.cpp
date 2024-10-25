@@ -44,12 +44,6 @@ static uint32_t generateTileID()
     return ++id;
 }
 
-static IntPoint innerBottomRight(const IntRect& rect)
-{
-    // Actually, the rect does not contain rect.maxX(). Refer to IntRect::contain.
-    return IntPoint(rect.maxX() - 1, rect.maxY() - 1);
-}
-
 CoordinatedBackingStoreProxy::CoordinatedBackingStoreProxy(CoordinatedBackingStoreProxyClient& client, float contentsScale)
     : m_client(client)
     , m_contentsScale(contentsScale)
@@ -126,25 +120,20 @@ void CoordinatedBackingStoreProxy::invalidateRegion(const Vector<IntRect, 1>& di
 {
     for (const auto& contentsDirtyRect : dirtyRegion) {
         IntRect dirtyRect(mapFromContents(contentsDirtyRect));
-        IntRect keepRectFitToTileSize = tileRectForPosition(tilePositionForPoint(m_keepRect.location()));
-        keepRectFitToTileSize.unite(tileRectForPosition(tilePositionForPoint(innerBottomRight(m_keepRect))));
+        IntRect keepRectFitToTileSize = tileRectForPosition(tilePositionForPoint(m_keepRect.minXMinYCorner()));
+        keepRectFitToTileSize.unite(tileRectForPosition(tilePositionForPoint(m_keepRect.maxXMaxYCorner() - IntSize(1, 1))));
 
         // Only iterate on the part of the rect that we know we might have tiles.
         IntRect coveredDirtyRect = intersection(dirtyRect, keepRectFitToTileSize);
-        auto topLeft = tilePositionForPoint(coveredDirtyRect.location());
-        auto bottomRight = tilePositionForPoint(innerBottomRight(coveredDirtyRect));
+        forEachTilePositionInRect(coveredDirtyRect, [&](IntPoint&& position) {
+            auto it = m_tiles.find(position);
+            if (it == m_tiles.end())
+                return;
 
-        for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
-            for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
-                auto it = m_tiles.find(IntPoint(x, y));
-                if (it == m_tiles.end())
-                    continue;
-
-                // Pass the full rect to each tile as coveredDirtyRect might not
-                // contain them completely and we don't want partial tile redraws.
-                it->value.addDirtyRect(dirtyRect);
-            }
-        }
+            // Pass the full rect to each tile as coveredDirtyRect might not
+            // contain them completely and we don't want partial tile redraws.
+            it->value.addDirtyRect(dirtyRect);
+        });
     }
 }
 
@@ -244,26 +233,21 @@ void CoordinatedBackingStoreProxy::createOrDestroyTiles(const IntRect& visibleRe
     // inside the visible rect.
     Vector<IntPoint> tilesToCreate;
     unsigned requiredTileCount = 0;
-    auto topLeft = tilePositionForPoint(m_coverRect.location());
-    auto bottomRight = tilePositionForPoint(innerBottomRight(m_coverRect));
-    for (int y = topLeft.y(); y <= bottomRight.y(); ++y) {
-        for (int x = topLeft.x(); x <= bottomRight.x(); ++x) {
-            IntPoint position(x, y);
-            if (m_tiles.contains(position))
-                continue;
+    forEachTilePositionInRect(m_coverRect, [&](IntPoint&& position) {
+        if (m_tiles.contains(position))
+            return;
 
-            ++requiredTileCount;
-            double distance = tileDistance(position);
-            if (distance > shortestDistance)
-                continue;
+        ++requiredTileCount;
+        double distance = tileDistance(position);
+        if (distance > shortestDistance)
+            return;
 
-            if (distance < shortestDistance) {
-                tilesToCreate.clear();
-                shortestDistance = distance;
-            }
-            tilesToCreate.append(position);
+        if (distance < shortestDistance) {
+            tilesToCreate.clear();
+            shortestDistance = distance;
         }
-    }
+        tilesToCreate.append(position);
+    });
 
     if (requiredTileCount) {
         requiredTileCount -= tilesToCreate.size();
@@ -379,6 +363,16 @@ IntPoint CoordinatedBackingStoreProxy::tilePositionForPoint(const IntPoint& poin
     int x = point.x() / m_tileSize.width();
     int y = point.y() / m_tileSize.height();
     return IntPoint(std::max(x, 0), std::max(y, 0));
+}
+
+void CoordinatedBackingStoreProxy::forEachTilePositionInRect(const IntRect& rect, Function<void(IntPoint&&)>&& callback)
+{
+    auto topLeft = tilePositionForPoint(rect.minXMinYCorner());
+    auto innerBottomRight = tilePositionForPoint(rect.maxXMaxYCorner() - IntSize(1, 1));
+    for (int y = topLeft.y(); y <= innerBottomRight.y(); ++y) {
+        for (int x = topLeft.x(); x <= innerBottomRight.x(); ++x)
+            callback(IntPoint(x, y));
+    }
 }
 
 } // namespace WebCore

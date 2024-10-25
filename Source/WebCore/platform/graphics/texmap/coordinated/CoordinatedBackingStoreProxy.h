@@ -105,6 +105,7 @@ private:
     IntRect mapFromContents(const IntRect&) const;
     IntRect tileRectForPosition(const IntPoint&) const;
     IntPoint tilePositionForPoint(const IntPoint&) const;
+    void forEachTilePositionInRect(const IntRect&, Function<void(IntPoint&&)>&&);
 
     CoordinatedBackingStoreProxyClient& m_client;
 
