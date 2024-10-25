@@ -368,6 +368,8 @@ fast/canvas/offscreen-scaling.html [ Skip ]
 fast/canvas/offscreen-toggle-display.html [ Skip ]
 fast/canvas/offscreen-visibility-change.html [ Skip ]
 fast/images/protected-image-queue.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/context-lost-restored.html [ Skip ]
+webgl/2.0.y/conformance/offscreencanvas/context-lost.html [ Skip ]
 webgl/offscreen-webgl-errors-to-console.html [ Skip ]
 webgl/webgl-worker.html [ Skip ]
 
