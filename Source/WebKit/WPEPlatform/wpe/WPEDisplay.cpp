@@ -59,6 +59,7 @@ struct _WPEDisplayPrivate {
     HashMap<String, bool> extensionsMap;
     GRefPtr<WPEBufferDMABufFormats> preferredDMABufFormats;
     GRefPtr<WPEKeymap> keymap;
+    GRefPtr<WPESettings> settings;
 };
 
 WEBKIT_DEFINE_ABSTRACT_TYPE(WPEDisplay, wpe_display, G_TYPE_OBJECT)
@@ -325,6 +326,25 @@ WPEKeymap* wpe_display_get_keymap(WPEDisplay* display, GError** error)
     }
 
     return wpeDisplayClass->get_keymap(display, error);
+}
+
+/**
+ * wpe_display_get_settings:
+ * @display: a #WPEDisplay
+ *
+ * Get the #WPESettings of @display
+ *
+ * Returns: (transfer none): a #WPESettings
+ */
+WPESettings* wpe_display_get_settings(WPEDisplay* display)
+{
+    g_return_val_if_fail(WPE_IS_DISPLAY(display), nullptr);
+
+    auto* priv = display->priv;
+    if (!priv->settings)
+        priv->settings = adoptGRef(WPE_SETTINGS(g_object_new(WPE_TYPE_SETTINGS, nullptr)));
+
+    return priv->settings.get();
 }
 
 #if USE(LIBDRM)

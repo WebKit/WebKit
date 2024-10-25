@@ -36,6 +36,7 @@
 #include <wpe/WPEInputMethodContext.h>
 #include <wpe/WPEKeymap.h>
 #include <wpe/WPEScreen.h>
+#include <wpe/WPESettings.h>
 #include <wpe/WPEView.h>
 
 G_BEGIN_DECLS
@@ -104,6 +105,8 @@ WPE_API void                    wpe_display_screen_removed                (WPEDi
 WPE_API const char             *wpe_display_get_drm_device                (WPEDisplay *display);
 WPE_API const char             *wpe_display_get_drm_render_node           (WPEDisplay *display);
 WPE_API gboolean                wpe_display_use_explicit_sync             (WPEDisplay *display);
+
+WPE_API WPESettings            *wpe_display_get_settings                  (WPEDisplay *display);
 
 G_END_DECLS
 

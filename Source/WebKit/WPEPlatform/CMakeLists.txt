@@ -31,6 +31,7 @@ set(WPEPlatform_SOURCES
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEGestureDetector.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPERectangle.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEScreen.cpp
+    ${WEBKIT_DIR}/WPEPlatform/wpe/WPESettings.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEToplevel.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEVersion.cpp
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEView.cpp
@@ -55,6 +56,7 @@ set(WPEPlatform_INSTALLED_HEADERS
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEGestureController.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPERectangle.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEScreen.h
+    ${WEBKIT_DIR}/WPEPlatform/wpe/WPESettings.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEToplevel.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/WPEView.h
     ${WEBKIT_DIR}/WPEPlatform/wpe/wpe-platform.h
