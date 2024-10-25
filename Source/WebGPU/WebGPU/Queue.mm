@@ -495,8 +495,8 @@ void Queue::clearTextureIfNeeded(const WGPUImageCopyTexture& destination, NSUInt
     if (!device)
         return;
 
-    auto& texture = fromAPI(destination.texture);
-    if (texture.isDestroyed()) {
+    Ref texture = fromAPI(destination.texture);
+    if (texture->isDestroyed()) {
         device->generateAValidationError("GPUQueue.clearTexture: destination texture is destroyed"_s);
         return;
     }
@@ -531,13 +531,13 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueue-writetexture
 
     auto dataByteSize = data.size();
-    auto& texture = fromAPI(destination.texture);
-    if (texture.isDestroyed()) {
+    Ref texture = fromAPI(destination.texture);
+    if (texture->isDestroyed()) {
         device->generateAValidationError("GPUQueue.writeTexture: destination texture is destroyed"_s);
         return;
     }
 
-    auto textureFormat = texture.format();
+    auto textureFormat = texture->format();
     if (Texture::isDepthOrStencilFormat(textureFormat)) {
         textureFormat = Texture::aspectSpecificFormat(textureFormat, destination.aspect);
         if (textureFormat == WGPUTextureFormat_Undefined) {
@@ -557,7 +557,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
         return;
 
     uint32_t blockSize = Texture::texelBlockSize(textureFormat);
-    auto logicalSize = texture.logicalMiplevelSpecificTextureExtent(destination.mipLevel);
+    auto logicalSize = texture->logicalMiplevelSpecificTextureExtent(destination.mipLevel);
     auto widthForMetal = logicalSize.width < destination.origin.x ? 0 : std::min(size.width, logicalSize.width - destination.origin.x);
     if (!widthForMetal)
         return;
@@ -567,9 +567,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
 
     NSUInteger bytesPerRow = dataLayout.bytesPerRow;
     if (bytesPerRow == WGPU_COPY_STRIDE_UNDEFINED)
-        bytesPerRow = std::max<uint32_t>(size.height ? (data.size() / size.height) : data.size(), Texture::bytesPerRow(textureFormat, widthForMetal, texture.sampleCount()));
+        bytesPerRow = std::max<uint32_t>(size.height ? (data.size() / size.height) : data.size(), Texture::bytesPerRow(textureFormat, widthForMetal, texture->sampleCount()));
 
-    switch (texture.dimension()) {
+    switch (texture->dimension()) {
     case WGPUTextureDimension_1D: {
         auto blockSizeTimes1DTextureLimit = checkedProduct<uint32_t>(blockSize, device->limits().maxTextureDimension1D);
         bytesPerRow = blockSizeTimes1DTextureLimit.hasOverflowed() ? bytesPerRow : std::min<uint32_t>(bytesPerRow, blockSizeTimes1DTextureLimit.value());
@@ -605,8 +605,8 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
         return;
     }
 
-    id<MTLTexture> mtlTexture = texture.texture();
-    auto textureDimension = texture.dimension();
+    id<MTLTexture> mtlTexture = texture->texture();
+    auto textureDimension = texture->dimension();
     uint32_t sliceCount = textureDimension == WGPUTextureDimension_3D ? 1 : size.depthOrArrayLayers;
     bool clearWasNeeded = false;
     for (uint32_t layer = 0; layer < sliceCount; ++layer) {
@@ -614,9 +614,9 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
         if (checkedDestinationSlice.hasOverflowed())
             return;
         NSUInteger destinationSlice = textureDimension == WGPUTextureDimension_3D ? 0 : checkedDestinationSlice.value();
-        if (!texture.previouslyCleared(destination.mipLevel, destinationSlice)) {
+        if (!texture->previouslyCleared(destination.mipLevel, destinationSlice)) {
             if (writeWillCompletelyClear(textureDimension, widthForMetal, logicalSize.width, heightForMetal, logicalSize.height, depthForMetal, logicalSize.depthOrArrayLayers))
-                texture.setPreviouslyCleared(destination.mipLevel, destinationSlice);
+                texture->setPreviouslyCleared(destination.mipLevel, destinationSlice);
             else {
                 clearWasNeeded = true;
                 clearTextureIfNeeded(destination, destinationSlice);
@@ -910,7 +910,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
     if (!temporaryBuffer)
         return;
 
-    switch (texture.dimension()) {
+    switch (texture->dimension()) {
     case WGPUTextureDimension_1D: {
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 1D texture, height and depth must be 1."
@@ -958,7 +958,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
         // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400771-copyfrombuffer?language=objc
         // "When you copy to a 2D texture, depth must be 1."
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, 1);
-        if (!widthForMetal || !heightForMetal || bytesPerRow < Texture::bytesPerRow(textureFormat, widthForMetal, texture.sampleCount()))
+        if (!widthForMetal || !heightForMetal || bytesPerRow < Texture::bytesPerRow(textureFormat, widthForMetal, texture->sampleCount()))
             return;
 
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, 0);
@@ -990,7 +990,7 @@ void Queue::writeTexture(const WGPUImageCopyTexture& destination, std::span<uint
     case WGPUTextureDimension_3D: {
         auto sourceSize = MTLSizeMake(widthForMetal, heightForMetal, depthForMetal);
         auto destinationOrigin = MTLOriginMake(destination.origin.x, destination.origin.y, destination.origin.z);
-        if (!widthForMetal || !heightForMetal || !depthForMetal || bytesPerRow < Texture::bytesPerRow(textureFormat, widthForMetal, texture.sampleCount()))
+        if (!widthForMetal || !heightForMetal || !depthForMetal || bytesPerRow < Texture::bytesPerRow(textureFormat, widthForMetal, texture->sampleCount()))
             return;
 
         [m_blitCommandEncoder
@@ -1070,14 +1070,14 @@ void wgpuQueueRelease(WGPUQueue queue)
 
 void wgpuQueueOnSubmittedWorkDone(WGPUQueue queue, WGPUQueueWorkDoneCallback callback, void* userdata)
 {
-    WebGPU::fromAPI(queue).onSubmittedWorkDone([callback, userdata](WGPUQueueWorkDoneStatus status) {
+    WebGPU::protectedFromAPI(queue)->onSubmittedWorkDone([callback, userdata](WGPUQueueWorkDoneStatus status) {
         callback(status, userdata);
     });
 }
 
 void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, WGPUQueueWorkDoneBlockCallback callback)
 {
-    WebGPU::fromAPI(queue).onSubmittedWorkDone([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUQueueWorkDoneStatus status) {
+    WebGPU::protectedFromAPI(queue)->onSubmittedWorkDone([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUQueueWorkDoneStatus status) {
         callback(status);
     });
 }
@@ -1086,21 +1086,21 @@ void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuff
 {
     Vector<std::reference_wrapper<WebGPU::CommandBuffer>> commandsToForward;
     for (auto& command : unsafeForgeSpan(commands, commandCount))
-        commandsToForward.append(WebGPU::fromAPI(command));
-    WebGPU::fromAPI(queue).submit(WTFMove(commandsToForward));
+        commandsToForward.append(WebGPU::protectedFromAPI(command));
+    WebGPU::protectedFromAPI(queue)->submit(WTFMove(commandsToForward));
 }
 
 void wgpuQueueWriteBuffer(WGPUQueue queue, WGPUBuffer buffer, uint64_t bufferOffset, std::span<uint8_t> data)
 {
-    WebGPU::fromAPI(queue).writeBuffer(WebGPU::fromAPI(buffer), bufferOffset, data);
+    WebGPU::protectedFromAPI(queue)->writeBuffer(WebGPU::protectedFromAPI(buffer), bufferOffset, data);
 }
 
 void wgpuQueueWriteTexture(WGPUQueue queue, const WGPUImageCopyTexture* destination, std::span<uint8_t> data, const WGPUTextureDataLayout* dataLayout, const WGPUExtent3D* writeSize)
 {
-    WebGPU::fromAPI(queue).writeTexture(*destination, data, *dataLayout, *writeSize);
+    WebGPU::protectedFromAPI(queue)->writeTexture(*destination, data, *dataLayout, *writeSize);
 }
 
 void wgpuQueueSetLabel(WGPUQueue queue, const char* label)
 {
-    WebGPU::fromAPI(queue).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(queue)->setLabel(WebGPU::fromAPI(label));
 }

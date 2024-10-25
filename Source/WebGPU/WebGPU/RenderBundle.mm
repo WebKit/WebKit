@@ -187,5 +187,5 @@ void wgpuRenderBundleRelease(WGPURenderBundle renderBundle)
 
 void wgpuRenderBundleSetLabel(WGPURenderBundle renderBundle, const char* label)
 {
-    WebGPU::fromAPI(renderBundle).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(renderBundle)->setLabel(WebGPU::fromAPI(label));
 }

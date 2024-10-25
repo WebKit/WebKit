@@ -143,20 +143,20 @@ void wgpuQuerySetRelease(WGPUQuerySet querySet)
 
 void wgpuQuerySetDestroy(WGPUQuerySet querySet)
 {
-    WebGPU::fromAPI(querySet).destroy();
+    WebGPU::protectedFromAPI(querySet)->destroy();
 }
 
 void wgpuQuerySetSetLabel(WGPUQuerySet querySet, const char* label)
 {
-    WebGPU::fromAPI(querySet).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(querySet)->setLabel(WebGPU::fromAPI(label));
 }
 
 uint32_t wgpuQuerySetGetCount(WGPUQuerySet querySet)
 {
-    return WebGPU::fromAPI(querySet).count();
+    return WebGPU::protectedFromAPI(querySet)->count();
 }
 
 WGPUQueryType wgpuQuerySetGetType(WGPUQuerySet querySet)
 {
-    return WebGPU::fromAPI(querySet).type();
+    return WebGPU::protectedFromAPI(querySet)->type();
 }

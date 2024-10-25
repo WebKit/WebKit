@@ -104,10 +104,10 @@ static RefPtr<ShaderModule> earlyCompileShaderModule(Device& device, std::varian
         if (hint.nextInChain)
             return nullptr;
         auto hintKey = fromAPI(hint.entryPoint);
-        auto& layout = WebGPU::fromAPI(hint.layout);
+        Ref layout = WebGPU::protectedFromAPI(hint.layout);
         hints.add(hintKey, layout);
         WGSL::PipelineLayout* convertedPipelineLayout = nullptr;
-        if (layout.numberOfBindGroupLayouts()) {
+        if (layout->numberOfBindGroupLayouts()) {
             wgslPipelineLayouts.append(ShaderModule::convertPipelineLayout(layout));
             convertedPipelineLayout = &wgslPipelineLayouts.last();
         }
@@ -1075,19 +1075,19 @@ void wgpuShaderModuleRelease(WGPUShaderModule shaderModule)
 
 void wgpuShaderModuleGetCompilationInfo(WGPUShaderModule shaderModule, WGPUCompilationInfoCallback callback, void * userdata)
 {
-    WebGPU::fromAPI(shaderModule).getCompilationInfo([callback, userdata](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+    WebGPU::protectedFromAPI(shaderModule)->getCompilationInfo([callback, userdata](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
         callback(status, &compilationInfo, userdata);
     });
 }
 
 void wgpuShaderModuleGetCompilationInfoWithBlock(WGPUShaderModule shaderModule, WGPUCompilationInfoBlockCallback callback)
 {
-    WebGPU::fromAPI(shaderModule).getCompilationInfo([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
+    WebGPU::protectedFromAPI(shaderModule)->getCompilationInfo([callback = WebGPU::fromAPI(WTFMove(callback))](WGPUCompilationInfoRequestStatus status, const WGPUCompilationInfo& compilationInfo) {
         callback(status, &compilationInfo);
     });
 }
 
 void wgpuShaderModuleSetLabel(WGPUShaderModule shaderModule, const char* label)
 {
-    WebGPU::fromAPI(shaderModule).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(shaderModule)->setLabel(WebGPU::fromAPI(label));
 }

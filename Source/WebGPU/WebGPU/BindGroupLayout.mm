@@ -728,5 +728,5 @@ void wgpuBindGroupLayoutRelease(WGPUBindGroupLayout bindGroupLayout)
 
 void wgpuBindGroupLayoutSetLabel(WGPUBindGroupLayout bindGroupLayout, const char* label)
 {
-    WebGPU::fromAPI(bindGroupLayout).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(bindGroupLayout)->setLabel(WebGPU::fromAPI(label));
 }

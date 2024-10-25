@@ -130,15 +130,15 @@ void wgpuExternalTextureRelease(WGPUExternalTexture externalTexture)
 
 void wgpuExternalTextureDestroy(WGPUExternalTexture externalTexture)
 {
-    WebGPU::fromAPI(externalTexture).destroy();
+    WebGPU::protectedFromAPI(externalTexture)->destroy();
 }
 
 void wgpuExternalTextureUndestroy(WGPUExternalTexture externalTexture)
 {
-    WebGPU::fromAPI(externalTexture).undestroy();
+    WebGPU::protectedFromAPI(externalTexture)->undestroy();
 }
 
 void wgpuExternalTextureUpdate(WGPUExternalTexture externalTexture, CVPixelBufferRef pixelBuffer)
 {
-    WebGPU::fromAPI(externalTexture).update(pixelBuffer);
+    WebGPU::protectedFromAPI(externalTexture)->update(pixelBuffer);
 }

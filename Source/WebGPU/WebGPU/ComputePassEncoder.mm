@@ -513,45 +513,45 @@ void wgpuComputePassEncoderRelease(WGPUComputePassEncoder computePassEncoder)
 
 void wgpuComputePassEncoderDispatchWorkgroups(WGPUComputePassEncoder computePassEncoder, uint32_t x, uint32_t y, uint32_t z)
 {
-    WebGPU::fromAPI(computePassEncoder).dispatch(x, y, z);
+    WebGPU::protectedFromAPI(computePassEncoder)->dispatch(x, y, z);
 }
 
 void wgpuComputePassEncoderDispatchWorkgroupsIndirect(WGPUComputePassEncoder computePassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
-    WebGPU::fromAPI(computePassEncoder).dispatchIndirect(WebGPU::fromAPI(indirectBuffer), indirectOffset);
+    WebGPU::protectedFromAPI(computePassEncoder)->dispatchIndirect(WebGPU::protectedFromAPI(indirectBuffer), indirectOffset);
 }
 
 void wgpuComputePassEncoderEnd(WGPUComputePassEncoder computePassEncoder)
 {
-    WebGPU::fromAPI(computePassEncoder).endPass();
+    WebGPU::protectedFromAPI(computePassEncoder)->endPass();
 }
 
 void wgpuComputePassEncoderInsertDebugMarker(WGPUComputePassEncoder computePassEncoder, const char* markerLabel)
 {
-    WebGPU::fromAPI(computePassEncoder).insertDebugMarker(WebGPU::fromAPI(markerLabel));
+    WebGPU::protectedFromAPI(computePassEncoder)->insertDebugMarker(WebGPU::fromAPI(markerLabel));
 }
 
 void wgpuComputePassEncoderPopDebugGroup(WGPUComputePassEncoder computePassEncoder)
 {
-    WebGPU::fromAPI(computePassEncoder).popDebugGroup();
+    WebGPU::protectedFromAPI(computePassEncoder)->popDebugGroup();
 }
 
 void wgpuComputePassEncoderPushDebugGroup(WGPUComputePassEncoder computePassEncoder, const char* groupLabel)
 {
-    WebGPU::fromAPI(computePassEncoder).pushDebugGroup(WebGPU::fromAPI(groupLabel));
+    WebGPU::protectedFromAPI(computePassEncoder)->pushDebugGroup(WebGPU::fromAPI(groupLabel));
 }
 
 void wgpuComputePassEncoderSetBindGroup(WGPUComputePassEncoder computePassEncoder, uint32_t groupIndex, WGPUBindGroup group, size_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
-    WebGPU::fromAPI(computePassEncoder).setBindGroup(groupIndex, WebGPU::fromAPI(group), unsafeForgeSpan(dynamicOffsets, dynamicOffsetCount));
+    WebGPU::protectedFromAPI(computePassEncoder)->setBindGroup(groupIndex, WebGPU::protectedFromAPI(group), unsafeForgeSpan(dynamicOffsets, dynamicOffsetCount));
 }
 
 void wgpuComputePassEncoderSetPipeline(WGPUComputePassEncoder computePassEncoder, WGPUComputePipeline pipeline)
 {
-    WebGPU::fromAPI(computePassEncoder).setPipeline(WebGPU::fromAPI(pipeline));
+    WebGPU::protectedFromAPI(computePassEncoder)->setPipeline(WebGPU::protectedFromAPI(pipeline));
 }
 
 void wgpuComputePassEncoderSetLabel(WGPUComputePassEncoder computePassEncoder, const char* label)
 {
-    WebGPU::fromAPI(computePassEncoder).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(computePassEncoder)->setLabel(WebGPU::fromAPI(label));
 }

@@ -57,7 +57,7 @@ Ref<PipelineLayout> Device::createPipelineLayout(const WGPUPipelineLayoutDescrip
                 return PipelineLayout::createInvalid(*this);
         }
         Vector<Ref<BindGroupLayout>> bindGroupLayouts(descriptorBindGroupLayouts.size(), [&](size_t i) {
-            return Ref<BindGroupLayout> { WebGPU::fromAPI(descriptorBindGroupLayouts[i]) };
+            return Ref<BindGroupLayout> { WebGPU::protectedFromAPI(descriptorBindGroupLayouts[i]) };
         });
         ShaderStage stages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute };
         for (ShaderStage shaderStage : stages) {
@@ -324,5 +324,5 @@ void wgpuPipelineLayoutRelease(WGPUPipelineLayout pipelineLayout)
 
 void wgpuPipelineLayoutSetLabel(WGPUPipelineLayout pipelineLayout, const char* label)
 {
-    WebGPU::fromAPI(pipelineLayout).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(pipelineLayout)->setLabel(WebGPU::fromAPI(label));
 }

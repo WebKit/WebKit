@@ -233,16 +233,16 @@ void RenderBundleEncoder::makeInvalid(NSString* errorString)
     m_resources = nil;
     m_lastErrorString = errorString;
     m_icbArray = nil;
-    if (m_renderPassEncoder)
-        m_renderPassEncoder->makeInvalid(errorString);
+    if (RefPtr renderPassEncoder = m_renderPassEncoder.get())
+        renderPassEncoder->makeInvalid(errorString);
 }
 
 RenderBundleEncoder::~RenderBundleEncoder() = default;
 
 id<MTLIndirectRenderCommand> RenderBundleEncoder::currentRenderCommand()
 {
-    if (m_renderPassEncoder)
-        return (id<MTLIndirectRenderCommand>)m_renderPassEncoder->renderCommandEncoder();
+    if (RefPtr renderPassEncoder = m_renderPassEncoder.get())
+        return (id<MTLIndirectRenderCommand>)renderPassEncoder->renderCommandEncoder();
 
     if (m_currentCommand)
         return m_currentCommand;
@@ -254,13 +254,14 @@ id<MTLIndirectRenderCommand> RenderBundleEncoder::currentRenderCommand()
 
 bool RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resources, id<MTLResource> mtlResource, ResourceUsageAndRenderStage *resource)
 {
-    if (m_renderPassEncoder) {
+    RefPtr renderPassEncoder = m_renderPassEncoder.get();
+    if (renderPassEncoder) {
         if (resource.renderStages && mtlResource)
-            [m_renderPassEncoder->renderCommandEncoder() useResource:mtlResource usage:resource.usage stages:resource.renderStages];
+            [renderPassEncoder->renderCommandEncoder() useResource:mtlResource usage:resource.usage stages:resource.renderStages];
         ASSERT(resource.entryUsage.hasExactlyOneBitSet());
-        m_renderPassEncoder->addResourceToActiveResources(resource.resource, mtlResource, resource.entryUsage);
-        m_renderPassEncoder->setCommandEncoder(resource.resource);
-        return m_renderPassEncoder->renderCommandEncoder();
+        renderPassEncoder->addResourceToActiveResources(resource.resource, mtlResource, resource.entryUsage);
+        renderPassEncoder->setCommandEncoder(resource.resource);
+        return renderPassEncoder->renderCommandEncoder();
     }
 
     if (ResourceUsageAndRenderStage *existingResource = [resources objectForKey:mtlResource]) {
@@ -282,8 +283,9 @@ bool RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* containe
 
 bool RenderBundleEncoder::addResource(RenderBundle::ResourcesContainer* resources, id<MTLResource> mtlResource, MTLRenderStages stage, const BindGroupEntryUsageData::Resource& resource)
 {
-    if (m_renderPassEncoder && mtlResource) {
-        id<MTLRenderCommandEncoder> renderCommandEncoder = m_renderPassEncoder->renderCommandEncoder();
+    RefPtr renderPassEncoder = m_renderPassEncoder.get();
+    if (renderPassEncoder && mtlResource) {
+        id<MTLRenderCommandEncoder> renderCommandEncoder = renderPassEncoder->renderCommandEncoder();
         [renderCommandEncoder useResource:mtlResource usage:MTLResourceUsageRead stages:stage];
         return !!renderCommandEncoder;
     }
@@ -335,8 +337,9 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
         return true;
 
 #if CPU(X86_64)
-    if (m_renderPassEncoder && passWasSplit) {
-        id<MTLRenderCommandEncoder> commandEncoder = m_renderPassEncoder->renderCommandEncoder();
+    RefPtr renderPassEncoder = m_renderPassEncoder.get();
+    if (renderPassEncoder && passWasSplit) {
+        id<MTLRenderCommandEncoder> commandEncoder = renderPassEncoder->renderCommandEncoder();
         if (id<MTLRenderPipelineState> renderPipeline = m_currentPipelineState)
             [commandEncoder setRenderPipelineState:renderPipeline];
         if (id<MTLDepthStencilState> depthStencilState = m_depthStencilState)
@@ -356,7 +359,7 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
                 ASSERT(resource.mtlResources.size() == resource.resourceUsages.size());
                 for (size_t i = 0, resourceCount = resource.resourceUsages.size(); i < resourceCount; ++i) {
                     if (resource.renderStages && resource.mtlResources[i])
-                        [m_renderPassEncoder->renderCommandEncoder() useResource:resource.mtlResources[i] usage:resource.usage stages:resource.renderStages];
+                        [renderPassEncoder->renderCommandEncoder() useResource:resource.mtlResources[i] usage:resource.usage stages:resource.renderStages];
                 }
             }
         }
@@ -693,11 +696,12 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
 
     id<MTLBuffer> indexBuffer = m_indexBuffer ? m_indexBuffer->buffer() : nil;
     RenderPassEncoder::IndexCall useIndirectCall { RenderPassEncoder::IndexCall::Draw };
-    if (m_renderPassEncoder) {
+    RefPtr renderPassEncoder = m_renderPassEncoder.get();
+    if (renderPassEncoder) {
         auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount();
-        useIndirectCall = RenderPassEncoder::clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes, m_indexBuffer.get(), minVertexCount, minInstanceCount, m_renderPassEncoder->renderCommandEncoder(), m_device.get(), m_descriptor.sampleCount, m_primitiveType);
+        useIndirectCall = RenderPassEncoder::clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes, m_indexBuffer.get(), minVertexCount, minInstanceCount, renderPassEncoder->renderCommandEncoder(), m_device.get(), m_descriptor.sampleCount, m_primitiveType);
         if (useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw)
-            m_renderPassEncoder->splitRenderPass();
+            renderPassEncoder->splitRenderPass();
     }
 
     if (!executePreDrawCommands(useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw, firstInstance, instanceCount))
@@ -724,9 +728,10 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
 
         storeVertexBufferCountsForValidation(indexCount, instanceCount, firstIndex, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes);
 
-        if (m_renderPassEncoder && (useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw || useIndirectCall == RenderPassEncoder::IndexCall::CachedIndirectDraw)) {
+        RefPtr renderPassEncoder = m_renderPassEncoder.get();
+        if (renderPassEncoder && (useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw || useIndirectCall == RenderPassEncoder::IndexCall::CachedIndirectDraw)) {
             id<MTLBuffer> indirectBuffer = m_indexBuffer->indirectIndexedBuffer();
-            [m_renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:0 indirectBuffer:indirectBuffer indirectBufferOffset:0];
+            [renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:0 indirectBuffer:indirectBuffer indirectBufferOffset:0];
         } else if (useIndirectCall != RenderPassEncoder::IndexCall::Skip) {
             auto checkedAddition = checkedSum<size_t>(indexBufferOffsetInBytes, indexCountTimesSizeInBytes);
             if (!checkedAddition.hasOverflowed() && checkedAddition.value() <= indexBuffer.length)
@@ -750,11 +755,12 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndir
     id<MTLBuffer> mtlIndirectBuffer = nil;
     uint64_t modifiedIndirectOffset = 0;
     bool splitPass = false;
-    if (m_renderPassEncoder) {
+    RefPtr renderPassEncoder = m_renderPassEncoder.get();
+    if (renderPassEncoder) {
         auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount();
-        auto result = RenderPassEncoder::clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indirectBuffer, m_indexType, m_indexBufferOffset, indirectOffset, minVertexCount, minInstanceCount, m_primitiveType, m_device.get(), m_descriptor.sampleCount, m_renderPassEncoder->renderCommandEncoder(), splitPass);
+        auto result = RenderPassEncoder::clampIndirectIndexBufferToValidValues(m_indexBuffer.get(), indirectBuffer, m_indexType, m_indexBufferOffset, indirectOffset, minVertexCount, minInstanceCount, m_primitiveType, m_device.get(), m_descriptor.sampleCount, renderPassEncoder->renderCommandEncoder(), splitPass);
         if (splitPass)
-            m_renderPassEncoder->splitRenderPass();
+            renderPassEncoder->splitRenderPass();
         mtlIndirectBuffer = result.first;
         modifiedIndirectOffset = result.second;
     }
@@ -766,11 +772,11 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndir
         if (!indexBuffer.length)
             return finalizeRenderCommand();
 
-        if (m_renderPassEncoder) {
-            if (!setCommandEncoder(indirectBuffer, m_renderPassEncoder))
+        if (renderPassEncoder) {
+            if (!setCommandEncoder(indirectBuffer, renderPassEncoder))
                 return finalizeRenderCommand();
             if (!indirectBuffer.isDestroyed() && indexBuffer.length && mtlIndirectBuffer)
-                [m_renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:mtlIndirectBuffer indirectBufferOffset:modifiedIndirectOffset];
+                [renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:mtlIndirectBuffer indirectBufferOffset:modifiedIndirectOffset];
         } else {
             auto contents = makeSpanFromBuffer<MTLDrawIndexedPrimitivesIndirectArguments>(indirectBuffer.buffer(), indirectOffset).data();
             if (!contents || !contents->indexCount || !contents->instanceCount)
@@ -814,21 +820,22 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndirect(Buf
     m_requiresCommandReplay = true;
     id<MTLBuffer> clampedIndirectBuffer = nil;
     bool splitPass = false;
-    if (m_renderPassEncoder) {
+    RefPtr renderPassEncoder = m_renderPassEncoder.get();
+    if (renderPassEncoder) {
         auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount();
-        clampedIndirectBuffer = RenderPassEncoder::clampIndirectBufferToValidValues(indirectBuffer, indirectOffset, minVertexCount, minInstanceCount, m_device.get(), m_descriptor.sampleCount, m_renderPassEncoder->renderCommandEncoder(), splitPass);
+        clampedIndirectBuffer = RenderPassEncoder::clampIndirectBufferToValidValues(indirectBuffer, indirectOffset, minVertexCount, minInstanceCount, m_device.get(), m_descriptor.sampleCount, renderPassEncoder->renderCommandEncoder(), splitPass);
         if (splitPass)
-            m_renderPassEncoder->splitRenderPass();
+            renderPassEncoder->splitRenderPass();
     }
 
     if (!executePreDrawCommands(splitPass))
         return finalizeRenderCommand();
     if (id<MTLIndirectRenderCommand> icbCommand = currentRenderCommand()) {
-        if (m_renderPassEncoder) {
-            if (!setCommandEncoder(indirectBuffer, m_renderPassEncoder))
+        if (renderPassEncoder) {
+            if (!setCommandEncoder(indirectBuffer, renderPassEncoder))
                 return finalizeRenderCommand();
             if (!indirectBuffer.isDestroyed() && clampedIndirectBuffer)
-                [m_renderPassEncoder->renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:clampedIndirectBuffer indirectBufferOffset:0];
+                [renderPassEncoder->renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:clampedIndirectBuffer indirectBufferOffset:0];
         } else {
             auto contents = makeSpanFromBuffer<MTLDrawPrimitivesIndirectArguments>(indirectBuffer.buffer(), indirectOffset).data();
             if (!contents || !contents->instanceCount || !contents->vertexCount)
@@ -935,7 +942,7 @@ void RenderBundleEncoder::endCurrentICB()
 
 bool RenderBundleEncoder::validToEncodeCommand() const
 {
-    return !m_finished || (m_renderPassEncoder && m_renderPassEncoder->renderCommandEncoder());
+    return !m_finished || (m_renderPassEncoder && RefPtr { m_renderPassEncoder.get() }->renderCommandEncoder());
 }
 
 Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& descriptor)
@@ -1094,10 +1101,10 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
             if (!addResource(m_resources, resource.mtlResources[i], usageAndRenderStage))
                 return;
         }
-        if (m_renderPassEncoder) {
+        if (RefPtr renderPassEncoder = m_renderPassEncoder.get()) {
             for (size_t i = 0, resourceCount = resource.resourceUsages.size(); i < resourceCount; ++i) {
                 auto& resourceUsage = resource.resourceUsages[i];
-                if (!m_renderPassEncoder->setCommandEncoder(resourceUsage.resource))
+                if (!renderPassEncoder->setCommandEncoder(resourceUsage.resource))
                     return;
             }
         }
@@ -1241,13 +1248,14 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
         m_depthBiasClamp = pipeline.depthBiasClamp();
         m_sampleMask = pipeline.sampleMask();
 
-        if (m_renderPassEncoder) {
-            if (NSString* error = m_renderPassEncoder->errorValidatingPipeline(pipeline)) {
+        RefPtr renderPassEncoder = m_renderPassEncoder.get();
+        if (renderPassEncoder) {
+            if (NSString* error = renderPassEncoder->errorValidatingPipeline(pipeline)) {
                 makeInvalid(error);
                 return;
             }
 
-        id<MTLRenderCommandEncoder> commandEncoder = m_renderPassEncoder->renderCommandEncoder();
+        id<MTLRenderCommandEncoder> commandEncoder = renderPassEncoder->renderCommandEncoder();
         id<MTLRenderPipelineState> renderPipeline = m_currentPipelineState;
         if (renderPipeline && previousRenderPipelineState != m_currentPipelineState)
             [commandEncoder setRenderPipelineState:renderPipeline];
@@ -1375,44 +1383,44 @@ void wgpuRenderBundleEncoderRelease(WGPURenderBundleEncoder renderBundleEncoder)
 
 void wgpuRenderBundleEncoderDraw(WGPURenderBundleEncoder renderBundleEncoder, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
-    WebGPU::fromAPI(renderBundleEncoder).draw(vertexCount, instanceCount, firstVertex, firstInstance);
+    WebGPU::protectedFromAPI(renderBundleEncoder)->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
 void wgpuRenderBundleEncoderDrawIndexed(WGPURenderBundleEncoder renderBundleEncoder, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
-    WebGPU::fromAPI(renderBundleEncoder).drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+    WebGPU::protectedFromAPI(renderBundleEncoder)->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
 void wgpuRenderBundleEncoderDrawIndexedIndirect(WGPURenderBundleEncoder renderBundleEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
     RELEASE_ASSERT(indirectBuffer);
-    WebGPU::fromAPI(renderBundleEncoder).drawIndexedIndirect(WebGPU::fromAPI(indirectBuffer), indirectOffset);
+    WebGPU::protectedFromAPI(renderBundleEncoder)->drawIndexedIndirect(WebGPU::protectedFromAPI(indirectBuffer), indirectOffset);
 }
 
 void wgpuRenderBundleEncoderDrawIndirect(WGPURenderBundleEncoder renderBundleEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
     RELEASE_ASSERT(indirectBuffer);
-    WebGPU::fromAPI(renderBundleEncoder).drawIndirect(WebGPU::fromAPI(indirectBuffer), indirectOffset);
+    WebGPU::protectedFromAPI(renderBundleEncoder)->drawIndirect(WebGPU::protectedFromAPI(indirectBuffer), indirectOffset);
 }
 
 WGPURenderBundle wgpuRenderBundleEncoderFinish(WGPURenderBundleEncoder renderBundleEncoder, const WGPURenderBundleDescriptor* descriptor)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(renderBundleEncoder).finish(*descriptor));
+    return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(renderBundleEncoder)->finish(*descriptor));
 }
 
 void wgpuRenderBundleEncoderInsertDebugMarker(WGPURenderBundleEncoder renderBundleEncoder, const char* markerLabel)
 {
-    WebGPU::fromAPI(renderBundleEncoder).insertDebugMarker(WebGPU::fromAPI(markerLabel));
+    WebGPU::protectedFromAPI(renderBundleEncoder)->insertDebugMarker(WebGPU::fromAPI(markerLabel));
 }
 
 void wgpuRenderBundleEncoderPopDebugGroup(WGPURenderBundleEncoder renderBundleEncoder)
 {
-    WebGPU::fromAPI(renderBundleEncoder).popDebugGroup();
+    WebGPU::protectedFromAPI(renderBundleEncoder)->popDebugGroup();
 }
 
 void wgpuRenderBundleEncoderPushDebugGroup(WGPURenderBundleEncoder renderBundleEncoder, const char* groupLabel)
 {
-    WebGPU::fromAPI(renderBundleEncoder).pushDebugGroup(WebGPU::fromAPI(groupLabel));
+    WebGPU::protectedFromAPI(renderBundleEncoder)->pushDebugGroup(WebGPU::fromAPI(groupLabel));
 }
 
 void wgpuRenderBundleEncoderSetBindGroup(WGPURenderBundleEncoder, uint32_t, WGPUBindGroup, size_t, const uint32_t*)
@@ -1421,28 +1429,28 @@ void wgpuRenderBundleEncoderSetBindGroup(WGPURenderBundleEncoder, uint32_t, WGPU
 
 void wgpuRenderBundleEncoderSetBindGroupWithDynamicOffsets(WGPURenderBundleEncoder renderBundleEncoder, uint32_t groupIndex, WGPUBindGroup group, std::optional<Vector<uint32_t>>&& dynamicOffsets)
 {
-    WebGPU::fromAPI(renderBundleEncoder).setBindGroup(groupIndex, WebGPU::fromAPI(group), WTFMove(dynamicOffsets));
+    WebGPU::protectedFromAPI(renderBundleEncoder)->setBindGroup(groupIndex, WebGPU::protectedFromAPI(group), WTFMove(dynamicOffsets));
 }
 
 void wgpuRenderBundleEncoderSetIndexBuffer(WGPURenderBundleEncoder renderBundleEncoder, WGPUBuffer buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
 {
-    WebGPU::fromAPI(renderBundleEncoder).setIndexBuffer(WebGPU::fromAPI(buffer), format, offset, size);
+    WebGPU::protectedFromAPI(renderBundleEncoder)->setIndexBuffer(WebGPU::protectedFromAPI(buffer), format, offset, size);
 }
 
 void wgpuRenderBundleEncoderSetPipeline(WGPURenderBundleEncoder renderBundleEncoder, WGPURenderPipeline pipeline)
 {
-    WebGPU::fromAPI(renderBundleEncoder).setPipeline(WebGPU::fromAPI(pipeline));
+    WebGPU::protectedFromAPI(renderBundleEncoder)->setPipeline(WebGPU::protectedFromAPI(pipeline));
 }
 
 void wgpuRenderBundleEncoderSetVertexBuffer(WGPURenderBundleEncoder renderBundleEncoder, uint32_t slot, WGPUBuffer buffer, uint64_t offset, uint64_t size)
 {
-    WebGPU::Buffer* optionalBuffer = nullptr;
+    RefPtr<WebGPU::Buffer> optionalBuffer;
     if (buffer)
-        optionalBuffer = &WebGPU::fromAPI(buffer);
-    WebGPU::fromAPI(renderBundleEncoder).setVertexBuffer(slot, optionalBuffer, offset, size);
+        optionalBuffer = WebGPU::protectedFromAPI(buffer).ptr();
+    WebGPU::protectedFromAPI(renderBundleEncoder)->setVertexBuffer(slot, optionalBuffer.get(), offset, size);
 }
 
 void wgpuRenderBundleEncoderSetLabel(WGPURenderBundleEncoder renderBundleEncoder, const char* label)
 {
-    WebGPU::fromAPI(renderBundleEncoder).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(renderBundleEncoder)->setLabel(WebGPU::fromAPI(label));
 }

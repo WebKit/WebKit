@@ -44,4 +44,11 @@ bool isValidToUseWith(const T& object, const U& targetObject)
     return true;
 }
 
+template <typename T, typename U>
+bool isValidToUseWith(const Ref<T>& object, const U& targetObject)
+{
+    return isValidToUseWith(object.get(), targetObject);
+}
+
+
 } // namespace WebGPU

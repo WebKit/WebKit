@@ -81,11 +81,11 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
     if (descriptor.nextInChain || descriptor.compute.nextInChain)
         return returnInvalidComputePipeline(*this, isAsync);
 
-    ShaderModule& shaderModule = WebGPU::fromAPI(descriptor.compute.module);
+    ShaderModule& shaderModule = WebGPU::protectedFromAPI(descriptor.compute.module);
     if (!shaderModule.isValid() || &shaderModule.device() != this || !descriptor.layout)
         return returnInvalidComputePipeline(*this, isAsync);
 
-    PipelineLayout& pipelineLayout = WebGPU::fromAPI(descriptor.layout);
+    PipelineLayout& pipelineLayout = WebGPU::protectedFromAPI(descriptor.layout);
     auto& deviceLimits = limits();
     auto label = fromAPI(descriptor.label);
     auto entryPointName = descriptor.compute.entryPoint ? fromAPI(descriptor.compute.entryPoint) : shaderModule.defaultComputeEntryPoint();
@@ -209,10 +209,10 @@ void wgpuComputePipelineRelease(WGPUComputePipeline computePipeline)
 
 WGPUBindGroupLayout wgpuComputePipelineGetBindGroupLayout(WGPUComputePipeline computePipeline, uint32_t groupIndex)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(computePipeline).getBindGroupLayout(groupIndex));
+    return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(computePipeline)->getBindGroupLayout(groupIndex));
 }
 
 void wgpuComputePipelineSetLabel(WGPUComputePipeline computePipeline, const char* label)
 {
-    WebGPU::fromAPI(computePipeline).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(computePipeline)->setLabel(WebGPU::fromAPI(label));
 }

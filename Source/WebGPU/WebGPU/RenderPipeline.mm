@@ -1324,14 +1324,14 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
     PipelineLayout* pipelineLayout = nullptr;
     Vector<Vector<WGPUBindGroupLayoutEntry>> bindGroupEntries;
     if (descriptor.layout) {
-        auto& layout = WebGPU::fromAPI(descriptor.layout);
-        if (!layout.isValid())
+        Ref layout = WebGPU::protectedFromAPI(descriptor.layout);
+        if (!layout->isValid())
             return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout is not valid"_s);
-        if (&layout.device() != this)
+        if (&layout->device() != this)
             return returnInvalidRenderPipeline(*this, isAsync, "Pipeline layout created from different device"_s);
 
-        if (!layout.isAutoLayout())
-            pipelineLayout = &layout;
+        if (!layout->isAutoLayout())
+            pipelineLayout = layout.ptr();
     }
 
     const ShaderModule::VertexStageIn* vertexStageIn = nullptr;
@@ -1342,14 +1342,14 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
         if (descriptor.vertex.nextInChain)
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex module has an invalid chain"_s);
 
-        const auto& vertexModule = WebGPU::fromAPI(descriptor.vertex.module);
-        if (!vertexModule.isValid() || !vertexModule.ast())
+        Ref vertexModule = WebGPU::protectedFromAPI(descriptor.vertex.module);
+        if (!vertexModule->isValid() || !vertexModule->ast())
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex module is not valid"_s);
-        if (&vertexModule.device() != this)
+        if (&vertexModule->device() != this)
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex module was created with a different device"_s);
 
-        const auto& vertexEntryPoint = descriptor.vertex.entryPoint ? fromAPI(descriptor.vertex.entryPoint) : vertexModule.defaultVertexEntryPoint();
-        vertexStageIn = vertexModule.stageInTypesForEntryPoint(vertexEntryPoint);
+        const auto& vertexEntryPoint = descriptor.vertex.entryPoint ? fromAPI(descriptor.vertex.entryPoint) : vertexModule->defaultVertexEntryPoint();
+        vertexStageIn = vertexModule->stageInTypesForEntryPoint(vertexEntryPoint);
         if (NSString* error = errorValidatingVertexStageIn(vertexStageIn, *this))
             return returnInvalidRenderPipeline(*this, isAsync, error);
         NSError *error = nil;
@@ -1366,7 +1366,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
         if (!vertexFunction || vertexFunction.functionType != MTLFunctionTypeVertex || entryPointInformation.specializationConstants.size() != libraryCreationResult->wgslConstantValues.size())
             return returnInvalidRenderPipeline(*this, isAsync, "Vertex function could not be created"_s);
         mtlRenderPipelineDescriptor.vertexFunction = vertexFunction;
-        vertexOutputs = vertexModule.vertexReturnTypeForEntryPoint(vertexEntryPoint);
+        vertexOutputs = vertexModule->vertexReturnTypeForEntryPoint(vertexEntryPoint);
     }
 
     std::optional<PipelineLayout> fragmentPipelineLayout { std::nullopt };
@@ -1376,14 +1376,14 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
     const ShaderModule::FragmentOutputs* fragmentReturnTypes { nullptr };
     const ShaderModule::FragmentInputs* fragmentInputs { nullptr };
     uint32_t colorAttachmentCount = 0;
-    ShaderModule *fragmentModule = nullptr;
+    RefPtr<ShaderModule> fragmentModule;
     if (descriptor.fragment) {
         const auto& fragmentDescriptor = *descriptor.fragment;
 
         if (fragmentDescriptor.nextInChain)
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment has extra chain"_s);
 
-        fragmentModule = &WebGPU::fromAPI(fragmentDescriptor.module);
+        fragmentModule = WebGPU::protectedFromAPI(fragmentDescriptor.module).ptr();
         if (!fragmentModule->isValid() || !fragmentModule->ast())
             return returnInvalidRenderPipeline(*this, isAsync, "Fragment module is invalid"_s);
 
@@ -1520,7 +1520,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
         sampleMask = mask;
     }
 
-    if (NSString* error = errorValidatingInterstageShaderInterfaces(*this, descriptor, vertexOutputs, fragmentInputs, fragmentReturnTypes, fragmentModule, descriptor.fragment))
+    if (NSString* error = errorValidatingInterstageShaderInterfaces(*this, descriptor, vertexOutputs, fragmentInputs, fragmentReturnTypes, fragmentModule.get(), descriptor.fragment))
         return returnInvalidRenderPipeline(*this, isAsync, error);
 
     RenderPipeline::RequiredBufferIndicesContainer requiredBufferIndices;
@@ -1815,10 +1815,10 @@ void wgpuRenderPipelineRelease(WGPURenderPipeline renderPipeline)
 
 WGPUBindGroupLayout wgpuRenderPipelineGetBindGroupLayout(WGPURenderPipeline renderPipeline, uint32_t groupIndex)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(renderPipeline).getBindGroupLayout(groupIndex));
+    return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(renderPipeline)->getBindGroupLayout(groupIndex));
 }
 
 void wgpuRenderPipelineSetLabel(WGPURenderPipeline renderPipeline, const char* label)
 {
-    WebGPU::fromAPI(renderPipeline).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(renderPipeline)->setLabel(WebGPU::fromAPI(label));
 }

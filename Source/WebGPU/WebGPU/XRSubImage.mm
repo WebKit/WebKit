@@ -153,10 +153,10 @@ void wgpuXRSubImageRelease(WGPUXRSubImage subImage)
 
 WGPUTexture wgpuXRSubImageGetColorTexture(WGPUXRSubImage subImage)
 {
-    return WebGPU::fromAPI(subImage).colorTexture();
+    return WebGPU::protectedFromAPI(subImage)->colorTexture();
 }
 
 WGPUTexture wgpuXRSubImageGetDepthStencilTexture(WGPUXRSubImage subImage)
 {
-    return WebGPU::fromAPI(subImage).depthTexture();
+    return WebGPU::protectedFromAPI(subImage)->depthTexture();
 }

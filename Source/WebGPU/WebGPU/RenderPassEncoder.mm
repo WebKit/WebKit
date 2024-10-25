@@ -93,7 +93,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     for (auto& attachment : colorAttachments)
         m_colorAttachmentViews.append(RefPtr { static_cast<TextureView*>(attachment.view) });
     if (descriptor.depthStencilAttachment)
-        m_depthStencilView = RefPtr { static_cast<TextureView*>(descriptor.depthStencilAttachment->view) };
+        m_depthStencilView = static_cast<TextureView*>(descriptor.depthStencilAttachment->view);
 
     m_parentEncoder->lock(true);
 
@@ -102,22 +102,22 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         if (!attachment.view)
             continue;
 
-        auto& texture = fromAPI(attachment.view);
-        if (texture.isDestroyed())
+        Ref texture = fromAPI(attachment.view);
+        if (texture->isDestroyed())
             m_parentEncoder->makeSubmitInvalid();
 
-        texture.setPreviouslyCleared();
+        texture->setPreviouslyCleared();
         addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
-        m_rasterSampleCount = texture.sampleCount();
+        m_rasterSampleCount = texture->sampleCount();
         if (attachment.resolveTarget) {
-            auto& texture = fromAPI(attachment.resolveTarget);
-            texture.setCommandEncoder(parentEncoder);
-            texture.setPreviouslyCleared();
+            Ref texture = fromAPI(attachment.resolveTarget);
+            texture->setCommandEncoder(parentEncoder);
+            texture->setPreviouslyCleared();
             addResourceToActiveResources(texture, BindGroupEntryUsage::Attachment);
         }
 
-        texture.setCommandEncoder(parentEncoder);
-        id<MTLTexture> textureToClear = texture.texture();
+        texture->setCommandEncoder(parentEncoder);
+        id<MTLTexture> textureToClear = texture->texture();
         m_renderTargetWidth = textureToClear.width;
         m_renderTargetHeight = textureToClear.height;
         if (!textureToClear)
@@ -131,21 +131,21 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
             [m_attachmentsToClear setObject:textureWithClearColor forKey:@(i)];
         }
 
-        textureWithClearColor.depthPlane = texture.isDestroyed() ? 0 : attachment.depthSlice.value_or(0);
+        textureWithClearColor.depthPlane = texture->isDestroyed() ? 0 : attachment.depthSlice.value_or(0);
     }
 
     if (const auto* attachment = descriptor.depthStencilAttachment) {
-        auto& textureView = fromAPI(attachment->view);
-        textureView.setPreviouslyCleared();
-        textureView.setCommandEncoder(parentEncoder);
-        id<MTLTexture> depthTexture = textureView.isDestroyed() ? nil : textureView.texture();
-        if (textureView.width() && !m_renderTargetWidth) {
+        Ref textureView = fromAPI(attachment->view);
+        textureView->setPreviouslyCleared();
+        textureView->setCommandEncoder(parentEncoder);
+        id<MTLTexture> depthTexture = textureView->isDestroyed() ? nil : textureView->texture();
+        if (textureView->width() && !m_renderTargetWidth) {
             m_renderTargetWidth = depthTexture.width;
             m_renderTargetHeight = depthTexture.height;
-            m_rasterSampleCount = textureView.sampleCount();
+            m_rasterSampleCount = textureView->sampleCount();
         }
 
-        m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : quantizedDepthValue(attachment->depthClearValue, textureView.format());
+        m_depthClearValue = attachment->depthStoreOp == WGPUStoreOp_Discard ? 0 : quantizedDepthValue(attachment->depthClearValue, textureView->format());
         if (!Device::isStencilOnlyFormat(depthTexture.pixelFormat)) {
             m_clearDepthAttachment = depthTexture && attachment->depthStoreOp == WGPUStoreOp_Discard && attachment->depthLoadOp == WGPULoadOp_Load;
             m_depthStencilAttachmentToClear = depthTexture;
@@ -153,7 +153,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         }
 
         m_stencilClearValue = attachment->stencilStoreOp == WGPUStoreOp_Discard ? 0 : attachment->stencilClearValue;
-        if (Texture::stencilOnlyAspectMetalFormat(textureView.descriptor().format)) {
+        if (Texture::stencilOnlyAspectMetalFormat(textureView->descriptor().format)) {
             m_clearStencilAttachment = depthTexture && attachment->stencilStoreOp == WGPUStoreOp_Discard && attachment->stencilLoadOp == WGPULoadOp_Load;
             m_depthStencilAttachmentToClear = depthTexture;
             addResourceToActiveResources(textureView, attachment->stencilReadOnly ? BindGroupEntryUsage::AttachmentRead : BindGroupEntryUsage::Attachment, WGPUTextureAspect_StencilOnly);
@@ -1380,106 +1380,106 @@ void wgpuRenderPassEncoderRelease(WGPURenderPassEncoder renderPassEncoder)
 
 void wgpuRenderPassEncoderBeginOcclusionQuery(WGPURenderPassEncoder renderPassEncoder, uint32_t queryIndex)
 {
-    WebGPU::fromAPI(renderPassEncoder).beginOcclusionQuery(queryIndex);
+    WebGPU::protectedFromAPI(renderPassEncoder)->beginOcclusionQuery(queryIndex);
 }
 
 void wgpuRenderPassEncoderDraw(WGPURenderPassEncoder renderPassEncoder, uint32_t vertexCount, uint32_t instanceCount, uint32_t firstVertex, uint32_t firstInstance)
 {
-    WebGPU::fromAPI(renderPassEncoder).draw(vertexCount, instanceCount, firstVertex, firstInstance);
+    WebGPU::protectedFromAPI(renderPassEncoder)->draw(vertexCount, instanceCount, firstVertex, firstInstance);
 }
 
 void wgpuRenderPassEncoderDrawIndexed(WGPURenderPassEncoder renderPassEncoder, uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance)
 {
-    WebGPU::fromAPI(renderPassEncoder).drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
+    WebGPU::protectedFromAPI(renderPassEncoder)->drawIndexed(indexCount, instanceCount, firstIndex, baseVertex, firstInstance);
 }
 
 void wgpuRenderPassEncoderDrawIndexedIndirect(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
-    WebGPU::fromAPI(renderPassEncoder).drawIndexedIndirect(WebGPU::fromAPI(indirectBuffer), indirectOffset);
+    WebGPU::protectedFromAPI(renderPassEncoder)->drawIndexedIndirect(WebGPU::protectedFromAPI(indirectBuffer), indirectOffset);
 }
 
 void wgpuRenderPassEncoderDrawIndirect(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer indirectBuffer, uint64_t indirectOffset)
 {
-    WebGPU::fromAPI(renderPassEncoder).drawIndirect(WebGPU::fromAPI(indirectBuffer), indirectOffset);
+    WebGPU::protectedFromAPI(renderPassEncoder)->drawIndirect(WebGPU::protectedFromAPI(indirectBuffer), indirectOffset);
 }
 
 void wgpuRenderPassEncoderEndOcclusionQuery(WGPURenderPassEncoder renderPassEncoder)
 {
-    WebGPU::fromAPI(renderPassEncoder).endOcclusionQuery();
+    WebGPU::protectedFromAPI(renderPassEncoder)->endOcclusionQuery();
 }
 
 void wgpuRenderPassEncoderEnd(WGPURenderPassEncoder renderPassEncoder)
 {
-    WebGPU::fromAPI(renderPassEncoder).endPass();
+    WebGPU::protectedFromAPI(renderPassEncoder)->endPass();
 }
 
 void wgpuRenderPassEncoderExecuteBundles(WGPURenderPassEncoder renderPassEncoder, size_t bundlesCount, const WGPURenderBundle* bundles)
 {
     Vector<std::reference_wrapper<WebGPU::RenderBundle>> bundlesToForward;
     for (auto& bundle : unsafeForgeSpan(bundles, bundlesCount))
-        bundlesToForward.append(WebGPU::fromAPI(bundle));
-    WebGPU::fromAPI(renderPassEncoder).executeBundles(WTFMove(bundlesToForward));
+        bundlesToForward.append(WebGPU::protectedFromAPI(bundle));
+    WebGPU::protectedFromAPI(renderPassEncoder)->executeBundles(WTFMove(bundlesToForward));
 }
 
 void wgpuRenderPassEncoderInsertDebugMarker(WGPURenderPassEncoder renderPassEncoder, const char* markerLabel)
 {
-    WebGPU::fromAPI(renderPassEncoder).insertDebugMarker(WebGPU::fromAPI(markerLabel));
+    WebGPU::protectedFromAPI(renderPassEncoder)->insertDebugMarker(WebGPU::fromAPI(markerLabel));
 }
 
 void wgpuRenderPassEncoderPopDebugGroup(WGPURenderPassEncoder renderPassEncoder)
 {
-    WebGPU::fromAPI(renderPassEncoder).popDebugGroup();
+    WebGPU::protectedFromAPI(renderPassEncoder)->popDebugGroup();
 }
 
 void wgpuRenderPassEncoderPushDebugGroup(WGPURenderPassEncoder renderPassEncoder, const char* groupLabel)
 {
-    WebGPU::fromAPI(renderPassEncoder).pushDebugGroup(WebGPU::fromAPI(groupLabel));
+    WebGPU::protectedFromAPI(renderPassEncoder)->pushDebugGroup(WebGPU::fromAPI(groupLabel));
 }
 
 void wgpuRenderPassEncoderSetBindGroup(WGPURenderPassEncoder renderPassEncoder, uint32_t groupIndex, WGPUBindGroup group, size_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
-    WebGPU::fromAPI(renderPassEncoder).setBindGroup(groupIndex, WebGPU::fromAPI(group), unsafeForgeSpan(dynamicOffsets, dynamicOffsetCount));
+    WebGPU::protectedFromAPI(renderPassEncoder)->setBindGroup(groupIndex, WebGPU::protectedFromAPI(group), unsafeForgeSpan(dynamicOffsets, dynamicOffsetCount));
 }
 
 void wgpuRenderPassEncoderSetBlendConstant(WGPURenderPassEncoder renderPassEncoder, const WGPUColor* color)
 {
-    WebGPU::fromAPI(renderPassEncoder).setBlendConstant(*color);
+    WebGPU::protectedFromAPI(renderPassEncoder)->setBlendConstant(*color);
 }
 
 void wgpuRenderPassEncoderSetIndexBuffer(WGPURenderPassEncoder renderPassEncoder, WGPUBuffer buffer, WGPUIndexFormat format, uint64_t offset, uint64_t size)
 {
-    WebGPU::fromAPI(renderPassEncoder).setIndexBuffer(WebGPU::fromAPI(buffer), format, offset, size);
+    WebGPU::protectedFromAPI(renderPassEncoder)->setIndexBuffer(WebGPU::protectedFromAPI(buffer), format, offset, size);
 }
 
 void wgpuRenderPassEncoderSetPipeline(WGPURenderPassEncoder renderPassEncoder, WGPURenderPipeline pipeline)
 {
-    WebGPU::fromAPI(renderPassEncoder).setPipeline(WebGPU::fromAPI(pipeline));
+    WebGPU::protectedFromAPI(renderPassEncoder)->setPipeline(WebGPU::protectedFromAPI(pipeline));
 }
 
 void wgpuRenderPassEncoderSetScissorRect(WGPURenderPassEncoder renderPassEncoder, uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 {
-    WebGPU::fromAPI(renderPassEncoder).setScissorRect(x, y, width, height);
+    WebGPU::protectedFromAPI(renderPassEncoder)->setScissorRect(x, y, width, height);
 }
 
 void wgpuRenderPassEncoderSetStencilReference(WGPURenderPassEncoder renderPassEncoder, uint32_t reference)
 {
-    WebGPU::fromAPI(renderPassEncoder).setStencilReference(reference);
+    WebGPU::protectedFromAPI(renderPassEncoder)->setStencilReference(reference);
 }
 
 void wgpuRenderPassEncoderSetVertexBuffer(WGPURenderPassEncoder renderPassEncoder, uint32_t slot, WGPUBuffer buffer, uint64_t offset, uint64_t size)
 {
-    WebGPU::Buffer* optionalBuffer = nullptr;
+    RefPtr<WebGPU::Buffer> optionalBuffer;
     if (buffer)
-        optionalBuffer = &WebGPU::fromAPI(buffer);
-    WebGPU::fromAPI(renderPassEncoder).setVertexBuffer(slot, optionalBuffer, offset, size);
+        optionalBuffer = WebGPU::protectedFromAPI(buffer).ptr();
+    WebGPU::protectedFromAPI(renderPassEncoder)->setVertexBuffer(slot, optionalBuffer.get(), offset, size);
 }
 
 void wgpuRenderPassEncoderSetViewport(WGPURenderPassEncoder renderPassEncoder, float x, float y, float width, float height, float minDepth, float maxDepth)
 {
-    WebGPU::fromAPI(renderPassEncoder).setViewport(x, y, width, height, minDepth, maxDepth);
+    WebGPU::protectedFromAPI(renderPassEncoder)->setViewport(x, y, width, height, minDepth, maxDepth);
 }
 
 void wgpuRenderPassEncoderSetLabel(WGPURenderPassEncoder renderPassEncoder, const char* label)
 {
-    WebGPU::fromAPI(renderPassEncoder).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(renderPassEncoder)->setLabel(WebGPU::fromAPI(label));
 }

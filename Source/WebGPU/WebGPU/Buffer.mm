@@ -514,12 +514,12 @@ void wgpuBufferRelease(WGPUBuffer buffer)
 
 void wgpuBufferDestroy(WGPUBuffer buffer)
 {
-    WebGPU::fromAPI(buffer).destroy();
+    WebGPU::protectedFromAPI(buffer)->destroy();
 }
 
 WGPUBufferMapState wgpuBufferGetMapState(WGPUBuffer buffer)
 {
-    switch (WebGPU::fromAPI(buffer).state()) {
+    switch (WebGPU::protectedFromAPI(buffer)->state()) {
     case WebGPU::Buffer::State::Mapped:
         return WGPUBufferMapState_Mapped;
     case WebGPU::Buffer::State::MappedAtCreation:
@@ -535,56 +535,56 @@ WGPUBufferMapState wgpuBufferGetMapState(WGPUBuffer buffer)
 
 std::span<uint8_t> wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size)
 {
-    return WebGPU::fromAPI(buffer).getMappedRange(offset, size);
+    return WebGPU::protectedFromAPI(buffer)->getMappedRange(offset, size);
 }
 
 std::span<uint8_t> wgpuBufferGetBufferContents(WGPUBuffer buffer)
 {
-    return WebGPU::fromAPI(buffer).getBufferContents();
+    return WebGPU::protectedFromAPI(buffer)->getBufferContents();
 }
 
 uint64_t wgpuBufferGetInitialSize(WGPUBuffer buffer)
 {
-    return WebGPU::fromAPI(buffer).initialSize();
+    return WebGPU::protectedFromAPI(buffer)->initialSize();
 }
 
 uint64_t wgpuBufferGetCurrentSize(WGPUBuffer buffer)
 {
-    return WebGPU::fromAPI(buffer).currentSize();
+    return WebGPU::protectedFromAPI(buffer)->currentSize();
 }
 
 void wgpuBufferMapAsync(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapCallback callback, void* userdata)
 {
-    WebGPU::fromAPI(buffer).mapAsync(mode, offset, size, [callback, userdata](WGPUBufferMapAsyncStatus status) {
+    WebGPU::protectedFromAPI(buffer)->mapAsync(mode, offset, size, [callback, userdata](WGPUBufferMapAsyncStatus status) {
         callback(status, userdata);
     });
 }
 
 void wgpuBufferMapAsyncWithBlock(WGPUBuffer buffer, WGPUMapModeFlags mode, size_t offset, size_t size, WGPUBufferMapBlockCallback callback)
 {
-    WebGPU::fromAPI(buffer).mapAsync(mode, offset, size, [callback = WebGPU::fromAPI(WTFMove(callback))](WGPUBufferMapAsyncStatus status) {
+    WebGPU::protectedFromAPI(buffer)->mapAsync(mode, offset, size, [callback = WebGPU::fromAPI(WTFMove(callback))](WGPUBufferMapAsyncStatus status) {
         callback(status);
     });
 }
 
 void wgpuBufferUnmap(WGPUBuffer buffer)
 {
-    WebGPU::fromAPI(buffer).unmap();
+    WebGPU::protectedFromAPI(buffer)->unmap();
 }
 
 void wgpuBufferSetLabel(WGPUBuffer buffer, const char* label)
 {
-    WebGPU::fromAPI(buffer).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(buffer)->setLabel(WebGPU::fromAPI(label));
 }
 
 WGPUBufferUsageFlags wgpuBufferGetUsage(WGPUBuffer buffer)
 {
-    return WebGPU::fromAPI(buffer).usage();
+    return WebGPU::protectedFromAPI(buffer)->usage();
 }
 
 #if ENABLE(WEBGPU_SWIFT)
 void wgpuBufferCopy(WGPUBuffer buffer, std::span<const uint8_t> data, size_t offset)
 {
-    WebGPU::fromAPI(buffer).copy(data, offset);
+    WebGPU::protectedFromAPI(buffer)->copy(data, offset);
 }
 #endif

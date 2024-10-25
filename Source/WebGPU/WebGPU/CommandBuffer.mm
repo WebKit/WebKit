@@ -111,5 +111,5 @@ void wgpuCommandBufferRelease(WGPUCommandBuffer commandBuffer)
 
 void wgpuCommandBufferSetLabel(WGPUCommandBuffer commandBuffer, const char* label)
 {
-    WebGPU::fromAPI(commandBuffer).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(commandBuffer)->setLabel(WebGPU::fromAPI(label));
 }

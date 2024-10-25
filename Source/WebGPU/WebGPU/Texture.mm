@@ -3300,18 +3300,18 @@ static WGPUExtent3D imageCopyTextureSubresourceSize(const WGPUImageCopyTexture& 
 {
     // https://gpuweb.github.io/gpuweb/#imagecopytexture-subresource-size
 
-    return fromAPI(imageCopyTexture.texture).physicalMiplevelSpecificTextureExtent(imageCopyTexture.mipLevel);
+    return protectedFromAPI(imageCopyTexture.texture)->physicalMiplevelSpecificTextureExtent(imageCopyTexture.mipLevel);
 }
 
 NSString* Texture::errorValidatingImageCopyTexture(const WGPUImageCopyTexture& imageCopyTexture, const WGPUExtent3D& copySize)
 {
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-validating-gpuimagecopytexture
 
-    uint32_t blockWidth = Texture::texelBlockWidth(fromAPI(imageCopyTexture.texture).format());
+    uint32_t blockWidth = Texture::texelBlockWidth(protectedFromAPI(imageCopyTexture.texture)->format());
 
-    uint32_t blockHeight = Texture::texelBlockHeight(fromAPI(imageCopyTexture.texture).format());
+    uint32_t blockHeight = Texture::texelBlockHeight(protectedFromAPI(imageCopyTexture.texture)->format());
 
-    if (!fromAPI(imageCopyTexture.texture).isValid())
+    if (!protectedFromAPI(imageCopyTexture.texture)->isValid())
         return @"imageCopyTexture is not valid";
 
     if (imageCopyTexture.mipLevel >= fromAPI(imageCopyTexture.texture).mipLevelCount())
@@ -3323,8 +3323,8 @@ NSString* Texture::errorValidatingImageCopyTexture(const WGPUImageCopyTexture& i
     if (imageCopyTexture.origin.y % blockHeight)
         return @"imageCopyTexture.origin.y is not a multiple of the texture blockHeight";
 
-    if (Texture::isDepthOrStencilFormat(fromAPI(imageCopyTexture.texture).format())
-        || fromAPI(imageCopyTexture.texture).sampleCount() > 1) {
+    if (Texture::isDepthOrStencilFormat(protectedFromAPI(imageCopyTexture.texture)->format())
+        || protectedFromAPI(imageCopyTexture.texture)->sampleCount() > 1) {
         auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
         if (subresourceSize.width != copySize.width
             || (copySize.height > 1 && subresourceSize.height != copySize.height))
@@ -3595,9 +3595,9 @@ NSString* Texture::errorValidatingTextureCopyRange(const WGPUImageCopyTexture& i
 {
     // https://gpuweb.github.io/gpuweb/#validating-texture-copy-range
 
-    auto blockWidth = Texture::texelBlockWidth(fromAPI(imageCopyTexture.texture).format());
+    auto blockWidth = Texture::texelBlockWidth(protectedFromAPI(imageCopyTexture.texture)->format());
 
-    auto blockHeight = Texture::texelBlockHeight(fromAPI(imageCopyTexture.texture).format());
+    auto blockHeight = Texture::texelBlockHeight(protectedFromAPI(imageCopyTexture.texture)->format());
 
     auto subresourceSize = imageCopyTextureSubresourceSize(imageCopyTexture);
 
@@ -3754,55 +3754,55 @@ void wgpuTextureRelease(WGPUTexture texture)
 
 WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureViewDescriptor* descriptor)
 {
-    return WebGPU::releaseToAPI(WebGPU::fromAPI(texture).createView(*descriptor));
+    return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(texture)->createView(*descriptor));
 }
 
 void wgpuTextureDestroy(WGPUTexture texture)
 {
-    WebGPU::fromAPI(texture).destroy();
+    WebGPU::protectedFromAPI(texture)->destroy();
 }
 
 void wgpuTextureSetLabel(WGPUTexture texture, const char* label)
 {
-    WebGPU::fromAPI(texture).setLabel(WebGPU::fromAPI(label));
+    WebGPU::protectedFromAPI(texture)->setLabel(WebGPU::fromAPI(label));
 }
 
 uint32_t wgpuTextureGetDepthOrArrayLayers(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).depthOrArrayLayers();
+    return WebGPU::protectedFromAPI(texture)->depthOrArrayLayers();
 }
 
 WGPUTextureDimension wgpuTextureGetDimension(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).dimension();
+    return WebGPU::protectedFromAPI(texture)->dimension();
 }
 
 WGPUTextureFormat wgpuTextureGetFormat(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).format();
+    return WebGPU::protectedFromAPI(texture)->format();
 }
 
 uint32_t wgpuTextureGetHeight(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).height();
+    return WebGPU::protectedFromAPI(texture)->height();
 }
 
 uint32_t wgpuTextureGetWidth(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).width();
+    return WebGPU::protectedFromAPI(texture)->width();
 }
 
 uint32_t wgpuTextureGetMipLevelCount(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).mipLevelCount();
+    return WebGPU::protectedFromAPI(texture)->mipLevelCount();
 }
 
 uint32_t wgpuTextureGetSampleCount(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).sampleCount();
+    return WebGPU::protectedFromAPI(texture)->sampleCount();
 }
 
 WGPUTextureUsageFlags wgpuTextureGetUsage(WGPUTexture texture)
 {
-    return WebGPU::fromAPI(texture).usage();
+    return WebGPU::protectedFromAPI(texture)->usage();
 }
