@@ -45,6 +45,9 @@ public:
     unsigned span() const { return m_span; }
     void setSpan(unsigned span) { m_span = span; }
 
+    unsigned columnIndex() const { return m_columnIndex; }
+    void setColumnIndex(unsigned columnIndex) { m_columnIndex = columnIndex; }
+
     bool isTableColumnGroupWithColumnChildren() const { return firstChild(); }
     bool isTableColumn() const { return style().display() == DisplayType::TableColumn; }
     bool isTableColumnGroup() const { return style().display() == DisplayType::TableColumnGroup; }
@@ -89,6 +92,7 @@ private:
     RenderTable* table() const;
 
     unsigned m_span { 1 };
+    unsigned m_columnIndex { 0 };
 };
 
 inline RenderTableCol* RenderTableCol::enclosingColumnGroupIfAdjacentBefore() const

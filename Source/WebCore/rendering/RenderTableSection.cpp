@@ -967,9 +967,21 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
         // Note that we deliberately ignore whether or not the cell has a layer, since these backgrounds paint "behind" the
         // cell.
         if (RenderTableCol* column = table()->colElement(cell->col())) {
+            // The backgroundOffset for the column is the top left corner
+            // of the table's nonempty sections (including hBorderSpacing);
+            // how we get there depends on writing mode
+            LayoutPoint columnPoint = paintOffset;
+            auto& tableElt = *table();
+            if (tableElt.isHorizontalWritingMode())
+                columnPoint.move(0, tableElt.columnBlockStart() - y());
+            else if (tableElt.writingMode().isBlockFlipped())
+                columnPoint.move(x() + width() - (tableElt.columnBlockStart() + tableElt.columnBlockLength()), 0);
+            else
+                columnPoint.move(tableElt.columnBlockStart() - x(), 0);
+
             if (RenderTableCol* columnGroup = column->enclosingColumnGroup())
-                cell->paintBackgroundsBehindCell(paintInfo, cellPoint, columnGroup, cellPoint);
-            cell->paintBackgroundsBehindCell(paintInfo, cellPoint, column, cellPoint);
+                cell->paintBackgroundsBehindCell(paintInfo, cellPoint, columnGroup, columnPoint);
+            cell->paintBackgroundsBehindCell(paintInfo, cellPoint, column, columnPoint);
         }
 
         // Paint the row group next.
