@@ -105,8 +105,10 @@ Length SingleTimelineRange::lengthForCSSValue(RefPtr<const CSSPrimitiveValue> va
     if (value->isPercentage())
         return Length(value->resolveAsPercentage(*conversionData), LengthType::Percent);
 
-    if (value->isCalculatedPercentageWithLength() && value->cssCalcValue())
-        return Length(value->cssCalcValue()->createCalculationValue(*conversionData, CSSCalcSymbolTable { }));
+    if (value->isCalculatedPercentageWithLength()) {
+        if (RefPtr cssCalcValue = value->cssCalcValue())
+            return Length(cssCalcValue->createCalculationValue(*conversionData, CSSCalcSymbolTable { }));
+    }
 
     ASSERT_NOT_REACHED();
     return { };
