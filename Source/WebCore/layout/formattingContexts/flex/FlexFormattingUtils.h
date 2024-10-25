@@ -39,14 +39,14 @@ public:
     FlexFormattingUtils(const FlexFormattingContext&);
 
     static bool isMainAxisParallelWithInlineAxis(const ElementBox& flexContainer);
-    static bool isMainAxisParallelWithLeftRightAxis(const ElementBox& flexContainer);
-    static bool isInlineDirectionRTL(const ElementBox& flexContainer);
     static bool isMainReversedToContentDirection(const ElementBox& flexContainer);
     static bool areFlexLinesReversedInCrossAxis(const ElementBox& flexContainer);
 
     // FIXME: These values should probably be computed by FlexFormattingContext and get passed in to FlexLayout.
     static LayoutUnit mainAxisGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxWidth);
     static LayoutUnit crossAxisGapValue(const ElementBox& flexContainer, LayoutUnit flexContainerContentBoxHeight);
+
+    static ContentPosition logicalJustifyContentPosition(const ElementBox& flexContainer, ContentPosition);
 
     LayoutUnit usedMinimumSizeInMainAxis(const LogicalFlexItem&) const;
     std::optional<LayoutUnit> usedMaximumSizeInMainAxis(const LogicalFlexItem&) const;

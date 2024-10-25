@@ -48,19 +48,24 @@ bool FlexFormattingUtils::isMainAxisParallelWithInlineAxis(const ElementBox& fle
     return (isHorizontalWritingMode && (flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse)) || (!isHorizontalWritingMode && (flexDirection == FlexDirection::Column || flexDirection == FlexDirection::ColumnReverse));
 }
 
-bool FlexFormattingUtils::isMainAxisParallelWithLeftRightAxis(const ElementBox& flexContainer)
+ContentPosition FlexFormattingUtils::logicalJustifyContentPosition(const ElementBox& flexContainer, ContentPosition justifyContentPosition)
 {
-    // Currently, the only case where the property’s axis is not parallel with either left↔right axis is in a column flexbox.
-    // https://drafts.csswg.org/css-align/#positional-values
     ASSERT(flexContainer.isFlexBox());
-    auto flexDirection = flexContainer.style().flexDirection();
-    return flexDirection == FlexDirection::Row || flexDirection == FlexDirection::RowReverse;
-}
 
-bool FlexFormattingUtils::isInlineDirectionRTL(const ElementBox& flexContainer)
-{
-    ASSERT(flexContainer.isFlexBox());
-    return !flexContainer.writingMode().isLogicalLeftInlineStart();
+    if (justifyContentPosition != ContentPosition::Right && justifyContentPosition != ContentPosition::Left)
+        return justifyContentPosition;
+
+    auto& flexContainerStyle = flexContainer.style();
+    // If the property's axis is not parallel with either left<->right axis, this value behaves as start (https://drafts.csswg.org/css-align/#positional-values)
+    // Currently, the only case where the property’s axis is not parallel with either left<->right axis is in a column flexbox.
+    // https://drafts.csswg.org/css-align/#positional-values
+    if (flexContainerStyle.isColumnFlexDirection() && flexContainerStyle.writingMode().isHorizontal())
+        return ContentPosition::Start;
+
+    auto isLeftToRightInAxisDirection = flexContainerStyle.isRowFlexDirection() ? flexContainerStyle.writingMode().isLogicalLeftInlineStart() : flexContainerStyle.writingMode().isBlockLeftToRight();
+    if (justifyContentPosition == ContentPosition::Left)
+        return isLeftToRightInAxisDirection ? ContentPosition::Start : ContentPosition::End;
+    return isLeftToRightInAxisDirection ? ContentPosition::End : ContentPosition::Start;
 }
 
 bool FlexFormattingUtils::isMainReversedToContentDirection(const ElementBox& flexContainer)

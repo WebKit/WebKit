@@ -584,19 +584,6 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
         };
         setFallbackValuesIfApplicable();
 
-        auto resolveNonLogicalValues = [&] {
-            if (justifyContentPosition != ContentPosition::Right && justifyContentPosition != ContentPosition::Left)
-                return;
-            if (!FlexFormattingUtils::isMainAxisParallelWithLeftRightAxis(flexContainer())) {
-                // If the property's axis is not parallel with either left<->right axis, this value behaves as start (https://drafts.csswg.org/css-align/#positional-values)
-                justifyContentPosition = ContentPosition::Start;
-                return;
-            }
-            auto leftRightNeedsFlipping = FlexFormattingUtils::isInlineDirectionRTL(flexContainer());
-            justifyContentPosition = justifyContentPosition == ContentPosition::Left ? (!leftRightNeedsFlipping ? ContentPosition::Start : ContentPosition::End) : (!leftRightNeedsFlipping ? ContentPosition::End : ContentPosition::Start);
-        };
-        resolveNonLogicalValues();
-
         auto justifyContent = [&] {
             // 2. Align the items along the main-axis per justify-content.
             auto initialOffset = [&] {
@@ -615,7 +602,7 @@ FlexLayout::PositionAndMarginsList FlexLayout::handleMainAxisAlignment(LayoutUni
                     }
                 }
 
-                switch (justifyContentPosition) {
+                switch (FlexFormattingUtils::logicalJustifyContentPosition(flexContainer(), justifyContentPosition)) {
                 case ContentPosition::Normal:
                 case ContentPosition::FlexStart:
                     return LayoutUnit { };
