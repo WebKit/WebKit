@@ -31,6 +31,11 @@
 #import <cmath>
 #import <wtf/TZoneMallocInlines.h>
 
+// FIXME: remove once FB6018791 is addressed in Foundation
+@interface NSObject (NSPointerArray_15396578)
+- (void)_markNeedsCompaction;
+@end
+
 @implementation SamplerIdentifier
 - (instancetype)initWithFirst:(uint64_t)first second:(uint64_t)second
 {
@@ -45,13 +50,25 @@
 {
     return self;
 }
+- (BOOL)isEqual:(id)object
+{
+    if (self == object)
+        return YES;
+
+    if (![object isKindOfClass:[self class]])
+        return NO;
+
+    SamplerIdentifier* otherSampler = (SamplerIdentifier*)object;
+    return _first == otherSampler.first && _second == otherSampler.second;
+}
 @end
 
 namespace WebGPU {
 
+Lock Sampler::samplerStateLock;
 NSMutableDictionary<SamplerIdentifier*, id<MTLSamplerState>> *Sampler::cachedSamplerStates = nil;
 NSMutableOrderedSet<SamplerIdentifier*> *Sampler::lastAccessedKeys = nil;
-Lock Sampler::samplerStateLock;
+NSPointerArray* Sampler::weakSamplerStates = nil;
 
 static bool validateCreateSampler(Device& device, const WGPUSamplerDescriptor& descriptor)
 {
@@ -272,25 +289,40 @@ bool Sampler::isValid() const
     return !!m_samplerIdentifier;
 }
 
+NSUInteger Sampler::aliveCount()
+{
+    Locker locker { samplerStateLock };
+    [weakSamplerStates _markNeedsCompaction];
+    [weakSamplerStates compact];
+    return weakSamplerStates.count;
+}
+
 id<MTLSamplerState> Sampler::samplerState() const
 {
     if (!m_samplerIdentifier)
         return nil;
 
-    Locker locker { samplerStateLock };
-    if (!cachedSamplerStates) {
-        cachedSamplerStates = [NSMutableDictionary dictionary];
-        lastAccessedKeys = [NSMutableOrderedSet orderedSet];
-    }
+    {
+        Locker locker { samplerStateLock };
+        if (!cachedSamplerStates) {
+            cachedSamplerStates = [NSMutableDictionary dictionary];
+            lastAccessedKeys = [NSMutableOrderedSet orderedSet];
+            weakSamplerStates = [NSPointerArray weakObjectsPointerArray];
+        }
 
-    id<MTLSamplerState> samplerState = [cachedSamplerStates objectForKey:m_samplerIdentifier];
-    if (samplerState)
-        return samplerState;
+        id<MTLSamplerState> samplerState = [cachedSamplerStates objectForKey:m_samplerIdentifier];
+        if (samplerState) {
+            m_cachedSamplerState = samplerState;
+            return samplerState;
+        }
+    }
 
     id<MTLDevice> device = m_device->device();
     if (!device)
         return nil;
-    if (cachedSamplerStates.count >= device.maxArgumentBufferSamplerCount) {
+
+    if (aliveCount() >= device.maxArgumentBufferSamplerCount) {
+        Locker locker { samplerStateLock };
         if (!lastAccessedKeys.count)
             return nil;
 
@@ -298,15 +330,21 @@ id<MTLSamplerState> Sampler::samplerState() const
         if (key)
             [cachedSamplerStates removeObjectForKey:key];
         [lastAccessedKeys removeObjectAtIndex:0];
-        ASSERT(cachedSamplerStates.count < device.maxArgumentBufferSamplerCount);
     }
 
-    samplerState = [device newSamplerStateWithDescriptor:createMetalDescriptorFromDescriptor(m_descriptor)];
+    if (aliveCount() >= device.maxArgumentBufferSamplerCount)
+        return nil;
+
+    id<MTLSamplerState> samplerState = [device newSamplerStateWithDescriptor:createMetalDescriptorFromDescriptor(m_descriptor)];
     if (!samplerState)
         return nil;
 
-    [cachedSamplerStates setObject:samplerState forKey:m_samplerIdentifier];
-    [lastAccessedKeys addObject:m_samplerIdentifier];
+    {
+        Locker locker { samplerStateLock };
+        [cachedSamplerStates setObject:samplerState forKey:m_samplerIdentifier];
+        [lastAccessedKeys addObject:m_samplerIdentifier];
+        [weakSamplerStates addPointer:(__bridge void*)samplerState];
+    }
     m_cachedSamplerState = samplerState;
 
     return samplerState;

@@ -79,12 +79,14 @@ private:
 
     SamplerIdentifier* m_samplerIdentifier { nil };
     WGPUSamplerDescriptor m_descriptor { };
+    static NSUInteger aliveCount();
 
     const Ref<Device> m_device;
     // static is intentional here as the limit is per process
     static Lock samplerStateLock;
-    static NSMutableDictionary<SamplerIdentifier*, id<MTLSamplerState>> *cachedSamplerStates;
-    static NSMutableOrderedSet<SamplerIdentifier*> *lastAccessedKeys;
+    static NSMutableDictionary<SamplerIdentifier*, id<MTLSamplerState>> *cachedSamplerStates WTF_GUARDED_BY_LOCK(samplerStateLock);
+    static NSMutableOrderedSet<SamplerIdentifier*> *lastAccessedKeys WTF_GUARDED_BY_LOCK(samplerStateLock);
+    static NSPointerArray* weakSamplerStates WTF_GUARDED_BY_LOCK(samplerStateLock);
 
     mutable __weak id<MTLSamplerState> m_cachedSamplerState { nil };
 };
