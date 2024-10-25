@@ -5706,8 +5706,8 @@ ExceptionOr<Ref<WebAnimation>> Element::animate(JSC::JSGlobalObject& lexicalGlob
     if (timeline)
         animation->setTimeline(timeline->get());
     animation->setBindingsFrameRate(WTFMove(frameRate));
-    animation->setRangeStart(WTFMove(animationRangeStart));
-    animation->setRangeEnd(WTFMove(animationRangeEnd));
+    animation->setBindingsRangeStart(WTFMove(animationRangeStart));
+    animation->setBindingsRangeEnd(WTFMove(animationRangeEnd));
 
     auto animationPlayResult = animation->play();
     if (animationPlayResult.hasException())

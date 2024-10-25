@@ -1846,13 +1846,13 @@ std::optional<double> WebAnimation::progress() const
     return std::min(std::max(*currentTime / endTime, 0.0), 1.0);
 }
 
-void WebAnimation::setRangeStart(TimelineRangeValue&& rangeStart)
+void WebAnimation::setBindingsRangeStart(TimelineRangeValue&& rangeStart)
 {
     if (RefPtr keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get()))
         m_timelineRange.start = SingleTimelineRange::parse(WTFMove(rangeStart), keyframeEffect->target(), SingleTimelineRange::Type::Start);
 }
 
-void WebAnimation::setRangeEnd(TimelineRangeValue&& rangeEnd)
+void WebAnimation::setBindingsRangeEnd(TimelineRangeValue&& rangeEnd)
 {
     if (RefPtr keyframeEffect = dynamicDowncast<KeyframeEffect>(m_effect.get()))
         m_timelineRange.end = SingleTimelineRange::parse(WTFMove(rangeEnd), keyframeEffect->target(), SingleTimelineRange::Type::End);

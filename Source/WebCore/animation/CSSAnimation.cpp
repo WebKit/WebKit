@@ -134,6 +134,9 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
         );
     }
 
+    if (!m_overriddenProperties.contains(Property::Range))
+        setRange(animation.range());
+
     animationEffect->updateStaticTimingProperties();
     effectTimingDidChange();
 
@@ -158,6 +161,18 @@ void CSSAnimation::setBindingsTimeline(RefPtr<AnimationTimeline>&& timeline)
 {
     m_overriddenProperties.add(Property::Timeline);
     StyleOriginatedAnimation::setBindingsTimeline(WTFMove(timeline));
+}
+
+void CSSAnimation::setBindingsRangeStart(TimelineRangeValue&& range)
+{
+    m_overriddenProperties.add(Property::Range);
+    StyleOriginatedAnimation::setBindingsRangeEnd(WTFMove(range));
+}
+
+void CSSAnimation::setBindingsRangeEnd(TimelineRangeValue&& range)
+{
+    m_overriddenProperties.add(Property::Range);
+    StyleOriginatedAnimation::setBindingsRangeEnd(WTFMove(range));
 }
 
 ExceptionOr<void> CSSAnimation::bindingsPlay()

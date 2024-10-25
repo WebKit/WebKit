@@ -63,6 +63,8 @@ private:
     void setBindingsEffect(RefPtr<AnimationEffect>&&) final;
     ExceptionOr<void> setBindingsStartTime(const std::optional<WebAnimationTime>&) final;
     ExceptionOr<void> bindingsReverse() final;
+    void setBindingsRangeStart(TimelineRangeValue&&) final;
+    void setBindingsRangeEnd(TimelineRangeValue&&) final;
 
     enum class Property : uint16_t {
         Name = 1 << 0,
@@ -75,7 +77,8 @@ private:
         FillMode = 1 << 7,
         Keyframes = 1 << 8,
         CompositeOperation = 1 << 9,
-        Timeline = 1 << 10
+        Timeline = 1 << 10,
+        Range = 1 << 11
     };
 
     String m_animationName;
