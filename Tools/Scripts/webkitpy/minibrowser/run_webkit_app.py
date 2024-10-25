@@ -48,6 +48,8 @@ def main(argv):
 
     option_parser.add_argument('url', metavar='url', type=lambda s: decode(s, 'utf8'), nargs='?',
                                help='Website URL to load')
+    option_parser.add_argument('--inspector', action='store_const', const='--inspector',
+                               help='Show Web Inspector after loading page')
     options, args = option_parser.parse_known_args(argv)
 
     if not options.platform:
@@ -59,6 +61,9 @@ def main(argv):
     browser_args = [decode(s, "utf-8") for s in option_parser.convert_arg_line_to_args(' '.join(args))[0].split()]
     if options.url:
         browser_args.append(options.url)
+
+    if options.inspector:
+        browser_args.append(options.inspector)
 
     try:
         port = factory.PortFactory(Host()).get(options.platform, options=options)

@@ -44,6 +44,7 @@
 #import <objc/runtime.h>
 
 static const NSString * const kURLArgumentString = @"--url";
+static const NSString * const kShowWebInspectorArgumentString = @"--inspector";
 
 enum {
     WebKit1NewWindowTag = 1,
@@ -337,6 +338,10 @@ static NSNumber *_currentBadge;
 
     [[controller window] makeKeyAndOrderFront:sender];
     [controller loadURLString:[self targetURLOrDefaultURL]];
+
+    NSArray *args = [[NSProcessInfo processInfo] arguments];
+    if ([args containsObject:kShowWebInspectorArgumentString])
+        [controller showWebInspector];
 }
 
 - (IBAction)newPrivateWindow:(id)sender
@@ -350,6 +355,10 @@ static NSNumber *_currentBadge;
     [_browserWindowControllers addObject:controller];
 
     [controller loadURLString:_settingsController.defaultURL];
+
+    NSArray *args = [[NSProcessInfo processInfo] arguments];
+    if ([args containsObject:kShowWebInspectorArgumentString])
+        [controller showWebInspector];
 }
 
 - (IBAction)newEditorWindow:(id)sender
@@ -360,6 +369,10 @@ static NSNumber *_currentBadge;
 
     [[controller window] makeKeyAndOrderFront:sender];
     [controller loadHTMLString:@"<html><body></body></html>"];
+
+    NSArray *args = [[NSProcessInfo processInfo] arguments];
+    if ([args containsObject:kShowWebInspectorArgumentString])
+        [controller showWebInspector];
 }
 
 - (void)didCreateBrowserWindowController:(BrowserWindowController *)controller
