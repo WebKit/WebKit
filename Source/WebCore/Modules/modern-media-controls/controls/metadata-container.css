@@ -24,19 +24,19 @@
  */
 
 .media-controls.fullscreen.tvos > .metadata-container {
-    .title-label, .artist-label {
+    #title-label, #artist-label {
         mix-blend-mode: plus-lighter;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
     }
 
-    .title-label {
+    #title-label {
         color: var(--primary-glyph-color);
         font-size: larger;
     }
 
-    .artist-label {
+    #artist-label {
         color: var(--secondary-glyph-color);
     }
 }

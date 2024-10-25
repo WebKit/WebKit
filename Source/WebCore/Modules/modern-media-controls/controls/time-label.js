@@ -46,6 +46,20 @@ class TimeLabel extends LayoutNode
 
         this._type = type;
         this.setValueWithNumberOfDigits(0, 4);
+        
+        switch (this._type) {
+        case TimeLabel.Type.Elapsed:
+            this.element.setAttribute("id", "time-label-elapsed");
+            break;
+
+        case TimeLabel.Type.Remaining:
+            this.element.setAttribute("id", "time-label-remaining");
+            break;
+
+        case TimeLabel.Type.Duration:
+            this.element.setAttribute("id", "time-label-duration");
+            break;
+        }
     }
 
     // Public

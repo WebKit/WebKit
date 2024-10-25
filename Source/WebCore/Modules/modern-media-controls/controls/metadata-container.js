@@ -32,8 +32,8 @@ class MetadataContainer extends LayoutNode
         this._title = "";
         this._artist = "";
         
-        this._titleNode = new LayoutNode(`<div class="title-label"></div>`);
-        this._artistNode = new LayoutNode(`<div class="artist-label"></div>`);
+        this._titleNode = new LayoutNode(`<div id="title-label"></div>`);
+        this._artistNode = new LayoutNode(`<div id="artist-label"></div>`);
         this.children = [this._titleNode, this._artistNode];
     }
 
