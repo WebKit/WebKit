@@ -1425,11 +1425,13 @@ auto LLIntGenerator::addBranch(ControlType& data, ExpressionType condition, Stac
 
 auto LLIntGenerator::addBranchNull(ControlType& data, ExpressionType reference, Stack& returnValues, bool shouldNegate, ExpressionType& result) -> PartialResult
 {
+    checkConsistency();
+
     // Leave a hole for the reference and avoid overwriting it with the condition.
     if (!shouldNegate)
-        push();
+        push(NoConsistencyCheck);
 
-    auto condition = push();
+    auto condition = push(NoConsistencyCheck);
     WasmRefIsNull::emit(this, condition, reference);
 
     if (shouldNegate)
@@ -1440,8 +1442,10 @@ auto LLIntGenerator::addBranchNull(ControlType& data, ExpressionType reference, 
 
     WASM_FAIL_IF_HELPER_FAILS(addBranch(data, condition, returnValues));
 
+    checkConsistency();
+
     if (!shouldNegate) {
-        result = push();
+        result = push(NoConsistencyCheck);
         if (reference != result)
             WasmMov::emit(this, result, reference);
     }
