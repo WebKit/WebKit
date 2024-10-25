@@ -1945,3 +1945,7 @@ webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/touch-globaleve
 
 fast/text/simple-line-layout-hyphenation-constrains.html [ ImageOnlyFailure ]
 editing/spelling/spelling-marker-includes-hyphen.html [ ImageOnlyFailure ]
+
+http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
+http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
+http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]

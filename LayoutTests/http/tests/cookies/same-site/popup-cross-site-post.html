@@ -7,8 +7,8 @@
 if (window.location.hostname == "127.0.0.1") {
     clearKnownCookies();
     document.cookie = STRICT_DOM + "=1; SameSite=Strict; Max-Age=100; path=/";
-    document.cookie = IMPLICIT_LAX_DOM + "=1; SameSite; Max-Age=100; path=/";
-    document.cookie = LAX_BECAUSE_INVALID_SAMESITE_VALUE + "=1; SameSite=invalid; Max-Age=100; path=/";
+    document.cookie = IMPLICIT_NONE_DOM + "=1; SameSite; Max-Age=100; path=/";
+    document.cookie = NONE_BECAUSE_INVALID_SAMESITE_VALUE + "=1; SameSite=invalid; Max-Age=100; path=/";
     document.cookie = LAX_DOM + "=1; SameSite=Lax; Max-Age=100; path=/";
     document.cookie = NORMAL_DOM + "=1; Max-Age=100; path=/";
     window.location.hostname = "localhost";
@@ -16,11 +16,11 @@ if (window.location.hostname == "127.0.0.1") {
     async_test(t => {
         window.addEventListener("message", t.step_func_done(e => {
             assert_equals(e.data.http[STRICT_DOM], undefined, "strict");
-            assert_equals(e.data.http[IMPLICIT_LAX_DOM], undefined, "implicit-lax");
-            assert_equals(e.data.http[LAX_BECAUSE_INVALID_SAMESITE_VALUE], undefined, "lax-because-invalid-SameSite-value");
+            assert_equals(e.data.http[IMPLICIT_NONE_DOM], "1", "implicit-none");
+            assert_equals(e.data.http[NONE_BECAUSE_INVALID_SAMESITE_VALUE], "1", "none-because-invalid-SameSite-value");
             assert_equals(e.data.http[LAX_DOM], undefined, "lax");
-            assert_equals(e.data.http[NORMAL_DOM], undefined, "normal");
-            assert_equals(normalizeCookie(e.data.document), normalizeCookie(IMPLICIT_LAX_DOM + "=1; " + LAX_DOM + "=1; " + NORMAL_DOM + "=1; " + LAX_BECAUSE_INVALID_SAMESITE_VALUE + "=1; " + STRICT_DOM + "=1"));
+            assert_equals(e.data.http[NORMAL_DOM], "1", "normal");
+            assert_equals(normalizeCookie(e.data.document), normalizeCookie(IMPLICIT_NONE_DOM + "=1; " + LAX_DOM + "=1; " + NORMAL_DOM + "=1; " + NONE_BECAUSE_INVALID_SAMESITE_VALUE + "=1; " + STRICT_DOM + "=1"));
             e.source.close();
         }));
 

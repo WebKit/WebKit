@@ -16,14 +16,14 @@ async function checkResult()
 
     debug("Cookies sent with HTTP request:");
     await shouldNotHaveCookie("strict");
-    await shouldNotHaveCookie("implicit-lax", "10"); // Behaves like a non-SameSite cookie
-    await shouldNotHaveCookie("lax-because-invalid-SameSite-value", "10"); // Behaves like a non-SameSite cookie
+    await shouldHaveCookieWithValue("implicit-none", "10"); // Behaves like a non-SameSite cookie
+    await shouldHaveCookieWithValue("none-because-invalid-SameSite-value", "10"); // Behaves like a non-SameSite cookie
     await shouldNotHaveCookie("lax");
 
     debug("<br>Cookies visible in DOM:");
     shouldNotHaveDOMCookie("strict");
-    shouldNotHaveDOMCookie("implicit-lax");
-    shouldNotHaveDOMCookie("lax-because-invalid-SameSite-value");
+    shouldNotHaveDOMCookie("implicit-none");
+    shouldNotHaveDOMCookie("none-because-invalid-SameSite-value");
     shouldNotHaveDOMCookie("lax");
 
     await resetCookies();

@@ -95,13 +95,6 @@ imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullw
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-fullwidth-005.xht [ Pass ]
 fast/text/text-underline-position-under.html [ Pass ]
 
-# Fails when cookies are not SameSite=Lax by default
-http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
-http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
-http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
-imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
-
 # Fails with SameSite=None cookies by default
 http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure ]
 

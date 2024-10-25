@@ -2959,9 +2959,6 @@ imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-mode
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue/white-space_pre.html
 imported/w3c/web-platform-tests/webvtt/rendering/cues-with-video/processing-model/selectors/cue_function/not_root_selector.html
 
-[ Ventura Sonoma ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
-[ Ventura Sonoma ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
-
 webkit.org/b/276636 imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-only-sends-reports-on-violation.https.sub.html [ Failure ]
 
 # webkit.org/b/278293 [MacOS WK1] imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-api-report-to-only-sends-reports-to-first-endpoint.https.sub.html is a flakey failure

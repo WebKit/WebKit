@@ -1765,25 +1765,6 @@ webkit.org/b/275913 [ Debug ] imported/w3c/web-platform-tests/media-source/dedic
 
 webkit.org/b/275873 storage/indexeddb/database-transaction-cycle.html [ Pass Failure ]
 
-# rdar://135211047
-[ Sequoia+ ] http/tests/resourceLoadStatistics/do-not-remove-blocking-in-redirect.https.html [ Failure ]
-[ Sequoia+ ] http/tests/privateClickMeasurement/send-attribution-conversion-request.https.html [ Failure ]
-[ Sequoia+ ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.https.html [ Failure ]
-[ Sequoia+ ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.https.html [ Failure ]
-[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.https.html [ Failure ]
-[ Sequoia+ ] http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.https.html [ Failure ]
-
-# rdar://125587489
-[ Sequoia+ ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.html [ Failure ]
-[ Sequoia+ ] imported/w3c/web-platform-tests/fetch/api/cors/cors-cookies-redirect.any.worker.html [ Failure ]
-
-[ Ventura Sonoma ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
-[ Ventura Sonoma ] http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
-[ Ventura Sonoma ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
-[ Ventura Sonoma ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
-[ Ventura Sonoma ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
-[ Ventura Sonoma ] http/tests/resourceLoadStatistics/set-all-cookies-to-same-site-strict.html [ Failure ]
-
 webkit.org/b/276389 media/video-transformed.html [ Pass Failure ] 
 
 # webkit.org/b/277841 [ macOS wk2 ] imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html is a flaky failure
@@ -1904,17 +1885,8 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopen
 # webkit.org/b/281840 [ Ventura wk2 ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-same-document-preventDefault-multiple-windows.html is a flaky failure.
 [ Ventura ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-same-document-preventDefault-multiple-windows.html [ Pass Failure ]
 
-# webkit.org/b/281923 [ Sequoia wk2 Debug arm64 ] 3 tests in http/tests/cookies/same-site are constant failure (failure in EWS)
-[ Sequoia+ Debug arm64 ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
-[ Sequoia+ Debug arm64 ] http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
-[ Sequoia+ Debug arm64 ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
-
 # webkit.org/b/281939 [Sequoia] svg/stroke/non-scaling-stroke-gradient-text.html is a constant image failure
 [ Sequoia ] svg/stroke/non-scaling-stroke-gradient-text.html [ ImageOnlyFailure ]
-
-# webkit.org/b/281984 [ SequoiaA wk2 Debug arm64 ] 2x imported/w3c/web-platform-tests/html/anonymous-iframe/* are constant failures. 
-[ Sequoia+ Debug arm64 ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
-[ Sequoia+ Debug arm64 ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
 
 # webkit.org/b/281999 REGRESSION (285061@main): [macOS Debug arm64 ] ASSERTION FAILED: m_lastEnqueuedRawVideoFrame <= sampleTime in http/wpt/mediarecorder/paus e-recording.html (EWS failure)
 [ Debug arm64 ] http/wpt/mediarecorder/pause-recording.html [ Skip ]

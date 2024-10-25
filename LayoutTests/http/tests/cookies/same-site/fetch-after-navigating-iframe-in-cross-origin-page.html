@@ -8,8 +8,8 @@ async function runTest()
 {
     await resetCookies();
     await setCookie("strict", "6", {"SameSite": "Strict", "Max-Age": 100, "path": "/"});
-    await setCookie("implicit-lax", "6", {"SameSite": null, "Max-Age": 100, "path": "/"});
-    await setCookie("lax-because-invalid-SameSite-value", "6", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
+    await setCookie("implicit-none", "6", {"SameSite": null, "Max-Age": 100, "path": "/"});
+    await setCookie("none-because-invalid-SameSite-value", "6", {"SameSite": "invalid", "Max-Age": 100, "path": "/"});
     await setCookie("lax", "6", {"SameSite": "Lax", "Max-Age": 100, "path": "/"});
     window.location.href = "http://localhost:8000/resources/echo-iframe-src.py?src=http%3A//127.0.0.1%3A8000/cookies/same-site/resources/click-hyperlink.py%3Fhref%3Dfetch-after-navigating-iframe-in-cross-origin-page.py";
 }

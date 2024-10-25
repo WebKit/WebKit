@@ -5,9 +5,9 @@ var TEST_SUB  = "subdomain." + TEST_HOST;
 
 var STRICT_DOM = "strict_from_dom";
 var IMPLICIT_STRICT_DOM = "implicit_strict_from_dom";
-var IMPLICIT_LAX_DOM = "implicit_lax_from_dom";
+var IMPLICIT_NONE_DOM = "implicit_none_from_dom";
 var STRICT_BECAUSE_INVALID_SAMESITE_VALUE = "strict_because_invalid_SameSite_value";
-var LAX_BECAUSE_INVALID_SAMESITE_VALUE = "lax_because_invalid_SameSite_value";
+var NONE_BECAUSE_INVALID_SAMESITE_VALUE = "none_because_invalid_SameSite_value";
 var LAX_DOM = "lax_from_dom";
 var NORMAL_DOM = "normal_from_dom";
 

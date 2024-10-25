@@ -1684,3 +1684,7 @@ webkit.org/b/279179 imported/w3c/web-platform-tests/eventsource/eventsource-cons
 
 webkit.org/b/281053 fast/storage/serialized-script-value.html [ Pass Crash ]
 webkit.org/b/281053 imported/w3c/web-platform-tests/worklets/audio-worklet-referrer.https.html [ Pass Crash ]
+
+http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
+http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
+http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]

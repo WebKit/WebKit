@@ -4261,10 +4261,6 @@ webkit.org/b/124566 fast/dom/SelectorAPI/resig-SelectorsAPI-test.xhtml [ Skip ] 
 # Failures related with compositing tests.
 webkit.org/b/169918 compositing/fixed-with-fixed-layout.html [ Crash Pass ]
 
-# Fails when cookies are not SameSite=Lax by default
-imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
-imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
-
 # Touch events related layout tests failing
 webkit.org/b/278719 fast/events/touch/basic-multi-touch-events.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/basic-multi-touch-events-limited.html [ Failure ]
