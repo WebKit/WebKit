@@ -339,7 +339,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setDefersLoadingForTesting:(BOOL)defersLoading
 {
-    if (auto* pageForTesting = _page->pageForTesting())
+    if (RefPtr pageForTesting = _page->pageForTesting())
         pageForTesting->setDefersLoading(defersLoading);
 }
 
@@ -406,7 +406,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (nsIndex)
         index = nsIndex.unsignedIntValue;
 
-    if (auto* pageForTesting = _page->pageForTesting())
+    if (RefPtr pageForTesting = _page->pageForTesting())
         pageForTesting->setIndexOfGetDisplayMediaDeviceSelectedForTesting(index);
 #endif
 }
@@ -417,7 +417,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     if (!_page)
         return;
 
-    if (auto* pageForTesting = _page->pageForTesting())
+    if (RefPtr pageForTesting = _page->pageForTesting())
         pageForTesting->setSystemCanPromptForGetDisplayMediaForTesting(!!canPrompt);
 #endif
 }
@@ -513,7 +513,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setPrivateClickMeasurementOverrideTimerForTesting:(BOOL)overrideTimer completionHandler:(void(^)(void))completionHandler
 {
-    auto* pageForTesting = _page->pageForTesting();
+    RefPtr pageForTesting = _page->pageForTesting();
     if (!pageForTesting)
         return completionHandler();
 
@@ -524,7 +524,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setPrivateClickMeasurementAttributionReportURLsForTesting:(NSURL *)sourceURL destinationURL:(NSURL *)destinationURL completionHandler:(void(^)(void))completionHandler
 {
-    auto* pageForTesting = _page->pageForTesting();
+    RefPtr pageForTesting = _page->pageForTesting();
     if (!pageForTesting)
         return completionHandler();
 
@@ -535,7 +535,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setPrivateClickMeasurementAttributionTokenPublicKeyURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler
 {
-    auto* pageForTesting = _page->pageForTesting();
+    RefPtr pageForTesting = _page->pageForTesting();
     if (!pageForTesting)
         return completionHandler();
 
@@ -546,7 +546,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setPrivateClickMeasurementAttributionTokenSignatureURLForTesting:(NSURL *)url completionHandler:(void(^)(void))completionHandler
 {
-    auto* pageForTesting = _page->pageForTesting();
+    RefPtr pageForTesting = _page->pageForTesting();
     if (!pageForTesting)
         return completionHandler();
 
@@ -557,7 +557,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_setPrivateClickMeasurementAppBundleIDForTesting:(NSString *)appBundleID completionHandler:(void(^)(void))completionHandler
 {
-    auto* pageForTesting = _page->pageForTesting();
+    RefPtr pageForTesting = _page->pageForTesting();
     if (!pageForTesting)
         return completionHandler();
 
@@ -568,7 +568,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_dumpPrivateClickMeasurement:(void(^)(NSString *))completionHandler
 {
-    auto* pageForTesting = _page->pageForTesting();
+    RefPtr pageForTesting = _page->pageForTesting();
     if (!pageForTesting)
         return completionHandler({ });
 
@@ -641,7 +641,7 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 
 - (void)_isLayerTreeFrozenForTesting:(void (^)(BOOL frozen))completionHandler
 {
-    auto* pageForTesting = _page->pageForTesting();
+    RefPtr pageForTesting = _page->pageForTesting();
     if (!pageForTesting)
         return completionHandler(false);
 

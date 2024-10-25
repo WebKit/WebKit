@@ -354,10 +354,6 @@ void InjectedBundlePage::prepare()
 
     WKBundleClearHistoryForTesting(m_page);
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    WKBundleFrameClearOpener(WKBundlePageGetMainFrame(m_page));
-    ALLOW_DEPRECATED_DECLARATIONS_END
-
     WKBundlePageSetTracksRepaints(m_page, false);
     
     // Force consistent "responsive" behavior for WebPage::eventThrottlingDelay() for testing. Tests can override via internals.

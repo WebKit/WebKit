@@ -34,10 +34,6 @@ class Connection;
 class Decoder;
 }
 
-namespace WebCore {
-class IntPoint;
-}
-
 namespace WebKit {
 
 class WebPage;
@@ -57,6 +53,7 @@ private:
     void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
     void setPermissionLevel(const String& origin, bool allowed);
     void isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&&);
+    void resetStateBetweenTests();
 
 #if ENABLE(NOTIFICATIONS)
     void clearNotificationPermissionState();

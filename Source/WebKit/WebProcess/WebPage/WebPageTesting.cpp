@@ -122,4 +122,10 @@ Ref<WebPage> WebPageTesting::protectedPage() const
     return m_page.get();
 }
 
+void WebPageTesting::resetStateBetweenTests()
+{
+    if (RefPtr mainFrame = protectedPage()->mainFrame())
+        mainFrame->disownOpener();
+}
+
 } // namespace WebKit

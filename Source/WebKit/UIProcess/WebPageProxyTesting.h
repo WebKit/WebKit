@@ -39,11 +39,11 @@ namespace WebKit {
 
 class WebPageProxy;
 
-class WebPageProxyTesting : public IPC::MessageSender {
+class WebPageProxyTesting : public IPC::MessageSender, public RefCounted<WebPageProxyTesting> {
     WTF_MAKE_TZONE_ALLOCATED(WebPageProxyTesting);
     WTF_MAKE_NONCOPYABLE(WebPageProxyTesting);
 public:
-    explicit WebPageProxyTesting(WebPageProxy&);
+    static Ref<WebPageProxyTesting> create(WebPageProxy& page) { return adoptRef(*new WebPageProxyTesting(page)); }
 
     void setDefersLoading(bool);
     void isLayerTreeFrozen(CompletionHandler<void(bool)>&&);
@@ -51,6 +51,7 @@ public:
     void setCrossSiteLoadWithLinkDecorationForTesting(const URL& fromURL, const URL& toURL, bool wasFiltered, CompletionHandler<void()>&&);
     void setPermissionLevel(const String& origin, bool allowed);
     bool isEditingCommandEnabled(const String& commandName);
+    void resetStateBetweenTests();
 
     void dumpPrivateClickMeasurement(CompletionHandler<void(const String&)>&&);
     void clearPrivateClickMeasurement(CompletionHandler<void()>&&);
@@ -78,6 +79,8 @@ public:
 
     void setTopContentInset(float, CompletionHandler<void()>&&);
 private:
+    explicit WebPageProxyTesting(WebPageProxy&);
+
     bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>) final;
     bool sendMessageWithAsyncReply(UniqueRef<IPC::Encoder>&&, AsyncReplyHandler, OptionSet<IPC::SendOption>) final;
 

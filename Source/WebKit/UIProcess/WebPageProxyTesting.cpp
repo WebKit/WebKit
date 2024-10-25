@@ -210,4 +210,16 @@ Ref<WebPageProxy> WebPageProxyTesting::protectedPage() const
     return m_page.get();
 }
 
+void WebPageProxyTesting::resetStateBetweenTests()
+{
+    protectedPage()->protectedLegacyMainFrameProcess()->resetState();
+
+    if (RefPtr mainFrame = m_page->mainFrame())
+        mainFrame->disownOpener();
+
+    protectedPage()->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebPageTesting::ResetStateBetweenTests(), pageID);
+    });
+}
+
 } // namespace WebKit
