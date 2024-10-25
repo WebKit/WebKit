@@ -1188,16 +1188,19 @@ static InputSessionChangeCount nextInputSessionChangeCount()
 
 - (NSArray<NSValue *> *)selectionViewRectsInContentCoordinates
 {
-    NSMutableArray *selectionRects = [NSMutableArray array];
-    NSArray<UITextSelectionRect *> *rects = nil;
 #if HAVE(UI_TEXT_SELECTION_DISPLAY_INTERACTION)
-    if (auto view = self.textSelectionDisplayInteraction.highlightView; !view.hidden)
-        rects = view.selectionRects;
+    RetainPtr contentView = [self textInputContentView];
+    if (auto view = self.textSelectionDisplayInteraction.highlightView; !view.hidden) {
+        RetainPtr uiTextSelectionRects = [view selectionRects];
+        NSMutableArray *selectionRects = [NSMutableArray arrayWithCapacity:[uiTextSelectionRects count]];
+        for (UITextSelectionRect *rect in uiTextSelectionRects.get()) {
+            CGRect rectInContentView = [view convertRect:rect.rect toView:contentView.get()];
+            [selectionRects addObject:[NSValue valueWithCGRect:rectInContentView]];
+        }
+        return selectionRects;
+    }
 #endif
-
-    for (UITextSelectionRect *rect in rects)
-        [selectionRects addObject:[NSValue valueWithCGRect:rect.rect]];
-    return selectionRects;
+    return @[ ];
 }
 
 - (_WKActivatedElementInfo *)activatedElementAtPosition:(CGPoint)position

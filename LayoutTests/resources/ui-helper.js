@@ -206,6 +206,18 @@ window.UIHelper = class UIHelper {
         });
     }
 
+    static roundToDevicePixel(value)
+    {
+        return Math.round(value * devicePixelRatio) / devicePixelRatio;
+    }
+
+    static roundRectToDevicePixel(rect)
+    {
+        return Object.fromEntries(Object.keys(rect).map(key => {
+            return [key, this.roundToDevicePixel(rect[key])];
+        }));
+    }
+
     static tapAt(x, y, modifiers=[])
     {
         console.assert(this.isIOSFamily());

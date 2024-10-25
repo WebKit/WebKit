@@ -5,14 +5,10 @@ This test verifies that after focusing a visible input field in a body element t
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
-PASS caretBefore.left is 18
-PASS caretBefore.top is 12
-PASS caretBefore.width is 2
-PASS caretBefore.height is 24
-PASS caretAfter.left is 18
-PASS caretAfter.top is 12
-PASS caretAfter.width is 2
-PASS caretAfter.height is 24
+PASS caretBefore.top is caretAfter.top
+PASS caretBefore.left is caretAfter.left
+PASS caretBefore.width is caretAfter.width
+PASS caretBefore.height is caretAfter.height
 PASS successfullyParsed is true
 
 TEST COMPLETE
