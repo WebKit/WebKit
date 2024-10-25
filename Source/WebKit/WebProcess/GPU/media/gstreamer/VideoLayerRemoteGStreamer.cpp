@@ -26,7 +26,7 @@
 #include "config.h"
 #include "VideoLayerRemote.h"
 
-#if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
+#if ENABLE(GPU_PROCESS)
 
 #include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformLayer.h>

@@ -1503,9 +1503,7 @@ public:
 
     const String& defaultSpatialTrackingLabel() const;
 
-#if ENABLE(VIDEO)
     bool isEffectivelyMuted(const HTMLMediaElement&);
-#endif
 
     using RenderingMode = WebCore::RenderingMode;
     std::optional<RenderingMode> getEffectiveRenderingModeOfNewlyCreatedAcceleratedImageBuffer();

@@ -1409,7 +1409,7 @@ enum RenderingMode {
 
     readonly attribute DOMString defaultSpatialTrackingLabel;
 
-    [Conditional=VIDEO] boolean isEffectivelyMuted(HTMLMediaElement element);
+    boolean isEffectivelyMuted(HTMLMediaElement element);
 
     RenderingMode? getEffectiveRenderingModeOfNewlyCreatedAcceleratedImageBuffer();
     Promise<ImageBufferResourceLimits> getImageBufferResourceLimits();
