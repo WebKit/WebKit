@@ -24,7 +24,7 @@
 
 struct WebKit::WebExtensionMessageTargetParameters {
     std::optional<WebKit::WebExtensionFrameIdentifier> frameIdentifier;
-    WTF::Markable<WTF::UUID> documentIdentifier;
+    Markable<WTF::UUID> documentIdentifier;
 };
 
 #endif

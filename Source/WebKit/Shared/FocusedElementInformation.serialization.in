@@ -117,3 +117,5 @@ enum class WebKit::InputType : uint8_t {
     Markable<WebCore::FrameIdentifier> frameID;
 }
 #endif
+
+enum class WebKit::ColorControlSupportsAlpha : bool
