@@ -1229,6 +1229,7 @@ dom/InternalObserver.cpp
 dom/InternalObserverDrop.cpp
 dom/InternalObserverFilter.cpp
 dom/InternalObserverFirst.cpp
+dom/InternalObserverForEach.cpp
 dom/InternalObserverFromScript.cpp
 dom/InternalObserverLast.cpp
 dom/InternalObserverMap.cpp
@@ -4654,6 +4655,7 @@ JSViewTransition.cpp
 JSViewTransitionTypeSet.cpp
 JSViewTransitionUpdateCallback.cpp
 JSVisibilityState.cpp
+JSVisitorCallback.cpp
 JSVisualViewport.cpp
 JSVoidCallback.cpp
 JSWakeLock.cpp

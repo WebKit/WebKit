@@ -3111,6 +3111,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransitionUpdateCallback.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSViewTransitionUpdateCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisibilityState.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisibilityState.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisitorCallback.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisitorCallback.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisualViewport.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVisualViewport.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSVoidCallback.cpp

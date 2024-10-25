@@ -1549,6 +1549,7 @@ $(PROJECT_DIR)/dom/ViewTransition.idl
 $(PROJECT_DIR)/dom/ViewTransitionTypeSet.idl
 $(PROJECT_DIR)/dom/ViewTransitionUpdateCallback.idl
 $(PROJECT_DIR)/dom/VisibilityState.idl
+$(PROJECT_DIR)/dom/VisitorCallback.idl
 $(PROJECT_DIR)/dom/WheelEvent.idl
 $(PROJECT_DIR)/dom/WindowOrWorkerGlobalScope+TrustedTypes.idl
 $(PROJECT_DIR)/dom/XMLDocument.idl
