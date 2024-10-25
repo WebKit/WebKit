@@ -41,6 +41,15 @@
 
 namespace WebCore {
 
+template<CSSValueID cssValueFor0, CSSValueID cssValueFor100>
+Length positionComponentOrCoordinateToLength(const CSSValue& value, CoordinateAffinity affinity, const Style::BuilderState& builderState)
+{
+    if (affinity == CoordinateAffinity::Absolute)
+        return Style::BuilderConverter::convertPositionComponent<cssValueFor0, cssValueFor100>(builderState, value);
+
+    return convertToLength(builderState.cssToLengthConversionData(), value);
+}
+
 static ControlPoint controlPoint(const ControlPointValue& controlPointValue, CoordinateAffinity affinity, const Style::BuilderState& builderState)
 {
     return ControlPoint {
@@ -248,9 +257,9 @@ BasicShapeShape::ShapeSegment CSSShapeSegmentValue::toShapeSegment(const Style::
         return ShapeLineSegment(m_data->affinity, WTFMove(targetLengthPoint));
     }
     case SegmentType::HorizontalLine:
-        return ShapeHorizontalLineSegment(m_data->affinity, convertToLength(builderState.cssToLengthConversionData(), m_data->offset));
+        return ShapeHorizontalLineSegment(m_data->affinity, positionComponentOrCoordinateToLength<CSSValueLeft, CSSValueRight>(m_data->offset, m_data->affinity, builderState));
     case SegmentType::VerticalLine:
-        return ShapeVerticalLineSegment(m_data->affinity, convertToLength(builderState.cssToLengthConversionData(), m_data->offset));
+        return ShapeVerticalLineSegment(m_data->affinity, positionComponentOrCoordinateToLength<CSSValueTop, CSSValueBottom>(m_data->offset, m_data->affinity, builderState));
     case SegmentType::CubicCurve: {
         auto& twoPointData = static_cast<const TwoPointData&>(*m_data);
         auto targetLengthPoint = positionOrCoordinatePairToLengthPoint(twoPointData.offset, twoPointData.affinity, builderState);

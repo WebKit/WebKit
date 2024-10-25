@@ -1384,7 +1384,7 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
     auto id = range.consumeIncludingWhitespace().id();
     switch (id) {
     case CSSValueMove: {
-        // <move-command> = move <by-to> <coordinate-pair>
+        // <move-command> = move [ to <position> | by <coordinate-pair> ]
         auto affinityValue = consumeAffinity();
         if (!affinityValue)
             return nullptr;
@@ -1396,7 +1396,7 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
         return CSSShapeSegmentValue::createMove(*affinityValue, toCoordinates.releaseNonNull());
     }
     case CSSValueLine: {
-        // <line-command> = line <by-to> <coordinate-pair>
+        // <line-command> = line [ to <position> | by <coordinate-pair> ]
         auto affinityValue = consumeAffinity();
         if (!affinityValue)
             return nullptr;
@@ -1407,24 +1407,45 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
 
         return CSSShapeSegmentValue::createLine(*affinityValue, toCoordinates.releaseNonNull());
     }
-    case CSSValueHline:
-    case CSSValueVline: {
-        // <hv-line-command> = [hline | vline] <by-to> <length-percentage>
+    case CSSValueHline: {
+        // <horizontal-line-command> = hline [ to [ <length-percentage> | left | center | right | x-start | x-end ] | by <length-percentage> ]
         auto affinityValue = consumeAffinity();
         if (!affinityValue)
             return nullptr;
+
+        if (*affinityValue == CoordinateAffinity::Absolute) {
+            // FIXME: Add x-start, x-end when supported: webkit.org/b/282026
+            if (auto ident = consumeIdent<CSSValueLeft, CSSValueCenter, CSSValueRight /*, CSSValueXStart, CSSValueXEnd */>(range))
+                return CSSShapeSegmentValue::createHorizontalLine(*affinityValue, ident.releaseNonNull());
+        }
 
         auto length = consumeLengthPercentage(range, context);
         if (!length)
             return nullptr;
 
-        if (id == CSSValueHline)
-            return CSSShapeSegmentValue::createHorizontalLine(*affinityValue, length.releaseNonNull());
+        return CSSShapeSegmentValue::createHorizontalLine(*affinityValue, length.releaseNonNull());
+    }
+    case CSSValueVline: {
+        // <vertical-line-command> = vline [ to [ <length-percentage> | top | center | bottom | y-start | y-end ] | by <length-percentage> ]
+        auto affinityValue = consumeAffinity();
+        if (!affinityValue)
+            return nullptr;
+
+        if (*affinityValue == CoordinateAffinity::Absolute) {
+            // FIXME: Add y-start, y-end when supported: webkit.org/b/282026
+            if (auto ident = consumeIdent<CSSValueTop, CSSValueCenter, CSSValueBottom /*, CSSValueYStart, CSSValueYEnd */>(range))
+                return CSSShapeSegmentValue::createVerticalLine(*affinityValue, ident.releaseNonNull());
+        }
+
+        auto length = consumeLengthPercentage(range, context);
+        if (!length)
+            return nullptr;
 
         return CSSShapeSegmentValue::createVerticalLine(*affinityValue, length.releaseNonNull());
     }
     case CSSValueCurve: {
-        // <curve-command> = curve <by-to> <coordinate-pair> using <coordinate-pair>{1,2}
+        // <curve-command> = curve [ to <position> with <to-control-point> [ / <to-control-point> ]?
+        //                         | by <coordinate-pair> with <relative-control-point> [ / <relative-control-point> ]? ]
         auto affinityValue = consumeAffinity();
         if (!affinityValue)
             return nullptr;
@@ -1451,7 +1472,8 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
         return CSSShapeSegmentValue::createQuadraticCurve(*affinityValue, toCoordinates.releaseNonNull(), WTFMove(*controlPoint1));
     }
     case CSSValueSmooth: {
-        // <smooth-command> = smooth <by-to> <coordinate-pair> [using <coordinate-pair>]?
+        // <smooth-command> = smooth [ to <position> [ with <to-control-point> ]?
+        //                           | by <coordinate-pair> [ with <relative-control-point> ]? ]
         auto affinityValue = consumeAffinity();
         if (!affinityValue)
             return nullptr;
@@ -1471,7 +1493,11 @@ static RefPtr<CSSValue> consumeShapeCommand(CSSParserTokenRange& range, const CS
         return CSSShapeSegmentValue::createSmoothQuadraticCurve(*affinityValue, toCoordinates.releaseNonNull());
     }
     case CSSValueArc: {
-        // arc <by-to> <coordinate-pair> of <length-percentage>{1,2} [ <arc-sweep> || <arc-size> || rotate <angle> ]?
+        // <arc-command> = arc [ to <position> | by <coordinate-pair> ]
+        //                                       && of <length-percentage>{1,2}
+        //                                       && <arc-sweep>?
+        //                                       && <arc-size>?
+        //                                       && [rotate <angle>]?
         auto affinityValue = consumeAffinity();
         if (!affinityValue)
             return nullptr;

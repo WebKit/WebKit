@@ -244,6 +244,11 @@ public:
 
     static TimelineScope convertTimelineScope(const BuilderState&, const CSSValue&);
 
+    static SingleTimelineRange convertAnimationRangeStart(const BuilderState&, const CSSValue&);
+    static SingleTimelineRange convertAnimationRangeEnd(const BuilderState&, const CSSValue&);
+
+    template<CSSValueID, CSSValueID> static WebCore::Length convertPositionComponent(const BuilderState&, const CSSValue&);
+
 private:
     friend class BuilderCustom;
 
@@ -253,8 +258,6 @@ private:
 #if ENABLE(DARK_MODE_CSS)
     static void updateColorScheme(const CSSPrimitiveValue&, StyleColorScheme&);
 #endif
-
-    template<CSSValueID, CSSValueID> static WebCore::Length convertPositionComponent(const BuilderState&, const CSSValue&);
 
     static GridLength createGridTrackBreadth(const BuilderState&, const CSSPrimitiveValue&);
     static GridTrackSize createGridTrackSize(const BuilderState&, const CSSValue&);
