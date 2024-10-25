@@ -269,6 +269,7 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
     }
 
     if (decoder.messageReceiverName() == Messages::NetworkSocketChannel::messageReceiverName()) {
+        MESSAGE_CHECK(decoder.destinationID());
         if (auto* channel = m_networkSocketChannels.get(LegacyNullableAtomicObjectIdentifier<WebSocketIdentifierType>(decoder.destinationID())))
             channel->didReceiveMessage(connection, decoder);
         return;
@@ -296,6 +297,7 @@ void NetworkConnectionToWebProcess::didReceiveMessage(IPC::Connection& connectio
 #endif
 
     if (decoder.messageReceiverName() == Messages::NetworkTransportSession::messageReceiverName()) {
+        MESSAGE_CHECK(decoder.destinationID());
         if (auto* networkTransportSession = m_networkTransportSessions.get(WebTransportSessionIdentifier(decoder.destinationID())))
             networkTransportSession->didReceiveMessage(connection, decoder);
         return;
