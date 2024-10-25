@@ -53,11 +53,8 @@ public:
 private:
     void next(JSC::JSValue value) final
     {
-        auto* globalObject = protectedScriptExecutionContext()->globalObject();
-        ASSERT(globalObject);
-
         Ref { m_promise }->resolve<IDLAny>(value);
-        Ref { m_controller }->abort(*JSC::jsCast<JSDOMGlobalObject*>(globalObject), JSC::jsUndefined());
+        Ref { m_controller }->abort(JSC::jsUndefined());
     }
 
     void error(JSC::JSValue value) final

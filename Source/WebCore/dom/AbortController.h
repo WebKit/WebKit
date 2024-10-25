@@ -37,7 +37,6 @@ class JSValue;
 namespace WebCore {
 
 class AbortSignal;
-class JSDOMGlobalObject;
 class ScriptExecutionContext;
 
 class AbortController final : public ScriptWrappable, public RefCounted<AbortController> {
@@ -48,7 +47,7 @@ public:
 
     AbortSignal& signal();
     Ref<AbortSignal> protectedSignal() const;
-    void abort(JSDOMGlobalObject&, JSC::JSValue reason);
+    void abort(JSC::JSValue reason);
 
     WebCoreOpaqueRoot opaqueRoot();
 
