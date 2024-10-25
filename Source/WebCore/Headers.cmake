@@ -598,12 +598,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     Modules/system-preview/ARKitBadgeSystemImage.h
 
-    Modules/url-pattern/URLPattern.h
-    Modules/url-pattern/URLPatternCanonical.h
-    Modules/url-pattern/URLPatternInit.h
-    Modules/url-pattern/URLPatternOptions.h
-    Modules/url-pattern/URLPatternResult.h
-
     Modules/web-locks/WebLock.h
     Modules/web-locks/WebLockIdentifier.h
     Modules/web-locks/WebLockManagerSnapshot.h
