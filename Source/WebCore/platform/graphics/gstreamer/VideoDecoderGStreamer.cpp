@@ -20,7 +20,7 @@
 #include "config.h"
 #include "VideoDecoderGStreamer.h"
 
-#if USE(GSTREAMER)
+#if ENABLE(VIDEO) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
 #include "GStreamerElementHarness.h"
@@ -280,4 +280,4 @@ void GStreamerInternalVideoDecoder::flush()
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_CODECS) && USE(GSTREAMER)
+#endif // ENABLE(VIDEO) && USE(GSTREAMER)
