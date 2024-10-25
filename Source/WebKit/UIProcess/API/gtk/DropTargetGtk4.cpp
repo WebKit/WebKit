@@ -131,32 +131,30 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
         }, this);
     }
 
-    static const char* const portalMIMETypes[] = {
-        "application/vnd.portal.filetransfer",
-        "application/vnd.portal.files", // Deprecated, but added for compatibility
+    static constexpr std::array portalMIMETypes = {
+        "application/vnd.portal.filetransfer"_s,
+        "application/vnd.portal.files"_s, // Deprecated, but added for compatibility
     };
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    static const char* const supportedMimeTypes[] = {
-        "application/vnd.portal.filetransfer",
-        "application/vnd.portal.files", // Deprecated, but added for compatibility
-        "text/html",
-        "_NETSCAPE_URL",
-        "text/uri-list",
-        "application/vnd.webkitgtk.smartpaste",
-        "org.webkitgtk.WebKit.custom-pasteboard-data"
+    static constexpr std::array supportedMimeTypes = {
+        "application/vnd.portal.filetransfer"_s,
+        "application/vnd.portal.files"_s, // Deprecated, but added for compatibility
+        "text/html"_s,
+        "_NETSCAPE_URL"_s,
+        "text/uri-list"_s,
+        "application/vnd.webkitgtk.smartpaste"_s,
+        "org.webkitgtk.WebKit.custom-pasteboard-data"_s,
     };
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     bool transferredFilesFromPortal = false;
-    for (unsigned i = 0; i < G_N_ELEMENTS(supportedMimeTypes); ++i) {
-        if (!gdk_content_formats_contain_mime_type(formats, supportedMimeTypes[i]))
+    for (const ASCIILiteral& mimeType : supportedMimeTypes) {
+        if (!gdk_content_formats_contain_mime_type(formats, mimeType))
             continue;
 
         // Reading from the File Transfer portal is a bit special. When either portal
         // mimetypes are present, GTK serializes them using the GdkFileList type. If
         // this type is present, ignore file:// URIs from the "text/uri-list" later on.
-        if (!transferredFilesFromPortal && g_strv_contains(portalMIMETypes, supportedMimeTypes[i])) {
+        if (!transferredFilesFromPortal && std::ranges::contains(portalMIMETypes, mimeType)) {
             ASSERT(gdk_content_formats_contain_gtype(formats, GDK_TYPE_FILE_LIST));
 
             m_dataRequestCount++;
@@ -178,7 +176,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
         }
 
         m_dataRequestCount++;
-        loadData(supportedMimeTypes[i], [this, transferredFilesFromPortal, mimeType = String::fromUTF8(supportedMimeTypes[i]), cancellable = m_cancellable](GRefPtr<GBytes>&& data) {
+        loadData(mimeType, [this, transferredFilesFromPortal, mimeType, cancellable = m_cancellable](GRefPtr<GBytes>&& data) {
             if (g_cancellable_is_cancelled(cancellable.get()))
                 return;
 
