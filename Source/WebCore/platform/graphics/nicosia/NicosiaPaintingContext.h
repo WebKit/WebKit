@@ -28,9 +28,13 @@
 
 #pragma once
 
+#if USE(CAIRO)
 #include "NicosiaPaintingOperation.h"
+#include "RefPtrCairo.h"
 #include <memory>
 #include <wtf/TZoneMalloc.h>
+
+typedef struct _cairo_surface cairo_surface_t;
 
 namespace WebCore {
 class CoordinatedTileBuffer;
@@ -62,15 +66,26 @@ public:
         paintingContext->replay(paintingOperations);
     }
 
-    virtual ~PaintingContext() = default;
+    ~PaintingContext();
 
-protected:
-    virtual WebCore::GraphicsContext& graphicsContext() = 0;
-    virtual void replay(const PaintingOperations&) = 0;
+    WebCore::GraphicsContext& graphicsContext() { return *m_graphicsContext; }
 
 private:
     static std::unique_ptr<PaintingContext> createForPainting(WebCore::CoordinatedTileBuffer&);
     static std::unique_ptr<PaintingContext> createForRecording(PaintingOperations&);
+
+    explicit PaintingContext(WebCore::CoordinatedTileBuffer&);
+    explicit PaintingContext(PaintingOperations&);
+
+    void replay(const PaintingOperations&);
+
+    RefPtr<cairo_surface_t> m_surface;
+    std::unique_ptr<WebCore::GraphicsContext> m_graphicsContext;
+#if ASSERT_ENABLED
+    bool m_deletionComplete { false };
+#endif
 };
 
 } // namespace Nicosia
+
+#endif // USE(CAIRO)

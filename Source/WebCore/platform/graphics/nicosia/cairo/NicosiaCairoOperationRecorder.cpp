@@ -30,14 +30,15 @@
 #include "config.h"
 #include "NicosiaCairoOperationRecorder.h"
 
+#if USE(CAIRO)
 #include "CairoOperations.h"
 #include "DecomposedGlyphs.h"
 #include "Filter.h"
 #include "FilterResults.h"
 #include "FloatRoundedRect.h"
 #include "Gradient.h"
+#include "GraphicsContextCairo.h"
 #include "ImageBuffer.h"
-#include "NicosiaPaintingOperationReplayCairo.h"
 #include <type_traits>
 #include <wtf/text/TextStream.h>
 
@@ -47,11 +48,6 @@
 
 namespace Nicosia {
 using namespace WebCore;
-
-GraphicsContextCairo& contextForReplay(PaintingOperationReplay& operationReplay)
-{
-    return static_cast<PaintingOperationReplayCairo&>(operationReplay).platformContext;
-}
 
 template<typename... Args>
 struct OperationData {
@@ -92,9 +88,9 @@ void CairoOperationRecorder::didUpdateState(GraphicsContextState& state)
         struct StrokeThicknessChange final : PaintingOperation, OperationData<float> {
             virtual ~StrokeThicknessChange() = default;
 
-            void execute(PaintingOperationReplay& replayer) override
+            void execute(WebCore::GraphicsContextCairo& context) override
             {
-                Cairo::State::setStrokeThickness(contextForReplay(replayer), arg<0>());
+                Cairo::State::setStrokeThickness(context, arg<0>());
             }
 
             void dump(TextStream& ts) override
@@ -110,9 +106,9 @@ void CairoOperationRecorder::didUpdateState(GraphicsContextState& state)
         struct StrokeStyleChange final : PaintingOperation, OperationData<StrokeStyle> {
             virtual ~StrokeStyleChange() = default;
 
-            void execute(PaintingOperationReplay& replayer) override
+            void execute(WebCore::GraphicsContextCairo& context) override
             {
-                Cairo::State::setStrokeStyle(contextForReplay(replayer), arg<0>());
+                Cairo::State::setStrokeStyle(context, arg<0>());
             }
 
             void dump(TextStream& ts) override
@@ -128,9 +124,9 @@ void CairoOperationRecorder::didUpdateState(GraphicsContextState& state)
         struct CompositeOperationChange final : PaintingOperation, OperationData<CompositeOperator, BlendMode> {
             virtual ~CompositeOperationChange() = default;
 
-            void execute(PaintingOperationReplay& replayer) override
+            void execute(WebCore::GraphicsContextCairo& context) override
             {
-                Cairo::State::setCompositeOperation(contextForReplay(replayer), arg<0>(), arg<1>());
+                Cairo::State::setCompositeOperation(context, arg<0>(), arg<1>());
             }
 
             void dump(TextStream& ts) override
@@ -146,9 +142,9 @@ void CairoOperationRecorder::didUpdateState(GraphicsContextState& state)
         struct ShouldAntialiasChange final : PaintingOperation, OperationData<bool> {
             virtual ~ShouldAntialiasChange() = default;
 
-            void execute(PaintingOperationReplay& replayer) override
+            void execute(WebCore::GraphicsContextCairo& context) override
             {
-                Cairo::State::setShouldAntialias(contextForReplay(replayer), arg<0>());
+                Cairo::State::setShouldAntialias(context, arg<0>());
             }
 
             void dump(TextStream& ts) override
@@ -168,9 +164,9 @@ void CairoOperationRecorder::setLineCap(LineCap lineCap)
     struct SetLineCap final : PaintingOperation, OperationData<LineCap> {
         virtual ~SetLineCap() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::setLineCap(contextForReplay(replayer), arg<0>());
+            Cairo::setLineCap(context, arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -187,9 +183,9 @@ void CairoOperationRecorder::setLineDash(const DashArray& dashes, float dashOffs
     struct SetLineDash final : PaintingOperation, OperationData<DashArray, float> {
         virtual ~SetLineDash() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::setLineDash(contextForReplay(replayer), arg<0>(), arg<1>());
+            Cairo::setLineDash(context, arg<0>(), arg<1>());
         }
 
         void dump(TextStream& ts) override
@@ -206,9 +202,9 @@ void CairoOperationRecorder::setLineJoin(LineJoin lineJoin)
     struct SetLineJoin final : PaintingOperation, OperationData<LineJoin> {
         virtual ~SetLineJoin() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::setLineJoin(contextForReplay(replayer), arg<0>());
+            Cairo::setLineJoin(context, arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -225,9 +221,9 @@ void CairoOperationRecorder::setMiterLimit(float miterLimit)
     struct SetMiterLimit final : PaintingOperation, OperationData<float> {
         virtual ~SetMiterLimit() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::setMiterLimit(contextForReplay(replayer), arg<0>());
+            Cairo::setMiterLimit(context, arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -244,9 +240,9 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, RequiresClipToRect)
     struct FillRect final : PaintingOperation, OperationData<FloatRect, Cairo::FillSource, Cairo::ShadowState> {
         virtual ~FillRect() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::fillRect(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>());
+            Cairo::fillRect(context, arg<0>(), arg<1>(), arg<2>());
         }
 
         void dump(TextStream& ts) override
@@ -264,9 +260,9 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, const Color& color)
     struct FillRect final : PaintingOperation, OperationData<FloatRect, Color, Cairo::ShadowState> {
         virtual ~FillRect() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::fillRect(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>());
+            Cairo::fillRect(context, arg<0>(), arg<1>(), arg<2>());
         }
 
         void dump(TextStream& ts) override
@@ -283,9 +279,9 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient)
     struct FillRect final : PaintingOperation, OperationData<FloatRect, RefPtr<cairo_pattern_t>> {
         virtual ~FillRect() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            auto& platformContext = contextForReplay(replayer);
+            auto& platformContext = context;
             platformContext.save();
             Cairo::fillRect(platformContext, arg<0>(), arg<1>().get());
             platformContext.restore();
@@ -306,9 +302,9 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, Gradient& gradient,
     struct FillRect final : PaintingOperation, OperationData<FloatRect, Cairo::FillSource, Cairo::ShadowState> {
         virtual ~FillRect() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::fillRect(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>());
+            Cairo::fillRect(context, arg<0>(), arg<1>(), arg<2>());
         }
 
         void dump(TextStream& ts) override
@@ -326,9 +322,9 @@ void CairoOperationRecorder::fillRect(const FloatRect& rect, const Color& color,
     struct FillRect final : PaintingOperation, OperationData<FloatRect, Color, CompositeOperator, BlendMode, Cairo::ShadowState, CompositeOperator> {
         virtual ~FillRect() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            auto& platformContext = contextForReplay(replayer);
+            auto& platformContext = context;
 
             Cairo::State::setCompositeOperation(platformContext, arg<2>(), arg<3>());
             Cairo::fillRect(platformContext, arg<0>(), arg<1>(), arg<4>());
@@ -350,9 +346,9 @@ void CairoOperationRecorder::fillRoundedRect(const FloatRoundedRect& roundedRect
     struct FillRoundedRect final : PaintingOperation, OperationData<FloatRoundedRect, Color, CompositeOperator, BlendMode, Cairo::ShadowState> {
         virtual ~FillRoundedRect() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            auto& platformContext = contextForReplay(replayer);
+            auto& platformContext = context;
 
             Cairo::State::setCompositeOperation(platformContext, arg<2>(), arg<3>());
 
@@ -380,9 +376,9 @@ void CairoOperationRecorder::fillRectWithRoundedHole(const FloatRect& rect, cons
     struct FillRectWithRoundedHole final : PaintingOperation, OperationData<FloatRect, FloatRoundedRect, Cairo::ShadowState> {
         virtual ~FillRectWithRoundedHole() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::fillRectWithRoundedHole(contextForReplay(replayer), arg<0>(), arg<1>(), { }, arg<2>());
+            Cairo::fillRectWithRoundedHole(context, arg<0>(), arg<1>(), { }, arg<2>());
         }
 
         void dump(TextStream& ts) override
@@ -400,9 +396,9 @@ void CairoOperationRecorder::fillPath(const Path& path)
     struct FillPath final : PaintingOperation, OperationData<Path, Cairo::FillSource, Cairo::ShadowState> {
         virtual ~FillPath() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::fillPath(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>());
+            Cairo::fillPath(context, arg<0>(), arg<1>(), arg<2>());
         }
 
         void dump(TextStream& ts) override
@@ -423,11 +419,11 @@ void CairoOperationRecorder::fillEllipse(const FloatRect& rect)
     struct FillEllipse final : PaintingOperation, OperationData<FloatRect, Cairo::FillSource, Cairo::ShadowState> {
         virtual ~FillEllipse() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
             Path path;
             path.addEllipseInRect(arg<0>());
-            Cairo::fillPath(contextForReplay(replayer), path, arg<1>(), arg<2>());
+            Cairo::fillPath(context, path, arg<1>(), arg<2>());
         }
 
         void dump(TextStream& ts) override
@@ -445,9 +441,9 @@ void CairoOperationRecorder::strokeRect(const FloatRect& rect, float lineWidth)
     struct StrokeRect final : PaintingOperation, OperationData<FloatRect, float, Cairo::StrokeSource, Cairo::ShadowState> {
         virtual ~StrokeRect() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::strokeRect(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>(), arg<3>());
+            Cairo::strokeRect(context, arg<0>(), arg<1>(), arg<2>(), arg<3>());
         }
 
         void dump(TextStream& ts) override
@@ -465,9 +461,9 @@ void CairoOperationRecorder::strokePath(const Path& path)
     struct StrokePath final : PaintingOperation, OperationData<Path, Cairo::StrokeSource, Cairo::ShadowState> {
         virtual ~StrokePath() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::strokePath(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>());
+            Cairo::strokePath(context, arg<0>(), arg<1>(), arg<2>());
         }
 
         void dump(TextStream& ts) override
@@ -488,11 +484,11 @@ void CairoOperationRecorder::strokeEllipse(const FloatRect& rect)
     struct StrokeEllipse final : PaintingOperation, OperationData<FloatRect, Cairo::StrokeSource, Cairo::ShadowState> {
         virtual ~StrokeEllipse() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
             Path path;
             path.addEllipseInRect(arg<0>());
-            Cairo::strokePath(contextForReplay(replayer), path, arg<1>(), arg<2>());
+            Cairo::strokePath(context, path, arg<1>(), arg<2>());
         }
 
         void dump(TextStream& ts) override
@@ -510,9 +506,9 @@ void CairoOperationRecorder::clearRect(const FloatRect& rect)
     struct ClearRect final : PaintingOperation, OperationData<FloatRect> {
         virtual ~ClearRect() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::clearRect(contextForReplay(replayer), arg<0>());
+            Cairo::clearRect(context, arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -529,9 +525,9 @@ void CairoOperationRecorder::drawGlyphs(const Font& font, const GlyphBufferGlyph
     struct DrawGlyphs final : PaintingOperation, OperationData<Cairo::FillSource, Cairo::StrokeSource, Cairo::ShadowState, FloatPoint, RefPtr<cairo_scaled_font_t>, float, Vector<cairo_glyph_t>, float, TextDrawingModeFlags, float, std::optional<GraphicsDropShadow>, FontSmoothingMode> {
         virtual ~DrawGlyphs() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::drawGlyphs(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>(), arg<3>(), arg<4>().get(),
+            Cairo::drawGlyphs(context, arg<0>(), arg<1>(), arg<2>(), arg<3>(), arg<4>().get(),
                 arg<5>(), arg<6>(), arg<7>(), arg<8>(), arg<9>(), arg<10>(), arg<11>());
         }
 
@@ -573,9 +569,9 @@ void CairoOperationRecorder::drawImageBuffer(ImageBuffer& buffer, const FloatRec
     struct DrawImageBuffer final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect, FloatRect, ImagePaintingOptions, float, Cairo::ShadowState> {
         virtual ~DrawImageBuffer() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::drawPlatformImage(contextForReplay(replayer), arg<0>().get(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>());
+            Cairo::drawPlatformImage(context, arg<0>().get(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>());
         }
 
         void dump(TextStream& ts) override
@@ -597,11 +593,11 @@ void CairoOperationRecorder::drawFilteredImageBuffer(ImageBuffer* srcImage, cons
     struct DrawFilteredImageBuffer final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect, FloatRect, FloatSize, ImagePaintingOptions, float, Cairo::ShadowState> {
         virtual ~DrawFilteredImageBuffer() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::scale(contextForReplay(replayer), { 1 / arg<3>().width(), 1 / arg<3>().height() });
-            Cairo::drawPlatformImage(contextForReplay(replayer), arg<0>().get(), arg<1>(), arg<2>(), arg<4>(), arg<5>(), arg<6>());
-            Cairo::scale(contextForReplay(replayer), arg<3>());
+            Cairo::scale(context, { 1 / arg<3>().width(), 1 / arg<3>().height() });
+            Cairo::drawPlatformImage(context, arg<0>().get(), arg<1>(), arg<2>(), arg<4>(), arg<5>(), arg<6>());
+            Cairo::scale(context, arg<3>());
         }
 
         void dump(TextStream& ts) override
@@ -631,9 +627,9 @@ void CairoOperationRecorder::drawNativeImageInternal(NativeImage& nativeImage, c
     struct DrawNativeImage final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect, FloatRect, ImagePaintingOptions, float, Cairo::ShadowState> {
         virtual ~DrawNativeImage() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::drawPlatformImage(contextForReplay(replayer), arg<0>().get(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>());
+            Cairo::drawPlatformImage(context, arg<0>().get(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>());
         }
 
         void dump(TextStream& ts) override
@@ -651,9 +647,9 @@ void CairoOperationRecorder::drawPattern(NativeImage& nativeImage, const FloatRe
     struct DrawPattern final : PaintingOperation, OperationData<RefPtr<cairo_surface_t>, IntSize, FloatRect, FloatRect, AffineTransform, FloatPoint, FloatSize, ImagePaintingOptions> {
         virtual ~DrawPattern() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::drawPattern(contextForReplay(replayer), arg<0>().get(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>(), arg<6>(), arg<7>());
+            Cairo::drawPattern(context, arg<0>().get(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>(), arg<6>(), arg<7>());
         }
 
         void dump(TextStream& ts) override
@@ -671,9 +667,9 @@ void CairoOperationRecorder::drawRect(const FloatRect& rect, float borderThickne
     struct DrawRect final : PaintingOperation, OperationData<FloatRect, float, Color, StrokeStyle, Color> {
         virtual ~DrawRect() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::drawRect(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>(), arg<3>(), arg<4>());
+            Cairo::drawRect(context, arg<0>(), arg<1>(), arg<2>(), arg<3>(), arg<4>());
         }
 
         void dump(TextStream& ts) override
@@ -691,9 +687,9 @@ void CairoOperationRecorder::drawLine(const FloatPoint& point1, const FloatPoint
     struct DrawLine final : PaintingOperation, OperationData<FloatPoint, FloatPoint, StrokeStyle, Color, float, bool> {
         virtual ~DrawLine() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::drawLine(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>());
+            Cairo::drawLine(context, arg<0>(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>());
         }
 
         void dump(TextStream& ts) override
@@ -714,9 +710,9 @@ void CairoOperationRecorder::drawLinesForText(const FloatPoint& point, float thi
     struct DrawLinesForText final : PaintingOperation, OperationData<FloatPoint, float, DashArray, bool, bool, Color> {
         virtual ~DrawLinesForText() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::drawLinesForText(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>());
+            Cairo::drawLinesForText(context, arg<0>(), arg<1>(), arg<2>(), arg<3>(), arg<4>(), arg<5>());
         }
 
         void dump(TextStream& ts) override
@@ -737,9 +733,9 @@ void CairoOperationRecorder::drawDotsForDocumentMarker(const FloatRect& rect, Do
     struct DrawDotsForDocumentMarker final : PaintingOperation, OperationData<FloatRect, DocumentMarkerLineStyle> {
         virtual ~DrawDotsForDocumentMarker() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::drawDotsForDocumentMarker(contextForReplay(replayer), arg<0>(), arg<1>());
+            Cairo::drawDotsForDocumentMarker(context, arg<0>(), arg<1>());
         }
 
         void dump(TextStream& ts) override
@@ -756,9 +752,9 @@ void CairoOperationRecorder::drawEllipse(const FloatRect& rect)
     struct DrawEllipse final : PaintingOperation, OperationData<FloatRect, Color, StrokeStyle, Color, float> {
         virtual ~DrawEllipse() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::drawEllipse(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>(), arg<3>(), arg<4>());
+            Cairo::drawEllipse(context, arg<0>(), arg<1>(), arg<2>(), arg<3>(), arg<4>());
         }
 
         void dump(TextStream& ts) override
@@ -780,9 +776,9 @@ void CairoOperationRecorder::drawFocusRing(const Path& path, float outlineWidth,
     struct DrawFocusRing final : PaintingOperation, OperationData<Path, float, Color> {
         virtual ~DrawFocusRing() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::drawFocusRing(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>());
+            Cairo::drawFocusRing(context, arg<0>(), arg<1>(), arg<2>());
         }
 
         void dump(TextStream& ts) override
@@ -804,9 +800,9 @@ void CairoOperationRecorder::drawFocusRing(const Vector<FloatRect>& rects, float
     struct DrawFocusRing final : PaintingOperation, OperationData<Vector<FloatRect>, float, Color> {
         virtual ~DrawFocusRing() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::drawFocusRing(contextForReplay(replayer), arg<0>(), arg<1>(), arg<2>());
+            Cairo::drawFocusRing(context, arg<0>(), arg<1>(), arg<2>());
         }
 
         void dump(TextStream& ts) override
@@ -825,9 +821,9 @@ void CairoOperationRecorder::save(GraphicsContextState::Purpose purpose)
     struct Save final : PaintingOperation, OperationData<GraphicsContextState::Purpose> {
         virtual ~Save() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            contextForReplay(replayer).save(arg<0>());
+            context.save(arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -848,9 +844,9 @@ void CairoOperationRecorder::restore(GraphicsContextState::Purpose purpose)
     struct Restore final : PaintingOperation, OperationData<GraphicsContextState::Purpose> {
         virtual ~Restore() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            contextForReplay(replayer).restore(arg<0>());
+            context.restore(arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -879,9 +875,9 @@ void CairoOperationRecorder::translate(float x, float y)
     struct Translate final : PaintingOperation, OperationData<float, float> {
         virtual ~Translate() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::translate(contextForReplay(replayer), arg<0>(), arg<1>());
+            Cairo::translate(context, arg<0>(), arg<1>());
         }
 
         void dump(TextStream& ts) override
@@ -907,9 +903,9 @@ void CairoOperationRecorder::rotate(float angleInRadians)
     struct Rotate final : PaintingOperation, OperationData<float> {
         virtual ~Rotate() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::rotate(contextForReplay(replayer), arg<0>());
+            Cairo::rotate(context, arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -935,9 +931,9 @@ void CairoOperationRecorder::scale(const FloatSize& size)
     struct Scale final : PaintingOperation, OperationData<FloatSize> {
         virtual ~Scale() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::scale(contextForReplay(replayer), arg<0>());
+            Cairo::scale(context, arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -963,9 +959,9 @@ void CairoOperationRecorder::concatCTM(const AffineTransform& transform)
     struct ConcatCTM final : PaintingOperation, OperationData<AffineTransform> {
         virtual ~ConcatCTM() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::concatCTM(contextForReplay(replayer), arg<0>());
+            Cairo::concatCTM(context, arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -990,9 +986,9 @@ void CairoOperationRecorder::setCTM(const AffineTransform& transform)
     struct SetCTM final : PaintingOperation, OperationData<AffineTransform> {
         virtual ~SetCTM() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::State::setCTM(contextForReplay(replayer), arg<0>());
+            Cairo::State::setCTM(context, arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -1022,9 +1018,9 @@ void CairoOperationRecorder::beginTransparencyLayer(float opacity)
     struct BeginTransparencyLayer final : PaintingOperation, OperationData<float> {
         virtual ~BeginTransparencyLayer() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::beginTransparencyLayer(contextForReplay(replayer), arg<0>());
+            Cairo::beginTransparencyLayer(context, arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -1048,9 +1044,9 @@ void CairoOperationRecorder::endTransparencyLayer()
     struct EndTransparencyLayer final : PaintingOperation, OperationData<> {
         virtual ~EndTransparencyLayer() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::endTransparencyLayer(contextForReplay(replayer));
+            Cairo::endTransparencyLayer(context);
         }
 
         void dump(TextStream& ts) override
@@ -1074,9 +1070,9 @@ void CairoOperationRecorder::clip(const FloatRect& rect)
     struct Clip final : PaintingOperation, OperationData<FloatRect> {
         virtual ~Clip() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::clip(contextForReplay(replayer), arg<0>());
+            Cairo::clip(context, arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -1098,9 +1094,9 @@ void CairoOperationRecorder::clipOut(const FloatRect& rect)
     struct ClipOut final : PaintingOperation, OperationData<FloatRect> {
         virtual ~ClipOut() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::clipOut(contextForReplay(replayer), arg<0>());
+            Cairo::clipOut(context, arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -1117,9 +1113,9 @@ void CairoOperationRecorder::clipOut(const Path& path)
     struct ClipOut final : PaintingOperation, OperationData<Path> {
         virtual ~ClipOut() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::clipOut(contextForReplay(replayer), arg<0>());
+            Cairo::clipOut(context, arg<0>());
         }
 
         void dump(TextStream& ts) override
@@ -1136,9 +1132,9 @@ void CairoOperationRecorder::clipPath(const Path& path, WindRule clipRule)
     struct ClipPath final : PaintingOperation, OperationData<Path, WindRule> {
         virtual ~ClipPath() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::clipPath(contextForReplay(replayer), arg<0>(), arg<1>());
+            Cairo::clipPath(context, arg<0>(), arg<1>());
         }
 
         void dump(TextStream& ts) override
@@ -1166,9 +1162,9 @@ void CairoOperationRecorder::clipToImageBuffer(ImageBuffer& buffer, const FloatR
     struct ClipToImageBuffer final: PaintingOperation, OperationData<RefPtr<cairo_surface_t>, FloatRect> {
         virtual ~ClipToImageBuffer() = default;
 
-        void execute(PaintingOperationReplay& replayer) override
+        void execute(WebCore::GraphicsContextCairo& context) override
         {
-            Cairo::clipToImageBuffer(contextForReplay(replayer), arg<0>().get(), arg<1>());
+            Cairo::clipToImageBuffer(context, arg<0>().get(), arg<1>());
         }
 
         void dump(TextStream& ts) override
@@ -1199,3 +1195,5 @@ void CairoOperationRecorder::drawVideoFrame(VideoFrame& frame, const FloatRect& 
 #endif
 
 } // namespace Nicosia
+
+#endif // USE(CAIRO)

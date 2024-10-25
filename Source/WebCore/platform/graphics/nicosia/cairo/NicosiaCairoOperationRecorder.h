@@ -29,6 +29,7 @@
 
 #pragma once
 
+#if USE(CAIRO)
 #include "GraphicsContext.h"
 #include "NicosiaPaintingOperation.h"
 
@@ -120,3 +121,5 @@ private:
 };
 
 } // namespace Nicosia
+
+#endif // USE(CAIRO)

@@ -28,8 +28,13 @@
 
 #pragma once
 
+#if USE(CAIRO)
 #include <memory>
 #include <wtf/Vector.h>
+
+namespace WebCore {
+class GraphicsContextCairo;
+}
 
 namespace WTF {
 class TextStream;
@@ -37,15 +42,15 @@ class TextStream;
 
 namespace Nicosia {
 
-struct PaintingOperationReplay { };
-
 struct PaintingOperation {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     virtual ~PaintingOperation() = default;
-    virtual void execute(PaintingOperationReplay&) = 0;
+    virtual void execute(WebCore::GraphicsContextCairo&) = 0;
     virtual void dump(WTF::TextStream&) = 0;
 };
 
 using PaintingOperations = Vector<std::unique_ptr<PaintingOperation>>;
 
 } // namespace Nicosia
+
+#endif // USE(CAIRO)

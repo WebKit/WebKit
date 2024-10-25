@@ -144,7 +144,6 @@ if (USE_NICOSIA)
             platform/graphics/nicosia/NicosiaPaintingEngineThreaded.cpp
 
             platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp
-            platform/graphics/nicosia/cairo/NicosiaPaintingContextCairo.cpp
         )
     endif ()
 endif ()
