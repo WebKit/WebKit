@@ -327,13 +327,15 @@ bool Quirks::needsYouTubeMouseOutQuirk() const
 }
 
 // mail.google.com rdar://128360054
-// FIXME (rdar://130624461): Remove this quirk once Gmail adopts the `writingsuggestions` attribute.
+// safe.menlosecurity.com rdar://135114489
+// FIXME (rdar://130624461): Remove this quirk for mail.google.com once Gmail adopts the `writingsuggestions` attribute.
+// FIXME (rdar://138585709): Remove this quirk for safe.menlosecurity.com once investigation into text corruption on the site is completed and the issue is resolved.
 bool Quirks::shouldDisableWritingSuggestionsByDefault() const
 {
     if (!needsQuirks())
         return false;
     auto& url = m_document->topDocument().url();
-    return url.host() == "mail.google.com"_s;
+    return url.host() == "mail.google.com"_s || url.host() == "safe.menlosecurity.com"_s;
 }
 
 void Quirks::updateStorageAccessUserAgentStringQuirks(HashMap<RegistrableDomain, String>&& userAgentStringQuirks)
