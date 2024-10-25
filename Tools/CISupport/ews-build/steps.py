@@ -256,19 +256,31 @@ class GitHubMixin(object):
             defer.returnValue(data)
 
     @defer.inlineCallbacks
-    def get_number_of_prs_with_label(self, label):
+    def get_number_of_prs_with_label(self, label, retry=0):
         project = self.getProperty('project') or GITHUB_PROJECTS[0]
         owner, name = project.split('/', 1)
         query_body = '{repository(owner:"%s", name:"%s") { pullRequests(labels: "%s") { totalCount } } }' % (owner, name, label)
         query = {'query': query_body}
-        response = yield self.query_graph_ql(query)
-        if response:
-            num_prs = response['data']['repository']['pullRequests']['totalCount']
-            yield self._addToLog('stdio', 'There are {} PR(s) in safe-merge-queue.\n'.format(num_prs))
-            defer.returnValue(num_prs)
-        else:
-            yield self._addToLog('stdio', 'Failed to retrieve number of PRs.\n')
-            defer.returnValue(None)
+
+        for attempt in range(retry + 1):
+            try:
+                response = yield self.query_graph_ql(query)
+                if 'errors' in response:
+                    yield self._addToLog('stdio', response['errors'][0]['message'])
+                else:
+                    num_prs = response['data']['repository']['pullRequests']['totalCount']
+                    break
+            except Exception as e:
+                yield self._addToLog('stdio', 'Failed to retrieve number of PRs.\n')
+
+            if attempt > retry:
+                return defer.returnValue(None)
+            wait_for = (attempt + 1) * 15
+            yield self._addToLog('stdio', 'Backing off for {} seconds before retrying.\n'.format(wait_for))
+            yield task.deferLater(reactor, wait_for, lambda: None)
+
+        yield self._addToLog('stdio', 'There are {} PR(s) in safe-merge-queue.\n'.format(num_prs))
+        defer.returnValue(num_prs)
 
     @defer.inlineCallbacks
     def get_pr_json(self, pr_number, repository_url=None, retry=0):
@@ -2479,7 +2491,7 @@ class RetrievePRDataFromLabel(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
         project = self.getProperty('project')
         self.setProperty('repository', f'{GITHUB_URL}{project}')
 
-        num_prs = yield self.get_number_of_prs_with_label(self.label)
+        num_prs = yield self.get_number_of_prs_with_label(self.label, retry=3)
         if num_prs == 0:
             yield self._addToLog('stdio', f'Ending process as there are no PRs in {self.label}.\n')
             return defer.returnValue(SUCCESS)

@@ -6284,7 +6284,7 @@ class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success(self):
         self.setupStep(RetrievePRDataFromLabel(project='WebKit/WebKit'))
-        GitHubMixin.get_number_of_prs_with_label = lambda self, label: 4
+        GitHubMixin.get_number_of_prs_with_label = lambda self, label, retry=0: 4
         query_result = {'data': {'repository': {'pullRequests': {'edges': [
             {'node':
                 {'title': 'Fix `test-webkitpy webkitflaskpy`', 'number': 17412, 'commits':
@@ -6395,7 +6395,7 @@ class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
 
     def test_success_project(self):
         self.setupStep(RetrievePRDataFromLabel(project='testRepo/WebKit'))
-        GitHubMixin.get_number_of_prs_with_label = lambda self, label: 4
+        GitHubMixin.get_number_of_prs_with_label = lambda self, label, retry=0: 4
         query_result = {'data': {'repository': {'pullRequests': {'edges': [
             {'node':
                 {'title': 'Fix `test-webkitpy webkitflaskpy`', 'number': 17412, 'commits':
@@ -6501,6 +6501,18 @@ class TestRetrievePRDataFromLabel(BuildStepMixinAdditions, unittest.TestCase):
         self.assertEqual(self.getProperty('project'), 'testRepo/WebKit')
         self.assertEqual(self.getProperty('repository'), 'https://github.com/testRepo/WebKit')
         self.assertEqual(self.getProperty('list_of_prs'), [17412, 17418, 17451, 17454])
+        return rc
+
+    def test_failure(self):
+        self.timeout = 1000
+        self.setupStep(RetrievePRDataFromLabel(project='testRepo/WebKit'))
+        GitHubMixin.get_number_of_prs_with_label = lambda self, label, retry=0: None
+        query_result = {'errors': [{'message': 'Error'}]}
+        GitHubMixin.query_graph_ql = lambda self, query: query_result
+        self.expectOutcome(result=FAILURE, state_string="Failed to retrieve pull request data")
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('project'), 'testRepo/WebKit')
+        self.assertEqual(self.getProperty('repository'), 'https://github.com/testRepo/WebKit')
         return rc
 
 
