@@ -88,8 +88,14 @@ void GStreamerVideoDecoder::create(const String& codecName, const Config& config
         GST_DEBUG_CATEGORY_INIT(webkit_video_decoder_debug, "webkitvideodecoder", 0, "WebKit WebCodecs Video Decoder");
     });
 
+    bool usingHardware = config.decoding == VideoDecoder::HardwareAcceleration::Yes;
     auto& scanner = GStreamerRegistryScanner::singleton();
-    auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codecName);
+    auto lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codecName, usingHardware);
+    if (usingHardware && !lookupResult) {
+        GST_DEBUG("No hardware decoder found for codec %s, falling back to software", codecName.utf8().data());
+        lookupResult = scanner.isCodecSupported(GStreamerRegistryScanner::Configuration::Decoding, codecName, false);
+    }
+
     if (!lookupResult) {
         GST_WARNING("No decoder found for codec %s", codecName.utf8().data());
         callback(makeUnexpected(makeString("No decoder found for codec "_s, codecName)));
