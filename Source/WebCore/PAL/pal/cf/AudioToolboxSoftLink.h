@@ -88,6 +88,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioConverterGetProperty, OSSt
 #define AudioConverterGetProperty softLink_AudioToolbox_AudioConverterGetProperty
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioConverterNew, OSStatus, (const AudioStreamBasicDescription* inSourceFormat, const AudioStreamBasicDescription* inDestinationFormat, AudioConverterRef* outAudioConverter), (inSourceFormat, inDestinationFormat, outAudioConverter))
 #define AudioConverterNew softLink_AudioToolbox_AudioConverterNew
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioConverterReset, OSStatus, (AudioConverterRef inAudioConverter), (inAudioConverter))
+#define AudioConverterReset softLink_AudioToolbox_AudioConverterReset
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioConverterDispose, OSStatus, (AudioConverterRef inAudioConverter), (inAudioConverter))
 #define AudioConverterDispose softLink_AudioToolbox_AudioConverterDispose
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, AudioToolbox, AudioConverterSetProperty, OSStatus, (AudioConverterRef inAudioConverter, AudioConverterPropertyID inPropertyID, UInt32 inPropertyDataSize, const void* inPropertyData), (inAudioConverter, inPropertyID, inPropertyDataSize, inPropertyData))

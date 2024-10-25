@@ -31,8 +31,9 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 #include <wtf/WorkQueue.h>
 
-typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
+typedef struct opaqueCMSampleBuffer* CMSampleBufferRef;
 typedef struct OpaqueAudioConverter* AudioConverterRef;
+OBJC_CLASS NSNumber;
 
 namespace WebCore {
 
@@ -45,6 +46,7 @@ public:
     void setBitsPerSecond(unsigned);
     Ref<GenericPromise> finish() { return flushInternal(true); }
     Ref<GenericPromise> flush() { return flushInternal(false); }
+    Ref<GenericPromise> drain();
     void addSampleBuffer(CMSampleBufferRef);
     CMSampleBufferRef getOutputSampleBuffer() const;
     RetainPtr<CMSampleBufferRef> takeOutputSampleBuffer();
@@ -60,11 +62,10 @@ private:
 
     void processSampleBuffer(CMSampleBufferRef);
     bool initAudioConverterForSourceFormatDescription(CMFormatDescriptionRef, AudioFormatID);
-    size_t computeBufferSizeForAudioFormat(AudioStreamBasicDescription, UInt32, Float32);
     void attachPrimingTrimsIfNeeded(CMSampleBufferRef);
     RetainPtr<NSNumber> gradualDecoderRefreshCount();
-    RetainPtr<CMSampleBufferRef> sampleBufferWithNumPackets(UInt32 numPackets, AudioBufferList);
-    void processSampleBuffersUntilLowWaterTime(CMTime);
+    RetainPtr<CMSampleBufferRef> sampleBuffer(AudioBufferList);
+    void processSampleBuffers();
     OSStatus provideSourceDataNumOutputPackets(UInt32*, AudioBufferList*, AudioStreamPacketDescription**);
     Ref<GenericPromise> flushInternal(bool isFinished);
 
@@ -74,6 +75,7 @@ private:
     RetainPtr<CMBufferQueueRef> m_outputBufferQueue;
     RetainPtr<CMBufferQueueRef> m_inputBufferQueue;
     bool m_isEncoding { false };
+    bool m_isDraining { false };
 
     AudioConverterRef m_converter { nullptr };
     AudioStreamBasicDescription m_sourceFormat;
@@ -81,7 +83,7 @@ private:
     RetainPtr<CMFormatDescriptionRef> m_destinationFormatDescription;
     RetainPtr<NSNumber> m_gdrCountNum;
     UInt32 m_maxOutputPacketSize { 0 };
-    Vector<AudioStreamPacketDescription> m_destinationPacketDescriptions;
+    AudioStreamPacketDescription m_destinationPacketDescriptions;
 
     CMTime m_currentNativePresentationTimeStamp;
     CMTime m_currentOutputPresentationTimeStamp;
