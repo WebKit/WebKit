@@ -24,6 +24,7 @@
 			buildPhases = (
 			);
 			dependencies = (
+				E3D8A94E2CC69CAF006B43E3 /* PBXTargetDependency */,
 				A115CCBC1B9D76C400E89159 /* PBXTargetDependency */,
 				A115CCBA1B9D76BF00E89159 /* PBXTargetDependency */,
 			);
@@ -165,6 +166,7 @@
 		E372BC362C08E29C006DFE67 /* NetworkingExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC352C08E29C006DFE67 /* NetworkingExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E372BC382C08EB01006DFE67 /* GPUExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC372C08EB01006DFE67 /* GPUExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E372BC3A2C08F323006DFE67 /* WebContentExtension.appex in Embed Extensions */ = {isa = PBXBuildFile; fileRef = E372BC392C08F323006DFE67 /* WebContentExtension.appex */; platformFilters = (ios, ); settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		E3D8A94C2CC4B003006B43E3 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3E17D422CC4447B0077C3AE /* main.cpp */; };
 		F4010B7E24DA205300A876E2 /* PoseAsClass.mm in Sources */ = {isa = PBXBuildFile; fileRef = F4010B7C24DA204800A876E2 /* PoseAsClass.mm */; };
 		F415C22C27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h in Headers */ = {isa = PBXBuildFile; fileRef = F415C22A27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h */; };
 		F415C23527AF5B390028F505 /* UIPasteboardConsistencyEnforcer.mm in Sources */ = {isa = PBXBuildFile; fileRef = F415C22B27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.mm */; };
@@ -236,6 +238,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = BC952D7711F3BF5D003398B4;
 			remoteInfo = "Derived Sources";
+		};
+		E30604EF2CCB2B920033AC72 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2EE52CDF1890A9A80010ED21;
+			remoteInfo = WebKitTestRunnerApp;
+		};
+		E3D8A94D2CC69CAF006B43E3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 08FB7793FE84155DC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E3D8A9332CC4AFB3006B43E3;
+			remoteInfo = WebKitEligibilityUtil;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -479,6 +495,9 @@
 		E372BC372C08EB01006DFE67 /* GPUExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = GPUExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E372BC392C08F323006DFE67 /* WebContentExtension.appex */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.extensionkit-extension"; path = WebContentExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3C2C0312C34DEFC000C7F2E /* WebKitTestRunnerApp-iOS-simulator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WebKitTestRunnerApp-iOS-simulator.entitlements"; sourceTree = "<group>"; };
+		E3D8A94A2CC4AFB3006B43E3 /* WebKitEligibilityUtil */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebKitEligibilityUtil; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3E17D422CC4447B0077C3AE /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitEligibilityUtil.xcconfig; sourceTree = "<group>"; };
 		F4010B7C24DA204800A876E2 /* PoseAsClass.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PoseAsClass.mm; path = ../TestRunnerShared/cocoa/PoseAsClass.mm; sourceTree = "<group>"; };
 		F4010B7D24DA204800A876E2 /* PoseAsClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PoseAsClass.h; path = ../TestRunnerShared/cocoa/PoseAsClass.h; sourceTree = "<group>"; };
 		F415C22A27AF52D30028F505 /* UIPasteboardConsistencyEnforcer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UIPasteboardConsistencyEnforcer.h; sourceTree = "<group>"; };
@@ -534,12 +553,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E3D8A9412CC4AFB3006B43E3 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		08FB7794FE84155DC02AAC07 /* WebKitTestRunner */ = {
 			isa = PBXGroup;
 			children = (
+				E3E17D412CC4445D0077C3AE /* WebKitEligibilityUtil */,
 				E372BC392C08F323006DFE67 /* WebContentExtension.appex */,
 				E372BC372C08EB01006DFE67 /* GPUExtension.appex */,
 				E372BC352C08E29C006DFE67 /* NetworkingExtension.appex */,
@@ -713,6 +740,7 @@
 				A18510271B9ADE4800744AEB /* libWebKitTestRunner.a */,
 				2EE52CE01890A9A80010ED21 /* WebKitTestRunnerApp.app */,
 				BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */,
+				E3D8A94A2CC4AFB3006B43E3 /* WebKitEligibilityUtil */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -941,6 +969,7 @@
 				0F2109C7189C650D00F879A3 /* BaseTarget.xcconfig */,
 				BC793427118F7DAF005EA8E2 /* DebugRelease.xcconfig */,
 				BC25197111D15E61002EBC01 /* InjectedBundle.xcconfig */,
+				E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */,
 				57A0062C22976E4D00AD08BD /* WebKitTestRunner.entitlements */,
 				A18510381B9ADF2200744AEB /* WebKitTestRunner.xcconfig */,
 				E3C2C0312C34DEFC000C7F2E /* WebKitTestRunnerApp-iOS-simulator.entitlements */,
@@ -1010,6 +1039,14 @@
 				9B36A270209453A0003E0651 /* WhatToDump.h */,
 			);
 			name = Shared;
+			sourceTree = "<group>";
+		};
+		E3E17D412CC4445D0077C3AE /* WebKitEligibilityUtil */ = {
+			isa = PBXGroup;
+			children = (
+				E3E17D422CC4447B0077C3AE /* main.cpp */,
+			);
+			path = WebKitEligibilityUtil;
 			sourceTree = "<group>";
 		};
 		F4B6C31620E84369008AC225 /* cocoa */ = {
@@ -1146,6 +1183,24 @@
 			productReference = BC25186211D15D54002EBC01 /* WebKitTestRunnerInjectedBundle.bundle */;
 			productType = "com.apple.product-type.bundle";
 		};
+		E3D8A9332CC4AFB3006B43E3 /* WebKitEligibilityUtil */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E3D8A9462CC4AFB3006B43E3 /* Build configuration list for PBXNativeTarget "WebKitEligibilityUtil" */;
+			buildPhases = (
+				E3D8A9362CC4AFB3006B43E3 /* Sources */,
+				E3D8A9412CC4AFB3006B43E3 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E30604F02CCB2B920033AC72 /* PBXTargetDependency */,
+			);
+			name = WebKitEligibilityUtil;
+			productInstallPath = "$(HOME)/bin";
+			productName = WebKitTestRunner;
+			productReference = E3D8A94A2CC4AFB3006B43E3 /* WebKitEligibilityUtil */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -1185,6 +1240,7 @@
 				BC952D7711F3BF5D003398B4 /* Derived Sources */,
 				A18510261B9ADE4800744AEB /* WebKitTestRunner (Library) */,
 				5325BDD921DFF4F500A0DEE1 /* Apply Configuration to XCFileLists */,
+				E3D8A9332CC4AFB3006B43E3 /* WebKitEligibilityUtil */,
 			);
 		};
 /* End PBXProject section */
@@ -1405,6 +1461,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E3D8A9362CC4AFB3006B43E3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E3D8A94C2CC4B003006B43E3 /* main.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -1437,6 +1501,16 @@
 			isa = PBXTargetDependency;
 			target = BC952D7711F3BF5D003398B4 /* Derived Sources */;
 			targetProxy = BC952ED611F3C38B003398B4 /* PBXContainerItemProxy */;
+		};
+		E30604F02CCB2B920033AC72 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2EE52CDF1890A9A80010ED21 /* WebKitTestRunnerApp */;
+			targetProxy = E30604EF2CCB2B920033AC72 /* PBXContainerItemProxy */;
+		};
+		E3D8A94E2CC69CAF006B43E3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E3D8A9332CC4AFB3006B43E3 /* WebKitEligibilityUtil */;
+			targetProxy = E3D8A94D2CC69CAF006B43E3 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1629,6 +1703,27 @@
 			};
 			name = Release;
 		};
+		E3D8A9472CC4AFB3006B43E3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		E3D8A9482CC4AFB3006B43E3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */;
+			buildSettings = {
+			};
+			name = Release;
+		};
+		E3D8A9492CC4AFB3006B43E3 /* Production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E3E17D472CC49D440077C3AE /* WebKitEligibilityUtil.xcconfig */;
+			buildSettings = {
+			};
+			name = Production;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -1708,6 +1803,16 @@
 				BC952D7811F3BF5E003398B4 /* Debug */,
 				BC952D7911F3BF5E003398B4 /* Release */,
 				BC646D70136A3A8700B35DED /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
+		E3D8A9462CC4AFB3006B43E3 /* Build configuration list for PBXNativeTarget "WebKitEligibilityUtil" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E3D8A9472CC4AFB3006B43E3 /* Debug */,
+				E3D8A9482CC4AFB3006B43E3 /* Release */,
+				E3D8A9492CC4AFB3006B43E3 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
