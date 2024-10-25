@@ -864,7 +864,6 @@ html/HTMLOptionElement.cpp
 html/HTMLPictureElement.cpp
 html/HTMLSelectElement.cpp
 html/HTMLSlotElement.cpp
-html/HTMLSourceElement.cpp
 html/HTMLStyleElement.cpp
 html/HTMLSummaryElement.cpp
 html/HTMLTableElement.cpp
