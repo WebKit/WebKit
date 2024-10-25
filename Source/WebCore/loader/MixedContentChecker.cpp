@@ -168,6 +168,11 @@ static bool destinationIsImageAudioOrVideo(FetchOptions::Destination destination
     return destination == FetchOptions::Destination::Audio || destination == FetchOptions::Destination::Image || destination == FetchOptions::Destination::Video;
 }
 
+static bool destinationIsImageAndInitiatorIsImageset(FetchOptions::Destination destination, Initiator initiator)
+{
+    return destination == FetchOptions::Destination::Image && initiator == Initiator::Imageset;
+}
+
 bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgradable isUpgradable, const URL& url, FetchOptions::Mode mode, FetchOptions::Destination destination, Initiator initiator)
 {
     RefPtr document = frame.document();
@@ -185,19 +190,32 @@ bool MixedContentChecker::shouldUpgradeInsecureContent(LocalFrame& frame, IsUpgr
 
     auto shouldUpgradeIPAddressAndLocalhostForTesting = document->settings().iPAddressAndLocalhostMixedContentUpgradeTestingEnabled();
 
-    // The request's URL is not upgraded in the following cases.
-    // 4.1.1 request’s URL is a potentially trustworthy URL.
-    if (url.protocolIs("https"_s)
-        // 4.1.2 request’s URL’s host is an IP address.
-        || (!shouldUpgradeIPAddressAndLocalhostForTesting && URL::hostIsIPAddress(url.host()))
-        // 4.1.4 request’s destination is not "image", "audio", or "video".
-        || (!destinationIsImageAudioOrVideo(destination))
-        // 4.1.5 request’s destination is "image" and request’s initiator is "imageset".
-        || (destination == FetchOptions::Destination::Image && initiator == Initiator::Imageset)
-        // and CORS is excluded
-        || (mode == FetchOptions::Mode::Cors && !(document->quirks().needsRelaxedCorsMixedContentCheckQuirk() && destinationIsImageAudioOrVideo(destination))))
+    // 4.1 The request's URL is not upgraded in the following cases.
+    if (!canModifyRequest(url, destination, initiator, shouldUpgradeIPAddressAndLocalhostForTesting))
         return false;
+    // or CORS is excluded
+    if (mode == FetchOptions::Mode::Cors && !(document->quirks().needsRelaxedCorsMixedContentCheckQuirk() && destinationIsImageAudioOrVideo(destination)))
+        return false;
+
     logConsoleWarningForUpgrade(frame, /* blocked */ false, url, shouldUpgradeIPAddressAndLocalhostForTesting);
+    return true;
+}
+
+bool MixedContentChecker::canModifyRequest(const URL& url, FetchOptions::Destination destination, Initiator initiator, bool shouldUpgradeIPAddressAndLocalhostForTesting)
+{
+    // 4.1.1 request’s URL is a potentially trustworthy URL.
+    if (url.protocolIs("https"_s))
+        return false;
+    // 4.1.2 request’s URL’s host is an IP address.
+    if (!shouldUpgradeIPAddressAndLocalhostForTesting && URL::hostIsIPAddress(url.host()))
+        return false;
+    // 4.1.4 request’s destination is not "image", "audio", or "video".
+    if (!destinationIsImageAudioOrVideo(destination))
+        return false;
+    // 4.1.5 request’s destination is "image" and request’s initiator is "imageset".
+    auto schemeIsHandledBySchemeHandler = LegacySchemeRegistry::schemeIsHandledBySchemeHandler(url.protocol());
+    if (!schemeIsHandledBySchemeHandler && destinationIsImageAndInitiatorIsImageset(destination, initiator))
+        return false;
     return true;
 }
 
