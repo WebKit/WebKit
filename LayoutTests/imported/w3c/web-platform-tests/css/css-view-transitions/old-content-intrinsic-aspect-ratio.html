@@ -25,7 +25,6 @@
   view-transition-name: hidden;
   width: 10px;
   height: 10px;
-  visibility: hidden;
   contain: paint;
 }
 
@@ -33,6 +32,8 @@
 html::view-transition-group(*) { animation-duration: 300s; }
 html::view-transition-new(*) { animation: unset; opacity: 0; }
 html::view-transition-old(*) { animation: unset; opacity: 1; }
+
+html::view-transition-image-pair(hidden) { animation: unset; opacity: 0; }
 
 html::view-transition-group(target1) {
   animation: unset;
