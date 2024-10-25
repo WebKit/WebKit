@@ -75,10 +75,11 @@ std::pair<const char*, const char*> GStreamerCodecUtilities::parseH264ProfileAnd
 static std::pair<GRefPtr<GstCaps>, GRefPtr<GstCaps>> h264CapsFromCodecString(const String& codecString)
 {
     auto outputCaps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
-    // FIXME: Set level on caps too?
-    auto [gstProfile, _] = GStreamerCodecUtilities::parseH264ProfileAndLevel(codecString);
+    auto [gstProfile, level] = GStreamerCodecUtilities::parseH264ProfileAndLevel(codecString);
     if (gstProfile)
         gst_caps_set_simple(outputCaps.get(), "profile", G_TYPE_STRING, gstProfile, nullptr);
+    if (level)
+        gst_caps_set_simple(outputCaps.get(), "level", G_TYPE_STRING, level, nullptr);
 
     StringBuilder formatBuilder;
     auto profile = StringView::fromLatin1(gstProfile);

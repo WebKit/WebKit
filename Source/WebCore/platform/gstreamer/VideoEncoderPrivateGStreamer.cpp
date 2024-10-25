@@ -662,7 +662,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
     gst_element_class_set_static_metadata(elementClass, "WebKit video encoder", "Codec/Encoder/Video", "Encodes video for streaming", "Igalia");
     gst_element_class_add_pad_template(elementClass, gst_static_pad_template_get(&sinkTemplate));
 
-    Encoders::registerEncoder(OmxH264, "omxh264enc"_s, "h264parse"_s, "video/x-h264"_s, "video/x-h264,alignment=au,stream-format=byte-stream,profile=baseline"_s,
+    Encoders::registerEncoder(OmxH264, "omxh264enc"_s, "h264parse"_s, "video/x-h264"_s, "video/x-h264,alignment=au,stream-format=avc,profile=baseline"_s,
         [](WebKitVideoEncoder* self) {
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
         }, "target-bitrate"_s, setBitrateBitPerSec, "interval-intraframes"_s, [](GstElement* encoder, BitrateMode mode) {
@@ -678,10 +678,21 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
             notImplemented();
         });
     Encoders::registerEncoder(X264, "x264enc"_s, "h264parse"_s, "video/x-h264"_s,
-        "video/x-h264,alignment=au,stream-format=byte-stream"_s,
+        "video/x-h264,alignment=au,stream-format=avc"_s,
         [](WebKitVideoEncoder* self) {
             g_object_set(self->priv->encoder.get(), "key-int-max", 15, "threads", NUMBER_OF_THREADS, "b-adapt", FALSE, "vbv-buf-capacity", 120, nullptr);
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
+
+            const auto& encodedCaps = self->priv->encodedCaps;
+            if (LIKELY(!gst_caps_is_any(encodedCaps.get()) && !gst_caps_is_empty(encodedCaps.get()))) {
+                auto structure = gst_caps_get_structure(encodedCaps.get(), 0);
+                auto profile = gstStructureGetString(structure, "profile"_s);
+
+                if (profile == "high"_s)
+                    gst_preset_load_preset(GST_PRESET(self->priv->encoder.get()), "Profile High");
+                else if (profile == "main"_s)
+                    gst_preset_load_preset(GST_PRESET(self->priv->encoder.get()), "Profile Main");
+            }
         }, "bitrate"_s, setBitrateKbitPerSec, "key-int-max"_s, [](GstElement* encoder, BitrateMode mode) {
             switch (mode) {
             case CONSTANT_BITRATE_MODE:
@@ -705,7 +716,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
             };
         });
     Encoders::registerEncoder(OpenH264, "openh264enc"_s, "h264parse"_s, "video/x-h264"_s,
-        "video/x-h264,alignment=au,stream-format=byte-stream"_s,
+        "video/x-h264,alignment=au,stream-format=avc"_s,
         [](WebKitVideoEncoder* self) {
             g_object_set(self->priv->parser.get(), "config-interval", 1, nullptr);
             g_object_set(self->priv->outputCapsFilter.get(), "caps", self->priv->encodedCaps.get(), nullptr);
