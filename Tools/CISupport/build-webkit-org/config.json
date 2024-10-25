@@ -4,7 +4,7 @@
                   { "name": "bot244", "platform": "mac-sonoma" },
                   { "name": "bot247", "platform": "mac-sonoma" },
                   { "name": "bot248", "platform": "mac-sonoma" },
-                  { "name": "bot600", "platform": "mac-sonoma" },
+                  { "name": "bot600", "platform": "mac-sequoia" },
                   { "name": "bot611", "platform": "mac-sonoma" },
                   { "name": "bot612", "platform": "mac-sonoma" },
                   { "name": "bot613", "platform": "mac-sonoma" },
@@ -260,8 +260,8 @@
                   "workernames": ["bot611"]
                   },
                   {
-                    "name": "Apple-Sonoma-Safer-CPP-Checks", "factory": "SaferCPPStaticAnalyzerFactory",
-                    "platform": "mac-sonoma", "configuration": "release", "architectures": ["arm64"],
+                    "name": "Apple-Sequoia-Safer-CPP-Checks", "factory": "SaferCPPStaticAnalyzerFactory",
+                    "platform": "mac-sequoia", "configuration": "release", "architectures": ["arm64"],
                     "workernames": ["bot600"]
                   },
                   { "name": "Apple-Sonoma-Debug-Build", "factory": "BuildFactory",
@@ -751,7 +751,7 @@
                   },
 
                   { "type": "PlatformSpecificScheduler", "platform": "mac-sequoia", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-Sequoia-Release-Build", "Apple-Sequoia-Debug-Build", "Apple-Sequoia-LLINT-CLoop-BuildAndTest"]
+                  "builderNames": ["Apple-Sequoia-Release-Build", "Apple-Sequoia-Debug-Build", "Apple-Sequoia-Safer-CPP-Checks", "Apple-Sequoia-LLINT-CLoop-BuildAndTest"]
                   },
                   { "type": "Triggerable", "name": "sequoia-release-tests-wk1",
                   "builderNames": ["Apple-Sequoia-Release-WK1-Tests"]
@@ -790,7 +790,7 @@
                   "builderNames": ["Apple-Sequoia-Debug-WK2-Site-Isolation-Tree-Tests"]
                   },                  
                   { "type": "PlatformSpecificScheduler", "platform": "mac-sonoma", "branch": "main", "treeStableTimer": 45.0,
-                  "builderNames": ["Apple-Sonoma-Release-Build", "Apple-Sonoma-Debug-Build","Apple-Sonoma-Safer-CPP-Checks"]
+                  "builderNames": ["Apple-Sonoma-Release-Build", "Apple-Sonoma-Debug-Build"]
                   },
                   { "type": "Triggerable", "name": "sonoma-release-tests-wk1",
                   "builderNames": ["Apple-Sonoma-Release-WK1-Tests"]

@@ -604,7 +604,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'trigger'
         ],
-        'Apple-Sonoma-Safer-CPP-Checks': [
+        'Apple-Sequoia-Safer-CPP-Checks': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
