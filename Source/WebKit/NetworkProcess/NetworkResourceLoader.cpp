@@ -826,7 +826,7 @@ void NetworkResourceLoader::processClearSiteDataHeader(const WebCore::ResourceRe
         typesToRemove.add(WebsiteDataType::ServiceWorkerRegistrations);
     }
 
-    bool shouldReloadExecutionContexts = clearSiteDataValues.contains(ClearSiteDataValue::ExecutionContexts);
+    bool shouldReloadExecutionContexts = m_parameters.isClearSiteDataExecutionContextEnabled && clearSiteDataValues.contains(ClearSiteDataValue::ExecutionContexts);
     if (!typesToRemove && !shouldReloadExecutionContexts)
         return completionHandler();
 

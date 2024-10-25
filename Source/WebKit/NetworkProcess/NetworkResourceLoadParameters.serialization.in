@@ -89,6 +89,7 @@ class WebKit::NetworkResourceLoadParameters : WebKit::NetworkLoadParameters {
 
     bool isCrossOriginOpenerPolicyEnabled;
     bool isClearSiteDataHeaderEnabled;
+    bool isClearSiteDataExecutionContextEnabled;
     bool isDisplayingInitialEmptyDocument;
     WebCore::SandboxFlags effectiveSandboxFlags;
     URL openerURL;

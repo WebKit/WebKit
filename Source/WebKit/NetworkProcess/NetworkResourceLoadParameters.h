@@ -73,6 +73,7 @@ public:
         , URL&& documentURL
         , bool isCrossOriginOpenerPolicyEnabled
         , bool isClearSiteDataHeaderEnabled
+        , bool isClearSiteDataExecutionContextEnabled
         , bool isDisplayingInitialEmptyDocument
         , WebCore::SandboxFlags effectiveSandboxFlags
         , URL&& openerURL
@@ -121,6 +122,7 @@ public:
 
     bool isCrossOriginOpenerPolicyEnabled { false };
     bool isClearSiteDataHeaderEnabled { false };
+    bool isClearSiteDataExecutionContextEnabled { false };
     bool isDisplayingInitialEmptyDocument { false };
     WebCore::SandboxFlags effectiveSandboxFlags;
     URL openerURL;
