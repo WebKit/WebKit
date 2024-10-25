@@ -30,6 +30,7 @@
 
 #include "Color.h"
 #include "CoordinatedAnimatedBackingStoreClient.h"
+#include "CoordinatedBackingStoreProxy.h"
 #include "CoordinatedImageBackingStore.h"
 #include "Damage.h"
 #include "FilterOperations.h"
@@ -37,7 +38,6 @@
 #include "FloatPoint3D.h"
 #include "FloatRect.h"
 #include "FloatSize.h"
-#include "NicosiaBackingStore.h"
 #include "NicosiaPlatformLayer.h"
 #include "ScrollTypes.h"
 #include "TextureMapperAnimation.h"
@@ -141,12 +141,12 @@ public:
         WebCore::FloatRoundedRect backdropFiltersRect;
 
         RefPtr<WebCore::TextureMapperPlatformLayerProxy> contentLayer;
-        RefPtr<BackingStore> backingStore;
+        RefPtr<WebCore::CoordinatedBackingStoreProxy> backingStore;
+        RefPtr<WebCore::CoordinatedAnimatedBackingStoreClient> animatedBackingStoreClient;
         struct {
             RefPtr<WebCore::CoordinatedImageBackingStore> store;
             bool isVisible { false };
         } imageBacking;
-        RefPtr<WebCore::CoordinatedAnimatedBackingStoreClient> animatedBackingStoreClient;
 
         struct RepaintCounter {
             unsigned count { 0 };
@@ -162,8 +162,7 @@ public:
         WebCore::EventRegion eventRegion;
     };
 
-    template<typename T>
-    void flushState(const T& functor)
+    void flushState()
     {
         Locker locker { PlatformLayer::m_state.lock };
         auto& pending = m_state.pending;
@@ -241,8 +240,6 @@ public:
             staging.damage = pending.damage;
 
         pending.delta = { };
-
-        functor(staging);
     }
 
     template<typename T>

@@ -32,7 +32,6 @@ page/scrolling/nicosia/ScrollingTreePositionedNodeNicosia.cpp
 page/scrolling/nicosia/ScrollingTreeScrollingNodeDelegateNicosia.cpp
 page/scrolling/nicosia/ScrollingTreeStickyNodeNicosia.cpp
 
-platform/graphics/nicosia/NicosiaBackingStore.cpp
 platform/graphics/nicosia/NicosiaScene.cpp
 platform/graphics/nicosia/NicosiaSceneIntegration.cpp
 

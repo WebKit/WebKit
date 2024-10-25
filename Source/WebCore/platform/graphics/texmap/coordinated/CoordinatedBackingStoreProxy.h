@@ -26,31 +26,59 @@
 #include "IntRect.h"
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
+#include <wtf/Lock.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
-class CoordinatedBackingStoreProxyClient;
 class CoordinatedGraphicsLayer;
+class CoordinatedTileBuffer;
 
-class CoordinatedBackingStoreProxy {
+class CoordinatedBackingStoreProxy final : public ThreadSafeRefCounted<CoordinatedBackingStoreProxy> {
     WTF_MAKE_TZONE_ALLOCATED(CoordinatedBackingStoreProxy);
-    WTF_MAKE_NONCOPYABLE(CoordinatedBackingStoreProxy);
 public:
-    explicit CoordinatedBackingStoreProxy(CoordinatedBackingStoreProxyClient&, float contentsScale = 1.f);
+    static Ref<CoordinatedBackingStoreProxy> create(float contentsScale, std::optional<IntSize> tileSize = std::nullopt);
     ~CoordinatedBackingStoreProxy();
 
-    CoordinatedBackingStoreProxyClient& client() { return m_client; }
-
     bool setContentsScale(float);
-    float contentsScale() const { return m_contentsScale; }
-
     const IntRect& coverRect() const { return m_coverRect; }
+
+    class Update {
+        WTF_MAKE_NONCOPYABLE(Update);
+    public:
+        Update() = default;
+        Update(Update&&) = default;
+        Update& operator=(Update&&) = default;
+        ~Update();
+
+        struct TileUpdate {
+            uint32_t tileID { 0 };
+            IntRect tileRect;
+            IntRect dirtyRect;
+            Ref<CoordinatedTileBuffer> buffer;
+        };
+
+        float scale() const { return m_scale; }
+        const Vector<uint32_t>& tilesToCreate() const { return m_tilesToCreate; }
+        const Vector<TileUpdate>& tilesToUpdate() const { return m_tilesToUpdate; }
+        const Vector<uint32_t>& tilesToRemove() const { return m_tilesToRemove; }
+
+        void appendUpdate(float, Vector<uint32_t>&&, Vector<TileUpdate>&&, Vector<uint32_t>&&);
+
+    private:
+        float m_scale { 1 };
+        Vector<uint32_t> m_tilesToCreate;
+        Vector<TileUpdate> m_tilesToUpdate;
+        Vector<uint32_t> m_tilesToRemove;
+    };
 
     enum class UpdateResult : uint8_t {
         BuffersChanged = 1 << 0,
-        TilesPending =  1 << 1
+        TilesPending = 1 << 1,
+        TilesChanged = 1 << 2
     };
     OptionSet<UpdateResult> updateIfNeeded(const IntRect& unscaledVisibleRect, const IntRect& unscaledContentsRect, bool shouldCreateAndDestroyTiles, const Vector<IntRect, 1>&, CoordinatedGraphicsLayer&);
+    Update takePendingUpdate();
 
 private:
     struct Tile {
@@ -95,8 +123,10 @@ private:
         IntRect dirtyRect;
     };
 
+    CoordinatedBackingStoreProxy(float contentsScale, const IntSize& tileSize);
+
     void invalidateRegion(const Vector<IntRect, 1>&);
-    void createOrDestroyTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier);
+    void createOrDestroyTiles(const IntRect& visibleRect, const IntRect& scaledContentsRect, float coverAreaMultiplier, Vector<uint32_t>& tilesToCreate, Vector<uint32_t>& tilesToRemove);
     std::pair<IntRect, IntRect> computeCoverAndKeepRect() const;
 
     void adjustForContentsRect(IntRect&) const;
@@ -107,8 +137,6 @@ private:
     IntPoint tilePositionForPoint(const IntPoint&) const;
     void forEachTilePositionInRect(const IntRect&, Function<void(IntPoint&&)>&&);
 
-    CoordinatedBackingStoreProxyClient& m_client;
-
     float m_contentsScale { 1 };
     IntSize m_tileSize;
     float m_coverAreaMultiplier { 2 };
@@ -118,6 +146,10 @@ private:
     IntRect m_coverRect;
     IntRect m_keepRect;
     UncheckedKeyHashMap<IntPoint, Tile> m_tiles;
+    struct {
+        Lock lock;
+        Update pending WTF_GUARDED_BY_LOCK(lock);
+    } m_update;
 };
 
 } // namespace WebCore

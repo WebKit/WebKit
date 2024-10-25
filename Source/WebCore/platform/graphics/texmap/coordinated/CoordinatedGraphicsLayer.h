@@ -251,9 +251,9 @@ private:
         Nicosia::CompositionLayer::LayerState::RepaintCounter repaintCounter;
         Nicosia::CompositionLayer::LayerState::DebugBorder debugBorder;
         bool performLayerSync { false };
-        RefPtr<Nicosia::BackingStore> backingStore;
     } m_nicosia;
 
+    RefPtr<CoordinatedBackingStoreProxy> m_backingStore;
     RefPtr<CoordinatedAnimatedBackingStoreClient> m_animatedBackingStoreClient;
 
     RefPtr<NativeImage> m_pendingContentsImage;

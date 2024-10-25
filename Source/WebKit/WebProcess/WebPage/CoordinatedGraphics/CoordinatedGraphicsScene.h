@@ -30,6 +30,7 @@
 #include <WebCore/TextureMapperLayer.h>
 #include <WebCore/TextureMapperPlatformLayerProxy.h>
 #include <wtf/Function.h>
+#include <wtf/HashMap.h>
 #include <wtf/Lock.h>
 #include <wtf/RunLoop.h>
 #include <wtf/ThreadingPrimitives.h>
@@ -73,6 +74,8 @@ private:
 
     WebCore::TextureMapperLayer* rootLayer() { return m_rootLayer.get(); }
 
+    void removeLayer(Nicosia::CompositionLayer&);
+
     void updateViewport();
 
     void ensureRootLayer();
@@ -96,6 +99,8 @@ private:
     std::unique_ptr<WebCore::TextureMapperLayer> m_rootLayer;
 
     Nicosia::PlatformLayer::LayerID m_rootLayerID { 0 };
+
+    HashMap<WebCore::TextureMapperLayer*, Ref<WebCore::CoordinatedBackingStore>> m_backingStores;
 
     WebCore::TextureMapperFPSCounter m_fpsCounter;
 };

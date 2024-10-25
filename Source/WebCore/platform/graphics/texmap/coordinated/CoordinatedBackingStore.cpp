@@ -29,10 +29,8 @@
 
 namespace WebCore {
 
-void CoordinatedBackingStore::createTile(uint32_t id, float scale)
+void CoordinatedBackingStore::createTile(uint32_t id)
 {
-    // FIXME: scale set shouldn't be done in createTile, it sould be moved to resize().
-    m_scale = scale;
     m_tiles.add(id, CoordinatedBackingStoreTile(m_scale));
 }
 
@@ -55,9 +53,10 @@ void CoordinatedBackingStore::processPendingUpdates(TextureMapper& textureMapper
         tile.processPendingUpdates(textureMapper);
 }
 
-void CoordinatedBackingStore::resize(const FloatSize& size)
+void CoordinatedBackingStore::resize(const FloatSize& size, float scale)
 {
     m_size = size;
+    m_scale = scale;
 }
 
 void CoordinatedBackingStore::paintToTextureMapper(TextureMapper& textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)

@@ -228,12 +228,8 @@ void LayerTreeHost::flushLayers()
         WTFBeginSignpost(this, SyncFrame);
 
         m_nicosia.scene->accessState([this](Nicosia::Scene::State& state) {
-            for (auto& compositionLayer : m_nicosia.state.layers) {
-                compositionLayer->flushState([] (const Nicosia::CompositionLayer::LayerState& state) {
-                    if (state.backingStore)
-                        state.backingStore->flushUpdate();
-                });
-            }
+            for (auto& compositionLayer : m_nicosia.state.layers)
+                compositionLayer->flushState();
 
             ++state.id;
             state.layers = m_nicosia.state.layers;
