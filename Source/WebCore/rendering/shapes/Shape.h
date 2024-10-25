@@ -31,6 +31,7 @@
 
 #include "LayoutRect.h"
 #include "Path.h"
+#include "StyleBasicShape.h"
 #include "WritingMode.h"
 #include <wtf/RefCounted.h>
 
@@ -56,7 +57,6 @@ struct LineSegment {
     bool isValid;
 };
 
-class BasicShape;
 class Image;
 class RoundedRect;
 
@@ -72,7 +72,7 @@ public:
         Path marginShape;
     };
 
-    static Ref<const Shape> createShape(const BasicShape&, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode, float margin);
+    static Ref<const Shape> createShape(const Style::BasicShape&, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode, float margin);
     static Ref<const Shape> createRasterShape(Image*, float threshold, const LayoutRect& imageRect, const LayoutRect& marginRect, WritingMode, float margin);
     static Ref<const Shape> createBoxShape(const RoundedRect&, WritingMode, float margin);
 

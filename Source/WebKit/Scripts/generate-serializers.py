@@ -148,6 +148,9 @@ class SerializedType(object):
             self.namespace = 'WebKit'
             self.webkit_platform = True
 
+    def name_as_identifier(self):
+        return re.sub(r'\W+', '_', self.name)
+
     def namespace_and_name(self):
         if self.cf_type is not None:
             return self.cf_type + "Ref"
@@ -734,7 +737,7 @@ def check_type_members(type, checking_parent_class):
     if type.can_assert_member_order_is_correct():
         # FIXME: Add this check for types with parent classes, too.
         if type.parent_class is None and not checking_parent_class:
-            result.append('    struct ShouldBeSameSizeAs' + type.name + ' : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<' + type.namespace_and_name() + '>, ' + ('true' if type.return_ref else 'false') + '> {')
+            result.append('    struct ShouldBeSameSizeAs' + type.name_as_identifier() + ' : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<' + type.namespace_and_name() + '>, ' + ('true' if type.return_ref else 'false') + '> {')
             for member in type.members:
                 if member.condition is not None:
                     result.append('#if ' + member.condition)
@@ -744,7 +747,7 @@ def check_type_members(type, checking_parent_class):
             for member in type.dictionary_members:
                 result.append('        ' + member.dictionary_type() + ' ' + member.type + ';')
             result.append('    };')
-            result.append('    static_assert(sizeof(ShouldBeSameSizeAs' + type.name + ') == sizeof(' + type.namespace_and_name() + '));')
+            result.append('    static_assert(sizeof(ShouldBeSameSizeAs' + type.name_as_identifier() + ') == sizeof(' + type.namespace_and_name() + '));')
         result.append('    static_assert(MembersInCorrectOrder < 0')
         for member in type.members:
             if 'BitField' in member.attributes:
@@ -1582,6 +1585,10 @@ def parse_serialized_types(file):
         match = re.search(r'(struct|class|alias) (.*)::(.*) : (.*) {', line)
         if match:
             struct_or_class, namespace, name, parent_class_name = match.groups()
+            continue
+        match = re.search(r'\[(.*)\] (struct|class|alias) (.*)::((?:.*)<(?:.*)>) {', line)
+        if match:
+            attributes, struct_or_class, namespace, name = match.groups()
             continue
         match = re.search(r'\[(.*)\] (struct|class|alias) (.*)::([^\s]*) {', line)
         if match:

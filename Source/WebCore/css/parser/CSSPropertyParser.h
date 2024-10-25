@@ -129,6 +129,7 @@ private:
 
     // CSS3 Parsing Routines (for properties specific to CSS3)
     bool consumeBorderImage(CSSPropertyID, bool important);
+    bool consumeBorderRadius(CSSPropertyID, bool important);
 
     bool consumeFlex(bool important);
 

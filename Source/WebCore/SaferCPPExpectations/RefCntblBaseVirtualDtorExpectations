@@ -2,7 +2,7 @@ Modules/webtransport/WebTransportReceiveStream.h
 Modules/webtransport/WebTransportSendStream.h
 css/CSSAspectRatioValue.h
 css/CSSBackgroundRepeatValue.h
-css/CSSBasicShapes.h
+css/CSSBasicShapeValue.h
 css/CSSBorderImageSliceValue.h
 css/CSSBorderImageWidthValue.h
 css/CSSCanvasValue.h
@@ -37,6 +37,7 @@ css/CSSLineBoxContainValue.h
 css/CSSNamedImageValue.h
 css/CSSOffsetRotateValue.h
 css/CSSPaintImageValue.h
+css/CSSPathValue.h
 css/CSSPendingSubstitutionValue.h
 css/CSSPrimitiveValue.h
 css/CSSQuadValue.h
@@ -45,7 +46,6 @@ css/CSSRectValue.h
 css/CSSReflectValue.h
 css/CSSScrollValue.h
 css/CSSShadowValue.h
-css/CSSShapeSegmentValue.h
 css/CSSSubgridValue.h
 css/CSSTimingFunctionValue.h
 css/CSSTransformListValue.h
