@@ -801,8 +801,6 @@ fast/events/context-activated-by-key-event.html [ Skip ]
 
 compositing/tiling/non-visible-window-tile-coverage.html [ Pass ]
 
-webkit.org/b/170484 swipe/main-frame-pinning-requirement.html [ Pass Failure ]
-
 webkit.org/b/171763 compositing/tiling/non-active-window-tiles-size.html [ Pass Failure ]
 
 webkit.org/b/168937  tiled-drawing/scrolling/fast-scroll-iframe-latched-mainframe.html [ Pass Failure ]
@@ -886,8 +884,6 @@ http/wpt/cache-storage/cache-open-delete-in-parallel.https.html [ Slow ]
 http/wpt/cache-storage/cache-quota-add.any.html [ Slow ]
 http/wpt/cache-storage/quota-third-party.https.html [ Slow ]
 http/wpt/cache-storage/cache-quota-after-restart.any.html [ Slow ]
-
-webkit.org/b/181502 swipe/pushstate-with-manual-scrollrestoration.html [ Failure ]
 
 webkit.org/b/181750 imported/w3c/web-platform-tests/service-workers/service-worker/fetch-request-redirect.https.html [ DumpJSConsoleLogInStdErr Pass Failure Crash ]
 
@@ -1903,3 +1899,10 @@ media/remote-control-command-is-user-gesture.html [ Timeout ]
 # webkit.org/b/281984 Undo test changes expecting SameSite=Lax cookies by default
 [ Sequoia+ Debug ] imported/w3c/web-platform-tests/html/cross-origin-embedder-policy/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
 [ Sequoia+ Debug ] imported/w3c/web-platform-tests/html/anonymous-iframe/cookie.tentative.https.window.html [ Failure ]
+
+# webkit.org/b/282126 NEW TEST [ Sequoia+ x86_64 ] 5 swipe layout tests are timing due to "Timed out waiting for notifyDone to be called"
+[ Sequoia+ x86_64 ] http/tests/swipe/swipe-back-with-outstanding-load-cancellation.html [ Timeout ]
+[ Sequoia+ x86_64 ] swipe/main-frame-pinning-requirement.html [ Timeout ]
+[ Sequoia+ x86_64 ] swipe/navigate-event-back-swipe-verify-ua-transition.html [ Timeout ]
+[ Sequoia+ x86_64 ] swipe/pushState-back-swipe-verify-ua-transition.html [ Timeout ]
+[ Sequoia+ x86_64 ] swipe/pushstate-with-manual-scrollrestoration.html [ Timeout ]
