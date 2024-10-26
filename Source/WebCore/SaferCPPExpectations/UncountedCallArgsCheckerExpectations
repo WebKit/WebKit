@@ -1102,7 +1102,6 @@ dom/StaticNodeList.cpp
 dom/StaticRange.cpp
 dom/StyledElement.cpp
 dom/Subscriber.cpp
-dom/Subscriber.h
 dom/TextDecoderStreamDecoder.h
 dom/Traversal.cpp
 dom/TreeScope.cpp

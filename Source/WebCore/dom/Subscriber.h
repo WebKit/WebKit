@@ -50,7 +50,9 @@ public:
     void addTeardown(Ref<VoidCallback>);
 
     bool active() { return m_active; }
-    AbortSignal& signal() { return m_abortController->signal(); }
+    AbortSignal& signal() { return m_signal.get(); }
+
+    Ref<AbortSignal> protectedSignal() const { return m_signal; }
 
     static Ref<Subscriber> create(ScriptExecutionContext&, Ref<InternalObserver>&&, const SubscribeOptions&);
 
@@ -85,7 +87,7 @@ private:
 
     bool m_active = true;
     Lock m_teardownsLock;
-    Ref<AbortController> m_abortController;
+    Ref<AbortSignal> m_signal;
     Ref<InternalObserver> m_observer;
     SubscribeOptions m_options;
     Vector<Ref<VoidCallback>> m_teardowns WTF_GUARDED_BY_LOCK(m_teardownsLock);

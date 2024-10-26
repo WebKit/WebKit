@@ -25,7 +25,6 @@
 #include "config.h"
 #include "Subscriber.h"
 
-#include "AbortController.h"
 #include "AbortSignal.h"
 #include "Document.h"
 #include "InternalObserver.h"
@@ -43,11 +42,11 @@ Ref<Subscriber> Subscriber::create(ScriptExecutionContext& context, Ref<Internal
 
 Subscriber::Subscriber(ScriptExecutionContext& context, Ref<InternalObserver>&& observer, const SubscribeOptions& options)
     : ActiveDOMObject(&context)
-    , m_abortController(AbortController::create(context))
+    , m_signal(AbortSignal::create(&context))
     , m_observer(observer)
     , m_options(options)
 {
-    followSignal(m_abortController->signal());
+    followSignal(protectedSignal());
     if (RefPtr signal = options.signal)
         followSignal(*signal);
     suspendIfNeeded();
@@ -111,13 +110,12 @@ void Subscriber::followSignal(AbortSignal& signal)
 
 void Subscriber::close(JSC::JSValue reason)
 {
-    auto* context = scriptExecutionContext();
-    if (!context || !m_active)
+    if (!m_active || !scriptExecutionContext())
         return;
 
     m_active = false;
 
-    m_abortController->abort(reason);
+    protectedSignal()->signalAbort(reason);
 
     {
         Locker locker { m_teardownsLock };
