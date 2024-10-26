@@ -191,7 +191,6 @@
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/LogInitialization.h>
 #import <WebCore/MIMETypeRegistry.h>
-#import <WebCore/MediaRecorderProvider.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/MemoryRelease.h>
 #import <WebCore/MutableStyleProperties.h>
@@ -1524,7 +1523,6 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         WebCore::FrameIdentifier::generate(),
         nullptr, // Opener may be set by setOpenerForWebKitLegacy after instantiation.
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
-        makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>(),
@@ -1790,7 +1788,6 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         WebCore::FrameIdentifier::generate(),
         nullptr, // Opener may be set by setOpenerForWebKitLegacy after instantiation.
         makeUniqueRef<WebCore::DummySpeechRecognitionProvider>(),
-        makeUniqueRef<WebCore::MediaRecorderProvider>(),
         WebBroadcastChannelRegistry::getOrCreate([[self preferences] privateBrowsingEnabled]),
         makeUniqueRef<WebCore::DummyStorageProvider>(),
         makeUniqueRef<WebCore::DummyModelPlayerProvider>(),

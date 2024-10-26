@@ -76,7 +76,6 @@ class FrameLoader;
 class HistoryItemClient;
 class InspectorClient;
 class LocalFrameLoaderClient;
-class MediaRecorderProvider;
 class ModelPlayerProvider;
 class PaymentCoordinatorClient;
 class PerformanceLoggingClient;
@@ -125,7 +124,6 @@ public:
         FrameIdentifier mainFrameIdentifier,
         RefPtr<Frame>&& mainFrameOpener,
         UniqueRef<SpeechRecognitionProvider>&&,
-        UniqueRef<MediaRecorderProvider>&&,
         Ref<BroadcastChannelRegistry>&&,
         UniqueRef<StorageProvider>&&,
         UniqueRef<ModelPlayerProvider>&&,
@@ -200,7 +198,6 @@ public:
     Vector<UserContentURLPattern> corsDisablingPatterns;
     HashSet<String> maskedURLSchemes;
     UniqueRef<SpeechRecognitionProvider> speechRecognitionProvider;
-    UniqueRef<MediaRecorderProvider> mediaRecorderProvider;
 
     // FIXME: These should be all be Settings.
     bool loadsSubresources { true };

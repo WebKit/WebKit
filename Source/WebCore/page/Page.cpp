@@ -105,7 +105,6 @@
 #include "Logging.h"
 #include "LowPowerModeNotifier.h"
 #include "MediaCanStartListener.h"
-#include "MediaRecorderProvider.h"
 #include "MemoryCache.h"
 #include "ModelPlayerProvider.h"
 #include "NavigationScheduler.h"
@@ -362,7 +361,6 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_speechSynthesisClient(WTFMove(pageConfiguration.speechSynthesisClient))
 #endif
     , m_speechRecognitionProvider((WTFMove(pageConfiguration.speechRecognitionProvider)))
-    , m_mediaRecorderProvider((WTFMove(pageConfiguration.mediaRecorderProvider)))
     , m_webRTCProvider(WTFMove(pageConfiguration.webRTCProvider))
     , m_rtcController(RTCController::create())
 #if PLATFORM(IOS_FAMILY)

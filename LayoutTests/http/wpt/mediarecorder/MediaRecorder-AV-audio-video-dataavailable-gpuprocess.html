@@ -80,7 +80,7 @@
         let mode = 0;
 
         recorder.ondataavailable = t.step_func(blobEvent => {
-            assert_equals(blobEvent.data.type, 'video/webm; codecs="vp8"');
+            assert_equals(blobEvent.data.type, 'video/webm; codecs=vp8');
             assert_true(blobEvent instanceof BlobEvent, 'the type of event should be BlobEvent');
             assert_equals(blobEvent.type, 'dataavailable', 'the event type should be dataavailable');
             assert_true(blobEvent.isTrusted, 'isTrusted should be true when the event is created by C++');

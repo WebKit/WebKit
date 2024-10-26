@@ -121,10 +121,6 @@ class RemoteMediaResourceManager;
 class RemoteVideoFrameObjectHeap;
 #endif
 
-#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
-class RemoteMediaRecorderManager;
-#endif
-
 #if ENABLE(WEBGL)
 class RemoteGraphicsContextGL;
 #endif
@@ -280,9 +276,6 @@ private:
     UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy();
     RemoteAudioMediaStreamTrackRendererInternalUnitManager& audioMediaStreamTrackRendererInternalUnitManager();
 #endif
-#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
-    RemoteMediaRecorderManager& mediaRecorderManager();
-#endif
 
     void createRenderingBackend(RenderingBackendIdentifier, IPC::StreamServerConnection::Handle&&);
     void releaseRenderingBackend(RenderingBackendIdentifier);
@@ -377,9 +370,6 @@ private:
     Ref<RemoteSampleBufferDisplayLayerManager> m_sampleBufferDisplayLayerManager;
 #endif
 
-#if PLATFORM(COCOA) && ENABLE(MEDIA_RECORDER)
-    std::unique_ptr<RemoteMediaRecorderManager> m_remoteMediaRecorderManager;
-#endif
 #if ENABLE(MEDIA_STREAM)
     Ref<WebCore::SecurityOrigin> m_captureOrigin;
     bool m_allowsAudioCapture { false };

@@ -85,7 +85,7 @@ public:
 private:
     MediaRecorder(Document&, Ref<MediaStream>&&, Options&&);
 
-    static ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> createMediaRecorderPrivate(Document&, MediaStreamPrivate&, const Options&);
+    static ExceptionOr<std::unique_ptr<MediaRecorderPrivate>> createMediaRecorderPrivate(MediaStreamPrivate&, const Options&);
     
     Document* document() const;
 

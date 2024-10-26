@@ -225,7 +225,6 @@ Modules/mediacontrols/MediaControlsHost.cpp
 Modules/mediarecorder/BlobEvent.cpp
 Modules/mediarecorder/MediaRecorder.cpp
 Modules/mediarecorder/MediaRecorderErrorEvent.cpp
-Modules/mediarecorder/MediaRecorderProvider.cpp
 Modules/mediasource/BufferedChangeEvent.cpp
 Modules/mediasource/DOMURLMediaSource.cpp
 Modules/mediasource/ManagedMediaSource.cpp

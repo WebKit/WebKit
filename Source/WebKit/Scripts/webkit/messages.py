@@ -377,7 +377,6 @@ def serialized_identifiers():
         'WebKit::LibWebRTCResolverIdentifier',
         'WebKit::LogStreamIdentifier',
         'WebKit::MarkSurfacesAsVolatileRequestIdentifier',
-        'WebKit::MediaRecorderIdentifier',
         'WebKit::NetworkResourceLoadIdentifier',
         'WebKit::PDFPluginIdentifier',
         'WebKit::PageGroupIdentifier',

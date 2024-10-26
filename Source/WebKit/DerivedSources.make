@@ -310,9 +310,7 @@ MESSAGE_RECEIVERS = \
 	GPUProcess/graphics/WebGPU/RemoteXRView \
 	GPUProcess/webrtc/LibWebRTCCodecsProxy \
 	GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager \
-	GPUProcess/webrtc/RemoteMediaRecorderManager \
 	GPUProcess/webrtc/RemoteSampleBufferDisplayLayer \
-	GPUProcess/webrtc/RemoteMediaRecorder \
 	GPUProcess/webrtc/RemoteAudioMediaStreamTrackRendererInternalUnitManager \
 	GPUProcess/GPUProcess \
 	GPUProcess/media/RemoteImageDecoderAVFProxy \

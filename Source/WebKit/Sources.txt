@@ -91,8 +91,6 @@ GPUProcess/media/RemoteRemoteCommandListenerProxy.cpp
 GPUProcess/media/RemoteSourceBufferProxy.cpp
 GPUProcess/media/RemoteTextTrackProxy.cpp
 GPUProcess/media/RemoteVideoTrackProxy.cpp
-GPUProcess/webrtc/RemoteMediaRecorder.cpp
-GPUProcess/webrtc/RemoteMediaRecorderManager.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayer.cpp
 GPUProcess/webrtc/RemoteSampleBufferDisplayLayerManager.cpp
 
@@ -777,8 +775,6 @@ WebProcess/GPU/media/TextTrackPrivateRemote.cpp
 WebProcess/GPU/media/VideoTrackPrivateRemote.cpp
 WebProcess/GPU/media/WebMediaStrategy.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
-WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp
-WebProcess/GPU/webrtc/MediaRecorderProvider.cpp
 WebProcess/GPU/webrtc/RemoteVideoFrameObjectHeapProxyProcessor.cpp
 WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp
 WebProcess/GPU/webrtc/SampleBufferDisplayLayerManager.cpp

@@ -3410,6 +3410,8 @@ http/tests/workers/service/service-worker-download-async-delegates.https.html [ 
 
 # rdar://80396393 ([ iOS15 ] http/wpt/mediarecorder/mute-tracks.html is a flaky failure)
 http/wpt/mediarecorder/mute-tracks.html [ Pass Failure ]
+# This test is highly time dependent on when a MediaStream will start. Failure is expected some time, but should pass most of the time.
+http/wpt/mediarecorder/MediaRecorder-first-frame.html [ Pass Failure ]
 
 # rdar://80396502 ([ iOS15 ] http/wpt/mediarecorder/pause-recording.html is a flaky crash)
 http/wpt/mediarecorder/pause-recording.html [ Pass Crash ]
@@ -6831,8 +6833,6 @@ webkit.org/b/267796 [ Release ] imported/w3c/web-platform-tests/requestidlecallb
 webkit.org/b/264296 fast/forms/ios/show-and-dismiss-date-input-in-landscape.html [ Pass Timeout Crash ]
 
 webkit.org/b/267974 fast/forms/ios/dismiss-date-picker-on-rotation.html [ Pass Timeout Crash ]
-
-webkit.org/b/268044 [ Debug ] ipc/shared-video-frame-size.html [ Crash ]
 
 webkit.org/b/263044 [ Debug ] imported/w3c/web-platform-tests/webrtc-stats/supported-stats.https.html [ Pass Failure ]
 

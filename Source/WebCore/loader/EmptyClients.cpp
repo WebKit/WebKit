@@ -62,8 +62,6 @@
 #include "InspectorClient.h"
 #include "LocalFrame.h"
 #include "LocalFrameLoaderClient.h"
-#include "MediaRecorderPrivate.h"
-#include "MediaRecorderProvider.h"
 #include "ModalContainerTypes.h"
 #include "NetworkStorageSession.h"
 #include "Page.h"
@@ -1173,16 +1171,6 @@ class EmptyStorageSessionProvider final : public StorageSessionProvider {
     NetworkStorageSession* storageSession() const final { return nullptr; }
 };
 
-class EmptyMediaRecorderProvider final : public MediaRecorderProvider {
-    WTF_MAKE_TZONE_ALLOCATED_INLINE(EmptyMediaRecorderProvider);
-public:
-    EmptyMediaRecorderProvider() = default;
-private:
-#if ENABLE(MEDIA_RECORDER)
-    std::unique_ptr<MediaRecorderPrivate> createMediaRecorderPrivate(MediaStreamPrivate&, const MediaRecorderPrivateOptions&) final { return nullptr; }
-#endif
-};
-
 class EmptyBroadcastChannelRegistry final : public BroadcastChannelRegistry {
 public:
     static Ref<EmptyBroadcastChannelRegistry> create()
@@ -1232,7 +1220,6 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
         FrameIdentifier::generate(),
         nullptr,
         makeUniqueRef<DummySpeechRecognitionProvider>(),
-        makeUniqueRef<EmptyMediaRecorderProvider>(),
         EmptyBroadcastChannelRegistry::create(),
         makeUniqueRef<DummyStorageProvider>(),
         makeUniqueRef<DummyModelPlayerProvider>(),

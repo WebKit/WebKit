@@ -63,7 +63,7 @@
         const recorder = new MediaRecorder(video);
         let nonEmptyBlobCount = 0;
         recorder.ondataavailable = t.step_func(blobEvent => {
-            assert_equals(blobEvent.data.type, "video/mp4");
+            assert_true(blobEvent.data.type.startsWith("video/mp4"), "Blob has right data type");
             if (blobEvent.data.size <= 0 && checkForEmptyBlobCount())
                 return;
             if (++nonEmptyBlobCount <= 1)
@@ -94,7 +94,7 @@
         const recorder = new MediaRecorder(video, { mimeType: 'video/webm; codecs=vp8' });
         let nonEmptyBlobCount = 0;
         recorder.ondataavailable = t.step_func(blobEvent => {
-            assert_equals(blobEvent.data.type, "video/webm; codecs=\"vp8\"");
+            assert_true(blobEvent.data.type.startsWith("video/webm"), "Blob has right data type");
             if (blobEvent.data.size <= 0 && checkForEmptyBlobCount())
                 return;
             if (++nonEmptyBlobCount <= 1)

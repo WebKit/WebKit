@@ -218,8 +218,6 @@ media/encrypted-media/clearKey/clearKey-session-life-cycle.html [ Failure Crash 
 # webkit.org/b/221806
 # webgl/2.0.0/conformance/textures/video/tex-2d-rgb-rgb-unsigned_byte.html [ Failure ]
 
-webkit.org/b/221816 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Failure ]
-
 webkit.org/b/222569 fast/mediastream/media-stream-track-interrupted.html [ Crash Pass ]
 
 ### END OF (1) Classified failures with bug reports

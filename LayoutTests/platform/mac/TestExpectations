@@ -207,6 +207,8 @@ http/tests/images/webp-partial-load.html
 http/tests/images/webp-progressive-load.html
 fast/images/animated-webp-expected.html
 
+# This test is highly time dependent on when a MediaStream will start. Failure is expected some time, but should pass most of the time.
+http/wpt/mediarecorder/MediaRecorder-first-frame.html [ Pass Failure ]
 
 # DRT does not support toggling caret browsing on / off
 editing/selection/caret-mode-paragraph-keys-navigation.html

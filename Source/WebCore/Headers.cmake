@@ -471,8 +471,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/indexeddb/shared/IDBResultData.h
     Modules/indexeddb/shared/IDBTransactionInfo.h
 
-    Modules/mediarecorder/MediaRecorderProvider.h
-
     Modules/mediasession/NavigatorMediaSession.h
     Modules/mediasession/MediaSession.h
     Modules/mediasession/MediaImage.h

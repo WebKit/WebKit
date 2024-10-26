@@ -26,43 +26,44 @@
 
 #if ENABLE(MEDIA_RECORDER)
 
-#include <span>
+#include <memory>
+#include <optional>
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
 namespace WTF {
 class MediaTime;
 }
 
+typedef const struct opaqueCMFormatDescription* CMFormatDescriptionRef;
+struct CGAffineTransform;
+
 namespace WebCore {
 
 class AudioStreamDescription;
-class FragmentedSharedBuffer;
-struct MediaRecorderPrivateOptions;
-class PlatformAudioData;
-class VideoFrame;
+class MediaSample;
 
-class WEBCORE_EXPORT MediaRecorderPrivateWriter : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivateWriter, WTF::DestructionThread::Main> {
+class MediaRecorderPrivateWriterListener : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivateWriterListener> {
 public:
-    static RefPtr<MediaRecorderPrivateWriter> create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions&);
-    virtual ~MediaRecorderPrivateWriter() = default;
-    virtual bool initialize(const MediaRecorderPrivateOptions&) = 0;
-
-    virtual void appendVideoFrame(VideoFrame&) = 0;
-    virtual void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t) = 0;
-    virtual void stopRecording() = 0;
-    virtual void fetchData(CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, double)>&&) = 0;
-
-    virtual void pause() = 0;
-    virtual void resume() = 0;
-
     virtual void appendData(std::span<const uint8_t>) = 0;
+    virtual ~MediaRecorderPrivateWriterListener() = default;
+};
 
-    virtual const String& mimeType() const = 0;
-    virtual unsigned audioBitRate() const = 0;
-    virtual unsigned videoBitRate() const = 0;
+class MediaRecorderPrivateWriter {
+    WTF_MAKE_TZONE_ALLOCATED(MediaRecorderPrivateWriter);
+public:
+    static std::unique_ptr<MediaRecorderPrivateWriter> create(String type, MediaRecorderPrivateWriterListener&);
 
-    virtual void close() = 0;
+    virtual ~MediaRecorderPrivateWriter() = default;
+
+    virtual std::optional<uint8_t> addAudioTrack(CMFormatDescriptionRef) = 0;
+    virtual std::optional<uint8_t> addVideoTrack(CMFormatDescriptionRef, const std::optional<CGAffineTransform>&) = 0;
+    virtual bool allTracksAdded() = 0;
+    enum class Result : uint8_t { Success, Failure, NotReady };
+    virtual Result muxFrame(const MediaSample&, uint8_t) = 0;
+    virtual void forceNewSegment(const WTF::MediaTime&) = 0;
+    virtual Ref<GenericPromise> close(const WTF::MediaTime&) = 0;
 };
 
 } // namespace WebCore

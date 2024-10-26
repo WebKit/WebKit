@@ -28,35 +28,22 @@
 
 #if ENABLE(MEDIA_RECORDER)
 
-#include "ContentType.h"
-#include "MediaRecorderPrivateOptions.h"
-#include "MediaRecorderPrivateWriterCocoa.h"
+#include "MediaRecorderPrivateWriterAVFObjC.h"
 #include "MediaRecorderPrivateWriterWebM.h"
 
 namespace WebCore {
 
-RefPtr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions& options)
+std::unique_ptr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriter::create(String type, MediaRecorderPrivateWriterListener& listener)
 {
-#if PLATFORM(COCOA)
-    ContentType mimeType(options.mimeType);
-    auto containerType = mimeType.containerType();
-    Ref writer =
+    if (equalLettersIgnoringASCIICase(type, "video/mp4"_s) || equalLettersIgnoringASCIICase(type, "audio/mp4"_s))
+        return MediaRecorderPrivateWriterAVFObjC::create(listener);
 #if ENABLE(MEDIA_RECORDER_WEBM)
-    (equalLettersIgnoringASCIICase(containerType, "audio/webm"_s) || equalLettersIgnoringASCIICase(containerType, "video/webm"_s)) ? MediaRecorderPrivateWriterWebM::create(hasAudio, hasVideo) :
+    if (equalLettersIgnoringASCIICase(type, "video/webm"_s) || equalLettersIgnoringASCIICase(type, "audio/webm"_s))
+        return MediaRecorderPrivateWriterWebM::create(listener);
 #endif
-    MediaRecorderPrivateWriterAVFObjC::create(hasAudio, hasVideo);
-
-    if (!writer->initialize(options))
-        return nullptr;
-    return writer;
-#else
-    UNUSED_VARIABLE(hasAudio);
-    UNUSED_VARIABLE(hasVideo);
-    UNUSED_VARIABLE(options);
     return nullptr;
-#endif
 }
 
-} // namespae WebCore
+} // namespace WebCore
 
 #endif // ENABLE(MEDIA_RECORDER)

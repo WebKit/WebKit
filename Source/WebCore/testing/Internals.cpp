@@ -147,7 +147,6 @@
 #include "MediaMetadata.h"
 #include "MediaPlayer.h"
 #include "MediaProducer.h"
-#include "MediaRecorderProvider.h"
 #include "MediaResourceLoader.h"
 #include "MediaSession.h"
 #include "MediaSessionActionDetails.h"

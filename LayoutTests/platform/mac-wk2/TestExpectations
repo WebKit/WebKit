@@ -1881,9 +1881,6 @@ imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopen
 # webkit.org/b/281939 [Sequoia] svg/stroke/non-scaling-stroke-gradient-text.html is a constant image failure
 [ Sequoia ] svg/stroke/non-scaling-stroke-gradient-text.html [ ImageOnlyFailure ]
 
-# webkit.org/b/281999 REGRESSION (285061@main): [macOS Debug arm64 ] ASSERTION FAILED: m_lastEnqueuedRawVideoFrame <= sampleTime in http/wpt/mediarecorder/paus e-recording.html (EWS failure)
-[ Debug arm64 ] http/wpt/mediarecorder/pause-recording.html [ Skip ]
-
 # webkit.org/b/282046 REGRESSION(285592@main): [ macOS iOS wk2 ] http/tests/site-isolation/l oad-event.html are near constant failures.
 http/tests/site-isolation/load-event.html [ Pass Failure ]
 

@@ -58,7 +58,6 @@
 #include "LoadParameters.h"
 #include "Logging.h"
 #include "MediaKeySystemPermissionRequestManager.h"
-#include "MediaRecorderProvider.h"
 #include "MessageSenderInlines.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
@@ -740,7 +739,6 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         m_mainFrame->frameID(),
         frameFromIdentifier(parameters.mainFrameOpenerIdentifier),
         makeUniqueRef<WebSpeechRecognitionProvider>(pageID),
-        makeUniqueRef<MediaRecorderProvider>(*this),
         WebProcess::singleton().broadcastChannelRegistry(),
         makeUniqueRef<WebStorageProvider>(WebProcess::singleton().mediaKeysStorageDirectory(), WebProcess::singleton().mediaKeysStorageSalt()),
         makeUniqueRef<WebModelPlayerProvider>(*this),

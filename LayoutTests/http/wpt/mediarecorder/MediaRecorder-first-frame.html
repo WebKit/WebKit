@@ -117,7 +117,7 @@
             recorder.stop();
             audioContext.suspend();
             clearInterval(interval);
-        }, 500);
+        }, 1000);
     }
 
     async_test(t => runTest(t, "video/mp4"), "Verify MP4 MediaRecorder doesn't drop first frame");

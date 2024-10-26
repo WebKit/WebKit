@@ -140,7 +140,6 @@ class WebRTCProvider;
 class LowPowerModeNotifier;
 class MediaCanStartListener;
 class MediaPlaybackTarget;
-class MediaRecorderProvider;
 class MediaSessionCoordinatorPrivate;
 class ModelPlayerProvider;
 class PageConfiguration;
@@ -906,7 +905,6 @@ public:
     DatabaseProvider& databaseProvider() { return m_databaseProvider; }
     CacheStorageProvider& cacheStorageProvider() { return m_cacheStorageProvider; }
     SocketProvider& socketProvider() { return m_socketProvider; }
-    MediaRecorderProvider& mediaRecorderProvider() { return m_mediaRecorderProvider; }
     CookieJar& cookieJar() { return m_cookieJar.get(); }
     WEBCORE_EXPORT Ref<CookieJar> protectedCookieJar() const;
 
@@ -1338,7 +1336,6 @@ private:
 
     UniqueRef<SpeechRecognitionProvider> m_speechRecognitionProvider;
 
-    UniqueRef<MediaRecorderProvider> m_mediaRecorderProvider;
     UniqueRef<WebRTCProvider> m_webRTCProvider;
     Ref<RTCController> m_rtcController;
 

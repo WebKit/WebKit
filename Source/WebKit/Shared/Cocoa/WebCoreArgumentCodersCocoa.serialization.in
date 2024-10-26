@@ -261,15 +261,6 @@ struct WebCore::AttributedString {
     std::optional<HashMap<String, WebCore::AttributedString::AttributeValue>> documentAttributes;
 };
 
-#if ENABLE(MEDIA_RECORDER)
-struct WebCore::MediaRecorderPrivateOptions {
-    String mimeType;
-    std::optional<unsigned> audioBitsPerSecond;
-    std::optional<unsigned> videoBitsPerSecond;
-    std::optional<unsigned> bitsPerSecond;
-};
-#endif // ENABLE(MEDIA_RECORDER)
-
 [Nested] class WebCore::ProtectionSpace::PlatformData {
     RetainPtr<NSURLProtectionSpace> nsSpace;
 };

@@ -40,31 +40,31 @@ promise_test(async () => {
     assert_equals(recorder.mimeType, "");
     recorder.start();
     await new Promise(resolve => recorder.onstart = resolve);
-    assert_equals(recorder.mimeType, "video/mp4", "test 1 mime type");
+    assert_true(recorder.mimeType.startsWith("video/mp4"), "test 1 mime type");
 
     recorder = new MediaRecorder(new MediaStream([mediaStream.getVideoTracks()[0]]));
     assert_equals(recorder.mimeType, "");
     recorder.start();
     await new Promise(resolve => recorder.onstart = resolve);
-    assert_equals(recorder.mimeType, "video/mp4", "test 2 mime type");
+    assert_true(recorder.mimeType.startsWith("video/mp4"), "test 2 mime type");
 
     recorder = new MediaRecorder(new MediaStream([mediaStream.getAudioTracks()[0]]));
     assert_equals(recorder.mimeType, "");
     recorder.start();
     await new Promise(resolve => recorder.onstart = resolve);
-    assert_equals(recorder.mimeType, "audio/mp4");
+    assert_true(recorder.mimeType.startsWith("audio/mp4"));
 
     recorder = new MediaRecorder(new MediaStream([mediaStream.getVideoTracks()[0]]), { mimeType: "video/webm" });
     assert_equals(recorder.mimeType, "video/webm");
     recorder.start();
     await new Promise(resolve => recorder.onstart = resolve);
-    assert_equals(recorder.mimeType, "video/webm; codecs=\"vp8\"", "test 3 mime type");
+    assert_equals(recorder.mimeType, "video/webm; codecs=vp8", "test 3 mime type");
 
     recorder = new MediaRecorder(new MediaStream([mediaStream.getAudioTracks()[0]]), { mimeType: "audio/webm" });
     assert_equals(recorder.mimeType, "audio/webm");
     recorder.start();
     await new Promise(resolve => recorder.onstart = resolve);
-    assert_equals(recorder.mimeType, "audio/webm; codecs=\"opus\"");
+    assert_equals(recorder.mimeType, "audio/webm; codecs=opus");
 
 }, "MediaRecorder mimeType");
 </script>

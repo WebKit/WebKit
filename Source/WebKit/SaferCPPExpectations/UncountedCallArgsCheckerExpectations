@@ -430,7 +430,6 @@ WebProcess/GPU/media/WebMediaStrategy.cpp
 WebProcess/GPU/media/cocoa/MediaPlayerPrivateRemoteCocoa.mm
 WebProcess/GPU/webrtc/AudioMediaStreamTrackRendererInternalUnitManager.cpp
 WebProcess/GPU/webrtc/LibWebRTCCodecs.cpp
-WebProcess/GPU/webrtc/MediaRecorderPrivate.cpp
 WebProcess/GPU/webrtc/SampleBufferDisplayLayer.cpp
 WebProcess/GPU/webrtc/SharedVideoFrame.cpp
 WebProcess/Geolocation/WebGeolocationManager.cpp

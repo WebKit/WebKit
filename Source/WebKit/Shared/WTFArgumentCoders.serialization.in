@@ -87,7 +87,6 @@ template: enum class WebKit::ContentWorldIdentifierType
 template: enum class WebKit::DownloadIdentifierType
 template: enum class WebKit::ImageAnalysisRequestIdentifierType
 template: enum class WebKit::MediaDevicePermissionRequestIdentifierType
-template: enum class WebKit::MediaRecorderIdentifierType
 template: enum class WebKit::RemoteAudioHardwareListenerIdentifierType
 template: enum class WebKit::RemoteAudioSessionIdentifierType
 template: enum class WebKit::RemoteCDMIdentifierType
