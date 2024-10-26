@@ -28,71 +28,54 @@
 
 #include "AnimationUtilities.h"
 #include "CachedImage.h"
-#include "StylePrimitiveNumericTypes+Blending.h"
+#include <wtf/PointerComparison.h>
 
 namespace WebCore {
 
 bool ShapeValue::isImageValid() const
 {
-    auto image = this->protectedImage();
-    if (!image)
+    if (!m_image)
         return false;
-    if (image->hasCachedImage()) {
-        auto* cachedImage = image->cachedImage();
+    if (m_image->hasCachedImage()) {
+        auto* cachedImage = m_image->cachedImage();
         return cachedImage && cachedImage->hasImage();
     }
-    return image->isGeneratedImage();
+    return m_image->isGeneratedImage();
 }
 
 bool ShapeValue::operator==(const ShapeValue& other) const
 {
-    return std::visit(WTF::makeVisitor(
-        []<typename T>(const T& a, const T& b) {
-            return a == b;
-        },
-        [](const auto&, const auto&) {
-            return false;
-        }
-    ), m_value, other.m_value);
+    return m_type == other.m_type
+        && m_cssBox == other.m_cssBox
+        && arePointingToEqualData(m_shape, other.m_shape)
+        && arePointingToEqualData(m_image, other.m_image);
 }
 
-bool ShapeValue::canBlend(const ShapeValue& other) const
+bool ShapeValue::canBlend(const ShapeValue& to) const
 {
-    return std::visit(WTF::makeVisitor(
-        [](const ShapeAndBox& a, const ShapeAndBox& b) {
-            return Style::canBlend(a.shape, b.shape) && a.box == b.box;
-        },
-        [](const auto&, const auto&) {
-            return false;
-        }
-    ), m_value, other.m_value);
+    if (m_type != ShapeValue::Type::Shape || to.type() != ShapeValue::Type::Shape)
+        return false;
+
+    if (m_cssBox != to.cssBox())
+        return false;
+
+    if (RefPtr toShape = to.shape())
+        return m_shape && m_shape->canBlend(*toShape);
+
+    return false;
 }
 
-Ref<ShapeValue> ShapeValue::blend(const ShapeValue& other, const BlendingContext& context) const
+Ref<ShapeValue> ShapeValue::blend(const ShapeValue& to, const BlendingContext& context) const
 {
-    return std::visit(WTF::makeVisitor(
-        [&](const ShapeAndBox& a, const ShapeAndBox& b) -> Ref<ShapeValue> {
-            return ShapeValue::create(Style::blend(a.shape, b.shape, context), a.box);
-        },
-        [](const auto&, const auto&) -> Ref<ShapeValue> {
-            RELEASE_ASSERT_NOT_REACHED();
-        }
-    ), m_value, other.m_value);
+    ASSERT(m_shape && to.shape());
+    return ShapeValue::create(to.shape()->blend(*m_shape, context), m_cssBox);
 }
 
 CSSBoxType ShapeValue::effectiveCSSBox() const
 {
-    return WTF::switchOn(m_value,
-        [](const ShapeAndBox& shape) {
-            return shape.box == CSSBoxType::BoxMissing ? CSSBoxType::MarginBox : shape.box;
-        },
-        [](const Ref<StyleImage>&) {
-            return CSSBoxType::ContentBox;
-        },
-        [](const CSSBoxType& box) {
-            return box == CSSBoxType::BoxMissing ? CSSBoxType::MarginBox : box;
-        }
-    );
+    if (m_cssBox == CSSBoxType::BoxMissing)
+        return m_type == ShapeValue::Type::Image ? CSSBoxType::ContentBox : CSSBoxType::MarginBox;
+    return m_cssBox;
 }
 
 } // namespace WebCore

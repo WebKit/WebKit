@@ -310,64 +310,9 @@ static std::optional<PositionUnresolvedComponent> consumePositionUnresolvedCompo
 
     const auto options = CSSPropertyParserOptions {
         .parserMode = context.mode,
-        .unitlessZero = UnitlessZeroQuirk::Allow
     };
     if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<>>::consume(range, context, { }, options))
         return PositionUnresolvedComponent { WTFMove(*lengthPercentage) };
-    return std::nullopt;
-}
-
-std::optional<CSS::TwoComponentPositionHorizontal> consumeTwoComponentPositionHorizontalUnresolved(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    if (range.peek().type() == IdentToken) {
-        switch (range.peek().id()) {
-        case CSSValueLeft:
-            range.consumeIncludingWhitespace();
-            return CSS::TwoComponentPositionHorizontal { CSS::Left { } };
-        case CSSValueRight:
-            range.consumeIncludingWhitespace();
-            return CSS::TwoComponentPositionHorizontal { CSS::Right { } };
-        case CSSValueCenter:
-            range.consumeIncludingWhitespace();
-            return CSS::TwoComponentPositionHorizontal { CSS::Center { } };
-        default:
-            return std::nullopt;
-        }
-    }
-
-    const auto options = CSSPropertyParserOptions {
-        .parserMode = context.mode,
-        .unitlessZero = UnitlessZeroQuirk::Allow
-    };
-    if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<>>::consume(range, context, { }, options))
-        return CSS::TwoComponentPositionHorizontal { WTFMove(*lengthPercentage) };
-    return std::nullopt;
-}
-
-std::optional<CSS::TwoComponentPositionVertical> consumeTwoComponentPositionVerticalUnresolved(CSSParserTokenRange& range, const CSSParserContext& context)
-{
-    if (range.peek().type() == IdentToken) {
-        switch (range.peek().id()) {
-        case CSSValueBottom:
-            range.consumeIncludingWhitespace();
-            return CSS::TwoComponentPositionVertical { CSS::Bottom { } };
-        case CSSValueTop:
-            range.consumeIncludingWhitespace();
-            return CSS::TwoComponentPositionVertical { CSS::Top { } };
-        case CSSValueCenter:
-            range.consumeIncludingWhitespace();
-            return CSS::TwoComponentPositionVertical { CSS::Center { } };
-        default:
-            return std::nullopt;
-        }
-    }
-
-    const auto options = CSSPropertyParserOptions {
-        .parserMode = context.mode,
-        .unitlessZero = UnitlessZeroQuirk::Allow
-    };
-    if (auto lengthPercentage = MetaConsumer<CSS::LengthPercentage<>>::consume(range, context, { }, options))
-        return CSS::TwoComponentPositionVertical { WTFMove(*lengthPercentage) };
     return std::nullopt;
 }
 
@@ -385,22 +330,22 @@ static CSS::Position positionUnresolvedFromOneComponent(PositionUnresolvedCompon
 {
     return WTF::switchOn(WTFMove(component),
         [](CSS::Left&& component) {
-            return CSS::TwoComponentPosition { { WTFMove(component) }, { CSS::Center { } } };
+            return CSS::TwoComponentPosition { WTFMove(component), CSS::Center { } };
         },
         [](CSS::Right&& component) {
-            return CSS::TwoComponentPosition { { WTFMove(component) }, { CSS::Center { } } };
+            return CSS::TwoComponentPosition { WTFMove(component), CSS::Center { } };
         },
         [](CSS::Top&& component) {
-            return CSS::TwoComponentPosition { { CSS::Center { } }, { WTFMove(component) } };
+            return CSS::TwoComponentPosition { CSS::Center { }, WTFMove(component) };
         },
         [](CSS::Bottom&& component) {
-            return CSS::TwoComponentPosition { { CSS::Center { } }, { WTFMove(component) } };
+            return CSS::TwoComponentPosition { CSS::Center { }, WTFMove(component) };
         },
         [](CSS::Center&&) {
-            return CSS::TwoComponentPosition { { CSS::Center { } }, { CSS::Center { } } };
+            return CSS::TwoComponentPosition { CSS::Center { }, CSS::Center { } };
         },
         [](CSS::LengthPercentage<>&& component) {
-            return CSS::TwoComponentPosition { { WTFMove(component) }, { CSS::Center { } } };
+            return CSS::TwoComponentPosition { WTFMove(component), CSS::Center { } };
         }
     );
 }

@@ -63,8 +63,5 @@ std::optional<PositionCoordinates> consumeOneOrTwoValuedPositionCoordinates(CSSP
 std::optional<CSS::Position> consumePositionUnresolved(CSSParserTokenRange&, const CSSParserContext&);
 std::optional<CSS::Position> consumeOneOrTwoComponentPositionUnresolved(CSSParserTokenRange&, const CSSParserContext&);
 
-std::optional<CSS::TwoComponentPositionHorizontal> consumeTwoComponentPositionHorizontalUnresolved(CSSParserTokenRange&, const CSSParserContext&);
-std::optional<CSS::TwoComponentPositionVertical> consumeTwoComponentPositionVerticalUnresolved(CSSParserTokenRange&, const CSSParserContext&);
-
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore

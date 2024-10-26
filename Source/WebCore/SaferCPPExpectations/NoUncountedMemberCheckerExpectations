@@ -131,6 +131,7 @@ plugins/PluginData.h
 rendering/RenderQuote.cpp
 rendering/RenderVTTCue.h
 rendering/TextBoxPainter.h
+rendering/style/BasicShapesShape.cpp
 rendering/style/StyleGeneratedImage.cpp
 rendering/svg/SVGTextLayoutAttributesBuilder.h
 rendering/updating/RenderTreeUpdater.h

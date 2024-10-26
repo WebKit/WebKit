@@ -30,6 +30,8 @@
 #include "config.h"
 #include "Shape.h"
 
+#include "BasicShapeConversion.h"
+#include "BasicShapes.h"
 #include "BoxShape.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
@@ -38,8 +40,6 @@
 #include "PolygonShape.h"
 #include "RasterShape.h"
 #include "RectangleShape.h"
-#include "StylePosition.h"
-#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "WindRule.h"
 
 namespace WebCore {
@@ -92,78 +92,88 @@ static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode
     return size.transposedSize();
 }
 
-Ref<const Shape> Shape::createShape(const Style::BasicShape& basicShape, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode writingMode, float margin)
+Ref<const Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode writingMode, float margin)
 {
     bool horizontalWritingMode = writingMode.isHorizontal();
-    auto boxWidth = horizontalWritingMode ? logicalBoxSize.width() : logicalBoxSize.height();
-    auto boxHeight = horizontalWritingMode ? logicalBoxSize.height() : logicalBoxSize.width();
+    float boxWidth = horizontalWritingMode ? logicalBoxSize.width() : logicalBoxSize.height();
+    float boxHeight = horizontalWritingMode ? logicalBoxSize.height() : logicalBoxSize.width();
+    RefPtr<Shape> shape;
 
-    auto shape = WTF::switchOn(basicShape,
-        [&](const Style::CircleFunction& circle) -> Ref<Shape> {
-            auto boxSize = FloatSize { boxWidth, boxHeight };
-            auto center = Style::resolvePosition(*circle, boxSize);
-            auto radius = Style::resolveRadius(*circle, boxSize, center);
+    switch (basicShape.type()) {
 
-            auto logicalCenter = physicalPointToLogical(center, logicalBoxSize.height(), writingMode);
-            logicalCenter.moveBy(borderBoxOffset);
+    case BasicShape::Type::Circle: {
+        const auto& circle = uncheckedDowncast<BasicShapeCircle>(basicShape);
+        float centerX = floatValueForCenterCoordinate(circle.centerX(), boxWidth);
+        float centerY = floatValueForCenterCoordinate(circle.centerY(), boxHeight);
+        float radius = circle.floatValueForRadiusInBox({ boxWidth, boxHeight }, { centerX, centerY });
+        FloatPoint logicalCenter = physicalPointToLogical(FloatPoint(centerX, centerY), logicalBoxSize.height(), writingMode);
+        logicalCenter.moveBy(borderBoxOffset);
 
-            return createCircleShape(logicalCenter, radius);
-        },
-        [&](const Style::EllipseFunction& ellipse) -> Ref<Shape> {
-            auto boxSize = FloatSize { boxWidth, boxHeight };
-            auto center = Style::resolvePosition(*ellipse, boxSize);
-            auto radii = Style::resolveRadii(*ellipse, boxSize, center);
+        shape = createCircleShape(logicalCenter, radius);
+        break;
+    }
 
-            auto logicalCenter = physicalPointToLogical(center, logicalBoxSize.height(), writingMode);
-            logicalCenter.moveBy(borderBoxOffset);
+    case BasicShape::Type::Ellipse: {
+        const auto& ellipse = uncheckedDowncast<BasicShapeEllipse>(basicShape);
+        float centerX = floatValueForCenterCoordinate(ellipse.centerX(), boxWidth);
+        float centerY = floatValueForCenterCoordinate(ellipse.centerY(), boxHeight);
+        auto center = FloatPoint { centerX, centerY };
+        auto radius = ellipse.floatSizeForRadiusInBox({ boxWidth, boxHeight }, center);
+        FloatPoint logicalCenter = physicalPointToLogical(center, logicalBoxSize.height(), writingMode);
+        logicalCenter.moveBy(borderBoxOffset);
+        shape = createEllipseShape(logicalCenter, radius);
+        break;
+    }
 
-            return createEllipseShape(logicalCenter, radii);
-        },
-        [&](const Style::InsetFunction& inset) -> Ref<Shape> {
-            float left = Style::evaluate(inset->insets.left(), boxWidth);
-            float top = Style::evaluate(inset->insets.top(), boxHeight);
-
-            FloatRect rect {
-                left,
-                top,
-                std::max<float>(boxWidth - left - Style::evaluate(inset->insets.right(), boxWidth), 0),
-                std::max<float>(boxHeight - top - Style::evaluate(inset->insets.bottom(), boxHeight), 0)
-            };
-
-            auto logicalRect = physicalRectToLogical(rect, logicalBoxSize.height(), writingMode);
-            logicalRect.moveBy(borderBoxOffset);
-
-            auto boxSize = FloatSize(boxWidth, boxHeight);
-            auto topLeftRadius = physicalSizeToLogical(Style::evaluate(inset->radii.topLeft, boxSize), writingMode);
-            auto topRightRadius = physicalSizeToLogical(Style::evaluate(inset->radii.topRight, boxSize), writingMode);
-            auto bottomLeftRadius = physicalSizeToLogical(Style::evaluate(inset->radii.bottomLeft, boxSize), writingMode);
-            auto bottomRightRadius = physicalSizeToLogical(Style::evaluate(inset->radii.bottomRight, boxSize), writingMode);
-
-            auto cornerRadii = FloatRoundedRect::Radii(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
-            cornerRadii.scale(calcBorderRadiiConstraintScaleFor(logicalRect, cornerRadii));
-            return createInsetShape(FloatRoundedRect { logicalRect, cornerRadii });
-        },
-        [&](const Style::PolygonFunction& polygon) -> Ref<Shape> {
-            auto boxSize = FloatSize { boxWidth, boxHeight };
-
-            auto vertices = polygon->vertices.value.map([&](const auto& vertex) -> FloatPoint {
-                return physicalPointToLogical(Style::evaluate(vertex, boxSize) + borderBoxOffset, logicalBoxSize.height(), writingMode);
-            });
-
-            return createPolygonShape(WTFMove(vertices), Style::windRule(*polygon));
-        },
-        [&](const Style::PathFunction&) -> Ref<Shape> {
-            RELEASE_ASSERT_NOT_REACHED();
-        },
-        [&](const Style::ShapeFunction&) -> Ref<Shape> {
-            RELEASE_ASSERT_NOT_REACHED();
+    case BasicShape::Type::Polygon: {
+        const auto& polygon = uncheckedDowncast<BasicShapePolygon>(basicShape);
+        const Vector<Length>& values = polygon.values();
+        size_t valuesSize = values.size();
+        ASSERT(!(valuesSize % 2));
+        Vector<FloatPoint> vertices(valuesSize / 2);
+        for (unsigned i = 0; i < valuesSize; i += 2) {
+            FloatPoint vertex(
+                floatValueForLength(values.at(i), boxWidth),
+                floatValueForLength(values.at(i + 1), boxHeight));
+            vertex.moveBy(borderBoxOffset);
+            vertices[i / 2] = physicalPointToLogical(vertex, logicalBoxSize.height(), writingMode);
         }
-    );
+        shape = createPolygonShape(WTFMove(vertices), polygon.windRule());
+        break;
+    }
+
+    case BasicShape::Type::Inset: {
+        const auto& inset = uncheckedDowncast<BasicShapeInset>(basicShape);
+        float left = floatValueForLength(inset.left(), boxWidth);
+        float top = floatValueForLength(inset.top(), boxHeight);
+        FloatRect rect(left,
+            top,
+            std::max<float>(boxWidth - left - floatValueForLength(inset.right(), boxWidth), 0),
+            std::max<float>(boxHeight - top - floatValueForLength(inset.bottom(), boxHeight), 0));
+        FloatRect logicalRect = physicalRectToLogical(rect, logicalBoxSize.height(), writingMode);
+        logicalRect.moveBy(borderBoxOffset);
+
+        FloatSize boxSize(boxWidth, boxHeight);
+        FloatSize topLeftRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.topLeftRadius(), boxSize), writingMode);
+        FloatSize topRightRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.topRightRadius(), boxSize), writingMode);
+        FloatSize bottomLeftRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.bottomLeftRadius(), boxSize), writingMode);
+        FloatSize bottomRightRadius = physicalSizeToLogical(floatSizeForLengthSize(inset.bottomRightRadius(), boxSize), writingMode);
+        FloatRoundedRect::Radii cornerRadii(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+
+        cornerRadii.scale(calcBorderRadiiConstraintScaleFor(logicalRect, cornerRadii));
+
+        shape = createInsetShape(FloatRoundedRect(logicalRect, cornerRadii));
+        break;
+    }
+
+    default:
+        ASSERT_NOT_REACHED();
+    }
 
     shape->m_writingMode = writingMode;
     shape->m_margin = margin;
 
-    return shape;
+    return shape.releaseNonNull();
 }
 
 Ref<const Shape> Shape::createRasterShape(Image* image, float threshold, const LayoutRect& imageR, const LayoutRect& marginR, WritingMode writingMode, float margin)

@@ -45,7 +45,10 @@ public:
     bool equals(const CSSGradientValue&) const;
     RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
+    {
+        return CSS::visitCSSValueChildren(func, m_gradient);
+    }
 
 private:
     CSSGradientValue(CSS::Gradient&& gradient)

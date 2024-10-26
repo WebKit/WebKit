@@ -1,5 +1,5 @@
 
-PASS Test circle with negative easing on shape-outside
-PASS Test ellipse with negative easing on shape-outside
+FAIL Test circle with negative easing on shape-outside assert_equals: The radius of circle is clamped to zero at 61% expected "circle(0px)" but got "circle(-0.071513px)"
+FAIL Test ellipse with negative easing on shape-outside assert_equals: The radius of ellipse is clamped to zero at 61% expected "ellipse(0px 0px)" but got "ellipse(-0.071513px -0.071513px)"
 PASS Test inset with negative easing on shape-outside
 

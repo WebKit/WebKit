@@ -26,12 +26,9 @@
 #include "config.h"
 #include "CSSGradientValue.h"
 
-#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
-#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "ColorInterpolation.h"
 #include "StyleBuilderState.h"
 #include "StyleGradientImage.h"
-#include "StylePrimitiveNumericTypes+Conversions.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -110,14 +107,6 @@ template<> struct StyleImageIsUncacheable<GradientColorInterpolationMethod> {
     constexpr bool operator()(const auto&) { return false; }
 };
 
-template<> struct StyleImageIsUncacheable<TwoComponentPositionHorizontal> {
-    bool operator()(const auto& value) { return styleImageIsUncacheable(value.offset); }
-};
-
-template<> struct StyleImageIsUncacheable<TwoComponentPositionVertical> {
-    bool operator()(const auto& value) { return styleImageIsUncacheable(value.offset); }
-};
-
 template<> struct StyleImageIsUncacheable<Position> {
     bool operator()(const auto& value) { return styleImageIsUncacheable(value.value); }
 };
@@ -164,11 +153,6 @@ String CSSGradientValue::customCSSText() const
 bool CSSGradientValue::equals(const CSSGradientValue& other) const
 {
     return m_gradient == other.m_gradient;
-}
-
-IterationStatus CSSGradientValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
-{
-    return CSS::visitCSSValueChildren(func, m_gradient);
 }
 
 } // namespace WebCore

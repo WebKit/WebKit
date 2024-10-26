@@ -33,7 +33,6 @@
 #include "NodeRenderStyle.h"
 #include "RenderElement.h"
 #include "RenderStyleInlines.h"
-#include "StylePrimitiveNumericTypes+Conversions.h"
 
 namespace WebCore {
 

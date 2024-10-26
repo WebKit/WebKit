@@ -223,7 +223,7 @@
         "describes the code generation criterion. See the documentation for \"enable-if\"",
         "above for more details.",
         "",
-        "Conditional CSS property definition:",
+        "Conditonal CSS property definition:",
         "",
         "A CSS property can have more than one definition so long as the key \"enable-if\"",
         "differs in each definition. For example, ",
@@ -3234,7 +3234,8 @@
                     "-webkit-clip-path"
                 ],
                 "converter": "PathOperation",
-                "parser-function": "consumeClipPath",
+                "parser-function": "consumePathOperation",
+                "parser-function-requires-additional-parameters": ["RejectRay"],
                 "parser-grammar-unused": "<clip-source> | [ <basic-shape> || <geometry-box> ] | none",
                 "parser-grammar-unused-reason": "Needs support for '||' groups."
             },
@@ -3456,7 +3457,7 @@
                 "none"
             ],
             "codegen-properties": {
-                "converter": "DPath",
+                "converter": "SVGPath",
                 "parser-grammar": "none | <path()>",
                 "settings-flag": "cssDPropertyEnabled"
             },
@@ -4841,7 +4842,8 @@
             "codegen-properties": {
                 "converter": "PathOperation",
                 "settings-flag": "cssMotionPathEnabled",
-                "parser-function": "consumeOffsetPath",
+                "parser-function": "consumePathOperation",
+                "parser-function-requires-additional-parameters": ["RejectFillRule"],
                 "parser-grammar-unused": "none | <ray()> | <path()> | <url> | [ <basic-shape> && <coord-box>? ] | <coord-box>",
                 "parser-grammar-unused-reason": "Needs support for '||' groups, '&&' groups, optionals and function notation."
             },

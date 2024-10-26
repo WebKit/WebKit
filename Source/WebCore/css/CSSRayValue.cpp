@@ -29,34 +29,37 @@
 #include "config.h"
 #include "CSSRayValue.h"
 
-#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
-#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPrimitiveValueMappings.h"
-#include "CSSValueKeywords.h"
-#include <wtf/text/StringBuilder.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 
 String CSSRayValue::customCSSText() const
 {
-    StringBuilder builder;
-    CSS::serializationForCSS(builder, m_ray);
+    bool isNonDefaultSize = m_size != CSSValueClosestSide;
+    bool hasPosition = m_position;
+    bool hasCustomCoordinateBox = m_coordinateBox != CSSBoxType::BoxMissing;
 
-    if (m_coordinateBox != CSSBoxType::BoxMissing)
-        builder.append(' ', nameLiteralForSerialization(toCSSValueID(m_coordinateBox)));
-
-    return builder.toString();
+    return makeString(
+        "ray("_s, m_angle->cssText(),
+        isNonDefaultSize ? " "_s : ""_s,
+        isNonDefaultSize ? nameLiteral(m_size) : ""_s,
+        m_isContaining ? " contain"_s : ""_s,
+        hasPosition ? " at "_s : ""_s,
+        hasPosition ? m_position->cssText() : ""_s,
+        ')',
+        hasCustomCoordinateBox ? " "_s : ""_s,
+        hasCustomCoordinateBox ? nameLiteral(toCSSValueID(m_coordinateBox)) : ""_s
+    );
 }
 
 bool CSSRayValue::equals(const CSSRayValue& other) const
 {
-    return m_ray == other.m_ray
+    return compareCSSValue(m_angle, other.m_angle)
+        && m_size == other.m_size
+        && m_isContaining == other.m_isContaining
+        && compareCSSValuePtr(m_position, other.m_position)
         && m_coordinateBox == other.m_coordinateBox;
 }
 
-IterationStatus CSSRayValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
-{
-    return CSS::visitCSSValueChildren(func, m_ray);
 }
-
-} // namespace WebCore

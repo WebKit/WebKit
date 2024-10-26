@@ -25,7 +25,6 @@
 #pragma once
 
 #include "CSSValueKeywords.h"
-#include "RectEdges.h"
 #include <optional>
 #include <tuple>
 #include <utility>
@@ -56,14 +55,6 @@ template<CSSValueID C> struct Constant {
 template<CSSValueID C, typename T> struct FunctionNotation {
     static constexpr auto name = C;
     T parameters;
-
-    // Forward * and -> to the parameters for convenience.
-    const T& operator*() const { return parameters; }
-    T& operator*() { return parameters; }
-    const T* operator->() const { return &parameters; }
-    T* operator->() { return &parameters; }
-    operator const T&() const { return parameters; }
-    operator T&() { return parameters; }
 
     bool operator==(const FunctionNotation<C, T>&) const = default;
 };
@@ -133,10 +124,9 @@ template<typename T, size_t inlineCapacity = 0> struct CommaSeparatedVector {
 // Wraps a fixed size list of elements of a single type, semantically marking them as serializing as "space separated".
 template<typename T, size_t N> struct SpaceSeparatedArray {
     using Array = std::array<T, N>;
-    using value_type = T;
 
     template<typename...Ts> requires (sizeof...(Ts) == N && WTF::all<std::is_same_v<T, Ts>...>)
-    constexpr SpaceSeparatedArray(Ts... values)
+    constexpr SpaceSeparatedArray(Ts&&... values)
         : value { std::forward<Ts>(values)... }
     {
     }
@@ -160,15 +150,12 @@ template<size_t I, typename T, size_t N> decltype(auto) get(const SpaceSeparated
     return std::get<I>(array.value);
 }
 
-template<typename T> using SpaceSeparatedPair = SpaceSeparatedArray<T, 2>;
-
 // Wraps a fixed size list of elements of a single type, semantically marking them as serializing as "comma separated".
 template<typename T, size_t N> struct CommaSeparatedArray {
     using Array = std::array<T, N>;
-    using value_type = T;
 
     template<typename...Ts> requires (sizeof...(Ts) == N && WTF::all<std::is_same_v<T, Ts>...>)
-    constexpr CommaSeparatedArray(Ts... values)
+    constexpr CommaSeparatedArray(Ts&&... values)
         : value { std::forward<Ts>(values)... }
     {
     }
@@ -192,8 +179,6 @@ template<size_t I, typename T, size_t N> decltype(auto) get(const CommaSeparated
 {
     return std::get<I>(array.value);
 }
-
-template<typename T> using CommaSeparatedPair = CommaSeparatedArray<T, 2>;
 
 // Wraps a variadic list of types, semantically marking them as serializing as "space separated".
 template<typename... Ts> struct SpaceSeparatedTuple {
@@ -251,62 +236,6 @@ template<typename... Ts> struct CommaSeparatedTuple {
 template<size_t I, typename... Ts> decltype(auto) get(const CommaSeparatedTuple<Ts...>& tuple)
 {
     return std::get<I>(tuple.value);
-}
-
-// Wraps a pair of elements of a single type, semantically marking them as serializing as "point".
-template<typename T> struct Point {
-    using Array = SpaceSeparatedPair<T>;
-    using value_type = T;
-
-    constexpr Point(T p1, T p2)
-        : value { WTFMove(p1), WTFMove(p2) }
-    {
-    }
-
-    constexpr Point(SpaceSeparatedPair<T>&& array)
-        : value { WTFMove(array) }
-    {
-    }
-
-    constexpr bool operator==(const Point<T>&) const = default;
-
-    const T& x() const { return get<0>(value); }
-    const T& y() const { return get<1>(value); }
-
-    SpaceSeparatedPair<T> value;
-};
-
-template<size_t I, typename T> decltype(auto) get(const Point<T>& point)
-{
-    return get<I>(point.value);
-}
-
-// Wraps a pair of elements of a single type, semantically marking them as serializing as "size".
-template<typename T> struct Size {
-    using Array = SpaceSeparatedPair<T>;
-    using value_type = T;
-
-    constexpr Size(T p1, T p2)
-        : value { WTFMove(p1), WTFMove(p2) }
-    {
-    }
-
-    constexpr Size(SpaceSeparatedPair<T>&& array)
-        : value { WTFMove(array) }
-    {
-    }
-
-    constexpr bool operator==(const Size<T>&) const = default;
-
-    const T& width() const { return get<0>(value); }
-    const T& height() const { return get<1>(value); }
-
-    SpaceSeparatedPair<T> value;
-};
-
-template<size_t I, typename T> decltype(auto) get(const Size<T>& size)
-{
-    return get<I>(size.value);
 }
 
 // MARK: - Serialization
@@ -444,41 +373,11 @@ template<typename... CSSTypes> struct Serialize<CommaSeparatedTuple<CSSTypes...>
     }
 };
 
-// Specialization for `Point`.
-template<typename CSSType> struct Serialize<Point<CSSType>> {
-    void operator()(StringBuilder& builder, const Point<CSSType>& value)
-    {
-        serializationForCSS(builder, value.value);
-    }
-};
-
-// Specialization for `Size`.
-template<typename CSSType> struct Serialize<Size<CSSType>> {
-    void operator()(StringBuilder& builder, const Size<CSSType>& value)
-    {
-        serializationForCSS(builder, value.value);
-    }
-};
-
-// Specialization for `RectEdges`.
-template<typename CSSType> struct Serialize<RectEdges<CSSType>> {
-    void operator()(StringBuilder& builder, const RectEdges<CSSType>& value)
-    {
-        serializationForCSS(builder, value.top());
-        builder.append(' ');
-        serializationForCSS(builder, value.right());
-        builder.append(' ');
-        serializationForCSS(builder, value.bottom());
-        builder.append(' ');
-        serializationForCSS(builder, value.left());
-    }
-};
-
 // MARK: - Computed Style Dependencies
 
 // What properties does this value rely on (eg, font-size for em units)?
 
-// All non-tuple-like leaf types must implement the following conversions:
+// All leaf types must implement the following conversions:
 //
 //    template<> struct WebCore::CSS::ComputedStyleDependenciesCollector<CSSType> {
 //        void operator()(ComputedStyleDependencies&, const CSSType&);
@@ -593,36 +492,9 @@ template<typename... CSSTypes> struct ComputedStyleDependenciesCollector<CommaSe
     }
 };
 
-// Specialization for `Point`.
-template<typename CSSType> struct ComputedStyleDependenciesCollector<Point<CSSType>> {
-    void operator()(ComputedStyleDependencies& dependencies, const Point<CSSType>& value)
-    {
-        collectComputedStyleDependencies(dependencies, value.value);
-    }
-};
-
-// Specialization for `Size`.
-template<typename CSSType> struct ComputedStyleDependenciesCollector<Size<CSSType>> {
-    void operator()(ComputedStyleDependencies& dependencies, const Size<CSSType>& value)
-    {
-        collectComputedStyleDependencies(dependencies, value.value);
-    }
-};
-
-// Specialization for `RectEdges`.
-template<typename CSSType> struct ComputedStyleDependenciesCollector<RectEdges<CSSType>> {
-    void operator()(ComputedStyleDependencies& dependencies, const RectEdges<CSSType>& value)
-    {
-        collectComputedStyleDependencies(dependencies, value.top());
-        collectComputedStyleDependencies(dependencies, value.right());
-        collectComputedStyleDependencies(dependencies, value.bottom());
-        collectComputedStyleDependencies(dependencies, value.left());
-    }
-};
-
 // MARK: - CSSValue Visitation
 
-// All non-tuple-like leaf types must implement the following conversions:
+// All leaf types must implement the following conversions:
 //
 //    template<> struct WebCore::CSS::CSSValueChildrenVisitor<CSSType> {
 //        IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const CSSType&);
@@ -749,38 +621,6 @@ template<typename... CSSTypes> struct CSSValueChildrenVisitor<CommaSeparatedTupl
     }
 };
 
-// Specialization for `Point`.
-template<typename CSSType> struct CSSValueChildrenVisitor<Point<CSSType>> {
-    constexpr IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const Point<CSSType>& value)
-    {
-        return visitCSSValueChildren(func, value.value);
-    }
-};
-
-// Specialization for `Size`.
-template<typename CSSType> struct CSSValueChildrenVisitor<Size<CSSType>> {
-    constexpr IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const Size<CSSType>& value)
-    {
-        return visitCSSValueChildren(func, value.value);
-    }
-};
-
-// Specialization for `RectEdges`.
-template<typename CSSType> struct CSSValueChildrenVisitor<RectEdges<CSSType>> {
-    constexpr IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const RectEdges<CSSType>& value)
-    {
-        if (visitCSSValueChildren(func, value.top()) == IterationStatus::Done)
-            return IterationStatus::Done;
-        if (visitCSSValueChildren(func, value.right()) == IterationStatus::Done)
-            return IterationStatus::Done;
-        if (visitCSSValueChildren(func, value.bottom()) == IterationStatus::Done)
-            return IterationStatus::Done;
-        if (visitCSSValueChildren(func, value.left()) == IterationStatus::Done)
-            return IterationStatus::Done;
-        return IterationStatus::Continue;
-    }
-};
-
 } // namespace CSS
 } // namespace WebCore
 
@@ -808,18 +648,6 @@ template<typename... Ts> class tuple_size<WebCore::CSS::CommaSeparatedTuple<Ts..
 template<size_t I, typename... Ts> class tuple_element<I, WebCore::CSS::CommaSeparatedTuple<Ts...>> {
 public:
     using type = tuple_element_t<I, tuple<Ts...>>;
-};
-
-template<typename T> class tuple_size<WebCore::CSS::Point<T>> : public std::integral_constant<size_t, 2> { };
-template<size_t I, typename T> class tuple_element<I, WebCore::CSS::Point<T>> {
-public:
-    using type = T;
-};
-
-template<typename T> class tuple_size<WebCore::CSS::Size<T>> : public std::integral_constant<size_t, 2> { };
-template<size_t I, typename T> class tuple_element<I, WebCore::CSS::Size<T>> {
-public:
-    using type = T;
 };
 
 #define CSS_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \

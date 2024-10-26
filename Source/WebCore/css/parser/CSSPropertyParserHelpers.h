@@ -50,6 +50,7 @@ enum CSSPropertyID : uint16_t;
 // will not be modified.
 namespace CSSPropertyParserHelpers {
 
+RefPtr<CSSShadowValue> consumeSingleShadow(CSSParserTokenRange&, const CSSParserContext&, bool allowInset, bool allowSpread, bool isWebkitBoxShadow = false);
 RefPtr<CSSPrimitiveValue> consumeSingleContainerName(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeAspectRatio(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeDisplay(CSSParserTokenRange&, const CSSParserContext&);
@@ -62,13 +63,19 @@ RefPtr<CSSValue> consumeMarginSide(CSSParserTokenRange&, const CSSParserContext&
 RefPtr<CSSValue> consumeMarginTrim(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeSide(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID currentShorthand);
 RefPtr<CSSValue> consumeInsetLogicalStartEnd(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeClip(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTouchAction(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeKeyframesName(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeSingleTransitionPropertyOrNone(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeSingleTransitionProperty(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTextShadow(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeBoxShadow(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeWebkitBoxShadow(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTextDecorationLine(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTextEmphasisStyle(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeBorderWidth(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID currentShorthand);
+RefPtr<CSSValue> consumeBorderColor(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID currentShorthand);
+RefPtr<CSSValue> consumeRepeatStyle(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumePaintStroke(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumePaintOrder(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeStrokeDasharray(CSSParserTokenRange&, const CSSParserContext&);
@@ -81,6 +88,23 @@ RefPtr<CSSValue> consumeScrollbarColor(CSSParserTokenRange&, const CSSParserCont
 RefPtr<CSSValue> consumeScrollbarGutter(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeLineFitEdge(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTextBoxEdge(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeBorderRadiusCorner(CSSParserTokenRange&, const CSSParserContext&);
+bool consumeRadii(std::array<RefPtr<CSSValue>, 4>& horizontalRadii, std::array<RefPtr<CSSValue>, 4>& verticalRadii, CSSParserTokenRange&, const CSSParserContext&, bool useLegacyParsing);
+enum PathParsingOption : uint8_t { RejectRay = 1 << 0, RejectFillRule = 1 << 1 };
+RefPtr<CSSValue> consumePathOperation(CSSParserTokenRange&, const CSSParserContext&, OptionSet<PathParsingOption>);
+RefPtr<CSSValue> consumePath(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeShapeOutside(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeBorderImageRepeat(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeBorderImageSlice(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID currentProperty);
+RefPtr<CSSValue> consumeBorderImageOutset(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeBorderImageWidth(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID currentProperty);
+bool consumeBorderImageComponents(CSSParserTokenRange&, const CSSParserContext&, CSSPropertyID currentProperty, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
+RefPtr<CSSValue> consumeReflect(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeSingleBackgroundClip(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeBackgroundClip(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeSingleBackgroundSize(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeSingleMaskSize(CSSParserTokenRange&, const CSSParserContext&);
+RefPtr<CSSValue> consumeSingleWebkitBackgroundSize(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeLineBoxContain(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeContainerName(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeWebkitInitialLetter(CSSParserTokenRange&, const CSSParserContext&);
@@ -92,6 +116,7 @@ RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange&, const CSSPars
 #if ENABLE(DARK_MODE_CSS)
 RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange&, const CSSParserContext&);
 #endif
+RefPtr<CSSValue> consumeOffsetRotate(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTextUnderlinePosition(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeWebKitRubyPosition(CSSParserTokenRange&, const CSSParserContext&);

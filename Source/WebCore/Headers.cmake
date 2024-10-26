@@ -944,23 +944,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/typedom/numeric/CSSNumericBaseType.h
     css/typedom/numeric/CSSNumericType.h
 
-    css/values/backgrounds/CSSBorderRadius.h
-    css/values/backgrounds/CSSMinimallySerializingRectEdges.h
-    css/values/images/CSSGradient.h
-    css/values/motion/CSSRayFunction.h
-    css/values/primitives/CSSPosition.h
-    css/values/primitives/CSSPrimitiveNumericTypes.h
-    css/values/primitives/CSSUnevaluatedCalc.h
-    css/values/shapes/CSSBasicShape.h
-    css/values/shapes/CSSCircleFunction.h
-    css/values/shapes/CSSEllipseFunction.h
-    css/values/shapes/CSSFillRule.h
-    css/values/shapes/CSSInsetFunction.h
-    css/values/shapes/CSSPathFunction.h
-    css/values/shapes/CSSPolygonFunction.h
-    css/values/shapes/CSSRectFunction.h
-    css/values/shapes/CSSShapeFunction.h
-    css/values/shapes/CSSXywhFunction.h
+    css/values/CSSPrimitiveNumericTypes.h
+    css/values/CSSUnevaluatedCalc.h
     css/values/CSSValueTypes.h
 
     cssjit/CompiledSelector.h
@@ -2502,6 +2487,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/shapes/Shape.h
     rendering/shapes/ShapeOutsideInfo.h
 
+    rendering/style/BasicShapes.h
     rendering/style/BlockEllipsis.h
     rendering/style/BorderData.h
     rendering/style/BorderValue.h
@@ -2583,24 +2569,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/StyleValidity.h
     style/Styleable.h
 
-    style/values/backgrounds/StyleBorderRadius.h
-    style/values/backgrounds/StyleMinimallySerializingRectEdges.h
-    style/values/images/StyleGradient.h
-    style/values/motion/StyleRayFunction.h
-    style/values/primitives/StylePosition.h
-    style/values/primitives/StylePrimitiveNumericTypes.h
-    style/values/shapes/StyleBasicShape.h
-    style/values/shapes/StyleCircleFunction.h
-    style/values/shapes/StyleEllipseFunction.h
-    style/values/shapes/StyleFillRule.h
-    style/values/shapes/StyleInsetFunction.h
-    style/values/shapes/StylePathComputation.h
-    style/values/shapes/StylePathFunction.h
-    style/values/shapes/StylePolygonFunction.h
-    style/values/shapes/StyleRectFunction.h
-    style/values/shapes/StyleShapeFunction.h
-    style/values/shapes/StyleWindRuleComputation.h
-    style/values/shapes/StyleXywhFunction.h
+    style/values/StylePrimitiveNumericTypes.h
     style/values/StyleValueTypes.h
 
     svg/SVGElement.h

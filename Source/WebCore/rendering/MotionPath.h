@@ -52,9 +52,12 @@ public:
     static void applyMotionPathTransform(TransformationMatrix&, const TransformOperationData&, const FloatPoint& transformOrigin, const PathOperation&, const LengthPoint& offsetAnchor, const Length& offsetDistance, const OffsetRotation&, TransformBox);
     static void applyMotionPathTransform(const RenderStyle&, const TransformOperationData&, TransformationMatrix&);
 
-    static std::optional<Path> computePathForBox(const BoxPathOperation&, const TransformOperationData&);
-    static std::optional<Path> computePathForShape(const ShapePathOperation&, const TransformOperationData&);
+    WEBCORE_EXPORT static std::optional<Path> computePathForBox(const BoxPathOperation&, const TransformOperationData&);
+    WEBCORE_EXPORT static std::optional<Path> computePathForShape(const ShapePathOperation&, const TransformOperationData&);
     static std::optional<Path> computePathForRay(const RayPathOperation&, const TransformOperationData&);
+
+    static double lengthForRayPath(const RayPathOperation&, const MotionPathData&);
+    static double lengthForRayContainPath(const FloatRect& elementRect, double computedPathLength);
 };
 
 } // namespace WebCore

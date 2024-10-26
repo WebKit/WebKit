@@ -25,7 +25,7 @@
 #include "config.h"
 #include "ComputedStyleExtractor.h"
 
-#include "CSSBasicShapeValue.h"
+#include "BasicShapeConversion.h"
 #include "CSSBorderImage.h"
 #include "CSSBorderImageSliceValue.h"
 #include "CSSCounterValue.h"
@@ -39,7 +39,6 @@
 #include "CSSGridIntegerRepeatValue.h"
 #include "CSSGridLineNamesValue.h"
 #include "CSSGridTemplateAreasValue.h"
-#include "CSSPathValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSProperty.h"
 #include "CSSPropertyAnimation.h"
@@ -81,8 +80,6 @@
 #include "ScaleTransformOperation.h"
 #include "ScrollTimeline.h"
 #include "SkewTransformOperation.h"
-#include "StylePathData.h"
-#include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
 #include "StyleReflection.h"
@@ -2032,29 +2029,33 @@ static Ref<CSSValue> valueForPositionOrAutoOrNormal(const RenderStyle& style, co
     return valueForPosition(style, position);
 }
 
-static Ref<CSSValue> valueForD(const RenderStyle& style, const StylePathData* path)
+static CSSValueID valueIDForRaySize(RayPathOperation::Size size)
+{
+    switch (size) {
+    case RayPathOperation::Size::ClosestCorner:
+        return CSSValueClosestCorner;
+    case RayPathOperation::Size::ClosestSide:
+        return CSSValueClosestSide;
+    case RayPathOperation::Size::FarthestCorner:
+        return CSSValueFarthestCorner;
+    case RayPathOperation::Size::FarthestSide:
+        return CSSValueFarthestSide;
+    case RayPathOperation::Size::Sides:
+        return CSSValueSides;
+    }
+
+    ASSERT_NOT_REACHED();
+    return CSSValueInvalid;
+}
+
+static Ref<CSSValue> valueForSVGPath(const BasicShapePath* path)
 {
     if (!path)
         return CSSPrimitiveValue::create(CSSValueNone);
-    Ref protectedPath = *path;
-    return CSSPathValue::create(Style::overrideToCSS(protectedPath->path(), style, Style::PathConversion::ForceAbsolute));
+    return valueForSVGPath(*path, SVGPathConversion::ForceAbsolute);
 }
 
-static Ref<CSSValue> valueForBasicShape(const RenderStyle& style, const Style::BasicShape& basicShape, Style::PathConversion conversion)
-{
-    return CSSBasicShapeValue::create(
-        WTF::switchOn(basicShape,
-            [&](const auto& shape) {
-                return CSS::BasicShape { Style::toCSS(shape, style) };
-            },
-            [&](const Style::PathFunction& path) {
-                return CSS::BasicShape { Style::overrideToCSS(path, style, conversion) };
-            }
-        )
-    );
-}
-
-static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathOperation* operation, Style::PathConversion conversion = Style::PathConversion::None)
+static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathOperation* operation, SVGPathConversion conversion = SVGPathConversion::None)
 {
     if (!operation)
         return CSSPrimitiveValue::create(CSSValueNone);
@@ -2066,8 +2067,8 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
     case PathOperation::Type::Shape: {
         auto& shapeOperation = uncheckedDowncast<ShapePathOperation>(*operation);
         if (shapeOperation.referenceBox() == CSSBoxType::BoxMissing)
-            return CSSValueList::createSpaceSeparated(valueForBasicShape(style, shapeOperation.shape(), conversion));
-        return CSSValueList::createSpaceSeparated(valueForBasicShape(style, shapeOperation.shape(), conversion),
+            return CSSValueList::createSpaceSeparated(valueForBasicShape(style, shapeOperation.basicShape(), conversion));
+        return CSSValueList::createSpaceSeparated(valueForBasicShape(style, shapeOperation.basicShape(), conversion),
             createConvertingToCSSValueID(shapeOperation.referenceBox()));
     }
 
@@ -2076,7 +2077,9 @@ static Ref<CSSValue> valueForPathOperation(const RenderStyle& style, const PathO
 
     case PathOperation::Type::Ray: {
         auto& ray = uncheckedDowncast<RayPathOperation>(*operation);
-        return CSSRayValue::create(Style::toCSS(ray.ray(), style), ray.referenceBox());
+        auto angle = CSSPrimitiveValue::create(ray.angle(), CSSUnitType::CSS_DEG);
+        RefPtr<CSSValuePair> position = ray.position().x.isAuto() ? nullptr : RefPtr { CSSValuePair::createNoncoalescing(Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().x, style) }, Ref { ComputedStyleExtractor::zoomAdjustedPixelValueForLength(ray.position().y, style) }) };
+        return CSSRayValue::create(WTFMove(angle), valueIDForRaySize(ray.size()), ray.isContaining(), WTFMove(position), ray.referenceBox());
     }
     }
 
@@ -3029,8 +3032,8 @@ static Ref<CSSValue> shapePropertyValue(const RenderStyle& style, const ShapeVal
     ASSERT(shapeValue->type() == ShapeValue::Type::Shape);
 
     if (shapeValue->cssBox() == CSSBoxType::BoxMissing)
-        return CSSValueList::createSpaceSeparated(valueForBasicShape(style, *shapeValue->shape(), Style::PathConversion::None));
-    return CSSValueList::createSpaceSeparated(valueForBasicShape(style, *shapeValue->shape(), Style::PathConversion::None),
+        return CSSValueList::createSpaceSeparated(valueForBasicShape(style, *shapeValue->shape()));
+    return CSSValueList::createSpaceSeparated(valueForBasicShape(style, *shapeValue->shape()),
         createConvertingToCSSValueID(shapeValue->cssBox()));
 }
 
@@ -3110,7 +3113,7 @@ static Ref<CSSValue> valueForOffsetShorthand(const RenderStyle& style)
     bool nonInitialRotate = style.offsetRotate() != style.initialOffsetRotate();
 
     if (style.offsetPath() || nonInitialDistance || nonInitialRotate)
-        innerList.append(valueForPathOperation(style, style.offsetPath(), Style::PathConversion::ForceAbsolute));
+        innerList.append(valueForPathOperation(style, style.offsetPath(), SVGPathConversion::ForceAbsolute));
 
     if (nonInitialDistance)
         innerList.append(CSSPrimitiveValue::create(style.offsetDistance(), style));
@@ -4089,7 +4092,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
     case CSSPropertyOffsetPath:
         // The computed value of offset-path must only contain absolute draw commands.
         // https://github.com/w3c/fxtf-drafts/issues/225#issuecomment-334322738
-        return valueForPathOperation(style, style.offsetPath(), Style::PathConversion::ForceAbsolute);
+        return valueForPathOperation(style, style.offsetPath(), SVGPathConversion::ForceAbsolute);
     case CSSPropertyOffsetDistance:
         return CSSPrimitiveValue::create(style.offsetDistance(), style);
     case CSSPropertyOffsetPosition:
@@ -4869,7 +4872,7 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
         return createConvertingToCSSValueID(style.textZoom());
 
     case CSSPropertyD:
-        return valueForD(style, style.d());
+        return valueForSVGPath(style.d());
 
     case CSSPropertyPaintOrder:
         return paintOrder(style.paintOrder());
