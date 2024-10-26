@@ -582,6 +582,7 @@ public:
     void didFinishDocumentLoad(WebFrame&);
     void didFinishLoad(WebFrame&);
     void didSameDocumentNavigationForFrame(WebFrame&);
+    void didNavigateWithinPageForFrame(WebFrame&);
     void show();
     String userAgent(const URL&) const;
     String platformUserAgent(const URL&) const;

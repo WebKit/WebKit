@@ -7896,6 +7896,68 @@ TEST(ProcessSwap, NavigateBackAfterNavigatingAwayFromCrossOriginOpenerPolicyUsin
     done = false;
 }
 
+TEST(ProcessSwap, NavigateBackAfterNavigatingAwayFromCrossOriginOpenerPolicyUsingBackForwardCache2)
+{
+    using namespace TestWebKitAPI;
+
+    auto processPoolConfiguration = psonProcessPoolConfiguration();
+    auto processPool = adoptNS([[WKProcessPool alloc] _initWithConfiguration:processPoolConfiguration.get()]);
+
+    auto webViewConfiguration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [webViewConfiguration setProcessPool:processPool.get()];
+    auto handler = adoptNS([[PSONScheme alloc] init]);
+    [handler addMappingFromURLString:@"pson://www.webkit.org" toData:"<script>function navigateToApple() { window.location = 'pson://www.apple.com'; }</script>foo"];
+    [webViewConfiguration setURLSchemeHandler:handler.get() forURLScheme:@"PSON"];
+
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:webViewConfiguration.get()]);
+    auto navigationDelegate = adoptNS([[PSONNavigationDelegate alloc] init]);
+    navigationDelegate->didSameDocumentNavigationHandler = ^{
+        done = true;
+    };
+    [webView setNavigationDelegate:navigationDelegate.get()];
+
+    done = false;
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"pson://www.webkit.org"]]];
+    Util::run(&done);
+    done = false;
+
+    auto pid1 = [webView _webProcessIdentifier];
+
+    [webView _evaluateJavaScriptWithoutUserGesture:@"window.history.pushState({}, null, '/foo')" completionHandler:nil];
+    Util::run(&done);
+    done = false;
+
+    [webView goBack];
+    Util::run(&done);
+    done = false;
+
+    [webView _evaluateJavaScriptWithoutUserGesture:@"window.navigateToApple()" completionHandler:nil];
+    Util::run(&done);
+    done = false;
+
+    auto pid2 = [webView _webProcessIdentifier];
+    EXPECT_NE(pid1, pid2);
+
+    EXPECT_TRUE([webView canGoBack]);
+    EXPECT_FALSE([webView canGoForward]);
+
+    [webView goBack];
+    Util::run(&done);
+    done = false;
+
+    EXPECT_EQ(pid1, [webView _webProcessIdentifier]);
+    EXPECT_WK_STREQ([webView _committedURL].absoluteString, "pson://www.webkit.org");
+
+    [webView _evaluateJavaScriptWithoutUserGesture:@"document.body.innerHTML" completionHandler:^(id result, NSError* error) {
+        NSString* resultString = result;
+        EXPECT_TRUE(!error);
+        EXPECT_WK_STREQ(resultString, @"foo");
+        done = true;
+    }];
+    Util::run(&done);
+    done = false;
+}
+
 TEST(ProcessSwap, CommittedURLAfterNavigatingBackToCOOP)
 {
     using namespace TestWebKitAPI;

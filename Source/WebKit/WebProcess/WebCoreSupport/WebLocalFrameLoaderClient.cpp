@@ -423,20 +423,20 @@ void WebLocalFrameLoaderClient::dispatchWillPerformClientRedirect(const URL& url
 
 void WebLocalFrameLoaderClient::dispatchDidChangeLocationWithinPage()
 {
-    RefPtr webPage = m_frame->page();
-    if (!webPage)
-        return;
+    if (RefPtr webPage = m_frame->page())
+        webPage->didSameDocumentNavigationForFrame(m_frame);
+}
 
-    webPage->didSameDocumentNavigationForFrame(m_frame);
+void WebLocalFrameLoaderClient::dispatchDidNavigateWithinPage()
+{
+    if (RefPtr webPage = m_frame->page())
+        webPage->didNavigateWithinPageForFrame(m_frame);
 }
 
 void WebLocalFrameLoaderClient::dispatchDidChangeMainDocument()
 {
-    RefPtr webPage = m_frame->page();
-    if (!webPage)
-        return;
-
-    webPage->send(Messages::WebPageProxy::DidChangeMainDocument(m_frame->frameID()));
+    if (RefPtr webPage = m_frame->page())
+        webPage->send(Messages::WebPageProxy::DidChangeMainDocument(m_frame->frameID()));
 }
 
 void WebLocalFrameLoaderClient::dispatchWillChangeDocument(const URL& currentURL, const URL& newURL)
