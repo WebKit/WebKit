@@ -1224,18 +1224,23 @@ static bool fillBufferWithContentsOfFile(FILE* file, Vector& buffer)
 static bool fillBufferWithContentsOfFile(const String& fileName, Vector<char>& buffer)
 {
     struct stat statBuf;
-    if (stat(fileName.utf8().data(), &statBuf) == -1) {
-        fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
+    auto fileNameUTF = fileName.tryGetUTF8();
+    if (!fileNameUTF.has_value()) {
+        fprintf(stderr, "Error when parsing file name: %s\n", fileName.ascii().data());
+        return false;
+    }
+    if (stat(fileNameUTF->data(), &statBuf) == -1) {
+        fprintf(stderr, "Could not open file: %s\n", fileNameUTF->data());
         return false;
     }
 
     if ((statBuf.st_mode & S_IFMT) != S_IFREG) {
-        fprintf(stderr, "Trying to open a non-file: %s\n", fileName.utf8().data());
+        fprintf(stderr, "Trying to open a non-file: %s\n", fileNameUTF->data());
         return false;
     }
-    FILE* f = fopen(fileName.utf8().data(), "rb");
+    auto* f = fopen(fileNameUTF->data(), "rb");
     if (!f) {
-        fprintf(stderr, "Could not open file: %s\n", fileName.utf8().data());
+        fprintf(stderr, "Could not open file: %s\n", fileNameUTF->data());
         return false;
     }
 
