@@ -28,12 +28,12 @@
 
 #pragma once
 
-#include "AccessibilitySVGElement.h"
+#include "AccessibilitySVGObject.h"
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
-class AccessibilitySVGRoot final : public AccessibilitySVGElement {
+class AccessibilitySVGRoot final : public AccessibilitySVGObject {
 public:
     static Ref<AccessibilitySVGRoot> create(RenderObject&, AXObjectCache*);
     virtual ~AccessibilitySVGRoot();

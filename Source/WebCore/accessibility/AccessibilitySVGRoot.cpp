@@ -40,7 +40,7 @@
 namespace WebCore {
 
 AccessibilitySVGRoot::AccessibilitySVGRoot(RenderObject& renderer, AXObjectCache* cache)
-    : AccessibilitySVGElement(renderer, cache)
+    : AccessibilitySVGObject(renderer, cache)
 {
 }
 
@@ -63,7 +63,7 @@ AccessibilityObject* AccessibilitySVGRoot::parentObject() const
     if (m_parent)
         return m_parent.get();
     
-    return AccessibilitySVGElement::parentObject();
+    return AccessibilitySVGObject::parentObject();
 }
 
 AccessibilityRole AccessibilitySVGRoot::determineAccessibilityRole()

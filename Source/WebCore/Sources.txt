@@ -568,7 +568,7 @@ accessibility/AccessibilityNodeObject.cpp
 accessibility/AccessibilityObject.cpp
 accessibility/AccessibilityProgressIndicator.cpp
 accessibility/AccessibilityRenderObject.cpp
-accessibility/AccessibilitySVGElement.cpp
+accessibility/AccessibilitySVGObject.cpp
 accessibility/AccessibilitySVGRoot.cpp
 accessibility/AccessibilityScrollView.cpp
 accessibility/AccessibilityScrollbar.cpp

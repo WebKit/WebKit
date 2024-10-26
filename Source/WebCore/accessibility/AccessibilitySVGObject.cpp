@@ -26,7 +26,7 @@
  */
 
 #include "config.h"
-#include "AccessibilitySVGElement.h"
+#include "AccessibilitySVGObject.h"
 
 #include "AXObjectCache.h"
 #include "ElementChildIteratorInlines.h"
@@ -44,21 +44,21 @@
 
 namespace WebCore {
 
-AccessibilitySVGElement::AccessibilitySVGElement(RenderObject& renderer, AXObjectCache* cache)
+AccessibilitySVGObject::AccessibilitySVGObject(RenderObject& renderer, AXObjectCache* cache)
     : AccessibilityRenderObject(renderer)
     , m_axObjectCache(cache)
 {
     ASSERT(cache);
 }
 
-AccessibilitySVGElement::~AccessibilitySVGElement() = default;
+AccessibilitySVGObject::~AccessibilitySVGObject() = default;
 
-Ref<AccessibilitySVGElement> AccessibilitySVGElement::create(RenderObject& renderer, AXObjectCache* cache)
+Ref<AccessibilitySVGObject> AccessibilitySVGObject::create(RenderObject& renderer, AXObjectCache* cache)
 {
-    return adoptRef(*new AccessibilitySVGElement(renderer, cache));
+    return adoptRef(*new AccessibilitySVGObject(renderer, cache));
 }
 
-AccessibilityObject* AccessibilitySVGElement::targetForUseElement() const
+AccessibilityObject* AccessibilitySVGObject::targetForUseElement() const
 {
     auto* use = dynamicDowncast<SVGUseElement>(element());
     if (!use)
@@ -69,16 +69,12 @@ AccessibilityObject* AccessibilitySVGElement::targetForUseElement() const
         href = getAttribute(HTMLNames::hrefAttr);
 
     auto target = SVGURIReference::targetElementFromIRIString(href, use->treeScopeForSVGReferences());
-    if (!target.element)
-        return nullptr;
-
-    if (auto* cache = axObjectCache())
-        return cache->getOrCreate(*target.element);
-    return nullptr;
+    CheckedPtr cache = axObjectCache();
+    return cache ? cache->getOrCreate(target.element.get()) : nullptr;
 }
 
 template <typename ChildrenType>
-Element* AccessibilitySVGElement::childElementWithMatchingLanguage(ChildrenType& children) const
+Element* AccessibilitySVGObject::childElementWithMatchingLanguage(ChildrenType& children) const
 {
     String languageCode = language();
     if (languageCode.isEmpty())
@@ -112,7 +108,7 @@ Element* AccessibilitySVGElement::childElementWithMatchingLanguage(ChildrenType&
     return fallback;
 }
 
-void AccessibilitySVGElement::accessibilityText(Vector<AccessibilityText>& textOrder) const
+void AccessibilitySVGObject::accessibilityText(Vector<AccessibilityText>& textOrder) const
 {
     String description = this->description();
     if (!description.isEmpty())
@@ -123,7 +119,7 @@ void AccessibilitySVGElement::accessibilityText(Vector<AccessibilityText>& textO
         textOrder.append(AccessibilityText(helptext, AccessibilityTextSource::Help));
 }
 
-String AccessibilitySVGElement::description() const
+String AccessibilitySVGObject::description() const
 {
     // According to the SVG Accessibility API Mappings spec, the order of priority is:
     // 1. aria-labelledby
@@ -150,10 +146,8 @@ String AccessibilitySVGElement::description() const
             return xlinkTitle;
     }
 
-    if (is<SVGUseElement>(element.get())) {
-        if (auto* target = targetForUseElement())
-            return target->description();
-    }
+    if (RefPtr target = targetForUseElement())
+        return target->description();
 
     // FIXME: This is here to not break the svg-image.html test. But 'alt' is not
     // listed as a supported attribute of the 'image' element in the SVG spec:
@@ -167,8 +161,12 @@ String AccessibilitySVGElement::description() const
     return { };
 }
 
-String AccessibilitySVGElement::helpText() const
+String AccessibilitySVGObject::helpText() const
 {
+    RefPtr element = this->element();
+    if (!element)
+        return { };
+
     // According to the SVG Accessibility API Mappings spec, the order of priority is:
     // 1. aria-describedby
     // 2. a direct child desc element
@@ -180,26 +178,22 @@ String AccessibilitySVGElement::helpText() const
     if (!describedBy.isEmpty())
         return describedBy;
 
-    auto descriptionElements = childrenOfType<SVGDescElement>(*element());
-    if (auto descriptionChild = childElementWithMatchingLanguage(descriptionElements))
+    auto descriptionElements = childrenOfType<SVGDescElement>(*element);
+    if (RefPtr descriptionChild = childElementWithMatchingLanguage(descriptionElements))
         return descriptionChild->textContent();
 
-    if (is<SVGUseElement>(element())) {
-        AccessibilityObject* target = targetForUseElement();
-        if (target)
-            return target->helpText();
-    }
+    if (RefPtr target = targetForUseElement())
+        return target->helpText();
 
-    auto titleElements = childrenOfType<SVGTitleElement>(*element());
-    if (auto* titleChild = childElementWithMatchingLanguage(titleElements)) {
+    auto titleElements = childrenOfType<SVGTitleElement>(*element);
+    if (RefPtr titleChild = childElementWithMatchingLanguage(titleElements)) {
         if (titleChild->textContent() != description())
             return titleChild->textContent();
     }
-
-    return String();
+    return { };
 }
 
-bool AccessibilitySVGElement::hasTitleOrDescriptionChild() const
+bool AccessibilitySVGObject::hasTitleOrDescriptionChild() const
 {
     RefPtr element = this->element();
     if (!element)
@@ -212,7 +206,7 @@ bool AccessibilitySVGElement::hasTitleOrDescriptionChild() const
     return false;
 }
 
-bool AccessibilitySVGElement::computeIsIgnored() const
+bool AccessibilitySVGObject::computeIsIgnored() const
 {
     // According to the SVG Accessibility API Mappings spec, items should be excluded if:
     // * They would be excluded according to the Core Accessibility API Mappings.
@@ -262,7 +256,7 @@ bool AccessibilitySVGElement::computeIsIgnored() const
     return AccessibilityRenderObject::computeIsIgnored();
 }
 
-bool AccessibilitySVGElement::inheritsPresentationalRole() const
+bool AccessibilitySVGObject::inheritsPresentationalRole() const
 {
     if (canSetFocusAttribute())
         return false;
@@ -279,7 +273,7 @@ bool AccessibilitySVGElement::inheritsPresentationalRole() const
     return false;
 }
 
-AccessibilityRole AccessibilitySVGElement::determineAriaRoleAttribute() const
+AccessibilityRole AccessibilitySVGObject::determineAriaRoleAttribute() const
 {
     auto role = AccessibilityRenderObject::determineAriaRoleAttribute();
     if (role != AccessibilityRole::Presentational)
@@ -291,7 +285,7 @@ AccessibilityRole AccessibilitySVGElement::determineAriaRoleAttribute() const
     return hasTitleOrDescriptionChild() ? AccessibilityRole::Unknown : role;
 }
 
-AccessibilityRole AccessibilitySVGElement::determineAccessibilityRole()
+AccessibilityRole AccessibilitySVGObject::determineAccessibilityRole()
 {
     if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown)
         return m_ariaRole;
@@ -311,6 +305,8 @@ AccessibilityRole AccessibilitySVGElement::determineAccessibilityRole()
             return AccessibilityRole::Group;
         return AccessibilityRole::Generic;
     }
+    if (m_renderer->isRenderSVGInlineText())
+        return AccessibilityRole::StaticText;
     if (m_renderer->isRenderSVGText())
         return AccessibilityRole::SVGText;
     if (m_renderer->isRenderSVGTextPath())
