@@ -438,11 +438,11 @@ void RemoteLayerTreePropertyApplier::updateMask(RemoteLayerTreeNode& node, const
     ASSERT(maskNode);
     if (!maskNode)
         return;
-    CALayer *maskLayer = maskNode->layer();
-    ASSERT(!maskLayer.superlayer);
-    if (maskLayer.superlayer)
-        return;
-    maskOwnerLayer.mask = maskLayer;
+
+    RetainPtr maskLayer = maskNode->layer();
+    [maskLayer removeFromSuperlayer];
+
+    maskOwnerLayer.mask = maskLayer.get();
 }
 
 #if PLATFORM(IOS_FAMILY)

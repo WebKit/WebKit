@@ -1660,6 +1660,9 @@ webkit.org/b/186601 fullscreen/full-screen-layer-dump.html [ Failure ]
 
 webkit.org/b/187994 compositing/backing/backing-store-attachment-fill-forwards-animation.html [ Failure ]
 
+# No support for compositing clip-path?
+webkit.org/b/282148 compositing/masks/clip-path-on-tiled-toggle.html [ Failure ]
+
 webkit.org/b/188218 fast/repaint/canvas-object-fit.html [ Failure ]
 
 webkit.org/b/188436 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]
