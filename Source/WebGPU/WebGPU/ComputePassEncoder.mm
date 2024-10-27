@@ -175,24 +175,24 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
     if (indirectBuffer)
         addResourceToActiveResources(indirectBuffer, indirectBuffer->buffer(), BindGroupEntryUsage::Input, usagesForResource, BindGroupId { INT32_MAX });
 
-    auto& pipelineLayout = pipeline->pipelineLayout();
-    auto pipelineLayoutCount = pipelineLayout.numberOfBindGroupLayouts();
+    Ref pipelineLayout = pipeline->pipelineLayout();
+    auto pipelineLayoutCount = pipelineLayout->numberOfBindGroupLayouts();
     for (auto& kvp : m_bindGroups) {
         auto bindGroupIndex = kvp.key;
         if (!kvp.value.get()) {
             makeInvalid(@"bind group was deallocated");
             return;
         }
-        auto& group = *kvp.value.get();
-        group.rebindSamplersIfNeeded();
+        auto group = kvp.value;
+        group->rebindSamplersIfNeeded();
         const Vector<uint32_t>* dynamicOffsets = nullptr;
         if (auto it = m_bindGroupDynamicOffsets.find(bindGroupIndex); it != m_bindGroupDynamicOffsets.end())
             dynamicOffsets = &it->value;
-        if (NSString* error = errorValidatingBindGroup(group, pipeline->minimumBufferSizes(bindGroupIndex), dynamicOffsets)) {
+        if (NSString* error = errorValidatingBindGroup(*group, pipeline->minimumBufferSizes(bindGroupIndex), dynamicOffsets)) {
             makeInvalid(error);
             return;
         }
-        [computeCommandEncoder() setBuffer:group.computeArgumentBuffer() offset:0 atIndex:bindGroupIndex];
+        [computeCommandEncoder() setBuffer:group->computeArgumentBuffer() offset:0 atIndex:bindGroupIndex];
     }
 
     for (auto& kvp : m_bindGroupResources) {
@@ -200,7 +200,7 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
         if (bindGroupIndex >= pipelineLayoutCount)
             continue;
 
-        auto& bindGroupLayout = pipelineLayout.bindGroupLayout(bindGroupIndex);
+        Ref bindGroupLayout = pipelineLayout->bindGroupLayout(bindGroupIndex);
         for (auto* bindGroupResources : kvp.value) {
             for (size_t i = 0, sz = bindGroupResources->mtlResources.size(); i < sz; ++i) {
                 id<MTLResource> mtlResource = bindGroupResources->mtlResources[i];
@@ -208,7 +208,7 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
                 constexpr ShaderStage shaderStages[] = { ShaderStage::Vertex, ShaderStage::Fragment, ShaderStage::Compute, ShaderStage::Undefined };
                 std::optional<BindGroupLayout::StageMapValue> bindingAccess = std::nullopt;
                 for (auto shaderStage : shaderStages) {
-                    bindingAccess = bindGroupLayout.bindingAccessForBindingIndex(usageData.binding, shaderStage);
+                    bindingAccess = bindGroupLayout->bindingAccessForBindingIndex(usageData.binding, shaderStage);
                     if (bindingAccess)
                         break;
                 }
@@ -229,12 +229,12 @@ void ComputePassEncoder::executePreDispatchCommands(const Buffer* indirectBuffer
         return;
 
     for (auto& kvp : m_bindGroupDynamicOffsets) {
-        auto& pipelineLayout = pipeline->pipelineLayout();
+        Ref pipelineLayout = pipeline->pipelineLayout();
         auto bindGroupIndex = kvp.key;
-        auto* pcomputeOffsets = pipelineLayout.computeOffsets(bindGroupIndex, kvp.value);
+        auto* pcomputeOffsets = pipelineLayout->computeOffsets(bindGroupIndex, kvp.value);
         if (pcomputeOffsets && pcomputeOffsets->size()) {
             auto& computeOffsets = *pcomputeOffsets;
-            auto startIndex = pipelineLayout.computeOffsetForBindGroup(bindGroupIndex);
+            auto startIndex = pipelineLayout->computeOffsetForBindGroup(bindGroupIndex);
             memcpySpan(m_computeDynamicOffsets.mutableSpan().subspan(startIndex), computeOffsets.span());
         }
     }
@@ -432,7 +432,7 @@ void ComputePassEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& grou
         return;
     }
 
-    auto* bindGroupLayout = group.bindGroupLayout();
+    RefPtr bindGroupLayout = group.bindGroupLayout();
     if (!bindGroupLayout) {
         makeInvalid(@"GPUComputePassEncoder.setBindGroup: bind group is nil");
         return;

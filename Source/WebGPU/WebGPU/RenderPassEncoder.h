@@ -77,7 +77,7 @@ public:
     void drawIndirect(Buffer& indirectBuffer, uint64_t indirectOffset);
     void endOcclusionQuery();
     void endPass();
-    void executeBundles(Vector<std::reference_wrapper<RenderBundle>>&& bundles);
+    void executeBundles(Vector<Ref<RenderBundle>>&& bundles);
     void insertDebugMarker(String&& markerLabel);
     void popDebugGroup();
     void pushDebugGroup(String&& groupLabel);
@@ -97,7 +97,8 @@ public:
     bool colorDepthStencilTargetsMatch(const RenderPipeline&) const;
     id<MTLRenderCommandEncoder> renderCommandEncoder() const;
     void makeInvalid(NSString* = nil);
-    CommandEncoder& parentEncoder();
+    CommandEncoder& parentEncoder() { return m_parentEncoder; }
+
     bool setCommandEncoder(const BindGroupEntryUsageData::Resource&);
     void addResourceToActiveResources(const BindGroupEntryUsageData::Resource&, id<MTLResource>, OptionSet<BindGroupEntryUsage>);
     static double quantizedDepthValue(double, WGPUTextureFormat);

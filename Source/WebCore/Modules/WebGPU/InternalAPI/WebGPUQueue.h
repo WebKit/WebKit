@@ -58,7 +58,7 @@ public:
         setLabelInternal(m_label);
     }
 
-    virtual void submit(Vector<std::reference_wrapper<CommandBuffer>>&&) = 0;
+    virtual void submit(Vector<Ref<WebGPU::CommandBuffer>>&&) = 0;
 
     virtual void onSubmittedWorkDone(CompletionHandler<void()>&&) = 0;
 

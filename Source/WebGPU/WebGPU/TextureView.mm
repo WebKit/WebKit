@@ -64,12 +64,12 @@ id<MTLTexture> TextureView::parentTexture() const
 
 bool TextureView::previouslyCleared() const
 {
-    return m_parentTexture->previouslyCleared(m_texture.parentRelativeLevel, m_texture.parentRelativeSlice);
+    return Ref { m_parentTexture }->previouslyCleared(m_texture.parentRelativeLevel, m_texture.parentRelativeSlice);
 }
 
 void TextureView::setPreviouslyCleared(uint32_t mipLevel, uint32_t slice)
 {
-    m_parentTexture->setPreviouslyCleared(m_texture.parentRelativeLevel + mipLevel, m_texture.parentRelativeSlice + slice);
+    Ref { m_parentTexture }->setPreviouslyCleared(m_texture.parentRelativeLevel + mipLevel, m_texture.parentRelativeSlice + slice);
 }
 
 uint32_t TextureView::parentRelativeMipLevel() const
@@ -85,17 +85,17 @@ uint32_t TextureView::parentRelativeSlice() const
 
 uint32_t TextureView::width() const
 {
-    return m_parentTexture->physicalMiplevelSpecificTextureExtent(baseMipLevel()).width;
+    return Ref { m_parentTexture }->physicalMiplevelSpecificTextureExtent(baseMipLevel()).width;
 }
 
 uint32_t TextureView::height() const
 {
-    return m_parentTexture->physicalMiplevelSpecificTextureExtent(baseMipLevel()).height;
+    return Ref { m_parentTexture }->physicalMiplevelSpecificTextureExtent(baseMipLevel()).height;
 }
 
 uint32_t TextureView::depthOrArrayLayers() const
 {
-    return m_parentTexture->physicalMiplevelSpecificTextureExtent(baseMipLevel()).depthOrArrayLayers;
+    return Ref { m_parentTexture }->physicalMiplevelSpecificTextureExtent(baseMipLevel()).depthOrArrayLayers;
 }
 
 WGPUTextureUsageFlags TextureView::usage() const
@@ -170,10 +170,10 @@ bool TextureView::isValid() const
 
 void TextureView::destroy()
 {
-    m_texture = m_device->placeholderTexture(format());
+    m_texture = Ref { m_device }->placeholderTexture(format());
     if (!m_parentTexture->isCanvasBacking()) {
-        for (auto& commandEncoder : m_commandEncoders)
-            commandEncoder.makeSubmitInvalid();
+        for (Ref commandEncoder : m_commandEncoders)
+            commandEncoder->makeSubmitInvalid();
     }
 
     m_commandEncoders.clear();

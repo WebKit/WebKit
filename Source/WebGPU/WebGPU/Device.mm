@@ -241,14 +241,14 @@ Device::~Device()
 
 RefPtr<XRSubImage> Device::getXRViewSubImage(XRProjectionLayer& projectionLayer)
 {
-    m_xrSubImage->update(projectionLayer.colorTexture(), projectionLayer.depthTexture(), projectionLayer.reusableTextureIndex(), projectionLayer.completionEvent());
+    RefPtr { m_xrSubImage }->update(projectionLayer.colorTexture(), projectionLayer.depthTexture(), projectionLayer.reusableTextureIndex(), projectionLayer.completionEvent());
     return m_xrSubImage;
 }
 
 void Device::makeInvalid()
 {
     m_device = nil;
-    m_defaultQueue->makeInvalid();
+    protectedQueue()->makeInvalid();
 }
 
 void Device::loseTheDevice(WGPUDeviceLostReason reason)
@@ -262,7 +262,7 @@ void Device::loseTheDevice(WGPUDeviceLostReason reason)
         m_deviceLostCallback = nullptr;
     }
 
-    m_defaultQueue->makeInvalid();
+    protectedQueue()->makeInvalid();
     m_isLost = true;
 }
 
@@ -311,11 +311,6 @@ bool Device::getLimits(WGPUSupportedLimits& limits)
 
     limits.limits = m_capabilities.limits;
     return true;
-}
-
-id<MTLBuffer> Device::placeholderBuffer() const
-{
-    return m_placeholderBuffer;
 }
 
 id<MTLTexture> Device::placeholderTexture(WGPUTextureFormat format) const
@@ -394,23 +389,6 @@ void Device::generateAnInternalError(String&& message)
         m_uncapturedErrorCallback(WGPUErrorType_Internal, WTFMove(message));
         m_uncapturedErrorCallback = nullptr;
     }
-}
-
-uint32_t Device::maxBuffersPlusVertexBuffersForVertexStage() const
-{
-    ASSERT(m_capabilities.limits.maxBindGroupsPlusVertexBuffers > 0);
-    return m_capabilities.limits.maxBindGroupsPlusVertexBuffers;
-}
-
-uint32_t Device::maxBuffersForFragmentStage() const
-{
-    return m_capabilities.limits.maxBindGroups;
-}
-
-uint32_t Device::vertexBufferIndexForBindGroup(uint32_t groupIndex) const
-{
-    ASSERT(maxBuffersPlusVertexBuffersForVertexStage() > 0);
-    return WGSL::vertexBufferIndexForBindGroup(groupIndex, maxBuffersPlusVertexBuffersForVertexStage() - 1);
 }
 
 id<MTLBuffer> Device::newBufferWithBytes(const void* pointer, size_t length, MTLResourceOptions options) const

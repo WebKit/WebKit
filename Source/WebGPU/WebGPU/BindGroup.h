@@ -95,7 +95,8 @@ public:
     static NSString* usageName(const OptionSet<BindGroupEntryUsage>&);
     static uint64_t makeEntryMapKey(uint32_t baseMipLevel, uint32_t baseArrayLayer, WGPUTextureAspect);
 
-    const BindGroupLayout* bindGroupLayout() const;
+    const BindGroupLayout* bindGroupLayout() const { return m_bindGroupLayout.get(); }
+
     const BufferAndType* dynamicBuffer(uint32_t) const;
     uint32_t dynamicOffset(uint32_t bindingIndex, const Vector<uint32_t>*) const;
     void rebindSamplersIfNeeded() const;

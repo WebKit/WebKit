@@ -103,8 +103,8 @@ void QuerySet::destroy()
     // https://gpuweb.github.io/gpuweb/#dom-gpuqueryset-destroy
     m_visibilityBuffer = nil;
     m_timestampBuffer = nil;
-    for (auto& commandEncoder : m_commandEncoders)
-        commandEncoder.makeSubmitInvalid();
+    for (Ref commandEncoder : m_commandEncoders)
+        commandEncoder->makeSubmitInvalid();
 
     m_commandEncoders.clear();
 }

@@ -154,7 +154,7 @@ void RenderPassEncoderImpl::endOcclusionQuery()
     wgpuRenderPassEncoderEndOcclusionQuery(m_backing.get());
 }
 
-void RenderPassEncoderImpl::executeBundles(Vector<std::reference_wrapper<RenderBundle>>&& renderBundles)
+void RenderPassEncoderImpl::executeBundles(Vector<Ref<RenderBundle>>&& renderBundles)
 {
     auto backingBundles = renderBundles.map([&convertToBackingContext = m_convertToBackingContext.get()](auto renderBundle) {
         return convertToBackingContext.convertToBacking(renderBundle.get());

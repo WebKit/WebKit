@@ -74,7 +74,7 @@ private:
         return root().protectedStreamClientConnection()->sendWithAsyncReply(WTFMove(message), completionHandler, backing());
     }
 
-    void submit(Vector<std::reference_wrapper<WebCore::WebGPU::CommandBuffer>>&&) final;
+    void submit(Vector<Ref<WebCore::WebGPU::CommandBuffer>>&&) final;
 
     void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
 

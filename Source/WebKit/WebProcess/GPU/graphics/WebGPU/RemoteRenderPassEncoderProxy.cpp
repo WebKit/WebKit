@@ -193,7 +193,7 @@ void RemoteRenderPassEncoderProxy::endOcclusionQuery()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteRenderPassEncoderProxy::executeBundles(Vector<std::reference_wrapper<WebCore::WebGPU::RenderBundle>>&& renderBundles)
+void RemoteRenderPassEncoderProxy::executeBundles(Vector<Ref<WebCore::WebGPU::RenderBundle>>&& renderBundles)
 {
     auto convertedRenderBundles = WTF::compactMap(renderBundles, [&](auto& renderBundle) -> std::optional<WebGPUIdentifier> {
         return protectedConvertToBackingContext()->convertToBacking(renderBundle);

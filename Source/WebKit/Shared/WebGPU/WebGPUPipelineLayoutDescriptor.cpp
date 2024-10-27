@@ -60,8 +60,8 @@ std::optional<WebCore::WebGPU::PipelineLayoutDescriptor> ConvertFromBackingConte
     if (!base)
         return std::nullopt;
 
-    std::optional<Vector<std::reference_wrapper<WebCore::WebGPU::BindGroupLayout>>> optionalBindGroupLayouts = std::nullopt;
-    Vector<std::reference_wrapper<WebCore::WebGPU::BindGroupLayout>> bindGroupLayouts;
+    std::optional<Vector<Ref<WebCore::WebGPU::BindGroupLayout>>> optionalBindGroupLayouts = std::nullopt;
+    Vector<Ref<WebCore::WebGPU::BindGroupLayout>> bindGroupLayouts;
     if (pipelineLayoutDescriptor.bindGroupLayouts) {
         bindGroupLayouts.reserveInitialCapacity(pipelineLayoutDescriptor.bindGroupLayouts->size());
         for (const auto& backingBindGroupLayout : *pipelineLayoutDescriptor.bindGroupLayouts) {

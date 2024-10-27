@@ -48,7 +48,7 @@ QueueImpl::QueueImpl(WebGPUPtr<WGPUQueue>&& queue, ConvertToBackingContext& conv
 
 QueueImpl::~QueueImpl() = default;
 
-void QueueImpl::submit(Vector<std::reference_wrapper<CommandBuffer>>&& commandBuffers)
+void QueueImpl::submit(Vector<Ref<WebGPU::CommandBuffer>>&& commandBuffers)
 {
     auto backingCommandBuffers = commandBuffers.map([&convertToBackingContext = m_convertToBackingContext.get()](auto commandBuffer) {
         return convertToBackingContext.convertToBacking(commandBuffer);

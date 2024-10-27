@@ -68,7 +68,6 @@ public:
 
     RefPtr<Instance> instance() const { return m_instance.get(); }
 
-
 private:
     Adapter(id<MTLDevice>, Instance&, bool xrCompatible, HardwareCapabilities&&);
     Adapter(Instance&);

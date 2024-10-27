@@ -178,14 +178,14 @@ Buffer::~Buffer() = default;
 
 void Buffer::incrementBufferMapCount()
 {
-    for (auto& commandEncoder : m_commandEncoders)
-        commandEncoder.incrementBufferMapCount();
+    for (Ref commandEncoder : m_commandEncoders)
+        commandEncoder->incrementBufferMapCount();
 }
 
 void Buffer::decrementBufferMapCount()
 {
-    for (auto& commandEncoder : m_commandEncoders)
-        commandEncoder.decrementBufferMapCount();
+    for (Ref commandEncoder : m_commandEncoders)
+        commandEncoder->decrementBufferMapCount();
 }
 
 void Buffer::setCommandEncoder(CommandEncoder& commandEncoder, bool mayModifyBuffer) const
@@ -209,8 +209,8 @@ void Buffer::destroy()
     }
 
     setState(State::Destroyed);
-    for (auto& commandEncoder : m_commandEncoders)
-        commandEncoder.makeSubmitInvalid();
+    for (Ref commandEncoder : m_commandEncoders)
+        commandEncoder->makeSubmitInvalid();
 
     m_commandEncoders.clear();
     m_buffer = protectedDevice()->placeholderBuffer();
@@ -418,19 +418,9 @@ bool Buffer::isValid() const
     return isDestroyed() || m_buffer;
 }
 
-bool Buffer::isDestroyed() const
-{
-    return state() == State::Destroyed;
-}
-
 id<MTLBuffer> Buffer::indirectBuffer() const
 {
     return m_indirectBuffer;
-}
-
-id<MTLBuffer> Buffer::indirectIndexedBuffer() const
-{
-    return m_indirectIndexedBuffer;
 }
 
 bool Buffer::indirectBufferRequiresRecomputation(uint32_t baseIndex, uint32_t indexCount, uint32_t minVertexCount, uint32_t minInstanceCount, MTLIndexType indexType, uint32_t firstInstance) const

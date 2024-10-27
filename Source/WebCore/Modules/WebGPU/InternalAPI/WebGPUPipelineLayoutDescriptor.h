@@ -34,7 +34,7 @@ namespace WebCore::WebGPU {
 class BindGroupLayout;
 
 struct PipelineLayoutDescriptor : public ObjectDescriptorBase {
-    std::optional<Vector<std::reference_wrapper<BindGroupLayout>>> bindGroupLayouts;
+    std::optional<Vector<Ref<BindGroupLayout>>> bindGroupLayouts;
 };
 
 } // namespace WebCore::WebGPU

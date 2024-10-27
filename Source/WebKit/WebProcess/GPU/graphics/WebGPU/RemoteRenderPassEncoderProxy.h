@@ -108,7 +108,7 @@ private:
     void beginOcclusionQuery(WebCore::WebGPU::Size32 queryIndex) final;
     void endOcclusionQuery() final;
 
-    void executeBundles(Vector<std::reference_wrapper<WebCore::WebGPU::RenderBundle>>&&) final;
+    void executeBundles(Vector<Ref<WebCore::WebGPU::RenderBundle>>&&) final;
     void end() final;
 
     void setLabelInternal(const String&) final;

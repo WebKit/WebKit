@@ -117,7 +117,7 @@ Ref<XRProjectionLayer> XRBinding::createXRProjectionLayer(WGPUTextureFormat colo
     UNUSED_PARAM(flags);
     UNUSED_PARAM(scale);
 
-    return XRProjectionLayer::create(device());
+    return XRProjectionLayer::create(protectedDevice().get());
 }
 
 } // namespace WebGPU

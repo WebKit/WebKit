@@ -62,7 +62,7 @@ void GPUQueue::setLabel(String&& label)
 
 void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
 {
-    auto result = WTF::map(commandBuffers, [](auto& commandBuffer) -> std::reference_wrapper<WebGPU::CommandBuffer> {
+    auto result = WTF::map(commandBuffers, [](auto& commandBuffer) -> Ref<WebGPU::CommandBuffer> {
         return commandBuffer->backing();
     });
     m_backing->submit(WTFMove(result));

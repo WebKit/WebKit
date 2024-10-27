@@ -70,8 +70,8 @@ void ExternalTexture::destroy()
 {
     m_pixelBuffer = nil;
     m_destroyed = true;
-    for (auto& commandEncoder : m_commandEncoders)
-        commandEncoder.makeSubmitInvalid();
+    for (Ref commandEncoder : m_commandEncoders)
+        commandEncoder->makeSubmitInvalid();
 
     m_commandEncoders.clear();
 }

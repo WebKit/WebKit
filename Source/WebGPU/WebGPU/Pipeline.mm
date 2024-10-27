@@ -38,7 +38,7 @@ std::optional<LibraryCreationResult> createLibrary(id<MTLDevice> device, const S
         return std::nullopt;
 
     if (shaderModule.library() && pipelineLayout) {
-        if (const auto* pipelineLayoutHint = shaderModule.pipelineLayoutHint(entryPoint)) {
+        if (const RefPtr pipelineLayoutHint = shaderModule.pipelineLayoutHint(entryPoint)) {
             if (*pipelineLayoutHint == *pipelineLayout) {
                 if (const auto* entryPointInformation = shaderModule.entryPointInformation(entryPoint))
                     return { { shaderModule.library(), *entryPointInformation,  wgslConstantValues } };
@@ -171,7 +171,7 @@ id<MTLFunction> createFunction(id<MTLLibrary> library, const WGSL::Reflection::E
 
 NSString* errorValidatingBindGroup(const BindGroup& bindGroup, const BufferBindingSizesForBindGroup* mininumBufferSizes, const Vector<uint32_t>* dynamicOffsets)
 {
-    auto bindGroupLayout = bindGroup.bindGroupLayout();
+    RefPtr bindGroupLayout = bindGroup.bindGroupLayout();
     if (!bindGroupLayout)
         return nil;
 

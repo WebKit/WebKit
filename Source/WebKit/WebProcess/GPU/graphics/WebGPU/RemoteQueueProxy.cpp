@@ -49,7 +49,7 @@ RemoteQueueProxy::~RemoteQueueProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
-void RemoteQueueProxy::submit(Vector<std::reference_wrapper<WebCore::WebGPU::CommandBuffer>>&& commandBuffers)
+void RemoteQueueProxy::submit(Vector<Ref<WebCore::WebGPU::CommandBuffer>>&& commandBuffers)
 {
     auto convertedCommandBuffers = WTF::compactMap(commandBuffers, [&](auto& commandBuffer) -> std::optional<WebGPUIdentifier> {
         auto convertedCommandBuffer = protectedConvertToBackingContext()->convertToBacking(commandBuffer);

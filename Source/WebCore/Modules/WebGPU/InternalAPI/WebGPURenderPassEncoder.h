@@ -97,7 +97,7 @@ public:
     virtual void beginOcclusionQuery(Size32 queryIndex) = 0;
     virtual void endOcclusionQuery() = 0;
 
-    virtual void executeBundles(Vector<std::reference_wrapper<RenderBundle>>&&) = 0;
+    virtual void executeBundles(Vector<Ref<RenderBundle>>&&) = 0;
     virtual void end() = 0;
 
 protected:

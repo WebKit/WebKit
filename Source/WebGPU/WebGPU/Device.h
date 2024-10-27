@@ -25,12 +25,13 @@
 
 #pragma once
 
+#import "API.h"
 #import "Adapter.h"
 #import "HardwareCapabilities.h"
-#import <IOSurface/IOSurfaceRef.h>
 #import "Queue.h"
 #import <CoreVideo/CVMetalTextureCache.h>
 #import <CoreVideo/CoreVideo.h>
+#import <IOSurface/IOSurfaceRef.h>
 #import <simd/matrix_types.h>
 #import <wtf/CompletionHandler.h>
 #import <wtf/FastMalloc.h>
@@ -129,20 +130,32 @@ public:
     void generateAnOutOfMemoryError(String&& message);
     void generateAnInternalError(String&& message);
 
-    RefPtr<Instance> instance() const { return m_adapter->instance(); }
+    RefPtr<Instance> instance() const { return Ref { m_adapter }->instance(); }
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
 
-    uint32_t maxBuffersPlusVertexBuffersForVertexStage() const;
-    uint32_t maxBuffersForFragmentStage() const;
+    uint32_t maxBuffersPlusVertexBuffersForVertexStage() const
+    {
+        ASSERT(m_capabilities.limits.maxBindGroupsPlusVertexBuffers > 0);
+        return m_capabilities.limits.maxBindGroupsPlusVertexBuffers;
+    }
+
+    uint32_t maxBuffersForFragmentStage() const { return m_capabilities.limits.maxBindGroups; }
+
     uint32_t maxBuffersForComputeStage() const { return m_capabilities.limits.maxBindGroups; }
-    uint32_t vertexBufferIndexForBindGroup(uint32_t groupIndex) const;
+    uint32_t vertexBufferIndexForBindGroup(uint32_t groupIndex) const
+    {
+        ASSERT(maxBuffersPlusVertexBuffersForVertexStage() > 0);
+        return WGSL::vertexBufferIndexForBindGroup(groupIndex, maxBuffersPlusVertexBuffersForVertexStage() - 1);
+    }
+
     id<MTLBuffer> newBufferWithBytes(const void*, size_t, MTLResourceOptions) const;
     id<MTLBuffer> newBufferWithBytesNoCopy(void*, size_t, MTLResourceOptions) const;
     id<MTLTexture> newTextureWithDescriptor(MTLTextureDescriptor *, IOSurfaceRef = nullptr, NSUInteger plane = 0) const;
 
     static bool isStencilOnlyFormat(MTLPixelFormat);
     bool shouldStopCaptureAfterSubmit();
-    id<MTLBuffer> placeholderBuffer() const;
+    id<MTLBuffer> placeholderBuffer() const { return m_placeholderBuffer; }
+
     id<MTLTexture> placeholderTexture(WGPUTextureFormat) const;
     bool isDestroyed() const;
     NSString *errorValidatingTextureCreation(const WGPUTextureDescriptor&, const Vector<WGPUTextureFormat>& viewFormats);

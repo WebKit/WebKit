@@ -91,7 +91,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderBundleEncoder);
 bool RenderBundleEncoder::returnIfEncodingIsFinished(NSString* errorString)
 {
     if (!validToEncodeCommand()) {
-        m_device->generateAValidationError(errorString);
+        Ref { m_device }->generateAValidationError(errorString);
         return true;
     }
 
@@ -318,14 +318,14 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
         return false;
     }
 
-    auto vertexDynamicOffsetSum = checkedSum<uint64_t>(m_vertexDynamicOffset, sizeof(uint32_t) * m_pipeline->pipelineLayout().sizeOfVertexDynamicOffsets());
+    auto vertexDynamicOffsetSum = checkedSum<uint64_t>(m_vertexDynamicOffset, sizeof(uint32_t) * m_pipeline->protectedPipelineLayout()->sizeOfVertexDynamicOffsets());
     if (vertexDynamicOffsetSum.hasOverflowed()) {
         makeInvalid(@"Invalid vertexDynamicOffset");
         return false;
     }
     m_vertexDynamicOffset = vertexDynamicOffsetSum.value();
 
-    auto fragmentDynamicOffsetSum = checkedSum<uint64_t>(m_fragmentDynamicOffset, sizeof(uint32_t) * m_pipeline->pipelineLayout().sizeOfFragmentDynamicOffsets());
+    auto fragmentDynamicOffsetSum = checkedSum<uint64_t>(m_fragmentDynamicOffset, sizeof(uint32_t) * m_pipeline->protectedPipelineLayout()->sizeOfFragmentDynamicOffsets());
     if (fragmentDynamicOffsetSum.hasOverflowed()) {
         makeInvalid(@"Invalid fragmentDynamicOffset");
         return false;
@@ -368,7 +368,7 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
     UNUSED_PARAM(passWasSplit);
 #endif
 
-    if (NSString* error = m_pipeline->pipelineLayout().errorValidatingBindGroupCompatibility(m_bindGroups)) {
+    if (NSString* error = m_pipeline->protectedPipelineLayout()->errorValidatingBindGroupCompatibility(m_bindGroups)) {
         makeInvalid(error);
         return false;
     }
@@ -400,7 +400,7 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
 
     if (m_bindGroupDynamicOffsets) {
         for (auto& kvp : *m_bindGroupDynamicOffsets) {
-            auto& pipelineLayout = m_pipeline->pipelineLayout();
+            Ref pipelineLayout = m_pipeline->pipelineLayout();
             auto bindGroupIndex = kvp.key;
 
             if (m_dynamicOffsetsVertexBuffer) {
@@ -408,10 +408,10 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
 
                 auto bufferOffset = vertexDynamicOffset;
                 auto vertexBufferContentsSpan = dynamicOffsetsVertexBuffer.subspan(bufferOffset);
-                auto* pvertexOffsets = pipelineLayout.vertexOffsets(bindGroupIndex, kvp.value);
+                auto* pvertexOffsets = pipelineLayout->vertexOffsets(bindGroupIndex, kvp.value);
                 if (pvertexOffsets && pvertexOffsets->size()) {
                     auto& vertexOffsets = *pvertexOffsets;
-                    auto startIndex = checkedProduct<uint64_t>(sizeof(uint32_t), pipelineLayout.vertexOffsetForBindGroup(bindGroupIndex));
+                    auto startIndex = checkedProduct<uint64_t>(sizeof(uint32_t), pipelineLayout->vertexOffsetForBindGroup(bindGroupIndex));
                     auto bytesToCopy = checkedProduct<uint64_t>(sizeof(vertexOffsets[0]), vertexOffsets.size());
                     if (startIndex.hasOverflowed() || bytesToCopy.hasOverflowed()) {
                         makeInvalid(@"Incorrect data for vertexBuffer");
@@ -425,11 +425,11 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
                 auto dynamicOffsetsFragmentBuffer = makeSpanFromBuffer<uint8_t>(m_dynamicOffsetsFragmentBuffer);
                 auto bufferOffset = fragmentDynamicOffset;
                 auto fragmentBufferContents = dynamicOffsetsFragmentBuffer.subspan(bufferOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float));
-                auto* pfragmentOffsets = pipelineLayout.fragmentOffsets(bindGroupIndex, kvp.value);
+                auto* pfragmentOffsets = pipelineLayout->fragmentOffsets(bindGroupIndex, kvp.value);
                 if (pfragmentOffsets && pfragmentOffsets->size()) {
                     auto& fragmentOffsets = *pfragmentOffsets;
 
-                    auto startIndex = checkedProduct<uint64_t>(sizeof(uint32_t), pipelineLayout.fragmentOffsetForBindGroup(bindGroupIndex));
+                    auto startIndex = checkedProduct<uint64_t>(sizeof(uint32_t), pipelineLayout->fragmentOffsetForBindGroup(bindGroupIndex));
                     auto bytesToCopy = checkedProduct<uint64_t>(sizeof(fragmentOffsets[0]), fragmentOffsets.size());
                     if (startIndex.hasOverflowed() || bytesToCopy.hasOverflowed()) {
                         makeInvalid(@"Incorrect data for fragmentBuffer");
@@ -876,21 +876,23 @@ void RenderBundleEncoder::endCurrentICB()
     m_currentCommandIndex = 0;
     RELEASE_ASSERT(!commandCount || !!m_icbDescriptor.commandTypes);
 
-    m_icbDescriptor.maxVertexBufferBindCount = m_device->maxBuffersPlusVertexBuffersForVertexStage() + 1;
-    m_icbDescriptor.maxFragmentBufferBindCount = m_device->maxBuffersForFragmentStage() + 1;
+    Ref device = m_device;
+
+    m_icbDescriptor.maxVertexBufferBindCount = device->maxBuffersPlusVertexBuffersForVertexStage() + 1;
+    m_icbDescriptor.maxFragmentBufferBindCount = device->maxBuffersForFragmentStage() + 1;
     if (m_vertexBuffers.size() < m_icbDescriptor.maxVertexBufferBindCount)
         m_vertexBuffers.grow(m_icbDescriptor.maxVertexBufferBindCount);
     if (m_fragmentBuffers.size() < m_icbDescriptor.maxFragmentBufferBindCount)
         m_fragmentBuffers.grow(m_icbDescriptor.maxFragmentBufferBindCount);
     if (m_vertexDynamicOffset && !m_dynamicOffsetsVertexBuffer) {
-        m_dynamicOffsetsVertexBuffer = m_device->safeCreateBuffer(m_vertexDynamicOffset);
+        m_dynamicOffsetsVertexBuffer = device->safeCreateBuffer(m_vertexDynamicOffset);
         if (!addResource(m_resources, m_dynamicOffsetsVertexBuffer, MTLRenderStageVertex))
             return;
     }
     m_vertexDynamicOffset = 0;
 
     if (!m_dynamicOffsetsFragmentBuffer) {
-        m_dynamicOffsetsFragmentBuffer = m_device->safeCreateBuffer(m_fragmentDynamicOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float));
+        m_dynamicOffsetsFragmentBuffer = device->safeCreateBuffer(m_fragmentDynamicOffset + RenderBundleEncoder::startIndexForFragmentDynamicOffsets * sizeof(float));
         auto fragmentBufferSpan = makeSpanFromBuffer<float>(m_dynamicOffsetsFragmentBuffer);
         auto fragmentBufferIntSpan = makeSpanFromBuffer<uint32_t>(m_dynamicOffsetsFragmentBuffer);
         RELEASE_ASSERT(fragmentBufferSpan.size());
@@ -904,12 +906,12 @@ void RenderBundleEncoder::endCurrentICB()
     m_fragmentDynamicOffset = 0;
 
     if (!m_renderPassEncoder) {
-        m_indirectCommandBuffer = [m_device->device() newIndirectCommandBufferWithDescriptor:m_icbDescriptor maxCommandCount:commandCount options:0];
+        m_indirectCommandBuffer = [device->device() newIndirectCommandBufferWithDescriptor:m_icbDescriptor maxCommandCount:commandCount options:0];
         if (!m_indirectCommandBuffer || m_indirectCommandBuffer.size != commandCount) {
             makeInvalid(@"MTLIndirectCommandBuffer allocation failed, likely tried to encode too many commands");
             return;
         }
-        m_device->setOwnerWithIdentity(m_indirectCommandBuffer);
+        device->setOwnerWithIdentity(m_indirectCommandBuffer);
     }
 
     uint64_t completedDraws = 0, lastIndexOfRecordedCommand = 0;
@@ -931,7 +933,7 @@ void RenderBundleEncoder::endCurrentICB()
         m_recordedCommands.remove(0, lastIndexOfRecordedCommand);
 
     m_currentCommandIndex = commandCount - completedDraws;
-    [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_resources, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp, m_dynamicOffsetsFragmentBuffer, m_pipeline.get(), m_device, m_minVertexCountForDrawCommand)];
+    [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_resources, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp, m_dynamicOffsetsFragmentBuffer, m_pipeline.get(), device.get(), m_minVertexCountForDrawCommand)];
     m_indirectCommandBuffer = nil;
     m_currentCommand = nil;
     m_currentPipelineState = nil;
@@ -947,16 +949,17 @@ bool RenderBundleEncoder::validToEncodeCommand() const
 
 Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& descriptor)
 {
-    if (!m_icbDescriptor || m_debugGroupStackSize || !m_device->isValid() || m_finished) {
-        m_device->generateAValidationError(m_lastErrorString);
-        return RenderBundle::createInvalid(m_device, m_lastErrorString);
+    auto device = m_device;
+    if (!m_icbDescriptor || m_debugGroupStackSize || !device->isValid() || m_finished) {
+        device->generateAValidationError(m_lastErrorString);
+        return RenderBundle::createInvalid(device, m_lastErrorString);
     }
 
     m_requiresCommandReplay = m_requiresCommandReplay ?: (!m_currentCommandIndex);
 
     auto createRenderBundle = ^{
         if (m_requiresCommandReplay)
-            return RenderBundle::create(m_icbArray, this, m_descriptor, m_currentCommandIndex, m_device);
+            return RenderBundle::create(m_icbArray, this, m_descriptor, m_currentCommandIndex, device);
 
         auto commandCount = m_currentCommandIndex;
         endCurrentICB();
@@ -967,10 +970,10 @@ Ref<RenderBundle> RenderBundleEncoder::finish(const WGPURenderBundleDescriptor& 
 
         RELEASE_ASSERT(m_icbArray || m_lastErrorString);
         if (m_icbArray)
-            return RenderBundle::create(m_icbArray, nullptr, m_descriptor, commandCount, m_device);
+            return RenderBundle::create(m_icbArray, nullptr, m_descriptor, commandCount, device);
 
-        m_device->generateAValidationError(m_lastErrorString);
-        return RenderBundle::createInvalid(m_device, m_lastErrorString);
+        device->generateAValidationError(m_lastErrorString);
+        return RenderBundle::createInvalid(device, m_lastErrorString);
     };
 
     auto renderBundle = createRenderBundle();
@@ -1068,7 +1071,7 @@ void RenderBundleEncoder::setBindGroup(uint32_t groupIndex, const BindGroup& gro
         }
 
         if (dynamicOffsets) {
-            auto* bindGroupLayout = group.bindGroupLayout();
+            RefPtr bindGroupLayout = group.bindGroupLayout();
             if (!bindGroupLayout) {
                 makeInvalid(@"GPURenderBundleEncoder.setBindGroup: bind group is nil");
                 return;
@@ -1290,7 +1293,8 @@ void RenderBundleEncoder::setPipeline(const RenderPipeline& pipeline)
         if (pipeline.sampleMask() != defaultSampleMask)
             m_requiresCommandReplay = true;
 
-        if (m_pipeline && m_currentCommandIndex && icbNeedsToBeSplit(*m_pipeline, pipeline))
+        auto currentPipeline = m_pipeline;
+        if (m_pipeline && m_currentCommandIndex && icbNeedsToBeSplit(*currentPipeline, pipeline))
             endCurrentICB();
 
         recordCommand([pipeline = Ref { pipeline }, protectedThis = Ref { *this }] {

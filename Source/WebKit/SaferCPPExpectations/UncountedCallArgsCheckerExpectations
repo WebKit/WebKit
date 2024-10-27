@@ -139,7 +139,6 @@ Shared/WebGPU/WebGPUComputePassTimestampWrites.cpp
 Shared/WebGPU/WebGPUImageCopyBuffer.cpp
 Shared/WebGPU/WebGPUImageCopyTexture.cpp
 Shared/WebGPU/WebGPUPipelineDescriptorBase.cpp
-Shared/WebGPU/WebGPUPipelineLayoutDescriptor.cpp
 Shared/WebGPU/WebGPUProgrammableStage.cpp
 Shared/WebGPU/WebGPURenderPassColorAttachment.cpp
 Shared/WebGPU/WebGPURenderPassDepthStencilAttachment.cpp

@@ -114,7 +114,8 @@ public:
 
     bool previouslyCleared(uint32_t mipLevel, uint32_t slice) const;
     void setPreviouslyCleared(uint32_t mipLevel, uint32_t slice, bool = true);
-    bool isDestroyed() const;
+    bool isDestroyed() const { return m_destroyed; }
+
     static bool hasStorageBindingCapability(WGPUTextureFormat, const Device&, WGPUStorageTextureAccess = WGPUStorageTextureAccess_Undefined);
     static bool supportsMultisampling(WGPUTextureFormat, const Device&);
     static bool supportsResolve(WGPUTextureFormat, const Device&);
@@ -123,7 +124,8 @@ public:
     void makeCanvasBacking();
     void setCommandEncoder(CommandEncoder&) const;
     static ASCIILiteral formatToString(WGPUTextureFormat);
-    bool isCanvasBacking() const;
+    bool isCanvasBacking() const { return m_canvasBacking; }
+
     bool waitForCommandBufferCompletion();
     void updateCompletionEvent(const std::pair<id<MTLSharedEvent>, uint64_t>&);
     id<MTLSharedEvent> sharedEvent() const;

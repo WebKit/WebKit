@@ -84,7 +84,7 @@ void PresentationContextIOSurface::renderBuffersWereRecreated(NSArray<IOSurface 
 void PresentationContextIOSurface::onSubmittedWorkScheduled(Function<void()>&& completionHandler)
 {
     if (m_device)
-        m_device->getQueue().onSubmittedWorkScheduled(WTFMove(completionHandler));
+        m_device->protectedQueue()->onSubmittedWorkScheduled(WTFMove(completionHandler));
     else
         completionHandler();
 }
@@ -92,7 +92,7 @@ void PresentationContextIOSurface::onSubmittedWorkScheduled(Function<void()>&& c
 RetainPtr<CGImageRef> PresentationContextIOSurface::getTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat)
 {
     isIOSurfaceSupportedFormat = false;
-    auto* device = m_device.get();
+    RefPtr device = m_device.get();
     if (!device || bufferIndex >= m_renderBuffers.size())
         return nullptr;
 
@@ -315,22 +315,23 @@ void PresentationContextIOSurface::unconfigure()
 
 void PresentationContextIOSurface::present()
 {
-    auto devicePtr = m_device.get();
-    if (m_ioSurfaces.count != m_renderBuffers.size() || m_currentIndex >= m_renderBuffers.size() || !devicePtr)
+    RefPtr device = m_device;
+    if (m_ioSurfaces.count != m_renderBuffers.size() || m_currentIndex >= m_renderBuffers.size() || !device)
         return;
 
-    auto& textureRefPtr = m_renderBuffers[m_currentIndex].luminanceClampTexture;
-    if (Texture* texturePtr = textureRefPtr.get(); texturePtr && m_computePipelineState) {
+    Ref deviceQueue = device->getQueue();
+
+    if (auto texture = m_renderBuffers[m_currentIndex].luminanceClampTexture; texture && m_computePipelineState) {
         MTLCommandBufferDescriptor *descriptor = [MTLCommandBufferDescriptor new];
         descriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
-        id<MTLCommandBuffer> commandBuffer = devicePtr->getQueue().commandBufferWithDescriptor(descriptor);
+        id<MTLCommandBuffer> commandBuffer = deviceQueue->commandBufferWithDescriptor(descriptor);
         MTLComputePassDescriptor* computeDescriptor = [MTLComputePassDescriptor new];
         computeDescriptor.dispatchType = MTLDispatchTypeSerial;
 
         id<MTLComputeCommandEncoder> computeEncoder = [commandBuffer computeCommandEncoderWithDescriptor:computeDescriptor];
-        devicePtr->getQueue().setEncoderForBuffer(commandBuffer, computeEncoder);
+        deviceQueue->setEncoderForBuffer(commandBuffer, computeEncoder);
         [computeEncoder setComputePipelineState:m_computePipelineState];
-        id<MTLTexture> inputTexture = texturePtr->texture();
+        id<MTLTexture> inputTexture = texture->texture();
         [computeEncoder setTexture:inputTexture atIndex:0];
         [computeEncoder setTexture:m_renderBuffers[m_currentIndex].texture->texture() atIndex:1];
         auto threadgroupSize = MTLSizeMake(16, 16, 1);
@@ -340,8 +341,8 @@ void PresentationContextIOSurface::present()
         threadgroupCount.height = (inputTexture.height + threadgroupSize.height - 1) / threadgroupSize.height;
         threadgroupCount.depth = 1;
         [computeEncoder dispatchThreadgroups:threadgroupCount threadsPerThreadgroup:threadgroupSize];
-        devicePtr->getQueue().endEncoding(computeEncoder, commandBuffer);
-        devicePtr->getQueue().commitMTLCommandBuffer(commandBuffer);
+        deviceQueue->endEncoding(computeEncoder, commandBuffer);
+        deviceQueue->commitMTLCommandBuffer(commandBuffer);
     }
 
     m_currentIndex = (m_currentIndex + 1) % m_renderBuffers.size();
@@ -350,8 +351,8 @@ void PresentationContextIOSurface::present()
 Texture* PresentationContextIOSurface::getCurrentTexture()
 {
     if (m_ioSurfaces.count != m_renderBuffers.size() || m_renderBuffers.size() <= m_currentIndex) {
-        if (m_device.get())
-            m_device->generateAValidationError("GPUCanvasContext is not configured correctly"_s);
+        if (RefPtr device = m_device)
+            device->generateAValidationError("GPUCanvasContext is not configured correctly"_s);
         return m_invalidTexture.get();
     }
 

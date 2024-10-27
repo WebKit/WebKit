@@ -977,10 +977,10 @@ WGSL::PipelineLayout ShaderModule::convertPipelineLayout(const PipelineLayout& p
 
     uint32_t maxVertexOffset = 0, maxFragmentOffset = 0, maxComputeOffset = 0;
     for (size_t i = 0; i < pipelineLayout.numberOfBindGroupLayouts(); ++i) {
-        auto& bindGroupLayout = pipelineLayout.bindGroupLayout(i);
+        Ref bindGroupLayout = pipelineLayout.bindGroupLayout(i);
         WGSL::BindGroupLayout wgslBindGroupLayout;
         auto vertexOffset = maxVertexOffset, fragmentOffset = maxFragmentOffset, computeOffset = maxComputeOffset;
-        for (auto& entry : bindGroupLayout.entries()) {
+        for (auto& entry : bindGroupLayout->entries()) {
             WGSL::BindGroupLayoutEntry wgslEntry;
             wgslEntry.binding = entry.value.binding;
             wgslEntry.visibility = wgslEntry.visibility.fromRaw(entry.value.visibility);

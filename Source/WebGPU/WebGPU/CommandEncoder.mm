@@ -253,7 +253,7 @@ void CommandEncoder::discardCommandBuffer()
         return;
     }
 
-    id<MTLCommandEncoder> existingEncoder = m_device->getQueue().encoderForBuffer(m_commandBuffer);
+    id<MTLCommandEncoder> existingEncoder = m_device->protectedQueue()->encoderForBuffer(m_commandBuffer);
     auto queue = m_device->protectedQueue();
     queue->endEncoding(existingEncoder, m_commandBuffer);
     queue->removeMTLCommandBuffer(m_commandBuffer);
@@ -945,7 +945,7 @@ void CommandEncoder::copyBufferToTexture(const WGPUImageCopyBuffer& source, cons
         return;
     }
 
-    auto logicalSize = fromAPI(destination.texture).logicalMiplevelSpecificTextureExtent(destination.mipLevel);
+    auto logicalSize = protectedFromAPI(destination.texture)->logicalMiplevelSpecificTextureExtent(destination.mipLevel);
     auto widthForMetal = logicalSize.width < destination.origin.x ? 0 : std::min(copySize.width, logicalSize.width - destination.origin.x);
     auto heightForMetal = logicalSize.height < destination.origin.y ? 0 : std::min(copySize.height, logicalSize.height - destination.origin.y);
     auto depthForMetal = logicalSize.depthOrArrayLayers < destination.origin.z ? 0 : std::min(copySize.depthOrArrayLayers, logicalSize.depthOrArrayLayers - destination.origin.z);
