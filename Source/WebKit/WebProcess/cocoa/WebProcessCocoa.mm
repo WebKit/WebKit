@@ -836,6 +836,8 @@ void WebProcess::registerLogHook()
             return;
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
         std::span logChannel(byteCast<uint8_t>(msg->subsystem), msg->subsystem ? strlen(msg->subsystem) + 1 : 0);
         std::span logCategory(byteCast<uint8_t>(msg->category), msg->category ? strlen(msg->category) + 1 : 0);
 
@@ -848,6 +850,8 @@ void WebProcess::registerLogHook()
             free(messageString);
         }
     }).get());
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     WTFSignpostIndirectLoggingEnabled = true;
 }
