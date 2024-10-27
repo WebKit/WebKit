@@ -90,8 +90,6 @@ WARNING_CFLAGS = $(inherited) $(WK_FIXME_WARNING_CFLAGS) -Wcast-qual -Wchar-subs
 // Remove WK_FIXME_WARNING_CFLAGS once all warnings are fixed.
 WK_FIXME_WARNING_CFLAGS = -Wno-unused-parameter;
 
-SWIFT_VERSION = 5.0;
-
 COPY_PHASE_STRIP = NO;
 // Dead code stripping needs to be on in the debug variant to avoid link errors.  This is due to unconditionally
 // building the MiG bindings for WebKitPluginClient even when the functions that the bindings wrap are not built.
@@ -115,6 +113,11 @@ AD_HOC_CODE_SIGNING_ALLOWED = YES;
 
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx appletvos appletvsimulator watchos watchsimulator xros xrsimulator;
 SUPPORTS_MACCATALYST = YES;
+
+// Can't enable objcxx mode until rdar://135979809 is resolved.
+SWIFT_OBJC_INTEROP_MODE = objc;
+SWIFT_VERSION = 5.0;
+OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS$(WK_MACOS_1400)) -no-warnings-as-errors -Xfrontend -experimental-spi-only-imports -Xfrontend -enable-experimental-concurrency;
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 

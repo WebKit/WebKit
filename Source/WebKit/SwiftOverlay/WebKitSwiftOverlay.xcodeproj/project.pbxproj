@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,12 +11,8 @@
 		7D20071B22F4ECCA008DF640 /* libswiftWebKit.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7D20068722F26721008DF640 /* libswiftWebKit.dylib */; };
 		B3A5D38F23F78F5400B17727 /* WebKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A5D38823F78F5400B17727 /* WebKitTests.swift */; };
 		B3A5D39023F78F5400B17727 /* WebKitTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A5D38823F78F5400B17727 /* WebKitTests.swift */; };
-		B3A5D39223F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */; };
-		B3A5D39323F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */; };
 		B3B8FECC250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B8FECB250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift */; };
 		B3B8FECD250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B8FECB250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift */; };
-		B3B8FEEF2502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B8FEEE2502BAA0006172CA /* ObjectiveCBlockConversions.swift */; };
-		B3B8FEF02502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3B8FEEE2502BAA0006172CA /* ObjectiveCBlockConversions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,7 +38,6 @@
 		7D20070722F4EB72008DF640 /* WebKitSwiftOverlayTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WebKitSwiftOverlayTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D20071622F4ECCA008DF640 /* WebKitSwiftOverlayTests-maccatalyst.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WebKitSwiftOverlayTests-maccatalyst.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3A5D38823F78F5400B17727 /* WebKitTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WebKitTests.swift; sourceTree = "<group>"; };
-		B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = WebKitSwiftOverlay.swift; path = ../UIProcess/API/Cocoa/WebKitSwiftOverlay.swift; sourceTree = SOURCE_ROOT; };
 		B3A5D39423F790E100B17727 /* WebKitSwiftOverlay.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebKitSwiftOverlay.xcconfig; sourceTree = "<group>"; };
 		B3A5D39523F790E100B17727 /* Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
 		B3A5D39623F790E100B17727 /* WebKitSwiftOverlay-maccatalyst.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "WebKitSwiftOverlay-maccatalyst.xcconfig"; sourceTree = "<group>"; };
@@ -51,7 +46,6 @@
 		B3A5D39923F790E100B17727 /* install-swiftmodules.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "install-swiftmodules.sh"; sourceTree = "<group>"; };
 		B3A5D39A23F790E700B17727 /* WebKitSwiftOverlayTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WebKitSwiftOverlayTests-Info.plist"; sourceTree = "<group>"; };
 		B3B8FECB250090B1006172CA /* JavaScriptToSwiftTypeConversions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavaScriptToSwiftTypeConversions.swift; sourceTree = "<group>"; };
-		B3B8FEEE2502BAA0006172CA /* ObjectiveCBlockConversions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObjectiveCBlockConversions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -92,8 +86,6 @@
 			isa = PBXGroup;
 			children = (
 				B3A5D39923F790E100B17727 /* install-swiftmodules.sh */,
-				B3B8FEEE2502BAA0006172CA /* ObjectiveCBlockConversions.swift */,
-				B3A5D39123F790DB00B17727 /* WebKitSwiftOverlay.swift */,
 			);
 			name = "Swift Overlay";
 			path = SwiftOverlay;
@@ -313,7 +305,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		5172437E2A1BF41700F0F6D8 /* Copy Additional Sources */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			files = (
 			);
 			inputFileListPaths = (
@@ -327,13 +319,13 @@
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WebKitSwiftOverlayAdditions.swift",
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nRELATIVE_SOURCE_PATH=\"usr/local/include/WebKitAdditions/WebKitSwiftOverlayAdditions.swift\"\nSOURCE_PATH=\"$SDK_DIR/$RELATIVE_SOURCE_PATH\"\nDESTINATION_PATH=\"$BUILT_PRODUCTS_DIR/$RELATIVE_SOURCE_PATH\"\n\nif [[ -e \"$SOURCE_PATH\" ]]; then\n    ditto \"$SOURCE_PATH\" \"$DESTINATION_PATH\"\nelse\n    touch \"$DESTINATION_PATH\"\nfi\n";
 		};
 		5172437F2A1BF4D400F0F6D8 /* Copy Additional Sources */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			files = (
 			);
 			inputFileListPaths = (
@@ -347,7 +339,7 @@
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WebKitSwiftOverlayAdditions.swift",
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nRELATIVE_SOURCE_PATH=\"usr/local/include/WebKitAdditions/WebKitSwiftOverlayAdditions.swift\"\nSOURCE_PATH=\"$SDK_DIR/$RELATIVE_SOURCE_PATH\"\nDESTINATION_PATH=\"$BUILT_PRODUCTS_DIR/$RELATIVE_SOURCE_PATH\"\n\nif [[ -e \"$SOURCE_PATH\" ]]; then\n    ditto \"$SOURCE_PATH\" \"$DESTINATION_PATH\"\nelse\n    touch \"$DESTINATION_PATH\"\nfi\n";
 		};
@@ -394,8 +386,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3B8FEEF2502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */,
-				B3A5D39223F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,8 +393,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3B8FEF02502BAA0006172CA /* ObjectiveCBlockConversions.swift in Sources */,
-				B3A5D39323F790DB00B17727 /* WebKitSwiftOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
