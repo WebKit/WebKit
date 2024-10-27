@@ -2403,6 +2403,7 @@
 		333B9CE11277F23100FEFCE3 /* PreventEmptyUserAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PreventEmptyUserAgent.cpp; sourceTree = "<group>"; };
 		3378222C2947C095002106BB /* WKWebExtensionAPIWebNavigation.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIWebNavigation.mm; sourceTree = "<group>"; };
 		33976D8224DC479B00812304 /* IndexSparseSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IndexSparseSet.cpp; sourceTree = "<group>"; };
+		33B6F9E32CCB29EA009AD8FE /* WKPrinting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKPrinting.h; sourceTree = "<group>"; };
 		33B767672CC066E400E4314F /* notEncrypted.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = notEncrypted.pdf; sourceTree = "<group>"; };
 		33BE5AF4137B5A6C00705813 /* MouseMoveAfterCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash.cpp; sourceTree = "<group>"; };
 		33BE5AF8137B5AAE00705813 /* MouseMoveAfterCrash_Bundle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MouseMoveAfterCrash_Bundle.cpp; sourceTree = "<group>"; };
@@ -4490,6 +4491,7 @@
 				5102ED872950538D0053243E /* WKPageHasMediaStreamingActivity.mm */,
 				2D00065D1C1F58940088E6A7 /* WKPDFView.mm */,
 				3AEA55B22CB0897200A9ECAA /* WKPreferences.mm */,
+				33B6F9E32CCB29EA009AD8FE /* WKPrinting.h */,
 				1CC4C74A288909F600A3B23D /* WKPrinting.mm */,
 				3781746C2198AE2400062C26 /* WKProcessPoolConfiguration.mm */,
 				44817A2E1F0486BF00003810 /* WKRequestActivatedElementInfo.mm */,
