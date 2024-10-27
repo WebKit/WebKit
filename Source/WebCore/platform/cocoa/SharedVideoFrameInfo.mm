@@ -165,19 +165,19 @@ std::optional<SharedVideoFrameInfo> SharedVideoFrameInfo::decode(std::span<const
     return info;
 }
 
-static const uint8_t* copyToCVPixelBufferPlane(CVPixelBufferRef pixelBuffer, size_t planeIndex, const uint8_t* source, size_t height, uint32_t bytesPerRowSource)
+static std::span<const uint8_t> copyToCVPixelBufferPlane(CVPixelBufferRef pixelBuffer, size_t planeIndex, std::span<const uint8_t> source, size_t height, uint32_t bytesPerRowSource)
 {
     auto* destination = static_cast<uint8_t*>(CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, planeIndex));
     uint32_t bytesPerRowDestination = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, planeIndex);
     for (unsigned i = 0; i < height; ++i) {
-        std::memcpy(destination, source, std::min(bytesPerRowSource, bytesPerRowDestination));
-        source += bytesPerRowSource;
+        std::memcpy(destination, source.data(), std::min(bytesPerRowSource, bytesPerRowDestination));
+        source = source.subspan(bytesPerRowSource);
         destination += bytesPerRowDestination;
     }
     return source;
 }
 
-RetainPtr<CVPixelBufferRef> SharedVideoFrameInfo::createPixelBufferFromMemory(const uint8_t* data, CVPixelBufferPoolRef bufferPool)
+RetainPtr<CVPixelBufferRef> SharedVideoFrameInfo::createPixelBufferFromMemory(std::span<const uint8_t> data, CVPixelBufferPoolRef bufferPool)
 {
     ASSERT(isReadWriteSupported());
     CVPixelBufferRef rawPixelBuffer = nullptr;

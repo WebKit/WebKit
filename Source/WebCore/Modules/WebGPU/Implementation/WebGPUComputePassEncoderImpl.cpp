@@ -76,14 +76,12 @@ void ComputePassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGr
 }
 
 void ComputePassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGroup,
-    const uint32_t* dynamicOffsetsArrayBuffer,
-    size_t dynamicOffsetsArrayBufferLength,
+    std::span<const uint32_t> dynamicOffsetsArrayBuffer,
     Size64 dynamicOffsetsDataStart,
     Size32 dynamicOffsetsDataLength)
 {
-    UNUSED_PARAM(dynamicOffsetsArrayBufferLength);
     // FIXME: Use checked algebra.
-    wgpuComputePassEncoderSetBindGroup(m_backing.get(), index, m_convertToBackingContext->convertToBacking(bindGroup), dynamicOffsetsDataLength, dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart);
+    wgpuComputePassEncoderSetBindGroup(m_backing.get(), index, m_convertToBackingContext->convertToBacking(bindGroup), dynamicOffsetsDataLength, dynamicOffsetsArrayBuffer.subspan(dynamicOffsetsDataStart).data());
 }
 
 void ComputePassEncoderImpl::pushDebugGroup(String&& groupLabel)

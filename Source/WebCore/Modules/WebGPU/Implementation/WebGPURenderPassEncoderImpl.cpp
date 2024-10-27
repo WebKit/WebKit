@@ -96,14 +96,12 @@ void RenderPassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGro
 }
 
 void RenderPassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGroup,
-    const uint32_t* dynamicOffsetsArrayBuffer,
-    size_t dynamicOffsetsArrayBufferLength,
+    std::span<const uint32_t> dynamicOffsetsArrayBuffer,
     Size64 dynamicOffsetsDataStart,
     Size32 dynamicOffsetsDataLength)
 {
-    UNUSED_PARAM(dynamicOffsetsArrayBufferLength);
     // FIXME: Use checked algebra.
-    wgpuRenderPassEncoderSetBindGroup(m_backing.get(), index, m_convertToBackingContext->convertToBacking(bindGroup), dynamicOffsetsDataLength, dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart);
+    wgpuRenderPassEncoderSetBindGroup(m_backing.get(), index, m_convertToBackingContext->convertToBacking(bindGroup), dynamicOffsetsDataLength, dynamicOffsetsArrayBuffer.subspan(dynamicOffsetsDataStart).data());
 }
 
 void RenderPassEncoderImpl::pushDebugGroup(String&& groupLabel)

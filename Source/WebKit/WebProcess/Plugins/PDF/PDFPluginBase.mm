@@ -76,8 +76,6 @@
 
 #import "PDFKitSoftLink.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -303,10 +301,10 @@ std::span<const uint8_t> PDFPluginBase::dataSpanForRange(uint64_t sourcePosition
     if (!haveValidData(checkValidRanges))
         return { };
 
-    return { CFDataGetBytePtr(m_data.get()) + sourcePosition, count };
+    return span(m_data.get()).subspan(sourcePosition, count);
 }
 
-bool PDFPluginBase::getByteRanges(CFMutableArrayRef dataBuffersArray, const CFRange* ranges, size_t count) const
+bool PDFPluginBase::getByteRanges(CFMutableArrayRef dataBuffersArray, std::span<const CFRange> ranges) const
 {
     Locker locker { m_streamedDataLock };
 
@@ -330,15 +328,14 @@ bool PDFPluginBase::getByteRanges(CFMutableArrayRef dataBuffersArray, const CFRa
         return m_validRanges.contains({ rangeLocation, rangeLocation + rangeLength - 1 });
     };
 
-    for (size_t i = 0; i < count; ++i) {
-        if (!haveDataForRange(ranges[i]))
+    for (auto& range : ranges) {
+        if (!haveDataForRange(range))
             return false;
     }
 
-    for (size_t i = 0; i < count; ++i) {
-        auto range = ranges[i];
-        const uint8_t* dataPtr = CFDataGetBytePtr(m_data.get()) + range.location;
-        RetainPtr cfData = adoptCF(CFDataCreate(kCFAllocatorDefault, dataPtr, range.length));
+    for (auto& range : ranges) {
+        auto data = span(m_data.get()).subspan(range.location, range.length);
+        RetainPtr cfData = adoptCF(CFDataCreate(kCFAllocatorDefault, data.data(), data.size()));
         CFArrayAppendValue(dataBuffersArray, cfData.get());
     }
 
@@ -355,7 +352,7 @@ void PDFPluginBase::insertRangeRequestData(uint64_t offset, const Vector<uint8_t
     auto requiredLength = offset + requestData.size();
     ensureDataBufferLength(requiredLength);
 
-    memcpy(CFDataGetMutableBytePtr(m_data.get()) + offset, requestData.data(), requestData.size());
+    memcpySpan(mutableSpan(m_data.get()).subspan(offset), requestData.span());
 
     m_validRanges.add({ offset, offset + requestData.size() - 1 });
 }
@@ -382,7 +379,7 @@ void PDFPluginBase::streamDidReceiveData(const SharedBuffer& buffer)
 
         ensureDataBufferLength(m_streamedBytes + buffer.size());
         auto bufferSpan = buffer.span();
-        memcpy(CFDataGetMutableBytePtr(m_data.get()) + m_streamedBytes, bufferSpan.data(), bufferSpan.size());
+        memcpySpan(mutableSpan(m_data.get()).subspan(m_streamedBytes), bufferSpan);
         m_streamedBytes += buffer.size();
 
         // Keep our ranges-lookup-table compact by continuously updating its first range
@@ -1250,7 +1247,5 @@ std::optional<FrameIdentifier> PDFPluginBase::rootFrameID() const
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(PDF_PLUGIN)

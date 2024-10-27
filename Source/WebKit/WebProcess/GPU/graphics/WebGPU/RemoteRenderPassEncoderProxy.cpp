@@ -32,8 +32,6 @@
 #include "WebGPUConvertToBackingContext.h"
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRenderPassEncoderProxy);
@@ -123,14 +121,13 @@ void RemoteRenderPassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index, 
 }
 
 void RemoteRenderPassEncoderProxy::setBindGroup(WebCore::WebGPU::Index32 index, const WebCore::WebGPU::BindGroup& bindGroup,
-    const uint32_t* dynamicOffsetsArrayBuffer,
-    size_t dynamicOffsetsArrayBufferLength,
+    std::span<const uint32_t> dynamicOffsetsArrayBuffer,
     WebCore::WebGPU::Size64 dynamicOffsetsDataStart,
     WebCore::WebGPU::Size32 dynamicOffsetsDataLength)
 {
     auto convertedBindGroup = protectedConvertToBackingContext()->convertToBacking(bindGroup);
 
-    auto sendResult = send(Messages::RemoteRenderPassEncoder::SetBindGroup(index, convertedBindGroup, Vector<WebCore::WebGPU::BufferDynamicOffset>(std::span { dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart, dynamicOffsetsDataLength })));
+    auto sendResult = send(Messages::RemoteRenderPassEncoder::SetBindGroup(index, convertedBindGroup, Vector<WebCore::WebGPU::BufferDynamicOffset>(dynamicOffsetsArrayBuffer.subspan(dynamicOffsetsDataStart, dynamicOffsetsDataLength))));
     UNUSED_VARIABLE(sendResult);
 }
 
@@ -224,7 +221,5 @@ Ref<ConvertToBackingContext> RemoteRenderPassEncoderProxy::protectedConvertToBac
 }
 
 } // namespace WebKit::WebGPU
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(GPU_PROCESS)

@@ -63,14 +63,13 @@
 #include <WebCore/LocalFrame.h>
 #include <WebCore/LocalFrameView.h>
 #include <WebCore/RenderElement.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
 
 #if ENABLE(DATALIST_ELEMENT)
 #include <WebCore/HTMLDataListElement.h>
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebKit {
 
@@ -191,13 +190,16 @@ static JSValueRef createUUID(JSContextRef context, JSObjectRef function, JSObjec
     return toJSValue(context, createVersion4UUIDString().convertToASCIIUppercase());
 }
 
-static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    ASSERT_ARG(argumentCount, argumentCount == 4);
-    ASSERT_ARG(arguments, JSValueIsNumber(context, arguments[0]));
-    ASSERT_ARG(arguments, JSValueIsNumber(context, arguments[1]));
-    ASSERT_ARG(arguments, JSValueIsNumber(context, arguments[2]));
-    ASSERT_ARG(arguments, JSValueIsObject(context, arguments[3]) || JSValueIsString(context, arguments[3]));
+    // This is using the JSC C API so we cannot take a std::span in argument directly.
+    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+
+    ASSERT(arguments.size() == 4);
+    ASSERT(JSValueIsNumber(context, arguments[0]));
+    ASSERT(JSValueIsNumber(context, arguments[1]));
+    ASSERT(JSValueIsNumber(context, arguments[2]));
+    ASSERT(JSValueIsObject(context, arguments[3]) || JSValueIsString(context, arguments[3]));
 
     auto automationSessionProxy = WebProcess::singleton().automationSessionProxy();
     if (!automationSessionProxy)
@@ -1069,5 +1071,3 @@ void WebAutomationSessionProxy::deleteCookie(WebCore::PageIdentifier pageID, std
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
