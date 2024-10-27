@@ -8,9 +8,10 @@ var iteratorPrototype = "Cocoa"[Symbol.iterator]().__proto__.__proto__;
 
 shouldBe(iteratorPrototype !== Object.prototype, true);
 shouldBe(iteratorPrototype.__proto__, Object.prototype);
-shouldBe(JSON.stringify(Object.getOwnPropertyNames(iteratorPrototype)), '[]');
-shouldBe(Object.getOwnPropertySymbols(iteratorPrototype).length, 1);
+shouldBe(JSON.stringify(Object.getOwnPropertyNames(iteratorPrototype)), '["constructor","toArray","forEach","some","every","find","reduce","map","filter","take","drop","flatMap"]');
+shouldBe(Object.getOwnPropertySymbols(iteratorPrototype).length, 2);
 shouldBe(Object.getOwnPropertySymbols(iteratorPrototype)[0], Symbol.iterator);
+shouldBe(Object.getOwnPropertySymbols(iteratorPrototype)[1], Symbol.toStringTag);
 shouldBe(iteratorPrototype[Symbol.iterator](), iteratorPrototype);
 var stringIterator = "Hello"[Symbol.iterator]();
 shouldBe(iteratorPrototype[Symbol.iterator].call(stringIterator), stringIterator);

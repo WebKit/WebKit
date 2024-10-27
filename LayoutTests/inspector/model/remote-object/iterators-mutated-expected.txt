@@ -86,7 +86,7 @@ EXPRESSION: iter.__proto__.next = function(){}; iter
     "_type": "object",
     "_subtype": "iterator",
     "_description": "String Iterator",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -498,7 +498,7 @@ EXPRESSION: arrayIter.__proto__.next = function(){}; arrayIter
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Array Iterator",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
@@ -555,7 +555,7 @@ EXPRESSION: argumentsIter.__proto__.next = function(){}; argumentsIter
     "_type": "object",
     "_subtype": "iterator",
     "_description": "Array Iterator",
-    "_lossless": true,
+    "_lossless": false,
     "_overflow": false,
     "_properties": [
       {
