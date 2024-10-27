@@ -39,9 +39,10 @@ JSTestCallbackFunction::JSTestCallbackFunction(JSObject* callback, JSDOMGlobalOb
 
 JSTestCallbackFunction::~JSTestCallbackFunction()
 {
-    ScriptExecutionContext* context = scriptExecutionContext();
+    SUPPRESS_UNCOUNTED_LOCAL ScriptExecutionContext* context = scriptExecutionContext();
     // When the context is destroyed, all tasks with a reference to a callback
     // should be deleted. So if the context is 0, we are on the context thread.
+    // We can't use RefPtr here since ScriptExecutionContext is not thread safe ref counted.
     if (!context || context->isContextThread())
         delete m_data;
     else
