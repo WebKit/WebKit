@@ -72,8 +72,11 @@ AccessibilityTable::~AccessibilityTable() = default;
 
 void AccessibilityTable::init()
 {
-    AccessibilityRenderObject::init();
+    // m_ariaRole must be setup before calling computeIsTableExposableThroughAccessibility for the first time
+    // because it relies on ARIA role to compute the value correctly.
+    m_ariaRole = determineAriaRoleAttribute();
     m_isExposable = computeIsTableExposableThroughAccessibility();
+    AccessibilityRenderObject::init();
 }
 
 Ref<AccessibilityTable> AccessibilityTable::create(RenderObject& renderer)
@@ -127,6 +130,8 @@ static const RenderStyle* styleFrom(Element& element)
     return element.existingComputedStyle();
 }
 
+// The following is a heuristic used to determine if a <table> should be exposed as an AXTable.
+// The goal is to only show "data" tables.
 bool AccessibilityTable::isDataTable() const
 {
     WeakPtr cache = axObjectCache();
@@ -382,17 +387,6 @@ bool AccessibilityTable::isDataTable() const
     return false;
 }
 
-// The following is a heuristic used to determine if a <table> should be exposed as an AXTable.
-// The goal is to only show "data" tables.
-bool AccessibilityTable::computeIsTableExposableThroughAccessibility() const
-{
-    // If it has a non-table ARIA role, it shouldn't be exposed as a table.
-    if (hasNonTableARIARole())
-        return false;
-
-    return isDataTable();
-}
-
 void AccessibilityTable::recomputeIsExposable()
 {
     // Make sure children are up-to-date, because if we do end up changing is-exposed state, we want to make
@@ -402,9 +396,8 @@ void AccessibilityTable::recomputeIsExposable()
     bool previouslyExposable = m_isExposable;
     m_isExposable = computeIsTableExposableThroughAccessibility();
     if (previouslyExposable != m_isExposable) {
-        // A table's role value is dependent on whether it's exposed, so notify the cache this has changed.
-        if (auto* cache = axObjectCache())
-            cache->handleRoleChanged(*this);
+        // A table's role value is dependent on whether it's exposed, so recompute it now.
+        updateRole();
 
         // Before resetting our existing children, possibly losing references to them, ensure we update their role (since a table cell's role is dependent on whether its parent table is exposable).
         updateChildrenRoles();
@@ -875,12 +868,12 @@ bool AccessibilityTable::hasGridAriaRole() const
     return ariaRole == AccessibilityRole::Grid || ariaRole == AccessibilityRole::TreeGrid;
 }
 
-AccessibilityRole AccessibilityTable::roleValue() const
+AccessibilityRole AccessibilityTable::determineAccessibilityRole()
 {
     if (!isExposable())
-        return AccessibilityRenderObject::roleValue();
+        return AccessibilityRenderObject::determineAccessibilityRole();
 
-    AccessibilityRole ariaRole = ariaRoleAttribute();
+    auto ariaRole = ariaRoleAttribute();
     if (ariaRole == AccessibilityRole::Grid || ariaRole == AccessibilityRole::TreeGrid)
         return ariaRole;
 

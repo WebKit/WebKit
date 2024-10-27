@@ -431,8 +431,7 @@ public:
     // Only if isColorWell()
     SRGBA<uint8_t> colorValue() const override;
 
-    // FIXME: This should be made final after AccessibilityTable is fixed to use m_role rather than computing its own roleValue().
-    AccessibilityRole roleValue() const override { return m_role; }
+    AccessibilityRole roleValue() const final { return m_role; }
     virtual AccessibilityRole determineAccessibilityRole() = 0;
     String rolePlatformString() const override;
     String roleDescription() const override;
@@ -524,7 +523,7 @@ public:
     void decrement() override { }
     virtual bool toggleDetailsAncestor() { return false; }
 
-    virtual void updateRole();
+    void updateRole();
     bool childrenInitialized() const { return m_childrenInitialized; }
     const AccessibilityChildrenVector& children(bool updateChildrenIfNeeded = true) override;
     virtual void addChildren() { }

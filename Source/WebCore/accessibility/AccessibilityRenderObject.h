@@ -196,7 +196,7 @@ private:
 #endif
     String expandedTextValue() const override;
     bool supportsExpandedTextValue() const override;
-    virtual void updateRoleAfterChildrenCreation();
+    void updateRoleAfterChildrenCreation();
 
     bool inheritsPresentationalRole() const override;
 
