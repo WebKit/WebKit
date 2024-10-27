@@ -56,6 +56,14 @@ inline const FunctionSignature& TypeInformation::getFunctionSignature(TypeIndex 
     return *signature.as<FunctionSignature>();
 }
 
+inline std::optional<const FunctionSignature*> TypeInformation::tryGetFunctionSignature(TypeIndex index)
+{
+    const TypeDefinition& signature = get(index).expand();
+    if (signature.is<FunctionSignature>())
+        return signature.as<FunctionSignature>();
+    return std::nullopt;
+}
+
 inline TypeIndex TypeInformation::get(const TypeDefinition& type)
 {
     if (ASSERT_ENABLED) {
