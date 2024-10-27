@@ -54,7 +54,6 @@ template<> struct JSConverter<IDLDate> {
     static constexpr bool needsState = true;
     static constexpr bool needsGlobalObject = false;
 
-    // FIXME: This should be taking a JSDOMGlobalObject and passing it to jsDate.
     static JSC::JSValue convert(JSC::JSGlobalObject& lexicalGlobalObject, WallTime value)
     {
         return jsDate(lexicalGlobalObject, value);
