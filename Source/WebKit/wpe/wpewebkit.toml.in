@@ -22,7 +22,7 @@ docs_url = "https://docs.gtk.org/gio/"
 [dependencies."Soup-@SOUP_API_VERSION@"]
 name = "Soup"
 description = "HTTP client/server library"
-docs_url = "https://libsoup.org/libsoup-@SOUP_API_VERSION@"
+docs_url = "https://gnome.pages.gitlab.gnome.org/libsoup/libsoup-@SOUP_API_VERSION@"
 
 [theme]
 name = "basic"

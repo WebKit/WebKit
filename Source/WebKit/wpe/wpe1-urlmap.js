@@ -7,7 +7,7 @@ baseURLs = [
   ["GLib", "https://docs.gtk.org/glib/"],
   ["GObject", "https://docs.gtk.org/gobject/"],
   ["Gio", "https://docs.gtk.org/gio/"],
-  ["Soup", "https://libsoup.org/libsoup-3.0/"],
+  ["Soup", "https://gnome.pages.gitlab.gnome.org/libsoup/libsoup-3.0/"],
   ["WPEJavaScriptCore", "../wpe-javascriptcore" + baseURLApiLevelSuffix],
   ["WPEWebExtension", "../wpe-web-extension" + baseURLApiLevelSuffix],
   ["WPEWebKit", "../wpe-webkit" + baseURLApiLevelSuffix]
