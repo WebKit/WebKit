@@ -37,6 +37,7 @@ public:
 
 private:
     WebSearchPopupMenu(WebPage*, WebCore::PopupMenuClient*);
+    RefPtr<WebPopupMenu> protectedPopup();
 
     RefPtr<WebPopupMenu> m_popup;
 };
