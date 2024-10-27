@@ -9,8 +9,9 @@ This demonstrates a bug: the content in the blockquote that's not in a list is p
 | <blockquote>
 |   class="webkit-indent-blockquote"
 |   style="margin: 0 0 0 40px;"
-| "ipsum"
-| <br>
+| <div>
+|   "ipsum"
+|   <br>
 | <blockquote>
 |   class="webkit-indent-blockquote"
 |   style="margin: 0 0 0 40px;"
@@ -22,8 +23,9 @@ This demonstrates a bug: the content in the blockquote that's not in a list is p
 |   <br>
 |   <ul>
 |     "\n"
-| "Dolor"
-| <br>
+| <div>
+|   "Dolor"
+|   <br>
 | "\nDinner time?"
 | <br>
 | <ul>
