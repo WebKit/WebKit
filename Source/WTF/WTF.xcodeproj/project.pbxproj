@@ -913,6 +913,22 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildRule section */
+		147572882CCD82170027BA8F /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			fileType = sourcecode.mig;
+			inputFiles = (
+				"$(INPUT_FILE_PATH)",
+			);
+			isEditable = 1;
+			outputFiles = (
+				"$(DERIVED_FILE_DIR)/$(CURRENT_ARCH)/$(INPUT_FILE_BASE).h",
+				"$(DERIVED_FILE_DIR)/$(CURRENT_ARCH)/$(INPUT_FILE_BASE)User.c",
+				"$(DERIVED_FILE_DIR)/$(CURRENT_ARCH)/$(INPUT_FILE_BASE)Server.h",
+				"$(DERIVED_FILE_DIR)/$(CURRENT_ARCH)/$(INPUT_FILE_BASE)Server.c",
+			);
+			script = "mig -arch ${CURRENT_ARCH} -header ${DERIVED_SOURCES_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}.h -user ${DERIVED_SOURCES_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}User.c -sheader ${DERIVED_SOURCES_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}Server.h -server ${DERIVED_SOURCES_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}Server.c -DMACH_EXC_SERVER_TASKIDTOKEN_STATE ${INPUT_FILE_PATH}\n\necho \"#pragma clang diagnostic ignored \\\"-Wunsafe-buffer-usage\\\"\\n$(cat ${DERIVED_SOURCES_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}Server.c)\" > ${DERIVED_SOURCES_DIR}/${CURRENT_ARCH}/${INPUT_FILE_BASE}Server.c\n";
+		};
 		DD3C8E7627C84C9400322F62 /* PBXBuildRule */ = {
 			isa = PBXBuildRule;
 			compilerSpec = com.apple.compilers.proxy.script;
@@ -3891,6 +3907,7 @@
 				DDA35E4929CA74D4006C1018 /* Generate TAPI filelist */,
 			);
 			buildRules = (
+				147572882CCD82170027BA8F /* PBXBuildRule */,
 				DDF307FB27C08869006A526F /* PBXBuildRule */,
 				DDF3080F27C091A9006A526F /* PBXBuildRule */,
 				DD3C8E7627C84C9400322F62 /* PBXBuildRule */,
