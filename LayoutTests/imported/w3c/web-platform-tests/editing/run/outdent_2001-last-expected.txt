@@ -282,7 +282,7 @@ PASS [["defaultparagraphseparator","p"],["outdent",""]] "<ul> <li>[foo]</li> </u
 PASS [["defaultparagraphseparator","p"],["outdent",""]] "<ul> <li>[foo]</li> </ul>" queryCommandValue("outdent") after
 PASS [["outdent",""]] "<blockquote> <p>[foo]</p> <p>bar</p> <p>baz</p></blockquote>": execCommand("outdent", false, "") return value
 PASS [["outdent",""]] "<blockquote> <p>[foo]</p> <p>bar</p> <p>baz</p></blockquote>" checks for modifications to non-editable content
-FAIL [["outdent",""]] "<blockquote> <p>[foo]</p> <p>bar</p> <p>baz</p></blockquote>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected " <p>foo</p><blockquote> <p>bar</p> <p>baz</p></blockquote>" but got "foo<br><blockquote>  <p>bar</p> <p>baz</p></blockquote>"
+FAIL [["outdent",""]] "<blockquote> <p>[foo]</p> <p>bar</p> <p>baz</p></blockquote>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected " <p>foo</p><blockquote> <p>bar</p> <p>baz</p></blockquote>" but got "<p>foo<br></p><blockquote>  <p>bar</p> <p>baz</p></blockquote>"
 PASS [["outdent",""]] "<blockquote> <p>[foo]</p> <p>bar</p> <p>baz</p></blockquote>" queryCommandIndeterm("outdent") before
 PASS [["outdent",""]] "<blockquote> <p>[foo]</p> <p>bar</p> <p>baz</p></blockquote>" queryCommandState("outdent") before
 PASS [["outdent",""]] "<blockquote> <p>[foo]</p> <p>bar</p> <p>baz</p></blockquote>" queryCommandValue("outdent") before
@@ -291,7 +291,7 @@ PASS [["outdent",""]] "<blockquote> <p>[foo]</p> <p>bar</p> <p>baz</p></blockquo
 PASS [["outdent",""]] "<blockquote> <p>[foo]</p> <p>bar</p> <p>baz</p></blockquote>" queryCommandValue("outdent") after
 PASS [["outdent",""]] "<blockquote> <p>foo</p> <p>[bar]</p> <p>baz</p></blockquote>": execCommand("outdent", false, "") return value
 PASS [["outdent",""]] "<blockquote> <p>foo</p> <p>[bar]</p> <p>baz</p></blockquote>" checks for modifications to non-editable content
-FAIL [["outdent",""]] "<blockquote> <p>foo</p> <p>[bar]</p> <p>baz</p></blockquote>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<blockquote> <p>foo</p> </blockquote><p>bar</p><blockquote> <p>baz</p></blockquote>" but got "<blockquote> <p>foo</p> </blockquote>bar<br><blockquote> <p>baz</p></blockquote>"
+FAIL [["outdent",""]] "<blockquote> <p>foo</p> <p>[bar]</p> <p>baz</p></blockquote>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<blockquote> <p>foo</p> </blockquote><p>bar</p><blockquote> <p>baz</p></blockquote>" but got "<blockquote> <p>foo</p> </blockquote><p>bar<br></p><blockquote> <p>baz</p></blockquote>"
 PASS [["outdent",""]] "<blockquote> <p>foo</p> <p>[bar]</p> <p>baz</p></blockquote>" queryCommandIndeterm("outdent") before
 PASS [["outdent",""]] "<blockquote> <p>foo</p> <p>[bar]</p> <p>baz</p></blockquote>" queryCommandState("outdent") before
 PASS [["outdent",""]] "<blockquote> <p>foo</p> <p>[bar]</p> <p>baz</p></blockquote>" queryCommandValue("outdent") before
@@ -300,7 +300,7 @@ PASS [["outdent",""]] "<blockquote> <p>foo</p> <p>[bar]</p> <p>baz</p></blockquo
 PASS [["outdent",""]] "<blockquote> <p>foo</p> <p>[bar]</p> <p>baz</p></blockquote>" queryCommandValue("outdent") after
 PASS [["outdent",""]] "<blockquote> <p>foo</p> <p>bar</p> <p>[baz]</p></blockquote>": execCommand("outdent", false, "") return value
 PASS [["outdent",""]] "<blockquote> <p>foo</p> <p>bar</p> <p>[baz]</p></blockquote>" checks for modifications to non-editable content
-FAIL [["outdent",""]] "<blockquote> <p>foo</p> <p>bar</p> <p>[baz]</p></blockquote>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<blockquote> <p>foo</p> <p>bar</p> </blockquote><p>baz</p>" but got "<blockquote> <p>foo</p> <p>bar</p> </blockquote>baz<br>"
+FAIL [["outdent",""]] "<blockquote> <p>foo</p> <p>bar</p> <p>[baz]</p></blockquote>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<blockquote> <p>foo</p> <p>bar</p> </blockquote><p>baz</p>" but got "<blockquote> <p>foo</p> <p>bar</p> </blockquote><p>baz<br></p>"
 PASS [["outdent",""]] "<blockquote> <p>foo</p> <p>bar</p> <p>[baz]</p></blockquote>" queryCommandIndeterm("outdent") before
 PASS [["outdent",""]] "<blockquote> <p>foo</p> <p>bar</p> <p>[baz]</p></blockquote>" queryCommandState("outdent") before
 PASS [["outdent",""]] "<blockquote> <p>foo</p> <p>bar</p> <p>[baz]</p></blockquote>" queryCommandValue("outdent") before
@@ -533,7 +533,7 @@ PASS [["defaultparagraphseparator","p"],["outdent",""]] "<ol><li>[]a<table><tr><
 PASS [["defaultparagraphseparator","p"],["outdent",""]] "<ol><li>[]a<table><tr><td><br></table></ol>" queryCommandValue("outdent") after
 PASS [["outdent",""]] "<blockquote><span>foo<br>[bar]</span></blockquote>": execCommand("outdent", false, "") return value
 PASS [["outdent",""]] "<blockquote><span>foo<br>[bar]</span></blockquote>" checks for modifications to non-editable content
-FAIL [["outdent",""]] "<blockquote><span>foo<br>[bar]</span></blockquote>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<blockquote>foo</blockquote><span>bar</span>" but got "<blockquote></blockquote>bar<br><blockquote><span>foo<br></span></blockquote>"
+FAIL [["outdent",""]] "<blockquote><span>foo<br>[bar]</span></blockquote>" compare innerHTML assert_equals: Unexpected innerHTML (after normalizing inline style) expected "<blockquote>foo</blockquote><span>bar</span>" but got "<blockquote></blockquote><p>bar<br></p><blockquote><span>foo<br></span></blockquote>"
 PASS [["outdent",""]] "<blockquote><span>foo<br>[bar]</span></blockquote>" queryCommandIndeterm("outdent") before
 PASS [["outdent",""]] "<blockquote><span>foo<br>[bar]</span></blockquote>" queryCommandState("outdent") before
 PASS [["outdent",""]] "<blockquote><span>foo<br>[bar]</span></blockquote>" queryCommandValue("outdent") before
