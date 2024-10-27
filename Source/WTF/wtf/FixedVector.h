@@ -130,7 +130,7 @@ public:
     }
 
     template<std::invocable<size_t> Generator>
-    static FixedVector createWithSizeFromGenerator(size_t size, Generator&& generator)
+    static FixedVector createWithSizeFromGenerator(size_t size, NOESCAPE Generator&& generator)
     {
         return FixedVector<T> { Storage::createWithSizeFromGenerator(size, std::forward<Generator>(generator)) };
     }

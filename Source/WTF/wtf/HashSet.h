@@ -117,7 +117,7 @@ public:
     // function members:
     //   static unsigned hash(const T&);
     //   static bool equal(const ValueType&, const T&);
-    template<typename HashTranslator> AddResult ensure(auto&&, const Invocable<ValueType()> auto&);
+    template<typename HashTranslator> AddResult ensure(auto&&, NOESCAPE const Invocable<ValueType()> auto&);
 
     // Attempts to add a list of things to the set. Returns true if any of
     // them are new to the set. Returns false if the set is unchanged.
@@ -128,7 +128,7 @@ public:
 
     bool remove(const ValueType&);
     bool remove(iterator);
-    bool removeIf(const Invocable<bool(const ValueType&)> auto&);
+    bool removeIf(NOESCAPE const Invocable<bool(const ValueType&)> auto&);
     void clear();
 
     TakeType take(const ValueType&);
@@ -136,7 +136,7 @@ public:
     TakeType takeAny();
 
     template<size_t inlineCapacity = 0>
-    Vector<TakeType, inlineCapacity> takeIf(const Invocable<bool(const ValueType&)> auto& functor) { return m_impl.template takeIf<inlineCapacity>(functor); }
+    Vector<TakeType, inlineCapacity> takeIf(NOESCAPE const Invocable<bool(const ValueType&)> auto& functor) { return m_impl.template takeIf<inlineCapacity>(functor); }
 
     // Returns a new set with the elements of both this and the given
     // collection (a.k.a. OR).
@@ -207,7 +207,7 @@ template<typename ValueTraits, typename HashFunctions>
 struct HashSetTranslator {
     static unsigned hash(const auto& key) { return HashFunctions::hash(key); }
     static bool equal(const auto& a, const auto& b) { return HashFunctions::equal(a, b); }
-    static void translate(auto& location, auto&&, const Invocable<typename ValueTraits::TraitType()> auto& functor)
+    static void translate(auto& location, auto&&, NOESCAPE const Invocable<typename ValueTraits::TraitType()> auto& functor)
     { 
         ValueTraits::assignToEmpty(location, functor());
     }
@@ -227,7 +227,7 @@ template<typename ValueTraits, typename Translator>
 struct HashSetEnsureTranslatorAdaptor {
     static unsigned hash(const auto& key) { return Translator::hash(key); }
     static bool equal(const auto& a, const auto& b) { return Translator::equal(a, b); }
-    static void translate(auto& location, auto&&, const Invocable<typename ValueTraits::TraitType()> auto& functor)
+    static void translate(auto& location, auto&&, NOESCAPE const Invocable<typename ValueTraits::TraitType()> auto& functor)
     {
         ValueTraits::assignToEmpty(location, functor());
     }
@@ -303,7 +303,7 @@ inline bool HashSet<Value, HashFunctions, Traits, TableTraits>::contains(const T
 
 template<typename Value, typename HashFunctions, typename Traits, typename TableTraits>
 template<typename HashTranslator, typename T>
-inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::ensure(T&& key, const Invocable<ValueType()> auto& functor) -> AddResult
+inline auto HashSet<Value, HashFunctions, Traits, TableTraits>::ensure(T&& key, NOESCAPE const Invocable<ValueType()> auto& functor) -> AddResult
 {
     return m_impl.template add<HashSetEnsureTranslatorAdaptor<Traits, HashTranslator>>(std::forward<T>(key), functor);
 }
@@ -376,7 +376,7 @@ inline bool HashSet<T, U, V, W>::remove(const ValueType& value)
 }
 
 template<typename T, typename U, typename V, typename W>
-inline bool HashSet<T, U, V, W>::removeIf(const Invocable<bool(const ValueType&)> auto& functor)
+inline bool HashSet<T, U, V, W>::removeIf(NOESCAPE const Invocable<bool(const ValueType&)> auto& functor)
 {
     return m_impl.removeIf(functor);
 }

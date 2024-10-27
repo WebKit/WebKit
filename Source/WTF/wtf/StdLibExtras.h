@@ -749,7 +749,7 @@ constexpr auto constructFixedSizeArrayWithArguments(Args&&... args) -> decltype(
     return constructFixedSizeArrayWithArgumentsImpl<ResultType>(tuple, std::forward<Args>(args)...);
 }
 
-template<typename OptionalType, class Callback> typename OptionalType::value_type valueOrCompute(OptionalType optional, Callback callback) 
+template<typename OptionalType> typename OptionalType::value_type valueOrCompute(OptionalType optional, NOESCAPE const std::invocable<> auto& callback)
 {
     return optional ? *optional : callback();
 }

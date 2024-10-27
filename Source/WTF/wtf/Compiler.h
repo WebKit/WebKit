@@ -562,6 +562,18 @@
 #define IGNORE_NULL_CHECK_WARNINGS_BEGIN IGNORE_WARNINGS_BEGIN("nonnull")
 #define IGNORE_NULL_CHECK_WARNINGS_END IGNORE_WARNINGS_END
 
+/* NOESCAPE */
+/* This attribute promises that a function argumemnt will only be used for the duration of the function,
+   and not stored to the heap or in a global state for later use. The compiler does not verify this claim. */
+
+#if !defined(NOESCAPE) && defined(__has_cpp_attribute)
+#if __has_cpp_attribute(clang::noescape)
+#define NOESCAPE [[clang::noescape]]
+#else
+#define NOESCAPE
+#endif
+#endif
+
 /* NO_UNIQUE_ADDRESS */
 
 #if !defined(NO_UNIQUE_ADDRESS) && defined(__has_cpp_attribute)

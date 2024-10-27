@@ -178,7 +178,7 @@ public:
         return m_set.size();
     }
 
-    void forEach(const Function<void(T&)>& callback)
+    void forEach(NOESCAPE const Function<void(T&)>& callback)
     {
         auto items = map(m_set, [](const Ref<WeakPtrImpl>& item) {
             auto* pointer = static_cast<T*>(item->template get<T>());

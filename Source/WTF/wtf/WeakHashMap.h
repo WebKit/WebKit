@@ -195,7 +195,7 @@ public:
     const_iterator end() const { return WeakHashMapConstIterator(*this, m_map.end()); }
 
     template <typename Functor>
-    AddResult ensure(const KeyType& key, Functor&& functor)
+    AddResult ensure(const KeyType& key, NOESCAPE Functor&& functor)
     {
         amortizedCleanupIfNeeded();
         auto result = m_map.ensure(makeKeyImpl(key), functor);
@@ -279,7 +279,7 @@ public:
     }
 
     template<typename Functor>
-    bool removeIf(Functor&& functor)
+    bool removeIf(NOESCAPE Functor&& functor)
     {
         bool result = m_map.removeIf([&](auto& entry) {
             auto* key = static_cast<KeyType*>(entry.key->template get<KeyType>());

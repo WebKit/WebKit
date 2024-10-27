@@ -300,7 +300,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     public:
         static unsigned hash(const auto& key) { return HashFunctions::hash(key); }
         static bool equal(const auto& a, const auto& b) { return HashFunctions::equal(a, b); }
-        static void translate(auto& location, const auto&, const Invocable<typename ValueTraits::TraitType()> auto& functor)
+        static void translate(auto& location, const auto&, NOESCAPE const Invocable<typename ValueTraits::TraitType()> auto& functor)
         {
             ValueTraits::assignToEmpty(location, functor());
         }
@@ -484,8 +484,8 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         // A special version of add() that finds the object by hashing and comparing
         // with some other type, to avoid the cost of type conversion if the object is already
         // in the table.
-        template<typename HashTranslator> AddResult add(auto&& key, const std::invocable<> auto& functor);
-        template<typename HashTranslator> AddResult addPassingHashCode(auto&& key, const std::invocable<> auto& functor);
+        template<typename HashTranslator> AddResult add(auto&& key, NOESCAPE const std::invocable<> auto& functor);
+        template<typename HashTranslator> AddResult addPassingHashCode(auto&& key, NOESCAPE const std::invocable<> auto& functor);
 
         iterator find(const KeyType& key) { return find<IdentityTranslatorType>(key); }
         const_iterator find(const KeyType& key) const { return find<IdentityTranslatorType>(key); }
@@ -500,11 +500,11 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         void removeWithoutEntryConsistencyCheck(iterator);
         void removeWithoutEntryConsistencyCheck(const_iterator);
         // FIXME: This feels like it should be Invocable<bool(const ValueType&)> but that breaks many HashMap users.
-        bool removeIf(const Invocable<bool(ValueType&)> auto&);
+        bool removeIf(NOESCAPE const Invocable<bool(ValueType&)> auto&);
         void clear();
 
         template<size_t inlineCapacity>
-        Vector<TakeType, inlineCapacity> takeIf(const Invocable<bool(const ValueType&)> auto&);
+        Vector<TakeType, inlineCapacity> takeIf(NOESCAPE const Invocable<bool(const ValueType&)> auto&);
 
         static bool isEmptyBucket(const ValueType& value) { return isHashTraitsEmptyValue<KeyTraits>(Extractor::extract(value)); }
         static bool isReleasedWeakBucket(const ValueType& value) { return isHashTraitsReleasedWeakValue<KeyTraits>(Extractor::extract(value)); }
@@ -541,7 +541,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
         template<typename HashTranslator, typename T> ValueType* lookupForReinsert(const T&);
         template<typename HashTranslator, typename T> FullLookupType fullLookupForWriting(const T&);
 
-        template<typename HashTranslator> void addUniqueForInitialization(auto&& key, const std::invocable<> auto& functor);
+        template<typename HashTranslator> void addUniqueForInitialization(auto&& key, NOESCAPE const std::invocable<> auto& functor);
 
         template<typename HashTranslator, typename T> void checkKey(const T&);
 
@@ -826,7 +826,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey>
     template<typename HashTranslator, typename T>
-    ALWAYS_INLINE void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::addUniqueForInitialization(T&& key, const std::invocable<> auto& functor)
+    ALWAYS_INLINE void HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::addUniqueForInitialization(T&& key, NOESCAPE const std::invocable<> auto& functor)
     {
         ASSERT(m_table);
         checkKey<HashTranslator>(key);
@@ -867,7 +867,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey>
     template<typename HashTranslator, typename T>
-    ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::add(T&& key, const std::invocable<> auto& functor) -> AddResult
+    ALWAYS_INLINE auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::add(T&& key, NOESCAPE const std::invocable<> auto& functor) -> AddResult
     {
         checkKey<HashTranslator>(key);
         invalidateIterators(this);
@@ -950,7 +950,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey>
     template<typename HashTranslator, typename T>
-    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::addPassingHashCode(T&& key, const std::invocable<> auto& functor) -> AddResult
+    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::addPassingHashCode(T&& key, NOESCAPE const std::invocable<> auto& functor) -> AddResult
     {
         checkKey<HashTranslator>(key);
 
@@ -1113,7 +1113,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
     }
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey>
-    inline bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::removeIf(const Invocable<bool(ValueType&)> auto& functor)
+    inline bool HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::removeIf(NOESCAPE const Invocable<bool(ValueType&)> auto& functor)
     {
         // We must use local copies in case "functor" or "deleteBucket"
         // make a function call, which prevents the compiler from keeping
@@ -1146,7 +1146,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HashTable);
 
     template<typename Key, typename Value, typename Extractor, typename HashFunctions, typename Traits, typename KeyTraits, ShouldValidateKey shouldValidateKey>
     template<size_t inlineCapacity>
-    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::takeIf(const Invocable<bool(const ValueType&)> auto& functor) -> Vector<TakeType, inlineCapacity>
+    inline auto HashTable<Key, Value, Extractor, HashFunctions, Traits, KeyTraits, shouldValidateKey>::takeIf(NOESCAPE const Invocable<bool(const ValueType&)> auto& functor) -> Vector<TakeType, inlineCapacity>
     {
         // We must use local copies in case "functor" or "deleteBucket"
         // make a function call, which prevents the compiler from keeping

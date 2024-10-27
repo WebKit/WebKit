@@ -77,7 +77,7 @@ public:
     }
 
     template<std::invocable<size_t> Generator>
-    static std::unique_ptr<EmbeddedFixedVector> createWithSizeFromGenerator(unsigned size, Generator&& generator)
+    static std::unique_ptr<EmbeddedFixedVector> createWithSizeFromGenerator(unsigned size, NOESCAPE Generator&& generator)
     {
 
         auto result = std::unique_ptr<EmbeddedFixedVector> { new (NotNull, EmbeddedFixedVectorMalloc::malloc(Base::allocationSize(size))) EmbeddedFixedVector(typename Base::Failable { }, size, std::forward<Generator>(generator)) };

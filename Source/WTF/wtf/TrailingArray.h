@@ -94,7 +94,7 @@ protected:
     // should be used as appropriate.
     struct Failable { };
     template<std::invocable<size_t> Generator>
-    explicit TrailingArray(Failable, unsigned size, Generator&& generator)
+    explicit TrailingArray(Failable, unsigned size, NOESCAPE Generator&& generator)
         : m_size(size)
     {
         static_assert(std::is_final_v<Derived>);
