@@ -6815,9 +6815,10 @@ sub GenerateCallbackImplementationContent
     # Destructor
     push(@$contentRef, "${className}::~${className}()\n");
     push(@$contentRef, "{\n");
-    push(@$contentRef, "    ScriptExecutionContext* context = scriptExecutionContext();\n");
+    push(@$contentRef, "    SUPPRESS_UNCOUNTED_LOCAL ScriptExecutionContext* context = scriptExecutionContext();\n");
     push(@$contentRef, "    // When the context is destroyed, all tasks with a reference to a callback\n");
     push(@$contentRef, "    // should be deleted. So if the context is 0, we are on the context thread.\n");
+    push(@$contentRef, "    // We can't use RefPtr here since ScriptExecutionContext is not thread safe ref counted.\n");
     push(@$contentRef, "    if (!context || context->isContextThread())\n");
     push(@$contentRef, "        delete m_data;\n");
     push(@$contentRef, "    else\n");
