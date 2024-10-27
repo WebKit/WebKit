@@ -105,6 +105,7 @@ public:
     std::string captionDisplayMode() const { return stringTestRunnerFeatureValue("captionDisplayMode"); }
     std::string standaloneWebApplicationURL() const { return stringTestRunnerFeatureValue("standaloneWebApplicationURL"); }
     std::vector<std::string> overrideLanguages() const { return stringVectorTestRunnerFeatureValue("language"); }
+    bool shouldIgnoreWebProcessTermination() const { return boolTestRunnerFeatureValue("ignoreWebProcessTermination"); }
 
     bool shouldEnableProcessSwapOnNavigation() const
     {

@@ -1321,14 +1321,21 @@ void WebProcessProxy::processDidTerminateOrFailedToLaunch(ProcessTerminationReas
         return transaction;
     });
 
-    for (auto& provisionalPage : provisionalPages)
+    WTFLogAlways("WebProcessProxy::processDidTerminateOrFailedToLaunch");
+    for (auto& provisionalPage : provisionalPages) {
+        WTFLogAlways("provisional page");
         provisionalPage->processDidTerminate();
+    }
 
-    for (auto& page : pages)
+    for (auto& page : pages) {
+        WTFLogAlways("web page proxy");
         page->dispatchProcessDidTerminate(*this, reason);
+    }
 
-    for (Ref remotePage : m_remotePages)
-        remotePage->processDidTerminate(coreProcessIdentifier());
+    for (Ref remotePage : m_remotePages) {
+        WTFLogAlways("remote page");
+        remotePage->processDidTerminate(*this, reason);
+    }
 }
 
 void WebProcessProxy::didReceiveInvalidMessage(IPC::Connection& connection, IPC::MessageName messageName, int32_t indexOfObjectFailingDecoding)

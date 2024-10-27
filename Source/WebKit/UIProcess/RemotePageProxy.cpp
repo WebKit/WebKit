@@ -100,14 +100,15 @@ void RemotePageProxy::injectPageIntoNewProcess()
         0);
 }
 
-void RemotePageProxy::processDidTerminate(WebCore::ProcessIdentifier processIdentifier)
+void RemotePageProxy::processDidTerminate(WebProcessProxy& process, ProcessTerminationReason reason)
 {
     if (!m_page)
         return;
     if (auto* drawingArea = m_page->drawingArea())
-        drawingArea->remotePageProcessDidTerminate(processIdentifier);
+        drawingArea->remotePageProcessDidTerminate(process.coreProcessIdentifier());
     if (RefPtr mainFrame = m_page->mainFrame())
-        mainFrame->remoteProcessDidTerminate(process());
+        mainFrame->remoteProcessDidTerminate(process);
+    m_page->dispatchProcessDidTerminate(process, reason);
 }
 
 RemotePageProxy::~RemotePageProxy()

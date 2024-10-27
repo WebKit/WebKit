@@ -69,6 +69,8 @@ struct FrameInfoData;
 struct FrameTreeCreationParameters;
 struct NavigationActionData;
 
+enum class ProcessTerminationReason : uint8_t;
+
 class RemotePageProxy : public IPC::MessageReceiver, public RefCounted<RemotePageProxy> {
     WTF_MAKE_TZONE_ALLOCATED(RemotePageProxy);
 public:
@@ -79,7 +81,7 @@ public:
     RefPtr<WebPageProxy> protectedPage() const;
 
     void injectPageIntoNewProcess();
-    void processDidTerminate(WebCore::ProcessIdentifier);
+    void processDidTerminate(WebProcessProxy&, ProcessTerminationReason);
 
     WebPageProxyMessageReceiverRegistration& messageReceiverRegistration() { return m_messageReceiverRegistration; }
 

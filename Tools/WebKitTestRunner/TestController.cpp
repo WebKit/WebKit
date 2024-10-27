@@ -2827,6 +2827,9 @@ void TestController::downloadDidWriteData(WKDownloadRef download, long long byte
 
 void TestController::webProcessDidTerminate(WKProcessTerminationReason reason)
 {
+    if (m_currentInvocation->options().shouldIgnoreWebProcessTermination())
+        return;
+
     // This function can be called multiple times when crash logs are being saved on Windows, so
     // ensure we only print the crashed message once.
     if (!m_didPrintWebProcessCrashedMessage) {
