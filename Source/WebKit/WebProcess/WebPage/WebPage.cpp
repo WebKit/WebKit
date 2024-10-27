@@ -1836,12 +1836,6 @@ void WebPage::setBaseWritingDirection(WritingDirection direction)
 
     frame->editor().setBaseWritingDirection(direction);
 }
-    
-void WebPage::clearMainFrameName()
-{
-    if (auto* frame = mainFrame())
-        frame->tree().clearName();
-}
 
 void WebPage::enterAcceleratedCompositingMode(WebCore::Frame& frame, GraphicsLayer* layer)
 {

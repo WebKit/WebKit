@@ -696,7 +696,6 @@ public:
     Ref<API::Array> trackedRepaintRects();
 
     void executeEditingCommand(const String& commandName, const String& argument);
-    void clearMainFrameName();
     void sendClose();
 
     void suspendForProcessSwap();

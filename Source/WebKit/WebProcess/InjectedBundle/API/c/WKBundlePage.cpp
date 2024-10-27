@@ -342,11 +342,6 @@ WKStringRef WKBundlePageCopyRenderTreeExternalRepresentationForPrinting(WKBundle
     return WebKit::toCopiedAPI(WebKit::toImpl(pageRef)->renderTreeExternalRepresentationForPrinting());
 }
 
-void WKBundlePageClearMainFrameName(WKBundlePageRef pageRef)
-{
-    WebKit::toImpl(pageRef)->clearMainFrameName();
-}
-
 void WKBundlePageClose(WKBundlePageRef pageRef)
 {
     WebKit::toImpl(pageRef)->sendClose();
@@ -827,23 +822,6 @@ WKCaptionUserPreferencesTestingModeTokenRef WKBundlePageCreateCaptionUserPrefere
     UNUSED_PARAM(page);
     return { };
 #endif
-}
-
-void WKBundlePageSetEventThrottlingBehaviorOverride(WKBundlePageRef page, WKEventThrottlingBehavior* behavior)
-{
-    std::optional<WebCore::EventThrottlingBehavior> behaviorValue;
-    if (behavior) {
-        switch (*behavior) {
-        case kWKEventThrottlingBehaviorResponsive:
-            behaviorValue = WebCore::EventThrottlingBehavior::Responsive;
-            break;
-        case kWKEventThrottlingBehaviorUnresponsive:
-            behaviorValue = WebCore::EventThrottlingBehavior::Unresponsive;
-            break;
-        }
-    }
-
-    WebKit::toImpl(page)->corePage()->setEventThrottlingBehaviorOverride(behaviorValue);
 }
 
 void WKBundlePageLayoutIfNeeded(WKBundlePageRef page)

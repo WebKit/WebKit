@@ -124,8 +124,14 @@ Ref<WebPage> WebPageTesting::protectedPage() const
 
 void WebPageTesting::resetStateBetweenTests()
 {
-    if (RefPtr mainFrame = protectedPage()->mainFrame())
+    if (RefPtr mainFrame = protectedPage()->mainFrame()) {
         mainFrame->disownOpener();
+        mainFrame->tree().clearName();
+    }
+    if (RefPtr corePage = protectedPage()->corePage()) {
+        // Force consistent "responsive" behavior for WebPage::eventThrottlingDelay() for testing. Tests can override via internals.
+        corePage->setEventThrottlingBehaviorOverride(WebCore::EventThrottlingBehavior::Responsive);
+    }
 }
 
 } // namespace WebKit
