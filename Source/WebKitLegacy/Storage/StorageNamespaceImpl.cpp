@@ -72,7 +72,7 @@ StorageNamespaceImpl::StorageNamespaceImpl(StorageType storageType, const String
     , m_isShutdown(false)
     , m_sessionID(sessionID)
 {
-    if (isPersistentLocalStorage(m_storageType) && !m_path.isEmpty())
+    if (isLocalStorage(m_storageType) && !m_path.isEmpty())
         m_syncManager = StorageSyncManager::create(m_path);
 }
 
@@ -80,7 +80,7 @@ StorageNamespaceImpl::~StorageNamespaceImpl()
 {
     ASSERT(isMainThread());
 
-    if (isPersistentLocalStorage(m_storageType)) {
+    if (isLocalStorage(m_storageType)) {
         ASSERT(localStorageNamespaceMap().get(m_path) == this);
         localStorageNamespaceMap().remove(m_path);
     }
