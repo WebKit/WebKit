@@ -656,6 +656,10 @@ TEST(ElementTargeting, CountVisibilityAdjustmentsAfterNavigatingBack)
     auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600)]);
     [webView synchronouslyLoadTestPageNamed:@"element-targeting-1"];
 
+    Util::waitForConditionWithLogging([&] {
+        return [[webView objectByEvaluatingJavaScript:@"window.subframeLoaded"] boolValue];
+    }, 5, @"Timed out waiting for subframes to finish loading.");
+
     RetainPtr element = [[webView targetedElementInfoAt:CGPointMake(150, 150)] firstObject];
     EXPECT_WK_STREQ("DIV.fixed.container", [[[element selectorsIncludingShadowHosts] firstObject] firstObject]);
     [webView adjustVisibilityForTargets:@[ element.get() ]];
