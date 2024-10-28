@@ -43,11 +43,11 @@
 IGNORE_WARNINGS_BEGIN("#warnings")
 #import <AVFoundation/AVOutputContext_Private.h>
 #import <AVFoundation/AVOutputDevice.h>
-IGNORE_WARNINGS_END
 #import <AVFoundation/AVPlayerItemOutput_Private.h>
 #import <AVFoundation/AVPlayerItem_Private.h>
 #import <AVFoundation/AVPlayerLayer_Private.h>
 #import <AVFoundation/AVPlayer_Private.h>
+IGNORE_WARNINGS_END
 
 #if ENABLE(MEDIA_SOURCE)
 #if PLATFORM(IOS_FAMILY_SIMULATOR)
