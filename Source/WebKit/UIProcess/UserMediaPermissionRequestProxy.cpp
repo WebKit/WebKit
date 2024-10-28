@@ -29,8 +29,6 @@
 #include <WebCore/SecurityOriginData.h>
 #include <wtf/text/StringHash.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -153,7 +151,7 @@ Vector<String> UserMediaPermissionRequestProxy::audioDeviceUIDs() const
 
 String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason enumerationValue)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 7> values = {
         MAKE_STATIC_STRING_IMPL("NoConstraints"),
         MAKE_STATIC_STRING_IMPL("UserMediaDisabled"),
         MAKE_STATIC_STRING_IMPL("NoCaptureDevices"),
@@ -169,7 +167,6 @@ String convertEnumerationToString(UserMediaPermissionRequestProxy::UserMediaAcce
     static_assert(static_cast<size_t>(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::HardwareError) == 4, "UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::HardwareError is not 4 as expected");
     static_assert(static_cast<size_t>(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied) == 5, "UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::PermissionDenied is not 5 as expected");
     static_assert(static_cast<size_t>(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure) == 6, "UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure is not 6 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
@@ -237,5 +234,3 @@ bool UserMediaPermissionRequestProxy::canRequestDisplayCapturePermission()
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

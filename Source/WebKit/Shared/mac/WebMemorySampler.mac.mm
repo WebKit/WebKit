@@ -39,8 +39,6 @@
 #import <notify.h>
 #import <wtf/WallTime.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
     
 struct SystemMallocStats {
@@ -55,7 +53,7 @@ SystemMallocStats WebMemorySampler::sampleSystemMalloc() const
     static constexpr auto dispatchContinuationMallocZoneName = "DispatchContinuations"_s;
     static constexpr auto purgeableMallocZoneName = "DefaultPurgeableMallocZone"_s;
     SystemMallocStats mallocStats;
-    vm_address_t* zones;
+    vm_address_t* rawZones;
     unsigned count;
     
     // Zero out the structures in case a zone is missing
@@ -68,14 +66,15 @@ SystemMallocStats WebMemorySampler::sampleSystemMalloc() const
     mallocStats.dispatchContinuationMallocZoneStats = stats;
     mallocStats.purgeableMallocZoneStats = stats;
     
-    malloc_get_all_zones(mach_task_self(), 0, &zones, &count);
-    for (unsigned i = 0; i < count; i++) {
-        if (const char* name = malloc_get_zone_name(reinterpret_cast<malloc_zone_t*>(zones[i]))) {
+    malloc_get_all_zones(mach_task_self(), 0, &rawZones, &count);
+    auto zones = unsafeForgeSpan(rawZones, count);
+    for (auto& zone : zones) {
+        if (const char* name = malloc_get_zone_name(reinterpret_cast<malloc_zone_t*>(zone))) {
             stats.blocks_in_use = 0;
             stats.size_in_use = 0;
             stats.max_size_in_use = 0;
             stats.size_allocated = 0;
-            malloc_zone_statistics(reinterpret_cast<malloc_zone_t*>(zones[i]), &stats);
+            malloc_zone_statistics(reinterpret_cast<malloc_zone_t*>(zone), &stats);
             if (!strcmp(name, defaultMallocZoneName))
                 mallocStats.defaultMallocZoneStats = stats;
             else if (!strcmp(name, dispatchContinuationMallocZoneName))
@@ -184,8 +183,6 @@ void WebMemorySampler::sendMemoryPressureEvent()
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif
 

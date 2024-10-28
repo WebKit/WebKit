@@ -40,8 +40,6 @@
 #include <WebCore/NotificationData.h>
 #include <WebCore/SecurityOriginData.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -178,9 +176,9 @@ void WebNotificationManagerProxy::clearNotifications(WebPageProxy* webPage, cons
         globalNotificationIDs.append(globalNotificationID);
     }
 
-    for (auto it = globalNotificationIDs.begin(), end = globalNotificationIDs.end(); it != end; ++it) {
-        auto pageNotification = m_globalNotificationMap.take(*it);
-        m_notifications.remove(pageNotification);
+    for (auto globalNotificationID : globalNotificationIDs) {
+        if (auto pageNotification = m_globalNotificationMap.takeOptional(globalNotificationID))
+            m_notifications.remove(*pageNotification);
     }
 
     m_provider->clearNotifications(globalNotificationIDs);
@@ -389,5 +387,3 @@ void WebNotificationManagerProxy::getNotifications(const URL& url, const String&
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -45,9 +45,8 @@
 #import <pal/spi/mac/NSTextFinderSPI.h>
 #import <pal/spi/mac/NSTextInputContextSPI.h>
 #import <pal/spi/mac/NSViewSPI.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 _WKOverlayScrollbarStyle toAPIScrollbarStyle(std::optional<WebCore::ScrollbarOverlayStyle> coreScrollbarStyle)
 {
@@ -877,13 +876,13 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     return _impl->addTrackingRectWithTrackingNum(NSRectToCGRect(rect), owner, data, assumeInside, tag);
 }
 
-- (void)_addTrackingRects:(NSRect *)rects owner:(id)owner userDataList:(void **)userDataList assumeInsideList:(BOOL *)assumeInsideList trackingNums:(NSTrackingRectTag *)trackingNums count:(int)count
+- (void)_addTrackingRects:(NSRect *)rawRects owner:(id)owner userDataList:(void **)userDataList assumeInsideList:(BOOL *)assumeInsideList trackingNums:(NSTrackingRectTag *)trackingNums count:(int)count
 {
-    CGRect *cgRects = (CGRect *)calloc(1, sizeof(CGRect));
-    for (int i = 0; i < count; i++)
-        cgRects[i] = NSRectToCGRect(rects[i]);
-    _impl->addTrackingRectsWithTrackingNums(cgRects, owner, userDataList, assumeInsideList, trackingNums, count);
-    free(cgRects);
+    auto nsRects = unsafeForgeSpan(rawRects, count);
+    auto cgRects = WTF::map(nsRects, [](auto& nsRect) {
+        return NSRectToCGRect(nsRect);
+    });
+    _impl->addTrackingRectsWithTrackingNums(cgRects, owner, userDataList, assumeInsideList, trackingNums);
 }
 
 - (void)removeTrackingRect:(NSTrackingRectTag)tag
@@ -897,7 +896,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (!_impl)
         return;
-    _impl->removeTrackingRects(tags, count);
+    _impl->removeTrackingRects(unsafeForgeSpan(tags, count));
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN
@@ -1827,7 +1826,5 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [[NSImage alloc] initWithCGImage:snapshot.get() size:NSZeroSize];
 }
 @end
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(MAC)

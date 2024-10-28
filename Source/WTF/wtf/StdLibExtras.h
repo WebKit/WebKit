@@ -802,6 +802,12 @@ std::span<const uint8_t> asByteSpan(const T& input)
     return { reinterpret_cast<const uint8_t*>(&input), sizeof(input) };
 }
 
+template<typename T>
+std::span<uint8_t> asMutableByteSpan(T& input)
+{
+    return { reinterpret_cast<uint8_t*>(&input), sizeof(input) };
+}
+
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
 bool equalSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
 {
@@ -1027,6 +1033,7 @@ using WTF::MB;
 using WTF::approximateBinarySearch;
 using WTF::asBytes;
 using WTF::asByteSpan;
+using WTF::asMutableByteSpan;
 using WTF::asWritableBytes;
 using WTF::binarySearch;
 using WTF::bitwise_cast;

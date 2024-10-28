@@ -101,12 +101,12 @@ bool FileHandle::open()
     return static_cast<bool>(*this);
 }
 
-int FileHandle::read(void* data, int length)
+int FileHandle::read(std::span<uint8_t> data)
 {
     if (!open())
         return -1;
 
-    return FileSystem::readFromFile(m_fileHandle, { static_cast<uint8_t*>(data), static_cast<size_t>(length) });
+    return FileSystem::readFromFile(m_fileHandle, data);
 }
 
 int FileHandle::write(std::span<const uint8_t> data)

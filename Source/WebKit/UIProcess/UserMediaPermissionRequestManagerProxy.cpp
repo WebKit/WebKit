@@ -62,8 +62,6 @@
 #include <WebCore/ScreenCaptureKitCaptureSource.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -1161,7 +1159,7 @@ const Logger& UserMediaPermissionRequestManagerProxy::logger() const
 
 String convertEnumerationToString(UserMediaPermissionRequestManagerProxy::RequestAction enumerationValue)
 {
-    static const NeverDestroyed<String> values[] = {
+    static const std::array<NeverDestroyed<String>, 3> values = {
         MAKE_STATIC_STRING_IMPL("Deny"),
         MAKE_STATIC_STRING_IMPL("Grant"),
         MAKE_STATIC_STRING_IMPL("Prompt"),
@@ -1169,10 +1167,7 @@ String convertEnumerationToString(UserMediaPermissionRequestManagerProxy::Reques
     static_assert(static_cast<size_t>(UserMediaPermissionRequestManagerProxy::RequestAction::Deny) == 0, "UserMediaPermissionRequestManagerProxy::RequestAction::Deny is not 0 as expected");
     static_assert(static_cast<size_t>(UserMediaPermissionRequestManagerProxy::RequestAction::Grant) == 1, "UserMediaPermissionRequestManagerProxy::RequestAction::Grant is not 1 as expected");
     static_assert(static_cast<size_t>(UserMediaPermissionRequestManagerProxy::RequestAction::Prompt) == 2, "UserMediaPermissionRequestManagerProxy::RequestAction::Prompt is not 2 as expected");
-    ASSERT(static_cast<size_t>(enumerationValue) < std::size(values));
     return values[static_cast<size_t>(enumerationValue)];
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

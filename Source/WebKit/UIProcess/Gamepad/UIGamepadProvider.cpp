@@ -37,8 +37,6 @@
 #include <WebCore/PlatformGamepad.h>
 #include <wtf/NeverDestroyed.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -81,8 +79,8 @@ void UIGamepadProvider::gamepadSyncTimerFired()
 bool UIGamepadProvider::isAnyGamepadConnected() const
 {
     bool anyGamepadConnected = false;
-    for (auto it = m_gamepads.begin(); it != m_gamepads.end(); ++it) {
-        if (*it) {
+    for (auto& gamepad : m_gamepads) {
+        if (gamepad) {
             anyGamepadConnected = true;
             break;
         }
@@ -250,7 +248,5 @@ void UIGamepadProvider::platformStartMonitoringInput()
 #endif // !PLATFORM(COCOA) && !(USE(MANETTE) && OS(LINUX))
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(GAMEPAD)

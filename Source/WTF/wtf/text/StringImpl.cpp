@@ -171,16 +171,17 @@ Ref<StringImpl> StringImpl::createWithoutCopyingNonEmpty(std::span<const LChar> 
     return adoptRef(*new StringImpl(characters, ConstructWithoutCopying));
 }
 
-template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternal(size_t length, CharacterType*& data)
+template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternal(size_t length, std::span<CharacterType>& data)
 {
     if (!length) {
-        data = nullptr;
+        data = { };
         return *empty();
     }
+
     return createUninitializedInternalNonEmpty(length, data);
 }
 
-template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, CharacterType*& data)
+template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, std::span<CharacterType>& data)
 {
     ASSERT(length);
 
@@ -190,21 +191,37 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninit
     if (length > maxInternalLength<CharacterType>())
         CRASH();
     StringImpl* string = static_cast<StringImpl*>(StringImplMalloc::malloc(allocationSize<CharacterType>(length)));
-    data = string->tailPointer<CharacterType>();
+    data = unsafeForgeSpan(string->tailPointer<CharacterType>(), length);
     return constructInternal<CharacterType>(*string, length);
 }
 
-template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, LChar*& data);
-template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, UChar*& data);
+template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, std::span<LChar>& data);
+template Ref<StringImpl> StringImpl::createUninitializedInternalNonEmpty(size_t length, std::span<UChar>& data);
+
+Ref<StringImpl> StringImpl::createUninitialized(size_t length, std::span<LChar>& data)
+{
+    return createUninitializedInternal(length, data);
+}
+
+Ref<StringImpl> StringImpl::createUninitialized(size_t length, std::span<UChar>& data)
+{
+    return createUninitializedInternal(length, data);
+}
 
 Ref<StringImpl> StringImpl::createUninitialized(size_t length, LChar*& data)
 {
-    return createUninitializedInternal(length, data);
+    std::span<LChar> span;
+    auto result = createUninitializedInternal(length, span);
+    data = span.data();
+    return result;
 }
 
 Ref<StringImpl> StringImpl::createUninitialized(size_t length, UChar*& data)
 {
-    return createUninitializedInternal(length, data);
+    std::span<UChar> span;
+    auto result = createUninitializedInternal(length, span);
+    data = span.data();
+    return result;
 }
 
 template<typename CharacterType> inline Expected<Ref<StringImpl>, UTF8ConversionError> StringImpl::reallocateInternal(Ref<StringImpl>&& originalString, unsigned length, CharacterType*& data)
@@ -260,9 +277,9 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createIntern
 {
     if (characters.empty())
         return *empty();
-    CharacterType* data;
+    std::span<CharacterType> data;
     auto string = createUninitializedInternalNonEmpty(characters.size(), data);
-    copyCharacters(data, characters);
+    copyCharacters(data.data(), characters);
     return string;
 }
 
@@ -301,13 +318,14 @@ Ref<StringImpl> StringImpl::create8BitIfPossible(std::span<const UChar> characte
     if (characters.empty())
         return *empty();
 
-    LChar* data;
+    std::span<LChar> data;
     auto string = createUninitializedInternalNonEmpty(characters.size(), data);
 
+    size_t i = 0;
     for (auto character : characters) {
         if (!isLatin1(character))
             return create(characters);
-        *data++ = static_cast<LChar>(character);
+        data[i++] = static_cast<LChar>(character);
     }
 
     return string;
@@ -371,7 +389,7 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
         return *this;
 
     if (!(ored & ~0x7F)) {
-        UChar* data16;
+        std::span<UChar> data16;
         auto newImpl = createUninitializedInternalNonEmpty(m_length, data16);
         for (unsigned i = 0; i < m_length; ++i)
             data16[i] = toASCIILower(m_data16[i]);
@@ -383,17 +401,17 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
     int32_t length = m_length;
 
     // Do a slower implementation for cases that include non-ASCII characters.
-    UChar* data16;
+    std::span<UChar> data16;
     auto newImpl = createUninitializedInternalNonEmpty(m_length, data16);
 
     UErrorCode status = U_ZERO_ERROR;
-    int32_t realLength = u_strToLower(data16, length, m_data16, m_length, "", &status);
+    int32_t realLength = u_strToLower(data16.data(), length, m_data16, m_length, "", &status);
     if (U_SUCCESS(status) && realLength == length)
         return newImpl;
 
     newImpl = createUninitialized(realLength, data16);
     status = U_ZERO_ERROR;
-    u_strToLower(data16, realLength, m_data16, m_length, "", &status);
+    u_strToLower(data16.data(), realLength, m_data16, m_length, "", &status);
     if (U_FAILURE(status))
         return *this;
     return newImpl;
@@ -402,7 +420,7 @@ Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocale()
 Ref<StringImpl> StringImpl::convertToLowercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned failingIndex)
 {
     ASSERT(is8Bit());
-    LChar* data8;
+    std::span<LChar> data8;
     auto newImpl = createUninitializedInternalNonEmpty(m_length, data8);
 
     for (unsigned i = 0; i < failingIndex; ++i) {
@@ -662,9 +680,9 @@ SlowPath:
         }
 
         if (!need16BitCharacters) {
-            LChar* data8;
+            std::span<LChar> data8;
             auto folded = createUninitializedInternalNonEmpty(m_length, data8);
-            copyCharacters(data8, { m_data8, failingIndex });
+            copyCharacters(data8.data(), { m_data8, failingIndex });
             for (unsigned i = failingIndex; i < m_length; ++i) {
                 auto character = m_data8[i];
                 if (isASCII(character))
@@ -691,7 +709,7 @@ SlowPath:
                 // String was all ASCII and no uppercase, so just return as-is.
                 return *this;
             }
-            UChar* data16;
+            std::span<UChar> data16;
             auto folded = createUninitializedInternalNonEmpty(m_length, data16);
             for (unsigned i = 0; i < m_length; ++i)
                 data16[i] = toASCIILower(m_data16[i]);
@@ -705,16 +723,16 @@ SlowPath:
     auto upconvertedCharacters = StringView(*this).upconvertedCharacters();
     auto source16 = upconvertedCharacters.span();
 
-    UChar* data;
+    std::span<UChar> data;
     auto folded = createUninitializedInternalNonEmpty(source16.size(), data);
     UErrorCode status = U_ZERO_ERROR;
-    size_t realLength = u_strFoldCase(data, source16.size(), source16.data(), source16.size(), U_FOLD_CASE_DEFAULT, &status);
+    size_t realLength = u_strFoldCase(data.data(), source16.size(), source16.data(), source16.size(), U_FOLD_CASE_DEFAULT, &status);
     if (U_SUCCESS(status) && realLength == source16.size())
         return folded;
     ASSERT(realLength > source16.size());
     folded = createUninitializedInternalNonEmpty(realLength, data);
     status = U_ZERO_ERROR;
-    u_strFoldCase(data, realLength, source16.data(), source16.size(), U_FOLD_CASE_DEFAULT, &status);
+    u_strFoldCase(data.data(), realLength, source16.data(), source16.size(), U_FOLD_CASE_DEFAULT, &status);
     if (U_FAILURE(status))
         return *this;
     return folded;
@@ -734,9 +752,9 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::convertASCIICase(StringImpl& impl, std
     return impl;
 
 SlowPath:
-    CharacterType* newData;
+    std::span<CharacterType> newData;
     auto newImpl = createUninitializedInternalNonEmpty(data.size(), newData);
-    copyCharacters(newData, data.first(failingIndex));
+    copyCharacters(newData.data(), data.first(failingIndex));
     for (size_t i = failingIndex; i < data.size(); ++i)
         newData[i] = type == CaseConvertType::Lower ? toASCIILower(data[i]) : toASCIIUpper(data[i]);
     return newImpl;
