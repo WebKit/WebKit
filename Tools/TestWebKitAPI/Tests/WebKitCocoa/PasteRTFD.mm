@@ -170,6 +170,9 @@ TEST(PasteRTFD, ImageElementUsesBlobURLInHTML)
 
     [webView waitForMessage:@"loaded"];
     EXPECT_WK_STREQ("[\"text/html\"]", [webView stringByEvaluatingJavaScript:@"JSON.stringify(clipboardData.types)"]);
+    RetainPtr rawMarkup = [webView stringByEvaluatingJavaScript:@"clipboardData.values[0]"];
+    EXPECT_FALSE([rawMarkup containsString:@"<p"]);
+    EXPECT_FALSE([rawMarkup containsString:@"<br"]);
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"imageElement = (new DOMParser).parseFromString(clipboardData.values[0], 'text/html').querySelector('img'); !!imageElement"].boolValue);
     EXPECT_WK_STREQ("blob:", [webView stringByEvaluatingJavaScript:@"new URL(imageElement.src).protocol"]);
 }

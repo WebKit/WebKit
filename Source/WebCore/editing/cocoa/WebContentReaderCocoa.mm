@@ -48,6 +48,7 @@
 #import "HTMLIFrameElement.h"
 #import "HTMLImageElement.h"
 #import "HTMLObjectElement.h"
+#import "HTMLPictureElement.h"
 #import "HTMLSourceElement.h"
 #import "LegacyWebArchive.h"
 #import "LocalFrame.h"
@@ -419,6 +420,43 @@ static void replaceRichContentWithAttachments(LocalFrame& frame, DocumentFragmen
 #endif
 }
 
+static void simplifyFragmentForSingleTextAttachment(NSAttributedString *string, DocumentFragment& fragment)
+{
+    auto stringLength = string.length;
+    if (!stringLength || stringLength > 2)
+        return;
+
+    RetainPtr plainText = [string string];
+    if ([plainText characterAtIndex:0] != objectReplacementCharacter)
+        return;
+
+    __block unsigned numberOfTextAttachments = 0;
+    [string enumerateAttribute:NSAttachmentAttributeName inRange:NSMakeRange(0, 1) options:0 usingBlock:^(NSTextAttachment *attachment, NSRange, BOOL *) {
+        if (attachment)
+            numberOfTextAttachments++;
+    }];
+
+    if (numberOfTextAttachments != 1)
+        return;
+
+    if (stringLength == 2 && [plainText characterAtIndex:1] != newlineCharacter)
+        return;
+
+    RefPtr pictureOrImage = [&] -> RefPtr<HTMLElement> {
+        for (Ref element : descendantsOfType<HTMLElement>(fragment)) {
+            if (is<HTMLPictureElement>(element) || is<HTMLImageElement>(element))
+                return WTFMove(element);
+        }
+        return { };
+    }();
+
+    if (!pictureOrImage)
+        return;
+
+    fragment.removeChildren();
+    fragment.appendChild(pictureOrImage.releaseNonNull());
+}
+
 RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *string, OptionSet<FragmentCreationOptions> fragmentCreationOptions)
 {
     if (!frame.page() || !frame.document())
@@ -457,6 +495,7 @@ RefPtr<DocumentFragment> createFragment(LocalFrame& frame, NSAttributedString *s
     }
 
     replaceSubresourceURLs(*fragmentAndResources.fragment, WTFMove(blobURLMap));
+    simplifyFragmentForSingleTextAttachment(string, *fragmentAndResources.fragment);
     return WTFMove(fragmentAndResources.fragment);
 }
 
