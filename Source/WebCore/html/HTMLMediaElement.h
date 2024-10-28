@@ -1117,6 +1117,10 @@ private:
     void startBufferingStopwatch();
     void invalidateBufferingStopwatch();
 
+    enum ForceMuteChange { False, True };
+    void setMutedInternal(bool muted, ForceMuteChange);
+    bool implicitlyMuted() const { return m_implicitlyMuted.value_or(false); }
+
     Timer m_progressEventTimer;
     Timer m_playbackProgressTimer;
     Timer m_scanTimer;
@@ -1232,6 +1236,8 @@ private:
 
     BufferingPolicy m_bufferingPolicy { BufferingPolicy::Default };
 
+    std::optional<bool> m_implicitlyMuted;
+
     bool m_firstTimePlaying : 1;
     bool m_playing : 1;
     bool m_isWaitingUntilMediaCanStart : 1;
@@ -1241,7 +1247,6 @@ private:
     bool m_autoplaying : 1;
     bool m_muted : 1;
     bool m_explicitlyMuted : 1;
-    bool m_initiallyMuted : 1;
     bool m_paused : 1;
     bool m_seeking : 1;
     bool m_buffering : 1;

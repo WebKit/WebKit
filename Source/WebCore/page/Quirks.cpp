@@ -1880,6 +1880,24 @@ bool Quirks::shouldHideCoarsePointerCharacteristics() const
     return false;
 }
 
+// hulu.com rdar://126096361
+bool Quirks::implicitMuteWhenVolumeSetToZero() const
+{
+#if HAVE(MEDIA_VOLUME_PER_ELEMENT)
+    if (!needsQuirks())
+        return false;
+
+    if (!m_implicitMuteWhenVolumeSetToZero) {
+        auto domain = RegistrableDomain(m_document->topDocument().url()).string();
+        m_implicitMuteWhenVolumeSetToZero = domain == "hulu.com"_s || domain.endsWith(".hulu.com"_s);
+    }
+
+    return *m_implicitMuteWhenVolumeSetToZero;
+#else
+    return false;
+#endif
+}
+
 #if ENABLE(TOUCH_EVENTS)
 
 bool Quirks::shouldOmitTouchEventDOMAttributesForDesktopWebsite(const URL& requestURL)

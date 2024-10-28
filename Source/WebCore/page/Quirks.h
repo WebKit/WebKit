@@ -210,6 +210,8 @@ public:
 
     bool shouldHideCoarsePointerCharacteristics() const;
 
+    bool implicitMuteWhenVolumeSetToZero() const;
+
 private:
     bool needsQuirks() const;
     bool isDomain(const String&) const;
@@ -282,6 +284,7 @@ private:
     mutable std::optional<bool> m_needsRelaxedCorsMixedContentCheckQuirk;
     mutable std::optional<bool> m_needsScrollbarWidthThinDisabledQuirk;
     mutable std::optional<bool> m_needsPrimeVideoUserSelectNoneQuirk;
+    mutable std::optional<bool> m_implicitMuteWhenVolumeSetToZero;
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
 };
