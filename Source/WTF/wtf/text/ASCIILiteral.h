@@ -36,6 +36,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/SuperFastHash.h>
 
+#if USE(CF)
+typedef const struct __CFString * CFStringRef;
+#endif
+
 OBJC_CLASS NSString;
 
 namespace WTF {
@@ -78,6 +82,10 @@ public:
 
     static ASCIILiteral deletedValue();
     bool isDeletedValue() const { return characters() == reinterpret_cast<char*>(-1); }
+
+#if USE(CF)
+    WTF_EXPORT_PRIVATE RetainPtr<CFStringRef> createCFString() const;
+#endif
 
 private:
     constexpr explicit ASCIILiteral(std::span<const char> spanWithNullTerminator)

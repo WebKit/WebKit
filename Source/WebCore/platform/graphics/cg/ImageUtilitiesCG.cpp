@@ -184,16 +184,11 @@ static RefPtr<NativeImage> createNativeImageFromData(std::span<const uint8_t> da
     return NativeImage::create(WTFMove(image));
 }
 
-static RetainPtr<CFStringRef> cfString(ASCIILiteral string)
-{
-    return adoptCF(CFStringCreateWithCStringNoCopy(kCFAllocatorDefault, string.characters(), kCFStringEncodingASCII, kCFAllocatorNull));
-}
-
 static RefPtr<SharedBuffer> expandNativeImageToData(NativeImage& image, ASCIILiteral uti, std::span<const unsigned> lengths)
 {
     RetainPtr colorSpace = adoptCF(CGColorSpaceCreateWithName(kCGColorSpaceSRGB));
     RetainPtr destinationData = adoptCF(CFDataCreateMutable(0, 0));
-    RetainPtr cfUTI = cfString(uti);
+    RetainPtr cfUTI = uti.createCFString();
     RetainPtr destination = adoptCF(CGImageDestinationCreateWithData(destinationData.get(), cfUTI.get(), lengths.size(), nullptr));
     for (auto length : lengths) {
         RetainPtr context = adoptCF(CGBitmapContextCreate(nullptr, length, length, 8, length * 4, colorSpace.get(), kCGImageAlphaPremultipliedLast));
