@@ -1680,7 +1680,7 @@ void RenderText::secureText(UChar maskingCharacter)
         }
     }
 
-    UChar* characters;
+    std::span<UChar> characters;
     m_text = String::createUninitialized(length, characters);
 
     for (unsigned i = 0; i < length; ++i)

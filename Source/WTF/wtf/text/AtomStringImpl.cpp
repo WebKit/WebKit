@@ -143,10 +143,10 @@ struct HashedUTF8CharactersTranslator {
 
     static void translate(AtomStringTable::StringEntry& location, const HashedUTF8Characters& characters, unsigned hash)
     {
-        UChar* target;
+        std::span<UChar> target;
         auto newString = StringImpl::createUninitialized(characters.length.lengthUTF16, target);
 
-        auto result = Unicode::convert(characters.characters, { target, characters.length.lengthUTF16 });
+        auto result = Unicode::convert(characters.characters, target);
         RELEASE_ASSERT(result.code == Unicode::ConversionResultCode::Success);
 
         if (result.isAllASCII)

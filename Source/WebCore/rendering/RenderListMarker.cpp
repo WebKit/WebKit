@@ -111,10 +111,10 @@ static String reversed(StringView string)
     auto length = string.length();
     if (length <= 1)
         return string.toString();
-    UChar* characters;
+    std::span<UChar> characters;
     auto result = String::createUninitialized(length, characters);
     for (unsigned i = 0; i < length; ++i)
-        *characters++ = string[length - i - 1];
+        characters[i] = string[length - i - 1];
     return result;
 }
 

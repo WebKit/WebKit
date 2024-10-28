@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/AdaptiveStringSearcher.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
@@ -275,10 +276,11 @@ String convertASCIICase(std::span<const CharacterType> input)
     if (!input)
         return { };
 
-    CharacterType* characters;
+    std::span<CharacterType> characters;
     auto result = String::createUninitialized(input.size(), characters);
+    size_t i = 0;
     for (auto character : input)
-        *characters++ = type == ASCIICase::Lower ? toASCIILower(character) : toASCIIUpper(character);
+        characters[i++] = type == ASCIICase::Lower ? toASCIILower(character) : toASCIIUpper(character);
     return result;
 }
 
@@ -359,11 +361,11 @@ StringViewWithUnderlyingString normalizedNFC(StringView string)
     unsigned normalizedLength = unorm2_normalize(normalizer, span.data(), span.size(), nullptr, 0, &status);
     ASSERT(needsToGrowToProduceBuffer(status));
 
-    UChar* characters;
+    std::span<UChar> characters;
     String result = String::createUninitialized(normalizedLength, characters);
 
     status = U_ZERO_ERROR;
-    unorm2_normalize(normalizer, span.data(), span.size(), characters, normalizedLength, &status);
+    unorm2_normalize(normalizer, span.data(), span.size(), characters.data(), characters.size(), &status);
     ASSERT(U_SUCCESS(status));
 
     StringView view { result };
@@ -465,9 +467,9 @@ template<typename CharacterType> static String makeStringBySimplifyingNewLinesSl
     unsigned length = string.length();
     unsigned resultLength = firstCarriageReturn;
     auto characters = string.span<CharacterType>();
-    CharacterType* resultCharacters;
+    std::span<CharacterType> resultCharacters;
     auto result = String::createUninitialized(length, resultCharacters);
-    memcpy(resultCharacters, characters.data(), firstCarriageReturn * sizeof(CharacterType));
+    memcpySpan(resultCharacters, characters.first(firstCarriageReturn));
     for (unsigned i = firstCarriageReturn; i < length; ++i) {
         if (characters[i] != '\r')
             resultCharacters[resultLength++] = characters[i];

@@ -449,9 +449,9 @@ CString String::utf8(ConversionMode mode) const
 
 String String::make8Bit(std::span<const UChar> source)
 {
-    LChar* destination;
+    std::span<LChar> destination;
     String result = String::createUninitialized(source.size(), destination);
-    StringImpl::copyCharacters(destination, source);
+    StringImpl::copyCharacters(destination.data(), source);
     return result;
 }
 
@@ -459,9 +459,9 @@ void String::convertTo16Bit()
 {
     if (isNull() || !is8Bit())
         return;
-    UChar* destination;
+    std::span<UChar> destination;
     auto convertedString = String::createUninitialized(length(), destination);
-    StringImpl::copyCharacters(destination, span8());
+    StringImpl::copyCharacters(destination.data(), span8());
     *this = WTFMove(convertedString);
 }
 

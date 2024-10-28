@@ -114,9 +114,9 @@ static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t 
     if (!decoder.bufferIsLargeEnoughToContain<CharacterType>(length))
         return std::nullopt;
 
-    CharacterType* buffer;
+    std::span<CharacterType> buffer;
     String string = String::createUninitialized(length, buffer);
-    if (!decoder.decodeFixedLengthData({ reinterpret_cast<uint8_t*>(buffer), length * sizeof(CharacterType) }))
+    if (!decoder.decodeFixedLengthData(spanReinterpretCast<uint8_t>(buffer)))
         return std::nullopt;
     
     return string;

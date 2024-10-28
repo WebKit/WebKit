@@ -59,7 +59,7 @@ public:
         return bufferIsLargeEnoughToContainBytes(numElements * sizeof(T));
     }
 
-    WARN_UNUSED_RETURN bool decodeFixedLengthData(uint8_t* data, size_t);
+    WARN_UNUSED_RETURN bool decodeFixedLengthData(std::span<uint8_t> data);
     std::span<const uint8_t> decodeFixedLengthReference(size_t);
 
 private:

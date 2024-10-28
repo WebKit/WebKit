@@ -99,7 +99,7 @@ void TextCodecLatin1::registerCodecs(TextCodecRegistrar registrar)
 
 String TextCodecLatin1::decode(std::span<const uint8_t> bytes, bool, bool, bool& sawException)
 {
-    LChar* characters;
+    std::span<LChar> characters;
     if (bytes.empty())
         return emptyString();
     if (UNLIKELY(bytes.size() > std::numeric_limits<unsigned>::max())) {
@@ -112,7 +112,7 @@ String TextCodecLatin1::decode(std::span<const uint8_t> bytes, bool, bool, bool&
     const uint8_t* source = bytes.data();
     const uint8_t* end = bytes.data() + bytes.size();
     const uint8_t* alignedEnd = WTF::alignToMachineWord(end);
-    LChar* destination = characters;
+    auto destination = characters;
 
     while (source < end) {
         if (isASCII(*source)) {
@@ -124,9 +124,9 @@ String TextCodecLatin1::decode(std::span<const uint8_t> bytes, bool, bool, bool&
                     if (!WTF::containsOnlyASCII<LChar>(chunk))
                         goto useLookupTable;
 
-                    copyASCIIMachineWord(destination, source);
+                    copyASCIIMachineWord(destination.data(), source);
                     source += sizeof(WTF::MachineWord);
-                    destination += sizeof(WTF::MachineWord);
+                    destination = destination.subspan(sizeof(WTF::MachineWord));
                 }
 
                 if (source == end)
@@ -136,38 +136,40 @@ String TextCodecLatin1::decode(std::span<const uint8_t> bytes, bool, bool, bool&
                 if (!isASCII(*source))
                     goto useLookupTable;
             }
-            *destination = *source;
+            destination[0] = *source;
         } else {
 useLookupTable:
             if (!isLatin1(latin1ConversionTable[*source]))
                 goto upConvertTo16Bit;
 
-            *destination = latin1ConversionTable[*source];
+            destination[0] = latin1ConversionTable[*source];
         }
 
         ++source;
-        ++destination;
+        destination = destination.subspan(1);
     }
 
     return result;
     
 upConvertTo16Bit:
-    UChar* characters16;
+    std::span<UChar> characters16;
     String result16 = String::createUninitialized(bytes.size(), characters16);
 
-    UChar* destination16 = characters16;
+    auto destination16 = characters16;
 
     // Zero extend and copy already processed 8 bit data
-    LChar* ptr8 = characters;
-    LChar* endPtr8 = destination;
+    LChar* ptr8 = characters.data();
+    LChar* endPtr8 = destination.data();
 
-    while (ptr8 < endPtr8)
-        *destination16++ = *ptr8++;
+    while (ptr8 < endPtr8) {
+        destination16[0] = *ptr8++;
+        destination16 = destination16.subspan(1);
+    }
 
     // Handle the character that triggered the 16 bit path
-    *destination16 = latin1ConversionTable[*source];
+    destination16[0] = latin1ConversionTable[*source];
     ++source;
-    ++destination16;
+    destination16 = destination16.subspan(1);
 
     while (source < end) {
         if (isASCII(*source)) {
@@ -179,9 +181,9 @@ upConvertTo16Bit:
                     if (!WTF::containsOnlyASCII<LChar>(chunk))
                         goto useLookupTable16;
                     
-                    copyASCIIMachineWord(destination16, source);
+                    copyASCIIMachineWord(destination16.data(), source);
                     source += sizeof(WTF::MachineWord);
-                    destination16 += sizeof(WTF::MachineWord);
+                    destination16 = destination16.subspan(sizeof(WTF::MachineWord));
                 }
                 
                 if (source == end)
@@ -191,14 +193,14 @@ upConvertTo16Bit:
                 if (!isASCII(*source))
                     goto useLookupTable16;
             }
-            *destination16 = *source;
+            destination16[0] = *source;
         } else {
 useLookupTable16:
-            *destination16 = latin1ConversionTable[*source];
+            destination16[0] = latin1ConversionTable[*source];
         }
         
         ++source;
-        ++destination16;
+        destination16 = destination16.subspan(1);
     }
     
     return result16;

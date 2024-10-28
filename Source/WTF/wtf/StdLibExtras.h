@@ -765,7 +765,6 @@ template<typename T, typename U, std::size_t Extent>
 constexpr std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (sizeof(U) * Extent) / sizeof(T)> spanReinterpretCast(std::span<U, Extent> span)
 {
     static_assert(std::is_const_v<T> || (!std::is_const_v<T> && !std::is_const_v<U>), "spanReinterpretCast will not remove constness from source");
-    static_assert(!std::is_same_v<std::remove_const_t<T>, std::remove_const_t<U>>, "Unnecessary call to spanReinterpretCast");
 
     if constexpr (Extent == std::dynamic_extent) {
         if constexpr (sizeof(U) < sizeof(T) || sizeof(U) % sizeof(T))
