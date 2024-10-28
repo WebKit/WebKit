@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,6 +48,7 @@ inline DeferredWorkTimer::TicketData::TicketData(WorkType type, JSGlobalObject* 
     , m_scriptExecutionOwner(scriptExecutionOwner)
     , m_globalObject(globalObject)
 {
+    ASSERT_WITH_MESSAGE(!m_dependencies.isEmpty(), "dependencies shouldn't be empty since it should contain the target");
     globalObject->addWeakTicket(this);
 }
 
@@ -65,7 +66,6 @@ inline VM& DeferredWorkTimer::TicketData::vm()
 inline void DeferredWorkTimer::TicketData::cancel()
 {
     m_scriptExecutionOwner.clear();
-    m_dependencies.clear();
     m_globalObject.clear();
 }
 

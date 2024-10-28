@@ -61,19 +61,19 @@ public:
         WorkType type() const { return m_type; }
         inline VM& vm();
         JSObject* target();
-        inline bool hasValidTarget() const;
-        inline FixedVector<Weak<JSCell>>& dependencies();
+        inline const FixedVector<Weak<JSCell>>& dependencies(bool mayBeCancelled = false);
         inline JSObject* scriptExecutionOwner();
         inline JSGlobalObject* globalObject();
 
         inline void cancel();
-        bool isCancelled() const { return !m_scriptExecutionOwner.get() || !m_globalObject.get() || !hasValidTarget(); }
+        bool isCancelled() const { return !m_scriptExecutionOwner.get() || !m_globalObject.get(); }
 
     private:
         inline TicketData(WorkType, JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
 
         WorkType m_type;
-        FixedVector<Weak<JSCell>> m_dependencies;
+        // This is const since we don't want to take the lock when visiting TicketData.
+        const FixedVector<Weak<JSCell>> m_dependencies;
         Weak<JSObject> m_scriptExecutionOwner;
         Weak<JSGlobalObject> m_globalObject;
     };
@@ -121,14 +121,9 @@ inline JSObject* DeferredWorkTimer::TicketData::target()
     return jsCast<JSObject*>(m_dependencies.last().get());
 }
 
-inline bool DeferredWorkTimer::TicketData::hasValidTarget() const
+inline const FixedVector<Weak<JSCell>>& DeferredWorkTimer::TicketData::dependencies(bool mayBeCancelled)
 {
-    return !m_dependencies.isEmpty() && !!m_dependencies.last().get();
-}
-
-inline FixedVector<Weak<JSCell>>& DeferredWorkTimer::TicketData::dependencies()
-{
-    ASSERT(!isCancelled());
+    ASSERT_UNUSED(mayBeCancelled, mayBeCancelled || !isCancelled());
     return m_dependencies;
 }
 
