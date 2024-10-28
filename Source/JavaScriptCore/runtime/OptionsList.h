@@ -426,6 +426,8 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, validateDFGClobberize, false, Normal, "Emits code in the DFG/FTL to validate the Clobberize phase"_s) \
     v(Bool, validateBoundsCheckElimination, false, Normal, "Emits code in the DFG/FTL to validate bounds check elimination"_s) \
     \
+    v(Bool, validateVMEntryCalleeSaves, false, Configurable, "Causes vmEntryToJavaScript to validate VMEntry callee saves are properly restored"_s) \
+    \
     v(Bool, useExecutableAllocationFuzz, false, Normal, nullptr) \
     v(Unsigned, fireExecutableAllocationFuzzAt, 0, Normal, nullptr) \
     v(Unsigned, fireExecutableAllocationFuzzAtOrAfter, 0, Normal, nullptr) \

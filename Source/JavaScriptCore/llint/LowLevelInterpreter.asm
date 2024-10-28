@@ -324,6 +324,12 @@ const GigacageConfig = _g_config + constexpr Gigacage::startOffsetOfGigacageConf
 const JSCConfigOffset = constexpr WTF::offsetOfWTFConfigExtension
 const JSCConfigGateMapOffset = JSCConfigOffset + constexpr JSC::offsetOfJSCConfigGateMap
 
+
+macro loadBoolJSCOption(name, reg)
+    leap _g_config, reg
+    loadb JSCConfigOffset + JSC::Config::options + OptionsStorage::%name%[reg], reg
+end
+
 macro nextInstruction()
     loadb [PB, PC, 1], t0
     leap _g_opcodeMap, t1
@@ -852,6 +858,45 @@ macro restoreCalleeSavesUsedByLLInt()
         loadp -24[cfr], csr7
         loadp -16[cfr], csr8
         loadp -8[cfr], csr9
+    end
+end
+
+macro forEachGPCalleeSave(func)
+    if ARM64 or ARM64E
+        func(csr0, 0)
+        func(csr1, 1)
+        func(csr2, 2)
+        func(csr3, 3)
+        func(csr4, 4)
+        func(csr5, 5)
+        func(csr6, 6)
+        func(csr7, 7)
+        func(csr8, 8)
+        func(csr9, 9)
+    elsif X86_64
+        func(csr0, 0)
+        func(csr1, 1)
+        func(csr2, 2)
+        func(csr3, 3)
+        func(csr4, 4)
+    else
+        error
+    end
+end
+
+macro forEachFPCalleeSave(func)
+    if ARM64 or ARM64E
+        func(csfr0, 0)
+        func(csfr1, 1)
+        func(csfr2, 2)
+        func(csfr3, 3)
+        func(csfr4, 4)
+        func(csfr5, 5)
+        func(csfr6, 6)
+        func(csfr7, 7)
+    elsif X86_64
+    else
+        error
     end
 end
 
@@ -1603,16 +1648,63 @@ end
 # EncodedJSValue vmEntryToJavaScript(void* code, VM* vm, ProtoCallFrame* protoFrame)
 # EncodedJSValue vmEntryToNativeFunction(void* code, VM* vm, ProtoCallFrame* protoFrame)
 
+macro frameForCalleeSaveVerification()
+    if ARM64 or ARM64E
+        const scratch = t9
+    else
+        const scratch = t5
+    end
+
+    # Don't do this always since it screws up btjs.
+    loadBoolJSCOption(validateVMEntryCalleeSaves, scratch)
+    btbz scratch, .continue
+
+    functionPrologue()
+    # This VMEntryRecord is used to record what our callee saves were originally so we can check we didn't screw up somewhere.
+    vmEntryRecord(cfr, sp)
+    checkStackPointerAlignment(scratch, 0xbad0dc02)
+    move cfr, scratch
+    copyCalleeSavesToEntryFrameCalleeSavesBuffer(scratch)
+
+    call .continue
+
+    vmEntryRecord(cfr, scratch)
+    leap VMEntryRecord::calleeSaveRegistersBuffer[scratch], scratch
+    forEachGPCalleeSave(macro (reg, index)
+        bqeq index * MachineRegisterSize[scratch], reg, .ok
+        break
+    .ok:
+    end)
+    forEachFPCalleeSave(macro (reg, index)
+        fd2q reg, t3
+        bqeq (index + (constexpr GPRInfo::numberOfCalleeSaveRegisters)) * MachineRegisterSize[scratch], t3, .ok
+        break
+    .ok:
+    end)
+
+    move cfr, sp
+    functionEpilogue()
+    ret
+.continue:
+end
+
 if C_LOOP
     _llint_vm_entry_to_javascript:
 else
     global _vmEntryToJavaScript
     _vmEntryToJavaScript:
+
+    if ASSERT_ENABLED and (ARM64 or ARM64E or X86_64)
+        frameForCalleeSaveVerification()
+    end
 end
     doVMEntry(makeJavaScriptCall)
 
 if (ARM64E or ARM64) and ADDRESS64
     macro vmEntryToJavaScriptSetup()
+        if ASSERT_ENABLED
+            frameForCalleeSaveVerification()
+        end
         functionPrologue()
         pushCalleeSaves()
         vmEntryRecord(cfr, sp)
@@ -1626,6 +1718,9 @@ if (ARM64E or ARM64) and ADDRESS64
     global _vmEntryToJavaScriptWith0Arguments
     _vmEntryToJavaScriptWith0Arguments:
         # entry must be a0
+        if ASSERT_ENABLED
+            frameForCalleeSaveVerification()
+        end
         vmEntryToJavaScriptSetup()
         move 1, t8 # argumentCountIncludingThis
         subp ((CallFrameHeaderSize + 1 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask), sp
@@ -1640,6 +1735,9 @@ if (ARM64E or ARM64) and ADDRESS64
     global _vmEntryToJavaScriptWith1Arguments
     _vmEntryToJavaScriptWith1Arguments:
         # entry must be a0
+        if ASSERT_ENABLED
+            frameForCalleeSaveVerification()
+        end
         vmEntryToJavaScriptSetup()
         move 2, t8 # argumentCountIncludingThis
         subp ((CallFrameHeaderSize + 2 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask), sp
@@ -1655,6 +1753,9 @@ if (ARM64E or ARM64) and ADDRESS64
     global _vmEntryToJavaScriptWith2Arguments
     _vmEntryToJavaScriptWith2Arguments:
         # entry must be a0
+        if ASSERT_ENABLED
+            frameForCalleeSaveVerification()
+        end
         vmEntryToJavaScriptSetup()
         move 3, t8 # argumentCountIncludingThis
         subp ((CallFrameHeaderSize + 3 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask), sp
@@ -1670,6 +1771,9 @@ if (ARM64E or ARM64) and ADDRESS64
     global _vmEntryToJavaScriptWith3Arguments
     _vmEntryToJavaScriptWith3Arguments:
         # entry must be a0
+        if ASSERT_ENABLED
+            frameForCalleeSaveVerification()
+        end
         vmEntryToJavaScriptSetup()
         move 4, t8 # argumentCountIncludingThis
         subp ((CallFrameHeaderSize + 4 * SlotSize + StackAlignment - 1) & ~StackAlignmentMask), sp

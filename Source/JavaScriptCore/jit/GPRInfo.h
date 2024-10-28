@@ -343,6 +343,7 @@ public:
     typedef GPRReg RegisterType;
     static constexpr unsigned numberOfRegisters = 10;
     static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
+    static constexpr unsigned numberOfCalleeSaveRegisters = 5;
 
     // These registers match the baseline JIT.
     static constexpr GPRReg callFrameRegister = X86Registers::ebp;
@@ -571,6 +572,7 @@ public:
     typedef GPRReg RegisterType;
     static constexpr unsigned numberOfRegisters = 16;
     static constexpr unsigned numberOfArgumentRegisters = NUMBER_OF_ARGUMENT_REGISTERS;
+    static constexpr unsigned numberOfCalleeSaveRegisters = 10;
 
     // These registers match the baseline JIT.
     static constexpr GPRReg callFrameRegister = ARM64Registers::fp;

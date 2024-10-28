@@ -383,6 +383,9 @@ bool Options::isAvailable(Options::ID id, Options::Availability availability)
         return !!LLINT_TRACING;
     if (id == traceWasmLLIntExecutionID)
         return !!LLINT_TRACING;
+
+    if (id == validateVMEntryCalleeSavesID)
+        return !!ASSERT_ENABLED;
     return false;
 }
 
