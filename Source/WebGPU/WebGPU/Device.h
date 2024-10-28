@@ -130,7 +130,7 @@ public:
     void generateAnOutOfMemoryError(String&& message);
     void generateAnInternalError(String&& message);
 
-    RefPtr<Instance> instance() const { return Ref { m_adapter }->instance(); }
+    RefPtr<Instance> instance() const { return m_instance.get(); }
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
 
     uint32_t maxBuffersPlusVertexBuffersForVertexStage() const
@@ -253,6 +253,7 @@ private:
     id<MTLRenderPipelineState> m_copyIndexedIndirectArgsPSOMS { nil };
 
     const Ref<Adapter> m_adapter;
+    const ThreadSafeWeakPtr<Instance> m_instance;
 #if HAVE(COREVIDEO_METAL_SUPPORT)
     RetainPtr<CVMetalTextureCacheRef> m_coreVideoTextureCache;
 #endif
