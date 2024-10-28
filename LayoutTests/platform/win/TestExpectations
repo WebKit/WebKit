@@ -4216,6 +4216,10 @@ imported/w3c/web-platform-tests/permissions/all-permissions.html [ Failure ]
 loader/go-back-cached-main-resource.html [ Failure ]
 streams/pipe-to.html [ Failure ]
 
+# Failing after ICU 76.1. Needs to rebaseline.
+fast/url/idna2003.html [ Failure ]
+fast/url/idna2008.html [ Failure ]
+
 fast/canvas/canvas-composite-text-alpha.html [ Failure Pass ]
 
 animations/stacking-context-not-fill-forwards.html [ ImageOnlyFailure ]
