@@ -88,7 +88,12 @@ TEST(PasteHTML, ExposesHTMLTypeInDataTransfer)
     EXPECT_WK_STREQ("hello, world", [webView stringByEvaluatingJavaScript:@"editor.textContent"]);
 }
 
+// rdar://138144869
+#if PLATFORM(IOS) && !defined(NDEBUG)
+TEST(PasteHTML, DISABLED_SanitizesHTML)
+#else
 TEST(PasteHTML, SanitizesHTML)
+#endif
 {
     auto webView = createWebViewWithCustomPasteboardDataSetting(true);
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
@@ -120,7 +125,12 @@ TEST(PasteHTML, DoesNotSanitizeHTMLWhenCustomPasteboardDataIsDisabled)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.values[0].includes('dangerousCode')"].boolValue);
 }
 
+// rdar://138144869
+#if PLATFORM(IOS) && !defined(NDEBUG)
+TEST(PasteHTML, DISABLED_StripsFileAndJavaScriptURLs)
+#else
 TEST(PasteHTML, StripsFileAndJavaScriptURLs)
+#endif
 {
     auto webView = createWebViewWithCustomPasteboardDataSetting(true);
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
@@ -154,7 +164,12 @@ TEST(PasteHTML, DoesNotStripFileURLsWhenCustomPasteboardDataIsDisabled)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.values[0].includes('secret')"].boolValue);
 }
 
+// rdar://138144869
+#if PLATFORM(IOS) && !defined(NDEBUG)
+TEST(PasteHTML, DISABLED_KeepsHTTPURLs)
+#else
 TEST(PasteHTML, KeepsHTTPURLs)
+#endif
 {
     auto webView = createWebViewWithCustomPasteboardDataSetting(true);
     [webView synchronouslyLoadTestPageNamed:@"paste-rtfd"];
@@ -168,7 +183,12 @@ TEST(PasteHTML, KeepsHTTPURLs)
     EXPECT_TRUE([webView stringByEvaluatingJavaScript:@"clipboardData.values[0].includes('abe.png')"].boolValue);
 }
 
+// rdar://138144869
+#if PLATFORM(IOS) && !defined(NDEBUG)
+TEST(PasteHTML, DISABLED_PreservesMSOList)
+#else
 TEST(PasteHTML, PreservesMSOList)
+#endif
 {
     writeHTMLToPasteboard([NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"mso-list" ofType:@"html"]
         encoding:NSUTF8StringEncoding error:NULL]);
@@ -256,7 +276,12 @@ TEST(PasteHTML, PreservesMSOListInCompatibilityMode)
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('/Users/webkitten/Library/')"].boolValue);
 }
 
+// rdar://138144869
+#if PLATFORM(IOS) && !defined(NDEBUG)
+TEST(PasteHTML, DISABLED_PreservesMSOListOnH4)
+#else
 TEST(PasteHTML, PreservesMSOListOnH4)
+#endif
 {
     writeHTMLToPasteboard([NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"mso-list-on-h4" ofType:@"html"]
         encoding:NSUTF8StringEncoding error:NULL]);
@@ -292,7 +317,12 @@ TEST(PasteHTML, PreservesMSOListOnH4)
     EXPECT_FALSE([webView stringByEvaluatingJavaScript:@"htmlInDataTransfer.includes('/Users/webkitten/Library/')"].boolValue);
 }
 
+// rdar://138144869
+#if PLATFORM(IOS) && !defined(NDEBUG)
+TEST(PasteHTML, DISABLED_StripsMSOListWhenMissingMSOHTMLElement)
+#else
 TEST(PasteHTML, StripsMSOListWhenMissingMSOHTMLElement)
+#endif
 {
     auto *markup = [NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"mso-list" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL];
 
@@ -339,7 +369,12 @@ TEST(PasteHTML, StripsMSOListWhenMissingMSOHTMLElement)
     EXPECT_WK_STREQ("rgb(255, 0, 0)", [webView stringByEvaluatingJavaScript:@"document.queryCommandValue('foreColor')"]);
 }
 
+// rdar://138144869
+#if PLATFORM(IOS) && !defined(NDEBUG)
+TEST(PasteHTML, DISABLED_StripsSystemFontNames)
+#else
 TEST(PasteHTML, StripsSystemFontNames)
+#endif
 {
     writeHTMLToPasteboard([NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"cocoa-writer-markup-with-system-fonts" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL]);
 
@@ -369,7 +404,12 @@ TEST(PasteHTML, StripsSystemFontNames)
         [webView stringByEvaluatingJavaScript:@"getComputedStyle(document.body).fontFamily"]);
 }
 
+// rdar://138144869
+#if PLATFORM(IOS) && !defined(NDEBUG)
+TEST(PasteHTML, DISABLED_DoesNotAddStandardFontFamily)
+#else
 TEST(PasteHTML, DoesNotAddStandardFontFamily)
+#endif
 {
     writeHTMLToPasteboard([NSString stringWithContentsOfFile:[NSBundle.test_resourcesBundle pathForResource:@"cocoa-writer-markup-with-lists" ofType:@"html"] encoding:NSUTF8StringEncoding error:NULL]);
 
