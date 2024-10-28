@@ -3,17 +3,17 @@ Test ECDH deriveBits operation for corner-case length values.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS deriveBits(..., 0) successfully derived 256 bits for a P-256 curve
+PASS deriveBits(..., 0) successfully derived 0 bits for a P-256 curve
 PASS deriveBits(..., 8) successfully derived 8 bits for a P-256 curve
 PASS deriveBits(..., 256) successfully derived 256 bits for a P-256 curve
 PASS Bit derivations for EC P-256 with minimum and maximum lengths succeeded
 PASS deriveBits(P256, 256 + 8) rejected promise  with OperationError: The operation failed for an operation-specific reason.
-PASS deriveBits(..., 0) successfully derived 384 bits for a P-384 curve
+PASS deriveBits(..., 0) successfully derived 0 bits for a P-384 curve
 PASS deriveBits(..., 8) successfully derived 8 bits for a P-384 curve
 PASS deriveBits(..., 384) successfully derived 384 bits for a P-384 curve
 PASS Bit derivations for EC P-384 with minimum and maximum lengths succeeded
 PASS deriveBits(P384, 384 + 8) rejected promise  with OperationError: The operation failed for an operation-specific reason.
-PASS deriveBits(..., 0) successfully derived 528 bits for a P-521 curve
+PASS deriveBits(..., 0) successfully derived 0 bits for a P-521 curve
 PASS deriveBits(..., 8) successfully derived 8 bits for a P-521 curve
 PASS deriveBits(..., 528) successfully derived 528 bits for a P-521 curve
 PASS Bit derivations for EC P-521 with minimum and maximum lengths succeeded
