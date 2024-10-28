@@ -4170,8 +4170,14 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthType, Length lo
             logicalWidth = Length(0, LengthType::Fixed);
     } else if (widthType == SizeType::MainOrPreferredSize && logicalWidth.isAuto() && shouldComputeLogicalWidthFromAspectRatio())
         logicalWidth = Length(computeLogicalWidthFromAspectRatio(), LengthType::Fixed);
-    else if (logicalWidth.isIntrinsic())
-        logicalWidth = Length(computeIntrinsicLogicalWidthUsing(logicalWidth, containerLogicalWidth, bordersPlusPadding) - bordersPlusPadding, LengthType::Fixed);
+    else if (logicalWidth.isIntrinsic()) {
+        auto availableSpace = [&] {
+            auto logicalLeftValue = !logicalLeft.isAuto() ? std::make_optional(valueForLength(logicalLeft, containerLogicalWidth)) : std::nullopt;
+            auto logicalRightValue = !logicalRight.isAuto() ? std::make_optional(valueForLength(logicalRight, containerLogicalWidth)) : std::nullopt;
+            return containerLogicalWidth - (logicalLeftValue.value_or(0_lu) + logicalRightValue.value_or(0_lu));
+        };
+        logicalWidth = Length(computeIntrinsicLogicalWidthUsing(logicalWidth, availableSpace(), bordersPlusPadding) - bordersPlusPadding, LengthType::Fixed);
+    }
 
     // 'left' and 'right' cannot both be 'auto' because one would of been
     // converted to the static position already
