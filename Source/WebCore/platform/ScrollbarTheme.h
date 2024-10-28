@@ -41,6 +41,8 @@ class ScrollView;
 class GraphicsLayer;
 #endif
 
+enum OverlaySizeRelevancy : bool { Include, Ignore };
+
 class ScrollbarTheme {
     WTF_MAKE_TZONE_ALLOCATED(ScrollbarTheme);
     WTF_MAKE_NONCOPYABLE(ScrollbarTheme);
@@ -53,7 +55,7 @@ public:
     virtual bool paint(Scrollbar&, GraphicsContext&, const IntRect& /*damageRect*/) { return false; }
     virtual ScrollbarPart hitTest(Scrollbar&, const IntPoint&) { return NoPart; }
     
-    virtual int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) { return 0; }
+    virtual int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded, OverlaySizeRelevancy = OverlaySizeRelevancy::Include) { return 0; }
 
     virtual ScrollbarButtonsPlacement buttonsPlacement() const { return ScrollbarButtonsSingle; }
 

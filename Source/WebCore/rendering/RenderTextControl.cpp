@@ -87,7 +87,7 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
 int RenderTextControl::scrollbarThickness() const
 {
     // FIXME: We should get the size of the scrollbar from the RenderTheme instead.
-    return ScrollbarTheme::theme().scrollbarThickness(this->style().scrollbarWidth());
+    return ScrollbarTheme::theme().scrollbarThickness(this->style().scrollbarWidth(), ScrollbarExpansionState::Expanded, OverlaySizeRelevancy::Ignore);
 }
 
 RenderBox::LogicalExtentComputedValues RenderTextControl::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const

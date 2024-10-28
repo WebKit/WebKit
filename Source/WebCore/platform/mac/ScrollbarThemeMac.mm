@@ -221,10 +221,10 @@ void ScrollbarThemeMac::preferencesChanged()
     usesOverlayScrollbarsChanged();
 }
 
-int ScrollbarThemeMac::scrollbarThickness(ScrollbarWidth scrollbarWidth, ScrollbarExpansionState expansionState)
+int ScrollbarThemeMac::scrollbarThickness(ScrollbarWidth scrollbarWidth, ScrollbarExpansionState expansionState, OverlaySizeRelevancy overlayRelevancy)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    if (scrollbarWidth == ScrollbarWidth::None)
+    if (scrollbarWidth == ScrollbarWidth::None || (usesOverlayScrollbars() && overlayRelevancy == OverlaySizeRelevancy::Ignore))
         return 0;
     NSScrollerImp *scrollerImp = [NSScrollerImp scrollerImpWithStyle:ScrollerStyle::recommendedScrollerStyle() controlSize:nsControlSizeFromScrollbarWidth(scrollbarWidth) horizontal:NO replacingScrollerImp:nil];
     [scrollerImp setExpanded:(expansionState == ScrollbarExpansionState::Expanded)];

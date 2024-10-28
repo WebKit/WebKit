@@ -38,7 +38,7 @@ public:
 
     bool paint(Scrollbar&, GraphicsContext&, const IntRect& damageRect) override;
 
-    int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded) override;
+    int scrollbarThickness(ScrollbarWidth = ScrollbarWidth::Auto, ScrollbarExpansionState = ScrollbarExpansionState::Expanded, OverlaySizeRelevancy = OverlaySizeRelevancy::Include) override;
     
     bool supportsControlTints() const override { return true; }
 
