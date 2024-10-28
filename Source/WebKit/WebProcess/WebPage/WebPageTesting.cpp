@@ -32,6 +32,7 @@
 #include "WebPage.h"
 #include "WebPageTestingMessages.h"
 #include "WebProcess.h"
+#include <WebCore/BackForwardController.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/IntPoint.h>
@@ -132,6 +133,17 @@ void WebPageTesting::resetStateBetweenTests()
         // Force consistent "responsive" behavior for WebPage::eventThrottlingDelay() for testing. Tests can override via internals.
         corePage->setEventThrottlingBehaviorOverride(WebCore::EventThrottlingBehavior::Responsive);
     }
+}
+
+void WebPageTesting::clearCachedBackForwardListCounts(CompletionHandler<void()>&& completionHandler)
+{
+    RefPtr page = m_page->corePage();
+    if (!page)
+        return completionHandler();
+
+    Ref backForwardListProxy = static_cast<WebBackForwardListProxy&>(page->backForward().client());
+    backForwardListProxy->clearCachedListCounts();
+    completionHandler();
 }
 
 } // namespace WebKit

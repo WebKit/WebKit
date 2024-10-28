@@ -146,7 +146,7 @@ public:
     void setCustomUserAgent(JSStringRef);
 
     // Special DOM functions.
-    void clearBackForwardList();
+    void clearBackForwardList(JSContextRef, JSValueRef callback);
     void execCommand(JSStringRef name, JSStringRef showUI, JSStringRef value);
     bool isCommandEnabled(JSStringRef name);
     unsigned windowCount();

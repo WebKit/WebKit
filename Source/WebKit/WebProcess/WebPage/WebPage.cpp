@@ -2571,14 +2571,6 @@ String WebPage::frameTextForTestingIncludingSubframes(bool includeSubframes)
     return m_mainFrame->frameTextForTesting(includeSubframes);
 }
 
-void WebPage::clearHistory()
-{
-    if (!m_page)
-        return;
-
-    static_cast<WebBackForwardListProxy&>(m_page->backForward().client()).clear();
-}
-
 void WebPage::windowScreenDidChange(PlatformDisplayID displayID, std::optional<unsigned> nominalFramesPerSecond)
 {
     m_page->chrome().windowScreenDidChange(displayID, nominalFramesPerSecond);

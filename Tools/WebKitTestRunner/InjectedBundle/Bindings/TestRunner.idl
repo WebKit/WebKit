@@ -107,7 +107,7 @@ interface TestRunner {
     undefined stopLoading();
 
     // Special DOM functions.
-    undefined clearBackForwardList();
+    Promise<undefined> clearBackForwardList();
     undefined execCommand(DOMString name, DOMString showUI, DOMString value);
     boolean isCommandEnabled(DOMString name);
     unsigned long windowCount();

@@ -78,6 +78,9 @@ public:
 #endif
 
     void setTopContentInset(float, CompletionHandler<void()>&&);
+
+    void clearBackForwardList(CompletionHandler<void()>&&);
+
 private:
     explicit WebPageProxyTesting(WebPageProxy&);
 

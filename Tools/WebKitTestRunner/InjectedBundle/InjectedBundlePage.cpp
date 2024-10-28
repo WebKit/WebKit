@@ -350,8 +350,6 @@ InjectedBundlePage::~InjectedBundlePage()
 
 void InjectedBundlePage::prepare()
 {
-    WKBundleClearHistoryForTesting(m_page);
-
     WKBundlePageSetTracksRepaints(m_page, false);
 }
 

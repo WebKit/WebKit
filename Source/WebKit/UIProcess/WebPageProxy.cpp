@@ -11402,11 +11402,6 @@ void WebPageProxy::updateAcceleratedCompositingMode(const LayerTreeContext& laye
         pageClient->updateAcceleratedCompositingMode(layerTreeContext);
 }
 
-void WebPageProxy::backForwardClear()
-{
-    protectedBackForwardList()->clear();
-}
-
 #if ENABLE(GAMEPAD)
 
 void WebPageProxy::gamepadActivity(const Vector<std::optional<GamepadData>>& gamepadDatas, EventMakesGamepadsVisible eventVisibility)

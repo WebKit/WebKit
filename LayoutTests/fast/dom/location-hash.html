@@ -90,11 +90,11 @@
         setTimeout(step, 0);
     }
         
-    function runTests() {
+    async function runTests() {
         if (window.testRunner) {
-            testRunner.clearBackForwardList();
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
+            await testRunner.clearBackForwardList();
         }
         
         state = 0;

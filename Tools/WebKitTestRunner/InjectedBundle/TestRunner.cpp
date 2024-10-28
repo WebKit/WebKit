@@ -484,9 +484,9 @@ unsigned TestRunner::windowCount()
     return InjectedBundle::singleton().pageCount();
 }
 
-void TestRunner::clearBackForwardList()
+void TestRunner::clearBackForwardList(JSContextRef context, JSValueRef callback)
 {
-    WKBundleClearHistoryForTesting(page());
+    postMessageWithAsyncReply(context, "ClearBackForwardList", callback);
 }
 
 void TestRunner::makeWindowObject(JSContextRef context)

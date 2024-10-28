@@ -1,14 +1,6 @@
 <html>
 <head>
 <script>
-
-if (window.testRunner) {
-    if (!sessionStorage.stage)
-        testRunner.clearBackForwardList();
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
-}
-
 function lastPathComponent(url)
 {
     return url.split('/').pop();
@@ -37,8 +29,13 @@ function runThirdStageOfTest()
     alert("Final stage of test loaded");
 }
 
-function runTest()
+async function runTest()
 {
+    testRunner?.dumpAsText();
+    testRunner?.waitUntilDone();
+    if (!sessionStorage.stage)
+        await testRunner?.clearBackForwardList();
+
     alert("LOADED");
     if (!sessionStorage.stage)
         runFirstStageOfTest();

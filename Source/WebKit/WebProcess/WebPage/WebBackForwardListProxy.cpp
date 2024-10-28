@@ -66,7 +66,7 @@ void WebBackForwardListProxy::addItem(FrameIdentifier targetFrameID, Ref<History
         return;
 
     LOG(BackForward, "(Back/Forward) WebProcess pid %i setting item %p for id %s with url %s", getCurrentProcessID(), item.ptr(), item->identifier().toString().utf8().data(), item->urlString().utf8().data());
-    clearCachedListCounts();
+    m_cachedBackForwardListCounts = std::nullopt;
     page->send(Messages::WebPageProxy::BackForwardAddItem(targetFrameID, toFrameState(item.get())));
 }
 
@@ -152,7 +152,7 @@ const WebBackForwardListCounts& WebBackForwardListProxy::cacheListCountsIfNecess
 
 void WebBackForwardListProxy::clearCachedListCounts()
 {
-    m_cachedBackForwardListCounts = std::nullopt;
+    m_cachedBackForwardListCounts = WebBackForwardListCounts { };
 }
 
 void WebBackForwardListProxy::close()
@@ -160,12 +160,6 @@ void WebBackForwardListProxy::close()
     ASSERT(m_page);
     m_page = nullptr;
     m_cachedBackForwardListCounts = WebBackForwardListCounts { };
-}
-
-void WebBackForwardListProxy::clear()
-{
-    m_cachedBackForwardListCounts = WebBackForwardListCounts { }; // Clearing the back/forward list will cause the counts to become 0.
-    m_page->send(Messages::WebPageProxy::BackForwardClear());
 }
 
 } // namespace WebKit

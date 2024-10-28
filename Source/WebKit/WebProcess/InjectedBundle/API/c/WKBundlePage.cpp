@@ -362,11 +362,6 @@ WKStringRef WKBundlePageDumpHistoryForTesting(WKBundlePageRef page, WKStringRef 
     return WebKit::toCopiedAPI(WebKit::toImpl(page)->dumpHistoryForTesting(WebKit::toWTFString(directory)));
 }
 
-void WKBundleClearHistoryForTesting(WKBundlePageRef page)
-{
-    WebKit::toImpl(page)->clearHistory();
-}
-
 WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef pageRef)
 {
     return nullptr;

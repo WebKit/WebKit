@@ -54,6 +54,7 @@ private:
     void setPermissionLevel(const String& origin, bool allowed);
     void isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&&);
     void resetStateBetweenTests();
+    void clearCachedBackForwardListCounts(CompletionHandler<void()>&&);
 
 #if ENABLE(NOTIFICATIONS)
     void clearNotificationPermissionState();

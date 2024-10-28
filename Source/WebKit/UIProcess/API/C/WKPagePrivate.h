@@ -229,6 +229,8 @@ typedef void (*WKPageSetTopContentInsetForTestingFunction)(void* functionContext
 WK_EXPORT void WKPageSetTopContentInsetForTesting(WKPageRef page, float contentInset, void* context, WKPageSetTopContentInsetForTestingFunction callback);
 typedef void (*WKPageSetPageScaleFactorForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageSetPageScaleFactorForTesting(WKPageRef page, float scaleFactor, WKPoint point, void* context, WKPageSetPageScaleFactorForTestingFunction completionHandler);
+typedef void (*WKPageClearBackForwardListForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageClearBackForwardListForTesting(WKPageRef page, void* context, WKPageClearBackForwardListForTestingFunction completionHandler);
 #ifdef __cplusplus
 }
 #endif

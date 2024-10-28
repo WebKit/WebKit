@@ -3346,3 +3346,14 @@ void WKPageSetPageScaleFactorForTesting(WKPageRef pageRef, float scaleFactor, WK
         completionHandler(context);
     });
 }
+
+void WKPageClearBackForwardListForTesting(WKPageRef pageRef, void* context, WKPageClearBackForwardListForTestingFunction completionHandler)
+{
+    RefPtr pageForTesting = toImpl(pageRef)->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler(context);
+
+    pageForTesting->clearBackForwardList([context, completionHandler] {
+        completionHandler(context);
+    });
+}

@@ -708,7 +708,6 @@ public:
     void didSetPageZoomFactor(double);
     void windowScreenDidChange(WebCore::PlatformDisplayID, std::optional<unsigned> nominalFramesPerSecond);
     String dumpHistoryForTesting(const String& directory);
-    void clearHistory();
 
     void accessibilitySettingsDidChange();
 #if PLATFORM(COCOA)

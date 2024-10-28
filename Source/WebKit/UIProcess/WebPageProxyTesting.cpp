@@ -30,6 +30,7 @@
 #include "MessageSenderInlines.h"
 #include "NetworkProcessMessages.h"
 #include "NetworkProcessProxy.h"
+#include "WebBackForwardList.h"
 #include "WebFrameProxy.h"
 #include "WebPageMessages.h"
 #include "WebPageProxy.h"
@@ -219,6 +220,17 @@ void WebPageProxyTesting::resetStateBetweenTests()
 
     protectedPage()->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         webProcess.send(Messages::WebPageTesting::ResetStateBetweenTests(), pageID);
+    });
+}
+
+void WebPageProxyTesting::clearBackForwardList(CompletionHandler<void()>&& completionHandler)
+{
+    Ref page = m_page.get();
+    page->protectedBackForwardList()->clear();
+
+    Ref callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPageTesting::ClearCachedBackForwardListCounts(), [callbackAggregator] { }, pageID);
     });
 }
 

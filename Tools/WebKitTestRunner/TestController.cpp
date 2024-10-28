@@ -1298,7 +1298,9 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
             return false;
         }
     }
-    
+
+    WKPageClearBackForwardListForTesting(TestController::singleton().mainWebView()->page(), nullptr, [](void*) { });
+
     if (resetStage == ResetStage::AfterTest) {
         updateLiveDocumentsAfterTest();
 #if PLATFORM(COCOA)
@@ -2190,6 +2192,9 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
 
     if (WKStringIsEqualToUTF8CString(messageName, "SetTopContentInset"))
         return WKPageSetTopContentInsetForTesting(TestController::singleton().mainWebView()->page(), static_cast<float>(doubleValue(messageBody)), completionHandler.leak(), adoptAndCallCompletionHandler);
+
+    if (WKStringIsEqualToUTF8CString(messageName, "ClearBackForwardList"))
+        return WKPageClearBackForwardListForTesting(TestController::singleton().mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
 
     ASSERT_NOT_REACHED();
 }

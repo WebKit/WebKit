@@ -71,7 +71,6 @@ WK_EXPORT WKFrameHandleRef WKBundleFrameCreateFrameHandle(WKBundleFrameRef);
 
 WK_EXPORT WKBundleBackForwardListRef WKBundlePageGetBackForwardList(WKBundlePageRef page) WK_C_API_DEPRECATED;
 WK_EXPORT WKStringRef WKBundlePageDumpHistoryForTesting(WKBundlePageRef page, WKStringRef directory);
-WK_EXPORT void WKBundleClearHistoryForTesting(WKBundlePageRef page);
 
 WK_EXPORT void WKBundlePageInstallPageOverlay(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay);
 WK_EXPORT void WKBundlePageUninstallPageOverlay(WKBundlePageRef page, WKBundlePageOverlayRef pageOverlay);
