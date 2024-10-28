@@ -447,6 +447,7 @@ static void jsc_class_class_init(JSCClassClass* klass)
 
 GRefPtr<JSCClass> jscClassCreate(JSCContext* context, const char* name, JSCClass* parentClass, JSCClassVTable* vtable, GDestroyNotify destroyFunction)
 {
+    JSC::JSLockHolder locker(toJS(jscContextGetJSContext(context))->vm());
     GRefPtr<JSCClass> jscClass = adoptGRef(JSC_CLASS(g_object_new(JSC_TYPE_CLASS, "context", context, "name", name, "parent", parentClass, nullptr)));
 
     JSCClassPrivate* priv = jscClass->priv;
