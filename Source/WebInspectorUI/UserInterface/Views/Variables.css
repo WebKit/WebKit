@@ -386,7 +386,7 @@ body {
         }
     }
 
-    &:is(.mac-platform.monterey, .mac-platform.big-sur) {
+    &.mac-platform {
         --text-color: hsl(0, 0%, 15%);
         --text-color-transparent: hsla(0, 0%, 15%, 0.4);
 
@@ -401,6 +401,16 @@ body {
         --border-color-secondary: hsl(0, 0%, 91%);
 
         --sorted-header-font-weight: 700;
+
+        --selected-foreground-color: -apple-system-alternate-selected-text;
+        --selected-background-color: -apple-system-selected-content-background;
+        --selected-text-background-color: -apple-system-selected-text-background;
+
+        --breakpoint-color: -apple-system-control-accent;
+        --breakpoint-color-disabled: -apple-system-selected-text-background;
+
+        --glyph-color-active: -apple-system-control-accent;
+        --glyph-color-active-pressed: -apple-system-control-accent;
 
         @media (prefers-color-scheme: dark) {
             --text-color: hsl(0, 0%, 85%);
@@ -424,23 +434,7 @@ body {
         }
     }
 
-    &:is(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) {
+    &:not(.docked) {
         --undocked-title-area-height: calc(27px / var(--zoom-factor));
-    }
-
-    &:is(.mac-platform.catalina):not(.docked) {
-        --undocked-title-area-height: calc(22px / var(--zoom-factor));
-    }
-
-    &.mac-platform {
-        --selected-foreground-color: -apple-system-alternate-selected-text;
-        --selected-background-color: -apple-system-selected-content-background;
-        --selected-text-background-color: -apple-system-selected-text-background;
-
-        --breakpoint-color: -apple-system-control-accent;
-        --breakpoint-color-disabled: -apple-system-selected-text-background;
-
-        --glyph-color-active: -apple-system-control-accent;
-        --glyph-color-active-pressed: -apple-system-control-accent;
     }
 }

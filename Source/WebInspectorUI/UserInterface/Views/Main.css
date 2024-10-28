@@ -115,11 +115,11 @@ body.docked.left #docked-resizer {
     background: var(--undocked-title-area-background);
 }
 
-body:is(.mac-platform.monterey, .mac-platform.big-sur) #undocked-title-area {
+body.mac-platform #undocked-title-area {
     --undocked-title-area-background: white;
 }
 
-body:not(.mac-platform.monterey, .mac-platform.big-sur) #undocked-title-area {
+body:not(.mac-platform) #undocked-title-area {
     --undocked-title-area-background: linear-gradient(to bottom, hsl(0, 0%, 92%), hsl(0, 0%, 87%));
     box-shadow: inset hsla(0, 0%, 100%, 0.5) 0 1px 1px;
 }
@@ -553,19 +553,19 @@ body[dir=rtl] [dir=ltr] .go-to-arrow {
         box-shadow: none;
     }
 
-    body:is(.mac-platform.monterey, .mac-platform.big-sur) #undocked-title-area {
+    body.mac-platform #undocked-title-area {
         --undocked-title-area-background: var(--background-color-content);
     }
 
-    body:not(.mac-platform.monterey, .mac-platform.big-sur) #undocked-title-area {
+    body:not(.mac-platform) #undocked-title-area {
         --undocked-title-area-background: linear-gradient(to bottom, hsl(0, 0%, 26%), hsl(0, 0%, 23%));
     }
 
-    body:is(.mac-platform.monterey, .mac-platform.big-sur).window-inactive #undocked-title-area {
+    body.mac-platform.window-inactive #undocked-title-area {
         --undocked-title-area-background: hsl(0, 0%, 11%);
     }
 
-    body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive #undocked-title-area {
+    body:not(.mac-platform).window-inactive #undocked-title-area {
         --undocked-title-area-background: hsl(0, 0%, 19%);
     }
 

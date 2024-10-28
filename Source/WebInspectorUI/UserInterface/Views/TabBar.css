@@ -41,7 +41,7 @@
     --tab-bar-border-z-index: 10;
 }
 
-body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar {
+body.mac-platform .tab-bar {
     --tab-bar-background: hsl(0, 0%, 90%);
 
     --tab-item-light-border-color: hsl(0, 0%, 85%);
@@ -49,13 +49,12 @@ body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar {
     --tab-item-dark-border-color: hsl(0, 0%, 75%);
 }
 
-body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar {
+body:not(.mac-platform) .tab-bar {
     background-size: 100% 200%;
     --tab-bar-background: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
 }
 
-body:is(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar,
-body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar {
+body.window-inactive .tab-bar {
     --tab-bar-background: hsl(0, 0%, 92%);
 }
 
@@ -145,13 +144,12 @@ body.window-inactive .tab-bar > .navigation-bar > .item.divider {
     --tab-bar-item-height: 100%;
 }
 
-body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item {
+body.mac-platform .tab-bar > .tabs > .item {
     --tab-item-background: var(--tab-bar-background);
 }
 
-body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item {
+body:not(.mac-platform) .tab-bar > .tabs > .item {
     background-size: 100% 200%;
-
     --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 78%), hsl(0, 0%, 72%));
 }
 
@@ -180,24 +178,24 @@ body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item
     padding: 0;
 }
 
-body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item:not(.disabled).selected {
+body.mac-platform .tab-bar > .tabs > .item:not(.disabled).selected {
     --tab-item-background: white;
 }
 
-body:is(.mac-platform.monterey, .mac-platform.big-sur):not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected {
+body.mac-platform:not(.docked) .tab-bar > .tabs > .item:not(.disabled).selected {
     border-top-color: var(--tab-item-background);
 }
 
-body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item:not(.disabled).selected {
+body:not(.mac-platform) .tab-bar > .tabs > .item:not(.disabled).selected {
     --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 87%), hsl(0, 0%, 82%));
     background-size: 100% 100%;
 }
 
-body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
+body.mac-platform .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
     --tab-item-background: hsl(0, 0%, 84%);
 }
 
-body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
+body:not(.mac-platform) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
     --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 67%), hsl(0, 0%, 64%));
 }
 
@@ -210,8 +208,7 @@ body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs:not(.an
     border-inline-end-color: var(--tab-item-dark-border-color);
 }
 
-body:is(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item,
-body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item {
+body.window-inactive .tab-bar > .tabs > .item {
     border-top-color: var(--tab-item-light-border-color);
     border-bottom-color: var(--tab-item-light-border-color);
     border-right-color: var(--tab-item-light-border-color) !important;
@@ -350,40 +347,36 @@ body.window-inactive .tab-bar > .tabs.animating.closing-tab > .item:not(.disable
 }
 
 @media (prefers-color-scheme: dark) {
-    body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar,
-    body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar {
+    body.mac-platform .tab-bar {
         /* FIXME: <https://webkit.org/b/189769> Dark Mode: use semantic color names */
         --tab-item-dark-border-color: var(--tab-item-border-color);
         --tab-item-medium-border-color: var(--tab-item-border-color);
         --tab-item-light-border-color: var(--tab-item-border-color);
         --tab-item-border-color: hsl(0, 0%, 36%);
-    }
-
-    body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar {
         --tab-bar-background: hsl(0, 0%, 8%);
     }
 
-    body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar {
+    body:not(.mac-platform) .tab-bar {
         background-image: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
     }
 
-    body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item {
+    body:not(.mac-platform) .tab-bar > .tabs > .item {
         --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 12%), hsl(0, 0%, 10%));
     }
 
-    body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item:not(.disabled).selected {
+    body.mac-platform .tab-bar > .tabs > .item:not(.disabled).selected {
         --tab-item-background: var(--background-color-content);
     }
 
-    body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs > .item:not(.disabled).selected {
+    body:not(.mac-platform) .tab-bar > .tabs > .item:not(.disabled).selected {
         --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 23%), hsl(0, 0%, 21%));
     }
 
-    body:is(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
+    body.mac-platform .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
         --tab-item-background: hsl(0, 0%, 7%);
     }
 
-    body:not(.mac-platform.monterey, .mac-platform.big-sur) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
+    body:not(.mac-platform) .tab-bar > .tabs:not(.animating) > .item:not(.selected, .disabled):hover {
         --tab-item-background: linear-gradient(to bottom, hsl(0, 0%, 11%), hsl(0, 0%, 9%));
     }
 
@@ -395,25 +388,24 @@ body.window-inactive .tab-bar > .tabs.animating.closing-tab > .item:not(.disable
         opacity: 0.6;
     }
 
-    body:is(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar,
-    body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar {
+    body.window-inactive .tab-bar {
         --tab-bar-background: hsl(0, 0%, 7%);
         --tab-item-border-color: hsl(0, 0%, 34%);
     }
 
-    body:is(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item {
+    body.mac-platform.window-inactive .tab-bar > .tabs > .item {
         --tab-item-background: hsl(0, 0%, 7%);
     }
 
-    body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item {
+    body:not(.mac-platform).window-inactive .tab-bar > .tabs > .item {
         --tab-item-background: hsl(0, 0%, 13%);
     }
 
-    body:is(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
+    body.mac-platform.window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
         --tab-item-background: hsl(0, 0%, 11%);
     }
 
-    body:not(.mac-platform.monterey, .mac-platform.big-sur).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
+    body:not(.mac-platform).window-inactive .tab-bar > .tabs > .item:not(.disabled).selected {
         --tab-item-background: hsl(0, 0%, 19%);
     }
 }
