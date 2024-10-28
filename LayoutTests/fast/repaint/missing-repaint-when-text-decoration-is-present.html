@@ -1,0 +1,24 @@
+<style>
+.container {
+  width: 300px;
+  font-family: Ahem;
+  font-size: 20px;
+}
+
+.decoration {
+  outline: 8px solid blue;
+  text-decoration: underline;
+}
+</style>
+<!-- PASS if outline appears -->
+
+<div class=container>
+  <div id=outline_and_text_decoration>XXX</div>
+</div>
+<script src="resources/text-based-repaint.js"></script>
+<script>
+  repaintTest = function() {
+    outline_and_text_decoration.className = "decoration";
+  };
+runRepaintTest();
+</script>

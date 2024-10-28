@@ -722,7 +722,8 @@ inline bool RenderStyle::changeAffectsVisualOverflow(const RenderStyle& other) c
         // is specified. We can take an early out here.
         if (isAlignedForUnder(*this) || isAlignedForUnder(other))
             return true;
-        return visualOverflowForDecorations(*this) != visualOverflowForDecorations(other);
+        if (visualOverflowForDecorations(*this) != visualOverflowForDecorations(other))
+            return true;
     }
 
     auto hasOutlineInVisualOverflow = this->hasOutlineInVisualOverflow();
