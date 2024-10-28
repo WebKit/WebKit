@@ -49,6 +49,7 @@
 #include "Path.h"
 #include "PlatformLayer.h"
 #include "Timer.h"
+#include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -247,11 +248,14 @@ public:
     using Direction = CanvasDirection;
     void setDirection(Direction);
 
-    class FontProxy final : public FontSelectorClient {
-    public:
-        FontProxy() = default;
+    class FontProxy final : public RefCounted<FontProxy>, public FontSelectorClient {
+
+        public:
+        static RefPtr<FontProxy> create() { return adoptRef(*new FontProxy()); }
         virtual ~FontProxy();
         FontProxy(const FontProxy&);
+
+        FontProxy();
         FontProxy& operator=(const FontProxy&);
 
         bool realized() const { return m_font.fontSelector(); }
@@ -304,7 +308,6 @@ public:
 
         String unparsedFont;
         FontProxy font;
-
         RefPtr<CanvasLayerContextSwitcher> targetSwitcher;
 
         CanvasLineCap canvasLineCap() const;
