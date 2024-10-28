@@ -39,8 +39,11 @@
 #import <AVFoundation/AVCaptureSession_Private.h>
 #import <AVFoundation/AVContentKeySession_Private.h>
 #import <AVFoundation/AVMediaSelectionGroup_Private.h>
+// FIXME: rdar://138773933
+IGNORE_WARNINGS_BEGIN("#warnings")
 #import <AVFoundation/AVOutputContext_Private.h>
 #import <AVFoundation/AVOutputDevice.h>
+IGNORE_WARNINGS_END
 #import <AVFoundation/AVPlayerItemOutput_Private.h>
 #import <AVFoundation/AVPlayerItem_Private.h>
 #import <AVFoundation/AVPlayerLayer_Private.h>
