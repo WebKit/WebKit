@@ -82,8 +82,12 @@ void SystemSettings::updateSettings(const SystemSettings::State& state)
     if (state.enableAnimations)
         m_state.enableAnimations = state.enableAnimations;
 
-    for (const auto& observer : m_observers.values())
-        observer(state);
+    for (auto* context : copyToVector(m_observers.keys())) {
+        const auto it = m_observers.find(context);
+        if (it == m_observers.end())
+            continue;
+        it->value(state);
+    }
 }
 
 std::optional<FontRenderOptions::Hinting> SystemSettings::hintStyle() const
