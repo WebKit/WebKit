@@ -30,8 +30,6 @@
 #include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 
 using namespace WebCore;
@@ -138,9 +136,8 @@ void SharedStringHashStore::resizeTable(unsigned newTableLength)
         RELEASE_ASSERT(currentTableMemory->size() == (Checked<unsigned>(currentTableLength) * sizeof(SharedStringHash)).value());
 
         // Go through the current hash table and re-add all entries to the new hash table.
-        auto* currentSharedStringHashes = reinterpret_cast<const SharedStringHash*>(currentTableMemory->span().data());
-        for (unsigned i = 0; i < currentTableLength; ++i) {
-            auto sharedStringHash = currentSharedStringHashes[i];
+        auto currentSharedStringHashes = spanReinterpretCast<const SharedStringHash>(currentTableMemory->span());
+        for (auto& sharedStringHash : currentSharedStringHashes) {
             if (!sharedStringHash)
                 continue;
 
@@ -212,5 +209,3 @@ void SharedStringHashStore::processPendingOperations()
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

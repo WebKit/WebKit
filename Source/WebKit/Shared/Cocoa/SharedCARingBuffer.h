@@ -32,16 +32,15 @@
 #include <WebCore/SharedMemory.h>
 #include <wtf/Atomics.h>
 #include <wtf/Function.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+#include <wtf/StdLibExtras.h>
 
 namespace WebKit {
 
 class SharedCARingBufferBase : public WebCore::CARingBuffer {
 protected:
     SharedCARingBufferBase(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStream, Ref<WebCore::SharedMemory>);
-    void* data() final { return byteCast<Byte>(m_storage->mutableSpan().data()) + sizeof(TimeBoundsBuffer); }
-    TimeBoundsBuffer& timeBoundsBuffer() final { return *reinterpret_cast<TimeBoundsBuffer*>(m_storage->mutableSpan().data()); }
+    void* data() final { return byteCast<Byte>(m_storage->mutableSpan().subspan(sizeof(TimeBoundsBuffer)).data()); }
+    TimeBoundsBuffer& timeBoundsBuffer() final { return spanReinterpretCast<TimeBoundsBuffer>(m_storage->mutableSpan().first(sizeof(TimeBoundsBuffer))).front(); }
 
     Ref<WebCore::SharedMemory> m_storage;
 };
@@ -81,5 +80,3 @@ protected:
 }
 
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

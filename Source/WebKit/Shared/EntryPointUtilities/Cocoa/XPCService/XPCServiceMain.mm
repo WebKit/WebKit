@@ -39,6 +39,7 @@
 #import <wtf/Language.h>
 #import <wtf/OSObjectPtr.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/StdLibExtras.h>
 #import <wtf/WTFProcess.h>
 #import <wtf/spi/cocoa/OSLogSPI.h>
 #import <wtf/spi/darwin/SandboxSPI.h>
@@ -48,8 +49,6 @@
 #if __has_include(<WebKitAdditions/DyldCallbackAdditions.h>)
 #import <WebKitAdditions/DyldCallbackAdditions.h>
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebKit {
 
@@ -100,10 +99,10 @@ static void initializeLogd(bool disableLogging)
     // Log a long message to make sure the XPC connection to the log daemon for oversized messages is opened.
     // This is needed to block launchd after the WebContent process has launched, since access to launchd is
     // required when opening new XPC connections.
-    char stringWithSpaces[1024];
-    memset(stringWithSpaces, ' ', sizeof(stringWithSpaces));
-    stringWithSpaces[sizeof(stringWithSpaces) - 1] = 0;
-    RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces);
+    std::array<char, 1024> stringWithSpaces;
+    memsetSpan(std::span { stringWithSpaces }, ' ');
+    stringWithSpaces.back() = '\0';
+    RELEASE_LOG(Process, "Initialized logd %s", stringWithSpaces.data());
 }
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -280,5 +279,3 @@ int XPCServiceMain(int, const char**)
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
