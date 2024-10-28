@@ -28,9 +28,8 @@
 #if HAVE(SEC_ACCESS_CONTROL)
 
 #import <wtf/RetainPtr.h>
+#import <wtf/cf/VectorCF.h>
 #import <wtf/spi/cocoa/SecuritySPI.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebKit {
 
@@ -62,8 +61,7 @@ public:
     {
         if (!m_accessControlData)
             return { };
-        CFDataRef data = m_accessControlData.get();
-        return { CFDataGetBytePtr(data), static_cast<size_t>(CFDataGetLength(data)) };
+        return span(m_accessControlData.get());
     }
 
 private:
@@ -79,7 +77,5 @@ private:
 };
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // HAVE(SEC_ACCESS_CONTROL)
