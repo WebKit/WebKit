@@ -32,6 +32,7 @@
 #include "ExceptionCode.h"
 #include "InternalObserverDrop.h"
 #include "InternalObserverFilter.h"
+#include "InternalObserverFind.h"
 #include "InternalObserverFirst.h"
 #include "InternalObserverForEach.h"
 #include "InternalObserverFromScript.h"
@@ -134,6 +135,11 @@ void Observable::forEach(ScriptExecutionContext& context, Ref<VisitorCallback>&&
 void Observable::last(ScriptExecutionContext& context, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
 {
     return createInternalObserverOperatorLast(context, *this, options, WTFMove(promise));
+}
+
+void Observable::find(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+{
+    return createInternalObserverOperatorFind(context, *this, WTFMove(callback), options, WTFMove(promise));
 }
 
 Observable::Observable(Ref<SubscriberCallback> callback)

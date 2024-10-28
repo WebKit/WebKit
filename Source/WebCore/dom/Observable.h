@@ -69,6 +69,7 @@ public:
     void first(ScriptExecutionContext&, const SubscribeOptions&, Ref<DeferredPromise>&&);
     void forEach(ScriptExecutionContext&, Ref<VisitorCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
     void last(ScriptExecutionContext&, const SubscribeOptions&, Ref<DeferredPromise>&&);
+    void find(ScriptExecutionContext&, Ref<PredicateCallback>&&, const SubscribeOptions&, Ref<DeferredPromise>&&);
 
 private:
     Ref<SubscriberCallback> m_subscriberCallback;

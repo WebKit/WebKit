@@ -1227,6 +1227,7 @@ dom/InputEvent.cpp
 dom/InternalObserver.cpp
 dom/InternalObserverDrop.cpp
 dom/InternalObserverFilter.cpp
+dom/InternalObserverFind.cpp
 dom/InternalObserverFirst.cpp
 dom/InternalObserverForEach.cpp
 dom/InternalObserverFromScript.cpp
