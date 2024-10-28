@@ -134,7 +134,9 @@ void RemoteInspectorHTTPServer::handleWebSocket(const char* path, SoupWebsocketC
         auto& httpServer = *static_cast<RemoteInspectorHTTPServer*>(userData);
         gsize dataSize;
         const auto* data = static_cast<const char*>(g_bytes_get_data(message, &dataSize));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         httpServer.sendMessageToBackend(connection, String::fromUTF8(std::span(data, dataSize)));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }), this);
     g_signal_connect(connection, "closed", G_CALLBACK(+[](SoupWebsocketConnection* connection, gpointer userData) {
         auto& httpServer = *static_cast<RemoteInspectorHTTPServer*>(userData);

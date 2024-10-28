@@ -58,11 +58,15 @@ bool SystemSettingsManagerProxy::darkMode() const
     // FIXME: These are just heuristics, we should get the dark mode from libhandy/libadwaita, falling back to the settings portal.
 
     if (auto* themeNameEnv = g_getenv("GTK_THEME"))
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         return g_str_has_suffix(themeNameEnv, "-dark") || g_str_has_suffix(themeNameEnv, "-Dark") || g_str_has_suffix(themeNameEnv, ":dark");
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     GUniqueOutPtr<char> themeName;
     g_object_get(m_settings, "gtk-theme-name", &themeName.outPtr(), nullptr);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     if (g_str_has_suffix(themeName.get(), "-dark") || (g_str_has_suffix(themeName.get(), "-Dark")))
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return true;
 
     return false;

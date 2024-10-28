@@ -348,7 +348,9 @@ static std::optional<String> base64EncodedPNGData(GdkTexture* texture)
     size_t pngSize;
     auto* pngData = static_cast<const uint8_t*>(g_bytes_get_data(pngBytes.get(), &pngSize));
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return base64EncodeToString(std::span<const uint8_t>(pngData, pngSize));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 #else
 static std::optional<String> base64EncodedPNGData(cairo_surface_t* surface)

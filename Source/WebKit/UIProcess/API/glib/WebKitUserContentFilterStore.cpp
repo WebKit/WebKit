@@ -196,7 +196,9 @@ static void webkitUserContentFilterStoreSaveBytes(GRefPtr<GTask>&& task, String&
     }
 
     auto* store = WEBKIT_USER_CONTENT_FILTER_STORE(g_task_get_source_object(task.get()));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     store->priv->store->compileContentRuleList(WTFMove(identifier), String::fromUTF8({ sourceData, sourceSize }), [task = WTFMove(task)](RefPtr<API::ContentRuleList> contentRuleList, std::error_code error) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         if (g_task_return_error_if_cancelled(task.get()))
             return;
 

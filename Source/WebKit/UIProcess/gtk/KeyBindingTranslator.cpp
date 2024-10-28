@@ -82,6 +82,7 @@ static void showHelpCallback(GtkWidget* widget, KeyBindingTranslator*)
 }
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static const char* const gtkDeleteCommands[][2] = {
     { "DeleteBackward",               "DeleteForward"                        }, // Characters
     { "DeleteWordBackward",           "DeleteWordForward"                    }, // Word ends
@@ -92,6 +93,7 @@ static const char* const gtkDeleteCommands[][2] = {
     { "DeleteToBeginningOfParagraph", "DeleteToEndOfParagraph"               }, // Paragraphs
     { 0,                              0                                      } // Whitespace (M-\ in Emacs)
 };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void deleteFromCursorCallback(GtkWidget* widget, GtkDeleteType deleteType, gint count, KeyBindingTranslator* translator)
 {
@@ -121,7 +123,9 @@ static void deleteFromCursorCallback(GtkWidget* widget, GtkDeleteType deleteType
             translator->addPendingEditorCommand("MoveToEndOfParagraph");
     }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     const char* rawCommand = gtkDeleteCommands[deleteType][direction];
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (!rawCommand)
         return;
 
@@ -129,6 +133,7 @@ static void deleteFromCursorCallback(GtkWidget* widget, GtkDeleteType deleteType
         translator->addPendingEditorCommand(rawCommand);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static const char* const gtkMoveCommands[][4] = {
     { "MoveBackward",                                   "MoveForward",
       "MoveBackwardAndModifySelection",                 "MoveForwardAndModifySelection"             }, // Forward/backward grapheme
@@ -151,6 +156,7 @@ static const char* const gtkMoveCommands[][4] = {
     { 0,                                                0,
       0,                                                0                                           } // Horizontal page movement
 };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void moveCursorCallback(GtkWidget* widget, GtkMovementStep step, gint count, gboolean extendSelection, KeyBindingTranslator* translator)
 {
@@ -162,7 +168,9 @@ static void moveCursorCallback(GtkWidget* widget, GtkMovementStep step, gint cou
     if (static_cast<unsigned>(step) >= G_N_ELEMENTS(gtkMoveCommands))
         return;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     const char* rawCommand = gtkMoveCommands[step][direction];
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (!rawCommand)
         return;
 
@@ -220,6 +228,7 @@ static const KeyCombinationEntry customKeyBindings[] = {
     { GDK_KEY_V,         GDK_CONTROL_MASK | GDK_SHIFT_MASK, "PasteAsPlainText"_s },
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static Vector<String> handleKeyBindingsForMap(const KeyCombinationEntry* map, unsigned mapSize, unsigned keyval, GdkModifierType state)
 {
     // For keypress events, we want charCode(), but keyCode() does that.
@@ -234,6 +243,7 @@ static Vector<String> handleKeyBindingsForMap(const KeyCombinationEntry* map, un
 
     return { };
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static Vector<String> handleCustomKeyBindings(unsigned keyval, GdkModifierType state)
 {

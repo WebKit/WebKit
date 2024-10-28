@@ -180,7 +180,9 @@ void WebSocketTask::didReceiveMessageCallback(WebSocketTask* task, SoupWebsocket
 
     gsize dataSize;
     const auto* data = g_bytes_get_data(message, &dataSize);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     std::span dataSpan { static_cast<const uint8_t*>(data), dataSize };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     switch (dataType) {
     case SOUP_WEBSOCKET_DATA_TEXT:

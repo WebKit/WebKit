@@ -48,7 +48,9 @@ static std::optional<String> base64EncodedPNGData(SkImage& image)
     if (!data)
         return std::nullopt;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return base64EncodeToString(std::span<const uint8_t>(data->bytes(), data->size()));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 std::optional<String> WebAutomationSession::platformGetBase64EncodedPNGData(ShareableBitmap::Handle&& handle)

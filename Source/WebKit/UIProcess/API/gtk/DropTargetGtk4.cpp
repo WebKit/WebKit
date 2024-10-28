@@ -201,7 +201,9 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                 gsize length;
                 const auto* urlData = static_cast<const char*>(g_bytes_get_data(data.get(), &length));
                 if (length) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                     Vector<String> tokens = String::fromUTF8(std::span(urlData, length)).split('\n');
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     URL url({ }, tokens[0]);
                     if (url.isValid())
                         m_selectionData->setURL(url, tokens.size() > 1 ? tokens[1] : String());
@@ -210,7 +212,9 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                 gsize length;
                 const auto* uriListData = static_cast<const char*>(g_bytes_get_data(data.get(), &length));
                 if (length) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
                     String uriListString(String::fromUTF8(std::span(uriListData, length)));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                     for (auto& line : uriListString.split('\n')) {
                         line = line.trim(deprecatedIsSpaceOrNewline);
                         if (line.isEmpty())

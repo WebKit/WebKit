@@ -65,7 +65,9 @@ std::span<const uint8_t> Data::span() const
 {
     if (!m_buffer)
         return { };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return { reinterpret_cast<const uint8_t*>(g_bytes_get_data(m_buffer.get(), nullptr)), g_bytes_get_size(m_buffer.get()) };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 size_t Data::size() const
@@ -85,7 +87,9 @@ bool Data::apply(const Function<bool(std::span<const uint8_t>)>& applier) const
 
     gsize length;
     const auto* data = g_bytes_get_data(m_buffer.get(), &length);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return applier({ reinterpret_cast<const uint8_t*>(data), length });
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 Data Data::subrange(size_t offset, size_t size) const
