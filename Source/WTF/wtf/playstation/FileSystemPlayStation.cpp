@@ -100,7 +100,8 @@ Vector<String> listDirectorySub(const String& path, bool fullPath)
             String newEntry;
             if (fullPath) {
                 char filePath[PATH_MAX];
-                if (fullPath && static_cast<int>(sizeof(filePath) - 1) < snprintf(filePath, sizeof(filePath), "%s/%s", cpath.data(), name))
+                int textLength = snprintf(filePath, PATH_MAX, "%s/%s", cpath.data(), name);
+                if (static_cast<unsigned>(textLength) >= PATH_MAX)
                     continue; // buffer overflow
 
                 newEntry = stringFromFileSystemRepresentation(filePath);
