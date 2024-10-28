@@ -90,6 +90,8 @@
 #include <windows.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 static Lock innerTimeZoneOverrideLock;
@@ -1055,3 +1057,5 @@ void getTimeZoneOverride(Vector<UChar, 32>& timeZoneID)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

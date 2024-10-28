@@ -30,6 +30,8 @@
 #include <stdio.h>
 #include <wtf/FastMalloc.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 StringPrintStream::StringPrintStream()
@@ -135,3 +137,4 @@ void StringPrintStream::increaseSize(size_t newSize)
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

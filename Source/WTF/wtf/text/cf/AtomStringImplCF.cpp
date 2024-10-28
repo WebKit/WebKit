@@ -31,6 +31,8 @@
 #include <CoreFoundation/CoreFoundation.h>
 #include <wtf/text/CString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 RefPtr<AtomStringImpl> AtomStringImpl::add(CFStringRef string)
@@ -52,5 +54,7 @@ RefPtr<AtomStringImpl> AtomStringImpl::add(CFStringRef string)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CF)

@@ -34,6 +34,8 @@
 #import <wtf/ResourceUsage.h>
 #import <wtf/spi/darwin/DispatchSPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #define ENABLE_FMW_FOOTPRINT_COMPARISON 0
 
 extern "C" void cache_simulate_memory_warning_event(uint64_t);
@@ -244,3 +246,5 @@ std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHa
 } // namespace WTF
 
 #undef LOG_CHANNEL_PREFIX
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

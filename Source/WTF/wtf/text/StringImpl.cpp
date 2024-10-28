@@ -42,6 +42,8 @@
 #include <wtf/DataLog.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 using namespace Unicode;
@@ -1648,3 +1650,5 @@ bool equalIgnoringNullity(std::span<const UChar> a, StringImpl* b)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

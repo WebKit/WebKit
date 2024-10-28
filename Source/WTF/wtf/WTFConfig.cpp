@@ -48,6 +48,8 @@
 
 #include <mutex>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebConfig {
 
 alignas(WTF::ConfigAlignment) Slot g_config[WTF::ConfigSizeToProtect / sizeof(Slot)];
@@ -164,3 +166,5 @@ void Config::disableFreezingForTesting()
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

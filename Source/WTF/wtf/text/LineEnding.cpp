@@ -34,6 +34,8 @@
 
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 Vector<uint8_t> normalizeLineEndingsToLF(Vector<uint8_t>&& vector)
@@ -110,3 +112,5 @@ Vector<uint8_t> normalizeLineEndingsToNative(Vector<uint8_t>&& from)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

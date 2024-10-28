@@ -30,6 +30,8 @@
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 //---------------------------------------------------------------------
@@ -526,3 +528,5 @@ int searchString(AdaptiveStringSearcherTables& tables, std::span<const SubjectCh
 using WTF::AdaptiveStringSearcher;
 using WTF::AdaptiveStringSearcherTables;
 using WTF::searchString;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

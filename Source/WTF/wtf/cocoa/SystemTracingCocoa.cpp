@@ -31,6 +31,8 @@
 #import <dispatch/dispatch.h>
 #import <mach/mach_time.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 bool WTFSignpostIndirectLoggingEnabled;
 
 os_log_t WTFSignpostLogHandle()
@@ -151,5 +153,7 @@ uint64_t WTFCurrentContinuousTime(Seconds deltaFromNow)
 
     return static_cast<uint64_t>((timestamp.seconds() * 1.0e9 * info.denom) / info.numer);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

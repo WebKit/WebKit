@@ -28,6 +28,8 @@
 #include <wtf/Assertions.h>
 #include <wtf/DataLog.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 enum class PACKeyType {
@@ -624,3 +626,5 @@ using WTF::isTaggedWith;
 using WTF::assertIsTaggedWith;
 using WTF::assertIsNullOrTaggedWith;
 using WTF::usesPointerTagging;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -28,6 +28,8 @@
 
 #include <wtf/WTFConfig.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 #if CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING)
@@ -90,3 +92,5 @@ void reportBadTag(const void* ptr, PtrTag expectedTag)
 #endif // CPU(ARM64E) && ENABLE(PTRTAG_DEBUGGING)
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

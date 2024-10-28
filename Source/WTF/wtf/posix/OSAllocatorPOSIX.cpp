@@ -51,6 +51,8 @@
 #include <wtf/spi/cocoa/MachVMSPI.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 void* OSAllocator::tryReserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool jitCageEnabled, bool includesGuardPages)
@@ -290,3 +292,5 @@ void OSAllocator::protect(void* address, size_t bytes, bool readable, bool writa
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

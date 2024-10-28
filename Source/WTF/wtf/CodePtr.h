@@ -30,6 +30,8 @@
 #include <wtf/HashTraits.h>
 #include <wtf/PtrTag.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 class PrintStream;
@@ -297,3 +299,5 @@ struct HashTraits<CodePtr<tag, attr>> : public CustomHashTraits<CodePtr<tag, att
 } // namespace WTF
 
 using WTF::CodePtr;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -37,6 +37,8 @@
 #include <wtf/IteratorRange.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 namespace URLHelpers {
 
@@ -971,3 +973,5 @@ String userVisibleURL(const CString& url)
 
 } // namespace URLHelpers
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

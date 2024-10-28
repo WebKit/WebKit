@@ -26,6 +26,8 @@
 #include "config.h"
 #include <wtf/threads/Signals.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if OS(UNIX)
 
 #if HAVE(MACH_EXCEPTIONS)
@@ -610,3 +612,5 @@ void SignalHandlers::finalize()
 } // namespace WTF
 
 #endif // OS(UNIX)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

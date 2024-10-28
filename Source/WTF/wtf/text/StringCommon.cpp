@@ -26,6 +26,8 @@
 #include "config.h"
 #include <wtf/text/StringCommon.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 SUPPRESS_ASAN
@@ -152,3 +154,5 @@ const UChar* find16NonASCIIAlignedImpl(std::span<const UChar> data)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

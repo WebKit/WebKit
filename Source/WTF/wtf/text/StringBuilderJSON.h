@@ -15,6 +15,8 @@
 #include <wtf/text/StringBuilderInternals.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<typename OutputCharacterType, typename InputCharacterType>
@@ -68,3 +70,5 @@ ALWAYS_INLINE static void appendEscapedJSONStringContent(OutputCharacterType*& o
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

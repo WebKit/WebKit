@@ -35,6 +35,8 @@
 #include <wtf/dtoa/ieee.h>
 #include <wtf/dtoa/strtod.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 namespace double_conversion {
 
@@ -585,3 +587,5 @@ float Strtof(BufferReference<const char> buffer, int exponent) {
 
 }  // namespace double_conversion
 }  // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

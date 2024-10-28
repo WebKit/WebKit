@@ -39,6 +39,8 @@
 #include <wtf/dragonbox/detail/wuint.h>
 #include <wtf/dragonbox/ieee754_format.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 namespace dragonbox {
@@ -641,3 +643,5 @@ inline constexpr auto compact = detail::policy_impl::cache::compact { };
 } // namespace dragonbox
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

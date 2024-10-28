@@ -46,6 +46,8 @@
 #include <wtf/StdFilesystem.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF::FileSystemImpl {
 
 #if HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
@@ -930,3 +932,5 @@ String createTemporaryDirectory()
 #endif // HAVE(STD_FILESYSTEM) || HAVE(STD_EXPERIMENTAL_FILESYSTEM)
 
 } // namespace WTF::FileSystemImpl
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

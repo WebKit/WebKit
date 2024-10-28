@@ -65,6 +65,8 @@
 #import <wtf/spi/cocoa/OSLogSPI.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 WTF_ATTRIBUTE_PRINTF(1, 0)
@@ -738,3 +740,5 @@ String getAndResetAccumulatedLogs()
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

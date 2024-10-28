@@ -33,6 +33,8 @@
 #include <wtf/Lock.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 using namespace Unicode;
@@ -515,3 +517,5 @@ bool AtomStringImpl::isInAtomStringTable(StringImpl* string)
 #endif
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

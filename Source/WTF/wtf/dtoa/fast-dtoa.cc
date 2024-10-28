@@ -33,6 +33,8 @@
 #include <wtf/dtoa/diy-fp.h>
 #include <wtf/dtoa/ieee.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 namespace double_conversion {
 
@@ -667,3 +669,5 @@ bool FastDtoa(double v,
 
 }  // namespace double_conversion
 }  // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

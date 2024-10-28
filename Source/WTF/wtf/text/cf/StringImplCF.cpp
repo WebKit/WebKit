@@ -30,6 +30,8 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 namespace StringWrapperCFAllocator {
@@ -153,5 +155,7 @@ RetainPtr<CFStringRef> StringImpl::createCFString()
 // allocator, so it's probably not urgent optimize that case.
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CF)

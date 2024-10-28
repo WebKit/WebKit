@@ -32,6 +32,8 @@
 #include <wtf/text/CodePointIterator.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 #define URL_PARSER_DEBUGGING 0
@@ -3030,3 +3032,5 @@ bool URLParser::internalValuesConsistent(const URL& url)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

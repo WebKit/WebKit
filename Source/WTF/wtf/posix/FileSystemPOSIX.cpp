@@ -51,6 +51,8 @@
 #include <glib.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 namespace FileSystemImpl {
@@ -375,3 +377,5 @@ String pathByAppendingComponents(StringView path, const Vector<StringView>& comp
 
 } // namespace FileSystemImpl
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -10,6 +10,8 @@
 #include "bigint.h"
 #include "ascii_number.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace fast_float {
 
 // 1e0 to 1e19
@@ -422,5 +424,7 @@ adjusted_mantissa digit_comp(parsed_number_string_t<UC>& num, adjusted_mantissa 
 }
 
 } // namespace fast_float
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

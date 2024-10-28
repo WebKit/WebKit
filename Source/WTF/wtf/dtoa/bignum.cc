@@ -32,6 +32,8 @@
 #include <wtf/dtoa/utils.h>
 #include <wtf/ASCIICType.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 namespace double_conversion {
 
@@ -763,3 +765,5 @@ void Bignum::SubtractTimes(const Bignum& other, int factor) {
 
 }  // namespace double_conversion
 }  // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -36,6 +36,8 @@
 #include <wtf/WeakRandom.h>
 #include <wtf/WordLock.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 namespace {
@@ -817,3 +819,4 @@ NEVER_INLINE void ParkingLot::forEachImpl(const ScopedLambda<void(Thread&, const
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

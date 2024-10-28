@@ -71,6 +71,8 @@
 #include <mach/thread_switch.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if OS(QNX)
 #define SA_RESTART 0
 #endif
@@ -701,3 +703,5 @@ void Thread::yield()
 } // namespace WTF
 
 #endif // USE(PTHREADS)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

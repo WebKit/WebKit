@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include "BPlatform.h"
+
+BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "AllocationCounts.h"
 #include "AvailableMemory.h"
 #include "Cache.h"
@@ -248,3 +252,5 @@ inline size_t mallocGoodSize(size_t size)
 
 } // namespace api
 } // namespace bmalloc
+
+BALLOW_UNSAFE_BUFFER_USAGE_END

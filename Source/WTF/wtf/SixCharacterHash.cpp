@@ -28,6 +28,8 @@
 
 #include <wtf/ASCIICType.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 unsigned sixCharacterHashStringToInteger(std::span<const char, 6> string)
@@ -66,3 +68,4 @@ std::array<char, 6> integerToSixCharacterHashString(unsigned hash)
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

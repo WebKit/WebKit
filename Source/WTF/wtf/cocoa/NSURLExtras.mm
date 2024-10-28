@@ -39,6 +39,8 @@
 #import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 static BOOL readIDNAllowedScriptListFile(NSString *filename)
@@ -347,3 +349,5 @@ BOOL isUserVisibleURL(NSString *string)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

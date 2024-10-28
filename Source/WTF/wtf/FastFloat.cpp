@@ -28,6 +28,8 @@
 
 #include "fast_float/fast_float.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 double parseDouble(std::span<const LChar> string, size_t& parsedLength)
@@ -67,3 +69,5 @@ double parseHexDouble(std::span<const UChar> string, size_t& parsedLength)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

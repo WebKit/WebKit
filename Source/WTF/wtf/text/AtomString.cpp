@@ -30,6 +30,8 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 const StaticAtomString nullAtomData { nullptr };
@@ -166,3 +168,5 @@ String replaceUnpairedSurrogatesWithReplacementCharacter(String&& string)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

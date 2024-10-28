@@ -31,6 +31,8 @@
 #include <wtf/Vector.h>
 #include <wtf/persistence/PersistentCoders.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF::Persistence {
 
 template<typename> struct Coder;
@@ -111,3 +113,5 @@ void Encoder::updateChecksumForNumber(SHA1& sha1, Type value)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

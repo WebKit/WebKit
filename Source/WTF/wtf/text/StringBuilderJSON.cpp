@@ -15,6 +15,8 @@
 #include <wtf/text/EscapedFormsForJSON.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 void StringBuilder::appendQuotedJSONString(const String& string)
@@ -60,3 +62,5 @@ void StringBuilder::appendQuotedJSONString(const String& string)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

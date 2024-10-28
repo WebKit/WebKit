@@ -29,6 +29,8 @@
 #include <wtf/text/StringImpl.h>
 #include <wtf/text/icu/UTextProvider.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 // Latin1 provider
@@ -392,3 +394,5 @@ UText* openLatin1ContextAwareUTextProvider(UTextWithBuffer* utWithBuffer, std::s
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -10,6 +10,8 @@
 
 #include "constexpr_feature_detect.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace fast_float {
 
 enum chars_format {
@@ -668,5 +670,7 @@ constexpr char32_t const * str_const_inf<char32_t>()
     return U"infinity";
 }
 } // namespace fast_float
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

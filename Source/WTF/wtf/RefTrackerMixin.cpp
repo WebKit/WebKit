@@ -20,6 +20,8 @@
 #include "config.h"
 #include "RefTrackerMixin.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 #if ENABLE(REFTRACKER)
@@ -66,3 +68,5 @@ void RefTracker::logAllLiveReferences()
 #endif // ENABLE(REFTRACKER)
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

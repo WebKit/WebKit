@@ -349,7 +349,7 @@ BINLINE unsigned TZoneHeapManager::bucketCountForSizeClass(SizeAndAlign typeSize
     return bucketsForSmallSizes;
 }
 
-BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 BINLINE unsigned TZoneHeapManager::tzoneBucketForKey(UniqueLockHolder&, bmalloc_type* type, unsigned bucketCountForSize)
 {
@@ -381,7 +381,7 @@ BINLINE unsigned TZoneHeapManager::tzoneBucketForKey(UniqueLockHolder&, bmalloc_
     return bucket;
 }
 
-BCOMPILER_ALLOW_UNSAFE_BUFFER_USAGE_END
+BALLOW_UNSAFE_BUFFER_USAGE_END
 
 TZoneHeapManager::TZoneTypeBuckets* TZoneHeapManager::populateBucketsForSizeClass(UniqueLockHolder& lock, SizeAndAlign typeSizeAlign)
 {

@@ -28,6 +28,8 @@
 
 #include <wtf/persistence/PersistentEncoder.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF::Persistence {
 
 Decoder::Decoder(std::span<const uint8_t> span)
@@ -151,3 +153,5 @@ bool Decoder::verifyChecksum()
 }
 
 } // namespace WTF::Persistence
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

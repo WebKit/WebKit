@@ -29,6 +29,8 @@
 #import <algorithm>
 #import <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 @implementation WTFContextualizedNSString {
     StringView context;
     StringView contents;
@@ -69,3 +71,5 @@
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

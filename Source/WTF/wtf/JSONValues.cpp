@@ -38,6 +38,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 namespace JSONImpl {
 
@@ -907,3 +909,5 @@ bool ObjectBase::getValue(const String& name, RefPtr<Value>& output) const
 
 } // namespace JSONImpl
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

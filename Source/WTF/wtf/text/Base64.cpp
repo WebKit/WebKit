@@ -30,6 +30,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringCommon.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 constexpr const char nonAlphabet = -1;
@@ -490,3 +492,5 @@ size_t maxLengthFromBase64(StringView string)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

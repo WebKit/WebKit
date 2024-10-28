@@ -28,6 +28,8 @@
 
 #include <wtf/text/StringBuilder.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 // Allocate a new buffer, copying in currentCharacters (these may come from either m_string or m_buffer.
@@ -92,3 +94,5 @@ template<typename CharacterType> CharacterType* StringBuilder::extendBufferForAp
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

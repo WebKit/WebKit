@@ -28,6 +28,8 @@
 
 #include <wtf/SHA1.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF::Persistence {
 
 Encoder::Encoder() = default;
@@ -124,3 +126,5 @@ void Encoder::encodeChecksum()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

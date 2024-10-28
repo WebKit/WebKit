@@ -43,6 +43,8 @@
 
 #include <wtf/ASCIICType.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 namespace double_conversion {
 
@@ -699,3 +701,5 @@ float StringToDoubleConverter::StringToFloat(
 
 }  // namespace double_conversion
 }  // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

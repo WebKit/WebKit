@@ -37,6 +37,8 @@
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8Conversion.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 // Construct a string with UTF-16 data.
@@ -629,3 +631,5 @@ Vector<char> asciiDebug(String& string)
 }
 
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

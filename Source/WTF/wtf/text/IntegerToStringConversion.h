@@ -28,6 +28,8 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/LChar.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 enum PositiveOrNegativeNumber { PositiveNumber, NegativeNumber };
@@ -145,3 +147,5 @@ using WTF::numberToStringSigned;
 using WTF::numberToStringUnsigned;
 using WTF::lengthOfIntegerAsString;
 using WTF::writeIntegerToBuffer;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

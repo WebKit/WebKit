@@ -35,6 +35,8 @@
 
 #include <wtf/dragonbox/dragonbox.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 namespace dragonbox {
@@ -158,3 +160,5 @@ void ToShortest(Float value, StringBuilder* result_builder)
 } // namespace dragonbox
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

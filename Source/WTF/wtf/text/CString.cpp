@@ -33,6 +33,8 @@
 #include <wtf/text/StringCommon.h>
 #include <wtf/text/SuperFastHash.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CStringBuffer);
@@ -162,3 +164,5 @@ bool CStringHash::equal(const CString& a, const CString& b)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

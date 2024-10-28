@@ -50,6 +50,8 @@
 #include <wtf/WallTime.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 enum TimeType {
@@ -531,3 +533,5 @@ using WTF::secondsPerMinute;
 using WTF::setTimeZoneOverride;
 using WTF::timeClip;
 using WTF::timeToMS;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

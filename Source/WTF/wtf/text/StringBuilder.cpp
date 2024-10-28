@@ -30,6 +30,8 @@
 #include <wtf/dtoa.h>
 #include <wtf/text/StringBuilderInternals.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 static constexpr unsigned maxCapacity = String::MaxLength;
@@ -197,3 +199,5 @@ bool StringBuilder::containsOnlyASCII() const
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -31,6 +31,8 @@
 #include <wtf/PrintStream.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 class PrintStream;
@@ -603,3 +605,5 @@ public:
 
 using WTF::FastBitReference;
 using WTF::FastBitVector;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

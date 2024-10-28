@@ -23,6 +23,8 @@
 #include <wtf/PrintStream.h>
 #include <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 namespace Internal {
@@ -52,3 +54,5 @@ void printInternal(PrintStream& out, HexNumberBuffer buffer)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

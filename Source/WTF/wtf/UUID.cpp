@@ -46,6 +46,8 @@
 #include <sys/sysctl.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 static ALWAYS_INLINE UInt128 convertRandomUInt128ToUUIDVersion4(UInt128 buffer)
@@ -214,3 +216,5 @@ bool isVersion4UUID(StringView value)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

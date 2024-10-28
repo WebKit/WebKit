@@ -225,6 +225,3 @@ BINLINE void removePrimitiveDisableCallback(void (*)(void*), void*) { }
 #endif // GIGACAGE_ENABLED
 
 } // namespace Gigacage
-
-
-

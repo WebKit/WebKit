@@ -35,6 +35,8 @@
 
 #include <wtf/dtoa/cached-powers.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 namespace double_conversion {
 
@@ -177,3 +179,5 @@ void PowersOfTenCache::GetCachedPowerForDecimalExponent(int requested_exponent,
 
 }  // namespace double_conversion
 }  // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

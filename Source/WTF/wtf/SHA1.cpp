@@ -37,6 +37,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 #if PLATFORM(COCOA)
@@ -258,3 +260,5 @@ CString SHA1::computeHexDigest()
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

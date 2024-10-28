@@ -22,6 +22,8 @@
 #include <wtf/dtoa.h>
 #include <wtf/dragonbox/dragonbox_to_chars.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 NumberToStringSpan numberToStringAndSize(float number, NumberToStringBuffer& buffer)
@@ -147,3 +149,5 @@ NumberToStringSpan numberToCSSString(double d, NumberToCSSStringBuffer& buffer)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
