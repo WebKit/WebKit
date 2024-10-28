@@ -20,19 +20,25 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import warnings
-import types
 import sys
+import types
+import warnings
 
 import pytest
-
 from webkitcorepy import AutoInstall
+
+from webkitpy.test import markers
 
 
 def pytest_configure(config):
+    markers._running_under_pytest = True
     config.addinivalue_line("markers", "serial: tests that must be run in serial")
     config.addinivalue_line("markers", "integration: integration tests")
     config.addinivalue_line("markers", "slow: tests that take a while to run")
+
+
+def pytest_unconfigure(config):
+    markers._running_under_pytest = False
 
 
 def pytest_addoption(parser):
