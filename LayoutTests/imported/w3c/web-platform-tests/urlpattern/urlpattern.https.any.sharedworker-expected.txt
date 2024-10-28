@@ -1,433 +1,367 @@
 
 PASS Loading data...
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/ba"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: ["https://example.com/foo/bar"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: ["https://example.com/foo/bar/baz"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"hostname":"example.com","pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"hostname":"example.com","pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar","baseURL":"https://example.com"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar/baz","baseURL":"https://example.com"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"hostname":"example.com","pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar","search":"otherquery","hash":"otherhash"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar","search":"otherquery","hash":"otherhash"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?otherquery#otherhash"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar","search":"otherquery","hash":"otherhash"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar?otherquery#otherhash"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar?query#hash"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar/baz"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://other.com/foo/bar"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["http://other.com/foo/bar"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"pathname":"/foo/bar","baseURL":"https://example.com"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"pathname":"/foo/bar/baz","baseURL":"https://example.com"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"pathname":"/foo/bar","baseURL":"https://other.com"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"pathname":"/foo/bar","baseURL":"http://example.com"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/([^\\/]+?)"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar"}] Inputs: [{"pathname":"/foo/index.html"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar"}] Inputs: [{"pathname":"/foo/bar/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar(.*)"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar(.*)"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar(.*)"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar(.*)"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar?"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar?"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar?"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar?"}] Inputs: [{"pathname":"/foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar?"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar+"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar+"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar+"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar+"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar+"}] Inputs: [{"pathname":"/foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/fo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/fo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/fo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/fo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/fo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/fo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}?"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}?"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}?"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}?"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}+"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}+"}] Inputs: [{"pathname":"/foo/bar/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}+"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}+"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}+"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo/bar/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo/bar/baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/ba"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: ["https://example.com/foo/bar"] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: ["https://example.com/foo/bar/baz"] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"hostname":"example.com","pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"hostname":"example.com","pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar","baseURL":"https://example.com"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar/baz","baseURL":"https://example.com"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"hostname":"example.com","pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar","search":"otherquery","hash":"otherhash"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar","search":"otherquery","hash":"otherhash"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?otherquery#otherhash"}] Inputs: [{"protocol":"https","hostname":"example.com","pathname":"/foo/bar","search":"otherquery","hash":"otherhash"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar"] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar?otherquery#otherhash"] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar?query#hash"] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://example.com/foo/bar/baz"] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["https://other.com/foo/bar"] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: ["http://other.com/foo/bar"] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"pathname":"/foo/bar","baseURL":"https://example.com"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"pathname":"/foo/bar/baz","baseURL":"https://example.com"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"pathname":"/foo/bar","baseURL":"https://other.com"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar","baseURL":"https://example.com?query#hash"}] Inputs: [{"pathname":"/foo/bar","baseURL":"http://example.com"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/([^\\/]+?)"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar"}] Inputs: [{"pathname":"/foo/index.html"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar"}] Inputs: [{"pathname":"/foo/bar/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo/bar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*" but got "/foo/(.*)"
+FAIL Pattern: [{"pathname":"/foo/*"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo/bar/baz"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*" but got "/foo/(.*)"
+FAIL Pattern: [{"pathname":"/foo/*"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*" but got "/foo/(.*)"
+FAIL Pattern: [{"pathname":"/foo/*"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*" but got "/foo/(.*)"
+FAIL Pattern: [{"pathname":"/foo/*"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar(.*)"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar(.*)"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar(.*)"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar(.*)"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar?"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar?"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar?"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar?"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar?"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar+"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar+"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar+"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar+"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar+"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo/bar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*?" but got "/foo/(.*)?"
+FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo/bar/baz"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*?" but got "/foo/(.*)?"
+FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*?" but got "/foo/(.*)?"
+FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*?" but got "/foo/(.*)?"
+FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foobar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*?" but got "/foo/(.*)?"
+FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/fo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*?" but got "/foo/(.*)?"
+FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/fo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo/bar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*+" but got "/foo/(.*)+"
+FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo/bar/baz"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*+" but got "/foo/(.*)+"
+FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*+" but got "/foo/(.*)+"
+FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*+" but got "/foo/(.*)+"
+FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foobar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*+" but got "/foo/(.*)+"
+FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/fo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*+" but got "/foo/(.*)+"
+FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/fo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo/bar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/**" but got "/foo/(.*)*"
+FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo/bar/baz"}] assert_equals: compiled pattern property 'pathname' expected "/foo/**" but got "/foo/(.*)*"
+FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/**" but got "/foo/(.*)*"
+FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/**" but got "/foo/(.*)*"
+FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foobar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/**" but got "/foo/(.*)*"
+FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/fo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/**" but got "/foo/(.*)*"
+FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/fo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo/bar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "/foo{/bar}"
+FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo/bar/baz"}] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "/foo{/bar}"
+FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "/foo{/bar}"
+FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "/foo{/bar}"
+FAIL Pattern: [{"pathname":"/foo{/bar}?"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}?"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}?"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}?"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}+"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}+"}] Inputs: [{"pathname":"/foo/bar/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}+"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}+"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}+"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo/bar/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
+FAIL Pattern: [{"protocol":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"username":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"password":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"pathname":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"search":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hash":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"protocol":":café"}] Inputs: [{"protocol":"foo"}] The operation is not supported.
+FAIL Pattern: [{"username":":café"}] Inputs: [{"username":"foo"}] The operation is not supported.
+FAIL Pattern: [{"password":":café"}] Inputs: [{"password":"foo"}] The operation is not supported.
+FAIL Pattern: [{"hostname":":café"}] Inputs: [{"hostname":"foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/:café"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"search":":café"}] Inputs: [{"search":"foo"}] The operation is not supported.
+FAIL Pattern: [{"hash":":café"}] Inputs: [{"hash":"foo"}] The operation is not supported.
+FAIL Pattern: [{"protocol":":℘"}] Inputs: [{"protocol":"foo"}] The operation is not supported.
+FAIL Pattern: [{"username":":℘"}] Inputs: [{"username":"foo"}] The operation is not supported.
+FAIL Pattern: [{"password":":℘"}] Inputs: [{"password":"foo"}] The operation is not supported.
+FAIL Pattern: [{"hostname":":℘"}] Inputs: [{"hostname":"foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/:℘"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"search":":℘"}] Inputs: [{"search":"foo"}] The operation is not supported.
+FAIL Pattern: [{"hash":":℘"}] Inputs: [{"hash":"foo"}] The operation is not supported.
+FAIL Pattern: [{"protocol":":㐀"}] Inputs: [{"protocol":"foo"}] The operation is not supported.
+FAIL Pattern: [{"username":":㐀"}] Inputs: [{"username":"foo"}] The operation is not supported.
+FAIL Pattern: [{"password":":㐀"}] Inputs: [{"password":"foo"}] The operation is not supported.
+FAIL Pattern: [{"hostname":":㐀"}] Inputs: [{"hostname":"foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/:㐀"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"search":":㐀"}] Inputs: [{"search":"foo"}] The operation is not supported.
+FAIL Pattern: [{"hash":":㐀"}] Inputs: [{"hash":"foo"}] The operation is not supported.
+FAIL Pattern: [{"protocol":"(.*)"}] Inputs: [{"protocol":"café"}] assert_equals: compiled pattern property 'protocol' expected "*" but got "(.*)"
+FAIL Pattern: [{"protocol":"(.*)"}] Inputs: [{"protocol":"cafe"}] assert_equals: compiled pattern property 'protocol' expected "*" but got "(.*)"
+FAIL Pattern: [{"protocol":"foo-bar"}] Inputs: [{"protocol":"foo-bar"}] The operation is not supported.
+FAIL Pattern: [{"username":"caf%C3%A9"}] Inputs: [{"username":"café"}] The operation is not supported.
+FAIL Pattern: [{"username":"café"}] Inputs: [{"username":"café"}] assert_equals: compiled pattern property 'username' expected "caf%C3%A9" but got "café"
+FAIL Pattern: [{"username":"caf%c3%a9"}] Inputs: [{"username":"café"}] The operation is not supported.
+FAIL Pattern: [{"password":"caf%C3%A9"}] Inputs: [{"password":"café"}] The operation is not supported.
+FAIL Pattern: [{"password":"café"}] Inputs: [{"password":"café"}] assert_equals: compiled pattern property 'password' expected "caf%C3%A9" but got "café"
+FAIL Pattern: [{"password":"caf%c3%a9"}] Inputs: [{"password":"café"}] The operation is not supported.
+FAIL Pattern: [{"hostname":"xn--caf-dma.com"}] Inputs: [{"hostname":"café.com"}] The operation is not supported.
+FAIL Pattern: [{"hostname":"café.com"}] Inputs: [{"hostname":"café.com"}] assert_equals: compiled pattern property 'hostname' expected "xn--caf-dma.com" but got "café.com"
+FAIL Pattern: [{"port":""}] Inputs: [{"protocol":"http","port":"80"}] The operation is not supported.
+FAIL Pattern: [{"protocol":"http","port":"80"}] Inputs: [{"protocol":"http","port":"80"}] The operation is not supported.
+FAIL Pattern: [{"protocol":"http","port":"80{20}?"}] Inputs: [{"protocol":"http","port":"80"}] The operation is not supported.
+FAIL Pattern: [{"protocol":"http","port":"80 "}] Inputs: [{"protocol":"http","port":"80"}] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"port":"80"}] Inputs: [{"protocol":"http","port":"80"}] The operation is not supported.
+FAIL Pattern: [{"protocol":"http{s}?","port":"80"}] Inputs: [{"protocol":"http","port":"80"}] The operation is not supported.
+FAIL Pattern: [{"port":"80"}] Inputs: [{"port":"80"}] The operation is not supported.
+FAIL Pattern: [{"port":"(.*)"}] Inputs: [{"port":"invalid80"}] assert_equals: compiled pattern property 'port' expected "*" but got "(.*)"
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/./bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/baz"}] Inputs: [{"pathname":"/foo/bar/../baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/caf%C3%A9"}] Inputs: [{"pathname":"/café"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/café"}] Inputs: [{"pathname":"/café"}] assert_equals: compiled pattern property 'pathname' expected "/caf%C3%A9" but got "/café"
+FAIL Pattern: [{"pathname":"/caf%c3%a9"}] Inputs: [{"pathname":"/café"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"foo/bar","baseURL":"https://example.com"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/../bar"}] Inputs: [{"pathname":"/bar"}] assert_equals: compiled pattern property 'pathname' expected "/bar" but got "/foo/../bar"
+FAIL Pattern: [{"pathname":"./foo/bar","baseURL":"https://example.com"}] Inputs: [{"pathname":"foo/bar","baseURL":"https://example.com"}] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "./foo/bar"
+FAIL Pattern: [{"pathname":"","baseURL":"https://example.com"}] Inputs: [{"pathname":"/","baseURL":"https://example.com"}] assert_equals: compiled pattern property 'pathname' expected "/" but got ""
+FAIL Pattern: [{"pathname":"{/bar}","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./bar","baseURL":"https://example.com/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/bar" but got "{/bar}"
+FAIL Pattern: [{"pathname":"\\/bar","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./bar","baseURL":"https://example.com/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/bar" but got "\\/bar"
+FAIL Pattern: [{"pathname":"b","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./b","baseURL":"https://example.com/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/b" but got "b"
+FAIL Pattern: [{"pathname":"foo/bar"}] Inputs: ["https://example.com/foo/bar"] The operation is not supported.
+FAIL Pattern: [{"pathname":"foo/bar","baseURL":"https://example.com"}] Inputs: ["https://example.com/foo/bar"] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "foo/bar"
+FAIL Pattern: [{"pathname":":name.html","baseURL":"https://example.com"}] Inputs: ["https://example.com/foo.html"] assert_equals: compiled pattern property 'pathname' expected "/:name.html" but got ":name.html"
+FAIL Pattern: [{"search":"q=caf%C3%A9"}] Inputs: [{"search":"q=café"}] The operation is not supported.
+FAIL Pattern: [{"search":"q=café"}] Inputs: [{"search":"q=café"}] assert_equals: compiled pattern property 'search' expected "q=caf%C3%A9" but got "q=café"
+FAIL Pattern: [{"search":"q=caf%c3%a9"}] Inputs: [{"search":"q=café"}] The operation is not supported.
+FAIL Pattern: [{"hash":"caf%C3%A9"}] Inputs: [{"hash":"café"}] The operation is not supported.
+FAIL Pattern: [{"hash":"café"}] Inputs: [{"hash":"café"}] assert_equals: compiled pattern property 'hash' expected "caf%C3%A9" but got "café"
+FAIL Pattern: [{"hash":"caf%c3%a9"}] Inputs: [{"hash":"café"}] The operation is not supported.
+FAIL Pattern: [{"protocol":"about","pathname":"(blank|sourcedoc)"}] Inputs: ["about:blank"] The operation is not supported.
+FAIL Pattern: [{"protocol":"data","pathname":":number([0-9]+)"}] Inputs: ["data:8675309"] The operation is not supported.
+FAIL Pattern: [{"pathname":"/(\\m)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"pathname":"/foo!"}] Inputs: [{"pathname":"/foo!"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo\\:"}] Inputs: [{"pathname":"/foo:"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo\\{"}] Inputs: [{"pathname":"/foo{"}] assert_equals: compiled pattern property 'pathname' expected "/foo%7B" but got "/foo\\{"
+FAIL Pattern: [{"pathname":"/foo\\("}] Inputs: [{"pathname":"/foo("}] The operation is not supported.
+FAIL Pattern: [{"protocol":"javascript","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] assert_equals: compiled pattern property 'pathname' expected "var%20x%20=%201;" but got "var x = 1;"
+FAIL Pattern: [{"protocol":"javascript","pathname":"var x = 1;"}] Inputs: [{"baseURL":"javascript:var x = 1;"}] The operation is not supported.
+FAIL Pattern: [{"protocol":"(data|javascript)","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] The operation is not supported.
+FAIL Pattern: [{"protocol":"(https|javascript)","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] assert_equals: compiled pattern property 'pathname' expected "var%20x%20=%201;" but got "var x = 1;"
+FAIL Pattern: [{"pathname":"var x = 1;"}] Inputs: [{"pathname":"var x = 1;"}] assert_equals: compiled pattern property 'pathname' expected "var%20x%20=%201;" but got "var x = 1;"
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: ["./foo/bar","https://example.com"] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar"},"https://example.com"] assert_throws_js: test() result function "_ => pattern.test(...entry.inputs)" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Pattern: [{"username":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Pattern: ["https://example.com:8080/foo?bar#baz"] Inputs: [{"pathname":"/foo","search":"bar","hash":"baz","baseURL":"https://example.com:8080"}] Not implemented.
+FAIL Pattern: ["/foo?bar#baz","https://example.com:8080"] Inputs: [{"pathname":"/foo","search":"bar","hash":"baz","baseURL":"https://example.com:8080"}] Type error
+FAIL Pattern: ["/foo"] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Pattern: [{"password":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Pattern: ["example.com/foo"] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Pattern: [{"hostname":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Pattern: ["http{s}?://{*.}?example.com/:product/:endpoint"] Inputs: ["https://sub.example.com/foo/bar"] Not implemented.
+FAIL Pattern: ["https://example.com?foo"] Inputs: ["https://example.com/?foo"] Not implemented.
+FAIL Pattern: ["https://example.com#foo"] Inputs: ["https://example.com/#foo"] Not implemented.
+FAIL Pattern: ["https://example.com:8080?foo"] Inputs: ["https://example.com:8080/?foo"] Not implemented.
+FAIL Pattern: ["https://example.com:8080#foo"] Inputs: ["https://example.com:8080/#foo"] Not implemented.
+FAIL Pattern: ["https://example.com/?foo"] Inputs: ["https://example.com/?foo"] Not implemented.
+FAIL Pattern: ["https://example.com/#foo"] Inputs: ["https://example.com/#foo"] Not implemented.
+FAIL Pattern: ["https://example.com/*?foo"] Inputs: ["https://example.com/?foo"] Not implemented.
+FAIL Pattern: ["https://example.com/*\\?foo"] Inputs: ["https://example.com/?foo"] Not implemented.
+FAIL Pattern: ["https://example.com/:name?foo"] Inputs: ["https://example.com/bar?foo"] Not implemented.
+FAIL Pattern: ["https://example.com/:name\\?foo"] Inputs: ["https://example.com/bar?foo"] Not implemented.
+FAIL Pattern: ["https://example.com/(bar)?foo"] Inputs: ["https://example.com/bar?foo"] Not implemented.
+FAIL Pattern: ["https://example.com/(bar)\\?foo"] Inputs: ["https://example.com/bar?foo"] Not implemented.
+FAIL Pattern: ["https://example.com/{bar}?foo"] Inputs: ["https://example.com/bar?foo"] Not implemented.
+FAIL Pattern: ["https://example.com/{bar}\\?foo"] Inputs: ["https://example.com/bar?foo"] Not implemented.
+FAIL Pattern: ["https://example.com/"] Inputs: ["https://example.com:8080/"] Not implemented.
+FAIL Pattern: ["data:foobar"] Inputs: ["data:foobar"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Pattern: [{"pathname":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Pattern: ["data\\:foobar"] Inputs: ["data:foobar"] Not implemented.
+FAIL Pattern: ["https://{sub.}?example.com/foo"] Inputs: ["https://example.com/foo"] Not implemented.
+FAIL Pattern: ["https://{sub.}?example{.com/}foo"] Inputs: ["https://example.com/foo"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Pattern: [{"search":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Pattern: ["{https://}example.com/foo"] Inputs: ["https://example.com/foo"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Pattern: [{"hash":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Pattern: ["https://(sub.)?example.com/foo"] Inputs: ["https://example.com/foo"] Not implemented.
+FAIL Pattern: ["https://(sub.)?example(.com/)foo"] Inputs: ["https://example.com/foo"] Not implemented.
+FAIL Pattern: ["(https://)example.com/foo"] Inputs: ["https://example.com/foo"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Pattern: [{"protocol":":café"}] Inputs: [{"protocol":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"username":":café"}] Inputs: [{"username":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"password":":café"}] Inputs: [{"password":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hostname":":café"}] Inputs: [{"hostname":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/:café"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"search":":café"}] Inputs: [{"search":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hash":":café"}] Inputs: [{"hash":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":":℘"}] Inputs: [{"protocol":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"username":":℘"}] Inputs: [{"username":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"password":":℘"}] Inputs: [{"password":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hostname":":℘"}] Inputs: [{"hostname":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/:℘"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"search":":℘"}] Inputs: [{"search":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hash":":℘"}] Inputs: [{"hash":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":":㐀"}] Inputs: [{"protocol":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"username":":㐀"}] Inputs: [{"username":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"password":":㐀"}] Inputs: [{"password":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hostname":":㐀"}] Inputs: [{"hostname":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/:㐀"}] Inputs: [{"pathname":"/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"search":":㐀"}] Inputs: [{"search":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hash":":㐀"}] Inputs: [{"hash":"foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"(.*)"}] Inputs: [{"protocol":"café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"(.*)"}] Inputs: [{"protocol":"cafe"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"foo-bar"}] Inputs: [{"protocol":"foo-bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"username":"caf%C3%A9"}] Inputs: [{"username":"café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"username":"café"}] Inputs: [{"username":"café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"username":"caf%c3%a9"}] Inputs: [{"username":"café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"password":"caf%C3%A9"}] Inputs: [{"password":"café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"password":"café"}] Inputs: [{"password":"café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"password":"caf%c3%a9"}] Inputs: [{"password":"café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hostname":"xn--caf-dma.com"}] Inputs: [{"hostname":"café.com"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hostname":"café.com"}] Inputs: [{"hostname":"café.com"}] Can't find variable: URLPattern
-FAIL Pattern: [{"port":""}] Inputs: [{"protocol":"http","port":"80"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"http","port":"80"}] Inputs: [{"protocol":"http","port":"80"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"http","port":"80{20}?"}] Inputs: [{"protocol":"http","port":"80"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"http","port":"80 "}] Inputs: [{"protocol":"http","port":"80"}] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Pattern: ["https://{sub{.}}example.com/foo"] Inputs: ["https://example.com/foo"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Pattern: [{"port":"80"}] Inputs: [{"protocol":"http","port":"80"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"http{s}?","port":"80"}] Inputs: [{"protocol":"http","port":"80"}] Can't find variable: URLPattern
-FAIL Pattern: [{"port":"80"}] Inputs: [{"port":"80"}] Can't find variable: URLPattern
-FAIL Pattern: [{"port":"(.*)"}] Inputs: [{"port":"invalid80"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/./bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/baz"}] Inputs: [{"pathname":"/foo/bar/../baz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/caf%C3%A9"}] Inputs: [{"pathname":"/café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/café"}] Inputs: [{"pathname":"/café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/caf%c3%a9"}] Inputs: [{"pathname":"/café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"foo/bar","baseURL":"https://example.com"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/../bar"}] Inputs: [{"pathname":"/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"./foo/bar","baseURL":"https://example.com"}] Inputs: [{"pathname":"foo/bar","baseURL":"https://example.com"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"","baseURL":"https://example.com"}] Inputs: [{"pathname":"/","baseURL":"https://example.com"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{/bar}","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./bar","baseURL":"https://example.com/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"\\/bar","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./bar","baseURL":"https://example.com/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"b","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./b","baseURL":"https://example.com/foo/"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"foo/bar"}] Inputs: ["https://example.com/foo/bar"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"foo/bar","baseURL":"https://example.com"}] Inputs: ["https://example.com/foo/bar"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":":name.html","baseURL":"https://example.com"}] Inputs: ["https://example.com/foo.html"] Can't find variable: URLPattern
-FAIL Pattern: [{"search":"q=caf%C3%A9"}] Inputs: [{"search":"q=café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"search":"q=café"}] Inputs: [{"search":"q=café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"search":"q=caf%c3%a9"}] Inputs: [{"search":"q=café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hash":"caf%C3%A9"}] Inputs: [{"hash":"café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hash":"café"}] Inputs: [{"hash":"café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hash":"caf%c3%a9"}] Inputs: [{"hash":"café"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"about","pathname":"(blank|sourcedoc)"}] Inputs: ["about:blank"] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"data","pathname":":number([0-9]+)"}] Inputs: ["data:8675309"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/(\\m)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Pattern: ["https://(sub(?:.))?example.com/foo"] Inputs: ["https://example.com/foo"] Not implemented.
+FAIL Pattern: ["file:///foo/bar"] Inputs: ["file:///foo/bar"] Not implemented.
+FAIL Pattern: ["data:"] Inputs: ["data:"] Not implemented.
+FAIL Pattern: ["foo://bar"] Inputs: ["foo://bad_url_browser_interop"] Not implemented.
+FAIL Pattern: ["(café)://foo"] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Pattern: [{"pathname":"/foo!"}] Inputs: [{"pathname":"/foo!"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo\\:"}] Inputs: [{"pathname":"/foo:"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo\\{"}] Inputs: [{"pathname":"/foo{"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo\\("}] Inputs: [{"pathname":"/foo("}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"javascript","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"javascript","pathname":"var x = 1;"}] Inputs: [{"baseURL":"javascript:var x = 1;"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"(data|javascript)","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"(https|javascript)","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"var x = 1;"}] Inputs: [{"pathname":"var x = 1;"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: ["./foo/bar","https://example.com"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar"},"https://example.com"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com:8080/foo?bar#baz"] Inputs: [{"pathname":"/foo","search":"bar","hash":"baz","baseURL":"https://example.com:8080"}] Can't find variable: URLPattern
-FAIL Pattern: ["/foo?bar#baz","https://example.com:8080"] Inputs: [{"pathname":"/foo","search":"bar","hash":"baz","baseURL":"https://example.com:8080"}] Can't find variable: URLPattern
-FAIL Pattern: ["/foo"] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Pattern: ["https://example.com/foo?bar#baz"] Inputs: [{"protocol":"https:","search":"?bar","hash":"#baz","baseURL":"http://example.com/foo"}] Not implemented.
+FAIL Pattern: [{"protocol":"http{s}?:","search":"?bar","hash":"#baz"}] Inputs: ["http://example.com/foo?bar#baz"] The operation is not supported.
+FAIL Pattern: ["?bar#baz","https://example.com/foo"] Inputs: ["?bar#baz","https://example.com/foo"] Type error
+FAIL Pattern: ["?bar","https://example.com/foo#baz"] Inputs: ["?bar","https://example.com/foo#snafu"] Type error
+FAIL Pattern: ["#baz","https://example.com/foo?bar"] Inputs: ["#baz","https://example.com/foo?bar"] Type error
+FAIL Pattern: ["#baz","https://example.com/foo"] Inputs: ["#baz","https://example.com/foo"] Type error
+FAIL Pattern: [{"pathname":"*"}] Inputs: ["foo","data:data-urls-cannot-be-base-urls"] The operation is not supported.
+FAIL Pattern: [{"pathname":"*"}] Inputs: ["foo","not|a|valid|url"] The operation is not supported.
+FAIL Pattern: ["https://foo\\:bar@example.com"] Inputs: ["https://foo:bar@example.com"] Not implemented.
+FAIL Pattern: ["https://foo@example.com"] Inputs: ["https://foo@example.com"] Not implemented.
+FAIL Pattern: ["https://\\:bar@example.com"] Inputs: ["https://:bar@example.com"] Not implemented.
+FAIL Pattern: ["https://:user::pass@example.com"] Inputs: ["https://foo:bar@example.com"] Not implemented.
+FAIL Pattern: ["https\\:foo\\:bar@example.com"] Inputs: ["https:foo:bar@example.com"] Not implemented.
+FAIL Pattern: ["data\\:foo\\:bar@example.com"] Inputs: ["data:foo:bar@example.com"] Not implemented.
+FAIL Pattern: ["https://foo{\\:}bar@example.com"] Inputs: ["https://foo:bar@example.com"] Not implemented.
+FAIL Pattern: ["data{\\:}channel.html","https://example.com"] Inputs: ["https://example.com/data:channel.html"] Type error
+FAIL Pattern: ["http://[\\:\\:1]/"] Inputs: ["http://[::1]/"] Not implemented.
+FAIL Pattern: ["http://[\\:\\:1]:8080/"] Inputs: ["http://[::1]:8080/"] Not implemented.
+FAIL Pattern: ["http://[\\:\\:a]/"] Inputs: ["http://[::a]/"] Not implemented.
+FAIL Pattern: ["http://[:address]/"] Inputs: ["http://[::1]/"] Not implemented.
+FAIL Pattern: ["http://[\\:\\:AB\\::num]/"] Inputs: ["http://[::ab:1]/"] Not implemented.
+FAIL Pattern: [{"hostname":"[\\:\\:AB\\::num]"}] Inputs: [{"hostname":"[::ab:1]"}] assert_equals: compiled pattern property 'hostname' expected "[\\:\\:ab\\::num]" but got "[\\:\\:AB\\::num]"
+FAIL Pattern: [{"hostname":"[\\:\\:xY\\::num]"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"{[\\:\\:ab\\::num]}"}] Inputs: [{"hostname":"[::ab:1]"}] The operation is not supported.
+FAIL Pattern: [{"hostname":"{[\\:\\:fé\\::num]}"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"{[\\:\\::num\\:1]}"}] Inputs: [{"hostname":"[::ab:1]"}] The operation is not supported.
+FAIL Pattern: [{"hostname":"{[\\:\\::num\\:fé]}"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"[*\\:1]"}] Inputs: [{"hostname":"[::ab:1]"}] The operation is not supported.
+FAIL Pattern: [{"hostname":"*\\:1]"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: ["https://foo{{@}}example.com"] Inputs: ["https://foo@example.com"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Pattern: ["example.com/foo"] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Pattern: ["https://foo{@example.com"] Inputs: ["https://foo@example.com"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Pattern: ["http{s}?://{*.}?example.com/:product/:endpoint"] Inputs: ["https://sub.example.com/foo/bar"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com?foo"] Inputs: ["https://example.com/?foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com#foo"] Inputs: ["https://example.com/#foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com:8080?foo"] Inputs: ["https://example.com:8080/?foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com:8080#foo"] Inputs: ["https://example.com:8080/#foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com/?foo"] Inputs: ["https://example.com/?foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com/#foo"] Inputs: ["https://example.com/#foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com/*?foo"] Inputs: ["https://example.com/?foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com/*\\?foo"] Inputs: ["https://example.com/?foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com/:name?foo"] Inputs: ["https://example.com/bar?foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com/:name\\?foo"] Inputs: ["https://example.com/bar?foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com/(bar)?foo"] Inputs: ["https://example.com/bar?foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com/(bar)\\?foo"] Inputs: ["https://example.com/bar?foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com/{bar}?foo"] Inputs: ["https://example.com/bar?foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com/{bar}\\?foo"] Inputs: ["https://example.com/bar?foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com/"] Inputs: ["https://example.com:8080/"] Can't find variable: URLPattern
-FAIL Pattern: ["data:foobar"] Inputs: ["data:foobar"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
+FAIL Pattern: ["data\\:text/javascript,let x = 100/:tens?5;"] Inputs: ["data:text/javascript,let x = 100/5;"] Not implemented.
+FAIL Pattern: [{"pathname":"/:id/:id"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"pathname":"/foo","baseURL":""}] Inputs: undefined
+PASS Pattern: ["/foo",""] Inputs: undefined
+FAIL Pattern: [{"pathname":"/foo"},"https://example.com"] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
 }" ("TypeError")
-FAIL Pattern: ["data\\:foobar"] Inputs: ["data:foobar"] Can't find variable: URLPattern
-FAIL Pattern: ["https://{sub.}?example.com/foo"] Inputs: ["https://example.com/foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://{sub.}?example{.com/}foo"] Inputs: ["https://example.com/foo"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: ["{https://}example.com/foo"] Inputs: ["https://example.com/foo"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: ["https://(sub.)?example.com/foo"] Inputs: ["https://example.com/foo"] Can't find variable: URLPattern
-FAIL Pattern: ["https://(sub.)?example(.com/)foo"] Inputs: ["https://example.com/foo"] Can't find variable: URLPattern
-FAIL Pattern: ["(https://)example.com/foo"] Inputs: ["https://example.com/foo"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: ["https://{sub{.}}example.com/foo"] Inputs: ["https://example.com/foo"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: ["https://(sub(?:.))?example.com/foo"] Inputs: ["https://example.com/foo"] Can't find variable: URLPattern
-FAIL Pattern: ["file:///foo/bar"] Inputs: ["file:///foo/bar"] Can't find variable: URLPattern
-FAIL Pattern: ["data:"] Inputs: ["data:"] Can't find variable: URLPattern
-FAIL Pattern: ["foo://bar"] Inputs: ["foo://bad_url_browser_interop"] Can't find variable: URLPattern
-FAIL Pattern: ["(café)://foo"] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: ["https://example.com/foo?bar#baz"] Inputs: [{"protocol":"https:","search":"?bar","hash":"#baz","baseURL":"http://example.com/foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":"http{s}?:","search":"?bar","hash":"#baz"}] Inputs: ["http://example.com/foo?bar#baz"] Can't find variable: URLPattern
-FAIL Pattern: ["?bar#baz","https://example.com/foo"] Inputs: ["?bar#baz","https://example.com/foo"] Can't find variable: URLPattern
-FAIL Pattern: ["?bar","https://example.com/foo#baz"] Inputs: ["?bar","https://example.com/foo#snafu"] Can't find variable: URLPattern
-FAIL Pattern: ["#baz","https://example.com/foo?bar"] Inputs: ["#baz","https://example.com/foo?bar"] Can't find variable: URLPattern
-FAIL Pattern: ["#baz","https://example.com/foo"] Inputs: ["#baz","https://example.com/foo"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"*"}] Inputs: ["foo","data:data-urls-cannot-be-base-urls"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"*"}] Inputs: ["foo","not|a|valid|url"] Can't find variable: URLPattern
-FAIL Pattern: ["https://foo\\:bar@example.com"] Inputs: ["https://foo:bar@example.com"] Can't find variable: URLPattern
-FAIL Pattern: ["https://foo@example.com"] Inputs: ["https://foo@example.com"] Can't find variable: URLPattern
-FAIL Pattern: ["https://\\:bar@example.com"] Inputs: ["https://:bar@example.com"] Can't find variable: URLPattern
-FAIL Pattern: ["https://:user::pass@example.com"] Inputs: ["https://foo:bar@example.com"] Can't find variable: URLPattern
-FAIL Pattern: ["https\\:foo\\:bar@example.com"] Inputs: ["https:foo:bar@example.com"] Can't find variable: URLPattern
-FAIL Pattern: ["data\\:foo\\:bar@example.com"] Inputs: ["data:foo:bar@example.com"] Can't find variable: URLPattern
-FAIL Pattern: ["https://foo{\\:}bar@example.com"] Inputs: ["https://foo:bar@example.com"] Can't find variable: URLPattern
-FAIL Pattern: ["data{\\:}channel.html","https://example.com"] Inputs: ["https://example.com/data:channel.html"] Can't find variable: URLPattern
-FAIL Pattern: ["http://[\\:\\:1]/"] Inputs: ["http://[::1]/"] Can't find variable: URLPattern
-FAIL Pattern: ["http://[\\:\\:1]:8080/"] Inputs: ["http://[::1]:8080/"] Can't find variable: URLPattern
-FAIL Pattern: ["http://[\\:\\:a]/"] Inputs: ["http://[::a]/"] Can't find variable: URLPattern
-FAIL Pattern: ["http://[:address]/"] Inputs: ["http://[::1]/"] Can't find variable: URLPattern
-FAIL Pattern: ["http://[\\:\\:AB\\::num]/"] Inputs: ["http://[::ab:1]/"] Can't find variable: URLPattern
-FAIL Pattern: [{"hostname":"[\\:\\:AB\\::num]"}] Inputs: [{"hostname":"[::ab:1]"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hostname":"[\\:\\:xY\\::num]"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"{[\\:\\:ab\\::num]}"}] Inputs: [{"hostname":"[::ab:1]"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hostname":"{[\\:\\:fé\\::num]}"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"{[\\:\\::num\\:1]}"}] Inputs: [{"hostname":"[::ab:1]"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hostname":"{[\\:\\::num\\:fé]}"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"[*\\:1]"}] Inputs: [{"hostname":"[::ab:1]"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hostname":"*\\:1]"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: ["https://foo{{@}}example.com"] Inputs: ["https://foo@example.com"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: ["https://foo{@example.com"] Inputs: ["https://foo@example.com"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: ["data\\:text/javascript,let x = 100/:tens?5;"] Inputs: ["data:text/javascript,let x = 100/5;"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/:id/:id"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"pathname":"/foo","baseURL":""}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: ["/foo",""] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"pathname":"/foo"},"https://example.com"] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"pathname":":name*"}] Inputs: [{"pathname":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":":name+"}] Inputs: [{"pathname":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":":name"}] Inputs: [{"pathname":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":":name*"}] Inputs: [{"protocol":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":":name+"}] Inputs: [{"protocol":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"protocol":":name"}] Inputs: [{"protocol":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hostname":"bad hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad#hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad%hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad/hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad\\:hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad<hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad>hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad?hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad@hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad[hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad]hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad\\\\hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad^hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad|hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad\nhostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad\rhostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"hostname":"bad\thostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{}] Inputs: ["https://example.com/"] Can't find variable: URLPattern
-FAIL Pattern: [] Inputs: ["https://example.com/"] Can't find variable: URLPattern
-FAIL Pattern: [] Inputs: [{}] Can't find variable: URLPattern
-FAIL Pattern: [] Inputs: [] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"(foo)(.*)"}] Inputs: [{"pathname":"foobarbaz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{(foo)bar}(.*)"}] Inputs: [{"pathname":"foobarbaz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"(foo)?(.*)"}] Inputs: [{"pathname":"foobarbaz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{:foo}(.*)"}] Inputs: [{"pathname":"foobarbaz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{:foo}(barbaz)"}] Inputs: [{"pathname":"foobarbaz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{:foo}{(.*)}"}] Inputs: [{"pathname":"foobarbaz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{:foo}{(.*)bar}"}] Inputs: [{"pathname":"foobarbaz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{:foo}{bar(.*)}"}] Inputs: [{"pathname":"foobarbaz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{:foo}:bar(.*)"}] Inputs: [{"pathname":"foobarbaz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{:foo}?(.*)"}] Inputs: [{"pathname":"foobarbaz"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{:foo\\bar}"}] Inputs: [{"pathname":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{:foo\\.bar}"}] Inputs: [{"pathname":"foo.bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{:foo(foo)bar}"}] Inputs: [{"pathname":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"{:foo}bar"}] Inputs: [{"pathname":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":":foo\\bar"}] Inputs: [{"pathname":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":":foo{}(.*)"}] Inputs: [{"pathname":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":":foo{}bar"}] Inputs: [{"pathname":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":":foo{}?bar"}] Inputs: [{"pathname":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"*{}**?"}] Inputs: [{"pathname":"foobar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":":foo(baz)(.*)"}] Inputs: [{"pathname":"bazbar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":":foo(baz)bar"}] Inputs: [{"pathname":"bazbar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"*/*"}] Inputs: [{"pathname":"foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"*\\/*"}] Inputs: [{"pathname":"foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"*/{*}"}] Inputs: [{"pathname":"foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"*//*"}] Inputs: [{"pathname":"foo/bar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/:foo."}] Inputs: [{"pathname":"/bar."}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/:foo.."}] Inputs: [{"pathname":"/bar.."}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"./foo"}] Inputs: [{"pathname":"./foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"../foo"}] Inputs: [{"pathname":"../foo"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":":foo./"}] Inputs: [{"pathname":"bar./"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":":foo../"}] Inputs: [{"pathname":"bar../"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/:foo\\bar"}] Inputs: [{"pathname":"/bazbar"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/foo/bar"},{"ignoreCase":true}] Inputs: [{"pathname":"/FOO/BAR"}] Can't find variable: URLPattern
-FAIL Pattern: [{"ignoreCase":true}] Inputs: [{"pathname":"/FOO/BAR"}] Can't find variable: URLPattern
-FAIL Pattern: ["https://example.com:8080/foo?bar#baz",{"ignoreCase":true}] Inputs: [{"pathname":"/FOO","search":"BAR","hash":"BAZ","baseURL":"https://example.com:8080"}] Can't find variable: URLPattern
-FAIL Pattern: ["/foo?bar#baz","https://example.com:8080",{"ignoreCase":true}] Inputs: [{"pathname":"/FOO","search":"BAR","hash":"BAZ","baseURL":"https://example.com:8080"}] Can't find variable: URLPattern
-FAIL Pattern: ["/foo?bar#baz",{"ignoreCase":true},"https://example.com:8080"] Inputs: [{"pathname":"/FOO","search":"BAR","hash":"BAZ","baseURL":"https://example.com:8080"}] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "ReferenceError: Can't find variable: URLPattern" ("ReferenceError") expected instance of function "function TypeError() {
-    [native code]
-}" ("TypeError")
-FAIL Pattern: [{"search":"foo","baseURL":"https://example.com/a/+/b"}] Inputs: [{"search":"foo","baseURL":"https://example.com/a/+/b"}] Can't find variable: URLPattern
-FAIL Pattern: [{"hash":"foo","baseURL":"https://example.com/?q=*&v=?&hmm={}&umm=()"}] Inputs: [{"hash":"foo","baseURL":"https://example.com/?q=*&v=?&hmm={}&umm=()"}] Can't find variable: URLPattern
-FAIL Pattern: ["#foo","https://example.com/?q=*&v=?&hmm={}&umm=()"] Inputs: ["https://example.com/?q=*&v=?&hmm={}&umm=()#foo"] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/([[a-z]--a])"}] Inputs: [{"pathname":"/a"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/([[a-z]--a])"}] Inputs: [{"pathname":"/z"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/([\\d&&[0-1]])"}] Inputs: [{"pathname":"/0"}] Can't find variable: URLPattern
-FAIL Pattern: [{"pathname":"/([\\d&&[0-1]])"}] Inputs: [{"pathname":"/3"}] Can't find variable: URLPattern
+FAIL Pattern: [{"pathname":":name*"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":":name+"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":":name"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"protocol":":name*"}] Inputs: [{"protocol":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"protocol":":name+"}] Inputs: [{"protocol":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"protocol":":name"}] Inputs: [{"protocol":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"hostname":"bad hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad#hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad%hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad/hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad\\:hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad<hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad>hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad?hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad@hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad[hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad]hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad\\\\hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad^hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad|hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad\nhostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad\rhostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{"hostname":"bad\thostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+FAIL Pattern: [{}] Inputs: ["https://example.com/"] The operation is not supported.
+FAIL Pattern: [] Inputs: ["https://example.com/"] Not implemented.
+FAIL Pattern: [] Inputs: [{}] Not implemented.
+FAIL Pattern: [] Inputs: [] Not implemented.
+FAIL Pattern: [{"pathname":"(foo)(.*)"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"{(foo)bar}(.*)"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"(foo)?(.*)"}] Inputs: [{"pathname":"foobarbaz"}] assert_equals: compiled pattern property 'pathname' expected "(foo)?*" but got "(foo)?(.*)"
+FAIL Pattern: [{"pathname":"{:foo}(.*)"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"{:foo}(barbaz)"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"{:foo}{(.*)}"}] Inputs: [{"pathname":"foobarbaz"}] assert_equals: compiled pattern property 'pathname' expected "{:foo}(.*)" but got "{:foo}{(.*)}"
+FAIL Pattern: [{"pathname":"{:foo}{(.*)bar}"}] Inputs: [{"pathname":"foobarbaz"}] assert_equals: compiled pattern property 'pathname' expected ":foo{*bar}" but got "{:foo}{(.*)bar}"
+FAIL Pattern: [{"pathname":"{:foo}{bar(.*)}"}] Inputs: [{"pathname":"foobarbaz"}] assert_equals: compiled pattern property 'pathname' expected ":foo{bar*}" but got "{:foo}{bar(.*)}"
+FAIL Pattern: [{"pathname":"{:foo}:bar(.*)"}] Inputs: [{"pathname":"foobarbaz"}] assert_equals: compiled pattern property 'pathname' expected ":foo:bar(.*)" but got "{:foo}:bar(.*)"
+FAIL Pattern: [{"pathname":"{:foo}?(.*)"}] Inputs: [{"pathname":"foobarbaz"}] assert_equals: compiled pattern property 'pathname' expected ":foo?*" but got "{:foo}?(.*)"
+FAIL Pattern: [{"pathname":"{:foo\\bar}"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"{:foo\\.bar}"}] Inputs: [{"pathname":"foo.bar"}] assert_equals: compiled pattern property 'pathname' expected "{:foo.bar}" but got "{:foo\\.bar}"
+FAIL Pattern: [{"pathname":"{:foo(foo)bar}"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"{:foo}bar"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":":foo\\bar"}] Inputs: [{"pathname":"foobar"}] assert_equals: compiled pattern property 'pathname' expected "{:foo}bar" but got ":foo\\bar"
+FAIL Pattern: [{"pathname":":foo{}(.*)"}] Inputs: [{"pathname":"foobar"}] assert_equals: compiled pattern property 'pathname' expected "{:foo}(.*)" but got ":foo{}(.*)"
+FAIL Pattern: [{"pathname":":foo{}bar"}] Inputs: [{"pathname":"foobar"}] assert_equals: compiled pattern property 'pathname' expected "{:foo}bar" but got ":foo{}bar"
+FAIL Pattern: [{"pathname":":foo{}?bar"}] Inputs: [{"pathname":"foobar"}] assert_equals: compiled pattern property 'pathname' expected "{:foo}bar" but got ":foo{}?bar"
+FAIL Pattern: [{"pathname":"*{}**?"}] Inputs: [{"pathname":"foobar"}] assert_equals: compiled pattern property 'pathname' expected "*(.*)?" but got "*{}**?"
+FAIL Pattern: [{"pathname":":foo(baz)(.*)"}] Inputs: [{"pathname":"bazbar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":":foo(baz)bar"}] Inputs: [{"pathname":"bazbar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"*/*"}] Inputs: [{"pathname":"foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"*\\/*"}] Inputs: [{"pathname":"foo/bar"}] assert_equals: compiled pattern property 'pathname' expected "*/{*}" but got "*\\/*"
+FAIL Pattern: [{"pathname":"*/{*}"}] Inputs: [{"pathname":"foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"*//*"}] Inputs: [{"pathname":"foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/:foo."}] Inputs: [{"pathname":"/bar."}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/:foo.."}] Inputs: [{"pathname":"/bar.."}] The operation is not supported.
+FAIL Pattern: [{"pathname":"./foo"}] Inputs: [{"pathname":"./foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"../foo"}] Inputs: [{"pathname":"../foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":":foo./"}] Inputs: [{"pathname":"bar./"}] The operation is not supported.
+FAIL Pattern: [{"pathname":":foo../"}] Inputs: [{"pathname":"bar../"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/:foo\\bar"}] Inputs: [{"pathname":"/bazbar"}] assert_equals: compiled pattern property 'pathname' expected "{/:foo}bar" but got "/:foo\\bar"
+FAIL Pattern: [{"pathname":"/foo/bar"},{"ignoreCase":true}] Inputs: [{"pathname":"/FOO/BAR"}] The operation is not supported.
+FAIL Pattern: [{"ignoreCase":true}] Inputs: [{"pathname":"/FOO/BAR"}] The operation is not supported.
+FAIL Pattern: ["https://example.com:8080/foo?bar#baz",{"ignoreCase":true}] Inputs: [{"pathname":"/FOO","search":"BAR","hash":"BAZ","baseURL":"https://example.com:8080"}] Not implemented.
+FAIL Pattern: ["/foo?bar#baz","https://example.com:8080",{"ignoreCase":true}] Inputs: [{"pathname":"/FOO","search":"BAR","hash":"BAZ","baseURL":"https://example.com:8080"}] Type error
+PASS Pattern: ["/foo?bar#baz",{"ignoreCase":true},"https://example.com:8080"] Inputs: [{"pathname":"/FOO","search":"BAR","hash":"BAZ","baseURL":"https://example.com:8080"}]
+FAIL Pattern: [{"search":"foo","baseURL":"https://example.com/a/+/b"}] Inputs: [{"search":"foo","baseURL":"https://example.com/a/+/b"}] The operation is not supported.
+FAIL Pattern: [{"hash":"foo","baseURL":"https://example.com/?q=*&v=?&hmm={}&umm=()"}] Inputs: [{"hash":"foo","baseURL":"https://example.com/?q=*&v=?&hmm={}&umm=()"}] The operation is not supported.
+FAIL Pattern: ["#foo","https://example.com/?q=*&v=?&hmm={}&umm=()"] Inputs: ["https://example.com/?q=*&v=?&hmm={}&umm=()#foo"] Type error
+FAIL Pattern: [{"pathname":"/([[a-z]--a])"}] Inputs: [{"pathname":"/a"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/([[a-z]--a])"}] Inputs: [{"pathname":"/z"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/([\\d&&[0-1]])"}] Inputs: [{"pathname":"/0"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/([\\d&&[0-1]])"}] Inputs: [{"pathname":"/3"}] The operation is not supported.
 

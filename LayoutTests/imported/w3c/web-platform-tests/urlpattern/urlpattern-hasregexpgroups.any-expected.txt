@@ -1,3 +1,3 @@
 
-FAIL urlpattern-hasregexpgroups Can't find variable: URLPattern
+FAIL urlpattern-hasregexpgroups assert_true: named regexp group in protocol expected true got false
 

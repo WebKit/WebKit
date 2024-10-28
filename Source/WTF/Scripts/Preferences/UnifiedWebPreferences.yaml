@@ -7487,7 +7487,7 @@ UAVisualTransitionDetectionEnabled:
 URLPatternAPIEnabled:
   type: bool
   category: dom
-  status: unstable
+  status: testable
   humanReadableName: "URL Pattern API"
   humanReadableDescription: "Enable URL Pattern API"
   defaultValue:

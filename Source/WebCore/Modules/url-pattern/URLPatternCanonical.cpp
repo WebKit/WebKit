@@ -26,6 +26,7 @@
 #include "config.h"
 #include "URLPatternCanonical.h"
 
+#include <wtf/URLParser.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
@@ -192,10 +193,7 @@ ExceptionOr<String> canonicalizePath(const String& pathnameValue, StringView pro
     if (pathnameValueType == BaseURLStringType::Pattern)
         return String { pathnameValue };
 
-    if (protocolValue == "ftp"_s || protocolValue == "file"_s
-        || protocolValue == "http"_s || protocolValue == "https"_s
-        || protocolValue == "ws"_s || protocolValue == "wss"_s) {
-
+    if (WTF::URLParser::isSpecialScheme(protocolValue)) {
         bool hasLeadingSlash = pathnameValue[0] == '/';
         auto maybeAddSlashPrefix = hasLeadingSlash ? pathnameValue : makeString("/-"_s, pathnameValue);
 
