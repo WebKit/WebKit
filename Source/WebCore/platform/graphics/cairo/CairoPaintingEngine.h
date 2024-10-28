@@ -28,17 +28,29 @@
 
 #pragma once
 
-#include "NicosiaPaintingEngine.h"
+#if USE(CAIRO)
+#include <memory>
+#include <wtf/Ref.h>
+#include <wtf/TZoneMalloc.h>
 
-namespace Nicosia {
+namespace WebCore {
+class CoordinatedTileBuffer;
+class GraphicsLayer;
+class IntRect;
 
-class PaintingEngineBasic final : public PaintingEngine {
+namespace Cairo {
+
+class PaintingEngine {
+    WTF_MAKE_TZONE_ALLOCATED(PaintingEngine);
 public:
-    PaintingEngineBasic();
-    virtual ~PaintingEngineBasic();
+    WEBCORE_EXPORT static std::unique_ptr<PaintingEngine> create();
 
-private:
-    void paint(WebCore::GraphicsLayer&, WebCore::CoordinatedTileBuffer&, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&, float) override;
+    virtual ~PaintingEngine() = default;
+
+    virtual void paint(WebCore::GraphicsLayer&, WebCore::CoordinatedTileBuffer&, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&, float) = 0;
 };
 
-} // namespace Nicosia
+} // namespace Cairo
+} // namespace WebCore
+
+#endif // USE(CAIRO)

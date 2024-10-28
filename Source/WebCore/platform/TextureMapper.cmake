@@ -86,7 +86,17 @@ if (USE_COORDINATED_GRAPHICS)
     endif ()
 
     if (USE_CAIRO)
+        list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
+            platform/graphics/cairo/CairoPaintingEngine.h
+        )
+
         list(APPEND WebCore_SOURCES
+            platform/graphics/cairo/CairoOperationRecorder.cpp
+            platform/graphics/cairo/CairoPaintingContext.cpp
+            platform/graphics/cairo/CairoPaintingEngine.cpp
+            platform/graphics/cairo/CairoPaintingEngineBasic.cpp
+            platform/graphics/cairo/CairoPaintingEngineThreaded.cpp
+
             platform/graphics/texmap/coordinated/CoordinatedGraphicsLayerCairo.cpp
         )
     elseif (USE_SKIA)
@@ -126,26 +136,6 @@ if (USE_NICOSIA)
         platform/graphics/nicosia/NicosiaScene.h
         platform/graphics/nicosia/NicosiaSceneIntegration.h
     )
-
-    if (USE_CAIRO)
-        list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
-            "${WEBCORE_DIR}/platform/graphics/nicosia/cairo"
-        )
-        list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
-            platform/graphics/nicosia/NicosiaPaintingEngine.h
-        )
-
-        # Currently NicosiaPaintingContext.cpp will cause a compilation error
-        # when building without USE_CAIRO so these are not in unified sources
-        list(APPEND WebCore_SOURCES
-            platform/graphics/nicosia/NicosiaPaintingContext.cpp
-            platform/graphics/nicosia/NicosiaPaintingEngine.cpp
-            platform/graphics/nicosia/NicosiaPaintingEngineBasic.cpp
-            platform/graphics/nicosia/NicosiaPaintingEngineThreaded.cpp
-
-            platform/graphics/nicosia/cairo/NicosiaCairoOperationRecorder.cpp
-        )
-    endif ()
 endif ()
 
 if (USE_GRAPHICS_LAYER_WC)

@@ -27,18 +27,19 @@
  */
 
 #include "config.h"
-#include "NicosiaPaintingContext.h"
+#include "CairoPaintingContext.h"
 
 #if USE(CAIRO)
+#include "CairoOperationRecorder.h"
 #include "CoordinatedTileBuffer.h"
 #include "GraphicsContext.h"
 #include "GraphicsContextCairo.h"
-#include "NicosiaCairoOperationRecorder.h"
 #include <cairo.h>
 #include <utility>
 #include <wtf/TZoneMallocInlines.h>
 
-namespace Nicosia {
+namespace WebCore {
+namespace Cairo {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PaintingContext);
 
@@ -83,7 +84,7 @@ PaintingContext::PaintingContext(WebCore::CoordinatedTileBuffer& baseBuffer)
 }
 
 PaintingContext::PaintingContext(PaintingOperations& paintingOperations)
-    : m_graphicsContext(makeUnique<CairoOperationRecorder>(paintingOperations))
+    : m_graphicsContext(makeUnique<OperationRecorder>(paintingOperations))
 {
 }
 
@@ -112,6 +113,7 @@ void PaintingContext::replay(const PaintingOperations& paintingOperations)
         operation->execute(context);
 }
 
-} // namespace Nicosia
+} // namespace Cairo
+} // namespace WebCore
 
 #endif // USE(CAIRO)

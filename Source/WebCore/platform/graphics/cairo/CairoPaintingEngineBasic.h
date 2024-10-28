@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2018 Metrological Group B.V.
- * Copyright (C) 2018 Igalia S.L.
+ * Copyright (C) 2017 Metrological Group B.V.
+ * Copyright (C) 2017 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,28 +29,21 @@
 #pragma once
 
 #if USE(CAIRO)
-#include <memory>
-#include <wtf/Vector.h>
+#include "CairoPaintingEngine.h"
 
 namespace WebCore {
-class GraphicsContextCairo;
-}
+namespace Cairo {
 
-namespace WTF {
-class TextStream;
-}
+class PaintingEngineBasic final : public PaintingEngine {
+public:
+    PaintingEngineBasic();
+    virtual ~PaintingEngineBasic();
 
-namespace Nicosia {
-
-struct PaintingOperation {
-    WTF_MAKE_STRUCT_FAST_ALLOCATED;
-    virtual ~PaintingOperation() = default;
-    virtual void execute(WebCore::GraphicsContextCairo&) = 0;
-    virtual void dump(WTF::TextStream&) = 0;
+private:
+    void paint(WebCore::GraphicsLayer&, WebCore::CoordinatedTileBuffer&, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&, float) override;
 };
 
-using PaintingOperations = Vector<std::unique_ptr<PaintingOperation>>;
-
-} // namespace Nicosia
+} // namespace Cairo
+} // namespace WebCore
 
 #endif // USE(CAIRO)

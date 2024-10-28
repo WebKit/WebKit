@@ -51,7 +51,6 @@
 #endif
 
 namespace Nicosia {
-class PaintingEngine;
 class SceneIntegration;
 }
 
@@ -65,6 +64,11 @@ class GraphicsLayerFactory;
 class NativeImage;
 class SkiaThreadedPaintingPool;
 struct ViewportAttributes;
+#if USE(CAIRO)
+namespace Cairo {
+class PaintingEngine;
+}
+#endif
 }
 
 namespace WebKit {
@@ -144,7 +148,7 @@ private:
     void detachLayer(WebCore::CoordinatedGraphicsLayer*) override;
     void attachLayer(WebCore::CoordinatedGraphicsLayer*) override;
 #if USE(CAIRO)
-    Nicosia::PaintingEngine& paintingEngine() override;
+    WebCore::Cairo::PaintingEngine& paintingEngine() override;
 #elif USE(SKIA)
     WebCore::BitmapTexturePool* skiaAcceleratedBitmapTexturePool() const override { return m_skiaAcceleratedBitmapTexturePool.get(); }
     WebCore::SkiaThreadedPaintingPool* skiaThreadedPaintingPool() const override { return m_skiaThreadedPaintingPool.get(); }
@@ -199,7 +203,7 @@ private:
     WebCore::PlatformDisplayID m_displayID;
 #endif
 #if USE(CAIRO)
-    std::unique_ptr<Nicosia::PaintingEngine> m_paintingEngine;
+    std::unique_ptr<WebCore::Cairo::PaintingEngine> m_paintingEngine;
 #elif USE(SKIA)
     std::unique_ptr<WebCore::BitmapTexturePool> m_skiaAcceleratedBitmapTexturePool;
     std::unique_ptr<WebCore::SkiaThreadedPaintingPool> m_skiaThreadedPaintingPool;

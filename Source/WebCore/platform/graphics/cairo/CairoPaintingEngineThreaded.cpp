@@ -27,17 +27,16 @@
  */
 
 #include "config.h"
-#include "NicosiaPaintingEngineThreaded.h"
+#include "CairoPaintingEngineThreaded.h"
 
-#if USE(COORDINATED_GRAPHICS)
-
+#if USE(CAIRO) && USE(COORDINATED_GRAPHICS)
+#include "CairoPaintingContext.h"
 #include "CoordinatedTileBuffer.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "NicosiaPaintingContext.h"
 
-namespace Nicosia {
-using namespace WebCore;
+namespace WebCore {
+namespace Cairo {
 
 static void paintLayer(GraphicsContext& context, GraphicsLayer& layer, const IntRect& sourceRect, const IntRect& mappedSourceRect, const IntRect& targetRect, float contentsScale, bool supportsAlpha)
 {
@@ -73,11 +72,9 @@ void PaintingEngineThreaded::paint(GraphicsLayer& layer, CoordinatedTileBuffer& 
     buffer.beginPainting();
 
     PaintingOperations paintingOperations;
-    PaintingContext::record(paintingOperations,
-        [&](GraphicsContext& context)
-        {
-            paintLayer(context, layer, sourceRect, mappedSourceRect, targetRect, contentsScale, buffer.supportsAlpha());
-        });
+    PaintingContext::record(paintingOperations, [&](GraphicsContext& context) {
+        paintLayer(context, layer, sourceRect, mappedSourceRect, targetRect, contentsScale, buffer.supportsAlpha());
+    });
 
     m_workerPool->postTask([paintingOperations = WTFMove(paintingOperations), buffer = Ref { buffer }] {
         PaintingContext::replay(buffer.get(), paintingOperations);
@@ -85,6 +82,7 @@ void PaintingEngineThreaded::paint(GraphicsLayer& layer, CoordinatedTileBuffer& 
     });
 }
 
-} // namespace Nicosia
+} // namespace Cairo
+} // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(CAIRO) && USE(COORDINATED_GRAPHICS)

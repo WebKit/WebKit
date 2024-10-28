@@ -44,10 +44,6 @@ class SkiaThreadedPaintingPool;
 }
 #endif
 
-namespace Nicosia {
-class PaintingEngine;
-}
-
 namespace WebCore {
 class CoordinatedAnimatedBackingStoreClient;
 class CoordinatedBackingStoreProxy;
@@ -55,6 +51,11 @@ class CoordinatedGraphicsLayer;
 class CoordinatedImageBackingStore;
 class CoordinatedTileBuffer;
 class TextureMapperPlatformLayerProxy;
+#if USE(CAIRO)
+namespace Cairo {
+class PaintingEngine;
+}
+#endif
 
 class CoordinatedGraphicsLayerClient {
 public:
@@ -63,7 +64,7 @@ public:
     virtual void detachLayer(CoordinatedGraphicsLayer*) = 0;
     virtual void attachLayer(CoordinatedGraphicsLayer*) = 0;
 #if USE(CAIRO)
-    virtual Nicosia::PaintingEngine& paintingEngine() = 0;
+    virtual Cairo::PaintingEngine& paintingEngine() = 0;
 #elif USE(SKIA)
     virtual BitmapTexturePool* skiaAcceleratedBitmapTexturePool() const = 0;
     virtual SkiaThreadedPaintingPool* skiaThreadedPaintingPool() const = 0;

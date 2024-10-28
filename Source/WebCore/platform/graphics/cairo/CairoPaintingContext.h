@@ -29,7 +29,7 @@
 #pragma once
 
 #if USE(CAIRO)
-#include "NicosiaPaintingOperation.h"
+#include "CairoPaintingOperation.h"
 #include "RefPtrCairo.h"
 #include <memory>
 #include <wtf/TZoneMalloc.h>
@@ -39,9 +39,8 @@ typedef struct _cairo_surface cairo_surface_t;
 namespace WebCore {
 class CoordinatedTileBuffer;
 class GraphicsContext;
-}
 
-namespace Nicosia {
+namespace Cairo {
 
 class PaintingContext {
     WTF_MAKE_TZONE_ALLOCATED(PaintingContext);
@@ -86,6 +85,7 @@ private:
 #endif
 };
 
-} // namespace Nicosia
+} // namespace Cairo
+} // namespace WebCore
 
 #endif // USE(CAIRO)

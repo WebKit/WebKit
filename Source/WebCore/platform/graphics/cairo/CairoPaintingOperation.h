@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2017 Metrological Group B.V.
- * Copyright (C) 2017 Igalia S.L.
+ * Copyright (C) 2018 Metrological Group B.V.
+ * Copyright (C) 2018 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,38 +26,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "NicosiaPaintingEngine.h"
+#pragma once
 
-#include "NicosiaPaintingEngineBasic.h"
-#include "NicosiaPaintingEngineThreaded.h"
-#include <wtf/NumberOfCores.h>
-#include <wtf/TZoneMallocInlines.h>
-#include <wtf/text/StringToIntegerConversion.h>
+#if USE(CAIRO)
+#include <memory>
+#include <wtf/Vector.h>
 
-namespace Nicosia {
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL(PaintingEngine);
-
-std::unique_ptr<PaintingEngine> PaintingEngine::create()
-{
-#if PLATFORM(WPE) || USE(GTK4)
-    unsigned numThreads = std::max(1, std::min(8, WTF::numberOfProcessorCores() / 2));
-#else
-    unsigned numThreads = 0;
-#endif
-    if (const char* numThreadsEnv = getenv("WEBKIT_NICOSIA_PAINTING_THREADS")) {
-        auto newValue = parseInteger<unsigned>(StringView::fromLatin1(numThreadsEnv));
-        if (newValue && *newValue <= 8)
-            numThreads = *newValue;
-        else
-            WTFLogAlways("The number of Nicosia painting threads is not between 0 and 8. Using the default value %u\n", numThreads);
-    }
-
-    if (numThreads)
-        return std::unique_ptr<PaintingEngine>(new PaintingEngineThreaded(numThreads));
-
-    return std::unique_ptr<PaintingEngine>(new PaintingEngineBasic);
+namespace WTF {
+class TextStream;
 }
 
-} // namespace Nicosia
+namespace WebCore {
+class GraphicsContextCairo;
+
+namespace Cairo {
+
+struct PaintingOperation {
+    WTF_MAKE_STRUCT_FAST_ALLOCATED;
+    virtual ~PaintingOperation() = default;
+    virtual void execute(WebCore::GraphicsContextCairo&) = 0;
+    virtual void dump(WTF::TextStream&) = 0;
+};
+
+using PaintingOperations = Vector<std::unique_ptr<PaintingOperation>>;
+
+} // namespace Cairo
+} // namespace WebCore
+
+#endif // USE(CAIRO)

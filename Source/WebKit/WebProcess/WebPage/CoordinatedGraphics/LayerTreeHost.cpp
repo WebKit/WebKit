@@ -50,7 +50,7 @@
 #include <wtf/TZoneMallocInlines.h>
 
 #if USE(CAIRO)
-#include <WebCore/NicosiaPaintingEngine.h>
+#include <WebCore/CairoPaintingEngine.h>
 #elif USE(SKIA)
 #include <WebCore/ProcessCapabilities.h>
 #include <WebCore/SkiaThreadedPaintingPool.h>
@@ -77,7 +77,7 @@ LayerTreeHost::LayerTreeHost(WebPage& webPage, WebCore::PlatformDisplayID displa
     , m_displayID(displayID)
 #endif
 #if USE(CAIRO)
-    , m_paintingEngine(Nicosia::PaintingEngine::create())
+    , m_paintingEngine(Cairo::PaintingEngine::create())
 #endif
 {
 #if USE(SKIA)
@@ -480,7 +480,7 @@ void LayerTreeHost::attachLayer(CoordinatedGraphicsLayer* layer)
 }
 
 #if USE(CAIRO)
-Nicosia::PaintingEngine& LayerTreeHost::paintingEngine()
+Cairo::PaintingEngine& LayerTreeHost::paintingEngine()
 {
     return *m_paintingEngine;
 }

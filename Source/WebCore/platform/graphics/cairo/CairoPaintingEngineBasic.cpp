@@ -27,16 +27,16 @@
  */
 
 #include "config.h"
-#include "NicosiaPaintingEngineBasic.h"
+#include "CairoPaintingEngineBasic.h"
 
+#if USE(CAIRO)
+#include "CairoPaintingContext.h"
 #include "CoordinatedTileBuffer.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
-#include "NicosiaPaintingContext.h"
 
-namespace Nicosia {
-
-using namespace WebCore;
+namespace WebCore {
+namespace Cairo {
 
 PaintingEngineBasic::PaintingEngineBasic() = default;
 PaintingEngineBasic::~PaintingEngineBasic() = default;
@@ -71,4 +71,7 @@ void PaintingEngineBasic::paint(GraphicsLayer& layer, CoordinatedTileBuffer& buf
     buffer.completePainting();
 }
 
-} // namespace Nicosia
+} // namespace Cairo
+} // namespace WebCore
+
+#endif // USE(CAIRO)

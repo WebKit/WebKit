@@ -26,26 +26,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "CairoPaintingEngine.h"
 
-#if USE(COORDINATED_GRAPHICS)
+#if USE(CAIRO)
+#include "CairoPaintingEngineBasic.h"
+#include "CairoPaintingEngineThreaded.h"
+#include <wtf/NumberOfCores.h>
+#include <wtf/TZoneMallocInlines.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
-#include "NicosiaPaintingEngine.h"
-#include <wtf/WorkerPool.h>
+namespace WebCore {
+namespace Cairo {
 
-namespace Nicosia {
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PaintingEngine);
 
-class PaintingEngineThreaded final : public PaintingEngine {
-public:
-    explicit PaintingEngineThreaded(unsigned);
-    virtual ~PaintingEngineThreaded();
+std::unique_ptr<PaintingEngine> PaintingEngine::create()
+{
+#if PLATFORM(WPE) || USE(GTK4)
+    unsigned numThreads = std::max(1, std::min(8, WTF::numberOfProcessorCores() / 2));
+#else
+    unsigned numThreads = 0;
+#endif
+    const char* numThreadsEnv = getenv("WEBKIT_CAIRO_PAINTING_THREADS");
+    if (!numThreadsEnv)
+        numThreadsEnv = getenv("WEBKIT_NICOSIA_PAINTING_THREADS");
+    if (numThreadsEnv) {
+        auto newValue = parseInteger<unsigned>(StringView::fromLatin1(numThreadsEnv));
+        if (newValue && *newValue <= 8)
+            numThreads = *newValue;
+        else
+            WTFLogAlways("The number of Cairo painting threads is not between 0 and 8. Using the default value %u\n", numThreads);
+    }
 
-private:
-    void paint(WebCore::GraphicsLayer&, WebCore::CoordinatedTileBuffer&, const WebCore::IntRect&, const WebCore::IntRect&, const WebCore::IntRect&, float) override;
+    if (numThreads)
+        return std::unique_ptr<PaintingEngine>(new PaintingEngineThreaded(numThreads));
 
-    Ref<WorkerPool> m_workerPool;
-};
+    return std::unique_ptr<PaintingEngine>(new PaintingEngineBasic);
+}
 
-} // namespace Nicosia
+} // namespace Cairo
+} // namespace WebCore
 
-#endif // USE(COORDINATED_GRAPHICS)
+#endif // USE(CAIRO)

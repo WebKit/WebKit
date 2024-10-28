@@ -21,11 +21,11 @@
 #include "CoordinatedGraphicsLayer.h"
 
 #if USE(COORDINATED_GRAPHICS) && USE(CAIRO)
+#include "CairoPaintingContext.h"
+#include "CairoPaintingEngine.h"
 #include "CoordinatedTileBuffer.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
-#include "NicosiaPaintingContext.h"
-#include "NicosiaPaintingEngine.h"
 
 namespace WebCore {
 

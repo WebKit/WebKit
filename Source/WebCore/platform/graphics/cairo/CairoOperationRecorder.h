@@ -30,14 +30,15 @@
 #pragma once
 
 #if USE(CAIRO)
+#include "CairoPaintingOperation.h"
 #include "GraphicsContext.h"
-#include "NicosiaPaintingOperation.h"
 
-namespace Nicosia {
+namespace WebCore {
+namespace Cairo {
 
-class CairoOperationRecorder final : public WebCore::GraphicsContext {
+class OperationRecorder final : public WebCore::GraphicsContext {
 public:
-    CairoOperationRecorder(PaintingOperations&);
+    OperationRecorder(PaintingOperations&);
 
 private:
     bool hasPlatformContext() const override { return false; }
@@ -120,6 +121,7 @@ private:
     Vector<State, 32> m_stateStack;
 };
 
-} // namespace Nicosia
+} // namespace Cairo
+} // namespace WebCore
 
 #endif // USE(CAIRO)
