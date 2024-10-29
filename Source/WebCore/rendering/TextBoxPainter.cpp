@@ -531,9 +531,9 @@ void TextBoxPainter<TextBoxPath>::paintForeground(const StyledMarkedText& marked
     updateGraphicsContext(context, markedText.style.textStyles);
 
     if constexpr (std::is_same_v<TextBoxPath, InlineIterator::BoxLegacyPath>)
-        textPainter.setGlyphDisplayListIfNeeded(downcast<LegacyInlineTextBox>(*textBox().legacyInlineBox()), m_paintInfo, m_paintTextRun);
+        textPainter.setGlyphDisplayListIfNeeded(downcast<LegacyInlineTextBox>(*textBox().legacyInlineBox()), m_paintInfo, m_style, m_paintTextRun);
     else
-        textPainter.setGlyphDisplayListIfNeeded(textBox().box(), m_paintInfo, m_paintTextRun);
+        textPainter.setGlyphDisplayListIfNeeded(textBox().box(), m_paintInfo, m_style, m_paintTextRun);
 
     // TextPainter wants the box rectangle and text origin of the entire line box.
     textPainter.paintRange(m_paintTextRun, m_paintRect, textOriginFromPaintRect(m_paintRect), markedText.startOffset, markedText.endOffset);

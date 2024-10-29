@@ -45,6 +45,11 @@ bool FontCascade::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
+bool FontCascade::canUseGlyphDisplayList(const RenderStyle&)
+{
+    return true;
+}
+
 static bool characterSequenceIsEmoji(SurrogatePairAwareTextIterator& iterator, char32_t firstCharacter, unsigned firstClusterLength)
 {
     char32_t character = firstCharacter;

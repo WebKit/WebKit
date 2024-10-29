@@ -514,4 +514,10 @@ ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariant
     }
 }
 
+bool FontCascade::canUseGlyphDisplayList(const RenderStyle& style)
+{
+    // CoreText won't call the drawImage delegate for glyphs that are invisible, even if they have an associated shadow applied to its graphic context. This would result in a glyph display list without the invisible glyph which is drawn as image and we would not draw its associated shadow. Therefore, we won't use a display list for runs that are invisible and have an associated shadow.
+    return !(style.textShadow() && !style.color().isVisible());
+}
+
 } // namespace WebCore

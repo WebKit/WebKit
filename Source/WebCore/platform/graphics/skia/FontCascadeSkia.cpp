@@ -101,6 +101,11 @@ bool FontCascade::canExpandAroundIdeographsInComplexText()
     return false;
 }
 
+bool FontCascade::canUseGlyphDisplayList(const RenderStyle&)
+{
+    return true;
+}
+
 ResolvedEmojiPolicy FontCascade::resolveEmojiPolicy(FontVariantEmoji fontVariantEmoji, char32_t character)
 {
     switch (fontVariantEmoji) {

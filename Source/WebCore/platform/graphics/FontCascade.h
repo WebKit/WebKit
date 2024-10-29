@@ -52,6 +52,7 @@ namespace WebCore {
 
 class GraphicsContext;
 class LayoutRect;
+class RenderStyle;
 class RenderText;
 class TextLayout;
 class TextRun;
@@ -205,6 +206,8 @@ public:
 
     static bool isCJKIdeograph(char32_t);
     static bool isCJKIdeographOrSymbol(char32_t);
+
+    static bool canUseGlyphDisplayList(const RenderStyle&);
 
     // Returns (the number of opportunities, whether the last expansion is a trailing expansion)
     // If there are no opportunities, the bool will be true iff we are forbidding leading expansions.
