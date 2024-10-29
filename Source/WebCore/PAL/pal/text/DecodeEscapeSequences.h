@@ -34,6 +34,8 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/StringBuilder.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace PAL {
 
 // See <http://en.wikipedia.org/wiki/Percent-encoding#Non-standard_implementations>.
@@ -187,3 +189,4 @@ inline Vector<uint8_t> decodeURLEscapeSequencesAsData(StringView string)
 
 } // namespace PAL
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -48,6 +48,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace PAL {
 
 const size_t maxEncodingNameLength = 63;
@@ -357,3 +359,5 @@ String defaultTextEncodingNameForSystemLanguage()
 }
 
 } // namespace PAL
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

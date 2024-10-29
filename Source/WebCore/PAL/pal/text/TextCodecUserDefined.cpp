@@ -32,6 +32,8 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace PAL {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodecUserDefined);
@@ -97,3 +99,5 @@ Vector<uint8_t> TextCodecUserDefined::encode(StringView string, UnencodableHandl
 }
 
 } // namespace PAL
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

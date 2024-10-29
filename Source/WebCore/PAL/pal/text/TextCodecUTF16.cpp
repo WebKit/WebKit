@@ -32,6 +32,8 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace PAL {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodecUTF16);
@@ -168,3 +170,5 @@ Vector<uint8_t> TextCodecUTF16::encode(StringView string, UnencodableHandling) c
 }
 
 } // namespace PAL
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

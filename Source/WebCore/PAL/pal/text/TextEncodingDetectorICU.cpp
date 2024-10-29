@@ -35,6 +35,8 @@
 #include <unicode/ucnv.h>
 #include <unicode/ucsdet.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace PAL {
 
 bool detectTextEncoding(std::span<const uint8_t> data, const char* hintEncodingName, TextEncoding* detectedEncoding)
@@ -113,3 +115,5 @@ bool detectTextEncoding(std::span<const uint8_t> data, const char* hintEncodingN
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

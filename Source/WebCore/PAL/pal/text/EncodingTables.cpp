@@ -30,6 +30,8 @@
 #include <mutex>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace PAL {
 
 #if ASSERT_ENABLED
@@ -8686,3 +8688,5 @@ void checkEncodingTableInvariants()
 #endif
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

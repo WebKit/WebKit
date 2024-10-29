@@ -31,6 +31,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace PAL {
 
 static const UChar latin1ConversionTable[256] = {
@@ -253,3 +255,5 @@ Vector<uint8_t> TextCodecLatin1::encode(StringView string, UnencodableHandling h
 }
 
 } // namespace PAL
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

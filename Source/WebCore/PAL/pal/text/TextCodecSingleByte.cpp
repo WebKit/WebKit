@@ -34,6 +34,8 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace PAL {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextCodecSingleByte);
@@ -463,3 +465,5 @@ void TextCodecSingleByte::registerCodecs(TextCodecRegistrar registrar)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

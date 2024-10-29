@@ -61,5 +61,7 @@ struct CryptoOperationReturnValue {
 } // Cpp
 
 #ifndef __swift__
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "PALSwift-Generated.h"
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
