@@ -162,7 +162,7 @@ bool RenderWidget::updateWidgetGeometry()
 
     LayoutRect contentBox = contentBoxRect();
     LayoutRect absoluteContentBox(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
-    if (m_widget->isLocalFrameView()) {
+    if (is<FrameView>(m_widget)) {
         contentBox.setLocation(absoluteContentBox.location());
         return setWidgetGeometry(contentBox);
     }
