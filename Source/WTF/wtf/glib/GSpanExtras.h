@@ -36,6 +36,28 @@ inline std::span<const uint8_t> span(const GRefPtr<GBytes>& bytes)
     return span(bytes.get());
 }
 
+inline std::span<const uint8_t> span(GByteArray* array)
+{
+    return unsafeForgeSpan<const uint8_t>(array->data, array->len);
+}
+
+inline std::span<const uint8_t> span(const GRefPtr<GByteArray>& array)
+{
+    return span(array.get());
+}
+
+inline std::span<const uint8_t> span(GVariant* variant)
+{
+    const auto* ptr = static_cast<const uint8_t*>(g_variant_get_data(variant));
+    size_t size = g_variant_get_size(variant);
+    return unsafeForgeSpan<const uint8_t>(ptr, size);
+}
+
+inline std::span<const uint8_t> span(const GRefPtr<GVariant>& variant)
+{
+    return span(variant.get());
+}
+
 } // namespace WTF
 
 using WTF::span;

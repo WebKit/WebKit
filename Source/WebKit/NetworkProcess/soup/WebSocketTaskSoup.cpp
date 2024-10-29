@@ -37,6 +37,7 @@
 #include <WebCore/ThreadableWebSocketChannel.h>
 #include <wtf/RunLoop.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/text/StringBuilder.h>
@@ -178,18 +179,13 @@ void WebSocketTask::didReceiveMessageCallback(WebSocketTask* task, SoupWebsocket
     if (g_cancellable_is_cancelled(task->m_cancellable.get()))
         return;
 
-    gsize dataSize;
-    const auto* data = g_bytes_get_data(message, &dataSize);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    std::span dataSpan { static_cast<const uint8_t*>(data), dataSize };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
+    std::span data = span(message);
     switch (dataType) {
     case SOUP_WEBSOCKET_DATA_TEXT:
-        task->m_channel->didReceiveText(String::fromUTF8(dataSpan));
+        task->m_channel->didReceiveText(String::fromUTF8(data));
         break;
     case SOUP_WEBSOCKET_DATA_BINARY:
-        task->m_channel->didReceiveBinaryData(dataSpan);
+        task->m_channel->didReceiveBinaryData(data);
         break;
     }
 }

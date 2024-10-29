@@ -118,9 +118,7 @@ static void deleteFromCursorCallback(GtkWidget* widget, GtkDeleteType deleteType
             translator->addPendingEditorCommand("MoveToEndOfParagraph");
     }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     const char* rawCommand = gtkDeleteCommands[deleteType][direction];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (!rawCommand)
         return;
 
@@ -151,9 +149,7 @@ static void moveCursorCallback(GtkWidget* widget, GtkMovementStep step, gint cou
     if (static_cast<unsigned>(step) >= G_N_ELEMENTS(gtkMoveCommands))
         return;
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     const char* rawCommand = gtkMoveCommands[step][direction];
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (!rawCommand)
         return;
 
