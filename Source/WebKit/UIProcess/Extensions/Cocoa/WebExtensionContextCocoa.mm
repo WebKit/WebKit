@@ -70,6 +70,7 @@
 #import "WebExtensionDataType.h"
 #import "WebExtensionDynamicScripts.h"
 #import "WebExtensionMenuItemContextParameters.h"
+#import "WebExtensionPermission.h"
 #import "WebExtensionTab.h"
 #import "WebExtensionURLSchemeHandler.h"
 #import "WebExtensionWindow.h"
@@ -1683,6 +1684,9 @@ WebExtensionContext::PermissionState WebExtensionContext::permissionState(const 
     }
 
     if (hasPermission(WKWebExtensionPermissionWebNavigation, tab, options))
+        return cacheResultAndReturn(PermissionState::RequestedImplicitly);
+
+    if (hasPermission(WebExtensionPermission::declarativeNetRequestFeedback(), tab, options))
         return cacheResultAndReturn(PermissionState::RequestedImplicitly);
 
     if (options.contains(PermissionStateOptions::RequestedWithTabsPermission) && hasPermission(WKWebExtensionPermissionTabs, tab, options))
