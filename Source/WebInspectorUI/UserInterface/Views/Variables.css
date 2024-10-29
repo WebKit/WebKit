@@ -434,7 +434,7 @@ body {
         }
     }
 
-    &:not(.docked) {
+    &.mac-platform:not(.docked) {
         --undocked-title-area-height: calc(27px / var(--zoom-factor));
     }
 }

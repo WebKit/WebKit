@@ -32,8 +32,6 @@ WI.TabBar = class TabBar extends WI.View
         this.element.classList.add("tab-bar");
         this.element.addEventListener("mousedown", this._handleMouseDown.bind(this));
 
-        this.element.createChild("div", "border top");
-
         const navigationBarBeforeElement = null;
         this._navigationBarBefore = new WI.NavigationBar(navigationBarBeforeElement, {sizesToFit: true});
         this.addSubview(this._navigationBarBefore);
@@ -48,8 +46,6 @@ WI.TabBar = class TabBar extends WI.View
         const navigationBarAfterElement = null;
         this._navigationBarAfter = new WI.NavigationBar(navigationBarAfterElement, {sizesToFit: true});
         this.addSubview(this._navigationBarAfter);
-
-        this.element.createChild("div", "border bottom");
 
         this._tabBarItems = [];
         this._hiddenTabBarItems = [];
