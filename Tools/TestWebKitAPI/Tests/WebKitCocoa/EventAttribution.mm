@@ -121,11 +121,6 @@ static NSURL *exampleURL()
     return [NSURL URLWithString:@"https://example.com/"];
 }
 
-static void clearState()
-{
-    [[NSFileManager defaultManager] removeItemAtURL:adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]).get()._resourceLoadStatisticsDirectory error:nil];
-}
-
 static RetainPtr<WKWebViewConfiguration> configurationWithoutUsingDaemon()
 {
     auto dataStoreConfiguration = adoptNS([_WKWebsiteDataStoreConfiguration new]);
@@ -142,7 +137,6 @@ static RetainPtr<WKWebView> webViewWithoutUsingDaemon()
 
 void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebView *, const HTTPServer&)>&& addAttributionToWebView, bool setTestAppBundleID = true)
 {
-    clearState();
     [WKWebsiteDataStore _setNetworkProcessSuspensionAllowedForTesting:NO];
     bool done = false;
     HTTPServer server([&done, connectionCount = 0] (Connection connection) mutable {
@@ -181,6 +175,12 @@ void runBasicPCMTest(WKWebViewConfiguration *configuration, Function<void(WKWebV
     addAttributionToWebView(webView.get(), server);
     [[webView configuration].websiteDataStore _setResourceLoadStatisticsEnabled:YES];
     [[webView configuration].websiteDataStore _trustServerForLocalPCMTesting:secTrustFromCertificateChain(@[(id)testCertificate().get()]).get()];
+    // Clear existing data.
+    __block bool cleared = false;
+    [[webView configuration].websiteDataStore removeDataOfTypes:[WKWebsiteDataStore _allWebsiteDataTypesIncludingPrivate] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        cleared = true;
+    }];
+    Util::run(&cleared);
     [webView _setPrivateClickMeasurementAttributionReportURLsForTesting:serverURL destinationURL:exampleURL() completionHandler:^{
         [webView _setPrivateClickMeasurementOverrideTimerForTesting:YES completionHandler:^{
             NSString *html = [NSString stringWithFormat:@"<script>fetch('%@conversionRequestBeforeRedirect',{mode:'no-cors'})</script>", serverURL];
@@ -386,12 +386,7 @@ TEST(PrivateClickMeasurement, Basic)
     });
 }
 
-// rdar://136703173
-#if PLATFORM(MAC)
-TEST(PrivateClickMeasurement, DISABLED_EphemeralWithAttributedBundleIdentifier)
-#else
 TEST(PrivateClickMeasurement, EphemeralWithAttributedBundleIdentifier)
-#endif
 {
     auto configuration = configurationWithoutUsingDaemon();
     configuration.get()._attributedBundleIdentifier = @"other.test.bundle.id";
