@@ -1,9 +1,9 @@
 
-FAIL some(): subscriber is inactive after the first value that passes the predicate, because the source was unsubscribed from promise_test: Unhandled rejection with value: object "TypeError: source.some is not a function. (In 'source.some((value) => value === "good")', 'source.some' is undefined)"
-FAIL observable-some promise_test: Unhandled rejection with value: object "TypeError: source.some is not a function. (In 'source.some((value) => value === "good")', 'source.some' is undefined)"
-FAIL observable-some 1 promise_test: Unhandled rejection with value: object "TypeError: source.some is not a function. (In 'source.some((value) => value === "good")', 'source.some' is undefined)"
-FAIL some(): The returned promise rejects with an error if the predicate errors promise_test: Unhandled rejection with value: object "TypeError: source.some is not a function. (In 'source.some(() => {throw error})', 'source.some' is undefined)"
-FAIL some(): The returned promise rejects with an error if the source observable errors promise_test: Unhandled rejection with value: object "TypeError: source.some is not a function. (In 'source.some(() => true)', 'source.some' is undefined)"
-FAIL some(): The returned promise resolves as false if the source observable completes without emitting a value promise_test: Unhandled rejection with value: object "TypeError: source.some is not a function. (In 'source.some(() => true)', 'source.some' is undefined)"
-FAIL some(): The return promise rejects with a DOMException if the signal is aborted promise_test: Unhandled rejection with value: object "TypeError: source.some is not a function. (In 'source.some(() => true, { signal: controller.signal })', 'source.some' is undefined)"
+PASS some(): subscriber is inactive after the first value that passes the predicate, because the source was unsubscribed from
+PASS observable-some
+PASS observable-some 1
+PASS some(): The returned promise rejects with an error if the predicate errors
+PASS some(): The returned promise rejects with an error if the source observable errors
+PASS some(): The returned promise resolves as false if the source observable completes without emitting a value
+PASS some(): The return promise rejects with a DOMException if the signal is aborted
 

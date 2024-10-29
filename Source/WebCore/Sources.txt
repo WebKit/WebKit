@@ -1234,6 +1234,7 @@ dom/InternalObserverForEach.cpp
 dom/InternalObserverFromScript.cpp
 dom/InternalObserverLast.cpp
 dom/InternalObserverMap.cpp
+dom/InternalObserverSome.cpp
 dom/InternalObserverTake.cpp
 dom/KeyboardEvent.cpp
 dom/LiveNodeList.cpp

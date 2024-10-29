@@ -39,6 +39,7 @@
 #include "InternalObserverFromScript.h"
 #include "InternalObserverLast.h"
 #include "InternalObserverMap.h"
+#include "InternalObserverSome.h"
 #include "InternalObserverTake.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSSubscriptionObserverCallback.h"
@@ -146,6 +147,11 @@ void Observable::find(ScriptExecutionContext& context, Ref<PredicateCallback>&& 
 void Observable::every(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
 {
     return createInternalObserverOperatorEvery(context, *this, WTFMove(callback), options, WTFMove(promise));
+}
+
+void Observable::some(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+{
+    return createInternalObserverOperatorSome(context, *this, WTFMove(callback), options, WTFMove(promise));
 }
 
 Observable::Observable(Ref<SubscriberCallback> callback)
