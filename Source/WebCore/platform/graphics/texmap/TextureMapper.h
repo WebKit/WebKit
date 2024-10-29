@@ -82,6 +82,7 @@ public:
     IntRect clipBounds();
     IntSize maxTextureSize() const { return IntSize(2000, 2000); }
     void setDepthRange(double zNear, double zFar);
+    std::pair<double, double> depthRange() const;
     void setMaskMode(bool m) { m_isMaskMode = m; }
     void setWrapMode(WrapMode m) { m_wrapMode = m; }
     void setPatternTransform(const TransformationMatrix& p) { m_patternTransform = p; }
@@ -118,7 +119,7 @@ private:
     bool beginRoundedRectClip(const TransformationMatrix&, const FloatRoundedRect&);
     void bindDefaultSurface();
     ClipStack& clipStack();
-    TextureMapperGLData& data() { return *m_data; }
+    TextureMapperGLData& data() const { return *m_data; }
 
     void updateProjectionMatrix();
 

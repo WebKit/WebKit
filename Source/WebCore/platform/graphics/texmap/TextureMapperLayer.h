@@ -41,6 +41,7 @@ template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TextureMappe
 namespace WebCore {
 
 class TextureMapper;
+class TextureMapperFlattenedLayer;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
 
@@ -135,10 +136,18 @@ private:
     {
         if (m_effectTarget)
             return m_effectTarget->rootLayer();
-        if (m_parent)
+        if (m_parent) {
+            if (m_parent->flattensAsLeafOf3DSceneOr3DPerspective())
+                return *m_parent;
             return m_parent->rootLayer();
+        }
         return const_cast<TextureMapperLayer&>(*this);
     }
+
+    void processDescendantLayersFlatteningRequirements();
+    void processFlatteningRequirements();
+    void computeFlattenedRegion(Region&, bool);
+    void destroyFlattenedDescendantLayers();
 
     struct ComputeTransformData;
     void computeTransformsRecursive(ComputeTransformData&);
@@ -163,6 +172,7 @@ private:
     void computeOverlapRegions(ComputeOverlapRegionData&, const TransformationMatrix&, bool includesReplica = true);
 
     void paintRecursive(TextureMapperPaintOptions&);
+    void paintFlattened(TextureMapperPaintOptions&);
     void paintWith3DRenderingContext(TextureMapperPaintOptions&);
     void paintSelfChildrenReplicaFilterAndMask(TextureMapperPaintOptions&);
     void paintUsingOverlapRegions(TextureMapperPaintOptions&);
@@ -173,12 +183,18 @@ private:
     void paintSelf(TextureMapperPaintOptions&);
     void paintSelfAndChildren(TextureMapperPaintOptions&);
     void paintSelfAndChildrenWithReplica(TextureMapperPaintOptions&);
+    void paintBackdrop(TextureMapperPaintOptions&);
     void applyMask(TextureMapperPaintOptions&);
     void recordDamage(const FloatRect&, const TransformationMatrix&, const TextureMapperPaintOptions&);
 
     bool isVisible() const;
 
     bool shouldBlend() const;
+
+    bool flattensAsLeafOf3DSceneOr3DPerspective() const;
+
+    bool preserves3D() const { return m_state.preserves3D; }
+    bool isFlattened() const { return !!m_flattenedLayer; }
 
     inline FloatRect layerRect() const
     {
@@ -190,6 +206,7 @@ private:
     WeakPtr<TextureMapperLayer> m_effectTarget;
     TextureMapperBackingStore* m_backingStore { nullptr };
     TextureMapperPlatformLayer* m_contentsLayer { nullptr };
+    std::unique_ptr<TextureMapperFlattenedLayer> m_flattenedLayer;
     float m_currentOpacity { 1.0 };
     FilterOperations m_currentFilters;
     float m_centerZ { 0 };

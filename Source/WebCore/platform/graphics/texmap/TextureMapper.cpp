@@ -1335,6 +1335,11 @@ void TextureMapper::setDepthRange(double zNear, double zFar)
     updateProjectionMatrix();
 }
 
+std::pair<double, double> TextureMapper::depthRange() const
+{
+    return { data().zNear, data().zFar };
+}
+
 void TextureMapper::updateProjectionMatrix()
 {
     bool flipY;
