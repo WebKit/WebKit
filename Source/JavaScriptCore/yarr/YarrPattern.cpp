@@ -409,8 +409,13 @@ public:
         if (m_compileMode != CompileMode::UnicodeSets)
             return;
 
-        asciiOpSorted(rhsMatches, rhsRanges);
-        unicodeOpSorted(rhsMatchesUnicode, rhsRangesUnicode);
+        asciiOp(rhsMatches, rhsRanges);
+        // Sort the incoming Unicode matches, since Unicode case folding canonicalization may cause
+        // characters to be added to rhsMatches out of code point order.
+        Vector<char32_t> rhsSortedMatchesUnicode(rhsMatchesUnicode);
+        std::sort(rhsSortedMatchesUnicode.begin(), rhsSortedMatchesUnicode.end());
+
+        unicodeOpSorted(rhsSortedMatchesUnicode, rhsRangesUnicode);
     }
 
     bool hasInverteStrings()
@@ -667,7 +672,7 @@ private:
         m_mayContainStrings = !m_strings.isEmpty();
     }
 
-    void asciiOpSorted(const Vector<char32_t>& rhsMatches, const Vector<CharacterRange>& rhsRanges)
+    void asciiOp(const Vector<char32_t>& rhsMatches, const Vector<CharacterRange>& rhsRanges)
     {
         Vector<char32_t> resultMatches;
         Vector<CharacterRange> resultRanges;
