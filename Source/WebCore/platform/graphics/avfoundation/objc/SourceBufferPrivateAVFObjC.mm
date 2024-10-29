@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -178,6 +178,9 @@ void SourceBufferPrivateAVFObjC::setTrackChangeCallbacks(const InitializationSeg
             });
         });
     }
+
+    // When a text track mode changes we should continue to parse and add cues to HTMLMediaElement, it will ensure
+    // that only the correct cues are made visible.
 }
 
 bool SourceBufferPrivateAVFObjC::precheckInitializationSegment(const InitializationSegment& segment)
@@ -201,6 +204,9 @@ bool SourceBufferPrivateAVFObjC::precheckInitializationSegment(const Initializat
 
     for (auto& audioTrackInfo : segment.audioTracks)
         m_audioTracks.try_emplace(audioTrackInfo.track->id(), audioTrackInfo.track);
+
+    for (auto& textTrackInfo : segment.textTracks)
+        m_textTracks.try_emplace(textTrackInfo.track->id(), textTrackInfo.track);
 
     setTrackChangeCallbacks(segment, false);
 
@@ -236,9 +242,20 @@ void SourceBufferPrivateAVFObjC::didProvideMediaDataForTrackId(Ref<MediaSampleAV
 
 bool SourceBufferPrivateAVFObjC::isMediaSampleAllowed(const MediaSample& sample) const
 {
-    // FIXME(125161): We don't handle text tracks, and passing this sample up to SourceBuffer
-    // will just confuse its state. Drop this sample until we can handle text tracks properly.
     auto trackID = sample.trackID();
+    if (isTextTrack(trackID)) {
+        auto result = m_textTracks.find(trackID);
+        if (result == m_textTracks.end())
+            return false;
+
+        if (RefPtr textTrack = downcast<InbandTextTrackPrivateAVF>(result->second)) {
+            PlatformSample platformSample = sample.platformSample();
+            textTrack->processVTTSample(platformSample.sample.cmSampleBuffer, sample.presentationTime());
+        }
+
+        return false;
+    }
+
     return isEnabledVideoTrackID(trackID) || audioRendererForTrackID(trackID);
 }
 
@@ -541,6 +558,13 @@ void SourceBufferPrivateAVFObjC::clearTracks()
             player->removeAudioTrack(*track);
     }
     m_audioTracks.clear();
+
+    for (auto& pair : m_textTracks) {
+        RefPtr track = pair.second;
+        if (RefPtr player = this->player())
+            player->removeTextTrack(*track);
+    }
+    m_textTracks.clear();
 }
 
 void SourceBufferPrivateAVFObjC::removedFromMediaSource()
@@ -611,8 +635,8 @@ void SourceBufferPrivateAVFObjC::trackDidChangeEnabled(AudioTrackPrivate& track,
             }
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-        if (m_cdmInstance && shouldAddContentKeyRecipients())
-            [m_cdmInstance->contentKeySession() addContentKeyRecipient:renderer.get()];
+            if (m_cdmInstance && shouldAddContentKeyRecipients())
+                [m_cdmInstance->contentKeySession() addContentKeyRecipient:renderer.get()];
 #endif
 
             ThreadSafeWeakPtr weakThis { *this };
@@ -956,6 +980,11 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
 
     if (RefPtr player = this->player())
         player->setHasAvailableAudioSample(renderer, false);
+}
+
+bool SourceBufferPrivateAVFObjC::isTextTrack(TrackID trackID) const
+{
+    return m_textTracks.contains(trackID);
 }
 
 bool SourceBufferPrivateAVFObjC::trackIsBlocked(TrackID trackID) const

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,6 +30,7 @@
 
 #import "AVAssetTrackUtilities.h"
 #import "FormatDescriptionUtilities.h"
+#import "FourCC.h"
 #import "MediaSelectionGroupAVFObjC.h"
 #import "PlatformAudioTrackConfiguration.h"
 #import "PlatformVideoTrackConfiguration.h"
@@ -187,6 +188,70 @@ VideoTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::videoKind() const
 
     ASSERT_NOT_REACHED();
     return VideoTrackPrivate::Kind::None;
+}
+
+InbandTextTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::textKindForAVAssetTrack(const AVAssetTrack* track)
+{
+    NSString *mediaType = [track mediaType];
+    if ([mediaType isEqualToString:AVMediaTypeClosedCaption])
+        return InbandTextTrackPrivate::Kind::Captions;
+    if ([mediaType isEqualToString:AVMediaTypeSubtitle]) {
+
+        if ([track hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles])
+            return InbandTextTrackPrivate::Kind::Forced;
+
+        // An "SDH" track is a subtitle track created for the deaf or hard-of-hearing. "captions" in WebVTT are
+        // "labeled as appropriate for the hard-of-hearing", so tag SDH sutitles as "captions".
+        if ([track hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
+            return InbandTextTrackPrivate::Kind::Captions;
+        if ([track hasMediaCharacteristic:AVMediaCharacteristicDescribesMusicAndSoundForAccessibility])
+            return InbandTextTrackPrivate::Kind::Captions;
+
+        return InbandTextTrackPrivate::Kind::Subtitles;
+    }
+
+    NSArray* formatDescriptions = [track formatDescriptions];
+    if ([formatDescriptions count]) {
+        FourCC codec = PAL::softLink_CoreMedia_CMFormatDescriptionGetMediaSubType((__bridge CMFormatDescriptionRef)[formatDescriptions objectAtIndex:0]);
+        if (codec == kCMSubtitleFormatType_WebVTT)
+            return InbandTextTrackPrivate::Kind::Captions;
+    }
+
+    return InbandTextTrackPrivate::Kind::Captions;
+}
+
+InbandTextTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::textKindForAVMediaSelectionOption(const AVMediaSelectionOption *option)
+{
+    NSString *mediaType = [option mediaType];
+    if ([mediaType isEqualToString:AVMediaTypeClosedCaption])
+        return InbandTextTrackPrivate::Kind::Captions;
+    if ([mediaType isEqualToString:AVMediaTypeSubtitle]) {
+
+        if ([option hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles])
+            return InbandTextTrackPrivate::Kind::Forced;
+
+        // An "SDH" track is a subtitle track created for the deaf or hard-of-hearing. "captions" in WebVTT are
+        // "labeled as appropriate for the hard-of-hearing", so tag SDH sutitles as "captions".
+        if ([option hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
+            return InbandTextTrackPrivate::Kind::Captions;
+        if ([option hasMediaCharacteristic:AVMediaCharacteristicDescribesMusicAndSoundForAccessibility])
+            return InbandTextTrackPrivate::Kind::Captions;
+
+        return InbandTextTrackPrivate::Kind::Subtitles;
+    }
+
+    return InbandTextTrackPrivate::Kind::Captions;
+}
+
+InbandTextTrackPrivate::Kind AVTrackPrivateAVFObjCImpl::textKind() const
+{
+    if (m_assetTrack)
+        return textKindForAVAssetTrack(m_assetTrack.get());
+
+    if (m_mediaSelectionOption)
+        return textKindForAVMediaSelectionOption(m_mediaSelectionOption->avMediaSelectionOption());
+
+    return InbandTextTrackPrivate::Kind::None;
 }
 
 int AVTrackPrivateAVFObjCImpl::index() const

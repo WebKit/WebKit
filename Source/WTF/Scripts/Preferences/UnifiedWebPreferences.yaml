@@ -7353,6 +7353,21 @@ TextRecognitionInVideosEnabled:
       default: defaultTextRecognitionInVideosEnabled()
   sharedPreferenceForWebProcess: true
 
+TextTracksInMSEEnabled:
+  type: bool
+  status: testable
+  category: media
+  humanReadableName: "Text Tracks in MSE"
+  humanReadableDescription: "Enable Text Tracks in Media Source Extension"
+  condition: ENABLE(MEDIA_SOURCE)
+  defaultValue:
+    WebCore:
+      default: false
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+
 ThreadedAnimationResolutionEnabled:
   type: bool
   status: unstable

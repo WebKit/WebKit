@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO)
 
 #include "AudioTrackPrivate.h"
+#include "InbandTextTrackPrivate.h"
 #include "PlatformVideoColorSpace.h"
 #include "SpatialVideoMetadata.h"
 #include "VideoTrackPrivate.h"
@@ -77,6 +78,10 @@ public:
 
     AudioTrackPrivate::Kind audioKind() const;
     VideoTrackPrivate::Kind videoKind() const;
+    InbandTextTrackPrivate::Kind textKind() const;
+
+    static InbandTextTrackPrivate::Kind textKindForAVAssetTrack(const AVAssetTrack*);
+    static InbandTextTrackPrivate::Kind textKindForAVMediaSelectionOption(const AVMediaSelectionOption*);
 
     int index() const;
     TrackID id() const;

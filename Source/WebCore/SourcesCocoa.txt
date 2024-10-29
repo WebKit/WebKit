@@ -376,6 +376,7 @@ platform/graphics/avfoundation/objc/MediaSampleAVFObjC.mm
 platform/graphics/avfoundation/objc/MediaSourcePrivateAVFObjC.mm
 platform/graphics/avfoundation/objc/SourceBufferPrivateAVFObjC.mm @no-unify
 platform/graphics/avfoundation/objc/SourceBufferParserAVFObjC.mm @no-unify
+platform/graphics/avfoundation/objc/TextTrackPrivateMediaSourceAVFObjC.cpp
 platform/graphics/avfoundation/objc/VideoLayerManagerObjC.mm @no-unify
 platform/graphics/avfoundation/objc/VideoTrackPrivateAVFObjC.cpp
 platform/graphics/avfoundation/objc/VideoTrackPrivateMediaSourceAVFObjC.mm

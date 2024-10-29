@@ -122,6 +122,8 @@ SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMediaCharacteristicAudible, N
 #define AVMediaCharacteristicAudible PAL::get_AVFoundation_AVMediaCharacteristicAudible()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMediaTypeClosedCaption, NSString *)
 #define AVMediaTypeClosedCaption PAL::get_AVFoundation_AVMediaTypeClosedCaption()
+SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMediaTypeText, NSString *)
+#define AVMediaTypeText PAL::get_AVFoundation_AVMediaTypeText()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMediaTypeVideo, NSString *)
 #define AVMediaTypeVideo PAL::get_AVFoundation_AVMediaTypeVideo()
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, AVFoundation, AVMediaTypeMuxed, NSString *)

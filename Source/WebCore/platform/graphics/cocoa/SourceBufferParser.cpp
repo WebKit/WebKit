@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "ContentType.h"
+#include "MediaSourceConfiguration.h"
 #include "SharedBuffer.h"
 #include "SourceBufferParserAVFObjC.h"
 #include "SourceBufferParserWebM.h"
@@ -47,13 +48,13 @@ MediaPlayerEnums::SupportsType SourceBufferParser::isContentTypeSupported(const 
     return supports;
 }
 
-RefPtr<SourceBufferParser> SourceBufferParser::create(const ContentType& type, bool webMParserEnabled)
+RefPtr<SourceBufferParser> SourceBufferParser::create(const ContentType& type, const MediaSourceConfiguration& configuration)
 {
-    if (SourceBufferParserWebM::isContentTypeSupported(type) != MediaPlayerEnums::SupportsType::IsNotSupported && webMParserEnabled)
+    if (SourceBufferParserWebM::isContentTypeSupported(type) != MediaPlayerEnums::SupportsType::IsNotSupported && configuration.webMParserEnabled)
         return SourceBufferParserWebM::create();
 
     if (SourceBufferParserAVFObjC::isContentTypeSupported(type) != MediaPlayerEnums::SupportsType::IsNotSupported)
-        return adoptRef(new SourceBufferParserAVFObjC());
+        return adoptRef(new SourceBufferParserAVFObjC(configuration));
 
     return nullptr;
 }

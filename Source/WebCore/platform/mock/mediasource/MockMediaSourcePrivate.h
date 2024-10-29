@@ -71,7 +71,7 @@ private:
     MockMediaSourcePrivate(MockMediaPlayerMediaSource&, MediaSourcePrivateClient&);
 
     // MediaSourcePrivate Overrides
-    AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) override;
+    AddStatus addSourceBuffer(const ContentType&, const MediaSourceConfiguration&, RefPtr<SourceBufferPrivate>&) override;
     void durationChanged(const MediaTime&) override;
     void markEndOfStream(EndOfStreamStatus) override;
 

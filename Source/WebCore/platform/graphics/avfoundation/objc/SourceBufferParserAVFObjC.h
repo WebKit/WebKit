@@ -28,6 +28,7 @@
 #if ENABLE(MEDIA_SOURCE)
 
 #include "Logging.h"
+#include "MediaSourceConfiguration.h"
 #include "SourceBufferParser.h"
 #include <wtf/Box.h>
 #include <wtf/LoggerHelper.h>
@@ -52,7 +53,7 @@ class SourceBufferParserAVFObjC final
 public:
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
 
-    SourceBufferParserAVFObjC();
+    SourceBufferParserAVFObjC(const MediaSourceConfiguration&);
     virtual ~SourceBufferParserAVFObjC();
 
     AVStreamDataParser* streamDataParser() const { return m_parser.get(); }
@@ -84,6 +85,7 @@ private:
 
     RetainPtr<AVStreamDataParser> m_parser;
     RetainPtr<WebAVStreamDataParserListener> m_delegate;
+    MediaSourceConfiguration m_configuration;
     bool m_parserStateWasReset { false };
     std::optional<int> m_lastErrorCode;
 

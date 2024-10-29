@@ -65,7 +65,7 @@ public:
     // MediaSourcePrivate overrides
     RefPtr<WebCore::MediaPlayerPrivateInterface> player() const final;
     constexpr WebCore::MediaPlatformType platformType() const final { return WebCore::MediaPlatformType::Remote; }
-    AddStatus addSourceBuffer(const WebCore::ContentType&, bool webMParserEnabled, RefPtr<WebCore::SourceBufferPrivate>&) final;
+    AddStatus addSourceBuffer(const WebCore::ContentType&, const WebCore::MediaSourceConfiguration&, RefPtr<WebCore::SourceBufferPrivate>&) final;
     void removeSourceBuffer(WebCore::SourceBufferPrivate&) final { }
     void notifyActiveSourceBuffersChanged() final { };
     void durationChanged(const MediaTime&) final;

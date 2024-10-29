@@ -25,7 +25,8 @@
 [Nested] enum class WebCore::InbandTextTrackPrivate::CueFormat : uint8_t {
     Data,
     Generic,
-    WebVTT
+    WebVTT,
+    Unknown
 }
 
 enum class WebCore::InbandTextTrackPrivateMode : uint8_t {

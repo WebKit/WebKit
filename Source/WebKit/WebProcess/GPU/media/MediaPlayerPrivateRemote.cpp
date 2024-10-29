@@ -1017,7 +1017,7 @@ void MediaPlayerPrivateRemote::load(const URL& url, const ContentType& contentTy
             }
             return RemoteMediaSourceIdentifier::generate();
         }();
-        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, DeprecatedGlobalSettings::webMParserEnabled(), identifier), [weakThis = ThreadSafeWeakPtr { *this }, this](RemoteMediaPlayerConfiguration&& configuration) {
+        connection().sendWithAsyncReply(Messages::RemoteMediaPlayerProxy::LoadMediaSource(url, contentType, identifier), [weakThis = ThreadSafeWeakPtr { *this }, this](RemoteMediaPlayerConfiguration&& configuration) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis)
                 return;

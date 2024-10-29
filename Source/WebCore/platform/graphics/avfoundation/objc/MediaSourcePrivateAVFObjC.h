@@ -53,6 +53,7 @@ class MediaSourcePrivateClient;
 class SourceBufferPrivateAVFObjC;
 class TimeRanges;
 class WebCoreDecompressionSession;
+struct MediaSourceConfiguration;
 
 class MediaSourcePrivateAVFObjC final
     : public MediaSourcePrivate
@@ -69,7 +70,7 @@ public:
     RefPtr<MediaPlayerPrivateInterface> player() const final;
     void setPlayer(MediaPlayerPrivateInterface*) final;
 
-    AddStatus addSourceBuffer(const ContentType&, bool webMParserEnabled, RefPtr<SourceBufferPrivate>&) final;
+    AddStatus addSourceBuffer(const ContentType&, const MediaSourceConfiguration&, RefPtr<SourceBufferPrivate>&) final;
     void durationChanged(const MediaTime&) final;
     void markEndOfStream(EndOfStreamStatus) final;
 
