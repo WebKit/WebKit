@@ -83,7 +83,7 @@
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URL.h>
-#include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -3451,14 +3451,11 @@ void webkit_web_view_load_bytes(WebKitWebView* webView, GBytes* bytes, const cha
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(bytes);
 
-    gsize bytesDataSize;
-    gconstpointer bytesData = g_bytes_get_data(bytes, &bytesDataSize);
-    g_return_if_fail(bytesDataSize);
+    auto bytesData = span(bytes);
+    g_return_if_fail(bytesData.size());
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    getPage(webView).loadData(WebCore::SharedBuffer::create(std::span { reinterpret_cast<const uint8_t*>(bytesData), bytesDataSize }), mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
+    getPage(webView).loadData(WebCore::SharedBuffer::create(bytesData), mimeType ? String::fromUTF8(mimeType) : String::fromUTF8("text/html"),
         encoding ? String::fromUTF8(encoding) : String::fromUTF8("UTF-8"), String::fromUTF8(baseURI));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**

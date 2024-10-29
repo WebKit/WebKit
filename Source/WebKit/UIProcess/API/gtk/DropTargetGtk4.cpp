@@ -34,6 +34,7 @@
 #include <WebCore/GtkUtilities.h>
 #include <WebCore/PasteboardCustomData.h>
 #include <gtk/gtk.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
@@ -198,23 +199,17 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 }
             } else if (mimeType == "_NETSCAPE_URL"_s) {
-                gsize length;
-                const auto* urlData = static_cast<const char*>(g_bytes_get_data(data.get(), &length));
-                if (length) {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-                    Vector<String> tokens = String::fromUTF8(std::span(urlData, length)).split('\n');
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+                auto urlData = span(data);
+                if (urlData.size()) {
+                    Vector<String> tokens = String::fromUTF8(urlData).split('\n');
                     URL url({ }, tokens[0]);
                     if (url.isValid())
                         m_selectionData->setURL(url, tokens.size() > 1 ? tokens[1] : String());
                 }
             } else if (mimeType == "text/uri-list"_s) {
-                gsize length;
-                const auto* uriListData = static_cast<const char*>(g_bytes_get_data(data.get(), &length));
-                if (length) {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-                    String uriListString(String::fromUTF8(std::span(uriListData, length)));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+                auto urlListData = span(data);
+                if (urlListData.size()) {
+                    String uriListString(String::fromUTF8(urlListData));
                     for (auto& line : uriListString.split('\n')) {
                         line = line.trim(deprecatedIsSpaceOrNewline);
                         if (line.isEmpty())

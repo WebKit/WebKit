@@ -32,6 +32,7 @@
 #include <WebCore/SoupVersioning.h>
 #include <wtf/FileSystem.h>
 #include <wtf/URL.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebKit {
@@ -132,11 +133,7 @@ void RemoteInspectorHTTPServer::handleWebSocket(const char* path, SoupWebsocketC
     m_webSocketConnectionToTargetMap.set(connection, std::make_pair(connectionID, targetID));
     g_signal_connect(connection, "message", G_CALLBACK(+[](SoupWebsocketConnection* connection, SoupWebsocketDataType messageType, GBytes* message, gpointer userData) {
         auto& httpServer = *static_cast<RemoteInspectorHTTPServer*>(userData);
-        gsize dataSize;
-        const auto* data = static_cast<const char*>(g_bytes_get_data(message, &dataSize));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        httpServer.sendMessageToBackend(connection, String::fromUTF8(std::span(data, dataSize)));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        httpServer.sendMessageToBackend(connection, String::fromUTF8(span(message)));
     }), this);
     g_signal_connect(connection, "closed", G_CALLBACK(+[](SoupWebsocketConnection* connection, gpointer userData) {
         auto& httpServer = *static_cast<RemoteInspectorHTTPServer*>(userData);
