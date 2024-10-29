@@ -26,6 +26,8 @@
 #include "CSSPrimitiveNumericTypes.h"
 
 #include "CSSPrimitiveValue.h"
+#include "CSSToLengthConversionData.h"
+#include "FloatConversion.h"
 
 namespace WebCore {
 namespace CSS {

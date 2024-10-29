@@ -27,6 +27,7 @@
 
 #include "AnchorPositionEvaluator.h"
 #include "CSSCalcSymbolTable.h"
+#include "CSSCalcTree+Copy.h"
 #include "CSSCalcTree+Evaluation.h"
 #include "CSSCalcTree+NumericIdentity.h"
 #include "CSSCalcTree+Traversal.h"

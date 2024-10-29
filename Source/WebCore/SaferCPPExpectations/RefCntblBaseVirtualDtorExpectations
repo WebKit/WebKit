@@ -1,6 +1,7 @@
 Modules/webtransport/WebTransportReceiveStream.h
 Modules/webtransport/WebTransportSendStream.h
 css/CSSAspectRatioValue.h
+css/CSSAttrValue.h
 css/CSSBackgroundRepeatValue.h
 css/CSSBasicShapes.h
 css/CSSBorderImageSliceValue.h

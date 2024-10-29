@@ -951,17 +951,29 @@ RefPtr<CSSValue> consumeAttr(CSSParserTokenRange args, const CSSParserContext& c
         return nullptr;
 
     CSSParserToken token = args.consumeIncludingWhitespace();
+
     AtomString attrName;
     if (context.isHTMLDocument)
         attrName = token.value().convertToASCIILowercaseAtom();
     else
         attrName = token.value().toAtomString();
 
+    if (!args.atEnd() && !consumeCommaIncludingWhitespace(args))
+        return nullptr;
+
+    RefPtr<CSSValue> fallback;
+    if (args.peek().type() == StringToken) {
+        token = args.consumeIncludingWhitespace();
+        fallback = CSSPrimitiveValue::create(token.value().toString());
+    }
+
     if (!args.atEnd())
         return nullptr;
 
+    auto attr = CSSAttrValue::create(WTFMove(attrName), WTFMove(fallback));
     // FIXME: Consider moving to a CSSFunctionValue with a custom-ident rather than a special CSS_ATTR primitive value.
-    return CSSPrimitiveValue::createAttr(WTFMove(attrName));
+
+    return CSSPrimitiveValue::create(WTFMove(attr));
 }
 
 static RefPtr<CSSValue> consumeCounterContent(CSSParserTokenRange args, const CSSParserContext& context, bool counters)

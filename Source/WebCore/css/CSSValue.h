@@ -64,6 +64,7 @@ public:
 
     WEBCORE_EXPORT String cssText() const;
 
+    bool isAttrValue() const { return m_classType == ClassType::Attr; }
     bool isAspectRatioValue() const { return m_classType == ClassType::AspectRatio; }
     bool isBackgroundRepeatValue() const { return m_classType == ClassType::BackgroundRepeat; }
     bool isBorderImageSliceValue() const { return m_classType == ClassType::BorderImageSlice; }
@@ -225,6 +226,7 @@ protected:
 
         // Other non-list classes.
         AspectRatio,
+        Attr,
         BackgroundRepeat,
         BorderImageSlice,
         BorderImageWidth,

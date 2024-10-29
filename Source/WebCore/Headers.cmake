@@ -847,6 +847,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     crypto/SerializedCryptoKeyWrap.h
     crypto/WrappedCryptoKey.h
 
+    css/CSSAttrValue.h
     css/CSSConditionRule.h
     css/CSSCounterStyle.h
     css/CSSCounterStyleDescriptors.h

@@ -30,6 +30,7 @@
 #include "CSSValue.h"
 
 #include "CSSAspectRatioValue.h"
+#include "CSSAttrValue.h"
 #include "CSSBackgroundRepeatValue.h"
 #include "CSSBasicShapes.h"
 #include "CSSBorderImageSliceValue.h"
@@ -104,6 +105,8 @@ template<typename Visitor> constexpr decltype(auto) CSSValue::visitDerived(Visit
 {
     using enum CSSValue::ClassType;
     switch (m_classType) {
+    case Attr:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAttrValue>(*this));
     case AspectRatio:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<CSSAspectRatioValue>(*this));
     case BackgroundRepeat:

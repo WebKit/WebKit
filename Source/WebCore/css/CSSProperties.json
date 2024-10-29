@@ -3298,7 +3298,7 @@
                 "custom": "All",
                 "separator": ",",
                 "parser-function": "consumeContent",
-                "parser-grammar-unused": "none | normal | [ <image> | open-quote | close-quote | no-open-quote | no-close-quote | attr(<custom-ident>) | counter(<counter-name>, <counter-style>?) | counters(<counter-name>, <string>, <counter-style>?) ]+",
+                "parser-grammar-unused": "none | normal | [ <image> | open-quote | close-quote | no-open-quote | no-close-quote | attr(<custom-ident>,<declaration-value>?) | counter(<counter-name>, <counter-style>?) | counters(<counter-name>, <string>, <counter-style>?) ]+",
                 "parser-grammar-unused-reason": "consumeContent is quite different than current spec"
             },
             "specification": {

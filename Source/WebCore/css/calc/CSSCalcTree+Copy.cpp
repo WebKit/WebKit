@@ -78,7 +78,7 @@ template<typename Op> Child copy(const IndirectNode<Op>& root)
     return makeChild(WTF::apply([](const auto& ...x) { return Op { copy(x)... }; } , *root), root.type);
 }
 
-static Anchor::Side copy(const Anchor::Side& side)
+Anchor::Side copy(const Anchor::Side& side)
 {
     return WTF::switchOn(side,
         [](CSSValueID value) -> Anchor::Side {

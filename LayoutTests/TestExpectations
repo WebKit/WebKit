@@ -4152,7 +4152,6 @@ webkit.org/b/203331 imported/w3c/web-platform-tests/css/css-values/attr-px-valid
 webkit.org/b/259025 imported/w3c/web-platform-tests/css/css-values/ic-unit-015.html [ ImageOnlyFailure ]
 webkit.org/b/214466 imported/w3c/web-platform-tests/css/css-values/ex-unit-004.html [ ImageOnlyFailure ]
 webkit.org/b/242467 imported/w3c/web-platform-tests/css/css-values/calc-text-indent-intrinsic-1.html [ ImageOnlyFailure ]
-webkit.org/b/277995 imported/w3c/web-platform-tests/css/css-values/attr-notype-fallback.html [ ImageOnlyFailure ]
 webkit.org/b/277995 imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-aspect-ratio-001.html [ ImageOnlyFailure ]
 webkit.org/b/277995 imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-aspect-ratio-002.html [ ImageOnlyFailure ]
 webkit.org/b/277995 imported/w3c/web-platform-tests/css/css-values/calc-size/calc-size-aspect-ratio-003.html [ ImageOnlyFailure ]

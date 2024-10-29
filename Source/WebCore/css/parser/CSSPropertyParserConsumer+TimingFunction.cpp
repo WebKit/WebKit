@@ -32,6 +32,7 @@
 #include "CSSPropertyParserConsumer+Integer.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+Percentage.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSTimingFunctionValue.h"
 #include "CSSValueKeywords.h"
 #include "TimingFunction.h"

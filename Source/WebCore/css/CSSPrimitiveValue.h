@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "CSSAttrValue.h"
 #include "CSSPropertyNames.h"
 #include "CSSUnits.h"
 #include "CSSValue.h"
@@ -86,6 +87,7 @@ public:
 
     // FIXME: Some of these use primitiveUnitType() and some use primitiveType(). Many that use primitiveUnitType() are likely broken with calc().
     bool isAngle() const { return unitCategory(primitiveType()) == CSSUnitCategory::Angle; }
+    bool isAttr() const { return primitiveUnitType() == CSSUnitType::CSS_ATTR; }
     bool isFontIndependentLength() const { return isFontIndependentLength(primitiveUnitType()); }
     bool isFontRelativeLength() const { return isFontRelativeLength(primitiveUnitType()); }
     bool isParentFontRelativeLength() const { return isPercentage() || (isFontRelativeLength() && !isRootFontRelativeLength()); }
@@ -118,6 +120,7 @@ public:
     static Ref<CSSPrimitiveValue> create(const Length&);
     static Ref<CSSPrimitiveValue> create(const Length&, const RenderStyle&);
     static Ref<CSSPrimitiveValue> create(Ref<CSSCalcValue>);
+    static Ref<CSSPrimitiveValue> create(Ref<CSSAttrValue>);
 
     static inline Ref<CSSPrimitiveValue> create(CSSValueID);
     bool isValueID() const { return primitiveUnitType() == CSSUnitType::CSS_VALUE_ID; }
@@ -133,9 +136,6 @@ public:
     static Ref<CSSPrimitiveValue> create(CSSUnresolvedColor);
     bool isUnresolvedColor() const { return primitiveUnitType() == CSSUnitType::CSS_UNRESOLVED_COLOR; }
     const CSSUnresolvedColor& unresolvedColor() const { ASSERT(isUnresolvedColor()); return *m_value.unresolvedColor; }
-
-    static Ref<CSSPrimitiveValue> createAttr(String);
-    bool isAttr() const { return primitiveUnitType() == CSSUnitType::CSS_ATTR; }
 
     bool isColor() const { return primitiveUnitType() == CSSUnitType::CSS_RGBCOLOR; }
     const Color& color() const { ASSERT(isColor()); return *reinterpret_cast<const Color*>(&m_value.colorAsInteger); }
@@ -223,6 +223,7 @@ public:
 
     WEBCORE_EXPORT String stringValue() const;
     const CSSCalcValue* cssCalcValue() const { return isCalculated() ? m_value.calc : nullptr; }
+    const CSSAttrValue* cssAttrValue() const { return isAttr() ? m_value.attr : nullptr; }
 
     String customCSSText() const;
 
@@ -254,6 +255,7 @@ private:
     CSSPrimitiveValue(double, CSSUnitType);
     explicit CSSPrimitiveValue(Ref<CSSCalcValue>);
     explicit CSSPrimitiveValue(CSSUnresolvedColor);
+    explicit CSSPrimitiveValue(Ref<CSSAttrValue>);
 
     CSSPrimitiveValue(StaticCSSValueTag, CSSValueID);
     CSSPrimitiveValue(StaticCSSValueTag, Color);
@@ -307,6 +309,7 @@ private:
         uint64_t colorAsInteger;
         const CSSUnresolvedColor* unresolvedColor;
         const CSSCalcValue* calc;
+        const CSSAttrValue* attr;
     } m_value;
 };
 
