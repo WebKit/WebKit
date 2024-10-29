@@ -291,6 +291,19 @@ URL WebExtension::resourceFileURLForPath(const String& originalPath)
     return result;
 }
 
+String WebExtension::resourceMIMETypeForPath(const String& path)
+{
+    auto dataPrefix = "data:"_s;
+    if (path.startsWith(dataPrefix)) {
+        auto mimeTypePosition = path.find(';');
+        if (mimeTypePosition != notFound)
+            return path.substring(dataPrefix.length(), mimeTypePosition - dataPrefix.length());
+        return defaultMIMEType();
+    }
+
+    return MIMETypeRegistry::mimeTypeForPath(path);
+}
+
 String WebExtension::resourceStringForPath(const String& originalPath, RefPtr<API::Error>& outError, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
     ASSERT(originalPath);

@@ -50,7 +50,6 @@ OBJC_CLASS NSLocale;
 OBJC_CLASS NSMutableDictionary;
 OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
-OBJC_CLASS UTType;
 OBJC_CLASS WKWebExtension;
 OBJC_CLASS _WKWebExtensionLocalization;
 
@@ -233,7 +232,7 @@ public:
 
     bool isWebAccessibleResource(const URL& resourceURL, const URL& pageURL);
 
-    UTType *resourceTypeForPath(NSString *);
+    String resourceMIMETypeForPath(const String&);
 
     String resourceStringForPath(const String&, RefPtr<API::Error>&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);
     RefPtr<API::Data> resourceDataForPath(const String&, RefPtr<API::Error>&, CacheResult = CacheResult::No, SuppressNotFoundErrors = SuppressNotFoundErrors::No);

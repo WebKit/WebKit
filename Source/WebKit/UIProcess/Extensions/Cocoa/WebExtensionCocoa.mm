@@ -43,8 +43,6 @@
 #import "WebExtensionUtilities.h"
 #import "_WKWebExtensionLocalization.h"
 #import <CoreFoundation/CFBundle.h>
-#import <UniformTypeIdentifiers/UTCoreTypes.h>
-#import <UniformTypeIdentifiers/UTType.h>
 #import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/FileSystem.h>
@@ -419,24 +417,6 @@ bool WebExtension::validateResourceData(NSURL *resourceURL, NSData *resourceData
 }
 #endif // PLATFORM(MAC)
 
-UTType *WebExtension::resourceTypeForPath(NSString *path)
-{
-    UTType *result;
-
-    if ([path hasPrefix:@"data:"]) {
-        auto mimeTypeRange = [path rangeOfString:@";"];
-        if (mimeTypeRange.location != NSNotFound) {
-            auto *mimeType = [path substringWithRange:NSMakeRange(5, mimeTypeRange.location - 5)];
-            result = [UTType typeWithMIMEType:mimeType];
-        }
-    } else if (auto *fileExtension = path.pathExtension; fileExtension.length)
-        result = [UTType typeWithFilenameExtension:fileExtension];
-    else if (auto *fileURL = static_cast<NSURL *>(resourceFileURLForPath(path)))
-        [fileURL getResourceValue:&result forKey:NSURLContentTypeKey error:nil];
-
-    return result;
-}
-
 RefPtr<API::Data> WebExtension::resourceDataForPath(const String& originalPath, RefPtr<API::Error>& outError, CacheResult cacheResult, SuppressNotFoundErrors suppressErrors)
 {
     ASSERT(originalPath);
@@ -664,8 +644,8 @@ CocoaImage *WebExtension::imageForPath(NSString *imagePath, RefPtr<API::Error>& 
     CocoaImage *result;
 
 #if !USE(NSIMAGE_FOR_SVG_SUPPORT)
-    UTType *imageType = resourceTypeForPath(imagePath);
-    if ([imageType.identifier isEqualToString:UTTypeSVG.identifier]) {
+    auto imageType = resourceMIMETypeForPath(imagePath);
+    if (equalLettersIgnoringASCIICase(imageType, "image/svg+xml"_s)) {
 #if USE(APPKIT)
         static Class svgImageRep = NSClassFromString(@"_NSSVGImageRep");
         RELEASE_ASSERT(svgImageRep);

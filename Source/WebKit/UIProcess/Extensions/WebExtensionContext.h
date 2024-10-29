@@ -311,6 +311,9 @@ public:
 
     _WKWebExtensionLocalization *localization();
 
+    RefPtr<API::Data> localizedResourceData(const RefPtr<API::Data>&, const String& mimeType);
+    String localizedResourceString(const String&, const String& mimeType);
+
     bool isInspectable() const { return m_inspectable; }
     void setInspectable(bool);
 

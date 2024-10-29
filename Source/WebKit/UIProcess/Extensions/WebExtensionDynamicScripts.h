@@ -105,7 +105,7 @@ private:
     void removeUserScripts(const String& identifier);
 };
 
-std::optional<SourcePair> sourcePairForResource(String path, WebExtensionContext&);
+std::optional<SourcePair> sourcePairForResource(const String& path, WebExtensionContext&);
 SourcePairs getSourcePairsForParameters(const WebExtensionScriptInjectionParameters&, WebExtensionContext&);
 Vector<RetainPtr<_WKFrameTreeNode>> getFrames(_WKFrameTreeNode *, std::optional<Vector<WebExtensionFrameIdentifier>>);
 

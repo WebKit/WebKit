@@ -47,7 +47,6 @@
 #import "WebProcessProxy.h"
 #import "WebURLSchemeTask.h"
 #import "_WKWebExtensionLocalization.h"
-#import <UniformTypeIdentifiers/UTType.h>
 #import <wtf/BlockPtr.h>
 
 namespace WebKit {
@@ -116,34 +115,23 @@ void WebExtensionURLSchemeHandler::platformStartTask(WebPageProxy& page, WebURLS
             return;
         }
 
-        auto *fileData = static_cast<NSData *>(resourceData->wrapper());
-
         if (loadingExtensionMainFrame) {
             if (auto tab = extensionContext->getTab(page.identifier()))
                 extensionContext->addExtensionTabPage(page, *tab);
         }
 
-        auto *mimeType = [UTType typeWithFilenameExtension:((NSURL *)requestURL).pathExtension].preferredMIMEType;
-        if (!mimeType)
-            mimeType = @"application/octet-stream";
-
-        if ([mimeType isEqualToString:@"text/css"]) {
-            // FIXME: <https://webkit.org/b/252628> Only attempt to localize CSS files if we notice a localization wildcard in the file's NSData.
-            auto *localization = extensionContext->localization();
-            auto *stylesheetContents = [[NSString alloc] initWithData:fileData encoding:NSUTF8StringEncoding];
-            stylesheetContents = [localization localizedStringForString:stylesheetContents];
-            fileData = [stylesheetContents dataUsingEncoding:NSUTF8StringEncoding];
-        }
+        auto mimeType = extensionContext->extension().resourceMIMETypeForPath(requestURL.path().toString());
+        resourceData = extensionContext->localizedResourceData(resourceData, mimeType);
 
         auto *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:requestURL statusCode:200 HTTPVersion:nil headerFields:@{
             @"Access-Control-Allow-Origin": @"*",
             @"Content-Security-Policy": extensionContext->extension().contentSecurityPolicy(),
-            @"Content-Length": [NSString stringWithFormat:@"%zu", (size_t)fileData.length],
+            @"Content-Length": @(resourceData->size()).stringValue,
             @"Content-Type": mimeType
         }];
 
         task.didReceiveResponse(urlResponse);
-        task.didReceiveData(WebCore::SharedBuffer::create(fileData));
+        task.didReceiveData(WebCore::SharedBuffer::create(resourceData->span()));
         task.didComplete({ });
     }).get()];
 
