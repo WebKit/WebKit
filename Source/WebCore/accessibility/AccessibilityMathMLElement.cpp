@@ -66,6 +66,25 @@ AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()
     return AccessibilityRole::MathElement;
 }
 
+void AccessibilityMathMLElement::addChildren()
+{
+    if (!hasTagName(MathMLNames::mfencedTag)) {
+        AccessibilityRenderObject::addChildren();
+        return;
+    }
+
+    // mfenced elements generate lots of anonymous renderers due to their `open`, `close`, and `separators` attributes.
+    // Because of this, default to walking the render tree when adding their children (unlike most other object types for
+    // which we walk the DOM). This may cause unexpected behavior for `display:contents` descendants of mfenced elements.
+    // However, this element is very deprecated, and even the most simple usages of it do not render consistently across
+    // browsers, so it's already unlikely to be used by web developers, even more so with `display:contents` mixed in.
+    m_childrenInitialized = true;
+    for (auto& object : AXChildIterator(*this))
+        addChild(&object);
+
+    m_subtreeDirty = false;
+}
+
 String AccessibilityMathMLElement::textUnderElement(TextUnderElementMode mode) const
 {
     if (m_isAnonymousOperator && !mode.isHidden()) {

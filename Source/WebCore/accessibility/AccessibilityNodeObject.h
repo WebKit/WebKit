@@ -135,7 +135,6 @@ public:
     AccessibilityObject* previousSibling() const override;
     AccessibilityObject* nextSibling() const override;
     AccessibilityObject* parentObject() const override;
-    AccessibilityObject* parentObjectIfExists() const override;
 
     bool matchesTextAreaRole() const;
 

@@ -892,8 +892,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
             // Propagate any subtree updates downwards for this already-existing child.
             if (auto* liveChild = dynamicDowncast<AccessibilityObject>(newChildren[i].get()); liveChild && liveChild->hasDirtySubtree())
                 updateChildren(*liveChild, ResolveNodeChanges::No);
-        }
-        else {
+        } else {
             // This is a new child, add it to the tree.
             childrenChanged = true;
             AXLOG(makeString("AXID "_s, axAncestor->objectID() ? axAncestor->objectID()->loggingString() : ""_str, " gaining new subtree, starting at ID "_s, newChildren[i]->objectID() ? newChildren[i]->objectID()->loggingString() : ""_s, ':'));

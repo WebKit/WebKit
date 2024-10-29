@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StyleTreeResolver.h"
 
+#include "AXObjectCache.h"
 #include "AnchorPositionEvaluator.h"
 #include "CSSFontSelector.h"
 #include "ComposedTreeAncestorIterator.h"
@@ -1110,6 +1111,8 @@ void TreeResolver::resolveComposedTree()
 
             if (element.hasCustomStyleResolveCallbacks())
                 element.didRecalcStyle(elementUpdate.change);
+            if (CheckedPtr cache = m_document->existingAXObjectCache())
+                cache->onStyleChange(element, elementUpdate.change, elementUpdate.style.get(), style);
 
             style = elementUpdate.style.get();
             change = elementUpdate.change;

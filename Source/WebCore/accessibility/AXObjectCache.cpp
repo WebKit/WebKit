@@ -604,6 +604,19 @@ bool nodeHasCellRole(Node* node)
     return node && (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s) || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s));
 }
 
+ContainerNode* composedParentIgnoringDocumentFragments(Node& node)
+{
+    RefPtr ancestor = node.parentInComposedTree();
+    while (is<DocumentFragment>(ancestor.get()))
+        ancestor = ancestor->parentInComposedTree();
+    return ancestor.get();
+}
+
+ContainerNode* composedParentIgnoringDocumentFragments(Node* node)
+{
+    return node ? composedParentIgnoringDocumentFragments(*node) : nullptr;
+}
+
 bool hasAccNameAttribute(Element& element)
 {
     auto trimmed = [&] (const auto& attribute) {
@@ -750,15 +763,20 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject& r
     if (auto* renderMenuList = dynamicDowncast<RenderMenuList>(renderer))
         return AccessibilityMenuList::create(*renderMenuList);
 
-
+    bool isAnonymous = false;
+#if USE(ATSPI)
+    // This branch is only necessary because ATSPI walks the render tree rather than the DOM to build the accessiblity tree.
+    // FIXME: Consider removing this with https://bugs.webkit.org/show_bug.cgi?id=282117.
+    isAnonymous = renderer.isAnonymous();
+#endif
     // Some websites put display:table on tbody / thead / tfoot, resulting in a RenderTable being generated.
     // We don't want to consider these tables (since they are typically wrapped by an actual <table> element),
     // so only create an AccessibilityTable when !is<HTMLTableSectionElement>.
-    if ((is<RenderTable>(renderer) && !renderer.isAnonymous() && !is<HTMLTableSectionElement>(node.get())) || isAccessibilityTable(node.get()))
+    if ((is<RenderTable>(renderer) && !isAnonymous && !is<HTMLTableSectionElement>(node.get())) || isAccessibilityTable(node.get()))
         return AccessibilityTable::create(renderer);
-    if ((is<RenderTableRow>(renderer) && !renderer.isAnonymous()) || isAccessibilityTableRow(node.get()))
+    if ((is<RenderTableRow>(renderer) && !isAnonymous) || isAccessibilityTableRow(node.get()))
         return AccessibilityTableRow::create(renderer);
-    if ((is<RenderTableCell>(renderer) && !renderer.isAnonymous()) || isAccessibilityTableCell(node.get()))
+    if ((is<RenderTableCell>(renderer) && !isAnonymous) || isAccessibilityTableCell(node.get()))
         return AccessibilityTableCell::create(renderer);
 
     // Progress indicator.
@@ -857,7 +875,8 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node& node, IsPartOfRelation isP
     if (auto* renderer = node.renderer())
         return getOrCreate(*renderer);
 
-    if (!node.parentElement())
+    RefPtr composedParent = node.parentElementInComposedTree();
+    if (!composedParent)
         return nullptr;
 
     Ref protectedNode { node };
@@ -881,10 +900,19 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node& node, IsPartOfRelation isP
         return object.get();
     }
 
-    bool inCanvasSubtree = lineageOfType<HTMLCanvasElement>(*node.parentElement()).first();
+    bool inCanvasSubtree = lineageOfType<HTMLCanvasElement>(*composedParent).first();
+    if (inCanvasSubtree) {
+        // Don't include objects that are descendants of user agent shadow trees. For example, in this HTML:
+        //     <canvas><input type="text"></canvas>
+        // <input type="text"> generates a user agent shadow root to host a <div contenteditable>.
+        // We already handle elements that host user agent shadows specially, so don't include their
+        // descendants (like this <div>) just because they happen to be within <canvas>.
+        if (auto* shadowRoot = composedParent->shadowRoot())
+            inCanvasSubtree = !shadowRoot->isUserAgentShadowRoot();
+    }
     // If node is the target of a relationship or a descendant of one, create an AX object unconditionally.
     if (isPartOfRelation == IsPartOfRelation::No && !isDescendantOfRelatedNode(node)) {
-        bool insideMeterElement = is<HTMLMeterElement>(*node.parentElement());
+        bool insideMeterElement = is<HTMLMeterElement>(*composedParent);
         auto* element = dynamicDowncast<Element>(node);
         bool hasDisplayContents = element && element->hasDisplayContents();
         bool isPopover = element && element->hasAttributeWithoutSynchronization(popoverAttr);
@@ -1331,7 +1359,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
     // Go up the existing ancestors chain and fire the appropriate notifications.
     bool shouldUpdateParent = true;
     bool foundTableCaption = false;
-    for (RefPtr parent = &object; parent; parent = parent->parentObjectIfExists()) {
+    for (RefPtr parent = &object; parent; parent = parent->parentObject()) {
         if (shouldUpdateParent)
             parent->setNeedsToUpdateChildren();
 
@@ -1859,6 +1887,18 @@ void AXObjectCache::onSelectedChanged(Node& node)
 
     handleMenuItemSelected(&node);
     handleTabPanelSelected(nullptr, &node);
+}
+
+void AXObjectCache::onStyleChange(Element& element, Style::Change change, const RenderStyle* newStyle, const RenderStyle* oldStyle)
+{
+    if (change == Style::Change::None)
+        return;
+
+    if (!element.renderer() && oldStyle && newStyle && oldStyle->usedVisibility() != newStyle->usedVisibility()) {
+        // We only need to do this when the given element doesn't have a renderer, as if it did, we would get a normal
+        // children-changed event through the render tree.
+        childrenChanged(&element);
+    }
 }
 
 void AXObjectCache::onTextSecurityChanged(HTMLInputElement& inputElement)

@@ -36,6 +36,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "AXTreeStore.h"
 #include "AccessibilityObject.h"
 #include "SimpleRange.h"
+#include "StyleChange.h"
 #include "Timer.h"
 #include "VisibleUnits.h"
 #include <limits.h>
@@ -344,6 +345,7 @@ public:
     void onPopoverToggle(const HTMLElement&);
     void onScrollbarFrameRectChange(const Scrollbar&);
     void onSelectedChanged(Node&);
+    void onStyleChange(Element&, Style::Change, const RenderStyle* newStyle, const RenderStyle* oldStyle);
     void onTextSecurityChanged(HTMLInputElement&);
     void onTitleChange(Document&);
     void onValidityChange(Element&);
@@ -916,6 +918,8 @@ private:
 bool nodeHasRole(Node*, StringView role);
 bool nodeHasCellRole(Node*);
 bool nodeHasTableRole(Node*);
+ContainerNode* composedParentIgnoringDocumentFragments(Node&);
+ContainerNode* composedParentIgnoringDocumentFragments(Node*);
 
 // Returns true if the element has an attribute that will result in an accname being computed.
 // https://www.w3.org/TR/accname-1.2/

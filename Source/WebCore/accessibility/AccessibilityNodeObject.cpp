@@ -37,6 +37,7 @@
 #include "AccessibilityListBox.h"
 #include "AccessibilitySpinButton.h"
 #include "AccessibilityTable.h"
+#include "ComposedTreeIterator.h"
 #include "DateComponents.h"
 #include "Editing.h"
 #include "ElementAncestorIteratorInlines.h"
@@ -186,11 +187,6 @@ AccessibilityObject* AccessibilityNodeObject::nextSibling() const
     return objectCache ? objectCache->getOrCreate(*nextSibling) : nullptr;
 }
 
-AccessibilityObject* AccessibilityNodeObject::parentObjectIfExists() const
-{
-    return parentObject();
-}
-
 AccessibilityObject* AccessibilityNodeObject::ownerParentObject() const
 {
     auto owners = this->owners();
@@ -200,20 +196,20 @@ AccessibilityObject* AccessibilityNodeObject::ownerParentObject() const
 
 AccessibilityObject* AccessibilityNodeObject::parentObject() const
 {
-    if (!node())
+    RefPtr node = this->node();
+    if (!node)
         return nullptr;
 
     if (auto* ownerParent = ownerParentObject())
         return ownerParent;
 
-    Node* parentObj = node()->parentNode();
-    if (!parentObj)
-        return nullptr;
-
-    if (AXObjectCache* cache = axObjectCache())
-        return cache->getOrCreate(*parentObj);
-
-    return nullptr;
+    CheckedPtr cache = axObjectCache();
+#if !USE(ATSPI)
+    return cache ? cache->getOrCreate(composedParentIgnoringDocumentFragments(*node)) : nullptr;
+#else
+    // FIXME: Consider removing this ATSPI-only branch with https://bugs.webkit.org/show_bug.cgi?id=282117.
+    return cache ? cache->getOrCreate(node->parentNode()) : nullptr;
+#endif // !USE(ATSPI)
 }
 
 LayoutRect AccessibilityNodeObject::checkboxOrRadioRect() const
@@ -586,7 +582,7 @@ void AccessibilityNodeObject::addChildren()
         m_subtreeDirty = false;
     });
 
-    WeakPtr node = this->node();
+    RefPtr node = this->node();
     if (!node || !canHaveChildren())
         return;
 
@@ -594,12 +590,20 @@ void AccessibilityNodeObject::addChildren()
     if (renderer() && !node->hasTagName(canvasTag))
         return;
 
-    auto objectCache = axObjectCache();
-    if (!objectCache)
+    CheckedPtr cache = axObjectCache();
+    if (!cache)
         return;
 
+#if !USE(ATSPI)
+    if (auto* containerNode = dynamicDowncast<ContainerNode>(*node)) {
+        for (Ref child : composedTreeChildren(*containerNode))
+            addChild(cache->getOrCreate(child.get()));
+    }
+#else
+    // FIXME: Consider removing this ATSPI-only branch with https://bugs.webkit.org/show_bug.cgi?id=282117.
     for (auto* child = node->firstChild(); child; child = child->nextSibling())
-        addChild(objectCache->getOrCreate(*child));
+        addChild(cache->getOrCreate(*child));
+#endif // !USE(ATSPI)
 
     updateOwnedChildren();
 }
@@ -2204,9 +2208,12 @@ void AccessibilityNodeObject::setIsExpanded(bool expand)
 // we should include the inner text of this given descendant object or skip it.
 static bool shouldUseAccessibilityObjectInnerText(AccessibilityObject& object, TextUnderElementMode mode)
 {
+#if USE(ATSPI)
+    // Only ATSPI ever sets IncludeAllChildren.
     // Do not use any heuristic if we are explicitly asking to include all the children.
     if (mode.childrenInclusion == TextUnderElementMode::Children::IncludeAllChildren)
         return true;
+#endif // USE(ATSPI)
 
     // Consider this hypothetical example:
     // <div tabindex=0>

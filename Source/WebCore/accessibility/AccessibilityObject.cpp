@@ -641,6 +641,8 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
         }
     }
 
+#if USE(ATSPI)
+    // FIXME: Consider removing this ATSPI-only branch with https://bugs.webkit.org/show_bug.cgi?id=282117.
     RefPtr displayContentsParent = child->displayContentsParent();
     // To avoid double-inserting a child of a `display: contents` element, only insert if `this` is the rightful parent.
     if (displayContentsParent && displayContentsParent != this) {
@@ -657,6 +659,7 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
         if (!allowInsert)
             return;
     }
+#endif // USE(ATSPI)
 
     auto thisAncestorFlags = computeAncestorFlags();
     child->initializeAncestorFlags(thisAncestorFlags);
@@ -1748,7 +1751,7 @@ Vector<RetainPtr<id>> AccessibilityObject::modelElementChildren()
 }
 #endif
 
-// Finds a RenderListItem parent give a node.
+// Finds a RenderListItem parent given a node.
 static RenderListItem* renderListItemContainer(Node* node)
 {
     for (; node; node = node->parentNode()) {

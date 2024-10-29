@@ -8,9 +8,6 @@ PASS: axRubyText.role === expectedRubyRole
 PASS: axRubyText.subrole === expectedRubyTextSubrole
 Testing #ruby
 PASS: axRuby.role === expectedRubyRole
-Testing AX element with no ID
-PASS: axRuby.role === expectedRubyRole
-PASS: axRuby.subrole === expectedRubyInlineSubrole
 Testing #rt
 PASS: axRubyText.role === expectedRubyRole
 PASS: axRubyText.subrole === expectedRubyTextSubrole

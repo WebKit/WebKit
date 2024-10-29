@@ -77,7 +77,6 @@ private:
     LocalFrameView* documentFrameView() const override;
     LayoutRect elementRect() const override;
     AccessibilityObject* parentObject() const override;
-    AccessibilityObject* parentObjectIfExists() const override { return parentObject(); }
 
     AccessibilityObject* firstChild() const override { return webAreaObject(); }
     AccessibilityScrollbar* addChildScrollbar(Scrollbar*);

@@ -351,7 +351,6 @@ public:
         return parentObjectUnignored();
 #endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     }
-    virtual AccessibilityObject* parentObjectIfExists() const { return nullptr; }
     static AccessibilityObject* firstAccessibleObjectFromNode(const Node*);
     AccessibilityChildrenVector findMatchingObjects(AccessibilitySearchCriteria&&) final;
     virtual bool isDescendantOfBarrenParent() const { return false; }

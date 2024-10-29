@@ -604,8 +604,7 @@ void AccessibilityTable::addChildren()
         yCurrent += 1;
     };
     auto needsToDescend = [&processedRows] (AXCoreObject& axObject) {
-        return (!axObject.isTableRow() || !axObject.node())
-            && !processedRows.contains(dynamicDowncast<AccessibilityObject>(axObject));
+        return !axObject.isTableRow() && !processedRows.contains(&downcast<AccessibilityObject>(axObject));
     };
     std::function<void(AXCoreObject*)> processRowDescendingIfNeeded = [&] (AXCoreObject* axObject) {
         if (!axObject)

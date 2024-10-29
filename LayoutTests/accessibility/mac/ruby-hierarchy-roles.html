@@ -41,12 +41,6 @@ if (window.accessibilityController) {
         output += expect("axRuby.role", "expectedRubyRole");
         if (expectInline)
             output += expect("axRuby.subrole", "expectedRubyInlineSubrole");
-        else {
-            axRuby = axRuby.childAtIndex(0);
-            logId(axRuby);
-            output += expect("axRuby.role", "expectedRubyRole");
-            output += expect("axRuby.subrole", "expectedRubyInlineSubrole");
-        }
 
         // Test AXRubyText.
         axRubyText = axRuby.childAtIndex(1);

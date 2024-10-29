@@ -18,7 +18,7 @@
 
     if (window.accessibilityController) {
         var listItem1 = accessibilityController.accessibleElementById("item1");
-        var p1 = listItem1.childAtIndex(0);
+        var p1 = listItem1.childAtIndex(1);
         var firstLineRange = p1.textMarkerRangeForElement(p1);
         debug(p1.stringForTextMarkerRange(firstLineRange));
         
