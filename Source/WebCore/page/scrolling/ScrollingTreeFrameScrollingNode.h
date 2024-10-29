@@ -42,7 +42,6 @@ public:
 
     bool commitStateBeforeChildren(const ScrollingStateNode&) override;
     
-    bool fixedElementsLayoutRelativeToFrame() const { return m_fixedElementsLayoutRelativeToFrame; }
     bool visualViewportIsSmallerThanLayoutViewport() const { return m_visualViewportIsSmallerThanLayoutViewport; }
 
     FloatSize viewToContentsOffset(const FloatPoint& scrollPosition) const;
@@ -87,7 +86,6 @@ private:
     
     ScrollBehaviorForFixedElements m_behaviorForFixed { ScrollBehaviorForFixedElements::StickToDocumentBounds };
     
-    bool m_fixedElementsLayoutRelativeToFrame { false };
     bool m_visualViewportIsSmallerThanLayoutViewport { false };
 };
 

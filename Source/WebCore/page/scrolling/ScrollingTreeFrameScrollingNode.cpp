@@ -75,9 +75,6 @@ bool ScrollingTreeFrameScrollingNode::commitStateBeforeChildren(const ScrollingS
     if (state->hasChangedProperty(ScrollingStateNode::Property::VisualViewportIsSmallerThanLayoutViewport))
         m_visualViewportIsSmallerThanLayoutViewport = state->visualViewportIsSmallerThanLayoutViewport();
 
-    if (state->hasChangedProperty(ScrollingStateNode::Property::FixedElementsLayoutRelativeToFrame))
-        m_fixedElementsLayoutRelativeToFrame = state->fixedElementsLayoutRelativeToFrame();
-
     if (state->hasChangedProperty(ScrollingStateNode::Property::LayoutViewport))
         m_layoutViewport = state->layoutViewport();
 
@@ -166,8 +163,6 @@ void ScrollingTreeFrameScrollingNode::dumpProperties(TextStream& ts, OptionSet<S
         ts.dumpProperty("footer height", m_footerHeight);
 
     ts.dumpProperty("behavior for fixed", m_behaviorForFixed);
-    if (m_fixedElementsLayoutRelativeToFrame)
-        ts.dumpProperty("fixed elements lay out relative to frame", m_fixedElementsLayoutRelativeToFrame);
     if (m_visualViewportIsSmallerThanLayoutViewport)
         ts.dumpProperty("visual viewport is smaller than layout viewport", m_visualViewportIsSmallerThanLayoutViewport);
 }
