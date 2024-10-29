@@ -1,0 +1,19 @@
+<!DOCTYPE HTML>
+<html class="reftest-wait">
+<script>
+    function finishTest() {
+        document.documentElement.classList.remove("reftest-wait");
+    }
+    async function startTest() {
+        document.startViewTransition(() => requestAnimationFrame(() => requestAnimationFrame(finishTest)));
+    }
+    onload = () => requestAnimationFrame(() => requestAnimationFrame(startTest));
+
+    if (window.internals)
+        internals.setUnderPageBackgroundColorOverride("red");
+</script>
+<style>
+    html::view-transition-group(root) { animation-duration: 300s; }
+    html::view-transition-new(root) { animation: unset; opacity: 0; }
+    html::view-transition-old(root) { animation: unset; opacity: 0; }
+</style>

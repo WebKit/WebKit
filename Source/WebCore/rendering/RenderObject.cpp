@@ -1832,9 +1832,10 @@ void RenderObject::setCapturedInViewTransition(bool captured)
         m_stateBitfields.setFlag(StateFlag::CapturedInViewTransition, captured);
 
         CheckedPtr<RenderLayer> layerToInvalidate;
-        if (isDocumentElementRenderer())
+        if (isDocumentElementRenderer()) {
             layerToInvalidate = view().layer();
-        else if (hasLayer())
+            view().compositor().setRootElementCapturedInViewTransition(captured);
+        } else if (hasLayer())
             layerToInvalidate = downcast<RenderLayerModelObject>(*this).layer();
 
         if (layerToInvalidate) {

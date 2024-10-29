@@ -43,6 +43,7 @@
 #include "CSSMediaRule.h"
 #include "CSSParser.h"
 #include "CSSPropertyParser.h"
+#include "CSSPropertyParserConsumer+Color.h"
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
 #include "CacheStorageConnection.h"
@@ -2254,6 +2255,28 @@ ExceptionOr<void> Internals::setViewBaseBackgroundColor(const String& colorValue
         return { };
     }
     return Exception { ExceptionCode::SyntaxError };
+}
+
+using LazySlowPathColorParsingParameters = std::tuple<
+    CSSPropertyParserHelpers::CSSColorParsingOptions,
+    CSSUnresolvedColorResolutionState,
+    std::optional<CSSUnresolvedColorResolutionDelegate>
+>;
+
+ExceptionOr<void> Internals::setUnderPageBackgroundColorOverride(const String& colorValue)
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+
+    auto color = CSSPropertyParserHelpers::parseColorRaw(colorValue, document->cssParserContext(), [] {
+        return LazySlowPathColorParsingParameters { { }, { }, std::nullopt };
+    });
+    if (!color.isValid())
+        return Exception { ExceptionCode::SyntaxError };
+
+    document->page()->setUnderPageBackgroundColorOverride(WTFMove(color));
+    return { };
 }
 
 ExceptionOr<String> Internals::documentBackgroundColor()

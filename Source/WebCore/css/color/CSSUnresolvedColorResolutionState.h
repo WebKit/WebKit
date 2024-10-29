@@ -35,7 +35,7 @@ namespace WebCore {
 
 enum class CSSUnresolvedLightDarkAppearance : bool;
 
-class CSSUnresolvedColorResolutionDelegate {
+class WEBCORE_EXPORT CSSUnresolvedColorResolutionDelegate {
 public:
     virtual ~CSSUnresolvedColorResolutionDelegate();
 

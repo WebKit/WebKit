@@ -4659,6 +4659,24 @@ void RenderLayerCompositor::rootOrBodyStyleChanged(RenderElement& renderer, cons
     }
 }
 
+void RenderLayerCompositor::setRootElementCapturedInViewTransition(bool captured)
+{
+    if (m_rootElementCapturedInViewTransition == captured)
+        return;
+    m_rootElementCapturedInViewTransition = captured;
+    updateRootContentsLayerBackgroundColor();
+}
+
+void RenderLayerCompositor::updateRootContentsLayerBackgroundColor()
+{
+    if (!m_rootContentsLayer)
+        return;
+    if (m_rootElementCapturedInViewTransition)
+        m_rootContentsLayer->setBackgroundColor(m_viewBackgroundColor);
+    else
+        m_rootContentsLayer->setBackgroundColor(Color());
+}
+
 void RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged()
 {
     if (!usesCompositing())
@@ -4688,6 +4706,7 @@ void RenderLayerCompositor::rootBackgroundColorOrTransparencyChanged()
 #if HAVE(RUBBER_BANDING)
         updateLayerForOverhangAreasBackgroundColor();
 #endif
+        updateRootContentsLayerBackgroundColor();
     }
     
     rootLayerConfigurationChanged();
@@ -4825,6 +4844,7 @@ void RenderLayerCompositor::ensureRootLayer()
 
         // Need to clip to prevent transformed content showing outside this frame
         updateRootContentLayerClipping();
+        updateRootContentsLayerBackgroundColor();
     }
 
     if (requiresScrollLayer(expectedAttachment)) {
