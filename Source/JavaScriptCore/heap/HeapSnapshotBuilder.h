@@ -30,6 +30,7 @@
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
+#include <wtf/OverflowPolicy.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
@@ -107,9 +108,8 @@ class JS_EXPORT_PRIVATE HeapSnapshotBuilder final : public HeapAnalyzer {
     WTF_MAKE_TZONE_ALLOCATED(HeapSnapshotBuilder);
 public:
     enum SnapshotType { InspectorSnapshot, GCDebuggingSnapshot };
-    enum class OverflowAction : uint8_t { CrashOnOverflow, RecordOverflow };
 
-    HeapSnapshotBuilder(HeapProfiler&, SnapshotType = SnapshotType::InspectorSnapshot, OverflowAction = OverflowAction::CrashOnOverflow);
+    HeapSnapshotBuilder(HeapProfiler&, SnapshotType = SnapshotType::InspectorSnapshot, OverflowPolicy = OverflowPolicy::CrashOnOverflow);
     ~HeapSnapshotBuilder() final;
 
     static void resetNextAvailableObjectIdentifier();
@@ -151,7 +151,7 @@ private:
     };
     
     HeapProfiler& m_profiler;
-    OverflowAction m_overflowAction;
+    OverflowPolicy m_overflowPolicy;
     bool m_hasOverflowed { false };
 
     // SlotVisitors run in parallel.

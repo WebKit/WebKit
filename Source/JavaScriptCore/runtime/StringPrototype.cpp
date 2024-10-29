@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004-2023 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004-2024 Apple Inc. All rights reserved.
  *  Copyright (C) 2009 Torch Mobile, Inc.
  *  Copyright (C) 2015 Jordan Harband (ljharb@gmail.com)
  *
@@ -726,7 +726,7 @@ static ALWAYS_INLINE JSString* replaceUsingRegExpSearch(
                         OUT_OF_MEMORY(globalObject, scope);
 
                     if (replLen) {
-                        StringBuilder replacement(StringBuilder::OverflowHandler::RecordOverflow);
+                        StringBuilder replacement(OverflowPolicy::RecordOverflow);
                         substituteBackreferences(replacement, replacementString, source, ovector, regExp);
                         if (UNLIKELY(replacement.hasOverflowed()))
                             OUT_OF_MEMORY(globalObject, scope);

@@ -192,6 +192,7 @@ set(WTF_PUBLIC_HEADERS
     OptionSet.h
     OptionSetHash.h
     OrderMaker.h
+    OverflowPolicy.h
     Packed.h
     PackedRef.h
     PackedRefPtr.h

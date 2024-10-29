@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include <wtf/OverflowPolicy.h>
 #include <wtf/SaturatedArithmetic.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
@@ -43,8 +44,7 @@ public:
     StringBuilder(StringBuilder&&) = default;
     StringBuilder& operator=(StringBuilder&&) = default;
 
-    enum class OverflowHandler { CrashOnOverflow, RecordOverflow }; // FIXME: Despite its use in Checked<>, "handler" does not seem the correct name for this.
-    explicit StringBuilder(OverflowHandler);
+    explicit StringBuilder(OverflowPolicy);
 
     void clear();
     void swap(StringBuilder&);
@@ -132,8 +132,8 @@ template<typename CharacterType> bool equal(const StringBuilder&, const Characte
 
 // Inline function implementations.
 
-inline StringBuilder::StringBuilder(OverflowHandler policy)
-    : m_shouldCrashOnOverflow { policy == OverflowHandler::CrashOnOverflow }
+inline StringBuilder::StringBuilder(OverflowPolicy policy)
+    : m_shouldCrashOnOverflow { policy == OverflowPolicy::CrashOnOverflow }
 {
 }
 

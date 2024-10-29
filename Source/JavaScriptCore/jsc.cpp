@@ -3147,7 +3147,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGenerateHeapSnapshot, (JSGlobalObject* globalOb
     DeferTermination deferScope(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::InspectorSnapshot, HeapSnapshotBuilder::OverflowAction::RecordOverflow);
+    HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::InspectorSnapshot, OverflowPolicy::RecordOverflow);
     snapshotBuilder.buildSnapshot();
 
     String jsonString = snapshotBuilder.json();
@@ -3171,7 +3171,7 @@ JSC_DEFINE_HOST_FUNCTION(functionGenerateHeapSnapshotForGCDebugging, (JSGlobalOb
     {
         DeferGCForAWhile deferGC(vm); // Prevent concurrent GC from interfering with the full GC that the snapshot does.
 
-        HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::GCDebuggingSnapshot, HeapSnapshotBuilder::OverflowAction::RecordOverflow);
+        HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::GCDebuggingSnapshot, OverflowPolicy::RecordOverflow);
         snapshotBuilder.buildSnapshot();
 
         jsonString = snapshotBuilder.json();

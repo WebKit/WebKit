@@ -46,10 +46,10 @@ NodeIdentifier HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1;
 NodeIdentifier HeapSnapshotBuilder::getNextObjectIdentifier() { return nextAvailableObjectIdentifier++; }
 void HeapSnapshotBuilder::resetNextAvailableObjectIdentifier() { HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1; }
 
-HeapSnapshotBuilder::HeapSnapshotBuilder(HeapProfiler& profiler, SnapshotType type, OverflowAction action)
+HeapSnapshotBuilder::HeapSnapshotBuilder(HeapProfiler& profiler, SnapshotType type, OverflowPolicy policy)
     : HeapAnalyzer()
     , m_profiler(profiler)
-    , m_overflowAction(action)
+    , m_overflowPolicy(policy)
     , m_snapshotType(type)
 {
 }
@@ -356,14 +356,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
     UncheckedKeyHashMap<UniquedStringImpl*, unsigned> edgeNameIndexes;
     unsigned nextEdgeNameIndex = 0;
 
-    auto getStringBuilderOverflowHandler = [&] -> StringBuilder::OverflowHandler {
-        if (m_overflowAction == OverflowAction::RecordOverflow)
-            return StringBuilder::OverflowHandler::RecordOverflow;
-        return StringBuilder::OverflowHandler::CrashOnOverflow;
-    };
-
-    auto stringBuilderOverflowHandler = getStringBuilderOverflowHandler();
-    StringBuilder json(stringBuilderOverflowHandler);
+    StringBuilder json(m_overflowPolicy);
 
     auto appendNodeJSON = [&] (const HeapSnapshotNode& node) {
         // Let the client decide if they want to allow or disallow certain nodes.
@@ -402,7 +395,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
                 flags |= static_cast<unsigned>(NodeFlags::Internal);
 
             if (m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
-                StringBuilder nodeLabel(stringBuilderOverflowHandler);
+                StringBuilder nodeLabel(m_overflowPolicy);
                 auto it = m_cellLabels.find(node.cell);
                 if (it != m_cellLabels.end())
                     nodeLabel.append(it->value);
