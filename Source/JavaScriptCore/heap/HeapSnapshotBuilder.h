@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -107,8 +107,9 @@ class JS_EXPORT_PRIVATE HeapSnapshotBuilder final : public HeapAnalyzer {
     WTF_MAKE_TZONE_ALLOCATED(HeapSnapshotBuilder);
 public:
     enum SnapshotType { InspectorSnapshot, GCDebuggingSnapshot };
+    enum class OverflowAction : uint8_t { CrashOnOverflow, RecordOverflow };
 
-    HeapSnapshotBuilder(HeapProfiler&, SnapshotType = SnapshotType::InspectorSnapshot);
+    HeapSnapshotBuilder(HeapProfiler&, SnapshotType = SnapshotType::InspectorSnapshot, OverflowAction = OverflowAction::CrashOnOverflow);
     ~HeapSnapshotBuilder() final;
 
     static void resetNextAvailableObjectIdentifier();
@@ -132,6 +133,8 @@ public:
     String json();
     String json(Function<bool (const HeapSnapshotNode&)> allowNodeCallback);
 
+    bool hasOverflowed() const { return m_hasOverflowed; }
+
 private:
     static NodeIdentifier nextAvailableObjectIdentifier;
     static NodeIdentifier getNextObjectIdentifier();
@@ -148,6 +151,8 @@ private:
     };
     
     HeapProfiler& m_profiler;
+    OverflowAction m_overflowAction;
+    bool m_hasOverflowed { false };
 
     // SlotVisitors run in parallel.
     Lock m_buildingNodeMutex;

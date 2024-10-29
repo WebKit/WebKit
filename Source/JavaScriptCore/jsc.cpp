@@ -3147,10 +3147,15 @@ JSC_DEFINE_HOST_FUNCTION(functionGenerateHeapSnapshot, (JSGlobalObject* globalOb
     DeferTermination deferScope(vm);
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler());
+    HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::InspectorSnapshot, HeapSnapshotBuilder::OverflowAction::RecordOverflow);
     snapshotBuilder.buildSnapshot();
 
     String jsonString = snapshotBuilder.json();
+    if (snapshotBuilder.hasOverflowed()) {
+        throwOutOfMemoryError(globalObject, scope);
+        return encodedJSUndefined();
+    }
+
     EncodedJSValue result = JSValue::encode(JSONParse(globalObject, jsonString));
     scope.releaseAssertNoException();
     return result;
@@ -3166,10 +3171,14 @@ JSC_DEFINE_HOST_FUNCTION(functionGenerateHeapSnapshotForGCDebugging, (JSGlobalOb
     {
         DeferGCForAWhile deferGC(vm); // Prevent concurrent GC from interfering with the full GC that the snapshot does.
 
-        HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::GCDebuggingSnapshot);
+        HeapSnapshotBuilder snapshotBuilder(vm.ensureHeapProfiler(), HeapSnapshotBuilder::SnapshotType::GCDebuggingSnapshot, HeapSnapshotBuilder::OverflowAction::RecordOverflow);
         snapshotBuilder.buildSnapshot();
 
         jsonString = snapshotBuilder.json();
+        if (snapshotBuilder.hasOverflowed()) {
+            throwOutOfMemoryError(globalObject, scope);
+            return encodedJSUndefined();
+        }
     }
     scope.releaseAssertNoException();
     return JSValue::encode(jsString(vm, WTFMove(jsonString)));

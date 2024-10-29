@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,9 +46,10 @@ NodeIdentifier HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1;
 NodeIdentifier HeapSnapshotBuilder::getNextObjectIdentifier() { return nextAvailableObjectIdentifier++; }
 void HeapSnapshotBuilder::resetNextAvailableObjectIdentifier() { HeapSnapshotBuilder::nextAvailableObjectIdentifier = 1; }
 
-HeapSnapshotBuilder::HeapSnapshotBuilder(HeapProfiler& profiler, SnapshotType type)
+HeapSnapshotBuilder::HeapSnapshotBuilder(HeapProfiler& profiler, SnapshotType type, OverflowAction action)
     : HeapAnalyzer()
     , m_profiler(profiler)
+    , m_overflowAction(action)
     , m_snapshotType(type)
 {
 }
@@ -355,7 +356,14 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
     UncheckedKeyHashMap<UniquedStringImpl*, unsigned> edgeNameIndexes;
     unsigned nextEdgeNameIndex = 0;
 
-    StringBuilder json;
+    auto getStringBuilderOverflowHandler = [&] -> StringBuilder::OverflowHandler {
+        if (m_overflowAction == OverflowAction::RecordOverflow)
+            return StringBuilder::OverflowHandler::RecordOverflow;
+        return StringBuilder::OverflowHandler::CrashOnOverflow;
+    };
+
+    auto stringBuilderOverflowHandler = getStringBuilderOverflowHandler();
+    StringBuilder json(stringBuilderOverflowHandler);
 
     auto appendNodeJSON = [&] (const HeapSnapshotNode& node) {
         // Let the client decide if they want to allow or disallow certain nodes.
@@ -394,7 +402,7 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
                 flags |= static_cast<unsigned>(NodeFlags::Internal);
 
             if (m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
-                StringBuilder nodeLabel;
+                StringBuilder nodeLabel(stringBuilderOverflowHandler);
                 auto it = m_cellLabels.find(node.cell);
                 if (it != m_cellLabels.end())
                     nodeLabel.append(it->value);
@@ -411,6 +419,11 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
                     if (nodeLabel.length())
                         nodeLabel.append(' ');
                     nodeLabel.append(description);
+                }
+
+                if (UNLIKELY(nodeLabel.hasOverflowed())) {
+                    m_hasOverflowed = true;
+                    return;
                 }
 
                 if (!nodeLabel.isEmpty() && m_snapshotType == SnapshotType::GCDebuggingSnapshot) {
@@ -625,6 +638,10 @@ String HeapSnapshotBuilder::json(Function<bool (const HeapSnapshotNode&)> allowN
     }
 
     json.append('}');
+    if (json.hasOverflowed()) {
+        m_hasOverflowed = true;
+        return { };
+    }
     return json.toString();
 }
 
