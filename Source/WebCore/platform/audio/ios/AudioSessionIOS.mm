@@ -352,7 +352,10 @@ size_t AudioSessionIOS::maximumNumberOfOutputChannels() const
 
 size_t AudioSessionIOS::preferredBufferSize() const
 {
-    return [[PAL::getAVAudioSessionClass() sharedInstance] preferredIOBufferDuration] * sampleRate();
+// FIXME: rdar://138773933
+IGNORE_WARNINGS_BEGIN("objc-multiple-method-names")
+     return [[PAL::getAVAudioSessionClass() sharedInstance] preferredIOBufferDuration] * sampleRate();
+IGNORE_WARNINGS_END
 }
 
 void AudioSessionIOS::setPreferredBufferSize(size_t bufferSize)
