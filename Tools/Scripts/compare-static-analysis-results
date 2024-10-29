@@ -25,14 +25,23 @@ import os
 import subprocess
 import argparse
 import json
+import sys
+
+from webkitpy.results.upload import Upload
+from webkitpy.results.options import upload_args
+from libraries.webkitscmpy.webkitscmpy import Commit
+from libraries.webkitscmpy.webkitscmpy import local, log, remote
 
 CHECKERS = ['NoUncountedMemberChecker', 'NoUncheckedPtrMemberChecker', 'RefCntblBaseVirtualDtor', 'UncountedCallArgsChecker', 'UncountedLocalVarsChecker']
 PROJECTS = ['WebCore', 'WebKit']
 STATIC_ANALYZER_UNEXPECTED = 'StaticAnalyzerUnexpectedRegressions'
+UNEXPECTED_PASS = {'actual': 'PASS', 'expected': 'FAIL'}
+UNEXPECTED_FAILURE = {'actual': 'FAIL', 'expected': 'PASS'}
+EXPECTED_FAILURE = {'actual': 'FAIL', 'expected': 'FAIL'}
 
 
 def parser():
-    parser = argparse.ArgumentParser(description='Finds new regressions and fixes between two smart pointer static analysis results')
+    parser = argparse.ArgumentParser(parents=[upload_args()], description='Finds new regressions and fixes between two smart pointer static analysis results')
     parser.add_argument(
         'new_dir',
         help='Path to directory of results from new build'
@@ -66,18 +75,26 @@ def parser():
         default=False,
         help='Delete static analyzer results'
     )
+    config_options = parser.add_argument_group('Configuration options')
+    config_options.add_argument('--architecture')
+    config_options.add_argument('--platform')
+    config_options.add_argument('--version')
+    config_options.add_argument('--version-name')
+    config_options.add_argument('--style')
+    config_options.add_argument('--sdk')
+
     return parser.parse_args()
 
 
 def find_diff(args, file1, file2):
+    # Create empty file if the corresponding one doesn't exist - this happens if a checker is added or removed
     if not args.check_expectations:
-        # Create empty file if the corresponding one doesn't exist - this happens if a checker is added or removed
         if not os.path.exists(file1):
             f = open(file1, 'a')
             f.close()
-        if not os.path.exists(file2):
-            f = open(file2, 'a')
-            f.close()
+    if not os.path.exists(file2):
+        f = open(file2, 'a')
+        f.close()
 
     with open(file1) as baseline_file, open(file2) as new_file:
         baseline_list = [line for line in baseline_file.read().splitlines() if not line.startswith('//') and line.strip()]  # Remove lines from the copyright
@@ -87,7 +104,7 @@ def find_diff(args, file1, file2):
         # Find fixes
         diff_baseline_from_new = set(baseline_list) - set(new_file_list)
 
-    return set(diff_new_from_baseline), set(diff_baseline_from_new)
+    return set(diff_new_from_baseline), set(diff_baseline_from_new), new_file_list
 
 
 def create_filtered_results_dir(args, project, result_paths, category='StaticAnalyzerRegressions'):
@@ -110,11 +127,12 @@ def compare_project_results_to_expectations(args, new_path, project):
     unexpected_clean_files = set()
     project_results_passes = {}
     project_results_failures = {}
+    project_results_for_upload = {}
 
     # Compare the list of dirty files to the expectations list of files
     for checker in CHECKERS:
         # Get unexpected clean and buggy files per checker
-        buggy_files, clean_files = find_diff(args, os.path.abspath(f'Source/{project}/SaferCPPExpectations/{checker}Expectations'), f'{new_path}/{project}/{checker}Files')
+        buggy_files, clean_files, current_results = find_diff(args, os.path.join(os.path.dirname(__file__), f'../../Source/{project}/SaferCPPExpectations/{checker}Expectations'), f'{new_path}/{project}/{checker}Files')
         unexpected_clean_files.update(clean_files)
         unexpected_buggy_files.update(buggy_files)
 
@@ -151,13 +169,25 @@ def compare_project_results_to_expectations(args, new_path, project):
         else:
             print('    No unexpected results')
 
+        for file in current_results:
+            if not file in project_results_for_upload.keys():
+                project_results_for_upload[file] = {}
+            if file in buggy_files:
+                project_results_for_upload[file][checker] = UNEXPECTED_FAILURE
+            else:
+                project_results_for_upload[file][checker] = EXPECTED_FAILURE
+        for file in clean_files:
+            if not file in project_results_for_upload.keys():
+                project_results_for_upload[file] = {}
+            project_results_for_upload[file][checker] = UNEXPECTED_PASS
+
     if unexpected_issues_total and args.scan_build:
         create_filtered_results_dir(args, project, unexpected_result_paths_total, STATIC_ANALYZER_UNEXPECTED)
 
     if not unexpected_buggy_files and not unexpected_clean_files and not unexpected_issues_total:
         print('No unexpected results!')
 
-    return unexpected_buggy_files, unexpected_clean_files, unexpected_issues_total, project_results_passes, project_results_failures
+    return unexpected_buggy_files, unexpected_clean_files, unexpected_issues_total, project_results_passes, project_results_failures, project_results_for_upload
 
 
 def compare_project_results_by_run(args, archive_path, new_path, project):
@@ -206,6 +236,45 @@ def compare_project_results_by_run(args, archive_path, new_path, project):
     return new_issues_total, new_files_total, fixed_files_total, fixed_issues_total, project_results_passes, project_results_failures
 
 
+def upload_results(options, results):
+    print('\nPreparing to upload results...')
+
+    config = Upload.create_configuration(
+        architecture=options.architecture,
+        platform=options.platform,
+        version=options.version,
+        version_name=options.version_name,
+        style=options.style,
+        sdk=options.sdk
+    )
+
+    repo = os.getcwd()
+    if repo.startswith(('https://', 'http://')):
+        repository = remote.Scm.from_url(repo)
+    else:
+        try:
+            repository = local.Scm.from_path(path=repo,)
+        except OSError:
+            log.warning("No repository found at '{}'".format(repo))
+            repository = None
+
+    commit = repository.commit()
+    commit = commit.Encoder().default(commit)
+    commit['repository_id'] = 'webkit'
+
+    upload = Upload(
+        suite=options.suite or 'safer-cpp-checks',
+        configuration=config,
+        details=Upload.create_details(options=options),
+        commits=[commit],
+        run_stats=Upload.create_run_stats(), results=results,
+    )
+
+    for url in options.report_urls:
+        if not upload.upload(url):
+            sys.stderr.write(f'Failed to upload results\n')
+
+
 def main():
     args = parser()
     new_issues_total = set()
@@ -216,12 +285,13 @@ def main():
     unexpected_failures_total = set()
     unexpected_issues_total = set()
     unexpected_results_data = {'passes': {}, 'failures': {}}
+    results_for_upload = {}
 
     for project in PROJECTS:
         print(f'\n------ {project} ------')
         new_path = os.path.abspath(f'{args.new_dir}')
         if args.check_expectations:
-            unexpected_failures, unexpected_passes, unexpected_issues, project_results_passes, project_results_failures = compare_project_results_to_expectations(args, new_path, project)
+            unexpected_failures, unexpected_passes, unexpected_issues, project_results_passes, project_results_failures, project_results_for_upload = compare_project_results_to_expectations(args, new_path, project)
             unexpected_failures_total.update(unexpected_failures)
             unexpected_passes_total.update(unexpected_passes)
             unexpected_issues_total.update(unexpected_issues)
@@ -235,6 +305,7 @@ def main():
         # JSON
         unexpected_results_data['passes'][project] = project_results_passes
         unexpected_results_data['failures'][project] = project_results_failures
+        results_for_upload[project] = project_results_for_upload
 
     results_data_file = os.path.abspath(f'{args.build_output}/unexpected_results.json')
     with open(results_data_file, "w") as f:
@@ -253,6 +324,9 @@ def main():
     }.items():
         if type_total:
             print(f'Total {type}: {len(type_total)}')
+
+    if args.report_urls:
+        upload_results(args, results_for_upload)
 
     # We don't need the full results for EWS runs. Delete full results if option enabled.
     if args.delete_results:

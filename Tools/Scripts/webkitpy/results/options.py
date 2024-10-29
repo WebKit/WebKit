@@ -21,15 +21,27 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import optparse
+import argparse
+
+
+def add_optargs(func, suite_name_flag='suite'):
+    return [
+        func('--report', action='append', dest='report_urls', help='URL (or URLs) to report test results to'),
+        func('--buildbot-master', help='The url of the buildbot master.'),
+        func('--builder-name', help='The name of the buildbot builder tests were run on.'),
+        func('--build-number', help='The buildbot build number tests are associated with.'),
+        func('--buildbot-worker', help='The buildbot worker tests were run on.'),
+        func('--result-report-flavor', help='Optional flag for categorizing test runs which do not fit into other configuration options.'),
+        func('--' + suite_name_flag, help='Optional flag for overriding reported suite name.', default=None),
+    ]
 
 
 def upload_options(suite_name_flag='suite'):
-    return [
-        optparse.make_option('--report', action='append', dest='report_urls', help='URL (or URLs) to report test results to'),
-        optparse.make_option('--buildbot-master', help='The url of the buildbot master.'),
-        optparse.make_option('--builder-name', help='The name of the buildbot builder tests were run on.'),
-        optparse.make_option('--build-number', help='The buildbot build number tests are associated with.'),
-        optparse.make_option('--buildbot-worker', help='The buildbot worker tests were run on.'),
-        optparse.make_option('--result-report-flavor', help='Optional flag for categorizing test runs which do not fit into other configuration options.'),
-        optparse.make_option('--' + suite_name_flag, help='Optional flag for overriding reported suite name.', default=None),
-    ]
+    return add_optargs(optparse.make_option)
+
+
+def upload_args(suite_name_flag='suite'):
+    parser = argparse.ArgumentParser(add_help=False)
+    upload_options = parser.add_argument_group('Upload options')
+    add_optargs(upload_options.add_argument)
+    return parser
