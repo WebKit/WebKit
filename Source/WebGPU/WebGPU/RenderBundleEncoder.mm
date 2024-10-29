@@ -778,14 +778,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexedIndir
             if (!indirectBuffer.isDestroyed() && indexBuffer.length && mtlIndirectBuffer)
                 [renderPassEncoder->renderCommandEncoder() drawIndexedPrimitives:m_primitiveType indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset indirectBuffer:mtlIndirectBuffer indirectBufferOffset:modifiedIndirectOffset];
         } else {
-            auto contents = makeSpanFromBuffer<MTLDrawIndexedPrimitivesIndirectArguments>(indirectBuffer.buffer(), indirectOffset).data();
-            if (!contents || !contents->indexCount || !contents->instanceCount)
-                return finalizeRenderCommand();
-
-            ASSERT(m_indexBufferOffset == contents->indexStart);
-            if (!addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer))
-                return finalizeRenderCommand();
-            [icbCommand drawIndexedPrimitives:m_primitiveType indexCount:contents->indexCount indexType:m_indexType indexBuffer:indexBuffer indexBufferOffset:m_indexBufferOffset instanceCount:contents->instanceCount baseVertex:contents->baseVertex baseInstance:contents->baseInstance];
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=264219
         }
     } else {
         if (!isValidToUseWith(indirectBuffer, *this)) {
@@ -837,13 +830,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndirect(Buf
             if (!indirectBuffer.isDestroyed() && clampedIndirectBuffer)
                 [renderPassEncoder->renderCommandEncoder() drawPrimitives:m_primitiveType indirectBuffer:clampedIndirectBuffer indirectBufferOffset:0];
         } else {
-            auto contents = makeSpanFromBuffer<MTLDrawPrimitivesIndirectArguments>(indirectBuffer.buffer(), indirectOffset).data();
-            if (!contents || !contents->instanceCount || !contents->vertexCount)
-                return finalizeRenderCommand();
-
-            if (!addResource(m_resources, indirectBuffer.buffer(), MTLRenderStageVertex, &indirectBuffer))
-                return finalizeRenderCommand();
-            [icbCommand drawPrimitives:m_primitiveType vertexStart:contents->vertexStart vertexCount:contents->vertexCount instanceCount:contents->instanceCount baseInstance:contents->baseInstance];
+            // FIXME: https://bugs.webkit.org/show_bug.cgi?id=264219
         }
     } else {
         if (!isValidToUseWith(indirectBuffer, *this)) {
