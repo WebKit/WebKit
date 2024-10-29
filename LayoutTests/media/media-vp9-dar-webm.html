@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>webm file with vp9 with DAR 5:7</title>
+<script src="../media/video-test.js"></script>
+<script src="utilities.js"></script>
+<script>
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        video = document.getElementsByTagName('video')[0];
+        video.src = "content/test-vp9-dar.webm";
+        await once(video, 'loadedmetadata');
+        testExpected("video.videoWidth", 1000);
+        testExpected("video.videoHeight", 1400);
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+<video id="video"/>
+</body>
+</html>

@@ -1075,13 +1075,13 @@ WebMParser::ConsumeFrameDataResult WebMParser::VideoTrackData::consumeFrameData(
 
         if (m_headerParser.key()) {
             isKey = true;
-            setFormatDescription(createVideoInfoFromVP9HeaderParser(m_headerParser, track().video.value().colour));
+            setFormatDescription(createVideoInfoFromVP9HeaderParser(m_headerParser, track().video.value()));
         }
     } else if (codec() == CodecType::VP8) {
         auto header = parseVP8FrameHeader(segmentHeaderData);
         if (header && header->keyframe) {
             isKey = true;
-            setFormatDescription(createVideoInfoFromVP8Header(*header, track().video.value().colour));
+            setFormatDescription(createVideoInfoFromVP8Header(*header, track().video.value()));
         }
     }
 

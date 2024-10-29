@@ -1143,9 +1143,9 @@ media/media-vp8-webm.html [ Skip ]
 media/media-vp8-webm-seek-to-start.html [ Skip ]
 media/media-vp8-webm-with-poster.html [ Skip ]
 media/media-vp8-webm-with-preload.html [ Skip ]
+media/media-vp9-dar-webm.html [ Skip ]
 media/video-src-webm-blob.html [ Failure ]
 media/track/audio-track-configuration-webm.html [ Skip ]
-
 media/track/media-audio-track.html [ Failure ]
 media/media-sources-selection.html [ ImageOnlyFailure ]
 

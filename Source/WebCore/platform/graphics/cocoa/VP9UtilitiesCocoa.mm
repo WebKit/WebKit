@@ -578,7 +578,7 @@ static uint8_t convertSubsamplingXYToChromaSubsampling(uint64_t x, uint64_t y)
     return VPConfigurationChromaSubsampling::Subsampling_420_Colocated;
 }
 
-static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord& record, int32_t width, int32_t height)
+static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord& record, const FloatSize& size, const FloatSize& displaySize)
 {
     // Ref: "VP Codec ISO Media File Format Binding, v1.0, 2017-03-31"
     // <https://www.webmproject.org/vp9/mp4/>
@@ -608,7 +608,8 @@ static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCode
     // with a subclass of ISOFullBox.
 
     auto videoInfo = VideoInfo::create();
-    videoInfo->size = videoInfo->displaySize = { float(width), float(height) };
+    videoInfo->size = size;
+    videoInfo->displaySize = displaySize;
 
     constexpr size_t VPCodecConfigurationContentsSize = 12;
 
@@ -634,7 +635,7 @@ static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCode
     return videoInfo;
 }
 
-Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser& parser, const webm::Element<Colour>& color)
+Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderParser& parser, const webm::Video& video)
 {
     VPCodecConfigurationRecord record;
 
@@ -714,8 +715,8 @@ Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderPar
     }
 
     // Container color values can override per-sample ones:
-    if (color.is_present()) {
-        auto& colorValue = color.value();
+    if (video.colour.is_present()) {
+        auto& colorValue = video.colour.value();
         if (colorValue.chroma_subsampling_x.is_present() && colorValue.chroma_subsampling_y.is_present())
             record.chromaSubsampling = convertSubsamplingXYToChromaSubsampling(colorValue.chroma_subsampling_x.value(), colorValue.chroma_subsampling_y.value());
         if (colorValue.range.is_present() && colorValue.range.value() != Range::kUnspecified)
@@ -730,7 +731,7 @@ Ref<VideoInfo> createVideoInfoFromVP9HeaderParser(const vp9_parser::Vp9HeaderPar
             record.colorPrimaries = convertToColorPrimaries(colorValue.primaries.value());
     }
 
-    return createVideoInfoFromVPCodecConfigurationRecord(record, parser.width(), parser.height());
+    return createVideoInfoFromVPCodecConfigurationRecord(record, { static_cast<float>(parser.width()), static_cast<float>(parser.height()) }, { static_cast<float>(video.display_width.is_present() ? video.display_width.value() : parser.display_width()), static_cast<float>(video.display_height.is_present() ? video.display_height.value() : parser.display_height()) });
 }
 
 std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t> frameData)
@@ -795,7 +796,7 @@ std::optional<VP8FrameHeader> parseVP8FrameHeader(std::span<const uint8_t> frame
     return header;
 }
 
-Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const webm::Element<Colour>& color)
+Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const webm::Video& video)
 {
     VPCodecConfigurationRecord record;
     record.codecName = "vp08"_s;
@@ -809,8 +810,8 @@ Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const 
     record.matrixCoefficients = header.colorSpace ? VPConfigurationMatrixCoefficients::Unspecified : VPConfigurationMatrixCoefficients::BT_601_7;
 
     // Container color values can override per-sample ones:
-    if (color.is_present()) {
-        auto& colorValue = color.value();
+    if (video.colour.is_present()) {
+        auto& colorValue = video.colour.value();
         if (colorValue.chroma_subsampling_x.is_present() && colorValue.chroma_subsampling_y.is_present())
             record.chromaSubsampling = convertSubsamplingXYToChromaSubsampling(colorValue.chroma_subsampling_x.value(), colorValue.chroma_subsampling_y.value());
         if (colorValue.range.is_present() && colorValue.range.value() != Range::kUnspecified)
@@ -825,7 +826,7 @@ Ref<VideoInfo> createVideoInfoFromVP8Header(const VP8FrameHeader& header, const 
             record.colorPrimaries = convertToColorPrimaries(colorValue.primaries.value());
     }
 
-    return createVideoInfoFromVPCodecConfigurationRecord(record, header.width, header.height);
+    return createVideoInfoFromVPCodecConfigurationRecord(record, { static_cast<float>(header.width), static_cast<float>(header.height) }, { static_cast<float>(video.display_width.is_present() ? video.display_width.value() : header.width), static_cast<float>(video.display_height.is_present() ? video.display_height.value() : header.height) });
 }
 
 }

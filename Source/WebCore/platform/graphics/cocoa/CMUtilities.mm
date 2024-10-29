@@ -35,6 +35,7 @@
 #import "SharedBuffer.h"
 #import "WebMAudioUtilitiesCocoa.h"
 #import <CoreMedia/CMFormatDescription.h>
+#import <numeric>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
 #import <pal/spi/cocoa/AudioToolboxSPI.h>
 #import <wtf/Scope.h>
@@ -207,6 +208,15 @@ RetainPtr<CMFormatDescriptionRef> createFormatDescriptionFromTrackInfo(const Tra
     if (videoInfo.colorSpace.matrix) {
         if (RetainPtr cmMatrix = convertToCMYCbCRMatrix(*videoInfo.colorSpace.matrix))
             CFDictionaryAddValue(extensions.get(), kCVImageBufferYCbCrMatrixKey, cmMatrix.get());
+    }
+    if (videoInfo.size != videoInfo.displaySize) {
+        uint32_t width = videoInfo.displaySize.width();
+        uint32_t height = videoInfo.displaySize.height();
+        auto gcd = std::gcd(width, height);
+        CFDictionaryAddValue(extensions.get(), PAL::get_CoreMedia_kCMFormatDescriptionExtension_PixelAspectRatio(), @{
+            (__bridge NSString*)PAL::get_CoreMedia_kCMFormatDescriptionKey_PixelAspectRatioHorizontalSpacing() : @(width / gcd),
+            (__bridge NSString*)PAL::get_CoreMedia_kCMFormatDescriptionKey_PixelAspectRatioVerticalSpacing() : @(height / gcd)
+        });
     }
 
     CMVideoFormatDescriptionRef formatDescription = nullptr;
