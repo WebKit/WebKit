@@ -1973,6 +1973,10 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(PipelineLayout& l
                 serializedVariables.add(variable, &entry);
                 entries.append({ entry.binding, &createArgumentBufferEntry(*argumentBufferIndex, *variable) });
             } else {
+                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=282098
+                if (std::get_if<ExternalTextureBindingLayout>(&entry.bindingMember))
+                    return makeUnexpected(Error("Shader uses bind group layout with unused external texture: this is not supported"_s, SourceSpan::empty()));
+
                 auto& type = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("u32"_s));
                 type.m_inferredType = m_shaderModule.types().u32Type();
 
