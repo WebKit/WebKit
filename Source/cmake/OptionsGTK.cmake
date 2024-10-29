@@ -3,7 +3,7 @@ include(VersioningUtils)
 
 WEBKIT_OPTION_BEGIN()
 
-SET_PROJECT_VERSION(2 47 0)
+SET_PROJECT_VERSION(2 47 1)
 
 set(USER_AGENT_BRANDING "" CACHE STRING "Branding to add to user agent string")
 
