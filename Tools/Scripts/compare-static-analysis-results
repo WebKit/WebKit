@@ -305,12 +305,14 @@ def main():
         # JSON
         unexpected_results_data['passes'][project] = project_results_passes
         unexpected_results_data['failures'][project] = project_results_failures
-        results_for_upload[project] = project_results_for_upload
+        if args.report_urls:
+            results_for_upload[project] = project_results_for_upload
 
-    results_data_file = os.path.abspath(f'{args.build_output}/unexpected_results.json')
-    with open(results_data_file, "w") as f:
-        results_data_obj = json.dumps(unexpected_results_data, indent=4)
-        f.write(results_data_obj)
+    if args.build_output:
+        results_data_file = os.path.abspath(f"{args.build_output}/unexpected_results.json")
+        with open(results_data_file, "w") as f:
+            results_data_obj = json.dumps(unexpected_results_data, indent=4)
+            f.write(results_data_obj)
 
     print('\n')
     for type, type_total in {
