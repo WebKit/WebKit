@@ -717,7 +717,18 @@ static inline int32_t waitImpl(VM& vm, ValueType* pointer, ValueType expectedVal
     Seconds timeout = Seconds::infinity();
     if (timeoutInNanoseconds >= 0)
         timeout = Seconds::fromNanoseconds(timeoutInNanoseconds);
-    return static_cast<int32_t>(WaiterListManager::singleton().waitSync(vm, pointer, expectedValue, timeout));
+    auto result = WaiterListManager::singleton().waitSync(vm, pointer, expectedValue, timeout);
+    switch (result) {
+    case WaiterListManager::WaitSyncResult::OK:
+    case WaiterListManager::WaitSyncResult::NotEqual:
+    case WaiterListManager::WaitSyncResult::TimedOut:
+        return static_cast<int32_t>(result);
+    case WaiterListManager::WaitSyncResult::Terminated:
+        vm.throwTerminationException();
+        return -1;
+    }
+    RELEASE_ASSERT_NOT_REACHED();
+    return -1;
 }
 
 inline int32_t memoryAtomicWait32(JSWebAssemblyInstance* instance, uint64_t offsetInMemory, int32_t value, int64_t timeoutInNanoseconds)
