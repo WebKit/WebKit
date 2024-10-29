@@ -336,6 +336,8 @@ EXCLUDED_MACOS_PLUGIN_FILE_NAMES[sdk=iphone*] = SecItemShim.dylib WebProcessShim
 // platforms, preventing any Swift compilation. (https://bugs.webkit.org/show_bug.cgi?id=280912)
 EXCLUDED_SWIFT_FILE_NAMES[sdk=appletv*] = *.swift;
 EXCLUDED_SWIFT_FILE_NAMES[sdk=watch*] = *.swift;
+EXCLUDED_SWIFT_FILE_NAMES[sdk=appletv*internal] = ;
+EXCLUDED_SWIFT_FILE_NAMES[sdk=watch*internal] = ;
 
 INSTALLHDRS_SCRIPT_PHASE = YES;
 INSTALLHDRS_COPY_PHASE = YES;

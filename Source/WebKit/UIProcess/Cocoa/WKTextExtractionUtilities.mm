@@ -35,13 +35,6 @@
 namespace WebKit {
 using namespace WebCore;
 
-void prepareTextExtractionSupportIfNeeded()
-{
-    // Preemptively soft link libWebKitSwift if it exists, so that the corresponding Swift extension
-    // on WKWebView will be loaded.
-    WebKitSwiftLibrary(true);
-}
-
 inline static WKTextExtractionContainer containerType(TextExtraction::ContainerType type)
 {
     switch (type) {

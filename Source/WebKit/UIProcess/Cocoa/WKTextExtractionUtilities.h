@@ -40,8 +40,6 @@ struct Item;
 
 namespace WebKit {
 
-void prepareTextExtractionSupportIfNeeded();
-
 using RootViewToWebViewConverter = Function<WebCore::FloatRect(const WebCore::FloatRect&)>;
 RetainPtr<WKTextExtractionItem> createItem(const WebCore::TextExtraction::Item&, RootViewToWebViewConverter&&);
 

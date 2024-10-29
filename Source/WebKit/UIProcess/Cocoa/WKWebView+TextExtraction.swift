@@ -23,8 +23,7 @@
 
 #if canImport(UIIntelligenceSupport)
 
-@_spiOnly import WebKit
-@_spiOnly import UIIntelligenceSupport
+@_weakLinked @_spiOnly import UIIntelligenceSupport
 
 #if canImport(UIKit)
 @_spi(UIIntelligenceSupport) import UIKit

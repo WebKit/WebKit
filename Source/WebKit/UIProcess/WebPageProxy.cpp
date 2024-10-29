@@ -6964,11 +6964,6 @@ void WebPageProxy::didCommitLoadForFrame(IPC::Connection& connection, FrameIdent
     if (frame->isMainFrame())
         resetMediaCapability();
 #endif
-
-#if PLATFORM(COCOA)
-    if (frame->isMainFrame() && preferences().textExtractionEnabled())
-        prepareTextExtractionSupportIfNeeded();
-#endif
 }
 
 void WebPageProxy::didFinishDocumentLoadForFrame(IPC::Connection& connection, FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, const UserData& userData, WallTime timestamp)
