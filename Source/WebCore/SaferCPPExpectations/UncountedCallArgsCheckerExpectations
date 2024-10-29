@@ -1708,7 +1708,6 @@ platform/mediarecorder/MediaRecorderPrivate.h
 platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp
 platform/mediarecorder/MediaRecorderPrivateMock.cpp
 platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm
-platform/mediarecorder/cocoa/VideoSampleBufferCompressor.mm
 platform/mediastream/AudioTrackPrivateMediaStream.cpp
 platform/mediastream/MediaStreamTrackDataHolder.cpp
 platform/mediastream/MediaStreamTrackPrivate.cpp
