@@ -31,6 +31,7 @@
 #include "Exception.h"
 #include "ExceptionCode.h"
 #include "InternalObserverDrop.h"
+#include "InternalObserverEvery.h"
 #include "InternalObserverFilter.h"
 #include "InternalObserverFind.h"
 #include "InternalObserverFirst.h"
@@ -140,6 +141,11 @@ void Observable::last(ScriptExecutionContext& context, const SubscribeOptions& o
 void Observable::find(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
 {
     return createInternalObserverOperatorFind(context, *this, WTFMove(callback), options, WTFMove(promise));
+}
+
+void Observable::every(ScriptExecutionContext& context, Ref<PredicateCallback>&& callback, const SubscribeOptions& options, Ref<DeferredPromise>&& promise)
+{
+    return createInternalObserverOperatorEvery(context, *this, WTFMove(callback), options, WTFMove(promise));
 }
 
 Observable::Observable(Ref<SubscriberCallback> callback)

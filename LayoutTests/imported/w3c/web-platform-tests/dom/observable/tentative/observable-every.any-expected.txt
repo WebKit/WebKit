@@ -1,24 +1,12 @@
 
-FAIL every(): Promise resolves to true if all values pass the predicate promise_test: Unhandled rejection with value: object "TypeError: source.every is not a function. (In 'source.every((value) => value === "good")', 'source.every' is undefined)"
-FAIL every(): Promise resolves to false if any value fails the predicate promise_test: Unhandled rejection with value: object "TypeError: source.every is not a function. (In 'source.every((value) => value === "good")', 'source.every' is undefined)"
-FAIL every(): Abort the subscription to the source if the predicate does not pass promise_test: Unhandled rejection with value: object "TypeError: source.every is not a function. (In 'source.every((value) => value === "good")', 'source.every' is undefined)"
-FAIL every(): Lifecycle checks when all values pass the predicate promise_test: Unhandled rejection with value: object "TypeError: source.every is not a function. (In 'source.every((value, index) => {
-    logs.push(`Predicate called with ${value}, ${index}`);
-    return true;
-  })', 'source.every' is undefined)"
-FAIL every(): Lifecycle checks when any value fails the predicate promise_test: Unhandled rejection with value: object "TypeError: source.every is not a function. (In 'source.every((value, index) => {
-    logs.push(`Predicate called with ${value}, ${index}`);
-    return value === "good";
-  })', 'source.every' is undefined)"
-FAIL every(): Resolves with true if the observable completes without emitting a value promise_test: Unhandled rejection with value: object "TypeError: source.every is not a function. (In 'source.every(() => true)', 'source.every' is undefined)"
-FAIL every(): Rejects with any error emitted from the source observable promise_test: Unhandled rejection with value: object "TypeError: source.every is not a function. (In 'source.every(() => true)', 'source.every' is undefined)"
-FAIL every(): Rejects with any error thrown from the predicate promise_test: Unhandled rejection with value: object "TypeError: source.every is not a function. (In 'source.every(value => {
-    if (value <= 2) return true;
-    throw error;
-  })', 'source.every' is undefined)"
-FAIL every(): Index is passed into the predicate promise_test: Unhandled rejection with value: object "TypeError: source.every is not a function. (In 'source.every((value, index) => {
-    indices.push(index);
-    return true;
-  })', 'source.every' is undefined)"
-FAIL every(): Rejects with a DOMException if the source Observable is aborted promise_test: Unhandled rejection with value: object "TypeError: source.every is not a function. (In 'source.every(() => true, { signal: controller.signal })', 'source.every' is undefined)"
+PASS every(): Promise resolves to true if all values pass the predicate
+PASS every(): Promise resolves to false if any value fails the predicate
+PASS every(): Abort the subscription to the source if the predicate does not pass
+PASS every(): Lifecycle checks when all values pass the predicate
+PASS every(): Lifecycle checks when any value fails the predicate
+PASS every(): Resolves with true if the observable completes without emitting a value
+PASS every(): Rejects with any error emitted from the source observable
+PASS every(): Rejects with any error thrown from the predicate
+PASS every(): Index is passed into the predicate
+PASS every(): Rejects with a DOMException if the source Observable is aborted
 

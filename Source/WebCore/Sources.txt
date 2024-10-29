@@ -1226,6 +1226,7 @@ dom/InlineStyleSheetOwner.cpp
 dom/InputEvent.cpp
 dom/InternalObserver.cpp
 dom/InternalObserverDrop.cpp
+dom/InternalObserverEvery.cpp
 dom/InternalObserverFilter.cpp
 dom/InternalObserverFind.cpp
 dom/InternalObserverFirst.cpp

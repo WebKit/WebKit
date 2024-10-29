@@ -48,4 +48,6 @@ interface Observable {
   [CallWith=CurrentScriptExecutionContext] Promise<undefined> forEach(VisitorCallback callback, optional SubscribeOptions options = {});
   [CallWith=CurrentScriptExecutionContext] Promise<any> last(optional SubscribeOptions options = {});
   [CallWith=CurrentScriptExecutionContext] Promise<any> find(PredicateCallback callback, optional SubscribeOptions options = {});
+  [CallWith=CurrentScriptExecutionContext] Promise<boolean> every(PredicateCallback callback, optional SubscribeOptions options = {});
+
 };
