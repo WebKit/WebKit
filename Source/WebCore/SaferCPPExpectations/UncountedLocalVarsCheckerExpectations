@@ -343,9 +343,6 @@ Modules/WebGPU/Implementation/WebGPUAdapterImpl.cpp
 Modules/WebGPU/Implementation/WebGPUCompositorIntegrationImpl.cpp
 Modules/WebGPU/Implementation/WebGPUDeviceImpl.cpp
 Modules/WebGPU/Implementation/WebGPUImpl.cpp
-Modules/WebGPU/Implementation/WebGPUPresentationContextImpl.cpp
-Modules/WebGPU/Implementation/WebGPUQueueImpl.cpp
-Modules/WebGPU/Implementation/WebGPURenderPassEncoderImpl.cpp
 Modules/applepay-ams-ui/ApplePayAMSUIPaymentHandler.cpp
 Modules/applepay/ApplePaySession.cpp
 Modules/applepay/ApplePaySetup.cpp
