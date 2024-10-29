@@ -2574,15 +2574,9 @@ media/video-playsinline.html
 media/video-remote-control-playpause.html
 media/video-webkit-playsinline.html
 
-webkit.org/b/103926 media/track/opera
-
 webkit.org/b/112659 media/video-playing-and-pause.html [ Skip ]
 
 webkit.org/b/112492 media/track/track-prefer-captions.html
-
-# WebVTT tests don't work because they need more than a 800x600 snapshot.
-# They are also flakily failing on WebKit2, as snapshot sometimes has a black rectangle for video element instead of white one.
-webkit.org/b/131476 media/track/w3c/track/webvtt
 
 media/video-object-fit-change.html [ ImageOnlyFailure ]
 
