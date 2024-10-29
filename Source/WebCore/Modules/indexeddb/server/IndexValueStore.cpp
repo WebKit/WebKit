@@ -107,8 +107,10 @@ void IndexValueStore::removeRecord(const IDBKeyData& indexKey, const IDBKeyData&
     if (!iterator->value)
         return;
 
-    if (iterator->value->removeKey(valueKey))
+    if (iterator->value->removeKey(valueKey)) {
         m_records.remove(iterator);
+        m_orderedKeys.erase(indexKey);
+    }
 }
 
 void IndexValueStore::removeEntriesWithValueKey(MemoryIndex& index, const IDBKeyData& valueKey)
