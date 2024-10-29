@@ -296,8 +296,11 @@ bool SharingResolver::canShareStyleWithElement(const Context& context, const Sty
     if (!m_document->styleScope().anchorPositionedStates().isEmptyIgnoringNullReferences())
         return false;
 
+    if (candidateElement.isInTopLayer() || element.isInTopLayer())
+        return false;
+
 #if ENABLE(FULLSCREEN_API)
-    if (CheckedPtr fullscreenManager = m_document->fullscreenManagerIfExists(); fullscreenManager && (&candidateElement == fullscreenManager->currentFullscreenElement() || &element == fullscreenManager->currentFullscreenElement()))
+    if (candidateElement.hasFullscreenFlag() || element.hasFullscreenFlag())
         return false;
 #endif
 
