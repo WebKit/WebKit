@@ -183,6 +183,7 @@ class DevicePort(DarwinPort):
             pin=self.get_option('pin', None),
             use_nfs=self.get_option('use_nfs', True),
             reboot=self.get_option('reboot', False),
+            udids=self.get_option('udids', None)
         )
 
         if not self.devices():

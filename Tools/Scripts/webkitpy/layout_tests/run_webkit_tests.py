@@ -342,6 +342,7 @@ def parse_args(args):
         optparse.make_option('--dedicated-simulators', action="store_true", default=False,
             help="If set, dedicated iOS simulators will always be created.  If not set, the script will attempt to use any currently running simulator."),
         optparse.make_option('--show-touches', action="store_true", default=False, help="If set, a small dot will be shown where the generated touches are. Helpful for debugging touch tests."),
+        optparse.make_option('--udid', '--udids', dest='udids', action='store', help='Specify a device UDID to pick the connected device to run tests on. Specify multiple by separating with commas. If using --*-simulator and the specified UDIDs don\'t satisfy the request, simulators will be created to fulfill the remaining requests.'),
     ]))
 
     option_group_definitions.append(("Miscellaneous Options", [
