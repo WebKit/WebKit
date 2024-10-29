@@ -177,6 +177,7 @@ public:
 
     bool isRootFrame() const final { return m_rootFrame.ptr() == this; }
     const LocalFrame& rootFrame() const { return m_rootFrame.get(); }
+    LocalFrame& rootFrame() { return m_rootFrame.get(); }
 
     WEBCORE_EXPORT RenderView* contentRenderer() const; // Root of the render tree for the document contained in this frame.
 
@@ -402,7 +403,7 @@ private:
 
     FloatSize m_overrideScreenSize;
 
-    const WeakRef<const LocalFrame> m_rootFrame;
+    const WeakRef<LocalFrame> m_rootFrame;
     SandboxFlags m_sandboxFlags;
     UniqueRef<EventHandler> m_eventHandler;
     HashSet<RegistrableDomain> m_storageAccessExceptionDomains;

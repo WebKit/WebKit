@@ -292,24 +292,23 @@ public:
 
     void fire(Frame& frame) override
     {
-        // If the destination HistoryItem is no longer in the back/forward list, then we don't proceed.
-        RefPtr page { frame.page() };
+        RefPtr localFrame = dynamicDowncast<LocalFrame>(frame);
+        if (!localFrame)
+            return;
+
+        RefPtr page { localFrame->page() };
         if (!page || !page->checkedBackForward()->containsItem(m_historyItem))
             return;
 
         UserGestureIndicator gestureIndicator(userGestureToForward());
 
         if (page->checkedBackForward()->currentItem() && page->checkedBackForward()->currentItem()->identifier() == m_historyItem->identifier()) {
-            // Special case for go(0) from a frame -> reload only the frame
-            // To follow Firefox and IE's behavior, history reload can only navigate the self frame.
-            if (RefPtr localFrame = dynamicDowncast<LocalFrame>(frame))
-                localFrame->protectedLoader()->changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
+            localFrame->protectedLoader()->changeLocation(localFrame->document()->url(), selfTargetFrameName(), 0, ReferrerPolicy::EmptyString, shouldOpenExternalURLs(), std::nullopt, nullAtom(), std::nullopt, NavigationHistoryBehavior::Reload);
             return;
         }
         
-        // go(i!=0) from a frame navigates into the history of the frame only,
-        // in both IE and NS (but not in Mozilla). We can't easily do that.
-        page->goToItem(page->mainFrame(), m_historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
+        Ref rootFrame = localFrame->rootFrame();
+        page->goToItem(rootFrame, m_historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
     }
 
 private:
@@ -359,7 +358,8 @@ public:
         }
 
         auto completionHandler = std::exchange(m_completionHandler, nullptr);
-        page->goToItem(page->mainFrame(), historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
+        Ref rootFrame = localFrame->rootFrame();
+        page->goToItem(rootFrame, historyItem, FrameLoadType::IndexedBackForward, ShouldTreatAsContinuingLoad::No);
         completionHandler(ScheduleHistoryNavigationResult::Completed);
     }
 
@@ -678,7 +678,13 @@ void NavigationScheduler::scheduleHistoryNavigation(int steps)
         return;
     }
 
-    RefPtr historyItem = backForward->itemAtIndex(steps);
+    RefPtr localFrame = dynamicDowncast<LocalFrame>(m_frame.get());
+    if (!localFrame) {
+        cancel();
+        return;
+    }
+
+    RefPtr historyItem = backForward->itemAtIndex(steps, localFrame->rootFrame().frameID());
     if (!historyItem) {
         cancel();
         return;

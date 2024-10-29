@@ -2336,7 +2336,7 @@ void WebPage::goToBackForwardItem(GoToBackForwardItemParameters&& parameters)
 
     ASSERT(targetFrame == m_mainFrame || m_page->settings().siteIsolationEnabled());
 
-    if (RefPtr targetLocalFrame = targetFrame->provisionalFrame() ? targetFrame->provisionalFrame() : targetFrame->coreFrame())
+    if (RefPtr targetLocalFrame = targetFrame->provisionalFrame() ? targetFrame->provisionalFrame() : targetFrame->coreLocalFrame())
         m_page->goToItem(*targetLocalFrame, *item, parameters.backForwardType, parameters.shouldTreatAsContinuingLoad);
 }
 
