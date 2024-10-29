@@ -14,7 +14,8 @@ test(function() {
   assert_equals(getTotalLength('M0,20 L400,20 L640,20'), 640);
   assert_equals(getTotalLength('M0,20 L400,20 L640,20 z'), 1280);
   assert_equals(getTotalLength('M0,20 L400,20 z M 320,20 L640,20'), 1120);
-  assert_throws_dom("InvalidStateError", function() { getTotalLength('') });
+  assert_equals(getTotalLength(''), 0);
+  assert_equals(getTotalLength('M0,20'), 0);
 }, document.title + " with SVGPathElement");
 
 test(function() {

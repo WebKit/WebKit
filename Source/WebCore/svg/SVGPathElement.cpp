@@ -182,9 +182,6 @@ ExceptionOr<float> SVGPathElement::getTotalLength() const
 {
     protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
-    if (pathByteStream().isEmpty())
-        return Exception { ExceptionCode::InvalidStateError, "The element's path is empty."_s };
-
     return getTotalLengthOfSVGPathByteStream(pathByteStream());
 }
 
