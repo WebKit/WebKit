@@ -547,7 +547,6 @@ void GraphicsLayerWC::flushCompositingStateForThisLayerOnly()
 {
     if (!m_uncommittedChanges)
         return;
-    SetForScope<bool> scopedIsFlushing(m_isFlushing, true);
     WCLayerUpdateInfo update {
         .id = *primaryLayerID(),
         .changes = std::exchange(m_uncommittedChanges, { })
@@ -740,6 +739,7 @@ GraphicsLayerWC::VisibleAndCoverageRects GraphicsLayerWC::computeVisibleAndCover
 void GraphicsLayerWC::recursiveCommitChanges(const TransformState& state)
 {
     TransformState localState = state;
+    SetForScope<bool> scopedIsFlushing(m_isFlushing, true);
 
     bool accumulateTransform = accumulatesTransform(*this);
     VisibleAndCoverageRects rects = computeVisibleAndCoverageRect(localState, accumulateTransform);
