@@ -33,40 +33,46 @@
 #include <wtf/MathExtras.h>
 #include <wtf/NotFound.h>
 #include <wtf/SIMDHelpers.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/UnalignedAccess.h>
 #include <wtf/text/ASCIIFastPath.h>
 #include <wtf/text/ASCIILiteral.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
 inline std::span<const LChar> span(const LChar& character)
 {
-    return { &character, 1 };
+    return unsafeForgeSpan(&character, 1);
 }
 
 inline std::span<const UChar> span(const UChar& character)
 {
-    return { &character, 1 };
+    return unsafeForgeSpan(&character, 1);
 }
 
 inline std::span<const LChar> span8(const char* string)
 {
-    return { byteCast<LChar>(string), string ? strlen(string) : 0 };
+    return unsafeForgeSpan(byteCast<LChar>(string), string ? strlen(string) : 0);
+}
+
+inline std::span<const LChar> span8IncludingNullTerminator(const char* string)
+{
+    return unsafeForgeSpan(byteCast<LChar>(string), string ? strlen(string) + 1 : 0);
 }
 
 inline std::span<const char> span(const char* string)
 {
-    return { string, string ? strlen(string) : 0 };
+    return unsafeForgeSpan(string, string ? strlen(string) : 0);
 }
 
 #if !HAVE(MISSING_U8STRING)
 inline std::span<const char8_t> span(const std::u8string& string)
 {
-    return { string.data(), string.length() };
+    return unsafeForgeSpan(string.data(), string.length());
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 template<typename CharacterType> inline constexpr bool isLatin1(CharacterType character)
 {
@@ -1167,6 +1173,8 @@ ALWAYS_INLINE bool charactersContain(std::span<const CharacterType> span)
     return false;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 }
 
 using WTF::equalIgnoringASCIICase;
@@ -1176,6 +1184,5 @@ using WTF::equalLettersIgnoringASCIICaseWithLength;
 using WTF::isLatin1;
 using WTF::span;
 using WTF::span8;
+using WTF::span8IncludingNullTerminator;
 using WTF::charactersContain;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
