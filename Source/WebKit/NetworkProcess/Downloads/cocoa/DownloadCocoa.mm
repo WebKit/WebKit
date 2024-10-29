@@ -229,13 +229,20 @@ void Download::startUpdatingProgress() const
 
 Vector<uint8_t> Download::updateResumeDataWithPlaceholderURL(NSURL *placeholderURL, std::span<const uint8_t> resumeData)
 {
-    if (!placeholderURL)
-        return { };
+    if (!placeholderURL) {
+        RELEASE_LOG_ERROR(Network, "Download::updateResumeDataWithPlaceholderURL: placeholderURL equals nil.");
+        return resumeData;
+    }
 
     BOOL usingSecurityScopedURL = [placeholderURL startAccessingSecurityScopedResource];
 
     NSError *bookmarkError = nil;
     RetainPtr bookmarkData = [placeholderURL bookmarkDataWithOptions:0 includingResourceValuesForKeys:nil relativeToURL:nil error:&bookmarkError];
+
+    if (!bookmarkData) {
+        RELEASE_LOG_ERROR(Network, "Download::updateResumeDataWithPlaceholderURL: could not create bookmark data from placeholderURL.");
+        return resumeData;
+    }
 
     RetainPtr data = toNSData(resumeData);
     RetainPtr dictionary = [NSPropertyListSerialization propertyListWithData:data.get() options:NSPropertyListMutableContainersAndLeaves format:0 error:nullptr];
