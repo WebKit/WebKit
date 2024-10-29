@@ -46,7 +46,7 @@
 
 static bool setCommandEncoder(auto& buffer, auto& renderPassEncoder)
 {
-    buffer.setCommandEncoder(renderPassEncoder->parentEncoder());
+    buffer.setCommandEncoder(renderPassEncoder->protectedParentEncoder().get());
     return !!renderPassEncoder->renderCommandEncoder();
 }
 

@@ -40,7 +40,7 @@ std::optional<RenderPassTimestampWrites> ConvertToBackingContext::convertToBacki
     if (!renderPassTimestampWrite.querySet)
         return std::nullopt;
 
-    auto querySet = convertToBacking(*renderPassTimestampWrite.querySet);
+    auto querySet = convertToBacking(*renderPassTimestampWrite.protectedQuerySet());
 
     return { { querySet, renderPassTimestampWrite.beginningOfPassWriteIndex, renderPassTimestampWrite.endOfPassWriteIndex } };
 }

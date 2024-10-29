@@ -98,7 +98,7 @@ void ExternalTexture::update(CVPixelBufferRef pixelBuffer)
 {
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)
     if (IOSurfaceRef ioSurface = CVPixelBufferGetIOSurface(pixelBuffer)) {
-        if (auto optionalWebProcessID = m_device->webProcessID()) {
+        if (auto optionalWebProcessID = protectedDevice()->webProcessID()) {
             if (auto webProcessID = optionalWebProcessID->sendRight())
                 IOSurfaceSetOwnershipIdentity(ioSurface, webProcessID, kIOSurfaceMemoryLedgerTagGraphics, 0);
         }

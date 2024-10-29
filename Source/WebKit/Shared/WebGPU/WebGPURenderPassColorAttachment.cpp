@@ -37,11 +37,11 @@ namespace WebKit::WebGPU {
 
 std::optional<RenderPassColorAttachment> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::RenderPassColorAttachment& renderPassColorAttachment)
 {
-    auto view = convertToBacking(renderPassColorAttachment.view);
+    auto view = convertToBacking(renderPassColorAttachment.protectedView().get());
 
     std::optional<WebGPUIdentifier> resolveTarget;
     if (renderPassColorAttachment.resolveTarget) {
-        resolveTarget = convertToBacking(*renderPassColorAttachment.resolveTarget);
+        resolveTarget = convertToBacking(*renderPassColorAttachment.protectedResolveTarget());
         if (!resolveTarget)
             return std::nullopt;
     }

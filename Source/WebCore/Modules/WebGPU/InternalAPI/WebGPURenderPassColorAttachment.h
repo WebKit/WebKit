@@ -47,6 +47,9 @@ struct RenderPassColorAttachment {
     std::optional<Color> clearValue;
     LoadOp loadOp { LoadOp::Load };
     StoreOp storeOp { StoreOp::Store };
+
+    Ref<TextureView> protectedView() const { return view.get(); }
+    RefPtr<TextureView> protectedResolveTarget() const { return resolveTarget.get(); }
 };
 
 } // namespace WebCore::WebGPU

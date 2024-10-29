@@ -61,6 +61,8 @@ private:
     RefPtr<RenderPassEncoder> beginRenderPass(const RenderPassDescriptor&) final;
     RefPtr<ComputePassEncoder> beginComputePass(const std::optional<ComputePassDescriptor>&) final;
 
+    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const { return m_convertToBackingContext; }
+
     void copyBufferToBuffer(
         const Buffer& source,
         Size64 sourceOffset,

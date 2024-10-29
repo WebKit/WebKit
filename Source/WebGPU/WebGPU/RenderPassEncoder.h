@@ -97,7 +97,8 @@ public:
     bool colorDepthStencilTargetsMatch(const RenderPipeline&) const;
     id<MTLRenderCommandEncoder> renderCommandEncoder() const;
     void makeInvalid(NSString* = nil);
-    CommandEncoder& parentEncoder() { return m_parentEncoder; }
+    CommandEncoder& parentEncoder() const { return m_parentEncoder; }
+    Ref<CommandEncoder> protectedParentEncoder() const { return m_parentEncoder; }
 
     bool setCommandEncoder(const BindGroupEntryUsageData::Resource&);
     void addResourceToActiveResources(const BindGroupEntryUsageData::Resource&, id<MTLResource>, OptionSet<BindGroupEntryUsage>);

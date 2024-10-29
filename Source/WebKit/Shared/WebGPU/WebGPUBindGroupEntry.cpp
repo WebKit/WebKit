@@ -40,11 +40,11 @@ namespace WebKit::WebGPU {
 std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::BindGroupEntry& bindGroupEntry)
 {
     return WTF::switchOn(bindGroupEntry.resource, [&] (std::reference_wrapper<WebCore::WebGPU::Sampler> sampler) -> std::optional<BindGroupEntry> {
-        auto identifier = convertToBacking(sampler);
+        auto identifier = convertToBacking(Ref { sampler.get() }.get());
 
         return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::Sampler } };
     }, [&] (std::reference_wrapper<WebCore::WebGPU::TextureView> textureView) -> std::optional<BindGroupEntry> {
-        auto identifier = convertToBacking(textureView);
+        auto identifier = convertToBacking(Ref { textureView.get() }.get());
 
         return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::TextureView } };
     }, [&] (const auto& bufferBinding) -> std::optional<BindGroupEntry> {
@@ -54,7 +54,7 @@ std::optional<BindGroupEntry> ConvertToBackingContext::convertToBacking(const We
 
         return { { bindGroupEntry.binding, WTFMove(*convertedBufferBinding), convertedBufferBinding->buffer, BindingResourceType::BufferBinding } };
     }, [&] (std::reference_wrapper<WebCore::WebGPU::ExternalTexture> externalTexture) -> std::optional<BindGroupEntry> {
-        auto identifier = convertToBacking(externalTexture);
+        auto identifier = convertToBacking(Ref { externalTexture.get() }.get());
 
         return { { bindGroupEntry.binding, { identifier }, identifier, BindingResourceType::ExternalTexture } };
     });

@@ -103,6 +103,8 @@ private:
 
     void setLabelInternal(const String&) final;
 
+    Ref<ConvertToBackingContext> protectedConvertToBackingContext() const { return m_convertToBackingContext; }
+
     WebGPUPtr<WGPURenderPassEncoder> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
 };

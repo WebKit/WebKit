@@ -37,7 +37,7 @@ namespace WebKit::WebGPU {
 
 std::optional<ProgrammableStage> ConvertToBackingContext::convertToBacking(const WebCore::WebGPU::ProgrammableStage& programmableStage)
 {
-    auto module = convertToBacking(programmableStage.module);
+    auto module = convertToBacking(programmableStage.protectedModule().get());
 
     return { { module, programmableStage.entryPoint, programmableStage.constants } };
 }

@@ -90,16 +90,18 @@ bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
 
     m_format = canvasConfiguration.format;
 
+    Ref convertToBackingContext = m_convertToBackingContext;
+
     WGPUSwapChainDescriptor backingDescriptor {
         .nextInChain = nullptr,
         .label = nullptr,
-        .usage = m_convertToBackingContext->convertTextureUsageFlagsToBacking(canvasConfiguration.usage),
-        .format = m_convertToBackingContext->convertToBacking(canvasConfiguration.format),
+        .usage = convertToBackingContext->convertTextureUsageFlagsToBacking(canvasConfiguration.usage),
+        .format = convertToBackingContext->convertToBacking(canvasConfiguration.format),
         .width = m_width,
         .height = m_height,
         .presentMode = WGPUPresentMode_Immediate,
-        .viewFormats = canvasConfiguration.viewFormats.map([&convertToBackingContext = m_convertToBackingContext.get()](auto colorFormat) {
-            return convertToBackingContext.convertToBacking(colorFormat);
+        .viewFormats = canvasConfiguration.viewFormats.map([&](auto colorFormat) {
+            return convertToBackingContext->convertToBacking(colorFormat);
         }),
         .colorSpace = canvasConfiguration.colorSpace == WebCore::WebGPU::PredefinedColorSpace::SRGB ? WGPUColorSpace::SRGB : WGPUColorSpace::DisplayP3,
         .toneMappingMode = convertToToneMappingMode(canvasConfiguration.toneMappingMode),
@@ -107,7 +109,7 @@ bool PresentationContextImpl::configure(const CanvasConfiguration& canvasConfigu
         .reportValidationErrors = canvasConfiguration.reportValidationErrors
     };
 
-    m_swapChain = adoptWebGPU(wgpuDeviceCreateSwapChain(m_convertToBackingContext->convertToBacking(canvasConfiguration.device), m_backing.get(), &backingDescriptor));
+    m_swapChain = adoptWebGPU(wgpuDeviceCreateSwapChain(convertToBackingContext->convertToBacking(canvasConfiguration.protectedDevice().get()), m_backing.get(), &backingDescriptor));
     return true;
 }
 
