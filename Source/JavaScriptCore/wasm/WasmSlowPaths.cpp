@@ -424,10 +424,10 @@ WASM_SLOW_PATH_DECL(array_new)
         if (Wasm::isRefType(elementType))
             value = JSValue::encode(jsNull());
         else if (elementType.unpacked().isV128()) {
-            EncodedJSValue result = Wasm::arrayNew(instance, instruction.m_typeIndex, size, vectorAllZeros());
-            if (JSValue::decode(result).isNull())
+            JSValue result = Wasm::arrayNew(instance, instruction.m_typeIndex, size, vectorAllZeros());
+            if (UNLIKELY(result.isNull()))
                 WASM_THROW(Wasm::ExceptionType::BadArrayNew);
-            WASM_RETURN(result);
+            WASM_RETURN(JSValue::encode(result));
         }
         break;
     }
@@ -435,14 +435,17 @@ WASM_SLOW_PATH_DECL(array_new)
         // In this case, m_value must refer to a possibly-empty array of arguments,
         // so m_value being constant would be a bug.
         ASSERT(!instruction.m_value.isConstant());
-        WASM_RETURN(Wasm::arrayNewFixed(instance, instruction.m_typeIndex, size, reinterpret_cast<uint64_t*>(&callFrame->r(instruction.m_value))));
+        JSValue result = Wasm::arrayNewFixed(instance, instruction.m_typeIndex, size, reinterpret_cast<uint64_t*>(&callFrame->r(instruction.m_value)));
+        if (UNLIKELY(result.isNull()))
+            WASM_THROW(Wasm::ExceptionType::BadArrayNew);
+        WASM_RETURN(JSValue::encode(result));
     }
     }
     ASSERT(!elementType.unpacked().isV128());
-    EncodedJSValue result = Wasm::arrayNew(instance, instruction.m_typeIndex, size, value);
-    if (JSValue::decode(result).isNull())
+    JSValue result = Wasm::arrayNew(instance, instruction.m_typeIndex, size, value);
+    if (UNLIKELY(result.isNull()))
         WASM_THROW(Wasm::ExceptionType::BadArrayNew);
-    WASM_RETURN(result);
+    WASM_RETURN(JSValue::encode(result));
 }
 
 WASM_SLOW_PATH_DECL(array_get)

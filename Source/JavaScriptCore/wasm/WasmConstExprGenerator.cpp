@@ -308,14 +308,14 @@ public:
     ExpressionType createNewArray(uint32_t typeIndex, uint32_t size, ExpressionType value)
     {
         VM& vm = m_instance->vm();
-        EncodedJSValue obj;
+        JSValue result;
         if (value.type() == ConstExprValue::Vector)
-            obj = arrayNew(m_instance, typeIndex, size, value.getVector());
+            result = arrayNew(m_instance, typeIndex, size, value.getVector());
         else
-            obj = arrayNew(m_instance, typeIndex, size, value.getValue());
-        if (UNLIKELY(!obj))
+            result = arrayNew(m_instance, typeIndex, size, value.getValue());
+        if (UNLIKELY(result.isNull()))
             return ConstExprValue(InvalidConstExpr);
-        return ConstExprValue(Strong<JSObject>(vm, JSValue::decode(obj).getObject()));
+        return ConstExprValue(Strong<JSObject>(vm, asObject(result)));
     }
 
     PartialResult WARN_UNUSED_RETURN addArrayNew(uint32_t typeIndex, ExpressionType size, ExpressionType value, ExpressionType& result)
