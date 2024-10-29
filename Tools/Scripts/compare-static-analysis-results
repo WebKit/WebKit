@@ -200,8 +200,8 @@ def compare_project_results_by_run(args, archive_path, new_path, project):
     project_results_failures = {}
 
     for checker in CHECKERS:
-        _, fixed_issues = find_diff(args, f'{archive_path}/{checker}Issues', f'{new_path}/{project}/{checker}Issues')
-        new_files, fixed_files = find_diff(args, f'{archive_path}/{checker}Files', f'{new_path}/{project}/{checker}Files')
+        _, fixed_issues, _ = find_diff(args, f'{archive_path}/{checker}Issues', f'{new_path}/{project}/{checker}Issues')
+        new_files, fixed_files, _ = find_diff(args, f'{archive_path}/{checker}Files', f'{new_path}/{project}/{checker}Files')
         fixed_issues_total.update(fixed_issues)
         fixed_files_total.update(fixed_files)
         new_files_total.update(new_files)
