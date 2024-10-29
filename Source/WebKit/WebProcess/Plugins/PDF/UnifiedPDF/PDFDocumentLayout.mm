@@ -81,11 +81,11 @@ RetainPtr<PDFPage> PDFDocumentLayout::pageAtIndex(PageIndex index) const
 
 auto PDFDocumentLayout::indexForPage(RetainPtr<PDFPage> page) const -> std::optional<PageIndex>
 {
-    for (PageIndex pageIndex = 0; pageIndex < [m_pdfDocument pageCount]; ++pageIndex) {
-        if (page == [m_pdfDocument pageAtIndex:pageIndex])
-            return pageIndex;
-    }
-    return std::nullopt;
+
+    auto pageIndex = [m_pdfDocument indexForPage:page.get()];
+    if (pageIndex == NSNotFound)
+        return { };
+    return pageIndex;
 }
 
 PDFDocumentLayout::PageIndex PDFDocumentLayout::nearestPageIndexForDocumentPoint(FloatPoint documentSpacePoint, const std::optional<PDFLayoutRow>& visibleRow) const
