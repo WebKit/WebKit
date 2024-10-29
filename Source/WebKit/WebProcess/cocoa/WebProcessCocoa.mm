@@ -836,22 +836,18 @@ void WebProcess::registerLogHook()
             return;
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
-        std::span logChannel(byteCast<uint8_t>(msg->subsystem), msg->subsystem ? strlen(msg->subsystem) + 1 : 0);
-        std::span logCategory(byteCast<uint8_t>(msg->category), msg->category ? strlen(msg->category) + 1 : 0);
+        auto logChannel = span8IncludingNullTerminator(msg->subsystem);
+        auto logCategory = span8IncludingNullTerminator(msg->category);
 
         if (type == OS_LOG_TYPE_FAULT)
             type = OS_LOG_TYPE_ERROR;
 
         if (char* messageString = os_log_copy_message_string(msg)) {
-            std::span logString(byteCast<uint8_t>(messageString), strlen(messageString) + 1);
+            auto logString = span8IncludingNullTerminator(messageString);
             WebProcess::singleton().sendLogOnStream(logChannel, logCategory, logString, type);
             free(messageString);
         }
     }).get());
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     WTFSignpostIndirectLoggingEnabled = true;
 }
@@ -880,7 +876,7 @@ void WebProcess::setupLogStream()
     });
 }
 
-void WebProcess::sendLogOnStream(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<uint8_t> logString, os_log_type_t type)
+void WebProcess::sendLogOnStream(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, os_log_type_t type)
 {
     if (RefPtr logStreamConnection = m_logStreamConnection)
         logStreamConnection->send(Messages::LogStream::LogOnBehalfOfWebContent(logChannel, logCategory, logString, type), m_logStreamIdentifier);
