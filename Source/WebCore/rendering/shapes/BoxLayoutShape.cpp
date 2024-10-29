@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "BoxShape.h"
+#include "BoxLayoutShape.h"
 
 #include "BorderShape.h"
 #include "RenderBoxInlines.h"
@@ -97,7 +97,7 @@ RoundedRect computeRoundedRectForBoxShape(CSSBoxType box, const RenderBox& rende
     return BorderShape::shapeForBorderRect(style, renderer.borderBoxRect()).deprecatedRoundedRect();
 }
 
-LayoutRect BoxShape::shapeMarginLogicalBoundingBox() const
+LayoutRect BoxLayoutShape::shapeMarginLogicalBoundingBox() const
 {
     FloatRect marginBounds(m_bounds.rect());
     if (shapeMargin() > 0)
@@ -105,7 +105,7 @@ LayoutRect BoxShape::shapeMarginLogicalBoundingBox() const
     return static_cast<LayoutRect>(marginBounds);
 }
 
-FloatRoundedRect BoxShape::shapeMarginBounds() const
+FloatRoundedRect BoxLayoutShape::shapeMarginBounds() const
 {
     FloatRoundedRect marginBounds(m_bounds);
     if (shapeMargin() > 0) {
@@ -115,7 +115,7 @@ FloatRoundedRect BoxShape::shapeMarginBounds() const
     return marginBounds;
 }
 
-LineSegment BoxShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
+LineSegment BoxLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
 {
     const FloatRoundedRect& marginBounds = shapeMarginBounds();
     if (marginBounds.isEmpty() || !lineOverlapsShapeMarginBounds(logicalTop, logicalHeight))
@@ -159,7 +159,7 @@ LineSegment BoxShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logi
     return LineSegment(x1, x2);
 }
 
-void BoxShape::buildDisplayPaths(DisplayPaths& paths) const
+void BoxLayoutShape::buildDisplayPaths(DisplayPaths& paths) const
 {
     paths.shape.addRoundedRect(m_bounds, PathRoundedRect::Strategy::PreferBezier);
     if (shapeMargin())

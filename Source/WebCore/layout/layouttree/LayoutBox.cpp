@@ -31,10 +31,10 @@
 #include "LayoutElementBox.h"
 #include "LayoutInitialContainingBlock.h"
 #include "LayoutPhase.h"
+#include "LayoutShape.h"
 #include "LayoutState.h"
 #include "RenderObject.h"
 #include "RenderStyleInlines.h"
-#include "Shape.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -495,14 +495,14 @@ std::optional<LayoutUnit> Box::columnWidth() const
     return rareData().columnWidth;
 }
 
-const Shape* Box::shape() const
+const LayoutShape* Box::shape() const
 {
     if (!hasRareData())
         return nullptr;
     return rareData().shape.get();
 }
 
-void Box::setShape(RefPtr<const Shape> shape)
+void Box::setShape(RefPtr<const LayoutShape> shape)
 {
     ensureRareData().shape = WTFMove(shape);
 }

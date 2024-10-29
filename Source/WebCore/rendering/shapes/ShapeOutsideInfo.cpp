@@ -30,7 +30,6 @@
 #include "config.h"
 #include "ShapeOutsideInfo.h"
 
-#include "BoxShape.h"
 #include "FloatingObjects.h"
 #include "LengthFunctions.h"
 #include "RenderBlockFlow.h"
@@ -124,7 +123,7 @@ static LayoutRect getShapeImageMarginRect(const RenderBox& renderBox, const Layo
     return LayoutRect(marginBoxOrigin, marginRectSize);
 }
 
-Ref<const Shape> makeShapeForShapeOutside(const RenderBox& renderer)
+Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
 {
     auto& style = renderer.style();
     auto& containingBlock = *renderer.containingBlock();
@@ -145,7 +144,7 @@ Ref<const Shape> makeShapeForShapeOutside(const RenderBox& renderer)
     case ShapeValue::Type::Shape: {
         ASSERT(shapeValue.shape());
         auto offset = LayoutPoint { logicalLeftOffset(renderer), logicalTopOffset(renderer) };
-        return Shape::createShape(*shapeValue.shape(), offset, boxSize, writingMode, margin);
+        return LayoutShape::createShape(*shapeValue.shape(), offset, boxSize, writingMode, margin);
     }
     case ShapeValue::Type::Image: {
         ASSERT(shapeValue.isImageValid());
@@ -159,17 +158,17 @@ Ref<const Shape> makeShapeForShapeOutside(const RenderBox& renderer)
 
         ASSERT(!styleImage->isPending());
         RefPtr<Image> image = styleImage->image(const_cast<RenderBox*>(&renderer), imageSize);
-        return Shape::createRasterShape(image.get(), shapeImageThreshold, imageRect, marginRect, writingMode, margin);
+        return LayoutShape::createRasterShape(image.get(), shapeImageThreshold, imageRect, marginRect, writingMode, margin);
     }
     case ShapeValue::Type::Box: {
         auto shapeRect = computeRoundedRectForBoxShape(shapeValue.effectiveCSSBox(), renderer);
         if (!isHorizontalWritingMode)
             shapeRect = shapeRect.transposedRect();
-        return Shape::createBoxShape(shapeRect, writingMode, margin);
+        return LayoutShape::createBoxShape(shapeRect, writingMode, margin);
     }
     }
     ASSERT_NOT_REACHED();
-    return Shape::createBoxShape(RoundedRect { { } }, writingMode, 0);
+    return LayoutShape::createBoxShape(RoundedRect { { } }, writingMode, 0);
 }
 
 static inline bool checkShapeImageOrigin(Document& document, const StyleImage& styleImage)
@@ -189,7 +188,7 @@ static inline bool checkShapeImageOrigin(Document& document, const StyleImage& s
     return false;
 }
 
-const Shape& ShapeOutsideInfo::computedShape() const
+const LayoutShape& ShapeOutsideInfo::computedShape() const
 {
     if (!m_shape)
         m_shape = makeShapeForShapeOutside(m_renderer);

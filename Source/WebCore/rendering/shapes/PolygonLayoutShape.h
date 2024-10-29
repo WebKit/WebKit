@@ -29,39 +29,49 @@
 
 #pragma once
 
-#include "FloatRect.h"
-#include "FloatSize.h"
-#include "Shape.h"
-#include <wtf/Assertions.h>
+#include "FloatPolygon.h"
+#include "LayoutShape.h"
+#include "ShapeInterval.h"
 
 namespace WebCore {
 
-class RectangleShape final : public Shape {
+class OffsetPolygonEdge final : public VertexPair {
 public:
-    RectangleShape(const FloatRect& bounds, const FloatSize& radii)
-        : m_bounds(bounds)
-        , m_radii(radii)
+    OffsetPolygonEdge(const FloatPolygonEdge& edge, const FloatSize& offset)
+        : m_vertex1(edge.vertex1() + offset)
+        , m_vertex2(edge.vertex2() + offset)
     {
     }
 
-    LayoutRect shapeMarginLogicalBoundingBox() const override { return static_cast<LayoutRect>(shapeMarginBounds()); }
-    bool isEmpty() const override { return m_bounds.isEmpty(); }
+    const FloatPoint& vertex1() const override { return m_vertex1; }
+    const FloatPoint& vertex2() const override { return m_vertex2; }
+
+    bool isWithinYRange(float y1, float y2) const { return y1 <= minY() && y2 >= maxY(); }
+    bool overlapsYRange(float y1, float y2) const { return y2 >= minY() && y1 <= maxY(); }
+    float xIntercept(float y) const;
+    FloatShapeInterval clippedEdgeXRange(float y1, float y2) const;
+
+private:
+    FloatPoint m_vertex1;
+    FloatPoint m_vertex2;
+};
+
+class PolygonLayoutShape : public LayoutShape {
+    WTF_MAKE_NONCOPYABLE(PolygonLayoutShape);
+public:
+    PolygonLayoutShape(Vector<FloatPoint>&& vertices, WindRule fillRule)
+        : m_polygon(WTFMove(vertices), fillRule)
+    {
+    }
+
+    LayoutRect shapeMarginLogicalBoundingBox() const override;
+    bool isEmpty() const override { return m_polygon.isEmpty(); }
     LineSegment getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const override;
 
     void buildDisplayPaths(DisplayPaths&) const override;
 
 private:
-    FloatRect shapeMarginBounds() const;
-
-    float rx() const { return m_radii.width(); }
-    float ry() const { return m_radii.height(); }
-    float x() const { return m_bounds.x(); }
-    float y() const { return m_bounds.y(); }
-    float width() const { return m_bounds.width(); }
-    float height() const { return m_bounds.height(); }
-
-    FloatRect m_bounds;
-    FloatSize m_radii;
+    FloatPolygon m_polygon;
 };
 
 } // namespace WebCore

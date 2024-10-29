@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "RasterShape.h"
+#include "RasterLayoutShape.h"
 
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -138,7 +138,7 @@ void RasterShapeIntervals::buildBoundsPath(Path& path) const
     }
 }
 
-const RasterShapeIntervals& RasterShape::marginIntervals() const
+const RasterShapeIntervals& RasterLayoutShape::marginIntervals() const
 {
     ASSERT(shapeMargin() >= 0);
     if (!shapeMargin())
@@ -152,7 +152,7 @@ const RasterShapeIntervals& RasterShape::marginIntervals() const
     return *m_marginIntervals;
 }
 
-LineSegment RasterShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
+LineSegment RasterLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
 {
     const RasterShapeIntervals& intervals = marginIntervals();
     if (intervals.isEmpty())

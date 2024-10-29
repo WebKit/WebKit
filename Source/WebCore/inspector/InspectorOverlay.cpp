@@ -326,7 +326,7 @@ static void drawShapeHighlight(GraphicsContext& context, Node& node, InspectorOv
 
     static constexpr auto shapeHighlightColor = SRGBA<uint8_t> { 96, 82, 127, 204 };
 
-    Shape::DisplayPaths paths;
+    LayoutShape::DisplayPaths paths;
     shapeOutsideInfo->computedShape().buildDisplayPaths(paths);
 
     if (paths.shape.isEmpty()) {

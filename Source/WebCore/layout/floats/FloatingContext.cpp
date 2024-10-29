@@ -33,8 +33,8 @@
 #include "LayoutBoxGeometry.h"
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutElementBox.h"
+#include "LayoutShape.h"
 #include "RenderStyleInlines.h"
-#include "Shape.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

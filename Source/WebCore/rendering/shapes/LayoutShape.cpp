@@ -28,43 +28,43 @@
  */
 
 #include "config.h"
-#include "Shape.h"
+#include "LayoutShape.h"
 
 #include "BasicShapeConversion.h"
 #include "BasicShapes.h"
-#include "BoxShape.h"
+#include "BoxLayoutShape.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
 #include "LengthFunctions.h"
 #include "PixelBuffer.h"
-#include "PolygonShape.h"
-#include "RasterShape.h"
-#include "RectangleShape.h"
+#include "PolygonLayoutShape.h"
+#include "RasterLayoutShape.h"
+#include "RectangleLayoutShape.h"
 #include "WindRule.h"
 
 namespace WebCore {
 
-static Ref<Shape> createInsetShape(const FloatRoundedRect& bounds)
+static Ref<LayoutShape> createInsetShape(const FloatRoundedRect& bounds)
 {
     ASSERT(bounds.rect().width() >= 0 && bounds.rect().height() >= 0);
-    return adoptRef(*new BoxShape(bounds));
+    return adoptRef(*new BoxLayoutShape(bounds));
 }
 
-static Ref<Shape> createCircleShape(const FloatPoint& center, float radius)
+static Ref<LayoutShape> createCircleShape(const FloatPoint& center, float radius)
 {
     ASSERT(radius >= 0);
-    return adoptRef(*new RectangleShape(FloatRect(center.x() - radius, center.y() - radius, radius*2, radius*2), FloatSize(radius, radius)));
+    return adoptRef(*new RectangleLayoutShape(FloatRect(center.x() - radius, center.y() - radius, radius*2, radius*2), FloatSize(radius, radius)));
 }
 
-static Ref<Shape> createEllipseShape(const FloatPoint& center, const FloatSize& radii)
+static Ref<LayoutShape> createEllipseShape(const FloatPoint& center, const FloatSize& radii)
 {
     ASSERT(radii.width() >= 0 && radii.height() >= 0);
-    return adoptRef(*new RectangleShape(FloatRect(center.x() - radii.width(), center.y() - radii.height(), radii.width()*2, radii.height()*2), radii));
+    return adoptRef(*new RectangleLayoutShape(FloatRect(center.x() - radii.width(), center.y() - radii.height(), radii.width()*2, radii.height()*2), radii));
 }
 
-static Ref<Shape> createPolygonShape(Vector<FloatPoint>&& vertices, WindRule fillRule)
+static Ref<LayoutShape> createPolygonShape(Vector<FloatPoint>&& vertices, WindRule fillRule)
 {
-    return adoptRef(*new PolygonShape(WTFMove(vertices), fillRule));
+    return adoptRef(*new PolygonLayoutShape(WTFMove(vertices), fillRule));
 }
 
 static inline FloatRect physicalRectToLogical(const FloatRect& rect, float logicalBoxHeight, WritingMode writingMode)
@@ -92,12 +92,12 @@ static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode
     return size.transposedSize();
 }
 
-Ref<const Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode writingMode, float margin)
+Ref<const LayoutShape> LayoutShape::createShape(const BasicShape& basicShape, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode writingMode, float margin)
 {
     bool horizontalWritingMode = writingMode.isHorizontal();
     float boxWidth = horizontalWritingMode ? logicalBoxSize.width() : logicalBoxSize.height();
     float boxHeight = horizontalWritingMode ? logicalBoxSize.height() : logicalBoxSize.width();
-    RefPtr<Shape> shape;
+    RefPtr<LayoutShape> shape;
 
     switch (basicShape.type()) {
 
@@ -168,6 +168,7 @@ Ref<const Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPo
 
     default:
         ASSERT_NOT_REACHED();
+        break;
     }
 
     shape->m_writingMode = writingMode;
@@ -176,7 +177,7 @@ Ref<const Shape> Shape::createShape(const BasicShape& basicShape, const LayoutPo
     return shape.releaseNonNull();
 }
 
-Ref<const Shape> Shape::createRasterShape(Image* image, float threshold, const LayoutRect& imageR, const LayoutRect& marginR, WritingMode writingMode, float margin)
+Ref<const LayoutShape> LayoutShape::createRasterShape(Image* image, float threshold, const LayoutRect& imageR, const LayoutRect& marginR, WritingMode writingMode, float margin)
 {
     ASSERT(marginR.height() >= 0);
 
@@ -187,7 +188,7 @@ Ref<const Shape> Shape::createRasterShape(Image* image, float threshold, const L
     auto imageBuffer = ImageBuffer::create(imageRect.size(), RenderingPurpose::Unspecified, 1, DestinationColorSpace::SRGB(), ImageBufferPixelFormat::BGRA8);
 
     auto createShape = [&]() {
-        auto rasterShape = adoptRef(*new RasterShape(WTFMove(intervals), marginRect.size()));
+        auto rasterShape = adoptRef(*new RasterLayoutShape(WTFMove(intervals), marginRect.size()));
         rasterShape->m_writingMode = writingMode;
         rasterShape->m_margin = margin;
         return rasterShape;
@@ -202,7 +203,7 @@ Ref<const Shape> Shape::createRasterShape(Image* image, float threshold, const L
 
     PixelBufferFormat format { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, DestinationColorSpace::SRGB() };
     auto pixelBuffer = imageBuffer->getPixelBuffer(format, { IntPoint(), imageRect.size() });
-    
+
     // We could get to a value where PixelBuffer could be nullptr because ImageRect.size()
     // is huge and the data size overflows. Refer rdar://problem/61793884.
     if (!pixelBuffer)
@@ -237,12 +238,12 @@ Ref<const Shape> Shape::createRasterShape(Image* image, float threshold, const L
     return createShape();
 }
 
-Ref<const Shape> Shape::createBoxShape(const RoundedRect& roundedRect, WritingMode writingMode, float margin)
+Ref<const LayoutShape> LayoutShape::createBoxShape(const RoundedRect& roundedRect, WritingMode writingMode, float margin)
 {
     ASSERT(roundedRect.rect().width() >= 0 && roundedRect.rect().height() >= 0);
 
     FloatRoundedRect bounds { roundedRect };
-    auto shape = adoptRef(*new BoxShape(bounds));
+    auto shape = adoptRef(*new BoxLayoutShape(bounds));
     shape->m_writingMode = writingMode;
     shape->m_margin = margin;
 

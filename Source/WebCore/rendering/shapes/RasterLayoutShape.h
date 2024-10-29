@@ -30,7 +30,7 @@
 #pragma once
 
 #include "FloatRect.h"
-#include "Shape.h"
+#include "LayoutShape.h"
 #include "ShapeInterval.h"
 #include <wtf/Assertions.h>
 #include <wtf/TZoneMalloc.h>
@@ -77,10 +77,10 @@ private:
     int m_offset;
 };
 
-class RasterShape final : public Shape {
-    WTF_MAKE_NONCOPYABLE(RasterShape);
+class RasterLayoutShape final : public LayoutShape {
+    WTF_MAKE_NONCOPYABLE(RasterLayoutShape);
 public:
-    RasterShape(std::unique_ptr<RasterShapeIntervals> intervals, const IntSize& marginRectSize)
+    RasterLayoutShape(std::unique_ptr<RasterShapeIntervals> intervals, const IntSize& marginRectSize)
         : m_intervals(WTFMove(intervals))
         , m_marginRectSize(marginRectSize)
     {

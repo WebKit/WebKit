@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "RectangleShape.h"
+#include "RectangleLayoutShape.h"
 
 #include <wtf/MathExtras.h>
 
@@ -40,7 +40,7 @@ static inline float ellipseXIntercept(float y, float rx, float ry)
     return rx * sqrt(1 - (y * y) / (ry * ry));
 }
 
-FloatRect RectangleShape::shapeMarginBounds() const
+FloatRect RectangleLayoutShape::shapeMarginBounds() const
 {
     ASSERT(shapeMargin() >= 0);
     if (!shapeMargin())
@@ -53,7 +53,7 @@ FloatRect RectangleShape::shapeMarginBounds() const
     return FloatRect(boundsX, boundsY, boundsWidth, boundsHeight);
 }
 
-LineSegment RectangleShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
+LineSegment RectangleLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
 {
     const FloatRect& bounds = shapeMarginBounds();
     if (bounds.isEmpty())
@@ -88,7 +88,7 @@ LineSegment RectangleShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUni
     return LineSegment(x1, x2);
 }
 
-void RectangleShape::buildDisplayPaths(DisplayPaths& paths) const
+void RectangleLayoutShape::buildDisplayPaths(DisplayPaths& paths) const
 {
     paths.shape.addRoundedRect(m_bounds, FloatSize(m_radii.width(), m_radii.height()), PathRoundedRect::Strategy::PreferBezier);
     if (shapeMargin())

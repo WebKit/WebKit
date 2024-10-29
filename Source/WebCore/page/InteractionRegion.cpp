@@ -41,6 +41,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
 #include "HitTestResult.h"
+#include "LayoutShape.h"
 #include "LegacyRenderSVGShape.h"
 #include "LegacyRenderSVGShapeInlines.h"
 #include "LocalFrame.h"
@@ -55,7 +56,6 @@
 #include "RenderLayerBacking.h"
 #include "RenderVideo.h"
 #include "SVGSVGElement.h"
-#include "Shape.h"
 #include "SimpleRange.h"
 #include "SliderThumbElement.h"
 #include "StyleResolver.h"
@@ -501,8 +501,8 @@ std::optional<InteractionRegion> interactionRegionForRenderedRegion(RenderObject
     } else if (iconImage && originalElement) {
         auto size = boundingSize(regionRenderer, transform);
         LayoutRect imageRect(FloatPoint(), size);
-        Ref shape = Shape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode(), 0);
-        Shape::DisplayPaths paths;
+        Ref shape = LayoutShape::createRasterShape(iconImage.get(), 0, imageRect, imageRect, WritingMode(), 0);
+        LayoutShape::DisplayPaths paths;
         shape->buildDisplayPaths(paths);
         auto path = paths.shape;
 

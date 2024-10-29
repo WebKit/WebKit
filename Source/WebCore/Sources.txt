@@ -2859,11 +2859,11 @@ rendering/mathml/RenderMathMLScripts.cpp
 rendering/mathml/RenderMathMLSpace.cpp
 rendering/mathml/RenderMathMLToken.cpp
 rendering/mathml/RenderMathMLUnderOver.cpp
-rendering/shapes/BoxShape.cpp
-rendering/shapes/PolygonShape.cpp
-rendering/shapes/RasterShape.cpp
-rendering/shapes/RectangleShape.cpp
-rendering/shapes/Shape.cpp
+rendering/shapes/BoxLayoutShape.cpp
+rendering/shapes/PolygonLayoutShape.cpp
+rendering/shapes/RasterLayoutShape.cpp
+rendering/shapes/RectangleLayoutShape.cpp
+rendering/shapes/LayoutShape.cpp
 rendering/shapes/ShapeOutsideInfo.cpp
 rendering/style/BasicShapes.cpp
 rendering/style/BasicShapesShape.cpp

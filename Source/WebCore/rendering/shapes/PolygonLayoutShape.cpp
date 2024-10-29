@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "PolygonShape.h"
+#include "PolygonLayoutShape.h"
 
 #include <wtf/MathExtras.h>
 
@@ -110,14 +110,14 @@ static FloatShapeInterval clippedCircleXRange(const FloatPoint& center, float ra
     return FloatShapeInterval(center.x() - xi, center.x() + xi);
 }
 
-LayoutRect PolygonShape::shapeMarginLogicalBoundingBox() const
+LayoutRect PolygonLayoutShape::shapeMarginLogicalBoundingBox() const
 {
     FloatRect box = m_polygon.boundingBox();
     box.inflate(shapeMargin());
     return LayoutRect(box);
 }
 
-LineSegment PolygonShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
+LineSegment PolygonLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
 {
     float y1 = logicalTop;
     float y2 = logicalTop + logicalHeight;
@@ -145,7 +145,7 @@ LineSegment PolygonShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit 
     return LineSegment(excludedInterval.x1(), excludedInterval.x2());
 }
 
-void PolygonShape::buildDisplayPaths(DisplayPaths& paths) const
+void PolygonLayoutShape::buildDisplayPaths(DisplayPaths& paths) const
 {
     if (m_polygon.isEmpty())
         return;

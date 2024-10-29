@@ -33,9 +33,9 @@
 #include "InlineQuirks.h"
 #include "LayoutBox.h"
 #include "LayoutBoxGeometry.h"
+#include "LayoutShape.h"
 #include "RenderStyleInlines.h"
 #include "RubyFormattingContext.h"
-#include "Shape.h"
 #include "TextUtil.h"
 #include "UnicodeBidi.h"
 #include <wtf/unicode/CharacterNames.h>

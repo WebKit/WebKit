@@ -2483,7 +2483,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/line/LineWidth.h
     rendering/line/TrailingObjects.h
 
-    rendering/shapes/Shape.h
+    rendering/shapes/LayoutShape.h
     rendering/shapes/ShapeOutsideInfo.h
 
     rendering/style/BasicShapes.h

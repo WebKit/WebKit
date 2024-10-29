@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class Shape;
+class LayoutShape;
 class RenderObject;
 
 namespace Layout {
@@ -192,8 +192,8 @@ public:
     void setIsInlineIntegrationRoot() { m_isInlineIntegrationRoot = true; }
     void setIsFirstChildForIntegration(bool value) { m_isFirstChildForIntegration = value; }
 
-    const Shape* shape() const;
-    void setShape(RefPtr<const Shape>);
+    const LayoutShape* shape() const;
+    void setShape(RefPtr<const LayoutShape>);
 
     const ElementBox* associatedRubyAnnotationBox() const;
 
@@ -217,7 +217,7 @@ private:
         CellSpan tableCellSpan;
         std::optional<LayoutUnit> columnWidth;
         std::unique_ptr<RenderStyle> firstLineStyle;
-        RefPtr<const Shape> shape;
+        RefPtr<const LayoutShape> shape;
     };
 
     bool hasRareData() const { return m_hasRareData; }

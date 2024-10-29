@@ -50,7 +50,7 @@
 #include "AccessibilityRegionContext.h"
 #include "BitmapImage.h"
 #include "BorderShape.h"
-#include "BoxShape.h"
+#include "BoxLayoutShape.h"
 #include "CSSFilter.h"
 #include "CSSPropertyNames.h"
 #include "Chrome.h"

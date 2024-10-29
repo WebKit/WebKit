@@ -27,7 +27,7 @@
 
 #include "LayoutBoxGeometry.h"
 #include "LayoutElementBox.h"
-#include "Shape.h"
+#include "LayoutShape.h"
 #include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -52,7 +52,7 @@ public:
     public:
         // FIXME: This c'tor is only used by the render tree integation codepath.
         enum class Position { Left, Right };
-        Item(Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, const Shape*);
+        Item(Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, const LayoutShape*);
         Item(const Box&, Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, std::optional<size_t> line);
 
         ~Item();
@@ -68,7 +68,7 @@ public:
         BoxGeometry::HorizontalEdges horizontalMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
         PositionInContextRoot absoluteBottom() const { return { absoluteRectWithMargin().bottom() }; }
 
-        const Shape* shape() const { return m_shape.get(); }
+        const LayoutShape* shape() const { return m_shape.get(); }
         std::optional<size_t> placedByLine() const { return m_placedByLine; }
 
         const Box* layoutBox() const { return m_layoutBox.get(); }
@@ -78,7 +78,7 @@ public:
         Position m_position;
         BoxGeometry m_absoluteBoxGeometry;
         LayoutPoint m_localTopLeft;
-        RefPtr<const Shape> m_shape;
+        RefPtr<const LayoutShape> m_shape;
         std::optional<size_t> m_placedByLine;
     };
     using List = Vector<Item>;

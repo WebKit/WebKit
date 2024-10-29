@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,49 +29,33 @@
 
 #pragma once
 
-#include "FloatPolygon.h"
-#include "Shape.h"
-#include "ShapeInterval.h"
+#include "FloatRoundedRect.h"
+#include "LayoutShape.h"
+#include "RenderStyleConstants.h"
 
 namespace WebCore {
 
-class OffsetPolygonEdge final : public VertexPair {
+class RenderBox;
+
+RoundedRect computeRoundedRectForBoxShape(CSSBoxType, const RenderBox&);
+
+class BoxLayoutShape final : public LayoutShape {
 public:
-    OffsetPolygonEdge(const FloatPolygonEdge& edge, const FloatSize& offset)
-        : m_vertex1(edge.vertex1() + offset)
-        , m_vertex2(edge.vertex2() + offset)
-    {
-    }
-
-    const FloatPoint& vertex1() const override { return m_vertex1; }
-    const FloatPoint& vertex2() const override { return m_vertex2; }
-
-    bool isWithinYRange(float y1, float y2) const { return y1 <= minY() && y2 >= maxY(); }
-    bool overlapsYRange(float y1, float y2) const { return y2 >= minY() && y1 <= maxY(); }
-    float xIntercept(float y) const;
-    FloatShapeInterval clippedEdgeXRange(float y1, float y2) const;
-
-private:
-    FloatPoint m_vertex1;
-    FloatPoint m_vertex2;
-};
-
-class PolygonShape : public Shape {
-    WTF_MAKE_NONCOPYABLE(PolygonShape);
-public:
-    PolygonShape(Vector<FloatPoint>&& vertices, WindRule fillRule)
-        : m_polygon(WTFMove(vertices), fillRule)
+    BoxLayoutShape(const FloatRoundedRect& bounds)
+        : m_bounds(bounds)
     {
     }
 
     LayoutRect shapeMarginLogicalBoundingBox() const override;
-    bool isEmpty() const override { return m_polygon.isEmpty(); }
+    bool isEmpty() const override { return m_bounds.isEmpty(); }
     LineSegment getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const override;
 
     void buildDisplayPaths(DisplayPaths&) const override;
 
 private:
-    FloatPolygon m_polygon;
+    FloatRoundedRect shapeMarginBounds() const;
+
+    FloatRoundedRect m_bounds;
 };
 
 } // namespace WebCore

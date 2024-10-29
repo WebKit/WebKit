@@ -65,18 +65,18 @@ class RoundedRect;
 // computed segments are returned as pairs of logical X coordinates. The BasicShape itself is defined in
 // physical coordinates.
 
-class Shape : public RefCounted<Shape> {
+class LayoutShape : public RefCounted<LayoutShape> {
 public:
     struct DisplayPaths {
         Path shape;
         Path marginShape;
     };
 
-    static Ref<const Shape> createShape(const BasicShape&, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode, float margin);
-    static Ref<const Shape> createRasterShape(Image*, float threshold, const LayoutRect& imageRect, const LayoutRect& marginRect, WritingMode, float margin);
-    static Ref<const Shape> createBoxShape(const RoundedRect&, WritingMode, float margin);
+    static Ref<const LayoutShape> createShape(const BasicShape&, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode, float margin);
+    static Ref<const LayoutShape> createRasterShape(Image*, float threshold, const LayoutRect& imageRect, const LayoutRect& marginRect, WritingMode, float margin);
+    static Ref<const LayoutShape> createBoxShape(const RoundedRect&, WritingMode, float margin);
 
-    virtual ~Shape() = default;
+    virtual ~LayoutShape() = default;
 
     virtual LayoutRect shapeMarginLogicalBoundingBox() const = 0;
     virtual bool isEmpty() const = 0;

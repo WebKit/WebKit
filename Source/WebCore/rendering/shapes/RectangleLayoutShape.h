@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2012 Adobe Systems Incorporated. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,33 +29,39 @@
 
 #pragma once
 
-#include "FloatRoundedRect.h"
-#include "RenderStyleConstants.h"
-#include "Shape.h"
+#include "FloatRect.h"
+#include "FloatSize.h"
+#include "LayoutShape.h"
+#include <wtf/Assertions.h>
 
 namespace WebCore {
 
-class RenderBox;
-
-RoundedRect computeRoundedRectForBoxShape(CSSBoxType, const RenderBox&);
-
-class BoxShape final : public Shape {
+class RectangleLayoutShape final : public LayoutShape {
 public:
-    BoxShape(const FloatRoundedRect& bounds)
+    RectangleLayoutShape(const FloatRect& bounds, const FloatSize& radii)
         : m_bounds(bounds)
+        , m_radii(radii)
     {
     }
 
-    LayoutRect shapeMarginLogicalBoundingBox() const override;
+    LayoutRect shapeMarginLogicalBoundingBox() const override { return static_cast<LayoutRect>(shapeMarginBounds()); }
     bool isEmpty() const override { return m_bounds.isEmpty(); }
     LineSegment getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const override;
 
     void buildDisplayPaths(DisplayPaths&) const override;
 
 private:
-    FloatRoundedRect shapeMarginBounds() const;
+    FloatRect shapeMarginBounds() const;
 
-    FloatRoundedRect m_bounds;
+    float rx() const { return m_radii.width(); }
+    float ry() const { return m_radii.height(); }
+    float x() const { return m_bounds.x(); }
+    float y() const { return m_bounds.y(); }
+    float width() const { return m_bounds.width(); }
+    float height() const { return m_bounds.height(); }
+
+    FloatRect m_bounds;
+    FloatSize m_radii;
 };
 
 } // namespace WebCore

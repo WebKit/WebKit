@@ -28,8 +28,8 @@
 
 #include "LayoutContainingBlockChainIterator.h"
 #include "LayoutInitialContainingBlock.h"
+#include "LayoutShape.h"
 #include "RenderStyleInlines.h"
-#include "Shape.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -47,7 +47,7 @@ PlacedFloats::Item::Item(const Box& layoutBox, Position position, const BoxGeome
 {
 }
 
-PlacedFloats::Item::Item(Position position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, const Shape* shape)
+PlacedFloats::Item::Item(Position position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, const LayoutShape* shape)
     : m_position(position)
     , m_absoluteBoxGeometry(absoluteBoxGeometry)
     , m_localTopLeft(localTopLeft)
