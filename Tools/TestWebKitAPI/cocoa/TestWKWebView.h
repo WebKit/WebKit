@@ -132,7 +132,7 @@ struct AutocorrectionContext {
 
 @interface TestMessageHandler : NSObject <WKScriptMessageHandler>
 - (void)addMessage:(NSString *)message withHandler:(dispatch_block_t)handler;
-- (void)setWildcardMessageHandler:(void (^)(NSString *))handler;
+@property (nonatomic, copy) void (^didReceiveScriptMessage)(NSString *);
 @end
 
 @interface TestWKWebView : WKWebView
@@ -143,6 +143,7 @@ struct AutocorrectionContext {
 - (void)performAfterReceivingMessage:(NSString *)message action:(dispatch_block_t)action;
 - (void)performAfterReceivingAnyMessage:(void (^)(NSString *))action;
 - (void)waitForMessage:(NSString *)message;
+- (void)waitForMessages:(NSArray<NSString *> *)messages;
 
 // This function waits until a DOM load event is fired.
 // FIXME: Rename this function to better describe what "after loading" means.

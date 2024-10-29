@@ -32,7 +32,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 
-TEST(WKWebView, DISABLED_SetOverrideContentSecurityPolicyWithEmptyStringForPageWithCSP)
+TEST(WKWebView, SetOverrideContentSecurityPolicyWithEmptyStringForPageWithCSP)
 {
     @autoreleasepool {
         RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
@@ -42,10 +42,7 @@ TEST(WKWebView, DISABLED_SetOverrideContentSecurityPolicyWithEmptyStringForPageW
         NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"page-with-csp" withExtension:@"html"]];
         [webView loadRequest:request];
 
-        [webView waitForMessage:@"MainFrame: A"];
-        [webView waitForMessage:@"MainFrame: B"];
-        [webView waitForMessage:@"Subframe: A"];
-        [webView waitForMessage:@"Subframe: B"];
+        [webView waitForMessages:@[@"MainFrame: A", @"MainFrame: B", @"Subframe: A", @"Subframe: B"]];
     }
 }
 
@@ -59,8 +56,7 @@ TEST(WKWebView, SetOverrideContentSecurityPolicyForPageWithCSP)
         NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"page-with-csp" withExtension:@"html"]];
         [webView loadRequest:request];
 
-        [webView waitForMessage:@"MainFrame: B"];
-        [webView waitForMessage:@"Subframe: B"];
+        [webView waitForMessages:@[@"MainFrame: B", @"Subframe: B"]];
     }
 }
 
@@ -74,8 +70,7 @@ TEST(WKWebView, SetOverrideContentSecurityPolicyForPageWithoutCSP)
         NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"page-without-csp" withExtension:@"html"]];
         [webView loadRequest:request];
 
-        [webView waitForMessage:@"MainFrame: B"];
-        [webView waitForMessage:@"Subframe: B"];
+        [webView waitForMessages:@[@"MainFrame: B", @"Subframe: B"]];
     }
 }
 

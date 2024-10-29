@@ -1117,7 +1117,7 @@ public:
 
     void captureAllMessages()
     {
-        [m_testMessageHandler setWildcardMessageHandler:^(NSString *message){
+        [m_testMessageHandler setDidReceiveScriptMessage:^(NSString *message) {
             m_mostRecentMessage = message;
         }];
     }
