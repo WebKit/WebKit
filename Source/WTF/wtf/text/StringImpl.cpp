@@ -451,13 +451,13 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocale()
 Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocaleStartingAtFailingIndex8Bit(unsigned failingIndex)
 {
     ASSERT(is8Bit());
-    std::span<LChar> data8;
-    auto newImpl = createUninitialized(m_length, data8);
+    std::span<LChar> destination;
+    auto newImpl = createUninitialized(m_length, destination);
 
     for (unsigned i = 0; i < failingIndex; ++i) {
         ASSERT(isASCII(m_data8[i]));
         ASSERT(!isASCIILower(m_data8[i]));
-        data8[i] = m_data8[i];
+        destination[i] = m_data8[i];
     }
 
     // Do a faster loop for the case where all the characters are ASCII.
@@ -465,7 +465,7 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocaleStartingAtFailingInde
     for (unsigned i = failingIndex; i < m_length; ++i) {
         LChar character = m_data8[i];
         ored |= character;
-        data8[i] = toASCIIUpper(character);
+        destination[i] = toASCIIUpper(character);
     }
     if (!(ored & ~0x7F))
         return newImpl;
@@ -486,7 +486,7 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocaleStartingAtFailingInde
             // Since this upper-cased character does not fit in an 8-bit string, we need to take the 16-bit path.
             return convertToUppercaseWithoutLocaleUpconvert();
         }
-        data8[i] = static_cast<LChar>(upper);
+        destination[i] = static_cast<LChar>(upper);
     }
 
     if (!numberSharpSCharacters)
@@ -495,9 +495,8 @@ Ref<StringImpl> StringImpl::convertToUppercaseWithoutLocaleStartingAtFailingInde
     // We have numberSSCharacters sharp-s characters, but none of the other special characters.
     if ((m_length + numberSharpSCharacters) > MaxLength)
         return *this;
-    newImpl = createUninitialized(m_length + numberSharpSCharacters, data8);
+    newImpl = createUninitialized(m_length + numberSharpSCharacters, destination);
 
-    auto destination = data8;
     size_t destinationIndex = 0;
     for (unsigned i = 0; i < m_length; ++i) {
         LChar character = m_data8[i];
