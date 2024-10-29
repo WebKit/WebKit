@@ -58,7 +58,7 @@ KNOWN_KEY_TYPES = {
 # - an `-apple-` prefix only exposed to certain Apple clients (there is a settings-flag requirement for using this prefix)
 WEBKIT_PREFIX_COUNTS_DO_NOT_INCREASE = {
     'pseudo-classes': 5,
-    'pseudo-elements': 59,
+    'pseudo-elements': 60,
 }
 
 class InputValidator:

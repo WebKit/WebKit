@@ -1920,4 +1920,15 @@ bool Quirks::needsZeroMaxTouchPointsQuirk() const
     return false;
 }
 
+bool Quirks::needsChromeMediaControlsPseudoElement() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsChromeMediaControlsPseudoElementQuirk)
+        m_needsChromeMediaControlsPseudoElementQuirk = isDomain("imdb.com"_s);
+
+    return *m_needsChromeMediaControlsPseudoElementQuirk;
+}
+
 }

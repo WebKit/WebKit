@@ -213,6 +213,7 @@ public:
     bool implicitMuteWhenVolumeSetToZero() const;
 
     bool needsZeroMaxTouchPointsQuirk() const;
+    bool needsChromeMediaControlsPseudoElement() const;
 
 private:
     bool needsQuirks() const;
@@ -290,6 +291,7 @@ private:
 #if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
     mutable std::optional<bool> m_needsZeroMaxTouchPointsQuirk;
 #endif
+    mutable std::optional<bool> m_needsChromeMediaControlsPseudoElementQuirk;
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
 };

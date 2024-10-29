@@ -38,6 +38,7 @@
 #include "ContextMenuController.h"
 #include "ContextMenuItem.h"
 #include "ContextMenuProvider.h"
+#include "DocumentInlines.h"
 #include "Event.h"
 #include "EventListener.h"
 #include "EventNames.h"
@@ -57,6 +58,7 @@
 #include "Node.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "Quirks.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
 #include "TextTrack.h"
@@ -325,6 +327,13 @@ bool MediaControlsHost::supportsRewind() const
     if (auto sourceType = this->sourceType())
         return *sourceType == SourceType::HLS || *sourceType == SourceType::File;
 #endif
+    return false;
+}
+
+bool MediaControlsHost::needsChromeMediaControlsPseudoElement() const
+{
+    if (m_mediaElement)
+        return m_mediaElement->document().quirks().needsChromeMediaControlsPseudoElement();
     return false;
 }
 

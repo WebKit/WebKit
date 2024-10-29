@@ -357,6 +357,11 @@
             "status": "non-standard",
             "user-agent-part": true
         },
+        "-webkit-media-controls": {
+            "comment": "For needsChromeMediaControlsPseudoElement quirk",
+            "status": "non-standard",
+            "user-agent-part": true
+        },
         "-webkit-media-text-track-container": {
             "status": "non-standard",
             "user-agent-part": true

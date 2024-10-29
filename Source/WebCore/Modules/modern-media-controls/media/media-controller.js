@@ -422,6 +422,9 @@ class MediaController
         }
 
         this._updateControlsAvailability();
+
+        if (this.host?.needsChromeMediaControlsPseudoElement)
+            this.controls.element.setAttribute('useragentpart', '-webkit-media-controls');
     }
 
     _stopPropagationOnClickEvents()
