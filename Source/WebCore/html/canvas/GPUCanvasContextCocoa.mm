@@ -194,7 +194,11 @@ void GPUCanvasContextCocoa::reshape()
 RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuffer)
 {
     // FIXME(https://bugs.webkit.org/show_bug.cgi?id=263957): WebGPU should support obtaining drawing buffer for Web Inspector.
-    m_compositorIntegration->prepareForDisplay([this, weakThis = WeakPtr { *this }] {
+    if (!m_configuration)
+        return canvasBase().buffer();
+
+    auto frameCount = m_configuration->frameCount;
+    m_compositorIntegration->prepareForDisplay(frameCount, [this, weakThis = WeakPtr { *this }, frameCount] {
         if (!weakThis)
             return;
 
@@ -202,8 +206,8 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::surfaceBufferToImageBuffer(SurfaceBuf
         base.clearCopiedImage();
         if (auto buffer = base.buffer(); buffer && m_configuration) {
             buffer->flushDrawingContext();
-            m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, m_configuration->frameCount);
-            present();
+            m_compositorIntegration->paintCompositedResultsToCanvas(*buffer, frameCount);
+            present(frameCount);
         }
     });
     return canvasBase().buffer();
@@ -218,7 +222,7 @@ RefPtr<ImageBuffer> GPUCanvasContextCocoa::transferToImageBuffer()
     if (m_configuration) {
         m_compositorIntegration->paintCompositedResultsToCanvas(bufferRef, m_configuration->frameCount);
         m_currentTexture = nullptr;
-        m_presentationContext->present(true);
+        m_presentationContext->present(m_configuration->frameCount, true);
     }
     return bufferRef;
 }
@@ -358,7 +362,7 @@ ExceptionOr<RefPtr<GPUTexture>> GPUCanvasContextCocoa::getCurrentTexture()
         return protectedCurrentTexture;
 
     markContextChangedAndNotifyCanvasObservers();
-    m_currentTexture = m_presentationContext->getCurrentTexture();
+    m_currentTexture = m_presentationContext->getCurrentTexture(m_configuration->frameCount);
     protectedCurrentTexture = m_currentTexture;
     return protectedCurrentTexture;
 }
@@ -390,14 +394,17 @@ RefPtr<GraphicsLayerContentsDisplayDelegate> GPUCanvasContextCocoa::layerContent
     return m_layerContentsDisplayDelegate.ptr();
 }
 
-void GPUCanvasContextCocoa::present()
+void GPUCanvasContextCocoa::present(uint32_t frameIndex)
 {
+    if (!m_configuration)
+        return;
+
     m_compositingResultsNeedsUpdating = false;
     m_configuration->frameCount = (m_configuration->frameCount + 1) % m_configuration->renderBuffers.size();
     if (m_currentTexture)
         m_currentTexture->destroy();
     m_currentTexture = nullptr;
-    m_presentationContext->present();
+    m_presentationContext->present(frameIndex);
 }
 
 void GPUCanvasContextCocoa::prepareForDisplay()
@@ -407,13 +414,14 @@ void GPUCanvasContextCocoa::prepareForDisplay()
 
     ASSERT(m_configuration->frameCount < m_configuration->renderBuffers.size());
 
-    m_compositorIntegration->prepareForDisplay([this, weakThis = WeakPtr { *this }] {
+    auto frameIndex = m_configuration->frameCount;
+    m_compositorIntegration->prepareForDisplay(frameIndex, [this, weakThis = WeakPtr { *this }, frameIndex] {
         if (!weakThis)
             return;
-        if (m_configuration->frameCount >= m_configuration->renderBuffers.size())
+        if (frameIndex >= m_configuration->renderBuffers.size())
             return;
-        m_layerContentsDisplayDelegate->setDisplayBuffer(m_configuration->renderBuffers[m_configuration->frameCount]);
-        present();
+        m_layerContentsDisplayDelegate->setDisplayBuffer(m_configuration->renderBuffers[frameIndex]);
+        present(frameIndex);
     });
 }
 

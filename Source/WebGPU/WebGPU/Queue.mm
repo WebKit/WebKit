@@ -77,7 +77,6 @@ id<MTLBlitCommandEncoder> Queue::ensureBlitCommandEncoder()
         return m_blitCommandEncoder;
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
-    commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
     auto blitCommandBuffer = commandBufferWithDescriptor(commandBufferDescriptor);
     m_commandBuffer = blitCommandBuffer;
     m_blitCommandEncoder = [m_commandBuffer blitCommandEncoder];
@@ -268,8 +267,16 @@ void Queue::commitMTLCommandBuffer(id<MTLCommandBuffer> commandBuffer)
             return;
         MTLCommandBufferStatus status = mtlCommandBuffer.status;
         bool loseTheDevice = false;
-        if (NSError *error = mtlCommandBuffer.error; status != MTLCommandBufferStatusCompleted)
+        if (NSError *error = mtlCommandBuffer.error; status != MTLCommandBufferStatusCompleted) {
             loseTheDevice = !error || error.code != MTLCommandBufferErrorNotPermitted;
+            if (loseTheDevice) {
+                NSError* underlyingError = error.userInfo[NSUnderlyingErrorKey];
+                if (underlyingError.code == 0x10a)
+                    loseTheDevice = false;
+                else
+                    WTFLogAlways("Encountered fatal command buffer error %@, underlying error %@", error, underlyingError);
+            }
+        }
 
         protectedThis->scheduleWork([loseTheDevice, protectedThis = protectedThis.copyRef()]() {
             ++(protectedThis->m_completedCommandBufferCount);

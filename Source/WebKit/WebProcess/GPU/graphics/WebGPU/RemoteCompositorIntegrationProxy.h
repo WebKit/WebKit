@@ -94,7 +94,7 @@ private:
     Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, WebCore::WebGPU::Device&) override;
 #endif
 
-    void prepareForDisplay(CompletionHandler<void()>&&) override;
+    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&) override;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

@@ -3219,9 +3219,11 @@ void Texture::destroy()
     if (!m_canvasBacking)
         m_texture = Ref { m_device }->placeholderTexture(format());
     m_destroyed = true;
-    for (auto& view : m_textureViews) {
-        if (view.get())
-            view->destroy();
+    if (!m_canvasBacking) {
+        for (auto& view : m_textureViews) {
+            if (view.get())
+                view->destroy();
+        }
     }
     if (!m_canvasBacking) {
         for (Ref commandEncoder : m_commandEncoders)
@@ -3752,6 +3754,11 @@ WGPUTextureView wgpuTextureCreateView(WGPUTexture texture, const WGPUTextureView
 void wgpuTextureDestroy(WGPUTexture texture)
 {
     WebGPU::protectedFromAPI(texture)->destroy();
+}
+
+void wgpuTextureUndestroy(WGPUTexture texture)
+{
+    WebGPU::fromAPI(texture).recreateIfNeeded();
 }
 
 void wgpuTextureSetLabel(WGPUTexture texture, const char* label)

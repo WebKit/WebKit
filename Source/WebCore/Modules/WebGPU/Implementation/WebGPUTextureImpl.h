@@ -64,6 +64,7 @@ private:
     RefPtr<TextureView> createView(const std::optional<TextureViewDescriptor>&) final;
 
     void destroy() final;
+    void undestroy() final;
 
     void setLabelInternal(const String&) final;
 

@@ -107,7 +107,6 @@ Ref<CommandEncoder> Device::createCommandEncoder(const WGPUCommandEncoderDescrip
     // https://gpuweb.github.io/gpuweb/#dom-gpudevice-createcommandencoder
 
     auto *commandBufferDescriptor = [MTLCommandBufferDescriptor new];
-    commandBufferDescriptor.errorOptions = MTLCommandBufferErrorOptionEncoderExecutionStatus;
     auto commandBuffer = protectedQueue()->commandBufferWithDescriptor(commandBufferDescriptor);
     if (!commandBuffer)
         return CommandEncoder::createInvalid(*this);

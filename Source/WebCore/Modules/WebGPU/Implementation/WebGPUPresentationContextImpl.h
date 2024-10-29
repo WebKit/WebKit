@@ -52,7 +52,7 @@ public:
 
     void setSize(uint32_t width, uint32_t height);
 
-    void present(bool = false);
+    void present(uint32_t frameIndex, bool = false);
 
     WGPUSurface backing() const { return m_backing.get(); }
     RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) final;
@@ -70,7 +70,7 @@ private:
     bool configure(const CanvasConfiguration&) final;
     void unconfigure() final;
 
-    RefPtr<Texture> getCurrentTexture() final;
+    RefPtr<Texture> getCurrentTexture(uint32_t) final;
 
     TextureFormat m_format { TextureFormat::Bgra8unorm };
     uint32_t m_width { 0 };

@@ -38,10 +38,11 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteTextureProxy);
 
-RemoteTextureProxy::RemoteTextureProxy(Ref<RemoteGPUProxy>&& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+RemoteTextureProxy::RemoteTextureProxy(Ref<RemoteGPUProxy>&& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool isCanvasBacking)
     : m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_root(WTFMove(root))
+    , m_isCanvasBacking(isCanvasBacking)
 {
 }
 
@@ -51,8 +52,28 @@ RemoteTextureProxy::~RemoteTextureProxy()
     UNUSED_VARIABLE(sendResult);
 }
 
+static bool equalDescriptors(const std::optional<WebCore::WebGPU::TextureViewDescriptor>& a, const std::optional<WebCore::WebGPU::TextureViewDescriptor>& b)
+{
+    if (!a && !b)
+        return true;
+
+    if (!a || !b)
+        return false;
+
+    return a->format == b->format
+        && a->dimension == b->dimension
+        && a->aspect == b->aspect
+        && a->baseMipLevel == b->baseMipLevel
+        && a->mipLevelCount == b->mipLevelCount
+        && a->baseArrayLayer == b->baseArrayLayer
+        && a->arrayLayerCount == b->arrayLayerCount;
+}
+
 RefPtr<WebCore::WebGPU::TextureView> RemoteTextureProxy::createView(const std::optional<WebCore::WebGPU::TextureViewDescriptor>& descriptor)
 {
+    if (m_isCanvasBacking && m_lastCreatedView && equalDescriptors(descriptor, m_lastCreatedViewDescriptor))
+        return m_lastCreatedView;
+
     std::optional<TextureViewDescriptor> convertedDescriptor;
     Ref convertToBackingContext = m_convertToBackingContext;
 
@@ -69,12 +90,23 @@ RefPtr<WebCore::WebGPU::TextureView> RemoteTextureProxy::createView(const std::o
 
     auto result = RemoteTextureViewProxy::create(*this, convertToBackingContext, identifier);
     result->setLabel(WTFMove(convertedDescriptor->label));
-    return result;
+    if (!m_isCanvasBacking)
+        return result;
+
+    m_lastCreatedView = WTFMove(result);
+    m_lastCreatedViewDescriptor = descriptor;
+    return m_lastCreatedView;
 }
 
 void RemoteTextureProxy::destroy()
 {
     auto sendResult = send(Messages::RemoteTexture::Destroy());
+    UNUSED_VARIABLE(sendResult);
+}
+
+void RemoteTextureProxy::undestroy()
+{
+    auto sendResult = send(Messages::RemoteTexture::Undestroy());
     UNUSED_VARIABLE(sendResult);
 }
 

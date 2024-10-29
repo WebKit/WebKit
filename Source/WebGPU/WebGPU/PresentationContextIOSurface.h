@@ -46,9 +46,9 @@ public:
     void configure(Device&, const WGPUSwapChainDescriptor&) override;
     void unconfigure() override;
 
-    void present() override;
-    Texture* getCurrentTexture() override; // FIXME: This should return a Texture&.
-    TextureView* getCurrentTextureView() override; // FIXME: This should return a TextureView&.
+    void present(uint32_t) override;
+    Texture* getCurrentTexture(uint32_t) override;
+    TextureView* getCurrentTextureView() override;
 
     bool isPresentationContextIOSurface() const override { return true; }
 
@@ -68,7 +68,6 @@ private:
     Vector<RenderBuffer> m_renderBuffers;
     RefPtr<Device> m_device;
     RefPtr<Texture> m_invalidTexture;
-    size_t m_currentIndex { 0 };
     id<MTLFunction> m_luminanceClampFunction;
     id<MTLComputePipelineState> m_computePipelineState;
 #if HAVE(IOSURFACE_SET_OWNERSHIP_IDENTITY) && HAVE(TASK_IDENTITY_TOKEN)

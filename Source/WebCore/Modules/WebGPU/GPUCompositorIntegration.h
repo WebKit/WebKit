@@ -53,7 +53,7 @@ public:
     Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, WebCore::WebGPU::Device&) const;
 #endif
 
-    void prepareForDisplay(CompletionHandler<void()>&&);
+    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&);
 
     WebGPU::CompositorIntegration& backing() { return m_backing; }
     const WebGPU::CompositorIntegration& backing() const { return m_backing; }

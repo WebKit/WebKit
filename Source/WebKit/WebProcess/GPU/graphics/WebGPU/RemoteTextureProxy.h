@@ -43,19 +43,20 @@ class ConvertToBackingContext;
 class RemoteTextureProxy final : public WebCore::WebGPU::Texture {
     WTF_MAKE_TZONE_ALLOCATED(RemoteTextureProxy);
 public:
-    static Ref<RemoteTextureProxy> create(Ref<RemoteGPUProxy>&& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier)
+    static Ref<RemoteTextureProxy> create(Ref<RemoteGPUProxy>&& root, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, bool isCanvasBacking = false)
     {
-        return adoptRef(*new RemoteTextureProxy(WTFMove(root), convertToBackingContext, identifier));
+        return adoptRef(*new RemoteTextureProxy(WTFMove(root), convertToBackingContext, identifier, isCanvasBacking));
     }
 
     virtual ~RemoteTextureProxy();
 
     RemoteGPUProxy& root() { return m_root; }
+    void undestroy() final;
 
 private:
     friend class DowncastConvertToBackingContext;
 
-    RemoteTextureProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUIdentifier);
+    RemoteTextureProxy(Ref<RemoteGPUProxy>&&, ConvertToBackingContext&, WebGPUIdentifier, bool isCanvasBacking);
 
     RemoteTextureProxy(const RemoteTextureProxy&) = delete;
     RemoteTextureProxy(RemoteTextureProxy&&) = delete;
@@ -73,12 +74,15 @@ private:
     RefPtr<WebCore::WebGPU::TextureView> createView(const std::optional<WebCore::WebGPU::TextureViewDescriptor>&) final;
 
     void destroy() final;
-
     void setLabelInternal(const String&) final;
 
     WebGPUIdentifier m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;
     Ref<RemoteGPUProxy> m_root;
+
+    RefPtr<WebCore::WebGPU::TextureView> m_lastCreatedView;
+    std::optional<WebCore::WebGPU::TextureViewDescriptor> m_lastCreatedViewDescriptor;
+    bool m_isCanvasBacking { false };
 };
 
 } // namespace WebKit::WebGPU

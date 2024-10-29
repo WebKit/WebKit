@@ -60,7 +60,7 @@ public:
     virtual Vector<MachSendRight> recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, Device&) = 0;
 #endif
 
-    virtual void prepareForDisplay(CompletionHandler<void()>&&) = 0;
+    virtual void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void()>&&) = 0;
     virtual void withDisplayBufferAsNativeImage(uint32_t bufferIndex, Function<void(WebCore::NativeImage*)>) = 0;
     virtual void paintCompositedResultsToCanvas(WebCore::ImageBuffer&, uint32_t bufferIndex) = 0;
 

@@ -108,7 +108,7 @@ private:
     void recreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace&&, WebCore::AlphaPremultiplication, WebCore::WebGPU::TextureFormat, WebKit::WebGPUIdentifier deviceIdentifier, CompletionHandler<void(Vector<MachSendRight>&&)>&&);
 #endif
 
-    void prepareForDisplay(CompletionHandler<void(bool)>&&);
+    void prepareForDisplay(uint32_t frameIndex, CompletionHandler<void(bool)>&&);
 
     Ref<WebCore::WebGPU::CompositorIntegration> m_backing;
     WeakRef<WebGPU::ObjectHeap> m_objectHeap;

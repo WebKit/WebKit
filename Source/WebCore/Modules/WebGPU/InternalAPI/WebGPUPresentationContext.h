@@ -50,9 +50,9 @@ public:
 
     WARN_UNUSED_RETURN virtual bool configure(const CanvasConfiguration&) = 0;
     virtual void unconfigure() = 0;
-    virtual void present(bool = false) = 0;
+    virtual void present(uint32_t frameIndex, bool = false) = 0;
 
-    virtual RefPtr<Texture> getCurrentTexture() = 0;
+    virtual RefPtr<Texture> getCurrentTexture(uint32_t) = 0;
     virtual RefPtr<WebCore::NativeImage> getMetalTextureAsNativeImage(uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat) = 0;
 
 protected:

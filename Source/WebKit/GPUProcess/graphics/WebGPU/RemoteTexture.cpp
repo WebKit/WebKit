@@ -93,6 +93,11 @@ void RemoteTexture::destroy()
     protectedBacking()->destroy();
 }
 
+void RemoteTexture::undestroy()
+{
+    protectedBacking()->undestroy();
+}
+
 void RemoteTexture::destruct()
 {
     Ref { m_objectHeap.get() }->removeObject(m_identifier);

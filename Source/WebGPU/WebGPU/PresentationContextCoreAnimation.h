@@ -47,9 +47,9 @@ public:
     void configure(Device&, const WGPUSwapChainDescriptor&) override;
     void unconfigure() override;
 
-    void present() override;
-    Texture* getCurrentTexture() override; // FIXME: This should return a Texture&.
-    TextureView* getCurrentTextureView() override; // FIXME: This should return a TextureView&.
+    void present(uint32_t) override;
+    Texture* getCurrentTexture(uint32_t) override;
+    TextureView* getCurrentTextureView() override;
 
     bool isPresentationContextCoreAnimation() const override { return true; }
 

@@ -74,11 +74,11 @@ void PresentationContext::unconfigure()
 {
 }
 
-void PresentationContext::present()
+void PresentationContext::present(uint32_t)
 {
 }
 
-Texture* PresentationContext::getCurrentTexture()
+Texture* PresentationContext::getCurrentTexture(uint32_t)
 {
     return nullptr;
 }
@@ -117,9 +117,9 @@ WGPUTextureFormat wgpuSurfaceGetPreferredFormat(WGPUSurface surface, WGPUAdapter
     return WebGPU::protectedFromAPI(surface)->getPreferredFormat(WebGPU::protectedFromAPI(adapter));
 }
 
-WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain)
+WGPUTexture wgpuSwapChainGetCurrentTexture(WGPUSwapChain swapChain, uint32_t index)
 {
-    return WebGPU::protectedFromAPI(swapChain)->getCurrentTexture();
+    return WebGPU::protectedFromAPI(swapChain)->getCurrentTexture(index);
 }
 
 WGPUTextureView wgpuSwapChainGetCurrentTextureView(WGPUSwapChain swapChain)
@@ -127,9 +127,9 @@ WGPUTextureView wgpuSwapChainGetCurrentTextureView(WGPUSwapChain swapChain)
     return WebGPU::protectedFromAPI(swapChain)->getCurrentTextureView();
 }
 
-void wgpuSwapChainPresent(WGPUSwapChain swapChain)
+void wgpuSwapChainPresent(WGPUSwapChain swapChain, uint32_t index)
 {
-    WebGPU::protectedFromAPI(swapChain)->present();
+    WebGPU::protectedFromAPI(swapChain)->present(index);
 }
 
 RetainPtr<CGImageRef> wgpuSwapChainGetTextureAsNativeImage(WGPUSwapChain swapChain, uint32_t bufferIndex, bool& isIOSurfaceSupportedFormat)

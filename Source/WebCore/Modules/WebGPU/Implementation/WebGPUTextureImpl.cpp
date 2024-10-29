@@ -75,6 +75,11 @@ void TextureImpl::destroy()
     wgpuTextureDestroy(m_backing.get());
 }
 
+void TextureImpl::undestroy()
+{
+    wgpuTextureUndestroy(m_backing.get());
+}
+
 void TextureImpl::setLabelInternal(const String& label)
 {
     wgpuTextureSetLabel(m_backing.get(), label.utf8().data());

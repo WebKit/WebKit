@@ -59,30 +59,35 @@ bool RemotePresentationContextProxy::configure(const WebCore::WebGPU::CanvasConf
 
 void RemotePresentationContextProxy::unconfigure()
 {
-    m_currentTexture = nullptr;
+    for (size_t i = 0; i < textureCount; ++i)
+        m_currentTexture[i] = nullptr;
+
     auto sendResult = send(Messages::RemotePresentationContext::Unconfigure());
     UNUSED_VARIABLE(sendResult);
 }
 
-RefPtr<WebCore::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTexture()
+RefPtr<WebCore::WebGPU::Texture> RemotePresentationContextProxy::getCurrentTexture(uint32_t frameIndex)
 {
-    if (!m_currentTexture) {
+    if (frameIndex >= textureCount)
+        return nullptr;
+
+    if (!m_currentTexture[frameIndex]) {
         auto identifier = WebGPUIdentifier::generate();
-        auto sendResult = send(Messages::RemotePresentationContext::GetCurrentTexture(identifier));
+        auto sendResult = send(Messages::RemotePresentationContext::GetCurrentTexture(identifier, frameIndex));
         if (sendResult != IPC::Error::NoError)
             return nullptr;
 
-        m_currentTexture = RemoteTextureProxy::create(protectedRoot(), protectedConvertToBackingContext(), identifier);
-    }
+        m_currentTexture[frameIndex] = RemoteTextureProxy::create(protectedRoot(), protectedConvertToBackingContext(), identifier, true);
+    } else
+        RefPtr { m_currentTexture[frameIndex] }->undestroy();
 
-    return m_currentTexture;
+    return m_currentTexture[frameIndex];
 }
 
-void RemotePresentationContextProxy::present(bool presentToGPUProcess)
+void RemotePresentationContextProxy::present(uint32_t frameIndex, bool presentToGPUProcess)
 {
-    m_currentTexture = nullptr;
     if (presentToGPUProcess) {
-        auto sendResult = send(Messages::RemotePresentationContext::Present());
+        auto sendResult = send(Messages::RemotePresentationContext::Present(frameIndex));
         UNUSED_VARIABLE(sendResult);
     }
 }

@@ -127,13 +127,13 @@ void PresentationContextImpl::unconfigure()
     m_currentTexture = nullptr;
 }
 
-RefPtr<Texture> PresentationContextImpl::getCurrentTexture()
+RefPtr<Texture> PresentationContextImpl::getCurrentTexture(uint32_t frameIndex)
 {
     if (!m_swapChain)
         return nullptr; // FIXME: This should return an invalid texture instead.
 
     if (!m_currentTexture) {
-        auto texturePtr = wgpuSwapChainGetCurrentTexture(m_swapChain.get());
+        auto texturePtr = wgpuSwapChainGetCurrentTexture(m_swapChain.get(), frameIndex);
         if (!texturePtr)
             return nullptr;
 
@@ -142,10 +142,10 @@ RefPtr<Texture> PresentationContextImpl::getCurrentTexture()
     return m_currentTexture;
 }
 
-void PresentationContextImpl::present(bool)
+void PresentationContextImpl::present(uint32_t frameIndex, bool)
 {
     if (auto* surface = m_swapChain.get())
-        wgpuSwapChainPresent(surface);
+        wgpuSwapChainPresent(surface, frameIndex);
     m_currentTexture = nullptr;
 }
 
