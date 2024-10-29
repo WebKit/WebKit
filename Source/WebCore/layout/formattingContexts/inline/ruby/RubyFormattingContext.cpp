@@ -200,7 +200,7 @@ bool RubyFormattingContext::isAtSoftWrapOpportunity(const InlineItem& previous, 
     }
 
     if (currentLayoutBox.isRubyBase() || previousLayoutBox.isRubyBase()) {
-        // There's always a soft wrap opportunity between two bases.
+        // FIXME: This is matching legacy behavior: there's always a soft wrap opportunity between two bases.
         return currentLayoutBox.isRubyBase() && previousLayoutBox.isRubyBase();
     }
 

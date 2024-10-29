@@ -334,9 +334,11 @@ bool TextUtil::mayBreakInBetween(const InlineTextItem& previousInlineItem, const
 {
     // Check if these 2 adjacent non-whitespace inline items are connected at a breakable position.
     ASSERT(!previousInlineItem.isWhitespace() && !nextInlineItem.isWhitespace());
+    return mayBreakInBetween(previousInlineItem.inlineTextBox().content(), previousInlineItem.style(), nextInlineItem.inlineTextBox().content(), nextInlineItem.style());
+}
 
-    auto previousContent = previousInlineItem.inlineTextBox().content();
-    auto nextContent = nextInlineItem.inlineTextBox().content();
+bool TextUtil::mayBreakInBetween(String previousContent, const RenderStyle& previousContentStyle, String nextContent, const RenderStyle& nextContentStyle)
+{
     // Now we need to collect at least 3 adjacent characters to be able to make a decision whether the previous text item ends with breaking opportunity.
     // [ex-][ample] <- second to last[x] last[-] current[a]
     // We need at least 1 character in the current inline text item and 2 more from previous inline items.
@@ -345,8 +347,6 @@ bool TextUtil::mayBreakInBetween(const InlineTextItem& previousInlineItem, const
         // See the templated CharacterType in nextBreakablePosition for last and lastlast characters.
         nextContent.convertTo16Bit();
     }
-    auto& previousContentStyle = previousInlineItem.style();
-    auto& nextContentStyle = nextInlineItem.style();
     auto lineBreakIteratorFactory = CachedLineBreakIteratorFactory { nextContent, nextContentStyle.computedLocale(), TextUtil::lineBreakIteratorMode(nextContentStyle.lineBreak()), TextUtil::contentAnalysis(nextContentStyle.wordBreak()) };
     auto previousContentLength = previousContent.length();
     // FIXME: We should look into the entire uncommitted content for more text context.

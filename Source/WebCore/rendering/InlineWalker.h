@@ -32,8 +32,8 @@ namespace WebCore {
 
 class InlineWalker {
 public:
-    InlineWalker(const RenderBlockFlow& root)
-        : m_iterator(root, root.firstChild())
+    InlineWalker(const RenderBlockFlow& root, RenderObject* from = nullptr)
+        : m_iterator(root, from ? from : root.firstChild())
     {
     }
 
