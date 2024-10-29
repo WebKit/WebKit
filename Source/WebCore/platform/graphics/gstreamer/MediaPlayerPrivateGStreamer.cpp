@@ -353,8 +353,8 @@ void MediaPlayerPrivateGStreamer::load(const String& urlString)
         m_fillTimer.stop();
 
     ASSERT(m_pipeline);
-    setVisibleInViewport(player->isVisibleInViewport());
     setPlaybinURL(url);
+    setVisibleInViewport(player->isVisibleInViewport());
 
     GST_DEBUG_OBJECT(pipeline(), "preload: %s", convertEnumerationToString(m_preload).utf8().data());
     if (m_preload == MediaPlayer::Preload::None && !isMediaSource()) {
