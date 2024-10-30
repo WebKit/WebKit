@@ -29,6 +29,7 @@
 #include "CacheStorageDiskStore.h"
 #include "CacheStorageManager.h"
 #include "CacheStorageMemoryStore.h"
+#include "Logging.h"
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/HTTPHeaderMap.h>
