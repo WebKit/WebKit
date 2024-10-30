@@ -1351,6 +1351,8 @@ http/wpt/mediasession/voiceActivityDetection.html [ Skip ]
 # Seek on live streams not implemented.
 webkit.org/b/280069 imported/w3c/web-platform-tests/webvtt/api/VTTRegion/non-visible-cue-with-region.html [ Failure ]
 
+webkit.org/b/260455 http/tests/media/media-source/mediasource-rvfc.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
