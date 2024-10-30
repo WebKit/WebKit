@@ -1728,7 +1728,6 @@ void RenderGrid::applyStretchAlignmentToGridItemIfNeeded(RenderBox& gridItem, Gr
         //
         // FIXME: Can avoid laying out here in some cases. See https://webkit.org/b/87905.
         if (itemNeedsRelayoutForStretchAlignment) {
-            gridItem.setLogicalHeight(0_lu);
             gridItem.setNeedsLayout(MarkOnlyThis);
         }
     } else if (!allowedToStretchgridItemBlockSize && allowedToStretchGridItemAlongRowAxis(gridItem)) {
