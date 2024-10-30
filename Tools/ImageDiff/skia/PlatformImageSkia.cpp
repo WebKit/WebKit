@@ -132,7 +132,7 @@ void PlatformImage::writeAsPNGToStdout()
     if (!data)
         return;
 
-    fprintf(stdout, "Content-Length: %lu\n", data->size());
+    fprintf(stdout, "Content-Length: %zu\n", data->size());
     fwrite(data->data(), 1, data->size(), stdout);
 }
 
