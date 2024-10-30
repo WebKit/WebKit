@@ -86,13 +86,14 @@ Vector<RetainPtr<_WKFrameTreeNode>> getFrames(_WKFrameTreeNode *currentNode, std
 std::optional<SourcePair> sourcePairForResource(const String& path, WebExtensionContext& extensionContext)
 {
     RefPtr<API::Error> error;
-    auto scriptString = extensionContext.protectedExtension()->resourceStringForPath(path, error);
+    Ref extension = extensionContext.extension();
+    auto scriptString = extension->resourceStringForPath(path, error);
     if (!scriptString || error) {
         extensionContext.recordError(wrapper(error));
         return std::nullopt;
     }
 
-    scriptString = extensionContext.localizedResourceString(scriptString, extensionContext.extension().resourceMIMETypeForPath(path));
+    scriptString = extensionContext.localizedResourceString(scriptString, extension->resourceMIMETypeForPath(path));
 
     return SourcePair { scriptString, { extensionContext.baseURL(), path } };
 }
