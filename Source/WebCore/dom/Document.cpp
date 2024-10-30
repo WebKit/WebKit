@@ -170,6 +170,7 @@
 #include "MouseEventWithHitTestResults.h"
 #include "MutationEvent.h"
 #include "NameNodeList.h"
+#include "Navigation.h"
 #include "NavigationActivation.h"
 #include "NavigationDisabler.h"
 #include "NavigationScheduler.h"
@@ -5567,6 +5568,9 @@ void Document::adjustFocusedNodeOnNodeRemoval(Node& node, NodeRemoval nodeRemova
         // Also we need to call removeFocusNavigationNodeOfSubtree after this function because
         // setFocusedElement(nullptr) will reset m_focusNavigationStartingNode.
         setFocusNavigationStartingNode(focusedElement.get());
+
+        if (settings().navigationAPIEnabled())
+            domWindow()->navigation().setFocusChanged(FocusDidChange::No);
     }
 }
 
@@ -5899,6 +5903,10 @@ bool Document::setFocusedElement(Element* newFocusedElement, const FocusOptions&
     }
 
     if (m_focusedElement) {
+
+        if (settings().navigationAPIEnabled())
+            domWindow()->navigation().setFocusChanged(FocusDidChange::Yes);
+
 #if PLATFORM(GTK)
         // GTK relies on creating the AXObjectCache when a focus change happens.
         if (CheckedPtr cache = axObjectCache())

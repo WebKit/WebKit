@@ -702,7 +702,7 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
     if (!globalObject)
         return;
 
-    m_focusChangedDuringOnoingNavigation = false;
+    m_focusChangedDuringOngoingNavigation = FocusDidChange::No;
     m_suppressNormalScrollRestorationDuringOngoingNavigation = false;
 
     if (event.isBeingDispatched())
@@ -850,7 +850,7 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
     Ref event = NavigateEvent::create(eventNames().navigateEvent, init, abortController.get());
     m_ongoingNavigateEvent = event.ptr();
-    m_focusChangedDuringOnoingNavigation = false;
+    m_focusChangedDuringOngoingNavigation = FocusDidChange::No;
     m_suppressNormalScrollRestorationDuringOngoingNavigation = false;
 
     dispatchEvent(event);
@@ -926,7 +926,8 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
             RefPtr strongThis = weakThis.get();
 
-            m_ongoingNavigateEvent->finish(*document, InterceptionHandlersDidFulfill::Yes);
+            auto focusChanged = std::exchange(m_focusChangedDuringOngoingNavigation, FocusDidChange::No);
+            m_ongoingNavigateEvent->finish(*document, InterceptionHandlersDidFulfill::Yes, focusChanged);
             m_ongoingNavigateEvent = nullptr;
 
             dispatchEvent(Event::create(eventNames().navigatesuccessEvent, { }));
@@ -945,7 +946,8 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
 
             RefPtr strongThis = weakThis.get();
 
-            m_ongoingNavigateEvent->finish(*document, InterceptionHandlersDidFulfill::No);
+            auto focusChanged = std::exchange(m_focusChangedDuringOngoingNavigation, FocusDidChange::No);
+            m_ongoingNavigateEvent->finish(*document, InterceptionHandlersDidFulfill::No, focusChanged);
             m_ongoingNavigateEvent = nullptr;
 
             ErrorInformation errorInformation;

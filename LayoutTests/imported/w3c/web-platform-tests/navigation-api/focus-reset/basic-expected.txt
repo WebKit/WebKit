@@ -1,13 +1,10 @@
 
-
-Harness Error (TIMEOUT), message = null
-
 PASS Invalid values for focusReset throw
-TIMEOUT Does not reset the focus when no navigate handler is present Test timed out
-NOTRUN Resets the focus when no focusReset option is provided
-NOTRUN Resets the focus when focusReset is explicitly set to undefined
-NOTRUN Resets the focus when no focusReset option is provided (nontrivial fulfilled promise)
-NOTRUN Resets the focus when no focusReset option is provided (rejected promise)
-NOTRUN Resets the focus when focusReset is explicitly set to 'after-transition'
-NOTRUN Does not reset the focus when focusReset is set to 'manual'
+PASS Does not reset the focus when no navigate handler is present
+FAIL Resets the focus when no focusReset option is provided assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
+FAIL Resets the focus when focusReset is explicitly set to undefined assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
+PASS Resets the focus when no focusReset option is provided (nontrivial fulfilled promise)
+FAIL Resets the focus when no focusReset option is provided (rejected promise) assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
+FAIL Resets the focus when focusReset is explicitly set to 'after-transition' assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
+PASS Does not reset the focus when focusReset is set to 'manual'
 

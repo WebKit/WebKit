@@ -7495,9 +7495,6 @@ imported/w3c/web-platform-tests/navigation-api/ [ Timeout Pass ]
 imported/w3c/web-platform-tests/navigation-api/commit-behavior/ [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-before-after-transition-commit.html [ Skip ]
 
-# Not yet implemented so just full of timeouts and flakes.
-imported/w3c/web-platform-tests/navigation-api/focus-reset/ [ Skip ]
-
 # Tests for sourceElement is not yet part of the HTML spec.
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-requestSubmit.html [ Skip ]
 
@@ -7522,6 +7519,11 @@ imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/n
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-beforeunload.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-beforeunload-unserializablestate.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-beforeunload.html [ Skip ]
+
+# These are likely fixed with https://bugs.webkit.org/show_bug.cgi?id=282137
+imported/w3c/web-platform-tests/navigation-api/focus-reset/multiple-intercept.html [ Pass Failure ]
+# Single flakey test case ("Resets the focus when no focusReset option is provided (nontrivial fulfilled promise)")
+imported/w3c/web-platform-tests/navigation-api/focus-reset/basic.html [ Pass Failure ]
 
 # -- View Transitions -- #
 # Reftest failures:

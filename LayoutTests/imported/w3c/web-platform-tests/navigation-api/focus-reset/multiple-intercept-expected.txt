@@ -1,11 +1,8 @@
 
-
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT (not provided) + after-transition Test timed out
-NOTRUN (not provided) + manual
-NOTRUN after-transition + manual
-NOTRUN after-transition + (not provided)
-NOTRUN manual + after-transition
-NOTRUN manual + (not provided)
+FAIL (not provided) + after-transition assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
+PASS (not provided) + manual
+PASS after-transition + manual
+FAIL after-transition + (not provided) assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
+FAIL manual + after-transition assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
+PASS manual + (not provided)
 

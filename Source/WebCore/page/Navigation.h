@@ -28,6 +28,7 @@
 #include "EventTarget.h"
 #include "JSDOMPromiseDeferred.h"
 #include "LocalDOMWindowProperty.h"
+#include "NavigateEvent.h"
 #include "NavigationHistoryEntry.h"
 #include "NavigationNavigationType.h"
 #include "NavigationTransition.h"
@@ -153,6 +154,8 @@ public:
     std::optional<Ref<NavigationHistoryEntry>> findEntryByKey(const String& key);
     bool suppressNormalScrollRestoration() const { return m_suppressNormalScrollRestorationDuringOngoingNavigation; }
 
+    void setFocusChanged(FocusDidChange changed) { m_focusChangedDuringOngoingNavigation = changed; }
+
 private:
     explicit Navigation(LocalDOMWindow&);
 
@@ -183,7 +186,7 @@ private:
     Vector<Ref<NavigationHistoryEntry>> m_entries;
 
     RefPtr<NavigateEvent> m_ongoingNavigateEvent;
-    bool m_focusChangedDuringOnoingNavigation { false };
+    FocusDidChange m_focusChangedDuringOngoingNavigation { FocusDidChange::No };
     bool m_suppressNormalScrollRestorationDuringOngoingNavigation { false };
     RefPtr<NavigationAPIMethodTracker> m_ongoingAPIMethodTracker;
     RefPtr<NavigationAPIMethodTracker> m_upcomingNonTraverseMethodTracker;

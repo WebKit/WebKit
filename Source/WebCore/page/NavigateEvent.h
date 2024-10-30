@@ -50,6 +50,11 @@ enum class InterceptionHandlersDidFulfill : bool {
     Yes
 };
 
+enum class FocusDidChange : bool {
+    No,
+    Yes
+};
+
 class NavigateEvent final : public Event {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NavigateEvent);
 public:
@@ -104,7 +109,7 @@ public:
     void setCanIntercept(bool canIntercept) { m_canIntercept = canIntercept; }
     void setInterceptionState(InterceptionState interceptionState) { m_interceptionState = interceptionState; }
 
-    void finish(Document&, InterceptionHandlersDidFulfill);
+    void finish(Document&, InterceptionHandlersDidFulfill, FocusDidChange);
 
     Vector<Ref<NavigationInterceptHandler>>& handlers() { return m_handlers; }
 
