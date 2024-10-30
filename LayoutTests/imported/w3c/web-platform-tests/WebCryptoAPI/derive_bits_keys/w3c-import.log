@@ -21,6 +21,8 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys_curve25519.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/cfrg_curves_keys_curve448.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derive_key_and_encrypt.https.any.js
+/LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derive_key_and_encrypt.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derived_bits_length.https.any.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derived_bits_length.js
 /LayoutTests/imported/w3c/web-platform-tests/WebCryptoAPI/derive_bits_keys/derived_bits_length_testcases.js
