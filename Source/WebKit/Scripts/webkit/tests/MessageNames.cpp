@@ -27,175 +27,175 @@
 
 namespace IPC::Detail {
 
-const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Count) + 1] = {
+const MessageDescriptionsArray messageDescriptions {
 #if USE(AVFOUNDATION)
-    { "TestWithCVPixelBuffer_ReceiveCVPixelBuffer"_s, ReceiverName::TestWithCVPixelBuffer, false, false },
-    { "TestWithCVPixelBuffer_SendCVPixelBuffer"_s, ReceiverName::TestWithCVPixelBuffer, false, false },
+    MessageDescription { "TestWithCVPixelBuffer_ReceiveCVPixelBuffer"_s, ReceiverName::TestWithCVPixelBuffer, false, false },
+    MessageDescription { "TestWithCVPixelBuffer_SendCVPixelBuffer"_s, ReceiverName::TestWithCVPixelBuffer, false, false },
 #endif
-    { "TestWithEnabledByAndConjunction_AlwaysEnabled"_s, ReceiverName::TestWithEnabledByAndConjunction, false, false },
-    { "TestWithEnabledByOrConjunction_AlwaysEnabled"_s, ReceiverName::TestWithEnabledByOrConjunction, false, false },
-    { "TestWithEnabledBy_AlwaysEnabled"_s, ReceiverName::TestWithEnabledBy, false, false },
-    { "TestWithEnabledBy_ConditionallyEnabled"_s, ReceiverName::TestWithEnabledBy, false, false },
-    { "TestWithEnabledBy_ConditionallyEnabledAnd"_s, ReceiverName::TestWithEnabledBy, false, false },
-    { "TestWithEnabledBy_ConditionallyEnabledOr"_s, ReceiverName::TestWithEnabledBy, false, false },
-    { "TestWithEnabledIf_AlwaysEnabled"_s, ReceiverName::TestWithEnabledIf, false, false },
-    { "TestWithEnabledIf_OnlyEnabledIfFeatureEnabled"_s, ReceiverName::TestWithEnabledIf, false, false },
+    MessageDescription { "TestWithEnabledByAndConjunction_AlwaysEnabled"_s, ReceiverName::TestWithEnabledByAndConjunction, false, false },
+    MessageDescription { "TestWithEnabledByOrConjunction_AlwaysEnabled"_s, ReceiverName::TestWithEnabledByOrConjunction, false, false },
+    MessageDescription { "TestWithEnabledBy_AlwaysEnabled"_s, ReceiverName::TestWithEnabledBy, false, false },
+    MessageDescription { "TestWithEnabledBy_ConditionallyEnabled"_s, ReceiverName::TestWithEnabledBy, false, false },
+    MessageDescription { "TestWithEnabledBy_ConditionallyEnabledAnd"_s, ReceiverName::TestWithEnabledBy, false, false },
+    MessageDescription { "TestWithEnabledBy_ConditionallyEnabledOr"_s, ReceiverName::TestWithEnabledBy, false, false },
+    MessageDescription { "TestWithEnabledIf_AlwaysEnabled"_s, ReceiverName::TestWithEnabledIf, false, false },
+    MessageDescription { "TestWithEnabledIf_OnlyEnabledIfFeatureEnabled"_s, ReceiverName::TestWithEnabledIf, false, false },
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-    { "TestWithIfMessage_LoadURL"_s, ReceiverName::TestWithIfMessage, false, false },
+    MessageDescription { "TestWithIfMessage_LoadURL"_s, ReceiverName::TestWithIfMessage, false, false },
 #endif
-    { "TestWithImageData_ReceiveImageData"_s, ReceiverName::TestWithImageData, false, false },
-    { "TestWithImageData_SendImageData"_s, ReceiverName::TestWithImageData, false, false },
+    MessageDescription { "TestWithImageData_ReceiveImageData"_s, ReceiverName::TestWithImageData, false, false },
+    MessageDescription { "TestWithImageData_SendImageData"_s, ReceiverName::TestWithImageData, false, false },
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    { "TestWithLegacyReceiver_AddEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_AddEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
-    { "TestWithLegacyReceiver_Close"_s, ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_CreatePlugin"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_Close"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_CreatePlugin"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #if ENABLE(DEPRECATED_FEATURE)
-    { "TestWithLegacyReceiver_DeprecatedOperation"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_DeprecatedOperation"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
 #if PLATFORM(MAC)
-    { "TestWithLegacyReceiver_DidCreateWebProcessConnection"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_DidCreateWebProcessConnection"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
-    { "TestWithLegacyReceiver_DidReceivePolicyDecision"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_DidReceivePolicyDecision"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #if ENABLE(FEATURE_FOR_TESTING)
-    { "TestWithLegacyReceiver_ExperimentalOperation"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_ExperimentalOperation"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
-    { "TestWithLegacyReceiver_GetPlugins"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_GetPlugins"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #if PLATFORM(MAC)
-    { "TestWithLegacyReceiver_InterpretKeyEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_InterpretKeyEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    { "TestWithLegacyReceiver_LoadSomething"_s, ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_LoadSomethingElse"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_LoadSomething"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_LoadSomethingElse"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
-    { "TestWithLegacyReceiver_LoadURL"_s, ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_PreferencesDidChange"_s, ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_RunJavaScriptAlert"_s, ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_SendDoubleAndFloat"_s, ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_SendInts"_s, ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_SetVideoLayerID"_s, ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_TemplateTest"_s, ReceiverName::TestWithLegacyReceiver, false, false },
-    { "TestWithLegacyReceiver_TestParameterAttributes"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_LoadURL"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_PreferencesDidChange"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_RunJavaScriptAlert"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_SendDoubleAndFloat"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_SendInts"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_SetVideoLayerID"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_TemplateTest"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_TestParameterAttributes"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    { "TestWithLegacyReceiver_TouchEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false },
+    MessageDescription { "TestWithLegacyReceiver_TouchEvent"_s, ReceiverName::TestWithLegacyReceiver, false, false },
 #endif
-    { "TestWithSemaphore_ReceiveSemaphore"_s, ReceiverName::TestWithSemaphore, false, false },
-    { "TestWithSemaphore_SendSemaphore"_s, ReceiverName::TestWithSemaphore, false, false },
-    { "TestWithStreamBatched_SendString"_s, ReceiverName::TestWithStreamBatched, true, false },
-    { "TestWithStreamBuffer_SendStreamBuffer"_s, ReceiverName::TestWithStreamBuffer, false, false },
-    { "TestWithStreamServerConnectionHandle_SendStreamServerConnection"_s, ReceiverName::TestWithStreamServerConnectionHandle, false, false },
-    { "TestWithStream_CallWithIdentifier"_s, ReceiverName::TestWithStream, true, false },
+    MessageDescription { "TestWithSemaphore_ReceiveSemaphore"_s, ReceiverName::TestWithSemaphore, false, false },
+    MessageDescription { "TestWithSemaphore_SendSemaphore"_s, ReceiverName::TestWithSemaphore, false, false },
+    MessageDescription { "TestWithStreamBatched_SendString"_s, ReceiverName::TestWithStreamBatched, true, false },
+    MessageDescription { "TestWithStreamBuffer_SendStreamBuffer"_s, ReceiverName::TestWithStreamBuffer, false, false },
+    MessageDescription { "TestWithStreamServerConnectionHandle_SendStreamServerConnection"_s, ReceiverName::TestWithStreamServerConnectionHandle, false, false },
+    MessageDescription { "TestWithStream_CallWithIdentifier"_s, ReceiverName::TestWithStream, true, false },
 #if PLATFORM(COCOA)
-    { "TestWithStream_SendMachSendRight"_s, ReceiverName::TestWithStream, true, false },
+    MessageDescription { "TestWithStream_SendMachSendRight"_s, ReceiverName::TestWithStream, true, false },
 #endif
-    { "TestWithStream_SendString"_s, ReceiverName::TestWithStream, true, false },
-    { "TestWithStream_SendStringAsync"_s, ReceiverName::TestWithStream, true, false },
-    { "TestWithSuperclassAndWantsAsyncDispatch_LoadURL"_s, ReceiverName::TestWithSuperclassAndWantsAsyncDispatch, false, false },
-    { "TestWithSuperclassAndWantsDispatch_LoadURL"_s, ReceiverName::TestWithSuperclassAndWantsDispatch, false, false },
-    { "TestWithSuperclass_LoadURL"_s, ReceiverName::TestWithSuperclass, false, false },
+    MessageDescription { "TestWithStream_SendString"_s, ReceiverName::TestWithStream, true, false },
+    MessageDescription { "TestWithStream_SendStringAsync"_s, ReceiverName::TestWithStream, true, false },
+    MessageDescription { "TestWithSuperclassAndWantsAsyncDispatch_LoadURL"_s, ReceiverName::TestWithSuperclassAndWantsAsyncDispatch, false, false },
+    MessageDescription { "TestWithSuperclassAndWantsDispatch_LoadURL"_s, ReceiverName::TestWithSuperclassAndWantsDispatch, false, false },
+    MessageDescription { "TestWithSuperclass_LoadURL"_s, ReceiverName::TestWithSuperclass, false, false },
 #if ENABLE(TEST_FEATURE)
-    { "TestWithSuperclass_TestAsyncMessage"_s, ReceiverName::TestWithSuperclass, false, false },
-    { "TestWithSuperclass_TestAsyncMessageWithConnection"_s, ReceiverName::TestWithSuperclass, false, false },
-    { "TestWithSuperclass_TestAsyncMessageWithMultipleArguments"_s, ReceiverName::TestWithSuperclass, false, false },
-    { "TestWithSuperclass_TestAsyncMessageWithNoArguments"_s, ReceiverName::TestWithSuperclass, false, false },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessage"_s, ReceiverName::TestWithSuperclass, false, false },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageWithConnection"_s, ReceiverName::TestWithSuperclass, false, false },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageWithMultipleArguments"_s, ReceiverName::TestWithSuperclass, false, false },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageWithNoArguments"_s, ReceiverName::TestWithSuperclass, false, false },
 #endif
-    { "TestWithWantsAsyncDispatch_TestMessage"_s, ReceiverName::TestWithWantsAsyncDispatch, false, false },
-    { "TestWithWantsDispatchNoSyncMessages_TestMessage"_s, ReceiverName::TestWithWantsDispatchNoSyncMessages, false, false },
-    { "TestWithWantsDispatch_TestMessage"_s, ReceiverName::TestWithWantsDispatch, false, false },
+    MessageDescription { "TestWithWantsAsyncDispatch_TestMessage"_s, ReceiverName::TestWithWantsAsyncDispatch, false, false },
+    MessageDescription { "TestWithWantsDispatchNoSyncMessages_TestMessage"_s, ReceiverName::TestWithWantsDispatchNoSyncMessages, false, false },
+    MessageDescription { "TestWithWantsDispatch_TestMessage"_s, ReceiverName::TestWithWantsDispatch, false, false },
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION && SOME_OTHER_MESSAGE_CONDITION))
-    { "TestWithoutAttributes_AddEvent"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_AddEvent"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
-    { "TestWithoutAttributes_Close"_s, ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_CreatePlugin"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_Close"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_CreatePlugin"_s, ReceiverName::TestWithoutAttributes, false, false },
 #if ENABLE(DEPRECATED_FEATURE)
-    { "TestWithoutAttributes_DeprecatedOperation"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_DeprecatedOperation"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
 #if PLATFORM(MAC)
-    { "TestWithoutAttributes_DidCreateWebProcessConnection"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_DidCreateWebProcessConnection"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
-    { "TestWithoutAttributes_DidReceivePolicyDecision"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_DidReceivePolicyDecision"_s, ReceiverName::TestWithoutAttributes, false, false },
 #if ENABLE(FEATURE_FOR_TESTING)
-    { "TestWithoutAttributes_ExperimentalOperation"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_ExperimentalOperation"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
-    { "TestWithoutAttributes_GetPlugins"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_GetPlugins"_s, ReceiverName::TestWithoutAttributes, false, false },
 #if PLATFORM(MAC)
-    { "TestWithoutAttributes_InterpretKeyEvent"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_InterpretKeyEvent"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
 #if ENABLE(TOUCH_EVENTS)
-    { "TestWithoutAttributes_LoadSomething"_s, ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_LoadSomethingElse"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_LoadSomething"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_LoadSomethingElse"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
-    { "TestWithoutAttributes_LoadURL"_s, ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_PreferencesDidChange"_s, ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_RunJavaScriptAlert"_s, ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_SendDoubleAndFloat"_s, ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_SendInts"_s, ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_SetVideoLayerID"_s, ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_TemplateTest"_s, ReceiverName::TestWithoutAttributes, false, false },
-    { "TestWithoutAttributes_TestParameterAttributes"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_LoadURL"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_PreferencesDidChange"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_RunJavaScriptAlert"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_SendDoubleAndFloat"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_SendInts"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_SetVideoLayerID"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_TemplateTest"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_TestParameterAttributes"_s, ReceiverName::TestWithoutAttributes, false, false },
 #if (ENABLE(TOUCH_EVENTS) && (NESTED_MESSAGE_CONDITION || SOME_OTHER_MESSAGE_CONDITION))
-    { "TestWithoutAttributes_TouchEvent"_s, ReceiverName::TestWithoutAttributes, false, false },
+    MessageDescription { "TestWithoutAttributes_TouchEvent"_s, ReceiverName::TestWithoutAttributes, false, false },
 #endif
-    { "TestWithoutUsingIPCConnection_MessageWithArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithoutArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
-    { "CancelSyncMessageReply"_s, ReceiverName::IPC, false, false },
+    MessageDescription { "TestWithoutUsingIPCConnection_MessageWithArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    MessageDescription { "TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReply"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    MessageDescription { "TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    MessageDescription { "TestWithoutUsingIPCConnection_MessageWithoutArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    MessageDescription { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReply"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    MessageDescription { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgument"_s, ReceiverName::TestWithoutUsingIPCConnection, false, false },
+    MessageDescription { "CancelSyncMessageReply"_s, ReceiverName::IPC, false, false },
 #if PLATFORM(COCOA)
-    { "InitializeConnection"_s, ReceiverName::IPC, false, false },
+    MessageDescription { "InitializeConnection"_s, ReceiverName::IPC, false, false },
 #endif
-    { "LegacySessionState"_s, ReceiverName::IPC, false, false },
-    { "ProcessOutOfStreamMessage"_s, ReceiverName::IPC, false, false },
-    { "SetStreamDestinationID"_s, ReceiverName::IPC, false, false },
-    { "SyncMessageReply"_s, ReceiverName::IPC, false, false },
+    MessageDescription { "LegacySessionState"_s, ReceiverName::IPC, false, false },
+    MessageDescription { "ProcessOutOfStreamMessage"_s, ReceiverName::IPC, false, false },
+    MessageDescription { "SetStreamDestinationID"_s, ReceiverName::IPC, false, false },
+    MessageDescription { "SyncMessageReply"_s, ReceiverName::IPC, false, false },
 #if USE(AVFOUNDATION)
-    { "TestWithCVPixelBuffer_ReceiveCVPixelBufferReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithCVPixelBuffer_ReceiveCVPixelBufferReply"_s, ReceiverName::AsyncReply, false, false },
 #endif
-    { "TestWithImageData_ReceiveImageDataReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithLegacyReceiver_CreatePluginReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithLegacyReceiver_GetPluginsReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithImageData_ReceiveImageDataReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithLegacyReceiver_CreatePluginReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithLegacyReceiver_GetPluginsReply"_s, ReceiverName::AsyncReply, false, false },
 #if PLATFORM(MAC)
-    { "TestWithLegacyReceiver_InterpretKeyEventReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithLegacyReceiver_InterpretKeyEventReply"_s, ReceiverName::AsyncReply, false, false },
 #endif
-    { "TestWithLegacyReceiver_RunJavaScriptAlertReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithSemaphore_ReceiveSemaphoreReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithStream_CallWithIdentifierReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithStream_SendStringAsyncReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithLegacyReceiver_RunJavaScriptAlertReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithSemaphore_ReceiveSemaphoreReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithStream_CallWithIdentifierReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithStream_SendStringAsyncReply"_s, ReceiverName::AsyncReply, false, false },
 #if ENABLE(TEST_FEATURE)
-    { "TestWithSuperclass_TestAsyncMessageReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithSuperclass_TestAsyncMessageWithConnectionReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageWithConnectionReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageWithMultipleArgumentsReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithSuperclass_TestAsyncMessageWithNoArgumentsReply"_s, ReceiverName::AsyncReply, false, false },
 #endif
-    { "TestWithoutAttributes_CreatePluginReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithoutAttributes_GetPluginsReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithoutAttributes_CreatePluginReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithoutAttributes_GetPluginsReply"_s, ReceiverName::AsyncReply, false, false },
 #if PLATFORM(MAC)
-    { "TestWithoutAttributes_InterpretKeyEventReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithoutAttributes_InterpretKeyEventReply"_s, ReceiverName::AsyncReply, false, false },
 #endif
-    { "TestWithoutAttributes_RunJavaScriptAlertReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReplyReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReplyReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply"_s, ReceiverName::AsyncReply, false, false },
-    { "TestWithLegacyReceiver_GetPluginProcessConnection"_s, ReceiverName::TestWithLegacyReceiver, true, false },
-    { "TestWithLegacyReceiver_TestMultipleAttributes"_s, ReceiverName::TestWithLegacyReceiver, true, false },
+    MessageDescription { "TestWithoutAttributes_RunJavaScriptAlertReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithoutUsingIPCConnection_MessageWithArgumentAndEmptyReplyReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithoutUsingIPCConnection_MessageWithArgumentAndReplyWithArgumentReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndEmptyReplyReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithoutUsingIPCConnection_MessageWithoutArgumentAndReplyWithArgumentReply"_s, ReceiverName::AsyncReply, false, false },
+    MessageDescription { "TestWithLegacyReceiver_GetPluginProcessConnection"_s, ReceiverName::TestWithLegacyReceiver, true, false },
+    MessageDescription { "TestWithLegacyReceiver_TestMultipleAttributes"_s, ReceiverName::TestWithLegacyReceiver, true, false },
 #if PLATFORM(COCOA)
-    { "TestWithStream_ReceiveMachSendRight"_s, ReceiverName::TestWithStream, true, false },
-    { "TestWithStream_SendAndReceiveMachSendRight"_s, ReceiverName::TestWithStream, true, false },
+    MessageDescription { "TestWithStream_ReceiveMachSendRight"_s, ReceiverName::TestWithStream, true, false },
+    MessageDescription { "TestWithStream_SendAndReceiveMachSendRight"_s, ReceiverName::TestWithStream, true, false },
 #endif
-    { "TestWithStream_SendStringSync"_s, ReceiverName::TestWithStream, true, false },
-    { "TestWithSuperclassAndWantsAsyncDispatch_TestSyncMessage"_s, ReceiverName::TestWithSuperclassAndWantsAsyncDispatch, true, false },
-    { "TestWithSuperclassAndWantsDispatch_TestSyncMessage"_s, ReceiverName::TestWithSuperclassAndWantsDispatch, true, false },
-    { "TestWithSuperclass_TestSyncMessage"_s, ReceiverName::TestWithSuperclass, true, false },
-    { "TestWithSuperclass_TestSynchronousMessage"_s, ReceiverName::TestWithSuperclass, true, false },
-    { "TestWithWantsAsyncDispatch_TestSyncMessage"_s, ReceiverName::TestWithWantsAsyncDispatch, true, false },
-    { "TestWithWantsDispatch_TestSyncMessage"_s, ReceiverName::TestWithWantsDispatch, true, false },
-    { "TestWithoutAttributes_GetPluginProcessConnection"_s, ReceiverName::TestWithoutAttributes, true, false },
-    { "TestWithoutAttributes_TestMultipleAttributes"_s, ReceiverName::TestWithoutAttributes, true, false },
-    { "WrappedAsyncMessageForTesting"_s, ReceiverName::IPC, true, false },
-    { "<invalid message name>"_s, ReceiverName::Invalid, false, false }
+    MessageDescription { "TestWithStream_SendStringSync"_s, ReceiverName::TestWithStream, true, false },
+    MessageDescription { "TestWithSuperclassAndWantsAsyncDispatch_TestSyncMessage"_s, ReceiverName::TestWithSuperclassAndWantsAsyncDispatch, true, false },
+    MessageDescription { "TestWithSuperclassAndWantsDispatch_TestSyncMessage"_s, ReceiverName::TestWithSuperclassAndWantsDispatch, true, false },
+    MessageDescription { "TestWithSuperclass_TestSyncMessage"_s, ReceiverName::TestWithSuperclass, true, false },
+    MessageDescription { "TestWithSuperclass_TestSynchronousMessage"_s, ReceiverName::TestWithSuperclass, true, false },
+    MessageDescription { "TestWithWantsAsyncDispatch_TestSyncMessage"_s, ReceiverName::TestWithWantsAsyncDispatch, true, false },
+    MessageDescription { "TestWithWantsDispatch_TestSyncMessage"_s, ReceiverName::TestWithWantsDispatch, true, false },
+    MessageDescription { "TestWithoutAttributes_GetPluginProcessConnection"_s, ReceiverName::TestWithoutAttributes, true, false },
+    MessageDescription { "TestWithoutAttributes_TestMultipleAttributes"_s, ReceiverName::TestWithoutAttributes, true, false },
+    MessageDescription { "WrappedAsyncMessageForTesting"_s, ReceiverName::IPC, true, false },
+    MessageDescription { "<invalid message name>"_s, ReceiverName::Invalid, false, false }
 };
 
 } // namespace IPC::Detail

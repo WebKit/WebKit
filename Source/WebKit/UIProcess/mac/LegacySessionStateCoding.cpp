@@ -806,9 +806,7 @@ private:
 
     inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, size_t size) const
     {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        auto* bufferEnd = m_buffer.data() + m_buffer.size();
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        auto* bufferEnd = std::to_address(m_buffer.end());
         return bufferEnd >= alignedPosition && static_cast<size_t>(bufferEnd - alignedPosition) >= size;
     }
 

@@ -26,8 +26,6 @@
 #import "config.h"
 #import "SandboxInitializationParameters.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 
 SandboxInitializationParameters::SandboxInitializationParameters()
@@ -39,21 +37,21 @@ SandboxInitializationParameters::~SandboxInitializationParameters() = default;
 
 void SandboxInitializationParameters::appendPathInternal(ASCIILiteral name, const char* path)
 {
-    char normalizedPath[PATH_MAX];
-    if (!realpath(path, normalizedPath))
+    std::array<char, PATH_MAX> normalizedPath;
+    if (!realpath(path, normalizedPath.data()))
         normalizedPath[0] = '\0';
 
     m_parameterNames.append(name);
-    m_parameterValues.append(normalizedPath);
+    m_parameterValues.append(normalizedPath.data());
 }
 
 void SandboxInitializationParameters::addConfDirectoryParameter(ASCIILiteral name, int confID)
 {
-    char path[PATH_MAX];
-    if (confstr(confID, path, PATH_MAX) <= 0)
+    std::array<char, PATH_MAX> path;
+    if (confstr(confID, path.data(), PATH_MAX) <= 0)
         path[0] = '\0';
 
-    appendPathInternal(name, path);
+    appendPathInternal(name, path.data());
 }
 
 void SandboxInitializationParameters::addPathParameter(ASCIILiteral name, NSString *path)
@@ -101,5 +99,3 @@ const char* SandboxInitializationParameters::value(size_t index) const
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

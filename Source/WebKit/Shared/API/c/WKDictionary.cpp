@@ -30,15 +30,16 @@
 #include "APIDictionary.h"
 #include "WKAPICast.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 WKTypeID WKDictionaryGetTypeID()
 {
     return WebKit::toAPI(API::Dictionary::APIType);
 }
 
-WK_EXPORT WKDictionaryRef WKDictionaryCreate(const WKStringRef* keys, const WKTypeRef* values, size_t numberOfValues)
+WK_EXPORT WKDictionaryRef WKDictionaryCreate(const WKStringRef* rawKeys, const WKTypeRef* rawValues, size_t numberOfValues)
 {
+    auto keys = unsafeForgeSpan(rawKeys, numberOfValues);
+    auto values = unsafeForgeSpan(rawValues, numberOfValues);
+
     API::Dictionary::MapType map;
     map.reserveInitialCapacity(numberOfValues);
     for (size_t i = 0; i < numberOfValues; ++i)
@@ -61,5 +62,3 @@ WKArrayRef WKDictionaryCopyKeys(WKDictionaryRef dictionaryRef)
 {
     return WebKit::toAPI(&WebKit::toImpl(dictionaryRef)->keys().leakRef());
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

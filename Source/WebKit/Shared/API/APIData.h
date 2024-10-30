@@ -26,13 +26,12 @@
 #pragma once
 
 #include "APIObject.h"
+#include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(COCOA)
 #include <wtf/RetainPtr.h>
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 OBJC_CLASS NSData;
 
@@ -49,14 +48,14 @@ public:
 
     static Ref<Data> create(std::span<const uint8_t> bytes)
     {
-        uint8_t* copiedBytes = nullptr;
+        std::span<uint8_t> copiedBytes;
 
-        if (bytes.size()) {
-            copiedBytes = static_cast<uint8_t*>(fastMalloc(bytes.size()));
-            memcpy(copiedBytes, bytes.data(), bytes.size());
+        if (!bytes.empty()) {
+            copiedBytes = unsafeForgeSpan(static_cast<uint8_t*>(fastMalloc(bytes.size())), bytes.size());
+            memcpySpan(copiedBytes, bytes);
         }
 
-        return createWithoutCopying({ copiedBytes, bytes.size() }, [] (uint8_t* bytes, const void*) {
+        return createWithoutCopying(copiedBytes, [] (uint8_t* bytes, const void*) {
             if (bytes)
                 fastFree(static_cast<void*>(bytes));
         }, nullptr);
@@ -71,7 +70,7 @@ public:
     {
         auto bufferSize = buffer.size();
         auto bufferPointer = buffer.releaseBuffer().leakPtr();
-        return createWithoutCopying({ bufferPointer, bufferSize }, [] (uint8_t* bytes, const void*) {
+        return createWithoutCopying(unsafeForgeSpan(bufferPointer, bufferSize), [] (uint8_t* bytes, const void*) {
             if (bytes)
                 WTF::VectorMalloc::free(bytes);
         }, nullptr);
@@ -105,5 +104,3 @@ private:
 } // namespace API
 
 SPECIALIZE_TYPE_TRAITS_API_OBJECT(Data);
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

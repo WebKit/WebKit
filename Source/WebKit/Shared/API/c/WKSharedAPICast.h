@@ -36,6 +36,7 @@
 #include "SameDocumentNavigationType.h"
 #include "WKBase.h"
 #include "WKContextMenuItemTypes.h"
+#include "WKData.h"
 #include "WKDiagnosticLoggingResultType.h"
 #include "WKEvent.h"
 #include "WKFindOptions.h"

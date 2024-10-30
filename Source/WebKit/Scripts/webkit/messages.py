@@ -1532,8 +1532,6 @@ def generate_message_names_header(receivers):
     result.append('#include <wtf/EnumTraits.h>\n')
     result.append('#include <wtf/text/ASCIILiteral.h>\n')
     result.append('\n')
-    result.append('WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN\n')
-    result.append('\n')
     result.append('namespace IPC {\n')
     result.append('\n')
     result.append('enum class ReceiverName : uint8_t {')
@@ -1571,7 +1569,8 @@ def generate_message_names_header(receivers):
         result.append('    bool %s : 1;\n' % fname)
     result.append('};\n')
     result.append('\n')
-    result.append('extern const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Count) + 1];\n')
+    result.append('using MessageDescriptionsArray = std::array<MessageDescription, static_cast<size_t>(MessageName::Count) + 1>;\n')
+    result.append('extern const MessageDescriptionsArray messageDescriptions;\n\n')
     result.append('}\n')
     result.append('\n')
     fnames = [('ReceiverName', 'receiverName'), ('ASCIILiteral', 'description')]
@@ -1602,8 +1601,6 @@ def generate_message_names_header(receivers):
     result.append('}\n')
     result.append('\n')
     result.append('} // namespace WTF\n')
-    result.append('\n')
-    result.append('WTF_ALLOW_UNSAFE_BUFFER_USAGE_END\n')
     return ''.join(result)
 
 
@@ -1615,21 +1612,21 @@ def generate_message_names_implementation(receivers):
     result.append('\n')
     result.append('namespace IPC::Detail {\n')
     result.append('\n')
-    result.append('const MessageDescription messageDescriptions[static_cast<size_t>(MessageName::Count) + 1] = {\n')
+    result.append('const MessageDescriptionsArray messageDescriptions {\n')
 
     message_enumerators = get_message_enumerators(receivers)
     for condition, enumerators in itertools.groupby(message_enumerators, lambda e: e.condition()):
         if condition:
             result.append('#if %s\n' % condition)
         for enumerator in enumerators:
-            result.append('    { "%s"_s, ReceiverName::%s' % (enumerator, enumerator.receiver.name))
+            result.append('    MessageDescription { "%s"_s, ReceiverName::%s' % (enumerator, enumerator.receiver.name))
             for attr_list in sorted(attributes_to_generate_validators.values()):
                 value = "true" if set(attr_list).intersection(set(enumerator.messages[0].attributes).union(set(enumerator.receiver.attributes))) else "false"
                 result.append(', %s' % value)
             result.append(' },\n')
         if condition:
             result.append('#endif\n')
-    result.append('    { "<invalid message name>"_s, ReceiverName::Invalid%s }\n' % (", false" * len(attributes_to_generate_validators)))
+    result.append('    MessageDescription { "<invalid message name>"_s, ReceiverName::Invalid%s }\n' % (", false" * len(attributes_to_generate_validators)))
     result.append('};\n')
     result.append('\n')
     result.append('} // namespace IPC::Detail\n')

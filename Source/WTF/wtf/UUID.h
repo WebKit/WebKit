@@ -79,6 +79,12 @@ public:
         memcpy(&m_data, span.data(), 16);
     }
 
+    explicit UUID(std::span<const uint8_t> span)
+    {
+        RELEASE_ASSERT(span.size() == 16);
+        memcpy(&m_data, span.data(), 16);
+    }
+
     explicit constexpr UUID(UInt128 data)
         : m_data(data)
     {

@@ -29,9 +29,8 @@
 #include "APIURLRequest.h"
 #include "WKAPICast.h"
 #include "WKData.h"
+#include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 WKTypeID WKURLRequestGetTypeID()
 {
@@ -61,7 +60,7 @@ WKStringRef WKURLRequestCopyHTTPMethod(WKURLRequestRef requestRef)
 WKURLRequestRef WKURLRequestCopySettingHTTPBody(WKURLRequestRef requestRef, WKDataRef body)
 {
     WebCore::ResourceRequest requestCopy(WebKit::toImpl(requestRef)->resourceRequest());
-    requestCopy.setHTTPBody(WebCore::FormData::create(std::span { WKDataGetBytes(body), WKDataGetSize(body) }));
+    requestCopy.setHTTPBody(WebCore::FormData::create(WKDataGetSpan(body)));
     return WebKit::toAPI(&API::URLRequest::create(requestCopy).leakRef());
 }
 
@@ -69,5 +68,3 @@ void WKURLRequestSetDefaultTimeoutInterval(double timeoutInterval)
 {
     API::URLRequest::setDefaultTimeoutInterval(timeoutInterval);
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

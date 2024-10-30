@@ -57,6 +57,7 @@
 
 #if USE(CF)
 #include "WebArchiveDumpSupport.h"
+#include <wtf/cf/VectorCF.h>
 #include <wtf/text/cf/StringConcatenateCF.h>
 #endif
 
@@ -694,7 +695,7 @@ void InjectedBundlePage::dumpDOMAsWebArchive(WKBundleFrameRef frame, StringBuild
 {
 #if USE(CF)
     auto wkData = adoptWK(WKBundleFrameCopyWebArchive(frame));
-    auto cfData = adoptCF(CFDataCreate(0, WKDataGetBytes(wkData.get()), WKDataGetSize(wkData.get())));
+    RetainPtr cfData = toCFData(WKDataGetSpan(wkData.get()));
     stringBuilder.append(WebCoreTestSupport::createXMLStringFromWebArchiveData(cfData.get()).get());
 #endif
 }

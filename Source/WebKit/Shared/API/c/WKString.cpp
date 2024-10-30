@@ -31,9 +31,8 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/OpaqueJSString.h>
 #include <WebCore/WebCoreJITOperations.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/unicode/UTF8Conversion.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 WKTypeID WKStringGetTypeID()
 {
@@ -47,7 +46,7 @@ WKStringRef WKStringCreateWithUTF8CString(const char* string)
 
 WKStringRef WKStringCreateWithUTF8CStringWithLength(const char* string, size_t stringLength)
 {
-    return WebKit::toAPI(&API::String::create(WTF::String::fromUTF8({ string, stringLength })).leakRef());
+    return WebKit::toAPI(&API::String::create(WTF::String::fromUTF8(unsafeForgeSpan(string, stringLength))).leakRef());
 }
 
 bool WKStringIsEmpty(WKStringRef stringRef)
@@ -86,21 +85,21 @@ size_t WKStringGetUTF8CStringImpl(WKStringRef stringRef, char* buffer, size_t bu
 
     auto string = WebKit::toImpl(stringRef)->stringView();
 
-    std::span<char8_t> target { byteCast<char8_t>(buffer), bufferSize - 1 };
+    auto target = unsafeForgeSpan(byteCast<char8_t>(buffer), bufferSize);
     WTF::Unicode::ConversionResult<char8_t> result;
     if (string.is8Bit())
-        result = WTF::Unicode::convert(string.span8(), target);
+        result = WTF::Unicode::convert(string.span8(), target.first(bufferSize - 1));
     else {
         if constexpr (strict == NonStrict)
-            result = WTF::Unicode::convertReplacingInvalidSequences(string.span16(), target);
+            result = WTF::Unicode::convertReplacingInvalidSequences(string.span16(), target.first(bufferSize - 1));
         else {
-            result = WTF::Unicode::convert(string.span16(), target);
+            result = WTF::Unicode::convert(string.span16(), target.first(bufferSize - 1));
             if (result.code == WTF::Unicode::ConversionResultCode::SourceInvalid)
                 return 0;
         }
     }
 
-    buffer[result.buffer.size()] = '\0';
+    target[result.buffer.size()] = '\0';
     return result.buffer.size() + 1;
 }
 
@@ -146,5 +145,3 @@ JSStringRef WKStringCopyJSString(WKStringRef stringRef)
     WebCore::populateJITOperations();
     return OpaqueJSString::tryCreate(WebKit::toImpl(stringRef)->string()).leakRef();
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

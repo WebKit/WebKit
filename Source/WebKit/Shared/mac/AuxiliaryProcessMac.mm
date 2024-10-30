@@ -501,9 +501,7 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
             return false;
         memcpy(profile.builtin, sandboxBuiltin.data(), cachedSandboxHeader.builtinSize);
     }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    ASSERT(sandboxData.subspan(profile.size).data() <= (cachedSandboxContents.data() + cachedSandboxContents.size()));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    ASSERT(sandboxData.subspan(profile.size).data() <= std::to_address(cachedSandboxContents.end()));
     profile.data = sandboxData.data();
 
     if (sandbox_apply(&profile)) {
