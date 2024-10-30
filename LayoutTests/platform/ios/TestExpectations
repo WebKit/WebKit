@@ -1531,8 +1531,6 @@ svg/css/font-face-variant-crash.html
 
 # storage/indexeddb tests to triage
 webkit.org/b/181752 storage/indexeddb/dont-commit-on-blocked-private.html [ Failure ]
-webkit.org/b/181752 storage/indexeddb/events-private.html [ Failure ]
-webkit.org/b/181752 storage/indexeddb/events.html [ Failure ]
 webkit.org/b/181752 storage/indexeddb/open-db-private-browsing.html [ Failure ]
 webkit.org/b/181752 storage/indexeddb/properties-disabled-at-runtime.html [ Failure ]
 webkit.org/b/181752 storage/indexeddb/removed-private.html [ Failure ]
