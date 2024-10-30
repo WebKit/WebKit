@@ -204,6 +204,7 @@ private:
     // https://bugs.webkit.org/show_bug.cgi?id=265566
     unsigned m_styleRuleNestingLevel { 0 };
     unsigned m_ruleListNestingLevel { 0 };
+    Vector<const CSSSelectorList*> m_selectorListStack;
     Vector<CSSParserEnum::NestedContextType, 16> m_ancestorRuleTypeStack;
     std::optional<CSSParserEnum::NestedContextType> lastAncestorRuleType() const
     {

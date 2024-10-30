@@ -74,6 +74,7 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
         newRule = CSSParserImpl::parseNestedDeclarations(parserContext(), ruleString);
         if (!newRule)
             return Exception { ExceptionCode::SyntaxError };
+
     }
 
     if (newRule->isImportRule() || newRule->isNamespaceRule()) {
@@ -93,6 +94,7 @@ ExceptionOr<unsigned> CSSGroupingRule::insertRule(const String& ruleString, unsi
     CSSStyleSheet::RuleMutationScope mutationScope(this);
 
     m_groupRule->wrapperInsertRule(index, newRule.releaseNonNull());
+    resolveChildSelectors();
 
     m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
     return index;

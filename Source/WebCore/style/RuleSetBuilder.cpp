@@ -39,7 +39,6 @@
 #include "Document.h"
 #include "DocumentInlines.h"
 #include "MediaQueryEvaluator.h"
-#include "MutableCSSSelector.h"
 #include "StyleResolver.h"
 #include "StyleRuleImport.h"
 #include "StyleScope.h"
@@ -49,12 +48,11 @@
 namespace WebCore {
 namespace Style {
 
-RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MQ::MediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit, ShouldResolveNesting shouldResolveNesting)
+RuleSetBuilder::RuleSetBuilder(RuleSet& ruleSet, const MQ::MediaQueryEvaluator& evaluator, Resolver* resolver, ShrinkToFit shrinkToFit)
     : m_ruleSet(&ruleSet)
     , m_mediaQueryCollector({ evaluator })
     , m_resolver(resolver)
     , m_shrinkToFit(shrinkToFit)
-    , m_shouldResolveNesting(shouldResolveNesting)
 {
 }
 
@@ -131,30 +129,7 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
             m_ruleSet->m_scopeRules.append({ scopeRule.copyRef(), previousScopeIdentifier });
             m_currentScopeIdentifier = m_ruleSet->m_scopeRules.size();
         }
-
-        // https://drafts.csswg.org/css-nesting/#nesting-at-scope
-        // For the purposes of the style rules in its body and its own <scope-end> selector,
-        // the @scope rule is treated as an ancestor style rule, matching the elements matched by its <scope-start> selector.
-        if (m_shouldResolveNesting == ShouldResolveNesting::Yes) {
-            const CSSSelectorList* parentResolvedSelectorList = nullptr;
-            if (m_selectorListStack.size())
-                parentResolvedSelectorList =  m_selectorListStack.last();
-            if (!scopeRule->originalScopeStart().isEmpty())
-                scopeRule->setScopeStart(CSSSelectorParser::resolveNestingParent(scopeRule->originalScopeStart(), parentResolvedSelectorList));
-            if (!scopeRule->originalScopeEnd().isEmpty())
-                scopeRule->setScopeEnd(CSSSelectorParser::resolveNestingParent(scopeRule->originalScopeEnd(), &scopeRule->scopeStart()));
-        }
-
-        const auto& scopeStart = scopeRule->scopeStart();
-        // If <scope-start> is empty, it doesn't create a nesting context (the nesting selector might eventually be replaced by :scope)
-        if (!scopeStart.isEmpty())
-            m_selectorListStack.append(&scopeStart);
-        m_ancestorStack.append(CSSParserEnum::NestedContextType::Scope);
         addChildRules(scopeRule->childRules());
-        m_ancestorStack.removeLast();
-        if (!scopeStart.isEmpty())
-            m_selectorListStack.removeLast();
-
         if (m_ruleSet)
             m_currentScopeIdentifier = previousScopeIdentifier;
         return;
@@ -300,21 +275,14 @@ void RuleSetBuilder::addStyleRuleWithSelectorList(const CSSSelectorList& selecto
     }
 }
 
-void RuleSetBuilder::addStyleRule(StyleRuleWithNesting& rule)
+void RuleSetBuilder::addStyleRule(const StyleRuleWithNesting& rule)
 {
-    if (m_shouldResolveNesting == ShouldResolveNesting::Yes)
-        resolveSelectorListWithNesting(rule);
-
     const auto& selectorList = rule.selectorList();
     addStyleRuleWithSelectorList(selectorList, rule);
 
     // Process nested rules
-    m_selectorListStack.append(&selectorList);
-    m_ancestorStack.append(CSSParserEnum::NestedContextType::Style);
     for (auto& nestedRule : rule.nestedRules())
         addChildRule(nestedRule);
-    m_ancestorStack.removeLast();
-    m_selectorListStack.removeLast();
 }
 
 void RuleSetBuilder::addStyleRule(const StyleRule& rule)
@@ -322,29 +290,8 @@ void RuleSetBuilder::addStyleRule(const StyleRule& rule)
     addStyleRuleWithSelectorList(rule.selectorList(), rule);
 }
 
-void RuleSetBuilder::addStyleRule(StyleRuleNestedDeclarations& rule)
+void RuleSetBuilder::addStyleRule(const StyleRuleNestedDeclarations& rule)
 {
-    auto whereScopeSelector = [] {
-        auto scopeSelector = makeUnique<MutableCSSSelector>();
-        scopeSelector->setMatch(CSSSelector::Match::PseudoClass);
-        scopeSelector->setPseudoClass(CSSSelector::PseudoClass::Scope);
-        auto whereSelector = makeUnique<MutableCSSSelector>();
-        whereSelector->setMatch(CSSSelector::Match::PseudoClass);
-        whereSelector->setPseudoClass(CSSSelector::PseudoClass::Where);
-        whereSelector->setSelectorList(makeUnique<CSSSelectorList>(MutableCSSSelectorList::from(WTFMove(scopeSelector))));
-        return whereSelector;
-    };
-
-    auto selectorList = [&] {
-        ASSERT(m_selectorListStack.size());
-        ASSERT(m_ancestorStack.size());
-        if (m_ancestorStack.last() == CSSParserEnum::NestedContextType::Style)
-            return *m_selectorListStack.last();
-        ASSERT(m_ancestorStack.last() == CSSParserEnum::NestedContextType::Scope);
-        return CSSSelectorList { MutableCSSSelectorList::from(whereScopeSelector()) };
-    }();
-
-    rule.wrapperAdoptSelectorList(WTFMove(selectorList));
     addStyleRuleWithSelectorList(rule.selectorList(), rule);
 }
 

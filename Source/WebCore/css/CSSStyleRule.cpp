@@ -34,6 +34,7 @@
 #include "RuleSet.h"
 #include "StyleProperties.h"
 #include "StyleRule.h"
+#include "wtf/Assertions.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -264,8 +265,15 @@ ExceptionOr<unsigned> CSSStyleRule::insertRule(const String& ruleString, unsigne
         styleSheet->contents().clearHasNestingRulesCache();
 
     downcast<StyleRuleWithNesting>(m_styleRule)->nestedRules().insert(index, newRule.releaseNonNull());
+    resolveChildSelectors();
+
     m_childRuleCSSOMWrappers.insert(index, RefPtr<CSSRule>());
     return index;
+}
+
+void CSSStyleRule::resolveChildSelectors()
+{
+    ASSERT_NOT_REACHED();
 }
 
 ExceptionOr<void> CSSStyleRule::deleteRule(unsigned index)
