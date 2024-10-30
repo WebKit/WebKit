@@ -71,6 +71,8 @@
 #include "PingPongStackOverflowTest.h"
 #include "TypedArrayCTest.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(const char*);
 #endif
@@ -2417,3 +2419,5 @@ __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, char* argv[])
     return main(argc, argv);
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

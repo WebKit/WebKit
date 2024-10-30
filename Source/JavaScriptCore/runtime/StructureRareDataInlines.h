@@ -31,6 +31,8 @@
 #include "StructureChain.h"
 #include "StructureRareData.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 // FIXME: Use ObjectPropertyConditionSet instead.
@@ -214,3 +216,5 @@ inline void StructureRareData::clearCachedPropertyNameEnumerator()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

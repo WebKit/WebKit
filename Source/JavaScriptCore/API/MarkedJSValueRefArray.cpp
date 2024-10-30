@@ -28,6 +28,8 @@
 
 #include "JSCJSValue.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 MarkedJSValueRefArray::MarkedJSValueRefArray(JSGlobalContextRef context, unsigned size)
@@ -67,3 +69,5 @@ template void MarkedJSValueRefArray::visitAggregate(AbstractSlotVisitor&);
 template void MarkedJSValueRefArray::visitAggregate(SlotVisitor&);
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

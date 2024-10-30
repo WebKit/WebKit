@@ -31,6 +31,8 @@
 #include "FTLState.h"
 #include "JSCPtrTag.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace FTL {
 
 using namespace B3;
@@ -183,5 +185,6 @@ std::optional<CodeOrigin> JITCode::findPC(CodeBlock* codeBlock, void* pc)
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(FTL_JIT)

@@ -44,6 +44,8 @@
 #include <wtf/Range.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace ARM64Disassembler {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(A64DOpcodeOpcodeGroup, A64DOpcode::OpcodeGroup);
@@ -1966,5 +1968,7 @@ const char* A64DOpcodeVectorDataProcessingLogical2Source::opName()
 }
 
 } } // namespace JSC::ARM64Disassembler
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ARM64_DISASSEMBLER)

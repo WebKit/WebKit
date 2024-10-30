@@ -36,6 +36,8 @@
 #include <wtf/PrintStream.h>
 #include <wtf/StringPrintStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class UnlinkedValueProfile;
@@ -252,3 +254,5 @@ private:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

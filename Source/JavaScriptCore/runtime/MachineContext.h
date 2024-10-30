@@ -34,6 +34,8 @@
 #include <wtf/PointerPreparations.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace MachineContext {
 
@@ -870,3 +872,5 @@ inline void* llintInstructionPointer(const mcontext_t& machineContext)
 
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

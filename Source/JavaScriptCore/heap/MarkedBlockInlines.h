@@ -33,6 +33,8 @@
 #include "SuperSampler.h"
 #include "VM.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 inline unsigned MarkedBlock::Handle::cellsPerBlock()
@@ -625,3 +627,4 @@ inline IterationStatus MarkedBlock::Handle::forEachMarkedCell(const Functor& fun
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -32,6 +32,8 @@
 #include "JSSymbolTableObject.h"
 #include "SymbolTable.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class LLIntOffsetsExtractor;
@@ -136,3 +138,5 @@ inline JSLexicalEnvironment::JSLexicalEnvironment(VM& vm, Structure* structure, 
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

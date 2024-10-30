@@ -45,6 +45,8 @@
 #define U_HIDE_DRAFT_API 1
 #include <unicode/uformattedvalue.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace IntlDurationFormatInternal {
 static constexpr bool verbose = false;
@@ -891,3 +893,5 @@ ASCIILiteral IntlDurationFormat::displayString(Display display)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -60,6 +60,8 @@
 #include "MultiRepresentationHEICMetrics.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 CachedImage::CachedImage(CachedResourceRequest&& request, PAL::SessionID sessionID, const CookieJar* cookieJar)
@@ -791,3 +793,5 @@ bool CachedImage::isVisibleInViewport(const Document& document) const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

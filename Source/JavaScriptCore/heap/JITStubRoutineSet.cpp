@@ -32,6 +32,8 @@
 #include "HeapInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JITStubRoutineSet);
@@ -187,5 +189,6 @@ template void JITStubRoutineSet::traceMarkedStubRoutines(SlotVisitor&);
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(JIT)

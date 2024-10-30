@@ -28,6 +28,8 @@
 #include "HandleBlock.h"
 #include <wtf/FastMalloc.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 inline HandleBlock* HandleBlock::create(HandleSet* handleSet)
@@ -74,3 +76,5 @@ inline unsigned HandleBlock::nodeCapacity()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

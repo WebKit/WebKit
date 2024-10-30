@@ -28,6 +28,8 @@
 #include <stdint.h>
 #include <unicode/utypes.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Yarr {
 
 // This set of data provides information for each UCS2 code point as to the set of code points
@@ -142,3 +144,5 @@ inline bool areCanonicallyEquivalent(char32_t a, char32_t b, CanonicalMode canon
 }
 
 } } // JSC::Yarr
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

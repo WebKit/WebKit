@@ -54,6 +54,8 @@ ALLOW_COMMA_END
 
 #include "CoreVideoSoftLink.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
@@ -622,5 +624,7 @@ Ref<VideoFrame> VideoFrameCV::clone()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

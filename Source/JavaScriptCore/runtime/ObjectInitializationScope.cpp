@@ -32,6 +32,8 @@
 #include "JSObject.h"
 #include "Scribble.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 #if ASSERT_ENABLED
@@ -116,3 +118,5 @@ void ObjectInitializationScope::verifyPropertiesAreInitialized(JSObject* object)
 #endif // ASSERT_ENABLED
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

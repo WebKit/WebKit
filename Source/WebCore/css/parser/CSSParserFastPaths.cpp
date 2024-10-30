@@ -48,6 +48,8 @@
 #include "StyleColor.h"
 #include "StylePropertyShorthand.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 bool CSSParserFastPaths::isSimpleLengthPropertyID(CSSPropertyID propertyId, CSS::Range& range)
@@ -1106,3 +1108,5 @@ RefPtr<CSSValue> CSSParserFastPaths::maybeParseValue(CSSPropertyID propertyID, S
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

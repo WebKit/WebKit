@@ -38,6 +38,8 @@
 #include "SVGPathStringViewSource.h"
 #include "SVGPathTraversalStateBuilder.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 Path buildPathFromString(StringView d)
@@ -233,3 +235,5 @@ std::optional<SVGPathByteStream> convertSVGPathByteStreamToAbsoluteCoordinates(c
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

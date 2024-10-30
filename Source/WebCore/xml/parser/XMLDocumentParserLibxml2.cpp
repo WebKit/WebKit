@@ -79,6 +79,8 @@
 #include <libxslt/xslt.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 #if ENABLE(XSLT)
@@ -1513,3 +1515,5 @@ std::optional<HashMap<String, String>> parseAttributes(CachedResourceLoader& cac
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

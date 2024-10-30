@@ -58,6 +58,8 @@
 #include "VideoFrameGStreamer.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 struct VideoFrameAdaptor {
@@ -1511,5 +1513,7 @@ String convertEnumerationToString(RealtimeMediaSource::Type enumerationValue)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MEDIA_STREAM)

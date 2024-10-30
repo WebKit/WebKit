@@ -37,6 +37,8 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JITDisassembler);
@@ -171,5 +173,6 @@ void JITDisassembler::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, 
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(JIT)

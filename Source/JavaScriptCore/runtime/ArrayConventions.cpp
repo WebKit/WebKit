@@ -28,6 +28,8 @@
 
 #include "GCMemoryOperations.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 #if USE(JSVALUE64)
@@ -56,3 +58,4 @@ void clearArrayMemset(double* base, unsigned count)
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

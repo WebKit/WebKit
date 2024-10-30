@@ -28,6 +28,8 @@
 
 #include <wtf/NeverDestroyed.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 String convertEnumerationToString(SpeechRecognitionUpdateType enumerationValue)
@@ -99,3 +101,5 @@ Vector<SpeechRecognitionResultData> SpeechRecognitionUpdate::result() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

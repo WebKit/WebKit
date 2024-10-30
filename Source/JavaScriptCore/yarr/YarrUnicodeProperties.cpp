@@ -31,6 +31,8 @@
 #include <string_view>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Yarr {
 
 struct HashIndex {
@@ -120,3 +122,5 @@ bool characterClassMayContainStrings(BuiltInCharacterClassID unicodeClassID)
 }
 
 } } // namespace JSC::Yarr
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

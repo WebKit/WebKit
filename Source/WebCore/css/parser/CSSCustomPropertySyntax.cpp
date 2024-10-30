@@ -31,6 +31,8 @@
 #include "ParsingUtilities.h"
 #include <wtf/SortedArrayMap.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 template<typename CharacterType>
@@ -161,3 +163,5 @@ auto CSSCustomPropertySyntax::typeForTypeName(StringView dataTypeName) -> Type
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -40,6 +40,8 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace JSC;
 
 // Helper functions.
@@ -373,3 +375,5 @@ size_t JSObjectGetArrayBufferByteLength(JSContextRef, JSObjectRef objectRef, JSV
     
     return 0;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

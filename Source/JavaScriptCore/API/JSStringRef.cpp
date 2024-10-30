@@ -33,6 +33,8 @@
 
 using namespace JSC;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 JSStringRef JSStringCreateWithCharacters(const JSChar* chars, size_t numChars)
 {
     JSC::initialize();
@@ -117,3 +119,5 @@ bool JSStringIsEqualToUTF8CString(JSStringRef a, const char* b)
 {
     return JSStringIsEqual(a, adoptRef(JSStringCreateWithUTF8CString(b)).get());
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

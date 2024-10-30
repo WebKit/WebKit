@@ -36,6 +36,8 @@
 
 #define PROPERTY_MAP_DELETED_ENTRY_KEY ((UniquedStringImpl*)1)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(PropertyTable);
@@ -680,3 +682,5 @@ inline void PropertyTable::forEachProperty(const Functor& functor) const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

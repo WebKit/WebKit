@@ -39,6 +39,8 @@
 #define ASSERT_SORTED(begin, end) ((void)0)
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static inline bool cueSortsBefore(const RefPtr<TextTrackCue>& a, const RefPtr<TextTrackCue>& b)
@@ -146,5 +148,7 @@ void TextTrackCueList::updateCueIndex(const TextTrackCue& cue)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

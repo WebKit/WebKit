@@ -43,6 +43,8 @@
 #include <CoreText/CoreText.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ComplexTextController);
@@ -859,3 +861,5 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(const Vector<FloatSize>& a
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

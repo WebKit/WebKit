@@ -274,6 +274,6 @@ int Collator::collate(const char8_t* a, const char8_t* b) const
 
 } // namespace WTF
 
-#endif
-
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif

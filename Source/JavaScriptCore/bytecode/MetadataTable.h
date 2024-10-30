@@ -32,6 +32,8 @@
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class CodeBlock;
@@ -173,3 +175,5 @@ private:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -39,6 +39,8 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // ScalableImageDecoder is a base for all format-specific decoders
@@ -209,5 +211,7 @@ private:
     EncodedDataStatus m_encodedDataStatus { EncodedDataStatus::TypeAvailable };
     bool m_decodingSizeFromSetData { false };
 };
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace WebCore

@@ -75,6 +75,8 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 #if ENABLE(DFG_JIT)
@@ -1023,3 +1025,5 @@ namespace WTF {
 JS_EXPORT_PRIVATE void printInternal(PrintStream&, JSC::CodeBlock*);
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

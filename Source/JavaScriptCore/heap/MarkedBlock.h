@@ -35,6 +35,8 @@
 #include <wtf/PageBlock.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class AlignedMemoryAllocator;    
@@ -723,3 +725,5 @@ template<> struct DefaultHash<JSC::MarkedBlock*> : MarkedBlockHash { };
 void printInternal(PrintStream& out, JSC::MarkedBlock::Handle::SweepMode);
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -28,6 +28,8 @@
 #include "SQLTransactionState.h"
 #include <wtf/Forward.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 template<typename T>
@@ -108,3 +110,5 @@ void SQLTransactionStateMachine<T>::runStateMachine()
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

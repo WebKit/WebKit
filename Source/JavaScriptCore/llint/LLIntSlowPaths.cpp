@@ -72,6 +72,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StringPrintStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace LLInt {
 
 #define LLINT_BEGIN_NO_SET_PC() \
@@ -2866,3 +2868,5 @@ extern "C" NO_RETURN_DUE_TO_CRASH void SYSV_ABI llint_crash()
 }
 
 } } // namespace JSC::LLInt
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

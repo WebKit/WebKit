@@ -22,6 +22,8 @@
 #include "FloatConversion.h"
 #include "Path.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 class RenderSVGResourceMarker;
@@ -162,3 +164,5 @@ private:
 };
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -35,6 +35,8 @@
 #include "ShadowData.h"
 #include "TextRun.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 /*
@@ -419,3 +421,5 @@ OptionSet<TextDecorationLine> TextDecorationPainter::textDecorationsInEffectForS
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

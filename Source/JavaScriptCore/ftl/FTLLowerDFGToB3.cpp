@@ -114,6 +114,8 @@
 #include <wtf/RecursableLambda.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace FTL {
 
 using namespace B3;
@@ -23810,5 +23812,6 @@ void lowerDFGToB3(State& state)
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(FTL_JIT)

@@ -29,8 +29,9 @@
 #include "UnlinkedMetadataTable.h"
 #include <wtf/FastMalloc.h>
 
-namespace JSC {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+namespace JSC {
 
 ALWAYS_INLINE UnlinkedMetadataTable::UnlinkedMetadataTable()
     : m_hasMetadata(false)
@@ -155,3 +156,5 @@ ALWAYS_INLINE void UnlinkedMetadataTable::unlink(MetadataTable& metadataTable)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

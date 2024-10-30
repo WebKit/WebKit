@@ -30,6 +30,8 @@
 #include "TypeError.h"
 #include <wtf/Assertions.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ASCIILiteral LengthExceededTheMaximumArrayLengthError { "Length exceeded the maximum array length"_s };
@@ -1599,3 +1601,5 @@ template JSArray* tryCloneArrayFromFast<ArrayFillMode::Undefined>(JSGlobalObject
 template JSArray* tryCloneArrayFromFast<ArrayFillMode::Empty>(JSGlobalObject*, JSValue);
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

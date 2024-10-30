@@ -48,6 +48,8 @@ static constexpr bool useUnixDomainSockets = true;
 static constexpr bool useUnixDomainSockets = false;
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedBufferBuilder);
@@ -740,3 +742,5 @@ Ref<SharedBuffer> SharedBuffer::create(Ref<FragmentedSharedBuffer>&& fragmentedB
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -33,6 +33,8 @@
 #include "LLIntThunks.h"
 #include "Opcode.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace LLInt {
@@ -263,3 +265,5 @@ void initialize()
 }
 
 } } // namespace JSC::LLInt
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

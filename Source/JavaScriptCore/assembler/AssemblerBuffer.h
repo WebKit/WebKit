@@ -41,6 +41,8 @@
 #include <wtf/ThreadSpecific.h>
 #include <wtf/UnalignedAccess.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
     enum class AssemblerDataType : uint8_t { Code, Hashes };
     template<AssemblerDataType>
@@ -517,5 +519,7 @@ namespace JSC {
     };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER)

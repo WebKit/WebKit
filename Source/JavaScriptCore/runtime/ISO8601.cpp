@@ -37,6 +37,8 @@
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace ISO8601 {
 
@@ -1622,3 +1624,5 @@ bool isYearWithinLimits(double year)
 
 } // namespace ISO8601
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

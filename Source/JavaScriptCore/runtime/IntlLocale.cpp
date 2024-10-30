@@ -38,6 +38,8 @@
 #include <unicode/unumsys.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo IntlLocale::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlLocale) };
@@ -882,3 +884,5 @@ JSObject* IntlLocale::weekInfo(JSGlobalObject* globalObject)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -41,6 +41,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC::Wasm {
 
 WTF_MAKE_COMPACT_TZONE_ALLOCATED_IMPL(Callee);
@@ -534,5 +536,7 @@ BBQCallee::~BBQCallee()
 #endif
 
 } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

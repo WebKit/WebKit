@@ -28,6 +28,8 @@
 #include "DestructionMode.h"
 #include "EnsureStillAliveHere.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class CellContainer;
@@ -113,3 +115,4 @@ void printInternal(PrintStream&, JSC::HeapCell::Kind);
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

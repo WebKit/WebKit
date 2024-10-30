@@ -41,6 +41,8 @@
 #include "VMTrapsInlines.h"
 #include <wtf/UnalignedAccess.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 ALWAYS_INLINE VM& Interpreter::vm()
@@ -164,3 +166,5 @@ ALWAYS_INLINE JSValue Interpreter::tryCallWithArguments(CachedCall& cachedCall, 
 #endif
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

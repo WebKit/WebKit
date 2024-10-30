@@ -67,6 +67,8 @@
 #include <wtf/CommaPrinter.h>
 #include <wtf/ListDump.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace InlineCacheCompilerInternal {
@@ -7936,6 +7938,6 @@ void printInternal(PrintStream& out, AccessType type)
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 #endif // ENABLE(JIT)
-
-

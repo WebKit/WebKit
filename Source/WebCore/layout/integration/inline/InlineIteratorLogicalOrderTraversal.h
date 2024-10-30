@@ -29,6 +29,8 @@
 #include "InlineIteratorTextBox.h"
 #include "RenderBlockFlow.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 namespace InlineIterator {
 
@@ -106,3 +108,5 @@ Vector<LeafBoxIterator> leafBoxesInLogicalOrder(const LineBoxIterator& lineBox, 
 
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

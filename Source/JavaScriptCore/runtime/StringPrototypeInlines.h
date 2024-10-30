@@ -32,6 +32,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringSearch.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 inline Structure* StringPrototype::createStructure(VM& vm, JSGlobalObject* globalObject, JSValue prototype)
@@ -404,3 +406,5 @@ inline JSString* tryReplaceOneCharUsingString(JSGlobalObject* globalObject, JSSt
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

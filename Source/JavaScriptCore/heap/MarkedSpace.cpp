@@ -29,6 +29,8 @@
 #include <wtf/ListDump.h>
 #include <wtf/SimpleStats.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 std::array<unsigned, MarkedSpace::numSizeClasses> MarkedSpace::s_sizeClassForSizeStep;
@@ -591,3 +593,5 @@ void MarkedSpace::addBlockDirectory(const AbstractLocker&, BlockDirectory* direc
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

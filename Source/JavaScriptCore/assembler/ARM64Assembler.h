@@ -61,6 +61,8 @@
 #define MEMPAIROPSIZE_INT(datasize) ((datasize == 64) ? MemPairOp_64 : MemPairOp_32)
 #define MEMPAIROPSIZE_FP(datasize) ((datasize == 128) ? MemPairOp_V128 : (datasize == 64) ? MemPairOp_V64 : MemPairOp_32)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static ALWAYS_INLINE bool is4ByteAligned(const void* ptr)
@@ -4715,5 +4717,7 @@ public:
 #undef DATASIZE
 #undef MEMOPSIZE
 #undef CHECK_FP_MEMOP_DATASIZE
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER) && CPU(ARM64)

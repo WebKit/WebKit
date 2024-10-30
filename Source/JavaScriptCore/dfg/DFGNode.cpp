@@ -34,6 +34,8 @@
 #include "DOMJITSignature.h"
 #include "JSImmutableButterfly.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 
 const char Node::HashSetTemplateInstantiationString[] = "::JSC::DFG::Node*";
@@ -478,5 +480,6 @@ void printInternal(PrintStream& out, Node* node)
 
 } // namespace WTF
 
-#endif // ENABLE(DFG_JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(DFG_JIT)

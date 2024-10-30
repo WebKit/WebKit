@@ -41,6 +41,8 @@
 #include "PixelBuffer.h"
 #include "VideoFrame.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static GraphicsContextGL::DataFormat getDataFormat(GCGLenum destinationFormat, GCGLenum destinationType)
@@ -638,5 +640,7 @@ RefPtr<Image> GraphicsContextGL::videoFrameToImage(VideoFrame& frame)
 #endif
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBGL)

@@ -28,6 +28,8 @@
 #include "FreeList.h"
 #include "MarkedBlock.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 template<typename Func>
@@ -75,3 +77,4 @@ void FreeList::forEach(const Func& func) const
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

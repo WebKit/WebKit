@@ -47,6 +47,8 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 // We keep track of the size of the last array after it was grown. We use this
@@ -4204,3 +4206,5 @@ NEVER_INLINE void JSObject::putDirectForJSONSlow(VM& vm, PropertyName propertyNa
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -31,6 +31,8 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/UniqueRef.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 /*
@@ -1059,3 +1061,5 @@ void ExpressionInfo::dumpEncodedInfo(ExpressionInfo::EncodedInfo* start, Express
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

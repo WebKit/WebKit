@@ -53,6 +53,8 @@
 
 WTF_WEAK_LINK_FORCE_IMPORT(webm::swap);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<typename> struct LogArgument;
@@ -1607,5 +1609,7 @@ void SourceBufferParserWebM::setMinimumAudioSampleDuration(float duration)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MEDIA_SOURCE)

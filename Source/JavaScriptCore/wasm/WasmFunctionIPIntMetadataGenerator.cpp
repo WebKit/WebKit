@@ -32,6 +32,8 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace Wasm {
@@ -158,5 +160,7 @@ void FunctionIPIntMetadataGenerator::addReturnData(const FunctionSignature& sig)
 }
 
 } }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

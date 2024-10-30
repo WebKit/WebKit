@@ -31,6 +31,8 @@
 #include "GradientColorStops.h"
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 GradientRendererCG::GradientRendererCG(ColorInterpolationMethod colorInterpolationMethod, const GradientColorStops& stops)
@@ -704,3 +706,5 @@ void GradientRendererCG::drawConicGradient(CGContextRef platformContext, CGPoint
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

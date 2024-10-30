@@ -32,6 +32,8 @@
 #include "ParsingUtilities.h"
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // Helper class for "scanning" an input string and performing parsing of
@@ -229,3 +231,5 @@ inline void VTTScanner::advance(unsigned amount)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

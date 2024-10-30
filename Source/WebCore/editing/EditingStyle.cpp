@@ -66,6 +66,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // Editing style properties must be preserved during editing operation.
@@ -2008,3 +2010,5 @@ RefPtr<CSSValue> backgroundColorInEffect(Node* node)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

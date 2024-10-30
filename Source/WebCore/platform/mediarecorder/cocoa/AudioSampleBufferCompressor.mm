@@ -44,6 +44,8 @@
 // Error value we pass through the converter to signal that nothing has gone wrong during encoding and we're done processing the packet.
 constexpr uint32_t kNoMoreDataErr = 'MOAR';
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 RefPtr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create(CMBufferQueueTriggerCallback callback, void* callbackObject, AudioFormatID format)
@@ -599,5 +601,7 @@ bool AudioSampleBufferCompressor::isEmpty() const
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MEDIA_RECORDER) && USE(AVFOUNDATION)

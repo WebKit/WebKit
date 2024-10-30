@@ -31,6 +31,8 @@
 #include "RenderStyle.h"
 #include "RenderStyleInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 bool AutosizeStatus::probablyContainsASmallFixedNumberOfLines(const RenderStyle& style)
@@ -148,5 +150,7 @@ float AutosizeStatus::idempotentTextSize(float specifiedSize, float pageScale)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

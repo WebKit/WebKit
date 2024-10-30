@@ -32,6 +32,8 @@
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 #if CPU(ARM64E) && ENABLE(JIT)
@@ -282,3 +284,5 @@ void SecureARM64EHashPins::deallocatePinForCurrentThread()
 #endif // CPU(ARM64E) && ENABLE(JIT)
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

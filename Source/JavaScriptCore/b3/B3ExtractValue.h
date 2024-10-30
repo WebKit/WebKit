@@ -29,6 +29,8 @@
 
 #include "B3Value.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 {
 
 class JS_EXPORT_PRIVATE ExtractValue final : public Value {
@@ -66,5 +68,7 @@ private:
 };
 
 } } // namespace JSC::B3
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(B3_JIT)

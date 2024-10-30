@@ -54,6 +54,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static double sNumTotalStackTraces = 0;
@@ -1409,5 +1411,7 @@ void printInternal(PrintStream& out, SamplingProfiler::FrameType frameType)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(SAMPLING_PROFILER)

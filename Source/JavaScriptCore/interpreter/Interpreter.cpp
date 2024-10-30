@@ -90,6 +90,8 @@
 #include "WebAssemblyFunction.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain, LexicallyScopedFeatures lexicallyScopedFeatures)
@@ -1710,3 +1712,5 @@ void printInternal(PrintStream& out, JSC::DebugHookType type)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

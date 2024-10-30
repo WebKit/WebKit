@@ -44,6 +44,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SlotVisitor);
@@ -818,3 +820,5 @@ void SlotVisitor::addParallelConstraintTask(RefPtr<SharedTask<void(SlotVisitor&)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

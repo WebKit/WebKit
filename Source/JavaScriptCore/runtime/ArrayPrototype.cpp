@@ -45,6 +45,8 @@
 #include <wtf/Assertions.h>
 #include <wtf/StdMap.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(arrayProtoFuncToLocaleString);
@@ -1899,3 +1901,5 @@ JSC_DEFINE_HOST_FUNCTION(arrayProtoFuncConcat, (JSGlobalObject* globalObject, Ca
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

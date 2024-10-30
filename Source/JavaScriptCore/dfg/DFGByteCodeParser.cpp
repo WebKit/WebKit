@@ -95,6 +95,8 @@
 #include <wtf/SetForScope.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 
 namespace DFGByteCodeParserInternal {
@@ -10602,5 +10604,7 @@ bool parse(Graph& graph)
 }
 
 } } // namespace JSC::DFG
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

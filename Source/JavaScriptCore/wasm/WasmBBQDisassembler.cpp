@@ -35,6 +35,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace Wasm {
 
@@ -129,5 +131,7 @@ void BBQDisassembler::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, 
 
 } // namespace Wasm
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY_BBQJIT)

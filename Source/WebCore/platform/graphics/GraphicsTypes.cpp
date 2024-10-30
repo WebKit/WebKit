@@ -33,6 +33,8 @@
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static constexpr ASCIILiteral compositeOperatorNames[] = {
@@ -266,3 +268,5 @@ TextStream& operator<<(TextStream& ts, TextDrawingMode textDrawingMode)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -31,6 +31,8 @@
 
 #include <wtf/PrintStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(DirectJITCode);
@@ -310,3 +312,4 @@ void printInternal(PrintStream& out, JSC::JITType type)
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

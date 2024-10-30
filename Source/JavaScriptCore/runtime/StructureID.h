@@ -31,6 +31,8 @@
 #include <wtf/HashTraits.h>
 #include <wtf/StdIntExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class Structure;
@@ -191,3 +193,5 @@ template<> struct HashTraits<JSC::StructureID> : SimpleClassHashTraits<JSC::Stru
 };
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

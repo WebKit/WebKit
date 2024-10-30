@@ -101,6 +101,8 @@
 
 IGNORE_WARNINGS_BEGIN("frame-address")
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 
 template<bool strict, bool direct>
@@ -5225,6 +5227,8 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationTriggerOSREntryNow, char*, (VM* vmPoi
 } } // namespace JSC::DFG
 
 IGNORE_WARNINGS_END
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(DFG_JIT)
 

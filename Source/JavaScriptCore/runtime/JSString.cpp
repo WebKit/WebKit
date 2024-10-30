@@ -30,6 +30,8 @@
 #include "StrongInlines.h"
 #include "StructureInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
     
 const ClassInfo JSString::s_info = { "string"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSString) };
@@ -356,3 +358,5 @@ JSString* jsStringWithCacheSlowCase(VM& vm, StringImpl& stringImpl)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

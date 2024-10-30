@@ -96,6 +96,8 @@
 #include <wtf/cocoa/CrashReporter.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace JSC;
 
 IGNORE_WARNINGS_BEGIN("frame-address")
@@ -4446,3 +4448,4 @@ REFTRACKER_IMPL(StrongRefTracker);
 
 IGNORE_WARNINGS_END
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

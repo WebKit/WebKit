@@ -38,6 +38,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/spi/cocoa/IOSurfaceSPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 ShareableBitmapConfiguration::ShareableBitmapConfiguration(NativeImage& image)
@@ -277,3 +279,5 @@ void ShareableBitmap::setOwnershipOfMemory(const ProcessIdentity& identity)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

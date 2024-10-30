@@ -39,6 +39,8 @@
 #include "YarrJIT.h"
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(JITThunks);
@@ -296,5 +298,7 @@ NativeExecutable* JITThunks::hostFunctionStub(VM& vm, TaggedNativeFunction funct
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(JIT)

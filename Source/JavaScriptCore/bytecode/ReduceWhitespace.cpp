@@ -29,6 +29,8 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/StringPrintStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 CString reduceWhitespace(const CString& input)
@@ -52,3 +54,5 @@ CString reduceWhitespace(const CString& input)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

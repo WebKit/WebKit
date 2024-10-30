@@ -48,6 +48,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Value);
@@ -1164,5 +1166,7 @@ void Value::badKind(Kind kind, unsigned numArgs)
 }
 
 } } // namespace JSC::B3
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(B3_JIT)

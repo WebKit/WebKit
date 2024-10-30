@@ -32,6 +32,8 @@
 #include "StructureInlines.h"
 #include "WeakMapImplInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 template <typename WeakMapBucket>
@@ -131,3 +133,5 @@ template class WeakMapImpl<WeakMapBucket<WeakMapBucketDataKeyValue>>;
 template class WeakMapImpl<WeakMapBucket<WeakMapBucketDataKey>>;
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

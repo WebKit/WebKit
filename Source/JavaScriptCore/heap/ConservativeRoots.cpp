@@ -37,6 +37,8 @@
 #include "WasmCallee.h"
 #include <wtf/OSAllocator.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static constexpr bool verboseWasmCalleeScan = false;
@@ -289,3 +291,5 @@ void ConservativeRoots::add(
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

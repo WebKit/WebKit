@@ -30,6 +30,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 #define FOR_EACH_BLOCK_DIRECTORY_BIT(macro) \
@@ -229,3 +231,5 @@ private:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

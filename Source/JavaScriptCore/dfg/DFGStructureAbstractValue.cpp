@@ -31,6 +31,8 @@
 #include "DFGGraph.h"
 #include "JSCJSValueInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 
 #if ASSERT_ENABLED
@@ -398,5 +400,6 @@ void StructureAbstractValue::validateReferences(const TrackedReferences& tracked
 
 } } // namespace JSC::DFG
 
-#endif // ENABLE(DFG_JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(DFG_JIT)

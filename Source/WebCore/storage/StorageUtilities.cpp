@@ -38,6 +38,8 @@
 #include <wtf/RunLoop.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 namespace StorageUtilities {
 
@@ -99,3 +101,5 @@ String encodeSecurityOriginForFileName(FileSystem::Salt salt, const SecurityOrig
 
 } // namespace StorageUtilities
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

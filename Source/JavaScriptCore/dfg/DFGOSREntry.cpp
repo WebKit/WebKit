@@ -38,6 +38,8 @@
 #include "VMInlines.h"
 #include <wtf/CommaPrinter.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 
 void OSREntryData::dumpInContext(PrintStream& out, DumpContext* context) const
@@ -420,5 +422,7 @@ CodePtr<ExceptionHandlerPtrTag> prepareCatchOSREntry(VM& vm, CallFrame* callFram
 }
 
 } } // namespace JSC::DFG
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(DFG_JIT)

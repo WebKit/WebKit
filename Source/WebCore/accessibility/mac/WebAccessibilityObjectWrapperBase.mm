@@ -68,6 +68,8 @@
 #import "WebAccessibilityObjectWrapperIOS.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace WebCore;
 
 // Search Keys
@@ -942,3 +944,5 @@ AccessibilitySearchCriteria accessibilitySearchCriteriaForSearchPredicate(AXCore
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

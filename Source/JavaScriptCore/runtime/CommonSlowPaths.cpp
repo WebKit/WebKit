@@ -56,6 +56,8 @@
 #include "ScopedArguments.h"
 #include "TypeProfilerLog.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 #define BEGIN_NO_SET_PC() \
@@ -1430,3 +1432,5 @@ JSC_DEFINE_COMMON_SLOW_PATH(slow_path_spread)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

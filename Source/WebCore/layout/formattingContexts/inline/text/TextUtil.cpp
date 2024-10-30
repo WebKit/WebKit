@@ -42,6 +42,8 @@
 #include <unicode/ubidi.h>
 #include <wtf/text/TextBreakIterator.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 namespace Layout {
 
@@ -698,3 +700,5 @@ bool TextUtil::hasPositionDependentContentWidth(StringView textContent)
 
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -53,6 +53,8 @@
 #include "MathMLNames.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1524,3 +1526,5 @@ bool RenderTableCell::hasLineIfEmpty() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

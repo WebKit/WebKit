@@ -34,6 +34,8 @@
 #include "WasmOpcodeOrigin.h"
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace {
@@ -319,5 +321,7 @@ std::optional<CodeOrigin> PCToCodeOriginMap::findPC(void* pc) const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(JIT)

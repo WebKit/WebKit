@@ -31,6 +31,8 @@
 #import <wtf/Vector.h>
 #import <wtf/text/CString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 template<typename T, typename U>
 inline std::unique_ptr<T, WTF::SystemFree<T>> adoptSystem(U value)
 {
@@ -246,3 +248,5 @@ extern "C" {
     bool _Block_has_signature(void *);
     const char * _Block_signature(void *);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

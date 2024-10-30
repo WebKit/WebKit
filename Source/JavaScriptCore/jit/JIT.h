@@ -42,6 +42,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
     enum OpcodeID : unsigned;
@@ -921,5 +923,6 @@ namespace JSC {
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(JIT)

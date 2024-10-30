@@ -31,6 +31,8 @@
 #include "MacroAssemblerCodeRef.h"
 #include "Opcode.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class VM;
@@ -383,3 +385,5 @@ struct Registers {
 #endif
 
 } } // namespace JSC::LLInt
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

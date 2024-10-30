@@ -37,6 +37,8 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 template<typename Adaptor>
@@ -1012,3 +1014,5 @@ template<typename PassedAdaptor> inline Structure* JSGenericResizableOrGrowableS
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -28,6 +28,8 @@
 #include "HashMapHelper.h"
 #include "WeakMapImpl.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 ALWAYS_INLINE uint32_t jsWeakMapHash(JSCell* key)
@@ -139,3 +141,5 @@ ALWAYS_INLINE uint32_t WeakMapImpl<WeakMapBucket>::shouldRehashAfterAdd() const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

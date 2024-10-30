@@ -50,6 +50,8 @@
 #include "PhotosFormatSoftLink.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ImageDecoderCG);
@@ -736,5 +738,7 @@ bool ImageDecoderCG::shouldUseQuickLookForFullscreen() const
 #endif // ENABLE(QUICKLOOK_FULLSCREEN)
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CG)

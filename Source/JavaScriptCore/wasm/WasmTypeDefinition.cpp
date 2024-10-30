@@ -40,6 +40,8 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Wasm {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TypeDefinition);
@@ -1169,5 +1171,7 @@ void TypeInformation::tryCleanup()
 }
 
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

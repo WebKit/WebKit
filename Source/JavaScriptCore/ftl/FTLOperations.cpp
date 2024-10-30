@@ -54,6 +54,8 @@
 
 IGNORE_WARNINGS_BEGIN("frame-address")
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace FTL {
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationPopulateObjectInOSR, void, (JSGlobalObject* globalObject, ExitTimeObjectMaterialization* materialization, EncodedJSValue* encodedValue, EncodedJSValue* values))
@@ -780,5 +782,6 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION_WITH_ATTRIBUTES(operationReportBoundsCheckElim
 
 IGNORE_WARNINGS_END
 
-#endif // ENABLE(FTL_JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(FTL_JIT)

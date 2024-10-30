@@ -38,6 +38,8 @@
 #include "DFGPhase.h"
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 
 // This file contains two CSE implementations: local and global. LocalCSE typically runs when we're
@@ -1007,5 +1009,7 @@ bool performGlobalCSE(Graph& graph)
 }
 
 } } // namespace JSC::DFG
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(DFG_JIT)

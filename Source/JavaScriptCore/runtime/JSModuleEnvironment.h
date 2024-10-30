@@ -30,6 +30,8 @@
 
 #include "JSLexicalEnvironment.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class AbstractModuleRecord;
@@ -96,3 +98,5 @@ inline JSModuleEnvironment::JSModuleEnvironment(VM& vm, Structure* structure, JS
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -29,6 +29,8 @@
 #include "WeakSet.h"
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class IsoSubspace;
@@ -188,3 +190,5 @@ inline void* PreciseAllocation::basePointer() const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

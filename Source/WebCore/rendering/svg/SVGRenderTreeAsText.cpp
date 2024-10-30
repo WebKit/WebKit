@@ -72,6 +72,8 @@
 #include "StyleCachedImage.h"
 #include <math.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 /** class + iomanip to help streaming list separators, i.e. ", " in string "a, b, c, d"
@@ -622,3 +624,5 @@ void writeResources(TextStream& ts, const RenderObject& renderer, OptionSet<Rend
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -49,6 +49,8 @@
 #include <variant>
 #include <wtf/TZoneMalloc.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 typedef void (*V_DebugOperation_EPP)(CallFrame*, void*, void*);
@@ -2142,5 +2144,7 @@ protected:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(JIT)

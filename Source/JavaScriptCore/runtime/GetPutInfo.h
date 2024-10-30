@@ -28,6 +28,8 @@
 #include "ECMAMode.h"
 #include <wtf/text/UniquedStringImpl.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class Structure;
@@ -270,3 +272,5 @@ void printInternal(PrintStream&, JSC::ResolveType);
 void printInternal(PrintStream&, JSC::InitializationMode);
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

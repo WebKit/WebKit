@@ -29,6 +29,8 @@
 #include "JSImmutableButterfly.h"
 #include "JSObject.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 struct MapTraits {
@@ -597,3 +599,5 @@ public:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

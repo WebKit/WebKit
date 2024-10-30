@@ -49,6 +49,8 @@
 // Turn this on to log information about fastStringify usage, with a focus on why it failed.
 #define FAST_STRINGIFY_LOG_USAGE 0
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSONObject);
@@ -1788,3 +1790,5 @@ String JSONStringify(JSGlobalObject* globalObject, JSValue value, unsigned inden
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

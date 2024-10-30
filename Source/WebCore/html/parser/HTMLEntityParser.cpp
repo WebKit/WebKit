@@ -34,6 +34,8 @@
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static constexpr UChar windowsLatin1ExtensionArray[32] = {
@@ -306,3 +308,5 @@ DecodedHTMLEntity decodeNamedHTMLEntityForXMLParser(const char* name)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

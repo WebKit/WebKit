@@ -39,6 +39,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Yarr {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BytecodePattern);
@@ -3167,3 +3169,5 @@ static_assert(sizeof(Interpreter<UChar>::BackTrackInfoParentheses) <= (YarrStack
 
 
 } }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

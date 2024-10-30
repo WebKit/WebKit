@@ -38,6 +38,8 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 /*
@@ -285,3 +287,4 @@ void FunctionOverrides::parseOverridesInFile(const char* fileName)
     
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

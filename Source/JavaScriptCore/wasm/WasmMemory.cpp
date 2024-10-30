@@ -49,6 +49,8 @@
 #include <limits>
 #include <mutex>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(MemoryJSWebAssemblyInstanceWeakCGSet, Wasm::Memory::JSWebAssemblyInstanceWeakCGSet);
@@ -450,5 +452,7 @@ void Memory::dump(PrintStream& out) const
 } // namespace Wasm
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

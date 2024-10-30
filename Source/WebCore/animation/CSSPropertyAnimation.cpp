@@ -76,6 +76,8 @@
 #include <wtf/PointerComparison.h>
 #include <wtf/text/TextStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 #if !LOG_DISABLED
@@ -4753,3 +4755,5 @@ int CSSPropertyAnimation::getNumProperties()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

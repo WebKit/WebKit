@@ -34,6 +34,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 using Assembler = TARGET_ASSEMBLER;
@@ -7147,5 +7149,7 @@ inline MacroAssemblerARM64::Jump MacroAssemblerARM64::branch<64>(RelationalCondi
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER) && CPU(ARM64)

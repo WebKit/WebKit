@@ -47,6 +47,8 @@
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class JSModuleNamespaceObject;
@@ -333,5 +335,7 @@ private:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

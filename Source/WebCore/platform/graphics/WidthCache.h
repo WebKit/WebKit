@@ -239,6 +239,6 @@ private:
 
 } // namespace WebCore
 
-#endif // WidthCache_h
-
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // WidthCache_h

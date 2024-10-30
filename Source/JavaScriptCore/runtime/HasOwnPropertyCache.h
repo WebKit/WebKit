@@ -30,6 +30,8 @@
 #include "Structure.h"
 #include <wtf/UniqueRef.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HasOwnPropertyCache);
@@ -131,3 +133,5 @@ private:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

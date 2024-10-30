@@ -28,6 +28,8 @@
 #include "MarkedBlockInlines.h"
 #include "MarkedSpace.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 ALWAYS_INLINE JSC::Heap& MarkedSpace::heap() const
@@ -148,3 +150,4 @@ inline Ref<SharedTask<void(Visitor&)>> MarkedSpace::forEachWeakInParallel(Visito
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

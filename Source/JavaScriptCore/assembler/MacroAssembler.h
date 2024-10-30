@@ -30,6 +30,8 @@
 #include "JSCJSValue.h"
 #include <wtf/TZoneMalloc.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #define DEFINE_SIMD_FUNC(name, func, lane) \
     template <typename ...Args> \
     void name(Args&&... args) { func(lane, std::forward<Args>(args)...); }
@@ -2476,5 +2478,7 @@ public:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER)

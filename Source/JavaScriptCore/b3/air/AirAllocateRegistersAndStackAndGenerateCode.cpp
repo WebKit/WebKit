@@ -41,6 +41,8 @@
 #include <wtf/ListDump.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 { namespace Air {
 
 namespace GenerateAndAllocateRegistersInternal {
@@ -1033,5 +1035,7 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 }
 
 } } } // namespace JSC::B3::Air
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(B3_JIT)

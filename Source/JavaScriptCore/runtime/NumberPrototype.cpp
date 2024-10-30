@@ -40,6 +40,8 @@ using DoubleToStringConverter = WTF::double_conversion::DoubleToStringConverter;
 // To avoid conflict with WTF::StringBuilder.
 typedef WTF::double_conversion::StringBuilder DoubleConversionStringBuilder;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(numberProtoFuncToLocaleString);
@@ -673,3 +675,5 @@ int32_t extractToStringRadixArgument(JSGlobalObject* globalObject, JSValue radix
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -33,6 +33,8 @@
 #include "ScopedArguments.h"
 #include <wtf/IterationStatus.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo JSImmutableButterfly::s_info = { "Immutable Butterfly"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSImmutableButterfly) };
@@ -247,3 +249,5 @@ JSImmutableButterfly* JSImmutableButterfly::tryCreateFromArgList(VM& vm, ArgList
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

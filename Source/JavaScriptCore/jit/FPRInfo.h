@@ -28,6 +28,8 @@
 #include "MacroAssembler.h"
 #include <wtf/PrintStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 typedef MacroAssembler::FPRegisterID FPRReg;
@@ -437,3 +439,5 @@ inline void printInternal(PrintStream& out, JSC::FPRReg reg)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

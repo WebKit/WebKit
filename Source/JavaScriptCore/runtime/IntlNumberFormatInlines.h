@@ -31,6 +31,8 @@
 #include "JSGlobalObject.h"
 #include "JSGlobalObjectFunctions.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC  {
 
 template<typename IntlType>
@@ -347,3 +349,5 @@ inline IntlMathematicalValue toIntlMathematicalValue(JSGlobalObject* globalObjec
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

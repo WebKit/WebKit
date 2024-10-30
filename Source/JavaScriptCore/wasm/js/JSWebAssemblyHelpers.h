@@ -39,6 +39,8 @@
 #include "WebAssemblyFunction.h"
 #include "WebAssemblyWrapperFunction.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 ALWAYS_INLINE uint32_t toNonWrappingUint32(JSGlobalObject* globalObject, JSValue value, ErrorType errorType = ErrorType::TypeError)
@@ -240,5 +242,7 @@ ALWAYS_INLINE uint64_t toWebAssemblyValue(JSGlobalObject* globalObject, const Wa
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

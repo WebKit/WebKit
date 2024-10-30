@@ -36,6 +36,8 @@
 #endif
 #include "SharedBuffer.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 #if ENABLE(OPENTYPE_MATH)
@@ -388,5 +390,7 @@ void OpenTypeMathData::getMathVariants(Glyph, bool, Vector<Glyph>&, Vector<Assem
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MATHML)

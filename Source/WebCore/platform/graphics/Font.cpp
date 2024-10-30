@@ -50,6 +50,8 @@
 #include "OpenTypeVerticalData.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 unsigned GlyphPage::s_count = 0;
@@ -681,3 +683,5 @@ TextStream& operator<<(TextStream& ts, const Font& font)
 #endif
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

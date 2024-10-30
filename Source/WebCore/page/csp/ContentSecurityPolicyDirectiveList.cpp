@@ -37,6 +37,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringParsingBuffer.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ContentSecurityPolicyDirectiveList);
@@ -777,3 +779,5 @@ bool ContentSecurityPolicyDirectiveList::shouldReportSample(const String& violat
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

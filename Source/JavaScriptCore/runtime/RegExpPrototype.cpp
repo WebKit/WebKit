@@ -33,6 +33,8 @@
 #include "YarrFlags.h"
 #include <wtf/text/StringBuilder.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(regExpProtoFuncExec);
@@ -652,3 +654,5 @@ JSC_DEFINE_HOST_FUNCTION(regExpProtoFuncSplitFast, (JSGlobalObject* globalObject
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

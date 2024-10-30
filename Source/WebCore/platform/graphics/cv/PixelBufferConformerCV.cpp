@@ -37,6 +37,8 @@
 #include "CoreVideoSoftLink.h"
 #include "VideoToolboxSoftLink.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PixelBufferConformerCV);
@@ -227,3 +229,5 @@ RetainPtr<CGImageRef> PixelBufferConformerCV::imageFrom32BGRAPixelBuffer(RetainP
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -35,6 +35,8 @@
 #include "LinkBuffer.h"
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Disassembler);
@@ -176,5 +178,7 @@ void Disassembler::dumpDisassembly(PrintStream& out, const char* prefix, LinkBuf
 }
 
 } } // namespace JSC::DFG
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(DFG_JIT)

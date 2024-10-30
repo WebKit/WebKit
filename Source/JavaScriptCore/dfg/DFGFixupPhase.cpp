@@ -38,6 +38,8 @@
 #include "JSCInlines.h"
 #include "TypeLocation.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 
 class FixupPhase : public Phase {
@@ -5295,5 +5297,6 @@ bool performFixup(Graph& graph)
 
 } } // namespace JSC::DFG
 
-#endif // ENABLE(DFG_JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(DFG_JIT)

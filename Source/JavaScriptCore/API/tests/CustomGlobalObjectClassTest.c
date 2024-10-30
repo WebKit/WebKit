@@ -32,6 +32,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 extern bool assertTrue(bool value, const char* message);
 
 static bool executedCallback = false;
@@ -142,3 +144,5 @@ void globalObjectPrivatePropertyTest(void)
     JSStringRelease(privateName);
     JSGlobalContextRelease(context);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

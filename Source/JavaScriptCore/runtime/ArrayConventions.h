@@ -24,6 +24,8 @@
 #include "PureNaN.h"
 #include "WriteBarrier.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 // Overview of JSArray
@@ -150,3 +152,5 @@ ALWAYS_INLINE void clearArray(double* base, unsigned count)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -29,6 +29,8 @@
 #include "config.h"
 #include "FileHandle.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 FileHandle::FileHandle(const String& path, FileSystem::FileOpenMode mode)
@@ -152,3 +154,5 @@ FileSystem::PlatformFileHandle FileHandle::handle() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

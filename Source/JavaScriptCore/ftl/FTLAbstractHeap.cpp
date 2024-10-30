@@ -36,6 +36,8 @@
 #include "StructureRareDataInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace FTL {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AbstractHeap);
@@ -265,5 +267,6 @@ void AbsoluteAbstractHeap::dump(PrintStream& out)
 
 } } // namespace JSC::FTL
 
-#endif // ENABLE(FTL_JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(FTL_JIT)

@@ -38,6 +38,8 @@
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 namespace Layout {
 
@@ -1023,3 +1025,4 @@ void InlineItemsBuilder::populateBreakingPositionCache(const InlineItemList& inl
 }
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

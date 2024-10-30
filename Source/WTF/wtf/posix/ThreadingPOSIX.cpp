@@ -702,6 +702,6 @@ void Thread::yield()
 
 } // namespace WTF
 
-#endif // USE(PTHREADS)
-
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // USE(PTHREADS)

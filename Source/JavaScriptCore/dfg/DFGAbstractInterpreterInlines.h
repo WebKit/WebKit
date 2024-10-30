@@ -63,6 +63,8 @@
 #include <wtf/BooleanLattice.h>
 #include <wtf/CheckedArithmetic.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 
 template<typename AbstractStateType>
@@ -5789,5 +5791,7 @@ void AbstractInterpreter<AbstractStateType>::executeDoubleUnaryOpEffects(Node* n
 }
 
 } } // namespace JSC::DFG
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(DFG_JIT)

@@ -58,6 +58,8 @@
 #include <wtf/Int128.h>
 #include <wtf/MathExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo JSBigInt::s_info = { "BigInt"_s, nullptr, nullptr, nullptr, CREATE_METHOD_TABLE(JSBigInt) };
@@ -3248,3 +3250,5 @@ unsigned JSBigInt::hashSlow()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -46,6 +46,8 @@
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static constexpr auto borderStartEdgeColor = SRGBA<uint8_t> { 170, 170, 170 };
@@ -664,3 +666,5 @@ CursorDirective RenderFrameSet::getCursor(const LayoutPoint& point, Cursor& curs
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

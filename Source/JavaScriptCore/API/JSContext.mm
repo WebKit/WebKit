@@ -50,6 +50,8 @@
 
 #if JSC_OBJC_API_ENABLED
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 @implementation JSContext {
     RetainPtr<JSVirtualMachine> m_virtualMachine;
     JSGlobalContextRef m_context;
@@ -425,5 +427,7 @@
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

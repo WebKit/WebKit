@@ -36,6 +36,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Wasm {
 
 class ConstExprGenerator;
@@ -4279,5 +4281,7 @@ auto FunctionParser<Context>::parseUnreachableExpression() -> PartialResult
 #undef WASM_TRY_POP_EXPRESSION_STACK_INTO
 #undef WASM_TRY_ADD_TO_CONTEXT
 #undef WASM_VALIDATOR_FAIL_IF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

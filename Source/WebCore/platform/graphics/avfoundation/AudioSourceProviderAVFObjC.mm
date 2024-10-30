@@ -52,6 +52,8 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static const double kRingBufferDuration = 1;
@@ -427,5 +429,7 @@ void AudioSourceProviderAVFObjC::setConfigureAudioStorageCallback(ConfigureAudio
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)

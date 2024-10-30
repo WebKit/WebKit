@@ -30,6 +30,8 @@
 #include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 namespace Calculation {
 
@@ -487,3 +489,5 @@ template<> struct OperatorExecutor<Progress> {
 
 } // namespace Calculation
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -77,6 +77,8 @@
 #include <memory>
 #include <optional>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 CSSParserImpl::~CSSParserImpl() = default;
@@ -1610,3 +1612,5 @@ Vector<double> CSSParserImpl::consumeKeyframeKeyList(CSSParserTokenRange range)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

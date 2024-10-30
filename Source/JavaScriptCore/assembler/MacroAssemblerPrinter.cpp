@@ -31,6 +31,8 @@
 #include "MacroAssembler.h"
 #include <inttypes.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace Printer {
@@ -184,5 +186,7 @@ void SYSV_ABI printCallback(Probe::Context& probeContext)
 
 } // namespace Printer
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER)

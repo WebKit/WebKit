@@ -30,6 +30,8 @@
 
 #include <algorithm>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 enum {
     kAudioHardwarePropertyProcessIsRunning = 'prun'
 };
@@ -173,5 +175,7 @@ void AudioHardwareListenerMac::outputDeviceChanged()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

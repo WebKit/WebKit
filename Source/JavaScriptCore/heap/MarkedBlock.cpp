@@ -38,6 +38,8 @@
 #include <wtf/cocoa/CrashReporter.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace MarkedBlockInternal {
 static constexpr bool verbose = false;
@@ -682,3 +684,4 @@ void printInternal(PrintStream& out, JSC::MarkedBlock::Handle::SweepMode mode)
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

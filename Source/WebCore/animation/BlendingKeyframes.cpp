@@ -41,6 +41,8 @@
 #include "TransformOperations.h"
 #include "TranslateTransformOperation.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 BlendingKeyframes::~BlendingKeyframes() = default;
@@ -399,3 +401,5 @@ bool BlendingKeyframe::animatesProperty(KeyframeInterpolation::Property property
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

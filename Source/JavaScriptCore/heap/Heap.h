@@ -56,6 +56,8 @@
 #include <wtf/ParallelHelperPool.h>
 #include <wtf/Threading.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class CodeBlock;
@@ -1235,3 +1237,5 @@ private:
 } // namespace GCClient
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -37,6 +37,8 @@
 #include "TypeError.h"
 #include <wtf/Assertions.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 struct CompactHashIndex {
@@ -564,3 +566,5 @@ inline void reifyStaticProperties(VM& vm, const ClassInfo* classInfo, const Hash
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

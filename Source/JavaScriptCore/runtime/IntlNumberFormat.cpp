@@ -47,6 +47,8 @@
 #include <unicode/unumberrangeformatter.h>
 #define U_HIDE_DRAFT_API 1
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo IntlNumberFormat::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlNumberFormat) };
@@ -1450,3 +1452,5 @@ IntlMathematicalValue IntlMathematicalValue::parseString(JSGlobalObject* globalO
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

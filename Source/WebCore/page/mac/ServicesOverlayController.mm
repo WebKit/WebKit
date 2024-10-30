@@ -51,6 +51,8 @@
 #import <wtf/TZoneMallocInlines.h>
 #import <pal/mac/DataDetectorsSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ServicesOverlayController);
@@ -683,5 +685,7 @@ RefPtr<GraphicsLayer> ServicesOverlayController::createGraphicsLayer(GraphicsLay
 #endif
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // (ENABLE(SERVICE_CONTROLS) || ENABLE(TELEPHONE_NUMBER_DETECTION)) && PLATFORM(MAC)

@@ -32,6 +32,8 @@
 #include "JSCInlines.h"
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static JSC_DECLARE_HOST_FUNCTION(arrayBufferProtoFuncSlice);
@@ -571,3 +573,4 @@ Structure* JSArrayBufferPrototype::createStructure(
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

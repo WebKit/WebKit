@@ -34,6 +34,8 @@
 #include "TypedArrays.h"
 #include <wtf/Gigacage.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo JSArrayBufferView::s_info = {
@@ -430,3 +432,4 @@ void printInternal(PrintStream& out, TypedArrayMode mode)
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -48,6 +48,8 @@
 #include <wtf/UUID.h>
 #include <wtf/text/AtomStringImpl.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace Yarr {
@@ -2649,3 +2651,5 @@ void decodeFunctionCodeBlock(Decoder& decoder, int32_t cachedFunctionCodeBlockOf
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

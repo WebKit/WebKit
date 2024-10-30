@@ -92,6 +92,8 @@
  * 
  */
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Wasm {
 
 using ErrorType = String;
@@ -2502,5 +2504,7 @@ void IPIntGenerator::dump(const ControlStack&, const Stack*)
 }
 
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

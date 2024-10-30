@@ -29,6 +29,8 @@
 #include "JSCell.h"
 #include "Options.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 inline bool scribbleFreeCells()
@@ -52,3 +54,5 @@ inline void scribble(void* base, size_t size)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -33,6 +33,8 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static void computeStyleForPseudoElementStyle(StyledMarkedText::Style& style, const RenderStyle* pseudoElementStyle, const PaintInfo& paintInfo)
@@ -345,3 +347,5 @@ Vector<StyledMarkedText> StyledMarkedText::coalesceAdjacentWithEqualDecorations(
     });
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

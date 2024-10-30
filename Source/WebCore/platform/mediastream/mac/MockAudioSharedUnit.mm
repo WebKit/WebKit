@@ -51,6 +51,8 @@
 #import <pal/cf/AudioToolboxSoftLink.h>
 #import <pal/cf/CoreMediaSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static inline size_t alignTo16Bytes(size_t size)
@@ -468,5 +470,7 @@ OSStatus MockAudioSharedInternalUnit::defaultOutputDevice(uint32_t* device)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MEDIA_STREAM)

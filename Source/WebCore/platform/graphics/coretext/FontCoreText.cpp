@@ -54,6 +54,8 @@
 
 #include <pal/cf/CoreTextSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static inline bool caseInsensitiveCompare(CFStringRef a, CFStringRef b)
@@ -993,3 +995,5 @@ MultiRepresentationHEICMetrics Font::metricsForMultiRepresentationHEIC() const
 #endif
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

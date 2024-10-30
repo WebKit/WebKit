@@ -41,6 +41,8 @@
 #include <wtf/NativePromise.h>
 #include <wtf/StringPrintStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 class MockMediaSample final : public MediaSample {
@@ -277,6 +279,8 @@ WTFLogChannel& MockSourceBufferPrivate::logChannel() const
 #endif
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif
 

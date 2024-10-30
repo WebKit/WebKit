@@ -38,6 +38,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TinyLRUCache.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 static RetainPtr<CGColorRef> createCGColor(const Color&);
 }
@@ -230,5 +232,7 @@ ColorComponents<float, 4> platformConvertColorComponents(ColorSpace inputColorSp
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CG)

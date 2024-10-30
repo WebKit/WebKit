@@ -36,6 +36,8 @@
 #include <wtf/StackTrace.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VerifierSlotVisitor);
@@ -416,3 +418,5 @@ void VerifierSlotVisitor::visitChildren(const JSCell* cell)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

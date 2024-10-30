@@ -45,6 +45,8 @@
 #include <wtf/StringPrintStream.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace PerfLogInternal {
@@ -231,5 +233,7 @@ void PerfLog::flush()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER) && (OS(LINUX) || OS(DARWIN))

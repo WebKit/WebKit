@@ -29,6 +29,8 @@
 
 #include <wtf/BitSet.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class SecureARM64EHashPins {
@@ -131,5 +133,7 @@ private:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // CPU(ARM64E) && ENABLE(JIT)

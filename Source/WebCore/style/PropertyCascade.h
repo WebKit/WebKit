@@ -31,6 +31,8 @@
 #include <wtf/BitSet.h>
 #include <wtf/TZoneMalloc.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 class StyleResolver;
@@ -200,3 +202,5 @@ inline const PropertyCascade::Property& PropertyCascade::customProperty(const At
 
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

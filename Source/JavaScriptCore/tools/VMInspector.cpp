@@ -39,6 +39,8 @@
 #include <wtf/Expected.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VMInspector);
@@ -710,5 +712,7 @@ void VMInspector::dumpSubspaceHashes(VM* vm)
     });
     dataLogLn();
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace JSC

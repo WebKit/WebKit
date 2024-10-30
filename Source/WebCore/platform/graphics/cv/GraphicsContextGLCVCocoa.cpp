@@ -45,6 +45,8 @@
 
 #include "CoreVideoSoftLink.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextGLCVCocoa);
@@ -762,5 +764,7 @@ void GraphicsContextGLCVCocoa::invalidateKnownTextureContent(GCGLuint texture)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

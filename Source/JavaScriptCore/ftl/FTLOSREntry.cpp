@@ -36,6 +36,8 @@
 
 #if ENABLE(FTL_JIT)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace FTL {
 
 SUPPRESS_ASAN
@@ -148,6 +150,6 @@ void* prepareOSREntry(
 
 } } // namespace JSC::FTL
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 #endif // ENABLE(FTL_JIT)
-
-

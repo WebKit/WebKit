@@ -30,6 +30,8 @@
 #include <wtf/SHA1.h>
 #include <wtf/SixCharacterHash.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 CodeBlockHash::CodeBlockHash(std::span<const char, 6> string)
@@ -97,3 +99,4 @@ void CodeBlockHash::dump(PrintStream& out) const
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

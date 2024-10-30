@@ -33,6 +33,8 @@
 #include "B3Type.h"
 #include <wtf/HashTable.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 {
 
 class Procedure;
@@ -209,5 +211,7 @@ template<> struct HashTraits<JSC::B3::ValueKey> : public SimpleClassHashTraits<J
 };
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(B3_JIT)

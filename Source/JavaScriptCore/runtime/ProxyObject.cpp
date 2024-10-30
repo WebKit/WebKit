@@ -37,6 +37,8 @@
 // Note that we use NO_TAIL_CALLS() throughout this file because we rely on the machine stack
 // growing larger for throwing OOM errors for when we have an effectively cyclic prototype chain.
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(ProxyObject);
@@ -1303,3 +1305,5 @@ void ProxyObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 DEFINE_VISIT_CHILDREN(ProxyObject);
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

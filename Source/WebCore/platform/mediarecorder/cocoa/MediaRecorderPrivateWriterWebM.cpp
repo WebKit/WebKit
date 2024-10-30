@@ -38,6 +38,8 @@
 
 #import <pal/cf/CoreMediaSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 class MediaRecorderPrivateWriterWebMDelegate : public mkvmuxer::IMkvWriter {
@@ -184,5 +186,7 @@ Ref<GenericPromise> MediaRecorderPrivateWriterWebM::close(const MediaTime&)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(MEDIA_RECORDER)

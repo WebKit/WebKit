@@ -35,6 +35,8 @@
 #import <wtf/text/MakeString.h>
 #import <wtf/unicode/icu/ICUHelpers.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static ExceptionOr<void> validateCountryCode(const String&);
@@ -180,5 +182,7 @@ static ExceptionOr<void> validateShippingMethods(const Vector<ApplePayShippingMe
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

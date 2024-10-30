@@ -338,6 +338,8 @@
 //     - This is how a transaction ends normally.
 //     - state CleanupAndTerminate calls doCleanup().
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 SQLTransactionBackend::SQLTransactionBackend(SQLTransaction& frontend)
@@ -520,3 +522,5 @@ void SQLTransactionBackend::unreachableState()
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

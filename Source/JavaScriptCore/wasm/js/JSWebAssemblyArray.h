@@ -32,6 +32,8 @@
 #include "WasmTypeDefinition.h"
 #include "WebAssemblyGCObjectBase.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class JSWebAssemblyArray final : public WebAssemblyGCObjectBase {
@@ -235,5 +237,7 @@ protected:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

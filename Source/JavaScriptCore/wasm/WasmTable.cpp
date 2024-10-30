@@ -35,6 +35,8 @@
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Wasm {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Table);
@@ -332,5 +334,7 @@ void FuncRefTable::set(uint32_t index, JSValue value)
 }
 
 } } // namespace JSC::Table
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

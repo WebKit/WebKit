@@ -35,6 +35,8 @@
 static const unsigned kRadicalOperator = 0x221A;
 static const unsigned kMaximumExtensionCount = 128;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static inline FloatRect boundsForGlyph(const GlyphData& data)
@@ -732,5 +734,7 @@ void MathOperator::paint(const RenderStyle& style, PaintInfo& info, const Layout
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

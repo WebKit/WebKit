@@ -33,6 +33,8 @@
 #include "TypedArrayAdaptors.h"
 #include <wtf/FlipBytes.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 /* Source for JSDataViewPrototype.lut.h
@@ -377,3 +379,5 @@ JSC_DEFINE_HOST_FUNCTION(dataViewProtoFuncSetBigUint64, (JSGlobalObject* globalO
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

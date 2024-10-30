@@ -29,6 +29,8 @@
 #include "CachedTypes.h"
 #include "UnlinkedFunctionExecutable.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 void CachedBytecode::addGlobalUpdate(Ref<CachedBytecode> bytecode)
@@ -90,3 +92,5 @@ void CachedBytecode::commitUpdates(const ForEachUpdateCallback& callback) const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

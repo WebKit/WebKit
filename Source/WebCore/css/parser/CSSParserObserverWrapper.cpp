@@ -32,6 +32,8 @@
 
 #include "CSSParserTokenRange.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 unsigned CSSParserObserverWrapper::startOffset(const CSSParserTokenRange& range)
@@ -70,3 +72,5 @@ void CSSParserObserverWrapper::yieldCommentsBefore(const CSSParserTokenRange& ra
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

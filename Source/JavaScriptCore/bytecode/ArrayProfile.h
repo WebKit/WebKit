@@ -28,6 +28,8 @@
 #include "ConcurrentJSLock.h"
 #include "Structure.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class CodeBlock;
@@ -293,3 +295,5 @@ private:
 static_assert(sizeof(UnlinkedArrayProfile) <= 8);
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

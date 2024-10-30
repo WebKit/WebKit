@@ -52,6 +52,8 @@
 // would need more work to be included from WebCore.
 #define GL_MAX_SAMPLES_EXT 0x8D57
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // List of displays ever instantiated from EGL. When terminating all EGL resources, we need to
@@ -3394,5 +3396,7 @@ bool GraphicsContextGLANGLE::validateClearBufferv(GCGLenum buffer, size_t values
     return false;
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBGL)

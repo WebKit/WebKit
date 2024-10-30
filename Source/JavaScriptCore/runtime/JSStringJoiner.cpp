@@ -28,6 +28,8 @@
 
 #include "JSCJSValueInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 JSStringJoiner::~JSStringJoiner() = default;
@@ -216,3 +218,5 @@ JSValue JSStringJoiner::joinSlow(JSGlobalObject* globalObject)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

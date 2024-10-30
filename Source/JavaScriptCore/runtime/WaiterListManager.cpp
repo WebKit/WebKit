@@ -36,6 +36,8 @@
 #include <wtf/RawPointer.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace WaiterListsManagerInternal {
@@ -399,3 +401,5 @@ void Waiter::dump(PrintStream& out) const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

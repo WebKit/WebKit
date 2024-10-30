@@ -37,6 +37,8 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WorkQueue& sharedImageTranscodingQueue()
@@ -245,3 +247,5 @@ RefPtr<ShareableBitmap> decodeImageWithSize(std::span<const uint8_t> data, std::
 
 }
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

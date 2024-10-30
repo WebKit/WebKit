@@ -89,6 +89,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 bool isCustomPropertyName(StringView propertyName)
@@ -3128,3 +3130,5 @@ bool CSSPropertyParser::parseShorthand(CSSPropertyID property, bool important)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

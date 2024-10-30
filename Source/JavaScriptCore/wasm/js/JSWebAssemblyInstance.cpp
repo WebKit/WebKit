@@ -47,6 +47,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 using namespace Wasm;
@@ -634,5 +636,7 @@ void JSWebAssemblyInstance::setTag(unsigned index, Ref<const Tag>&& tag)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

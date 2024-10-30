@@ -35,6 +35,8 @@
 #include "MacroAssembler.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 #if PLATFORM(MAC) || PLATFORM(MACCATALYST)
@@ -146,3 +148,5 @@ bool isX86_64_AVX()
 #endif
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

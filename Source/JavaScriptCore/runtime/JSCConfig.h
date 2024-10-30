@@ -31,6 +31,8 @@
 #include "SecureARM64EHashPins.h"
 #include <wtf/WTFConfig.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class ExecutableAllocator;
@@ -134,3 +136,5 @@ ALWAYS_INLINE PURE_FUNCTION uintptr_t startOfStructureHeap()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

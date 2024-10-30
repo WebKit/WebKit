@@ -40,6 +40,8 @@
 #define U_HIDE_DRAFT_API 1
 #include <unicode/uformattedvalue.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo IntlListFormat::s_info = { "Object"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(IntlListFormat) };
@@ -309,3 +311,5 @@ ASCIILiteral IntlListFormat::typeString(Type type)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

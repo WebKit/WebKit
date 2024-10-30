@@ -50,6 +50,8 @@
 #include <wtf/URL.h>
 #include <wtf/text/TextStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsContextCG);
@@ -1554,5 +1556,7 @@ bool GraphicsContextCG::consumeHasDrawn()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

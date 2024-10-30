@@ -31,6 +31,8 @@
 
 #include <pal/cf/CoreMediaSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WebAudioBufferList::WebAudioBufferList(const CAAudioStreamDescription& format)
@@ -155,3 +157,5 @@ void WebAudioBufferList::zeroFlatBuffer()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

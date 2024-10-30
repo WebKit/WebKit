@@ -43,6 +43,8 @@
 #include <wtf/text/AtomStringHash.h>
 #include <wtf/text/StringBuilder.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FontCascade);
@@ -1899,3 +1901,5 @@ std::optional<char32_t> capitalized(char32_t baseCharacter)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

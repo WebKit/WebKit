@@ -54,6 +54,8 @@
 #define EXECUTABLE_POOL_WRITABLE true
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 static constexpr unsigned jitAllocationGranule = 32;
@@ -375,3 +377,5 @@ inline bool isJITPC(void*) { return false; }
 #endif // ENABLE(JIT)
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

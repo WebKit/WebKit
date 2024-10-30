@@ -46,6 +46,8 @@
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 {
 
 namespace {
@@ -3791,5 +3793,6 @@ bool reduceStrength(Procedure& proc)
 
 } } // namespace JSC::B3
 
-#endif // ENABLE(B3_JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(B3_JIT)

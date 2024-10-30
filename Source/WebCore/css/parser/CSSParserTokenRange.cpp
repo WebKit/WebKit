@@ -34,6 +34,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/StringBuilder.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 CSSParserToken& CSSParserTokenRange::eofToken()
@@ -129,3 +131,5 @@ String CSSParserTokenRange::serialize(CSSParserToken::SerializationMode mode) co
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

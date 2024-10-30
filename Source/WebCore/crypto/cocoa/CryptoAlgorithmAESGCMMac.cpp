@@ -34,6 +34,8 @@
 #endif
 #include <wtf/CryptographicUtilities.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 #if !HAVE(SWIFT_CPP_INTEROP)
@@ -98,3 +100,5 @@ ExceptionOr<Vector<uint8_t>> CryptoAlgorithmAESGCM::platformDecrypt(const Crypto
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

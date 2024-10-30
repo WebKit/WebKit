@@ -37,6 +37,8 @@
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InnerSpinButtonMac);
@@ -106,5 +108,7 @@ void InnerSpinButtonMac::draw(GraphicsContext& context, const FloatRoundedRect& 
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(MAC)

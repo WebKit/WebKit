@@ -32,6 +32,8 @@
 #include <wtf/Gigacage.h>
 #include <wtf/SafeStrerror.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace ArrayBufferInternal {
 static constexpr bool verbose = false;
@@ -617,3 +619,4 @@ std::optional<ArrayBufferContents> ArrayBufferContents::fromSpan(std::span<const
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

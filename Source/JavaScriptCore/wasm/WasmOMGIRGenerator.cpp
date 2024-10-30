@@ -81,6 +81,8 @@
 #error ENABLE(WEBASSEMBLY_OMGJIT) is enabled, but ENABLE(WEBASSEMBLY) is not.
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 void dumpProcedure(void* ptr)
 {
     JSC::B3::Procedure* proc = static_cast<JSC::B3::Procedure*>(ptr);
@@ -6579,6 +6581,8 @@ auto OMGIRGenerator::addI64TruncUF32(ExpressionType argVar, ExpressionType& resu
 } } // namespace JSC::Wasm
 
 #include "WasmOMGIRGeneratorInlines.h"
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(JSVALUE64)
 #endif // ENABLE(WEBASSEMBLY_OMGJIT)

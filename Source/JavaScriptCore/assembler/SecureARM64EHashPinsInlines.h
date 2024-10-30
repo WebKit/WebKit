@@ -29,6 +29,8 @@
 
 #if CPU(ARM64E) && ENABLE(JIT)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 ALWAYS_INLINE uint64_t SecureARM64EHashPins::keyForCurrentThread()
@@ -109,5 +111,7 @@ ALWAYS_INLINE uint64_t SecureARM64EHashPins::pinForCurrentThread()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // CPU(ARM64E) && ENABLE(JIT)

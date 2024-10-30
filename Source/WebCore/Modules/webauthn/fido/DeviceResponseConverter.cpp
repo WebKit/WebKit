@@ -40,6 +40,8 @@
 #include <wtf/StdSet.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace fido {
 using namespace WebCore;
 using CBOR = cbor::CBORValue;
@@ -367,5 +369,7 @@ std::optional<AuthenticatorGetInfoResponse> readCTAPGetInfoResponse(const Vector
 }
 
 } // namespace fido
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUTHN)

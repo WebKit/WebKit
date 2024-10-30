@@ -26,6 +26,8 @@
 #include "config.h"
 #include "CachePayload.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 CachePayload CachePayload::makeMappedPayload(FileSystem::MappedFileData&& data)
@@ -68,3 +70,5 @@ std::span<const uint8_t> CachePayload::span() const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -32,6 +32,8 @@
 #include "A64DOpcode.h"
 #include "MacroAssemblerCodeRef.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, void* codeStart, void* codeEnd, const char* prefix, PrintStream& out)
@@ -65,5 +67,6 @@ bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, vo
 
 } // namespace JSC
 
-#endif // ENABLE(ARM64_DISASSEMBLER)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(ARM64_DISASSEMBLER)

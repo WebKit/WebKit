@@ -36,6 +36,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CARingBuffer);
@@ -325,5 +327,7 @@ InProcessCARingBuffer::InProcessCARingBuffer(size_t bytesPerFrame, size_t frameC
 InProcessCARingBuffer::~InProcessCARingBuffer() = default;
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO) && USE(MEDIATOOLBOX)

@@ -45,6 +45,8 @@
 #include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SWRegistrationDatabase);
@@ -517,5 +519,7 @@ void SWRegistrationDatabase::clearAllRegistrations()
     FileSystem::deleteNonEmptyDirectory(scriptDirectoryPath(m_directory));
     FileSystem::deleteEmptyDirectory(m_directory);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 } // namespace WebCore

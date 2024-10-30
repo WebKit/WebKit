@@ -85,6 +85,8 @@
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace WebCore;
 
 static id attributeValueForTesting(const RefPtr<AXCoreObject>&, NSString *);
@@ -4018,5 +4020,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(MAC)

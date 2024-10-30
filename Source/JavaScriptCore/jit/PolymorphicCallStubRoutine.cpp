@@ -33,6 +33,8 @@
 #include "JSCJSValueInlines.h"
 #include "LinkBuffer.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 void PolymorphicCallNode::unlinkOrUpgradeImpl(VM& vm, CodeBlock* oldCodeBlock, CodeBlock* newCodeBlock)
@@ -187,3 +189,5 @@ void PolymorphicCallStubRoutine::destroy(PolymorphicCallStubRoutine* derived)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

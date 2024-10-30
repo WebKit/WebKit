@@ -47,6 +47,8 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/UTF8Conversion.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Wasm {
 
 namespace FailureHelper {
@@ -429,5 +431,7 @@ ALWAYS_INLINE I32InitExpr makeI32InitExpr(uint8_t opcode, bool isExtendedConstan
 }
 
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

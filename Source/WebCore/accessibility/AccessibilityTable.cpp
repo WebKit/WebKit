@@ -50,6 +50,8 @@
 
 #include <queue>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -958,3 +960,5 @@ void AccessibilityTable::ensureRowAndColumn(unsigned rowIndex, unsigned columnIn
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

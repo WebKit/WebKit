@@ -28,6 +28,8 @@
 
 #if ENABLE(CONTENT_EXTENSIONS)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore::ContentExtensions {
 
 String deserializeString(std::span<const uint8_t> span)
@@ -51,5 +53,7 @@ size_t stringSerializedLength(std::span<const uint8_t> span)
 }
 
 } // namespace WebCore::ContentExtensions
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

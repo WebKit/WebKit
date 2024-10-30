@@ -36,6 +36,8 @@
 // This implementation uses two vectors instead of linked list, and
 // also compresses regions when possible.
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(Region);
@@ -692,3 +694,5 @@ TextStream& operator<<(TextStream& ts, const Region& region)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

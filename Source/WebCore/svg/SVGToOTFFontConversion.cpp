@@ -43,6 +43,8 @@
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 class SVGToOTFFontConverter;
 }
@@ -1574,3 +1576,5 @@ std::optional<Vector<uint8_t>> convertSVGToOTFFont(const SVGFontElement& element
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

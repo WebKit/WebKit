@@ -54,6 +54,8 @@ namespace Inspector {
 class JSGlobalObjectInspectorController;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class ArrayAllocationProfile;
@@ -1205,3 +1207,5 @@ inline JSObject* JSGlobalObject::globalThis() const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

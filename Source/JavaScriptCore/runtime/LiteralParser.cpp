@@ -40,6 +40,8 @@
 
 #include "KeywordLookup.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 template <typename CharType>
@@ -1627,3 +1629,5 @@ template class LiteralParser<LChar>;
 template class LiteralParser<UChar>;
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

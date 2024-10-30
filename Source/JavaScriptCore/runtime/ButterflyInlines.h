@@ -31,6 +31,8 @@
 #include "Structure.h"
 #include "VM.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 template<typename T>
@@ -286,3 +288,5 @@ inline Butterfly* Butterfly::shift(Structure* structure, size_t numberOfSlots)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

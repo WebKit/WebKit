@@ -39,6 +39,8 @@
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static bool isCSPDirectiveName(StringView name)
@@ -614,3 +616,5 @@ template<typename CharacterType> bool ContentSecurityPolicySourceList::parseHash
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

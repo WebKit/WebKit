@@ -32,6 +32,8 @@
 #include <wtf/Vector.h>
 #include <utility>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Wasm {
 
 struct NameSection : public ThreadSafeRefCounted<NameSection> {
@@ -70,3 +72,5 @@ public:
 };
 
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

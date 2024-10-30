@@ -33,6 +33,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 // See comment at the top of ExpressionInfo.cpp on how ExpressionInfo works.
@@ -332,3 +334,5 @@ private:
 static_assert(roundUpToMultipleOf<sizeof(unsigned)>(sizeof(ExpressionInfo)) == sizeof(ExpressionInfo), "CachedExpressionInfo relies on this invariant");
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

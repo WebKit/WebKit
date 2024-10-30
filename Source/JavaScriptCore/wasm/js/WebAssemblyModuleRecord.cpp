@@ -45,6 +45,8 @@
 #include "WebAssemblyFunction.h"
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ClassInfo WebAssemblyModuleRecord::s_info = { "WebAssemblyModuleRecord"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(WebAssemblyModuleRecord) };
@@ -918,5 +920,7 @@ JSValue WebAssemblyModuleRecord::evaluate(JSGlobalObject* globalObject)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

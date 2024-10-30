@@ -37,6 +37,8 @@
 #include <wtf/StackCheck.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Yarr {
 
 #include "RegExpJitTables.h"
@@ -2524,3 +2526,5 @@ std::unique_ptr<CharacterClass> anycharCreate()
 }
 
 } } // namespace JSC::Yarr
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

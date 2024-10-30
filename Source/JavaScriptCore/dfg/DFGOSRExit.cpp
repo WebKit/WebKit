@@ -46,6 +46,8 @@
 
 #include <wtf/Scope.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SpeculationFailureDebugInfo);
@@ -911,5 +913,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (
 }
 
 } } // namespace JSC::DFG
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(DFG_JIT)

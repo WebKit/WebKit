@@ -32,6 +32,8 @@
 #include "WasmFunctionParser.h"
 #include "WasmLimits.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace Wasm {
 
 namespace BBQJITImpl {
@@ -2331,5 +2333,7 @@ using BBQJIT = BBQJITImpl::BBQJIT;
 Expected<std::unique_ptr<InternalFunction>, String> parseAndCompileBBQ(CompilationContext&, BBQCallee&, const FunctionData&, const TypeDefinition&, Vector<UnlinkedWasmToWasmCall>&, const ModuleInformation&, MemoryMode, FunctionCodeIndex functionIndex, std::optional<bool> hasExceptionHandlers, unsigned);
 
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY_BBQJIT)

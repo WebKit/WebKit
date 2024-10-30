@@ -26,6 +26,8 @@
 
 #include "StyleProperties.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImmutableStyleProperties);
@@ -92,3 +94,5 @@ constexpr size_t ImmutableStyleProperties::objectSize(unsigned count)
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ImmutableStyleProperties)
     static bool isType(const WebCore::StyleProperties& properties) { return !properties.isMutable(); }
 SPECIALIZE_TYPE_TRAITS_END()
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

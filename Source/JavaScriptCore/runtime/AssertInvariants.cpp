@@ -31,6 +31,8 @@
 #include "CodeBlock.h"
 #include "DFGJITCode.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 void assertInvariants()
@@ -141,3 +143,5 @@ void assertInvariants()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

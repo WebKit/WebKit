@@ -43,6 +43,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 // FIXME: We could be smarter about memset / mmap / madvise. https://bugs.webkit.org/show_bug.cgi?id=170343
@@ -286,3 +288,5 @@ NEVER_INLINE void* BufferMemoryHandle::memory() const
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

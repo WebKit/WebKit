@@ -37,6 +37,8 @@
 #include "SharedAudioDestination.h"
 #include <algorithm>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 constexpr size_t fifoSize = 96 * AudioUtilities::renderQuantumSize;
@@ -125,5 +127,7 @@ OSStatus AudioDestinationCocoa::render(double sampleTime, uint64_t hostTime, UIn
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO)

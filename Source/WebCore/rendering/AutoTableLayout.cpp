@@ -33,6 +33,8 @@
 #include "RenderTableSection.h"
 #include "RenderView.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 AutoTableLayout::AutoTableLayout(RenderTable* table)
@@ -749,3 +751,5 @@ void AutoTableLayout::layout()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

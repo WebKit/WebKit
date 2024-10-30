@@ -30,6 +30,8 @@
 #include "PropertyNameArray.h"
 #include "StructureChain.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class JSPropertyNameEnumerator final : public JSCell {
@@ -164,3 +166,5 @@ inline JSPropertyNameEnumerator* propertyNameEnumerator(JSGlobalObject* globalOb
 using EnumeratorMetadata = std::underlying_type_t<JSPropertyNameEnumerator::Flag>;
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -31,6 +31,8 @@
 #include "JSObject.h"
 #include <wtf/MallocPtr.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 enum class HashTableType {
@@ -419,3 +421,5 @@ private:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

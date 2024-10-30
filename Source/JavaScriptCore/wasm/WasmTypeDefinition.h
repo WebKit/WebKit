@@ -57,6 +57,8 @@
 #define RTT_ALIGNMENT
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 namespace Wasm {
@@ -978,5 +980,7 @@ private:
 };
 
 } } // namespace JSC::Wasm
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBASSEMBLY)

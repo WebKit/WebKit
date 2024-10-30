@@ -28,6 +28,8 @@
 
 #include <wtf/PrintStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 ASCIILiteral errorTypeName(ErrorType errorType)
@@ -60,3 +62,5 @@ void printInternal(PrintStream& out, JSC::ErrorTypeWithExtension errorType)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

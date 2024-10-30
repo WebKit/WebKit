@@ -31,6 +31,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 using namespace WTF::Unicode;
 
@@ -513,3 +515,5 @@ void RenderQuote::updateRenderer(RenderTreeBuilder& builder, RenderQuote* previo
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

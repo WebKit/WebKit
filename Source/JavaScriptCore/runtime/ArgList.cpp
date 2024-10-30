@@ -26,6 +26,8 @@
 
 using std::min;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ArgList);
@@ -126,3 +128,5 @@ auto MarkedVectorBase::slowAppend(JSValue v) -> Status
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

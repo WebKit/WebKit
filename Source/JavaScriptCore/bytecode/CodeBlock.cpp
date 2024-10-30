@@ -91,6 +91,8 @@
 #include "FTLJITCode.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CodeBlockRareData);
@@ -3581,3 +3583,5 @@ void printInternal(PrintStream& out, JSC::CodeBlock* codeBlock)
 }
     
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

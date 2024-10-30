@@ -34,6 +34,8 @@
 #include <wtf/SafeStrerror.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 FunctionAllowlist::FunctionAllowlist(const char* filename)
@@ -116,5 +118,6 @@ bool FunctionAllowlist::containsWasmFunction(uint32_t index) const
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+#endif // ENABLE(JIT)

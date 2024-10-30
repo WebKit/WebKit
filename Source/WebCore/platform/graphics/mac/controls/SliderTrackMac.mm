@@ -33,6 +33,8 @@
 #import "GraphicsContext.h"
 #import <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SliderTrackMac);
@@ -104,5 +106,7 @@ void SliderTrackMac::draw(GraphicsContext& context, const FloatRoundedRect& bord
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(MAC)

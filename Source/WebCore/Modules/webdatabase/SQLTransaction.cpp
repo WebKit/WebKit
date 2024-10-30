@@ -51,6 +51,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 Ref<SQLTransaction> SQLTransaction::create(Ref<Database>&& database, RefPtr<SQLTransactionCallback>&& callback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
@@ -676,3 +678,5 @@ ASCIILiteral SQLTransaction::debugStepName(void (SQLTransaction::*step)())
 #endif
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

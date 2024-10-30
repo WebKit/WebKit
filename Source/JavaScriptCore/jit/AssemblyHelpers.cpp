@@ -26,6 +26,8 @@
 #include "config.h"
 #include "AssemblyHelpers.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(JIT)
 
 #include "AccessCase.h"
@@ -2049,3 +2051,4 @@ AssemblyHelpers::JumpList AssemblyHelpers::checkWasmStackOverflow(GPRReg instanc
 
 #endif // ENABLE(JIT)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

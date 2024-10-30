@@ -31,6 +31,8 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/AtomStringHash.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 class CSSValueList;
@@ -94,3 +96,5 @@ inline Ref<CSSPrimitiveValue> CSSPrimitiveValue::create(CSSValueID identifier)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

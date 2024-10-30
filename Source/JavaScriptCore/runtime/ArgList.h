@@ -28,6 +28,8 @@
 #include <wtf/HashSet.h>
 #include <wtf/TZoneMalloc.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class alignas(alignof(EncodedJSValue)) MarkedVectorBase {
@@ -310,3 +312,5 @@ private:
 };
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

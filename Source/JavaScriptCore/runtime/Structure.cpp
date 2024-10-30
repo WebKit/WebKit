@@ -39,6 +39,8 @@
 
 #define DUMP_STRUCTURE_ID_STATISTICS 0
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 #if DUMP_STRUCTURE_ID_STATISTICS
@@ -1728,3 +1730,5 @@ void dumpTransitionKind(PrintStream& out, TransitionKind kind)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

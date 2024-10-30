@@ -53,6 +53,8 @@ ALLOW_UNUSED_PARAMETERS_END
 
 #include "CoreVideoSoftLink.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(LibWebRTCVPXVideoDecoder);
@@ -243,5 +245,7 @@ int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBWEBRTC)

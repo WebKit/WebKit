@@ -31,6 +31,8 @@
 #include "B3Value.h"
 #include "B3ValueKey.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 {
 
 inline ValueKey::ValueKey(Kind kind, Type type, Value* child)
@@ -109,5 +111,7 @@ inline Value* ValueKey::child(Procedure& proc, unsigned index) const
 }
 
 } } // namespace JSC::B3
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(B3_JIT)

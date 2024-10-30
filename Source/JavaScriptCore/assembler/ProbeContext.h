@@ -31,6 +31,8 @@
 
 #if ENABLE(ASSEMBLER)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace Probe {
 
@@ -278,5 +280,7 @@ extern "C" void SYSV_ABI executeJSCJITProbe(State*) REFERENCED_FROM_ASM WTF_INTE
 
 } // namespace Probe
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER)

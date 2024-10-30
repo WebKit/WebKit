@@ -52,6 +52,8 @@
 static constexpr int32_t firstJavaScriptCoreVersionWithInitConstructorSupport = 0x21A0400; // 538.4.0
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 @class JSObjCClassInfo;
 
 @interface JSWrapperMap () 
@@ -721,5 +723,7 @@ Class getNSBlockClass()
     static Class cls = objc_getClass("NSBlock");
     return cls;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

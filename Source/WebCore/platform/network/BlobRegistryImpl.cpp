@@ -53,6 +53,8 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BlobRegistryImpl);
@@ -468,3 +470,5 @@ void BlobRegistryImpl::unregisterBlobURLHandle(const URL& url, const std::option
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

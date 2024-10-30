@@ -32,6 +32,8 @@
 #include "SharedBuffer.h"
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 #if USE(CAIRO)
@@ -243,3 +245,5 @@ private:
 };
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

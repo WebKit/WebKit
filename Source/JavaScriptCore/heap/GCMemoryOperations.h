@@ -28,6 +28,8 @@
 #include "CPU.h"
 #include "JSCJSValue.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 // We use these memory operations when modifying memory that might be scanned by the concurrent collector.
@@ -301,3 +303,5 @@ ALWAYS_INLINE void gcSafeZeroMemory(T* dst, size_t bytes)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -38,6 +38,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformMediaSession);
@@ -526,5 +528,7 @@ std::optional<NowPlayingInfo> PlatformMediaSessionClient::nowPlayingInfo() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(VIDEO) || ENABLE(WEB_AUDIO)

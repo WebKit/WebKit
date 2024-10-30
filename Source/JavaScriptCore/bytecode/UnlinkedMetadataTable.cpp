@@ -28,6 +28,8 @@
 
 #include "BytecodeStructs.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MetadataTable);
@@ -178,3 +180,5 @@ UnlinkedMetadataTable::~UnlinkedMetadataTable()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

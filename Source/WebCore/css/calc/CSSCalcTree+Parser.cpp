@@ -44,6 +44,8 @@
 #include "Logging.h"
 #include <wtf/SortedArrayMap.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 namespace CSSCalc {
 
@@ -1298,3 +1300,5 @@ std::optional<TypedChild> parseCalcDimension(const CSSParserToken& token, Parser
 
 } // namespace CSSCalc
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

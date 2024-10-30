@@ -40,6 +40,8 @@
 #include <sys/mman.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 StructureAlignedMemoryAllocator::StructureAlignedMemoryAllocator(CString name)
@@ -216,3 +218,4 @@ void StructureAlignedMemoryAllocator::decommitBlock(void* block)
 
 } // namespace JSC
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

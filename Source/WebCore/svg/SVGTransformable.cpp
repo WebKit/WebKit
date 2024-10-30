@@ -30,6 +30,8 @@
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 SVGTransformable::~SVGTransformable() = default;
@@ -212,3 +214,5 @@ std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransf
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

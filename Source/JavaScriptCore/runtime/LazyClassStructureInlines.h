@@ -28,6 +28,8 @@
 #include "LazyClassStructure.h"
 #include "LazyPropertyInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 template<typename Callback>
@@ -44,3 +46,5 @@ void LazyClassStructure::initLater(const Callback&)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

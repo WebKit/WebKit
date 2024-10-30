@@ -84,6 +84,8 @@
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace B3 {
 
 namespace {
@@ -5385,5 +5387,7 @@ IGNORE_RETURN_TYPE_WARNINGS_END
 #pragma pop_macro("StoreFence")
 #pragma pop_macro("LoadFence")
 #pragma pop_macro("MemoryFence")
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(B3_JIT)

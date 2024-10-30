@@ -30,6 +30,8 @@
 #include <stdio.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // Biblically, Noah's Ark only had room for two of each animal, but in the
@@ -227,3 +229,5 @@ void HTMLFormattingElementList::show()
 #endif
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -27,6 +27,8 @@
 
 #include <wtf/PrintStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 typedef union v128_u {
@@ -219,3 +221,5 @@ JS_EXPORT_PRIVATE void printInternal(PrintStream& out, JSC::SIMDSignMode);
 JS_EXPORT_PRIVATE void printInternal(PrintStream& out, JSC::v128_t);
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
