@@ -108,6 +108,49 @@
     color: var(--glyph-color-active);
 }
 
+.color-picker > .contrast-accessibility-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    padding-right: 5px;
+    align-items: center;
+}
+    
+.color-picker > .contrast-accessibility-container a {
+    margin: 0;
+    padding: 0;
+    height: min-content;
+}
+    
+.color-picker > .contrast-accessibility-container > .contrast-rating {
+    display: flex;
+    gap: 5px;
+    font-weight: bold;
+}
+
+.color-picker > .contrast-accessibility-container > .contrast-rating > p {
+    font-size: 10px;
+}
+
+.color-picker > .contrast-accessibility-container > .contrast-rating > .swatches-wrapper {
+    display: flex;
+}
+
+.color-picker > .contrast-accessibility-container > .contrast-rating > .swatches-wrapper > .inline-swatch {
+    --inline-swatch-margin-right-override: 0;
+    --inline-swatch-vertical-align-override: 0;
+}
+    
+.color-picker > .contrast-accessibility-container > .contrast-rating > .swatches-wrapper > .inline-swatch:first-child {
+    z-index: 1;
+    margin-right: -4px;
+}
+
+.color-picker > .contrast-accessibility-container > .contrast-rating > .swatches-wrapper > .inline-swatch:last-child {
+    z-index: 0;
+    margin-top: 4px;
+}
+
 .color-picker > .variable-color-swatches {
     padding: 8px 0 0;
 }

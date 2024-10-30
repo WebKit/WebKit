@@ -482,6 +482,22 @@ WI.SpreadsheetStyleProperty = class SpreadsheetStyleProperty extends WI.Object
         return this._property.ownerStyle.nodeStyles.computedStyle.variablesForType(WI.CSSStyleDeclaration.VariablesGroupType.Colors);
     }
 
+    inlineSwatchGetContrastObject(inline)
+    {
+        if (!(this.property.name === "color" || this.property.name === "background-color")) {
+            return null;
+        }
+
+        let enabledProperties = this.property.ownerStyle.nodeStyles.computedStyle.enabledProperties;
+        let propertyBackgroundColor = WI.Color.fromString(enabledProperties.find(property => property.name === "background-color")?.value);
+        let propertyForegroundColor = WI.Color.fromString(enabledProperties.find(property => property.name === "color")?.value)
+
+        if (!propertyBackgroundColor || !propertyForegroundColor)
+            return null;
+
+        return {propertyBackgroundColor, propertyForegroundColor, active: this.property.name};
+    }
+
     // Private
 
     _toggle()
