@@ -1,6 +1,0 @@
-
-FAIL { commit: 'after-transition' } for a reload navigation, reject before commit assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
-FAIL { commit: 'after-transition' } for a reload navigation, reject after commit assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
-FAIL { commit: 'after-transition' } for a reload navigation, explicit commit() assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
-FAIL { commit: 'after-transition' } for a reload navigation, commit when handler resolves assert_array_equals: lengths differ, expected array ["committed", "finished"] length 2, got ["todo"] length 1
-
