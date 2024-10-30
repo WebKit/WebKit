@@ -319,8 +319,6 @@ EOF
 #include "WebExtensionUtilities.h"
 #include <wtf/GetPtr.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 
 ${implementationClassName}* to${implementationClassName}(JSContextRef context, JSValueRef value)
@@ -448,7 +446,7 @@ EOF
 
             push(@contents, "\n");
 
-            my $functionSignature = "JSValueRef ${className}::@{[$function->name]}(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)";
+            my $functionSignature = "JSValueRef ${className}::@{[$function->name]}(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef unsafeArguments[], JSValueRef* exception)";
             my $call = _callString($idlType, $function, 1);
 
             my $defaultEarlyReturnValue = "JSValueMakeUndefined(context)";
@@ -494,7 +492,7 @@ EOF
 
             my $lastParameter = $specifiedParameters[$#specifiedParameters];
 
-            push(@contents, "\n") if scalar @specifiedParameters;
+            push(@contents, "\n    auto arguments = unsafeForgeSpan(unsafeArguments, argumentCount);\n\n") if scalar @specifiedParameters;
             my $needsScriptContext = $function->extendedAttributes->{"NeedsScriptContext"};
 
             my $needsFrame = $function->extendedAttributes->{"NeedsFrame"};
@@ -967,9 +965,6 @@ EOF
     push(@contents, <<EOF);
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
 EOF
 
     push(@contents, <<EOF) if $conditionalString;
