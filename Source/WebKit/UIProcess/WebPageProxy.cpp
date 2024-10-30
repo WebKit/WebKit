@@ -4375,7 +4375,7 @@ void WebPageProxy::handlePreventableTouchEvent(NativeWebTouchEvent& event)
         // We can use asynchronous dispatch and pretend to the client that the page does nothing with the events.
         event.setCanPreventNativeGestures(false);
         handleUnpreventableTouchEvent(event);
-        didReceiveEvent(protectedThis->legacyMainFrameProcess().connection(), event.type(), false, std::nullopt);
+        didReceiveEvent(m_legacyMainFrameProcess->connection(), event.type(), false, std::nullopt);
         if (pageClient) {
             if (isTouchStart)
                 pageClient->doneDeferringTouchStart(false);
