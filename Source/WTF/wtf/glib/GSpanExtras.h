@@ -21,8 +21,27 @@
 
 #include <wtf/StdLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
 
 namespace WTF {
+
+template <typename T, size_t Extent = std::dynamic_extent>
+class GOwningSpan : public std::span<T> {
+    WTF_MAKE_NONCOPYABLE(GOwningSpan);
+public:
+    explicit GOwningSpan(T* ptr, size_t nitems)
+        : std::span<T, Extent>(ptr, nitems)
+    {
+    }
+
+    ~GOwningSpan()
+    {
+        g_free(this->data());
+    }
+};
+
+WTF_EXPORT_PRIVATE GOwningSpan<const char*> gKeyFileGetKeys(GKeyFile*, const char* groupName, GUniqueOutPtr<GError>&);
+WTF_EXPORT_PRIVATE GOwningSpan<GParamSpec*> gObjectClassGetProperties(GObjectClass*);
 
 inline std::span<const uint8_t> span(GBytes* bytes)
 {
@@ -60,4 +79,6 @@ inline std::span<const uint8_t> span(const GRefPtr<GVariant>& variant)
 
 } // namespace WTF
 
+using WTF::gKeyFileGetKeys;
+using WTF::gObjectClassGetProperties;
 using WTF::span;
