@@ -27,7 +27,7 @@ messages -> ModelProcessModelPlayer {
     [EnabledIf='modelProcessEnabled()'] DidFinishLoading(WebCore::FloatPoint3D center, WebCore::FloatPoint3D extents)
     [EnabledIf='modelProcessEnabled()'] DidUpdateEntityTransform(WebCore::TransformationMatrix transform)
     [EnabledIf='modelProcessEnabled()'] DidUpdateAnimationPlaybackState(bool isPaused, double playbackRate, Seconds duration, Seconds currentTime, MonotonicTime clockTimestamp)
-    [EnabledIf='modelProcessEnabled()'] DidFinishEnvironmentMapLoading()
+    [EnabledIf='modelProcessEnabled()'] DidFinishEnvironmentMapLoading(bool succeeded)
 }
 
 #endif // ENABLE(MODEL_PROCESS)

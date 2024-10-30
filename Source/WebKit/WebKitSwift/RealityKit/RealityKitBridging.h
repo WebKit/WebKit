@@ -58,7 +58,7 @@ typedef struct {
 
 - (instancetype)initWithCoreEntity:(REEntityRef)coreEntity;
 - (void)setUpAnimationWithAutoPlay:(BOOL)autoPlay;
-- (void)applyIBLData:(NSData *)data;
+- (void)applyIBLData:(NSData *)data withCompletion:(void (^)(BOOL success))completion;
 - (void)removeIBL;
 @end
 

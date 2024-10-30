@@ -583,12 +583,15 @@ void ModelProcessModelPlayerProxy::setEnvironmentMap(Ref<WebCore::SharedBuffer>&
 void ModelProcessModelPlayerProxy::applyEnvironmentMapDataAndRelease()
 {
     if (m_environmentMapData) {
-        if (m_environmentMapData->size() > 0)
-            [m_modelRKEntity applyIBLData:m_environmentMapData->createNSData().get()];
-        else
+        if (m_environmentMapData->size() > 0) {
+            [m_modelRKEntity applyIBLData:m_environmentMapData->createNSData().get() withCompletion:^(BOOL succeeded) {
+                send(Messages::ModelProcessModelPlayer::DidFinishEnvironmentMapLoading(succeeded));
+            }];
+        } else {
             [m_modelRKEntity removeIBL];
+            send(Messages::ModelProcessModelPlayer::DidFinishEnvironmentMapLoading(true));
+        }
         m_environmentMapData = nullptr;
-        send(Messages::ModelProcessModelPlayer::DidFinishEnvironmentMapLoading());
     }
 }
 

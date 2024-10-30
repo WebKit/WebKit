@@ -196,7 +196,7 @@ private:
 #if ENABLE(MODEL_PROCESS)
     void didUpdateEntityTransform(ModelPlayer&, const TransformationMatrix&) final;
     void didUpdateBoundingBox(ModelPlayer&, const FloatPoint3D&, const FloatPoint3D&) final;
-    void didFinishEnvironmentMapLoading() final;
+    void didFinishEnvironmentMapLoading(bool succeeded) final;
 #endif
     std::optional<PlatformLayerIdentifier> platformLayerID() final;
 
@@ -218,6 +218,8 @@ private:
     void updateLoop();
     void updateEnvironmentMap();
     URL selectEnvironmentMapURL() const;
+    void environmentMapRequestResource();
+    void environmentMapResetAndReject(Exception&&);
     void environmentMapResourceFinished();
 #endif
     void modelResourceFinished();

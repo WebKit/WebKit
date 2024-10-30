@@ -51,5 +51,17 @@ promise_test(async t => {
     await model.environmentMapReady;
 }, `<model> resolves the environmentMapReady promise when provided with a known resource.`);
 
+promise_test(async t => {
+    const blueResource = "resources/blue.hdr";
+
+    const [model, source] = createModelWithAttributesAndSource(t, {environmentmap: blueResource }, "resources/cube.usdz");
+    assert_true(model.environmentMap.includes(blueResource));
+    await model.environmentMapReady;
+
+    model.children[0].src = "resources/heart.usdz"
+    assert_true(model.environmentMap.includes(blueResource));
+    await model.environmentMapReady;
+}, `<model> resolves the environmentMapReady promise when new model resource is loaded.`);
+
 </script>
 </body>

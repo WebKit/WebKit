@@ -107,9 +107,9 @@ void ModelProcessModelPlayer::didUpdateAnimationPlaybackState(bool isPaused, dou
     m_lastCachedClockTimestamp = clockTimestamp;
 }
 
-void ModelProcessModelPlayer::didFinishEnvironmentMapLoading()
+void ModelProcessModelPlayer::didFinishEnvironmentMapLoading(bool succeeded)
 {
-    m_client->didFinishEnvironmentMapLoading();
+    m_client->didFinishEnvironmentMapLoading(succeeded);
 }
 
 // MARK: - WebCore::ModelPlayer
@@ -319,9 +319,6 @@ void ModelProcessModelPlayer::setCurrentTime(Seconds currentTime, CompletionHand
 
 void ModelProcessModelPlayer::setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data)
 {
-    if (data->isEmpty())
-        return;
-
     send(Messages::ModelProcessModelPlayerProxy::SetEnvironmentMap(WTFMove(data)));
 }
 
