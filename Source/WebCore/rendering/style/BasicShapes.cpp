@@ -348,26 +348,158 @@ void BasicShapeEllipse::dump(TextStream& ts) const
 
 // MARK: -
 
+BasicRoundedRectShape::BasicRoundedRectShape(LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius)
+    : m_topLeftRadius(WTFMove(topLeftRadius))
+    , m_topRightRadius(WTFMove(topRightRadius))
+    , m_bottomRightRadius(WTFMove(bottomRightRadius))
+    , m_bottomLeftRadius(WTFMove(bottomLeftRadius))
+{
+}
+
+bool BasicRoundedRectShape::operator==(const BasicShape& other) const
+{
+    auto& otherRectTypeShape = downcast<BasicRoundedRectShape>(other);
+
+    return m_topLeftRadius == otherRectTypeShape.m_topLeftRadius
+        && m_topRightRadius == otherRectTypeShape.m_topRightRadius
+        && m_bottomRightRadius == otherRectTypeShape.m_bottomRightRadius
+        && m_bottomLeftRadius == otherRectTypeShape.m_bottomLeftRadius;
+}
+
+FloatRoundedRect BasicRoundedRectShape::roundedRectForBoundingBox(const FloatRect& boundingBox) const
+{
+    auto rect = rectForBoundingBox(boundingBox);
+
+    auto radii = FloatRoundedRect::Radii(floatSizeForLengthSize(m_topLeftRadius, boundingBox.size()),
+        floatSizeForLengthSize(m_topRightRadius, boundingBox.size()),
+        floatSizeForLengthSize(m_bottomLeftRadius, boundingBox.size()),
+        floatSizeForLengthSize(m_bottomRightRadius, boundingBox.size()));
+
+    radii.scale(calcBorderRadiiConstraintScaleFor(rect, radii));
+    return FloatRoundedRect(rect, radii);
+}
+
+Path BasicRoundedRectShape::path(const FloatRect& boundingBox) const
+{
+    return cachedRoundedRectPath(roundedRectForBoundingBox(boundingBox));
+}
+
+// MARK: -
+
+Ref<BasicShapeInset> BasicShapeInset::create(Length&& right, Length&& top, Length&& bottom, Length&& left, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius)
+{
+    return adoptRef(*new BasicShapeInset(WTFMove(right), WTFMove(top), WTFMove(bottom), WTFMove(left), WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
+}
+
+BasicShapeInset::BasicShapeInset(Length&& right, Length&& top, Length&& bottom, Length&& left, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius)
+    : BasicRoundedRectShape(WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius))
+    , m_right(WTFMove(right))
+    , m_top(WTFMove(top))
+    , m_bottom(WTFMove(bottom))
+    , m_left(WTFMove(left))
+{
+}
+
+Ref<BasicShape> BasicShapeInset::clone() const
+{
+    auto right = m_right;
+    auto top = m_top;
+    auto bottom = m_bottom;
+    auto left = m_left;
+    auto topLeftRadius = m_topLeftRadius;
+    auto topRightRadius = m_topRightRadius;
+    auto bottomRightRadius = m_bottomRightRadius;
+    auto bottomLeftRadius = m_bottomLeftRadius;
+    return adoptRef(*new BasicShapeInset(WTFMove(right), WTFMove(top), WTFMove(bottom), WTFMove(left), WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
+}
+
+bool BasicShapeInset::operator==(const BasicShape& other) const
+{
+    if (type() != other.type())
+        return false;
+
+    auto& otherInset = uncheckedDowncast<BasicShapeInset>(other);
+    return m_right == otherInset.m_right
+        && m_top == otherInset.m_top
+        && m_bottom == otherInset.m_bottom
+        && m_left == otherInset.m_left
+        && BasicRoundedRectShape::operator==(otherInset);
+}
+
+FloatRect BasicShapeInset::rectForBoundingBox(const FloatRect& boundingBox) const
+{
+    float left = floatValueForLength(m_left, boundingBox.width());
+    float top = floatValueForLength(m_top, boundingBox.height());
+    return FloatRect(left + boundingBox.x(), top + boundingBox.y(),
+        std::max<float>(boundingBox.width() - left - floatValueForLength(m_right, boundingBox.width()), 0),
+        std::max<float>(boundingBox.height() - top - floatValueForLength(m_bottom, boundingBox.height()), 0));
+}
+
+bool BasicShapeInset::canBlend(const BasicShape& other) const
+{
+    return type() == other.type();
+}
+
+Ref<BasicShape> BasicShapeInset::blend(const BasicShape& from, const BlendingContext& context) const
+{
+    ASSERT(type() == from.type());
+
+    auto& fromInset = downcast<BasicShapeInset>(from);
+    auto result =  BasicShapeInset::create();
+    result->setTop(WebCore::blend(fromInset.top(), top(), context));
+    result->setRight(WebCore::blend(fromInset.right(), right(), context));
+    result->setBottom(WebCore::blend(fromInset.bottom(), bottom(), context));
+    result->setLeft(WebCore::blend(fromInset.left(), left(), context));
+
+    result->setTopLeftRadius(WebCore::blend(fromInset.topLeftRadius(), topLeftRadius(), context, ValueRange::NonNegative));
+    result->setTopRightRadius(WebCore::blend(fromInset.topRightRadius(), topRightRadius(), context, ValueRange::NonNegative));
+    result->setBottomRightRadius(WebCore::blend(fromInset.bottomRightRadius(), bottomRightRadius(), context, ValueRange::NonNegative));
+    result->setBottomLeftRadius(WebCore::blend(fromInset.bottomLeftRadius(), bottomLeftRadius(), context, ValueRange::NonNegative));
+
+    return result;
+}
+
+void BasicShapeInset::dump(TextStream& ts) const
+{
+    ts.dumpProperty("top", top());
+    ts.dumpProperty("right", right());
+    ts.dumpProperty("bottom", bottom());
+    ts.dumpProperty("left", left());
+
+    ts.dumpProperty("top-left-radius", topLeftRadius());
+    ts.dumpProperty("top-right-radius", topRightRadius());
+    ts.dumpProperty("bottom-right-radius", bottomRightRadius());
+    ts.dumpProperty("bottom-left-radius", bottomLeftRadius());
+}
+
+static TextStream& operator<<(TextStream& ts, BasicShapeRadius::Type radiusType)
+{
+    switch (radiusType) {
+    case BasicShapeRadius::Type::Value: ts << "value"; break;
+    case BasicShapeRadius::Type::ClosestSide: ts << "closest-side"; break;
+    case BasicShapeRadius::Type::FarthestSide: ts << "farthest-side"; break;
+    case BasicShapeRadius::Type::ClosestCorner: ts << "closest-corner"; break;
+    case BasicShapeRadius::Type::FarthestCorner: ts << "farthest-corner"; break;
+    }
+    return ts;
+}
+
+// MARK: -
+
 Ref<BasicShapeRect> BasicShapeRect::create(Length&& top, Length&& right, Length&& bottom, Length&& left, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius)
 {
     return adoptRef(*new BasicShapeRect(WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left), WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
 }
 
 BasicShapeRect::BasicShapeRect(Length&& top, Length&& right, Length&& bottom, Length&& left, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius)
-    : m_edges(RectEdges<Length> { WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left) })
-    , m_topLeftRadius(WTFMove(topLeftRadius))
-    , m_topRightRadius(WTFMove(topRightRadius))
-    , m_bottomRightRadius(WTFMove(bottomRightRadius))
-    , m_bottomLeftRadius(WTFMove(bottomLeftRadius))
+    : BasicRoundedRectShape(WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius))
+    , m_edges(RectEdges<Length> { WTFMove(top), WTFMove(right), WTFMove(bottom), WTFMove(left) })
 {
 }
 
 BasicShapeRect::BasicShapeRect(RectEdges<Length>&& edges, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius)
-    : m_edges(WTFMove(edges))
-    , m_topLeftRadius(WTFMove(topLeftRadius))
-    , m_topRightRadius(WTFMove(topRightRadius))
-    , m_bottomRightRadius(WTFMove(bottomRightRadius))
-    , m_bottomLeftRadius(WTFMove(bottomLeftRadius))
+    : BasicRoundedRectShape(WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius))
+    , m_edges(WTFMove(edges))
 {
 }
 
@@ -390,13 +522,10 @@ bool BasicShapeRect::operator==(const BasicShape& other) const
 
     auto& otherRect = uncheckedDowncast<BasicShapeRect>(other);
     return m_edges == otherRect.m_edges
-        && m_topLeftRadius == otherRect.m_topLeftRadius
-        && m_topRightRadius == otherRect.m_topRightRadius
-        && m_bottomRightRadius == otherRect.m_bottomRightRadius
-        && m_bottomLeftRadius == otherRect.m_bottomLeftRadius;
+        && BasicRoundedRectShape::operator==(otherRect);
 }
 
-Path BasicShapeRect::path(const FloatRect& boundingBox) const
+FloatRect BasicShapeRect::rectForBoundingBox(const FloatRect& boundingBox) const
 {
     auto top = m_edges.top().isAuto() ? 0 : floatValueForLength(m_edges.top(), boundingBox.height());
     auto right = m_edges.right().isAuto() ? boundingBox.width() : floatValueForLength(m_edges.right(), boundingBox.width());
@@ -406,15 +535,7 @@ Path BasicShapeRect::path(const FloatRect& boundingBox) const
     right = std::max(right, left);
     bottom = std::max(top, bottom);
 
-    auto rect = FloatRect(left + boundingBox.x(), top + boundingBox.y(), right - left, bottom - top);
-    auto radii = FloatRoundedRect::Radii(floatSizeForLengthSize(m_topLeftRadius, boundingBox.size()),
-        floatSizeForLengthSize(m_topRightRadius, boundingBox.size()),
-        floatSizeForLengthSize(m_bottomLeftRadius, boundingBox.size()),
-        floatSizeForLengthSize(m_bottomRightRadius, boundingBox.size()));
-
-    radii.scale(calcBorderRadiiConstraintScaleFor(rect, radii));
-
-    return cachedRoundedRectPath(FloatRoundedRect(rect, radii));
+    return FloatRect(left + boundingBox.x(), top + boundingBox.y(), right - left, bottom - top);
 }
 
 bool BasicShapeRect::canBlend(const BasicShape& other) const
@@ -463,14 +584,11 @@ Ref<BasicShapeXywh> BasicShapeXywh::create(Length&& insetX, Length&& insetY, Len
 }
 
 BasicShapeXywh::BasicShapeXywh(Length&& insetX, Length&& insetY, Length&& width, Length&& height, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius)
-    : m_insetX(WTFMove(insetX))
+    : BasicRoundedRectShape(WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius))
+    , m_insetX(WTFMove(insetX))
     , m_insetY(WTFMove(insetY))
     , m_width(WTFMove(width))
     , m_height(WTFMove(height))
-    , m_topLeftRadius(WTFMove(topLeftRadius))
-    , m_topRightRadius(WTFMove(topRightRadius))
-    , m_bottomRightRadius(WTFMove(bottomRightRadius))
-    , m_bottomLeftRadius(WTFMove(bottomLeftRadius))
 {
 }
 
@@ -499,28 +617,17 @@ bool BasicShapeXywh::operator==(const BasicShape& other) const
         && m_insetY == otherXywh.m_insetY
         && m_width == otherXywh.m_width
         && m_height == otherXywh.m_height
-        && m_topLeftRadius == otherXywh.m_topLeftRadius
-        && m_topRightRadius == otherXywh.m_topRightRadius
-        && m_bottomRightRadius == otherXywh.m_bottomRightRadius
-        && m_bottomLeftRadius == otherXywh.m_bottomLeftRadius;
+        && BasicRoundedRectShape::operator==(otherXywh);
 }
 
-Path BasicShapeXywh::path(const FloatRect& boundingBox) const
+FloatRect BasicShapeXywh::rectForBoundingBox(const FloatRect& boundingBox) const
 {
     auto insetX = floatValueForLength(m_insetX, boundingBox.width());
     auto insetY = floatValueForLength(m_insetY, boundingBox.height());
     auto width = floatValueForLength(m_width, boundingBox.width());
     auto height = floatValueForLength(m_height, boundingBox.height());
 
-    auto rect = FloatRect(boundingBox.x() + insetX, boundingBox.y() + insetY, width, height);
-    auto radii = FloatRoundedRect::Radii(floatSizeForLengthSize(m_topLeftRadius, boundingBox.size()),
-        floatSizeForLengthSize(m_topRightRadius, boundingBox.size()),
-        floatSizeForLengthSize(m_bottomLeftRadius, boundingBox.size()),
-        floatSizeForLengthSize(m_bottomRightRadius, boundingBox.size()));
-
-    radii.scale(calcBorderRadiiConstraintScaleFor(rect, radii));
-
-    return cachedRoundedRectPath(FloatRoundedRect(rect, radii));
+    return FloatRect(boundingBox.x() + insetX, boundingBox.y() + insetY, width, height);
 }
 
 bool BasicShapeXywh::canBlend(const BasicShape& other) const
@@ -720,119 +827,6 @@ void BasicShapePath::dump(TextStream& ts) const
 {
     ts.dumpProperty("wind-rule", windRule());
     // FIXME: print the byte stream?
-}
-
-// MARK: -
-
-Ref<BasicShapeInset> BasicShapeInset::create(Length&& right, Length&& top, Length&& bottom, Length&& left, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius)
-{
-    return adoptRef(*new BasicShapeInset(WTFMove(right), WTFMove(top), WTFMove(bottom), WTFMove(left), WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
-}
-
-BasicShapeInset::BasicShapeInset(Length&& right, Length&& top, Length&& bottom, Length&& left, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius)
-    : m_right(WTFMove(right))
-    , m_top(WTFMove(top))
-    , m_bottom(WTFMove(bottom))
-    , m_left(WTFMove(left))
-    , m_topLeftRadius(WTFMove(topLeftRadius))
-    , m_topRightRadius(WTFMove(topRightRadius))
-    , m_bottomRightRadius(WTFMove(bottomRightRadius))
-    , m_bottomLeftRadius(WTFMove(bottomLeftRadius))
-{
-}
-
-Ref<BasicShape> BasicShapeInset::clone() const
-{
-    auto right = m_right;
-    auto top = m_top;
-    auto bottom = m_bottom;
-    auto left = m_left;
-    auto topLeftRadius = m_topLeftRadius;
-    auto topRightRadius = m_topRightRadius;
-    auto bottomRightRadius = m_bottomRightRadius;
-    auto bottomLeftRadius = m_bottomLeftRadius;
-    return adoptRef(*new BasicShapeInset(WTFMove(right), WTFMove(top), WTFMove(bottom), WTFMove(left), WTFMove(topLeftRadius), WTFMove(topRightRadius), WTFMove(bottomRightRadius), WTFMove(bottomLeftRadius)));
-}
-
-bool BasicShapeInset::operator==(const BasicShape& other) const
-{
-    if (type() != other.type())
-        return false;
-
-    auto& otherInset = uncheckedDowncast<BasicShapeInset>(other);
-    return m_right == otherInset.m_right
-        && m_top == otherInset.m_top
-        && m_bottom == otherInset.m_bottom
-        && m_left == otherInset.m_left
-        && m_topLeftRadius == otherInset.m_topLeftRadius
-        && m_topRightRadius == otherInset.m_topRightRadius
-        && m_bottomRightRadius == otherInset.m_bottomRightRadius
-        && m_bottomLeftRadius == otherInset.m_bottomLeftRadius;
-}
-
-Path BasicShapeInset::path(const FloatRect& boundingBox) const
-{
-    float left = floatValueForLength(m_left, boundingBox.width());
-    float top = floatValueForLength(m_top, boundingBox.height());
-    auto rect = FloatRect(left + boundingBox.x(), top + boundingBox.y(),
-        std::max<float>(boundingBox.width() - left - floatValueForLength(m_right, boundingBox.width()), 0),
-        std::max<float>(boundingBox.height() - top - floatValueForLength(m_bottom, boundingBox.height()), 0));
-    auto radii = FloatRoundedRect::Radii(floatSizeForLengthSize(m_topLeftRadius, boundingBox.size()),
-        floatSizeForLengthSize(m_topRightRadius, boundingBox.size()),
-        floatSizeForLengthSize(m_bottomLeftRadius, boundingBox.size()),
-        floatSizeForLengthSize(m_bottomRightRadius, boundingBox.size()));
-    radii.scale(calcBorderRadiiConstraintScaleFor(rect, radii));
-
-    return cachedRoundedRectPath(FloatRoundedRect(rect, radii));
-}
-
-bool BasicShapeInset::canBlend(const BasicShape& other) const
-{
-    return type() == other.type();
-}
-
-Ref<BasicShape> BasicShapeInset::blend(const BasicShape& from, const BlendingContext& context) const
-{
-    ASSERT(type() == from.type());
-
-    auto& fromInset = downcast<BasicShapeInset>(from);
-    auto result =  BasicShapeInset::create();
-    result->setTop(WebCore::blend(fromInset.top(), top(), context));
-    result->setRight(WebCore::blend(fromInset.right(), right(), context));
-    result->setBottom(WebCore::blend(fromInset.bottom(), bottom(), context));
-    result->setLeft(WebCore::blend(fromInset.left(), left(), context));
-
-    result->setTopLeftRadius(WebCore::blend(fromInset.topLeftRadius(), topLeftRadius(), context, ValueRange::NonNegative));
-    result->setTopRightRadius(WebCore::blend(fromInset.topRightRadius(), topRightRadius(), context, ValueRange::NonNegative));
-    result->setBottomRightRadius(WebCore::blend(fromInset.bottomRightRadius(), bottomRightRadius(), context, ValueRange::NonNegative));
-    result->setBottomLeftRadius(WebCore::blend(fromInset.bottomLeftRadius(), bottomLeftRadius(), context, ValueRange::NonNegative));
-
-    return result;
-}
-
-void BasicShapeInset::dump(TextStream& ts) const
-{
-    ts.dumpProperty("top", top());
-    ts.dumpProperty("right", right());
-    ts.dumpProperty("bottom", bottom());
-    ts.dumpProperty("left", left());
-
-    ts.dumpProperty("top-left-radius", topLeftRadius());
-    ts.dumpProperty("top-right-radius", topRightRadius());
-    ts.dumpProperty("bottom-right-radius", bottomRightRadius());
-    ts.dumpProperty("bottom-left-radius", bottomLeftRadius());
-}
-
-static TextStream& operator<<(TextStream& ts, BasicShapeRadius::Type radiusType)
-{
-    switch (radiusType) {
-    case BasicShapeRadius::Type::Value: ts << "value"; break;
-    case BasicShapeRadius::Type::ClosestSide: ts << "closest-side"; break;
-    case BasicShapeRadius::Type::FarthestSide: ts << "farthest-side"; break;
-    case BasicShapeRadius::Type::ClosestCorner: ts << "closest-corner"; break;
-    case BasicShapeRadius::Type::FarthestCorner: ts << "farthest-corner"; break;
-    }
-    return ts;
 }
 
 // MARK: -

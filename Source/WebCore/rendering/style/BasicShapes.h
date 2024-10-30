@@ -45,11 +45,12 @@ class TextStream;
 
 namespace WebCore {
 
-struct BlendingContext;
 class FloatRect;
+class FloatRoundedRect;
 class Path;
 class RenderBox;
 class SVGPathByteStream;
+struct BlendingContext;
 
 enum class CoordinateAffinity : uint8_t {
     Relative, Absolute
@@ -80,6 +81,18 @@ public:
     virtual Ref<BasicShape> clone() const = 0;
 
     virtual Type type() const = 0;
+
+    bool isCircleOrEllipseShape() const
+    {
+        auto shapeType = type();
+        return shapeType == Type::Circle || shapeType == Type::Ellipse;
+    }
+
+    bool isRectBasedShape() const
+    {
+        auto shapeType = type();
+        return shapeType == Type::Inset || shapeType == Type::Rect || shapeType == Type::Xywh;
+    }
 
     virtual Path path(const FloatRect&) const = 0;
     virtual WindRule windRule() const { return WindRule::NonZero; }
@@ -341,7 +354,37 @@ private:
     WindRule m_windRule { WindRule::NonZero };
 };
 
-class BasicShapeInset final : public BasicShape {
+class BasicRoundedRectShape : public BasicShape {
+public:
+    const LengthSize& topLeftRadius() const { return m_topLeftRadius; }
+    const LengthSize& topRightRadius() const { return m_topRightRadius; }
+    const LengthSize& bottomRightRadius() const { return m_bottomRightRadius; }
+    const LengthSize& bottomLeftRadius() const { return m_bottomLeftRadius; }
+
+
+    void setTopLeftRadius(LengthSize&& radius) { m_topLeftRadius = WTFMove(radius); }
+    void setTopRightRadius(LengthSize&& radius) { m_topRightRadius = WTFMove(radius); }
+    void setBottomRightRadius(LengthSize&& radius) { m_bottomRightRadius = WTFMove(radius); }
+    void setBottomLeftRadius(LengthSize&& radius) { m_bottomLeftRadius = WTFMove(radius); }
+
+protected:
+    BasicRoundedRectShape() = default;
+    BasicRoundedRectShape(LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius);
+
+    bool operator==(const BasicShape&) const override;
+
+    virtual FloatRect rectForBoundingBox(const FloatRect&) const = 0;
+
+    FloatRoundedRect roundedRectForBoundingBox(const FloatRect&) const;
+    Path path(const FloatRect&) const final;
+
+    LengthSize m_topLeftRadius;
+    LengthSize m_topRightRadius;
+    LengthSize m_bottomRightRadius;
+    LengthSize m_bottomLeftRadius;
+};
+
+class BasicShapeInset final : public BasicRoundedRectShape {
     WTF_MAKE_TZONE_ALLOCATED(BasicShapeInset);
 public:
     static Ref<BasicShapeInset> create() { return adoptRef(*new BasicShapeInset); }
@@ -354,28 +397,17 @@ public:
     const Length& bottom() const { return m_bottom; }
     const Length& left() const { return m_left; }
 
-    const LengthSize& topLeftRadius() const { return m_topLeftRadius; }
-    const LengthSize& topRightRadius() const { return m_topRightRadius; }
-    const LengthSize& bottomRightRadius() const { return m_bottomRightRadius; }
-    const LengthSize& bottomLeftRadius() const { return m_bottomLeftRadius; }
-
     void setTop(Length&& top) { m_top = WTFMove(top); }
     void setRight(Length&& right) { m_right = WTFMove(right); }
     void setBottom(Length&& bottom) { m_bottom = WTFMove(bottom); }
     void setLeft(Length&& left) { m_left = WTFMove(left); }
-
-    void setTopLeftRadius(LengthSize&& radius) { m_topLeftRadius = WTFMove(radius); }
-    void setTopRightRadius(LengthSize&& radius) { m_topRightRadius = WTFMove(radius); }
-    void setBottomRightRadius(LengthSize&& radius) { m_bottomRightRadius = WTFMove(radius); }
-    void setBottomLeftRadius(LengthSize&& radius) { m_bottomLeftRadius = WTFMove(radius); }
 
 private:
     BasicShapeInset() = default;
     BasicShapeInset(Length&& right, Length&& top, Length&& bottom, Length&& left, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius);
 
     Type type() const override { return Type::Inset; }
-
-    Path path(const FloatRect&) const override;
+    FloatRect rectForBoundingBox(const FloatRect&) const override;
 
     bool canBlend(const BasicShape&) const override;
     Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const override;
@@ -388,14 +420,9 @@ private:
     Length m_top;
     Length m_bottom;
     Length m_left;
-
-    LengthSize m_topLeftRadius;
-    LengthSize m_topRightRadius;
-    LengthSize m_bottomRightRadius;
-    LengthSize m_bottomLeftRadius;
 };
 
-class BasicShapeRect final : public BasicShape {
+class BasicShapeRect final : public BasicRoundedRectShape {
     WTF_MAKE_TZONE_ALLOCATED(BasicShapeRect);
 public:
     static Ref<BasicShapeRect> create() { return adoptRef(*new BasicShapeRect); }
@@ -408,46 +435,30 @@ public:
     const Length& bottom() const { return m_edges.bottom(); }
     const Length& left() const { return m_edges.left(); }
 
-    const LengthSize& topLeftRadius() const { return m_topLeftRadius; }
-    const LengthSize& topRightRadius() const { return m_topRightRadius; }
-    const LengthSize& bottomRightRadius() const { return m_bottomRightRadius; }
-    const LengthSize& bottomLeftRadius() const { return m_bottomLeftRadius; }
-
     void setTop(Length&& top) { m_edges.setTop(WTFMove(top)); }
     void setRight(Length&& right) { m_edges.setRight(WTFMove(right)); }
     void setBottom(Length&& bottom) { m_edges.setBottom(WTFMove(bottom)); }
     void setLeft(Length&& left) { m_edges.setLeft(WTFMove(left)); }
-
-    void setTopLeftRadius(LengthSize&& radius) { m_topLeftRadius = WTFMove(radius); }
-    void setTopRightRadius(LengthSize&& radius) { m_topRightRadius = WTFMove(radius); }
-    void setBottomRightRadius(LengthSize&& radius) { m_bottomRightRadius = WTFMove(radius); }
-    void setBottomLeftRadius(LengthSize&& radius) { m_bottomLeftRadius = WTFMove(radius); }
 
 private:
     BasicShapeRect() = default;
     BasicShapeRect(RectEdges<Length>&&, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius);
     BasicShapeRect(Length&& top, Length&& right, Length&& bottom, Length&& left, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius);
 
-    Type type() const final { return Type::Rect; }
-
-    Path path(const FloatRect&) const final;
+    Type type() const override { return Type::Rect; }
+    FloatRect rectForBoundingBox(const FloatRect&) const override;
 
     bool canBlend(const BasicShape&) const final;
-    Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const final;
+    Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const override;
 
-    bool operator==(const BasicShape&) const final;
+    bool operator==(const BasicShape&) const override;
 
-    void dump(TextStream&) const final;
+    void dump(TextStream&) const override;
 
     RectEdges<Length> m_edges;
-
-    LengthSize m_topLeftRadius;
-    LengthSize m_topRightRadius;
-    LengthSize m_bottomRightRadius;
-    LengthSize m_bottomLeftRadius;
 };
 
-class BasicShapeXywh final : public BasicShape {
+class BasicShapeXywh final : public BasicRoundedRectShape {
     WTF_MAKE_TZONE_ALLOCATED(BasicShapeXywh);
 public:
     static Ref<BasicShapeXywh> create() { return adoptRef(*new BasicShapeXywh); }
@@ -460,45 +471,29 @@ public:
     const Length& width() const { return m_width; }
     const Length& height() const { return m_height; }
 
-    const LengthSize& topLeftRadius() const { return m_topLeftRadius; }
-    const LengthSize& topRightRadius() const { return m_topRightRadius; }
-    const LengthSize& bottomRightRadius() const { return m_bottomRightRadius; }
-    const LengthSize& bottomLeftRadius() const { return m_bottomLeftRadius; }
-
     void setInsetX(Length&& insetX) { m_insetX = WTFMove(insetX); }
     void setInsetY(Length&& insetY) { m_insetY = WTFMove(insetY); }
     void setWidth(Length&& width) { m_width = WTFMove(width); }
     void setHeight(Length&& height) { m_height = WTFMove(height); }
 
-    void setTopLeftRadius(LengthSize&& radius) { m_topLeftRadius = WTFMove(radius); }
-    void setTopRightRadius(LengthSize&& radius) { m_topRightRadius = WTFMove(radius); }
-    void setBottomRightRadius(LengthSize&& radius) { m_bottomRightRadius = WTFMove(radius); }
-    void setBottomLeftRadius(LengthSize&& radius) { m_bottomLeftRadius = WTFMove(radius); }
-
 private:
     BasicShapeXywh() = default;
     BasicShapeXywh(Length&& insetX, Length&& insetY, Length&& width, Length&& height, LengthSize&& topLeftRadius, LengthSize&& topRightRadius, LengthSize&& bottomRightRadius, LengthSize&& bottomLeftRadius);
 
-    Type type() const final { return Type::Xywh; }
+    Type type() const override { return Type::Xywh; }
+    FloatRect rectForBoundingBox(const FloatRect&) const override;
 
-    Path path(const FloatRect&) const final;
+    bool canBlend(const BasicShape&) const override;
+    Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const override;
 
-    bool canBlend(const BasicShape&) const final;
-    Ref<BasicShape> blend(const BasicShape& from, const BlendingContext&) const final;
+    bool operator==(const BasicShape&) const override;
 
-    bool operator==(const BasicShape&) const final;
-
-    void dump(TextStream&) const final;
+    void dump(TextStream&) const override;
 
     Length m_insetX;
     Length m_insetY;
     Length m_width;
     Length m_height;
-
-    LengthSize m_topLeftRadius;
-    LengthSize m_topRightRadius;
-    LengthSize m_bottomRightRadius;
-    LengthSize m_bottomLeftRadius;
 };
 
 WTF::TextStream& operator<<(WTF::TextStream&, ControlPointAnchoring);
@@ -509,9 +504,9 @@ WTF::TextStream& operator<<(WTF::TextStream&, const BasicShape&);
 
 } // namespace WebCore
 
-#define SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE_CIRCULAR(ToValueTypeName, predicate1, predicate2) \
+#define SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE_BASE(ToValueTypeName, predicate) \
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::ToValueTypeName) \
-    static bool isType(const WebCore::BasicShape& basicShape) { return basicShape.type() == WebCore::predicate1 || basicShape.type() == WebCore::predicate2; } \
+    static bool isType(const WebCore::BasicShape& basicShape) { return basicShape.predicate(); } \
 SPECIALIZE_TYPE_TRAITS_END()
 
 #define SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(ToValueTypeName, predicate) \
@@ -526,4 +521,6 @@ SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(BasicShapePath, BasicShape::Type::Path)
 SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(BasicShapeInset, BasicShape::Type::Inset)
 SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(BasicShapeRect, BasicShape::Type::Rect)
 SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE(BasicShapeXywh, BasicShape::Type::Xywh)
-SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE_CIRCULAR(BasicShapeCircleOrEllipse, BasicShape::Type::Circle, BasicShape::Type::Ellipse);
+
+SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE_BASE(BasicShapeCircleOrEllipse, isCircleOrEllipseShape);
+SPECIALIZE_TYPE_TRAITS_BASIC_SHAPE_BASE(BasicRoundedRectShape, isRectBasedShape);
