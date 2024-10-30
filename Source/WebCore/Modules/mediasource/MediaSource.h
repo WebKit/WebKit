@@ -184,7 +184,8 @@ protected:
 
     virtual void elementDetached() { }
 
-    RefPtr<MediaSourcePrivate> m_private;
+    RefPtr<MediaSourcePrivate> protectedPrivate() const;
+
     WeakPtr<HTMLMediaElement> m_mediaElement;
     bool m_detachable { false };
 
@@ -251,6 +252,7 @@ private:
 #endif
     std::atomic<uint64_t> m_associatedRegistryCount { 0 };
     Ref<MediaSourceClientImpl> m_client;
+    RefPtr<MediaSourcePrivate> m_private;
 };
 
 String convertEnumerationToString(MediaSource::EndOfStreamError);

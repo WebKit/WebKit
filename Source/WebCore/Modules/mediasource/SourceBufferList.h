@@ -54,13 +54,13 @@ public:
     bool isSupportedPropertyIndex(unsigned index) const { return index < length(); }
     unsigned length() const { return m_list.size(); }
 
-    SourceBuffer* item(unsigned index) const { return (index < m_list.size()) ? m_list[index].get() : nullptr; }
+    RefPtr<SourceBuffer> item(unsigned index) const;
 
     void add(Ref<SourceBuffer>&&);
     void remove(SourceBuffer&);
-    bool contains(SourceBuffer& buffer) { return m_list.find(&buffer) != notFound; }
+    bool contains(SourceBuffer&) const;
     void clear();
-    void replaceWith(Vector<RefPtr<SourceBuffer>>&&);
+    void replaceWith(Vector<Ref<SourceBuffer>>&&);
 
     auto begin() { return m_list.begin(); }
     auto end() { return m_list.end(); }
@@ -80,7 +80,7 @@ private:
     void refEventTarget() override { ref(); }
     void derefEventTarget() override { deref(); }
 
-    Vector<RefPtr<SourceBuffer>> m_list;
+    Vector<Ref<SourceBuffer>> m_list;
 };
 
 WebCoreOpaqueRoot root(SourceBufferList*);
