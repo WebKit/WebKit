@@ -347,6 +347,8 @@ MediaStreamTrackPrivate::MediaStreamTrackPrivate(Ref<const Logger>&& logger, Uni
     , m_type(dataHolder->type)
     , m_deviceType(dataHolder->deviceType)
     , m_isCaptureTrack(false)
+    , m_isEnabled(dataHolder->isEnabled)
+    , m_isEnded(dataHolder->isEnded)
     , m_captureDidFail(false)
     , m_contentHint(dataHolder->contentHint)
     , m_logger(WTFMove(logger))

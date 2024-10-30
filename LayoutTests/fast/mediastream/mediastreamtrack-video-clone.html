@@ -143,6 +143,44 @@
         await video1.play();
         assert_equals(video1.videoWidth, 100);
     }, "Collecting a cloned track should not stop the original track");
+
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+        stream.getTracks().forEach(t => t.enabled = false);
+
+        const channel = new MessageChannel();
+        const transferringTracks = { audio:stream.getAudioTracks()[0].clone() , video:stream.getVideoTracks()[0].clone() };
+
+        channel.port1.postMessage(transferringTracks, [transferringTracks.audio, transferringTracks.video]);
+        let transferredTracks = await new Promise(resolve => channel.port2.onmessage = e => resolve(e.data));
+
+        assert_false(transferredTracks.audio.enabled, "transferredTracks.audio.enabled");
+        assert_false(transferredTracks.video.enabled, "transferredTracks.video.enabled");
+
+        transferredTracks.audio.stop();
+        transferredTracks.video.stop();
+
+        channel.port1.postMessage(transferredTracks, [transferredTracks.audio, transferredTracks.video]);
+        transferredTracks = await new Promise(resolve => channel.port2.onmessage = e => resolve(e.data));
+
+        assert_equals(transferredTracks.audio.readyState, "ended", "transferredTracks.audio.enabled");
+        assert_equals(transferredTracks.video.readyState, "ended", "transferredTracks.video.enabled");
+    }, "Transferring a track should preserve enabled and readyState");
+
+    promise_test(async (t) => {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+        stream.getTracks().forEach(t => t.enabled = false);
+        const clone1 = stream.clone();
+
+        clone1.getTracks().forEach(t => assert_false(t.enabled));
+
+        stream.getTracks().forEach(t => t.stop());
+        const clone2 = stream.clone();
+
+        clone1.getTracks().forEach(t => assert_equals(t.readyState, "live"));
+        clone2.getTracks().forEach(t => assert_equals(t.readyState, "ended"));
+
+    }, "Cloning a track should preserve enabled and readyState");
     </script>
 </body>
 </html>
