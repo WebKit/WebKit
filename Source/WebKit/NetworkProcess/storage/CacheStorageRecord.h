@@ -31,47 +31,38 @@
 
 namespace WebKit {
 
-struct CacheStorageRecordInformation {
-    void updateVaryHeaders(const WebCore::ResourceRequest& request, const WebCore::ResourceResponse::CrossThreadData& response)
-    {
-        auto varyValue = response.httpHeaderFields.get(WebCore::HTTPHeaderName::Vary);
-        if (varyValue.isNull() || response.tainting == WebCore::ResourceResponse::Tainting::Opaque || response.tainting == WebCore::ResourceResponse::Tainting::Opaqueredirect) {
-            hasVaryStar = false;
-            varyHeaders = { };
-            return;
-        }
+class CacheStorageRecordInformation {
+public:
+    CacheStorageRecordInformation() = default;
+    CacheStorageRecordInformation(NetworkCache::Key&&, double insertionTime, uint64_t identifier, uint64_t updateResponseCounter, uint64_t size, URL&&, bool hasVaryStar, HashMap<String, String>&& varyHeaders);
+    void updateVaryHeaders(const WebCore::ResourceRequest&, const WebCore::ResourceResponse::CrossThreadData&);
+    CacheStorageRecordInformation isolatedCopy() &&;
 
-        varyValue.split(',', [&](StringView view) {
-            if (!hasVaryStar && view.trim(isASCIIWhitespaceWithoutFF<UChar>) == "*"_s)
-                hasVaryStar = true;
-            varyHeaders.add(view.toString(), request.httpHeaderField(view));
-        });
+    NetworkCache::Key key() const { return m_key; }
+    double insertionTime() const { return m_insertionTime; }
+    uint64_t identifier() const { return m_identifier; }
+    uint64_t updateResponseCounter() const { return m_updateResponseCounter; }
+    uint64_t size() const { return m_size; }
+    URL url() const { return m_url; }
+    bool hasVaryStar() const { return m_hasVaryStar; }
+    HashMap<String, String> varyHeaders() const { return m_varyHeaders; }
 
-        if (hasVaryStar)
-            varyHeaders = { };
-    }
+    void setKey(NetworkCache::Key&& key) { m_key = WTFMove(key); }
+    void setSize(uint64_t size) { m_size = size; }
+    void setIdentifier(uint64_t identifier) { m_identifier = identifier; }
+    void setUpdateResponseCounter(double updateResponseCounter) { m_updateResponseCounter = updateResponseCounter; }
+    void setInsertionTime(double insertionTime) { m_insertionTime = insertionTime; }
+    void setURL(URL&&);
 
-    CacheStorageRecordInformation isolatedCopy() && {
-        return {
-            crossThreadCopy(WTFMove(key)),
-            insertionTime,
-            identifier,
-            updateResponseCounter,
-            size,
-            crossThreadCopy(WTFMove(url)),
-            hasVaryStar,
-            crossThreadCopy(WTFMove(varyHeaders))
-        };
-    }
-
-    NetworkCache::Key key;
-    double insertionTime { 0 };
-    uint64_t identifier { 0 };
-    uint64_t updateResponseCounter { 0 };
-    uint64_t size { 0 };
-    URL url;
-    bool hasVaryStar { false };
-    HashMap<String, String> varyHeaders;
+private:
+    NetworkCache::Key m_key;
+    double m_insertionTime { 0 };
+    uint64_t m_identifier { 0 };
+    uint64_t m_updateResponseCounter { 0 };
+    uint64_t m_size { 0 };
+    URL m_url;
+    bool m_hasVaryStar { false };
+    HashMap<String, String> m_varyHeaders;
 };
 
 struct CacheStorageRecord {

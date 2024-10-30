@@ -169,6 +169,7 @@ NetworkProcess/storage/CacheStorageCache.cpp
 NetworkProcess/storage/CacheStorageMemoryStore.cpp
 NetworkProcess/storage/CacheStorageManager.cpp
 NetworkProcess/storage/CacheStorageDiskStore.cpp
+NetworkProcess/storage/CacheStorageRecord.cpp
 NetworkProcess/storage/CacheStorageRegistry.cpp
 NetworkProcess/storage/FileSystemStorageManager.cpp
 NetworkProcess/storage/FileSystemStorageHandle.cpp

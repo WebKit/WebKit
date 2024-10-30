@@ -30,8 +30,8 @@
 
 namespace WebKit {
 
+class CacheStorageRecordInformation;
 struct CacheStorageRecord;
-struct CacheStorageRecordInformation;
 
 class CacheStorageStore : public ThreadSafeRefCounted<CacheStorageStore> {
 public:

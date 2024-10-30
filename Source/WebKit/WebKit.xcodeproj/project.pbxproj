@@ -5159,6 +5159,7 @@
 		3AC6E5242A1C59AE0059F092 /* RemoteGraphicsContextGLInitializationState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGraphicsContextGLInitializationState.h; sourceTree = "<group>"; };
 		3AE104BD29CBC8BA00661165 /* OriginQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginQuotaManager.cpp; sourceTree = "<group>"; };
 		3AE104BE29CBC8BB00661165 /* OriginQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginQuotaManager.h; sourceTree = "<group>"; };
+		3AE26CB62CD1B10B00836AB7 /* CacheStorageRecord.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = CacheStorageRecord.cpp; sourceTree = "<group>"; };
 		3AEE89912AA595AC00D4DF44 /* PlatformXRARKit.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformXRARKit.mm; sourceTree = "<group>"; };
 		3AEE89922AA595AC00D4DF44 /* PlatformXRARKit.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformXRARKit.h; sourceTree = "<group>"; };
 		3AEE89932AA5966A00D4DF44 /* PlatformXRSystemIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformXRSystemIOS.mm; sourceTree = "<group>"; };
@@ -13472,6 +13473,7 @@
 				935BF7F62936BF1800B41326 /* CacheStorageManager.h */,
 				934CF812294B884B00304F7D /* CacheStorageMemoryStore.cpp */,
 				934CF811294B884A00304F7D /* CacheStorageMemoryStore.h */,
+				3AE26CB62CD1B10B00836AB7 /* CacheStorageRecord.cpp */,
 				935BF7FA2936BF1900B41326 /* CacheStorageRecord.h */,
 				935BF8082936CA2F00B41326 /* CacheStorageRegistry.cpp */,
 				935BF8062936C9FC00B41326 /* CacheStorageRegistry.h */,
