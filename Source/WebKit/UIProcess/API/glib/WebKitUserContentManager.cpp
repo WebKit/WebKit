@@ -30,6 +30,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GWeakPtr.h>
 #include <wtf/glib/WTFGType.h>
 
 #if !ENABLE(2022_GLIB_API)
@@ -406,12 +407,17 @@ public:
 
     void didPostMessage(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue& serializedScriptValue) override
     {
+        if (!m_manager) {
+            g_critical("Script message %s received after the WebKitUserContentManager has been destroyed. You must unregister the message handler!", g_quark_to_string(m_handlerName));
+            return;
+        }
+
 #if ENABLE(2022_GLIB_API)
         GRefPtr<JSCValue> value = API::SerializedScriptValue::deserialize(serializedScriptValue);
-        g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, value.get());
+        g_signal_emit(m_manager.get(), signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, value.get());
 #else
         WebKitJavascriptResult* jsResult = webkitJavascriptResultCreate(serializedScriptValue);
-        g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, jsResult);
+        g_signal_emit(m_manager.get(), signals[SCRIPT_MESSAGE_RECEIVED], m_handlerName, jsResult);
         webkit_javascript_result_unref(jsResult);
 #endif
     }
@@ -423,10 +429,15 @@ public:
 
     void didPostMessageWithAsyncReply(WebPageProxy&, FrameInfoData&&, API::ContentWorld&, WebCore::SerializedScriptValue& serializedScriptValue, WTF::Function<void(API::SerializedScriptValue*, const String&)>&& completionHandler) override
     {
+        if (!m_manager) {
+            g_critical("Script message %s received after the WebKitUserContentManager has been destroyed. You must unregister the message handler!", g_quark_to_string(m_handlerName));
+            return;
+        }
+
         WebKitScriptMessageReply* message = webKitScriptMessageReplyCreate(WTFMove(completionHandler));
         GRefPtr<JSCValue> value = API::SerializedScriptValue::deserialize(serializedScriptValue);
         gboolean returnValue;
-        g_signal_emit(m_manager, signals[SCRIPT_MESSAGE_WITH_REPLY_RECEIVED], m_handlerName, value.get(), message, &returnValue);
+        g_signal_emit(m_manager.get(), signals[SCRIPT_MESSAGE_WITH_REPLY_RECEIVED], m_handlerName, value.get(), message, &returnValue);
         webkit_script_message_reply_unref(message);
     }
 
@@ -434,7 +445,7 @@ public:
 
 private:
     GQuark m_handlerName;
-    WebKitUserContentManager* m_manager;
+    GWeakPtr<WebKitUserContentManager> m_manager;
     bool m_supportsAsyncReply;
 };
 
