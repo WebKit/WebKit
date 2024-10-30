@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LegacyCDMSession.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
@@ -38,12 +39,20 @@ namespace WebCore {
 
 class MediaPlayerPrivateAVFoundationCF;
 
-class CDMSessionAVFoundationCF final : public LegacyCDMSession {
+class CDMSessionAVFoundationCF final : public LegacyCDMSession, public RefCounted<CDMSessionAVFoundationCF> {
     WTF_MAKE_TZONE_ALLOCATED(CDMSessionAVFoundationCF);
 public:
-    CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF& parent, LegacyCDMSessionClient&);
+    static Ref<CDMSessionAVFoundationCF> create(MediaPlayerPrivateAVFoundationCF& parent, LegacyCDMSessionClient&)
+    {
+        return adoptRef(*new CDMSessionAVFoundationCF(parent, client));
+    }
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
 private:
+    CDMSessionAVFoundationCF(MediaPlayerPrivateAVFoundationCF& parent, LegacyCDMSessionClient&);
+
     const String& sessionId() const final { return m_sessionId; }
     RefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode) final;
     void releaseKeys() final;

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LegacyCDMSession.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -37,23 +38,20 @@ OBJC_CLASS AVAssetResourceLoadingRequest;
 OBJC_CLASS WebCDMSessionAVFoundationObjCListener;
 
 namespace WebCore {
-class CDMSessionAVFoundationObjC;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CDMSessionAVFoundationObjC> : std::true_type { };
-}
-
-namespace WebCore {
 
 class MediaPlayerPrivateAVFoundationObjC;
 
-class CDMSessionAVFoundationObjC final : public LegacyCDMSession, public CanMakeWeakPtr<CDMSessionAVFoundationObjC> {
+class CDMSessionAVFoundationObjC final : public LegacyCDMSession, public CanMakeWeakPtr<CDMSessionAVFoundationObjC>, public RefCounted<CDMSessionAVFoundationObjC> {
     WTF_MAKE_TZONE_ALLOCATED(CDMSessionAVFoundationObjC);
 public:
-    CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient&);
+    static Ref<CDMSessionAVFoundationObjC> create(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient& client)
+    {
+        return adoptRef(*new CDMSessionAVFoundationObjC(parent, client));
+    }
     virtual ~CDMSessionAVFoundationObjC();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     LegacyCDMSessionType type() override { return CDMSessionTypeAVFoundationObjC; }
     const String& sessionId() const override { return m_sessionId; }
@@ -65,6 +63,8 @@ public:
     void playerDidReceiveError(NSError *);
 
 private:
+    CDMSessionAVFoundationObjC(MediaPlayerPrivateAVFoundationObjC* parent, LegacyCDMSessionClient&);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const { return m_logger; }
     uint64_t logIdentifier() const { return m_logIdentifier; }

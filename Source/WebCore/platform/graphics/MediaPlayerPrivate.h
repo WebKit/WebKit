@@ -262,7 +262,7 @@ public:
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-    virtual std::unique_ptr<LegacyCDMSession> createSession(const String&, LegacyCDMSessionClient&) { return nullptr; }
+    virtual RefPtr<LegacyCDMSession> createSession(const String&, LegacyCDMSessionClient&) { return nullptr; }
     virtual void setCDM(LegacyCDM*) { }
     virtual void setCDMSession(LegacyCDMSession*) { }
     virtual void keyAdded() { }

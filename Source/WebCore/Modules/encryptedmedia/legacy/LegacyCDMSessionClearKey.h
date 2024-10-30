@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LegacyCDMSession.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/WTFString.h>
@@ -34,11 +35,18 @@
 
 namespace WebCore {
 
-class CDMSessionClearKey final : public LegacyCDMSession {
+class CDMSessionClearKey final : public LegacyCDMSession, public RefCounted<CDMSessionClearKey> {
     WTF_MAKE_TZONE_ALLOCATED(CDMSessionClearKey);
 public:
-    CDMSessionClearKey(LegacyCDMSessionClient&);
+    static Ref<CDMSessionClearKey> create(LegacyCDMSessionClient& client)
+    {
+        return adoptRef(*new CDMSessionClearKey(client));
+    }
+
     virtual ~CDMSessionClearKey();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     // CDMSessionPrivate
     LegacyCDMSessionType type() override { return CDMSessionTypeClearKey; }
@@ -49,6 +57,8 @@ public:
     RefPtr<ArrayBuffer> cachedKeyForKeyID(const String&) const override;
 
 private:
+    CDMSessionClearKey(LegacyCDMSessionClient&);
+
     WeakPtr<LegacyCDMSessionClient> m_client;
     RefPtr<Uint8Array> m_initData;
     MemoryCompactRobinHoodHashMap<String, Vector<uint8_t>> m_cachedKeys;

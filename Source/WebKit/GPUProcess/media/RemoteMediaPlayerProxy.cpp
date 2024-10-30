@@ -1048,7 +1048,7 @@ void RemoteMediaPlayerProxy::setLegacyCDMSession(std::optional<RemoteLegacyCDMSe
 
     if (m_legacySession) {
         if (auto cdmSession = manager->gpuConnectionToWebProcess()->protectedLegacyCdmFactoryProxy()->getSession(*m_legacySession)) {
-            player->setCDMSession(cdmSession->session());
+            player->setCDMSession(cdmSession->protectedSession().get());
             cdmSession->setPlayer(*this);
         }
     }

@@ -27,6 +27,7 @@
 
 #include "CDMSessionMediaSourceAVFObjC.h"
 #include "SourceBufferPrivateAVFObjC.h"
+#include <wtf/RefCounted.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WTFSemaphore.h>
@@ -45,11 +46,18 @@ namespace WebCore {
 
 class CDMPrivateMediaSourceAVFObjC;
 
-class CDMSessionAVContentKeySession : public CDMSessionMediaSourceAVFObjC {
+class CDMSessionAVContentKeySession : public CDMSessionMediaSourceAVFObjC, public RefCounted<CDMSessionAVContentKeySession> {
     WTF_MAKE_TZONE_ALLOCATED(CDMSessionAVContentKeySession);
 public:
-    CDMSessionAVContentKeySession(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
+    static Ref<CDMSessionAVContentKeySession> create(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC& parent, LegacyCDMSessionClient& client)
+    {
+        return adoptRef(*new CDMSessionAVContentKeySession(WTFMove(protocolVersions), cdmVersion, parent, client));
+    }
+
     virtual ~CDMSessionAVContentKeySession();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     static bool isAvailable();
 
@@ -69,6 +77,8 @@ public:
     void didProvideContentKeyRequest(AVContentKeyRequest *);
 
 protected:
+    CDMSessionAVContentKeySession(Vector<int>&& protocolVersions, int cdmVersion, CDMPrivateMediaSourceAVFObjC&, LegacyCDMSessionClient&);
+
     RefPtr<Uint8Array> generateKeyReleaseMessage(unsigned short& errorCode, uint32_t& systemCode);
 
     bool hasContentKeySession() const { return m_contentKeySession; }

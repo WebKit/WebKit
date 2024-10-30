@@ -60,7 +60,7 @@ bool RemoteLegacyCDM::supportsMIMEType(const String& mimeType) const
     return supported;
 }
 
-std::unique_ptr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCore::LegacyCDMSessionClient& client)
+RefPtr<WebCore::LegacyCDMSession> RemoteLegacyCDM::createSession(WebCore::LegacyCDMSessionClient& client)
 {
     String storageDirectory = client.mediaKeysStorageDirectory();
 

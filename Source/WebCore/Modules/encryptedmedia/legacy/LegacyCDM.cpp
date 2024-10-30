@@ -135,9 +135,9 @@ RefPtr<CDMPrivateInterface> LegacyCDM::protectedCDMPrivate() const
     return cdmPrivate();
 }
 
-std::unique_ptr<LegacyCDMSession> LegacyCDM::createSession(LegacyCDMSessionClient& client)
+RefPtr<LegacyCDMSession> LegacyCDM::createSession(LegacyCDMSessionClient& client)
 {
-    auto session = protectedCDMPrivate()->createSession(client);
+    RefPtr session = protectedCDMPrivate()->createSession(client);
     if (mediaPlayer())
         mediaPlayer()->setCDMSession(session.get());
     return session;

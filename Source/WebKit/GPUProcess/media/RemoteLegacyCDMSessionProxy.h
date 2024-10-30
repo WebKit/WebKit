@@ -54,6 +54,7 @@ public:
 
     RemoteLegacyCDMFactoryProxy* factory() const { return m_factory.get(); }
     WebCore::LegacyCDMSession* session() const { return m_session.get(); }
+    RefPtr<WebCore::LegacyCDMSession> protectedSession() const;
 
     void setPlayer(WeakPtr<RemoteMediaPlayerProxy>);
 
@@ -98,7 +99,7 @@ private:
 #endif
 
     RemoteLegacyCDMSessionIdentifier m_identifier;
-    std::unique_ptr<WebCore::LegacyCDMSession> m_session;
+    RefPtr<WebCore::LegacyCDMSession> m_session;
     WeakPtr<RemoteMediaPlayerProxy> m_player;
 };
 

@@ -44,7 +44,7 @@ public:
 
     virtual bool supportsMIMEType(const String&) const = 0;
 
-    virtual std::unique_ptr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) = 0;
+    virtual RefPtr<LegacyCDMSession> createSession(LegacyCDMSessionClient&) = 0;
 };
 
 } // namespace WebCore

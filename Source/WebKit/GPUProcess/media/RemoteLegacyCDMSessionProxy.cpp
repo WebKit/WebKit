@@ -88,7 +88,8 @@ void RemoteLegacyCDMSessionProxy::setPlayer(WeakPtr<RemoteMediaPlayerProxy> play
 
 void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, RefPtr<SharedBuffer>&& initData, GenerateKeyCallback&& completion)
 {
-    if (!m_session) {
+    RefPtr session = m_session;
+    if (!session) {
         completion({ }, emptyString(), 0, 0);
         return;
     }
@@ -103,7 +104,7 @@ void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, Ref
     unsigned short errorCode { 0 };
     uint32_t systemCode { 0 };
 
-    auto keyRequest = m_session->generateKeyRequest(mimeType, initDataArray.get(), destinationURL, errorCode, systemCode);
+    auto keyRequest = session->generateKeyRequest(mimeType, initDataArray.get(), destinationURL, errorCode, systemCode);
 
     destinationURL = "this is a test string"_s;
 
@@ -112,13 +113,14 @@ void RemoteLegacyCDMSessionProxy::generateKeyRequest(const String& mimeType, Ref
 
 void RemoteLegacyCDMSessionProxy::releaseKeys()
 {
-    if (m_session)
-        m_session->releaseKeys();
+    if (RefPtr session = m_session)
+        session->releaseKeys();
 }
 
 void RemoteLegacyCDMSessionProxy::update(RefPtr<SharedBuffer>&& update, UpdateCallback&& completion)
 {
-    if (!m_session) {
+    RefPtr session = m_session;
+    if (!session) {
         completion(false, nullptr, 0, 0);
         return;
     }
@@ -133,17 +135,18 @@ void RemoteLegacyCDMSessionProxy::update(RefPtr<SharedBuffer>&& update, UpdateCa
     unsigned short errorCode { 0 };
     uint32_t systemCode { 0 };
 
-    bool succeeded = m_session->update(updateArray.get(), nextMessage, errorCode, systemCode);
+    bool succeeded = session->update(updateArray.get(), nextMessage, errorCode, systemCode);
 
     completion(succeeded, convertToOptionalSharedBuffer(nextMessage), errorCode, systemCode);
 }
 
 RefPtr<ArrayBuffer> RemoteLegacyCDMSessionProxy::getCachedKeyForKeyId(const String& keyId)
 {
-    if (!m_session)
+    RefPtr session = m_session;
+    if (!session)
         return nullptr;
     
-    return m_session->cachedKeyForKeyID(keyId);
+    return session->cachedKeyForKeyID(keyId);
 }
 
 void RemoteLegacyCDMSessionProxy::cachedKeyForKeyID(String keyId, CachedKeyForKeyIDCallback&& completion)
@@ -204,6 +207,11 @@ std::optional<SharedPreferencesForWebProcess> RemoteLegacyCDMSessionProxy::share
 
     // FIXME: Remove SUPPRESS_UNCOUNTED_ARG once https://github.com/llvm/llvm-project/pull/111198 lands.
     SUPPRESS_UNCOUNTED_ARG return m_factory->sharedPreferencesForWebProcess();
+}
+
+RefPtr<WebCore::LegacyCDMSession> RemoteLegacyCDMSessionProxy::protectedSession() const
+{
+    return m_session;
 }
 
 } // namespace WebKit

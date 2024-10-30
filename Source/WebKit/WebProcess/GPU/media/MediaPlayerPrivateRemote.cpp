@@ -1409,7 +1409,7 @@ AudioSourceProvider* MediaPlayerPrivateRemote::audioSourceProvider()
 #endif
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-std::unique_ptr<LegacyCDMSession> MediaPlayerPrivateRemote::createSession(const String&, LegacyCDMSessionClient&)
+RefPtr<LegacyCDMSession> MediaPlayerPrivateRemote::createSession(const String&, LegacyCDMSessionClient&)
 {
     notImplemented();
     return nullptr;
