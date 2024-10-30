@@ -56,12 +56,16 @@ public:
             return;
         ASSERT(s_requests);
         --s_requests;
+        if (!s_requests)
+            scheduleFreeRenderingResources();
     }
     static ScopedRenderingResourcesRequest acquire()
     {
         return { DidRequest };
     }
 private:
+    static void scheduleFreeRenderingResources();
+    static void freeRenderingResources();
     enum RequestState { DidRequest };
     ScopedRenderingResourcesRequest(RequestState)
         : m_requested(true)
