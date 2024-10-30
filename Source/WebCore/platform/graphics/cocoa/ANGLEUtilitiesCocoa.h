@@ -31,8 +31,8 @@
 #include "IntSize.h"
 
 typedef struct __IOSurface *IOSurfaceRef;
-OBJC_PROTOCOL(MTLSharedEvent);
-OBJC_PROTOCOL(MTLRasterizationRateMap);
+@protocol MTLSharedEvent;
+@protocol MTLRasterizationRateMap;
 
 namespace WebCore {
 
@@ -41,10 +41,10 @@ void* createPbufferAndAttachIOSurface(GCGLDisplay, GCGLConfig, GCGLenum target, 
 
 void destroyPbufferAndDetachIOSurface(GCGLDisplay, void* handle);
 
-RetainPtr<MTLRasterizationRateMap> newRasterizationRateMap(GCGLDisplay, IntSize, IntSize, IntSize, std::span<const float>, std::span<const float>, std::span<const float>);
+RetainPtr<id<MTLRasterizationRateMap>> newRasterizationRateMap(GCGLDisplay, IntSize, IntSize, IntSize, std::span<const float>, std::span<const float>, std::span<const float>);
 
-RetainPtr<MTLSharedEvent> newSharedEventWithMachPort(GCGLDisplay, mach_port_t);
-RetainPtr<MTLSharedEvent> newSharedEvent(GCGLDisplay);
+RetainPtr<id<MTLSharedEvent>> newSharedEventWithMachPort(GCGLDisplay, mach_port_t);
+RetainPtr<id<MTLSharedEvent>> newSharedEvent(GCGLDisplay);
 
 }
 

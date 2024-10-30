@@ -716,4 +716,4 @@ testing/cocoa/WebViewVisualIdentificationOverlay.mm
 
 platform/graphics/angle/GraphicsContextGLANGLE.cpp @no-unify
 platform/graphics/cocoa/GraphicsContextGLCocoa.mm @no-unify
-platform/graphics/cv/GraphicsContextGLCVCocoa.cpp @no-unify
+platform/graphics/cv/GraphicsContextGLCVCocoa.mm @no-unify

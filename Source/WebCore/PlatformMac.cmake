@@ -340,7 +340,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/coretext/SimpleFontDataCoreText.cpp
 
     platform/graphics/cv/CVUtilities.mm
-    platform/graphics/cv/GraphicsContextGLCVCocoa.cpp
+    platform/graphics/cv/GraphicsContextGLCVCocoa.mm
     platform/graphics/cv/ImageRotationSessionVT.mm
     platform/graphics/cv/PixelBufferConformerCV.cpp
 
