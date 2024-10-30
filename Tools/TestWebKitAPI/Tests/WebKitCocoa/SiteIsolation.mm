@@ -1522,6 +1522,45 @@ TEST(SiteIsolation, DragEvents)
     EXPECT_WK_STREQ("dragend", events[3]);
 }
 
+TEST(SiteIsolation, FrameMetrics)
+{
+    auto mainframeHTML = "<iframe width='300' height='300' src='https://domain2.com/subframe'></iframe>"_s;
+
+    auto subframeHTML = "<body>"
+    "<div>"
+    "Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc.Lots and lots of content in this div. Let's just keep going and going and going. Lazy brown foxes, etc etc etc."
+    "</div>"
+    "</body>"_s;
+
+    HTTPServer server({
+        { "/mainframe"_s, { mainframeHTML } },
+        { "/subframe"_s, { subframeHTML } }
+    }, HTTPServer::Protocol::HttpsProxy);
+
+    auto [webView, navigationDelegate] = siteIsolatedViewAndDelegate(server, CGRectMake(0, 0, 800, 600));
+    [webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"https://domain1.com/mainframe"]]];
+    [navigationDelegate waitForDidFinishNavigation];
+
+    RetainPtr frame = [webView mainFrame];
+    WKFrameInfo *info = frame.get().info;
+
+    EXPECT_EQ(info._isScrollable, NO);
+    EXPECT_EQ(info._contentSize.width, 800);
+    EXPECT_EQ(info._contentSize.height, 600);
+    EXPECT_TRUE(CGSizeEqualToSize(info._contentSize, info._visibleContentSize));
+    EXPECT_TRUE(CGSizeEqualToSize(info._contentSize, info._visibleContentSizeExcludingScrollbars));
+
+    frame = frame.get().childFrames.firstObject;
+    info = frame.get().info;
+
+    EXPECT_EQ(info._isScrollable, YES);
+    EXPECT_EQ(info._visibleContentSize.width, 300);
+    EXPECT_EQ(info._visibleContentSize.height, 300);
+    EXPECT_EQ(info._visibleContentSize.height, info._visibleContentSizeExcludingScrollbars.height);
+    EXPECT_EQ(info._visibleContentSizeExcludingScrollbars.width, info._contentSize.width);
+    EXPECT_TRUE(info._visibleContentSizeExcludingScrollbars.width < info._visibleContentSize.width);
+}
+
 void writeImageDataToPasteboard(NSString *type, NSData *data)
 {
     [NSPasteboard.generalPasteboard declareTypes:@[type] owner:nil];

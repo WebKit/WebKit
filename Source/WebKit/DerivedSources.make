@@ -695,6 +695,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/WebEvent.serialization.in \
 	Shared/WebFindOptions.serialization.in \
 	Shared/WebFoundTextRange.serialization.in \
+	Shared/WebFrameMetrics.serialization.in \
 	Shared/WebHitTestResultData.serialization.in \
 	Shared/WebImage.serialization.in \
 	Shared/WebNavigationDataStore.serialization.in \

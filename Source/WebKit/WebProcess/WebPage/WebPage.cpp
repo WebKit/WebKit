@@ -109,6 +109,7 @@
 #include "WebFoundTextRange.h"
 #include "WebFoundTextRangeController.h"
 #include "WebFrame.h"
+#include "WebFrameMetrics.h"
 #include "WebFullScreenManager.h"
 #include "WebFullScreenManagerMessages.h"
 #include "WebGamepadProvider.h"
