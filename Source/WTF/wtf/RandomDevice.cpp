@@ -94,7 +94,9 @@ void RandomDevice::cryptographicallyRandomValues(std::span<uint8_t> buffer)
 #elif OS(UNIX)
     ssize_t amountRead = 0;
     while (static_cast<size_t>(amountRead) < buffer.size()) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         ssize_t currentRead = read(m_fd, buffer.data() + amountRead, buffer.size() - amountRead);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         // We need to check for both EAGAIN and EINTR since on some systems /dev/urandom
         // is blocking and on others it is non-blocking.
         if (currentRead == -1) {

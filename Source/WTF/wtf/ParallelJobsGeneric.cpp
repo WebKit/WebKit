@@ -66,7 +66,9 @@ ParallelEnvironment::ParallelEnvironment(ThreadFunction threadFunction, size_t s
 
 void ParallelEnvironment::execute(void* parameters)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     unsigned char* currentParameter = static_cast<unsigned char*>(parameters);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     size_t i;
     for (i = 0; i < m_threads.size(); ++i) {
         m_threads[i]->execute(m_threadFunction, currentParameter);

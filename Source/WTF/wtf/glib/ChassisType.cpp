@@ -43,6 +43,7 @@ static std::optional<ChassisType> readMachineInfoChassisType()
     }
 
     GUniquePtr<char*> split(g_strsplit(buffer.get(), "\n", -1));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     for (int i = 0; split.get()[i]; ++i) {
         if (g_str_has_prefix(split.get()[i], "CHASSIS=")) {
             char* chassis = split.get()[i] + 8;
@@ -57,6 +58,7 @@ static std::optional<ChassisType> readMachineInfoChassisType()
             return ChassisType::Desktop;
         }
     }
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     return std::nullopt;
 }
