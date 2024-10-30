@@ -1040,22 +1040,24 @@ LineBuilder::Result LineBuilder::handleInlineContent(const InlineItemRange& layo
         return availableWidth(inlineContent, m_line, availableTotalWidthForContent, intrinsicWidthMode());
     }();
 
-    auto lineIsConsideredContentful = m_line.hasContentOrListMarker() || isLineConstrainedByFloat() || !constraints.constrainedSideSet.isEmpty();
+    auto lineHasContent = m_line.hasContentOrListMarker();
+    auto verticalPositionHasFloatOrInlineContent = lineHasContent || isLineConstrainedByFloat() || !constraints.constrainedSideSet.isEmpty();
     auto lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Keep, InlineContentBreaker::IsEndOfLine::No, { }, { } };
 
     if (auto minimumRequiredWidth = continuousInlineContent.minimumRequiredWidth(); minimumRequiredWidth && *minimumRequiredWidth > availableWidthForCandidateContent) {
-        if (lineIsConsideredContentful)
+        if (verticalPositionHasFloatOrInlineContent)
             lineBreakingResult = InlineContentBreaker::Result { InlineContentBreaker::Result::Action::Wrap, InlineContentBreaker::IsEndOfLine::Yes, { }, { } };
     } else if (continuousInlineContent.logicalWidth() > availableWidthForCandidateContent) {
-        auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidthForCandidateContent, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), lineIsConsideredContentful, !m_wrapOpportunityList.isEmpty() };
+        auto lineStatus = InlineContentBreaker::LineStatus { m_line.contentLogicalRight(), availableWidthForCandidateContent, m_line.trimmableTrailingWidth(), m_line.trailingSoftHyphenWidth(), m_line.isTrailingRunFullyTrimmable(), verticalPositionHasFloatOrInlineContent, !m_wrapOpportunityList.isEmpty() };
         lineBreakingResult = inlineContentBreaker().processInlineContent(continuousInlineContent, lineStatus);
     }
     result = processLineBreakingResult(lineCandidate, layoutRange, lineBreakingResult);
 
     auto lineGainsNewContent = lineBreakingResult.action == InlineContentBreaker::Result::Action::Keep || lineBreakingResult.action == InlineContentBreaker::Result::Action::Break;
-    if (lineGainsNewContent) {
-        // Sometimes in order to put this content on the line, we have to avoid additional float boxes (when the new content is taller than any previous content and we have vertically stacked floats on this line)
-        // which means we need to adjust the line rect to accommodate such new constraints.
+    if (lineGainsNewContent || !lineHasContent) {
+        // In some cases in order to put this content on the line, we have to avoid float boxes that didn't constrain the line initially.
+        // (e.g. when this new content is taller than any previous content and there are vertically stacked floats)
+        // In some other cases we can't put any content on the line due to such newly discovered floats (e.g. shape-outside floats with gaps in-between them in vertical axis)
         m_lineLogicalRect = constraints.logicalRect;
         m_lineIsConstrainedByFloat.add(constraints.constrainedSideSet);
     }
