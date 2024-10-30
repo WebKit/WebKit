@@ -108,26 +108,15 @@ void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, F
     // https://www.w3.org/TR/SVG/coords.html#IntrinsicSizing
     intrinsicSize = calculateIntrinsicSize();
 
-    if (style().aspectRatioType() == AspectRatioType::Ratio) {
+    if (style().aspectRatioType() == AspectRatioType::Ratio)
         intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth(), style().aspectRatioLogicalHeight());
-        return;
-    }
-
-    std::optional<LayoutSize> intrinsicRatioValue;
-    if (!intrinsicSize.isEmpty())
-        intrinsicRatioValue = { intrinsicSize.width(), intrinsicSize.height() }; 
-    else {
-        FloatSize viewBoxSize = svgSVGElement().viewBox().size();
-        if (!viewBoxSize.isEmpty()) {
-            // The viewBox can only yield an intrinsic ratio, not an intrinsic size.
-            intrinsicRatioValue = { viewBoxSize.width(), viewBoxSize.height() };
-        }
-    }
-
-    if (intrinsicRatioValue)
-        intrinsicRatio = *intrinsicRatioValue;
-    else if (style().aspectRatioType() == AspectRatioType::AutoAndRatio)
+    else if (!intrinsicSize.isEmpty())
+        intrinsicRatio = { intrinsicSize.width(), intrinsicSize.height() };
+    else if (auto viewBoxSize = svgSVGElement().viewBox().size(); !viewBoxSize.isEmpty())
+        intrinsicRatio = { viewBoxSize.width(), viewBoxSize.height() }; // The viewBox can only yield an intrinsic ratio, not an intrinsic size.
+    else if ((style().aspectRatioType() == AspectRatioType::AutoAndRatio))
         intrinsicRatio = FloatSize::narrowPrecision(style().aspectRatioLogicalWidth(), style().aspectRatioLogicalHeight());
+
 }
 
 bool RenderSVGRoot::isEmbeddedThroughSVGImage() const
