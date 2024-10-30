@@ -371,9 +371,12 @@ NSString *toWebAPI(NSLocale *locale)
     if (!locale.languageCode.length)
         return @"und";
 
+    NSMutableString *result = [locale.languageCode mutableCopy];
+    if (locale.scriptCode.length)
+        [result appendFormat:@"-%@", locale.scriptCode];
     if (locale.countryCode.length)
-        return [NSString stringWithFormat:@"%@-%@", locale.languageCode, locale.countryCode];
-    return locale.languageCode;
+        [result appendFormat:@"-%@", locale.countryCode];
+    return [result copy];
 }
 
 size_t storageSizeOf(NSString *keyOrValue)

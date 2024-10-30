@@ -32,6 +32,7 @@
 #include <wtf/Logging.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/MakeString.h>
+#include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextStream.h>
 #include <wtf/text/WTFString.h>
 
@@ -177,16 +178,28 @@ LocaleComponents parseLocale(const String& localeIdentifier)
     LocaleComponents result;
 
     auto components = canonicalLanguageIdentifier(localeIdentifier).split('-');
-    if (components.size() >= 1)
-        result.languageCode = components[0];
+    if (components.isEmpty())
+        return result;
 
-    if (components.size() >= 2 && components[1].length() == 4)
+    // First component is always the language code.
+    result.languageCode = components[0].convertToASCIILowercase();
+
+    // If only a language code is present, return it.
+    if (components.size() <= 1)
+        return result;
+
+    // If the second component is four characters, interpret it as a script code.
+    if (components[1].length() == 4)
         result.scriptCode = makeString(components[1].left(1).convertToASCIIUppercase(), components[1].substring(1));
 
-    if (components.size() >= 3 && !result.scriptCode)
-        result.countryCode = components[1].convertToASCIIUppercase();
-    else if (components.size() >= 3)
-        result.countryCode = components[2].convertToASCIIUppercase();
+    // Determine region code component based on presence of script code.
+    auto regionCodeCandidate = components.size() >= 3 && !result.scriptCode.isEmpty() ? components[2] : components[1];
+
+    // 2 character codes (e.g., "US") are ISO 3166-1 alpha-2; 3 character codes (e.g., "001") are ISO 3166-1 numeric.
+    if (regionCodeCandidate.length() == 2)
+        result.regionCode = regionCodeCandidate.convertToASCIIUppercase();
+    else if (regionCodeCandidate.length() == 3 && parseInteger<uint16_t>(regionCodeCandidate, 10))
+        result.regionCode = regionCodeCandidate;
 
     return result;
 }
@@ -214,11 +227,11 @@ size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<St
         auto componentsFromList = parseLocale(canonicalizedLanguageFromList);
         if (components.languageCode == componentsFromList.languageCode) {
             // If it's a language-only match, store the first occurrence.
-            if (languageOnlyMatchIndex == notFound && componentsFromList.scriptCode.isEmpty() && componentsFromList.countryCode.isEmpty())
+            if (languageOnlyMatchIndex == notFound && componentsFromList.scriptCode.isEmpty() && componentsFromList.regionCode.isEmpty())
                 languageOnlyMatchIndex = i;
 
             // If it's a partial match (language and script), store the first occurrence.
-            if (partialMatchIndex == notFound && components.scriptCode == componentsFromList.scriptCode && !componentsFromList.countryCode.isEmpty())
+            if (partialMatchIndex == notFound && components.scriptCode == componentsFromList.scriptCode && !componentsFromList.regionCode.isEmpty())
                 partialMatchIndex = i;
         }
     }
