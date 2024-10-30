@@ -34,6 +34,7 @@ public:
     enum class Type : uint8_t {
         None,
         Auto,
+        MatchElement,
         CustomIdent,
     };
 
@@ -45,6 +46,11 @@ public:
     static ViewTransitionName createWithAuto(ScopeOrdinal ordinal)
     {
         return ViewTransitionName(Type::Auto, ordinal);
+    }
+
+    static ViewTransitionName createWithMatchElement(ScopeOrdinal ordinal)
+    {
+        return ViewTransitionName(Type::MatchElement, ordinal);
     }
 
     static ViewTransitionName createWithCustomIdent(ScopeOrdinal ordinal, AtomString ident)
@@ -62,6 +68,11 @@ public:
         return m_type == Type::Auto;
     }
 
+    bool isMatchElement() const
+    {
+        return m_type == Type::MatchElement;
+    }
+
     bool isCustomIdent() const
     {
         return m_type == Type::CustomIdent;
@@ -75,7 +86,7 @@ public:
 
     ScopeOrdinal scopeOrdinal() const
     {
-        ASSERT(isCustomIdent() || isAuto());
+        ASSERT(!isNone());
         return m_scopeOrdinal;
     }
 
@@ -104,6 +115,8 @@ inline TextStream& operator<<(TextStream& ts, const ViewTransitionName& name)
 {
     if (name.isAuto())
         ts << "auto"_s;
+    else if (name.isMatchElement())
+        ts << "match-element"_s;
     else if (name.isNone())
         ts << "none"_s;
     else

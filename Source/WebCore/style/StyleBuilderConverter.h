@@ -2059,6 +2059,9 @@ inline Style::ViewTransitionName BuilderConverter::convertViewTransitionName(con
     if (value.valueID() == CSSValueAuto)
         return Style::ViewTransitionName::createWithAuto(state.styleScopeOrdinal());
 
+    if (value.valueID() == CSSValueMatchElement)
+        return Style::ViewTransitionName::createWithMatchElement(state.styleScopeOrdinal());
+
     return Style::ViewTransitionName::createWithCustomIdent(state.styleScopeOrdinal(), AtomString { primitiveValue->stringValue() });
 }
 
