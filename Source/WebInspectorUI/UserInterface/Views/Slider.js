@@ -23,10 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WI.Slider = class Slider extends WI.Object
-{
-    constructor()
-    {
+WI.Slider = class Slider extends WI.Object {
+    constructor({ horizontal } = {}) {
         super();
 
         this._element = document.createElement("div");
@@ -36,90 +34,97 @@ WI.Slider = class Slider extends WI.Object
         this._knob = this._element.appendChild(document.createElement("img"));
 
         this._value = 0;
-        this._knobY = 0;
-        this._maxY = 0;
+        this._knobPosition = 0;
+        this._maxPosition = 0;
 
+        this._horizontal = horizontal;
+        if (this._horizontal)
+            this._knob.classList.add("horizontal");
+            
         this._element.addEventListener("mousedown", this);
         this._element.addEventListener("keydown", this._handleKeyDown.bind(this));
     }
 
     // Public
 
-    get element()
-    {
+    get element() {
         return this._element;
     }
 
-    get value()
-    {
+    get value() {
         return this._value;
     }
 
-    set value(value)
-    {
+    set value(value) {
         value = Math.max(Math.min(value, 1), 0);
 
         if (value === this._value) {
-            this.recalculateKnobY();
+            this.recalculateKnobPosition();
             return;
         }
 
-        this.knobY = value;
+        this.knobPosition = value;
 
         if (this.delegate && typeof this.delegate.sliderValueDidChange === "function")
             this.delegate.sliderValueDidChange(this, value);
     }
 
-    set knobY(value)
-    {
+    set knobPosition(value) {
         this._value = value;
-        this._knobY = Math.round((1 - value) * this.maxY);
-        this._knob.style.setProperty("--translate-y", `${this._knobY}px`);
+        this._knobPosition = Math.round((1 - value) * this.maxPosition);
+        if (this._horizontal)
+            this._knob.style.setProperty("--translate-x", `${this._knobPosition}px`);
+        else
+            this._knob.style.setProperty("--translate-y", `${this._knobPosition}px`);
     }
 
-    get maxY()
-    {
-        if (this._maxY <= 0 && document.body.contains(this._element))
-            this._maxY = Math.max(this._element.offsetHeight - Math.ceil(WI.Slider.KnobWidth / 2), 0);
-
-        return this._maxY;
+    get maxPosition() {
+        if (this._maxPosition <= 0 && document.body.contains(this._element)) {
+            if (this._horizontal)
+                this._maxPosition = Math.max(this._element.offsetWidth - Math.ceil(WI.Slider.KnobWidth / 2), 0);
+            else
+                this._maxPosition = Math.max(this._element.offsetHeight - Math.ceil(WI.Slider.KnobWidth / 2), 0);
+        }
+        return this._maxPosition;
     }
 
-    recalculateKnobY()
-    {
-        this._maxY = 0;
-        this.knobY = this._value;
+    recalculateKnobPosition() {
+        this._maxPosition = 0;
+        this.knobPosition = this._value;
     }
 
     // Protected
 
-    handleEvent(event)
-    {
+    handleEvent(event) {
         switch (event.type) {
-        case "mousedown":
-            this._handleMousedown(event);
-            break;
-        case "mousemove":
-            this._handleMousemove(event);
-            break;
-        case "mouseup":
-            this._handleMouseup(event);
-            break;
+            case "mousedown":
+                this._handleMousedown(event);
+                break;
+            case "mousemove":
+                this._handleMousemove(event);
+                break;
+            case "mouseup":
+                this._handleMouseup(event);
+                break;
         }
     }
 
     // Private
 
-    _handleMousedown(event)
-    {
+    _handleMousedown(event) {
         if (event.button !== 0 || event.ctrlKey)
             return;
 
-        if (event.target !== this._knob)
-            this.value = 1 - ((this._localPointForEvent(event).y - 3) / this.maxY);
+        if (event.target !== this._knob) {
+            if (this._horizontal)
+                this.value = 1 - ((this._localPointForEvent(event).x - 3) / this.maxPosition);
+            else
+                this.value = 1 - ((this._localPointForEvent(event).y - 3) / this.maxPosition);
+        }
 
-        this._startKnobY = this._knobY;
+        this._startKnobPosition = this._knobPosition;
         this._startMouseY = this._localPointForEvent(event).y;
+        this._startMouseX = this._localPointForEvent(event).x;
 
         this._element.classList.add("dragging");
 
@@ -129,44 +134,53 @@ WI.Slider = class Slider extends WI.Object
         this._element.focus();
     }
 
-    _handleMousemove(event)
-    {
-        let dy = this._localPointForEvent(event).y - this._startMouseY;
-        let y = Math.max(Math.min(this._startKnobY + dy, this.maxY), 0);
+    _handleMousemove(event) {
+        if (this._horizontal) {
+            let dx = this._localPointForEvent(event).x - this._startMouseX;
+            let x = Math.max(Math.min(this._startKnobPosition + dx, this.maxPosition), 0);
 
-        this.value = 1 - (y / this.maxY);
+            this.value = 1 - (x / this.maxPosition);
+        } else {
+            let dy = this._localPointForEvent(event).y - this._startMouseY;
+            let y = Math.max(Math.min(this._startKnobPosition + dy, this.maxPosition), 0);
+
+            this.value = 1 - (y / this.maxPosition);
+        }
     }
 
-    _handleMouseup(event)
-    {
+    _handleMouseup(event) {
         this._element.classList.remove("dragging");
 
         window.removeEventListener("mousemove", this, true);
         window.removeEventListener("mouseup", this, true);
     }
 
-    _handleKeyDown(event)
-    {
-        let y = 0;
+    _handleKeyDown(event) {
+        let inc = 0;
         let step = event.shiftKey ? 0.1 : 0.01;
 
         switch (event.keyIdentifier) {
-        case "Down":
-            y -= step;
-            break;
-        case "Up":
-            y += step;
-            break;
+            case "Down":
+                inc -= step;
+                break;
+            case "Up":
+                inc += step;
+                break;
+            case "Right":
+                inc += step
+                break;
+            case "Left":
+                inc += step;
+                break;
         }
 
-        if (y) {
+        if (inc) {
             event.preventDefault();
-            this.value += y;
+            this.value += inc;
         }
     }
 
-    _localPointForEvent(event)
-    {
+    _localPointForEvent(event) {
         // We convert all event coordinates from page coordinates to local coordinates such that the slider
         // may be transformed using CSS Transforms and interaction works as expected.
         let rect = this._element.getBoundingClientRect();
