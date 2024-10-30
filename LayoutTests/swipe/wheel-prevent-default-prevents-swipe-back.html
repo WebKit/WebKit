@@ -49,7 +49,7 @@
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
 
-            initializeSwipeTest();
+            await initializeSwipeTest();
         
             testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
             testRunner.installWillEndSwipeCallback(willEndSwipeCallback);

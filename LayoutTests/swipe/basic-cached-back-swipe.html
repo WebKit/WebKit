@@ -52,15 +52,15 @@ window.onload = async function () {
     document.body.innerHTML = isFirstPage() ? "first" : "second";
 
     if (isFirstPage()) {
-        initializeSwipeTest();
+        testRunner.dumpAsText();
+        testRunner.waitUntilDone();
+
+        await initializeSwipeTest();
 
         testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
         testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
         testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
         testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
-
-        testRunner.dumpAsText();
-        testRunner.waitUntilDone();
 
         setTimeout(function () { 
             window.location.href = window.location.href + "?second";

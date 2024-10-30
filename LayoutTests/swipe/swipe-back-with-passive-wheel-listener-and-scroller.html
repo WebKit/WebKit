@@ -61,15 +61,15 @@
 
             if (!window.eventSender || !window.testRunner)
                 return;
+            
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
 
-            initializeSwipeTest();
+            await initializeSwipeTest();
         
             testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
             testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
             testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
-
-            testRunner.dumpAsText();
-            testRunner.waitUntilDone();
 
             return;
         }

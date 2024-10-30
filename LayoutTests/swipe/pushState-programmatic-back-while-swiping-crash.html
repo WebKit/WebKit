@@ -98,12 +98,12 @@ window.onload = async function () {
 
     updateContent();
 
-    initializeSwipeTest();
-
-    testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
-
     testRunner.dumpAsText();
     testRunner.waitUntilDone();
+
+    await initializeSwipeTest();
+
+    testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
 
     window.addEventListener("popstate", function(e) {
         updateContent();

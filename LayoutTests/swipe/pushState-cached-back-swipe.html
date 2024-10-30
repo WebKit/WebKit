@@ -59,15 +59,15 @@ window.onload = async function () {
 
     updateContent();
 
-    initializeSwipeTest();
+    testRunner.dumpAsText();
+    testRunner.waitUntilDone();
+
+    await initializeSwipeTest();
 
     testRunner.installDidBeginSwipeCallback(didBeginSwipeCallback);
     testRunner.installWillEndSwipeCallback(willEndSwipeCallback);
     testRunner.installDidEndSwipeCallback(didEndSwipeCallback);
     testRunner.installDidRemoveSwipeSnapshotCallback(didRemoveSwipeSnapshotCallback);
-
-    testRunner.dumpAsText();
-    testRunner.waitUntilDone();
 
     window.addEventListener("popstate", function(e) {
         updateContent();

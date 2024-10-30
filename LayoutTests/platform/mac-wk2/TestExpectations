@@ -1916,7 +1916,3 @@ imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data
 
 # webkit.org/b/282126 NEW TEST [ Sequoia+ x86_64 ] 5 swipe layout tests are timing due to "Timed out waiting for notifyDone to be called"
 [ Debug ] swipe/main-frame-pinning-requirement.html [ Failure Timeout ]
-
-# webkit.org/b/282264 REGRESSION (285707@main): [macOS wk2 Debug] swipe/pushState tests are failing/timeout (EWS failure)
-[ Debug ] swipe/pushState-programmatic-back-while-swiping-crash.html [ Pass Failure ]
-[ Debug ] swipe/pushstate-with-manual-scrollrestoration.html [ Pass Timeout ]
