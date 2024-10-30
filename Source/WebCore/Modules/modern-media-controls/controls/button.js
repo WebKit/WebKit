@@ -83,6 +83,7 @@ class Button extends LayoutItem
 
         this._loadImage(iconName);
         this.element.setAttribute("aria-label", iconName.label);
+        this.element.setAttribute("id", iconName.name);
     }
 
     get on()
