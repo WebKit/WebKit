@@ -35,6 +35,7 @@ struct LineContent;
 struct LineCandidate;
 
 class LineBuilder final : public AbstractLineBuilder {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     LineBuilder(InlineFormattingContext&, HorizontalConstraints rootHorizontalConstraints, const InlineItemList&);
     virtual ~LineBuilder() { };
@@ -69,7 +70,7 @@ private:
     size_t rebuildLineForTrailingSoftHyphen(const InlineItemRange& layoutRange);
     void commitPartialContent(const InlineContentBreaker::ContinuousContent::RunList&, const InlineContentBreaker::Result::PartialTrailingContent&);
     void initialize(const InlineRect& initialLineLogicalRect, const InlineItemRange& needsLayoutRange, const std::optional<PreviousLine>&,  std::optional<bool> previousLineEndsWithLineBreak);
-    LineContent placeInlineAndFloatContent(const InlineItemRange&);
+    UniqueRef<LineContent> placeInlineAndFloatContent(const InlineItemRange&);
     struct InitialLetterOffsets {
         LayoutUnit capHeightOffset;
         LayoutUnit sunkenBelowFirstLineOffset;
