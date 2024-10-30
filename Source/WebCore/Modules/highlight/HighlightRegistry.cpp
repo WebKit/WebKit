@@ -68,8 +68,8 @@ void HighlightRegistry::setHighlightVisibility(HighlightVisibility highlightVisi
     
     m_highlightVisibility = highlightVisibility;
     
-    for (auto& highlight : m_map)
-        highlight.value->repaint();
+    for (Ref highlight : m_map.values())
+        highlight->repaint();
 }
 #endif
 static ASCIILiteral annotationHighlightKey()
@@ -80,7 +80,7 @@ static ASCIILiteral annotationHighlightKey()
 void HighlightRegistry::addAnnotationHighlightWithRange(Ref<StaticRange>&& value)
 {
     if (m_map.contains(annotationHighlightKey()))
-        m_map.get(annotationHighlightKey())->addToSetLike(value);
+        RefPtr { m_map.get(annotationHighlightKey()) } ->addToSetLike(value);
     else
         setFromMapLike(annotationHighlightKey(), Highlight::create({ std::ref<AbstractRange>(value.get()) }));
 }
