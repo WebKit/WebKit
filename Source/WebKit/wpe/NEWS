@@ -1,4 +1,18 @@
 =================
+WPE WebKit 2.46.3
+=================
+
+What's new in WPE WebKit 2.46.3?
+
+  - Fix DuckDuckGo links by adding a user agent quirk.
+  - Flatten layers to a plane when preseve-3d style is set.
+  - Fix H.264 encoding and improve selection of encoder parameters according
+    to the requested profile.
+  - Fix libsoup URLs in generated reference documentation.
+  - Fix the build with ENABLE_REMOTE_INSPECTOR=OFF.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.46.2
 =================
 
