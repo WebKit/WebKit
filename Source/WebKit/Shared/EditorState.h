@@ -95,7 +95,7 @@ struct EditorState {
         WebCore::Color textColor { WebCore::Color::black }; // FIXME: Maybe this should be on VisualData?
         ListType enclosingListType { ListType::None };
         WebCore::WritingDirection baseWritingDirection { WebCore::WritingDirection::Natural };
-        bool editableRootIsTransparentOrFullyClipped { false };
+        bool selectionIsTransparentOrFullyClipped { false };
         bool canEnableWritingSuggestions { false };
 #endif
 #if PLATFORM(IOS_FAMILY)

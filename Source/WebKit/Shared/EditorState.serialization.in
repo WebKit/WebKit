@@ -69,7 +69,7 @@ struct WebKit::EditorState {
     WebCore::Color textColor;
     WebKit::ListType enclosingListType;
     WebCore::WritingDirection baseWritingDirection;
-    bool editableRootIsTransparentOrFullyClipped;
+    bool selectionIsTransparentOrFullyClipped;
     bool canEnableWritingSuggestions;
 #endif
 #if PLATFORM(IOS_FAMILY)

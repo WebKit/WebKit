@@ -8909,13 +8909,13 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
     if (!editorState.hasPostLayoutAndVisualData())
         return;
 
-    BOOL editableRootIsTransparentOrFullyClipped = NO;
+    BOOL selectionIsTransparentOrFullyClipped = NO;
     BOOL focusedElementIsTooSmall = NO;
     if (!editorState.selectionIsNone) {
         auto& postLayoutData = *editorState.postLayoutData;
         auto& visualData = *editorState.visualData;
-        if (postLayoutData.editableRootIsTransparentOrFullyClipped)
-            editableRootIsTransparentOrFullyClipped = YES;
+        if (postLayoutData.selectionIsTransparentOrFullyClipped)
+            selectionIsTransparentOrFullyClipped = YES;
 
         if (self._hasFocusedElement) {
             auto elementArea = visualData.editableRootBounds.area<RecordOverflow>();
@@ -8924,10 +8924,10 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
         }
     }
 
-    if (editableRootIsTransparentOrFullyClipped)
-        [self _startSuppressingSelectionAssistantForReason:WebKit::EditableRootIsTransparentOrFullyClipped];
+    if (selectionIsTransparentOrFullyClipped)
+        [self _startSuppressingSelectionAssistantForReason:WebKit::SelectionIsTransparentOrFullyClipped];
     else
-        [self _stopSuppressingSelectionAssistantForReason:WebKit::EditableRootIsTransparentOrFullyClipped];
+        [self _stopSuppressingSelectionAssistantForReason:WebKit::SelectionIsTransparentOrFullyClipped];
 
     if (focusedElementIsTooSmall)
         [self _startSuppressingSelectionAssistantForReason:WebKit::FocusedElementIsTooSmall];
@@ -9106,7 +9106,7 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 
 - (BOOL)hasHiddenContentEditable
 {
-    return _suppressSelectionAssistantReasons.containsAny({ WebKit::EditableRootIsTransparentOrFullyClipped, WebKit::FocusedElementIsTooSmall });
+    return _suppressSelectionAssistantReasons.containsAny({ WebKit::SelectionIsTransparentOrFullyClipped, WebKit::FocusedElementIsTooSmall });
 }
 
 - (BOOL)_shouldSuppressSelectionCommands
