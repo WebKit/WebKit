@@ -64,9 +64,11 @@ ResourceRequest::ResourceRequest(NSURLRequest *nsRequest)
 ResourceRequest::ResourceRequest(ResourceRequestPlatformData&& platformData, const String& cachePartition, bool hiddenFromInspector)
 {
     if (platformData.m_urlRequest) {
-        setRequester(*platformData.m_requester);
+        if (platformData.m_requester)
+            setRequester(*platformData.m_requester);
         m_nsRequest = platformData.m_urlRequest;
-        setIsAppInitiated(*platformData.m_isAppInitiated);
+        if (platformData.m_isAppInitiated)
+            setIsAppInitiated(*platformData.m_isAppInitiated);
         setPrivacyProxyFailClosedForUnreachableNonMainHosts(platformData.m_privacyProxyFailClosedForUnreachableNonMainHosts);
         setUseAdvancedPrivacyProtections(platformData.m_useAdvancedPrivacyProtections);
         setDidFilterLinkDecoration(platformData.m_didFilterLinkDecoration);
