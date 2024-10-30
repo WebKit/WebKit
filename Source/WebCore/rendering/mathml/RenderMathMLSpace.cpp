@@ -51,6 +51,9 @@ void RenderMathMLSpace::computePreferredLogicalWidths()
 
     m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = spaceWidth();
 
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth);
+    applySizeToMathContent(LayoutPhase::CalculatePreferredLogicalWidth, sizes);
+
     adjustPreferredLogicalWidthsForBorderAndPadding();
 
     setPreferredLogicalWidthsDirty(false);
@@ -89,10 +92,15 @@ void RenderMathMLSpace::layoutBlock(bool relayoutChildren, LayoutUnit)
 
     recomputeLogicalWidth();
 
-    setLogicalWidth(spaceWidth() + borderAndPaddingLogicalWidth());
+    setLogicalWidth(spaceWidth());
     LayoutUnit height, depth;
     getSpaceHeightAndDepth(height, depth);
-    setLogicalHeight(height + depth + borderAndPaddingLogicalHeight());
+    setLogicalHeight(height + depth);
+
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::Layout);
+    applySizeToMathContent(LayoutPhase::Layout, sizes);
+
+    adjustLayoutForBorderAndPadding();
 
     updateScrollInfoAfterLayout();
 

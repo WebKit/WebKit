@@ -1,0 +1,156 @@
+
+PASS mrow
+PASS mrow (vertical overflow)
+PASS mpadded
+PASS mpadded (vertical overflow)
+PASS msqrt
+PASS msqrt (vertical overflow)
+PASS mroot
+PASS mroot (vertical overflow)
+PASS munder
+PASS munder (vertical overflow)
+PASS mover
+PASS mover (vertical overflow)
+PASS munderover
+PASS munderover (vertical overflow)
+PASS msub
+PASS msub (vertical overflow)
+PASS msup
+PASS msup (vertical overflow)
+PASS msubsup
+PASS msubsup (vertical overflow)
+PASS mmultiscripts
+PASS mmultiscripts (vertical overflow)
+PASS mtext
+PASS mtext (vertical overflow)
+PASS legacy menclose
+PASS legacy menclose (vertical overflow)
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+
+X
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+
+X
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+X
+X
+X
+
+X
+X
+X
+X
+X
+
+X
+X
+X
+X
+X
+X X X
+
+X X X
+
+X X X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+

@@ -283,6 +283,51 @@ void RenderMathMLBlock::adjustLayoutForBorderAndPadding()
     shiftInFlowChildren(style().isLeftToRightDirection() ? borderAndPaddingStart() : borderAndPaddingEnd(), borderAndPaddingBefore());
 }
 
+RenderMathMLBlock::SizeAppliedToMathContent RenderMathMLBlock::sizeAppliedToMathContent(LayoutPhase phase)
+{
+    SizeAppliedToMathContent sizes;
+    // FIXME: Resolve percentages.
+    // https://github.com/w3c/mathml-core/issues/76
+    if (style().logicalWidth().isFixed())
+        sizes.logicalWidth = style().logicalWidth().value();
+
+    // FIXME: Resolve percentages.
+    // https://github.com/w3c/mathml-core/issues/77
+    if (phase == LayoutPhase::Layout && style().logicalHeight().isFixed())
+        sizes.logicalHeight = style().logicalHeight().value();
+
+    return sizes;
+}
+
+LayoutUnit RenderMathMLBlock::applySizeToMathContent(LayoutPhase phase, const SizeAppliedToMathContent& sizes)
+{
+    if (phase == LayoutPhase::CalculatePreferredLogicalWidth) {
+        ASSERT(preferredLogicalWidthsDirty());
+        if (sizes.logicalWidth) {
+            m_minPreferredLogicalWidth = *sizes.logicalWidth;
+            m_maxPreferredLogicalWidth = *sizes.logicalWidth;
+        }
+        return LayoutUnit();
+    }
+
+    ASSERT(phase == LayoutPhase::Layout);
+
+    LayoutUnit inlineShift;
+    if (sizes.logicalWidth) {
+        auto oldWidth = logicalWidth();
+        if (isMathContentCentered()) {
+            inlineShift = (*sizes.logicalWidth - oldWidth) / 2;
+        } else if (!style().isLeftToRightDirection())
+            inlineShift = *sizes.logicalWidth - oldWidth;
+        setLogicalWidth(*sizes.logicalWidth);
+    }
+
+    if (sizes.logicalHeight)
+        setLogicalHeight(*sizes.logicalHeight);
+
+    return inlineShift;
+}
+
 }
 
 #endif

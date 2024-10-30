@@ -55,6 +55,7 @@ private:
     std::optional<LayoutUnit> firstLineBaseline() const final;
     void paint(PaintInfo&, const LayoutPoint&) final;
     RenderMathMLOperator* unembellishedOperator() const final;
+    bool isMathContentCentered() const final { return true; }
 
     MathMLFractionElement& element() const { return static_cast<MathMLFractionElement&>(nodeForNonAnonymous()); }
 

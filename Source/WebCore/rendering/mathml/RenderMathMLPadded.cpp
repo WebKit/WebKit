@@ -81,6 +81,9 @@ void RenderMathMLPadded::computePreferredLogicalWidths()
     preferredWidth = mpaddedWidth(preferredWidth);
     m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = preferredWidth;
 
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth);
+    applySizeToMathContent(LayoutPhase::CalculatePreferredLogicalWidth, sizes);
+
     adjustPreferredLogicalWidthsForBorderAndPadding();
 
     setPreferredLogicalWidthsDirty(false);
@@ -117,6 +120,10 @@ void RenderMathMLPadded::layoutBlock(bool relayoutChildren, LayoutUnit)
     // Set the final metrics.
     setLogicalWidth(width);
     setLogicalHeight(ascent + descent);
+
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::Layout);
+    auto shift = applySizeToMathContent(LayoutPhase::Layout, sizes);
+    shiftInFlowChildren(shift, 0);
 
     adjustLayoutForBorderAndPadding();
 

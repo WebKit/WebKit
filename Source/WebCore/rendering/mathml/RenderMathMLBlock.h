@@ -81,6 +81,22 @@ protected:
     void adjustPreferredLogicalWidthsForBorderAndPadding();
     void adjustLayoutForBorderAndPadding();
 
+    enum class LayoutPhase : uint8_t {
+        CalculatePreferredLogicalWidth,
+        Layout,
+    };
+    struct SizeAppliedToMathContent {
+        std::optional<LayoutUnit> logicalWidth;
+        std::optional<LayoutUnit> logicalHeight;
+    };
+    // Retrieve the specified (and supported) CSS width/height to apply to math
+    // content box, if any.
+    SizeAppliedToMathContent sizeAppliedToMathContent(LayoutPhase);
+    // Whether math content should be centered on the inline axis if a different size is specified by the user.
+    virtual bool isMathContentCentered() const { return false; }
+    // Apply the specified CSS width/height to the math content box and return inline shift for further adjustments.
+    LayoutUnit applySizeToMathContent(LayoutPhase, const SizeAppliedToMathContent&);
+
 private:
     bool isRenderMathMLBlock() const final { return true; }
     ASCIILiteral renderName() const override { return "RenderMathMLBlock"_s; }

@@ -167,6 +167,9 @@ void RenderMathMLMenclose::computePreferredLogicalWidths()
     preferredWidth += space.left + space.right;
     m_maxPreferredLogicalWidth = m_minPreferredLogicalWidth = preferredWidth;
 
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::CalculatePreferredLogicalWidth);
+    applySizeToMathContent(LayoutPhase::CalculatePreferredLogicalWidth, sizes);
+
     adjustPreferredLogicalWidthsForBorderAndPadding();
 
     setPreferredLogicalWidthsDirty(false);
@@ -197,6 +200,10 @@ void RenderMathMLMenclose::layoutBlock(bool relayoutChildren, LayoutUnit)
     shiftInFlowChildren(space.left, space.top);
 
     m_contentRect = LayoutRect(space.left, space.top, contentWidth, contentAscent + contentDescent);
+
+    auto sizes = sizeAppliedToMathContent(LayoutPhase::Layout);
+    auto shift = applySizeToMathContent(LayoutPhase::Layout, sizes);
+    shiftInFlowChildren(shift, 0);
 
     adjustLayoutForBorderAndPadding();
     m_contentRect.moveBy(LayoutPoint(borderLeft() + paddingLeft(), borderAndPaddingBefore()));

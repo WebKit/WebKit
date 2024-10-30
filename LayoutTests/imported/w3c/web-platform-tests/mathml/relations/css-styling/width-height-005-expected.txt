@@ -1,0 +1,244 @@
+
+PASS mrow
+PASS mrow (horizontal overflow)
+PASS RTL mrow
+PASS RTL mrow (horizontal overflow)
+PASS mpadded
+PASS mpadded (horizontal overflow)
+PASS RTL mpadded
+PASS RTL mpadded (horizontal overflow)
+PASS msqrt
+PASS msqrt (horizontal overflow)
+PASS RTL msqrt
+PASS RTL msqrt (horizontal overflow)
+PASS mroot
+PASS mroot (horizontal overflow)
+PASS RTL mroot
+PASS RTL mroot (horizontal overflow)
+PASS msub
+PASS msub (horizontal overflow)
+PASS RTL msub
+PASS RTL msub (horizontal overflow)
+PASS msup
+PASS msup (horizontal overflow)
+PASS RTL msup
+PASS RTL msup (horizontal overflow)
+PASS msubsup
+PASS msubsup (horizontal overflow)
+PASS RTL msubsup
+PASS RTL msubsup (horizontal overflow)
+PASS mmultiscripts
+PASS mmultiscripts (horizontal overflow)
+PASS RTL mmultiscripts
+PASS RTL mmultiscripts (horizontal overflow)
+PASS mtext
+PASS mtext (horizontal overflow)
+PASS RTL mtext
+PASS RTL mtext (horizontal overflow)
+PASS legacy menclose
+PASS legacy menclose (horizontal overflow)
+PASS RTL legacy menclose
+PASS RTL legacy menclose (horizontal overflow)
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+
+X
+X
+X
+X
+
+X
+X
+
+X
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+X
+X
+X
+
+X
+X
+X
+X
+X
+
+X
+X
+X
+X
+X
+X
+X
+X
+X
+X
+
+X
+X
+X
+X
+X
+
+X
+X
+X
+X
+X
+X X X
+
+X X X
+
+X X X
+X X X
+
+X X X
+
+X X X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+X
+X
+X
+
+X
+X
+X
+
+X
+X
+X
+
