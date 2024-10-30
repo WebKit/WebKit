@@ -4369,7 +4369,7 @@ void OMGIRGenerator::connectControlAtEntrypoint(unsigned& indexInBuffer, Value* 
             append<VariableValue>(m_proc, Set, origin(), value.value(), load);
     }
     if (ControlType::isAnyCatch(data) && &data != &currentData) {
-        auto* load = loadFromScratchBuffer(indexInBuffer, pointer, pointerType());
+        auto* load = loadFromScratchBuffer(indexInBuffer, pointer, Int64);
         append<VariableValue>(m_proc, Set, origin(), data.exception(), load);
     }
 };
