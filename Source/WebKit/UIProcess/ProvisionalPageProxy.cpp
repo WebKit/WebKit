@@ -503,10 +503,10 @@ void ProvisionalPageProxy::startURLSchemeTask(IPC::Connection& connection, URLSc
         page->startURLSchemeTaskShared(connection, protectedProcess(), m_webPageID, WTFMove(parameters));
 }
 
-void ProvisionalPageProxy::backForwardGoToItem(const WebCore::BackForwardItemIdentifier& identifier, CompletionHandler<void(const WebBackForwardListCounts&)>&& completionHandler)
+void ProvisionalPageProxy::backForwardGoToItem(IPC::Connection& connection, const WebCore::BackForwardItemIdentifier& identifier, CompletionHandler<void(const WebBackForwardListCounts&)>&& completionHandler)
 {
     if (RefPtr page = m_page.get())
-        page->backForwardGoToItemShared(identifier, WTFMove(completionHandler));
+        page->backForwardGoToItemShared(connection, identifier, WTFMove(completionHandler));
     else
         completionHandler({ });
 }

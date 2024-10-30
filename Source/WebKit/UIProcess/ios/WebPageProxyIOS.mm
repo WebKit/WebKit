@@ -89,8 +89,6 @@
 #import <wtf/text/WTFString.h>
 #endif
 
-#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, legacyMainFrameProcess().connection())
-
 #define WEBPAGEPROXY_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageProxyID=%llu, webPageID=%llu, PID=%i] WebPageProxy::" fmt, this, identifier().toUInt64(), webPageIDInMainFrameProcess().toUInt64(), m_legacyMainFrameProcess->processID(), ##__VA_ARGS__)
 
 #if PLATFORM(VISION)
@@ -591,9 +589,9 @@ void WebPageProxy::performActionOnElements(uint32_t action, Vector<WebCore::Elem
     m_legacyMainFrameProcess->send(Messages::WebPage::PerformActionOnElements(action, elements), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::saveImageToLibrary(SharedMemory::Handle&& imageHandle, const String& authorizationToken)
+void WebPageProxy::saveImageToLibrary(IPC::Connection& connection, SharedMemory::Handle&& imageHandle, const String& authorizationToken)
 {
-    MESSAGE_CHECK(isValidPerformActionOnElementAuthorizationToken(authorizationToken));
+    MESSAGE_CHECK_BASE(isValidPerformActionOnElementAuthorizationToken(authorizationToken), connection);
 
     auto sharedMemoryBuffer = SharedMemory::map(WTFMove(imageHandle), SharedMemory::Protection::ReadOnly);
     if (!sharedMemoryBuffer)
@@ -908,16 +906,16 @@ void WebPageProxy::couldNotRestorePageState()
         pageClient->couldNotRestorePageState();
 }
 
-void WebPageProxy::restorePageState(std::optional<WebCore::FloatPoint> scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatBoxExtent& obscuredInsetsOnSave, double scale)
+void WebPageProxy::restorePageState(IPC::Connection& connection, std::optional<WebCore::FloatPoint> scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatBoxExtent& obscuredInsetsOnSave, double scale)
 {
-    MESSAGE_CHECK(scale > 0);
+    MESSAGE_CHECK_BASE(scale > 0, connection);
     if (RefPtr pageClient = this->pageClient())
         pageClient->restorePageState(scrollPosition, scrollOrigin, obscuredInsetsOnSave, scale);
 }
 
-void WebPageProxy::restorePageCenterAndScale(std::optional<WebCore::FloatPoint> center, double scale)
+void WebPageProxy::restorePageCenterAndScale(IPC::Connection& connection, std::optional<WebCore::FloatPoint> center, double scale)
 {
-    MESSAGE_CHECK(scale > 0);
+    MESSAGE_CHECK_BASE(scale > 0, connection);
     if (RefPtr pageClient = this->pageClient())
         pageClient->restorePageCenterAndScale(center, scale);
 }
@@ -1743,6 +1741,5 @@ void WebPageProxy::pluginDidInstallPDFDocument(double initialScale)
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG
-#undef MESSAGE_CHECK
 
 #endif // PLATFORM(IOS_FAMILY)

@@ -3933,11 +3933,11 @@ static HandleUserInputEventResult handleGestureEvent(FrameIdentifier frameID, co
     return coreLocalFrame->eventHandler().handleGestureEvent(platform(event));
 }
 
-void WebPage::gestureEvent(FrameIdentifier frameID, const WebGestureEvent& gestureEvent, CompletionHandler<void(std::optional<WebEventType>, bool, std::optional<RemoteUserInputEventData>)>&& completionHandler)
+void WebPage::gestureEvent(FrameIdentifier frameID, const WebGestureEvent& gestureEvent)
 {
     CurrentEvent currentEvent(gestureEvent);
     auto result = handleGestureEvent(frameID, gestureEvent, m_page.get());
-    completionHandler(gestureEvent.type(), result.wasHandled(), result.remoteUserInputEventData());
+    send(Messages::WebPageProxy::DidReceiveEvent(gestureEvent.type(), result.wasHandled(), result.remoteUserInputEventData()));
 }
 #endif
 
