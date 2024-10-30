@@ -165,7 +165,7 @@ InlineLayoutResult InlineFormattingContext::layout(const ConstraintsForInlineCon
         auto rangeBasedLineBuilder = RangeBasedLineBuilder { *this, constraints.horizontal(), inlineItemList };
         return lineLayout(rangeBasedLineBuilder, inlineItemList, needsLayoutRange, previousLine(), constraints, lineDamage);
     }
-    auto lineBuilder = LineBuilder { *this, constraints.horizontal(), inlineItemList, inlineContentCache().inlineBoxBoundaryTextSpacings() };
+    auto lineBuilder = makeUniqueRef<LineBuilder>(*this, constraints.horizontal(), inlineItemList, inlineContentCache().inlineBoxBoundaryTextSpacings());
     return lineLayout(lineBuilder, inlineItemList, needsLayoutRange, previousLine(), constraints, lineDamage);
 }
 
