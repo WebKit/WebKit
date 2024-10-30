@@ -855,6 +855,7 @@ public:
     PartialResult WARN_UNUSED_RETURN addCallRef(const TypeDefinition&, ArgumentList& args, ResultList& results, CallType = CallType::Call);
     PartialResult WARN_UNUSED_RETURN addUnreachable();
     PartialResult WARN_UNUSED_RETURN addCrash();
+    void fillCallResults(Value* callResult, const TypeDefinition& signature, ResultList& results);
     PartialResult WARN_UNUSED_RETURN emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, const TypeDefinition&, const ArgumentList& args, ResultList&, CallType = CallType::Call);
     auto createCallPatchpoint(BasicBlock*, const TypeDefinition&, const CallInformation&, const ArgumentList& tmpArgs) -> CallPatchpointData;
     auto createTailCallPatchpoint(BasicBlock*, CallInformation wasmCallerInfoAsCallee, CallInformation wasmCalleeInfoAsCallee, const ArgumentList& tmpArgSourceLocations, Vector<B3::ConstrainedValue> patchArgs) -> CallPatchpointData;
@@ -1645,7 +1646,7 @@ B3::Type OMGIRGenerator::toB3ResultType(const TypeDefinition* returnType)
     if (returnType->as<FunctionSignature>()->returnsVoid())
         return B3::Void;
 
-    if (returnType->as<FunctionSignature>()->returnCount() == 1 && returnType->as<FunctionSignature>()->returnType(0).isI64())
+    if (returnType->as<FunctionSignature>()->returnCount() == 1 && toB3Type(returnType->as<FunctionSignature>()->returnType(0)) == Int64)
         return m_proc.addTuple({ Int32, Int32 });
 
     if (returnType->as<FunctionSignature>()->returnCount() == 1)
@@ -1977,6 +1978,43 @@ auto OMGIRGenerator::addCrash() -> PartialResult
     return { };
 }
 
+void OMGIRGenerator::fillCallResults(Value* callResult, const TypeDefinition& signature, ResultList& results)
+{
+    B3::Type returnType = toB3ResultType(&signature);
+    switch (returnType.kind()) {
+    case B3::Void: {
+        break;
+    }
+    case B3::Tuple: {
+        const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
+        auto logicalReturnCount = signature.as<FunctionSignature>()->returnCount();
+
+        ASSERT(!isARM64() || logicalReturnCount == tuple.size());
+        for (unsigned i = 0; i < logicalReturnCount; ++i) {
+            if (toB3Type(signature.as<FunctionSignature>()->returnType(i)) == Int64) {
+                int highBitsIndex = 0;
+                for (unsigned j = 0; j < i; ++j) {
+                    ASSERT(j < logicalReturnCount);
+                    if (toB3Type(signature.as<FunctionSignature>()->returnType(j)) == Int64)
+                        ++highBitsIndex;
+                }
+                auto lo = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, i);
+                auto hi = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, logicalReturnCount + highBitsIndex);
+                auto stitched = m_currentBlock->appendNew<Value>(m_proc, Stitch, origin(), lo, hi);
+                results.append(push(stitched));
+                continue;
+            }
+            results.append(push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i)));
+        }
+        break;
+    }
+    default: {
+        results.append(push(callResult));
+        break;
+    }
+    }
+}
+
 auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, Value* boxedCalleeCallee, const TypeDefinition& signature, const ArgumentList& args, ResultList& results, CallType callType) -> PartialResult
 {
     const bool isTailCallInlineCaller = callType == CallType::TailCall && m_inlineParent;
@@ -1986,41 +2024,6 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
     m_makesCalls = true;
     if (isTailCall || isTailCallInlineCaller)
         m_makesTailCalls = true;
-    B3::Type returnType = toB3ResultType(&signature);
-    auto fillResults = [&] (Value* callResult) {
-        switch (returnType.kind()) {
-        case B3::Void: {
-            break;
-        }
-        case B3::Tuple: {
-            const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
-            auto logicalReturnCount = signature.as<FunctionSignature>()->returnCount();
-
-            ASSERT(!isARM64() || logicalReturnCount == tuple.size());
-            for (unsigned i = 0; i < logicalReturnCount; ++i) {
-                if (signature.as<FunctionSignature>()->returnType(i).isI64()) {
-                    int highBitsIndex = 0;
-                    for (unsigned j = 0; j < i; ++j) {
-                        ASSERT(j < logicalReturnCount);
-                        if (signature.as<FunctionSignature>()->returnType(j).isI64())
-                            ++highBitsIndex;
-                    }
-                    auto lo = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, i);
-                    auto hi = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, logicalReturnCount + highBitsIndex);
-                    auto stitched = m_currentBlock->appendNew<Value>(m_proc, Stitch, origin(), lo, hi);
-                    results.append(push(stitched));
-                    continue;
-                }
-                results.append(push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i)));
-            }
-            break;
-        }
-        default: {
-            results.append(push(callResult));
-            break;
-        }
-        }
-    };
 
     // Do a context switch if needed.
     {
@@ -2111,7 +2114,7 @@ auto OMGIRGenerator::emitIndirectCall(Value* calleeInstance, Value* calleeCode, 
         jit.storeWasmCalleeCallee(params[patchArgsIndex + 1].gpr());
         jit.call(params[patchArgsIndex].gpr(), WasmEntryPtrTag);
     });
-    fillResults(patchpoint);
+    fillCallResults(patchpoint, signature, results);
 
     // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
     restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
@@ -5095,7 +5098,7 @@ auto OMGIRGenerator::createCallPatchpoint(BasicBlock* block, const TypeDefinitio
         for (size_t index = 0; index < functionSignature.returnCount(); ++index) {
             auto valueLocation = constrainedResultLocations[index];
 
-            if (functionSignature.returnType(index).isI64()) {
+            if (toB3Type(functionSignature.returnType(index)) == Int64) {
                 ASSERT(returnType == Int64 || m_proc.tupleForType(returnType)[index] == Int32);
                 if (valueLocation.location.isGPR())
                     resultConstraintsHigh.append(B3::ValueRep(valueLocation.location.jsr().tagGPR()));
@@ -5366,41 +5369,6 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
         returnType = toB3ResultType(&signature);
     }
 
-    auto fillResults = [&] (Value* callResult) {
-        switch (returnType.kind()) {
-        case B3::Void: {
-            break;
-        }
-        case B3::Tuple: {
-            const Vector<B3::Type>& tuple = m_proc.tupleForType(returnType);
-            auto logicalReturnCount = signature.as<FunctionSignature>()->returnCount();
-
-            ASSERT(!isARM64() || logicalReturnCount == tuple.size());
-            for (unsigned i = 0; i < logicalReturnCount; ++i) {
-                if (signature.as<FunctionSignature>()->returnType(i).isI64()) {
-                    int highBitsIndex = 0;
-                    for (unsigned j = 0; j < i; ++j) {
-                        ASSERT(j < logicalReturnCount);
-                        if (signature.as<FunctionSignature>()->returnType(j).isI64())
-                            ++highBitsIndex;
-                    }
-                    auto lo = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, i);
-                    auto hi = m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), Int32, callResult, logicalReturnCount + highBitsIndex);
-                    auto stitched = m_currentBlock->appendNew<Value>(m_proc, Stitch, origin(), lo, hi);
-                    results.append(push(stitched));
-                    continue;
-                }
-                results.append(push(m_currentBlock->appendNew<ExtractValue>(m_proc, origin(), tuple[i], callResult, i)));
-            }
-            break;
-        }
-        default: {
-            results.append(push(callResult));
-            break;
-        }
-        }
-    };
-
     m_proc.requestCallArgAreaSizeInBytes(calleeStackSize);
 
     if (m_info.isImportedFunctionFromFunctionIndexSpace(functionIndexSpace)) {
@@ -5443,7 +5411,7 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
         emitCallToImport(patchpoint, handle, prepareForCall);
 
         if (returnType != B3::Void)
-            fillResults(patchpoint);
+            fillCallResults(patchpoint, signature, results);
 
         // The call could have been to another WebAssembly instance, and / or could have modified our Memory.
         restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
@@ -5506,7 +5474,7 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
 #endif
 
 
-    fillResults(patchpoint);
+    fillCallResults(patchpoint, signature, results);
 
     if (m_info.callCanClobberInstance(functionIndexSpace))
         restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
