@@ -62,7 +62,7 @@ extension WKWebView {
 
 // Concurrency diagnostics are incorrectly promoted to errors on older public
 // versions of Swift. Remove when dropping support for macOS Ventura.
-#if (swift(>=5.5) && USE_APPLE_INTERNAL_SDK) || swift(>=5.10)
+#if (swift(>=5.5) && USE_APPLE_INTERNAL_SDK && NDEBUG) || swift(>=5.10)
 @available(iOS 15.0, macOS 12.0, *)
 extension WKWebView {
     public func callAsyncJavaScript(_ functionBody: String, arguments: [String:Any] = [:], in frame: WKFrameInfo? = nil, contentWorld: WKContentWorld) async throws -> Any? {
