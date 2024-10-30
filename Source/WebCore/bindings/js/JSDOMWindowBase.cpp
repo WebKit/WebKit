@@ -87,6 +87,7 @@ const GlobalObjectMethodTable* JSDOMWindowBase::globalObjectMethodTable()
         shouldInterruptScript,
         javaScriptRuntimeFlags,
         queueMicrotaskToEventLoop,
+        nullptr, // queueMicrotaskToIncubatingRealm
         shouldInterruptScriptBeforeTimeout,
         moduleLoaderImportModule,
         moduleLoaderResolve,

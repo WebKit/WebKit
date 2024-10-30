@@ -51,6 +51,7 @@ struct GlobalObjectMethodTable {
     bool (*shouldInterruptScript)(const JSGlobalObject*);
     RuntimeFlags (*javaScriptRuntimeFlags)(const JSGlobalObject*);
     void (*queueMicrotaskToEventLoop)(JSGlobalObject&, Ref<Microtask>&&);
+    void (*queueMicrotaskToIncubatingRealm)(JSGlobalObject&, JSValue job, JSValue arg0, JSValue arg1, JSValue arg2, JSValue arg3);
     bool (*shouldInterruptScriptBeforeTimeout)(const JSGlobalObject*);
 
     JSInternalPromise* (*moduleLoaderImportModule)(JSGlobalObject*, JSModuleLoader*, JSString*, JSValue, const SourceOrigin&);

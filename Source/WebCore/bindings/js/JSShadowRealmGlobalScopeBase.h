@@ -53,6 +53,7 @@ private:
     static bool shouldInterruptScriptBeforeTimeout(const JSC::JSGlobalObject*);
     static JSC::RuntimeFlags javaScriptRuntimeFlags(const JSC::JSGlobalObject*);
     static JSC::ScriptExecutionStatus scriptExecutionStatus(JSC::JSGlobalObject*, JSC::JSObject*);
+    static void queueMicrotaskToIncubatingRealm(JSC::JSGlobalObject&, JSC::JSValue job, JSC::JSValue arg0, JSC::JSValue arg1, JSC::JSValue arg2, JSC::JSValue arg3);
     static void queueMicrotaskToEventLoop(JSC::JSGlobalObject&, Ref<JSC::Microtask>&&);
     static void reportViolationForUnsafeEval(JSC::JSGlobalObject*, JSC::JSString*);
     static String codeForEval(JSC::JSGlobalObject*, JSC::JSValue);
