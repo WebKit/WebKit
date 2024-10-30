@@ -1,8 +1,6 @@
 
 PASS .target 1
-FAIL .target 2 assert_equals:
-<div class="target" style="width: anchor-size(--inexist-anchor width, 50px)" data-expected-width="50"></div>
-width expected 50 but got 0
+PASS .target 2
 PASS .target 3
 PASS .target 4
 PASS .target 5
@@ -11,16 +9,8 @@ PASS .target 7
 PASS .target 8
 PASS .target 9
 PASS .target 10
-FAIL .target 11 assert_equals:
-<div class="target" style="width: anchor-size(--inexist-anchor width, 50%)" data-expected-width="150"></div>
-width expected 150 but got 0
-FAIL .target 12 assert_equals:
-<div class="target" style="width: anchor-size(--inexist-anchor width, calc(20% + 20px))" data-expected-width="80"></div>
-width expected 80 but got 0
-FAIL .target 13 assert_equals:
-<div class="target" style="height: anchor-size(--inexist-anchor height, anchor-size(--a1 width))" data-expected-height="100"></div>
-height expected 100 but got 0
-FAIL .target 14 assert_equals:
-<div class="target" style="height: anchor-size(--inexist-anchor height, calc((anchor-size(--a1 width) + anchor-size(--a2 height)) / 2))" data-expected-height="75"></div>
-height expected 75 but got 0
+PASS .target 11
+PASS .target 12
+PASS .target 13
+PASS .target 14
 

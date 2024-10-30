@@ -1,62 +1,6 @@
 
-FAIL .target 1 assert_equals:
-<div class="container">
-    <div class="anchor1"></div>
-
-    <div class="target" style="min-width: anchor-size(--a1 width)" data-expected-width="5"></div>
-    <div class="target" style="min-height: anchor-size(--a1 width)" data-expected-height="5"></div>
-
-    <div class="target" style="max-width: anchor-size(--a1 width)" data-expected-width="5">
-      <div style="width: 100px"></div>
-    </div>
-    <div class="target" style="max-height: anchor-size(--a1 width)" data-expected-height="5">
-      <div style="height: 100px"></div>
-    </div>
-  </div>
-width expected 5 but got 0
-FAIL .target 2 assert_equals:
-<div class="container">
-    <div class="anchor1"></div>
-
-    <div class="target" style="min-width: anchor-size(--a1 width)" data-expected-width="5"></div>
-    <div class="target" style="min-height: anchor-size(--a1 width)" data-expected-height="5"></div>
-
-    <div class="target" style="max-width: anchor-size(--a1 width)" data-expected-width="5">
-      <div style="width: 100px"></div>
-    </div>
-    <div class="target" style="max-height: anchor-size(--a1 width)" data-expected-height="5">
-      <div style="height: 100px"></div>
-    </div>
-  </div>
-height expected 5 but got 0
-FAIL .target 3 assert_equals:
-<div class="container">
-    <div class="anchor1"></div>
-
-    <div class="target" style="min-width: anchor-size(--a1 width)" data-expected-width="5"></div>
-    <div class="target" style="min-height: anchor-size(--a1 width)" data-expected-height="5"></div>
-
-    <div class="target" style="max-width: anchor-size(--a1 width)" data-expected-width="5">
-      <div style="width: 100px"></div>
-    </div>
-    <div class="target" style="max-height: anchor-size(--a1 width)" data-expected-height="5">
-      <div style="height: 100px"></div>
-    </div>
-  </div>
-width expected 5 but got 0
-FAIL .target 4 assert_equals:
-<div class="container">
-    <div class="anchor1"></div>
-
-    <div class="target" style="min-width: anchor-size(--a1 width)" data-expected-width="5"></div>
-    <div class="target" style="min-height: anchor-size(--a1 width)" data-expected-height="5"></div>
-
-    <div class="target" style="max-width: anchor-size(--a1 width)" data-expected-width="5">
-      <div style="width: 100px"></div>
-    </div>
-    <div class="target" style="max-height: anchor-size(--a1 width)" data-expected-height="5">
-      <div style="height: 100px"></div>
-    </div>
-  </div>
-height expected 5 but got 0
+PASS .target 1
+PASS .target 2
+PASS .target 3
+PASS .target 4
 

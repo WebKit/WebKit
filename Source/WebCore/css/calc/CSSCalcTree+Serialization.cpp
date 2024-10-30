@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CSSCalcTree+Serialization.h"
 
+#include "AnchorPositionEvaluator.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcTree+Traversal.h"
 #include "CSSCalcTree.h"
@@ -400,6 +401,30 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<A
     }
 }
 
+static void serializeAnchorSizeDimension(StringBuilder& builder, Style::AnchorSizeDimension dimension)
+{
+    switch (dimension) {
+    case Style::AnchorSizeDimension::Width:
+        builder.append("width"_s);
+        break;
+    case Style::AnchorSizeDimension::Height:
+        builder.append("height"_s);
+        break;
+    case Style::AnchorSizeDimension::Block:
+        builder.append("block"_s);
+        break;
+    case Style::AnchorSizeDimension::Inline:
+        builder.append("inline"_s);
+        break;
+    case Style::AnchorSizeDimension::SelfBlock:
+        builder.append("self-block"_s);
+        break;
+    case Style::AnchorSizeDimension::SelfInline:
+        builder.append("self-inline"_s);
+        break;
+    }
+}
+
 void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<AnchorSize>& anchorSize, SerializationState& state)
 {
     bool hasElementName = !anchorSize->elementName.isNull();
@@ -407,15 +432,15 @@ void serializeMathFunctionArguments(StringBuilder& builder, const IndirectNode<A
     if (hasElementName)
         serializeIdentifier(anchorSize->elementName, builder);
 
-    if (anchorSize->size) {
+    if (anchorSize->dimension) {
         if (hasElementName)
             builder.append(' ');
 
-        builder.append(nameLiteralForSerialization(*anchorSize->size));
+        serializeAnchorSizeDimension(builder, *anchorSize->dimension);
     }
 
     if (anchorSize->fallback) {
-        if (hasElementName || anchorSize->size)
+        if (hasElementName || anchorSize->dimension)
             builder.append(", "_s);
 
         serializeWithoutOmittingPrefix(builder, *anchorSize->fallback, state);

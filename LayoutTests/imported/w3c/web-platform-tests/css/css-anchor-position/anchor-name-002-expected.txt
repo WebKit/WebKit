@@ -1,16 +1,8 @@
 
 PASS .target 1
 PASS .target 2
-FAIL .target 3 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
-FAIL .target 4 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
-FAIL .target 5 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
-FAIL .target 6 assert_equals:
-<div class="target" data-expected-width="10"></div>
-width expected 10 but got 0
+PASS .target 3
+PASS .target 4
+PASS .target 5
+PASS .target 6
 

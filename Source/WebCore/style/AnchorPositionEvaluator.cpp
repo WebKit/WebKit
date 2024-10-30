@@ -49,6 +49,49 @@ namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AnchorPositionedState);
 
+static bool isSizingProperty(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+    case CSSPropertyWidth:
+    case CSSPropertyMinWidth:
+    case CSSPropertyMaxWidth:
+
+    case CSSPropertyHeight:
+    case CSSPropertyMinHeight:
+    case CSSPropertyMaxHeight:
+
+    case CSSPropertyBlockSize:
+    case CSSPropertyMinBlockSize:
+    case CSSPropertyMaxBlockSize:
+
+    case CSSPropertyInlineSize:
+    case CSSPropertyMinInlineSize:
+    case CSSPropertyMaxInlineSize:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool isMarginProperty(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+    case CSSPropertyMarginLeft:
+    case CSSPropertyMarginRight:
+    case CSSPropertyMarginTop:
+    case CSSPropertyMarginBottom:
+
+    case CSSPropertyMarginBlockStart:
+    case CSSPropertyMarginBlockEnd:
+    case CSSPropertyMarginInlineStart:
+    case CSSPropertyMarginInlineEnd:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
 static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const WritingMode writingMode)
 {
     switch (id) {
@@ -377,13 +420,11 @@ static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<co
     return removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
 }
 
-std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& builderState, AtomString elementName, Side side)
+RefPtr<Element> AnchorPositionEvaluator::findAnchorAndAttemptResolution(const BuilderState& builderState, AtomString elementName)
 {
-    auto propertyID = builderState.cssPropertyID();
     const auto& style = builderState.style();
 
-    // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
-    auto isValidAnchor = [&] {
+    auto isValid = [&] {
         if (!builderState.element())
             return false;
 
@@ -391,23 +432,10 @@ std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& buil
         if (style.pseudoElementType() != PseudoId::None)
             return false;
 
-        // It’s being used in an inset property...
-        if (!CSSProperty::isInsetProperty(propertyID))
-            return false;
-
-        // ...on an absolutely-positioned element.
-        if (!style.hasOutOfFlowPosition())
-            return false;
-
-        // If its <anchor-side> specifies a physical keyword, it’s being used in an inset property in that axis.
-        // (For example, left can only be used in left, right, or a logical inset property in the horizontal axis.)
-        if (auto* sideID = std::get_if<CSSValueID>(&side); sideID && !anchorSideMatchesInsetProperty(*sideID, propertyID, style.writingMode()))
-            return false;
-
         return true;
     };
 
-    if (!isValidAnchor())
+    if (!isValid())
         return { };
 
     Ref anchorPositionedElement = *builderState.element();
@@ -463,12 +491,173 @@ std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& buil
 
     anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
 
+    return anchorElement;
+}
+
+std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& builderState, AtomString elementName, Side side)
+{
+    auto propertyID = builderState.cssPropertyID();
+    const auto& style = builderState.style();
+
+    // https://drafts.csswg.org/css-anchor-position-1/#anchor-valid
+    auto isValidAnchor = [&] {
+        // It’s being used in an inset property...
+        if (!CSSProperty::isInsetProperty(propertyID))
+            return false;
+
+        // ...on an absolutely-positioned element.
+        if (!style.hasOutOfFlowPosition())
+            return false;
+
+        // If its <anchor-side> specifies a physical keyword, it’s being used in an inset property in that axis.
+        // (For example, left can only be used in left, right, or a logical inset property in the horizontal axis.)
+        if (auto* sideID = std::get_if<CSSValueID>(&side); sideID && !anchorSideMatchesInsetProperty(*sideID, propertyID, style.writingMode()))
+            return false;
+
+        return true;
+    };
+
+    if (!isValidAnchor())
+        return { };
+
+    auto anchorElement = findAnchorAndAttemptResolution(builderState, elementName);
+    if (!anchorElement)
+        return { };
+
     CheckedPtr anchorRenderer = anchorElement->renderer();
     ASSERT(anchorRenderer);
+
+    CheckedPtr anchorPositionedElement = builderState.element();
+    ASSERT(anchorPositionedElement);
+    CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
+    ASSERT(anchorPositionedRenderer);
 
     // Proceed with computing the inset value for the specified inset property.
     CheckedRef anchorBox = downcast<RenderBoxModelObject>(*anchorRenderer);
     return computeInsetValue(propertyID, anchorBox, *anchorPositionedRenderer, side);
+}
+
+// Returns the default anchor size dimension to use when it is not specified in
+// anchor-size(). This matches the axis of the property that anchor-size() is used in.
+static AnchorSizeDimension defaultDimensionForPropertyID(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+    case CSSPropertyWidth:
+    case CSSPropertyMinWidth:
+    case CSSPropertyMaxWidth:
+    case CSSPropertyLeft:
+    case CSSPropertyRight:
+    case CSSPropertyMarginLeft:
+    case CSSPropertyMarginRight:
+        return AnchorSizeDimension::Width;
+
+    case CSSPropertyHeight:
+    case CSSPropertyMinHeight:
+    case CSSPropertyMaxHeight:
+    case CSSPropertyTop:
+    case CSSPropertyBottom:
+    case CSSPropertyMarginTop:
+    case CSSPropertyMarginBottom:
+        return AnchorSizeDimension::Height;
+
+    case CSSPropertyBlockSize:
+    case CSSPropertyMinBlockSize:
+    case CSSPropertyMaxBlockSize:
+    case CSSPropertyInsetBlockStart:
+    case CSSPropertyInsetBlockEnd:
+    case CSSPropertyMarginBlockStart:
+    case CSSPropertyMarginBlockEnd:
+        return AnchorSizeDimension::Block;
+
+    case CSSPropertyInlineSize:
+    case CSSPropertyMinInlineSize:
+    case CSSPropertyMaxInlineSize:
+    case CSSPropertyInsetInlineStart:
+    case CSSPropertyInsetInlineEnd:
+    case CSSPropertyMarginInlineStart:
+    case CSSPropertyMarginInlineEnd:
+        return AnchorSizeDimension::Inline;
+
+    default:
+        ASSERT_NOT_REACHED("anchor-size() being used in disallowed CSS property, which should not happen");
+        return AnchorSizeDimension::Width;
+    }
+}
+
+// Convert anchor size dimension to the physical dimension (width or height).
+static BoxAxis anchorSizeDimensionToPhysicalDimension(AnchorSizeDimension dimension, const RenderStyle& style, const RenderStyle& containerStyle)
+{
+    switch (dimension) {
+    case AnchorSizeDimension::Width:
+        return BoxAxis::Horizontal;
+    case AnchorSizeDimension::Height:
+        return BoxAxis::Vertical;
+    case AnchorSizeDimension::Block:
+        return mapAxisLogicalToPhysical(containerStyle.writingMode(), LogicalBoxAxis::Block);
+    case AnchorSizeDimension::Inline:
+        return mapAxisLogicalToPhysical(containerStyle.writingMode(), LogicalBoxAxis::Inline);
+    case AnchorSizeDimension::SelfBlock:
+        return mapAxisLogicalToPhysical(style.writingMode(), LogicalBoxAxis::Block);
+    case AnchorSizeDimension::SelfInline:
+        return mapAxisLogicalToPhysical(style.writingMode(), LogicalBoxAxis::Inline);
+    }
+
+    ASSERT_NOT_REACHED();
+    return BoxAxis::Horizontal;
+}
+
+std::optional<double> AnchorPositionEvaluator::evaluateSize(const BuilderState& builderState, AtomString elementName, std::optional<AnchorSizeDimension> dimension)
+{
+    auto propertyID = builderState.cssPropertyID();
+    const auto& style = builderState.style();
+
+    auto isValidAnchorSize = [&] {
+        // It’s being used in a sizing property, an inset property, or a margin property...
+        if (!isSizingProperty(propertyID) && !CSSProperty::isInsetProperty(propertyID) && !isMarginProperty(propertyID))
+            return false;
+
+        // ...on an absolutely-positioned element.
+        if (!style.hasOutOfFlowPosition())
+            return false;
+
+        return true;
+    };
+
+    if (!isValidAnchorSize())
+        return { };
+
+    auto anchorElement = findAnchorAndAttemptResolution(builderState, elementName);
+    if (!anchorElement)
+        return { };
+
+    // Resolve the dimension (width or height) to return from the anchor positioned element.
+    CheckedPtr anchorPositionedElement = builderState.element();
+    ASSERT(anchorPositionedElement);
+    CheckedPtr anchorPositionedRenderer = anchorPositionedElement->renderer();
+    ASSERT(anchorPositionedRenderer);
+
+    CheckedPtr anchorPositionedContainerRenderer = anchorPositionedRenderer->container();
+    ASSERT(anchorPositionedContainerRenderer);
+
+    auto resolvedDimension = dimension.value_or(defaultDimensionForPropertyID(propertyID));
+    auto physicalDimension = anchorSizeDimensionToPhysicalDimension(resolvedDimension, anchorPositionedRenderer->style(), anchorPositionedContainerRenderer->style());
+
+    // Return the dimension information from the anchor element.
+    CheckedPtr anchorRenderer = anchorElement->renderer();
+    ASSERT(anchorRenderer);
+
+    CheckedRef anchorBox = downcast<RenderBoxModelObject>(*anchorRenderer);
+    auto anchorBorderBoundingBox = anchorBox->borderBoundingBox();
+
+    switch (physicalDimension) {
+    case BoxAxis::Horizontal:
+        return anchorBorderBoundingBox.width();
+    case BoxAxis::Vertical:
+        return anchorBorderBoundingBox.height();
+    }
+
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 static const RenderElement* penultimateContainingBlockChainElement(const RenderElement& descendant, const RenderElement* ancestor)

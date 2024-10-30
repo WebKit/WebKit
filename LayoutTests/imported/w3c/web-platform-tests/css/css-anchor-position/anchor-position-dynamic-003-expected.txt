@@ -1,32 +1,12 @@
 
-FAIL .target 1 assert_equals:
-<div class="target" data-offset-x="50" data-offset-y="70" data-expected-width="50" data-expected-height="70"></div>
-width expected 50 but got 0
-FAIL .target 2 assert_equals:
-<div class="target" data-offset-x="50" data-offset-y="70" data-expected-width="50" data-expected-height="70"></div>
-width expected 50 but got 0
-FAIL .target 3 assert_equals:
-<div class="target" data-offset-x="50" data-offset-y="70" data-expected-width="50" data-expected-height="70"></div>
-width expected 50 but got 0
-FAIL .target 4 assert_equals:
-<div class="target" data-offset-x="50" data-offset-y="70" data-expected-width="50" data-expected-height="70"></div>
-width expected 50 but got 0
-FAIL .target 5 assert_equals:
-<div class="target" data-offset-x="50" data-offset-y="70" data-expected-width="50" data-expected-height="70"></div>
-width expected 50 but got 0
-FAIL .after .target 6 assert_equals:
-<div class="target" data-offset-x="70" data-offset-y="50" data-expected-width="70" data-expected-height="50"></div>
-width expected 70 but got 0
-FAIL .after .target 7 assert_equals:
-<div class="target" data-offset-x="70" data-offset-y="50" data-expected-width="70" data-expected-height="50"></div>
-width expected 70 but got 0
-FAIL .after .target 8 assert_equals:
-<div class="target" data-offset-x="70" data-offset-y="50" data-expected-width="70" data-expected-height="50"></div>
-width expected 70 but got 0
-FAIL .after .target 9 assert_equals:
-<div class="target" data-offset-x="70" data-offset-y="50" data-expected-width="70" data-expected-height="50"></div>
-width expected 70 but got 0
-FAIL .after .target 10 assert_equals:
-<div class="target" data-offset-x="70" data-offset-y="50" data-expected-width="70" data-expected-height="50"></div>
-width expected 70 but got 0
+PASS .target 1
+PASS .target 2
+PASS .target 3
+PASS .target 4
+PASS .target 5
+PASS .after .target 6
+PASS .after .target 7
+PASS .after .target 8
+PASS .after .target 9
+PASS .after .target 10
 

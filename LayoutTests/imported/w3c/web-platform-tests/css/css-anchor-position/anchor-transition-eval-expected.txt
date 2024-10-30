@@ -1,5 +1,5 @@
 
 
 FAIL Transition when the result of anchor() changes assert_equals: expected 120 but got 130
-FAIL Transition when the result of anchor-size() changes assert_equals: expected 50 but got 0
+FAIL Transition when the result of anchor-size() changes assert_equals: expected 60 but got 70
 

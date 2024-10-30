@@ -1,4 +1,4 @@
 X
 
-FAIL Correct invalidation when fallbacks match the old style assert_equals: expected 40 but got 0
+PASS Correct invalidation when fallbacks match the old style
 

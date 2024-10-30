@@ -1,4 +1,4 @@
 
 PASS anchor() computes to pixels
-FAIL anchor-size() computes to pixels assert_equals: expected 25 but got 0
+PASS anchor-size() computes to pixels
 

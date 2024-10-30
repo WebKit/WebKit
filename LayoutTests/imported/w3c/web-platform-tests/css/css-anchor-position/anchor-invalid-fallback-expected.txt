@@ -1,19 +1,19 @@
 X
 
-FAIL Element can be anchor positioned assert_equals: expected "50px" but got "0px"
-FAIL Element can use <length> fallback if present assert_equals: expected "42px" but got "0px"
+PASS Element can be anchor positioned
+PASS Element can use <length> fallback if present
 PASS Invalid anchor function, left
 PASS Invalid anchor function, right
 PASS Invalid anchor function, bottom
 PASS Invalid anchor function, top
-FAIL Invalid anchor function, width assert_equals: right expected "188.4375px" but got "200px"
-FAIL Invalid anchor function, height assert_equals: bottom expected "182px" but got "200px"
+PASS Invalid anchor function, width
+PASS Invalid anchor function, height
 PASS Invalid anchor function, min-width
 PASS Invalid anchor function, min-height
-FAIL Invalid anchor function, max-width assert_equals: right expected "188.4375px" but got "200px"
-FAIL Invalid anchor function, max-height assert_equals: bottom expected "182px" but got "200px"
+PASS Invalid anchor function, max-width
+PASS Invalid anchor function, max-height
 PASS Invalid anchor function, --unknown left
-FAIL Invalid anchor function, --unknown width assert_equals: right expected "188.4375px" but got "200px"
+PASS Invalid anchor function, --unknown width
 PASS Invalid anchor function, cross-axis query (vertical)
 PASS Invalid anchor function,  cross-axis query (horizontal)
 PASS Invalid anchor function, anchor() in sizing property
@@ -21,12 +21,12 @@ PASS Invalid anchor function, nested left
 PASS Invalid anchor function, nested right
 PASS Invalid anchor function, nested bottom
 PASS Invalid anchor function, nested top
-FAIL Invalid anchor function, nested min-width assert_equals: minWidth expected "0px" but got "10px"
-FAIL Invalid anchor function, nested min-height assert_equals: minHeight expected "0px" but got "10px"
-FAIL Invalid anchor function, nested max-width assert_equals: right expected "188.4375px" but got "190px"
-FAIL Invalid anchor function, nested max-height assert_equals: bottom expected "182px" but got "190px"
+PASS Invalid anchor function, nested min-width
+PASS Invalid anchor function, nested min-height
+PASS Invalid anchor function, nested max-width
+PASS Invalid anchor function, nested max-height
 PASS Invalid anchor function, invalid anchor() in fallback
-FAIL Invalid anchor function, invalid anchor-size() in fallback assert_equals: right expected "188.4375px" but got "200px"
+PASS Invalid anchor function, invalid anchor-size() in fallback
 PASS Invalid anchor function, min()
 PASS Invalid anchor function, max()
 PASS Invalid anchor function, abs()

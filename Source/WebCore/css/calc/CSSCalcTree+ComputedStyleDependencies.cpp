@@ -57,6 +57,11 @@ static void collectComputedStyleDependencies(const Child& root, ComputedStyleDep
             if (anchor->fallback)
                 collectComputedStyleDependencies(*anchor->fallback, dependencies);
         },
+        [&](const IndirectNode<AnchorSize>& anchorSize) {
+            dependencies.anchors = true;
+            if (anchorSize->fallback)
+                collectComputedStyleDependencies(*anchorSize->fallback, dependencies);
+        },
         [&](const auto& root) {
             forAllChildNodes(*root, [&](const auto& root) { collectComputedStyleDependencies(root, dependencies); });
         }

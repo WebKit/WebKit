@@ -191,10 +191,22 @@ std::optional<double> evaluate(const IndirectNode<Anchor>& anchor, const Evaluat
 
 }
 
-std::optional<double> evaluate(const IndirectNode<AnchorSize>&, const EvaluationOptions&)
+std::optional<double> evaluate(const IndirectNode<AnchorSize>& anchorSize, const EvaluationOptions& options)
 {
-    // FIXME (webkit.org/b/280789): evaluate anchor-size()
-    return 0.0;
+    if (!options.conversionData || !options.conversionData->styleBuilderState())
+        return { };
+
+    auto& builderState = *options.conversionData->styleBuilderState();
+
+    auto result = Style::AnchorPositionEvaluator::evaluateSize(builderState, anchorSize->elementName, anchorSize->dimension);
+
+    if (!result && anchorSize->fallback)
+        result = evaluate(*anchorSize->fallback, options);
+
+    if (!result)
+        options.conversionData->styleBuilderState()->setCurrentPropertyInvalidAtComputedValueTime();
+
+    return result;
 }
 
 template<typename Op> std::optional<double> evaluate(const IndirectNode<Op>& root, const EvaluationOptions& options)

@@ -37,6 +37,13 @@
 
 namespace WebCore {
 
+namespace Style {
+
+// Forward declared from AnchorPositionEvaluator.h
+enum class AnchorSizeDimension : uint8_t;
+
+}
+
 enum class CSSUnitType : uint8_t;
 
 namespace CSSCalc {
@@ -759,8 +766,8 @@ public:
     // <anchor-element> = <dashed-ident>
     // <anchor-size> = width | height | block | inline | self-block | self-inline
 
-    AtomString elementName;
-    std::optional<CSSValueID> size;
+    AtomString elementName; // <anchor-element>
+    std::optional<Style::AnchorSizeDimension> dimension; // <anchor-size>
     std::optional<Child> fallback;
 
     bool operator==(const AnchorSize&) const = default;

@@ -1,5 +1,5 @@
 
-FAIL Basic case assert_equals: expected "40px" but got "0px"
-FAIL Mixed writing modes and directions assert_equals: expected "40px" but got "0px"
-FAIL With containing block padding assert_equals: expected "40px" but got "0px"
+PASS Basic case
+PASS Mixed writing modes and directions
+PASS With containing block padding
 

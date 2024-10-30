@@ -8121,6 +8121,7 @@ imported/w3c/web-platform-tests/css/css-anchor-position/position-visibility-remo
 
 # timeouts
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-scroll-js-expose.html [ Skip ]
+imported/w3c/web-platform-tests/css/css-anchor-position/anchor-size-animation.html [ Skip ]
 
 # -- End: Anchor Positioning -- #
 

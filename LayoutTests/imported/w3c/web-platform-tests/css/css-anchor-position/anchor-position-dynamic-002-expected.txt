@@ -1,18 +1,10 @@
 
 PASS .target 1
-FAIL .target 2 assert_equals:
-<div class="target" style="width: anchor-size(--a1 width)" data-expected-width="5"></div>
-width expected 5 but got 0
+PASS .target 2
 PASS .target 3
-FAIL .target 4 assert_equals:
-<div class="target" style="width: anchor-size(--a2 width)" data-expected-width="5"></div>
-width expected 5 but got 0
+PASS .target 4
 PASS .after .target 5
-FAIL .after .target 6 assert_equals:
-<div class="target" style="width: anchor-size(--a1 width)" data-expected-width="10"></div>
-width expected 10 but got 0
+PASS .after .target 6
 PASS .after .target 7
-FAIL .after .target 8 assert_equals:
-<div class="target" style="width: anchor-size(--a2 width)" data-expected-width="10"></div>
-width expected 10 but got 0
+PASS .after .target 8
 
