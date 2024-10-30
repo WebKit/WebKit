@@ -1,4 +1,14 @@
 ================
+WebKitGTK 2.46.3
+================
+
+What's new in WebKitGTK 2.46.3?
+
+  - Flatten layers to a plane when preseve-3d style is set.
+  - Fix DuckDuckGo links by adding a user agent quirk.
+  - Fix several crashes and rendering issues.
+
+================
 WebKitGTK 2.46.2
 ================
 
