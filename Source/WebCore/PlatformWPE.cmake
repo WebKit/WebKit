@@ -141,15 +141,6 @@ if (ENABLE_GAMEPAD)
     )
 endif ()
 
-if (ENABLE_SPEECH_SYNTHESIS)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${Flite_INCLUDE_DIRS}
-    )
-    list(APPEND WebCore_LIBRARIES
-        ${Flite_LIBRARIES}
-    )
-endif ()
-
 # This sets the maximum amount of memory that BitmapTexturePool can hold before being more
 # aggressive trying to release the unused textures.
 # Use a big value as the default size limit (80MB, enough for ten 1920x1080 layers).

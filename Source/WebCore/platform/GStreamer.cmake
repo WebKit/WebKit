@@ -152,3 +152,25 @@ if (ENABLE_ENCRYPTED_MEDIA AND ENABLE_THUNDER)
         ${THUNDER_LIBRARIES}
     )
 endif ()
+
+if (ENABLE_SPEECH_SYNTHESIS)
+    if (USE_SPIEL)
+        list(APPEND WebCore_SOURCES
+            platform/spiel/PlatformSpeechSynthesizerSpiel.cpp
+        )
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+            ${SPIEL_INCLUDE_DIRS}
+        )
+        list(APPEND WebCore_LIBRARIES
+            LibSpiel::LibSpiel
+        )
+    elseif (USE_FLITE)
+        list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
+            ${Flite_INCLUDE_DIRS}
+        )
+        list(APPEND WebCore_LIBRARIES
+            ${Flite_LIBRARIES}
+        )
+    endif ()
+endif ()
+

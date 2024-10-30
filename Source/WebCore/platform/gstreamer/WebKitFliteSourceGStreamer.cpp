@@ -19,7 +19,7 @@
 #include "config.h"
 #include "WebKitFliteSourceGStreamer.h"
 
-#if ENABLE(SPEECH_SYNTHESIS) && USE(GSTREAMER)
+#if USE(FLITE) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
 #include "GUniquePtrFlite.h"
@@ -272,4 +272,4 @@ void webKitFliteSrcSetUtterance(WebKitFliteSrc* src, const PlatformSpeechSynthes
 
 #undef GST_CAT_DEFAULT
 
-#endif // ENABLE(SPEECH_SYNTHESIS) && USE(GSTREAMER)
+#endif // USE(FLITE) && USE(GSTREAMER)

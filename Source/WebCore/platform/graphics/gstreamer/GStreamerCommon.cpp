@@ -69,7 +69,7 @@
 #include "GStreamerMediaStreamSource.h"
 #endif
 
-#if ENABLE(SPEECH_SYNTHESIS)
+#if USE(FLITE)
 #include "WebKitFliteSourceGStreamer.h"
 #endif
 
@@ -387,7 +387,7 @@ void registerWebKitGStreamerElements()
         gst_element_register(nullptr, "webkitmediasrc", GST_RANK_PRIMARY, WEBKIT_TYPE_MEDIA_SRC);
 #endif
 
-#if ENABLE(SPEECH_SYNTHESIS)
+#if USE(FLITE)
         gst_element_register(nullptr, "webkitflitesrc", GST_RANK_NONE, WEBKIT_TYPE_FLITE_SRC);
 #endif
 

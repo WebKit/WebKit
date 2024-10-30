@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformSpeechSynthesizer_h
-#define PlatformSpeechSynthesizer_h
+#pragma once
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
@@ -40,12 +39,16 @@ OBJC_CLASS WebSpeechSynthesisWrapper;
 
 namespace WebCore {
 
+#if USE(SPIEL)
+class SpielSpeechWrapper;
+#endif
+
 enum class SpeechBoundary : uint8_t {
     SpeechWordBoundary,
     SpeechSentenceBoundary
 };
 
-#if USE(GSTREAMER)
+#if USE(FLITE) && USE(GSTREAMER)
 class GstSpeechSynthesisWrapper;
 #endif
 class PlatformSpeechSynthesisUtterance;
@@ -95,13 +98,13 @@ private:
 
 #if PLATFORM(COCOA)
     RetainPtr<WebSpeechSynthesisWrapper> m_platformSpeechWrapper;
-#elif USE(GSTREAMER)
-    std::unique_ptr<GstSpeechSynthesisWrapper> m_platformSpeechWrapper { nullptr };
+#elif USE(FLITE) && USE(GSTREAMER)
+    std::unique_ptr<GstSpeechSynthesisWrapper> m_platformSpeechWrapper;
+#elif USE(SPIEL)
+    std::unique_ptr<SpielSpeechWrapper> m_platformSpeechWrapper;
 #endif
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)
-
-#endif // PlatformSpeechSynthesizer_h

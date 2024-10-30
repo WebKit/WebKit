@@ -120,15 +120,6 @@ if (ENABLE_BUBBLEWRAP_SANDBOX)
     list(APPEND WebCore_LIBRARIES Libseccomp::Libseccomp)
 endif ()
 
-if (ENABLE_SPEECH_SYNTHESIS)
-    list(APPEND WebCore_SYSTEM_INCLUDE_DIRECTORIES
-        ${Flite_INCLUDE_DIRS}
-    )
-    list(APPEND WebCore_LIBRARIES
-        ${Flite_LIBRARIES}
-    )
-endif ()
-
 if (USE_SKIA)
     # When building with Skia we don't build Cairo sources, but since
     # Cairo is still needed in the UI process API we need to include

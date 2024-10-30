@@ -27,7 +27,7 @@
 #include "config.h"
 #include "PlatformSpeechSynthesizer.h"
 
-#if ENABLE(SPEECH_SYNTHESIS) && USE(GSTREAMER)
+#if USE(FLITE) && USE(GSTREAMER)
 
 #include "GStreamerCommon.h"
 #include "PlatformSpeechSynthesisUtterance.h"
@@ -265,4 +265,4 @@ void PlatformSpeechSynthesizer::resetState()
 
 } // namespace WebCore
 
-#endif // ENABLE(SPEECH_SYNTHESIS) && USE(GSTREAMER)
+#endif // USE(FLITE) && USE(GSTREAMER)
