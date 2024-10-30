@@ -47,7 +47,7 @@ IGNORE_CLANG_WARNINGS_END
 #if USE(LIBEPOXY)
 #include <skia/gpu/ganesh/gl/epoxy/GrGLMakeEpoxyEGLInterface.h>
 #else
-#include <skia/gpu/gl/egl/GrGLMakeEGLInterface.h>
+#include <skia/gpu/ganesh/gl/egl/GrGLMakeEGLInterface.h>
 #endif
 
 namespace WebCore {
@@ -70,7 +70,7 @@ static const unsigned s_defaultSampleCount = 0;
 #if !(PLATFORM(PLAYSTATION) && USE(COORDINATED_GRAPHICS))
 static sk_sp<const GrGLInterface> skiaGLInterface()
 {
-    static NeverDestroyed<sk_sp<const GrGLInterface>> interface {
+    static NeverDestroyed<sk_sp<const GrGLInterface>> grGLInterface {
 #if USE(LIBEPOXY)
         GrGLInterfaces::MakeEpoxyEGL()
 #else
@@ -78,7 +78,7 @@ static sk_sp<const GrGLInterface> skiaGLInterface()
 #endif
     };
 
-    return interface.get();
+    return grGLInterface.get();
 }
 
 static thread_local RefPtr<SkiaGLContext> s_skiaGLContext;
