@@ -24,22 +24,22 @@ function hashChanged()
     setTimeout("clickSecondAnchor();", 0);
 }
 
-function clickSecondAnchor()
+async function clickSecondAnchor()
 {
     var rect = document.getElementById("secondanchor").getBoundingClientRect();
-    eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
-    eventSender.mouseDown();
-    eventSender.mouseUp();
+    await eventSender.asyncMouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+    await eventSender.asyncMouseDown();
+    await eventSender.asyncMouseUp();
 }
 
-function loaded()
+async function loaded()
 {
     if (sessionStorage.in_document_with_fragment_url_1) {
         alert("First load complete.  URL's current hash is " + documentURLHash());
         var rect = document.getElementById("firstanchor").getBoundingClientRect();
-        eventSender.mouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(rect.left + rect.width / 2, rect.top + rect.height / 2);
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     } else {
         alert("Second load complete.  URL's current hash is " + documentURLHash());
         if (window.testRunner)

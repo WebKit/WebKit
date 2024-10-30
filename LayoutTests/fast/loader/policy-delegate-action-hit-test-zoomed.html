@@ -10,25 +10,30 @@
         document.getElementById("log").appendChild(document.createTextNode(message + '\n'));
     }
 
-    if (window.testRunner) {
-        testRunner.dumpAsText();
+    onload = async () => {
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+    
+            eventSender.zoomPageIn();
+            eventSender.zoomPageIn();
+    
+            var zoomFactor = 1.2 * 1.2;
+    
+            var link = document.getElementById("link");
+            var x = (link.offsetLeft + link.offsetWidth / 2) * zoomFactor;
+            var y = (link.offsetTop + link.offsetHeight / 2) * zoomFactor;
+    
+            testRunner.setCustomPolicyDelegate(true, false);
+    
+            log("The policy delegate message should indicate that the originating node is the text child of an anchor element.");
+    
+            await eventSender.asyncMouseMoveTo(x, y);
+            await eventSender.asyncMouseDown();
+            await eventSender.asyncMouseUp();
+            testRunner.notifyDone();
+        } else
+            log("The test can only be run in DumpRenderTree.");
+    }
 
-        eventSender.zoomPageIn();
-        eventSender.zoomPageIn();
-
-        var zoomFactor = 1.2 * 1.2;
-
-        var link = document.getElementById("link");
-        var x = (link.offsetLeft + link.offsetWidth / 2) * zoomFactor;
-        var y = (link.offsetTop + link.offsetHeight / 2) * zoomFactor;
-
-        testRunner.setCustomPolicyDelegate(true, false);
-
-        log("The policy delegate message should indicate that the originating node is the text child of an anchor element.");
-
-        eventSender.mouseMoveTo(x, y);
-        eventSender.mouseDown();
-        eventSender.mouseUp();
-    } else
-        log("The test can only be run in DumpRenderTree.");
 </script>

@@ -1,11 +1,12 @@
 <script>
 
-function loaded() {
+async function loaded() {
     if (window.testRunner) {
+        testRunner.waitUntilDone();
         var element = document.getElementById("fragmentlink");
-        eventSender.mouseMoveTo(element.offsetLeft + (element.offsetWidth / 2), element.offsetTop + (element.offsetHeight / 2));
-        eventSender.mouseDown();
-        eventSender.mouseUp();
+        await eventSender.asyncMouseMoveTo(element.offsetLeft + (element.offsetWidth / 2), element.offsetTop + (element.offsetHeight / 2));
+        await eventSender.asyncMouseDown();
+        await eventSender.asyncMouseUp();
     }
 }
 
