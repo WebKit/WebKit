@@ -608,7 +608,7 @@ public:
 
         std::span<UChar> buffer;
         auto string = String::createUninitialized(length, buffer);
-        decodeFixedLengthData(spanReinterpretCast<uint8_t>(buffer), alignof(UChar));
+        decodeFixedLengthData(asMutableByteSpan(buffer), alignof(UChar));
 
         value = string;
         return *this;

@@ -214,7 +214,7 @@ TEST(WTF_StdLibExtras, SpanReinterpretCast_DynamicExtent)
     static_assert(std::same_as<std::span<const int32_t, std::dynamic_extent>, decltype(signedIntSpan)>);
 
     // Cast from 4 bytes to 1 byte per item.
-    auto unsignedIntByteSpan = spanReinterpretCast<const uint8_t>(signedIntSpan);
+    auto unsignedIntByteSpan = asByteSpan(signedIntSpan);
     static_assert(std::same_as<std::span<const uint8_t, std::dynamic_extent>, decltype(unsignedIntByteSpan)>);
     EXPECT_TRUE(!memcmp(signedIntSpan.data(), unsignedIntByteSpan.data(), unsignedIntByteSpan.size_bytes()));
 
@@ -257,8 +257,8 @@ TEST(WTF_StdLibExtras, SpanReinterpretCast_NonDynamicExtent)
     static_assert(std::same_as<std::span<const int32_t, 6>, decltype(signedIntSpan)>);
 
     // Cast from 4 bytes to 1 byte per item.
-    auto unsignedIntByteSpan = spanReinterpretCast<const uint8_t>(signedIntSpan);
-    static_assert(std::same_as<std::span<const uint8_t, 24>, decltype(unsignedIntByteSpan)>);
+    auto unsignedIntByteSpan = asByteSpan(signedIntSpan);
+    static_assert(std::same_as<std::span<const uint8_t>, decltype(unsignedIntByteSpan)>);
     EXPECT_TRUE(!memcmp(signedIntSpan.data(), unsignedIntByteSpan.data(), unsignedIntByteSpan.size_bytes()));
 
     // Cast from 4 bytes to 4 bytes per item.

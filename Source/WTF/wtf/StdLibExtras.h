@@ -759,6 +759,17 @@ template<typename OptionalType> auto valueOrDefault(OptionalType&& optionalValue
     return optionalValue ? *std::forward<OptionalType>(optionalValue) : std::remove_reference_t<decltype(*optionalValue)> { };
 }
 
+// Less preferred helper function for converting an imported API into a span.
+// Use this when we can't edit the imported API and it doesn't offer
+// begin() / end() or a span accessor.
+template<typename T, std::size_t Extent = std::dynamic_extent>
+inline constexpr auto unsafeForgeSpan(T* ptr, size_t size)
+{
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    return std::span<T, Extent> { ptr, size };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+}
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-align"
 template<typename T, typename U, std::size_t Extent>
@@ -798,13 +809,27 @@ std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent *
 template<typename T>
 std::span<const uint8_t> asByteSpan(const T& input)
 {
-    return { reinterpret_cast<const uint8_t*>(&input), sizeof(input) };
+    return unsafeForgeSpan(reinterpret_cast<const uint8_t*>(&input), sizeof(input));
+}
+
+template<typename T, std::size_t Extent>
+std::span<const uint8_t> asByteSpan(std::span<T, Extent> input)
+{
+    return unsafeForgeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size_bytes());
 }
 
 template<typename T>
 std::span<uint8_t> asMutableByteSpan(T& input)
 {
-    return { reinterpret_cast<uint8_t*>(&input), sizeof(input) };
+    static_assert(!std::is_const_v<T>);
+    return unsafeForgeSpan(reinterpret_cast<uint8_t*>(&input), sizeof(input));
+}
+
+template<typename T, std::size_t Extent>
+std::span<uint8_t> asMutableByteSpan(std::span<T, Extent> input)
+{
+    static_assert(!std::is_const_v<T>);
+    return unsafeForgeSpan(reinterpret_cast<uint8_t*>(input.data()), input.size_bytes());
 }
 
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
@@ -833,17 +858,6 @@ void memsetSpan(std::span<T, Extent> destination, uint8_t byte)
 {
     static_assert(std::is_trivially_copyable_v<T>);
     memset(destination.data(), byte, destination.size_bytes());
-}
-
-// Less preferred helper function for converting an imported API into a span.
-// Use this when we can't edit the imported API and it doesn't offer
-// begin() / end() or a span accessor.
-template<typename T, std::size_t Extent = std::dynamic_extent>
-inline constexpr auto unsafeForgeSpan(T* ptr, size_t size)
-{
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-    return std::span<T, Extent> { ptr, size };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 template<typename T> concept ByteType = sizeof(T) == 1 && ((std::is_integral_v<T> && !std::same_as<T, bool>) || std::same_as<T, std::byte>) && !std::is_const_v<T>;

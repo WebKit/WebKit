@@ -161,7 +161,7 @@ template<> struct Coder<WTF::String> {
 
         std::span<CharacterType> buffer;
         String string = String::createUninitialized(length, buffer);
-        if (!decoder.decodeFixedLengthData(spanReinterpretCast<uint8_t>(buffer)))
+        if (!decoder.decodeFixedLengthData(asMutableByteSpan(buffer)))
             return std::nullopt;
 
         return string;

@@ -116,7 +116,7 @@ static inline std::optional<String> decodeStringText(Decoder& decoder, uint32_t 
 
     std::span<CharacterType> buffer;
     String string = String::createUninitialized(length, buffer);
-    if (!decoder.decodeFixedLengthData(spanReinterpretCast<uint8_t>(buffer)))
+    if (!decoder.decodeFixedLengthData(asMutableByteSpan(buffer)))
         return std::nullopt;
     
     return string;
