@@ -41,7 +41,6 @@ class Rect;
 class RubyFormattingContext {
 public:
     // Line building
-    static bool isAtSoftWrapOpportunity(const InlineItem& previous, const InlineItem& current);
     static InlineLayoutUnit annotationBoxLogicalWidth(const Box& rubyBaseLayoutBox, InlineFormattingContext&);
     static InlineLayoutUnit baseEndAdditionalLogicalWidth(const Box& rubyBaseLayoutBox, const Line::RunList&, const InlineContentBreaker::ContinuousContent::RunList&, InlineFormattingContext&);
     static UncheckedKeyHashMap<const Box*, InlineLayoutUnit> applyRubyAlign(Line&, InlineFormattingContext&);

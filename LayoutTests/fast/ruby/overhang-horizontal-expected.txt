@@ -77,7 +77,7 @@ layer at (0,0) size 800x600
           text run at (3,33) width 20: "h"
       RenderBlock {DIV} at (0,304) size 206x56 [color=#4B0082] [border: (3px solid #000000)]
         RenderText {#text} at (3,3) size 160x20
-          text run at (3,3) width 160: "a b bc b"
+          text run at (3,3) width 160: "a b bc b\x{200B}"
         RenderInline {RUBY} at (3,33) size 50x20 [color=#0000FF]
           RenderInline (generated) at (3,33) size 50x20
             RenderText {#text} at (8,33) size 40x20
@@ -88,7 +88,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,368) size 206x46 [color=#4B0082] [border: (3px solid #000000)]
         RenderText {#text} at (3,13) size 140x20
-          text run at (3,13) width 140: "a b b b"
+          text run at (3,13) width 140: "a b b b\x{200B}"
         RenderInline {RUBY} at (143,13) size 50x20 [color=#0000FF]
           RenderInline (generated) at (138,13) size 50x20
             RenderText {#text} at (143,13) size 40x20
@@ -96,8 +96,9 @@ layer at (0,0) size 800x600
           RenderBlock {RT} at (138,3) size 50x10 [color=#C0C0C0]
             RenderText {#text} at (0,0) size 50x10
               text run at (0,0) width 50: "yy yy"
-        RenderInline {SPAN} at (3,33) size 20x10
-          RenderText {#text} at (3,33) size 20x10
+        RenderInline {SPAN} at (3,21) size 180x22
+          RenderText {#text} at (3,21) size 180x22
+            text run at (183,21) width 0: "\x{200B}"
             text run at (3,33) width 20: "de"
       RenderBlock {DIV} at (0,422) size 206x38 [color=#4B0082] [border: (3px solid #000000)]
         RenderText {#text} at (3,13) size 120x20

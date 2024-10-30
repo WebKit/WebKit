@@ -406,9 +406,6 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
     ASSERT(previous.isText() || previous.isAtomicInlineBox() || previous.layoutBox().isRubyInlineBox());
     ASSERT(next.isText() || next.isAtomicInlineBox() || next.layoutBox().isRubyInlineBox());
 
-    if (previous.layoutBox().isRubyInlineBox() || next.layoutBox().isRubyInlineBox())
-        return RubyFormattingContext::isAtSoftWrapOpportunity(previous, next);
-
     auto mayWrapPrevious = TextUtil::isWrappingAllowed(previous.layoutBox().parent().style());
     auto mayWrapNext = TextUtil::isWrappingAllowed(next.layoutBox().parent().style());
     if (&previous.layoutBox().parent() == &next.layoutBox().parent() && !mayWrapPrevious && !mayWrapNext)
@@ -485,8 +482,8 @@ size_t InlineFormattingUtils::nextWrapOpportunity(size_t startIndex, const Inlin
             for (++index; index < layoutRange.endIndex() && inlineItemList[index].isInlineBoxEnd(); ++index) { }
             return index;
         }
-        auto isNonRubyInlineBox = (currentItem.isInlineBoxStart() || currentItem.isInlineBoxEnd()) && !currentItem.layoutBox().isRubyInlineBox();
-        if (isNonRubyInlineBox) {
+        auto isInlineBox = currentItem.isInlineBoxStart() || currentItem.isInlineBoxEnd();
+        if (isInlineBox) {
             // Need to see what comes next to decide.
             continue;
         }
