@@ -17,6 +17,7 @@ http/wpt/mediasession/voiceActivityDetection.html [ Skip ]
 # Skip these tests that enable UnifiedPDFPlugin, since it's only meaningful for macOS 14+.
 http/tests/pdf/linearized-pdf-in-iframe.html [ Skip ]
 http/tests/pdf/linearized-pdf-in-display-none-iframe.html [ Skip ]
+http/tests/pdf/page-in-window-update-with-linearized-pdf-in-display-none-iframe.html [ Skip ]
 pdf/pdf-in-embed-rounded-border.html [ Skip ]
 pdf/pdf-plugin-printing.html [ Skip ]
 pdf/annotations/checkbox-set-active.html [ Skip ]

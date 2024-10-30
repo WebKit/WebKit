@@ -650,6 +650,9 @@ bool UnifiedPDFPlugin::isInWindow() const
 
 void UnifiedPDFPlugin::didChangeIsInWindow()
 {
+    if (!m_pdfDocument)
+        return;
+
     RefPtr page = this->page();
     if (!page)
         return;
