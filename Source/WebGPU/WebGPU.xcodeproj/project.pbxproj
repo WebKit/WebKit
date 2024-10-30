@@ -249,6 +249,13 @@
 			remoteGlobalIDString = 1CEBD7F12716B2CC00A5254D;
 			remoteInfo = WGSL;
 		};
+		31EAB9DE2CD039A100E92E40 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1CEBD7DA2716AFBA00A5254D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1CA5B4F02A6F28C400E5F297;
+			remoteInfo = wgslfuzz;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -1064,6 +1071,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				31EAB9DF2CD039A100E92E40 /* PBXTargetDependency */,
 				1CEBD8282716CACC00A5254D /* PBXTargetDependency */,
 			);
 			name = WebGPU;
@@ -1292,6 +1300,11 @@
 			isa = PBXTargetDependency;
 			target = 1CEBD7F12716B2CC00A5254D /* WGSL */;
 			targetProxy = 1CEBD8272716CACC00A5254D /* PBXContainerItemProxy */;
+		};
+		31EAB9DF2CD039A100E92E40 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1CA5B4F02A6F28C400E5F297 /* wgslfuzz */;
+			targetProxy = 31EAB9DE2CD039A100E92E40 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
