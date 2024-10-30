@@ -1,4 +1,0 @@
-
-PASS SVGGeometryElement.getTotalLength Exception with SVGRectElement
-PASS SVGGeometryElement.getTotalLength Exception with SVGCircleElement
-

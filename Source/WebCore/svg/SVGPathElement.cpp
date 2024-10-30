@@ -178,12 +178,9 @@ void SVGPathElement::removedFromAncestor(RemovalType removalType, ContainerNode&
     invalidateMPathDependencies();
 }
 
-ExceptionOr<float> SVGPathElement::getTotalLength() const
+float SVGPathElement::getTotalLength() const
 {
     protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
-
-    if (pathByteStream().isEmpty())
-        return Exception { ExceptionCode::InvalidStateError, "The element's path is empty."_s };
 
     return getTotalLengthOfSVGPathByteStream(pathByteStream());
 }
@@ -196,11 +193,8 @@ ExceptionOr<Ref<SVGPoint>> SVGPathElement::getPointAtLength(float distance) cons
     if (pathByteStream().isEmpty())
         return Exception { ExceptionCode::InvalidStateError, "The element's path is empty."_s };
 
-    auto totalLength =  getTotalLength();
-    if (totalLength.hasException())
-        return totalLength.releaseException();
     // Spec: Clamp distance to [0, length].
-    distance = clampTo<float>(distance, 0, totalLength.returnValue());
+    distance = clampTo<float>(distance, 0, getTotalLength());
 
     // Spec: Return a newly created, detached SVGPoint object.
     return SVGPoint::create(getPointAtLengthOfSVGPathByteStream(pathByteStream(), distance));

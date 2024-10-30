@@ -46,14 +46,13 @@ SVGGeometryElement::SVGGeometryElement(const QualifiedName& tagName, Document& d
     });
 }
 
-ExceptionOr<float> SVGGeometryElement::getTotalLength() const
+float SVGGeometryElement::getTotalLength() const
 {
     protectedDocument()->updateLayoutIgnorePendingStylesheets({ LayoutOptions::ContentVisibilityForceLayout }, this);
 
     auto* renderer = this->renderer();
-    // Spec: If current element is a non-rendered element, throw an InvalidStateError.
     if (!renderer)
-        return Exception { ExceptionCode::InvalidStateError, "The element can not be rendered."_s };
+        return 0;
 
     if (CheckedPtr renderSVGShape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
         return renderSVGShape->getTotalLength();
@@ -62,7 +61,7 @@ ExceptionOr<float> SVGGeometryElement::getTotalLength() const
         return renderSVGShape->getTotalLength();
 
     ASSERT_NOT_REACHED();
-    return Exception { ExceptionCode::InvalidStateError };
+    return 0;
 }
 
 ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) const
@@ -74,11 +73,8 @@ ExceptionOr<Ref<SVGPoint>> SVGGeometryElement::getPointAtLength(float distance) 
     if (!renderer)
         return Exception { ExceptionCode::InvalidStateError };
 
-    auto totalLength =  getTotalLength();
-    if (totalLength.hasException())
-        return totalLength.releaseException();
     // Spec: Clamp distance to [0, length].
-    distance = clampTo<float>(distance, 0, totalLength.returnValue());
+    distance = clampTo<float>(distance, 0, getTotalLength());
 
     // Spec: Return a newly created, detached SVGPoint object.
     if (CheckedPtr renderSVGShape = dynamicDowncast<LegacyRenderSVGShape>(renderer))
