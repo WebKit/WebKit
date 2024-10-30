@@ -93,13 +93,15 @@ void SWServerToContextConnection::workerTerminated(ServiceWorkerIdentifier servi
         worker->contextTerminated();
 }
 
-void SWServerToContextConnection::matchAll(uint64_t requestIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier, const ServiceWorkerClientQueryOptions& options)
+void SWServerToContextConnection::matchAll(ServiceWorkerIdentifier serviceWorkerIdentifier, const ServiceWorkerClientQueryOptions& options, CompletionHandler<void(Vector<WebCore::ServiceWorkerClientData>&&)>&& callback)
 {
-    if (RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier)) {
-        worker->matchAll(options, [&] (auto&& data) {
-            worker->contextConnection()->matchAllCompleted(requestIdentifier, data);
-        });
+    RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier);
+    if (!worker) {
+        callback({ });
+        return;
     }
+
+    worker->matchAll(options, WTFMove(callback));
 }
 
 void SWServerToContextConnection::findClientByVisibleIdentifier(ServiceWorkerIdentifier serviceWorkerIdentifier, const String& clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)

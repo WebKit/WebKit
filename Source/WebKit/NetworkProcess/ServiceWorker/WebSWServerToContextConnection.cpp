@@ -115,14 +115,14 @@ void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const Scri
         connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin);
 }
 
-void WebSWServerToContextConnection::skipWaiting(uint64_t requestIdentifier, ServiceWorkerIdentifier serviceWorkerIdentifier)
+void WebSWServerToContextConnection::skipWaiting(ServiceWorkerIdentifier serviceWorkerIdentifier, CompletionHandler<void()>&& callback)
 {
     if (RefPtr worker = SWServerWorker::existingWorkerForIdentifier(serviceWorkerIdentifier)) {
         MESSAGE_CHECK(worker->isTerminating() || worker->registration());
         worker->skipWaiting();
     }
 
-    send(Messages::WebSWContextManagerConnection::SkipWaitingCompleted { requestIdentifier });
+    callback();
 }
 
 void WebSWServerToContextConnection::close()
@@ -320,11 +320,6 @@ void WebSWServerToContextConnection::reportConsoleMessage(WebCore::ServiceWorker
     if (!worker)
         return;
     protectedConnection()->protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::ReportConsoleMessage { m_connection->sessionID(), worker->scriptURL(), worker->origin().clientOrigin, source, level, message, requestIdentifier }, 0);
-}
-
-void WebSWServerToContextConnection::matchAllCompleted(uint64_t requestIdentifier, const Vector<ServiceWorkerClientData>& clientsData)
-{
-    send(Messages::WebSWContextManagerConnection::MatchAllCompleted { requestIdentifier, clientsData });
 }
 
 void WebSWServerToContextConnection::connectionIsNoLongerNeeded()

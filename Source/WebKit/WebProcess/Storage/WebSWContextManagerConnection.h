@@ -117,8 +117,6 @@ private:
 #if ENABLE(SHAREABLE_RESOURCE) && PLATFORM(COCOA)
     void didSaveScriptsToDisk(WebCore::ServiceWorkerIdentifier, WebCore::ScriptBuffer&&, HashMap<URL, WebCore::ScriptBuffer>&& importedScripts);
 #endif
-    void matchAllCompleted(uint64_t matchAllRequestIdentifier, Vector<WebCore::ServiceWorkerClientData>&&);
-    void skipWaitingCompleted(uint64_t matchAllRequestIdentifier);
     void setUserAgent(String&& userAgent);
     void close();
     void setThrottleState(bool isThrottleable);
@@ -142,9 +140,6 @@ private:
     WebCore::PageIdentifier m_pageID;
 
     HashSet<std::unique_ptr<RemoteWorkerFrameLoaderClient>> m_loaders;
-    HashMap<uint64_t, WebCore::ServiceWorkerClientsMatchAllCallback> m_matchAllRequests;
-    HashMap<uint64_t, Function<void()>> m_skipWaitingCallbacks;
-    uint64_t m_previousRequestIdentifier { 0 };
     String m_userAgent;
     bool m_isThrottleable { true };
     Ref<WebUserContentController> m_userContentController;
