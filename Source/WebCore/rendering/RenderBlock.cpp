@@ -2799,7 +2799,7 @@ void RenderBlock::addFocusRingRects(Vector<LayoutRect>& rects, const LayoutPoint
             addFocusRingRectsForInlineChildren(rects, additionalOffset, paintContainer);
     
         for (auto& box : childrenOfType<RenderBox>(*this)) {
-            if (is<RenderListMarker>(box))
+            if (is<RenderListMarker>(box) || box.isOutOfFlowPositioned())
                 continue;
 
             FloatPoint pos;
