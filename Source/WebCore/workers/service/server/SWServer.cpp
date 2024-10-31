@@ -740,6 +740,10 @@ void SWServer::matchAll(SWServerWorker& worker, const ServiceWorkerClientQueryOp
 
     Vector<ServiceWorkerClientData> matchingClients;
     forEachClientForOrigin(worker.origin(), [&](auto& clientData) {
+        // If client’s execution ready flag is unset, continue.
+        if (m_clientsToBeCreatedById.contains(clientData.identifier))
+            return;
+
         if (!options.includeUncontrolled) {
             auto registrationIdentifier = m_clientToControllingRegistration.get(clientData.identifier);
             if (worker.data().registrationIdentifier != registrationIdentifier)
@@ -1159,9 +1163,9 @@ void SWServer::registerServiceWorkerClient(ClientOrigin&& clientOrigin, ServiceW
     ASSERT(!m_clientsById.contains(clientIdentifier));
     m_clientsById.add(clientIdentifier, makeUniqueRef<ServiceWorkerClientData>(WTFMove(data)));
 
-    ASSERT(!m_clientPendingMessagesById.contains(clientIdentifier));
+    ASSERT(!m_clientsToBeCreatedById.contains(clientIdentifier));
     if (isBeingCreatedClient == IsBeingCreatedClient::Yes)
-        m_clientPendingMessagesById.add(clientIdentifier, Vector<ServiceWorkerClientPendingMessage> { });
+        m_clientsToBeCreatedById.add(clientIdentifier, Vector<ServiceWorkerClientPendingMessage> { });
 
     auto& clientIdentifiersForOrigin = m_clientIdentifiersPerOrigin.ensure(clientOrigin, [] {
         return Clients { };
@@ -1220,7 +1224,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
     auto appInitiatedValueBefore = clientIsAppInitiatedForRegistrableDomain(clientOrigin.clientRegistrableDomain());
 
     m_clientsById.remove(clientIdentifier);
-    m_clientPendingMessagesById.remove(clientIdentifier);
+    m_clientsToBeCreatedById.remove(clientIdentifier);
     m_visibleClientIdToInternalClientIdMap.remove(clientIdentifier.toString());
 
     auto clientsByRegistrableDomainIterator = m_clientsByRegistrableDomain.find(clientRegistrableDomain);
@@ -1736,8 +1740,8 @@ void SWServer::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier
     if (!sourceServiceWorker)
         return;
 
-    auto iterator = m_clientPendingMessagesById.find(destinationContextIdentifier);
-    if (iterator == m_clientPendingMessagesById.end()) {
+    auto iterator = m_clientsToBeCreatedById.find(destinationContextIdentifier);
+    if (iterator == m_clientsToBeCreatedById.end()) {
         callbackIfClientIsReady(destinationContextIdentifier, message, sourceServiceWorker->data(), sourceOrigin);
         return;
     }
@@ -1746,7 +1750,7 @@ void SWServer::postMessageToServiceWorkerClient(ScriptExecutionContextIdentifier
 
 Vector<ServiceWorkerClientPendingMessage> SWServer::releaseServiceWorkerClientPendingMessage(ScriptExecutionContextIdentifier contextIdentifier)
 {
-    return m_clientPendingMessagesById.take(contextIdentifier);
+    return m_clientsToBeCreatedById.take(contextIdentifier);
 }
 
 void SWServer::setInspectable(ServiceWorkerIsInspectable inspectable)
