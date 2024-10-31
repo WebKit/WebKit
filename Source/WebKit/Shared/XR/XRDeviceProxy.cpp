@@ -48,6 +48,8 @@ XRDeviceProxy::XRDeviceProxy(XRDeviceInfo&& deviceInfo, PlatformXRSystemProxy& x
     m_supportsStereoRendering = deviceInfo.supportsStereoRendering;
     m_supportsOrientationTracking = deviceInfo.supportsOrientationTracking;
     m_recommendedResolution = deviceInfo.recommendedResolution;
+    m_minimumNearClipPlane = deviceInfo.minimumNearClipPlane;
+
     if (!deviceInfo.vrFeatures.isEmpty())
         setSupportedFeatures(SessionMode::ImmersiveVr, deviceInfo.vrFeatures);
     if (!deviceInfo.arFeatures.isEmpty())

@@ -77,6 +77,13 @@ WebXRSession::WebXRSession(Document& document, WebXRSystem& system, XRSessionMod
     // https://immersive-web.github.io/webxr/#ref-for-dom-xrreferencespacetype-viewer%E2%91%A2
     // Every session MUST support viewer XRReferenceSpaces.
     device.initializeReferenceSpace(XRReferenceSpaceType::Viewer);
+
+    // https://www.w3.org/TR/webxr/#minimum-near-clip-plane
+    // Each XRSession has a minimum near clip plane and a maximum far clip plane, defined
+    // in meters. The values MUST be determined by the user agent and MUST be non-negative.
+    auto minimumNearClipPlaneFromPlatform = device.minimumNearClipPlane();
+    if (minimumNearClipPlaneFromPlatform >= 0)
+        m_minimumNearClipPlane = minimumNearClipPlaneFromPlatform;
 }
 
 WebXRSession::~WebXRSession()
@@ -504,8 +511,6 @@ void WebXRSession::applyPendingRenderState()
     ASSERT(newState);
     ASSERT(!m_pendingRenderState);
 
-    m_requestData = {{ .depthRange = PlatformXR::DepthRange { static_cast<float>(newState->depthNear()), static_cast<float>(newState->depthFar()) } }}; // NOLINT
-
     // 4. Let oldBaseLayer be activeState’s baseLayer.
     // 5. Let oldLayers be activeState’s layers.
     // FIXME: those are only needed for step 6.2.
@@ -543,6 +548,8 @@ void WebXRSession::applyPendingRenderState()
         m_activeRenderState->setCompositionEnabled(true);
         m_activeRenderState->setOutputCanvas(nullptr);
     }
+
+    m_requestData = {{ .depthRange = PlatformXR::DepthRange { static_cast<float>(m_activeRenderState->depthNear()), static_cast<float>(m_activeRenderState->depthFar()) } }}; // NOLINT
 }
 
 void WebXRSession::minimalUpdateRendering()
