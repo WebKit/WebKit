@@ -1462,21 +1462,18 @@ LLINT_SLOW_PATH_DECL(slow_path_put_private_name)
         if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base()) {
             if (slot.type() == PutPropertySlot::NewProperty) {
                 GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
-                if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity()) {
-                    ASSERT(oldStructure == newStructure->previousID());
-                    if (oldStructure == newStructure->previousID()) {
-                        ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
+                if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity() && oldStructure == newStructure->previousID()) {
+                    ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
 
-                        bool sawPolyProto = false;
-                        auto result = normalizePrototypeChain(globalObject, baseCell, sawPolyProto);
-                        if (result != InvalidPrototypeChain && !sawPolyProto) {
-                            ASSERT(oldStructure->isObject());
-                            metadata.m_oldStructureID = oldStructure->id();
-                            metadata.m_offset = slot.cachedOffset();
-                            metadata.m_newStructureID = newStructure->id();
-                            metadata.m_property.set(vm, codeBlock, subscript.asCell());
-                            vm.writeBarrier(codeBlock);
-                        }
+                    bool sawPolyProto = false;
+                    auto result = normalizePrototypeChain(globalObject, baseCell, sawPolyProto);
+                    if (result != InvalidPrototypeChain && !sawPolyProto) {
+                        ASSERT(oldStructure->isObject());
+                        metadata.m_oldStructureID = oldStructure->id();
+                        metadata.m_offset = slot.cachedOffset();
+                        metadata.m_newStructureID = newStructure->id();
+                        metadata.m_property.set(vm, codeBlock, subscript.asCell());
+                        vm.writeBarrier(codeBlock);
                     }
                 }
             } else {
