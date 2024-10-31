@@ -7440,6 +7440,8 @@ imported/w3c/web-platform-tests/scroll-animations/view-timelines/change-animatio
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/view-timeline-root-source.html [ Pass Failure ]
 imported/w3c/web-platform-tests/web-animations/interfaces/Animation/scroll-timeline-progress.tentative.html [ Pass Failure ]
 
+webkit.org/b/282373 imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-dynamic.tentative.html [ Pass Failure ]
+
 # webkit.org/b/263872 [scroll-animations] some WPT tests are ImageOnlyFailure
 imported/w3c/web-platform-tests/scroll-animations/css/animation-fill-outside-range-test.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/scroll-animations/css/animation-range-visual-test.html [ ImageOnlyFailure ]
