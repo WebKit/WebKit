@@ -201,9 +201,6 @@ Ref<GenericPromise> MediaRecorderPrivateWriterAVFObjC::close(const MediaTime& en
 {
     if (m_hasAddedVideoFrame)
         appendEndsPreviousSampleDurationMarker(m_videoAssetWriterInput.get(), PAL::toCMTime(endTime));
-    [m_audioAssetWriterInput markAsFinished];
-    [m_videoAssetWriterInput markAsFinished];
-    [m_writer flushSegment];
     GenericPromise::Producer producer;
     Ref promise = producer.promise();
     [m_writer finishWritingWithCompletionHandler:makeBlockPtr([producer = WTFMove(producer)]() mutable {
