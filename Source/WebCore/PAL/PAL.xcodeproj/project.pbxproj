@@ -381,6 +381,13 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		314C6E612CD2AB5E001EA6B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 726FBD4C2C5D9CF800B3F5FF /* dav1d.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 444A6F102AEB1D1C005FE121;
+			remoteInfo = dav1d_fuzzer;
+		};
 		72C802702C5D9FEB00D7143C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 726FBD4C2C5D9CF800B3F5FF /* dav1d.xcodeproj */;
@@ -1601,6 +1608,7 @@
 				DD20DD0627BC7F290093D175 /* PBXBuildRule */,
 			);
 			dependencies = (
+				314C6E622CD2AB5E001EA6B3 /* PBXTargetDependency */,
 				72C802792C5DA20200D7143C /* PBXTargetDependency */,
 			);
 			name = PAL;
@@ -1777,6 +1785,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		314C6E622CD2AB5E001EA6B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = dav1d_fuzzer;
+			targetProxy = 314C6E612CD2AB5E001EA6B3 /* PBXContainerItemProxy */;
+		};
 		72C802792C5DA20200D7143C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = dav1d;

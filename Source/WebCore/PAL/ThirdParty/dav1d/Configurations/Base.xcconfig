@@ -23,6 +23,7 @@
 
 #include "../../../../../Configurations/CommonBase.xcconfig"
 
+AD_HOC_CODE_SIGNING_ALLOWED = YES;
 CODE_SIGN_IDENTITY = -;
 
 ALWAYS_SEARCH_USER_PATHS = NO;
