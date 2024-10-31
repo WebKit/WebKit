@@ -19,10 +19,53 @@
 
 #pragma once
 
+#include <wtf/MallocSpan.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GUniquePtr.h>
+
+extern "C" {
+void* g_malloc(size_t);
+void* g_malloc0(size_t);
+void* g_realloc(void*, size_t);
+void* g_try_malloc(size_t);
+void* g_try_malloc0(size_t);
+void* g_try_realloc(void*, size_t);
+void g_strfreev(char**);
+}
 
 namespace WTF {
+
+struct GMalloc {
+    static void* malloc(size_t size) { return g_malloc(size); }
+    static void* tryMalloc(size_t size) { return g_try_malloc(size); }
+    static void* zeroedMalloc(size_t size) { return g_malloc0(size); }
+    static void* tryZeroedMalloc(size_t size) { return g_try_malloc0(size); }
+    static void* realloc(void* ptr, size_t size) { return g_realloc(ptr, size); }
+    static void* tryRealloc(void* ptr, size_t size) { return g_try_realloc(ptr, size); }
+    static void free(void* ptr) { g_free(ptr); }
+
+    static constexpr ALWAYS_INLINE size_t nextCapacity(size_t capacity)
+    {
+        return capacity + capacity / 4 + 1;
+    }
+};
+
+struct GMallocStrv {
+    static void free(char** ptr) { g_strfreev(ptr); }
+};
+
+template <typename T, typename Malloc = GMalloc>
+using GMallocSpan = MallocSpan<T, Malloc>;
+
+template<typename T, typename Malloc = GMalloc>
+GMallocSpan<T, Malloc> adoptGMallocSpan(T* ptr, size_t size)
+{
+    return adoptMallocSpan<T, Malloc>(ptr, size);
+}
+
+WTF_EXPORT_PRIVATE GMallocSpan<char*, GMallocStrv> gKeyFileGetKeys(GKeyFile*, const char* groupName, GUniqueOutPtr<GError>&);
+WTF_EXPORT_PRIVATE GMallocSpan<GParamSpec*> gObjectClassGetProperties(GObjectClass*);
 
 inline std::span<const uint8_t> span(GBytes* bytes)
 {
@@ -60,4 +103,6 @@ inline std::span<const uint8_t> span(const GRefPtr<GVariant>& variant)
 
 } // namespace WTF
 
+using WTF::gKeyFileGetKeys;
+using WTF::gObjectClassGetProperties;
 using WTF::span;

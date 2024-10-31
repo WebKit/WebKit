@@ -43,7 +43,7 @@
 #include <cmath>
 #include <glib/gi18n-lib.h>
 #include <pal/text/TextEncodingRegistry.h>
-#include <wtf/glib/GUniquePtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
 
@@ -4299,8 +4299,6 @@ WebKitFeatureList* webkit_settings_get_development_features(void)
  */
 gboolean webkit_settings_apply_from_key_file(WebKitSettings* settings, GKeyFile* keyFile, const gchar* groupName, GError** error)
 {
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
     g_return_val_if_fail(WEBKIT_IS_SETTINGS(settings), FALSE);
     g_return_val_if_fail(keyFile, FALSE);
     g_return_val_if_fail(groupName, FALSE);
@@ -4311,17 +4309,14 @@ gboolean webkit_settings_apply_from_key_file(WebKitSettings* settings, GKeyFile*
         return FALSE;
     }
 
-    auto klass = G_OBJECT_GET_CLASS(settings);
-    unsigned totalProperties = 0;
-    GUniquePtr<GParamSpec*> properties(g_object_class_list_properties(klass, &totalProperties));
-
-    GRefPtr<GPtrArray> propertyNames = adoptGRef(g_ptr_array_sized_new(totalProperties));
-    GRefPtr<GArray> values = adoptGRef(g_array_sized_new(FALSE, FALSE, sizeof(GValue), totalProperties));
+    const auto properties = gObjectClassGetProperties(G_OBJECT_GET_CLASS(settings));
+    GRefPtr<GPtrArray> propertyNames = adoptGRef(g_ptr_array_sized_new(properties.span().size()));
+    GRefPtr<GArray> values = adoptGRef(g_array_sized_new(FALSE, FALSE, sizeof(GValue), properties.span().size()));
     g_array_set_clear_func(values.get(), reinterpret_cast<GDestroyNotify>(g_value_unset));
 
-    for (unsigned i = 0; i < totalProperties; i++) {
+    for (const GParamSpec* property : properties.span()) {
         GUniqueOutPtr<GError> lookupError;
-        const char* name = properties.get()[i]->name;
+        const char* name = property->name;
         if (!g_key_file_has_key(keyFile, groupName, name, &lookupError.outPtr())) {
             if (lookupError) {
                 g_propagate_error(error, lookupError.release());
@@ -4332,7 +4327,7 @@ gboolean webkit_settings_apply_from_key_file(WebKitSettings* settings, GKeyFile*
 
         GValue value = G_VALUE_INIT;
         bool isValueSet = false;
-        switch (G_PARAM_SPEC_VALUE_TYPE(properties.get()[i])) {
+        switch (G_PARAM_SPEC_VALUE_TYPE(property)) {
         case G_TYPE_BOOLEAN: {
             bool boolValue = g_key_file_get_boolean(keyFile, groupName, name, &lookupError.outPtr());
             if (!boolValue && lookupError) {
@@ -4380,16 +4375,14 @@ gboolean webkit_settings_apply_from_key_file(WebKitSettings* settings, GKeyFile*
         }
     }
 
-    size_t length;
     GUniqueOutPtr<GError> getKeysError;
-    GUniquePtr<char*> allKeys(g_key_file_get_keys(keyFile, groupName, &length, &getKeysError.outPtr()));
+    auto allKeys = gKeyFileGetKeys(keyFile, groupName, getKeysError);
     if (UNLIKELY(getKeysError)) {
         g_propagate_error(error, getKeysError.release());
         return FALSE;
     }
 
-    for (unsigned i = 0; i < length; i++) {
-        auto key = allKeys.get()[i];
+    for (const char* key : allKeys.span()) {
         if (!g_ptr_array_find_with_equal_func(propertyNames.get(), static_cast<gconstpointer>(key), g_str_equal, nullptr)) {
             g_set_error(error, G_KEY_FILE_ERROR, G_KEY_FILE_ERROR_INVALID_VALUE, "The %s group contains an invalid setting: %s", groupName, key);
             return FALSE;
@@ -4398,8 +4391,6 @@ gboolean webkit_settings_apply_from_key_file(WebKitSettings* settings, GKeyFile*
 
     g_object_setv(G_OBJECT(settings), propertyNames->len, const_cast<const char**>(reinterpret_cast<char**>(propertyNames->pdata)), reinterpret_cast<GValue*>(values->data));
     return TRUE;
-
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**
