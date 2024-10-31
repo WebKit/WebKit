@@ -14,5 +14,6 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/htmlconstructor/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/htmlconstructor/newtarget-customized-builtins.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/htmlconstructor/newtarget.html

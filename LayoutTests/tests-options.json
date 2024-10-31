@@ -2312,6 +2312,18 @@
     "imported/w3c/web-platform-tests/css/selectors/media/media-loading-state.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/custom-elements/form-associated/ElementInternals-target-element-is-held-strongly.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/custom-elements/state/custom-state-set-strong-ref.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/custom-elements/state/state-css-selector-shadow-dom.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/custom-elements/state/state-css-selector.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/custom-state-pseudo-class/custom-state-set-strong-ref.tentative.html": [
         "slow"
     ],

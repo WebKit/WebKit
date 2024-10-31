@@ -18,5 +18,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/Document-importNode.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/Node-cloneNode-customized-builtins.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/Node-cloneNode.html
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/upgrade-custom-element-error-event.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/upgrading-enqueue-reactions.html
 /LayoutTests/imported/w3c/web-platform-tests/custom-elements/upgrading/upgrading-parser-created-element.html

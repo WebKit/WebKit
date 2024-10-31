@@ -4,6 +4,7 @@
 
 
 
+
 PASS Adding/removing disabled content attribute
 PASS Relationship with FIELDSET
 PASS A disabled form-associated custom element should not provide an entry for it
@@ -12,4 +13,6 @@ PASS Disabled attribute affects focus-capability
 PASS Upgrading an element with disabled content attribute
 PASS Toggling "disabled" attribute on a custom element inside disabled <fieldset> does not trigger a callback
 PASS Toggling "disabled" attribute on a <fieldset> does not trigger a callback on disabled custom element descendant
+PASS Callback triggered during a clone/append operation, with disabled state provided by ancestor
+PASS Callback triggered during a clone operation, with disabled state provided by ancestor
 

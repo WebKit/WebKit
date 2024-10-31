@@ -1,0 +1,7 @@
+
+FAIL Upgrade into autonomous custom element when inserted via innerHTML Illegal constructor
+FAIL Upgrade into autonomous custom element when definition is added Illegal constructor
+FAIL Upgrade into customized built-in element when inserted via innerHTML Illegal constructor
+FAIL Upgrade into customized built-in element when definition is added Illegal constructor
+FAIL Upgrade into autonomous custom element should not inherit from global registry for missing values Illegal constructor
+

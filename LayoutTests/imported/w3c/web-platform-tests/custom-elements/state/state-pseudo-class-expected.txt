@@ -1,0 +1,10 @@
+
+PASS :state() parsing passes
+PASS :state() parsing failures
+PASS deprecated :--state parsing failures
+PASS :state(foo) serialization
+PASS :state(foo) in simple cases
+PASS :state(foo) and other pseudo classes
+FAIL :state(foo) and ::part() assert_equals: :state() matching should be case-sensitive expected "0" but got "0.5"
+PASS :state(foo) and :host()
+

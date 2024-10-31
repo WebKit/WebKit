@@ -3,6 +3,10 @@ PASS ariaAtomic on Element must enqueue an attributeChanged reaction when adding
 PASS ariaAtomic on Element must enqueue an attributeChanged reaction when replacing an existing attribute
 PASS ariaAutoComplete on Element must enqueue an attributeChanged reaction when adding aria-autocomplete content attribute
 PASS ariaAutoComplete on Element must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS ariaBrailleLabel on Element must enqueue an attributeChanged reaction when adding aria-braillelabel content attribute
+PASS ariaBrailleLabel on Element must enqueue an attributeChanged reaction when replacing an existing attribute
+PASS ariaBrailleRoleDescription on Element must enqueue an attributeChanged reaction when adding aria-brailleroledescription content attribute
+PASS ariaBrailleRoleDescription on Element must enqueue an attributeChanged reaction when replacing an existing attribute
 PASS ariaBusy on Element must enqueue an attributeChanged reaction when adding aria-busy content attribute
 PASS ariaBusy on Element must enqueue an attributeChanged reaction when replacing an existing attribute
 PASS ariaChecked on Element must enqueue an attributeChanged reaction when adding aria-checked content attribute

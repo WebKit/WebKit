@@ -1,3 +1,0 @@
-
-PASS setValidity() works as expected in precustomized state
-

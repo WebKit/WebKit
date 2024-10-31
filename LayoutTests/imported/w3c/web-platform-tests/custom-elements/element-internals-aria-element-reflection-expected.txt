@@ -1,0 +1,17 @@
+Active descendant
+Controls
+Described by
+Details
+Error message
+Flow to
+Labelled By
+Owns
+
+PASS Getting previously-unset ARIA element reflection properties on ElementInternals should return null.
+PASS Getting ARIA element reflection properties on ElementInternals should return the value that was set.
+PASS Setting ARIA element reflection properties to an empty array should work as expected.
+FAIL Setting ARIA element reflection properties on ElementInternals to null should delete any previous value, and not crash assert_equals: expected null but got []
+PASS Setting ariaLabelledByElements should change the accessible name of the custom element
+PASS Caching invariant different attributes.
+PASS Caching invariant different elements.
+

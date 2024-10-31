@@ -1727,6 +1727,7 @@ imported/w3c/web-platform-tests/html/semantics/forms/the-input-element/image01.h
 
 webkit.org/b/251615 imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/inert-node-is-uneditable.html [ Failure ]
 
+webkit.org/b/251616 imported/w3c/web-platform-tests/custom-elements/form-associated/label-delegatesFocus.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/delegatesFocus-highlight-sibling.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-fallback-default-tabindex.html [ Failure ]
 webkit.org/b/251616 imported/w3c/web-platform-tests/shadow-dom/focus-navigation/focus-navigation-slot-fallback.html [ Failure ]
