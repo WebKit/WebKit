@@ -835,7 +835,7 @@ inline StringImplShape::StringImplShape(unsigned refCount, std::span<const LChar
     , m_data8(data.data())
     , m_hashAndFlags(hashAndFlags)
 {
-    ASSERT(data.size() <= std::numeric_limits<unsigned>::max());
+    RELEASE_ASSERT(data.size() <= MaxLength);
 }
 
 inline StringImplShape::StringImplShape(unsigned refCount, std::span<const UChar> data, unsigned hashAndFlags)
@@ -844,7 +844,7 @@ inline StringImplShape::StringImplShape(unsigned refCount, std::span<const UChar
     , m_data16(data.data())
     , m_hashAndFlags(hashAndFlags)
 {
-    ASSERT(data.size() <= std::numeric_limits<unsigned>::max());
+    RELEASE_ASSERT(data.size() <= MaxLength);
 }
 
 template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
@@ -853,6 +853,7 @@ template<unsigned characterCount> constexpr StringImplShape::StringImplShape(uns
     , m_data8Char(characters)
     , m_hashAndFlags(hashAndFlags)
 {
+    RELEASE_ASSERT(length <= MaxLength);
 }
 
 template<unsigned characterCount> constexpr StringImplShape::StringImplShape(unsigned refCount, unsigned length, const char16_t (&characters)[characterCount], unsigned hashAndFlags, ConstructWithConstExprTag)
@@ -861,6 +862,7 @@ template<unsigned characterCount> constexpr StringImplShape::StringImplShape(uns
     , m_data16Char(characters)
     , m_hashAndFlags(hashAndFlags)
 {
+    RELEASE_ASSERT(length <= MaxLength);
 }
 
 inline Ref<StringImpl> StringImpl::isolatedCopy() const
@@ -1064,8 +1066,6 @@ inline Ref<StringImpl> StringImpl::adopt(Vector<CharacterType, inlineCapacity, O
         auto length = vector.size();
         if (!length)
             return *empty();
-        if (length > MaxLength)
-            CRASH();
         return adoptRef(*new StringImpl(vector.releaseBuffer(), length));
     } else
         return create(vector.span());
