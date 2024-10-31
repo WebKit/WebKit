@@ -1948,11 +1948,7 @@ private:
                 if (arrayBuffer->isResizableOrGrowableShared()) {
                     appendObjectPoolTag(ResizableArrayBufferTag);
                     write(ResizableArrayBufferTag);
-                    uint64_t byteLength = arrayBuffer->byteLength();
-                    write(byteLength);
-                    uint64_t maxByteLength = arrayBuffer->maxByteLength().value_or(0);
-                    write(maxByteLength);
-                    write(arrayBuffer->span());
+                    writeResizableArrayBuffer(arrayBuffer->span(), arrayBuffer->maxByteLength().value_or(0));
                     return true;
                 }
 
@@ -2629,6 +2625,13 @@ private:
     void write(std::span<const uint8_t> data)
     {
         m_buffer.append(data);
+    }
+
+    void writeResizableArrayBuffer(std::span<const uint8_t> data, size_t maxByteLength)
+    {
+        write(static_cast<uint64_t>(data.size()));
+        write(static_cast<uint64_t>(maxByteLength));
+        write(data);
     }
 
     Vector<uint8_t>& m_buffer;
