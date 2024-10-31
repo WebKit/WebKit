@@ -59,6 +59,7 @@ public:
     WEBCORE_EXPORT void webkitExitFullscreen();
     WEBCORE_EXPORT bool webkitSupportsFullscreen();
     WEBCORE_EXPORT bool webkitDisplayingFullscreen();
+    WEBCORE_EXPORT ExceptionOr<void> enterFullscreenIgnoringPermissionsPolicy();
 
     void ancestorWillEnterFullscreen() final;
 
@@ -105,6 +106,7 @@ public:
     WEBCORE_EXPORT void didEnterFullscreenOrPictureInPicture(const FloatSize&);
     WEBCORE_EXPORT void didExitFullscreenOrPictureInPicture();
     WEBCORE_EXPORT bool isChangingPresentationMode() const;
+    WEBCORE_EXPORT void setPresentationModeIgnoringPermissionsPolicy(VideoPresentationMode);
 
     void setVideoFullscreenFrame(const FloatRect&) final;
 

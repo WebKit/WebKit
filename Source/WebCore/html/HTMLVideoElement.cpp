@@ -797,6 +797,20 @@ void HTMLVideoElement::setVideoFullscreenStandby(bool value)
     }
 }
 
+ExceptionOr<void> HTMLVideoElement::enterFullscreenIgnoringPermissionsPolicy()
+{
+    ignoreFullscreenPermissionPolicyOnNextCallToEnterFullscreen();
+    return webkitEnterFullscreen();
+}
+
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+void HTMLVideoElement::setPresentationModeIgnoringPermissionsPolicy(VideoPresentationMode mode)
+{
+    ignoreFullscreenPermissionPolicyOnNextCallToEnterFullscreen();
+    setPresentationMode(mode);
+}
+#endif
+
 } // namespace WebCore
 
 #endif // ENABLE(VIDEO)

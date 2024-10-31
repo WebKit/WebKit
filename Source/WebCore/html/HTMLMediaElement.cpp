@@ -7353,7 +7353,9 @@ void HTMLMediaElement::enterFullscreen(VideoFullscreenMode mode)
     if (videoUsesElementFullscreen() && page->isFullscreenManagerEnabled() && isInWindowOrStandardFullscreen(mode)) {
         m_temporarilyAllowingInlinePlaybackAfterFullscreen = false;
         m_waitingToEnterFullscreen = true;
-        protectedDocument()->checkedFullscreenManager()->requestFullscreenForElement(*this, nullptr, { }, [weakThis = WeakPtr { *this }](bool success) {
+        FullscreenManager::FullscreenCheckType fullscreenCheckType = m_ignoreFullscreenPermissionsPolicy ? FullscreenManager::ExemptIFrameAllowFullscreenRequirement : FullscreenManager::EnforceIFrameAllowFullscreenRequirement;
+        m_ignoreFullscreenPermissionsPolicy = false;
+        protectedDocument()->checkedFullscreenManager()->requestFullscreenForElement(*this, nullptr, fullscreenCheckType, [weakThis = WeakPtr { *this }](bool success) {
             RefPtr protectedThis = weakThis.get();
             if (!protectedThis || success)
                 return;
