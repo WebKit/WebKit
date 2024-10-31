@@ -899,6 +899,8 @@ static NSSet<NSString *> *UTIsForMIMETypes(NSArray *mimeTypes)
     [_cameraPicker setSourceType:UIImagePickerControllerSourceTypeCamera];
     [_cameraPicker setMediaTypes:[self _mediaTypesForPickerSourceType:UIImagePickerControllerSourceTypeCamera]];
     [_cameraPicker setDelegate:self];
+    // Modal presentation style must be set before accessing the presentation controller.
+    [_cameraPicker setModalPresentationStyle:UIModalPresentationOverFullScreen];
     [_cameraPicker presentationController].delegate = self;
     [_cameraPicker setAllowsEditing:NO];
     [_cameraPicker _setAllowsMultipleSelection:_allowMultipleFiles];
