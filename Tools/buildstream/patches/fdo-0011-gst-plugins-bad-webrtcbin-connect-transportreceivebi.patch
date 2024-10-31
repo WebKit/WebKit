@@ -110,7 +110,7 @@ new file mode 100644
 index 0000000..83557b0
 --- /dev/null
 +++ b/patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch
-@@ -0,0 +1,122 @@
+@@ -0,0 +1,40 @@
 +From efa0a3ec6a5f8277d16f0cb46e3528be931f7859 Mon Sep 17 00:00:00 2001
 +From: Carlos Bentzen <cadubentzen@igalia.com>
 +Date: Fri, 2 Aug 2024 11:21:13 +0200
@@ -148,88 +148,6 @@ index 0000000..83557b0
 +   }
 + 
 +   ret = TRUE;
-+diff --git a/subprojects/gst-plugins-bad/tests/check/elements/webrtcbin.c b/subprojects/gst-plugins-bad/tests/check/elements/webrtcbin.c
-+index 1dd2ddf3c2..6ba8315f87 100644
-+--- a/subprojects/gst-plugins-bad/tests/check/elements/webrtcbin.c
-++++ b/subprojects/gst-plugins-bad/tests/check/elements/webrtcbin.c
-+@@ -4601,6 +4601,69 @@ _pad_added_harness (struct test_webrtc *t, GstElement * element,
-+   }
-+ }
-+ 
-++GST_START_TEST (test_audio_sendrecv)
-++{
-++  struct test_webrtc *t = test_webrtc_new ();
-++  GstHarness *h1, *h2;
-++
-++  t->on_negotiation_needed = NULL;
-++  t->on_ice_candidate = NULL;
-++  t->on_pad_added = _pad_added_fakesink;
-++
-++  h1 = gst_harness_new_with_element (t->webrtc1, "sink_0", NULL);
-++  add_audio_test_src_harness (h1, 0xDEADBEEF);
-++  t->harnesses = g_list_prepend (t->harnesses, h1);
-++
-++  h2 = gst_harness_new_with_element (t->webrtc2, "sink_0", NULL);
-++  add_audio_test_src_harness (h2, 0xBEEFDEAD);
-++  t->harnesses = g_list_prepend (t->harnesses, h2);
-++
-++  VAL_SDP_INIT (no_duplicate_payloads, on_sdp_media_no_duplicate_payloads,
-++      NULL, NULL);
-++  guint media_format_count[] = { 1 };
-++  VAL_SDP_INIT (media_formats, on_sdp_media_count_formats,
-++      media_format_count, &no_duplicate_payloads);
-++  VAL_SDP_INIT (count, _count_num_sdp_media, GUINT_TO_POINTER (1),
-++      &media_formats);
-++  const gchar *expected_offer_setup[] = { "actpass", };
-++  VAL_SDP_INIT (offer_setup, on_sdp_media_setup, expected_offer_setup, &count);
-++  const gchar *expected_answer_setup[] = { "active", };
-++  VAL_SDP_INIT (answer_setup, on_sdp_media_setup, expected_answer_setup,
-++      &count);
-++  const gchar *expected_offer_direction[] = { "sendrecv", };
-++  VAL_SDP_INIT (offer, on_sdp_media_direction, expected_offer_direction,
-++      &offer_setup);
-++  const gchar *expected_answer_direction[] = { "sendrecv", };
-++  VAL_SDP_INIT (answer, on_sdp_media_direction, expected_answer_direction,
-++      &answer_setup);
-++  GstWebRTCKind expected_kind = GST_WEBRTC_KIND_AUDIO;
-++
-++  g_signal_connect (t->webrtc1, "on-new-transceiver",
-++      G_CALLBACK (on_new_transceiver_expected_kind),
-++      GUINT_TO_POINTER (expected_kind));
-++  g_signal_connect (t->webrtc2, "on-new-transceiver",
-++      G_CALLBACK (on_new_transceiver_expected_kind),
-++      GUINT_TO_POINTER (expected_kind));
-++
-++  test_validate_sdp (t, &offer, &answer);
-++
-++  fail_if (gst_element_set_state (t->webrtc1,
-++          GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE);
-++  fail_if (gst_element_set_state (t->webrtc2,
-++          GST_STATE_PLAYING) == GST_STATE_CHANGE_FAILURE);
-++
-++  /* Exchange a few buffers between webrtcbin1 and webrtcbin2 to check
-++     that they can handle incoming data and we get no errors on the bus. */
-++  for (int i = 0; i < 5; i++) {
-++    gst_harness_push_from_src (h1);
-++    gst_harness_push_from_src (h2);
-++  }
-++
-++  test_webrtc_free (t);
-++}
-++
-++GST_END_TEST;
-++
-+ static void
-+ new_jitterbuffer_set_fast_start (GstElement * rtpbin,
-+     GstElement * rtpjitterbuffer, guint session_id, guint ssrc,
-+@@ -6001,6 +6064,7 @@ webrtcbin_suite (void)
-+     tcase_add_test (tc, test_session_stats);
-+     tcase_add_test (tc, test_stats_with_stream);
-+     tcase_add_test (tc, test_audio);
-++    tcase_add_test (tc, test_audio_sendrecv);
-+     tcase_add_test (tc, test_ice_port_restriction);
-+     tcase_add_test (tc, test_audio_video);
-+     tcase_add_test (tc, test_media_direction);
 +-- 
 +2.45.2
 +
