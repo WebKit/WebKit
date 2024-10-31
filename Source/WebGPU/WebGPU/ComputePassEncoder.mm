@@ -415,7 +415,9 @@ static void setCommandEncoder(const BindGroupEntryUsageData::Resource& resource,
         }, [&](const RefPtr<const TextureView>& textureView) {
             if (textureView)
                 textureView->setCommandEncoder(parentEncoder);
-        }, [](const RefPtr<const ExternalTexture>&) {
+        }, [&](const RefPtr<const ExternalTexture>& externalTexture) {
+            if (externalTexture)
+                externalTexture->setCommandEncoder(parentEncoder);
     });
 }
 
