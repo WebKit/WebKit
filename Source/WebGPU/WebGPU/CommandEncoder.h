@@ -115,6 +115,7 @@ public:
     void setExistingEncoder(id<MTLCommandEncoder>);
     void generateInvalidEncoderStateError();
     bool validateClearBuffer(const Buffer&, uint64_t offset, uint64_t size);
+    static void trackEncoder(CommandEncoder&, WeakHashSet<CommandEncoder>&);
 
 private:
     CommandEncoder(id<MTLCommandBuffer>, Device&);

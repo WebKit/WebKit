@@ -343,6 +343,9 @@ void Device::generateAValidationError(NSString * message)
 
 void Device::generateAValidationError(String&& message)
 {
+    if (m_supressAllErrors)
+        return;
+
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-a-validation-error
     auto* scope = currentErrorScope(WGPUErrorFilter_Validation);
     if (scope) {
@@ -359,6 +362,9 @@ void Device::generateAValidationError(String&& message)
 
 void Device::generateAnOutOfMemoryError(String&& message)
 {
+    if (m_supressAllErrors)
+        return;
+
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-an-out-of-memory-error
 
     auto* scope = currentErrorScope(WGPUErrorFilter_OutOfMemory);
@@ -377,6 +383,9 @@ void Device::generateAnOutOfMemoryError(String&& message)
 
 void Device::generateAnInternalError(String&& message)
 {
+    if (m_supressAllErrors)
+        return;
+
     // https://gpuweb.github.io/gpuweb/#abstract-opdef-generate-an-internal-error
 
     auto* scope = currentErrorScope(WGPUErrorFilter_Internal);
@@ -884,6 +893,11 @@ id<MTLFunction> Device::icbCommandClampFunction(MTLIndexType indexType)
     return indexType == MTLIndexTypeUInt16 ? functionUshort : function;
 }
 
+void Device::pauseErrorReporting(bool pauseReporting)
+{
+    m_supressAllErrors = pauseReporting;
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
@@ -926,6 +940,11 @@ WGPUCommandEncoder wgpuDeviceCreateCommandEncoder(WGPUDevice device, const WGPUC
 WGPUComputePipeline wgpuDeviceCreateComputePipeline(WGPUDevice device, const WGPUComputePipelineDescriptor* descriptor)
 {
     return WebGPU::releaseToAPI(WebGPU::protectedFromAPI(device)->createComputePipeline(*descriptor).first);
+}
+
+void wgpuDevicePauseErrorReporting(WGPUDevice device, WGPUBool pauseErrors)
+{
+    WebGPU::protectedFromAPI(device)->pauseErrorReporting(!!pauseErrors);
 }
 
 void wgpuDeviceCreateComputePipelineAsync(WGPUDevice device, const WGPUComputePipelineDescriptor* descriptor, WGPUCreateComputePipelineAsyncCallback callback, void* userdata)

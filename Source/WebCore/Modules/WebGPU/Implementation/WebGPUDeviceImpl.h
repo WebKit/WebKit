@@ -95,6 +95,12 @@ private:
     void resolveDeviceLostPromise(CompletionHandler<void(WebCore::WebGPU::DeviceLostReason)>&&) final;
 
     void setLabelInternal(const String&) final;
+    void pauseAllErrorReporting(bool pause) final;
+
+    [[noreturn]] Ref<CommandEncoder> invalidCommandEncoder() final;
+    [[noreturn]] Ref<CommandBuffer> invalidCommandBuffer() final;
+    [[noreturn]] Ref<RenderPassEncoder> invalidRenderPassEncoder() final;
+    [[noreturn]] Ref<ComputePassEncoder> invalidComputePassEncoder() final;
 
     WebGPUPtr<WGPUDevice> m_backing;
     Ref<ConvertToBackingContext> m_convertToBackingContext;

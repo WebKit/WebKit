@@ -43,12 +43,19 @@
 #include "PixelBuffer.h"
 #include "VideoFrame.h"
 #include "WebCodecsVideoFrame.h"
+#include "WebGPUDevice.h"
 
 #if PLATFORM(COCOA)
 #include "CoreVideoSoftLink.h"
 #endif
 
 namespace WebCore {
+
+GPUQueue::GPUQueue(Ref<WebGPU::Queue>&& backing, WebGPU::Device& device)
+    : m_backing(WTFMove(backing))
+    , m_device(&device)
+{
+}
 
 String GPUQueue::label() const
 {
@@ -66,6 +73,11 @@ void GPUQueue::submit(Vector<Ref<GPUCommandBuffer>>&& commandBuffers)
         return commandBuffer->backing();
     });
     m_backing->submit(WTFMove(result));
+
+    if (RefPtr device = m_device.get()) {
+        for (Ref commandBuffer : commandBuffers)
+            commandBuffer->setBacking(device->invalidCommandEncoder(), device->invalidCommandBuffer());
+    }
 }
 
 void GPUQueue::onSubmittedWorkDone(OnSubmittedWorkDonePromise&& promise)

@@ -53,13 +53,40 @@ namespace WebKit::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteDeviceProxy);
 
+Ref<WebCore::WebGPU::CommandEncoder> RemoteDeviceProxy::createInvalidCommandEncoder()
+{
+    pauseAllErrorReporting(true);
+    return createCommandEncoder(std::nullopt).releaseNonNull();
+}
+
+static auto makeInvalidRenderPassEncoder(auto& commandEncoder)
+{
+    WebCore::WebGPU::RenderPassDescriptor descriptor;
+    return commandEncoder->beginRenderPass(descriptor).releaseNonNull();
+}
+
+static auto makeInvalidCommandBuffer(auto& commandEncoder)
+{
+    WebCore::WebGPU::CommandBufferDescriptor descriptor;
+    return commandEncoder->finish(descriptor).releaseNonNull();
+}
+
 RemoteDeviceProxy::RemoteDeviceProxy(Ref<WebCore::WebGPU::SupportedFeatures>&& features, Ref<WebCore::WebGPU::SupportedLimits>&& limits, RemoteAdapterProxy& parent, ConvertToBackingContext& convertToBackingContext, WebGPUIdentifier identifier, WebGPUIdentifier queueIdentifier)
     : Device(WTFMove(features), WTFMove(limits))
     , m_backing(identifier)
     , m_convertToBackingContext(convertToBackingContext)
     , m_parent(parent)
     , m_queue(RemoteQueueProxy::create(parent, convertToBackingContext, queueIdentifier))
+    , m_invalidCommandEncoder(createInvalidCommandEncoder())
+    , m_invalidRenderPassEncoder(makeInvalidRenderPassEncoder(m_invalidCommandEncoder))
+    , m_invalidComputePassEncoder(Ref { m_invalidCommandEncoder }->beginComputePass(std::nullopt).releaseNonNull())
+    , m_invalidCommandBuffer(makeInvalidCommandBuffer(m_invalidCommandEncoder))
 {
+    Ref { m_invalidRenderPassEncoder }->end();
+    Ref { m_invalidComputePassEncoder }->end();
+    Ref { m_queue }->submit({ m_invalidCommandBuffer });
+
+    pauseAllErrorReporting(false);
 }
 
 RemoteDeviceProxy::~RemoteDeviceProxy()
@@ -331,8 +358,9 @@ RefPtr<WebCore::WebGPU::CommandEncoder> RemoteDeviceProxy::createCommandEncoder(
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteCommandEncoderProxy::create(*this, protectedConvertToBackingContext(), identifier);
-    result->setLabel(WTFMove(convertedDescriptor->label));
+    auto result = RemoteCommandEncoderProxy::create(root(), protectedConvertToBackingContext(), identifier);
+    if (convertedDescriptor)
+        result->setLabel(WTFMove(convertedDescriptor->label));
     return result;
 }
 
@@ -429,6 +457,32 @@ void RemoteDeviceProxy::resolveDeviceLostPromise(CompletionHandler<void(WebCore:
 Ref<ConvertToBackingContext> RemoteDeviceProxy::protectedConvertToBackingContext() const
 {
     return m_convertToBackingContext;
+}
+
+void RemoteDeviceProxy::pauseAllErrorReporting(bool pause)
+{
+    auto sendResult = send(Messages::RemoteDevice::PauseAllErrorReporting(pause));
+    UNUSED_PARAM(sendResult);
+}
+
+Ref<WebCore::WebGPU::CommandEncoder> RemoteDeviceProxy::invalidCommandEncoder()
+{
+    return m_invalidCommandEncoder;
+}
+
+Ref<WebCore::WebGPU::CommandBuffer> RemoteDeviceProxy::invalidCommandBuffer()
+{
+    return m_invalidCommandBuffer;
+}
+
+Ref<WebCore::WebGPU::RenderPassEncoder> RemoteDeviceProxy::invalidRenderPassEncoder()
+{
+    return m_invalidRenderPassEncoder;
+}
+
+Ref<WebCore::WebGPU::ComputePassEncoder> RemoteDeviceProxy::invalidComputePassEncoder()
+{
+    return m_invalidComputePassEncoder;
 }
 
 } // namespace WebKit::WebGPU

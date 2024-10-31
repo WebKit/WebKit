@@ -186,6 +186,7 @@ public:
 #else
     constexpr bool isIntel() const { return false; }
 #endif
+    void pauseErrorReporting(bool pauseReporting);
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
@@ -257,6 +258,7 @@ private:
 #if HAVE(COREVIDEO_METAL_SUPPORT)
     RetainPtr<CVMetalTextureCacheRef> m_coreVideoTextureCache;
 #endif
+    bool m_supressAllErrors { false };
 } SWIFT_SHARED_REFERENCE(retainDevice, releaseDevice);
 
 } // namespace WebGPU

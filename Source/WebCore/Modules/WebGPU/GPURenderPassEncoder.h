@@ -46,11 +46,15 @@ class GPUQuerySet;
 class GPURenderBundle;
 class GPURenderPipeline;
 
+namespace WebGPU {
+class Device;
+}
+
 class GPURenderPassEncoder : public RefCounted<GPURenderPassEncoder> {
 public:
-    static Ref<GPURenderPassEncoder> create(Ref<WebGPU::RenderPassEncoder>&& backing)
+    static Ref<GPURenderPassEncoder> create(Ref<WebGPU::RenderPassEncoder>&& backing, WebGPU::Device& device)
     {
-        return adoptRef(*new GPURenderPassEncoder(WTFMove(backing)));
+        return adoptRef(*new GPURenderPassEncoder(WTFMove(backing), device));
     }
 
     String label() const;
@@ -103,12 +107,10 @@ public:
     const WebGPU::RenderPassEncoder& backing() const { return m_backing; }
 
 private:
-    GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing)
-        : m_backing(WTFMove(backing))
-    {
-    }
+    GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, WebGPU::Device&);
 
     Ref<WebGPU::RenderPassEncoder> m_backing;
+    WeakPtr<WebGPU::Device> m_device;
 };
 
 }

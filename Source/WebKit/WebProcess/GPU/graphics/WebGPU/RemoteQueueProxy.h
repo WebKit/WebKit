@@ -48,6 +48,7 @@ public:
 
     RemoteAdapterProxy& parent() { return m_parent; }
     RemoteGPUProxy& root() { return m_parent->root(); }
+    void submit(Vector<Ref<WebCore::WebGPU::CommandBuffer>>&&) final;
 
 private:
     friend class DowncastConvertToBackingContext;
@@ -73,8 +74,6 @@ private:
     {
         return root().protectedStreamClientConnection()->sendWithAsyncReply(WTFMove(message), completionHandler, backing());
     }
-
-    void submit(Vector<Ref<WebCore::WebGPU::CommandBuffer>>&&) final;
 
     void onSubmittedWorkDone(CompletionHandler<void()>&&) final;
 

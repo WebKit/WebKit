@@ -3006,7 +3006,7 @@ bool Texture::waitForCommandBufferCompletion()
 
 void Texture::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
-    m_commandEncoders.add(commandEncoder);
+    CommandEncoder::trackEncoder(commandEncoder, m_commandEncoders);
     commandEncoder.addTexture(*this);
     if (!m_canvasBacking && isDestroyed())
         commandEncoder.makeSubmitInvalid();

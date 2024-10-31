@@ -30,8 +30,15 @@
 #include "GPUBuffer.h"
 #include "GPUComputePipeline.h"
 #include "GPUQuerySet.h"
+#include "WebGPUDevice.h"
 
 namespace WebCore {
+
+GPUComputePassEncoder::GPUComputePassEncoder(Ref<WebGPU::ComputePassEncoder>&& backing, WebGPU::Device& device)
+    : m_backing(WTFMove(backing))
+    , m_device(&device)
+{
+}
 
 String GPUComputePassEncoder::label() const
 {
@@ -63,6 +70,8 @@ void GPUComputePassEncoder::dispatchWorkgroupsIndirect(const GPUBuffer& indirect
 void GPUComputePassEncoder::end()
 {
     m_backing->end();
+    if (m_device)
+        m_backing = m_device->invalidComputePassEncoder();
 }
 
 void GPUComputePassEncoder::setBindGroup(GPUIndex32 index, const GPUBindGroup& bindGroup,

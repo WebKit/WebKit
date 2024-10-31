@@ -31,8 +31,15 @@
 #include "GPUQuerySet.h"
 #include "GPURenderBundle.h"
 #include "GPURenderPipeline.h"
+#include "WebGPUDevice.h"
 
 namespace WebCore {
+
+GPURenderPassEncoder::GPURenderPassEncoder(Ref<WebGPU::RenderPassEncoder>&& backing, WebGPU::Device& device)
+    : m_backing(WTFMove(backing))
+    , m_device(&device)
+{
+}
 
 String GPURenderPassEncoder::label() const
 {
@@ -161,6 +168,8 @@ void GPURenderPassEncoder::executeBundles(Vector<Ref<GPURenderBundle>>&& bundles
 void GPURenderPassEncoder::end()
 {
     m_backing->end();
+    if (m_device)
+        m_backing = m_device->invalidRenderPassEncoder();
 }
 
 }

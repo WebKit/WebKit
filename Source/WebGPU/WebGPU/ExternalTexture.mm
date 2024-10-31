@@ -84,7 +84,7 @@ void ExternalTexture::undestroy()
 
 void ExternalTexture::setCommandEncoder(CommandEncoder& commandEncoder) const
 {
-    m_commandEncoders.add(commandEncoder);
+    CommandEncoder::trackEncoder(commandEncoder, m_commandEncoders);
     if (isDestroyed())
         commandEncoder.makeSubmitInvalid();
 }
