@@ -2027,8 +2027,10 @@ private:
                 rawKeySerializer.write(key);
 
                 auto wrappedKey = wrapCryptoKey(m_lexicalGlobalObject, serializedKey);
-                if (!wrappedKey)
-                    return false;
+                if (!wrappedKey) {
+                    code = SerializationReturnCode::DataCloneError;
+                    return true;
+                }
 
                 write(*wrappedKey);
                 return true;
