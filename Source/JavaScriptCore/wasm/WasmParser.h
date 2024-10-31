@@ -312,7 +312,7 @@ ALWAYS_INLINE typename ParserBase::PartialResult ParserBase::parseBlockSignature
 
         Type type = { typeKind, TypeDefinition::invalidIndex };
         WASM_PARSER_FAIL_IF(!(isValueType(type) || type.isVoid()), "result type of block: "_s, makeString(type.kind), " is not a value type or Void"_s);
-        result = m_typeInformation.thunkFor(type);
+        result = { m_typeInformation.thunkFor(type), nullptr };
         m_offset++;
         return { };
     }
@@ -325,7 +325,7 @@ ALWAYS_INLINE typename ParserBase::PartialResult ParserBase::parseBlockSignature
     const auto& signature = info.typeSignatures[index].get().expand();
     WASM_PARSER_FAIL_IF(!signature.is<FunctionSignature>(), "Block-like instruction signature index does not refer to a function type definition"_s);
 
-    result = signature.as<FunctionSignature>();
+    result = { signature.as<FunctionSignature>(), nullptr };
     return { };
 }
 
@@ -334,8 +334,8 @@ inline typename ParserBase::PartialResult ParserBase::parseReftypeSignature(cons
     Type resultType;
     WASM_PARSER_FAIL_IF(!parseValueType(info, resultType), "result type of block is not a valid ref type"_s);
     Vector<Type, 16> returnTypes { resultType };
-    const auto& typeDefinition = TypeInformation::typeDefinitionForFunction(returnTypes, { }).get();
-    result = &TypeInformation::getFunctionSignature(typeDefinition->index());
+    auto typeDefinition = TypeInformation::typeDefinitionForFunction(returnTypes, { });
+    result = { &TypeInformation::getFunctionSignature(typeDefinition->index()), typeDefinition };
 
     return { };
 }
