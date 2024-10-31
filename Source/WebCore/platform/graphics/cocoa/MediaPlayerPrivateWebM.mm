@@ -149,6 +149,9 @@ MediaPlayerPrivateWebM::~MediaPlayerPrivateWebM()
 {
     ALWAYS_LOG(LOGIDENTIFIER);
 
+    if (m_seekPromise)
+        m_seekPromise->reject();
+
     if (m_durationObserver)
         [m_synchronizer removeTimeObserver:m_durationObserver.get()];
     if (m_videoFrameMetadataGatheringObserver)
@@ -404,6 +407,9 @@ void MediaPlayerPrivateWebM::setPageIsVisible(bool visible)
 
 MediaTime MediaPlayerPrivateWebM::currentTime() const
 {
+    if (seeking())
+        return m_lastSeekTime;
+
     MediaTime synchronizerTime = clampTimeToLastSeekTime(PAL::toMediaTime(PAL::CMTimebaseGetTime([m_synchronizer timebase])));
     if (synchronizerTime < MediaTime::zeroTime())
         return MediaTime::zeroTime();
@@ -432,31 +438,55 @@ void MediaPlayerPrivateWebM::seekInternal()
 
     m_seekState = Seeking;
 
-    MediaTime synchronizerTime = PAL::toMediaTime([m_synchronizer currentTime]);
+    seekTo(m_lastSeekTime)->whenSettled(RunLoop::main(), [weakThis = ThreadSafeWeakPtr { *this }, this](auto&& result) {
+        if (!result)
+            return; // seek cancelled.
 
-    m_isSynchronizerSeeking = synchronizerTime != m_lastSeekTime;
-    ALWAYS_LOG(LOGIDENTIFIER, "seekedTime = ", m_lastSeekTime, ", synchronizerTime = ", synchronizerTime, "synchronizer seeking = ", m_isSynchronizerSeeking);
+        if (RefPtr protectedThis = weakThis.get()) {
+            MediaTime synchronizerTime = PAL::toMediaTime([m_synchronizer currentTime]);
 
-    if (!m_isSynchronizerSeeking) {
-        // In cases where the destination seek time precisely matches the synchronizer's existing time
-        // no time jumped notification will be issued. In this case, just notify the MediaPlayer that
-        // the seek completed successfully.
-        maybeCompleteSeek();
-        return;
+            m_isSynchronizerSeeking = synchronizerTime != m_lastSeekTime;
+            ALWAYS_LOG(LOGIDENTIFIER, "seekedTime = ", m_lastSeekTime, ", synchronizerTime = ", synchronizerTime, "synchronizer seeking = ", m_isSynchronizerSeeking);
+
+            if (!m_isSynchronizerSeeking) {
+                // In cases where the destination seek time precisely matches the synchronizer's existing time
+                // no time jumped notification will be issued. In this case, just notify the MediaPlayer that
+                // the seek completed successfully.
+                maybeCompleteSeek();
+                return;
+            }
+
+            flush();
+            [m_synchronizer setRate:0 time:PAL::toCMTime(m_lastSeekTime)];
+
+            for (auto& trackBufferPair : m_trackBufferMap) {
+                TrackBuffer& trackBuffer = trackBufferPair.second;
+                auto trackId = trackBufferPair.first;
+
+                trackBuffer.setNeedsReenqueueing(true);
+                reenqueueMediaForTime(trackBuffer, trackId, m_lastSeekTime);
+            }
+
+            maybeCompleteSeek();
+        }
+    });
+}
+
+Ref<GenericPromise> MediaPlayerPrivateWebM::seekTo(const MediaTime& time)
+{
+    if (m_seekPromise) {
+        m_seekPromise->reject();
+        m_seekPromise.reset();
     }
 
-    flush();
-    [m_synchronizer setRate:0 time:PAL::toCMTime(m_lastSeekTime)];
+    if (m_buffered.contain(time))
+        return GenericPromise::createAndResolve();
 
-    for (auto& trackBufferPair : m_trackBufferMap) {
-        TrackBuffer& trackBuffer = trackBufferPair.second;
-        auto trackId = trackBufferPair.first;
+    [m_synchronizer setRate:0];
+    setReadyState(MediaPlayer::ReadyState::HaveMetadata);
 
-        trackBuffer.setNeedsReenqueueing(true);
-        reenqueueMediaForTime(trackBuffer, trackId, m_lastSeekTime);
-    }
-
-    maybeCompleteSeek();
+    m_seekPromise.emplace();
+    return m_seekPromise->promise();
 }
 
 void MediaPlayerPrivateWebM::maybeCompleteSeek()
@@ -1129,6 +1159,11 @@ void MediaPlayerPrivateWebM::appendCompleted(bool success)
     m_errored |= !success;
     if (!m_errored)
         updateBufferedFromTrackBuffers(m_loadFinished && !m_pendingAppends);
+
+    if (m_seekPromise && m_buffered.contain(m_lastSeekTime)) {
+        m_seekPromise->resolve();
+        m_seekPromise.reset();
+    }
 
     maybeFinishLoading();
 }

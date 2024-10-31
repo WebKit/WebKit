@@ -36,6 +36,7 @@
 #include "WebMResourceClient.h"
 #include <wtf/HashFunctions.h>
 #include <wtf/LoggerHelper.h>
+#include <wtf/NativePromise.h>
 #include <wtf/StdUnorderedMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/UniqueRef.h>
@@ -395,6 +396,7 @@ private:
     void seekToTarget(const SeekTarget&) final;
     bool seeking() const final;
     void seekInternal();
+    Ref<GenericPromise> seekTo(const MediaTime&);
     void maybeCompleteSeek();
     MediaTime clampTimeToLastSeekTime(const MediaTime&) const;
     bool shouldBePlaying() const;
@@ -410,6 +412,7 @@ private:
         SeekCompleted,
     };
     SeekState m_seekState { SeekCompleted };
+    std::optional<GenericPromise::Producer> m_seekPromise;
     bool m_isSynchronizerSeeking { false };
 #if HAVE(SPATIAL_TRACKING_LABEL)
     String m_defaultSpatialTrackingLabel;

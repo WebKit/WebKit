@@ -1,0 +1,8 @@
+
+RUN(video.src = 'http://127.0.0.1:8000/media/resources/serve_video.py.webm?type=video/webm&name=../media-source/webm/test.webm&stallDuration=1&stallOffset=56386')
+RUN(video.currentTime = 5.976)
+EVENT(seeking)
+EXPECTED (video.readyState == '1') OK
+EVENT(seeked)
+END OF TEST
+

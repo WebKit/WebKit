@@ -3548,6 +3548,7 @@ webkit.org/b/198830 media/video-size-intrinsic-scale.html [ Failure ]
 http/tests/media/video-preload.html [ Pass Slow ]
 
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Failure Timeout ]
+webkit.org/b/282165 http/tests/media/video-webm-stall-seek.html [ Failure ]
 
 webkit.org/b/132262 http/tests/media/video-redirect.html [ Timeout Pass Crash ]
 
