@@ -788,10 +788,10 @@ constexpr std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (si
 }
 #pragma GCC diagnostic pop
 
-template<typename T, std::size_t Extent>
-std::span<T, Extent> spanConstCast(std::span<const T, Extent> span)
+template<typename U, typename T, std::size_t Extent>
+std::span<U, Extent> spanConstCast(std::span<T, Extent> span)
 {
-    return std::span<T, Extent> { const_cast<T*>(span.data()), span.size() };
+    return std::span<U, Extent> { const_cast<U*>(span.data()), span.size() };
 }
 
 template<typename T, std::size_t Extent>

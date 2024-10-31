@@ -30,7 +30,7 @@
 #include "SessionState.h"
 #include <mutex>
 #include <wtf/CheckedArithmetic.h>
-#include <wtf/MallocPtr.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/cf/VectorCF.h>
@@ -81,10 +81,8 @@ DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(HistoryEntryDataEncoder);
 class HistoryEntryDataEncoder {
 public:
     HistoryEntryDataEncoder()
-        : m_bufferSize(0)
-        , m_bufferCapacity(512)
-        , m_buffer(MallocPtr<uint8_t, HistoryEntryDataEncoderMalloc>::malloc(m_bufferCapacity))
-        , m_bufferPointer(m_buffer.get())
+        : m_buffer(MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc>::malloc(512))
+        , m_bufferPointer(m_buffer.mutableSpan().data())
     {
         // Keep format compatibility by encoding an unused uint64_t here.
         *this << static_cast<uint64_t>(0);
@@ -200,7 +198,7 @@ public:
         return *this << static_cast<uint32_t>(value);
     }
 
-    MallocPtr<uint8_t, HistoryEntryDataEncoderMalloc> finishEncoding(size_t& size)
+    MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc> finishEncoding(size_t& size)
     {
         size = m_bufferSize;
         return WTFMove(m_buffer);
@@ -244,24 +242,25 @@ private:
 
     void growCapacity(size_t newSize)
     {
-        if (newSize <= m_bufferCapacity)
+        auto currentCapacity = capacity();
+        if (newSize <= currentCapacity)
             return;
 
-        Checked<size_t> newCapacity = m_bufferCapacity;
+        Checked<size_t> newCapacity = currentCapacity;
         while (newCapacity < newSize)
             newCapacity *= 2U;
 
         m_buffer.realloc(newCapacity.value());
-        m_bufferCapacity = newCapacity.value();
     }
 
-    std::span<uint8_t> mutableBuffer() { return unsafeForgeSpan(m_buffer.get(), m_bufferCapacity); }
-    std::span<const uint8_t> buffer() const { return unsafeForgeSpan(m_buffer.get(), m_bufferCapacity); }
+    size_t capacity() const { return m_buffer.span().size(); }
 
-    size_t m_bufferSize;
-    size_t m_bufferCapacity;
-    MallocPtr<uint8_t, HistoryEntryDataEncoderMalloc> m_buffer;
-    uint8_t* m_bufferPointer;
+    std::span<uint8_t> mutableBuffer() { return m_buffer.mutableSpan(); }
+    std::span<const uint8_t> buffer() const { return m_buffer.span(); }
+
+    size_t m_bufferSize { 0 };
+    MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc> m_buffer;
+    uint8_t* m_bufferPointer { nullptr };
 };
 
 enum class FormDataElementType {
@@ -368,7 +367,7 @@ static void encodeFrameStateNode(HistoryEntryDataEncoder& encoder, const FrameSt
 #endif
 }
 
-static MallocPtr<uint8_t, HistoryEntryDataEncoderMalloc> encodeSessionHistoryEntryData(const FrameState& frameState, size_t& bufferSize)
+static MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc> encodeSessionHistoryEntryData(const FrameState& frameState, size_t& bufferSize)
 {
     HistoryEntryDataEncoder encoder;
 
@@ -403,7 +402,7 @@ static RetainPtr<CFDataRef> encodeSessionHistoryEntryData(const FrameState& fram
     size_t bufferSize;
     auto buffer = encodeSessionHistoryEntryData(frameState, bufferSize);
 
-    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, buffer.leakPtr(), bufferSize, fastMallocDeallocator.get().get()));
+    return adoptCF(CFDataCreateWithBytesNoCopy(kCFAllocatorDefault, buffer.leakSpan().data(), bufferSize, fastMallocDeallocator.get().get()));
 }
 
 static RetainPtr<CFDictionaryRef> createDictionary(std::initializer_list<std::pair<CFStringRef, CFTypeRef>> keyValuePairs)

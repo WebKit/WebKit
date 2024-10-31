@@ -1,0 +1,118 @@
+/*
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ * THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#pragma once
+
+#include <utility>
+#include <wtf/FastMalloc.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/StdLibExtras.h>
+
+// MallocSpan is a smart pointer class that wraps a std::span and calls fastFree in its destructor.
+
+namespace WTF {
+
+template<typename T, typename Malloc = FastMalloc> class MallocSpan {
+    WTF_MAKE_NONCOPYABLE(MallocSpan);
+public:
+    MallocSpan() = default;
+
+    MallocSpan(MallocSpan&& other)
+        : m_span(other.leakSpan())
+    {
+    }
+
+    ~MallocSpan()
+    {
+        Malloc::free(m_span.data());
+    }
+
+    MallocSpan& operator=(MallocSpan&& other)
+    {
+        MallocSpan ptr = WTFMove(other);
+        swap(ptr);
+        return *this;
+    }
+
+    void swap(MallocSpan& other)
+    {
+        std::swap(m_span, other.m_span);
+    }
+
+    std::span<const T> span() const { return spanConstCast<const T>(m_span); }
+    std::span<T> mutableSpan() { return m_span; }
+    std::span<T> leakSpan() WARN_UNUSED_RETURN { return std::exchange(m_span, std::span<T>()); }
+
+    static MallocSpan malloc(size_t size)
+    {
+        return MallocSpan { static_cast<T*>(Malloc::malloc(size)), size };
+    }
+
+    static MallocSpan zeroedMalloc(size_t size)
+    {
+        return MallocSpan { static_cast<T*>(Malloc::zeroedMalloc(size)), size };
+    }
+
+    static MallocSpan tryMalloc(size_t size)
+    {
+        auto* ptr = Malloc::tryMalloc(size);
+        if (!ptr)
+            return { };
+        return MallocSpan { static_cast<T*>(ptr), size };
+    }
+
+    static MallocSpan tryZeroedMalloc(size_t size)
+    {
+        auto* ptr = Malloc::tryZeroedMalloc(size);
+        if (!ptr)
+            return { };
+        return MallocSpan { static_cast<T*>(ptr), size };
+    }
+
+    void realloc(size_t newSize)
+    {
+        m_span = unsafeForgeSpan(static_cast<T*>(Malloc::realloc(m_span.data(), newSize)), newSize);
+    }
+
+private:
+    template<typename U, typename OtherMalloc> friend MallocSpan<U, OtherMalloc> adoptMallocSpan(U*, size_t);
+
+    explicit MallocSpan(T* ptr, size_t size)
+        : m_span(unsafeForgeSpan(ptr, size))
+    {
+    }
+
+    std::span<T> m_span;
+};
+
+template<typename U, typename OtherMalloc> MallocSpan<U, OtherMalloc> adoptMallocSpan(U* ptr, size_t size)
+{
+    return MallocSpan<U, OtherMalloc>(ptr, size);
+}
+
+} // namespace WTF
+
+using WTF::MallocSpan;
+using WTF::adoptMallocSpan;

@@ -163,6 +163,7 @@ set(WTF_PUBLIC_HEADERS
     MainThreadData.h
     MainThreadDispatcher.h
     MallocPtr.h
+    MallocSpan.h
     Markable.h
     MathExtras.h
     MediaTime.h
