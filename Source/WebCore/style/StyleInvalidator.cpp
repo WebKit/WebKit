@@ -26,7 +26,6 @@
 #include "config.h"
 #include "StyleInvalidator.h"
 
-#include "CSSSelectorList.h"
 #include "Document.h"
 #include "ElementChildIteratorInlines.h"
 #include "ElementRareData.h"
@@ -90,7 +89,7 @@ static bool shouldDirtyAllStyle(const Vector<Ref<StyleSheetContents>>& sheets)
 
 Invalidator::Invalidator(const Vector<Ref<StyleSheetContents>>& sheets, const MQ::MediaQueryEvaluator& mediaQueryEvaluator)
     : m_ownedRuleSet(RuleSet::create())
-    , m_ruleSets({ m_ownedRuleSet })
+    , m_ruleSets({ { m_ownedRuleSet } })
     , m_dirtiesAllStyle(shouldDirtyAllStyle(sheets))
 {
     if (m_dirtiesAllStyle)
@@ -117,19 +116,19 @@ Invalidator::RuleInformation Invalidator::collectRuleInformation()
 {
     RuleInformation information;
     for (auto& ruleSet : m_ruleSets) {
-        if (!ruleSet->slottedPseudoElementRules().isEmpty())
+        if (!ruleSet.ruleSet->slottedPseudoElementRules().isEmpty())
             information.hasSlottedPseudoElementRules = true;
-        if (!ruleSet->hostPseudoClassRules().isEmpty())
+        if (!ruleSet.ruleSet->hostPseudoClassRules().isEmpty())
             information.hasHostPseudoClassRules = true;
-        if (ruleSet->hasHostPseudoClassRulesMatchingInShadowTree())
+        if (ruleSet.ruleSet->hasHostPseudoClassRulesMatchingInShadowTree())
             information.hasHostPseudoClassRulesMatchingInShadowTree = true;
-        if (ruleSet->hasUserAgentPartRules())
+        if (ruleSet.ruleSet->hasUserAgentPartRules())
             information.hasUserAgentPartRules = true;
 #if ENABLE(VIDEO)
-        if (!ruleSet->cuePseudoRules().isEmpty())
+        if (!ruleSet.ruleSet->cuePseudoRules().isEmpty())
             information.hasCuePseudoElementRules = true;
 #endif
-        if (!ruleSet->partPseudoElementRules().isEmpty())
+        if (!ruleSet.ruleSet->partPseudoElementRules().isEmpty())
             information.hasPartPseudoElementRules = true;
     }
     return information;
@@ -166,10 +165,11 @@ Invalidator::CheckDescendants Invalidator::invalidateIfNeeded(Element& element, 
     case Validity::AnimationInvalid:
     case Validity::InlineStyleInvalid: {
         for (auto& ruleSet : m_ruleSets) {
-            ElementRuleCollector ruleCollector(element, *ruleSet, selectorMatchingState);
+            ElementRuleCollector ruleCollector(element, *ruleSet.ruleSet, selectorMatchingState);
             ruleCollector.setMode(SelectorChecker::Mode::CollectingRulesIgnoringVirtualPseudoElements);
 
-            if (ruleCollector.matchesAnyAuthorRules()) {
+            auto matches = ruleCollector.matchesAnyAuthorRules();
+            if (ruleSet.isNegation == IsNegation::No ? matches : !matches) {
                 element.invalidateStyleInternal();
                 break;
             }
@@ -426,7 +426,7 @@ void Invalidator::invalidateUserAgentParts(ShadowRoot& shadowRoot)
         if (!part)
             continue;
         for (auto& ruleSet : m_ruleSets) {
-            if (ruleSet->userAgentPartRules(part))
+            if (ruleSet.ruleSet->userAgentPartRules(part))
                 descendant.invalidateStyleInternal();
         }
     }
@@ -462,7 +462,14 @@ void Invalidator::addToMatchElementRuleSets(Invalidator::MatchElementRuleSets& m
 {
     matchElementRuleSets.ensure(invalidationRuleSet.matchElement, [] {
         return InvalidationRuleSetVector { };
-    }).iterator->value.append(invalidationRuleSet.ruleSet.copyRef());
+    }).iterator->value.append({ invalidationRuleSet.ruleSet.copyRef(), IsNegation::No });
+}
+
+void Invalidator::addToMatchElementRuleSetsRespectingNegation(Invalidator::MatchElementRuleSets& matchElementRuleSets, const InvalidationRuleSet& invalidationRuleSet)
+{
+    matchElementRuleSets.ensure(invalidationRuleSet.matchElement, [] {
+        return InvalidationRuleSetVector { };
+    }).iterator->value.append({ invalidationRuleSet.ruleSet.copyRef(), invalidationRuleSet.isNegation });
 }
 
 void Invalidator::invalidateWithMatchElementRuleSets(Element& element, const MatchElementRuleSets& matchElementRuleSets)
@@ -478,7 +485,7 @@ void Invalidator::invalidateWithMatchElementRuleSets(Element& element, const Mat
 void Invalidator::invalidateWithScopeBreakingHasPseudoClassRuleSet(Element& element, const RuleSet* ruleSet)
 {
     SetForScope isInvalidating(element.styleResolver().ruleSets().isInvalidatingStyleWithRuleSets(), true);
-    Invalidator invalidator({ ruleSet });
+    Invalidator invalidator(InvalidationRuleSetVector { { ruleSet } });
     invalidator.invalidateStyleWithMatchElement(element, MatchElement::HasScopeBreaking);
 }
 

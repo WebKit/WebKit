@@ -1,0 +1,40 @@
+<html>
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+    <head>
+        <style>
+            div#target:not(:has(> span)) {
+                color: red;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="target">Hello</div>
+        <button onclick="_addChild()">Add Child</button>
+        <button onclick="_removeChild()">Remove Child</button>
+    </body>
+
+    <script>
+        function _addChild() {
+            let targetElement = document.getElementById("target");
+            let newElement = document.createElement("span");
+            newElement.innerText = "I'm a child element";
+            targetElement.appendChild(newElement);
+        }
+
+        function _removeChild() {
+            let targetElement = document.getElementById("target");
+            targetElement.removeChild(targetElement.lastChild);
+        }
+    </script>
+    <script>
+    test(function() {
+        var target = document.getElementById("target");
+        assert_equals(getComputedStyle(target).getPropertyValue("color"), "rgb(255, 0, 0)");
+        _addChild()
+        assert_equals(getComputedStyle(target).getPropertyValue("color"), "rgb(0, 0, 0)");
+        _removeChild()
+        assert_equals(getComputedStyle(target).getPropertyValue("color"), "rgb(255, 0, 0)");
+    }, "invalidation :not(:has(> foo))");
+    </script>
+</html>
