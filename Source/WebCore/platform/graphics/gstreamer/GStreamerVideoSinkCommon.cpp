@@ -70,6 +70,8 @@ public:
                     GST_DEBUG_OBJECT(pad, "Received FLUSH_STOP without a FLUSH_START, ignoring.");
             }
         }
+        if (self->m_isFlushing)
+            return GST_PAD_PROBE_OK; // do not process regular (non-flush) events during a flush
 
         if (info->type & GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM && GST_EVENT_TYPE(GST_PAD_PROBE_INFO_EVENT(info)) == GST_EVENT_TAG) {
             GstTagList* tagList;
