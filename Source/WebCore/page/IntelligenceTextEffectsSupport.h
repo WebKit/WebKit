@@ -25,6 +25,10 @@
 
 #pragma once
 
+namespace WTF {
+class UUID;
+}
+
 namespace WebCore {
 
 class Document;
@@ -40,9 +44,13 @@ namespace IntelligenceTextEffectsSupport {
 WEBCORE_EXPORT Vector<FloatRect> writingToolsTextSuggestionRectsInRootViewCoordinates(Document&, const SimpleRange& scope, const CharacterRange&);
 #endif
 
-WEBCORE_EXPORT void updateTextVisibility(Document&, const SimpleRange& scope, const CharacterRange&, bool visible);
+WEBCORE_EXPORT void updateTextVisibility(Document&, const SimpleRange& scope, const CharacterRange&, bool visible, const WTF::UUID&);
 
 WEBCORE_EXPORT std::optional<TextIndicatorData> textPreviewDataForRange(Document&, const SimpleRange& scope, const CharacterRange&);
+
+#if ENABLE(WRITING_TOOLS)
+WEBCORE_EXPORT void decorateWritingToolsTextReplacements(Document&, const SimpleRange& scope, const CharacterRange&);
+#endif
 
 } // namespace IntelligenceTextEffectsSupport
 

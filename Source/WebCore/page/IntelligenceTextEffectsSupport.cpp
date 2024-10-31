@@ -33,6 +33,7 @@
 #include "RenderedDocumentMarker.h"
 #include "SimpleRange.h"
 #include "TextIndicator.h"
+#include <wtf/UUID.h>
 
 namespace WebCore {
 namespace IntelligenceTextEffectsSupport {
@@ -60,15 +61,16 @@ Vector<FloatRect> writingToolsTextSuggestionRectsInRootViewCoordinates(Document&
 }
 #endif
 
-void updateTextVisibility(Document& document, const SimpleRange& scope, const CharacterRange& range, bool visible)
+void updateTextVisibility(Document& document, const SimpleRange& scope, const CharacterRange& range, bool visible, const WTF::UUID& identifier)
 {
-    auto resolvedRange = resolveCharacterRange(scope, range);
-
-    if (visible)
-        document.markers().removeMarkers(resolvedRange, { WebCore::DocumentMarker::Type::TransparentContent });
-    else {
-        // FIXME: Remove the UUID parameter once the old animation system is removed and it's no longer needed.
-        document.markers().addTransparentContentMarker(resolvedRange, WTF::UUID { 0 });
+    if (visible) {
+        document.markers().removeMarkers({ WebCore::DocumentMarker::Type::TransparentContent }, [identifier](auto& marker) {
+            auto& data = std::get<WebCore::DocumentMarker::TransparentContentData>(marker.data());
+            return data.uuid == identifier ? WebCore::FilterMarkerResult::Remove : WebCore::FilterMarkerResult::Keep;
+        });
+    } else {
+        auto resolvedRange = resolveCharacterRange(scope, range);
+        document.markers().addTransparentContentMarker(resolvedRange, identifier);
     }
 }
 
@@ -108,6 +110,30 @@ std::optional<TextIndicatorData> textPreviewDataForRange(Document& document, con
 
     return textIndicator->data();
 }
+
+#if ENABLE(WRITING_TOOLS)
+void decorateWritingToolsTextReplacements(Document& document, const SimpleRange& scope, const CharacterRange& range)
+{
+    auto resolvedRange = resolveCharacterRange(scope, range);
+
+    auto& markers = document.markers();
+
+    markers.forEach(resolvedRange, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
+        auto oldData = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
+        if (oldData.decoration != DocumentMarker::WritingToolsTextSuggestionData::Decoration::None)
+            return false;
+
+        auto offsetRange = OffsetRange { marker.startOffset(), marker.endOffset() };
+
+        markers.removeMarkers(node, offsetRange, { DocumentMarker::Type::WritingToolsTextSuggestion });
+
+        auto newData = DocumentMarker::WritingToolsTextSuggestionData { oldData.originalText, oldData.suggestionID, oldData.state, DocumentMarker::WritingToolsTextSuggestionData::Decoration::Underline };
+        markers.addMarker(node, DocumentMarker { DocumentMarker::Type::WritingToolsTextSuggestion, offsetRange, WTFMove(newData) });
+
+        return false;
+    });
+}
+#endif
 
 } // namespace IntelligenceTextEffectsSupport
 } // namespace WebCore
