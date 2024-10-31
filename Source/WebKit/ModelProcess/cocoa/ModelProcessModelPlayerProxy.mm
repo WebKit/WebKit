@@ -575,23 +575,23 @@ void ModelProcessModelPlayerProxy::setCurrentTime(Seconds currentTime, Completio
 
 void ModelProcessModelPlayerProxy::setEnvironmentMap(Ref<WebCore::SharedBuffer>&& data)
 {
-    m_environmentMapData = WTFMove(data);
+    m_transientEnvironmentMapData = WTFMove(data);
     if (m_modelRKEntity)
         applyEnvironmentMapDataAndRelease();
 }
 
 void ModelProcessModelPlayerProxy::applyEnvironmentMapDataAndRelease()
 {
-    if (m_environmentMapData) {
-        if (m_environmentMapData->size() > 0) {
-            [m_modelRKEntity applyIBLData:m_environmentMapData->createNSData().get() withCompletion:^(BOOL succeeded) {
+    if (m_transientEnvironmentMapData) {
+        if (m_transientEnvironmentMapData->size() > 0) {
+            [m_modelRKEntity applyIBLData:m_transientEnvironmentMapData->createNSData().get() withCompletion:^(BOOL succeeded) {
                 send(Messages::ModelProcessModelPlayer::DidFinishEnvironmentMapLoading(succeeded));
             }];
         } else {
             [m_modelRKEntity removeIBL];
             send(Messages::ModelProcessModelPlayer::DidFinishEnvironmentMapLoading(true));
         }
-        m_environmentMapData = nullptr;
+        m_transientEnvironmentMapData = nullptr;
     }
 }
 

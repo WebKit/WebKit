@@ -236,7 +236,7 @@ void HTMLModelElement::dataReceived(CachedResource& resource, const SharedBuffer
         m_data.append(buffer);
 #if ENABLE(MODEL_PROCESS)
     else if (&resource == m_environmentMapResource)
-        m_pendingEnvironmentMapData.append(buffer);
+        m_environmentMapData.append(buffer);
 #endif
     else
         ASSERT_NOT_REACHED();
@@ -305,8 +305,8 @@ void HTMLModelElement::createModelPlayer()
     m_modelPlayer->load(*m_model, size);
 
 #if ENABLE(MODEL_PROCESS)
-    if (m_pendingEnvironmentMapData)
-        m_modelPlayer->setEnvironmentMap(m_pendingEnvironmentMapData.takeAsContiguous().get());
+    if (m_environmentMapData)
+        m_modelPlayer->setEnvironmentMap(m_environmentMapData.takeAsContiguous().get());
     else if (!m_environmentMapURL.isEmpty())
         environmentMapRequestResource();
 #endif
@@ -757,7 +757,7 @@ void HTMLModelElement::environmentMapRequestResource()
         return;
     }
 
-    m_pendingEnvironmentMapData.empty();
+    m_environmentMapData.empty();
 
     m_environmentMapResource = resource.value();
     m_environmentMapResource->addClient(*this);
@@ -765,7 +765,7 @@ void HTMLModelElement::environmentMapRequestResource()
 
 void HTMLModelElement::environmentMapResetAndReject(Exception&& exception)
 {
-    m_pendingEnvironmentMapData.reset();
+    m_environmentMapData.reset();
 
     if (m_environmentMapResource) {
         m_environmentMapResource->removeClient(*this);
@@ -788,7 +788,7 @@ void HTMLModelElement::environmentMapResourceFinished()
         return;
     }
     if (m_modelPlayer)
-        m_modelPlayer->setEnvironmentMap(m_pendingEnvironmentMapData.takeAsContiguous().get());
+        m_modelPlayer->setEnvironmentMap(m_environmentMapData.takeAsContiguous().get());
 
     m_environmentMapResource->removeClient(*this);
     m_environmentMapResource = nullptr;

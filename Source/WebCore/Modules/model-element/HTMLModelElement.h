@@ -240,7 +240,7 @@ private:
     Ref<DOMPointReadOnly> m_boundingBoxExtents;
     double m_playbackRate { 1.0 };
     URL m_environmentMapURL;
-    SharedBufferBuilder m_pendingEnvironmentMapData;
+    SharedBufferBuilder m_environmentMapData;
     CachedResourceHandle<CachedRawResource> m_environmentMapResource;
     UniqueRef<EnvironmentMapPromise> m_environmentMapReadyPromise;
 #endif
