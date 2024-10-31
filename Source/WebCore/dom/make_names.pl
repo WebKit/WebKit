@@ -989,6 +989,8 @@ sub printTagNameCppFile
     }
     print F "#include <wtf/text/FastCharacterComparison.h>\n";
     print F "\n";
+    print F "WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN\n";
+    print F "\n";
     print F "namespace WebCore {\n";
     print F "\n";
     print F "static constexpr void* tagQualifiedNamePointers[] = {\n";
@@ -1046,6 +1048,9 @@ sub printTagNameCppFile
     print F "#endif\n";
     print F "\n";
     print F "} // namespace WebCore\n";
+    print F "\n";
+    print F "WTF_ALLOW_UNSAFE_BUFFER_USAGE_END\n";
+    print F "\n";
     close F;
 }
 
@@ -1211,6 +1216,8 @@ sub printNodeNameCppFile
     print F "#include \"Namespace.h\"\n";
     print F "#include <wtf/text/FastCharacterComparison.h>\n";
     print F "\n";
+    print F "WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN\n";
+    print F "\n";
     print F "namespace WebCore {\n";
     print F "\n";
     my @allNamespaces = sort (keys %allElementsPerNamespace, keys %allAttrsPerNamespace);
@@ -1306,6 +1313,9 @@ sub printNodeNameCppFile
     print F "}\n";
     print F "\n";
     print F "} // namespace WebCore\n";
+    print F "\n";
+    print F "WTF_ALLOW_UNSAFE_BUFFER_USAGE_END\n";
+    print F "\n";
     close F;
 }
 

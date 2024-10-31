@@ -352,7 +352,7 @@ class GPerfOutputGenerator:
             write_copyright_header(writer)
             write_autogeneration_comment(writer)
             self.write_includes(writer, generator_type)
-            self.write_ignore_implicit_fallthrough(writer)
+            self.write_ignore_warnings_begin(writer)
             self.write_define_register(writer)
             open_namespace_webcore(writer)
             self.write_entry_struct_definition(writer, generator_type)
@@ -367,7 +367,7 @@ class GPerfOutputGenerator:
                 self.write_parsing_function_definitions_for_pseudo_element(writer)
 
             close_namespace_webcore(writer)
-            self.write_end_ignore_warning(writer)
+            self.write_ignore_warnings_end(writer)
 
     def write_includes(self, writer, generator_type):
         writer.newline()
@@ -377,8 +377,9 @@ class GPerfOutputGenerator:
             writer.newline()
             writer.write('#include "MutableCSSSelector.h"')
 
-    def write_ignore_implicit_fallthrough(self, writer):
+    def write_ignore_warnings_begin(self, writer):
         writer.newline()
+        writer.write('WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN')
         writer.write('IGNORE_WARNINGS_BEGIN("implicit-fallthrough")')
 
     def write_define_register(self, writer):
@@ -508,9 +509,10 @@ class GPerfOutputGenerator:
                 return findPseudoElementName(name.span16());
             }""")
 
-    def write_end_ignore_warning(self, writer):
+    def write_ignore_warnings_end(self, writer):
         writer.newline()
         writer.write('IGNORE_WARNINGS_END')
+        writer.write('WTF_ALLOW_UNSAFE_BUFFER_USAGE_END')
 
 
 class GPerfGenerator:
