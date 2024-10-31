@@ -4391,3 +4391,5 @@ imported/w3c/web-platform-tests/css/css-viewport/zoom/background-image.html [ Im
 imported/w3c/web-platform-tests/css/css-viewport/zoom/image-intrinsic-size.html [ ImageOnlyFailure Pass ]
 
 http/tests/login-status/login-status-api-getter-setter-functions.html [ Failure ]
+
+fast/css/view-transitions-no-content-for-new-pseudo.html [ Failure ]

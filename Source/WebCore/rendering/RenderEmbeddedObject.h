@@ -68,6 +68,8 @@ public:
     void willAttachScrollingNode();
     void didAttachScrollingNode();
 
+    bool paintsContent() const final;
+
 private:
     void paintReplaced(PaintInfo&, const LayoutPoint&) final;
     void paint(PaintInfo&, const LayoutPoint&) final;

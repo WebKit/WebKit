@@ -119,6 +119,13 @@ Node* RenderViewTransitionCapture::nodeForHitTest() const
     return document().documentElement();
 }
 
+bool RenderViewTransitionCapture::paintsContent() const
+{
+    if (style().pseudoElementType() == PseudoId::ViewTransitionOld)
+        return true;
+    return !canUseExistingLayers();
+}
+
 String RenderViewTransitionCapture::debugDescription() const
 {
     StringBuilder builder;

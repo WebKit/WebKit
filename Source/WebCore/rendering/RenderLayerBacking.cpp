@@ -2958,12 +2958,6 @@ bool RenderLayerBacking::paintsContent(RenderLayer::PaintedContentRequest& reque
     return paintsContent;
 }
 
-static bool isCompositedPlugin(RenderObject& renderer)
-{
-    auto* embeddedObject = dynamicDowncast<RenderEmbeddedObject>(renderer);
-    return embeddedObject && embeddedObject->requiresAcceleratedCompositing();
-}
-
 // A "simple container layer" is a RenderLayer which has no visible content to render.
 // It may have no children, or all its children may be themselves composited.
 // This is a useful optimization, because it allows us to avoid allocating backing store.
@@ -2975,8 +2969,10 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer(PaintedContentsInfo& 
     if (hasBackingSharingLayers())
         return false;
 
-    if (renderer().isRenderReplaced() && !isCompositedPlugin(renderer()))
-        return false;
+    if (auto* replaced = dynamicDowncast<RenderReplaced>(renderer())) {
+        if (replaced->paintsContent())
+            return false;
+    }
 
     if (renderer().isRenderTextControl())
         return false;

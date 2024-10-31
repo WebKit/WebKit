@@ -489,4 +489,9 @@ CursorDirective RenderEmbeddedObject::getCursor(const LayoutPoint& point, Cursor
     return RenderWidget::getCursor(point, cursor);
 }
 
+bool RenderEmbeddedObject::paintsContent() const
+{
+    return !requiresAcceleratedCompositing();
+}
+
 }

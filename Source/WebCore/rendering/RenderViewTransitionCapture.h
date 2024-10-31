@@ -54,6 +54,8 @@ public:
 
     bool canUseExistingLayers() const { return !hasNonVisibleOverflow(); }
 
+    bool paintsContent() const final;
+
 private:
     ASCIILiteral renderName() const override { return "RenderViewTransitionCapture"_s; }
     String debugDescription() const override;
