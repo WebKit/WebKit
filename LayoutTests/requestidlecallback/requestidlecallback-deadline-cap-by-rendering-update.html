@@ -22,10 +22,7 @@ onload = () => {
         if (idleDeadline.timeRemaining() > preferredRenderingUpdateInterval)
             console.log(idleDeadline.timeRemaining() + ' >'  + preferredRenderingUpdateInterval);
     });
-    setTimeout(() => {
-        shouldBeTrue('didRunIdleCallback');
-        finishJSTest();
-    }, 200);
+    shouldBecomeEqual("didRunIdleCallback", "true", finishJSTest);
 }
 
 </script>

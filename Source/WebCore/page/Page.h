@@ -1065,6 +1065,7 @@ public:
 #endif
 
     WEBCORE_EXPORT void forEachDocument(const Function<void(Document&)>&) const;
+    bool findMatchingLocalDocument(const Function<bool(Document&)>&) const;
     void forEachRenderableDocument(const Function<void(Document&)>&) const;
     void forEachMediaElement(const Function<void(HTMLMediaElement&)>&);
     static void forEachDocumentFromMainFrame(const Frame&, const Function<void(Document&)>&);
@@ -1085,6 +1086,7 @@ public:
     WEBCORE_EXPORT void notifyToInjectUserScripts();
 
     MonotonicTime lastRenderingUpdateTimestamp() const { return m_lastRenderingUpdateTimestamp; }
+    std::optional<MonotonicTime> nextRenderingUpdateTimestamp() const;
 
     bool httpsUpgradeEnabled() const { return m_httpsUpgradeEnabled; }
 
@@ -1143,7 +1145,7 @@ public:
     WEBCORE_EXPORT void addRootFrame(LocalFrame&);
     WEBCORE_EXPORT void removeRootFrame(LocalFrame&);
 
-    void opportunisticallyRunIdleCallbacks();
+    void opportunisticallyRunIdleCallbacks(MonotonicTime deadline);
     void performOpportunisticallyScheduledTasks(MonotonicTime deadline);
     String ensureMediaKeysStorageDirectoryForOrigin(const SecurityOriginData&);
     WEBCORE_EXPORT void setMediaKeysStorageDirectory(const String&);
@@ -1579,6 +1581,7 @@ private:
     bool m_isServiceWorkerPage { false };
 
     MonotonicTime m_lastRenderingUpdateTimestamp;
+    bool m_renderingUpdateIsScheduled { false };
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     MonotonicTime m_lastAccessibilityObjectRegionsUpdate;
 #endif

@@ -64,8 +64,10 @@ int IdleCallbackController::queueIdleCallback(Ref<IdleRequestCallback>&& callbac
                 weakThis->invokeIdleCallbackTimeout(handle);
             });
         });
-    } else if (RefPtr page = m_document ? m_document->page() : nullptr)
-        m_document->protectedWindowEventLoop()->scheduleIdlePeriod(*page);
+    }
+
+    if (RefPtr document = m_document.get())
+        document->protectedWindowEventLoop()->scheduleIdlePeriod();
 
     return handle;
 }

@@ -1458,7 +1458,8 @@ public:
 
     int requestIdleCallback(Ref<IdleRequestCallback>&&, Seconds timeout);
     void cancelIdleCallback(int id);
-    IdleCallbackController* idleCallbackController() { return m_idleCallbackController.get(); }
+    bool hasPendingIdleCallback() const;
+    IdleCallbackController* idleCallbackController() const { return m_idleCallbackController.get(); }
 
     EventTarget* errorEventTarget() final;
     void logExceptionToConsole(const String& errorMessage, const String& sourceURL, int lineNumber, int columnNumber, RefPtr<Inspector::ScriptCallStack>&&) final;
