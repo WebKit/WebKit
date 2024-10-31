@@ -1564,21 +1564,34 @@ static void rd_update_mvcount(MACROBLOCK *x, int_mv *best_ref_mv) {
 
     for (i = 0; i < x->partition_info->count; ++i) {
       if (x->partition_info->bmi[i].mode == NEW4X4) {
-        x->MVcount[0][mv_max + ((x->partition_info->bmi[i].mv.as_mv.row -
-                                 best_ref_mv->as_mv.row) >>
-                                1)]++;
-        x->MVcount[1][mv_max + ((x->partition_info->bmi[i].mv.as_mv.col -
-                                 best_ref_mv->as_mv.col) >>
-                                1)]++;
+        const int row_val = ((x->partition_info->bmi[i].mv.as_mv.row -
+                              best_ref_mv->as_mv.row) >>
+                             1);
+        const int row_idx = mv_max + row_val;
+        const int col_val = ((x->partition_info->bmi[i].mv.as_mv.col -
+                              best_ref_mv->as_mv.col) >>
+                             1);
+        const int col_idx = mv_max + col_val;
+        if (row_idx >= 0 && row_idx < MVvals && col_idx >= 0 &&
+            col_idx < MVvals) {
+          x->MVcount[0][row_idx]++;
+          x->MVcount[1][col_idx]++;
+        }
       }
     }
   } else if (x->e_mbd.mode_info_context->mbmi.mode == NEWMV) {
-    x->MVcount[0][mv_max + ((x->e_mbd.mode_info_context->mbmi.mv.as_mv.row -
-                             best_ref_mv->as_mv.row) >>
-                            1)]++;
-    x->MVcount[1][mv_max + ((x->e_mbd.mode_info_context->mbmi.mv.as_mv.col -
-                             best_ref_mv->as_mv.col) >>
-                            1)]++;
+    const int row_val = ((x->e_mbd.mode_info_context->mbmi.mv.as_mv.row -
+                          best_ref_mv->as_mv.row) >>
+                         1);
+    const int row_idx = mv_max + row_val;
+    const int col_val = ((x->e_mbd.mode_info_context->mbmi.mv.as_mv.col -
+                          best_ref_mv->as_mv.col) >>
+                         1);
+    const int col_idx = mv_max + col_val;
+    if (row_idx >= 0 && row_idx < MVvals && col_idx >= 0 && col_idx < MVvals) {
+      x->MVcount[0][row_idx]++;
+      x->MVcount[1][col_idx]++;
+    }
   }
 }
 
