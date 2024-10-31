@@ -9603,7 +9603,7 @@ const Logger& WebPage::logger() const
 {
     if (!m_logger) {
         m_logger = Logger::create(this);
-        m_logger->setEnabled(this, !sessionID().isEphemeral());
+        m_logger->setEnabled(this, isAlwaysOnLoggingAllowed());
     }
 
     return *m_logger;
@@ -10163,6 +10163,12 @@ void WebPage::updateOpener(WebCore::FrameIdentifier frameID, WebCore::FrameIdent
     coreFrame->updateOpener(*coreNewOpener, WebCore::Frame::NotifyUIProcess::No);
     if (RefPtr provisionalFrame = frame->provisionalFrame())
         provisionalFrame->updateOpener(*coreNewOpener, WebCore::Frame::NotifyUIProcess::No);
+}
+
+bool WebPage::isAlwaysOnLoggingAllowed() const
+{
+    RefPtr page { protectedCorePage() };
+    return page && page->isAlwaysOnLoggingAllowed();
 }
 
 } // namespace WebKit

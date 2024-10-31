@@ -524,6 +524,8 @@ public:
 
     void markAsUsedForSiteIsolation() { m_usedForSiteIsolation = true; }
 
+    bool isAlwaysOnLoggingAllowed() const;
+
 private:
     Type type() const final { return Type::WebContent; }
 

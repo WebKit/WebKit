@@ -1852,6 +1852,8 @@ public:
 
     WebHistoryItemClient& historyItemClient() const { return m_historyItemClient.get(); }
 
+    bool isAlwaysOnLoggingAllowed() const;
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 

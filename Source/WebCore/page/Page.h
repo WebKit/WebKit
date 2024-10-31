@@ -1228,6 +1228,8 @@ public:
     bool reportScriptTelemetry(const URL&, ScriptTelemetryCategory);
     bool requiresScriptTelemetryForURL(const URL&) const;
 
+    WEBCORE_EXPORT bool isAlwaysOnLoggingAllowed() const;
+
 private:
     explicit Page(PageConfiguration&&);
 

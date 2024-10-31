@@ -884,6 +884,11 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
 #endif
 }
 
+- (BOOL)_isLoggerEnabledForTesting
+{
+    return _page->logger().enabled();
+}
+
 @end
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

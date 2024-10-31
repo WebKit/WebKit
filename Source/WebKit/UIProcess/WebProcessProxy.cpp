@@ -443,7 +443,7 @@ void WebProcessProxy::setWebsiteDataStore(WebsiteDataStore& dataStore)
         dataStore.protectedNetworkProcess()->sendXPCEndpointToProcess(*this);
 #endif
     m_websiteDataStore = &dataStore;
-    logger().setEnabled(this, dataStore.sessionID().isAlwaysOnLoggingAllowed());
+    logger().setEnabled(this, isAlwaysOnLoggingAllowed());
     updateRegistrationWithDataStore();
     send(Messages::WebProcess::SetWebsiteDataStoreParameters(protectedProcessPool()->webProcessDataStoreParameters(*this, dataStore)), 0);
 
@@ -841,6 +841,8 @@ void WebProcessProxy::addExistingWebPage(WebPageProxy& webPage, BeginsUsingDataS
     m_pageMap.set(webPage.identifier(), webPage);
     globalPageMap().set(webPage.identifier(), webPage);
 
+    logger().setEnabled(this, isAlwaysOnLoggingAllowed());
+
     Ref protectedThrottler = throttler();
     protectedThrottler->setShouldTakeNearSuspendedAssertion(shouldTakeNearSuspendedAssertion());
     protectedThrottler->setShouldDropNearSuspendedAssertionAfterDelay(shouldDropNearSuspendedAssertionAfterDelay());
@@ -877,6 +879,8 @@ void WebProcessProxy::removeWebPage(WebPageProxy& webPage, EndsUsingDataStore en
     ASSERT_UNUSED(removedPage, removedPage == &webPage);
     removedPage = globalPageMap().take(webPage.identifier()).get();
     ASSERT_UNUSED(removedPage, removedPage == &webPage);
+
+    logger().setEnabled(this, isAlwaysOnLoggingAllowed());
 
     reportProcessDisassociatedWithPageIfNecessary(webPage.identifier());
 
@@ -2847,8 +2851,7 @@ Logger& WebProcessProxy::logger()
     if (!m_logger) {
         Ref logger = Logger::create(this);
         m_logger = logger.copyRef();
-        auto alwaysOnLoggingAllowed = m_websiteDataStore ? m_websiteDataStore->sessionID().isAlwaysOnLoggingAllowed() : false;
-        logger->setEnabled(this, alwaysOnLoggingAllowed);
+        logger->setEnabled(this, isAlwaysOnLoggingAllowed());
     }
     return *m_logger;
 }
@@ -2923,6 +2926,13 @@ void WebProcessProxy::updateRuntimeStatistics()
                 page->processDidUpdateThrottleState();
         }
     }
+}
+
+bool WebProcessProxy::isAlwaysOnLoggingAllowed() const
+{
+    return WTF::allOf(pages(), [](auto& page) {
+        return page->isAlwaysOnLoggingAllowed();
+    });
 }
 
 TextStream& operator<<(TextStream& ts, const WebProcessProxy& process)

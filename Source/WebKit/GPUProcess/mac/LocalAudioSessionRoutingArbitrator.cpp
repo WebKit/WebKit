@@ -88,10 +88,9 @@ WTFLogChannel& LocalAudioSessionRoutingArbitrator::logChannel() const
 
 bool LocalAudioSessionRoutingArbitrator::canLog() const
 {
-    RefPtr connection = m_connectionToWebProcess.get();
-    if (!connection)
-        return false;
-    return connection->sessionID().isAlwaysOnLoggingAllowed();
+    if (RefPtr connection = m_connectionToWebProcess.get())
+        return connection->isAlwaysOnLoggingAllowed();
+    return false;
 }
 
 }

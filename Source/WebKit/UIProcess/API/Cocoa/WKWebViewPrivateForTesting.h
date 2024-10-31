@@ -144,6 +144,8 @@ struct WKAppPrivacyReportTestingData {
 
 - (void)_setSystemPreviewCompletionHandlerForLoadTesting:(void(^)(bool))completionHandler;
 
+@property (nonatomic, readonly) BOOL _isLoggerEnabledForTesting;
+
 @end
 
 typedef NS_ENUM(NSInteger, _WKMediaSessionReadyState) {
