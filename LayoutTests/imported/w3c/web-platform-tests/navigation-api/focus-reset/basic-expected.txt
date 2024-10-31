@@ -1,10 +1,13 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: undefined
+
+Harness Error (FAIL), message = Unhandled rejection
 
 PASS Invalid values for focusReset throw
 PASS Does not reset the focus when no navigate handler is present
-FAIL Resets the focus when no focusReset option is provided assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
-FAIL Resets the focus when focusReset is explicitly set to undefined assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
+PASS Resets the focus when no focusReset option is provided
+PASS Resets the focus when focusReset is explicitly set to undefined
 PASS Resets the focus when no focusReset option is provided (nontrivial fulfilled promise)
-FAIL Resets the focus when no focusReset option is provided (rejected promise) assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
-FAIL Resets the focus when focusReset is explicitly set to 'after-transition' assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
+PASS Resets the focus when no focusReset option is provided (rejected promise)
+PASS Resets the focus when focusReset is explicitly set to 'after-transition'
 PASS Does not reset the focus when focusReset is set to 'manual'
 

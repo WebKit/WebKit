@@ -920,54 +920,58 @@ bool Navigation::innerDispatchNavigateEvent(NavigationNavigationType navigationT
             promiseList.append(WTFMove(promiseAndWrapper.first));
         }
 
-        waitForAllPromises(promiseList, [this, abortController, document, apiMethodTracker, weakThis = WeakPtr { *this }]() mutable {
-            if (!weakThis || abortController->signal().aborted() || !document->isFullyActive() || !m_ongoingNavigateEvent)
-                return;
+        // FIXME: this emulates the behavior of a Promise wrapped around waitForAll, but we may want the real
+        // thing if the ordering-and-transition tests show timing related issues related to this.
+        protectedScriptExecutionContext()->checkedEventLoop()->queueTask(TaskSource::DOMManipulation, [this, promiseList, abortController, document, apiMethodTracker]() {
+            waitForAllPromises(promiseList, [abortController, document, apiMethodTracker, weakThis = WeakPtr { *this }]() mutable {
+                if (!weakThis || abortController->signal().aborted() || !document->isFullyActive() || !weakThis->m_ongoingNavigateEvent)
+                    return;
 
-            RefPtr strongThis = weakThis.get();
+                RefPtr strongThis = weakThis.get();
 
-            auto focusChanged = std::exchange(m_focusChangedDuringOngoingNavigation, FocusDidChange::No);
-            m_ongoingNavigateEvent->finish(*document, InterceptionHandlersDidFulfill::Yes, focusChanged);
-            m_ongoingNavigateEvent = nullptr;
+                auto focusChanged = std::exchange(strongThis->m_focusChangedDuringOngoingNavigation, FocusDidChange::No);
+                strongThis->m_ongoingNavigateEvent->finish(*document, InterceptionHandlersDidFulfill::Yes, focusChanged);
+                strongThis->m_ongoingNavigateEvent = nullptr;
 
-            dispatchEvent(Event::create(eventNames().navigatesuccessEvent, { }));
+                strongThis->dispatchEvent(Event::create(eventNames().navigatesuccessEvent, { }));
 
-            if (apiMethodTracker)
-                resolveFinishedPromise(apiMethodTracker.get());
+                if (apiMethodTracker)
+                    strongThis->resolveFinishedPromise(apiMethodTracker.get());
 
-            if (RefPtr transition = std::exchange(m_transition, nullptr))
-                transition->resolvePromise();
+                if (RefPtr transition = std::exchange(strongThis->m_transition, nullptr))
+                    transition->resolvePromise();
 
-            m_ongoingNavigateEvent = nullptr;
+                strongThis->m_ongoingNavigateEvent = nullptr;
 
-        }, [this, abortController, document, apiMethodTracker, weakThis = WeakPtr { *this }](JSC::JSValue result) mutable {
-            if (!weakThis || abortController->signal().aborted() || !document->isFullyActive() || !m_ongoingNavigateEvent)
-                return;
+            }, [abortController, document, apiMethodTracker, weakThis = WeakPtr { *this }](JSC::JSValue result) mutable {
+                if (!weakThis || abortController->signal().aborted() || !document->isFullyActive() || !weakThis->m_ongoingNavigateEvent)
+                    return;
 
-            RefPtr strongThis = weakThis.get();
+                RefPtr strongThis = weakThis.get();
 
-            auto focusChanged = std::exchange(m_focusChangedDuringOngoingNavigation, FocusDidChange::No);
-            m_ongoingNavigateEvent->finish(*document, InterceptionHandlersDidFulfill::No, focusChanged);
-            m_ongoingNavigateEvent = nullptr;
+                auto focusChanged = std::exchange(strongThis->m_focusChangedDuringOngoingNavigation, FocusDidChange::No);
+                strongThis->m_ongoingNavigateEvent->finish(*document, InterceptionHandlersDidFulfill::No, focusChanged);
+                strongThis->m_ongoingNavigateEvent = nullptr;
 
-            ErrorInformation errorInformation;
-            String errorMessage;
-            if (auto* errorInstance = jsDynamicCast<JSC::ErrorInstance*>(result)) {
-                if (auto result = extractErrorInformationFromErrorInstance(protectedScriptExecutionContext()->globalObject(), *errorInstance)) {
-                    errorInformation = WTFMove(*result);
-                    errorMessage = makeString("Uncaught "_s, errorInformation.errorTypeString, ": "_s, errorInformation.message);
+                ErrorInformation errorInformation;
+                String errorMessage;
+                if (auto* errorInstance = jsDynamicCast<JSC::ErrorInstance*>(result)) {
+                    if (auto result = extractErrorInformationFromErrorInstance(strongThis->protectedScriptExecutionContext()->globalObject(), *errorInstance)) {
+                        errorInformation = WTFMove(*result);
+                        errorMessage = makeString("Uncaught "_s, errorInformation.errorTypeString, ": "_s, errorInformation.message);
+                    }
                 }
-            }
-            auto exception = Exception(ExceptionCode::UnknownError, errorMessage);
-            auto domException = createDOMException(*protectedScriptExecutionContext()->globalObject(), exception.isolatedCopy());
+                auto exception = Exception(ExceptionCode::UnknownError, errorMessage);
+                auto domException = createDOMException(*strongThis->protectedScriptExecutionContext()->globalObject(), exception.isolatedCopy());
 
-            dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, errorMessage, errorInformation.sourceURL, errorInformation.line, errorInformation.column, { protectedScriptExecutionContext()->globalObject()->vm(), result }));
+                strongThis->dispatchEvent(ErrorEvent::create(eventNames().navigateerrorEvent, errorMessage, errorInformation.sourceURL, errorInformation.line, errorInformation.column, { strongThis->protectedScriptExecutionContext()->globalObject()->vm(), result }));
 
-            if (apiMethodTracker)
-                apiMethodTracker->finishedPromise->reject<IDLAny>(result, RejectAsHandled::Yes);
+                if (apiMethodTracker)
+                    apiMethodTracker->finishedPromise->reject<IDLAny>(result, RejectAsHandled::Yes);
 
-            if (RefPtr transition = std::exchange(m_transition, nullptr))
-                transition->rejectPromise(exception, domException);
+                if (RefPtr transition = std::exchange(strongThis->m_transition, nullptr))
+                    transition->rejectPromise(exception, domException);
+            });
         });
 
         // If a new event has been dispatched in our event handler then we were aborted above.

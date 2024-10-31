@@ -1,8 +1,8 @@
 
-FAIL (not provided) + after-transition assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
+PASS (not provided) + after-transition
 PASS (not provided) + manual
 PASS after-transition + manual
-FAIL after-transition + (not provided) assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
-FAIL manual + after-transition assert_equals: Focus stays on the button during the transition expected Element node <button></button> but got Element node <body><button></button><button tabindex="0"></button></body>
+PASS after-transition + (not provided)
+PASS manual + after-transition
 PASS manual + (not provided)
 

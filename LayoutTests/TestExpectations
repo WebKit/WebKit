@@ -7519,11 +7519,6 @@ imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/r
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-beforeunload-unserializablestate.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-beforeunload.html [ Skip ]
 
-# These are likely fixed with https://bugs.webkit.org/show_bug.cgi?id=282137
-imported/w3c/web-platform-tests/navigation-api/focus-reset/multiple-intercept.html [ Pass Failure ]
-# Single flakey test case ("Resets the focus when no focusReset option is provided (nontrivial fulfilled promise)")
-imported/w3c/web-platform-tests/navigation-api/focus-reset/basic.html [ Pass Failure ]
-
 # -- View Transitions -- #
 # Reftest failures:
 imported/w3c/web-platform-tests/css/css-view-transitions/content-with-clip-root.html [ ImageOnlyFailure ]
