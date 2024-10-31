@@ -690,7 +690,6 @@ dom/CommandEvent.cpp
 dom/ComposedTreeAncestorIterator.h
 dom/ComposedTreeIterator.cpp
 dom/ComposedTreeIterator.h
-dom/ContainerNode.h
 dom/ContainerNodeAlgorithms.cpp
 dom/Document.cpp
 dom/DocumentFragment.cpp

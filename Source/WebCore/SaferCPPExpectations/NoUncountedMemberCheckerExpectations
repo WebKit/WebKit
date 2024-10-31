@@ -44,7 +44,6 @@ css/StyleSheetList.h
 css/color/CSSUnresolvedStyleColorResolutionState.h
 css/parser/SizesCalcParser.h
 dom/CollectionIndexCache.h
-dom/ContainerNode.h
 dom/ElementAncestorIterator.h
 dom/Node.cpp
 dom/Node.h
