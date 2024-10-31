@@ -2965,7 +2965,7 @@ private:
             append(Air::Mul32, leftLo, rightHi, tmpLoHi);
             append(Air::UMull32, leftLo, rightLo, resultHi, resultLo);
             append(Air::Add32, tmpHiLo, resultHi);
-            append(Air::Add32, tmpLoHi, resultLo);
+            append(Air::Add32, tmpLoHi, resultHi);
             return;
         }
         case B3::BitwiseCast: {
