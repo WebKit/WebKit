@@ -1696,7 +1696,7 @@ auto LLIntGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
     unifyValuesWithBlock(calleeInfo.arguments, args);
 
     if (isTailCall) {
-        m_codeBlock->setTailCallClobbersInstance(true);
+        m_codeBlock->setTailCallClobbersInstance();
 
         const auto& callingConvention = wasmCallingConvention();
         const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
@@ -1722,7 +1722,7 @@ auto LLIntGenerator::addCallRef(const TypeDefinition& signature, ArgumentList& a
     LLIntCallInformation info = callInformationForCaller(functionSignature);
     unifyValuesWithBlock(info.arguments, args);
     if (isTailCall) {
-        m_codeBlock->setTailCallClobbersInstance(true);
+        m_codeBlock->setTailCallClobbersInstance();
 
         const auto& callingConvention = wasmCallingConvention();
         const TypeIndex callerTypeIndex = m_info.internalFunctionTypeIndices[m_functionIndex];
