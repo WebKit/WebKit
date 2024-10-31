@@ -1758,9 +1758,6 @@ webkit.org/b/275873 storage/indexeddb/database-transaction-cycle.html [ Pass Fai
 
 webkit.org/b/276389 media/video-transformed.html [ Pass Failure ] 
 
-# webkit.org/b/277841 [ macOS wk2 ] imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html is a flaky failure
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html [ Pass ImageOnlyFailure ]
-
 # rdar://132528380 (REGRESSION (281042@main): [ macOS ] 2x tiled-drawing/scrolling/overflow/overflow-scrolled-* is flaky failing.
 tiled-drawing/scrolling/overflow/overflow-scrolled-down-tile-coverage.html [ Pass Failure ]
 tiled-drawing/scrolling/overflow/overflow-scrolled-up-tile-coverage.html [ Pass Failure ]

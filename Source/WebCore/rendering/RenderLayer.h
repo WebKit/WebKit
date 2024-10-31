@@ -431,7 +431,7 @@ public:
     bool descendantDependentFlagsAreDirty() const
     {
         return m_visibleDescendantStatusDirty || m_visibleContentStatusDirty || m_hasSelfPaintingLayerDescendantDirty
-            || m_hasNotIsolatedBlendingDescendantsStatusDirty || m_hasIntrinsicallyCompositedDescendantsStatusDirty;
+            || m_hasNotIsolatedBlendingDescendantsStatusDirty || m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty;
     }
 
     bool isPaintingSVGResourceLayer() const { return m_isPaintingSVGResourceLayer; }
@@ -1224,12 +1224,13 @@ private:
     void updateAncestorChainHasBlendingDescendants();
     void dirtyAncestorChainHasBlendingDescendants();
 
-    void updateAncestorChainHasIntrinsicallyCompositedDescendants();
-    void dirtyAncestorChainHasIntrinsicallyCompositedDescendants();
+    void updateAncestorChainHasAlwaysIncludedInZOrderListsDescendants();
+    void dirtyAncestorChainHasAlwaysIncludedInZOrderListsDescendants();
 
-    bool isIntrinsicallyComposited() const { return m_intrinsicallyComposited; }
-    bool hasIntrinsicallyCompositedDescendants() const { return m_hasIntrinsicallyCompositedDescendants; }
+    bool alwaysIncludedInZOrderLists() const { return m_alwaysIncludedInZOrderLists; }
+    bool hasAlwaysIncludedInZOrderListsDescendants() const { return m_hasAlwaysIncludedInZOrderListsDescendants; }
     void setIntrinsicallyComposited(bool);
+    void updateAlwaysIncludedInZOrderLists();
 
     Ref<ClipRects> parentClipRects(const ClipRectsContext&) const;
     ClipRect backgroundClipRect(const ClipRectsContext&) const;
@@ -1339,8 +1340,9 @@ private:
     bool m_repaintRectsValid : 1;
 
     bool m_intrinsicallyComposited : 1 { false };
-    bool m_hasIntrinsicallyCompositedDescendants : 1 { false };
-    bool m_hasIntrinsicallyCompositedDescendantsStatusDirty : 1 { true };
+    bool m_alwaysIncludedInZOrderLists : 1 { false };
+    bool m_hasAlwaysIncludedInZOrderListsDescendants : 1 { false };
+    bool m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty : 1 { true };
 
     bool m_wasOmittedFromZOrderTree : 1 { false };
 

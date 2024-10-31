@@ -7428,9 +7428,6 @@ imported/w3c/web-platform-tests/css/css-inline/text-box-trim/text-box-trim-block
 # webkit.org/b/278352 [ iOS MacOS ] imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html is a flaky image failure
 imported/w3c/web-platform-tests/css/css-view-transitions/capture-with-opacity-zero-child.html [ Pass ImageOnlyFailure ]
 
-# webkit.org/b/277841 REGRESSION (281870@main): [ macOS iOS wk2 ] imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html is a flaky failure
-imported/w3c/web-platform-tests/css/css-view-transitions/new-content-intrinsic-aspect-ratio.html [ Pass ImageOnlyFailure ]
-
 # webkit.org/b/278934 [ macOS iOS wk2 ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html is a flaky failure.
 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/inheritance/history.sub.html [ Failure Pass ]
 

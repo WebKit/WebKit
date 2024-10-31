@@ -863,7 +863,7 @@ void RenderLayer::collectLayers(std::unique_ptr<Vector<RenderLayer*>>& positiveZ
 
     bool isStacking = isStackingContext();
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
-    bool layerOrDescendantsAreVisible = (m_hasVisibleContent || m_intrinsicallyComposited) || ((m_hasVisibleDescendant || m_hasIntrinsicallyCompositedDescendants) && isStacking);
+    bool layerOrDescendantsAreVisible = (m_hasVisibleContent || m_alwaysIncludedInZOrderLists) || ((m_hasVisibleDescendant || m_hasAlwaysIncludedInZOrderListsDescendants) && isStacking);
     layerOrDescendantsAreVisible |= page().hasEverSetVisibilityAdjustment();
     if (!isNormalFlowOnly()) {
         if (layerOrDescendantsAreVisible) {
@@ -1544,34 +1544,41 @@ void RenderLayer::dirtyAncestorChainHasBlendingDescendants()
 
 void RenderLayer::setIntrinsicallyComposited(bool composited)
 {
-    if (m_intrinsicallyComposited != composited) {
-        m_intrinsicallyComposited = composited;
-        if (composited)
-            updateAncestorChainHasIntrinsicallyCompositedDescendants();
+    m_intrinsicallyComposited = composited;
+    updateAlwaysIncludedInZOrderLists();
+}
+
+void RenderLayer::updateAlwaysIncludedInZOrderLists()
+{
+    bool alwaysIncludedInZOrderLists = m_intrinsicallyComposited  || renderer().hasViewTransitionName();
+    if (m_alwaysIncludedInZOrderLists != alwaysIncludedInZOrderLists) {
+        m_alwaysIncludedInZOrderLists = alwaysIncludedInZOrderLists;
+        if (alwaysIncludedInZOrderLists)
+            updateAncestorChainHasAlwaysIncludedInZOrderListsDescendants();
         else
-            dirtyAncestorChainHasIntrinsicallyCompositedDescendants();
+            dirtyAncestorChainHasAlwaysIncludedInZOrderListsDescendants();
         if (!hasVisibleContent() && !isNormalFlowOnly())
             dirtyHiddenStackingContextAncestorZOrderLists();
     }
 }
 
-void RenderLayer::updateAncestorChainHasIntrinsicallyCompositedDescendants()
+void RenderLayer::updateAncestorChainHasAlwaysIncludedInZOrderListsDescendants()
 {
     for (auto* layer = this; layer; layer = layer->parent()) {
-        if (!layer->m_hasIntrinsicallyCompositedDescendantsStatusDirty && layer->m_hasIntrinsicallyCompositedDescendants)
+        if (!layer->m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty && layer->m_hasAlwaysIncludedInZOrderListsDescendants)
             break;
-        layer->m_hasIntrinsicallyCompositedDescendants = true;
-        layer->m_hasIntrinsicallyCompositedDescendantsStatusDirty = false;
+        layer->m_hasAlwaysIncludedInZOrderListsDescendants = true;
+        layer->m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty = false;
     }
 }
 
-void RenderLayer::dirtyAncestorChainHasIntrinsicallyCompositedDescendants()
+void RenderLayer::dirtyAncestorChainHasAlwaysIncludedInZOrderListsDescendants()
 {
     for (auto* layer = this; layer; layer = layer->parent()) {
-        if (layer->m_hasIntrinsicallyCompositedDescendantsStatusDirty)
+        if (layer->m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty)
             break;
 
-        layer->m_hasIntrinsicallyCompositedDescendantsStatusDirty = true;
+        layer->m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty = true;
     }
 }
 
@@ -1866,11 +1873,11 @@ void RenderLayer::updateAncestorDependentState()
 
 void RenderLayer::updateDescendantDependentFlags()
 {
-    if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || hasNotIsolatedBlendingDescendantsStatusDirty() || m_hasIntrinsicallyCompositedDescendantsStatusDirty) {
+    if (m_visibleDescendantStatusDirty || m_hasSelfPaintingLayerDescendantDirty || hasNotIsolatedBlendingDescendantsStatusDirty() || m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty) {
         bool hasVisibleDescendant = false;
         bool hasSelfPaintingLayerDescendant = false;
         bool hasNotIsolatedBlendingDescendants = false;
-        bool hasIntrinsicallyCompositedDescendants = false;
+        bool hasAlwaysIncludedInZOrderListsDescendants = false;
 
         if (m_hasNotIsolatedBlendingDescendantsStatusDirty) {
             m_hasNotIsolatedBlendingDescendantsStatusDirty = false;
@@ -1883,15 +1890,15 @@ void RenderLayer::updateDescendantDependentFlags()
             hasVisibleDescendant |= child->m_hasVisibleContent || child->m_hasVisibleDescendant;
             hasSelfPaintingLayerDescendant |= child->isSelfPaintingLayer() || child->hasSelfPaintingLayerDescendant();
             hasNotIsolatedBlendingDescendants |= child->hasBlendMode() || (child->hasNotIsolatedBlendingDescendants() && !child->isolatesBlending());
-            hasIntrinsicallyCompositedDescendants |= child->isIntrinsicallyComposited() || child->m_hasIntrinsicallyCompositedDescendants;
+            hasAlwaysIncludedInZOrderListsDescendants |= child->alwaysIncludedInZOrderLists() || child->m_hasAlwaysIncludedInZOrderListsDescendants;
         }
 
         m_hasVisibleDescendant = hasVisibleDescendant;
         m_visibleDescendantStatusDirty = false;
         m_hasSelfPaintingLayerDescendant = hasSelfPaintingLayerDescendant;
         m_hasSelfPaintingLayerDescendantDirty = false;
-        m_hasIntrinsicallyCompositedDescendants = hasIntrinsicallyCompositedDescendants;
-        m_hasIntrinsicallyCompositedDescendantsStatusDirty = false;
+        m_hasAlwaysIncludedInZOrderListsDescendants = hasAlwaysIncludedInZOrderListsDescendants;
+        m_hasAlwaysIncludedInZOrderListsDescendantsStatusDirty = false;
 
         m_hasNotIsolatedBlendingDescendants = hasNotIsolatedBlendingDescendants;
     }
@@ -5859,6 +5866,9 @@ void RenderLayer::styleChanged(StyleDifference diff, const RenderStyle* oldStyle
             if (isStackingContext())
                 dirtyZOrderLists();
         }
+
+        if (!oldStyle->viewTransitionName().isNone() != renderer().hasViewTransitionName())
+            updateAlwaysIncludedInZOrderLists();
 
         // Visibility and scrollability are input to canUseCompositedScrolling().
         if (m_scrollableArea) {
