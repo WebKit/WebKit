@@ -38,6 +38,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore::ContentExtensions {
 
 static void append(Vector<uint8_t>& vector, size_t length)
@@ -911,5 +913,7 @@ size_t RedirectAction::URLTransformAction::QueryTransform::QueryKeyValue::serial
 }
 
 } // namespace WebCore::ContentExtensions
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(CONTENT_EXTENSIONS)

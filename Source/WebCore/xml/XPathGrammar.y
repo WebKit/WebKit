@@ -35,6 +35,8 @@
 #include "XPathStep.h"
 #include "XPathVariableReference.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if COMPILER(MSVC)
 // See https://msdn.microsoft.com/en-us/library/1wea5zwe.aspx
 #pragma warning(disable: 4701)
@@ -490,3 +492,5 @@ UnaryExpr:
     ;
 
 %%
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

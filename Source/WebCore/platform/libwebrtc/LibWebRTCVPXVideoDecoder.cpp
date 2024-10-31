@@ -39,6 +39,8 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
@@ -52,8 +54,6 @@ ALLOW_COMMA_END
 ALLOW_UNUSED_PARAMETERS_END
 
 #include "CoreVideoSoftLink.h"
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 

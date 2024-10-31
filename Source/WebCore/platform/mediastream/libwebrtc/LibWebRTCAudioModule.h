@@ -33,6 +33,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
@@ -40,6 +42,8 @@ ALLOW_COMMA_BEGIN
 
 ALLOW_UNUSED_PARAMETERS_END
 ALLOW_COMMA_END
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WebCore {
 class BaseAudioMediaStreamTrackRendererUnit;

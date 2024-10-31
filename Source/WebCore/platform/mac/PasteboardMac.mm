@@ -49,6 +49,8 @@
 #import <wtf/text/StringBuilder.h>
 #import <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 const ASCIILiteral WebArchivePboardType = "Apple Web Archive pasteboard type"_s;
@@ -885,5 +887,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(MAC)

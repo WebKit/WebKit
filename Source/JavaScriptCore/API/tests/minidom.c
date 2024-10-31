@@ -34,6 +34,8 @@
 #include <stdlib.h>
 #include <wtf/Assertions.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 static char* createStringWithContentsOfFile(const char* fileName);
 static JSValueRef print(JSContextRef context, JSObjectRef object, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception);
 
@@ -128,3 +130,5 @@ static char* createStringWithContentsOfFile(const char* fileName)
     
     return buffer;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

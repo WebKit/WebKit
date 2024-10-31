@@ -30,6 +30,8 @@
 #include <span>
 #include <wtf/NeverDestroyed.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<typename KeyType, typename ValueType>
@@ -89,3 +91,5 @@ private:
 
 using WTF::TinyLRUCache;
 using WTF::TinyLRUCachePolicy;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -41,6 +41,8 @@
 #import "VideoToolboxSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace WebCore;
 
 typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;
@@ -498,5 +500,7 @@ static void av1DecompressionOutputCallback(void* decoderRef, void* params, OSSta
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBWEBRTC)

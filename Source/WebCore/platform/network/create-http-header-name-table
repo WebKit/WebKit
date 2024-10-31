@@ -90,6 +90,8 @@ gperf_file.write('''
 
 #include <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 IGNORE_WARNINGS_BEGIN("implicit-fallthrough")
 
 // Older versions of gperf like to use the `register` keyword.
@@ -170,6 +172,7 @@ ASCIILiteral httpHeaderNameString(HTTPHeaderName headerName)
 
 #if defined(__clang__)
 IGNORE_WARNINGS_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 ''')
 

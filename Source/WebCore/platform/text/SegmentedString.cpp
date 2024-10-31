@@ -23,6 +23,8 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/TextPosition.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 inline void SegmentedString::Substring::appendTo(StringBuilder& builder) const
@@ -273,3 +275,5 @@ void SegmentedString::updateAdvanceFunctionPointersForEmptyString()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

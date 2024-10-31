@@ -43,6 +43,8 @@
 #include <emmintrin.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 //
@@ -1940,3 +1942,5 @@ TextStream& operator<<(TextStream& ts, const TransformationMatrix& transform)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

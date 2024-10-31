@@ -34,6 +34,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
@@ -235,5 +237,7 @@ UniqueRef<webrtc::VideoDecoder> createLibWebRTCDav1dDecoder()
 }
 
 } // namespace
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

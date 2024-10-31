@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 inline bool needToFlipBytesIfLittleEndian(bool littleEndian)
@@ -121,3 +125,5 @@ inline T flipBytesIfLittleEndian(T value, bool littleEndian)
 using WTF::needToFlipBytesIfLittleEndian;
 using WTF::flipBytes;
 using WTF::flipBytesIfLittleEndian;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

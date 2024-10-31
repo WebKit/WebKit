@@ -37,6 +37,8 @@
 #include <wtf/BlockPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ShaderModuleImpl);
@@ -96,5 +98,7 @@ void ShaderModuleImpl::setLabelInternal(const String& label)
 }
 
 } // namespace WebCore::WebGPU
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

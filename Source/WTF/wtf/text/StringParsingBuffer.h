@@ -27,6 +27,8 @@
 
 #include <wtf/text/StringView.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 template<typename T>
@@ -135,3 +137,5 @@ template<typename StringType, typename Function> decltype(auto) readCharactersFo
 
 using WTF::StringParsingBuffer;
 using WTF::readCharactersForParsing;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
