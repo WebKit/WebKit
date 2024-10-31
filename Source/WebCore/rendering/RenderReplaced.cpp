@@ -44,6 +44,7 @@
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderFlexibleBox.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderHighlight.h"
 #include "RenderImage.h"
@@ -641,7 +642,13 @@ LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred sh
             // calculated from the constraint equation used for block-level,
             // non-replaced elements in normal flow.
             if (computedHeightIsAuto && !hasIntrinsicWidth && !hasIntrinsicHeight) {
-                if (shouldComputePreferred == ComputePreferred)
+                auto hasDefiniteContainingBlockLogicalWidth = [&] {
+                    if (!isFlexItem())
+                        return false;
+                    return downcast<RenderFlexibleBox>(containingBlock())->layoutPhase() == RenderFlexibleBox::LayoutPhase::Layout;
+                }();
+
+                if (shouldComputePreferred == ComputePreferred && !hasDefiniteContainingBlockLogicalWidth)
                     return computeReplacedLogicalWidthRespectingMinMaxWidth(0_lu, ComputePreferred);
                 auto constrainedLogicalWidth = computeConstrainedLogicalWidth();
                 return computeReplacedLogicalWidthRespectingMinMaxWidth(constrainedLogicalWidth, ComputeActual);

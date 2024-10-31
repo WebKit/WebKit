@@ -46,6 +46,10 @@ class RenderFlexibleBox : public RenderBlock {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderFlexibleBox);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderFlexibleBox);
 public:
+
+    enum class LayoutPhase { IntrinsicLogicalWidthComputation, Layout };
+    std::optional<LayoutPhase> layoutPhase() const { return m_layoutPhase; }
+
     RenderFlexibleBox(Type, Element&, RenderStyle&&);
     RenderFlexibleBox(Type, Document&, RenderStyle&&);
     virtual ~RenderFlexibleBox();
@@ -304,6 +308,9 @@ private:
     bool m_shouldResetFlexItemLogicalHeightBeforeLayout { false };
     bool m_isComputingFlexBaseSizes { false };
     bool m_hasFlexFormattingContextLayout { false };
+
+    mutable std::optional<LayoutPhase> m_layoutPhase;
+
 };
 
 } // namespace WebCore
