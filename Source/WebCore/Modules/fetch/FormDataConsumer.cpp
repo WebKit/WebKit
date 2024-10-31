@@ -124,14 +124,16 @@ void FormDataConsumer::consume(std::span<const uint8_t> content)
     if (!m_callback)
         return;
 
-    bool result = m_callback(WTFMove(content));
-    if (!result) {
-        cancel();
-        return;
-    }
+    if (!content.empty()) {
+        bool result = m_callback(WTFMove(content));
+        if (!result) {
+            cancel();
+            return;
+        }
 
-    if (!m_callback)
-        return;
+        if (!m_callback)
+            return;
+    }
 
     read();
 }
