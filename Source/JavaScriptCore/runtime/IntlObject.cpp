@@ -1633,7 +1633,7 @@ const Vector<String>& intlAvailableCalendars()
             int32_t length = 0;
             const char* pointer = uenum_next(enumeration.get(), &length, &status);
             ASSERT(U_SUCCESS(status));
-            String calendar(unsafeForgeSpan(pointer, static_cast<size_t>(length)));
+            String calendar(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
             if (auto mapped = mapICUCalendarKeywordToBCP47(calendar))
                 return createImmortalThreadSafeString(WTFMove(mapped.value()));
             return createImmortalThreadSafeString(WTFMove(calendar));
@@ -1704,7 +1704,7 @@ static JSArray* availableCollations(JSGlobalObject* globalObject)
             throwTypeError(globalObject, scope, "failed to enumerate available collations"_s);
             return { };
         }
-        String collation(unsafeForgeSpan(pointer, static_cast<size_t>(length)));
+        String collation(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
         if (collation == "standard"_s || collation == "search"_s)
             continue;
         if (auto mapped = mapICUCollationKeywordToBCP47(collation))
@@ -1761,7 +1761,7 @@ static JSArray* availableCurrencies(JSGlobalObject* globalObject)
             throwTypeError(globalObject, scope, "failed to enumerate available currencies"_s);
             return { };
         }
-        String currency(unsafeForgeSpan(pointer, static_cast<size_t>(length)));
+        String currency(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
         if (currency == "EQE"_s)
             continue;
         if (currency == "LSM"_s)
@@ -1870,7 +1870,7 @@ const Vector<String>& intlAvailableTimeZones()
             int32_t length = 0;
             const char* pointer = uenum_next(enumeration.get(), &length, &status);
             ASSERT(U_SUCCESS(status));
-            String timeZone(unsafeForgeSpan(pointer, static_cast<size_t>(length)));
+            String timeZone(unsafeMakeSpan(pointer, static_cast<size_t>(length)));
             if (isValidTimeZoneNameFromICUTimeZone(timeZone)) {
                 if (auto mapped = canonicalizeTimeZoneNameFromICUTimeZone(WTFMove(timeZone)))
                     temporary.append(WTFMove(mapped.value()));

@@ -144,8 +144,8 @@ public:
 
     constexpr size_t storageLengthInBytes() { return sizeof(bits); }
 
-    std::span<uint8_t> storageBytes() { return unsafeForgeSpan(reinterpret_cast<uint8_t*>(storage()), storageLengthInBytes()); }
-    std::span<const uint8_t> storageBytes() const { return unsafeForgeSpan(reinterpret_cast<const uint8_t*>(storage()), storageLengthInBytes()); }
+    std::span<uint8_t> storageBytes() { return unsafeMakeSpan(reinterpret_cast<uint8_t*>(storage()), storageLengthInBytes()); }
+    std::span<const uint8_t> storageBytes() const { return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(storage()), storageLengthInBytes()); }
 
 private:
     void cleanseLastWord();

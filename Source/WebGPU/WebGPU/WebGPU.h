@@ -919,7 +919,7 @@ typedef struct WGPUPipelineLayoutDescriptor {
     size_t bindGroupLayoutCount;
     WGPUBindGroupLayout const * bindGroupLayouts;
 
-    auto bindGroupLayoutsSpan() const { return unsafeForgeSpan(bindGroupLayouts, bindGroupLayoutCount); }
+    auto bindGroupLayoutsSpan() const { return unsafeMakeSpan(bindGroupLayouts, bindGroupLayoutCount); }
 } WGPUPipelineLayoutDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 // Can be chained in WGPUPrimitiveState
@@ -963,7 +963,7 @@ typedef struct WGPURenderBundleEncoderDescriptor {
     WGPUBool depthReadOnly;
     WGPUBool stencilReadOnly;
 
-    auto colorFormatsSpan() const { return unsafeForgeSpan(colorFormats, colorFormatCount); }
+    auto colorFormatsSpan() const { return unsafeMakeSpan(colorFormats, colorFormatCount); }
 } WGPURenderBundleEncoderDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPURenderPassDepthStencilAttachment {
@@ -1163,7 +1163,7 @@ typedef struct WGPUBindGroupDescriptor {
     size_t entryCount;
     WGPUBindGroupEntry const * entries;
 
-    auto entriesSpan() const { return unsafeForgeSpan(entries, entryCount); }
+    auto entriesSpan() const { return unsafeMakeSpan(entries, entryCount); }
 } WGPUBindGroupDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUBindGroupLayoutEntry {
@@ -1233,7 +1233,7 @@ typedef struct WGPUProgrammableStageDescriptor {
     size_t constantCount;
     WGPUConstantEntry const * constants;
 
-    auto constantsSpan() const { return unsafeForgeSpan(constants, constantCount); }
+    auto constantsSpan() const { return unsafeMakeSpan(constants, constantCount); }
 } WGPUProgrammableStageDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPURenderPassColorAttachment {
@@ -1259,7 +1259,7 @@ typedef struct WGPUShaderModuleDescriptor {
     size_t hintCount;
     WGPUShaderModuleCompilationHint const * hints;
 
-    auto hintsSpan() const { return unsafeForgeSpan(hints, hintCount); }
+    auto hintsSpan() const { return unsafeMakeSpan(hints, hintCount); }
 } WGPUShaderModuleDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUSupportedLimits {
@@ -1279,7 +1279,7 @@ typedef struct WGPUTextureDescriptor {
     size_t viewFormatCount;
     WGPUTextureFormat const * viewFormats;
 
-    auto viewFormatsSpan() const { return unsafeForgeSpan(viewFormats, viewFormatCount); }
+    auto viewFormatsSpan() const { return unsafeMakeSpan(viewFormats, viewFormatCount); }
 } WGPUTextureDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUVertexBufferLayout {
@@ -1288,7 +1288,7 @@ typedef struct WGPUVertexBufferLayout {
     size_t attributeCount;
     WGPUVertexAttribute const * attributes;
 
-    auto attributesSpan() const { return unsafeForgeSpan(attributes, attributeCount); }
+    auto attributesSpan() const { return unsafeMakeSpan(attributes, attributeCount); }
 } WGPUVertexBufferLayout WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUBindGroupLayoutDescriptor {
@@ -1297,7 +1297,7 @@ typedef struct WGPUBindGroupLayoutDescriptor {
     size_t entryCount;
     WGPUBindGroupLayoutEntry const * entries;
 
-    auto entriesSpan() const { return unsafeForgeSpan(entries, entryCount); }
+    auto entriesSpan() const { return unsafeMakeSpan(entries, entryCount); }
 } WGPUBindGroupLayoutDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUColorTargetState {
@@ -1324,7 +1324,7 @@ typedef struct WGPUDeviceDescriptor {
     WGPUDeviceLostCallback deviceLostCallback;
     void * deviceLostUserdata;
 
-    auto requiredFeaturesSpan() const { return unsafeForgeSpan(requiredFeatures, requiredFeatureCount); }
+    auto requiredFeaturesSpan() const { return unsafeMakeSpan(requiredFeatures, requiredFeatureCount); }
 } WGPUDeviceDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPURenderPassDescriptor {
@@ -1336,7 +1336,7 @@ typedef struct WGPURenderPassDescriptor {
     WGPU_NULLABLE WGPUQuerySet occlusionQuerySet;
     WGPU_NULLABLE WGPURenderPassTimestampWrites const * timestampWrites;
 
-    auto colorAttachmentsSpan() const { return unsafeForgeSpan(colorAttachments, colorAttachmentCount); }
+    auto colorAttachmentsSpan() const { return unsafeMakeSpan(colorAttachments, colorAttachmentCount); }
 } WGPURenderPassDescriptor WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUVertexState {
@@ -1348,8 +1348,8 @@ typedef struct WGPUVertexState {
     size_t bufferCount;
     WGPUVertexBufferLayout const * buffers;
 
-    auto buffersSpan() const { return unsafeForgeSpan(buffers, bufferCount); }
-    auto constantsSpan() const { return unsafeForgeSpan(constants, constantCount); }
+    auto buffersSpan() const { return unsafeMakeSpan(buffers, bufferCount); }
+    auto constantsSpan() const { return unsafeMakeSpan(constants, constantCount); }
 } WGPUVertexState WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPUFragmentState {
@@ -1361,8 +1361,8 @@ typedef struct WGPUFragmentState {
     size_t targetCount;
     WGPUColorTargetState const * targets;
 
-    auto targetsSpan() const { return unsafeForgeSpan(targets, targetCount); }
-    auto constantsSpan() const { return unsafeForgeSpan(constants, constantCount); }
+    auto targetsSpan() const { return unsafeMakeSpan(targets, targetCount); }
+    auto constantsSpan() const { return unsafeMakeSpan(constants, constantCount); }
 } WGPUFragmentState WGPU_STRUCTURE_ATTRIBUTE;
 
 typedef struct WGPURenderPipelineDescriptor {

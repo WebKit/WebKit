@@ -39,7 +39,7 @@ namespace WebGPU {
 
 static inline auto span(id<MTLBuffer> buffer)
 {
-    return unsafeForgeSpan(static_cast<uint8_t*>(buffer.contents), static_cast<size_t>(buffer.length));
+    return unsafeMakeSpan(static_cast<uint8_t*>(buffer.contents), static_cast<size_t>(buffer.length));
 }
 
 static bool validateDescriptor(const Device& device, const WGPUBufferDescriptor& descriptor)

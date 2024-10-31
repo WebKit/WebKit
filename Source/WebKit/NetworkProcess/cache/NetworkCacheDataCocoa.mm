@@ -57,7 +57,7 @@ std::span<const uint8_t> Data::span() const
         const void* data = nullptr;
         size_t size = 0;
         m_dispatchData = adoptOSObject(dispatch_data_create_map(m_dispatchData.get(), &data, &size));
-        m_data = unsafeForgeSpan(static_cast<const uint8_t*>(data), size);
+        m_data = unsafeMakeSpan(static_cast<const uint8_t*>(data), size);
     }
     return m_data;
 }

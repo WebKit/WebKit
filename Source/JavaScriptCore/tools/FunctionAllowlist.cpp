@@ -72,7 +72,7 @@ FunctionAllowlist::FunctionAllowlist(const char* filename)
         if (!length)
             continue;
         
-        m_entries.add(String(unsafeForgeSpan(line, length)));
+        m_entries.add(String(unsafeMakeSpan(line, length)));
     }
 
     int result = fclose(f);

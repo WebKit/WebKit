@@ -847,7 +847,7 @@ JSValueRef JSIPCConnection::invalidate(JSContextRef context, JSObjectRef, JSObje
 
 JSValueRef JSIPCConnection::sendMessage(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -872,7 +872,7 @@ JSValueRef JSIPCConnection::sendMessage(JSContextRef context, JSObjectRef, JSObj
 
 JSValueRef JSIPCConnection::sendWithAsyncReply(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -910,7 +910,7 @@ JSValueRef JSIPCConnection::sendWithAsyncReply(JSContextRef context, JSObjectRef
 
 JSValueRef JSIPCConnection::sendSyncMessage(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -931,7 +931,7 @@ JSValueRef JSIPCConnection::sendSyncMessage(JSContextRef context, JSObjectRef, J
 
 JSValueRef JSIPCConnection::waitForMessage(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -951,7 +951,7 @@ JSValueRef JSIPCConnection::waitForMessage(JSContextRef context, JSObjectRef, JS
 
 JSValueRef JSIPCConnection::waitForAsyncReplyAndDispatchImmediately(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -1073,7 +1073,7 @@ JSValueRef JSIPCStreamClientConnection::streamBuffer(JSContextRef context, JSObj
 
 JSValueRef JSIPCStreamClientConnection::setSemaphores(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());
@@ -1141,7 +1141,7 @@ bool JSIPCStreamClientConnection::prepareToSendOutOfStreamMessage(uint64_t desti
 
 JSValueRef JSIPCStreamClientConnection::sendMessage(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -1161,7 +1161,7 @@ JSValueRef JSIPCStreamClientConnection::sendMessage(JSContextRef context, JSObje
 
 JSValueRef JSIPCStreamClientConnection::sendWithAsyncReply(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -1200,7 +1200,7 @@ JSValueRef JSIPCStreamClientConnection::sendWithAsyncReply(JSContextRef context,
 
 JSValueRef JSIPCStreamClientConnection::sendSyncMessage(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -1223,7 +1223,7 @@ JSValueRef JSIPCStreamClientConnection::sendSyncMessage(JSContextRef context, JS
 // FIXME(http://webkit.org/b/237197): Cannot send arbitrary messages, so we hard-code this one to be able to send it.
 JSValueRef JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());
@@ -1269,7 +1269,7 @@ JSValueRef JSIPCStreamClientConnection::sendIPCStreamTesterSyncCrashOnZero(JSCon
 
 JSValueRef JSIPCStreamClientConnection::waitForMessage(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -1289,7 +1289,7 @@ JSValueRef JSIPCStreamClientConnection::waitForMessage(JSContextRef context, JSO
 
 JSValueRef JSIPCStreamClientConnection::waitForAsyncReplyAndDispatchImmediately(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -1539,7 +1539,7 @@ const JSStaticFunction* JSSharedMemory::staticFunctions()
 
 JSValueRef JSSharedMemory::readBytes(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsSharedMemory = toWrapped(context, thisObject);
     if (!jsSharedMemory) {
@@ -1609,12 +1609,12 @@ static std::span<const uint8_t> arrayBufferSpanFromValueRef(JSContextRef context
     else
         length = JSObjectGetTypedArrayByteLength(context, objectRef, exception);
 
-    return unsafeForgeSpan(static_cast<const uint8_t*>(buffer), length);
+    return unsafeMakeSpan(static_cast<const uint8_t*>(buffer), length);
 }
 
 JSValueRef JSSharedMemory::writeBytes(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsSharedMemory = toWrapped(context, thisObject);
     if (!jsSharedMemory) {
@@ -1713,7 +1713,7 @@ JSValueRef JSIPCStreamConnectionBuffer::readDataBytes(JSContextRef context, JSOb
 
 JSValueRef JSIPCStreamConnectionBuffer::readBytes(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception, std::span<uint8_t> span)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     size_t offset = 0;
     size_t length = span.size();
@@ -1795,7 +1795,7 @@ JSValueRef JSIPCStreamConnectionBuffer::writeDataBytes(JSContextRef context, JSO
 
 JSValueRef JSIPCStreamConnectionBuffer::writeBytes(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception, std::span<uint8_t> span)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     auto type = arguments.size() > 0 ? JSValueGetTypedArrayType(context, arguments[0], exception) : kJSTypedArrayTypeNone;
     if (type == kJSTypedArrayTypeNone) {
@@ -1960,7 +1960,7 @@ RefPtr<JSIPCConnection> JSIPC::processTargetFromArgument(JSC::JSGlobalObject* gl
 
 void JSIPC::addMessageListener(JSMessageListener::Type type, JSContextRef context, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -2523,7 +2523,7 @@ JSValueRef JSIPC::connectionForProcessTarget(JSContextRef context, JSObjectRef, 
 
 JSValueRef JSIPC::sendMessage(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -2551,7 +2551,7 @@ JSValueRef JSIPC::sendMessage(JSContextRef context, JSObjectRef, JSObjectRef thi
 
 JSValueRef JSIPC::waitForMessage(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -2576,7 +2576,7 @@ JSValueRef JSIPC::waitForMessage(JSContextRef context, JSObjectRef, JSObjectRef 
 
 JSValueRef JSIPC::sendSyncMessage(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     RefPtr jsIPC = toWrapped(context, thisObject);
     if (!jsIPC) {
@@ -2628,7 +2628,7 @@ JSValueRef JSIPC::createConnectionPair(JSContextRef context, JSObjectRef, JSObje
 
 JSValueRef JSIPC::createStreamClientConnection(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     auto* globalObject = toJS(context);
     JSC::JSLockHolder lock(globalObject->vm());

@@ -878,7 +878,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
 - (void)_addTrackingRects:(NSRect *)rawRects owner:(id)owner userDataList:(void **)userDataList assumeInsideList:(BOOL *)assumeInsideList trackingNums:(NSTrackingRectTag *)trackingNums count:(int)count
 {
-    auto nsRects = unsafeForgeSpan(rawRects, count);
+    auto nsRects = unsafeMakeSpan(rawRects, count);
     auto cgRects = WTF::map(nsRects, [](auto& nsRect) {
         return NSRectToCGRect(nsRect);
     });
@@ -896,7 +896,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (!_impl)
         return;
-    _impl->removeTrackingRects(unsafeForgeSpan(tags, count));
+    _impl->removeTrackingRects(unsafeMakeSpan(tags, count));
 }
 
 ALLOW_DEPRECATED_IMPLEMENTATIONS_BEGIN

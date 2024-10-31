@@ -518,7 +518,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     auto mallocBuffer = MallocPtr<uint8_t, HistoryEntryDataEncoderMalloc>::tryMalloc(bufferSize);
     if (!mallocBuffer)
         return nullptr;
-    auto buffer = unsafeForgeSpan(mallocBuffer.leakPtr(), bufferSize);
+    auto buffer = unsafeMakeSpan(mallocBuffer.leakPtr(), bufferSize);
 
     // Put the session state version number at the start of the buffer
     buffer[0] = (sessionStateDataVersion & 0xff000000) >> 24;

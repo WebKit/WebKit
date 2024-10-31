@@ -37,8 +37,8 @@ WKTypeID WKDictionaryGetTypeID()
 
 WK_EXPORT WKDictionaryRef WKDictionaryCreate(const WKStringRef* rawKeys, const WKTypeRef* rawValues, size_t numberOfValues)
 {
-    auto keys = unsafeForgeSpan(rawKeys, numberOfValues);
-    auto values = unsafeForgeSpan(rawValues, numberOfValues);
+    auto keys = unsafeMakeSpan(rawKeys, numberOfValues);
+    auto values = unsafeMakeSpan(rawValues, numberOfValues);
 
     API::Dictionary::MapType map;
     map.reserveInitialCapacity(numberOfValues);

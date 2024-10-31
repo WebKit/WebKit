@@ -153,7 +153,7 @@ static int32_t releaseVideoDecoder(webrtc::WebKitVideoDecoder::Value decoder)
 
 static int32_t decodeVideoFrame(webrtc::WebKitVideoDecoder::Value decoder, uint32_t timeStamp, const uint8_t* data, size_t size, uint16_t width,  uint16_t height)
 {
-    return WebProcess::singleton().libWebRTCCodecs().decodeWebRTCFrame(*static_cast<LibWebRTCCodecs::Decoder*>(decoder), timeStamp, unsafeForgeSpan(data, size), width, height);
+    return WebProcess::singleton().libWebRTCCodecs().decodeWebRTCFrame(*static_cast<LibWebRTCCodecs::Decoder*>(decoder), timeStamp, unsafeMakeSpan(data, size), width, height);
 }
 
 static int32_t registerDecodeCompleteCallback(webrtc::WebKitVideoDecoder::Value decoder, void* decodedImageCallback)

@@ -300,7 +300,7 @@ static std::span<T> makeSpanFromBuffer(id<MTLBuffer> buffer, size_t byteOffset =
     if (UNLIKELY(bufferLength < byteOffset || (bufferLength - byteOffset < sizeof(T))))
         return { };
 
-    return unsafeForgeSpan(static_cast<T*>(buffer.contents), (bufferLength - byteOffset) / sizeof(T));
+    return unsafeMakeSpan(static_cast<T*>(buffer.contents), (bufferLength - byteOffset) / sizeof(T));
 }
 
 bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t firstInstance, uint32_t instanceCount)

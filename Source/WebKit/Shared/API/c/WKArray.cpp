@@ -37,7 +37,7 @@ WKTypeID WKArrayGetTypeID()
 
 WKArrayRef WKArrayCreate(WKTypeRef* rawValues, size_t numberOfValues)
 {
-    auto values = unsafeForgeSpan(rawValues, numberOfValues);
+    auto values = unsafeMakeSpan(rawValues, numberOfValues);
     Vector<RefPtr<API::Object>> elements(numberOfValues, [values](size_t i) -> RefPtr<API::Object> {
         return WebKit::toImpl(values[i]);
     });
@@ -46,7 +46,7 @@ WKArrayRef WKArrayCreate(WKTypeRef* rawValues, size_t numberOfValues)
 
 WKArrayRef WKArrayCreateAdoptingValues(WKTypeRef* rawValues, size_t numberOfValues)
 {
-    auto values = unsafeForgeSpan(rawValues, numberOfValues);
+    auto values = unsafeMakeSpan(rawValues, numberOfValues);
     Vector<RefPtr<API::Object>> elements(numberOfValues, [values](size_t i) {
         return adoptRef(WebKit::toImpl(values[i]));
     });

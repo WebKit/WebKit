@@ -93,14 +93,14 @@ public:
 
     void realloc(size_t newSize)
     {
-        m_span = unsafeForgeSpan(static_cast<T*>(Malloc::realloc(m_span.data(), newSize)), newSize);
+        m_span = unsafeMakeSpan(static_cast<T*>(Malloc::realloc(m_span.data(), newSize)), newSize);
     }
 
 private:
     template<typename U, typename OtherMalloc> friend MallocSpan<U, OtherMalloc> adoptMallocSpan(U*, size_t);
 
     explicit MallocSpan(T* ptr, size_t size)
-        : m_span(unsafeForgeSpan(ptr, size))
+        : m_span(unsafeMakeSpan(ptr, size))
     {
     }
 

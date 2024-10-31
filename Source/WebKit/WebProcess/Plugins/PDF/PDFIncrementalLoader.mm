@@ -574,13 +574,13 @@ void PDFIncrementalLoader::requestDidCompleteWithAccumulatedData(ByteRangeReques
 static void dataProviderGetByteRangesCallback(void* info, CFMutableArrayRef buffers, const CFRange* ranges, size_t count)
 {
     RefPtr loader = reinterpret_cast<PDFIncrementalLoader*>(info);
-    loader->dataProviderGetByteRanges(buffers, unsafeForgeSpan(ranges, count));
+    loader->dataProviderGetByteRanges(buffers, unsafeMakeSpan(ranges, count));
 }
 
 static size_t dataProviderGetBytesAtPositionCallback(void* info, void* buffer, off_t position, size_t count)
 {
     RefPtr loader = reinterpret_cast<PDFIncrementalLoader*>(info);
-    return loader->dataProviderGetBytesAtPosition(unsafeForgeSpan(static_cast<uint8_t*>(buffer), count), position);
+    return loader->dataProviderGetBytesAtPosition(unsafeMakeSpan(static_cast<uint8_t*>(buffer), count), position);
 }
 
 static void dataProviderReleaseInfoCallback(void* info)

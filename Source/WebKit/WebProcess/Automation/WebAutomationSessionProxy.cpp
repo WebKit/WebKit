@@ -193,7 +193,7 @@ static JSValueRef createUUID(JSContextRef context, JSObjectRef function, JSObjec
 static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t rawArgumentCount, const JSValueRef rawArguments[], JSValueRef* exception)
 {
     // This is using the JSC C API so we cannot take a std::span in argument directly.
-    auto arguments = unsafeForgeSpan(rawArguments, rawArgumentCount);
+    auto arguments = unsafeMakeSpan(rawArguments, rawArgumentCount);
 
     ASSERT(arguments.size() == 4);
     ASSERT(JSValueIsNumber(context, arguments[0]));

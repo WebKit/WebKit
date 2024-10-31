@@ -121,7 +121,7 @@ int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAdd
     if (m_isSuspended)
         return size;
 
-    auto data = unsafeForgeSpan(static_cast<const uint8_t*>(value), size);
+    auto data = unsafeMakeSpan(static_cast<const uint8_t*>(value), size);
     connection->send(Messages::NetworkRTCProvider::SendToSocket { identifier(), data, RTCNetwork::SocketAddress { address }, RTCPacketOptions { options } }, 0);
 
     return size;

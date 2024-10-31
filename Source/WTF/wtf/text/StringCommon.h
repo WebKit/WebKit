@@ -42,33 +42,33 @@ namespace WTF {
 
 inline std::span<const LChar> span(const LChar& character)
 {
-    return unsafeForgeSpan(&character, 1);
+    return unsafeMakeSpan(&character, 1);
 }
 
 inline std::span<const UChar> span(const UChar& character)
 {
-    return unsafeForgeSpan(&character, 1);
+    return unsafeMakeSpan(&character, 1);
 }
 
 inline std::span<const LChar> span8(const char* string)
 {
-    return unsafeForgeSpan(byteCast<LChar>(string), string ? strlen(string) : 0);
+    return unsafeMakeSpan(byteCast<LChar>(string), string ? strlen(string) : 0);
 }
 
 inline std::span<const LChar> span8IncludingNullTerminator(const char* string)
 {
-    return unsafeForgeSpan(byteCast<LChar>(string), string ? strlen(string) + 1 : 0);
+    return unsafeMakeSpan(byteCast<LChar>(string), string ? strlen(string) + 1 : 0);
 }
 
 inline std::span<const char> span(const char* string)
 {
-    return unsafeForgeSpan(string, string ? strlen(string) : 0);
+    return unsafeMakeSpan(string, string ? strlen(string) : 0);
 }
 
 #if !HAVE(MISSING_U8STRING)
 inline std::span<const char8_t> span(const std::u8string& string)
 {
-    return unsafeForgeSpan(string.data(), string.length());
+    return unsafeMakeSpan(string.data(), string.length());
 }
 #endif
 

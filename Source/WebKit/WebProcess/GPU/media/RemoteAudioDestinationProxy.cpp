@@ -243,7 +243,7 @@ void RemoteAudioDestinationProxy::renderAudio(unsigned frameCount)
 
 
         auto numberOfBuffers = std::min<UInt32>(ioData->mNumberBuffers, m_outputBus->numberOfChannels());
-        auto buffers = unsafeForgeSpan(ioData->mBuffers, numberOfBuffers);
+        auto buffers = unsafeMakeSpan(ioData->mBuffers, numberOfBuffers);
 
         // Associate the destination data array with the output bus then fill the FIFO.
         for (UInt32 i = 0; i < numberOfBuffers; ++i) {

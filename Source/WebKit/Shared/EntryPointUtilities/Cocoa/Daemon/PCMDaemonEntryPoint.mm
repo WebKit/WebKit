@@ -124,7 +124,7 @@ static void connectionRemoved(xpc_connection_t connection)
 
 int PCMDaemonMain(int argc, const char** argv)
 {
-    auto arguments = unsafeForgeSpan(argv, argc);
+    auto arguments = unsafeMakeSpan(argv, argc);
     if (arguments.size() < 5 || strcmp(arguments[1], "--machServiceName") || strcmp(arguments[3], "--storageLocation")) {
         NSLog(@"Usage: %s --machServiceName <name> --storageLocation <location> [--startActivity]", arguments[0]);
         return -1;

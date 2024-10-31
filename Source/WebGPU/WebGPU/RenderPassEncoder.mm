@@ -1416,7 +1416,7 @@ void wgpuRenderPassEncoderEnd(WGPURenderPassEncoder renderPassEncoder)
 void wgpuRenderPassEncoderExecuteBundles(WGPURenderPassEncoder renderPassEncoder, size_t bundlesCount, const WGPURenderBundle* bundles)
 {
     Vector<Ref<WebGPU::RenderBundle>> bundlesToForward;
-    for (auto& bundle : unsafeForgeSpan(bundles, bundlesCount))
+    for (auto& bundle : unsafeMakeSpan(bundles, bundlesCount))
         bundlesToForward.append(WebGPU::protectedFromAPI(bundle));
     WebGPU::protectedFromAPI(renderPassEncoder)->executeBundles(WTFMove(bundlesToForward));
 }
@@ -1438,7 +1438,7 @@ void wgpuRenderPassEncoderPushDebugGroup(WGPURenderPassEncoder renderPassEncoder
 
 void wgpuRenderPassEncoderSetBindGroup(WGPURenderPassEncoder renderPassEncoder, uint32_t groupIndex, WGPUBindGroup group, size_t dynamicOffsetCount, const uint32_t* dynamicOffsets)
 {
-    WebGPU::protectedFromAPI(renderPassEncoder)->setBindGroup(groupIndex, WebGPU::protectedFromAPI(group), unsafeForgeSpan(dynamicOffsets, dynamicOffsetCount));
+    WebGPU::protectedFromAPI(renderPassEncoder)->setBindGroup(groupIndex, WebGPU::protectedFromAPI(group), unsafeMakeSpan(dynamicOffsets, dynamicOffsetCount));
 }
 
 void wgpuRenderPassEncoderSetBlendConstant(WGPURenderPassEncoder renderPassEncoder, const WGPUColor* color)

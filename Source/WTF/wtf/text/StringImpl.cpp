@@ -191,7 +191,7 @@ template<typename CharacterType> inline Ref<StringImpl> StringImpl::createUninit
     if (length > maxInternalLength<CharacterType>())
         CRASH();
     StringImpl* string = static_cast<StringImpl*>(StringImplMalloc::malloc(allocationSize<CharacterType>(length)));
-    data = unsafeForgeSpan(string->tailPointer<CharacterType>(), length);
+    data = unsafeMakeSpan(string->tailPointer<CharacterType>(), length);
     return constructInternal<CharacterType>(*string, length);
 }
 

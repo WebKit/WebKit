@@ -35,7 +35,7 @@ namespace WTF {
 bool dispatch_data_apply_span(dispatch_data_t data, const Function<bool(std::span<const uint8_t>)>& applier)
 {
     return dispatch_data_apply(data, makeBlockPtr([&applier](dispatch_data_t, size_t, const void* data, size_t size) {
-        return applier(unsafeForgeSpan(static_cast<const uint8_t*>(data), size));
+        return applier(unsafeMakeSpan(static_cast<const uint8_t*>(data), size));
     }).get());
 }
 

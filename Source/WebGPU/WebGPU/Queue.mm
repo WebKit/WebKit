@@ -1090,7 +1090,7 @@ void wgpuQueueOnSubmittedWorkDoneWithBlock(WGPUQueue queue, WGPUQueueWorkDoneBlo
 void wgpuQueueSubmit(WGPUQueue queue, size_t commandCount, const WGPUCommandBuffer* commands)
 {
     Vector<Ref<WebGPU::CommandBuffer>> commandsToForward;
-    for (auto& command : unsafeForgeSpan(commands, commandCount))
+    for (auto& command : unsafeMakeSpan(commands, commandCount))
         commandsToForward.append(WebGPU::protectedFromAPI(command));
     WebGPU::protectedFromAPI(queue)->submit(WTFMove(commandsToForward));
 }

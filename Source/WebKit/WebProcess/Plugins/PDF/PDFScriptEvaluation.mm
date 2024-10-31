@@ -124,7 +124,7 @@ static bool pdfDocumentContainsPrintScript(RetainPtr<CGPDFDocumentRef> pdfDocume
             CGPDFStringRef string = nullptr;
             if (!CGPDFDictionaryGetString(javaScriptAction, "JS", &string))
                 return nullptr;
-            return scriptFromBytes(unsafeForgeSpan(CGPDFStringGetBytePtr(string), CGPDFStringGetLength(string)));
+            return scriptFromBytes(unsafeMakeSpan(CGPDFStringGetBytePtr(string), CGPDFStringGetLength(string)));
         };
 
         if (RetainPtr<CFStringRef> script = scriptFromStream() ?: scriptFromString(); script && isPrintScript({ script.get() }))

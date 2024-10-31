@@ -492,7 +492,7 @@ EOF
 
             my $lastParameter = $specifiedParameters[$#specifiedParameters];
 
-            push(@contents, "\n    auto arguments = unsafeForgeSpan(unsafeArguments, argumentCount);\n\n") if scalar @specifiedParameters;
+            push(@contents, "\n    auto arguments = unsafeMakeSpan(unsafeArguments, argumentCount);\n\n") if scalar @specifiedParameters;
             my $needsScriptContext = $function->extendedAttributes->{"NeedsScriptContext"};
 
             my $needsFrame = $function->extendedAttributes->{"NeedsFrame"};

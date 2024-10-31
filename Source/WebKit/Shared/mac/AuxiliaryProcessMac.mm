@@ -431,8 +431,8 @@ static SandboxProfilePtr compileAndCacheSandboxProfile(const SandboxInfo& info)
     cacheFile.append(asByteSpan(cachedHeader));
     cacheFile.append(info.header.span());
     if (haveBuiltin)
-        cacheFile.append(unsafeForgeSpan(sandboxProfile->builtin, cachedHeader.builtinSize));
-    cacheFile.append(unsafeForgeSpan(sandboxProfile->data, cachedHeader.dataSize));
+        cacheFile.append(unsafeMakeSpan(sandboxProfile->builtin, cachedHeader.builtinSize));
+    cacheFile.append(unsafeMakeSpan(sandboxProfile->data, cachedHeader.dataSize));
 
     if (!writeSandboxDataToCacheFile(info, cacheFile))
         WTFLogAlways("%s: Unable to cache compiled sandbox\n", getprogname());

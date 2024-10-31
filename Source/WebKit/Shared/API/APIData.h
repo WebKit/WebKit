@@ -51,7 +51,7 @@ public:
         std::span<uint8_t> copiedBytes;
 
         if (!bytes.empty()) {
-            copiedBytes = unsafeForgeSpan(static_cast<uint8_t*>(fastMalloc(bytes.size())), bytes.size());
+            copiedBytes = unsafeMakeSpan(static_cast<uint8_t*>(fastMalloc(bytes.size())), bytes.size());
             memcpySpan(copiedBytes, bytes);
         }
 
@@ -70,7 +70,7 @@ public:
     {
         auto bufferSize = buffer.size();
         auto bufferPointer = buffer.releaseBuffer().leakPtr();
-        return createWithoutCopying(unsafeForgeSpan(bufferPointer, bufferSize), [] (uint8_t* bytes, const void*) {
+        return createWithoutCopying(unsafeMakeSpan(bufferPointer, bufferSize), [] (uint8_t* bytes, const void*) {
             if (bytes)
                 WTF::VectorMalloc::free(bytes);
         }, nullptr);

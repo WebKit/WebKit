@@ -190,7 +190,7 @@ JSObject* IntlPluralRules::resolvedOptions(JSGlobalObject* globalObject) const
     unsigned index = 0;
     while (const char* result = uenum_next(keywords.get(), &resultLength, &status)) {
         ASSERT(U_SUCCESS(status));
-        categories->putDirectIndex(globalObject, index++, jsNontrivialString(vm, String(unsafeForgeSpan(result, static_cast<size_t>(resultLength)))));
+        categories->putDirectIndex(globalObject, index++, jsNontrivialString(vm, String(unsafeMakeSpan(result, static_cast<size_t>(resultLength)))));
         RETURN_IF_EXCEPTION(scope, { });
     }
     options->putDirect(vm, Identifier::fromString(vm, "pluralCategories"_s), categories);

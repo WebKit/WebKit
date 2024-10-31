@@ -123,7 +123,7 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
     unsigned methodCount;
     struct objc_method_description *rawMethods = protocol_copyMethodDescriptionList(protocol, requiredMethods, true, &methodCount);
 
-    auto methods = unsafeForgeSpan(rawMethods, methodCount);
+    auto methods = unsafeMakeSpan(rawMethods, methodCount);
     for (auto& method : methods) {
         SEL selector = method.name;
 
@@ -146,7 +146,7 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
 {
     unsigned conformingProtocolCount;
     auto rawConformingProtocols = protocol_copyProtocolList(protocol, &conformingProtocolCount);
-    auto conformingProtocols = unsafeForgeSpan(rawConformingProtocols, conformingProtocolCount);
+    auto conformingProtocols = unsafeMakeSpan(rawConformingProtocols, conformingProtocolCount);
 
     for (auto& conformingProtocol : conformingProtocols) {
         if (conformingProtocol == @protocol(NSObject))

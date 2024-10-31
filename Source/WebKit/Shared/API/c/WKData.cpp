@@ -37,7 +37,7 @@ WKTypeID WKDataGetTypeID()
 
 WKDataRef WKDataCreate(const unsigned char* bytes, size_t size)
 {
-    return WebKit::toAPI(&API::Data::create(unsafeForgeSpan(bytes, size)).leakRef());
+    return WebKit::toAPI(&API::Data::create(unsafeMakeSpan(bytes, size)).leakRef());
 }
 
 const unsigned char* WKDataGetBytes(WKDataRef dataRef)
@@ -52,5 +52,5 @@ size_t WKDataGetSize(WKDataRef dataRef)
 
 std::span<const uint8_t> WKDataGetSpan(WKDataRef dataRef)
 {
-    return unsafeForgeSpan(byteCast<uint8_t>(WKDataGetBytes(dataRef)), WKDataGetSize(dataRef));
+    return unsafeMakeSpan(byteCast<uint8_t>(WKDataGetBytes(dataRef)), WKDataGetSize(dataRef));
 }

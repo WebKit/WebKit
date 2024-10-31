@@ -71,7 +71,7 @@ inline std::span<const uint8_t> span(GBytes* bytes)
 {
     size_t size = 0;
     const auto* ptr = static_cast<const uint8_t*>(g_bytes_get_data(bytes, &size));
-    return unsafeForgeSpan<const uint8_t>(ptr, size);
+    return unsafeMakeSpan<const uint8_t>(ptr, size);
 }
 
 inline std::span<const uint8_t> span(const GRefPtr<GBytes>& bytes)
@@ -81,7 +81,7 @@ inline std::span<const uint8_t> span(const GRefPtr<GBytes>& bytes)
 
 inline std::span<const uint8_t> span(GByteArray* array)
 {
-    return unsafeForgeSpan<const uint8_t>(array->data, array->len);
+    return unsafeMakeSpan<const uint8_t>(array->data, array->len);
 }
 
 inline std::span<const uint8_t> span(const GRefPtr<GByteArray>& array)
@@ -93,7 +93,7 @@ inline std::span<const uint8_t> span(GVariant* variant)
 {
     const auto* ptr = static_cast<const uint8_t*>(g_variant_get_data(variant));
     size_t size = g_variant_get_size(variant);
-    return unsafeForgeSpan<const uint8_t>(ptr, size);
+    return unsafeMakeSpan<const uint8_t>(ptr, size);
 }
 
 inline std::span<const uint8_t> span(const GRefPtr<GVariant>& variant)

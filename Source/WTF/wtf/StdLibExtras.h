@@ -764,7 +764,7 @@ template<typename OptionalType> auto valueOrDefault(OptionalType&& optionalValue
 // Use this when we can't edit the imported API and it doesn't offer
 // begin() / end() or a span accessor.
 template<typename T, std::size_t Extent = std::dynamic_extent>
-inline constexpr auto unsafeForgeSpan(T* ptr, size_t size)
+inline constexpr auto unsafeMakeSpan(T* ptr, size_t size)
 {
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     return std::span<T, Extent> { ptr, size };
@@ -810,27 +810,27 @@ std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent *
 template<typename T>
 std::span<const uint8_t> asByteSpan(const T& input)
 {
-    return unsafeForgeSpan(reinterpret_cast<const uint8_t*>(&input), sizeof(input));
+    return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(&input), sizeof(input));
 }
 
 template<typename T, std::size_t Extent>
 std::span<const uint8_t> asByteSpan(std::span<T, Extent> input)
 {
-    return unsafeForgeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size_bytes());
+    return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size_bytes());
 }
 
 template<typename T>
 std::span<uint8_t> asMutableByteSpan(T& input)
 {
     static_assert(!std::is_const_v<T>);
-    return unsafeForgeSpan(reinterpret_cast<uint8_t*>(&input), sizeof(input));
+    return unsafeMakeSpan(reinterpret_cast<uint8_t*>(&input), sizeof(input));
 }
 
 template<typename T, std::size_t Extent>
 std::span<uint8_t> asMutableByteSpan(std::span<T, Extent> input)
 {
     static_assert(!std::is_const_v<T>);
-    return unsafeForgeSpan(reinterpret_cast<uint8_t*>(input.data()), input.size_bytes());
+    return unsafeMakeSpan(reinterpret_cast<uint8_t*>(input.data()), input.size_bytes());
 }
 
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
@@ -1126,7 +1126,7 @@ using WTF::safeCast;
 using WTF::spanConstCast;
 using WTF::spanReinterpretCast;
 using WTF::tryBinarySearch;
-using WTF::unsafeForgeSpan;
+using WTF::unsafeMakeSpan;
 using WTF::valueOrCompute;
 using WTF::valueOrDefault;
 using WTF::toTwosComplement;

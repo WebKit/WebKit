@@ -46,7 +46,7 @@ WKStringRef WKStringCreateWithUTF8CString(const char* string)
 
 WKStringRef WKStringCreateWithUTF8CStringWithLength(const char* string, size_t stringLength)
 {
-    return WebKit::toAPI(&API::String::create(WTF::String::fromUTF8(unsafeForgeSpan(string, stringLength))).leakRef());
+    return WebKit::toAPI(&API::String::create(WTF::String::fromUTF8(unsafeMakeSpan(string, stringLength))).leakRef());
 }
 
 bool WKStringIsEmpty(WKStringRef stringRef)
@@ -85,7 +85,7 @@ size_t WKStringGetUTF8CStringImpl(WKStringRef stringRef, char* buffer, size_t bu
 
     auto string = WebKit::toImpl(stringRef)->stringView();
 
-    auto target = unsafeForgeSpan(byteCast<char8_t>(buffer), bufferSize);
+    auto target = unsafeMakeSpan(byteCast<char8_t>(buffer), bufferSize);
     WTF::Unicode::ConversionResult<char8_t> result;
     if (string.is8Bit())
         result = WTF::Unicode::convert(string.span8(), target.first(bufferSize - 1));

@@ -222,7 +222,7 @@ static String parseClause(const char* keyword, size_t keywordLength, FILE* file,
         FAIL_WITH_ERROR(SYNTAX_ERROR, ("Missing { after '", keyword, "' clause start delimiter:\n", line, "\n"));
 
     size_t delimiterLength = delimiterEnd - delimiterStart;
-    String delimiter(unsafeForgeSpan(delimiterStart, delimiterLength));
+    String delimiter(unsafeMakeSpan(delimiterStart, delimiterLength));
 
     if (hasDisallowedCharacters(delimiterStart, delimiterLength))
         FAIL_WITH_ERROR(SYNTAX_ERROR, ("Delimiter '", delimiter, "' cannot have '{', '}', or whitespace:\n", line, "\n"));

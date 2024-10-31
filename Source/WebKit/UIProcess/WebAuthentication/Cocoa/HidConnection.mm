@@ -53,7 +53,7 @@ static void reportReceived(void* context, IOReturn status, void*, IOHIDReportTyp
     ASSERT(reportID == kHidReportId);
     ASSERT(reportLength == kHidMaxPacketSize);
 
-    connection->receiveReport(unsafeForgeSpan(report, reportLength));
+    connection->receiveReport(unsafeMakeSpan(report, reportLength));
 }
 #endif // HAVE(SECURITY_KEY_API)
 

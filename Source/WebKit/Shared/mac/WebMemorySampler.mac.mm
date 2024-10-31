@@ -67,7 +67,7 @@ SystemMallocStats WebMemorySampler::sampleSystemMalloc() const
     mallocStats.purgeableMallocZoneStats = stats;
     
     malloc_get_all_zones(mach_task_self(), 0, &rawZones, &count);
-    auto zones = unsafeForgeSpan(rawZones, count);
+    auto zones = unsafeMakeSpan(rawZones, count);
     for (auto& zone : zones) {
         if (const char* name = malloc_get_zone_name(reinterpret_cast<malloc_zone_t*>(zone))) {
             stats.blocks_in_use = 0;
