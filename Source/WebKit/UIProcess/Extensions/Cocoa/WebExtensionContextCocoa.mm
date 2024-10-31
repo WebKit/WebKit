@@ -3506,7 +3506,7 @@ void WebExtensionContext::loadBackgroundWebView()
     Ref backgroundProcess = backgroundPage->protectedLegacyMainFrameProcess();
 
     // Use foreground activity to keep background content responsive to events.
-    m_backgroundWebViewActivity = backgroundProcess->throttler().foregroundActivity("Web Extension background content"_s);
+    m_backgroundWebViewActivity = backgroundProcess->protectedThrottler()->foregroundActivity("Web Extension background content"_s);
 
     if (!protectedExtension()->backgroundContentIsServiceWorker()) {
         backgroundPage->protectedLegacyMainFrameProcess()->send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageIDInMainFrameProcess()), identifier());
@@ -4135,7 +4135,7 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
         Ref process = inspectorBackgroundWebView._page->legacyMainFrameProcess();
 
         // Use foreground activity to keep background content responsive to events.
-        Ref inspectorBackgroundWebViewActivity = process->throttler().foregroundActivity("Web Extension Inspector background content"_s);
+        Ref inspectorBackgroundWebViewActivity = process->protectedThrottler()->foregroundActivity("Web Extension Inspector background content"_s);
 
         InspectorContext inspectorContext {
             tab->identifier(),

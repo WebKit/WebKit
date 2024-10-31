@@ -358,7 +358,7 @@ RefPtr<WebCore::WebGPU::CommandEncoder> RemoteDeviceProxy::createCommandEncoder(
     if (sendResult != IPC::Error::NoError)
         return nullptr;
 
-    auto result = RemoteCommandEncoderProxy::create(root(), protectedConvertToBackingContext(), identifier);
+    auto result = RemoteCommandEncoderProxy::create(protectedRoot(), protectedConvertToBackingContext(), identifier);
     if (convertedDescriptor)
         result->setLabel(WTFMove(convertedDescriptor->label));
     return result;

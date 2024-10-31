@@ -918,7 +918,7 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
     if (type.isEmpty())
         return Exception { ExceptionCode::TypeError };
 
-    auto context = scriptExecutionContext();
+    RefPtr context = scriptExecutionContext();
     if (!context)
         return Exception { ExceptionCode::NotAllowedError };
 
@@ -1021,28 +1021,28 @@ void MediaSource::removeSourceBufferWithOptionalDestruction(SourceBuffer& buffer
 
             // 5.3 For each AudioTrack object in the SourceBuffer audioTracks list, run the following steps:
             for (ssize_t index = audioTracks->length() - 1; index >= 0; index--) {
-                auto& track = *audioTracks->item(index);
+                Ref track = *audioTracks->item(index);
 
                 if (withDestruction) {
                     // 5.3.1 Set the sourceBuffer attribute on the AudioTrack object to null.
-                    track.setSourceBuffer(nullptr);
+                    track->setSourceBuffer(nullptr);
                 }
 
                 // 5.3.2 If the enabled attribute on the AudioTrack object is true, then set the removed enabled
                 // audio track flag to true.
-                if (track.enabled())
+                if (track->enabled())
                     removedEnabledAudioTrack = true;
 
                 // 5.3.3 Remove the AudioTrack object from the HTMLMediaElement audioTracks list.
                 // 5.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
                 // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement audioTracks list.
                 if (isMainThread()) {
-                    ensureWeakOnHTMLMediaElementContext([track = Ref { track }](auto& mediaElement) mutable {
+                    ensureWeakOnHTMLMediaElementContext([track = track](auto& mediaElement) mutable {
                         // FIXME: Need to send a mirror when we are in a worker.
                         mediaElement.removeAudioTrack(WTFMove(track));
                     });
                 } else {
-                    ensureWeakOnHTMLMediaElementContext([trackID = track.trackId()](auto& mediaElement) mutable {
+                    ensureWeakOnHTMLMediaElementContext([trackID = track->trackId()](auto& mediaElement) mutable {
                         mediaElement.removeAudioTrack(trackID);
                     });
                 }
@@ -1076,28 +1076,28 @@ void MediaSource::removeSourceBufferWithOptionalDestruction(SourceBuffer& buffer
 
             // 7.3 For each VideoTrack object in the SourceBuffer videoTracks list, run the following steps:
             for (ssize_t index = videoTracks->length() - 1; index >= 0; index--) {
-                auto& track = *videoTracks->item(index);
+                Ref track = *videoTracks->item(index);
 
                 if (withDestruction) {
                     // 7.3.1 Set the sourceBuffer attribute on the VideoTrack object to null.
-                    track.setSourceBuffer(nullptr);
+                    track->setSourceBuffer(nullptr);
                 }
 
                 // 7.3.2 If the selected attribute on the VideoTrack object is true, then set the removed selected
                 // video track flag to true.
-                if (track.selected())
+                if (track->selected())
                     removedSelectedVideoTrack = true;
 
                 // 7.3.3 Remove the VideoTrack object from the HTMLMediaElement videoTracks list.
                 // 7.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
                 // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement videoTracks list.
                 if (isMainThread()) {
-                    ensureWeakOnHTMLMediaElementContext([track = Ref { track }](auto& mediaElement) mutable {
+                    ensureWeakOnHTMLMediaElementContext([track = track](auto& mediaElement) mutable {
                         // FIXME: Need to send a mirror when we are in a worker.
                         mediaElement.removeVideoTrack(WTFMove(track));
                     });
                 } else {
-                    ensureWeakOnHTMLMediaElementContext([trackID = track.trackId()](auto& mediaElement) mutable {
+                    ensureWeakOnHTMLMediaElementContext([trackID = track->trackId()](auto& mediaElement) mutable {
                         mediaElement.removeVideoTrack(trackID);
                     });
                 }
@@ -1131,27 +1131,27 @@ void MediaSource::removeSourceBufferWithOptionalDestruction(SourceBuffer& buffer
 
             // 9.3 For each TextTrack object in the SourceBuffer textTracks list, run the following steps:
             for (ssize_t index = textTracks->length() - 1; index >= 0; index--) {
-                auto& track = *textTracks->lastItem();
+                Ref track = *textTracks->lastItem();
 
                 if (withDestruction) {
                     // 9.3.1 Set the sourceBuffer attribute on the TextTrack object to null.
-                    track.setSourceBuffer(nullptr);
+                    track->setSourceBuffer(nullptr);
                 }
 
                 // 9.3.2 If the mode attribute on the TextTrack object is set to "showing" or "hidden", then
                 // set the removed enabled text track flag to true.
-                if (track.mode() == TextTrack::Mode::Showing || track.mode() == TextTrack::Mode::Hidden)
+                if (track->mode() == TextTrack::Mode::Showing || track->mode() == TextTrack::Mode::Hidden)
                     removedEnabledTextTrack = true;
 
                 // 9.3.3 Remove the TextTrack object from the HTMLMediaElement textTracks list.
                 // 9.3.4 Queue a task to fire a trusted event named removetrack, that does not bubble and is not
                 // cancelable, and that uses the TrackEvent interface, at the HTMLMediaElement textTracks list.
                 if (isMainThread()) {
-                    ensureWeakOnHTMLMediaElementContext([track = Ref { track }](HTMLMediaElement& mediaElement) mutable {
+                    ensureWeakOnHTMLMediaElementContext([track = track](HTMLMediaElement& mediaElement) mutable {
                         mediaElement.removeTextTrack(WTFMove(track));
                     });
                 } else {
-                    ensureWeakOnHTMLMediaElementContext([trackID = track.trackId()](auto& mediaElement) mutable {
+                    ensureWeakOnHTMLMediaElementContext([trackID = track->trackId()](auto& mediaElement) mutable {
                         mediaElement.removeTextTrack(trackID);
                     });
                 }
@@ -1608,7 +1608,7 @@ WTFLogChannel& MediaSource::logChannel() const
 
 void MediaSource::failedToCreateRenderer(RendererType type)
 {
-    if (auto context = scriptExecutionContext())
+    if (RefPtr context = scriptExecutionContext())
         context->addConsoleMessage(MessageSource::JS, MessageLevel::Error, makeString("MediaSource "_s, type == RendererType::Video ? "video"_s : "audio"_s, " renderer creation failed."_s));
 }
 
