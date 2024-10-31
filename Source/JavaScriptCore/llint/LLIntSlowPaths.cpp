@@ -1135,25 +1135,22 @@ LLINT_SLOW_PATH_DECL(slow_path_put_by_id)
         if (newStructure->propertyAccessesAreCacheable() && baseCell == slot.base()) {
             if (slot.type() == PutPropertySlot::NewProperty) {
                 GCSafeConcurrentJSLocker locker(codeBlock->m_lock, vm);
-                if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity()) {
-                    ASSERT(oldStructure == newStructure->previousID());
-                    if (oldStructure == newStructure->previousID()) {
-                        ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
+                if (!newStructure->isDictionary() && newStructure->previousID()->outOfLineCapacity() == newStructure->outOfLineCapacity() && newStructure->previousID() == oldStructure) {
+                    ASSERT(oldStructure->transitionWatchpointSetHasBeenInvalidated());
 
-                        bool sawPolyProto = false;
-                        auto result = normalizePrototypeChain(globalObject, baseCell, sawPolyProto);
-                        if (result != InvalidPrototypeChain && !sawPolyProto) {
-                            ASSERT(oldStructure->isObject());
-                            metadata.m_oldStructureID = oldStructure->id();
-                            metadata.m_offset = slot.cachedOffset();
-                            metadata.m_newStructureID = newStructure->id();
-                            if (!(bytecode.m_flags.isDirect())) {
-                                StructureChain* chain = newStructure->prototypeChain(vm, globalObject, asObject(baseCell));
-                                ASSERT(chain);
-                                metadata.m_structureChain.set(vm, codeBlock, chain);
-                            }
-                            vm.writeBarrier(codeBlock);
+                    bool sawPolyProto = false;
+                    auto result = normalizePrototypeChain(globalObject, baseCell, sawPolyProto);
+                    if (result != InvalidPrototypeChain && !sawPolyProto) {
+                        ASSERT(oldStructure->isObject());
+                        metadata.m_oldStructureID = oldStructure->id();
+                        metadata.m_offset = slot.cachedOffset();
+                        metadata.m_newStructureID = newStructure->id();
+                        if (!(bytecode.m_flags.isDirect())) {
+                            StructureChain* chain = newStructure->prototypeChain(vm, globalObject, asObject(baseCell));
+                            ASSERT(chain);
+                            metadata.m_structureChain.set(vm, codeBlock, chain);
                         }
+                        vm.writeBarrier(codeBlock);
                     }
                 }
             } else {
