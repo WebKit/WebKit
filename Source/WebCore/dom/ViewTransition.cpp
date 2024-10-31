@@ -344,6 +344,15 @@ static AtomString effectiveViewTransitionName(RenderLayerModelObject& renderer, 
     return makeAtomString("-ua-auto-"_s, String::number(renderer.element()->identifier().toRawValue()));
 }
 
+static AtomString effectiveViewTransitionName(RenderLayerModelObject& renderer)
+{
+    auto styleable = Styleable::fromRenderer(renderer);
+    if (!styleable)
+        return nullAtom();
+
+    return effectiveViewTransitionName(renderer, styleable->element, renderer.document().styleScope(), false);
+}
+
 static ExceptionOr<void> checkDuplicateViewTransitionName(const AtomString& name, ListHashSet<AtomString>& usedTransitionNames)
 {
     if (usedTransitionNames.contains(name))
@@ -876,15 +885,12 @@ ExceptionOr<void> ViewTransition::updatePseudoElementStyles()
 
 RenderViewTransitionCapture* ViewTransition::viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject& renderer)
 {
-    for (auto& [name, capturedElement] : m_namedElements.map()) {
-        if (auto newStyleable = capturedElement->newElement.styleable()) {
-            if (newStyleable->renderer() == &renderer) {
-                Styleable styleable(*renderer.document().documentElement(), Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name });
-                return dynamicDowncast<RenderViewTransitionCapture>(styleable.renderer());
-            }
-        }
-    }
-    return nullptr;
+    auto name = effectiveViewTransitionName(renderer);
+    if (name.isNull())
+        return nullptr;
+
+    Styleable styleable(*renderer.document().documentElement(), Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name });
+    return dynamicDowncast<RenderViewTransitionCapture>(styleable.renderer());
 }
 
 // https://drafts.csswg.org/css-view-transitions/#page-visibility-change-steps
