@@ -587,7 +587,7 @@ public:
 
     void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_value)
+        if (!(imm.m_value & 0x1f))
             move(src, dest);
         else
             m_assembler.asr(dest, src, imm.m_value & 0x1f);
@@ -616,7 +616,7 @@ public:
     
     void urshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
-        if (!imm.m_value)
+        if (!(imm.m_value & 0x1f))
             move(src, dest);
         else
             m_assembler.lsr(dest, src, imm.m_value & 0x1f);
