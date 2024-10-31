@@ -36,7 +36,6 @@ namespace WebCore {
 
 class AnimationList;
 class AutosizeStatus;
-class BasicShapePath;
 class BorderData;
 class BorderValue;
 class CSSCustomPropertyValue;
@@ -88,6 +87,7 @@ class StyleCustomPropertyData;
 class StyleImage;
 class StyleInheritedData;
 class StyleNonInheritedData;
+class StylePathData;
 class StyleRareInheritedData;
 class StyleReflection;
 class StyleScrollSnapArea;
@@ -1718,9 +1718,9 @@ public:
     inline const Length& y() const;
     inline void setY(Length&&);
 
-    inline void setD(RefPtr<BasicShapePath>&&);
-    inline BasicShapePath* d() const;
-    static BasicShapePath* initialD() { return nullptr; }
+    inline void setD(RefPtr<StylePathData>&&);
+    inline StylePathData* d() const;
+    static StylePathData* initialD() { return nullptr; }
 
     inline float floodOpacity() const;
     inline void setFloodOpacity(float);

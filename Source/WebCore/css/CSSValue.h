@@ -67,18 +67,17 @@ public:
     bool isAttrValue() const { return m_classType == ClassType::Attr; }
     bool isAspectRatioValue() const { return m_classType == ClassType::AspectRatio; }
     bool isBackgroundRepeatValue() const { return m_classType == ClassType::BackgroundRepeat; }
+    bool isBasicShape() const { return m_classType == ClassType::BasicShape; }
     bool isBorderImageSliceValue() const { return m_classType == ClassType::BorderImageSlice; }
     bool isBorderImageWidthValue() const { return m_classType == ClassType::BorderImageWidth; }
     bool isCalcValue() const { return m_classType == ClassType::Calculation; }
     bool isCanvasValue() const { return m_classType == ClassType::Canvas; }
-    bool isCircle() const { return m_classType == ClassType::Circle; }
     bool isContentDistributionValue() const { return m_classType == ClassType::ContentDistribution; }
     bool isCounter() const { return m_classType == ClassType::Counter; }
     bool isCrossfadeValue() const { return m_classType == ClassType::Crossfade; }
     bool isCubicBezierTimingFunctionValue() const { return m_classType == ClassType::CubicBezierTimingFunction; }
     bool isCursorImageValue() const { return m_classType == ClassType::CursorImage; }
     bool isCustomPropertyValue() const { return m_classType == ClassType::CustomProperty; }
-    bool isEllipse() const { return m_classType == ClassType::Ellipse; }
     bool isFilterImageValue() const { return m_classType == ClassType::FilterImage; }
     bool isFontFaceSrcLocalValue() const { return m_classType == ClassType::FontFaceSrcLocal; }
     bool isFontFaceSrcResourceValue() const { return m_classType == ClassType::FontFaceSrcResource; }
@@ -99,7 +98,6 @@ public:
     bool isImageSetOptionValue() const { return m_classType == ClassType::ImageSetOption; }
     bool isImageSetValue() const { return m_classType == ClassType::ImageSet; }
     bool isImageValue() const { return m_classType == ClassType::Image; }
-    bool isInsetShape() const { return m_classType == ClassType::InsetShape; }
     bool isLineBoxContainValue() const { return m_classType == ClassType::LineBoxContain; }
     bool isLinearTimingFunctionValue() const { return m_classType == ClassType::LinearTimingFunction; }
     bool isNamedImageValue() const { return m_classType == ClassType::NamedImage; }
@@ -107,17 +105,13 @@ public:
     bool isPair() const { return m_classType == ClassType::ValuePair; }
     bool isPath() const { return m_classType == ClassType::Path; }
     bool isPendingSubstitutionValue() const { return m_classType == ClassType::PendingSubstitutionValue; }
-    bool isPolygon() const { return m_classType == ClassType::Polygon; }
     bool isPrimitiveValue() const { return m_classType == ClassType::Primitive; }
     bool isQuad() const { return m_classType == ClassType::Quad; }
     bool isRayValue() const { return m_classType == ClassType::Ray; }
     bool isRect() const { return m_classType == ClassType::Rect; }
-    bool isRectShape() const { return m_classType == ClassType::RectShape; }
     bool isReflectValue() const { return m_classType == ClassType::Reflect; }
     bool isScrollValue() const { return m_classType == ClassType::Scroll; }
     bool isShadowValue() const { return m_classType == ClassType::Shadow; }
-    bool isShape() const { return m_classType == ClassType::Shape; }
-    bool isShapeSegment() const { return m_classType == ClassType::ShapeSegment; }
     bool isSpringTimingFunctionValue() const { return m_classType == ClassType::SpringTimingFunction; }
     bool isStepsTimingFunctionValue() const { return m_classType == ClassType::StepsTimingFunction; }
     bool isSubgridValue() const { return m_classType == ClassType::Subgrid; }
@@ -126,7 +120,6 @@ public:
     bool isValueList() const { return m_classType == ClassType::ValueList; }
     bool isVariableReferenceValue() const { return m_classType == ClassType::VariableReference; }
     bool isViewValue() const { return m_classType == ClassType::View; }
-    bool isXywhShape() const { return m_classType == ClassType::XywhShape; }
     bool isPaintImageValue() const { return m_classType == ClassType::PaintImage; }
 
     bool hasVariableReferences() const { return isVariableReferenceValue() || isPendingSubstitutionValue(); }
@@ -228,14 +221,13 @@ protected:
         AspectRatio,
         Attr,
         BackgroundRepeat,
+        BasicShape,
         BorderImageSlice,
         BorderImageWidth,
         Calculation,
-        Circle,
         ContentDistribution,
         Counter,
         CustomProperty,
-        Ellipse,
         Font,
         FontFaceSrcLocal,
         FontFaceSrcResource,
@@ -248,7 +240,6 @@ protected:
         GridLineNames,
         GridLineValue,
         GridTemplateAreas,
-        InsetShape,
         LineBoxContain,
         OffsetRotate,
         Path,
@@ -256,16 +247,13 @@ protected:
         Quad,
         Ray,
         Rect,
-        RectShape,
         Reflect,
         Scroll,
         Shadow,
-        ShapeSegment,
         UnicodeRange,
         ValuePair,
         VariableReference,
         View,
-        XywhShape,
 
         // Classes that contain vectors, which derive from CSSValueContainingVector.
         ValueList,
@@ -273,8 +261,6 @@ protected:
         GridAutoRepeat,
         GridIntegerRepeat,
         ImageSet,
-        Polygon,
-        Shape,
         Subgrid,
         TransformList,
         // Do not append classes here unless they derive from CSSValueContainingVector.

@@ -27,7 +27,6 @@
 #include "config.h"
 #include "SVGRenderingContext.h"
 
-#include "BasicShapes.h"
 #include "LegacyRenderSVGImage.h"
 #include "LegacyRenderSVGResourceClipper.h"
 #include "LegacyRenderSVGResourceFilter.h"

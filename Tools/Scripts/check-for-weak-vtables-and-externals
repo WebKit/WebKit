@@ -75,6 +75,9 @@ if (!defined $executablePathAge || !defined $buildTimestampAge || $executablePat
             # Ignore weak symbols present when compiling with coverage enabled.
             next if /\b(___llvm_profile_filename|___llvm_profile_raw_version|_lprofDirMode|__llvm_profile_reset_counters)/ && $skipProfileSymbols;
 
+            # FIXME: Temporarily ignore these weak external template parameter object symbols present when compiling. Working to understand why these get produced (https://github.com/llvm/llvm-project/issues/113824)
+            next if /\b__ZTAXtlN7WebCore3CSS5RangeELd0000000000000000ELd7ff0000000000000EEE/ or /\b__ZTAXtlN7WebCore3CSS5RangeELdfff0000000000000ELd7ff0000000000000EEE/;
+
             if (/weak external vtable for (.*)$/) {
                 push @weakVTableClasses, $1;
             } elsif (/weak external (.*)$/) {

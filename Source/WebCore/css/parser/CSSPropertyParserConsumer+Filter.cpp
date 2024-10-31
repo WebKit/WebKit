@@ -32,10 +32,13 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+Angle.h"
+#include "CSSPropertyParserConsumer+Background.h"
+#include "CSSPropertyParserConsumer+Color.h"
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+Length.h"
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+Percentage.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSShadowValue.h"
@@ -133,6 +136,47 @@ static RefPtr<CSSFunctionValue> consumeFilterFunctionContrast(CSSParserTokenRang
     return CSSFunctionValue::create(function, parsedValue.releaseNonNull());
 }
 
+static RefPtr<CSSValue> consumeDropShadow(CSSParserTokenRange& range, const CSSParserContext& context)
+{
+    // <drop-shadow> = [ <color>? && <length>{2,3} ]
+
+    RefPtr<CSSPrimitiveValue> color;
+    RefPtr<CSSPrimitiveValue> horizontalOffset;
+    RefPtr<CSSPrimitiveValue> verticalOffset;
+    RefPtr<CSSPrimitiveValue> standardDeviation;
+
+    auto consumeOptionalColor = [&] -> bool {
+        if (color)
+            return false;
+        color = consumeColor(range, context);
+        return !!color;
+    };
+
+    auto consumeLengths = [&] -> bool {
+        if (horizontalOffset)
+            return false;
+        horizontalOffset = consumeLength(range, context);
+        if (!horizontalOffset)
+            return false;
+        verticalOffset = consumeLength(range, context);
+        if (!verticalOffset)
+            return false;
+        // FIXME: the CSS filters spec does not say this should be non-negative, but tests currently rely on this.
+        standardDeviation = consumeLength(range, context, ValueRange::NonNegative);
+        return true;
+    };
+
+    while (!range.atEnd()) {
+        if (consumeOptionalColor() || consumeLengths())
+            continue;
+        break;
+    }
+
+    if (!verticalOffset)
+        return nullptr;
+    return CSSShadowValue::create(WTFMove(horizontalOffset), WTFMove(verticalOffset), WTFMove(standardDeviation), nullptr, nullptr, WTFMove(color));
+}
+
 static RefPtr<CSSFunctionValue> consumeFilterFunctionDropShadow(CSSParserTokenRange& range, const CSSParserContext& context, AllowedFilterFunctions allowedFunctions)
 {
     // drop-shadow() = drop-shadow( [ <color>? && <length>{2,3} ] )
@@ -144,7 +188,7 @@ static RefPtr<CSSFunctionValue> consumeFilterFunctionDropShadow(CSSParserTokenRa
 
     auto args = consumeFunction(range);
 
-    auto parsedValue = consumeSingleShadow(args, context, false, false);
+    auto parsedValue = consumeDropShadow(args, context);
     if (!parsedValue || !args.atEnd())
         return nullptr;
 

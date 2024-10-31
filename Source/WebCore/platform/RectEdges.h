@@ -35,7 +35,10 @@ namespace WebCore {
 
 template<typename T> class RectEdges {
 public:
-    RectEdges() = default;
+    RectEdges() requires (std::is_default_constructible_v<T>)
+        : m_sides { }
+    {
+    }
 
     RectEdges(const RectEdges&) = default;
     RectEdges& operator=(const RectEdges&) = default;
@@ -43,12 +46,14 @@ public:
     template<typename U>
     RectEdges(U&& top, U&& right, U&& bottom, U&& left)
         : m_sides({ { std::forward<T>(top), std::forward<T>(right), std::forward<T>(bottom), std::forward<T>(left) } })
-    { }
+    {
+    }
 
     template<typename U>
     RectEdges(const RectEdges<U>& other)
         : RectEdges(other.top(), other.right(), other.bottom(), other.left())
-    { }
+    {
+    }
 
     T& at(BoxSide side) { return m_sides[static_cast<size_t>(side)]; }
     T& operator[](BoxSide side) { return m_sides[static_cast<size_t>(side)]; }
@@ -119,15 +124,15 @@ public:
         return yFlippedCopy();
     }
 
-    friend bool operator==(const RectEdges&, const RectEdges&) = default;
-
     bool isZero() const
     {
         return !top() && !right() && !bottom() && !left();
     }
 
+    bool operator==(const RectEdges<T>&) const = default;
+
 private:
-    std::array<T, 4> m_sides { };
+    std::array<T, 4> m_sides;
 };
 
 template<typename T>

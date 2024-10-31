@@ -28,6 +28,7 @@
 #include "CSSParserToken.h"
 #include "CSSParserTokenRange.h"
 #include "CSSPrimitiveValue.h"
+#include "CSSValuePool.h"
 #include <optional>
 #include <wtf/RefPtr.h>
 

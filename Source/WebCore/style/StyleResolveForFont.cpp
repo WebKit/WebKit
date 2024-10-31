@@ -54,6 +54,7 @@
 #include "Settings.h"
 #include "StyleFontSizeFunctions.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
+#include "StylePrimitiveNumericTypes+Evaluation.h"
 #include "WebKitFontFamilyNames.h"
 
 namespace WebCore {

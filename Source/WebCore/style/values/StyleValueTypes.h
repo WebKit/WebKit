@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class RenderStyle;
+struct BlendingContext;
 
 namespace Style {
 
@@ -61,7 +62,7 @@ template<typename> struct StyleToCSSMapping;
     template<> struct CSSToStyleMapping<css> { using type = style; }; \
     template<> struct StyleToCSSMapping<style> { using type = css; }; \
 
-// All non-converting and non-tuple like conforming types must implement the following for conversions:
+// All non-converting and non-tuple-like conforming types must implement the following for conversions:
 //
 //    template<> struct WebCore::Style::ToCSS<StyleType> {
 //        CSSType operator()(const StyleType&, const RenderStyle&);
@@ -161,10 +162,11 @@ template<typename T, size_t inlineCapacity = 0> struct CommaSeparatedVector {
 // Wraps a fixed size list of elements of a single type, semantically marking them as serializing as "space separated".
 template<typename T, size_t N> struct SpaceSeparatedArray {
     using Array = std::array<T, N>;
+    using value_type = T;
 
     template<typename...Ts>
         requires (sizeof...(Ts) == N && WTF::all<std::is_same_v<T, Ts>...>)
-    constexpr SpaceSeparatedArray(Ts&&... values)
+    constexpr SpaceSeparatedArray(Ts... values)
         : value { std::forward<Ts>(values)... }
     {
     }
@@ -188,13 +190,16 @@ template<size_t I, typename T, size_t N> decltype(auto) get(const SpaceSeparated
     return std::get<I>(array.value);
 }
 
+template<typename T> using SpaceSeparatedPair = SpaceSeparatedArray<T, 2>;
+
 // Wraps a fixed size list of elements of a single type, semantically marking them as serializing as "comma separated".
 template<typename T, size_t N> struct CommaSeparatedArray {
     using Array = std::array<T, N>;
+    using value_type = T;
 
     template<typename...Ts>
         requires (sizeof...(Ts) == N && WTF::all<std::is_same_v<T, Ts>...>)
-    constexpr CommaSeparatedArray(Ts&&... values)
+    constexpr CommaSeparatedArray(Ts... values)
         : value { std::forward<Ts>(values)... }
     {
     }
@@ -217,6 +222,8 @@ template<size_t I, typename T, size_t N> decltype(auto) get(const CommaSeparated
 {
     return std::get<I>(array.value);
 }
+
+template<typename T> using CommaSeparatedPair = CommaSeparatedArray<T, 2>;
 
 // Wraps a variadic list of types, semantically marking them as serializing as "space separated".
 template<typename... Ts> struct SpaceSeparatedTuple {
@@ -276,6 +283,62 @@ template<size_t I, typename... Ts> decltype(auto) get(const CommaSeparatedTuple<
     return std::get<I>(tuple.value);
 }
 
+// Wraps a pair of elements of a single type, semantically marking them as serializing as "point".
+template<typename T> struct Point {
+    using Array = SpaceSeparatedPair<T>;
+    using value_type = T;
+
+    constexpr Point(T p1, T p2)
+        : value { WTFMove(p1), WTFMove(p2) }
+    {
+    }
+
+    constexpr Point(SpaceSeparatedPair<T>&& array)
+        : value { WTFMove(array) }
+    {
+    }
+
+    constexpr bool operator==(const Point<T>&) const = default;
+
+    const T& x() const { return get<0>(value); }
+    const T& y() const { return get<1>(value); }
+
+    SpaceSeparatedPair<T> value;
+};
+
+template<size_t I, typename T> decltype(auto) get(const Point<T>& point)
+{
+    return get<I>(point.value);
+}
+
+// Wraps a pair of elements of a single type, semantically marking them as serializing as "size".
+template<typename T> struct Size {
+    using Array = SpaceSeparatedPair<T>;
+    using value_type = T;
+
+    constexpr Size(T p1, T p2)
+        : value { WTFMove(p1), WTFMove(p2) }
+    {
+    }
+
+    constexpr Size(SpaceSeparatedPair<T>&& array)
+        : value { WTFMove(array) }
+    {
+    }
+
+    constexpr bool operator==(const Size<T>&) const = default;
+
+    const T& width() const { return get<0>(value); }
+    const T& height() const { return get<1>(value); }
+
+    SpaceSeparatedPair<T> value;
+};
+
+template<size_t I, typename T> decltype(auto) get(const Size<T>& size)
+{
+    return get<I>(size.value);
+}
+
 // MARK: - Conversion from "Style to "CSS"
 
 // Conversion Invoker
@@ -328,9 +391,11 @@ template<typename... StyleTypes> struct ToCSS<std::variant<StyleTypes...>> {
 
 // Specialization for `FunctionNotation`.
 template<CSSValueID Name, typename StyleType> struct ToCSS<FunctionNotation<Name, StyleType>> {
+    using Result = CSS::FunctionNotation<Name, CSSType<StyleType>>;
+
     decltype(auto) operator()(const FunctionNotation<Name, StyleType>& value, const RenderStyle& style)
     {
-        return FunctionNotation<Name, CSSType<StyleType>> { toCSS(value.parameters, style) };
+        return Result { toCSS(value.parameters, style) };
     }
 };
 
@@ -391,6 +456,26 @@ template<typename... StyleTypes> struct ToCSS<CommaSeparatedTuple<StyleTypes...>
     decltype(auto) operator()(const CommaSeparatedTuple<StyleTypes...>& value, const RenderStyle& style)
     {
         return Result { toCSSOnTupleLike<typename Result::Tuple>(value.value, style) };
+    }
+};
+
+// Specialization for `Point`.
+template<typename StyleType> struct ToCSS<Point<StyleType>> {
+    using Result = CSS::Point<CSSType<StyleType>>;
+
+    decltype(auto) operator()(const Point<StyleType>& value, const RenderStyle& style)
+    {
+        return Result { toCSS(value.value, style) };
+    }
+};
+
+// Specialization for `Size`.
+template<typename StyleType> struct ToCSS<Size<StyleType>> {
+    using Result = CSS::Size<CSSType<StyleType>>;
+
+    decltype(auto) operator()(const Size<StyleType>& value, const RenderStyle& style)
+    {
+        return Result { toCSS(value.value, style) };
     }
 };
 
@@ -508,17 +593,19 @@ template<typename... CSSTypes> struct ToStyle<std::variant<CSSTypes...>> {
 
 // Specialization for `FunctionNotation`.
 template<CSSValueID Name, typename CSSType> struct ToStyle<CSS::FunctionNotation<Name, CSSType>> {
+    using Result = FunctionNotation<Name, StyleType<CSSType>>;
+
     decltype(auto) operator()(const CSS::FunctionNotation<Name, CSSType>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
     {
-        return FunctionNotation<Name, StyleType<CSSType>> { toStyle(value.parameters, conversionData, symbolTable) };
+        return Result { toStyle(value.parameters, conversionData, symbolTable) };
     }
     decltype(auto) operator()(const CSS::FunctionNotation<Name, CSSType>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
-        return FunctionNotation<Name, StyleType<CSSType>> { toStyle(value.parameters, builderState, symbolTable) };
+        return Result { toStyle(value.parameters, builderState, symbolTable) };
     }
     decltype(auto) operator()(const CSS::FunctionNotation<Name, CSSType>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
     {
-        return FunctionNotation<Name, StyleType<CSSType>> { toStyleNoConversionDataRequired(value.parameters, symbolTable) };
+        return Result { toStyleNoConversionDataRequired(value.parameters, symbolTable) };
     }
 };
 
@@ -630,6 +717,277 @@ template<typename... CSSTypes> struct ToStyle<CSS::CommaSeparatedTuple<CSSTypes.
     }
 };
 
+// Specialization for `Point`.
+template<typename CSSType> struct ToStyle<CSS::Point<CSSType>> {
+    using Result = Point<StyleType<CSSType>>;
+
+    decltype(auto) operator()(const CSS::Point<CSSType>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+    {
+        return Result { toStyle(value.value, conversionData, symbolTable) };
+    }
+    decltype(auto) operator()(const CSS::Point<CSSType>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    {
+        return Result { toStyle(value.value, builderState, symbolTable) };
+    }
+    decltype(auto) operator()(const CSS::Point<CSSType>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
+    {
+        return Result { toStyleNoConversionDataRequired(value.value, symbolTable) };
+    }
+};
+
+// Specialization for `Size`.
+template<typename CSSType> struct ToStyle<CSS::Size<CSSType>> {
+    using Result = Size<StyleType<CSSType>>;
+
+    decltype(auto) operator()(const CSS::Size<CSSType>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+    {
+        return Result { toStyle(value.value, conversionData, symbolTable) };
+    }
+    decltype(auto) operator()(const CSS::Size<CSSType>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    {
+        return Result { toStyle(value.value, builderState, symbolTable) };
+    }
+    decltype(auto) operator()(const CSS::Size<CSSType>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
+    {
+        return Result { toStyleNoConversionDataRequired(value.value, symbolTable) };
+    }
+};
+
+// MARK: - Blending
+
+// All non-tuple-like leaf types must specialize `Blending` with the following member functions:
+//
+//    template<> struct WebCore::Style::Blending<StyleType> {
+//        bool canBlend(const StyleType&, const StyleType&);
+//        StyleType blend(const StyleType&, const StyleType&, const BlendingContext&);
+//    };
+
+template<typename> struct Blending;
+
+// `CanBlend` Invoker
+template<typename StyleType> auto canBlend(const StyleType& a, const StyleType& b) -> bool
+{
+    return Blending<StyleType>{}.canBlend(a, b);
+}
+
+// `Blend` Invoker
+template<typename StyleType> auto blend(const StyleType& a, const StyleType& b, const BlendingContext& context) -> StyleType
+{
+    return Blending<StyleType>{}.blend(a, b, context);
+}
+
+template<typename StyleType> auto canBlendOnTupleLike(const StyleType& a, const StyleType& b) -> bool
+{
+    return WTF::apply([&](const auto& ...pair) {
+        return (WebCore::Style::canBlend(std::get<0>(pair), std::get<1>(pair)) && ...);
+    }, WTF::tuple_zip(a, b));
+}
+
+template<typename StyleType> auto blendOnTupleLike(const StyleType& a, const StyleType& b, const BlendingContext& context) -> StyleType
+{
+    return WTF::apply([&](const auto& ...pair) {
+        return StyleType { WebCore::Style::blend(std::get<0>(pair), std::get<1>(pair), context)... };
+    }, WTF::tuple_zip(a, b));
+}
+
+// Constrained for `TreatAsTupleLike`.
+template<typename StyleType> requires (TreatAsTupleLike<StyleType>) struct Blending<StyleType> {
+    constexpr auto canBlend(const StyleType& a, const StyleType& b) -> bool
+    {
+        return canBlendOnTupleLike(a, b);
+    }
+    auto blend(const StyleType& a, const StyleType& b, const BlendingContext& context) -> StyleType
+    {
+        return blendOnTupleLike(a, b, context);
+    }
+};
+
+// Specialization for `Constant`.
+template<CSSValueID C> struct Blending<Constant<C>> {
+    constexpr auto canBlend(const Constant<C>&, const Constant<C>&) -> bool
+    {
+        return true;
+    }
+    auto blend(const Constant<C>&, const Constant<C>&, const BlendingContext&) -> Constant<C>
+    {
+        return { };
+    }
+};
+
+// Specialization for `std::optional`.
+template<typename StyleType> struct Blending<std::optional<StyleType>> {
+    auto canBlend(const std::optional<StyleType>& a, const std::optional<StyleType>& b) -> bool
+    {
+        if (a && b)
+            return WebCore::Style::canBlend(*a, *b);
+        if (!a && !b)
+            return true;
+        return false;
+    }
+    auto blend(const std::optional<StyleType>& a, const std::optional<StyleType>& b, const BlendingContext& context) -> std::optional<StyleType>
+    {
+        if (a && b)
+            return WebCore::Style::blend(*a, *b, context);
+        return std::nullopt;
+    }
+};
+
+// Specialization for `std::variant`.
+template<typename... StyleTypes> struct Blending<std::variant<StyleTypes...>> {
+    auto canBlend(const std::variant<StyleTypes...>& a, const std::variant<StyleTypes...>& b) -> bool
+    {
+        return std::visit(WTF::makeVisitor(
+            []<typename T>(const T& a, const T& b) -> bool {
+                return WebCore::Style::canBlend(a, b);
+            },
+            [](const auto&, const auto&) -> bool {
+                return false;
+            }
+        ), a, b);
+    }
+    auto blend(const std::variant<StyleTypes...>& a, const std::variant<StyleTypes...>& b, const BlendingContext& context) -> std::variant<StyleTypes...>
+    {
+        return std::visit(WTF::makeVisitor(
+            [&]<typename T>(const T& a, const T& b) -> std::variant<StyleTypes...> {
+                return WebCore::Style::blend(a, b, context);
+            },
+            [](const auto&, const auto&) -> std::variant<StyleTypes...> {
+                RELEASE_ASSERT_NOT_REACHED();
+            }
+        ), a, b);
+    }
+};
+
+// Specialization for `FunctionNotation`.
+template<CSSValueID Name, typename StyleType> struct Blending<FunctionNotation<Name, StyleType>> {
+    auto canBlend(const FunctionNotation<Name, StyleType>& a, const FunctionNotation<Name, StyleType>& b) -> bool
+    {
+        return WebCore::Style::canBlend(a.parameters, b.parameters);
+    }
+    auto blend(const FunctionNotation<Name, StyleType>& a, const FunctionNotation<Name, StyleType>& b, const BlendingContext& context) -> FunctionNotation<Name, StyleType>
+    {
+        return { WebCore::Style::blend(a.parameters, b.parameters, context) };
+    }
+};
+
+// Specialization for `SpaceSeparatedVector`.
+template<typename StyleType, size_t inlineCapacity> struct Blending<SpaceSeparatedVector<StyleType, inlineCapacity>> {
+    auto canBlend(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b) -> bool
+    {
+        if (a.size() != b.size())
+            return false;
+        for (size_t i = 0; i < a.size(); ++i) {
+            if (!WebCore::Style::canBlend(a[i], b[i]))
+                return false;
+        }
+        return true;
+    }
+    auto blend(const SpaceSeparatedVector<StyleType, inlineCapacity>& a, const SpaceSeparatedVector<StyleType, inlineCapacity>& b, const BlendingContext& context) -> SpaceSeparatedVector<StyleType, inlineCapacity>
+    {
+        auto size = a.size();
+        typename SpaceSeparatedVector<StyleType, inlineCapacity>::Vector result;
+        result.reserveInitialCapacity(size);
+        for (size_t i = 0; i < size; ++i)
+            result.append(WebCore::Style::blend(a[i], b[i], context));
+        return { WTFMove(result) };
+    }
+};
+
+// Specialization for `CommaSeparatedVector`.
+template<typename StyleType, size_t inlineCapacity> struct Blending<CommaSeparatedVector<StyleType, inlineCapacity>> {
+    auto canBlend(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b) -> bool
+    {
+        if (a.size() != b.size())
+            return false;
+        for (size_t i = 0; i < a.size(); ++i) {
+            if (!WebCore::Style::canBlend(a[i], b[i]))
+                return false;
+        }
+        return true;
+    }
+    auto blend(const CommaSeparatedVector<StyleType, inlineCapacity>& a, const CommaSeparatedVector<StyleType, inlineCapacity>& b, const BlendingContext& context) -> CommaSeparatedVector<StyleType, inlineCapacity>
+    {
+        auto size = a.size();
+        typename CommaSeparatedVector<StyleType, inlineCapacity>::Vector result;
+        result.reserveInitialCapacity(size);
+        for (size_t i = 0; i < size; ++i)
+            result.append(WebCore::Style::blend(a[i], b[i], context));
+        return { WTFMove(result) };
+    }
+};
+
+// Specialization for `SpaceSeparatedArray`.
+template<typename StyleType, size_t N> struct Blending<SpaceSeparatedArray<StyleType, N>> {
+    auto canBlend(const SpaceSeparatedArray<StyleType, N>& a, const SpaceSeparatedArray<StyleType, N>& b) -> bool
+    {
+        return canBlendOnTupleLike(a, b);
+    }
+    auto blend(const SpaceSeparatedArray<StyleType, N>& a, const SpaceSeparatedArray<StyleType, N>& b, const BlendingContext& context) -> SpaceSeparatedArray<StyleType, N>
+    {
+        return blendOnTupleLike(a, b, context);
+    }
+};
+
+// Specialization for `CommaSeparatedArray`.
+template<typename StyleType, size_t N> struct Blending<CommaSeparatedArray<StyleType, N>> {
+    auto canBlend(const CommaSeparatedArray<StyleType, N>& a, const CommaSeparatedArray<StyleType, N>& b) -> bool
+    {
+        return canBlendOnTupleLike(a, b);
+    }
+    auto blend(const CommaSeparatedArray<StyleType, N>& a, const CommaSeparatedArray<StyleType, N>& b, const BlendingContext& context) -> CommaSeparatedArray<StyleType, N>
+    {
+        return blendOnTupleLike(a, b, context);
+    }
+};
+
+// Specialization for `SpaceSeparatedTuple`.
+template<typename... StyleTypes> struct Blending<SpaceSeparatedTuple<StyleTypes...>> {
+    auto canBlend(const SpaceSeparatedTuple<StyleTypes...>& a, const SpaceSeparatedTuple<StyleTypes...>& b) -> bool
+    {
+        return canBlendOnTupleLike(a, b);
+    }
+    auto blend(const SpaceSeparatedTuple<StyleTypes...>& a, const SpaceSeparatedTuple<StyleTypes...>& b, const BlendingContext& context) -> SpaceSeparatedTuple<StyleTypes...>
+    {
+        return blendOnTupleLike(a, b, context);
+    }
+};
+
+// Specialization for `CommaSeparatedTuple`.
+template<typename... StyleTypes> struct Blending<CommaSeparatedTuple<StyleTypes...>> {
+    auto canBlend(const CommaSeparatedTuple<StyleTypes...>& a, const CommaSeparatedTuple<StyleTypes...>& b) -> bool
+    {
+        return canBlendOnTupleLike(a, b);
+    }
+    auto blend(const CommaSeparatedTuple<StyleTypes...>& a, const CommaSeparatedTuple<StyleTypes...>& b, const BlendingContext& context) -> CommaSeparatedTuple<StyleTypes...>
+    {
+        return blendOnTupleLike(a, b, context);
+    }
+};
+
+// Specialization for `Point`.
+template<typename StyleType> struct Blending<Point<StyleType>> {
+    auto canBlend(const Point<StyleType>& a, const Point<StyleType>& b) -> bool
+    {
+        return WebCore::Style::canBlend(a.value, b.value);
+    }
+    auto blend(const Point<StyleType>& a, const Point<StyleType>& b, const BlendingContext& context) -> Point<StyleType>
+    {
+        return { WebCore::Style::blend(a.value, b.value, context) };
+    }
+};
+
+// Specialization for `Size`.
+template<typename StyleType> struct Blending<Size<StyleType>> {
+    auto canBlend(const Size<StyleType>& a, const Size<StyleType>& b) -> bool
+    {
+        return WebCore::Style::canBlend(a.value, b.value);
+    }
+    auto blend(const Size<StyleType>& a, const Size<StyleType>& b, const BlendingContext& context) -> Size<StyleType>
+    {
+        return { WebCore::Style::blend(a.value, b.value, context) };
+    }
+};
+
 } // namespace Style
 } // namespace WebCore
 
@@ -657,6 +1015,18 @@ template<typename... Ts> class tuple_size<WebCore::Style::CommaSeparatedTuple<Ts
 template<size_t I, typename... Ts> class tuple_element<I, WebCore::Style::CommaSeparatedTuple<Ts...>> {
 public:
     using type = tuple_element_t<I, tuple<Ts...>>;
+};
+
+template<typename T> class tuple_size<WebCore::Style::Point<T>> : public std::integral_constant<size_t, 2> { };
+template<size_t I, typename T> class tuple_element<I, WebCore::Style::Point<T>> {
+public:
+    using type = T;
+};
+
+template<typename T> class tuple_size<WebCore::Style::Size<T>> : public std::integral_constant<size_t, 2> { };
+template<size_t I, typename T> class tuple_element<I, WebCore::Style::Size<T>> {
+public:
+    using type = T;
 };
 
 #define STYLE_TUPLE_LIKE_CONFORMANCE(t, numberOfArguments) \

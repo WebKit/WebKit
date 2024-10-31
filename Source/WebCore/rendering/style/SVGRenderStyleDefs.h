@@ -28,11 +28,11 @@
 
 #pragma once
 
-#include "BasicShapes.h"
 #include "Length.h"
 #include "SVGLengthValue.h"
 #include "ShadowData.h"
 #include "StyleColor.h"
+#include "StylePathData.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -282,7 +282,7 @@ public:
     Length ry;
     Length x;
     Length y;
-    RefPtr<BasicShapePath> d;
+    RefPtr<StylePathData> d;
 
 private:
     StyleLayoutData();

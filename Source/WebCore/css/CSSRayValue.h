@@ -28,8 +28,7 @@
 
 #pragma once
 
-#include "CSSPrimitiveValue.h"
-#include "CSSValuePair.h"
+#include "CSSRayFunction.h"
 #include "RenderStyleConstants.h"
 
 namespace WebCore {
@@ -38,64 +37,28 @@ namespace WebCore {
 // https://drafts.fxtf.org/motion-1/#funcdef-offset-path-ray.
 class CSSRayValue final : public CSSValue {
 public:
-    static Ref<CSSRayValue> create(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining, RefPtr<CSSValuePair>&& position)
+    static Ref<CSSRayValue> create(CSS::RayFunction ray, CSSBoxType coordinateBox = CSSBoxType::BoxMissing)
     {
-        return adoptRef(*new CSSRayValue(WTFMove(angle), size, isContaining, WTFMove(position)));
+        return adoptRef(*new CSSRayValue(WTFMove(ray), coordinateBox));
     }
 
-    static Ref<CSSRayValue> create(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining, RefPtr<CSSValuePair>&& position, CSSBoxType coordinateBox)
-    {
-        return adoptRef(*new CSSRayValue(WTFMove(angle), size, isContaining, WTFMove(position), coordinateBox));
-    }
 
-    String customCSSText() const;
-
-    Ref<CSSPrimitiveValue> angle() const { return m_angle; }
-    CSSValueID size() const { return m_size; }
-    bool isContaining() const { return m_isContaining; }
-    RefPtr<CSSValuePair> position() const { return m_position; }
+    const CSS::RayFunction& ray() const { return m_ray; }
     CSSBoxType coordinateBox() const { return m_coordinateBox; }
 
+    String customCSSText() const;
     bool equals(const CSSRayValue&) const;
-
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
-    {
-        if (func(m_angle.get()) == IterationStatus::Done)
-            return IterationStatus::Done;
-        if (m_position) {
-            if (func(*m_position) == IterationStatus::Done)
-                return IterationStatus::Done;
-        }
-        return IterationStatus::Continue;
-    }
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
 
 private:
-    CSSRayValue(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining, RefPtr<CSSValuePair>&& position)
+    CSSRayValue(CSS::RayFunction ray, CSSBoxType coordinateBox)
         : CSSValue(ClassType::Ray)
-        , m_angle(WTFMove(angle))
-        , m_size(size)
-        , m_isContaining(isContaining)
-        , m_position(WTFMove(position))
-        , m_coordinateBox(CSSBoxType::BoxMissing)
-    {
-        ASSERT(m_angle->isAngle());
-    }
-
-    CSSRayValue(Ref<CSSPrimitiveValue>&& angle, CSSValueID size, bool isContaining, RefPtr<CSSValuePair>&& position, CSSBoxType coordinateBox)
-        : CSSValue(ClassType::Ray)
-        , m_angle(WTFMove(angle))
-        , m_size(size)
-        , m_isContaining(isContaining)
-        , m_position(WTFMove(position))
+        , m_ray(WTFMove(ray))
         , m_coordinateBox(coordinateBox)
     {
-        ASSERT(m_angle->isAngle());
     }
 
-    Ref<CSSPrimitiveValue> m_angle;
-    CSSValueID m_size;
-    bool m_isContaining;
-    RefPtr<CSSValuePair> m_position;
+    CSS::RayFunction m_ray;
     CSSBoxType m_coordinateBox;
 };
 
