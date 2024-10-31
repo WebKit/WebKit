@@ -1099,7 +1099,7 @@ void SourceBufferPrivateAVFObjC::enqueueSampleBuffer(MediaSampleAVFObjC& sample)
     attachContentKeyToSampleIfNeeded(sample);
     WebSampleBufferVideoRendering *renderer = nil;
     if (m_videoRenderer) {
-        m_videoRenderer->enqueueSample(sample);
+        m_videoRenderer->enqueueSample(sample.platformSample().sample.cmSampleBuffer, !sample.isNonDisplaying());
 
         // Enqueuing a sample for display my synchronously fire an error, which can cause m_videoRenderer to become null.
         if (!m_videoRenderer)

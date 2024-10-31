@@ -75,8 +75,6 @@ public:
     KeyIDs& keyIDs() { return m_keyIDs; }
 #endif
 
-    static bool isCMSampleBufferNonDisplaying(CMSampleBufferRef);
-
 protected:
     WEBCORE_EXPORT MediaSampleAVFObjC(RetainPtr<CMSampleBufferRef>&&);
     WEBCORE_EXPORT MediaSampleAVFObjC(CMSampleBufferRef);

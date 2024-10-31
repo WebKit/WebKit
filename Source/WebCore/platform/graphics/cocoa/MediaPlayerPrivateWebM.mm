@@ -977,7 +977,7 @@ void MediaPlayerPrivateWebM::enqueueSample(Ref<MediaSample>&& sample, TrackID tr
         if (!m_videoRenderer)
             return;
 
-        m_videoRenderer->enqueueSample(sample);
+        m_videoRenderer->enqueueSample(platformSample.sample.cmSampleBuffer, !sample->isNonDisplaying());
         WebSampleBufferVideoRendering *renderer = m_videoRenderer->renderer();
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
         if (AVSampleBufferDisplayLayer *displayLayer = m_videoRenderer->displayLayer()) {
@@ -2035,8 +2035,6 @@ void MediaPlayerPrivateWebM::setVideoRenderer(WebSampleBufferVideoRendering *ren
         return;
 
     m_videoRenderer = VideoMediaSampleRenderer::create(renderer);
-    m_videoRenderer->setPrefersDecompressionSession(true);
-    m_videoRenderer->setTimebase([m_synchronizer timebase]);
     configureVideoRenderer(*m_videoRenderer);
 }
 

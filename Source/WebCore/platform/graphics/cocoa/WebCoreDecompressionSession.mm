@@ -134,33 +134,6 @@ void WebCoreDecompressionSession::maybeBecomeReadyForMoreMediaData()
     });
 }
 
-RetainPtr<CMBufferQueueRef> WebCoreDecompressionSession::createBufferQueue()
-{
-    // CMBufferCallbacks contains 64-bit pointers that aren't 8-byte aligned. To suppress the linker
-    // warning about this, we prepend 4 bytes of padding when building.
-    const size_t padSize = 4;
-
-#pragma pack(push, 4)
-    struct BufferCallbacks { uint8_t pad[padSize]; CMBufferCallbacks callbacks; } callbacks { { }, {
-        0,
-        nullptr,
-        &getDecodeTime,
-        &getPresentationTime,
-        &getDuration,
-        nullptr,
-        &compareBuffers,
-        nullptr,
-        nullptr,
-    } };
-#pragma pack(pop)
-    static_assert(sizeof(callbacks.callbacks.version) == sizeof(uint32_t), "Version field must be 4 bytes");
-    static_assert(alignof(BufferCallbacks) == 4, "CMBufferCallbacks struct must have 4 byte alignment");
-
-    CMBufferQueueRef outQueue { nullptr };
-    PAL::CMBufferQueueCreate(kCFAllocatorDefault, kMaximumCapacity, &callbacks.callbacks, &outQueue);
-    return adoptCF(outQueue);
-}
-
 void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, bool displaying)
 {
     CMItemCount itemCount = 0;
@@ -172,8 +145,31 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
     if (noErr != PAL::CMSampleBufferGetSampleTimingInfoArray(sampleBuffer, itemCount, timingInfoArray.data(), nullptr))
         return;
 
-    if (!m_producerQueue)
-        m_producerQueue = createBufferQueue();
+    // CMBufferCallbacks contains 64-bit pointers that aren't 8-byte aligned. To suppress the linker
+    // warning about this, we prepend 4 bytes of padding when building.
+    const size_t padSize = 4;
+
+    if (!m_producerQueue) {
+        CMBufferQueueRef outQueue { nullptr };
+#pragma pack(push, 4)
+        struct BufferCallbacks { uint8_t pad[padSize]; CMBufferCallbacks callbacks; } callbacks { { }, {
+            0,
+            nullptr,
+            &getDecodeTime,
+            &getPresentationTime,
+            &getDuration,
+            nullptr,
+            &compareBuffers,
+            nullptr,
+            nullptr,
+        } };
+#pragma pack(pop)
+        static_assert(sizeof(callbacks.callbacks.version) == sizeof(uint32_t), "Version field must be 4 bytes");
+        static_assert(alignof(BufferCallbacks) == 4, "CMBufferCallbacks struct must have 4 byte alignment");
+
+        PAL::CMBufferQueueCreate(kCFAllocatorDefault, kMaximumCapacity, &callbacks.callbacks, &outQueue);
+        m_producerQueue = adoptCF(outQueue);
+    }
 
     ++m_framesBeingDecoded;
 
@@ -281,7 +277,7 @@ void WebCoreDecompressionSession::maybeDecodeNextSample()
 
     m_isDecodingSample = true;
     auto tuple = m_pendingSamples.takeFirst();
-    decodeSampleInternal(std::get<RetainPtr<CMSampleBufferRef>>(tuple).get(), std::get<bool>(tuple))->whenSettled(m_decompressionQueue, [weakThis = ThreadSafeWeakPtr { *this }, this, flushId = std::get<uint32_t>(tuple)](auto&& result) {
+    decodeSample(std::get<RetainPtr<CMSampleBufferRef>>(tuple).get(), std::get<bool>(tuple))->whenSettled(m_decompressionQueue, [weakThis = ThreadSafeWeakPtr { *this }, this, flushId = std::get<uint32_t>(tuple)](auto&& result) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || isInvalidated())
             return;
@@ -327,17 +323,7 @@ void WebCoreDecompressionSession::maybeDecodeNextSample()
     });
 }
 
-auto WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, bool displaying) -> Ref<DecodingPromise>
-{
-    DecodingPromise::Producer producer;
-    auto promise = producer.promise();
-    m_decompressionQueue->dispatch([protectedThis = RefPtr { this }, producer = WTFMove(producer), sample = RetainPtr { sample }, displaying] () mutable {
-        protectedThis->decodeSampleInternal(sample.get(), displaying)->chainTo(WTFMove(producer));
-    });
-    return promise;
-}
-
-Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::decodeSampleInternal(CMSampleBufferRef sample, bool displaying)
+Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, bool displaying)
 {
     assertIsCurrent(m_decompressionQueue.get());
 

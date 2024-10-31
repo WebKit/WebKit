@@ -33,39 +33,25 @@
 #include <wtf/ThreadSafeWeakPtr.h>
 
 OBJC_CLASS AVSampleBufferDisplayLayer;
-OBJC_CLASS AVSampleBufferVideoRenderer;
 OBJC_PROTOCOL(WebSampleBufferVideoRendering);
-typedef struct opaqueCMBufferQueue *CMBufferQueueRef;
 typedef struct opaqueCMSampleBuffer *CMSampleBufferRef;
-typedef struct OpaqueCMTimebase* CMTimebaseRef;
 
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
 typedef struct __CVBuffer* CVPixelBufferRef;
 #endif
 
-namespace WTF {
-class WorkQueue;
-}
-
 namespace WebCore {
 
-class MediaSample;
 class WebCoreDecompressionSession;
 
-class VideoMediaSampleRenderer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoMediaSampleRenderer, WTF::DestructionThread::Main> {
+class VideoMediaSampleRenderer : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoMediaSampleRenderer> {
 public:
     static Ref<VideoMediaSampleRenderer> create(WebSampleBufferVideoRendering *renderer) { return adoptRef(*new VideoMediaSampleRenderer(renderer)); }
     ~VideoMediaSampleRenderer();
 
-    bool prefersDecompressionSession() { return m_prefersDecompressionSession; }
-    void setPrefersDecompressionSession(bool);
-
-    void setTimebase(RetainPtr<CMTimebaseRef>&&);
-    RetainPtr<CMTimebaseRef> timebase() const { return m_timebase; }
-
     bool isReadyForMoreMediaData() const;
     void requestMediaDataWhenReady(Function<void()>&&);
-    void enqueueSample(const MediaSample&);
+    void enqueueSample(CMSampleBufferRef, bool displaying = true);
     void stopRequestingMediaData();
 
     void flush();
@@ -73,48 +59,30 @@ public:
     void expectMinimumUpcomingSampleBufferPresentationTime(const MediaTime&);
     void resetUpcomingSampleBufferPresentationTimeExpectations();
 
-    WebSampleBufferVideoRendering *renderer() const;
+    WebSampleBufferVideoRendering *renderer() const { return m_renderer.get(); }
     AVSampleBufferDisplayLayer *displayLayer() const;
-    RetainPtr<CVPixelBufferRef> copyDisplayedPixelBuffer();
+#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
+    RetainPtr<CVPixelBufferRef> copyDisplayedPixelBuffer() const;
     CGRect bounds() const;
+#endif
 
-    unsigned totalVideoFrames() const;
-    unsigned droppedVideoFrames() const;
-    unsigned corruptedVideoFrames() const;
-    MediaTime totalFrameDelay() const;
-
-    void setResourceOwner(const ProcessIdentity&);
+    void setResourceOwner(const ProcessIdentity& resourceOwner) { m_resourceOwner = resourceOwner; }
 
 private:
     VideoMediaSampleRenderer(WebSampleBufferVideoRendering *);
-
-    void setPrefersDecompressionSessionInternal(bool);
-    void setTimebaseInternal(RetainPtr<CMTimebaseRef>&&);
-
     void resetReadyForMoreSample();
     void initializeDecompressionSession();
-    void decodeNextSample();
-    void decodedFrameAvailable(RetainPtr<CMSampleBufferRef>&&);
-    void flushCompressedSampleQueue();
-    void flushDecodedSampleQueue();
-    void purgeDecodedSampleQueue();
-    CMBufferQueueRef ensureCompressedSampleQueue();
-    CMBufferQueueRef ensureDecodedSampleQueue();
-    void assignResourceOwner(CMSampleBufferRef);
-    void maybeBecomeReadyForMoreMediaData();
 
-    Ref<WTF::WorkQueue> m_workQueue;
-    RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
-    RetainPtr<AVSampleBufferVideoRenderer> m_renderer;
-    RetainPtr<CMTimebaseRef> m_timebase;
-    RetainPtr<CMBufferQueueRef> m_compressedSampleQueue;
-    RetainPtr<CMBufferQueueRef> m_decodedSampleQueue;
-    OSObjectPtr<dispatch_source_t> m_timerSource;
+    RetainPtr<WebSampleBufferVideoRendering> m_renderer;
     RefPtr<WebCoreDecompressionSession> m_decompressionSession;
-    bool m_isDecodingSample { false };
+    bool m_displayLayerReadyForMoreSample { false };
+    bool m_decompressionSessionReadyForMoreSample { false };
     Function<void()> m_readyForMoreSampleFunction;
-    bool m_prefersDecompressionSession { false };
+    uint32_t m_decodePending { 0 };
+    bool m_wasNotDisplaying { false };
+    bool m_requestMediaDataWhenReadySet { false };
     std::optional<uint32_t> m_currentCodec;
+    std::optional<MediaTime> m_minimumUpcomingPresentationTime;
 
     ProcessIdentity m_resourceOwner;
 };
