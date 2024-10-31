@@ -82,7 +82,7 @@ inline void CollectionNamedElementCache::append(StringToElementsMap& map, const 
 
 inline bool HTMLCollection::isRootedAtTreeScope() const
 {
-    return m_rootType == IsRootedAtTreeScope;
+    return static_cast<bool>(m_rootType) == static_cast<bool>(RootType::AtTreeScope);
 }
 
 inline NodeListInvalidationType HTMLCollection::invalidationType() const
