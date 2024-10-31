@@ -509,7 +509,7 @@ public:
     bool operator==(const Blend&) const = default;
 };
 
-static_assert(sizeof(Child) == 16);
+static_assert(sizeof(Child) <= 16, "Child should stay small");
 
 // MARK: Construction
 

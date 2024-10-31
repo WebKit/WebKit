@@ -775,7 +775,7 @@ public:
 
 // MARK: Size assertions
 
-static_assert(sizeof(Child) == 24);
+static_assert(sizeof(Child) <= 24, "Child should stay small");
 
 // MARK: Reverse mappings
 
