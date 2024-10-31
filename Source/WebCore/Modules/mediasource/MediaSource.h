@@ -251,8 +251,8 @@ private:
     uint64_t m_logIdentifier { 0 };
 #endif
     std::atomic<uint64_t> m_associatedRegistryCount { 0 };
-    Ref<MediaSourceClientImpl> m_client;
     RefPtr<MediaSourcePrivate> m_private;
+    Ref<MediaSourceClientImpl> m_client;
 };
 
 String convertEnumerationToString(MediaSource::EndOfStreamError);
