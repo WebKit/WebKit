@@ -140,7 +140,7 @@ messages -> WebPageProxy {
     DidRunInsecureContentForFrame(WebCore::FrameIdentifier frameID, WebKit::UserData userData)
     DidSameDocumentNavigationForFrame(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID, enum:uint8_t WebKit::SameDocumentNavigationType type, URL url, WebKit::UserData userData)
     DidSameDocumentNavigationForFrameViaJS(enum:uint8_t WebKit::SameDocumentNavigationType type, URL url, struct WebKit::NavigationActionData navigationActionData, WebKit::UserData userData);
-    DidChangeMainDocument(WebCore::FrameIdentifier frameID)
+    DidChangeMainDocument(WebCore::FrameIdentifier frameID, std::optional<WebCore::NavigationIdentifier> navigationID)
     DidExplicitOpenForFrame(WebCore::FrameIdentifier frameID, URL url, String mimeType)
     DidDestroyNavigation(WebCore::NavigationIdentifier navigationID)
     UpdateSandboxFlags(WebCore::FrameIdentifier frameID, WebCore::SandboxFlags sandboxFlags)

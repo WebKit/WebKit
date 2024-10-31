@@ -143,7 +143,7 @@ public:
     void changeLocation(FrameLoadRequest&&, Event* = nullptr, std::optional<PrivateClickMeasurement>&& = std::nullopt);
     void submitForm(Ref<FormSubmission>&&);
 
-    WEBCORE_EXPORT void reload(OptionSet<ReloadOption> = { });
+    WEBCORE_EXPORT void reload(OptionSet<ReloadOption> = { }, bool isRequestFromClientOrUserInput = false);
     WEBCORE_EXPORT void reloadWithOverrideEncoding(const String& overrideEncoding);
 
     void open(CachedFrameBase&);

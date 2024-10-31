@@ -374,23 +374,23 @@ void UserMediaPermissionRequestManagerProxy::didCommitLoadForFrame(FrameIdentifi
     m_frameEphemeralHashSalts.remove(frameID);
 }
 
-void UserMediaPermissionRequestManagerProxy::resetAccess(std::optional<FrameIdentifier> frameID)
+void UserMediaPermissionRequestManagerProxy::resetAccess(WebFrameProxy* frame)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, frameID ? frameID->object().toUInt64() : 0);
+    ALWAYS_LOG(LOGIDENTIFIER, frame ? frame->frameID().object().toUInt64() : 0);
 
-    if (RefPtr currentUserMediaRequest = m_currentUserMediaRequest; currentUserMediaRequest && (!frameID || m_currentUserMediaRequest->frameID() == *frameID)) {
+    if (RefPtr currentUserMediaRequest = m_currentUserMediaRequest; currentUserMediaRequest && (!frame || m_currentUserMediaRequest->frameID() == frame->frameID())) {
         // Avoid starting pending requests after denying current request.
         auto pendingUserMediaRequests = std::exchange(m_pendingUserMediaRequests, { });
         currentUserMediaRequest->deny(UserMediaPermissionRequestProxy::UserMediaAccessDenialReason::OtherFailure);
         m_pendingUserMediaRequests = std::exchange(pendingUserMediaRequests, { });
     }
 
-    if (frameID) {
-        m_grantedRequests.removeAllMatching([frameID](const auto& grantedRequest) {
-            return grantedRequest->mainFrameID() == frameID;
+    if (frame) {
+        m_grantedRequests.removeAllMatching([frame](const auto& grantedRequest) {
+            return grantedRequest->mainFrameID() == frame->frameID() && !grantedRequest->userMediaDocumentSecurityOrigin().isSameOriginAs(SecurityOrigin::create(frame->url()).get());
         });
-        m_grantedFrames.remove(*frameID);
-        m_frameEphemeralHashSalts.remove(*frameID);
+        m_grantedFrames.remove(frame->frameID());
+        m_frameEphemeralHashSalts.remove(frame->frameID());
     } else {
         m_grantedRequests.clear();
         m_grantedFrames.clear();

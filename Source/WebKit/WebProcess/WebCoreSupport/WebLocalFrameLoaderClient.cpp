@@ -435,8 +435,15 @@ void WebLocalFrameLoaderClient::dispatchDidNavigateWithinPage()
 
 void WebLocalFrameLoaderClient::dispatchDidChangeMainDocument()
 {
-    if (RefPtr webPage = m_frame->page())
-        webPage->send(Messages::WebPageProxy::DidChangeMainDocument(m_frame->frameID()));
+    RefPtr webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    std::optional<NavigationIdentifier> navigationID;
+    if (RefPtr documentLoader = m_localFrame->loader().documentLoader())
+        navigationID = documentLoader->navigationID();
+
+    webPage->send(Messages::WebPageProxy::DidChangeMainDocument(m_frame->frameID(), navigationID));
 }
 
 void WebLocalFrameLoaderClient::dispatchWillChangeDocument(const URL& currentURL, const URL& newURL)

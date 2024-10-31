@@ -2282,7 +2282,8 @@ void WebPage::reload(WebCore::NavigationIdentifier navigationID, OptionSet<WebCo
     Ref mainFrame = m_mainFrame;
     m_sandboxExtensionTracker.beginReload(mainFrame.ptr(), WTFMove(sandboxExtensionHandle));
     if (m_page && mainFrame->coreLocalFrame()) {
-        mainFrame->coreLocalFrame()->loader().reload(reloadOptions);
+        bool isRequestFromClientOrUserInput = true;
+        mainFrame->coreLocalFrame()->loader().reload(reloadOptions, isRequestFromClientOrUserInput);
     } else
         ASSERT_NOT_REACHED();
 

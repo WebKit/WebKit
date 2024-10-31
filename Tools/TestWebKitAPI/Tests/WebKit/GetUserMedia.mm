@@ -623,6 +623,124 @@ TEST(WebKit, TransferTrackBetweenSameProcessPages)
     EXPECT_EQ(webView2.get().cameraCaptureState, WKMediaCaptureStateActive);
 }
 
+static constexpr auto KeepPermissionForWebAppSameOriginNavigationsText = R"DOCDOCDOC(
+<html><body onload='start()'>
+<div>hello</div>
+<script>
+function start()
+{
+    window.webkit.messageHandlers.gum.postMessage("PASS");
+}
+
+function capture()
+{
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(() => {
+        window.webkit.messageHandlers.gum.postMessage("PASS");
+    });
+}
+
+function reload()
+{
+    window.location.reload();
+}
+
+function changeLocation(url)
+{
+    window.location = url;
+}
+</script></body></html>
+)DOCDOCDOC"_s;
+
+TEST(WebKit, KeepPermissionForWebAppSameOriginNavigations)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { KeepPermissionForWebAppSameOriginNavigationsText } },
+        { "/1"_s, { KeepPermissionForWebAppSameOriginNavigationsText } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 9090);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    initializeMediaCaptureConfiguration(configuration.get());
+
+    auto messageHandler = adoptNS([[GUMMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"gum"];
+
+    auto webView1 = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+    auto observer = adoptNS([[MediaCaptureObserver alloc] init]);
+
+    auto delegate = adoptNS([[UserMediaCaptureUIDelegate alloc] init]);
+    webView1.get().UIDelegate = delegate.get();
+
+    done = false;
+    [webView1 loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:@"http://127.0.0.1:9090/"]]];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView1 stringByEvaluatingJavaScript:@"capture()"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE([delegate wasPrompted]);
+    [delegate resetWasPrompted];
+
+    done = false;
+    [webView1 stringByEvaluatingJavaScript:@"capture()"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_FALSE([delegate wasPrompted]);
+
+    done = false;
+    [webView1 reload];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView1 stringByEvaluatingJavaScript:@"capture()"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE([delegate wasPrompted]);
+    [delegate resetWasPrompted];
+
+    done = false;
+    [webView1 stringByEvaluatingJavaScript:@"reload()"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView1 stringByEvaluatingJavaScript:@"capture()"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_FALSE([delegate wasPrompted]);
+
+    done = false;
+    [webView1 stringByEvaluatingJavaScript:@"changeLocation('http://127.0.0.1:9090/1')"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView1 stringByEvaluatingJavaScript:@"capture()"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_FALSE([delegate wasPrompted]);
+
+    done = false;
+    [webView1 stringByEvaluatingJavaScript:@"changeLocation('http://localhost:9090/')"];
+    TestWebKitAPI::Util::run(&done);
+
+    done = false;
+    [webView1 stringByEvaluatingJavaScript:@"capture()"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE([delegate wasPrompted]);
+    [delegate resetWasPrompted];
+
+    done = false;
+    [webView1 goBack];
+    [webView1 _test_waitForDidFinishNavigation];
+
+    done = false;
+    [webView1 stringByEvaluatingJavaScript:@"capture()"];
+    TestWebKitAPI::Util::run(&done);
+
+    EXPECT_TRUE([delegate wasPrompted]);
+    [delegate resetWasPrompted];
+}
+
 #if PLATFORM(MAC)
 TEST(WebKit, InterruptionBetweenGetDisplayMediaAndGetUserMedia)
 {

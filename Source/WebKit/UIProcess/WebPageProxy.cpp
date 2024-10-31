@@ -7239,13 +7239,22 @@ void WebPageProxy::didSameDocumentNavigationForFrameViaJS(IPC::Connection& conne
         navigationState().didDestroyNavigation(navigation->processID(), navigation->navigationID());
 }
 
-void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID)
+void WebPageProxy::didChangeMainDocument(FrameIdentifier frameID, std::optional<NavigationIdentifier> navigationID)
 {
     RefPtr frame = WebFrameProxy::webFrame(frameID);
 
 #if ENABLE(MEDIA_STREAM)
     if (m_userMediaPermissionRequestManager) {
-        m_userMediaPermissionRequestManager->resetAccess(frameID);
+        auto shouldClearAllGrantedRequests = [&] {
+            if (!frame)
+                return true;
+            if (!frame->isMainFrame())
+                return false;
+            if (!navigationID || !navigationState().hasNavigation(*navigationID))
+                return true;
+            return navigationState().navigation(*navigationID)->isRequestFromClientOrUserInput();
+        };
+        m_userMediaPermissionRequestManager->resetAccess(shouldClearAllGrantedRequests() ? nullptr : frame.get());
 
 #if ENABLE(GPU_PROCESS)
         if (RefPtr gpuProcess = m_legacyMainFrameProcess->processPool().gpuProcess()) {

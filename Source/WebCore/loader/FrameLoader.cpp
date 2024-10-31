@@ -1990,7 +1990,7 @@ void FrameLoader::reloadWithOverrideEncoding(const String& encoding)
     loadWithDocumentLoader(loader.ptr(), FrameLoadType::Reload, { }, AllowNavigationToInvalidURL::Yes);
 }
 
-void FrameLoader::reload(OptionSet<ReloadOption> options)
+void FrameLoader::reload(OptionSet<ReloadOption> options, bool isRequestFromClientOrUserInput)
 {
     if (!m_documentLoader)
         return;
@@ -2011,7 +2011,7 @@ void FrameLoader::reload(OptionSet<ReloadOption> options)
     // Create a new document loader for the reload, this will become m_documentLoader eventually,
     // but first it has to be the "policy" document loader, and then the "provisional" document loader.
     Ref loader = m_client->createDocumentLoader(initialRequest, defaultSubstituteDataForURL(initialRequest.url()));
-    loader->setIsRequestFromClientOrUserInput(m_documentLoader->isRequestFromClientOrUserInput());
+    loader->setIsRequestFromClientOrUserInput(m_documentLoader->isRequestFromClientOrUserInput() || isRequestFromClientOrUserInput);
     applyShouldOpenExternalURLsPolicyToNewDocumentLoader(protectedFrame(), loader, InitiatedByMainFrame::Unknown, m_documentLoader->shouldOpenExternalURLsPolicyToPropagate());
 
     loader->setContentExtensionEnablement({ options.contains(ReloadOption::DisableContentBlockers) ? ContentExtensionDefaultEnablement::Disabled : ContentExtensionDefaultEnablement::Enabled, { } });
