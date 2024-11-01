@@ -211,6 +211,13 @@
             }
         }
     },
+    "TestWebCore": {
+        "subtests": {
+            "GStreamerTest.harnessParseMP4": {
+                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/282445"}}
+            }
+        }
+    },
     "TestWebKit": {
         "subtests": {
             "WebKit.NewFirstVisuallyNonEmptyLayoutForImages": {
