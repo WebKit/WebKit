@@ -552,8 +552,8 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
 
 LayoutUnit RenderReplaced::computeConstrainedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
 {
-    if (shouldComputePreferred == ComputePreferred)
-        return computeReplacedLogicalWidthRespectingMinMaxWidth(0_lu, ComputePreferred);
+    if (shouldComputePreferred == ShouldComputePreferred::ComputePreferred)
+        return computeReplacedLogicalWidthRespectingMinMaxWidth(0_lu, ShouldComputePreferred::ComputePreferred);
 
     // The aforementioned 'constraint equation' used for block-level, non-replaced
     // elements in normal flow:
@@ -717,7 +717,7 @@ void RenderReplaced::computePreferredLogicalWidths()
     if (style().logicalWidth().isPercentOrCalculated())
         computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
     else
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(ComputePreferred);
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(ShouldComputePreferred::ComputePreferred);
 
     bool ignoreMinMaxSizes = shouldIgnoreLogicalMinMaxWidthSizes();
     const RenderStyle& styleToUse = style();

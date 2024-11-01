@@ -158,7 +158,7 @@ LayoutUnit LegacyRenderSVGRoot::computeReplacedLogicalHeight(std::optional<Layou
         return m_containerSize.height();
 
     if (isEmbeddedThroughFrameContainingSVGDocument())
-        return containingBlock()->availableLogicalHeight(IncludeMarginBorderPadding);
+        return containingBlock()->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding);
 
     // SVG embedded via SVGImage (background-image/border-image/etc) / Inline SVG.
     return RenderReplaced::computeReplacedLogicalHeight(estimatedUsedWidth);

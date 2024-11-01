@@ -4907,7 +4907,7 @@ Ref<ClipRects> RenderLayer::updateClipRects(const ClipRectsContext& clipRectsCon
 #if ASSERT_ENABLED
     m_clipRectsCache->m_clipRectsRoot[clipRectsType] = clipRectsContext.rootLayer;
 #endif
-    ASSERT(clipRectsContext.overlayScrollbarSizeRelevancy() == (clipRectsContext.clipRectsType == RootRelativeClipRects));
+    ASSERT(enumToUnderlyingType(clipRectsContext.overlayScrollbarSizeRelevancy()) == (clipRectsContext.clipRectsType == RootRelativeClipRects));
 
     RefPtr<ClipRects> parentClipRects;
     // For transformed layers, the root layer was shifted to be us, so there is no need to

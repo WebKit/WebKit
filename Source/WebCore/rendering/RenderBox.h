@@ -39,10 +39,10 @@ class RenderFragmentContainer;
 class RoundedRectRadii;
 struct PaintInfo;
 
-enum AvailableLogicalHeightType { ExcludeMarginBorderPadding, IncludeMarginBorderPadding };
-enum OverlayScrollbarSizeRelevancy { IgnoreOverlayScrollbarSize, IncludeOverlayScrollbarSize };
+enum class AvailableLogicalHeightType : bool { ExcludeMarginBorderPadding, IncludeMarginBorderPadding };
+enum class OverlayScrollbarSizeRelevancy : bool { IgnoreOverlayScrollbarSize, IncludeOverlayScrollbarSize };
 
-enum ShouldComputePreferred { ComputeActual, ComputePreferred };
+enum class ShouldComputePreferred : bool { ComputeActual, ComputePreferred };
 
 enum class StretchingMode { Any, Explicit };
 
@@ -349,8 +349,8 @@ public:
     void computeBlockDirectionMargins(const RenderBlock& containingBlock, LayoutUnit& marginBefore, LayoutUnit& marginAfter) const;
     void computeAndSetBlockDirectionMargins(const RenderBlock& containingBlock);
 
-    enum RenderBoxFragmentInfoFlags { CacheRenderBoxFragmentInfo, DoNotCacheRenderBoxFragmentInfo };
-    LayoutRect borderBoxRectInFragment(const RenderFragmentContainer*, RenderBoxFragmentInfoFlags = CacheRenderBoxFragmentInfo) const;
+    enum class RenderBoxFragmentInfoFlags : bool { CacheRenderBoxFragmentInfo, DoNotCacheRenderBoxFragmentInfo };
+    LayoutRect borderBoxRectInFragment(const RenderFragmentContainer*, RenderBoxFragmentInfoFlags = RenderBoxFragmentInfoFlags::CacheRenderBoxFragmentInfo) const;
     LayoutRect clientBoxRectInFragment(const RenderFragmentContainer*) const;
     RenderFragmentContainer* clampToStartAndEndFragments(RenderFragmentContainer*) const;
     bool hasFragmentRangeInFragmentedFlow() const;
@@ -385,7 +385,7 @@ public:
     // zero (and returns just border + padding).
     LayoutUnit computeLogicalHeightWithoutLayout() const;
 
-    RenderBoxFragmentInfo* renderBoxFragmentInfo(RenderFragmentContainer*, RenderBoxFragmentInfoFlags = CacheRenderBoxFragmentInfo) const;
+    RenderBoxFragmentInfo* renderBoxFragmentInfo(RenderFragmentContainer*, RenderBoxFragmentInfoFlags = RenderBoxFragmentInfoFlags::CacheRenderBoxFragmentInfo) const;
     void computeLogicalWidthInFragment(LogicalExtentComputedValues&, RenderFragmentContainer* = nullptr) const;
 
     inline bool stretchesToViewport() const;
@@ -415,14 +415,14 @@ public:
     std::optional<LayoutUnit> computeContentLogicalHeight(SizeType, const Length& height, std::optional<LayoutUnit> intrinsicContentHeight) const;
     std::optional<LayoutUnit> computeContentAndScrollbarLogicalHeightUsing(SizeType, const Length& height, std::optional<LayoutUnit> intrinsicContentHeight) const;
     LayoutUnit computeReplacedLogicalWidthUsing(SizeType, Length width) const;
-    LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, ShouldComputePreferred  = ComputeActual) const;
+    LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit logicalWidth, ShouldComputePreferred  = ShouldComputePreferred::ComputeActual) const;
     LayoutUnit computeReplacedLogicalHeightUsing(SizeType, Length height) const;
     LayoutUnit computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit logicalHeight) const;
 
-    template<typename T> LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(T logicalWidth, ShouldComputePreferred shouldComputePreferred = ComputeActual) const { return computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit(logicalWidth), shouldComputePreferred); }
+    template<typename T> LayoutUnit computeReplacedLogicalWidthRespectingMinMaxWidth(T logicalWidth, ShouldComputePreferred shouldComputePreferred = ShouldComputePreferred::ComputeActual) const { return computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUnit(logicalWidth), shouldComputePreferred); }
     template<typename T> LayoutUnit computeReplacedLogicalHeightRespectingMinMaxHeight(T logicalHeight) const { return computeReplacedLogicalHeightRespectingMinMaxHeight(LayoutUnit(logicalHeight)); }
 
-    virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ComputeActual) const;
+    virtual LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred  = ShouldComputePreferred::ComputeActual) const;
     virtual LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const;
 
     std::optional<LayoutUnit> computePercentageLogicalHeight(const Length& height, UpdatePercentageHeightDescendants = UpdatePercentageHeightDescendants::Yes) const;
@@ -478,7 +478,7 @@ public:
 
     bool shouldTreatChildAsReplacedInTableCells() const;
 
-    virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* = nullptr, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const;
+    virtual LayoutRect overflowClipRect(const LayoutPoint& location, RenderFragmentContainer* = nullptr, OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, PaintPhase = PaintPhase::BlockBackground) const;
     virtual LayoutRect overflowClipRectForChildLayers(const LayoutPoint& location, RenderFragmentContainer* fragment, OverlayScrollbarSizeRelevancy relevancy) const { return overflowClipRect(location, fragment, relevancy); }
     LayoutRect clipRect(const LayoutPoint& location, RenderFragmentContainer*) const;
     virtual bool hasControlClip() const { return false; }

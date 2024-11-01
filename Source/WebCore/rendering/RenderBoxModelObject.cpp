@@ -657,7 +657,7 @@ FloatRect RenderBoxModelObject::constrainingRectForStickyPosition() const
 
         float scrollbarOffset = 0;
         if (enclosingClippingBox.hasLayer() && enclosingClippingBox.shouldPlaceVerticalScrollbarOnLeft() && scrollableArea)
-            scrollbarOffset = scrollableArea->verticalScrollbarWidth(IgnoreOverlayScrollbarSize, isHorizontalWritingMode());
+            scrollbarOffset = scrollableArea->verticalScrollbarWidth(OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, isHorizontalWritingMode());
 
         constrainingRect.setLocation(FloatPoint(scrollOffset.x() + scrollbarOffset, scrollOffset.y()));
         return constrainingRect;

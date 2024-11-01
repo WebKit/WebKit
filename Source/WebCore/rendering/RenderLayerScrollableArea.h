@@ -131,8 +131,8 @@ public:
     // Returns true when there is actually scrollable overflow (requires layout to be up-to-date).
     bool hasCompositedScrollableOverflow() const { return m_hasCompositedScrollableOverflow; }
 
-    int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, bool isHorizontalWritingMode = true) const;
-    int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, bool isHorizontalWritingMode = true) const;
+    int verticalScrollbarWidth(OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, bool isHorizontalWritingMode = true) const;
+    int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, bool isHorizontalWritingMode = true) const;
 
     bool hasOverflowControls() const;
     bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);

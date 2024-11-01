@@ -2011,7 +2011,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     // If we have clipping, then we can't have any spillout.
     bool useClip = (hasControlClip() || hasNonVisibleOverflow());
-    bool checkChildren = !useClip || (hasControlClip() ? locationInContainer.intersects(controlClipRect(adjustedLocation)) : locationInContainer.intersects(overflowClipRect(adjustedLocation, nullptr, IncludeOverlayScrollbarSize)));
+    bool checkChildren = !useClip || (hasControlClip() ? locationInContainer.intersects(controlClipRect(adjustedLocation)) : locationInContainer.intersects(overflowClipRect(adjustedLocation, nullptr, OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize)));
     if (checkChildren && hitTestChildren(request, result, locationInContainer, adjustedLocation, hitTestAction))
         return true;
 

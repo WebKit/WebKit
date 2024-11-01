@@ -3054,7 +3054,7 @@ LayoutUnit RenderBlockFlow::getClearDelta(RenderBox& child, LayoutUnit logicalTo
                 return newLogicalTop - logicalTop;
 
             RenderFragmentContainer* fragment = fragmentAtBlockOffset(logicalTopForChild(child));
-            LayoutRect borderBox = child.borderBoxRectInFragment(fragment, DoNotCacheRenderBoxFragmentInfo);
+            LayoutRect borderBox = child.borderBoxRectInFragment(fragment, RenderBoxFragmentInfoFlags::DoNotCacheRenderBoxFragmentInfo);
             LayoutUnit childLogicalWidthAtOldLogicalTopOffset = isHorizontalWritingMode() ? borderBox.width() : borderBox.height();
 
             // FIXME: None of this is right for perpendicular writing-mode children.
@@ -3066,7 +3066,7 @@ LayoutUnit RenderBlockFlow::getClearDelta(RenderBox& child, LayoutUnit logicalTo
             child.setLogicalTop(newLogicalTop);
             child.updateLogicalWidth();
             fragment = fragmentAtBlockOffset(logicalTopForChild(child));
-            borderBox = child.borderBoxRectInFragment(fragment, DoNotCacheRenderBoxFragmentInfo);
+            borderBox = child.borderBoxRectInFragment(fragment, RenderBoxFragmentInfoFlags::DoNotCacheRenderBoxFragmentInfo);
             LayoutUnit childLogicalWidthAtNewLogicalTopOffset = isHorizontalWritingMode() ? borderBox.width() : borderBox.height();
 
             child.setLogicalTop(childOldLogicalTop);

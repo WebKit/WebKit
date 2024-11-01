@@ -931,7 +931,7 @@ void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, Flo
         RenderObject* containingBlock = isOutOfFlowPositioned() ? container() : this->containingBlock();
         if (auto* box = dynamicDowncast<RenderBox>(*containingBlock)) {
             intrinsicSize.setWidth(box->availableLogicalWidth());
-            intrinsicSize.setHeight(box->availableLogicalHeight(IncludeMarginBorderPadding));
+            intrinsicSize.setHeight(box->availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
         }
     }
 

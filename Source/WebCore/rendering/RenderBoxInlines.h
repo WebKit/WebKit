@@ -24,9 +24,9 @@
 
 namespace WebCore {
 
-inline LayoutUnit RenderBox::availableHeight() const { return writingMode().isHorizontal() ? availableLogicalHeight(IncludeMarginBorderPadding) : availableLogicalWidth(); }
+inline LayoutUnit RenderBox::availableHeight() const { return writingMode().isHorizontal() ? availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding) : availableLogicalWidth(); }
 inline LayoutUnit RenderBox::availableLogicalWidth() const { return contentLogicalWidth(); }
-inline LayoutUnit RenderBox::availableWidth() const { return writingMode().isHorizontal() ? availableLogicalWidth() : availableLogicalHeight(IncludeMarginBorderPadding); }
+inline LayoutUnit RenderBox::availableWidth() const { return writingMode().isHorizontal() ? availableLogicalWidth() : availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding); }
 inline LayoutSize RenderBox::borderBoxLogicalSize() const { return logicalSize(); }
 inline LayoutRect RenderBox::clientBoxRect() const { return LayoutRect(clientLeft(), clientTop(), clientWidth(), clientHeight()); }
 inline LayoutUnit RenderBox::clientLeft() const { return borderLeft(); }

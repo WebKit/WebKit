@@ -141,7 +141,7 @@ private:
 
     bool hasShadowContent() const { return m_hasShadowControls || m_hasImageOverlay; }
 
-    LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ComputeActual) const override;
+    LayoutUnit computeReplacedLogicalWidth(ShouldComputePreferred = ShouldComputePreferred::ComputeActual) const override;
     LayoutUnit computeReplacedLogicalHeight(std::optional<LayoutUnit> estimatedUsedWidth = std::nullopt) const override;
 
     LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const override;

@@ -955,7 +955,7 @@ int RenderBox::verticalScrollbarWidth() const
     auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
     if (!scrollableArea)
         return 0;
-    return includeVerticalScrollbarSize() ? scrollableArea->verticalScrollbarWidth(IgnoreOverlayScrollbarSize, isHorizontalWritingMode()) : 0;
+    return includeVerticalScrollbarSize() ? scrollableArea->verticalScrollbarWidth(OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, isHorizontalWritingMode()) : 0;
 }
 
 int RenderBox::horizontalScrollbarHeight() const
@@ -963,7 +963,7 @@ int RenderBox::horizontalScrollbarHeight() const
     auto* scrollableArea = layer() ? layer()->scrollableArea() : nullptr;
     if (!scrollableArea)
         return 0;
-    return includeHorizontalScrollbarSize() ? scrollableArea->horizontalScrollbarHeight(IgnoreOverlayScrollbarSize, isHorizontalWritingMode()) : 0;
+    return includeHorizontalScrollbarSize() ? scrollableArea->horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, isHorizontalWritingMode()) : 0;
 }
 
 int RenderBox::intrinsicScrollbarLogicalWidthIncludingGutter() const
@@ -2164,7 +2164,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumu
         paintInfo.phase = PaintPhase::ChildBlockBackgrounds;
     }
     float deviceScaleFactor = document().deviceScaleFactor();
-    FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, nullptr, IgnoreOverlayScrollbarSize, paintInfo.phase)), deviceScaleFactor);
+    FloatRect clipRect = snapRectToDevicePixels((isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset, nullptr, OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, paintInfo.phase)), deviceScaleFactor);
     paintInfo.context().save();
     if (style().hasBorderRadius())
         clipToPaddingBoxShape(paintInfo.context(), accumulatedOffset, deviceScaleFactor);
@@ -2335,7 +2335,7 @@ LayoutUnit RenderBox::containingBlockAvailableLineWidthInFragment(RenderFragment
         logicalTopPosition = std::max(logicalTopPosition, logicalTopPosition + offsetFromLogicalTopOfFragment);
         containingBlockFragment = cb->clampToStartAndEndFragments(fragment);
     }
-    return cb->availableLogicalWidthForLineInFragment(logicalTopPosition, containingBlockFragment, availableLogicalHeight(IncludeMarginBorderPadding));
+    return cb->availableLogicalWidthForLineInFragment(logicalTopPosition, containingBlockFragment, availableLogicalHeight(AvailableLogicalHeightType::IncludeMarginBorderPadding));
 }
 
 LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
@@ -2355,7 +2355,7 @@ LayoutUnit RenderBox::perpendicularContainingBlockLogicalHeight() const
         LayoutUnit fillFallbackExtent = containingBlockStyle.writingMode().isHorizontal()
             ? view().frameView().layoutSize().height()
             : view().frameView().layoutSize().width();
-        LayoutUnit fillAvailableExtent = containingBlock->availableLogicalHeight(ExcludeMarginBorderPadding);
+        LayoutUnit fillAvailableExtent = containingBlock->availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
         view().addPercentHeightDescendant(const_cast<RenderBox&>(*this));
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=158286 We also need to perform the same percentHeightDescendant treatment to the element which dictates the return value for containingBlock()->availableLogicalHeight() above.
         return std::min(fillAvailableExtent, fillFallbackExtent);
@@ -3081,7 +3081,7 @@ RenderBoxFragmentInfo* RenderBox::renderBoxFragmentInfo(RenderFragmentContainer*
     // If we have computed our width in this fragment already, it will be cached, and we can
     // just return it.
     RenderBoxFragmentInfo* boxInfo = fragment->renderBoxFragmentInfo(*this);
-    if (boxInfo && cacheFlag == CacheRenderBoxFragmentInfo)
+    if (boxInfo && cacheFlag == RenderBoxFragmentInfoFlags::CacheRenderBoxFragmentInfo)
         return boxInfo;
 
     return nullptr;
@@ -3335,7 +3335,7 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
         return { };
     }
     if (logicalHeightLength.isFillAvailable())
-        return containingBlock()->availableLogicalHeight(ExcludeMarginBorderPadding) - borderAndPadding;
+        return containingBlock()->availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding) - borderAndPadding;
     ASSERT_NOT_REACHED();
     return 0_lu;
 }
@@ -3481,8 +3481,8 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth(LayoutUni
 
     auto& logicalMinWidth = style().logicalMinWidth();
     auto& logicalMaxWidth = style().logicalMaxWidth();
-    bool useLogicalWidthForMinWidth = (shouldComputePreferred == ComputePreferred && logicalMinWidth.isPercentOrCalculated()) || logicalMinWidth.isUndefined();
-    bool useLogicalWidthForMaxWidth = (shouldComputePreferred == ComputePreferred && logicalMaxWidth.isPercentOrCalculated()) || logicalMaxWidth.isUndefined();
+    bool useLogicalWidthForMinWidth = (shouldComputePreferred == ShouldComputePreferred::ComputePreferred && logicalMinWidth.isPercentOrCalculated()) || logicalMinWidth.isUndefined();
+    bool useLogicalWidthForMaxWidth = (shouldComputePreferred == ShouldComputePreferred::ComputePreferred && logicalMaxWidth.isPercentOrCalculated()) || logicalMaxWidth.isUndefined();
     auto minLogicalWidth =  useLogicalWidthForMinWidth ? logicalWidth : computeReplacedLogicalWidthUsing(SizeType::MinSize, logicalMinWidth);
     auto maxLogicalWidth =  useLogicalWidthForMaxWidth ? logicalWidth : computeReplacedLogicalWidthUsing(SizeType::MaxSize, logicalMaxWidth);
     return std::max(minLogicalWidth, std::min(logicalWidth, maxLogicalWidth));
@@ -3675,7 +3675,7 @@ LayoutUnit RenderBox::computeReplacedLogicalHeightUsing(SizeType heightType, Len
         else if (auto gridAreaLogicalHeight = isGridItem() ? this->overridingContainingBlockContentLogicalHeight() : std::nullopt; gridAreaLogicalHeight && *gridAreaLogicalHeight)
             availableHeight = gridAreaLogicalHeight->value();
         else {
-            availableHeight = hasPerpendicularContainingBlock ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(IncludeMarginBorderPadding);
+            availableHeight = hasPerpendicularContainingBlock ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(AvailableLogicalHeightType::IncludeMarginBorderPadding);
             // It is necessary to use the border-box to match WinIE's broken
             // box model. This is essential for sizing inside
             // table cells using percentage heights.
@@ -3749,7 +3749,7 @@ LayoutUnit RenderBox::availableLogicalHeightUsing(const Length& h, AvailableLogi
     }
 
     LayoutUnit availableHeight = isOrthogonal(*this, *containingBlock()) ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(heightType);
-    if (heightType == ExcludeMarginBorderPadding) {
+    if (heightType == AvailableLogicalHeightType::ExcludeMarginBorderPadding) {
         // FIXME: Margin collapsing hasn't happened yet, so this incorrectly removes collapsed margins.
         availableHeight -= marginBefore() + marginAfter() + borderAndPaddingLogicalHeight();
     }

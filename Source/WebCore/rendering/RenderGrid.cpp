@@ -367,7 +367,7 @@ void RenderGrid::layoutGrid(bool relayoutChildren)
             auto availableLogicalHeightForContentBox = [&] {
                 if (auto overridingLogicalHeight = this->overridingLogicalHeight())
                     return constrainContentBoxLogicalHeightByMinMax(*overridingLogicalHeight - borderAndPaddingLogicalHeight(), { });
-                return availableLogicalHeight(ExcludeMarginBorderPadding);
+                return availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
             };
             computeTrackSizesForDefiniteSize(GridTrackSizingDirection::ForRows, availableLogicalHeightForContentBox(), gridLayoutState);
         }
@@ -494,7 +494,7 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
             if (shouldApplySizeContainment())
                 shouldRecomputeHeight = true;
         } else
-            computeTrackSizesForDefiniteSize(GridTrackSizingDirection::ForRows, availableLogicalHeight(ExcludeMarginBorderPadding), gridLayoutState);
+            computeTrackSizesForDefiniteSize(GridTrackSizingDirection::ForRows, availableLogicalHeight(AvailableLogicalHeightType::ExcludeMarginBorderPadding), gridLayoutState);
 
         auto performMasonryPlacement = [&](const GridTrackSizingDirection masonryAxisDirection) {
             auto gridAxisDirection = masonryAxisDirection == GridTrackSizingDirection::ForRows ? GridTrackSizingDirection::ForColumns : GridTrackSizingDirection::ForRows;
@@ -793,7 +793,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
         std::optional<LayoutUnit> availableMaxSize;
         if (maxSize.isSpecified()) {
             if (maxSize.isPercentOrCalculated())
-                containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
+                containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
             LayoutUnit maxSizeValue = valueForLength(maxSize, valueOrDefault(containingBlockAvailableSize));
             availableMaxSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(maxSizeValue, maxSize.type()) : adjustContentBoxLogicalHeightForBoxSizing(maxSizeValue);
         }
@@ -809,7 +809,7 @@ unsigned RenderGrid::computeAutoRepeatTracksCount(GridTrackSizingDirection direc
         std::optional<LayoutUnit> availableMinSize;
         if (minSize.isSpecified()) {
             if (!containingBlockAvailableSize && minSize.isPercentOrCalculated())
-                containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
+                containingBlockAvailableSize = isRowAxis ? containingBlockLogicalWidthForContent() : containingBlockLogicalHeightForContent(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
             LayoutUnit minSizeValue = valueForLength(minSize, valueOrDefault(containingBlockAvailableSize));
             availableMinSize = isRowAxis ? adjustContentBoxLogicalWidthForBoxSizing(minSizeValue, minSize.type()) : adjustContentBoxLogicalHeightForBoxSizing(minSizeValue);
         } else if (shouldComputeMinSizeFromAspectRatio) {

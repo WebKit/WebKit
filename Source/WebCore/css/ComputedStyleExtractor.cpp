@@ -587,7 +587,7 @@ static RefPtr<CSSValue> positionOffsetValue(const RenderStyle& style, CSSPropert
             if (isVerticalProperty == containingBlock->isHorizontalWritingMode()) {
                 containingBlockSize = box->isOutOfFlowPositioned()
                     ? box->containingBlockLogicalHeightForPositioned(*containingBlock, false)
-                    : box->containingBlockLogicalHeightForContent(ExcludeMarginBorderPadding);
+                    : box->containingBlockLogicalHeightForContent(AvailableLogicalHeightType::ExcludeMarginBorderPadding);
             } else {
                 containingBlockSize = box->isOutOfFlowPositioned()
                     ? box->containingBlockLogicalWidthForPositioned(*containingBlock, nullptr, false)

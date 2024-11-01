@@ -681,7 +681,7 @@ public:
         OptionSet<ClipRectsOption> options;
 
         bool respectOverflowClip() const { return options.contains(ClipRectsOption::RespectOverflowClip); }
-        OverlayScrollbarSizeRelevancy overlayScrollbarSizeRelevancy() const { return options.contains(ClipRectsOption::IncludeOverlayScrollbarSize) ? IncludeOverlayScrollbarSize : IgnoreOverlayScrollbarSize; }
+        OverlayScrollbarSizeRelevancy overlayScrollbarSizeRelevancy() const { return options.contains(ClipRectsOption::IncludeOverlayScrollbarSize) ? OverlayScrollbarSizeRelevancy::IncludeOverlayScrollbarSize : OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize; }
     };
 
     // This method figures out our layerBounds in coordinates relative to
@@ -1081,7 +1081,7 @@ private:
         return { };
     }
 
-    LayoutRect rendererBorderBoxRectInFragment(RenderFragmentContainer* fragment, RenderBox::RenderBoxFragmentInfoFlags flags = RenderBox::CacheRenderBoxFragmentInfo) const
+    LayoutRect rendererBorderBoxRectInFragment(RenderFragmentContainer* fragment, RenderBox::RenderBoxFragmentInfoFlags flags = RenderBox::RenderBoxFragmentInfoFlags::CacheRenderBoxFragmentInfo) const
     {
         if (auto* box = dynamicDowncast<RenderBox>(renderer()))
             return box->borderBoxRectInFragment(fragment, flags);

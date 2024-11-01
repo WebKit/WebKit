@@ -980,7 +980,7 @@ bool RenderLayerScrollableArea::hasScrollableOrRubberbandableAncestor()
 
 int RenderLayerScrollableArea::verticalScrollbarWidth(OverlayScrollbarSizeRelevancy relevancy, bool isHorizontalWritingMode) const
 {
-    if (m_vBar && m_vBar->isOverlayScrollbar() && (relevancy == IgnoreOverlayScrollbarSize || !m_vBar->shouldParticipateInHitTesting()))
+    if (m_vBar && m_vBar->isOverlayScrollbar() && (relevancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize || !m_vBar->shouldParticipateInHitTesting()))
         return 0;
 
     if (!m_vBar && isHorizontalWritingMode && !(scrollbarGutterStyle().isAuto || ScrollbarTheme::theme().usesOverlayScrollbars()))
@@ -994,7 +994,7 @@ int RenderLayerScrollableArea::verticalScrollbarWidth(OverlayScrollbarSizeReleva
 
 int RenderLayerScrollableArea::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevancy, bool isHorizontalWritingMode) const
 {
-    if (m_hBar && m_hBar->isOverlayScrollbar() && (relevancy == IgnoreOverlayScrollbarSize || !m_hBar->shouldParticipateInHitTesting()))
+    if (m_hBar && m_hBar->isOverlayScrollbar() && (relevancy == OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize || !m_hBar->shouldParticipateInHitTesting()))
         return 0;
 
     if (!m_hBar && !isHorizontalWritingMode && !(scrollbarGutterStyle().isAuto || ScrollbarTheme::theme().usesOverlayScrollbars()))
@@ -1147,7 +1147,7 @@ void RenderLayerScrollableArea::computeScrollOrigin()
 
     int scrollableLeftOverflow = roundToInt(overflowLeft() - box->borderLeft());
     if (shouldPlaceVerticalScrollbarOnLeft())
-        scrollableLeftOverflow -= verticalScrollbarWidth(IgnoreOverlayScrollbarSize, box->writingMode().isHorizontal());
+        scrollableLeftOverflow -= verticalScrollbarWidth(OverlayScrollbarSizeRelevancy::IgnoreOverlayScrollbarSize, box->writingMode().isHorizontal());
     int scrollableTopOverflow = roundToInt(overflowTop() - box->borderTop());
     setScrollOrigin(IntPoint(-scrollableLeftOverflow, -scrollableTopOverflow));
 
