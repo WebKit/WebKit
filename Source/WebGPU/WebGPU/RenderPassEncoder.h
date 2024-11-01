@@ -141,10 +141,6 @@ private:
     id<MTLRenderCommandEncoder> m_renderCommandEncoder { nil };
 
     uint64_t m_debugGroupStackSize { 0 };
-    struct PendingTimestampWrites {
-        Ref<QuerySet> querySet;
-        uint32_t queryIndex;
-    };
 
     const Ref<Device> m_device;
     RefPtr<Buffer> m_indexBuffer;
@@ -179,7 +175,6 @@ private:
     WGPURenderPassDescriptor m_descriptor;
     Vector<WGPURenderPassColorAttachment> m_descriptorColorAttachments;
     WGPURenderPassDepthStencilAttachment m_descriptorDepthStencilAttachment;
-    WGPURenderPassTimestampWrites m_descriptorTimestampWrites;
     Vector<RefPtr<TextureView>> m_colorAttachmentViews;
     RefPtr<TextureView> m_depthStencilView;
     struct BufferAndOffset {

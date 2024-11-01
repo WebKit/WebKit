@@ -74,7 +74,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     , m_descriptor(descriptor)
     , m_descriptorColorAttachments(descriptor.colorAttachmentCount ? Vector<WGPURenderPassColorAttachment>(std::span { descriptor.colorAttachments, descriptor.colorAttachmentCount }) : Vector<WGPURenderPassColorAttachment>())
     , m_descriptorDepthStencilAttachment(descriptor.depthStencilAttachment ? *descriptor.depthStencilAttachment : WGPURenderPassDepthStencilAttachment())
-    , m_descriptorTimestampWrites(descriptor.timestampWrites ? *descriptor.timestampWrites : WGPURenderPassTimestampWrites())
 #if CPU(X86_64)
     , m_metalDescriptor(metalDescriptor)
 #endif
@@ -87,8 +86,6 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
         m_descriptor.colorAttachments = &m_descriptorColorAttachments[0];
     if (descriptor.depthStencilAttachment)
         m_descriptor.depthStencilAttachment = &m_descriptorDepthStencilAttachment;
-    if (descriptor.timestampWrites)
-        m_descriptor.timestampWrites = &m_descriptorTimestampWrites;
     auto colorAttachments = descriptor.colorAttachmentsSpan();
     for (auto& attachment : colorAttachments)
         m_colorAttachmentViews.append(RefPtr { static_cast<TextureView*>(attachment.view) });

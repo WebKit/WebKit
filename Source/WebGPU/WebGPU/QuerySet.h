@@ -83,7 +83,6 @@ private:
     QuerySet(Device&);
 
     const Ref<Device> m_device;
-    // FIXME: Can we use a variant for these two resources?
     id<MTLBuffer> m_visibilityBuffer { nil };
     id<MTLCounterSampleBuffer> m_timestampBuffer { nil };
     uint32_t m_count { 0 };

@@ -128,6 +128,96 @@ int GPUFrameCapture::maxSubmitCallsToCapture = 1;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(Device);
 
+GPUShaderValidation Device::shaderValidationState() const
+{
+#if ENABLE(WEBGPU_BY_DEFAULT)
+    static MTLShaderValidation shaderValidationState = MTLShaderValidationDefault;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        int captureFirstFrameToken;
+        notify_register_dispatch("com.apple.WebKit.WebGPU.ToggleShaderValidationState", &captureFirstFrameToken, dispatch_get_main_queue(), ^(int) {
+            shaderValidationState = (shaderValidationState == MTLShaderValidationEnabled ? MTLShaderValidationDefault : MTLShaderValidationEnabled);
+        });
+    });
+
+    return shaderValidationState;
+#else
+    return 0;
+#endif
+}
+
+bool Device::enableEncoderTimestamps() const
+{
+    static bool enable = false;
+    static std::once_flag onceFlag;
+    std::call_once(onceFlag, [] {
+        int token;
+        notify_register_dispatch("com.apple.WebKit.WebGPU.EnableEncoderTimestamps", &token, dispatch_get_main_queue(), ^(int) {
+            enable = !enable;
+            WTFLogAlways("Encoder timestamps are %s", enable ? "ENABLED" : "DISABLED");
+        });
+    });
+
+    return enable;
+}
+
+id<MTLCounterSampleBuffer> Device::timestampsBuffer(id<MTLCommandBuffer> commandBuffer, size_t timestampCount)
+{
+#if !PLATFORM(WATCHOS)
+    MTLCounterSampleBufferDescriptor* sampleBufferDesc = [MTLCounterSampleBufferDescriptor new];
+    sampleBufferDesc.sampleCount = timestampCount;
+    sampleBufferDesc.storageMode = MTLStorageModeShared;
+    sampleBufferDesc.counterSet = m_capabilities.baseCapabilities.timestampCounterSet;
+
+    NSError* error = nil;
+    id<MTLCounterSampleBuffer> buffer = [m_device newCounterSampleBufferWithDescriptor:sampleBufferDesc error:&error];
+    if (error) {
+        WTFLogAlways("newCounterSamplerBufferWithDescriptor failed %@", error.localizedDescription);
+        return nil;
+    }
+
+    [m_sampleCounterBuffers setObject:buffer forKey:commandBuffer];
+
+    return buffer;
+#else
+    UNUSED_PARAM(commandBuffer);
+    UNUSED_PARAM(timestampCount);
+    return nil;
+#endif
+}
+
+void Device::resolveTimestampsForBuffer(id<MTLCommandBuffer> commandBuffer)
+{
+    id<MTLCounterSampleBuffer> sampleBuffer = [m_sampleCounterBuffers objectForKey:commandBuffer];
+    if (!sampleBuffer)
+        return;
+
+    [m_sampleCounterBuffers removeObjectForKey:commandBuffer];
+    id<MTLBlitCommandEncoder> blitCommandEncoder = [commandBuffer blitCommandEncoder];
+    auto timestampCount = sampleBuffer.sampleCount;
+    id<MTLBuffer> counterDataBuffer = safeCreateBuffer(sizeof(MTLCounterResultTimestamp) * timestampCount);
+    [blitCommandEncoder resolveCounters:sampleBuffer inRange:NSMakeRange(0, timestampCount) destinationBuffer:counterDataBuffer destinationOffset:0];
+    [blitCommandEncoder endEncoding];
+    NSMutableArray<id<MTLBuffer>>* resolvedBuffers = [m_resolvedSampleCounterBuffers objectForKey:commandBuffer];
+    if (!resolvedBuffers) {
+        resolvedBuffers = [NSMutableArray arrayWithObject:counterDataBuffer];
+        [m_resolvedSampleCounterBuffers setObject:resolvedBuffers forKey:commandBuffer];
+    } else
+        [resolvedBuffers addObject:counterDataBuffer];
+
+    [commandBuffer addCompletedHandler:^(id<MTLCommandBuffer> completedCommandBuffer) {
+        for (id<MTLBuffer> buffer in resolvedBuffers) {
+            auto timestamps = unsafeMakeSpan(static_cast<MTLCounterResultTimestamp*>(buffer.contents), buffer.length);
+            WTFLogAlways("Timestamps for buffer %@", buffer.label);
+            for (size_t i = 0, timestampCount = buffer.length / sizeof(MTLCounterResultTimestamp); (i + 1) < timestampCount; i += 2) {
+                auto timeDifference = timestamps[i + 1].timestamp - timestamps[i].timestamp;
+                WTFLogAlways("\tencoder time %f", timeDifference / 100000.0f);
+            }
+        }
+        [m_resolvedSampleCounterBuffers removeObjectForKey:completedCommandBuffer];
+    }];
+}
+
 bool Device::shouldStopCaptureAfterSubmit()
 {
     return GPUFrameCapture::shouldStopCaptureAfterSubmit();
@@ -214,6 +304,8 @@ Device::Device(id<MTLDevice> device, id<MTLCommandQueue> defaultQueue, HardwareC
     desc.pixelFormat = MTLPixelFormatDepth32Float_Stencil8;
     desc.storageMode = MTLStorageModePrivate;
     m_placeholderDepthStencilTexture = [m_device newTextureWithDescriptor:desc];
+    m_sampleCounterBuffers = [NSMapTable weakToStrongObjectsMapTable];
+    m_resolvedSampleCounterBuffers = [NSMapTable weakToStrongObjectsMapTable];
 }
 
 Device::Device(Adapter& adapter)

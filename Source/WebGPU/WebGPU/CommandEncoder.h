@@ -139,10 +139,7 @@ private:
     id<MTLSharedEvent> m_abortCommandBuffer { nil };
     id<MTLBlitCommandEncoder> m_blitCommandEncoder { nil };
     id<MTLCommandEncoder> m_existingCommandEncoder { nil };
-    struct PendingTimestampWrites {
-        Ref<QuerySet> querySet;
-        uint32_t queryIndex;
-    };
+
     uint64_t m_debugGroupStackSize { 0 };
     WeakPtr<CommandBuffer> m_cachedCommandBuffer;
     NSString* m_lastErrorString { nil };

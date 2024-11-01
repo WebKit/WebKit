@@ -97,10 +97,12 @@ void Queue::finalizeBlitCommandEncoder()
 void Queue::endEncoding(id<MTLCommandEncoder> commandEncoder, id<MTLCommandBuffer> commandBuffer) const
 {
     id<MTLCommandEncoder> currentEncoder = encoderForBuffer(commandBuffer);
-    if (currentEncoder != commandEncoder)
+    if (!currentEncoder || currentEncoder != commandEncoder)
         return;
 
     [currentEncoder endEncoding];
+    if (RefPtr device = m_device.get())
+        device->resolveTimestampsForBuffer(commandBuffer);
     [m_openCommandEncoders removeObjectForKey:commandBuffer];
 }
 

@@ -94,10 +94,6 @@ private:
 
     id<MTLComputeCommandEncoder> m_computeCommandEncoder { nil };
 
-    struct PendingTimestampWrites {
-        Ref<QuerySet> querySet;
-        uint32_t queryIndex;
-    };
     uint64_t m_debugGroupStackSize { 0 };
 
     const Ref<Device> m_device;

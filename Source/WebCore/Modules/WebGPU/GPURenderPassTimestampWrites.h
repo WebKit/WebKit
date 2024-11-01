@@ -44,8 +44,8 @@ struct GPURenderPassTimestampWrites {
     }
 
     WeakPtr<GPUQuerySet> querySet;
-    GPUSize32 beginningOfPassWriteIndex { UINT32_MAX };
-    GPUSize32 endOfPassWriteIndex { UINT32_MAX };
+    GPUSize32 beginningOfPassWriteIndex { 0 };
+    GPUSize32 endOfPassWriteIndex { 1 };
 };
 
 }

@@ -72,6 +72,12 @@ class XRSubImage;
 class XRProjectionLayer;
 class XRView;
 
+#if ENABLE(WEBGPU_BY_DEFAULT)
+using GPUShaderValidation = MTLShaderValidation;
+#else
+using GPUShaderValidation = uint32_t;
+#endif
+
 // https://gpuweb.github.io/gpuweb/#gpudevice
 class Device : public WGPUDeviceImpl, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device> {
     WTF_MAKE_TZONE_ALLOCATED(Device);
@@ -187,6 +193,9 @@ public:
     constexpr bool isIntel() const { return false; }
 #endif
     void pauseErrorReporting(bool pauseReporting);
+    bool enableEncoderTimestamps() const;
+    id<MTLCounterSampleBuffer> timestampsBuffer(id<MTLCommandBuffer>, size_t);
+    void resolveTimestampsForBuffer(id<MTLCommandBuffer>);
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
@@ -204,6 +213,7 @@ private:
     Ref<PipelineLayout> generatePipelineLayout(const Vector<Vector<WGPUBindGroupLayoutEntry>> &bindGroupEntries);
 
     void captureFrameIfNeeded() const;
+    GPUShaderValidation shaderValidationState() const;
 
     struct Error {
         WGPUErrorType type;
@@ -258,6 +268,8 @@ private:
 #if HAVE(COREVIDEO_METAL_SUPPORT)
     RetainPtr<CVMetalTextureCacheRef> m_coreVideoTextureCache;
 #endif
+    NSMapTable<id<MTLCommandBuffer>, id<MTLCounterSampleBuffer>>* m_sampleCounterBuffers;
+    NSMapTable<id<MTLCommandBuffer>, NSMutableArray<id<MTLBuffer>>*>* m_resolvedSampleCounterBuffers;
     bool m_supressAllErrors { false };
 } SWIFT_SHARED_REFERENCE(retainDevice, releaseDevice);
 

@@ -81,8 +81,6 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
             statisticCounterSet = counterSet;
     }
 
-    timestampCounterSet = nil;
-
     return {
         .argumentBuffersTier = [device argumentBuffersSupport],
         .supportsNonPrivateDepthStencilTextures = false, // To be filled in by the caller.
@@ -119,6 +117,9 @@ static Vector<WGPUFeatureName> baseFeatures(id<MTLDevice> device, const Hardware
     if (device.supports32BitFloatFiltering)
         features.append(WGPUFeatureName_Float32Filterable);
 #endif
+
+    if (baseCapabilities.timestampCounterSet)
+        features.append(WGPUFeatureName_TimestampQuery);
 
     return features;
 }

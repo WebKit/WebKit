@@ -1313,7 +1313,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
 
     MTLRenderPipelineDescriptor* mtlRenderPipelineDescriptor = [MTLRenderPipelineDescriptor new];
 #if ENABLE(WEBGPU_BY_DEFAULT)
-    mtlRenderPipelineDescriptor.shaderValidation = MTLShaderValidationEnabled;
+    mtlRenderPipelineDescriptor.shaderValidation = shaderValidationState();
 #endif
 
     auto label = fromAPI(descriptor.label);

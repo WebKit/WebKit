@@ -230,6 +230,18 @@ Ref<ComputePassEncoder> CommandEncoder::beginComputePass(const WGPUComputePassDe
 
     MTLComputePassDescriptor* computePassDescriptor = [MTLComputePassDescriptor new];
     computePassDescriptor.dispatchType = MTLDispatchTypeSerial;
+    id<MTLCounterSampleBuffer> counterSampleBuffer;
+    if (auto* wgpuTimestampWrites = descriptor.timestampWrites) {
+        Ref timestampWrites = protectedFromAPI(wgpuTimestampWrites->querySet);
+        counterSampleBuffer = timestampWrites->counterSampleBuffer();
+    }
+
+    if (m_device->enableEncoderTimestamps() || counterSampleBuffer) {
+        auto* timestampWrites = descriptor.timestampWrites;
+        computePassDescriptor.sampleBufferAttachments[0].sampleBuffer = counterSampleBuffer ?: m_device->timestampsBuffer(m_commandBuffer, 2);
+        computePassDescriptor.sampleBufferAttachments[0].startOfEncoderSampleIndex = timestampWrites ? timestampWrites->beginningOfPassWriteIndex : 0;
+        computePassDescriptor.sampleBufferAttachments[0].endOfEncoderSampleIndex = timestampWrites ? timestampWrites->endOfPassWriteIndex : 1;
+    }
 
     id<MTLComputeCommandEncoder> computeCommandEncoder = [m_commandBuffer computeCommandEncoderWithDescriptor:computePassDescriptor];
     setExistingEncoder(computeCommandEncoder);
@@ -457,6 +469,27 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
         return RenderPassEncoder::createInvalid(*this, m_device, @"command buffer has already been committed");
 
     MTLRenderPassDescriptor* mtlDescriptor = [MTLRenderPassDescriptor new];
+    id<MTLCounterSampleBuffer> counterSampleBuffer;
+    if (auto* wgpuTimestampWrites = descriptor.timestampWrites) {
+        Ref timestampWrites = protectedFromAPI(wgpuTimestampWrites->querySet);
+        counterSampleBuffer = timestampWrites->counterSampleBuffer();
+    }
+
+    if (m_device->enableEncoderTimestamps() || counterSampleBuffer) {
+        if (counterSampleBuffer) {
+            mtlDescriptor.sampleBufferAttachments[0].sampleBuffer = counterSampleBuffer;
+            mtlDescriptor.sampleBufferAttachments[0].startOfVertexSampleIndex = descriptor.timestampWrites->beginningOfPassWriteIndex;
+            mtlDescriptor.sampleBufferAttachments[0].endOfVertexSampleIndex = descriptor.timestampWrites->endOfPassWriteIndex;
+            mtlDescriptor.sampleBufferAttachments[0].startOfFragmentSampleIndex = descriptor.timestampWrites->endOfPassWriteIndex;
+            mtlDescriptor.sampleBufferAttachments[0].endOfFragmentSampleIndex = descriptor.timestampWrites->endOfPassWriteIndex;
+        } else {
+            mtlDescriptor.sampleBufferAttachments[0].sampleBuffer = counterSampleBuffer ?: m_device->timestampsBuffer(m_commandBuffer, 4);
+            mtlDescriptor.sampleBufferAttachments[0].startOfVertexSampleIndex = 0;
+            mtlDescriptor.sampleBufferAttachments[0].endOfVertexSampleIndex = 1;
+            mtlDescriptor.sampleBufferAttachments[0].startOfFragmentSampleIndex = 2;
+            mtlDescriptor.sampleBufferAttachments[0].endOfFragmentSampleIndex = 3;
+        }
+    }
 
     if (descriptor.colorAttachmentCount > 8)
         return RenderPassEncoder::createInvalid(*this, m_device, @"color attachment count is > 8");
@@ -2089,6 +2122,7 @@ void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQue
         break;
     }
     case WGPUQueryType_Timestamp: {
+        [m_blitCommandEncoder resolveCounters:querySet.counterSampleBuffer() inRange:NSMakeRange(0, querySet.count()) destinationBuffer:destination.buffer() destinationOffset:destinationOffset];
         break;
     }
     default:

@@ -35,11 +35,13 @@
 
 namespace WebGPU {
 
-static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> device, id<MTLFunction> function, const PipelineLayout& pipelineLayout, const MTLSize& size, NSString *label)
+static id<MTLComputePipelineState> createComputePipelineState(id<MTLDevice> device, id<MTLFunction> function, const PipelineLayout& pipelineLayout, const MTLSize& size, NSString *label, GPUShaderValidation validationState)
 {
     auto computePipelineDescriptor = [MTLComputePipelineDescriptor new];
 #if ENABLE(WEBGPU_BY_DEFAULT)
-    computePipelineDescriptor.shaderValidation = MTLShaderValidationEnabled;
+    computePipelineDescriptor.shaderValidation = validationState;
+#else
+    UNUSED_PARAM(validationState);
 #endif
 
     computePipelineDescriptor.computeFunction = function;
@@ -125,11 +127,11 @@ std::pair<Ref<ComputePipeline>, NSString*> Device::createComputePipeline(const W
         auto generatedPipelineLayout = generatePipelineLayout(bindGroupEntries);
         if (!generatedPipelineLayout->isValid())
             return returnInvalidComputePipeline(*this, isAsync);
-        auto computePipelineState = createComputePipelineState(m_device, function, generatedPipelineLayout, size, label);
+        auto computePipelineState = createComputePipelineState(m_device, function, generatedPipelineLayout, size, label, shaderValidationState());
         return std::make_pair(ComputePipeline::create(computePipelineState, WTFMove(generatedPipelineLayout), size, WTFMove(minimumBufferSizes), *this), nil);
     }
 
-    auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, size, label);
+    auto computePipelineState = createComputePipelineState(m_device, function, pipelineLayout, size, label, shaderValidationState());
     return std::make_pair(ComputePipeline::create(computePipelineState, WTFMove(pipelineLayout), size, WTFMove(minimumBufferSizes), *this), nil);
 }
 

@@ -47,9 +47,22 @@ Ref<QuerySet> Device::createQuerySet(const WGPUQuerySetDescriptor& descriptor)
     auto type = descriptor.type;
 
     switch (type) {
-    case WGPUQueryType_Timestamp:
+    case WGPUQueryType_Timestamp: {
+#if !PLATFORM(WATCHOS)
+        MTLCounterSampleBufferDescriptor* sampleBufferDesc = [MTLCounterSampleBufferDescriptor new];
+        sampleBufferDesc.sampleCount = count;
+        sampleBufferDesc.storageMode = MTLStorageModeShared;
+        sampleBufferDesc.counterSet = m_capabilities.baseCapabilities.timestampCounterSet;
+
+        NSError* error = nil;
+        id<MTLCounterSampleBuffer> buffer = [m_device newCounterSampleBufferWithDescriptor:sampleBufferDesc error:&error];
+        if (error)
+            return QuerySet::createInvalid(*this);
+        return QuerySet::create(buffer, count, type, *this);
+#else
         return QuerySet::createInvalid(*this);
-    case WGPUQueryType_Occlusion: {
+#endif
+    } case WGPUQueryType_Occlusion: {
         auto buffer = safeCreateBuffer(sizeof(uint64_t) * count, MTLStorageModePrivate);
         buffer.label = fromAPI(label);
         return QuerySet::create(buffer, count, type, *this);
