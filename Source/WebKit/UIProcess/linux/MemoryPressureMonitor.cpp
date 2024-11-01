@@ -283,18 +283,18 @@ static int systemMemoryUsedAsPercentage(FILE* memInfoFile, FILE* zoneInfoFile, C
         return -1;
 
     int memoryUsagePercentage = ((memoryTotal - memoryAvailable) * 100) / memoryTotal;
-    LOG_VERBOSE(MemoryPressure, "MemoryPressureMonitor::memory: real (memory total=%zu MB) (memory available=%zu MB) (memory usage percentage=%d MB)", memoryTotal, memoryAvailable, memoryUsagePercentage);
+    LOG(MemoryPressure, "MemoryPressureMonitor::memory: real (total: %zu kB) (available: %zu kB) (usage: %d%%)", memoryTotal, memoryAvailable, memoryUsagePercentage);
     if (memoryController->isActive()) {
         memoryTotal = memoryController->getMemoryTotalWithCgroup();
         size_t memoryUsage = memoryController->getMemoryUsageWithCgroup();
         if (memoryTotal != notSet && memoryUsage != notSet) {
             int memoryUsagePercentageWithCgroup = 100 * ((float) memoryUsage / (float) memoryTotal);
-            LOG_VERBOSE(MemoryPressure, "MemoryPressureMonitor::memory: cgroup (memory total=%zu bytes) (memory usage=%zu bytes) (memory usage percentage=%d bytes)", memoryTotal, memoryUsage, memoryUsagePercentageWithCgroup);
+            LOG(MemoryPressure, "MemoryPressureMonitor::memory: cgroup (total: %zu bytes) (in use: %zu bytes) (usage: %d%%)", memoryTotal, memoryUsage, memoryUsagePercentageWithCgroup);
             if (memoryUsagePercentageWithCgroup > memoryUsagePercentage)
                 memoryUsagePercentage = memoryUsagePercentageWithCgroup;
         }
     }
-    LOG_VERBOSE(MemoryPressure, "MemoryPressureMonitor::memory: memoryUsagePercentage (%d)", memoryUsagePercentage);
+    LOG(MemoryPressure, "MemoryPressureMonitor::memory: (memoryUsagePercentage: %d%%)", memoryUsagePercentage);
     return memoryUsagePercentage;
 }
 
