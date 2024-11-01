@@ -37,13 +37,13 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InputEvent);
 
 Ref<InputEvent> InputEvent::create(const AtomString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view,
-    const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail, IsInputMethodComposing isInputMethodComposing)
+    const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing isInputMethodComposing)
 {
     return adoptRef(*new InputEvent(eventType, inputType, cancelable, WTFMove(view), data, WTFMove(dataTransfer), targetRanges, detail, isInputMethodComposing));
 }
 
 InputEvent::InputEvent(const AtomString& eventType, const String& inputType, IsCancelable cancelable, RefPtr<WindowProxy>&& view,
-    const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<RefPtr<StaticRange>>& targetRanges, int detail, IsInputMethodComposing isInputMethodComposing)
+    const String& data, RefPtr<DataTransfer>&& dataTransfer, const Vector<Ref<StaticRange>>& targetRanges, int detail, IsInputMethodComposing isInputMethodComposing)
     : UIEvent(EventInterfaceType::InputEvent, eventType, CanBubble::Yes, cancelable, IsComposed::Yes, WTFMove(view), detail)
     , m_inputType(inputType)
     , m_data(data)

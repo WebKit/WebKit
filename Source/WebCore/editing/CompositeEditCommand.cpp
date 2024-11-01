@@ -427,7 +427,7 @@ void CompositeEditCommand::didApplyCommand()
     protectedDocument()->editor().appliedEditing(*this);
 }
 
-Vector<RefPtr<StaticRange>> CompositeEditCommand::targetRanges() const
+Vector<Ref<StaticRange>> CompositeEditCommand::targetRanges() const
 {
     ASSERT(!isEditingTextAreaOrTextInput());
     auto firstRange = document().selection().selection().firstRange();
@@ -437,7 +437,7 @@ Vector<RefPtr<StaticRange>> CompositeEditCommand::targetRanges() const
     return { 1, StaticRange::create(WTFMove(*firstRange)) };
 }
 
-Vector<RefPtr<StaticRange>> CompositeEditCommand::targetRangesForBindings() const
+Vector<Ref<StaticRange>> CompositeEditCommand::targetRangesForBindings() const
 {
     if (isEditingTextAreaOrTextInput())
         return { };
