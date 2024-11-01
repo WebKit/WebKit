@@ -861,7 +861,20 @@ void RenderBundleEncoder::endCurrentICB()
 {
     auto commandCount = m_currentCommandIndex;
     m_currentCommandIndex = 0;
-    RELEASE_ASSERT(!commandCount || !!m_icbDescriptor.commandTypes);
+    RELEASE_ASSERT(!commandCount || !!m_icbDescriptor);
+    auto cleanup = [&] {
+        m_indirectCommandBuffer = nil;
+        m_currentCommand = nil;
+        m_currentPipelineState = nil;
+        m_dynamicOffsetsFragmentBuffer = nil;
+        m_dynamicOffsetsVertexBuffer = nil;
+        m_resources = [NSMapTable strongToStrongObjectsMapTable];
+    };
+    if (!m_icbDescriptor.commandTypes && !m_requiresCommandReplay) {
+        m_recordedCommands.clear();
+        cleanup();
+        return;
+    }
 
     Ref device = m_device;
 
@@ -892,7 +905,7 @@ void RenderBundleEncoder::endCurrentICB()
     }
     m_fragmentDynamicOffset = 0;
 
-    if (!m_renderPassEncoder) {
+    if (!m_renderPassEncoder && !m_requiresCommandReplay) {
         m_indirectCommandBuffer = [device->device() newIndirectCommandBufferWithDescriptor:m_icbDescriptor maxCommandCount:commandCount options:0];
         if (!m_indirectCommandBuffer || m_indirectCommandBuffer.size != commandCount) {
             makeInvalid(@"MTLIndirectCommandBuffer allocation failed, likely tried to encode too many commands");
@@ -921,12 +934,7 @@ void RenderBundleEncoder::endCurrentICB()
 
     m_currentCommandIndex = commandCount - completedDraws;
     [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_resources, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp, m_dynamicOffsetsFragmentBuffer, m_pipeline.get(), device.get(), m_minVertexCountForDrawCommand)];
-    m_indirectCommandBuffer = nil;
-    m_currentCommand = nil;
-    m_currentPipelineState = nil;
-    m_dynamicOffsetsFragmentBuffer = nil;
-    m_dynamicOffsetsVertexBuffer = nil;
-    m_resources = [NSMapTable strongToStrongObjectsMapTable];
+    cleanup();
 }
 
 bool RenderBundleEncoder::validToEncodeCommand() const
