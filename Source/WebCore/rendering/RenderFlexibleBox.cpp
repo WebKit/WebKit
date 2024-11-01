@@ -103,6 +103,8 @@ ASCIILiteral RenderFlexibleBox::renderName() const
 
 void RenderFlexibleBox::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
+    SetForScope<std::optional<LayoutPhase>> computeIntrinsicLogicalWidthsScope(m_layoutPhase, LayoutPhase::IntrinsicLogicalWidthComputation);
+
     auto addScrollbarWidth = [&]() {
         LayoutUnit scrollbarWidth(scrollbarLogicalWidth());
         maxLogicalWidth += scrollbarWidth;
@@ -388,6 +390,10 @@ bool RenderFlexibleBox::hitTestChildren(const HitTestRequest& request, HitTestRe
 void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
+
+    auto clearLayoutPhase = WTF::makeScopeExit([&] {
+        m_layoutPhase = { };
+    });
 
     if (!relayoutChildren && simplifiedLayout())
         return;
@@ -1257,6 +1263,7 @@ LayoutUnit RenderFlexibleBox::computeFlexBaseSizeForFlexItem(RenderBox& flexItem
 
 void RenderFlexibleBox::performFlexLayout(bool relayoutChildren)
 {
+    auto flexLayoutScope = SetForScope<std::optional<LayoutPhase>>(m_layoutPhase, LayoutPhase::Layout);
     if (layoutUsingFlexFormattingContext())
         return;
 
