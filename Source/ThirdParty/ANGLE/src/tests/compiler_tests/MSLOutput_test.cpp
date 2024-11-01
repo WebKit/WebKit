@@ -15,27 +15,35 @@
 
 using namespace sh;
 
-class MSLVertexOutputTest : public MatchOutputCodeTest
+class MSLOutputTestBase : public MatchOutputCodeTest
 {
   public:
-    MSLVertexOutputTest() : MatchOutputCodeTest(GL_VERTEX_SHADER, SH_MSL_METAL_OUTPUT)
+    MSLOutputTestBase(GLenum shaderType) : MatchOutputCodeTest(shaderType, SH_MSL_METAL_OUTPUT)
     {
         ShCompileOptions defaultCompileOptions = {};
-        defaultCompileOptions.validateAST      = true;
+        // Default options that are forced for MSL output.
+        defaultCompileOptions.rescopeGlobalVariables             = true;
+        defaultCompileOptions.simplifyLoopConditions             = true;
+        defaultCompileOptions.initializeUninitializedLocals      = true;
+        defaultCompileOptions.separateCompoundStructDeclarations = true;
+        // The tests also test that validation succeeds. This should be also the
+        // default forced option, but currently MSL backend does not generate
+        // valid trees. Once validateAST is forced, move to above hunk.
+        defaultCompileOptions.validateAST = true;
         setDefaultCompileOptions(defaultCompileOptions);
     }
 };
 
-class MSLOutputTest : public MatchOutputCodeTest
+class MSLOutputTest : public MSLOutputTestBase
 {
   public:
-    MSLOutputTest() : MatchOutputCodeTest(GL_FRAGMENT_SHADER, SH_MSL_METAL_OUTPUT)
-    {
-        ShCompileOptions defaultCompileOptions       = {};
-        defaultCompileOptions.rescopeGlobalVariables = true;
-        defaultCompileOptions.validateAST            = true;
-        setDefaultCompileOptions(defaultCompileOptions);
-    }
+    MSLOutputTest() : MSLOutputTestBase(GL_FRAGMENT_SHADER) {}
+};
+
+class MSLVertexOutputTest : public MSLOutputTestBase
+{
+  public:
+    MSLVertexOutputTest() : MSLOutputTestBase(GL_VERTEX_SHADER) {}
 };
 
 // Test that having dynamic indexing of a vector inside the right hand side of logical or doesn't
@@ -919,5 +927,40 @@ TEST_F(MSLVertexOutputTest, VertexIDIvecNoCrash)
 {
     const char kShader[] = R"(#version 300 es
 void main(){ivec2 xy=ivec2((+gl_VertexID));gl_Position=vec4((xy), 0,1);})";
+    compile(kShader);
+}
+
+TEST_F(MSLVertexOutputTest, StructEqualityNoCrash)
+{
+    const char kShader[] = R"(#version 300 es
+struct S{mediump vec2 i;};S a,b;void main(){if (a==b){}})";
+    compile(kShader);
+}
+
+TEST_F(MSLOutputTest, StructAndVarDeclarationNoCrash)
+{
+    const char kShader[] = R"(#version 300 es
+void main(){struct S{mediump vec4 v;};S a;a=a,1;})";
+    compile(kShader);
+}
+
+TEST_F(MSLOutputTest, StructAndVarDeclarationSeparationNoCrash)
+{
+    const char kShader[] = R"(#version 300 es
+void main(){struct S{mediump vec4 v;}a;a=a,1;})";
+    compile(kShader);
+}
+
+TEST_F(MSLOutputTest, StructAndVarDeclarationSeparationNoCrash2)
+{
+    const char kShader[] = R"(#version 300 es
+void main(){struct S{mediump vec4 v;}a,b;a=b,1;})";
+    compile(kShader);
+}
+
+TEST_F(MSLOutputTest, StructAndVarDeclarationSeparationNoCrash3)
+{
+    const char kShader[] = R"(#version 300 es
+ void main(){struct S1{mediump vec4 v;}l;struct S2{S1 s1;}s2;s2=s2,l=l,1;})";
     compile(kShader);
 }

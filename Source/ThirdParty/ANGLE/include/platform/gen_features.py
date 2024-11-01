@@ -56,8 +56,7 @@ inline {name}::~{name}() = default;
 template_feature = u"""    FeatureInfo {var_name} = {{
         "{display_name}",
         FeatureCategory::{category},
-        {description},
-        &members,{issue}
+        &members,
     }};
 """
 
@@ -182,14 +181,10 @@ def main():
             var_name = make_camel_case(json_name)
             # Use the same (camelCase) name for display as well
             display_name = var_name
-            issue = feature_json.get('issue', None)
             feature = template_feature.format(
                 var_name=var_name,
                 display_name=display_name,
-                category=category_prefix + feature_json['category'],
-                description='\n        '.join(
-                    '"' + line + '"' for line in feature_json['description']),
-                issue='' if issue is None else ' "' + issue + '"')
+                category=category_prefix + feature_json['category'])
 
             features.append(feature)
 

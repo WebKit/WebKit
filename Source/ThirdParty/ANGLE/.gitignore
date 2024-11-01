@@ -63,7 +63,7 @@
 /third_party/jinja2
 /third_party/jsoncpp
 /third_party/kotlin_stdlib
-/third_party/libdrm
+/third_party/libdrm/src
 /third_party/libc++/src
 /third_party/libc++abi/src
 /third_party/libjpeg_turbo

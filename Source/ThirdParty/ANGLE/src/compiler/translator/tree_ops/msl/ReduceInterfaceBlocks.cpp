@@ -121,7 +121,7 @@ bool sh::ReduceInterfaceBlocks(TCompiler &compiler, TIntermBlock &root, IdGen &i
         return false;
     }
 
-    if (!SeparateDeclarations(compiler, root))
+    if (!SeparateDeclarations(compiler, root, false))
     {
         return false;
     }

@@ -179,25 +179,6 @@ if(angle_enable_cgl)
     )
 endif()
 
-if(angle_enable_eagl)
-    list(APPEND gl_backend_sources
-        "src/libANGLE/renderer/gl/eagl/ContextEAGL.cpp"
-        "src/libANGLE/renderer/gl/eagl/ContextEAGL.h"
-        "src/libANGLE/renderer/gl/eagl/DeviceEAGL.cpp"
-        "src/libANGLE/renderer/gl/eagl/DeviceEAGL.h"
-        "src/libANGLE/renderer/gl/eagl/DisplayEAGL.h"
-        "src/libANGLE/renderer/gl/eagl/DisplayEAGL.mm"
-        "src/libANGLE/renderer/gl/eagl/FunctionsEAGL.h"
-        "src/libANGLE/renderer/gl/eagl/FunctionsEAGL.mm"
-        "src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.h"
-        "src/libANGLE/renderer/gl/eagl/IOSurfaceSurfaceEAGL.mm"
-        "src/libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.cpp"
-        "src/libANGLE/renderer/gl/eagl/PbufferSurfaceEAGL.h"
-        "src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.h"
-        "src/libANGLE/renderer/gl/eagl/WindowSurfaceEAGL.mm"
-    )
-endif()
-
 if(angle_enable_gl_null)
     list(APPEND gl_backend_sources
         "src/libANGLE/renderer/gl/null_functions.cpp"

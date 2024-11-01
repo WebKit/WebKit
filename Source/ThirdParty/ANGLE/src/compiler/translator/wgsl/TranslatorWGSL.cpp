@@ -22,7 +22,6 @@
 #include "compiler/translator/StaticType.h"
 #include "compiler/translator/SymbolUniqueId.h"
 #include "compiler/translator/Types.h"
-#include "compiler/translator/tree_ops/SeparateCompoundStructDeclarations.h"
 #include "compiler/translator/tree_util/BuiltIn_autogen.h"
 #include "compiler/translator/tree_util/FindMain.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
@@ -1791,20 +1790,6 @@ bool TranslatorWGSL::translate(TIntermBlock *root,
     {
         OutputTree(root, getInfoSink().info);
         std::cout << getInfoSink().info.c_str();
-    }
-
-    {
-        int uniqueStructId = 0;
-        if (!SeparateCompoundStructDeclarations(
-                *this,
-                [&uniqueStructId]() {
-                    return BuildConcatenatedImmutableString("ANGLE_unnamed_struct_",
-                                                            uniqueStructId++);
-                },
-                *root))
-        {
-            return false;
-        }
     }
 
     RewritePipelineVarOutput rewritePipelineVarOutput(getShaderType());

@@ -12,7 +12,7 @@ or D3D11 explicit APIs can offer a number of significant benefits:
 
 ## Back-end Design
 
-The [`vk::Renderer`](vk::Renderer.cpp) class represents an `EGLDisplay`. `vk::Renderer` owns shared global
+The [`vk::Renderer`](Renderer.cpp) class represents an `EGLDisplay`. `vk::Renderer` owns shared global
 resources like the [VkDevice][VkDevice], [VkQueue][VkQueue], the [Vulkan format tables](vk_format_utils.h)
 and [internal Vulkan shaders](shaders). The [ContextVk](ContextVk.cpp) class implements the back-end
 of a front-end OpenGL Context. ContextVk processes state changes and handles action commands like
@@ -80,10 +80,10 @@ More implementation details can be found in the `doc` directory:
 
 - [Fast OpenGL State Transitions](doc/FastOpenGLStateTransitions.md)
 - [Shader Module Compilation](doc/ShaderModuleCompilation.md)
-- [OpenGL Line Segment Rasterization](doc/OpenGLLineSegmentRasterization.md)
 - [Format Tables and Emulation](doc/FormatTablesAndEmulation.md)
 - [Deferred Clears](doc/DeferredClears.md)
 - [Queries](doc/Queries.md)
+- [Present Semaphores](doc/PresentSemaphores.md)
 
 [VkDevice]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkDevice.html
 [VkQueue]: https://www.khronos.org/registry/vulkan/specs/1.1-extensions/man/html/VkQueue.html

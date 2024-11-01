@@ -67,6 +67,7 @@ ANGLE_CHROMIUM_DEPS = [
     'third_party/kotlin_stdlib',
     'third_party/libc++/src',
     'third_party/libc++abi/src',
+    'third_party/libdrm/src',
     'third_party/libjpeg_turbo',
     'third_party/libunwind/src',
     'third_party/markupsafe',

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -462,10 +462,6 @@
 		7BA890562CB522400020C411 /* ImmutableString_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA890542CB522400020C411 /* ImmutableString_autogen.cpp */; };
 		7BA890582CB5227C0020C411 /* SymbolTable_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA890572CB5227C0020C411 /* SymbolTable_autogen.cpp */; };
 		7BA890592CB5227C0020C411 /* SymbolTable_autogen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA890572CB5227C0020C411 /* SymbolTable_autogen.cpp */; };
-		7BA8905C2CB5229C0020C411 /* SeparateCompoundStructDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA8905B2CB5229C0020C411 /* SeparateCompoundStructDeclarations.cpp */; };
-		7BA8905D2CB5229C0020C411 /* SeparateCompoundStructDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BA8905A2CB5229C0020C411 /* SeparateCompoundStructDeclarations.h */; };
-		7BA8905E2CB5229C0020C411 /* SeparateCompoundStructDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BA8905A2CB5229C0020C411 /* SeparateCompoundStructDeclarations.h */; };
-		7BA8905F2CB5229C0020C411 /* SeparateCompoundStructDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA8905B2CB5229C0020C411 /* SeparateCompoundStructDeclarations.cpp */; };
 		7BA890622CB522F40020C411 /* context_private_call_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BA890612CB522F40020C411 /* context_private_call_autogen.h */; };
 		7BA890632CB522F40020C411 /* context_private_call.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7BA890602CB522F40020C411 /* context_private_call.cpp */; };
 		7BA890652CB5234E0020C411 /* BuiltIn_autogen.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BA890642CB5234E0020C411 /* BuiltIn_autogen.h */; };
@@ -1656,8 +1652,6 @@
 		7B81955A28CF63D800C7ABCD /* MemoryShaderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryShaderCache.h; sourceTree = "<group>"; };
 		7BA890542CB522400020C411 /* ImmutableString_autogen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableString_autogen.cpp; sourceTree = "<group>"; };
 		7BA890572CB5227C0020C411 /* SymbolTable_autogen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable_autogen.cpp; sourceTree = "<group>"; };
-		7BA8905A2CB5229C0020C411 /* SeparateCompoundStructDeclarations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SeparateCompoundStructDeclarations.h; sourceTree = "<group>"; };
-		7BA8905B2CB5229C0020C411 /* SeparateCompoundStructDeclarations.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SeparateCompoundStructDeclarations.cpp; sourceTree = "<group>"; };
 		7BA890602CB522F40020C411 /* context_private_call.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = context_private_call.cpp; sourceTree = "<group>"; };
 		7BA890612CB522F40020C411 /* context_private_call_autogen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = context_private_call_autogen.h; sourceTree = "<group>"; };
 		7BA890642CB5234E0020C411 /* BuiltIn_autogen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BuiltIn_autogen.h; sourceTree = "<group>"; };
@@ -2669,8 +2663,6 @@
 				5C55D5F322826B8E00B5BA2C /* RewriteStructSamplers.h */,
 				5C55D61022826B9100B5BA2C /* RewriteTexelFetchOffset.cpp */,
 				5C55D62B22826B9700B5BA2C /* RewriteTexelFetchOffset.h */,
-				7BA8905B2CB5229C0020C411 /* SeparateCompoundStructDeclarations.cpp */,
-				7BA8905A2CB5229C0020C411 /* SeparateCompoundStructDeclarations.h */,
 				5C55D60322826B9000B5BA2C /* SeparateDeclarations.cpp */,
 				5C55D61422826B9100B5BA2C /* SeparateDeclarations.h */,
 				7B1538892BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp */,
@@ -3582,7 +3574,6 @@
 				31CD0069249184FC00486F27 /* Semaphore.h in Headers */,
 				31CD0030249184F400486F27 /* SemaphoreImpl.h in Headers */,
 				7B359DAB2A7CEDAA0016DC59 /* SeparateCompoundExpressions.h in Headers */,
-				7BA8905E2CB5229C0020C411 /* SeparateCompoundStructDeclarations.h in Headers */,
 				31CDFF8E2491849800486F27 /* SeparateDeclarations.h in Headers */,
 				7B15388C2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h in Headers */,
 				FF194FE427432CC3006A97A3 /* SeparateStructFromUniformDeclarations.h in Headers */,
@@ -3683,7 +3674,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				7BA890652CB5234E0020C411 /* BuiltIn_autogen.h in Headers */,
-				7BA8905D2CB5229C0020C411 /* SeparateCompoundStructDeclarations.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4194,7 +4184,6 @@
 				DF83E37C2639FEB8000825EF /* SamplerMtl.mm in Sources */,
 				DF83E2FF2639FE17000825EF /* Semaphore.cpp in Sources */,
 				7B359DA92A7CEDAA0016DC59 /* SeparateCompoundExpressions.cpp in Sources */,
-				7BA8905F2CB5229C0020C411 /* SeparateCompoundStructDeclarations.cpp in Sources */,
 				DF83E28A2639FD33000825EF /* SeparateDeclarations.cpp in Sources */,
 				7B15388B2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp in Sources */,
 				FF194FE227432CC3006A97A3 /* SeparateStructFromUniformDeclarations.cpp in Sources */,
@@ -4420,7 +4409,6 @@
 				7BF555582C81F198002B101E /* RunAtTheBeginningOfShader.cpp in Sources */,
 				7BF5555C2C81F198002B101E /* RunAtTheEndOfShader.cpp in Sources */,
 				7BF5557F2C81F198002B101E /* SeparateCompoundExpressions.cpp in Sources */,
-				7BA8905C2CB5229C0020C411 /* SeparateCompoundStructDeclarations.cpp in Sources */,
 				7BF555642C81F198002B101E /* SeparateDeclarations.cpp in Sources */,
 				7BF5552F2C81F198002B101E /* SeparateStructFromFunctionDeclarations.cpp in Sources */,
 				7BF555292C81F198002B101E /* SeparateStructFromUniformDeclarations.cpp in Sources */,

@@ -65,15 +65,10 @@ bool FeatureNameMatch(const std::string &a, const std::string &b)
 }
 }  // anonymous namespace
 
-// FeatureInfo implementation
-static const char *kFeatureOverrideTrue  = "true (override)";
-static const char *kFeatureOverrideFalse = "false (override)";
-
 void FeatureInfo::applyOverride(bool state)
 {
     enabled     = state;
     hasOverride = true;
-    condition   = state ? kFeatureOverrideTrue : kFeatureOverrideFalse;
 }
 
 // FeatureSetBase implementation

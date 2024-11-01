@@ -26,7 +26,7 @@
 
 // Version number for shader translation API.
 // It is incremented every time the API changes.
-#define ANGLE_SH_VERSION 368
+#define ANGLE_SH_VERSION 370
 
 enum ShShaderSpec
 {
@@ -455,6 +455,12 @@ struct ShCompileOptions
 
     // Emulate r32f image with an r32ui image
     uint64_t emulateR32fImageAtomicExchange : 1;
+
+    // Rewrite for and while loops to loop normal form.
+    uint64_t simplifyLoopConditions : 1;
+
+    // Specify struct in one statement, declare instance in other.
+    uint64_t separateCompoundStructDeclarations : 1;
 
     ShCompileOptionsMetal metal;
     ShPixelLocalStorageOptions pls;

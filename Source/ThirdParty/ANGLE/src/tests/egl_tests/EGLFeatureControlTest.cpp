@@ -101,13 +101,8 @@ TEST_P(EGLFeatureControlTest, QueryAll)
         EXPECT_STREQ(features[i]->name, eglQueryStringiANGLE(mDisplay, EGL_FEATURE_NAME_ANGLE, i));
         EXPECT_STREQ(FeatureCategoryToString(features[i]->category),
                      eglQueryStringiANGLE(mDisplay, EGL_FEATURE_CATEGORY_ANGLE, i));
-        EXPECT_STREQ(features[i]->description,
-                     eglQueryStringiANGLE(mDisplay, EGL_FEATURE_DESCRIPTION_ANGLE, i));
-        EXPECT_STREQ(features[i]->bug, eglQueryStringiANGLE(mDisplay, EGL_FEATURE_BUG_ANGLE, i));
         EXPECT_STREQ(FeatureStatusToString(features[i]->enabled),
                      eglQueryStringiANGLE(mDisplay, EGL_FEATURE_STATUS_ANGLE, i));
-        EXPECT_STREQ(features[i]->condition,
-                     eglQueryStringiANGLE(mDisplay, EGL_FEATURE_CONDITION_ANGLE, i));
         ASSERT_EGL_SUCCESS();
     }
 }

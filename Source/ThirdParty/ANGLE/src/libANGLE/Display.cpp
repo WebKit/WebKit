@@ -2487,16 +2487,16 @@ const char *Display::queryStringi(const EGLint name, const EGLint index)
             result = angle::FeatureCategoryToString(mFeatures[index]->category);
             break;
         case EGL_FEATURE_DESCRIPTION_ANGLE:
-            result = mFeatures[index]->description;
+            result = "";
             break;
         case EGL_FEATURE_BUG_ANGLE:
-            result = mFeatures[index]->bug;
+            result = "";
             break;
         case EGL_FEATURE_STATUS_ANGLE:
             result = angle::FeatureStatusToString(mFeatures[index]->enabled);
             break;
         case EGL_FEATURE_CONDITION_ANGLE:
-            result = mFeatures[index]->condition;
+            result = "";
             break;
         default:
             UNREACHABLE();

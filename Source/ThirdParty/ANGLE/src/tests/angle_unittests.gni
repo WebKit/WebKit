@@ -143,6 +143,7 @@ angle_unittests_compiler_tests_sources = [
   "compiler_tests/ShaderImage_test.cpp",
   "compiler_tests/ShaderValidation_test.cpp",
   "compiler_tests/ShaderVariable_test.cpp",
+  "compiler_tests/SimplifyLoopConditions_test.cpp",
   "compiler_tests/TextureFunction_test.cpp",
   "compiler_tests/TypeTracking_test.cpp",
   "compiler_tests/Type_test.cpp",

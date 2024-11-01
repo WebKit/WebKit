@@ -1930,7 +1930,8 @@ void SPIRVBuilder::writeInterfaceVariableDecorations(const TType &type, spirv::I
     }
 
     // If the resource declaration is an input attachment, add the InputAttachmentIndex decoration.
-    if (needsInputAttachmentIndex)
+    // Depth and stencil input attachments are exempt.
+    if (needsInputAttachmentIndex && layoutQualifier.inputAttachmentIndex >= 0)
     {
         spirv::WriteDecorate(&mSpirvDecorations, variableId, spv::DecorationInputAttachmentIndex,
                              {spirv::LiteralInteger(layoutQualifier.inputAttachmentIndex)});

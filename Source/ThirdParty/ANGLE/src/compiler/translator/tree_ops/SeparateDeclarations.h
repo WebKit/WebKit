@@ -29,11 +29,40 @@ class TIntermBlock;
 //    struct S { vec3 d; } a;
 //    S b;
 // Input:
+//    struct { vec3 d; } a;
+// Output (note: no change):
+//    struct { vec3 d; } a;
+// Input:
 //    struct { vec3 d; } a, b;
 // Output:
 //    struct s1234 { vec3 d; } a;
 //    s1234 b;
-[[nodiscard]] bool SeparateDeclarations(TCompiler &compiler, TIntermBlock &root);
+// Input with separateCompoundStructDeclarations=true:
+//    struct S { vec3 d; } a;
+// Output:
+//    struct S { vec3 d; };
+//    S a;
+// Input with separateCompoundStructDeclarations=true:
+//    struct S { vec3 d; } a, b;
+// Output:
+//    struct S { vec3 d; };
+//    S a;
+//    S b;
+// Input with separateCompoundStructDeclarations=true:
+//    struct { vec3 d; } a, b;
+// Output:
+//    struct s1234 { vec3 d; };
+//    s1234 a;
+//    s1234 b;
+// Input with separateCompoundStructDeclarations=true:
+//    struct { vec3 d; } a;
+// Output (note: now, changes):
+//    struct s1234 { vec3 d; };
+//    s1234 a;
+
+[[nodiscard]] bool SeparateDeclarations(TCompiler &compiler,
+                                        TIntermBlock &root,
+                                        bool separateCompoundStructDeclarations);
 
 }  // namespace sh
 

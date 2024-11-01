@@ -5483,7 +5483,10 @@ void main()
     }
 
     ASSERT_GL_NO_ERROR();
-    EXPECT_GT(expectedShaderResourcesCacheMisses, 0u);
+    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    {
+        EXPECT_GT(expectedShaderResourcesCacheMisses, 0u);
+    }
 
     // Verify correctness first.
     std::vector<GLColor> expectedData(kIterations * 2, GLColor::green);
@@ -5497,10 +5500,13 @@ void main()
 
     EXPECT_EQ(expectedData, actualData);
 
-    // Check for unnecessary descriptor set allocations.
-    uint64_t actualShaderResourcesCacheMisses =
-        getPerfCounters().shaderResourcesDescriptorSetCacheMisses;
-    EXPECT_EQ(expectedShaderResourcesCacheMisses, actualShaderResourcesCacheMisses);
+    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    {
+        // Check for unnecessary descriptor set allocations.
+        uint64_t actualShaderResourcesCacheMisses =
+            getPerfCounters().shaderResourcesDescriptorSetCacheMisses;
+        EXPECT_EQ(expectedShaderResourcesCacheMisses, actualShaderResourcesCacheMisses);
+    }
 }
 
 // Test that mapping a buffer that the GPU is using as read-only ghosts the buffer, rather than
@@ -6032,7 +6038,11 @@ TEST_P(VulkanPerformanceCounterTest, UniformUpdatesHitDescriptorSetCache)
     ASSERT_GL_NO_ERROR();
 
     uint64_t expectedCacheMisses = getPerfCounters().uniformsAndXfbDescriptorSetCacheMisses;
-    EXPECT_GT(expectedCacheMisses, 0u);
+    GLint expectedAllocations    = getPerfCounters().descriptorSetAllocations;
+    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    {
+        EXPECT_GT(expectedCacheMisses, 0u);
+    }
 
     // Second pass: ensure all the uniforms are cached.
     for (int iteration = 0; iteration < kIterations; ++iteration)
@@ -6048,8 +6058,18 @@ TEST_P(VulkanPerformanceCounterTest, UniformUpdatesHitDescriptorSetCache)
 
     ASSERT_GL_NO_ERROR();
 
-    uint64_t actualCacheMisses = getPerfCounters().uniformsAndXfbDescriptorSetCacheMisses;
-    EXPECT_EQ(expectedCacheMisses, actualCacheMisses);
+    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    {
+        uint64_t actualCacheMisses = getPerfCounters().uniformsAndXfbDescriptorSetCacheMisses;
+        EXPECT_EQ(expectedCacheMisses, actualCacheMisses);
+    }
+    else
+    {
+        // If cache is disabled, we still expect descriptorSets to be reused instead of keep
+        // allocating new descriptorSets.
+        GLint actualAllocations = getPerfCounters().descriptorSetAllocations;
+        EXPECT_EQ(expectedAllocations, actualAllocations);
+    }
 }
 
 // Test one texture sampled by fragment shader, then image load it by compute
@@ -7203,7 +7223,10 @@ TEST_P(VulkanPerformanceCounterTest, TextureDescriptorsAreShared)
     ASSERT_GL_NO_ERROR();
 
     GLuint expectedCacheMisses = getPerfCounters().textureDescriptorSetCacheMisses;
-    EXPECT_GT(expectedCacheMisses, 0u);
+    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    {
+        EXPECT_GT(expectedCacheMisses, 0u);
+    }
 
     glUseProgram(testProgram2);
 
@@ -7214,8 +7237,16 @@ TEST_P(VulkanPerformanceCounterTest, TextureDescriptorsAreShared)
 
     ASSERT_GL_NO_ERROR();
 
-    GLuint actualCacheMisses = getPerfCounters().textureDescriptorSetCacheMisses;
-    EXPECT_EQ(expectedCacheMisses, actualCacheMisses);
+    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    {
+        GLuint actualCacheMisses = getPerfCounters().textureDescriptorSetCacheMisses;
+        EXPECT_EQ(expectedCacheMisses, actualCacheMisses);
+    }
+    else
+    {
+        GLint descriptorSetAllocations = getPerfCounters().descriptorSetAllocations;
+        EXPECT_EQ(4, descriptorSetAllocations);
+    }
 }
 
 // Verifies that we share Uniform Buffer descriptor sets between programs.
@@ -7262,7 +7293,11 @@ void main() {
     ASSERT_GL_NO_ERROR();
 
     GLuint expectedCacheMisses = getPerfCounters().shaderResourcesDescriptorSetCacheMisses;
-    EXPECT_GT(expectedCacheMisses, 0u);
+    GLuint totalAllocationsAtFirstProgram = getPerfCounters().descriptorSetAllocations;
+    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    {
+        EXPECT_GT(expectedCacheMisses, 0u);
+    }
 
     glUseProgram(testProgram2);
 
@@ -7273,8 +7308,19 @@ void main() {
 
     ASSERT_GL_NO_ERROR();
 
-    GLuint actualCacheMisses = getPerfCounters().shaderResourcesDescriptorSetCacheMisses;
-    EXPECT_EQ(expectedCacheMisses, actualCacheMisses);
+    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    {
+        GLuint actualCacheMisses = getPerfCounters().shaderResourcesDescriptorSetCacheMisses;
+        EXPECT_EQ(expectedCacheMisses, actualCacheMisses);
+    }
+    else
+    {
+        // Because between program switch there is no submit and wait for finish, we expect draw
+        // with second program will end up allocating same number of descriptorSets as the draws
+        // with the first program.
+        GLuint totalAllocationsAtSecondProgram = getPerfCounters().descriptorSetAllocations;
+        EXPECT_EQ(totalAllocationsAtFirstProgram * 2, totalAllocationsAtSecondProgram);
+    }
 }
 
 // Test modifying texture size and render to it does not cause VkFramebuffer cache explode
@@ -7570,7 +7616,8 @@ TEST_P(VulkanPerformanceCounterTest, Source2DAndRepeatedlyRespecifyTarget2DWithS
 
     // Create the target in a loop
     GLTexture targetTexture;
-    constexpr size_t kMaxLoop = 2;
+    constexpr size_t kMaxLoop            = 20;
+    GLint descriptorSetAllocationsBefore = 0;
     GLint textureDescriptorSetCacheTotalSizeBefore =
         getPerfCounters().textureDescriptorSetCacheTotalSize;
     for (size_t loop = 0; loop < kMaxLoop; loop++)
@@ -7590,14 +7637,28 @@ TEST_P(VulkanPerformanceCounterTest, Source2DAndRepeatedlyRespecifyTarget2DWithS
         // of 1
         EXPECT_PIXEL_NEAR(0, 0, kLinearColor[0], kLinearColor[1], kLinearColor[2], kLinearColor[3],
                           1);
+        if (loop == 0)
+        {
+            descriptorSetAllocationsBefore = getPerfCounters().descriptorSetAllocations;
+        }
     }
+    GLint descriptorSetAllocationsIncrease =
+        getPerfCounters().descriptorSetAllocations - descriptorSetAllocationsBefore;
     GLint textureDescriptorSetCacheTotalSizeIncrease =
         getPerfCounters().textureDescriptorSetCacheTotalSize -
         textureDescriptorSetCacheTotalSizeBefore;
 
-    // We don't expect descriptorSet cache to keep growing
-    EXPECT_EQ(1, textureDescriptorSetCacheTotalSizeIncrease);
-
+    if (getPerfCounters().descriptorSetCacheTotalSize > 0)
+    {
+        // We don't expect descriptorSet cache to keep growing
+        EXPECT_EQ(1, textureDescriptorSetCacheTotalSizeIncrease);
+    }
+    else
+    {
+        // Because we call EXPECT_PIXEL_NEAR which will wait for draw to finish, we don't expect
+        // descriptorSet allocation to keep growing
+        EXPECT_EQ(1, descriptorSetAllocationsIncrease);
+    }
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);
 }

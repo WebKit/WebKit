@@ -27,15 +27,20 @@
 
 #include "compiler/translator/Compiler.h"
 
+#if ANGLE_SH_VERSION != 370
+#error Check if there are added options and update this check.
+#endif
+
 // name, index, allowed output languages expression, forced option value expression for output language
 // default option for fuzzer to prevent unexpected behavior during compilation
 // limitExpressionComplexity and limitCallStackDepth forced for all backends for fuzzing robustness purposes.
+// validateAST is forced for all backeds for fixing the validation issues.
 #define FOR_EACH_SH_COMPILE_OPTIONS_BOOL_OPTION(MACRO) \
     MACRO(objectCode, 0, any, none) \
     MACRO(outputDebugInfo, 1, any, none) \
     MACRO(sourcePath, 2, any, none) \
     MACRO(intermediateTree, 3, any, none) \
-    MACRO(validateAST, 4, any, none) \
+    MACRO(validateAST, 4, none, any) \
     MACRO(validateLoopIndexing, 5, any, none) \
     MACRO(lineDirectives, 6, any, none) \
     MACRO(removeInvariantAndCentroidForESSL3, 7, glsl, none) \
@@ -60,10 +65,10 @@
     MACRO(useUnusedStandardSharedBlocks, 26, glsl, none) \
     MACRO(rewriteFloatUnaryMinusOperator, 27, appleGLSL, none) \
     MACRO(emulateAtan2FloatFunction, 28, glsl, none) \
-    MACRO(initializeUninitializedLocals, 29, any, none) \
+    MACRO(initializeUninitializedLocals, 29, any, msl) \
     MACRO(initializeBuiltinsForInstancedMultiview, 30, glsl || hlsl, none) \
     MACRO(selectViewInNvGLSLVertexShader, 31, glsl, none) \
-    MACRO(clampPointSize, 32, glsl || msl || spirvVk, none) \
+    MACRO(clampPointSize, 32, glsl || spirvVk, msl) \
     MACRO(addAdvancedBlendEquationsEmulation, 33, spirvVk, none) \
     MACRO(dontUseLoopsToInitializeVariables, 34, glsl, none) \
     MACRO(skipD3DConstantRegisterZero, 35, hlsl, none) \
@@ -100,7 +105,10 @@
     MACRO(preTransformTextureCubeGradDerivatives, 66, appleGLSL || msl, none) \
     MACRO(avoidOpSelectWithMismatchingRelaxedPrecision, 67, spirvVk, none) \
     MACRO(emitSPIRV14, 68, spirvVk, none) \
-    MACRO(rejectWebglShadersWithUndefinedBehavior, 69, any, none)
+    MACRO(rejectWebglShadersWithUndefinedBehavior, 69, any, none) \
+    MACRO(emulateR32fImageAtomicExchange, 70, spirvVk, none) \
+    MACRO(simplifyLoopConditions, 71, none, msl) \
+    MACRO(separateCompoundStructDeclarations, 72, none, msl || wgsl)
 
 void filterOptions(ShShaderOutput output, ShCompileOptions& options);
 

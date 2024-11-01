@@ -316,7 +316,7 @@ class TSymbolTable : angle::NonCopyable, TSymbolTableBase
 
     int mUniqueIdCounter;
 
-    static const int kLastBuiltInId;
+    static constexpr int kFirstUserDefinedSymbolId = 3000;
 
     sh::GLenum mShaderType;
     ShShaderSpec mShaderSpec;
@@ -328,6 +328,7 @@ class TSymbolTable : angle::NonCopyable, TSymbolTableBase
     // Store gl_in variable with its array size once the array size can be determined. The array
     // size can also be checked against latter input primitive type declaration.
     TVariable *mGlInVariableWithArraySize;
+    friend struct SymbolIdChecker;
 };
 
 }  // namespace sh

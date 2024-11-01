@@ -342,6 +342,8 @@ class ProgramExecutable final : public angle::Subject
         return !getLinkedTransformFeedbackVaryings().empty();
     }
     bool usesColorFramebufferFetch() const { return mPod.fragmentInoutIndices.any(); }
+    bool usesDepthFramebufferFetch() const { return mPod.hasDepthInputAttachment; }
+    bool usesStencilFramebufferFetch() const { return mPod.hasStencilInputAttachment; }
 
     // Count the number of uniform and storage buffer declarations, counting arrays as one.
     size_t getTransformFeedbackBufferCount() const { return mTransformFeedbackStrides.size(); }
@@ -375,6 +377,8 @@ class ProgramExecutable final : public angle::Subject
     DrawBufferMask getFragmentInoutIndices() const { return mPod.fragmentInoutIndices; }
     bool hasClipDistance() const { return mPod.hasClipDistance; }
     bool hasDiscard() const { return mPod.hasDiscard; }
+    bool hasDepthInputAttachment() const { return mPod.hasDepthInputAttachment; }
+    bool hasStencilInputAttachment() const { return mPod.hasStencilInputAttachment; }
     bool enablesPerSampleShading() const { return mPod.enablesPerSampleShading; }
     BlendEquationBitSet getAdvancedBlendEquations() const { return mPod.advancedBlendEquations; }
     const std::vector<TransformFeedbackVarying> &getLinkedTransformFeedbackVaryings() const
@@ -866,10 +870,11 @@ class ProgramExecutable final : public angle::Subject
         uint8_t hasClipDistance : 1;
         uint8_t hasDiscard : 1;
         uint8_t hasYUVOutput : 1;
+        uint8_t hasDepthInputAttachment : 1;
+        uint8_t hasStencilInputAttachment : 1;
         uint8_t enablesPerSampleShading : 1;
         uint8_t canDrawWith : 1;
         uint8_t isSeparable : 1;
-        uint8_t pad : 2;
 
         // 12 bytes
         sh::WorkGroupSize computeShaderLocalSize;

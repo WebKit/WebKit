@@ -109,12 +109,18 @@ angle::Result Program::getInfo(ProgramInfo name,
             copySize  = devices.size() * sizeof(decltype(devices)::value_type);
             break;
         case ProgramInfo::Source:
-            copyValue = mSource.c_str();
-            copySize  = mSource.length() + 1u;
+            if (!mSource.empty())
+            {
+                copyValue = mSource.c_str();
+                copySize  = mSource.length() + 1u;
+            }
             break;
         case ProgramInfo::IL:
-            copyValue = mIL.c_str();
-            copySize  = mIL.length() + 1u;
+            if (!mIL.empty())
+            {
+                copyValue = mIL.c_str();
+                copySize  = mIL.length() + 1u;
+            }
             break;
         case ProgramInfo::BinarySizes:
         case ProgramInfo::Binaries:

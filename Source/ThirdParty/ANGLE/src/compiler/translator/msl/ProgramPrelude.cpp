@@ -34,11 +34,6 @@ class ProgramPrelude : public TIntermTraverser
         mOut << "#include <metal_stdlib>\n\n";
         ALWAYS_INLINE();
         int_clamp();
-        if (ppc.hasStructEq)
-        {
-            equalVector();
-            equalMatrix();
-        }
 
         switch (ppc.shaderType)
         {

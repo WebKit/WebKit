@@ -32,14 +32,15 @@ struct SpvProgramInterfaceInfo
 
 struct SpvSourceOptions
 {
-    uint32_t maxInputAttachmentCount        = 0;
+    uint32_t maxColorInputAttachmentCount     = 0;
     bool supportsTransformFeedbackExtension = false;
     bool supportsTransformFeedbackEmulation = false;
     bool enableTransformFeedbackEmulation   = false;
+    bool supportsDepthStencilInputAttachments = false;
 };
 
 SpvSourceOptions SpvCreateSourceOptions(const angle::FeaturesVk &features,
-                                        uint32_t maxInputAttachmentCount);
+                                        uint32_t maxColorInputAttachmentCount);
 
 struct SpvTransformOptions
 {

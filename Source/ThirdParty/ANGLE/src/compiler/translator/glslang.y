@@ -1579,7 +1579,10 @@ statement_list
 
 expression_statement
     : SEMICOLON  { $$ = context->addEmptyStatement(@$); }
-    | expression SEMICOLON  { $$ = $1; }
+    | expression SEMICOLON  {
+        context->checkIsValidExpressionStatement(@$, $1);
+        $$ = $1;
+    }
     ;
 
 selection_statement

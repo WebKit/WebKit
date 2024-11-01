@@ -8,7 +8,6 @@
 
 #include "common/system_utils.h"
 #include "compiler/translator/IntermRebuild.h"
-#include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/msl/SeparateCompoundExpressions.h"
 #include "compiler/translator/tree_util/IntermNode_util.h"
 #include "compiler/translator/util.h"
@@ -658,11 +657,6 @@ bool sh::SeparateCompoundExpressions(TCompiler &compiler,
     if (angle::GetBoolEnvironmentVar("GMT_DISABLE_SEPARATE_COMPOUND_EXPRESSIONS"))
     {
         return true;
-    }
-
-    if (!SimplifyLoopConditions(&compiler, &root, &compiler.getSymbolTable()))
-    {
-        return false;
     }
 
     if (!PrePass(compiler).rebuildRoot(root))

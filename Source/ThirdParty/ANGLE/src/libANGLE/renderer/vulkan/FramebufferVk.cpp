@@ -567,7 +567,7 @@ angle::Result FramebufferVk::clearImpl(const gl::Context *context,
                 adjustedClearColorValues[colorIndexGL].float32[1] = clearColorValue.float32[0];
                 adjustedClearColorValues[colorIndexGL].float32[2] = clearColorValue.float32[1];
             }
-            else if (contextVk->getRenderer()->getFeatures().adjustClearColorPrecision.enabled)
+            else if (contextVk->getFeatures().adjustClearColorPrecision.enabled)
             {
                 const angle::FormatID colorRenderTargetFormat =
                     colorRenderTarget->getImageForRenderPass().getActualFormatID();
@@ -634,7 +634,7 @@ angle::Result FramebufferVk::clearImpl(const gl::Context *context,
     }
 
     const bool preferDrawOverClearAttachments =
-        contextVk->getRenderer()->getFeatures().preferDrawClearOverVkCmdClearAttachments.enabled;
+        contextVk->getFeatures().preferDrawClearOverVkCmdClearAttachments.enabled;
 
     // Merge current clears with the deferred clears, then proceed with only processing deferred
     // clears.  This simplifies the clear paths such that they don't need to consider both the
@@ -2945,6 +2945,7 @@ angle::Result FramebufferVk::createNewFramebuffer(
 angle::Result FramebufferVk::getFramebuffer(ContextVk *contextVk,
                                             vk::RenderPassFramebuffer *framebufferOut)
 {
+    ASSERT(!mRenderPassDesc.hasDepthStencilFramebufferFetch());
     ASSERT(mCurrentFramebufferDesc.hasColorFramebufferFetch() ==
            mRenderPassDesc.hasColorFramebufferFetch());
 
@@ -3577,7 +3578,7 @@ angle::Result FramebufferVk::startNewRenderPass(ContextVk *contextVk,
 
                 // If VK_EXT_shader_stencil_export is not supported, stencil unresolve is done
                 // through a method that requires stencil to have been cleared.
-                if (!contextVk->getRenderer()->getFeatures().supportsShaderStencilExport.enabled)
+                if (!contextVk->getFeatures().supportsShaderStencilExport.enabled)
                 {
                     stencilLoadOp = vk::RenderPassLoadOp::Clear;
 

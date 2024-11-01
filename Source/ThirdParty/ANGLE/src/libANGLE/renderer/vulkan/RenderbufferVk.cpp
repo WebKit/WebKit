@@ -103,7 +103,9 @@ angle::Result RenderbufferVk::setStorageImpl(const gl::Context *context,
     }
 
     // For framebuffer fetch and advanced blend emulation, color will be read as input attachment.
-    if (!isDepthStencilFormat)
+    // For depth/stencil framebuffer fetch, depth/stencil will also be read as input attachment.
+    if (!isDepthStencilFormat ||
+        renderer->getFeatures().supportsShaderFramebufferFetchDepthStencil.enabled)
     {
         usage |= VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT;
     }

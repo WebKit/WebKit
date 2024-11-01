@@ -338,6 +338,24 @@ bool MatchOutputCodeTest::notFoundInCode(const char *stringToFind) const
     return true;
 }
 
+std::string MatchOutputCodeTest::outputCode(ShShaderOutput output) const
+{
+    const auto code = mOutputCode.find(output);
+    EXPECT_NE(mOutputCode.end(), code);
+    if (code == mOutputCode.end())
+    {
+        return {};
+    }
+
+    // No meaningful check for binary blobs
+    if (IsBinaryBlob(code->second))
+    {
+        return {};
+    }
+
+    return code->second;
+}
+
 const TIntermAggregate *FindFunctionCallNode(TIntermNode *root, const TString &functionMangledName)
 {
     FunctionCallFinder finder(functionMangledName.c_str());

@@ -678,34 +678,60 @@ void AssignInputAttachmentBindings(const SpvSourceOptions &options,
                                    SpvProgramInterfaceInfo *programInterfaceInfo,
                                    ShaderInterfaceVariableInfoMap *variableInfoMapOut)
 {
-    if (!programExecutable.hasLinkedShaderStage(gl::ShaderType::Fragment) ||
-        !programExecutable.usesColorFramebufferFetch())
+    if (!programExecutable.hasLinkedShaderStage(gl::ShaderType::Fragment))
     {
         return;
     }
 
-    const uint32_t baseInputAttachmentBindingIndex =
+    if (!programExecutable.usesColorFramebufferFetch() &&
+        !programExecutable.usesDepthFramebufferFetch() &&
+        !programExecutable.usesStencilFramebufferFetch())
+    {
+        return;
+    }
+
+    uint32_t baseInputAttachmentBindingIndex =
         programInterfaceInfo->currentShaderResourceBindingIndex;
     const gl::ShaderBitSet activeShaders{gl::ShaderType::Fragment};
 
-    // sh::vk::spirv::ReservedIds supports max 8 draw buffers
-    ASSERT(options.maxInputAttachmentCount <= 8);
-    ASSERT(options.maxInputAttachmentCount >= 1);
-
-    for (size_t index : programExecutable.getFragmentInoutIndices())
+    // If depth/stencil framebuffer fetch is enabled, place their bindings before the color
+    // attachments.  When binding descriptors, this results in a smaller gap that would need to be
+    // filled with bogus bindings.
+    if (options.supportsDepthStencilInputAttachments)
     {
-        const uint32_t inputAttachmentBindingIndex =
-            baseInputAttachmentBindingIndex + static_cast<uint32_t>(index);
-
         AddResourceInfo(variableInfoMapOut, activeShaders, gl::ShaderType::Fragment,
-                        sh::vk::spirv::kIdInputAttachment0 + static_cast<uint32_t>(index),
+                        sh::vk::spirv::kIdDepthInputAttachment,
                         ToUnderlying(DescriptorSetIndex::ShaderResource),
-                        inputAttachmentBindingIndex);
+                        baseInputAttachmentBindingIndex++);
+        AddResourceInfo(variableInfoMapOut, activeShaders, gl::ShaderType::Fragment,
+                        sh::vk::spirv::kIdStencilInputAttachment,
+                        ToUnderlying(DescriptorSetIndex::ShaderResource),
+                        baseInputAttachmentBindingIndex++);
+
+        programInterfaceInfo->currentShaderResourceBindingIndex += 2;
+    }
+
+    if (programExecutable.usesColorFramebufferFetch())
+    {
+        // sh::vk::spirv::ReservedIds supports max 8 draw buffers
+        ASSERT(options.maxColorInputAttachmentCount <= 8);
+        ASSERT(options.maxColorInputAttachmentCount >= 1);
+
+        for (size_t index : programExecutable.getFragmentInoutIndices())
+        {
+            const uint32_t inputAttachmentBindingIndex =
+                baseInputAttachmentBindingIndex + static_cast<uint32_t>(index);
+
+            AddResourceInfo(variableInfoMapOut, activeShaders, gl::ShaderType::Fragment,
+                            sh::vk::spirv::kIdInputAttachment0 + static_cast<uint32_t>(index),
+                            ToUnderlying(DescriptorSetIndex::ShaderResource),
+                            inputAttachmentBindingIndex);
+        }
     }
 
     // For input attachment uniform, the descriptor set binding indices are allocated as much as
     // the maximum draw buffers.
-    programInterfaceInfo->currentShaderResourceBindingIndex += options.maxInputAttachmentCount;
+    programInterfaceInfo->currentShaderResourceBindingIndex += options.maxColorInputAttachmentCount;
 }
 
 void AssignInterfaceBlockBindings(const SpvSourceOptions &options,
@@ -2905,8 +2931,7 @@ TransformationState SpirvMultisampleTransformer::transformDecorate(
     spv::Decoration &decoration,
     spirv::Blob *blobOut)
 {
-    if (mOptions.isMultisampledFramebufferFetch &&
-        decoration == spv::DecorationInputAttachmentIndex && !nonSemantic.hasSampleID() &&
+    if (mOptions.isMultisampledFramebufferFetch && !nonSemantic.hasSampleID() &&
         !mSampleIDDecorationsAdded)
     {
         // Add the following instructions if they are not available yet:
@@ -5166,15 +5191,17 @@ void SpirvVertexAttributeAliasingTransformer::writeExpandedMatrixInitialization(
 }  // anonymous namespace
 
 SpvSourceOptions SpvCreateSourceOptions(const angle::FeaturesVk &features,
-                                        uint32_t maxInputAttachmentCount)
+                                        uint32_t maxColorInputAttachmentCount)
 {
     SpvSourceOptions options;
 
-    options.maxInputAttachmentCount = maxInputAttachmentCount;
+    options.maxColorInputAttachmentCount = maxColorInputAttachmentCount;
     options.supportsTransformFeedbackExtension =
         features.supportsTransformFeedbackExtension.enabled;
     options.supportsTransformFeedbackEmulation = features.emulateTransformFeedback.enabled;
     options.enableTransformFeedbackEmulation   = options.supportsTransformFeedbackEmulation;
+    options.supportsDepthStencilInputAttachments =
+        features.supportsShaderFramebufferFetchDepthStencil.enabled;
 
     return options;
 }

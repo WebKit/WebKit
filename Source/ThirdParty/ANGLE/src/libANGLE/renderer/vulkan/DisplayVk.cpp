@@ -525,15 +525,13 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     outExtensions->imagePixmap           = false;  // ANGLE does not support pixmaps
     outExtensions->glTexture2DImage      = true;
     outExtensions->glTextureCubemapImage = true;
-    outExtensions->glTexture3DImage =
-        getRenderer()->getFeatures().supportsSampler2dViewOf3d.enabled;
+    outExtensions->glTexture3DImage      = getFeatures().supportsSampler2dViewOf3d.enabled;
     outExtensions->glRenderbufferImage = true;
-    outExtensions->imageNativeBuffer =
-        getRenderer()->getFeatures().supportsAndroidHardwareBuffer.enabled;
+    outExtensions->imageNativeBuffer     = getFeatures().supportsAndroidHardwareBuffer.enabled;
     outExtensions->surfacelessContext = true;
     outExtensions->glColorspace       = true;
     outExtensions->imageGlColorspace =
-        outExtensions->glColorspace && getRenderer()->getFeatures().supportsImageFormatList.enabled;
+        outExtensions->glColorspace && getFeatures().supportsImageFormatList.enabled;
 
 #if defined(ANGLE_PLATFORM_ANDROID)
     outExtensions->getNativeClientBufferANDROID = true;
@@ -545,47 +543,43 @@ void DisplayVk::generateExtensions(egl::DisplayExtensions *outExtensions) const
     // the same way; both Vulkan extensions are needed for EGL_EXT_image_dma_buf_import, and with
     // both Vulkan extensions, EGL_EXT_image_dma_buf_import_modifiers is also supportable.
     outExtensions->imageDmaBufImportEXT =
-        getRenderer()->getFeatures().supportsExternalMemoryDmaBufAndModifiers.enabled;
+        getFeatures().supportsExternalMemoryDmaBufAndModifiers.enabled;
     outExtensions->imageDmaBufImportModifiersEXT = outExtensions->imageDmaBufImportEXT;
 
     // Disable context priority when non-zero memory init is enabled. This enforces a queue order.
-    outExtensions->contextPriority = !getRenderer()->getFeatures().allocateNonZeroMemory.enabled;
+    outExtensions->contextPriority = !getFeatures().allocateNonZeroMemory.enabled;
     outExtensions->noConfigContext = true;
 
 #if defined(ANGLE_PLATFORM_ANDROID) || defined(ANGLE_PLATFORM_LINUX)
-    outExtensions->nativeFenceSyncANDROID =
-        getRenderer()->getFeatures().supportsAndroidNativeFenceSync.enabled;
+    outExtensions->nativeFenceSyncANDROID = getFeatures().supportsAndroidNativeFenceSync.enabled;
 #endif  // defined(ANGLE_PLATFORM_ANDROID) || defined(ANGLE_PLATFORM_LINUX)
 
 #if defined(ANGLE_PLATFORM_GGP)
     outExtensions->ggpStreamDescriptor = true;
-    outExtensions->swapWithFrameToken  = getRenderer()->getFeatures().supportsGGPFrameToken.enabled;
+    outExtensions->swapWithFrameToken  = getFeatures().supportsGGPFrameToken.enabled;
 #endif  // defined(ANGLE_PLATFORM_GGP)
 
     outExtensions->bufferAgeEXT = true;
 
-    outExtensions->protectedContentEXT =
-        (getRenderer()->getFeatures().supportsProtectedMemory.enabled &&
-         getRenderer()->getFeatures().supportsSurfaceProtectedSwapchains.enabled);
+    outExtensions->protectedContentEXT = (getFeatures().supportsProtectedMemory.enabled &&
+                                          getFeatures().supportsSurfaceProtectedSwapchains.enabled);
 
     outExtensions->createSurfaceSwapIntervalANGLE = true;
 
     outExtensions->mutableRenderBufferKHR =
-        getRenderer()->getFeatures().supportsSharedPresentableImageExtension.enabled;
+        getFeatures().supportsSharedPresentableImageExtension.enabled;
 
     outExtensions->vulkanImageANGLE = true;
 
-    outExtensions->lockSurface3KHR =
-        getRenderer()->getFeatures().supportsLockSurfaceExtension.enabled;
+    outExtensions->lockSurface3KHR = getFeatures().supportsLockSurfaceExtension.enabled;
 
     outExtensions->partialUpdateKHR = true;
 
     outExtensions->timestampSurfaceAttributeANGLE =
-        getRenderer()->getFeatures().supportsTimestampSurfaceAttribute.enabled;
+        getFeatures().supportsTimestampSurfaceAttribute.enabled;
 
     outExtensions->eglColorspaceAttributePassthroughANGLE =
-        outExtensions->glColorspace &&
-        getRenderer()->getFeatures().eglColorspaceAttributePassthrough.enabled;
+        outExtensions->glColorspace && getFeatures().eglColorspaceAttributePassthrough.enabled;
 
     // If EGL_KHR_gl_colorspace extension is supported check if other colorspace extensions
     // can be supported as well.

@@ -27,7 +27,6 @@
 #include "compiler/translator/tree_ops/RewriteAtomicCounters.h"
 #include "compiler/translator/tree_ops/RewriteDfdy.h"
 #include "compiler/translator/tree_ops/RewriteStructSamplers.h"
-#include "compiler/translator/tree_ops/SeparateCompoundStructDeclarations.h"
 #include "compiler/translator/tree_ops/SeparateStructFromUniformDeclarations.h"
 #include "compiler/translator/tree_ops/msl/AddExplicitTypeCasts.h"
 #include "compiler/translator/tree_ops/msl/ConvertUnsupportedConstructorsToFunctionCalls.h"
@@ -1428,12 +1427,6 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
 
     const bool needsExplicitBoolCasts = compileOptions.addExplicitBoolCasts;
     if (!AddExplicitTypeCasts(*this, *root, symbolEnv, needsExplicitBoolCasts))
-    {
-        return false;
-    }
-
-    if (!SeparateCompoundStructDeclarations(
-            *this, [&idGen]() { return idGen.createNewName().rawName(); }, *root))
     {
         return false;
     }

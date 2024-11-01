@@ -23,184 +23,150 @@ struct FeaturesD3D : FeatureSetBase
     FeatureInfo borderColorSrgb = {
         "borderColorSrgb",
         FeatureCategory::D3DWorkarounds,
-        "Some drivers expect sRGB border color for sRGB texture formats",
         &members,
     };
 
     FeatureInfo mrtPerfWorkaround = {
         "mrtPerfWorkaround",
         FeatureCategory::D3DWorkarounds,
-        "Some drivers have a bug where they ignore null render targets",
         &members,
     };
 
     FeatureInfo setDataFasterThanImageUpload = {
         "setDataFasterThanImageUpload",
         FeatureCategory::D3DWorkarounds,
-        "Set data faster than image upload",
         &members,
     };
 
     FeatureInfo zeroMaxLodWorkaround = {
         "zeroMaxLodWorkaround",
         FeatureCategory::D3DWorkarounds,
-        "Missing an option to disable mipmaps on a mipmapped texture",
         &members,
     };
 
     FeatureInfo depthStencilBlitExtraCopy = {
         "depthStencilBlitExtraCopy",
         FeatureCategory::D3DWorkarounds,
-        "Bug in some drivers triggers a TDR when using CopySubresourceRegion from a staging "
-        "texture to a depth/stencil",
-        &members, "http://anglebug.com/40096371"
+        &members,
     };
 
     FeatureInfo expandIntegerPowExpressions = {
         "expandIntegerPowExpressions",
         FeatureCategory::D3DWorkarounds,
-        "The HLSL optimizer has a bug with optimizing 'pow' in certain integer-valued expressions",
         &members,
     };
 
     FeatureInfo flushAfterEndingTransformFeedback = {
         "flushAfterEndingTransformFeedback",
         FeatureCategory::D3DWorkarounds,
-        "Some drivers sometimes write out-of-order results to StreamOut buffers when transform "
-        "feedback is used to repeatedly write to the same buffer positions",
         &members,
     };
 
     FeatureInfo getDimensionsIgnoresBaseLevel = {
         "getDimensionsIgnoresBaseLevel",
         FeatureCategory::D3DWorkarounds,
-        "Some drivers do not take into account the base level of the "
-        "texture in the results of the HLSL GetDimensions builtin",
         &members,
     };
 
     FeatureInfo preAddTexelFetchOffsets = {
         "preAddTexelFetchOffsets",
         FeatureCategory::D3DWorkarounds,
-        "HLSL's function texture.Load returns 0 when the parameter Location is negative, even if "
-        "the sum of Offset and Location is in range",
         &members,
     };
 
     FeatureInfo emulateTinyStencilTextures = {
         "emulateTinyStencilTextures",
         FeatureCategory::D3DWorkarounds,
-        "1x1 and 2x2 mips of depth/stencil textures aren't sampled correctly",
         &members,
     };
 
     FeatureInfo disableB5G6R5Support = {
         "disableB5G6R5Support",
         FeatureCategory::D3DWorkarounds,
-        "Textures with the format "
-        "DXGI_FORMAT_B5G6R5_UNORM have incorrect data",
         &members,
     };
 
     FeatureInfo rewriteUnaryMinusOperator = {
         "rewriteUnaryMinusOperator",
         FeatureCategory::D3DWorkarounds,
-        "Evaluating unary minus operator on integer may get wrong answer in vertex shaders",
         &members,
     };
 
     FeatureInfo emulateIsnanFloat = {
         "emulateIsnanFloat",
         FeatureCategory::D3DWorkarounds,
-        "Using isnan() on highp float will get wrong answer",
-        &members, "https://crbug.com/650547"
+        &members,
     };
 
     FeatureInfo callClearTwice = {
         "callClearTwice",
         FeatureCategory::D3DWorkarounds,
-        "Using clear() may not take effect",
-        &members, "https://crbug.com/655534"
+        &members,
     };
 
     FeatureInfo useSystemMemoryForConstantBuffers = {
         "useSystemMemoryForConstantBuffers",
         FeatureCategory::D3DWorkarounds,
-        "Copying from staging storage to constant buffer "
-        "storage does not work",
-        &members, "https://crbug.com/593024"
+        &members,
     };
 
     FeatureInfo selectViewInGeometryShader = {
         "selectViewInGeometryShader",
         FeatureCategory::D3DWorkarounds,
-        "The viewport or render target slice will be selected in the geometry shader stage for "
-        "the ANGLE_multiview extension",
         &members,
     };
 
     FeatureInfo addMockTextureNoRenderTarget = {
         "addMockTextureNoRenderTarget",
         FeatureCategory::D3DWorkarounds,
-        "On some drivers when rendering with no render target, two bugs lead to incorrect behavior",
-        &members, "http://anglebug.com/40644627"
+        &members,
     };
 
     FeatureInfo skipVSConstantRegisterZero = {
         "skipVSConstantRegisterZero",
         FeatureCategory::D3DWorkarounds,
-        "In specific cases the driver doesn't handle constant register zero correctly",
         &members,
     };
 
     FeatureInfo forceAtomicValueResolution = {
         "forceAtomicValueResolution",
         FeatureCategory::D3DWorkarounds,
-        "On some drivers the return value from RWByteAddressBuffer.InterlockedAdd does not resolve "
-        "when used in the .yzw components of a RWByteAddressBuffer.Store operation",
-        &members, "http://anglebug.com/42261924"
+        &members,
     };
 
     FeatureInfo allowClearForRobustResourceInit = {
         "allowClearForRobustResourceInit",
         FeatureCategory::D3DWorkarounds,
-        "Some drivers corrupt texture data when clearing for robust resource initialization.",
-        &members, "http://crbug.com/941620"
+        &members,
     };
 
     FeatureInfo allowTranslateUniformBlockToStructuredBuffer = {
         "allowTranslateUniformBlockToStructuredBuffer",
         FeatureCategory::D3DWorkarounds,
-        "There is a slow fxc compile performance issue with dynamic uniform indexing if "
-        "translating a uniform block with a large array member to cbuffer.",
-        &members, "http://anglebug.com/40096608"
+        &members,
     };
 
     FeatureInfo allowES3OnFL100 = {
         "allowES3OnFL100",
         FeatureCategory::D3DWorkarounds,
-        "Allow ES3 on 10.0 devices",
         &members,
     };
 
     FeatureInfo disableRasterizerOrderViews = {
         "disableRasterizerOrderViews",
         FeatureCategory::D3DWorkarounds,
-        "Disable ROVs for testing",
-        &members, "http://anglebug.com/40096838"
+        &members,
     };
 
     FeatureInfo enableTimestampQueries = {
         "enableTimestampQueries",
         FeatureCategory::D3DWorkarounds,
-        "Enable timestamp on GL_EXT_disjoint_timer_query extension",
         &members,
     };
 
     FeatureInfo supportsNonConstantLoopIndexing = {
         "supportsNonConstantLoopIndexing",
         FeatureCategory::D3DWorkarounds,
-        "Whether the API supports non-constant loop indexing",
         &members,
     };
 

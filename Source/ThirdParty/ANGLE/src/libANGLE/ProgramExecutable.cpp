@@ -793,6 +793,8 @@ void ProgramExecutable::reset()
     mPod.hasDiscard              = false;
     mPod.enablesPerSampleShading = false;
     mPod.hasYUVOutput            = false;
+    mPod.hasDepthInputAttachment   = false;
+    mPod.hasStencilInputAttachment = false;
 
     mPod.advancedBlendEquations.reset();
 
@@ -2995,7 +2997,7 @@ void ProgramExecutable::updateSamplerUniform(Context *context,
 {
     ASSERT(isSamplerUniformIndex(locationInfo.index));
     GLuint samplerIndex                    = getSamplerIndexFromUniformIndex(locationInfo.index);
-    SamplerBinding &samplerBinding         = mSamplerBindings[samplerIndex];
+    const SamplerBinding &samplerBinding   = mSamplerBindings[samplerIndex];
     std::vector<GLuint> &boundTextureUnits = mSamplerBoundTextureUnits;
 
     if (locationInfo.arrayIndex >= samplerBinding.textureUnitsCount)

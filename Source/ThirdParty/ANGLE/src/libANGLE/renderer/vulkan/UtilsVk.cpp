@@ -286,8 +286,7 @@ uint32_t GetGenerateMipmapFlags(ContextVk *contextVk, const angle::Format &actua
 
     // Note: If bits-per-component is 8 or 16 and float16 is supported in the shader, use that for
     // faster math.
-    const bool hasShaderFloat16 =
-        contextVk->getRenderer()->getFeatures().supportsShaderFloat16.enabled;
+    const bool hasShaderFloat16 = contextVk->getFeatures().supportsShaderFloat16.enabled;
 
     if (actualFormat.redBits <= 8)
     {
@@ -403,15 +402,15 @@ void CalculateResolveOffset(const UtilsVk::BlitResolveParameters &params, int32_
 
 void SetDepthStateForWrite(vk::Renderer *renderer, vk::GraphicsPipelineDesc *desc)
 {
-    if (!renderer->useDepthTestEnableDynamicState())
+    if (!renderer->getFeatures().useDepthTestEnableDynamicState.enabled)
     {
         desc->setDepthTestEnabled(VK_TRUE);
     }
-    if (!renderer->useDepthWriteEnableDynamicState())
+    if (!renderer->getFeatures().useDepthWriteEnableDynamicState.enabled)
     {
         desc->setDepthWriteEnabled(VK_TRUE);
     }
-    if (!renderer->useDepthCompareOpDynamicState())
+    if (!renderer->getFeatures().useDepthCompareOpDynamicState.enabled)
     {
         desc->setDepthFunc(VK_COMPARE_OP_ALWAYS);
     }
@@ -419,11 +418,11 @@ void SetDepthStateForWrite(vk::Renderer *renderer, vk::GraphicsPipelineDesc *des
 
 void SetDepthStateForUnused(vk::Renderer *renderer, vk::GraphicsPipelineDesc *desc)
 {
-    if (!renderer->useDepthTestEnableDynamicState())
+    if (!renderer->getFeatures().useDepthTestEnableDynamicState.enabled)
     {
         desc->setDepthTestEnabled(VK_FALSE);
     }
-    if (!renderer->useDepthWriteEnableDynamicState())
+    if (!renderer->getFeatures().useDepthWriteEnableDynamicState.enabled)
     {
         desc->setDepthWriteEnabled(VK_FALSE);
     }
@@ -432,15 +431,15 @@ void SetDepthStateForUnused(vk::Renderer *renderer, vk::GraphicsPipelineDesc *de
 void SetDepthDynamicStateForWrite(vk::Renderer *renderer,
                                   vk::RenderPassCommandBuffer *commandBuffer)
 {
-    if (renderer->useDepthTestEnableDynamicState())
+    if (renderer->getFeatures().useDepthTestEnableDynamicState.enabled)
     {
         commandBuffer->setDepthTestEnable(VK_TRUE);
     }
-    if (renderer->useDepthWriteEnableDynamicState())
+    if (renderer->getFeatures().useDepthWriteEnableDynamicState.enabled)
     {
         commandBuffer->setDepthWriteEnable(VK_TRUE);
     }
-    if (renderer->useDepthCompareOpDynamicState())
+    if (renderer->getFeatures().useDepthCompareOpDynamicState.enabled)
     {
         commandBuffer->setDepthCompareOp(VK_COMPARE_OP_ALWAYS);
     }
@@ -449,15 +448,15 @@ void SetDepthDynamicStateForWrite(vk::Renderer *renderer,
 void SetDepthDynamicStateForUnused(vk::Renderer *renderer,
                                    vk::RenderPassCommandBuffer *commandBuffer)
 {
-    if (renderer->useDepthTestEnableDynamicState())
+    if (renderer->getFeatures().useDepthTestEnableDynamicState.enabled)
     {
         commandBuffer->setDepthTestEnable(VK_FALSE);
     }
-    if (renderer->useDepthWriteEnableDynamicState())
+    if (renderer->getFeatures().useDepthWriteEnableDynamicState.enabled)
     {
         commandBuffer->setDepthWriteEnable(VK_FALSE);
     }
-    if (renderer->useDepthCompareOpDynamicState())
+    if (renderer->getFeatures().useDepthCompareOpDynamicState.enabled)
     {
         commandBuffer->setDepthCompareOp(VK_COMPARE_OP_ALWAYS);
     }
@@ -467,11 +466,11 @@ void SetDepthDynamicStateForUnused(vk::Renderer *renderer,
 // of whether its done through the reference value or the shader stencil export extension.
 void SetStencilStateForWrite(vk::Renderer *renderer, vk::GraphicsPipelineDesc *desc)
 {
-    if (!renderer->useStencilTestEnableDynamicState())
+    if (!renderer->getFeatures().useStencilTestEnableDynamicState.enabled)
     {
         desc->setStencilTestEnabled(true);
     }
-    if (!renderer->useStencilOpDynamicState())
+    if (!renderer->getFeatures().useStencilOpDynamicState.enabled)
     {
         desc->setStencilFrontFuncs(VK_COMPARE_OP_ALWAYS);
         desc->setStencilBackFuncs(VK_COMPARE_OP_ALWAYS);
@@ -485,11 +484,11 @@ void SetStencilStateForWrite(vk::Renderer *renderer, vk::GraphicsPipelineDesc *d
 void SetStencilDynamicStateForWrite(vk::Renderer *renderer,
                                     vk::RenderPassCommandBuffer *commandBuffer)
 {
-    if (renderer->useStencilTestEnableDynamicState())
+    if (renderer->getFeatures().useStencilTestEnableDynamicState.enabled)
     {
         commandBuffer->setStencilTestEnable(true);
     }
-    if (renderer->useStencilOpDynamicState())
+    if (renderer->getFeatures().useStencilOpDynamicState.enabled)
     {
         commandBuffer->setStencilOp(VK_STENCIL_FACE_FRONT_BIT, VK_STENCIL_OP_REPLACE,
                                     VK_STENCIL_OP_REPLACE, VK_STENCIL_OP_REPLACE,
@@ -503,11 +502,11 @@ void SetStencilDynamicStateForWrite(vk::Renderer *renderer,
 void SetStencilDynamicStateForUnused(vk::Renderer *renderer,
                                      vk::RenderPassCommandBuffer *commandBuffer)
 {
-    if (renderer->useStencilTestEnableDynamicState())
+    if (renderer->getFeatures().useStencilTestEnableDynamicState.enabled)
     {
         commandBuffer->setStencilTestEnable(false);
     }
-    if (renderer->useStencilOpDynamicState())
+    if (renderer->getFeatures().useStencilOpDynamicState.enabled)
     {
         commandBuffer->setStencilOp(VK_STENCIL_FACE_FRONT_BIT, VK_STENCIL_OP_REPLACE,
                                     VK_STENCIL_OP_REPLACE, VK_STENCIL_OP_REPLACE,
@@ -1156,7 +1155,7 @@ angle::Result GetUnresolveFrag(
 
     angle::spirv::Blob shaderCode = unresolve::MakeFragShader(
         colorAttachmentCount, colorAttachmentTypes, unresolveDepth, unresolveStencil,
-        context->getRenderer()->getFeatures().supportsShaderStencilExport.enabled);
+        context->getFeatures().supportsShaderStencilExport.enabled);
 
     ASSERT(spirv::Validate(shaderCode));
 
@@ -1237,31 +1236,31 @@ void ResetDynamicState(ContextVk *contextVk, vk::RenderPassCommandBuffer *comman
     vk::Renderer *renderer = contextVk->getRenderer();
 
     // Reset all other dynamic state, since it can affect UtilsVk functions:
-    if (renderer->useCullModeDynamicState())
+    if (renderer->getFeatures().useCullModeDynamicState.enabled)
     {
         commandBuffer->setCullMode(VK_CULL_MODE_NONE);
     }
-    if (renderer->useFrontFaceDynamicState())
+    if (renderer->getFeatures().useFrontFaceDynamicState.enabled)
     {
         commandBuffer->setFrontFace(VK_FRONT_FACE_COUNTER_CLOCKWISE);
     }
-    if (renderer->useDepthTestEnableDynamicState())
+    if (renderer->getFeatures().useDepthTestEnableDynamicState.enabled)
     {
         commandBuffer->setDepthTestEnable(VK_FALSE);
     }
-    if (renderer->useStencilTestEnableDynamicState())
+    if (renderer->getFeatures().useStencilTestEnableDynamicState.enabled)
     {
         commandBuffer->setStencilTestEnable(VK_FALSE);
     }
-    if (renderer->useRasterizerDiscardEnableDynamicState())
+    if (renderer->getFeatures().useRasterizerDiscardEnableDynamicState.enabled)
     {
         commandBuffer->setRasterizerDiscardEnable(VK_FALSE);
     }
-    if (renderer->useDepthBiasEnableDynamicState())
+    if (renderer->getFeatures().useDepthBiasEnableDynamicState.enabled)
     {
         commandBuffer->setDepthBiasEnable(VK_FALSE);
     }
-    if (renderer->usePrimitiveRestartEnableDynamicState())
+    if (renderer->getFeatures().usePrimitiveRestartEnableDynamicState.enabled)
     {
         commandBuffer->setPrimitiveRestartEnable(VK_FALSE);
     }
@@ -1273,7 +1272,7 @@ void ResetDynamicState(ContextVk *contextVk, vk::RenderPassCommandBuffer *comman
             VK_FRAGMENT_SHADING_RATE_COMBINER_OP_KEEP_KHR};
         commandBuffer->setFragmentShadingRate(&fragmentSize, shadingRateCombinerOp);
     }
-    if (renderer->useLogicOpDynamicState())
+    if (renderer->getFeatures().supportsLogicOpDynamicState.enabled)
     {
         commandBuffer->setLogicOp(VK_LOGIC_OP_COPY);
     }
@@ -4719,14 +4718,9 @@ angle::Result UtilsVk::allocateDescriptorSetWithLayout(
     // Retain the individual descriptorSet to the command buffer.
     commandBufferHelper->retainResource(descriptorSet.get());
     // Since the eviction is relying on the pool's mUse, we need to update pool's mUse here.
-    commandBufferHelper->retainResource(&descriptorSet->getPool()->get());
+    commandBufferHelper->retainResource(descriptorSet->getPool().get());
 
     *descriptorSetOut = descriptorSet->getDescriptorSet();
-
-    // Because this is a one time use descriptorSet, we immediately put in the garbage list for
-    // recycle.
-    vk::DescriptorPoolPointer pool = descriptorSet->getPool();
-    pool->addGarbage(std::move(descriptorSet));
 
     return angle::Result::Continue;
 }

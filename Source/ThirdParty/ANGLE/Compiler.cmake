@@ -191,8 +191,6 @@ set(angle_translator_sources
     "src/compiler/translator/tree_ops/RewriteStructSamplers.h"
     "src/compiler/translator/tree_ops/RewriteTexelFetchOffset.cpp"
     "src/compiler/translator/tree_ops/RewriteTexelFetchOffset.h"
-    "src/compiler/translator/tree_ops/SeparateCompoundStructDeclarations.cpp"
-    "src/compiler/translator/tree_ops/SeparateCompoundStructDeclarations.h"
     "src/compiler/translator/tree_ops/SeparateDeclarations.cpp"
     "src/compiler/translator/tree_ops/SeparateDeclarations.h"
     "src/compiler/translator/tree_ops/SeparateStructFromFunctionDeclarations.cpp"

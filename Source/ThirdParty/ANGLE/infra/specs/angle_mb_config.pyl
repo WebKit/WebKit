@@ -114,7 +114,7 @@
       'gn_args': 'is_lsan=true',
     },
     'non_clang': {
-      'gn_args': 'is_clang=false',
+      'gn_args': 'is_clang=false treat_warnings_as_errors=false use_custom_libcxx=false',
     },
     'opencl': {
       'gn_args': 'angle_enable_cl=true',

@@ -688,8 +688,7 @@ angle::GenericProc KHRONOS_APIENTRY TraceLoadProc(const char *procName)
     }
 
     // GLES
-    // TODO(b/370508393): gles1 also requires glBindFramebufferOES, e.g. plague_inc
-    if (strcmp(procName, "glBindFramebuffer") == 0)
+    if (strcmp(procName, "glBindFramebuffer") == 0 || strcmp(procName, "glBindFramebufferOES") == 0)
     {
         return reinterpret_cast<angle::GenericProc>(BindFramebufferProc);
     }
@@ -2175,15 +2174,23 @@ void TracePerfTest::drawBenchmark()
         }
         else
         {
-            // TODO(b/370508393): this is not valid for gles1, GL_READ_FRAMEBUFFER_BINDING
-            // isn't supported - only FRAMEBUFFER_BINDING_OES + bind FRAMEBUFFER_OES
+            GLuint offscreenBuffer =
+                mOffscreenFramebuffers[mTotalFrameCount % mMaxOffscreenBufferCount];
             GLint currentDrawFBO, currentReadFBO;
-            glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &currentDrawFBO);
-            glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &currentReadFBO);
+            if (gles1)
+            {
+                // OES_framebuffer_object doesn't define a separate "read" binding
+                glGetIntegerv(GL_FRAMEBUFFER_BINDING_OES, &currentDrawFBO);
+                bindFramebuffer(GL_FRAMEBUFFER, offscreenBuffer);
+            }
+            else
+            {
+                glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &currentDrawFBO);
+                glGetIntegerv(GL_READ_FRAMEBUFFER_BINDING, &currentReadFBO);
 
-            bindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-            bindFramebuffer(GL_READ_FRAMEBUFFER,
-                            mOffscreenFramebuffers[mTotalFrameCount % mMaxOffscreenBufferCount]);
+                bindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+                bindFramebuffer(GL_READ_FRAMEBUFFER, offscreenBuffer);
+            }
 
             uint32_t frameX  = (mOffscreenFrameCount % kFramesPerSwap) % kFramesPerX;
             uint32_t frameY  = (mOffscreenFrameCount % kFramesPerSwap) / kFramesPerX;
@@ -2234,8 +2241,15 @@ void TracePerfTest::drawBenchmark()
                 glEnable(GL_SCISSOR_TEST);
             }
 
-            bindFramebuffer(GL_DRAW_FRAMEBUFFER, currentDrawFBO);
-            bindFramebuffer(GL_READ_FRAMEBUFFER, currentReadFBO);
+            if (gles1)
+            {
+                bindFramebuffer(GL_FRAMEBUFFER, currentDrawFBO);
+            }
+            else
+            {
+                bindFramebuffer(GL_DRAW_FRAMEBUFFER, currentDrawFBO);
+                bindFramebuffer(GL_READ_FRAMEBUFFER, currentReadFBO);
+            }
         }
 
         mTotalFrameCount++;
@@ -2442,14 +2456,17 @@ EGLDisplay TracePerfTest::onEglGetCurrentDisplay()
 // Triggered when the replay calls glBindFramebuffer.
 void TracePerfTest::onReplayFramebufferChange(GLenum target, GLuint framebuffer)
 {
+    bool gles1           = mParams->traceInfo.contextClientMajorVersion == 1;
+    auto bindFramebuffer = gles1 ? glBindFramebufferOES : glBindFramebuffer;
+
     if (framebuffer == 0 && mParams->surfaceType == SurfaceType::Offscreen)
     {
-        glBindFramebuffer(target,
-                          mOffscreenFramebuffers[mTotalFrameCount % mMaxOffscreenBufferCount]);
+        bindFramebuffer(target,
+                        mOffscreenFramebuffers[mTotalFrameCount % mMaxOffscreenBufferCount]);
     }
     else
     {
-        glBindFramebuffer(target, framebuffer);
+        bindFramebuffer(target, framebuffer);
     }
 
     switch (target)

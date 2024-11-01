@@ -90,6 +90,8 @@ class MatchOutputCodeTest : public testing::Test
     // Test that the string is found in none of the outputs
     bool notFoundInCode(const char *stringToFind) const;
 
+    std::string outputCode(ShShaderOutput output) const;
+
   private:
     bool compileWithSettings(ShShaderOutput output,
                              const std::string &shaderString,

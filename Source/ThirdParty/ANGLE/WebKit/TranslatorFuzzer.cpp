@@ -236,6 +236,7 @@ void filterOptions(ShShaderOutput output, ShCompileOptions& options)
 #endif
     const bool hlsl = IsOutputHLSL(output);
     const bool spirvVk = output == SH_SPIRV_VULKAN_OUTPUT;
+    const bool wgsl = output == SH_WGSL_OUTPUT;
 #define CHECK_VALID_OPTION(name, i, allowed, forced) options.name = (allowed) ? options.name : (forced);
     FOR_EACH_SH_COMPILE_OPTIONS_BOOL_OPTION(CHECK_VALID_OPTION)
 #undef CHECK_VALID_OPTION

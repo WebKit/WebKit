@@ -1336,19 +1336,42 @@ void Renderer::ensureCapsInitialized() const
         // Make sure no more than the allowed input attachments bindings are used by descriptor set
         // layouts.  This number matches the number of color attachments because of framebuffer
         // fetch, and that limit is later capped to IMPLEMENTATION_MAX_DRAW_BUFFERS in Context.cpp.
-        mMaxInputAttachmentCount = std::min<uint32_t>(mNativeCaps.maxColorAttachments,
-                                                      gl::IMPLEMENTATION_MAX_DRAW_BUFFERS);
+        mMaxColorInputAttachmentCount = std::min<uint32_t>(mNativeCaps.maxColorAttachments,
+                                                           gl::IMPLEMENTATION_MAX_DRAW_BUFFERS);
     }
     else if (mFeatures.emulateAdvancedBlendEquations.enabled)
     {
         // ANGLE may also use framebuffer fetch to emulate KHR_blend_equation_advanced, which needs
         // a single input attachment.
-        mMaxInputAttachmentCount = 1;
+        mMaxColorInputAttachmentCount = 1;
     }
     else
     {
-        // mMaxInputAttachmentCount is left as 0 to catch bugs if a future user of framebuffer fetch
-        // functionality does not update the logic in this if/else chain.
+        // mMaxColorInputAttachmentCount is left as 0 to catch bugs if a future user of framebuffer
+        // fetch functionality does not update the logic in this if/else chain.
+    }
+
+    // Enable the ARM_shader_framebuffer_fetch_depth_stencil extension only if the number of input
+    // descriptor exceeds the color attachment count by at least 2 (for depth and stencil), or if
+    // the number of color attachments can be reduced to accomodate for the 2 depth/stencil images.
+    if (mFeatures.supportsShaderFramebufferFetchDepthStencil.enabled)
+    {
+        const uint32_t maxColorAttachmentsWithDepthStencilInput = std::min<uint32_t>(
+            mNativeCaps.maxColorAttachments, limitsVk.maxPerStageDescriptorInputAttachments - 2);
+        const uint32_t maxDrawBuffersWithDepthStencilInput = std::min<uint32_t>(
+            mNativeCaps.maxDrawBuffers, limitsVk.maxPerStageDescriptorInputAttachments - 2);
+
+        // As long as the minimum required color attachments (4) is satisfied, the extension can be
+        // exposed.
+        if (maxColorAttachmentsWithDepthStencilInput >= 4 &&
+            maxDrawBuffersWithDepthStencilInput >= 4)
+        {
+            mNativeExtensions.shaderFramebufferFetchDepthStencilARM = true;
+            mNativeCaps.maxColorAttachments = maxColorAttachmentsWithDepthStencilInput;
+            mNativeCaps.maxDrawBuffers      = maxDrawBuffersWithDepthStencilInput;
+            mMaxColorInputAttachmentCount =
+                std::min<uint32_t>(mMaxColorInputAttachmentCount, mNativeCaps.maxColorAttachments);
+        }
     }
 
     mNativeExtensions.logicOpANGLE = mPhysicalDeviceFeatures.logicOp == VK_TRUE;

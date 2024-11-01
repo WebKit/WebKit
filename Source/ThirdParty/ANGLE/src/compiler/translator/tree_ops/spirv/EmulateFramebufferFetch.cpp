@@ -264,8 +264,11 @@ void DeclareDepthInputAttachmentVariable(TSymbolTable *symbolTable,
                                          InputAttachmentMap *inputAttachmentMapOut,
                                          TIntermSequence *declarationsOut)
 {
+    const TType *inputAttachmentType =
+        new TType(EbtSubpassInput, type->getPrecision(), EvqUniform, 1);
+
     inputAttachmentMapOut->depth = DeclareDepthStencilInputAttachmentVariable(
-        symbolTable, type, "ANGLEDepthInputAttachment", declarationsOut);
+        symbolTable, inputAttachmentType, "ANGLEDepthInputAttachment", declarationsOut);
 }
 
 void DeclareStencilInputAttachmentVariable(TSymbolTable *symbolTable,
@@ -273,8 +276,11 @@ void DeclareStencilInputAttachmentVariable(TSymbolTable *symbolTable,
                                            InputAttachmentMap *inputAttachmentMapOut,
                                            TIntermSequence *declarationsOut)
 {
+    const TType *inputAttachmentType =
+        new TType(EbtISubpassInput, type->getPrecision(), EvqUniform, 1);
+
     inputAttachmentMapOut->stencil = DeclareDepthStencilInputAttachmentVariable(
-        symbolTable, type, "ANGLEStencilInputAttachment", declarationsOut);
+        symbolTable, inputAttachmentType, "ANGLEStencilInputAttachment", declarationsOut);
 }
 
 // Declare a global variable to hold gl_LastFragData/gl_LastFragColorARM
@@ -604,13 +610,13 @@ void InitializeFromInputAttachment(TSymbolTable *symbolTable,
         }
         if (inputAttachmentMap.depth != nullptr)
         {
-            replacementMap[glLastFragDepth] =
-                CreateSubpassLoadFuncCall(symbolTable, inputAttachmentMap.depth);
+            replacementMap[glLastFragDepth] = new TIntermSwizzle(
+                CreateSubpassLoadFuncCall(symbolTable, inputAttachmentMap.depth), {0});
         }
         if (inputAttachmentMap.stencil != nullptr)
         {
-            replacementMap[glLastFragStencil] =
-                CreateSubpassLoadFuncCall(symbolTable, inputAttachmentMap.stencil);
+            replacementMap[glLastFragStencil] = new TIntermSwizzle(
+                CreateSubpassLoadFuncCall(symbolTable, inputAttachmentMap.stencil), {0});
         }
     }
 

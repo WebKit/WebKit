@@ -95,7 +95,7 @@ int B[int[][](A)];)";
     EXPECT_TRUE(foundInIntermediateTree("constructing from an unsized array"));
 }
 
-TEST_F(ParseTest, UniformBlockNameReferenceNoCrash)
+TEST_F(ParseTest, UniformBlockNameReferenceConstructorNoCrash)
 {
     const char kShader[] = R"(#version 300 es
 precision mediump float;
@@ -446,4 +446,184 @@ void main() {
     EXPECT_FALSE(compile(shader.str()));
     EXPECT_TRUE(foundErrorInIntermediateTree());
     EXPECT_TRUE(foundInIntermediateTree("Expression too complex"));
+}
+
+// Test that comma expression referring to an uniform block member through instance-name is not an
+// error.
+TEST_F(ParseTest, UniformBlockWorks)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+         uniform B { uint e; } b;
+         void main() { b.e; })";
+
+    EXPECT_TRUE(compile(kShader));
+
+    const char kShader2[] = R"(#version 300 es
+         uniform B { uint e; } b;
+         mediump float f() { return .0; }
+         void main() { f(), b.e; })";
+    EXPECT_TRUE(compile(kShader2));
+
+    const char kShader3[] = R"(#version 300 es
+         uniform B { uint e; };
+         void main() { e; })";
+    EXPECT_TRUE(compile(kShader3));
+
+    const char kShader4[] = R"(#version 300 es
+        uniform B { uint e; };
+        mediump float f() { return .0; }
+        void main() { f(), e; })";
+    EXPECT_TRUE(compile(kShader4));
+
+    const char kShader5[] = R"(#version 300 es
+        uniform B { uint e; } b[3];
+        void main() { b[0].e; })";
+    EXPECT_TRUE(compile(kShader5));
+
+    const char kShader6[] = R"(#version 300 es
+        uniform B { uint e; } b[3];
+        mediump float f() { return .0; }
+        void main() { f(), b[0].e; })";
+    EXPECT_TRUE(compile(kShader6));
+}
+
+// Test that comma expression referring to an uniform block instance-name is an error.
+TEST_F(ParseTest, UniformBlockInstanceNameReferenceIsError)
+{
+    mShaderSpec = SH_WEBGL2_SPEC;
+
+    const char kShader[] = R"(#version 300 es
+         precision mediump float;
+         uniform B { uint e; } b;
+         void main() { b; })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("expression statement is not allowed for interface blocks"));
+
+    const char kShader2[] = R"(#version 300 es
+         uniform B { uint e; } b;
+         mediump float f() { return .0; }
+         void main() { f(), b; })";
+    EXPECT_FALSE(compile(kShader2));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("',' : sequence operator is not allowed for interface blocks"));
+}
+
+// Test that expression statements resulting in a uniform block instance-name as an array subscript
+// is an error.
+TEST_F(ParseTest, UniformBlockInstanceNameReferenceSubscriptIsError)
+{
+    mShaderSpec = SH_WEBGL2_SPEC;
+
+    const char kShader[] = R"(#version 300 es
+         precision mediump float;
+         uniform B { uint e; } b[3];
+         void main() { b[0]; })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("expression statement is not allowed for interface blocks"));
+    const char kShader2[] = R"(#version 300 es
+         uniform B { uint e; } b[3];
+         mediump float f() { return .0; }
+         void main() { f(), b[0]; })";
+    EXPECT_FALSE(compile(kShader2));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("',' : sequence operator is not allowed for interface blocks"));
+}
+
+// Test that expressions using binary operations on a uniform block instance-name is an error.
+TEST_F(ParseTest, UniformBlockInstanceNameOpIsError)
+{
+    mShaderSpec = SH_WEBGL2_SPEC;
+
+    const char kShader[] = R"(#version 300 es
+        precision mediump float;
+        uniform B { uint e; } b;
+        void main() { b = b; })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("'assign' : l-value required (can't modify a uniform \"b\")"));
+    EXPECT_TRUE(foundInIntermediateTree("'=' : Invalid operation for interface blocks"));
+    EXPECT_TRUE(foundInIntermediateTree(
+        "'assign' : cannot convert from 'uniform interface block' to 'uniform interface block'"));
+
+    const char kShader2[] = R"(#version 300 es
+        uniform B { uint e; } b;
+        void main() { b == b; })";
+    EXPECT_FALSE(compile(kShader2));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'==' : Invalid operation for interface blocks"));
+    EXPECT_TRUE(foundInIntermediateTree(
+        "'==' : wrong operand types - no operation '==' exists that takes a left-hand operand of "
+        "type 'uniform interface block' and a right operand of type 'uniform interface block' (or "
+        "there is no acceptable conversion)"));
+    const char kShader3[] = R"(#version 300 es
+         uniform B { uint e; } b;
+         void main() { b.e > 33u ? b : b; })";
+    EXPECT_FALSE(compile(kShader3));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(
+        foundInIntermediateTree("'?:' : ternary operator is not allowed for interface blocks"));
+}
+
+TEST_F(ParseTest, UniformBlockReferenceIsError)
+{
+    const char kShader[] = R"(#version 300 es
+        uniform B { uint e; } b;
+        void main() { B; })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'B' : variable expected"));
+
+    const char kShader2[] = R"(#version 300 es
+        uniform B { uint e; };
+        mediump float f() { return .0; }
+        void main() { f(), B; })";
+    EXPECT_FALSE(compile(kShader2));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'B' : variable expected"));
+}
+
+// Tests that referring to functions is a parse error.
+TEST_F(ParseTest, FunctionReferenceIsError)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+        mediump float f() { return .0; }
+        void main() { f; })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'f' : variable expected"));
+
+    const char kShader2[] = R"(#version 300 es
+        mediump float f() { return .0; }
+        void main() { f(), f; })";
+    EXPECT_FALSE(compile(kShader2));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'f' : variable expected"));
+}
+
+// Tests that referring to builtin functions is a parse error.
+// Shows discrepancy where the error message is unexpected, user defined functions have
+// better error message.
+TEST_F(ParseTest, BuiltinFunctionReferenceIsError)
+{
+    mShaderSpec          = SH_WEBGL2_SPEC;
+    const char kShader[] = R"(#version 300 es
+        void main() { sin; })";
+    EXPECT_FALSE(compile(kShader));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'sin' : undeclared identifier"));
+
+    const char kShader2[] = R"(#version 300 es
+        void main() { sin(3.0), sin; })";
+    EXPECT_FALSE(compile(kShader2));
+    EXPECT_TRUE(foundErrorInIntermediateTree());
+    EXPECT_TRUE(foundInIntermediateTree("'sin' : undeclared identifier"));
 }

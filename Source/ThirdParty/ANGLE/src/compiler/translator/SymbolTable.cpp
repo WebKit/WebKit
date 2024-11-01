@@ -354,7 +354,7 @@ TPrecision TSymbolTable::getDefaultPrecision(TBasicType type) const
 void TSymbolTable::clearCompilationResults()
 {
     mGlobalInvariant = false;
-    mUniqueIdCounter = kLastBuiltInId + 1;
+    mUniqueIdCounter = kFirstUserDefinedSymbolId;
     mVariableMetadata.clear();
     mGlInVariableWithArraySize = nullptr;
 
@@ -418,7 +418,7 @@ void TSymbolTable::initializeBuiltIns(sh::GLenum type,
     setDefaultPrecision(EbtAtomicCounter, EbpHigh);
 
     initializeBuiltInVariables(type, spec, resources);
-    mUniqueIdCounter = kLastBuiltInId + 1;
+    mUniqueIdCounter = kFirstUserDefinedSymbolId;
 }
 
 void TSymbolTable::initSamplerDefaultPrecision(TBasicType samplerType)

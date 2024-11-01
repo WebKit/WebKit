@@ -912,7 +912,7 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
             }
             // Strip SPIR-V binary if Vk implementation does not support non-semantic info
             angle::spirv::Blob spvBlob =
-                !mContext->getRenderer()->getFeatures().supportsShaderNonSemanticInfo.enabled
+                !mContext->getFeatures().supportsShaderNonSemanticInfo.enabled
                     ? stripReflection(&deviceProgramData)
                     : deviceProgramData.binary;
             ASSERT(!spvBlob.empty());
