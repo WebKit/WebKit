@@ -1920,6 +1920,9 @@ webkit.org/b/260731 imported/w3c/web-platform-tests/loading/preloader-css-import
 webkit.org/b/260731 imported/w3c/web-platform-tests/loading/preloader-css-import-no-semicolon.tentative.html [ Failure ]
 webkit.org/b/260731 imported/w3c/web-platform-tests/loading/preloader-css-import-no-space.tentative.html [ Failure ]
 
+# These tests allocate > 8 GB of RAM and cause OOM in test runner bots. Need to investigate as that shouldn't happen.
+webkit.org/b/282428 imported/w3c/web-platform-tests/fetch/api/crashtests/ [ Skip ]
+
 # The tests are crashing, timing out and passing. Mark as Skip for now.
 webkit.org/b/177940 workers/wasm-hashset-many-2.html [ Skip ]
 webkit.org/b/177940 workers/wasm-hashset-many.html [ Skip ]
