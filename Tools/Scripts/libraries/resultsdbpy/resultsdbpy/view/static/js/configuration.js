@@ -121,7 +121,9 @@ class Configuration {
                 return 'A';
             if (count < 700)
                 return 'B';
-            return 'C';
+            if (count < 800)
+                return 'C';
+            return 'D';
         }
         if (['K'].includes(match[2])) {
             const count = parseInt(match[3]);
