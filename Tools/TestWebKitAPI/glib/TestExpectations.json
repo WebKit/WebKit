@@ -214,7 +214,7 @@
     "TestWebCore": {
         "subtests": {
             "GStreamerTest.harnessParseMP4": {
-                "expected": {"gtk": {"status": ["FAIL"], "bug": "webkit.org/b/282445"}}
+                "expected": {"all": {"status": ["FAIL"], "bug": "webkit.org/b/282445"}}
             }
         }
     },
