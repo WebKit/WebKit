@@ -304,7 +304,7 @@ protected:
 
     virtual void teardown();
 
-    bool supportsForms();
+    bool supportsForms() const;
 
     void createPDFDocument();
     virtual void installPDFDocument() = 0;
@@ -380,6 +380,8 @@ protected:
 
     virtual void teardownPasswordEntryForm() = 0;
 
+    String annotationStyle() const;
+
     SingleThreadWeakPtr<PluginView> m_view;
     WeakPtr<WebFrame> m_frame;
     WeakPtr<WebCore::HTMLPlugInElement, WebCore::WeakPtrImplWithEventTargetData> m_element;
@@ -432,66 +434,6 @@ protected:
     CompletionHandler<void(const String&, const URL&, std::span<const uint8_t>)> m_pendingSaveCompletionHandler;
     CompletionHandler<void(const String&, FrameInfoData&&, std::span<const uint8_t>, const String&)> m_pendingOpenCompletionHandler;
 #endif
-
-    // Set overflow: hidden on the annotation container so <input> elements scrolled out of view don't show
-    // scrollbars on the body. We can't add annotations directly to the body, because overflow: hidden on the body
-    // will break rubber-banding.
-    static constexpr auto annotationStyle =
-    "#annotationContainer {"
-    "    overflow: hidden;"
-    "    position: absolute;"
-    "    pointer-events: none;"
-    "    top: 0;"
-    "    left: 0;"
-    "    right: 0;"
-    "    bottom: 0;"
-    "    display: flex;"
-    "    flex-direction: column;"
-    "    justify-content: center;"
-    "    align-items: center;"
-    "}"
-    ""
-    ".annotation {"
-    "    position: absolute;"
-    "    pointer-events: auto;"
-    "}"
-    ""
-    "textarea.annotation { "
-    "    resize: none;"
-    "}"
-    ""
-    "input.annotation[type='password'] {"
-    "    position: static;"
-    "    width: 238px;"
-    "    margin-top: 110px;"
-    "    font-size: 15px;"
-    "}"
-    ""
-    ".lock-icon {"
-    "    width: 64px;"
-    "    height: 64px;"
-    "    margin-bottom: 12px;"
-    "}"
-    ""
-    ".password-form {"
-    "    position: static;"
-    "    display: block;"
-    "    text-align: center;"
-    "    font-family: system-ui;"
-    "    font-size: 15px;"
-    "}"
-    ""
-    ".password-form p {"
-    "    margin: 4pt;"
-    "}"
-    ""
-    ".password-form .subtitle {"
-    "    font-size: 12px;"
-    "}"
-    ""
-    ".password-form + input.annotation[type='password'] {"
-    "    margin-top: 16px;"
-    "}"_s;
 };
 
 } // namespace WebKit

@@ -287,6 +287,11 @@ void HTMLObjectElement::renderFallbackContent()
     scheduleUpdateForAfterStyleResolution();
     invalidateStyleAndRenderersForSubtree();
 
+    // Presence of a UA shadow root indicates render invalidation during embedded PDF plugin bringup, and not a failed render.
+    // It's safe to special case here because UA shadow root cannot be attached to <object>/<embed> programmatically.
+    if (userAgentShadowRoot())
+        return;
+
     // Before we give up and use fallback content, check to see if this is a MIME type issue.
     auto* loader = imageLoader();
     if (loader && loader->image() && loader->image()->status() != CachedResource::LoadError) {

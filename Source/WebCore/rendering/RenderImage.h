@@ -136,8 +136,6 @@ private:
     void updateInnerContentRect();
 
     void paintAreaElementFocusRing(PaintInfo&, const LayoutPoint& paintOffset);
-    
-    void layoutShadowContent(const LayoutSize& oldSize);
 
     bool hasShadowContent() const { return m_hasShadowControls || m_hasImageOverlay; }
 

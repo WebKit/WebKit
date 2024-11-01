@@ -83,6 +83,7 @@
 #include <WebCore/PageOverlay.h>
 #include <WebCore/PageOverlayController.h>
 #include <WebCore/PlatformScreen.h>
+#include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderLayerBacking.h>
 #include <WebCore/RenderLayerCompositor.h>
@@ -91,6 +92,7 @@
 #include <WebCore/ScrollTypes.h>
 #include <WebCore/ScrollbarTheme.h>
 #include <WebCore/ScrollbarsController.h>
+#include <WebCore/ShadowRoot.h>
 #include <WebCore/VoidCallback.h>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 #include <wtf/Algorithms.h>
@@ -157,17 +159,13 @@ UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
     this->setVerticalScrollElasticity(ScrollElasticity::Automatic);
     this->setHorizontalScrollElasticity(ScrollElasticity::Automatic);
 
-    if (supportsForms()) {
-        Ref document = element.document();
-        m_annotationContainer = document->createElement(HTMLNames::divTag, false);
-        m_annotationContainer->setAttributeWithoutSynchronization(HTMLNames::idAttr, "annotationContainer"_s);
-
-        auto annotationStyleElement = document->createElement(HTMLNames::styleTag, false);
-        annotationStyleElement->setTextContent(annotationStyle);
-
-        m_annotationContainer->appendChild(annotationStyleElement);
-        RefPtr { document->bodyOrFrameset() }->appendChild(*m_annotationContainer);
-    }
+    Ref document = element.document();
+    m_annotationContainer = document->createElement(HTMLNames::divTag, false);
+    m_annotationContainer->setAttributeWithoutSynchronization(HTMLNames::idAttr, "annotationContainer"_s);
+    Ref annotationStyleElement = document->createElement(HTMLNames::styleTag, false);
+    annotationStyleElement->setTextContent(annotationStyle());
+    m_annotationContainer->appendChild(annotationStyleElement);
+    installAnnotationContainer();
 
     setDisplayMode(PDFDocumentLayout::DisplayMode::SinglePageContinuous);
 
@@ -180,6 +178,31 @@ UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
 
     if (m_presentationController->wantsWheelEvents())
         wantsWheelEventsChanged();
+}
+
+void UnifiedPDFPlugin::installAnnotationContainer()
+{
+    if (!m_annotationContainer) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    Ref document = m_element->document();
+
+    if (supportsForms()) {
+        RefPtr { document->bodyOrFrameset() }->appendChild(*m_annotationContainer);
+        return;
+    }
+
+    if (RefPtr existingShadowRoot = m_element->userAgentShadowRoot())
+        existingShadowRoot->removeChildren();
+
+    m_shadowRoot = &m_element->ensureUserAgentShadowRoot();
+    m_shadowRoot->appendChild(*m_annotationContainer);
+    if (CheckedPtr renderer = dynamicDowncast<RenderEmbeddedObject>(m_element->renderer()))
+        renderer->setHasShadowContent();
+
+    document->updateLayoutIgnorePendingStylesheets();
 }
 
 UnifiedPDFPlugin::~UnifiedPDFPlugin() = default;
@@ -348,18 +371,26 @@ void UnifiedPDFPlugin::didInvalidateDataDetectorHighlightOverlayRects()
 
 #endif
 
+// FIXME: Disambiguate between supportsForms/supportsPasswordForm. The former is a slight misnomer now.
+bool UnifiedPDFPlugin::supportsPasswordForm() const
+{
+    return supportsForms() || m_shadowRoot;
+}
+
 void UnifiedPDFPlugin::createPasswordEntryForm()
 {
-    if (!supportsForms())
+    if (!supportsPasswordForm())
         return;
 
-    auto passwordForm = PDFPluginPasswordForm::create(this);
+    Ref passwordForm = PDFPluginPasswordForm::create(this);
     m_passwordForm = passwordForm.ptr();
     passwordForm->attach(m_annotationContainer.get());
 
-    auto passwordField = PDFPluginPasswordField::create(this);
-    m_passwordField = passwordField.ptr();
-    passwordField->attach(m_annotationContainer.get());
+    if (supportsForms()) {
+        Ref passwordField = PDFPluginPasswordField::create(this);
+        m_passwordField = passwordField.ptr();
+        passwordField->attach(m_annotationContainer.get());
+    }
 }
 
 void UnifiedPDFPlugin::teardownPasswordEntryForm()

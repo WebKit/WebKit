@@ -1105,7 +1105,7 @@ void PDFPluginBase::notifyCursorChanged(WebCore::PlatformCursorType cursorType)
     m_frame->protectedPage()->send(Messages::WebPageProxy::SetCursor(WebCore::Cursor::fromType(cursorType)));
 }
 
-bool PDFPluginBase::supportsForms()
+bool PDFPluginBase::supportsForms() const
 {
     // FIXME: We support forms for full-main-frame and <iframe> PDFs, but not <embed> or <object>, because those cases do not have their own Document into which to inject form elements.
     return isFullFramePlugin();
@@ -1244,6 +1244,106 @@ void PDFPluginBase::registerPDFTest(RefPtr<WebCore::VoidCallback>&& callback)
 std::optional<FrameIdentifier> PDFPluginBase::rootFrameID() const
 {
     return m_view->frame()->rootFrame().frameID();
+}
+
+// FIXME: Share more of the style sheet between the embed/non-embed case.
+String PDFPluginBase::annotationStyle() const
+{
+    if (!supportsForms()) {
+        return
+        "#annotationContainer {"
+        "    overflow: hidden;"
+        "    position: relative;"
+        "    pointer-events: none;"
+        "    display: flex;"
+        "    place-content: center;"
+        "    place-items: center;"
+        "}"
+        ""
+        ".annotation {"
+        "    position: absolute;"
+        "    pointer-events: auto;"
+        "}"
+        ""
+        ".lock-icon {"
+        "    width: 64px;"
+        "    height: 64px;"
+        "    margin-bottom: 12px;"
+        "}"
+        ""
+        ".password-form {"
+        "    position: static;"
+        "    display: block;"
+        "    text-align: center;"
+        "    font-family: system-ui;"
+        "    font-size: 15px;"
+        "}"
+        ""
+        ".password-form p {"
+        "    margin: 4pt;"
+        "}"
+        ""
+        ".password-form .subtitle {"
+        "    font-size: 12px;"
+        "}"_s;
+    }
+
+    return
+    "#annotationContainer {"
+    "    overflow: hidden;"
+    "    position: absolute;"
+    "    pointer-events: none;"
+    "    top: 0;"
+    "    left: 0;"
+    "    right: 0;"
+    "    bottom: 0;"
+    "    display: flex;"
+    "    flex-direction: column;"
+    "    justify-content: center;"
+    "    align-items: center;"
+    "}"
+    ""
+    ".annotation {"
+    "    position: absolute;"
+    "    pointer-events: auto;"
+    "}"
+    ""
+    "textarea.annotation { "
+    "    resize: none;"
+    "}"
+    ""
+    "input.annotation[type='password'] {"
+    "    position: static;"
+    "    width: 238px;"
+    "    margin-top: 110px;"
+    "    font-size: 15px;"
+    "}"
+    ""
+    ".lock-icon {"
+    "    width: 64px;"
+    "    height: 64px;"
+    "    margin-bottom: 12px;"
+    "}"
+    ""
+    ".password-form {"
+    "    position: static;"
+    "    display: block;"
+    "    text-align: center;"
+    "    font-family: system-ui;"
+    "    font-size: 15px;"
+    "}"
+    ""
+    ".password-form p {"
+    "    margin: 4pt;"
+    "}"
+    ""
+    ".password-form .subtitle {"
+    "    font-size: 12px;"
+    "}"
+    ""
+    ".password-form + input.annotation[type='password'] {"
+    "    margin-top: 16px;"
+    "}"_s;
 }
 
 } // namespace WebKit

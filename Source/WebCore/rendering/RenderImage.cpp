@@ -58,7 +58,6 @@
 #include "RenderElementInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderImageResourceStyleImage.h"
-#include "RenderLayoutState.h"
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -889,36 +888,6 @@ void RenderImage::layout()
 
     if (hasShadowContent())
         layoutShadowContent(oldSize);
-}
-
-void RenderImage::layoutShadowContent(const LayoutSize& oldSize)
-{
-    for (auto& renderBox : childrenOfType<RenderBox>(*this)) {
-        bool childNeedsLayout = renderBox.needsLayout();
-        // If the region chain has changed we also need to relayout the children to update the region box info.
-        // FIXME: We can do better once we compute region box info for RenderReplaced, not only for RenderBlock.
-        auto* fragmentedFlow = enclosingFragmentedFlow();
-        if (fragmentedFlow && !childNeedsLayout) {
-            if (fragmentedFlow->pageLogicalSizeChanged())
-                childNeedsLayout = true;
-        }
-
-        auto newSize = contentBoxRect().size();
-        if (newSize == oldSize && !childNeedsLayout)
-            continue;
-
-        // When calling layout() on a child node, a parent must either push a LayoutStateMaintainer, or
-        // instantiate LayoutStateDisabler. Since using a LayoutStateMaintainer is slightly more efficient,
-        // and this method might be called many times per second during video playback, use a LayoutStateMaintainer:
-        LayoutStateMaintainer statePusher(*this, locationOffset(), isTransformed() || hasReflection() || writingMode().isBlockFlipped());
-        renderBox.setLocation(LayoutPoint(borderLeft(), borderTop()) + LayoutSize(paddingLeft(), paddingTop()));
-        renderBox.mutableStyle().setHeight(Length(newSize.height(), LengthType::Fixed));
-        renderBox.mutableStyle().setWidth(Length(newSize.width(), LengthType::Fixed));
-        renderBox.setNeedsLayout(MarkOnlyThis);
-        renderBox.layout();
-    }
-
-    clearChildNeedsLayout();
 }
 
 void RenderImage::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, FloatSize& intrinsicRatio) const

@@ -376,7 +376,8 @@ void RenderEmbeddedObject::layout()
     updateLogicalWidth();
     updateLogicalHeight();
 
-    RenderWidget::layout();
+    LayoutSize oldSize = contentBoxRect().size();
+    RenderReplaced::layout();
 
     clearOverflow();
     addVisualEffectOverflow();
@@ -387,6 +388,9 @@ void RenderEmbeddedObject::layout()
         view().frameView().addEmbeddedObjectToUpdate(*this);
 
     clearNeedsLayout();
+
+    if (m_hasShadowContent)
+        layoutShadowContent(oldSize);
 }
 
 bool RenderEmbeddedObject::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction)
