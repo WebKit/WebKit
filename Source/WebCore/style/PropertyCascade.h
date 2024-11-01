@@ -31,8 +31,6 @@
 #include <wtf/BitSet.h>
 #include <wtf/TZoneMalloc.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 class StyleResolver;
@@ -186,7 +184,7 @@ inline const PropertyCascade::Property& PropertyCascade::logicalGroupProperty(CS
 
 inline std::span<const CSSPropertyID> PropertyCascade::logicalGroupPropertyIDs() const
 {
-    return { m_logicalGroupPropertyIDs.data(), m_seenLogicalGroupPropertyCount };
+    return std::span { m_logicalGroupPropertyIDs }.first(m_seenLogicalGroupPropertyCount);
 }
 
 inline bool PropertyCascade::hasCustomProperty(const AtomString& name) const
@@ -200,7 +198,5 @@ inline const PropertyCascade::Property& PropertyCascade::customProperty(const At
     return m_customProperties.find(name)->value;
 }
 
-}
-}
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+} // namespace Style
+} // namespace WebCore
