@@ -284,6 +284,8 @@ private:
     void didAccessWindowProxyPropertyViaOpener(WebCore::SecurityOriginData&&, WebCore::WindowProxyProperty) final;
 #endif
 
+    bool siteIsolationEnabled() const;
+
 #if ENABLE(PDF_PLUGIN)
     RefPtr<PluginView> m_pluginView;
     bool m_hasSentResponseToPluginView { false };

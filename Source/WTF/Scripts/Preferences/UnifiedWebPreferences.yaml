@@ -6927,6 +6927,7 @@ SiteIsolationEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
 
 # FIXME: This is handled via WebView SPI rather than WebPreferences for WebKitLegacy. We should change the SPI to lookup the WebPreferences value instead.
 SmartInsertDeleteEnabled:

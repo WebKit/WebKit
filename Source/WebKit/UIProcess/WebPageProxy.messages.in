@@ -145,8 +145,8 @@ messages -> WebPageProxy {
     DidDestroyNavigation(WebCore::NavigationIdentifier navigationID)
     UpdateSandboxFlags(WebCore::FrameIdentifier frameID, WebCore::SandboxFlags sandboxFlags)
     UpdateOpener(WebCore::FrameIdentifier frameID, WebCore::FrameIdentifier newOpener)
-    UpdateScrollingMode(WebCore::FrameIdentifier frameID, enum:uint8_t WebCore::ScrollbarMode scrollingMode)
-    UpdateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize size)
+    [EnabledBy=SiteIsolationEnabled] UpdateScrollingMode(WebCore::FrameIdentifier frameID, enum:uint8_t WebCore::ScrollbarMode scrollingMode)
+    [EnabledBy=SiteIsolationEnabled] UpdateRemoteFrameSize(WebCore::FrameIdentifier frameID, WebCore::IntSize size)
 
     MainFramePluginHandlesPageScaleGestureDidChange(bool mainFramePluginHandlesPageScaleGesture, double minScale, double maxScale)
 
@@ -638,24 +638,24 @@ messages -> WebPageProxy {
 #endif
 
     DidApplyLinkDecorationFiltering(URL originalURL, URL adjustedURL)
-    BroadcastMainFrameURLChangeToOtherProcesses(URL newURL)
+    [EnabledBy=SiteIsolationEnabled] BroadcastMainFrameURLChangeToOtherProcesses(URL newURL)
 
-    DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
+    [EnabledBy=SiteIsolationEnabled] DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
 
-    FocusRemoteFrame(WebCore::FrameIdentifier frameID)
-    PostMessageToRemote(WebCore::FrameIdentifier source, String sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, struct WebCore::MessageWithMessagePorts message)
-    RenderTreeAsTextForTesting(WebCore::FrameIdentifier identifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous
-    FrameTextForTesting(WebCore::FrameIdentifier frameID) -> (String text) Synchronous
-    LayerTreeAsTextForTesting(WebCore::FrameIdentifier identifier, size_t baseIndent, OptionSet<WebCore::LayerTreeAsTextOptions> options) -> (String layerTreeDump) Synchronous
-    BindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, Vector<uint8_t> dataToken) -> (Vector<uint8_t> token, int processIdentifier) Synchronous
-    UpdateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
-    DocumentURLForConsoleLog(WebCore::FrameIdentifier frameID) -> (URL url)
+    [EnabledBy=SiteIsolationEnabled] FocusRemoteFrame(WebCore::FrameIdentifier frameID)
+    [EnabledBy=SiteIsolationEnabled] PostMessageToRemote(WebCore::FrameIdentifier source, String sourceOrigin, WebCore::FrameIdentifier target, std::optional<WebCore::SecurityOriginData> targetOrigin, struct WebCore::MessageWithMessagePorts message)
+    [EnabledBy=SiteIsolationEnabled] RenderTreeAsTextForTesting(WebCore::FrameIdentifier identifier, size_t baseIndent, OptionSet<WebCore::RenderAsTextFlag> behavior) -> (String renderTreeDump) Synchronous
+    [EnabledBy=SiteIsolationEnabled] FrameTextForTesting(WebCore::FrameIdentifier frameID) -> (String text) Synchronous
+    [EnabledBy=SiteIsolationEnabled] LayerTreeAsTextForTesting(WebCore::FrameIdentifier identifier, size_t baseIndent, OptionSet<WebCore::LayerTreeAsTextOptions> options) -> (String layerTreeDump) Synchronous
+    [EnabledBy=SiteIsolationEnabled] BindRemoteAccessibilityFrames(int processIdentifier, WebCore::FrameIdentifier frameID, Vector<uint8_t> dataToken) -> (Vector<uint8_t> token, int processIdentifier) Synchronous
+    [EnabledBy=SiteIsolationEnabled] UpdateRemoteFrameAccessibilityOffset(WebCore::FrameIdentifier frameID, WebCore::IntPoint offset)
+    [EnabledBy=SiteIsolationEnabled] DocumentURLForConsoleLog(WebCore::FrameIdentifier frameID) -> (URL url)
 
     NowPlayingMetadataChanged(struct WebCore::NowPlayingMetadata metadata)
 
     DidAdjustVisibilityWithSelectors(Vector<String> selectors)
 
-    FrameNameChanged(WebCore::FrameIdentifier frameID, String frameName)
+    [EnabledBy=SiteIsolationEnabled] FrameNameChanged(WebCore::FrameIdentifier frameID, String frameName)
 
 #if ENABLE(GAMEPAD)
     [EnabledBy=GamepadsEnabled] GamepadsRecentlyAccessed()

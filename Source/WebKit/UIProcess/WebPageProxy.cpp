@@ -10259,6 +10259,7 @@ void WebPageProxy::keyEventHandlingCompleted(IPC::Connection& connection, std::o
 
 void WebPageProxy::didReceiveEvent(IPC::Connection& connection, WebEventType eventType, bool handled, std::optional<RemoteUserInputEventData> remoteUserInputEventData)
 {
+    MESSAGE_CHECK_BASE(!remoteUserInputEventData || m_preferences->siteIsolationEnabled(), connection);
     switch (eventType) {
     case WebEventType::MouseMove:
     case WebEventType::Wheel:

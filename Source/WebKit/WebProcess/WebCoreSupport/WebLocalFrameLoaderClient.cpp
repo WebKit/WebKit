@@ -1951,6 +1951,8 @@ void WebLocalFrameLoaderClient::getLoadDecisionForIcons(const Vector<std::pair<W
 
 void WebLocalFrameLoaderClient::broadcastMainFrameURLChangeToOtherProcesses(const URL& url)
 {
+    if (!siteIsolationEnabled())
+        return;
     RefPtr webPage = m_frame->page();
     if (!webPage)
         return;
@@ -2037,8 +2039,17 @@ void WebLocalFrameLoaderClient::didAccessWindowProxyPropertyViaOpener(WebCore::S
 
 void WebLocalFrameLoaderClient::frameNameChanged(const String& frameName)
 {
+    if (!siteIsolationEnabled())
+        return;
     if (RefPtr page = m_frame->page())
         page->send(Messages::WebPageProxy::FrameNameChanged(m_frame->frameID(), frameName));
+}
+
+bool WebLocalFrameLoaderClient::siteIsolationEnabled() const
+{
+    if (RefPtr coreFrame = m_frame->coreFrame())
+        return coreFrame->settings().siteIsolationEnabled();
+    return false;
 }
 
 } // namespace WebKit
