@@ -1973,21 +1973,111 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(PipelineLayout& l
                 serializedVariables.add(variable, &entry);
                 entries.append({ entry.binding, &createArgumentBufferEntry(*argumentBufferIndex, *variable) });
             } else {
-                // FIXME: https://bugs.webkit.org/show_bug.cgi?id=282098
-                if (std::get_if<ExternalTextureBindingLayout>(&entry.bindingMember))
-                    return makeUnexpected(Error("Shader uses bind group layout with unused external texture: this is not supported"_s, SourceSpan::empty()));
+                auto& type = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("void"_s));
+                type.m_inferredType = WTF::switchOn(entry.bindingMember,
+                    [&](const BufferBindingLayout& buffer) -> const Type* {
+                        AddressSpace addressSpace;
+                        AccessMode accessMode;
+                        switch (buffer.type) {
+                        case BufferBindingType::Uniform:
+                            addressSpace = AddressSpace::Uniform;
+                            accessMode = AccessMode::Read;
+                            break;
+                        case BufferBindingType::Storage:
+                            addressSpace = AddressSpace::Storage;
+                            accessMode = AccessMode::ReadWrite;
+                            break;
+                        case BufferBindingType::ReadOnlyStorage:
+                            addressSpace = AddressSpace::Storage;
+                            accessMode = AccessMode::Read;
+                            break;
+                        }
+                        return m_shaderModule.types().pointerType(addressSpace, m_shaderModule.types().voidType(), accessMode);
+                    },
+                    [&](const SamplerBindingLayout&) -> const Type* {
+                        return m_shaderModule.types().samplerType();
+                    },
+                    [&](const TextureBindingLayout& layout) -> const Type* {
+                        const Type* sampleType;
+                        switch (layout.sampleType) {
+                        case TextureSampleType::Float:
+                        case TextureSampleType::UnfilterableFloat:
+                        case TextureSampleType::Depth:
+                            sampleType = m_shaderModule.types().f32Type();
+                            break;
+                        case TextureSampleType::SignedInt:
+                            sampleType = m_shaderModule.types().i32Type();
+                            break;
+                        case TextureSampleType::UnsignedInt:
+                            sampleType = m_shaderModule.types().u32Type();
+                            break;
+                        }
+                        Types::Texture::Kind textureKind;
+                        switch (layout.viewDimension) {
+                        case TextureViewDimension::OneDimensional:
+                            textureKind = Types::Texture::Kind::Texture1d;
+                            break;
+                        case TextureViewDimension::TwoDimensional:
+                            if (layout.multisampled)
+                                textureKind = Types::Texture::Kind::TextureMultisampled2d;
+                            else
+                                textureKind = Types::Texture::Kind::Texture2d;
+                            break;
+                        case TextureViewDimension::TwoDimensionalArray:
+                            textureKind = Types::Texture::Kind::Texture2dArray;
+                            break;
+                        case TextureViewDimension::Cube:
+                            textureKind = Types::Texture::Kind::TextureCube;
+                            break;
+                        case TextureViewDimension::CubeArray:
+                            textureKind = Types::Texture::Kind::TextureCubeArray;
+                            break;
+                        case TextureViewDimension::ThreeDimensional:
+                            textureKind = Types::Texture::Kind::Texture3d;
+                            break;
+                        }
+                        return m_shaderModule.types().textureType(textureKind, sampleType);
+                    },
+                    [&](const StorageTextureBindingLayout& layout) -> const Type* {
+                        Types::TextureStorage::Kind textureStorageKind;
+                        switch (layout.viewDimension) {
+                        case TextureViewDimension::OneDimensional:
+                            textureStorageKind = Types::TextureStorage::Kind::TextureStorage1d;
+                            break;
+                        case TextureViewDimension::TwoDimensional:
+                            textureStorageKind = Types::TextureStorage::Kind::TextureStorage2d;
+                            break;
+                        case TextureViewDimension::TwoDimensionalArray:
+                            textureStorageKind = Types::TextureStorage::Kind::TextureStorage2dArray;
+                            break;
+                        case TextureViewDimension::ThreeDimensional:
+                            textureStorageKind = Types::TextureStorage::Kind::TextureStorage3d;
+                            break;
+                        default:
+                            RELEASE_ASSERT_NOT_REACHED();
+                        }
+                        AccessMode accessMode;
+                        switch (layout.access) {
+                        case StorageTextureAccess::WriteOnly:
+                            accessMode = AccessMode::Write;
+                            break;
+                        case StorageTextureAccess::ReadOnly:
+                            accessMode = AccessMode::Read;
+                            break;
+                        case StorageTextureAccess::ReadWrite:
+                            accessMode = AccessMode::ReadWrite;
+                            break;
+                        }
+                        return m_shaderModule.types().textureStorageType(textureStorageKind, layout.format, accessMode);
+                    },
+                    [&](const ExternalTextureBindingLayout&) -> const Type* {
+                        m_shaderModule.setUsesExternalTextures();
+                        return m_shaderModule.types().textureExternalType();
+                    });
 
-                auto& type = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("u32"_s));
-                type.m_inferredType = m_shaderModule.types().u32Type();
-
-                auto& referenceType = m_shaderModule.astBuilder().construct<AST::ReferenceTypeExpression>(
-                    SourceSpan::empty(),
-                    type
-                );
-                referenceType.m_inferredType = m_shaderModule.types().referenceType(AddressSpace::Storage, m_shaderModule.types().u32Type(), AccessMode::Read);
                 entries.append({
                     entry.binding,
-                    &createArgumentBufferEntry(*argumentBufferIndex, SourceSpan::empty(), makeString("__ArgumentBufferPlaceholder_"_s, entry.binding), referenceType)
+                    &createArgumentBufferEntry(*argumentBufferIndex, SourceSpan::empty(), makeString("__ArgumentBufferPlaceholder_"_s, entry.binding), type)
                 });
             }
 
