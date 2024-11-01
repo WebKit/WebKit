@@ -43,16 +43,6 @@ uint8_t tagID1[] = { 0x01 };
 uint8_t tagID2[] = { 0x02 };
 }
 
-#if HAVE(NEAR_FIELD) && (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED > 150000) \
-    || ((PLATFORM(IOS) || PLATFORM(MACCATALYST)) && __IPHONE_OS_VERSION_MIN_REQUIRED > 180000) \
-    || PLATFORM(VISION) && __VISION_OS_VERSION_MIN_REQUIRED > 20000 \
-    || (PLATFORM(WATCHOS) && __WATCH_OS_VERSION_MIN_REQUIRED > 110000) \
-    || (PLATFORM(APPLETV) && __TV_OS_VERSION_MIN_REQUIRED > 180000)
-#define NEED_UI_TYPE_FOR_NFC_SESSION 1
-#else
-#define NEED_UI_TYPE_FOR_NFC_SESSION 0
-#endif
-
 #if HAVE(NEAR_FIELD)
 
 @interface WKMockNFTag : NSObject <NFTag>
@@ -247,11 +237,7 @@ void MockNfcService::platformStartDiscovery()
         Method methodToSwizzle5 = class_getInstanceMethod(getNFReaderSessionClass(), @selector(startPollingWithError:));
         method_setImplementation(methodToSwizzle5, (IMP)NFReaderSessionStartPollingWithError);
 
-#if NEED_UI_TYPE_FOR_NFC_SESSION
         auto readerSession = adoptNS([allocNFReaderSessionInstance() initWithUIType:NFReaderSessionUINone]);
-#else
-        auto readerSession = adoptNS([allocNFReaderSessionInstance() init]);
-#endif
         setConnection(NfcConnection::create(readerSession.get(), *this));
     }
     LOG_ERROR("No nfc authenticators is available.");
@@ -277,11 +263,7 @@ void MockNfcService::detectTags() const
         if (configuration.nfc->multiplePhysicalTags)
             [tags addObject:adoptNS([[WKMockNFTag alloc] initWithType:NFTagTypeGeneric4A tagID:adoptNS([[NSData alloc] initWithBytesNoCopy:tagID2 length:sizeof(tagID2) freeWhenDone:NO]).get()]).get()];
 
-#if NEED_UI_TYPE_FOR_NFC_SESSION
         auto readerSession = adoptNS([allocNFReaderSessionInstance() initWithUIType:NFReaderSessionUINone]);
-#else
-        auto readerSession = adoptNS([allocNFReaderSessionInstance() init]);
-#endif
         [globalNFReaderSessionDelegate readerSession:readerSession.get() didDetectTags:tags.get()];
     });
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), callback.get());
