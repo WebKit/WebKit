@@ -113,7 +113,8 @@ private:
     void platformDidFinish(CompletionHandler<void()>&&);
 
 #if HAVE(MODERN_DOWNLOADPROGRESS)
-    void startUpdatingProgress() const;
+    void startUpdatingProgress();
+    void updateProgress(uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite);
     static Vector<uint8_t> updateResumeDataWithPlaceholderURL(NSURL *, std::span<const uint8_t> resumeData);
 #endif
 
@@ -132,6 +133,9 @@ private:
 #if HAVE(MODERN_DOWNLOADPROGRESS)
     RetainPtr<NSData> m_bookmarkData;
     RetainPtr<NSURL> m_bookmarkURL;
+    bool m_canUpdateProgress { false };
+    std::optional<uint64_t> m_totalBytesWritten;
+    std::optional<uint64_t> m_totalBytesExpectedToWrite;
 #endif
 #endif
     PAL::SessionID m_sessionID;

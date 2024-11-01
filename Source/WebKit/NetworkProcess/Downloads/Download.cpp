@@ -134,6 +134,10 @@ void Download::didReceiveData(uint64_t bytesWritten, uint64_t totalBytesWritten,
     
     m_monitor.downloadReceivedBytes(bytesWritten);
 
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    updateProgress(totalBytesWritten, totalBytesExpectedToWrite);
+#endif
+
     send(Messages::DownloadProxy::DidReceiveData(bytesWritten, totalBytesWritten, totalBytesExpectedToWrite));
 }
 

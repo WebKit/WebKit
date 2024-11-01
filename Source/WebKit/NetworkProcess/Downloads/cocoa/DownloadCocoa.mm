@@ -146,11 +146,6 @@ void Download::publishProgress(const URL& url, std::span<const uint8_t> bookmark
         RELEASE_LOG(Network, "Unable to create bookmark URL, error = %@", error);
 
     if (enableModernDownloadProgress()) {
-        if (!m_downloadTask.get().currentRequest.URL) {
-            RELEASE_LOG_ERROR(Network, "Download::publishProgress: Invalid request URL");
-            return;
-        }
-
         RetainPtr<NSURL> publishURL = (NSURL *)url;
         if (!publishURL) {
             RELEASE_LOG_ERROR(Network, "Download::publishProgress: Invalid publish URL");
@@ -219,12 +214,42 @@ void Download::setFinalURL(NSURL *finalURL, NSData *bookmarkData)
     send(Messages::DownloadProxy::DidReceiveFinalURL(finalURL, span(bookmarkData), WTFMove(sandboxExtensionHandle)));
 }
 
-void Download::startUpdatingProgress() const
+void Download::startUpdatingProgress()
 {
+    m_canUpdateProgress = true;
+
     if (![m_progress isKindOfClass:WKModernDownloadProgress.class])
         return;
+
     auto *progress = (WKModernDownloadProgress *)m_progress;
     [progress startUpdatingDownloadProgress];
+
+    // If we have a download task, progress is updated by observing this task. See startUpdatingDownloadProgress method.
+    if (m_downloadTask)
+        return;
+
+    if (!m_totalBytesWritten || !m_totalBytesExpectedToWrite)
+        return;
+
+    progress.completedUnitCount = *m_totalBytesWritten;
+    progress.totalUnitCount = *m_totalBytesExpectedToWrite;
+}
+
+void Download::updateProgress(uint64_t totalBytesWritten, uint64_t totalBytesExpectedToWrite)
+{
+    m_totalBytesWritten = totalBytesWritten;
+    m_totalBytesExpectedToWrite = totalBytesExpectedToWrite;
+
+    if (!m_canUpdateProgress || ![m_progress isKindOfClass:WKModernDownloadProgress.class])
+        return;
+
+    // If we have a download task, progress is updated by observing this task. See startUpdatingDownloadProgress method.
+    if (m_downloadTask)
+        return;
+
+    auto *progress = (WKModernDownloadProgress *)m_progress;
+    progress.totalUnitCount = totalBytesExpectedToWrite;
+    progress.completedUnitCount = totalBytesWritten;
 }
 
 Vector<uint8_t> Download::updateResumeDataWithPlaceholderURL(NSURL *placeholderURL, std::span<const uint8_t> resumeData)
