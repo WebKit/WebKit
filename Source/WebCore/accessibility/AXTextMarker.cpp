@@ -933,7 +933,43 @@ AXTextMarker AXTextMarker::findMarker(AXDirection direction, AXTextUnit textUnit
 
         return resultMarker;
     }
-    // FIXME: Implement the other AXTextUnits.
+
+    // Paragraphs must be handled differently from word + sentence boundaries, as there is no paragraph break iterator.
+    // Rather, paragraph boundaries are based on rendered newlines and differences in node editability and block-grouping (through containing blocks).
+    if (textUnit == AXTextUnit::Paragraph) {
+        size_t startLineIndex = currentRuns->lineID(runIndex).lineIndex;
+        unsigned offsetInStartLine =  startLineIndex ? offset() - currentRuns->runLengthSumTo(startLineIndex) : offset();
+
+        while (currentObject) {
+            RELEASE_ASSERT(currentRuns->size());
+            unsigned cumulativeOffset = direction == AXDirection::Next ? 0 : currentRuns->runLengthSumTo(startLineIndex);
+            for (size_t i = startLineIndex; i < currentRuns->size() && i >= 0; direction == AXDirection::Next ? i++ : i--) {
+                // If a text run starts or ends with a newline character, that indicates a paragraph boundary. However, if the direction
+                // is Next, and our starting offset points to the end of the line (past the newline character), we are past the boundary.
+                if (currentRuns->at(i).endsWithLineBreak() && (i != startLineIndex || (direction == AXDirection::Next && currentRuns->runLength(i) != offsetInStartLine))) {
+                    unsigned newlineOffsetConsideringDirection = direction == AXDirection::Next ? cumulativeOffset + currentRuns->runLength(i) - 1 : cumulativeOffset;
+                    return { *currentObject, newlineOffsetConsideringDirection };
+                }
+                if (currentRuns->at(i).startsWithLineBreak() && (i != startLineIndex || direction == AXDirection::Previous)) {
+                    unsigned newlineOffsetConsideringDirection = direction == AXDirection::Next ? 0 : 1;
+                    return { *currentObject, cumulativeOffset + newlineOffsetConsideringDirection };
+                }
+                cumulativeOffset = direction == AXDirection::Next ? cumulativeOffset + currentRuns->runLength(i) : cumulativeOffset - currentRuns->runLength(i);
+            }
+
+            RefPtr previousObject = currentObject;
+            const auto* previousRuns = previousObject->textRuns();
+            currentObject = findObjectWithRuns(*currentObject, direction, stopAtID);
+            currentRuns = currentObject ? currentObject->textRuns() : nullptr;
+
+            // Paragraph boundaries also change based on editability, containing block, and whether we hit a line break.
+            bool isContainingBlockBoundary = currentRuns && previousRuns && currentRuns->containingBlock != previousRuns->containingBlock;
+            // Don't bother computing isEditBoundary if isContainingBlockBoundary since we only need one or the other below.
+            bool isEditBoundary = !isContainingBlockBoundary && previousObject && currentObject && !!previousObject->editableAncestor() != !!currentObject->editableAncestor();
+            if (!currentObject || !currentRuns || currentObject->roleValue() == AccessibilityRole::LineBreak || isContainingBlockBoundary || isEditBoundary)
+                return { *previousObject, direction == AXDirection::Next ? previousRuns->totalLength() : 0 };
+        }
+    }
 
     return { };
 }
@@ -1055,6 +1091,17 @@ AXTextMarkerRange AXTextMarker::sentenceRange(SentenceRangeType type) const
         if (rangeString.containsOnly<isASCIIWhitespace>())
             endMarker = startMarker;
     }
+
+    return { WTFMove(startMarker), WTFMove(endMarker) };
+}
+
+AXTextMarkerRange AXTextMarker::paragraphRange() const
+{
+    if (!isValid())
+        return { { }, { } };
+
+    AXTextMarker startMarker = previousParagraphStart();
+    AXTextMarker endMarker = startMarker.nextParagraphEnd();
 
     return { WTFMove(startMarker), WTFMove(endMarker) };
 }

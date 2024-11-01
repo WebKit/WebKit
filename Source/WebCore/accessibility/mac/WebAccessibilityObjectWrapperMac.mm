@@ -3066,6 +3066,8 @@ enum class TextUnit {
             return inputMarker.wordRange(WordRangeType::Right).platformData().autorelease();
         case TextUnit::Sentence:
             return inputMarker.sentenceRange(SentenceRangeType::Current).platformData().autorelease();
+        case TextUnit::Paragraph:
+            return inputMarker.paragraphRange().platformData().autorelease();
         default:
             // TODO: Not implemented!
             break;

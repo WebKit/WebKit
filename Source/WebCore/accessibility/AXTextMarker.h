@@ -193,6 +193,8 @@ public:
     AXTextMarker previousWordEnd(std::optional<AXID> stopAtID = std::nullopt) const { return findMarker(AXDirection::Previous, AXTextUnit::Word, AXTextUnitBoundary::End, stopAtID); }
     AXTextMarker previousSentenceStart(std::optional<AXID> stopAtID = std::nullopt) const { return findMarker(AXDirection::Previous, AXTextUnit::Sentence, AXTextUnitBoundary::Start, stopAtID); }
     AXTextMarker nextSentenceEnd(std::optional<AXID> stopAtID = std::nullopt) const { return findMarker(AXDirection::Next, AXTextUnit::Sentence, AXTextUnitBoundary::End, stopAtID); }
+    AXTextMarker previousParagraphStart(std::optional<AXID> stopAtID = std::nullopt) const { return findMarker(AXDirection::Previous, AXTextUnit::Paragraph, AXTextUnitBoundary::Start, stopAtID); }
+    AXTextMarker nextParagraphEnd(std::optional<AXID> stopAtID = std::nullopt) const { return findMarker(AXDirection::Next, AXTextUnit::Paragraph, AXTextUnitBoundary::End, stopAtID); }
 
     // Creates a range for the line this marker points to.
     AXTextMarkerRange lineRange(LineRangeType) const;
@@ -200,6 +202,8 @@ public:
     AXTextMarkerRange wordRange(WordRangeType) const;
     // Creates a range for the sentence specified by the sentence range type;
     AXTextMarkerRange sentenceRange(SentenceRangeType) const;
+    // Creates a range for the paragraph at the current marker.
+    AXTextMarkerRange paragraphRange() const;
     // Given a character offset relative to this marker, find the next marker the offset points to.
     AXTextMarker nextMarkerFromOffset(unsigned) const;
     // Returns the number of intermediate text markers between this and the root.
