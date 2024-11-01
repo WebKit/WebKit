@@ -997,7 +997,7 @@ bool LineBuilder::tryPlacingFloatBox(const Box& floatBox, MayOverConstrainLine m
         // When floats with clear are placed under existing floats, we may find ourselves in an over-constrained state and
         // can't place this float here.
         auto contentLogicalWidth = m_line.contentLogicalWidth() - m_line.trimmableTrailingWidth();
-        return haveEnoughSpaceForFloatWithClear(BoxGeometry::marginBoxRect(boxGeometry), floatingContext.isLogicalLeftPositioned(floatBox), m_lineLogicalRect, contentLogicalWidth);
+        return haveEnoughSpaceForFloatWithClear(BoxGeometry::marginBoxRect(boxGeometry), floatingContext.isStartPositioned(floatBox), m_lineLogicalRect, contentLogicalWidth);
     };
     if (floatBox.hasFloatClear() && !willFloatBoxWithClearFit())
         return false;

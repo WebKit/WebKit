@@ -51,14 +51,14 @@ public:
     class Item {
     public:
         // FIXME: This c'tor is only used by the render tree integation codepath.
-        enum class Position { Left, Right };
+        enum class Position { Start, End };
         Item(Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, const LayoutShape*);
         Item(const Box&, Position, const BoxGeometry& absoluteBoxGeometry, LayoutPoint localTopLeft, std::optional<size_t> line);
 
         ~Item();
 
-        bool isLeftPositioned() const { return m_position == Position::Left; }
-        bool isRightPositioned() const { return m_position == Position::Right; }
+        bool isStartPositioned() const { return m_position == Position::Start; }
+        bool isEndPositioned() const { return m_position == Position::End; }
         bool isInFormattingContextOf(const ElementBox& formattingContextRoot) const;
 
         BoxGeometry boxGeometry() const;
@@ -90,8 +90,8 @@ public:
     void clear();
 
     bool isEmpty() const { return list().isEmpty(); }
-    bool hasLeftPositioned() const;
-    bool hasRightPositioned() const;
+    bool hasStartPositioned() const;
+    bool hasEndPositioned() const;
 
     WritingMode writingMode() const { return m_writingMode; }
     // FIXME: This should always be placedFloats's root().writingMode() if we used the actual containing block of the intrusive
@@ -104,8 +104,8 @@ private:
     CheckedRef<const ElementBox> m_blockFormattingContextRoot;
     List m_list;
     enum class PositionType {
-        Left = 1 << 0,
-        Right  = 1 << 1
+        Start = 1 << 0,
+        End  = 1 << 1
     };
     OptionSet<PositionType> m_positionTypes;
     WritingMode m_writingMode;
@@ -118,14 +118,14 @@ inline bool PlacedFloats::remove(const Box& floatBox)
     });
 }
 
-inline bool PlacedFloats::hasLeftPositioned() const
+inline bool PlacedFloats::hasStartPositioned() const
 {
-    return m_positionTypes.contains(PositionType::Left);
+    return m_positionTypes.contains(PositionType::Start);
 }
 
-inline bool PlacedFloats::hasRightPositioned() const
+inline bool PlacedFloats::hasEndPositioned() const
 {
-    return m_positionTypes.contains(PositionType::Right);
+    return m_positionTypes.contains(PositionType::End);
 }
 
 }

@@ -73,8 +73,8 @@ PlacedFloats::PlacedFloats(const ElementBox& blockFormattingContextRoot)
 
 void PlacedFloats::append(Item newFloatItem)
 {
-    auto isLeftPositioned = newFloatItem.isLeftPositioned();
-    m_positionTypes.add(isLeftPositioned ? PositionType::Left : PositionType::Right);
+    auto isStartPositioned = newFloatItem.isStartPositioned();
+    m_positionTypes.add(isStartPositioned ? PositionType::Start : PositionType::End);
 
     if (m_list.isEmpty())
         return m_list.append(newFloatItem);
@@ -88,13 +88,13 @@ void PlacedFloats::append(Item newFloatItem)
     // Normally it is, but negative horizontal margins can push the float box beyond another float box.
     // Float items in m_list list should stay in horizontal position order (left/right edge) on the same vertical position.
     auto horizontalMargin = newFloatItem.horizontalMargin();
-    auto hasNegativeHorizontalMargin = (isLeftPositioned && horizontalMargin.start < 0) || (!isLeftPositioned && horizontalMargin.end < 0);
+    auto hasNegativeHorizontalMargin = (isStartPositioned && horizontalMargin.start < 0) || (!isStartPositioned && horizontalMargin.end < 0);
     if (!hasNegativeHorizontalMargin)
         return m_list.append(newFloatItem);
 
     for (size_t i = m_list.size(); i--;) {
         auto& floatItem = m_list[i];
-        if (isLeftPositioned != floatItem.isLeftPositioned())
+        if (isStartPositioned != floatItem.isStartPositioned())
             continue;
 
         auto isHorizontallyOrdered = [&] {
@@ -102,8 +102,8 @@ void PlacedFloats::append(Item newFloatItem)
                 // There's no more floats on this vertical position.
                 return true;
             }
-            return (isLeftPositioned && newFloatItem.absoluteRectWithMargin().right() >= floatItem.absoluteRectWithMargin().right())
-                || (!isLeftPositioned && newFloatItem.absoluteRectWithMargin().left() <= floatItem.absoluteRectWithMargin().left());
+            return (isStartPositioned && newFloatItem.absoluteRectWithMargin().right() >= floatItem.absoluteRectWithMargin().right())
+                || (!isStartPositioned && newFloatItem.absoluteRectWithMargin().left() <= floatItem.absoluteRectWithMargin().left());
         };
         if (isHorizontallyOrdered())
             return m_list.insert(i + 1, newFloatItem);

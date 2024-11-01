@@ -675,24 +675,24 @@ void LineLayout::preparePlacedFloats()
         auto logicalPosition = [&] {
             switch (floatingObject->renderer().style().floating()) {
             case Float::Left:
-                return placedFloatsIsLeftToRight ? Layout::PlacedFloats::Item::Position::Left : Layout::PlacedFloats::Item::Position::Right;
+                return placedFloatsIsLeftToRight ? Layout::PlacedFloats::Item::Position::Start : Layout::PlacedFloats::Item::Position::End;
             case Float::Right:
-                return placedFloatsIsLeftToRight ? Layout::PlacedFloats::Item::Position::Right : Layout::PlacedFloats::Item::Position::Left;
+                return placedFloatsIsLeftToRight ? Layout::PlacedFloats::Item::Position::End : Layout::PlacedFloats::Item::Position::Start;
             case Float::InlineStart: {
                 auto* floatBoxContainingBlock = floatingObject->renderer().containingBlock();
                 if (floatBoxContainingBlock && placedFloatsWritingMode.isInlineOpposing(floatBoxContainingBlock->writingMode()))
-                    return Layout::PlacedFloats::Item::Position::Right;
-                return Layout::PlacedFloats::Item::Position::Left;
+                    return Layout::PlacedFloats::Item::Position::End;
+                return Layout::PlacedFloats::Item::Position::Start;
             }
             case Float::InlineEnd: {
                 auto* floatBoxContainingBlock = floatingObject->renderer().containingBlock();
                 if (floatBoxContainingBlock && placedFloatsWritingMode.isInlineOpposing(floatBoxContainingBlock->writingMode()))
-                    return Layout::PlacedFloats::Item::Position::Left;
-                return Layout::PlacedFloats::Item::Position::Right;
+                    return Layout::PlacedFloats::Item::Position::Start;
+                return Layout::PlacedFloats::Item::Position::End;
             }
             default:
                 ASSERT_NOT_REACHED();
-                return Layout::PlacedFloats::Item::Position::Left;
+                return Layout::PlacedFloats::Item::Position::Start;
             }
         };
 

@@ -72,12 +72,12 @@ public:
 
     PlacedFloats::Item makeFloatItem(const Box& floatBox, const BoxGeometry&, std::optional<size_t> line = { }) const;
 
-    bool isLogicalLeftPositioned(const Box& floatBox) const;
+    bool isStartPositioned(const Box& floatBox) const;
 
 private:
     std::optional<LayoutUnit> bottom(Clear) const;
 
-    bool isFloatingCandidateLeftPositionedInPlacedFloats(const Box&) const;
+    bool isFloatingCandidateStartPositionedInPlacedFloats(const Box&) const;
     Clear clearInPlacedFloats(const Box&) const;
 
     const ElementBox& root() const { return m_formattingContextRoot; }
