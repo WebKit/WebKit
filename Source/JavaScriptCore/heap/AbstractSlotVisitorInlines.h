@@ -30,6 +30,8 @@
 #include "WeakInlines.h"
 #include "WriteBarrier.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 using ReferrerToken = AbstractSlotVisitor::ReferrerToken;
@@ -228,3 +230,5 @@ ALWAYS_INLINE void AbstractSlotVisitor::reset()
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

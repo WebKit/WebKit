@@ -138,6 +138,8 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDOMAgent);
@@ -3205,3 +3207,5 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

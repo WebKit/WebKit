@@ -33,6 +33,9 @@
 #include "ZydisStatus.h"
 #include "ZydisInternalDecoderData.h"
 #include "ZydisInternalSharedData.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #if defined(ZYAN_GCC)
 #pragma GCC diagnostic push
@@ -5129,5 +5132,7 @@ ZyanStatus ZydisDecoderDecodeBuffer(const ZydisDecoder* decoder, const void* buf
 #endif
 
 /* ============================================================================================== */
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ENABLE(ZYDIS) */

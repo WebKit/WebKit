@@ -67,6 +67,8 @@
 #import <pal/ios/UIKitSoftLink.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 @interface WebCoreRenderThemeBundle : NSObject
 @end
 
@@ -294,3 +296,5 @@ Color RenderThemeCocoa::platformGrammarMarkerColor(OptionSet<StyleColorOptions> 
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

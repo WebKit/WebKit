@@ -4509,7 +4509,11 @@ sub GenerateImplementation
 
     @implContent = ();
 
-    push(@implContent, "\n\nnamespace WebCore {\n");
+    push(@implContent, "\n");
+    push(@implContent, "WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN\n");
+    push(@implContent, "\n");
+
+    push(@implContent, "namespace WebCore {\n");
     push(@implContent, "using namespace JSC;\n\n");
 
     push(@implContent, GenerateEnumerationsImplementationContent($interface, $enumerations));
@@ -5470,6 +5474,8 @@ END
     }
 
     push(@implContent, "\n}\n");
+
+    push(@implContent, "WTF_ALLOW_UNSAFE_BUFFER_USAGE_END\n");
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($interface);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;

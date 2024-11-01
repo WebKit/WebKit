@@ -28,6 +28,8 @@
 #if ENABLE(WEB_AUDIO)
 #include "IIRDSPKernel.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 IIRDSPKernel::IIRDSPKernel(IIRProcessor& processor)
@@ -73,5 +75,7 @@ bool IIRDSPKernel::requiresTailProcessing() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO)

@@ -34,12 +34,14 @@
 
 #include <webrtc/api/create_peerconnection_factory.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 #include <webrtc/webkit_sdk/WebKit/WebKitDecoder.h>
 #include <webrtc/webkit_sdk/WebKit/WebKitEncoder.h>
 ALLOW_UNUSED_PARAMETERS_END
 ALLOW_COMMA_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #include <webrtc/webkit_sdk/WebKit/WebKitVP8Decoder.h>
 #include <webrtc/webkit_sdk/WebKit/WebKitVP9Decoder.h>
 #include <wtf/MainThread.h>

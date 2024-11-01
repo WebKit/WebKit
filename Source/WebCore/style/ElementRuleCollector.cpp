@@ -57,6 +57,8 @@
 #include "UserAgentStyle.h"
 #include <wtf/SetForScope.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 namespace Style {
 
@@ -904,3 +906,5 @@ void ElementRuleCollector::addAuthorKeyframeRules(const StyleRuleKeyframe& keyfr
 
 }
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

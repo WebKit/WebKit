@@ -43,6 +43,8 @@
 #include <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 extern "C" void configureJSCForTesting();
 extern "C" int testCAPIViaCpp(const char* filter);
 extern "C" void JSSynchronousGarbageCollectForDebugging(JSContextRef);
@@ -1259,3 +1261,5 @@ int testCAPIViaCpp(const char* filter)
     dataLogLn("C-API tests in C++ had ", failed.load(), " failures");
     return failed.load();
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -36,6 +36,8 @@
 #import <pal/spi/cocoa/IOKitSPI.h>
 #import <wtf/MainThread.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 int windowsKeyCodeForKeyCode(uint16_t keyCode)
@@ -341,5 +343,7 @@ OptionSet<PlatformEvent::Modifier> PlatformKeyboardEvent::currentStateOfModifier
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(IOS_FAMILY)

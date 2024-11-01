@@ -34,6 +34,7 @@
 
 #include "ZycoreDefines.h"
 #include "ZycoreTypes.h"
+#include <wtf/Compiler.h>
 
 #ifndef ZYDIS_DISABLE_DECODER
 #   include "ZydisDecoder.h"
@@ -50,6 +51,8 @@
 #include "ZydisSharedTypes.h"
 #include "ZydisStatus.h"
 #include "ZydisUtils.h"
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #ifdef __cplusplus
 extern "C" {
@@ -165,5 +168,7 @@ ZYDIS_EXPORT ZyanStatus ZydisIsFeatureEnabled(ZydisFeature feature);
 #ifdef __cplusplus
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ZYDIS_H */

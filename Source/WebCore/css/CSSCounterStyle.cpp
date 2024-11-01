@@ -35,6 +35,8 @@
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // https://www.w3.org/TR/css-counter-styles-3/#cyclic-system
@@ -524,3 +526,5 @@ void CSSCounterStyle::extendAndResolve(const CSSCounterStyle& extendedCounterSty
         setSpeakAs(extendedCounterStyle.speakAs());
 }
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

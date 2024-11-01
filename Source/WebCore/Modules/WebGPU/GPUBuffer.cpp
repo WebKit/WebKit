@@ -30,6 +30,8 @@
 #include "JSDOMPromiseDeferred.h"
 #include "JSGPUBufferMapState.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 GPUBuffer::~GPUBuffer() = default;
@@ -233,3 +235,5 @@ void GPUBuffer::destroy(ScriptExecutionContext& scriptExecutionContext)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

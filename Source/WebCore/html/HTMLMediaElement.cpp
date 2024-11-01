@@ -211,6 +211,8 @@
 #include "MediaSessionCoordinator.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 template <>
 struct LogArgument<URL> {
@@ -9984,5 +9986,7 @@ void HTMLMediaElement::invalidateBufferingStopwatch()
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(VIDEO)

@@ -32,6 +32,8 @@
 #include "ScriptExecutionContext.h"
 #include <wtf/CrossThreadCopier.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 namespace CryptoAlgorithmAESGCMInternal {
@@ -241,3 +243,5 @@ ExceptionOr<std::optional<size_t>> CryptoAlgorithmAESGCM::getKeyLength(const Cry
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

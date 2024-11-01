@@ -30,6 +30,8 @@
 #include "Instruction.h"
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(InstructionStream);
@@ -364,3 +366,5 @@ using JSInstructionStreamWriter = InstructionStreamWriter<JSInstruction>;
 using WasmInstructionStream = InstructionStream<WasmInstruction>;
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

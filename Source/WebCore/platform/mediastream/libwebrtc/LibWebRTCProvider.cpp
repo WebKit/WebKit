@@ -41,6 +41,7 @@
 #include <dlfcn.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
@@ -60,6 +61,7 @@ IGNORE_CLANG_WARNINGS_END
 
 ALLOW_COMMA_END
 ALLOW_UNUSED_PARAMETERS_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #include <wtf/Function.h>
 #include <wtf/NeverDestroyed.h>

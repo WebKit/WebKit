@@ -177,6 +177,8 @@
 #include "PlatformScreen.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebGLRenderingContextBase);
@@ -5651,5 +5653,7 @@ WebCoreOpaqueRoot root(const WebGLExtension<WebGLRenderingContextBase>* extensio
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBGL)

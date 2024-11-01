@@ -35,6 +35,8 @@
 #include <pal/PALSwiftUtils.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 #if HAVE(SWIFT_CPP_INTEROP)
 
@@ -196,3 +198,5 @@ ExceptionOr<bool> CryptoAlgorithmECDSA::platformVerify(const CryptoAlgorithmEcds
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

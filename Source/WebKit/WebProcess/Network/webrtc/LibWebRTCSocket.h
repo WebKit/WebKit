@@ -34,11 +34,13 @@
 #include <wtf/Identified.h>
 #include <wtf/TZoneMalloc.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_COMMA_BEGIN
 
 #include <webrtc/rtc_base/async_packet_socket.h>
 
 ALLOW_COMMA_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace IPC {
 class Connection;

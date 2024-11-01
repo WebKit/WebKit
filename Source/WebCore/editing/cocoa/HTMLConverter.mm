@@ -94,6 +94,8 @@
 #import <pal/spi/ios/UIKitSPI.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 using namespace WebCore;
 using namespace HTMLNames;
 
@@ -2664,3 +2666,5 @@ AttributedString editingAttributedString(const SimpleRange& range, OptionSet<Inc
 }
     
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

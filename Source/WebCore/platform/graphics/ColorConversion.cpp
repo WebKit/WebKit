@@ -32,6 +32,8 @@
 #include "DestinationColorSpace.h"
 #include <wtf/MathExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // MARK: Lab-Like to LCH-Like conversion utilities.
@@ -384,3 +386,5 @@ ColorComponents<float, 4> convertAndResolveColorComponents(ColorSpace inputColor
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -79,6 +79,8 @@ using namespace WTF::Unicode;
 
 using JSC::JSLockHolder;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // Create <html><body (style="...")></body></html> doing minimal amount of work.
@@ -847,5 +849,7 @@ void LocalFrame::resetAllGeolocationPermission()
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(IOS_FAMILY)

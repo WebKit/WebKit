@@ -55,6 +55,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 using namespace JSC;
 namespace IDBServer {
@@ -2855,3 +2857,5 @@ void SQLiteIDBBackingStore::handleLowMemoryWarning()
 
 } // namespace IDBServer
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

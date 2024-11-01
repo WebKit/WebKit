@@ -33,6 +33,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 using namespace JSC;
 
@@ -112,3 +114,5 @@ bool IdentifierRep::isValid(IdentifierRep* identifier)
 }
     
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

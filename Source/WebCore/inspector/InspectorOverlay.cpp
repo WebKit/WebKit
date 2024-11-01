@@ -80,6 +80,8 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 using namespace Inspector;
@@ -2120,3 +2122,5 @@ std::optional<InspectorOverlay::Highlight::FlexHighlightOverlay> InspectorOverla
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

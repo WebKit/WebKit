@@ -33,6 +33,8 @@
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FlipBytes.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 namespace CryptoAlgorithmAESCTRInternal {
@@ -314,3 +316,5 @@ auto CryptoAlgorithmAESCTR::CounterBlockHelper::CounterBlockBits::operator &=(co
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

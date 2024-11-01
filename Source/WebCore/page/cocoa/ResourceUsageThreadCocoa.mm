@@ -39,6 +39,8 @@
 #import <wtf/ResourceUsage.h>
 #import <wtf/spi/cocoa/MachVMSPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static unsigned categoryForVMTag(unsigned tag)
@@ -275,5 +277,7 @@ void ResourceUsageThread::platformCollectMemoryData(JSC::VM* vm, ResourceUsageDa
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

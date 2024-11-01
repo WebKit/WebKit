@@ -37,6 +37,8 @@
 #include "RenderStyleInlines.h"
 #include "Settings.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 namespace Style {
@@ -216,3 +218,5 @@ float adjustedFontSize(float size, const FontSizeAdjust& sizeAdjust, const FontM
 
 } // namespace Style
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

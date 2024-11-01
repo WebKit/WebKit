@@ -36,6 +36,8 @@
 #endif
 #include <pal/spi/cocoa/CoreCryptoSPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 bool CryptoKeyOKP::isPlatformSupportedCurve(NamedCurve namedCurve)
@@ -473,3 +475,5 @@ Vector<uint8_t> CryptoKeyOKP::platformExportRaw() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -31,6 +31,8 @@
 #include <wtf/Hasher.h>
 #include <wtf/NeverDestroyed.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ImmutableStyleProperties);
@@ -143,3 +145,5 @@ int ImmutableStyleProperties::findCustomPropertyIndex(StringView propertyName) c
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

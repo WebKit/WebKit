@@ -31,6 +31,8 @@
 #import "ColorSpaceCG.h"
 #import <UIKit/UIKit.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 Color colorFromCocoaColor(UIColor *color)
@@ -63,5 +65,7 @@ Color colorFromCocoaColor(UIColor *color)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

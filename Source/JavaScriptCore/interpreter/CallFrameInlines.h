@@ -29,6 +29,8 @@
 #include "JSCalleeInlines.h"
 #include "RegisterInlines.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 inline Register& CallFrame::r(VirtualRegister reg)
@@ -132,3 +134,5 @@ SUPPRESS_ASAN ALWAYS_INLINE void CallFrame::setCallSiteIndex(CallSiteIndex callS
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

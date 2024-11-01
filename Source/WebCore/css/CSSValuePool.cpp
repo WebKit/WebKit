@@ -31,6 +31,8 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(CSSValuePool);
 
@@ -129,3 +131,5 @@ void CSSValuePool::drain()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

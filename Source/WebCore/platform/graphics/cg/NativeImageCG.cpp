@@ -34,6 +34,8 @@
 #include <limits>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 IntSize PlatformImageNativeImageBackend::size() const
@@ -176,5 +178,7 @@ void NativeImage::clearSubimages()
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CG)

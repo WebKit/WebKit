@@ -33,6 +33,8 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/RetainPtr.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 namespace Bindings {
 
@@ -256,3 +258,5 @@ JSValue ObjcClass::fallbackObject(JSGlobalObject* lexicalGlobalObject, Instance*
 
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

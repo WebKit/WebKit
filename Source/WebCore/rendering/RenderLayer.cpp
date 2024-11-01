@@ -157,6 +157,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -6593,3 +6595,5 @@ void showLayerPositionTree(const WebCore::RenderLayer* layer)
 }
 
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

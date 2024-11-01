@@ -34,6 +34,8 @@
 #include <wtf/WTFProcess.h>
 #include <wtf/text/StringCommon.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 // We don't have a NO_RETURN_DUE_TO_EXIT, nor should we. That's ridiculous.
 static bool hiddenTruthBecauseNoReturnIsStupid() { return true; }
 
@@ -126,3 +128,5 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, cons
     return main(argc, const_cast<char**>(argv));
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -37,6 +37,9 @@
 #include "ZycoreTypes.h"
 #include "ZydisDecoderTypes.h"
 #include "ZydisFormatterBuffer.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #ifdef __cplusplus
 extern "C" {
@@ -1186,5 +1189,7 @@ ZYDIS_EXPORT ZyanStatus ZydisFormatterTokenizeOperandEx(const ZydisFormatter* fo
 #ifdef __cplusplus
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ZYDIS_FORMATTER_H */

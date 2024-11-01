@@ -32,6 +32,10 @@
 #ifndef ZYCORE_STATUS_H
 #define ZYCORE_STATUS_H
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -283,5 +287,7 @@ typedef ZyanU32 ZyanStatus;
 #ifdef __cplusplus
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ZYCORE_STATUS_H */

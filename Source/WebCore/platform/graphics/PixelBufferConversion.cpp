@@ -39,6 +39,8 @@ IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 IGNORE_CLANG_WARNINGS_END
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 #if USE(ACCELERATE) && USE(CG)
@@ -365,3 +367,5 @@ void copyRows(unsigned sourceBytesPerRow, const uint8_t* source, unsigned destin
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

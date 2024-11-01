@@ -36,6 +36,9 @@
 #include "ZycoreStatus.h"
 #include "ZycoreString.h"
 #include "ZycoreTypes.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #ifdef __cplusplus
 extern "C" {
@@ -282,5 +285,7 @@ ZYCORE_EXPORT ZyanStatus ZyanStringAppendHexS(ZyanString* string, ZyanI64 value,
 #ifdef __cplusplus
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ZYCORE_FORMAT_H

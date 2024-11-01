@@ -53,6 +53,8 @@
 #include "TypedElementDescendantIteratorInlines.h"
 #include "ViewTransition.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1633,3 +1635,5 @@ unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

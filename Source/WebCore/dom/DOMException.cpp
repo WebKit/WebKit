@@ -31,6 +31,8 @@
 
 #include "Exception.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // This array needs to be kept in sync with the ExceptionCode enumeration.
@@ -115,3 +117,5 @@ DOMException::DOMException(LegacyCode legacyCode, const String& name, const Stri
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

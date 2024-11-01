@@ -34,6 +34,8 @@
 #import <JavaScriptCore/JSLock.h>
 #import <wtf/Assertions.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if !defined(_C_LNG_LNG)
 #define _C_LNG_LNG 'q'
 #endif
@@ -332,3 +334,5 @@ Exception *throwError(JSGlobalObject* lexicalGlobalObject, ThrowScope& scope, NS
 
 }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

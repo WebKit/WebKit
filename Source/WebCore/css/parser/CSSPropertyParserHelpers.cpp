@@ -92,6 +92,8 @@
 #include <wtf/SortedArrayMap.h>
 #include <wtf/text/TextStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 namespace CSSPropertyParserHelpers {
@@ -1467,3 +1469,5 @@ RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range, const CSSParse
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

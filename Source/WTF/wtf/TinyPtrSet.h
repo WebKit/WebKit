@@ -29,6 +29,8 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC { namespace DFG {
 class StructureAbstractValue;
 } } // namespace JSC::DFG
@@ -519,3 +521,5 @@ private:
 } // namespace WTF
 
 using WTF::TinyPtrSet;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

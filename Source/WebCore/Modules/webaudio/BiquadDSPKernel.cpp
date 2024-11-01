@@ -44,6 +44,8 @@
 #include <arm_neon.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static bool hasConstantValue(float* values, int framesToProcess)
@@ -257,5 +259,7 @@ bool BiquadDSPKernel::requiresTailProcessing() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO)

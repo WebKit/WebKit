@@ -34,6 +34,8 @@
 #include "StylePropertiesInlines.h"
 #include "StylePropertyShorthand.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(MutableStyleProperties);
@@ -354,3 +356,5 @@ CSSStyleDeclaration& MutableStyleProperties::ensureInlineCSSStyleDeclaration(Sty
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

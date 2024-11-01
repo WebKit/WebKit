@@ -95,6 +95,8 @@
 #include "ViewTimeline.h"
 #include "WebAnimationUtilities.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(ComputedStyleExtractor);
 
@@ -5234,3 +5236,5 @@ Ref<CSSValue> ComputedStyleExtractor::getMaskShorthandValue() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

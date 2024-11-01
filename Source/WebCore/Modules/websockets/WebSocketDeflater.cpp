@@ -38,6 +38,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <zlib.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static const int defaultMemLevel = 8;
@@ -226,3 +228,5 @@ void WebSocketInflater::reset()
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

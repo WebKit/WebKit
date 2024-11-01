@@ -44,6 +44,8 @@
 #include <wtf/URLParser.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
@@ -512,3 +514,5 @@ FetchBodyConsumer FetchBodyConsumer::clone()
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

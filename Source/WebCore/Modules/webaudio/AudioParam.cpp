@@ -37,6 +37,8 @@
 #include "VectorMath.h"
 #include <wtf/MathExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static void replaceNaNValues(float* values, unsigned numberOfValues, float defaultValue)
@@ -392,5 +394,7 @@ WTFLogChannel& AudioParam::logChannel() const
     
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO)

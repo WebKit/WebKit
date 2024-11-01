@@ -104,6 +104,8 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -4526,3 +4528,5 @@ String roleToPlatformString(AccessibilityRole role)
 } // namespace Accessibility
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

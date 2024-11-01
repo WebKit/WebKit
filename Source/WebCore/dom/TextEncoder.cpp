@@ -30,6 +30,8 @@
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 String TextEncoder::encoding() const
@@ -74,3 +76,5 @@ auto TextEncoder::encodeInto(String&& input, Ref<Uint8Array>&& array) -> EncodeI
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

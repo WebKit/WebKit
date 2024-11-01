@@ -105,6 +105,8 @@
 #include <wtf/Locker.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 const GCGLuint64 MaxClientWaitTimeout = 0u;
@@ -3558,5 +3560,7 @@ void WebGL2RenderingContext::updateBuffersToAutoClear(ClearBufferCaller caller, 
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEBGL)

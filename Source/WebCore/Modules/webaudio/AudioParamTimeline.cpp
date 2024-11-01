@@ -37,6 +37,8 @@
 #include <wtf/MathExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static void fillWithValue(float* values, float value, unsigned endFrame, unsigned& writeIndex)
@@ -1052,5 +1054,7 @@ bool AudioParamTimeline::hasValues(size_t startFrame, double sampleRate) const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO)

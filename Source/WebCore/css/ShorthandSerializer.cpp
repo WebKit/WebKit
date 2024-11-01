@@ -45,6 +45,8 @@
 #include "StylePropertyShorthand.h"
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 constexpr unsigned maxShorthandLength = 18; // FIXME: Generate this from CSSProperties.json.
@@ -1410,3 +1412,5 @@ String serializeShorthandValue(const ComputedStyleExtractor& extractor, CSSPrope
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

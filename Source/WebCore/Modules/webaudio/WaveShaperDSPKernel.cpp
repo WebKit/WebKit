@@ -35,6 +35,8 @@
 #include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WaveShaperDSPKernel::WaveShaperDSPKernel(WaveShaperProcessor* processor)
@@ -205,5 +207,7 @@ bool WaveShaperDSPKernel::requiresTailProcessing() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO)

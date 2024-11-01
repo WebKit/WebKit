@@ -135,6 +135,8 @@
 
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace std {
 template <> struct iterator_traits<HashSet<RefPtr<WebCore::MediaSelectionOptionAVFObjC>>::iterator> {
     typedef RefPtr<WebCore::MediaSelectionOptionAVFObjC> value_type;
@@ -4459,5 +4461,7 @@ NSArray* playerKVOProperties()
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

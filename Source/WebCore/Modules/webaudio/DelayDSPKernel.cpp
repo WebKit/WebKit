@@ -32,6 +32,8 @@
 #include "VectorMath.h"
 #include <algorithm>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static size_t bufferLengthForDelay(double maxDelayTime, double sampleRate)
@@ -241,5 +243,7 @@ bool DelayDSPKernel::requiresTailProcessing() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUDIO)

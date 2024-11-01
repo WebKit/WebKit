@@ -168,6 +168,7 @@ class GenerationContext:
             #include <wtf/text/AtomString.h>
             #include <string.h>
 
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             IGNORE_WARNINGS_BEGIN("implicit-fallthrough")
 
             // Older versions of gperf generate code using the `register` keyword.
@@ -183,6 +184,7 @@ class GenerationContext:
             } // namespace WebCore
 
             IGNORE_WARNINGS_END
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             """))
 
     def _generate_gperf_definition(self, *, to):

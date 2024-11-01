@@ -80,6 +80,8 @@
 #include <wtf/text/TextBreakIteratorInternalICU.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(TextIterator);
@@ -2711,3 +2713,5 @@ void showTree(const WebCore::TextIterator* pos)
 }
 
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

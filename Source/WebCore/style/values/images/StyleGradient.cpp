@@ -36,6 +36,8 @@
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 namespace Style {
 
@@ -1259,3 +1261,5 @@ bool isOpaque(const Gradient& gradient, const RenderStyle& style)
 
 } // namespace Style
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

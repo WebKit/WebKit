@@ -49,6 +49,8 @@
 #include "CoreVideoSoftLink.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 GPUQueue::GPUQueue(Ref<WebGPU::Queue>&& backing, WebGPU::Device& device)
@@ -1021,3 +1023,5 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

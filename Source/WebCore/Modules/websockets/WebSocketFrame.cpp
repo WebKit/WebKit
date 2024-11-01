@@ -27,6 +27,8 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // Constants for hybi-10 frame format.
@@ -180,3 +182,5 @@ WebSocketFrame::WebSocketFrame(OpCode opCode, bool final, bool compress, bool ma
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

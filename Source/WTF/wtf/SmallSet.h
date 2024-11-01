@@ -30,6 +30,8 @@
 #include <wtf/HashFunctions.h>
 #include <wtf/Noncopyable.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SmallSet);
@@ -322,3 +324,5 @@ private:
 } // namespace WTF
 
 using WTF::SmallSet;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

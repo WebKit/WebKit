@@ -29,6 +29,8 @@
 #include <unicode/utf16.h>
 #include <unicode/utf8.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 namespace URLPatternUtilities {
 
@@ -270,3 +272,5 @@ ExceptionOr<Vector<Token>> Tokenizer::tokenize()
 
 } // namespace URLPatternUtilities
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

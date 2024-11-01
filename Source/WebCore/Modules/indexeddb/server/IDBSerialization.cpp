@@ -35,6 +35,8 @@
 #include <wtf/glib/GRefPtr.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 enum class KeyPathType { Null, String, Array };
@@ -414,3 +416,5 @@ bool deserializeIDBKeyData(std::span<const uint8_t> data, IDBKeyData& result)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -35,6 +35,8 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/text/CString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 bool WebSocketExtensionParser::finished()
@@ -142,3 +144,5 @@ bool WebSocketExtensionParser::parseExtension(String& extensionToken, UncheckedK
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

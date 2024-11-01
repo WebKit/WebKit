@@ -49,12 +49,14 @@
 #import <wtf/Scope.h>
 #import <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_COMMA_BEGIN
 
 #include <webrtc/webkit_sdk/WebKit/WebKitDecoder.h>
 #include <webrtc/webkit_sdk/WebKit/WebKitEncoder.h>
 
 ALLOW_COMMA_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #import <pal/cf/CoreMediaSoftLink.h>
 #import <WebCore/CoreVideoSoftLink.h>

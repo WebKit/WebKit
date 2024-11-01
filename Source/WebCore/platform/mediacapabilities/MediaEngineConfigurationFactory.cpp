@@ -45,6 +45,8 @@
 #include "MediaEngineConfigurationFactoryGStreamer.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static bool& mockEnabled()
@@ -170,3 +172,5 @@ void MediaEngineConfigurationFactory::disableMock()
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -29,6 +29,9 @@
 #if ENABLE(ZYDIS)
 
 #include "ZydisMetaInfo.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 /* ============================================================================================== */
 /* Enum strings                                                                                   */
@@ -70,5 +73,7 @@ const char* ZydisISAExtGetString(ZydisISAExt isa_ext)
 }
 
 /* ============================================================================================== */
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ENABLE(ZYDIS) */

@@ -83,6 +83,8 @@
 #include <wtf/spi/darwin/OSVariantSPI.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 using namespace Inspector;
@@ -891,3 +893,5 @@ void InspectorFrontendHost::setPath(OffscreenCanvasRenderingContext2D& context, 
 #endif // ENABLE(OFFSCREEN_CANVAS)
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

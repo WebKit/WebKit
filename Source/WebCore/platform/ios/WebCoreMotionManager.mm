@@ -38,6 +38,8 @@
 #import <wtf/MathExtras.h>
 #import <wtf/SoftLinking.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 // Get CoreLocation classes
 SOFT_LINK_FRAMEWORK(CoreLocation)
 
@@ -326,5 +328,7 @@ static const double kGravity = 9.80665;
 }
 
 @end
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

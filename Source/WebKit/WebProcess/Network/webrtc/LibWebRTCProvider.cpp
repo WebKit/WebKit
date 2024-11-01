@@ -43,6 +43,7 @@
 #include <WebCore/Settings.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_COMMA_BEGIN
 
 // See Bug 274508: Disable thread-safety-reference-return warnings in libwebrtc
@@ -51,6 +52,7 @@ IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
 IGNORE_CLANG_WARNINGS_END
 
 ALLOW_COMMA_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WebKit {
 using namespace WebCore;

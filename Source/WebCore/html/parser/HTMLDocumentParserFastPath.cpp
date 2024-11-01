@@ -64,6 +64,8 @@
 #include <wtf/text/FastCharacterComparison.h>
 #include <wtf/text/StringParsingBuffer.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 // Captures the potential outcomes for fast path html parser.
@@ -991,3 +993,5 @@ bool tryFastParsingHTMLFragment(StringView source, Document& document, Container
 #undef FOR_EACH_SUPPORTED_TAG
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

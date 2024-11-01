@@ -38,6 +38,8 @@
 #include <windows.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 const int MaxLineLength = 100 * 1024;
 
 using namespace JSC;
@@ -516,3 +518,5 @@ extern "C" __declspec(dllexport) int WINAPI dllLauncherEntryPoint(int argc, cons
     return main(argc, const_cast<char**>(argv));
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

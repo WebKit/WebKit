@@ -34,6 +34,10 @@
 
 #ifndef ZYAN_CUSTOM_LIBC
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 // Include a custom LibC header and define `ZYAN_CUSTOM_LIBC` to provide your own LibC
 // replacement functions
 
@@ -507,5 +511,7 @@ ZYAN_INLINE ZyanUSize ZYAN_STRXFRM(char* dest, const char* src, ZyanUSize n)
 #endif
 
 /* ============================================================================================== */
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ZYCORE_LIBC_H */

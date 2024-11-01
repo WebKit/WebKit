@@ -35,6 +35,7 @@
 #include "Timer.h"
 #include <wtf/Lock.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_UNUSED_PARAMETERS_BEGIN
 ALLOW_COMMA_BEGIN
 
@@ -42,6 +43,7 @@ ALLOW_COMMA_BEGIN
 
 ALLOW_UNUSED_PARAMETERS_END
 ALLOW_COMMA_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #include <wtf/LoggerHelper.h>
 #include <wtf/ThreadSafeRefCounted.h>

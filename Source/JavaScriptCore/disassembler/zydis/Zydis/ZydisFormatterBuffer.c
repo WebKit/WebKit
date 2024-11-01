@@ -30,6 +30,9 @@
 
 #include "ZydisInternalString.h"
 #include "ZydisFormatterBuffer.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 /* ============================================================================================== */
 /* Exported functions                                                                             */
@@ -193,5 +196,7 @@ ZyanStatus ZydisFormatterBufferRestore(ZydisFormatterBuffer* buffer, ZyanUPointe
 /* ---------------------------------------------------------------------------------------------- */
 
 /* ============================================================================================== */
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ENABLE(ZYDIS) */

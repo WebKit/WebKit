@@ -33,6 +33,8 @@
 #include "PerformanceObserverEntryList.h"
 #include "WorkerGlobalScope.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 PerformanceObserver::PerformanceObserver(ScriptExecutionContext& scriptExecutionContext, Ref<PerformanceObserverCallback>&& callback)
@@ -164,3 +166,5 @@ Vector<String> PerformanceObserver::supportedEntryTypes(ScriptExecutionContext& 
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

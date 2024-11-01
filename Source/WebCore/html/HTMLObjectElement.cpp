@@ -55,6 +55,8 @@
 #include <wtf/RuntimeApplicationChecks.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLObjectElement);
@@ -405,3 +407,5 @@ bool HTMLObjectElement::canContainRangeEndPoint() const
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

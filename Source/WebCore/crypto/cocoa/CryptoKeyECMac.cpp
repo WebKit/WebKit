@@ -33,6 +33,8 @@
 #endif
 #include <wtf/text/Base64.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static const unsigned char InitialOctetEC = 0x04; // Per Section 2.3.3 of http://www.secg.org/sec1-v2.pdf
@@ -513,3 +515,5 @@ Vector<uint8_t> CryptoKeyEC::platformExportPkcs8() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

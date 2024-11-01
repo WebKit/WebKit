@@ -38,6 +38,8 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 void WebSocketExtensionDispatcher::reset()
@@ -138,3 +140,5 @@ String WebSocketExtensionDispatcher::failureReason() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

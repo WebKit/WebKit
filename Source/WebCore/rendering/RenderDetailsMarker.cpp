@@ -31,6 +31,8 @@
 #include "RenderBoxModelObjectInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -157,3 +159,5 @@ bool RenderDetailsMarker::isOpen() const
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

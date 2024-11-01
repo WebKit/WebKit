@@ -30,6 +30,8 @@
 
 #include "ParsingUtilities.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 template<typename CharacterType> static bool isNotURLTerminatingChar(CharacterType character)
@@ -350,3 +352,4 @@ LinkHeaderSet::LinkHeaderSet(const String& header)
 
 } // namespace WebCore
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

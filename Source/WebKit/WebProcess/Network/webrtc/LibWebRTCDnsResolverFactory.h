@@ -33,9 +33,11 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #include <WebCore/LibWebRTCMacros.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALLOW_COMMA_BEGIN
 #include <webrtc/api/async_dns_resolver.h>
 ALLOW_COMMA_END
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>

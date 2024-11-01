@@ -35,6 +35,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/StringParsingBuffer.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(CSSStyleDeclaration);
@@ -317,3 +319,5 @@ ExceptionOr<void> CSSStyleDeclaration::setCssFloat(const String& value)
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -32,6 +32,8 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringParsingBuffer.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 template<typename CharacterType> static std::optional<ResourceCryptographicDigest::Algorithm> parseHashAlgorithmAdvancingPosition(StringParsingBuffer<CharacterType>& buffer)
@@ -167,3 +169,5 @@ ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptogra
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

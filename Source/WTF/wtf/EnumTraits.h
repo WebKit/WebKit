@@ -59,6 +59,9 @@
 #include <algorithm>
 #include <span>
 #include <type_traits>
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
@@ -270,3 +273,5 @@ using WTF::isZeroBasedContiguousEnum;
 using WTF::enumTypeName;
 using WTF::enumNames;
 using WTF::enumName;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

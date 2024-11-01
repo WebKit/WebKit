@@ -35,6 +35,9 @@
 #include "ZydisFormatter.h"
 #include "ZydisInternalFormatterBase.h"
 #include "ZydisInternalString.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #ifdef __cplusplus
 extern "C" {
@@ -192,5 +195,7 @@ static const ZydisFormatter FORMATTER_ATT =
 #ifdef __cplusplus
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ZYDIS_FORMATTER_ATT_H

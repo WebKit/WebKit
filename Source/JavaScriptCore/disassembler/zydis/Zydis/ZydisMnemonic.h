@@ -34,6 +34,9 @@
 
 #include "ZycoreTypes.h"
 #include "ZydisShortString.h"
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #ifdef __cplusplus
 extern "C" {
@@ -84,5 +87,7 @@ ZYDIS_EXPORT const ZydisShortString* ZydisMnemonicGetStringWrapped(ZydisMnemonic
 #ifdef __cplusplus
 }
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif /* ZYDIS_MNEMONIC_H */

@@ -43,6 +43,8 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class FunctionMetadataNode;
@@ -2392,3 +2394,5 @@ inline std::unique_ptr<ProgramNode> parseFunctionForFunctionConstructor(VM& vm, 
 
 
 } // namespace
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
