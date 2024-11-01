@@ -31,6 +31,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -152,7 +153,19 @@ public:
         timer->startOneShot(delay);
     }
 
+    template<typename TimerFiredClass, typename TimerFiredBaseClass>
+    requires (WTF::TypeHasRefMemberFunction<TimerFiredClass>::value)
+    Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
+        : m_function([objectPtr = &object, function] {
+            Ref protectedObject { *objectPtr };
+            (objectPtr->*function)();
+        })
+    {
+    }
+
+    // FIXME: This constructor isn't as safe as the other ones and should ideally be removed.
     template <typename TimerFiredClass, typename TimerFiredBaseClass>
+    requires (!WTF::TypeHasRefMemberFunction<TimerFiredClass>::value)
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
         : m_function(std::bind(function, &object))
     {

@@ -254,7 +254,6 @@ void HTMLPlugInElement::swapRendererTimerFired()
     
     // Create a shadow root, which will trigger the code to add a snapshot container
     // and reattach, thus making a new Renderer.
-    Ref protectedThis { *this };
     ensureUserAgentShadowRoot();
 }
 

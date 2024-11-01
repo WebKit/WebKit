@@ -37,6 +37,7 @@
 #include <wtf/Observer.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Seconds.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/ThreadSafetyAnalysis.h>
 #include <wtf/ThreadSpecific.h>
 #include <wtf/Threading.h>
@@ -178,8 +179,20 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         template <typename TimerFiredClass>
-        Timer(Ref<RunLoop>&& runLoop, TimerFiredClass* o, void (TimerFiredClass::*f)())
-            : Timer(WTFMove(runLoop), std::bind(f, o))
+        requires (WTF::TypeHasRefMemberFunction<TimerFiredClass>::value)
+        Timer(Ref<RunLoop>&& runLoop, TimerFiredClass* object, void (TimerFiredClass::*function)())
+            : Timer(WTFMove(runLoop), [object, function] {
+                RefPtr protectedObject { object };
+                (object->*function)();
+            })
+        {
+        }
+
+        // FIXME: This constructor isn't as safe as the other ones and should ideally be removed.
+        template <typename TimerFiredClass>
+        requires (!WTF::TypeHasRefMemberFunction<TimerFiredClass>::value)
+        Timer(Ref<RunLoop>&& runLoop, TimerFiredClass* object, void (TimerFiredClass::*function)())
+            : Timer(WTFMove(runLoop), std::bind(function, object))
         {
         }
 

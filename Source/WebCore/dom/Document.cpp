@@ -7978,7 +7978,6 @@ void Document::postTask(Task&& task)
 
 void Document::pendingTasksTimerFired()
 {
-    Ref protectedThis { *this };
     auto pendingTasks = std::exchange(m_pendingTasks, Vector<Task> { });
     for (auto& task : pendingTasks)
         task.performTask(*this);
@@ -8350,7 +8349,6 @@ void Document::loadEventDelayTimerFired()
     // FIXME: Should this also call DocumentLoader::checkLoadComplete?
     // FIXME: Not obvious why checkCompleted needs to go first. The order these are called is
     // visible to WebKit clients, but it's more like a race than a well-defined relationship.
-    Ref protectedThis { *this };
     checkCompleted();
     if (RefPtr frame = this->frame())
         frame->protectedLoader()->checkLoadComplete();

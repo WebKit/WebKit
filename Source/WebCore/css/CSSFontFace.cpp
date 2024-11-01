@@ -431,8 +431,6 @@ void CSSFontFace::fontLoadEventOccurred()
 
 void CSSFontFace::timeoutFired()
 {
-    Ref<CSSFontFace> protectedThis(*this);
-    
     switch (status()) {
     case Status::Loading:
         setStatus(Status::TimedOut);

@@ -2514,7 +2514,6 @@ void LocalFrameView::scrollToFocusedElementImmediatelyIfNeeded()
 
 void LocalFrameView::scrollToFocusedElementTimerFired()
 {
-    Ref protectedThis { *this };
     scrollToFocusedElementInternal();
 }
 
@@ -2555,8 +2554,6 @@ void LocalFrameView::scrollToFocusedElementInternal()
 
 void LocalFrameView::textFragmentIndicatorTimerFired()
 {
-    Ref protectedThis { *this };
-    
     ASSERT(m_frame->document());
     auto& document = *m_frame->document();
     
@@ -3780,7 +3777,6 @@ bool LocalFrameView::updateEmbeddedObjects()
 
 void LocalFrameView::updateEmbeddedObjectsTimerFired()
 {
-    Ref protectedThis { *this };
     m_updateEmbeddedObjectsTimer.stop();
     for (unsigned i = 0; i < maxUpdateEmbeddedObjectsIterations; ++i) {
         if (updateEmbeddedObjects())
