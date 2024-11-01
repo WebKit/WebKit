@@ -38,7 +38,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     int m_tabIndex;
     uint8_t contentRelevancy;
     IntPoint savedLayerScrollPosition;
-    Vector<std::unique_ptr<ElementAnimationRareData>> animationRareData;
+    HashMap<std::optional<Style::PseudoElementIdentifier>, std::unique_ptr<ElementAnimationRareData>> animationRareData;
     void* pointers[17];
     void* intersectionObserverData;
     void* typedOMData[2];

@@ -80,12 +80,16 @@ struct HashTraits<std::optional<WebCore::Style::PseudoElementIdentifier>> : Gene
 
     static constexpr bool emptyValueIsZero = false;
     static EmptyValueType emptyValue() { return WebCore::Style::PseudoElementIdentifier { WebCore::PseudoId::AfterLastInternalPseudoId, nullAtom() }; }
+
+    static void constructDeletedValue(std::optional<WebCore::Style::PseudoElementIdentifier>& pseudoElementIdentifier) { pseudoElementIdentifier = WebCore::Style::PseudoElementIdentifier { WebCore::PseudoId::None, nullAtom() }; }
+    static bool isDeletedValue(const std::optional<WebCore::Style::PseudoElementIdentifier>& pseudoElementIdentifier) { return pseudoElementIdentifier == WebCore::Style::PseudoElementIdentifier { WebCore::PseudoId::None, nullAtom() }; }
 };
 
 template<>
 struct DefaultHash<std::optional<WebCore::Style::PseudoElementIdentifier>> {
     static unsigned hash(const std::optional<WebCore::Style::PseudoElementIdentifier>& data) { return computeHash(data); }
     static bool equal(const std::optional<WebCore::Style::PseudoElementIdentifier>& a, const std::optional<WebCore::Style::PseudoElementIdentifier>& b) { return a == b; }
+
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
