@@ -45,7 +45,7 @@ static const IOHIDFloat defaultMajorRadius = 5;
 static const IOHIDFloat defaultPathPressure = 0;
 static const long nanosecondsPerSecond = 1e9;
 
-constexpr size_t HIDMaxTouchCount = 5;
+constexpr NSUInteger HIDMaxTouchCount = 5;
 constexpr std::array<int, HIDMaxTouchCount> fingerIdentifiers { 2, 3, 4, 5, 1 };
 
 typedef enum {
