@@ -53,6 +53,7 @@
 #include "JSDOMConvertBase.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 using namespace JSC;
@@ -542,3 +543,4 @@ TestEnabledBySetting* JSTestEnabledBySetting::toWrapped(JSC::VM&, JSC::JSValue v
 }
 
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -39,6 +39,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/PointerPreparations.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 using namespace JSC;
@@ -101,3 +102,4 @@ JSC::GCClient::IsoSubspace* JSTestNamespaceConst::subspaceForImpl(JSC::VM& vm)
 
 
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

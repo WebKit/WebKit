@@ -135,6 +135,7 @@
 #include "TestGlobalObjectBuiltins.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 using namespace JSC;
@@ -2308,3 +2309,4 @@ TestGlobalObject* JSTestGlobalObject::toWrapped(JSC::VM&, JSC::JSValue value)
 }
 
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

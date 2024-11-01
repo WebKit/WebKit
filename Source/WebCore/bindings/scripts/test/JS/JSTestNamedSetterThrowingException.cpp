@@ -47,6 +47,7 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 using namespace JSC;
@@ -432,3 +433,4 @@ TestNamedSetterThrowingException* JSTestNamedSetterThrowingException::toWrapped(
 }
 
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -78,6 +78,7 @@
 #include <JavaScriptCore/JSArray.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 using namespace JSC;
@@ -1280,5 +1281,6 @@ TestInterface* JSTestInterface::toWrapped(JSC::VM&, JSC::JSValue value)
 }
 
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(Condition1) || ENABLE(Condition2)

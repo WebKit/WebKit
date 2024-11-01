@@ -63,6 +63,7 @@
 #include "JSTestDefaultToJSONEnum.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 using namespace JSC;
@@ -310,3 +311,4 @@ void JSTestDefaultToJSONInherit::analyzeHeap(JSCell* cell, HeapAnalyzer& analyze
 
 
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

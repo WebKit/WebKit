@@ -51,6 +51,7 @@
 #include "JSDOMConvertBase.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 using namespace JSC;
@@ -302,5 +303,6 @@ TestOperationConditional* JSTestOperationConditional::toWrapped(JSC::VM&, JSC::J
 }
 
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ConditionDerived)

@@ -64,6 +64,7 @@
 #include <JavaScriptCore/JSArray.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 using namespace JSC;
@@ -865,3 +866,4 @@ TestConditionalIncludes* JSTestConditionalIncludes::toWrapped(JSC::VM&, JSC::JSV
 }
 
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
