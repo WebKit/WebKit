@@ -57,6 +57,8 @@ InputEvent::InputEvent(const AtomString& eventType, const Init& initializer)
     : UIEvent(EventInterfaceType::InputEvent, eventType, initializer)
     , m_inputType(initializer.inputType)
     , m_data(initializer.data)
+    , m_dataTransfer(initializer.dataTransfer)
+    , m_targetRanges(initializer.targetRanges)
     , m_isInputMethodComposing(initializer.isComposing)
 {
 }

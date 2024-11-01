@@ -42,6 +42,8 @@ public:
         String data;
         bool isComposing { false }; // input method
         String inputType;
+        RefPtr<DataTransfer> dataTransfer;
+        Vector<RefPtr<StaticRange>> targetRanges;
     };
 
     virtual ~InputEvent();

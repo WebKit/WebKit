@@ -44,4 +44,6 @@ dictionary InputEventInit : UIEventInit {
     DOMString? data = null;
     boolean isComposing = false;
     DOMString inputType = "";
+    DataTransfer? dataTransfer;
+    sequence<StaticRange> targetRanges;
 };
