@@ -38,6 +38,7 @@ namespace WebCore {
 class PluginReplacement;
 class PluginViewBase;
 class RenderWidget;
+class VoidCallback;
 
 class HTMLPlugInElement : public HTMLFrameOwnerElement {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(HTMLPlugInElement);
@@ -74,6 +75,9 @@ public:
     WEBCORE_EXPORT bool setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason, const String& unavailabilityDescription);
 
     WEBCORE_EXPORT bool isReplacementObscured();
+
+    WEBCORE_EXPORT void pluginDestroyedWithPendingPDFTestCallback(RefPtr<VoidCallback>&&);
+    WEBCORE_EXPORT RefPtr<VoidCallback> takePendingPDFTestCallback();
 
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document&, OptionSet<TypeFlag> = { });
@@ -112,6 +116,8 @@ private:
     RefPtr<PluginReplacement> m_pluginReplacement;
     bool m_isCapturingMouseEvents { false };
     DisplayState m_displayState { Playing };
+
+    RefPtr<VoidCallback> m_pendingPDFTestCallback;
 };
 
 } // namespace WebCore

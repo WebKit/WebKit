@@ -125,6 +125,8 @@ PDFPluginBase::~PDFPluginBase()
     if (auto* page = m_frame ? m_frame->page() : nullptr)
         page->removePDFHUD(*this);
 #endif
+
+    ASSERT(!m_pdfTestCallback);
 }
 
 void PDFPluginBase::teardown()
@@ -159,6 +161,9 @@ void PDFPluginBase::teardown()
 
     if (isLocked())
         teardownPasswordEntryForm();
+
+    if (m_pdfTestCallback && m_element)
+        m_element->pluginDestroyedWithPendingPDFTestCallback(WTFMove(m_pdfTestCallback));
 }
 
 Page* PDFPluginBase::page() const
@@ -1235,6 +1240,8 @@ void PDFPluginBase::incrementalLoaderLog(const String& message)
 
 void PDFPluginBase::registerPDFTest(RefPtr<WebCore::VoidCallback>&& callback)
 {
+    ASSERT(!m_pdfTestCallback);
+
     if (m_pdfDocument && callback)
         callback->handleEvent();
     else

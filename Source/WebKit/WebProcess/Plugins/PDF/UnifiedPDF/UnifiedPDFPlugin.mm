@@ -314,10 +314,13 @@ void UnifiedPDFPlugin::installPDFDocument()
 
     revealFragmentIfNeeded();
 
-    if (m_pdfTestCallback) {
-        m_pdfTestCallback->handleEvent();
-        m_pdfTestCallback = nullptr;
+    if (m_element) {
+        if (RefPtr callback = m_element->takePendingPDFTestCallback())
+            registerPDFTest(WTFMove(callback));
     }
+
+    if (m_pdfTestCallback)
+        std::exchange(m_pdfTestCallback, nullptr)->handleEvent();
 }
 
 void UnifiedPDFPlugin::incrementalLoadingDidProgress()

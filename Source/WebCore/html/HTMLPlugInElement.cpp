@@ -50,6 +50,7 @@
 #include "Settings.h"
 #include "ShadowRoot.h"
 #include "SubframeLoader.h"
+#include "VoidCallback.h"
 #include "Widget.h"
 #include <wtf/TZoneMallocInlines.h>
 
@@ -72,6 +73,7 @@ HTMLPlugInElement::HTMLPlugInElement(const QualifiedName& tagName, Document& doc
 HTMLPlugInElement::~HTMLPlugInElement()
 {
     ASSERT(!m_instance); // cleared in detach()
+    ASSERT(!m_pendingPDFTestCallback);
 }
 
 bool HTMLPlugInElement::willRespondToMouseClickEventsWithEditability(Editability) const
@@ -459,6 +461,19 @@ bool HTMLPlugInElement::canLoadScriptURL(const URL&) const
 {
     // FIXME: Probably want to at least check canAddSubframe.
     return true;
+}
+
+void HTMLPlugInElement::pluginDestroyedWithPendingPDFTestCallback(RefPtr<VoidCallback>&& callback)
+{
+    ASSERT(!m_pendingPDFTestCallback);
+    m_pendingPDFTestCallback = WTFMove(callback);
+}
+
+RefPtr<VoidCallback> HTMLPlugInElement::takePendingPDFTestCallback()
+{
+    if (!m_pendingPDFTestCallback)
+        return nullptr;
+    return WTFMove(m_pendingPDFTestCallback);
 }
 
 }

@@ -15,7 +15,7 @@
         window.internals.registerPDFTest(async () => {
             internals.setPDFDisplayModeForTesting(pluginElement, "TwoUpContinuous");
             internals.setPDFDisplayModeForTesting(pluginElement, "TwoUpDiscrete");
-            await UIHelper.renderingUpdate();
+            await UIHelper.ensureStablePresentationUpdate();
             testRunner.notifyDone();
         }, pluginElement);
     });
