@@ -61,55 +61,59 @@ public:
         std::swap(m_span, other.m_span);
     }
 
+    size_t sizeInBytes() const { return m_span.size_bytes(); }
+
     std::span<const T> span() const { return spanConstCast<const T>(m_span); }
     std::span<T> mutableSpan() { return m_span; }
     std::span<T> leakSpan() WARN_UNUSED_RETURN { return std::exchange(m_span, std::span<T>()); }
 
-    static MallocSpan malloc(size_t size)
+    static MallocSpan malloc(size_t sizeInBytes)
     {
-        return MallocSpan { static_cast<T*>(Malloc::malloc(size)), size };
+        return MallocSpan { static_cast<T*>(Malloc::malloc(sizeInBytes)), sizeInBytes };
     }
 
-    static MallocSpan zeroedMalloc(size_t size)
+    static MallocSpan zeroedMalloc(size_t sizeInBytes)
     {
-        return MallocSpan { static_cast<T*>(Malloc::zeroedMalloc(size)), size };
+        return MallocSpan { static_cast<T*>(Malloc::zeroedMalloc(sizeInBytes)), sizeInBytes };
     }
 
-    static MallocSpan tryMalloc(size_t size)
+    static MallocSpan tryMalloc(size_t sizeInBytes)
     {
-        auto* ptr = Malloc::tryMalloc(size);
+        auto* ptr = Malloc::tryMalloc(sizeInBytes);
         if (!ptr)
             return { };
-        return MallocSpan { static_cast<T*>(ptr), size };
+        return MallocSpan { static_cast<T*>(ptr), sizeInBytes };
     }
 
-    static MallocSpan tryZeroedMalloc(size_t size)
+    static MallocSpan tryZeroedMalloc(size_t sizeInBytes)
     {
-        auto* ptr = Malloc::tryZeroedMalloc(size);
+        auto* ptr = Malloc::tryZeroedMalloc(sizeInBytes);
         if (!ptr)
             return { };
-        return MallocSpan { static_cast<T*>(ptr), size };
+        return MallocSpan { static_cast<T*>(ptr), sizeInBytes };
     }
 
-    void realloc(size_t newSize)
+    void realloc(size_t newSizeInBytes)
     {
-        m_span = unsafeMakeSpan(static_cast<T*>(Malloc::realloc(m_span.data(), newSize)), newSize);
+        RELEASE_ASSERT(!(newSizeInBytes % sizeof(T)));
+        m_span = unsafeMakeSpan(static_cast<T*>(Malloc::realloc(m_span.data(), newSizeInBytes)), newSizeInBytes / sizeof(T));
     }
 
 private:
-    template<typename U, typename OtherMalloc> friend MallocSpan<U, OtherMalloc> adoptMallocSpan(U*, size_t);
+    template<typename U, typename OtherMalloc> friend MallocSpan<U, OtherMalloc> adoptMallocSpan(std::span<U>);
 
-    explicit MallocSpan(T* ptr, size_t size)
-        : m_span(unsafeMakeSpan(ptr, size))
+    explicit MallocSpan(T* ptr, size_t sizeInBytes)
+        : m_span(unsafeMakeSpan(ptr, sizeInBytes / sizeof(T)))
     {
+        RELEASE_ASSERT(!(sizeInBytes % sizeof(T)));
     }
 
     std::span<T> m_span;
 };
 
-template<typename U, typename OtherMalloc> MallocSpan<U, OtherMalloc> adoptMallocSpan(U* ptr, size_t size)
+template<typename U, typename OtherMalloc> MallocSpan<U, OtherMalloc> adoptMallocSpan(std::span<U> span)
 {
-    return MallocSpan<U, OtherMalloc>(ptr, size);
+    return MallocSpan<U, OtherMalloc>(span.data(), span.size_bytes());
 }
 
 } // namespace WTF

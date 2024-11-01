@@ -20,6 +20,8 @@
 #include "config.h"
 #include <wtf/glib/GSpanExtras.h>
 
+#include <wtf/StdLibExtras.h>
+
 namespace WTF {
 
 GMallocSpan<char*, GMallocStrv> gKeyFileGetKeys(GKeyFile* keyFile, const char* groupName, GUniqueOutPtr<GError>& error)
@@ -29,7 +31,7 @@ GMallocSpan<char*, GMallocStrv> gKeyFileGetKeys(GKeyFile* keyFile, const char* g
 
     size_t keyCount = 0;
     char** keys = g_key_file_get_keys(keyFile, groupName, &keyCount, &error.outPtr());
-    return adoptGMallocSpan<char*, GMallocStrv>(keys, keyCount);
+    return adoptGMallocSpan<char*, GMallocStrv>(unsafeMakeSpan(keys, keyCount));
 }
 
 GMallocSpan<GParamSpec*> gObjectClassGetProperties(GObjectClass* objectClass)
@@ -38,7 +40,7 @@ GMallocSpan<GParamSpec*> gObjectClassGetProperties(GObjectClass* objectClass)
 
     unsigned propertyCount = 0;
     GParamSpec** properties = g_object_class_list_properties(objectClass, &propertyCount);
-    return adoptGMallocSpan(properties, propertyCount);
+    return adoptGMallocSpan(unsafeMakeSpan(properties, propertyCount));
 }
 
 } // namespace WTF

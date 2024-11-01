@@ -29,6 +29,7 @@
 
 #include "BytecodeIndex.h"
 #include "CodeLocation.h"
+#include <wtf/MallocPtr.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "APIObject.h"
+#include <wtf/Function.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
@@ -39,26 +40,24 @@ namespace API {
 
 class Data : public ObjectImpl<API::Object::Type::Data> {
 public:
-    using FreeDataFunction = void (*)(uint8_t*, const void* context);
+    using FreeDataFunction = WTF::Function<void(uint8_t*, const void* context)>;
 
-    static Ref<Data> createWithoutCopying(std::span<const uint8_t> bytes, FreeDataFunction freeDataFunction, const void* context)
+    static Ref<Data> createWithoutCopying(std::span<const uint8_t> bytes, FreeDataFunction&& freeDataFunction, const void* context)
     {
-        return adoptRef(*new Data(bytes, freeDataFunction, context));
+        return adoptRef(*new Data(bytes, WTFMove(freeDataFunction), context));
     }
 
     static Ref<Data> create(std::span<const uint8_t> bytes)
     {
-        std::span<uint8_t> copiedBytes;
+        MallocSpan<uint8_t> copiedBytes;
 
         if (!bytes.empty()) {
-            copiedBytes = unsafeMakeSpan(static_cast<uint8_t*>(fastMalloc(bytes.size())), bytes.size());
-            memcpySpan(copiedBytes, bytes);
+            copiedBytes = MallocSpan<uint8_t>::malloc(bytes.size_bytes());
+            memcpySpan(copiedBytes.mutableSpan(), bytes);
         }
 
-        return createWithoutCopying(copiedBytes, [] (uint8_t* bytes, const void*) {
-            if (bytes)
-                fastFree(static_cast<void*>(bytes));
-        }, nullptr);
+        auto data = copiedBytes.span();
+        return createWithoutCopying(data, [copiedBytes = WTFMove(copiedBytes)] (uint8_t*, const void*) { }, nullptr);
     }
     
     static Ref<Data> create(const Vector<unsigned char>& buffer)
@@ -66,14 +65,11 @@ public:
         return create(buffer.span());
     }
 
-    static Ref<Data> create(Vector<unsigned char>&& buffer)
+    static Ref<Data> create(Vector<unsigned char>&& vector)
     {
-        auto bufferSize = buffer.size();
-        auto bufferPointer = buffer.releaseBuffer().leakPtr();
-        return createWithoutCopying(unsafeMakeSpan(bufferPointer, bufferSize), [] (uint8_t* bytes, const void*) {
-            if (bytes)
-                WTF::VectorMalloc::free(bytes);
-        }, nullptr);
+        auto buffer = vector.releaseBuffer();
+        auto span = buffer.span();
+        return createWithoutCopying(span, [buffer = WTFMove(buffer)] (uint8_t*, const void*) { }, nullptr);
     }
 
 #if PLATFORM(COCOA)
@@ -89,15 +85,15 @@ public:
     std::span<const uint8_t> span() const { return m_span; }
 
 private:
-    Data(std::span<const uint8_t> span, FreeDataFunction freeDataFunction, const void* context)
+    Data(std::span<const uint8_t> span, FreeDataFunction&& freeDataFunction, const void* context)
         : m_span(span)
-        , m_freeDataFunction(freeDataFunction)
+        , m_freeDataFunction(WTFMove(freeDataFunction))
         , m_context(context)
     {
     }
 
     std::span<const uint8_t> m_span;
-    FreeDataFunction m_freeDataFunction { nullptr };
+    FreeDataFunction m_freeDataFunction;
     const void* m_context { nullptr };
 };
 

@@ -238,8 +238,8 @@ private:
     explicit StringImpl(unsigned length);
 
     // Create a StringImpl adopting ownership of the provided buffer (BufferOwned).
-    template<typename Malloc> StringImpl(MallocPtr<LChar, Malloc>, unsigned length);
-    template<typename Malloc> StringImpl(MallocPtr<UChar, Malloc>, unsigned length);
+    template<typename Malloc> explicit StringImpl(MallocSpan<LChar, Malloc>);
+    template<typename Malloc> explicit StringImpl(MallocSpan<UChar, Malloc>);
     enum ConstructWithoutCopyingTag { ConstructWithoutCopying };
     StringImpl(std::span<const UChar>, ConstructWithoutCopyingTag);
     StringImpl(std::span<const LChar>, ConstructWithoutCopyingTag);
@@ -931,14 +931,14 @@ inline StringImpl::StringImpl(unsigned length)
 }
 
 template<typename Malloc>
-inline StringImpl::StringImpl(MallocPtr<LChar, Malloc> characters, unsigned length)
-    : StringImplShape(s_refCountIncrement, { static_cast<const LChar*>(nullptr), length }, s_hashFlag8BitBuffer | StringNormal | BufferOwned)
+inline StringImpl::StringImpl(MallocSpan<LChar, Malloc> characters)
+    : StringImplShape(s_refCountIncrement, { static_cast<const LChar*>(nullptr), characters.span().size() }, s_hashFlag8BitBuffer | StringNormal | BufferOwned)
 {
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
-        m_data8 = characters.leakPtr();
+        m_data8 = characters.leakSpan().data();
     else {
-        auto data8 = static_cast<LChar*>(StringImplMalloc::malloc(length * sizeof(LChar)));
-        copyCharacters(data8, { characters.get(), length });
+        auto* data8 = static_cast<LChar*>(StringImplMalloc::malloc(characters.sizeInBytes()));
+        copyCharacters(data8, characters.span());
         m_data8 = data8;
     }
 
@@ -967,14 +967,14 @@ inline StringImpl::StringImpl(std::span<const LChar> characters, ConstructWithou
 }
 
 template<typename Malloc>
-inline StringImpl::StringImpl(MallocPtr<UChar, Malloc> characters, unsigned length)
-    : StringImplShape(s_refCountIncrement, { static_cast<const UChar*>(nullptr), length }, s_hashZeroValue | StringNormal | BufferOwned)
+inline StringImpl::StringImpl(MallocSpan<UChar, Malloc> characters)
+    : StringImplShape(s_refCountIncrement, { static_cast<const UChar*>(nullptr), characters.span().size() }, s_hashZeroValue | StringNormal | BufferOwned)
 {
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>)
-        m_data16 = characters.leakPtr();
+        m_data16 = characters.leakSpan().data();
     else {
-        auto data16 = static_cast<UChar*>(StringImplMalloc::malloc(length * sizeof(UChar)));
-        copyCharacters(data16, { characters.get(), length });
+        auto* data16 = static_cast<UChar*>(StringImplMalloc::malloc(characters.sizeInBytes()));
+        copyCharacters(data16, characters.span());
         m_data16 = data16;
     }
 
@@ -1063,10 +1063,9 @@ template<typename CharacterType, size_t inlineCapacity, typename OverflowHandler
 inline Ref<StringImpl> StringImpl::adopt(Vector<CharacterType, inlineCapacity, OverflowHandler, minCapacity, Malloc>&& vector)
 {
     if constexpr (std::is_same_v<Malloc, StringImplMalloc>) {
-        auto length = vector.size();
-        if (!length)
+        if (!vector.size())
             return *empty();
-        return adoptRef(*new StringImpl(vector.releaseBuffer(), length));
+        return adoptRef(*new StringImpl(vector.releaseBuffer()));
     } else
         return create(vector.span());
 }

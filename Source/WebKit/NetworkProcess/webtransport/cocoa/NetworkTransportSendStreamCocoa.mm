@@ -27,6 +27,7 @@
 #import "NetworkTransportSendStream.h"
 
 #import <wtf/Vector.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 
@@ -38,16 +39,7 @@ NetworkTransportSendStream::NetworkTransportSendStream(nw_connection_t connectio
 
 void NetworkTransportSendStream::sendBytes(std::span<const uint8_t> data, bool)
 {
-    // FIXME: This exists in several places. Make a common place in WTF for it.
-    auto dataFromVector = [] (Vector<uint8_t>&& v) {
-        auto bufferSize = v.size();
-        auto rawPointer = v.releaseBuffer().leakPtr();
-        return adoptNS(dispatch_data_create(rawPointer, bufferSize, dispatch_get_main_queue(), ^{
-            fastFree(rawPointer);
-        }));
-    };
-
-    nw_connection_send(m_connection.get(), dataFromVector(Vector(data)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, ^(nw_error_t error) {
+    nw_connection_send(m_connection.get(), makeDispatchData(Vector(data)).get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, true, ^(nw_error_t error) {
         // FIXME: Pipe any error to JS.
         // FIXME: sendBytes should probably have a completion handler.
     });

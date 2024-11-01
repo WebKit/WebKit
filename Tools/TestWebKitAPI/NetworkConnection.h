@@ -98,6 +98,4 @@ private:
     Connection m_connection;
 };
 
-RetainPtr<dispatch_data_t> dataFromVector(Vector<uint8_t>&&);
-
 } // namespace TestWebKitAPI

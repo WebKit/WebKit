@@ -28,6 +28,7 @@
 
 #pragma once
 
+#include <wtf/BlockPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 #include <wtf/cocoa/SpanCocoa.h>
@@ -118,7 +119,16 @@ inline Vector<uint8_t> makeVector(NSData *data)
     return span(data);
 }
 
+template<typename T>
+inline RetainPtr<dispatch_data_t> makeDispatchData(Vector<T>&& vector)
+{
+    auto buffer = vector.releaseBuffer();
+    auto span = buffer.span();
+    return adoptNS(dispatch_data_create(span.data(), span.size_bytes(), dispatch_get_main_queue(), makeBlockPtr([buffer = WTFMove(buffer)] { }).get()));
+}
+
 } // namespace WTF
 
 using WTF::createNSArray;
+using WTF::makeDispatchData;
 using WTF::makeVector;

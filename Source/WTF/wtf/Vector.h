@@ -31,7 +31,7 @@
 #include <wtf/FailureAction.h>
 #include <wtf/FastMalloc.h>
 #include <wtf/Forward.h>
-#include <wtf/MallocPtr.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/MathExtras.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/NotFound.h>
@@ -368,12 +368,10 @@ public:
     static constexpr ptrdiff_t bufferMemoryOffset() { return OBJECT_OFFSETOF(VectorBufferBase, m_buffer); }
     size_t capacity() const { return m_capacity; }
 
-    MallocPtr<T, Malloc> releaseBuffer()
+    MallocSpan<T, Malloc> releaseBuffer()
     {
-        T* buffer = m_buffer;
-        m_buffer = nullptr;
         m_capacity = 0;
-        return adoptMallocPtr<T, Malloc>(buffer);
+        return adoptMallocSpan<T, Malloc>(unsafeMakeSpan(std::exchange(m_buffer, nullptr), std::exchange(m_size, 0)));
     }
 
 protected:
@@ -582,7 +580,7 @@ public:
     using Base::capacity;
     using Base::bufferMemoryOffset;
 
-    MallocPtr<T, Malloc> releaseBuffer()
+    MallocSpan<T, Malloc> releaseBuffer()
     {
         if (buffer() == inlineBuffer())
             return { };
@@ -926,7 +924,7 @@ public:
     template<typename Iterator> void appendRange(Iterator start, Iterator end);
     template<typename ContainerType, typename MapFunction> void appendContainerWithMapping(ContainerType&&, NOESCAPE const MapFunction&);
 
-    MallocPtr<T, Malloc> releaseBuffer();
+    MallocSpan<T, Malloc> releaseBuffer();
 
     void swap(Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>& other)
     {
@@ -1805,21 +1803,20 @@ void Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::appendCont
 }
 
 template<typename T, size_t inlineCapacity, typename OverflowHandler, size_t minCapacity, typename Malloc>
-inline MallocPtr<T, Malloc> Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::releaseBuffer()
+inline MallocSpan<T, Malloc> Vector<T, inlineCapacity, OverflowHandler, minCapacity, Malloc>::releaseBuffer()
 {
     // FIXME: Find a way to preserve annotations on the returned buffer.
     // ASan requires that all annotations are removed before deallocation,
-    // and MallocPtr doesn't implement that.
+    // and MallocSpan doesn't implement that.
     asanSetBufferSizeToFullCapacity();
 
     auto buffer = Base::releaseBuffer();
-    if (inlineCapacity && !buffer && m_size) {
+    if (inlineCapacity && buffer.span().empty() && m_size) {
         // If the vector had some data, but no buffer to release,
         // that means it was using the inline buffer. In that case,
         // we create a brand new buffer so the caller always gets one.
-        size_t bytes = m_size * sizeof(T);
-        buffer = adoptMallocPtr<T, Malloc>(static_cast<T*>(Malloc::malloc(bytes)));
-        memcpy(buffer.get(), data(), bytes);
+        buffer = MallocSpan<T, Malloc>::malloc(m_size * sizeof(T));
+        memcpySpan(buffer.mutableSpan(), span());
     }
     m_size = 0;
     // FIXME: Should we call Base::restoreInlineBufferIfNeeded() here?

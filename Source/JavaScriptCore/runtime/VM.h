@@ -74,6 +74,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/HashMap.h>
 #include <wtf/LazyRef.h>
 #include <wtf/LazyUniqueRef.h>
+#include <wtf/MallocPtr.h>
 #include <wtf/SetForScope.h>
 #include <wtf/StackPointer.h>
 #include <wtf/Stopwatch.h>

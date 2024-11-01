@@ -59,9 +59,9 @@ template <typename T, typename Malloc = GMalloc>
 using GMallocSpan = MallocSpan<T, Malloc>;
 
 template<typename T, typename Malloc = GMalloc>
-GMallocSpan<T, Malloc> adoptGMallocSpan(T* ptr, size_t size)
+GMallocSpan<T, Malloc> adoptGMallocSpan(std::span<T> span)
 {
-    return adoptMallocSpan<T, Malloc>(ptr, size);
+    return adoptMallocSpan<T, Malloc>(span);
 }
 
 WTF_EXPORT_PRIVATE GMallocSpan<char*, GMallocStrv> gKeyFileGetKeys(GKeyFile*, const char* groupName, GUniqueOutPtr<GError>&);

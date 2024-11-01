@@ -35,6 +35,7 @@
 #import <WebKit/WKWebViewPrivate.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 static int provisionalLoadCount;
 
@@ -233,7 +234,7 @@ TEST(WebKit, LoadMoreThan4GB)
     "</script>"_s;
 
     using namespace TestWebKitAPI;
-    auto longData = dataFromVector(Vector<uint8_t>(static_cast<size_t>(0x10000000), [] (size_t) {
+    auto longData = makeDispatchData(Vector<uint8_t>(static_cast<size_t>(0x10000000), [] (size_t) {
         return static_cast<uint8_t>('a');
     }));
 

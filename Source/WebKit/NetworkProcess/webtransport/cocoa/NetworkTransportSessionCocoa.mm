@@ -35,7 +35,7 @@
 #import <wtf/CompletionHandler.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/StdLibExtras.h>
-#import <wtf/cocoa/SpanCocoa.h>
+#import <wtf/cocoa/VectorCocoa.h>
 
 namespace WebKit {
 
@@ -145,16 +145,7 @@ void NetworkTransportSession::initialize(NetworkConnectionToWebProcess& connecti
 
 void NetworkTransportSession::sendDatagram(std::span<const uint8_t> data, CompletionHandler<void()>&& completionHandler)
 {
-    // FIXME: This exists in several places. Make a common place in WTF for it.
-    auto dataFromVector = [] (Vector<uint8_t>&& v) {
-        auto bufferSize = v.size();
-        auto rawPointer = v.releaseBuffer().leakPtr();
-        return adoptNS(dispatch_data_create(rawPointer, bufferSize, dispatch_get_main_queue(), ^{
-            fastFree(rawPointer);
-        }));
-    };
-
-    nw_connection_group_send_message(m_connectionGroup.get(), dataFromVector(Vector(data)).get(),  m_endpoint.get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, makeBlockPtr([completionHandler = WTFMove(completionHandler)] (nw_error_t error) mutable {
+    nw_connection_group_send_message(m_connectionGroup.get(), makeDispatchData(Vector(data)).get(), m_endpoint.get(), NW_CONNECTION_DEFAULT_MESSAGE_CONTEXT, makeBlockPtr([completionHandler = WTFMove(completionHandler)] (nw_error_t error) mutable {
         // FIXME: Pass any error through to JS.
         completionHandler();
     }).get());
