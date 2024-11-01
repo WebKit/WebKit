@@ -116,8 +116,12 @@ SUPPORTS_MACCATALYST = YES;
 
 // Can't enable objcxx mode until rdar://135979809 is resolved.
 SWIFT_OBJC_INTEROP_MODE = objc;
-SWIFT_VERSION = 5.0;
-OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS$(WK_MACOS_1400)) -no-warnings-as-errors -Xfrontend -experimental-spi-only-imports -Xfrontend -enable-experimental-concurrency;
+SWIFT_VERSION = $(SWIFT_VERSION$(WK_XCODE_16));
+SWIFT_VERSION_XCODE_BEFORE_16 = 5.0;
+SWIFT_VERSION_XCODE_SINCE_16 = 6.0;
+
+OTHER_SWIFT_FLAGS = $(inherited) $(OTHER_SWIFT_FLAGS$(WK_XCODE_16)) -no-warnings-as-errors;
+OTHER_SWIFT_FLAGS_XCODE_BEFORE_16 = -Xfrontend -experimental-spi-only-imports -Xfrontend -enable-experimental-concurrency -enable-upcoming-feature IsolatedDefaultValues;
 
 OTHER_CPLUSPLUSFLAGS = $(inherited) -isystem $(SDKROOT)/System/Library/Frameworks/System.framework/PrivateHeaders;
 
