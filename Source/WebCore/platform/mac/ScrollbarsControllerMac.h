@@ -102,6 +102,8 @@ public:
     void scrollbarWidthChanged(WebCore::ScrollbarWidth) final;
 private:
 
+    void updateScrollerImps();
+
     // sendContentAreaScrolledSoon() will do the same work that sendContentAreaScrolled() does except
     // it does it after a zero-delay timer fires. This will prevent us from updating overlay scrollbar
     // information during layout.

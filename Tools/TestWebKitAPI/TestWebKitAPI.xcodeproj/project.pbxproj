@@ -84,6 +84,7 @@
 		1ADAD1501D77A9F600212586 /* BlockPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1ADAD14E1D77A9F600212586 /* BlockPtr.mm */; };
 		1AEDE22613E5E7E700E62FE8 /* InjectedBundleControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */; };
 		1AF7B21F1D6CD14D008C126C /* EnumTraits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AF7B21D1D6CD12E008C126C /* EnumTraits.cpp */; };
+		1AF86FC02CD5526B00AD337C /* ScrollbarWidthCrash.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AF86FBF2CD5526B00AD337C /* ScrollbarWidthCrash.mm */; };
 		1C15499A2928475C001B9E5B /* WebExtensionUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C15498E2926F701001B9E5B /* WebExtensionUtilities.mm */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		1C24DEED263001DE00450D07 /* TextStyleFontSize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C24DEEC263001DE00450D07 /* TextStyleFontSize.mm */; };
 		1C2B81831C891F0900A5529F /* CancelFontSubresourcePlugIn.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1C2B81811C891EFA00A5529F /* CancelFontSubresourcePlugIn.mm */; };
@@ -2208,6 +2209,7 @@
 		1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InjectedBundleControllerMac.mm; sourceTree = "<group>"; };
 		1AEF994817A09F5300998EF0 /* GetPIDAfterAbortedProcessLaunch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GetPIDAfterAbortedProcessLaunch.cpp; sourceTree = "<group>"; };
 		1AF7B21D1D6CD12E008C126C /* EnumTraits.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = EnumTraits.cpp; sourceTree = "<group>"; };
+		1AF86FBF2CD5526B00AD337C /* ScrollbarWidthCrash.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ScrollbarWidthCrash.mm; sourceTree = "<group>"; };
 		1C1549852926F4CA001B9E5B /* WKWebExtensionAPIRuntime.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebExtensionAPIRuntime.mm; sourceTree = "<group>"; };
 		1C15498E2926F701001B9E5B /* WebExtensionUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WebExtensionUtilities.mm; path = cocoa/WebExtensionUtilities.mm; sourceTree = "<group>"; };
 		1C15498F2926F944001B9E5B /* WebExtensionUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebExtensionUtilities.h; path = cocoa/WebExtensionUtilities.h; sourceTree = "<group>"; };
@@ -6092,6 +6094,7 @@
 				41EBA9F128ABA06500953013 /* ImageRotationSessionVT.cpp */,
 				7BB62AB629BB4BAA00228CD6 /* IOSurfaceTests.mm */,
 				57F1C91025DDD51900E8F6EA /* PrivateClickMeasurementCocoa.mm */,
+				1AF86FBF2CD5526B00AD337C /* ScrollbarWidthCrash.mm */,
 				5769C50A1D9B0001000847FB /* SerializedCryptoKeyWrap.mm */,
 				A17991861E1C994E00A505ED /* SharedBuffer.mm */,
 				7BA3936B271EDFCA0015911C /* TestGraphicsContextGLCocoa.mm */,
@@ -7111,6 +7114,7 @@
 				F418BE151F71B7DC001970E6 /* RoundedRectTests.cpp in Sources */,
 				4181C62D255A891100AEB0FF /* RTCRtpSFrameTransformerTests.cpp in Sources */,
 				CDCFA7AA1E45183200C2433D /* SampleMap.cpp in Sources */,
+				1AF86FC02CD5526B00AD337C /* ScrollbarWidthCrash.mm in Sources */,
 				0FEFAF64271FC2CD005704D7 /* ScrollingCoordinatorTests.mm in Sources */,
 				CDC0932B21C872C10030C4B0 /* ScrollingDoesNotPauseMedia.mm in Sources */,
 				7CCE7F121A411AE600447C4C /* ScrollPinningBehaviors.mm in Sources */,
