@@ -30,15 +30,16 @@ namespace WTF {
 template<typename Iterator> class IndexedRangeIterator {
 public:
     IndexedRangeIterator(Iterator&& iterator)
-        : m_index(0)
-        , m_iterator(WTFMove(iterator))
+        : m_iterator(WTFMove(iterator))
     {
     }
 
     IndexedRangeIterator& operator++()
     {
         ++m_index;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         ++m_iterator;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return *this;
     }
 
@@ -53,7 +54,7 @@ public:
     }
 
 private:
-    size_t m_index;
+    size_t m_index { 0 };
     Iterator m_iterator;
 };
 
