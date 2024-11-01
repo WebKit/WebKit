@@ -1390,7 +1390,9 @@ public:
 
     ExceptionOr<unsigned> createSleepDisabler(const String& reason, bool display);
     bool destroySleepDisabler(unsigned identifier);
-        
+
+    void setTopDocumentURLForQuirks(const String&);
+
 #if ENABLE(APP_HIGHLIGHTS)
     Vector<String> appHighlightContextMenuItemTitles() const;
     unsigned numberOfAppHighlights();

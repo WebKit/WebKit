@@ -1944,4 +1944,9 @@ bool WebChromeClient::requiresScriptTelemetryForURL(const URL& url, const Securi
     return WebProcess::singleton().requiresScriptTelemetryForURL(url, topOrigin);
 }
 
+void WebChromeClient::callAfterPendingSyntheticClick(CompletionHandler<void(SyntheticClickResult)>&& completion)
+{
+    protectedPage()->callAfterPendingSyntheticClick(WTFMove(completion));
+}
+
 } // namespace WebKit

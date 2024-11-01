@@ -3725,6 +3725,11 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _potentialTapInProgress = NO;
 }
 
+- (BOOL)isPotentialTapInProgress
+{
+    return _potentialTapInProgress;
+}
+
 - (void)_singleTapIdentified:(UITapGestureRecognizer *)gestureRecognizer
 {
     auto position = [gestureRecognizer locationInView:self];

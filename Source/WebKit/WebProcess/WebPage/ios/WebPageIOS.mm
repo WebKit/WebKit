@@ -846,7 +846,7 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
 
     if (targetNodeWentFromHiddenToVisible) {
         LOG(ContentObservation, "handleSyntheticClick: target node was hidden and now is visible -> hover.");
-        send(Messages::WebPageProxy::DidHandleTapAsHover());
+        didHandleTapAsHover();
         return;
     }
 
@@ -887,12 +887,18 @@ void WebPage::handleSyntheticClick(Node& nodeRespondingToClick, const WebCore::F
             if (RefPtr localMainFrame = dynamicDowncast<WebCore::LocalFrame>(protectedThis->corePage()->mainFrame()))
                 dispatchSyntheticMouseMove(*localMainFrame, location, modifiers, pointerId);
             LOG(ContentObservation, "handleSyntheticClick: Observed meaningful visible change -> hover.");
-            protectedThis->send(Messages::WebPageProxy::DidHandleTapAsHover());
+            protectedThis->didHandleTapAsHover();
             return;
         }
         LOG(ContentObservation, "handleSyntheticClick: calling completeSyntheticClick -> click.");
         protectedThis->completeSyntheticClick(targetNode, location, modifiers, WebCore::SyntheticClickType::OneFingerTap, pointerId);
     });
+}
+
+void WebPage::didHandleTapAsHover()
+{
+    invokePendingSyntheticClickCallback(SyntheticClickResult::Hover);
+    send(Messages::WebPageProxy::DidHandleTapAsHover());
 }
 
 void WebPage::didFinishContentChangeObserving(WKContentChange observedContentChange)
@@ -917,7 +923,7 @@ void WebPage::didFinishContentChangeObserving(WKContentChange observedContentCha
         if (auto* localMainFrame = dynamicDowncast<WebCore::LocalFrame>(protectedThis->corePage()->mainFrame()))
             dispatchSyntheticMouseMove(*localMainFrame, location, modifiers, pointerId);
 
-        protectedThis->send(Messages::WebPageProxy::DidHandleTapAsHover());
+        protectedThis->didHandleTapAsHover();
     });
     m_pendingSyntheticClickNode = nullptr;
     m_pendingSyntheticClickLocation = { };
@@ -929,9 +935,11 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
 {
     SetForScope completeSyntheticClickScope { m_completingSyntheticClick, true };
     IntPoint roundedAdjustedPoint = roundedIntPoint(location);
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
+    if (!localMainFrame) {
+        invokePendingSyntheticClickCallback(SyntheticClickResult::PageInvalid);
         return;
+    }
 
     RefPtr oldFocusedFrame = m_page->checkedFocusController()->focusedLocalFrame();
     RefPtr<Element> oldFocusedElement = oldFocusedFrame ? oldFocusedFrame->document()->focusedElement() : nullptr;
@@ -970,6 +978,8 @@ void WebPage::completeSyntheticClick(Node& nodeRespondingToClick, const WebCore:
 
     if (m_isClosed)
         return;
+
+    invokePendingSyntheticClickCallback(SyntheticClickResult::Click);
 
     if ((!handledPress && !handledRelease) || !nodeRespondingToClick.isElementNode())
         send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(location)));
@@ -1228,8 +1238,8 @@ void WebPage::handleTwoFingerTapAtPoint(const WebCore::IntPoint& point, OptionSe
 }
 
 void WebPage::potentialTapAtPosition(WebKit::TapIdentifier requestID, const WebCore::FloatPoint& position, bool shouldRequestMagnificationInformation)
-{   
-    if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
+{
+    if (RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
         m_potentialTapNode = localMainFrame->nodeRespondingToClickEvents(position, m_potentialTapLocation, m_potentialTapSecurityOrigin.get());
     m_wasShowingInputViewForFocusedElementDuringLastPotentialTap = m_isShowingInputViewForFocusedElement;
 
@@ -1298,6 +1308,7 @@ void WebPage::commitPotentialTapFailed()
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame()))
         ContentChangeObserver::didCancelPotentialTap(*localMainFrame);
     clearSelectionAfterTapIfNeeded();
+    invokePendingSyntheticClickCallback(SyntheticClickResult::Failed);
 
     send(Messages::WebPageProxy::CommitPotentialTapFailed());
     send(Messages::WebPageProxy::DidNotHandleTapAsClick(roundedIntPoint(m_potentialTapLocation)));
@@ -5631,6 +5642,32 @@ void WebPage::computeEnclosingLayerID(EditorState& state, const VisibleSelection
         state.visualData->enclosingLayerID = WTFMove(identifier);
         return;
     }
+}
+
+void WebPage::invokePendingSyntheticClickCallback(SyntheticClickResult result)
+{
+    if (auto callback = std::exchange(m_pendingSyntheticClickCallback, { }))
+        callback(result);
+}
+
+void WebPage::callAfterPendingSyntheticClick(CompletionHandler<void(SyntheticClickResult)>&& completion)
+{
+    if (m_pendingSyntheticClickCallback)
+        return completion(SyntheticClickResult::Failed);
+
+    sendWithAsyncReply(Messages::WebPageProxy::IsPotentialTapInProgress(), [weakPage = WeakPtr { *this }, completion = WTFMove(completion)](bool isTapping) mutable {
+        RefPtr page = weakPage.get();
+        if (!page || page->m_isClosed)
+            return completion(SyntheticClickResult::PageInvalid);
+
+        if (!isTapping)
+            return completion(SyntheticClickResult::Failed);
+
+        if (!page->m_potentialTapNode)
+            return completion(SyntheticClickResult::Failed);
+
+        page->m_pendingSyntheticClickCallback = WTFMove(completion);
+    });
 }
 
 } // namespace WebKit

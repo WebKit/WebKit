@@ -1896,6 +1896,7 @@ void WebPage::close()
 #endif
 
 #if PLATFORM(IOS_FAMILY)
+    invokePendingSyntheticClickCallback(SyntheticClickResult::PageInvalid);
     m_updateFocusedElementInformationTimer.stop();
 #endif
 
@@ -7733,6 +7734,8 @@ void WebPage::didCommitLoad(WebFrame* frame)
     m_shouldRevealCurrentSelectionAfterInsertion = true;
     m_lastLayerTreeTransactionIdAndPageScaleBeforeScalingPage = std::nullopt;
 
+    invokePendingSyntheticClickCallback(SyntheticClickResult::PageInvalid);
+
 #if ENABLE(IOS_TOUCH_EVENTS)
     auto queuedEvents = makeUniqueRef<EventDispatcher::TouchEventQueue>();
     WebProcess::singleton().eventDispatcher().takeQueuedTouchEventsForPage(*this, queuedEvents);
@@ -10159,6 +10162,15 @@ bool WebPage::isAlwaysOnLoggingAllowed() const
     RefPtr page { protectedCorePage() };
     return page && page->isAlwaysOnLoggingAllowed();
 }
+
+#if !PLATFORM(IOS_FAMILY)
+
+void WebPage::callAfterPendingSyntheticClick(CompletionHandler<void(SyntheticClickResult)>&& completion)
+{
+    completion(SyntheticClickResult::Failed);
+}
+
+#endif
 
 } // namespace WebKit
 

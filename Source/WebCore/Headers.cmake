@@ -1873,6 +1873,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/StyleAppearance.h
     platform/SuddenTermination.h
     platform/Supplementable.h
+    platform/SyntheticClickResult.h
     platform/SystemSoundDelegate.h
     platform/TextRecognitionOptions.h
     platform/ThemeTypes.h

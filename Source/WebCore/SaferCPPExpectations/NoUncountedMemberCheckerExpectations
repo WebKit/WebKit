@@ -85,7 +85,6 @@ page/FrameSnapshotting.cpp
 page/NavigatorLoginStatus.h
 page/OpportunisticTaskScheduler.h
 page/PerformanceLogging.h
-page/PointerCaptureController.h
 page/PointerLockController.h
 page/RenderingUpdateScheduler.h
 page/ResourceUsageThread.h

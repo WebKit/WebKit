@@ -179,6 +179,7 @@
 #include "PseudoElement.h"
 #include "PushSubscription.h"
 #include "PushSubscriptionData.h"
+#include "Quirks.h"
 #include "RTCNetworkManager.h"
 #include "RTCRtpSFrameTransform.h"
 #include "Range.h"
@@ -7731,6 +7732,16 @@ void Internals::setResourceCachingDisabledByWebInspector(bool disabled)
         return;
 
     document->page()->setResourceCachingDisabledByWebInspector(disabled);
+}
+
+void Internals::setTopDocumentURLForQuirks(const String& urlString)
+{
+    RefPtr document = contextDocument();
+    if (!document)
+        return;
+
+    document->protectedPage()->settings().setNeedsSiteSpecificQuirks(true);
+    document->quirks().setTopDocumentURLForTesting(URL { urlString });
 }
 
 } // namespace WebCore
