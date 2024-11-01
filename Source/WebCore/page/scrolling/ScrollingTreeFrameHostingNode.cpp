@@ -69,20 +69,20 @@ void ScrollingTreeFrameHostingNode::setLayerHostingContextIdentifier(std::option
         removeHostedChildren();
     m_hostingContext = identifier;
     if (m_hostingContext)
-        scrollingTree().addScrollingNodeToHostedSubtreeMap(*m_hostingContext, *this);
+        scrollingTree()->addScrollingNodeToHostedSubtreeMap(*m_hostingContext, *this);
 }
 
 void ScrollingTreeFrameHostingNode::removeHostedChildren()
 {
     auto hostedChildren = std::exchange(m_hostedChildren, { });
     for (auto& children : hostedChildren)
-        scrollingTree().removeNode(children->scrollingNodeID());
+        scrollingTree()->removeNode(children->scrollingNodeID());
 }
 
 void ScrollingTreeFrameHostingNode::willBeDestroyed()
 {
     if (m_hostingContext)
-        scrollingTree().removeFrameHostingNode(*m_hostingContext);
+        scrollingTree()->removeFrameHostingNode(*m_hostingContext);
     removeHostedChildren();
 }
 

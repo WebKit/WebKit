@@ -462,6 +462,14 @@ bool RemoteScrollingCoordinatorProxy::isMonitoringWheelEvents()
     return false;
 }
 
+bool RemoteScrollingCoordinatorProxy::hasFixedOrSticky() const
+{
+    if (RefPtr scrollingTree = m_scrollingTree)
+        return scrollingTree->hasFixedOrSticky();
+
+    return false;
+}
+
 #undef MESSAGE_CHECK_WITH_RETURN_VALUE
 
 } // namespace WebKit

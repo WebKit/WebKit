@@ -380,7 +380,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::commitStateAfterChildren(const Scrol
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::RequestedScrollPosition)) {
         scrollingNode().handleScrollPositionRequest(scrollingStateNode.requestedScrollData());
-        scrollingTree().setNeedsApplyLayerPositionsAfterCommit();
+        scrollingTree()->setNeedsApplyLayerPositionsAfterCommit();
     }
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollbarWidth)) {
@@ -416,7 +416,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::stopAnimatedScroll()
 #if HAVE(UISCROLLVIEW_ASYNCHRONOUS_SCROLL_EVENT_HANDLING)
 void ScrollingTreeScrollingNodeDelegateIOS::handleAsynchronousCancelableScrollEvent(WKBaseScrollView *scrollView, WKBEScrollViewScrollUpdate *update, void (^completion)(BOOL handled))
 {
-    auto* scrollingCoordinatorProxy = downcast<WebKit::RemoteScrollingTree>(scrollingTree()).scrollingCoordinatorProxy();
+    auto* scrollingCoordinatorProxy = downcast<WebKit::RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy();
     if (scrollingCoordinatorProxy) {
         if (RefPtr pageClient = scrollingCoordinatorProxy->webPageProxy().pageClient())
             pageClient->handleAsynchronousCancelableScrollEvent(scrollView, update, completion);
@@ -438,17 +438,17 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollWillStart() const
 {
-    scrollingTree().scrollingTreeNodeWillStartScroll(scrollingNode().scrollingNodeID());
+    scrollingTree()->scrollingTreeNodeWillStartScroll(scrollingNode().scrollingNodeID());
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollDidEnd() const
 {
-    scrollingTree().scrollingTreeNodeDidEndScroll(scrollingNode().scrollingNodeID());
+    scrollingTree()->scrollingTreeNodeDidEndScroll(scrollingNode().scrollingNodeID());
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollViewWillStartPanGesture() const
 {
-    scrollingTree().scrollingTreeNodeWillStartPanGesture(scrollingNode().scrollingNodeID());
+    scrollingTree()->scrollingTreeNodeWillStartPanGesture(scrollingNode().scrollingNodeID());
 }
 
 void ScrollingTreeScrollingNodeDelegateIOS::scrollViewDidScroll(const FloatPoint& scrollOffset, bool inUserInteraction)
@@ -465,7 +465,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::currentSnapPointIndicesDidChange(std
     if (m_updatingFromStateNode)
         return;
 
-    scrollingTree().currentSnapPointIndicesDidChange(scrollingNode().scrollingNodeID(), horizontal, vertical);
+    scrollingTree()->currentSnapPointIndicesDidChange(scrollingNode().scrollingNodeID(), horizontal, vertical);
 }
 
 WKBaseScrollView *ScrollingTreeScrollingNodeDelegateIOS::scrollView() const
@@ -479,7 +479,7 @@ UIScrollView *ScrollingTreeScrollingNodeDelegateIOS::findActingScrollParent(UISc
 {
     ASSERT(scrollView == this->scrollView());
 
-    auto* scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree()).scrollingCoordinatorProxy();
+    auto* scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy();
     if (!scrollingCoordinatorProxy)
         return nil;
 
@@ -492,7 +492,7 @@ UIScrollView *ScrollingTreeScrollingNodeDelegateIOS::findActingScrollParent(UISc
 
 void ScrollingTreeScrollingNodeDelegateIOS::computeActiveTouchActionsForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
 {
-    auto* scrollingCoordinatorProxy = dynamicDowncast<RemoteScrollingCoordinatorProxyIOS>(downcast<RemoteScrollingTree>(scrollingTree()).scrollingCoordinatorProxy());
+    auto* scrollingCoordinatorProxy = dynamicDowncast<RemoteScrollingCoordinatorProxyIOS>(downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy());
     if (!scrollingCoordinatorProxy)
         return;
 
@@ -506,7 +506,7 @@ void ScrollingTreeScrollingNodeDelegateIOS::computeActiveTouchActionsForGestureR
 
 void ScrollingTreeScrollingNodeDelegateIOS::cancelPointersForGestureRecognizer(UIGestureRecognizer* gestureRecognizer)
 {
-    auto* scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree()).scrollingCoordinatorProxy();
+    auto* scrollingCoordinatorProxy = downcast<RemoteScrollingTree>(scrollingTree())->scrollingCoordinatorProxy();
     if (!scrollingCoordinatorProxy)
         return;
 

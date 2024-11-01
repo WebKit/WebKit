@@ -1102,6 +1102,16 @@ String ScrollingTree::scrollingTreeAsText(OptionSet<ScrollingStateTreeAsTextBeha
     return ts.release();
 }
 
+bool ScrollingTree::hasFixedOrSticky() const
+{
+    return !m_fixedOrStickyNodes.isEmptyIgnoringNullReferences();
+}
+
+void ScrollingTree::fixedOrStickyNodeAdded(ScrollingTreeNode& node)
+{
+    m_fixedOrStickyNodes.add(node);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ASYNC_SCROLLING)

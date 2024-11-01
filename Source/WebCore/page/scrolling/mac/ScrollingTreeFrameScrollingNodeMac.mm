@@ -104,8 +104,8 @@ bool ScrollingTreeFrameScrollingNodeMac::commitStateBeforeChildren(const Scrolli
     if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::Property::ReasonsForSynchronousScrolling))
         logScrollingMode = true;
 
-    if (logScrollingMode && isRootNode() && scrollingTree().scrollingPerformanceTestingEnabled())
-        scrollingTree().reportSynchronousScrollingReasonsChanged(MonotonicTime::now(), synchronousScrollingReasons());
+    if (logScrollingMode && isRootNode() && scrollingTree()->scrollingPerformanceTestingEnabled())
+        scrollingTree()->reportSynchronousScrollingReasonsChanged(MonotonicTime::now(), synchronousScrollingReasons());
 
     m_delegate->updateFromStateNode(*scrollingStateNode);
 
@@ -148,7 +148,7 @@ void ScrollingTreeFrameScrollingNodeMac::willDoProgrammaticScroll(const FloatPoi
 
 void ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged(ScrollType scrollType, ScrollingLayerPositionAction action)
 {
-    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeMac " << scrollingNodeID() << " currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << hasSynchronousScrollingReasons() << " is animating: " << scrollingTree().isScrollAnimationInProgressForNode(scrollingNodeID()));
+    LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeFrameScrollingNodeMac " << scrollingNodeID() << " currentScrollPositionChanged to " << currentScrollPosition() << " min: " << minimumScrollPosition() << " max: " << maximumScrollPosition() << " sync: " << hasSynchronousScrollingReasons() << " is animating: " << scrollingTree()->isScrollAnimationInProgressForNode(scrollingNodeID()));
 
     delegate().currentScrollPositionChanged();
 
@@ -157,10 +157,10 @@ void ScrollingTreeFrameScrollingNodeMac::currentScrollPositionChanged(ScrollType
 
     ScrollingTreeFrameScrollingNode::currentScrollPositionChanged(scrollType, hasSynchronousScrollingReasons() ? ScrollingLayerPositionAction::Set : action);
 
-    if (scrollingTree().scrollingPerformanceTestingEnabled()) {
+    if (scrollingTree()->scrollingPerformanceTestingEnabled()) {
         unsigned unfilledArea = exposedUnfilledArea();
         if (unfilledArea || m_lastScrollHadUnfilledPixels)
-            scrollingTree().reportExposedUnfilledArea(MonotonicTime::now(), unfilledArea);
+            scrollingTree()->reportExposedUnfilledArea(MonotonicTime::now(), unfilledArea);
 
         m_lastScrollHadUnfilledPixels = unfilledArea;
     }
@@ -176,7 +176,7 @@ void ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers()
         // The main thread may already have set the same layer position, but here we need to trigger a scrolling thread commit to
         // ensure that the scroll happens even when the main thread commit is taking a long time. So make sure the layer property changes
         // when there has been a scroll position change.
-        if (!scrollingTree().isScrollingSynchronizedWithMainThread())
+        if (!scrollingTree()->isScrollingSynchronizedWithMainThread())
             layer.position = CGPointZero;
     }
 
@@ -224,7 +224,7 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::minimumScrollPosition() const
 {
     FloatPoint position = ScrollableArea::scrollPositionFromOffset(FloatPoint(), toFloatSize(scrollOrigin()));
     
-    if (isRootNode() && scrollingTree().scrollPinningBehavior() == ScrollPinningBehavior::PinToBottom)
+    if (isRootNode() && scrollingTree()->scrollPinningBehavior() == ScrollPinningBehavior::PinToBottom)
         position.setY(maximumScrollPosition().y());
 
     return position;
@@ -235,7 +235,7 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::maximumScrollPosition() const
     FloatPoint position = ScrollableArea::scrollPositionFromOffset(FloatPoint(totalContentsSizeForRubberBand() - scrollableAreaSize()), toFloatSize(scrollOrigin()));
     position = position.expandedTo(FloatPoint());
 
-    if (isRootNode() && scrollingTree().scrollPinningBehavior() == ScrollPinningBehavior::PinToTop)
+    if (isRootNode() && scrollingTree()->scrollPinningBehavior() == ScrollPinningBehavior::PinToTop)
         position.setY(minimumScrollPosition().y());
 
     return position;
@@ -244,7 +244,7 @@ FloatPoint ScrollingTreeFrameScrollingNodeMac::maximumScrollPosition() const
 void ScrollingTreeFrameScrollingNodeMac::updateMainFramePinAndRubberbandState()
 {
     ASSERT(isRootNode());
-    scrollingTree().setMainFramePinnedState(edgePinnedState());
+    scrollingTree()->setMainFramePinnedState(edgePinnedState());
 }
 
 unsigned ScrollingTreeFrameScrollingNodeMac::exposedUnfilledArea() const

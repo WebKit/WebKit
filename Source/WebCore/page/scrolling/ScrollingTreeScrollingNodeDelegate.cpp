@@ -43,9 +43,9 @@ ScrollingTreeScrollingNodeDelegate::ScrollingTreeScrollingNodeDelegate(Scrolling
 
 ScrollingTreeScrollingNodeDelegate::~ScrollingTreeScrollingNodeDelegate() = default;
 
-ScrollingTree& ScrollingTreeScrollingNodeDelegate::scrollingTree() const
+RefPtr<ScrollingTree> ScrollingTreeScrollingNodeDelegate::scrollingTree() const
 {
-    return m_scrollingNode.scrollingTree();
+    return protectedScrollingNode()->scrollingTree();
 }
 
 FloatPoint ScrollingTreeScrollingNodeDelegate::lastCommittedScrollPosition() const

@@ -64,7 +64,7 @@ using PlatformDisplayID = uint32_t;
 
 enum class EventTargeting : uint8_t { NodeOnly, Propagate };
 
-class ScrollingTree : public ThreadSafeRefCounted<ScrollingTree> {
+class ScrollingTree : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<ScrollingTree> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ScrollingTree, WEBCORE_EXPORT);
     friend class ScrollingTreeLatchingController;
 public:
@@ -186,13 +186,8 @@ public:
     std::optional<ScrollingNodeID> latchedNodeID() const;
     WEBCORE_EXPORT void clearLatchedNode();
 
-    bool hasFixedOrSticky() const { return !!m_fixedOrStickyNodeCount; }
-    void fixedOrStickyNodeAdded() { ++m_fixedOrStickyNodeCount; }
-    void fixedOrStickyNodeRemoved()
-    {
-        ASSERT(m_fixedOrStickyNodeCount);
-        --m_fixedOrStickyNodeCount;
-    }
+    bool hasFixedOrSticky() const;
+    void fixedOrStickyNodeAdded(ScrollingTreeNode&);
 
     // A map of overflow scrolling nodes to positioned nodes which need to be updated
     // when the scroller changes, but are not descendants.
@@ -357,8 +352,8 @@ protected:
     bool m_allowLatching { true };
 
 private:
-    unsigned m_fixedOrStickyNodeCount { 0 };
-    bool m_isHandlingProgrammaticScroll { false };
+    ThreadSafeWeakHashSet<ScrollingTreeNode> m_fixedOrStickyNodes;
+    std::atomic<bool> m_isHandlingProgrammaticScroll { false };
     bool m_isMonitoringWheelEvents { false };
     bool m_scrollingPerformanceTestingEnabled { false };
     bool m_overlayScrollbarsEnabled { false };

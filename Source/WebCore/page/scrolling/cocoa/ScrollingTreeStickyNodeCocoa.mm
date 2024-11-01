@@ -67,7 +67,7 @@ void ScrollingTreeStickyNodeCocoa::applyLayerPositions()
 #if ENABLE(SCROLLING_THREAD)
     if (ScrollingThread::isCurrentThread()) {
         // Match the behavior of ScrollingTreeFrameScrollingNodeMac::repositionScrollingLayers().
-        if (!scrollingTree().isScrollingSynchronizedWithMainThread())
+        if (!scrollingTree()->isScrollingSynchronizedWithMainThread())
             [m_layer _web_setLayerTopLeftPosition:CGPointZero];
     }
 #endif

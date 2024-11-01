@@ -61,7 +61,7 @@ bool ScrollingTreeScrollingNode::commitStateBeforeChildren(const ScrollingStateN
         m_scrollableAreaSize = state->scrollableAreaSize();
 
     if (state->hasChangedProperty(ScrollingStateNode::Property::TotalContentsSize)) {
-        if (scrollingTree().isRubberBandInProgressForNode(scrollingNodeID()))
+        if (scrollingTree()->isRubberBandInProgressForNode(scrollingNodeID()))
             m_totalContentsSizeForRubberBand = m_totalContentsSize;
         else
             m_totalContentsSizeForRubberBand = state->totalContentsSize();
@@ -134,7 +134,7 @@ void ScrollingTreeScrollingNode::didCompleteCommitForNode()
 
 bool ScrollingTreeScrollingNode::isLatchedNode() const
 {
-    return scrollingTree().latchedNodeID() == scrollingNodeID();
+    return scrollingTree()->latchedNodeID() == scrollingNodeID();
 }
 
 bool ScrollingTreeScrollingNode::shouldRubberBand(const PlatformWheelEvent& wheelEvent, EventTargeting eventTargeting) const
@@ -229,43 +229,43 @@ RectEdges<bool> ScrollingTreeScrollingNode::edgePinnedState() const
 
 bool ScrollingTreeScrollingNode::isUserScrollInProgress() const
 {
-    return scrollingTree().isUserScrollInProgressForNode(scrollingNodeID());
+    return scrollingTree()->isUserScrollInProgressForNode(scrollingNodeID());
 }
 
 void ScrollingTreeScrollingNode::setUserScrollInProgress(bool isUserScrolling)
 {
-    scrollingTree().setUserScrollInProgressForNode(scrollingNodeID(), isUserScrolling);
+    scrollingTree()->setUserScrollInProgressForNode(scrollingNodeID(), isUserScrolling);
 }
 
 bool ScrollingTreeScrollingNode::isScrollSnapInProgress() const
 {
-    return scrollingTree().isScrollSnapInProgressForNode(scrollingNodeID());
+    return scrollingTree()->isScrollSnapInProgressForNode(scrollingNodeID());
 }
 
 void ScrollingTreeScrollingNode::setScrollSnapInProgress(bool isSnapping)
 {
-    scrollingTree().setNodeScrollSnapInProgress(scrollingNodeID(), isSnapping);
+    scrollingTree()->setNodeScrollSnapInProgress(scrollingNodeID(), isSnapping);
 }
 
 void ScrollingTreeScrollingNode::willStartAnimatedScroll()
 {
-    scrollingTree().scrollingTreeNodeWillStartAnimatedScroll(*this);
+    scrollingTree()->scrollingTreeNodeWillStartAnimatedScroll(*this);
 }
 
 void ScrollingTreeScrollingNode::didStopAnimatedScroll()
 {
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " didStopAnimatedScroll");
-    scrollingTree().scrollingTreeNodeDidStopAnimatedScroll(*this);
+    scrollingTree()->scrollingTreeNodeDidStopAnimatedScroll(*this);
 }
 
 void ScrollingTreeScrollingNode::willStartWheelEventScroll()
 {
-    scrollingTree().scrollingTreeNodeWillStartWheelEventScroll(*this);
+    scrollingTree()->scrollingTreeNodeWillStartWheelEventScroll(*this);
 }
 
 void ScrollingTreeScrollingNode::didStopWheelEventScroll()
 {
-    scrollingTree().scrollingTreeNodeDidStopWheelEventScroll(*this);
+    scrollingTree()->scrollingTreeNodeDidStopWheelEventScroll(*this);
 }
 
 bool ScrollingTreeScrollingNode::startAnimatedScrollToPosition(FloatPoint destinationPosition)
@@ -287,7 +287,7 @@ void ScrollingTreeScrollingNode::serviceScrollAnimation(MonotonicTime currentTim
 
 void ScrollingTreeScrollingNode::setScrollAnimationInProgress(bool animationInProgress)
 {
-    scrollingTree().setScrollAnimationInProgressForNode(scrollingNodeID(), animationInProgress);
+    scrollingTree()->setScrollAnimationInProgressForNode(scrollingNodeID(), animationInProgress);
 }
 
 void ScrollingTreeScrollingNode::handleKeyboardScrollRequest(const RequestedKeyboardScrollData& scrollData)
@@ -298,7 +298,7 @@ void ScrollingTreeScrollingNode::handleKeyboardScrollRequest(const RequestedKeyb
 
 void ScrollingTreeScrollingNode::requestKeyboardScroll(const RequestedKeyboardScrollData& scrollData)
 {
-    scrollingTree().scrollingTreeNodeRequestsKeyboardScroll(scrollingNodeID(), scrollData);
+    scrollingTree()->scrollingTreeNodeRequestsKeyboardScroll(scrollingNodeID(), scrollData);
 }
 
 void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScrollData& requestedScrollData)
@@ -308,11 +308,11 @@ void ScrollingTreeScrollingNode::handleScrollPositionRequest(const RequestedScro
     if (requestedScrollData.requestType == ScrollRequestType::CancelAnimatedScroll) {
         ASSERT(!requestedScrollData.requestedDataBeforeAnimatedScroll);
         LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest() - cancel animated scroll");
-        scrollingTree().removePendingScrollAnimationForNode(scrollingNodeID());
+        scrollingTree()->removePendingScrollAnimationForNode(scrollingNodeID());
         return;
     }
 
-    if (scrollingTree().scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData))
+    if (scrollingTree()->scrollingTreeNodeRequestsScroll(scrollingNodeID(), requestedScrollData))
         return;
 
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " handleScrollPositionRequest() with data " << requestedScrollData);
@@ -361,7 +361,7 @@ void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType
     if (position == m_currentScrollPosition)
         return;
 
-    scrollingTree().setIsHandlingProgrammaticScroll(scrollType == ScrollType::Programmatic);
+    scrollingTree()->setIsHandlingProgrammaticScroll(scrollType == ScrollType::Programmatic);
 
     if (scrollType == ScrollType::Programmatic)
         willDoProgrammaticScroll(position);
@@ -370,18 +370,18 @@ void ScrollingTreeScrollingNode::scrollTo(const FloatPoint& position, ScrollType
     
     LOG_WITH_STREAM(Scrolling, stream << "ScrollingTreeScrollingNode " << scrollingNodeID() << " scrollTo " << position << " adjusted to "
         << m_currentScrollPosition << " (" << scrollType << ", " << clamp << ") (delta from last committed position " << (m_lastCommittedScrollPosition - m_currentScrollPosition) << ")"
-        << " rubberbanding " << scrollingTree().isRubberBandInProgressForNode(scrollingNodeID()));
+        << " rubberbanding " << scrollingTree()->isRubberBandInProgressForNode(scrollingNodeID()));
 
     updateViewportForCurrentScrollPosition();
     currentScrollPositionChanged(scrollType);
 
-    scrollingTree().setIsHandlingProgrammaticScroll(false);
+    scrollingTree()->setIsHandlingProgrammaticScroll(false);
 }
 
 void ScrollingTreeScrollingNode::currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction action)
 {
     m_scrolledSinceLastCommit = true;
-    scrollingTree().scrollingTreeNodeDidScroll(*this, action);
+    scrollingTree()->scrollingTreeNodeDidScroll(*this, action);
 }
 
 bool ScrollingTreeScrollingNode::scrollPositionAndLayoutViewportMatch(const FloatPoint& position, std::optional<FloatRect>)
@@ -406,9 +406,9 @@ void ScrollingTreeScrollingNode::wasScrolledByDelegatedScrolling(const FloatPoin
 
     repositionRelatedLayers();
 
-    scrollingTree().notifyRelatedNodesAfterScrollPositionChange(*this);
-    scrollingTree().scrollingTreeNodeDidScroll(*this, scrollingLayerPositionAction);
-    scrollingTree().setNeedsApplyLayerPositionsAfterCommit();
+    scrollingTree()->notifyRelatedNodesAfterScrollPositionChange(*this);
+    scrollingTree()->scrollingTreeNodeDidScroll(*this, scrollingLayerPositionAction);
+    scrollingTree()->setNeedsApplyLayerPositionsAfterCommit();
 }
 
 void ScrollingTreeScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const
@@ -515,12 +515,12 @@ ScrollPropagationInfo ScrollingTreeScrollingNode::computeScrollPropagation(const
 
 void ScrollingTreeScrollingNode::scrollbarVisibilityDidChange(ScrollbarOrientation orientation, bool isVisible)
 {
-    scrollingTree().scrollingTreeNodeScrollbarVisibilityDidChange(scrollingNodeID(), orientation, isVisible);
+    scrollingTree()->scrollingTreeNodeScrollbarVisibilityDidChange(scrollingNodeID(), orientation, isVisible);
 }
 
 void ScrollingTreeScrollingNode::scrollbarMinimumThumbLengthDidChange(ScrollbarOrientation orientation, int minimumThumbLength)
 {
-    scrollingTree().scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(scrollingNodeID(), orientation, minimumThumbLength);
+    scrollingTree()->scrollingTreeNodeScrollbarMinimumThumbLengthDidChange(scrollingNodeID(), orientation, minimumThumbLength);
 }
 
 } // namespace WebCore

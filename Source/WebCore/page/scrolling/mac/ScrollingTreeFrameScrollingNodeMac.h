@@ -73,7 +73,7 @@ private:
     void willDoProgrammaticScroll(const FloatPoint&) final;
 
     void currentScrollPositionChanged(ScrollType, ScrollingLayerPositionAction) final;
-    void repositionScrollingLayers() final WTF_REQUIRES_LOCK(scrollingTree().treeLock());
+    void repositionScrollingLayers() final WTF_REQUIRES_LOCK(scrollingTree()->treeLock());
 
     RetainPtr<CALayer> m_rootContentsLayer;
     RetainPtr<CALayer> m_counterScrollingLayer;

@@ -102,7 +102,7 @@ public:
 
 protected:
     ScrollingTreeNode(ScrollingTree&, ScrollingNodeType, ScrollingNodeID);
-    ScrollingTree& scrollingTree() const { return m_scrollingTree; }
+    RefPtr<ScrollingTree> scrollingTree() const { return m_scrollingTree.get(); }
 
     virtual void applyLayerPositions() = 0;
 
@@ -111,7 +111,7 @@ protected:
     Vector<Ref<ScrollingTreeNode>> m_children;
 
 private:
-    ScrollingTree& m_scrollingTree;
+    ThreadSafeWeakPtr<ScrollingTree> m_scrollingTree;
 
     const ScrollingNodeType m_nodeType;
     const ScrollingNodeID m_nodeID;

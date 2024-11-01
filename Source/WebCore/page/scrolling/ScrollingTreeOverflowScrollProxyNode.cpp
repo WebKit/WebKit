@@ -55,12 +55,12 @@ bool ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(const Scrol
         m_overflowScrollingNodeID = overflowProxyStateNode->overflowScrollingNode();
 
     if (m_overflowScrollingNodeID) {
-        auto& relatedNodes = scrollingTree().overflowRelatedNodes();
+        auto& relatedNodes = scrollingTree()->overflowRelatedNodes();
         relatedNodes.ensure(*m_overflowScrollingNodeID, [] {
             return Vector<ScrollingNodeID>();
         }).iterator->value.append(scrollingNodeID());
 
-        scrollingTree().activeOverflowScrollProxyNodes().add(*this);
+        scrollingTree()->activeOverflowScrollProxyNodes().add(*this);
     }
     
     return true;
@@ -68,7 +68,7 @@ bool ScrollingTreeOverflowScrollProxyNode::commitStateBeforeChildren(const Scrol
 
 FloatSize ScrollingTreeOverflowScrollProxyNode::scrollDeltaSinceLastCommit() const
 {
-    if (auto* node = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(scrollingTree().nodeForID(m_overflowScrollingNodeID)))
+    if (auto* node = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(scrollingTree()->nodeForID(m_overflowScrollingNodeID)))
         return node->scrollDeltaSinceLastCommit();
 
     return { };
@@ -77,7 +77,7 @@ FloatSize ScrollingTreeOverflowScrollProxyNode::scrollDeltaSinceLastCommit() con
 FloatPoint ScrollingTreeOverflowScrollProxyNode::computeLayerPosition() const
 {
     FloatPoint scrollOffset;
-    if (auto* node = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(scrollingTree().nodeForID(m_overflowScrollingNodeID)))
+    if (auto* node = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(scrollingTree()->nodeForID(m_overflowScrollingNodeID)))
         scrollOffset = node->currentScrollOffset();
     return scrollOffset;
 }
@@ -87,7 +87,7 @@ void ScrollingTreeOverflowScrollProxyNode::dumpProperties(TextStream& ts, Option
     ts << "overflow scroll proxy node";
     ScrollingTreeNode::dumpProperties(ts, behavior);
 
-    if (auto* relatedOverflowNode = scrollingTree().nodeForID(m_overflowScrollingNodeID)) {
+    if (auto* relatedOverflowNode = scrollingTree()->nodeForID(m_overflowScrollingNodeID)) {
         if (RefPtr scrollingNode = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(relatedOverflowNode))
             ts.dumpProperty("related overflow scrolling node scroll position", scrollingNode->currentScrollPosition());
     }

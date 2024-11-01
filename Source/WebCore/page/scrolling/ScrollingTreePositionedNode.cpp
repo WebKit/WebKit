@@ -60,7 +60,7 @@ bool ScrollingTreePositionedNode::commitStateBeforeChildren(const ScrollingState
         m_constraints = positionedStateNode->layoutConstraints();
 
     if (!m_relatedOverflowScrollingNodes.isEmpty())
-        scrollingTree().activePositionedNodes().add(*this);
+        scrollingTree()->activePositionedNodes().add(*this);
 
     return true;
 }
@@ -69,7 +69,7 @@ FloatSize ScrollingTreePositionedNode::scrollDeltaSinceLastCommit() const
 {
     FloatSize delta;
     for (auto nodeID : m_relatedOverflowScrollingNodes) {
-        if (auto* node = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(scrollingTree().nodeForID(nodeID)))
+        if (auto* node = dynamicDowncast<ScrollingTreeOverflowScrollingNode>(scrollingTree()->nodeForID(nodeID)))
             delta += node->scrollDeltaSinceLastCommit();
     }
 

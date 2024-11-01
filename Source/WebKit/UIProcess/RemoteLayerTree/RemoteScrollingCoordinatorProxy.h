@@ -112,7 +112,7 @@ public:
 
     std::optional<WebCore::RequestedScrollData> commitScrollingTreeState(IPC::Connection&, const RemoteScrollingCoordinatorTransaction&, std::optional<WebCore::LayerHostingContextIdentifier> = std::nullopt);
 
-    bool hasFixedOrSticky() const { return m_scrollingTree->hasFixedOrSticky(); }
+    bool hasFixedOrSticky() const;
     bool hasScrollableMainFrame() const;
     bool hasScrollableOrZoomedMainFrame() const;
 
