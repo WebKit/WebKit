@@ -467,6 +467,7 @@ set(WTF_PUBLIC_HEADERS
     text/WTFString.h
 
     text/icu/TextBreakIteratorICU.h
+    text/icu/UnicodeExtras.h
     text/icu/UTextProvider.h
     text/icu/UTextProviderLatin1.h
     text/icu/UTextProviderUTF16.h
@@ -621,6 +622,7 @@ set(WTF_SOURCES
     text/TextStream.cpp
     text/WTFString.cpp
 
+    text/icu/UnicodeExtras.cpp
     text/icu/UTextProvider.cpp
     text/icu/UTextProviderLatin1.cpp
     text/icu/UTextProviderUTF16.cpp

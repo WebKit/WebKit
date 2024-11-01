@@ -34,8 +34,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/text/StringBuilder.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace PAL {
 
 // See <http://en.wikipedia.org/wiki/Percent-encoding#Non-standard_implementations>.
@@ -104,18 +102,17 @@ struct URLEscapeSequence {
         // a valid escape sequence, but there may be characters between the sequences.
         Vector<uint8_t, 512> buffer;
         buffer.grow(run.length()); // Unescaping hex sequences only makes the length smaller.
-        uint8_t* p = buffer.data();
+        size_t bufferIndex = 0;
         while (!run.isEmpty()) {
             if (run[0] == '%') {
-                *p++ = (toASCIIHexValue(run[1]) << 4) | toASCIIHexValue(run[2]);
+                buffer[bufferIndex++] = (toASCIIHexValue(run[1]) << 4) | toASCIIHexValue(run[2]);
                 run = run.substring(SequenceSize);
             } else {
-                *p++ = run[0];
+                buffer[bufferIndex++] = run[0];
                 run = run.substring(1);
             }
         }
-        ASSERT(buffer.size() >= static_cast<size_t>(p - buffer.data())); // Prove buffer not overrun.
-        buffer.shrink(p - buffer.data());
+        buffer.shrink(bufferIndex);
         return buffer;
     }
 
@@ -188,5 +185,3 @@ inline Vector<uint8_t> decodeURLEscapeSequencesAsData(StringView string)
 }
 
 } // namespace PAL
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -62,7 +62,7 @@ inline EventSource::EventSource(ScriptExecutionContext& context, const URL& url,
     : ActiveDOMObject(&context)
     , m_url(url)
     , m_withCredentials(eventSourceInit.withCredentials)
-    , m_decoder(TextResourceDecoder::create("text/plain"_s, "UTF-8"))
+    , m_decoder(TextResourceDecoder::create("text/plain"_s, "UTF-8"_s))
 {
 }
 

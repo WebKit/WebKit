@@ -85,7 +85,7 @@ static const char* escapeNonASCIIPrintableCharacters(StringView string)
     return resultBuffer.data();
 }
 
-static const char* testDecode(const char* encodingName, std::initializer_list<const char*> inputs)
+static const char* testDecode(ASCIILiteral encodingName, std::initializer_list<const char*> inputs)
 {
     StringBuilder resultBuilder;
     auto codec = newTextCodec(PAL::TextEncoding { encodingName });
@@ -103,138 +103,138 @@ static const char* testDecode(const char* encodingName, std::initializer_list<co
 
 TEST(TextCodec, UTF8)
 {
-    EXPECT_STREQ("", testDecode("UTF-8", { "" }));
+    EXPECT_STREQ("", testDecode("UTF-8"_s, { "" }));
 
-    EXPECT_STREQ("{0}", testDecode("UTF-8", { "00" }));
+    EXPECT_STREQ("{0}", testDecode("UTF-8"_s, { "00" }));
 
-    EXPECT_STREQ("a", testDecode("UTF-8", { "61" }));
-    EXPECT_STREQ("a", testDecode("UTF-8", { "", "61" }));
-    EXPECT_STREQ("a", testDecode("UTF-8", { "61", "" }));
-    EXPECT_STREQ("a", testDecode("UTF-8", { "", "61", "" }));
+    EXPECT_STREQ("a", testDecode("UTF-8"_s, { "61" }));
+    EXPECT_STREQ("a", testDecode("UTF-8"_s, { "", "61" }));
+    EXPECT_STREQ("a", testDecode("UTF-8"_s, { "61", "" }));
+    EXPECT_STREQ("a", testDecode("UTF-8"_s, { "", "61", "" }));
 
-    EXPECT_STREQ("{B6}", testDecode("UTF-8", { "C2 B6" }));
-    EXPECT_STREQ("{B6}", testDecode("UTF-8", { "C2", "B6" }));
-    EXPECT_STREQ("{B6}", testDecode("UTF-8", { "", "C2", "", "B6", "" }));
-    EXPECT_STREQ("x{B6}", testDecode("UTF-8", { "78 C2 B6" }));
-    EXPECT_STREQ("{B6}x", testDecode("UTF-8", { "C2 B6 78" }));
+    EXPECT_STREQ("{B6}", testDecode("UTF-8"_s, { "C2 B6" }));
+    EXPECT_STREQ("{B6}", testDecode("UTF-8"_s, { "C2", "B6" }));
+    EXPECT_STREQ("{B6}", testDecode("UTF-8"_s, { "", "C2", "", "B6", "" }));
+    EXPECT_STREQ("x{B6}", testDecode("UTF-8"_s, { "78 C2 B6" }));
+    EXPECT_STREQ("{B6}x", testDecode("UTF-8"_s, { "C2 B6 78" }));
 
-    EXPECT_STREQ("{2603}", testDecode("UTF-8", { "E2 98 83" }));
-    EXPECT_STREQ("{2603}", testDecode("UTF-8", { "E2", "98", "83" }));
-    EXPECT_STREQ("{2603}", testDecode("UTF-8", { "", "E2", "", "98", "83" }));
-    EXPECT_STREQ("{2603}", testDecode("UTF-8", { "E2 98", "83" }));
-    EXPECT_STREQ("{2603}", testDecode("UTF-8", { "", "E2 98", "", "83", "" }));
-    EXPECT_STREQ("{2603}", testDecode("UTF-8", { "E2", "9883" }));
-    EXPECT_STREQ("{2603}", testDecode("UTF-8", { "", "E2", "", "9883", "" }));
-    EXPECT_STREQ("x{2603}", testDecode("UTF-8", { "78 E2 98 83" }));
-    EXPECT_STREQ("{2603}x", testDecode("UTF-8", { "E2 98 83 78" }));
+    EXPECT_STREQ("{2603}", testDecode("UTF-8"_s, { "E2 98 83" }));
+    EXPECT_STREQ("{2603}", testDecode("UTF-8"_s, { "E2", "98", "83" }));
+    EXPECT_STREQ("{2603}", testDecode("UTF-8"_s, { "", "E2", "", "98", "83" }));
+    EXPECT_STREQ("{2603}", testDecode("UTF-8"_s, { "E2 98", "83" }));
+    EXPECT_STREQ("{2603}", testDecode("UTF-8"_s, { "", "E2 98", "", "83", "" }));
+    EXPECT_STREQ("{2603}", testDecode("UTF-8"_s, { "E2", "9883" }));
+    EXPECT_STREQ("{2603}", testDecode("UTF-8"_s, { "", "E2", "", "9883", "" }));
+    EXPECT_STREQ("x{2603}", testDecode("UTF-8"_s, { "78 E2 98 83" }));
+    EXPECT_STREQ("{2603}x", testDecode("UTF-8"_s, { "E2 98 83 78" }));
 
-    EXPECT_STREQ("{1F4A9}", testDecode("UTF-8", { "F0 9F 92 A9" }));
-    EXPECT_STREQ("{1F4A9}", testDecode("UTF-8", { "F0", "9F", "92", "A9" }));
-    EXPECT_STREQ("{1F4A9}", testDecode("UTF-8", { "", "F0", "", "9F", "", "92", "" , "A9", "" }));
-    EXPECT_STREQ("{1F4A9}", testDecode("UTF-8", { "F09F92", "A9" }));
-    EXPECT_STREQ("x{1F4A9}", testDecode("UTF-8", { "78 F0 9F 92 A9" }));
-    EXPECT_STREQ("{1F4A9}x", testDecode("UTF-8", { "F0 9F 92 A9 78" }));
+    EXPECT_STREQ("{1F4A9}", testDecode("UTF-8"_s, { "F0 9F 92 A9" }));
+    EXPECT_STREQ("{1F4A9}", testDecode("UTF-8"_s, { "F0", "9F", "92", "A9" }));
+    EXPECT_STREQ("{1F4A9}", testDecode("UTF-8"_s, { "", "F0", "", "9F", "", "92", "" , "A9", "" }));
+    EXPECT_STREQ("{1F4A9}", testDecode("UTF-8"_s, { "F09F92", "A9" }));
+    EXPECT_STREQ("x{1F4A9}", testDecode("UTF-8"_s, { "78 F0 9F 92 A9" }));
+    EXPECT_STREQ("{1F4A9}x", testDecode("UTF-8"_s, { "F0 9F 92 A9 78" }));
 }
 
 TEST(TextCodec, UTF8InvalidSequences)
 {
-    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8", { "E0 A5 3F" }));
-    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8", { "E0 A5", "3F" }));
-    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8", { "E0", "A5 3F" }));
-    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8", { "E0", "A5", "3F" }));
-    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8", { "E0", "", "A5", "", "3F" }));
-    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8", { "E0", "", "A5", "", "3F", "" }));
-    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8", { "", "E0", "", "A5", "", "3F", "" }));
+    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8"_s, { "E0 A5 3F" }));
+    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8"_s, { "E0 A5", "3F" }));
+    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8"_s, { "E0", "A5 3F" }));
+    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8"_s, { "E0", "A5", "3F" }));
+    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8"_s, { "E0", "", "A5", "", "3F" }));
+    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8"_s, { "E0", "", "A5", "", "3F", "" }));
+    EXPECT_STREQ("{FFFD}? ERROR", testDecode("UTF-8"_s, { "", "E0", "", "A5", "", "3F", "" }));
 
-    EXPECT_STREQ("a{FFFD}? ERROR", testDecode("UTF-8", { "61 E0 A5 3F" }));
-    EXPECT_STREQ("a{FFFD}? ERROR", testDecode("UTF-8", { "61 E0 A5", "3F" }));
-    EXPECT_STREQ("a{FFFD}? ERROR", testDecode("UTF-8", { "61 E0", "A5 3F" }));
-    EXPECT_STREQ("a{FFFD}? ERROR", testDecode("UTF-8", { "61 E0", "A5", "3F" }));
+    EXPECT_STREQ("a{FFFD}? ERROR", testDecode("UTF-8"_s, { "61 E0 A5 3F" }));
+    EXPECT_STREQ("a{FFFD}? ERROR", testDecode("UTF-8"_s, { "61 E0 A5", "3F" }));
+    EXPECT_STREQ("a{FFFD}? ERROR", testDecode("UTF-8"_s, { "61 E0", "A5 3F" }));
+    EXPECT_STREQ("a{FFFD}? ERROR", testDecode("UTF-8"_s, { "61 E0", "A5", "3F" }));
 
-    EXPECT_STREQ("{B6}{FFFD}? ERROR", testDecode("UTF-8", { "C2 B6 E0 A5 3F" }));
-    EXPECT_STREQ("{B6}{FFFD}? ERROR", testDecode("UTF-8", { "C2 B6 E0 A5", "3F" }));
-    EXPECT_STREQ("{B6}{FFFD}? ERROR", testDecode("UTF-8", { "C2 B6 E0", "A5 3F" }));
-    EXPECT_STREQ("{B6}{FFFD}? ERROR", testDecode("UTF-8", { "C2 B6 E0", "A5", "3F" }));
+    EXPECT_STREQ("{B6}{FFFD}? ERROR", testDecode("UTF-8"_s, { "C2 B6 E0 A5 3F" }));
+    EXPECT_STREQ("{B6}{FFFD}? ERROR", testDecode("UTF-8"_s, { "C2 B6 E0 A5", "3F" }));
+    EXPECT_STREQ("{B6}{FFFD}? ERROR", testDecode("UTF-8"_s, { "C2 B6 E0", "A5 3F" }));
+    EXPECT_STREQ("{B6}{FFFD}? ERROR", testDecode("UTF-8"_s, { "C2 B6 E0", "A5", "3F" }));
 
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "C2" }));
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "E2" }));
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "E2 98" }));
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "F0" }));
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "F0 9F" }));
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "F0 9F 92" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "C2" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "E2" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "E2 98" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "F0" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 9F" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 9F 92" }));
 
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "E2", "98" }));
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "F0", "9F" }));
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "F0 9F", "92" }));
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "F0", "9F92" }));
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "F0", "9F", "92" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "E2", "98" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "F0", "9F" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 9F", "92" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "F0", "9F92" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "F0", "9F", "92" }));
 
-    EXPECT_STREQ("{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "C0 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "E0 80 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F0 80 80 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F8 80 80 80 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FC 80 80 80 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "C0 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "E0 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 80 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F8 80 80 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FC 80 80 80 80 80" }));
 
-    EXPECT_STREQ("{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "C1 BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "E0 81 BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F0 80 81 BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F8 80 80 81 BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FC 80 80 80 81 BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "C1 BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "E0 81 BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 80 81 BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F8 80 80 81 BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FC 80 80 80 81 BF" }));
 
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "E0 82 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F0 80 82 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F8 80 80 82 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FC 80 80 80 82 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "E0 82 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 80 82 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F8 80 80 82 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FC 80 80 80 82 80" }));
 
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "E0 9F BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F0 80 9F BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F8 80 80 9F BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FC 80 80 80 9F BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "E0 9F BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 80 9F BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F8 80 80 9F BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FC 80 80 80 9F BF" }));
 
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F0 80 A0 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F8 80 80 A0 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FC 80 80 80 A0 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 80 A0 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F8 80 80 A0 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FC 80 80 80 A0 80" }));
 
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F0 8F BF BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F8 80 8F BF BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FC 80 80 8F BF BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 8F BF BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F8 80 8F BF BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FC 80 80 8F BF BF" }));
 
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F8 80 90 80 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FC 80 80 90 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F8 80 90 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FC 80 80 90 80 80" }));
 
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F8 84 8F BF BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FC 80 84 8F BF BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F8 84 8F BF BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FC 80 84 8F BF BF" }));
 
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F4 90 80 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FB BF BF BF BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FD BF BF BF BF BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "ED A0 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "ED BF BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "ED A0 BD ED B2 A9" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F4 90 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FB BF BF BF BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FD BF BF BF BF BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "ED A0 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "ED BF BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "ED A0 BD ED B2 A9" }));
 
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F8 84 90 80 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FC 80 84 90 80 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F0 8D A0 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F0 8D BF BF" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "F0 8D A0 BD F0 8D B2 A9" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F8 84 90 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FC 80 84 90 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 8D A0 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 8D BF BF" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 8D A0 BD F0 8D B2 A9" }));
 
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "80" }));
-    EXPECT_STREQ("{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "80 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "80 80 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "80 80 80 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "80 80 80 80 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "80 80 80 80 80 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "80 80 80 80 80 80 80" }));
-    EXPECT_STREQ("{B6}{FFFD} ERROR", testDecode("UTF-8", { "C2 B6 80" }));
-    EXPECT_STREQ("{2603}{FFFD} ERROR", testDecode("UTF-8", { "E2 98 83 80" }));
-    EXPECT_STREQ("{1F4A9}{FFFD} ERROR", testDecode("UTF-8", { "F0 9F 92 A9 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FB BF BF BF BF 80" }));
-    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FD BF BF BF BF BF 80" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "80" }));
+    EXPECT_STREQ("{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "80 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "80 80 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "80 80 80 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "80 80 80 80 80 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "80 80 80 80 80 80 80" }));
+    EXPECT_STREQ("{B6}{FFFD} ERROR", testDecode("UTF-8"_s, { "C2 B6 80" }));
+    EXPECT_STREQ("{2603}{FFFD} ERROR", testDecode("UTF-8"_s, { "E2 98 83 80" }));
+    EXPECT_STREQ("{1F4A9}{FFFD} ERROR", testDecode("UTF-8"_s, { "F0 9F 92 A9 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FB BF BF BF BF 80" }));
+    EXPECT_STREQ("{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FD BF BF BF BF BF 80" }));
 
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "FE" }));
-    EXPECT_STREQ("{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FE 80" }));
-    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8", { "FF" }));
-    EXPECT_STREQ("{FFFD}{FFFD} ERROR", testDecode("UTF-8", { "FF 80" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "FE" }));
+    EXPECT_STREQ("{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FE 80" }));
+    EXPECT_STREQ("{FFFD} ERROR", testDecode("UTF-8"_s, { "FF" }));
+    EXPECT_STREQ("{FFFD}{FFFD} ERROR", testDecode("UTF-8"_s, { "FF 80" }));
 }
 
 }

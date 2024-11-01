@@ -142,7 +142,7 @@ TEST_F(URLParserTextEncodingTest, QueryEncoding)
 {
     checkURL(utf16String(u"http://host?ß😍#ß😍"), nullptr, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "%C3%9F%F0%9F%98%8D"_s, "%C3%9F%F0%9F%98%8D"_s, utf16String(u"http://host/?%C3%9F%F0%9F%98%8D#%C3%9F%F0%9F%98%8D")}, testTabsValueForSurrogatePairs);
 
-    PAL::TextEncoding latin1("latin1");
+    PAL::TextEncoding latin1("latin1"_s);
     checkURL("http://host/?query with%20spaces"_s, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query%20with%20spaces"_s, emptyString(), "http://host/?query%20with%20spaces"_s});
     checkURL("http://host/?query"_s, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query"_s, emptyString(), "http://host/?query"_s});
     checkURL("http://host/?\tquery"_s, &latin1, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, "query"_s, emptyString(), "http://host/?query"_s});
@@ -154,7 +154,7 @@ TEST_F(URLParserTextEncodingTest, QueryEncoding)
     checkURL("http://host/?query"_s, &unrecognized, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, emptyString(), emptyString(), "http://host/?"_s});
     checkURL("http://host/?"_s, &unrecognized, {"http"_s, emptyString(), emptyString(), "host"_s, 0, "/"_s, emptyString(), emptyString(), "http://host/?"_s});
 
-    PAL::TextEncoding iso88591("ISO-8859-1");
+    PAL::TextEncoding iso88591("ISO-8859-1"_s);
     String withUmlauts = utf16String<4>({0xDC, 0x430, 0x451, '\0'});
     checkURL(makeString("ws://host/path?"_s, withUmlauts), &iso88591, {"ws"_s, emptyString(), emptyString(), "host"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, emptyString(), "ws://host/path?%C3%9C%D0%B0%D1%91"_s});
     checkURL(makeString("wss://host/path?"_s, withUmlauts), &iso88591, {"wss"_s, emptyString(), emptyString(), "host"_s, 0, "/path"_s, "%C3%9C%D0%B0%D1%91"_s, emptyString(), "wss://host/path?%C3%9C%D0%B0%D1%91"_s});

@@ -78,7 +78,7 @@ std::optional<ApplicationCacheManifest> parseApplicationCacheManifest(const URL&
     bool allowFallbackNamespaceOutsideManifestPath = equalLettersIgnoringASCIICase(manifestMIMEType, cacheManifestMIMEType);
     auto manifestPath = WebCore::manifestPath(manifestURL);
 
-    auto manifestString = TextResourceDecoder::create(cacheManifestMIMEType, "UTF-8")->decodeAndFlush(data);
+    auto manifestString = TextResourceDecoder::create(cacheManifestMIMEType, "UTF-8"_s)->decodeAndFlush(data);
 
     return readCharactersForParsing(manifestString, [&]<typename CharacterType> (StringParsingBuffer<CharacterType> buffer) -> std::optional<ApplicationCacheManifest> {
         ApplicationCacheManifest manifest;

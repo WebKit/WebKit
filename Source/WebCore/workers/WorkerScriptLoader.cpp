@@ -290,7 +290,7 @@ void WorkerScriptLoader::didReceiveData(const SharedBuffer& buffer)
 #endif
 
     if (!m_decoder)
-        m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8");
+        m_decoder = TextResourceDecoder::create("text/javascript"_s, "UTF-8"_s);
 
     if (buffer.isEmpty())
         return;

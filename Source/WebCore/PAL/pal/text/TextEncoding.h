@@ -36,7 +36,7 @@ enum class NFCNormalize : bool { No, Yes };
 class TextEncoding : public WTF::URLTextEncoding {
 public:
     TextEncoding() = default;
-    PAL_EXPORT TextEncoding(const char* name);
+    PAL_EXPORT TextEncoding(ASCIILiteral name);
     PAL_EXPORT TextEncoding(StringView name);
     PAL_EXPORT TextEncoding(const String& name);
 

@@ -1424,7 +1424,7 @@ Ref<TextResourceDecoder> InspectorNetworkAgent::createTextDecoder(const String& 
         return TextResourceDecoder::create("text/plain"_s, textEncodingName);
 
     if (MIMETypeRegistry::isTextMIMEType(mimeType))
-        return TextResourceDecoder::create(mimeType, "UTF-8");
+        return TextResourceDecoder::create(mimeType, "UTF-8"_s);
 
     if (MIMETypeRegistry::isXMLMIMEType(mimeType)) {
         auto decoder = TextResourceDecoder::create("application/xml"_s);
@@ -1432,7 +1432,7 @@ Ref<TextResourceDecoder> InspectorNetworkAgent::createTextDecoder(const String& 
         return decoder;
     }
 
-    return TextResourceDecoder::create("text/plain"_s, "UTF-8");
+    return TextResourceDecoder::create("text/plain"_s, "UTF-8"_s);
 }
 
 std::optional<String> InspectorNetworkAgent::textContentForCachedResource(CachedResource& cachedResource)
