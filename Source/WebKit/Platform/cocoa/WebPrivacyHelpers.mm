@@ -157,9 +157,6 @@ void LinkDecorationFilteringController::updateList(CompletionHandler<void()>&& c
             auto rules = [data rules];
             for (WPLinkFilteringRule *rule : rules) {
                 auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, String { rule.domain }) } };
-                // FIXME: This should be removed with rdar://127137181
-                if ([rule.domain hasPrefix:@"http://"])
-                    domain = WebCore::RegistrableDomain { URL { String { rule.domain } } };
                 result.append(WebCore::LinkDecorationFilteringData { WTFMove(domain), [rule respondsToSelector:@selector(path)] ? rule.path : @"", rule.queryParameter });
             }
             setCachedListData(WTFMove(result));
@@ -204,9 +201,6 @@ void requestLinkDecorationFilteringData(LinkFilteringRulesCallback&& callback)
             auto rules = [data rules];
             for (WPLinkFilteringRule *rule : rules) {
                 auto domain = WebCore::RegistrableDomain { URL { makeString("http://"_s, String { rule.domain }) } };
-                // FIXME: This should be removed with rdar://127137181
-                if ([rule.domain hasPrefix:@"http://"])
-                    domain = WebCore::RegistrableDomain { URL { String { rule.domain } } };
                 result.append(WebCore::LinkDecorationFilteringData { WTFMove(domain), { }, rule.queryParameter });
             }
         }
