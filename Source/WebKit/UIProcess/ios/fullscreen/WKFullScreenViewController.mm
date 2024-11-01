@@ -731,9 +731,10 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         descriptor = [descriptor fontDescriptorByAddingAttributes:@{
             UIFontWeightTrait : [NSNumber numberWithDouble:UIFontWeightMedium]
         }];
-        fullscreenButtonConfiguration.attributedTitle = [[NSMutableAttributedString alloc] initWithString:WebCore::fullscreenControllerViewSpatial() attributes:@{
+        RetainPtr buttonTitle = adoptNS([[NSMutableAttributedString alloc] initWithString:WebCore::fullscreenControllerViewSpatial() attributes:@{
             NSFontAttributeName : [UIFont fontWithDescriptor:descriptor.get() size:0]
-        }];
+        }]);
+        fullscreenButtonConfiguration.attributedTitle = buttonTitle.get();
 
         [_enterVideoFullscreenButton setConfiguration:fullscreenButtonConfiguration];
         [_enterVideoFullscreenButton setContentHorizontalAlignment:UIControlContentHorizontalAlignmentLeft];
