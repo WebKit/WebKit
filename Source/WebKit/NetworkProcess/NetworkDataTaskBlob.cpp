@@ -516,14 +516,22 @@ void NetworkDataTaskBlob::didFinishDownload()
     FileSystem::closeFile(m_downloadFile);
     m_downloadFile = FileSystem::invalidPlatformFileHandle;
 
+#if !HAVE(MODERN_DOWNLOADPROGRESS)
     if (m_sandboxExtension) {
         m_sandboxExtension->revoke();
         m_sandboxExtension = nullptr;
     }
+#endif
 
     clearStream();
     auto* download = m_networkProcess->downloadManager().download(*m_pendingDownloadID);
     ASSERT(download);
+
+#if HAVE(MODERN_DOWNLOADPROGRESS)
+    if (m_sandboxExtension)
+        download->setSandboxExtension(std::exchange(m_sandboxExtension, nullptr));
+#endif
+
     download->didFinish();
 }
 
