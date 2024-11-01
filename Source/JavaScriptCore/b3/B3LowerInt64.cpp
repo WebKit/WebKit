@@ -1180,8 +1180,9 @@ private:
             auto input = getMapping(m_value->child(0));
             Value* zero32 = insert<Const32Value>(m_index, m_origin, 0);
             Value* zero = valueLoHi(zero32, zero32);
-            m_value->replaceWithIdentity(insert<Value>(m_index, Sub, m_origin, zero, valueLoHi(input.first, input.second)));
-            setMapping(m_value, valueLo(m_value, m_index + 1), valueHi(m_value, m_index + 1));
+            Value* sub = insert<Value>(m_index, Sub, m_origin, zero, valueLoHi(input.first, input.second));
+            setMapping(m_value, valueLo(sub, m_index + 1), valueHi(sub, m_index + 1));
+            valueReplaced();
             return;
         }
         default: {
