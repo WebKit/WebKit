@@ -216,8 +216,6 @@
 #define UIWKDocumentRequestAutocorrectedRanges (1 << 7)
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #if USE(BROWSERENGINEKIT)
 
 @interface WKUITextSelectionRect : UITextSelectionRect
@@ -2332,7 +2330,7 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
     //  p1------p4
 
     // 1) Sort the points horizontally.
-    WebCore::FloatPoint points[4] = { quad.p1(), quad.p4(), quad.p2(), quad.p3() };
+    std::array points { quad.p1(), quad.p4(), quad.p2(), quad.p3() };
     if (points[0].x() > points[1].x())
         std::swap(points[0], points[1]);
     if (points[2].x() > points[3].x())
@@ -2400,32 +2398,28 @@ static WebCore::FloatQuad inflateQuad(const WebCore::FloatQuad& quad, float infl
     return gestures;
 }
 
+static void appendRecognizerIfNonNull(RetainPtr<NSMutableArray>& array, const RetainPtr<WKDeferringGestureRecognizer>& recognizer)
+{
+    if (recognizer)
+        [array addObject:recognizer.get()];
+}
+
 - (NSArray<WKDeferringGestureRecognizer *> *)_touchStartDeferringGestures
 {
-    WKDeferringGestureRecognizer *recognizers[3];
-    NSUInteger count = 0;
-    auto add = [&] (const RetainPtr<WKDeferringGestureRecognizer>& recognizer) {
-        if (recognizer)
-            recognizers[count++] = recognizer.get();
-    };
-    add(_touchStartDeferringGestureRecognizerForImmediatelyResettableGestures);
-    add(_touchStartDeferringGestureRecognizerForDelayedResettableGestures);
-    add(_touchStartDeferringGestureRecognizerForSyntheticTapGestures);
-    return [NSArray arrayWithObjects:recognizers count:count];
+    RetainPtr recognizers = adoptNS([[NSMutableArray alloc] initWithCapacity:3]);
+    appendRecognizerIfNonNull(recognizers, _touchStartDeferringGestureRecognizerForImmediatelyResettableGestures);
+    appendRecognizerIfNonNull(recognizers, _touchStartDeferringGestureRecognizerForDelayedResettableGestures);
+    appendRecognizerIfNonNull(recognizers, _touchStartDeferringGestureRecognizerForSyntheticTapGestures);
+    return recognizers.autorelease();
 }
 
 - (NSArray<WKDeferringGestureRecognizer *> *)_touchEndDeferringGestures
 {
-    WKDeferringGestureRecognizer *recognizers[3];
-    NSUInteger count = 0;
-    auto add = [&] (const RetainPtr<WKDeferringGestureRecognizer>& recognizer) {
-        if (recognizer)
-            recognizers[count++] = recognizer.get();
-    };
-    add(_touchEndDeferringGestureRecognizerForImmediatelyResettableGestures);
-    add(_touchEndDeferringGestureRecognizerForDelayedResettableGestures);
-    add(_touchEndDeferringGestureRecognizerForSyntheticTapGestures);
-    return [NSArray arrayWithObjects:recognizers count:count];
+    RetainPtr recognizers = adoptNS([[NSMutableArray alloc] initWithCapacity:3]);
+    appendRecognizerIfNonNull(recognizers, _touchEndDeferringGestureRecognizerForImmediatelyResettableGestures);
+    appendRecognizerIfNonNull(recognizers, _touchEndDeferringGestureRecognizerForDelayedResettableGestures);
+    appendRecognizerIfNonNull(recognizers, _touchEndDeferringGestureRecognizerForSyntheticTapGestures);
+    return recognizers.autorelease();
 }
 
 - (void)_doneDeferringTouchStart:(BOOL)preventNativeGestures
@@ -15313,7 +15307,5 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 @end
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(IOS_FAMILY)
