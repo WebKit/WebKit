@@ -1038,6 +1038,9 @@ static ExceptionOr<bool> checkPopoverValidity(HTMLElement& element, PopoverVisib
     if (auto* dialog = dynamicDowncast<HTMLDialogElement>(element); dialog && dialog->isModal())
         return Exception { ExceptionCode::InvalidStateError, "Element is a modal <dialog> element"_s };
 
+    if (!element.document().isFullyActive())
+        return Exception { ExceptionCode::InvalidStateError, "Invalid for popovers within documents that are not fully active"_s };
+
 #if ENABLE(FULLSCREEN_API)
     if (element.hasFullscreenFlag())
         return Exception { ExceptionCode::InvalidStateError, "Element is fullscreen"_s };
