@@ -1822,6 +1822,7 @@ public:
 
     void hideAllPopoversUntil(HTMLElement*, FocusPreviousElement, FireEvents);
     void handlePopoverLightDismiss(const PointerEvent&, Node&);
+    bool needsPointerEventHandlingForPopover() const { return !m_autoPopoverList.isEmpty(); }
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     void registerAttachmentIdentifier(const String&, const AttachmentAssociatedElement&);
