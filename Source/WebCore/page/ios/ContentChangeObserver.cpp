@@ -76,7 +76,7 @@ static bool isHiddenBehindFullscreenElement(const Node& descendantCandidate)
 
 bool ContentChangeObserver::isContentChangeObserverEnabled()
 {
-    return m_document.settings().contentChangeObserverEnabled();
+    return m_document->settings().contentChangeObserverEnabled();
 }
 
 bool ContentChangeObserver::isVisuallyHidden(const Node& node)
@@ -185,7 +185,7 @@ bool ContentChangeObserver::isConsideredActionableContent(const Element& candida
 
 ContentChangeObserver::ContentChangeObserver(Document& document)
     : m_document(document)
-    , m_contentObservationTimer([this] { completeDurationBasedContentObservation(); })
+    , m_contentObservationTimer([this] { Ref { *this }->completeDurationBasedContentObservation(); })
 {
 }
 
@@ -317,7 +317,7 @@ void ContentChangeObserver::didInstallDOMTimer(const DOMTimer& timer, Seconds ti
         return;
     if (hasVisibleChangeState())
         return;
-    if (m_document.activeDOMObjectsAreSuspended())
+    if (m_document->activeDOMObjectsAreSuspended())
         return;
     if (timeout > maximumDelayForTimers || !singleShot)
         return;
@@ -585,9 +585,9 @@ void ContentChangeObserver::adjustObservedState(Event event)
             setHasNoChangeState();
 
         LOG_WITH_STREAM(ContentObservation, stream << "notifyClientIfNeeded: sending observedContentChange ->" << observedContentChange());
-        ASSERT(m_document.page());
-        ASSERT(m_document.frame());
-        m_document.page()->chrome().client().didFinishContentChangeObserving(*m_document.frame(), observedContentChange());
+        ASSERT(m_document->page());
+        ASSERT(m_document->frame());
+        m_document->page()->chrome().client().didFinishContentChangeObserving(*m_document->protectedFrame(), observedContentChange());
         stopContentObservation();
     };
 
@@ -604,7 +604,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
         }
         if (event == Event::StartedMouseMovedEventDispatching) {
-            ASSERT(!m_document.hasPendingStyleRecalc());
+            ASSERT(!m_document->hasPendingStyleRecalc());
             if (!isBetweenTouchEndAndMouseMoved())
                 resetToStartObserving();
             setIsBetweenTouchEndAndMouseMoved(false);
@@ -648,7 +648,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
         }
         if (event == Event::EndedDOMTimerExecution) {
-            if (m_document.hasPendingStyleRecalc()) {
+            if (m_document->hasPendingStyleRecalc()) {
                 setShouldObserveNextStyleRecalc(true);
                 return;
             }
@@ -658,7 +658,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
         if (event == Event::EndedTransitionButFinalStyleIsNotDefiniteYet) {
             // onAnimationEnd can be called while in the middle of resolving the document (synchronously) or
             // asynchronously right before the style update is issued. It also means we don't know whether this animation ends up producing visible content yet. 
-            if (m_document.inStyleRecalc()) {
+            if (m_document->inStyleRecalc()) {
                 // We need to start observing this style change synchronously.
                 m_isInObservedStyleRecalc = true;
                 return;
@@ -667,7 +667,7 @@ void ContentChangeObserver::adjustObservedState(Event event)
             return;
         }
         if (event == Event::CompletedTransition) {
-            if (m_document.inStyleRecalc()) {
+            if (m_document->inStyleRecalc()) {
                 m_isInObservedStyleRecalc = true;
                 return;
             }

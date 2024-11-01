@@ -113,7 +113,7 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Opti
     : ActiveDOMObject(document)
     , m_options(WTFMove(options))
     , m_stream(WTFMove(stream))
-    , m_timeSliceTimer([this] { requestData(); })
+    , m_timeSliceTimer([this] { Ref { *this }->requestData(); })
 {
     computeInitialBitRates();
 
