@@ -162,8 +162,25 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
     }
     case ShapeValue::Type::Box: {
         auto shapeRect = computeRoundedRectForBoxShape(shapeValue.effectiveCSSBox(), renderer);
-        if (!isHorizontalWritingMode)
-            shapeRect = shapeRect.transposedRect();
+        auto flipForWritingAndInlineDirection = [&] {
+            // FIXME: We should consider this moving to RoundedRect::transposedRect.
+            if (isHorizontalWritingMode && writingMode.isBidiLTR())
+                return;
+
+            if (!isHorizontalWritingMode) {
+                shapeRect = shapeRect.transposedRect();
+                auto radiiForBlockDirection = shapeRect.radii();
+                if (writingMode.isBlockLeftToRight())
+                    shapeRect.setRadii({ radiiForBlockDirection.topLeft(), radiiForBlockDirection.bottomLeft(), radiiForBlockDirection.topRight(), radiiForBlockDirection.bottomRight() });
+                else
+                    shapeRect.setRadii({ radiiForBlockDirection.topRight(), radiiForBlockDirection.bottomRight(), radiiForBlockDirection.topLeft(), radiiForBlockDirection.bottomLeft() });
+            }
+            if (writingMode.isBidiRTL()) {
+                auto radii = shapeRect.radii();
+                shapeRect.setRadii({ radii.topRight(), radii.topLeft(), radii.bottomRight(), radii.bottomLeft() });
+            }
+        };
+        flipForWritingAndInlineDirection();
         return LayoutShape::createBoxShape(shapeRect, writingMode, margin);
     }
     }
