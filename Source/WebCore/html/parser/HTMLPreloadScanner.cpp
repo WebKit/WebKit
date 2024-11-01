@@ -71,6 +71,7 @@ TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVe
         { "source", TagId::Source },
         { "style", TagId::Style },
         { "template", TagId::Template },
+        { "video", TagId::Video },
     };
     static constexpr SortedArrayMap map { mappings };
     return map.get(data.span(), TagId::Unknown);
@@ -88,6 +89,8 @@ ASCIILiteral TokenPreloadScanner::initiatorFor(TagId tagId)
         return "link"_s;
     case TagId::Script:
         return "script"_s;
+    case TagId::Video:
+        return "video"_s;
     case TagId::Unknown:
     case TagId::Style:
     case TagId::Base:
@@ -202,6 +205,14 @@ private:
             m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<UChar>).toString();
         else if (match(attributeName, charsetAttr))
             m_charset = attributeValue.toString();
+    }
+
+    void processVideoAttribute(const AtomString& attributeName, StringView attributeValue)
+    {
+        if (match(attributeName, posterAttr))
+            setURLToLoad(attributeValue);
+        else if (match(attributeName, crossoriginAttr))
+            m_crossOriginMode = attributeValue.trim(isASCIIWhitespace<UChar>).toString();
     }
 
     void processAttribute(const AtomString& attributeName, StringView attributeValue, const Vector<bool>& pictureState)
@@ -325,6 +336,9 @@ private:
             else if (document->settings().disabledAdaptationsMetaTagEnabled() && match(attributeName, nameAttr))
                 m_metaIsDisabledAdaptations = equalLettersIgnoringASCIICase(attributeValue, "disabled-adaptations"_s);
             break;
+        case TagId::Video:
+            processVideoAttribute(attributeName, attributeValue);
+            break;
         case TagId::Base:
         case TagId::Style:
         case TagId::Template:
@@ -369,6 +383,7 @@ private:
         case TagId::Img:
         case TagId::Input:
         case TagId::Source:
+        case TagId::Video:
             ASSERT(m_tagId != TagId::Input || m_inputIsImage);
             return CachedResource::Type::ImageResource;
         case TagId::Link:

@@ -54,6 +54,7 @@ private:
         Script,
         Meta,
         Source,
+        Video,
 
         // These tags are not scanned by the StartTagScanner.
         Unknown,
