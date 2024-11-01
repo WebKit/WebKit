@@ -75,14 +75,14 @@ InlineLayoutUnit InlineFormattingUtils::logicalTopForNextLine(const LineLayoutRe
             return LayoutUnit { lineLogicalRect.top() + formattingContext().root().style().computedLineHeight() };
         };
         auto floatConstraints = floatingContext.constraints(toLayoutUnit(lineLogicalRect.top()), nextLineLogicalTop(), FloatingContext::MayBeAboveLastFloat::Yes);
-        if (floatConstraints.left && floatConstraints.right) {
+        if (floatConstraints.start && floatConstraints.end) {
             // In case of left and right constraints, we need to pick the one that's closer to the current line.
-            return std::min(floatConstraints.left->y, floatConstraints.right->y);
+            return std::min(floatConstraints.start->y, floatConstraints.end->y);
         }
-        if (floatConstraints.left)
-            return floatConstraints.left->y;
-        if (floatConstraints.right)
-            return floatConstraints.right->y;
+        if (floatConstraints.start)
+            return floatConstraints.start->y;
+        if (floatConstraints.end)
+            return floatConstraints.end->y;
         // If we didn't manage to place a content on this vertical position due to intrusive floats, we have to have
         // at least one float here.
         ASSERT_NOT_REACHED();

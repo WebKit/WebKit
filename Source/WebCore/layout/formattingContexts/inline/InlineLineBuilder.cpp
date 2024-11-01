@@ -812,19 +812,19 @@ LineBuilder::RectAndFloatConstraints LineBuilder::floatAvoidingRect(const Inline
             return { logicalRect, { } };
 
         auto constraints = formattingContext().formattingUtils().floatConstraintsForLine(logicalRect.top(), logicalRect.height(), floatingContext());
-        if (!constraints.left && !constraints.right)
+        if (!constraints.start && !constraints.end)
             return { logicalRect, { } };
 
         auto constrainedSideSet = OptionSet<UsedFloat> { };
         // text-indent acts as (start)margin on the line. When looking for intrusive floats we need to check against the line's _margin_ box.
         auto marginBoxRect = InlineRect { logicalRect.top(), logicalRect.left() - lineMarginStart, logicalRect.width() + lineMarginStart, logicalRect.height() };
 
-        if (constraints.left && constraints.left->x > marginBoxRect.left()) {
-            marginBoxRect.shiftLeftTo(constraints.left->x);
+        if (constraints.start && constraints.start->x > marginBoxRect.left()) {
+            marginBoxRect.shiftLeftTo(constraints.start->x);
             constrainedSideSet.add(UsedFloat::Left);
         }
-        if (constraints.right && constraints.right->x < marginBoxRect.right()) {
-            marginBoxRect.setRight(std::max<InlineLayoutUnit>(marginBoxRect.left(), constraints.right->x));
+        if (constraints.end && constraints.end->x < marginBoxRect.right()) {
+            marginBoxRect.setRight(std::max<InlineLayoutUnit>(marginBoxRect.left(), constraints.end->x));
             constrainedSideSet.add(UsedFloat::Right);
         }
 

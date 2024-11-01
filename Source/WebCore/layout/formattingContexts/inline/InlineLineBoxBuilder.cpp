@@ -787,7 +787,7 @@ void LineBoxBuilder::adjustOutsideListMarkersPosition(LineBox& lineBox)
             // <ul><li>markers<ul><li>with dedicated lines
             // While a float may not constrain the line, it could constrain the nested list marker (being it outside of the line box to the logical left).  
             // FIXME: We may need to do this in a post-process task after the line box geometry is computed.
-            return floatConstraints.left ? std::min(0_lu, std::max(floatConstraints.left->x, nestedOffset)) : nestedOffset;
+            return floatConstraints.start ? std::min(0_lu, std::max(floatConstraints.start->x, nestedOffset)) : nestedOffset;
         }();
         adjustMarginStartForListMarker(listMarkerBox, nestedListMarkerMarginStart, rootInlineBoxOffsetFromContentBoxOrIntrusiveFloat);
         logicalLeft += nestedListMarkerMarginStart;

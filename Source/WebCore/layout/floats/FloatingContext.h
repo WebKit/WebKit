@@ -64,8 +64,8 @@ public:
     bool isEmpty() const { return m_placedFloats.list().isEmpty(); }
 
     struct Constraints {
-        std::optional<PointInContextRoot> left;
-        std::optional<PointInContextRoot> right;
+        std::optional<PointInContextRoot> start;
+        std::optional<PointInContextRoot> end;
     };
     enum class MayBeAboveLastFloat : bool { No, Yes };
     Constraints constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom, MayBeAboveLastFloat) const;

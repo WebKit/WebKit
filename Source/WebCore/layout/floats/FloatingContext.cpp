@@ -434,7 +434,7 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
     auto constraints = Constraints { };
     if (mayBeAboveLastFloat == MayBeAboveLastFloat::No) {
         for (auto& floatItem : makeReversedRange(placedFloats.list())) {
-            if ((constraints.left && floatItem.isLeftPositioned()) || (constraints.right && !floatItem.isLeftPositioned()))
+            if ((constraints.start && floatItem.isLeftPositioned()) || (constraints.end && !floatItem.isLeftPositioned()))
                 continue;
 
             auto edgeAndBottom = computeFloatEdgeAndBottom(floatItem);
@@ -444,13 +444,13 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
             auto [edge, bottom] = *edgeAndBottom;
 
             if (floatItem.isLeftPositioned())
-                constraints.left = PointInContextRoot { edge, bottom };
+                constraints.start = PointInContextRoot { edge, bottom };
             else
-                constraints.right = PointInContextRoot { edge, bottom };
+                constraints.end = PointInContextRoot { edge, bottom };
 
-            if ((constraints.left && constraints.right)
-                || (constraints.left && !placedFloats.hasRightPositioned())
-                || (constraints.right && !placedFloats.hasLeftPositioned()))
+            if ((constraints.start && constraints.end)
+                || (constraints.start && !placedFloats.hasRightPositioned())
+                || (constraints.end && !placedFloats.hasLeftPositioned()))
                 break;
         }
     } else {
@@ -462,22 +462,22 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
             auto [edge, bottom] = *edgeAndBottom;
 
             if (floatItem.isLeftPositioned()) {
-                if (!constraints.left || constraints.left->x < edge)
-                    constraints.left = PointInContextRoot { edge, bottom };
+                if (!constraints.start || constraints.start->x < edge)
+                    constraints.start = PointInContextRoot { edge, bottom };
             } else {
-                if (!constraints.right || constraints.right->x > edge)
-                    constraints.right = PointInContextRoot { edge, bottom };
+                if (!constraints.end || constraints.end->x > edge)
+                    constraints.end = PointInContextRoot { edge, bottom };
             }
             // FIXME: Bail out when floats are way above.
         }
     }
 
     if (coordinateMappingIsRequired) {
-        if (constraints.left)
-            constraints.left->move(-adjustingDelta);
+        if (constraints.start)
+            constraints.start->move(-adjustingDelta);
 
-        if (constraints.right)
-            constraints.right->move(-adjustingDelta);
+        if (constraints.end)
+            constraints.end->move(-adjustingDelta);
     }
 
     if (placedFloats.writingMode().isInlineOpposing(root().writingMode())) {
@@ -487,10 +487,10 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
         // Flip to logical in inline direction.
         auto logicalConstraints = Constraints { };
         auto borderBoxWidth = containingBlockGeometries().geometryForBox(root()).borderBoxWidth();
-        if (constraints.left)
-            logicalConstraints.right = PointInContextRoot { borderBoxWidth - constraints.left->x, constraints.left->y };
-        if (constraints.right)
-            logicalConstraints.left = PointInContextRoot { borderBoxWidth - constraints.right->x, constraints.right->y };
+        if (constraints.start)
+            logicalConstraints.end = PointInContextRoot { borderBoxWidth - constraints.start->x, constraints.start->y };
+        if (constraints.end)
+            logicalConstraints.start = PointInContextRoot { borderBoxWidth - constraints.end->x, constraints.end->y };
         constraints = logicalConstraints;
     }
     return constraints;
