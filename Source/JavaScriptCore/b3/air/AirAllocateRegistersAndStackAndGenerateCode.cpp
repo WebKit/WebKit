@@ -383,6 +383,24 @@ ALWAYS_INLINE bool GenerateAndAllocateRegisters::isDisallowedRegister(Reg reg)
     return !m_allowedRegisters.contains(reg, IgnoreVectors);
 }
 
+static inline void lowerInstOffsets(Inst& inst, CCallHelpers& jit)
+{
+    if constexpr (!is32Bit())
+        return;
+    int pinnedRegisterUses = 0;
+    inst.forEachArg([&] (Arg& arg, Arg::Role, Bank, Width width) {
+        if (arg.isAddr() && !arg.isValidForm(inst.kind.opcode, width)) {
+            GPRReg reg = extendedOffsetAddrRegister();
+            jit.move(CCallHelpers::TrustedImmPtr(arg.offset()), reg);
+            jit.addPtr(arg.base().gpr(), reg);
+            arg = Arg::addr(Tmp(reg));
+            ++pinnedRegisterUses;
+            RELEASE_ASSERT(pinnedRegisterUses < 2);
+            return;
+        }
+    });
+}
+
 void GenerateAndAllocateRegisters::prepareForGeneration()
 {
     // We pessimistically assume we use all callee saves.
@@ -872,18 +890,6 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
                             arg = Arg::addr(Tmp(GPRInfo::callFrameRegister), entry.spillSlot->offsetFromFP());
                         }
                     });
-                    int pinnedRegisterUses = 0;
-                    inst.forEachArg([&] (Arg& arg, Arg::Role role, Bank, Width) {
-                        if (arg.isAddr() && arg.isAnyUse(role) && !arg.isValidForm(inst.kind.opcode)) {
-                            GPRReg reg = extendedOffsetAddrRegister();
-                            m_jit->move(CCallHelpers::TrustedImmPtr(arg.offset()), reg);
-                            m_jit->addPtr(arg.base().gpr(), reg);
-                            arg = Arg::addr(Tmp(reg));
-                            ++pinnedRegisterUses;
-                            RELEASE_ASSERT(pinnedRegisterUses < 2);
-                            return;
-                        }
-                    });
                     --instIndex;
                     isReplayingSameInst = true;
                     continue;
@@ -891,6 +897,8 @@ void GenerateAndAllocateRegisters::generate(CCallHelpers& jit)
 
                 isReplayingSameInst = false;
             }
+            if (inst.kind.opcode != Patch)
+                lowerInstOffsets(inst, *m_jit);
 
             if (m_code.needsUsedRegisters() && inst.kind.opcode == Patch) {
                 RegisterSetBuilder registerSetBuilder;

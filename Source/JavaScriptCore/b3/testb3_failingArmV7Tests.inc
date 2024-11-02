@@ -4,8 +4,6 @@
 "testAtomicWeakCAS",
 "testAtomicXchg",
 "testCall",
-"testCallFunctionWithHellaArguments",
-"testCallFunctionWithHellaArguments3",
 "testCallPairResult",
 "testCallPairResultRare",
 "testCeilIToD64",
