@@ -148,10 +148,10 @@ public:
     static Ref<NetworkConnectionToWebProcess> create(NetworkProcess&, WebCore::ProcessIdentifier, PAL::SessionID, NetworkProcessConnectionParameters&&, IPC::Connection::Identifier);
     virtual ~NetworkConnectionToWebProcess();
 
-    using IPC::Connection::Client::ptrCount;
-    using IPC::Connection::Client::ptrCountWithoutThreadCheck;
-    using IPC::Connection::Client::incrementPtrCount;
-    using IPC::Connection::Client::decrementPtrCount;
+    using IPC::Connection::Client::checkedPtrCount;
+    using IPC::Connection::Client::checkedPtrCountWithoutThreadCheck;
+    using IPC::Connection::Client::incrementCheckedPtrCount;
+    using IPC::Connection::Client::decrementCheckedPtrCount;
 
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const { return m_sharedPreferencesForWebProcess; }
     void updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess&& sharedPreferencesForWebProcess) { m_sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess); }

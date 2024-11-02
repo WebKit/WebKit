@@ -77,10 +77,10 @@ public:
     USING_CAN_MAKE_WEAKPTR(ResponsivenessTimer::Client);
 
     // ProcessLauncher::Client
-    uint32_t ptrCount() const final { return IPC::Connection::Client::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const final { return IPC::Connection::Client::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const final { IPC::Connection::Client::incrementPtrCount(); }
-    void decrementPtrCount() const final { IPC::Connection::Client::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const final { return IPC::Connection::Client::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const final { return IPC::Connection::Client::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const final { IPC::Connection::Client::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const final { IPC::Connection::Client::decrementCheckedPtrCount(); }
 
     virtual ~AuxiliaryProcessProxy();
 

@@ -629,7 +629,7 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 void operator delete(T* object, std::destroying_delete_t, size_t size) { \
     ASSERT(sizeof(T) == size); \
     object->T::~T(); \
-    if (UNLIKELY(object->ptrCountWithoutThreadCheck())) { \
+    if (UNLIKELY(object->checkedPtrCountWithoutThreadCheck())) { \
         memset(static_cast<void*>(object), 0, size); \
         return; \
     } \

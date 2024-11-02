@@ -51,10 +51,10 @@ public:
     virtual void workerGlobalScopeDestroyed() = 0;
 
     // CanMakeCheckedPtr.
-    virtual uint32_t ptrCount() const = 0;
-    virtual uint32_t ptrCountWithoutThreadCheck() const = 0;
-    virtual void incrementPtrCount() const = 0;
-    virtual void decrementPtrCount() const = 0;
+    virtual uint32_t checkedPtrCount() const = 0;
+    virtual uint32_t checkedPtrCountWithoutThreadCheck() const = 0;
+    virtual void incrementCheckedPtrCount() const = 0;
+    virtual void decrementCheckedPtrCount() const = 0;
 };
 
 } // namespace WebCore

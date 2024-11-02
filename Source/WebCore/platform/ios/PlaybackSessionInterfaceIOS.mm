@@ -132,24 +132,24 @@ WTFLogChannel& PlaybackSessionInterfaceIOS::logChannel() const
     return LogMedia;
 }
 
-uint32_t PlaybackSessionInterfaceIOS::ptrCount() const
+uint32_t PlaybackSessionInterfaceIOS::checkedPtrCount() const
 {
-    return CanMakeCheckedPtr::ptrCount();
+    return CanMakeCheckedPtr::checkedPtrCount();
 }
 
-uint32_t PlaybackSessionInterfaceIOS::ptrCountWithoutThreadCheck() const
+uint32_t PlaybackSessionInterfaceIOS::checkedPtrCountWithoutThreadCheck() const
 {
-    return CanMakeCheckedPtr::ptrCountWithoutThreadCheck();
+    return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck();
 }
 
-void PlaybackSessionInterfaceIOS::incrementPtrCount() const
+void PlaybackSessionInterfaceIOS::incrementCheckedPtrCount() const
 {
-    CanMakeCheckedPtr::incrementPtrCount();
+    CanMakeCheckedPtr::incrementCheckedPtrCount();
 }
 
-void PlaybackSessionInterfaceIOS::decrementPtrCount() const
+void PlaybackSessionInterfaceIOS::decrementCheckedPtrCount() const
 {
-    CanMakeCheckedPtr::decrementPtrCount();
+    CanMakeCheckedPtr::decrementCheckedPtrCount();
 }
 
 #endif

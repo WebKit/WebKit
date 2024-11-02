@@ -75,10 +75,10 @@ public:
     }
 
     // CanMakeCheckedPtr.
-    uint32_t ptrCount() const { return CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const { return CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const { CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::incrementPtrCount(); }
-    void decrementPtrCount() const { CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const { return CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const { return CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const { CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const { CanMakeThreadSafeCheckedPtr<DummyServiceWorkerThreadProxy>::decrementCheckedPtrCount(); }
 
 private:
     void postExceptionToWorkerObject(const String&, int, int, const String&) final { };

@@ -57,10 +57,10 @@ public:
     void postTaskToAudioWorklet(Function<void(AudioWorklet&)>&&);
     ScriptExecutionContextIdentifier loaderContextIdentifier() const final;
 
-    uint32_t ptrCount() const { return CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const { return CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const { CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::incrementPtrCount(); }
-    void decrementPtrCount() const { CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const { return CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const { return CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const { CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const { CanMakeThreadSafeCheckedPtr<AudioWorkletMessagingProxy>::decrementCheckedPtrCount(); }
 
 private:
     explicit AudioWorkletMessagingProxy(AudioWorklet&);

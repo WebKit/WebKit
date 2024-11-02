@@ -48,10 +48,10 @@ public:
     explicit WorkerMessagingProxy(Worker&);
     virtual ~WorkerMessagingProxy();
 
-    uint32_t ptrCount() const { return CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy>::ptrCount(); }
-    uint32_t ptrCountWithoutThreadCheck() const { return CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy>::ptrCountWithoutThreadCheck(); }
-    void incrementPtrCount() const { CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy>::incrementPtrCount(); }
-    void decrementPtrCount() const { CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy>::decrementPtrCount(); }
+    uint32_t checkedPtrCount() const { return CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy>::checkedPtrCount(); }
+    uint32_t checkedPtrCountWithoutThreadCheck() const { return CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy>::checkedPtrCountWithoutThreadCheck(); }
+    void incrementCheckedPtrCount() const { CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy>::incrementCheckedPtrCount(); }
+    void decrementCheckedPtrCount() const { CanMakeThreadSafeCheckedPtr<WorkerMessagingProxy>::decrementCheckedPtrCount(); }
 
 private:
     // Implementations of WorkerGlobalScopeProxy.
