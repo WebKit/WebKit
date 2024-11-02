@@ -1,0 +1,46 @@
+setViewScale(0.50)
+PASS:  window size scaled correctly
+PASS:  square size scaled correctly
+PASS:  zoom scale accounts for both target scale and initial scale
+
+setViewScale(0.75)
+PASS:  window size scaled correctly
+PASS:  square size scaled correctly
+PASS:  zoom scale accounts for both target scale and initial scale
+
+setViewScale(1.00)
+PASS:  window size scaled correctly
+PASS:  square size scaled correctly
+PASS:  zoom scale accounts for both target scale and initial scale
+
+setViewScale(1.25)
+PASS:  window size scaled correctly
+PASS:  square size scaled correctly
+PASS:  zoom scale accounts for both target scale and initial scale
+
+setViewScale(1.50)
+PASS:  window size scaled correctly
+PASS:  square size scaled correctly
+PASS:  zoom scale accounts for both target scale and initial scale
+
+setViewScale(1.25)
+PASS:  window size scaled correctly
+PASS:  square size scaled correctly
+PASS:  zoom scale accounts for both target scale and initial scale
+
+setViewScale(1.00)
+PASS:  window size scaled correctly
+PASS:  square size scaled correctly
+PASS:  zoom scale accounts for both target scale and initial scale
+
+setViewScale(0.75)
+PASS:  window size scaled correctly
+PASS:  square size scaled correctly
+PASS:  zoom scale accounts for both target scale and initial scale
+
+setViewScale(0.50)
+PASS:  window size scaled correctly
+PASS:  square size scaled correctly
+PASS:  zoom scale accounts for both target scale and initial scale
+
+
