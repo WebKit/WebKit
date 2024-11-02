@@ -527,7 +527,7 @@ void MediaSession::updateCaptureState(bool isActive, DOMPromiseDeferred<void>&& 
         return;
     }
 
-    if (isActive && (document->topDocument().hidden() || !UserGestureIndicator::currentUserGesture())) {
+    if (isActive && (document->hidden() || !UserGestureIndicator::currentUserGesture())) {
         promise.reject(Exception { ExceptionCode::InvalidStateError, "Activating capture must be called from a user gesture handler."_s });
         return;
     }

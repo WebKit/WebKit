@@ -283,7 +283,7 @@ void MediaDevices::getDisplayMedia(DisplayMediaStreamConstraints&& constraints, 
     }
 
     // FIXME: We use hidden while the spec is using focus, let's revisit when when spec is made clearer.
-    if (!document->isFullyActive() || document->topDocument().hidden()) {
+    if (!document->isFullyActive() || document->hidden()) {
         promise.reject(Exception { ExceptionCode::InvalidStateError, "Document is not fully active or does not have focus"_s });
         return;
     }

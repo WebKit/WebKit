@@ -5446,7 +5446,7 @@ void Document::setShouldListenToVoiceActivity(bool shouldListen)
 
 void Document::voiceActivityDetected()
 {
-    if (!isFullyActive() || topDocument().hidden() || !hasMutedAudioCaptureDevice())
+    if (!isFullyActive() || hidden() || !hasMutedAudioCaptureDevice())
         return;
 
     RefPtr window = domWindow();
