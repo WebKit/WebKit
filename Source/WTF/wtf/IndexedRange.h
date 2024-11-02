@@ -27,6 +27,40 @@
 
 namespace WTF {
 
+template<typename Collection, typename Iterator> class BoundsCheckedIterator {
+public:
+    BoundsCheckedIterator(const Collection& collection, Iterator&& iterator)
+        : m_iterator(iterator)
+        , m_end(collection.end())
+    {
+    }
+
+    BoundsCheckedIterator& operator++()
+    {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        RELEASE_ASSERT(m_iterator != m_end);
+        ++m_iterator;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+        return *this;
+    }
+
+    auto operator*() const
+    {
+        RELEASE_ASSERT(m_iterator != m_end);
+        return *m_iterator;
+    }
+
+    bool operator==(const BoundsCheckedIterator& other) const
+    {
+        return m_iterator == other.m_iterator;
+    }
+
+private:
+    Iterator m_iterator;
+    Iterator m_end;
+};
+
 template<typename Iterator> class IndexedRangeIterator {
 public:
     IndexedRangeIterator(Iterator&& iterator)
@@ -37,9 +71,7 @@ public:
     IndexedRangeIterator& operator++()
     {
         ++m_index;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         ++m_iterator;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return *this;
     }
 
@@ -61,16 +93,16 @@ private:
 // Usage: for (auto [ index, value ] : IndexedRange(collection)) { ... }
 template<typename T> class IndexedRange {
 public:
-    IndexedRange(const T& range)
-        : m_range(range)
+    IndexedRange(const T& collection)
+        : m_collection(collection)
     {
     }
 
-    auto begin() { return IndexedRangeIterator(m_range.begin()); }
-    auto end() { return IndexedRangeIterator(m_range.end()); }
+    auto begin() { return IndexedRangeIterator(BoundsCheckedIterator(m_collection, m_collection.begin())); }
+    auto end() { return IndexedRangeIterator(BoundsCheckedIterator(m_collection, m_collection.end())); }
 
 private:
-    const T& m_range;
+    const T& m_collection;
 };
 
 } // namespace WTF
