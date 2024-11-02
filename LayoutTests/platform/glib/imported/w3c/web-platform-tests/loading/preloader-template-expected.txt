@@ -1,0 +1,7 @@
+main frame - didStartProvisionalLoadForFrame
+main frame - didCommitLoadForFrame
+main frame - didFinishDocumentLoadForFrame
+main frame - didHandleOnloadEventsForFrame
+
+PASS Things inside templates are not preloaded
+
