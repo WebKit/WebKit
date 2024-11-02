@@ -1,4 +1,12 @@
+CONSOLE MESSAGE: Unhandled Promise Rejection: TypeError: audioContext.setSinkId is not a function. (In 'audioContext.setSinkId(silentSinkOption)', 'audioContext.setSinkId' is undefined)
+
+Harness Error (FAIL), message = Unhandled rejection: audioContext.setSinkId is not a function. (In 'audioContext.setSinkId(silentSinkOption)', 'audioContext.setSinkId' is undefined)
 
 FAIL Calling setSinkId() on a suspended AudioContext should fire only sink change events. promise_test: Unhandled rejection with value: object "TypeError: audioContext.setSinkId is not a function. (In 'audioContext.setSinkId(firstDeviceId)', 'audioContext.setSinkId' is undefined)"
-FAIL Calling setSinkId() on a running AudioContext should fire both state and sink change events. promise_test: Unhandled rejection with value: object "TypeError: audioContext.setSinkId is not a function. (In 'audioContext.setSinkId(firstDeviceId)', 'audioContext.setSinkId' is undefined)"
+TIMEOUT Calling setSinkId() on a running AudioContext should fire both state and sink change events. Test timed out
+
+Harness Error (FAIL), message = Unhandled rejection: audioContext.setSinkId is not a function. (In 'audioContext.setSinkId(silentSinkOption)', 'audioContext.setSinkId' is undefined)
+
+FAIL Calling setSinkId() on a suspended AudioContext should fire only sink change events. promise_test: Unhandled rejection with value: object "TypeError: audioContext.setSinkId is not a function. (In 'audioContext.setSinkId(firstDeviceId)', 'audioContext.setSinkId' is undefined)"
+TIMEOUT Calling setSinkId() on a running AudioContext should fire both state and sink change events. Test timed out
 

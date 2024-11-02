@@ -1,0 +1,5 @@
+
+FAIL Call close on a closed AudioContext assert_unreached: Should have rejected: A closed AudioContext should reject calls to close Reached unreachable code
+PASS Call resume on a closed AudioContext
+PASS Call suspend on a closed AudioContext
+
