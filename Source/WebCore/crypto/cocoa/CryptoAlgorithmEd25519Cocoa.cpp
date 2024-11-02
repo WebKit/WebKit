@@ -51,7 +51,7 @@ static ExceptionOr<Vector<uint8_t>> signEd25519(const Vector<uint8_t>& sk, const
 #else
     cced25519_sign(di, newSignature, data.size(), data.data(), pk, sk.data());
 #endif
-    return Vector<uint8_t>(std::span { newSignature, ed25519SignatureSize });
+    return Vector<uint8_t> { std::span { newSignature } };
 }
 
 static ExceptionOr<bool> verifyEd25519(const Vector<uint8_t>& key, const Vector<uint8_t>& signature, const Vector<uint8_t> data)
