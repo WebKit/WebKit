@@ -164,9 +164,6 @@ Ref<const LayoutShape> makeShapeForShapeOutside(const RenderBox& renderer)
         auto shapeRect = computeRoundedRectForBoxShape(shapeValue.effectiveCSSBox(), renderer);
         auto flipForWritingAndInlineDirection = [&] {
             // FIXME: We should consider this moving to RoundedRect::transposedRect.
-            if (isHorizontalWritingMode && writingMode.isBidiLTR())
-                return;
-
             if (!isHorizontalWritingMode) {
                 shapeRect = shapeRect.transposedRect();
                 auto radiiForBlockDirection = shapeRect.radii();

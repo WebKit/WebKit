@@ -134,12 +134,15 @@ Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicSh
             logicalRect.moveBy(borderBoxOffset);
 
             auto boxSize = FloatSize(boxWidth, boxHeight);
-            auto topLeftRadius = physicalSizeToLogical(Style::evaluate(inset->radii.topLeft, boxSize), writingMode);
-            auto topRightRadius = physicalSizeToLogical(Style::evaluate(inset->radii.topRight, boxSize), writingMode);
-            auto bottomLeftRadius = physicalSizeToLogical(Style::evaluate(inset->radii.bottomLeft, boxSize), writingMode);
-            auto bottomRightRadius = physicalSizeToLogical(Style::evaluate(inset->radii.bottomRight, boxSize), writingMode);
-
+            auto isBlockLeftToRight = writingMode.isBlockLeftToRight();
+            auto topLeftRadius = physicalSizeToLogical(Style::evaluate(horizontalWritingMode || isBlockLeftToRight ? inset->radii.topLeft : inset->radii.topRight, boxSize), writingMode);
+            auto topRightRadius = physicalSizeToLogical(Style::evaluate(horizontalWritingMode ? inset->radii.topRight : isBlockLeftToRight ? inset->radii.bottomLeft : inset->radii.bottomRight, boxSize), writingMode);
+            auto bottomLeftRadius = physicalSizeToLogical(Style::evaluate(horizontalWritingMode ? inset->radii.bottomLeft : isBlockLeftToRight ? inset->radii.topRight : inset->radii.topLeft, boxSize), writingMode);
+            auto bottomRightRadius = physicalSizeToLogical(Style::evaluate(horizontalWritingMode ? inset->radii.bottomRight : isBlockLeftToRight ? inset->radii.bottomRight : inset->radii.bottomLeft, boxSize), writingMode);
             auto cornerRadii = FloatRoundedRect::Radii(topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
+            if (writingMode.isBidiRTL())
+                cornerRadii = { cornerRadii.topRight(), cornerRadii.topLeft(), cornerRadii.bottomRight(), cornerRadii.bottomLeft() };
+
             cornerRadii.scale(calcBorderRadiiConstraintScaleFor(logicalRect, cornerRadii));
             return createInsetShape(FloatRoundedRect { logicalRect, cornerRadii });
         },
