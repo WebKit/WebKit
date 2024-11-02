@@ -437,10 +437,11 @@ class SimulatedDeviceManager(object):
             requests = [requests]
 
         # Parse user-specified UDIDs
+        udids = udids or []
         if type(udids) is str:
             udids = udids.split(',')
 
-        # Check running sims
+        # Check for running simulators.
         deferred_booted_devices = []
         for device in cls.available_devices(host):
             matched_request = cls._does_fulfill_request(device, requests, True)
@@ -448,21 +449,18 @@ class SimulatedDeviceManager(object):
                 continue
 
             device_is_booted = device.platform_device.is_booted_or_booting()
-            if udids and device.platform_device.udid not in udids:
-                # Only add booted devices, we'll add non-booted if we still need them later
-                if device_is_booted:
+            if device.platform_device.udid not in udids:
+                if device_is_booted:  # Defer booted devices that weren't requested, resorting to non-booted if we still need them later
                     deferred_booted_devices.append((matched_request, device))
-                continue
             else:
+                # For specified UDIDs, either use or boot them immediately
                 cls._boot_device(device, host) if not device_is_booted else SimulatedDeviceManager.INITIALIZED_DEVICES.append(device)
+                _log.debug(u'Attached to requested simulator {}'.format(device))
+                requests.remove(matched_request)
+                requests = cls._validate_running_device_against_requests(requests, device)
 
-            _log.debug(u'Attached to requested simulator {}'.format(device))
-            requests.remove(matched_request)
-            requests = cls._validate_running_device_against_requests(requests, device)
-
-        # If the user passed UDIDs, we should check for matches among remaining booted devices and
-        # then resort to using any available ones or creating new ones that match the requests.
-        if udids and len(deferred_booted_devices) and len(requests):
+        # Check for matches among remaining booted simulators.
+        if len(deferred_booted_devices) and len(requests):
             for matched_request, device in deferred_booted_devices:
                 _log.debug(u'Attached to running simulator {}'.format(device))
                 requests.remove(matched_request)
@@ -475,6 +473,8 @@ class SimulatedDeviceManager(object):
         if len(requests):
             _log.debug(f'Running{"/specified" if udids else ""} simulators did not satisfy request. Finding matching non-booted ones, and/or creating new ones to satisfy the request.')
 
+        # Check for any other matching simulators that can satisfy the request.
+        # If none are found, we create and boot new ones.
         for request in requests:
             device = cls._create_or_find_device_for_request(request, host, name_base)
             assert device is not None
