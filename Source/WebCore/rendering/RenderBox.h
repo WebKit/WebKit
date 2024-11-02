@@ -647,6 +647,9 @@ public:
 
     LayoutUnit computeIntrinsicLogicalWidthUsing(Length logicalWidthLength, LayoutUnit availableLogicalWidth, LayoutUnit borderAndPadding) const;
 
+    bool includeVerticalScrollbarSize() const;
+    bool includeHorizontalScrollbarSize() const;
+
 protected:
     RenderBox(Type, Element&, RenderStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
     RenderBox(Type, Document&, RenderStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
@@ -729,9 +732,6 @@ private:
     bool fixedElementLaysOutRelativeToFrame(const LocalFrameView&) const;
 
     template<typename Function> LayoutUnit computeOrTrimInlineMargin(const RenderBlock& containingBlock, MarginTrimType marginSide, const Function& computeInlineMargin) const;
-
-    bool includeVerticalScrollbarSize() const;
-    bool includeHorizontalScrollbarSize() const;
 
     bool isScrollableOrRubberbandableBox() const override;
 
