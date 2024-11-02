@@ -192,6 +192,11 @@ bool WebGLMultiDraw::validateOffset(WebGLRenderingContextBase& context, ASCIILit
         return false;
     }
 
+    if (offset >= static_cast<GCGLuint>(size)) {
+        m_context->synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, outOfBoundsDescription);
+        return false;
+    }
+
     if (offset > static_cast<GCGLuint>(size - drawcount)) {
         context.synthesizeGLError(GraphicsContextGL::INVALID_OPERATION, functionName, outOfBoundsDescription);
         return false;
