@@ -239,7 +239,7 @@ CandidateExaminationResult ScrollAnchoringController::examineAnchorCandidate(Ele
 
         if (isExcludedSubtree(renderer, intersects))
             return CandidateExaminationResult::Exclude;
-        if (&element == document->bodyOrFrameset() || is<HTMLHtmlElement>(&element) || (renderer->isInline() && !renderer->isAtomicInlineLevelBox()))
+        if (&element == document->bodyOrFrameset() || is<HTMLHtmlElement>(&element) || (is<RenderBox>(renderer) && renderer->isInline() && !renderer->isAtomicInlineLevelBox()))
             return CandidateExaminationResult::Skip;
         if (!boxRect.width() || !boxRect.height())
             return CandidateExaminationResult::Skip;
