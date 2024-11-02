@@ -135,5 +135,15 @@ void decorateWritingToolsTextReplacements(Document& document, const SimpleRange&
 }
 #endif
 
+void setSelection(Document& document, const SimpleRange& scope, const CharacterRange& range)
+{
+    auto resolvedRange = resolveCharacterRange(scope, range);
+    auto visibleSelection = VisibleSelection { resolvedRange };
+    if (visibleSelection.isNoneOrOrphaned())
+        return;
+
+    document.selection().setSelection(visibleSelection);
+}
+
 } // namespace IntelligenceTextEffectsSupport
 } // namespace WebCore

@@ -960,6 +960,12 @@ void WebPage::proofreadingSessionDidUpdateStateForSuggestion(const WebCore::Writ
     corePage()->proofreadingSessionDidUpdateStateForSuggestion(session, state, suggestion, context);
 }
 
+void WebPage::willEndWritingToolsSession(const WebCore::WritingTools::Session& session, bool accepted, CompletionHandler<void()>&& completionHandler)
+{
+    corePage()->willEndWritingToolsSession(session, accepted);
+    completionHandler();
+}
+
 void WebPage::didEndWritingToolsSession(const WebCore::WritingTools::Session& session, bool accepted)
 {
     corePage()->didEndWritingToolsSession(session, accepted);
@@ -1069,6 +1075,12 @@ void WebPage::textPreviewDataForActiveWritingToolsSession(const WebCore::Charact
 void WebPage::decorateTextReplacementsForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, CompletionHandler<void(void)>&& completionHandler)
 {
     corePage()->decorateTextReplacementsForActiveWritingToolsSession(rangeRelativeToSessionRange);
+    completionHandler();
+}
+
+void WebPage::setSelectionForActiveWritingToolsSession(const WebCore::CharacterRange& rangeRelativeToSessionRange, CompletionHandler<void(void)>&& completionHandler)
+{
+    corePage()->setSelectionForActiveWritingToolsSession(rangeRelativeToSessionRange);
     completionHandler();
 }
 

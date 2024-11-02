@@ -64,6 +64,8 @@ public:
 
     void proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session&, WritingTools::TextSuggestion::State, const WritingTools::TextSuggestion&, const WritingTools::Context&);
 
+    void willEndWritingToolsSession(const WritingTools::Session&, bool accepted);
+
     void didEndWritingToolsSession(const WritingTools::Session&, bool accepted);
 
     void compositionSessionDidReceiveTextWithReplacementRange(const WritingTools::Session&, const AttributedString&, const CharacterRange&, const WritingTools::Context&, bool finished);
@@ -180,6 +182,9 @@ private:
 
     template<WritingTools::Session::Type Type>
     void writingToolsSessionDidReceiveAction(WritingTools::Action);
+
+    template<WritingTools::Session::Type Type>
+    void willEndWritingToolsSession(bool accepted);
 
     template<WritingTools::Session::Type Type>
     void didEndWritingToolsSession(bool accepted);

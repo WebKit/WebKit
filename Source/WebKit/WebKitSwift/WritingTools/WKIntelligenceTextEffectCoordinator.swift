@@ -16,6 +16,7 @@ import WebKitSwift
 @_objcImplementation extension WKIntelligenceTextEffectCoordinator {
     private struct ReplacementOperationRequest {
         let processedRange: Range<Int>
+        let finished: Bool
         let characterDelta: Int
         let operation: (() async -> Void)
     }
@@ -76,10 +77,10 @@ import WebKitSwift
         await self.setActivePonderingEffect(effect)
     }
 
-    @objc(requestReplacementWithProcessedRange:characterDelta:operation:completion:)
-    public func requestReplacement(withProcessedRange processedRange: NSRange, characterDelta: Int, operation: @escaping (@escaping () -> Void) -> Void) async {
+    @objc(requestReplacementWithProcessedRange:finished:characterDelta:operation:completion:)
+    public func requestReplacement(withProcessedRange processedRange: NSRange, finished: Bool, characterDelta: Int, operation: @escaping (@escaping () -> Void) -> Void) async {
         let asyncBlock = async(operation)
-        let request = Self.ReplacementOperationRequest(processedRange: Range(processedRange)!, characterDelta: characterDelta, operation: asyncBlock)
+        let request = Self.ReplacementOperationRequest(processedRange: Range(processedRange)!, finished: finished, characterDelta: characterDelta, operation: asyncBlock)
 
         self.replacementQueue.append(request)
 
@@ -112,6 +113,17 @@ import WebKitSwift
         }
     }
 
+    @objc(restoreSelectionAcceptedReplacements:completion:)
+    public func restoreSelection(acceptedReplacements: Bool) async {
+        guard let contextRange = self.contextRange else {
+            assertionFailure()
+            return
+        }
+
+        let range = acceptedReplacements ? contextRange.lowerBound..<(contextRange.upperBound + self.processedRangeOffset) : contextRange;
+        await self.delegate.intelligenceTextEffectCoordinator(self, setSelectionFor: NSRange(range))
+    }
+
     @nonobjc final private func removeActiveEffects() async {
         if self.activePonderingEffect != nil {
             await self.setActivePonderingEffect(nil)
@@ -133,6 +145,7 @@ import WebKitSwift
         let chunk = Self.Chunk.Replacement(
             range: processedRangeRelativeToCurrentText,
             rangeAfterReplacement: processedRangeRelativeToCurrentText.lowerBound..<(processedRangeRelativeToCurrentText.upperBound + characterDelta),
+            finished: request.finished,
             replacement: request.operation
         )
 
@@ -341,12 +354,28 @@ extension WKIntelligenceTextEffectCoordinator: PlatformIntelligenceTextEffectVie
             return
         }
 
+        guard let chunk = effect.chunk as? Chunk.Replacement else {
+            assertionFailure("Intelligence text effect coordinator: Replacement effect chunk is not Chunk.Replacement")
+            return
+        }
+
         // At this point, the text has been replaced, and the effect's chunk's range has been updated to account for the latest character delta.
-        let rangeAfterReplacement = effect.chunk.range
+        let rangeAfterReplacement = chunk.range
 
         // Inform the coordinator the active replacement effect is over, and then inform the delegate to decorate the replacements if needed.
         await self.setActiveReplacementEffect(nil)
         await self.delegate.intelligenceTextEffectCoordinator(self, decorateReplacementsFor: NSRange(rangeAfterReplacement))
+
+        // If this is the last chunk, that means that there will be no subsequent replacements, and no replacements other than
+        // this one are in the replacement queue.
+        //
+        // Therefore, the entire animation is over and the selection can be restored to the context range.
+
+        if chunk.finished {
+            self.replacementQueue.removeFirst()
+            await self.restoreSelectionAcceptedReplacements(true)
+            return
+        }
 
         // Now that the coordinator is in-between replacements, if a flush has previously been requested, flush out
         // all the remaining replacements from the queue as fast as possible and without any effects.
@@ -392,10 +421,12 @@ extension WKIntelligenceTextEffectCoordinator {
 
         fileprivate class Replacement: Chunk {
             let rangeAfterReplacement: Range<Int>
+            let finished: Bool
             let replacement: (() async -> Void)
 
-            init(range: Range<Int>, rangeAfterReplacement: Range<Int>, replacement: @escaping (() async -> Void)) {
+            init(range: Range<Int>, rangeAfterReplacement: Range<Int>, finished: Bool, replacement: @escaping (() async -> Void)) {
                 self.rangeAfterReplacement = rangeAfterReplacement
+                self.finished = finished
                 self.replacement = replacement
                 super.init(range: range)
             }
@@ -426,12 +457,10 @@ extension WKIntelligenceTextEffectCoordinator.Chunk: Hashable, Equatable {
 // MARK: Misc. helper functions
 
 /// Converts a block with a completion handler into an async block.
-fileprivate func async<each Arg>(_ block: @escaping (@escaping (repeat each Arg) -> Void) -> Void) -> (() async -> (repeat each Arg)) {
+fileprivate func async(_ block: @escaping (@escaping () -> Void) -> Void) -> (() async -> Void) {
     { @MainActor in
         await withCheckedContinuation { continuation in
-            block { (args: repeat each Arg) in
-                continuation.resume(returning: (repeat each args))
-            }
+            block(continuation.resume)
         }
     }
 }

@@ -772,7 +772,7 @@ void WritingToolsController::writingToolsSessionDidReceiveAction(const WritingTo
 }
 
 template<>
-void WritingToolsController::didEndWritingToolsSession<WritingTools::Session::Type::Proofreading>(bool accepted)
+void WritingToolsController::willEndWritingToolsSession<WritingTools::Session::Type::Proofreading>(bool accepted)
 {
     RefPtr document = this->document();
 
@@ -802,8 +802,28 @@ void WritingToolsController::didEndWritingToolsSession<WritingTools::Session::Ty
 
         return false;
     });
+}
 
-    state = nullptr;
+template<>
+void WritingToolsController::willEndWritingToolsSession<WritingTools::Session::Type::Composition>(bool)
+{
+}
+
+void WritingToolsController::willEndWritingToolsSession(const WritingTools::Session& session, bool accepted)
+{
+    switch (session.type) {
+    case WritingTools::Session::Type::Proofreading:
+        willEndWritingToolsSession<WritingTools::Session::Type::Proofreading>(accepted);
+        break;
+    case WritingTools::Session::Type::Composition:
+        willEndWritingToolsSession<WritingTools::Session::Type::Composition>(accepted);
+        break;
+    }
+}
+
+template<>
+void WritingToolsController::didEndWritingToolsSession<WritingTools::Session::Type::Proofreading>(bool)
+{
     m_state = { };
 }
 

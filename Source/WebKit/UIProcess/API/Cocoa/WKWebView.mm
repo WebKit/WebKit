@@ -2115,7 +2115,6 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 
 - (void)willBeginWritingToolsSession:(WTSession *)session requestContexts:(void (^)(NSArray<WTContext *> *))completion
 {
-    NSLog(@"RR_CODES willBeginWritingToolsSession");
     auto webSession = WebKit::convertToWebSession(session);
 
     if (session) {
@@ -2201,7 +2200,7 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
         });
     });
 
-    [_intelligenceTextEffectCoordinator requestReplacementWithProcessedRange:range characterDelta:delta operation:operation.get() completion:^{ }];
+    [_intelligenceTextEffectCoordinator requestReplacementWithProcessedRange:range finished:finished characterDelta:delta operation:operation.get() completion:^{ }];
 }
 
 - (void)proofreadingSession:(WTSession *)session didUpdateState:(WTTextSuggestionState)state forSuggestionWithUUID:(NSUUID *)suggestionUUID inContext:(WTContext *)context
@@ -2246,13 +2245,29 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
     _activeWritingToolsSession = nil;
     [_writingToolsTextSuggestions removeAllObjects];
 
+    if (session.type != WTSessionTypeProofreading) {
+        _page->didEndWritingToolsSession(*webSession, accepted);
+        return;
+    }
+
+    // Flush and invoke all replacement operations, then dismiss the markers (and revert the text if not accepted),
+    // then set the selection to the updated context range, and finally clear the state in the web process.
+    //
+    // It's possible that the selection has already been restored by this point if the entire animation has already
+    // finished, but this is not guaranteed.
+
     [_intelligenceTextEffectCoordinator flushReplacementsWithCompletion:makeBlockPtr([webSession, accepted, weakSelf = WeakObjCPtr<WKWebView>(self)] {
         auto strongSelf = weakSelf.get();
         if (!strongSelf)
             return;
 
         strongSelf->_page->setWritingToolsActive(false);
-        strongSelf->_page->didEndWritingToolsSession(*webSession, accepted);
+
+        strongSelf->_page->willEndWritingToolsSession(*webSession, accepted, [webSession, accepted, weakSelf] {
+            [weakSelf.get()->_intelligenceTextEffectCoordinator restoreSelectionAcceptedReplacements:accepted completion:makeBlockPtr([webSession, accepted, weakSelf] {
+                weakSelf.get()->_page->didEndWritingToolsSession(*webSession, accepted);
+            }).get()];
+        });
     }).get()];
 }
 
@@ -2405,6 +2420,13 @@ static _WKSelectionAttributes selectionAttributes(const WebKit::EditorState& edi
 - (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator decorateReplacementsForRange:(NSRange)range completion:(void (^)(void))completion
 {
     _page->decorateTextReplacementsForActiveWritingToolsSession(range, [completion = makeBlockPtr(completion)] {
+        completion();
+    });
+}
+
+- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator setSelectionForRange:(NSRange)range completion:(void (^)(void))completion
+{
+    _page->setSelectionForActiveWritingToolsSession(range, [completion = makeBlockPtr(completion)] {
         completion();
     });
 }

@@ -5030,6 +5030,11 @@ void Page::proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Se
     m_writingToolsController->proofreadingSessionDidUpdateStateForSuggestion(session, state, suggestion, context);
 }
 
+void Page::willEndWritingToolsSession(const WritingTools::Session& session, bool accepted)
+{
+    m_writingToolsController->willEndWritingToolsSession(session, accepted);
+}
+
 void Page::didEndWritingToolsSession(const WritingTools::Session& session, bool accepted)
 {
     m_writingToolsController->didEndWritingToolsSession(session, accepted);
@@ -5130,6 +5135,24 @@ void Page::decorateTextReplacementsForActiveWritingToolsSession(const CharacterR
     }
 
     IntelligenceTextEffectsSupport::decorateWritingToolsTextReplacements(*document, *scope, rangeRelativeToSessionRange);
+}
+
+void Page::setSelectionForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange)
+{
+    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
+    if (!document) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    auto scope = m_writingToolsController->activeSessionRange();
+    if (!scope) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    IntelligenceTextEffectsSupport::setSelection(*document, *scope, rangeRelativeToSessionRange);
 }
 
 std::optional<SimpleRange> Page::contextRangeForActiveWritingToolsSession() const

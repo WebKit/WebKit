@@ -59,6 +59,8 @@ NS_SWIFT_UI_ACTOR
 
 - (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator decorateReplacementsForRange:(NSRange)range completion:(void (^)(void))completion;
 
+- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator setSelectionForRange:(NSRange)range completion:(void (^)(void))completion;
+
 @end
 
 NS_SWIFT_UI_ACTOR
@@ -70,9 +72,11 @@ NS_SWIFT_UI_ACTOR
 
 - (void)startAnimationForRange:(NSRange)range completion:(void (^)(void))completion;
 
-- (void)requestReplacementWithProcessedRange:(NSRange)range characterDelta:(NSInteger)characterDelta operation:(void (^)(void (^)(void)))operation completion:(void (^)(void))completion;
+- (void)requestReplacementWithProcessedRange:(NSRange)range finished:(BOOL)finished characterDelta:(NSInteger)characterDelta operation:(void (^)(void (^)(void)))operation completion:(void (^)(void))completion;
 
 - (void)flushReplacementsWithCompletion:(void (^)(void))completion;
+
+- (void)restoreSelectionAcceptedReplacements:(BOOL)acceptedReplacements completion:(void (^)(void))completion;
 
 @end
 

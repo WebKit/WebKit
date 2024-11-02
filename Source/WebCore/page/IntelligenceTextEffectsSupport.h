@@ -52,6 +52,8 @@ WEBCORE_EXPORT std::optional<TextIndicatorData> textPreviewDataForRange(Document
 WEBCORE_EXPORT void decorateWritingToolsTextReplacements(Document&, const SimpleRange& scope, const CharacterRange&);
 #endif
 
+WEBCORE_EXPORT void setSelection(Document&, const SimpleRange& scope, const CharacterRange&);
+
 } // namespace IntelligenceTextEffectsSupport
 
 } // namespace WebCore
