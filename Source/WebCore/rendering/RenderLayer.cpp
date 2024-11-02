@@ -3535,7 +3535,6 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
     bool haveTransparency = localPaintFlags.contains(PaintLayerFlag::HaveTransparency);
     bool isPaintingOverlayScrollbars = localPaintFlags.contains(PaintLayerFlag::PaintingOverlayScrollbars);
-    bool isPaintingScrollingContent = localPaintFlags.contains(PaintLayerFlag::PaintingCompositingScrollingPhase);
     bool isPaintingCompositedForeground = localPaintFlags.contains(PaintLayerFlag::PaintingCompositingForegroundPhase);
     bool isPaintingCompositedBackground = localPaintFlags.contains(PaintLayerFlag::PaintingCompositingBackgroundPhase);
     bool isPaintingOverflowContents = localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContents);
@@ -3544,16 +3543,37 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
     bool isSelfPaintingLayer = this->isSelfPaintingLayer();
 
-    // Outline always needs to be painted even if we have no visible content. Also,
-    // the outline is painted in the background phase during composited scrolling.
-    // If it were painted in the foreground phase, it would move with the scrolled
-    // content. When not composited scrolling, the outline is painted in the
-    // foreground phase. Since scrolled contents are moved by repainting in this
-    // case, the outline won't get 'dragged along'.
-    bool shouldPaintOutline = isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion && !isCollectingAccessibilityRegion
-        && (renderer().view().printing() || renderer().view().hasRenderersWithOutline())
-        && ((isPaintingScrollingContent && isPaintingCompositedBackground)
-        || (!isPaintingScrollingContent && isPaintingCompositedForeground));
+    bool shouldPaintOutline = [&]() {
+        if (!isSelfPaintingLayer)
+            return false;
+
+        if (isPaintingOverlayScrollbars || isCollectingEventRegion || isCollectingAccessibilityRegion)
+            return false;
+
+        // For the current layer, the outline has been painted by the primary GraphicsLayer.
+        if (localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContents))
+            return false;
+
+        // Paint outlines in the background phase for a scroll container so that they don't scroll with the content.
+        // FIXME: inset outlines will have the wrong z-ordering with scrolled content. See also webkit.org/b/249457.
+        if (localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContainer))
+            return isPaintingCompositedBackground;
+
+        return isPaintingCompositedForeground;
+    }();
+
+    bool shouldPaintNegativeZIndexChildren = [&]() {
+        if (localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContainer))
+            return false;
+
+        if (localPaintFlags.contains(PaintLayerFlag::PaintingOverflowContents)) {
+            // Overflow contents has the "PaintingCompositingForegroundPhase" phase,
+            // but we need to paint negative z-index layers here so they scroll with the content.
+            return true;
+        }
+
+        return isPaintingCompositedBackground;
+    }();
 
     auto hasVisibleContent = [&]() -> bool {
         if (!m_hasVisibleContent)
@@ -3712,7 +3732,7 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
         }
 
         // Now walk the sorted list of children with negative z-indices.
-        if ((isPaintingScrollingContent && isPaintingOverflowContents) || (!isPaintingScrollingContent && isPaintingCompositedBackground))
+        if (shouldPaintNegativeZIndexChildren)
             paintList(negativeZOrderLayers(), currentContext, paintingInfo, localPaintFlags);
         
         if (isPaintingCompositedForeground) {
@@ -6310,6 +6330,32 @@ TextStream& operator<<(TextStream& ts, PaintBehavior behavior)
 
     return ts;
 }
+
+TextStream& operator<<(TextStream& ts, RenderLayer::PaintLayerFlag flag)
+{
+    switch (flag) {
+    case RenderLayer::PaintLayerFlag::HaveTransparency: ts << "HaveTransparency"; break;
+    case RenderLayer::PaintLayerFlag::AppliedTransform: ts << "AppliedTransform"; break;
+    case RenderLayer::PaintLayerFlag::TemporaryClipRects: ts << "TemporaryClipRects"; break;
+    case RenderLayer::PaintLayerFlag::PaintingReflection: ts << "PaintingReflection"; break;
+    case RenderLayer::PaintLayerFlag::PaintingOverlayScrollbars: ts << "PaintingOverlayScrollbars"; break;
+    case RenderLayer::PaintLayerFlag::PaintingCompositingBackgroundPhase: ts << "PaintingCompositingBackgroundPhase"; break;
+    case RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase: ts << "PaintingCompositingForegroundPhase"; break;
+    case RenderLayer::PaintLayerFlag::PaintingCompositingMaskPhase: ts << "PaintingCompositingMaskPhase"; break;
+    case RenderLayer::PaintLayerFlag::PaintingCompositingClipPathPhase: ts << "PaintingCompositingClipPathPhase"; break;
+    case RenderLayer::PaintLayerFlag::PaintingOverflowContainer: ts << "PaintingOverflowContainer"; break;
+    case RenderLayer::PaintLayerFlag::PaintingOverflowContents: ts << "PaintingOverflowContents"; break;
+    case RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly: ts << "PaintingRootBackgroundOnly"; break;
+    case RenderLayer::PaintLayerFlag::PaintingSkipRootBackground: ts << "PaintingSkipRootBackground"; break;
+    case RenderLayer::PaintLayerFlag::PaintingChildClippingMaskPhase: ts << "PaintingChildClippingMaskPhase"; break;
+    case RenderLayer::PaintLayerFlag::PaintingSVGClippingMask: ts << "PaintingSVGClippingMask"; break;
+    case RenderLayer::PaintLayerFlag::CollectingEventRegion: ts << "CollectingEventRegion"; break;
+    case RenderLayer::PaintLayerFlag::PaintingSkipDescendantViewTransition: ts << "PaintingSkipDescendantViewTransition"; break;
+    }
+
+    return ts;
+}
+
 
 #undef LAYER_POSITIONS_ASSERT_ENABLED
 #undef LAYER_POSITIONS_ASSERT

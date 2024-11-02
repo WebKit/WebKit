@@ -637,7 +637,7 @@ public:
         PaintingCompositingForegroundPhase    = 1 << 6,
         PaintingCompositingMaskPhase          = 1 << 7,
         PaintingCompositingClipPathPhase      = 1 << 8,
-        PaintingCompositingScrollingPhase     = 1 << 9,
+        PaintingOverflowContainer             = 1 << 9,
         PaintingOverflowContents              = 1 << 10,
         PaintingRootBackgroundOnly            = 1 << 11,
         PaintingSkipRootBackground            = 1 << 12,
@@ -1478,6 +1478,7 @@ WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayer&);
 WTF::TextStream& operator<<(WTF::TextStream&, const RenderLayer::ClipRectsContext&);
 WTF::TextStream& operator<<(WTF::TextStream&, IndirectCompositingReason);
 WTF::TextStream& operator<<(WTF::TextStream&, PaintBehavior);
+WTF::TextStream& operator<<(WTF::TextStream&, RenderLayer::PaintLayerFlag);
 
 } // namespace WebCore
 

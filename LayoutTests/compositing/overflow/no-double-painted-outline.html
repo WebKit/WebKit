@@ -1,0 +1,24 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ AsyncOverflowScrollingEnabled=true ] -->
+<html>
+<head>
+    <style>
+        .scroller {
+            margin: 50px;
+            width: 300px;
+            height: 250px;
+            overflow-y: scroll;
+            outline: 20px solid rgba(0, 128, 0, 0.5);
+            outline-offset: -40px;
+        }
+        
+        .contents {
+            height: 400%;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroller">
+        <div class="contents">&nbsp;</div>
+    </div>
+</body>
+</html>

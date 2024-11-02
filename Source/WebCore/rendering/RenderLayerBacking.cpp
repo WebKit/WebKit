@@ -3570,10 +3570,12 @@ void RenderLayerBacking::paintIntoLayer(const GraphicsLayer* graphicsLayer, Grap
     if (graphicsLayer == destinationForSharingLayers) {
         OptionSet<RenderLayer::PaintLayerFlag> sharingLayerPaintFlags = {
             RenderLayer::PaintLayerFlag::PaintingCompositingBackgroundPhase,
-            RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase };
+            RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase
+        };
 
         if (graphicsLayer->paintingPhase().contains(GraphicsLayerPaintingPhase::OverflowContents))
             sharingLayerPaintFlags.add(RenderLayer::PaintLayerFlag::PaintingOverflowContents);
+
         if (is<EventRegionContext>(regionContext))
             sharingLayerPaintFlags.add(RenderLayer::PaintLayerFlag::CollectingEventRegion);
 
@@ -3602,8 +3604,11 @@ OptionSet<RenderLayer::PaintLayerFlag> RenderLayerBacking::paintFlagsForLayer(co
         paintFlags.add(RenderLayer::PaintLayerFlag::PaintingChildClippingMaskPhase);
     if (paintingPhase.contains(GraphicsLayerPaintingPhase::OverflowContents))
         paintFlags.add(RenderLayer::PaintLayerFlag::PaintingOverflowContents);
-    if (paintingPhase.contains(GraphicsLayerPaintingPhase::CompositedScroll))
-        paintFlags.add(RenderLayer::PaintLayerFlag::PaintingCompositingScrollingPhase);
+
+    if (paintingPhase.contains(GraphicsLayerPaintingPhase::CompositedScroll)) {
+        if (&graphicsLayer == m_graphicsLayer.get())
+            paintFlags.add(RenderLayer::PaintLayerFlag::PaintingOverflowContainer);
+    }
 
     if (&graphicsLayer == m_backgroundLayer.get() && m_backgroundLayerPaintsFixedRootBackground)
         paintFlags.add({ RenderLayer::PaintLayerFlag::PaintingRootBackgroundOnly, RenderLayer::PaintLayerFlag::PaintingCompositingForegroundPhase }); // Need PaintLayerFlag::PaintingCompositingForegroundPhase to walk child layers.
