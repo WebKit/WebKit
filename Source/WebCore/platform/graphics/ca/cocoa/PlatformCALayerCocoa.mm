@@ -1138,10 +1138,13 @@ void PlatformCALayerCocoa::updateContentsFormat()
         BEGIN_BLOCK_OBJC_EXCEPTIONS
         auto contentsFormat = this->contentsFormat();
 
-        [m_layer setContentsFormat:contentsFormatString(contentsFormat)];
+        if (NSString *formatString = contentsFormatString(contentsFormat))
+            [m_layer setContentsFormat:formatString];
 #if HAVE(HDR_SUPPORT)
-        [m_layer setWantsExtendedDynamicRangeContent:contentsFormatWantsExtendedDynamicRangeContent(contentsFormat)];
-        [m_layer setToneMapMode:contentsFormatWantsToneMapMode(contentsFormat) ? CAToneMapModeIfSupported : CAToneMapModeAutomatic];
+        if (contentsFormat == ContentsFormat::RGBA16F) {
+            [m_layer setWantsExtendedDynamicRangeContent:true];
+            [m_layer setToneMapMode:CAToneMapModeIfSupported];
+        }
 #endif
         END_BLOCK_OBJC_EXCEPTIONS
     }

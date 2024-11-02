@@ -69,38 +69,6 @@ constexpr NSString *contentsFormatString(ContentsFormat contentsFormat)
     }
 }
 
-constexpr bool contentsFormatWantsExtendedDynamicRangeContent(ContentsFormat contentsFormat)
-{
-    switch (contentsFormat) {
-    case ContentsFormat::RGBA8:
-        return false;
-#if HAVE(IOSURFACE_RGB10)
-    case ContentsFormat::RGBA10:
-        return true;
-#endif
-#if HAVE(HDR_SUPPORT)
-    case ContentsFormat::RGBA16F:
-        return true;
-#endif
-    }
-}
-
-constexpr bool contentsFormatWantsToneMapMode(ContentsFormat contentsFormat)
-{
-    switch (contentsFormat) {
-    case ContentsFormat::RGBA8:
-        return false;
-#if HAVE(IOSURFACE_RGB10)
-    case ContentsFormat::RGBA10:
-        return false;
-#endif
-#if HAVE(HDR_SUPPORT)
-    case ContentsFormat::RGBA16F:
-        return true;
-#endif
-    }
-}
-
 } // namespace WebCore
 
 #endif // PLATFORM(COCOA)
