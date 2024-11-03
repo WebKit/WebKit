@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja">
+<meta charset="UTF-8">
+<title>width:min-content on div containing implicit ruby bases causes line break</title>
+<link rel="help" href="https://drafts.csswg.org/css-ruby-1/#break-between">
+<link rel="match" href="ruby-min-content-wrap-ref.html">
+<link rel="stylesheet" href="/fonts/ahem.css">
+<style>
+body {
+  font: 16px Ahem;
+}
+div {
+  width: min-content;
+}
+</style>
+<div><ruby>み<rt>mi</rt>ず<rt>zu</rt></ruby></div>
