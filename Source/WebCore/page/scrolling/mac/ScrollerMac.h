@@ -61,6 +61,8 @@ public:
     void updateScrollbarStyle();
     void updatePairScrollerImps();
 
+    void setHiddenByStyle(NativeScrollbarVisibility);
+
     void updateValues();
     
     String scrollbarState() const;
@@ -80,6 +82,7 @@ private:
 
     bool m_isEnabled { false };
     bool m_isVisible { false };
+    bool m_isHiddenByStyle { false };
 
     ScrollerPairMac& m_pair;
     const ScrollbarOrientation m_orientation;

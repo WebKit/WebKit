@@ -350,6 +350,20 @@ void ScrollerMac::setHostLayer(CALayer *layer)
     updatePairScrollerImps();
 }
 
+void ScrollerMac::setHiddenByStyle(NativeScrollbarVisibility visibility)
+{
+    m_isHiddenByStyle = visibility != NativeScrollbarVisibility::Visible;
+    if (m_isHiddenByStyle) {
+        detach();
+        setScrollerImp(nullptr);
+    } else {
+        attach();
+        [m_scrollerImp setLayer:m_hostLayer.get()];
+        updateValues();
+    }
+    updatePairScrollerImps();
+}
+
 void ScrollerMac::updateValues()
 {
     auto values = m_pair.valuesForOrientation(m_orientation);
@@ -372,7 +386,7 @@ void ScrollerMac::updateScrollbarStyle()
 
 void ScrollerMac::updatePairScrollerImps()
 {
-    NSScrollerImp *scrollerImp = m_hostLayer ? m_scrollerImp.get() : nil;
+    NSScrollerImp *scrollerImp = m_scrollerImp.get();
     if (m_orientation == ScrollbarOrientation::Vertical)
         m_pair.setVerticalScrollerImp(scrollerImp);
     else
@@ -438,6 +452,8 @@ void ScrollerMac::updateMinimumKnobLength(int minimumKnobLength)
 
 void ScrollerMac::setScrollerImp(NSScrollerImp *imp)
 {
+    if (m_isHiddenByStyle && imp)
+        return;
     m_scrollerImp = imp;
     updateMinimumKnobLength([m_scrollerImp knobMinLength]);
 }

@@ -1631,7 +1631,8 @@ http/tests/webgpu/webgpu/shader/execution/flow_control/switch.html [ Pass ]
 
 webkit.org/b/264266 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-002.html [ ImageOnlyFailure ]
 
-webkit.org/b/264306 [ Sonoma+ ] fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html [ Pass ImageOnlyFailure Timeout ]
+webkit.org/b/264306 fast/scrolling/mac/scrollbars/very-wide-overlay-scrollbar.html [ Pass ImageOnlyFailure Timeout ]
+[ Ventura ] fast/scrolling/mac/scrollbars/scrollbar-width-dynamic-none-to-auto.html [ ImageOnlyFailure ]
 
 webkit.org/b/265599 [ Sonoma+ Debug x86_64 ] imported/w3c/web-platform-tests/html/browsers/the-window-object/open-close/open-features-tokenization-noreferrer.html [ Pass Crash ]
 

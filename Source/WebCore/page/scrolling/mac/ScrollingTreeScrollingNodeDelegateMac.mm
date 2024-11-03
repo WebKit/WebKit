@@ -70,17 +70,15 @@ void ScrollingTreeScrollingNodeDelegateMac::updateFromStateNode(const ScrollingS
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollbarHoverState))
         m_scrollerPair->mouseIsInScrollbar(scrollingStateNode.scrollbarHoverState());
     
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer) && scrollingNode().horizontalNativeScrollbarVisibility() == NativeScrollbarVisibility::Visible)
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::HorizontalScrollbarLayer))
         m_scrollerPair->horizontalScroller().setHostLayer(static_cast<CALayer*>(scrollingStateNode.horizontalScrollbarLayer()));
     
-    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer) && scrollingNode().verticalNativeScrollbarVisibility() == NativeScrollbarVisibility::Visible)
+    if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::VerticalScrollbarLayer))
         m_scrollerPair->verticalScroller().setHostLayer(static_cast<CALayer*>(scrollingStateNode.verticalScrollbarLayer()));
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollableAreaParams)) {
-        if (scrollingStateNode.scrollableAreaParameters().horizontalNativeScrollbarVisibility != NativeScrollbarVisibility::Visible)
-            m_scrollerPair->horizontalScroller().setHostLayer(nullptr);
-        if (scrollingStateNode.scrollableAreaParameters().verticalNativeScrollbarVisibility != NativeScrollbarVisibility::Visible)
-            m_scrollerPair->verticalScroller().setHostLayer(nullptr);
+        m_scrollerPair->horizontalScroller().setHiddenByStyle(scrollingStateNode.scrollableAreaParameters().horizontalNativeScrollbarVisibility);
+        m_scrollerPair->verticalScroller().setHiddenByStyle(scrollingStateNode.scrollableAreaParameters().verticalNativeScrollbarVisibility);
     }
 
     if (scrollingStateNode.hasChangedProperty(ScrollingStateNode::Property::ScrollbarEnabledState)) {
