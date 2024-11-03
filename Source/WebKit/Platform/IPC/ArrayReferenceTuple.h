@@ -50,6 +50,12 @@ public:
         return std::get<I>(m_data);
     }
 
+    template<unsigned I>
+    auto span() const
+    {
+        return unsafeMakeSpan(std::get<I>(m_data), m_size);
+    }
+
 private:
     size_t m_size { 0 };
     std::tuple<const Types*...> m_data;

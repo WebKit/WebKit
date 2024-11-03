@@ -73,8 +73,6 @@
 
 #include <wtf/NativePromise.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 
 using namespace WebCore;
@@ -820,7 +818,7 @@ void RemoteMediaPlayerProxy::mediaPlayerKeyNeeded(const SharedBuffer& message)
 #if ENABLE(ENCRYPTED_MEDIA)
 void RemoteMediaPlayerProxy::mediaPlayerInitializationDataEncountered(const String& initDataType, RefPtr<ArrayBuffer>&& initData)
 {
-    protectedConnection()->send(Messages::MediaPlayerPrivateRemote::InitializationDataEncountered(initDataType, std::span<const uint8_t>(static_cast<uint8_t*>(initData->data()), initData->byteLength())), m_id);
+    protectedConnection()->send(Messages::MediaPlayerPrivateRemote::InitializationDataEncountered(initDataType, initData->mutableSpan()), m_id);
 }
 
 void RemoteMediaPlayerProxy::mediaPlayerWaitingForKeyChanged()
@@ -1327,7 +1325,5 @@ void RemoteMediaPlayerProxy::audioOutputDeviceChanged(String&& deviceId)
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(VIDEO)

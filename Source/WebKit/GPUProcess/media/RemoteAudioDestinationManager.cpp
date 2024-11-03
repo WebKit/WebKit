@@ -44,8 +44,6 @@
 #include <WebCore/WebAudioBufferList.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #define MESSAGE_CHECK(assertion, message) MESSAGE_CHECK_WITH_MESSAGE_BASE(assertion, &connection->connection(), message)
 #define MESSAGE_CHECK_COMPLETION(assertion, completion) MESSAGE_CHECK_COMPLETION_BASE(assertion, connection->connection(), completion)
 
@@ -143,10 +141,8 @@ private:
     void incrementTotalFrameCount(UInt32 numberOfFrames)
     {
         static_assert(std::atomic<UInt32>::is_always_lock_free, "Shared memory atomic usage assumes lock free primitives are used");
-        if (m_frameCount) {
-            RELEASE_ASSERT(m_frameCount->size() == sizeof(std::atomic<uint32_t>));
-            WTF::atomicExchangeAdd(reinterpret_cast<uint32_t*>(m_frameCount->mutableSpan().data()), numberOfFrames);
-        }
+        if (m_frameCount)
+            WTF::atomicExchangeAdd(spanReinterpretCast<uint32_t>(m_frameCount->mutableSpan()).data(), numberOfFrames);
     }
 
     OSStatus render(double sampleTime, uint64_t hostTime, UInt32 numberOfFrames, AudioBufferList* ioData)
@@ -284,7 +280,5 @@ std::optional<SharedPreferencesForWebProcess> RemoteAudioDestinationManager::sha
 } // namespace WebKit
 
 #undef MESSAGE_CHECK
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)

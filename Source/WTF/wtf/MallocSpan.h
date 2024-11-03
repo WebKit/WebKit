@@ -67,6 +67,16 @@ public:
     std::span<T> mutableSpan() { return m_span; }
     std::span<T> leakSpan() WARN_UNUSED_RETURN { return std::exchange(m_span, std::span<T>()); }
 
+    explicit operator bool() const
+    {
+        return m_span.data();
+    }
+
+    bool operator!() const
+    {
+        return !m_span.data();
+    }
+
     static MallocSpan malloc(size_t sizeInBytes)
     {
         return MallocSpan { static_cast<T*>(Malloc::malloc(sizeInBytes)), sizeInBytes };
