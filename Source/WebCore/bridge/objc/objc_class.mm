@@ -31,6 +31,7 @@
 #import "objc_instance.h"
 #import <JavaScriptCore/JSGlobalObjectInlines.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -123,10 +124,8 @@ Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
     ClassStructPtr thisClass = _isa;
     
     while (thisClass && !methodPtr) {
-        unsigned numMethodsInClass = 0;
-        MethodStructPtr* objcMethodList = class_copyMethodList(thisClass, &numMethodsInClass);
-        for (unsigned i = 0; i < numMethodsInClass; i++) {
-            MethodStructPtr objcMethod = objcMethodList[i];
+        auto objcMethodList = class_copyMethodListSpan(thisClass);
+        for (auto& objcMethod : objcMethodList.span()) {
             SEL objcMethodSelector = method_getName(objcMethod);
             const char* objcMethodSelectorName = sel_getName(objcMethodSelector);
             NSString* mappedName = nil;
@@ -150,7 +149,6 @@ Method* ObjcClass::methodNamed(PropertyName propertyName, Instance*) const
             }
         }
         thisClass = class_getSuperclass(thisClass);
-        free(objcMethodList);
     }
 
     return methodPtr;

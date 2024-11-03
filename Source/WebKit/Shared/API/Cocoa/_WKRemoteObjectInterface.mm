@@ -29,6 +29,7 @@
 #import <objc/runtime.h>
 #import <wtf/HashMap.h>
 #import <wtf/NeverDestroyed.h>
+#import <wtf/ObjCRuntimeExtras.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/Vector.h>
 #import <wtf/text/CString.h>
@@ -120,11 +121,9 @@ static void initializeMethod(MethodInfo& methodInfo, Protocol *protocol, SEL sel
 
 static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *protocol, bool requiredMethods)
 {
-    unsigned methodCount;
-    struct objc_method_description *rawMethods = protocol_copyMethodDescriptionList(protocol, requiredMethods, true, &methodCount);
+    auto methods = protocol_copyMethodDescriptionListSpan(protocol, requiredMethods, true);
 
-    auto methods = unsafeMakeSpan(rawMethods, methodCount);
-    for (auto& method : methods) {
+    for (auto& method : methods.span()) {
         SEL selector = method.name;
 
         ASSERT(!interface->_methods.contains(selector));
@@ -138,23 +137,16 @@ static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *pro
 
         initializeMethod(methodInfo, protocol, selector, methodSignature, false);
     }
-
-    free(methods.data());
 }
 
 static void initializeMethods(_WKRemoteObjectInterface *interface, Protocol *protocol)
 {
-    unsigned conformingProtocolCount;
-    auto rawConformingProtocols = protocol_copyProtocolList(protocol, &conformingProtocolCount);
-    auto conformingProtocols = unsafeMakeSpan(rawConformingProtocols, conformingProtocolCount);
-
-    for (auto& conformingProtocol : conformingProtocols) {
+    auto conformingProtocols = protocol_copyProtocolListSpan(protocol);
+    for (auto* conformingProtocol : conformingProtocols.span()) {
         if (conformingProtocol == @protocol(NSObject))
             continue;
         initializeMethods(interface, conformingProtocol);
     }
-
-    free(conformingProtocols.data());
 
     initializeMethods(interface, protocol, true);
     initializeMethods(interface, protocol, false);

@@ -90,6 +90,7 @@
 		46449E8B2822E5680005A8BC /* WeakHashCountedSet.h in Headers */ = {isa = PBXBuildFile; fileRef = 46449E8A2822E5670005A8BC /* WeakHashCountedSet.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		465005D82CD2840A00950C5F /* MallocSpan.h in Headers */ = {isa = PBXBuildFile; fileRef = 465005D72CD2840A00950C5F /* MallocSpan.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4655743627F5FC4A002D5522 /* ASCIILiteralCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4655743527F5FC4A002D5522 /* ASCIILiteralCocoa.mm */; };
+		465F34932CD824AF000963B1 /* ObjCRuntimeExtras.mm in Sources */ = {isa = PBXBuildFile; fileRef = 465F34922CD824AF000963B1 /* ObjCRuntimeExtras.mm */; };
 		466D69112BA4E433005D43F4 /* SpanCocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 466D69102BA4E433005D43F4 /* SpanCocoa.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		467DCD532CD4689A0040C644 /* UnicodeExtras.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 467DCD522CD4689A0040C644 /* UnicodeExtras.cpp */; };
 		46BEB6EB22FFE24900269867 /* RefCounted.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 46BEB6E922FFDDD500269867 /* RefCounted.cpp */; };
@@ -1226,6 +1227,7 @@
 		46449E8A2822E5670005A8BC /* WeakHashCountedSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeakHashCountedSet.h; sourceTree = "<group>"; };
 		465005D72CD2840A00950C5F /* MallocSpan.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MallocSpan.h; sourceTree = "<group>"; };
 		4655743527F5FC4A002D5522 /* ASCIILiteralCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ASCIILiteralCocoa.mm; sourceTree = "<group>"; };
+		465F34922CD824AF000963B1 /* ObjCRuntimeExtras.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCRuntimeExtras.mm; sourceTree = "<group>"; };
 		466D69102BA4E433005D43F4 /* SpanCocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpanCocoa.h; sourceTree = "<group>"; };
 		467DCD522CD4689A0040C644 /* UnicodeExtras.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = UnicodeExtras.cpp; sourceTree = "<group>"; };
 		46BA9EAB1F4CD61E009A2BBC /* CompletionHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CompletionHandler.h; sourceTree = "<group>"; };
@@ -2358,6 +2360,7 @@
 				A8A472D5151A825B004123FF /* NumberOfCores.cpp */,
 				A8A472D6151A825B004123FF /* NumberOfCores.h */,
 				7E29C33D15FFD79B00516D61 /* ObjCRuntimeExtras.h */,
+				465F34922CD824AF000963B1 /* ObjCRuntimeExtras.mm */,
 				8348BA0D21FBC0D400FD3054 /* ObjectIdentifier.cpp */,
 				83A8AC3D1FABBE94002064AC /* ObjectIdentifier.h */,
 				CD48A87024C8A21600F5800C /* Observer.h */,
@@ -4155,6 +4158,7 @@
 				51B07F542AB8797300E14EE9 /* NativePromise.cpp in Sources */,
 				5CC0EE8A2162BC2200A1A842 /* NSURLExtras.mm in Sources */,
 				A8A473F4151A825B004123FF /* NumberOfCores.cpp in Sources */,
+				465F34932CD824AF000963B1 /* ObjCRuntimeExtras.mm in Sources */,
 				8348BA0E21FBC0D500FD3054 /* ObjectIdentifier.cpp in Sources */,
 				A3EE5C3A21FFAC5F00FABD61 /* OSAllocatorPOSIX.cpp in Sources */,
 				53FC70D023FB950C005B1990 /* OSLogPrintStream.mm in Sources */,
