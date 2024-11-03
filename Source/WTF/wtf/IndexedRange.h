@@ -71,12 +71,12 @@ private:
     Iterator m_end;
 };
 
-template<typename Collection> auto begin(const Collection& collection)
+template<typename Collection> auto boundsCheckedBegin(const Collection& collection)
 {
     return BoundsCheckedIterator<Collection, decltype(collection.begin())>::begin(collection);
 }
 
-template<typename Collection> auto end(const Collection& collection)
+template<typename Collection> auto boundsCheckedEnd(const Collection& collection)
 {
     return BoundsCheckedIterator<Collection, decltype(collection.end())>::end(collection);
 }
@@ -113,17 +113,17 @@ private:
 // Usage: for (auto [ index, value ] : IndexedRange(collection)) { ... }
 template<typename Collection>
 class IndexedRange {
-    using Iterator = IndexedRangeIterator<decltype(WTF::begin(std::declval<Collection>()))>;
+    using Iterator = IndexedRangeIterator<decltype(boundsCheckedBegin(std::declval<Collection>()))>;
 public:
     IndexedRange(const Collection& collection)
-        : m_begin(WTF::begin(collection))
-        , m_end(WTF::end(collection))
+        : m_begin(boundsCheckedBegin(collection))
+        , m_end(boundsCheckedEnd(collection))
     {
     }
 
     IndexedRange(Collection&& collection)
-        : m_begin(WTF::begin(collection))
-        , m_end(WTF::end(collection))
+        : m_begin(boundsCheckedBegin(collection))
+        , m_end(boundsCheckedEnd(collection))
     {
         // Prevent use after destruction of a returned temporary.
         static_assert(std::ranges::borrowed_range<Collection>);
