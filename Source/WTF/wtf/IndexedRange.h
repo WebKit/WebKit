@@ -111,18 +111,30 @@ private:
 };
 
 // Usage: for (auto [ index, value ] : IndexedRange(collection)) { ... }
-template<typename Collection> class IndexedRange {
+template<typename Collection>
+class IndexedRange {
+    using Iterator = IndexedRangeIterator<decltype(WTF::begin(std::declval<Collection>()))>;
 public:
     IndexedRange(const Collection& collection)
-        : m_collection(collection)
+        : m_begin(WTF::begin(collection))
+        , m_end(WTF::end(collection))
     {
     }
 
-    auto begin() { return IndexedRangeIterator(WTF::begin(m_collection)); }
-    auto end() { return IndexedRangeIterator(WTF::end(m_collection)); }
+    IndexedRange(Collection&& collection)
+        : m_begin(WTF::begin(collection))
+        , m_end(WTF::end(collection))
+    {
+        // Prevent use after destruction of a returned temporary.
+        static_assert(std::ranges::borrowed_range<Collection>);
+    }
+
+    auto begin() { return m_begin; }
+    auto end() { return m_end; }
 
 private:
-    const Collection& m_collection;
+    Iterator m_begin;
+    Iterator m_end;
 };
 
 } // namespace WTF
