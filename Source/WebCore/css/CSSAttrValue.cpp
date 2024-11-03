@@ -44,6 +44,8 @@ bool CSSAttrValue::equals(const CSSAttrValue& other) const
 
     if (fallback && otherFallback)
         return m_attributeName == other.m_attributeName && fallback->stringValue() == otherFallback->stringValue();
+    if (fallback || otherFallback)
+        return false;
     return m_attributeName == other.m_attributeName;
 }
 
