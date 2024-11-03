@@ -1742,7 +1742,7 @@ RefPtr<Element> AccessibilityRenderObject::rootEditableElementForPosition(const 
     RefPtr rootEditableElement = position.rootEditableElement();
 
     for (RefPtr ancestor = position.anchorElementAncestor(); ancestor && ancestor != rootEditableElement; ancestor = ancestor->parentElement()) {
-        if (nodeIsTextControl(*ancestor))
+        if (elementIsTextControl(*ancestor))
             result = ancestor;
         if (ancestor->hasTagName(bodyTag))
             break;
@@ -1750,10 +1750,10 @@ RefPtr<Element> AccessibilityRenderObject::rootEditableElementForPosition(const 
     return result ? result : rootEditableElement;
 }
 
-bool AccessibilityRenderObject::nodeIsTextControl(const Node& node) const
+bool AccessibilityRenderObject::elementIsTextControl(const Element& element) const
 {
     auto* cache = axObjectCache();
-    auto* axObject = cache ? cache->getOrCreate(const_cast<Node&>(node)) : nullptr;
+    auto* axObject = cache ? cache->getOrCreate(const_cast<Element&>(element)) : nullptr;
     return axObject && axObject->isTextControl();
 }
 

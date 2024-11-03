@@ -1163,8 +1163,8 @@ void AXObjectCache::remove(Node& node)
         m_deferredSelectedChildredChangedList.remove(*nodeElement);
         m_deferredModalChangedList.remove(*nodeElement);
         m_deferredMenuListChange.remove(*nodeElement);
+        m_deferredElementAddedOrRemovedList.remove(*nodeElement);
     }
-    m_deferredNodeAddedOrRemovedList.remove(node);
     m_deferredTextChangedList.remove(node);
 }
 
@@ -1430,42 +1430,38 @@ void AXObjectCache::onTextRunsChanged(const RenderObject& renderer)
 }
 #endif
 
-void AXObjectCache::handleMenuOpened(Node& node)
+void AXObjectCache::handleMenuOpened(Element& element)
 {
-    if (!node.renderer() || !nodeHasRole(&node, "menu"_s))
+    if (!element.renderer() || !nodeHasRole(&element, "menu"_s))
         return;
 
-    postNotification(getOrCreate(node), protectedDocument().ptr(), AXMenuOpened);
+    postNotification(getOrCreate(element), protectedDocument().ptr(), AXMenuOpened);
 }
 
-void AXObjectCache::handleLiveRegionCreated(Node& node)
+void AXObjectCache::handleLiveRegionCreated(Element& element)
 {
-    RefPtr element = dynamicDowncast<Element>(node);
-    if (!element || !node.renderer())
+    if (!element.renderer())
         return;
 
-    auto liveRegionStatus = element->attributeWithoutSynchronization(aria_liveAttr);
+    auto liveRegionStatus = element.attributeWithoutSynchronization(aria_liveAttr);
     if (liveRegionStatus.isEmpty()) {
-        const AtomString& ariaRole = element->attributeWithoutSynchronization(roleAttr);
+        const AtomString& ariaRole = element.attributeWithoutSynchronization(roleAttr);
         if (!ariaRole.isEmpty())
             liveRegionStatus = AtomString { AccessibilityObject::defaultLiveRegionStatusForRole(AccessibilityObject::ariaRoleToWebCoreRole(ariaRole)) };
     }
 
     if (AXCoreObject::liveRegionStatusIsEnabled(liveRegionStatus))
-        postNotification(getOrCreate(node), protectedDocument().ptr(), AXLiveRegionCreated);
+        postNotification(getOrCreate(element), protectedDocument().ptr(), AXLiveRegionCreated);
 }
 
-void AXObjectCache::deferNodeAddedOrRemoved(Node* node)
+void AXObjectCache::deferElementAddedOrRemoved(Element* element)
 {
-    if (!node)
+    if (!element)
         return;
 
-    m_deferredNodeAddedOrRemovedList.add(*node);
-
-    if (auto* changedElement = dynamicDowncast<Element>(node)) {
-        if (isModalElement(*changedElement))
-            deferModalChange(*changedElement);
-    }
+    m_deferredElementAddedOrRemovedList.add(*element);
+    if (isModalElement(*element))
+        deferModalChange(*element);
 
     if (!m_performCacheUpdateTimer.isActive())
         m_performCacheUpdateTimer.startOneShot(0_s);
@@ -1481,10 +1477,10 @@ void AXObjectCache::deferAddUnconnectedNode(AccessibilityObject& axObject)
 }
 #endif
 
-void AXObjectCache::childrenChanged(Node* node, Node* changedChild)
+void AXObjectCache::childrenChanged(Node* node, Element* changedChild)
 {
     childrenChanged(get(node));
-    deferNodeAddedOrRemoved(changedChild);
+    deferElementAddedOrRemoved(changedChild);
 }
 
 void AXObjectCache::childrenChanged(RenderObject* renderer, RenderObject* changedChild)
@@ -1494,7 +1490,7 @@ void AXObjectCache::childrenChanged(RenderObject* renderer, RenderObject* change
 
     childrenChanged(get(*renderer));
     if (changedChild)
-        deferNodeAddedOrRemoved(changedChild->node());
+        deferElementAddedOrRemoved(dynamicDowncast<Element>(changedChild->node()));
 }
 
 void AXObjectCache::childrenChanged(AccessibilityObject* object)
@@ -1673,55 +1669,54 @@ void AXObjectCache::postNotification(AccessibilityObject& object, AXNotification
         m_notificationPostTimer.startOneShot(0_s);
 }
 
-void AXObjectCache::checkedStateChanged(Node& node)
+void AXObjectCache::checkedStateChanged(Element& element)
 {
-    postNotification(&node, AXCheckedStateChanged);
+    postNotification(&element, AXCheckedStateChanged);
 }
 
-void AXObjectCache::autofillTypeChanged(Node& node)
+void AXObjectCache::autofillTypeChanged(HTMLInputElement& element)
 {
-    postNotification(&node, AXNotification::AXAutofillTypeChanged);
+    postNotification(&element, AXNotification::AXAutofillTypeChanged);
 }
 
-void AXObjectCache::handleMenuItemSelected(Node* node)
+void AXObjectCache::handleMenuItemSelected(Element* element)
 {
-    RefPtr element = dynamicDowncast<Element>(node);
     if (!element)
         return;
 
-    if (!nodeHasRole(node, "menuitem"_s) && !nodeHasRole(node, "menuitemradio"_s) && !nodeHasRole(node, "menuitemcheckbox"_s))
+    if (!nodeHasRole(element, "menuitem"_s) && !nodeHasRole(element, "menuitemradio"_s) && !nodeHasRole(element, "menuitemcheckbox"_s))
         return;
 
     if (!element->focused() && !equalLettersIgnoringASCIICase(element->attributeWithoutSynchronization(aria_selectedAttr), "true"_s))
         return;
 
-    postNotification(getOrCreate(*node), protectedDocument().ptr(), AXMenuListItemSelected);
+    postNotification(getOrCreate(*element), protectedDocument().ptr(), AXMenuListItemSelected);
 }
 
-// FIXME: Consider also handling updating SelectedChildren of TabLists (this should happen for the oldNode, newNode, and/or the parent of a tab)
-void AXObjectCache::handleTabPanelSelected(Node* oldNode, Node* newNode)
+// FIXME: Consider also handling updating SelectedChildren of TabLists (this should happen for the oldElement, newElement, and/or the parent of a tab)
+void AXObjectCache::handleTabPanelSelected(Element* oldElement, Element* newElement)
 {
-    auto updateTab = [this] (AccessibilityObject* controlPanel, Node& focusedNode) {
+    auto updateTab = [this] (AccessibilityObject* controlPanel, Element& element) {
         if (!controlPanel)
             return;
 
         auto controllers = controlPanel->controllers();
         for (auto& controller : controllers)
-            postNotification(dynamicDowncast<AccessibilityObject>(controller.get()), focusedNode.protectedDocument().ptr(), AXSelectedStateChanged);
+            postNotification(dynamicDowncast<AccessibilityObject>(controller.get()), element.protectedDocument().ptr(), AXSelectedStateChanged);
     };
 
 
-    RefPtr oldObject = get(oldNode);
+    RefPtr oldObject = get(oldElement);
     RefPtr<AccessibilityObject> oldFocusedControlledPanel;
     if (oldObject) {
         oldFocusedControlledPanel = Accessibility::findAncestor<AccessibilityObject>(*oldObject, false, [] (auto& ancestor) {
             return ancestor.roleValue() == AccessibilityRole::TabPanel;
         });
 
-        updateTab(oldFocusedControlledPanel.get(), *oldNode);
+        updateTab(oldFocusedControlledPanel.get(), *oldElement);
     }
 
-    RefPtr newObject = get(newNode);
+    RefPtr newObject = get(newElement);
     if (!newObject)
         return;
 
@@ -1730,7 +1725,7 @@ void AXObjectCache::handleTabPanelSelected(Node* oldNode, Node* newNode)
     });
 
     if (oldFocusedControlledPanel != newFocusedControlledPanel)
-        updateTab(newFocusedControlledPanel.get(), *newNode);
+        updateTab(newFocusedControlledPanel.get(), *newElement);
 }
 
 void AXObjectCache::handleRowCountChanged(AccessibilityObject* axObject, Document* document)
@@ -1832,18 +1827,18 @@ void AXObjectCache::deferModalChange(Element& element)
         m_performCacheUpdateTimer.startOneShot(0_s);
 }
 
-void AXObjectCache::handleFocusedUIElementChanged(Node* oldNode, Node* newNode, UpdateModal updateModal)
+void AXObjectCache::handleFocusedUIElementChanged(Element* oldElement, Element* newElement, UpdateModal updateModal)
 {
     if (updateModal == UpdateModal::Yes)
         updateCurrentModalNode();
-    handleMenuItemSelected(newNode);
+    handleMenuItemSelected(newElement);
 
     // FIXME: Consider creating a new ancestor flag to only do this work when |oldNode| or |newNode| have a tab panel ancestor (the only time it is necessary)
-    handleTabPanelSelected(oldNode, newNode);
+    handleTabPanelSelected(oldElement, newElement);
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    setIsolatedTreeFocusedObject(focusedObjectForNode(newNode));
+    setIsolatedTreeFocusedObject(focusedObjectForNode(newElement));
 #endif
-    platformHandleFocusedUIElementChanged(oldNode, newNode);
+    platformHandleFocusedUIElementChanged(oldElement, newElement);
 }
 
 void AXObjectCache::selectedChildrenChanged(Node* node)
@@ -1870,23 +1865,23 @@ void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar& scrollbar)
 #endif
 }
 
-void AXObjectCache::onSelectedChanged(Node& node)
+void AXObjectCache::onSelectedChanged(Element& element)
 {
-    if (nodeHasCellRole(&node))
-        postNotification(&node, AXSelectedCellsChanged);
-    else if (is<HTMLOptionElement>(node))
-        postNotification(&node, AXSelectedStateChanged);
-    else if (auto* axObject = getOrCreate(node)) {
+    if (nodeHasCellRole(&element))
+        postNotification(&element, AXSelectedCellsChanged);
+    else if (is<HTMLOptionElement>(element))
+        postNotification(&element, AXSelectedStateChanged);
+    else if (auto* axObject = getOrCreate(element)) {
         if (auto* ancestor = Accessibility::findAncestor<AccessibilityObject>(*axObject, false, [] (const auto& object) {
             return object.canHaveSelectedChildren();
         })) {
             selectedChildrenChanged(ancestor->node());
-            postNotification(axObject, node.protectedDocument().ptr(), AXSelectedStateChanged);
+            postNotification(axObject, element.protectedDocument().ptr(), AXSelectedStateChanged);
         }
     }
 
-    handleMenuItemSelected(&node);
-    handleTabPanelSelected(nullptr, &node);
+    handleMenuItemSelected(&element);
+    handleTabPanelSelected(nullptr, &element);
 }
 
 void AXObjectCache::onStyleChange(Element& element, Style::Change change, const RenderStyle* newStyle, const RenderStyle* oldStyle)
@@ -2370,12 +2365,12 @@ void AXObjectCache::handleScrollbarUpdate(ScrollView& view)
     }
 }
 
-void AXObjectCache::handleAriaExpandedChange(Node& node)
+void AXObjectCache::handleAriaExpandedChange(Element& element)
 {
     // An aria-expanded change can cause two notifications to be posted:
     // RowCountChanged for the tree or table ancestor of this object, and
     // RowExpanded/Collapsed for this object.
-    if (RefPtr object = get(node)) {
+    if (RefPtr object = get(element)) {
         // Find the ancestor that supports RowCountChanged if exists.
         auto* ancestor = Accessibility::findAncestor<AccessibilityObject>(*object, false, [] (auto& candidate) {
             return candidate.supportsRowCountChange();
@@ -2978,7 +2973,7 @@ CharacterOffset AXObjectCache::traverseToOffsetInRange(const SimpleRange& range,
                     } else if (auto* shadowHost = currentNode->shadowHost()) {
                         // Since we are entering text controls, we should set the currentNode
                         // to be the shadow host when there's no content.
-                        if (nodeIsTextControl(*shadowHost) && currentNode->isShadowRoot()) {
+                        if (elementIsTextControl(*shadowHost) && currentNode->isShadowRoot()) {
                             currentNode = shadowHost;
                             continue;
                         }
@@ -4025,7 +4020,7 @@ const Element* AXObjectCache::rootAXEditableElement(const Node* node)
         element = node->parentElement();
 
     for (; element; element = element->parentElement()) {
-        if (nodeIsTextControl(*element))
+        if (elementIsTextControl(*element))
             result = element;
     }
 
@@ -4087,7 +4082,7 @@ void AXObjectCache::prepareForDocumentDestruction(const Document& document)
 {
     HashSet<Ref<Node>> nodesToRemove;
     filterWeakListHashSetForRemoval(m_deferredTextChangedList, document, nodesToRemove);
-    filterWeakListHashSetForRemoval(m_deferredNodeAddedOrRemovedList, document, nodesToRemove);
+    filterWeakListHashSetForRemoval(m_deferredElementAddedOrRemovedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredRecomputeIsIgnoredList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredRecomputeTableIsExposedList, document, nodesToRemove);
     filterWeakHashSetForRemoval(m_deferredSelectedChildredChangedList, document, nodesToRemove);
@@ -4110,9 +4105,9 @@ void AXObjectCache::prepareForDocumentDestruction(const Document& document)
         remove(node);
 }
     
-bool AXObjectCache::nodeIsTextControl(const Node& node)
+bool AXObjectCache::elementIsTextControl(const Element& element)
 {
-    const auto* axObject = getOrCreate(const_cast<Node&>(node));
+    const auto* axObject = getOrCreate(const_cast<Element&>(element));
     return axObject && axObject->isTextControl();
 }
 
@@ -4186,8 +4181,8 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
     });
     m_deferredRecomputeTableIsExposedList.clear();
 
-    AXLOGDeferredCollection("NodeAddedOrRemovedList"_s, m_deferredNodeAddedOrRemovedList);
-    auto nodeAddedOrRemovedList = copyToVector(m_deferredNodeAddedOrRemovedList);
+    AXLOGDeferredCollection("ElementAddedOrRemovedList"_s, m_deferredElementAddedOrRemovedList);
+    auto nodeAddedOrRemovedList = copyToVector(m_deferredElementAddedOrRemovedList);
     for (auto& weakNode : nodeAddedOrRemovedList) {
         if (RefPtr node = weakNode.get()) {
             handleMenuOpened(*node);
@@ -4199,7 +4194,7 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
             }
         }
     }
-    m_deferredNodeAddedOrRemovedList.clear();
+    m_deferredElementAddedOrRemovedList.clear();
 
     AXLOGDeferredCollection("ChildrenChangedList"_s, m_deferredChildrenChangedList);
     handleAllDeferredChildrenChanged();

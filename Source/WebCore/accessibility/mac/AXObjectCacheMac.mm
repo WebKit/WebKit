@@ -719,7 +719,7 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* a
     }
 }
 
-void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node*)
+void AXObjectCache::platformHandleFocusedUIElementChanged(Element*, Element*)
 {
     NSAccessibilityHandleFocusChanged();
     // AXFocusChanged is a test specific notification name and not something a real AT will be listening for

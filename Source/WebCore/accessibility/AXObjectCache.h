@@ -338,13 +338,13 @@ public:
     void setPageActivityState(OptionSet<ActivityState> state) { m_pageActivityState = state; }
     OptionSet<ActivityState> pageActivityState() const { return m_pageActivityState; }
 
-    void childrenChanged(Node*, Node* newChild = nullptr);
+    void childrenChanged(Node*, Element* newChild = nullptr);
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
     void onFocusChange(Element* oldElement, Element* newElement);
     void onPopoverToggle(const HTMLElement&);
     void onScrollbarFrameRectChange(const Scrollbar&);
-    void onSelectedChanged(Node&);
+    void onSelectedChanged(Element&);
     void onStyleChange(Element&, Style::Change, const RenderStyle* newStyle, const RenderStyle* oldStyle);
     void onTextSecurityChanged(HTMLInputElement&);
     void onTitleChange(Document&);
@@ -352,8 +352,8 @@ public:
     void onTextCompositionChange(Node&, CompositionState, bool, const String&, size_t, bool);
     void onWidgetVisibilityChanged(RenderWidget&);
     void valueChanged(Element&);
-    void checkedStateChanged(Node&);
-    void autofillTypeChanged(Node&);
+    void checkedStateChanged(Element&);
+    void autofillTypeChanged(HTMLInputElement&);
     void handleRoleChanged(AccessibilityObject&);
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -394,11 +394,12 @@ public:
         , WeakHashSet<AccessibilityTable>
         , WeakHashSet<AccessibilityTableCell>
         , WeakListHashSet<Node, WeakPtrImplWithEventTargetData>
+        , WeakListHashSet<Element, WeakPtrImplWithEventTargetData>
         , WeakHashMap<Element, String, WeakPtrImplWithEventTargetData>>;
     void deferFocusedUIElementChangeIfNeeded(Node* oldFocusedNode, Node* newFocusedNode);
     void deferModalChange(Element&);
     void deferMenuListValueChange(Element*);
-    void deferNodeAddedOrRemoved(Node*);
+    void deferElementAddedOrRemoved(Element*);
     void handleScrolledToAnchor(const Node& anchorNode);
     void onScrollbarUpdate(ScrollView&);
     void onRemoteFrameInitialized(AXRemoteFrame&);
@@ -438,7 +439,7 @@ public:
 #endif
 
     const Element* rootAXEditableElement(const Node*);
-    bool nodeIsTextControl(const Node&);
+    bool elementIsTextControl(const Element&);
 
     AccessibilityObject* objectForID(const AXID id) const { return m_objects.get(id); }
     template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&) const;
@@ -613,7 +614,7 @@ private:
 
 protected:
     void postPlatformNotification(AccessibilityObject&, AXNotification);
-    void platformHandleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode);
+    void platformHandleFocusedUIElementChanged(Element* oldFocus, Element* newFocus);
 
     void platformPerformDeferredCacheUpdate();
 
@@ -705,10 +706,10 @@ private:
     void handleAllDeferredChildrenChanged();
     void handleRoleChanged(Element&, const AtomString&, const AtomString&);
     void handleRoleDescriptionChanged(Element&);
-    void handleMenuOpened(Node&);
-    void handleLiveRegionCreated(Node&);
-    void handleMenuItemSelected(Node*);
-    void handleTabPanelSelected(Node*, Node*);
+    void handleMenuOpened(Element&);
+    void handleLiveRegionCreated(Element&);
+    void handleMenuItemSelected(Element*);
+    void handleTabPanelSelected(Element*, Element*);
     void handleRowCountChanged(AccessibilityObject*, Document*);
     void handleAttributeChange(Element*, const QualifiedName&, const AtomString&, const AtomString&);
     bool shouldProcessAttributeChange(Element*, const QualifiedName&);
@@ -716,9 +717,9 @@ private:
     void selectedChildrenChanged(RenderObject*);
     void handleScrollbarUpdate(ScrollView&);
     void handleActiveDescendantChange(Element&, const AtomString&, const AtomString&);
-    void handleAriaExpandedChange(Node&);
+    void handleAriaExpandedChange(Element&);
     enum class UpdateModal : bool { No, Yes };
-    void handleFocusedUIElementChanged(Node* oldFocusedNode, Node* newFocusedNode, UpdateModal = UpdateModal::Yes);
+    void handleFocusedUIElementChanged(Element* oldFocus, Element* newFocus, UpdateModal = UpdateModal::Yes);
     void handleMenuListValueChanged(Element&);
     void handleTextChanged(AccessibilityObject*);
     void handleRecomputeCellSlots(AccessibilityTable&);
@@ -818,13 +819,13 @@ private:
     WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_deferredTextChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredSelectedChildredChangedList;
     ListHashSet<Ref<AccessibilityObject>> m_deferredChildrenChangedList;
-    WeakListHashSet<Node, WeakPtrImplWithEventTargetData> m_deferredNodeAddedOrRemovedList;
+    WeakListHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredElementAddedOrRemovedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredModalChangedList;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_deferredMenuListChange;
     SingleThreadWeakHashSet<ScrollView> m_deferredScrollbarUpdateChangeList;
     WeakHashMap<Element, String, WeakPtrImplWithEventTargetData> m_deferredTextFormControlValue;
     Vector<AttributeChange> m_deferredAttributeChange;
-    std::optional<std::pair<WeakPtr<Node, WeakPtrImplWithEventTargetData>, WeakPtr<Node, WeakPtrImplWithEventTargetData>>> m_deferredFocusedNodeChange;
+    std::optional<std::pair<WeakPtr<Element, WeakPtrImplWithEventTargetData>, WeakPtr<Element, WeakPtrImplWithEventTargetData>>> m_deferredFocusedNodeChange;
     WeakHashSet<AccessibilityObject> m_deferredUnconnectedObjects;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)

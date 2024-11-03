@@ -159,9 +159,9 @@ void AXObjectCache::frameLoadingEventPlatformNotification(AccessibilityObject* a
         postPlatformNotification(*axFrameObject, AXLoadComplete);
 }
 
-void AXObjectCache::platformHandleFocusedUIElementChanged(Node*, Node* newNode)
+void AXObjectCache::platformHandleFocusedUIElementChanged(Element*, Element* newElement)
 {
-    postNotification(newNode, AXFocusedUIElementChanged);
+    postNotification(newElement, AXFocusedUIElementChanged);
 }
 
 void AXObjectCache::handleScrolledToAnchor(const Node&)
