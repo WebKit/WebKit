@@ -29,10 +29,14 @@ namespace WTF {
 
 template<typename Collection, typename Iterator> class BoundsCheckedIterator {
 public:
-    BoundsCheckedIterator(const Collection& collection, Iterator&& iterator)
-        : m_iterator(iterator)
-        , m_end(collection.end())
+    static BoundsCheckedIterator begin(const Collection& collection)
     {
+        return BoundsCheckedIterator(collection, collection.begin());
+    }
+
+    static BoundsCheckedIterator end(const Collection& collection)
+    {
+        return BoundsCheckedIterator(collection, collection.end());
     }
 
     BoundsCheckedIterator& operator++()
@@ -57,9 +61,25 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
 private:
+    BoundsCheckedIterator(const Collection& collection, Iterator&& iterator)
+        : m_iterator(WTFMove(iterator))
+        , m_end(collection.end())
+    {
+    }
+
     Iterator m_iterator;
     Iterator m_end;
 };
+
+template<typename Collection> auto begin(const Collection& collection)
+{
+    return BoundsCheckedIterator<Collection, decltype(collection.begin())>::begin(collection);
+}
+
+template<typename Collection> auto end(const Collection& collection)
+{
+    return BoundsCheckedIterator<Collection, decltype(collection.end())>::end(collection);
+}
 
 template<typename Iterator> class IndexedRangeIterator {
 public:
@@ -91,18 +111,18 @@ private:
 };
 
 // Usage: for (auto [ index, value ] : IndexedRange(collection)) { ... }
-template<typename T> class IndexedRange {
+template<typename Collection> class IndexedRange {
 public:
-    IndexedRange(const T& collection)
+    IndexedRange(const Collection& collection)
         : m_collection(collection)
     {
     }
 
-    auto begin() { return IndexedRangeIterator(BoundsCheckedIterator(m_collection, m_collection.begin())); }
-    auto end() { return IndexedRangeIterator(BoundsCheckedIterator(m_collection, m_collection.end())); }
+    auto begin() { return IndexedRangeIterator(WTF::begin(m_collection)); }
+    auto end() { return IndexedRangeIterator(WTF::end(m_collection)); }
 
 private:
-    const T& m_collection;
+    const Collection& m_collection;
 };
 
 } // namespace WTF
