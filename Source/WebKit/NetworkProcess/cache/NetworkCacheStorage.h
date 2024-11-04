@@ -53,13 +53,23 @@ public:
     static RefPtr<Storage> open(const String& cachePath, Mode, size_t capacity);
 
     struct Record {
+        Record() = default;
+        Record(const Key& key, WallTime timeStamp, const Data& header, const Data& body, std::optional<SHA1::Digest> bodyHash)
+            : key(key)
+            , timeStamp(timeStamp)
+            , header(header)
+            , body(body)
+            , bodyHash(bodyHash)
+        {
+        }
+        Record isolatedCopy() const & { return { crossThreadCopy(key), timeStamp, header, body, bodyHash }; }
+        bool isNull() const { return key.isNull(); }
+
         Key key;
         WallTime timeStamp;
         Data header;
         Data body;
         std::optional<SHA1::Digest> bodyHash;
-
-        WTF_MAKE_TZONE_ALLOCATED(Record);
     };
 
     struct Timings {
@@ -80,10 +90,10 @@ public:
     };
 
     // This may call completion handler synchronously on failure.
-    using RetrieveCompletionHandler = CompletionHandler<bool(std::unique_ptr<Record>, const Timings&)>;
+    using RetrieveCompletionHandler = CompletionHandler<bool(Record&&, const Timings&)>;
     void retrieve(const Key&, unsigned priority, RetrieveCompletionHandler&&);
 
-    using MappedBodyHandler = Function<void (const Data& mappedBody)>;
+    using MappedBodyHandler = Function<void(const Data& mappedBody)>;
     void store(const Record&, MappedBodyHandler&&, CompletionHandler<void(int)>&& = { });
 
     void remove(const Key&);
@@ -136,21 +146,21 @@ private:
     void shrinkIfNeeded();
     void shrink();
 
-    struct ReadOperation;
+    class ReadOperation;
     void dispatchReadOperation(std::unique_ptr<ReadOperation>);
     void dispatchPendingReadOperations();
     void finishReadOperation(ReadOperation&);
     void cancelAllReadOperations();
 
-    struct WriteOperation;
+    class WriteOperation;
     void dispatchWriteOperation(std::unique_ptr<WriteOperation>);
     void dispatchPendingWriteOperations();
     void finishWriteOperation(WriteOperation&, int error = 0);
 
     bool shouldStoreBodyAsBlob(const Data& bodyData);
-    std::optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperation&);
+    std::optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperation&, const Key&, const Data&);
     Data encodeRecord(const Record&, std::optional<BlobStorage::Blob>);
-    void readRecord(ReadOperation&, const Data&);
+    Storage::Record readRecord(const Key&, const Data&);
 
     void updateFileModificationTime(String&& path);
     void removeFromPendingWriteOperations(const Key&);
