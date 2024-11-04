@@ -202,12 +202,12 @@ const RemoteLayerTreeDrawingAreaProxy::ProcessState& RemoteLayerTreeDrawingAreaP
     return *iter.values();
 }
 
-IPC::Connection& RemoteLayerTreeDrawingAreaProxy::connectionForIdentifier(WebCore::ProcessIdentifier processIdentifier)
+IPC::Connection* RemoteLayerTreeDrawingAreaProxy::connectionForIdentifier(WebCore::ProcessIdentifier processIdentifier)
 {
     RefPtr webProcess = WebProcessProxy::processForIdentifier(processIdentifier);
-    RELEASE_ASSERT(webProcess);
-    RELEASE_ASSERT(webProcess->hasConnection());
-    return webProcess->connection();
+    if (webProcess && webProcess->hasConnection())
+        return &webProcess->connection();
+    return nullptr;
 }
 
 void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeNotTriggered(IPC::Connection& connection, TransactionID nextCommitTransactionID)
@@ -405,14 +405,14 @@ void RemoteLayerTreeDrawingAreaProxy::asyncSetLayerContents(WebCore::PlatformLay
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidStart(WebCore::PlatformLayerIdentifier layerID, const String& key, MonotonicTime startTime)
 {
-    Ref connection = connectionForIdentifier(layerID.processIdentifier());
-    connection->send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), identifier());
+    if (RefPtr connection = connectionForIdentifier(layerID.processIdentifier()))
+        connection->send(Messages::DrawingArea::AcceleratedAnimationDidStart(layerID, key, startTime), identifier());
 }
 
 void RemoteLayerTreeDrawingAreaProxy::acceleratedAnimationDidEnd(WebCore::PlatformLayerIdentifier layerID, const String& key)
 {
-    Ref connection = connectionForIdentifier(layerID.processIdentifier());
-    connection->send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key), identifier());
+    if (RefPtr connection = connectionForIdentifier(layerID.processIdentifier()))
+        connection->send(Messages::DrawingArea::AcceleratedAnimationDidEnd(layerID, key), identifier());
 }
 
 static const float indicatorInset = 10;
