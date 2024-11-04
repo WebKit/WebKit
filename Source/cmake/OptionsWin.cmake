@@ -61,7 +61,7 @@ set(CMAKE_DISABLE_PRECOMPILE_HEADERS OFF)
 
 find_package(Cairo 1.18.0 REQUIRED)
 find_package(CURL 7.87.0 REQUIRED)
-find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
+find_package(ICU 70.1 REQUIRED COMPONENTS data i18n uc)
 find_package(JPEG 1.5.2 REQUIRED)
 find_package(LibXml2 2.9.7 REQUIRED)
 find_package(OpenSSL REQUIRED)

@@ -47,7 +47,7 @@ list(APPEND CMAKE_PREFIX_PATH ${WEBKIT_LIBRARIES_DIR})
 # Find libraries
 find_library(C_STD_LIBRARY c)
 find_library(KERNEL_LIBRARY kernel)
-find_package(ICU 61.2 REQUIRED COMPONENTS data i18n uc)
+find_package(ICU 70.1 REQUIRED COMPONENTS data i18n uc)
 find_package(Threads REQUIRED)
 
 set(USE_WPE_BACKEND_PLAYSTATION OFF)
