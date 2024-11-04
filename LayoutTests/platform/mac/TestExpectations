@@ -499,8 +499,6 @@ webkit.org/b/117427 compositing/reflections/load-video-in-reflection.html [ Pass
 
 webkit.org/b/122031 fast/animation/request-animation-frame-time-unit.html [ Pass Failure ]
 
-webkit.org/b/122038 animations/transform-non-accelerated.html [ Pass Failure ]
-
 inspector/debugger/didSampleProbe-multiple-probes.html
 inspector/debugger/nested-inspectors.html
 

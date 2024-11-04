@@ -4072,9 +4072,6 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
             backdropFilterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->backdropFilter(), tf));
     }
 
-    if (!renderer().settings().acceleratedCompositedAnimationsEnabled())
-        return false;
-
     bool didAnimate = false;
 
     auto referenceBoxRect = renderer().transformReferenceBoxRect(renderer().style());
@@ -4114,9 +4111,6 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
 bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
 {
     auto& renderer = this->renderer();
-    if (!renderer.settings().acceleratedCompositedAnimationsEnabled())
-        return false;
-
     OptionSet<AcceleratedEffectProperty> disallowedAcceleratedProperties;
 
     auto rendererAllowsTransform = renderer.isRenderBox() || renderer.isSVGLayerAwareRenderer();
