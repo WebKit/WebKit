@@ -33,7 +33,7 @@ enum class TokenizePolicy : bool { Strict, Lenient };
 
 struct Token {
     TokenType type;
-    size_t index;
+    std::optional<size_t> index;
     StringView value;
 
     bool isNull() const;

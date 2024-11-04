@@ -45,7 +45,11 @@ static bool isValidNameCodepoint(UChar codepoint, bool first)
 
 bool Token::isNull() const
 {
-    return type == TokenType::Open && !index && !value;
+    if (!index) {
+        ASSERT(value.isNull());
+        return true;
+    }
+    return false;
 }
 
 // https://urlpattern.spec.whatwg.org/#get-the-next-code-point

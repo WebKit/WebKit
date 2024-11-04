@@ -163,7 +163,7 @@ static ExceptionOr<URLPatternInit> processInit(URLPatternInit&& init, BaseURLStr
         result.password = canonicalizePassword(init.password, type);
 
     if (!init.hostname.isNull()) {
-        auto hostResult = canonicalizeHost(init.hostname, type);
+        auto hostResult = canonicalizeHostname(init.hostname, type);
 
         if (hostResult.hasException())
             return hostResult.releaseException();
@@ -190,7 +190,7 @@ static ExceptionOr<URLPatternInit> processInit(URLPatternInit&& init, BaseURLStr
             if (slashIndex != notFound)
                 result.pathname = makeString(StringView { baseURLPath }.left(slashIndex + 1), result.pathname);
 
-            auto pathResult = canonicalizePath(result.pathname, baseURL.protocol(), type);
+            auto pathResult = processPathname(result.pathname, baseURL.protocol(), type);
 
             if (pathResult.hasException())
                 return pathResult.releaseException();

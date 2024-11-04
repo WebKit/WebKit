@@ -28,16 +28,17 @@
 namespace WebCore {
 
 enum class BaseURLStringType : bool;
+enum class EncodingCallbackType : uint8_t { Protocol, Username, Password, Host, IPv6Host, Port, Path, Search, Hash };
 
 bool isAbsolutePathname(StringView input, BaseURLStringType inputType);
-ExceptionOr<String> canonicalizeProtocol(const String& value, BaseURLStringType valueType);
-String canonicalizeUsername(const String& value, BaseURLStringType valueType);
-String canonicalizePassword(const String& value, BaseURLStringType valueType);
-ExceptionOr<String> canonicalizeHost(const String& value, BaseURLStringType valueType);
-ExceptionOr<String> canonicalizeIPv6Host(const String& value, BaseURLStringType valueType);
-ExceptionOr<String> canonicalizePort(const String& portValue, std::optional<StringView> protocolValue, BaseURLStringType portValueType);
-ExceptionOr<String> canonicalizePath(const String& pathnameValue, StringView protocolValue, BaseURLStringType pathnameValueType);
-ExceptionOr<String> canonicalizeSearch(const String& value, BaseURLStringType valueType);
-ExceptionOr<String> canonicalizeHash(const String& value, BaseURLStringType valueType);
-
+ExceptionOr<String> canonicalizeProtocol(StringView, BaseURLStringType valueType);
+String canonicalizeUsername(StringView value, BaseURLStringType valueType);
+String canonicalizePassword(StringView value, BaseURLStringType valueType);
+ExceptionOr<String> canonicalizeHostname(StringView value, BaseURLStringType valueType);
+ExceptionOr<String> canonicalizeIPv6Hostname(StringView value, BaseURLStringType valueType);
+ExceptionOr<String> canonicalizePort(StringView portValue, const std::optional<StringView> protocolValue, BaseURLStringType portValueType);
+ExceptionOr<String> processPathname(StringView pathnameValue, const StringView protocolValue, BaseURLStringType pathnameValueType);
+ExceptionOr<String> canonicalizeSearch(StringView value, BaseURLStringType valueType);
+ExceptionOr<String> canonicalizeHash(StringView value, BaseURLStringType valueType);
+ExceptionOr<String> callEncodingCallback(EncodingCallbackType, StringView input);
 }
