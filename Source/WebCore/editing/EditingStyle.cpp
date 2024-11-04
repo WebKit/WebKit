@@ -1360,6 +1360,10 @@ void EditingStyle::mergeStyle(const StyleProperties* style, CSSPropertyOverrideM
 static Ref<MutableStyleProperties> styleFromMatchedRulesForElement(Element& element, unsigned rulesToInclude)
 {
     Ref style = MutableStyleProperties::create();
+
+    if (!element.isConnected())
+        return style;
+
     for (auto& matchedRule : element.styleResolver().styleRulesForElement(&element, rulesToInclude))
         style->mergeAndOverrideOnConflict(matchedRule->protectedProperties());
     

@@ -1,0 +1,15 @@
+<style>
+@container style(--foo) {
+    title { color: blue; }
+}
+</style>
+<script>
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.head.offsetLeft;
+const title = document.createElement("title");
+document.head.appendChild(title);
+getComputedStyle(title).color;
+document.firstChild.remove();
+title.innerText = "This test passes if it doesn't crash.";
+</script>

@@ -151,6 +151,9 @@ void BlendingKeyframes::fillImplicitKeyframes(const KeyframeEffect& effect, cons
 
     ASSERT(effect.target());
     auto& element = *effect.target();
+    if (!element.isConnected())
+        return;
+
     auto& styleResolver = element.styleResolver();
 
     // We need to establish which properties are implicit for 0% and 100%.

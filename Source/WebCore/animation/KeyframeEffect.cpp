@@ -747,7 +747,7 @@ auto KeyframeEffect::getKeyframes() -> Vector<ComputedKeyframe>
     };
 
     auto styleProperties = MutableStyleProperties::create();
-    if (m_animationType == WebAnimationType::CSSAnimation) {
+    if (m_animationType == WebAnimationType::CSSAnimation && m_target->isConnected()) {
         auto matchingRules = m_target->styleResolver().pseudoStyleRulesForElement(target, m_pseudoElementIdentifier, Style::Resolver::AllCSSRules);
         for (auto& matchedRule : matchingRules)
             styleProperties->mergeAndOverrideOnConflict(matchedRule->properties());

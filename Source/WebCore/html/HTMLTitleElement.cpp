@@ -59,21 +59,30 @@ Ref<HTMLTitleElement> HTMLTitleElement::create(const QualifiedName& tagName, Doc
 Node::InsertedIntoAncestorResult HTMLTitleElement::insertedIntoAncestor(InsertionType insertionType, ContainerNode& parentOfInsertedTree)
 {
     HTMLElement::insertedIntoAncestor(insertionType, parentOfInsertedTree);
-    document().titleElementAdded(*this);
+
+    if (insertionType.connectedToDocument) {
+        m_title = computedTextWithDirection();
+        document().titleElementAdded(*this);
+    }
     return InsertedIntoAncestorResult::Done;
 }
 
 void HTMLTitleElement::removedFromAncestor(RemovalType removalType, ContainerNode& oldParentOfRemovedTree)
 {
     HTMLElement::removedFromAncestor(removalType, oldParentOfRemovedTree);
-    document().titleElementRemoved(*this);
+
+    if (removalType.disconnectedFromDocument)
+        document().titleElementRemoved(*this);
 }
 
 void HTMLTitleElement::childrenChanged(const ChildChange& change)
 {
     HTMLElement::childrenChanged(change);
-    m_title = computedTextWithDirection();
-    document().titleElementTextChanged(*this);
+
+    if (isConnected()) {
+        m_title = computedTextWithDirection();
+        document().titleElementTextChanged(*this);
+    }
 }
 
 String HTMLTitleElement::text() const
@@ -83,11 +92,12 @@ String HTMLTitleElement::text() const
 
 StringWithDirection HTMLTitleElement::computedTextWithDirection()
 {
+    ASSERT(isConnected());
+    if (!firstChild())
+        return { };
     auto direction = TextDirection::LTR;
     if (auto* computedStyle = this->computedStyle())
         direction = computedStyle->writingMode().computedTextDirection();
-    else
-        direction = styleResolver().styleForElement(*this, { parentElement() ? parentElement()->renderStyle() : nullptr }).style->writingMode().computedTextDirection();
     return { text(), direction };
 }
 
