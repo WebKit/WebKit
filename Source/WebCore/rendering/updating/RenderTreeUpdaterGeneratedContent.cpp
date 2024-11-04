@@ -38,6 +38,7 @@
 #include "RenderImage.h"
 #include "RenderQuote.h"
 #include "RenderStyleInlines.h"
+#include "RenderTextFragment.h"
 #include "RenderTreeUpdater.h"
 #include "RenderView.h"
 #include "StyleTreeResolver.h"
@@ -118,10 +119,21 @@ static bool elementHasDisplayAnimationForPseudoId(const Element& element, Pseudo
 static void createContentRenderers(RenderTreeBuilder& builder, RenderElement& pseudoRenderer, const RenderStyle& style, PseudoId pseudoId)
 {
     if (auto* contentData = style.contentData()) {
+        CheckedPtr<RenderTextFragment> previousTextFragment;
         for (const ContentData* content = contentData; content; content = content->next()) {
-            auto child = content->createContentRenderer(pseudoRenderer.document(), style);
-            if (pseudoRenderer.isChildAllowed(*child, style))
-                builder.attach(pseudoRenderer, WTFMove(child));
+            if (auto* textContent = dynamicDowncast<TextContentData>(content); textContent && previousTextFragment) {
+                auto concatenatedText = makeString(previousTextFragment->text(), textContent->text());
+                previousTextFragment->setText(concatenatedText);
+            } else {
+                auto child = content->createContentRenderer(pseudoRenderer.document(), style);
+
+                if (CheckedPtr textFragment = dynamicDowncast<RenderTextFragment>(*child))
+                    previousTextFragment = textFragment;
+                else
+                    previousTextFragment = nullptr;
+                if (pseudoRenderer.isChildAllowed(*child, style))
+                    builder.attach(pseudoRenderer, WTFMove(child));
+            }
         }
     } else {
         // The only valid scenario where this method is called without the "content" property being set
