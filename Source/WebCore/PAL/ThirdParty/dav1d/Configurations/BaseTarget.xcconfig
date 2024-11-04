@@ -29,4 +29,4 @@ HEADER_SEARCH_PATHS = $(PROJECT_DIR) $(PROJECT_DIR)/include "$(BUILT_PRODUCTS_DI
 SYSTEM_HEADER_SEARCH_PATHS = $(WK_PRIVATE_SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_HEADERS_FOLDER_PATH) $(inherited);
 USE_HEADERMAP = NO;
 
-WARNING_CFLAGS = -Wall -Wextra -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wvla -Wno-unknown-warning-option -Wliteral-conversion -Wthread-safety -Wno-unused-parameter -Wno-comma -Wno-incompatible-pointer-types -Wno-format-nonliteral;
+WARNING_CFLAGS = -Wall -Wextra -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare -Wvla -Wno-unknown-warning-option -Wliteral-conversion -Wthread-safety -Wno-thread-safety-reference-return -Wno-unused-parameter -Wno-comma -Wno-incompatible-pointer-types -Wno-format-nonliteral;
