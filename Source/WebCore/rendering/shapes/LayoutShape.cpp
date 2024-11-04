@@ -116,6 +116,8 @@ Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicSh
 
             auto logicalCenter = physicalPointToLogical(center, logicalBoxSize.height(), writingMode);
             logicalCenter.moveBy(borderBoxOffset);
+            if (!horizontalWritingMode)
+                radii = radii.transposedSize();
 
             return createEllipseShape(logicalCenter, radii, logicalBoxSize);
         },
