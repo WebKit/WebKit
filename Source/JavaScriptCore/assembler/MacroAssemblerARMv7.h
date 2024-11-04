@@ -922,6 +922,12 @@ public:
         load32(setupArmAddress(address), dest);
     }
 
+    void loadAcq32(Address address, RegisterID dest)
+    {
+        load32(address, dest);
+        loadFence();
+    }
+
     void load32(BaseIndex address, RegisterID dest)
     {
         load32(setupArmAddress(address), dest);
@@ -967,9 +973,21 @@ public:
         load8(setupArmAddress(address), dest);
     }
 
+    void loadAcq8(Address address, RegisterID dest)
+    {
+        load8(address, dest);
+        loadFence();
+    }
+
     void load8SignedExtendTo32(Address address, RegisterID dest)
     {
         load8SignedExtendTo32(setupArmAddress(address), dest);
+    }
+
+    void loadAcq8SignedExtendTo32(Address address, RegisterID dest)
+    {
+        load8SignedExtendTo32(address, dest);
+        loadFence();
     }
 
     void load8(BaseIndex address, RegisterID dest)
@@ -1012,10 +1030,22 @@ public:
             m_assembler.ldrh(dest, address.base, dataTempRegister);
         }
     }
+
+    void loadAcq16(Address address, RegisterID dest)
+    {
+        load16(address, dest);
+        loadFence();
+    }
     
     void load16SignedExtendTo32(Address address, RegisterID dest)
     {
         load16SignedExtendTo32(setupArmAddress(address), dest);
+    }
+
+    void loadAcq16SignedExtendTo32(Address address, RegisterID dest)
+    {
+        load16SignedExtendTo32(address, dest);
+        loadFence();
     }
 
     void loadPair32(RegisterID src, RegisterID dest1, RegisterID dest2)
@@ -1181,6 +1211,12 @@ public:
         store32(dataTempRegister, address);
     }
 
+    void storeRel32(RegisterID src, Address address)
+    {
+        storeFence();
+        store32(src, address);
+    }
+
     void store8(RegisterID src, Address address)
     {
         store8(src, setupArmAddress(address));
@@ -1214,6 +1250,12 @@ public:
     {
         store8(src, ArmAddress(addrreg, 0));
     }
+
+    void storeRel8(RegisterID src, Address address)
+    {
+        storeFence();
+        store8(src, address);
+    }
     
     void store16(RegisterID src, Address address)
     {
@@ -1234,6 +1276,12 @@ public:
     {
         move(imm, dataTempRegister);
         store16(dataTempRegister, address);
+    }
+
+    void storeRel16(RegisterID src, Address address)
+    {
+        storeFence();
+        store16(src, address);
     }
 
     void storePair32(RegisterID src1, TrustedImm32 imm, Address address)

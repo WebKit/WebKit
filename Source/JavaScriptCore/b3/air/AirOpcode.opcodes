@@ -562,6 +562,7 @@ Xor32 U:G:32, U:G:32, ZD:G:32
     arm64: BitImm, Tmp, Tmp
     x86: Tmp, Addr, Tmp
     x86: Addr, Tmp, Tmp
+    armv7: Imm, Tmp, Tmp
 
 Xor32 U:G:32, UZD:G:32
     Tmp, Tmp
@@ -853,7 +854,7 @@ Load8 U:G:8, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-arm64: LoadAcq8 U:G:8, ZD:G:32 /effects
+arm: LoadAcq8 U:G:8, ZD:G:32 /effects
     SimpleAddr, Tmp
 
 Store8 U:G:8, D:G:8
@@ -864,28 +865,28 @@ Store8 U:G:8, D:G:8
     arm64: ZeroReg, Addr
     arm64: ZeroReg, Index
 
-arm64: StoreRel8 U:G:8, D:G:8 /effects
+arm: StoreRel8 U:G:8, D:G:8 /effects
     Tmp, SimpleAddr
 
 Load8SignedExtendTo32 U:G:8, D:G:32
     Addr, Tmp
     Index, Tmp
 
-arm64: LoadAcq8SignedExtendTo32 U:G:8, D:G:32 /effects
+arm: LoadAcq8SignedExtendTo32 U:G:8, D:G:32 /effects
     SimpleAddr, Tmp
 
 Load16 U:G:16, ZD:G:32
     Addr, Tmp
     Index, Tmp
 
-arm64: LoadAcq16 U:G:16, ZD:G:32 /effects
+arm: LoadAcq16 U:G:16, ZD:G:32 /effects
     SimpleAddr, Tmp
 
 Load16SignedExtendTo32 U:G:16, D:G:32
     Addr, Tmp
     Index, Tmp
 
-arm64: LoadAcq16SignedExtendTo32 U:G:16, D:G:32 /effects
+arm: LoadAcq16SignedExtendTo32 U:G:16, D:G:32 /effects
     SimpleAddr, Tmp
 
 Store16 U:G:16, D:G:16
@@ -896,13 +897,13 @@ Store16 U:G:16, D:G:16
     arm64: ZeroReg, Addr
     arm64: ZeroReg, Index
 
-arm64: StoreRel16 U:G:16, D:G:16 /effects
+arm: StoreRel16 U:G:16, D:G:16 /effects
     Tmp, SimpleAddr
 
-arm64: LoadAcq32 U:G:32, ZD:G:32 /effects
+arm: LoadAcq32 U:G:32, ZD:G:32 /effects
     SimpleAddr, Tmp
 
-arm64: StoreRel32 U:G:32, ZD:G:32 /effects
+arm: StoreRel32 U:G:32, ZD:G:32 /effects
     Tmp, SimpleAddr
 
 arm64: LoadAcq64 U:G:64, ZD:G:64 /effects

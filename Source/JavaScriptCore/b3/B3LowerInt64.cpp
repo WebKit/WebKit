@@ -1185,6 +1185,47 @@ private:
             valueReplaced();
             return;
         }
+        case AtomicStrongCAS:
+        case AtomicWeakCAS: {
+            auto atomic = m_value->as<AtomicValue>();
+            if (atomic->accessWidth() != Width64)
+                return;
+            auto expectedValue = getMapping(atomic->child(0));
+            auto newValue = getMapping(atomic->child(1));
+            auto address = atomic->child(2);
+            auto stitchedExpected = valueLoHi(expectedValue.first, expectedValue.second, m_index);
+            auto stitchedNew = valueLoHi(newValue.first, newValue.second, m_index);
+            auto stitched = insert<AtomicValue>(m_index, atomic->opcode(), m_origin, atomic->accessWidth(), stitchedExpected, stitchedNew, address);
+            stitched->setOffset(atomic->offset());
+            stitched->setRange(atomic->range());
+            stitched->setFenceRange(atomic->fenceRange());
+            if (stitched->type() == Int64) {
+                setMapping(m_value, valueLo(stitched, m_index), valueHi(stitched, m_index));
+                valueReplaced();
+            } else
+                m_value->replaceWithIdentity(stitched);
+            return;
+        }
+        case AtomicXchg:
+        case AtomicXchgAdd:
+        case AtomicXchgSub:
+        case AtomicXchgAnd:
+        case AtomicXchgOr:
+        case AtomicXchgXor: {
+            auto atomic = m_value->as<AtomicValue>();
+            if (atomic->accessWidth() != Width64)
+                return;
+            auto value = getMapping(atomic->child(0));
+            auto address = atomic->child(1);
+            auto stitchedValue = valueLoHi(value.first, value.second, m_index);
+            auto stitched = insert<AtomicValue>(m_index, atomic->opcode(), m_origin, atomic->accessWidth(), stitchedValue, address);
+            stitched->setOffset(atomic->offset());
+            stitched->setRange(atomic->range());
+            stitched->setFenceRange(atomic->fenceRange());
+            setMapping(m_value, valueLo(stitched, m_index), valueHi(stitched, m_index));
+            valueReplaced();
+            return;
+        }
         default: {
             dataLogLn("Cannot lower ", deepDump(m_value));
             RELEASE_ASSERT_NOT_REACHED();
