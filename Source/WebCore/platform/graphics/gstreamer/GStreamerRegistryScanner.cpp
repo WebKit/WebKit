@@ -740,11 +740,12 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isHEVCCode
     return areCapsSupported(configuration, h265Caps, shouldCheckForHardwareUse);
 }
 
-GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isCodecSupported(Configuration configuration, const String& codec, bool shouldCheckForHardwareUse) const
+GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isCodecSupported(Configuration configuration, const String& codec, bool shouldCheckForHardwareUse, CaseSensitiveCodecName caseSensitive) const
 {
     // If the codec is named like a mimetype (eg: video/avc) remove the "video/" part.
     size_t slashIndex = codec.find('/');
-    String codecName = slashIndex != notFound ? codec.substring(slashIndex + 1) : codec;
+    String subType = slashIndex != notFound ? codec.substring(slashIndex + 1) : codec;
+    auto codecName = caseSensitive == CaseSensitiveCodecName::Yes ? subType : subType.convertToASCIILowercase();
 
     CodecLookupResult result;
     if (codecName.startsWith("avc1"_s))
@@ -767,7 +768,7 @@ GStreamerRegistryScanner::CodecLookupResult GStreamerRegistryScanner::isCodecSup
 
 #ifndef GST_DISABLE_GST_DEBUG
     ASCIILiteral configLogString = configurationNameForLogging(configuration);
-    GST_LOG("Checked %s %s codec \"%s\" supported %s", shouldCheckForHardwareUse ? "hardware" : "software", configLogString.characters(), codecName.utf8().data(), boolForPrinting(result.isSupported));
+    GST_LOG("Checked %s %s codec \"%s\" supported %s", shouldCheckForHardwareUse ? "hardware" : "software", configLogString.characters(), codec.utf8().data(), boolForPrinting(result.isSupported));
 #endif
     return result;
 }
@@ -782,7 +783,7 @@ bool GStreamerRegistryScanner::supportsFeatures(const String& features) const
     return false;
 }
 
-MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(Configuration configuration, const ContentType& contentType, const Vector<ContentType>& contentTypesRequiringHardwareSupport) const
+MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(Configuration configuration, const ContentType& contentType, const Vector<ContentType>& contentTypesRequiringHardwareSupport, CaseSensitiveCodecName caseSensitive) const
 {
     VideoDecodingLimits* videoDecodingLimits = nullptr;
 #ifdef VIDEO_DECODING_LIMIT
@@ -885,7 +886,7 @@ MediaPlayerEnums::SupportsType GStreamerRegistryScanner::isContentTypeSupported(
                     return !fnmatch(hardwareCodec.utf8().data(), codec.utf8().data(), 0);
             }) != notFound;
         }) != notFound;
-        if (!isCodecSupported(configuration, codec, requiresHardwareSupport))
+        if (!isCodecSupported(configuration, codec, requiresHardwareSupport, caseSensitive))
             return SupportsType::IsNotSupported;
     }
     return SupportsType::IsSupported;
