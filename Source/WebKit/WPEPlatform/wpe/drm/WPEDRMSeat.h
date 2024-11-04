@@ -28,6 +28,7 @@
 #include "WPEKeymap.h"
 #include "WPEView.h"
 #include <libinput.h>
+#include <wtf/HashMap.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/glib/GRefPtr.h>
@@ -60,6 +61,10 @@ private:
     void handlePointerScrollContinuousEvent(struct libinput_event_pointer*, WPEInputSource);
     void handleKeyEvent(struct libinput_event_keyboard*);
     void handleKey(uint32_t time, uint32_t key, bool pressed, bool fromRepeat);
+    void handleTouchDownEvent(struct libinput_event_touch*);
+    void handleTouchUpEvent(struct libinput_event_touch*);
+    void handleTouchMotionEvent(struct libinput_event_touch*);
+    void handleTouchCancelEvent(struct libinput_event_touch*);
 
     struct libinput* m_libinput { nullptr };
     GRefPtr<GSource> m_inputSource;
@@ -85,6 +90,12 @@ private:
             Seconds deadline;
         } repeat;
     } m_keyboard;
+
+    struct {
+        WPEInputSource source { WPE_INPUT_SOURCE_TOUCHSCREEN };
+        uint32_t time { 0 };
+        HashMap<int32_t, std::pair<double, double>, IntHash<int32_t>, WTF::SignedWithZeroKeyHashTraits<int32_t>> points;
+    } m_touch;
 };
 
 } // namespace DRM
