@@ -47,22 +47,22 @@ LegacySVGTextBoxPainter::LegacySVGTextBoxPainter(const SVGInlineTextBox& textBox
 }
 
 template<typename TextBoxPath>
-SVGTextBoxPainter<TextBoxPath>::SVGTextBoxPainter(TextBoxPath&& path, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-    : TextBoxPainter<TextBoxPath>(WTFMove(path), paintInfo, paintOffset)
+SVGTextBoxPainter<TextBoxPath>::SVGTextBoxPainter(TextBoxPath&& textBox, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+    : m_textBox(WTFMove(textBox))
+    , m_renderer(downcast<RenderSVGInlineText>(m_textBox.renderer()))
+    , m_paintInfo(paintInfo)
+    , m_selectableRange(m_textBox.selectableRange())
+    , m_paintOffset(paintOffset)
+    , m_haveSelection(!m_renderer.document().printing() && m_renderer.view().selection().highlightStateForTextBox(m_renderer, m_selectableRange) != RenderObject::HighlightState::None)
 {
 }
 
 template<typename TextBoxPath>
 InlineIterator::SVGTextBoxIterator SVGTextBoxPainter<TextBoxPath>::textBoxIterator() const
 {
-    return { textBox() };
+    return { m_textBox };
 }
 
-template<typename TextBoxPath>
-const RenderSVGInlineText& SVGTextBoxPainter<TextBoxPath>::renderer() const
-{
-    return downcast<RenderSVGInlineText>(m_renderer);
-}
 
 template<typename TextBoxPath>
 const RenderBoxModelObject& SVGTextBoxPainter<TextBoxPath>::parentRenderer() const
@@ -374,7 +374,7 @@ void SVGTextBoxPainter<TextBoxPath>::releaseLegacyPaintingResource(GraphicsConte
 template<typename TextBoxPath>
 bool SVGTextBoxPainter<TextBoxPath>::mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment& fragment, unsigned& startPosition, unsigned& endPosition) const
 {
-    unsigned startFragment = fragment.characterOffset - textBox().start();
+    unsigned startFragment = fragment.characterOffset - m_textBox.start();
     unsigned endFragment = startFragment + fragment.length;
 
     // Find intersection between the intervals: [startFragment..endFragment) and [startPosition..endPosition)
@@ -663,12 +663,18 @@ TextRun SVGTextBoxPainter<TextBoxPath>::constructTextRun(const RenderStyle& styl
         0, /* xPos, only relevant with allowTabs=true */
         0, /* padding, only relevant for justified text, not relevant for SVG */
         ExpansionBehavior::allowRightOnly(),
-        textBox().direction(),
+        m_textBox.direction(),
         style.rtlOrdering() == Order::Visual /* directionalOverride */);
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
     return run;
+}
+
+template<typename TextBoxPath>
+std::pair<unsigned, unsigned> SVGTextBoxPainter<TextBoxPath>::selectionStartEnd() const
+{
+    return m_renderer.view().selection().rangeForTextBox(m_renderer, m_selectableRange);
 }
 
 template class SVGTextBoxPainter<InlineIterator::BoxModernPath>;

@@ -93,7 +93,7 @@ void InlineContentPainter::paintDisplayBox(const InlineDisplay::Box& box)
         if (!hasVisibleDamage)
             return;
 
-        ModernTextBoxPainter { m_inlineContent, box, m_paintInfo, m_paintOffset }.paint();
+        TextBoxPainter { m_inlineContent, box, m_paintInfo, m_paintOffset }.paint();
         return;
     }
 
