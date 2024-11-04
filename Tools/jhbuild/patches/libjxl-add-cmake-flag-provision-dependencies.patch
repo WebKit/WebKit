@@ -1,17 +1,17 @@
-From 4f433922a741268e0dbf4da432ca4c9e4317c6b6 Mon Sep 17 00:00:00 2001
+From 0ac86d7d0b8c2e4928c061c7cb93bf4b9b25529d Mon Sep 17 00:00:00 2001
 From: Diego Pino Garcia <dpino@igalia.com>
-Date: Tue, 20 Jun 2023 20:38:55 +0800
-Subject: [PATCH] add-cmake-flag-provision-dependencies
+Date: Thu, 17 Oct 2024 13:25:01 +0200
+Subject: [PATCH] Add CMake flag to provision dependencies
 
 ---
  CMakeLists.txt | 13 +++++++++++++
  1 file changed, 13 insertions(+)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index c2790ab..2382603 100644
+index 4c13d27f..4202dbf9 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -47,6 +47,19 @@ if(CHECK_PIE_SUPPORTED)
+@@ -50,6 +50,19 @@ if(CHECK_PIE_SUPPORTED)
    endif()
  endif()
  
@@ -29,8 +29,8 @@ index c2790ab..2382603 100644
 +endif()
 +
  ### Project build options:
- if(${CXX_FUZZERS_SUPPORTED})
+ if(CXX_FUZZERS_SUPPORTED)
    # Enabled by default except on arm64, Windows and Apple builds.
 -- 
-2.40.0
+2.46.0
 

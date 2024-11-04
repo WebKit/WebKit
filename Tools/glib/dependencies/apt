@@ -42,6 +42,7 @@ PACKAGES=(
     itstool
     libasound2-dev
     libatk1.0-dev
+    libbz2-dev
     libdrm-dev
     libenchant-2-dev
     libepoxy-dev
