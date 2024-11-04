@@ -14,9 +14,15 @@
 
 namespace skgpu::graphite {
 
-struct FragSkSLInfo;
-struct VertSkSLInfo;
+class ShaderInfo;
 class RenderStep;
+
+enum class PipelineCreationFlags : uint8_t {
+    kNone             = 0b000,
+    // This flag is Dawn specific. It overrides the DawnCaps::fUseAsyncPipelineCreation
+    // parameter and forces Synchronous Pipeline creation (for Precompilation).
+    kForceSynchronous = 0b001,
+};
 
 /**
  * GraphicsPipeline corresponds to a backend specific pipeline used for rendering (vs. compute),
@@ -45,7 +51,7 @@ public:
         PipelineInfo() = default;
 
         // NOTE: Subclasses must manually fill in native shader code in GPU_TEST_UTILS builds.
-        PipelineInfo(const VertSkSLInfo&, const FragSkSLInfo&);
+        PipelineInfo(const ShaderInfo&);
 
         DstReadRequirement fDstReadReq = DstReadRequirement::kNone;
         int  fNumFragTexturesAndSamplers = 0;

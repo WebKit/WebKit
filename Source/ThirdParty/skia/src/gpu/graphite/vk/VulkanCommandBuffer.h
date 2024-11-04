@@ -26,7 +26,8 @@ class Buffer;
 class VulkanCommandBuffer final : public CommandBuffer {
 public:
     static std::unique_ptr<VulkanCommandBuffer> Make(const VulkanSharedContext*,
-                                                     VulkanResourceProvider*);
+                                                     VulkanResourceProvider*,
+                                                     Protected);
     ~VulkanCommandBuffer() override;
 
     bool setNewCommandBufferResources() override;
@@ -54,7 +55,8 @@ private:
     VulkanCommandBuffer(VkCommandPool pool,
                         VkCommandBuffer primaryCommandBuffer,
                         const VulkanSharedContext* sharedContext,
-                        VulkanResourceProvider* resourceProvider);
+                        VulkanResourceProvider* resourceProvider,
+                        Protected);
 
     ResourceProvider* resourceProvider() const override { return fResourceProvider; }
 
@@ -165,7 +167,7 @@ private:
 
     // Update the intrinsic constant uniform buffer and binding to reflect the updated viewport.
     // The resource provider is responsible for finding a suitable buffer and managing its lifetime.
-    void updateIntrinsicUniforms(SkIRect viewport);
+    bool updateIntrinsicUniforms(SkIRect viewport);
 
     bool updateLoadMSAAVertexBuffer();
     bool loadMSAAFromResolve(const RenderPassDesc&,
@@ -223,6 +225,9 @@ private:
     size_t fBoundIndirectBufferOffset = 0;
 
     float fCachedBlendConstant[4];
+
+    class IntrinsicConstantsManager;
+    std::unique_ptr<IntrinsicConstantsManager> fIntrinsicConstants;
 };
 
 } // namespace skgpu::graphite

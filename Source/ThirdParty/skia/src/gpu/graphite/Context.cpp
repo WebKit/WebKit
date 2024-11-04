@@ -90,7 +90,8 @@ Context::Context(sk_sp<SharedContext> sharedContext,
     // SingleOwner object and it is declared last
     fResourceProvider = fSharedContext->makeResourceProvider(&fSingleOwner,
                                                              SK_InvalidGenID,
-                                                             options.fGpuBudgetInBytes);
+                                                             options.fGpuBudgetInBytes,
+                                                             /* avoidBufferAlloc= */ false);
     fMappedBufferManager = std::make_unique<ClientMappedBufferManager>(this->contextID());
 #if defined(GPU_TEST_UTILS)
     if (options.fOptionsPriv) {
@@ -685,8 +686,10 @@ Context::PixelTransferResult Context::transferPixels(Recorder* recorder,
                                                                             /*bufferOffset=*/0,
                                                                             rowBytes);
     const bool addTasksDirectly = !SkToBool(recorder);
-
-    if (!copyTask || (addTasksDirectly && !fQueueManager->addTask(copyTask.get(), this))) {
+    Protected contextIsProtected = fSharedContext->isProtected();
+    if (!copyTask || (addTasksDirectly && !fQueueManager->addTask(copyTask.get(),
+                                                                  this,
+                                                                  contextIsProtected))) {
         return {};
     } else if (!addTasksDirectly) {
         // Add the task to the Recorder instead of the QueueManager if that's been required for
@@ -694,7 +697,9 @@ Context::PixelTransferResult Context::transferPixels(Recorder* recorder,
         recorder->priv().add(std::move(copyTask));
     }
     sk_sp<SynchronizeToCpuTask> syncTask = SynchronizeToCpuTask::Make(buffer);
-    if (!syncTask || (addTasksDirectly && !fQueueManager->addTask(syncTask.get(), this))) {
+    if (!syncTask || (addTasksDirectly && !fQueueManager->addTask(syncTask.get(),
+                                                                  this,
+                                                                  contextIsProtected))) {
         return {};
     } else if (!addTasksDirectly) {
         recorder->priv().add(std::move(syncTask));

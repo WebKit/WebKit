@@ -14,6 +14,7 @@
 #include "include/core/SkStream.h"
 #include "include/core/SkTypeface.h"
 #include "include/private/base/SkOnce.h"
+#include "include/private/base/SkTArray.h"
 #include "src/core/SkAdvancedTypefaceMetrics.h"
 #include "src/core/SkScalerContext.h"
 #include "src/ports/fontations/src/ffi.rs.h"
@@ -172,8 +173,7 @@ public:
 
 private:
     SkFontationsScalerContext& fScalerContext;
-    SkMatrix fCurrentTransform;
-    SkMatrix fStackTopTransformInverse;
+    skia_private::STArray<4, SkMatrix> fMatrixStack;
 
     uint16_t fUpem;
     SkRect fBounds;
@@ -213,6 +213,10 @@ protected:
     sk_sp<SkTypeface> onMakeClone(const SkFontArguments& args) const override;
     std::unique_ptr<SkScalerContext> onCreateScalerContext(const SkScalerContextEffects& effects,
                                                            const SkDescriptor* desc) const override;
+    std::unique_ptr<SkScalerContext> onCreateScalerContextAsProxyTypeface(
+            const SkScalerContextEffects&,
+            const SkDescriptor*,
+            sk_sp<SkTypeface>) const override;
     void onFilterRec(SkScalerContextRec*) const override;
     std::unique_ptr<SkAdvancedTypefaceMetrics> onGetAdvancedMetrics() const override;
     void onGetFontDescriptor(SkFontDescriptor*, bool*) const override;

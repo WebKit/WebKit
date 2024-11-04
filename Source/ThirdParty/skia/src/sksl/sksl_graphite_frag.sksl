@@ -135,13 +135,14 @@ $pure half4 sk_circular_rrect_clip(float4 rect,
     float2 dxy0 = edgeSelect.LT*((rect.LT + radius) - fragCoord);
     float2 dxy1 = edgeSelect.RB*(fragCoord - (rect.RB - radius));
     float2 dxy = max(max(dxy0, dxy1), 0.0);
-    float circleCornerAlpha = saturate(radius.x - length(dxy));
+    // Use more complex length calculation to manage precision issues
+    half circleCornerAlpha = half(saturate(radius.x*(1.0 - length(dxy*radiusPlusHalf.y))));
 
-    float4 rectEdgeDists = saturate(float4(fragCoord - rect.LT, rect.RB - fragCoord));
-    rectEdgeDists = mix(rectEdgeDists, float4(1), edgeSelect);
-    float2 rectEdgeAlphas = rectEdgeDists.xy + rectEdgeDists.zw - 1;
+    half4 rectEdgeAlphas = saturate(half4(fragCoord - rect.LT, rect.RB - fragCoord));
+    rectEdgeAlphas = mix(rectEdgeAlphas, half4(1), edgeSelect);
 
-    half alpha = half(circleCornerAlpha * rectEdgeAlphas.x * rectEdgeAlphas.y);
+    half alpha = circleCornerAlpha * rectEdgeAlphas.x * rectEdgeAlphas.y *
+                 rectEdgeAlphas.z * rectEdgeAlphas.w;
     // Check for inverse fill
     alpha = radiusPlusHalf.x < 0 ? (1-alpha) : alpha;
 
@@ -1542,6 +1543,33 @@ $pure half4 per_edge_aa_quad_coverage_fn(float4 coords,
     float2 outerDist = min(edgeDistances.xy, edgeDistances.zw);
     float c = min(outerDist.x, outerDist.y) * coords.w;
     return half4(saturate(c));
+}
+
+$pure half4 circular_arc_coverage_fn(float4 circleEdge,
+                                     float3 clipPlane,
+                                     float3 isectPlane,
+                                     float3 unionPlane,
+                                     float roundCapRadius,
+                                     float4 roundCapPos) {
+    float d = length(circleEdge.xy);
+    half distanceToOuterEdge = half(circleEdge.z * (1.0 - d));
+    half edgeAlpha = saturate(distanceToOuterEdge);
+    half distanceToInnerEdge = half(circleEdge.z * (d - circleEdge.w));
+    half innerAlpha = saturate(distanceToInnerEdge);
+    edgeAlpha *= innerAlpha;
+
+    half clip = half(saturate(circleEdge.z * dot(circleEdge.xy, clipPlane.xy) + clipPlane.z));
+    clip *= half(saturate(circleEdge.z * dot(circleEdge.xy, isectPlane.xy) + isectPlane.z));
+    clip = clip + half(saturate(circleEdge.z * dot(circleEdge.xy, unionPlane.xy) + unionPlane.z));
+
+    // We compute coverage of the round caps as circles at the butt caps produced
+    // by the clip planes, and union it with the current clip.
+    half dcap1 = half(circleEdge.z * (roundCapRadius - length(circleEdge.xy - roundCapPos.xy)));
+    half dcap2 = half(circleEdge.z * (roundCapRadius - length(circleEdge.xy - roundCapPos.zw)));
+    half capAlpha = max(dcap1, 0) + max(dcap2, 0);
+    clip = saturate(clip + capAlpha);
+
+    return half4(clip*edgeAlpha);
 }
 
 $pure half4 $rect_blur_coverage_fn(float2 coords,

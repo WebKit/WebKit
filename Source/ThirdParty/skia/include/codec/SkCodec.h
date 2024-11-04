@@ -637,6 +637,12 @@ public:
      *  Return the number of frames in the image.
      *
      *  May require reading through the stream.
+     *
+     *  Note that some codecs may be unable to gather `FrameInfo` for all frames
+     *  in case of `kIncompleteInput`.  For such codecs `getFrameCount` may
+     *  initially report a low frame count.  After the underlying `SkStream`
+     *  provides additional data, then calling `getFrameCount` again may return
+     *  an updated, increased frame count.
      */
     int getFrameCount() {
         return this->onGetFrameCount();

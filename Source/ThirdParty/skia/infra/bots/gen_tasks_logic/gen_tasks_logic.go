@@ -570,6 +570,9 @@ func GenTasks(cfg *Config) {
 			"skia/include/config", // There's a WORKSPACE.bazel in here
 			"skia/requirements.txt",
 			"skia/toolchain",
+			// TODO(kjlubick, lukasza) remove after rust's png crate is updated
+			// and we don't need the patches anymore
+			"skia/experimental/rust_png",
 			// Actually needed to build the task drivers
 			"skia/infra/bots/BUILD.bazel",
 			"skia/infra/bots/build_task_drivers.sh",
@@ -996,12 +999,12 @@ func (b *taskBuilder) defaultSwarmDimensions() {
 					"IntelIris540":  "8086:1926-31.0.101.2115",
 					"IntelIris6100": "8086:162b-20.19.15.4963",
 					"IntelIris655":  "8086:3ea5-26.20.100.7463",
-					"IntelIrisXe":   "8086:9a49-31.0.101.5537",
+					"IntelIrisXe":   "8086:9a49-32.0.101.5972",
 					"RadeonHD7770":  "1002:683d-26.20.13031.18002",
 					"RadeonR9M470X": "1002:6646-26.20.13031.18002",
 					"QuadroP400":    "10de:1cb3-31.0.15.5222",
 					"RadeonVega6":   "1002:1636-31.0.14057.5006",
-					"RTX3060":       "10de:2489-31.0.15.3699",
+					"RTX3060":       "10de:2489-32.0.15.6094",
 				}[b.parts["cpu_or_gpu_value"]]
 				if !ok {
 					log.Fatalf("Entry %q not found in Win GPU mapping.", b.parts["cpu_or_gpu_value"])

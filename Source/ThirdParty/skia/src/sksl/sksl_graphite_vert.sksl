@@ -550,8 +550,8 @@ float4 analytic_rrect_vertex_fn(// Vertex Attributes
                                 out float2 perPixelControl,
                                 // Render Step
                                 out float2 stepLocalCoords) {
-    const int kCornerVertexCount = 9; // KEEP IN SYNC WITH C++'s
-                                      // AnalyticRRectRenderStep::kCornerVertexCount
+    const uint kCornerVertexCount = 9; // KEEP IN SYNC WITH C++'s
+                                       // AnalyticRRectRenderStep::kCornerVertexCount
     const float kMiterScale = 1.0;
     const float kBevelScale = 0.0;
     const float kRoundScale = 0.41421356237; // sqrt(2)-1
@@ -619,7 +619,7 @@ float4 analytic_rrect_vertex_fn(// Vertex Attributes
     }
 
     // Adjust state on a per-corner basis
-    int cornerID = sk_VertexID / kCornerVertexCount;
+    uint cornerID = uint(sk_VertexID) / kCornerVertexCount;
     float2 cornerRadii = float2(xRadii[cornerID], yRadii[cornerID]);
     if (cornerID % 2 != 0) {
         // Corner radii are uploaded in the local coordinate frame, but vertex placement happens
@@ -847,8 +847,8 @@ float4 per_edge_aa_quad_vertex_fn(// Vertex Attributes
                                   out float4 edgeDistances,
                                   // Render Step
                                   out float2 stepLocalCoords) {
-    const int kCornerVertexCount = 4; // KEEP IN SYNC WITH C++'s
-                                      // PerEdgeAAQuadRenderStep::kCornerVertexCount
+    const uint kCornerVertexCount = 4; // KEEP IN SYNC WITH C++'s
+                                       // PerEdgeAAQuadRenderStep::kCornerVertexCount
 
     const float kEpsilon = 0.00024; // SK_ScalarNearlyZero
 
@@ -886,7 +886,7 @@ float4 per_edge_aa_quad_vertex_fn(// Vertex Attributes
     dy *= inverseEdgeLen;
 
     // Calculate local coordinate for the vertex (relative to xAxis and yAxis at first).
-    int cornerID = sk_VertexID / kCornerVertexCount;
+    uint cornerID = uint(sk_VertexID) / kCornerVertexCount;
     float2 xAxis = -float2(dx.yzwx[cornerID], dy.yzwx[cornerID]);
     float2 yAxis =  float2(dx.xyzw[cornerID], dy.xyzw[cornerID]);
 
@@ -966,6 +966,85 @@ float4 per_edge_aa_quad_vertex_fn(// Vertex Attributes
     // Write out final results
     stepLocalCoords = localPos;
     return float4(devPos.xy, devPos.z*depth, devPos.z);
+}
+
+float4 circular_arc_vertex_fn(float3 position,
+                              // Instance Attributes
+                              float4 centerScales,
+                              float3 radiiAndFlags,
+                              float3 geoClipPlane,
+                              float3 fragClipPlane0,
+                              float3 fragClipPlane1,
+                              float4 inRoundCapPos,
+                              float depth,
+                              float3x3 localToDevice,
+                              // Varyings
+                              out float4 circleEdge,
+                              out float3 clipPlane,
+                              out float3 isectPlane,
+                              out float3 unionPlane,
+                              out float  roundCapRadius,
+                              out float4 roundCapPos,
+                              // Render Step
+                              out float2 stepLocalCoords) {
+    // TODO: clip offset against clip planes
+    float2 localCenter = centerScales.xy;
+    float2 localPos = localCenter;
+    // do geometric clip in normalized space
+    float dist = min(dot(position.xy, geoClipPlane.xy) + geoClipPlane.z, 0);
+    position.xy -= geoClipPlane.xy * dist;
+    // Get the new length to use below for scaling the offset
+    // (origLength is the initial length of position.xy).
+    float offsetScale = length(position.xy);
+
+    // scale and translate to local space
+    if (position.z > 0) {
+        localPos += position.xy * centerScales.z;
+    } else {
+        localPos += position.xy * centerScales.w;
+    }
+
+    float3 devPos = localToDevice * localPos.xy1;
+    float3 devCenter = localToDevice * localCenter.xy1;
+    float2 offset = devPos.xy - devCenter.xy;
+    // offset for AA and correct length of offset
+    if (offset != float2(0)) {
+        offset = normalize(offset);
+        devPos.xy += position.z*offset;
+        if (position.z > 0) {
+            // Scale using distance from center of unit octagon to the vertex
+            // Because of geometry clipping we need to scale by 1.0823922*newLength/origLength
+            // But the original length is 1.0823922 so the offsetScale is just newLength
+            offset *= offsetScale;
+        } else {
+            // Because of geometry clipping we need to scale by innerRadius*newLength/origLength
+            // But the original length is 1 so this is just innerRadius*newLength
+            offset *= offsetScale*radiiAndFlags.y;
+        }
+    }
+
+    circleEdge = float4(offset, radiiAndFlags.xy);
+    if (radiiAndFlags.z > 0) {
+        clipPlane = fragClipPlane0;
+        isectPlane = fragClipPlane1;
+        unionPlane = float3(0, 0, 0);
+    } else {
+        clipPlane = fragClipPlane0;
+        isectPlane = float3(0, 0, 1);
+        unionPlane = fragClipPlane1;
+    }
+    if (abs(radiiAndFlags.z) > 1) {
+        // This is the cap radius in normalized space where the outer radius is 1 and
+        // radii.y is the normalized inner radius.
+        roundCapRadius = (1.0 - radiiAndFlags.y) / 2.0;
+    } else {
+        roundCapRadius = 0;
+    }
+    roundCapPos = inRoundCapPos;
+    stepLocalCoords = localPos;
+
+    // We assume no perspective
+    return float4(devPos.xy, depth, 1);
 }
 
 float4 text_vertex_fn(float2 baseCoords,

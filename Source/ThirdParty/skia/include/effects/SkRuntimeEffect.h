@@ -162,6 +162,7 @@ public:
 
     // Color filter SkSL requires an entry point that looks like:
     //     vec4 main(vec4 inColor) { ... }
+    //     https://fiddle.skia.org/c/@runtimeeffect_colorfilter_grid
     static Result MakeForColorFilter(SkString sksl, const Options&);
     static Result MakeForColorFilter(SkString sksl) {
         return MakeForColorFilter(std::move(sksl), Options{});
@@ -352,7 +353,7 @@ private:
  * Note that SkRuntimeEffectBuilder is built entirely on the public API of SkRuntimeEffect,
  * so can be used as-is or serve as inspiration for other interfaces or binding techniques.
  */
-class SkRuntimeEffectBuilder {
+class SK_API SkRuntimeEffectBuilder {
 public:
     explicit SkRuntimeEffectBuilder(sk_sp<SkRuntimeEffect> effect)
             : fEffect(std::move(effect))
