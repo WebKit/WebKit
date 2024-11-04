@@ -636,25 +636,9 @@ bool RenderBundleEncoder::runVertexBufferValidation(uint32_t vertexCount, uint32
 
 std::pair<uint32_t, uint32_t> RenderBundleEncoder::computeMininumVertexInstanceCount() const
 {
-    if (!m_pipeline)
-        return std::make_pair(0u, 0u);
-
-    uint32_t minVertexCount = invalidVertexInstanceCount;
-    uint32_t minInstanceCount = invalidVertexInstanceCount;
-    auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
-    for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
-        auto bufferSize = bufferIndex < m_vertexBuffers.size() ? m_vertexBuffers[bufferIndex].size : 0;
-        auto stride = bufferData.stride;
-        auto lastStride = bufferData.lastStride;
-        if (!stride)
-            continue;
-        auto elementCount = bufferSize < lastStride ? 0 : ((bufferSize - lastStride) / stride + 1);
-        if (bufferData.stepMode == WGPUVertexStepMode_Vertex)
-            minVertexCount = std::min<uint32_t>(minVertexCount, elementCount);
-        else
-            minInstanceCount = std::min<uint32_t>(minInstanceCount, elementCount);
-    }
-    return std::make_pair(minVertexCount, minInstanceCount);
+    return RenderPassEncoder::computeMininumVertexInstanceCount(m_pipeline.get(), ^(uint32_t bufferIndex) {
+        return bufferIndex < m_vertexBuffers.size() ? m_vertexBuffers[bufferIndex].size : 0;
+    });
 }
 
 void RenderBundleEncoder::storeVertexBufferCountsForValidation(uint32_t indexCount, uint32_t instanceCount, uint32_t firstIndex, int32_t baseVertex, uint32_t firstInstance, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes)

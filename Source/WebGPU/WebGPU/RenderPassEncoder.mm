@@ -633,20 +633,19 @@ void RenderPassEncoder::draw(uint32_t vertexCount, uint32_t instanceCount, uint3
         baseInstance:firstInstance];
 }
 
-std::pair<uint32_t, uint32_t> RenderPassEncoder::computeMininumVertexInstanceCount() const
+std::pair<uint32_t, uint32_t> RenderPassEncoder::computeMininumVertexInstanceCount(const RenderPipeline* pipeline, uint64_t (^computeBufferSize)(uint32_t))
 {
-    if (!m_pipeline)
+    if (!pipeline)
         return std::make_pair(0, 0);
 
     uint32_t minVertexCount = RenderBundleEncoder::invalidVertexInstanceCount;
     uint32_t minInstanceCount = RenderBundleEncoder::invalidVertexInstanceCount;
-    auto& requiredBufferIndices = m_pipeline->requiredBufferIndices();
+    auto& requiredBufferIndices = pipeline->requiredBufferIndices();
     for (auto& [bufferIndex, bufferData] : requiredBufferIndices) {
-        auto it = m_vertexBuffers.find(bufferIndex);
-        auto bufferSize = it == m_vertexBuffers.end() || (it->value.buffer.length < it->value.offset) ? 0 : (it->value.buffer.length - it->value.offset);
+        auto bufferSize = computeBufferSize(bufferIndex);
         auto stride = bufferData.stride;
         auto lastStride = bufferData.lastStride;
-        if (!stride)
+        if (!stride && bufferSize >= lastStride)
             continue;
 
         auto elementCount = bufferSize < lastStride ? 0 : ((bufferSize - lastStride) / stride + 1);
@@ -656,6 +655,14 @@ std::pair<uint32_t, uint32_t> RenderPassEncoder::computeMininumVertexInstanceCou
             minInstanceCount = std::min<uint32_t>(minInstanceCount, elementCount);
     }
     return std::make_pair(minVertexCount, minInstanceCount);
+}
+
+std::pair<uint32_t, uint32_t> RenderPassEncoder::computeMininumVertexInstanceCount() const
+{
+    return computeMininumVertexInstanceCount(m_pipeline.get(), ^(uint32_t bufferIndex) {
+        auto it = m_vertexBuffers.find(bufferIndex);
+        return it == m_vertexBuffers.end() || (it->value.buffer.length < it->value.offset) ? 0 : (it->value.buffer.length - it->value.offset);
+    });
 }
 
 RenderPassEncoder::IndexCall RenderPassEncoder::clampIndexBufferToValidValues(uint32_t indexCount, uint32_t instanceCount, int32_t baseVertex, uint32_t firstInstance, MTLIndexType indexType, NSUInteger indexBufferOffsetInBytes, Buffer* apiIndexBuffer, uint32_t minVertexCount, uint32_t minInstanceCount, id<MTLRenderCommandEncoder> renderCommandEncoder, Device& device, uint32_t rasterSampleCount, MTLPrimitiveType primitiveType)
