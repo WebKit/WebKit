@@ -25,7 +25,6 @@
 
 #pragma once
 
-#include <wtf/MallocPtr.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Nonmovable.h>

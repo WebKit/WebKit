@@ -43,8 +43,10 @@
 #include "UnlinkedModuleProgramCodeBlock.h"
 #include "UnlinkedProgramCodeBlock.h"
 #include <wtf/MallocPtr.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/Packed.h>
 #include <wtf/RobinHoodHashMap.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/UUID.h>
 #include <wtf/text/AtomStringImpl.h>
 
@@ -162,14 +164,15 @@ public:
         }
 
         size_t size = m_baseOffset + m_currentPage->size();
-        MallocPtr<uint8_t, VMMalloc> buffer = MallocPtr<uint8_t, VMMalloc>::malloc(size);
+        auto buffer = MallocSpan<uint8_t, VMMalloc>::malloc(size);
+        auto bufferSpan = buffer.mutableSpan();
         unsigned offset = 0;
         for (const auto& page : m_pages) {
-            memcpy(buffer.get() + offset, page.buffer(), page.size());
+            memcpySpan(bufferSpan.subspan(offset), page.span());
             offset += page.size();
         }
         RELEASE_ASSERT(offset == size);
-        return CachedBytecode::create(WTFMove(buffer), size, WTFMove(m_leafExecutables));
+        return CachedBytecode::create(WTFMove(buffer), WTFMove(m_leafExecutables));
     }
 
 private:
@@ -207,8 +210,7 @@ private:
     class Page {
     public:
         Page(size_t size)
-            : m_buffer(MallocPtr<uint8_t, VMMalloc>::malloc(size))
-            , m_capacity(size)
+            : m_buffer(MallocSpan<uint8_t, VMMalloc>::malloc(size))
         {
         }
 
@@ -217,7 +219,7 @@ private:
             size_t alignment = std::min(alignof(std::max_align_t), static_cast<size_t>(WTF::roundUpToPowerOfTwo(size)));
             ptrdiff_t offset = roundUpToMultipleOf(alignment, m_offset);
             size = roundUpToMultipleOf(alignment, size);
-            if (static_cast<size_t>(offset + size) > m_capacity)
+            if (static_cast<size_t>(offset + size) > capacity())
                 return false;
 
             result = offset;
@@ -225,17 +227,20 @@ private:
             return true;
         }
 
-        uint8_t* buffer() const { return m_buffer.get(); }
+        // FIXME: Port call sites for span() / mutableSpan() and remove.
+        const uint8_t* buffer() const { return m_buffer.span().data(); }
+        uint8_t* buffer() { return m_buffer.mutableSpan().data(); }
         size_t size() const { return static_cast<size_t>(m_offset); }
 
-        std::span<uint8_t> mutableSpan() { return { m_buffer.get(), size() }; }
-        std::span<const uint8_t> span() const { return { m_buffer.get(), size() }; }
+        std::span<uint8_t> mutableSpan() { return m_buffer.mutableSpan().first(size()); }
+        std::span<const uint8_t> span() const { return m_buffer.span().first(size()); }
 
         bool getOffset(const void* address, ptrdiff_t& result) const
         {
-            const uint8_t* addr = static_cast<const uint8_t*>(address);
-            if (addr >= m_buffer.get() && addr < m_buffer.get() + m_offset) {
-                result = addr - m_buffer.get();
+            auto* addr = static_cast<const uint8_t*>(address);
+            auto* bufferStart = buffer();
+            if (addr >= bufferStart && addr < bufferStart + m_offset) {
+                result = addr - bufferStart;
                 return true;
             }
             return false;
@@ -246,14 +251,15 @@ private:
             ptrdiff_t size = roundUpToMultipleOf(alignof(std::max_align_t), m_offset);
             if (size == m_offset)
                 return;
-            RELEASE_ASSERT(static_cast<size_t>(size) <= m_capacity);
+            RELEASE_ASSERT(static_cast<size_t>(size) <= capacity());
             m_offset = size;
         }
 
     private:
-        MallocPtr<uint8_t, VMMalloc> m_buffer;
+        size_t capacity() const { return m_buffer.sizeInBytes(); }
+
+        MallocSpan<uint8_t, VMMalloc> m_buffer;
         ptrdiff_t m_offset { 0 };
-        size_t m_capacity;
     };
 
     void allocateNewPage(size_t size = 0)

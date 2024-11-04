@@ -35,23 +35,19 @@ CachePayload CachePayload::makeMappedPayload(FileSystem::MappedFileData&& data)
     return CachePayload(WTFMove(data));
 }
 
-CachePayload CachePayload::makeMallocPayload(MallocPtr<uint8_t, VMMalloc>&& data, size_t size)
+CachePayload CachePayload::makeMallocPayload(MallocSpan<uint8_t, VMMalloc>&& data)
 {
-    return CachePayload(std::pair { WTFMove(data), size });
+    return CachePayload(WTFMove(data));
 }
 
 CachePayload CachePayload::makeEmptyPayload()
 {
-    return CachePayload(std::pair { nullptr, 0 });
+    return CachePayload({ });
 }
 
-CachePayload::CachePayload(CachePayload&& other)
-{
-    m_data = WTFMove(other.m_data);
-    other.m_data = std::pair { nullptr, 0 };
-}
+CachePayload::CachePayload(CachePayload&&) = default;
 
-CachePayload::CachePayload(std::variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>>&& data)
+CachePayload::CachePayload(DataType&& data)
     : m_data(WTFMove(data))
 {
 }
@@ -60,13 +56,9 @@ CachePayload::~CachePayload() = default;
 
 std::span<const uint8_t> CachePayload::span() const
 {
-    return WTF::switchOn(m_data,
-        [](const FileSystem::MappedFileData& data) {
-            return data.span();
-        }, [](const std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>& data) {
-            return std::span<const uint8_t> { data.first.get(), data.second };
-        }
-    );
+    return WTF::switchOn(m_data, [](const auto& data) {
+        return data.span();
+    });
 }
 
 } // namespace JSC

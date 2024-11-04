@@ -39,6 +39,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <wtf/FileSystem.h>
 #include <wtf/FixedVector.h>
 #include <wtf/IterationStatus.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/PageReservation.h>
 #include <wtf/ProcessID.h>
 #include <wtf/RedBlackTree.h>
@@ -1430,8 +1431,9 @@ ExecutableMemoryHandle::~ExecutableMemoryHandle()
     allocator->handleWillBeReleased(*this, sizeInBytes());
     if (UNLIKELY(Options::zeroExecutableMemoryOnFree())) {
         // We don't have a performJITMemset so just use a zeroed buffer.
-        auto zeros = MallocPtr<uint8_t>::zeroedMalloc(sizeInBytes());
-        performJITMemcpy(start().untaggedPtr(), zeros.get(), sizeInBytes());
+        auto zeros = MallocSpan<uint8_t>::zeroedMalloc(sizeInBytes());
+        auto span = zeros.span();
+        performJITMemcpy(start().untaggedPtr(), span.data(), span.size());
     }
     jit_heap_deallocate(key());
 }

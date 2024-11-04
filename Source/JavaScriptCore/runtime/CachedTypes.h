@@ -30,7 +30,6 @@
 #include "VariableEnvironment.h"
 #include <wtf/FileSystem.h>
 #include <wtf/HashMap.h>
-#include <wtf/MallocPtr.h>
 
 namespace JSC {
 

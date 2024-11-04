@@ -33,7 +33,7 @@
 #include "IntSize.h"
 #include <wtf/Condition.h>
 #include <wtf/Lock.h>
-#include <wtf/MallocPtr.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/Ref.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
@@ -99,7 +99,9 @@ public:
     WEBCORE_EXPORT virtual ~CoordinatedUnacceleratedTileBuffer();
 
     int stride() const { return m_size.width() * 4; }
-    unsigned char* data() const { return m_data.get(); }
+
+    const unsigned char* data() const { return m_data.span().data(); }
+    unsigned char* data() { return m_data.mutableSpan().data(); }
 
     PixelFormat pixelFormat() const;
 
@@ -116,7 +118,7 @@ private:
     void completePainting() final;
     void waitUntilPaintingComplete() final;
 
-    MallocPtr<unsigned char> m_data;
+    MallocSpan<unsigned char> m_data;
     IntSize m_size;
 
     enum class PaintingState {

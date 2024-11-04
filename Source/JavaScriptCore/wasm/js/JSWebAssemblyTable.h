@@ -32,7 +32,6 @@
 #include "WasmTable.h"
 #include "WebAssemblyWrapperFunction.h"
 #include "WebAssemblyFunction.h"
-#include <wtf/MallocPtr.h>
 #include <wtf/Ref.h>
 
 namespace JSC {

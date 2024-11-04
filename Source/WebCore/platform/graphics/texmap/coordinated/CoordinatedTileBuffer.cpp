@@ -96,7 +96,7 @@ CoordinatedUnacceleratedTileBuffer::CoordinatedUnacceleratedTileBuffer(const Int
     , m_size(size)
 {
     const auto checkedArea = size.area() * 4;
-    m_data = MallocPtr<unsigned char>::tryZeroedMalloc(checkedArea);
+    m_data = MallocSpan<unsigned char>::tryZeroedMalloc(checkedArea);
 
     {
         Locker locker { s_layersMemoryUsageLock };
@@ -135,7 +135,7 @@ bool CoordinatedUnacceleratedTileBuffer::tryEnsureSurface()
     auto imageInfo = SkImageInfo::Make(m_size.width(), m_size.height(), colorType, kPremul_SkAlphaType, SkColorSpace::MakeSRGB());
     // FIXME: ref buffer and unref on release proc?
     SkSurfaceProps properties = { 0, FontRenderOptions::singleton().subpixelOrder() };
-    m_surface = SkSurfaces::WrapPixels(imageInfo, m_data.get(), imageInfo.minRowBytes64(), &properties);
+    m_surface = SkSurfaces::WrapPixels(imageInfo, data(), imageInfo.minRowBytes64(), &properties);
     return true;
 }
 #endif

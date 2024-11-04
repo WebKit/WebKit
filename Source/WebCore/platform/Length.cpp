@@ -31,7 +31,6 @@
 #include "CalculationValue.h"
 #include <wtf/ASCIICType.h>
 #include <wtf/HashMap.h>
-#include <wtf/MallocPtr.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>

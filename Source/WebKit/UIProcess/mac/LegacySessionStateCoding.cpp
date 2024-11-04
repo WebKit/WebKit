@@ -515,10 +515,10 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     CFIndex length = CFDataGetLength(data.get());
 
     size_t bufferSize = length + sizeof(uint32_t);
-    auto mallocBuffer = MallocPtr<uint8_t, HistoryEntryDataEncoderMalloc>::tryMalloc(bufferSize);
+    auto mallocBuffer = MallocSpan<uint8_t, HistoryEntryDataEncoderMalloc>::tryMalloc(bufferSize);
     if (!mallocBuffer)
         return nullptr;
-    auto buffer = unsafeMakeSpan(mallocBuffer.leakPtr(), bufferSize);
+    auto buffer = mallocBuffer.mutableSpan();
 
     // Put the session state version number at the start of the buffer
     buffer[0] = (sessionStateDataVersion & 0xff000000) >> 24;
@@ -529,9 +529,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     // Copy in the actual session state data
     CFDataGetBytes(data.get(), CFRangeMake(0, length), buffer.subspan(sizeof(uint32_t)).data());
 
-    return API::Data::createWithoutCopying(buffer, [] (uint8_t* buffer, const void* context) {
-        HistoryEntryDataEncoderMalloc::free(buffer);
-    }, nullptr);
+    return API::Data::createWithoutCopying(buffer, [mallocBuffer = WTFMove(mallocBuffer)] (uint8_t*, const void*) { }, nullptr);
 }
 
 class HistoryEntryDataDecoder {

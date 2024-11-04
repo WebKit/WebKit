@@ -32,7 +32,6 @@
 #include "WasmLimits.h"
 #include "WebAssemblyFunction.h"
 #include "WebAssemblyWrapperFunction.h"
-#include <wtf/MallocPtr.h>
 #include <wtf/Ref.h>
 
 namespace JSC {

@@ -28,14 +28,14 @@
 #include "VM.h"
 #include <variant>
 #include <wtf/FileSystem.h>
-#include <wtf/MallocPtr.h>
+#include <wtf/MallocSpan.h>
 
 namespace JSC {
 
 class CachePayload {
 public:
     JS_EXPORT_PRIVATE static CachePayload makeMappedPayload(FileSystem::MappedFileData&&);
-    JS_EXPORT_PRIVATE static CachePayload makeMallocPayload(MallocPtr<uint8_t, VMMalloc>&&, size_t);
+    JS_EXPORT_PRIVATE static CachePayload makeMallocPayload(MallocSpan<uint8_t, VMMalloc>&&);
     JS_EXPORT_PRIVATE static CachePayload makeEmptyPayload();
 
     JS_EXPORT_PRIVATE CachePayload(CachePayload&&);
@@ -45,9 +45,10 @@ public:
     JS_EXPORT_PRIVATE std::span<const uint8_t> span() const;
 
 private:
-    CachePayload(std::variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>>&&);
+    using DataType = std::variant<MallocSpan<uint8_t, VMMalloc>, FileSystem::MappedFileData>;
+    explicit CachePayload(DataType&&);
 
-    std::variant<FileSystem::MappedFileData, std::pair<MallocPtr<uint8_t, VMMalloc>, size_t>> m_data;
+    DataType m_data;
 };
 
 } // namespace JSC

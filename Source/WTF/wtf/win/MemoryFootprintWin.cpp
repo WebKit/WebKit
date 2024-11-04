@@ -30,7 +30,7 @@
 #include <type_traits>
 #include <windows.h>
 #include <psapi.h>
-#include <wtf/MallocPtr.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/win/Win32Handle.h>
 
 namespace WTF {
@@ -76,13 +76,14 @@ size_t memoryFootprint()
 
     for (size_t numberOfEntries = updateNumberOfEntries(workingSetsOnStack->NumberOfEntries);;) {
         size_t workingSetSizeInBytes = sizeof(PSAPI_WORKING_SET_INFORMATION) + sizeof(PSAPI_WORKING_SET_BLOCK) * numberOfEntries;
-        auto workingSets = MallocPtr<PSAPI_WORKING_SET_INFORMATION>::malloc(workingSetSizeInBytes);
-        if (QueryWorkingSet(process.get(), workingSets.get(), workingSetSizeInBytes))
-            return countSizeOfPrivateWorkingSet(*workingSets);
+        auto workingSets = MallocSpan<PSAPI_WORKING_SET_INFORMATION>::malloc(workingSetSizeInBytes);
+        auto workingSetsSpan = workingSets.mutableSpan();
+        if (QueryWorkingSet(process.get(), workingSetsSpan.data(), workingSetsSpan.size_bytes()))
+            return countSizeOfPrivateWorkingSet(workingSetsSpan[0]);
 
         if (GetLastError() != ERROR_BAD_LENGTH)
             return 0;
-        numberOfEntries = updateNumberOfEntries(workingSets->NumberOfEntries);
+        numberOfEntries = updateNumberOfEntries(workingSetsSpan[0].NumberOfEntries);
     }
 }
 
