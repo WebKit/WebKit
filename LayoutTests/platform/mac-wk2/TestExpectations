@@ -1920,3 +1920,5 @@ imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data
 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Pass Failure ]
 
 webkit.org/b/282563 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/locked-frame-crash.html [ Skip ]
+
+webkit.org/b/282565 [ Sequoia+ Debug ] imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-001.html [ Pass ImageOnlyFailure ]
