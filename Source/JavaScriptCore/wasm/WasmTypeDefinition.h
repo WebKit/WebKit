@@ -605,7 +605,7 @@ public:
     {
     }
 
-    void cleanup();
+    bool cleanup();
 
     RecursionGroupCount typeCount() const { return m_typeCount; }
     TypeIndex type(RecursionGroupCount i) const { return const_cast<RecursionGroup*>(this)->getType(i); }
@@ -641,7 +641,7 @@ public:
     {
     }
 
-    void cleanup();
+    bool cleanup();
 
     TypeIndex recursionGroup() const { return const_cast<Projection*>(this)->getRecursionGroup(); }
     ProjectionIndex index() const { return const_cast<Projection*>(this)->getIndex(); }
@@ -677,7 +677,7 @@ public:
     {
     }
 
-    void cleanup();
+    bool cleanup();
 
     SupertypeCount supertypeCount() const { return m_supertypeCount; }
     bool isFinal() const { return m_final; }
@@ -831,8 +831,9 @@ public:
     // Type definitions that are compound and contain references to other definitions
     // via a type index should ref() the other definition when new unique instances are
     // constructed, and need to be cleaned up and have deref() called through this cleanup()
-    // method when the containing module is destroyed.
-    void cleanup();
+    // method when the containing module is destroyed. Returns true if any ref counts may
+    // have changed.
+    bool cleanup();
 
     // Type definitions are uniqued and, for call_indirect, validated at runtime. Tables can create invalid TypeIndex values which cause call_indirect to fail. We use 0 as the invalidIndex so that the codegen can easily test for it and trap, and we add a token invalid entry in TypeInformation.
     static const constexpr TypeIndex invalidIndex = 0;

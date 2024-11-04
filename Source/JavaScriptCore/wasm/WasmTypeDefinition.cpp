@@ -220,7 +220,7 @@ void StorageType::dump(PrintStream& out) const
     }
 }
 
-void TypeDefinition::cleanup()
+bool TypeDefinition::cleanup()
 {
     // Only compound type definitions need to be cleaned up, not, e.g., function types.
     if (is<Subtype>())
@@ -229,25 +229,31 @@ void TypeDefinition::cleanup()
         return as<Projection>()->cleanup();
     if (is<RecursionGroup>())
         return as<RecursionGroup>()->cleanup();
+    return false;
 }
 
-void Subtype::cleanup()
+bool Subtype::cleanup()
 {
     if (supertypeCount() > 0)
         TypeInformation::get(firstSuperType()).deref();
     TypeInformation::get(underlyingType()).deref();
+    return true;
 }
 
-void Projection::cleanup()
+bool Projection::cleanup()
 {
-    if (recursionGroup() != TypeDefinition::invalidIndex)
+    if (recursionGroup() != TypeDefinition::invalidIndex) {
         TypeInformation::get(recursionGroup()).deref();
+        return true;
+    }
+    return false;
 }
 
-void RecursionGroup::cleanup()
+bool RecursionGroup::cleanup()
 {
     for (RecursionGroupCount i = 0; i < typeCount(); i++)
         TypeInformation::get(type(i)).deref();
+    return true;
 }
 
 static unsigned computeSignatureHash(size_t returnCount, const Type* returnTypes, size_t argumentCount, const Type* argumentTypes)
@@ -1151,23 +1157,21 @@ void TypeInformation::tryCleanup()
     TypeInformation& info = singleton();
     Locker locker { info.m_lock };
 
-    info.m_unrollingCache.removeIf([&] (auto& keyValuePair) {
-        const TypeDefinition& type = TypeInformation::get(keyValuePair.key);
-        return type.refCount() == 1;
-    });
-
-    info.m_rttMap.removeIf([&] (auto& keyValuePair) {
-        const TypeDefinition& type = TypeInformation::get(keyValuePair.key);
-        return type.refCount() == 1;
-    });
-
-    info.m_typeSet.removeIf([&] (auto& hash) {
-        const auto& signature = hash.key;
-        const bool shouldRemove = signature->refCount() == 1;
-        if (shouldRemove)
-            signature->cleanup();
-        return shouldRemove;
-    });
+    bool changed;
+    do {
+        changed = false;
+        info.m_typeSet.removeIf([&] (auto& hash) {
+            const auto& signature = hash.key;
+            if (signature->refCount() == 1) {
+                TypeIndex index = signature->index();
+                info.m_unrollingCache.remove(index);
+                info.m_rttMap.remove(index);
+                changed |= signature->cleanup();
+                return true;
+            }
+            return false;
+        });
+    } while (changed);
 }
 
 } } // namespace JSC::Wasm
