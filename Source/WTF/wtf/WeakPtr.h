@@ -88,7 +88,7 @@ public:
     T* get() const
     {
         static_assert(
-            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
 
         ASSERT(canSafelyBeUsed());
@@ -112,7 +112,7 @@ public:
     T* operator->() const
     {
         static_assert(
-            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
 
         ASSERT(canSafelyBeUsed());
@@ -122,7 +122,7 @@ public:
     T& operator*() const
     {
         static_assert(
-            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
 
         ASSERT(canSafelyBeUsed());

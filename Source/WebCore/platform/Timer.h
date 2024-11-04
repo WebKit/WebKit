@@ -155,7 +155,7 @@ public:
     }
 
     template<typename TimerFiredClass, typename TimerFiredBaseClass>
-    requires (WTF::HasRefPtrMethods<TimerFiredClass>::value)
+    requires (WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
         : m_function([objectPtr = &object, function] {
             Ref protectedObject { *objectPtr };
@@ -166,7 +166,7 @@ public:
 
 
     template<typename TimerFiredClass, typename TimerFiredBaseClass>
-    requires (WTF::HasCheckedPtrMethods<TimerFiredClass>::value && !WTF::HasRefPtrMethods<TimerFiredClass>::value)
+    requires (WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value && !WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
         : m_function([objectPtr = &object, function] {
             CheckedRef checkedObject { *objectPtr };
@@ -177,7 +177,7 @@ public:
 
     // FIXME: This constructor isn't as safe as the other ones and should ideally be removed.
     template <typename TimerFiredClass, typename TimerFiredBaseClass>
-    requires (!WTF::HasRefPtrMethods<TimerFiredClass>::value && !WTF::HasCheckedPtrMethods<TimerFiredClass>::value)
+    requires (!WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value && !WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value)
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
         : m_function(std::bind(function, &object))
     {

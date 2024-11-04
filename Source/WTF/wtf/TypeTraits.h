@@ -97,34 +97,34 @@ struct RemoveSmartPointerHelper<T, Ref<Pointee>> {
 template<typename T>
 struct RemoveSmartPointer : detail::RemoveSmartPointerHelper<T, std::remove_cv_t<T>> { };
 
-// HasRefPtrMethods implementation
+// HasRefPtrMemberFunctions implementation
 namespace detail {
 
 template<typename>
 struct SFINAE1True : std::true_type { };
 
 template<class T>
-static auto HasRefPtrMethodsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->ref(), static_cast<std::remove_cv_t<T>*>(nullptr)->deref())>;
+static auto HasRefPtrMemberFunctionsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->ref(), static_cast<std::remove_cv_t<T>*>(nullptr)->deref())>;
 template<class>
-static auto HasRefPtrMethodsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
+static auto HasRefPtrMemberFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
 
 } // namespace detail
 
 template<class T>
-struct HasRefPtrMethods : decltype(detail::HasRefPtrMethodsTest<T>(SFINAE_OVERLOAD)) { };
+struct HasRefPtrMemberFunctions : decltype(detail::HasRefPtrMemberFunctionsTest<T>(SFINAE_OVERLOAD)) { };
 
-// HasCheckedPtrMethods implementation
+// HasCheckedPtrMemberFunctions implementation
 namespace detail {
 
 template<class T>
-static auto HasCheckedPtrMethodsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->incrementCheckedPtrCount(), static_cast<std::remove_cv_t<T>*>(nullptr)->decrementCheckedPtrCount())>;
+static auto HasCheckedPtrMemberFunctionsTest(SFINAE_OVERLOAD_PREFERRED) -> SFINAE1True<decltype(static_cast<std::remove_cv_t<T>*>(nullptr)->incrementCheckedPtrCount(), static_cast<std::remove_cv_t<T>*>(nullptr)->decrementCheckedPtrCount())>;
 template<class>
-static auto HasCheckedPtrMethodsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
+static auto HasCheckedPtrMemberFunctionsTest(SFINAE_OVERLOAD_DEFAULT) -> std::false_type;
 
 } // namespace detail
 
 template<class T>
-struct HasCheckedPtrMethods : decltype(detail::HasCheckedPtrMethodsTest<T>(SFINAE_OVERLOAD)) { };
+struct HasCheckedPtrMemberFunctions : decltype(detail::HasCheckedPtrMemberFunctionsTest<T>(SFINAE_OVERLOAD)) { };
 
 // HasIsolatedCopy()
 namespace detail {

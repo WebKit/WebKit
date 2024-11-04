@@ -76,7 +76,7 @@ public:
     T* ptrAllowingHashTableEmptyValue() const
     {
         static_assert(
-            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
 
         return !m_impl.isHashTableEmptyValue() ? static_cast<T*>(m_impl->template get<T>()) : nullptr;
@@ -85,7 +85,7 @@ public:
     T* ptr() const
     {
         static_assert(
-            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
 
         auto* ptr = static_cast<T*>(m_impl->template get<T>());
@@ -96,7 +96,7 @@ public:
     T& get() const
     {
         static_assert(
-            HasRefPtrMethods<T>::value || HasCheckedPtrMethods<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
+            HasRefPtrMemberFunctions<T>::value || HasCheckedPtrMemberFunctions<T>::value || IsDeprecatedWeakRefSmartPointerException<std::remove_cv_t<T>>::value,
             "Classes that offer weak pointers should also offer RefPtr or CheckedPtr. Please do not add new exceptions.");
 
         auto* ptr = static_cast<T*>(m_impl->template get<T>());

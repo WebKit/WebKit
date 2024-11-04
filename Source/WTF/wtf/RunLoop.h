@@ -180,7 +180,7 @@ public:
         WTF_MAKE_FAST_ALLOCATED;
     public:
         template <typename TimerFiredClass>
-        requires (WTF::HasRefPtrMethods<TimerFiredClass>::value)
+        requires (WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
         Timer(Ref<RunLoop>&& runLoop, TimerFiredClass* object, void (TimerFiredClass::*function)())
             : Timer(WTFMove(runLoop), [object, function] {
                 RefPtr protectedObject { object };
@@ -190,7 +190,7 @@ public:
         }
 
         template <typename TimerFiredClass>
-        requires (WTF::HasCheckedPtrMethods<TimerFiredClass>::value && !WTF::HasRefPtrMethods<TimerFiredClass>::value)
+        requires (WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value && !WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value)
         Timer(Ref<RunLoop>&& runLoop, TimerFiredClass* object, void (TimerFiredClass::*function)())
             : Timer(WTFMove(runLoop), [object, function] {
                 CheckedPtr checkedObject { object };
@@ -201,7 +201,7 @@ public:
 
         // FIXME: This constructor isn't as safe as the other ones and should ideally be removed.
         template <typename TimerFiredClass>
-        requires (!WTF::HasRefPtrMethods<TimerFiredClass>::value && !WTF::HasCheckedPtrMethods<TimerFiredClass>::value)
+        requires (!WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value && !WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value)
         Timer(Ref<RunLoop>&& runLoop, TimerFiredClass* object, void (TimerFiredClass::*function)())
             : Timer(WTFMove(runLoop), std::bind(function, object))
         {
