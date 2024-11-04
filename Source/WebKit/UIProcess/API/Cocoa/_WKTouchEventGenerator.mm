@@ -88,7 +88,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     if (delay > 0) {
         struct timespec moveDelay = { 0, static_cast<long>(delay * nanosecondsPerSecond) };
         nanosleep(&moveDelay, NULL);
-    }   
+    }
 }
 
 // NOTE: this event synthesizer is derived from WebKitTestRunner code.
@@ -184,7 +184,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
         CGPoint point = pointInfo->point;
         point = CGPointMake(roundf(point.x), roundf(point.y));
-        
+
         RetainPtr<IOHIDEventRef> subEvent = adoptCF(IOHIDEventCreateDigitizerFingerEvent(kCFAllocatorDefault, machTime,
             pointInfo->identifier,
             pointInfo->identifier,
@@ -235,7 +235,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         (uint8_t*)&callbackID,
         sizeof(CFIndex),
         kIOHIDEventOptionNone));
-    
+
     if (markerEvent) {
         auto contextId = window._contextId;
         ASSERT(contextId);
@@ -251,7 +251,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 - (void)_updateTouchPoints:(std::span<CGPoint>)points window:(UIWindow *)window
 {
     HandEventType handEventType;
-    
+
     // The hand event type is based on previous state.
     if (!_activePointCount)
         handEventType = HandEventTouched;
@@ -261,14 +261,14 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         handEventType = HandEventMoved;
     else
         handEventType = HandEventChordChanged;
-    
+
     // Update previous count for next event.
     _activePointCount = points.size();
 
     // Update point locations.
     for (auto [i, point] : IndexedRange(points))
         _activePoints[i].point = point;
-    
+
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:handEventType]);
     [self _sendHIDEvent:eventRef.get() window:window];
 }
@@ -303,7 +303,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
     for (auto [i, location] : IndexedRange(locations))
         _activePoints[newPointCount + i].point = location;
-    
+
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:HandEventLifted]);
     [self _sendHIDEvent:eventRef.get() window:window];
 
@@ -331,7 +331,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     while (elapsed < (seconds - fingerMoveInterval)) {
         elapsed = secondsSinceAbsoluteTime(startTime);
         CFTimeInterval interval = elapsed / seconds;
-        
+
         for (NSUInteger i = 0; i < touchCount; ++i) {
             if (!eventIndex)
                 startLocations[i] = _activePoints[i].point;

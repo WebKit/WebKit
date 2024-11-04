@@ -1932,8 +1932,6 @@
 		99C81D5A1C20E7E2005C4C82 /* AutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D551C20DFBE005C4C82 /* AutomationClient.h */; };
 		99C81D5D1C21F38B005C4C82 /* APIAutomationClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */; };
 		99E714C51C124A0400665B3A /* _WKAutomationDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		99E7189A21F79D9E0055E975 /* _WKTouchEventGenerator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 99E7189621F79D9D0055E975 /* _WKTouchEventGenerator.mm */; };
-		99E7189C21F79D9E0055E975 /* _WKTouchEventGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 99E7189821F79D9E0055E975 /* _WKTouchEventGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9ACC07AD25C8132D00DC6386 /* MediaKeySystemPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07AC25C8132D00DC6386 /* MediaKeySystemPermissionRequestManager.h */; };
 		9ACC07B125C815D800DC6386 /* MediaKeySystemPermissionRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07B025C815D800DC6386 /* MediaKeySystemPermissionRequest.h */; };
 		9ACC07B325C815F300DC6386 /* MediaKeySystemPermissionRequestManagerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 9ACC07B225C815F300DC6386 /* MediaKeySystemPermissionRequestManagerProxy.h */; };
@@ -2532,6 +2530,7 @@
 		ED82A7F2128C6FAF004477B3 /* WKBundlePageOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A22F0FF1289FCD90085E74F /* WKBundlePageOverlay.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F409BA181E6E64BC009DA28E /* WKDragDestinationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = F409BA171E6E64B3009DA28E /* WKDragDestinationAction.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F40C3B712AB401C5007A3567 /* WKDatePickerPopoverController.h in Headers */ = {isa = PBXBuildFile; fileRef = F40C3B6F2AB40167007A3567 /* WKDatePickerPopoverController.h */; };
+		F41145682CD939E0004CDBD1 /* _WKTouchEventGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = F41145652CD939E0004CDBD1 /* _WKTouchEventGenerator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F416F1C02C5C3E360085D8DD /* WKScrollViewTrackingTapGestureRecognizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F416F1BE2C5C3E360085D8DD /* WKScrollViewTrackingTapGestureRecognizer.h */; };
 		F41795A62AC61B78007F5F12 /* CompactContextMenuPresenter.h in Headers */ = {isa = PBXBuildFile; fileRef = F41795A42AC619A2007F5F12 /* CompactContextMenuPresenter.h */; };
 		F4299507270E234D0032298B /* StreamMessageReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = F4299506270E234C0032298B /* StreamMessageReceiver.h */; };
@@ -7067,8 +7066,6 @@
 		99C81D5B1C20E817005C4C82 /* APIAutomationClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIAutomationClient.h; sourceTree = "<group>"; };
 		99CA66C8203668220074F35E /* EnterFullscreen.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = EnterFullscreen.js; sourceTree = "<group>"; };
 		99E714C11C1249E600665B3A /* _WKAutomationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKAutomationDelegate.h; sourceTree = "<group>"; };
-		99E7189621F79D9D0055E975 /* _WKTouchEventGenerator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTouchEventGenerator.mm; sourceTree = "<group>"; };
-		99E7189821F79D9E0055E975 /* _WKTouchEventGenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _WKTouchEventGenerator.h; sourceTree = "<group>"; };
 		99F642D21FABE378009621E9 /* CoordinateSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoordinateSystem.h; sourceTree = "<group>"; };
 		9ACC07AC25C8132D00DC6386 /* MediaKeySystemPermissionRequestManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaKeySystemPermissionRequestManager.h; path = EncryptedMedia/MediaKeySystemPermissionRequestManager.h; sourceTree = "<group>"; };
 		9ACC07B025C815D800DC6386 /* MediaKeySystemPermissionRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaKeySystemPermissionRequest.h; sourceTree = "<group>"; };
@@ -8185,6 +8182,8 @@
 		F40D1B68220BDC0F00B49A01 /* WebAutocorrectionContext.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebAutocorrectionContext.h; path = ios/WebAutocorrectionContext.h; sourceTree = "<group>"; };
 		F41056612130699A0092281D /* APIAttachmentCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = APIAttachmentCocoa.mm; sourceTree = "<group>"; };
 		F410A19329AAC81E0082D554 /* RemoteGPURequestAdapterResponse.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteGPURequestAdapterResponse.h; sourceTree = "<group>"; };
+		F41145652CD939E0004CDBD1 /* _WKTouchEventGenerator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTouchEventGenerator.h; sourceTree = "<group>"; };
+		F41145662CD939E0004CDBD1 /* _WKTouchEventGenerator.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTouchEventGenerator.mm; sourceTree = "<group>"; };
 		F416F1BE2C5C3E360085D8DD /* WKScrollViewTrackingTapGestureRecognizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WKScrollViewTrackingTapGestureRecognizer.h; path = ios/WKScrollViewTrackingTapGestureRecognizer.h; sourceTree = "<group>"; };
 		F416F1BF2C5C3E360085D8DD /* WKScrollViewTrackingTapGestureRecognizer.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = WKScrollViewTrackingTapGestureRecognizer.mm; path = ios/WKScrollViewTrackingTapGestureRecognizer.mm; sourceTree = "<group>"; };
 		F41795A42AC619A2007F5F12 /* CompactContextMenuPresenter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = CompactContextMenuPresenter.h; path = ios/CompactContextMenuPresenter.h; sourceTree = "<group>"; };
@@ -11189,8 +11188,6 @@
 			children = (
 				C54256AE18BEC16100DE4179 /* forms */,
 				CDC2831A201BD75600E6E745 /* fullscreen */,
-				99E7189821F79D9E0055E975 /* _WKTouchEventGenerator.h */,
-				99E7189621F79D9D0055E975 /* _WKTouchEventGenerator.mm */,
 				A115DC6E191D82AB00DA8072 /* _WKWebViewPrintFormatter.h */,
 				A115DC6D191D82AB00DA8072 /* _WKWebViewPrintFormatter.mm */,
 				A19DD3BF1D07D16800AC823B /* _WKWebViewPrintFormatterInternal.h */,
@@ -11622,6 +11619,8 @@
 				2D6B371918A967AD0042AE80 /* _WKThumbnailView.h */,
 				2D6B371A18A967AD0042AE80 /* _WKThumbnailView.mm */,
 				2DACE64D18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h */,
+				F41145652CD939E0004CDBD1 /* _WKTouchEventGenerator.h */,
+				F41145662CD939E0004CDBD1 /* _WKTouchEventGenerator.mm */,
 				7C2413011AACFA7500A58C15 /* _WKUserContentExtensionStore.h */,
 				7C2413001AACFA7500A58C15 /* _WKUserContentExtensionStore.mm */,
 				7C2413041AACFA9C00A58C15 /* _WKUserContentExtensionStoreInternal.h */,
@@ -16201,7 +16200,7 @@
 				F42A04712CA1B328000D3118 /* _WKTextRunInternal.h in Headers */,
 				2D6B371B18A967AD0042AE80 /* _WKThumbnailView.h in Headers */,
 				2DACE64E18ADBFF000E4CA76 /* _WKThumbnailViewInternal.h in Headers */,
-				99E7189C21F79D9E0055E975 /* _WKTouchEventGenerator.h in Headers */,
+				F41145682CD939E0004CDBD1 /* _WKTouchEventGenerator.h in Headers */,
 				7C2413031AACFA7500A58C15 /* _WKUserContentExtensionStore.h in Headers */,
 				7C2413051AACFA9C00A58C15 /* _WKUserContentExtensionStoreInternal.h in Headers */,
 				7CA3793E1AC378B30079DC37 /* _WKUserContentExtensionStorePrivate.h in Headers */,
@@ -19639,7 +19638,6 @@
 				5790A65F25679C110077C5A7 /* _WKPublicKeyCredentialUserEntity.mm in Sources */,
 				49FBEFFD239B011D00BD032F /* _WKResourceLoadStatisticsFirstParty.mm in Sources */,
 				49FBEFFF239B012F00BD032F /* _WKResourceLoadStatisticsThirdParty.mm in Sources */,
-				99E7189A21F79D9E0055E975 /* _WKTouchEventGenerator.mm in Sources */,
 				5CA26D83217AD1B800F97A35 /* _WKWarningView.mm in Sources */,
 				3326F2652B06A1F4001A535F /* _WKWebExtensionDeclarativeNetRequestRule.mm in Sources */,
 				3343C3272B21140C00AD10A6 /* _WKWebExtensionDeclarativeNetRequestSQLiteStore.mm in Sources */,
