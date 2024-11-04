@@ -251,7 +251,7 @@ void MediaRecorderPrivateEncoder::close()
     stopRecording();
 }
 
-const String& MediaRecorderPrivateEncoder::mimeType() const
+String MediaRecorderPrivateEncoder::mimeType() const
 {
     assertIsMainThread();
     return m_mimeType;

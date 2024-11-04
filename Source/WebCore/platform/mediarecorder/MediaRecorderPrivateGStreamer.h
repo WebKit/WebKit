@@ -114,7 +114,7 @@ private:
     void stopRecording(CompletionHandler<void()>&&) final;
     void pauseRecording(CompletionHandler<void()>&&) final;
     void resumeRecording(CompletionHandler<void()>&&) final;
-    const String& mimeType() const final;
+    String mimeType() const final;
 
     Ref<MediaRecorderPrivateBackend> m_recorder;
 };

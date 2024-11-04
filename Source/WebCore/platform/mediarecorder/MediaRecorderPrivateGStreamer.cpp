@@ -99,7 +99,7 @@ void MediaRecorderPrivateGStreamer::resumeRecording(CompletionHandler<void()>&& 
     m_recorder->resumeRecording(WTFMove(completionHandler));
 }
 
-const String& MediaRecorderPrivateGStreamer::mimeType() const
+String MediaRecorderPrivateGStreamer::mimeType() const
 {
     return m_recorder->mimeType();
 }

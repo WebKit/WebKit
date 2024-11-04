@@ -60,7 +60,7 @@ private:
     void fetchData(FetchDataCallback&&) final;
     void audioSamplesAvailable(const WTF::MediaTime&, const PlatformAudioData&, const AudioStreamDescription&, size_t) final;
     void startRecording(StartRecordingCallback&&) final;
-    const String& mimeType() const final;
+    String mimeType() const final;
 
     void stopRecording(CompletionHandler<void()>&&) final;
     void pauseRecording(CompletionHandler<void()>&&) final;

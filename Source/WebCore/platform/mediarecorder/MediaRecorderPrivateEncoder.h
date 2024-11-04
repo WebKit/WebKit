@@ -68,7 +68,7 @@ public:
     void stopRecording();
     void close();
 
-    const String& mimeType() const;
+    String mimeType() const;
     unsigned audioBitRate() const;
     unsigned videoBitRate() const;
 

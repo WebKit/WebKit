@@ -197,7 +197,7 @@ void MediaRecorderPrivateAVFImpl::fetchData(FetchDataCallback&& completionHandle
     });
 }
 
-const String& MediaRecorderPrivateAVFImpl::mimeType() const
+String MediaRecorderPrivateAVFImpl::mimeType() const
 {
     return m_encoder->mimeType();
 }

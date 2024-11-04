@@ -72,7 +72,7 @@ public:
 
     using FetchDataCallback = CompletionHandler<void(RefPtr<FragmentedSharedBuffer>&&, const String& mimeType, double)>;
     virtual void fetchData(FetchDataCallback&&) = 0;
-    virtual const String& mimeType() const = 0;
+    virtual String mimeType() const = 0;
 
     void stop(CompletionHandler<void()>&&);
     void pause(CompletionHandler<void()>&&);
