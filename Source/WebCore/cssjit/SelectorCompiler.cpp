@@ -914,13 +914,11 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesAnimatingFullscreenTransitionP
     return matchesAnimatingFullscreenTransitionPseudoClass(element);
 }
 
-#if ENABLE(VIDEO)
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationMatchesInWindowFullscreenPseudoClass, bool, (const Element& element))
 {
     COUNT_SELECTOR_OPERATION(operationMatchesInWindowFullscreenPseudoClass);
     return matchesInWindowFullscreenPseudoClass(element);
 }
-#endif
 
 #endif
 
@@ -1126,11 +1124,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
     case CSSSelector::PseudoClass::InternalAnimatingFullscreenTransition:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesAnimatingFullscreenTransitionPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-#if ENABLE(VIDEO)
     case CSSSelector::PseudoClass::InternalInWindowFullscreen:
         fragment.unoptimizedPseudoClasses.append(CodePtr<JSC::OperationPtrTag>(operationMatchesInWindowFullscreenPseudoClass));
         return FunctionType::SimpleSelectorChecker;
-#endif
 #endif
 
 #if ENABLE(PICTURE_IN_PICTURE_API)

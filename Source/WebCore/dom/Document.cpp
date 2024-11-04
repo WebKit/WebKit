@@ -8793,7 +8793,7 @@ Element* eventTargetElementForDocument(Document* document)
 {
     if (!document)
         return nullptr;
-#if ENABLE(FULLSCREEN_API)
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
     if (CheckedPtr fullscreenManager = document->fullscreenManagerIfExists(); fullscreenManager && fullscreenManager->isFullscreen() && is<HTMLVideoElement>(fullscreenManager->currentFullscreenElement()))
         return fullscreenManager->currentFullscreenElement();
 #endif

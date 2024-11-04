@@ -620,6 +620,7 @@ static String searchableTextForTarget(Element& target)
 
 static bool hasAudibleMedia(const Element& element)
 {
+#if ENABLE(VIDEO)
     if (RefPtr media = dynamicDowncast<HTMLMediaElement>(element))
         return media->isAudible();
 
@@ -632,6 +633,9 @@ static bool hasAudibleMedia(const Element& element)
         if (hasAudibleMedia(documentElement))
             return true;
     }
+#else
+    UNUSED_PARAM(element);
+#endif
 
     return false;
 }
@@ -644,8 +648,10 @@ static URL urlForElement(const Element& element)
     if (RefPtr image = dynamicDowncast<HTMLImageElement>(element))
         return image->currentURL();
 
+#if ENABLE(VIDEO)
     if (RefPtr media = dynamicDowncast<HTMLMediaElement>(element))
         return media->currentSrc();
+#endif
 
     if (CheckedPtr renderer = element.renderer()) {
         if (auto& style = renderer->style(); style.hasBackgroundImage()) {
