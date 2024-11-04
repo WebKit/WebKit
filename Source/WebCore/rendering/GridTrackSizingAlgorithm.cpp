@@ -950,7 +950,10 @@ LayoutUnit GridTrackSizingAlgorithmStrategy::minSizeForGridItem(RenderBox& gridI
     bool overflowIsVisible = isRowAxis ? gridItem.effectiveOverflowInlineDirection() == Overflow::Visible : gridItem.effectiveOverflowBlockDirection() == Overflow::Visible;
     LayoutUnit baselineShim = m_algorithm.baselineOffsetForGridItem(gridItem, gridAxisForDirection(direction()));
 
-    if (gridItemMinSize.isAuto() && overflowIsVisible) {
+    if (gridItemMinSize.isAuto()) {
+        if (!overflowIsVisible)
+            return { };
+
         auto minSize = minContentForGridItem(gridItem, gridLayoutState);
         const GridSpan& span = m_algorithm.m_renderGrid->gridSpanForGridItem(gridItem, direction());
 
