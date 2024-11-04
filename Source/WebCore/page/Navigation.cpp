@@ -135,9 +135,22 @@ void Navigation::initializeForNewWindow(std::optional<NavigationNavigationType> 
         if (shouldProcessPreviousNavigationEntries) {
             for (auto& entry : previousNavigation->m_entries)
                 m_entries.append(NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), entry.get()));
-            m_currentEntryIndex = previousNavigation->m_currentEntryIndex;
-            if (navigationType == NavigationNavigationType::Reload) {
-                updateForActivation(currentItem.get(), navigationType);
+
+            RELEASE_ASSERT(m_entries.size() > previousNavigation->m_currentEntryIndex);
+
+            // FIXME: This should handle Push, however somewhere before here the currentEntry of previousNavigation was updated
+            // to the new navigation so we get duplicate entries.
+            if (navigationType != NavigationNavigationType::Push) {
+                Ref previousEntry = m_entries[*previousNavigation->m_currentEntryIndex];
+
+                if (navigationType == NavigationNavigationType::Replace)
+                    m_entries[*previousNavigation->m_currentEntryIndex] = NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), *currentItem);
+
+                m_currentEntryIndex = getEntryIndexOfHistoryItem(m_entries, *currentItem);
+
+                if (navigationType) // Unset in the case of forms/POST requests.
+                    m_activation = NavigationActivation::create(*navigationType, *currentEntry(), WTFMove(previousEntry));
+
                 return;
             }
         }
