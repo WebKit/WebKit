@@ -54,6 +54,7 @@ private class SwiftOnlyData: NSObject {
 
     var spatialVideoMetadata: WKSLinearMediaSpatialVideoMetadata?
     var videoReceiverEndpointObserver: Cancellable?
+    weak var viewController: PlayableViewController?
 }
 
 enum LinearMediaPlayerErrors: Error {
@@ -172,11 +173,16 @@ enum LinearMediaPlayerErrors: Error {
     func makeViewController() -> PlayableViewController {
         Logger.linearMediaPlayer.log("\(#function)")
 
+        if let viewController = swiftOnlyData.viewController {
+            return viewController
+        }
         let viewController = PlayableViewController()
 #if canImport(LinearMediaKit, _version: 205)
         viewController.playable = self
 #endif
         viewController.prefersAutoDimming = true
+        swiftOnlyData.viewController = viewController;
+
         return viewController
     }
 
