@@ -107,11 +107,15 @@ LayoutRect BoxLayoutShape::shapeMarginLogicalBoundingBox() const
 
 FloatRoundedRect BoxLayoutShape::shapeMarginBounds() const
 {
-    FloatRoundedRect marginBounds(m_bounds);
-    if (shapeMargin() > 0) {
-        marginBounds.inflate(shapeMargin());
-        marginBounds.expandRadii(shapeMargin());
-    }
+    auto shapeMargin = this->shapeMargin();
+    if (!shapeMargin)
+        return m_bounds;
+
+    auto marginBounds = FloatRoundedRect { m_bounds };
+    marginBounds.inflate(shapeMargin);
+    auto expandedRadii = marginBounds.radii();
+    expandedRadii.expandEvenIfZero(shapeMargin);
+    marginBounds.setRadii(expandedRadii);
     return marginBounds;
 }
 

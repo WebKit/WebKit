@@ -124,6 +124,19 @@ void FloatRoundedRect::Radii::expand(float topWidth, float bottomWidth, float le
     }
 }
 
+void FloatRoundedRect::Radii::expandEvenIfZero(float size)
+{
+    auto expand = [&](auto& corner) {
+        corner.setWidth(std::max(0.f, corner.width() + size));
+        corner.setHeight(std::max(0.f, corner.height() + size));
+    };
+
+    expand(m_topLeft);
+    expand(m_topRight);
+    expand(m_bottomLeft);
+    expand(m_bottomRight);
+}
+
 static inline float cornerRectIntercept(float y, const FloatRect& cornerRect)
 {
     ASSERT(cornerRect.height() > 0);
