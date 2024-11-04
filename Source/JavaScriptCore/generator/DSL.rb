@@ -227,6 +227,8 @@ module DSL
 #include "PutByIdFlags.h"
 #include "ToThisStatus.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 class BasicBlockLocation;
@@ -245,8 +247,14 @@ EOF
 #if ENABLE(WEBASSEMBLY)
 #{opcodes_filter { |s| s.config[:emit_in_structs_file] && s.is_wasm? }.map(&:struct).join("\n")}
 #endif // ENABLE(WEBASSEMBLY)
+
 EOF
-            template.suffix = "} // namespace JSC"
+            template.suffix = <<-EOF
+} // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+EOF
+
         end
     end
 

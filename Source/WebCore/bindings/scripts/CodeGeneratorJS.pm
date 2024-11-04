@@ -2503,11 +2503,19 @@ sub GenerateEnumerationImplementation
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($enumeration));
 
+    push(@implContent, "\n");
+    push(@implContent, "WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN\n");
+    push(@implContent, "\n");
+
     push(@implContent, "\n\nnamespace WebCore {\n");
     push(@implContent, "using namespace JSC;\n\n");
     push(@implContent, GenerateEnumerationImplementationContent($enumeration, $className));
     push(@implContent, "} // namespace WebCore\n");
-     
+
+    push(@implContent, "\n");
+    push(@implContent, "WTF_ALLOW_UNSAFE_BUFFER_USAGE_END\n");
+    push(@implContent, "\n");
+
     my $conditionalString = $codeGenerator->GenerateConditionalString($enumeration);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;
 }
