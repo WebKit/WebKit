@@ -380,8 +380,13 @@ void ScrollerMac::updateValues()
 
 void ScrollerMac::updateScrollbarStyle()
 {
-    setScrollerImp([NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:nsControlSizeFromScrollbarWidth(m_pair.scrollbarWidthStyle()) horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:takeScrollerImp().get()]);
+    setScrollerImp([NSScrollerImp scrollerImpWithStyle:nsScrollerStyle(m_pair.scrollbarStyle()) controlSize:nsControlSizeFromScrollbarWidth(m_pair.scrollbarWidthStyle()) horizontal:m_orientation == ScrollbarOrientation::Horizontal replacingScrollerImp:nil]);
+    [m_scrollerImp setDelegate:m_scrollerImpDelegate.get()];
+
+    [m_scrollerImp setLayer:m_hostLayer.get()];
+
     updatePairScrollerImps();
+    updateValues();
 }
 
 void ScrollerMac::updatePairScrollerImps()
