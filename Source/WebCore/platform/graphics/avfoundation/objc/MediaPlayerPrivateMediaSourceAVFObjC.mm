@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2013-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,7 @@
 #import <QuartzCore/CALayer.h>
 #import <objc_runtime.h>
 #import <pal/avfoundation/MediaTimeAVFoundation.h>
+#import <pal/spi/cf/CFNotificationCenterSPI.h>
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/Deque.h>
@@ -62,6 +63,7 @@
 #import <wtf/NeverDestroyed.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/WeakPtr.h>
+#import <wtf/spi/cocoa/NSObjCRuntimeSPI.h>
 
 #import "CoreVideoSoftLink.h"
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -77,6 +79,30 @@
 - (void)removeAllVideoTargets;
 @end
 #endif
+
+@interface WebEffectiveRateChangedListenerObjCAdapter : NSObject
+@property (nonatomic, readonly, direct) RefPtr<WebCore::EffectiveRateChangedListener> protectedListener;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithEffectiveRateChangedListener:(const WebCore::EffectiveRateChangedListener&)listener;
+@end
+
+NS_DIRECT_MEMBERS
+@implementation WebEffectiveRateChangedListenerObjCAdapter {
+    ThreadSafeWeakPtr<WebCore::EffectiveRateChangedListener> _listener;
+}
+
+- (instancetype)initWithEffectiveRateChangedListener:(const WebCore::EffectiveRateChangedListener&)listener
+{
+    if ((self = [super init]))
+        _listener = listener;
+    return self;
+}
+
+- (RefPtr<WebCore::EffectiveRateChangedListener>)protectedListener
+{
+    return _listener.get();
+}
+@end
 
 namespace WebCore {
 
@@ -109,12 +135,13 @@ static bool isCopyDisplayedPixelBufferAvailable()
 #pragma mark -
 #pragma mark MediaPlayerPrivateMediaSourceAVFObjC
 
-class EffectiveRateChangedListener : public ThreadSafeRefCounted<EffectiveRateChangedListener> {
+class EffectiveRateChangedListener : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<EffectiveRateChangedListener> {
 public:
     static Ref<EffectiveRateChangedListener> create(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
     {
         return adoptRef(*new EffectiveRateChangedListener(client, timebase));
     }
+    ~EffectiveRateChangedListener() = default;
 
     void effectiveRateChanged()
     {
@@ -130,22 +157,27 @@ private:
     EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC&, CMTimebaseRef);
 
     WeakPtr<MediaPlayerPrivateMediaSourceAVFObjC> m_client;
+    RetainPtr<WebEffectiveRateChangedListenerObjCAdapter> m_objcAdapter;
 };
 
 static void timebaseEffectiveRateChangedCallback(CFNotificationCenterRef, void* observer, CFNotificationName, const void*, CFDictionaryRef)
 {
-    static_cast<EffectiveRateChangedListener*>(observer)->effectiveRateChanged();
+    RetainPtr adapter { dynamic_objc_cast<WebEffectiveRateChangedListenerObjCAdapter>(reinterpret_cast<id>(observer)) };
+    if (RefPtr protectedListener = [adapter protectedListener])
+        protectedListener->effectiveRateChanged();
 }
 
 void EffectiveRateChangedListener::stop(CMTimebaseRef timebase)
 {
-    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kCMTimebaseNotification_EffectiveRateChanged, timebase);
+    CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), kCMTimebaseNotification_EffectiveRateChanged, timebase);
 }
 
 EffectiveRateChangedListener::EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
     : m_client(client)
+    , m_objcAdapter([[WebEffectiveRateChangedListenerObjCAdapter alloc] initWithEffectiveRateChangedListener:*this])
 {
-    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), this, timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(0));
+    // Observer removed MediaPlayerPrivateMediaSourceAVFObjC destructor.
+    CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(_CFNotificationObserverIsObjC));
 }
 
 MediaPlayerPrivateMediaSourceAVFObjC::MediaPlayerPrivateMediaSourceAVFObjC(MediaPlayer* player)
