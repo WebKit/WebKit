@@ -29,6 +29,7 @@
 #if ENABLE(MEDIA_RECORDER)
 
 #include "AudioSampleBufferCompressor.h"
+#include "CARingBuffer.h"
 #include "CMUtilities.h"
 #include "ContentType.h"
 #include "MediaRecorderPrivateOptions.h"
@@ -276,21 +277,93 @@ void MediaRecorderPrivateEncoder::appendAudioSampleBuffer(const PlatformAudioDat
     // explicitly allow the following allocation(s).
     DisableMallocRestrictionsForCurrentThreadScope disableMallocRestrictions;
 
-    ASSERT(!m_currentAudioSamplingRate || m_currentAudioSamplingRate == description.sampleRate(), "sampling rate should never change over a session");
-    m_currentAudioSamplingRate = description.sampleRate();
+    if (!m_currentAudioSamplingRate) {
+        m_currentAudioSamplingRate = description.sampleRate();
+        Locker locker { m_ringBufferLock };
+        m_ringBuffer = InProcessCARingBuffer::allocate(*std::get<const AudioStreamBasicDescription*>(description.platformDescription().description), description.sampleRate() * 2); // Allow for 2s of audio.
+        queueSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, description = *std::get<const AudioStreamBasicDescription*>(description.platformDescription().description)] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->audioSamplesAvailableStarted(description);
+        });
+        m_originalDescription = toCAAudioStreamDescription(description);
+    }
+    ASSERT(m_originalDescription == description, "sampling rate should never change over a session");
+    if (m_originalDescription != description) {
+        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateEncoder::appendAudioSampleBuffer sampling rate changed from %u to %f, abort recording", static_cast<uint32_t>(m_currentAudioSamplingRate), description.sampleRate());
+        callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->stopRecording();
+        });
+        return;
+    }
     m_lastEnqueuedAudioSampleCount = m_currentAudioSampleCount.load();
     m_currentAudioSampleCount += sampleCount;
-    if (RetainPtr sampleBuffer = createAudioSampleBuffer(data, description, PAL::CMTimeMake(m_lastEnqueuedAudioSampleCount, description.sampleRate()), sampleCount))
-        audioCompressor()->addSampleBuffer(sampleBuffer.get());
+    {
+        if (!m_ringBufferLock.tryLock())
+            return;
+        Locker locker { AdoptLock, m_ringBufferLock };
+        if (!m_ringBuffer)
+            return;
+        m_ringBuffer->store(downcast<WebAudioBufferList>(data).list(), sampleCount, m_lastEnqueuedAudioSampleCount);
+    }
+    queueSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, sampleCount, lastEnqueued = m_lastEnqueuedAudioSampleCount.load()] {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->audioSamplesAvailable(sampleCount, lastEnqueued);
+    });
+}
+
+void MediaRecorderPrivateEncoder::audioSamplesAvailableStarted(const AudioStreamBasicDescription& description)
+{
+    assertIsCurrent(queueSingleton());
+
+    ASSERT(!m_audioFormatDescription);
+    CMFormatDescriptionRef newFormat = nullptr;
+    if (auto error = PAL::CMAudioFormatDescriptionCreate(kCFAllocatorDefault, &description, 0, nullptr, 0, nullptr, nullptr, &newFormat)) {
+        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateEncoder::audioSamplesAvailable: CMAudioFormatDescriptionCreate failed with %u", error);
+        return;
+    }
+    m_audioFormatDescription = adoptCF(newFormat);
+}
+
+void MediaRecorderPrivateEncoder::audioSamplesAvailable(size_t sampleCount, size_t totalSampleCount)
+{
+    assertIsCurrent(queueSingleton());
+
+    ASSERT(m_audioFormatDescription);
+
+    auto* absd = PAL::CMAudioFormatDescriptionGetStreamBasicDescription(m_audioFormatDescription.get());
+    ASSERT(absd);
+    if (!absd) {
+        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateEncoder::audioSamplesAvailable: inconsistent running state");
+        return;
+    }
+
+    auto result = WebAudioBufferList::createWebAudioBufferListWithBlockBuffer(*absd, sampleCount);
+    if (!result) {
+        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateEncoder::audioSamplesAvailable: failed to create block buffer");
+        return;
+    }
+    auto [list, block] = WTFMove(*result);
+    m_ringBuffer->fetch(list->list(), sampleCount, totalSampleCount);
+
+    CMSampleBufferRef sampleBuffer = nullptr;
+    if (auto error = PAL::CMAudioSampleBufferCreateWithPacketDescriptions(kCFAllocatorDefault, block.get(), true, nullptr, nullptr, m_audioFormatDescription.get(), sampleCount, PAL::CMTimeMake(totalSampleCount, absd->mSampleRate), nullptr, &sampleBuffer)) {
+        RELEASE_LOG_ERROR(MediaStream, "MediaRecorderPrivateEncoder::audioSamplesAvailable: CMAudioSampleBufferCreateWithPacketDescriptions failed with error %d", error);
+        return;
+    }
+    RetainPtr sample = adoptCF(sampleBuffer);
+
+    audioCompressor()->addSampleBuffer(sampleBuffer);
 }
 
 void MediaRecorderPrivateEncoder::appendVideoFrame(VideoFrame& frame)
 {
+    if (m_isStopped)
+        return;
+
     queueSingleton().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, frame = Ref { frame }, sampleCount = static_cast<size_t>(m_lastEnqueuedAudioSampleCount), samplingRate = static_cast<uint32_t>(m_currentAudioSamplingRate)]() mutable {
         assertIsCurrent(queueSingleton());
         if (RefPtr protectedThis = weakThis.get()) {
-            if (m_isStopped)
-                return;
             if (!hasAudio() && !m_resumeWallTime)
                 m_resumeWallTime = MonotonicTime::now();
             appendVideoFrame(samplingRate ? MediaTime(sampleCount, samplingRate) : MediaTime::zeroTime(), WTFMove(frame));
@@ -421,9 +494,9 @@ void MediaRecorderPrivateEncoder::enqueueCompressedAudioSampleBuffers()
     if (!audioCompressor() || audioCompressor()->isEmpty())
         return;
 
-    if (!m_audioFormatDescription) {
-        m_audioFormatDescription = PAL::CMSampleBufferGetFormatDescription(audioCompressor()->getOutputSampleBuffer());
-        if (auto result = m_writer->addAudioTrack(m_audioFormatDescription.get()))
+    if (!m_audioCompressedFormatDescription) {
+        m_audioCompressedFormatDescription = PAL::CMSampleBufferGetFormatDescription(audioCompressor()->getOutputSampleBuffer());
+        if (auto result = m_writer->addAudioTrack(m_audioCompressedFormatDescription.get()))
             m_audioTrackIndex = result;
         else {
             RELEASE_LOG_ERROR(MediaStream, "appendAudioFrame: Failed to create audio track");
@@ -455,7 +528,7 @@ void MediaRecorderPrivateEncoder::maybeStartWriter()
     if (m_writerIsStarted)
         return;
 
-    if ((hasAudio() && !m_audioFormatDescription && !m_audioTrackIndex) || (hasVideo() && !m_videoFormatDescription && !m_videoTrackIndex))
+    if ((hasAudio() && !m_audioCompressedFormatDescription && !m_audioTrackIndex) || (hasVideo() && !m_videoFormatDescription && !m_videoTrackIndex))
         return;
 
     m_writer->allTracksAdded();
@@ -743,6 +816,11 @@ void MediaRecorderPrivateEncoder::stopRecording()
         if (RefPtr compressor = audioCompressor())
             compressor->finish();
 
+        {
+            Locker locker { m_ringBufferLock };
+            m_ringBuffer = nullptr;
+        }
+
         return flushPendingData(MediaTime::positiveInfiniteTime())->whenSettled(queueSingleton(), [protectedThis, this] {
             assertIsCurrent(queueSingleton());
             if (m_videoEncoder)
@@ -756,6 +834,7 @@ void MediaRecorderPrivateEncoder::stopRecording()
             m_writerIsClosed = true;
 
             LOG(MediaStream, "FlushPendingData::close writer time:%f", currentEndTime().toDouble());
+
             return m_writer->close(currentEndTime());
         });
     });

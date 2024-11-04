@@ -26,7 +26,7 @@
 
 #if ENABLE(MEDIA_RECORDER)
 
-#include "AudioStreamDescription.h"
+#include "CAAudioStreamDescription.h"
 #include "MediaRecorderPrivateWriter.h"
 #include "SharedBuffer.h"
 #include "VideoEncoder.h"
@@ -46,6 +46,7 @@ typedef struct opaqueCMBufferQueueTriggerToken *CMBufferQueueTriggerToken;
 namespace WebCore {
 
 class AudioSampleBufferCompressor;
+class InProcessCARingBuffer;
 class FragmentedSharedBuffer;
 struct MediaRecorderPrivateOptions;
 class MediaSample;
@@ -53,10 +54,10 @@ class PlatformAudioData;
 class VideoFrame;
 struct VideoInfo;
 
-class MediaRecorderPrivateEncoder : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivateEncoder, WTF::DestructionThread::Main> {
+class MediaRecorderPrivateEncoder final : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<MediaRecorderPrivateEncoder, WTF::DestructionThread::Main> {
 public:
     static RefPtr<MediaRecorderPrivateEncoder> create(bool hasAudio, bool hasVideo, const MediaRecorderPrivateOptions&);
-    virtual ~MediaRecorderPrivateEncoder();
+    ~MediaRecorderPrivateEncoder();
 
     void appendVideoFrame(VideoFrame&);
     void appendAudioSampleBuffer(const PlatformAudioData&, const AudioStreamDescription&, const WTF::MediaTime&, size_t);
@@ -100,6 +101,8 @@ private:
 
     void generateMIMEType();
 
+    void audioSamplesAvailableStarted(const AudioStreamBasicDescription&);
+    void audioSamplesAvailable(size_t, size_t);
     RefPtr<AudioSampleBufferCompressor> audioCompressor() const;
     void enqueueCompressedAudioSampleBuffers();
 
@@ -136,11 +139,15 @@ private:
     String m_audioCodecMimeType WTF_GUARDED_BY_CAPABILITY(mainThread);
     std::optional<uint8_t> m_audioTrackIndex WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     RetainPtr<CMFormatDescriptionRef> m_audioFormatDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    RetainPtr<CMFormatDescriptionRef> m_audioCompressedFormatDescription WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    Lock m_ringBufferLock;
+    std::unique_ptr<InProcessCARingBuffer> m_ringBuffer; // lock must be held when creating or deleting.
     RefPtr<AudioSampleBufferCompressor> m_audioCompressor; // set on creation. const after
     Deque<Ref<MediaSample>> m_encodedAudioFrames WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     std::atomic<size_t> m_lastEnqueuedAudioSampleCount { 0 };
     std::atomic<size_t> m_currentAudioSampleCount { 0 };
     std::atomic<uint32_t> m_currentAudioSamplingRate { 0 };
+    std::optional<CAAudioStreamDescription> m_originalDescription;
     std::optional<std::pair<const MediaTime, GenericPromise::Producer>> m_pendingAudioFramePromise WTF_GUARDED_BY_CAPABILITY(queueSingleton());
 
     FourCharCode m_videoCodec { 0 }; // set on creation. const after
