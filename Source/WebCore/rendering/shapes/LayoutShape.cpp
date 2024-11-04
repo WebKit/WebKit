@@ -50,16 +50,16 @@ static Ref<LayoutShape> createInsetShape(const FloatRoundedRect& bounds)
     return adoptRef(*new BoxLayoutShape(bounds));
 }
 
-static Ref<LayoutShape> createCircleShape(const FloatPoint& center, float radius)
+static Ref<LayoutShape> createCircleShape(const FloatPoint& center, float radius, FloatSize logicalBoxSize)
 {
     ASSERT(radius >= 0);
-    return adoptRef(*new RectangleLayoutShape(FloatRect(center.x() - radius, center.y() - radius, radius*2, radius*2), FloatSize(radius, radius)));
+    return adoptRef(*new RectangleLayoutShape(FloatRect(center.x() - radius, center.y() - radius, radius*2, radius*2), FloatSize(radius, radius), logicalBoxSize));
 }
 
-static Ref<LayoutShape> createEllipseShape(const FloatPoint& center, const FloatSize& radii)
+static Ref<LayoutShape> createEllipseShape(const FloatPoint& center, const FloatSize& radii, FloatSize logicalBoxSize)
 {
     ASSERT(radii.width() >= 0 && radii.height() >= 0);
-    return adoptRef(*new RectangleLayoutShape(FloatRect(center.x() - radii.width(), center.y() - radii.height(), radii.width()*2, radii.height()*2), radii));
+    return adoptRef(*new RectangleLayoutShape(FloatRect(center.x() - radii.width(), center.y() - radii.height(), radii.width()*2, radii.height()*2), radii, logicalBoxSize));
 }
 
 static Ref<LayoutShape> createPolygonShape(Vector<FloatPoint>&& vertices, WindRule fillRule)
@@ -107,7 +107,7 @@ Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicSh
             auto logicalCenter = physicalPointToLogical(center, logicalBoxSize.height(), writingMode);
             logicalCenter.moveBy(borderBoxOffset);
 
-            return createCircleShape(logicalCenter, radius);
+            return createCircleShape(logicalCenter, radius, logicalBoxSize);
         },
         [&](const Style::EllipseFunction& ellipse) -> Ref<LayoutShape> {
             auto boxSize = FloatSize { boxWidth, boxHeight };
@@ -117,7 +117,7 @@ Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicSh
             auto logicalCenter = physicalPointToLogical(center, logicalBoxSize.height(), writingMode);
             logicalCenter.moveBy(borderBoxOffset);
 
-            return createEllipseShape(logicalCenter, radii);
+            return createEllipseShape(logicalCenter, radii, logicalBoxSize);
         },
         [&](const Style::InsetFunction& inset) -> Ref<LayoutShape> {
             float left = Style::evaluate(inset->insets.left(), boxWidth);

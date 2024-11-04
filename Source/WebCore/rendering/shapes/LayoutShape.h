@@ -88,6 +88,7 @@ public:
 
 protected:
     float shapeMargin() const { return m_margin; }
+    WritingMode writingMode() const { return m_writingMode; }
 
 private:
     bool lineOverlapsBoundingBox(LayoutUnit lineTop, LayoutUnit lineHeight, const LayoutRect& rect) const

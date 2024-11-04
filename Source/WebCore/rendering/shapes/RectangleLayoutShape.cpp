@@ -55,15 +55,15 @@ FloatRect RectangleLayoutShape::shapeMarginBounds() const
 
 LineSegment RectangleLayoutShape::getExcludedInterval(LayoutUnit logicalTop, LayoutUnit logicalHeight) const
 {
-    const FloatRect& bounds = shapeMarginBounds();
+    auto bounds = shapeMarginBounds();
     if (bounds.isEmpty())
-        return LineSegment();
+        return { };
 
     float y1 = logicalTop;
     float y2 = logicalTop + logicalHeight;
 
     if (y2 < bounds.y() || y1 >= bounds.maxY())
-        return LineSegment();
+        return { };
 
     float x1 = bounds.x();
     float x2 = bounds.maxX();
@@ -85,7 +85,9 @@ LineSegment RectangleLayoutShape::getExcludedInterval(LayoutUnit logicalTop, Lay
         }
     }
 
-    return LineSegment(x1, x2);
+    if (writingMode().isBidiRTL())
+        return { std::max(0.f, m_logicalBoxSize.width() - x2), std::max(0.f, m_logicalBoxSize.width() - x1) };
+    return { x1, x2 };
 }
 
 void RectangleLayoutShape::buildDisplayPaths(DisplayPaths& paths) const

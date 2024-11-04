@@ -38,9 +38,10 @@ namespace WebCore {
 
 class RectangleLayoutShape final : public LayoutShape {
 public:
-    RectangleLayoutShape(const FloatRect& bounds, const FloatSize& radii)
+    RectangleLayoutShape(const FloatRect& bounds, const FloatSize& radii, FloatSize logicalBoxSize)
         : m_bounds(bounds)
         , m_radii(radii)
+        , m_logicalBoxSize(logicalBoxSize)
     {
     }
 
@@ -62,6 +63,7 @@ private:
 
     FloatRect m_bounds;
     FloatSize m_radii;
+    FloatSize m_logicalBoxSize;
 };
 
 } // namespace WebCore
