@@ -84,7 +84,12 @@ ViewTransition::ViewTransition(Document& document, Vector<AtomString>&& initialA
 }
 
 
-ViewTransition::~ViewTransition() = default;
+ViewTransition::~ViewTransition()
+{
+    auto documentRef = protectedDocument();
+    if (documentRef)
+        documentRef->unregisterForVisibilityStateChangedCallbacks(*this);
+}
 
 Ref<ViewTransition> ViewTransition::createSamePage(Document& document, RefPtr<ViewTransitionUpdateCallback>&& updateCallback, Vector<AtomString>&& initialActiveTypes)
 {
@@ -906,7 +911,6 @@ void ViewTransition::stop()
         return;
 
     m_phase = ViewTransitionPhase::Done;
-    document()->unregisterForVisibilityStateChangedCallbacks(*this);
 
     if (document()->activeViewTransition() == this)
         clearViewTransition();
