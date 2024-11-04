@@ -278,40 +278,12 @@ static const char *GetOperatorString(TOperator op,
             return "=";
         case TOperator::EOpInitialize:
             return "=";
-        case TOperator::EOpAddAssign:
-            return "+=";
-        case TOperator::EOpSubAssign:
-            return "-=";
-        case TOperator::EOpMulAssign:
-            return "*=";
-        case TOperator::EOpDivAssign:
-            return "/=";
-        case TOperator::EOpIModAssign:
-            return "%=";
-        case TOperator::EOpBitShiftLeftAssign:
-            return "<<=";  // TODO: Check logical vs arithmetic shifting.
-        case TOperator::EOpBitShiftRightAssign:
-            return ">>=";  // TODO: Check logical vs arithmetic shifting.
         case TOperator::EOpBitwiseAndAssign:
             return "&=";
         case TOperator::EOpBitwiseXorAssign:
             return "^=";
         case TOperator::EOpBitwiseOrAssign:
             return "|=";
-        case TOperator::EOpAdd:
-            return "+";
-        case TOperator::EOpSub:
-            return "-";
-        case TOperator::EOpMul:
-            return "*";
-        case TOperator::EOpDiv:
-            return "/";
-        case TOperator::EOpIMod:
-            return "%";
-        case TOperator::EOpBitShiftLeft:
-            return "<<";  // TODO: Check logical vs arithmetic shifting.
-        case TOperator::EOpBitShiftRight:
-            return ">>";  // TODO: Check logical vs arithmetic shifting.
         case TOperator::EOpBitwiseAnd:
             return "&";
         case TOperator::EOpBitwiseXor:
@@ -385,6 +357,36 @@ static const char *GetOperatorString(TOperator op,
             return "==";
         case TOperator::EOpNotEqualComponentWise:
             return "!=";
+
+        case TOperator::EOpBitShiftRight:
+        case TOperator::EOpBitShiftRightAssign:
+            // TODO: Check logical vs arithmetic shifting.
+            return "ANGLE_rshift";
+
+        case TOperator::EOpBitShiftLeft:
+        case TOperator::EOpBitShiftLeftAssign:
+            // TODO: Check logical vs arithmetic shifting.
+            return resultType.isSignedIntegerValue() ? "ANGLE_ilshift" : "ANGLE_ulshift";
+
+        case TOperator::EOpAddAssign:
+        case TOperator::EOpAdd:
+            return resultType.isSignedIntegerValue() ? "ANGLE_iadd" : "+";
+
+        case TOperator::EOpSubAssign:
+        case TOperator::EOpSub:
+            return resultType.isSignedIntegerValue() ? "ANGLE_isub" : "-";
+
+        case TOperator::EOpMulAssign:
+        case TOperator::EOpMul:
+            return resultType.isSignedIntegerValue() ? "ANGLE_imul" : "*";
+
+        case TOperator::EOpDiv:
+        case TOperator::EOpDivAssign:
+            return resultType.isSignedIntegerValue() ? "ANGLE_div" : "/";
+
+        case TOperator::EOpIMod:
+        case TOperator::EOpIModAssign:
+            return resultType.isSignedIntegerValue() ? "ANGLE_imod" : "%";
 
         case TOperator::EOpEqual:
             if ((argType0->getStruct() && argType1->getStruct()) &&
@@ -1813,6 +1815,17 @@ bool GenMetalTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
         }
         break;
 
+        case TOperator::EOpDivAssign:
+        case TOperator::EOpIModAssign:
+        case TOperator::EOpBitShiftRightAssign:
+        case TOperator::EOpBitShiftLeftAssign:
+        case TOperator::EOpAddAssign:
+        case TOperator::EOpSubAssign:
+        case TOperator::EOpMulAssign:
+            leftNode.traverse(this);
+            mOut << " = ";
+            [[fallthrough]];
+
         default:
         {
             const TType &resultType = binaryNode->getType();
@@ -2249,7 +2262,27 @@ bool GenMetalTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
         }
         else
         {
-            emitType(retType, etConfig);
+            bool isFtoi = [&]() {
+                if ((!retType.isScalar() && !retType.isVector()) ||
+                    !IsInteger(retType.getBasicType()))
+                    return false;
+                if (aggregateNode->getChildCount() != 1)
+                    return false;
+                auto &argType = aggregateNode->getChildNode(0)->getAsTyped()->getType();
+                return (argType.isScalar() || argType.isVector()) &&
+                       argType.getBasicType() == EbtFloat;
+            }();
+
+            if (isFtoi)
+            {
+                mOut << "ANGLE_ftoi<";
+                emitType(retType, etConfig);
+                mOut << ">";
+            }
+            else
+            {
+                emitType(retType, etConfig);
+            }
             emitArgList("(", ")");
         }
 
