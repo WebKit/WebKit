@@ -31,7 +31,7 @@
             };
             frame.scrollBy(-90, -90);
         }
-        onload = () => {
+        onload = async () => {
             var frame = window.frames[0];
             var doc = frame.document;
             doc.body.style.backgroundColor = 'white';
@@ -41,7 +41,7 @@
             frame.scrollBy(100, 100);
 
             if (window.testRunner) {
-                testRunner.displayAndTrackRepaints();
+                await testRunner.displayAndTrackRepaints();
                 testScrollRepaint();
             } else {
                 setTimeout(testScrollRepaint, 100);

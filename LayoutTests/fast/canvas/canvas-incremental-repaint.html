@@ -18,11 +18,11 @@
     }
 
     var appleImage;
-    function runRepaintTest()
+    async function runRepaintTest()
     {
         if (window.testRunner) {
             document.body.offsetTop;
-            testRunner.displayAndTrackRepaints();
+            await testRunner.displayAndTrackRepaints();
             repaintTest();
             testRunner.notifyDone();
         } else {

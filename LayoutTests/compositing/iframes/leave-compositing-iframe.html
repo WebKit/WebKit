@@ -33,7 +33,7 @@
     {
       document.getElementById('parent-iframe').contentDocument.body.offsetWidth; // work around bug 41999.
       if (window.testRunner)
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
 
       if (window.testRunner) {
         document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);

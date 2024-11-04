@@ -19,7 +19,7 @@ function busyWait(millis) {
 var firstTimestamp = undefined;
 var secondTimestamp = undefined;
 
-window.requestAnimationFrame(function(timestamp) {
+window.requestAnimationFrame(async function(timestamp) {
     firstTimestamp = timestamp;
     shouldBeDefined("firstTimestamp");
     window.requestAnimationFrame(function(timestamp) {
@@ -29,15 +29,12 @@ window.requestAnimationFrame(function(timestamp) {
         finishJSTest();
     });
     busyWait(10);
-    if (window.testRunner)
-        testRunner.displayAndTrackRepaints();
+    await testRunner?.displayAndTrackRepaints();
 });
 
-
-if (window.testRunner)
-    window.setTimeout(function() {
-        testRunner.displayAndTrackRepaints();
-    });
+window.setTimeout(async function() {
+    await testRunner?.displayAndTrackRepaints();
+});
 </script>
 <script src="../../resources/js-test-post.js"></script>
 </body>

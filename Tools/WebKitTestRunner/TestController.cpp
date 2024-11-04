@@ -1197,6 +1197,8 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
 
     WKPageClearUserMediaState(m_mainWebView->page());
 
+    setTracksRepaints(false);
+
     // Reset notification permissions
     m_webNotificationProvider.reset();
     m_notificationOriginsToDenyOnPrompt.clear();
@@ -2195,6 +2197,9 @@ void TestController::didReceiveAsyncMessageFromInjectedBundle(WKStringRef messag
 
     if (WKStringIsEqualToUTF8CString(messageName, "ClearBackForwardList"))
         return WKPageClearBackForwardListForTesting(TestController::singleton().mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
+
+    if (WKStringIsEqualToUTF8CString(messageName, "DisplayAndTrackRepaints"))
+        return WKPageDisplayAndTrackRepaintsForTesting(TestController::singleton().mainWebView()->page(), completionHandler.leak(), adoptAndCallCompletionHandler);
 
     ASSERT_NOT_REACHED();
 }
@@ -4290,6 +4295,13 @@ WKRetainPtr<WKArrayRef> TestController::getAndClearReportedWindowProxyAccessDoma
 void TestController::setServiceWorkerFetchTimeoutForTesting(double seconds)
 {
     WKWebsiteDataStoreSetServiceWorkerFetchTimeoutForTesting(websiteDataStore(), seconds);
+}
+
+void TestController::setTracksRepaints(bool trackRepaints)
+{
+    GenericVoidContext context(*this);
+    WKPageSetTracksRepaintsForTesting(TestController::singleton().mainWebView()->page(), &context, trackRepaints, genericVoidCallback);
+    runUntil(context.done, noTimeout);
 }
 
 struct PrivateClickMeasurementStringResultCallbackContext {

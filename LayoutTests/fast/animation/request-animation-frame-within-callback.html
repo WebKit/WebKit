@@ -23,21 +23,19 @@ window.requestAnimationFrame(function() {
     sameFrame = false;
 }, e);
 
-// This should fire the three already registered callbacks, but not the one dynamically registered.
-if (window.testRunner)
-    testRunner.displayAndTrackRepaints();
-// This should fire the dynamically registered callback.
-if (window.testRunner)
-    testRunner.displayAndTrackRepaints();
+onload = async () => {
+    testRunner?.waitUntilDone();
+    // This should fire the three already registered callbacks, but not the one dynamically registered.
+    await testRunner?.displayAndTrackRepaints();
+    // This should fire the dynamically registered callback.
+    await testRunner?.displayAndTrackRepaints();
 
-if (window.testRunner)
-    testRunner.waitUntilDone();
-
-setTimeout(function() {
-    isSuccessfullyParsed();
-    if (window.testRunner)
-        testRunner.notifyDone();
-}, 200);
+    setTimeout(function() {
+        isSuccessfullyParsed();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 200);
+}
 </script>
 </body>
 </html>

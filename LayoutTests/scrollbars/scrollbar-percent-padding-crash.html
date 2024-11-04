@@ -7,11 +7,13 @@
 }
 </style>
 <script>
-function runTest() {
+async function runTest() {
     if (window.testRunner) {
         testRunner.dumpAsText();
+        testRunner.waitUntilDone();
         document.body.offsetTop;
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
+        testRunner.notifyDone();
     }
 };
 </script>

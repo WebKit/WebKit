@@ -14,23 +14,23 @@ var e = document.getElementById("e");
 var id = window.requestAnimationFrame(function() {
 }, e);
 
-window.cancelAnimationFrame(id);
+onload = async () => {
+    window.cancelAnimationFrame(id);
 
-if (window.testRunner)
-    testRunner.displayAndTrackRepaints();
+    testRunner?.waitUntilDone();
+    await testRunner?.displayAndTrackRepaints();
+    
+    setTimeout(function() {
+        shouldBeFalse("callbackFired");
+    }, 100);
+    
+    setTimeout(function() {
+        isSuccessfullyParsed();
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }, 200);
+}
 
-setTimeout(function() {
-    shouldBeFalse("callbackFired");
-}, 100);
-
-if (window.testRunner)
-    testRunner.waitUntilDone();
-
-setTimeout(function() {
-    isSuccessfullyParsed();
-    if (window.testRunner)
-        testRunner.notifyDone();
-}, 200);
 </script>
 </body>
 </html>

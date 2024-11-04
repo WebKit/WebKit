@@ -13,8 +13,8 @@ window.onload = function() {
     });
 
     if (window.testRunner) {
-        window.setTimeout(function() {
-            testRunner.displayAndTrackRepaints();
+        window.setTimeout(async function() {
+            await testRunner.displayAndTrackRepaints();
             testRunner.notifyDone();
         }, 50);
     }

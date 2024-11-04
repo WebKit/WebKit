@@ -627,6 +627,8 @@ private:
     static const char* libraryPathForTesting();
     static const char* platformLibraryPathForTesting();
 
+    void setTracksRepaints(bool);
+
     WKRetainPtr<WKURLRef> m_mainResourceURL;
     std::unique_ptr<TestInvocation> m_currentInvocation;
 #if PLATFORM(COCOA)

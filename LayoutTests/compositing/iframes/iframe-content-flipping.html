@@ -16,10 +16,10 @@
     
   </style>
   <script type="text/javascript" charset="utf-8">
-    function doTest()
+    async function doTest()
     {
       if (window.testRunner)
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
 
       document.getElementById('iframe').className = 'composited';
     }

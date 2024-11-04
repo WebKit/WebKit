@@ -690,9 +690,7 @@ public:
     String renderTreeExternalRepresentationForPrinting() const;
     uint64_t renderTreeSize() const;
 
-    void setTracksRepaints(bool);
     bool isTrackingRepaints() const;
-    void resetTrackedRepaints();
     Ref<API::Array> trackedRepaintRects();
 
     void executeEditingCommand(const String& commandName, const String& argument);

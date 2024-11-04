@@ -155,7 +155,7 @@ public:
     void testRepaint() { m_testRepaint = true; }
     void repaintSweepHorizontally() { m_testRepaintSweepHorizontally = true; }
     void display();
-    void displayAndTrackRepaints();
+    void displayAndTrackRepaints(JSContextRef, JSValueRef callback);
     void displayOnLoadFinish() { m_displayOnLoadFinish = true; }
     bool shouldDisplayOnLoadFinish() { return m_displayOnLoadFinish; }
     void dontForceRepaint() { m_forceRepaint = false; }

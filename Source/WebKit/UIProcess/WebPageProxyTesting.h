@@ -81,6 +81,9 @@ public:
 
     void clearBackForwardList(CompletionHandler<void()>&&);
 
+    void setTracksRepaints(bool, CompletionHandler<void()>&&);
+    void displayAndTrackRepaints(CompletionHandler<void()>&&);
+
 private:
     explicit WebPageProxyTesting(WebPageProxy&);
 

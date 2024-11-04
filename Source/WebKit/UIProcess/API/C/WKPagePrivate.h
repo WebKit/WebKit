@@ -231,6 +231,10 @@ typedef void (*WKPageSetPageScaleFactorForTestingFunction)(void* functionContext
 WK_EXPORT void WKPageSetPageScaleFactorForTesting(WKPageRef page, float scaleFactor, WKPoint point, void* context, WKPageSetPageScaleFactorForTestingFunction completionHandler);
 typedef void (*WKPageClearBackForwardListForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageClearBackForwardListForTesting(WKPageRef page, void* context, WKPageClearBackForwardListForTestingFunction completionHandler);
+typedef void (*WKPageSetTracksRepaintsForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageSetTracksRepaintsForTesting(WKPageRef page, void* context, bool trackRepaints, WKPageSetTracksRepaintsForTestingFunction completionHandler);
+typedef void (*WKPageDisplayAndTrackRepaintsForTestingFunction)(void* functionContext);
+WK_EXPORT void WKPageDisplayAndTrackRepaintsForTesting(WKPageRef page, void* context, WKPageDisplayAndTrackRepaintsForTestingFunction completionHandler);
 #ifdef __cplusplus
 }
 #endif

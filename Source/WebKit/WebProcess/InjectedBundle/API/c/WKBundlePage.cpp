@@ -533,19 +533,9 @@ void WKBundlePageSetPaintedObjectsCounterThreshold(WKBundlePageRef, uint64_t)
     // We should remove it as soon as we can.
 }
 
-void WKBundlePageSetTracksRepaints(WKBundlePageRef pageRef, bool trackRepaints)
-{
-    WebKit::toImpl(pageRef)->setTracksRepaints(trackRepaints);
-}
-
 bool WKBundlePageIsTrackingRepaints(WKBundlePageRef pageRef)
 {
     return WebKit::toImpl(pageRef)->isTrackingRepaints();
-}
-
-void WKBundlePageResetTrackedRepaints(WKBundlePageRef pageRef)
-{
-    WebKit::toImpl(pageRef)->resetTrackedRepaints();
 }
 
 WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef pageRef)

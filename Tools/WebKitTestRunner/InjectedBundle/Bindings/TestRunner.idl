@@ -122,7 +122,7 @@ interface TestRunner {
     undefined testRepaint();
     undefined repaintSweepHorizontally();
     undefined display();
-    undefined displayAndTrackRepaints();
+    Promise<undefined> displayAndTrackRepaints();
     undefined displayOnLoadFinish();
     undefined dontForceRepaint();
 

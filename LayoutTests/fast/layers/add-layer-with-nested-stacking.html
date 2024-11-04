@@ -19,11 +19,15 @@
         document.getElementById("test").style.display = "block";
     }
 
-    if (!window.testRunner)
-        setTimeout(test, 0);
-    else {
-        document.body.offsetTop;
-        testRunner.displayAndTrackRepaints();
-        test();
+    onload = async () => {
+        if (!window.testRunner)
+            setTimeout(test, 0);
+        else {
+            document.body.offsetTop;
+            testRunner.waitUntilDone();
+            await testRunner.displayAndTrackRepaints();
+            test();
+            testRunner.notifyDone();
+        }
     }
 </script>

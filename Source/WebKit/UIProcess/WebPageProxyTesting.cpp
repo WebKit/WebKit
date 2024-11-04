@@ -234,4 +234,20 @@ void WebPageProxyTesting::clearBackForwardList(CompletionHandler<void()>&& compl
     });
 }
 
+void WebPageProxyTesting::setTracksRepaints(bool trackRepaints, CompletionHandler<void()>&& completionHandler)
+{
+    Ref callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    protectedPage()->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPageTesting::SetTracksRepaints(trackRepaints), [callbackAggregator] { }, pageID);
+    });
+}
+
+void WebPageProxyTesting::displayAndTrackRepaints(CompletionHandler<void()>&& completionHandler)
+{
+    Ref callbackAggregator = CallbackAggregator::create(WTFMove(completionHandler));
+    protectedPage()->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.sendWithAsyncReply(Messages::WebPageTesting::DisplayAndTrackRepaints(), [callbackAggregator] { }, pageID);
+    });
+}
+
 } // namespace WebKit

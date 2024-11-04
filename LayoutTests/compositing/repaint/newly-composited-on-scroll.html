@@ -61,13 +61,11 @@
         testRunner.waitUntilDone();
     }
 
-    function repaintTest() {
-        if (window.testRunner)
-            testRunner.displayAndTrackRepaints();
+    async function repaintTest() {
+        await testRunner?.displayAndTrackRepaints();
 
         document.getElementById('overflow').scrollTop = 30;
-        if (window.testRunner)
-            testRunner.displayAndTrackRepaints();
+        await testRunner?.displayAndTrackRepaints();
 
         window.setTimeout(function() {
             document.getElementById('overflow').scrollTop = 50;

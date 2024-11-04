@@ -43,12 +43,11 @@
                 testRunner.notifyDone();
         }
 
-        function runRepaintTest()
+        async function runRepaintTest()
         {
             document.getElementById("outer").scrollTop = 1000;
 
-            if (window.testRunner)
-                testRunner.displayAndTrackRepaints();
+            await testRunner?.displayAndTrackRepaints();
 
             setTimeout(repaintTest, 0);
         }

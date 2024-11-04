@@ -30,11 +30,11 @@
     function doTest()
     {
         // For some reason this delay is required for AppKit to not short-circuit the display.
-        window.setTimeout(function() {
+        window.setTimeout(async function() {
           window.scrollTo(0, 100);
           // Force a paint, and give layers a chance to update.
           if (window.testRunner)
-            testRunner.displayAndTrackRepaints();
+            await testRunner.displayAndTrackRepaints();
           window.setTimeout(function() {
             if (window.testRunner) {
                 document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);

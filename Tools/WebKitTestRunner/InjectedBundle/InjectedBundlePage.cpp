@@ -349,11 +349,6 @@ InjectedBundlePage::~InjectedBundlePage()
     bundlePageMap().remove(m_page);
 }
 
-void InjectedBundlePage::prepare()
-{
-    WKBundlePageSetTracksRepaints(m_page, false);
-}
-
 void InjectedBundlePage::resetAfterTest()
 {
     ALLOW_DEPRECATED_DECLARATIONS_BEGIN

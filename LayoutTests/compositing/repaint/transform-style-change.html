@@ -9,9 +9,14 @@ function test() {
     document.getElementById("box").style.webkitTransformStyle = "flat";
 }
 
-if (window.testRunner) {
-    testRunner.displayAndTrackRepaints(); // Force one composite with preserve-3d
-    test();
-} else
-    window.setTimeout(test, 0);
+onload = async () => {
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        await testRunner.displayAndTrackRepaints(); // Force one composite with preserve-3d
+        test();
+        testRunner.notifyDone();
+    } else
+        window.setTimeout(test, 0);
+}
+
 </script>

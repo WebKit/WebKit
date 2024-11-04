@@ -53,11 +53,11 @@
       testRunner.waitUntilDone();
     }
 
-    function doTest()
+    async function doTest()
     {
       if (window.testRunner) {
         // We need to call display() here to sync the compositor state and avoid a race condition.
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
         document.getElementById('layers').innerText = window.internals.layerTreeAsText(document);
         testRunner.notifyDone();
       }

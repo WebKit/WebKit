@@ -55,6 +55,8 @@ private:
     void isEditingCommandEnabled(const String& commandName, CompletionHandler<void(bool)>&&);
     void resetStateBetweenTests();
     void clearCachedBackForwardListCounts(CompletionHandler<void()>&&);
+    void setTracksRepaints(bool, CompletionHandler<void()>&&);
+    void displayAndTrackRepaints(CompletionHandler<void()>&&);
 
 #if ENABLE(NOTIFICATIONS)
     void clearNotificationPermissionState();

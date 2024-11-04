@@ -3357,3 +3357,25 @@ void WKPageClearBackForwardListForTesting(WKPageRef pageRef, void* context, WKPa
         completionHandler(context);
     });
 }
+
+void WKPageSetTracksRepaintsForTesting(WKPageRef pageRef, void* context, bool trackRepaints, WKPageSetTracksRepaintsForTestingFunction completionHandler)
+{
+    RefPtr pageForTesting = toImpl(pageRef)->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler(context);
+
+    pageForTesting->setTracksRepaints(trackRepaints, [context, completionHandler] {
+        completionHandler(context);
+    });
+}
+
+void WKPageDisplayAndTrackRepaintsForTesting(WKPageRef pageRef, void* context, WKPageDisplayAndTrackRepaintsForTestingFunction completionHandler)
+{
+    RefPtr pageForTesting = toImpl(pageRef)->pageForTesting();
+    if (!pageForTesting)
+        return completionHandler(context);
+
+    pageForTesting->displayAndTrackRepaints([context, completionHandler] {
+        completionHandler(context);
+    });
+}

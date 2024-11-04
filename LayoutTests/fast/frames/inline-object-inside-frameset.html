@@ -1,7 +1,7 @@
 <html><head>
 
 <script>
-function runTest() {
+async function runTest() {
     var dcont = document.getElementById("dcont");
 
     var e = document.createElement('frameset');
@@ -9,9 +9,9 @@ function runTest() {
     e.appendChild(span);
     
     dcont.appendChild(e);
-    
-    if (window.testRunner)
-        testRunner.displayAndTrackRepaints();
+    testRunner?.waitUntilDone();
+    await testRunner?.displayAndTrackRepaints();
+    testRunner?.notifyDone();
 }
 
 </script>

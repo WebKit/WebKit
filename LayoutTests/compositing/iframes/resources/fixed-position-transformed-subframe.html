@@ -34,10 +34,10 @@
       testRunner.dumpAsText(true);
     }
 
-    function doTest()
+    async function doTest()
     {
       if (window.testRunner)
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
 
       // Any scroll should keep the fixed-position element where it is.
       // If it stutters or disappears incorrectly, then the red background will be revealed.

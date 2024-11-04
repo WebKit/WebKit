@@ -39,12 +39,12 @@ function step(count) {
     }
 }
 
-window.onload = function() {
+window.onload = async function() {
     if (window.testRunner) {
         testRunner.dumpAsText(true);
         document.body.offsetTop;
-        testRunner.displayAndTrackRepaints();
         testRunner.waitUntilDone();
+        await testRunner.displayAndTrackRepaints();
     }
     window.startTime = Date.now();
 

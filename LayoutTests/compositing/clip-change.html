@@ -24,14 +24,15 @@
   <script>
     if (window.testRunner)
       testRunner.dumpAsText(true);
-    function doTest() {
-      if (window.testRunner)
-        testRunner.displayAndTrackRepaints();
+    async function doTest() {
+      testRunner?.waitUntilDone();
+      await testRunner?.displayAndTrackRepaints();
       // The change in clip style should be reflected immediately in the size
       // of the composited clipper layer. After changing the clip, it should
       // entirely cover the indicator.
       var clipper = document.getElementById("clipper");
       clipper.style.clip = "rect(0px, 100px, 100px, 0px)";
+      testRunner?.notifyDone();
     }
     window.addEventListener("load", doTest, false);
   </script>

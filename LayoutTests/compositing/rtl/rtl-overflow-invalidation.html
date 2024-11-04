@@ -23,15 +23,17 @@
     }
 </style>
 <script>
-    function doTest() {
+    async function doTest() {
         if (window.testRunner) {
-            testRunner.displayAndTrackRepaints();
             testRunner.dumpAsText(true);
+            testRunner.waitUntilDone();
+            await testRunner.displayAndTrackRepaints();
         }
         // This test passes if this element is repainted correctly, even
         // on a page that is composited and has horizontal overflow.
         var elem = document.getElementById("layer");
         elem.style.backgroundColor = "green";
+        testRunner?.notifyDone();
     }
     window.addEventListener('load', doTest, false);
 </script>

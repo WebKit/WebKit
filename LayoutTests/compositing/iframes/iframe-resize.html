@@ -36,13 +36,13 @@
     function doTest()
     {
         // For some reason this delay is required for AppKit to not short-circuit the display.
-        window.setTimeout(function() {
+        window.setTimeout(async function() {
           if (window.testRunner)
-            testRunner.displayAndTrackRepaints();
+            await testRunner.displayAndTrackRepaints();
 
             document.getElementById('parent-iframe').className = 'bigger';
             if (window.testRunner) {
-                testRunner.displayAndTrackRepaints();
+                await testRunner.displayAndTrackRepaints();
                 document.getElementById('layers').innerHTML = window.internals.layerTreeAsText(document);
                 testRunner.notifyDone();
             }

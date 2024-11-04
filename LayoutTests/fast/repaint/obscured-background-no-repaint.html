@@ -46,11 +46,10 @@
 </style>
 <script>
     description("Test that obscured animated gif does not trigger repaints. This test requires DRT.");
-    function startTrackingRepaints()
+    async function startTrackingRepaints()
     {
         document.body.offsetTop;
-        window.internals.startTrackingRepaints();
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
         setTimeout(logRepaints, 200);
     }
 

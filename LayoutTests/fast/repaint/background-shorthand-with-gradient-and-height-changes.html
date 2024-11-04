@@ -40,19 +40,17 @@
 <script>
 description("This test verifies that gradient background gets repainted properly after child box height change.");
 
-function start() {
+async function start() {
+    if (!window.testRunner || !window.internals)
+        return;
+
+    await testRunner.displayAndTrackRepaints();
     window.setTimeout(function() { 
         document.getElementsByClassName('inner')[0].style.height = 200 + 'px'; 
         document.getElementsByClassName('inner')[1].style.height = 200 + 'px'; 
         
         window.setTimeout(logRepaints, 200);
     }, 0); 
-
-    if (!window.testRunner || !window.internals)
-        return;
-        
-    window.internals.startTrackingRepaints();
-    window.testRunner.displayAndTrackRepaints();
 }
 
 function logRepaints() {

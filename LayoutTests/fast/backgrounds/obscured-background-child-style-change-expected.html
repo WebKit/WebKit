@@ -23,10 +23,13 @@
     </div>
 </div>
 <script>
-document.body.offsetTop;
-if (window.testRunner)
-    testRunner.displayAndTrackRepaints();
-var children = document.getElementsByClassName("child");
-children[0].style.backgroundColor = "rgba(0,255,0,0.5)";
-children[1].style.backgroundColor = "rgba(0,255,0,0.5)";
+onload = async () => {
+    document.body.offsetTop;
+    testRunner?.waitUntilDone();
+    await testRunner?.displayAndTrackRepaints();
+    var children = document.getElementsByClassName("child");
+    children[0].style.backgroundColor = "rgba(0,255,0,0.5)";
+    children[1].style.backgroundColor = "rgba(0,255,0,0.5)";
+    testRunner?.notifyDone();
+}
 </script>

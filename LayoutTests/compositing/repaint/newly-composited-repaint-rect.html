@@ -58,14 +58,13 @@
         document.getElementById("scrolldiv").style.left="50px";
     }
 
-    function repaintTest() {
+    async function repaintTest() {
         // Changing the position will cause the scrolldiv to become composited becuase it overlaps another compostied element.
         changeDivPosition();
 
         // Force DumpRenderTree to do a layout and repaint here, this is where the repaintRect
         // goes wrong because it does not get updated for a newly composited element.
-        if (window.testRunner)
-            testRunner.displayAndTrackRepaints();
+        await testRunner?.displayAndTrackRepaints();
 
         window.setTimeout(function() {
             // Scrolling a little will demonstrate whether the repaint rect is correct or not.

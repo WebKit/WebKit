@@ -31,12 +31,12 @@ function setFlex(value)
     document.getElementById("content").style.webkitFlex = value;
 }
 
-window.onload = function() {
+window.onload = async function() {
     if (window.testRunner) {
         testRunner.dumpAsText(true);
         document.body.offsetTop;
-        testRunner.displayAndTrackRepaints();
         testRunner.waitUntilDone();
+        await testRunner.displayAndTrackRepaints();
     }
     setTimeout(function() {
         setFlex(4.6);

@@ -11,12 +11,16 @@ function resize() {
     c.height = "10000";
 }
 
-if (window.testRunner) {
-    testRunner.displayAndTrackRepaints(); // Force a composite at normal width/height to ensure we have a compositing layer for the canvas.
-    resize();
-} else
-    window.setTimeout(resize, 0);
+onload = async () => {
+    if (window.testRunner) {
+        testRunner.waitUntilDone();
+        await testRunner.displayAndTrackRepaints(); // Force a composite at normal width/height to ensure we have a compositing layer for the canvas.
+        resize();
+    } else
+        window.setTimeout(resize, 0);
 
-document.write("PASS");
+    document.write("PASS");
+    testRunner?.notifyDone();
+}
 </script>
 

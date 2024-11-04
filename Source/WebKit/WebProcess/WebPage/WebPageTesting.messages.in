@@ -34,4 +34,6 @@ messages -> WebPageTesting NotRefCounted {
     ResetStateBetweenTests()
     SetTopContentInset(float contentInset) -> ()
     ClearCachedBackForwardListCounts() -> ()
+    SetTracksRepaints(bool trackRepaints) -> ()
+    DisplayAndTrackRepaints() -> ()
 }

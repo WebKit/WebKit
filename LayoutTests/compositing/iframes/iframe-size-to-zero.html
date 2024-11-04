@@ -34,9 +34,9 @@
     function doTest()
     {
         // For some reason this delay is required for AppKit to not short-circuit the display.
-        window.setTimeout(function() {
+        window.setTimeout(async function() {
             if (window.testRunner)
-                testRunner.displayAndTrackRepaints();
+                await testRunner.displayAndTrackRepaints();
 
             var hadLayers = false;
             if (window.testRunner) {
@@ -48,7 +48,7 @@
 
             if (window.testRunner) {
 
-                testRunner.displayAndTrackRepaints();
+                await testRunner.displayAndTrackRepaints();
                 var haveLayers = window.internals.layerTreeAsText(document) != "";
                 var result;
                 if (hadLayers && !haveLayers)

@@ -42,22 +42,27 @@ resize: both;
   <div class="content"></div>
 </div>
 <script>
-function finishTest() {
+async function finishTest() {
     document.getElementById("vertical").classList.remove("tall"); // topmost div loses a vertical scrollbar
     document.getElementById("horizontal").classList.remove("wide"); // second div loses a horizontal scrollbar
     document.getElementById("both").classList.remove("wide"); // third div loses both
     document.getElementById("both").classList.remove("tall"); // vertical and horizontal scrollbars
     document.getElementById("corner").classList.remove("resizeWidget"); // bottom div loses a resize corner but no scrollbars
     if (window.testRunner) {
-        testRunner.displayAndTrackRepaints(); // Ensure compositor tree is up to date.
+        await testRunner.displayAndTrackRepaints(); // Ensure compositor tree is up to date.
         document.getElementById("layerTree").innerText = window.internals.layerTreeAsText(document);
+        testRunner.notifyDone();
     }
 }
 
-if (window.testRunner) {
-    testRunner.dumpAsText();
-    testRunner.displayAndTrackRepaints(); // Force compositor state to be updated before the container needs any overflow controls
-    finishTest();
-} else
-    window.setTimeout(finishTest, 0);
+onload = async () => {
+  if (window.testRunner) {
+      testRunner.waitUntilDone();
+      testRunner.dumpAsText();
+      await testRunner.displayAndTrackRepaints(); // Force compositor state to be updated before the container needs any overflow controls
+      finishTest();
+  } else
+      window.setTimeout(finishTest, 0);
+}
+
 </script>

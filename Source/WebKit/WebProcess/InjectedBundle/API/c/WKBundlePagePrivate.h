@@ -66,9 +66,7 @@ WK_EXPORT void WKBundlePageCopyRenderLayerTree(WKBundlePageRef page);
 // We should remove it as soon as we can.
 WK_EXPORT void WKBundlePageSetPaintedObjectsCounterThreshold(WKBundlePageRef page, uint64_t threshold);
 
-WK_EXPORT void WKBundlePageSetTracksRepaints(WKBundlePageRef page, bool trackRepaints);
 WK_EXPORT bool WKBundlePageIsTrackingRepaints(WKBundlePageRef page);
-WK_EXPORT void WKBundlePageResetTrackedRepaints(WKBundlePageRef page);
 WK_EXPORT WKArrayRef WKBundlePageCopyTrackedRepaintRects(WKBundlePageRef page);
 
 WK_EXPORT void WKBundlePageSetComposition(WKBundlePageRef page, WKStringRef text, int from, int length, bool suppressUnderline, WKArrayRef highlightData, WKArrayRef annotationData);

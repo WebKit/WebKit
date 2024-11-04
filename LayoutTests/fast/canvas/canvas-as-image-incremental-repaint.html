@@ -14,12 +14,12 @@
       testRunner.waitUntilDone();
 
     var canvasContext;
-    function runRepaintTest()
+    async function runRepaintTest()
     {
       canvasContext = document.getCSSCanvasContext("2d", "squares", 300, 300);
       if (window.testRunner) {
         document.body.offsetTop;
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
         repaintTest();
         testRunner.notifyDone();
       } else {

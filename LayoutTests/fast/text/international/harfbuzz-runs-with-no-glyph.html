@@ -12,10 +12,12 @@ body {
 <body>
 <p>&#x200f;&#x0627;&#x200e;</p>
 <script>
-if (window.testRunner) {
+onload = async () => {
+    testRunner?.dumpAsText();
+    testRunner?.waitUntilDone();
     // Force layout.
-    testRunner.displayAndTrackRepaints();
-    testRunner.dumpAsText();
+    await testRunner?.displayAndTrackRepaints();
+    testRunner?.notifyDone();
 }
 </script>
 </body>

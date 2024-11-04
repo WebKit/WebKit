@@ -372,8 +372,6 @@ void InjectedBundle::beginTesting(WKDictionaryRef settings, BegingTestingMode te
     if (m_timeout > 0_s)
         m_testRunner->setCustomTimeout(m_timeout);
 
-    page()->prepare();
-
     if (testingMode != BegingTestingMode::New)
         return;
 

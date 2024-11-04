@@ -18,11 +18,11 @@
   <script>
     var video = document.getElementsByTagName('video')[0];
     video.src = 'resources/video.' + (video.canPlayType('video/ogg') ? 'ogv' : 'mp4');
-    video.addEventListener('canplaythrough', function() {
+    video.addEventListener('canplaythrough', async function() {
       if (window.testRunner) {
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
         testRunner.setPageVisibility("hidden");
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
         testRunner.resetPageVisibility();
         testRunner.notifyDone();
       }

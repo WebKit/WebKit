@@ -17,11 +17,11 @@ function changeChildMargin()
         testRunner.notifyDone();
 }
 
-window.onload = function() {
+window.onload = async function() {
     if (window.testRunner) {
         testRunner.dumpAsText(true);
         testRunner.waitUntilDone();
-        testRunner.displayAndTrackRepaints();
+        await testRunner.displayAndTrackRepaints();
     } else {
         document.body.appendChild(document.createTextNode(
             "This test checks that for flex items that are moved multiple times during the layout "

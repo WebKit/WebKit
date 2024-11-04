@@ -21,10 +21,9 @@
         });
 
         // Called from subframe.
-        function doDisplay()
+        async function doDisplay()
         {
-            if (window.testRunner)
-                testRunner.displayAndTrackRepaints();
+            await testRunner?.displayAndTrackRepaints();
         }
 
         function doCheckResult()

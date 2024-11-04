@@ -1704,24 +1704,12 @@ void WebPage::setCanUseCredentialStorage(bool has)
         m_page->setCanUseCredentialStorage(has);
 }
 
-void WebPage::setTracksRepaints(bool trackRepaints)
-{
-    if (auto* view = localMainFrameView())
-        view->setTracksRepaints(trackRepaints);
-}
-
 bool WebPage::isTrackingRepaints() const
 {
     if (auto* view = localMainFrameView())
         return view->isTrackingRepaints();
 
     return false;
-}
-
-void WebPage::resetTrackedRepaints()
-{
-    if (auto* view = localMainFrameView())
-        view->resetTrackedRepaints();
 }
 
 Ref<API::Array> WebPage::trackedRepaintRects()
