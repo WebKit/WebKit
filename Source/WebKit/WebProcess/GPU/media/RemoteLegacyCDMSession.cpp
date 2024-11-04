@@ -82,8 +82,15 @@ RemoteLegacyCDMSession::RemoteLegacyCDMSession(RemoteLegacyCDMFactory& factory, 
 
 RemoteLegacyCDMSession::~RemoteLegacyCDMSession()
 {
-    if (m_factory)
-        m_factory->removeSession(m_identifier);
+    ASSERT(!m_factory);
+}
+
+void RemoteLegacyCDMSession::invalidate()
+{
+    if (RefPtr factory = m_factory.get()) {
+        factory->removeSession(m_identifier);
+        m_factory = nullptr;
+    }
 }
 
 RefPtr<Uint8Array> RemoteLegacyCDMSession::generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, uint32_t& systemCode)

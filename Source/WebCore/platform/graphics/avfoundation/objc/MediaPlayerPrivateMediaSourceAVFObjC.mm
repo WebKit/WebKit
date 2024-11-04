@@ -31,7 +31,7 @@
 #import "AVAssetMIMETypeCache.h"
 #import "AVAssetTrackUtilities.h"
 #import "AVStreamDataParserMIMETypeCache.h"
-#import "CDMSessionMediaSourceAVFObjC.h"
+#import "CDMSessionAVContentKeySession.h"
 #import "ContentTypeUtilities.h"
 #import "GraphicsContext.h"
 #import "IOSurface.h"
@@ -1346,7 +1346,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::flushPendingSizeChanges()
 }
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
-CDMSessionMediaSourceAVFObjC* MediaPlayerPrivateMediaSourceAVFObjC::cdmSession() const
+CDMSessionAVContentKeySession* MediaPlayerPrivateMediaSourceAVFObjC::cdmSession() const
 {
     return m_session.get();
 }
@@ -1358,13 +1358,20 @@ void MediaPlayerPrivateMediaSourceAVFObjC::setCDMSession(LegacyCDMSession* sessi
 
     ALWAYS_LOG(LOGIDENTIFIER);
 
-    m_session = toCDMSessionMediaSourceAVFObjC(session);
+    m_session = toCDMSessionAVContentKeySession(session);
 
     if (!m_mediaSourcePrivate)
         return;
 
     m_mediaSourcePrivate->setCDMSession(session);
 }
+
+void MediaPlayerPrivateMediaSourceAVFObjC::keyAdded()
+{
+    if (m_mediaSourcePrivate)
+        m_mediaSourcePrivate->keyAdded();
+}
+
 #endif // ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA)

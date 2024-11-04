@@ -114,6 +114,10 @@ public:
 
     void setResourceOwner(const ProcessIdentity& resourceOwner) { m_resourceOwner = resourceOwner; }
 
+#if ENABLE(LEGACY_ENCRYPTED_MEDIA)
+    void keyAdded();
+#endif
+
 private:
     friend class SourceBufferPrivateAVFObjC;
 

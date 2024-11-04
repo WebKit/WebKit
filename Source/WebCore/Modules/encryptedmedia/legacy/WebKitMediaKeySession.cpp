@@ -80,6 +80,7 @@ void WebKitMediaKeySession::close()
     ALWAYS_LOG(LOGIDENTIFIER);
     if (m_session) {
         m_session->releaseKeys();
+        m_session->invalidate();
         m_session = nullptr;
     }
 }

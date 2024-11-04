@@ -1,0 +1,18 @@
+
+Created mediaSource
+EVENT(sourceopen)
+-
+Appending Encrypted Video Header
+FETCH: content/elementary-stream-video-header-keyid-1.m4v OK
+EVENT(webkitneedkey)
+EVENT(updateend)
+FETCH: content/elementary-stream-video-payload.m4v OK
+EVENT(updateend)
+EVENT(webkitkeymessage)
+EXPECTED (uInt8ArrayToString(event.message) == 'certificate') OK
+FETCH: resources/cert.der OK
+EVENT(webkitkeymessage)
+PROMISE: licenseResponse resolved
+EVENT(canplay)
+END OF TEST
+

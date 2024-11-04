@@ -33,6 +33,7 @@
 #include "RemoteLegacyCDM.h"
 #include "RemoteLegacyCDMFactoryProxyMessages.h"
 #include "RemoteLegacyCDMSession.h"
+#include "RemoteLegacyCDMSessionMessages.h"
 #include "WebProcess.h"
 #include <WebCore/LegacyCDM.h>
 #include <WebCore/Settings.h>
@@ -131,13 +132,20 @@ void RemoteLegacyCDMFactory::addSession(RemoteLegacyCDMSessionIdentifier identif
 {
     ASSERT(!m_sessions.contains(identifier));
     m_sessions.set(identifier, WeakPtr { session });
+
+    gpuProcessConnection().messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMSession::messageReceiverName(), identifier.toUInt64(), session);
 }
 
 void RemoteLegacyCDMFactory::removeSession(RemoteLegacyCDMSessionIdentifier identifier)
 {
     ASSERT(m_sessions.contains(identifier));
-    m_sessions.remove(identifier);
-    gpuProcessConnection().connection().send(Messages::RemoteLegacyCDMFactoryProxy::RemoveSession(identifier), { });
+    RefPtr session = m_sessions.get(identifier).get();
+    gpuProcessConnection().connection().sendWithAsyncReply(Messages::RemoteLegacyCDMFactoryProxy::RemoveSession(identifier), [protectedThis = Ref { *this }, identifier, session = WTFMove(session)] {
+        ASSERT(protectedThis->m_sessions.contains(identifier));
+        protectedThis->m_sessions.remove(identifier);
+        protectedThis->gpuProcessConnection().messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSession::messageReceiverName(), identifier.toUInt64());
+        UNUSED_PARAM(session);
+    }, { });
 }
 
 RemoteLegacyCDM* RemoteLegacyCDMFactory::findCDM(CDMPrivateInterface* privateInterface) const

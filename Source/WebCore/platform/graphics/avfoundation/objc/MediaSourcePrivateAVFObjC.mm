@@ -163,6 +163,12 @@ void MediaSourcePrivateAVFObjC::sourceBufferKeyNeeded(SourceBufferPrivateAVFObjC
     if (auto player = platformPlayer())
         player->keyNeeded(initData);
 }
+
+void MediaSourcePrivateAVFObjC::keyAdded()
+{
+    for (auto& sourceBuffer : m_sourceBuffers)
+        sourceBuffer->attemptToDecrypt();
+}
 #endif
 
 bool MediaSourcePrivateAVFObjC::hasSelectedVideo() const

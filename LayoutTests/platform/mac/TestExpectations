@@ -2415,6 +2415,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 [ Sequoia arm64 ] http/tests/media/fairplay/fps-init-data-cenc.html [ Failure ]
 [ Sequoia arm64 ] http/tests/media/fairplay/fps-init-data-sinf.html [ Failure ]
 [ Sequoia arm64 ] http/tests/media/fairplay/fps-init-data-skd.html [ Failure ]
+[ Sequoia arm64 ] http/tests/media/fairplay/legacy-fairplay-mse-muxed-nowait.html [ Failure ]
 [ Sequoia arm64 ] http/tests/media/fairplay/fps-mse-play-while-not-in-dom.html [ Failure ]
 [ Sequoia arm64 ] http/tests/media/fairplay/fps-mse-unmuxed-audio-only.html [ Failure ]
 [ Sequoia arm64 ] http/tests/media/fairplay/fps-mse-unmuxed-key-renewal.html [ Failure ]
@@ -2446,3 +2447,6 @@ webanimations/scroll-timeline-clamped-current-time-while-rubber-banding-mac.html
 
 # webkit.org/b/281765 PROGRESSION (285251@main): [ macOS iOS ] imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-redirect.html is a constant failure. 
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-redirect.html [ Skip ]
+
+# Modern AVContentKeySession is only available on Sonoma
+[ Ventura Sonoma ] http/tests/media/fairplay/legacy-fairplay-mse-muxed-nowait.html [ Skip ]

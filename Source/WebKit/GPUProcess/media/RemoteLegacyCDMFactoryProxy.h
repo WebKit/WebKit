@@ -66,7 +66,7 @@ public:
     void removeProxy(RemoteLegacyCDMIdentifier);
 
     void addSession(RemoteLegacyCDMSessionIdentifier, std::unique_ptr<RemoteLegacyCDMSessionProxy>&&);
-    void removeSession(RemoteLegacyCDMSessionIdentifier);
+    void removeSession(RemoteLegacyCDMSessionIdentifier, CompletionHandler<void()>&&);
     RemoteLegacyCDMSessionProxy* getSession(const RemoteLegacyCDMSessionIdentifier&) const;
 
     RefPtr<GPUConnectionToWebProcess> gpuConnectionToWebProcess() { return m_gpuConnectionToWebProcess.get(); }

@@ -62,6 +62,11 @@ RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy(RemoteLegacyCDMFactoryP
 
 RemoteLegacyCDMSessionProxy::~RemoteLegacyCDMSessionProxy() = default;
 
+void RemoteLegacyCDMSessionProxy::invalidate()
+{
+    m_factory = nullptr;
+}
+
 static RefPtr<Uint8Array> convertToUint8Array(RefPtr<SharedBuffer>&& buffer)
 {
     if (!buffer)
