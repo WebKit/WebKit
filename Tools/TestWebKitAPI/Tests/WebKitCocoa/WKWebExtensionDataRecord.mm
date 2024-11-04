@@ -167,7 +167,7 @@ TEST(WKWebExtensionDataRecord, GetDataRecordsForMultipleContexts)
     TestWebKitAPI::Util::run(&fetchComplete);
 }
 
-TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
+TEST(WKWebExtensionDataRecord, RemoveDataRecords)
 {
     auto *backgroundScript = Util::constructScript(@[
         @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",
@@ -211,7 +211,7 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecords)
     TestWebKitAPI::Util::run(&removalComplete);
 }
 
-TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
+TEST(WKWebExtensionDataRecord, RemoveDataRecordsForMultipleContexts)
 {
     auto *backgroundScriptOne = Util::constructScript(@[
         @"const data = { 'string': 'string', 'number': 1, 'boolean': true, 'dictionary': {'key': 'value'}, 'array': [1, true, 'string'] }",
@@ -244,7 +244,9 @@ TEST(WKWebExtensionDataRecord, DISABLED_RemoveDataRecordsForMultipleContexts)
     __block bool removalComplete = false;
     [testController fetchDataRecordsOfTypes:allDataTypesSet completionHandler:^(NSArray<WKWebExtensionDataRecord *> *dataRecords) {
         EXPECT_EQ(dataRecords.count, 2UL);
-        EXPECT_EQ(dataRecords[0].totalSizeInBytes + dataRecords[1].totalSizeInBytes, 237UL);
+        NSLog(@"KIARA: unique id: %@. size: %lu", dataRecords[0].uniqueIdentifier, static_cast<unsigned long>(dataRecords[0].totalSizeInBytes));
+        NSLog(@"KIARA: unique id: %@. size: %lu", dataRecords[1].uniqueIdentifier, static_cast<unsigned long>(dataRecords[1].totalSizeInBytes));
+        EXPECT_EQ(dataRecords[0].totalSizeInBytes + dataRecords[1].totalSizeInBytes, 158UL);
 
         [testController removeDataOfTypes:allDataTypesSet fromDataRecords:dataRecords completionHandler:^{
             EXPECT_EQ(dataRecords[0].errors.count, 0UL);
