@@ -55,6 +55,8 @@ public:
     }
     void display(PlatformCALayer& layer) final
     {
+        if (layer.isOpaque() != m_isOpaque)
+            layer.setOpaque(m_isOpaque);
         if (m_displayBuffer) {
             layer.setContentsFormat(m_contentsFormat);
             layer.setDelegatedContents({ MachSendRight { m_displayBuffer }, { }, std::nullopt });
@@ -81,6 +83,10 @@ public:
     {
         m_contentsFormat = contentsFormat;
     }
+    void setOpaque(bool opaque)
+    {
+        m_isOpaque = opaque;
+    }
 private:
     GPUDisplayBufferDisplayDelegate(bool isOpaque, float contentsScale)
         : m_contentsScale(contentsScale)
@@ -89,7 +95,7 @@ private:
     }
     WTF::MachSendRight m_displayBuffer;
     const float m_contentsScale;
-    const bool m_isOpaque;
+    bool m_isOpaque;
     ContentsFormat m_contentsFormat { ContentsFormat::RGBA8 };
 };
 
@@ -307,6 +313,7 @@ ExceptionOr<void> GPUCanvasContextCocoa::configure(GPUCanvasConfiguration&& conf
     if (!m_presentationContext->configure(configuration, m_width, m_height, reportValidationErrors))
         return Exception { ExceptionCode::InvalidStateError, "GPUCanvasContext.configure: Unable to configure."_s };
 
+    m_layerContentsDisplayDelegate->setOpaque(configuration.alphaMode == GPUCanvasAlphaMode::Opaque);
     m_configuration = {
         *configuration.device,
         configuration.format,
