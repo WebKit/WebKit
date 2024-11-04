@@ -342,9 +342,13 @@ ALWAYS_INLINE JSArray* tryCreateContiguousArrayWithPattern(JSGlobalObject* globa
 
 #if OS(DARWIN)
     memset_pattern8(static_cast<void*>(butterfly->contiguous().data()), &pattern, sizeof(EncodedJSValue) * initialLength);
+    if (vectorLength > initialLength)
+        memset(static_cast<void*>(butterfly->contiguous().data() + initialLength), 0, sizeof(EncodedJSValue) * (vectorLength - initialLength));
 #else
     for (unsigned i = 0; i < initialLength; ++i)
         butterfly->contiguous().atUnsafe(i).setWithoutWriteBarrier(pattern);
+    for (unsigned i = initialLength; i < vectorLength; ++i)
+        butterfly->contiguous().atUnsafe(i).clear();
 #endif
     return JSArray::createWithButterfly(vm, nullptr, structure, butterfly);
 }
