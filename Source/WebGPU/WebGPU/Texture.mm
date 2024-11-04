@@ -2150,13 +2150,13 @@ NSUInteger Texture::bytesPerRow(WGPUTextureFormat format, uint32_t textureWidth,
     NSUInteger blockWidth = Texture::texelBlockWidth(format);
     if (!blockWidth) {
         ASSERT_NOT_REACHED();
-        return 0;
+        return NSUIntegerMax;
     }
-    if (textureWidth % blockWidth) {
-        ASSERT_NOT_REACHED();
-        return 0;
-    }
-    NSUInteger blocksInWidth = textureWidth / blockWidth;
+    NSUInteger add = 0;
+    if (textureWidth % blockWidth)
+        add = 1;
+
+    NSUInteger blocksInWidth = textureWidth / blockWidth + add;
     auto product = checkedProduct<NSUInteger>(Texture::texelBlockSize(format), blocksInWidth, sampleCount);
     return product.hasOverflowed() ? NSUIntegerMax : product.value();
 }
