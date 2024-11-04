@@ -157,7 +157,7 @@ void WebSocketServer::removeResourceForSession(const String& sessionId)
     m_listener->resources.erase(std::remove(m_listener->resources.begin(), m_listener->resources.end(), resourceName), m_listener->resources.end());
 }
 
-WebSocketMessageHandler::Message WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode errorCode, std::optional<Connection> connection, std::optional<String> errorMessage, std::optional<String> commandId)
+WebSocketMessageHandler::Message WebSocketMessageHandler::Message::fail(CommandResult::ErrorCode errorCode, std::optional<Connection> connection, std::optional<String> errorMessage, std::optional<int> commandId)
 {
     if (!connection)
         return { };
@@ -165,15 +165,29 @@ WebSocketMessageHandler::Message WebSocketMessageHandler::Message::fail(CommandR
     auto reply = JSON::Object::create();
 
     if (commandId)
-        reply->setString("id"_s, *commandId);
+        reply->setInteger("id"_s, *commandId);
 
     if (errorMessage)
         reply->setString("message"_s, *errorMessage);
 
     reply->setInteger("error"_s, CommandResult::errorCodeToHTTPStatusCode(errorCode));
 
-    auto serializedReply = reply->toJSONString().utf8().data();
-    return { *connection, serializedReply, strlen(serializedReply) };
+    return { *connection, reply->toJSONString().utf8() };
+}
+
+WebSocketMessageHandler::Message WebSocketMessageHandler::Message::reply(const String& type, unsigned id, Ref<JSON::Value>&& result)
+{
+    auto reply = JSON::Object::create();
+    reply->setString("type"_s, type);
+    reply->setInteger("id"_s, id);
+
+    if (auto resultObject = result->asObject())
+        reply->setObject("result"_s, resultObject.releaseNonNull());
+    else
+        reply->setObject("result"_s, JSON::Object::create());
+
+    // Connection will be set when sending the message back to the client, from the incoming message.
+    return { nullptr, reply->toJSONString().utf8() };
 }
 
 std::optional<Command> Command::fromData(const char* data, size_t dataLength)
