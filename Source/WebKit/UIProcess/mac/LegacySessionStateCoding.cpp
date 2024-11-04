@@ -529,7 +529,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     // Copy in the actual session state data
     CFDataGetBytes(data.get(), CFRangeMake(0, length), buffer.subspan(sizeof(uint32_t)).data());
 
-    return API::Data::createWithoutCopying(buffer, [mallocBuffer = WTFMove(mallocBuffer)] (uint8_t*, const void*) { }, nullptr);
+    return API::Data::createWithoutCopying(buffer, [mallocBuffer = WTFMove(mallocBuffer)] { });
 }
 
 class HistoryEntryDataDecoder {

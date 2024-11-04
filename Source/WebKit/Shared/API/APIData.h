@@ -40,11 +40,11 @@ namespace API {
 
 class Data : public ObjectImpl<API::Object::Type::Data> {
 public:
-    using FreeDataFunction = WTF::Function<void(uint8_t*, const void* context)>;
+    using FreeDataFunction = WTF::Function<void()>;
 
-    static Ref<Data> createWithoutCopying(std::span<const uint8_t> bytes, FreeDataFunction&& freeDataFunction, const void* context)
+    static Ref<Data> createWithoutCopying(std::span<const uint8_t> bytes, FreeDataFunction&& freeDataFunction)
     {
-        return adoptRef(*new Data(bytes, WTFMove(freeDataFunction), context));
+        return adoptRef(*new Data(bytes, WTFMove(freeDataFunction)));
     }
 
     static Ref<Data> create(std::span<const uint8_t> bytes)
@@ -57,7 +57,7 @@ public:
         }
 
         auto data = copiedBytes.span();
-        return createWithoutCopying(data, [copiedBytes = WTFMove(copiedBytes)] (uint8_t*, const void*) { }, nullptr);
+        return createWithoutCopying(data, [copiedBytes = WTFMove(copiedBytes)] () { });
     }
     
     static Ref<Data> create(const Vector<unsigned char>& buffer)
@@ -69,7 +69,7 @@ public:
     {
         auto buffer = vector.releaseBuffer();
         auto span = buffer.span();
-        return createWithoutCopying(span, [buffer = WTFMove(buffer)] (uint8_t*, const void*) { }, nullptr);
+        return createWithoutCopying(span, [buffer = WTFMove(buffer)] { });
     }
 
 #if PLATFORM(COCOA)
@@ -78,23 +78,21 @@ public:
 
     ~Data()
     {
-        m_freeDataFunction(const_cast<uint8_t*>(m_span.data()), m_context);
+        m_freeDataFunction();
     }
 
     size_t size() const { return m_span.size(); }
     std::span<const uint8_t> span() const { return m_span; }
 
 private:
-    Data(std::span<const uint8_t> span, FreeDataFunction&& freeDataFunction, const void* context)
+    Data(std::span<const uint8_t> span, FreeDataFunction&& freeDataFunction)
         : m_span(span)
         , m_freeDataFunction(WTFMove(freeDataFunction))
-        , m_context(context)
     {
     }
 
     std::span<const uint8_t> m_span;
     FreeDataFunction m_freeDataFunction;
-    const void* m_context { nullptr };
 };
 
 } // namespace API

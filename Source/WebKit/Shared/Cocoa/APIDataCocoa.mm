@@ -32,11 +32,8 @@ namespace API {
 
 Ref<Data> Data::createWithoutCopying(RetainPtr<NSData> data)
 {
-    return createWithoutCopying(WTF::span(data.get()), [](uint8_t*, const void* data) {
-        if (!data)
-            return;
-        CFRelease(data);
-    }, static_cast<void*>(data.leakRef()));
+    auto dataSpan = WTF::span(data.get());
+    return createWithoutCopying(dataSpan, [data = WTFMove(data)] { });
 }
 
 } // namespace API
