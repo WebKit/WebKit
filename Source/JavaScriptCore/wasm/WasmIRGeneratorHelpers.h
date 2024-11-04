@@ -51,10 +51,12 @@ struct PatchpointExceptionHandle : public PatchpointExceptionHandleBase {
         , m_callSiteIndex(callSiteIndex)
     { }
 
-    PatchpointExceptionHandle(std::optional<bool> hasExceptionHandlers, unsigned callSiteIndex, unsigned numLiveValues)
+    PatchpointExceptionHandle(std::optional<bool> hasExceptionHandlers, unsigned callSiteIndex, unsigned numLiveValues, unsigned firstStackmapParamOffset, unsigned firstStackmapChildOffset)
         : m_hasExceptionHandlers(hasExceptionHandlers)
         , m_callSiteIndex(callSiteIndex)
         , m_numLiveValues(numLiveValues)
+        , m_firstStackmapParamOffset(firstStackmapParamOffset)
+        , m_firstStackmapChildOffset(firstStackmapChildOffset)
     { }
 
     template <typename Generator>
@@ -69,10 +71,8 @@ struct PatchpointExceptionHandle : public PatchpointExceptionHandleBase {
             return;
 
         StackMap values(*m_numLiveValues);
-        unsigned paramsOffset = params.size() - *m_numLiveValues;
-        unsigned childrenOffset = params.value()->numChildren() - *m_numLiveValues;
         for (unsigned i = 0; i < *m_numLiveValues; ++i)
-            values[i] = OSREntryValue(params[i + paramsOffset], params.value()->child(i + childrenOffset)->type());
+            values[i] = OSREntryValue(params[i + m_firstStackmapParamOffset], params.value()->child(i + m_firstStackmapChildOffset)->type());
 
         generator->addStackMap(m_callSiteIndex, WTFMove(values));
     }
@@ -80,6 +80,8 @@ struct PatchpointExceptionHandle : public PatchpointExceptionHandleBase {
     std::optional<bool> m_hasExceptionHandlers;
     unsigned m_callSiteIndex { s_invalidCallSiteIndex };
     std::optional<unsigned> m_numLiveValues { };
+    unsigned m_firstStackmapParamOffset { };
+    unsigned m_firstStackmapChildOffset { };
 };
 
 #else
