@@ -42,28 +42,35 @@
 #include "StackAlignment.h"
 #include "ThunkGenerators.h"
 
+#define INSTRUMENT_LINE(source) JIT_COMMENT(*this, "^\n" source);
+
 namespace JSC {
 
 void JIT::emit_op_ret(const JSInstruction* currentInstruction)
 {
+    // @+ForEachLine(INSTRUMENT_LINE)
     static_assert(noOverlap(returnValueJSR, callFrameRegister));
 
     // Return the result in returnValueGPR (returnValueGPR2/returnValueGPR on 32-bit).
     auto bytecode = currentInstruction->as<OpRet>();
     emitGetVirtualRegister(bytecode.m_value, returnValueJSR);
     jumpThunk(CodeLocationLabel { vm().getCTIStub(CommonJITThunkID::ReturnFromBaseline).retaggedCode<NoPtrTag>() });
+    // @-ForEachLine(INSTRUMENT_LINE)
 }
 
 template<typename Op>
 void JIT::emitPutCallResult(const Op& bytecode)
 {
+    // @+ForEachLine(INSTRUMENT_LINE)
     emitValueProfilingSite(bytecode, returnValueJSR);
     emitPutVirtualRegister(destinationFor(bytecode, m_bytecodeIndex.checkpoint()).virtualRegister(), returnValueJSR);
+    // @-ForEachLine(INSTRUMENT_LINE)
 }
 
 template<typename Op>
 void JIT::compileSetupFrame(const Op& bytecode)
 {
+    // @+ForEachLine(INSTRUMENT_LINE)
     constexpr auto opcodeID = Op::opcodeID;
 
     if constexpr (opcodeID == op_call_varargs || opcodeID == op_construct_varargs || opcodeID == op_super_construct_varargs || opcodeID == op_tail_call_varargs || opcodeID == op_tail_call_forward_arguments) {
@@ -149,6 +156,7 @@ void JIT::compileSetupFrame(const Op& bytecode)
         addPtr(TrustedImm32(registerOffset * sizeof(Register) + sizeof(CallerFrameAndPC)), callFrameRegister, stackPointerRegister);
         store32(TrustedImm32(argCountIncludingThis), Address(stackPointerRegister, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset - sizeof(CallerFrameAndPC)));
     }
+    // @-ForEachLine(INSTRUMENT_LINE)
 }
 
 template<typename Op>
@@ -159,6 +167,7 @@ void JIT::compileCallDirectEval(const Op&)
 template<>
 void JIT::compileCallDirectEval(const OpCallDirectEval& bytecode)
 {
+    // @+ForEachLine(INSTRUMENT_LINE)
     using BaselineJITRegisters::CallDirectEval::SlowPath::calleeFrameGPR;
     using BaselineJITRegisters::CallDirectEval::SlowPath::thisValueJSR;
     using BaselineJITRegisters::CallDirectEval::SlowPath::scopeGPR;
@@ -175,10 +184,12 @@ void JIT::compileCallDirectEval(const OpCallDirectEval& bytecode)
 
     setFastPathResumePoint();
     emitPutCallResult(bytecode);
+    // @-ForEachLine(INSTRUMENT_LINE)
 }
 
 void JIT::compileCallDirectEvalSlowCase(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    // @+ForEachLine(INSTRUMENT_LINE)
     linkAllSlowCases(iter);
 
     auto bytecode = instruction->as<OpCallDirectEval>();
@@ -191,6 +202,7 @@ void JIT::compileCallDirectEvalSlowCase(const JSInstruction* instruction, Vector
     materializePointerIntoMetadata(bytecode, OpCallDirectEval::Metadata::offsetOfCallLinkInfo(), BaselineJITRegisters::Call::callLinkInfoGPR);
     emitVirtualCallWithoutMovingGlobalObject(*m_vm, BaselineJITRegisters::Call::callLinkInfoGPR, CallMode::Regular);
     resetSP();
+    // @-ForEachLine(INSTRUMENT_LINE)
 }
 
 template<typename Op>
@@ -202,6 +214,7 @@ bool JIT::compileTailCall(const Op&, BaselineUnlinkedCallLinkInfo*, unsigned)
 template<>
 bool JIT::compileTailCall(const OpTailCall& bytecode, BaselineUnlinkedCallLinkInfo* callLinkInfo, unsigned callLinkInfoIndex)
 {
+    // @+ForEachLine(INSTRUMENT_LINE)
     CallLinkInfo::emitTailCallFastPath(*this, callLinkInfo, scopedLambda<void()>([&] {
         CallFrameShuffleData shuffleData = CallFrameShuffleData::createForBaselineOrLLIntTailCall(bytecode, m_unlinkedCodeBlock->numParameters());
         CallFrameShuffler shuffler { *this, shuffleData };
@@ -214,12 +227,14 @@ bool JIT::compileTailCall(const OpTailCall& bytecode, BaselineUnlinkedCallLinkIn
     auto doneLocation = label();
     m_callCompilationInfo[callLinkInfoIndex].doneLocation = doneLocation;
 
+    // @-ForEachLine(INSTRUMENT_LINE)
     return true;
 }
 
 template<typename Op>
 void JIT::compileOpCall(const JSInstruction* instruction)
 {
+    // @+ForEachLine(INSTRUMENT_LINE)
     auto bytecode = instruction->as<Op>();
     VirtualRegister callee = calleeFor(bytecode, m_bytecodeIndex.checkpoint());
 
@@ -300,6 +315,7 @@ void JIT::compileOpCall(const JSInstruction* instruction)
                 emitPutCallResult(bytecode);
         }
     }
+    // @-ForEachLine(INSTRUMENT_LINE)
 }
 
 void JIT::emit_op_call(const JSInstruction* currentInstruction)
@@ -379,6 +395,7 @@ void JIT::emit_op_iterator_open(const JSInstruction* instruction)
     if (modeMetadata.mode == GetByIdMode::ProtoLoad)
         cacheType = CacheType::GetByIdPrototype;
 
+    // @+ForEachLine(INSTRUMENT_LINE)
     JITSlowPathCall slowPathCall(this, tryFastFunction);
     slowPathCall.call();
     Jump fastCase = branch32(NotEqual, GPRInfo::returnValueGPR2, TrustedImm32(static_cast<uint32_t>(IterationMode::Generic)));
@@ -416,10 +433,12 @@ void JIT::emit_op_iterator_open(const JSInstruction* instruction)
     emitPutVirtualRegister(bytecode.m_next, resultJSR);
 
     fastCase.link(this);
+    // @-ForEachLine(INSTRUMENT_LINE)
 }
 
 void JIT::emitSlow_op_iterator_open(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
+    // @+ForEachLine(INSTRUMENT_LINE)
     linkAllSlowCases(iter);
 
     using BaselineJITRegisters::GetById::baseJSR;
@@ -438,10 +457,12 @@ void JIT::emitSlow_op_iterator_open(const JSInstruction*, Vector<SlowCaseEntry>:
     notObject.link(this);
     loadGlobalObject(argumentGPR0);
     callOperation(operationThrowIteratorResultIsNotObject, argumentGPR0);
+    // @-ForEachLine(INSTRUMENT_LINE)
 }
 
 void JIT::emit_op_iterator_next(const JSInstruction* instruction)
 {
+    // @+ForEachLine(INSTRUMENT_LINE)
     auto bytecode = instruction->as<OpIteratorNext>();
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::resultJSR;
@@ -463,6 +484,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     doneCases.append(branchIfEmpty(JSValueRegs { returnValueGPR2 }));
     emitValueProfilingSite(bytecode, JSValueRegs { returnValueGPR2 });
 #else
+    // @-ForEachLine(INSTRUMENT_LINE)
     auto* tryFastFunction = ([&] () {
         switch (instruction->width()) {
         case Narrow: return iterator_next_try_fast_narrow;
@@ -471,6 +493,7 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
         default: RELEASE_ASSERT_NOT_REACHED();
         }
     })();
+    // @+ForEachLine(INSTRUMENT_LINE)
     JITSlowPathCall slowPathCall(this, tryFastFunction);
     slowPathCall.call();
 #endif
@@ -538,10 +561,12 @@ void JIT::emit_op_iterator_next(const JSInstruction* instruction)
     }
 
     doneCases.link(this);
+    // @-ForEachLine(INSTRUMENT_LINE)
 }
 
 void JIT::emitSlow_op_iterator_next(const JSInstruction*, Vector<SlowCaseEntry>::iterator& iter)
 {
+    // @+ForEachLine(INSTRUMENT_LINE)
     using BaselineJITRegisters::GetById::baseJSR;
     using BaselineJITRegisters::GetById::resultJSR;
     using BaselineJITRegisters::GetById::stubInfoGPR;
@@ -565,10 +590,12 @@ void JIT::emitSlow_op_iterator_next(const JSInstruction*, Vector<SlowCaseEntry>:
         nearCallThunk(CodeLocationLabel { InlineCacheCompiler::generateSlowPathCode(vm(), gen.accessType()).retaggedCode<NoPtrTag>() });
         static_assert(BaselineJITRegisters::GetById::resultJSR == returnValueJSR);
     }
+    // @-ForEachLine(INSTRUMENT_LINE)
 }
 
 void JIT::emit_op_instanceof(const JSInstruction* instruction)
 {
+    // @+ForEachLine(INSTRUMENT_LINE)
     using namespace BaselineJITRegisters;
 
     auto bytecode = instruction->as<OpInstanceof>();
@@ -685,10 +712,12 @@ void JIT::emit_op_instanceof(const JSInstruction* instruction)
 
     done.link(this);
     emitPutVirtualRegister(bytecode.m_dst, Instanceof::resultJSR);
+    // @-ForEachLine(INSTRUMENT_LINE)
 }
 
 void JIT::emitSlow_op_instanceof(const JSInstruction* instruction, Vector<SlowCaseEntry>::iterator& iter)
 {
+    // @+ForEachLine(INSTRUMENT_LINE)
     using namespace BaselineJITRegisters;
     Jump done;
 
@@ -742,8 +771,11 @@ void JIT::emitSlow_op_instanceof(const JSInstruction* instruction, Vector<SlowCa
     }
 
     done.link(this);
+    // @-ForEachLine(INSTRUMENT_LINE)
 }
 
 } // namespace JSC
+
+#undef INSTRUMENT_LINE
 
 #endif // ENABLE(JIT)

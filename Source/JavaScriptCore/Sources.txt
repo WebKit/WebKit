@@ -666,7 +666,6 @@ jit/JITArithmetic.cpp
 jit/JITBitAndGenerator.cpp
 jit/JITBitOrGenerator.cpp
 jit/JITBitXorGenerator.cpp
-jit/JITCall.cpp
 jit/JITCode.cpp
 jit/JITCodeMap.cpp
 jit/JITCompilation.cpp
