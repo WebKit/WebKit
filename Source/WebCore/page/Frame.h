@@ -98,7 +98,7 @@ public:
 
     WEBCORE_EXPORT void disconnectOwnerElement();
     NavigationScheduler& navigationScheduler() const { return m_navigationScheduler.get(); }
-    CheckedRef<NavigationScheduler> checkedNavigationScheduler() const;
+    Ref<NavigationScheduler> protectedNavigationScheduler() const;
     WEBCORE_EXPORT void takeWindowProxyAndOpenerFrom(Frame&);
 
     HistoryController& history() const { return m_history.get(); }

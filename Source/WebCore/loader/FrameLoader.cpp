@@ -469,7 +469,7 @@ void FrameLoader::setDefersLoading(bool defers)
     frame->checkedHistory()->setDefersLoading(defers);
 
     if (!defers) {
-        frame->checkedNavigationScheduler()->startTimer();
+        frame->protectedNavigationScheduler()->startTimer();
         startCheckCompleteTimer();
     }
 }
@@ -566,7 +566,7 @@ void FrameLoader::submitForm(Ref<FormSubmission>&& submission)
     submission->setReferrer(outgoingReferrer());
     submission->setOrigin(SecurityPolicy::generateOriginHeader(frame->document()->referrerPolicy(), submission->requestURL(), m_frame->document()->protectedSecurityOrigin(), OriginAccessPatternsForWebProcess::singleton()));
 
-    targetFrame->checkedNavigationScheduler()->scheduleFormSubmission(WTFMove(submission));
+    targetFrame->protectedNavigationScheduler()->scheduleFormSubmission(WTFMove(submission));
 }
 
 void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
@@ -600,7 +600,7 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
     policyChecker().stopCheck();
 
     // FIXME: This will cancel redirection timer, which really needs to be restarted when restoring the frame from b/f cache.
-    m_frame->checkedNavigationScheduler()->cancel();
+    m_frame->protectedNavigationScheduler()->cancel();
 }
 
 void FrameLoader::stop()
@@ -638,13 +638,13 @@ void FrameLoader::closeURL()
 bool FrameLoader::didOpenURL()
 {
     Ref frame = m_frame.get();
-    if (frame->checkedNavigationScheduler()->redirectScheduledDuringLoad()) {
+    if (frame->protectedNavigationScheduler()->redirectScheduledDuringLoad()) {
         // A redirect was scheduled before the document was created.
         // This can happen when one frame changes another frame's location.
         return false;
     }
 
-    frame->checkedNavigationScheduler()->cancel();
+    frame->protectedNavigationScheduler()->cancel();
 
     m_isComplete = false;
     m_didCallImplicitClose = false;
@@ -670,7 +670,7 @@ void FrameLoader::didExplicitOpen()
     // from a subsequent window.document.open / window.document.write call. 
     // Canceling redirection here works for all cases because document.open 
     // implicitly precedes document.write.
-    protectedFrame()->checkedNavigationScheduler()->cancel();
+    protectedFrame()->protectedNavigationScheduler()->cancel();
 }
 
 static inline bool shouldClearWindowName(const LocalFrame& frame, const Document& newDocument)
@@ -745,7 +745,7 @@ void FrameLoader::clear(RefPtr<Document>&& newDocument, bool clearWindowProperti
         script->setWebAssemblyEnabled(enableWASMValue, newDocumentCSP->webAssemblyErrorMessage());
     }
 
-    frame->checkedNavigationScheduler()->clear();
+    frame->protectedNavigationScheduler()->clear();
 
     m_checkTimer.stop();
     m_shouldCallCheckCompleted = false;
@@ -974,7 +974,7 @@ void FrameLoader::checkCompleted()
 
     checkCallImplicitClose(); // if we didn't do it before
 
-    frame->checkedNavigationScheduler()->startTimer();
+    frame->protectedNavigationScheduler()->startTimer();
 
     completed();
     if (frame->page())
@@ -1155,7 +1155,7 @@ void FrameLoader::provisionalLoadStarted()
     if (m_stateMachine.firstLayoutDone())
         m_stateMachine.advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
     Ref frame = m_frame.get();
-    frame->checkedNavigationScheduler()->cancel(NewLoadInProgress::Yes);
+    frame->protectedNavigationScheduler()->cancel(NewLoadInProgress::Yes);
     m_client->provisionalLoadStarted();
 
     if (frame->isMainFrame()) {
@@ -1351,7 +1351,7 @@ void FrameLoader::completed()
     Ref frame = m_frame.get();
 
     for (RefPtr descendant = frame->tree().traverseNext(frame.ptr()); descendant; descendant = descendant->tree().traverseNext(frame.ptr()))
-        descendant->checkedNavigationScheduler()->startTimer();
+        descendant->protectedNavigationScheduler()->startTimer();
 
     if (RefPtr parent = frame->tree().parent()) {
         if (RefPtr localParent = dynamicDowncast<LocalFrame>(parent.releaseNonNull()))
@@ -1873,7 +1873,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
         loader->setTriggeringAction(WTFMove(action));
     }
 
-    frame->checkedNavigationScheduler()->cancel(NewLoadInProgress::Yes);
+    frame->protectedNavigationScheduler()->cancel(NewLoadInProgress::Yes);
 
     if (shouldTreatCurrentLoadAsContinuingLoad()) {
         continueLoadAfterNavigationPolicy(loader->request(), formState.get(), NavigationPolicyDecision::ContinueLoad, allowNavigationToInvalidURL);
@@ -2112,7 +2112,7 @@ void FrameLoader::stopForBackForwardCache()
     // We cancel pending navigations & policy checks *after* cancelling loads because cancelling loads might end up
     // running script, which could schedule new navigations.
     policyChecker().stopCheck();
-    protectedFrame()->checkedNavigationScheduler()->cancel();
+    protectedFrame()->protectedNavigationScheduler()->cancel();
 }
 
 void FrameLoader::stopAllLoadersAndCheckCompleteness()
@@ -2608,7 +2608,7 @@ void FrameLoader::willRestoreFromCachedPage()
     ASSERT(m_frame->page());
     ASSERT(m_frame->isMainFrame());
 
-    protectedFrame()->checkedNavigationScheduler()->cancel();
+    protectedFrame()->protectedNavigationScheduler()->cancel();
 
     // We still have to close the previous part page.
     closeURL();
@@ -3381,7 +3381,7 @@ void FrameLoader::scheduleRefreshIfNeeded(Document& document, const String& cont
     if (parseMetaHTTPEquivRefresh(content, delay, urlString)) {
         auto completedURL = urlString.isEmpty() ? document.url() : document.completeURL(urlString);
         if (!completedURL.protocolIsJavaScript())
-            protectedFrame()->checkedNavigationScheduler()->scheduleRedirect(document, delay, completedURL, isMetaRefresh);
+            protectedFrame()->protectedNavigationScheduler()->scheduleRedirect(document, delay, completedURL, isMetaRefresh);
         else {
             auto message = makeString("Refused to refresh "_s, document.url().stringCenterEllipsizedToLength(), " to a javascript: URL"_s);
             document.addConsoleMessage(MessageSource::Security, MessageLevel::Error, message);

@@ -84,10 +84,12 @@ public:
 private:
     void readNextMessage();
 
+    RefPtr<NetworkSocketChannel> protectedChannel() const;
+
     NSURLSessionTask* task() const final;
     WebCore::StoredCredentialsPolicy storedCredentialsPolicy() const final { return m_storedCredentialsPolicy; }
 
-    CheckedPtr<NetworkSocketChannel> m_channel;
+    WeakPtr<NetworkSocketChannel> m_channel;
     RetainPtr<NSURLSessionWebSocketTask> m_task;
     bool m_receivedDidClose { false };
     bool m_receivedDidConnect { false };

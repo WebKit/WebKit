@@ -4862,7 +4862,7 @@ void Page::reloadExecutionContextsForOrigin(const ClientOrigin& origin, std::opt
             frame = frame->tree().traverseNext();
             continue;
         }
-        localFrame->checkedNavigationScheduler()->scheduleRefresh(*document);
+        localFrame->protectedNavigationScheduler()->scheduleRefresh(*document);
         frame = frame->tree().traverseNextSkippingChildren();
     }
 }

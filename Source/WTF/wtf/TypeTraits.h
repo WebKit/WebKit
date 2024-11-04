@@ -32,9 +32,6 @@
 
 #include <type_traits>
 #include <wtf/Forward.h>
-#include <wtf/FunctionDispatcher.h>
-#include <wtf/Ref.h>
-#include <wtf/RefPtr.h>
 
 // SFINAE depends on overload resolution. We indicate the overload we'd prefer
 // (if it can compile) using a higher priorty type (int), and the overload

@@ -27,13 +27,14 @@
 
 #include "ThreadTimers.h"
 #include <functional>
+#include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/Seconds.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
+#include <wtf/TypeTraits.h>
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
@@ -154,7 +155,7 @@ public:
     }
 
     template<typename TimerFiredClass, typename TimerFiredBaseClass>
-    requires (WTF::TypeHasRefMemberFunction<TimerFiredClass>::value)
+    requires (WTF::HasRefPtrMethods<TimerFiredClass>::value)
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
         : m_function([objectPtr = &object, function] {
             Ref protectedObject { *objectPtr };
@@ -163,9 +164,20 @@ public:
     {
     }
 
+
+    template<typename TimerFiredClass, typename TimerFiredBaseClass>
+    requires (WTF::HasCheckedPtrMethods<TimerFiredClass>::value && !WTF::HasRefPtrMethods<TimerFiredClass>::value)
+    Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
+        : m_function([objectPtr = &object, function] {
+            CheckedRef checkedObject { *objectPtr };
+            (objectPtr->*function)();
+        })
+    {
+    }
+
     // FIXME: This constructor isn't as safe as the other ones and should ideally be removed.
     template <typename TimerFiredClass, typename TimerFiredBaseClass>
-    requires (!WTF::TypeHasRefMemberFunction<TimerFiredClass>::value)
+    requires (!WTF::HasRefPtrMethods<TimerFiredClass>::value && !WTF::HasCheckedPtrMethods<TimerFiredClass>::value)
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
         : m_function(std::bind(function, &object))
     {

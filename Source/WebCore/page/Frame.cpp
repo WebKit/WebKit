@@ -112,7 +112,7 @@ Frame::Frame(Page& page, FrameIdentifier frameID, FrameType frameType, HTMLFrame
     , m_mainFrame(parent ? page.mainFrame() : *this)
     , m_settings(page.settings())
     , m_frameType(frameType)
-    , m_navigationScheduler(makeUniqueRef<NavigationScheduler>(*this))
+    , m_navigationScheduler(makeUniqueRefWithoutRefCountedCheck<NavigationScheduler>(*this))
     , m_opener(opener)
     , m_history(makeUniqueRef<HistoryController>(*this))
 {
@@ -196,7 +196,7 @@ Ref<WindowProxy> Frame::protectedWindowProxy() const
     return m_windowProxy;
 }
 
-CheckedRef<NavigationScheduler> Frame::checkedNavigationScheduler() const
+Ref<NavigationScheduler> Frame::protectedNavigationScheduler() const
 {
     return m_navigationScheduler.get();
 }

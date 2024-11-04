@@ -710,6 +710,17 @@ void NavigationScheduler::schedulePageBlock(Document& originDocument)
         schedule(makeUnique<ScheduledPageBlock>(originDocument));
 }
 
+
+void NavigationScheduler::ref() const
+{
+    m_frame->ref();
+}
+
+void NavigationScheduler::deref() const
+{
+    m_frame->deref();
+}
+
 void NavigationScheduler::timerFired()
 {
     Ref frame = m_frame.get();

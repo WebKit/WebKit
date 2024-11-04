@@ -43,6 +43,7 @@
 #include <wtf/GetPtr.h>
 #include <wtf/IterationStatus.h>
 #include <wtf/TypeCasts.h>
+#include <wtf/TypeTraits.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -707,18 +708,11 @@ ALWAYS_INLINE constexpr typename remove_reference<T>::type&& move(T&& value)
 
 namespace WTF {
 
-template<typename T> class TypeHasRefMemberFunction {
-    template<typename> static std::false_type test(...);
-    template<typename U> static auto test(int) -> decltype(std::declval<U>().ref(), std::true_type());
-public:
-    static constexpr bool value = std::is_same<decltype(test<T>(0)), std::true_type>::value;
-};
-
 template<class T, class... Args>
 ALWAYS_INLINE decltype(auto) makeUnique(Args&&... args)
 {
     static_assert(std::is_same<typename T::WTFIsFastAllocated, int>::value, "T sould use FastMalloc (WTF_MAKE_FAST_ALLOCATED)");
-    static_assert(!TypeHasRefMemberFunction<T>::value, "T should not be RefCounted");
+    static_assert(!HasRefPtrMethods<T>::value, "T should not be RefCounted");
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 
@@ -732,7 +726,7 @@ ALWAYS_INLINE decltype(auto) makeUniqueWithoutRefCountedCheck(Args&&... args)
 template<class T, class... Args>
 ALWAYS_INLINE decltype(auto) makeUniqueWithoutFastMallocCheck(Args&&... args)
 {
-    static_assert(!TypeHasRefMemberFunction<T>::value, "T should not be RefCounted");
+    static_assert(!HasRefPtrMethods<T>::value, "T should not be RefCounted");
     return std::make_unique<T>(std::forward<Args>(args)...);
 }
 

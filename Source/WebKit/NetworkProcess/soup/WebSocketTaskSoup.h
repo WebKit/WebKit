@@ -59,11 +59,13 @@ private:
 
     String acceptedExtensions() const;
 
+    Ref<NetworkSocketChannel> protectedChannel() const;
+
     static void didReceiveMessageCallback(WebSocketTask*, SoupWebsocketDataType, GBytes*);
     static void didReceiveErrorCallback(WebSocketTask*, GError*);
     static void didCloseCallback(WebSocketTask*);
 
-    CheckedRef<NetworkSocketChannel> m_channel;
+    WeakRef<NetworkSocketChannel> m_channel;
     WebCore::ResourceRequest m_request;
     GRefPtr<SoupMessage> m_handshakeMessage;
     GRefPtr<SoupWebsocketConnection> m_connection;
