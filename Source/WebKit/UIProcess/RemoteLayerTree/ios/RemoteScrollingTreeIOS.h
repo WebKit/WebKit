@@ -43,6 +43,7 @@ public:
 private:
     Ref<WebCore::ScrollingTreeNode> createScrollingTreeNode(WebCore::ScrollingNodeType, WebCore::ScrollingNodeID) final;
 
+    void scrollingTreeNodeDidScroll(WebCore::ScrollingTreeScrollingNode&, WebCore::ScrollingLayerPositionAction) final;
     void scrollingTreeNodeWillStartPanGesture(WebCore::ScrollingNodeID) final;
 };
 

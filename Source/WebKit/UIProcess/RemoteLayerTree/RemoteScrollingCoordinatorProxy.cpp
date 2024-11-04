@@ -181,37 +181,6 @@ void RemoteScrollingCoordinatorProxy::currentSnapPointIndicesDidChange(WebCore::
     m_webPageProxy->legacyMainFrameProcess().send(Messages::RemoteScrollingCoordinator::CurrentSnapPointIndicesChangedForNode(nodeID, horizontal, vertical), m_webPageProxy->webPageIDInMainFrameProcess());
 }
 
-// This comes from the scrolling tree.
-void RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll(ScrollingNodeID scrolledNodeID, const FloatPoint& newScrollPosition, const std::optional<FloatPoint>& layoutViewportOrigin, ScrollingLayerPositionAction scrollingLayerPositionAction)
-{
-    // Scroll updates for the main frame are sent via WebPageProxy::updateVisibleContentRects()
-    // so don't send them here.
-    if (!propagatesMainFrameScrolls() && scrolledNodeID == rootScrollingNodeID())
-        return;
-
-    Ref webPageProxy = m_webPageProxy.get();
-    if (webPageProxy->scrollingUpdatesDisabledForTesting())
-        return;
-
-    webPageProxy->scrollingNodeScrollViewDidScroll(scrolledNodeID);
-
-    if (m_scrollingTree->isHandlingProgrammaticScroll())
-        return;
-
-    auto scrollUpdate = ScrollUpdate { scrolledNodeID, newScrollPosition, layoutViewportOrigin, ScrollUpdateType::PositionUpdate, scrollingLayerPositionAction };
-    m_scrollingTree->addPendingScrollUpdate(WTFMove(scrollUpdate));
-
-    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::scrollingTreeNodeDidScroll " << scrolledNodeID << " to " << newScrollPosition << " waitingForDidScrollReply " << m_waitingForDidScrollReply);
-
-    if (WebKit::RemoteLayerTreeScrollingPerformanceData* scrollPerfData = webPageProxy->scrollingPerformanceData())
-        scrollPerfData->didScroll(m_scrollingTree->layoutViewport());
-
-    if (!m_waitingForDidScrollReply) {
-        sendScrollingTreeNodeDidScroll();
-        return;
-    }
-}
-
 void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll()
 {
     if (!m_scrollingTree) {
@@ -220,15 +189,37 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll()
     }
 
     Ref webPageProxy = m_webPageProxy.get();
+    if (webPageProxy->scrollingUpdatesDisabledForTesting())
+        return;
+
     auto scrollUpdates = m_scrollingTree->takePendingScrollUpdates();
     for (unsigned i = 0; i < scrollUpdates.size(); ++i) {
         const auto& update = scrollUpdates[i];
         bool isLastUpdate = i == scrollUpdates.size() - 1;
 
         LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll - node " << update.nodeID << " scroll position " << update.scrollPosition << " isLastUpdate " << isLastUpdate);
+
+        auto* scrollPerfData = webPageProxy->scrollingPerformanceData();
+        // update.layoutViewportOrigin is set for frame scrolls.
+        if (scrollPerfData && update.layoutViewportOrigin) {
+            auto layoutViewport = m_scrollingTree->layoutViewport();
+            layoutViewport.setLocation(*update.layoutViewportOrigin);
+            scrollPerfData->didScroll(layoutViewport);
+        }
+
         webPageProxy->sendScrollPositionChangedForNode(scrollingTree()->frameIDForScrollingNodeID(update.nodeID), update.nodeID, update.scrollPosition, update.layoutViewportOrigin, update.updateLayerPositionAction == ScrollingLayerPositionAction::Sync, isLastUpdate);
         m_waitingForDidScrollReply = true;
     }
+}
+
+void RemoteScrollingCoordinatorProxy::scrollingThreadAddedPendingUpdate()
+{
+    LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::scrollingThreadAddedPendingUpdate - m_waitingForDidScrollReply " << m_waitingForDidScrollReply);
+
+    if (m_waitingForDidScrollReply)
+        return;
+
+    sendScrollingTreeNodeDidScroll();
 }
 
 void RemoteScrollingCoordinatorProxy::receivedLastScrollingTreeNodeDidScrollReply()
