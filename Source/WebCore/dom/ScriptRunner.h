@@ -41,12 +41,12 @@ class ScriptElement;
 class LoadableScript;
 class WeakPtrImplWithEventTargetData;
 
-class ScriptRunner final : public PendingScriptClient, public CanMakeCheckedPtr<ScriptRunner> {
+class ScriptRunner final : public PendingScriptClient, public CanMakeCheckedPtr<ScriptRunner>, public RefCounted<ScriptRunner> {
     WTF_MAKE_TZONE_ALLOCATED(ScriptRunner);
     WTF_MAKE_NONCOPYABLE(ScriptRunner);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScriptRunner);
 public:
-    explicit ScriptRunner(Document&);
+    static Ref<ScriptRunner> create(Document&);
     ~ScriptRunner();
 
     // CheckedPtr interface
@@ -70,11 +70,13 @@ public:
     void clearPendingScripts();
 
 private:
+    explicit ScriptRunner(Document&);
+
     void timerFired();
 
     void notifyFinished(PendingScript&) override;
 
-    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
+    WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
     Vector<Ref<PendingScript>> m_scriptsToExecuteInOrder;
     Vector<RefPtr<PendingScript>> m_scriptsToExecuteSoon; // http://www.whatwg.org/specs/web-apps/current-work/#set-of-scripts-that-will-execute-as-soon-as-possible
     HashSet<Ref<PendingScript>> m_pendingAsyncScripts;

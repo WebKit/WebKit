@@ -7323,7 +7323,7 @@ bool Document::isTopDocument() const
 ScriptRunner& Document::ensureScriptRunner()
 {
     ASSERT(!m_scriptRunner);
-    m_scriptRunner = makeUnique<ScriptRunner>(*this);
+    m_scriptRunner = ScriptRunner::create(*this);
     return *m_scriptRunner;
 }
 
@@ -7334,7 +7334,7 @@ ScriptModuleLoader& Document::ensureModuleLoader()
     return *m_moduleLoader;
 }
 
-CheckedRef<ScriptRunner> Document::checkedScriptRunner()
+Ref<ScriptRunner> Document::protectedScriptRunner()
 {
     return scriptRunner();
 }

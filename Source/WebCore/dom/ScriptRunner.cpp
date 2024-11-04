@@ -37,6 +37,11 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ScriptRunner);
 
+Ref<ScriptRunner> ScriptRunner::create(Document& document)
+{
+    return adoptRef(*new ScriptRunner(document));
+}
+
 ScriptRunner::ScriptRunner(Document& document)
     : m_document(document)
     , m_timer(*this, &ScriptRunner::timerFired)
@@ -47,17 +52,20 @@ ScriptRunner::~ScriptRunner()
 {
     for (auto& pendingScript : m_scriptsToExecuteSoon) {
         UNUSED_PARAM(pendingScript);
-        m_document->decrementLoadEventDelayCount();
+        if (RefPtr document = m_document.get())
+            document->decrementLoadEventDelayCount();
     }
     for (auto& pendingScript : m_scriptsToExecuteInOrder) {
         if (pendingScript->watchingForLoad())
             pendingScript->clearClient();
-        m_document->decrementLoadEventDelayCount();
+        if (RefPtr document = m_document.get())
+            document->decrementLoadEventDelayCount();
     }
     for (auto& pendingScript : m_pendingAsyncScripts) {
         if (pendingScript->watchingForLoad())
             pendingScript->clearClient();
-        m_document->decrementLoadEventDelayCount();
+        if (RefPtr document = m_document.get())
+            document->decrementLoadEventDelayCount();
     }
 }
 
@@ -65,7 +73,8 @@ void ScriptRunner::queueScriptForExecution(ScriptElement& scriptElement, Loadabl
 {
     ASSERT(scriptElement.element().isConnected());
 
-    m_document->incrementLoadEventDelayCount();
+    if (m_document)
+        m_document->incrementLoadEventDelayCount();
 
     Ref pendingScript = PendingScript::create(scriptElement, loadableScript);
     switch (executionType) {
@@ -86,7 +95,7 @@ void ScriptRunner::suspend()
 
 void ScriptRunner::resume()
 {
-    if (hasPendingScripts() && !m_document->hasActiveParserYieldToken())
+    if (hasPendingScripts() && m_document && !m_document->hasActiveParserYieldToken())
         m_timer.startOneShot(0_s);
 }
 
@@ -104,13 +113,15 @@ void ScriptRunner::notifyFinished(PendingScript& pendingScript)
         m_scriptsToExecuteSoon.append(m_pendingAsyncScripts.take(pendingScript).releaseNonNull());
     pendingScript.clearClient();
 
-    if (!m_document->hasActiveParserYieldToken())
+    if (m_document && !m_document->hasActiveParserYieldToken())
         m_timer.startOneShot(0_s);
 }
 
 void ScriptRunner::timerFired()
 {
-    Ref document = m_document.get();
+    RefPtr document = m_document.get();
+    if (!document)
+        return;
 
     Vector<RefPtr<PendingScript>> scripts;
 
