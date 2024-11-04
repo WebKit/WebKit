@@ -74,6 +74,7 @@ class ProtectionSpace;
 class ResourceRequest;
 class SecurityOrigin;
 class SecurityOriginData;
+class Site;
 enum class ShouldSample : bool;
 enum class StorageAccessPromptWasShown : bool;
 enum class StorageAccessWasGranted : uint8_t;
@@ -388,14 +389,14 @@ private:
     void requestBackgroundFetchPermission(PAL::SessionID, const WebCore::ClientOrigin&, CompletionHandler<void(bool)>&&);
     void notifyBackgroundFetchChange(PAL::SessionID, const String&, BackgroundFetchChange);
     void remoteWorkerContextConnectionNoLongerNeeded(RemoteWorkerType, WebCore::ProcessIdentifier);
-    void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier>)>&&);
+    void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::Site&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier>)>&&);
     void registerRemoteWorkerClientProcess(RemoteWorkerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier);
     void unregisterRemoteWorkerClientProcess(RemoteWorkerType, WebCore::ProcessIdentifier clientProcessIdentifier, WebCore::ProcessIdentifier remoteWorkerProcessIdentifier);
     void reportConsoleMessage(PAL::SessionID, const URL&, const WebCore::SecurityOriginData&, MessageSource, MessageLevel, const String& message, unsigned long requestIdentifier);
 
     void terminateWebProcess(WebCore::ProcessIdentifier);
 
-    void triggerBrowsingContextGroupSwitchForNavigation(WebPageProxyIdentifier, WebCore::NavigationIdentifier, WebCore::BrowsingContextGroupSwitchDecision, const WebCore::RegistrableDomain& responseDomain, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&&);
+    void triggerBrowsingContextGroupSwitchForNavigation(WebPageProxyIdentifier, WebCore::NavigationIdentifier, WebCore::BrowsingContextGroupSwitchDecision, const WebCore::Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&&);
 
     void requestStorageSpace(PAL::SessionID, const WebCore::ClientOrigin&, uint64_t quota, uint64_t currentSize, uint64_t spaceRequired, CompletionHandler<void(std::optional<uint64_t> quota)>&&);
     void increaseQuota(PAL::SessionID, const WebCore::ClientOrigin&, QuotaIncreaseRequestIdentifier, uint64_t currentQuota, uint64_t currentUsage, uint64_t spaceRequested);

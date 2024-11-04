@@ -1747,6 +1747,11 @@ struct WebCore::PublicKeyCredentialRequestOptions {
     String string()
 }
 
+class WebCore::Site {
+    String protocol()
+    WebCore::RegistrableDomain domain()
+}
+
 struct WebCore::AudioConfiguration {
     String contentType;
     String channels;

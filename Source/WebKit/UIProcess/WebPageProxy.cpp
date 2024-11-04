@@ -1279,7 +1279,7 @@ void WebPageProxy::launchProcess(const Site& site, ProcessLaunchReason reason)
         m_legacyMainFrameProcess = relatedPage->ensureRunningProcess();
         WEBPAGEPROXY_RELEASE_LOG(Loading, "launchProcess: Using process (process=%p, PID=%i) from related page", m_legacyMainFrameProcess.ptr(), m_legacyMainFrameProcess->processID());
     } else
-        m_legacyMainFrameProcess = processPool->processForRegistrableDomain(protectedWebsiteDataStore(), site.domain(), shouldEnableLockdownMode() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled, protectedConfiguration());
+        m_legacyMainFrameProcess = processPool->processForSite(protectedWebsiteDataStore(), site, shouldEnableLockdownMode() ? WebProcessProxy::LockdownMode::Enabled : WebProcessProxy::LockdownMode::Disabled, protectedConfiguration());
 
     m_hasRunningProcess = true;
     m_shouldReloadDueToCrashWhenVisible = false;
@@ -7958,7 +7958,7 @@ void WebPageProxy::decidePolicyForResponseShared(Ref<WebProcessProxy>&& process,
         m_navigationClient->decidePolicyForNavigationResponse(*this, WTFMove(navigationResponse), WTFMove(listener));
 }
 
-void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const RegistrableDomain& responseDomain, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&& completionHandler)
+void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&& completionHandler)
 {
     // FIXME: When site isolation is enabled, this should probably switch the BrowsingContextGroup. <rdar://116203642>
     ASSERT(browsingContextGroupSwitchDecision != BrowsingContextGroupSwitchDecision::StayInGroup);
@@ -7975,7 +7975,7 @@ void WebPageProxy::triggerBrowsingContextGroupSwitchForNavigation(WebCore::Navig
     if (browsingContextGroupSwitchDecision == BrowsingContextGroupSwitchDecision::NewIsolatedGroup)
         processForNavigation = m_legacyMainFrameProcess->protectedProcessPool()->createNewWebProcess(protectedWebsiteDataStore().ptr(), lockdownMode, WebProcessProxy::IsPrewarmed::No, CrossOriginMode::Isolated);
     else
-        processForNavigation = m_legacyMainFrameProcess->protectedProcessPool()->processForRegistrableDomain(protectedWebsiteDataStore(), responseDomain, lockdownMode, protectedConfiguration());
+        processForNavigation = m_legacyMainFrameProcess->protectedProcessPool()->processForSite(protectedWebsiteDataStore(), responseSite, lockdownMode, protectedConfiguration());
 
     ASSERT(processForNavigation);
     auto domain = RegistrableDomain { navigation->currentRequest().url() };

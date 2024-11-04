@@ -303,7 +303,7 @@ void WebSWServerConnection::startFetch(ServiceWorkerFetchTask& task, SWServerWor
         }
 
         if (!worker->contextConnection())
-            server->createContextConnection(worker->topRegistrableDomain(), worker->serviceWorkerPageIdentifier());
+            server->createContextConnection(worker->topSite(), worker->serviceWorkerPageIdentifier());
 
         auto identifier = *task->serviceWorkerIdentifier();
         server->runServiceWorkerIfNecessary(identifier, [weakThis = WTFMove(weakThis), this, task = WTFMove(task)](auto* contextConnection) mutable {

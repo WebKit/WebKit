@@ -1331,12 +1331,12 @@ size_t NetworkConnectionToWebProcess::findNetworkActivityTracker(WebCore::Resour
     });
 }
 
-void NetworkConnectionToWebProcess::establishSharedWorkerContextConnection(WebPageProxyIdentifier, WebCore::RegistrableDomain&& registrableDomain, CompletionHandler<void()>&& completionHandler)
+void NetworkConnectionToWebProcess::establishSharedWorkerContextConnection(WebPageProxyIdentifier, WebCore::Site&& site, CompletionHandler<void()>&& completionHandler)
 {
     CONNECTION_RELEASE_LOG(SharedWorker, "establishSharedWorkerContextConnection:");
     auto* session = networkSession();
     if (auto* swServer = session ? session->sharedWorkerServer() : nullptr)
-        m_sharedWorkerContextConnection = WebSharedWorkerServerToContextConnection::create(*this, WTFMove(registrableDomain), *swServer);
+        m_sharedWorkerContextConnection = WebSharedWorkerServerToContextConnection::create(*this, WTFMove(site), *swServer);
     completionHandler();
 }
 
@@ -1415,12 +1415,12 @@ void NetworkConnectionToWebProcess::establishSWServerConnection()
     server->addConnection(WTFMove(connection));
 }
 
-void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
+void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIdentifier webPageProxyID, Site&& site, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     auto* session = networkSession();
     if (RefPtr swServer = session ? session->swServer() : nullptr) {
-        MESSAGE_CHECK_COMPLETION(session->protectedNetworkProcess()->allowsFirstPartyForCookies(webProcessIdentifier(), registrableDomain), completionHandler());
-        m_swContextConnection = makeUnique<WebSWServerToContextConnection>(*this, webPageProxyID, WTFMove(registrableDomain), serviceWorkerPageIdentifier, *swServer);
+        MESSAGE_CHECK_COMPLETION(session->protectedNetworkProcess()->allowsFirstPartyForCookies(webProcessIdentifier(), site.domain()), completionHandler());
+        m_swContextConnection = makeUnique<WebSWServerToContextConnection>(*this, webPageProxyID, WTFMove(site), serviceWorkerPageIdentifier, *swServer);
     }
     completionHandler();
 }

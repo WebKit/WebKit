@@ -40,6 +40,7 @@ namespace WebCore {
 struct FetchOptions;
 struct MessageWithMessagePorts;
 class ResourceRequest;
+class Site;
 }
 
 namespace IPC {
@@ -63,7 +64,7 @@ class WebSWServerToContextConnection final: public WebCore::SWServerToContextCon
 public:
     USING_CAN_MAKE_WEAKPTR(WebCore::SWServerToContextConnection);
 
-    WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebPageProxyIdentifier, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::SWServer&);
+    WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebPageProxyIdentifier, WebCore::Site&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::SWServer&);
     ~WebSWServerToContextConnection();
 
     Ref<IPC::Connection> protectedIPCConnection() const;

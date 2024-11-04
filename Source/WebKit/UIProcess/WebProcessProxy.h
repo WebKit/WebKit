@@ -47,8 +47,8 @@
 #include <WebCore/PageIdentifier.h>
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessIdentity.h>
-#include <WebCore/RegistrableDomain.h>
 #include <WebCore/SharedStringHash.h>
+#include <WebCore/Site.h>
 #include <WebCore/UserGestureTokenIdentifier.h>
 #include <pal/SessionID.h>
 #include <wtf/Forward.h>
@@ -171,7 +171,7 @@ public:
     enum class LockdownMode : bool { Disabled, Enabled };
 
     static Ref<WebProcessProxy> create(WebProcessPool&, WebsiteDataStore*, LockdownMode, IsPrewarmed, WebCore::CrossOriginMode = WebCore::CrossOriginMode::Shared, ShouldLaunchProcess = ShouldLaunchProcess::Yes);
-    static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::RegistrableDomain&&, WebsiteDataStore&, LockdownMode);
+    static Ref<WebProcessProxy> createForRemoteWorkers(RemoteWorkerType, WebProcessPool&, WebCore::Site&&, WebsiteDataStore&, LockdownMode);
 
     ~WebProcessProxy();
 
@@ -200,9 +200,9 @@ public:
 #endif
     void waitForSharedPreferencesForWebProcessToSync(uint64_t sharedPreferencesVersion, CompletionHandler<void(bool success)>&&);
 
-    bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_registrableDomain ? *m_registrableDomain == domain : false; }
-    WebCore::RegistrableDomain registrableDomain() const { return valueOrDefault(m_registrableDomain); }
-    const std::optional<WebCore::RegistrableDomain>& optionalRegistrableDomain() const { return m_registrableDomain; }
+    bool isMatchingRegistrableDomain(const WebCore::RegistrableDomain& domain) const { return m_site ? m_site->domain() == domain : false; }
+    WebCore::RegistrableDomain registrableDomain() const { return m_site ? m_site->domain() : WebCore::RegistrableDomain(); }
+    const std::optional<WebCore::Site>& optionalSite() const { return m_site; }
 
     enum class WillShutDown : bool { No, Yes };
     void setIsInProcessCache(bool, WillShutDown = WillShutDown::No);
@@ -418,7 +418,7 @@ public:
 
     void setRemoteWorkerUserAgent(const String&);
     void updateRemoteWorkerPreferencesStore(const WebPreferencesStore&);
-    void establishRemoteWorkerContext(RemoteWorkerType, const WebPreferencesStore&, const WebCore::RegistrableDomain&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&&);
+    void establishRemoteWorkerContext(RemoteWorkerType, const WebPreferencesStore&, const WebCore::Site&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&&);
     void registerRemoteWorkerClientProcess(RemoteWorkerType, WebProcessProxy&);
     void unregisterRemoteWorkerClientProcess(RemoteWorkerType, WebProcessProxy&);
     void updateRemoteWorkerProcessAssertion(RemoteWorkerType);
@@ -715,7 +715,7 @@ private:
 
     HashMap<String, uint64_t> m_pageURLRetainCountMap;
 
-    std::optional<WebCore::RegistrableDomain> m_registrableDomain;
+    std::optional<WebCore::Site> m_site;
     bool m_isInProcessCache { false };
     bool m_usedForSiteIsolation { false };
 

@@ -46,6 +46,7 @@
 #include "ServiceWorkerClientType.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerJobData.h"
+#include "Site.h"
 #include "WorkerFetchResult.h"
 #include <wtf/CallbackAggregator.h>
 #include <wtf/CompletionHandler.h>
@@ -862,15 +863,15 @@ LastNavigationWasAppInitiated SWServer::clientIsAppInitiatedForRegistrableDomain
 
 void SWServer::tryInstallContextData(const std::optional<ProcessIdentifier>& requestingProcessIdentifier, ServiceWorkerContextData&& data)
 {
-    RegistrableDomain registrableDomain(data.registration.key.topOrigin());
-    CheckedPtr connection = contextConnectionForRegistrableDomain(registrableDomain);
+    Site site(data.registration.key.topOrigin());
+    CheckedPtr connection = contextConnectionForRegistrableDomain(site.domain());
     if (!connection) {
         auto firstPartyForCookies = data.registration.key.firstPartyForCookies();
-        m_pendingContextDatas.ensure(registrableDomain, [] {
+        m_pendingContextDatas.ensure(site.domain(), [] {
             return Vector<ServiceWorkerContextData> { };
         }).iterator->value.append(WTFMove(data));
 
-        createContextConnection(registrableDomain, data.serviceWorkerPageIdentifier);
+        createContextConnection(site, data.serviceWorkerPageIdentifier);
         return;
     }
 
@@ -996,7 +997,7 @@ void SWServer::runServiceWorkerIfNecessary(SWServerWorker& worker, RunServiceWor
             return Vector<RunServiceWorkerCallback> { };
         }).iterator->value.append(WTFMove(callback));
 
-        createContextConnection(worker.topRegistrableDomain(), worker.serviceWorkerPageIdentifier());
+        createContextConnection(worker.topSite(), worker.serviceWorkerPageIdentifier());
         return;
     }
 
@@ -1437,15 +1438,15 @@ void SWServer::removeContextConnection(SWServerToContextConnection& connection)
 {
     RELEASE_LOG(ServiceWorker, "SWServer::removeContextConnection %" PRIu64, connection.identifier().toUInt64());
 
-    auto registrableDomain = connection.registrableDomain();
+    auto site = connection.site();
     auto serviceWorkerPageIdentifier = connection.serviceWorkerPageIdentifier();
 
-    ASSERT(m_contextConnections.get(registrableDomain) == &connection);
+    ASSERT(m_contextConnections.get(site.domain()) == &connection);
 
-    m_contextConnections.remove(registrableDomain);
-    markAllWorkersForRegistrableDomainAsTerminated(registrableDomain);
-    if (needsContextConnectionForRegistrableDomain(registrableDomain))
-        createContextConnection(registrableDomain, serviceWorkerPageIdentifier);
+    m_contextConnections.remove(site.domain());
+    markAllWorkersForRegistrableDomainAsTerminated(site.domain());
+    if (needsContextConnectionForRegistrableDomain(site.domain()))
+        createContextConnection(site, serviceWorkerPageIdentifier);
 }
 
 SWServerToContextConnection* SWServer::contextConnectionForRegistrableDomain(const RegistrableDomain& domain)
@@ -1453,36 +1454,36 @@ SWServerToContextConnection* SWServer::contextConnectionForRegistrableDomain(con
     return m_contextConnections.get(domain);
 }
 
-void SWServer::createContextConnection(const RegistrableDomain& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier)
+void SWServer::createContextConnection(const Site& site, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier)
 {
-    ASSERT(!m_contextConnections.contains(registrableDomain));
-    if (m_pendingConnectionDomains.contains(registrableDomain))
+    ASSERT(!m_contextConnections.contains(site.domain()));
+    if (m_pendingConnectionDomains.contains(site.domain()))
         return;
 
     RELEASE_LOG(ServiceWorker, "SWServer::createContextConnection will create a connection");
 
     std::optional<ProcessIdentifier> requestingProcessIdentifier;
-    if (auto it = m_clientsByRegistrableDomain.find(registrableDomain); it != m_clientsByRegistrableDomain.end()) {
+    if (auto it = m_clientsByRegistrableDomain.find(site.domain()); it != m_clientsByRegistrableDomain.end()) {
         if (!it->value.isEmpty())
             requestingProcessIdentifier = it->value.begin()->processIdentifier();
     }
 
-    m_pendingConnectionDomains.add(registrableDomain);
-    m_delegate->createContextConnection(registrableDomain, requestingProcessIdentifier, serviceWorkerPageIdentifier, [weakThis = WeakPtr { *this }, registrableDomain, serviceWorkerPageIdentifier] {
+    m_pendingConnectionDomains.add(site.domain());
+    m_delegate->createContextConnection(site, requestingProcessIdentifier, serviceWorkerPageIdentifier, [weakThis = WeakPtr { *this }, site, serviceWorkerPageIdentifier] {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
 
         RELEASE_LOG(ServiceWorker, "SWServer::createContextConnection should now have created a connection");
 
-        ASSERT(protectedThis->m_pendingConnectionDomains.contains(registrableDomain));
-        protectedThis->m_pendingConnectionDomains.remove(registrableDomain);
+        ASSERT(protectedThis->m_pendingConnectionDomains.contains(site.domain()));
+        protectedThis->m_pendingConnectionDomains.remove(site.domain());
 
-        if (protectedThis->m_contextConnections.contains(registrableDomain))
+        if (protectedThis->m_contextConnections.contains(site.domain()))
             return;
 
-        if (protectedThis->needsContextConnectionForRegistrableDomain(registrableDomain))
-            protectedThis->createContextConnection(registrableDomain, serviceWorkerPageIdentifier);
+        if (protectedThis->needsContextConnectionForRegistrableDomain(site.domain()))
+            protectedThis->createContextConnection(site, serviceWorkerPageIdentifier);
     });
 }
 
@@ -1722,7 +1723,7 @@ void SWServer::fireFunctionalEvent(SWServerRegistration& registration, Completio
         }
 
         if (!worker->contextConnection())
-            protectedThis->createContextConnection(worker->topRegistrableDomain(), worker->serviceWorkerPageIdentifier());
+            protectedThis->createContextConnection(worker->topSite(), worker->serviceWorkerPageIdentifier());
 
         protectedThis->runServiceWorkerIfNecessary(serviceWorkerIdentifier, [callback = WTFMove(callback)](auto* contextConnection) mutable {
             if (!contextConnection) {

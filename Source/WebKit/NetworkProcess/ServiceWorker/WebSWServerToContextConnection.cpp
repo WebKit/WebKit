@@ -52,8 +52,8 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSWServerToContextConnection);
 
-WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, WebPageProxyIdentifier webPageProxyID, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, SWServer& server)
-    : SWServerToContextConnection(server, WTFMove(registrableDomain), serviceWorkerPageIdentifier)
+WebSWServerToContextConnection::WebSWServerToContextConnection(NetworkConnectionToWebProcess& connection, WebPageProxyIdentifier webPageProxyID, Site&& site, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, SWServer& server)
+    : SWServerToContextConnection(server, WTFMove(site), serviceWorkerPageIdentifier)
     , m_connection(connection)
     , m_webPageProxyID(webPageProxyID)
 {

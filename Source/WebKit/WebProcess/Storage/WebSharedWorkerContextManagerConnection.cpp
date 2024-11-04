@@ -62,9 +62,9 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorkerContextManagerConnection);
 
-WebSharedWorkerContextManagerConnection::WebSharedWorkerContextManagerConnection(Ref<IPC::Connection>&& connectionToNetworkProcess, WebCore::RegistrableDomain&& registrableDomain, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, const WebPreferencesStore& preferencesStore, RemoteWorkerInitializationData&& initializationData)
+WebSharedWorkerContextManagerConnection::WebSharedWorkerContextManagerConnection(Ref<IPC::Connection>&& connectionToNetworkProcess, WebCore::Site&& site, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, WebCore::PageIdentifier pageID, const WebPreferencesStore& preferencesStore, RemoteWorkerInitializationData&& initializationData)
     : m_connectionToNetworkProcess(WTFMove(connectionToNetworkProcess))
-    , m_registrableDomain(WTFMove(registrableDomain))
+    , m_site(WTFMove(site))
     , m_pageGroupID(pageGroupID)
     , m_webPageProxyID(webPageProxyID)
     , m_pageID(pageID)
@@ -87,7 +87,7 @@ WebSharedWorkerContextManagerConnection::~WebSharedWorkerContextManagerConnectio
 
 void WebSharedWorkerContextManagerConnection::establishConnection(CompletionHandler<void()>&& completionHandler)
 {
-    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::EstablishSharedWorkerContextConnection { m_webPageProxyID, m_registrableDomain }, WTFMove(completionHandler), 0);
+    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::EstablishSharedWorkerContextConnection { m_webPageProxyID, m_site }, WTFMove(completionHandler), 0);
 }
 
 void WebSharedWorkerContextManagerConnection::postErrorToWorkerObject(WebCore::SharedWorkerIdentifier sharedWorkerIdentifier, const String& errorMessage, int lineNumber, int columnNumber, const String& sourceURL, bool isErrorEvent)

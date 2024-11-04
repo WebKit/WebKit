@@ -81,6 +81,7 @@ class LoginStatus;
 class MockContentFilterSettings;
 class ResourceError;
 class ResourceRequest;
+class Site;
 enum class AdvancedPrivacyProtections : uint16_t;
 enum class ApplyTrackingPrevention : bool;
 enum class StorageAccessScope : bool;
@@ -328,11 +329,11 @@ private:
     void unregisterSharedWorkerConnection();
 
     void establishSWServerConnection();
-    void establishSWContextConnection(WebPageProxyIdentifier, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&&);
+    void establishSWContextConnection(WebPageProxyIdentifier, WebCore::Site&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&&);
     void closeSWContextConnection();
     void unregisterSWConnection();
 
-    void establishSharedWorkerContextConnection(WebPageProxyIdentifier, WebCore::RegistrableDomain&&, CompletionHandler<void()>&&);
+    void establishSharedWorkerContextConnection(WebPageProxyIdentifier, WebCore::Site&&, CompletionHandler<void()>&&);
     void closeSharedWorkerContextConnection();
 
     void createRTCProvider(CompletionHandler<void()>&&);

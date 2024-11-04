@@ -64,6 +64,7 @@ class SWOriginStore;
 class SWServerJobQueue;
 class SWServerRegistration;
 class SWServerToContextConnection;
+class Site;
 class Timer;
 
 enum class AdvancedPrivacyProtections : uint16_t;
@@ -241,7 +242,7 @@ public:
     WEBCORE_EXPORT void removeContextConnection(SWServerToContextConnection&);
 
     WEBCORE_EXPORT SWServerToContextConnection* contextConnectionForRegistrableDomain(const RegistrableDomain&);
-    WEBCORE_EXPORT void createContextConnection(const RegistrableDomain&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
+    WEBCORE_EXPORT void createContextConnection(const Site&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
 
     bool isImportCompleted() const { return m_importCompleted; }
     WEBCORE_EXPORT void whenImportIsCompleted(CompletionHandler<void()>&&);

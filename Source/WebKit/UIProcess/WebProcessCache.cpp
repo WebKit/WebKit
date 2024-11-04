@@ -136,16 +136,17 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
     if (!canCacheProcess(process))
         return false;
 
-    auto registrableDomain = process->registrableDomain();
-    RELEASE_ASSERT(!registrableDomain.isEmpty());
+    RELEASE_ASSERT(process->optionalSite());
+    RELEASE_ASSERT(!process->optionalSite()->isEmpty());
+    auto site = *process->optionalSite();
 
-    if (auto previousProcess = m_processesPerRegistrableDomain.take(registrableDomain))
+    if (auto previousProcess = m_processesPerSite.take(site))
         WEBPROCESSCACHE_RELEASE_LOG("addProcess: Evicting process from WebProcess cache because a new process was added for the same domain", previousProcess->process().processID());
 
-    while (m_processesPerRegistrableDomain.size() >= capacity()) {
-        auto it = m_processesPerRegistrableDomain.random();
+    while (m_processesPerSite.size() >= capacity()) {
+        auto it = m_processesPerSite.random();
         WEBPROCESSCACHE_RELEASE_LOG("addProcess: Evicting process from WebProcess cache because capacity was reached", it->value->process().processID());
-        m_processesPerRegistrableDomain.remove(it);
+        m_processesPerSite.remove(it);
     }
 
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
@@ -153,15 +154,15 @@ bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
 #endif
 
     WEBPROCESSCACHE_RELEASE_LOG("addProcess: Added process to WebProcess cache (size=%u, capacity=%u)", cachedProcess->process().processID(), size() + 1, capacity());
-    m_processesPerRegistrableDomain.add(registrableDomain, WTFMove(cachedProcess));
+    m_processesPerSite.add(site, WTFMove(cachedProcess));
 
     return true;
 }
 
-RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableDomain& registrableDomain, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
+RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::Site& site, WebsiteDataStore& dataStore, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
 {
-    auto it = m_processesPerRegistrableDomain.find(registrableDomain);
-    if (it == m_processesPerRegistrableDomain.end())
+    auto it = m_processesPerSite.find(site);
+    if (it == m_processesPerSite.end())
         return nullptr;
 
     if (it->value->process().websiteDataStore() != &dataStore)
@@ -174,7 +175,7 @@ RefPtr<WebProcessProxy> WebProcessCache::takeProcess(const WebCore::RegistrableD
         return nullptr;
 
     auto process = it->value->takeProcess();
-    m_processesPerRegistrableDomain.remove(it);
+    m_processesPerSite.remove(it);
     WEBPROCESSCACHE_RELEASE_LOG("takeProcess: Taking process from WebProcess cache (size=%u, capacity=%u, processWasTerminated=%d)", process->processID(), size(), capacity(), process->wasTerminated());
 
     ASSERT(!process->pageCount());
@@ -226,18 +227,18 @@ void WebProcessCache::updateCapacity(WebProcessPool& processPool)
 
 void WebProcessCache::clear()
 {
-    if (m_pendingAddRequests.isEmpty() && m_processesPerRegistrableDomain.isEmpty())
+    if (m_pendingAddRequests.isEmpty() && m_processesPerSite.isEmpty())
         return;
 
-    WEBPROCESSCACHE_RELEASE_LOG("clear: Evicting %u processes", 0, m_pendingAddRequests.size() + m_processesPerRegistrableDomain.size());
+    WEBPROCESSCACHE_RELEASE_LOG("clear: Evicting %u processes", 0, m_pendingAddRequests.size() + m_processesPerSite.size());
     m_pendingAddRequests.clear();
-    m_processesPerRegistrableDomain.clear();
+    m_processesPerSite.clear();
 }
 
 void WebProcessCache::clearAllProcessesForSession(PAL::SessionID sessionID)
 {
-    Vector<WebCore::RegistrableDomain> keysToRemove;
-    for (auto& pair : m_processesPerRegistrableDomain) {
+    Vector<WebCore::Site> keysToRemove;
+    for (auto& pair : m_processesPerSite) {
         auto* dataStore = pair.value->process().websiteDataStore();
         if (!dataStore || dataStore->sessionID() == sessionID) {
             WEBPROCESSCACHE_RELEASE_LOG("clearAllProcessesForSession: Evicting process because its session was destroyed", pair.value->process().processID());
@@ -245,7 +246,7 @@ void WebProcessCache::clearAllProcessesForSession(PAL::SessionID sessionID)
         }
     }
     for (auto& key : keysToRemove)
-        m_processesPerRegistrableDomain.remove(key);
+        m_processesPerSite.remove(key);
 
     Vector<uint64_t> pendingRequestsToRemove;
     for (auto& pair : m_pendingAddRequests) {
@@ -264,20 +265,20 @@ void WebProcessCache::setApplicationIsActive(bool isActive)
     WEBPROCESSCACHE_RELEASE_LOG("setApplicationIsActive: (isActive=%d)", 0, isActive);
     if (isActive)
         m_evictionTimer.stop();
-    else if (!m_processesPerRegistrableDomain.isEmpty())
+    else if (!m_processesPerSite.isEmpty())
         m_evictionTimer.startOneShot(clearingDelayAfterApplicationResignsActive);
 }
 
 void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProcess shouldShutDownProcess)
 {
-    RELEASE_ASSERT(!process.registrableDomain().isEmpty());
+    RELEASE_ASSERT(process.optionalSite());
     WEBPROCESSCACHE_RELEASE_LOG("removeProcess: Evicting process from WebProcess cache because it expired", process.processID());
 
     std::unique_ptr<CachedProcess> cachedProcess;
-    auto it = m_processesPerRegistrableDomain.find(process.registrableDomain());
-    if (it != m_processesPerRegistrableDomain.end() && &it->value->process() == &process) {
+    auto it = m_processesPerSite.find(*process.optionalSite());
+    if (it != m_processesPerSite.end() && &it->value->process() == &process) {
         cachedProcess = WTFMove(it->value);
-        m_processesPerRegistrableDomain.remove(it);
+        m_processesPerSite.remove(it);
     } else {
         for (auto& pair : m_pendingAddRequests) {
             if (&pair.value->process() == &process) {

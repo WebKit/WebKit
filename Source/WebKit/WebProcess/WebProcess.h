@@ -103,6 +103,7 @@ namespace WebCore {
 class CPUMonitor;
 class PageGroup;
 class SecurityOriginData;
+class Site;
 class UserGestureToken;
 
 enum class EventMakesGamepadsVisible : bool;
@@ -549,7 +550,7 @@ private:
     void gamepadDisconnected(unsigned index);
 #endif
 
-    void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, WebCore::RegistrableDomain&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, RemoteWorkerInitializationData&&, CompletionHandler<void()>&&);
+    void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, PageGroupIdentifier, WebPageProxyIdentifier, WebCore::PageIdentifier, const WebPreferencesStore&, WebCore::Site&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, RemoteWorkerInitializationData&&, CompletionHandler<void()>&&);
 
     void fetchWebsiteData(OptionSet<WebsiteDataType>, CompletionHandler<void(WebsiteData&&)>&&);
     void deleteWebsiteData(OptionSet<WebsiteDataType>, WallTime modifiedSince, CompletionHandler<void()>&&);

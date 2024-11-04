@@ -91,10 +91,10 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     GetNetworkLoadIntermediateInformation(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (Vector<WebCore::NetworkTransactionInformation> transactions) Synchronous
     TakeNetworkLoadInformationMetrics(WebCore::ResourceLoaderIdentifier resourceLoadIdentifier) -> (WebCore::NetworkLoadMetrics networkMetrics) Synchronous
 
-    EstablishSWContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::RegistrableDomain domain, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier) -> ()
+    EstablishSWContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::Site site, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier) -> ()
     CloseSWContextConnection()
 
-    EstablishSharedWorkerContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::RegistrableDomain domain) -> ()
+    EstablishSharedWorkerContextConnection(WebKit::WebPageProxyIdentifier webPageProxyID, WebCore::Site site) -> ()
     CloseSharedWorkerContextConnection()
 
     CreateRTCProvider() -> ()

@@ -1067,8 +1067,8 @@ void NetworkResourceLoader::sendDidReceiveResponsePotentiallyInNewBrowsingContex
     auto existingNetworkResourceLoadIdentifierToResume = loader->identifier();
     if (auto* session = m_connection->networkSession())
         session->addLoaderAwaitingWebProcessTransfer(loader.releaseNonNull());
-    RegistrableDomain responseDomain { response.url() };
-    protectedConnectionToWebProcess()->protectedNetworkProcess()->protectedParentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::TriggerBrowsingContextGroupSwitchForNavigation(webPageProxyID(), *m_parameters.navigationID, browsingContextGroupSwitchDecision, responseDomain, existingNetworkResourceLoadIdentifierToResume), [existingNetworkResourceLoadIdentifierToResume, session = WeakPtr { connectionToWebProcess().networkSession() }](bool success) {
+    Site responseSite { response.url() };
+    protectedConnectionToWebProcess()->protectedNetworkProcess()->protectedParentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::TriggerBrowsingContextGroupSwitchForNavigation(webPageProxyID(), *m_parameters.navigationID, browsingContextGroupSwitchDecision, responseSite, existingNetworkResourceLoadIdentifierToResume), [existingNetworkResourceLoadIdentifierToResume, session = WeakPtr { connectionToWebProcess().networkSession() }](bool success) {
         if (success)
             return;
         if (session)

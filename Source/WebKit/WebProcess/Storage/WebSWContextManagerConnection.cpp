@@ -81,9 +81,9 @@ namespace WebKit {
 using namespace PAL;
 using namespace WebCore;
 
-WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, RemoteWorkerInitializationData&& initializationData)
+WebSWContextManagerConnection::WebSWContextManagerConnection(Ref<IPC::Connection>&& connection, Site&& site, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, RemoteWorkerInitializationData&& initializationData)
     : m_connectionToNetworkProcess(WTFMove(connection))
-    , m_registrableDomain(WTFMove(registrableDomain))
+    , m_site(WTFMove(site))
     , m_serviceWorkerPageIdentifier(serviceWorkerPageIdentifier)
     , m_pageGroupID(pageGroupID)
     , m_webPageProxyID(webPageProxyID)
@@ -111,7 +111,7 @@ WebSWContextManagerConnection::~WebSWContextManagerConnection() = default;
 void WebSWContextManagerConnection::establishConnection(CompletionHandler<void()>&& completionHandler)
 {
     m_connectionToNetworkProcess->addWorkQueueMessageReceiver(Messages::WebSWContextManagerConnection::messageReceiverName(), m_queue.get(), *this);
-    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::EstablishSWContextConnection { m_webPageProxyID, m_registrableDomain, m_serviceWorkerPageIdentifier }, WTFMove(completionHandler), 0);
+    m_connectionToNetworkProcess->sendWithAsyncReply(Messages::NetworkConnectionToWebProcess::EstablishSWContextConnection { m_webPageProxyID, m_site, m_serviceWorkerPageIdentifier }, WTFMove(completionHandler), 0);
 }
 
 void WebSWContextManagerConnection::stop()

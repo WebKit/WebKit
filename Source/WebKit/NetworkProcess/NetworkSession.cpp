@@ -782,10 +782,10 @@ void NetworkSession::softUpdate(ServiceWorkerJobData&& jobData, bool shouldRefre
     m_softUpdateLoaders.add(makeUnique<ServiceWorkerSoftUpdateLoader>(*this, WTFMove(jobData), shouldRefreshCache, WTFMove(request), WTFMove(completionHandler)));
 }
 
-void NetworkSession::createContextConnection(const WebCore::RegistrableDomain& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
+void NetworkSession::createContextConnection(const WebCore::Site& site, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
-    ASSERT(!registrableDomain.isEmpty());
-    m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::ServiceWorker, registrableDomain, requestingProcessIdentifier, serviceWorkerPageIdentifier, m_sessionID }, [completionHandler = WTFMove(completionHandler)] (auto) mutable {
+    ASSERT(!site.isEmpty());
+    m_networkProcess->parentProcessConnection()->sendWithAsyncReply(Messages::NetworkProcessProxy::EstablishRemoteWorkerContextConnectionToNetworkProcess { RemoteWorkerType::ServiceWorker, site, requestingProcessIdentifier, serviceWorkerPageIdentifier, m_sessionID }, [completionHandler = WTFMove(completionHandler)] (auto) mutable {
         completionHandler();
     }, 0);
 }

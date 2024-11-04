@@ -272,10 +272,10 @@ Ref<WebProcessProxy> WebProcessProxy::create(WebProcessPool& processPool, Websit
     return proxy;
 }
 
-Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType workerType, WebProcessPool& processPool, RegistrableDomain&& registrableDomain, WebsiteDataStore& websiteDataStore, LockdownMode lockdownMode)
+Ref<WebProcessProxy> WebProcessProxy::createForRemoteWorkers(RemoteWorkerType workerType, WebProcessPool& processPool, Site&& site, WebsiteDataStore& websiteDataStore, LockdownMode lockdownMode)
 {
     Ref proxy = adoptRef(*new WebProcessProxy(processPool, &websiteDataStore, IsPrewarmed::No, CrossOriginMode::Shared, lockdownMode));
-    proxy->m_registrableDomain = WTFMove(registrableDomain);
+    proxy->m_site = WTFMove(site);
     proxy->enableRemoteWorkers(workerType, processPool.userContentControllerIdentifierForRemoteWorkers());
     proxy->connect();
     return proxy;
@@ -571,7 +571,7 @@ void WebProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOpt
 
     if (m_serviceWorkerInformation) {
         launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("service-worker-process"_s, "1"_s);
-        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("registrable-domain"_s, m_registrableDomain->string());
+        launchOptions.extraInitializationData.add<HashTranslatorASCIILiteral>("registrable-domain"_s, m_site->domain().string());
     }
 
     if (shouldEnableLockdownMode())
@@ -2203,7 +2203,7 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "didStartProvisionalLoadForMainFrame:");
 
     // This process has been used for several registrable domains already.
-    if (m_registrableDomain && m_registrableDomain->isEmpty())
+    if (m_site && m_site->isEmpty())
         return;
 
     if (url.protocolIsAbout())
@@ -2212,25 +2212,25 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
     if (!url.protocolIsInHTTPFamily() && !processPool().configuration().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol()) {
         // Unless the processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol flag is set, we don't process swap on navigations withing the same
         // non HTTP(s) protocol. For this reason, we ignore the registrable domain and processes are not eligible for the process cache.
-        m_registrableDomain = WebCore::RegistrableDomain { };
+        m_site = WebCore::Site { };
         return;
     }
 
-    auto registrableDomain = WebCore::RegistrableDomain { url };
+    auto site = WebCore::Site { url };
     RefPtr dataStore = websiteDataStore();
-    if (dataStore && m_registrableDomain && *m_registrableDomain != registrableDomain) {
+    if (dataStore && m_site && *m_site != site) {
         if (isRunningServiceWorkers())
-            dataStore->protectedNetworkProcess()->terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType::ServiceWorker, dataStore->sessionID(), *m_registrableDomain, coreProcessIdentifier());
+            dataStore->protectedNetworkProcess()->terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType::ServiceWorker, dataStore->sessionID(), m_site->domain(), coreProcessIdentifier());
         if (isRunningSharedWorkers())
-            dataStore->protectedNetworkProcess()->terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType::SharedWorker, dataStore->sessionID(), *m_registrableDomain, coreProcessIdentifier());
+            dataStore->protectedNetworkProcess()->terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType::SharedWorker, dataStore->sessionID(), m_site->domain(), coreProcessIdentifier());
 
         // Null out registrable domain since this process has now been used for several domains.
-        m_registrableDomain = WebCore::RegistrableDomain { };
+        m_site = WebCore::Site { };
         return;
     }
 
-    // Associate the process with this registrable domain.
-    m_registrableDomain = WTFMove(registrableDomain);
+    // Associate the process with this site.
+    m_site = WTFMove(site);
 }
 
 void WebProcessProxy::addSuspendedPageProxy(SuspendedPageProxy& suspendedPage)
@@ -2510,13 +2510,13 @@ void WebProcessProxy::endBackgroundActivityForFullscreenInput()
 
 #endif
 
-void WebProcessProxy::establishRemoteWorkerContext(RemoteWorkerType workerType, const WebPreferencesStore& store, const RegistrableDomain& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
+void WebProcessProxy::establishRemoteWorkerContext(RemoteWorkerType workerType, const WebPreferencesStore& store, const Site& site, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, CompletionHandler<void()>&& completionHandler)
 {
     updateSharedPreferencesForWebProcess(store);
     WEBPROCESSPROXY_RELEASE_LOG(Loading, "establishRemoteWorkerContext: Started (workerType=%" PUBLIC_LOG_STRING ")", workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared");
     markProcessAsRecentlyUsed();
     auto& remoteWorkerInformation = workerType == RemoteWorkerType::ServiceWorker ? m_serviceWorkerInformation : m_sharedWorkerInformation;
-    sendWithAsyncReply(Messages::WebProcess::EstablishRemoteWorkerContextConnectionToNetworkProcess { workerType, processPool().defaultPageGroup().pageGroupID(), remoteWorkerInformation->remoteWorkerPageProxyID, remoteWorkerInformation->remoteWorkerPageID, store, registrableDomain, serviceWorkerPageIdentifier, remoteWorkerInformation->initializationData }, [this, weakThis = WeakPtr { *this }, workerType, completionHandler = WTFMove(completionHandler)]() mutable {
+    sendWithAsyncReply(Messages::WebProcess::EstablishRemoteWorkerContextConnectionToNetworkProcess { workerType, processPool().defaultPageGroup().pageGroupID(), remoteWorkerInformation->remoteWorkerPageProxyID, remoteWorkerInformation->remoteWorkerPageID, store, site, serviceWorkerPageIdentifier, remoteWorkerInformation->initializationData }, [this, weakThis = WeakPtr { *this }, workerType, completionHandler = WTFMove(completionHandler)]() mutable {
 #if RELEASE_LOG_DISABLED
         UNUSED_PARAM(this);
         UNUSED_PARAM(workerType);

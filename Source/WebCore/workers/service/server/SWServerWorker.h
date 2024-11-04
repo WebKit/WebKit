@@ -28,7 +28,6 @@
 #include "ClientOrigin.h"
 #include "ContentSecurityPolicyResponseHeaders.h"
 #include "CrossOriginEmbedderPolicy.h"
-#include "RegistrableDomain.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerClientData.h"
 #include "ServiceWorkerContextData.h"
@@ -36,6 +35,7 @@
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerRegistrationKey.h"
 #include "ServiceWorkerTypes.h"
+#include "Site.h"
 #include "Timer.h"
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
@@ -118,7 +118,8 @@ public:
     ServiceWorkerContextData contextData() const;
 
     WEBCORE_EXPORT const ClientOrigin& origin() const;
-    const RegistrableDomain& topRegistrableDomain() const { return m_topRegistrableDomain; }
+    const RegistrableDomain& topRegistrableDomain() const { return m_topSite.domain(); }
+    const Site& topSite() const { return m_topSite; }
     WEBCORE_EXPORT std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const;
 
     WEBCORE_EXPORT SWServerToContextConnection* contextConnection();
@@ -176,7 +177,7 @@ private:
     bool m_hasPendingEvents { false };
     State m_state { State::NotRunning };
     mutable std::optional<ClientOrigin> m_origin;
-    RegistrableDomain m_topRegistrableDomain;
+    Site m_topSite;
     bool m_isSkipWaitingFlagSet { false };
     Vector<CompletionHandler<void(bool)>> m_whenActivatedHandlers;
     MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> m_scriptResourceMap;

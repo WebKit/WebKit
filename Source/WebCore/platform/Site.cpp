@@ -30,9 +30,19 @@
 
 namespace WebCore {
 
+Site::Site() = default;
+
 Site::Site(const URL& url)
     : m_protocol(url.protocol().toString())
     , m_domain(url) { }
+
+Site::Site(String&& protocol, RegistrableDomain&& domain)
+    : m_protocol(WTFMove(protocol))
+    , m_domain(WTFMove(domain)) { }
+
+Site::Site(const SecurityOriginData& data)
+    : m_protocol(data.protocol())
+    , m_domain(data) { }
 
 unsigned Site::hash() const
 {

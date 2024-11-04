@@ -29,12 +29,12 @@
 #include "ExceptionData.h"
 #include "NotificationEventType.h"
 #include "PageIdentifier.h"
-#include "RegistrableDomain.h"
 #include "ScriptExecutionContextIdentifier.h"
 #include "ServiceWorkerClientQueryOptions.h"
 #include "ServiceWorkerContextData.h"
 #include "ServiceWorkerIdentifier.h"
 #include "ServiceWorkerTypes.h"
+#include "Site.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Identified.h>
 #include <wtf/TZoneMalloc.h>
@@ -96,7 +96,8 @@ public:
     using OpenWindowCallback = CompletionHandler<void(Expected<std::optional<ServiceWorkerClientData>, ExceptionData>&&)>;
     virtual void openWindow(ServiceWorkerIdentifier, const URL&, OpenWindowCallback&&) = 0;
 
-    const RegistrableDomain& registrableDomain() const { return m_registrableDomain; }
+    const RegistrableDomain& registrableDomain() const { return m_site.domain(); }
+    const Site& site() const { return m_site; }
     std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier() const { return m_serviceWorkerPageIdentifier; }
 
     virtual void connectionIsNoLongerNeeded() = 0;
@@ -105,13 +106,13 @@ public:
     virtual void setInspectable(ServiceWorkerIsInspectable) = 0;
 
 protected:
-    WEBCORE_EXPORT SWServerToContextConnection(SWServer&, RegistrableDomain&&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
+    WEBCORE_EXPORT SWServerToContextConnection(SWServer&, Site&&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
 
     virtual void close() = 0;
 
 private:
     WeakPtr<WebCore::SWServer> m_server;
-    RegistrableDomain m_registrableDomain;
+    Site m_site;
     std::optional<ScriptExecutionContextIdentifier> m_serviceWorkerPageIdentifier;
     bool m_shouldTerminateWhenPossible { false };
 };

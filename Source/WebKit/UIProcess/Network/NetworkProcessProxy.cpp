@@ -554,11 +554,11 @@ void NetworkProcessProxy::didBlockLoadToKnownTracker(WebPageProxyIdentifier page
         page->didBlockLoadToKnownTracker(url);
 }
 
-void NetworkProcessProxy::triggerBrowsingContextGroupSwitchForNavigation(WebPageProxyIdentifier pageID, WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const WebCore::RegistrableDomain& responseDomain, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&& completionHandler)
+void NetworkProcessProxy::triggerBrowsingContextGroupSwitchForNavigation(WebPageProxyIdentifier pageID, WebCore::NavigationIdentifier navigationID, BrowsingContextGroupSwitchDecision browsingContextGroupSwitchDecision, const WebCore::Site& responseSite, NetworkResourceLoadIdentifier existingNetworkResourceLoadIdentifierToResume, CompletionHandler<void(bool success)>&& completionHandler)
 {
     RELEASE_LOG(ProcessSwapping, "%p - NetworkProcessProxy::triggerBrowsingContextGroupSwitchForNavigation: pageID=%" PRIu64 ", navigationID=%" PRIu64 ", browsingContextGroupSwitchDecision=%u, existingNetworkResourceLoadIdentifierToResume=%" PRIu64, this, pageID.toUInt64(), navigationID.toUInt64(), (unsigned)browsingContextGroupSwitchDecision, existingNetworkResourceLoadIdentifierToResume.toUInt64());
     if (auto page = WebProcessProxy::webPage(pageID))
-        page->triggerBrowsingContextGroupSwitchForNavigation(navigationID, browsingContextGroupSwitchDecision, responseDomain, existingNetworkResourceLoadIdentifierToResume, WTFMove(completionHandler));
+        page->triggerBrowsingContextGroupSwitchForNavigation(navigationID, browsingContextGroupSwitchDecision, responseSite, existingNetworkResourceLoadIdentifierToResume, WTFMove(completionHandler));
     else
         completionHandler(false);
 }
@@ -1464,9 +1464,9 @@ void NetworkProcessProxy::remoteWorkerContextConnectionNoLongerNeeded(RemoteWork
         process->disableRemoteWorkers(workerType);
 }
 
-void NetworkProcessProxy::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, RegistrableDomain&& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier>)>&& completionHandler)
+void NetworkProcessProxy::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, Site&& site, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void(std::optional<WebCore::ProcessIdentifier>)>&& completionHandler)
 {
-    WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(workerType, WTFMove(registrableDomain), requestingProcessIdentifier, serviceWorkerPageIdentifier, sessionID, [completionHandler = WTFMove(completionHandler)](auto processIdentifier) mutable {
+    WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(workerType, WTFMove(site), requestingProcessIdentifier, serviceWorkerPageIdentifier, sessionID, [completionHandler = WTFMove(completionHandler)](auto processIdentifier) mutable {
         completionHandler(processIdentifier);
     });
 }

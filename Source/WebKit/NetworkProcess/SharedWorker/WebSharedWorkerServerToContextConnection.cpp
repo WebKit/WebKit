@@ -52,15 +52,15 @@ constexpr Seconds idleTerminationDelay { 5_s };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebSharedWorkerServerToContextConnection);
 
-Ref<WebSharedWorkerServerToContextConnection> WebSharedWorkerServerToContextConnection::create(NetworkConnectionToWebProcess& connection, const WebCore::RegistrableDomain& registrableDomain, WebSharedWorkerServer& server)
+Ref<WebSharedWorkerServerToContextConnection> WebSharedWorkerServerToContextConnection::create(NetworkConnectionToWebProcess& connection, const WebCore::Site& site, WebSharedWorkerServer& server)
 {
-    return adoptRef(*new WebSharedWorkerServerToContextConnection(connection, registrableDomain, server));
+    return adoptRef(*new WebSharedWorkerServerToContextConnection(connection, site, server));
 }
 
-WebSharedWorkerServerToContextConnection::WebSharedWorkerServerToContextConnection(NetworkConnectionToWebProcess& connection, const WebCore::RegistrableDomain& registrableDomain, WebSharedWorkerServer& server)
+WebSharedWorkerServerToContextConnection::WebSharedWorkerServerToContextConnection(NetworkConnectionToWebProcess& connection, const WebCore::Site& site, WebSharedWorkerServer& server)
     : m_connection(connection)
     , m_server(server)
-    , m_registrableDomain(registrableDomain)
+    , m_site(site)
     , m_idleTerminationTimer(*this, &WebSharedWorkerServerToContextConnection::idleTerminationTimerFired)
 {
     CONTEXT_CONNECTION_RELEASE_LOG("WebSharedWorkerServerToContextConnection:");

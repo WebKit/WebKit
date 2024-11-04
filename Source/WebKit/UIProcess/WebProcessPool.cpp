@@ -624,7 +624,7 @@ void WebProcessPool::createModelProcessConnection(WebProcessProxy& webProcessPro
 
 bool WebProcessPool::s_useSeparateServiceWorkerProcess = false;
 
-void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, RegistrableDomain&& registrableDomain, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void(WebCore::ProcessIdentifier)>&& completionHandler)
+void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, Site&& site, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID sessionID, CompletionHandler<void(WebCore::ProcessIdentifier)>&& completionHandler)
 {
     RefPtr websiteDataStore = WebsiteDataStore::existingDataStoreForSessionID(sessionID);
     if (!websiteDataStore)
@@ -656,7 +656,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
 
     // Prioritize the requesting WebProcess for running the service worker.
     if (!remoteWorkerProcessProxy && !s_useSeparateServiceWorkerProcess && requestingProcess) {
-        if (requestingProcess->websiteDataStore() == websiteDataStore && requestingProcess->isMatchingRegistrableDomain(registrableDomain))
+        if (requestingProcess->websiteDataStore() == websiteDataStore && requestingProcess->isMatchingRegistrableDomain(site.domain()))
             useProcessForRemoteWorkers(*requestingProcess);
     }
 
@@ -666,7 +666,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
                 continue;
             if (process->websiteDataStore() != websiteDataStore)
                 continue;
-            if (!process->isMatchingRegistrableDomain(registrableDomain))
+            if (!process->isMatchingRegistrableDomain(site.domain()))
                 continue;
             if (process->lockdownMode() != lockdownMode)
                 continue;
@@ -695,7 +695,7 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
     }();
 
     if (!remoteWorkerProcessProxy) {
-        Ref newProcessProxy = WebProcessProxy::createForRemoteWorkers(workerType, processPool, RegistrableDomain  { registrableDomain }, *websiteDataStore, lockdownMode);
+        Ref newProcessProxy = WebProcessProxy::createForRemoteWorkers(workerType, processPool, Site { site }, *websiteDataStore, lockdownMode);
         remoteWorkerProcessProxy = newProcessProxy.copyRef();
 
         WEBPROCESSPOOL_RELEASE_LOG_STATIC(ServiceWorker, "establishRemoteWorkerContextConnectionToNetworkProcess creating a new service worker process (process=%p, workerType=%" PUBLIC_LOG_STRING ", PID=%d)", remoteWorkerProcessProxy.get(), workerType == RemoteWorkerType::ServiceWorker ? "service" : "shared", remoteWorkerProcessProxy->processID());
@@ -707,8 +707,8 @@ void WebProcessPool::establishRemoteWorkerContextConnectionToNetworkProcess(Remo
     auto aggregator = CallbackAggregator::create([completionHandler = WTFMove(completionHandler), remoteProcessIdentifier = remoteWorkerProcessProxy->coreProcessIdentifier()]() mutable {
         completionHandler(remoteProcessIdentifier);
     });
-    websiteDataStore->protectedNetworkProcess()->addAllowedFirstPartyForCookies(*remoteWorkerProcessProxy, registrableDomain, LoadedWebArchive::No, [aggregator] { });
-    remoteWorkerProcessProxy->establishRemoteWorkerContext(workerType, preferencesStore.store, registrableDomain, serviceWorkerPageIdentifier, [aggregator] { });
+    websiteDataStore->protectedNetworkProcess()->addAllowedFirstPartyForCookies(*remoteWorkerProcessProxy, site.domain(), LoadedWebArchive::No, [aggregator] { });
+    remoteWorkerProcessProxy->establishRemoteWorkerContext(workerType, preferencesStore.store, site, serviceWorkerPageIdentifier, [aggregator] { });
 
     if (!processPool->m_remoteWorkerUserAgent.isNull())
         remoteWorkerProcessProxy->setRemoteWorkerUserAgent(processPool->m_remoteWorkerUserAgent);
@@ -1137,27 +1137,27 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
 #endif
 }
 
-Ref<WebProcessProxy> WebProcessPool::processForRegistrableDomain(WebsiteDataStore& websiteDataStore, const RegistrableDomain& registrableDomain, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
+Ref<WebProcessProxy> WebProcessPool::processForSite(WebsiteDataStore& websiteDataStore, const Site& site, WebProcessProxy::LockdownMode lockdownMode, const API::PageConfiguration& pageConfiguration)
 {
-    if (!registrableDomain.isEmpty()) {
-        if (RefPtr process = webProcessCache().takeProcess(registrableDomain, websiteDataStore, lockdownMode, pageConfiguration)) {
-            WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from WebProcess cache (process=%p, PID=%i)", process.get(), process->processID());
+    if (!site.isEmpty()) {
+        if (RefPtr process = webProcessCache().takeProcess(site, websiteDataStore, lockdownMode, pageConfiguration)) {
+            WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using WebProcess from WebProcess cache (process=%p, PID=%i)", process.get(), process->processID());
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
         }
 
         // RefPtr if we have a suspended page for the given registrable domain and use its process if we do, for performance reasons.
-        if (RefPtr process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, registrableDomain, websiteDataStore, lockdownMode, pageConfiguration)) {
-            WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using WebProcess from a SuspendedPage (process=%p, PID=%i)", process.get(), process->processID());
+        if (RefPtr process = SuspendedPageProxy::findReusableSuspendedPageProcess(*this, site.domain(), websiteDataStore, lockdownMode, pageConfiguration)) {
+            WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using WebProcess from a SuspendedPage (process=%p, PID=%i)", process.get(), process->processID());
             ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
             return process.releaseNonNull();
         }
     }
 
     if (RefPtr process = tryTakePrewarmedProcess(websiteDataStore, lockdownMode, pageConfiguration)) {
-        WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForRegistrableDomain: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processID());
-        if (!registrableDomain.isEmpty())
-            tryPrewarmWithDomainInformation(*process, registrableDomain);
+        WEBPROCESSPOOL_RELEASE_LOG(ProcessSwapping, "processForSite: Using prewarmed process (process=%p, PID=%i)", process.get(), process->processID());
+        if (!site.isEmpty())
+            tryPrewarmWithDomainInformation(*process, site.domain());
         ASSERT(m_processes.containsIf([&](auto& item) { return item.ptr() == process; }));
         return process.releaseNonNull();
     }
@@ -1218,7 +1218,7 @@ Ref<WebPageProxy> WebProcessPool::createWebPage(PageClient& pageClient, Ref<API:
         }
     } else {
         WEBPROCESSPOOL_RELEASE_LOG(Process, "createWebPage: Not delaying WebProcess launch");
-        process = processForRegistrableDomain(pageConfiguration->protectedWebsiteDataStore(), { }, lockdownMode, pageConfiguration);
+        process = processForSite(pageConfiguration->protectedWebsiteDataStore(), Site { }, lockdownMode, pageConfiguration);
     }
 
     Ref userContentController = pageConfiguration->userContentController();
@@ -1988,19 +1988,19 @@ void WebProcessPool::processForNavigation(WebPageProxy& page, WebFrameProxy& fra
         return completionHandler(WTFMove(process), suspendedPage, reason);
 
     ASSERT(process->state() != AuxiliaryProcessProxy::State::Terminated);
-    prepareProcessForNavigation(WTFMove(process), page, suspendedPage, reason, site.domain(), navigation, lockdownMode, WTFMove(dataStore), WTFMove(completionHandler));
+    prepareProcessForNavigation(WTFMove(process), page, suspendedPage, reason, site, navigation, lockdownMode, WTFMove(dataStore), WTFMove(completionHandler));
 }
 
-void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process, WebPageProxy& page, SuspendedPageProxy* suspendedPage, ASCIILiteral reason, const RegistrableDomain& registrableDomain, const API::Navigation& navigation, WebProcessProxy::LockdownMode lockdownMode, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler, unsigned previousAttemptsCount)
+void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process, WebPageProxy& page, SuspendedPageProxy* suspendedPage, ASCIILiteral reason, const Site& site, const API::Navigation& navigation, WebProcessProxy::LockdownMode lockdownMode, Ref<WebsiteDataStore>&& dataStore, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&& completionHandler, unsigned previousAttemptsCount)
 {
     static constexpr unsigned maximumNumberOfAttempts = 3;
     auto preventProcessShutdownScope = process->shutdownPreventingScope();
-    auto callCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = Ref { page }, navigation = Ref { navigation }, process, preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), reason, dataStore, lockdownMode, previousAttemptsCount, registrableDomain](SuspendedPageProxy* suspendedPage) mutable {
+    auto callCompletionHandler = [this, protectedThis = Ref { *this }, completionHandler = WTFMove(completionHandler), page = Ref { page }, navigation = Ref { navigation }, process, preventProcessShutdownScope = WTFMove(preventProcessShutdownScope), reason, dataStore, lockdownMode, previousAttemptsCount, site](SuspendedPageProxy* suspendedPage) mutable {
         // Since the IPC is asynchronous, make sure the destination process and suspended page are still valid.
         if (process->state() == AuxiliaryProcessProxy::State::Terminated && previousAttemptsCount < maximumNumberOfAttempts) {
             // The destination process crashed during the IPC to the network process, use a new process.
-            Ref fallbackProcess = processForRegistrableDomain(dataStore, registrableDomain, lockdownMode, page->protectedConfiguration());
-            prepareProcessForNavigation(WTFMove(fallbackProcess), page, nullptr, reason, registrableDomain, navigation, lockdownMode, WTFMove(dataStore), WTFMove(completionHandler), previousAttemptsCount + 1);
+            Ref fallbackProcess = processForSite(dataStore, site, lockdownMode, page->protectedConfiguration());
+            prepareProcessForNavigation(WTFMove(fallbackProcess), page, nullptr, reason, site, navigation, lockdownMode, WTFMove(dataStore), WTFMove(completionHandler), previousAttemptsCount + 1);
             return;
         }
         if (suspendedPage) {
@@ -2016,7 +2016,7 @@ void WebProcessPool::prepareProcessForNavigation(Ref<WebProcessProxy>&& process,
         loadedWebArchive = LoadedWebArchive::Yes;
 #endif
 
-    dataStore->protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, registrableDomain, loadedWebArchive, [callCompletionHandler = WTFMove(callCompletionHandler), suspendedPage = WeakPtr { suspendedPage }]() mutable {
+    dataStore->protectedNetworkProcess()->addAllowedFirstPartyForCookies(process, site.domain(), loadedWebArchive, [callCompletionHandler = WTFMove(callCompletionHandler), suspendedPage = WeakPtr { suspendedPage }]() mutable {
         if (suspendedPage)
             suspendedPage->waitUntilReadyToUnsuspend(WTFMove(callCompletionHandler));
         else
@@ -2031,7 +2031,7 @@ std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> WebProcessPo
     Ref pageConfiguration = page.configuration();
 
     auto createNewProcess = [&] () -> Ref<WebProcessProxy> {
-        return processForRegistrableDomain(dataStore, targetSite.domain(), lockdownMode, pageConfiguration);
+        return processForSite(dataStore, targetSite, lockdownMode, pageConfiguration);
     };
 
     if (usesSingleWebProcess())

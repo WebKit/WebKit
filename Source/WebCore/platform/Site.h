@@ -33,13 +33,16 @@ namespace WebCore {
 // https://html.spec.whatwg.org/multipage/browsers.html#site
 class Site {
 public:
+    WEBCORE_EXPORT explicit Site();
     WEBCORE_EXPORT explicit Site(const URL&);
+    WEBCORE_EXPORT explicit Site(String&& protocol, RegistrableDomain&&);
+    WEBCORE_EXPORT explicit Site(const SecurityOriginData&);
 
     Site(const Site&) = default;
     Site& operator=(const Site&) = default;
 
     const String& protocol() const { return m_protocol; }
-    const WebCore::RegistrableDomain& domain() const { return m_domain; }
+    const RegistrableDomain& domain() const { return m_domain; }
     bool isEmpty() const { return m_domain.isEmpty(); }
     WEBCORE_EXPORT bool matches(const URL&) const;
 
@@ -60,7 +63,7 @@ public:
 
 private:
     String m_protocol;
-    WebCore::RegistrableDomain m_domain;
+    RegistrableDomain m_domain;
 };
 
 } // namespace WebCore

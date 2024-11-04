@@ -28,6 +28,7 @@
 
 #include "WebSharedWorkerServer.h"
 #include "WebSharedWorkerServerToContextConnection.h"
+#include <WebCore/Site.h>
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/RunLoop.h>
@@ -79,6 +80,11 @@ WebSharedWorker* WebSharedWorker::fromIdentifier(WebCore::SharedWorkerIdentifier
 WebCore::RegistrableDomain WebSharedWorker::topRegistrableDomain() const
 {
     return WebCore::RegistrableDomain { m_key.origin.topOrigin };
+}
+
+WebCore::Site WebSharedWorker::topSite() const
+{
+    return WebCore::Site { m_key.origin.topOrigin };
 }
 
 void WebSharedWorker::setFetchResult(WebCore::WorkerFetchResult&& fetchResult)

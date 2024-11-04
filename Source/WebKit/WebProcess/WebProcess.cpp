@@ -2010,7 +2010,7 @@ Ref<LibWebRTCNetwork> WebProcess::protectedLibWebRTCNetwork()
     return libWebRTCNetwork();
 }
 
-void WebProcess::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, RegistrableDomain&& registrableDomain, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, RemoteWorkerInitializationData&& initializationData, CompletionHandler<void()>&& completionHandler)
+void WebProcess::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType workerType, PageGroupIdentifier pageGroupID, WebPageProxyIdentifier webPageProxyID, PageIdentifier pageID, const WebPreferencesStore& store, Site&& site, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, RemoteWorkerInitializationData&& initializationData, CompletionHandler<void()>&& completionHandler)
 {
     // We are in the Remote Worker context process and the call below establishes our connection to the Network Process
     // by calling ensureNetworkProcessConnection. SWContextManager / SharedWorkerContextManager need to use the same underlying IPC::Connection as the
@@ -2018,11 +2018,11 @@ void WebProcess::establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWo
     Ref ipcConnection = ensureNetworkProcessConnection().connection();
     switch (workerType) {
     case RemoteWorkerType::ServiceWorker:
-        SWContextManager::singleton().setConnection(WebSWContextManagerConnection::create(WTFMove(ipcConnection), WTFMove(registrableDomain), serviceWorkerPageIdentifier, pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
+        SWContextManager::singleton().setConnection(WebSWContextManagerConnection::create(WTFMove(ipcConnection), WTFMove(site), serviceWorkerPageIdentifier, pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
         SWContextManager::singleton().connection()->establishConnection(WTFMove(completionHandler));
         break;
     case RemoteWorkerType::SharedWorker:
-        SharedWorkerContextManager::singleton().setConnection(makeUnique<WebSharedWorkerContextManagerConnection>(WTFMove(ipcConnection), WTFMove(registrableDomain), pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
+        SharedWorkerContextManager::singleton().setConnection(makeUnique<WebSharedWorkerContextManagerConnection>(WTFMove(ipcConnection), WTFMove(site), pageGroupID, webPageProxyID, pageID, store, WTFMove(initializationData)));
         SharedWorkerContextManager::singleton().connection()->establishConnection(WTFMove(completionHandler));
         break;
     }

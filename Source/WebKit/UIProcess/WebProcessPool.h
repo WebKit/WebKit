@@ -103,6 +103,7 @@ class PageConfiguration;
 
 namespace WebCore {
 class RegistrableDomain;
+class Site;
 enum class EventMakesGamepadsVisible : bool;
 enum class GamepadHapticEffectType : uint8_t;
 struct GamepadEffectParameters;
@@ -338,7 +339,7 @@ public:
 
     void reportWebContentCPUTime(Seconds cpuTime, uint64_t activityState);
 
-    Ref<WebProcessProxy> processForRegistrableDomain(WebsiteDataStore&, const WebCore::RegistrableDomain&, WebProcessProxy::LockdownMode, const API::PageConfiguration&); // Will return an existing one if limit is met or due to caching.
+    Ref<WebProcessProxy> processForSite(WebsiteDataStore&, const WebCore::Site&, WebProcessProxy::LockdownMode, const API::PageConfiguration&); // Will return an existing one if limit is met or due to caching.
 
     void prewarmProcess();
 
@@ -420,7 +421,7 @@ public:
 
     void updateRemoteWorkerUserAgent(const String& userAgent);
     UserContentControllerIdentifier userContentControllerIdentifierForRemoteWorkers();
-    static void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::RegistrableDomain&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void(WebCore::ProcessIdentifier)>&&);
+    static void establishRemoteWorkerContextConnectionToNetworkProcess(RemoteWorkerType, WebCore::Site&&, std::optional<WebCore::ProcessIdentifier> requestingProcessIdentifier, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, PAL::SessionID, CompletionHandler<void(WebCore::ProcessIdentifier)>&&);
 
 #if PLATFORM(COCOA)
     bool processSuppressionEnabled() const;
@@ -621,7 +622,7 @@ private:
     void platformInvalidateContext();
 
     std::tuple<Ref<WebProcessProxy>, SuspendedPageProxy*, ASCIILiteral> processForNavigationInternal(WebPageProxy&, const API::Navigation&, Ref<WebProcessProxy>&& sourceProcess, const URL& sourceURL, ProcessSwapRequestedByClient, WebProcessProxy::LockdownMode, const FrameInfoData&, Ref<WebsiteDataStore>&&);
-    void prepareProcessForNavigation(Ref<WebProcessProxy>&&, WebPageProxy&, SuspendedPageProxy*, ASCIILiteral reason, const WebCore::RegistrableDomain&, const API::Navigation&, WebProcessProxy::LockdownMode, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&, unsigned previousAttemptsCount = 0);
+    void prepareProcessForNavigation(Ref<WebProcessProxy>&&, WebPageProxy&, SuspendedPageProxy*, ASCIILiteral reason, const WebCore::Site&, const API::Navigation&, WebProcessProxy::LockdownMode, Ref<WebsiteDataStore>&&, CompletionHandler<void(Ref<WebProcessProxy>&&, SuspendedPageProxy*, ASCIILiteral)>&&, unsigned previousAttemptsCount = 0);
 
     RefPtr<WebProcessProxy> tryTakePrewarmedProcess(WebsiteDataStore&, WebProcessProxy::LockdownMode, const API::PageConfiguration&);
 
