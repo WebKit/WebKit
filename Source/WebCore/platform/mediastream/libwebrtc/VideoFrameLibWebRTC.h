@@ -48,7 +48,7 @@ namespace WebCore {
 class VideoFrameLibWebRTC final : public VideoFrame {
 public:
     using ConversionCallback = std::function<RetainPtr<CVPixelBufferRef>(webrtc::VideoFrameBuffer&)>;
-    static Ref<VideoFrameLibWebRTC> create(MediaTime, bool isMirrored, Rotation, std::optional<PlatformVideoColorSpace>&&, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&, ConversionCallback&&);
+    static RefPtr<VideoFrameLibWebRTC> create(MediaTime, bool isMirrored, Rotation, std::optional<PlatformVideoColorSpace>&&, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&, ConversionCallback&&);
 
     rtc::scoped_refptr<webrtc::VideoFrameBuffer> buffer() const { return m_buffer; }
 

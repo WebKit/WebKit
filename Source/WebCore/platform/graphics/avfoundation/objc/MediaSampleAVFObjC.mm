@@ -183,7 +183,7 @@ static bool isCMSampleBufferAttachmentNonDisplaying(CFDictionaryRef attachmentDi
     return CFDictionaryContainsKey(attachmentDict, PAL::kCMSampleAttachmentKey_DoNotDisplay);
 }
 
-static bool isCMSampleBufferNonDisplaying(CMSampleBufferRef sample)
+bool MediaSampleAVFObjC::isCMSampleBufferNonDisplaying(CMSampleBufferRef sample)
 {
     CFArrayRef attachments = PAL::CMSampleBufferGetSampleAttachmentsArray(sample, false);
     if (!attachments)

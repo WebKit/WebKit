@@ -240,7 +240,11 @@ int32_t LibWebRTCVPXInternalVideoDecoder::Decoded(webrtc::VideoFrame& frame)
             return protectedThis->createPixelBuffer(width, height, bufferType);
         }));
     });
-    m_outputCallback(VideoDecoder::DecodedFrame { WTFMove(videoFrame), m_timestamp, m_duration });
+
+    if (!videoFrame)
+        return 0;
+
+    m_outputCallback(VideoDecoder::DecodedFrame { videoFrame.releaseNonNull(), m_timestamp, m_duration });
     return 0;
 }
 
