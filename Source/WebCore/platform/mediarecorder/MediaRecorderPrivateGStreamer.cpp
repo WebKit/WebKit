@@ -107,13 +107,44 @@ const String& MediaRecorderPrivateGStreamer::mimeType() const
 bool MediaRecorderPrivateGStreamer::isTypeSupported(const ContentType& contentType)
 {
     auto& scanner = GStreamerRegistryScanner::singleton();
-    return scanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Encoding, contentType, { }) > MediaPlayerEnums::SupportsType::IsNotSupported;
+    bool isSupported = scanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Encoding, contentType, { }, GStreamerRegistryScanner::CaseSensitiveCodecName::No) > MediaPlayerEnums::SupportsType::IsNotSupported;
+
+    // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7670
+    if (isSupported && !contentType.containerType().endsWith("mp4"_s) && !webkitGstCheckVersion(1, 24, 9))
+        isSupported = false;
+    return isSupported;
 }
 
 MediaRecorderPrivateBackend::MediaRecorderPrivateBackend(MediaStreamPrivate& stream, const MediaRecorderPrivateOptions& options)
     : m_stream(stream)
     , m_options(options)
+    , m_mimeType(options.mimeType)
 {
+    auto selectedTracks = MediaRecorderPrivate::selectTracks(stream);
+    auto contentType = ContentType(options.mimeType);
+    auto containerType = contentType.containerType();
+    auto codecs = contentType.codecs();
+    if (containerType.endsWith("webm"_s)) {
+        containerType = selectedTracks.videoTrack ? "video/webm"_s : "audio/webm"_s;
+        if (codecs.isEmpty()) {
+            if (selectedTracks.videoTrack)
+                codecs.append("vp8"_s);
+            else
+                codecs.append("opus"_s);
+        }
+    } else {
+        containerType = selectedTracks.videoTrack ? "video/mp4"_s : "audio/mp4"_s;
+        if (codecs.isEmpty() && selectedTracks.audioTrack && !selectedTracks.videoTrack)
+            codecs.append("mp4a"_s);
+    }
+
+    StringBuilder builder;
+    builder.append(containerType);
+    if (!codecs.isEmpty()) {
+        builder.append("; codecs="_s);
+        builder.append(interleave(codecs, ","_s));
+    }
+    m_mimeType = builder.toString();
 }
 
 MediaRecorderPrivateBackend::~MediaRecorderPrivateBackend()
@@ -170,16 +201,16 @@ void MediaRecorderPrivateBackend::stopRecording(CompletionHandler<void()>&& comp
 
 void MediaRecorderPrivateBackend::fetchData(MediaRecorderPrivate::FetchDataCallback&& completionHandler)
 {
-    callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTFMove(completionHandler)]() mutable {
+    callOnMainThread([this, weakThis = ThreadSafeWeakPtr { *this }, completionHandler = WTFMove(completionHandler), mimeType = this->mimeType()]() mutable {
         auto protectedThis = weakThis.get();
         if (!protectedThis) {
-            completionHandler(nullptr, mimeType(), 0);
+            completionHandler(nullptr, mimeType, 0);
             return;
         }
         Locker locker { m_dataLock };
-        GST_DEBUG_OBJECT(m_transcoder.get(), "Transfering %zu encoded bytes", m_data.size());
+        GST_DEBUG_OBJECT(m_transcoder.get(), "Transfering %zu encoded bytes, mimeType: %s", m_data.size(), mimeType.ascii().data());
         auto buffer = m_data.take();
-        completionHandler(WTFMove(buffer), mimeType(), m_position);
+        completionHandler(WTFMove(buffer), mimeType, m_position);
     });
 }
 
@@ -210,15 +241,6 @@ void MediaRecorderPrivateBackend::resumeRecording(CompletionHandler<void()>&& co
     completionHandler();
 }
 
-const String& MediaRecorderPrivateBackend::mimeType() const
-{
-    static NeverDestroyed<const String> MP4AUDIOMIMETYPE(MAKE_STATIC_STRING_IMPL("audio/mp4"));
-    static NeverDestroyed<const String> MP4VIDEOMIMETYPE(MAKE_STATIC_STRING_IMPL("video/mp4"));
-
-    auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
-    return selectedTracks.videoTrack ? MP4VIDEOMIMETYPE : MP4AUDIOMIMETYPE;
-}
-
 GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateBackend::containerProfile()
 {
     auto selectedTracks = MediaRecorderPrivate::selectTracks(m_stream);
@@ -236,6 +258,8 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateBackend::containerProfi
     auto containerType = contentType.containerType();
     if (containerType.endsWith("mp4"_s))
         containerCapsDescription = "video/quicktime, variant=iso";
+    else if (containerType.endsWith("webm"_s))
+        containerCapsDescription = selectedTracks.videoTrack ? "video/webm"_s : "audio/webm"_s;
     else
         containerCapsDescription = containerType.utf8().data();
 
@@ -247,9 +271,16 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateBackend::containerProfi
 
     auto codecs = contentType.codecs();
     if (selectedTracks.videoTrack) {
-        if (codecs.isEmpty())
-            m_videoCodec = "avc1.4d002a"_s;
-        else
+        if (codecs.isEmpty()) {
+            if (containerType.endsWith("mp4"_s))
+                m_videoCodec = "avc1.4d002a"_s;
+            else if (containerType.endsWith("webm"_s))
+                m_videoCodec = "vp8"_s;
+            else {
+                GST_ERROR("Unsupported container: %s", containerType.ascii().data());
+                return nullptr;
+            }
+        } else
             m_videoCodec = codecs.first();
         auto [_, videoCaps] = GStreamerCodecUtilities::capsFromCodecString(m_videoCodec);
         GST_DEBUG("Creating video encoding profile for caps %" GST_PTR_FORMAT, videoCaps.get());
@@ -328,6 +359,23 @@ void MediaRecorderPrivateBackend::setSink(GstElement* element)
     m_sink = element;
 }
 
+void MediaRecorderPrivateBackend::configureAudioEncoder(GstElement* element)
+{
+    if (!gstObjectHasProperty(element, "bitrate")) {
+        GST_WARNING_OBJECT(m_pipeline.get(), "Audio encoder %" GST_PTR_FORMAT " has no bitrate property, skipping configuration", element);
+        return;
+    }
+
+    int bitRate = 0;
+    if (m_options.audioBitsPerSecond)
+        bitRate = *m_options.audioBitsPerSecond;
+    else if (m_options.bitsPerSecond)
+        bitRate = *m_options.bitsPerSecond;
+
+    if (bitRate)
+        g_object_set(element, "bitrate", bitRate, nullptr);
+}
+
 void MediaRecorderPrivateBackend::configureVideoEncoder(GstElement* element)
 {
     videoEncoderSetCodec(WEBKIT_VIDEO_ENCODER(element), m_videoCodec);
@@ -365,10 +413,15 @@ bool MediaRecorderPrivateBackend::preparePipeline()
             return;
         }
 
-        if (!GST_IS_APP_SINK(element))
+        if (GST_IS_APP_SINK(element)) {
+            recorder->setSink(element);
             return;
+        }
 
-        recorder->setSink(element);
+        String elementClass = WTF::span(gst_element_get_metadata(element, GST_ELEMENT_METADATA_KLASS));
+        auto classifiers = elementClass.split('/');
+        if (classifiers.contains("Audio"_s) && classifiers.contains("Codec"_s) && classifiers.contains("Encoder"_s))
+            recorder->configureAudioEncoder(element);
     }), this);
 
     m_signalAdapter = adoptGRef(gst_transcoder_get_sync_signal_adapter(m_transcoder.get()));
