@@ -390,7 +390,8 @@ FloatRect RenderSVGShape::calculateApproximateStrokeBoundingBox() const
 float RenderSVGShape::strokeWidth() const
 {
     SVGLengthContext lengthContext(protectedGraphicsElement().ptr());
-    return lengthContext.valueForLength(style().strokeWidth());
+    auto strokeWidth = lengthContext.valueForLength(style().strokeWidth());
+    return std::isnan(strokeWidth) ? 0 : strokeWidth;
 }
 
 Path& RenderSVGShape::ensurePath()
