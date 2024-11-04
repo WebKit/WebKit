@@ -336,6 +336,9 @@ bool RenderBundleEncoder::executePreDrawCommands(bool passWasSplit, uint32_t fir
     if (!icbCommand)
         return true;
 
+    if (!m_currentPipelineState)
+        return false;
+
 #if CPU(X86_64)
     RefPtr renderPassEncoder = m_renderPassEncoder.get();
     if (renderPassEncoder && passWasSplit) {
@@ -535,7 +538,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::finalizeRenderCo
 
     constexpr auto approximateCommandSize = 512;
     static const auto maxCommandCount = std::max<uint32_t>(100000, m_device->limits().maxBufferSize / approximateCommandSize);
-    if (isValid() && m_currentCommandIndex >= maxCommandCount && !m_renderPassEncoder && !m_indirectCommandBuffer)
+    if (isValid() && m_currentCommandIndex >= maxCommandCount && !m_requiresCommandReplay && !m_indirectCommandBuffer)
         endCurrentICB();
 
     return FinalizeRenderCommand { };
