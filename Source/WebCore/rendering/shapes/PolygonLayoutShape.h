@@ -59,8 +59,9 @@ private:
 class PolygonLayoutShape : public LayoutShape {
     WTF_MAKE_NONCOPYABLE(PolygonLayoutShape);
 public:
-    PolygonLayoutShape(Vector<FloatPoint>&& vertices, WindRule fillRule)
+    PolygonLayoutShape(Vector<FloatPoint>&& vertices, WindRule fillRule, float boxLogicalWidth)
         : m_polygon(WTFMove(vertices), fillRule)
+        , m_boxLogicalWidth(boxLogicalWidth)
     {
     }
 
@@ -72,6 +73,7 @@ public:
 
 private:
     FloatPolygon m_polygon;
+    float m_boxLogicalWidth { 0.f };
 };
 
 } // namespace WebCore

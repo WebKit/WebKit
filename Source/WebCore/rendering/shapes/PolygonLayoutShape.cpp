@@ -123,7 +123,7 @@ LineSegment PolygonLayoutShape::getExcludedInterval(LayoutUnit logicalTop, Layou
     float y2 = logicalTop + logicalHeight;
 
     if (m_polygon.isEmpty() || !m_polygon.boundingBox().overlapsYRange(y1 - shapeMargin(), y2 + shapeMargin()))
-        return LineSegment();
+        return { };
 
     FloatShapeInterval excludedInterval;
     for (const FloatPolygonEdge& edge : m_polygon.overlappingEdges(y1 - shapeMargin(), y2 + shapeMargin())) {
@@ -140,9 +140,12 @@ LineSegment PolygonLayoutShape::getExcludedInterval(LayoutUnit logicalTop, Layou
     }
 
     if (excludedInterval.isEmpty())
-        return LineSegment();
+        return { };
 
-    return LineSegment(excludedInterval.x1(), excludedInterval.x2());
+    if (writingMode().isBidiRTL())
+        return { std::max(0.f, m_boxLogicalWidth - excludedInterval.x2()), std::max(0.f, m_boxLogicalWidth - excludedInterval.x1()) };
+
+    return { excludedInterval.x1(), excludedInterval.x2() };
 }
 
 void PolygonLayoutShape::buildDisplayPaths(DisplayPaths& paths) const
