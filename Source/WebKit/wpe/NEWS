@@ -1,4 +1,34 @@
 =================
+WPE WebKit 2.47.1
+=================
+
+What's new in WPE WebKit 2.47.1?
+
+  - Flatten layers to a plane when preseve-3d style is set.
+  - Build GPU process by default, but keeping WebGL in the web process by default for now.
+  - Enable WebGL support when targeting Android.
+  - Add experimental support for speech synthesis using libspiel, which may be
+    enabled at build time instead of Flite (with USE_SPIEL=ON and
+    USE_FLITE=OFF).
+  - Add support for building Skia when targeting Android.
+  - Add close button and handling of the URL entry onAccepted event to the
+    Qt6 qt-wpe-mini-browser.
+  - Add new settings API to the WPEPlatform library.
+  - Add new connect methods to use a custom device file with WPEDisplayDRM
+    and WPEDisplayHeadless in the WPEPlatform API.
+  - Web Inspector resources are now shipped in an GResource bundle file,
+    instead of the libWPEInspectorResources shared library.
+  - Rename class WPEMonitor to WPEScreen in the WPEPlatform API.
+  - Use DMA-BUF buffers for WebGL when available.
+  - Make GStreamer GL sink handle DMA-BUF memory to replace the DMA-BUF sink.
+  - Fix device scaling factor in the WPEPlatform DRM implementation.
+  - Fix input methods when using the WPEPlatform library.
+  - Fix unexpected ENABLE_WPE_PLATFORM guards in installed API headers.
+  - Fix building the Qt6 API.
+  - Fix DuckDuckGo links by adding a user agent quirk.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.45.3
 =================
 
