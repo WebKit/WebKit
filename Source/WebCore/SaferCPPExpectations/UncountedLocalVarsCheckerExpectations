@@ -741,7 +741,6 @@ dom/TypedElementDescendantIteratorInlines.h
 domjit/JSDocumentDOMJIT.cpp
 editing/ApplyStyleCommand.cpp
 editing/ChangeListTypeCommand.cpp
-editing/CompositeEditCommand.cpp
 editing/Editing.cpp
 editing/EditingStyle.cpp
 editing/Editor.cpp

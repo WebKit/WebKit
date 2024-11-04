@@ -279,7 +279,7 @@ void EditCommandComposition::unapply()
 
 void EditCommandComposition::reapply()
 {
-    auto document = protectedDocument();
+    RefPtr document = protectedDocument();
     ASSERT(document);
     RefPtr frame { document->frame() };
     if (!frame)
@@ -406,7 +406,7 @@ void CompositeEditCommand::apply()
     // Changes to the document may have been made since the last editing operation that require a layout, as in <rdar://problem/5658603>.
     // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
     // if one is necessary (like for the creation of VisiblePositions).
-    auto document = protectedDocument();
+    RefPtr document = protectedDocument();
     document->updateLayoutIgnorePendingStylesheets();
 
     auto prohibitScrollingForScope = document->view() ? document->view()->prohibitScrollingWhenChangingContentSizeForScope() : nullptr;
@@ -1205,7 +1205,7 @@ void CompositeEditCommand::removePlaceholderAt(const Position& p)
 
 Ref<HTMLElement> CompositeEditCommand::insertNewDefaultParagraphElementAt(const Position& position)
 {
-    auto document = protectedDocument();
+    Ref document = protectedDocument();
     auto paragraphElement = createDefaultParagraphElement(document);
     paragraphElement->appendChild(HTMLBRElement::create(document));
     insertNodeAt(paragraphElement.copyRef(), position);
@@ -1502,7 +1502,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     if (start.isNull() || end.isNull())
         return;
 
-    auto document = protectedDocument();
+    Ref document = protectedDocument();
     // FIXME: Serializing and re-parsing is an inefficient way to preserve style.
     RefPtr<DocumentFragment> fragment;
     if (startOfParagraphToMove != endOfParagraphToMove)
@@ -1687,7 +1687,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     if (enclosingNodeOfType(previous.deepEquivalent(), &isMailBlockquote))
         return false;
     
-    auto document = protectedDocument();
+    Ref document = protectedDocument();
     auto br = HTMLBRElement::create(document);
     // We want to replace this quoted paragraph with an unquoted one, so insert a br
     // to hold the caret before the highest blockquote.
