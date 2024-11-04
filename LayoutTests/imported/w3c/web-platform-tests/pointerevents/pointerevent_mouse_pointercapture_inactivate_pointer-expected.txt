@@ -1,7 +1,5 @@
 
 
-Harness Error (TIMEOUT), message = null
-
-FAIL setPointerCapture: pointer active in outer frame, set capture to inner frame assert_equals: Inner frame can not capture when pointer is activate in outer frame expected 0 but got 1
-TIMEOUT setPointerCapture: pointer active in inner frame, set capture to outer frame Test timed out
+PASS setPointerCapture: pointer active in outer frame, set capture to inner frame
+PASS setPointerCapture: pointer active in inner frame, set capture to outer frame
 
