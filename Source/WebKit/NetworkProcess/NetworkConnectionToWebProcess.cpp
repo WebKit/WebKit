@@ -417,7 +417,9 @@ bool NetworkConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connect
 
 void NetworkConnectionToWebProcess::didClose(IPC::Connection& connection)
 {
-    m_swContextConnection = nullptr;
+    if (RefPtr connection = std::exchange(m_swContextConnection, nullptr))
+        connection->stop();
+
     m_sharedWorkerContextConnection = nullptr;
 
     // Protect ourself as we might be otherwise be deleted during this function.
@@ -1420,14 +1422,15 @@ void NetworkConnectionToWebProcess::establishSWContextConnection(WebPageProxyIde
     auto* session = networkSession();
     if (RefPtr swServer = session ? session->swServer() : nullptr) {
         MESSAGE_CHECK_COMPLETION(session->protectedNetworkProcess()->allowsFirstPartyForCookies(webProcessIdentifier(), site.domain()), completionHandler());
-        m_swContextConnection = makeUnique<WebSWServerToContextConnection>(*this, webPageProxyID, WTFMove(site), serviceWorkerPageIdentifier, *swServer);
+        m_swContextConnection = WebSWServerToContextConnection::create(*this, webPageProxyID, WTFMove(site), serviceWorkerPageIdentifier, *swServer);
     }
     completionHandler();
 }
 
 void NetworkConnectionToWebProcess::closeSWContextConnection()
 {
-    m_swContextConnection = nullptr;
+    if (RefPtr connection = std::exchange(m_swContextConnection, nullptr))
+        connection->stop();
 }
 
 void NetworkConnectionToWebProcess::serviceWorkerServerToContextConnectionNoLongerNeeded()
@@ -1435,7 +1438,8 @@ void NetworkConnectionToWebProcess::serviceWorkerServerToContextConnectionNoLong
     CONNECTION_RELEASE_LOG(ServiceWorker, "serviceWorkerServerToContextConnectionNoLongerNeeded: WebProcess no longer useful for running service workers");
     protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::RemoteWorkerContextConnectionNoLongerNeeded { RemoteWorkerType::ServiceWorker, webProcessIdentifier() }, 0);
 
-    m_swContextConnection = nullptr;
+    if (RefPtr connection = std::exchange(m_swContextConnection, nullptr))
+        connection->stop();
 }
 
 WebSWServerConnection* NetworkConnectionToWebProcess::swConnection()

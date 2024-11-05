@@ -153,28 +153,28 @@ void WebSWServerConnection::startScriptFetchInClient(ServiceWorkerJobIdentifier 
 void WebSWServerConnection::updateRegistrationStateInClient(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerRegistrationState state, const std::optional<ServiceWorkerData>& serviceWorkerData)
 {
     send(Messages::WebSWClientConnection::UpdateRegistrationState(identifier, state, serviceWorkerData));
-    if (CheckedPtr contextConnection = m_networkConnectionToWebProcess->swContextConnection())
+    if (RefPtr contextConnection = m_networkConnectionToWebProcess->swContextConnection())
         sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::UpdateRegistrationState(identifier, state, serviceWorkerData));
 }
 
 void WebSWServerConnection::fireUpdateFoundEvent(ServiceWorkerRegistrationIdentifier identifier)
 {
     send(Messages::WebSWClientConnection::FireUpdateFoundEvent(identifier));
-    if (CheckedPtr contextConnection = m_networkConnectionToWebProcess->swContextConnection())
+    if (RefPtr contextConnection = m_networkConnectionToWebProcess->swContextConnection())
         sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::FireUpdateFoundEvent(identifier));
 }
 
 void WebSWServerConnection::setRegistrationLastUpdateTime(ServiceWorkerRegistrationIdentifier identifier, WallTime lastUpdateTime)
 {
     send(Messages::WebSWClientConnection::SetRegistrationLastUpdateTime(identifier, lastUpdateTime));
-    if (CheckedPtr contextConnection = m_networkConnectionToWebProcess->swContextConnection())
+    if (RefPtr contextConnection = m_networkConnectionToWebProcess->swContextConnection())
         sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::SetRegistrationLastUpdateTime(identifier, lastUpdateTime));
 }
 
 void WebSWServerConnection::setRegistrationUpdateViaCache(ServiceWorkerRegistrationIdentifier identifier, ServiceWorkerUpdateViaCache updateViaCache)
 {
     send(Messages::WebSWClientConnection::SetRegistrationUpdateViaCache(identifier, updateViaCache));
-    if (CheckedPtr contextConnection = m_networkConnectionToWebProcess->swContextConnection())
+    if (RefPtr contextConnection = m_networkConnectionToWebProcess->swContextConnection())
         sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::SetRegistrationUpdateViaCache(identifier, updateViaCache));
 }
 
@@ -186,7 +186,7 @@ void WebSWServerConnection::notifyClientsOfControllerChange(const HashSet<Script
 void WebSWServerConnection::updateWorkerStateInClient(ServiceWorkerIdentifier worker, ServiceWorkerState state)
 {
     send(Messages::WebSWClientConnection::UpdateWorkerState(worker, state));
-    if (CheckedPtr contextConnection = m_networkConnectionToWebProcess->swContextConnection())
+    if (RefPtr contextConnection = m_networkConnectionToWebProcess->swContextConnection())
         sendToContextProcess(*contextConnection, Messages::WebSWContextManagerConnection::UpdateWorkerState(worker, state));
 }
 
@@ -456,7 +456,7 @@ void WebSWServerConnection::registerServiceWorkerClientInternal(WebCore::ClientO
         return contextOrigin != origin.clientOrigin;
     });
     RefPtr server = protectedServer();
-    CheckedPtr contextConnection = isNewOrigin ? server->contextConnectionForRegistrableDomain(RegistrableDomain { contextOrigin }) : nullptr;
+    RefPtr contextConnection = isNewOrigin ? server->contextConnectionForRegistrableDomain(RegistrableDomain { contextOrigin }) : nullptr;
 
     m_clientOrigins.add(data.identifier, clientOrigin);
 
@@ -498,7 +498,7 @@ void WebSWServerConnection::unregisterServiceWorkerClient(const ScriptExecutionC
     if (isDeletedOrigin) {
         RegistrableDomain potentiallyRemovedDomain { clientOrigin.clientOrigin };
         if (!hasMatchingClient(potentiallyRemovedDomain)) {
-            if (CheckedPtr contextConnection = protectedServer()->contextConnectionForRegistrableDomain(potentiallyRemovedDomain)) {
+            if (RefPtr contextConnection = protectedServer()->contextConnectionForRegistrableDomain(potentiallyRemovedDomain)) {
                 auto& connection = static_cast<WebSWServerToContextConnection&>(*contextConnection);
                 protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::UnregisterRemoteWorkerClientProcess { RemoteWorkerType::ServiceWorker, identifier(), connection.webProcessIdentifier() }, 0);
             }
@@ -534,7 +534,7 @@ void WebSWServerConnection::updateThrottleState()
         origins.add(origin.clientOrigin);
 
     for (auto& origin : origins) {
-        if (CheckedPtr contextConnection = protectedServer()->contextConnectionForRegistrableDomain(RegistrableDomain { origin })) {
+        if (RefPtr contextConnection = protectedServer()->contextConnectionForRegistrableDomain(RegistrableDomain { origin })) {
             auto& connection = static_cast<WebSWServerToContextConnection&>(*contextConnection);
 
             if (connection.isThrottleable() == m_isThrottleable)

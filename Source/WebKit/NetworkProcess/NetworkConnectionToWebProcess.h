@@ -491,7 +491,7 @@ private:
     bool m_captureExtraNetworkLoadMetricsEnabled { false };
 
     WeakPtr<WebSWServerConnection> m_swConnection;
-    std::unique_ptr<WebSWServerToContextConnection> m_swContextConnection;
+    RefPtr<WebSWServerToContextConnection> m_swContextConnection;
     WeakPtr<WebSharedWorkerServerConnection> m_sharedWorkerConnection;
     RefPtr<WebSharedWorkerServerToContextConnection> m_sharedWorkerContextConnection;
 

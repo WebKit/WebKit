@@ -56,7 +56,7 @@ ServiceWorkerDownloadTask::ServiceWorkerDownloadTask(NetworkSession& session, Ne
     , m_serverConnectionIdentifier(serverConnectionIdentifier)
     , m_fetchIdentifier(fetchIdentifier)
     , m_downloadID(downloadID)
-    , m_networkProcess(serviceWorkerConnection.networkProcess())
+    , m_networkProcess(*serviceWorkerConnection.networkProcess())
 {
     auto expectedContentLength = response.expectedContentLength();
     if (expectedContentLength != -1)
@@ -71,7 +71,7 @@ ServiceWorkerDownloadTask::~ServiceWorkerDownloadTask()
 
 void ServiceWorkerDownloadTask::startListeningForIPC()
 {
-    m_serviceWorkerConnection->protectedIPCConnection()->addMessageReceiver(*this, *this, Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
+    RefPtr { m_serviceWorkerConnection.get() }->protectedIPCConnection()->addMessageReceiver(*this, *this, Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
 }
 
 Ref<NetworkProcess> ServiceWorkerDownloadTask::protectedNetworkProcess() const
@@ -83,7 +83,7 @@ void ServiceWorkerDownloadTask::close()
 {
     ASSERT(isMainRunLoop());
 
-    if (CheckedPtr serviceWorkerConnection = m_serviceWorkerConnection.get()) {
+    if (RefPtr serviceWorkerConnection = m_serviceWorkerConnection.get()) {
         serviceWorkerConnection->protectedIPCConnection()->removeMessageReceiver(Messages::ServiceWorkerDownloadTask::messageReceiverName(), fetchIdentifier().toUInt64());
         serviceWorkerConnection->unregisterDownload(*this);
         m_serviceWorkerConnection = nullptr;
@@ -92,10 +92,11 @@ void ServiceWorkerDownloadTask::close()
 
 template<typename Message> bool ServiceWorkerDownloadTask::sendToServiceWorker(Message&& message)
 {
-    if (!m_serviceWorkerConnection)
+    RefPtr serviceWorkerConnection = m_serviceWorkerConnection.get();
+    if (!serviceWorkerConnection)
         return false;
 
-    return m_serviceWorkerConnection->protectedIPCConnection()->send(std::forward<Message>(message), 0) == IPC::Error::NoError;
+    return serviceWorkerConnection->protectedIPCConnection()->send(std::forward<Message>(message), 0) == IPC::Error::NoError;
 }
 
 void ServiceWorkerDownloadTask::dispatch(Function<void()>&& function)

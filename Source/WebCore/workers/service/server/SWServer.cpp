@@ -864,7 +864,7 @@ LastNavigationWasAppInitiated SWServer::clientIsAppInitiatedForRegistrableDomain
 void SWServer::tryInstallContextData(const std::optional<ProcessIdentifier>& requestingProcessIdentifier, ServiceWorkerContextData&& data)
 {
     Site site(data.registration.key.topOrigin());
-    CheckedPtr connection = contextConnectionForRegistrableDomain(site.domain());
+    RefPtr connection = contextConnectionForRegistrableDomain(site.domain());
     if (!connection) {
         auto firstPartyForCookies = data.registration.key.firstPartyForCookies();
         m_pendingContextDatas.ensure(site.domain(), [] {
@@ -913,7 +913,7 @@ void SWServer::forEachServiceWorker(const Function<bool(const SWServerWorker&)>&
 
 void SWServer::terminateContextConnectionWhenPossible(const RegistrableDomain& registrableDomain, ProcessIdentifier processIdentifier)
 {
-    CheckedPtr contextConnection = contextConnectionForRegistrableDomain(registrableDomain);
+    RefPtr contextConnection = contextConnectionForRegistrableDomain(registrableDomain);
     if (!contextConnection || contextConnection->webProcessIdentifier() != processIdentifier)
         return;
 
@@ -943,7 +943,7 @@ void SWServer::installContextData(const ServiceWorkerContextData& data)
     RefPtr registration = m_scopeToRegistrationMap.get(data.registration.key);
     Ref worker = SWServerWorker::create(*this, *registration, data.scriptURL, data.script, data.certificateInfo, data.contentSecurityPolicy, data.crossOriginEmbedderPolicy, String { data.referrerPolicy }, data.workerType, data.serviceWorkerIdentifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript> { data.scriptResourceMap });
 
-    CheckedPtr connection = worker->contextConnection();
+    RefPtr connection = worker->contextConnection();
     ASSERT(connection);
 
     registration->setPreInstallationWorker(worker.ptr());
@@ -967,7 +967,7 @@ void SWServer::runServiceWorkerIfNecessary(ServiceWorkerIdentifier identifier, R
 
 void SWServer::runServiceWorkerIfNecessary(SWServerWorker& worker, RunServiceWorkerCallback&& callback)
 {
-    CheckedPtr contextConnection = worker.contextConnection();
+    RefPtr contextConnection = worker.contextConnection();
     if (worker.isRunning()) {
         ASSERT(contextConnection);
         callback(contextConnection.get());
@@ -1026,7 +1026,7 @@ bool SWServer::runServiceWorker(SWServerWorker& worker)
 
     worker.setState(SWServerWorker::State::Running);
 
-    CheckedPtr contextConnection = worker.contextConnection();
+    RefPtr contextConnection = worker.contextConnection();
     ASSERT(contextConnection);
 
     contextConnection->installServiceWorkerContext(worker.contextData(), worker.data(), worker.userAgent(), worker.workerThreadMode(), advancedPrivacyProtectionsFromClient(worker.registrationKey().clientOrigin()));
@@ -1065,7 +1065,7 @@ void SWServer::workerContextTerminated(SWServerWorker& worker)
 
 void SWServer::fireInstallEvent(SWServerWorker& worker)
 {
-    CheckedPtr contextConnection = worker.contextConnection();
+    RefPtr contextConnection = worker.contextConnection();
     if (!contextConnection) {
         RELEASE_LOG_ERROR(ServiceWorker, "Request to fire install event on a worker whose context connection does not exist");
         return;
@@ -1276,7 +1276,7 @@ void SWServer::unregisterServiceWorkerClient(const ClientOrigin& clientOrigin, S
 
             m_clientIdentifiersPerOrigin.remove(clientOrigin);
         });
-        CheckedPtr contextConnection = contextConnectionForRegistrableDomain(clientRegistrableDomain);
+        RefPtr contextConnection = contextConnectionForRegistrableDomain(clientRegistrableDomain);
         bool shouldContextConnectionBeTerminatedWhenPossible = contextConnection && contextConnection->shouldTerminateWhenPossible();
         iterator->value.terminateServiceWorkersTimer->startOneShot(m_isProcessTerminationDelayEnabled && !MemoryPressureHandler::singleton().isUnderMemoryPressure() && !shouldContextConnectionBeTerminatedWhenPossible && !didUnregister ? defaultTerminationDelay : 0_s);
     }
@@ -1310,7 +1310,7 @@ SWServer::ShouldDelayRemoval SWServer::removeContextConnectionIfPossible(const R
     if (m_clientsByRegistrableDomain.contains(domain))
         return ShouldDelayRemoval::No;
 
-    WeakPtr connection = contextConnectionForRegistrableDomain(domain);
+    RefPtr connection = contextConnectionForRegistrableDomain(domain);
     if (!connection)
         return ShouldDelayRemoval::No;
 
@@ -1320,7 +1320,7 @@ SWServer::ShouldDelayRemoval SWServer::removeContextConnectionIfPossible(const R
     }
 
     removeContextConnection(*connection);
-    connection->connectionIsNoLongerNeeded(); // May destroy the connection object.
+    connection->connectionIsNoLongerNeeded();
     return ShouldDelayRemoval::No;
 }
 
@@ -1762,7 +1762,7 @@ void SWServer::setInspectable(ServiceWorkerIsInspectable inspectable)
     m_isInspectable = inspectable;
 
     for (auto& connection : m_contextConnections.values())
-        CheckedRef { connection.get() }->setInspectable(inspectable);
+        Ref { connection.get() }->setInspectable(inspectable);
 }
 
 SWServerRegistration* SWServer::getRegistration(ServiceWorkerRegistrationIdentifier identifier)

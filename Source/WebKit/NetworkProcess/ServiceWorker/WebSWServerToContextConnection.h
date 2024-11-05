@@ -60,15 +60,16 @@ class WebSWServerConnection;
 
 class WebSWServerToContextConnection final: public WebCore::SWServerToContextConnection, public IPC::MessageSender, public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(WebSWServerToContextConnection);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(WebSWServerToContextConnection);
 public:
     USING_CAN_MAKE_WEAKPTR(WebCore::SWServerToContextConnection);
 
-    WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebPageProxyIdentifier, WebCore::Site&&, std::optional<WebCore::ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier, WebCore::SWServer&);
+    static Ref<WebSWServerToContextConnection> create(NetworkConnectionToWebProcess&, WebPageProxyIdentifier, WebCore::Site&&, std::optional<WebCore::ScriptExecutionContextIdentifier>, WebCore::SWServer&);
     ~WebSWServerToContextConnection();
 
-    Ref<IPC::Connection> protectedIPCConnection() const;
-    IPC::Connection& ipcConnection() const;
+    void stop();
+
+    RefPtr<IPC::Connection> protectedIPCConnection() const;
+    IPC::Connection* ipcConnection() const;
 
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
@@ -86,13 +87,17 @@ public:
     void registerDownload(ServiceWorkerDownloadTask&);
     void unregisterDownload(ServiceWorkerDownloadTask&);
 
-    WebCore::ProcessIdentifier webProcessIdentifier() const final;
-    NetworkProcess& networkProcess();
+    WebCore::ProcessIdentifier webProcessIdentifier() const final { return m_webProcessIdentifier; }
+    NetworkProcess* networkProcess();
+    RefPtr<NetworkProcess> protectedNetworkProcess();
+
     void didFinishInstall(const std::optional<WebCore::ServiceWorkerJobDataIdentifier>&, WebCore::ServiceWorkerIdentifier, bool wasSuccessful);
     void didFinishActivation(WebCore::ServiceWorkerIdentifier);
 
 private:
-    Ref<NetworkConnectionToWebProcess> protectedConnection() const;
+    WebSWServerToContextConnection(NetworkConnectionToWebProcess&, WebPageProxyIdentifier, WebCore::Site&&, std::optional<WebCore::ScriptExecutionContextIdentifier>, WebCore::SWServer&);
+
+    RefPtr<NetworkConnectionToWebProcess> protectedConnection() const;
 
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;
@@ -125,7 +130,8 @@ private:
 
     void setInspectable(WebCore::ServiceWorkerIsInspectable) final;
 
-    WeakRef<NetworkConnectionToWebProcess> m_connection;
+    WebCore::ProcessIdentifier m_webProcessIdentifier;
+    WeakPtr<NetworkConnectionToWebProcess> m_connection;
     HashMap<WebCore::FetchIdentifier, WeakPtr<ServiceWorkerFetchTask>> m_ongoingFetches;
     HashMap<WebCore::FetchIdentifier, ThreadSafeWeakPtr<ServiceWorkerDownloadTask>> m_ongoingDownloads;
     bool m_isThrottleable { true };

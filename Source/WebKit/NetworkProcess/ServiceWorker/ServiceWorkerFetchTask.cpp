@@ -130,7 +130,7 @@ ServiceWorkerFetchTask::ServiceWorkerFetchTask(WebSWServerConnection& swServerCo
 ServiceWorkerFetchTask::~ServiceWorkerFetchTask()
 {
     SWFETCH_RELEASE_LOG("~ServiceWorkerFetchTask:");
-    if (CheckedPtr serviceWorkerConnection = m_serviceWorkerConnection.get())
+    if (RefPtr serviceWorkerConnection = m_serviceWorkerConnection.get())
         serviceWorkerConnection->unregisterFetch(*this);
 
     cancelPreloadIfNecessary();
@@ -161,7 +161,7 @@ void ServiceWorkerFetchTask::start(WebSWServerToContextConnection& serviceWorker
 
 void ServiceWorkerFetchTask::workerClosed()
 {
-    if (CheckedPtr serviceWorkerConnection = m_serviceWorkerConnection.get())
+    if (RefPtr serviceWorkerConnection = m_serviceWorkerConnection.get())
         serviceWorkerConnection->unregisterFetch(*this);
     contextClosed();
 }

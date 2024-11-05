@@ -102,7 +102,7 @@ void SWServerWorker::updateAppInitiatedValue(LastNavigationWasAppInitiated lastN
     if (!isRunning())
         return;
 
-    if (CheckedPtr connection = contextConnection())
+    if (RefPtr connection = contextConnection())
         connection->updateAppInitiatedValue(identifier(), lastNavigationWasAppInitiated);
 }
 
@@ -131,7 +131,7 @@ void SWServerWorker::whenTerminated(CompletionHandler<void()>&& callback)
 
 void SWServerWorker::startTermination(CompletionHandler<void()>&& callback)
 {
-    CheckedPtr contextConnection = this->contextConnection();
+    RefPtr contextConnection = this->contextConnection();
     ASSERT(contextConnection);
     if (!contextConnection) {
         RELEASE_LOG_ERROR(ServiceWorker, "Request to terminate a worker %" PRIu64 " whose context connection does not exist", identifier().toUInt64());
@@ -166,7 +166,8 @@ void SWServerWorker::callTerminationCallbacks()
 void SWServerWorker::terminationTimerFired()
 {
     ASSERT(isTerminating());
-    contextConnection()->terminateDueToUnresponsiveness();
+    if (RefPtr contextConnection = this->contextConnection())
+        contextConnection->terminateDueToUnresponsiveness();
 }
 
 const ClientOrigin& SWServerWorker::origin() const
@@ -272,7 +273,7 @@ void SWServerWorker::setScriptResource(URL&& url, ServiceWorkerContextData::Impo
 void SWServerWorker::didSaveScriptsToDisk(ScriptBuffer&& mainScript, MemoryCompactRobinHoodHashMap<URL, ScriptBuffer>&& importedScripts)
 {
     // Send mmap'd version of the scripts to the ServiceWorker process so we can save dirty memory.
-    if (CheckedPtr contextConnection = this->contextConnection())
+    if (RefPtr contextConnection = this->contextConnection())
         contextConnection->didSaveScriptsToDisk(identifier(), mainScript, importedScripts);
 
     // The scripts were saved to disk, replace our scripts with the mmap'd version to save dirty memory.
