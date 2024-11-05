@@ -60,7 +60,7 @@ inline Ref<DeferredWorkTimer::TicketData> DeferredWorkTimer::TicketData::create(
 inline VM& DeferredWorkTimer::TicketData::vm()
 {
     ASSERT(!isCancelled());
-    return target()->vm();
+    return target().vm();
 }
 
 inline void DeferredWorkTimer::TicketData::cancel()
@@ -101,8 +101,8 @@ void DeferredWorkTimer::doWork(VM& vm)
 
         // We shouldn't access the TicketData to get this globalObject until
         // after we confirm that the ticket is still valid (which we did above).
-        auto globalObject = ticket->target()->globalObject();
-        switch (globalObject->globalObjectMethodTable()->scriptExecutionStatus(globalObject, ticket->scriptExecutionOwner())) {
+        auto globalObject = ticket->target().globalObject();
+        switch (globalObject->globalObjectMethodTable()->scriptExecutionStatus(globalObject, &ticket->scriptExecutionOwner())) {
         case ScriptExecutionStatus::Suspended:
             suspendedTasks.append(std::make_tuple(ticket, WTFMove(task)));
             continue;

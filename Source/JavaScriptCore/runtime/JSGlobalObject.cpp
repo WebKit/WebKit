@@ -2747,7 +2747,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
                 // FIXME: This seems like it should remove the cancelled ticket? Although, it would likely have to deal with deadlocking somehow.
                 if (ticket->isCancelled())
                     continue;
-                visitor.appendUnbarriered(ticket->scriptExecutionOwner());
+                visitor.appendUnbarriered(&ticket->scriptExecutionOwner());
                 // The check above is just an optimization since between the check and here the mutator could cancel the ticket.
                 constexpr bool mayBeCancelled = true;
                 for (auto& dependency : ticket->dependencies(mayBeCancelled))

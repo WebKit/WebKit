@@ -60,13 +60,14 @@ public:
 
         WorkType type() const { return m_type; }
         inline VM& vm();
-        JSObject* target();
+        JSObject& target();
+        inline bool hasValidTarget() const;
         inline const FixedVector<Weak<JSCell>>& dependencies(bool mayBeCancelled = false);
-        inline JSObject* scriptExecutionOwner();
-        inline JSGlobalObject* globalObject();
+        inline JSObject& scriptExecutionOwner();
+        inline JSGlobalObject& globalObject();
 
         inline void cancel();
-        bool isCancelled() const { return !m_scriptExecutionOwner.get() || !m_globalObject.get(); }
+        bool isCancelled() const { return !m_scriptExecutionOwner.get() || !m_globalObject.get() || !hasValidTarget(); }
 
     private:
         inline TicketData(WorkType, JSGlobalObject*, JSObject* scriptExecutionOwner, Vector<Weak<JSCell>>&& dependencies);
@@ -115,10 +116,16 @@ private:
     HashSet<Ref<TicketData>> m_pendingTickets;
 };
 
-inline JSObject* DeferredWorkTimer::TicketData::target()
+inline JSObject& DeferredWorkTimer::TicketData::target()
 {
     ASSERT(!isCancelled());
-    return jsCast<JSObject*>(m_dependencies.last().get());
+    return *jsCast<JSObject*>(m_dependencies.last().get());
+}
+
+inline bool DeferredWorkTimer::TicketData::hasValidTarget() const
+{
+    ASSERT(!m_dependencies.isEmpty());
+    return !!m_dependencies.last().get();
 }
 
 inline const FixedVector<Weak<JSCell>>& DeferredWorkTimer::TicketData::dependencies(bool mayBeCancelled)
@@ -127,16 +134,16 @@ inline const FixedVector<Weak<JSCell>>& DeferredWorkTimer::TicketData::dependenc
     return m_dependencies;
 }
 
-inline JSObject* DeferredWorkTimer::TicketData::scriptExecutionOwner()
+inline JSObject& DeferredWorkTimer::TicketData::scriptExecutionOwner()
 {
     ASSERT(!isCancelled());
-    return m_scriptExecutionOwner.get();
+    return *m_scriptExecutionOwner.get();
 }
 
-inline JSGlobalObject* DeferredWorkTimer::TicketData::globalObject()
+inline JSGlobalObject& DeferredWorkTimer::TicketData::globalObject()
 {
     ASSERT(!isCancelled());
-    return m_globalObject.get();
+    return *m_globalObject.get();
 }
 
 } // namespace JSC
