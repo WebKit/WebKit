@@ -739,7 +739,6 @@ dom/TreeScope.cpp
 dom/TrustedType.cpp
 dom/TypedElementDescendantIteratorInlines.h
 domjit/JSDocumentDOMJIT.cpp
-editing/ApplyStyleCommand.cpp
 editing/ChangeListTypeCommand.cpp
 editing/Editing.cpp
 editing/EditingStyle.cpp

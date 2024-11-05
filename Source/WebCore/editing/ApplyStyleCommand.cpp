@@ -67,7 +67,7 @@ static String& styleSpanClassString()
 
 bool isLegacyAppleStyleSpan(const Node* node)
 {
-    auto* spanElement = dynamicDowncast<HTMLSpanElement>(node);
+    RefPtr spanElement = dynamicDowncast<HTMLSpanElement>(node);
     return spanElement && spanElement->attributeWithoutSynchronization(classAttr) == styleSpanClassString();
 }
 
@@ -89,19 +89,19 @@ static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement& element, Sho
 
 bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element& element)
 {
-    auto* spanElement = dynamicDowncast<HTMLSpanElement>(element);
+    RefPtr spanElement = dynamicDowncast<HTMLSpanElement>(element);
     return spanElement && hasNoAttributeOrOnlyStyleAttribute(*spanElement, AllowNonEmptyStyleAttribute);
 }
 
 static inline bool isSpanWithoutAttributesOrUnstyledStyleSpan(const Element& element)
 {
-    auto* spanElement = dynamicDowncast<HTMLSpanElement>(element);
+    RefPtr spanElement = dynamicDowncast<HTMLSpanElement>(element);
     return spanElement && hasNoAttributeOrOnlyStyleAttribute(*spanElement, StyleAttributeShouldBeEmpty);
 }
 
 bool isEmptyFontTag(const Element* element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
 {
-    auto* fontElement = dynamicDowncast<HTMLFontElement>(element);
+    RefPtr fontElement = dynamicDowncast<HTMLFontElement>(element);
     return fontElement && hasNoAttributeOrOnlyStyleAttribute(*fontElement, shouldStyleAttributeBeEmpty);
 }
 
@@ -255,7 +255,7 @@ void ApplyStyleCommand::applyBlockStyle(EditingStyle& style)
                     block = newBlock;
             }
             ASSERT(!block || is<Element>(*block));
-            if (auto* htmlBlock = dynamicDowncast<HTMLElement>(block.get())) {
+            if (RefPtr htmlBlock = dynamicDowncast<HTMLElement>(block.get())) {
                 removeCSSStyle(style, *htmlBlock);
                 if (!m_removeOnly)
                     addBlockStyle(styleChange, *htmlBlock);
@@ -432,7 +432,7 @@ static ContainerNode* dummySpanAncestorForNode(Node* node)
 {
     RefPtr<Node> currentNode = node;
     while (currentNode) {
-        auto* element = dynamicDowncast<Element>(*currentNode);
+        RefPtr element = dynamicDowncast<Element>(*currentNode);
         if (element && isStyleSpanOrSpanWithOnlyStyleAttribute(*element))
             break;
         currentNode = currentNode->parentNode();
@@ -451,12 +451,12 @@ void ApplyStyleCommand::cleanupUnstyledAppleStyleSpans(ContainerNode* dummySpanA
     // all the children of the dummy's parent
 
     Vector<Ref<Element>> toRemove;
-    for (auto& child : childrenOfType<Element>(*dummySpanAncestor)) {
+    for (Ref child : childrenOfType<Element>(*dummySpanAncestor)) {
         if (isSpanWithoutAttributesOrUnstyledStyleSpan(child))
             toRemove.append(child);
     }
 
-    for (auto& element : toRemove)
+    for (Ref element : toRemove)
         removeNodePreservingChildren(element.get());
 }
 
@@ -518,11 +518,11 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
 
     for (RefPtr<Node> ancestor = node->parentNode(), parent; ancestor != block && ancestor != unsplitAncestor; ancestor = parent) {
         parent = ancestor->parentNode();
-        auto* element = dynamicDowncast<StyledElement>(*ancestor);
+        RefPtr element = dynamicDowncast<StyledElement>(*ancestor);
         if (!element)
             continue;
 
-        int unicodeBidi = valueID(ComputedStyleExtractor(element).propertyValue(CSSPropertyUnicodeBidi).get());
+        int unicodeBidi = valueID(ComputedStyleExtractor(element.get()).propertyValue(CSSPropertyUnicodeBidi).get());
         if (!unicodeBidi || unicodeBidi == CSSValueNormal)
             continue;
 
@@ -563,7 +563,7 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle& style)
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
-    auto document = protectedDocument();
+    Ref document = protectedDocument();
     document->updateLayoutIgnorePendingStylesheets();
 
     // adjust to the positions we want to use for applying style
@@ -770,7 +770,7 @@ void ApplyStyleCommand::applyInlineStyleToNodeRange(EditingStyle& style, Node& s
     if (m_removeOnly)
         return;
 
-    auto document = protectedDocument();
+    Ref document = protectedDocument();
     document->updateLayoutIgnorePendingStylesheets();
 
     Vector<InlineRunToApplyStyle> runs;
