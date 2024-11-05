@@ -30,9 +30,6 @@ fast/events/constructors/keyboard-event-constructor.html [ Pass ]
 webkit.org/b/136754 imported/w3c/web-platform-tests/css/css-flexbox/flexbox_flex-natural-mixed-basis-auto.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-flexbox/grid-flex-item-007.html [ Pass ]
 
-# FAIL results are platform dependent
-imported/w3c/web-platform-tests/css/css-anchor-position/anchor-invalid-fallback.html [ Failure ]
-
 imported/w3c/web-platform-tests/css/css-images/out-of-range-color-stop-conic.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/css-ui/text-overflow-005.html [ Pass ]
@@ -74,6 +71,11 @@ imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-015.htm
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-016.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-start-017.html [ Pass ]
 
+imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-different-size.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-view-transitions/new-content-captures-spans.html [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/overconstrained-rel-pos-ltr-left-right-vrl-004.xht [ Pass ]
+imported/w3c/web-platform-tests/css/css-writing-modes/overconstrained-rel-pos-rtl-left-right-vlr-009.xht [ Pass ]
+
 imported/w3c/web-platform-tests/css/filter-effects/svg-unknown-input-001.html [ Pass ]
 imported/w3c/web-platform-tests/css/filter-effects/svg-unknown-input-002.html [ Pass ]
 
@@ -85,6 +87,8 @@ imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow-and-properties.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/filters/canvas-filter-shadow.html [ Pass ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/shadows/canvas_shadows_system_colors.html [ Pass ]
+
+imported/w3c/web-platform-tests/html/canvas/element/layers/2d.layer.global-states.no-cxt-filter.rotation.html [ Pass ]
 
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir_auto-N-EN.html [ Pass ]
 imported/w3c/web-platform-tests/html/dom/elements/global-attributes/dir-shadow-41.html [ Pass ]
@@ -105,6 +109,8 @@ imported/w3c/web-platform-tests/css/css-transforms/transform3d-preserve3d-013.ht
 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-auto-control.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/resize-child-will-change-transform.html [ Pass ]
 imported/w3c/web-platform-tests/css/css-ui/resize-generated-content.html [ Pass ]
+
+imported/w3c/web-platform-tests/css/css-grid/masonry/tentative/alignment/masonry-align-content-004.html [ Pass ]
 
 # Skip as many tests are flaky.
 imported/w3c/web-platform-tests/pointerevents [ Skip ]
@@ -311,7 +317,6 @@ imported/w3c/web-platform-tests/html/canvas/offscreen/manual/wide-gamut-canvas/2
 imported/w3c/web-platform-tests/html/dom/documents/dom-tree-accessors/Document.currentScript.html [ Failure ]
 imported/w3c/web-platform-tests/html/dom/reflection-embedded.html [ Failure Pass ]
 imported/w3c/web-platform-tests/html/semantics/forms/textfieldselection/selection-not-application.html?week,month [ Failure ]
-imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html?101-last [ Failure ]
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.html [ Skip ]
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html?101-last [ Failure Pass ]
 imported/w3c/web-platform-tests/IndexedDB/structured-clone.any.worker.html [ Skip ]
@@ -565,8 +570,6 @@ webkit.org/b/206653 imported/w3c/web-platform-tests/clipboard-apis/async-navigat
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-no-quirks.html [ Failure ]
 webkit.org/b/208869 fast/images/inline-image-box-with-no-alt-should-collapse-quirks.html [ Failure ]
 
-webkit.org/b/223402 fast/inline/hyphenation-when-overflow-wrap-is-break-word.html [ ImageOnlyFailure ]
-
 webkit.org/b/208982 imported/w3c/web-platform-tests/html/rendering/widgets/button-layout/computed-style.html [ Failure ]
 
 webkit.org/b/208985 fast/viewport/ios/shrink-to-fit-large-content-width.html [ Failure ]
@@ -597,9 +600,6 @@ webkit.org/b/166941 imported/w3c/web-platform-tests/css/css-writing-modes/forms/
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-out-of-flow-002.html [ Pass ]
 webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-punctuation-001.html [ ImageOnlyFailure ]
 webkit.org/b/214290 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens-span-002.html [ Pass ]
-
-webkit.org/b/210262 fast/selectors/text-field-selection-stroke-color.html [ ImageOnlyFailure ]
-webkit.org/b/210262 fast/selectors/text-field-selection-text-shadow.html [ ImageOnlyFailure ]
 
 # Only enabled on Mac/iOS so far.
 Bug(WPE) contentfiltering/ [ Skip ]
@@ -669,7 +669,6 @@ webkit.org/b/252954 imported/w3c/web-platform-tests/html/rendering/replaced-elem
 webkit.org/b/252954 imported/w3c/web-platform-tests/html/rendering/replaced-elements/attributes-for-embedded-content-and-images/video-default-object-width-constrained-by-max-height.html [ ImageOnlyFailure ]
 
 webkit.org/b/264660 imported/w3c/web-platform-tests/html/semantics/disabled-elements/event-propagate-disabled-keyboard.tentative.html [ Failure ]
-webkit.org/b/264660 imported/w3c/web-platform-tests/html/semantics/disabled-elements/event-propagate-disabled.tentative.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # 3. UNRESOLVED TESTS
@@ -1081,8 +1080,13 @@ Bug(WPE) svg/animations/animations-paused-when-inserted-in-hidden-document.html 
 Bug(WPE) svg/animations/animations-paused-when-inserted-in-hidden-document2.html [ Skip ]
 
 webkit.org/b/99893 svg/animations/mozilla/animateMotion-mpath-targetChange-1.svg [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/svg/animations/stop-animation-01.html [ Pass ]
 Bug(WPE) svg/text/select-text-svgfont.html [ Failure ]
 Bug(WPE) svg/zoom/page/zoom-zoom-coords.xhtml [ Failure ]
+
+svg/text/kerning.svg [ Pass ]
+svg/text/multichar-glyph.svg [ Pass ]
+svg/text/text-overflow-ellipsis-svgfont-kerning-ligatures.html [ Pass ]
 
 webkit.org/b/188433 svg/custom/href-svg-namespace-static.svg [ ImageOnlyFailure ]
 
@@ -1301,7 +1305,6 @@ Bug(WPE) media/video-canvas-createPattern.html [ Failure ]
 
 webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-006.html [ ImageOnlyFailure ]
 webkit.org/b/262893 imported/w3c/web-platform-tests/css/css-transforms/backface-visibility-hidden-005.html [ ImageOnlyFailure ]
-webkit.org/b/230277 imported/w3c/web-platform-tests/css/css-transforms/scrollable-scroll-3d-transform-z.html [ ImageOnlyFailure ]
 webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg-perspective.html [ ImageOnlyFailure ]
 webkit.org/b/279023 imported/w3c/web-platform-tests/css/css-transforms/composited-under-rotateY-180deg-preserve-3d.html [ ImageOnlyFailure ]
 
@@ -1324,6 +1327,7 @@ fast/canvas/toDataURL-alpha-permutation.html [ ImageOnlyFailure ]
 webgl/1.0.x/conformance/extensions/oes-texture-float-with-video.html [ Timeout ]
 webgl/1.0.x/conformance/extensions/oes-texture-half-float-with-video.html [ Timeout ]
 webgl/pending/conformance/textures/misc/tex-image-video-repeated.html [ Failure ]
+webgl/2.0.y/conformance/extensions/ext-color-buffer-half-float.html [ Pass ]
 
 webkit.org/b/280603 webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-half_float.html [ Failure Timeout ]
 webkit.org/b/280603 webgl/2.0.0/conformance2/textures/video/tex-2d-r11f_g11f_b10f-rgb-unsigned_int_10f_11f_11f_rev.html [ Failure Timeout ]
@@ -1456,7 +1460,6 @@ imported/w3c/web-platform-tests/css/css-transforms/transform-3d-rotateY-stair-ab
 imported/w3c/web-platform-tests/css/css-ui/accent-color-invalidation-currentcolor.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-color-input-background-color-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-color-input-background-size-001.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-background-color-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-bottom-left-radius-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-bottom-right-radius-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-end-end-radius-001.html [ ImageOnlyFailure ]
@@ -1493,6 +1496,8 @@ webkit.org/b/261024 imported/w3c/web-platform-tests/workers/WorkerGlobalScope_Er
 webkit.org/b/261024 js/cached-window-properties.html [ Pass Timeout ]
 webkit.org/b/261024 webgl/1.0.x/conformance/reading/read-pixels-test.html [ Pass Timeout ]
 webkit.org/b/261024 webrtc/vp9.html [ Failure Pass Timeout ]
+
+webrtc/vp8-then-h264.html [ Pass ]
 
 imported/w3c/web-platform-tests/css/filter-effects/background-image-blur-repaint.html [ ImageOnlyFailure ]
 

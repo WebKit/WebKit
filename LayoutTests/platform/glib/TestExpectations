@@ -145,6 +145,7 @@ http/wpt/background-fetch [ Skip ]
 imported/w3c/web-platform-tests/background-fetch [ Pass Failure ]
 
 imported/mozilla/svg/blend-hard-light.svg [ Pass ]
+imported/mozilla/svg/dynamic-textPath-01.svg [ Pass ]
 imported/mozilla/svg/dynamic-textPath-02.svg [ Pass ]
 
 inspector/page/setScreenSizeOverride.html [ Pass ]
@@ -1177,9 +1178,6 @@ media/media-source/media-managedmse-memorypressure.html [ Timeout ]
 media/media-source/media-managedmse-memorypressure-inactive.html [ Timeout ]
 media/media-source/media-managedmse-eviction.html [ Timeout ]
 
-# No MSE in a worker on glib platforms for now (requires GPU process).
-media/media-source/worker/media-managedmse-worker.html [ Timeout ]
-
 webkit.org/b/211995 fast/images/animated-image-mp4.html [ Failure Timeout ]
 
 # Player is often not rendering in image tests, especially in Release
@@ -1436,7 +1434,6 @@ http/tests/push-api [ Skip ]
 #////////////////////////////////////////////////////////////////////////////////////////
 
 webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/presentation-markup/tables/table-002.html [ Failure ]
-webkit.org/b/212080 imported/w3c/web-platform-tests/mathml/relations/css-styling/not-participating-to-parent-layout.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of MathML-related bugs
@@ -1608,7 +1605,6 @@ imported/w3c/web-platform-tests/css/css-masking/clip-path-svg-content/mask-users
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-001.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/painting/reftests/marker-path-011.svg [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/svg/geometry/reftests/circle-003.svg [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/svg/text/reftests/transform-dynamic-change-root.html [ ImageOnlyFailure ]
 svg/animations/animateMotion-additive-2a.svg [ Pass ImageOnlyFailure ]
 svg/animations/animateMotion-additive-2c.svg [ Pass ImageOnlyFailure ]
 svg/as-image/svg-image-with-data-uri-from-canvas.html [ ImageOnlyFailure ]
@@ -1958,8 +1954,6 @@ webkit.org/b/264804 http/tests/resourceLoadStatistics/blocking-in-web-worker-scr
 webkit.org/b/264804 http/tests/resourceLoadStatistics/no-third-party-cookie-blocking-when-itp-is-off.html [ Failure ]
 webkit.org/b/264804 http/tests/resourceLoadStatistics/ping-to-prevalent-resource.html [ Failure ]
 webkit.org/b/264804 http/tests/resourceLoadStatistics/third-party-cookie-blocking-on-sites-without-user-interaction.html [ Failure ]
-webkit.org/b/264804 http/tests/websocket/tests/hybi/websocket-allowed-setting-cookie-as-third-party.https.html [ Failure ]
-webkit.org/b/264804 http/tests/websocket/tests/hybi/websocket-cookie-overwrite-behavior.https.html [ Failure ]
 webkit.org/b/264804 http/tests/resourceLoadStatistics/operating-dates-all-but-cookies-not-removed-with-user-interaction-6-days-ago.html [ Pass Timeout ]
 
 webkit.org/b/264805 imported/w3c/web-platform-tests/websockets/basic-auth.any.html?wss [ Failure ]
@@ -2374,8 +2368,6 @@ webkit.org/b/252878 webrtc/audio-peer-connection-webaudio.html [ Failure Pass Ti
 webkit.org/b/252878 webrtc/audio-samplerate-change.html [ Pass Timeout ]
 webkit.org/b/252878 webrtc/datachannel/bufferedAmountLowThreshold-default.html [ Failure Pass ]
 webkit.org/b/252878 webrtc/video-h264.html [ Pass Timeout ]
-imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpReceiver-jitterBufferTarget-stats.html [ Failure ]
-imported/w3c/web-platform-tests/webrtc-extensions/RTCRtpTransceiver-headerExtensionControl.html [ Failure ]
 
 imported/w3c/web-platform-tests/mediacapture-streams/GUM-required-constraint-with-ideal-value.https.html [ Failure ]
 imported/w3c/web-platform-tests/mediacapture-streams/MediaStream-MediaElement-preload-none.https.html [ Failure ]
@@ -2599,9 +2591,6 @@ webkit.org/b/214472 imported/w3c/web-platform-tests/css/css-images/normalization
 
 # Reftest-wait timeouts
 webkit.org/b/186045 imported/w3c/web-platform-tests/css/css-values/vh_not_refreshing_on_chrome.html [ Timeout ]
-
-webkit.org/b/186485 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/accumulation-per-property-002.html [ Failure ]
-webkit.org/b/186486 imported/w3c/web-platform-tests/web-animations/animation-model/animation-types/addition-per-property-002.html [ Failure ]
 
 webkit.org/b/203448 imported/w3c/web-platform-tests/css/css-position/position-absolute-dynamic-static-position-table-cell.html [ Pass ]
 
@@ -3139,7 +3128,6 @@ webkit.org/b/264577 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphens
 webkit.org/b/264577 imported/w3c/web-platform-tests/css/css-text/line-breaking/line-breaking-replaced-002.html [ ImageOnlyFailure ]
 
 webkit.org/b/264580 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-color-input-background-color-001.html [ ImageOnlyFailure ]
-webkit.org/b/264580 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-background-color-001.html [ ImageOnlyFailure ]
 webkit.org/b/264580 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-bottom-left-radius-001.html [ ImageOnlyFailure ]
 webkit.org/b/264580 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-bottom-right-radius-001.html [ ImageOnlyFailure ]
 webkit.org/b/264580 imported/w3c/web-platform-tests/css/css-ui/compute-kind-widget-generated/kind-of-widget-fallback-select-dropdown-box-border-end-end-radius-001.html [ ImageOnlyFailure ]
@@ -3621,8 +3609,6 @@ webkit.org/b/207062 webkit.org/b/244776 imported/w3c/web-platform-tests/media-so
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/background-clip-content-box-002.html [ ImageOnlyFailure ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-space-8.html [ ImageOnlyFailure Pass ]
 webkit.org/b/255101 imported/w3c/web-platform-tests/css/css-backgrounds/border-image-repeat-space-9.html [ ImageOnlyFailure Pass ]
-
-webkit.org/b/230315 imported/w3c/web-platform-tests/mathml/presentation-markup/direction/direction-006.html [ ImageOnlyFailure ]
 
 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/mathml/presentation-markup/fractions/frac-linethickness-006.html [ ImageOnlyFailure ]
@@ -4112,10 +4098,6 @@ imported/w3c/web-platform-tests/css/css-view-transitions/no-raf-while-render-blo
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/at-rule-opt-in-auto.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/mismatched-snapshot-containing-block-size-skips.html [ Skip ]
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-push-navigation.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-push-with-redirect.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-replace-navigation.html [ Failure ]
-imported/w3c/web-platform-tests/css/css-view-transitions/navigation/pageswap-traverse-navigation-no-bfcache.https.html [ Failure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-mutable.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types-no-cascade.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/navigation/with-types/at-rule-opt-in-auto-with-types.html [ ImageOnlyFailure ]
@@ -4267,8 +4249,6 @@ imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking
 imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-011.html [ Failure ]
 imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-020.html [ Failure ]
 imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-021.html [ Failure ]
-imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-024.html [ Failure ]
-imported/w3c/web-platform-tests/html/dom/render-blocking/element-render-blocking-027.html [ Failure ]
 
 imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Failure ]
 
