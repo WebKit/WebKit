@@ -110,6 +110,8 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifie
     case NamedCurve::X25519:
         if (keyData.crv != "X25519"_s)
             return nullptr;
+        if (keyData.ext && !keyData.ext.value() && extractable)
+            return nullptr;
         // FIXME: Add further checks.
         break;
     }
