@@ -41,6 +41,9 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/SortedArrayMap.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+
 
 namespace WebCore {
 using namespace JSC;
@@ -393,5 +396,8 @@ template<> ASCIILiteral expectedEnumerationValues<TestStandaloneDictionary::Enum
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 
 #endif // ENABLE(Condition1)

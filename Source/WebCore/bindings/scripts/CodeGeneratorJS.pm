@@ -6609,12 +6609,18 @@ sub GenerateDictionaryImplementation
     # - Add default header template
     push(@implContentHeader, GenerateImplementationContentHeader($dictionary));
 
+    push(@implContent, "\n");
+    push(@implContent, "WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN\n");
+    push(@implContent, "\n");
     push(@implContent, "\n\nnamespace WebCore {\n");
     push(@implContent, "using namespace JSC;\n\n");
     push(@implContent, GenerateDictionaryImplementationContent($dictionary, $className));
     push(@implContent, GenerateEnumerationsImplementationContent($dictionary, $enumerations));
     push(@implContent, GenerateDictionariesImplementationContent($dictionary, $otherDictionaries)) if $otherDictionaries;
     push(@implContent, "} // namespace WebCore\n");
+    push(@implContent, "\n");
+    push(@implContent, "WTF_ALLOW_UNSAFE_BUFFER_USAGE_END\n");
+    push(@implContent, "\n");
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($dictionary);
     push(@implContent, "\n#endif // ${conditionalString}\n") if $conditionalString;

@@ -182,6 +182,8 @@ class Trie:
         return max
 
     def printAsC(self):
+        print("WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN")
+        print("")
         print("namespace JSC {")
         print("")
         print("static ALWAYS_INLINE bool cannotBeIdentPartOrEscapeStart(LChar);")
@@ -210,6 +212,8 @@ class Trie:
         print("}")
         print("")
         print("} // namespace JSC")
+        print("")
+        print("WTF_ALLOW_UNSAFE_BUFFER_USAGE_END")
 
 keywords = parseKeywords(keywordsText)
 trie = Trie("")
