@@ -92,13 +92,13 @@ void testLoadPreIndex32()
 
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    auto arguments = cCallArgumentValues<int64_t>(proc, root);
+    auto arguments = cCallArgumentValues<intptr_t>(proc, root);
     BasicBlock* loopTest = proc.addBlock();
     BasicBlock* loopBody = proc.addBlock();
     BasicBlock* done = proc.addBlock();
 
     Variable* r = proc.addVariable(Int32);
-    Variable* p = proc.addVariable(Int64);
+    Variable* p = proc.addVariable(pointerType());
 
     // ---------------------- Root_Block
     // r1 = 0
@@ -127,7 +127,7 @@ void testLoadPreIndex32()
     // r3 = r2 + load(p3)
     // Upsilon(r3, ^r2)
     // goto loop
-    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<Const64Value>(proc, Origin(), 4));
+    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<ConstPtrValue>(proc, Origin(), 4));
     loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p3);
     Value* r3 = loopBody->appendNew<Value>(proc, Add, Origin(), r2, loopBody->appendNew<MemoryValue>(proc, Load, Int32, Origin(), p3));
     loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r3);
@@ -166,13 +166,13 @@ void testLoadPreIndex64()
 
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    auto arguments = cCallArgumentValues<int64_t>(proc, root);
+    auto arguments = cCallArgumentValues<intptr_t>(proc, root);
     BasicBlock* loopTest = proc.addBlock();
     BasicBlock* loopBody = proc.addBlock();
     BasicBlock* done = proc.addBlock();
 
     Variable* r = proc.addVariable(Int64);
-    Variable* p = proc.addVariable(Int64);
+    Variable* p = proc.addVariable(pointerType());
 
     // ---------------------- Root_Block
     // r1 = 0
@@ -201,7 +201,7 @@ void testLoadPreIndex64()
     // r3 = r2 + load(p3)
     // Upsilon(r3, ^r2)
     // goto loop
-    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<Const64Value>(proc, Origin(), 8));
+    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<ConstPtrValue>(proc, Origin(), 8));
     loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p3);
     Value* r3 = loopBody->appendNew<Value>(proc, Add, Origin(), r2, loopBody->appendNew<MemoryValue>(proc, Load, Int64, Origin(), p3));
     loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r3);
@@ -240,13 +240,13 @@ void testLoadPostIndex32()
 
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    auto arguments = cCallArgumentValues<int64_t>(proc, root);
+    auto arguments = cCallArgumentValues<intptr_t>(proc, root);
     BasicBlock* loopTest = proc.addBlock();
     BasicBlock* loopBody = proc.addBlock();
     BasicBlock* done = proc.addBlock();
 
     Variable* r = proc.addVariable(Int32);
-    Variable* p = proc.addVariable(Int64);
+    Variable* p = proc.addVariable(pointerType());
 
     // ---------------------- Root_Block
     // r1 = 0
@@ -276,7 +276,7 @@ void testLoadPostIndex32()
     // Upsilon(p3, ^p2)
     // goto loop
     Value* r3 = loopBody->appendNew<Value>(proc, Add, Origin(), r2, loopBody->appendNew<MemoryValue>(proc, Load, Int32, Origin(), p2));
-    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<Const64Value>(proc, Origin(), 4));
+    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<ConstPtrValue>(proc, Origin(), 4));
     loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r3);
     loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p3);
     loopBody->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
@@ -314,13 +314,13 @@ void testLoadPostIndex64()
 
     Procedure proc;
     BasicBlock* root = proc.addBlock();
-    auto arguments = cCallArgumentValues<int64_t>(proc, root);
+    auto arguments = cCallArgumentValues<intptr_t>(proc, root);
     BasicBlock* loopTest = proc.addBlock();
     BasicBlock* loopBody = proc.addBlock();
     BasicBlock* done = proc.addBlock();
 
     Variable* r = proc.addVariable(Int64);
-    Variable* p = proc.addVariable(Int64);
+    Variable* p = proc.addVariable(pointerType());
 
     // ---------------------- Root_Block
     // r1 = 0
@@ -350,7 +350,7 @@ void testLoadPostIndex64()
     // Upsilon(p3, ^p2)
     // goto loop
     Value* r3 = loopBody->appendNew<Value>(proc, Add, Origin(), r2, loopBody->appendNew<MemoryValue>(proc, Load, Int64, Origin(), p2));
-    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<Const64Value>(proc, Origin(), 8));
+    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<ConstPtrValue>(proc, Origin(), 8));
     loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r3);
     loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p3);
     loopBody->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
@@ -388,12 +388,13 @@ void testLoadPreIndex32WithStore()
 
     Procedure proc;
     BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<intptr_t>(proc, root);
     BasicBlock* loopTest = proc.addBlock();
     BasicBlock* loopBody = proc.addBlock();
     BasicBlock* done = proc.addBlock();
 
     Variable* r = proc.addVariable(Int32);
-    Variable* p = proc.addVariable(Int64);
+    Variable* p = proc.addVariable(pointerType());
 
     // ---------------------- Root_Block
     // r1 = 0
@@ -402,7 +403,7 @@ void testLoadPreIndex32WithStore()
     // Upsilon(p1, ^p2)
     Value* r1 = root->appendIntConstant(proc, Origin(), Int32, 0);
     root->appendNew<VariableValue>(proc, B3::Set, Origin(), r, r1);
-    Value* p1 = root->appendNew<ArgumentRegValue>(proc, Origin(), GPRInfo::argumentGPR0);
+    Value* p1 = arguments[0];
     root->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p1);
     root->appendNewControlValue(proc, Jump, Origin(), FrequentedBlock(loopTest));
 
@@ -424,7 +425,7 @@ void testLoadPreIndex32WithStore()
     // r3 = r2 + load(p3)
     // Upsilon(r3, ^r2)
     // goto loop
-    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<Const64Value>(proc, Origin(), 4));
+    Value* p3 = loopBody->appendNew<Value>(proc, Add, Origin(), p2, loopBody->appendNew<ConstPtrValue>(proc, Origin(), 4));
     loopBody->appendNew<VariableValue>(proc, B3::Set, Origin(), p, p3);
     Value* p3Prime = loopBody->appendNew<Value>(proc, Opaque, Origin(), p3);
     loopBody->appendNew<MemoryValue>(proc, Store, Origin(), loopBody->appendNew<Const32Value>(proc, Origin(), 5), p3Prime);
@@ -559,7 +560,7 @@ void testStorePostIndex64()
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "], #8");
-    intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
+    intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4ULL);
     ptr = bitwise_cast<int64_t*>(res);
     CHECK_EQ(nums[1], 4);
     CHECK_EQ(nums[2], *ptr);
