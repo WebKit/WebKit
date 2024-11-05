@@ -401,11 +401,6 @@ bool MediaPlayerPrivateMediaFoundation::didLoadingProgress() const
     return m_loadingProgress;
 }
 
-void MediaPlayerPrivateMediaFoundation::setPresentationSize(const IntSize& size)
-{
-    m_size = size;
-}
-
 void MediaPlayerPrivateMediaFoundation::paint(GraphicsContext& context, const FloatRect& rect)
 {
     if (context.paintingDisabled() || !m_visible)
@@ -884,18 +879,21 @@ void MediaPlayerPrivateMediaFoundation::onBufferingStopped()
 
 void MediaPlayerPrivateMediaFoundation::onSessionStarted()
 {
+    RefPtr<MediaPlayer> player = m_player.get();
+    if (!player)
+        return;
     m_sessionEnded = false;
     if (m_seeking) {
         m_seeking = false;
         if (m_paused)
             m_mediaSession->Pause();
-        if (auto player = m_player.get())
-            player->timeChanged();
+        player->timeChanged();
         return;
     }
 
     if (auto videoDisplay = this->videoDisplay()) {
-        RECT rc = { 0, 0, m_size.width(), m_size.height() };
+        IntSize size = player->presentationSize();
+        RECT rc = { 0, 0, size.width(), size.height() };
         videoDisplay->SetVideoPosition(nullptr, &rc);
     }
 

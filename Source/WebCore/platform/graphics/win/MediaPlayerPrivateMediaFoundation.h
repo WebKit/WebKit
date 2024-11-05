@@ -109,8 +109,6 @@ public:
 
     bool didLoadingProgress() const final;
 
-    void setPresentationSize(const IntSize&) final;
-
     void paint(GraphicsContext&, const FloatRect&) final;
 
     DestinationColorSpace colorSpace() final;
@@ -130,7 +128,6 @@ private:
 
     WeakPtr<MediaPlayerPrivateMediaFoundation> m_weakThis;
     ThreadSafeWeakPtr<MediaPlayer> m_player;
-    IntSize m_size;
     bool m_visible;
     bool m_loadingProgress;
     bool m_paused;
