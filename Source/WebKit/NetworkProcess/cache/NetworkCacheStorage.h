@@ -53,6 +53,7 @@ public:
     static RefPtr<Storage> open(const String& cachePath, Mode, size_t capacity);
 
     struct Record {
+        Record isolatedCopy() const & { return { crossThreadCopy(key), timeStamp, header, body, bodyHash }; }
         Key key;
         WallTime timeStamp;
         Data header;

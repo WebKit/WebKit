@@ -74,7 +74,7 @@ struct Storage::ReadOperation {
 public:
     ReadOperation(Storage& storage, const Key& key, unsigned priority, RetrieveCompletionHandler&& completionHandler)
         : storage(storage)
-        , key(key)
+        , key(crossThreadCopy(key))
         , ordinal(nextReadOperationOrdinal())
         , priority(priority)
         , completionHandler(WTFMove(completionHandler))
@@ -138,9 +138,9 @@ bool Storage::ReadOperation::finish()
 struct Storage::WriteOperation {
     WTF_MAKE_TZONE_ALLOCATED(Storage::WriteOperation);
 public:
-    WriteOperation(Storage& storage, const Record& record, MappedBodyHandler&& mappedBodyHandler, CompletionHandler<void(int)>&& completionHandler)
+    WriteOperation(Storage& storage, const Record& inputRecord, MappedBodyHandler&& mappedBodyHandler, CompletionHandler<void(int)>&& completionHandler)
         : storage(storage)
-        , record(record)
+        , record(crossThreadCopy(inputRecord))
         , mappedBodyHandler(WTFMove(mappedBodyHandler))
         , completionHandler(WTFMove(completionHandler))
     { }
@@ -596,10 +596,10 @@ void Storage::readRecord(ReadOperation& readOperation, const Data& recordData)
 
     readOperation.expectedBodyHash = metaData.bodyHash;
     readOperation.resultRecord = makeUnique<Storage::Record>(Storage::Record {
-        metaData.key,
+        crossThreadCopy(WTFMove(metaData.key)), // The record will be accessed on main thread.
         metaData.timeStamp,
-        headerData,
-        bodyData,
+        WTFMove(headerData),
+        WTFMove(bodyData),
         metaData.bodyHash
     });
 }
