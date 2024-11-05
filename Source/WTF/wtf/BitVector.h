@@ -373,12 +373,13 @@ public:
     iterator begin() const { return iterator(*this, findBit(0, true)); }
     iterator end() const { return iterator(*this, size()); }
 
-    unsigned outOfLineMemoryUse() const
+    static unsigned outOfLineMemoryUse(size_t bitCount)
     {
-        if (isInline())
+        if (bitCount <= maxInlineBits())
             return 0;
-        return byteCount(size());
+        return byteCount(bitCount);
     }
+    unsigned outOfLineMemoryUse() const { return outOfLineMemoryUse(size()); }
         
     WTF_EXPORT_PRIVATE void shiftRightByMultipleOf64(size_t);
 
