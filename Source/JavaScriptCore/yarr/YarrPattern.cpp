@@ -288,28 +288,28 @@ public:
             case CanonicalizeSet: {
                 UChar ch;
                 for (auto* set = canonicalCharacterSetInfo(info->value, m_canonicalMode); (ch = *set); ++set)
-                    addSorted(m_matchesUnicode, ch);
+                    addSorted(ch);
                 break;
             }
             case CanonicalizeRangeLo:
-                addSortedRange(m_rangesUnicode, lo + info->value, end + info->value);
+                addSortedRange(lo + info->value, end + info->value);
                 break;
             case CanonicalizeRangeHi:
-                addSortedRange(m_rangesUnicode, lo - info->value, end - info->value);
+                addSortedRange(lo - info->value, end - info->value);
                 break;
             case CanonicalizeAlternatingAligned:
                 // Use addSortedRange since there is likely an abutting range to combine with.
                 if (lo & 1)
-                    addSortedRange(m_rangesUnicode, lo - 1, lo - 1);
+                    addSortedRange(lo - 1, lo - 1);
                 if (!(end & 1))
-                    addSortedRange(m_rangesUnicode, end + 1, end + 1);
+                    addSortedRange(end + 1, end + 1);
                 break;
             case CanonicalizeAlternatingUnaligned:
                 // Use addSortedRange since there is likely an abutting range to combine with.
                 if (!(lo & 1))
-                    addSortedRange(m_rangesUnicode, lo - 1, lo - 1);
+                    addSortedRange(lo - 1, lo - 1);
                 if (end & 1)
-                    addSortedRange(m_rangesUnicode, end + 1, end + 1);
+                    addSortedRange(end + 1, end + 1);
                 break;
             }
 
@@ -562,6 +562,18 @@ private:
 
         // CharacterRange comes after all existing ranges.
         ranges.append(CharacterRange(lo, hi));
+    }
+
+
+    void addSortedRange(char32_t lo, char32_t hi)
+    {
+        if (isASCII(lo)) {
+            addSortedRange(m_ranges, lo, std::min<char32_t>(hi, 0x7f));
+            if (isASCII(hi))
+                return;
+            lo = 0x80;
+        }
+        addSortedRange(m_rangesUnicode, lo, hi);
     }
 
     void mergeRangesFrom(Vector<CharacterRange>& ranges, size_t index)
