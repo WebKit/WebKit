@@ -158,6 +158,8 @@ private:
     void removeFromParent();
     void removeAllChildren();
 
+    void paintPreserves3DHolePunch(TextureMapperPlatformLayer*, const TransformationMatrix&, TextureMapperPaintOptions&);
+
     enum class ComputeOverlapRegionMode : uint8_t {
         Intersection,
         Union,

@@ -53,6 +53,8 @@ private:
 
     std::unique_ptr<Nicosia::GCGLANGLELayer> m_nicosiaLayer;
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
+    void notifyVideoPosition(const FloatRect&, const TransformationMatrix&) override;
+    void paintTransparentRectangle(TextureMapper&, const FloatRect&, const TransformationMatrix&) override;
 };
 
 } // namespace WebCore
