@@ -197,6 +197,8 @@ void RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll()
         const auto& update = scrollUpdates[i];
         bool isLastUpdate = i == scrollUpdates.size() - 1;
 
+        webPageProxy->scrollingNodeScrollViewDidScroll(update.nodeID);
+
         LOG_WITH_STREAM(Scrolling, stream << "RemoteScrollingCoordinatorProxy::sendScrollingTreeNodeDidScroll - node " << update.nodeID << " scroll position " << update.scrollPosition << " isLastUpdate " << isLastUpdate);
 
         auto* scrollPerfData = webPageProxy->scrollingPerformanceData();
