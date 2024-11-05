@@ -34,8 +34,6 @@
 #import <WebKit/_WKTextPreview.h>
 #endif
 
-#import <WebKit/WKWebView.h>
-
 NS_ASSUME_NONNULL_BEGIN
 
 @class WKIntelligenceTextEffectCoordinator;
