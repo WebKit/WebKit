@@ -7295,7 +7295,7 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
             self.command += ['--delete-results']
         elif CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES and self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH:
             self.command += [
-                '--check-expectations'
+                '--check-expectations',
                 '--builder-name', self.getProperty('buildername', ''),
                 '--build-number', self.getProperty('buildnumber', ''),
                 '--buildbot-worker', self.getProperty('workername', ''),
