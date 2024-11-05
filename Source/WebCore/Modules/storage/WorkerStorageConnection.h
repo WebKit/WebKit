@@ -52,9 +52,9 @@ private:
 
     WeakPtr<WorkerGlobalScope, WeakPtrImplWithEventTargetData> m_scope;
     uint64_t m_lastCallbackIdentifier { 0 };
-    UncheckedKeyHashMap<uint64_t, StorageConnection::PersistCallback> m_getPersistedCallbacks;
-    UncheckedKeyHashMap<uint64_t, StorageConnection::GetEstimateCallback> m_getEstimateCallbacks;
-    UncheckedKeyHashMap<uint64_t, StorageConnection::GetDirectoryCallback> m_getDirectoryCallbacks;
+    HashMap<uint64_t, StorageConnection::PersistCallback> m_getPersistedCallbacks;
+    HashMap<uint64_t, StorageConnection::GetEstimateCallback> m_getEstimateCallbacks;
+    HashMap<uint64_t, StorageConnection::GetDirectoryCallback> m_getDirectoryCallbacks;
 };
 
 } // namespace WebCore

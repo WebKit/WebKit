@@ -180,13 +180,13 @@ private:
 
     String trackIdFromSDPMedia(const GstSDPMedia&);
 
-    UncheckedKeyHashMap<String, RealtimeMediaSource::Type> m_mediaForMid;
+    HashMap<String, RealtimeMediaSource::Type> m_mediaForMid;
 
     GStreamerPeerConnectionBackend& m_peerConnectionBackend;
     GRefPtr<GstElement> m_webrtcBin;
     GRefPtr<GstElement> m_pipeline;
 
-    UncheckedKeyHashMap<String, RefPtr<MediaStream>> m_remoteStreamsById;
+    HashMap<String, RefPtr<MediaStream>> m_remoteStreamsById;
 
     Ref<GStreamerStatsCollector> m_statsCollector;
 
@@ -202,11 +202,11 @@ private:
     UniqueRef<GStreamerDataChannelHandler> findOrCreateIncomingChannelHandler(GRefPtr<GstWebRTCDataChannel>&&);
 
     using DataChannelHandlerIdentifier = ObjectIdentifier<GstWebRTCDataChannel>;
-    UncheckedKeyHashMap<DataChannelHandlerIdentifier, UniqueRef<GStreamerDataChannelHandler>> m_incomingDataChannels;
+    HashMap<DataChannelHandlerIdentifier, UniqueRef<GStreamerDataChannelHandler>> m_incomingDataChannels;
 
     RefPtr<UniqueSSRCGenerator> m_ssrcGenerator;
 
-    UncheckedKeyHashMap<GRefPtr<GstWebRTCRTPTransceiver>, RefPtr<GStreamerIncomingTrackProcessor>> m_trackProcessors;
+    HashMap<GRefPtr<GstWebRTCRTPTransceiver>, RefPtr<GStreamerIncomingTrackProcessor>> m_trackProcessors;
 
     Vector<String> m_pendingIncomingMediaStreamIDs;
 

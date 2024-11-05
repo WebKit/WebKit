@@ -47,10 +47,10 @@ public:
     virtual String handshakeString() = 0;
 
     // This should validate the server's response parameters which are passed
-    // as UncheckedKeyHashMap<key, value>. This may also do something for the extension.
+    // as HashMap<key, value>. This may also do something for the extension.
     // Note that this method may be called more than once when the server
     // response contains duplicate extension token that matches extensionToken().
-    virtual bool processResponse(const UncheckedKeyHashMap<String, String>&) = 0;
+    virtual bool processResponse(const HashMap<String, String>&) = 0;
 
     // If procecssResponse() returns false, this should provide the reason.
     virtual String failureReason() { return makeString("Extension "_s, m_extensionToken, " failed"_s); }

@@ -130,9 +130,9 @@ private:
     bool m_closedInServer { false };
 
     RefPtr<IDBTransaction> m_versionChangeTransaction;
-    UncheckedKeyHashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_activeTransactions;
-    UncheckedKeyHashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
-    UncheckedKeyHashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_activeTransactions;
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_committingTransactions;
+    HashMap<IDBResourceIdentifier, RefPtr<IDBTransaction>> m_abortingTransactions;
     
     const EventNames& m_eventNames; // Need to cache this so we can use it from GC threads.
 

@@ -95,7 +95,7 @@ private:
 
     bool m_closePending { false };
 
-    UncheckedKeyHashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabaseTransaction>> m_transactionMap;
+    HashMap<IDBResourceIdentifier, RefPtr<UniqueIDBDatabaseTransaction>> m_transactionMap;
 };
 
 } // namespace IDBServer

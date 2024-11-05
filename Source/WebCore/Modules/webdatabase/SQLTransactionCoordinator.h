@@ -58,7 +58,7 @@ private:
         RefPtr<SQLTransaction> activeWriteTransaction;
     };
     // Maps database names to information about pending transactions
-    typedef UncheckedKeyHashMap<String, CoordinationInfo> CoordinationInfoMap;
+    typedef HashMap<String, CoordinationInfo> CoordinationInfoMap;
     CoordinationInfoMap m_coordinationInfoMap;
     bool m_isShuttingDown;
 

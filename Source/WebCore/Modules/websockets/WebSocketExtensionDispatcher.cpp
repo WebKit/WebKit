@@ -68,7 +68,7 @@ const String WebSocketExtensionDispatcher::createHeaderValue() const
     return makeString(interleave(m_processors, [](auto& processor) { return processor->handshakeString(); }, ", "_s));
 }
 
-void WebSocketExtensionDispatcher::appendAcceptedExtension(const String& extensionToken, UncheckedKeyHashMap<String, String>& extensionParameters)
+void WebSocketExtensionDispatcher::appendAcceptedExtension(const String& extensionToken, HashMap<String, String>& extensionParameters)
 {
     m_acceptedExtensionsBuilder.append(m_acceptedExtensionsBuilder.isEmpty() ? ""_s : ", "_s, extensionToken);
     // FIXME: Should use ListHashSet to keep the order of the parameters.
@@ -100,7 +100,7 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
     WebSocketExtensionParser parser(headerValueData.data(), headerValueData.data() + headerValueData.length());
     while (!parser.finished()) {
         String extensionToken;
-        UncheckedKeyHashMap<String, String> extensionParameters;
+        HashMap<String, String> extensionParameters;
         if (!parser.parseExtension(extensionToken, extensionParameters)) {
             fail("Sec-WebSocket-Extensions header is invalid"_s);
             return false;

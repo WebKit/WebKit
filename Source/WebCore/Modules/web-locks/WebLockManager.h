@@ -78,10 +78,10 @@ private:
     class MainThreadBridge;
     RefPtr<MainThreadBridge> m_mainThreadBridge;
 
-    UncheckedKeyHashMap<WebLockIdentifier, RefPtr<DeferredPromise>> m_releasePromises;
+    HashMap<WebLockIdentifier, RefPtr<DeferredPromise>> m_releasePromises;
 
     struct LockRequest;
-    UncheckedKeyHashMap<WebLockIdentifier, LockRequest> m_pendingRequests;
+    HashMap<WebLockIdentifier, LockRequest> m_pendingRequests;
 };
 
 } // namespace WebCore

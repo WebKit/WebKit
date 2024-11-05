@@ -47,7 +47,7 @@ public:
 
 private:
     String handshakeString() final;
-    bool processResponse(const UncheckedKeyHashMap<String, String>&) final;
+    bool processResponse(const HashMap<String, String>&) final;
     String failureReason() final { return m_failureReason; }
 
     WebSocketDeflateFramer& m_framer;
@@ -69,7 +69,7 @@ String WebSocketExtensionDeflateFrame::handshakeString()
     return extensionToken(); // No parameter
 }
 
-bool WebSocketExtensionDeflateFrame::processResponse(const UncheckedKeyHashMap<String, String>& serverParameters)
+bool WebSocketExtensionDeflateFrame::processResponse(const HashMap<String, String>& serverParameters)
 {
     if (m_responseProcessed) {
         m_failureReason = "Received duplicate deflate-frame response"_s;

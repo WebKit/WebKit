@@ -60,7 +60,7 @@ private:
 
     WeakPtr<HTMLPlugInElement, WeakPtrImplWithEventTargetData> m_parentElement;
     RefPtr<YouTubeEmbedShadowElement> m_embedShadowElement;
-    UncheckedKeyHashMap<AtomString, AtomString> m_attributes;
+    HashMap<AtomString, AtomString> m_attributes;
 };
 
 }

@@ -64,12 +64,12 @@ static bool isHTTPQuotedStringTokenCodePoint(UChar c)
 struct MimeType {
     String type;
     String subtype;
-    UncheckedKeyHashMap<String, String> parameters;
+    HashMap<String, String> parameters;
 };
 
-static UncheckedKeyHashMap<String, String> parseParameters(StringView input, size_t position)
+static HashMap<String, String> parseParameters(StringView input, size_t position)
 {
-    UncheckedKeyHashMap<String, String> parameters;
+    HashMap<String, String> parameters;
     while (position < input.length()) {
         while (position < input.length() && isTabOrSpace(input[position]))
             position++;

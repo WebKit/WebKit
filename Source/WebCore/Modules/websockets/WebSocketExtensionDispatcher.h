@@ -50,7 +50,7 @@ public:
     String failureReason() const;
 
 private:
-    void appendAcceptedExtension(const String& extensionToken, UncheckedKeyHashMap<String, String>& extensionParameters);
+    void appendAcceptedExtension(const String& extensionToken, HashMap<String, String>& extensionParameters);
     void fail(const String& reason);
 
     Vector<std::unique_ptr<WebSocketExtensionProcessor>> m_processors;

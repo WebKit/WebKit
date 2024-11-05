@@ -60,9 +60,9 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Notification);
 
 static Lock nonPersistentNotificationMapLock;
-static UncheckedKeyHashMap<WTF::UUID, Notification*>& nonPersistentNotificationMap() WTF_REQUIRES_LOCK(nonPersistentNotificationMapLock)
+static HashMap<WTF::UUID, Notification*>& nonPersistentNotificationMap() WTF_REQUIRES_LOCK(nonPersistentNotificationMapLock)
 {
-    static NeverDestroyed<UncheckedKeyHashMap<WTF::UUID, Notification*>> map;
+    static NeverDestroyed<HashMap<WTF::UUID, Notification*>> map;
     return map;
 }
 

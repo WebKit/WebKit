@@ -529,7 +529,7 @@ std::optional<IsSchemaUpgraded> SQLiteIDBBackingStore::ensureValidObjectStoreInf
     return { IsSchemaUpgraded::Yes };
 }
 
-bool SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate(const UncheckedKeyHashMap<std::pair<IDBObjectStoreIdentifier, uint64_t>, uint64_t>& indexIDMap)
+bool SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate(const HashMap<std::pair<IDBObjectStoreIdentifier, uint64_t>, uint64_t>& indexIDMap)
 {
     SQLiteDatabase& database = *m_sqliteDB;
     SQLiteTransaction transaction(database);
@@ -593,7 +593,7 @@ bool SQLiteIDBBackingStore::migrateIndexInfoTableForIDUpdate(const UncheckedKeyH
     return true;
 }
 
-bool SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate(const UncheckedKeyHashMap<std::pair<IDBObjectStoreIdentifier, uint64_t>, uint64_t>& indexIDMap)
+bool SQLiteIDBBackingStore::migrateIndexRecordsTableForIDUpdate(const HashMap<std::pair<IDBObjectStoreIdentifier, uint64_t>, uint64_t>& indexIDMap)
 {
     SQLiteDatabase& database = *m_sqliteDB;
     SQLiteTransaction transaction(database);
@@ -747,7 +747,7 @@ bool SQLiteIDBBackingStore::addExistingIndex(IDBObjectStoreInfo& objectStoreInfo
     return true;
 }
 
-bool SQLiteIDBBackingStore::handleDuplicateIndexIDs(const UncheckedKeyHashMap<uint64_t, Vector<IDBIndexInfo>>& indexInfoMap, IDBDatabaseInfo& databaseInfo)
+bool SQLiteIDBBackingStore::handleDuplicateIndexIDs(const HashMap<uint64_t, Vector<IDBIndexInfo>>& indexInfoMap, IDBDatabaseInfo& databaseInfo)
 {
     for (auto& iter : indexInfoMap) {
         if (iter.value.size() == 1)
@@ -843,8 +843,8 @@ std::unique_ptr<IDBDatabaseInfo> SQLiteIDBBackingStore::extractExistingDatabaseI
     }
 
     uint64_t maxIndexID = 0;
-    UncheckedKeyHashMap<std::pair<IDBObjectStoreIdentifier, uint64_t>, uint64_t> indexIDMap;
-    UncheckedKeyHashMap<uint64_t, Vector<IDBIndexInfo>> indexInfoMap;
+    HashMap<std::pair<IDBObjectStoreIdentifier, uint64_t>, uint64_t> indexIDMap;
+    HashMap<uint64_t, Vector<IDBIndexInfo>> indexInfoMap;
     {
         auto sql = m_sqliteDB->prepareStatement("SELECT id, name, objectStoreID, keyPath, isUnique, multiEntry FROM IndexInfo;"_s);
         if (!sql) {

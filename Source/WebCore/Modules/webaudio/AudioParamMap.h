@@ -48,12 +48,12 @@ public:
     void initializeMapLike(DOMMapAdapter&);
     void add(const String&, Ref<AudioParam>&&);
 
-    const UncheckedKeyHashMap<String, Ref<AudioParam>>& map() const { return m_map; }
+    const HashMap<String, Ref<AudioParam>>& map() const { return m_map; }
 
 private:
     AudioParamMap();
 
-    UncheckedKeyHashMap<String, Ref<AudioParam>> m_map;
+    HashMap<String, Ref<AudioParam>> m_map;
 };
 
 } // namespace WebCore

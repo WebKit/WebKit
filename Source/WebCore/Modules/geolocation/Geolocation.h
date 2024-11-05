@@ -111,8 +111,8 @@ private:
         bool isEmpty() const;
         void getNotifiersVector(GeoNotifierVector&) const;
     private:
-        typedef UncheckedKeyHashMap<int, RefPtr<GeoNotifier>> IdToNotifierMap;
-        typedef UncheckedKeyHashMap<RefPtr<GeoNotifier>, int> NotifierToIdMap;
+        typedef HashMap<int, RefPtr<GeoNotifier>> IdToNotifierMap;
+        typedef HashMap<RefPtr<GeoNotifier>, int> NotifierToIdMap;
         IdToNotifierMap m_idToNotifierMap;
         NotifierToIdMap m_notifierToIdMap;
     };

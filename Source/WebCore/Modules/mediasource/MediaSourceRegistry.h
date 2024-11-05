@@ -56,7 +56,7 @@ public:
 private:
     MediaSourceRegistry();
     MemoryCompactRobinHoodHashMap<String, std::pair<RefPtr<MediaSource>, ScriptExecutionContextIdentifier>> m_mediaSources;
-    UncheckedKeyHashMap<ScriptExecutionContextIdentifier, HashSet<String>> m_urlsPerContext;
+    HashMap<ScriptExecutionContextIdentifier, HashSet<String>> m_urlsPerContext;
 };
 
 } // namespace WebCore
