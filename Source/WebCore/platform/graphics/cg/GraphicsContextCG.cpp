@@ -330,8 +330,6 @@ void GraphicsContextCG::drawNativeImageInternal(NativeImage& nativeImage, const 
     CGContextStateSaver stateSaver(context, false);
     auto transform = CGContextGetCTM(context);
 
-    convertToDestinationColorSpaceIfNeeded(image);
-
     auto subImage = image;
 
     auto adjustedDestRect = normalizedDestRect;

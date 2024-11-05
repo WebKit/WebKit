@@ -66,14 +66,9 @@ std::optional<DestinationColorSpace> ShareableBitmapConfiguration::validateColor
 #endif
 }
 
-static bool wantsExtendedRange(const DestinationColorSpace& colorSpace)
-{
-    return CGColorSpaceUsesExtendedRange(colorSpace.platformColorSpace());
-}
-
 CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerPixel(const DestinationColorSpace& colorSpace)
 {
-    return wantsExtendedRange(colorSpace) ? 8 : 4;
+    return colorSpace.usesExtendedRange() ? 8 : 4;
 }
 
 CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& size, const DestinationColorSpace& colorSpace)
@@ -92,7 +87,7 @@ CheckedUint32 ShareableBitmapConfiguration::calculateBytesPerRow(const IntSize& 
 CGBitmapInfo ShareableBitmapConfiguration::calculateBitmapInfo(const DestinationColorSpace& colorSpace, bool isOpaque)
 {
     CGBitmapInfo info = 0;
-    if (wantsExtendedRange(colorSpace)) {
+    if (colorSpace.usesExtendedRange()) {
         info |= kCGBitmapFloatComponents | static_cast<CGBitmapInfo>(kCGBitmapByteOrder16Host);
 
         if (isOpaque)

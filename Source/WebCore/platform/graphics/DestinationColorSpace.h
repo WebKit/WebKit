@@ -59,6 +59,10 @@ public:
 
     WEBCORE_EXPORT bool supportsOutput() const;
 
+    bool usesExtendedRange() const;
+    bool usesRec2100TransferFunctions() const;
+    bool usesStandardRange() const { return !usesExtendedRange() && !usesRec2100TransferFunctions(); }
+
 private:
     PlatformColorSpace m_platformColorSpace;
 };
