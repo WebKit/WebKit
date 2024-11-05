@@ -14,11 +14,11 @@
 if (window.internals) {
     var inputs = document.querySelectorAll("input");
     for (var i = 0; i < inputs.length; ++i) {
-        window.internals.setAutoFilledAndObscured(inputs[i], true);
+        window.internals.setAutofilledAndObscured(inputs[i], true);
     }
 
     var dynamicInput = document.createElement("input");
-    window.internals.setAutoFilledAndObscured(dynamicInput, true);
+    window.internals.setAutofilledAndObscured(dynamicInput, true);
     document.querySelector("#container").appendChild(dynamicInput);
 }
 </script>

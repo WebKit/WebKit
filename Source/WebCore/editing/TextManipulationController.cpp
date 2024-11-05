@@ -371,7 +371,7 @@ static bool shouldIgnoreNodeInTextField(const Node& node)
     if (!input)
         return false;
 
-    return input->lastChangeWasUserEdit() || input->isAutoFilled();
+    return input->lastChangeWasUserEdit() || input->autofilled();
 }
 
 TextManipulationController::ManipulationUnit TextManipulationController::createUnit(const Vector<String>& text, Node& textNode)

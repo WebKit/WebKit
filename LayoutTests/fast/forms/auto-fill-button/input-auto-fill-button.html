@@ -8,14 +8,14 @@
 if (window.internals) {
     var inputs = document.querySelectorAll("input");
     for (var i = 0; i < inputs.length; ++i)
-        window.internals.setShowAutoFillButton(inputs[i], "Credentials");
+        window.internals.setAutofillButtonType(inputs[i], "Credentials");
 
     var dynamicInput = document.createElement("input");
-    window.internals.setShowAutoFillButton(dynamicInput, "Credentials");
+    window.internals.setAutofillButtonType(dynamicInput, "Credentials");
     document.querySelector("#container").appendChild(dynamicInput);
 
     var dynamicInput2 = document.createElement("input");
-    window.internals.setShowAutoFillButton(dynamicInput2, "Credentials");
+    window.internals.setAutofillButtonType(dynamicInput2, "Credentials");
     document.querySelector("#container").appendChild(dynamicInput2);
     dynamicInput2.setAttribute("type", "password");
 }

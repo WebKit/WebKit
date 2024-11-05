@@ -388,12 +388,12 @@ public:
     ExceptionOr<bool> wasLastChangeUserEdit(Element& textField);
     bool elementShouldAutoComplete(HTMLInputElement&);
     void setAutofilled(HTMLInputElement&, bool enabled);
-    void setAutoFilledAndViewable(HTMLInputElement&, bool enabled);
-    void setAutoFilledAndObscured(HTMLInputElement&, bool enabled);
+    void setAutofilledAndViewable(HTMLInputElement&, bool enabled);
+    void setAutofilledAndObscured(HTMLInputElement&, bool enabled);
     enum class AutoFillButtonType { None, Contacts, Credentials, StrongPassword, CreditCard, Loading };
-    void setShowAutoFillButton(HTMLInputElement&, AutoFillButtonType);
-    AutoFillButtonType autoFillButtonType(const HTMLInputElement&);
-    AutoFillButtonType lastAutoFillButtonType(const HTMLInputElement&);
+    void setAutofillButtonType(HTMLInputElement&, AutoFillButtonType);
+    AutoFillButtonType autofillButtonType(const HTMLInputElement&);
+    AutoFillButtonType lastAutofillButtonType(const HTMLInputElement&);
     Vector<String> recentSearches(const HTMLInputElement&);
     ExceptionOr<void> scrollElementToRect(Element&, int x, int y, int w, int h);
 

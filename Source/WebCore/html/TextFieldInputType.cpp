@@ -785,7 +785,7 @@ bool TextFieldInputType::shouldDrawCapsLockIndicator() const
     if (!element()->isMutable())
         return false;
 
-    if (element()->hasAutoFillStrongPasswordButton())
+    if (element()->hasAutofillStrongPasswordButton())
         return false;
 
     RefPtr frame { element()->document().frame() };
@@ -810,7 +810,7 @@ void TextFieldInputType::capsLockStateMayHaveChanged()
 bool TextFieldInputType::shouldDrawAutoFillButton() const
 {
     ASSERT(element());
-    return element()->isMutable() && element()->autoFillButtonType() != AutoFillButtonType::None;
+    return element()->isMutable() && element()->autofillButtonType() != AutoFillButtonType::None;
 }
 
 void TextFieldInputType::autoFillButtonElementWasClicked()
@@ -894,7 +894,7 @@ void TextFieldInputType::updateAutoFillButton()
         if (!m_container)
             createContainer();
 
-        AutoFillButtonType autoFillButtonType = element()->autoFillButtonType();
+        AutoFillButtonType autoFillButtonType = element()->autofillButtonType();
         if (!m_autoFillButton)
             createAutoFillButton(autoFillButtonType);
 

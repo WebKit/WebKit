@@ -266,7 +266,7 @@ bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilled() const
     if (!input)
         return false;
     
-    return input->isAutoFilled();
+    return input->autofilled();
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilledAndViewable() const
@@ -275,7 +275,7 @@ bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilledAndViewable() const
     if (!input)
         return false;
 
-    return input->isAutoFilledAndViewable();
+    return input->autofilledAndViewable();
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilledAndObscured() const
@@ -284,7 +284,7 @@ bool InjectedBundleNodeHandle::isHTMLInputElementAutoFilledAndObscured() const
     if (!input)
         return false;
 
-    return input->isAutoFilledAndObscured();
+    return input->autofilledAndObscured();
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutoFilled(bool filled)
@@ -293,7 +293,7 @@ void InjectedBundleNodeHandle::setHTMLInputElementAutoFilled(bool filled)
     if (!input)
         return;
 
-    input->setAutoFilled(filled);
+    input->setAutofilled(filled);
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutoFilledAndViewable(bool autoFilledAndViewable)
@@ -302,7 +302,7 @@ void InjectedBundleNodeHandle::setHTMLInputElementAutoFilledAndViewable(bool aut
     if (!input)
         return;
 
-    input->setAutoFilledAndViewable(autoFilledAndViewable);
+    input->setAutofilledAndViewable(autoFilledAndViewable);
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutoFilledAndObscured(bool autoFilledAndObscured)
@@ -311,7 +311,7 @@ void InjectedBundleNodeHandle::setHTMLInputElementAutoFilledAndObscured(bool aut
     if (!input)
         return;
 
-    input->setAutoFilledAndObscured(autoFilledAndObscured);
+    input->setAutofilledAndObscured(autoFilledAndObscured);
 }
 
 bool InjectedBundleNodeHandle::isHTMLInputElementAutoFillButtonEnabled() const
@@ -320,7 +320,7 @@ bool InjectedBundleNodeHandle::isHTMLInputElementAutoFillButtonEnabled() const
     if (!input)
         return false;
     
-    return input->autoFillButtonType() != AutoFillButtonType::None;
+    return input->autofillButtonType() != AutoFillButtonType::None;
 }
 
 void InjectedBundleNodeHandle::setHTMLInputElementAutoFillButtonEnabled(AutoFillButtonType autoFillButtonType)
@@ -329,7 +329,7 @@ void InjectedBundleNodeHandle::setHTMLInputElementAutoFillButtonEnabled(AutoFill
     if (!input)
         return;
 
-    input->setShowAutoFillButton(autoFillButtonType);
+    input->setAutofillButtonType(autoFillButtonType);
 }
 
 AutoFillButtonType InjectedBundleNodeHandle::htmlInputElementAutoFillButtonType() const
@@ -338,7 +338,7 @@ AutoFillButtonType InjectedBundleNodeHandle::htmlInputElementAutoFillButtonType(
     if (!input)
         return AutoFillButtonType::None;
 
-    return input->autoFillButtonType();
+    return input->autofillButtonType();
 }
 
 AutoFillButtonType InjectedBundleNodeHandle::htmlInputElementLastAutoFillButtonType() const
@@ -347,7 +347,7 @@ AutoFillButtonType InjectedBundleNodeHandle::htmlInputElementLastAutoFillButtonT
     if (!input)
         return AutoFillButtonType::None;
 
-    return input->lastAutoFillButtonType();
+    return input->lastAutofillButtonType();
 }
 
 bool InjectedBundleNodeHandle::isAutoFillAvailable() const
@@ -356,7 +356,7 @@ bool InjectedBundleNodeHandle::isAutoFillAvailable() const
     if (!input)
         return false;
 
-    return input->isAutoFillAvailable();
+    return input->autofillAvailable();
 }
 
 void InjectedBundleNodeHandle::setAutoFillAvailable(bool autoFillAvailable)
@@ -365,7 +365,7 @@ void InjectedBundleNodeHandle::setAutoFillAvailable(bool autoFillAvailable)
     if (!input)
         return;
 
-    input->setAutoFillAvailable(autoFillAvailable);
+    input->setAutofillAvailable(autoFillAvailable);
 }
 
 IntRect InjectedBundleNodeHandle::htmlInputElementAutoFillButtonBounds()

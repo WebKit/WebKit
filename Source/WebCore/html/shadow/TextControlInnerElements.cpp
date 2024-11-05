@@ -85,7 +85,7 @@ RenderPtr<RenderElement> TextControlInnerContainer::createElementRenderer(Render
 static inline bool isStrongPasswordTextField(const Element* element)
 {
     RefPtr inputElement = dynamicDowncast<HTMLInputElement>(element);
-    return inputElement && inputElement->hasAutoFillStrongPasswordButton();
+    return inputElement && inputElement->hasAutofillStrongPasswordButton();
 }
 
 std::optional<Style::ResolvedStyle> TextControlInnerContainer::resolveCustomStyle(const Style::ResolutionContext& resolutionContext, const RenderStyle*)

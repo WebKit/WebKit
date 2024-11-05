@@ -66,25 +66,25 @@ namespace WebCore {
 ALWAYS_INLINE bool isAutofilled(const Element& element)
 {
     auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    return inputElement && inputElement->isAutoFilled();
+    return inputElement && inputElement->autofilled();
 }
 
 ALWAYS_INLINE bool isAutofilledStrongPassword(const Element& element)
 {
     auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    return inputElement && inputElement->isAutoFilled() && inputElement->hasAutoFillStrongPasswordButton();
+    return inputElement && inputElement->autofilled() && inputElement->hasAutofillStrongPasswordButton();
 }
 
 ALWAYS_INLINE bool isAutofilledStrongPasswordViewable(const Element& element)
 {
     auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    return inputElement && inputElement->isAutoFilledAndViewable();
+    return inputElement && inputElement->autofilledAndViewable();
 }
 
 ALWAYS_INLINE bool isAutofilledAndObscured(const Element& element)
 {
     auto* inputElement = dynamicDowncast<HTMLInputElement>(element);
-    return inputElement && inputElement->isAutoFilledAndObscured();
+    return inputElement && inputElement->autofilledAndObscured();
 }
 
 ALWAYS_INLINE bool matchesDefaultPseudoClass(const Element& element)

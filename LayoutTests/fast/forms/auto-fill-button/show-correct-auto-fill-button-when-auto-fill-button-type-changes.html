@@ -6,11 +6,11 @@
 <input id="contacts">
 <script>
 if (window.internals) {
-    internals.setShowAutoFillButton(document.getElementById("credentials"), "Credentials");
-    internals.setShowAutoFillButton(document.getElementById("credentials"), "Contacts");
+    internals.setAutofillButtonType(document.getElementById("credentials"), "Credentials");
+    internals.setAutofillButtonType(document.getElementById("credentials"), "Contacts");
 
-    internals.setShowAutoFillButton(document.getElementById("contacts"), "Contacts");
-    internals.setShowAutoFillButton(document.getElementById("contacts"), "Credentials");
+    internals.setAutofillButtonType(document.getElementById("contacts"), "Contacts");
+    internals.setAutofillButtonType(document.getElementById("contacts"), "Credentials");
 }
 </script>
 </body>

@@ -5248,7 +5248,7 @@ void WebPage::requestDocumentEditingContext(DocumentEditingContextRequest&& requ
     auto isTextObscured = [] (const VisiblePosition& visiblePosition) {
         if (RefPtr textControl = enclosingTextFormControl(visiblePosition.deepEquivalent())) {
             if (auto* input = dynamicDowncast<HTMLInputElement>(textControl.get())) {
-                if (input->isAutoFilledAndObscured())
+                if (input->autofilledAndObscured())
                     return true;
             }
         }

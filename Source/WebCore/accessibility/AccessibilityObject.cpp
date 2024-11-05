@@ -3064,7 +3064,7 @@ bool AccessibilityObject::isValueAutofillAvailable() const
         return false;
 
     RefPtr input = dynamicDowncast<HTMLInputElement>(node());
-    return input && (input->isAutoFillAvailable() || input->autoFillButtonType() != AutoFillButtonType::None);
+    return input && (input->autofillAvailable() || input->autofillButtonType() != AutoFillButtonType::None);
 }
 
 AutoFillButtonType AccessibilityObject::valueAutofillButtonType() const
@@ -3072,7 +3072,7 @@ AutoFillButtonType AccessibilityObject::valueAutofillButtonType() const
     if (!isValueAutofillAvailable())
         return AutoFillButtonType::None;
     
-    return downcast<HTMLInputElement>(*this->node()).autoFillButtonType();
+    return downcast<HTMLInputElement>(*this->node()).autofillButtonType();
 }
 
 bool AccessibilityObject::isSelected() const

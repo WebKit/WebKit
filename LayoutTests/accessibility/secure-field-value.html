@@ -21,15 +21,15 @@ if (window.accessibilityController) {
     output += `#autofill-input value before being obscured: ${lastAutofillValue}\n`;
 
     output += "Making #autofill-input obscured.\n";
-    window.internals.setAutoFilledAndObscured(document.getElementById("autofill-input"), true);
+    window.internals.setAutofilledAndObscured(document.getElementById("autofill-input"), true);
     setTimeout(async function() {
         await waitFor(() => lastAutofillValue !== autofillInput.stringValue);
         lastAutofillValue = autofillInput.stringValue;
         output += `#autofill-input value after being obscured: ${autofillInput.stringValue}\n`;
 
         output += "Making #autofill-input viewable.\n";
-        window.internals.setAutoFilledAndObscured(document.getElementById("autofill-input"), false);
-        window.internals.setAutoFilledAndViewable(document.getElementById("autofill-input"), true);
+        window.internals.setAutofilledAndObscured(document.getElementById("autofill-input"), false);
+        window.internals.setAutofilledAndViewable(document.getElementById("autofill-input"), true);
         await waitFor(() => lastAutofillValue !== autofillInput.stringValue);
         output += `#autofill-input value after being made viewable: ${autofillInput.stringValue}\n`;
 

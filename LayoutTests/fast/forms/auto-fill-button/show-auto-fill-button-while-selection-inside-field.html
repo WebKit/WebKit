@@ -18,7 +18,7 @@ async function runTest() {
 
     await UIHelper.activateElement(input);
 
-    internals.setShowAutoFillButton(input, "Credentials");
+    internals.setAutofillButtonType(input, "Credentials");
 
     await UIHelper.renderingUpdate();
 

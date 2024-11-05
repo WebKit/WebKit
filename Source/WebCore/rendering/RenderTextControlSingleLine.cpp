@@ -156,7 +156,7 @@ void RenderTextControlSingleLine::layout()
         LayoutUnit containerLogicalHeight = containerRenderer->logicalHeight();
 
         CheckedPtr autoFillStrongPasswordButtonRenderer = [&]() -> RenderBox* {
-            if (!inputElement().hasAutoFillStrongPasswordButton())
+            if (!inputElement().hasAutofillStrongPasswordButton())
                 return nullptr;
 
             RefPtr autoFillButtonElement = inputElement().autoFillButtonElement();
@@ -191,7 +191,7 @@ void RenderTextControlSingleLine::layout()
 
     // Fix up the y-position of the container as it may have been flexed when the strong password or strong
     // confirmation password button wraps to the next line.
-    if (inputElement().hasAutoFillStrongPasswordButton() && containerRenderer)
+    if (inputElement().hasAutofillStrongPasswordButton() && containerRenderer)
         containerRenderer->setLogicalTop(oldContainerLogicalTop);
 
     // Center the child block in the block progression direction (vertical centering for horizontal text fields).

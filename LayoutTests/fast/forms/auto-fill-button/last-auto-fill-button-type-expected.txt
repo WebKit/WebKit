@@ -3,25 +3,25 @@ This tests that querying for the last auto fill button type works. This test mus
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS internals.autoFillButtonType(inputElement) is "None"
-internals.setShowAutoFillButton(inputElement, 'Credentials')
-PASS internals.autoFillButtonType(inputElement) is "Credentials"
-PASS internals.lastAutoFillButtonType(inputElement) is "None"
-internals.setShowAutoFillButton(inputElement, 'Contacts')
-PASS internals.autoFillButtonType(inputElement) is "Contacts"
-PASS internals.lastAutoFillButtonType(inputElement) is "Credentials"
-internals.setShowAutoFillButton(inputElement, 'StrongPassword')
-PASS internals.autoFillButtonType(inputElement) is "StrongPassword"
-PASS internals.lastAutoFillButtonType(inputElement) is "Contacts"
-internals.setShowAutoFillButton(inputElement, 'Credentials')
-PASS internals.autoFillButtonType(inputElement) is "Credentials"
-PASS internals.lastAutoFillButtonType(inputElement) is "StrongPassword"
-internals.setShowAutoFillButton(inputElement, 'CreditCard')
-PASS internals.autoFillButtonType(inputElement) is "CreditCard"
-PASS internals.lastAutoFillButtonType(inputElement) is "Credentials"
-internals.setShowAutoFillButton(inputElement, 'None')
-PASS internals.autoFillButtonType(inputElement) is "None"
-PASS internals.lastAutoFillButtonType(inputElement) is "CreditCard"
+PASS internals.autofillButtonType(inputElement) is "None"
+internals.setAutofillButtonType(inputElement, 'Credentials')
+PASS internals.autofillButtonType(inputElement) is "Credentials"
+PASS internals.lastAutofillButtonType(inputElement) is "None"
+internals.setAutofillButtonType(inputElement, 'Contacts')
+PASS internals.autofillButtonType(inputElement) is "Contacts"
+PASS internals.lastAutofillButtonType(inputElement) is "Credentials"
+internals.setAutofillButtonType(inputElement, 'StrongPassword')
+PASS internals.autofillButtonType(inputElement) is "StrongPassword"
+PASS internals.lastAutofillButtonType(inputElement) is "Contacts"
+internals.setAutofillButtonType(inputElement, 'Credentials')
+PASS internals.autofillButtonType(inputElement) is "Credentials"
+PASS internals.lastAutofillButtonType(inputElement) is "StrongPassword"
+internals.setAutofillButtonType(inputElement, 'CreditCard')
+PASS internals.autofillButtonType(inputElement) is "CreditCard"
+PASS internals.lastAutofillButtonType(inputElement) is "Credentials"
+internals.setAutofillButtonType(inputElement, 'None')
+PASS internals.autofillButtonType(inputElement) is "None"
+PASS internals.lastAutofillButtonType(inputElement) is "CreditCard"
 PASS successfullyParsed is true
 
 TEST COMPLETE

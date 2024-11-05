@@ -2373,20 +2373,20 @@ bool Internals::elementShouldAutoComplete(HTMLInputElement& element)
 
 void Internals::setAutofilled(HTMLInputElement& element, bool enabled)
 {
-    element.setAutoFilled(enabled);
+    element.setAutofilled(enabled);
 }
 
-void Internals::setAutoFilledAndViewable(HTMLInputElement& element, bool enabled)
+void Internals::setAutofilledAndViewable(HTMLInputElement& element, bool enabled)
 {
-    element.setAutoFilledAndViewable(enabled);
+    element.setAutofilledAndViewable(enabled);
 }
 
-void Internals::setAutoFilledAndObscured(HTMLInputElement& element, bool enabled)
+void Internals::setAutofilledAndObscured(HTMLInputElement& element, bool enabled)
 {
-    element.setAutoFilledAndObscured(enabled);
+    element.setAutofilledAndObscured(enabled);
 }
 
-static AutoFillButtonType toAutoFillButtonType(Internals::AutoFillButtonType type)
+static AutoFillButtonType toAutofillButtonType(Internals::AutoFillButtonType type)
 {
     switch (type) {
     case Internals::AutoFillButtonType::None:
@@ -2406,7 +2406,7 @@ static AutoFillButtonType toAutoFillButtonType(Internals::AutoFillButtonType typ
     return AutoFillButtonType::None;
 }
 
-static Internals::AutoFillButtonType toInternalsAutoFillButtonType(AutoFillButtonType type)
+static Internals::AutoFillButtonType toInternalsAutofillButtonType(AutoFillButtonType type)
 {
     switch (type) {
     case AutoFillButtonType::None:
@@ -2426,19 +2426,19 @@ static Internals::AutoFillButtonType toInternalsAutoFillButtonType(AutoFillButto
     return Internals::AutoFillButtonType::None;
 }
 
-void Internals::setShowAutoFillButton(HTMLInputElement& element, AutoFillButtonType type)
+void Internals::setAutofillButtonType(HTMLInputElement& element, AutoFillButtonType type)
 {
-    element.setShowAutoFillButton(toAutoFillButtonType(type));
+    element.setAutofillButtonType(toAutofillButtonType(type));
 }
 
-auto Internals::autoFillButtonType(const HTMLInputElement& element) -> AutoFillButtonType
+auto Internals::autofillButtonType(const HTMLInputElement& element) -> AutoFillButtonType
 {
-    return toInternalsAutoFillButtonType(element.autoFillButtonType());
+    return toInternalsAutofillButtonType(element.autofillButtonType());
 }
 
-auto Internals::lastAutoFillButtonType(const HTMLInputElement& element) -> AutoFillButtonType
+auto Internals::lastAutofillButtonType(const HTMLInputElement& element) -> AutoFillButtonType
 {
-    return toInternalsAutoFillButtonType(element.lastAutoFillButtonType());
+    return toInternalsAutofillButtonType(element.lastAutofillButtonType());
 }
 
 Vector<String> Internals::recentSearches(const HTMLInputElement& element)

@@ -19,7 +19,7 @@
         output += `Initial auto-fill available: ${axTextField.boolAttributeValue("AXValueAutofillAvailable")}\n`;
         output += `Auto-fill type: ${axTextField.stringAttributeValue("AXValueAutofillType")}\n`;
 
-        window.internals.setShowAutoFillButton(document.getElementById("textfield"), "Contacts");
+        window.internals.setAutofillButtonType(document.getElementById("textfield"), "Contacts");
         setTimeout(async function() {
             let contactsButton = null;
             // Wait for contacts autofill button to render.
@@ -31,7 +31,7 @@
             output += `Contact button label: ${contactsButton.description}\n`;
             output += `Auto-fill type: ${axTextField.stringAttributeValue("AXValueAutofillType")}\n`;
 
-            window.internals.setShowAutoFillButton(document.getElementById("textfield"), "Credentials");
+            window.internals.setAutofillButtonType(document.getElementById("textfield"), "Credentials");
             // Wait for credentials autofill button to render.
             let credentialsButton = null;
             await waitFor(() => {

@@ -223,7 +223,7 @@ void webkit_web_form_manager_input_element_auto_fill(JSCValue* element, const ch
     if (!input)
         return;
 
-    input->setAutoFilled(true);
+    input->setAutofilled(true);
     input->setValueForUser(String::fromUTF8(value));
 }
 
@@ -245,5 +245,5 @@ gboolean webkit_web_form_manager_input_element_is_auto_filled(JSCValue* element)
 
     RefPtr node = nodeForJSCValue(element);
     RefPtr input = dynamicDowncast<HTMLInputElement>(node);
-    return input && input->isAutoFilled();
+    return input && input->autofilled();
 }
