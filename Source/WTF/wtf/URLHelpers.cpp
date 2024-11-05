@@ -798,9 +798,9 @@ static void applyHostNameFunctionToURLString(const String& string, URLDecodeFunc
     }, authorityStart);
     unsigned hostNameEnd = hostNameTerminator == notFound ? string.length() : hostNameTerminator;
 
-    // Find "@" for the start of the host name.
-    auto userInfoTerminator = StringView { string }.left(hostNameEnd).find('@', authorityStart);
-    unsigned hostNameStart = userInfoTerminator == notFound ? authorityStart : userInfoTerminator + 1;
+    // Find "@" for the start of the host name. There might be more than one and we try to find the last one.
+    auto lastUserInfoTerminator = StringView { string }.left(hostNameEnd).reverseFind('@');
+    unsigned hostNameStart = lastUserInfoTerminator == notFound ? authorityStart : lastUserInfoTerminator + 1;
 
     collectRangesThatNeedMapping(string, hostNameStart, hostNameEnd - hostNameStart, array, decodeFunction);
 }
