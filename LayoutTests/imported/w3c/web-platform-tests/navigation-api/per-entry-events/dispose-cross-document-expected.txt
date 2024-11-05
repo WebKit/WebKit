@@ -1,8 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: Invalid key
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: Invalid key
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT No dispose events are fired due to cross-document forward pruning Test timed out
+PASS No dispose events are fired due to cross-document forward pruning
 

@@ -1,3 +1,6 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+
+Harness Error (TIMEOUT), message = null
+
+TIMEOUT navigation.traverseTo() in an iframe with same-document preventDefault in its parent Test timed out
 

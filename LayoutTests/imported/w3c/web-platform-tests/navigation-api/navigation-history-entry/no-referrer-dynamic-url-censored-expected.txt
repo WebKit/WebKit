@@ -1,3 +1,4 @@
-FAIL: Timed out waiting for notifyDone to be called
 
+
+FAIL The url of a document is censored by a no-referrer policy dynamically assert_equals: expected (object) null but got (string) "http://localhost:8800/common/blank.html"
 

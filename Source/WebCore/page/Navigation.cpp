@@ -97,7 +97,7 @@ static std::optional<size_t> getEntryIndexOfHistoryItem(const Vector<Ref<Navigat
 {
     // FIXME: We could have a more efficient solution than iterating through a list.
     for (size_t index = start; index < entries.size(); index++) {
-        if (entries[index]->associatedHistoryItem() == item)
+        if (entries[index]->associatedHistoryItem().itemSequenceNumber() == item.itemSequenceNumber())
             return index;
     }
 
@@ -126,8 +126,6 @@ void Navigation::initializeForNewWindow(std::optional<NavigationNavigationType> 
         bool shouldProcessPreviousNavigationEntries = [&]() {
             if (!previousNavigation->m_entries.size())
                 return false;
-            if (navigationType == NavigationNavigationType::Traverse)
-                return false;
             if (!frame()->document()->protectedSecurityOrigin()->isSameOriginAs(previousWindow->document()->protectedSecurityOrigin()))
                 return false;
             return true;
@@ -141,17 +139,28 @@ void Navigation::initializeForNewWindow(std::optional<NavigationNavigationType> 
             // FIXME: This should handle Push, however somewhere before here the currentEntry of previousNavigation was updated
             // to the new navigation so we get duplicate entries.
             if (navigationType != NavigationNavigationType::Push) {
-                Ref previousEntry = m_entries[*previousNavigation->m_currentEntryIndex];
+                if (navigationType == NavigationNavigationType::Traverse) {
+                    m_currentEntryIndex = getEntryIndexOfHistoryItem(m_entries, *currentItem);
+                    if (m_currentEntryIndex) {
+                        updateForActivation(frame()->history().previousItem(), navigationType);
+                        return;
+                    }
+                    // We are doing a cross document subframe traversal, we can't rely on previous window, so clear
+                    // m_entries and fall back to the normal algorithm for new windows.
+                    m_entries = { };
+                } else {
+                    Ref previousEntry = m_entries[*previousNavigation->m_currentEntryIndex];
 
-                if (navigationType == NavigationNavigationType::Replace)
-                    m_entries[*previousNavigation->m_currentEntryIndex] = NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), *currentItem);
+                    if (navigationType == NavigationNavigationType::Replace)
+                        m_entries[*previousNavigation->m_currentEntryIndex] = NavigationHistoryEntry::create(protectedScriptExecutionContext().get(), *currentItem);
 
-                m_currentEntryIndex = getEntryIndexOfHistoryItem(m_entries, *currentItem);
+                    m_currentEntryIndex = getEntryIndexOfHistoryItem(m_entries, *currentItem);
 
-                if (navigationType) // Unset in the case of forms/POST requests.
-                    m_activation = NavigationActivation::create(*navigationType, *currentEntry(), WTFMove(previousEntry));
+                    if (navigationType) // Unset in the case of forms/POST requests.
+                        m_activation = NavigationActivation::create(*navigationType, *currentEntry(), WTFMove(previousEntry));
 
-                return;
+                    return;
+                }
             }
         }
     }
@@ -1015,7 +1024,7 @@ Navigation::DispatchResult Navigation::dispatchTraversalNavigateEvent(HistoryIte
 
     RefPtr<NavigationHistoryEntry> destinationEntry;
     auto index = m_entries.findIf([&historyItem](const auto& entry) {
-        return entry->associatedHistoryItem() == historyItem;
+        return entry->associatedHistoryItem().itemSequenceNumber() == historyItem.itemSequenceNumber();
     });
     if (index != notFound)
         destinationEntry = m_entries[index].ptr();
