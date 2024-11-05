@@ -2865,9 +2865,13 @@ webkit.org/b/159755 fast/text/emoji-gender-9.html [ ImageOnlyFailure ]
 webkit.org/b/172056 fast/text/multiglyph-characters.html [ Failure ]
 
 # CSS Shapes tests
-webkit.org/b/166941 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-border-radius-012.html [ ImageOnlyFailure ]
-webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-024.html [ Skip ]
 imported/blink/http/tests/security/shape-image-cors-port.html [ ImageOnlyFailure ]
+
+# 1px off
+webkit.org/b/163706 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-image/shape-image-024.html [ ImageOnlyFailure ]
+
+# webkit.org/b/166941 missing sideways implementation.
+imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-border-radius-012.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/shape-box/shape-outside-border-box-border-radius-011.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-052.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-053.html [ ImageOnlyFailure ]
@@ -2877,10 +2881,6 @@ imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/in
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/inset/shape-outside-inset-027.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-024.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-025.html [ ImageOnlyFailure ]
-
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/circle/shape-outside-circle-056.html [ ImageOnlyFailure Pass ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/ellipse/shape-outside-ellipse-052.html [ ImageOnlyFailure Pass ]
-imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/polygon/shape-outside-polygon-032.html [ ImageOnlyFailure Pass ]
 
 # Temporary failure until we start using ANGLE as a WebGL backend
 webkit.org/b/163924 fast/canvas/webgl/bufferData-offset-length.html [ Pass Failure ]
