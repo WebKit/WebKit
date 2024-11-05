@@ -69,6 +69,11 @@ promise_test(async test => {
     assert_equals(track.getCapabilities().width.max, 100, "track capabilities width 1");
     assert_equals(track.getCapabilities().height.max, 100, "track capabilities height 1");
 
+    const frame = new VideoFrame(video);
+    test.add_cleanup(() => frame.close());
+    assert_equals(frame.codedWidth, 100, "video frame width");
+    assert_equals(frame.codedHeight, 100, "video frame height");
+
     worker.postMessage("mute");
     await new Promise(resolve => track.onmute = resolve);
 

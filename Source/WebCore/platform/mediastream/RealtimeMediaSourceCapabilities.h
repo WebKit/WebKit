@@ -74,6 +74,12 @@ public:
     }
 };
 
+template<typename CapabilityRange, typename T>
+CapabilityRange extendCapabilityRange(const CapabilityRange& range, T value)
+{
+    return { std::min(range.min(), value), std::max(range.max(), value) };
+}
+
 class RealtimeMediaSourceCapabilities {
 public:
     RealtimeMediaSourceCapabilities() = default;
