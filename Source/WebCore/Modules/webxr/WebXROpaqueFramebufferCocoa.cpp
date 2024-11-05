@@ -147,6 +147,7 @@ void WebXROpaqueFramebuffer::startFrame(PlatformXR::FrameData::LayerData& data)
     ScopedWebGLRestoreTexture restoreTexture { m_context, textureTarget };
     ScopedWebGLRestoreRenderbuffer restoreRenderBuffer { m_context };
 
+    gl->bindFramebuffer(GL::FRAMEBUFFER, m_drawFramebuffer->object());
     // https://immersive-web.github.io/webxr/#opaque-framebuffer
     // The buffers attached to an opaque framebuffer MUST be cleared to the values in the provided table when first created,
     // or prior to the processing of each XR animation frame.
@@ -162,10 +163,6 @@ void WebXROpaqueFramebuffer::startFrame(PlatformXR::FrameData::LayerData& data)
         m_completionSyncEvent = MachSendRight(data.layerSetup->completionSyncEvent);
     }
 
-    gl->bindFramebuffer(GL::FRAMEBUFFER, m_drawFramebuffer->object());
-    Vector<GCGLenum, 3> discardAttachments = { GL::COLOR_ATTACHMENT0, GL::DEPTH_ATTACHMENT, GL::STENCIL_ATTACHMENT };
-    gl->framebufferDiscard(GL::FRAMEBUFFER, discardAttachments);
-
     bindCompositorTexturesForDisplay(*gl, data);
     auto displayAttachmentSet = reusableDisplayAttachmentsAtIndex(m_currentDisplayAttachmentIndex);
     ASSERT(displayAttachmentSet);
@@ -180,6 +177,22 @@ void WebXROpaqueFramebuffer::startFrame(PlatformXR::FrameData::LayerData& data)
 
     m_renderingFrameIndex = data.renderingFrameIndex;
     m_blitDepth = data.requestDepth;
+
+    // WebXR must always clear for the rAF of the session. Currently we assume content does not do redundant initial clear,
+    // as the spec says the buffer always starts cleared.
+    ScopedDisableRasterizerDiscard disableRasterizerDiscard { m_context };
+    ScopedEnableBackbuffer enableBackBuffer { m_context };
+    ScopedDisableScissorTest disableScissorTest { m_context };
+    ScopedClearColorAndMask zeroClear { m_context, 0.f, 0.f, 0.f, 0.f, true, true, true, true, };
+    ScopedClearDepthAndMask zeroDepth { m_context, 1.0f, true, m_attributes.depth };
+    ScopedClearStencilAndMask zeroStencil { m_context, 0, 0xFFFFFFFF, m_attributes.stencil };
+    GCGLenum clearMask = GL::COLOR_BUFFER_BIT;
+    if (m_attributes.depth)
+        clearMask |= GL::DEPTH_BUFFER_BIT;
+    if (m_attributes.stencil)
+        clearMask |= GL::STENCIL_BUFFER_BIT;
+    gl->bindFramebuffer(GL::FRAMEBUFFER, m_drawFramebuffer->object());
+    gl->clear(clearMask);
 }
 
 void WebXROpaqueFramebuffer::endFrame()
