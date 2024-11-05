@@ -275,6 +275,11 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         return;
     }
 
+    if (paintInfo.phase == PaintPhase::ClippingMask && style().usedVisibility() == Visibility::Visible) {
+        paintClippingMask(paintInfo, adjustedPaintOffset);
+        return;
+    }
+
     LayoutRect paintRect = LayoutRect(adjustedPaintOffset, size());
     if (paintInfo.phase == PaintPhase::Outline || paintInfo.phase == PaintPhase::SelfOutline) {
         if (style().outlineWidth())
@@ -345,6 +350,7 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const LayoutPoint& paintO
         && paintInfo.phase != PaintPhase::SelfOutline
         && paintInfo.phase != PaintPhase::Selection
         && paintInfo.phase != PaintPhase::Mask
+        && paintInfo.phase != PaintPhase::ClippingMask
         && paintInfo.phase != PaintPhase::EventRegion
         && paintInfo.phase != PaintPhase::Accessibility)
         return false;
