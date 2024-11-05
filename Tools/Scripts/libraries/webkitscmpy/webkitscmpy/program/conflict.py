@@ -30,7 +30,7 @@ from ..commit import Commit
 
 class Conflict(Command):
     name = 'conflict'
-    help = "Given the representative Radar ID of a conflicting merge, checkout the branch."
+    help = "Given the representative Radar ID of a conflicting merge, checkout the branch with conflict markers in place."
     INTEGRATION_BRANCH_PREFIX = 'integration'
 
     @classmethod
@@ -84,11 +84,32 @@ class Conflict(Command):
         radar_id = ''.join(i for i in args.radar if i.isdigit())
         radar_obj = Tracker.from_string(f'rdar://{radar_id}')
         expected_branch = 'integration/conflict/{}'.format(radar_obj.id)
+        conflict_pr = None
+        source_remote = None
         for source_remote in repository.source_remotes():
             rmt = repository.remote(name=source_remote)
             conflict_pr = cls.find_conflict_pr(rmt, radar_obj.id)
             if conflict_pr:
-                return repository.checkout('{}:{}'.format(conflict_pr._metadata['full_name'], conflict_pr.head))
+                break
 
-        sys.stderr.write('No conflict pull request found with branch {}\n'.format(expected_branch))
-        return 1
+        if not conflict_pr:
+            sys.stderr.write('No conflict pull request found with branch {}\n'.format(expected_branch))
+            return 1
+
+        full_branch = '{}:{}'.format(conflict_pr._metadata['full_name'], conflict_pr.head)
+        print('Found conflict branch {}'.format(full_branch))
+        checkout_response = repository.checkout(full_branch)
+
+        msg = "\n\n-------------------------------------------------------"
+        msg += "\nYou are now checked out into the conflict branch.\n"
+        msg += "Conflict markers are present in files.\n"
+        msg += "Please resolve them, amend the commit and force push.\n"
+        msg += "\nAlternatively, if you want to get into the traditional conflict state (ex. `git status` shows conflicting files)\n"
+        msg += "you can run the following commands. Warning: This will require a force push. Any changes made to the pull request branch will therefore be lost."
+        msg += f'\n\ngit reset --hard {source_remote}/{conflict_pr.base}\n'
+        for source in radar_obj.source_changes:
+            source_sha = source.split(', ')[2]
+            msg += 'git cherry-pick {}\n'.format(source_sha)
+        print(msg)
+        return checkout_response
+
