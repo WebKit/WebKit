@@ -428,6 +428,7 @@ enum Opcode : uint8_t {
     VectorRelaxedTruncSat,
     VectorRelaxedMAdd,
     VectorRelaxedNMAdd,
+    VectorRelaxedLaneSelect,
 
     // Currently only some architectures support this.
     // FIXME: Expand this to identical instructions for the other architectures as a macro.

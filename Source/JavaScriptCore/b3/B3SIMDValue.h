@@ -101,6 +101,7 @@ public:
         case VectorRelaxedSwizzle:
         case VectorRelaxedMAdd:
         case VectorRelaxedNMAdd:
+        case VectorRelaxedLaneSelect:
             return true;
         default:
             return false;

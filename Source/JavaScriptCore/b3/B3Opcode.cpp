@@ -555,6 +555,9 @@ void printInternal(PrintStream& out, Opcode opcode)
     case VectorRelaxedNMAdd:
         out.print("VectorRelaxedNMAdd");
         return;
+    case VectorRelaxedLaneSelect:
+        out.print("VectorRelaxedLaneSelect");
+        return;
     case Upsilon:
         out.print("Upsilon");
         return;

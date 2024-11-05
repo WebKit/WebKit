@@ -751,6 +751,7 @@ Effects Value::effects() const
     case VectorRelaxedSwizzle:
     case VectorRelaxedMAdd:
     case VectorRelaxedNMAdd:
+    case VectorRelaxedLaneSelect:
         break;
     case Div:
     case UDiv:
@@ -1012,6 +1013,7 @@ ValueKey Value::key() const
     case VectorRelaxedMAdd:
     case VectorRelaxedNMAdd:
     case VectorBitwiseSelect:
+    case VectorRelaxedLaneSelect:
         numChildrenForKind(kind(), 3);
         return ValueKey(kind(), type(), as<SIMDValue>()->simdInfo(), child(0), child(1), child(2));
     case VectorSwizzle:

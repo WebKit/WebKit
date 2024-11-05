@@ -4416,7 +4416,8 @@ private:
         case B3::VectorBitmask:
             emitSIMDUnaryOp(Air::VectorBitmask);
             return;
-        case B3::VectorBitwiseSelect: {
+        case B3::VectorBitwiseSelect:
+        case B3::VectorRelaxedLaneSelect: {
             SIMDValue* value = m_value->as<SIMDValue>();
             auto resultTmp = tmp(value);
             append(MoveVector, tmp(value->child(2)), resultTmp);

@@ -553,6 +553,7 @@ protected:
         case VectorBitwiseSelect:
         case VectorRelaxedMAdd:
         case VectorRelaxedNMAdd:
+        case VectorRelaxedLaneSelect:
             return 3 * sizeof(Value*);
         case CCall:
         case Check:
@@ -784,6 +785,7 @@ private:
         case VectorBitwiseSelect:
         case VectorRelaxedMAdd:
         case VectorRelaxedNMAdd:
+        case VectorRelaxedLaneSelect:
             if (UNLIKELY(numArgs != 3))
                 badKind(kind, numArgs);
             return Three;

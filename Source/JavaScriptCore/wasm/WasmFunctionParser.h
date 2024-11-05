@@ -1352,7 +1352,8 @@ auto FunctionParser<Context>::simd(SIMDLaneOperation op, SIMDLane lane, SIMDSign
         } else
             return pushUnreachable(Types::V128);
     }
-    case SIMDLaneOperation::BitwiseSelect: {
+    case SIMDLaneOperation::BitwiseSelect:
+    case SIMDLaneOperation::RelaxedLaneSelect: {
         if constexpr (!isReachable)
             return { };
 

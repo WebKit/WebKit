@@ -115,6 +115,7 @@ enum class SIMDLaneOperation : uint8_t {
     RelaxedTruncSat,
     RelaxedMAdd,
     RelaxedNMAdd,
+    RelaxedLaneSelect,
 };
 
 #define FOR_EACH_WASM_EXT_SIMD_REL_OP(macro) \
@@ -365,7 +366,11 @@ macro(I32x4RelaxedTruncF64x2UZero, 0x104, RelaxedTruncSat,    SIMDLane::f64x2,  
 macro(F32x4RelaxedMAdd,           0x105, RelaxedMAdd,         SIMDLane::f32x4,  SIMDSignMode::None) \
 macro(F32x4RelaxedNMAdd,          0x106, RelaxedNMAdd,        SIMDLane::f32x4,  SIMDSignMode::None) \
 macro(F64x2RelaxedMAdd,           0x107, RelaxedMAdd,         SIMDLane::f64x2,  SIMDSignMode::None) \
-macro(F64x2RelaxedNMAdd,          0x108, RelaxedNMAdd,        SIMDLane::f64x2,  SIMDSignMode::None)
+macro(F64x2RelaxedNMAdd,          0x108, RelaxedNMAdd,        SIMDLane::f64x2,  SIMDSignMode::None) \
+macro(I8x16RelaxedLaneSelect,     0x109, RelaxedLaneSelect,   SIMDLane::i8x16,  SIMDSignMode::None) \
+macro(I16x8RelaxedLaneSelect,     0x10a, RelaxedLaneSelect,   SIMDLane::i16x8,  SIMDSignMode::None) \
+macro(I32x4RelaxedLaneSelect,     0x10b, RelaxedLaneSelect,   SIMDLane::i32x4,  SIMDSignMode::None) \
+macro(I64x2RelaxedLaneSelect,     0x10c, RelaxedLaneSelect,   SIMDLane::i64x2,  SIMDSignMode::None)
 
 #define FOR_EACH_WASM_EXT_SIMD_OP(macro) \
 FOR_EACH_WASM_EXT_SIMD_REL_OP(macro) \
@@ -455,6 +460,7 @@ static void dumpSIMDLaneOperation(PrintStream& out, SIMDLaneOperation op)
     case SIMDLaneOperation::RelaxedTruncSat: out.print("RelaxedTruncSat"); break;
     case SIMDLaneOperation::RelaxedMAdd: out.print("RelaxedMAdd"); break;
     case SIMDLaneOperation::RelaxedNMAdd: out.print("RelaxedNMAdd"); break;
+    case SIMDLaneOperation::RelaxedLaneSelect: out.print("RelaxedLaneSelect"); break;
     }
 }
 MAKE_PRINT_ADAPTOR(SIMDLaneOperationDump, SIMDLaneOperation, dumpSIMDLaneOperation);
@@ -468,6 +474,7 @@ inline bool isRelaxedSIMDOperation(SIMDLaneOperation op)
     case SIMDLaneOperation::RelaxedTruncSat:
     case SIMDLaneOperation::RelaxedMAdd:
     case SIMDLaneOperation::RelaxedNMAdd:
+    case SIMDLaneOperation::RelaxedLaneSelect:
         return true;
     default:
         return false;
