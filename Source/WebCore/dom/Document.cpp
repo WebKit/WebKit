@@ -2340,7 +2340,7 @@ void Document::visibilityStateChanged()
     // https://w3c.github.io/page-visibility/#reacting-to-visibilitychange-changes
     queueTaskToDispatchEvent(TaskSource::UserInteraction, Event::create(eventNames().visibilitychangeEvent, Event::CanBubble::Yes, Event::IsCancelable::No));
     m_visibilityStateCallbackClients.forEach([](auto& client) {
-        client.visibilityStateChanged();
+        Ref { client }->visibilityStateChanged();
     });
 
 #if ENABLE(MEDIA_STREAM) && PLATFORM(IOS_FAMILY)
@@ -2408,7 +2408,7 @@ String Document::nodeName() const
 WakeLockManager& Document::wakeLockManager()
 {
     if (!m_wakeLockManager)
-        m_wakeLockManager = makeUnique<WakeLockManager>(*this);
+        m_wakeLockManager = makeUniqueWithoutRefCountedCheck<WakeLockManager>(*this);
     return *m_wakeLockManager;
 }
 

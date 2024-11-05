@@ -46,8 +46,10 @@ WakeLockSentinel::WakeLockSentinel(Document& document, WakeLockType type)
 void WakeLockSentinel::release(Ref<DeferredPromise>&& promise)
 {
     if (!m_wasReleased) {
-        if (RefPtr document = downcast<Document>(scriptExecutionContext()))
-            Ref { *this }->release(document->wakeLockManager());
+        if (RefPtr document = downcast<Document>(scriptExecutionContext())) {
+            Ref wakeLockManagerRef { document->wakeLockManager() };
+            Ref { *this }->release(wakeLockManagerRef.get());
+        }
     }
     promise->resolve();
 }
