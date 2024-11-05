@@ -352,7 +352,7 @@ void TextResourceDecoder::setEncoding(const PAL::TextEncoding& encoding, Encodin
     // treat x-user-defined as windows-1252 (bug 18270)
     if (source == EncodingFromMetaTag && equalLettersIgnoringASCIICase(encoding.name(), "x-user-defined"_s))
         m_encoding = "windows-1252"_s;
-    else if (source == EncodingFromMetaTag || source == EncodingFromXMLHeader || source == EncodingFromCSSCharset)        
+    else if (source == EncodingFromMetaTag || source == EncodingFromXMLHeader || source == EncodingFromCSSCharset)
         m_encoding = encoding.closestByteBasedEquivalent();
     else
         m_encoding = encoding;

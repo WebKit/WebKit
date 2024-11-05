@@ -36,6 +36,7 @@ namespace WTF {
 
 const StaticAtomString nullAtomData { nullptr };
 const StaticAtomString emptyAtomData { &StringImpl::s_emptyAtomString };
+const StaticAtomString utf8AtomData { &StringImpl::s_utf8AtomString };
 
 template<AtomString::CaseConvertType type>
 ALWAYS_INLINE AtomString AtomString::convertASCIICase() const

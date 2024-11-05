@@ -584,6 +584,7 @@ float charactersToFloat(std::span<const UChar> data, size_t& parsedLength)
 
 const StaticString nullStringData { nullptr };
 const StaticString emptyStringData { &StringImpl::s_emptyAtomString };
+const StaticString utf8StringData { &StringImpl::s_utf8AtomString };
 
 } // namespace WTF
 

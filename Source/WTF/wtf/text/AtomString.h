@@ -258,9 +258,11 @@ struct StaticAtomString {
 static_assert(sizeof(AtomString) == sizeof(StaticAtomString), "AtomString and StaticAtomString must be the same size!");
 extern WTF_EXPORT_PRIVATE const StaticAtomString nullAtomData;
 extern WTF_EXPORT_PRIVATE const StaticAtomString emptyAtomData;
+extern WTF_EXPORT_PRIVATE const StaticAtomString utf8AtomData;
 
 inline const AtomString& nullAtom() { return *reinterpret_cast<const AtomString*>(&nullAtomData); }
 inline const AtomString& emptyAtom() { return *reinterpret_cast<const AtomString*>(&emptyAtomData); }
+inline const AtomString& utf8Atom() { return *reinterpret_cast<const AtomString*>(&utf8AtomData); }
 
 inline AtomString::AtomString(ASCIILiteral literal)
     : m_string(literal.length() ? AtomStringImpl::add(literal.span8()) : Ref { *emptyAtom().impl() })
@@ -349,5 +351,6 @@ template<> struct IntegerToStringConversionTrait<AtomString> {
 using WTF::AtomString;
 using WTF::nullAtom;
 using WTF::emptyAtom;
+using WTF::utf8Atom;
 
 #include <wtf/text/StringConcatenate.h>

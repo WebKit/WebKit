@@ -361,9 +361,11 @@ struct StaticString {
 static_assert(sizeof(String) == sizeof(StaticString), "String and StaticString must be the same size!");
 extern WTF_EXPORT_PRIVATE const StaticString nullStringData;
 extern WTF_EXPORT_PRIVATE const StaticString emptyStringData;
+extern WTF_EXPORT_PRIVATE const StaticString utf8StringData;
 
 inline const String& nullString() { return *reinterpret_cast<const String*>(&nullStringData); }
 inline const String& emptyString() { return *reinterpret_cast<const String*>(&emptyStringData); }
+inline const String& utf8String() { return *reinterpret_cast<const String*>(&utf8StringData); }
 
 template<typename> struct DefaultHash;
 template<> struct DefaultHash<String>;
@@ -593,6 +595,7 @@ using WTF::find;
 using WTF::containsOnly;
 using WTF::reverseFind;
 using WTF::codePointCompareLessThan;
+using WTF::utf8String;
 
 #include <wtf/text/AtomString.h>
 

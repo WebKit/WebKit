@@ -405,7 +405,9 @@ public:
     };
 
     WTF_EXPORT_PRIVATE static StaticStringImpl s_emptyAtomString;
+    WTF_EXPORT_PRIVATE static StaticStringImpl s_utf8AtomString;
     ALWAYS_INLINE static StringImpl* empty() { return reinterpret_cast<StringImpl*>(&s_emptyAtomString); }
+    ALWAYS_INLINE static StringImpl* utf8Atom() { return reinterpret_cast<StringImpl*>(&s_utf8AtomString); }
 
     // FIXME: Do these functions really belong in StringImpl?
     template<typename CharacterType>

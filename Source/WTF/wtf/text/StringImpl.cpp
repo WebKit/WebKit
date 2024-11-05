@@ -112,6 +112,7 @@ void StringStats::printStats()
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StringImpl);
 
 StringImpl::StaticStringImpl StringImpl::s_emptyAtomString("", StringImpl::StringAtom);
+StringImpl::StaticStringImpl StringImpl::s_utf8AtomString("UTF-8", StringImpl::StringAtom);
 
 StringImpl::~StringImpl()
 {
