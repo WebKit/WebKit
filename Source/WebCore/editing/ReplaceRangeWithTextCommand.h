@@ -44,7 +44,7 @@ private:
     void doApply() override;
     String inputEventData() const final;
     RefPtr<DataTransfer> inputEventDataTransfer() const final;
-    Vector<RefPtr<StaticRange>> targetRanges() const final;
+    Vector<Ref<StaticRange>> targetRanges() const final;
 
     RefPtr<DocumentFragment> protectedTextFragment() const { return m_textFragment; }
 

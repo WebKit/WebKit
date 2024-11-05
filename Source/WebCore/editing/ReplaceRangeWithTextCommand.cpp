@@ -83,7 +83,7 @@ RefPtr<DataTransfer> ReplaceRangeWithTextCommand::inputEventDataTransfer() const
     return CompositeEditCommand::inputEventDataTransfer();
 }
 
-Vector<RefPtr<StaticRange>> ReplaceRangeWithTextCommand::targetRanges() const
+Vector<Ref<StaticRange>> ReplaceRangeWithTextCommand::targetRanges() const
 {
     return { 1, StaticRange::create(m_rangeToBeReplaced) };
 }

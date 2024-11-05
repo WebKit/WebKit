@@ -22,4 +22,37 @@ test(function() {
 test(function() {
   assert_equals(new InputEvent('type', { data: 'data' }).data, 'data', '.data');
 }, 'InputEvent construtor with InputEventInit where data is non empty string');
+
+test(function() {
+  var e = new InputEvent('type', { dataTransfer: null });
+  assert_equals(e.dataTransfer, null, '.dataTransfer');
+}, 'InputEvent constructor with InputEventInit where dataTransfer is null');
+
+test(function() {
+  var dataTransfer = new DataTransfer();
+  var e = new InputEvent('type', { dataTransfer: dataTransfer });
+  assert_equals(e.dataTransfer, dataTransfer, '.dataTransfer');
+}, 'InputEvent constructor with InputEventInit where dataTransfer is set');
+
+test(function() {
+  var e = new InputEvent('type', { targetRanges: [] });
+  assert_equals(e.getTargetRanges().length, 0, '.targetRanges');
+}, 'InputEvent constructor with InputEventInit where targetRanges is empty');
+
+test(function() {
+  // Create a StaticRange with arguments (startContainer, startOffset, endContainer, endOffset)
+  var startContainer = document.createTextNode("example");
+  var endContainer = document.createTextNode("example");
+  var staticRange = new StaticRange({
+    startContainer: startContainer,
+    startOffset: 0,
+    endContainer: endContainer,
+    endOffset: 1
+  });
+
+  var e = new InputEvent('type', { targetRanges: [staticRange] });
+
+  assert_equals(e.getTargetRanges().length, 1, '.targetRanges');
+}, 'InputEvent constructor with InputEventInit where targetRanges has one item');
+
 </script>

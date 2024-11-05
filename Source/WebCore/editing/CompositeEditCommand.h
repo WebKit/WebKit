@@ -133,7 +133,7 @@ public:
     virtual String inputEventData() const { return { }; }
     virtual bool isBeforeInputEventCancelable() const { return true; }
     virtual bool shouldDispatchInputEvents() const { return true; }
-    Vector<RefPtr<StaticRange>> targetRangesForBindings() const;
+    Vector<Ref<StaticRange>> targetRangesForBindings() const;
     virtual RefPtr<DataTransfer> inputEventDataTransfer() const;
 
 protected:
@@ -143,7 +143,7 @@ protected:
     virtual bool willApplyCommand();
     virtual void didApplyCommand();
 
-    virtual Vector<RefPtr<StaticRange>> targetRanges() const;
+    virtual Vector<Ref<StaticRange>> targetRanges() const;
 
     //
     // sugary-sweet convenience functions to help create and apply edit commands in composite commands
