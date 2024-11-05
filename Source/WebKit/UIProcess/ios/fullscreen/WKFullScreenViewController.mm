@@ -1003,6 +1003,8 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!page)
         return;
 
+    [self hideUI];
+
     page->enterFullscreen();
 }
 
