@@ -30,24 +30,21 @@
 #include "Logging.h"
 #include "MessageFlags.h"
 #include <stdio.h>
+#include <wtf/MallocSpan.h>
 #include <wtf/ObjectIdentifier.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace IPC {
 
-static uint8_t* copyBuffer(std::span<const uint8_t> buffer)
+static MallocSpan<uint8_t> copyBuffer(std::span<const uint8_t> buffer)
 {
-    uint8_t* bufferCopy;
-    const size_t bufferSize = buffer.size_bytes();
-    if (!tryFastMalloc(bufferSize).getValue(bufferCopy)) {
-        RELEASE_LOG_FAULT(IPC, "Decoder::copyBuffer: tryFastMalloc(%lu) failed", bufferSize);
-        return nullptr;
+    auto bufferCopy = MallocSpan<uint8_t>::tryMalloc(buffer.size());
+    if (!bufferCopy) {
+        RELEASE_LOG_FAULT(IPC, "Decoder::copyBuffer: tryMalloc(%lu) failed", buffer.size());
+        return { };
     }
-
-    memcpy(bufferCopy, buffer.data(), bufferSize);
+    memcpySpan(bufferCopy.mutableSpan(), buffer);
     return bufferCopy;
 }
 
@@ -55,7 +52,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(Decoder);
 
 std::unique_ptr<Decoder> Decoder::create(std::span<const uint8_t> buffer, Vector<Attachment>&& attachments)
 {
-    return Decoder::create({ copyBuffer(buffer), buffer.size() }, [](auto buffer) { fastFree(const_cast<uint8_t*>(buffer.data())); }, WTFMove(attachments)); // NOLINT
+    auto bufferCopy = copyBuffer(buffer);
+    auto bufferCopySpan = bufferCopy.span();
+    return Decoder::create(bufferCopySpan, [bufferCopy = WTFMove(bufferCopy)](auto) { }, WTFMove(attachments)); // NOLINT
 }
 
 std::unique_ptr<Decoder> Decoder::create(std::span<const uint8_t> buffer, BufferDeallocator&& bufferDeallocator, Vector<Attachment>&& attachments)
@@ -192,5 +191,3 @@ std::optional<Attachment> Decoder::takeLastAttachment()
 }
 
 } // namespace IPC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

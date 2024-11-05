@@ -50,8 +50,6 @@
 #import "ProcessAssertion.h"
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace IPC {
 
 static const size_t inlineMessageMaxSize = 4096;
@@ -266,6 +264,14 @@ bool Connection::platformCanSendOutgoingMessages() const
     return !m_pendingOutgoingMachMessage && MACH_PORT_VALID(m_sendPort);
 }
 
+template<typename descriptorType>
+static descriptorType& popDescriptorAndAdvance(std::span<uint8_t>& data)
+{
+    auto& descriptor = reinterpretCastSpanStartTo<descriptorType>(data);
+    data = data.subspan(sizeof(descriptorType));
+    return descriptor;
+};
+
 bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
 {
     ASSERT(canSendOutgoingMessages());
@@ -290,50 +296,45 @@ bool Connection::sendOutgoingMessage(UniqueRef<Encoder>&& encoder)
     if (!message)
         return false;
 
-    auto* header = message->header();
-    header->msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0);
-    header->msgh_size = safeMessageSize;
-    header->msgh_remote_port = m_sendPort;
-    header->msgh_local_port = MACH_PORT_NULL;
-    header->msgh_id = messageBodyIsOOL ? outOfLineBodyMessageID : inlineBodyMessageID;
+    auto messageSpan = message->span();
+    auto& header = reinterpretCastSpanStartTo<mach_msg_header_t>(messageSpan);
+    header.msgh_bits = MACH_MSGH_BITS(MACH_MSG_TYPE_COPY_SEND, 0);
+    header.msgh_size = safeMessageSize;
+    header.msgh_remote_port = m_sendPort;
+    header.msgh_local_port = MACH_PORT_NULL;
+    header.msgh_id = messageBodyIsOOL ? outOfLineBodyMessageID : inlineBodyMessageID;
 
-    auto* messageData = reinterpret_cast<uint8_t*>(header + 1);
+    messageSpan = messageSpan.subspan(sizeof(mach_msg_header_t));
 
     bool isComplex = numberOfPortDescriptors || messageBodyIsOOL;
     if (isComplex) {
-        header->msgh_bits |= MACH_MSGH_BITS_COMPLEX;
+        header.msgh_bits |= MACH_MSGH_BITS_COMPLEX;
 
-        auto* body = reinterpret_cast<mach_msg_body_t*>(messageData);
-        body->msgh_descriptor_count = numberOfPortDescriptors + messageBodyIsOOL;
-        messageData = reinterpret_cast<uint8_t*>(body + 1);
-
-        auto getDescriptorAndAdvance = [](uint8_t*& data, std::size_t toAdvance) {
-            return reinterpret_cast<mach_msg_descriptor_t*>(std::exchange(data, data + toAdvance));
-        };
+        auto& body = reinterpretCastSpanStartTo<mach_msg_body_t>(messageSpan);
+        body.msgh_descriptor_count = numberOfPortDescriptors + messageBodyIsOOL;
+        messageSpan = messageSpan.subspan(sizeof(mach_msg_body_t));
 
         for (auto& attachment : attachments) {
-            auto* descriptor = getDescriptorAndAdvance(messageData, sizeof(mach_msg_port_descriptor_t));
-            descriptor->port.name = attachment.leakSendRight();
-            descriptor->port.disposition = MACH_MSG_TYPE_MOVE_SEND;
-            descriptor->port.type = MACH_MSG_PORT_DESCRIPTOR;
+            auto& descriptor = popDescriptorAndAdvance<mach_msg_port_descriptor_t>(messageSpan);
+            descriptor.name = attachment.leakSendRight();
+            descriptor.disposition = MACH_MSG_TYPE_MOVE_SEND;
+            descriptor.type = MACH_MSG_PORT_DESCRIPTOR;
         }
 
         if (messageBodyIsOOL) {
-            auto* descriptor = getDescriptorAndAdvance(messageData, sizeof(mach_msg_ool_descriptor_t));
-            auto buffer = encoder->span();
-            descriptor->out_of_line.address = const_cast<uint8_t*>(buffer.data());
-            descriptor->out_of_line.size = buffer.size();
-            descriptor->out_of_line.copy = MACH_MSG_VIRTUAL_COPY;
-            descriptor->out_of_line.deallocate = false;
-            descriptor->out_of_line.type = MACH_MSG_OOL_DESCRIPTOR;
+            auto& descriptor = popDescriptorAndAdvance<mach_msg_ool_descriptor_t>(messageSpan);
+            auto buffer = encoder->mutableSpan();
+            descriptor.address = buffer.data();
+            descriptor.size = buffer.size();
+            descriptor.copy = MACH_MSG_VIRTUAL_COPY;
+            descriptor.deallocate = false;
+            descriptor.type = MACH_MSG_OOL_DESCRIPTOR;
         }
     }
 
     // Copy the data if it is not being sent out-of-line.
-    if (!messageBodyIsOOL) {
-        auto buffer = encoder->span();
-        memcpy(messageData, buffer.data(), buffer.size());
-    }
+    if (!messageBodyIsOOL)
+        memcpySpan(messageSpan, encoder->span());
 
     return sendMessage(WTFMove(message));
 }
@@ -379,17 +380,17 @@ void Connection::resumeSendSource()
     sendOutgoingMessages();
 }
 
-static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, size_t bufferSize)
+static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, std::span<uint8_t> message)
 {
-    if (UNLIKELY(header->msgh_size > bufferSize)) {
-        RELEASE_LOG_FAULT(IPC, "createMessageDecoder: msgh_size is greater than bufferSize (header->msgh_size: %lu, bufferSize: %lu)", static_cast<unsigned long>(header->msgh_size), bufferSize);
+    if (UNLIKELY(header->msgh_size > message.size())) {
+        RELEASE_LOG_FAULT(IPC, "createMessageDecoder: msgh_size is greater than bufferSize (header->msgh_size: %lu, bufferSize: %lu)", static_cast<unsigned long>(header->msgh_size), message.size());
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
+    auto remaining = message.subspan(sizeof(mach_msg_header_t));
     if (!(header->msgh_bits & MACH_MSGH_BITS_COMPLEX)) {
         // We have a simple message.
-        uint8_t* body = reinterpret_cast<uint8_t*>(header + 1);
         auto bodySize = CheckedSize { header->msgh_size } - sizeof(mach_msg_header_t);
         if (UNLIKELY(bodySize.hasOverflowed())) {
             RELEASE_LOG_FAULT(IPC, "createMessageDecoder: Overflow when computing bodySize (header->msgh_size: %lu, sizeof(mach_msg_header_t): %lu)", static_cast<unsigned long>(header->msgh_size), sizeof(mach_msg_header_t));
@@ -397,23 +398,23 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
             return nullptr;
         }
 
-        return Decoder::create({ body, bodySize }, { });
+        return Decoder::create(remaining.first(bodySize), { });
     }
 
-    mach_msg_body_t* body = reinterpret_cast<mach_msg_body_t*>(header + 1);
-    mach_msg_size_t numberOfPortDescriptors = body->msgh_descriptor_count;
+    auto& body = reinterpretCastSpanStartTo<mach_msg_body_t>(remaining);
+    mach_msg_size_t numberOfPortDescriptors = body.msgh_descriptor_count;
     ASSERT(numberOfPortDescriptors);
     if (UNLIKELY(!numberOfPortDescriptors))
         return nullptr;
 
     auto sizeWithPortDescriptors = CheckedSize { sizeof(mach_msg_header_t) + sizeof(mach_msg_body_t) } + CheckedSize { numberOfPortDescriptors } * sizeof(mach_msg_port_descriptor_t);
-    if (UNLIKELY(sizeWithPortDescriptors.hasOverflowed() || sizeWithPortDescriptors.value() > bufferSize)) {
+    if (UNLIKELY(sizeWithPortDescriptors.hasOverflowed() || sizeWithPortDescriptors.value() > message.size())) {
         RELEASE_LOG_FAULT(IPC, "createMessageDecoder: Overflow when computing sizeWithPortDescriptors (numberOfPortDescriptors: %lu)", static_cast<unsigned long>(numberOfPortDescriptors));
         ASSERT_NOT_REACHED();
         return nullptr;
     }
 
-    uint8_t* descriptorData = reinterpret_cast<uint8_t*>(body + 1);
+    remaining = remaining.subspan(sizeof(mach_msg_body_t));
 
     // If the message body was sent out-of-line, don't treat the last descriptor
     // as an attachment, since it is really the message body.
@@ -424,35 +425,34 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
     Vector<Attachment> attachments(numberOfAttachments);
 
     for (mach_msg_size_t i = 0; i < numberOfAttachments; ++i) {
-        mach_msg_descriptor_t* descriptor = reinterpret_cast<mach_msg_descriptor_t*>(descriptorData);
-        ASSERT(descriptor->type.type == MACH_MSG_PORT_DESCRIPTOR);
-        if (descriptor->type.type != MACH_MSG_PORT_DESCRIPTOR)
+        auto& descriptor = reinterpretCastSpanStartTo<mach_msg_port_descriptor_t>(remaining);
+        ASSERT(descriptor.type == MACH_MSG_PORT_DESCRIPTOR);
+        if (descriptor.type != MACH_MSG_PORT_DESCRIPTOR)
             return nullptr;
-        ASSERT(descriptor->port.disposition == MACH_MSG_TYPE_PORT_SEND);
-        MachSendRight right = MachSendRight::adopt(descriptor->port.name);
+        ASSERT(descriptor.disposition == MACH_MSG_TYPE_PORT_SEND);
+        MachSendRight right = MachSendRight::adopt(descriptor.name);
 
         attachments[numberOfAttachments - i - 1] = Attachment { WTFMove(right) };
-        descriptorData += sizeof(mach_msg_port_descriptor_t);
+        remaining = remaining.subspan(sizeof(mach_msg_port_descriptor_t));
     }
 
     if (messageBodyIsOOL) {
-        mach_msg_descriptor_t* descriptor = reinterpret_cast<mach_msg_descriptor_t*>(descriptorData);
-        ASSERT(descriptor->type.type == MACH_MSG_OOL_DESCRIPTOR);
-        if (descriptor->type.type != MACH_MSG_OOL_DESCRIPTOR)
+        auto& descriptor = reinterpretCastSpanStartTo<mach_msg_descriptor_t>(remaining);
+        ASSERT(descriptor.type.type == MACH_MSG_OOL_DESCRIPTOR);
+        if (descriptor.type.type != MACH_MSG_OOL_DESCRIPTOR)
             return nullptr;
 
-        uint8_t* messageBody = static_cast<uint8_t*>(descriptor->out_of_line.address);
-        size_t messageBodySize = descriptor->out_of_line.size;
-        descriptor->out_of_line.deallocate = false; // We are taking ownership of the memory.
+        uint8_t* messageBody = static_cast<uint8_t*>(descriptor.out_of_line.address);
+        size_t messageBodySize = descriptor.out_of_line.size;
+        descriptor.out_of_line.deallocate = false; // We are taking ownership of the memory.
 
-        return Decoder::create({ messageBody, messageBodySize }, [](auto buffer) {
+        return Decoder::create(unsafeMakeSpan(messageBody, messageBodySize), [](auto buffer) {
             // FIXME: <rdar://problem/62086358> bufferDeallocator block ignores mach_msg_ool_descriptor_t->deallocate
             vm_deallocate(mach_task_self(), reinterpret_cast<vm_address_t>(buffer.data()), buffer.size_bytes());
         }, WTFMove(attachments));
     }
 
-    uint8_t* messageBody = descriptorData;
-    ASSERT((reinterpret_cast<uint8_t*>(header) + sizeWithPortDescriptors.value()) == messageBody);
+    ASSERT(std::to_address(message.subspan(sizeWithPortDescriptors.value()).begin()) == std::to_address(remaining.begin()));
     auto messageBodySize = header->msgh_size - sizeWithPortDescriptors;
     if (UNLIKELY(messageBodySize.hasOverflowed())) {
         RELEASE_LOG_FAULT(IPC, "createMessageDecoder: Overflow when computing bodySize (header->msgh_size: %lu, sizeWithPortDescriptors: %lu)", static_cast<unsigned long>(header->msgh_size), static_cast<unsigned long>(sizeWithPortDescriptors.value()));
@@ -460,12 +460,12 @@ static std::unique_ptr<Decoder> createMessageDecoder(mach_msg_header_t* header, 
         return nullptr;
     }
 
-    return Decoder::create({ messageBody, messageBodySize }, WTFMove(attachments));
+    return Decoder::create(remaining.first(messageBodySize), WTFMove(attachments));
 }
 
 // The receive buffer size should always include the maximum trailer size.
 static const size_t receiveBufferSize = inlineMessageMaxSize + MAX_TRAILER_SIZE;
-typedef Vector<char, receiveBufferSize> ReceiveBuffer;
+typedef Vector<uint8_t, receiveBufferSize> ReceiveBuffer;
 
 static mach_msg_header_t* readFromMachPort(mach_port_t machPort, ReceiveBuffer& buffer)
 {
@@ -534,7 +534,7 @@ void Connection::receiveSourceEventHandler()
         return;
     }
 
-    std::unique_ptr<Decoder> decoder = createMessageDecoder(header, buffer.size());
+    std::unique_ptr<Decoder> decoder = createMessageDecoder(header, buffer.mutableSpan());
     if (!decoder)
         return;
 
@@ -636,5 +636,3 @@ std::optional<Connection::ConnectionIdentifierPair> Connection::createConnection
 }
 
 } // namespace IPC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -32,8 +32,6 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/RunLoop.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 
 namespace Daemon {
@@ -124,5 +122,3 @@ template class ConnectionToMachService<WebPushD::ConnectionTraits>;
 } // namespace Daemon
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

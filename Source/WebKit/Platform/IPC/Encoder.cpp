@@ -30,14 +30,13 @@
 #include "MessageFlags.h"
 #include <algorithm>
 #include <wtf/OptionSet.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UniqueRef.h>
 
 #if OS(DARWIN)
 #include <sys/mman.h>
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace IPC {
 
@@ -48,10 +47,10 @@ static inline std::span<uint8_t> allocBuffer(size_t size)
 #if OS(DARWIN)
     auto* buffer = static_cast<uint8_t*>(mmap(0, size, PROT_READ | PROT_WRITE, MAP_ANON | MAP_PRIVATE, -1, 0));
     RELEASE_ASSERT(buffer != MAP_FAILED);
-    return std::span { buffer, size };
+    return unsafeMakeSpan(buffer, size);
 #else
     auto* buffer = static_cast<uint8_t*>(fastMalloc(size));
-    return std::span { buffer, size };
+    return unsafeMakeSpan(buffer, size);
 #endif
 }
 
@@ -201,5 +200,3 @@ bool Encoder::hasAttachments() const
 }
 
 } // namespace IPC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

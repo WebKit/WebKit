@@ -160,11 +160,11 @@ void StreamServerConnection::sendSyncReply(Connection::SyncRequestID syncRequest
         if (m_isProcessingStreamMessage) {
             auto span = m_buffer.acquireAll();
             {
-                StreamConnectionEncoder messageEncoder { MessageName::SyncMessageReply, span.data(), span.size() };
+                StreamConnectionEncoder messageEncoder { MessageName::SyncMessageReply, span };
                 if ((messageEncoder << ... << arguments))
                     return;
             }
-            StreamConnectionEncoder outOfStreamEncoder { MessageName::ProcessOutOfStreamMessage, span.data(), span.size() };
+            StreamConnectionEncoder outOfStreamEncoder { MessageName::ProcessOutOfStreamMessage, span };
         }
     }
     auto encoder = makeUniqueRef<Encoder>(MessageName::SyncMessageReply, syncRequestID.toUInt64());

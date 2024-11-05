@@ -225,7 +225,7 @@ std::optional<StreamClientConnection::AsyncReplyID> StreamClientConnection::send
 template<typename T, typename... AdditionalData>
 bool StreamClientConnection::trySendStream(std::span<uint8_t> span, T& message, AdditionalData&&... args)
 {
-    StreamConnectionEncoder messageEncoder { T::name(), span.data(), span.size() };
+    StreamConnectionEncoder messageEncoder { T::name(), span };
     if (((messageEncoder << message.arguments()) << ... << std::forward<decltype(args)>(args))) {
         auto wakeUpResult = m_buffer.release(messageEncoder.size());
         if constexpr (T::isStreamBatched)
@@ -292,7 +292,7 @@ std::optional<StreamClientConnection::SendSyncResult<T>> StreamClientConnection:
         return { { Error::CantWaitForSyncReplies } };
 
     auto decoderResult = [&]() -> std::optional<Connection::DecoderOrError> {
-        StreamConnectionEncoder messageEncoder { T::name(), span.data(), span.size() };
+        StreamConnectionEncoder messageEncoder { T::name(), span };
         if (!(messageEncoder << syncRequestID << message.arguments()))
             return std::nullopt;
 
@@ -339,7 +339,7 @@ inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t desti
     if (!span)
         return Error::FailedToAcquireBufferSpan;
 
-    StreamConnectionEncoder encoder { MessageName::SetStreamDestinationID, span->data(), span->size() };
+    StreamConnectionEncoder encoder { MessageName::SetStreamDestinationID, *span };
     if (!(encoder << destinationID)) {
         ASSERT_NOT_REACHED(); // Size of the minimum allocation is incorrect. Likely an alignment issue.
         return Error::StreamConnectionEncodingError;
@@ -352,7 +352,7 @@ inline Error StreamClientConnection::trySendDestinationIDIfNeeded(uint64_t desti
 
 inline void StreamClientConnection::sendProcessOutOfStreamMessage(std::span<uint8_t> span)
 {
-    StreamConnectionEncoder encoder { MessageName::ProcessOutOfStreamMessage, span.data(), span.size() };
+    StreamConnectionEncoder encoder { MessageName::ProcessOutOfStreamMessage, span };
     // Not notifying on wake up since the out-of-stream message will do that.
     auto result = m_buffer.release(encoder.size());
     UNUSED_VARIABLE(result);

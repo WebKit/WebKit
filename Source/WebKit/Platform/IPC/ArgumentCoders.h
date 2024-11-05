@@ -39,6 +39,7 @@
 #include <wtf/MonotonicTime.h>
 #include <wtf/OptionSet.h>
 #include <wtf/SHA1.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/Unexpected.h>
 #include <wtf/WallTime.h>
 
@@ -51,8 +52,6 @@
 #if USE(UNIX_DOMAIN_SOCKETS)
 #include "ArgumentCodersUnix.h"
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace IPC {
 
@@ -94,7 +93,7 @@ template<typename T, size_t Extent> struct ArgumentCoder<std::span<T, Extent>> {
         if constexpr (Extent == std::dynamic_extent)
             return data;
         else
-            return std::span<T, Extent> { data.data(), Extent };
+            return data.template subspan<0, Extent>();
     }
 };
 
@@ -114,7 +113,7 @@ struct ArgumentCoder<ArrayReferenceTuple<Types...>> {
         if (UNLIKELY(!size))
             return;
 
-        (..., encoder.encodeSpan(std::span(arrayReference.template data<Indices>(), size)));
+        (..., encoder.encodeSpan(arrayReference.template span<Indices>()));
     }
 
     template<typename Decoder>
@@ -856,5 +855,3 @@ template<typename T, typename Traits> struct ArgumentCoder<WTF::Markable<T, Trai
 };
 
 } // namespace IPC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

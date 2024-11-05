@@ -35,8 +35,6 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace IPC {
 
 enum class MessageFlags : uint8_t;
@@ -87,6 +85,7 @@ public:
         return *this;
     }
 
+    std::span<uint8_t> mutableSpan() { return m_capacityBuffer.first(m_bufferSize); }
     std::span<const uint8_t> span() const { return m_capacityBuffer.first(m_bufferSize); }
 
     void addAttachment(Attachment&&);
@@ -132,9 +131,7 @@ template<typename T>
 inline void Encoder::encodeObject(const T& object)
 {
     static_assert(std::is_trivially_copyable_v<T>);
-    encodeSpan(std::span(std::addressof(object), 1));
+    encodeSpan(unsafeMakeSpan(std::addressof(object), 1));
 }
 
 } // namespace IPC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

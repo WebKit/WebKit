@@ -802,6 +802,12 @@ std::span<uint8_t, Extent == std::dynamic_extent ? std::dynamic_extent: Extent *
 }
 
 template<typename T>
+std::span<const T> singleElementSpan(const T& object)
+{
+    return unsafeMakeSpan(std::addressof(object), 1);
+}
+
+template<typename T>
 std::span<const uint8_t> asByteSpan(const T& input)
 {
     return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(&input), sizeof(input));
@@ -825,6 +831,18 @@ std::span<uint8_t> asMutableByteSpan(std::span<T, Extent> input)
 {
     static_assert(!std::is_const_v<T>);
     return unsafeMakeSpan(reinterpret_cast<uint8_t*>(input.data()), input.size_bytes());
+}
+
+template<typename T, std::size_t Extent>
+const T& reinterpretCastSpanStartTo(std::span<const uint8_t, Extent> span)
+{
+    return spanReinterpretCast<const T>(span.first(sizeof(T)))[0];
+}
+
+template<typename T, std::size_t Extent>
+T& reinterpretCastSpanStartTo(std::span<uint8_t, Extent> span)
+{
+    return spanReinterpretCast<T>(span.first(sizeof(T)))[0];
 }
 
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
@@ -1113,10 +1131,12 @@ using WTF::makeUniqueWithoutRefCountedCheck;
 using WTF::memcpySpan;
 using WTF::memsetSpan;
 using WTF::mergeDeduplicatedSorted;
+using WTF::reinterpretCastSpanStartTo;
 using WTF::roundUpToMultipleOf;
 using WTF::roundUpToMultipleOfNonPowerOfTwo;
 using WTF::roundDownToMultipleOf;
 using WTF::safeCast;
+using WTF::singleElementSpan;
 using WTF::spanConstCast;
 using WTF::spanReinterpretCast;
 using WTF::tryBinarySearch;

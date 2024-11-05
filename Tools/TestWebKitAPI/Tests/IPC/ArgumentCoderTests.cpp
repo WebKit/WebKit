@@ -106,7 +106,7 @@ private:
 
         Impl()
             : buffer(1024, static_cast<uint8_t>(0))
-            , encoder(EncoderDecoderTest::name(), buffer.data(), buffer.size())
+            , encoder(EncoderDecoderTest::name(), buffer.mutableSpan())
         { }
 
         Vector<uint8_t> buffer;
