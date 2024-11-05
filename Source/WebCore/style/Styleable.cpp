@@ -50,6 +50,7 @@
 #include "RenderListMarker.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
+#include "RenderViewTransitionRoot.h"
 #include "StyleCustomPropertyData.h"
 #include "StyleOriginatedAnimation.h"
 #include "StylePropertyShorthand.h"
@@ -147,21 +148,13 @@ RenderElement* Styleable::renderer() const
             return nullptr;
 
         // Find the right ::view-transition-group().
-        RenderBlockFlow* correctGroup = nullptr;
-        for (auto& group : childrenOfType<RenderBlockFlow>(*viewTransitionRoot.get())) {
-            if (group.style().pseudoElementNameArgument() == pseudoElementIdentifier->nameArgument) {
-                correctGroup = &group;
-                break;
-            }
-        }
-
-        // If we can't find the correct group, return nullptr.
+        CheckedPtr correctGroup = viewTransitionRoot->childGroupForName(pseudoElementIdentifier->nameArgument);
         if (!correctGroup)
             return nullptr;
 
         // Return early if we're looking for ::view-transition-group().
         if (pseudoElementIdentifier->pseudoId == PseudoId::ViewTransitionGroup)
-            return correctGroup;
+            return correctGroup.get();
 
         // Go through all descendants until we find the relevant pseudo element otherwise.
         for (auto& descendant : descendantsOfType<RenderBox>(*correctGroup)) {

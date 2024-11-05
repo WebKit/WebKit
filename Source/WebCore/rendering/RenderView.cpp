@@ -61,6 +61,7 @@
 #include "RenderSVGRoot.h"
 #include "RenderStyleInlines.h"
 #include "RenderTreeBuilder.h"
+#include "RenderViewTransitionRoot.h"
 #include "RenderWidget.h"
 #include "SVGElementTypeHelpers.h"
 #include "SVGImage.h"
@@ -1112,12 +1113,12 @@ SingleThreadWeakHashSet<RenderCounter> RenderView::takeCountersNeedingUpdate()
     return std::exchange(m_countersNeedingUpdate, { });
 }
 
-SingleThreadWeakPtr<RenderElement> RenderView::viewTransitionRoot() const
+SingleThreadWeakPtr<RenderViewTransitionRoot> RenderView::viewTransitionRoot() const
 {
     return m_viewTransitionRoot;
 }
 
-void RenderView::setViewTransitionRoot(RenderElement& renderer)
+void RenderView::setViewTransitionRoot(RenderViewTransitionRoot& renderer)
 {
     m_viewTransitionRoot = renderer;
 }
