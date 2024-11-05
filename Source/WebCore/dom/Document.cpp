@@ -740,7 +740,6 @@ Document::~Document()
     if (RefPtr window = m_domWindow)
         window->resetUnlessSuspendedForDocumentSuspension();
 
-    m_scriptRunner = nullptr;
     m_moduleLoader = nullptr;
 
     removeAllEventListeners();
@@ -7232,7 +7231,7 @@ bool Document::isTopDocument() const
 ScriptRunner& Document::ensureScriptRunner()
 {
     ASSERT(!m_scriptRunner);
-    m_scriptRunner = makeUnique<ScriptRunner>(*this);
+    m_scriptRunner = makeUniqueWithoutRefCountedCheck<ScriptRunner>(*this);
     return *m_scriptRunner;
 }
 
@@ -7243,7 +7242,7 @@ ScriptModuleLoader& Document::ensureModuleLoader()
     return *m_moduleLoader;
 }
 
-CheckedRef<ScriptRunner> Document::checkedScriptRunner()
+Ref<ScriptRunner> Document::protectedScriptRunner()
 {
     return scriptRunner();
 }
@@ -7357,7 +7356,7 @@ void Document::finishedParsing()
 
     Ref protectedThis { *this };
 
-    if (CheckedPtr scriptRunner = m_scriptRunner.get())
+    if (RefPtr scriptRunner = m_scriptRunner.get())
         scriptRunner->documentFinishedParsing();
 
     if (!m_eventTiming.domContentLoadedEventStart) {
@@ -7932,7 +7931,7 @@ void Document::suspendScheduledTasks(ReasonForSuspension reason)
 
     suspendScriptedAnimationControllerCallbacks();
     suspendActiveDOMObjects(reason);
-    if (CheckedPtr scriptRunner = m_scriptRunner.get())
+    if (RefPtr scriptRunner = m_scriptRunner.get())
         scriptRunner->suspend();
     m_pendingTasksTimer.stop();
 
@@ -7967,7 +7966,7 @@ void Document::resumeScheduledTasks(ReasonForSuspension reason)
 
     if (!m_pendingTasks.isEmpty())
         m_pendingTasksTimer.startOneShot(0_s);
-    if (CheckedPtr scriptRunner = m_scriptRunner.get())
+    if (RefPtr scriptRunner = m_scriptRunner.get())
         scriptRunner->resume();
     resumeActiveDOMObjects(reason);
     resumeScriptedAnimationControllerCallbacks();

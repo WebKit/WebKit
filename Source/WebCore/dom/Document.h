@@ -1240,7 +1240,7 @@ public:
 
     ScriptRunner* scriptRunnerIfExists() { return m_scriptRunner.get(); }
     inline ScriptRunner& scriptRunner();
-    CheckedRef<ScriptRunner> checkedScriptRunner();
+    Ref<ScriptRunner> protectedScriptRunner();
     inline ScriptModuleLoader& moduleLoader();
 
     Element* currentScript() const { return !m_currentScriptStack.isEmpty() ? m_currentScriptStack.last().get() : nullptr; }
