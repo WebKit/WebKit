@@ -9250,8 +9250,8 @@ class TestParseStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase)
 
 
 class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase):
-    command = ['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/smart-pointer-result-archive/1234', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations']
-    upload_options = ['--builder-name', 'Safer-CPP-Checks', '--build-number', 1234, '--buildbot-worker', 'bot600', '--buildbot-master', EWS_BUILD_HOSTNAMES[0], '--report', 'https://results.webkit.org']
+    command = ['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--archived-dir', 'wkdir/build/baseline', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--delete-results']
+    upload_options = ['--builder-name', 'Safer-CPP-Checks', '--build-number', 1234, '--buildbot-worker', 'ews123', '--buildbot-master', EWS_BUILD_HOSTNAMES[0], '--report', 'https://results.webkit.org/']
     configuration = ['--architecture', 'arm64', '--platform', 'mac', '--version', '14.6.1', '--version-name', 'Sonoma', '--style', 'release', '--sdk', '23G93']
 
     def setUp(self):
@@ -9261,8 +9261,8 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
     def tearDown(self):
         return self.tearDownBuildStep()
 
-    def configureStep(self):
-        self.setupStep(FindUnexpectedStaticAnalyzerResults())
+    def configureStep(self, expectations):
+        self.setupStep(FindUnexpectedStaticAnalyzerResults(expectations=expectations))
         self.setProperty('builddir', 'wkdir')
         self.setProperty('buildnumber', 1234)
         self.setProperty('architecture', 'arm64')
@@ -9279,12 +9279,12 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
         self.setProperty('buildnumber', 1234)
 
     def test_success_no_issues(self):
-        self.configureStep()
+        self.configureStep(False)
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--archived-dir', 'wkdir/build/baseline', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--delete-results'],
+                        command=self.command + self.upload_options + self.configuration,
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
             + ExpectShell.log('stdio', stdout='')
             + 0,
@@ -9294,18 +9294,34 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
             return self.runStep()
 
     def test_new_issues(self):
-        self.configureStep()
+        self.configureStep(False)
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--archived-dir', 'wkdir/build/baseline', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--delete-results'],
+                        command=self.command + self.upload_options + self.configuration,
                         env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
             + ExpectShell.log('stdio', stdout='Total new issues: 19\nTotal fixed files: 3\n')
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='19 new issues 3 fixed files')
-        return self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.runStep()
+
+    def test_with_expectations(self):
+        self.configureStep(True)
+
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
+            + ExpectShell.log('stdio', stdout='Total new issues: 19\nTotal fixed files: 3\n')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='19 new issues 3 fixed files')
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.runStep()
 
 
 class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):

@@ -7293,21 +7293,22 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
             self.command += ['--archived-dir', os.path.join(self.getProperty('builddir'), 'build/baseline')]
             self.command += ['--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build']  # Only generate results page on the second comparison
             self.command += ['--delete-results']
-        elif CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES and self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH:
-            self.command += [
-                '--check-expectations',
-                '--builder-name', self.getProperty('buildername', ''),
-                '--build-number', self.getProperty('buildnumber', ''),
-                '--buildbot-worker', self.getProperty('workername', ''),
-                '--buildbot-master', CURRENT_HOSTNAME,
-                '--report', RESULTS_DB_URL,
-                '--architecture', self.getProperty('architecture', ''),
-                '--platform', self.getProperty('platform', ''),
-                '--version', self.getProperty('os_version', ''),
-                '--version-name', self.getProperty('os_name', ''),
-                '--style', self.getProperty('configuration', ''),
-                '--sdk', self.getProperty('build_version', '')
-            ]
+            if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES and self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH:
+                self.command += [
+                    '--builder-name', self.getProperty('buildername', ''),
+                    '--build-number', self.getProperty('buildnumber', ''),
+                    '--buildbot-worker', self.getProperty('workername', ''),
+                    '--buildbot-master', CURRENT_HOSTNAME,
+                    '--report', RESULTS_DB_URL,
+                    '--architecture', self.getProperty('architecture', ''),
+                    '--platform', self.getProperty('platform', ''),
+                    '--version', self.getProperty('os_version', ''),
+                    '--version-name', self.getProperty('os_name', ''),
+                    '--style', self.getProperty('configuration', ''),
+                    '--sdk', self.getProperty('build_version', '')
+                ]
+        else:
+            self.command += ['--check-expectations']
 
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
