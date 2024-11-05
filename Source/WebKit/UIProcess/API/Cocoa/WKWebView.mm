@@ -189,9 +189,8 @@
 #import "WKWebExtensionControllerInternal.h"
 #endif
 
-#import "WebKitSwiftSoftLink.h"
-
 #if PLATFORM(IOS_FAMILY)
+#import "PointerTouchCompatibilitySimulator.h"
 #import "RemoteLayerTreeDrawingAreaProxy.h"
 #import "RemoteScrollingCoordinatorProxy.h"
 #import "UIKitSPI.h"
@@ -216,6 +215,8 @@
 #import "WKViewInternal.h"
 #import <WebCore/ColorMac.h>
 #endif
+
+#import "WebKitSwiftSoftLink.h"
 
 #if PLATFORM(WATCHOS)
 static const BOOL defaultAllowsViewportShrinkToFit = YES;
@@ -448,6 +449,11 @@ static uint32_t convertSystemLayoutDirection(NSUserInterfaceLayoutDirection dire
 #if PLATFORM(APPLETV)
     // FIXME: This is a workaround for <rdar://135515434> to prevent the tint color from being set to either solid black or white.
     self.tintColor = UIColor.systemBlueColor;
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    if (WebKit::PointerTouchCompatibilitySimulator::requiresPointerTouchCompatibility())
+        _pointerTouchCompatibilitySimulator = WTF::makeUnique<WebKit::PointerTouchCompatibilitySimulator>(self);
 #endif
 }
 

@@ -101,13 +101,14 @@ enum class WheelScrollGestureState : uint8_t;
 
 namespace WebKit {
 enum class ContinueUnsafeLoad : bool;
+class BrowsingWarning;
 class IconLoadingDelegate;
 class NavigationState;
+class PointerTouchCompatibilitySimulator;
 class ResourceLoadDelegate;
-class BrowsingWarning;
+class UIDelegate;
 class ViewSnapshot;
 class WebPageProxy;
-class UIDelegate;
 struct PrintInfo;
 #if PLATFORM(MAC)
 class WebViewImpl;
@@ -373,7 +374,8 @@ struct PerWebProcessState {
     NSUInteger _activeFocusedStateRetainCount;
 
     RetainPtr<NSArray<NSNumber *>> _scrollViewDefaultAllowedTouchTypes;
-#endif
+    std::unique_ptr<WebKit::PointerTouchCompatibilitySimulator> _pointerTouchCompatibilitySimulator;
+#endif // PLATFORM(IOS_FAMILY)
 
 #if PLATFORM(VISION)
     String _defaultSTSLabel;

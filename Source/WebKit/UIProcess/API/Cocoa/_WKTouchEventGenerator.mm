@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "_WKTouchEventGenerator.h"
+#import "_WKTouchEventGeneratorInternal.h"
 
 #if PLATFORM(IOS_FAMILY)
 
@@ -90,13 +90,6 @@ static void delayBetweenMove(int eventIndex, double elapsed)
         nanosleep(&moveDelay, NULL);
     }
 }
-
-// NOTE: this event synthesizer is derived from WebKitTestRunner code.
-// Compared to that version, this lacks support for stylus event simulation,
-// event stream, and only single touches are exposed via the touch/lift/move method calls.
-@interface _WKTouchEventGenerator ()
-@property (nonatomic, strong) NSMutableDictionary *eventCallbacks;
-@end
 
 @implementation _WKTouchEventGenerator {
     RetainPtr<IOHIDEventSystemClientRef> _ioSystemClient;
@@ -346,23 +339,38 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     [self _updateTouchPoints:newLocations window:window];
 }
 
-- (void)touchDown:(CGPoint)location window:(UIWindow *)window completionBlock:(void (^)(void))completionBlock
+- (void)touchDown:(CGPoint)location window:(UIWindow *)window
 {
     [self touchDown:location touchCount:1 window:window];
+}
+
+- (void)touchDown:(CGPoint)location window:(UIWindow *)window completionBlock:(void (^)(void))completionBlock
+{
+    [self touchDown:location window:window];
     [self _sendMarkerHIDEventInWindow:window completionBlock:completionBlock];
+}
+
+- (void)liftUp:(CGPoint)location window:(UIWindow *)window
+{
+    [self liftUp:location touchCount:1 window:window];
 }
 
 - (void)liftUp:(CGPoint)location window:(UIWindow *)window completionBlock:(void (^)(void))completionBlock
 {
-    [self liftUp:location touchCount:1 window:window];
+    [self liftUp:location window:window];
     [self _sendMarkerHIDEventInWindow:window completionBlock:completionBlock];
 }
 
-- (void)moveToPoint:(CGPoint)location duration:(NSTimeInterval)seconds window:(UIWindow *)window completionBlock:(void (^)(void))completionBlock
+- (void)moveToPoint:(CGPoint)location duration:(NSTimeInterval)seconds window:(UIWindow *)window
 {
     CGPoint locations[1];
     locations[0] = location;
     [self moveToPoints:locations touchCount:1 duration:seconds window:window];
+}
+
+- (void)moveToPoint:(CGPoint)location duration:(NSTimeInterval)seconds window:(UIWindow *)window completionBlock:(void (^)(void))completionBlock
+{
+    [self moveToPoint:location duration:seconds window:window];
     [self _sendMarkerHIDEventInWindow:window completionBlock:completionBlock];
 }
 
