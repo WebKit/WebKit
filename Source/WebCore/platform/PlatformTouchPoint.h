@@ -20,7 +20,7 @@
 #ifndef PlatformTouchPoint_h
 #define PlatformTouchPoint_h
 
-#include "IntPoint.h"
+#include "FloatPoint.h"
 
 #if ENABLE(TOUCH_EVENTS)
 
@@ -42,8 +42,6 @@ public:
     // This is necessary for us to be able to build synthetic events.
     PlatformTouchPoint()
         : m_id(0)
-        , m_radiusY(0)
-        , m_radiusX(0)
         , m_rotationAngle(0)
         , m_force(0)
     {
@@ -52,7 +50,7 @@ public:
 #if PLATFORM(WPE)
     // FIXME: since WPE currently does not send touch stationary events, we need to be able to
     // create a PlatformTouchPoint of type TouchCancelled artificially
-    PlatformTouchPoint(unsigned id, State state, IntPoint screenPos, IntPoint pos)
+    PlatformTouchPoint(unsigned id, State state, FloatPoint screenPos, FloatPoint pos)
         : m_id(id)
         , m_state(state)
         , m_screenPos(screenPos)
@@ -63,20 +61,18 @@ public:
 
     unsigned id() const { return m_id; }
     State state() const { return m_state; }
-    IntPoint screenPos() const { return m_screenPos; }
-    IntPoint pos() const { return m_pos; }
-    int radiusX() const { return m_radiusX; }
-    int radiusY() const { return m_radiusY; }
+    FloatPoint screenPos() const { return m_screenPos; }
+    FloatPoint pos() const { return m_pos; }
+    FloatSize radius() const { return m_radius; }
     float rotationAngle() const { return m_rotationAngle; }
     float force() const { return m_force; }
 
 protected:
     unsigned m_id;
     State m_state;
-    IntPoint m_screenPos;
-    IntPoint m_pos;
-    int m_radiusY;
-    int m_radiusX;
+    FloatPoint m_screenPos;
+    FloatPoint m_pos;
+    FloatSize m_radius;
     float m_rotationAngle;
     float m_force;
 };

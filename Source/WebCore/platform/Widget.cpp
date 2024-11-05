@@ -164,6 +164,20 @@ IntRect Widget::convertFromContainingWindow(const IntRect& windowRect) const
     return convertFromContainingWindowToRoot(this, windowRect);
 }
 
+FloatPoint Widget::convertFromContainingWindow(const FloatPoint& windowPoint) const
+{
+    IntPoint flooredPoint = flooredIntPoint(windowPoint);
+    FloatPoint parentPoint = this->convertFromContainingWindow(flooredPoint);
+    FloatSize windowFraction = windowPoint - flooredPoint;
+    if (!windowFraction.isEmpty()) {
+        const int kFactor = 1000;
+        IntPoint parentLineEnd = this->convertFromContainingWindow(flooredPoint + roundedIntSize(windowFraction.scaled(kFactor)));
+        FloatSize parentFraction = (parentLineEnd - parentPoint).scaled(1.0f / kFactor);
+        parentPoint.move(parentFraction);
+    }
+    return parentPoint;
+}
+
 IntRect Widget::convertToContainingWindow(const IntRect& localRect) const
 {
     if (const ScrollView* parentScrollView = parent()) {

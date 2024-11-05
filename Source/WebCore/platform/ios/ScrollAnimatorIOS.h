@@ -48,7 +48,7 @@ public:
 
 private:
 #if ENABLE(TOUCH_EVENTS)
-    void determineScrollableAreaForTouchSequence(const IntSize& touchDelta);
+    void determineScrollableAreaForTouchSequence(const FloatSize& touchDelta);
 
     // State for handling sequences of touches in defaultTouchEventHandler.
     enum AxisLatch {
@@ -61,8 +61,8 @@ private:
     bool m_inTouchSequence { false };
     bool m_committedToScrollAxis { false };
     bool m_startedScroll { false };
-    IntPoint m_firstTouchPoint;
-    IntPoint m_lastTouchPoint;
+    FloatPoint m_firstTouchPoint;
+    FloatPoint m_lastTouchPoint;
 
     // When we're in a touch sequence, this will point to the scrollable area that
     // should actually be scrolled during the sequence.

@@ -163,6 +163,7 @@ public:
     // when converting window rects.
     WEBCORE_EXPORT IntRect convertToContainingWindow(const IntRect&) const;
     IntRect convertFromContainingWindow(const IntRect&) const;
+    FloatPoint convertFromContainingWindow(const FloatPoint&) const;
 
     WEBCORE_EXPORT IntPoint convertToContainingWindow(const IntPoint&) const;
     IntPoint convertFromContainingWindow(const IntPoint&) const;

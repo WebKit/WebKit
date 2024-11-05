@@ -211,7 +211,7 @@ static bool hierarchyHasCapturingEventListeners(Element* target, const AtomStrin
     return false;
 }
 
-void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target, const PlatformTouchEvent& platformTouchEvent, unsigned index, bool isPrimary, WindowProxy& view, const IntPoint& touchDelta)
+void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target, const PlatformTouchEvent& platformTouchEvent, unsigned index, bool isPrimary, WindowProxy& view, const FloatPoint& touchDelta)
 {
     RELEASE_ASSERT(is<Element>(target));
 
@@ -318,7 +318,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 
 #if PLATFORM(IOS_FAMILY)
     if (pointerEvent->type() == eventNames().pointercancelEvent) {
-        cancelPointer(pointerEvent->pointerId(), platformTouchEvent.touchLocationAtIndex(index), pointerEvent.ptr());
+        cancelPointer(pointerEvent->pointerId(), flooredIntPoint(platformTouchEvent.touchLocationAtIndex(index)), pointerEvent.ptr());
         return;
     }
 #endif
@@ -482,7 +482,7 @@ void PointerCaptureController::pointerEventWasDispatched(const PointerEvent& eve
         capturingData->preventsCompatibilityMouseEvents = event.defaultPrevented();
 }
 
-void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint& documentPoint, PointerEvent* existingCancelEvent)
+void PointerCaptureController::cancelPointer(PointerID pointerId, const FloatPoint& documentPoint, PointerEvent* existingCancelEvent)
 {
     // https://w3c.github.io/pointerevents/#the-pointercancel-event
 
@@ -522,7 +522,7 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
         RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
         if (!localMainFrame)
             return nullptr;
-        return localMainFrame->checkedEventHandler()->hitTestResultAtPoint(documentPoint, hitType).innerNonSharedElement();
+        return localMainFrame->checkedEventHandler()->hitTestResultAtPoint(LayoutPoint(documentPoint), hitType).innerNonSharedElement();
     }();
 
     if (!target)
