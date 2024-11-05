@@ -224,6 +224,17 @@ Vector<String> WebProcessPool::urlSchemesWithCustomProtocolHandlers()
     return copyToVector(globalURLSchemesWithCustomProtocolHandlers());
 }
 
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+static Seconds criticalMemoryPressureCheckInterval()
+{
+    static Seconds interval = []() {
+        auto value = CFPreferencesGetAppIntegerValue(CFSTR("DebugWebProcessCriticalMemoryPressureCheckInterval"), kCFPreferencesCurrentApplication, nullptr);
+        return value > 0 ? Seconds(value) : 30_min;
+    }();
+    return interval;
+}
+#endif
+
 WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     : m_configuration(configuration.copy())
     , m_defaultPageGroup(WebPageGroup::create())
@@ -253,7 +264,8 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_webProcessWithAudibleMediaCounter([this](RefCounterEvent) { updateAudibleMediaAssertions(); })
     , m_audibleActivityTimer(RunLoop::main(), this, &WebProcessPool::clearAudibleActivity)
     , m_webProcessWithMediaStreamingCounter([this](RefCounterEvent) { updateMediaStreamingActivity(); })
-#if PLATFORM(MAC)
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
+    , m_lastCriticalMemoryPressureStatusTime(ApproximateTime::now() - criticalMemoryPressureCheckInterval())
     , m_checkMemoryPressureStatusTimer(RunLoop::main(), this, &WebProcessPool::checkMemoryPressureStatus)
 #endif
 {
@@ -2520,15 +2532,6 @@ static bool isSystemUnderCriticalMemoryPressure()
     }
 
     return isSystemUnderCriticalMemoryPressure;
-}
-
-static Seconds criticalMemoryPressureCheckInterval()
-{
-    static Seconds interval = []() {
-        auto value = CFPreferencesGetAppIntegerValue(CFSTR("DebugWebProcessCriticalMemoryPressureCheckInterval"), kCFPreferencesCurrentApplication, nullptr);
-        return value > 0 ? Seconds(value) : 30_min;
-    }();
-    return interval;
 }
 
 void WebProcessPool::checkMemoryPressureStatus()

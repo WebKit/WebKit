@@ -951,7 +951,7 @@ private:
 
     bool m_webProcessStateUpdatesForPageClientEnabled { false };
 
-#if PLATFORM(MAC)
+#if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     ApproximateTime m_lastCriticalMemoryPressureStatusTime;
     RunLoop::Timer m_checkMemoryPressureStatusTimer;
 #endif
