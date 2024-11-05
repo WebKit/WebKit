@@ -983,6 +983,23 @@ Ref<SecurityOrigin> Document::protectedTopOrigin() const
     return topOrigin();
 }
 
+URL Document::topURL() const
+{
+    if (isTopDocument()) {
+        WTFLogAlways("Brady: isTopDocument, so returning url %s", url().string().utf8().data());
+        return url();
+    }
+
+    if (RefPtr page = this->page()) {
+        WTFLogAlways("Brady: Has a page, so returning main frame url %s", page->mainFrameURL().string().utf8().data());
+        return page->mainFrameURL();
+    }
+
+    WTFLogAlways("Brady: RETURNING EMPTY URL");
+    RELEASE_ASSERT_NOT_REACHED();
+//    return { };
+}
+
 SecurityOrigin& Document::topOrigin() const
 {
     // Keep exact pre-site-isolation behavior to avoid risking changing behavior when site isolation is not enabled.
