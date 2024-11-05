@@ -1417,12 +1417,19 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
     // Create or destroy backing here. However, we can't update geometry because layers above us may become composited
     // during post-order traversal (e.g. for clipping).
+    bool needsCompositingStatusUpdate = false;
     if (updateBacking(layer, queryData, &backingSharingState, willBeComposited ? BackingRequired::Yes : BackingRequired::No)) {
         layer.setNeedsCompositingLayerConnection();
         // Child layers need to get a geometry update to recompute their position.
         layer.setChildrenNeedCompositingGeometryUpdate();
         // The composited bounds of enclosing layers depends on which descendants are composited, so they need a geometry update.
         layer.setNeedsCompositingGeometryUpdateOnAncestors();
+
+        // This layer and all of its descendants have cached repaints rects that are relative to
+        // the repaint container, so change when compositing changes; we need to update them here,
+        // as long as shared backing isn't going to change our repaint container.
+        if (willBeComposited || !layerRepaintTargetsBackingSharingLayer(layer, backingSharingState))
+            needsCompositingStatusUpdate = true;
     }
 
     // Update layer state bits.
@@ -1440,6 +1447,18 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     // Compute state passed to the caller.
     compositingState.updateWithDescendantStateAndLayer(currentState, layer, ancestorLayer, layerExtent);
     updateBackingSharingAfterDescendantTraversal(backingSharingState, treeDepth, overlapMap, layer, layerExtent, compositingState.stackingContextAncestor, backingSharingSnapshot);
+
+    // Update the cached repaint rects now that we've finished updating backing
+    // sharing state on descendants
+    if (needsCompositingStatusUpdate) {
+        layer.compositingStatusChanged(queryData.layoutUpToDate);
+        if (!layer.isComposited()) {
+            if (layerRepaintTargetsBackingSharingLayer(layer, backingSharingState))
+                backingSharingState.addLayerNeedingRepaint(layer);
+            else
+                repaintOnCompositingChange(layer);
+        }
+    }
 
     bool layerContributesToOverlap = (currentState.compositingAncestor && !currentState.compositingAncestor->isRenderViewLayer()) || currentState.backingSharingAncestor;
     updateOverlapMap(overlapMap, layer, layerExtent, didPushOverlapContainer, layerContributesToOverlap, becameCompositedAfterDescendantTraversal && !descendantsAddedToOverlap);
@@ -2049,6 +2068,9 @@ void RenderLayerCompositor::layerGainedCompositedScrollableOverflow(RenderLayer&
 
     bool layerChanged = updateBacking(layer, queryData, nullptr, BackingRequired::Yes);
     if (layerChanged) {
+        layer.compositingStatusChanged(queryData.layoutUpToDate);
+        if (!layer.isComposited())
+            repaintOnCompositingChange(layer);
         layer.setChildrenNeedCompositingGeometryUpdate();
         layer.setNeedsCompositingLayerConnection();
         layer.setSubsequentLayersNeedCompositingRequirementsTraversal();
@@ -2077,6 +2099,9 @@ void RenderLayerCompositor::layerStyleChanged(StyleDifference diff, RenderLayer&
     
     bool layerChanged = updateBacking(layer, queryData);
     if (layerChanged) {
+        layer.compositingStatusChanged(queryData.layoutUpToDate);
+        if (!layer.isComposited())
+            repaintOnCompositingChange(layer);
         layer.setChildrenNeedCompositingGeometryUpdate();
         layer.setNeedsCompositingLayerConnection();
         layer.setSubsequentLayersNeedCompositingRequirementsTraversal();
@@ -2232,6 +2257,7 @@ void RenderLayerCompositor::updateRootContentLayerClipping()
     m_rootContentsLayer->setMasksToBounds(!m_renderView.settings().backgroundShouldExtendBeyondPage());
 }
 
+
 bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositingData& queryData, BackingSharingState* backingSharingState, BackingRequired backingRequired)
 {
     bool layerChanged = false;
@@ -2280,10 +2306,6 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
                     tiledBacking->setTopContentInset(frameView.topContentInset());
             }
 
-            // This layer and all of its descendants have cached repaints rects that are relative to
-            // the repaint container, so change when compositing changes; we need to update them here.
-            layer.compositingStatusChanged(queryData.layoutUpToDate);
-
             layer.setNeedsCompositingGeometryUpdate();
             layer.setNeedsCompositingConfigurationUpdate();
             layer.setNeedsCompositingPaintOrderChildrenUpdate();
@@ -2305,12 +2327,6 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
 
             layer.clearBacking();
             layerChanged = true;
-
-            // This layer and all of its descendants have cached repaints rects that are relative to
-            // the repaint container, so change when compositing changes; we need to update them here,
-            // as long as shared backing isn't going to change our repaint container.
-            if (!repaintTargetsSharedBacking(layer))
-                layer.compositingStatusChanged(queryData.layoutUpToDate);
 
             // If we need to repaint, do so now that we've removed the backing.
             repaintLayer(layer);
@@ -2360,6 +2376,11 @@ bool RenderLayerCompositor::updateBacking(RenderLayer& layer, RequiresCompositin
 bool RenderLayerCompositor::updateLayerCompositingState(RenderLayer& layer, const RenderLayer* compositingAncestor, RequiresCompositingData& queryData, BackingSharingState& backingSharingState)
 {
     bool layerChanged = updateBacking(layer, queryData, &backingSharingState);
+    if (layerChanged) {
+        layer.compositingStatusChanged(queryData.layoutUpToDate);
+        if (!layer.isComposited())
+            repaintOnCompositingChange(layer);
+    }
 
     // See if we need content or clipping layers. Methods called here should assume
     // that the compositing state of descendant layers has not been updated yet.

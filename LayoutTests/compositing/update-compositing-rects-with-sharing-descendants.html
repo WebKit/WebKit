@@ -1,0 +1,37 @@
+<!DOCTYPE HTML>
+<html>
+
+<p>This test should not crash.</p>
+
+<div style="width: 200px; height: 200px; isolation: isolate">
+  <div style="width: 200px; height: 200px; overflow: scroll">
+    <div style="width: 200px; height: 400px; background: green; position: relative"></div>
+
+  </div>
+  <div id=composited style="mix-blend-mode: screen; width: 100px; height: 100px; background: blue"></div>
+</div>
+
+<script>
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+async function runTest() {
+    // Make 'composited' actually composited, which should also make the outer div
+    // to composite too.
+    document.getElementById("composited").style.transform = "translateZ(0px)";
+
+    // Let a rendering update happen for the outer compositing change to take effect, and
+    // repaint rects for the scroller and scrolled to be recomputed.
+    await new Promise(requestAnimationFrame);
+
+    // Trigger a layout change to run updateLayerPositions and verify that the scroller
+    // was left in a valid state.
+    document.getElementById("composited").style.height = "120px";
+
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+onload = () => requestAnimationFrame(() => requestAnimationFrame(runTest));
+</script>
+</html>
