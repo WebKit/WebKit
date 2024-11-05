@@ -3543,8 +3543,29 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
     bool isSelfPaintingLayer = this->isSelfPaintingLayer();
 
+    auto hasVisibleContent = [&]() -> bool {
+        if (!m_hasVisibleContent)
+            return false;
+
+        if (!m_enclosingSVGHiddenOrResourceContainer)
+            return true;
+
+        // Hidden SVG containers (<defs> / <symbol> ...) and their children are never painted directly.
+        if (!is<RenderSVGResourceContainer>(m_enclosingSVGHiddenOrResourceContainer))
+            return false;
+
+        // SVG resource layers and their children are only painted indirectly, via paintSVGResourceLayer().
+        ASSERT(m_enclosingSVGHiddenOrResourceContainer->hasLayer());
+        return m_enclosingSVGHiddenOrResourceContainer->layer()->isPaintingSVGResourceLayer();
+    };
+
+    bool shouldPaintContent = hasVisibleContent() && isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion && !isCollectingAccessibilityRegion;
+
     bool shouldPaintOutline = [&]() {
         if (!isSelfPaintingLayer)
+            return false;
+
+        if (!shouldPaintContent)
             return false;
 
         if (isPaintingOverlayScrollbars || isCollectingEventRegion || isCollectingAccessibilityRegion)
@@ -3574,24 +3595,6 @@ void RenderLayer::paintLayerContents(GraphicsContext& context, const LayerPainti
 
         return isPaintingCompositedBackground;
     }();
-
-    auto hasVisibleContent = [&]() -> bool {
-        if (!m_hasVisibleContent)
-            return false;
-
-        if (!m_enclosingSVGHiddenOrResourceContainer)
-            return true;
-
-        // Hidden SVG containers (<defs> / <symbol> ...) and their children are never painted directly.
-        if (!is<RenderSVGResourceContainer>(m_enclosingSVGHiddenOrResourceContainer))
-            return false;
-
-        // SVG resource layers and their children are only painted indirectly, via paintSVGResourceLayer().
-        ASSERT(m_enclosingSVGHiddenOrResourceContainer->hasLayer());
-        return m_enclosingSVGHiddenOrResourceContainer->layer()->isPaintingSVGResourceLayer();
-    };
-
-    bool shouldPaintContent = hasVisibleContent() && isSelfPaintingLayer && !isPaintingOverlayScrollbars && !isCollectingEventRegion && !isCollectingAccessibilityRegion;
 
     if (localPaintFlags.contains(PaintLayerFlag::PaintingRootBackgroundOnly) && !renderer().isRenderView() && !renderer().isDocumentElementRenderer()) {
         // If beginTransparencyLayers was called prior to this, ensure the transparency state is cleaned up before returning.

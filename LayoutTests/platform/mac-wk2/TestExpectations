@@ -1919,6 +1919,4 @@ imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data
 # webkit.org/b/282477 [macOS wk2 Debug ] fast/events/drag-and-drop-autoscroll-inner-frame.html is flaky failure (failure in EWS)
 fast/events/drag-and-drop-autoscroll-inner-frame.html [ Pass Failure ]
 
-webkit.org/b/282563 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/locked-frame-crash.html [ Skip ]
-
 webkit.org/b/282565 [ Sequoia+ Debug ] imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-001.html [ Pass ImageOnlyFailure ]
