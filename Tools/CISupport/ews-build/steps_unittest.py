@@ -9250,7 +9250,12 @@ class TestParseStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase)
 
 
 class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase):
+    command = ['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/smart-pointer-result-archive/1234', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--check-expectations']
+    upload_options = ['--builder-name', 'Safer-CPP-Checks', '--build-number', 1234, '--buildbot-worker', 'bot600', '--buildbot-master', EWS_BUILD_HOSTNAMES[0], '--report', 'https://results.webkit.org']
+    configuration = ['--architecture', 'arm64', '--platform', 'mac', '--version', '14.6.1', '--version-name', 'Sonoma', '--style', 'release', '--sdk', '23G93']
+
     def setUp(self):
+        os.environ['RESULTS_SERVER_API_KEY'] = 'test-api-key'
         return self.setUpBuildStep()
 
     def tearDown(self):
@@ -9258,31 +9263,44 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
 
     def configureStep(self):
         self.setupStep(FindUnexpectedStaticAnalyzerResults())
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
+        self.setProperty('architecture', 'arm64')
+        self.setProperty('platform', 'mac')
+        self.setProperty('os_version', '14.6.1')
+        self.setProperty('os_name', 'Sonoma')
+        self.setProperty('configuration', 'release')
+        self.setProperty('build_version', '23G93')
+        self.setProperty('got_revision', '1234567')
+        self.setProperty('branch', 'main')
+        self.setProperty('buildername', 'Safer-CPP-Checks')
+        self.setProperty('workername', 'ews123')
+        self.setProperty('builddir', 'wkdir')
+        self.setProperty('buildnumber', 1234)
 
     def test_success_no_issues(self):
         self.configureStep()
-        self.setProperty('builddir', 'wkdir')
-        self.setProperty('buildnumber', 2)
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--archived-dir', 'wkdir/build/baseline', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--delete-results'])
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--archived-dir', 'wkdir/build/baseline', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--delete-results'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
             + ExpectShell.log('stdio', stdout='')
             + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Found no unexpected results')
-        return self.runStep()
+        with current_hostname(EWS_BUILD_HOSTNAMES[0]):
+            return self.runStep()
 
     def test_new_issues(self):
         self.configureStep()
-        self.setProperty('builddir', 'wkdir')
-        self.setProperty('buildnumber', 1234)
 
         self.expectRemoteCommands(
             ExpectShell(workdir='wkdir',
                         logEnviron=False,
-                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--archived-dir', 'wkdir/build/baseline', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--delete-results'],)
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--archived-dir', 'wkdir/build/baseline', '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--delete-results'],
+                        env={'RESULTS_SERVER_API_KEY': 'test-api-key'})
             + ExpectShell.log('stdio', stdout='Total new issues: 19\nTotal fixed files: 3\n')
             + 0,
         )

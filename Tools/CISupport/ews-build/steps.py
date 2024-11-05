@@ -5913,7 +5913,7 @@ class PrintConfiguration(steps.ShellSequence):
         return 'Unknown'
 
     def parseAndValidate(self, logText):
-        os_version, xcode_version = '', ''
+        os_version, os_name, xcode_version = '', '', ''
         match = re.search('ProductVersion:[ \t]*(.+?)\n', logText)
         if match:
             os_version = match.group(1).strip()
@@ -5924,7 +5924,13 @@ class PrintConfiguration(steps.ShellSequence):
         if match:
             xcode_version = match.group(1).strip()
 
+        match = re.search('BuildVersion:[ \t]*(.+?)\n', logText)
+        if match:
+            build_version = match.group(1).strip()
+            self.setProperty('build_version', build_version)
+
         self.setProperty('os_version', os_version)
+        self.setProperty('os_name', os_name)
         self.setProperty('xcode_version', xcode_version)
         os_version_builder = self.getProperty('os_version_builder', '')
         xcode_version_builder = self.getProperty('xcode_version_builder', '')
@@ -7275,14 +7281,33 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
 
     @defer.inlineCallbacks
     def run(self):
+        api_key = os.getenv(RESULTS_SERVER_API_KEY)
+        if api_key:
+            self.env[RESULTS_SERVER_API_KEY] = api_key
+        else:
+            self._addToLog('stdio', 'No API key for {} found'.format(RESULTS_DB_URL))
+
         self.command = ['python3', 'Tools/Scripts/compare-static-analysis-results', os.path.join(self.getProperty('builddir'), 'build/new')]
         self.command += ['--build-output', SCAN_BUILD_OUTPUT_DIR]
         if not self.expectations:
             self.command += ['--archived-dir', os.path.join(self.getProperty('builddir'), 'build/baseline')]
             self.command += ['--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build']  # Only generate results page on the second comparison
             self.command += ['--delete-results']
-        else:
-            self.command += ['--check-expectations']
+        elif CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES and self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH:
+            self.command += [
+                '--check-expectations'
+                '--builder-name', self.getProperty('buildername', ''),
+                '--build-number', self.getProperty('buildnumber', ''),
+                '--buildbot-worker', self.getProperty('workername', ''),
+                '--buildbot-master', CURRENT_HOSTNAME,
+                '--report', RESULTS_DB_URL,
+                '--architecture', self.getProperty('architecture', ''),
+                '--platform', self.getProperty('platform', ''),
+                '--version', self.getProperty('os_version', ''),
+                '--version-name', self.getProperty('os_name', ''),
+                '--style', self.getProperty('configuration', ''),
+                '--sdk', self.getProperty('build_version', '')
+            ]
 
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
