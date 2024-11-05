@@ -1294,6 +1294,14 @@ bool Quirks::requiresUserGestureToPauseInPictureInPicture() const
 #endif
 }
 
+bool Quirks::returnNullPictureInPictureElementDuringFullscreenChange() const
+{
+    if (!needsQuirks())
+        return false;
+
+    return isDomain("bbc.co.uk"_s);
+}
+
 bool Quirks::requiresUserGestureToLoadInPictureInPicture() const
 {
 #if ENABLE(VIDEO_PRESENTATION_MODE)
