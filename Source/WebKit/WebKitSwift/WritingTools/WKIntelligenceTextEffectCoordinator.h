@@ -25,7 +25,7 @@
 
 #import <Foundation/Foundation.h>
 
-#if !TARGET_OS_WATCH && !TARGET_OS_TV
+#if !TARGET_OS_WATCH && !TARGET_OS_TV && __has_include(<WritingTools/WritingTools.h>)
 
 #if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
 #import <UIKit/UIKit.h>
@@ -34,12 +34,13 @@
 #import <WebKit/_WKTextPreview.h>
 #endif
 
-#import <WebKit/WKWebView.h>
-
 NS_ASSUME_NONNULL_BEGIN
 
 @class WKIntelligenceTextEffectCoordinator;
 
+@class WTTextSuggestion;
+
+NS_SWIFT_UI_ACTOR
 @protocol WKIntelligenceTextEffectCoordinatorDelegate <NSObject>
 
 #if defined(TARGET_OS_IPHONE) && TARGET_OS_IPHONE
@@ -56,11 +57,28 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator rectsForProofreadingSuggestionsInRange:(NSRange)range completion:(void (^)(NSArray<NSValue *> *))completion;
 
-- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator updateTextVisibilityForRange:(NSRange)range visible:(BOOL)visible completion:(void (^)(void))completion;
+- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator updateTextVisibilityForRange:(NSRange)range visible:(BOOL)visible identifier:(NSUUID *)identifier completion:(void (^)(void))completion;
+
+- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator decorateReplacementsForRange:(NSRange)range completion:(void (^)(void))completion;
+
+- (void)intelligenceTextEffectCoordinator:(WKIntelligenceTextEffectCoordinator *)coordinator setSelectionForRange:(NSRange)range completion:(void (^)(void))completion;
 
 @end
 
+NS_SWIFT_UI_ACTOR
 @interface WKIntelligenceTextEffectCoordinator : NSObject
+
++ (NSInteger)characterDeltaForReceivedSuggestions:(NSArray<WTTextSuggestion *> *)suggestions;
+
+- (instancetype)initWithDelegate:(id<WKIntelligenceTextEffectCoordinatorDelegate>)delegate;
+
+- (void)startAnimationForRange:(NSRange)range completion:(void (^)(void))completion;
+
+- (void)requestReplacementWithProcessedRange:(NSRange)range finished:(BOOL)finished characterDelta:(NSInteger)characterDelta operation:(void (^)(void (^)(void)))operation completion:(void (^)(void))completion;
+
+- (void)flushReplacementsWithCompletion:(void (^)(void))completion;
+
+- (void)restoreSelectionAcceptedReplacements:(BOOL)acceptedReplacements completion:(void (^)(void))completion;
 
 @end
 

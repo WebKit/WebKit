@@ -293,6 +293,12 @@ using PlatformTextPlaceholder = NSTextPlaceholder;
     } while (true);
 };
 
+- (void)waitForProofreadingSuggestionsToBeReplaced
+{
+    // FIXME: Avoid using a hard-coded delay.
+    TestWebKitAPI::Util::runFor(1.0_s);
+}
+
 @end
 
 struct ColorExpectation {
@@ -328,8 +334,8 @@ TEST(WritingTools, ProofreadingAcceptReject)
 
     auto webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
 
-    constexpr unsigned start = 5;
-    constexpr unsigned end = 9;
+    constexpr unsigned start = 0;
+    constexpr unsigned end = 14;
 
     [webView waitForNextPresentationUpdate];
 
@@ -361,8 +367,10 @@ TEST(WritingTools, ProofreadingAcceptReject)
 
         EXPECT_WK_STREQ(@"AAAA BBBB CCCC", contexts.firstObject.attributedText.string);
 
-        EXPECT_EQ(5UL, contexts.firstObject.range.location);
+        EXPECT_EQ(0UL, contexts.firstObject.range.location);
         EXPECT_EQ(end - start, contexts.firstObject.range.length);
+
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
 
         // Test `didReceiveSuggestions`.
 
@@ -373,10 +381,12 @@ TEST(WritingTools, ProofreadingAcceptReject)
         [suggestions addObject:firstSuggestion.get()];
         [suggestions addObject:secondSuggestion.get()];
 
-        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(NSNotFound, 0) inContext:contexts.firstObject finished:YES];
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(0, 14) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
-        auto selectionAfterReceivingSuggestions = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
-        EXPECT_WK_STREQ(@"ZZZZ BBBB YYYY", selectionAfterReceivingSuggestions);
+        // FIXME: (282486) Uncomment this expectation once selection is updated to work with animations.
+//        auto selectionAfterReceivingSuggestions = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
+//        EXPECT_WK_STREQ(@"ZZZZ BBBB YYYY", selectionAfterReceivingSuggestions);
 
         modifySelection(0, 0);
 
@@ -409,6 +419,7 @@ TEST(WritingTools, ProofreadingAcceptReject)
         auto selectionBeforeEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
 
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         auto selectionAfterEnd = [webView stringByEvaluatingJavaScript:@"window.getSelection().toString()"];
         EXPECT_WK_STREQ(selectionBeforeEnd, selectionAfterEnd);
@@ -444,10 +455,13 @@ TEST(WritingTools, ProofreadingWithStreamingSuggestions)
 
         EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
 
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
         [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:@[ adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(0, 4) replacement:@"ZZ"]).get() ] processedRange:NSMakeRange(0, 4) inContext:contexts.firstObject finished:NO];
-        TestWebKitAPI::Util::runFor(0.1_s);
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:@[ adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(15, 4) replacement:@"YYYYY"]).get() ] processedRange:NSMakeRange(15, 4) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         [webView waitForNextPresentationUpdate];
 
@@ -478,13 +492,14 @@ TEST(WritingTools, ProofreadingWithLongReplacement)
 
         EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
 
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
         auto suggestions = [NSMutableArray array];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(8, 4) replacement:@"someveryveryverylongword"]).get()];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(32, 4) replacement:@"hear"]).get()];
 
-        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(NSNotFound, 0) inContext:contexts.firstObject finished:YES];
-
-        [webView waitForNextPresentationUpdate];
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(0, originalText.length) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         EXPECT_WK_STREQ(@"('thin', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
         EXPECT_WK_STREQ(@"('here', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
@@ -516,15 +531,16 @@ TEST(WritingTools, ProofreadingShowOriginal)
 
         EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
 
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
         auto suggestions = [NSMutableArray array];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(8, 4) replacement:@"think"]).get()];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(32, 4) replacement:@"hear"]).get()];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(54, 7) replacement:@"there"]).get()];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(76, 5) replacement:@"there"]).get()];
 
-        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(NSNotFound, 0) inContext:contexts.firstObject finished:YES];
-
-        [webView waitForNextPresentationUpdate];
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(0, originalText.length) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         EXPECT_WK_STREQ(@"('thin', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 0);"]);
         EXPECT_WK_STREQ(@"('here', state: 0)", [webView stringByEvaluatingJavaScript:@"internals.markerDescriptionForNode(document.getElementById('first').childNodes[0], 'writingtoolstextsuggestion', 1);"]);
@@ -556,6 +572,8 @@ TEST(WritingTools, ProofreadingShowOriginal)
         EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
 
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:NO];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
+
         EXPECT_WK_STREQ(originalText, [webView contentsAsString]);
 
         finished = true;
@@ -582,6 +600,8 @@ TEST(WritingTools, ProofreadingShowOriginalWithMultiwordSuggestions)
 
         EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
 
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
         context = contexts.firstObject;
         finished = true;
     }];
@@ -593,11 +613,8 @@ TEST(WritingTools, ProofreadingShowOriginalWithMultiwordSuggestions)
     [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(40, 12) replacement:@"daily lives"]).get()];
     [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(54, 21) replacement:@"influencing everything"]).get()];
 
-    [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions.get() processedRange:NSMakeRange(NSNotFound, 0) inContext:context.get() finished:YES];
-
-    TestWebKitAPI::Util::runFor(0.1_s);
-
-    [webView waitForNextPresentationUpdate];
+    [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions.get() processedRange:NSMakeRange(0, originalText.length) inContext:context.get() finished:YES];
+    [webView waitForProofreadingSuggestionsToBeReplaced];
 
     EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
 
@@ -625,6 +642,8 @@ TEST(WritingTools, ProofreadingRevert)
 
         EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
 
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
         auto suggestions = [NSMutableArray array];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(6, 3) replacement:@"I've"]).get()];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(31, 10) replacement:@"in watching"]).get()];
@@ -633,13 +652,14 @@ TEST(WritingTools, ProofreadingRevert)
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(77, 2) replacement:@"I've"]).get()];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(87, 5) replacement:@"pretty"]).get()];
 
-        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(NSNotFound, 0) inContext:contexts.firstObject finished:YES];
-
-        [webView waitForNextPresentationUpdate];
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(0, originalText.length) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
 
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:NO];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
+
         EXPECT_WK_STREQ(originalText, [webView contentsAsString]);
 
         finished = true;
@@ -665,17 +685,20 @@ TEST(WritingTools, ProofreadingRevertWithSuggestionAtEndOfText)
 
         EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
 
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
         auto suggestions = [NSMutableArray array];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(0, 3) replacement:@"Hey,"]).get()];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(32, 7) replacement:@"weekend?"]).get()];
 
-        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(NSNotFound, 0) inContext:contexts.firstObject finished:YES];
-
-        [webView waitForNextPresentationUpdate];
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(0, originalText.length) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
 
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:NO];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
+
         EXPECT_WK_STREQ(originalText, [webView contentsAsString]);
 
         finished = true;
@@ -716,6 +739,8 @@ TEST(WritingTools, ProofreadingRevertWithMultiwordSuggestions)
 
         EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
 
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
         RetainPtr suggestions = @[
             adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(0, 3) replacement:@"Hey,"]).get(),
             adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(11, 5) replacement:@"want to"]).get(),
@@ -726,13 +751,13 @@ TEST(WritingTools, ProofreadingRevertWithMultiwordSuggestions)
         ];
 
         [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions.get() processedRange:NSMakeRange(0, originalText.length) inContext:contexts.firstObject finished:YES];
-
-        [webView waitForNextPresentationUpdate];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         RetainPtr proofreadContents = [NSString stringWithFormat:@"%@\n%@", proofreadText, signature];
         EXPECT_WK_STREQ(proofreadContents.get(), [webView contentsAsString]);
 
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:NO];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         RetainPtr originalContents = [NSString stringWithFormat:@"%@\n%@", originalText, signature];
         EXPECT_WK_STREQ(originalContents.get(), [webView contentsAsString]);
@@ -762,13 +787,14 @@ TEST(WritingTools, ProofreadingWithImage)
 
         EXPECT_WK_STREQ(originalText, [contexts.firstObject.attributedText.string _withVisibleReplacementCharacters]);
 
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
         auto suggestions = [NSMutableArray array];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(0, 4) replacement:@"XXXX"]).get()];
         [suggestions addObject:adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(13, 4) replacement:@"ZZZZ"]).get()];
 
-        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(NSNotFound, 0) inContext:contexts.firstObject finished:YES];
-
-        [webView waitForNextPresentationUpdate];
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(0, 22) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         [webView _getContentsAsAttributedStringWithCompletionHandler:^(NSAttributedString *string, NSDictionary<NSAttributedStringDocumentAttributeKey, id> *attributes, NSError *error) {
             EXPECT_WK_STREQ(proofreadText, [string.string _withVisibleReplacementCharacters]);
@@ -838,13 +864,16 @@ TEST(WritingTools, ProofreadingWithAttemptedEditing)
         [webView attemptEditingForTesting];
         EXPECT_WK_STREQ(originalText, [webView contentsAsString]);
 
-        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:@[ adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(2, 9) replacement:@"frequently"]).get() ] processedRange:NSMakeRange(0, 9) inContext:contexts.firstObject finished:NO];
-        TestWebKitAPI::Util::runFor(0.1_s);
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:@[ adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(2, 9) replacement:@"frequently"]).get() ] processedRange:NSMakeRange(0, 11) inContext:contexts.firstObject finished:NO];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         [webView attemptEditingForTesting];
         EXPECT_WK_STREQ([originalText stringByReplacingOccurrencesOfString:@"frequetly" withString:@"frequently"], [webView contentsAsString]);
 
-        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:@[ adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(21, 5) replacement:@"things"]).get() ] processedRange:NSMakeRange(0, 27) inContext:contexts.firstObject finished:YES];
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:@[ adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(21, 5) replacement:@"things"]).get() ] processedRange:NSMakeRange(11, 16) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         EXPECT_WK_STREQ(proofreadText, [webView contentsAsString]);
 
@@ -852,6 +881,8 @@ TEST(WritingTools, ProofreadingWithAttemptedEditing)
         EXPECT_WK_STREQ("Test", [webView contentsAsString]);
 
         [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
+
         EXPECT_WK_STREQ("Test", [webView contentsAsString]);
 
         finished = true;
@@ -2175,12 +2206,15 @@ TEST(WritingTools, RevealOffScreenSuggestionWhenActive)
         EXPECT_EQ(1UL, contexts.count);
         EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
 
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
         [textViewDelegate setContext:contexts.firstObject];
 
         EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue]);
 
         // FIXME: This method should not result in the scroll position changing.
-        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(NSNotFound, 0) inContext:contexts.firstObject finished:YES];
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(0, originalText.length) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         [webView objectByEvaluatingJavaScript:@"window.scrollTo(0, 0);"];
         EXPECT_EQ(0, [[webView objectByEvaluatingJavaScript:@"window.scrollY"] intValue]);
@@ -2232,8 +2266,8 @@ TEST(WritingTools, ShowDetailsForSuggestions)
     auto session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:(id<WTTextViewDelegate>)textViewDelegate.get()]);
     [textViewDelegate setSession:session.get()];
 
-    constexpr unsigned start = 5;
-    constexpr unsigned end = 9;
+    constexpr unsigned start = 0;
+    constexpr unsigned end = 14;
 
     [webView waitForNextPresentationUpdate];
 
@@ -2263,12 +2297,15 @@ TEST(WritingTools, ShowDetailsForSuggestions)
 
         EXPECT_WK_STREQ(@"AAAA BBBB CCCC", contexts.firstObject.attributedText.string);
 
-        EXPECT_EQ(5UL, contexts.firstObject.range.location);
+        EXPECT_EQ(0UL, contexts.firstObject.range.location);
         EXPECT_EQ(end - start, contexts.firstObject.range.length);
+
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
 
         [textViewDelegate setContext:contexts.firstObject];
 
-        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(NSNotFound, 0) inContext:contexts.firstObject finished:YES];
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(0, 14) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
 
         modifySelection(1, 1);
 
@@ -3637,6 +3674,8 @@ TEST(WritingTools, IntelligenceTextEffectCoordinatorDelegate_RectsForProofreadin
 
         EXPECT_WK_STREQ(originalText, contexts.firstObject.attributedText.string);
 
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
         context = contexts.firstObject;
         finished = true;
     }];
@@ -3653,6 +3692,7 @@ TEST(WritingTools, IntelligenceTextEffectCoordinatorDelegate_RectsForProofreadin
     NSRange processedRange = NSMakeRange(0, 82);
 
     [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions.get() processedRange:processedRange inContext:context.get() finished:YES];
+    [webView waitForProofreadingSuggestionsToBeReplaced];
 
     [webView waitForNextPresentationUpdate];
 
@@ -3748,7 +3788,9 @@ TEST(WritingTools, IntelligenceTextEffectCoordinatorDelegate_UpdateTextVisibilit
 
     NSRange subrange = NSMakeRange(17, 45); // "I didn't quite here him.\n\nWho's over they're."
 
-    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator updateTextVisibilityForRange:subrange visible:NO completion:^{
+    RetainPtr identifier = [NSUUID UUID];
+
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator updateTextVisibilityForRange:subrange visible:NO identifier:identifier.get() completion:^{
         finished = true;
     }];
 
@@ -3761,7 +3803,7 @@ TEST(WritingTools, IntelligenceTextEffectCoordinatorDelegate_UpdateTextVisibilit
     moveSelectionToSecondNode();
     EXPECT_TRUE([[webView objectByEvaluatingJavaScript:@"internals.hasTransparentContentMarker(0, 19);"] boolValue]);
 
-    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator updateTextVisibilityForRange:subrange visible:YES completion:^{
+    [coordinatorDelegate intelligenceTextEffectCoordinator:coordinator updateTextVisibilityForRange:subrange visible:YES identifier:identifier.get() completion:^{
         finished = true;
     }];
 
