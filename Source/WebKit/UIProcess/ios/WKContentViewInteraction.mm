@@ -3262,6 +3262,9 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     if (!pointIsInSelectionRect)
         return NO;
 
+    if (!self.selectionHonorsOverflowScrolling)
+        return YES;
+
     RetainPtr hitView = [self hitTest:point withEvent:nil];
     if (!hitView)
         return NO;
