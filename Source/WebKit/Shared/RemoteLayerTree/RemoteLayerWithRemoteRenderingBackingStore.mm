@@ -110,7 +110,7 @@ void RemoteLayerWithRemoteRenderingBackingStore::ensureBackingStore(const Parame
         return;
 
     m_parameters = parameters;
-    clearBackingStore();
+    m_cleared = true;
     if (m_bufferSet) {
         auto renderingMode = type() == RemoteLayerBackingStore::Type::IOSurface ? RenderingMode::Accelerated : RenderingMode::Unaccelerated;
         auto renderingPurpose = m_layer->containsBitmapOnly() ? WebCore::RenderingPurpose::BitmapOnlyLayerBacking : WebCore::RenderingPurpose::LayerBacking;

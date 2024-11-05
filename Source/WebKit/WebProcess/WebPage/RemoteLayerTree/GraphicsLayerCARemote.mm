@@ -208,6 +208,29 @@ RefPtr<WebCore::GraphicsLayerAsyncContentsDisplayDelegate> GraphicsLayerCARemote
     return delegate;
 }
 
+bool GraphicsLayerCARemote::shouldDirectlyCompositeImageBuffer(ImageBuffer* image) const
+{
+    return !!dynamicDowncast<ImageBufferBackendHandleSharing>(image->toBackendSharing());
+}
+
+void GraphicsLayerCARemote::setLayerContentsToImageBuffer(PlatformCALayer* layer, ImageBuffer* image)
+{
+    if (!image)
+        return;
+
+    image->flushDrawingContextAsync();
+
+    auto* sharing = dynamicDowncast<ImageBufferBackendHandleSharing>(image->toBackendSharing());
+    if (!sharing)
+        return;
+
+    auto backendHandle = sharing->createBackendHandle(SharedMemory::Protection::ReadOnly);
+    ASSERT(backendHandle);
+
+    layer->setAcceleratesDrawing(true);
+    downcast<PlatformCALayerRemote>(layer)->setRemoteDelegatedContents({ ImageBufferBackendHandle { *backendHandle }, { }, std::nullopt  });
+}
+
 GraphicsLayer::LayerMode GraphicsLayerCARemote::layerMode() const
 {
     if (m_context && m_context->layerHostingMode() == LayerHostingMode::InProcess)

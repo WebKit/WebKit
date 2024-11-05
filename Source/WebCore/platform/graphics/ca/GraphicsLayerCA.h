@@ -150,6 +150,7 @@ public:
     WEBCORE_EXPORT void removeAnimation(const String& animationName, std::optional<AnimatedProperty>) override;
     WEBCORE_EXPORT void transformRelatedPropertyDidChange() override;
     WEBCORE_EXPORT void setContentsToImage(Image*) override;
+    WEBCORE_EXPORT void setContentsToImageBuffer(ImageBuffer*) override;
 #if PLATFORM(IOS_FAMILY)
     WEBCORE_EXPORT PlatformLayer* contentsLayerForMedia() const override;
 #endif
@@ -288,6 +289,8 @@ private:
     virtual Ref<PlatformCALayer> createPlatformCALayerHost(LayerHostingContextIdentifier, PlatformCALayerClient*);
     WEBCORE_EXPORT virtual Ref<PlatformCALayer> createPlatformVideoLayer(HTMLVideoElement&, PlatformCALayerClient* owner);
     virtual Ref<PlatformCAAnimation> createPlatformCAAnimation(PlatformCAAnimation::AnimationType, const String& keyPath);
+
+    virtual void setLayerContentsToImageBuffer(PlatformCALayer*, ImageBuffer*) { }
 
     PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
     PlatformCALayer* hostLayerForSublayers() const;
@@ -682,8 +685,8 @@ private:
 
     TileCoverage m_tileCoverage;
 
-    RefPtr<NativeImage> m_uncorrectedContentsImage;
     RefPtr<NativeImage> m_pendingContentsImage;
+    RefPtr<ImageBuffer> m_pendingContentsImageBuffer;
 
 #if ENABLE(MODEL_ELEMENT)
     RefPtr<Model> m_contentsModel;

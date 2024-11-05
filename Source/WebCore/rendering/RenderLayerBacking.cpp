@@ -1084,7 +1084,7 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
 
     if (updateForegroundLayer(compositor.needsContentsCompositingLayer(m_owningLayer)))
         layerConfigChanged = true;
-    
+
     bool needsDescendantsClippingLayer = false;
     bool usesCompositedScrolling = m_owningLayer.hasCompositedScrollableOverflow();
 
@@ -1880,10 +1880,15 @@ void RenderLayerBacking::updateContentsRects()
     m_graphicsLayer->setContentsRect(snapRectToDevicePixelsIfNeeded(contentsBox(), renderer()));
     
     if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(renderer())) {
-        auto borderShape = renderReplaced->borderShapeForContentClipping(renderReplaced->borderBoxRect());
-        auto contentsClippingRect = borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor());
-        contentsClippingRect.move(contentOffsetInCompositingLayer());
-        m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
+        if (renderer().isRenderViewTransitionCapture() && !renderer().hasNonVisibleOverflow())
+            m_graphicsLayer->setContentsClippingRect(FloatRoundedRect(m_graphicsLayer->contentsRect()));
+        else {
+            // FIXME: Support visible overflow for replaced content.
+            auto borderShape = renderReplaced->borderShapeForContentClipping(renderReplaced->borderBoxRect());
+            auto contentsClippingRect = borderShape.deprecatedPixelSnappedInnerRoundedRect(deviceScaleFactor());
+            contentsClippingRect.move(contentOffsetInCompositingLayer());
+            m_graphicsLayer->setContentsClippingRect(contentsClippingRect);
+        }
     }
 }
 
@@ -3116,8 +3121,26 @@ bool RenderLayerBacking::containsPaintedContent(PaintedContentsInfo& contentsInf
 // that require painting. Direct compositing saves backing store.
 bool RenderLayerBacking::isDirectlyCompositedImage() const
 {
+    if (m_owningLayer.hasVisibleBoxDecorationsOrBackground() || m_owningLayer.paintsWithFilters() || renderer().hasClip())
+        return false;
+
+#if (PLATFORM(GTK) || PLATFORM(WPE))
+        // GTK and WPE ports don't support rounded rect clipping at TextureMapper level, so they cannot
+        // directly composite images that have border-radius propery. Draw them as non directly composited
+        // content instead. See https://bugs.webkit.org/show_bug.cgi?id=174157.
+        if (renderer().style().hasBorderRadius())
+            return false;
+#endif
+
+    if (auto* viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer())) {
+        auto image = viewTransitionCapture->image();
+        if (!image)
+            return false;
+        return m_graphicsLayer->shouldDirectlyCompositeImageBuffer(image.get());
+    }
+
     CheckedPtr imageRenderer = dynamicDowncast<RenderImage>(renderer());
-    if (!imageRenderer || m_owningLayer.hasVisibleBoxDecorationsOrBackground() || m_owningLayer.paintsWithFilters() || renderer().hasClip())
+    if (!imageRenderer)
         return false;
 
 #if ENABLE(VIDEO)
@@ -3135,14 +3158,6 @@ bool RenderLayerBacking::isDirectlyCompositedImage() const
 
         if (image->currentFrameOrientation() != ImageOrientation::Orientation::None)
             return false;
-
-#if (PLATFORM(GTK) || PLATFORM(WPE))
-        // GTK and WPE ports don't support rounded rect clipping at TextureMapper level, so they cannot
-        // directly composite images that have border-radius propery. Draw them as non directly composited
-        // content instead. See https://bugs.webkit.org/show_bug.cgi?id=174157.
-        if (imageRenderer->style().hasBorderRadius())
-            return false;
-#endif
 
         return m_graphicsLayer->shouldDirectlyCompositeImage(image);
     }
@@ -3242,29 +3257,35 @@ void RenderLayerBacking::contentChanged(ContentChangeType changeType)
 
 void RenderLayerBacking::updateImageContents(PaintedContentsInfo& contentsInfo)
 {
-    auto& imageRenderer = downcast<RenderImage>(renderer());
+    if (auto* viewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(renderer())) {
+        if (auto image = viewTransitionCapture->image())
+            m_graphicsLayer->setContentsToImageBuffer(image.get());
+    } else {
+        auto& imageRenderer = downcast<RenderImage>(renderer());
 
-    auto* cachedImage = imageRenderer.cachedImage();
-    if (!cachedImage)
-        return;
+        auto* cachedImage = imageRenderer.cachedImage();
+        if (!cachedImage)
+            return;
 
-    auto* image = cachedImage->imageForRenderer(&imageRenderer);
-    if (!image)
-        return;
+        auto* image = cachedImage->imageForRenderer(&imageRenderer);
+        if (!image)
+            return;
 
-    // We have to wait until the image is fully loaded before setting it on the layer.
-    if (!cachedImage->isLoaded())
-        return;
+        // We have to wait until the image is fully loaded before setting it on the layer.
+        if (!cachedImage->isLoaded())
+            return;
+
+
+        m_graphicsLayer->setContentsToImage(image);
+
+        // Image animation is "lazy", in that it automatically stops unless someone is drawing
+        // the image. So we have to kick the animation each time; this has the downside that the
+        // image will keep animating, even if its layer is not visible.
+        image->startAnimation();
+    }
 
     updateContentsRects();
-    m_graphicsLayer->setContentsToImage(image);
-    
     updateDrawsContent(contentsInfo);
-    
-    // Image animation is "lazy", in that it automatically stops unless someone is drawing
-    // the image. So we have to kick the animation each time; this has the downside that the
-    // image will keep animating, even if its layer is not visible.
-    image->startAnimation();
 }
 
 // Return the offset from the top-left of this compositing layer at which the renderer's contents are painted.
@@ -3286,7 +3307,9 @@ LayoutRect RenderLayerBacking::contentsBox() const
     else
 #endif
 
-    if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderBox); renderReplaced && !is<RenderWidget>(*renderReplaced))
+    if (CheckedPtr renderViewTransitionCapture = dynamicDowncast<RenderViewTransitionCapture>(*renderBox))
+        contentsRect = renderViewTransitionCapture->captureLocalOverflowRect();
+    else if (CheckedPtr renderReplaced = dynamicDowncast<RenderReplaced>(*renderBox); renderReplaced && !is<RenderWidget>(*renderReplaced))
         contentsRect = renderReplaced->replacedContentRect();
     else
         contentsRect = renderBox->contentBoxRect();
