@@ -48,6 +48,7 @@ public:
     static Ref<ScrollTimeline> createFromCSSValue(const CSSScrollValue&);
 
     virtual Element* source() const { return m_source.get(); }
+    Element* sourceElementForProgressCalculation() const;
     void setSource(const Element*);
 
     ScrollAxis axis() const { return m_axis; }
@@ -89,7 +90,7 @@ private:
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_source;
     ScrollAxis m_axis { ScrollAxis::Block };
     AtomString m_name;
-    Scroller m_scroller { Scroller::Nearest };
+    Scroller m_scroller { Scroller::Self };
 };
 
 } // namespace WebCore

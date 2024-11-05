@@ -2,5 +2,5 @@
 
 
 
-FAIL Stability of animated elements aligned to the bounds of a contain region promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.effect')"
+FAIL Stability of animated elements aligned to the bounds of a contain region assert_approx_equals: a: Unexpected progress expected 1 +/- 0.001 but got 0.6206896209716797
 

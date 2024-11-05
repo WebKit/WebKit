@@ -129,6 +129,10 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
                 if (RefPtr timeline = timelinesController->timelineForName(name, target))
                     setTimeline(WTFMove(timeline));
             }, [&] (Ref<ScrollTimeline> anonymousTimeline) {
+                if (RefPtr viewTimeline = dynamicDowncast<ViewTimeline>(anonymousTimeline))
+                    viewTimeline->setSubject(target.ptr());
+                else
+                    anonymousTimeline->setSource(target.ptr());
                 setTimeline(RefPtr { anonymousTimeline.ptr() });
             }
         );

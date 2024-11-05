@@ -170,6 +170,24 @@ AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ScrollTimeline::documentW
     return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No;
 }
 
+Element* ScrollTimeline::sourceElementForProgressCalculation() const
+{
+    switch (m_scroller) {
+    case Scroller::Nearest: {
+        CheckedPtr subjectRenderer = m_source->renderer();
+        if (!subjectRenderer)
+            return nullptr;
+        return subjectRenderer->enclosingScrollableContainer()->element();
+    }
+    case Scroller::Root:
+        return m_source->protectedDocument()->documentElement();
+    case Scroller::Self:
+        return m_source.get();
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 ScrollableArea* ScrollTimeline::scrollableAreaForSourceRenderer(RenderElement* renderer, Ref<Document> document)
 {
     CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer);
@@ -199,10 +217,11 @@ ScrollTimeline::Data ScrollTimeline::computeTimelineData(const TimelineRange& ra
     if ((range.start.name != SingleTimelineRange::Name::Normal && range.start.name != SingleTimelineRange::Name::Omitted) || (range.end.name != SingleTimelineRange::Name::Normal && range.end.name != SingleTimelineRange::Name::Omitted))
         return { };
 
-    if (!m_source)
+    RefPtr source = sourceElementForProgressCalculation();
+    if (!source)
         return { };
 
-    auto* sourceScrollableArea = scrollableAreaForSourceRenderer(m_source->renderer(), m_source->document());
+    auto* sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document());
     if (!sourceScrollableArea)
         return { };
 

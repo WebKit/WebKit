@@ -1,4 +1,4 @@
 
-FAIL Test that the scroll animation is paused promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+PASS Test that the scroll animation is paused
 FAIL Test that the scroll animation is paused by updating animation-play-state promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
 
