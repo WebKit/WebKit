@@ -2462,8 +2462,18 @@ void HTMLTreeBuilder::linkifyPhoneNumbers(const String& string)
     auto characters = StringView(string).upconvertedCharacters();
     auto span = characters.span();
 
+    bool shouldCheckElementAncestors = true;
     // While there's a phone number in the rest of the string...
     while (!span.empty() && TelephoneNumberDetector::find(span, &relativeStartPosition, &relativeEndPosition)) {
+        if (std::exchange(shouldCheckElementAncestors, false)) {
+            for (RefPtr ancestor = &m_tree.currentElement(); ancestor; ancestor = ancestor->parentElement()) {
+                if (auto value = ancestor->getAttribute("data-mime-type"_s); value == "text/latex"_s) {
+                    m_tree.insertTextNode(string);
+                    return;
+                }
+            }
+        }
+
         auto scannerPosition = span.data() - characters.span().data();
 
         // The convention in the Data Detectors framework is that the end position is the first character NOT in the phone number
@@ -2517,6 +2527,11 @@ static inline bool disallowTelephoneNumberParsing(const ContainerNode& node)
 
 static inline bool shouldParseTelephoneNumbersInNode(const ContainerNode& node)
 {
+    // FIXME: It seems very wasteful to perform a full ancestor walk to check whether we should create
+    // telephone number links, when parsing every text node in the document. Ideally, we should maintain
+    // the count of elements that disallow telephone number parsing while pushing or popping from the
+    // HTML element stack, so that the check for whether or not we should parse telephone numbers in any
+    // given text node becomes constant time.
     for (const ContainerNode* ancestor = &node; ancestor; ancestor = ancestor->parentNode()) {
         if (disallowTelephoneNumberParsing(*ancestor))
             return false;
