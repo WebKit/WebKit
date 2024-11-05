@@ -155,7 +155,7 @@ void RemoteInspectorHTTPServer::sendMessageToFrontend(uint64_t connectionID, uin
     GRefPtr<GBytes> bytes = adoptGRef(g_bytes_new_static(utf8.data(), utf8.length()));
     soup_websocket_connection_send_message(webSocketConnection, SOUP_WEBSOCKET_DATA_TEXT, bytes.get());
 #else
-    soup_websocket_connection_send_text(webSocketConnection, CString(reinterpret_cast<const char*>(utf8.data()), utf8.length()).data());
+    soup_websocket_connection_send_text(webSocketConnection, CString(utf8).data());
 #endif
 }
 
