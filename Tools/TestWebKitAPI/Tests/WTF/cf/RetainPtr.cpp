@@ -181,4 +181,18 @@ TEST(RetainPtr, RetainPtrCF)
     EXPECT_EQ(1, CFGetRetainCount(object2.get()));
 }
 
+static void functionWithRetainedCFOutParam(CFNumberRef* __nonnull CF_RETURNS_RETAINED retainedOutParam)
+{
+    float value = 3.1415926535;
+    CFNumberRef number = CFNumberCreate(kCFAllocatorDefault, kCFNumberFloatType, &value);
+    *retainedOutParam = number;
+}
+
+TEST(RetainPtr, RetainedOutParams)
+{
+    RetainPtr<CFNumberRef> value;
+    functionWithRetainedCFOutParam(adoptOutParam(value));
+    EXPECT_EQ(1, CFGetRetainCount(value.get()));
+}
+
 } // namespace TestWebKitAPI
