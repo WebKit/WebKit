@@ -40,7 +40,7 @@ protocol PlatformIntelligenceTextEffectChunk: Identifiable {
 }
 
 /// Either a pondering or replacement effect.
-@MainActor protocol PlatformIntelligenceTextEffect: Equatable, Identifiable where ID == PlatformIntelligenceTextEffectID {
+@MainActor protocol PlatformIntelligenceTextEffect<Chunk>: Equatable, Identifiable where ID == PlatformIntelligenceTextEffectID {
     associatedtype Chunk: PlatformIntelligenceTextEffectChunk
 
     var chunk: Chunk { get }
@@ -72,11 +72,11 @@ extension PlatformIntelligenceTextEffect {
     /// the provided animation parameters.
     func performReplacementAndGeneratePreview(for chunk: Chunk, effect: PlatformIntelligenceReplacementTextEffect<Chunk>, animation: PlatformIntelligenceReplacementTextEffect<Chunk>.AnimationParameters) async -> PlatformTextPreview?
 
-    /// This function is invoked after an effect has been added and set-up, but before the effect actually begins.
+    /// This function is invoked after preparing the replacement effect, but before the effect is added.
     func replacementEffectWillBegin(_ effect: PlatformIntelligenceReplacementTextEffect<Chunk>) async
 
     /// This function is invoked once both parts of the replacement effect are complete.
-    func replacementEffectDidComplete(_ effect: PlatformIntelligenceReplacementTextEffect<Chunk>)
+    func replacementEffectDidComplete(_ effect: PlatformIntelligenceReplacementTextEffect<Chunk>) async
 }
 
 // MARK: Platform type adapters.
@@ -91,23 +91,25 @@ extension PlatformIntelligenceTextEffect {
     }
 
     func targetedPreview(for chunk: UITextEffectTextChunk) async -> UITargetedPreview {
-        guard let chunk = chunk as? UITextEffectTextChunkAdapter<Wrapped.Chunk> else {
-            fatalError("Failed to create a targeted preview: parameter was of unexpected type \(type(of: chunk)).")
+        if let chunk = chunk as? UIPonderingTextEffectTextChunkAdapter<Wrapped.Chunk> {
+            return chunk.preview
         }
 
-        guard let preview = await self.wrapped.textPreview(for: chunk.wrapped) else {
-            fatalError("Failed to create a targeted preview: unable to create a preview from the given chunk.")
+        if let chunk = chunk as? UIReplacementTextEffectTextChunkAdapter<Wrapped.Chunk> {
+            return chunk.source
         }
 
-        return preview
+        fatalError("Failed to create a targeted preview: parameter was of unexpected type \(type(of: chunk)).")
     }
 
     func updateTextChunkVisibilityForAnimation(_ chunk: UITextEffectTextChunk, visible: Bool) async {
-        guard let chunk = chunk as? UITextEffectTextChunkAdapter<Wrapped.Chunk> else {
-            fatalError("Failed to update text chunk visibility: parameter was of unexpected type \(type(of: chunk)).")
+        if let chunk = chunk as? UIPonderingTextEffectTextChunkAdapter<Wrapped.Chunk> {
+            await self.wrapped.updateTextChunkVisibility(chunk.wrapped, visible: visible)
         }
 
-        await self.wrapped.updateTextChunkVisibility(chunk.wrapped, visible: visible)
+        if let chunk = chunk as? UIReplacementTextEffectTextChunkAdapter<Wrapped.Chunk> {
+            await self.wrapped.updateTextChunkVisibility(chunk.wrapped, visible: visible)
+        }
     }
 }
 
@@ -131,41 +133,45 @@ extension PlatformIntelligenceTextEffect {
             return
         }
 
-        self.wrapped.replacementEffectDidComplete(effect)
+        Task { @MainActor in
+            await self.wrapped.replacementEffectDidComplete(effect)
+        }
     }
 
     func performReplacementAndGeneratePreview(for chunk: UITextEffectTextChunk, effect: UITextEffectView.ReplacementTextEffect, animation: UITextEffectView.ReplacementTextEffect.AnimationParameters) async -> UITargetedPreview? {
-        guard let view = self.view else {
-            assertionFailure("Failed to perform replacement and generate preview: view was unexpectedly nil.")
-            return nil
-        }
-
-        guard let effect = view.wrappedEffectIDToPlatformEffects[effect.id] as? PlatformIntelligenceReplacementTextEffect<Wrapped.Chunk> else {
-            assertionFailure("Failed to perform replacement and generate preview: effect was unexpectedly nil.")
-            return nil
-        }
-
-        guard let chunk = chunk as? UITextEffectTextChunkAdapter<Wrapped.Chunk> else {
+        guard let chunk = chunk as? UIReplacementTextEffectTextChunkAdapter<Wrapped.Chunk> else {
             fatalError("Failed to perform replacement and generate preview: parameter was of unexpected type \(type(of: chunk)).")
         }
 
-        let animationParameters = PlatformIntelligenceReplacementTextEffect<Wrapped.Chunk>.AnimationParameters(duration: animation.duration, delay: animation.delay)
-
-        return await self.wrapped.performReplacementAndGeneratePreview(for: chunk.wrapped, effect: effect, animation: animationParameters)
+        return chunk.destination
     }
 }
 
-private final class UITextEffectTextChunkAdapter<Wrapped>: UITextEffectTextChunk where Wrapped: PlatformIntelligenceTextEffectChunk {
+private final class UIPonderingTextEffectTextChunkAdapter<Wrapped>: UITextEffectTextChunk where Wrapped: PlatformIntelligenceTextEffectChunk {
     let wrapped: Wrapped
+    let preview: UITargetedPreview
 
-    init(wrapping wrapped: Wrapped) {
+    init(wrapping wrapped: Wrapped, preview: UITargetedPreview) {
         self.wrapped = wrapped
+        self.preview = preview
+    }
+}
+
+private final class UIReplacementTextEffectTextChunkAdapter<Wrapped>: UITextEffectTextChunk where Wrapped: PlatformIntelligenceTextEffectChunk {
+    let wrapped: Wrapped
+    let source: UITargetedPreview
+    let destination: UITargetedPreview
+
+    init(wrapping wrapped: Wrapped, source: UITargetedPreview, destination: UITargetedPreview) {
+        self.wrapped = wrapped
+        self.source = source
+        self.destination = destination
     }
 }
 
 #else
 
-private final class WTTextPreviewAsyncSourceAdapter<Wrapped>: NSObject, _WTTextPreviewAsyncSource where Wrapped: PlatformIntelligenceTextEffectViewSource {
+@MainActor private final class WTTextPreviewAsyncSourceAdapter<Wrapped>: NSObject, _WTTextPreviewAsyncSource where Wrapped: PlatformIntelligenceTextEffectViewSource {
     private let wrapped: Wrapped
 
     init(wrapping wrapped: Wrapped) {
@@ -173,15 +179,11 @@ private final class WTTextPreviewAsyncSourceAdapter<Wrapped>: NSObject, _WTTextP
     }
 
     func textPreviews(for chunk: _WTTextChunk) async -> [_WTTextPreview]? {
-        if let chunk = chunk as? WTPonderingTextChunkAdapter<Wrapped.Chunk> {
-            return await self.wrapped.textPreview(for: chunk.wrapped)
+        guard let chunk = chunk as? WTTextChunkAdapter<Wrapped.Chunk> else {
+            fatalError("Failed to update text chunk visibility: parameter was of unexpected type \(type(of: chunk)).")
         }
 
-        if let chunk = chunk as? WTReplacementTextChunkAdapter<Wrapped.Chunk> {
-            return chunk.preview
-        }
-
-        fatalError("Failed to create a text preview: parameter was of unexpected type \(type(of: chunk)).")
+        return chunk.preview
     }
     
     func textPreview(for rect: CGRect) async -> _WTTextPreview? {
@@ -190,37 +192,21 @@ private final class WTTextPreviewAsyncSourceAdapter<Wrapped>: NSObject, _WTTextP
     }
 
     func updateIsTextVisible(_ isTextVisible: Bool, for chunk: _WTTextChunk) async {
-        if let chunk = chunk as? WTPonderingTextChunkAdapter<Wrapped.Chunk> {
-            await self.wrapped.updateTextChunkVisibility(chunk.wrapped, visible: isTextVisible)
-            return
+        guard let chunk = chunk as? WTTextChunkAdapter<Wrapped.Chunk> else {
+            fatalError("Failed to update text chunk visibility: parameter was of unexpected type \(type(of: chunk)).")
         }
 
-        if let chunk = chunk as? WTReplacementTextChunkAdapter<Wrapped.Chunk> {
-            await self.wrapped.updateTextChunkVisibility(chunk.wrapped, visible: isTextVisible)
-            return
-        }
-
-        fatalError("Failed to update text chunk visibility: parameter was of unexpected type \(type(of: chunk)).")
+        await self.wrapped.updateTextChunkVisibility(chunk.wrapped, visible: isTextVisible)
     }
 }
 
-private final class WTReplacementTextChunkAdapter<Wrapped>: _WTTextChunk where Wrapped: PlatformIntelligenceTextEffectChunk {
+private final class WTTextChunkAdapter<Wrapped>: _WTTextChunk where Wrapped: PlatformIntelligenceTextEffectChunk {
     let wrapped: Wrapped
     let preview: PlatformTextPreview?
 
     init(wrapping wrapped: Wrapped, preview: PlatformTextPreview?) {
         self.wrapped = wrapped
         self.preview = preview
-
-        super.init(chunkWithIdentifier: UUID().uuidString)
-    }
-}
-
-private final class WTPonderingTextChunkAdapter<Wrapped>: _WTTextChunk where Wrapped: PlatformIntelligenceTextEffectChunk {
-    let wrapped: Wrapped
-
-    init(wrapping wrapped: Wrapped) {
-        self.wrapped = wrapped
 
         super.init(chunkWithIdentifier: UUID().uuidString)
     }
@@ -257,6 +243,7 @@ struct PlatformIntelligenceTextEffectID: Hashable {
     fileprivate var wrappedEffectIDToPlatformEffects: [UITextEffectView.EffectID : any PlatformIntelligenceTextEffect] = [:]
     fileprivate var platformEffectIDToWrappedEffectIDs: [PlatformIntelligenceTextEffectID : UITextEffectView.EffectID] = [:]
 #else
+    fileprivate var wrappedEffectIDToPlatformEffects: [UUID : any PlatformIntelligenceTextEffect<Source.Chunk>] = [:]
     fileprivate var platformEffectIDToWrappedEffectIDs: [PlatformIntelligenceTextEffectID : Set<UUID>] = [:]
 #endif
 
@@ -275,20 +262,14 @@ struct PlatformIntelligenceTextEffectID: Hashable {
         self.wrapped = Wrapped(asyncSource: self.viewSource)
 #endif
 
-        super.init(frame: .zero)
+        self.wrapped.clipsToBounds = true
 
-        self.addSubview(self.wrapped)
-        self.wrapped.frame = self.bounds
+        super.init(frame: .zero)
     }
 
-    override var bounds: PlatformBounds {
-        get {
-            super.bounds
-        }
-        set {
-            super.bounds = newValue
-            self.wrapped.frame = newValue
-        }
+    func initializeSubviews() {
+        self.addSubview(self.wrapped)
+        self.wrapped.frame = self.bounds
     }
 
     /// Prepares and adds an effect to be presented within the view.
@@ -298,7 +279,7 @@ struct PlatformIntelligenceTextEffectID: Hashable {
     }
 
     /// Removes the effect with the specified id.
-    func removeEffect(_ effectID: PlatformIntelligenceTextEffectID) {
+    func removeEffect(_ effectID: PlatformIntelligenceTextEffectID) async {
         guard let wrappedEffectIDs = self.platformEffectIDToWrappedEffectIDs.removeValue(forKey: effectID) else {
             return
         }
@@ -308,6 +289,19 @@ struct PlatformIntelligenceTextEffectID: Hashable {
         self.wrapped.removeEffect(wrappedEffectIDs)
 #else
         for wrappedEffectID in wrappedEffectIDs {
+            if let platformEffect = self.wrappedEffectIDToPlatformEffects.removeValue(forKey: wrappedEffectID), platformEffect is PlatformIntelligencePonderingTextEffect<Source.Chunk> {
+                // When WTUI starts a pondering effect, it creates a 0.75s opacity CA animation to fade out the text, so it is possible
+                // that this is still ongoing by the time `removeEffect` is called. This may lead to issues if subsequent effects start
+                // immediately after the effect is removed and the animation has yet to stop.
+                //
+                // To workaround this, manually try to find the applicable sublayer that WTUI adds the animation to, and remove it directly.
+                // FIXME: This is a fragile workaround, and should be removed once WTUI has proper support for removing effects at any point.
+                for sublayer in self.wrapped.layer?.sublayers ?? [] {
+                    sublayer.removeAnimation(forKey: "opacity")
+                }
+            }
+
+            self.wrappedEffectIDToPlatformEffects[wrappedEffectID] = nil
             self.wrapped.removeEffect(wrappedEffectID)
         }
 #endif
@@ -317,10 +311,7 @@ struct PlatformIntelligenceTextEffectID: Hashable {
     func removeAllEffects() {
         self.wrapped.removeAllEffects()
         self.platformEffectIDToWrappedEffectIDs = [:]
-
-#if canImport(UIKit)
         self.wrappedEffectIDToPlatformEffects = [:]
-#endif
     }
 }
 
@@ -344,20 +335,67 @@ struct PlatformIntelligenceTextEffectID: Hashable {
     }
 
 #if canImport(AppKit)
-    private func createEffects<Source>(using view: PlatformIntelligenceTextEffectView<Source>, sourceChunk: WTReplacementTextChunkAdapter<Chunk>, destinationChunk: WTReplacementTextChunkAdapter<Chunk>) where Source : PlatformIntelligenceTextEffectViewSource, Source.Chunk == Chunk {
-        let wrappedDestinationEffect = _WTReplaceTextEffect(chunk: destinationChunk, effectView: view.wrapped)
+    private func didCompletePartialWrappedEffect<Source>(for source: Source) where Source: PlatformIntelligenceTextEffectViewSource, Source.Chunk == Chunk {
+        if self.hasCompletedPartialWrappedEffect {
+            Task { @MainActor in
+                await source.replacementEffectDidComplete(self)
+            }
+        }
+
+        self.hasCompletedPartialWrappedEffect = true
+    }
+#endif
+
+    func _add<Source>(to view: PlatformIntelligenceTextEffectView<Source>) async where Source : PlatformIntelligenceTextEffectViewSource, Source.Chunk == Chunk {
+        // The WT interfaces expect the replacement operation to be performed synchronously, else the source
+        // and destination effects become disjoint and begin at different times.
+        //
+        // To workaround this, the replacement is performed immediately (with the text hidden prior so that
+        // it is not visible to the user) before the actual effects begins. The source preview is generated
+        // prior to this, and the destination preview is generated after. This allows the previews to be cached
+        // so that they can later be retrieved by the WT interface delegates.
+
+        guard let sourcePreview = await view.source.textPreview(for: self.chunk) else {
+            assertionFailure("Failed to generate source text preview for replacement effect")
+            return
+        }
+
+        await view.source.updateTextChunkVisibility(self.chunk, visible: false)
+
+        guard let destinationPreview = await view.source.performReplacementAndGeneratePreview(for: self.chunk, effect: self, animation: .init(duration: 0, delay: 0)) else {
+            assertionFailure("Failed to generate destination text preview for replacement effect")
+            return
+        }
+
+#if canImport(UIKit)
+        let chunkAdapter = UIReplacementTextEffectTextChunkAdapter(wrapping: self.chunk, source: sourcePreview, destination: destinationPreview)
+
+        let delegateAdapter = UIReplacementTextEffectDelegateAdapter(wrapping: view.source, view: view)
+        let wrappedEffect = UITextEffectView.ReplacementTextEffect(chunk: chunkAdapter, view: view.wrapped, delegate: delegateAdapter)
+
+        await view.source.replacementEffectWillBegin(self)
+
+        view.wrapped.addEffect(wrappedEffect)
+        view.wrappedEffectIDToPlatformEffects[wrappedEffect.id] = self
+        view.platformEffectIDToWrappedEffectIDs[self.id] = wrappedEffect.id
+#else
+        // The WTUI interface on macOS exposes the replacement effect as two separate effects, a source effect
+        // and a destination effect. To abstract this disparity between the platforms, the effects are modeled
+        // as a single replacement effect, to match the iOS interface and provide a cohesive API.
+
+        let sourceChunkAdapter = WTTextChunkAdapter(wrapping: self.chunk, preview: sourcePreview)
+        let destinationChunkAdapter = WTTextChunkAdapter(wrapping: self.chunk, preview: destinationPreview)
+
+        let wrappedDestinationEffect = _WTReplaceTextEffect(chunk: destinationChunkAdapter, effectView: view.wrapped)
         wrappedDestinationEffect.isDestination = true
         wrappedDestinationEffect.animateRemovalWhenDone = true
 
         wrappedDestinationEffect.completion = {
-            if self.hasCompletedPartialWrappedEffect {
-                view.source.replacementEffectDidComplete(self)
-            }
-
-            self.hasCompletedPartialWrappedEffect = true
+            // The destination completion handler is invoked right before it starts its opacity animation.
+            self.didCompletePartialWrappedEffect(for: view.source)
         }
 
-        let wrappedSourceEffect = _WTReplaceTextEffect(chunk: sourceChunk, effectView: view.wrapped)
+        let wrappedSourceEffect = _WTReplaceTextEffect(chunk: sourceChunkAdapter, effectView: view.wrapped)
         wrappedSourceEffect.animateRemovalWhenDone = false
 
         wrappedSourceEffect.preCompletion = {
@@ -365,86 +403,20 @@ struct PlatformIntelligenceTextEffectID: Hashable {
             // It's intended for the destination effect to be added here, synchronously.
 
             let destinationEffectID = view.wrapped.add(wrappedDestinationEffect)!
+            view.wrappedEffectIDToPlatformEffects[destinationEffectID] = self
             view.platformEffectIDToWrappedEffectIDs[self.id, default: []].insert(destinationEffectID)
         }
 
         wrappedSourceEffect.completion = {
-            if self.hasCompletedPartialWrappedEffect {
-                view.source.replacementEffectDidComplete(self)
-            }
-
-            self.hasCompletedPartialWrappedEffect = true
+            // The source completion handler is invoked right after it ends its opacity animation.
+            self.didCompletePartialWrappedEffect(for: view.source)
         }
 
-        let sourceEffectID = view.wrapped.add(wrappedSourceEffect)!
-        view.platformEffectIDToWrappedEffectIDs[self.id, default: []].insert(sourceEffectID)
-    }
-#endif
-
-    func _add<Source>(to view: PlatformIntelligenceTextEffectView<Source>) async where Source : PlatformIntelligenceTextEffectViewSource, Source.Chunk == Chunk {
-#if canImport(UIKit)
-        // The UIKit effects interface natively supports async operations such as replacing text, since the source and destination previews
-        // are generated before any animation actually begins.
-
-        let chunkAdapter = UITextEffectTextChunkAdapter(wrapping: self.chunk)
-        let delegateAdapter = UIReplacementTextEffectDelegateAdapter(wrapping: view.source, view: view)
-        let wrappedEffect = UITextEffectView.ReplacementTextEffect(chunk: chunkAdapter, view: view.wrapped, delegate: delegateAdapter)
-        view.wrapped.addEffect(wrappedEffect)
-
-        view.wrappedEffectIDToPlatformEffects[wrappedEffect.id] = self
-        view.platformEffectIDToWrappedEffectIDs[self.id] = wrappedEffect.id
-#else
-        // WritingToolsUI usually performs a replacement effect using the following flow:
-        //
-        //  1. A source effect is created
-        //  2. WTUI then requests a text preview of the source text.
-        //  3. WTUI requests the relevant text to become invisible.
-        //  4. WTUI invokes the 'pre-completion' block associated with the source effect. This gets invokes after the preview is generated
-        //     but before the effect actually begins. In this block, it is intended that the client performs the replacement, and then
-        //     begins a destination effect.
-        //  5. After adding the destination effect, WTUI requests a text preview of the now-replaced text.
-        //  6. WTUI then uses this text preview to begin the destination effect.
-        //  7. This results in the destination effect beginning immediately after the source effect begins, with no delay.
-        //
-        // However, if the replacement must happen asynchronously, the destination effect cannot begin immediately after the source effect,
-        // since it needs to wait for the text to be replaced so that it can then request a preview of the replaced text. Consequently, the
-        // whole replacement effect will not look correct, since the destination effect will lag behind the source effect.
-        //
-        // To address this gap in the interface of WTUI, the source and destination effect are abstracted into a single replacement effect.
-        // When adding this replacement effect, the replacement happens prior to both the source and destination effects starting. Specifically,
-        // this effectively works the way the UIKit interface does things. This allows the destination effect to happen immediately when needed,
-        // since the preview generation and replacement has already happened.
-
-        // First, a text preview of the source text is manually generated and saved.
-        // When WTUI requests the text preview of the source, this preview can be synchronously returned in the delegate method rather than
-        // a new preview being generated on-demand.
-        let sourcePreview = await view.source.textPreview(for: self.chunk)
-        let sourceChunkAdapter = WTReplacementTextChunkAdapter(wrapping: self.chunk, preview: sourcePreview)
-
-        // The replacement is then immediately performed. At this point, the text should be hidden
-        // so the user does not see the text update yet.
-        //
-        // At the moment, this really only works if there is an existing effect ongoing when this happens so that the user would see that
-        // effect instead of disappearing text. In practice, a pondering effect should always precede a replacement effect, so this shouldn't
-        // be a problem, but strictly speaking this is not a general solution.
-        //
-        // The UIKit interface does not have this issue since they can just present the source preview anyways while this is happening.
-
-        // FIXME: Don't assume that the text will be hidden at this point by a prior effect.
-        // FIXME: Mimic what UIKit does and add the source preview during this time, above the underlying text but below any prior effects.
-
-        // When the FIXMEs are addressed, this will allow replacement effects to be seamlessly added without any prior effects needed.
-
-        let destinationPreview = await view.source.performReplacementAndGeneratePreview(for: self.chunk, effect: self, animation: .init(duration: 0, delay: 0))
-
-        let destinationChunkAdapter = WTReplacementTextChunkAdapter(wrapping: self.chunk, preview: destinationPreview)
-
-        // Inform the view source that all async operations have completed, and the source and destination effects are about to actually begin.
-        // This is needed so that clients know when to stop any prior effects, since they should only be stopped when there will be no gap
-        // between effects.
         await view.source.replacementEffectWillBegin(self)
 
-        self.createEffects(using: view, sourceChunk: sourceChunkAdapter, destinationChunk: destinationChunkAdapter)
+        let sourceEffectID = view.wrapped.add(wrappedSourceEffect)!
+        view.wrappedEffectIDToPlatformEffects[sourceEffectID] = self
+        view.platformEffectIDToWrappedEffectIDs[self.id, default: []].insert(sourceEffectID)
 #endif
     }
 }
@@ -452,9 +424,9 @@ struct PlatformIntelligenceTextEffectID: Hashable {
 /// An effect which adds a shimmer animation to some text, intended to indicate that some operation is pending.
 class PlatformIntelligencePonderingTextEffect<Chunk>: PlatformIntelligenceTextEffect where Chunk: PlatformIntelligenceTextEffectChunk {
 #if canImport(UIKit)
-    private typealias ChunkAdapter = UITextEffectTextChunkAdapter
+    private typealias ChunkAdapter = UIPonderingTextEffectTextChunkAdapter
 #else
-    private typealias ChunkAdapter = WTPonderingTextChunkAdapter
+    private typealias ChunkAdapter = WTTextChunkAdapter
 #endif
 
     let id = PlatformIntelligenceTextEffectID()
@@ -465,7 +437,12 @@ class PlatformIntelligencePonderingTextEffect<Chunk>: PlatformIntelligenceTextEf
     }
 
     func _add<Source>(to view: PlatformIntelligenceTextEffectView<Source>) async where Source : PlatformIntelligenceTextEffectViewSource, Source.Chunk == Chunk {
-        let chunkAdapter = ChunkAdapter(wrapping: self.chunk)
+        guard let preview = await view.source.textPreview(for: self.chunk) else {
+            assertionFailure("Failed to generate text preview for pondering effect")
+            return
+        }
+
+        let chunkAdapter = ChunkAdapter(wrapping: self.chunk, preview: preview)
 
 #if canImport(UIKit)
         let wrappedEffect = UITextEffectView.PonderingEffect(chunk: chunkAdapter, view: view.wrapped)
@@ -477,6 +454,7 @@ class PlatformIntelligencePonderingTextEffect<Chunk>: PlatformIntelligenceTextEf
         let wrappedEffect = _WTSweepTextEffect(chunk: chunkAdapter, effectView: view.wrapped)
         view.wrapped.add(wrappedEffect)
 
+        view.wrappedEffectIDToPlatformEffects[wrappedEffect.identifier] = self
         view.platformEffectIDToWrappedEffectIDs[self.id] = [wrappedEffect.identifier]
 #endif
     }
