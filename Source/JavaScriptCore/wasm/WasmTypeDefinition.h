@@ -815,14 +815,14 @@ public:
     template <typename T>
     const T* as() const { return const_cast<TypeDefinition*>(this)->as<T>(); }
 
-    TypeIndex index() const { return bitwise_cast<TypeIndex>(this); }
+    TypeIndex index() const;
 
     WTF::String toString() const;
     void dump(WTF::PrintStream& out) const;
     bool operator==(const TypeDefinition& rhs) const { return this == &rhs; }
     unsigned hash() const;
 
-    const TypeDefinition& replacePlaceholders(TypeIndex) const;
+    Ref<const TypeDefinition> replacePlaceholders(TypeIndex) const;
     const TypeDefinition& unroll() const;
     const TypeDefinition& expand() const;
     bool hasRecursiveReference() const;
@@ -839,6 +839,9 @@ public:
     static const constexpr TypeIndex invalidIndex = 0;
 
 private:
+    // Returns the TypeIndex of a potentially unowned (other than TypeInformation::m_typeSet) TypeDefinition.
+    TypeIndex unownedIndex() const { return bitwise_cast<TypeIndex>(this); }
+
     friend class TypeInformation;
     friend struct FunctionParameterTypes;
     friend struct StructParameterTypes;
@@ -939,7 +942,7 @@ public:
     static RefPtr<TypeDefinition> getPlaceholderProjection(ProjectionIndex);
     ALWAYS_INLINE const FunctionSignature* thunkFor(Type type) const { return thunkTypes[linearizeType(type.kind)]; }
 
-    static void addCachedUnrolling(TypeIndex, const TypeDefinition*);
+    static void addCachedUnrolling(TypeIndex, const TypeDefinition&);
     static std::optional<TypeIndex> tryGetCachedUnrolling(TypeIndex);
 
     // Every type definition that is in a module's signature list should have a canonical RTT registered for subtyping checks.

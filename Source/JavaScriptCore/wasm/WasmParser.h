@@ -388,7 +388,8 @@ ALWAYS_INLINE bool ParserBase::parseValueType(const ModuleInformation& info, Typ
                 ASSERT(static_cast<uint32_t>(heapType) >= info.typeCount() && static_cast<uint32_t>(heapType) < m_recursionGroupInformation.end);
                 ProjectionIndex groupIndex = static_cast<ProjectionIndex>(heapType - m_recursionGroupInformation.start);
                 RefPtr<TypeDefinition> def = TypeInformation::getPlaceholderProjection(groupIndex);
-                typeIndex = def->index();
+                RELEASE_ASSERT(def->refCount() > 2); // tbl + RefPtr + owner
+                typeIndex = def->index(); // Owned by TypeInformation placeholder projections singleton.
             } else {
                 ASSERT(static_cast<uint32_t>(heapType) < info.typeCount());
                 typeIndex = TypeInformation::get(info.typeSignatures[heapType].get());
