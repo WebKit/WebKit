@@ -29,6 +29,7 @@
 #import <WebKit/WKContentRuleList.h>
 #import <WebKit/WKContentRuleListStore.h>
 #import <WebKit/WKContentWorld.h>
+#import <WebKit/WKContentWorldOptions.h>
 #import <WebKit/WKContextMenuElementInfo.h>
 #import <WebKit/WKDownload.h>
 #import <WebKit/WKDownloadDelegate.h>

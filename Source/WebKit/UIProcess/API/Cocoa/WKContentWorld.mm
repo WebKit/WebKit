@@ -45,7 +45,33 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 
 + (WKContentWorld *)worldWithName:(NSString *)name
 {
-    return wrapper(API::ContentWorld::sharedWorldWithName(name)).autorelease();
+    Ref world = API::ContentWorld::sharedWorldWithName(name);
+    if (world->allowsAutofill())
+        [NSException raise:NSInternalInconsistencyException format:@"The value of allowAutofill does not match the existing world"];
+    if (world->allowAccessToClosedShadowRoots())
+        [NSException raise:NSInternalInconsistencyException format:@"The value of allowAccessToClosedShadowRoots does not match the existing world"];
+    if (world->disableLegacyBuiltinOverrides())
+        [NSException raise:NSInternalInconsistencyException format:@"The value of disableLegacyBuiltinOverrides does not match the existing world"];
+    return wrapper(WTFMove(world)).autorelease();
+}
+
++ (WKContentWorld *)worldWithName:(NSString *)name options:(WKContentWorldOptions *)options
+{
+    OptionSet<WebKit::ContentWorldOption> optionSet;
+    if (options.allowAutofill)
+        optionSet.add(WebKit::ContentWorldOption::AllowsAutofill);
+    if (options.allowAccessToClosedShadowRoots)
+        optionSet.add(WebKit::ContentWorldOption::AllowsAccessToClosedShadowRoots);
+    if (options.disableLegacyBuiltinOverrides)
+        optionSet.add(WebKit::ContentWorldOption::DisableLegacyBuiltinOverrides);
+    Ref world = API::ContentWorld::sharedWorldWithName(name, optionSet);
+    if (world->allowsAutofill() != options.allowAutofill)
+        [NSException raise:NSInternalInconsistencyException format:@"The value of allowAutofill does not match the existing world"];
+    if (world->allowAccessToClosedShadowRoots() != options.allowAccessToClosedShadowRoots)
+        [NSException raise:NSInternalInconsistencyException format:@"The value of allowAccessToClosedShadowRoots does not match the existing world"];
+    if (world->disableLegacyBuiltinOverrides() != options.disableLegacyBuiltinOverrides)
+        [NSException raise:NSInternalInconsistencyException format:@"The value of disableLegacyBuiltinOverrides does not match the existing world"];
+    return wrapper(WTFMove(world)).autorelease();
 }
 
 - (void)dealloc

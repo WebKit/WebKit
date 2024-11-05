@@ -33,6 +33,7 @@
 #import "TestWKWebView.h"
 #import "WKWebViewConfigurationExtras.h"
 #import <WebKit/WKContentWorld.h>
+#import <WebKit/WKContentWorldOptions.h>
 #import <WebKit/WKProcessPoolPrivate.h>
 #import <WebKit/WKScriptMessage.h>
 #import <WebKit/WKScriptMessageHandlerWithReply.h>
@@ -1280,4 +1281,134 @@ TEST(WKUserContentController, RemoveAllScriptMessageHandlers)
     EXPECT_NOT_NULL(weakHandler.get());
     [controller removeAllScriptMessageHandlers];
     EXPECT_NULL(weakHandler.get());
+}
+
+TEST(WKUserContentController, AllowAutofill)
+{
+    scriptMessagesVector.clear();
+    isDoneWithNavigation = false;
+    receivedScriptMessage = false;
+
+    auto options = adoptNS([[WKContentWorldOptions alloc] init]);
+    options.get().allowAutofill = YES;
+
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorldAllowingAutofill" options:options.get()];
+    RetainPtr<ScriptMessageHandler> handler = adoptNS([[ScriptMessageHandler alloc] init]);
+    RetainPtr<WKUserScript> userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"window.webkit.messageHandlers.testHandler.postMessage(typeof(document.createElement('input').autofillAvailable))"
+        injectionTime:WKUserScriptInjectionTimeAtDocumentStart forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:nil contentWorld:world.get() deferRunningUntilNotification:NO]);
+
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] _addScriptMessageHandler:handler.get() name:@"testHandler" contentWorld:world.get()];
+    [[configuration userContentController] addUserScript:userScript.get()];
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
+
+    isDoneWithNavigation = false;
+    [webView loadRequest:request];
+
+    TestWebKitAPI::Util::run(&receivedScriptMessage);
+    receivedScriptMessage = false;
+    EXPECT_WK_STREQ(@"boolean", (NSString *)[scriptMessagesVector[0] body]);
+
+    if (!isDoneWithNavigation)
+        TestWebKitAPI::Util::run(&isDoneWithNavigation);
+
+    __block bool isDoneEvaluatingScript = false;
+    __block RetainPtr<NSString> resultValue = @"";
+    [webView evaluateJavaScript:@"typeof(document.createElement('input').autofillAvailable)" completionHandler:^(id value, NSError *error) {
+        resultValue = value;
+        isDoneEvaluatingScript = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDoneEvaluatingScript);
+    EXPECT_WK_STREQ(@"undefined", resultValue.get());
+}
+
+TEST(WKUserContentController, AllowAccessToClosedShadowRoots)
+{
+    scriptMessagesVector.clear();
+    isDoneWithNavigation = false;
+    receivedScriptMessage = false;
+
+    auto options = adoptNS([[WKContentWorldOptions alloc] init]);
+    options.get().allowAccessToClosedShadowRoots = YES;
+
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorldAllowingAccessToClosedShadowRoots" options:options.get()];
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
+
+    isDoneWithNavigation = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+
+    __block bool isDoneEvaluatingScript = false;
+    __block RetainPtr<NSString> resultValue = @"";
+    [webView evaluateJavaScript:@"document.body.appendChild(document.createElement('div')).attachShadow({mode: 'closed'}).textContent = 'PASS';" completionHandler:^(id value, NSError *error) {
+        resultValue = value;
+        isDoneEvaluatingScript = true;
+    }];
+    TestWebKitAPI::Util::run(&isDoneEvaluatingScript);
+    isDoneEvaluatingScript = false;
+
+    [webView evaluateJavaScript:@"document.querySelector('div').shadowRoot?.textContent" inFrame:nil inContentWorld:world.get() completionHandler:^(id value, NSError *error) {
+        resultValue = value;
+        isDoneEvaluatingScript = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDoneEvaluatingScript);
+    isDoneEvaluatingScript = false;
+    EXPECT_WK_STREQ(@"PASS", resultValue.get());
+}
+
+TEST(WKUserContentController, DisableLegacyBuiltinOverrides)
+{
+    scriptMessagesVector.clear();
+    isDoneWithNavigation = false;
+    receivedScriptMessage = false;
+
+    auto options = adoptNS([[WKContentWorldOptions alloc] init]);
+    options.get().disableLegacyBuiltinOverrides = YES;
+
+    RetainPtr<WKContentWorld> world = [WKContentWorld worldWithName:@"TestWorldDisablingLegacyBuiltinOverrides" options:options.get()];
+    RetainPtr<WKWebViewConfiguration> configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    RetainPtr<WKWebView> webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    RetainPtr<SimpleNavigationDelegate> delegate = adoptNS([[SimpleNavigationDelegate alloc] init]);
+    [webView setNavigationDelegate:delegate.get()];
+
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"simple" withExtension:@"html"]];
+
+    isDoneWithNavigation = false;
+    [webView loadRequest:request];
+    TestWebKitAPI::Util::run(&isDoneWithNavigation);
+
+    __block bool isDoneEvaluatingScript = false;
+    __block RetainPtr<NSString> resultValue = @"";
+    [webView evaluateJavaScript:@"document.body.innerHTML = `<img name='getElementById' src='https://webkit.org/'>`" completionHandler:^(id value, NSError *error) {
+        resultValue = value;
+        isDoneEvaluatingScript = true;
+    }];
+    TestWebKitAPI::Util::run(&isDoneEvaluatingScript);
+    isDoneEvaluatingScript = false;
+
+    [webView evaluateJavaScript:@"typeof(document.getElementById)" inFrame:nil inContentWorld:world.get() completionHandler:^(id value, NSError *error) {
+        resultValue = value;
+        isDoneEvaluatingScript = true;
+    }];
+
+    TestWebKitAPI::Util::run(&isDoneEvaluatingScript);
+    isDoneEvaluatingScript = false;
+    EXPECT_WK_STREQ(@"function", resultValue.get());
 }

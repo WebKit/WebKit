@@ -23,50 +23,18 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKWebPushSubscriptionDataInternal.h"
-#import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/cocoa/SpanCocoa.h>
+#include "config.h"
+#include "WKContentWorldOptions.h"
 
-@implementation _WKWebPushSubscriptionData
+@implementation WKContentWorldOptions
 
-- (void)dealloc
+WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
+
+- (instancetype)init
 {
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebPushSubscriptionData.class, self))
-        return;
-
-    _data->API::WebPushSubscriptionData::~WebPushSubscriptionData();
-    [super dealloc];
-}
-
-- (NSURL *)endpoint
-{
-    return self._protectedData->endpoint();
-}
-
-- (NSData *)applicationServerKey
-{
-    return toNSData(self._protectedData->applicationServerKey()).get();
-}
-
-- (NSData *)authenticationSecret
-{
-    return toNSData(self._protectedData->sharedAuthenticationSecret()).get();
-}
-
-- (NSData *)ecdhPublicKey
-{
-    return toNSData(self._protectedData->clientECDHPublicKey()).get();
-}
-
-- (API::Object&)_apiObject
-{
-    return *_data;
-}
-
-- (Ref<API::WebPushSubscriptionData>)_protectedData
-{
-    return *_data;
+    if (!(self = [super init]))
+        return nil;
+    return self;
 }
 
 @end

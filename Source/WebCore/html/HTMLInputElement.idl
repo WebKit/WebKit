@@ -19,6 +19,21 @@
  * Boston, MA 02110-1301, USA.
  */
 
+enum AutofillVisibility {
+    "normal",
+    "visible",
+    "hidden",
+};
+
+enum AutofillButtonType {
+    "none",
+    "credentials",
+    "contacts",
+    "strong-password",
+    "credit-card",
+    "loading"
+};
+
 [
     ExportMacro=WEBCORE_EXPORT,
     JSGenerateToNativeObject,
@@ -93,6 +108,12 @@
 
     [CEReactions=NotNeeded, Reflect] attribute DOMString align;
     [CEReactions=NotNeeded, Reflect] attribute DOMString useMap;
+
+    // WebKit extension for autofill.
+    [EnabledForWorld=allowsAutofill] attribute boolean autofillAvailable;
+    [EnabledForWorld=allowsAutofill] attribute boolean autofilled;
+    [EnabledForWorld=allowsAutofill] attribute AutofillVisibility autofillVisibility;
+    [EnabledForWorld=allowsAutofill] attribute AutofillButtonType autofillButtonType;
 
     // See http://www.w3.org/TR/html-media-capture/
     [CEReactions=NotNeeded, Conditional=MEDIA_CAPTURE, Reflect] attribute DOMString capture;

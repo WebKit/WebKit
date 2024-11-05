@@ -57,6 +57,9 @@ public:
     void didCreateWindowProxy(WindowProxy* controller) { m_jsWindowProxies.add(controller); }
     void didDestroyWindowProxy(WindowProxy* controller) { m_jsWindowProxies.remove(controller); }
 
+    void setAllowsAutofill() { m_allowsAutofill = true; }
+    bool allowsAutofill() const { return m_allowsAutofill; }
+
     void setShadowRootIsAlwaysOpen() { m_shadowRootIsAlwaysOpen = true; }
     bool shadowRootIsAlwaysOpen() const { return m_shadowRootIsAlwaysOpen; }
 
@@ -84,6 +87,7 @@ private:
     String m_name;
     Type m_type { Type::Internal };
 
+    bool m_allowsAutofill { false };
     bool m_shadowRootIsAlwaysOpen { false };
     bool m_shouldDisableLegacyOverrideBuiltInsBehavior { false };
 };

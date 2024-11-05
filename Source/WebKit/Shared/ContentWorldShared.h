@@ -39,4 +39,10 @@ inline ContentWorldIdentifier pageContentWorldIdentifier()
     return identifier;
 }
 
+enum class ContentWorldOption : uint8_t {
+    AllowsAutofill = 1 << 0,
+    AllowsAccessToClosedShadowRoots = 1 << 1,
+    DisableLegacyBuiltinOverrides = 1 << 2,
+};
+
 } // namespace WebKit

@@ -23,7 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit/WKFoundation.h>
+#import <WebKit/WKContentWorldOptions.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -66,6 +66,15 @@ Each named content world is distinct from all other named content worlds, the de
 The name can be used to keep distinct worlds identifiable anywhere a world might be surfaced in a user interface. For example, the different worlds used in your application will be surfaced by name in the WebKit Web Inspector.
 */
 + (WKContentWorld *)worldWithName:(NSString *)name NS_SWIFT_NAME(world(name:));
+
+/*! @abstract Retrieves a named content world for API client use with the specified options.
+@param name The name of the WKContentWorld to retrieve.
+@discussion The options  When using a content world different from the page content world you can still manipulate the DOM and built-in DOM APIs but without conflicting with other aspects of the page content (e.g. JavaScript from the web page content itself)
+As long as a particular named WKContentWorld instance has not been deallocated, repeated calls with the same name will retrieve that same WKContentWorld instance.
+Each named content world is distinct from all other named content worlds, the defaultClientWorld, and the pageWorld.
+The name can be used to keep distinct worlds identifiable anywhere a world might be surfaced in a user interface. For example, the different worlds used in your application will be surfaced by name in the WebKit Web Inspector.
+*/
++ (WKContentWorld *)worldWithName:(NSString *)name options:(WKContentWorldOptions *)options NS_SWIFT_NAME(world(name:options:)) WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*! @abstract The name of the WKContentWorld
 @discussion The pageWorld and defaultClientWorld instances will have a nil name.

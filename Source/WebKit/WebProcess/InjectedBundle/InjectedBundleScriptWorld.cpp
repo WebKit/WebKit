@@ -116,6 +116,11 @@ void InjectedBundleScriptWorld::clearWrappers()
     m_world->clearWrappers();
 }
 
+void InjectedBundleScriptWorld::setAllowsAutofill()
+{
+    m_world->setAllowsAutofill();
+}
+
 void InjectedBundleScriptWorld::makeAllShadowRootsOpen()
 {
     m_world->setShadowRootIsAlwaysOpen();

@@ -23,50 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKWebPushSubscriptionDataInternal.h"
-#import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/cocoa/SpanCocoa.h>
+#import <WebKit/WKFoundation.h>
 
-@implementation _WKWebPushSubscriptionData
+NS_ASSUME_NONNULL_BEGIN
 
-- (void)dealloc
-{
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebPushSubscriptionData.class, self))
-        return;
+/*! @abstract A WKContentWorldOptions object allows you to specify options for WKContentWorld.
+@discussion WKContentWorldOptions allows applications to specify ways by which extra JavaScript capabilities should be exposed to the script in the environment.
+For example:
+- If your scripts have to access autofill capabilities, you may want to set allowAutofill to YES. */
+WK_SWIFT_UI_ACTOR
+WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
+@interface WKContentWorldOptions : NSObject
 
-    _data->API::WebPushSubscriptionData::~WebPushSubscriptionData();
-    [super dealloc];
-}
+- (instancetype)init;
 
-- (NSURL *)endpoint
-{
-    return self._protectedData->endpoint();
-}
+/*! @abstract A boolean value indicating whether the capability to trigger autofill is exposed to scripts or not. */
+@property (nonatomic) BOOL allowAutofill;
 
-- (NSData *)applicationServerKey
-{
-    return toNSData(self._protectedData->applicationServerKey()).get();
-}
+/*! @abstract A boolean value indicating whether every shadow root should be treated as open mode shadow root or not. */
+@property (nonatomic) BOOL allowAccessToClosedShadowRoots;
 
-- (NSData *)authenticationSecret
-{
-    return toNSData(self._protectedData->sharedAuthenticationSecret()).get();
-}
-
-- (NSData *)ecdhPublicKey
-{
-    return toNSData(self._protectedData->clientECDHPublicKey()).get();
-}
-
-- (API::Object&)_apiObject
-{
-    return *_data;
-}
-
-- (Ref<API::WebPushSubscriptionData>)_protectedData
-{
-    return *_data;
-}
+/*! @abstract A boolean value indicating whether the behavior that elements with a name attribute overrides builtin methods on document object should be disabled or not. */
+@property (nonatomic) BOOL disableLegacyBuiltinOverrides;
 
 @end
+
+NS_ASSUME_NONNULL_END
