@@ -790,11 +790,11 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     DidBeginWritingToolsSession(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::Context> contexts)
 
-    ProofreadingSessionDidReceiveSuggestions(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::TextSuggestion> suggestions, struct WebCore::CharacterRange processedRange, struct WebCore::WritingTools::Context context, bool finished) -> ()
+    ProofreadingSessionDidReceiveSuggestions(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::TextSuggestion> suggestions, struct WebCore::WritingTools::Context context, bool finished) -> ()
+
+    ProofreadingSessionDidCompletePartialReplacement(struct WebCore::WritingTools::Session session, Vector<WebCore::WritingTools::TextSuggestion> suggestions, struct WebCore::WritingTools::Context context, bool finished) -> ()
 
     ProofreadingSessionDidUpdateStateForSuggestion(struct WebCore::WritingTools::Session session, enum:uint8_t WebCore::WritingTools::TextSuggestionState state, struct WebCore::WritingTools::TextSuggestion suggestion, struct WebCore::WritingTools::Context context)
-
-    WillEndWritingToolsSession(struct WebCore::WritingTools::Session session, bool accepted) -> ()
 
     DidEndWritingToolsSession(struct WebCore::WritingTools::Session session, bool accepted)
 
@@ -804,13 +804,9 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
 
     ProofreadingSessionSuggestionTextRectsInRootViewCoordinates(struct WebCore::CharacterRange enclosingRangeRelativeToSessionRange) -> (Vector<WebCore::FloatRect> rects)
 
-    UpdateTextVisibilityForActiveWritingToolsSession(struct WebCore::CharacterRange rangeRelativeToSessionRange, bool visible, WTF::UUID identifier) -> ()
+    UpdateTextVisibilityForActiveWritingToolsSession(struct WebCore::CharacterRange rangeRelativeToSessionRange, bool visible) -> ()
 
     TextPreviewDataForActiveWritingToolsSession(struct WebCore::CharacterRange rangeRelativeToSessionRange) -> (std::optional<WebCore::TextIndicatorData> data)
-
-    SetSelectionForActiveWritingToolsSession(struct WebCore::CharacterRange rangeRelativeToSessionRange) -> ()
-
-    DecorateTextReplacementsForActiveWritingToolsSession(struct WebCore::CharacterRange rangeRelativeToSessionRange) -> ()
 
     CreateTextIndicatorForTextAnimationID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
     UpdateUnderlyingTextVisibilityForTextAnimationID(WTF::UUID uuid, bool visible) -> ()

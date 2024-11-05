@@ -5020,19 +5020,19 @@ void Page::didBeginWritingToolsSession(const WritingTools::Session& session, con
     m_writingToolsController->didBeginWritingToolsSession(session, contexts);
 }
 
-void Page::proofreadingSessionDidReceiveSuggestions(const WritingTools::Session& session, const Vector<WritingTools::TextSuggestion>& suggestions, const CharacterRange& processedRange, const WritingTools::Context& context, bool finished)
+void Page::proofreadingSessionDidReceiveSuggestions(const WritingTools::Session& session, const Vector<WritingTools::TextSuggestion>& suggestions, const WritingTools::Context& context, bool finished)
 {
-    m_writingToolsController->proofreadingSessionDidReceiveSuggestions(session, suggestions, processedRange, context, finished);
+    m_writingToolsController->proofreadingSessionDidReceiveSuggestions(session, suggestions, context, finished);
+}
+
+void Page::proofreadingSessionDidCompletePartialReplacement(const WritingTools::Session& session, const Vector<WritingTools::TextSuggestion>& suggestions, const WritingTools::Context& context, bool finished)
+{
+    m_writingToolsController->proofreadingSessionDidCompletePartialReplacement(session, suggestions, context, finished);
 }
 
 void Page::proofreadingSessionDidUpdateStateForSuggestion(const WritingTools::Session& session, WritingTools::TextSuggestion::State state, const WritingTools::TextSuggestion& suggestion, const WritingTools::Context& context)
 {
     m_writingToolsController->proofreadingSessionDidUpdateStateForSuggestion(session, state, suggestion, context);
-}
-
-void Page::willEndWritingToolsSession(const WritingTools::Session& session, bool accepted)
-{
-    m_writingToolsController->willEndWritingToolsSession(session, accepted);
 }
 
 void Page::didEndWritingToolsSession(const WritingTools::Session& session, bool accepted)
@@ -5083,7 +5083,7 @@ Vector<FloatRect> Page::proofreadingSessionSuggestionTextRectsInRootViewCoordina
     return IntelligenceTextEffectsSupport::writingToolsTextSuggestionRectsInRootViewCoordinates(*document, *scope, enclosingRangeRelativeToSessionRange);
 }
 
-void Page::updateTextVisibilityForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange, bool visible, const WTF::UUID& identifier)
+void Page::updateTextVisibilityForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange, bool visible)
 {
     RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
     RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
@@ -5098,7 +5098,7 @@ void Page::updateTextVisibilityForActiveWritingToolsSession(const CharacterRange
         return;
     }
 
-    IntelligenceTextEffectsSupport::updateTextVisibility(*document, *scope, rangeRelativeToSessionRange, visible, identifier);
+    IntelligenceTextEffectsSupport::updateTextVisibility(*document, *scope, rangeRelativeToSessionRange, visible);
 }
 
 std::optional<TextIndicatorData> Page::textPreviewDataForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange)
@@ -5117,47 +5117,6 @@ std::optional<TextIndicatorData> Page::textPreviewDataForActiveWritingToolsSessi
     }
 
     return IntelligenceTextEffectsSupport::textPreviewDataForRange(*document, *scope, rangeRelativeToSessionRange);
-}
-
-void Page::decorateTextReplacementsForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange)
-{
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto scope = m_writingToolsController->activeSessionRange();
-    if (!scope) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    IntelligenceTextEffectsSupport::decorateWritingToolsTextReplacements(*document, *scope, rangeRelativeToSessionRange);
-}
-
-void Page::setSelectionForActiveWritingToolsSession(const CharacterRange& rangeRelativeToSessionRange)
-{
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
-    RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto scope = m_writingToolsController->activeSessionRange();
-    if (!scope) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto resolvedRange = resolveCharacterRange(*scope, rangeRelativeToSessionRange);
-    auto visibleSelection = VisibleSelection { resolvedRange };
-    if (visibleSelection.isNoneOrOrphaned())
-        return;
-
-    document->selection().setSelection(visibleSelection);
 }
 
 std::optional<SimpleRange> Page::contextRangeForActiveWritingToolsSession() const
