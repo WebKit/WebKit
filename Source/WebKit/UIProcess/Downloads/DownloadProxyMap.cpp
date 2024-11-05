@@ -62,6 +62,16 @@ DownloadProxyMap::~DownloadProxyMap()
     platformDestroy();
 }
 
+void DownloadProxyMap::ref() const
+{
+    m_process->ref();
+}
+
+void DownloadProxyMap::deref() const
+{
+    m_process->deref();
+}
+
 Ref<NetworkProcessProxy> DownloadProxyMap::protectedProcess()
 {
     return m_process.get();

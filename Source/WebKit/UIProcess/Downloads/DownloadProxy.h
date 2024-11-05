@@ -139,7 +139,7 @@ private:
     static Vector<uint8_t> activityAccessToken();
 #endif
 
-    CheckedRef<DownloadProxyMap> m_downloadProxyMap;
+    WeakPtr<DownloadProxyMap> m_downloadProxyMap;
     RefPtr<WebsiteDataStore> m_dataStore;
     Ref<API::DownloadClient> m_client;
     DownloadID m_downloadID;

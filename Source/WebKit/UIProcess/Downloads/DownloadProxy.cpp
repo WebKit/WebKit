@@ -87,7 +87,8 @@ void DownloadProxy::cancel(CompletionHandler<void(API::Data*)>&& completionHandl
                 return completionHandler(nullptr);
             protectedThis->m_legacyResumeData = createData(resumeData);
             completionHandler(protectedThis->m_legacyResumeData.get());
-            protectedThis->m_downloadProxyMap->downloadFinished(*protectedThis);
+            if (RefPtr downloadProxyMap = protectedThis->m_downloadProxyMap.get())
+                downloadProxyMap->downloadFinished(*protectedThis);
         });
     } else
         completionHandler(nullptr);
@@ -221,7 +222,8 @@ void DownloadProxy::didFinish()
     m_client->didFinish(*this);
 
     // This can cause the DownloadProxy object to be deleted.
-    m_downloadProxyMap->downloadFinished(*this);
+    if (RefPtr downloadProxyMap = m_downloadProxyMap.get())
+        downloadProxyMap->downloadFinished(*this);
 }
 
 void DownloadProxy::didFail(const ResourceError& error, std::span<const uint8_t> resumeData)
@@ -231,7 +233,8 @@ void DownloadProxy::didFail(const ResourceError& error, std::span<const uint8_t>
     m_client->didFail(*this, error, m_legacyResumeData.get());
 
     // This can cause the DownloadProxy object to be deleted.
-    m_downloadProxyMap->downloadFinished(*this);
+    if (RefPtr downloadProxyMap = m_downloadProxyMap.get())
+        downloadProxyMap->downloadFinished(*this);
 }
 
 void DownloadProxy::setClient(Ref<API::DownloadClient>&& client)
