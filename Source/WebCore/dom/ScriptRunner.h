@@ -49,6 +49,9 @@ public:
     explicit ScriptRunner(Document&);
     ~ScriptRunner();
 
+    void ref() const;
+    void deref() const;
+
     // CheckedPtr interface
     uint32_t checkedPtrCount() const final { return CanMakeCheckedPtr::checkedPtrCount(); }
     uint32_t checkedPtrCountWithoutThreadCheck() const final { return CanMakeCheckedPtr::checkedPtrCountWithoutThreadCheck(); }
