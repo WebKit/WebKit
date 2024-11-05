@@ -225,7 +225,7 @@ module DSL
 #include "PrivateFieldPutKind.h"
 #include "PutByStatus.h"
 #include "PutByIdFlags.h"
-#include "ToThisStatus.h"
+#include "SeenValuesStatus.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 

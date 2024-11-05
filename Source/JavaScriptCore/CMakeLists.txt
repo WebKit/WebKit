@@ -649,13 +649,13 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     bytecode/Operands.h
     bytecode/PropertyCondition.h
     bytecode/PutByIdFlags.h
+    bytecode/SeenValuesStatus.h
     bytecode/SetPrivateBrandStatus.h
     bytecode/SetPrivateBrandVariant.h
     bytecode/SourceID.h
     bytecode/SpeculatedType.h
     bytecode/StructureSet.h
     bytecode/SuperSampler.h
-    bytecode/ToThisStatus.h
     bytecode/TypeLocation.h
     bytecode/UnlinkedCodeBlock.h
     bytecode/UnlinkedEvalCodeBlock.h

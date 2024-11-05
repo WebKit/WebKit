@@ -865,17 +865,40 @@ end)
 
 
 llintOpWithMetadata(op_to_this, OpToThis, macro (size, get, dispatch, metadata, return)
+    metadata(t5, t0)
     get(m_srcDst, t0)
-    bineq TagOffset[cfr, t0, 8], CellTag, .opToThisSlow
-    loadi PayloadOffset[cfr, t0, 8], t0
-    bbneq JSCell::m_type[t0], FinalObjectType, .opToThisSlow
-    metadata(t2, t3)
-    loadi OpToThis::Metadata::m_cachedStructureID[t2], t2
-    bineq JSCell::m_structureID[t0], t2, .opToThisSlow
+    loadi TagOffset[cfr, t0, 8], t1
+    getu(size, OpToThis, m_ecmaMode, t2)
+    bineq t1, CellTag, .notCell
+    loadi PayloadOffset[cfr, t0, 8], t1
+    bbb JSCell::m_type[t1], ObjectType, .notObject
+
+    bieq OpToThis::Metadata::m_seenValuesStatus[t5], constexpr SeenValuesStatus::None, .slow
+    loadi OpToThis::Metadata::m_seenStructureID[t5], t3
+    bieq t3, JSCell::m_structureID[t1], .done
+    storei constexpr SeenValuesStatus::Other, OpToThis::Metadata::m_seenValuesStatus[t5]
+.done:
+    valueProfile(size, OpToThis, m_valueProfile, CellTag, t1, t2)
+    dispatch()
+ 
+.notCell:
+    bbeq t2, constexpr ECMAMode::StrictMode, .done
+    ori 1, t1
+    bieq t1, NullTag, .opToThisUndefinedOrNull
+.notObject:
+    bbeq t2, constexpr ECMAMode::StrictMode, .done
+.slow:
+    callSlowPath(_slow_path_to_this)
     dispatch()
 
-.opToThisSlow:
-    callSlowPath(_slow_path_to_this)
+.opToThisUndefinedOrNull:
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_globalObject[t1], t1
+    loadp JSGlobalObject::m_globalThis[t1], t1
+    storei CellTag, TagOffset[cfr, t0, 8]
+    storei t1, PayloadOffset[cfr, t0, 8]
+    storei constexpr SeenValuesStatus::Other, OpToThis::Metadata::m_seenValuesStatus[t5]
+    valueProfile(size, OpToThis, m_valueProfile, CellTag, t1, t2)
     dispatch()
 end)
 
@@ -1431,11 +1454,13 @@ end)
 llintOpWithReturn(op_is_cell_with_type, OpIsCellWithType, macro (size, get, dispatch, return)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t0, t3)
-    bineq t0, CellTag, .notCellCase
-    getu(size, OpIsCellWithType, m_type, t0)
-    cbeq JSCell::m_type[t3], t0, t1
-    return(BooleanTag, t1)
-.notCellCase:
+    bineq t0, CellTag, .returnFalseCase
+    getu(size, OpIsCellWithType, m_firstType, t0)
+    bbb JSCell::m_type[t3], t0, .returnFalseCase
+    getu(size, OpIsCellWithType, m_lastType, t0)
+    bba JSCell::m_type[t3], t0, .returnFalseCase
+    return(BooleanTag, 1)
+.returnFalseCase:
     return(BooleanTag, 0)
 end)
 

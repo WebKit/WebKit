@@ -877,18 +877,39 @@ end)
 
 
 llintOpWithMetadata(op_to_this, OpToThis, macro (size, get, dispatch, metadata, return)
+    metadata(t5, t0)
     get(m_srcDst, t0)
-    loadq [cfr, t0, 8], t0
-    btqnz t0, notCellMask, .opToThisSlow
-    bbneq JSCell::m_type[t0], FinalObjectType, .opToThisSlow
-    loadi JSCell::m_structureID[t0], t1
-    metadata(t2, t3)
-    loadi OpToThis::Metadata::m_cachedStructureID[t2], t2
-    bineq t1, t2, .opToThisSlow
+    loadq [cfr, t0, 8], t1
+    getu(size, OpToThis, m_ecmaMode, t2)
+
+    btqnz t1, notCellMask, .notCell
+    bbb JSCell::m_type[t1], ObjectType, .notObject
+
+    bieq OpToThis::Metadata::m_seenValuesStatus[t5], constexpr SeenValuesStatus::None, .slow
+    loadi OpToThis::Metadata::m_seenStructureID[t5], t3
+    bieq t3, JSCell::m_structureID[t1], .done
+    storei constexpr SeenValuesStatus::Other, OpToThis::Metadata::m_seenValuesStatus[t5]
+.done:
+    valueProfile(size, OpToThis, m_valueProfile, t1, t2)
     dispatch()
 
-.opToThisSlow:
+.notCell:
+    bbeq t2, constexpr ECMAMode::StrictMode, .done
+    andq ~TagUndefined, t1
+    bqeq t1, ValueNull, .undefinedOrNull
+.notObject:
+    bbeq t2, constexpr ECMAMode::StrictMode, .done
+.slow:
     callSlowPath(_slow_path_to_this)
+    dispatch()
+
+.undefinedOrNull:
+    loadp CodeBlock[cfr], t1
+    loadp CodeBlock::m_globalObject[t1], t1
+    loadp JSGlobalObject::m_globalThis[t1], t1
+    storeq t1, [cfr, t0, 8]
+    storei constexpr SeenValuesStatus::Other, OpToThis::Metadata::m_seenValuesStatus[t5]
+    valueProfile(size, OpToThis, m_valueProfile, t1, t2)
     dispatch()
 end)
 
@@ -1546,15 +1567,17 @@ else
     end)
 end
 
+
 llintOpWithReturn(op_is_cell_with_type, OpIsCellWithType, macro (size, get, dispatch, return)
-    getu(size, OpIsCellWithType, m_type, t0)
     get(m_operand, t1)
     loadConstantOrVariable(size, t1, t3)
-    btqnz t3, notCellMask, .notCellCase
-    cbeq JSCell::m_type[t3], t0, t1
-    orq ValueFalse, t1
-    return(t1)
-.notCellCase:
+    btqnz t3, notCellMask, .returnFalseCase
+    getu(size, OpIsCellWithType, m_firstType, t0)
+    bbb JSCell::m_type[t3], t0, .returnFalseCase
+    getu(size, OpIsCellWithType, m_lastType, t0)
+    bba JSCell::m_type[t3], t0, .returnFalseCase
+    return(ValueTrue)
+.returnFalseCase:
     return(ValueFalse)
 end)
 

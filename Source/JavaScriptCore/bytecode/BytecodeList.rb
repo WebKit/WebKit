@@ -52,12 +52,12 @@ types [
     :PropertyOffset,
     :PutByIdFlags,
     :ResolveType,
+    :SeenValuesStatus,
     :Structure,
     :StructureID,
     :StructureChain,
     :SymbolTable,
     :SymbolTableOrScopeDepth,
-    :ToThisStatus,
     :TypeLocation,
     :WasmBoundLabel,
     :WatchpointSet,
@@ -731,8 +731,8 @@ op :to_this,
         valueProfile: unsigned,
     },
     metadata: {
-        cachedStructureID: StructureID,
-        toThisStatus: ToThisStatus,
+        seenValuesStatus: SeenValuesStatus,
+        seenStructureID: StructureID,
     }
 
 op :enumerator_get_by_val,
@@ -1399,7 +1399,8 @@ op :is_cell_with_type,
     args: {
         dst: VirtualRegister,
         operand: VirtualRegister,
-        type: JSType,
+        firstType: JSType,
+        lastType: JSType,
     }
 
 op :has_structure_with_flags,

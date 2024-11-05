@@ -43,9 +43,9 @@ void AsyncIteratorPrototype::finishCreation(VM& vm, JSGlobalObject* globalObject
     putDirectWithoutTransition(vm, vm.propertyNames->asyncIteratorSymbol, asyncIteratorFunction, static_cast<unsigned>(PropertyAttribute::DontEnum));
 }
 
-JSC_DEFINE_HOST_FUNCTION(asyncIteratorProtoFuncAsyncIterator, (JSGlobalObject* globalObject, CallFrame* callFrame))
+JSC_DEFINE_HOST_FUNCTION(asyncIteratorProtoFuncAsyncIterator, (JSGlobalObject*, CallFrame* callFrame))
 {
-    return JSValue::encode(callFrame->thisValue().toThis(globalObject, ECMAMode::strict()));
+    return JSValue::encode(callFrame->thisValue());
 }
 
 } // namespace JSC
