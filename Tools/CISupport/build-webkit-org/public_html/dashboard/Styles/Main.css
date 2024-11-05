@@ -183,6 +183,16 @@ table.queue-grid td.logo img.logo {
     clip-path: circle(72px at center);
 }
 
+table.queue-grid tr.platform.ios-simulator-18 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: url(../Images/IOS18Simulator.png);
+}
+
+table.queue-grid tr.platform.ios-18 img.logo {
+    background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
+    content: url(../Images/IOS18.png);
+}
+
 table.queue-grid tr.platform.ios-simulator-17 img.logo {
     background: linear-gradient(155deg, #b1a8ed 16%,#aa3daa 50%);
     content: url(../Images/IOS17Simulator.png);

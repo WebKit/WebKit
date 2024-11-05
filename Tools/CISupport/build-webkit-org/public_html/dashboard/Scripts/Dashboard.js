@@ -28,6 +28,8 @@ Dashboard = {
         macOSSequoia: { name: "macos-sequoia", readableName: "macOS Sequoia", order: 1 },
         macOSSonoma: { name: "macos-sonoma", readableName: "macOS Sonoma", order: 2 },
         macOSVentura: { name: "macos-ventura", readableName: "macOS Ventura", order: 3 },
+        iOS18Simulator: { name: "ios-simulator-18", readableName: "iOS 18 Simulator", order: 11 },
+        iOS18Device: { name: "ios-18", readableName: "iOS 18", order: 12 },
         iOS17Simulator: { name: "ios-simulator-17", readableName: "iOS 17 Simulator", order: 13 },
         iOS17Device: { name: "ios-17", readableName: "iOS 17", order: 14 },
         visionOS2Simulator: { name: "visionos-simulator-2", readableName: "visionOS 2 Simulator", order: 15 },
