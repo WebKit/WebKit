@@ -156,6 +156,37 @@
             checkoutdir="libxml2-${version}"/>
   </autotools>
 
+  <!-- Allows USE_AVIF support -->
+  <cmake id="libavif" cmakeargs="-DCMAKE_BUILD_TYPE=Release -DAVIF_ENABLE_WERROR=OFF">
+    <pkg-config>libavif.pc</pkg-config>
+    <dependencies>
+      <dep package="aom"/>
+      <dep package="libyuv"/>
+    </dependencies>
+    <branch module="AOMediaCodec/libavif"
+            repo="github.com"
+            version="0.9.3"
+            tag="v0.9.3"/>
+  </cmake>
+
+  <cmake id="libyuv">
+    <branch module="libyuv/libyuv"
+            repo="chromium.googlesource.com"
+            tag="stable"
+            checkoutdir="libyuv"/>
+  </cmake>
+
+  <cmake id="aom" cmakeargs="-DBUILD_SHARED_LIBS=1 -DENABLE_DOCS=OFF -DENABLE_EXAMPLES=OFF -DENABLE_TOOLS=OFF -DENABLE_TESTS=OFF">
+    <pkg-config>aom.pc</pkg-config>
+    <branch module="aom"
+            repo="aomedia.googlesource.com"
+            version="3.3.0"
+            tag="v3.3.0"
+            checkoutdir="libaom-${version}">
+       <patch file="fix-aom-build-arm32.patch" strip="1"/>
+    </branch>
+  </cmake>
+
   <!-- libdrm required for function 'drmGetFormatName' (defined since 'libdrm-2.4.113') -->
   <meson id="libdrm" mesonargs="-Dtegra=enabled -Dcairo-tests=disabled -Dman-pages=disabled -Dvalgrind=disabled -Dudev=false -Dtests=false">
     <pkg-config>libdrm.pc</pkg-config>

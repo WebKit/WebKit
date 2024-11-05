@@ -69,6 +69,7 @@ PACKAGES=(
     libwebp-dev
     libwoff-dev
     libxml2-utils
+    libxcb-glx0-dev
     libxslt1-dev
     mesa-common-dev
     ninja-build
@@ -76,10 +77,12 @@ PACKAGES=(
     patchelf
     ruby
     $(aptIfExists gi-docgen)
+    $(aptIfExists libaom-dev)
     $(aptIfExists libavif-dev)
     $(aptIfExists libjxl-dev)
     $(aptIfExists libsoup-3.0-dev)
     $(aptIfExists libsysprof-capture-4-dev)
+    $(aptIfExists libyuv-dev)
 
     # These are dependencies necessary for running tests.
     apache2
