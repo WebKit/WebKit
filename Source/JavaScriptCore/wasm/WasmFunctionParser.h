@@ -72,6 +72,10 @@ void splitStack(BlockSignature signature, EnclosingStack& enclosingStack, NewSta
     enclosingStack.shrink(offset);
 }
 
+struct ControlRef {
+    size_t m_index { 0 };
+};
+
 template<typename Control, typename Expression, typename Call>
 struct FunctionParserTypes {
     using ControlType = Control;
@@ -127,7 +131,7 @@ struct FunctionParserTypes {
         CatchKind type;
         uint32_t tag;
         const TypeDefinition* exceptionSignature;
-        ControlType* target;
+        ControlRef target;
     };
 };
 
@@ -160,6 +164,8 @@ public:
 
     ControlStack& controlStack() { return m_controlStack; }
     Stack& expressionStack() { return m_expressionStack; }
+
+    ControlEntry& resolveControlRef(ControlRef ref) { return m_controlStack[ref.m_index]; }
 
     void pushLocalInitialized(uint32_t index)
     {
@@ -3445,7 +3451,7 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                 static_cast<CatchKind>(catchOpcode),
                 exceptionTag,
                 signature,
-                &m_controlStack[m_controlStack.size() - 1 - exceptionLabel].controlData
+                { m_controlStack.size() - 1 - exceptionLabel },
             });
         }
 
@@ -3453,10 +3459,10 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         Stack newStack;
 
         for (auto& catchTarget : targets) {
-            ControlType* target = catchTarget.target;
+            auto& target = resolveControlRef(catchTarget.target).controlData;
 
             Stack results;
-            results.reserveInitialCapacity(target->branchTargetArity());
+            results.reserveInitialCapacity(target.branchTargetArity());
             if (catchTarget.type == CatchKind::Catch || catchTarget.type == CatchKind::CatchRef) {
                 for (unsigned arg = 0; arg < catchTarget.exceptionSignature->template as<FunctionSignature>()->argumentCount(); ++arg) {
                     ExpressionType exp;
@@ -3468,9 +3474,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                 results.constructAndAppend(Type { TypeKind::Ref, static_cast<TypeIndex>(TypeKind::Exn) }, exp);
             }
 
-            WASM_VALIDATOR_FAIL_IF(results.size() != target->branchTargetArity());
-            for (unsigned i = 0; i < target->branchTargetArity(); ++i)
-                WASM_VALIDATOR_FAIL_IF(!isSubtype(results[i].type(), target->branchTargetType(i)), "try_table target type mismatch");
+            WASM_VALIDATOR_FAIL_IF(results.size() != target.branchTargetArity());
+            for (unsigned i = 0; i < target.branchTargetArity(); ++i)
+                WASM_VALIDATOR_FAIL_IF(!isSubtype(results[i].type(), target.branchTargetType(i)), "try_table target type mismatch");
         }
 
         WASM_TRY_ADD_TO_CONTEXT(addTryTable(inlineSignature, m_expressionStack, targets, control, newStack));

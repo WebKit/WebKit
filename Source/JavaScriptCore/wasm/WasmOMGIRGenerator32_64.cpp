@@ -259,7 +259,7 @@ public:
             CatchKind type;
             uint32_t tag;
             const TypeDefinition* exceptionSignature;
-            ControlData* target;
+            ControlRef target;
         };
         using TargetList = Vector<TryTableTarget>;
 
@@ -4751,10 +4751,11 @@ auto OMGIRGenerator::emitCatchTableImpl(ControlData& data, const ControlData::Tr
         newStack.constructAndAppend(Type { TypeKind::RefNull, static_cast<TypeIndex>(TypeKind::Exn) }, var);
     }
 
-    unifyValuesWithBlock(newStack, *target.target);
+    auto& targetControl = m_parser->resolveControlRef(target.target).controlData;
+    unifyValuesWithBlock(newStack, targetControl);
 
-    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), FrequentedBlock(target.target->targetBlockForBranch(), FrequencyClass::Normal));
-    target.target->targetBlockForBranch()->addPredecessor(block);
+    m_currentBlock->appendNewControlValue(m_proc, Jump, origin(), FrequentedBlock(targetControl.targetBlockForBranch(), FrequencyClass::Normal));
+    targetControl.targetBlockForBranch()->addPredecessor(block);
 
     m_currentBlock = oldBlock;
 }

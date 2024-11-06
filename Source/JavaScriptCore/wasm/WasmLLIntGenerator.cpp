@@ -79,7 +79,7 @@ public:
             CatchKind type;
             uint32_t tag;
             const TypeDefinition* exceptionSignature;
-            Label* target;
+            RefPtr<Label> target;
             unsigned targetStackSize;
         };
         using TargetList = Vector<TryTableTarget>;
@@ -1225,12 +1225,13 @@ auto LLIntGenerator::addTryTable(BlockSignature signature, Stack& enclosingStack
 
     auto targetList = targets.map(
         [&](const auto& target) -> ControlTryTable::TryTableTarget {
+            auto& entry = m_parser->resolveControlRef(target.target).controlData;
             return {
                 target.type,
                 target.tag,
                 target.exceptionSignature,
-                target.target->targetLabelForBranch().get(),
-                target.target->stackSize()
+                entry.targetLabelForBranch().get(),
+                entry.stackSize()
             };
         }
     );

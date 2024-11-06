@@ -2976,14 +2976,15 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     m_exceptionHandlers.append({ handlerType, entryData.tryStart(), m_callSiteIndex, 0, m_tryCatchDepth, target.tag });
     emitCatchPrologue();
 
+    auto& targetControl = m_parser->resolveControlRef(target.target).controlData;
     if (target.type == CatchKind::CatchRef || target.type == CatchKind::CatchAllRef) {
-        if (target.target->targetLocations().last().isGPR())
-            m_jit.move(GPRInfo::returnValueGPR, target.target->targetLocations().last().asGPR());
-        else if (target.target->targetLocations().last().isGPR2()) {
-            m_jit.move(GPRInfo::returnValueGPR, target.target->targetLocations().last().asGPRlo());
-            m_jit.move(GPRInfo::returnValueGPR2, target.target->targetLocations().last().asGPRhi());
+        if (targetControl.targetLocations().last().isGPR())
+            m_jit.move(GPRInfo::returnValueGPR, targetControl.targetLocations().last().asGPR());
+        else if (targetControl.targetLocations().last().isGPR2()) {
+            m_jit.move(GPRInfo::returnValueGPR, targetControl.targetLocations().last().asGPRlo());
+            m_jit.move(GPRInfo::returnValueGPR2, targetControl.targetLocations().last().asGPRhi());
         } else
-            m_jit.storePtr(GPRInfo::returnValueGPR, target.target->targetLocations().last().asAddress());
+            m_jit.storePtr(GPRInfo::returnValueGPR, targetControl.targetLocations().last().asAddress());
     }
 
     if (target.type == CatchKind::Catch || target.type == CatchKind::CatchRef) {
@@ -2995,7 +2996,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
             unsigned offset = 0;
             for (unsigned i = 0; i < signature->argumentCount(); ++i) {
                 Type type = signature->argumentType(i);
-                Location slot = target.target->targetLocations()[i];
+                Location slot = targetControl.targetLocations()[i];
                 switch (type.kind) {
                 case TypeKind::I32:
                     if (slot.isGPR())
@@ -3060,7 +3061,7 @@ void BBQJIT::emitCatchTableImpl(ControlData& entryData, ControlType::TryTableTar
     }
 
     // jump to target
-    target.target->addBranch(m_jit.jump());
+    targetControl.addBranch(m_jit.jump());
 }
 
 PartialResult WARN_UNUSED_RETURN BBQJIT::addThrowRef(Value exception, Stack&)

@@ -668,7 +668,7 @@ public:
             CatchKind type;
             uint32_t tag;
             const TypeDefinition* exceptionSignature;
-            ControlData* target;
+            ControlRef target;
         };
         using TargetList = Vector<TryTableTarget>;
 
