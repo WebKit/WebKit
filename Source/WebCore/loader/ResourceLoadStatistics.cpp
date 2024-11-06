@@ -37,7 +37,7 @@ namespace WebCore {
 
 static Seconds timestampResolution { 5_s };
 
-typedef UncheckedKeyHashMap<RegistrableDomain, unsigned, RegistrableDomain::RegistrableDomainHash, HashTraits<RegistrableDomain>, HashTraits<unsigned>>::KeyValuePairType ResourceLoadStatisticsValue;
+typedef HashMap<RegistrableDomain, unsigned, RegistrableDomain::RegistrableDomainHash, HashTraits<RegistrableDomain>, HashTraits<unsigned>>::KeyValuePairType ResourceLoadStatisticsValue;
 
 static void encodeHashSet(KeyedEncoder& encoder, const String& label,  const String& key, const HashSet<RegistrableDomain>& hashSet)
 {

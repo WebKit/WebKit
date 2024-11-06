@@ -106,9 +106,9 @@ private:
     Timer m_frameTimer;
     RequestFrameCallback m_FrameCallback;
 #if PLATFORM(COCOA)
-    UncheckedKeyHashMap<PlatformXR::LayerHandle, WebCore::IntSize> m_layers;
+    HashMap<PlatformXR::LayerHandle, WebCore::IntSize> m_layers;
 #else
-    UncheckedKeyHashMap<PlatformXR::LayerHandle, PlatformGLObject> m_layers;
+    HashMap<PlatformXR::LayerHandle, PlatformGLObject> m_layers;
     RefPtr<WebCore::GraphicsContextGL> m_gl;
 #endif
     uint32_t m_layerIndex { 0 };

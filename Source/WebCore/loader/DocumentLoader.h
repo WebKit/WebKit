@@ -111,7 +111,7 @@ enum class ClearSiteDataValue : uint8_t;
 enum class LoadWillContinueInAnotherProcess : bool;
 enum class ShouldContinue;
 
-using ResourceLoaderMap = UncheckedKeyHashMap<ResourceLoaderIdentifier, RefPtr<ResourceLoader>>;
+using ResourceLoaderMap = HashMap<ResourceLoaderIdentifier, RefPtr<ResourceLoader>>;
 
 enum class AutoplayPolicy : uint8_t {
     Default, // Uses policies specified in document settings.
@@ -670,7 +670,7 @@ private:
     std::optional<CrossOriginOpenerPolicy> m_responseCOOP;
     OptionSet<ClearSiteDataValue> m_responseClearSiteDataValues;
     
-    typedef UncheckedKeyHashMap<RefPtr<ResourceLoader>, RefPtr<SubstituteResource>> SubstituteResourceMap;
+    typedef HashMap<RefPtr<ResourceLoader>, RefPtr<SubstituteResource>> SubstituteResourceMap;
     SubstituteResourceMap m_pendingSubstituteResources;
     Timer m_substituteResourceDeliveryTimer;
 
@@ -690,8 +690,8 @@ private:
 
     DataLoadToken m_dataLoadToken;
 
-    UncheckedKeyHashMap<uint64_t, LinkIcon> m_iconsPendingLoadDecision;
-    UncheckedKeyHashMap<std::unique_ptr<IconLoader>, CompletionHandler<void(FragmentedSharedBuffer*)>> m_iconLoaders;
+    HashMap<uint64_t, LinkIcon> m_iconsPendingLoadDecision;
+    HashMap<std::unique_ptr<IconLoader>, CompletionHandler<void(FragmentedSharedBuffer*)>> m_iconLoaders;
     Vector<LinkIcon> m_linkIcons;
 
 #if ENABLE(APPLICATION_MANIFEST)

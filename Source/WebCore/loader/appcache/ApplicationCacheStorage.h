@@ -153,7 +153,7 @@ private:
     // we keep a hash set of the hosts of the manifest URLs of all non-obsolete cache groups.
     HashCountedSet<unsigned, AlreadyHashed> m_cacheHostSet;
     
-    UncheckedKeyHashMap<String, ApplicationCacheGroup*> m_cachesInMemory; // Excludes obsolete cache groups.
+    HashMap<String, ApplicationCacheGroup*> m_cachesInMemory; // Excludes obsolete cache groups.
 
     friend class NeverDestroyed<ApplicationCacheStorage>;
 };

@@ -160,7 +160,7 @@ private:
     HashSet<DocumentLoader*> m_associatedDocumentLoaders;
 
     // The URLs and types of pending cache entries.
-    UncheckedKeyHashMap<String, unsigned> m_pendingEntries;
+    HashMap<String, unsigned> m_pendingEntries;
     
     // The total number of items to be processed to update the cache group and the number that have been done.
     int m_progressTotal { 0 };

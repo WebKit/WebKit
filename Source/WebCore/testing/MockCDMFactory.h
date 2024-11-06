@@ -106,7 +106,7 @@ private:
     bool m_canCreateInstances { true };
     bool m_supportsServerCertificates { true };
     bool m_supportsSessions { true };
-    UncheckedKeyHashMap<String, Vector<Ref<SharedBuffer>>> m_sessions;
+    HashMap<String, Vector<Ref<SharedBuffer>>> m_sessions;
 };
 
 class MockCDM : public CDMPrivate {

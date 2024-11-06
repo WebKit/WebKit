@@ -83,7 +83,7 @@ private:
     Vector<String> m_profiles;
     PlatformXR::FrameData::InputSourcePose m_pointerOrigin;
     std::optional<PlatformXR::FrameData::InputSourcePose> m_gripOrigin;
-    UncheckedKeyHashMap<FakeXRButtonStateInit::Type, FakeXRButtonStateInit, IntHash<FakeXRButtonStateInit::Type>, WTF::StrongEnumHashTraits<FakeXRButtonStateInit::Type>> m_buttons;
+    HashMap<FakeXRButtonStateInit::Type, FakeXRButtonStateInit, IntHash<FakeXRButtonStateInit::Type>, WTF::StrongEnumHashTraits<FakeXRButtonStateInit::Type>> m_buttons;
     bool m_connected { true };
     bool m_primarySelected { false };
     bool m_simulateSelect { false };

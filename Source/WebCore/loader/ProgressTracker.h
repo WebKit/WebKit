@@ -78,7 +78,7 @@ private:
     WeakRef<Page> m_page;
     UniqueRef<ProgressTrackerClient> m_client;
     RefPtr<LocalFrame> m_originatingProgressFrame;
-    UncheckedKeyHashMap<ResourceLoaderIdentifier, std::unique_ptr<ProgressItem>> m_progressItems;
+    HashMap<ResourceLoaderIdentifier, std::unique_ptr<ProgressItem>> m_progressItems;
     Timer m_progressHeartbeatTimer;
 
     long long m_totalPageAndResourceBytesToLoad { 0 };

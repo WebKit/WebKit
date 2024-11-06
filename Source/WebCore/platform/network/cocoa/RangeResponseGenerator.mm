@@ -81,7 +81,7 @@ struct RangeResponseGenerator::Data {
             resource = nullptr;
         }
     }
-    UncheckedKeyHashMap<RetainPtr<WebCoreNSURLSessionDataTask>, std::unique_ptr<RangeResponseGeneratorDataTaskData>> taskData;
+    HashMap<RetainPtr<WebCoreNSURLSessionDataTask>, std::unique_ptr<RangeResponseGeneratorDataTaskData>> taskData;
     SharedBufferBuilder buffer;
     ResourceResponse originalResponse;
     enum class SuccessfullyFinishedLoading : bool { No, Yes } successfullyFinishedLoading { SuccessfullyFinishedLoading::No };
@@ -95,7 +95,7 @@ RangeResponseGenerator::RangeResponseGenerator(GuaranteedSerialFunctionDispatche
 
 RangeResponseGenerator::~RangeResponseGenerator() = default;
 
-UncheckedKeyHashMap<String, std::unique_ptr<RangeResponseGenerator::Data>>& RangeResponseGenerator::map()
+HashMap<String, std::unique_ptr<RangeResponseGenerator::Data>>& RangeResponseGenerator::map()
 {
     assertIsCurrent(m_targetDispatcher.get());
     IGNORE_CLANG_WARNINGS_BEGIN("thread-safety-reference-return")
@@ -125,7 +125,7 @@ static ResourceResponse synthesizedResponseForRange(const ResourceResponse& orig
 void RangeResponseGenerator::removeTask(WebCoreNSURLSessionDataTask *task)
 {
     auto url = task.originalRequest.URL;
-    // UncheckedKeyHashMap::get() crashes if a null String is passed.
+    // HashMap::get() crashes if a null String is passed.
     if (!url)
         return;
     auto* data = map().get(url.absoluteString);

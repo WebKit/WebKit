@@ -70,7 +70,7 @@ public:
     void dump();
 #endif
 
-    using ResourceMap = UncheckedKeyHashMap<String, RefPtr<ApplicationCacheResource>>;
+    using ResourceMap = HashMap<String, RefPtr<ApplicationCacheResource>>;
     const ResourceMap& resources() const { return m_resources; }
 
     void setStorageID(unsigned storageID) { m_storageID = storageID; }

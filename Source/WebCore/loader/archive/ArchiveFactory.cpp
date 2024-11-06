@@ -47,7 +47,7 @@
 namespace WebCore {
 
 typedef RefPtr<Archive> RawDataCreationFunction(const URL&, FragmentedSharedBuffer&);
-typedef UncheckedKeyHashMap<String, RawDataCreationFunction*, ASCIICaseInsensitiveHash> ArchiveMIMETypesMap;
+typedef HashMap<String, RawDataCreationFunction*, ASCIICaseInsensitiveHash> ArchiveMIMETypesMap;
 
 // The create functions in the archive classes return RefPtr to concrete subclasses
 // of Archive. This adaptor makes the functions have a uniform return type.

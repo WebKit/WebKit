@@ -1571,7 +1571,7 @@ private:
     std::unique_ptr<InspectorStubFrontend> m_inspectorFrontend;
     RefPtr<CacheStorageConnection> m_cacheStorageConnection;
 
-    UncheckedKeyHashMap<unsigned, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
+    HashMap<unsigned, std::unique_ptr<WebCore::SleepDisabler>> m_sleepDisablers;
 
     std::unique_ptr<TextIterator> m_textIterator;
 

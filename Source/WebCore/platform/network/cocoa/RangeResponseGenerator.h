@@ -52,14 +52,14 @@ private:
     struct Data;
 
     RangeResponseGenerator(WTF::GuaranteedSerialFunctionDispatcher&);
-    UncheckedKeyHashMap<String, std::unique_ptr<Data>>& map();
+    HashMap<String, std::unique_ptr<Data>>& map();
 
     class MediaResourceClient;
     void giveResponseToTasksWithFinishedRanges(Data&);
     void giveResponseToTaskIfBytesInRangeReceived(WebCoreNSURLSessionDataTask *, const ParsedRequestRange&, std::optional<size_t> expectedContentLength, const Data&);
     static std::optional<size_t> expectedContentLengthFromData(const Data&);
 
-    UncheckedKeyHashMap<String, std::unique_ptr<Data>> m_map WTF_GUARDED_BY_CAPABILITY(m_targetDispatcher.get());
+    HashMap<String, std::unique_ptr<Data>> m_map WTF_GUARDED_BY_CAPABILITY(m_targetDispatcher.get());
     Ref<GuaranteedSerialFunctionDispatcher> m_targetDispatcher;
 };
 
