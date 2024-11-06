@@ -125,22 +125,16 @@ auto SectionParser::parseType() -> PartialResult
                     // group takes ownership of signature via types, and projection takes ownership of group.
                     RefPtr<TypeDefinition> group = TypeInformation::typeDefinitionForRecursionGroup(types);
                     RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(group->index(), 0);
-                    TypeInformation::registerCanonicalRTTForType(projection->index());
-                    m_info->rtts.append(TypeInformation::getCanonicalRTT(projection->index()));
-                    if (signature->is<Subtype>()) {
-                        WASM_PARSER_FAIL_IF(m_info->rtts.last()->displaySize() > maxSubtypeDepth, "subtype depth for Type section's "_s, i, "th signature exceeded the limits of "_s, maxSubtypeDepth);
-                        WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(projection->unroll()));
-                    }
-                    m_info->typeSignatures.append(projection.releaseNonNull());
-                } else {
-                    TypeInformation::registerCanonicalRTTForType(signature->index());
-                    m_info->rtts.append(TypeInformation::getCanonicalRTT(signature->index()));
-                    if (signature->is<Subtype>()) {
-                        WASM_PARSER_FAIL_IF(m_info->rtts.last()->displaySize() > maxSubtypeDepth, "subtype depth for Type section's "_s, i, "th signature exceeded the limits of "_s, maxSubtypeDepth);
-                        WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(signature->unroll()));
-                    }
-                    m_info->typeSignatures.append(signature.releaseNonNull());
+                    signature = WTFMove(projection);
                 }
+                TypeInformation::registerCanonicalRTTForType(signature->index());
+                m_info->rtts.append(TypeInformation::getCanonicalRTT(signature->index()));
+                const TypeDefinition& unrolled = signature->unroll();
+                if (unrolled.is<Subtype>()) {
+                    WASM_PARSER_FAIL_IF(m_info->rtts.last()->displaySize() > maxSubtypeDepth, "subtype depth for Type section's "_s, i, "th signature exceeded the limits of "_s, maxSubtypeDepth);
+                    WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(unrolled));
+                }
+                m_info->typeSignatures.append(signature.releaseNonNull());
             }
         } else
             m_info->typeSignatures.append(signature.releaseNonNull());
@@ -1000,7 +994,13 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
     // store projections for each recursion group index in the type section.
     WASM_PARSER_FAIL_IF(!m_info->typeSignatures.tryGrowCapacityBy(typeCount), "can't allocate enough memory for recursion group's "_s, typeCount, " type "_s, typeCount > 1 ? "indices"_s : "index"_s);
     WASM_PARSER_FAIL_IF(!m_info->rtts.tryGrowCapacityBy(typeCount), "can't allocate enough memory for recursion group's "_s, typeCount, " RTT"_s, typeCount > 1 ? "s"_s : ""_s);
-    if (typeCount > 1) {
+    if (typeCount == 1 && !signatures[0]->hasRecursiveReference()) {
+        TypeInformation::registerCanonicalRTTForType(signatures[0]->index());
+        m_info->rtts.append(TypeInformation::getCanonicalRTT(signatures[0]->index()));
+        if (signatures[0]->is<Subtype>())
+            WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(signatures[0]));
+        m_info->typeSignatures.append(WTFMove(signatures[0]));
+    } else {
         Vector<Ref<TypeDefinition>> projections;
         // Take ownership of all projections before unrolling since they can refer to each other.
         for (uint32_t i = 0; i < typeCount; ++i) {
@@ -1011,29 +1011,13 @@ auto SectionParser::parseRecursionGroup(uint32_t position, RefPtr<TypeDefinition
         for (uint32_t i = 0; i < typeCount; ++i) {
             TypeInformation::registerCanonicalRTTForType(projections[i]->index());
             m_info->rtts.append(TypeInformation::getCanonicalRTT(projections[i]->index()));
-            m_info->typeSignatures.append(WTFMove(projections[i]));
+            m_info->typeSignatures.append(projections[i]);
         }
         // Checking subtyping requirements has to be deferred until we construct projections in case recursive references show up in the type.
         for (uint32_t i = 0; i < typeCount; ++i) {
-            Ref def = TypeInformation::get(types[i]).replacePlaceholders(recursionGroup->index());
-            if (def->is<Subtype>())
-                WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(def));
-        }
-    } else if (typeCount) {
-        if (!signatures[0]->hasRecursiveReference()) {
-            TypeInformation::registerCanonicalRTTForType(signatures[0]->index());
-            m_info->rtts.append(TypeInformation::getCanonicalRTT(signatures[0]->index()));
-            if (signatures[0]->is<Subtype>())
-                WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(signatures[0]));
-            m_info->typeSignatures.append(WTFMove(signatures[0]));
-        } else {
-            RefPtr<TypeDefinition> projection = TypeInformation::typeDefinitionForProjection(recursionGroup->index(), 0);
-            WASM_PARSER_FAIL_IF(!projection, "can't allocate enough memory for recursion group's 0th projection"_s);
-            TypeInformation::registerCanonicalRTTForType(projection->index());
-            m_info->rtts.append(TypeInformation::getCanonicalRTT(projection->index()));
-            if (signatures[0]->is<Subtype>())
-                WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(projection->unroll()));
-            m_info->typeSignatures.append(projection.releaseNonNull());
+            const TypeDefinition& unrolled = projections[i]->unroll();
+            if (unrolled.is<Subtype>())
+                WASM_FAIL_IF_HELPER_FAILS(checkSubtypeValidity(unrolled));
         }
     }
 
