@@ -52,7 +52,7 @@ static double magnitudeToIntensity(double magnitude)
     return intensity;
 }
 
-std::unique_ptr<GameControllerHapticEffect> GameControllerHapticEffect::create(GameControllerHapticEngines& engines, GamepadHapticEffectType type, const GamepadEffectParameters& parameters)
+RefPtr<GameControllerHapticEffect> GameControllerHapticEffect::create(GameControllerHapticEngines& engines, GamepadHapticEffectType type, const GamepadEffectParameters& parameters)
 {
     auto createPlayer = [&](CHHapticEngine *engine, double magnitude) -> RetainPtr<id> {
         NSDictionary* hapticDict = @{
@@ -98,7 +98,7 @@ std::unique_ptr<GameControllerHapticEffect> GameControllerHapticEffect::create(G
         RELEASE_LOG_ERROR(Gamepad, "GameControllerHapticEffect: Failed to create the haptic effect players");
         return nullptr;
     }
-    return std::unique_ptr<GameControllerHapticEffect>(new GameControllerHapticEffect(WTFMove(leftPlayer), WTFMove(rightPlayer)));
+    return adoptRef(new GameControllerHapticEffect(WTFMove(leftPlayer), WTFMove(rightPlayer)));
 }
 
 GameControllerHapticEffect::GameControllerHapticEffect(RetainPtr<id>&& leftPlayer, RetainPtr<id>&& rightPlayer)
