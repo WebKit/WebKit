@@ -807,10 +807,10 @@ std::span<const T> singleElementSpan(const T& object)
     return unsafeMakeSpan(std::addressof(object), 1);
 }
 
-template<typename T>
-std::span<const uint8_t> asByteSpan(const T& input)
+template<typename T, std::size_t Extent = std::dynamic_extent>
+std::span<const uint8_t, Extent> asByteSpan(const T& input)
 {
-    return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(&input), sizeof(input));
+    return unsafeMakeSpan<const uint8_t, Extent>(reinterpret_cast<const uint8_t*>(&input), sizeof(input));
 }
 
 template<typename T, std::size_t Extent>
@@ -819,11 +819,11 @@ std::span<const uint8_t> asByteSpan(std::span<T, Extent> input)
     return unsafeMakeSpan(reinterpret_cast<const uint8_t*>(input.data()), input.size_bytes());
 }
 
-template<typename T>
-std::span<uint8_t> asMutableByteSpan(T& input)
+template<typename T, std::size_t Extent = std::dynamic_extent>
+std::span<uint8_t, Extent> asMutableByteSpan(T& input)
 {
     static_assert(!std::is_const_v<T>);
-    return unsafeMakeSpan(reinterpret_cast<uint8_t*>(&input), sizeof(input));
+    return unsafeMakeSpan<uint8_t, Extent>(reinterpret_cast<uint8_t*>(&input), sizeof(input));
 }
 
 template<typename T, std::size_t Extent>

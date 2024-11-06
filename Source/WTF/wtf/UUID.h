@@ -34,10 +34,9 @@
 #include <wtf/HexNumber.h>
 #include <wtf/Int128.h>
 #include <wtf/SHA1.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringConcatenate.h>
 #include <wtf/text/WTFString.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #ifdef __OBJC__
 @class NSUUID;
@@ -98,7 +97,7 @@ public:
 
     std::span<const uint8_t, 16> span() const
     {
-        return std::span<const uint8_t, 16> { reinterpret_cast<const uint8_t*>(&m_data), 16 };
+        return asByteSpan<UInt128, 16>(m_data);
     }
 
     friend bool operator==(const UUID&, const UUID&) = default;
@@ -228,5 +227,3 @@ private:
 using WTF::createVersion4UUIDString;
 using WTF::createVersion4UUIDStringWeak;
 using WTF::bootSessionUUIDString;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
