@@ -204,6 +204,7 @@ public:
 
     // Update event regions, which only needs to happen once per rendering update.
     void updateEventRegions();
+    void updateEventRegionsRecursive(RenderLayer&);
 
     struct RequiresCompositingData {
         LayoutUpToDate layoutUpToDate { LayoutUpToDate::Yes };

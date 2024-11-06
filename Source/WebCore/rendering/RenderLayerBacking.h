@@ -200,7 +200,7 @@ public:
     void updateEventRegion();
     
     bool needsEventRegionUpdate() const { return m_needsEventRegionUpdate; }
-    void setNeedsEventRegionUpdate(bool needsUpdate = true) { m_needsEventRegionUpdate = needsUpdate; }
+    void setNeedsEventRegionUpdate(bool needsUpdate = true);
 #endif
 
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)

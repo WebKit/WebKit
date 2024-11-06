@@ -269,6 +269,8 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer& layer)
             adjustTiledBackingCoverage();
         }
     }
+
+    m_owningLayer.setAncestorsHaveDescendantNeedingEventRegionUpdate();
 }
 
 RenderLayerBacking::~RenderLayerBacking()
@@ -1974,6 +1976,11 @@ bool RenderLayerBacking::maintainsEventRegion() const
     return true;
 }
 
+void RenderLayerBacking::setNeedsEventRegionUpdate(bool needsUpdate)
+{
+    m_needsEventRegionUpdate = needsUpdate;
+}
+
 void RenderLayerBacking::updateEventRegion()
 {
     LOG_WITH_STREAM(EventRegions, stream << m_owningLayer << " " << this << " updateEventRegion (needs update: " << needsEventRegionUpdate() << ", maintainsEventRegion: " << maintainsEventRegion() << ")");
@@ -2050,8 +2057,6 @@ void RenderLayerBacking::updateEventRegion()
     if (m_foregroundLayer)
         updateEventRegionForLayer(*m_foregroundLayer);
 
-    renderer().view().setNeedsEventRegionUpdateForNonCompositedFrame(false);
-    
     setNeedsEventRegionUpdate(false);
 }
 #endif

@@ -827,6 +827,10 @@ public:
     bool hasCompositedMask() const;
     bool hasCompositedNonContainedDescendants() const { return m_hasCompositedNonContainedDescendants; }
 
+    bool hasDescendantNeedingEventRegionUpdate() const { return m_hasDescendantNeedingEventRegionUpdate; }
+    void setAncestorsHaveDescendantNeedingEventRegionUpdate();
+    void clearHasDescendantNeedingEventRegionUpdate() { m_hasDescendantNeedingEventRegionUpdate = false; }
+
     // If non-null, a non-ancestor composited layer that this layer paints into (it is sharing its backing store with this layer).
     RenderLayer* backingProviderLayer() const { return m_backingProviderLayer.get(); }
     void setBackingProviderLayer(RenderLayer*);
@@ -1325,6 +1329,8 @@ private:
     bool m_insideSVGForeignObject : 1;
     bool m_isHiddenByOverflowTruncation : 1 { false };
     bool m_isPaintingSVGResourceLayer : 1 { false };
+
+    bool m_hasDescendantNeedingEventRegionUpdate : 1 { false };
 
     unsigned m_indirectCompositingReason : 4; // IndirectCompositingReason
     unsigned m_viewportConstrainedNotCompositedReason : 2; // ViewportConstrainedNotCompositedReason

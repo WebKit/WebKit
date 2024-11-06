@@ -960,13 +960,28 @@ void RenderLayerCompositor::applyToCompositedLayerIncludingDescendants(RenderLay
         applyToCompositedLayerIncludingDescendants(*childLayer, function);
 }
 
-void RenderLayerCompositor::updateEventRegions()
+void RenderLayerCompositor::updateEventRegionsRecursive(RenderLayer& layer)
 {
 #if ENABLE(ASYNC_SCROLLING)
-    applyToCompositedLayerIncludingDescendants(*m_renderView.layer(), [](auto& layer) {
+    if (layer.isComposited())
         layer.backing()->updateEventRegion();
-    });
+
+    if (!layer.hasDescendantNeedingEventRegionUpdate())
+        return;
+
+    for (auto* childLayer = layer.firstChild(); childLayer; childLayer = childLayer->nextSibling())
+        updateEventRegionsRecursive(*childLayer);
+
+    layer.clearHasDescendantNeedingEventRegionUpdate();
+#else
+    UNUSED_PARAM(layer);
 #endif
+}
+
+void RenderLayerCompositor::updateEventRegions()
+{
+    updateEventRegionsRecursive(*m_renderView.layer());
+    m_renderView.setNeedsEventRegionUpdateForNonCompositedFrame(false);
 }
 
 static std::optional<ScrollingNodeID> frameHostingNodeForFrame(LocalFrame& frame)

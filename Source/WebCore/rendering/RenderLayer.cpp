@@ -443,6 +443,11 @@ void RenderLayer::addChild(RenderLayer& child, RenderLayer* beforeChild)
 
     if (child.hasBlendMode() || (child.hasNotIsolatedBlendingDescendants() && !child.isolatesBlending()))
         updateAncestorChainHasBlendingDescendants(); // Why not just dirty?
+
+#if ENABLE(ASYNC_SCROLLING)
+    if (child.hasDescendantNeedingEventRegionUpdate() || (child.isComposited() && child.backing()->needsEventRegionUpdate()))
+        child.setAncestorsHaveDescendantNeedingEventRegionUpdate();
+#endif
 }
 
 void RenderLayer::removeChild(RenderLayer& oldChild)
@@ -6220,6 +6225,16 @@ static TextStream& operator<<(TextStream& ts, RenderLayer::EventRegionInvalidati
 }
 #endif // !LOG_DISABLED
 
+void RenderLayer::setAncestorsHaveDescendantNeedingEventRegionUpdate()
+{
+    for (auto* layer = parent(); layer; layer = layer->parent()) {
+        if (layer->m_hasDescendantNeedingEventRegionUpdate)
+            break;
+
+        layer->m_hasDescendantNeedingEventRegionUpdate = true;
+    }
+}
+
 bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason)
 {
 #if ENABLE(ASYNC_SCROLLING)
@@ -6241,6 +6256,7 @@ bool RenderLayer::invalidateEventRegion(EventRegionInvalidationReason reason)
     LOG_WITH_STREAM(EventRegions, stream << this << " invalidateEventRegion for reason " << reason << " invalidating in compositing layer " << compositingLayer);
 
     compositingLayer->backing()->setNeedsEventRegionUpdate();
+    compositingLayer->setAncestorsHaveDescendantNeedingEventRegionUpdate();
 
     if (reason == EventRegionInvalidationReason::NonCompositedFrame) {
         auto& view = renderer().view();
