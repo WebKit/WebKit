@@ -622,6 +622,30 @@ void MediaStreamTrackPrivate::sourceSettingsChanged(RealtimeMediaSourceSettings&
         observer.trackSettingsChanged(*this);
     });
 }
+
+void MediaStreamTrackPrivate::updateSizeIfNeeded(IntSize size)
+{
+    ASSERT(isOnCreationThread());
+    ASSERT(isVideo());
+
+    auto width = size.width();
+    auto height = size.height();
+    if (static_cast<int>(m_settings.width()) == width && static_cast<int>(m_settings.height()) == height)
+        return;
+
+    m_settings.setWidth(width);
+    m_settings.setHeight(height);
+
+    if (m_capabilities.supportsWidth())
+        m_capabilities.setWidth(extendCapabilityRange(m_capabilities.width(), width));
+    if (m_capabilities.supportsHeight())
+        m_capabilities.setHeight(extendCapabilityRange(m_capabilities.height(), height));
+
+    forEachObserver([this](auto& observer) {
+        observer.trackSettingsChanged(*this);
+    });
+}
+
 void MediaStreamTrackPrivate::sourceConfigurationChanged(String&& label, RealtimeMediaSourceSettings&& settings, RealtimeMediaSourceCapabilities&& capabilities)
 {
     ASSERT(isOnCreationThread());

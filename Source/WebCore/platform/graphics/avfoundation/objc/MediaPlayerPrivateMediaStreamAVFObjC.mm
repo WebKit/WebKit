@@ -320,11 +320,9 @@ void MediaPlayerPrivateMediaStreamAVFObjC::processNewVideoFrame(VideoFrame& vide
     m_sampleMetadata = metadata;
     ++m_sampleCount;
 
-    if (!m_intrinsicSize.isEmpty()) {
-        if (videoFrameSize.width() != m_intrinsicSize.width() || videoFrameSize.height() != m_intrinsicSize.height()) {
-            m_intrinsicSize = videoFrameSize;
-            scheduleTaskForCharacteristicsChanged(SizeChanged::Yes);
-        }
+    if (videoFrameSize.width() != m_intrinsicSize.width() || videoFrameSize.height() != m_intrinsicSize.height()) {
+        if (RefPtr mediaStreamTrackPrivate = activeVideoTrack())
+            mediaStreamTrackPrivate->updateSizeIfNeeded(IntSize(videoFrameSize));
     }
 
     if (m_displayMode != LivePreview && !m_waitingForFirstImage)
@@ -770,14 +768,12 @@ void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
 {
     SizeChanged sizeChanged = SizeChanged::No;
 
-    FloatSize intrinsicSize = m_mediaStreamPrivate->intrinsicSize();
-    if (intrinsicSize.isEmpty() || m_intrinsicSize.isEmpty()) {
-        if (intrinsicSize.height() != m_intrinsicSize.height() || intrinsicSize.width() != m_intrinsicSize.width()) {
-            m_intrinsicSize = intrinsicSize;
-            sizeChanged = SizeChanged::Yes;
-            if (m_playbackState == PlaybackState::None)
-                m_playbackState = PlaybackState::Paused;
-        }
+    auto intrinsicSize = m_mediaStreamPrivate->intrinsicSize();
+    if (intrinsicSize.height() != m_intrinsicSize.height() || intrinsicSize.width() != m_intrinsicSize.width()) {
+        m_intrinsicSize = intrinsicSize;
+        sizeChanged = SizeChanged::Yes;
+        if (m_playbackState == PlaybackState::None)
+            m_playbackState = PlaybackState::Paused;
     }
 
     updateTracks();
