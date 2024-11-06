@@ -32,10 +32,11 @@
 #include "IntRect.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <math.h>
+#include <wtf/RetainPtr.h>
 
 namespace WebCore {
 
-WEBCORE_EXPORT CGImageRef cgWindowListCreateImage(CGRect, CGWindowListOption, CGWindowID, CGWindowImageOption);
+WEBCORE_EXPORT RetainPtr<CGImageRef> cgWindowListCreateImage(CGRect, CGWindowListOption, CGWindowID, CGWindowImageOption);
 
 }
 

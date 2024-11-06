@@ -223,7 +223,7 @@ RetainPtr<CGImageRef> PlatformWebView::windowSnapshotImage()
         options |= kCGWindowImageNominalResolution;
 
     RetainPtr image = adoptNS([platformView() _windowSnapshotInRect:CGRectNull withOptions:options]);
-    return adoptCF([image CGImageForProposedRect:nil context:nil hints:nil]);
+    return [image CGImageForProposedRect:nil context:nil hints:nil];
 }
 
 void PlatformWebView::changeWindowScaleIfNeeded(float newScale)
