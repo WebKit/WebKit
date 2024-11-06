@@ -72,7 +72,7 @@ bool AccessibilityTableCell::computeIsIgnored() const
 
     // Ignore anonymous table cells as long as they're not in a table (ie. when display:table is used).
     WeakPtr parentTable = this->parentTable();
-    bool inTable = parentTable && parentTable->element() && (parentTable->element()->hasTagName(tableTag) || nodeHasTableRole(parentTable->element()));
+    bool inTable = parentTable && parentTable->element() && (parentTable->element()->hasTagName(tableTag) || nodeHasTableRole(*parentTable->element()));
     if (!element() && !inTable)
         return true;
 

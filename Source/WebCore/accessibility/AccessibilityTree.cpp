@@ -90,11 +90,12 @@ bool AccessibilityTree::isTreeValid() const
     while (!queue.isEmpty()) {
         Ref child = queue.takeFirst();
 
-        if (!is<Element>(child.get()))
+        auto* childElement = dynamicDowncast<Element>(child.get());
+        if (!childElement)
             continue;
-        if (nodeHasRole(child.ptr(), "treeitem"_s))
+        if (hasRole(*childElement, "treeitem"_s))
             continue;
-        if (!nodeHasRole(child.ptr(), "group"_s) && !nodeHasRole(child.ptr(), "presentation"_s))
+        if (!hasAnyRole(*childElement, { "group"_s, "presentation"_s }))
             return false;
 
         for (RefPtr groupChild = child->firstChild(); groupChild; groupChild = queue.last()->nextSibling())

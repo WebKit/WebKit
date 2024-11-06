@@ -61,8 +61,6 @@ class IntPoint;
 class IntSize;
 class ScrollableArea;
 
-bool nodeHasPresentationRole(Node&);
-
 class AccessibilityObject : public AXCoreObject, public CanMakeWeakPtr<AccessibilityObject> {
 public:
     virtual ~AccessibilityObject();
@@ -629,7 +627,7 @@ public:
     bool liveRegionAtomic() const override { return false; }
     bool isBusy() const override { return false; }
     static const String defaultLiveRegionStatusForRole(AccessibilityRole);
-    static bool contentEditableAttributeIsEnabled(Element*);
+    static bool contentEditableAttributeIsEnabled(Element&);
     bool hasContentEditableAttributeSet() const;
 
     bool supportsReadOnly() const;

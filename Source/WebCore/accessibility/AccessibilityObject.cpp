@@ -1909,7 +1909,8 @@ InsideLink AccessibilityObject::insideLink() const
 // This only returns true if this is the element that actually has the contentEditable attribute set.
 bool AccessibilityObject::hasContentEditableAttributeSet() const
 {
-    return contentEditableAttributeIsEnabled(element());
+    auto* element = this->element();
+    return element && contentEditableAttributeIsEnabled(*element);
 }
 
 bool AccessibilityObject::dependsOnTextUnderElement() const
@@ -2006,12 +2007,9 @@ String AccessibilityObject::autoCompleteValue() const
     return "none"_s;
 }
 
-bool AccessibilityObject::contentEditableAttributeIsEnabled(Element* element)
+bool AccessibilityObject::contentEditableAttributeIsEnabled(Element& element)
 {
-    if (!element)
-        return false;
-    
-    const AtomString& contentEditableValue = element->attributeWithoutSynchronization(contenteditableAttr);
+    const AtomString& contentEditableValue = element.attributeWithoutSynchronization(contenteditableAttr);
     if (contentEditableValue.isNull())
         return false;
     
@@ -2938,11 +2936,6 @@ String AccessibilityObject::roleDescription() const
     return { };
 }
 
-bool nodeHasPresentationRole(Node& node)
-{
-    return nodeHasRole(&node, "presentation"_s) || nodeHasRole(&node, "none"_s);
-}
-    
 bool AccessibilityObject::supportsPressAction() const
 {
     if (isButton())

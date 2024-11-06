@@ -315,7 +315,7 @@ AXObjectCache::~AXObjectCache()
 
 bool AXObjectCache::isModalElement(Element& element) const
 {
-    if ((nodeHasRole(&element, "dialog"_s) || nodeHasRole(&element, "alertdialog"_s)) && equalLettersIgnoringASCIICase(element.attributeWithDefaultARIA(aria_modalAttr), "true"_s))
+    if (hasAnyRole(element, { "dialog"_s, "alertdialog"_s }) && equalLettersIgnoringASCIICase(element.attributeWithDefaultARIA(aria_modalAttr), "true"_s))
         return true;
 
     RefPtr dialog = dynamicDowncast<HTMLDialogElement>(element);
@@ -578,32 +578,6 @@ AccessibilityObject* AXObjectCache::get(Node& node) const
     return nodeID ? m_objects.get(*nodeID) : nullptr;
 }
 
-// FIXME: This probably belongs on Node.
-bool nodeHasRole(Node* node, StringView role)
-{
-    RefPtr element = dynamicDowncast<Element>(node);
-    if (!element)
-        return false;
-
-    auto roleValue = element->attributeWithDefaultARIA(roleAttr);
-    if (role.isNull())
-        return roleValue.isEmpty();
-    if (roleValue.isEmpty())
-        return false;
-
-    return SpaceSplitString::spaceSplitStringContainsValue(roleValue, role, SpaceSplitString::ShouldFoldCase::Yes);
-}
-
-bool nodeHasTableRole(Node* node)
-{
-    return nodeHasRole(node, "grid"_s) || nodeHasRole(node, "table"_s) || nodeHasRole(node, "treegrid"_s);
-}
-
-bool nodeHasCellRole(Node* node)
-{
-    return node && (nodeHasRole(node, "gridcell"_s) || nodeHasRole(node, "cell"_s) || nodeHasRole(node, "columnheader"_s) || nodeHasRole(node, "rowheader"_s));
-}
-
 ContainerNode* composedParentIgnoringDocumentFragments(Node& node)
 {
     RefPtr ancestor = node.parentInComposedTree();
@@ -664,22 +638,70 @@ static RenderImage* toSimpleImage(RenderObject& renderer)
     return renderImage.get();
 }
 
-static bool isAccessibilityList(Node& node)
+// FIXME: This probably belongs on Element.
+bool hasRole(Element& element, StringView role)
 {
-    // If the node is aria role="list" or the aria role is empty and it's a
-    // ul/ol/dl type (it shouldn't be a list if aria says otherwise).
-    return ((nodeHasRole(&node, "list"_s) || nodeHasRole(&node, "directory"_s))
-        || (nodeHasRole(&node, nullAtom()) && (node.hasTagName(ulTag) || node.hasTagName(olTag) || node.hasTagName(dlTag) || node.hasTagName(menuTag))));
+    auto roleValue = element.attributeWithDefaultARIA(roleAttr);
+    if (role.isNull())
+        return roleValue.isEmpty();
+    if (roleValue.isEmpty())
+        return false;
+
+    return SpaceSplitString::spaceSplitStringContainsValue(roleValue, role, SpaceSplitString::ShouldFoldCase::Yes);
 }
 
-static bool isAccessibilityTree(Node& node)
+bool hasAnyRole(Element& element, Vector<StringView>&& roles)
 {
-    return nodeHasRole(&node, "tree"_s);
+    auto roleValue = element.attributeWithDefaultARIA(roleAttr);
+    if (roleValue.isEmpty())
+        return false;
+
+    for (const auto& role : roles) {
+        ASSERT(!role.isEmpty());
+        if (SpaceSplitString::spaceSplitStringContainsValue(roleValue, role, SpaceSplitString::ShouldFoldCase::Yes))
+            return true;
+    }
+    return false;
 }
 
-static bool isAccessibilityTreeItem(Node& node)
+bool hasAnyRole(Element* element, Vector<StringView>&& roles)
 {
-    return nodeHasRole(&node, "treeitem"_s);
+    return element ? hasAnyRole(*element, WTFMove(roles)) : false;
+}
+
+bool nodeHasTableRole(Element& element)
+{
+    return hasAnyRole(element, { "grid"_s, "table"_s, "treegrid"_s });
+}
+
+bool nodeHasCellRole(Element& element)
+{
+    return hasAnyRole(element, { "gridcell"_s, "cell"_s, "columnheader"_s, "rowheader"_s });
+}
+
+bool nodeHasPresentationRole(Element& element)
+{
+    return hasAnyRole(element, { "presentation"_s, "none"_s });
+}
+
+static bool isAccessibilityList(Element& element)
+{
+    if (hasAnyRole(element, { "list"_s, "directory"_s }))
+        return true;
+
+    // Call it a list if it has no ARIA role and a list tag.
+    auto tagName = element.localName();
+    return hasRole(element, nullAtom()) && (tagName == ulTag || tagName == olTag || tagName == dlTag || tagName == menuTag);
+}
+
+static bool isAccessibilityTree(Element& element)
+{
+    return hasRole(element, "tree"_s);
+}
+
+static bool isAccessibilityTreeItem(Element& element)
+{
+    return hasRole(element, "treeitem"_s);
 }
 
 static bool isAccessibilityTable(Node* node)
@@ -697,45 +719,45 @@ static bool isAccessibilityTableCell(Node* node)
     return is<HTMLTableCellElement>(node);
 }
 
-static bool isAccessibilityARIATable(Node& node)
+static bool isAccessibilityARIATable(Element& element)
 {
-    return nodeHasTableRole(&node);
+    return nodeHasTableRole(element);
 }
 
-static bool isAccessibilityARIAGridRow(Node& node)
+static bool isAccessibilityARIAGridRow(Element& element)
 {
-    return nodeHasRole(&node, "row"_s);
+    return hasRole(element, "row"_s);
 }
 
-static bool isAccessibilityARIAGridCell(Node& node)
+static bool isAccessibilityARIAGridCell(Element& element)
 {
-    return nodeHasCellRole(&node);
+    return nodeHasCellRole(element);
 }
 
 Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject& renderer)
 {
     RefPtr node = renderer.node();
-    if (node) {
-        if (isAccessibilityList(*node))
+    if (auto* element = dynamicDowncast<Element>(node.get())) {
+        if (isAccessibilityList(*element))
             return AccessibilityList::create(renderer);
 
-        if (isAccessibilityARIATable(*node))
+        if (isAccessibilityARIATable(*element))
             return AccessibilityARIATable::create(renderer);
-        if (isAccessibilityARIAGridRow(*node))
+        if (isAccessibilityARIAGridRow(*element))
             return AccessibilityARIAGridRow::create(renderer);
-        if (isAccessibilityARIAGridCell(*node))
+        if (isAccessibilityARIAGridCell(*element))
             return AccessibilityARIAGridCell::create(renderer);
 
-        if (isAccessibilityTree(*node))
+        if (isAccessibilityTree(*element))
             return AccessibilityTree::create(renderer);
-        if (isAccessibilityTreeItem(*node))
+        if (isAccessibilityTreeItem(*element))
             return AccessibilityTreeItem::create(renderer);
 
-        if (is<HTMLLabelElement>(*node) && nodeHasRole(node.get(), nullAtom()))
+        if (is<HTMLLabelElement>(*element) && hasRole(*element, nullAtom()))
             return AccessibilityLabel::create(renderer);
 
 #if PLATFORM(IOS_FAMILY)
-        if (is<HTMLMediaElement>(*node) && nodeHasRole(node.get(), nullAtom()))
+        if (is<HTMLMediaElement>(*element) && hasRole(*element, nullAtom()))
             return AccessibilityMediaObject::create(renderer);
 #endif
     }
@@ -798,24 +820,26 @@ Ref<AccessibilityObject> AXObjectCache::createObjectFromRenderer(RenderObject& r
 
 static Ref<AccessibilityObject> createFromNode(Node& node)
 {
-    if (isAccessibilityList(node))
-        return AccessibilityList::create(node);
-    if (isAccessibilityTable(&node))
-        return AccessibilityTable::create(node);
-    if (isAccessibilityTableRow(&node))
-        return AccessibilityTableRow::create(node);
-    if (isAccessibilityTableCell(&node))
-        return AccessibilityTableCell::create(node);
-    if (isAccessibilityTree(node))
-        return AccessibilityTree::create(node);
-    if (isAccessibilityTreeItem(node))
-        return AccessibilityTreeItem::create(node);
-    if (isAccessibilityARIATable(node))
-        return AccessibilityARIATable::create(node);
-    if (isAccessibilityARIAGridRow(node))
-        return AccessibilityARIAGridRow::create(node);
-    if (isAccessibilityARIAGridCell(node))
-        return AccessibilityARIAGridCell::create(node);
+    if (auto* element = dynamicDowncast<Element>(node)) {
+        if (isAccessibilityList(*element))
+            return AccessibilityList::create(*element);
+        if (isAccessibilityTable(element))
+            return AccessibilityTable::create(*element);
+        if (isAccessibilityTableRow(element))
+            return AccessibilityTableRow::create(*element);
+        if (isAccessibilityTableCell(element))
+            return AccessibilityTableCell::create(*element);
+        if (isAccessibilityTree(*element))
+            return AccessibilityTree::create(*element);
+        if (isAccessibilityTreeItem(*element))
+            return AccessibilityTreeItem::create(*element);
+        if (isAccessibilityARIATable(*element))
+            return AccessibilityARIATable::create(*element);
+        if (isAccessibilityARIAGridRow(*element))
+            return AccessibilityARIAGridRow::create(*element);
+        if (isAccessibilityARIAGridCell(*element))
+            return AccessibilityARIAGridCell::create(*element);
+    }
     return AccessibilityNodeObject::create(node);
 }
 
@@ -1432,7 +1456,7 @@ void AXObjectCache::onTextRunsChanged(const RenderObject& renderer)
 
 void AXObjectCache::handleMenuOpened(Element& element)
 {
-    if (!element.renderer() || !nodeHasRole(&element, "menu"_s))
+    if (!element.renderer() || !hasRole(element, "menu"_s))
         return;
 
     postNotification(getOrCreate(element), protectedDocument().ptr(), AXMenuOpened);
@@ -1684,7 +1708,7 @@ void AXObjectCache::handleMenuItemSelected(Element* element)
     if (!element)
         return;
 
-    if (!nodeHasRole(element, "menuitem"_s) && !nodeHasRole(element, "menuitemradio"_s) && !nodeHasRole(element, "menuitemcheckbox"_s))
+    if (!hasAnyRole(*element, { "menuitem"_s, "menuitemradio"_s, "menuitemcheckbox"_s }))
         return;
 
     if (!element->focused() && !equalLettersIgnoringASCIICase(element->attributeWithoutSynchronization(aria_selectedAttr), "true"_s))
@@ -1867,7 +1891,7 @@ void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar& scrollbar)
 
 void AXObjectCache::onSelectedChanged(Element& element)
 {
-    if (nodeHasCellRole(&element))
+    if (nodeHasCellRole(element))
         postNotification(&element, AXSelectedCellsChanged);
     else if (is<HTMLOptionElement>(element))
         postNotification(&element, AXSelectedStateChanged);
@@ -2663,7 +2687,7 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         if (!axObject)
             return;
 
-        if (nodeHasRole(element, "form"_s) || nodeHasRole(element, "region"_s)) {
+        if (hasAnyRole(*element, { "form"_s, "region"_s })) {
             // https://w3c.github.io/aria/#document-handling_author-errors_roles
             // The computed role of ARIA forms and regions is dependent on whether they have a label.
             if (oldValue.isEmpty() || newValue.isEmpty())
@@ -4279,7 +4303,7 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
 
     AXLOGDeferredCollection("ModalChangedList"_s, m_deferredModalChangedList);
     for (auto& element : m_deferredModalChangedList) {
-        if (!is<HTMLDialogElement>(element) && !nodeHasRole(&element, "dialog"_s) && !nodeHasRole(&element, "alertdialog"_s))
+        if (!is<HTMLDialogElement>(element) && !hasAnyRole(element, { "dialog"_s, "alertdialog"_s }))
             continue;
 
         shouldRecomputeModal = true;

@@ -916,9 +916,12 @@ private:
     bool m_wasAlreadyCaching { false };
 };
 
-bool nodeHasRole(Node*, StringView role);
-bool nodeHasCellRole(Node*);
-bool nodeHasTableRole(Node*);
+bool hasRole(Element&, StringView role);
+bool hasAnyRole(Element&, Vector<StringView>&& roles);
+bool hasAnyRole(Element*, Vector<StringView>&& roles);
+bool nodeHasCellRole(Element&);
+bool nodeHasPresentationRole(Element&);
+bool nodeHasTableRole(Element&);
 ContainerNode* composedParentIgnoringDocumentFragments(Node&);
 ContainerNode* composedParentIgnoringDocumentFragments(Node*);
 

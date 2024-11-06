@@ -256,7 +256,7 @@ bool AccessibilityTable::isDataTable() const
                 if (isDataTableBasedOnRowColumnCount())
                     return true;
 
-                if (tableRow->getIntegralAttribute(aria_rowindexAttr) >= 1 || tableRow->getIntegralAttribute(aria_colindexAttr) || nodeHasRole(tableRow, "row"_s))
+                if (tableRow->getIntegralAttribute(aria_rowindexAttr) >= 1 || tableRow->getIntegralAttribute(aria_colindexAttr) || hasRole(*tableRow, "row"_s))
                     return true;
 
                 // For the first 5 rows, cache the background color so we can check if this table has zebra-striped rows.
@@ -286,7 +286,7 @@ bool AccessibilityTable::isDataTable() const
                 }
 
                 // In this case, the developer explicitly assigned a "data" table attribute.
-                if (!cell->headers().isEmpty() || !cell->abbr().isEmpty() || !cell->axis().isEmpty() || !cell->scope().isEmpty() || nodeHasCellRole(cell))
+                if (!cell->headers().isEmpty() || !cell->abbr().isEmpty() || !cell->axis().isEmpty() || !cell->scope().isEmpty() || nodeHasCellRole(*cell))
                     return true;
 
                 // If the author has used ARIA to specify a valid column or row index, assume they want us
@@ -642,7 +642,7 @@ void AccessibilityTable::addChildren()
                 processRow(tableRow.get());
             }
         } else if (RefPtr sectionAxObject = cache->getOrCreate(sectionElement)) {
-            ASSERT_WITH_MESSAGE(nodeHasRole(&sectionElement, "rowgroup"_s), "processRowGroup should only be called with native table section elements, or role=rowgroup elements");
+            ASSERT_WITH_MESSAGE(hasRole(sectionElement, "rowgroup"_s), "processRowGroup should only be called with native table section elements, or role=rowgroup elements");
             for (const auto& child : sectionAxObject->unignoredChildren())
                 processRowDescendingIfNeeded(child.get());
         }
@@ -676,8 +676,8 @@ void AccessibilityTable::addChildren()
         }
 
         auto* element = dynamicDowncast<Element>(node);
-        bool descendantIsRow = element && (element->hasTagName(trTag) || nodeHasRole(element, "row"_s));
-        bool descendantIsRowGroup = element && !descendantIsRow && (element->hasTagName(theadTag) || element->hasTagName(tbodyTag) || element->hasTagName(tfootTag) || nodeHasRole(element, "rowgroup"_s));
+        bool descendantIsRow = element && (element->hasTagName(trTag) || hasRole(*element, "row"_s));
+        bool descendantIsRowGroup = element && !descendantIsRow && (element->hasTagName(theadTag) || element->hasTagName(tbodyTag) || element->hasTagName(tfootTag) || hasRole(*element, "rowgroup"_s));
 
         if (descendantIsRowGroup)
             withinImplicitRowGroup = false;

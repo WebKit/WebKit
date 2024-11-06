@@ -2061,15 +2061,14 @@ bool AccessibilityRenderObject::renderObjectIsObservable(RenderObject& renderer)
     auto* node = renderer.node();
     if (!node)
         return false;
-    
-    if (auto* renderBox = dynamicDowncast<RenderBoxModelObject>(renderer); (renderBox && renderBox->isRenderListBox()) || nodeHasRole(node, "listbox"_s))
+
+    auto* element = dynamicDowncast<Element>(*node);
+    auto* renderBox = dynamicDowncast<RenderBoxModelObject>(renderer);
+    if ((renderBox && renderBox->isRenderListBox()) || (element && hasRole(*element, "listbox"_s)))
         return true;
 
     // Textboxes should send out notifications.
-    if (auto* element = dynamicDowncast<Element>(*node); (element && contentEditableAttributeIsEnabled(element)) || nodeHasRole(node, "textbox"_s))
-        return true;
-    
-    return false;
+    return element && (contentEditableAttributeIsEnabled(*element) || hasRole(*element, "textbox"_s));
 }
     
 AccessibilityObject* AccessibilityRenderObject::observableObject() const
