@@ -235,6 +235,26 @@ class CommitControllerTest(FlaskTestCase, WaitForDockerTestCase):
 
     @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
     @FlaskTestCase.run_with_webserver()
+    def test_find_limit(self, client, **kwargs):
+        self.register_all_commits(client)
+
+        response = client.get(self.URL + '/api/commits/find')
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(9, len(response.json()))
+        self.assertEqual(len([Commit.from_json(element) for element in response.json()]), 9)
+
+        response = client.get(self.URL + '/api/commits/find?limit=1')
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(1, len(response.json()))
+        self.assertEqual(len([Commit.from_json(element) for element in response.json()]), 1)
+
+        response = client.get(self.URL + '/api/commits/find?limit=5')
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(5, len(response.json()))
+        self.assertEqual(len([Commit.from_json(element) for element in response.json()]), 5)
+
+    @WaitForDockerTestCase.mock_if_no_docker(mock_redis=FakeStrictRedis, mock_cassandra=MockCassandraContext)
+    @FlaskTestCase.run_with_webserver()
     def test_next(self, client, **kwargs):
         self.register_all_commits(client)
         response = client.get(self.URL + '/api/commits/next?id=bae5d1e90999')
