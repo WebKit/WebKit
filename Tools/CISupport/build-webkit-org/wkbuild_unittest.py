@@ -29,8 +29,8 @@ class ShouldBuildTest(unittest.TestCase):
         (["ChangeLog", "Source/WebCore/ChangeLog", "Source/WebKit/ChangeLog-2011-02-11"], []),
         (["Websites/bugs.webkit.org/foo", "Source/WebCore/bar"], ["*"]),
         (["Websites/bugs.webkit.org/foo"], []),
-        (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
-        (["Source/JavaScriptCore/Configurations/Base.xcconfig"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
+        (["Source/JavaScriptCore/JavaScriptCore.xcodeproj/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
+        (["Source/JavaScriptCore/Configurations/Base.xcconfig"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
         (["LayoutTests/platform/mac/foo", "Source/WebCore/bar"], ["*"]),
         (["LayoutTests/foo"], ["*"]),
         (["LayoutTests/canvas/philip/tests/size.attributes.parse.exp-expected.txt", "LayoutTests/canvas/philip/tests/size.attributes.parse.exp.html"], ["*"]),
@@ -40,29 +40,29 @@ class ShouldBuildTest(unittest.TestCase):
         (["LayoutTests/platform/mac-highsierra/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra"]),
         (["LayoutTests/platform/mac-mojave/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
         (["LayoutTests/platform/mac-catalina/foo"], ["mac-mojave", "mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
-        (["LayoutTests/platform/ios-simulator/foo"], ["ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18"]),
-        (["LayoutTests/platform/ios-simulator-wk1/foo"], ["ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18"]),
-        (["LayoutTests/platform/ios-simulator-wk2/foo"], ["ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18"]),
+        (["LayoutTests/platform/ios-simulator/foo"], ["ios-18", "ios-simulator-18"]),
+        (["LayoutTests/platform/ios-simulator-wk1/foo"], ["ios-18", "ios-simulator-18"]),
+        (["LayoutTests/platform/ios-simulator-wk2/foo"], ["ios-18", "ios-simulator-18"]),
         (["LayoutTests/platform/visionos-simulator/foo"], ["visionos-2", "visionos-simulator-2"]),
         (["LayoutTests/platform/visionos-simulator-wk1/foo"], ["visionos-2", "visionos-simulator-2"]),
         (["LayoutTests/platform/visionos-simulator-wk2/foo"], ["visionos-2", "visionos-simulator-2"]),
-        (["LayoutTests/platform/wk2/Skipped"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2"]),
+        (["LayoutTests/platform/wk2/Skipped"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2"]),
         (["LayoutTests/platform/mac-wk2/Skipped"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
         (["LayoutTests/platform/mac-wk1/compositing/tiling/transform-origin-tiled-expected.txt"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
         (["LayoutTests/platform/mac/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
         (["LayoutTests/platform/mac-wk2/platform/mac/editing/spelling/autocorrection-contraction-expected.txt"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
-        (["LayoutTests/platform/spi/cocoa/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
-        (["LayoutTests/platform/spi/cf/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
+        (["LayoutTests/platform/spi/cocoa/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
+        (["LayoutTests/platform/spi/cf/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
         (["Source/WebKitLegacy/mac/WebKit.mac.exp"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
-        (["Source/WebKitLegacy/ios/WebKit.iOS.exp"], ["ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
-        (["Source/Dummy/foo.exp"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
-        (["Source/WebCore/ios/foo"], ["ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
+        (["Source/WebKitLegacy/ios/WebKit.iOS.exp"], ["ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
+        (["Source/Dummy/foo.exp"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
+        (["Source/WebCore/ios/foo"], ["ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
         (["Source/WebCore/mac/foo"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
-        (["Source/WebCore/bridge/objc/objc_class.mm"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
+        (["Source/WebCore/bridge/objc/objc_class.mm"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
         (["Source/WebCore/platform/wx/wxcode/win/foo"], []),
-        (["Source/WebCore/accessibility/ios/AXObjectCacheIOS.mm"], ["ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
+        (["Source/WebCore/accessibility/ios/AXObjectCacheIOS.mm"], ["ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
         (["Source/WebCore/rendering/mac/RenderThemeMac.mm", "Source/WebCore/rendering/mac/RenderThemeMac.h"], ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave"]),
-        (["Source/WebCore/rendering/ios/RenderThemeIOS.mm", "Source/WebCore/rendering/ios/RenderThemeIOS.h"], ["ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
+        (["Source/WebCore/rendering/ios/RenderThemeIOS.mm", "Source/WebCore/rendering/ios/RenderThemeIOS.h"], ["ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]),
         (["Tools/CISupport/build-webkit-org/public_html/LeaksViewer/LeaksViewer.js"], []),
     ]
 
@@ -70,7 +70,7 @@ class ShouldBuildTest(unittest.TestCase):
         for files, platforms in self._should_build_tests:
             # FIXME: We should test more platforms here once
             # wkbuild._should_file_trigger_build is implemented for them.
-            for platform in ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-17", "ios-simulator-17", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]:
+            for platform in ["mac-yosemite", "mac-elcapitan", "mac-sierra", "mac-highsierra", "mac-mojave", "ios-18", "ios-simulator-18", "visionos-2", "visionos-simulator-2", "tvos-18", "tvos-simulator-18", "watchos-11", "watchos-simulator-11"]:
                 should_build = platform in platforms or "*" in platforms
                 self.assertEqual(wkbuild.should_build(platform, files), should_build, "%s should%s have built but did%s (files: %s)" % (platform, "" if should_build else "n't", "n't" if should_build else "", str(files)))
 

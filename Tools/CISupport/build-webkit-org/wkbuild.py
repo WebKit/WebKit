@@ -50,8 +50,6 @@ def _should_file_trigger_build(target_platform, file):
         "mac-sequoia",
         "ios-18",
         "ios-simulator-18",
-        "ios-17",
-        "ios-simulator-17",
         "visionos-2",
         "visionos-simulator-2",
         "tvos-18",

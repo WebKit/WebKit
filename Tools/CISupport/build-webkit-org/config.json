@@ -54,13 +54,13 @@
                   { "name": "bot304", "platform": "ios-18" },
                   { "name": "bot305", "platform": "ios-simulator-18" },
                   { "name": "bot306", "platform": "ios-simulator-18" },
-                  { "name": "bot307", "platform": "ios-simulator-17" },
-                  { "name": "bot308", "platform": "ios-simulator-17" },
+                  { "name": "bot307", "platform": "ios-simulator-18" },
+                  { "name": "bot308", "platform": "ios-simulator-18" },
                   { "name": "bot651", "platform": "ios-simulator-18" },
                   { "name": "bot652", "platform": "ios-simulator-18" },
-                  { "name": "bot653", "platform": "ios-simulator-17" },
+                  { "name": "bot653", "platform": "ios-simulator-18" },
                   { "name": "bot667", "platform": "ios-simulator-18"},
-                  { "name": "bot664", "platform": "ios-simulator-17"},
+                  { "name": "bot664", "platform": "ios-simulator-18"},
                                     
                   { "name": "bot134", "platform": "visionos-simulator-2" },
                   { "name": "bot135", "platform": "visionos-simulator-2" },
@@ -378,9 +378,9 @@
                     "workernames": ["bot305", "bot306"]
                   },
                   {
-                    "name": "Apple-iOS-17-Simulator-Debug-Build", "factory": "BuildFactory",
-                    "platform": "ios-simulator-17", "configuration": "debug", "architectures": ["x86_64", "arm64"],
-                    "triggers": ["ios-simulator-17-debug-tests-wk2", "ipados-simulator-17-debug-tests-wk2"],
+                    "name": "Apple-iOS-18-Simulator-Debug-Build", "factory": "BuildFactory",
+                    "platform": "ios-simulator-18", "configuration": "debug", "architectures": ["x86_64", "arm64"],
+                    "triggers": ["ios-simulator-18-debug-tests-wk2", "ipados-simulator-18-debug-tests-wk2"],
                     "workernames": ["bot307", "bot308"]
                   },
                   {
@@ -390,8 +390,8 @@
                     "workernames": ["bot651", "bot652"]
                   },
                   {
-                    "name": "Apple-iOS-17-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "ios-simulator-17", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
+                    "name": "Apple-iOS-18-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "ios-simulator-18", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "iphone",
                     "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
                     "workernames": ["bot653"]
                   },
@@ -402,8 +402,8 @@
                     "workernames": ["bot667"]
                   },
                   {
-                    "name": "Apple-iPadOS-17-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
-                    "platform": "ios-simulator-17", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
+                    "name": "Apple-iPadOS-18-Simulator-Debug-WK2-Tests", "factory": "TestAllButJSCFactory",
+                    "platform": "ios-simulator-18", "configuration": "debug", "architectures": ["x86_64", "arm64"], "device_model": "ipad",
                     "additionalArguments": ["--no-retry-failures", "--no-sample-on-timeout", "--child-processes=6"],
                     "workernames": ["bot664"]
                   },
@@ -858,11 +858,8 @@
                   { "type": "PlatformSpecificScheduler", "platform": "ios-18", "branch": "main", "treeStableTimer": 45.0,
                     "builderNames": ["Apple-iOS-18-Release-Build"]
                   },
-                  { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-17", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-iOS-17-Simulator-Debug-Build"]
-                  },
                   { "type": "PlatformSpecificScheduler", "platform": "ios-simulator-18", "branch": "main", "treeStableTimer": 45.0,
-                    "builderNames": ["Apple-iOS-18-Simulator-Release-Build"]
+                    "builderNames": ["Apple-iOS-18-Simulator-Release-Build", "Apple-iOS-18-Simulator-Debug-Build"]
                   },
                   { "type": "PlatformSpecificScheduler", "platform": "visionos-2", "branch": "main", "treeStableTimer": 45.0,
                   "builderNames": ["Apple-visionOS-2-Release-Build"]
@@ -885,14 +882,14 @@
                   { "type": "Triggerable", "name": "ios-simulator-18-release-tests-wk2",
                     "builderNames": ["Apple-iOS-18-Simulator-Release-WK2-Tests"]
                   },
-                  { "type": "Triggerable", "name": "ios-simulator-17-debug-tests-wk2",
-                    "builderNames": ["Apple-iOS-17-Simulator-Debug-WK2-Tests"]
+                  { "type": "Triggerable", "name": "ios-simulator-18-debug-tests-wk2",
+                    "builderNames": ["Apple-iOS-18-Simulator-Debug-WK2-Tests"]
                   },
                   { "type": "Triggerable", "name": "ipados-simulator-18-release-tests-wk2",
                     "builderNames": ["Apple-iPadOS-18-Simulator-Release-WK2-Tests"]
                   },
-                  { "type": "Triggerable", "name": "ipados-simulator-17-debug-tests-wk2",
-                    "builderNames": ["Apple-iPadOS-17-Simulator-Debug-WK2-Tests"]
+                  { "type": "Triggerable", "name": "ipados-simulator-18-debug-tests-wk2",
+                    "builderNames": ["Apple-iPadOS-18-Simulator-Debug-WK2-Tests"]
                   },
                   { "type": "Triggerable", "name": "visionos-simulator-2-release-tests-wk2",
                   "builderNames": ["Apple-visionOS-2-Simulator-Release-WK2-Tests"]

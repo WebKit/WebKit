@@ -925,7 +925,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'trigger'
         ],
-        'Apple-iOS-17-Simulator-Debug-Build': [
+        'Apple-iOS-18-Simulator-Debug-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -962,7 +962,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iOS-17-Simulator-Debug-WK2-Tests': [
+        'Apple-iOS-18-Simulator-Debug-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1012,7 +1012,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iPadOS-17-Simulator-Debug-WK2-Tests': [
+        'Apple-iPadOS-18-Simulator-Debug-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
