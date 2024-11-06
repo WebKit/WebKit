@@ -4,7 +4,7 @@
  * Copyright (C) 2008 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Dirk Schulze <krit@webkit.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -108,13 +108,13 @@ RenderPtr<RenderElement> SVGLinearGradientElement::createElementRenderer(RenderS
 
 static void setGradientAttributes(SVGGradientElement& element, LinearGradientAttributes& attributes, bool isLinear = true)
 {
-    if (!attributes.hasSpreadMethod() && element.hasAttribute(SVGNames::spreadMethodAttr))
+    if (!attributes.hasSpreadMethod() && element.isAnimatedAttribute(SVGNames::spreadMethodAttr))
         attributes.setSpreadMethod(element.spreadMethod());
 
-    if (!attributes.hasGradientUnits() && element.hasAttribute(SVGNames::gradientUnitsAttr))
+    if (!attributes.hasGradientUnits() && element.isAnimatedAttribute(SVGNames::gradientUnitsAttr))
         attributes.setGradientUnits(element.gradientUnits());
 
-    if (!attributes.hasGradientTransform() && element.hasAttribute(SVGNames::gradientTransformAttr))
+    if (!attributes.hasGradientTransform() && element.isAnimatedAttribute(SVGNames::gradientTransformAttr))
         attributes.setGradientTransform(element.gradientTransform().concatenate());
 
     if (!attributes.hasStops())
@@ -123,16 +123,16 @@ static void setGradientAttributes(SVGGradientElement& element, LinearGradientAtt
     if (isLinear) {
         SVGLinearGradientElement& linear = downcast<SVGLinearGradientElement>(element);
 
-        if (!attributes.hasX1() && element.hasAttribute(SVGNames::x1Attr))
+        if (!attributes.hasX1() && element.isAnimatedAttribute(SVGNames::x1Attr))
             attributes.setX1(linear.x1());
 
-        if (!attributes.hasY1() && element.hasAttribute(SVGNames::y1Attr))
+        if (!attributes.hasY1() && element.isAnimatedAttribute(SVGNames::y1Attr))
             attributes.setY1(linear.y1());
 
-        if (!attributes.hasX2() && element.hasAttribute(SVGNames::x2Attr))
+        if (!attributes.hasX2() && element.isAnimatedAttribute(SVGNames::x2Attr))
             attributes.setX2(linear.x2());
 
-        if (!attributes.hasY2() && element.hasAttribute(SVGNames::y2Attr))
+        if (!attributes.hasY2() && element.isAnimatedAttribute(SVGNames::y2Attr))
             attributes.setY2(linear.y2());
     }
 }

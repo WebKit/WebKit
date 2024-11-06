@@ -3,7 +3,7 @@
  * Copyright (C) 2004, 2005, 2006, 2007 Rob Buis <buis@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  * Copyright (C) 2014 Adobe Systems Incorporated. All rights reserved.
- * Copyright (C) 2018-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -158,31 +158,31 @@ RenderPtr<RenderElement> SVGPatternElement::createElementRenderer(RenderStyle&& 
 
 void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) const
 {
-    if (!attributes.hasX() && hasAttribute(SVGNames::xAttr))
+    if (!attributes.hasX() && isAnimatedAttribute(SVGNames::xAttr))
         attributes.setX(x());
 
-    if (!attributes.hasY() && hasAttribute(SVGNames::yAttr))
+    if (!attributes.hasY() && isAnimatedAttribute(SVGNames::yAttr))
         attributes.setY(y());
 
-    if (!attributes.hasWidth() && hasAttribute(SVGNames::widthAttr))
+    if (!attributes.hasWidth() && isAnimatedAttribute(SVGNames::widthAttr))
         attributes.setWidth(width());
 
-    if (!attributes.hasHeight() && hasAttribute(SVGNames::heightAttr))
+    if (!attributes.hasHeight() && isAnimatedAttribute(SVGNames::heightAttr))
         attributes.setHeight(height());
 
-    if (!attributes.hasViewBox() && hasAttribute(SVGNames::viewBoxAttr) && hasValidViewBox())
+    if (!attributes.hasViewBox() && isAnimatedAttribute(SVGNames::viewBoxAttr) && hasValidViewBox())
         attributes.setViewBox(viewBox());
 
-    if (!attributes.hasPreserveAspectRatio() && hasAttribute(SVGNames::preserveAspectRatioAttr))
+    if (!attributes.hasPreserveAspectRatio() && isAnimatedAttribute(SVGNames::preserveAspectRatioAttr))
         attributes.setPreserveAspectRatio(preserveAspectRatio());
 
-    if (!attributes.hasPatternUnits() && hasAttribute(SVGNames::patternUnitsAttr))
+    if (!attributes.hasPatternUnits() && isAnimatedAttribute(SVGNames::patternUnitsAttr))
         attributes.setPatternUnits(patternUnits());
 
-    if (!attributes.hasPatternContentUnits() && hasAttribute(SVGNames::patternContentUnitsAttr))
+    if (!attributes.hasPatternContentUnits() && isAnimatedAttribute(SVGNames::patternContentUnitsAttr))
         attributes.setPatternContentUnits(patternContentUnits());
 
-    if (!attributes.hasPatternTransform() && hasAttribute(SVGNames::patternTransformAttr))
+    if (!attributes.hasPatternTransform() && isAnimatedAttribute(SVGNames::patternTransformAttr))
         attributes.setPatternTransform(patternTransform().concatenate());
 
     if (!attributes.hasPatternContentElement() && childElementCount())
