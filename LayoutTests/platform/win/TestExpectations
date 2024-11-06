@@ -1172,6 +1172,9 @@ fast/css/accent-color/text.html [ Pass ]
 fast/css/caret-color-with-inherited-color-property.html [ Skip ] # ImageOnlyFailure
 fast/css/caret-color-with-initial-color-property.html [ Skip ] # ImageOnlyFailure
 
+# GPU process hangs. Makes the subsequent test Timeout
+fast/css/repeating-conic-gradient-small-range.html [ Skip ]
+
 webkit.org/b/143153 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-multiple-001.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-anchor-position/anchor-invalid-fallback.html [ Pass ]
