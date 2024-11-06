@@ -1909,6 +1909,7 @@ compositing/repaint/copy-forward-dirty-region.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/web-animations-api.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/massive-element-on-top-of-viewport-partially-onscreen-new.html [ Pass ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-view-transitions/scroller.html [ Pass ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/css-view-transitions/view-transition-types-stay.html [ Pass ImageOnlyFailure ]
 
 http/tests/login-status/login-status-api-getter-setter-functions.html [ Failure ]
 

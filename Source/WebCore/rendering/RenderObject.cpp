@@ -1844,6 +1844,9 @@ void RenderObject::setCapturedInViewTransition(bool captured)
             // Invalidate transform applied by `RenderLayerBacking::updateTransform`.
             layerToInvalidate->setNeedsCompositingGeometryUpdate();
         }
+
+        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*this))
+            renderBox->invalidateAncestorBackgroundObscurationStatus();
     }
 }
 

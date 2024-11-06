@@ -650,6 +650,8 @@ public:
     bool includeVerticalScrollbarSize() const;
     bool includeHorizontalScrollbarSize() const;
 
+    void invalidateAncestorBackgroundObscurationStatus();
+
 protected:
     RenderBox(Type, Element&, RenderStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });
     RenderBox(Type, Document&, RenderStyle&&, OptionSet<TypeFlag> = { }, TypeSpecificFlags = { });

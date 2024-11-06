@@ -46,6 +46,10 @@ RenderViewTransitionCapture::~RenderViewTransitionCapture() = default;
 void RenderViewTransitionCapture::setImage(RefPtr<ImageBuffer> oldImage)
 {
     m_oldImage = oldImage;
+    if (hasLayer())
+        layer()->contentChanged(ContentChangeType::Image);
+    if (parent())
+        repaint();
 }
 
 bool RenderViewTransitionCapture::setCapturedSize(const LayoutSize& size, const LayoutRect& overflowRect, const LayoutPoint& layerToLayoutOffset)

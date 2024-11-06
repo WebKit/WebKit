@@ -310,6 +310,15 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle& newStyl
     RenderBoxModelObject::styleWillChange(diff, newStyle);
 }
 
+void RenderBox::invalidateAncestorBackgroundObscurationStatus()
+{
+    auto parentToInvalidate = parent();
+    for (unsigned i = 0; i < backgroundObscurationTestMaxDepth && parentToInvalidate; ++i) {
+        parentToInvalidate->invalidateBackgroundObscurationStatus();
+        parentToInvalidate = parentToInvalidate->parent();
+    }
+}
+
 void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     // Horizontal writing mode definition is updated in RenderBoxModelObject::updateFromStyle,
@@ -368,13 +377,8 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
 #endif
 
     // Our opaqueness might have changed without triggering layout.
-    if (diff >= StyleDifference::Repaint && diff <= StyleDifference::RepaintLayer) {
-        auto parentToInvalidate = parent();
-        for (unsigned i = 0; i < backgroundObscurationTestMaxDepth && parentToInvalidate; ++i) {
-            parentToInvalidate->invalidateBackgroundObscurationStatus();
-            parentToInvalidate = parentToInvalidate->parent();
-        }
-    }
+    if (diff >= StyleDifference::Repaint && diff <= StyleDifference::RepaintLayer)
+        invalidateAncestorBackgroundObscurationStatus();
 
     bool isBodyRenderer = isBody();
 
