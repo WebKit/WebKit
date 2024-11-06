@@ -616,7 +616,7 @@ void CompositeEditCommand::insertNodeAt(Ref<Node>&& insertChild, const Position&
             appendNode(WTFMove(insertChild), downcast<ContainerNode>(*refChild));
     } else if (caretMinOffset(*refChild) >= offset)
         insertNodeBefore(WTFMove(insertChild), *refChild);
-    else if (auto* text = dynamicDowncast<Text>(*refChild); text && caretMaxOffset(*refChild) > offset) {
+    else if (RefPtr text = dynamicDowncast<Text>(*refChild); text && caretMaxOffset(*refChild) > offset) {
         splitTextNode(*text, offset);
 
         // Mutation events (bug 22634) from the text node insertion may have removed the refChild
@@ -667,8 +667,8 @@ void CompositeEditCommand::moveRemainingSiblingsToNewParent(Node* node, Node* pa
     NodeVector nodesToRemove;
     Ref<Element> protectedNewParent = newParent;
 
-    for (; node && node != pastLastNodeToMove; node = node->nextSibling())
-        nodesToRemove.append(*node);
+    for (RefPtr currentNode = node; currentNode && currentNode != pastLastNodeToMove; currentNode = currentNode->nextSibling())
+        nodesToRemove.append(*currentNode);
 
     for (auto& nodeToRemove : nodesToRemove) {
         removeNode(nodeToRemove);

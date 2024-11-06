@@ -1106,7 +1106,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle& style, const Position& s
     // Move it to the next deep quivalent position to avoid removing the style from this node.
     // e.g. if pushDownStart was at Position("hello", 5) in <b>hello<div>world</div></b>, we want Position("world", 0) instead.
     RefPtr pushDownStartContainer { pushDownStart.containerNode() };
-    if (auto* text = dynamicDowncast<Text>(pushDownStartContainer.get()); text && static_cast<unsigned>(pushDownStart.computeOffsetInContainerNode()) == text->length())
+    if (RefPtr text = dynamicDowncast<Text>(pushDownStartContainer.get()); text && static_cast<unsigned>(pushDownStart.computeOffsetInContainerNode()) == text->length())
         pushDownStart = nextVisuallyDistinctCandidate(pushDownStart);
     // If pushDownEnd is at the start of a text node, then this node is not fully selected.
     // Move it to the previous deep equivalent position to avoid removing the style from this node.
@@ -1367,7 +1367,7 @@ bool ApplyStyleCommand::surroundNodeRangeWithElement(Node& startNode, Node& endN
             mergeIdenticalElements(element, *nextElement);
     }
 
-    if (auto* previousSiblingElement = dynamicDowncast<Element>(previousSibling.get()); previousSiblingElement && previousSiblingElement->hasEditableStyle()) {
+    if (RefPtr previousSiblingElement = dynamicDowncast<Element>(previousSibling.get()); previousSiblingElement && previousSiblingElement->hasEditableStyle()) {
         RefPtr mergedElementNode { previousSibling->nextSibling() };
         ASSERT(mergedElementNode);
         if (mergedElementNode->hasEditableStyle()) {
@@ -1445,7 +1445,7 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
             if (!canHaveChildrenForEditing(*startNode))
                 break;
         }
-        auto* startNodeFirstChild = startNode->firstChild();
+        RefPtr startNodeFirstChild = startNode->firstChild();
         if (!startNodeFirstChild)
             break;
         endNode = startNode->lastChild();
@@ -1473,10 +1473,10 @@ void ApplyStyleCommand::applyInlineStyleChange(Node& passedStart, Node& passedEn
         }
     }
 
-    if (auto styleToMerge = styleChange.cssStyle()) {
+    if (RefPtr styleToMerge = styleChange.cssStyle()) {
         if (styleContainer) {
-            if (auto existingStyle = styleContainer->inlineStyle()) {
-                auto inlineStyle = EditingStyle::create(existingStyle);
+            if (RefPtr existingStyle = styleContainer->inlineStyle()) {
+                Ref inlineStyle = EditingStyle::create(existingStyle.get());
                 inlineStyle->overrideWithStyle(*styleToMerge);
                 setNodeAttribute(*styleContainer, styleAttr, inlineStyle->style()->asTextAtom());
             } else
@@ -1529,7 +1529,7 @@ void ApplyStyleCommand::joinChildTextNodes(Node* node, const Position& start, co
     Position newEnd = end;
 
     Vector<Ref<Text>> textNodes;
-    for (Text* textNode = TextNodeTraversal::firstChild(*node); textNode; textNode = TextNodeTraversal::nextSibling(*textNode))
+    for (RefPtr textNode = TextNodeTraversal::firstChild(*node); textNode; textNode = TextNodeTraversal::nextSibling(*textNode))
         textNodes.append(*textNode);
 
     for (auto& childText : textNodes) {
