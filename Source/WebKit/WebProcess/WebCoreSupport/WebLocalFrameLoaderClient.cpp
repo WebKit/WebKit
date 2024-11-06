@@ -588,10 +588,10 @@ void WebLocalFrameLoaderClient::dispatchDidStartProvisionalLoad()
         UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), WallTime::now()));
 }
 
-static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.
-
 void WebLocalFrameLoaderClient::dispatchDidReceiveTitle(const StringWithDirection& title)
 {
+    static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.
+
     RefPtr webPage = m_frame->page();
     if (!webPage)
         return;

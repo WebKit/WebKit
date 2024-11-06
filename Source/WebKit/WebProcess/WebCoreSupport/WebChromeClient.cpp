@@ -817,10 +817,10 @@ void WebChromeClient::mouseDidMoveOverElement(const HitTestResult& hitTestResult
     page->send(Messages::WebPageProxy::MouseDidMoveOverElement(webHitTestResultData, wkModifiers, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
 }
 
-static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.
-
 void WebChromeClient::print(LocalFrame& frame, const StringWithDirection& title)
 {
+    static constexpr unsigned maxTitleLength = 1000; // Closest power of 10 above the W3C recommendation for Title length.
+
     auto webFrame = WebFrame::fromCoreFrame(frame);
     ASSERT(webFrame);
 
