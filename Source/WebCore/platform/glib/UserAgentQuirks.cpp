@@ -123,6 +123,7 @@ static bool urlRequiresMacintoshPlatform(const String& domain, const String& bas
     // agent to use the light version. Earlier versions even block users from
     // accessing the calendar.
     if (domain == "outlook.office.com"_s
+        || domain == "outlook.office365.com"_s
         || domain == "mail.ntu.edu.tw"_s
         || domain == "exchange.tu-berlin.de"_s)
         return true;
