@@ -985,14 +985,14 @@ gboolean webkit_dom_html_input_element_get_auto_filled(WebKitDOMHTMLInputElement
 {
   g_return_val_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self), FALSE);
 
-  return WebKit::core(self)->isAutoFilled();
+  return WebKit::core(self)->autofilled();
 }
 
 void webkit_dom_html_input_element_set_auto_filled(WebKitDOMHTMLInputElement* self, gboolean value)
 {
   g_return_if_fail(WEBKIT_DOM_IS_HTML_INPUT_ELEMENT(self));
 
-  WebKit::core(self)->setAutoFilled(value);
+  WebKit::core(self)->setAutofilled(value);
 }
 
 void webkit_dom_html_input_element_set_editing_value(WebKitDOMHTMLInputElement* self, const gchar* value)
