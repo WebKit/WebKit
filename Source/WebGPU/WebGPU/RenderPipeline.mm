@@ -558,6 +558,11 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, 
     uint32_t totalAttributeCount = 0;
     ASSERT(error);
 
+    if (vertexState.bufferCount > limits.maxVertexBuffers) {
+        *error = [NSString stringWithFormat:@"vertexBuffer count(%zu) exceeds limit(%u)", vertexState.bufferCount, limits.maxVertexBuffers];
+        return nil;
+    }
+
     ShaderModule::VertexStageIn shaderLocations;
     for (auto [ bufferIndex, buffer ] : IndexedRange(vertexState.buffersSpan())) {
         if (buffer.arrayStride == WGPU_COPY_STRIDE_UNDEFINED)
@@ -1525,8 +1530,6 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
     if (descriptor.vertex.bufferCount) {
         if (!vertexStageIn)
             return returnInvalidRenderPipeline(*this, isAsync, [NSString stringWithFormat:@"Vertex shader has no stageIn parameters but buffer count was %zu and attribute count was %zu", descriptor.vertex.bufferCount, descriptor.vertex.buffers[0].attributeCount]);
-        if (descriptor.vertex.bufferCount > deviceLimits.maxVertexBuffers)
-            return returnInvalidRenderPipeline(*this, isAsync, "vertexBuffer count exceeds limit"_s);
         NSString *error = nil;
         MTLVertexDescriptor *vertexDecriptor = createVertexDescriptor(descriptor.vertex, deviceLimits, *vertexStageIn, requiredBufferIndices, &error);
         if (error)
