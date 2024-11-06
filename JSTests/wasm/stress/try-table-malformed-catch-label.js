@@ -47,7 +47,7 @@ try {
         , 0, 0, 32, 3, 65, 1, 1, 33, 7, , 1, 11, , 1
     ]));
 } catch (e) {
-   if (!e || !e.toString().startsWith("CompileError: WebAssembly.Module doesn't parse at byte 35: invalid opcode of try_table catch at index 1,  opcode 4 is invalid, in function at index 0"))
+   if (!e || !e.toString().startsWith("CompileError: WebAssembly.Module doesn't validate: Too few values on stack for block."))
        throw e;
 }
 

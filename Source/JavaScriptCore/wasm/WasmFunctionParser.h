@@ -3411,6 +3411,13 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
         BlockSignature inlineSignature;
         WASM_PARSER_FAIL_IF(!parseBlockSignatureAndNotifySIMDUseIfNeeded(inlineSignature), "can't get try_table's signature"_s);
 
+        WASM_VALIDATOR_FAIL_IF(m_expressionStack.size() < inlineSignature.m_signature->argumentCount(), "Too few values on stack for block. Block expects ", inlineSignature.m_signature->argumentCount(), ", but only ", m_expressionStack.size(), " were present. Block has inlineSignature: ", inlineSignature.m_signature->toString());
+        unsigned offset = m_expressionStack.size() - inlineSignature.m_signature->argumentCount();
+        for (unsigned i = 0; i < inlineSignature.m_signature->argumentCount(); ++i) {
+            Type type = m_expressionStack.at(offset + i).type();
+            WASM_VALIDATOR_FAIL_IF(!isSubtype(type, inlineSignature.m_signature->argumentType(i)), "Block expects the argument at index", i, " to be ", inlineSignature.m_signature->argumentType(i), " but argument has type ", type);
+        }
+
         uint32_t numberOfCatches;
         Vector<CatchHandler> targets;
         WASM_PARSER_FAIL_IF(!parseVarUInt32(numberOfCatches), "can't get the number of catch statements for try_table"_s);
@@ -3455,9 +3462,6 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
             });
         }
 
-        ControlType control;
-        Stack newStack;
-
         for (auto& catchTarget : targets) {
             auto& target = resolveControlRef(catchTarget.target).controlData;
 
@@ -3479,11 +3483,14 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                 WASM_VALIDATOR_FAIL_IF(!isSubtype(results[i].type(), target.branchTargetType(i)), "try_table target type mismatch");
         }
 
-        WASM_TRY_ADD_TO_CONTEXT(addTryTable(inlineSignature, m_expressionStack, targets, control, newStack));
+        int64_t oldSize = m_expressionStack.size();
+        Stack newStack;
+        ControlType block;
+        WASM_TRY_ADD_TO_CONTEXT(addTryTable(inlineSignature, m_expressionStack, targets, block, newStack));
+        ASSERT_UNUSED(oldSize, oldSize - m_expressionStack.size() == inlineSignature.m_signature->argumentCount());
+        ASSERT(newStack.size() == inlineSignature.m_signature->argumentCount());
 
-        m_controlStack.append({ WTFMove(m_expressionStack), { }, getLocalInitStackHeight(), WTFMove(control) });
-        m_expressionStack = WTFMove(newStack);
-
+        switchToBlock(WTFMove(block), WTFMove(newStack));
         return { };
     }
 
