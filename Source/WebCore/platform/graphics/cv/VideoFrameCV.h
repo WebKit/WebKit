@@ -48,7 +48,7 @@ public:
     ImageOrientation orientation() const;
 
     // VideoFrame overrides.
-    WEBCORE_EXPORT WebCore::FloatSize presentationSize() const final;
+    WEBCORE_EXPORT WebCore::IntSize presentationSize() const final;
     WEBCORE_EXPORT uint32_t pixelFormat() const final;
     WEBCORE_EXPORT void setOwnershipIdentity(const ProcessIdentity&) final;
     bool isCV() const final { return true; }

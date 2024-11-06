@@ -269,7 +269,7 @@ private:
 
     MediaPlayer::NetworkState m_networkState { MediaPlayer::NetworkState::Empty };
     MediaPlayer::ReadyState m_readyState { MediaPlayer::ReadyState::HaveNothing };
-    FloatSize m_intrinsicSize;
+    IntSize m_intrinsicSize;
     float m_volume { 1 };
     DisplayMode m_displayMode { None };
     PlaybackState m_playbackState { PlaybackState::None };

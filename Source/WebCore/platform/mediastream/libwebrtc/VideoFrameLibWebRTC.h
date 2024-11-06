@@ -58,14 +58,14 @@ private:
     VideoFrameLibWebRTC(MediaTime, bool isMirrored, Rotation, PlatformVideoColorSpace&&, rtc::scoped_refptr<webrtc::VideoFrameBuffer>&&, ConversionCallback&&);
 
     // VideoFrame
-    FloatSize presentationSize() const final { return m_size; }
+    IntSize presentationSize() const final { return m_size; }
     uint32_t pixelFormat() const final { return m_videoPixelFormat; }
     CVPixelBufferRef pixelBuffer() const final;
 
     Ref<VideoFrame> clone() final;
 
     const rtc::scoped_refptr<webrtc::VideoFrameBuffer> m_buffer;
-    FloatSize m_size;
+    IntSize m_size;
     uint32_t m_videoPixelFormat { 0 };
 
     mutable ConversionCallback m_conversionCallback;

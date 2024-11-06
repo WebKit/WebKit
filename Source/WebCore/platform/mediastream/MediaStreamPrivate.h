@@ -109,7 +109,7 @@ public:
     bool hasAudio() const;
     bool muted() const;
 
-    FloatSize intrinsicSize() const;
+    IntSize intrinsicSize() const;
 
     void monitorOrientation(OrientationNotifier&);
 

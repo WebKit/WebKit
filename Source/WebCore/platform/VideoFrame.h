@@ -97,7 +97,7 @@ public:
     using CopyCallback = CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>;
     void copyTo(std::span<uint8_t>, VideoPixelFormat, Vector<ComputedPlaneLayout>&&, CopyCallback&&);
 
-    virtual FloatSize presentationSize() const = 0;
+    virtual IntSize presentationSize() const = 0;
     virtual uint32_t pixelFormat() const = 0;
 
     virtual bool isRemoteProxy() const { return false; }

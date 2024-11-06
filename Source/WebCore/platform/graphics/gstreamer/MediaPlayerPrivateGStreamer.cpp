@@ -3794,7 +3794,7 @@ RefPtr<VideoFrame> MediaPlayerPrivateGStreamer::videoFrameForCurrentTime()
         return nullptr;
 
     auto size = getVideoResolutionFromCaps(gst_sample_get_caps(m_sample.get())).value_or(FloatSize { 0, 0 });
-    return VideoFrameGStreamer::create(WTFMove(convertedSample), size);
+    return VideoFrameGStreamer::create(WTFMove(convertedSample), IntSize(size));
 }
 
 bool MediaPlayerPrivateGStreamer::setVideoSourceOrientation(ImageOrientation orientation)

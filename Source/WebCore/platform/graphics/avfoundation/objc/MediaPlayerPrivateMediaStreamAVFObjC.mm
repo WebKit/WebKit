@@ -487,7 +487,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::load(MediaStreamPrivate& stream)
 {
     INFO_LOG(LOGIDENTIFIER);
 
-    m_intrinsicSize = FloatSize();
+    m_intrinsicSize = { };
 
     m_mediaStreamPrivate = &stream;
     m_mediaStreamPrivate->addObserver(*this);
@@ -770,7 +770,7 @@ void MediaPlayerPrivateMediaStreamAVFObjC::characteristicsChanged()
 {
     SizeChanged sizeChanged = SizeChanged::No;
 
-    FloatSize intrinsicSize = m_mediaStreamPrivate->intrinsicSize();
+    IntSize intrinsicSize = m_mediaStreamPrivate->intrinsicSize();
     if (intrinsicSize.isEmpty() || m_intrinsicSize.isEmpty()) {
         if (intrinsicSize.height() != m_intrinsicSize.height() || intrinsicSize.width() != m_intrinsicSize.width()) {
             m_intrinsicSize = intrinsicSize;

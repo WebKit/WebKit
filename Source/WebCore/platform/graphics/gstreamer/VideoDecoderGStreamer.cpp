@@ -235,7 +235,7 @@ GStreamerInternalVideoDecoder::GStreamerInternalVideoDecoder(const String& codec
             timestamp = m_timestamp;
 
         GST_TRACE_OBJECT(m_harness->element(), "Handling decoded frame with PTS: %" GST_TIME_FORMAT " and duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(timestamp), GST_TIME_ARGS(duration));
-        auto videoFrame = VideoFrameGStreamer::create(WTFMove(outputSample), m_presentationSize, fromGstClockTime(timestamp));
+        auto videoFrame = VideoFrameGStreamer::create(WTFMove(outputSample), IntSize(m_presentationSize), fromGstClockTime(timestamp));
         m_outputCallback(VideoDecoder::DecodedFrame { WTFMove(videoFrame), timestamp, duration });
     });
 }

@@ -68,7 +68,7 @@ public:
     WebCore::IntSize size() const { return m_size; }
 
     // WebCore::VideoFrame overrides.
-    WebCore::FloatSize presentationSize() const final { return m_size; }
+    WebCore::IntSize presentationSize() const final { return m_size; }
     uint32_t pixelFormat() const final;
     bool isRemoteProxy() const final { return true; }
 #if PLATFORM(COCOA)
