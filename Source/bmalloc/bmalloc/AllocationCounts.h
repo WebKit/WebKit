@@ -110,3 +110,10 @@
 #define BENABLE_PROFILE_COMPACTIBLE_TRY_ALLOCATION 0
 #define BPROFILE_TRY_ALLOCATION_COMPACTIBLE(ptr, size) do { } while (false)
 #endif
+
+#ifdef BPROFILE_ZERO_FILL_PAGE
+#define BENABLE_PROFILE_ZERO_FILL_PAGE 1
+#else
+#define BENABLE_PROFILE_ZERO_FILL_PAGE 0
+#define BPROFILE_ZERO_FILL_PAGE(ptr, size, flags, tag) do { } while (false)
+#endif

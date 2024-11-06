@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "AllocationCounts.h"
 #include "BAssert.h"
 #include "BCompiler.h"
 #include "BSyscall.h"
@@ -154,9 +155,12 @@ inline void vmRevokePermissions(void* p, size_t vmSize)
 inline void vmZeroAndPurge(void* p, size_t vmSize, VMTag usage = VMTag::Malloc)
 {
     vmValidate(p, vmSize);
+    int flags = MAP_PRIVATE | MAP_ANON | MAP_FIXED | BMALLOC_NORESERVE;
+    int tag = static_cast<int>(usage);
+    BPROFILE_ZERO_FILL_PAGE(p, vmSize, flags, tag);
     // MAP_ANON guarantees the memory is zeroed. This will also cause
     // page faults on accesses to this range following this call.
-    void* result = mmap(p, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | MAP_FIXED | BMALLOC_NORESERVE, static_cast<int>(usage), 0);
+    void* result = mmap(p, vmSize, PROT_READ | PROT_WRITE, flags, tag, 0);
     RELEASE_BASSERT(result == p);
 }
 

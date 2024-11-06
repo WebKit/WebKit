@@ -185,12 +185,10 @@ void pas_page_malloc_zero_fill(void* base, size_t size)
     PAS_ASSERT(pas_is_aligned((uintptr_t)base, page_size));
     PAS_ASSERT(pas_is_aligned(size, page_size));
 
-    result_ptr = mmap(base,
-                      size,
-                      PROT_READ | PROT_WRITE,
-                      MAP_PRIVATE | MAP_ANON | MAP_FIXED | PAS_NORESERVE,
-                      PAS_VM_TAG,
-                      0);
+    int flags = MAP_PRIVATE | MAP_ANON | MAP_FIXED | PAS_NORESERVE;
+    int tag = PAS_VM_TAG;
+    PAS_PROFILE(ZERO_FILL_PAGE, base, size, flags, tag);
+    result_ptr = mmap(base, size, PROT_READ | PROT_WRITE, flags, tag, 0);
     PAS_ASSERT(result_ptr == base);
 }
 
