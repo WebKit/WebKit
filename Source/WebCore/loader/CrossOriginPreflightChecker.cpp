@@ -76,7 +76,7 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
         return;
     }
 
-    auto result = WebCore::validatePreflightResponse(page->sessionID(), request, response, loader.options().storedCredentialsPolicy, loader.securityOrigin(), &CrossOriginAccessControlCheckDisabler::singleton());
+    auto result = WebCore::validatePreflightResponse(page->sessionID(), request, response, loader.options().storedCredentialsPolicy, loader.topOrigin(), loader.securityOrigin(), &CrossOriginAccessControlCheckDisabler::singleton());
     if (!result) {
         loader.document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, result.error());
         loader.preflightFailure(identifier, ResourceError(errorDomainWebKitInternal, 0, request.url(), result.error(), ResourceError::Type::AccessControl));

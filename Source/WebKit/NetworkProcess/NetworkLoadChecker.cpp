@@ -467,7 +467,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
     ASSERT(m_options.mode == FetchOptions::Mode::Cors);
 
     m_isSimpleRequest = false;
-    if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(m_sessionID, m_origin->toString(), request.url(), m_storedCredentialsPolicy, request.httpMethod(), m_originalRequestHeaders)) {
+    if (CrossOriginPreflightResultCache::singleton().canSkipPreflight(m_sessionID, { m_topOrigin->data(), m_origin->data() }, request.url(), m_storedCredentialsPolicy, request.httpMethod(), m_originalRequestHeaders)) {
         LOAD_CHECKER_RELEASE_LOG("checkCORSRequestWithPreflight - preflight can be skipped thanks to cached result");
         updateRequestForAccessControl(request, *origin(), m_storedCredentialsPolicy);
         handler(WTFMove(request));
@@ -480,7 +480,7 @@ void NetworkLoadChecker::checkCORSRequestWithPreflight(ResourceRequest&& request
     NetworkCORSPreflightChecker::Parameters parameters = {
         WTFMove(requestForPreflight),
         *m_origin,
-        m_topOrigin,
+        *m_topOrigin,
         request.httpReferrer(),
         request.httpUserAgent(),
         m_sessionID,

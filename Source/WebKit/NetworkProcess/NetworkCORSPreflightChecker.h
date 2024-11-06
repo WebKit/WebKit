@@ -56,7 +56,7 @@ public:
     struct Parameters {
         WebCore::ResourceRequest originalRequest;
         Ref<WebCore::SecurityOrigin> sourceOrigin;
-        RefPtr<WebCore::SecurityOrigin> topOrigin;
+        Ref<WebCore::SecurityOrigin> topOrigin;
         String referrer;
         String userAgent;
         PAL::SessionID sessionID;

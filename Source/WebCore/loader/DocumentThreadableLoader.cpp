@@ -224,7 +224,7 @@ void DocumentThreadableLoader::makeCrossOriginAccessRequest(ResourceRequest&& re
             return;
 
         m_simpleRequest = false;
-        if (RefPtr page = document().page(); page && CrossOriginPreflightResultCache::singleton().canSkipPreflight(page->sessionID(), securityOrigin().toString(), request.url(), m_options.storedCredentialsPolicy, request.httpMethod(), request.httpHeaderFields()))
+        if (RefPtr page = document().page(); page && CrossOriginPreflightResultCache::singleton().canSkipPreflight(page->sessionID(), document().clientOrigin(), request.url(), m_options.storedCredentialsPolicy, request.httpMethod(), request.httpHeaderFields()))
             preflightSuccess(WTFMove(request));
         else
             makeCrossOriginAccessRequestWithPreflight(WTFMove(request));
@@ -729,6 +729,11 @@ bool DocumentThreadableLoader::isAllowedRedirect(const URL& url)
 SecurityOrigin& DocumentThreadableLoader::securityOrigin() const
 {
     return m_origin ? *m_origin : m_document->securityOrigin();
+}
+
+Ref<SecurityOrigin> DocumentThreadableLoader::topOrigin() const
+{
+    return m_document->topOrigin();
 }
 
 Ref<SecurityOrigin> DocumentThreadableLoader::protectedSecurityOrigin() const
