@@ -2626,20 +2626,26 @@ bool UnifiedPDFPlugin::performCopyEditingOperation() const
     NSMutableArray *types = [NSMutableArray array];
     NSMutableArray *items = [NSMutableArray array];
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://136075998> Stop using -[PDFSelection webArchive] since it returns nil unconditionally.
     if (NSData *webArchiveData = [m_currentSelection webArchive]) {
         [types addObject:PasteboardTypes::WebArchivePboardType];
         [items addObject:webArchiveData];
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     if (NSData *plainStringData = [[m_currentSelection string] dataUsingEncoding:NSUTF8StringEncoding]) {
         [types addObject:NSPasteboardTypeString];
         [items addObject:plainStringData];
     }
 
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    // FIXME: <rdar://136075998> Migrate from -[PDFSelection html] to -[PDFSelection htmlData].
     if (NSData *htmlStringData = [[m_currentSelection html] dataUsingEncoding:NSUTF8StringEncoding]) {
         [types addObject:NSPasteboardTypeHTML];
         [items addObject:htmlStringData];
     }
+ALLOW_DEPRECATED_DECLARATIONS_END
 
     writeItemsToPasteboard(NSPasteboardNameGeneral, items, types);
     return true;
