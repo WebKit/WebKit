@@ -277,8 +277,8 @@ NetworkProcessProxy::~NetworkProcessProxy()
         proxy->removeNetworkProcess(*this);
 #endif
 
-    if (m_downloadProxyMap)
-        m_downloadProxyMap->invalidate();
+    if (RefPtr downloadProxyMap = m_downloadProxyMap.get())
+        downloadProxyMap->invalidate();
     networkProcessesSet().remove(*this);
 #if PLATFORM(IOS_FAMILY)
     removeBackgroundStateObservers();
@@ -359,7 +359,7 @@ Ref<DownloadProxy> NetworkProcessProxy::createDownloadProxy(WebsiteDataStore& da
     if (!m_downloadProxyMap)
         m_downloadProxyMap = makeUniqueWithoutRefCountedCheck<DownloadProxyMap>(*this);
 
-    return m_downloadProxyMap->createDownloadProxy(dataStore, WTFMove(client), resourceRequest, frameInfo, originatingPage);
+    return Ref { *m_downloadProxyMap }->createDownloadProxy(dataStore, WTFMove(client), resourceRequest, frameInfo, originatingPage);
 }
 
 void NetworkProcessProxy::dataTaskWithRequest(WebPageProxy& page, PAL::SessionID sessionID, WebCore::ResourceRequest&& request, const std::optional<SecurityOriginData>& topOrigin, bool shouldRunAtForegroundPriority, CompletionHandler<void(API::DataTask&)>&& completionHandler)
@@ -449,8 +449,8 @@ void NetworkProcessProxy::networkProcessDidTerminate(ProcessTerminationReason re
 {
     Ref protectedThis { *this };
 
-    if (m_downloadProxyMap)
-        m_downloadProxyMap->invalidate();
+    if (RefPtr downloadProxyMap = m_downloadProxyMap.get())
+        downloadProxyMap->invalidate();
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
     m_customProtocolManagerProxy.invalidate();
 #endif
