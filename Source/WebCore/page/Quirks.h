@@ -221,6 +221,8 @@ public:
     WEBCORE_EXPORT bool shouldIgnoreContentObservationForClick(const Node&) const;
 #endif
 
+    bool needsMozillaFileTypeForDataTransfer() const;
+
 private:
     bool needsQuirks() const;
     bool isDomain(const String&) const;

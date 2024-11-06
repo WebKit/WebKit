@@ -1975,5 +1975,15 @@ bool Quirks::shouldIgnoreContentObservationForClick(const Node& targetNode) cons
 
 #endif // PLATFORM(IOS_FAMILY)
 
+bool Quirks::needsMozillaFileTypeForDataTransfer() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (m_document->topDocument().url().host() == "outlook.live.com"_s)
+        return true;
+
+    return false;
+}
 
 }

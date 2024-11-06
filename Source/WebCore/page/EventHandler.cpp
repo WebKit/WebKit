@@ -2544,13 +2544,13 @@ static String convertDragOperationToDropZoneOperation(std::optional<DragOperatio
     return "copy"_s;
 }
 
-static bool hasDropZoneType(DataTransfer& dataTransfer, const String& keyword)
+static bool hasDropZoneType(Document& document, DataTransfer& dataTransfer, const String& keyword)
 {
     if (keyword.startsWith("file:"_s))
         return dataTransfer.hasFileOfType(keyword.substring(5));
 
     if (keyword.startsWith("string:"_s))
-        return dataTransfer.hasStringOfType(keyword.substring(7));
+        return dataTransfer.hasStringOfType(document, keyword.substring(7));
 
     return false;
 }
@@ -2569,7 +2569,7 @@ static bool findDropZone(Node& target, DataTransfer& dataTransfer)
                 if (!dragOperation)
                     dragOperation = operationFromKeyword;
             } else
-                matched = matched || hasDropZoneType(dataTransfer, keyword.string());
+                matched = matched || hasDropZoneType(target.protectedDocument(), dataTransfer, keyword.string());
             if (matched && dragOperation)
                 break;
         }
