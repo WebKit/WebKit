@@ -2577,13 +2577,12 @@ def check_enum_casing(clean_lines, line_number, enum_state, error):
               'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.')
 
 
-def check_once_flag(clean_lines, line_number, enum_state, error):
+def check_once_flag(clean_lines, line_number, error):
     """Looks for non-static std::once_flag / dispatch_once_t.
 
     Args:
       clean_lines: A CleansedLines instance containing the file.
       line_number: The number of the line to check.
-      enum_state: A _EnumState instance which maintains enum declaration state.
       error: The function to call with any errors found.
     """
 
@@ -3513,7 +3512,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_soft_link_class_alloc(clean_lines, line_number, error)
     check_indentation_amount(clean_lines, line_number, error)
     check_enum_casing(clean_lines, line_number, enum_state, error)
-    check_once_flag(clean_lines, line_number, file_state, error)
+    check_once_flag(clean_lines, line_number, error)
     check_arguments_for_wk_api_available(clean_lines, line_number, error)
     check_objc_protocol(clean_lines, line_number, file_extension, error)
 
