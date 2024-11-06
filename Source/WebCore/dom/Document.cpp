@@ -984,6 +984,17 @@ Ref<SecurityOrigin> Document::protectedTopOrigin() const
     return topOrigin();
 }
 
+URL Document::topURL() const
+{
+    if (isTopDocument())
+        return url();
+
+    if (RefPtr page = this->page())
+        return page->mainFrameURL();
+
+    return { };
+}
+
 SecurityOrigin& Document::topOrigin() const
 {
     // Keep exact pre-site-isolation behavior to avoid risking changing behavior when site isolation is not enabled.
