@@ -50,6 +50,8 @@
 #include "StyleSheetContents.h"
 #include "UserAgentParts.h"
 
+#include <queue>
+
 namespace WebCore {
 namespace Style {
 
@@ -158,6 +160,11 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
     const auto& scopeRules = scopeRulesFor(ruleData);
     m_features.collectFeatures(ruleData, scopeRules);
 
+    // We store the ruledata in the best ruleset for each potential subject.
+    std::queue<const CSSSelector*> worklist;
+    worklist.push(ruleData.selector());
+
+    auto storeRuleDataInBestBucketForSelector = [&](const CSSSelector* selector) {
     unsigned classBucketSize = 0;
     const CSSSelector* idSelector = nullptr;
     const CSSSelector* tagSelector = nullptr;
@@ -174,7 +181,6 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
 #if ENABLE(VIDEO)
     const CSSSelector* cuePseudoElementSelector = nullptr;
 #endif
-    const CSSSelector* selector = ruleData.selector();
     do {
         switch (selector->match()) {
         case CSSSelector::Match::Id:
@@ -253,6 +259,15 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
             case CSSSelector::PseudoClass::Root:
                 rootElementSelector = selector;
                 break;
+            case CSSSelector::PseudoClass::Is:
+            case CSSSelector::PseudoClass::Where:
+            case CSSSelector::PseudoClass::Not: {
+                auto selectorList = selector->selectorList();
+                ASSERT(selectorList);
+                for (auto& subselector : *selectorList)
+                    worklist.push(&subselector);
+                break;
+            }
             default:
                 if (hasHostPseudoClassSubjectInSelectorList(selector->selectorList()))
                     m_hasHostPseudoClassRulesInUniversalBucket = true;
@@ -384,6 +399,13 @@ void RuleSet::addRule(RuleData&& ruleData, CascadeLayerIdentifier cascadeLayerId
 
     // If we didn't find a specialized map to stick it in, file under universal rules.
     m_universalRules.append(ruleData);
+    };
+
+    while (!worklist.empty()) {
+        auto selector = worklist.front();
+        worklist.pop();
+        storeRuleDataInBestBucketForSelector(selector);
+    }
 }
 
 void RuleSet::addPageRule(StyleRulePage& rule)

@@ -32,7 +32,11 @@
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
-namespace WebCore::Style {
+namespace WebCore {
+
+class CSSSelector;
+
+namespace Style {
 
 class ScopeRuleSets;
 struct MatchRequest;
@@ -131,6 +135,7 @@ private:
     SelectorChecker::Mode m_mode { SelectorChecker::Mode::ResolvingStyle };
 
     Vector<MatchedRule, 64> m_matchedRules;
+    HashSet<const CSSSelector*> m_processedSelector;
     size_t m_matchedRuleTransferIndex { 0 };
 
     // Output.
@@ -141,4 +146,6 @@ private:
     PseudoIdSet m_matchedPseudoElementIds;
 };
 
-}
+} // namespace Style
+
+} // namespace WebCore

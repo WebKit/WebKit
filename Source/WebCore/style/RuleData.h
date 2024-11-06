@@ -74,18 +74,18 @@ public:
     void disableSelectorFiltering() { m_descendantSelectorIdentifierHashes[0] = 0; }
 
 private:
-    RefPtr<const StyleRule> m_styleRule;
+    const RefPtr<const StyleRule> m_styleRule;
     // Keep in sync with RuleFeature's selectorIndex and selectorListIndex size.
-    unsigned m_selectorIndex : 16;
-    unsigned m_selectorListIndex : 16;
+    const unsigned m_selectorIndex : 16;
+    const unsigned m_selectorListIndex : 16;
     // If we have more rules than 2^bitcount here we'll get confused about rule order.
-    unsigned m_position : 21;
-    unsigned m_matchBasedOnRuleHash : 3;
-    unsigned m_canMatchPseudoElement : 1;
-    unsigned m_containsUncommonAttributeSelector : 1;
-    unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
-    unsigned m_propertyAllowlist : 2;
-    unsigned m_isStartingStyle : 1;
+    const unsigned m_position : 21;
+    const unsigned m_matchBasedOnRuleHash : 3;
+    const unsigned m_canMatchPseudoElement : 1;
+    const unsigned m_containsUncommonAttributeSelector : 1;
+    const unsigned m_linkMatchType : 2; //  SelectorChecker::LinkMatchMask
+    const unsigned m_propertyAllowlist : 2;
+    const unsigned m_isStartingStyle : 1;
     unsigned m_isEnabled : 1;
     SelectorFilter::Hashes m_descendantSelectorIdentifierHashes;
 };
