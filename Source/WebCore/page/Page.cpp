@@ -129,6 +129,7 @@
 #include "PluginViewBase.h"
 #include "PointerCaptureController.h"
 #include "PointerLockController.h"
+#include "ProcessSyncClient.h"
 #include "ProgressTracker.h"
 #include "Range.h"
 #include "RemoteFrame.h"
@@ -351,6 +352,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_settings(Settings::create(this))
     , m_cryptoClient(WTFMove(pageConfiguration.cryptoClient))
     , m_progress(makeUniqueRef<ProgressTracker>(*this, WTFMove(pageConfiguration.progressTrackerClient)))
+    , m_processSyncClient(WTFMove(pageConfiguration.processSyncClient))
     , m_backForwardController(makeUniqueRef<BackForwardController>(*this, WTFMove(pageConfiguration.backForwardClient)))
     , m_editorClient(WTFMove(pageConfiguration.editorClient))
     , m_mainFrame(createMainFrame(*this, WTFMove(pageConfiguration.mainFrameCreationParameters), WTFMove(pageConfiguration.mainFrameOpener), pageConfiguration.mainFrameIdentifier))

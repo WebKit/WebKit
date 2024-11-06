@@ -374,8 +374,6 @@ public:
     virtual void modelInlinePreviewUUIDs(CompletionHandler<void(Vector<String>)>&&) const { }
 #endif
 
-    virtual void broadcastMainFrameURLChangeToOtherProcesses(const URL&) = 0;
-
     virtual void dispatchLoadEventToOwnerElementInAnotherProcess() = 0;
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)

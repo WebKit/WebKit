@@ -69,6 +69,7 @@
 #include "PageConfiguration.h"
 #include "PaymentCoordinatorClient.h"
 #include "PluginInfoProvider.h"
+#include "ProcessSyncClient.h"
 #include "ProgressTrackerClient.h"
 #include "RemoteFrameClient.h"
 #include "SecurityOriginData.h"
@@ -606,10 +607,6 @@ void EmptyFrameLoaderClient::updateSandboxFlags(SandboxFlags)
 }
 
 void EmptyFrameLoaderClient::updateOpener(const Frame&)
-{
-}
-
-void EmptyFrameLoaderClient::broadcastMainFrameURLChangeToOtherProcesses(const URL&)
 {
 }
 
@@ -1233,7 +1230,8 @@ PageConfiguration pageConfigurationWithEmptyClients(std::optional<PageIdentifier
         makeUniqueRef<EmptyPaymentCoordinatorClient>(),
 #endif
         makeUniqueRef<EmptyChromeClient>(),
-        makeUniqueRef<EmptyCryptoClient>()
+        makeUniqueRef<EmptyCryptoClient>(),
+        makeUniqueRef<ProcessSyncClient>()
     };
 
 #if ENABLE(DRAG_SUPPORT)

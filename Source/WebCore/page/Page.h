@@ -155,6 +155,7 @@ class PluginData;
 class PluginInfoProvider;
 class PointerCaptureController;
 class PointerLockController;
+class ProcessSyncClient;
 class ProgressTracker;
 class RenderObject;
 class ResourceUsageOverlay;
@@ -419,6 +420,8 @@ public:
     const Chrome& chrome() const { return m_chrome.get(); }
     CryptoClient& cryptoClient() { return m_cryptoClient.get(); }
     const CryptoClient& cryptoClient() const { return m_cryptoClient.get(); }
+    ProcessSyncClient& processSyncClient() { return m_processSyncClient.get(); }
+    const ProcessSyncClient& processSyncClient() const { return m_processSyncClient.get(); }
     DragCaretController& dragCaretController() { return m_dragCaretController.get(); }
     const DragCaretController& dragCaretController() const { return m_dragCaretController.get(); }
 #if ENABLE(DRAG_SUPPORT)
@@ -1320,6 +1323,7 @@ private:
     const RefPtr<Settings> m_settings;
     UniqueRef<CryptoClient> m_cryptoClient;
     UniqueRef<ProgressTracker> m_progress;
+    UniqueRef<ProcessSyncClient> m_processSyncClient;
 
     UniqueRef<BackForwardController> m_backForwardController;
     HashSet<WeakRef<LocalFrame>> m_rootFrames;

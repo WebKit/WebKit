@@ -150,6 +150,7 @@
 #include "WebProcess.h"
 #include "WebProcessPoolMessages.h"
 #include "WebProcessProxyMessages.h"
+#include "WebProcessSyncClient.h"
 #include "WebProgressTrackerClient.h"
 #include "WebRemoteFrameClient.h"
 #include "WebScreenOrientationManager.h"
@@ -752,7 +753,8 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
         makeUniqueRef<WebPaymentCoordinator>(*this),
 #endif
         makeUniqueRef<WebChromeClient>(*this),
-        makeUniqueRef<WebCryptoClient>(this->identifier())
+        makeUniqueRef<WebCryptoClient>(this->identifier()),
+        makeUniqueRef<WebProcessSyncClient>(*this)
     );
 
 #if ENABLE(DRAG_SUPPORT)

@@ -276,8 +276,6 @@ private:
 
     inline bool hasPlugInView() const;
 
-    void broadcastMainFrameURLChangeToOtherProcesses(const URL&) final;
-
     void documentLoaderDetached(WebCore::NavigationIdentifier, WebCore::LoadWillContinueInAnotherProcess) final;
 
 #if ENABLE(WINDOW_PROXY_PROPERTY_ACCESS_NOTIFICATION)

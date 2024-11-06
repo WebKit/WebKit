@@ -79,6 +79,7 @@
 #include "NodeList.h"
 #include "NodeTraversal.h"
 #include "Page.h"
+#include "ProcessSyncClient.h"
 #include "ProcessWarming.h"
 #include "RemoteFrame.h"
 #include "RenderLayerCompositor.h"
@@ -1250,7 +1251,7 @@ void LocalFrame::documentURLDidChange(const URL& url)
 {
     if (RefPtr page = this->page(); page && isMainFrame()) {
         page->setMainFrameURL(url);
-        protectedLoader()->client().broadcastMainFrameURLChangeToOtherProcesses(url);
+        page->processSyncClient().broadcastMainFrameURLChangeToOtherProcesses(url);
     }
 }
 

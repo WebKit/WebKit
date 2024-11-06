@@ -205,6 +205,7 @@
 #import <WebCore/PlatformEventFactoryMac.h>
 #import <WebCore/PlatformScreen.h>
 #import <WebCore/PlatformTextAlternatives.h>
+#import <WebCore/ProcessSyncClient.h>
 #import <WebCore/ProgressTracker.h>
 #import <WebCore/Range.h>
 #import <WebCore/RemoteFrameClient.h>
@@ -1539,7 +1540,8 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
 #else
         makeUniqueRef<WebChromeClientIOS>(self),
 #endif
-        makeUniqueRef<WebCryptoClient>(self)
+        makeUniqueRef<WebCryptoClient>(self),
+        makeUniqueRef<WebCore::ProcessSyncClient>()
     );
 #if !PLATFORM(IOS_FAMILY)
     pageConfiguration.validationMessageClient = makeUnique<WebValidationMessageClient>(self);
@@ -1797,7 +1799,8 @@ static WebCore::ApplicationCacheStorage& webApplicationCacheStorage()
         makeUniqueRef<WebPaymentCoordinatorClient>(),
 #endif
         makeUniqueRef<WebChromeClientIOS>(self),
-        makeUniqueRef<WebCryptoClient>(self)
+        makeUniqueRef<WebCryptoClient>(self),
+        makeUniqueRef<WebCore::ProcessSyncClient>()
     );
 #if ENABLE(DRAG_SUPPORT)
     pageConfiguration.dragClient = makeUnique<WebDragClient>(self);

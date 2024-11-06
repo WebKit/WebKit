@@ -1235,6 +1235,7 @@
 		512CD69A2721F0A900F7F8EC /* WebPushDaemonConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = 512CD6992721F04900F7F8EC /* WebPushDaemonConstants.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		512ECC3527196ADB00089B66 /* PrivateClickMeasurementConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB930FE26E802160032B1C0 /* PrivateClickMeasurementConnection.h */; };
+		512F03842CDA9B34009F7ABC /* WebProcessSyncClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F03812CDA9B34009F7ABC /* WebProcessSyncClient.h */; };
 		512F589712A8838800629530 /* AuthenticationChallengeProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F588F12A8838800629530 /* AuthenticationChallengeProxy.h */; };
 		512F589912A8838800629530 /* AuthenticationDecisionListener.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F589112A8838800629530 /* AuthenticationDecisionListener.h */; };
 		512F589B12A8838800629530 /* WebCredential.h in Headers */ = {isa = PBXBuildFile; fileRef = 512F589312A8838800629530 /* WebCredential.h */; };
@@ -5590,6 +5591,8 @@
 		512CD69C27223A0800F7F8EC /* WebPushDaemonConnectionCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPushDaemonConnectionCocoa.mm; sourceTree = "<group>"; };
 		512CD69D2723393A00F7F8EC /* WebPushDaemon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPushDaemon.h; sourceTree = "<group>"; };
 		512CD69E2723393A00F7F8EC /* WebPushDaemon.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPushDaemon.mm; sourceTree = "<group>"; };
+		512F03812CDA9B34009F7ABC /* WebProcessSyncClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebProcessSyncClient.h; sourceTree = "<group>"; };
+		512F03822CDA9B34009F7ABC /* WebProcessSyncClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebProcessSyncClient.cpp; sourceTree = "<group>"; };
 		512F588E12A8838800629530 /* AuthenticationChallengeProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationChallengeProxy.cpp; sourceTree = "<group>"; };
 		512F588F12A8838800629530 /* AuthenticationChallengeProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AuthenticationChallengeProxy.h; sourceTree = "<group>"; };
 		512F589012A8838800629530 /* AuthenticationDecisionListener.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AuthenticationDecisionListener.cpp; sourceTree = "<group>"; };
@@ -13988,6 +13991,8 @@
 				1A3E735F11CC2659007BD539 /* WebPlatformStrategies.h */,
 				D3B9484211FF4B6500032B39 /* WebPopupMenu.cpp */,
 				D3B9484311FF4B6500032B39 /* WebPopupMenu.h */,
+				512F03822CDA9B34009F7ABC /* WebProcessSyncClient.cpp */,
+				512F03812CDA9B34009F7ABC /* WebProcessSyncClient.h */,
 				1A1E093118861D3800D2DC49 /* WebProgressTrackerClient.cpp */,
 				1A1E093218861D3800D2DC49 /* WebProgressTrackerClient.h */,
 				5C2397D42949235700BB4E10 /* WebRemoteFrameClient.cpp */,
@@ -17299,6 +17304,7 @@
 				BC032DD510F4389F0058C15A /* WebProcessProxy.h in Headers */,
 				BCEE7AD112817988009827DA /* WebProcessProxyMessages.h in Headers */,
 				BCE0E425168B7A280057E66A /* WebProcessSupplement.h in Headers */,
+				512F03842CDA9B34009F7ABC /* WebProcessSyncClient.h in Headers */,
 				1A1E093418861D3800D2DC49 /* WebProgressTrackerClient.h in Headers */,
 				512F589D12A8838800629530 /* WebProtectionSpace.h in Headers */,
 				517B5F7F275E97B6002DC22D /* WebPushDaemon.h in Headers */,
