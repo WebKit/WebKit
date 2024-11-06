@@ -120,7 +120,7 @@ def create_filtered_results_dir(args, project, result_paths, category='StaticAna
     subprocess.run([args.scan_build, '--generate-index-only', os.path.abspath(path_to_project)])
 
 
-def compare_project_results_to_expectations(args, new_path, project):
+def compare_project_results_to_expectations(args, new_path, project, upload_only=False):
     unexpected_issues_total = set()
     unexpected_result_paths_total = set()
     unexpected_buggy_files = set()
@@ -148,26 +148,27 @@ def compare_project_results_to_expectations(args, new_path, project):
         unexpected_result_paths_total.update(unexpected_result_paths)
         unexpected_issues_total.update(unexpected_issues)
 
-        # Set up JSON object
-        project_results_passes[checker] = list(clean_files)
-        project_results_failures[checker] = list(buggy_files)
+        if not upload_only:
+            # Set up JSON object
+            project_results_passes[checker] = list(clean_files)
+            project_results_failures[checker] = list(buggy_files)
 
-        # Create sorted files for each unexpected list - these need the .txt to be displayed in browser
-        subprocess.run(['mkdir', '-p', f'{args.build_output}/{STATIC_ANALYZER_UNEXPECTED}/{project}'])
-        with open(f'{args.build_output}/{STATIC_ANALYZER_UNEXPECTED}/{project}/UnexpectedPasses{checker}.txt', 'a') as f:
-            f.write('\n'.join(sorted(clean_files)))
-        with open(f'{args.build_output}/{STATIC_ANALYZER_UNEXPECTED}/{project}/UnexpectedFailures{checker}.txt', 'a') as f:
-            f.write('\n'.join(sorted(buggy_files)))
-        with open(f'{new_path}/{project}/UnexpectedIssues{checker}', 'a') as f:
-            f.write('\n'.join(unexpected_issues))
+            # Create sorted files for each unexpected list - these need the .txt to be displayed in browser
+            subprocess.run(['mkdir', '-p', f'{args.build_output}/{STATIC_ANALYZER_UNEXPECTED}/{project}'])
+            with open(f'{args.build_output}/{STATIC_ANALYZER_UNEXPECTED}/{project}/UnexpectedPasses{checker}.txt', 'a') as f:
+                f.write('\n'.join(sorted(clean_files)))
+            with open(f'{args.build_output}/{STATIC_ANALYZER_UNEXPECTED}/{project}/UnexpectedFailures{checker}.txt', 'a') as f:
+                f.write('\n'.join(sorted(buggy_files)))
+            with open(f'{new_path}/{project}/UnexpectedIssues{checker}', 'a') as f:
+                f.write('\n'.join(unexpected_issues))
 
-        print(f'\n{checker}:')
-        if clean_files or buggy_files or unexpected_issues:
-            print(f'    Unexpected passing files: {len(clean_files)}')
-            print(f'    Unexpected failing files: {len(buggy_files)}')
-            print(f'    Unexpected issues: {len(unexpected_issues)}')
-        else:
-            print('    No unexpected results')
+            print(f'\n{checker}:')
+            if clean_files or buggy_files or unexpected_issues:
+                print(f'    Unexpected passing files: {len(clean_files)}')
+                print(f'    Unexpected failing files: {len(buggy_files)}')
+                print(f'    Unexpected issues: {len(unexpected_issues)}')
+            else:
+                print('    No unexpected results')
 
         for file in current_results:
             if not file in project_results_for_upload.keys():
@@ -181,10 +182,10 @@ def compare_project_results_to_expectations(args, new_path, project):
                 project_results_for_upload[file] = {}
             project_results_for_upload[file][checker] = UNEXPECTED_PASS
 
-    if unexpected_issues_total and args.scan_build:
+    if unexpected_issues_total and args.scan_build and not upload_only:
         create_filtered_results_dir(args, project, unexpected_result_paths_total, STATIC_ANALYZER_UNEXPECTED)
 
-    if not unexpected_buggy_files and not unexpected_clean_files and not unexpected_issues_total:
+    if not unexpected_buggy_files and not unexpected_clean_files and not unexpected_issues_total and not upload_only:
         print('No unexpected results!')
 
     return unexpected_buggy_files, unexpected_clean_files, unexpected_issues_total, project_results_passes, project_results_failures, project_results_for_upload
@@ -288,6 +289,7 @@ def main():
     results_for_upload = {}
 
     for project in PROJECTS:
+        project_results_for_upload = None
         print(f'\n------ {project} ------')
         new_path = os.path.abspath(f'{args.new_dir}')
         if args.check_expectations:
@@ -306,6 +308,9 @@ def main():
         unexpected_results_data['passes'][project] = project_results_passes
         unexpected_results_data['failures'][project] = project_results_failures
         if args.report_urls:
+            if not project_results_for_upload:
+                print(f'\nChecking against expectations for results to upload for {project}...')
+                _, _, _, _, _, project_results_for_upload = compare_project_results_to_expectations(args, new_path, project, upload_only=True)
             results_for_upload[project] = project_results_for_upload
 
     if args.build_output:
