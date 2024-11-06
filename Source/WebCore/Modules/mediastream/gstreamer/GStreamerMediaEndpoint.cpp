@@ -1780,42 +1780,6 @@ void GStreamerMediaEndpoint::collectTransceivers()
     }
 }
 
-#if !RELEASE_LOG_DISABLED
-void GStreamerMediaEndpoint::gatherStatsForLogging()
-{
-    auto* holder = createGStreamerMediaEndpointHolder();
-    holder->endPoint = this;
-    g_signal_emit_by_name(m_webrtcBin.get(), "get-stats", nullptr, gst_promise_new_with_change_func([](GstPromise* rawPromise, gpointer userData) {
-        auto promise = adoptGRef(rawPromise);
-        auto result = gst_promise_wait(promise.get());
-        if (result != GST_PROMISE_RESULT_REPLIED)
-            return;
-
-        const auto* reply = gst_promise_get_reply(promise.get());
-        ASSERT(reply);
-        if (gst_structure_has_field(reply, "error"))
-            return;
-
-        auto* holder = static_cast<GStreamerMediaEndpointHolder*>(userData);
-        callOnMainThreadAndWait([holder, reply] {
-            auto stats = holder->endPoint->preprocessStats(nullptr, reply);
-            holder->endPoint->onStatsDelivered(WTFMove(stats));
-        });
-    }, holder, reinterpret_cast<GDestroyNotify>(destroyGStreamerMediaEndpointHolder)));
-}
-
-class RTCStatsLogger {
-public:
-    explicit RTCStatsLogger(const GstStructure* stats)
-        : m_stats(stats)
-    { }
-
-    String toJSONString() const { return gstStructureToJSONString(m_stats); }
-
-private:
-    const GstStructure* m_stats;
-};
-
 GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<GstPad>& pad, const GstStructure* stats)
 {
     ASSERT(isMainThread());
@@ -1914,6 +1878,42 @@ GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<G
     return result;
 }
 
+#if !RELEASE_LOG_DISABLED
+void GStreamerMediaEndpoint::gatherStatsForLogging()
+{
+    auto* holder = createGStreamerMediaEndpointHolder();
+    holder->endPoint = this;
+    g_signal_emit_by_name(m_webrtcBin.get(), "get-stats", nullptr, gst_promise_new_with_change_func([](GstPromise* rawPromise, gpointer userData) {
+        auto promise = adoptGRef(rawPromise);
+        auto result = gst_promise_wait(promise.get());
+        if (result != GST_PROMISE_RESULT_REPLIED)
+            return;
+
+        const auto* reply = gst_promise_get_reply(promise.get());
+        ASSERT(reply);
+        if (gst_structure_has_field(reply, "error"))
+            return;
+
+        auto* holder = static_cast<GStreamerMediaEndpointHolder*>(userData);
+        callOnMainThreadAndWait([holder, reply] {
+            auto stats = holder->endPoint->preprocessStats(nullptr, reply);
+            holder->endPoint->onStatsDelivered(WTFMove(stats));
+        });
+    }, holder, reinterpret_cast<GDestroyNotify>(destroyGStreamerMediaEndpointHolder)));
+}
+
+class RTCStatsLogger {
+public:
+    explicit RTCStatsLogger(const GstStructure* stats)
+        : m_stats(stats)
+    { }
+
+    String toJSONString() const { return gstStructureToJSONString(m_stats); }
+
+private:
+    const GstStructure* m_stats;
+};
+
 void GStreamerMediaEndpoint::processStatsItem(const GValue* value)
 {
     if (!GST_VALUE_HOLDS_STRUCTURE(value))
@@ -1958,9 +1958,7 @@ void GStreamerMediaEndpoint::onStatsDelivered(GUniquePtr<GstStructure>&& stats)
         });
     });
 }
-#endif
 
-#if !RELEASE_LOG_DISABLED
 void GStreamerMediaEndpoint::startLoggingStats()
 {
     if (m_statsLogTimer.isActive())
