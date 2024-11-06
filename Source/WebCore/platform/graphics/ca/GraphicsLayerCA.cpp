@@ -1898,7 +1898,7 @@ void GraphicsLayerCA::recursiveCommitChanges(CommitState& commitState, const Tra
     }
 
     if (isBackdropRoot())
-        commitState.backdropRootIsOpaque = backgroundColor().isOpaque();
+        childCommitState.backdropRootIsOpaque = backgroundColor().isOpaque();
 
     if (GraphicsLayerCA* maskLayer = downcast<GraphicsLayerCA>(m_maskLayer.get())) {
         maskLayer->setVisibleAndCoverageRects(rects);
