@@ -933,7 +933,6 @@
 		2DE9B13A2231F61C005287B7 /* _WKTextInputContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE9B1382231F61C005287B7 /* _WKTextInputContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2DE9B13C2231F77C005287B7 /* _WKTextInputContextInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DE9B13B2231F77C005287B7 /* _WKTextInputContextInternal.h */; };
 		2DEAC5CF1AC368BB00A195D8 /* _WKFindOptions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DEAC5CE1AC368BB00A195D8 /* _WKFindOptions.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		2DF6FE52212E110900469030 /* WebPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC963D6A113DD19200574BE2 /* WebPage.cpp */; };
 		2DF9EEE61A781FB400B6CFBE /* APIFrameInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF9EEE41A781FB400B6CFBE /* APIFrameInfo.h */; };
 		2DF9EEE81A78245500B6CFBE /* WKFrameInfoInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF9EEE71A78245500B6CFBE /* WKFrameInfoInternal.h */; };
 		2DF9EEEC1A7836EE00B6CFBE /* APINavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 2DF9EEEA1A7836EE00B6CFBE /* APINavigationAction.h */; };
@@ -20145,7 +20144,6 @@
 				CDF1B91B267025550007EC10 /* WebKitSwiftSoftLink.mm in Sources */,
 				E3816B3D27E2463A005EAFC0 /* WebMockContentFilterManager.cpp in Sources */,
 				31BA924D148831260062EDB5 /* WebNotificationManagerMessageReceiver.cpp in Sources */,
-				2DF6FE52212E110900469030 /* WebPage.cpp in Sources */,
 				C0CE72A01247E71D00BC0EC4 /* WebPageMessageReceiver.cpp in Sources */,
 				BCBD3914125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp in Sources */,
 				C0CE72A01B47E71D00BC0EC4 /* WebPageTestingMessageReceiver.cpp in Sources */,

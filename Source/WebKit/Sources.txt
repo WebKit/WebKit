@@ -879,7 +879,7 @@ WebProcess/WebPage/WebFoundTextRangeController.cpp
 WebProcess/WebPage/WebFrame.cpp
 WebProcess/WebPage/WebHistoryItemClient.cpp
 WebProcess/WebPage/WebOpenPanelResultListener.cpp
-WebProcess/WebPage/WebPage.cpp @no-unify
+WebProcess/WebPage/WebPage.cpp
 WebProcess/WebPage/WebPageGroupProxy.cpp
 WebProcess/WebPage/WebPageOverlay.cpp
 WebProcess/WebPage/WebPageTesting.cpp
