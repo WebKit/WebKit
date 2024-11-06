@@ -143,6 +143,7 @@ Ref<Notification> Notification::create(ScriptExecutionContext& context, const UR
 
     RefPtr<SerializedScriptValue> dataScriptValue;
     if (payload.options && !payload.options->dataJSONString.isEmpty() && context.globalObject()) {
+        JSC::JSLockHolder lock(context.globalObject());
         auto value = JSONParse(context.globalObject(), payload.options->dataJSONString);
         dataScriptValue = SerializedScriptValue::convert(*context.globalObject(), value);
     }
