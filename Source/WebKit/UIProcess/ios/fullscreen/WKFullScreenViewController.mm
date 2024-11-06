@@ -555,6 +555,21 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return [NSSet setWithObjects:@"prefersStatusBarHidden", @"view.window.windowScene.statusBarManager.statusBarHidden", @"view.window.safeAreaInsets", nil];
 }
 
+- (UIEdgeInsets)_additionalBottomInsets
+{
+    // If the window's safeAreaInsets.bottom is 0 then no additional bottom inset is necessary
+    // (e.g., because the device has a home button).
+    if (!self.view.window.safeAreaInsets.bottom)
+        return UIEdgeInsetsZero;
+
+    // This value was determined experimentally by finding the smallest value that
+    // allows for interacting with a slider aligned to the bottom of the web view without
+    // accidentally triggering system pan gestures.
+    static const UIEdgeInsets additionalBottomInsets = UIEdgeInsetsMake(0, 0, 8, 0);
+
+    return additionalBottomInsets;
+}
+
 - (UIEdgeInsets)additionalSafeAreaInsets
 {
     // When the status bar hides, the resulting changes to safeAreaInsets cause
@@ -562,22 +577,22 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
     // Do not add additional insets if the status bar is not hidden.
     if (!self.view.window.windowScene.statusBarManager.statusBarHidden)
-        return UIEdgeInsetsZero;
+        return [self _additionalBottomInsets];
 
     // If the status bar is hidden while would would prefer it not be,
     // we should not reserve space as it likely won't re-appear.
     if (!self.prefersStatusBarHidden)
-        return UIEdgeInsetsZero;
+        return [self _additionalBottomInsets];
 
     // Additionally, hiding the status bar does not reduce safeAreaInsets when
     // the status bar resides within a larger safe area inset (e.g., due to the
     // camera area).
     if (self.view.window.safeAreaInsets.top > 0)
-        return UIEdgeInsetsZero;
+        return [self _additionalBottomInsets];
 
     // Otherwise, provide what is effectively a constant safeAreaInset.top by adding
     // an additional safeAreaInset at the top equal to the status bar height.
-    return UIEdgeInsetsMake(_nonZeroStatusBarHeight, 0, 0, 0);
+    return UIEdgeInsetsAdd([self _additionalBottomInsets], UIEdgeInsetsMake(_nonZeroStatusBarHeight, 0, 0, 0), UIRectEdgeAll);
 }
 
 - (void)setPrefersStatusBarHidden:(BOOL)value
