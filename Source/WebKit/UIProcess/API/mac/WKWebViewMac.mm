@@ -1270,6 +1270,29 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
 }
 
+- (BOOL)_web_hasActiveIntelligenceTextEffects
+{
+#if ENABLE(WRITING_TOOLS)
+    return [_intelligenceTextEffectCoordinator hasActiveEffects];
+#else
+    return NO;
+#endif
+}
+
+- (void)_web_suppressContentRelativeChildViews
+{
+#if ENABLE(WRITING_TOOLS)
+    [_intelligenceTextEffectCoordinator hideEffectsWithCompletion:^{ }];
+#endif
+}
+
+- (void)_web_restoreContentRelativeChildViews
+{
+#if ENABLE(WRITING_TOOLS)
+    [_intelligenceTextEffectCoordinator showEffectsWithCompletion:^{ }];
+#endif
+}
+
 #if ENABLE(DRAG_SUPPORT)
 
 - (WKDragDestinationAction)_web_dragDestinationActionForDraggingInfo:(id <NSDraggingInfo>)draggingInfo

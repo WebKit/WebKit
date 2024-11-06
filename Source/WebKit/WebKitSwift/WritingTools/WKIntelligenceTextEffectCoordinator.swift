@@ -34,11 +34,6 @@ import WebKitSwift
     @nonobjc final private var activePonderingEffect: PlatformIntelligencePonderingTextEffect<Chunk>? = nil
     @nonobjc final private var activeReplacementEffect: PlatformIntelligenceReplacementTextEffect<Chunk>? = nil
 
-    // The transparent content document markers associated with the visibility of each chunk need to
-    // maintain identifiers so that if chunk A makes range R hidden, chunk B makes R hidden, then chunk A makes
-    // R visible, R must still be hidden due to B.
-    @nonobjc final private var textVisibilityRegionIdentifiers: [Chunk: UUID] = [:]
-
     // Maintain a replacement operation queue to ensure that no matter how many batches of replacements are received,
     // there is only ever one ongoing effect at a time.
     @nonobjc final private var replacementQueue: [ReplacementOperationRequest] = []
@@ -47,6 +42,13 @@ import WebKitSwift
     // suggestions, they first need to all be flushed out and invoked so that the state is not incomplete, and then
     // the acceptance/rejection can properly occur.
     @nonobjc final private var onFlushCompletion: (() async -> Void)? = nil
+
+    @nonobjc final private var suppressEffectView = false
+
+    @objc(hasActiveEffects)
+    public var hasActiveEffects: Bool {
+        self.activePonderingEffect != nil || self.activeReplacementEffect != nil
+    }
 
     @objc(characterDeltaForReceivedSuggestions:)
     public class func characterDelta(forReceivedSuggestions suggestions: [WTTextSuggestion]) -> Int {
@@ -132,6 +134,35 @@ import WebKitSwift
         await self.delegate.intelligenceTextEffectCoordinator(self, setSelectionFor: NSRange(range))
     }
 
+    @objc(hideEffectsWithCompletion:)
+    public func hideEffects() async {
+        guard !self.suppressEffectView else {
+            return
+        }
+
+        // On macOS, the effect view is incapable of scrolling with the web view. Therefore, the effects need to be suppressed
+        // when scrolling, resizing, or zooming.
+        //
+        // Consequently, since the effects will now be hidden, it is critical that the underlying text visibility is restored to be visible.
+
+        self.suppressEffectView = true
+
+        if let activePonderingEffect = self.activePonderingEffect {
+            await self.delegate.intelligenceTextEffectCoordinator(self, updateTextVisibilityFor: NSRange(activePonderingEffect.chunk.range), visible: true, identifier: activePonderingEffect.chunk.id)
+        }
+
+        if let activeReplacementEffect = self.activeReplacementEffect {
+            await self.delegate.intelligenceTextEffectCoordinator(self, updateTextVisibilityFor: NSRange(activeReplacementEffect.chunk.range), visible: true, identifier: activeReplacementEffect.chunk.id)
+        }
+
+        self.effectView?.isHidden = true
+    }
+
+    @objc(showEffectsWithCompletion:)
+    public func showEffects() async {
+        // FIXME: Ideally, after scrolling/resizing/zooming, the effects would be restored and visible.
+    }
+
     @nonobjc final private func removeActiveEffects() async {
         if self.activePonderingEffect != nil {
             await self.setActivePonderingEffect(nil)
@@ -182,6 +213,10 @@ import WebKitSwift
         effectView.frame = contentView.bounds
         contentView.addSubview(effectView)
 #endif
+
+        if self.suppressEffectView {
+            effectView.isHidden = true
+        }
 
         // UIKit expects subviews of the effect view to be added after the effect view is added to its parent.
         effectView.initializeSubviews()
@@ -253,8 +288,9 @@ import WebKitSwift
         self.activePonderingEffect = nil
         self.activeReplacementEffect = nil
 
-        self.textVisibilityRegionIdentifiers = [:]
         self.replacementQueue = []
+
+        self.suppressEffectView = false
     }
 }
 
@@ -283,17 +319,13 @@ extension WKIntelligenceTextEffectCoordinator: PlatformIntelligenceTextEffectVie
             return
         }
 
-        // Get the associated visibility identifier for the chunk, or make a new one if needed.
-
-        let id: UUID
-        if let cachedID = self.textVisibilityRegionIdentifiers[chunk] {
-            id = cachedID
-        } else {
-            id = UUID()
-            self.textVisibilityRegionIdentifiers[chunk] = id
+        guard !self.suppressEffectView else {
+            // If the effect view is currently suppressed, WTUI will still request making the text not visible since it does not know
+            // it is hidden. However, this needs to not happen since the effect view is hidden and the underlying text needs to remain visible.
+            return
         }
 
-        await self.delegate.intelligenceTextEffectCoordinator(self, updateTextVisibilityFor: NSRange(chunk.range), visible: visible, identifier: id)
+        await self.delegate.intelligenceTextEffectCoordinator(self, updateTextVisibilityFor: NSRange(chunk.range), visible: visible, identifier: chunk.id)
     }
 
     func updateTextChunkVisibility(_ chunk: Chunk, visible: Bool) async {

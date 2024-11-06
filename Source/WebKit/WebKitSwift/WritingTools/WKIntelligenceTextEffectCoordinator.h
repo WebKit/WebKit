@@ -68,6 +68,8 @@ NS_SWIFT_UI_ACTOR
 NS_SWIFT_UI_ACTOR
 @interface WKIntelligenceTextEffectCoordinator : NSObject
 
+@property (nonatomic, readonly) BOOL hasActiveEffects;
+
 + (NSInteger)characterDeltaForReceivedSuggestions:(NSArray<WTTextSuggestion *> *)suggestions;
 
 - (instancetype)initWithDelegate:(id<WKIntelligenceTextEffectCoordinatorDelegate>)delegate;
@@ -79,6 +81,10 @@ NS_SWIFT_UI_ACTOR
 - (void)flushReplacementsWithCompletion:(void (^)(void))completion;
 
 - (void)restoreSelectionAcceptedReplacements:(BOOL)acceptedReplacements completion:(void (^)(void))completion;
+
+- (void)hideEffectsWithCompletion:(void (^)(void))completion;
+
+- (void)showEffectsWithCompletion:(void (^)(void))completion;
 
 @end
 
