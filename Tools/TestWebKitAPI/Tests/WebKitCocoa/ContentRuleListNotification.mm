@@ -194,6 +194,68 @@ TEST(ContentRuleList, LoadHTMLStringDisplayNone)
     EXPECT_WK_STREQ([webView2 objectByEvaluatingJavaScript:getLinkDisplay], "inline");
 }
 
+TEST(ContentRuleList, DisplayNoneInSrcDocIFrame)
+{
+    NSString *html = @"<head></head><body></body>";
+
+    auto list = makeContentRuleList(@"["
+        "{ \"action\": { \"type\" : \"css-display-none\", \"selector\": \".header\" }, \"trigger\": { \"url-filter\": \".*\" }}"
+    "]");
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView synchronouslyLoadHTMLString:html];
+
+    [webView objectByEvaluatingJavaScript:@"var frame = document.createElement('iframe');"
+        "frame.id = 'subframe'; frame.srcdoc = `<!DOCTYPE html><h1 class='header'>test</h1>`; document.body.appendChild(frame); true"];
+
+    __block bool isDone = false;
+
+    // Make sure the frame loads before checking the computed style.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.05 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        NSString *getHeaderDisplay = @"window.getComputedStyle(document.getElementById('subframe').contentDocument.querySelector('h1')).getPropertyValue('display')";
+        EXPECT_WK_STREQ([webView objectByEvaluatingJavaScript:getHeaderDisplay], "none");
+
+        isDone = true;
+    });
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+
+TEST(ContentRuleList, DisplayNoneInAboutBlankIFrame)
+{
+    NSString *html = @"<head></head><body></body>";
+
+    auto list = makeContentRuleList(@"["
+        "{ \"action\": { \"type\" : \"css-display-none\", \"selector\": \"h1\" }, \"trigger\": { \"url-filter\": \".*\" }}"
+    "]");
+
+    auto configuration = adoptNS([WKWebViewConfiguration new]);
+    [[configuration userContentController] addContentRuleList:list.get()];
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView synchronouslyLoadHTMLString:html];
+
+    __block bool isDone = false;
+
+    NSString *createFrameScript = @"var subframe = document.createElement('iframe'); subframe.src = 'about:blank'; subframe.id = 'subframe'; document.body.appendChild(subframe);";
+    NSString *createHeaderScript = @"document.getElementById('subframe').contentDocument.body.innerHTML = '<h1>test</h1>';";
+
+    [webView evaluateJavaScript:createFrameScript completionHandler:^(id frameResult, NSError *frameError) {
+        [webView evaluateJavaScript:createHeaderScript completionHandler:^(id headerResult, NSError *headerError) {
+            NSString *getHeaderDisplay = @"window.getComputedStyle(document.getElementById('subframe').contentDocument.querySelector('h1')).getPropertyValue('display')";
+            [webView evaluateJavaScript:getHeaderDisplay completionHandler:^(id displayResult, NSError *displayError) {
+                EXPECT_WK_STREQ(displayResult, @"none");
+                isDone = true;
+            }];
+        }];
+    }];
+
+    TestWebKitAPI::Util::run(&isDone);
+}
+
 TEST(ContentRuleList, PerformedActionForURL)
 {
     NSString *firstList = @"[{\"action\":{\"type\":\"notify\",\"notification\":\"testnotification\"},\"trigger\":{\"url-filter\":\"notify\"}}]";
