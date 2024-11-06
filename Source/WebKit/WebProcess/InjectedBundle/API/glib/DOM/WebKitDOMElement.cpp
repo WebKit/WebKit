@@ -123,7 +123,7 @@ gboolean webkit_dom_element_html_input_element_get_auto_filled(WebKitDOMElement*
     if (!is<WebCore::HTMLInputElement>(node))
         return false;
 
-    return downcast<WebCore::HTMLInputElement>(*node).isAutoFilled();
+    return downcast<WebCore::HTMLInputElement>(*node).autofilled();
 }
 
 /**
@@ -146,7 +146,7 @@ void webkit_dom_element_html_input_element_set_auto_filled(WebKitDOMElement* ele
     if (!is<WebCore::HTMLInputElement>(node))
         return;
 
-    downcast<WebCore::HTMLInputElement>(*node).setAutoFilled(autoFilled);
+    downcast<WebCore::HTMLInputElement>(*node).setAutofilled(autoFilled);
 }
 
 /**
