@@ -197,7 +197,7 @@ class CommitController(HasCommitContext):
                         results_for_repo += self.commit_context.find_commits_in_range(repository, b, limit=limit - len(results_for_repo), begin=begin, end=end)
                 result += results_for_repo
 
-            return sorted(result)[:limit]
+            return sorted(result)
 
     def find(self):
         AssertRequest.is_type()
