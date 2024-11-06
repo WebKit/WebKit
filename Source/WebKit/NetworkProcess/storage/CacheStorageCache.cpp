@@ -29,11 +29,13 @@
 #include "CacheStorageDiskStore.h"
 #include "CacheStorageManager.h"
 #include "CacheStorageMemoryStore.h"
+#include "Logging.h"
 #include <WebCore/CacheQueryOptions.h>
 #include <WebCore/CrossOriginAccessControl.h>
 #include <WebCore/HTTPHeaderMap.h>
 #include <WebCore/OriginAccessPatterns.h>
 #include <WebCore/ResourceError.h>
+#include <wtf/CheckedArithmetic.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -289,21 +291,37 @@ void CacheStorageCache::putRecords(Vector<WebCore::DOMCacheEngine::CrossThreadRe
     if (!manager)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
 
-    int64_t spaceRequested = 0;
+    CheckedUint64 spaceRequested = 0;
+    CheckedUint64 spaceAvailable = 0;
+    bool isSpaceRequestedValid = true;
     auto cacheStorageRecords = WTF::map(WTFMove(records), [&](WebCore::DOMCacheEngine::CrossThreadRecord&& record) {
-        spaceRequested += record.responseBodySize;
-        if (auto* existingRecord = findExistingRecord(record.request))
-            spaceRequested -= existingRecord->size();
+        if (isSpaceRequestedValid) {
+            spaceRequested += record.responseBodySize;
+            if (auto* existingRecord = findExistingRecord(record.request))
+                spaceAvailable += existingRecord->size();
+            if (spaceRequested.hasOverflowed() || spaceAvailable.hasOverflowed())
+                isSpaceRequestedValid = false;
+            else {
+                uint64_t spaceUsed = std::min(spaceRequested, spaceAvailable);
+                spaceRequested -= spaceUsed;
+                spaceAvailable -= spaceUsed;
+            }
+        }
         return toCacheStorageRecord(WTFMove(record), manager->salt(), m_uniqueName);
     });
 
     // The request still needs to go through quota check to keep ordering.
-    if (spaceRequested < 0)
+    if (!isSpaceRequestedValid)
         spaceRequested = 0;
 
-    manager->requestSpace(spaceRequested, [this, weakThis = WeakPtr { *this }, records = WTFMove(cacheStorageRecords), callback = WTFMove(callback)](bool granted) mutable {
+    manager->requestSpace(spaceRequested, [this, weakThis = WeakPtr { *this }, records = WTFMove(cacheStorageRecords), callback = WTFMove(callback), isSpaceRequestedValid](bool granted) mutable {
         if (!weakThis)
             return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+        if (!isSpaceRequestedValid) {
+            RELEASE_LOG_ERROR(Storage, "CacheStorageCache::putRecords failed because the amount of space requested is invalid");
+            return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+        }
 
         if (!granted)
             return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::QuotaExceeded));

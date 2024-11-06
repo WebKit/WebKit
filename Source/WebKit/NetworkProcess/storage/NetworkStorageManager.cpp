@@ -29,6 +29,7 @@
 #include "BackgroundFetchChange.h"
 #include "BackgroundFetchStoreManager.h"
 #include "CacheStorageCache.h"
+#include "CacheStorageDiskStore.h"
 #include "CacheStorageManager.h"
 #include "CacheStorageRegistry.h"
 #include "FileSystemStorageHandleRegistry.h"
@@ -50,6 +51,7 @@
 #include "StorageAreaRegistry.h"
 #include "UnifiedOriginStorageLevel.h"
 #include "WebsiteDataType.h"
+#include <WebCore/DOMCacheEngine.h>
 #include <WebCore/IDBRequestData.h>
 #include <WebCore/SecurityOriginData.h>
 #include <WebCore/ServiceWorkerContextData.h>
@@ -1826,11 +1828,14 @@ void NetworkStorageManager::cacheStorageRemoveRecords(WebCore::DOMCacheIdentifie
     cache->removeRecords(WTFMove(request), WTFMove(options), WTFMove(callback));
 }
 
-void NetworkStorageManager::cacheStoragePutRecords(WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
+void NetworkStorageManager::cacheStoragePutRecords(IPC::Connection& connection, WebCore::DOMCacheIdentifier cacheIdentifier, Vector<WebCore::DOMCacheEngine::CrossThreadRecord>&& records, WebCore::DOMCacheEngine::RecordIdentifiersCallback&& callback)
 {
     RefPtr cache = protectedCacheStorageRegistry()->cache(cacheIdentifier);
     if (!cache)
         return callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal));
+
+    for (auto& record : records)
+        MESSAGE_CHECK_COMPLETION(record.responseBodySize >= CacheStorageDiskStore::computeRealBodySizeForStorage(record.responseBody), connection, callback(makeUnexpected(WebCore::DOMCacheEngine::Error::Internal)));
 
     cache->putRecords(WTFMove(records), WTFMove(callback));
 }
