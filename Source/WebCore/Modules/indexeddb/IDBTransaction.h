@@ -30,6 +30,7 @@
 #include "IDBError.h"
 #include "IDBGetAllRecordsData.h"
 #include "IDBGetRecordData.h"
+#include "IDBIndexIdentifier.h"
 #include "IDBKeyRangeData.h"
 #include "IDBObjectStoreIdentifier.h"
 #include "IDBOpenDBRequest.h"
@@ -193,7 +194,7 @@ private:
     void createIndexOnServer(IDBClient::TransactionOperation&, const IDBIndexInfo&);
     void didCreateIndexOnServer(const IDBResultData&);
 
-    void renameIndexOnServer(IDBClient::TransactionOperation&, IDBObjectStoreIdentifier, const uint64_t& indexIdentifier, const String& newName);
+    void renameIndexOnServer(IDBClient::TransactionOperation&, IDBObjectStoreIdentifier, IDBIndexIdentifier, const String& newName);
     void didRenameIndexOnServer(const IDBResultData&);
 
     void clearObjectStoreOnServer(IDBClient::TransactionOperation&, IDBObjectStoreIdentifier);

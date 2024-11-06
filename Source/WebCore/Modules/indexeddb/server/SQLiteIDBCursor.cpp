@@ -58,7 +58,7 @@ std::unique_ptr<SQLiteIDBCursor> SQLiteIDBCursor::maybeCreate(SQLiteIDBTransacti
     return cursor;
 }
 
-std::unique_ptr<SQLiteIDBCursor> SQLiteIDBCursor::maybeCreateBackingStoreCursor(SQLiteIDBTransaction& transaction, IDBObjectStoreIdentifier objectStoreID, const uint64_t indexID, const IDBKeyRangeData& range)
+std::unique_ptr<SQLiteIDBCursor> SQLiteIDBCursor::maybeCreateBackingStoreCursor(SQLiteIDBTransaction& transaction, IDBObjectStoreIdentifier objectStoreID, std::optional<IDBIndexIdentifier> indexID, const IDBKeyRangeData& range)
 {
     auto cursor = makeUnique<SQLiteIDBCursor>(transaction, objectStoreID, indexID, range);
 
@@ -75,21 +75,23 @@ SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction& transaction, const IDBCur
     : m_transaction(&transaction)
     , m_cursorIdentifier(info.identifier())
     , m_objectStoreID(info.objectStoreIdentifier())
-    , m_indexID(info.cursorSource() == IndexedDB::CursorSource::Index ? info.sourceIdentifier() : IDBIndexInfo::InvalidId)
+    , m_indexID(info.sourceIndexIdentifier())
     , m_cursorDirection(info.cursorDirection())
     , m_cursorType(info.cursorType())
     , m_keyRange(info.range())
+    , m_boundID(m_objectStoreID)
 {
 }
 
-SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction& transaction, IDBObjectStoreIdentifier objectStoreID, const uint64_t indexID, const IDBKeyRangeData& range)
+SQLiteIDBCursor::SQLiteIDBCursor(SQLiteIDBTransaction& transaction, IDBObjectStoreIdentifier objectStoreID, std::optional<IDBIndexIdentifier> indexID, const IDBKeyRangeData& range)
     : m_transaction(&transaction)
     , m_cursorIdentifier(transaction.transactionIdentifier())
     , m_objectStoreID(objectStoreID)
-    , m_indexID(indexID ? indexID : IDBIndexInfo::InvalidId)
+    , m_indexID(indexID)
     , m_cursorDirection(IndexedDB::CursorDirection::Next)
     , m_cursorType(IndexedDB::CursorType::KeyAndValue)
     , m_keyRange(range)
+    , m_boundID(m_objectStoreID)
     , m_backingStoreCursor(true)
 {
 }
@@ -173,12 +175,12 @@ bool SQLiteIDBCursor::establishStatement()
     ASSERT(!m_statement);
     String sql;
 
-    if (m_indexID != IDBIndexInfo::InvalidId) {
+    if (m_indexID) {
         sql = buildIndexStatement(m_keyRange, m_cursorDirection);
-        m_boundID = m_indexID;
+        m_boundID = *m_indexID;
     } else {
         sql = buildObjectStoreStatement(m_keyRange, m_cursorDirection);
-        m_boundID = m_objectStoreID.toRawValue();
+        m_boundID = m_objectStoreID;
     }
 
     m_currentLowerKey = m_keyRange.lowerKey.isNull() ? IDBKeyData::minimum() : m_keyRange.lowerKey;
@@ -214,7 +216,7 @@ void SQLiteIDBCursor::objectStoreRecordsChanged()
     ASSERT(!m_fetchedRecords.isEmpty());
 
     m_currentKeyForUniqueness = m_fetchedRecords.first().record.key;
-    if (m_indexID != IDBIndexInfo::InvalidId)
+    if (m_indexID)
         m_currentIndexRecordValue = m_fetchedRecords.first().record.primaryKey;
 
     // If ObjectStore or Index contents changed, we need to reset the statement and bind new parameters to it.
@@ -272,7 +274,7 @@ bool SQLiteIDBCursor::bindArguments()
 
     int currentBindArgument = 1;
 
-    if (m_statement->bindInt64(currentBindArgument++, m_boundID) != SQLITE_OK) {
+    if (m_statement->bindInt64(currentBindArgument++, boundIDValue()) != SQLITE_OK) {
         LOG_ERROR("Could not bind id argument (bound ID)");
         return false;
     }
@@ -294,7 +296,7 @@ bool SQLiteIDBCursor::bindArguments()
 
 bool SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary()
 {
-    if (m_indexID == IDBIndexInfo::InvalidId)
+    if (!m_indexID)
         return true;
 
     if (m_currentIndexRecordValue.isNull())
@@ -318,7 +320,7 @@ bool SQLiteIDBCursor::resetAndRebindPreIndexStatementIfNecessary()
     auto key = isDirectionNext() ? m_currentLowerKey : m_currentUpperKey;
     int currentBindArgument = 1;
 
-    if (m_preIndexStatement->bindInt64(currentBindArgument++, m_boundID) != SQLITE_OK) {
+    if (m_preIndexStatement->bindInt64(currentBindArgument++, boundIDValue()) != SQLITE_OK) {
         LOG_ERROR("Could not bind id argument to pre statement (bound ID)");
         return false;
     }
@@ -489,7 +491,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
 
     int result;
     if (m_preIndexStatement) {
-        ASSERT(m_indexID != IDBIndexInfo::InvalidId);
+        ASSERT(m_indexID);
 
         result = m_preIndexStatement->step();
         if (result == SQLITE_ROW)
@@ -526,7 +528,7 @@ SQLiteIDBCursor::FetchResult SQLiteIDBCursor::internalFetchNextRecord(SQLiteCurs
     auto keyData = statement->columnBlob(2);
 
     // The primaryKey of an ObjectStore cursor is the same as its key.
-    if (m_indexID == IDBIndexInfo::InvalidId) {
+    if (!m_indexID) {
         record.record.primaryKey = record.record.key;
 
         Vector<String> blobURLs, blobFilePaths;
@@ -659,6 +661,10 @@ int64_t SQLiteIDBCursor::currentRecordRowID() const
     return m_fetchedRecords.first().rowID;
 }
 
+uint64_t SQLiteIDBCursor::boundIDValue() const
+{
+    return std::holds_alternative<IDBObjectStoreIdentifier>(m_boundID) ? std::get<IDBObjectStoreIdentifier>(m_boundID).toRawValue() : std::get<IDBIndexIdentifier>(m_boundID).toRawValue();
+}
 
 } // namespace IDBServer
 } // namespace WebCore

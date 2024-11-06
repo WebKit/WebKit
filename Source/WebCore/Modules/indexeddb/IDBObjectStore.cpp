@@ -711,7 +711,7 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
     } else {
         m_deleted = false;
         
-        HashSet<uint64_t> indexesToRemove;
+        HashSet<IDBIndexIdentifier> indexesToRemove;
         for (auto indexIdentifier : objectStoreInfo->indexMap().keys()) {
             if (!objectStoreInfo->hasIndex(indexIdentifier))
                 indexesToRemove.add(indexIdentifier);
@@ -723,7 +723,7 @@ void IDBObjectStore::rollbackForVersionChangeAbort()
 
     Locker locker { m_referencedIndexLock };
 
-    Vector<uint64_t> identifiersToRemove;
+    Vector<IDBIndexIdentifier> identifiersToRemove;
     Vector<std::unique_ptr<IDBIndex>> indexesToDelete;
     for (auto& iterator : m_deletedIndexes) {
         if (m_info.hasIndex(iterator.key)) {

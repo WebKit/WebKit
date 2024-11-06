@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IDBIndexIdentifier.h"
 #include "IDBKeyData.h"
 #include "IDBObjectStoreInfo.h"
 #include "IndexKey.h"
@@ -66,7 +67,7 @@ public:
     MemoryBackingStoreTransaction* writeTransaction();
 
     IDBError createIndex(MemoryBackingStoreTransaction&, const IDBIndexInfo&);
-    IDBError deleteIndex(MemoryBackingStoreTransaction&, uint64_t indexIdentifier);
+    IDBError deleteIndex(MemoryBackingStoreTransaction&, IDBIndexIdentifier);
     void deleteAllIndexes(MemoryBackingStoreTransaction&);
     void registerIndex(Ref<MemoryIndex>&&);
 
@@ -85,8 +86,8 @@ public:
     ThreadSafeDataBuffer valueForKey(const IDBKeyData&) const;
     ThreadSafeDataBuffer valueForKeyRange(const IDBKeyRangeData&) const;
     IDBKeyData lowestKeyWithRecordInRange(const IDBKeyRangeData&) const;
-    IDBGetResult indexValueForKeyRange(uint64_t indexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&) const;
-    uint64_t countForKeyRange(uint64_t indexIdentifier, const IDBKeyRangeData&) const;
+    IDBGetResult indexValueForKeyRange(IDBIndexIdentifier, IndexedDB::IndexRecordType, const IDBKeyRangeData&) const;
+    uint64_t countForKeyRange(std::optional<IDBIndexIdentifier>, const IDBKeyRangeData&) const;
 
     void getAllRecords(const IDBKeyRangeData&, std::optional<uint32_t> count, IndexedDB::GetAllType, IDBGetAllResult&) const;
 
@@ -97,14 +98,14 @@ public:
 
     IDBKeyDataSet* orderedKeys() { return m_orderedKeys.get(); }
 
-    MemoryIndex* indexForIdentifier(uint64_t);
+    MemoryIndex* indexForIdentifier(IDBIndexIdentifier);
 
     void maybeRestoreDeletedIndex(Ref<MemoryIndex>&&);
 
     void rename(const String& newName) { m_info.rename(newName); }
     void renameIndex(MemoryIndex&, const String& newName);
 
-    RefPtr<MemoryIndex> takeIndexByIdentifier(uint64_t indexIdentifier);
+    RefPtr<MemoryIndex> takeIndexByIdentifier(IDBIndexIdentifier);
 
 private:
     MemoryObjectStore(const IDBObjectStoreInfo&);
@@ -126,7 +127,7 @@ private:
     std::unique_ptr<IDBKeyDataSet> m_orderedKeys;
 
     void unregisterIndex(MemoryIndex&);
-    HashMap<uint64_t, RefPtr<MemoryIndex>> m_indexesByIdentifier;
+    HashMap<IDBIndexIdentifier, RefPtr<MemoryIndex>> m_indexesByIdentifier;
     HashMap<String, RefPtr<MemoryIndex>> m_indexesByName;
     HashMap<IDBResourceIdentifier, std::unique_ptr<MemoryObjectStoreCursor>> m_cursors;
 };

@@ -38,7 +38,7 @@ IDBCursorInfo IDBCursorInfo::objectStoreCursor(IDBTransaction& transaction, IDBO
     return { transaction, objectStoreIdentifier, range, direction, type };
 }
 
-IDBCursorInfo IDBCursorInfo::indexCursor(IDBTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
+IDBCursorInfo IDBCursorInfo::indexCursor(IDBTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
 {
     return { transaction, objectStoreIdentifier, indexIdentifier, range, direction, type };
 }
@@ -47,7 +47,7 @@ IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, IDBObjectStoreIdentifi
     : m_cursorIdentifier(transaction.database().connectionProxy())
     , m_transactionIdentifier(transaction.info().identifier())
     , m_objectStoreIdentifier(objectStoreIdentifier)
-    , m_sourceIdentifier(objectStoreIdentifier.toRawValue())
+    , m_sourceIdentifier(objectStoreIdentifier)
     , m_range(range)
     , m_source(IndexedDB::CursorSource::ObjectStore)
     , m_direction(direction)
@@ -55,7 +55,7 @@ IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, IDBObjectStoreIdentifi
 {
 }
 
-IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
+IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
     : m_cursorIdentifier(transaction.database().connectionProxy())
     , m_transactionIdentifier(transaction.info().identifier())
     , m_objectStoreIdentifier(objectStoreIdentifier)
@@ -67,7 +67,7 @@ IDBCursorInfo::IDBCursorInfo(IDBTransaction& transaction, IDBObjectStoreIdentifi
 {
 }
 
-IDBCursorInfo::IDBCursorInfo(const IDBResourceIdentifier& cursorIdentifier, const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t sourceIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorSource source, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
+IDBCursorInfo::IDBCursorInfo(const IDBResourceIdentifier& cursorIdentifier, const IDBResourceIdentifier& transactionIdentifier, IDBObjectStoreIdentifier objectStoreIdentifier, std::variant<IDBObjectStoreIdentifier, IDBIndexIdentifier> sourceIdentifier, const IDBKeyRangeData& range, IndexedDB::CursorSource source, IndexedDB::CursorDirection direction, IndexedDB::CursorType type)
     : m_cursorIdentifier(cursorIdentifier)
     , m_transactionIdentifier(transactionIdentifier)
     , m_objectStoreIdentifier(objectStoreIdentifier)
@@ -94,12 +94,21 @@ IDBCursorInfo IDBCursorInfo::isolatedCopy() const
     return { m_cursorIdentifier.isolatedCopy(), m_transactionIdentifier.isolatedCopy(), m_objectStoreIdentifier, m_sourceIdentifier, m_range.isolatedCopy(), m_source, m_direction, m_type };
 }
 
+std::optional<IDBIndexIdentifier> IDBCursorInfo::sourceIndexIdentifier() const
+{
+    if (m_source == IndexedDB::CursorSource::Index)
+        return std::get<IDBIndexIdentifier>(m_sourceIdentifier);
+    return std::nullopt;
+}
+
 #if !LOG_DISABLED
 
 String IDBCursorInfo::loggingString() const
 {
+    auto sourceIdentifier = std::holds_alternative<IDBObjectStoreIdentifier>(m_sourceIdentifier) ? std::get<IDBObjectStoreIdentifier>(m_sourceIdentifier).toRawValue() : std::get<IDBIndexIdentifier>(m_sourceIdentifier).toRawValue();
+
     if (m_source == IndexedDB::CursorSource::Index)
-        return makeString("<Crsr: "_s, m_cursorIdentifier.loggingString(), " Idx "_s, m_sourceIdentifier, ", OS "_s, m_objectStoreIdentifier, ", tx "_s, m_transactionIdentifier.loggingString(), '>');
+        return makeString("<Crsr: "_s, m_cursorIdentifier.loggingString(), " Idx "_s, sourceIdentifier, ", OS "_s, m_objectStoreIdentifier, ", tx "_s, m_transactionIdentifier.loggingString(), '>');
 
     return makeString("<Crsr: "_s, m_cursorIdentifier.loggingString(), " OS "_s, m_objectStoreIdentifier, ", tx "_s, m_transactionIdentifier.loggingString(), '>');
 }

@@ -418,6 +418,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/indexeddb/IDBDatabaseNameAndVersionRequest.h
     Modules/indexeddb/IDBGetAllResult.h
     Modules/indexeddb/IDBGetResult.h
+    Modules/indexeddb/IDBIndexIdentifier.h
     Modules/indexeddb/IDBKey.h
     Modules/indexeddb/IDBKeyData.h
     Modules/indexeddb/IDBKeyPath.h

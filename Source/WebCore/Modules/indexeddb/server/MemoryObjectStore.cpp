@@ -58,9 +58,8 @@ MemoryObjectStore::~MemoryObjectStore()
     m_writeTransaction = nullptr;
 }
 
-MemoryIndex* MemoryObjectStore::indexForIdentifier(uint64_t identifier)
+MemoryIndex* MemoryObjectStore::indexForIdentifier(IDBIndexIdentifier identifier)
 {
-    ASSERT(identifier);
     return m_indexesByIdentifier.get(identifier);
 }
 
@@ -128,7 +127,7 @@ void MemoryObjectStore::maybeRestoreDeletedIndex(Ref<MemoryIndex>&& index)
     registerIndex(WTFMove(index));
 }
 
-RefPtr<MemoryIndex> MemoryObjectStore::takeIndexByIdentifier(uint64_t indexIdentifier)
+RefPtr<MemoryIndex> MemoryObjectStore::takeIndexByIdentifier(IDBIndexIdentifier indexIdentifier)
 {
     auto indexByIdentifier = m_indexesByIdentifier.take(indexIdentifier);
     if (!indexByIdentifier)
@@ -140,7 +139,7 @@ RefPtr<MemoryIndex> MemoryObjectStore::takeIndexByIdentifier(uint64_t indexIdent
     return index;
 }
 
-IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transaction, uint64_t indexIdentifier)
+IDBError MemoryObjectStore::deleteIndex(MemoryBackingStoreTransaction& transaction, IDBIndexIdentifier indexIdentifier)
 {
     LOG(IndexedDB, "MemoryObjectStore::deleteIndex");
 
@@ -366,12 +365,12 @@ IDBError MemoryObjectStore::populateIndexWithExistingRecords(MemoryIndex& index)
     return IDBError { };
 }
 
-uint64_t MemoryObjectStore::countForKeyRange(uint64_t indexIdentifier, const IDBKeyRangeData& inRange) const
+uint64_t MemoryObjectStore::countForKeyRange(std::optional<IDBIndexIdentifier> indexIdentifier, const IDBKeyRangeData& inRange) const
 {
     LOG(IndexedDB, "MemoryObjectStore::countForKeyRange");
 
     if (indexIdentifier) {
-        auto* index = m_indexesByIdentifier.get(indexIdentifier);
+        auto* index = m_indexesByIdentifier.get(*indexIdentifier);
         ASSERT(index);
         return index->countForKeyRange(inRange);
     }
@@ -441,7 +440,7 @@ void MemoryObjectStore::getAllRecords(const IDBKeyRangeData& keyRangeData, std::
     }
 }
 
-IDBGetResult MemoryObjectStore::indexValueForKeyRange(uint64_t indexIdentifier, IndexedDB::IndexRecordType recordType, const IDBKeyRangeData& range) const
+IDBGetResult MemoryObjectStore::indexValueForKeyRange(IDBIndexIdentifier indexIdentifier, IndexedDB::IndexRecordType recordType, const IDBKeyRangeData& range) const
 {
     LOG(IndexedDB, "MemoryObjectStore::indexValueForKeyRange");
 

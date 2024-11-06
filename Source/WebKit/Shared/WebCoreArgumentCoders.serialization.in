@@ -522,7 +522,7 @@ class WebCore::IDBCursorInfo {
     WebCore::IDBResourceIdentifier identifier();
     WebCore::IDBResourceIdentifier transactionIdentifier();
     WebCore::IDBObjectStoreIdentifier objectStoreIdentifier();
-    uint64_t sourceIdentifier();
+    std::variant<WebCore::IDBObjectStoreIdentifier, WebCore::IDBIndexIdentifier> sourceIdentifier();
 
     WebCore::IDBKeyRangeData range();
 
@@ -541,7 +541,7 @@ struct WebCore::IDBGetAllRecordsData {
     WebCore::IndexedDB::GetAllType getAllType;
     std::optional<uint32_t> count;
     WebCore::IDBObjectStoreIdentifier objectStoreIdentifier;
-    uint64_t indexIdentifier;
+    std::optional<WebCore::IDBIndexIdentifier> indexIdentifier;
 }
 
 class WebCore::IDBGetResult {
@@ -592,7 +592,7 @@ struct WebCore::IDBGetRecordData {
 }
 
 class WebCore::IDBIndexInfo {
-    uint64_t identifier()
+    WebCore::IDBIndexIdentifier identifier()
     WebCore::IDBObjectStoreIdentifier objectStoreIdentifier()
     String name()
     WebCore::IDBKeyPath keyPath()
@@ -605,7 +605,7 @@ class WebCore::IDBObjectStoreInfo {
     String name()
     std::optional<WebCore::IDBKeyPath> keyPath()
     bool autoIncrement()
-    HashMap<uint64_t, WebCore::IDBIndexInfo> indexMap()
+    HashMap<WebCore::IDBIndexIdentifier, WebCore::IDBIndexInfo> indexMap()
 }
 
 struct WebCore::IDBIterateCursorData {
@@ -640,7 +640,7 @@ class WebCore::IDBRequestData {
     [Validator='!m_transactionIdentifier->isEmpty()'] WebCore::IDBResourceIdentifier m_transactionIdentifier;
     std::optional<WebCore::IDBResourceIdentifier> m_cursorIdentifier;
     Markable<WebCore::IDBObjectStoreIdentifier> m_objectStoreIdentifier;
-    uint64_t m_indexIdentifier;
+    Markable<WebCore::IDBIndexIdentifier> m_indexIdentifier;
     WebCore::IndexedDB::IndexRecordType m_indexRecordType;
     uint64_t m_requestedVersion;
     WebCore::IndexedDB::RequestType m_requestType;

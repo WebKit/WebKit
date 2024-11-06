@@ -216,18 +216,16 @@ std::optional<IDBObjectStoreIdentifier> IDBRequest::sourceObjectStoreIdentifier(
     );
 }
 
-uint64_t IDBRequest::sourceIndexIdentifier() const
+std::optional<IDBIndexIdentifier> IDBRequest::sourceIndexIdentifier() const
 {
     ASSERT(canCurrentThreadAccessThreadLocalData(originThread()));
 
     if (!m_source)
-        return 0;
+        return std::nullopt;
 
-    return WTF::switchOn(m_source.value(),
-        [] (const RefPtr<IDBObjectStore>&) -> uint64_t { return 0; },
-        [] (const RefPtr<IDBIndex>& index) -> uint64_t { return index->info().identifier(); },
-        [] (const RefPtr<IDBCursor>&) -> uint64_t { return 0; }
-    );
+    if (auto* index = std::get_if<RefPtr<IDBIndex>>(&m_source.value()))
+        return (*index)->info().identifier();
+    return std::nullopt;
 }
 
 IndexedDB::ObjectStoreRecordType IDBRequest::requestedObjectStoreRecordType() const

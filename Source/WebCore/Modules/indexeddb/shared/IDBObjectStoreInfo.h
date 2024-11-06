@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IDBIndexIdentifier.h"
 #include "IDBIndexInfo.h"
 #include "IDBKeyPath.h"
 #include "IDBObjectStoreIdentifier.h"
@@ -35,7 +36,7 @@ namespace WebCore {
 
 class IDBObjectStoreInfo {
 public:
-    WEBCORE_EXPORT IDBObjectStoreInfo(IDBObjectStoreIdentifier, const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement, HashMap<uint64_t, IDBIndexInfo>&& = { });
+    WEBCORE_EXPORT IDBObjectStoreInfo(IDBObjectStoreIdentifier, const String& name, std::optional<IDBKeyPath>&&, bool autoIncrement, HashMap<IDBIndexIdentifier, IDBIndexInfo>&& = { });
 
     IDBObjectStoreIdentifier identifier() const { return m_identifier; }
     const String& name() const { return m_name; }
@@ -47,18 +48,18 @@ public:
     WEBCORE_EXPORT IDBObjectStoreInfo isolatedCopy() const &;
     WEBCORE_EXPORT IDBObjectStoreInfo isolatedCopy() &&;
 
-    IDBIndexInfo createNewIndex(uint64_t indexID, const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
+    IDBIndexInfo createNewIndex(IDBIndexIdentifier, const String& name, IDBKeyPath&&, bool unique, bool multiEntry);
     void addExistingIndex(const IDBIndexInfo&);
     bool hasIndex(const String& name) const;
-    bool hasIndex(uint64_t indexIdentifier) const;
+    bool hasIndex(IDBIndexIdentifier) const;
     IDBIndexInfo* infoForExistingIndex(const String& name);
-    IDBIndexInfo* infoForExistingIndex(uint64_t identifier);
+    IDBIndexInfo* infoForExistingIndex(IDBIndexIdentifier);
 
     Vector<String> indexNames() const;
-    const HashMap<uint64_t, IDBIndexInfo>& indexMap() const { return m_indexMap; }
+    const HashMap<IDBIndexIdentifier, IDBIndexInfo>& indexMap() const { return m_indexMap; }
 
     void deleteIndex(const String& indexName);
-    void deleteIndex(uint64_t indexIdentifier);
+    void deleteIndex(IDBIndexIdentifier);
 
 #if !LOG_DISABLED
     String loggingString(int indent = 0) const;
@@ -71,7 +72,7 @@ private:
     std::optional<IDBKeyPath> m_keyPath;
     bool m_autoIncrement { false };
 
-    HashMap<uint64_t, IDBIndexInfo> m_indexMap;
+    HashMap<IDBIndexIdentifier, IDBIndexInfo> m_indexMap;
 };
 
 } // namespace WebCore

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IDBIndexIdentifier.h"
 #include "IDBKeyData.h"
 #include <wtf/HashMap.h>
 #include <wtf/Vector.h>
@@ -49,6 +50,6 @@ private:
     Data m_keys;
 };
 
-typedef HashMap<uint64_t, IndexKey> IndexIDToIndexKeyMap;
+typedef HashMap<IDBIndexIdentifier, IndexKey> IndexIDToIndexKeyMap;
 
 } // namespace WebCore

@@ -158,7 +158,7 @@ void SQLiteIDBTransaction::reset()
     ASSERT(m_blobTemporaryAndStoredFilenames.isEmpty());
 }
 
-std::unique_ptr<SQLiteIDBCursor> SQLiteIDBTransaction::maybeOpenBackingStoreCursor(IDBObjectStoreIdentifier objectStoreID, uint64_t indexID, const IDBKeyRangeData& range)
+std::unique_ptr<SQLiteIDBCursor> SQLiteIDBTransaction::maybeOpenBackingStoreCursor(IDBObjectStoreIdentifier objectStoreID, std::optional<IDBIndexIdentifier> indexID, const IDBKeyRangeData& range)
 {
     ASSERT(inProgressOrReadOnly());
 

@@ -31,6 +31,7 @@
 #include "IDBError.h"
 #include "IDBGetAllResult.h"
 #include "IDBGetResult.h"
+#include "IDBIndexIdentifier.h"
 #include "IDBKeyData.h"
 #include "IDBObjectStoreIdentifier.h"
 #include "IDBResourceIdentifier.h"
@@ -98,7 +99,7 @@ public:
     bool isDone() const { return m_readyState == ReadyState::Done; }
 
     std::optional<IDBObjectStoreIdentifier> sourceObjectStoreIdentifier() const;
-    uint64_t sourceIndexIdentifier() const;
+    std::optional<IDBIndexIdentifier> sourceIndexIdentifier() const;
     IndexedDB::ObjectStoreRecordType requestedObjectStoreRecordType() const;
     IndexedDB::IndexRecordType requestedIndexRecordType() const;
 

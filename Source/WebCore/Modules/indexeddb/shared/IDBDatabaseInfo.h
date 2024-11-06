@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IDBIndexIdentifier.h"
 #include "IDBObjectStoreIdentifier.h"
 #include "IDBObjectStoreInfo.h"
 #include <wtf/ArgumentCoder.h>
@@ -66,7 +67,7 @@ public:
     void deleteObjectStore(IDBObjectStoreIdentifier);
 
     void setMaxIndexID(uint64_t maxIndexID);
-    uint64_t generateNextIndexID() { return ++m_maxIndexID; }
+    IDBIndexIdentifier generateNextIndexID() { return IDBIndexIdentifier { ++m_maxIndexID }; }
 
 #if !LOG_DISABLED
     String loggingString() const;

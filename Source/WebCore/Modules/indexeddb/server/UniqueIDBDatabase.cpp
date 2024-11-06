@@ -750,7 +750,7 @@ void UniqueIDBDatabase::createIndex(UniqueIDBDatabaseTransaction& transaction, c
         auto* objectStoreInfo = m_databaseInfo->infoForExistingObjectStore(info.objectStoreIdentifier());
         ASSERT(objectStoreInfo);
         objectStoreInfo->addExistingIndex(info);
-        m_databaseInfo->setMaxIndexID(info.identifier());
+        m_databaseInfo->setMaxIndexID(info.identifier().toRawValue());
     }
 
     callback(error);
@@ -798,7 +798,7 @@ void UniqueIDBDatabase::deleteIndex(UniqueIDBDatabaseTransaction& transaction, I
     callback(error);
 }
 
-void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, uint64_t indexIdentifier, const String& newName, ErrorCallback&& callback, SpaceCheckResult spaceCheckResult)
+void UniqueIDBDatabase::renameIndex(UniqueIDBDatabaseTransaction& transaction, IDBObjectStoreIdentifier objectStoreIdentifier, IDBIndexIdentifier indexIdentifier, const String& newName, ErrorCallback&& callback, SpaceCheckResult spaceCheckResult)
 {
     ASSERT(!isMainThread());
     LOG(IndexedDB, "UniqueIDBDatabase::renameIndex");
@@ -974,8 +974,8 @@ void UniqueIDBDatabase::getRecord(const IDBRequestData& requestData, const IDBGe
     IDBError error;
 
     auto transactionIdentifier = requestData.transactionIdentifier();
-    if (uint64_t indexIdentifier = requestData.indexIdentifier())
-        error = m_backingStore->getIndexRecord(transactionIdentifier, requestData.objectStoreIdentifier(), indexIdentifier, requestData.indexRecordType(), getRecordData.keyRangeData, result);
+    if (auto indexIdentifier = requestData.indexIdentifier())
+        error = m_backingStore->getIndexRecord(transactionIdentifier, requestData.objectStoreIdentifier(), *indexIdentifier, requestData.indexRecordType(), getRecordData.keyRangeData, result);
     else
         error = m_backingStore->getRecord(transactionIdentifier, requestData.objectStoreIdentifier(), getRecordData.keyRangeData, getRecordData.type, result);
 

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "IDBIndexIdentifier.h"
 #include "IDBObjectStoreIdentifier.h"
 #include "IDBRequest.h"
 #include "IDBRequestData.h"
@@ -129,7 +130,7 @@ protected:
     Ref<IDBTransaction> m_transaction;
     IDBResourceIdentifier m_identifier;
     Markable<IDBObjectStoreIdentifier> m_objectStoreIdentifier;
-    uint64_t m_indexIdentifier { 0 };
+    Markable<IDBIndexIdentifier> m_indexIdentifier;
     std::optional<IDBResourceIdentifier> m_cursorIdentifier;
     IndexedDB::IndexRecordType m_indexRecordType { IndexedDB::IndexRecordType::Key };
     Function<void()> m_performFunction;
@@ -138,7 +139,7 @@ protected:
 private:
     IDBResourceIdentifier transactionIdentifier() const { return m_transaction->info().identifier(); }
     std::optional<IDBObjectStoreIdentifier> objectStoreIdentifier() const { return m_objectStoreIdentifier; }
-    uint64_t indexIdentifier() const { return m_indexIdentifier; }
+    std::optional<IDBIndexIdentifier> indexIdentifier() const { return m_indexIdentifier; }
     std::optional<IDBResourceIdentifier> cursorIdentifier() const { return m_cursorIdentifier; }
     IDBTransaction& transaction() { return m_transaction.get(); }
     IndexedDB::IndexRecordType indexRecordType() const { return m_indexRecordType; }

@@ -41,6 +41,7 @@
 #include <WebCore/FileSystemHandleIdentifier.h>
 #include <WebCore/FileSystemSyncAccessHandleIdentifier.h>
 #include <WebCore/IDBDatabaseConnectionIdentifier.h>
+#include <WebCore/IDBIndexIdentifier.h>
 #include <WebCore/IDBObjectStoreIdentifier.h>
 #include <WebCore/IDBResourceIdentifier.h>
 #include <WebCore/IndexedDB.h>
@@ -209,7 +210,7 @@ private:
     void clearObjectStore(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier);
     void createIndex(const WebCore::IDBRequestData&, const WebCore::IDBIndexInfo&);
     void deleteIndex(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, const String& indexName);
-    void renameIndex(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, uint64_t indexIdentifier, const String& newName);
+    void renameIndex(const WebCore::IDBRequestData&, WebCore::IDBObjectStoreIdentifier, WebCore::IDBIndexIdentifier, const String& newName);
     void putOrAdd(IPC::Connection&, const WebCore::IDBRequestData&, const WebCore::IDBKeyData&, const WebCore::IDBValue&, WebCore::IndexedDB::ObjectStoreOverwriteMode);
     void getRecord(const WebCore::IDBRequestData&, const WebCore::IDBGetRecordData&);
     void getAllRecords(const WebCore::IDBRequestData&, const WebCore::IDBGetAllRecordsData&);

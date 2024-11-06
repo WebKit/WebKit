@@ -26,6 +26,7 @@
 #pragma once
 
 #include "IDBCursorRecord.h"
+#include "IDBIndexIdentifier.h"
 #include "IDBIndexInfo.h"
 #include "IDBKeyData.h"
 #include "IDBKeyRangeData.h"
@@ -35,6 +36,7 @@
 #include "SQLiteStatement.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Deque.h>
+#include <wtf/Markable.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -52,10 +54,10 @@ class SQLiteIDBCursor {
     WTF_MAKE_NONCOPYABLE(SQLiteIDBCursor);
 public:
     static std::unique_ptr<SQLiteIDBCursor> maybeCreate(SQLiteIDBTransaction&, const IDBCursorInfo&);
-    static std::unique_ptr<SQLiteIDBCursor> maybeCreateBackingStoreCursor(SQLiteIDBTransaction&, IDBObjectStoreIdentifier, const uint64_t indexIdentifier, const IDBKeyRangeData&);
+    static std::unique_ptr<SQLiteIDBCursor> maybeCreateBackingStoreCursor(SQLiteIDBTransaction&, IDBObjectStoreIdentifier, std::optional<IDBIndexIdentifier>, const IDBKeyRangeData&);
 
     SQLiteIDBCursor(SQLiteIDBTransaction&, const IDBCursorInfo&);
-    SQLiteIDBCursor(SQLiteIDBTransaction&, IDBObjectStoreIdentifier, uint64_t indexID, const IDBKeyRangeData&);
+    SQLiteIDBCursor(SQLiteIDBTransaction&, IDBObjectStoreIdentifier, std::optional<IDBIndexIdentifier>, const IDBKeyRangeData&);
 
     ~SQLiteIDBCursor();
 
@@ -114,10 +116,12 @@ private:
 
     void increaseCountToPrefetch();
 
+    uint64_t boundIDValue() const;
+
     CheckedPtr<SQLiteIDBTransaction> m_transaction;
     IDBResourceIdentifier m_cursorIdentifier;
     IDBObjectStoreIdentifier m_objectStoreID;
-    int64_t m_indexID { IDBIndexInfo::InvalidId };
+    Markable<IDBIndexIdentifier> m_indexID;
     IndexedDB::CursorDirection m_cursorDirection { IndexedDB::CursorDirection::Next };
     IndexedDB::CursorType m_cursorType;
     IDBKeyRangeData m_keyRange;
@@ -135,7 +139,7 @@ private:
     std::unique_ptr<SQLiteStatement> m_cachedObjectStoreStatement;
 
     bool m_statementNeedsReset { true };
-    int64_t m_boundID { 0 };
+    std::variant<IDBObjectStoreIdentifier, IDBIndexIdentifier> m_boundID;
 
     bool m_backingStoreCursor { false };
 
