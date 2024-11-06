@@ -50,11 +50,9 @@ extern "C" WK_EXPORT void GPU_SERVICE_INITIALIZER(xpc_connection_t connection, x
 
 void GPU_SERVICE_INITIALIZER(xpc_connection_t connection, xpc_object_t initializerMessage)
 {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     g_jscConfig.vmCreationDisallowed = true;
     g_jscConfig.vmEntryDisallowed = true;
     g_wtfConfig.useSpecialAbortForExtraSecurityImplications = true;
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     WTF::initializeMainThread();
     {

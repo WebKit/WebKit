@@ -116,7 +116,11 @@ static_assert(roundUpToMultipleOf<alignmentOfWTFConfig>(startOffsetOfWTFConfig) 
 
 WTF_EXPORT_PRIVATE void setPermissionsOfConfigPage();
 
-#define g_wtfConfig (*bitwise_cast<WTF::Config*>(&WebConfig::g_config[WTF::startSlotOfWTFConfig]))
+// Workaround to localize bounds safety warnings to this file.
+// FIXME: Use real types to make materializing WTF::Config* bounds-safe and type-safe.
+inline Config* addressOfWTFConfig() { return bitwise_cast<Config*>(&WebConfig::g_config[startSlotOfWTFConfig]); }
+
+#define g_wtfConfig (*WTF::addressOfWTFConfig())
 
 constexpr size_t offsetOfWTFConfigLowestAccessibleAddress = offsetof(WTF::Config, lowestAccessibleAddress);
 

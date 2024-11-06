@@ -123,7 +123,11 @@ constexpr size_t alignmentOfJSCConfig = std::alignment_of<JSC::Config>::value;
 static_assert(WTF::offsetOfWTFConfigExtension + sizeof(JSC::Config) <= WTF::ConfigSizeToProtect);
 static_assert(roundUpToMultipleOf<alignmentOfJSCConfig>(WTF::offsetOfWTFConfigExtension) == WTF::offsetOfWTFConfigExtension);
 
-#define g_jscConfig (*bitwise_cast<JSC::Config*>(&g_wtfConfig.spaceForExtensions))
+// Workaround to localize bounds safety warnings to this file.
+// FIXME: Use real types to make materializing JSC::Config* bounds-safe and type-safe.
+inline Config* addressOfJSCConfig() { return bitwise_cast<Config*>(&g_wtfConfig.spaceForExtensions); }
+
+#define g_jscConfig (*JSC::addressOfJSCConfig())
 
 constexpr size_t offsetOfJSCConfigInitializeHasBeenCalled = offsetof(JSC::Config, initializeHasBeenCalled);
 constexpr size_t offsetOfJSCConfigGateMap = offsetof(JSC::Config, llint.gateMap);
