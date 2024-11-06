@@ -468,6 +468,11 @@ void ScrollerMac::setScrollbarLayoutDirection(UserInterfaceLayoutDirection scrol
     [m_scrollerImp setUserInterfaceLayoutDirection: scrollbarLayoutDirection == UserInterfaceLayoutDirection::RTL ? NSUserInterfaceLayoutDirectionRightToLeft : NSUserInterfaceLayoutDirectionLeftToRight];
 }
 
+void ScrollerMac::setNeedsDisplay()
+{
+    [m_scrollerImp setNeedsDisplay:YES];
+}
+
 String ScrollerMac::scrollbarState() const
 {
     if (!m_hostLayer || !m_scrollerImp)

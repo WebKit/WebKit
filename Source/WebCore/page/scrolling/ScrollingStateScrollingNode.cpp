@@ -72,6 +72,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(
     ScrollbarEnabledState&& scrollbarEnabledState,
     UserInterfaceLayoutDirection scrollbarLayoutDirection,
     ScrollbarWidth scrollbarWidth,
+    bool useDarkAppearanceForScrollbars,
     RequestedKeyboardScrollData&& keyboardScrollData
 ) : ScrollingStateNode(nodeType, nodeID, WTFMove(children), changedProperties, layerID)
     , m_scrollableAreaSize(scrollableAreaSize)
@@ -97,6 +98,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(
 #endif
     , m_scrollbarLayoutDirection(scrollbarLayoutDirection)
     , m_scrollbarWidth(scrollbarWidth)
+    , m_useDarkAppearanceForScrollbars(useDarkAppearanceForScrollbars)
     , m_isMonitoringWheelEvents(isMonitoringWheelEvents)
     , m_mouseIsOverContentArea(mouseIsOverContentArea)
 {
@@ -126,6 +128,7 @@ ScrollingStateScrollingNode::ScrollingStateScrollingNode(const ScrollingStateScr
 #endif
     , m_scrollbarLayoutDirection(stateNode.scrollbarLayoutDirection())
     , m_scrollbarWidth(stateNode.scrollbarWidth())
+    , m_useDarkAppearanceForScrollbars(stateNode.useDarkAppearanceForScrollbars())
     , m_isMonitoringWheelEvents(stateNode.isMonitoringWheelEvents())
     , m_mouseIsOverContentArea(stateNode.mouseIsOverContentArea())
 {
@@ -397,6 +400,14 @@ void ScrollingStateScrollingNode::setScrollbarWidth(ScrollbarWidth scrollbarWidt
         return;
     m_scrollbarWidth = scrollbarWidth;
     setPropertyChanged(Property::ScrollbarWidth);
+}
+
+void ScrollingStateScrollingNode::setUseDarkAppearanceForScrollbars(bool useDarkAppearanceForScrollbars)
+{
+    if (useDarkAppearanceForScrollbars == m_useDarkAppearanceForScrollbars)
+        return;
+    m_useDarkAppearanceForScrollbars = useDarkAppearanceForScrollbars;
+    setPropertyChanged(Property::UseDarkAppearanceForScrollbars);
 }
 
 void ScrollingStateScrollingNode::dumpProperties(TextStream& ts, OptionSet<ScrollingStateTreeAsTextBehavior> behavior) const

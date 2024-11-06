@@ -153,6 +153,7 @@ private:
         ScrollbarEnabledState&&,
         UserInterfaceLayoutDirection,
         ScrollbarWidth,
+        bool useDarkAppearanceForScrollbars,
         RequestedKeyboardScrollData&&,
         float frameScaleFactor,
         EventTrackingRegions&&,

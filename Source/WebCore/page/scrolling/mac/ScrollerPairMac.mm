@@ -279,11 +279,7 @@ FloatSize ScrollerPairMac::visibleSize() const
 
 bool ScrollerPairMac::useDarkAppearance() const
 {
-    RefPtr node = m_scrollingNode.get();
-    if (!node)
-        return false;
-
-    return node->useDarkAppearanceForScrollbars();
+    return m_useDarkAppearance;
 }
 
 ScrollbarWidth ScrollerPairMac::scrollbarWidthStyle() const
@@ -426,6 +422,16 @@ void ScrollerPairMac::mouseIsInScrollbar(ScrollbarHoverState hoverState)
             horizontalScroller().mouseExitedScrollbar();
     }
     m_scrollbarHoverState = hoverState;
+}
+
+void ScrollerPairMac::setUseDarkAppearance(bool useDarkAppearance)
+{
+    if (m_useDarkAppearance == useDarkAppearance)
+        return;
+    m_useDarkAppearance = useDarkAppearance;
+
+    horizontalScroller().setNeedsDisplay();
+    verticalScroller().setNeedsDisplay();
 }
 
 void ScrollerPairMac::setScrollbarWidth(ScrollbarWidth scrollbarWidth)

@@ -77,6 +77,8 @@ public:
     void setEnabled(bool flag) { m_isEnabled = flag; }
     void setScrollbarLayoutDirection(UserInterfaceLayoutDirection);
 
+    void setNeedsDisplay();
+
 private:
     int m_minimumKnobLength { 0 };
 

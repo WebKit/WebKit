@@ -121,8 +121,6 @@ public:
     void setCurrentHorizontalSnapPointIndex(std::optional<unsigned>);
     void setCurrentVerticalSnapPointIndex(std::optional<unsigned>);
 
-    bool useDarkAppearanceForScrollbars() const { return m_scrollableAreaParameters.useDarkAppearanceForScrollbars; }
-
     bool eventCanScrollContents(const PlatformWheelEvent&) const;
     
     bool scrolledSinceLastCommit() const { return m_scrolledSinceLastCommit; }

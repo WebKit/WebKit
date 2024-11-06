@@ -62,6 +62,7 @@ ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(
     ScrollbarEnabledState&& scrollbarEnabledState,
     UserInterfaceLayoutDirection scrollbarLayoutDirection,
     ScrollbarWidth scrollbarWidth,
+    bool useDarkAppearanceForScrollbars,
     RequestedKeyboardScrollData&& scrollData
 ) : ScrollingStateScrollingNode(
     ScrollingNodeType::Overflow,
@@ -93,6 +94,7 @@ ScrollingStateOverflowScrollingNode::ScrollingStateOverflowScrollingNode(
     WTFMove(scrollbarEnabledState),
     scrollbarLayoutDirection,
     scrollbarWidth,
+    useDarkAppearanceForScrollbars,
     WTFMove(scrollData)
 ) { }
 
