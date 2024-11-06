@@ -141,6 +141,8 @@ TEST(WKWebExtensionAPIScripting, ErrorsRegisteredContentScript)
         @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts({ ids: 0 }), /'ids' is expected to be an array of strings, but a number was provided/i)",
         @"browser.test.assertThrows(() => browser.scripting.unregisterContentScripts({ ids: [ 0 ] }), /'ids' is expected to be an array of strings, but a number was provided/i)",
 
+        @"browser.test.assertRejects(() => browser.scripting.registerContentScripts([{ id: '1', matches: ['*://*/*'], js: ['invalidFile.js'] }]), /Invalid resource 'invalidFile.js'/i)",
+
         @"browser.test.notifyPass()"
     ]);
 
