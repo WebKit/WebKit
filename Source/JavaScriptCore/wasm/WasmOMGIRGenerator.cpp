@@ -5491,11 +5491,12 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
     if (useSignalingMemory() || m_info.memory.isShared())
         patchpoint->clobberLate(RegisterSetBuilder { GPRInfo::wasmBoundsCheckingSizeRegister });
 
-
     fillResults(patchpoint);
 
-    if (m_info.callCanClobberInstance(functionIndexSpace))
+    if (m_info.callCanClobberInstance(functionIndexSpace)) {
+        patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters());
         restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
+    }
 
     if (isTailCallInlineCaller) {
         Stack typedResults;
@@ -5641,6 +5642,8 @@ auto OMGIRGenerator::addCallRef(const TypeDefinition& originalSignature, Argumen
     const TypeDefinition& signature = originalSignature.expand();
     ASSERT(signature.as<FunctionSignature>()->argumentCount() == args.size());
     m_makesCalls = true;
+
+    TRACE_CF("CallRef: entered with ", signature);
 
     // Note: call ref can call either WebAssemblyFunction or WebAssemblyWrapperFunction. Because
     // WebAssemblyWrapperFunction is like calling into the js, we conservatively assume all call indirects

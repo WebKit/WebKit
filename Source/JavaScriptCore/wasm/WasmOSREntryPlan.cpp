@@ -78,7 +78,7 @@ void OSREntryPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& link
         auto forEachInst = scopedLambda<void(B3::Air::Inst&)>([&] (B3::Air::Inst& inst) {
             if (inst.origin && inst.origin != prevOrigin && context.procedure->code().shouldPreserveB3Origins()) {
                 if (String string = inst.origin->compilerConstructionSite(); !string.isNull())
-                    dataLogLn("\033[1;37m", string, "\033[0m");
+                    dataLogLn(string);
                 dataLog(b3Prefix);
                 inst.origin->deepDump(context.procedure.get(), WTF::dataFile());
                 dataLogLn();

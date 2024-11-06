@@ -5825,8 +5825,10 @@ auto OMGIRGenerator::addCall(FunctionSpaceIndex functionIndexSpace, const TypeDe
 
     fillCallResults(patchpoint, signature, results);
 
-    if (m_info.callCanClobberInstance(functionIndexSpace))
+    if (m_info.callCanClobberInstance(functionIndexSpace)) {
+        patchpoint->clobberLate(RegisterSetBuilder::wasmPinnedRegisters());
         restoreWebAssemblyGlobalState(m_info.memory, instanceValue(), m_currentBlock);
+    }
 
     if (isTailCallInlineCaller) {
         Stack typedResults;
