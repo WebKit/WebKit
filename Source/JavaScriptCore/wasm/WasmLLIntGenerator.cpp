@@ -1313,7 +1313,6 @@ auto LLIntGenerator::addCatchToUnreachable(unsigned exceptionIndex, const TypeDe
 auto LLIntGenerator::addCatchAll(Stack& expressionStack, ControlType& data) -> PartialResult
 {
     finalizePreviousBlockForCatch(data, expressionStack);
-    WasmJmp::emit(this, data.m_continuation->bind(this));
     return addCatchAllToUnreachable(data);
 }
 
