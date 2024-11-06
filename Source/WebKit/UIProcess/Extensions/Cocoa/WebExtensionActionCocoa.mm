@@ -614,9 +614,9 @@ void WebExtensionAction::clearCustomizations()
 #endif
         return;
 
-    m_customIcons = nil;
+    m_customIcons = nullptr;
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
-    m_customIconVariants = nil;
+    m_customIconVariants = nullptr;
 #endif
     m_customPopupPath = nullString();
     m_customLabel = nullString();
@@ -714,7 +714,7 @@ WebExtensionAction* WebExtensionAction::fallbackAction() const
     return nullptr;
 }
 
-CocoaImage *WebExtensionAction::icon(CGSize idealSize)
+RefPtr<WebCore::Icon> WebExtensionAction::icon(WebCore::FloatSize idealSize)
 {
     if (!extensionContext())
         return nil;
@@ -726,24 +726,24 @@ CocoaImage *WebExtensionAction::icon(CGSize idealSize)
 #endif
     {
         // Clear the cache if the display scales change (connecting display, etc.)
-        auto *currentScales = availableScreenScales();
-        if (![currentScales isEqualToSet:m_cachedIconScales.get()])
+        auto currentScales = availableScreenScales();
+        if (currentScales != m_cachedIconScales)
             clearIconCache();
 
-        if (m_cachedIcon && CGSizeEqualToSize(idealSize, m_cachedIconIdealSize))
-            return m_cachedIcon.get();
+        if (m_cachedIcon && idealSize == m_cachedIconIdealSize)
+            return m_cachedIcon;
 
-        CocoaImage *result;
+        RefPtr<WebCore::Icon> result;
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
         if (m_customIconVariants) {
-            result = extensionContext()->extension().bestImageForIconVariants(m_customIconVariants.get(), idealSize, [&](Ref<API::Error> error) {
+            result = extensionContext()->extension().bestIconVariant(m_customIconVariants, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
                 extensionContext()->recordError(::WebKit::wrapper(error));
             });
         } else
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
         if (m_customIcons) {
-            result = extensionContext()->extension().bestImageInIconsDictionary(m_customIcons.get(), idealSize, [&](Ref<API::Error> error) {
+            result = extensionContext()->extension().bestIcon(m_customIcons, WebCore::FloatSize(idealSize), [&](Ref<API::Error> error) {
                 extensionContext()->recordError(::WebKit::wrapper(error));
             });
         }
@@ -765,17 +765,17 @@ CocoaImage *WebExtensionAction::icon(CGSize idealSize)
         return fallback->icon(idealSize);
 
     // Default
-    return extensionContext()->extension().actionIcon(idealSize);
+    return extensionContext()->extension().actionIcon(WebCore::FloatSize(idealSize));
 }
 
-void WebExtensionAction::setIcons(NSDictionary *icons)
+void WebExtensionAction::setIcons(RefPtr<JSON::Object> icons)
 {
-    if ([(m_customIcons ?: @{ }) isEqualToDictionary:(icons ?: @{ })])
+    if (m_customIcons == icons)
         return;
 
-    m_customIcons = icons.count ? icons : nil;
+    m_customIcons = icons->size() ? icons : nullptr;
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
-    m_customIconVariants = nil;
+    m_customIconVariants = nullptr;
 #endif
 
     clearIconCache();
@@ -783,13 +783,13 @@ void WebExtensionAction::setIcons(NSDictionary *icons)
 }
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
-void WebExtensionAction::setIconVariants(NSArray *iconVariants)
+void WebExtensionAction::setIconVariants(RefPtr<JSON::Array> iconVariants)
 {
-    if ([(m_customIconVariants ?: @[ ]) isEqualToArray:(iconVariants ?: @[ ])])
+    if (m_customIconVariants == iconVariants)
         return;
 
-    m_customIconVariants = iconVariants.count ? iconVariants : nil;
-    m_customIcons = nil;
+    m_customIconVariants = iconVariants->length() ? iconVariants : nullptr;
+    m_customIcons = nullptr;
 
     clearIconCache();
     propertiesDidChange();
@@ -799,8 +799,8 @@ void WebExtensionAction::setIconVariants(NSArray *iconVariants)
 void WebExtensionAction::clearIconCache()
 {
     m_cachedIcon = nil;
-    m_cachedIconScales = nil;
-    m_cachedIconIdealSize = CGSizeZero;
+    m_cachedIconScales = { };
+    m_cachedIconIdealSize = { };
 }
 
 String WebExtensionAction::popupPath() const

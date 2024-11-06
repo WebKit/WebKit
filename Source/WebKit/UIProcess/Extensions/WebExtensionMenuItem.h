@@ -27,7 +27,6 @@
 
 #if ENABLE(WK_WEB_EXTENSIONS)
 
-#include "CocoaImage.h"
 #include "WebExtension.h"
 #include "WebExtensionCommand.h"
 #include "WebExtensionMenuItemContextType.h"
@@ -97,7 +96,7 @@ public:
 
     WebExtensionCommand* command() const { return m_command.get(); }
 
-    CocoaImage *icon(CGSize) const;
+    RefPtr<WebCore::Icon> icon(WebCore::FloatSize) const;
 
     bool isChecked() const { return m_checked; }
     void setChecked(bool checked) { ASSERT(isCheckedType(type())); m_checked = checked; }
@@ -135,13 +134,13 @@ private:
 
     RefPtr<WebExtensionCommand> m_command;
 
-    mutable RetainPtr<CocoaImage> m_cachedIcon;
-    mutable RetainPtr<NSSet> m_cachedIconScales;
-    mutable CGSize m_cachedIconIdealSize { CGSizeZero };
+    mutable RefPtr<WebCore::Icon> m_cachedIcon;
+    mutable Vector<double> m_cachedIconScales;
+    mutable WebCore::FloatSize m_cachedIconIdealSize;
 
-    RetainPtr<NSDictionary> m_icons;
+    RefPtr<JSON::Object> m_icons;
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
-    RetainPtr<NSArray> m_iconVariants;
+    RefPtr<JSON::Array> m_iconVariants;
 #endif
 
     bool m_checked : 1 { false };

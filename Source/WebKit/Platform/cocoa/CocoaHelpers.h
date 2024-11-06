@@ -136,9 +136,6 @@ NSString *escapeCharactersInString(NSString *, NSString *charactersToEscape);
 
 void callAfterRandomDelay(Function<void()>&&);
 
-NSSet *availableScreenScales();
-CGFloat largestDisplayScale();
-
 NSDate *toAPI(const WallTime&);
 WallTime toImpl(NSDate *);
 

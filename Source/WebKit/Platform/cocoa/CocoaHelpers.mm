@@ -444,40 +444,6 @@ void callAfterRandomDelay(Function<void()>&& completionHandler)
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, delay.nanosecondsAs<int64_t>()), dispatch_get_main_queue(), makeBlockPtr(WTFMove(completionHandler)).get());
 }
 
-NSSet *availableScreenScales()
-{
-    NSMutableSet *screenScales = [NSMutableSet set];
-
-#if USE(APPKIT)
-    for (NSScreen *screen in NSScreen.screens)
-        [screenScales addObject:@(screen.backingScaleFactor)];
-#else
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    for (UIScreen *screen in UIScreen.screens)
-        [screenScales addObject:@(screen.scale)];
-    ALLOW_DEPRECATED_DECLARATIONS_END
-#endif
-
-    if (screenScales.count)
-        return [screenScales copy];
-
-    // Assume 1x if we got no results. This can happen on headless devices (bots).
-    return [NSSet setWithObject:@1];
-}
-
-CGFloat largestDisplayScale()
-{
-    auto largestDisplayScale = 1.0;
-
-    for (NSNumber *scale in availableScreenScales()) {
-        auto doubleValue = scale.doubleValue;
-        if (doubleValue > largestDisplayScale)
-            largestDisplayScale = doubleValue;
-    }
-
-    return largestDisplayScale;
-}
-
 NSDate *toAPI(const WallTime& time)
 {
     if (time.isNaN())

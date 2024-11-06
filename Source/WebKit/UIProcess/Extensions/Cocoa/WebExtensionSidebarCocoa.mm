@@ -238,7 +238,7 @@ static std::optional<String> getDefaultSidebarPathFromExtension(WebExtension& ex
     return toOptional(extension.sidebarDocumentPath());
 }
 
-static std::optional<NSDictionary *> getDefaultIconsDictFromExtension(WebExtension& extensions)
+static std::optional<RefPtr<JSON::Value>> getDefaultIconsDictFromExtension(WebExtension& extensions)
 {
     // FIXME: <https://webkit.org/b/276833> implement this
     return std::nullopt;
@@ -309,34 +309,34 @@ void WebExtensionSidebar::propertiesDidChange()
         notifyDelegateOfPropertyUpdate();
 }
 
-RetainPtr<CocoaImage> WebExtensionSidebar::icon(CGSize size)
+RefPtr<WebCore::Icon> WebExtensionSidebar::icon(WebCore::FloatSize size)
 {
     if (!extensionContext())
         return nil;
 
     auto& context = extensionContext().value().get();
     return m_iconsOverride
-        .and_then([&](RetainPtr<NSDictionary> icons) -> std::optional<RetainPtr<CocoaImage>> {
-            return toOptional(context.extension().bestImageInIconsDictionary(icons.get(), size, [](NSError *error) { }));
+        .and_then([&](RefPtr<JSON::Value> icons) -> std::optional<RefPtr<WebCore::Icon>> {
+            return toOptional(context.extension().bestIcon(icons, size, [](NSError *error) { }));
         })
-        .or_else([&] -> std::optional<RetainPtr<CocoaImage>> {
+        .or_else([&] -> std::optional<RefPtr<WebCore::Icon>> {
             return parent().transform([&](auto const& parent) { return parent.get().icon(size); });
         })
         // using .or_else(..).value() is more efficient than value_or, since value_or will evaluate its argument
         // regardless of whether or not it's used. by switching to or_else(..).value() we instead lazily evaluate
         // the fallback value
-        .or_else([&] { return std::optional { RetainPtr(context.extension().actionIcon(size)) }; })
+        .or_else([&] { return std::optional { context.extension().actionIcon(size) }; })
         .value();
 }
 
-void WebExtensionSidebar::setIconsDictionary(NSDictionary *icons)
+void WebExtensionSidebar::setIconsDictionary(RefPtr<JSON::Object> icons)
 {
     if (!icons || !icons.count) {
         m_iconsOverride = std::nullopt;
         return;
     }
 
-    if (m_iconsOverride && [m_iconsOverride.value() isEqualToDictionary:icons])
+    if (m_iconsOverride && m_iconsOverride.value() == icons)
         return;
 
     m_iconsOverride = icons;

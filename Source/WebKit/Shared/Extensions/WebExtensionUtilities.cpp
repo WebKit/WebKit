@@ -60,6 +60,18 @@ Vector<String> makeStringVector(const JSON::Array& array)
     return vector;
 }
 
+double largestDisplayScale()
+{
+    auto largestDisplayScale = 1.0;
+
+    for (double scale : availableScreenScales()) {
+        if (scale > largestDisplayScale)
+            largestDisplayScale = scale;
+    }
+
+    return largestDisplayScale;
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

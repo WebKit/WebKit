@@ -428,6 +428,27 @@ Markable<WTF::UUID> toDocumentIdentifier(WebFrame& frame)
     return document->identifier().object();
 }
 
+Vector<double> availableScreenScales()
+{
+    Vector<double> screenScales;
+
+#if USE(APPKIT)
+    for (NSScreen *screen in NSScreen.screens)
+        screenScales.append(screen.backingScaleFactor);
+#else
+    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    for (UIScreen *screen in UIScreen.screens)
+        screenScales.append(screen.scale);
+    ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
+
+    if (screenScales.size())
+        return screenScales;
+
+    // Assume 1x if we got no results. This can happen on headless devices (bots).
+    return { 1.0 };
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

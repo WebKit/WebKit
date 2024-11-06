@@ -77,7 +77,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionAction, WebExtensionAction, 
 
 - (CocoaImage *)iconForSize:(CGSize)size
 {
-    return self._protectedWebExtensionAction->icon(size);
+    return self._protectedWebExtensionAction->icon(WebCore::FloatSize(size))->image().get();
 }
 
 - (NSString *)label

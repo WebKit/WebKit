@@ -56,14 +56,14 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(_WKWebExtensionSidebar, WebExtensionSideba
 #if PLATFORM(MAC)
 - (NSImage *)iconForSize:(CGSize)size
 {
-    return _webExtensionSidebar->icon(size).get();
+    return _webExtensionSidebar->icon(WebCore::FloatSize(size))->image().get();
 }
 #endif
 
 #if PLATFORM(IOS_FAMILY)
 - (UIImage *)iconForSize:(CGSize)size
 {
-    return _webExtensionSidebar->icon(size).get();
+    return _webExtensionSidebar->icon(WebCore::FloatSize(size))->image().get();
 }
 #endif
 

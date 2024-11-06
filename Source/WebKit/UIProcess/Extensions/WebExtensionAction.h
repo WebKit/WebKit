@@ -31,7 +31,10 @@
 #include "CocoaImage.h"
 #include "WebExtensionTab.h"
 #include "WebExtensionWindow.h"
+#include <WebCore/FloatSize.h>
+#include <WebCore/Icon.h>
 #include <wtf/Forward.h>
+#include <wtf/JSONValues.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -90,10 +93,10 @@ public:
 
     void propertiesDidChange();
 
-    CocoaImage *icon(CGSize);
-    void setIcons(NSDictionary *);
+    RefPtr<WebCore::Icon> icon(WebCore::FloatSize idealSize);
+    void setIcons(RefPtr<JSON::Object>);
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
-    void setIconVariants(NSArray *);
+    void setIconVariants(RefPtr<JSON::Array>);
 #endif
 
     String label(FallbackWhenEmpty = FallbackWhenEmpty::Yes) const;
@@ -175,13 +178,13 @@ private:
     String m_customPopupPath;
     String m_popupWebViewInspectionName;
 
-    RetainPtr<CocoaImage> m_cachedIcon;
-    RetainPtr<NSSet> m_cachedIconScales;
-    CGSize m_cachedIconIdealSize { CGSizeZero };
+    RefPtr<WebCore::Icon> m_cachedIcon;
+    Vector<double> m_cachedIconScales;
+    WebCore::FloatSize m_cachedIconIdealSize;
 
-    RetainPtr<NSDictionary> m_customIcons;
+    RefPtr<JSON::Object> m_customIcons;
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
-    RetainPtr<NSArray> m_customIconVariants;
+    RefPtr<JSON::Array> m_customIconVariants;
 #endif
     String m_customLabel;
     String m_customBadgeText;
