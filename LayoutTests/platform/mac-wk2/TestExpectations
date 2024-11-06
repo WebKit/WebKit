@@ -1869,9 +1869,6 @@ webkit.org/b/281531 [ Sequoia+ ] accessibility/mac/iframe-pdf.html [ Timeout ]
 # webkit.org/b/277908 NEW TEST (284866@main): [ macOS iOS ] imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopener/coop-noopener-allow-popups.https.html is a flaky failure.
 imported/w3c/web-platform-tests/html/cross-origin-opener-policy/tentative/noopener/coop-noopener-allow-popups.https.html [ Pass Failure ]
 
-# webkit.org/b/281840 [ Ventura wk2 ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-same-document-preventDefault-multiple-windows.html is a flaky failure.
-[ Ventura ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigation-traverseTo-same-document-preventDefault-multiple-windows.html [ Pass Failure ]
-
 # webkit.org/b/281939 [Sequoia] svg/stroke/non-scaling-stroke-gradient-text.html is a constant image failure
 [ Sequoia ] svg/stroke/non-scaling-stroke-gradient-text.html [ ImageOnlyFailure ]
 
