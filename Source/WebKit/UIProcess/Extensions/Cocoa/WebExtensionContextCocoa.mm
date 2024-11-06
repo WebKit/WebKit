@@ -2216,8 +2216,12 @@ RefPtr<WebExtensionWindow> WebExtensionContext::focusedWindow(IgnoreExtensionAcc
 
 RefPtr<WebExtensionWindow> WebExtensionContext::frontmostWindow(IgnoreExtensionAccess ignoreExtensionAccess) const
 {
-    if (!m_windowOrderVector.isEmpty())
-        return getWindow(m_windowOrderVector.first(), std::nullopt, ignoreExtensionAccess);
+    // Return the first non-null window, skipping private windows if access is denied.
+    for (auto& windowIdentifier : m_windowOrderVector) {
+        if (RefPtr window = getWindow(windowIdentifier, std::nullopt, ignoreExtensionAccess))
+            return window;
+    }
+
     return nullptr;
 }
 
