@@ -36,6 +36,7 @@
 #import <pal/spi/cocoa/AVAssetWriterSPI.h>
 #import <wtf/BlockObjCExceptions.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -73,6 +74,8 @@
 @end
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivateWriterAVFObjC);
 
 std::unique_ptr<MediaRecorderPrivateWriter> MediaRecorderPrivateWriterAVFObjC::create(MediaRecorderPrivateWriterListener& listener)
 {

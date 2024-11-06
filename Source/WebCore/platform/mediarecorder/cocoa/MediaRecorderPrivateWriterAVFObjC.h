@@ -28,6 +28,7 @@
 
 #include "MediaRecorderPrivateWriter.h"
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVAssetWriter;
 OBJC_CLASS AVAssetWriterInput;
@@ -36,6 +37,7 @@ OBJC_CLASS WebAVAssetWriterDelegate;
 namespace WebCore {
 
 class MediaRecorderPrivateWriterAVFObjC : public MediaRecorderPrivateWriter {
+    WTF_MAKE_TZONE_ALLOCATED(MediaRecorderPrivateWriterAVFObjC);
 public:
     static std::unique_ptr<MediaRecorderPrivateWriter> create(MediaRecorderPrivateWriterListener&);
     ~MediaRecorderPrivateWriterAVFObjC();

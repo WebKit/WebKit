@@ -34,6 +34,7 @@
 #import "WebMAudioUtilitiesCocoa.h"
 #import <webm/mkvmuxer/mkvmuxer.h>
 #import <wtf/NativePromise.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/UniqueRef.h>
 
 #import <pal/cf/CoreMediaSoftLink.h>
@@ -42,8 +43,10 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MediaRecorderPrivateWriterWebM);
+
 class MediaRecorderPrivateWriterWebMDelegate : public mkvmuxer::IMkvWriter {
-    WTF_MAKE_TZONE_ALLOCATED(MediaRecorderPrivateWriterWebMDelegate);
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(MediaRecorderPrivateWriterWebMDelegate);
 
 public:
     explicit MediaRecorderPrivateWriterWebMDelegate(MediaRecorderPrivateWriterListener& listener)

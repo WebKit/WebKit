@@ -28,12 +28,14 @@
 
 #include "MediaRecorderPrivateWriter.h"
 #include <wtf/Forward.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class MediaRecorderPrivateWriterWebMDelegate;
 
 class MediaRecorderPrivateWriterWebM final : public MediaRecorderPrivateWriter {
+    WTF_MAKE_TZONE_ALLOCATED(MediaRecorderPrivateWriterWebM);
 public:
     static std::unique_ptr<MediaRecorderPrivateWriter> create(MediaRecorderPrivateWriterListener&);
 
