@@ -345,7 +345,6 @@
     "web-platform-tests/webgl": "skip",
     "web-platform-tests/webgpu": "skip",
     "web-platform-tests/webhid": "skip",
-    "web-platform-tests/webidl": "import",
     "web-platform-tests/webmessaging": "import",
     "web-platform-tests/webmidi": "skip",
     "web-platform-tests/webnn": "skip",

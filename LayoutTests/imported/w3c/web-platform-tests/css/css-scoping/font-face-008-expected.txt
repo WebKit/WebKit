@@ -1,0 +1,4 @@
+1234567890
+
+PASS @font-face from shadow applies to a slotted element
+
