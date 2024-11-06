@@ -6892,10 +6892,6 @@ http/tests/security/clipboard/copy-paste-html-across-origin-sanitizes-html.html 
 http/tests/security/clipboard/copy-paste-html-across-origin-strips-mso-list.html [ Pass Failure ]
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-report-only-policy-works-with-external-hash-policy.html [ Pass Failure ]
 
-# webkit.org/b/276092 (REGRESSION (iOS 17.5?): [ iOS Debug ] 2 fast/events/ios/key-events-comprehensive/* tests are constantly failing.)
-fast/events/ios/key-events-comprehensive/key-events-control-shift.html [ Pass Failure ]
-fast/events/ios/key-events-comprehensive/key-events-control.html [ Pass Failure ]
-
 webkit.org/b/271445 fast/events/ios/rotation/resize-iframe-after-orientation-change.html [ Pass Failure ]
 
 webkit.org/b/271682 imported/w3c/web-platform-tests/css/css-content/quotes-007.html [ ImageOnlyFailure ] # TODO: uncomment line above with explicit pass expectation for this test when issue is resolved.
@@ -7517,3 +7513,13 @@ imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/wor
 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/top.meta/unset/xhr.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-classic-data.meta/unset/fetch.https.html [ Pass Failure ]
 imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/worker-module-data.meta/unset/fetch.https.html [ Pass Failure ]
+
+# webkit.org/b/276092 (REGRESSION (iOS 17.5?): [ iOS Debug ] 2 fast/events/ios/key-events-comprehensive/* tests are constantly failing.)
+fast/events/ios/key-events-comprehensive/key-events-control-shift.html [ Pass Timeout Failure ]
+fast/events/ios/key-events-comprehensive/key-events-control.html [ Pass Timeout Failure ]
+
+# webkit.org/b/282706 ([ iOS arm64 ] 6 key-events-comprehensive/* layout tests are flakily timing out.)
+fast/events/ios/key-events-comprehensive/key-events-control-option.html [ Pass Timeout ]
+fast/events/ios/key-events-comprehensive/key-events-meta.html [ Pass Timeout ]
+fast/events/ios/key-events-comprehensive/key-events-option.html [ Pass Timeout ]
+fast/events/ios/key-events-comprehensive/key-events-shift.html [ Pass Timeout ]
