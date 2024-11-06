@@ -25,6 +25,7 @@
 
 #pragma once
 
+#import "CommandBuffer.h"
 #import "CommandsMixin.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
