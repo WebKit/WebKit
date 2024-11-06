@@ -30,6 +30,8 @@
 #ifndef WEBGPU_H_
 #define WEBGPU_H_
 
+#ifdef __cplusplus
+
 #if defined(WGPU_SHARED_LIBRARY)
 #    if defined(_WIN32)
 #        if defined(WGPU_IMPLEMENTATION)
@@ -1898,6 +1900,8 @@ WGPU_EXPORT WGPUBool wgpuXRViewIsValid(WGPUXRView view) WGPU_FUNCTION_ATTRIBUTE;
 #ifdef __cplusplus
 WGPU_EXPORT std::span<uint8_t> wgpuBufferGetBufferContents(WGPUBuffer buffer) WGPU_FUNCTION_ATTRIBUTE;
 WGPU_EXPORT std::span<uint8_t> wgpuBufferGetMappedRange(WGPUBuffer buffer, size_t offset, size_t size) WGPU_FUNCTION_ATTRIBUTE;
+#endif
+
 #endif
 
 #endif // WEBGPU_H_
