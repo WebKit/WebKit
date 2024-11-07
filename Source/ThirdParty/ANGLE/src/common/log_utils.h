@@ -13,6 +13,7 @@
 #include <assert.h>
 #include <stdio.h>
 
+#include <cstdlib>
 #include <iomanip>
 #include <ios>
 #include <mutex>
@@ -248,6 +249,13 @@ std::ostream &FmtHex(std::ostream &os, T value)
 #    define EVENT(message, ...) (void(0))
 #endif
 
+#if defined(ANGLE_ENABLE_ASSERTS)
+bool AreAssertionsEnabled() {
+    static bool enabled = [] { return GetEnvironmentVar("ANGLE_DISABLE_ASSERTS") != "1"; }();
+    return enabled;
+}
+#endif  // defined(ANGLE_ENABLE_ASSERTS)
+
 // Note that gSwallowStream is used instead of an arbitrary LOG() stream to avoid the creation of an
 // object with a non-trivial destructor (LogMessage). On MSVC x86 (checked on 2015 Update 3), this
 // causes a few additional pointless instructions to be emitted even at full optimization level,
@@ -263,9 +271,10 @@ std::ostream &FmtHex(std::ostream &os, T value)
 // A macro asserting a condition and outputting failures to the debug log
 #if defined(ANGLE_ENABLE_ASSERTS)
 #    define ASSERT(expression)                                                                \
-        (expression ? static_cast<void>(0)                                                    \
-                    : (FATAL() << "\t! Assert failed in " << __FUNCTION__ << " (" << __FILE__ \
-                               << ":" << __LINE__ << "): " << #expression))
+        ((!(expression) && AreAssertionsEnabled())                                             \
+                    ? (FATAL() << "\t! Assert failed in " << __FUNCTION__ << " (" << __FILE__ \
+                               << ":" << __LINE__ << "): " << #expression)                    \
+                    : static_cast<void>(0))
 #else
 #    define ASSERT(condition) ANGLE_EAT_STREAM_PARAMETERS << !(condition)
 #endif  // defined(ANGLE_ENABLE_ASSERTS)
