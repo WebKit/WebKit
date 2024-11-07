@@ -29,6 +29,11 @@
 
 #if !BUSE(LIBPAS)
 
+/* avoid conflict with symbol from X11 headers */
+#ifdef Success
+#undef Success
+#endif
+
 namespace bmalloc {
 
 enum class EligibilityKind {
