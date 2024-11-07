@@ -1916,3 +1916,7 @@ fast/events/drag-and-drop-autoscroll-inner-frame.html [ Pass Failure ]
 webkit.org/b/282565 [ Sequoia+ Debug ] imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-001.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/282726 http/tests/media/fairplay/legacy-fairplay-hls.html [ Failure ]
+
+# webkit.org/b/282735 [macOS wk2 x86_64 ] 2 tests in imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes are a constant failure (failure in EWS)
+[ x86_64 ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/inset/shape-outside-inset-022.html [ ImageOnlyFailure ]
+[ x86_64 ] imported/w3c/web-platform-tests/css/css-shapes/shape-outside/supported-shapes/inset/shape-outside-inset-025.html [ ImageOnlyFailure ]
