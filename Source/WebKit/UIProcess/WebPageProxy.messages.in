@@ -181,6 +181,7 @@ messages -> WebPageProxy {
     DidHandleTapAsHover()
     DisableDoubleTapGesturesDuringTapIfNecessary(WebKit::TapIdentifier requestID)
     HandleSmartMagnificationInformationForPotentialTap(WebKit::TapIdentifier requestID, WebCore::FloatRect renderRect, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale, bool nodeIsRootLevel)
+    IsPotentialTapInProgress() -> (bool result)
 #endif
 #if ENABLE(DATA_DETECTION)
     SetDataDetectionResult(struct WebKit::DataDetectionResult dataDetectionResult)

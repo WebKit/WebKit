@@ -55,6 +55,7 @@
 #include "ScrollTypes.h"
 #include "ScrollingCoordinator.h"
 #include "SearchPopupMenu.h"
+#include "SyntheticClickResult.h"
 #include "TextDetectorInterface.h"
 #include "WebCoreKeyboardUIMode.h"
 #include "WebGPU.h"
@@ -702,6 +703,8 @@ public:
     virtual void hasActiveNowPlayingSessionChanged(bool) { }
 
     virtual void getImageBufferResourceLimitsForTesting(CompletionHandler<void(std::optional<ImageBufferResourceLimits>)>&& callback) const { callback(std::nullopt); }
+
+    virtual void callAfterPendingSyntheticClick(CompletionHandler<void(SyntheticClickResult)>&& completion) { completion(SyntheticClickResult::Failed); }
 
     WEBCORE_EXPORT virtual ~ChromeClient();
 

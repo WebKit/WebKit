@@ -25,7 +25,9 @@
 #include "config.h"
 #include "PointerCaptureController.h"
 
-#include "Document.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "EventHandler.h"
 #include "EventNames.h"
@@ -33,6 +35,7 @@
 #include "HitTestResult.h"
 #include "Page.h"
 #include "PointerEvent.h"
+#include "Quirks.h"
 #include <wtf/CheckedArithmetic.h>
 #include <wtf/TZoneMallocInlines.h>
 
@@ -211,37 +214,43 @@ static bool hierarchyHasCapturingEventListeners(Element* target, const AtomStrin
     return false;
 }
 
+void PointerCaptureController::dispatchOverOrOutEvent(const AtomString& type, EventTarget* target, const PlatformTouchEvent& event, unsigned index, bool isPrimary, WindowProxy& view, IntPoint touchDelta)
+{
+    dispatchEvent(PointerEvent::create(type, event, { }, { }, index, isPrimary, view, touchDelta), target);
+}
+
+void PointerCaptureController::dispatchEnterOrLeaveEvent(const AtomString& type, Element& targetElement, const PlatformTouchEvent& event, unsigned index, bool isPrimary, WindowProxy& view, IntPoint touchDelta)
+{
+    bool hasCapturingListenerInHierarchy = false;
+    for (RefPtr<ContainerNode> currentNode = &targetElement; currentNode; currentNode = currentNode->parentInComposedTree()) {
+        if (currentNode->hasCapturingEventListeners(type)) {
+            hasCapturingListenerInHierarchy = true;
+            break;
+        }
+    }
+
+    Vector<Ref<Element>, 32> targetChain;
+    for (RefPtr element = &targetElement; element; element = element->parentElementInComposedTree()) {
+        if (hasCapturingListenerInHierarchy || element->hasEventListeners(type))
+            targetChain.append(*element);
+    }
+
+    if (type == eventNames().pointerenterEvent) {
+        for (auto& element : makeReversedRange(targetChain))
+            dispatchEvent(PointerEvent::create(type, event, { }, { }, index, isPrimary, view, touchDelta), element.ptr());
+    } else {
+        for (auto& element : targetChain)
+            dispatchEvent(PointerEvent::create(type, event, { }, { }, index, isPrimary, view, touchDelta), element.ptr());
+    }
+}
+
 void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target, const PlatformTouchEvent& platformTouchEvent, unsigned index, bool isPrimary, WindowProxy& view, const IntPoint& touchDelta)
 {
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
     RELEASE_ASSERT(is<Element>(target));
-
-    auto dispatchOverOrOutEvent = [&](const AtomString& type, EventTarget* target) {
-        dispatchEvent(PointerEvent::create(type, platformTouchEvent, { }, { }, index, isPrimary, view, touchDelta), target);
-    };
-
-    auto dispatchEnterOrLeaveEvent = [&](const AtomString& type, Element& targetElement) {
-        bool hasCapturingListenerInHierarchy = false;
-        for (RefPtr<ContainerNode> currentNode = &targetElement; currentNode; currentNode = currentNode->parentInComposedTree()) {
-            if (currentNode->hasCapturingEventListeners(type)) {
-                hasCapturingListenerInHierarchy = true;
-                break;
-            }
-        }
-
-        Vector<Ref<Element>, 32> targetChain;
-        for (RefPtr element = &targetElement; element; element = element->parentElementInComposedTree()) {
-            if (hasCapturingListenerInHierarchy || element->hasEventListeners(type))
-                targetChain.append(*element);
-        }
-
-        if (type == eventNames().pointerenterEvent) {
-            for (auto& element : makeReversedRange(targetChain))
-                dispatchEvent(PointerEvent::create(type, platformTouchEvent, { }, { }, index, isPrimary, view, touchDelta), element.ptr());
-        } else {
-            for (auto& element : targetChain)
-                dispatchEvent(PointerEvent::create(type, platformTouchEvent, { }, { }, index, isPrimary, view, touchDelta), element.ptr());
-        }
-    };
 
     auto mapToPointerEvents = [&](const Vector<PlatformTouchEvent>& events) -> Vector<Ref<PointerEvent>> {
         if (index)
@@ -292,7 +301,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         }
 
         if (previousTarget)
-            dispatchOverOrOutEvent(eventNames().pointeroutEvent, previousTarget.get());
+            dispatchOverOrOutEvent(eventNames().pointeroutEvent, previousTarget.get(), platformTouchEvent, index, isPrimary, view, touchDelta);
 
         for (auto& chain : leftElementsChain) {
             if (hasCapturingPointerLeaveListener || chain->hasEventListeners(eventNames().pointerleaveEvent))
@@ -300,7 +309,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         }
 
         if (currentTarget)
-            dispatchOverOrOutEvent(eventNames().pointeroverEvent, currentTarget.get());
+            dispatchOverOrOutEvent(eventNames().pointeroverEvent, currentTarget.get(), platformTouchEvent, index, isPrimary, view, touchDelta);
 
         for (auto& chain : makeReversedRange(enteredElementsChain)) {
             if (hasCapturingPointerEnterListener || chain->hasEventListeners(eventNames().pointerenterEvent))
@@ -312,8 +321,8 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
         // https://w3c.github.io/pointerevents/#the-pointerdown-event
         // For input devices that do not support hover, a user agent MUST also fire a pointer event named pointerover followed by a pointer event named
         // pointerenter prior to dispatching the pointerdown event.
-        dispatchOverOrOutEvent(eventNames().pointeroverEvent, currentTarget.get());
-        dispatchEnterOrLeaveEvent(eventNames().pointerenterEvent, *currentTarget);
+        dispatchOverOrOutEvent(eventNames().pointeroverEvent, currentTarget.get(), platformTouchEvent, index, isPrimary, view, touchDelta);
+        dispatchEnterOrLeaveEvent(eventNames().pointerenterEvent, *currentTarget, platformTouchEvent, index, isPrimary, view, touchDelta);
     }
 
 #if PLATFORM(IOS_FAMILY)
@@ -325,17 +334,47 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 
     dispatchEvent(pointerEvent, &target);
 
-    if (pointerEvent->type() == eventNames().pointerupEvent) {
+    if (pointerEvent->type() != eventNames().pointerupEvent)
+        return;
+
+    auto dispatchPointerOutAndLeave = [weakPage = m_page, currentTarget, platformTouchEvent, index, isPrimary, view = Ref { view }, touchDelta](SyntheticClickResult result) {
+        RefPtr page = weakPage.get();
+        if (!page)
+            return;
+
+        switch (result) {
+        case SyntheticClickResult::Failed:
+        case SyntheticClickResult::Click:
+            break;
+        case SyntheticClickResult::Hover:
+        case SyntheticClickResult::PageInvalid:
+            return;
+        }
+
         // https://w3c.github.io/pointerevents/#the-pointerup-event
         // For input devices that do not support hover, a user agent MUST also fire a pointer event named pointerout followed by a
         // pointer event named pointerleave after dispatching the pointerup event.
-        dispatchOverOrOutEvent(eventNames().pointeroutEvent, currentTarget.get());
-        dispatchEnterOrLeaveEvent(eventNames().pointerleaveEvent, *currentTarget);
-        capturingData->previousTarget = nullptr;
-        capturingData->state = CapturingData::State::Finished;
-    }
-}
+        page->pointerCaptureController().dispatchOverOrOutEvent(eventNames().pointeroutEvent, currentTarget.get(), platformTouchEvent, index, isPrimary, view.get(), touchDelta);
+        page->pointerCaptureController().dispatchEnterOrLeaveEvent(eventNames().pointerleaveEvent, *currentTarget, platformTouchEvent, index, isPrimary, view.get(), touchDelta);
+    };
+
+    bool shouldWaitForSyntheticClick = [&] {
+#if PLATFORM(IOS_FAMILY)
+        if (platformTouchEvent.isPotentialTap())
+            return currentTarget->protectedDocument()->quirks().shouldDispatchPointerOutAfterHandlingSyntheticClick();
 #endif
+        return false;
+    }();
+
+    if (shouldWaitForSyntheticClick)
+        page->chrome().client().callAfterPendingSyntheticClick(WTFMove(dispatchPointerOutAndLeave));
+    else
+        dispatchPointerOutAndLeave(SyntheticClickResult::Failed);
+
+    capturingData->state = CapturingData::State::Finished;
+    capturingData->previousTarget = nullptr;
+}
+#endif // ENABLE(TOUCH_EVENTS) && (PLATFORM(IOS_FAMILY) || PLATFORM(WPE))
 
 RefPtr<PointerEvent> PointerCaptureController::pointerEventForMouseEvent(const MouseEvent& mouseEvent, PointerID pointerId, const String& pointerType)
 {
@@ -508,6 +547,10 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
     if (capturingData->state == CapturingData::State::Cancelled)
         return;
 
+    RefPtr page = m_page.get();
+    if (!page)
+        return;
+
     capturingData->pendingTargetOverride = nullptr;
     capturingData->state = CapturingData::State::Cancelled;
 
@@ -519,7 +562,7 @@ void PointerCaptureController::cancelPointer(PointerID pointerId, const IntPoint
         if (capturingData->targetOverride)
             return capturingData->targetOverride;
         constexpr OptionSet<HitTestRequest::Type> hitType { HitTestRequest::Type::ReadOnly, HitTestRequest::Type::Active, HitTestRequest::Type::DisallowUserAgentShadowContent, HitTestRequest::Type::AllowChildFrameContent };
-        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page.mainFrame());
+        RefPtr localMainFrame = dynamicDowncast<LocalFrame>(page->mainFrame());
         if (!localMainFrame)
             return nullptr;
         return localMainFrame->checkedEventHandler()->hitTestResultAtPoint(documentPoint, hitType).innerNonSharedElement();

@@ -1738,6 +1738,15 @@ void WebPageProxy::pluginDidInstallPDFDocument(double initialScale)
 
 #endif
 
+#if PLATFORM(IOS_FAMILY)
+
+void WebPageProxy::isPotentialTapInProgress(CompletionHandler<void(bool)>&& completion)
+{
+    completion(protectedPageClient()->isPotentialTapInProgress());
+}
+
+#endif // PLATFORM(IOS_FAMILY)
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG

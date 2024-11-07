@@ -671,6 +671,7 @@ struct ImageAnalysisContextMenuActionData {
 @property (nonatomic, readonly) UIView *unscaledView;
 @property (nonatomic, readonly) BOOL isPresentingEditMenu;
 @property (nonatomic, readonly) CGSize sizeForLegacyFormControlPickerViews;
+@property (nonatomic, readonly, getter=isPotentialTapInProgress) BOOL potentialTapInProgress;
 
 #if ENABLE(DATALIST_ELEMENT)
 @property (nonatomic, strong) UIView <WKFormControl> *dataListTextSuggestionsInputView;

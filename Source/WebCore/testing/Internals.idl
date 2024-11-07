@@ -1414,4 +1414,6 @@ enum RenderingMode {
 
     RenderingMode? getEffectiveRenderingModeOfNewlyCreatedAcceleratedImageBuffer();
     Promise<ImageBufferResourceLimits> getImageBufferResourceLimits();
+
+    undefined setTopDocumentURLForQuirks(DOMString urlString);
 };

@@ -542,6 +542,7 @@ public:
 #if PLATFORM(IOS_FAMILY)
     virtual void commitPotentialTapFailed() = 0;
     virtual void didGetTapHighlightGeometries(WebKit::TapIdentifier requestID, const WebCore::Color&, const Vector<WebCore::FloatQuad>& highlightedQuads, const WebCore::IntSize& topLeftRadius, const WebCore::IntSize& topRightRadius, const WebCore::IntSize& bottomLeftRadius, const WebCore::IntSize& bottomRightRadius, bool nodeHasBuiltInClickHandling) = 0;
+    virtual bool isPotentialTapInProgress() const = 0;
 
     virtual void couldNotRestorePageState() = 0;
     virtual void restorePageState(std::optional<WebCore::FloatPoint> scrollPosition, const WebCore::FloatPoint& scrollOrigin, const WebCore::FloatBoxExtent& obscuredInsetsOnSave, double scale) = 0;

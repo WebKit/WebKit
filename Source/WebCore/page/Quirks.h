@@ -159,7 +159,10 @@ public:
 
 #if ENABLE(TOUCH_EVENTS)
     WEBCORE_EXPORT static bool shouldOmitTouchEventDOMAttributesForDesktopWebsite(const URL&);
+    bool shouldDispatchPointerOutAfterHandlingSyntheticClick() const;
 #endif
+
+    WEBCORE_EXPORT void setTopDocumentURLForTesting(URL&&);
 
     static bool shouldOmitHTMLDocumentSupportedPropertyNames();
 
@@ -226,8 +229,10 @@ public:
 private:
     bool needsQuirks() const;
     bool isDomain(const String&) const;
+    bool domainStartsWith(const String&) const;
     bool isEmbedDomain(const String&) const;
     bool isYoutubeEmbedDomain() const;
+    bool isYahooMail() const;
 
     bool isAmazon() const;
 #if ENABLE(TOUCH_EVENTS)
@@ -235,6 +240,8 @@ private:
 #endif
 
     RefPtr<Document> protectedDocument() const;
+
+    URL topDocumentURL() const;
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 
@@ -258,6 +265,7 @@ private:
         Yes,
     };
     mutable ShouldDispatchSimulatedMouseEvents m_shouldDispatchSimulatedMouseEventsQuirk { ShouldDispatchSimulatedMouseEvents::Unknown };
+    mutable std::optional<bool> m_shouldDispatchPointerOutAfterHandlingSyntheticClick;
 #endif
     mutable std::optional<bool> m_needsCanPlayAfterSeekedQuirk;
     mutable std::optional<bool> m_shouldBypassAsyncScriptDeferring;
@@ -303,6 +311,7 @@ private:
     mutable std::optional<bool> m_needsChromeMediaControlsPseudoElementQuirk;
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
+    URL m_topDocumentURLForTesting;
 };
 
 } // namespace WebCore

@@ -2585,6 +2585,10 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
 
+#if PLATFORM(IOS_FAMILY)
+    void isPotentialTapInProgress(CompletionHandler<void(bool)>&&);
+#endif
+
 private:
     void getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);

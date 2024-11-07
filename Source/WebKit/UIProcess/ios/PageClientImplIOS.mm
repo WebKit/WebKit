@@ -1253,6 +1253,11 @@ void PageClientImpl::pluginDidInstallPDFDocument(double initialScale)
 }
 #endif
 
+bool PageClientImpl::isPotentialTapInProgress() const
+{
+    return [m_contentView isPotentialTapInProgress];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

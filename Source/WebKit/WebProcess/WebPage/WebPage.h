@@ -259,6 +259,7 @@ enum class MediaProducerMutedState : uint8_t;
 enum class ScheduleLocationChangeResult : uint8_t;
 enum class SelectionDirection : uint8_t;
 enum class ShouldTreatAsContinuingLoad : uint8_t;
+enum class SyntheticClickResult : uint8_t;
 enum class SyntheticClickType : uint8_t;
 enum class TextAnimationType : uint8_t;
 enum class TextIndicatorPresentationTransition : uint8_t;
@@ -934,6 +935,7 @@ public:
     void potentialTapAtPosition(WebKit::TapIdentifier, const WebCore::FloatPoint&, bool shouldRequestMagnificationInformation);
     void commitPotentialTap(OptionSet<WebKit::WebEventModifier>, TransactionID lastLayerTreeTransactionId, WebCore::PointerID);
     void commitPotentialTapFailed();
+    void didHandleTapAsHover();
     void cancelPotentialTap();
     void cancelPotentialTapInFrame(WebFrame&);
     void tapHighlightAtPosition(WebKit::TapIdentifier, const WebCore::FloatPoint&);
@@ -1852,6 +1854,8 @@ public:
 
     bool isAlwaysOnLoggingAllowed() const;
 
+    void callAfterPendingSyntheticClick(CompletionHandler<void(WebCore::SyntheticClickResult)>&&);
+
 private:
     WebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);
 
@@ -1888,6 +1892,7 @@ private:
     void setFocusedFrameBeforeSelectingTextAtLocation(const WebCore::IntPoint&);
     void setSelectedRangeDispatchingSyntheticMouseEventsIfNeeded(const WebCore::SimpleRange&, WebCore::Affinity);
     void dispatchSyntheticMouseEventsForSelectionGesture(SelectionTouch, const WebCore::IntPoint&);
+    void invokePendingSyntheticClickCallback(WebCore::SyntheticClickResult);
 
     void sendPositionInformation(InteractionInformationAtPosition&&);
     RefPtr<WebCore::ShareableBitmap> shareableBitmapSnapshotForNode(WebCore::Element&);
@@ -2708,6 +2713,7 @@ private:
     RefPtr<WebCore::Node> m_potentialTapNode;
     WebCore::FloatPoint m_potentialTapLocation;
     RefPtr<WebCore::SecurityOrigin> m_potentialTapSecurityOrigin;
+    CompletionHandler<void(WebCore::SyntheticClickResult)> m_pendingSyntheticClickCallback;
 
     bool m_hasReceivedVisibleContentRectsAfterDidCommitLoad { false };
     bool m_hasRestoredExposedContentRectAfterDidCommitLoad { false };

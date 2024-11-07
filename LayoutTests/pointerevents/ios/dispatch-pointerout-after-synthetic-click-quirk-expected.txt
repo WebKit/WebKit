@@ -1,0 +1,10 @@
+Verifies that tapping on a link inside of a container that hides itself when receiving pointerleave. This test requires WebKitTestRunner
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS dispatchedClick became true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
