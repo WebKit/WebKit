@@ -183,9 +183,7 @@ void setOSTransaction(OSObjectPtr<os_transaction_t>&& transaction)
 
 void setJSCOptions(xpc_object_t initializerMessage, EnableLockdownMode enableLockdownMode, bool isWebContentProcess)
 {
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     RELEASE_ASSERT(!g_jscConfig.initializeHasBeenCalled);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     bool optionsChanged = false;
     if (xpc_dictionary_get_bool(initializerMessage, "configure-jsc-for-testing"))

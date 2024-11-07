@@ -181,7 +181,7 @@ void webkitFaviconDatabaseGetFaviconInternal(WebKitFaviconDatabase* database, co
         return;
     }
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     if (g_str_has_prefix(pageURI, "about:")) {
         g_task_report_new_error(database, callback, userData, 0,
             WEBKIT_FAVICON_DATABASE_ERROR, WEBKIT_FAVICON_DATABASE_ERROR_FAVICON_NOT_FOUND, _("Page %s does not have a favicon"), pageURI);

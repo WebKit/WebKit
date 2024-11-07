@@ -32,7 +32,7 @@
 #include <WebCore/NotImplemented.h>
 #include <skia/core/SkData.h>
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Skia port
 #include <skia/encode/SkPngEncoder.h>
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 IGNORE_CLANG_WARNINGS_END
@@ -48,7 +48,7 @@ static std::optional<String> base64EncodedPNGData(SkImage& image)
     if (!data)
         return std::nullopt;
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Skia port
     return base64EncodeToString(std::span<const uint8_t>(data->bytes(), data->size()));
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }

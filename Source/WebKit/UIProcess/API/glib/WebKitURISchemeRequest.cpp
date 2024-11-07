@@ -268,7 +268,7 @@ static void webkitURISchemeRequestReadCallback(GInputStream* inputStream, GAsync
         return;
     }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     priv->task->didReceiveData(SharedBuffer::create(std::span(priv->readBuffer, bytesRead)));
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     priv->bytesRead += bytesRead;

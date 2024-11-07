@@ -27,9 +27,7 @@
 #include "AuxiliaryProcessMain.h"
 
 #include "IPCUtilities.h"
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <JavaScriptCore/Options.h>
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #include <WebCore/ProcessIdentifier.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -50,7 +48,7 @@ AuxiliaryProcessMainCommon::AuxiliaryProcessMainCommon()
 }
 
 // The command line is constructed in ProcessLauncher::launchProcess.
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Unix port
 bool AuxiliaryProcessMainCommon::parseCommandLine(int argc, char** argv)
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 {

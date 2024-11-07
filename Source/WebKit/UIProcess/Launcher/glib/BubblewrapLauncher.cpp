@@ -40,7 +40,7 @@
 #include "Display.h"
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
 
 #if !defined(MFD_ALLOW_SEALING) && HAVE(LINUX_MEMFD_H)
 #include <linux/memfd.h>

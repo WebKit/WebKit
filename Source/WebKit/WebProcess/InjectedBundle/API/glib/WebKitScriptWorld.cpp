@@ -53,7 +53,7 @@ struct _WebKitScriptWorldPrivate {
     CString name;
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
 static guint signals[LAST_SIGNAL] = { 0, };
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 

@@ -190,7 +190,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
                 gsize length;
                 const auto* markupData = g_bytes_get_data(data.get(), &length);
                 if (length) {
-                    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+                    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
                     // If data starts with UTF-16 BOM assume it's UTF-16, otherwise assume UTF-8.
                     if (length >= 2 && reinterpret_cast<const UChar*>(markupData)[0] == 0xFEFF)
                         m_selectionData->setMarkup(String({ reinterpret_cast<const UChar*>(markupData) + 1, (length / 2) - 1 }));

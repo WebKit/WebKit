@@ -46,7 +46,7 @@ struct _WebKitInspectorWindowClass {
     GtkWindowClass parent;
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
 G_DEFINE_TYPE(WebKitInspectorWindow, webkit_inspector_window, GTK_TYPE_WINDOW)
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 

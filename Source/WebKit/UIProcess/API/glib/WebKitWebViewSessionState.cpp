@@ -401,7 +401,7 @@ static inline void decodeBackForwardListItemState(GVariantIter* backForwardListS
 
 static bool decodeSessionState(GBytes* data, SessionState& sessionState)
 {
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     static const char* sessionStateTypeStringVersions[] = {
         SESSION_STATE_TYPE_STRING_V2,
         SESSION_STATE_TYPE_STRING_V1,

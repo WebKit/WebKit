@@ -161,7 +161,7 @@ void RemoteInspectorProtocolHandler::updateTargetList(WebKitWebView* webView)
 
     GString* script = g_string_new("document.getElementById('targetlist').innerHTML='");
     clientForWebView->appendTargertList(script, RemoteInspectorClient::InspectorType::UI, RemoteInspectorClient::ShouldEscapeSingleQuote::Yes);
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK port
     g_string_append(script, "';");
     WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     webkit_web_view_evaluate_javascript(webView, script->str, script->len, nullptr, nullptr, nullptr, nullptr, nullptr);

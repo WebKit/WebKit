@@ -3373,7 +3373,7 @@ void webkit_web_view_load_html(WebKitWebView* webView, const gchar* content, con
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(content);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     getPage(webView).loadData(WebCore::SharedBuffer::create(std::span { reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 }), "text/html"_s, "UTF-8"_s, String::fromUTF8(baseURI));
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
@@ -3398,7 +3398,7 @@ void webkit_web_view_load_alternate_html(WebKitWebView* webView, const gchar* co
     g_return_if_fail(content);
     g_return_if_fail(contentURI);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     getPage(webView).loadAlternateHTML(WebCore::DataSegment::create(Vector(std::span { reinterpret_cast<const uint8_t*>(content), content ? strlen(content) : 0 })), "UTF-8"_s, URL { String::fromUTF8(baseURI) }, URL { String::fromUTF8(contentURI) });
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
@@ -4217,7 +4217,7 @@ static void webkitWebViewEvaluateJavascriptInternal(WebKitWebView* webView, cons
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(script);
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     RunJavaScriptParameters params = { String::fromUTF8(std::span(script, length < 0 ? strlen(script) : length)), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::No, std::nullopt, ForceUserGesture::Yes, RemoveTransientActivation::Yes };
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
@@ -4355,7 +4355,7 @@ static void webkitWebViewCallAsyncJavascriptFunctionInternal(WebKitWebView* webV
         return;
     }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
     RunJavaScriptParameters params = { String::fromUTF8(std::span(body, length < 0 ? strlen(body) : length)), JSC::SourceTaintedOrigin::Untainted, URL({ }, String::fromUTF8(sourceURI)), RunAsAsyncFunction::Yes, WTFMove(argumentsMap), ForceUserGesture::Yes, RemoveTransientActivation::Yes };
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     webkitWebViewRunJavaScriptWithParams(webView, WTFMove(params), worldName, returnType, adoptGRef(g_task_new(webView, cancellable, callback, userData)));
@@ -5488,7 +5488,7 @@ void webkit_web_view_set_cors_allowlist(WebKitWebView* webView, const gchar* con
 
     Vector<String> allowListVector;
     if (allowList) {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
         for (auto str = allowList; *str; ++str)
             allowListVector.append(String::fromUTF8(*str));
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

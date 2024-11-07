@@ -27,7 +27,7 @@
 
 #if USE(SKIA)
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Skia port
 #include <skia/core/SkColorSpace.h>
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
@@ -51,7 +51,7 @@ public:
     {
         if (!m_serializedColorSpace)
             m_serializedColorSpace = m_skColorSpace->serialize();
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Skia port
         if (m_serializedColorSpace)
             return { m_serializedColorSpace->bytes(), m_serializedColorSpace->size() };
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

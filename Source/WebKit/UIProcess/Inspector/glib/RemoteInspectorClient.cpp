@@ -297,7 +297,7 @@ void RemoteInspectorClient::sendMessageToFrontend(uint64_t connectionID, uint64_
     proxy->sendMessageToFrontend(String::fromUTF8(message));
 }
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
 
 void RemoteInspectorClient::appendTargertList(GString* html, InspectorType inspectorType, ShouldEscapeSingleQuote escapeSingleQuote) const
 {

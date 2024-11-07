@@ -49,14 +49,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-ALLOW_COMMA_BEGIN
-
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/webkit_sdk/WebKit/WebKitDecoder.h>
 #include <webrtc/webkit_sdk/WebKit/WebKitEncoder.h>
-
-ALLOW_COMMA_END
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include <pal/cf/CoreMediaSoftLink.h>
 

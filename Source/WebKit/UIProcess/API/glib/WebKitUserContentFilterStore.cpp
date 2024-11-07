@@ -507,7 +507,7 @@ void webkit_user_content_filter_store_fetch_identifiers(WebKitUserContentFilterS
 
         GStrv result = static_cast<GStrv>(g_new0(gchar*, identifiers.size() + 1));
         for (size_t i = 0; i < identifiers.size(); ++i) {
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
             result[i] = g_strdup(identifiers[i].utf8().data());
             WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }

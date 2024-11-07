@@ -32,7 +32,7 @@
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/Sandbox.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
 
 namespace WebKit {
 

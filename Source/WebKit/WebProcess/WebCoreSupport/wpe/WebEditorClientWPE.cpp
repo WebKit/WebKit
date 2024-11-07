@@ -62,7 +62,7 @@ struct KeyPressEntry {
     const char* name;
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // WPE port
 
 static const KeyDownEntry keyDownEntries[] = {
     { VK_LEFT,   0,                  "MoveLeft"                                },

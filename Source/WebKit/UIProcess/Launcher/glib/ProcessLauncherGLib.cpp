@@ -115,7 +115,7 @@ void ProcessLauncher::launchProcess()
 
 #if USE(LIBWPE) && !ENABLE(BUBBLEWRAP_SANDBOX)
     if (ProcessProviderLibWPE::singleton().isEnabled()) {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
         unsigned nargs = 3;
         char** argv = g_newa(char*, nargs);
         unsigned i = 0;
@@ -179,7 +179,7 @@ void ProcessLauncher::launchProcess()
     }
 #endif
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
 
     char** argv = g_newa(char*, nargs);
     unsigned i = 0;

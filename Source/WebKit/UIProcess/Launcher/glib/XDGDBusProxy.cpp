@@ -180,7 +180,7 @@ void XDGDBusProxy::launch(const ProcessLaunchOptions& webProcessLaunchOptions)
     if (m_args.isEmpty())
         return;
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
 
     int syncFds[2];
     if (pipe(syncFds) == -1)

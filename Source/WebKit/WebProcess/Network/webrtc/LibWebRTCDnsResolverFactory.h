@@ -29,20 +29,14 @@
 
 #include <wtf/Compiler.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #include <WebCore/LibWebRTCMacros.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-ALLOW_COMMA_BEGIN
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <webrtc/api/async_dns_resolver.h>
-ALLOW_COMMA_END
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 #include <wtf/Function.h>
 #include <wtf/TZoneMalloc.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 namespace WebKit {
 

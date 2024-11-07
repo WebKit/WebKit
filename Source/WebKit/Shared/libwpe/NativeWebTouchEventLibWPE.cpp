@@ -37,7 +37,7 @@ NativeWebTouchEvent::NativeWebTouchEvent(struct wpe_input_touch_event* event, fl
     , m_fallbackTouchPoint { wpe_input_touch_event_type_null, 0, 0, 0, 0 }
 {
     for (unsigned i = 0; i < event->touchpoints_length; ++i) {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // WPE port
         auto& point = event->touchpoints[i];
         WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         if (point.type != wpe_input_touch_event_type_null) {

@@ -62,7 +62,7 @@ static void initializeRemoteInspectorServer()
 
         GUniquePtr<char> inspectorAddress(g_strdup(address));
 
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE port
         char* portPtr = g_strrstr(inspectorAddress.get(), ":");
         if (!portPtr)
             return nullptr;

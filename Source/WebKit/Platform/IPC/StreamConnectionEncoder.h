@@ -57,13 +57,11 @@ public:
     bool encodeSpan(std::span<T, Extent> span)
     {
         auto bytes = asBytes(span);
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-        size_t bufferPointer = static_cast<size_t>(reinterpret_cast<intptr_t>(m_buffer.data() + m_encodedSize));
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-        size_t newBufferPointer = roundUpToMultipleOf<alignof(T)>(bufferPointer);
+        auto bufferPointer = reinterpret_cast<uintptr_t>(m_buffer.data()) + m_encodedSize;
+        auto newBufferPointer = roundUpToMultipleOf<alignof(T)>(bufferPointer);
         if (newBufferPointer < bufferPointer)
             return false;
-        intptr_t alignedSize = m_encodedSize + (newBufferPointer - bufferPointer);
+        auto alignedSize = m_encodedSize + (newBufferPointer - bufferPointer);
         if (!reserve(alignedSize, bytes.size()))
             return false;
         memcpySpan(m_buffer.subspan(alignedSize), bytes);

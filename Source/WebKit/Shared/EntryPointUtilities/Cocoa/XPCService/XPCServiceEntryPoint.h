@@ -27,8 +27,6 @@
 
 #include <wtf/Compiler.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #import "AuxiliaryProcess.h"
 #import "WebKit2Initialize.h"
 #import <JavaScriptCore/ExecutableAllocator.h>
@@ -46,8 +44,6 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #else
 extern "C" OS_NOTHROW void voucher_replace_default_voucher(void);
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #define WEBCONTENT_SERVICE_INITIALIZER WebContentServiceInitializer
 #define NETWORK_SERVICE_INITIALIZER NetworkServiceInitializer
