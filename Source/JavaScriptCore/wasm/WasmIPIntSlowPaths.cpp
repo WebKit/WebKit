@@ -505,13 +505,9 @@ static inline UGPRPair doWasmCall(JSWebAssemblyInstance* instance, Wasm::Functio
     EncodedJSValue boxedCallee = CalleeBits::encodeNullCallee();
 
     if (functionIndex < importFunctionCount) {
-        JSWebAssemblyInstance::ImportFunctionInfo* functionInfo = instance->importFunctionInfo(functionIndex);
+        auto* functionInfo = instance->importFunctionInfo(functionIndex);
         codePtr = functionInfo->importFunctionStub;
-#if USE(JSVALUE64)
-        *callee = bitwise_cast<uint64_t>(functionInfo->boxedTargetCalleeLoadLocation);
-#else
-        *callee = bitwise_cast<uint32_t>(functionInfo->boxedTargetCalleeLoadLocation);
-#endif
+        *callee = *bitwise_cast<uintptr_t*>(functionInfo->boxedWasmCalleeLoadLocation);
     } else {
         // Target is a wasm function within the same instance
         codePtr = *instance->calleeGroup()->entrypointLoadLocationFromFunctionIndexSpace(functionIndex);
@@ -551,7 +547,7 @@ WASM_IPINT_EXTERN_CPP_DECL(call_indirect, CallFrame* callFrame, Wasm::FunctionSp
 
     EncodedJSValue* calleeReturn = bitwise_cast<EncodedJSValue*>(functionIndex);
     EncodedJSValue boxedCallee = CalleeBits::encodeNullCallee();
-    if (function.m_function.boxedWasmCalleeLoadLocation)
+    if (!function.m_function.boxedWasmCalleeLoadLocation)
         boxedCallee = CalleeBits::encodeBoxedNativeCallee(reinterpret_cast<void*>(*function.m_function.boxedWasmCalleeLoadLocation));
     else
         boxedCallee = CalleeBits::encodeNativeCallee(

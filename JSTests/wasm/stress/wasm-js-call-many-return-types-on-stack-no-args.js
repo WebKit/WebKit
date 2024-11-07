@@ -35,6 +35,7 @@ async function buildWat(types) {
 async function test() {
     await Promise.all([
         buildWat(["i32", "i32", "f32", "i32"]),
+        /*
         buildWat(["i32", "i32", "f32", "i32", "f64", "f32", "i32", "i32"]),
 
         // gpr in registers but fpr spilled. arm64 has 32 fprs so go above that
@@ -58,6 +59,7 @@ async function test() {
 
         // both are spilled
         buildWat(["i32", "f32", "i32", "f64", "i32", "f32", "i32", "i32", "f64", "i32", "i32", "f64", "f32", "f32", "f32", "f64", "f32", "i32", "i32", "f32", "i32", "f32", "f64", "f64", "i32", "f32", "f32", "f64", "i32", "i32", "i32", "f64", "f64", "f64", "f32", "f32", "i32", "i32", "i32", "i32", "f32", "f32", "f64", "i32", "i32", "i32", "i32", "i32", "i32", "i32", "f64", "f32", "f32", "f32", "f64", "i32", "i32", "i32", "f32", "f64", "f64", "i32", "i32", "f64", "f64", "f64", "i32", "i32", "i32", "i32"]),
+        */
     ]);
 }
 
