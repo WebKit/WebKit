@@ -66,7 +66,9 @@ CString currentExecutablePath()
     ssize_t result = readlink("/proc/self/exe", readLinkBuffer, PATH_MAX);
     if (result == -1)
         return { };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Linux port
     return CString({ readLinkBuffer, static_cast<size_t>(result) });
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 #elif OS(HURD)
 CString currentExecutablePath()
