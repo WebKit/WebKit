@@ -475,6 +475,33 @@ TEST(WKWebExtensionAPIWindows, RemovedEvent)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIWindows, RemoveListenerDuringEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"function windowListener() {",
+        @"  browser.windows.onCreated.removeListener(windowListener)",
+        @"  browser.test.assertFalse(browser.windows.onCreated.hasListener(windowListener), 'Listener should be removed')",
+        @"}",
+
+        @"browser.windows.onCreated.addListener(windowListener)",
+        @"browser.windows.onCreated.addListener(() => browser.test.notifyPass())",
+
+        @"browser.test.assertTrue(browser.windows.onCreated.hasListener(windowListener), 'Listener should be registered')",
+
+        @"browser.test.yield('Open Window')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:windowsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Open Window");
+
+    [manager openNewWindow];
+    [manager run];
+}
+
 #if PLATFORM(MAC)
 
 // iOS does not support create() and update().

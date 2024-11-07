@@ -54,7 +54,7 @@ typedef NS_ENUM(NSInteger, _WKWebExtensionWebRequestResourceType) {
 };
 
 #ifdef __cplusplus
-WK_EXTERN _WKWebExtensionWebRequestResourceType _WKWebExtensionWebRequestResourceTypeFromResourceLoadInfo(const WebKit::ResourceLoadInfo&);
+WK_EXTERN _WKWebExtensionWebRequestResourceType toWebExtensionWebRequestResourceType(const WebKit::ResourceLoadInfo&);
 #endif
 
 // https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/RequestFilter

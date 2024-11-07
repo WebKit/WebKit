@@ -229,6 +229,43 @@ TEST(WKWebExtensionAPIWebRequest, AllEventsFiredTest)
     [manager run];
 }
 
+TEST(WKWebExtensionAPIWebRequest, RemoveListenerDuringEvent)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { { { "Content-Type"_s, "text/html"_s } }, ""_s } },
+    }, TestWebKitAPI::HTTPServer::Protocol::Http);
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"function requestListener() {",
+        @"  browser.webRequest.onCompleted.removeListener(requestListener)",
+        @"  browser.test.assertFalse(browser.webRequest.onCompleted.hasListener(requestListener), 'Listener should be removed')",
+        @"}",
+
+        @"browser.webRequest.onCompleted.addListener(requestListener)",
+        @"browser.webRequest.onCompleted.addListener(() => browser.test.notifyPass())",
+
+        @"browser.test.assertTrue(browser.webRequest.onCompleted.hasListener(requestListener), 'Listener should be registered')",
+
+        @"browser.test.yield('Load Tab')"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:webRequestManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forPermission:WKWebExtensionPermissionWebRequest];
+
+    auto *urlRequest = server.requestWithLocalhost();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+
+    EXPECT_NS_EQUAL(manager.get().yieldMessage, @"Load Tab");
+
+    [manager.get().defaultTab.webView loadRequest:urlRequest];
+
+    [manager run];
+}
+
 TEST(WKWebExtensionAPIWebRequest, ErrorOccurred)
 {
     TestWebKitAPI::HTTPServer server({

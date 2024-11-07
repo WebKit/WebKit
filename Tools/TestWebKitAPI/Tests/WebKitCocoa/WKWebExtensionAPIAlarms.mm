@@ -358,6 +358,25 @@ TEST(WKWebExtensionAPIAlarms, UnnamedAlarm)
     Util::loadAndRunExtension(alarmsManifest, @{ @"background.js": backgroundScript });
 }
 
+TEST(WKWebExtensionAPIAlarms, RemoveListenerDuringEvent)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"function alarmListener() {",
+        @"  browser.alarms.onAlarm.removeListener(alarmListener)",
+        @"  browser.test.assertFalse(browser.alarms.onAlarm.hasListener(alarmListener), 'Listener should be removed')",
+        @"}",
+
+        @"browser.alarms.onAlarm.addListener(alarmListener)",
+        @"browser.alarms.onAlarm.addListener(() => browser.test.notifyPass())",
+
+        @"browser.test.assertTrue(browser.alarms.onAlarm.hasListener(alarmListener), 'Listener should be registered')",
+
+        @"browser.alarms.create('test-alarm', { delayInMinutes: (500 / 1000 / 60) })"
+    ]);
+
+    Util::loadAndRunExtension(alarmsManifest, @{ @"background.js": backgroundScript });
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

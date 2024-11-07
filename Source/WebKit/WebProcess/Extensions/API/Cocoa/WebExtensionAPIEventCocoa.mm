@@ -48,7 +48,10 @@ void WebExtensionAPIEvent::invokeListeners()
     if (m_listeners.isEmpty())
         return;
 
-    for (auto& listener : m_listeners)
+    // Copy the listeners since call() can trigger a mutation of the listeners.
+    auto listenersCopy = m_listeners;
+
+    for (RefPtr listener : listenersCopy)
         listener->call();
 }
 
@@ -57,7 +60,10 @@ void WebExtensionAPIEvent::invokeListenersWithArgument(id argument1)
     if (m_listeners.isEmpty())
         return;
 
-    for (auto& listener : m_listeners)
+    // Copy the listeners since call() can trigger a mutation of the listeners.
+    auto listenersCopy = m_listeners;
+
+    for (RefPtr listener : listenersCopy)
         listener->call(argument1);
 }
 
@@ -66,7 +72,10 @@ void WebExtensionAPIEvent::invokeListenersWithArgument(id argument1, id argument
     if (m_listeners.isEmpty())
         return;
 
-    for (auto& listener : m_listeners)
+    // Copy the listeners since call() can trigger a mutation of the listeners.
+    auto listenersCopy = m_listeners;
+
+    for (RefPtr listener : listenersCopy)
         listener->call(argument1, argument2);
 }
 
@@ -75,7 +84,10 @@ void WebExtensionAPIEvent::invokeListenersWithArgument(id argument1, id argument
     if (m_listeners.isEmpty())
         return;
 
-    for (auto& listener : m_listeners)
+    // Copy the listeners since call() can trigger a mutation of the listeners.
+    auto listenersCopy = m_listeners;
+
+    for (RefPtr listener : listenersCopy)
         listener->call(argument1, argument2, argument3);
 }
 
