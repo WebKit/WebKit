@@ -31,6 +31,15 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+class ImageFrameAnimator;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::ImageFrameAnimator> : std::true_type { };
+}
+
+namespace WebCore {
 
 class BitmapImageSource;
 class ImageFrame;

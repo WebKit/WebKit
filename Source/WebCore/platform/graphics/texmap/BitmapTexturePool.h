@@ -32,6 +32,15 @@
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
+class BitmapTexturePool;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::BitmapTexturePool> : std::true_type { };
+}
+
+namespace WebCore {
 
 class IntSize;
 

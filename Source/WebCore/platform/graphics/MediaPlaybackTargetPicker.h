@@ -33,6 +33,15 @@
 #include <wtf/RunLoop.h>
 
 namespace WebCore {
+class MediaPlaybackTargetPicker;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::MediaPlaybackTargetPicker> : std::true_type { };
+}
+
+namespace WebCore {
 
 class FloatRect;
 class MediaPlaybackTarget;

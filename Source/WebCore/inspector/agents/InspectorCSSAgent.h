@@ -47,6 +47,15 @@ class CSSFrontendDispatcher;
 }
 
 namespace WebCore {
+class InspectorCSSAgent;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::InspectorCSSAgent> : std::true_type { };
+}
+
+namespace WebCore {
 
 class CSSRule;
 class CSSStyleRule;

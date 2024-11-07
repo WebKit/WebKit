@@ -40,6 +40,15 @@
 #define CACHE_SUBIMAGES 1
 
 namespace WebCore {
+class CGSubimageCacheWithTimer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::CGSubimageCacheWithTimer> : std::true_type { };
+}
+
+namespace WebCore {
 
 #if CACHE_SUBIMAGES
 

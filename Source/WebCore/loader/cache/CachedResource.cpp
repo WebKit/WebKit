@@ -585,10 +585,10 @@ void CachedResource::removeClient(CachedResourceClient& client)
     if (hasClients())
         return;
 
-    auto& memoryCache = MemoryCache::singleton();
+    Ref memoryCache = MemoryCache::singleton();
     if (allowsCaching() && inCache()) {
-        memoryCache.removeFromLiveResourcesSize(*this);
-        memoryCache.removeFromLiveDecodedResourcesList(*this);
+        memoryCache->removeFromLiveResourcesSize(*this);
+        memoryCache->removeFromLiveDecodedResourcesList(*this);
     }
 
     if (deleteIfPossible()) {
@@ -603,7 +603,7 @@ void CachedResource::removeClient(CachedResourceClient& client)
     if (!allowsCaching())
         return;
 
-    memoryCache.pruneSoon();
+    memoryCache->pruneSoon();
 }
 
 void CachedResource::allClientsRemoved()
@@ -688,9 +688,9 @@ void CachedResource::setDecodedSize(unsigned size)
     mutableResponseData().m_decodedSize = size;
    
     if (allowsCaching() && inCache()) {
-        auto& memoryCache = MemoryCache::singleton();
+        Ref memoryCache = MemoryCache::singleton();
         // Now insert into the new LRU list.
-        memoryCache.insertInLRUList(*this);
+        memoryCache->insertInLRUList(*this);
         
         // Insert into or remove from the live decoded list if necessary.
         // When inserting into the LiveDecodedResourcesList it is possible
@@ -699,14 +699,14 @@ void CachedResource::setDecodedSize(unsigned size)
         // violation of the invariant that the list is to be kept sorted
         // by access time. The weakening of the invariant does not pose
         // a problem. For more details please see: https://bugs.webkit.org/show_bug.cgi?id=30209
-        bool inLiveDecodedResourcesList = memoryCache.inLiveDecodedResourcesList(*this);
+        bool inLiveDecodedResourcesList = memoryCache->inLiveDecodedResourcesList(*this);
         if (decodedSize() && !inLiveDecodedResourcesList && hasClients())
-            memoryCache.insertInLiveDecodedResourcesList(*this);
+            memoryCache->insertInLiveDecodedResourcesList(*this);
         else if (!decodedSize() && inLiveDecodedResourcesList)
-            memoryCache.removeFromLiveDecodedResourcesList(*this);
+            memoryCache->removeFromLiveDecodedResourcesList(*this);
 
         // Update the cache's size totals.
-        memoryCache.adjustSize(hasClients(), delta);
+        memoryCache->adjustSize(hasClients(), delta);
     }
 }
 
@@ -725,9 +725,9 @@ void CachedResource::setEncodedSize(unsigned size)
     mutableResponseData().m_encodedSize = size;
 
     if (allowsCaching() && inCache()) {
-        auto& memoryCache = MemoryCache::singleton();
-        memoryCache.insertInLRUList(*this);
-        memoryCache.adjustSize(hasClients(), delta);
+        Ref memoryCache = MemoryCache::singleton();
+        memoryCache->insertInLRUList(*this);
+        memoryCache->adjustSize(hasClients(), delta);
     }
 }
 
@@ -736,9 +736,9 @@ void CachedResource::didAccessDecodedData(MonotonicTime timeStamp)
     m_lastDecodedAccessTime = timeStamp;
     
     if (allowsCaching() && inCache()) {
-        auto& memoryCache = MemoryCache::singleton();
-        memoryCache.moveToEndOfLiveDecodedResourcesListIfPresent(*this);
-        memoryCache.pruneSoon();
+        Ref memoryCache = MemoryCache::singleton();
+        memoryCache->moveToEndOfLiveDecodedResourcesListIfPresent(*this);
+        memoryCache->pruneSoon();
     }
 }
     
@@ -1016,21 +1016,21 @@ unsigned CachedResource::decodedSize() const
     return m_response->m_decodedSize;
 }
 
-inline CachedResource::Callback::Callback(CachedResource& resource, CachedResourceClient& client)
+inline CachedResourceCallback::CachedResourceCallback(CachedResource& resource, CachedResourceClient& client)
     : m_resource(resource)
     , m_client(client)
-    , m_timer(*this, &Callback::timerFired)
+    , m_timer(*this, &CachedResourceCallback::timerFired)
 {
     m_timer.startOneShot(0_s);
 }
 
-inline void CachedResource::Callback::cancel()
+inline void CachedResourceCallback::cancel()
 {
     if (m_timer.isActive())
         m_timer.stop();
 }
 
-void CachedResource::Callback::timerFired()
+void CachedResourceCallback::timerFired()
 {
     CachedResourceHandle { m_resource.get() }->didAddClient(m_client);
 }

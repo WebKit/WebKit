@@ -40,6 +40,15 @@ class HysteresisActivity;
 }
 
 namespace WebCore {
+class ImageAnalysisQueue;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::ImageAnalysisQueue> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Document;
 class HTMLImageElement;

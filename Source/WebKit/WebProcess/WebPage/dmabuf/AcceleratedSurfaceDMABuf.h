@@ -52,6 +52,15 @@ class ShareableBitmapHandle;
 }
 
 namespace WebKit {
+class AcceleratedSurfaceDMABuf;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::AcceleratedSurfaceDMABuf> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebPage;
 

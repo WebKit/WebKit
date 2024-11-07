@@ -37,6 +37,15 @@
 #include <wtf/text/StringBuilder.h>
 
 namespace WTR {
+class TestInvocation;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WTR::TestInvocation> : std::true_type { };
+}
+
+namespace WTR {
 
 class TestInvocation final : public UIScriptContextDelegate {
     WTF_MAKE_FAST_ALLOCATED;

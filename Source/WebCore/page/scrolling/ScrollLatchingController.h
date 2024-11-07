@@ -34,8 +34,15 @@
 
 #if ENABLE(WHEEL_EVENT_LATCHING)
 
+namespace WebCore {
+class ScrollLatchingController;
+}
+
 namespace WTF {
 class TextStream;
+
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::ScrollLatchingController> : std::true_type { };
 }
 
 namespace WebCore {

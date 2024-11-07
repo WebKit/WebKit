@@ -34,6 +34,15 @@
 #include "Timer.h"
 
 namespace WebCore {
+class ScrollbarsControllerGeneric;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::ScrollbarsControllerGeneric> : std::true_type { };
+}
+
+namespace WebCore {
 
 class ScrollbarsControllerGeneric final : public ScrollbarsController {
 public:

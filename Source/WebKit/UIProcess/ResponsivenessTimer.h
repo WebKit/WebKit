@@ -31,6 +31,15 @@
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
+class ResponsivenessTimer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::ResponsivenessTimer> : std::true_type { };
+}
+
+namespace WebKit {
 
 class ResponsivenessTimer {
 public:

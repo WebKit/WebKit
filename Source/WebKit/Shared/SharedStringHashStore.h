@@ -31,6 +31,15 @@
 #include <wtf/RunLoop.h>
 
 namespace WebKit {
+class SharedStringHashStore;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::SharedStringHashStore> : std::true_type { };
+}
+
+namespace WebKit {
 
 class SharedStringHashStore {
 public:

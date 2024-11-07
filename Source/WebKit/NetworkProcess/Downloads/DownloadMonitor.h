@@ -31,6 +31,15 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
+class DownloadMonitor;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::DownloadMonitor> : std::true_type { };
+}
+
+namespace WebKit {
 
 class Download;
 

@@ -37,6 +37,15 @@
 #include <wtf/WeakHashMap.h>
 
 namespace WebCore {
+class InspectorAnimationAgent;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::InspectorAnimationAgent> : std::true_type { };
+}
+
+namespace WebCore {
 
 class AnimationEffect;
 class Element;

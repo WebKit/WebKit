@@ -1467,14 +1467,14 @@ void WebProcess::systemWillPowerOn()
 
 void WebProcess::systemWillSleep()
 {
-    if (PlatformMediaSessionManager::sharedManagerIfExists())
-        PlatformMediaSessionManager::sharedManager().processSystemWillSleep();
+    if (PlatformMediaSessionManager::singletonIfExists())
+        PlatformMediaSessionManager::singleton().processSystemWillSleep();
 }
 
 void WebProcess::systemDidWake()
 {
-    if (PlatformMediaSessionManager::sharedManagerIfExists())
-        PlatformMediaSessionManager::sharedManager().processSystemDidWake();
+    if (PlatformMediaSessionManager::singletonIfExists())
+        PlatformMediaSessionManager::singleton().processSystemDidWake();
 }
 #endif
 

@@ -37,6 +37,15 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
+class CompositingRunLoop;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::CompositingRunLoop> : std::true_type { };
+}
+
+namespace WebKit {
 
 class CompositingRunLoop {
     WTF_MAKE_NONCOPYABLE(CompositingRunLoop);

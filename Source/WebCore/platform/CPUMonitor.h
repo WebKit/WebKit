@@ -32,6 +32,15 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+class CPUMonitor;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::CPUMonitor> : std::true_type { };
+}
+
+namespace WebCore {
 
 class CPUMonitor {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(CPUMonitor, WEBCORE_EXPORT);

@@ -48,6 +48,15 @@ class Page;
 }
 
 namespace WebKit {
+class LayerTreeHost;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::LayerTreeHost> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebPage;
 

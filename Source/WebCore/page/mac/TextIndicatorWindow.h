@@ -36,6 +36,15 @@ OBJC_CLASS NSView;
 OBJC_CLASS WebTextIndicatorLayer;
 
 namespace WebCore {
+class TextIndicatorWindow;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::TextIndicatorWindow> : std::true_type { };
+}
+
+namespace WebCore {
 
 #if PLATFORM(MAC)
 

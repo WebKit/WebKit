@@ -53,6 +53,15 @@ using ErrorStringOr = Expected<T, ErrorString>;
 }
 
 namespace WebCore {
+class InspectorOverlay;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::InspectorOverlay> : std::true_type { };
+}
+
+namespace WebCore {
 
 class WeakPtrImplWithEventTargetData;
 class FontCascade;

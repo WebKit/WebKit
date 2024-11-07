@@ -36,6 +36,15 @@
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
+class RenderLayerCompositor;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::RenderLayerCompositor> : std::true_type { };
+}
+
+namespace WebCore {
 
 class DisplayRefreshMonitorFactory;
 class FixedPositionViewportConstraints;

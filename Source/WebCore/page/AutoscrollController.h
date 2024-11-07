@@ -31,6 +31,15 @@
 #include <wtf/WallTime.h>
 
 namespace WebCore {
+class AutoscrollController;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::AutoscrollController> : std::true_type { };
+}
+
+namespace WebCore {
 
 class EventHandler;
 class LocalFrame;

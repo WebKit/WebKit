@@ -42,6 +42,15 @@ class Node;
 class Page;
 class VisibleSelection;
 
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::CaretAnimator> : std::true_type { };
+}
+
+namespace WebCore {
+
 enum class CaretAnimatorType : uint8_t {
     Default,
     Dictation

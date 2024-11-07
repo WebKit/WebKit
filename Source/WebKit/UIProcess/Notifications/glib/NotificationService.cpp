@@ -67,6 +67,15 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 namespace WebKit {
+class IconCache;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::IconCache> : std::true_type { };
+}
+
+namespace WebKit {
 
 static const Seconds s_dbusCallTimeout = 20_ms;
 

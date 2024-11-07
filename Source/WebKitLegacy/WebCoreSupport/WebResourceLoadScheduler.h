@@ -40,6 +40,11 @@
 
 class WebResourceLoadScheduler;
 
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebResourceLoadScheduler> : std::true_type { };
+}
+
 WebResourceLoadScheduler& webResourceLoadScheduler();
 
 class WebResourceLoadScheduler final : public WebCore::LoaderStrategy {

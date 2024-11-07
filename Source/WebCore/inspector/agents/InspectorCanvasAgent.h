@@ -48,6 +48,9 @@ class InspectorCanvasAgent;
 namespace WTF {
 template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
 template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::InspectorCanvasAgent> : std::true_type { };
+
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::InspectorCanvasAgent> : std::true_type { };
 }
 
 namespace Inspector {

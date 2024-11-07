@@ -45,6 +45,9 @@ class ValidationMessage;
 namespace WTF {
 template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
 template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::ValidationMessage> : std::true_type { };
+
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::ValidationMessage> : std::true_type { };
 }
 
 namespace WebCore {

@@ -858,11 +858,11 @@ void SubresourceLoader::willCancel(const ResourceError& error)
 #else
     m_state = Finishing;
 #endif
-    auto& memoryCache = MemoryCache::singleton();
+    Ref memoryCache = MemoryCache::singleton();
     if (resource->resourceToRevalidate())
-        memoryCache.revalidationFailed(*resource);
+        memoryCache->revalidationFailed(*resource);
     resource->setResourceError(error);
-    memoryCache.remove(*resource);
+    memoryCache->remove(*resource);
 }
 
 void SubresourceLoader::didCancel(LoadWillContinueInAnotherProcess loadWillContinueInAnotherProcess)

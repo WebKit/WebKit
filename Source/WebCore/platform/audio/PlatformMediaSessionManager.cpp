@@ -75,7 +75,7 @@ static std::unique_ptr<PlatformMediaSessionManager>& sharedPlatformMediaSessionM
     return platformMediaSessionManager.get();
 }
 
-PlatformMediaSessionManager& PlatformMediaSessionManager::sharedManager()
+PlatformMediaSessionManager& PlatformMediaSessionManager::singleton()
 {
     auto& manager = sharedPlatformMediaSessionManager();
     if (!manager) {
@@ -85,7 +85,7 @@ PlatformMediaSessionManager& PlatformMediaSessionManager::sharedManager()
     return *manager;
 }
 
-PlatformMediaSessionManager* PlatformMediaSessionManager::sharedManagerIfExists()
+PlatformMediaSessionManager* PlatformMediaSessionManager::singletonIfExists()
 {
     return sharedPlatformMediaSessionManager().get();
 }
@@ -99,13 +99,13 @@ std::unique_ptr<PlatformMediaSessionManager> PlatformMediaSessionManager::create
 
 void PlatformMediaSessionManager::updateNowPlayingInfoIfNecessary()
 {
-    if (auto existingManager = PlatformMediaSessionManager::sharedManagerIfExists())
+    if (RefPtr existingManager = PlatformMediaSessionManager::singletonIfExists())
         existingManager->scheduleSessionStatusUpdate();
 }
 
 void PlatformMediaSessionManager::updateAudioSessionCategoryIfNecessary()
 {
-    if (auto existingManager = PlatformMediaSessionManager::sharedManagerIfExists())
+    if (RefPtr existingManager = PlatformMediaSessionManager::singletonIfExists())
         existingManager->scheduleUpdateSessionState();
 }
 

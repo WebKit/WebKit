@@ -38,6 +38,15 @@
 @class WKDeferringGestureRecognizer;
 
 namespace WebKit {
+class GestureRecognizerConsistencyEnforcer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::GestureRecognizerConsistencyEnforcer> : std::true_type { };
+}
+
+namespace WebKit {
 
 class GestureRecognizerConsistencyEnforcer {
     WTF_MAKE_TZONE_ALLOCATED(GestureRecognizerConsistencyEnforcer);

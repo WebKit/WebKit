@@ -4475,7 +4475,7 @@ void WebPage::applicationWillResignActive()
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillResignActiveNotification object:nil];
 
     // FIXME(224775): Move to WebProcess
-    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+    if (auto* manager = PlatformMediaSessionManager::singletonIfExists())
         manager->applicationWillBecomeInactive();
 
     if (m_page)
@@ -4490,7 +4490,7 @@ void WebPage::applicationDidEnterBackground(bool isSuspendedUnderLock)
     freezeLayerTree(LayerTreeFreezeReason::BackgroundApplication);
 
     // FIXME(224775): Move to WebProcess
-    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+    if (auto* manager = PlatformMediaSessionManager::singletonIfExists())
         manager->applicationDidEnterBackground(isSuspendedUnderLock);
 
     if (m_page)
@@ -4512,7 +4512,7 @@ void WebPage::applicationWillEnterForeground(bool isSuspendedUnderLock)
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationWillEnterForegroundNotification object:nil userInfo:@{@"isSuspendedUnderLock": @(isSuspendedUnderLock)}];
 
     // FIXME(224775): Move to WebProcess
-    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+    if (auto* manager = PlatformMediaSessionManager::singletonIfExists())
         manager->applicationWillEnterForeground(isSuspendedUnderLock);
 
     if (m_page)
@@ -4524,7 +4524,7 @@ void WebPage::applicationDidBecomeActive()
     [[NSNotificationCenter defaultCenter] postNotificationName:WebUIApplicationDidBecomeActiveNotification object:nil];
 
     // FIXME(224775): Move to WebProcess
-    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+    if (auto* manager = PlatformMediaSessionManager::singletonIfExists())
         manager->applicationDidBecomeActive();
 
     if (m_page)
@@ -4533,13 +4533,13 @@ void WebPage::applicationDidBecomeActive()
 
 void WebPage::applicationDidEnterBackgroundForMedia(bool isSuspendedUnderLock)
 {
-    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+    if (auto* manager = PlatformMediaSessionManager::singletonIfExists())
         manager->applicationDidEnterBackground(isSuspendedUnderLock);
 }
 
 void WebPage::applicationWillEnterForegroundForMedia(bool isSuspendedUnderLock)
 {
-    if (auto* manager = PlatformMediaSessionManager::sharedManagerIfExists())
+    if (auto* manager = PlatformMediaSessionManager::singletonIfExists())
         manager->applicationWillEnterForeground(isSuspendedUnderLock);
 }
 

@@ -35,8 +35,15 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
+namespace WebKit {
+class ProcessThrottlerTimedActivity;
+}
+
 namespace WTF {
 class TextStream;
+
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::ProcessThrottlerTimedActivity> : std::true_type { };
 }
 
 namespace WebKit {

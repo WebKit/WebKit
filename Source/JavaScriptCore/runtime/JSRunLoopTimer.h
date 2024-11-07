@@ -62,6 +62,10 @@ public:
 
         std::optional<Seconds> timeUntilFire(JSRunLoopTimer&);
 
+        // Do nothing since this is a singleton.
+        void ref() const { }
+        void deref() const { }
+
     private:
         Lock m_lock;
 

@@ -42,6 +42,10 @@ class MainThreadSharedTimer final : public SharedTimer {
 public:
     static MainThreadSharedTimer& singleton();
 
+    // Do nothing since this is a singleton.
+    void ref() const { }
+    void deref() const { }
+
     void setFiredFunction(Function<void()>&&) override;
     void setFireInterval(Seconds) override;
     void stop() override;

@@ -73,6 +73,10 @@ class WebPushDaemon {
 public:
     static WebPushDaemon& singleton();
 
+    // Do nothing since this is a singleton.
+    void ref() const { }
+    void deref() const { }
+
     void connectionEventHandler(xpc_object_t);
     void connectionAdded(xpc_connection_t);
     void connectionRemoved(xpc_connection_t);

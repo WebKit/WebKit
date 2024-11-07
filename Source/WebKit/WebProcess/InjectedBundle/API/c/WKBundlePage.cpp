@@ -681,6 +681,32 @@ bool WKBundlePageRegisterScrollOperationCompletionCallback(WKBundlePageRef pageR
     return true;
 }
 
+class TimerOwner {
+public:
+    TimerOwner(WTF::Function<void (void*)>&& callback, void* context)
+        : m_timer(*this, &TimerOwner::timerFired)
+        , m_callback(WTFMove(callback))
+        , m_context(context)
+    {
+        m_timer.startOneShot(0_s);
+    }
+
+    void timerFired()
+    {
+        m_callback(m_context);
+        delete this;
+    }
+
+    WebCore::Timer m_timer;
+    WTF::Function<void (void*)> m_callback;
+    void* m_context;
+};
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<TimerOwner> : std::true_type { };
+}
+
 void WKBundlePageCallAfterTasksAndTimers(WKBundlePageRef pageRef, WKBundlePageTestNotificationCallback callback, void* context)
 {
     if (!callback)
@@ -698,27 +724,6 @@ void WKBundlePageCallAfterTasksAndTimers(WKBundlePageRef pageRef, WKBundlePageTe
     WebCore::Document* document = localMainFrame->document();
     if (!document)
         return;
-
-    class TimerOwner {
-    public:
-        TimerOwner(WTF::Function<void (void*)>&& callback, void* context)
-            : m_timer(*this, &TimerOwner::timerFired)
-            , m_callback(WTFMove(callback))
-            , m_context(context)
-        {
-            m_timer.startOneShot(0_s);
-        }
-        
-        void timerFired()
-        {
-            m_callback(m_context);
-            delete this;
-        }
-        
-        WebCore::Timer m_timer;
-        WTF::Function<void (void*)> m_callback;
-        void* m_context;
-    };
     
     document->postTask([=] (WebCore::ScriptExecutionContext&) {
         new TimerOwner(callback, context); // deletes itself when done.

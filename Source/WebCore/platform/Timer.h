@@ -31,6 +31,7 @@
 #include <wtf/Function.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RunLoop.h>
 #include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/Threading.h>
@@ -181,6 +182,9 @@ public:
     Timer(TimerFiredClass& object, void (TimerFiredBaseClass::*function)())
         : m_function(std::bind(function, &object))
     {
+        static_assert(WTF::IsDeprecatedTimerSmartPointerException<std::remove_cv_t<TimerFiredClass>>::value,
+            "Classes that use Timer should be ref-counted or CanMakeCheckedPtr. Please do not add new exceptions."
+        );
     }
 
     Timer(Function<void()>&& function)

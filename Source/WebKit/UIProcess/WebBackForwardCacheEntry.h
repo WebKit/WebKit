@@ -33,6 +33,15 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
+class WebBackForwardCacheEntry;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::WebBackForwardCacheEntry> : std::true_type { };
+}
+
+namespace WebKit {
 
 class SuspendedPageProxy;
 class WebBackForwardCache;

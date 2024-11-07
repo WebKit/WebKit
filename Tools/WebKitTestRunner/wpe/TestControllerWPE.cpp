@@ -69,29 +69,25 @@ void TestController::platformInitializeContext()
 
 void TestController::platformRunUntil(bool& done, WTF::Seconds timeout)
 {
-    struct TimeoutTimer {
-        TimeoutTimer()
-            : timer(RunLoop::main(), this, &TimeoutTimer::fired)
-        { }
-
-        void fired()
+    bool timedOut = false;
+    class TimeoutTimer {
+    public:
+        TimeoutTimer(WTF::Seconds timeout, bool& timedOut)
+            : m_timer(RunLoop::main(), [&timedOut] {
+                timedOut = true;
+                RunLoop::main().stop();
+            })
         {
-            timedOut = true;
-            RunLoop::main().stop();
+            m_timer.setPriority(G_PRIORITY_DEFAULT_IDLE);
+            if (timeout >= 0_s)
+                m_timer.startOneShot(timeout);
         }
+    private:
+        RunLoop::Timer m_timer;
+    } timeoutTimer(timeout, timedOut);
 
-        RunLoop::Timer timer;
-        bool timedOut { false };
-    } timeoutTimer;
-
-    timeoutTimer.timer.setPriority(G_PRIORITY_DEFAULT_IDLE);
-    if (timeout >= 0_s)
-        timeoutTimer.timer.startOneShot(timeout);
-
-    while (!done && !timeoutTimer.timedOut)
+    while (!done && !timedOut)
         RunLoop::main().run();
-
-    timeoutTimer.timer.stop();
 }
 
 void TestController::platformDidCommitLoadForFrame(WKPageRef, WKFrameRef)

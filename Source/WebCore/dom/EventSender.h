@@ -31,6 +31,17 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
+template<typename T, typename WeakPtrImpl> class EventSender;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+
+template<typename U, typename WeakPtrImpl>
+struct IsDeprecatedTimerSmartPointerException<WebCore::EventSender<U, WeakPtrImpl>> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Page;
 class WeakPtrImplWithEventTargetData;

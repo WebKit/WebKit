@@ -32,6 +32,17 @@
 #include <wtf/threads/BinarySemaphore.h>
 
 namespace TestWebKitAPI {
+class DerivedOneShotTimer;
+class DerivedRepeatingTimer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<TestWebKitAPI::DerivedOneShotTimer> : std::true_type { };
+template<> struct IsDeprecatedTimerSmartPointerException<TestWebKitAPI::DerivedRepeatingTimer> : std::true_type { };
+}
+
+namespace TestWebKitAPI {
 
 static bool testFinished;
 static int count = 100;

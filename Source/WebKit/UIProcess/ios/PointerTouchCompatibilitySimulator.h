@@ -38,6 +38,15 @@
 @class WKWebView;
 
 namespace WebKit {
+class PointerTouchCompatibilitySimulator;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::PointerTouchCompatibilitySimulator> : std::true_type { };
+}
+
+namespace WebKit {
 
 class PointerTouchCompatibilitySimulator {
     WTF_MAKE_NONCOPYABLE(PointerTouchCompatibilitySimulator);

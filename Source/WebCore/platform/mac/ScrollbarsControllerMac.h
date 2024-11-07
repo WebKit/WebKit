@@ -40,6 +40,15 @@ OBJC_CLASS WebScrollerImpDelegate;
 typedef id ScrollerImpPair;
 
 namespace WebCore {
+class ScrollbarsControllerMac;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::ScrollbarsControllerMac> : std::true_type { };
+}
+
+namespace WebCore {
 
 class WheelEventTestMonitor;
 

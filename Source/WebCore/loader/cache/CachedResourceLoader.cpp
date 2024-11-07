@@ -299,12 +299,12 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
     if (RefPtr document = this->document())
         request.setDomainForCachePartition(*document);
 
-    auto& memoryCache = MemoryCache::singleton();
+    Ref memoryCache = MemoryCache::singleton();
     if (request.allowsCaching()) {
-        if (CachedResourceHandle existing = memoryCache.resourceForRequest(request.resourceRequest(), page.sessionID())) {
+        if (CachedResourceHandle existing = memoryCache->resourceForRequest(request.resourceRequest(), page.sessionID())) {
             if (auto* cssStyleSheet = dynamicDowncast<CachedCSSStyleSheet>(*existing))
                 return cssStyleSheet;
-            memoryCache.remove(*existing);
+            memoryCache->remove(*existing);
         }
     }
 
@@ -313,7 +313,7 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
     CachedResourceHandle userSheet = new CachedCSSStyleSheet(WTFMove(request), page.sessionID(), page.protectedCookieJar().ptr());
 
     if (userSheet->allowsCaching())
-        memoryCache.add(*userSheet);
+        memoryCache->add(*userSheet);
 
     userSheet->load(*this);
     return userSheet;
@@ -1234,8 +1234,8 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         updateHTTPRequestHeaders(frame->protectedLoader().get(), type, request);
     request.disableCachingIfNeeded();
 
-    auto& memoryCache = MemoryCache::singleton();
-    if (request.allowsCaching() && memoryCache.disabled())
+    Ref memoryCache = MemoryCache::singleton();
+    if (request.allowsCaching() && memoryCache->disabled())
         m_documentResources.remove(url.string());
 
     // See if we can use an existing resource from the cache.
@@ -1244,7 +1244,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         request.setDomainForCachePartition(*document);
 
     if (request.allowsCaching())
-        resource = memoryCache.resourceForRequest(request.resourceRequest(), page->sessionID());
+        resource = memoryCache->resourceForRequest(request.resourceRequest(), page->sessionID());
 
     if (resource && request.isLinkPreload() && !resource->isLinkPreload())
         resource->setLinkPreload();
@@ -1258,11 +1258,11 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
     switch (policy) {
     case Reload:
         if (mayAddToMemoryCache == MayAddToMemoryCache::Yes)
-            memoryCache.remove(*resource);
+            memoryCache->remove(*resource);
         FALLTHROUGH;
     case Load:
         if (resource && mayAddToMemoryCache == MayAddToMemoryCache::Yes)
-            memoryCache.remove(*resource);
+            memoryCache->remove(*resource);
         resource = loadResource(type, page->sessionID(), WTFMove(request), cookieJar, page->protectedSettings(), mayAddToMemoryCache);
         break;
     case Revalidate:
@@ -1300,7 +1300,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
                 return makeUnexpected(WTFMove(error));
             loadTiming.markEndTime();
 
-            memoryCache.resourceAccessed(*resource);
+            memoryCache->resourceAccessed(*resource);
 
             if (document() && !resource->isLoading()) {
                 Box<NetworkLoadMetrics> metrics;
@@ -1339,7 +1339,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
         // We don't support immediate loads, but we do support immediate failure.
         if (resource->errorOccurred()) {
             if (resource->allowsCaching() && resource->inCache())
-                memoryCache.remove(*resource);
+                memoryCache->remove(*resource);
 
             auto resourceError = resource->resourceError();
             // Synchronous cancellations are likely due to access control.
@@ -1376,8 +1376,8 @@ void CachedResourceLoader::stopUnusedPreloadsTimer()
 CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(CachedResourceRequest&& request, CachedResource& resource)
 {
     ASSERT(resource.inCache());
-    auto& memoryCache = MemoryCache::singleton();
-    ASSERT(!memoryCache.disabled());
+    Ref memoryCache = MemoryCache::singleton();
+    ASSERT(!memoryCache->disabled());
     ASSERT(resource.canUseCacheValidator());
     ASSERT(!resource.resourceToRevalidate());
     ASSERT(resource.allowsCaching());
@@ -1387,8 +1387,8 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
     LOG(ResourceLoading, "Resource %p created to revalidate %p", newResource.get(), &resource);
     newResource->setResourceToRevalidate(&resource);
 
-    memoryCache.remove(resource);
-    memoryCache.add(*newResource);
+    memoryCache->remove(resource);
+    memoryCache->add(*newResource);
 
     m_resourceTimingInfo.storeResourceTimingInitiatorInformation(newResource, newResource->initiatorType(), protectedFrame().get());
 
@@ -1397,8 +1397,8 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(Ca
 
 CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, PAL::SessionID sessionID, CachedResourceRequest&& request, const CookieJar& cookieJar, const Settings& settings, MayAddToMemoryCache mayAddToMemoryCache)
 {
-    auto& memoryCache = MemoryCache::singleton();
-    ASSERT(!request.allowsCaching() || mayAddToMemoryCache == MayAddToMemoryCache::No || !memoryCache.resourceForRequest(request.resourceRequest(), sessionID)
+    Ref memoryCache = MemoryCache::singleton();
+    ASSERT(!request.allowsCaching() || mayAddToMemoryCache == MayAddToMemoryCache::No || !memoryCache->resourceForRequest(request.resourceRequest(), sessionID)
         || request.resourceRequest().cachePolicy() == ResourceRequestCachePolicy::DoNotUseAnyCache || request.resourceRequest().cachePolicy() == ResourceRequestCachePolicy::ReloadIgnoringCacheData || request.resourceRequest().cachePolicy() == ResourceRequestCachePolicy::RefreshAnyCacheData);
 
     LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().stringCenterEllipsizedToLength().latin1().data());
@@ -1406,7 +1406,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
     CachedResourceHandle resource = createResource(type, WTFMove(request), sessionID, &cookieJar, settings, protectedDocument().get());
 
     if (resource->allowsCaching() && mayAddToMemoryCache == MayAddToMemoryCache::Yes)
-        memoryCache.add(*resource);
+        memoryCache->add(*resource);
 
     m_resourceTimingInfo.storeResourceTimingInitiatorInformation(resource, resource->initiatorType(), protectedFrame().get());
 

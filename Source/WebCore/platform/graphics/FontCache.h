@@ -82,6 +82,15 @@
 #endif
 
 namespace WebCore {
+class FontCache;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::FontCache> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Font;
 class FontCascade;

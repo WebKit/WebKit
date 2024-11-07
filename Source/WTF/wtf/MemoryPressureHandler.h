@@ -88,6 +88,10 @@ class MemoryPressureHandler {
 public:
     WTF_EXPORT_PRIVATE static MemoryPressureHandler& singleton();
 
+    // Do nothing since this is a singleton.
+    void ref() const { }
+    void deref() const { }
+
     WTF_EXPORT_PRIVATE void install();
 
     WTF_EXPORT_PRIVATE void setMemoryFootprintPollIntervalForTesting(Seconds);

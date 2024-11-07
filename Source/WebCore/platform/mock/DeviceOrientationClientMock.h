@@ -34,6 +34,15 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+class DeviceOrientationClientMock;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::DeviceOrientationClientMock> : std::true_type { };
+}
+
+namespace WebCore {
 
 class DeviceOrientationController;
 

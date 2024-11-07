@@ -33,6 +33,15 @@
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
+class DOMTimerHoldingTank;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::DOMTimerHoldingTank> : std::true_type { };
+}
+
+namespace WebCore {
 
 class DOMTimer;
 

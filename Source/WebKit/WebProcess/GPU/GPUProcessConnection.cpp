@@ -337,7 +337,7 @@ bool GPUProcessConnection::waitForDidInitialize()
 void GPUProcessConnection::didReceiveRemoteCommand(PlatformMediaSession::RemoteControlCommandType type, const PlatformMediaSession::RemoteCommandArgument& argument)
 {
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
-    PlatformMediaSessionManager::sharedManager().processDidReceiveRemoteControlCommand(type, argument);
+    PlatformMediaSessionManager::singleton().processDidReceiveRemoteControlCommand(type, argument);
 #endif
 }
 

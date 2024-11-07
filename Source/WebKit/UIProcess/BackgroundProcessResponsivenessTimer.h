@@ -30,6 +30,15 @@
 #include <wtf/WeakRef.h>
 
 namespace WebKit {
+class BackgroundProcessResponsivenessTimer;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::BackgroundProcessResponsivenessTimer> : std::true_type { };
+}
+
+namespace WebKit {
 
 class WebProcessProxy;
 

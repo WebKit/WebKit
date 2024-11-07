@@ -37,6 +37,15 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
+class PrefetchCache;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::PrefetchCache> : std::true_type { };
+}
+
+namespace WebKit {
 
 class PrefetchCache {
     WTF_MAKE_TZONE_ALLOCATED(PrefetchCache);

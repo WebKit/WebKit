@@ -41,6 +41,15 @@ struct FetchOptions;
 }
 
 namespace WebKit {
+class WebLoaderStrategy;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::WebLoaderStrategy> : std::true_type { };
+}
+
+namespace WebKit {
 
 class NetworkProcessConnection;
 class WebFrame;

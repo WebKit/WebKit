@@ -46,11 +46,15 @@
 
 namespace WebCore {
 class CachedResource;
+class CachedResourceCallback;
 }
 
 namespace WTF {
 template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
 template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CachedResource> : std::true_type { };
+
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::CachedResourceCallback> : std::true_type { };
 }
 
 namespace WebCore {
@@ -336,7 +340,7 @@ protected:
     void clearCachedCryptographicDigests();
 
 private:
-    class Callback;
+    using Callback = CachedResourceCallback;
     template<typename T> friend class CachedResourceClientWalker;
 
     void deleteThis();
@@ -444,10 +448,10 @@ private:
     mutable std::array<std::optional<ResourceCryptographicDigest>, ResourceCryptographicDigest::algorithmCount> m_cryptographicDigests;
 };
 
-class CachedResource::Callback {
+class CachedResourceCallback {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
-    Callback(CachedResource&, CachedResourceClient&);
+    CachedResourceCallback(CachedResource&, CachedResourceClient&);
 
     void cancel();
 

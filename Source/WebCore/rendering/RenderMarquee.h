@@ -49,6 +49,15 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
+class RenderMarquee;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::RenderMarquee> : std::true_type { };
+}
+
+namespace WebCore {
 
 class RenderLayer;
 

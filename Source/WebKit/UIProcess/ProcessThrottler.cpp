@@ -119,6 +119,15 @@ private:
     bool m_isEnabled { true };
 };
 
+} // namespace WebKit
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::ProcessThrottler::ProcessAssertionCache::CachedAssertion> : std::true_type { };
+}
+
+namespace WebKit {
+
 WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(ProcessThrottlerProcessAssertionCache, ProcessThrottler::ProcessAssertionCache);
 WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(ProcessThrottlerProcessAssertionCacheCachedAssertion, ProcessThrottler::ProcessAssertionCache::CachedAssertion);
 

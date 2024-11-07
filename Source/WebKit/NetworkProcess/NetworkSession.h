@@ -384,3 +384,8 @@ protected:
 };
 
 } // namespace WebKit
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::NetworkSession::CachedNetworkResourceLoader> : std::true_type { };
+}

@@ -41,6 +41,15 @@ typedef struct CGContext *CGContextRef;
 #endif
 
 namespace WebCore {
+class TileGrid;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::TileGrid> : std::true_type { };
+}
+
+namespace WebCore {
 
 class GraphicsContext;
 class PlatformCALayer;

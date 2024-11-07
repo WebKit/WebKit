@@ -55,6 +55,15 @@ class JSValue;
 }
 
 namespace WebCore {
+class InspectorDOMAgent;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::InspectorDOMAgent> : std::true_type { };
+}
+
+namespace WebCore {
 
 class AXCoreObject;
 class CharacterData;

@@ -104,6 +104,13 @@
 using namespace WebKit;
 using namespace WebCore;
 
+struct _WebKitWebViewBasePrivate;
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<_WebKitWebViewBasePrivate> : std::true_type { };
+}
+
 #if !USE(GTK4)
 struct ClickCounter {
 public:

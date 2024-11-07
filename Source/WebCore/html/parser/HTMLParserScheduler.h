@@ -35,6 +35,15 @@
 #endif
 
 namespace WebCore {
+class HTMLParserScheduler;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebCore::HTMLParserScheduler> : std::true_type { };
+}
+
+namespace WebCore {
 
 class Document;
 class HTMLDocumentParser;

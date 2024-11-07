@@ -30,6 +30,15 @@
 #include <wtf/TZoneMallocInlines.h>
 
 namespace PAL {
+class HysteresisActivity;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<PAL::HysteresisActivity> : std::true_type { };
+}
+
+namespace PAL {
 
 static const Seconds defaultHysteresisDuration { 5_s };
 

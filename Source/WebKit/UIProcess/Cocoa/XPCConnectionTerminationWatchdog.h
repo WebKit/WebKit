@@ -39,6 +39,15 @@
 #endif
 
 namespace WebKit {
+class XPCConnectionTerminationWatchdog;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::XPCConnectionTerminationWatchdog> : std::true_type { };
+}
+
+namespace WebKit {
 
 class AuxiliaryProcessProxy;
 class ProcessAndUIAssertion;

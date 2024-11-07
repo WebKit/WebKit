@@ -700,10 +700,10 @@ void MemoryCache::removeRequestFromSessionCaches(ScriptExecutionContext& context
         return;
     }
 
-    auto& memoryCache = MemoryCache::singleton();
-    for (auto& resources : memoryCache.m_sessionResources) {
-        if (CachedResourceHandle resource = memoryCache.resourceForRequestImpl(request, *resources.value))
-            memoryCache.remove(*resource);
+    Ref memoryCache = MemoryCache::singleton();
+    for (auto& resources : memoryCache->m_sessionResources) {
+        if (CachedResourceHandle resource = memoryCache->resourceForRequestImpl(request, *resources.value))
+            memoryCache->remove(*resource);
     }
 }
 

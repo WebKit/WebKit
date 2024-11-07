@@ -74,6 +74,9 @@ using RunLoopMode = unsigned;
 #define DefaultRunLoopMode 0
 #endif
 
+// Classes that offer Timers should be ref-counted of CanMakeCheckedPtr. Please do not add new exceptions.
+template<typename T> struct IsDeprecatedTimerSmartPointerException : std::false_type { };
+
 class WTF_CAPABILITY("is current") RunLoop final : public GuaranteedSerialFunctionDispatcher {
     WTF_MAKE_NONCOPYABLE(RunLoop);
 public:
@@ -199,12 +202,15 @@ public:
         {
         }
 
-        // FIXME: This constructor isn't as safe as the other ones and should ideally be removed.
+        // FIXME: This constructor isn't as safe as the other ones and should be removed.
         template <typename TimerFiredClass>
         requires (!WTF::HasRefPtrMemberFunctions<TimerFiredClass>::value && !WTF::HasCheckedPtrMemberFunctions<TimerFiredClass>::value)
         Timer(Ref<RunLoop>&& runLoop, TimerFiredClass* object, void (TimerFiredClass::*function)())
             : Timer(WTFMove(runLoop), std::bind(function, object))
         {
+            static_assert(IsDeprecatedTimerSmartPointerException<std::remove_cv_t<TimerFiredClass>>::value,
+                "Classes that use Timer should be ref-counted or CanMakeCheckedPtr. Please do not add new exceptions."
+            );
         }
 
         Timer(Ref<RunLoop>&& runLoop, Function<void ()>&& function)

@@ -32,6 +32,15 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebKit {
+class DisplayVBlankMonitor;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::DisplayVBlankMonitor> : std::true_type { };
+}
+
+namespace WebKit {
 
 using PlatformDisplayID = uint32_t;
 

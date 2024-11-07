@@ -36,6 +36,15 @@
 typedef struct _GInetAddress GInetAddress;
 
 namespace WebKit {
+class DNSCache;
+}
+
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::DNSCache> : std::true_type { };
+}
+
+namespace WebKit {
 
 class DNSCache {
 public:
