@@ -24,10 +24,9 @@
 
 #pragma once
 
+#include <array>
 #include <wtf/Assertions.h>
 #include <wtf/text/LChar.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 // The behavior of many of the functions in the <ctype.h> header is dependent
 // on the current locale. But in the WebKit project, all uses of those functions
@@ -78,7 +77,7 @@ template<typename CharacterType> constexpr bool isASCIIAlphaCaselessEqual(Charac
 // in the CSS tokenizer, for example, instead make direct use toASCIILowerUnchecked.
 template<typename CharacterType> constexpr CharacterType toASCIILowerUnchecked(CharacterType);
 
-extern WTF_EXPORT_PRIVATE const unsigned char asciiCaseFoldTable[256];
+extern WTF_EXPORT_PRIVATE const std::array<uint8_t, 256> asciiCaseFoldTable;
 
 template<typename CharacterType> constexpr bool isASCII(CharacterType character)
 {
@@ -280,5 +279,3 @@ using WTF::toASCIILowerUnchecked;
 using WTF::toASCIIUpper;
 using WTF::upperNibbleToASCIIHexDigit;
 using WTF::upperNibbleToLowercaseASCIIHexDigit;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
