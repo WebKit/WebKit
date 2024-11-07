@@ -500,7 +500,7 @@ void RenderGrid::layoutMasonry(bool relayoutChildren)
             auto gridAxisDirection = masonryAxisDirection == GridTrackSizingDirection::ForRows ? GridTrackSizingDirection::ForColumns : GridTrackSizingDirection::ForRows;
             unsigned gridAxisTracksBeforeAutoPlacement = currentGrid().numTracks(gridAxisDirection);
 
-            m_masonryLayout.performMasonryPlacement(m_trackSizingAlgorithm, gridAxisTracksBeforeAutoPlacement, masonryAxisDirection);
+            m_masonryLayout.performMasonryPlacement(m_trackSizingAlgorithm, gridAxisTracksBeforeAutoPlacement, masonryAxisDirection, GridMasonryLayout::MasonryLayoutPhase::LayoutPhase);
         };
 
         if (areMasonryRows())
@@ -706,29 +706,10 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
 
         // To determine the width of the grid when we have a masonry layout in the column direction we need to perform a layout with the min and max
         // conent sizes. We will override the grid items widths to accomplish this and then calculate the final grid content size after placement.
-
-        for (auto* gridItem = grid.orderIterator().first(); gridItem; gridItem = grid.orderIterator().next()) {
-            if (grid.orderIterator().shouldSkipChild(*gridItem))
-                continue;
-
-            if (gridItem->style().logicalWidth().isAuto() || gridItem->style().logicalWidth().isPercent())
-                gridItem->setOverridingLogicalWidth(gridItem->computeIntrinsicLogicalWidthUsing(Length(LengthType::MinContent), LayoutUnit(), gridItem->borderAndPaddingLogicalWidth()));
-        }
-
-        m_masonryLayout.performMasonryPlacement(algorithm, gridAxisTracksCountBeforeAutoPlacement, GridTrackSizingDirection::ForColumns);
-
+        m_masonryLayout.performMasonryPlacement(algorithm, gridAxisTracksCountBeforeAutoPlacement, GridTrackSizingDirection::ForColumns, GridMasonryLayout::MasonryLayoutPhase::MinContentPhase);
         minLogicalWidth = m_masonryLayout.gridContentSize();
 
-        for (auto* gridItem = grid.orderIterator().first(); gridItem; gridItem = grid.orderIterator().next()) {
-            if (grid.orderIterator().shouldSkipChild(*gridItem))
-                continue;
-
-            if (gridItem->style().logicalWidth().isAuto() || gridItem->style().logicalWidth().isPercent())
-                gridItem->setOverridingLogicalWidth(gridItem->computeIntrinsicLogicalWidthUsing(Length(LengthType::MaxContent), LayoutUnit(), gridItem->borderAndPaddingLogicalWidth()));
-        }
-
-        m_masonryLayout.performMasonryPlacement(algorithm, gridAxisTracksCountBeforeAutoPlacement, GridTrackSizingDirection::ForColumns);
-
+        m_masonryLayout.performMasonryPlacement(algorithm, gridAxisTracksCountBeforeAutoPlacement, GridTrackSizingDirection::ForColumns, GridMasonryLayout::MasonryLayoutPhase::MaxContentPhase);
         maxLogicalWidth = m_masonryLayout.gridContentSize();
     }
 

@@ -41,8 +41,14 @@ public:
     {
     }
 
+    enum class MasonryLayoutPhase : uint8_t {
+        LayoutPhase,
+        MinContentPhase,
+        MaxContentPhase
+    };
+
     void initializeMasonry(unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection);
-    void performMasonryPlacement(const GridTrackSizingAlgorithm&, unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection);
+    void performMasonryPlacement(const GridTrackSizingAlgorithm&, unsigned gridAxisTracks, GridTrackSizingDirection masonryAxisDirection, GridMasonryLayout::MasonryLayoutPhase);
     LayoutUnit offsetForGridItem(const RenderBox&) const;
     LayoutUnit gridContentSize() const { return m_gridContentSize; };
     LayoutUnit gridGap() const { return m_masonryAxisGridGap; };
@@ -54,11 +60,12 @@ private:
     GridArea gridAreaForDefiniteGridAxisItem(const RenderBox&) const;
 
     void collectMasonryItems();
-    void placeItemsUsingOrderModifiedDocumentOrder(const GridTrackSizingAlgorithm&);
-    void placeItemsWithDefiniteGridAxisPosition(const GridTrackSizingAlgorithm&);
-    void placeItemsWithIndefiniteGridAxisPosition(const GridTrackSizingAlgorithm&);
+    void placeItemsUsingOrderModifiedDocumentOrder(const GridTrackSizingAlgorithm&, GridMasonryLayout::MasonryLayoutPhase);
+    void placeItemsWithDefiniteGridAxisPosition(const GridTrackSizingAlgorithm&, GridMasonryLayout::MasonryLayoutPhase);
+    void placeItemsWithIndefiniteGridAxisPosition(const GridTrackSizingAlgorithm&, GridMasonryLayout::MasonryLayoutPhase);
     void setItemGridAxisContainingBlockToGridArea(const GridTrackSizingAlgorithm&, RenderBox&);
-    void insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&);
+    void insertIntoGridAndLayoutItem(const GridTrackSizingAlgorithm&, RenderBox&, const GridArea&, GridMasonryLayout::MasonryLayoutPhase);
+    LayoutUnit calculateMasonryIntrinsicLogicalWidth(RenderBox&, GridMasonryLayout::MasonryLayoutPhase);
 
     void resizeAndResetRunningPositions();
     void allocateCapacityForMasonryVectors();
