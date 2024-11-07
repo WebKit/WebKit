@@ -7743,7 +7743,7 @@ void WebPageProxy::decidePolicyForNavigationAction(Ref<WebProcessProxy>&& proces
 #endif
 
     auto wasPotentiallyInitiatedByUser = navigation->isLoadedWithNavigationShared() || navigation->wasUserInitiated();
-    if (isAlwaysOnLoggingAllowed())
+    if (!sessionID().isEphemeral())
         logFrameNavigation(frame, URL { internals().pageLoadState.url() }, request, navigationAction->data().redirectResponse.url(), wasPotentiallyInitiatedByUser);
 
     if (m_policyClient)
