@@ -82,6 +82,7 @@ public:
     DDHighlightRef highlight() const { return m_highlight.get(); }
     const SimpleRange& range() const;
     GraphicsLayer& layer() const { return m_graphicsLayer.get(); }
+    Ref<GraphicsLayer> protectedLayer() const { return layer(); }
 
     enum class Type : uint8_t {
         None = 0,

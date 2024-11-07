@@ -108,7 +108,6 @@ WebProcess/Network/webrtc/LibWebRTCProvider.cpp
 WebProcess/Network/webrtc/WebMDNSRegister.cpp
 WebProcess/Notifications/WebNotificationManager.cpp
 WebProcess/Plugins/PDF/PDFIncrementalLoader.mm
-WebProcess/Plugins/PDF/PDFPlugin.mm
 WebProcess/Plugins/PDF/PDFPluginAnnotation.mm
 WebProcess/Plugins/PDF/PDFPluginBase.mm
 WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm

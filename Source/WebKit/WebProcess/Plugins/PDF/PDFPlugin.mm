@@ -148,7 +148,7 @@ static const int defaultScrollMagnitudeThresholdForPageFlip = 20;
     if (!protectedSelf->_parent) {
         callOnMainRunLoopAndWait([&protectedSelf] {
             if (auto* axObjectCache = protectedSelf->_pdfPlugin->axObjectCache()) {
-                if (RefPtr pluginAxObject = axObjectCache->getOrCreate(protectedSelf->_pluginElement.get()))
+                if (RefPtr pluginAxObject = axObjectCache->getOrCreate(RefPtr { protectedSelf->_pluginElement.get() }.get()))
                     protectedSelf->_parent = pluginAxObject->wrapper();
             }
         });
@@ -291,7 +291,7 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 {
     if (RefPtr activeAnnotation = _pdfPlugin->activeAnnotation()) {
         if (WebCore::AXObjectCache* existingCache = _pdfPlugin->axObjectCache()) {
-            if (RefPtr object = existingCache->getOrCreate(activeAnnotation->element()))
+            if (RefPtr object = existingCache->getOrCreate(activeAnnotation->protectedElement().get()))
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
                 return [object->wrapper() accessibilityAttributeValue:@"_AXAssociatedPluginParent"];
 ALLOW_DEPRECATED_DECLARATIONS_END
@@ -309,7 +309,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     id wrapper = nil;
     callOnMainRunLoopAndWait([activeAnnotation, protectedSelf = retainPtr(self), &wrapper] {
         if (auto* axObjectCache = protectedSelf->_pdfPlugin->axObjectCache()) {
-            if (RefPtr annotationElementAxObject = axObjectCache->getOrCreate(activeAnnotation->element()))
+            if (RefPtr annotationElementAxObject = axObjectCache->getOrCreate(activeAnnotation->protectedElement().get()))
                 wrapper = annotationElementAxObject->wrapper();
         }
     });
@@ -547,26 +547,27 @@ PDFPlugin::PDFPlugin(HTMLPlugInElement& element)
     }
 
     if (supportsForms()) {
-        m_annotationContainer = document->createElement(divTag, false);
-        m_annotationContainer->setAttributeWithoutSynchronization(idAttr, "annotationContainer"_s);
+        RefPtr annotationContainer = m_annotationContainer = document->createElement(divTag, false);
+        annotationContainer->setAttributeWithoutSynchronization(idAttr, "annotationContainer"_s);
 
         auto annotationStyleElement = document->createElement(styleTag, false);
         annotationStyleElement->setTextContent(annotationStyle());
 
-        m_annotationContainer->appendChild(annotationStyleElement);
-        RefPtr { document->bodyOrFrameset() }->appendChild(*m_annotationContainer);
+        annotationContainer->appendChild(annotationStyleElement);
+        RefPtr { document->bodyOrFrameset() }->appendChild(*annotationContainer);
     }
 
+    RefPtr frame = m_frame.get();
     m_accessibilityObject = adoptNS([[WKPDFPluginAccessibilityObject alloc] initWithPDFPlugin:this andElement:&element]);
     [m_accessibilityObject setPdfLayerController:m_pdfLayerController.get()];
-    if (isFullFrame && m_frame->isMainFrame())
-        [m_accessibilityObject setParent:m_frame->page()->accessibilityRemoteObject()];
+    if (isFullFrame && frame->isMainFrame())
+        [m_accessibilityObject setParent:frame->page()->accessibilityRemoteObject()];
     // If this is not a main-frame (e.g. it originated from an iframe) full-frame plugin, we'll need to set the parent later after the AXObjectCache has been initialized.
 
     [m_containerLayer addSublayer:m_contentLayer.get()];
     [m_containerLayer addSublayer:m_scrollCornerLayer.get()];
     if ([m_pdfLayerController respondsToSelector:@selector(setDeviceColorSpace:)])
-        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(m_frame->coreLocalFrame()->view()).platformColorSpace()];
+        [m_pdfLayerController setDeviceColorSpace:screenColorSpace(frame->protectedCoreLocalFrame()->view()).platformColorSpace()];
     
     if ([getPDFLayerControllerClass() respondsToSelector:@selector(setUseIOSurfaceForTiles:)])
         [getPDFLayerControllerClass() setUseIOSurfaceForTiles:false];
@@ -579,13 +580,13 @@ void PDFPlugin::updateScrollbars()
     PDFPluginBase::updateScrollbars();
 
     if (m_verticalScrollbarLayer) {
-        m_verticalScrollbarLayer.get().frame = verticalScrollbar()->frameRect();
+        m_verticalScrollbarLayer.get().frame = protectedVerticalScrollbar()->frameRect();
         [m_verticalScrollbarLayer setContents:nil];
         [m_verticalScrollbarLayer setNeedsDisplay];
     }
     
     if (m_horizontalScrollbarLayer) {
-        m_horizontalScrollbarLayer.get().frame = horizontalScrollbar()->frameRect();
+        m_horizontalScrollbarLayer.get().frame = protectedHorizontalScrollbar()->frameRect();
         [m_horizontalScrollbarLayer setContents:nil];
         [m_horizontalScrollbarLayer setNeedsDisplay];
     }
@@ -650,8 +651,8 @@ void PDFPlugin::installPDFDocument()
     [m_pdfLayerController setFrameSize:size()];
     m_pdfLayerController.get().document = m_pdfDocument.get();
 
-    if (handlesPageScaleFactor())
-        m_view->setPageScaleFactor([m_pdfLayerController contentScaleFactor], std::nullopt);
+    if (RefPtr view = m_view.get(); view && handlesPageScaleFactor())
+        view->setPageScaleFactor([m_pdfLayerController contentScaleFactor], std::nullopt);
 
     notifyScrollPositionChanged(IntPoint([m_pdfLayerController scrollPosition]));
 
@@ -664,8 +665,8 @@ void PDFPlugin::installPDFDocument()
     if (isLocked())
         createPasswordEntryForm();
 
-    if (m_frame && [m_pdfLayerController respondsToSelector:@selector(setURLFragment:)])
-        [m_pdfLayerController setURLFragment:m_frame->url().fragmentIdentifier().createNSString().get()];
+    if (RefPtr frame = m_frame.get(); frame && [m_pdfLayerController respondsToSelector:@selector(setURLFragment:)])
+        [m_pdfLayerController setURLFragment:frame->url().fragmentIdentifier().createNSString().get()];
 }
 
 void PDFPlugin::createPasswordEntryForm()
@@ -703,8 +704,10 @@ void PDFPlugin::updatePageAndDeviceScaleFactors()
 
     CGFloat newScaleFactor = deviceScaleFactor();
     if (!handlesPageScaleFactor()) {
-        if (auto* page = m_frame ? m_frame->page() : nullptr)
-            newScaleFactor *= page->pageScaleFactor();
+        if (RefPtr frame = m_frame.get()) {
+            if (RefPtr page = frame->page())
+                newScaleFactor *= page->pageScaleFactor();
+        }
     }
 
     if (newScaleFactor != [m_pdfLayerController deviceScaleFactor])
@@ -744,7 +747,8 @@ void PDFPlugin::teardown()
 
     m_pdfLayerController.get().delegate = nil;
 
-    if (auto* frameView = m_frame && m_frame->coreLocalFrame() ? m_frame->coreLocalFrame()->view() : nullptr)
+    RefPtr frame = m_frame.get();
+    if (RefPtr frameView = frame && frame->coreLocalFrame() ? frame->protectedCoreLocalFrame()->view() : nullptr)
         frameView->removeScrollableArea(this);
 
     m_activeAnnotation = nullptr;
@@ -1086,7 +1090,9 @@ bool PDFPlugin::handleMouseLeaveEvent(const WebMouseEvent&)
     
 bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
 {
-    auto* frameView = m_frame ? m_frame->coreLocalFrame()->view() : nullptr;
+    RefPtr frame = m_frame.get();
+    RefPtr localFrame = frame ? frame->coreLocalFrame() : nullptr;
+    RefPtr frameView = localFrame ? localFrame->view() : nullptr;
     if (!frameView)
         return false;
     IntPoint contentsPoint = frameView->contentsToRootView(point);
@@ -1096,12 +1102,13 @@ bool PDFPlugin::showContextMenuAtPoint(const IntPoint& point)
 
 bool PDFPlugin::handleContextMenuEvent(const WebMouseEvent& event)
 {
-    if (!m_frame || !m_frame->coreLocalFrame())
+    RefPtr frame = m_frame.get();
+    if (!frame || !frame->coreLocalFrame())
         return false;
-    RefPtr webPage = m_frame->page();
+    RefPtr webPage = frame->page();
     if (!webPage)
         return false;
-    RefPtr frameView = m_frame->coreLocalFrame()->view();
+    RefPtr frameView = frame->protectedCoreLocalFrame()->view();
     if (!frameView)
         return false;
 
@@ -1234,8 +1241,8 @@ void PDFPlugin::setActiveAnnotation(SetActiveAnnotationParams&& setActiveAnnotat
 
 void PDFPlugin::notifyContentScaleFactorChanged(CGFloat scaleFactor)
 {
-    if (handlesPageScaleFactor())
-        m_view->setPageScaleFactor(scaleFactor, std::nullopt);
+    if (RefPtr view = m_view.get(); view && handlesPageScaleFactor())
+        view->setPageScaleFactor(scaleFactor, std::nullopt);
 
     updateHUDLocation();
     updateScrollbars();
@@ -1289,10 +1296,10 @@ void PDFPlugin::showDefinitionForAttributedString(NSAttributedString *string, CG
     dataForSelection.presentationTransition = TextIndicatorPresentationTransition::FadeIn;
     dictionaryPopupInfo.textIndicator = dataForSelection;
     
-    if (!m_frame || !m_frame->page())
-        return;
-
-    m_frame->page()->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
+    if (RefPtr frame = m_frame.get()) {
+        if (RefPtr page = frame->page())
+            page->send(Messages::WebPageProxy::DidPerformDictionaryLookup(dictionaryPopupInfo));
+    }
 }
 
 unsigned PDFPlugin::countFindMatches(const String& target, WebCore::FindOptions options, unsigned /*maxMatchCount*/)
