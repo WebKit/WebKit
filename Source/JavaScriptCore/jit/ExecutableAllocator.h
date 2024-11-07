@@ -26,6 +26,7 @@
 #pragma once
 
 #include <bit>
+#include "AssemblerCommon.h"
 #include "ExecutableMemoryHandle.h"
 #include "FastJITPermissions.h"
 #include "JITCompilationEffort.h"
@@ -274,7 +275,7 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
 
         if (g_jscConfig.useFastJITPermissions) {
             threadSelfRestrict<MemoryRestriction::kRwxToRw>();
-            memcpy(dst, src, n);
+            memcpyAtomicIfPossible(dst, src, n);
             threadSelfRestrict<MemoryRestriction::kRwxToRx>();
 #if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
             checkForZeroes();
@@ -296,15 +297,14 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
         }
 #endif
 
-        auto ret = memcpy(dst, src, n);
+        auto ret = memcpyAtomicIfPossible(dst, src, n);
 #if ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
         checkForZeroes();
 #endif
         return ret;
     }
 
-    // Use regular memcpy for writes outside the JIT region.
-    return memcpy(dst, src, n);
+    return memcpyAtomicIfPossible(dst, src, n);
 }
 
 class ExecutableAllocator : private ExecutableAllocatorBase {

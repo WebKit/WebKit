@@ -1409,7 +1409,7 @@ void ExecutableAllocator::finishWriting(const void* start, size_t sizeInBytes) {
 void* performJITMemcpyWithMProtect(void *dst, const void *src, size_t n)
 {
     g_jscConfig.fixedVMPoolExecutableAllocator->startWriting(dst, n);
-    memcpy(dst, src, n);
+    memcpyAtomicIfPossible(dst, src, n);
     g_jscConfig.fixedVMPoolExecutableAllocator->finishWriting(dst, n);
     return dst;
 }
