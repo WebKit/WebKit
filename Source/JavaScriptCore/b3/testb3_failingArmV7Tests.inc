@@ -52,8 +52,6 @@
 "testLateRegister",
 "testLICM",
 "testLoadPreIndex32WithStore",
-"testMoveConstants",
-"testMoveConstantsWithLargeOffsets",
 "testPinRegisters",
 "testReduceFloatToDoubleValidates",
 "testSimplePatchpoint",

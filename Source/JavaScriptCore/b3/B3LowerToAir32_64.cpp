@@ -590,7 +590,7 @@ private:
 
     // This turns the given operand into an address.
     template<typename Int, typename = Value::IsLegalOffset<Int>>
-    Arg effectiveAddr(Value* address, Int offset, Width width)
+    Arg effectiveAddr(Type accessType, Value* address, Int offset, Width width)
     {
         // This function currently is currently only used for loads/stores, so
         // using Air::Move is appropriate.
@@ -617,6 +617,8 @@ private:
                     return Arg();
                 if (m_locked.contains(index->child(0)) || m_locked.contains(base))
                     return Arg();
+                if (!Arg::isValidIndexForm(moveForType(accessType), *scale, offset, width))
+                    return Arg();
                 return indexArg(tmp(base), index->child(0), *scale, offset);
             };
 
@@ -629,6 +631,8 @@ private:
                 || !Arg::isValidIndexForm(Air::Move, 1, offset, width))
                 return fallback();
 
+            if (!Arg::isValidIndexForm(moveForType(accessType), 1, offset, width))
+                return fallback();
             if (isMergeableValue(left, ZExt32) || isMergeableValue(left, SExt32))
                 return indexArg(tmp(right), left, 1, offset);
             return indexArg(tmp(left), right, 1, offset);
@@ -696,7 +700,7 @@ private:
                 return Arg::simpleAddr(tmp(value->lastChild()));
         }
 
-        Arg result = effectiveAddr(value->lastChild(), offset, width);
+        Arg result = effectiveAddr(value->accessType(), value->lastChild(), offset, width);
         RELEASE_ASSERT(result.isValidForm(Air::Move, width));
 
         return result;

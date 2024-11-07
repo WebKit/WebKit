@@ -28,6 +28,7 @@
 #if ENABLE(B3_JIT)
 
 #include "AirArg.h"
+#include "AirHelpers.h"
 #include "AirOpcode.h"
 #include "B3AtomicValue.h"
 
@@ -43,7 +44,7 @@ inline bool MemoryValue::isLegalOffsetImpl(int32_t offset) const
 
     // The opcode is only used on ARM and Air::Move is appropriate for
     // loads/stores.
-    return Air::Arg::isValidAddrForm(Air::Move, offset, accessWidth());
+    return Air::Arg::isValidAddrForm(Air::moveForType(accessType()), offset, accessWidth());
 }
 
 inline bool MemoryValue::requiresSimpleAddr() const
