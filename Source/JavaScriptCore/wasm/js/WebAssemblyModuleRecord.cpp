@@ -205,7 +205,7 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
 
             JSWebAssemblyInstance* calleeInstance = nullptr;
             WasmToWasmImportableFunction::LoadLocation entrypointLoadLocation = nullptr;
-            const uintptr_t* boxedTargetCalleeLoadLocation = nullptr;
+            const uintptr_t* boxedWasmCalleeLoadLocation = nullptr;
             JSObject* function = jsCast<JSObject*>(value);
 
             // ii. If v is an Exported Function Exotic Object:
@@ -218,11 +218,12 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
                     importedTypeIndex = wasmFunction->typeIndex();
                     calleeInstance = wasmFunction->instance();
                     entrypointLoadLocation = wasmFunction->entrypointLoadLocation();
-                    boxedTargetCalleeLoadLocation = wasmFunction->boxedWasmCalleeLoadLocation();
+                    boxedWasmCalleeLoadLocation = wasmFunction->boxedWasmCalleeLoadLocation();
                 } else {
                     importedTypeIndex = wasmWrapperFunction->typeIndex();
                     // b. Let closure be v.[[Closure]].
                     function = wasmWrapperFunction->function();
+                    boxedWasmCalleeLoadLocation = wasmWrapperFunction->boxedWasmCalleeLoadLocation();
                 }
                 Wasm::TypeIndex expectedTypeIndex = moduleInformation.importFunctionTypeIndices[import.kindIndex];
                 if (!Wasm::isSubtypeIndex(importedTypeIndex, expectedTypeIndex))
@@ -235,9 +236,10 @@ void WebAssemblyModuleRecord::initializeImports(JSGlobalObject* globalObject, JS
             // Note: adding the JSCell to the instance list fulfills closure requirements b. above (the WebAssembly.Instance wil be kept alive) and v. below (the JSFunction).
 
             auto* info = m_instance->importFunctionInfo(import.kindIndex);
+            info->boxedWasmCalleeLoadLocation = boxedWasmCalleeLoadLocation;
             info->targetInstance.setMayBeNull(vm, m_instance.get(), calleeInstance);
-            info->wasmEntrypointLoadLocation = entrypointLoadLocation;
-            info->boxedTargetCalleeLoadLocation = boxedTargetCalleeLoadLocation;
+            info->entrypointLoadLocation = entrypointLoadLocation;
+            info->typeIndex = moduleInformation.importFunctionTypeIndices[import.kindIndex];
             m_instance->importFunction(import.kindIndex).set(vm, m_instance.get(), function);
             break;
         }
