@@ -769,7 +769,7 @@ void Storage::dispatchReadOperation(std::unique_ptr<ReadOperation> readOperation
         readOperation.timings.recordIOStartTime = MonotonicTime::now();
 
         auto channel = IOChannel::open(WTFMove(recordPath), IOChannel::Type::Read);
-        channel->read(0, std::numeric_limits<size_t>::max(), protectedIOQueue(), [this, &readOperation](const Data& fileData, int error) {
+        channel->read(0, std::numeric_limits<size_t>::max(), protectedIOQueue(), [this, &readOperation](auto fileData, int error) {
             readOperation.timings.recordIOEndTime = MonotonicTime::now();
             if (!error)
                 readRecord(readOperation, fileData);
@@ -1017,7 +1017,7 @@ void Storage::traverseWithinRootPath(const String& rootPath, const String& type,
             ++traverseOperation.activeCount;
 
             auto channel = IOChannel::open(WTFMove(recordPath), IOChannel::Type::Read);
-            channel->read(0, std::numeric_limits<size_t>::max(), WorkQueue::main(), [this, &traverseOperation, worth, bodyShareCount](Data& fileData, int) {
+            channel->read(0, std::numeric_limits<size_t>::max(), WorkQueue::main(), [this, &traverseOperation, worth, bodyShareCount](auto fileData, int) {
                 RecordMetaData metaData;
                 Data headerData;
                 if (decodeRecordHeader(fileData, metaData, headerData, m_salt)) {
