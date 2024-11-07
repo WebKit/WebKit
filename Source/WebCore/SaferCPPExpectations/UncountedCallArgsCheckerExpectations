@@ -724,7 +724,7 @@ accessibility/mac/AXObjectCacheMac.mm
 accessibility/mac/AccessibilityObjectMac.mm
 accessibility/mac/WebAccessibilityObjectWrapperBase.mm
 accessibility/mac/WebAccessibilityObjectWrapperMac.mm
-animation/AcceleratedTimeline.cpp
+animation/AcceleratedEffectStackUpdater.cpp
 animation/AnimationEffect.cpp
 animation/AnimationEffectTiming.cpp
 animation/AnimationTimeline.cpp

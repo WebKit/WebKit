@@ -37,18 +37,18 @@ class Document;
 class Element;
 struct Styleable;
 
-class AcceleratedTimeline {
+class AcceleratedEffectStackUpdater {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
-    AcceleratedTimeline(Document&);
+    AcceleratedEffectStackUpdater(Document&);
 
     void updateEffectStacks();
     void updateEffectStackForTarget(const Styleable&);
-    
+
     Seconds timeOrigin() const { return m_timeOrigin; }
-    
+
 protected:
-    
+
 private:
     using HashedStyleable = std::pair<Element*, std::optional<Style::PseudoElementIdentifier>>;
     HashSet<HashedStyleable> m_targetsPendingUpdate;

@@ -27,6 +27,7 @@
 #include "KeyframeEffect.h"
 
 #include "Animation.h"
+#include "AnimationTimelinesController.h"
 #include "CSSAnimation.h"
 #include "CSSKeyframeRule.h"
 #include "CSSPropertyAnimation.h"
@@ -77,7 +78,7 @@
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 #include "AcceleratedEffect.h"
-#include "AcceleratedTimeline.h"
+#include "AcceleratedEffectStackUpdater.h"
 #endif
 
 namespace WebCore {
@@ -2851,11 +2852,12 @@ void KeyframeEffect::updateAssociatedThreadedEffectStack(const std::optional<con
     if (!document()->page())
         return;
 
-    auto& acceleratedTimeline = document()->acceleratedTimeline();
+    ASSERT(document()->timelinesController());
+    auto& acceleratedEffectStackUpdater = CheckedPtr { document()->timelinesController() }->acceleratedEffectStackUpdater();
     if (previousTarget)
-        acceleratedTimeline.updateEffectStackForTarget(*previousTarget);
+        acceleratedEffectStackUpdater.updateEffectStackForTarget(*previousTarget);
     if (auto currentTarget = targetStyleable())
-        acceleratedTimeline.updateEffectStackForTarget(*currentTarget);
+        acceleratedEffectStackUpdater.updateEffectStackForTarget(*currentTarget);
 
     if (auto* animation = this->animation())
         animation->acceleratedStateDidChange();

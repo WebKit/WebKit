@@ -583,7 +583,7 @@ accessibility/AccessibilityTree.cpp
 accessibility/AccessibilityTreeItem.cpp
 accessibility/isolatedtree/AXIsolatedObject.cpp
 accessibility/isolatedtree/AXIsolatedTree.cpp
-animation/AcceleratedTimeline.cpp
+animation/AcceleratedEffectStackUpdater.cpp
 animation/AnimationEffect.cpp
 animation/AnimationEffectTiming.cpp
 animation/AnimationEventBase.cpp

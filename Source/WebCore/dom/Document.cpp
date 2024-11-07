@@ -398,10 +398,6 @@
 #include "HTMLVideoElement.h"
 #endif
 
-#if ENABLE(THREADED_ANIMATION_RESOLUTION)
-#include "AcceleratedTimeline.h"
-#endif
-
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #define DOCUMENT_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] Document::" fmt, this, pageID() ? pageID()->toUInt64() : 0, frameID() ? frameID()->object().toUInt64() : 0, this == &topDocument(), ##__VA_ARGS__)
@@ -9989,15 +9985,6 @@ DocumentTimeline& Document::timeline()
 
     return *m_timeline;
 }
-
-#if ENABLE(THREADED_ANIMATION_RESOLUTION)
-AcceleratedTimeline& Document::acceleratedTimeline()
-{
-    if (!m_acceleratedTimeline)
-        m_acceleratedTimeline = makeUnique<AcceleratedTimeline>(*this);
-    return *m_acceleratedTimeline;
-}
-#endif
 
 Vector<RefPtr<WebAnimation>> Document::getAnimations()
 {

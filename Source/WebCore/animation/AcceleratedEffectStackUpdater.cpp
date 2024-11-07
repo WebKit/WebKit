@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "AcceleratedTimeline.h"
+#include "AcceleratedEffectStackUpdater.h"
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-AcceleratedTimeline::AcceleratedTimeline(Document& document)
+AcceleratedEffectStackUpdater::AcceleratedEffectStackUpdater(Document& document)
 {
     auto now = MonotonicTime::now();
     m_timeOrigin = now.secondsSinceEpoch();
@@ -51,7 +51,7 @@ AcceleratedTimeline::AcceleratedTimeline(Document& document)
         m_timeOrigin -= Seconds::fromMilliseconds(domWindow->performance().relativeTimeFromTimeOriginInReducedResolution(now));
 }
 
-void AcceleratedTimeline::updateEffectStacks()
+void AcceleratedEffectStackUpdater::updateEffectStacks()
 {
     auto targetsPendingUpdate = std::exchange(m_targetsPendingUpdate, { });
     for (auto [element, pseudoElementIdentifier] : targetsPendingUpdate) {
@@ -70,7 +70,7 @@ void AcceleratedTimeline::updateEffectStacks()
     }
 }
 
-void AcceleratedTimeline::updateEffectStackForTarget(const Styleable& target)
+void AcceleratedEffectStackUpdater::updateEffectStackForTarget(const Styleable& target)
 {
     m_targetsPendingUpdate.add({ &target.element, target.pseudoElementIdentifier });
 }
