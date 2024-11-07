@@ -3,4 +3,5 @@ PASS Alternating light/dark
 PASS Proximity wins over order of appearance
 PASS Specificity wins over proximity
 PASS Identical root with further proximity is not ignored
+PASS Most proximate match wins under multiple scoping roots
 

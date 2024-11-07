@@ -14,9 +14,9 @@ PASS @scope (.a) to (& > &) is valid
 PASS @scope (.a) to (> .b) is valid
 PASS @scope (.a) to (+ .b) is valid
 PASS @scope (.a) to (~ .b) is valid
-PASS @scope () is valid
-PASS @scope to () is valid
-PASS @scope () to () is valid
+FAIL @scope () is not valid assert_equals: expected 0 but got 1
+FAIL @scope to () is not valid assert_equals: expected 0 but got 1
+FAIL @scope () to () is not valid assert_equals: expected 0 but got 1
 FAIL @scope (.c <> .d) is not valid assert_equals: expected 0 but got 1
 FAIL @scope (.a, .c <> .d) is not valid assert_equals: expected 0 but got 1
 FAIL @scope (.a <> .b, .c) is not valid assert_equals: expected 0 but got 1

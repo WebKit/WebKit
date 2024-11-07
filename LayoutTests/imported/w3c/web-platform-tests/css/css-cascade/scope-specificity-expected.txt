@@ -8,6 +8,6 @@ PASS @scope (#main) { & .b {  } } and #main .b
 PASS @scope (#main) { div .b {  } } and div .b
 PASS @scope (#main) { @scope (.a) { .b {  } } } and .b
 PASS @scope (#main) { :scope .b {  } } and :scope .b
-PASS @scope { & .b {  } } and :scope .b
+FAIL @scope { & .b {  } } and :where(:scope) .b assert_equals: unscoped + scoped expected "2" but got "1"
 PASS @scope (#main) { > .a {  } } and :where(#main) > .a
 
