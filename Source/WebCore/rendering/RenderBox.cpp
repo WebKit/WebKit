@@ -69,6 +69,7 @@
 #include "RenderFragmentContainer.h"
 #include "RenderGeometryMap.h"
 #include "RenderGrid.h"
+#include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderIterator.h"
 #include "RenderLayerCompositor.h"
@@ -3334,6 +3335,14 @@ std::optional<LayoutUnit> RenderBox::computeIntrinsicLogicalContentHeightUsing(L
     // FIXME: The CSS sizing spec is considering changing what min-content/max-content should resolve to.
     // If that happens, this code will have to change.
     if (logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent() || logicalHeightLength.isFitContent() || logicalHeightLength.isLegacyIntrinsic()) {
+        if (auto* renderImage = dynamicDowncast<RenderImage>(this)) {
+            auto computedLogicalWidth = style().logicalWidth();
+            if ((logicalHeightLength.isMinContent() || logicalHeightLength.isMaxContent()) && computedLogicalWidth.isFixed() && !style().hasAspectRatio()) {
+                auto intrinsicRatio = renderImage->intrinsicRatio();
+                return resolveHeightForRatio(borderAndPaddingLogicalWidth(), borderAndPaddingLogicalHeight(), LayoutUnit(computedLogicalWidth.value()), intrinsicRatio.transposedSize().aspectRatio(), BoxSizing::ContentBox);
+            }
+        }
+
         if (intrinsicContentHeight)
             return adjustIntrinsicLogicalHeightForBoxSizing(intrinsicContentHeight.value());
         return { };
