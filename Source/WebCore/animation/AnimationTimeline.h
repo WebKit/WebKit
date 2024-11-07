@@ -68,14 +68,13 @@ public:
     virtual AnimationTimelinesController* controller() const { return nullptr; }
 
     virtual TimelineRange defaultRange() const { return { }; }
-
+    static void updateGlobalPosition(WebAnimation&);
 protected:
     AnimationTimeline(std::optional<WebAnimationTime> = std::nullopt);
 
     AnimationCollection m_animations;
 
 private:
-    void updateGlobalPosition(WebAnimation&);
 
     std::optional<WebAnimationTime> m_currentTime;
     std::optional<WebAnimationTime> m_duration;

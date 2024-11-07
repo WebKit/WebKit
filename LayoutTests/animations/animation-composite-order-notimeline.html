@@ -1,0 +1,17 @@
+<p>This test passes if it doesn't crash.</p>
+<script>
+if (testRunner)
+    testRunner.dumpAsText();
+
+function eventhandler() {
+    varx = new Animation(new KeyframeEffect(document.documentElement, null, 1), null);
+    varx.pause();
+    htmlvar.crossOrigin = "crossorigin";
+}
+
+function loading() {
+    document.getAnimations();
+}
+</script>
+<body onload=loading()>
+<img id="htmlvar" onerror="eventhandler()" src="x"></img>
