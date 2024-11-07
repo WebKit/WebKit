@@ -35,6 +35,7 @@
 #import <GameController/GameController.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/CallbackAggregator.h>
+#import <wtf/CompletionHandler.h>
 #import <wtf/TZoneMallocInlines.h>
 
 #import "GameControllerSoftLink.h"
@@ -46,7 +47,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(GameControllerHapticEngines);
 
 Ref<GameControllerHapticEngines> GameControllerHapticEngines::create(GCController *gamepad)
 {
-    return adoptRef(*new GameControllerHapticEngines(gamepad));
+    return *adoptRef(new GameControllerHapticEngines(gamepad));
 }
 
 GameControllerHapticEngines::GameControllerHapticEngines(GCController *gamepad)
@@ -78,7 +79,7 @@ void GameControllerHapticEngines::playEffect(GamepadHapticEffectType type, const
     // Trying to create pattern players with a 0 duration will fail. However, Games on XBox seem to use such
     // requests to stop vibrating.
     if (!parameters.duration) {
-        if (RefPtr effect = std::exchange(currentEffect, nullptr))
+        if (auto effect = std::exchange(currentEffect, nullptr))
             effect->stop();
         return completionHandler(true);
     }
@@ -87,22 +88,33 @@ void GameControllerHapticEngines::playEffect(GamepadHapticEffectType type, const
     if (!newEffect)
         return completionHandler(false);
 
-    if (RefPtr effect = currentEffect)
-        effect->stop();
+    if (currentEffect)
+        currentEffect->stop();
 
     currentEffect = WTFMove(newEffect);
-    currentEffect->start([weakThis = WeakPtr { *this }, effect = WeakPtr { *currentEffect }, type, completionHandler = WTFMove(completionHandler)](bool success) mutable {
-        ASSERT(isMainThread());
-
-        completionHandler(success);
-
+    ensureStarted(type, [weakThis = WeakPtr { *this }, type, effect = WeakPtr { *currentEffect }, completionHandler = WTFMove(completionHandler)](bool success) mutable {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
-            return;
+            return completionHandler(false);
 
         auto& currentEffect = protectedThis->currentEffectForType(type);
-        if (currentEffect.get() == effect.get())
+        if (!currentEffect || currentEffect.get() != effect.get())
+            return completionHandler(false);
+
+        if (!success) {
             currentEffect = nullptr;
+            return completionHandler(false);
+        }
+
+        currentEffect->start([weakThis = WTFMove(weakThis), effect = WTFMove(effect), type, completionHandler = WTFMove(completionHandler)](bool success) mutable {
+            completionHandler(success);
+            RefPtr protectedThis = weakThis.get();
+            if (!protectedThis)
+                return;
+            auto& currentEffect = protectedThis->currentEffectForType(type);
+            if (currentEffect.get() == effect.get())
+                currentEffect = nullptr;
+        });
     });
 }
 
@@ -112,6 +124,71 @@ void GameControllerHapticEngines::stopEffects()
         currentEffect->stop();
     if (auto currentEffect = std::exchange(m_currentTriggerRumbleEffect, nullptr))
         currentEffect->stop();
+}
+
+void GameControllerHapticEngines::ensureStarted(GamepadHapticEffectType effectType, CompletionHandler<void(bool)>&& completionHandler)
+{
+    auto callbackAggregator = MainRunLoopCallbackAggregator::create([weakThis = WeakPtr { *this }, effectType, completionHandler = WTFMove(completionHandler)]() mutable {
+        bool success = false;
+        switch (effectType) {
+        case GamepadHapticEffectType::DualRumble:
+            success = weakThis && !weakThis->m_failedToStartLeftHandleEngine && !weakThis->m_failedToStartRightHandleEngine;
+            break;
+        case GamepadHapticEffectType::TriggerRumble:
+            success = weakThis && !weakThis->m_failedToStartLeftTriggerEngine && !weakThis->m_failedToStartRightTriggerEngine;
+            break;
+        }
+        completionHandler(success);
+    });
+    auto startEngine = [weakThis = WeakPtr { *this }](CHHapticEngine *engine, CompletionHandler<void(bool)>&& completionHandler, std::function<void()>&& playersFinished) mutable {
+        [engine startWithCompletionHandler:makeBlockPtr([engine, completionHandler = WTFMove(completionHandler), playersFinished](NSError* error) mutable {
+            ensureOnMainRunLoop([completionHandler = WTFMove(completionHandler), success = !error]() mutable {
+                completionHandler(success);
+            });
+            if (error)
+                RELEASE_LOG_ERROR(Gamepad, "GameControllerHapticEngines::ensureStarted: Failed to start haptic engine");
+            [engine notifyWhenPlayersFinished:makeBlockPtr([playersFinished](NSError *) mutable -> CHHapticEngineFinishedAction {
+                ensureOnMainRunLoop([playersFinished] {
+                    playersFinished();
+                });
+                return CHHapticEngineFinishedActionLeaveEngineRunning;
+            }).get()];
+        }).get()];
+    };
+    switch (effectType) {
+    case GamepadHapticEffectType::DualRumble:
+        startEngine(m_leftHandleEngine.get(), [weakThis = WeakPtr { *this }, callbackAggregator](bool success) {
+            if (weakThis)
+                weakThis->m_failedToStartLeftHandleEngine = !success;
+        }, [weakThis = WeakPtr { *this }] {
+            if (weakThis && weakThis->m_currentDualRumbleEffect)
+                Ref { *weakThis->m_currentDualRumbleEffect }->leftEffectFinishedPlaying();
+        });
+        startEngine(m_rightHandleEngine.get(), [weakThis = WeakPtr { *this }, callbackAggregator](bool success) {
+            if (weakThis)
+                weakThis->m_failedToStartRightHandleEngine = !success;
+        }, [weakThis = WeakPtr { *this }] {
+            if (weakThis && weakThis->m_currentDualRumbleEffect)
+                Ref { *weakThis->m_currentDualRumbleEffect }->rightEffectFinishedPlaying();
+        });
+        break;
+    case GamepadHapticEffectType::TriggerRumble:
+        startEngine(m_leftTriggerEngine.get(), [weakThis = WeakPtr { *this }, callbackAggregator](bool success) {
+            if (weakThis)
+                weakThis->m_failedToStartLeftTriggerEngine = !success;
+        }, [weakThis = WeakPtr { *this }] {
+            if (weakThis && weakThis->m_currentTriggerRumbleEffect)
+                Ref { *weakThis->m_currentTriggerRumbleEffect }->leftEffectFinishedPlaying();
+        });
+        startEngine(m_rightTriggerEngine.get(), [weakThis = WeakPtr { *this }, callbackAggregator](bool success) {
+            if (weakThis)
+                weakThis->m_failedToStartRightTriggerEngine = !success;
+        }, [weakThis = WeakPtr { *this }] {
+            if (weakThis && weakThis->m_currentTriggerRumbleEffect)
+                Ref { *weakThis->m_currentTriggerRumbleEffect }->rightEffectFinishedPlaying();
+        });
+        break;
+    }
 }
 
 void GameControllerHapticEngines::stop(CompletionHandler<void()>&& completionHandler)

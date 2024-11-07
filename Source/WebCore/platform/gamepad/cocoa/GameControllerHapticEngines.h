@@ -42,7 +42,7 @@ class GameControllerHapticEffect;
 struct GamepadEffectParameters;
 enum class GamepadHapticEffectType : uint8_t;
 
-class GameControllerHapticEngines final : public RefCountedAndCanMakeWeakPtr<GameControllerHapticEngines> {
+class GameControllerHapticEngines : public RefCountedAndCanMakeWeakPtr<GameControllerHapticEngines> {
     WTF_MAKE_TZONE_ALLOCATED(GameControllerHapticEngines);
 public:
     static Ref<GameControllerHapticEngines> create(GCController *);
@@ -61,12 +61,17 @@ public:
 private:
     explicit GameControllerHapticEngines(GCController *);
 
+    void ensureStarted(GamepadHapticEffectType, CompletionHandler<void(bool)>&&);
     RefPtr<GameControllerHapticEffect>& currentEffectForType(GamepadHapticEffectType);
 
     RetainPtr<CHHapticEngine> m_leftHandleEngine;
     RetainPtr<CHHapticEngine> m_rightHandleEngine;
     RetainPtr<CHHapticEngine> m_leftTriggerEngine;
     RetainPtr<CHHapticEngine> m_rightTriggerEngine;
+    bool m_failedToStartLeftHandleEngine { false };
+    bool m_failedToStartRightHandleEngine { false };
+    bool m_failedToStartLeftTriggerEngine { false };
+    bool m_failedToStartRightTriggerEngine { false };
     RefPtr<GameControllerHapticEffect> m_currentDualRumbleEffect;
     RefPtr<GameControllerHapticEffect> m_currentTriggerRumbleEffect;
 };
