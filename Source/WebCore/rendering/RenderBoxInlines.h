@@ -152,4 +152,11 @@ inline void RenderBox::setLogicalWidth(LayoutUnit size)
         setHeight(size);
 }
 
+inline LayoutUnit resolveHeightForRatio(LayoutUnit borderAndPaddingLogicalWidth, LayoutUnit borderAndPaddingLogicalHeight, LayoutUnit logicalWidth, double aspectRatio, BoxSizing boxSizing)
+{
+    if (boxSizing == BoxSizing::BorderBox)
+        return LayoutUnit((logicalWidth + borderAndPaddingLogicalWidth) * aspectRatio) - borderAndPaddingLogicalHeight;
+    return LayoutUnit(logicalWidth * aspectRatio);
+}
+
 } // namespace WebCore

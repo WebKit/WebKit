@@ -40,6 +40,7 @@ public:
     bool setNeedsLayoutIfNeededAfterIntrinsicSizeChange();
 
     LayoutSize intrinsicSize() const final;
+    FloatSize intrinsicRatio() const;
     
     bool isContentLikelyVisibleInViewport();
     bool needsPreferredWidthsRecalculation() const override;
