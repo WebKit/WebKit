@@ -46,8 +46,12 @@ class RefCountedBase {
 public:
     WTF_EXPORT_PRIVATE static void logRefDuringDestruction(const void*);
     WTF_EXPORT_PRIVATE static void printRefDuringDestructionLogAndCrash [[noreturn]] (const void*);
-
+#ifndef __swift__
     void ref() const
+#else
+    // FIXME: swift is not importing const methods.
+    void ref()
+#endif
     {
         applyRefDerefThreadingCheck();
         applyRefDuringDestructionCheck();

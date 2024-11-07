@@ -1,0 +1,5 @@
+module TestWebGPU {
+    header "TestWebGPU.h"
+    export *
+    module * { export * }
+}

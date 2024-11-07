@@ -478,12 +478,11 @@ void Buffer::indirectBufferInvalidated()
 void Buffer::copy(const std::span<const uint8_t> data, const size_t offset)
 {
     auto buffer = getBufferContents();
-    RELEASE_ASSERT(buffer);
     auto endOffset = checkedSum<size_t>(offset, data.size());
-    RELEASE_ASSERT(!(endOffset.hasOverflowed() || endOffset.value() > currentSize()));
-    auto checkSize = checkedSum<size_t>(currentSize());
+    RELEASE_ASSERT(!(endOffset.hasOverflowed() || endOffset.value() > buffer.size()));
+    auto checkSize = checkedSum<size_t>(buffer.size());
     RELEASE_ASSERT(!checkSize.hasOverflowed());
-    auto destination = std::span<uint8_t> { buffer + offset, static_cast<size_t>(currentSize()) - offset };
+    auto destination = std::span<uint8_t> { buffer.data() + offset, buffer.size() - offset };
     WebGPU::copySpan(destination, data);
 }
 #endif
