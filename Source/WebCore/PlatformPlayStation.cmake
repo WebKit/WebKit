@@ -17,6 +17,7 @@ list(APPEND WebCore_PRIVATE_INCLUDE_DIRECTORIES
     ${WEBCORE_DIR}/platform/graphics/opengl
     ${WEBCORE_DIR}/platform/graphics/libwpe
     ${WEBCORE_DIR}/platform/mediacapabilities
+    ${WEBCORE_DIR}/platform/video-codecs
 )
 
 list(APPEND WebCore_SOURCES

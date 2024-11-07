@@ -360,9 +360,23 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
             if (!m_videoDecoder) {
                 if (isInvalidated())
                     return DecodingPromise::createAndReject(0);
-                CMVideoFormatDescriptionRef videoFormatDescription = PAL::CMSampleBufferGetFormatDescription(sample);
-                auto fourCC = PAL::CMFormatDescriptionGetMediaSubType(videoFormatDescription);
-                initPromise = initializeVideoDecoder(fourCC);
+                RetainPtr videoFormatDescription = PAL::CMSampleBufferGetFormatDescription(sample);
+                auto fourCC = PAL::CMFormatDescriptionGetMediaSubType(videoFormatDescription.get());
+
+                RetainPtr extensions = PAL::CMFormatDescriptionGetExtensions(videoFormatDescription.get());
+                if (!extensions)
+                    return DecodingPromise::createAndReject(0);
+
+                RetainPtr extensionAtoms = dynamic_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(extensions.get(), PAL::kCMFormatDescriptionExtension_SampleDescriptionExtensionAtoms));
+                if (!extensionAtoms)
+                    return DecodingPromise::createAndReject(0);
+
+                // We should only hit this code path for VP8 and SW VP9 decoder, look for the vpcC path.
+                RetainPtr configurationRecord = dynamic_cf_cast<CFDataRef>(CFDictionaryGetValue(extensionAtoms.get(), CFSTR("vpcC")));
+                if (!configurationRecord)
+                    return DecodingPromise::createAndReject(0);
+
+                initPromise = initializeVideoDecoder(fourCC, unsafeMakeSpan(CFDataGetBytePtr(configurationRecord.get()), CFDataGetLength(configurationRecord.get())));
             }
         }
         auto decode = [protectedThis = Ref { *this }, this, sample = RetainPtr { sample }, displaying] {
@@ -857,9 +871,9 @@ void WebCoreDecompressionSession::updateQosWithDecodeTimeStatistics(double ratio
     m_framesSinceLastQosCheck = 0;
 }
 
-Ref<MediaPromise> WebCoreDecompressionSession::initializeVideoDecoder(FourCharCode codec)
+Ref<MediaPromise> WebCoreDecompressionSession::initializeVideoDecoder(FourCharCode codec, std::span<const uint8_t> description)
 {
-    VideoDecoder::Config config { { }, 0, 0, VideoDecoder::HardwareAcceleration::Yes, VideoDecoder::HardwareBuffer::Yes };
+    VideoDecoder::Config config { description, 0, 0, VideoDecoder::HardwareAcceleration::Yes, VideoDecoder::HardwareBuffer::Yes };
     MediaPromise::Producer producer;
     auto promise = producer.promise();
 

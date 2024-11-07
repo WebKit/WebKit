@@ -127,5 +127,11 @@ struct VPCodecConfigurationRecord {
 
 WEBCORE_EXPORT std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView codecString);
 WEBCORE_EXPORT String createVPCodecParametersString(const VPCodecConfigurationRecord&);
+std::optional<VPCodecConfigurationRecord> createVPCodecConfigurationRecordFromVPCC(std::span<const uint8_t>);
+void setConfigurationColorSpaceFromVP9ColorSpace(VPCodecConfigurationRecord&, uint8_t);
+
+enum class VPXCodec : uint8_t { Vp8, Vp9 };
+std::optional<Vector<uint8_t>> vpcCFromVPXByteStream(VPXCodec, std::span<const uint8_t>);
+Vector<uint8_t> vpcCFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord&);
 
 }

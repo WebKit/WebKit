@@ -26,6 +26,8 @@
 #include "config.h"
 #include "VP9Utilities.h"
 
+#include "BitReader.h"
+#include <JavaScriptCore/DataView.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/IntegerToStringConversion.h>
 #include <wtf/text/StringBuilder.h>
@@ -164,7 +166,7 @@ std::optional<VPCodecConfigurationRecord> parseVPCodecParameters(StringView code
     if (configuration.codecName == "vp8"_s || configuration.codecName == "vp9"_s) {
         if (nextElement == codecSplit.end())
             return configuration;
-        
+
         auto codecString = codecView.toStringWithoutCopying();
         if (codecString == "vp8.0"_s || codecString == "vp9.0"_s)
             return configuration;
@@ -327,4 +329,271 @@ String createVPCodecParametersString(const VPCodecConfigurationRecord& configura
     return resultBuilder.toString();
 }
 
+std::optional<VPCodecConfigurationRecord> createVPCodecConfigurationRecordFromVPCC(std::span<const uint8_t> vpcc)
+{
+    if (vpcc.size() < 12)
+        return { };
+
+    VPCodecConfigurationRecord configuration;
+
+    BitReader reader(vpcc);
+
+    reader.read(8); // version
+    reader.read(24); // flags
+
+    if (auto profile = reader.read(8))
+        configuration.profile = *profile;
+    else
+        return { };
+    if (auto level = reader.read(8))
+        configuration.level = *level;
+    else
+        return { };
+
+    if (auto bitDepth = reader.read(4))
+        configuration.bitDepth = *bitDepth;
+    else
+        return { };
+
+    if (auto chroma = reader.read(3))
+        configuration.chromaSubsampling = *chroma;
+    else
+        return { };
+
+    if (auto fullRange = reader.readBit())
+        configuration.videoFullRangeFlag = *fullRange;
+    else
+        return { };
+
+    if (auto colorPrimaries = reader.read(8))
+        configuration.colorPrimaries = *colorPrimaries;
+    else
+        return { };
+
+    if (auto transferCharacteristics = reader.read(8))
+        configuration.transferCharacteristics = *transferCharacteristics;
+    else
+        return { };
+
+    if (auto matrixCoefficients = reader.read(8))
+        configuration.matrixCoefficients = *matrixCoefficients;
+    else
+        return { };
+
+    // codecInitializationDataSize must be 0 for VP8 and VP9.
+    if (auto codecInitializationDataSize = reader.read(16); codecInitializationDataSize && !*codecInitializationDataSize)
+        return configuration;
+
+    return { };
 }
+
+Vector<uint8_t> vpcCFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord& record)
+{
+    // Ref: "VP Codec ISO Media File Format Binding, v1.0, 2017-03-31"
+    // <https://www.webmproject.org/vp9/mp4/>
+    //
+    // class VPCodecConfigurationBox extends FullBox('vpcC', version = 1, 0)
+    // {
+    //     VPCodecConfigurationRecord() vpcConfig;
+    // }
+    //
+    // aligned (8) class VPCodecConfigurationRecord {
+    //     unsigned int (8)     profile;
+    //     unsigned int (8)     level;
+    //     unsigned int (4)     bitDepth;
+    //     unsigned int (3)     chromaSubsampling;
+    //     unsigned int (1)     videoFullRangeFlag;
+    //     unsigned int (8)     colourPrimaries;
+    //     unsigned int (8)     transferCharacteristics;
+    //     unsigned int (8)     matrixCoefficients;
+    //     unsigned int (16)    codecIntializationDataSize;
+    //     unsigned int (8)[]   codecIntializationData;
+    // }
+    //
+    // codecIntializationDataSize​For VP8 and VP9 this field must be 0.
+    // codecIntializationData​binary codec initialization data. Not used for VP8 and VP9.
+
+    constexpr size_t VPCodecConfigurationContentsSize = 12;
+
+    uint32_t versionAndFlags = 1 << 24;
+    uint8_t bitDepthChromaAndRange = (0xF & record.bitDepth) << 4 | (0x7 & record.chromaSubsampling) << 1 | (0x1 & record.videoFullRangeFlag);
+    uint16_t codecInitializationDataSize = 0;
+    auto view = JSC::DataView::create(ArrayBuffer::create(VPCodecConfigurationContentsSize, 1), 0, VPCodecConfigurationContentsSize);
+    view->set(0, versionAndFlags, false);
+    view->set(4, record.profile, false);
+    view->set(5, record.level, false);
+    view->set(6, bitDepthChromaAndRange, false);
+    view->set(7, record.colorPrimaries, false);
+    view->set(8, record.transferCharacteristics, false);
+    view->set(9, record.matrixCoefficients, false);
+    view->set(10, codecInitializationDataSize, false);
+    return view->span();
+}
+
+void setConfigurationColorSpaceFromVP9ColorSpace(VPCodecConfigurationRecord& record, uint8_t colorSpace)
+{
+    // Derive the color information from the VP9 header color_space value, as per
+    // VP9 Bitstream & Decoding Process Specification 0.6, section 7.2.2. No enum exists
+    // in libwebm so reproduce the values from the specification here:
+    enum class Vp9ColorSpaceValues : uint8_t {
+        kCS_UNKNOWN,
+        kCS_BT_601,
+        kCS_BT_709,
+        kCS_SMPTE_170,
+        kCS_SMPTE_240,
+        kCS_BT_2020,
+        kCS_RESERVED,
+        kCS_RGB,
+    };
+
+    // Map those "Color Space" values to primaries, transfer function, and matrices, as per
+    // ISO 23091-2 (2019): Coding-independent code points
+    switch (static_cast<Vp9ColorSpaceValues>(colorSpace)) {
+    case Vp9ColorSpaceValues::kCS_BT_601:
+        record.colorPrimaries = VPConfigurationColorPrimaries::BT_601_7;
+        record.transferCharacteristics = VPConfigurationTransferCharacteristics::BT_601_7;
+        record.matrixCoefficients = VPConfigurationMatrixCoefficients::BT_601_7;
+        break;
+    case Vp9ColorSpaceValues::kCS_BT_709:
+        record.colorPrimaries = VPConfigurationColorPrimaries::BT_709_6;
+        record.transferCharacteristics = VPConfigurationTransferCharacteristics::BT_709_6;
+        record.matrixCoefficients = VPConfigurationMatrixCoefficients::BT_709_6;
+        break;
+    case Vp9ColorSpaceValues::kCS_SMPTE_170:
+        record.colorPrimaries = VPConfigurationColorPrimaries::BT_601_7;
+        record.transferCharacteristics = VPConfigurationTransferCharacteristics::BT_601_7;
+        record.matrixCoefficients = VPConfigurationMatrixCoefficients::BT_601_7;
+        break;
+    case Vp9ColorSpaceValues::kCS_SMPTE_240:
+        record.colorPrimaries = VPConfigurationColorPrimaries::SMPTE_ST_240;
+        record.transferCharacteristics = VPConfigurationTransferCharacteristics::SMPTE_ST_240;
+        record.matrixCoefficients = VPConfigurationMatrixCoefficients::SMPTE_ST_240;
+        break;
+    case Vp9ColorSpaceValues::kCS_BT_2020:
+        // From the VP9 Bitstream documentation:
+        // Note that VP9 passes the color space information in the bitstream including Rec. ITU-R BT.2020-2,
+        // however, VP9 does not specify if it is in the form of “constant luminance” or “nonconstant luminance”.
+        // As such, application should rely on the signaling outside of the VP9 bitstream. If there is no such
+        // signaling, the application may assume nonconstant luminance for Rec. ITU-R BT.2020-2.
+        record.colorPrimaries = VPConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance;
+        record.matrixCoefficients = VPConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance;
+        if (record.bitDepth <= 10)
+            record.transferCharacteristics = VPConfigurationTransferCharacteristics::BT_2020_10bit;
+        else
+            record.transferCharacteristics = VPConfigurationTransferCharacteristics::BT_2020_12bit;
+        break;
+    case Vp9ColorSpaceValues::kCS_RGB:
+        record.colorPrimaries = VPConfigurationColorPrimaries::BT_709_6;
+        record.transferCharacteristics = VPConfigurationTransferCharacteristics::IEC_61966_2_1;
+        record.matrixCoefficients = VPConfigurationMatrixCoefficients::Identity;
+        break;
+    case Vp9ColorSpaceValues::kCS_RESERVED:
+    case Vp9ColorSpaceValues::kCS_UNKNOWN:
+    default:
+        record.colorPrimaries = VPConfigurationColorPrimaries::Unspecified;
+        record.transferCharacteristics = VPConfigurationTransferCharacteristics::Unspecified;
+        record.matrixCoefficients = VPConfigurationMatrixCoefficients::Unspecified;
+        break;
+    }
+}
+
+std::optional<Vector<uint8_t>> vpcCFromVPXByteStream(VPXCodec codec, std::span<const uint8_t> data)
+{
+    if (data.size() < 11)
+        return { };
+
+    if (codec == VPXCodec::Vp8) {
+        if (!(data[0] & 1))
+            return { }; // not a keyframe.
+        uint8_t version = (data[0] >> 1) & 0x7;
+        if (version > 3)
+            return { };
+        uint8_t startCodeByte0 = data[3];
+        uint8_t startCodeByte1 = data[4];
+        uint8_t startCodeByte2 = data[5];
+        if (startCodeByte0 != 0x9d || startCodeByte1 != 0x01 || startCodeByte2 != 0x2a)
+            return { }; // Not VP8
+
+        auto colorSpaceAndClampingField = data[10];
+        bool colorSpace = colorSpaceAndClampingField & 0x80;
+
+        VPCodecConfigurationRecord record;
+        record.codecName = "vp08"_s;
+        record.profile = 0;
+        record.level = 10;
+        record.bitDepth = 8;
+        record.videoFullRangeFlag = VPConfigurationRange::VideoRange;
+        record.chromaSubsampling = VPConfigurationChromaSubsampling::Subsampling_420_Colocated;
+        record.colorPrimaries = colorSpace ? VPConfigurationColorPrimaries::Unspecified : VPConfigurationColorPrimaries::BT_601_7;
+        record.transferCharacteristics =  colorSpace ? VPConfigurationTransferCharacteristics::Unspecified : VPConfigurationTransferCharacteristics::BT_601_7;
+        record.matrixCoefficients = colorSpace ? VPConfigurationMatrixCoefficients::Unspecified : VPConfigurationMatrixCoefficients::BT_601_7;
+        return vpcCFromVPCodecConfigurationRecord(record);
+    }
+
+    BitReader br(data);
+    if (*br.read(2) != 2)
+        return { }; // Not a valid vp9 packet header.
+
+    auto profileLowBit = br.read(1);
+    auto profileHighBit = br.read(1);
+    uint8_t profile = *profileLowBit | (*profileHighBit << 1);
+    if (profile == 3)
+        profile += *br.read(1);
+
+    if (auto showExistingFrame = br.read(1); *showExistingFrame)
+        return { };
+    if (auto frameType = br.read(1); *frameType) // NON_KEY_FRAME
+        return { };
+
+    br.read(1); // show_frame
+    br.read(1); // error_resilient_mode
+
+    auto validFrameSyncCode = [&] {
+        uint8_t frameSyncByte1 = *br.read(8);
+        uint8_t frameSyncByte2 = *br.read(8);
+        uint8_t frameSyncByte3 = *br.read(8);
+        return frameSyncByte1 == 0x49 && frameSyncByte2 == 0x83 && frameSyncByte3 == 0x42;
+    };
+    if (!validFrameSyncCode())
+        return { };
+
+    VPCodecConfigurationRecord record;
+    record.codecName = "vp09"_s;
+    record.profile = profile;
+
+    if (profile >= 2)
+        record.bitDepth = *br.read(1) ? 12 : 10;
+    uint8_t colorSpace = *br.read(3);
+    bool subsamplingX = true;
+    bool subsamplingY = true;
+    if (colorSpace != 7 /* CS_RGB */) {
+        record.videoFullRangeFlag = *br.read(1) ? VPConfigurationRange::FullRange : VPConfigurationRange::VideoRange;
+        if (profile == 1 || profile == 3) {
+            subsamplingX = *br.read(1);
+            subsamplingY = *br.read(1);
+            br.read(1); // reserved_zero
+        }
+    } else {
+        record.videoFullRangeFlag = VPConfigurationRange::FullRange;
+        if (profile == 1 || profile == 3) {
+            subsamplingX = subsamplingY = false;
+            br.read(1); // reserved_zero
+        }
+    }
+    record.chromaSubsampling = [&] {
+        if (subsamplingX & subsamplingY)
+            return VPConfigurationChromaSubsampling::Subsampling_420_Colocated;
+        if (subsamplingX & !subsamplingY)
+            return VPConfigurationChromaSubsampling::Subsampling_422;
+        if (!subsamplingX & !subsamplingY)
+            return VPConfigurationChromaSubsampling::Subsampling_444;
+        // This indicates 4:4:0 subsampling, which is not expressable in the 'vpcC' box. Default to 4:2:0.
+        return VPConfigurationChromaSubsampling::Subsampling_420_Colocated;
+    }();
+
+    setConfigurationColorSpaceFromVP9ColorSpace(record, colorSpace);
+
+    return vpcCFromVPCodecConfigurationRecord(record);
+}
+
+} // namespace WebCore

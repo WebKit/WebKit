@@ -32,6 +32,7 @@
 #include "IOSurface.h"
 #include "LibWebRTCDav1dDecoder.h"
 #include "Logging.h"
+#include "VP9Utilities.h"
 #include "VideoFrameLibWebRTC.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -74,16 +75,19 @@ public:
     void close() { m_isClosed = true; }
 private:
     LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type, const VideoDecoder::Config&, VideoDecoder::OutputCallback&&);
+    bool isVPx() const { return m_type == LibWebRTCVPXVideoDecoder::Type::VP8 || m_type == LibWebRTCVPXVideoDecoder::Type::VP9 || m_type == LibWebRTCVPXVideoDecoder::Type::VP9_P2; }
     int32_t Decoded(webrtc::VideoFrame&) final;
     CVPixelBufferPoolRef pixelBufferPool(size_t width, size_t height, OSType) WTF_REQUIRES_LOCK(m_pixelBufferPoolLock);
     CVPixelBufferRef createPixelBuffer(size_t width, size_t height, webrtc::BufferType);
 
+    const LibWebRTCVPXVideoDecoder::Type m_type;
     VideoDecoder::OutputCallback m_outputCallback;
     UniqueRef<webrtc::VideoDecoder> m_internalDecoder;
     int64_t m_timestamp { 0 };
     std::optional<uint64_t> m_duration;
     bool m_isClosed { false };
     bool m_useIOSurface { false };
+    std::optional<VPCodecConfigurationRecord> m_configuration;
     ProcessIdentity m_resourceOwner;
     RetainPtr<CVPixelBufferPoolRef> m_pixelBufferPool WTF_GUARDED_BY_LOCK(m_pixelBufferPoolLock);
     Lock m_pixelBufferPoolLock;
@@ -137,6 +141,11 @@ Ref<VideoDecoder::DecodePromise> LibWebRTCVPXInternalVideoDecoder::decode(std::s
     m_timestamp = timestamp;
     m_duration = duration;
 
+    if (isVPx() && !m_configuration) {
+        if (auto vpcC = vpcCFromVPXByteStream(m_type == LibWebRTCVPXVideoDecoder::Type::VP8 ? VPXCodec::Vp8 : VPXCodec::Vp9, data))
+            m_configuration = createVPCodecConfigurationRecordFromVPCC(vpcC->span());
+    }
+
     webrtc::EncodedImage image;
     image.SetEncodedData(webrtc::WebKitEncodedImageBufferWrapper::create(const_cast<uint8_t*>(data.data()), data.size()));
     image._frameType = isKeyFrame ? webrtc::VideoFrameType::kVideoFrameKey : webrtc::VideoFrameType::kVideoFrameDelta;
@@ -166,9 +175,11 @@ static UniqueRef<webrtc::VideoDecoder> createInternalDecoder(LibWebRTCVPXVideoDe
 }
 
 LibWebRTCVPXInternalVideoDecoder::LibWebRTCVPXInternalVideoDecoder(LibWebRTCVPXVideoDecoder::Type type, const VideoDecoder::Config& config, VideoDecoder::OutputCallback&& outputCallback)
-    : m_outputCallback(WTFMove(outputCallback))
+    : m_type(type)
+    , m_outputCallback(WTFMove(outputCallback))
     , m_internalDecoder(createInternalDecoder(type))
     , m_useIOSurface(config.pixelBuffer == VideoDecoder::HardwareBuffer::Yes)
+    , m_configuration(isVPx() ? createVPCodecConfigurationRecordFromVPCC(config.description) : std::nullopt)
     , m_resourceOwner(config.resourceOwner)
 {
     m_internalDecoder->RegisterDecodeCompleteCallback(this);
@@ -199,10 +210,10 @@ CVPixelBufferRef LibWebRTCVPXInternalVideoDecoder::createPixelBuffer(size_t widt
     OSType pixelBufferType;
     switch (bufferType) {
     case webrtc::BufferType::I420:
-        pixelBufferType = kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
+        pixelBufferType = m_configuration && m_configuration->videoFullRangeFlag == VPConfigurationRange::FullRange ? kCVPixelFormatType_420YpCbCr8BiPlanarFullRange : kCVPixelFormatType_420YpCbCr8BiPlanarVideoRange;
         break;
     case webrtc::BufferType::I010:
-        pixelBufferType = kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
+        pixelBufferType = m_configuration && m_configuration->videoFullRangeFlag == VPConfigurationRange::FullRange ? kCVPixelFormatType_420YpCbCr10BiPlanarFullRange : kCVPixelFormatType_420YpCbCr10BiPlanarVideoRange;
         break;
     default:
         return nullptr;
