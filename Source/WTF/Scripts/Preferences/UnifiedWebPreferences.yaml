@@ -7460,7 +7460,7 @@ TreatsAnyTextCSSLinkAsStylesheet:
 
 TrustedTypesEnabled:
   type: bool
-  status: testable
+  status: preview
   category: dom
   humanReadableName: "Trusted Types"
   humanReadableDescription: "Enable Trusted Types"
