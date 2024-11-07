@@ -586,9 +586,7 @@ void Internals::resetToConsistentState(Page& page)
         mainFrameView->setUseFixedLayout(false);
         mainFrameView->setFixedLayoutSize(IntSize());
         mainFrameView->enableFixedWidthAutoSizeMode(false, { });
-#if USE(COORDINATED_GRAPHICS)
-        mainFrameView->setFixedVisibleContentRect(IntRect());
-#endif
+
         if (auto* backing = mainFrameView->tiledBacking())
             backing->setTileSizeUpdateDelayDisabledForTesting(false);
     }

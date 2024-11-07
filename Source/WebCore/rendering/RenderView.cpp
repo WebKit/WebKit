@@ -235,7 +235,6 @@ LayoutUnit RenderView::pageOrViewLogicalHeight() const
 
 LayoutUnit RenderView::clientLogicalWidthForFixedPosition() const
 {
-    // FIXME: If the FrameView's fixedVisibleContentRect() is not empty, perhaps it should be consulted here too?
     Ref frameView = this->frameView();
     if (frameView->fixedElementsLayoutRelativeToFrame())
         return LayoutUnit((isHorizontalWritingMode() ? frameView->visibleWidth() : frameView->visibleHeight()) / frameView->frame().frameScaleFactor());
@@ -253,7 +252,6 @@ LayoutUnit RenderView::clientLogicalWidthForFixedPosition() const
 
 LayoutUnit RenderView::clientLogicalHeightForFixedPosition() const
 {
-    // FIXME: If the FrameView's fixedVisibleContentRect() is not empty, perhaps it should be consulted here too?
     Ref frameView = this->frameView();
     if (frameView->fixedElementsLayoutRelativeToFrame())
         return LayoutUnit((isHorizontalWritingMode() ? frameView->visibleHeight() : frameView->visibleWidth()) / frameView->frame().frameScaleFactor());

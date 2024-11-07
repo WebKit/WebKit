@@ -107,7 +107,6 @@ void DrawingAreaCoordinatedGraphics::scroll(const IntRect& scrollRect, const Int
         ASSERT(m_scrollRect.isEmpty());
         ASSERT(m_scrollOffset.isEmpty());
         ASSERT(m_dirtyRegion.isEmpty());
-        m_layerTreeHost->scrollNonCompositedContents(scrollRect);
         return;
     }
 
@@ -241,23 +240,11 @@ void DrawingAreaCoordinatedGraphics::updatePreferences(const WebPreferencesStore
     }
 }
 
-void DrawingAreaCoordinatedGraphics::mainFrameContentSizeChanged(WebCore::FrameIdentifier, const IntSize& size)
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->contentsSizeChanged(size);
-}
-
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
 void DrawingAreaCoordinatedGraphics::deviceOrPageScaleFactorChanged()
 {
     if (m_layerTreeHost)
         m_layerTreeHost->deviceOrPageScaleFactorChanged();
-}
-
-void DrawingAreaCoordinatedGraphics::didChangeViewportAttributes(ViewportAttributes&& attrs)
-{
-    if (m_layerTreeHost)
-        m_layerTreeHost->didChangeViewportAttributes(WTFMove(attrs));
 }
 
 bool DrawingAreaCoordinatedGraphics::enterAcceleratedCompositingModeIfNeeded()

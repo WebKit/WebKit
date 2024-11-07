@@ -1477,10 +1477,6 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin, bool inStable
     if (mainFrameView && mainFrameView->scrollPosition() != origin) {
         if (mainFrameView->delegatedScrollingMode() != DelegatedScrollingMode::DelegatedToNativeScrollView)
             mainFrameView->setScrollPosition(origin);
-#if USE(COORDINATED_GRAPHICS)
-        else
-            mainFrameView->requestScrollToPosition(origin);
-#endif
     }
 
 #if ENABLE(VIDEO)

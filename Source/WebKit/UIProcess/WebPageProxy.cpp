@@ -8577,12 +8577,6 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(IPC::Connection& connection, Fram
     });
 }
 
-void WebPageProxy::didChangeViewportProperties(const ViewportAttributes& attr)
-{
-    if (RefPtr pageClient = this->pageClient())
-        pageClient->didChangeViewportProperties(attr);
-}
-
 void WebPageProxy::pageDidScroll(const WebCore::IntPoint& scrollPosition)
 {
     m_uiClient->pageDidScroll(this);

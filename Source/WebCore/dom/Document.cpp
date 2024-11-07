@@ -4753,9 +4753,6 @@ void Document::updateViewportArguments()
     if (!isViewportDocument())
         return;
 
-#if ASSERT_ENABLED
-    m_didDispatchViewportPropertiesChanged = true;
-#endif
     page->chrome().dispatchViewportPropertiesDidChange(viewportArguments());
     page->chrome().didReceiveDocType(protectedFrame().releaseNonNull());
 }
@@ -6939,12 +6936,6 @@ void Document::suspend(ReasonForSuspension reason)
 
     for (Ref element : m_documentSuspensionCallbackElements)
         element->prepareForDocumentSuspension();
-
-#if ASSERT_ENABLED
-    // Clear the update flag to be able to check if the viewport arguments update
-    // is dispatched, after the document is restored from the back/forward cache.
-    m_didDispatchViewportPropertiesChanged = false;
-#endif
 
     if (auto viewTransition = m_activeViewTransition)
         viewTransition->skipTransition();

@@ -905,10 +905,7 @@ std::optional<SimpleRange> LocalFrame::rangeForPoint(const IntPoint& framePoint)
     return std::nullopt;
 }
 
-void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Color>& backgroundColor,
-    const IntSize& fixedLayoutSize, const IntRect& fixedVisibleContentRect,
-    bool useFixedLayout, ScrollbarMode horizontalScrollbarMode, bool horizontalLock,
-    ScrollbarMode verticalScrollbarMode, bool verticalLock)
+void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Color>& backgroundColor, const IntSize& fixedLayoutSize, bool useFixedLayout, ScrollbarMode horizontalScrollbarMode, bool horizontalLock, ScrollbarMode verticalScrollbarMode, bool verticalLock)
 {
     ASSERT(page());
 
@@ -923,11 +920,6 @@ void LocalFrame::createView(const IntSize& viewportSize, const std::optional<Col
     if (isRootFrame) {
         frameView = LocalFrameView::create(*this, viewportSize);
         frameView->setFixedLayoutSize(fixedLayoutSize);
-#if USE(COORDINATED_GRAPHICS)
-        frameView->setFixedVisibleContentRect(fixedVisibleContentRect);
-#else
-        UNUSED_PARAM(fixedVisibleContentRect);
-#endif
         frameView->setUseFixedLayout(useFixedLayout);
     } else
         frameView = LocalFrameView::create(*this);

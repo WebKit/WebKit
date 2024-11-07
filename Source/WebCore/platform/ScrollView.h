@@ -188,15 +188,7 @@ public:
     // The visible content rect has a location that is the scrolled offset of the document. The width and height are the unobscured viewport
     // width and height. By default the scrollbars themselves are excluded from this rectangle, but an optional boolean argument allows them
     // to be included.
-    // In the situation the client is responsible for the scrolling (ie. with a tiled backing store) it is possible to use
-    // the setFixedVisibleContentRect instead for the mainframe, though this must be updated manually, e.g just before resuming the page
-    // which usually will happen when panning, pinching and rotation ends, or when scale or position are changed manually.
     IntSize visibleSize() const final { return visibleContentRect(LegacyIOSDocumentVisibleRect).size(); }
-
-#if USE(COORDINATED_GRAPHICS)
-    virtual void setFixedVisibleContentRect(const IntRect& visibleContentRect) { m_fixedVisibleContentRect = visibleContentRect; }
-    IntRect fixedVisibleContentRect() const { return m_fixedVisibleContentRect; }
-#endif
 
     // Parts of the document can be visible through transparent or blured UI widgets of the chrome. Those parts
     // contribute to painting but not to the scrollable area.
@@ -541,11 +533,6 @@ private:
     };
     std::optional<DelegatedScrollingGeometry> m_delegatedScrollingGeometry;
 
-#if USE(COORDINATED_GRAPHICS)
-    // FIXME: exposedContentRect is a very similar concept to fixedVisibleContentRect except it does not differentiate
-    // between exposed and unobscured areas. The two attributes should eventually be merged.
-    IntRect m_fixedVisibleContentRect;
-#endif
     ScrollPosition m_scrollPosition;
     IntPoint m_cachedScrollPosition;
 #if PLATFORM(IOS_FAMILY)

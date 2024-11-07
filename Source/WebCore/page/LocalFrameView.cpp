@@ -2779,35 +2779,6 @@ void LocalFrameView::delegatedScrollingModeDidChange()
     }
 }
 
-#if USE(COORDINATED_GRAPHICS)
-void LocalFrameView::setFixedVisibleContentRect(const IntRect& visibleContentRect)
-{
-    bool visibleContentSizeDidChange = false;
-    if (visibleContentRect.size() != this->fixedVisibleContentRect().size()) {
-        // When the viewport size changes or the content is scaled, we need to
-        // reposition the fixed and sticky positioned elements.
-        setViewportConstrainedObjectsNeedLayout();
-        visibleContentSizeDidChange = true;
-    }
-
-    IntPoint oldPosition = scrollPosition();
-    ScrollView::setFixedVisibleContentRect(visibleContentRect);
-    IntPoint newPosition = scrollPosition();
-    if (oldPosition != newPosition) {
-        updateLayerPositionsAfterScrolling();
-        if (m_frame->settings().acceleratedCompositingForFixedPositionEnabled())
-            updateCompositingLayersAfterScrolling();
-        scrollAnimator().setCurrentPosition(newPosition);
-        scrollPositionChanged(oldPosition, newPosition);
-    }
-    if (visibleContentSizeDidChange) {
-        // Update the scroll-bars to calculate new page-step size.
-        updateScrollbars(scrollPosition());
-    }
-    didChangeScrollOffset();
-}
-#endif
-
 void LocalFrameView::setViewportConstrainedObjectsNeedLayout()
 {
     if (!hasViewportConstrainedObjects())

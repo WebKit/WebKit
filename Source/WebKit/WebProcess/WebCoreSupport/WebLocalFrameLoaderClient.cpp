@@ -793,11 +793,6 @@ void WebLocalFrameLoaderClient::dispatchDidReachLayoutMilestone(OptionSet<WebCor
         // new didLayout API.
         webPage->injectedBundleLoaderClient().didFirstLayoutForFrame(*webPage, m_frame, userData);
         webPage->send(Messages::WebPageProxy::DidFirstLayoutForFrame(m_frame->frameID(), UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));
-
-#if USE(COORDINATED_GRAPHICS)
-        // Make sure viewport properties are dispatched on the main frame by the time the first layout happens.
-        ASSERT(!webPage->useFixedLayout() || m_frame.ptr() != &m_frame->page()->mainWebFrame() || m_localFrame->document()->didDispatchViewportPropertiesChanged());
-#endif
     }
 
 #if !RELEASE_LOG_DISABLED
@@ -1517,20 +1512,12 @@ void WebLocalFrameLoaderClient::transitionToCommittedForNewPage(InitializingIfra
     bool shouldUseFixedLayout = isMainFrame && webPage->useFixedLayout();
     bool shouldDisableScrolling = isMainFrame && !webPage->mainFrameIsScrollable();
     bool shouldHideScrollbars = shouldDisableScrolling;
-    IntRect fixedVisibleContentRect;
 
     auto oldView = m_localFrame->view();
 
     auto overrideSizeForCSSDefaultViewportUnits = oldView ? oldView->overrideSizeForCSSDefaultViewportUnits() : std::nullopt;
     auto overrideSizeForCSSSmallViewportUnits = oldView ? oldView->overrideSizeForCSSSmallViewportUnits() : std::nullopt;
     auto overrideSizeForCSSLargeViewportUnits = oldView ? oldView->overrideSizeForCSSLargeViewportUnits() : std::nullopt;
-
-#if USE(COORDINATED_GRAPHICS)
-    if (oldView)
-        fixedVisibleContentRect = oldView->fixedVisibleContentRect();
-    if (shouldUseFixedLayout)
-        shouldHideScrollbars = true;
-#endif
 
     m_frameHasCustomContentProvider = isMainFrame
         && m_localFrame->loader().documentLoader()
@@ -1546,8 +1533,7 @@ void WebLocalFrameLoaderClient::transitionToCommittedForNewPage(InitializingIfra
     bool verticalLock = shouldHideScrollbars || webPage->alwaysShowsVerticalScroller();
 
     auto size = m_frame->isRootFrame() && !isMainFrame && oldView ? oldView->size() : webPage->size();
-    m_localFrame->createView(size, webPage->backgroundColor(),
-        webPage->fixedLayoutSize(), fixedVisibleContentRect, shouldUseFixedLayout,
+    m_localFrame->createView(size, webPage->backgroundColor(), webPage->fixedLayoutSize(), shouldUseFixedLayout,
         horizontalScrollbarMode, horizontalLock, verticalScrollbarMode, verticalLock);
 
     RefPtr view = m_localFrame->view();
@@ -1596,14 +1582,6 @@ void WebLocalFrameLoaderClient::transitionToCommittedForNewPage(InitializingIfra
 
     if (initializingIframe == InitializingIframe::No)
         webPage->scheduleFullEditorStateUpdate();
-
-#if USE(COORDINATED_GRAPHICS)
-    if (shouldUseFixedLayout) {
-        view->setDelegatedScrollingMode(shouldUseFixedLayout ? DelegatedScrollingMode::DelegatedToNativeScrollView : DelegatedScrollingMode::NotDelegated);
-        view->setPaintsEntireContents(shouldUseFixedLayout);
-        return;
-    }
-#endif
 }
 
 void WebLocalFrameLoaderClient::didRestoreFromBackForwardCache()

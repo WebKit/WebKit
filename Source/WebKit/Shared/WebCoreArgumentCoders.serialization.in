@@ -880,21 +880,6 @@ enum class WebCore::ViewportFit : uint8_t {
     Cover,
 };
 
-header: <WebCore/ViewportArguments.h>
-[CustomHeader] struct WebCore::ViewportAttributes {
-    WebCore::FloatSize layoutSize;
-
-    float initialScale;
-    float minimumScale;
-    float maximumScale;
-
-    float userScalable;
-    float orientation;
-    float shrinkToFit;
-
-    WebCore::ViewportFit viewportFit;
-};
-
 header: <WebCore/ShareData.h>
 [CustomHeader] struct WebCore::ShareDataWithParsedURL {
     WebCore::ShareData shareData;

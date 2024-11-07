@@ -62,12 +62,10 @@ private:
     bool layerTreeStateIsFrozen() const override { return m_layerTreeStateIsFrozen; }
 
     void updatePreferences(const WebPreferencesStore&) override;
-    void mainFrameContentSizeChanged(WebCore::FrameIdentifier, const WebCore::IntSize&) override;
     void sendEnterAcceleratedCompositingModeIfNeeded() override;
 
 #if USE(COORDINATED_GRAPHICS) || USE(TEXTURE_MAPPER)
     void deviceOrPageScaleFactorChanged() override;
-    void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override;
     bool enterAcceleratedCompositingModeIfNeeded() override;
     void backgroundColorDidChange() override;
 #endif

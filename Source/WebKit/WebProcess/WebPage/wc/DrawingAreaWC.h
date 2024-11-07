@@ -57,7 +57,6 @@ private:
     void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) override;
     void updateRenderingWithForcedRepaintAsync(WebPage&, CompletionHandler<void()>&&) override;
     void triggerRenderingUpdate() override;
-    void didChangeViewportAttributes(WebCore::ViewportAttributes&&) override { }
     void deviceOrPageScaleFactorChanged() override { }
     bool enterAcceleratedCompositingModeIfNeeded() override { return false; }
     void setLayerTreeStateIsFrozen(bool) override;

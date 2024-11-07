@@ -307,7 +307,6 @@ struct TextManipulationItem;
 struct TextRecognitionResult;
 struct TranslationContextMenuInfo;
 struct UserMediaRequestIdentifierType;
-struct ViewportAttributes;
 struct ViewportArguments;
 struct WheelEventHandlingResult;
 struct WindowFeatures;
@@ -2718,7 +2717,6 @@ private:
     void relayAccessibilityNotification(const String&, std::span<const uint8_t>);
 #endif
     void runBeforeUnloadConfirmPanel(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, const String& message, CompletionHandler<void(bool)>&&);
-    void didChangeViewportProperties(const WebCore::ViewportAttributes&);
     void pageDidScroll(const WebCore::IntPoint&);
     void runOpenPanel(IPC::Connection&, WebCore::FrameIdentifier, FrameInfoData&&, const WebCore::FileChooserSettings&);
     bool didChooseFilesForOpenPanelWithImageTranscoding(const Vector<String>& fileURLs, const Vector<String>& allowedMIMETypes);

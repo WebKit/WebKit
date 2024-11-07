@@ -360,11 +360,6 @@ void PageClientImpl::setCursorHiddenUntilMouseMoves(bool)
     notImplemented();
 }
 
-void PageClientImpl::didChangeViewportProperties(const ViewportAttributes&)
-{
-    notImplemented();
-}
-
 void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, UndoOrRedo undoOrRedo)
 {
     auto actionName = command->label();

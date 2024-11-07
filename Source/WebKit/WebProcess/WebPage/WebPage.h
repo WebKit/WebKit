@@ -2157,10 +2157,6 @@ private:
     void addLayerForFindOverlay(CompletionHandler<void(std::optional<WebCore::PlatformLayerIdentifier>)>&&);
     void removeLayerForFindOverlay(CompletionHandler<void()>&&);
 
-#if USE(COORDINATED_GRAPHICS)
-    void sendViewportAttributesChanged(const WebCore::ViewportArguments&);
-#endif
-
     void didChangeSelectedIndexForActivePopupMenu(int32_t newIndex);
     void setTextForActivePopupMenu(int32_t index);
 

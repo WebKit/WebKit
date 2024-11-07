@@ -127,11 +127,6 @@ void PageClientImpl::setCursorHiddenUntilMouseMoves(bool /* hiddenUntilMouseMove
     notImplemented();
 }
 
-void PageClientImpl::didChangeViewportProperties(const WebCore::ViewportAttributes&)
-{
-    notImplemented();
-}
-
 void PageClientImpl::registerEditCommand(Ref<WebEditCommandProxy>&& command, UndoOrRedo undoOrRedo)
 {
     m_undoController.registerEditCommand(WTFMove(command), undoOrRedo);

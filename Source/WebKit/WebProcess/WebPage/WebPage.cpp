@@ -2366,63 +2366,10 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
     view->resize(viewSize);
     protectedDrawingArea()->setNeedsDisplay();
 
-#if USE(COORDINATED_GRAPHICS)
-    if (view->useFixedLayout())
-        sendViewportAttributesChanged(m_page->viewportArguments());
-#endif
-
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     cacheAXSize(m_viewSize);
 #endif
 }
-
-#if USE(COORDINATED_GRAPHICS)
-void WebPage::sendViewportAttributesChanged(const ViewportArguments& viewportArguments)
-{
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    if (!localMainFrame)
-        return;
-
-    RefPtr view = localMainFrame->view();
-    ASSERT(view && view->useFixedLayout());
-
-    // Viewport properties have no impact on zero sized fixed viewports.
-    if (m_viewSize.isEmpty())
-        return;
-
-    // Recalculate the recommended layout size, when the available size (device pixel) changes.
-    Settings& settings = m_page->settings();
-
-    int minimumLayoutFallbackWidth = std::max<int>(settings.layoutFallbackWidth(), m_viewSize.width());
-
-    // If unset  we use the viewport dimensions. This fits with the behavior of desktop browsers.
-    int deviceWidth = (settings.deviceWidth() > 0) ? settings.deviceWidth() : m_viewSize.width();
-    int deviceHeight = (settings.deviceHeight() > 0) ? settings.deviceHeight() : m_viewSize.height();
-
-    ViewportAttributes attr = computeViewportAttributes(viewportArguments, minimumLayoutFallbackWidth, deviceWidth, deviceHeight, 1, m_viewSize);
-
-    // If no layout was done yet set contentFixedOrigin to (0,0).
-    IntPoint contentFixedOrigin = view->didFirstLayout() ? view->fixedVisibleContentRect().location() : IntPoint();
-
-    // Put the width and height to the viewport width and height. In css units however.
-    // Use FloatSize to avoid truncated values during scale.
-    FloatSize contentFixedSize = m_viewSize;
-
-    contentFixedSize.scale(1 / attr.initialScale);
-    view->setFixedVisibleContentRect(IntRect(contentFixedOrigin, roundedIntSize(contentFixedSize)));
-
-    attr.initialScale = m_page->viewportArguments().zoom; // Resets auto (-1) if no value was set by user.
-
-    // This also takes care of the relayout.
-    setFixedLayoutSize(roundedIntSize(attr.layoutSize));
-
-#if USE(COORDINATED_GRAPHICS)
-    protectedDrawingArea()->didChangeViewportAttributes(WTFMove(attr));
-#else
-    send(Messages::WebPageProxy::DidChangeViewportProperties(attr));
-#endif
-}
-#endif
 
 void WebPage::drawRect(GraphicsContext& graphicsContext, const IntRect& rect)
 {
@@ -2891,18 +2838,7 @@ void WebPage::viewportPropertiesDidChange(const ViewportArguments& viewportArgum
 #if PLATFORM(IOS_FAMILY)
     if (m_viewportConfiguration.setViewportArguments(viewportArguments))
         viewportConfigurationChanged();
-#endif
-
-#if USE(COORDINATED_GRAPHICS)
-    RefPtr localMainFrame = dynamicDowncast<LocalFrame>(m_page->mainFrame());
-    RefPtr view = localMainFrame ? localMainFrame->view() : nullptr;
-    if (view && view->useFixedLayout())
-        sendViewportAttributesChanged(viewportArguments);
-    else
-        protectedDrawingArea()->didChangeViewportAttributes(ViewportAttributes());
-#endif
-
-#if !PLATFORM(IOS_FAMILY) && !USE(COORDINATED_GRAPHICS)
+#else
     UNUSED_PARAM(viewportArguments);
 #endif
 }

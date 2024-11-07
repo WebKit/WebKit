@@ -687,13 +687,6 @@ void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect)
     }
 
     page->pageDidScroll();
-#if USE(COORDINATED_GRAPHICS)
-    RefPtr frameView = page->localMainFrameView();
-    if (frameView && frameView->delegatesScrolling()) {
-        page->drawingArea()->scroll(rect, IntSize());
-        return;
-    }
-#endif
     page->drawingArea()->setNeedsDisplayInRect(rect);
 }
 

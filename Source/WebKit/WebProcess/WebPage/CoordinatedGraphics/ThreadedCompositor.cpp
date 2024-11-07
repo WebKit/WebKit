@@ -211,16 +211,6 @@ void ThreadedCompositor::resume()
     m_compositingRunLoop->resume();
 }
 
-void ThreadedCompositor::setScrollPosition(const IntPoint& scrollPosition, float scaleFactor)
-{
-    ASSERT(RunLoop::isMain());
-    Locker locker { m_attributes.lock };
-    m_attributes.scrollPosition = scrollPosition;
-    m_attributes.scrolledSinceLastFrame = true;
-    m_attributes.scaleFactor = scaleFactor;
-    m_compositingRunLoop->scheduleUpdate();
-}
-
 void ThreadedCompositor::setViewportSize(const IntSize& size, float scaleFactor)
 {
     ASSERT(RunLoop::isMain());
@@ -277,10 +267,8 @@ void ThreadedCompositor::renderLayerTree()
 
     // Retrieve the scene attributes in a thread-safe manner.
     WebCore::IntSize viewportSize;
-    WebCore::IntPoint scrollPosition;
     float scaleFactor;
     bool needsResize;
-    bool scrolledSinceLastFrame;
     uint32_t compositionRequestID;
 
     Vector<RefPtr<Nicosia::Scene>> states;
@@ -288,10 +276,8 @@ void ThreadedCompositor::renderLayerTree()
     {
         Locker locker { m_attributes.lock };
         viewportSize = m_attributes.viewportSize;
-        scrollPosition = m_attributes.scrollPosition;
         scaleFactor = m_attributes.scaleFactor;
         needsResize = m_attributes.needsResize;
-        scrolledSinceLastFrame = m_attributes.scrolledSinceLastFrame;
         compositionRequestID = m_attributes.compositionRequestID;
 
         states = WTFMove(m_attributes.states);
@@ -301,14 +287,12 @@ void ThreadedCompositor::renderLayerTree()
             m_attributes.clientRendersNextFrame = true;
         }
 
-        // Reset the needsResize and scrolledSinceLastFrame attributes to false.
+        // Reset the needsResize attribute to false.
         m_attributes.needsResize = false;
-        m_attributes.scrolledSinceLastFrame = false;
     }
 
     TransformationMatrix viewportTransform;
     viewportTransform.scale(scaleFactor);
-    viewportTransform.translate(-scrollPosition.x(), -scrollPosition.y());
 
     // Resize the client, if necessary, before the will-render-frame call is dispatched.
     // GL viewport is updated separately, if necessary. This establishes sequencing where
@@ -339,8 +323,7 @@ void ThreadedCompositor::renderLayerTree()
     WTFEmitSignpost(this, DidRenderFrame, "compositionResponseID %i", compositionRequestID);
 
     auto damageRegion = [&]() -> WebCore::Region {
-        if (scrolledSinceLastFrame)
-            return { };
+        // FIXME: find a way to know if main frame scrolled since last frame to return early here.
 
         const auto& damage = m_scene->lastDamage();
         if (m_damagePropagation == DamagePropagation::None || damage.isInvalid())

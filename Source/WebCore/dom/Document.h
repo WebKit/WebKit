@@ -502,9 +502,6 @@ public:
     WEBCORE_EXPORT ViewportArguments viewportArguments() const;
 
     OptionSet<DisabledAdaptations> disabledAdaptations() const { return m_disabledAdaptations; }
-#if ASSERT_ENABLED
-    bool didDispatchViewportPropertiesChanged() const { return m_didDispatchViewportPropertiesChanged; }
-#endif
 
     WEBCORE_EXPORT DocumentType* doctype() const;
 
@@ -2673,7 +2670,6 @@ private:
 
 #if ASSERT_ENABLED
     bool m_inHitTesting { false };
-    bool m_didDispatchViewportPropertiesChanged { false };
 #endif
     bool m_isDirAttributeDirty { false };
 
