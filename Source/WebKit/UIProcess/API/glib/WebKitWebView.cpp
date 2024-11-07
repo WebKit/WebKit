@@ -2659,8 +2659,6 @@ void webkitWebViewSetIcon(WebKitWebView* webView, const LinkIcon& icon, API::Dat
 
 RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, Ref<API::PageConfiguration>&& configuration, WebKitNavigationAction* navigationAction)
 {
-    auto& openerInfo = configuration->openerInfo();
-
     ASSERT(!webView->priv->configurationForNextRelatedView);
     SetForScope configurationScope(webView->priv->configurationForNextRelatedView, WTFMove(configuration));
 
@@ -2670,14 +2668,8 @@ RefPtr<WebPageProxy> webkitWebViewCreateNewPage(WebKitWebView* webView, Ref<API:
         return nullptr;
 
     Ref newPage = getPage(newWebView);
-    if (&getPage(webView) != newPage->configuration().relatedPage() || openerInfo != newPage->configuration().openerInfo()) {
-        g_warning("WebKitWebView returned by WebKitWebView::create signal was not created with the related WebKitWebView");
-        return nullptr;
-    }
-
     ASSERT(newPage->configuration().windowFeatures());
     webkitWindowPropertiesUpdateFromWebWindowFeatures(newWebView->priv->windowProperties.get(), *newPage->configuration().windowFeatures());
-
     return newPage;
 }
 
