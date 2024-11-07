@@ -28,7 +28,7 @@ messages -> NetworkProcessProxy WantsDispatchMessage {
     DidBlockLoadToKnownTracker(WebKit::WebPageProxyIdentifier pageID, URL url)
 
     TestProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebKit::WebPageProxyIdentifier pageID) -> (bool handled) Synchronous
-    TerminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier processIdentifier)
+    ProcessHasUnresponseServiceWorker(WebCore::ProcessIdentifier processIdentifier)
 
     # Diagnostic messages logging
     LogDiagnosticMessage(WebKit::WebPageProxyIdentifier pageID, String message, String description, enum:bool WebCore::ShouldSample shouldSample)

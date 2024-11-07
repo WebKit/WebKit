@@ -144,7 +144,11 @@ void SWServerWorker::startTermination(CompletionHandler<void()>&& callback)
     setState(State::Terminating);
 
     m_terminationCallbacks.append(WTFMove(callback));
-    m_terminationTimer.startOneShot(SWServer::defaultTerminationDelay);
+
+    constexpr Seconds terminationDelayForTesting = 1_s;
+    RefPtr<SWServer> server = m_server.get();
+    m_terminationTimer.startOneShot(server && server->isProcessTerminationDelayEnabled() ? SWServer::defaultTerminationDelay : terminationDelayForTesting);
+
     m_terminationIfPossibleTimer.stop();
 
     contextConnection->terminateWorker(identifier());
@@ -165,6 +169,8 @@ void SWServerWorker::callTerminationCallbacks()
 
 void SWServerWorker::terminationTimerFired()
 {
+    RELEASE_LOG_ERROR(ServiceWorker, "Terminating service worker %" PRIu64 " due to unresponsiveness", identifier().toUInt64());
+
     ASSERT(isTerminating());
     if (RefPtr contextConnection = this->contextConnection())
         contextConnection->terminateDueToUnresponsiveness();

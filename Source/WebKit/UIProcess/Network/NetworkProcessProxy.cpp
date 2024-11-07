@@ -592,12 +592,10 @@ void NetworkProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProc
         process->requestTermination(ProcessTerminationReason::RequestedByNetworkProcess);
 }
 
-void NetworkProcessProxy::terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier processIdentifier)
+void NetworkProcessProxy::processHasUnresponseServiceWorker(WebCore::ProcessIdentifier processIdentifier)
 {
-    if (auto process = WebProcessProxy::processForIdentifier(processIdentifier)) {
+    if (auto process = WebProcessProxy::processForIdentifier(processIdentifier))
         process->disableRemoteWorkers(RemoteWorkerType::ServiceWorker);
-        process->requestTermination(ProcessTerminationReason::ExceededCPULimit);
-    }
 }
 
 void NetworkProcessProxy::logDiagnosticMessageWithResult(WebPageProxyIdentifier pageID, const String& message, const String& description, uint32_t result, WebCore::ShouldSample shouldSample)

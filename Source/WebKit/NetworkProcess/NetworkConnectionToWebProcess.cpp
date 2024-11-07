@@ -1443,6 +1443,12 @@ void NetworkConnectionToWebProcess::serviceWorkerServerToContextConnectionNoLong
         connection->stop();
 }
 
+void NetworkConnectionToWebProcess::terminateSWContextConnectionDueToUnresponsiveness()
+{
+    protectedNetworkProcess()->protectedParentProcessConnection()->send(Messages::NetworkProcessProxy::ProcessHasUnresponseServiceWorker { webProcessIdentifier() }, 0);
+    closeSWContextConnection();
+}
+
 WebSWServerConnection* NetworkConnectionToWebProcess::swConnection()
 {
     if (!m_swConnection)

@@ -1708,14 +1708,14 @@ TEST(ServiceWorkers, NonDefaultSessionID)
     done = false;
 }
 
-static bool waitUntilEvaluatesToTrue(const Function<bool()>& f)
+static bool waitUntilEvaluatesToTrue(const Function<bool()>& f, unsigned maxTimeout = 100)
 {
     unsigned timeout = 0;
     do {
         if (f())
             return true;
         TestWebKitAPI::Util::runFor(0.1_s);
-    } while (++timeout < 100);
+    } while (++timeout < maxTimeout);
     return false;
 }
 
@@ -2084,6 +2084,65 @@ TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcessesWithSepara
 TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcessesWithoutSeparateServiceWorkerProcess)
 {
     testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWorkerProcess::No);
+}
+
+TEST(ServiceWorkers, SuspendAndTerminateWorker)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+
+    if ([[configuration preferences] inactiveSchedulingPolicy] == WKInactiveSchedulingPolicyNone)
+        return;
+
+    [[configuration preferences] setInactiveSchedulingPolicy:WKInactiveSchedulingPolicySuspend];
+
+    auto messageHandler = adoptNS([[SWMessageHandler alloc] init]);
+    [[configuration userContentController] addScriptMessageHandler:messageHandler.get() name:@"sw"];
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { mainBytes } },
+        { "/sw.js"_s, { { { "Content-Type"_s, "application/javascript"_s } }, scriptBytes } },
+    });
+
+    auto *processPool = configuration.get().processPool;
+    auto webView = adoptNS([[WKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+
+    [webView loadRequest:server.request()];
+    [webView _test_waitForDidFinishNavigation];
+
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [processPool _serviceWorkerProcessCount] == 1; }));
+
+    [webView _setThrottleStateForTesting:0];
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] {
+        return ![webView _hasServiceWorkerForegroundActivityForTesting] && ![webView _hasServiceWorkerBackgroundActivityForTesting];
+    }));
+
+    waitUntilEvaluatesToTrue([&] { return [webView _webProcessState] == _WKWebProcessStateSuspended; }, 500);
+
+    EXPECT_EQ([webView _webProcessState], _WKWebProcessStateSuspended);
+
+    // Process with service worker and page is suspended, let's terminate the service worker.
+    auto typesToRemove = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeServiceWorkerRegistrations]]);
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:typesToRemove.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    TestWebKitAPI::Util::runFor(1_s);
+
+    // Let's verify the WKWebView did not crash.
+    [webView evaluateJavaScript:@"log('OK')" completionHandler: nil];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
 }
 
 TEST(ServiceWorkers, ThrottleCrash)

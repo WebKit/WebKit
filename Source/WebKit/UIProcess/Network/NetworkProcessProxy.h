@@ -230,7 +230,7 @@ public:
     void flushCookies(PAL::SessionID, CompletionHandler<void()>&&);
 
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
-    void terminateUnresponsiveServiceWorkerProcesses(WebCore::ProcessIdentifier);
+    void processHasUnresponseServiceWorker(WebCore::ProcessIdentifier);
 
     void requestTermination();
 

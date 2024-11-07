@@ -227,6 +227,7 @@ public:
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
     void serviceWorkerServerToContextConnectionNoLongerNeeded();
+    void terminateSWContextConnectionDueToUnresponsiveness();
     WebSWServerConnection* swConnection();
     RefPtr<ServiceWorkerFetchTask> createFetchTask(NetworkResourceLoader&, const WebCore::ResourceRequest&);
     void sharedWorkerServerToContextConnectionIsNoLongerNeeded();
