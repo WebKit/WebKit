@@ -243,6 +243,9 @@ class cpp_type_container(cpp_type):
     def is_dynamic_span(self) -> bool:
         return (self.container_name == "std::span" and self.arity is None) or self.container_name == "GCGLSpanTuple"
 
+    def is_array(self) -> bool:
+        return self.container_name == "std::array"
+
     def get_container_name(self):
         return self.container_name
 
@@ -382,8 +385,14 @@ def cpp_implicit_cast(expr: cpp_expr, type: cpp_type) -> cpp_expr:
 
 
 def cpp_array_reinterpret_cast_conversion(expr: cpp_expr, type: cpp_type_container) -> cpp_expr:
-    element_pointer_type = type.get_contained_type().get_pointer_type()
-    return cpp_expr(type, f"{str(type)}(reinterpret_cast<{element_pointer_type}>({str(expr)}.data()), {str(expr)}.size())")
+    target_value_type = type.get_contained_type().get_decay_type()
+    target_arity = f", {type.arity}" if type.arity else ""
+    source_value_type = expr.type.get_contained_type().get_decay_type()
+    source_arity = f", {expr.type.arity}" if expr.type.arity else ""
+    if expr.type.is_array():
+        return cpp_expr(type, f"spanReinterpretCast<const {target_value_type}{target_arity}>(std::span<const {source_value_type}{source_arity}>({str(expr)}))")
+    else:
+        return cpp_expr(type, f"spanReinterpretCast<const {target_value_type}{target_arity}>({str(expr)}.span())")
 
 
 def cpp_move_expr(expr: cpp_expr) -> cpp_expr:

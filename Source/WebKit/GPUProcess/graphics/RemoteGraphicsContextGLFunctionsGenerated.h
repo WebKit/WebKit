@@ -379,21 +379,21 @@
         assertIsCurrent(workQueue());
         Vector<GCGLfloat, 16> value(valueSize, 0);
         protectedContext()->getFloatv(pname, value);
-        completionHandler(std::span<const float>(reinterpret_cast<const float*>(value.data()), value.size()));
+        completionHandler(spanReinterpretCast<const float>(value.span()));
     }
     void getIntegerv(uint32_t pname, size_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
         assertIsCurrent(workQueue());
         Vector<GCGLint, 4> value(valueSize, 0);
         protectedContext()->getIntegerv(pname, value);
-        completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(value.data()), value.size()));
+        completionHandler(spanReinterpretCast<const int32_t>(value.span()));
     }
     void getIntegeri_v(uint32_t pname, uint32_t index, CompletionHandler<void(std::span<const int32_t, 4>)>&& completionHandler) // NOLINT
     {
         assertIsCurrent(workQueue());
         std::array<GCGLint, 4> value { };
         protectedContext()->getIntegeri_v(pname, index, value);
-        completionHandler(std::span<const int32_t, 4>(reinterpret_cast<const int32_t*>(value.data()), value.size()));
+        completionHandler(spanReinterpretCast<const int32_t, 4>(std::span<const GCGLint, 4>(value)));
     }
     void getInteger64(uint32_t pname, CompletionHandler<void(int64_t)>&& completionHandler)
     {
@@ -423,7 +423,7 @@
         assertIsCurrent(workQueue());
         Vector<GCGLboolean, 4> value(valueSize, 0);
         protectedContext()->getBooleanv(pname, value);
-        completionHandler(std::span<const bool>(reinterpret_cast<const bool*>(value.data()), value.size()));
+        completionHandler(spanReinterpretCast<const bool>(value.span()));
     }
     void getFramebufferAttachmentParameteri(uint32_t target, uint32_t attachment, uint32_t pname, CompletionHandler<void(int32_t)>&& completionHandler)
     {
@@ -472,7 +472,7 @@
         std::array<GCGLint, 2> range { };
         GCGLint precision = { };
         protectedContext()->getShaderPrecisionFormat(shaderType, precisionType, range, &precision);
-        completionHandler(std::span<const int32_t, 2>(reinterpret_cast<const int32_t*>(range.data()), range.size()), precision);
+        completionHandler(spanReinterpretCast<const int32_t, 2>(std::span<const GCGLint, 2>(range)), precision);
     }
     void getShaderSource(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
     {
@@ -504,7 +504,7 @@
             program = m_objectNames.get(program);
         Vector<GCGLfloat, 16> value(valueSize, 0);
         protectedContext()->getUniformfv(program, location, value);
-        completionHandler(std::span<const float>(reinterpret_cast<const float*>(value.data()), value.size()));
+        completionHandler(spanReinterpretCast<const float>(value.span()));
     }
     void getUniformiv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const int32_t>)>&& completionHandler)
     {
@@ -513,7 +513,7 @@
             program = m_objectNames.get(program);
         Vector<GCGLint, 4> value(valueSize, 0);
         protectedContext()->getUniformiv(program, location, value);
-        completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(value.data()), value.size()));
+        completionHandler(spanReinterpretCast<const int32_t>(value.span()));
     }
     void getUniformuiv(uint32_t program, int32_t location, size_t valueSize, CompletionHandler<void(std::span<const uint32_t>)>&& completionHandler)
     {
@@ -522,7 +522,7 @@
             program = m_objectNames.get(program);
         Vector<GCGLuint, 4> value(valueSize, 0);
         protectedContext()->getUniformuiv(program, location, value);
-        completionHandler(std::span<const uint32_t>(reinterpret_cast<const uint32_t*>(value.data()), value.size()));
+        completionHandler(spanReinterpretCast<const uint32_t>(value.span()));
     }
     void getUniformLocation(uint32_t arg0, String&& name, CompletionHandler<void(int32_t)>&& completionHandler)
     {
@@ -1465,7 +1465,7 @@
             program = m_objectNames.get(program);
         Vector<GCGLint, 4> params(paramsSize, 0);
         protectedContext()->getActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
-        completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(params.data()), params.size()));
+        completionHandler(spanReinterpretCast<const int32_t>(params.span()));
     }
     void getTranslatedShaderSourceANGLE(uint32_t arg0, CompletionHandler<void(String&&)>&& completionHandler)
     {
@@ -1631,7 +1631,7 @@
         assertIsCurrent(workQueue());
         Vector<GCGLint, 4> params(paramsSize, 0);
         protectedContext()->getInternalformativ(target, internalformat, pname, params);
-        completionHandler(std::span<const int32_t>(reinterpret_cast<const int32_t*>(params.data()), params.size()));
+        completionHandler(spanReinterpretCast<const int32_t>(params.span()));
     }
     void setDrawingBufferColorSpace(WebCore::DestinationColorSpace&& arg0)
     {

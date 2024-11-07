@@ -767,7 +767,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-align"
-template<typename T, typename U, std::size_t Extent>
+template<typename T, std::size_t Extent, typename U>
 constexpr std::span<T, Extent == std::dynamic_extent ? std::dynamic_extent : (sizeof(U) * Extent) / sizeof(T)> spanReinterpretCast(std::span<U, Extent> span)
 {
     static_assert(std::is_const_v<T> || (!std::is_const_v<T> && !std::is_const_v<U>), "spanReinterpretCast will not remove constness from source");
