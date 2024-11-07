@@ -287,19 +287,20 @@ def main():
     unexpected_issues_total = set()
     unexpected_results_data = {'passes': {}, 'failures': {}}
     results_for_upload = {}
+    new_path = os.path.abspath(f'{args.new_dir}')
+    archive_path = os.path.abspath(f'{args.archived_dir}') if args.archived_dir else ''
 
     for project in PROJECTS:
         project_results_for_upload = None
         print(f'\n------ {project} ------')
-        new_path = os.path.abspath(f'{args.new_dir}')
         if args.check_expectations:
             unexpected_failures, unexpected_passes, unexpected_issues, project_results_passes, project_results_failures, project_results_for_upload = compare_project_results_to_expectations(args, new_path, project)
             unexpected_failures_total.update(unexpected_failures)
             unexpected_passes_total.update(unexpected_passes)
             unexpected_issues_total.update(unexpected_issues)
         else:
-            archive_path = os.path.abspath(f'{args.archived_dir}/{project}')
-            new_issues, new_files, fixed_files, fixed_issues, project_results_passes, project_results_failures = compare_project_results_by_run(args, archive_path, new_path, project)
+            path_to_project = f'{archive_path}/{project}'
+            new_issues, new_files, fixed_files, fixed_issues, project_results_passes, project_results_failures = compare_project_results_by_run(args, path_to_project, new_path, project)
             new_issues_total.update(new_issues)
             new_files_total.update(new_files)
             fixed_files_total.update(fixed_files)
@@ -308,9 +309,10 @@ def main():
         unexpected_results_data['passes'][project] = project_results_passes
         unexpected_results_data['failures'][project] = project_results_failures
         if args.report_urls:
+            path_for_upload = archive_path or new_path
             if not project_results_for_upload:
                 print(f'\nChecking against expectations for results to upload for {project}...')
-                _, _, _, _, _, project_results_for_upload = compare_project_results_to_expectations(args, new_path, project, upload_only=True)
+                _, _, _, _, _, project_results_for_upload = compare_project_results_to_expectations(args, path_for_upload, project, upload_only=True)
             results_for_upload[project] = project_results_for_upload
 
     if args.build_output:
