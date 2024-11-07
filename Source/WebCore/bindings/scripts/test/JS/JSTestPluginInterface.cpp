@@ -46,8 +46,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 using namespace JSC;
 
@@ -108,9 +106,8 @@ template<> void JSTestPluginInterfaceDOMConstructor::initializeProperties(VM& vm
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestPluginInterfacePrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestPluginInterfaceConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSTestPluginInterfacePrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestPluginInterfaceConstructor, 0 } },
 };
 
 const ClassInfo JSTestPluginInterfacePrototype::s_info = { "TestPluginInterface"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestPluginInterfacePrototype) };
@@ -302,6 +299,7 @@ void JSTestPluginInterfaceOwner::finalize(JSC::Handle<JSC::Unknown> handle, void
     uncacheWrapper(world, jsTestPluginInterface->protectedWrapped().ptr(), jsTestPluginInterface);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -326,6 +324,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestPluginInt
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestPluginInterface>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)
@@ -347,4 +347,3 @@ TestPluginInterface* JSTestPluginInterface::toWrapped(JSC::VM&, JSC::JSValue val
 }
 
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

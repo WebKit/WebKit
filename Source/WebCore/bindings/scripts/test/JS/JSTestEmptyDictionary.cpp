@@ -25,8 +25,6 @@
 #include <JavaScriptCore/JSCInlines.h>
 #include <JavaScriptCore/ObjectConstructor.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 
 
 namespace WebCore {
@@ -60,6 +58,4 @@ JSC::JSObject* convertDictionaryToJS(JSC::JSGlobalObject& lexicalGlobalObject, J
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 

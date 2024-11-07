@@ -47,9 +47,12 @@ protected:
     static constexpr size_t binarySearchThreshold = 20;
 };
 
+template<typename T>
+using ArrayElementType = std::remove_reference_t<decltype(*std::begin(std::declval<T&>()))>;
+
 template<typename ArrayType> class SortedArrayMap : public SortedArrayBase {
 public:
-    using ElementType = typename std::remove_extent_t<ArrayType>;
+    using ElementType = ArrayElementType<ArrayType>;
     using ValueType = typename ElementType::second_type;
 
     constexpr SortedArrayMap(const ArrayType&);

@@ -49,8 +49,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 using namespace JSC;
 
@@ -90,17 +88,16 @@ static const struct CompactHashIndex JSWorkerGlobalScopeTableIndex[18] = {
 };
 
 
-static const HashTableValue JSWorkerGlobalScopeTableValues[] =
-{
-    { "ExposedToWorkerAndWindow"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_ExposedToWorkerAndWindowConstructor, 0 } },
-    { "TestDefaultToJSONFilteredByExposed"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_TestDefaultToJSONFilteredByExposedConstructor, 0 } },
-    { "TestNode"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_TestNodeConstructor, 0 } },
-    { "TestObject"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_TestObjectConstructor, 0 } },
-    { "TestPromiseRejectionEvent"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_TestPromiseRejectionEventConstructor, 0 } },
-    { "WorkerGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_WorkerGlobalScopeConstructor, 0 } },
+static const std::array<HashTableValue, 6> JSWorkerGlobalScopeTableValues {
+    HashTableValue { "ExposedToWorkerAndWindow"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_ExposedToWorkerAndWindowConstructor, 0 } },
+    HashTableValue { "TestDefaultToJSONFilteredByExposed"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_TestDefaultToJSONFilteredByExposedConstructor, 0 } },
+    HashTableValue { "TestNode"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_TestNodeConstructor, 0 } },
+    HashTableValue { "TestObject"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_TestObjectConstructor, 0 } },
+    HashTableValue { "TestPromiseRejectionEvent"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_TestPromiseRejectionEventConstructor, 0 } },
+    HashTableValue { "WorkerGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScope_WorkerGlobalScopeConstructor, 0 } },
 };
 
-static const HashTable JSWorkerGlobalScopeTable = { 6, 15, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSWorkerGlobalScope::info(), JSWorkerGlobalScopeTableValues, JSWorkerGlobalScopeTableIndex };
+static const HashTable JSWorkerGlobalScopeTable = { 6, 15, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSWorkerGlobalScope::info(), JSWorkerGlobalScopeTableValues.data(), JSWorkerGlobalScopeTableIndex };
 template<> const ClassInfo JSWorkerGlobalScopeDOMConstructor::s_info = { "WorkerGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSWorkerGlobalScopeDOMConstructor) };
 
 template<> JSValue JSWorkerGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -125,12 +122,11 @@ static const struct CompactHashIndex JSWorkerGlobalScopePrototypeTableIndex[2] =
 };
 
 
-static const HashTableValue JSWorkerGlobalScopePrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScopeConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSWorkerGlobalScopePrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsWorkerGlobalScopeConstructor, 0 } },
 };
 
-static const HashTable JSWorkerGlobalScopePrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSWorkerGlobalScope::info(), JSWorkerGlobalScopePrototypeTableValues, JSWorkerGlobalScopePrototypeTableIndex };
+static const HashTable JSWorkerGlobalScopePrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSWorkerGlobalScope::info(), JSWorkerGlobalScopePrototypeTableValues.data(), JSWorkerGlobalScopePrototypeTableIndex };
 const ClassInfo JSWorkerGlobalScopePrototype::s_info = { "WorkerGlobalScope"_s, &Base::s_info, &JSWorkerGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSWorkerGlobalScopePrototype) };
 
 void JSWorkerGlobalScopePrototype::finishCreation(VM& vm)
@@ -283,4 +279,3 @@ WorkerGlobalScope* JSWorkerGlobalScope::toWrapped(JSC::VM&, JSC::JSValue value)
 }
 
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

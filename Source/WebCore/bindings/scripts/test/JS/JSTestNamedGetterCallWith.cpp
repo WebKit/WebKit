@@ -47,8 +47,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 using namespace JSC;
 
@@ -109,9 +107,8 @@ template<> void JSTestNamedGetterCallWithDOMConstructor::initializeProperties(VM
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestNamedGetterCallWithPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedGetterCallWithConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSTestNamedGetterCallWithPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamedGetterCallWithConstructor, 0 } },
 };
 
 const ClassInfo JSTestNamedGetterCallWithPrototype::s_info = { "TestNamedGetterCallWith"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestNamedGetterCallWithPrototype) };
@@ -369,6 +366,7 @@ void JSTestNamedGetterCallWithOwner::finalize(JSC::Handle<JSC::Unknown> handle, 
     uncacheWrapper(world, jsTestNamedGetterCallWith->protectedWrapped().ptr(), jsTestNamedGetterCallWith);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -393,6 +391,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestNamedGett
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestNamedGetterCallWith>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)
@@ -414,4 +414,3 @@ TestNamedGetterCallWith* JSTestNamedGetterCallWith::toWrapped(JSC::VM&, JSC::JSV
 }
 
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

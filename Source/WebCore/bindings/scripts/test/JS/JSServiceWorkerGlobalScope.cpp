@@ -45,8 +45,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 using namespace JSC;
 
@@ -68,13 +66,12 @@ static const struct CompactHashIndex JSServiceWorkerGlobalScopeTableIndex[4] = {
 };
 
 
-static const HashTableValue JSServiceWorkerGlobalScopeTableValues[] =
-{
-    { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsServiceWorkerGlobalScope_ExposedStarConstructor, 0 } },
-    { "ServiceWorkerGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstructor, 0 } },
+static const std::array<HashTableValue, 2> JSServiceWorkerGlobalScopeTableValues {
+    HashTableValue { "ExposedStar"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsServiceWorkerGlobalScope_ExposedStarConstructor, 0 } },
+    HashTableValue { "ServiceWorkerGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsServiceWorkerGlobalScope_ServiceWorkerGlobalScopeConstructor, 0 } },
 };
 
-static const HashTable JSServiceWorkerGlobalScopeTable = { 2, 3, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSServiceWorkerGlobalScope::info(), JSServiceWorkerGlobalScopeTableValues, JSServiceWorkerGlobalScopeTableIndex };
+static const HashTable JSServiceWorkerGlobalScopeTable = { 2, 3, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSServiceWorkerGlobalScope::info(), JSServiceWorkerGlobalScopeTableValues.data(), JSServiceWorkerGlobalScopeTableIndex };
 template<> const ClassInfo JSServiceWorkerGlobalScopeDOMConstructor::s_info = { "ServiceWorkerGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSServiceWorkerGlobalScopeDOMConstructor) };
 
 template<> JSValue JSServiceWorkerGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -99,12 +96,11 @@ static const struct CompactHashIndex JSServiceWorkerGlobalScopePrototypeTableInd
 };
 
 
-static const HashTableValue JSServiceWorkerGlobalScopePrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsServiceWorkerGlobalScopeConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSServiceWorkerGlobalScopePrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsServiceWorkerGlobalScopeConstructor, 0 } },
 };
 
-static const HashTable JSServiceWorkerGlobalScopePrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSServiceWorkerGlobalScope::info(), JSServiceWorkerGlobalScopePrototypeTableValues, JSServiceWorkerGlobalScopePrototypeTableIndex };
+static const HashTable JSServiceWorkerGlobalScopePrototypeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(PropertyAttribute::DontEnum)), JSServiceWorkerGlobalScope::info(), JSServiceWorkerGlobalScopePrototypeTableValues.data(), JSServiceWorkerGlobalScopePrototypeTableIndex };
 const ClassInfo JSServiceWorkerGlobalScopePrototype::s_info = { "ServiceWorkerGlobalScope"_s, &Base::s_info, &JSServiceWorkerGlobalScopePrototypeTable, nullptr, CREATE_METHOD_TABLE(JSServiceWorkerGlobalScopePrototype) };
 
 void JSServiceWorkerGlobalScopePrototype::finishCreation(VM& vm)
@@ -195,4 +191,3 @@ void JSServiceWorkerGlobalScope::analyzeHeap(JSCell* cell, HeapAnalyzer& analyze
 
 
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

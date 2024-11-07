@@ -44,8 +44,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 using namespace JSC;
 
@@ -107,10 +105,9 @@ template<> void JSTestExceptionDOMConstructor::initializeProperties(VM& vm, JSDO
 
 /* Hash table for prototype */
 
-static const HashTableValue JSTestExceptionPrototypeTableValues[] =
-{
-    { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestExceptionConstructor, 0 } },
-    { "name"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestException_name, 0 } },
+static const std::array<HashTableValue, 2> JSTestExceptionPrototypeTableValues {
+    HashTableValue { "constructor"_s, static_cast<unsigned>(PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestExceptionConstructor, 0 } },
+    HashTableValue { "name"_s, JSC::PropertyAttribute::ReadOnly | JSC::PropertyAttribute::CustomAccessor | JSC::PropertyAttribute::DOMAttribute, NoIntrinsic, { HashTableValue::GetterSetterType, jsTestException_name, 0 } },
 };
 
 const ClassInfo JSTestExceptionPrototype::s_info = { "TestException"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSTestExceptionPrototype) };
@@ -211,6 +208,7 @@ void JSTestExceptionOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* cont
     uncacheWrapper(world, jsTestException->protectedWrapped().ptr(), jsTestException);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(BINDING_INTEGRITY)
 #if PLATFORM(WIN)
 #pragma warning(disable: 4483)
@@ -235,6 +233,8 @@ template<typename T, typename = std::enable_if_t<std::is_same_v<T, TestException
     }
 }
 #endif
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 JSC::JSValue toJSNewlyCreated(JSC::JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<TestException>&& impl)
 {
 #if ENABLE(BINDING_INTEGRITY)
@@ -256,4 +256,3 @@ TestException* JSTestException::toWrapped(JSC::VM&, JSC::JSValue value)
 }
 
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

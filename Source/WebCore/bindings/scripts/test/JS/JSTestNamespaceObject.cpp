@@ -56,8 +56,6 @@
 #include "TestNamespaceObjectImpl.h"
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 using namespace JSC;
 
@@ -80,20 +78,19 @@ using JSTestNamespaceObjectDOMConstructor = JSDOMConstructorNotCallable<JSTestNa
 
 /* Hash table for constructor */
 
-static const HashTableValue JSTestNamespaceObjectConstructorTableValues[] =
-{
-    { "namespaceAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamespaceObjectConstructor_namespaceAttribute, 0 } },
+static const std::array<HashTableValue, 5> JSTestNamespaceObjectConstructorTableValues {
+    HashTableValue { "namespaceAttribute"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamespaceObjectConstructor_namespaceAttribute, 0 } },
 #if ENABLE(Condition1)
-    { "namespaceAttributeFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamespaceObjectConstructor_namespaceAttributeFromPartial, 0 } },
+    HashTableValue { "namespaceAttributeFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::ReadOnly), NoIntrinsic, { HashTableValue::GetterSetterType, jsTestNamespaceObjectConstructor_namespaceAttributeFromPartial, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
-    { "overloadedNamespaceOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperation, 1 } },
-    { "enabledBySettingNamespaceOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperation, 0 } },
+    HashTableValue { "overloadedNamespaceOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamespaceObjectConstructorFunction_overloadedNamespaceOperation, 1 } },
+    HashTableValue { "enabledBySettingNamespaceOperation"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamespaceObjectConstructorFunction_enabledBySettingNamespaceOperation, 0 } },
 #if ENABLE(Condition1)
-    { "namespaceOperationFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamespaceObjectConstructorFunction_namespaceOperationFromPartial, 0 } },
+    HashTableValue { "namespaceOperationFromPartial"_s, static_cast<unsigned>(JSC::PropertyAttribute::Function), NoIntrinsic, { HashTableValue::NativeFunctionType, jsTestNamespaceObjectConstructorFunction_namespaceOperationFromPartial, 0 } },
 #else
-    { { }, 0, NoIntrinsic, { HashTableValue::End } },
+    HashTableValue { { }, 0, NoIntrinsic, { HashTableValue::End } },
 #endif
 };
 
@@ -285,4 +282,3 @@ JSC::GCClient::IsoSubspace* JSTestNamespaceObject::subspaceForImpl(JSC::VM& vm)
 
 
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

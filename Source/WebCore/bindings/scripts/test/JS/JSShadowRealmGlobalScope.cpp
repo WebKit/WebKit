@@ -46,8 +46,6 @@
 #include <wtf/URL.h>
 #include <wtf/text/MakeString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 using namespace JSC;
 
@@ -67,12 +65,11 @@ static const struct CompactHashIndex JSShadowRealmGlobalScopeTableIndex[2] = {
 };
 
 
-static const HashTableValue JSShadowRealmGlobalScopeTableValues[] =
-{
-    { "ShadowRealmGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsShadowRealmGlobalScope_ShadowRealmGlobalScopeConstructor, 0 } },
+static const std::array<HashTableValue, 1> JSShadowRealmGlobalScopeTableValues {
+    HashTableValue { "ShadowRealmGlobalScope"_s, static_cast<unsigned>(JSC::PropertyAttribute::DontEnum), NoIntrinsic, { HashTableValue::GetterSetterType, jsShadowRealmGlobalScope_ShadowRealmGlobalScopeConstructor, 0 } },
 };
 
-static const HashTable JSShadowRealmGlobalScopeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSShadowRealmGlobalScope::info(), JSShadowRealmGlobalScopeTableValues, JSShadowRealmGlobalScopeTableIndex };
+static const HashTable JSShadowRealmGlobalScopeTable = { 1, 1, static_cast<uint8_t>(static_cast<unsigned>(JSC::PropertyAttribute::DontEnum)), JSShadowRealmGlobalScope::info(), JSShadowRealmGlobalScopeTableValues.data(), JSShadowRealmGlobalScopeTableIndex };
 template<> const ClassInfo JSShadowRealmGlobalScopeDOMConstructor::s_info = { "ShadowRealmGlobalScope"_s, &Base::s_info, nullptr, nullptr, CREATE_METHOD_TABLE(JSShadowRealmGlobalScopeDOMConstructor) };
 
 template<> JSValue JSShadowRealmGlobalScopeDOMConstructor::prototypeForStructure(JSC::VM& vm, const JSDOMGlobalObject& globalObject)
@@ -193,4 +190,3 @@ ShadowRealmGlobalScope* JSShadowRealmGlobalScope::toWrapped(JSC::VM&, JSC::JSVal
 }
 
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

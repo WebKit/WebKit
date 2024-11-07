@@ -24,8 +24,6 @@
 #include "JSDOMConvertNumbers.h"
 #include <JavaScriptCore/JSCInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 
 
 namespace WebCore {
@@ -59,6 +57,4 @@ template<> ConversionResult<IDLDictionary<TestDictionary>> convertDictionary<Tes
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
