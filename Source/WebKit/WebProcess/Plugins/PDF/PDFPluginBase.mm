@@ -1014,32 +1014,30 @@ void PDFPluginBase::print()
 
 #if PLATFORM(MAC)
 
-void PDFPluginBase::writeItemsToPasteboard(NSString *pasteboardName, NSArray *items, NSArray *types) const
+void PDFPluginBase::writeItemsToPasteboard(NSString *pasteboardName, Vector<PasteboardItem>&& pasteboardItems) const
 {
     // FIXME: <https://webkit.org/b/269174> PDFPluginBase::writeItemsToPasteboard should be platform-agnostic.
-    auto pasteboardTypes = makeVector<String>(types);
+    auto pasteboardTypes = pasteboardItems.map([](const auto& item) -> String {
+        return item.type.get();
+    });
     auto pageIdentifier = m_frame && m_frame->coreLocalFrame() ? m_frame->coreLocalFrame()->pageID() : std::nullopt;
 
     auto& webProcess = WebProcess::singleton();
     webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardTypes(pasteboardName, pasteboardTypes, pageIdentifier), 0);
 
-    ASSERT(items.count >= types.count);
-    for (NSUInteger i = 0, count = items.count; i < count; ++i) {
-        NSString *type = [types objectAtIndex:i];
-        NSData *data = [items objectAtIndex:i];
-
+    for (auto&& [data, type] : WTFMove(pasteboardItems)) {
         // We don't expect the data for any items to be empty, but aren't completely sure.
         // Avoid crashing in the SharedMemory constructor in release builds if we're wrong.
-        ASSERT(data.length);
-        if (!data.length)
+        ASSERT([data length]);
+        if (![data length])
             continue;
 
         if ([type isEqualToString:legacyStringPasteboardType()] || [type isEqualToString:NSPasteboardTypeString]) {
-            auto plainTextString = adoptNS([[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-            webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardStringForType(pasteboardName, type, plainTextString.get(), pageIdentifier), 0);
+            auto plainTextString = adoptNS([[NSString alloc] initWithData:data.get() encoding:NSUTF8StringEncoding]);
+            webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardStringForType(pasteboardName, type.get(), plainTextString.get(), pageIdentifier), 0);
         } else {
-            auto buffer = SharedBuffer::create(data);
-            webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardBufferForType(pasteboardName, type, WTFMove(buffer), pageIdentifier), 0);
+            auto buffer = SharedBuffer::create(data.get());
+            webProcess.parentProcessConnection()->sendSync(Messages::WebPasteboardProxy::SetPasteboardBufferForType(pasteboardName, type.get(), WTFMove(buffer), pageIdentifier), 0);
         }
     }
 }

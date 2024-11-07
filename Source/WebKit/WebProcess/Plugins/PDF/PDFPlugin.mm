@@ -426,7 +426,11 @@ static WebCore::Cursor::Type toWebCoreCursorType(PDFLayerControllerCursorType cu
 
 - (void)writeItemsToPasteboard:(NSArray *)items withTypes:(NSArray *)types
 {
-    _pdfPlugin->writeItemsToPasteboard(NSPasteboardNameGeneral, items, types);
+    Vector<WebKit::PDFPluginPasteboardItem> pasteboardItems;
+    ASSERT(items.count >= types.count);
+    for (NSUInteger i = 0, count = items.count; i < count; ++i)
+        pasteboardItems.append({ [items objectAtIndex:i], [types objectAtIndex:i] });
+    _pdfPlugin->writeItemsToPasteboard(NSPasteboardNameGeneral, WTFMove(pasteboardItems));
 }
 
 - (void)showDefinitionForAttributedString:(NSAttributedString *)string atPoint:(CGPoint)point
@@ -1163,7 +1167,7 @@ bool PDFPlugin::handleEditingCommand(const String& commandName, const String&)
     else if (commandName == "takeFindStringFromSelection"_s) {
         NSString *string = [m_pdfLayerController currentSelection].string;
         if (string.length)
-            writeItemsToPasteboard(NSPasteboardNameFind, @[ [string dataUsingEncoding:NSUTF8StringEncoding] ], @[ NSPasteboardTypeString ]);
+            writeItemsToPasteboard(NSPasteboardNameFind, { { [string dataUsingEncoding:NSUTF8StringEncoding], NSPasteboardTypeString } });
     }
 
     return true;

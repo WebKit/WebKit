@@ -2567,11 +2567,12 @@ void UnifiedPDFPlugin::performCopyLinkOperation(const IntPoint& contextMenuEvent
         return;
 
 #if PLATFORM(MAC)
-    NSString *urlAbsoluteString = [url absoluteString];
-    NSArray *types = @[ NSPasteboardTypeString, NSPasteboardTypeHTML ];
-    NSArray *items = @[ [urlAbsoluteString dataUsingEncoding:NSUTF8StringEncoding], [urlAbsoluteString dataUsingEncoding:NSUTF8StringEncoding] ];
-
-    writeItemsToPasteboard(NSPasteboardNameGeneral, items, types);
+    RetainPtr urlData = [[url absoluteString] dataUsingEncoding:NSUTF8StringEncoding];
+    Vector<PasteboardItem> pasteboardItems {
+        { urlData, NSPasteboardTypeURL },
+        { urlData, NSPasteboardTypeString },
+    };
+    writeItemsToPasteboard(NSPasteboardNameGeneral, WTFMove(pasteboardItems));
 #else
     // FIXME: Implement.
 #endif
@@ -2612,6 +2613,21 @@ bool UnifiedPDFPlugin::isEditingCommandEnabled(const String& commandName)
     return false;
 }
 
+#if PLATFORM(MAC)
+static NSData *htmlDataFromSelection(PDFSelection *selection)
+{
+    if (!selection)
+        return nil;
+#if HAVE(PDFSELECTION_HTMLDATA_RTFDATA)
+    if ([selection respondsToSelector:@selector(htmlData)])
+        return [selection htmlData];
+#endif
+ALLOW_DEPRECATED_DECLARATIONS_BEGIN
+    return [[selection html] dataUsingEncoding:NSUTF8StringEncoding];
+ALLOW_DEPRECATED_DECLARATIONS_END
+}
+#endif
+
 bool UnifiedPDFPlugin::performCopyEditingOperation() const
 {
 #if PLATFORM(MAC)
@@ -2623,31 +2639,22 @@ bool UnifiedPDFPlugin::performCopyEditingOperation() const
         return false;
     }
 
-    NSMutableArray *types = [NSMutableArray array];
-    NSMutableArray *items = [NSMutableArray array];
+    Vector<PasteboardItem> pasteboardItems;
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: <rdar://136075998> Stop using -[PDFSelection webArchive] since it returns nil unconditionally.
-    if (NSData *webArchiveData = [m_currentSelection webArchive]) {
-        [types addObject:PasteboardTypes::WebArchivePboardType];
-        [items addObject:webArchiveData];
+    if (NSData *htmlData = htmlDataFromSelection(m_currentSelection.get()))
+        pasteboardItems.append({ htmlData, NSPasteboardTypeHTML });
+
+#if HAVE(PDFSELECTION_HTMLDATA_RTFDATA)
+    if ([m_currentSelection respondsToSelector:@selector(rtfData)]) {
+        if (NSData *rtfData = [m_currentSelection rtfData])
+            pasteboardItems.append({ rtfData, NSPasteboardTypeRTF });
     }
-ALLOW_DEPRECATED_DECLARATIONS_END
+#endif
 
-    if (NSData *plainStringData = [[m_currentSelection string] dataUsingEncoding:NSUTF8StringEncoding]) {
-        [types addObject:NSPasteboardTypeString];
-        [items addObject:plainStringData];
-    }
+    if (NSData *plainStringData = [[m_currentSelection string] dataUsingEncoding:NSUTF8StringEncoding])
+        pasteboardItems.append({ plainStringData, NSPasteboardTypeString });
 
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    // FIXME: <rdar://136075998> Migrate from -[PDFSelection html] to -[PDFSelection htmlData].
-    if (NSData *htmlStringData = [[m_currentSelection html] dataUsingEncoding:NSUTF8StringEncoding]) {
-        [types addObject:NSPasteboardTypeHTML];
-        [items addObject:htmlStringData];
-    }
-ALLOW_DEPRECATED_DECLARATIONS_END
-
-    writeItemsToPasteboard(NSPasteboardNameGeneral, items, types);
+    writeItemsToPasteboard(NSPasteboardNameGeneral, WTFMove(pasteboardItems));
     return true;
 #endif
     return false;
@@ -2664,7 +2671,7 @@ bool UnifiedPDFPlugin::takeFindStringFromSelection()
         return false;
 
 #if PLATFORM(MAC)
-    writeItemsToPasteboard(NSPasteboardNameFind, @[ [nsStringNilIfEmpty(findString) dataUsingEncoding:NSUTF8StringEncoding] ], @[ NSPasteboardTypeString ]);
+    writeItemsToPasteboard(NSPasteboardNameFind, { { [nsStringNilIfEmpty(findString) dataUsingEncoding:NSUTF8StringEncoding], NSPasteboardTypeString } });
 #else
     if (!m_frame || !m_frame->coreLocalFrame())
         return false;
