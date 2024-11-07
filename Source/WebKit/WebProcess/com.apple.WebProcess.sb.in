@@ -1093,6 +1093,9 @@
 (deny mach-lookup (with no-report)
     (global-name "com.apple.tccd.system"))
 
+(deny mach-lookup (with telemetry-backtrace)
+    (global-name "com.apple.mobileassetd.v2"))
+
 (with-filter (require-not (state-flag "BlockMobileAssetInWebContentSandbox"))
     (allow mach-lookup
         (require-all
@@ -1131,8 +1134,11 @@
     (global-name "com.apple.PowerManagement.control"))
 
 #if HAVE(STATIC_FONT_REGISTRY)
+(deny mach-lookup (with telemetry-backtrace)
+    (global-name "com.apple.fonts"))
+
 (with-filter (require-not (state-flag "BlockFontServiceInWebContentSandbox"))
-    (allow mach-lookup
+    (allow mach-lookup (with telemetry-backtrace)
         (require-all
             (extension "com.apple.webkit.extension.mach")
             (global-name "com.apple.fonts"))))
@@ -1174,7 +1180,7 @@
 )
 
 (with-filter (require-not (state-flag "BlockOpenDirectoryInWebContentSandbox"))
-    (allow mach-lookup
+    (allow mach-lookup (with telemetry-backtrace)
         (require-all
             (extension "com.apple.webkit.extension.mach")
             (global-name "com.apple.system.opendirectoryd.libinfo"))))
@@ -1348,15 +1354,22 @@
         (global-name "com.apple.analyticsd")
         (global-name "com.apple.diagnosticd")))
 
+(deny mach-lookup (with telemetry-backtrace)
+    (global-name "com.apple.webinspector"))
+
 (with-filter (require-not (state-flag "BlockWebInspectorInWebContentSandbox"))
-    (allow mach-lookup
+    (allow mach-lookup (with telemetry-backtrace)
         (require-all
             (extension "com.apple.webkit.extension.mach")
-            (global-name
-                "com.apple.webinspector"))))
+            (global-name "com.apple.webinspector"))))
+
+(deny mach-lookup (with telemetry-backtrace)
+    (global-name
+        "com.apple.iconservices"
+        "com.apple.iconservices.store"))
 
 (with-filter (require-not (state-flag "BlockIconServicesInWebContentSandbox"))
-    (allow mach-lookup
+    (allow mach-lookup (with telemetry-backtrace)
         (require-all
             (extension "com.apple.webkit.extension.mach")
             (global-name
@@ -1972,14 +1985,14 @@
         (iokit-user-client-class "RootDomainUserClient")))
 
 (when (webcontent_gpu_sandbox_extensions_blocking)
-    (deny iokit-open-service (with telemetry-backtrace))
-    (deny iokit-open-user-client (with telemetry-backtrace)))
+    (deny iokit-open-service (with telemetry))
+    (deny iokit-open-user-client (with telemetry)))
 
 #if HAVE(SANDBOX_STATE_FLAGS)
 (with-filter (state-flag "BlockIOKitInWebContentSandbox")
-    (deny iokit-open-service (with telemetry-backtrace))
-    (deny iokit-open-user-client (with telemetry-backtrace))
-    (deny mach-lookup (with telemetry-backtrace)
+    (deny iokit-open-service (with telemetry))
+    (deny iokit-open-user-client (with telemetry))
+    (deny mach-lookup (with telemetry)
         (require-all
             (require-not (extension "com.apple.webkit.extension.mach"))
             (xpc-service-name "com.apple.MTLCompilerService"))))
