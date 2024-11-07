@@ -1,7 +1,5 @@
 SCRIPTS_PATH ?= ../Tools/Scripts
 
-ifneq ($(MAKECMDGOALS),installsrc)
-
 ifneq ($(USE_WORKSPACE),NO)
 SCHEME ?= $(notdir $(CURDIR))
 XCODE_TARGET = -scheme "$(SCHEME)"
@@ -67,8 +65,6 @@ ifneq (,$(EXPORT_COMPILE_COMMANDS))
 		XCODE_OPTIONS += CLANG_ENABLE_MODULE_DEBUGGING=NO
 		XCODE_OPTIONS += COMPILER_INDEX_STORE_ENABLE=NO
 endif
-
-endif # ifneq ($(MAKECMDGOALS),installsrc)
 
 DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
 VERBOSITY ?= $(DEFAULT_VERBOSITY)
@@ -212,8 +208,5 @@ ifndef XCODE_TARGET
 else
 	@$(call invoke_xcode,,clean)
 endif
-
-installsrc:
-	xcodebuild installsrc SRCROOT="$(SRCROOT)$(PATH_FROM_ROOT)"
 
 force: ;

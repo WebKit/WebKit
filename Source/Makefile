@@ -1,7 +1,3 @@
-ifeq ($(MAKECMDGOALS),installsrc)
-USE_WORKSPACE = NO
-endif
-
 ifneq ($(USE_WORKSPACE),NO)
 
 include ../Makefile.shared
@@ -15,9 +11,6 @@ TO_LOWER = $(shell echo $(1) | tr [:upper:] [:lower:])
 
 ifneq (,$(SDKROOT))
 	ifneq (,$(findstring macosx,$(call TO_LOWER,$(notdir $(SDKROOT)))))
-		WEBINSPECTORUI_MODULE = WebInspectorUI
-	endif
-	ifeq ($(MAKECMDGOALS),installsrc)
 		WEBINSPECTORUI_MODULE = WebInspectorUI
 	endif
 else
@@ -58,9 +51,5 @@ analyze:
 
 clean:
 	@$(build_target_for_each_module)
-
-installsrc:
-	@$(build_target_for_each_module)
-	cp -R ../Source/cmake $(SRCROOT)/Source/
 
 endif # USE_WORKSPACE

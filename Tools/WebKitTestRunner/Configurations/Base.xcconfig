@@ -92,5 +92,3 @@ HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include $(WEBCORE_TEST_SUP
 HEADER_SEARCH_PATHS_cocoatouch = $(SRCROOT)/../../Source/WebKit/Platform/spi/ios $(SRCROOT)/../../Source/WebKit/Platform/spi/watchos $(SRCROOT)/../../Source/WebKit/UIProcess/ios;
 
 LIBRARY_SEARCH_PATHS = $(SDK_DIR)$(WK_ALTERNATE_WEBKIT_SDK_PATH)$(WK_LIBRARY_INSTALL_PATH) $(inherited);
-
-EXCLUDED_INSTALLSRC_SUBDIRECTORY_PATTERNS = $(inherited) "$(PROJECT_DIR)/gtk";
