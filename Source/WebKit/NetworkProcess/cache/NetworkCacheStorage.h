@@ -33,6 +33,7 @@
 #include <wtf/CompletionHandler.h>
 #include <wtf/Deque.h>
 #include <wtf/Function.h>
+#include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/MonotonicTime.h>
 #include <wtf/PriorityQueue.h>
@@ -52,8 +53,12 @@ public:
     enum class Mode { Normal, AvoidRandomness };
     static RefPtr<Storage> open(const String& cachePath, Mode, size_t capacity);
 
+    enum class WriteOperationIdentifierType { };
+    using WriteOperationIdentifier = ObjectIdentifier<WriteOperationIdentifierType>;
+
     struct Record {
         Record isolatedCopy() const & { return { crossThreadCopy(key), timeStamp, header, body, bodyHash }; }
+        Record isolatedCopy() && { return { crossThreadCopy(WTFMove(key)), timeStamp, WTFMove(header), WTFMove(body), WTFMove(bodyHash) }; }
         Key key;
         WallTime timeStamp;
         Data header;
@@ -143,13 +148,15 @@ private:
     void finishReadOperation(ReadOperation&);
     void cancelAllReadOperations();
 
-    struct WriteOperation;
+    class WriteOperation;
     void dispatchWriteOperation(std::unique_ptr<WriteOperation>);
     void dispatchPendingWriteOperations();
-    void finishWriteOperation(WriteOperation&, int error = 0);
+    void addWriteOperationActivity(WriteOperationIdentifier);
+    bool removeWriteOperationActivity(WriteOperationIdentifier);
+    void finishWriteOperationActivity(WriteOperationIdentifier, int error = 0);
 
     bool shouldStoreBodyAsBlob(const Data& bodyData);
-    std::optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperation&);
+    std::optional<BlobStorage::Blob> storeBodyAsBlob(WriteOperationIdentifier, const Storage::Record&);
     Data encodeRecord(const Record&, std::optional<BlobStorage::Blob>);
     void readRecord(ReadOperation&, const Data&);
 
@@ -198,8 +205,10 @@ private:
     HashSet<std::unique_ptr<ReadOperation>> m_activeReadOperations;
     WebCore::Timer m_readOperationTimeoutTimer;
 
+    Lock m_activitiesLock;
+    HashCountedSet<WriteOperationIdentifier> m_writeOperationActivities WTF_GUARDED_BY_LOCK(m_activitiesLock);
     Deque<std::unique_ptr<WriteOperation>> m_pendingWriteOperations;
-    HashSet<std::unique_ptr<WriteOperation>> m_activeWriteOperations;
+    HashMap<WriteOperationIdentifier, std::unique_ptr<WriteOperation>> m_activeWriteOperations;
     WebCore::Timer m_writeOperationDispatchTimer;
 
     struct TraverseOperation;

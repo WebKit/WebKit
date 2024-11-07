@@ -135,26 +135,50 @@ bool Storage::ReadOperation::finish()
     return completionHandler(WTFMove(resultRecord), timings);
 }
 
-struct Storage::WriteOperation {
+class Storage::WriteOperation {
     WTF_MAKE_TZONE_ALLOCATED(Storage::WriteOperation);
 public:
-    WriteOperation(Storage& storage, const Record& inputRecord, MappedBodyHandler&& mappedBodyHandler, CompletionHandler<void(int)>&& completionHandler)
-        : storage(storage)
-        , record(crossThreadCopy(inputRecord))
-        , mappedBodyHandler(WTFMove(mappedBodyHandler))
-        , completionHandler(WTFMove(completionHandler))
-    { }
+    WriteOperation(const Record& record, MappedBodyHandler&& mappedBodyHandler, CompletionHandler<void(int)>&& completionHandler)
+        : m_identifier(Storage::WriteOperationIdentifier::generate())
+        , m_record(record)
+        , m_mappedBodyHandler(WTFMove(mappedBodyHandler))
+        , m_completionHandler(WTFMove(completionHandler))
+    {
+        ASSERT(isMainRunLoop());
+    }
 
-    Ref<Storage> storage;
+    ~WriteOperation()
+    {
+        ASSERT(isMainRunLoop());
+        if (m_completionHandler)
+            m_completionHandler(0);
+    }
 
-    const Record record;
-    const MappedBodyHandler mappedBodyHandler;
-    CompletionHandler<void(int)> completionHandler;
+    Storage::WriteOperationIdentifier identifier() const { return m_identifier; }
+    const Record& record() const WTF_REQUIRES_CAPABILITY(mainThread) { return m_record; }
+    void invokeMappedBodyHandler(const Data&);
+    void invokeCompletionHandler(int);
 
-    std::atomic<unsigned> activeCount { 0 };
+private:
+    Storage::WriteOperationIdentifier m_identifier;
+    const Record m_record;
+    const MappedBodyHandler m_mappedBodyHandler;
+    CompletionHandler<void(int)> m_completionHandler;
 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(StorageWriteOperation, Storage::WriteOperation);
+
+void Storage::WriteOperation::invokeMappedBodyHandler(const Data& data)
+{
+    if (m_mappedBodyHandler)
+        m_mappedBodyHandler(data);
+}
+
+void Storage::WriteOperation::invokeCompletionHandler(int result)
+{
+    if (m_completionHandler)
+        m_completionHandler(result);
+}
 
 struct Storage::TraverseOperation {
     WTF_MAKE_TZONE_ALLOCATED(Storage::TraverseOperation);
@@ -622,27 +646,31 @@ static Data encodeRecordMetaData(const RecordMetaData& metaData)
     return Data(encoder.span());
 }
 
-std::optional<BlobStorage::Blob> Storage::storeBodyAsBlob(WriteOperation& writeOperation)
+std::optional<BlobStorage::Blob> Storage::storeBodyAsBlob(WriteOperationIdentifier identifier, const Storage::Record& record)
 {
-    auto blobPath = blobPathForKey(writeOperation.record.key);
+    auto blobPath = blobPathForKey(record.key);
 
     // Store the body.
-    auto blob = m_blobStorage.add(blobPath, writeOperation.record.body);
+    auto blob = m_blobStorage.add(blobPath, record.body);
     if (blob.data.isNull())
         return { };
 
-    ++writeOperation.activeCount;
+    addWriteOperationActivity(identifier);
 
-    RunLoop::main().dispatch([this, blob, &writeOperation] {
+    RunLoop::main().dispatch([this, protectedThis = Ref { *this }, blob = WTFMove(blob), identifier] {
+        assertIsMainThread();
+
+        auto* writeOperation = m_activeWriteOperations.get(identifier);
+        RELEASE_ASSERT(writeOperation);
+
         if (m_blobFilter)
-            m_blobFilter->add(writeOperation.record.key.hash());
+            m_blobFilter->add(writeOperation->record().key.hash());
+
         if (m_synchronizationInProgress)
-            m_blobFilterHashesAddedDuringSynchronization.append(writeOperation.record.key.hash());
+            m_blobFilterHashesAddedDuringSynchronization.append(writeOperation->record().key.hash());
 
-        if (writeOperation.mappedBodyHandler)
-            writeOperation.mappedBodyHandler(blob.data);
-
-        finishWriteOperation(writeOperation);
+        writeOperation->invokeMappedBodyHandler(blob.data);
+        finishWriteOperationActivity(identifier);
     });
     return blob;
 }
@@ -672,7 +700,9 @@ void Storage::removeFromPendingWriteOperations(const Key& key)
 {
     while (true) {
         auto found = m_pendingWriteOperations.findIf([&key](auto& operation) {
-            return operation->record.key == key;
+            assertIsMainThread();
+
+            return operation->record().key == key;
         });
 
         if (found == m_pendingWriteOperations.end())
@@ -851,10 +881,12 @@ void Storage::dispatchPendingReadOperations()
 
 template <class T> bool retrieveFromMemory(const T& operations, const Key& key, Storage::RetrieveCompletionHandler& completionHandler)
 {
+    assertIsMainThread();
+
     for (auto& operation : operations) {
-        if (operation->record.key == key) {
+        if (operation->record().key == key) {
             LOG(NetworkCacheStorage, "(NetworkProcess) found write operation in progress");
-            RunLoop::main().dispatch([record = operation->record, completionHandler = WTFMove(completionHandler)] () mutable {
+            RunLoop::main().dispatch([record = operation->record(), completionHandler = WTFMove(completionHandler)] () mutable {
                 completionHandler(makeUnique<Storage::Record>(record), { });
             });
             return true;
@@ -885,54 +917,62 @@ bool Storage::shouldStoreBodyAsBlob(const Data& bodyData)
 
 void Storage::dispatchWriteOperation(std::unique_ptr<WriteOperation> writeOperationPtr)
 {
-    ASSERT(RunLoop::isMain());
+    assertIsMainThread();
 
     auto& writeOperation = *writeOperationPtr;
-    m_activeWriteOperations.add(WTFMove(writeOperationPtr));
+    auto identifier = writeOperation.identifier();
+    m_activeWriteOperations.add(identifier, WTFMove(writeOperationPtr));
 
+    auto record = writeOperation.record();
     // This was added already when starting the store but filter might have been wiped.
-    addToRecordFilter(writeOperation.record.key);
+    addToRecordFilter(record.key);
 
-    backgroundIOQueue().dispatch([this, &writeOperation] {
-        auto recordDirectorPath = recordDirectoryPathForKey(writeOperation.record.key);
-        auto recordPath = recordPathForKey(writeOperation.record.key);
+    backgroundIOQueue().dispatch([this, protectedThis = Ref { *this }, identifier, record = crossThreadCopy(WTFMove(record))]() mutable {
+        auto recordDirectoryPath = recordDirectoryPathForKey(record.key);
+        auto recordPath = recordPathForKey(record.key);
+        FileSystem::makeAllDirectories(recordDirectoryPath);
 
-        FileSystem::makeAllDirectories(recordDirectorPath);
+        addWriteOperationActivity(identifier);
 
-        ++writeOperation.activeCount;
-
-        bool shouldStoreAsBlob = shouldStoreBodyAsBlob(writeOperation.record.body);
-        auto blob = shouldStoreAsBlob ? storeBodyAsBlob(writeOperation) : std::nullopt;
-
-        auto recordData = encodeRecord(writeOperation.record, blob);
+        bool shouldStoreAsBlob = shouldStoreBodyAsBlob(record.body);
+        auto blob = shouldStoreAsBlob ? storeBodyAsBlob(identifier, record) : std::nullopt;
+        auto recordData = encodeRecord(record, blob);
 
         auto channel = IOChannel::open(WTFMove(recordPath), IOChannel::Type::Create);
         size_t recordSize = recordData.size();
-        channel->write(0, recordData, WorkQueue::main(), [this, &writeOperation, recordSize](int error) {
+        channel->write(0, recordData, WorkQueue::main(), [this, protectedThis = WTFMove(protectedThis), identifier, recordSize](int error) {
             // On error the entry still stays in the contents filter until next synchronization.
             m_approximateRecordsSize += recordSize;
-            finishWriteOperation(writeOperation, error);
+            finishWriteOperationActivity(identifier, error);
 
             LOG(NetworkCacheStorage, "(NetworkProcess) write complete error=%d", error);
         });
     });
 }
 
-void Storage::finishWriteOperation(WriteOperation& writeOperation, int error)
+void Storage::addWriteOperationActivity(WriteOperationIdentifier identifier)
+{
+    Locker locker { m_activitiesLock };
+    m_writeOperationActivities.add(identifier);
+}
+
+bool Storage::removeWriteOperationActivity(WriteOperationIdentifier identifier)
+{
+    Locker locker { m_activitiesLock };
+    ASSERT(m_writeOperationActivities.contains(identifier));
+    return m_writeOperationActivities.remove(identifier);
+}
+
+void Storage::finishWriteOperationActivity(WriteOperationIdentifier identifier, int error)
 {
     ASSERT(RunLoop::isMain());
-    ASSERT(writeOperation.activeCount);
-    ASSERT(m_activeWriteOperations.contains(&writeOperation));
-
-    if (--writeOperation.activeCount)
+    if (!removeWriteOperationActivity(identifier))
         return;
 
-    Ref protectedThis { *this };
+    auto writeOperation = m_activeWriteOperations.take(identifier);
+    RELEASE_ASSERT(writeOperation);
+    writeOperation->invokeCompletionHandler(error);
 
-    if (writeOperation.completionHandler)
-        writeOperation.completionHandler(error);
-
-    m_activeWriteOperations.remove(&writeOperation);
     dispatchPendingWriteOperations();
 
     shrinkIfNeeded();
@@ -955,7 +995,7 @@ void Storage::retrieve(const Key& key, unsigned priority, RetrieveCompletionHand
 
     if (retrieveFromMemory(m_pendingWriteOperations, key, completionHandler))
         return;
-    if (retrieveFromMemory(m_activeWriteOperations, key, completionHandler))
+    if (retrieveFromMemory(m_activeWriteOperations.values(), key, completionHandler))
         return;
 
     auto readOperation = makeUnique<ReadOperation>(*this, key, priority, WTFMove(completionHandler));
@@ -975,7 +1015,7 @@ void Storage::store(const Record& record, MappedBodyHandler&& mappedBodyHandler,
     if (!m_capacity)
         return;
 
-    auto writeOperation = makeUnique<WriteOperation>(*this, record, WTFMove(mappedBodyHandler), WTFMove(completionHandler));
+    auto writeOperation = makeUnique<WriteOperation>(record, WTFMove(mappedBodyHandler), WTFMove(completionHandler));
     m_pendingWriteOperations.prepend(WTFMove(writeOperation));
 
     // Add key to the filter already here as we do lookups from the pending operations too.
