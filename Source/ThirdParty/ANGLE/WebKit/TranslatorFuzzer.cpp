@@ -242,6 +242,48 @@ void filterOptions(ShShaderOutput output, ShCompileOptions& options)
 #undef CHECK_VALID_OPTION
 }
 
+ShShaderOutput resolveShaderOutput(ShShaderOutput output)
+{
+    // Constants in ShaderLang.h version 363.
+    switch (static_cast<unsigned>(output)) {
+    case 0x8B45:
+        return SH_ESSL_OUTPUT;
+    case 0x8B46:
+        return SH_GLSL_COMPATIBILITY_OUTPUT;
+    case 0x8B47:
+        return SH_GLSL_130_OUTPUT;
+    case 0x8B80:
+        return SH_GLSL_140_OUTPUT;
+    case 0x8B81:
+        return SH_GLSL_150_CORE_OUTPUT;
+    case 0x8B82:
+        return SH_GLSL_330_CORE_OUTPUT;
+    case 0x8B83:
+        return SH_GLSL_400_CORE_OUTPUT;
+    case 0x8B84:
+        return SH_GLSL_410_CORE_OUTPUT;
+    case 0x8B85:
+        return SH_GLSL_420_CORE_OUTPUT;
+    case 0x8B86:
+        return SH_GLSL_430_CORE_OUTPUT;
+    case 0x8B87:
+        return SH_GLSL_440_CORE_OUTPUT;
+    case 0x8B88:
+        return SH_GLSL_450_CORE_OUTPUT;
+    case 0x8B48:
+        return SH_HLSL_3_0_OUTPUT;
+    case 0x8B49:
+        return SH_HLSL_4_1_OUTPUT;
+    case 0x8B4B:
+        return SH_SPIRV_VULKAN_OUTPUT;
+    case 0x8B4D:
+        return SH_MSL_METAL_OUTPUT;
+    case 0x8B4E:
+        return SH_WGSL_OUTPUT;
+    };
+    return output;
+}
+
 extern "C" size_t LLVMFuzzerCustomMutator(uint8_t *data, size_t size, size_t maxSize, unsigned int seed)
 {
     initializeFuzzer();
@@ -273,6 +315,7 @@ extern "C" int LLVMFuzzerTestOneInput (const uint8_t* data, size_t size)
         return 0;
 
     GLSLDumpHeader header { data };
+    header.output = resolveShaderOutput(header.output);
     filterOptions(header.output, header.options);
     auto* translator = getTranslator(header.type, header.spec, header.output);
     if (!translator)

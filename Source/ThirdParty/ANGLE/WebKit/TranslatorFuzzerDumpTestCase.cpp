@@ -139,6 +139,7 @@ int main(int argc, const char * argv[])
             }
         }
         GLSLDumpHeader header { &fileData[0] };
+        header.output = resolveShaderOutput(header.output);
         filterOptions(header.output, header.options);
         std::cout << "TEST(CompilerWorksTest, Test" << i << ")";
         std::cout << testContent1;

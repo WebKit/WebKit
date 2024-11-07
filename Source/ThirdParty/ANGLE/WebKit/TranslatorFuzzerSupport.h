@@ -111,6 +111,7 @@
     MACRO(separateCompoundStructDeclarations, 72, none, msl || wgsl)
 
 void filterOptions(ShShaderOutput output, ShCompileOptions& options);
+ShShaderOutput resolveShaderOutput(ShShaderOutput output);
 
 struct GLSLDumpHeader {
     static constexpr int kHeaderSize = 128;
