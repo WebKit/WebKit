@@ -570,7 +570,8 @@ static inline bool objectIsRelayoutBoundary(const RenderElement* object)
 void RenderObject::clearNeedsLayout(HadSkippedLayout hadSkippedLayout)
 {
     // FIXME: Consider not setting the "ever had layout" bit to true when "hadSkippedLayout"
-    setEverHadLayout();
+    if (!isRenderSVGText() || hadSkippedLayout == HadSkippedLayout::No)
+        setEverHadLayout();
     setHadSkippedLayout(hadSkippedLayout == HadSkippedLayout::Yes);
 
     if (auto* renderElement = dynamicDowncast<RenderElement>(*this)) {
