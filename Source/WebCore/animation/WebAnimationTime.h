@@ -35,7 +35,7 @@ public:
     WebAnimationTime() = default;
     WEBCORE_EXPORT WebAnimationTime(std::optional<Seconds>, std::optional<double>);
 
-    WebAnimationTime(const Seconds&);
+    WEBCORE_EXPORT WebAnimationTime(const Seconds&);
     WebAnimationTime(const CSSNumberish&);
 
     static WebAnimationTime fromMilliseconds(double);

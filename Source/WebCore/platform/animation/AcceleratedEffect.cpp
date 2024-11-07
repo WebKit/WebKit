@@ -177,7 +177,7 @@ RefPtr<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect
     return adoptRef(*acceleratedEffect);
 }
 
-Ref<AcceleratedEffect> AcceleratedEffect::create(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<Seconds> startTime, std::optional<Seconds> holdTime)
+Ref<AcceleratedEffect> AcceleratedEffect::create(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime)
 {
     return adoptRef(*new AcceleratedEffect(WTFMove(timing), WTFMove(keyframes), type, composite, WTFMove(defaultKeyframeTimingFunction), WTFMove(animatedProperties), paused, playbackRate, startTime, holdTime));
 }
@@ -251,7 +251,7 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
     m_animatedProperties.remove(disallowedProperties);
 }
 
-AcceleratedEffect::AcceleratedEffect(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<Seconds> startTime, std::optional<Seconds> holdTime)
+AcceleratedEffect::AcceleratedEffect(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime)
     : m_timing(timing)
     , m_keyframes(WTFMove(keyframes))
     , m_animationType(type)
@@ -350,9 +350,9 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
     }
 }
 
-void AcceleratedEffect::apply(Seconds currentTime, AcceleratedEffectValues& values, const FloatRect& bounds)
+void AcceleratedEffect::apply(WebAnimationTime currentTime, AcceleratedEffectValues& values, const FloatRect& bounds)
 {
-    auto localTime = [&]() -> Seconds {
+    auto localTime = [&]() -> WebAnimationTime {
         ASSERT(m_holdTime || m_startTime);
         if (m_holdTime)
             return *m_holdTime;

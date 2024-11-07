@@ -6584,8 +6584,8 @@ header: <WebCore/AcceleratedEffect.h>
     OptionSet<WebCore::AcceleratedEffectProperty> animatedProperties();
     bool paused();
     double playbackRate();
-    std::optional<Seconds> startTime();
-    std::optional<Seconds> holdTime();
+    std::optional<WebCore::WebAnimationTime> startTime();
+    std::optional<WebCore::WebAnimationTime> holdTime();
 };
 #endif // ENABLE(THREADED_ANIMATION_RESOLUTION)
 
