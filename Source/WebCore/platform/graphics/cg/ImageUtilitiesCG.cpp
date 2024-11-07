@@ -26,6 +26,8 @@
 #include "config.h"
 #include "ImageUtilities.h"
 
+#include "FloatRect.h"
+#include "GraphicsContext.h"
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "UTIUtilities.h"

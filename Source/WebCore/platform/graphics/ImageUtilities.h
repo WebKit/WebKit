@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class ShareableBitmap;
+
 WEBCORE_EXPORT WorkQueue& sharedImageTranscodingQueue();
 
 // Given a list of files' 'paths' and 'allowedMIMETypes', the function returns a list
