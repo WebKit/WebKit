@@ -52,7 +52,7 @@ static std::optional<Vector<uint8_t>> deriveBitsCoreCrypto(const Vector<uint8_t>
 #else
     cccurve25519(derivedKey, baseKey.data(), publicKey.data());
 #endif
-    return Vector<uint8_t>(std::span { derivedKey, ed25519KeySize });
+    return Vector<uint8_t>(std::span { derivedKey });
 }
 #endif
 std::optional<Vector<uint8_t>> CryptoAlgorithmX25519::platformDeriveBits(const CryptoKeyOKP& baseKey, const CryptoKeyOKP& publicKey)

@@ -244,7 +244,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier identifi
         return nullptr;
     ++index;
 
-    return create(identifier, namedCurve, CryptoKeyType::Public, std::span { keyData.data() + index, keyData.size() - index }, extractable, usages);
+    return create(identifier, namedCurve, CryptoKeyType::Public, keyData.subspan(index, keyData.size() - index), extractable, usages);
 }
 
 constexpr uint8_t OKPOIDFirstByte = 6;
@@ -380,7 +380,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importPkcs8(CryptoAlgorithmIdentifier identif
     if (keyData.size() < index + 1)
         return nullptr;
 
-    return create(identifier, namedCurve, CryptoKeyType::Private, std::span { keyData.data() + index, keyData.size() - index }, extractable, usages);
+    return create(identifier, namedCurve, CryptoKeyType::Private, keyData.subspan(index, keyData.size() - index), extractable, usages);
 }
 
 ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportPkcs8() const
@@ -449,7 +449,7 @@ String CryptoKeyOKP::generateJwkX() const
         RELEASE_ASSERT_NOT_REACHED();
         return String(""_s);
     }
-    return base64URLEncodeToString(std::span { publicKey, sizeof(publicKey) });
+    return base64URLEncodeToString(std::span { publicKey });
 #else
     switch (namedCurve()) {
     case NamedCurve::Ed25519: {
