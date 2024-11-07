@@ -7477,6 +7477,10 @@ imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/r
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-beforeunload-unserializablestate.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-beforeunload.html [ Skip ]
 
+webkit.org/b/282758 [ Debug ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-back-same-document-in-iframe.html [ Crash ]
+webkit.org/b/282758 [ Debug ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-back-same-document.html [ Crash ]
+webkit.org/b/282758 [ Debug ] imported/w3c/web-platform-tests/navigation-api/navigation-methods/forward-to-pruned-entry.html [ Crash ]
+
 # -- View Transitions -- #
 # Reftest failures:
 imported/w3c/web-platform-tests/css/css-view-transitions/content-with-clip-root.html [ ImageOnlyFailure ]
