@@ -302,10 +302,10 @@ private:
     }
 
     template <class Fn>
-    Value* unaryCCall(Fn&& function, Type type, Value* arg)
+    Value* unaryCCall(Fn&& function, Type type, Value* argLo, Value* argHi)
     {
         Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(function));
-        return m_insertionSet.insert<CCallValue>(m_index, type, m_origin, Effects::none(), functionAddress, arg);
+        return m_insertionSet.insert<CCallValue>(m_index, type, m_origin, Effects::none(), functionAddress, argLo, argHi);
     }
 
     void splitRange(const HeapRange& original, HeapRange&lo, HeapRange&hi)
@@ -1162,16 +1162,14 @@ private:
             if (m_value->child(0)->type() != Int64)
                 return;
             auto input = getMapping(m_value->child(0));
-            Value* arg = valueLoHi(input.first, input.second);
-            m_value->replaceWithIdentity(unaryCCall(Math::f64_convert_s_i64, m_value->type(), arg));
+            m_value->replaceWithIdentity(unaryCCall(Math::f64_convert_s_i64, m_value->type(), input.first, input.second));
             return;
         }
         case IToF: {
             if (m_value->child(0)->type() != Int64)
                 return;
             auto input = getMapping(m_value->child(0));
-            Value* arg = valueLoHi(input.first, input.second);
-            m_value->replaceWithIdentity(unaryCCall(Math::f32_convert_s_i64, m_value->type(), arg));
+            m_value->replaceWithIdentity(unaryCCall(Math::f32_convert_s_i64, m_value->type(), input.first, input.second));
             return;
         }
         case Neg: {
