@@ -39,13 +39,21 @@ NSString * const _WKWebPushActionTypeNotificationClick = @"_WKWebPushActionTypeN
 NSString * const _WKWebPushActionTypeNotificationClose = @"_WKWebPushActionTypeNotificationClose";
 
 @interface _WKWebPushAction ()
-@property (nonatomic, readwrite) NSNumber *version;
-@property (nonatomic, readwrite) NSString *pushPartition;
-@property (nonatomic, readwrite) NSString *type;
-@property (nonatomic, readwrite) std::optional<WebCore::NotificationData> coreNotificationData;
+@property (nonatomic, readwrite, strong) NSNumber *version;
+@property (nonatomic, readwrite, strong) NSString *pushPartition;
+@property (nonatomic, readwrite, strong) NSString *type;
+@property (nonatomic, readwrite, assign) std::optional<WebCore::NotificationData> coreNotificationData;
 @end
 
 @implementation _WKWebPushAction
+
+- (void)dealloc
+{
+    [_version release];
+    [_pushPartition release];
+    [_type release];
+    [super dealloc];
+}
 
 + (_WKWebPushAction *)webPushActionWithDictionary:(NSDictionary *)dictionary
 {
