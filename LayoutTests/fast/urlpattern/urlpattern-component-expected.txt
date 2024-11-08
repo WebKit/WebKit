@@ -1,0 +1,3611 @@
+CONSOLE MESSAGE: NotSupportedError: Not implemented.
+Tests URLPattern: URLPattern constructor
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/([^\\/]+?)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*. Was /foo/(.*).
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*. Was /foo/(.*).
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*. Was /foo/(.*).
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*. Was /foo/(.*).
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar(.*)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar(.*)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar(.*)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar(.*)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/:bar*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/*+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/**"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/**"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/**"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/**"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/**"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/**"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/bar. Was /foo{/bar}.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/bar. Was /foo{/bar}.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/bar. Was /foo{/bar}.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/bar. Was /foo{/bar}.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}?"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}+"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo{/bar}*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "(cafÃ©)"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+WARN: shouldBeEqualToString() expects string arguments
+WARN: shouldBe() expects function or string arguments
+FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "(cafÃ©)"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+WARN: shouldBeEqualToString() expects string arguments
+WARN: shouldBe() expects function or string arguments
+FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "(cafÃ©)"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "(cafÃ©)"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+WARN: shouldBeEqualToString() expects string arguments
+WARN: shouldBe() expects function or string arguments
+FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "(cafÃ©)"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+WARN: shouldBeEqualToString() expects string arguments
+WARN: shouldBe() expects function or string arguments
+FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "(cafÃ©)"
+Component: search
+WARN: shouldBeEqualToString() expects string arguments
+WARN: shouldBe() expects function or string arguments
+FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+WARN: shouldBeEqualToString() expects string arguments
+WARN: shouldBe() expects function or string arguments
+FAIL urlPatternComponent should be undefined (of type undefined). Was (cafÃ©) (of type string).
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+WARN: shouldBeEqualToString() expects string arguments
+WARN: shouldBe() expects function or string arguments
+FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
+Component: hash
+PASS urlPatternComponent is "(cafÃ©)"
+Component: protocol
+PASS urlPatternComponent is ":cafÃ©"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is ":cafÃ©"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is ":cafÃ©"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is ":cafÃ©"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is ":cafÃ©"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/:cafÃ©"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is ":cafÃ©"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is ":cafÃ©"
+Component: protocol
+PASS urlPatternComponent is ":℘"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is ":℘"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is ":℘"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is ":℘"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is ":℘"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/:℘"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is ":℘"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is ":℘"
+Component: protocol
+PASS urlPatternComponent is ":㐀"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is ":㐀"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is ":㐀"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is ":㐀"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is ":㐀"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/:㐀"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is ":㐀"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is ":㐀"
+Component: protocol
+FAIL urlPatternComponent should be *. Was (.*).
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+FAIL urlPatternComponent should be *. Was (.*).
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "foo-bar"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "caf%C3%A9"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+FAIL urlPatternComponent should be caf%C3%A9. Was cafÃ©.
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "caf%c3%a9"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "caf%C3%A9"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "caf%C3%A9"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+FAIL urlPatternComponent should be caf%C3%A9. Was cafÃ©.
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+FAIL urlPatternComponent should be caf%C3%A9. Was cafÃ©.
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "caf%c3%a9"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "caf%c3%a9"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "xn--caf-dma.com"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+FAIL urlPatternComponent should be xn--caf-dma.com. Was cafÃ©.com.
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "http"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "http"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "80{20}?"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "http"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+FAIL urlPatternComponent should be 80 . Was .
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+WARN: shouldBeEqualToString() expects string arguments
+WARN: shouldBe() expects function or string arguments
+FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "80"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "http{s}?"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "80"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "80"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+FAIL urlPatternComponent should be *. Was (.*).
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/baz"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/caf%C3%A9"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /caf%C3%A9. Was /cafÃ©.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/caf%c3%a9"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /bar. Was /foo/../bar.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/bar. Was ./foo/bar.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /. Was .
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /bar. Was {/bar}.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /bar. Was \/bar.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/b. Was b.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo/bar. Was foo/bar.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "https"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "example.com"
+Component: port
+PASS urlPatternComponent is ""
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /:name.html. Was :name.html.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "q=caf%C3%A9"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+FAIL urlPatternComponent should be q=caf%C3%A9. Was q=cafÃ©.
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "q=caf%c3%a9"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "caf%C3%A9"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+FAIL urlPatternComponent should be caf%C3%A9. Was cafÃ©.
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "*"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "caf%c3%a9"
+Component: protocol
+PASS urlPatternComponent is "about"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "(blank|sourcedoc)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "data"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is ":number([0-9]+)"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/(\\m)"
+Component: search
+WARN: shouldBeEqualToString() expects string arguments
+WARN: shouldBe() expects function or string arguments
+FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo!"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo\\:"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be /foo%7B. Was /foo\{.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo\\("
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "javascript"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "var x = 1;"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be var%20x%20=%201;. Was var x = 1;.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "javascript"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "var x = 1;"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "(data|javascript)"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "var x = 1;"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "(https|javascript)"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be var%20x%20=%201;. Was var x = 1;.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+FAIL urlPatternComponent should be var%20x%20=%201;. Was var x = 1;.
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+Component: protocol
+PASS urlPatternComponent is "*"
+Component: username
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: hostname
+PASS urlPatternComponent is "*"
+Component: port
+PASS urlPatternComponent is "*"
+Component: password
+PASS urlPatternComponent is "*"
+Component: pathname
+PASS urlPatternComponent is "/foo/bar"
+Component: search
+PASS urlPatternComponent is "*"
+Component: hash
+PASS urlPatternComponent is "*"
+FAIL successfullyParsed should be true. Was false.
+Some tests failed.
+
+TEST COMPLETE
+
