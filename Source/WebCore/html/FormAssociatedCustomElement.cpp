@@ -65,7 +65,8 @@ ExceptionOr<void> FormAssociatedCustomElement::setValidity(ValidityStateFlags va
         return Exception { ExceptionCode::TypeError };
 
     m_validityStateFlags = validityStateFlags;
-    setCustomValidity(validityStateFlags.isValid() ? emptyString() : WTFMove(message));
+    m_validationMessage = message.isNull() || validityStateFlags.isValid() ? emptyString() : WTFMove(message);
+    setCustomValidity(validityStateFlags.customError ? message : emptyString());
 
     if (validationAnchor && !validationAnchor->isDescendantOrShadowDescendantOf(*m_element))
         return Exception { ExceptionCode::NotFoundError };
@@ -78,7 +79,7 @@ ExceptionOr<void> FormAssociatedCustomElement::setValidity(ValidityStateFlags va
 String FormAssociatedCustomElement::validationMessage() const
 {
     ASSERT(m_element->isPrecustomizedOrDefinedCustomElement());
-    return customValidationMessage();
+    return m_validationMessage;
 }
 
 ALWAYS_INLINE static CustomElementFormValue cloneIfIsFormData(CustomElementFormValue&& value)
