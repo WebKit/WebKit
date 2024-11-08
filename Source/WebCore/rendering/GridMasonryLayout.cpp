@@ -199,6 +199,11 @@ void GridMasonryLayout::insertIntoGridAndLayoutItem(const GridTrackSizingAlgorit
         if (!(gridItem.style().logicalWidth().isAuto() || gridItem.style().logicalWidth().isPercent()))
             return false;
 
+        ASSERT(m_renderGrid.isMasonry(GridTrackSizingDirection::ForColumns));
+
+        if (gridItem.style().writingMode().isOrthogonal(m_renderGrid.style().writingMode()))
+            return false;
+
         if (auto* renderGrid = dynamicDowncast<RenderGrid>(gridItem); renderGrid && renderGrid->isSubgridRows())
             return false;
 
