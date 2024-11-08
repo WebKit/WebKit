@@ -923,6 +923,11 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
     if (!m_element)
         return;
 
+    if (is<HTMLBodyElement>(m_element) && m_document->quirks().needsBodyScrollbarWidthNoneDisabledQuirk()) {
+        if (style.scrollbarWidth() == ScrollbarWidth::None)
+            style.setScrollbarWidth(ScrollbarWidth::Auto);
+    }
+
     if (m_document->quirks().needsGMailOverflowScrollQuirk()) {
         // This turns sidebar scrollable without mouse move event.
         static MainThreadNeverDestroyed<const AtomString> roleValue("navigation"_s);

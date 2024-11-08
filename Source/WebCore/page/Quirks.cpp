@@ -676,6 +676,18 @@ bool Quirks::needsScrollbarWidthThinDisabledQuirk() const
     return *m_needsScrollbarWidthThinDisabledQuirk;
 }
 
+// spotify.com rdar://138918575
+bool Quirks::needsBodyScrollbarWidthNoneDisabledQuirk() const
+{
+    if (!needsQuirks())
+        return false;
+
+    if (!m_needsBodyScrollbarWidthNoneDisabledQuirk)
+        m_needsBodyScrollbarWidthNoneDisabledQuirk = m_document->url().host() == "open.spotify.com"_s;
+
+    return *m_needsBodyScrollbarWidthNoneDisabledQuirk;
+}
+
 // gizmodo.com rdar://102227302
 bool Quirks::needsFullscreenDisplayNoneQuirk() const
 {
