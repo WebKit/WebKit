@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WasmBBQJIT64.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "WasmBBQJIT.h"
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
@@ -5148,3 +5150,5 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& origin
 
 #endif // USE(JSVALUE64)
 #endif // ENABLE(WEBASSEMBLY_BBQJIT)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

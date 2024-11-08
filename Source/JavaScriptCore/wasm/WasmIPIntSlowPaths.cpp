@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WasmIPIntSlowPaths.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(WEBASSEMBLY)
 
 #include "BytecodeStructs.h"
@@ -640,3 +642,4 @@ WASM_IPINT_EXTERN_CPP_DECL(ref_func, unsigned index)
 
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

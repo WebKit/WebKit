@@ -26,6 +26,8 @@
 #include "config.h"
 #include "testb3.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(B3_JIT)
 
 void test42()
@@ -7503,3 +7505,5 @@ void addBitTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& ta
 }
 
 #endif // ENABLE(B3_JIT)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(DFG_JIT)
 
 #include "DFGSilentRegisterSavePlan.h"
@@ -330,3 +334,5 @@ inline std::unique_ptr<SlowPathGenerator> slowPathICCall(
 } } // namespace JSC::DFG
 
 #endif // ENABLD(DFG_JIT)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -31,6 +31,8 @@
 #include <wtf/Deque.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 #if CPU(ARM64)
@@ -243,5 +245,7 @@ inline RegisterAllocator::~RegisterAllocator()
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(CSS_SELECTOR_JIT)

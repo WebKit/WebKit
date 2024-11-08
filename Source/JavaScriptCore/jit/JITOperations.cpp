@@ -26,6 +26,8 @@
 #include "config.h"
 #include "JITOperations.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(JIT)
 
 #include "ArithProfile.h"
@@ -5192,3 +5194,5 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationRetrieveAndClearExceptionIfCatchable,
 IGNORE_WARNINGS_END
 
 #endif // ENABLE(JIT)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

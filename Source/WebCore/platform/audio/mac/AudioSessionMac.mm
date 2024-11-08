@@ -40,6 +40,8 @@
 
 #import <pal/cocoa/AVFoundationSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSessionMac);
@@ -565,5 +567,7 @@ uint64_t AudioSessionMac::logIdentifier() const
 }
 
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(AUDIO_SESSION) && PLATFORM(MAC)

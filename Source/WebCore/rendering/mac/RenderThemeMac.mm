@@ -82,6 +82,8 @@
 #include "ImageControlsMac.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 @interface WebCoreRenderThemeNotificationObserver : NSObject
 @end
 
@@ -1505,5 +1507,7 @@ bool RenderThemeMac::paintAttachment(const RenderObject& renderer, const PaintIn
 #endif // ENABLE(ATTACHMENT_ELEMENT)
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // PLATFORM(MAC)

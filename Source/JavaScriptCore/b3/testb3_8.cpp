@@ -28,6 +28,8 @@
 
 #include <wtf/UniqueArray.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(B3_JIT)
 
 template<typename T>
@@ -1596,3 +1598,5 @@ void testSShrCompare64(int64_t constantValue)
 }
 
 #endif // ENABLE(B3_JIT)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "testb3.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(B3_JIT)
 
 void testStoreRelAddLoadAcq32(int32_t amount)
@@ -3283,3 +3285,5 @@ void addSExtTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>& t
 }
 
 #endif // ENABLE(B3_JIT)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

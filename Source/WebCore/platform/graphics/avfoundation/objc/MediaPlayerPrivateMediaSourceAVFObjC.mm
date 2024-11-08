@@ -70,6 +70,8 @@
 #import <pal/cocoa/AVFoundationSoftLink.h>
 #import <pal/cocoa/MediaToolboxSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 @interface AVSampleBufferDisplayLayer (Staging_100128644)
 @property (assign, nonatomic) BOOL preventsAutomaticBackgroundingDuringVideoPlayback;
 @end
@@ -1898,5 +1900,7 @@ void MediaPlayerPrivateMediaSourceAVFObjC::isInFullscreenOrPictureInPictureChang
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

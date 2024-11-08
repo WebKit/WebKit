@@ -53,6 +53,8 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/text/CString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(Blob);
@@ -480,3 +482,5 @@ WebCoreOpaqueRoot root(Blob* blob)
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

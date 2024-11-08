@@ -26,6 +26,8 @@
 #include "config.h"
 #include "testb3.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(B3_JIT)
 
 static const char* const dmbIsh = "dmb      ish";
@@ -2968,3 +2970,5 @@ void addSShrShTests(const TestConfig* config, Deque<RefPtr<SharedTask<void()>>>&
 }
 
 #endif // ENABLE(B3_JIT)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

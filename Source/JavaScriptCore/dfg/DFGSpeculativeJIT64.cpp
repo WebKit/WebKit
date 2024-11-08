@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DFGSpeculativeJIT.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(DFG_JIT)
 
 #include "AtomicsObject.h"
@@ -8394,3 +8396,5 @@ void SpeculativeJIT::compileCreateClonedArguments(Node* node)
 } } // namespace JSC::DFG
 
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

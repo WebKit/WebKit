@@ -26,6 +26,8 @@
 #include "config.h"
 #include "testb3.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(B3_JIT)
 
 Lock crashLock;
@@ -1011,3 +1013,5 @@ int main(int, char**)
 }
 
 #endif // ENABLE(B3_JIT)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

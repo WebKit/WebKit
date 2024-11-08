@@ -27,6 +27,8 @@
 #include "config.h"
 #include "JSWebAssemblyArray.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(WEBASSEMBLY)
 
 #include "JSCInlines.h"
@@ -218,3 +220,5 @@ DEFINE_VISIT_CHILDREN(JSWebAssemblyArray);
 } // namespace JSC
 
 #endif // ENABLE(WEBASSEMBLY)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -32,6 +32,8 @@
 #include "Symbol.h"
 #include <wtf/LockAlgorithmInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 const ASCIILiteral SymbolCoercionError { "Cannot convert a symbol to a string"_s };
@@ -354,3 +356,5 @@ NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void reportZappedCellAndCras
 #endif // CPU(X86_64)
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -35,6 +35,8 @@
 #include "WebAuthenticationUtils.h"
 #include <wtf/text/Base64.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 static std::optional<cbor::CBORValue> coseKeyForAttestationObject(Ref<ArrayBuffer> attObj)
@@ -205,5 +207,7 @@ RegistrationResponseJSON::AuthenticatorAttestationResponseJSON AuthenticatorAtte
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_AUTHN)

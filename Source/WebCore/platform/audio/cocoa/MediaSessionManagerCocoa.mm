@@ -49,6 +49,8 @@
 #import "MediaRemoteSoftLink.h"
 #include <pal/cocoa/AVFoundationSoftLink.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 static const size_t kLowPowerVideoBufferSize = 4096;
 
 #if USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
@@ -652,5 +654,7 @@ void MediaSessionManagerCocoa::updateNowPlayingSuppression(const NowPlayingInfo*
 #endif // USE(NOW_PLAYING_ACTIVITY_SUPPRESSION)
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(AUDIO_SESSION) && PLATFORM(COCOA)

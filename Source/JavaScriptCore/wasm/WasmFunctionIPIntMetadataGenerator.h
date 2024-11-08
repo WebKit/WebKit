@@ -25,6 +25,10 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(WEBASSEMBLY)
 
 #include "BytecodeConventions.h"
@@ -138,3 +142,5 @@ void FunctionIPIntMetadataGenerator::addBlankSpace(size_t size)
 } } // namespace JSC::Wasm
 
 #endif // ENABLE(WEBASSEMBLY)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

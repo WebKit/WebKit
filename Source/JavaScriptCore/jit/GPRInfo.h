@@ -31,6 +31,8 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PrintStream.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 enum NoResultTag { NoResult };
@@ -1166,3 +1168,5 @@ inline void printInternal(PrintStream& out, JSC::GPRReg reg)
 }
 
 } // namespace WTF
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

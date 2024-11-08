@@ -48,6 +48,8 @@
 #include <wtf/Threading.h>
 #include <wtf/text/MakeString.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(YARR_JIT)
 
 namespace JSC { namespace Yarr {
@@ -5454,3 +5456,5 @@ void YarrCodeBlock::dumpSimpleName(PrintStream& out) const
 }}
 
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

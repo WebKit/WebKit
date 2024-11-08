@@ -29,6 +29,8 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 // ButterflyArray offers the feature trailing and leading array in the derived class.
@@ -139,3 +141,5 @@ protected:
 } // namespace WTF
 
 using WTF::ButterflyArray;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

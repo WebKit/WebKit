@@ -26,6 +26,8 @@
 #include "config.h"
 #include "testb3.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(B3_JIT)
 
 void testPinRegisters()
@@ -2645,3 +2647,5 @@ void testVectorExtractLane0Double()
 }
 
 #endif // ENABLE(B3_JIT)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

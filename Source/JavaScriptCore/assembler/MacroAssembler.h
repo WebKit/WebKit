@@ -25,12 +25,14 @@
 
 #pragma once
 
+#include <wtf/Compiler.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(ASSEMBLER)
 
 #include "JSCJSValue.h"
 #include <wtf/TZoneMalloc.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 #define DEFINE_SIMD_FUNC(name, func, lane) \
     template <typename ...Args> \
@@ -2479,6 +2481,6 @@ public:
 
 } // namespace JSC
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-
 #endif // ENABLE(ASSEMBLER)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

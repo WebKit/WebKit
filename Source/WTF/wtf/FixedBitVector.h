@@ -33,6 +33,8 @@
 #include <wtf/StdIntExtras.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 // FIXME: This should be `: private BitVector`.
@@ -210,3 +212,5 @@ template<> struct HashTraits<FixedBitVector> : public CustomHashTraits<FixedBitV
 } // namespace WTF
 
 using WTF::FixedBitVector;
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

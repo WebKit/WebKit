@@ -29,6 +29,8 @@
 #include <wtf/IndexSparseSet.h>
 #include <wtf/StdLibExtras.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WTF {
 
 // HEADS UP: The algorithm here is duplicated in AirRegLiveness.h. That one uses sets rather
@@ -366,3 +368,4 @@ private:
 
 } // namespace WTF
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

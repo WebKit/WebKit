@@ -51,6 +51,8 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(WebCodecsVideoDecoder);
@@ -360,5 +362,7 @@ bool WebCodecsVideoDecoder::virtualHasPendingActivity() const
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(WEB_CODECS)

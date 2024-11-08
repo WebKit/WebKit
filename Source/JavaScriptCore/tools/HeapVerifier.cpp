@@ -35,6 +35,8 @@
 #include <wtf/ProcessID.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HeapVerifier);
@@ -460,3 +462,5 @@ void HeapVerifier::checkIfRecorded(uintptr_t candidateCell)
 }
 
 } // namespace JSC
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

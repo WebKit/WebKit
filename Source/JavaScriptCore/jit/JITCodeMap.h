@@ -101,6 +101,6 @@ private:
 
 } // namespace JSC
 
-#endif // ENABLE(JIT)
-
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
+#endif // ENABLE(JIT)

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "DFGSpeculativeJIT.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(DFG_JIT)
 
 #include "BinarySwitch.h"
@@ -16393,3 +16395,5 @@ void SpeculativeJIT::compileToLength(Node* node)
 } } // namespace JSC::DFG
 
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

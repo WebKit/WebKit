@@ -27,6 +27,8 @@
 #include "WasmSlowPaths.h"
 #include "JSCJSValue.h"
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(WEBASSEMBLY)
 
 #include "BytecodeStructs.h"
@@ -1340,3 +1342,5 @@ extern "C" UGPRPair SYSV_ABI slow_path_wasm_popcountll(const WasmInstruction* pc
 } } // namespace JSC::LLInt
 
 #endif // ENABLE(WEBASSEMBLY)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
