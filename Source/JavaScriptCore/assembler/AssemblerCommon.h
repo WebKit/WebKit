@@ -26,6 +26,7 @@
 #pragma once
 
 #include "OSCheck.h"
+#include <optional>
 #include <wtf/Atomics.h>
 
 namespace JSC {
