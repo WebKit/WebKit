@@ -48,8 +48,18 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioSession);
 
-bool AudioSession::s_shouldManageAudioSessionCategory { false };
+std::atomic<bool> s_shouldManageAudioSessionCategory { false };
 static bool s_mediaPlaybackEnabled { false };
+
+bool AudioSession::shouldManageAudioSessionCategory()
+{
+    return s_shouldManageAudioSessionCategory.load();
+}
+
+void AudioSession::setShouldManageAudioSessionCategory(bool flag)
+{
+    s_shouldManageAudioSessionCategory.store(flag);
+}
 
 static RefPtr<AudioSession>& sharedAudioSession()
 {
