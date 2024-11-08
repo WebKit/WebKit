@@ -309,10 +309,12 @@ void testCheckMegaCombo()
     auto arguments = cCallArgumentValues<intptr_t, size_t>(proc, root);
     Value* base = arguments[0];
     Value* index = arguments[1];
-    index = root->appendNew<Value>(
-        proc, ZExt32, Origin(),
-        root->appendNew<Value>(
-            proc, Trunc, Origin(), index));
+    if (is64Bit()) {
+        index = root->appendNew<Value>(
+            proc, ZExt32, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(), index));
+    }
 
     Value* ptr = root->appendNew<Value>(
         proc, Add, Origin(), base,
@@ -363,12 +365,14 @@ void testCheckTrickyMegaCombo()
     BasicBlock* root = proc.addBlock();
     auto arguments = cCallArgumentValues<intptr_t, size_t>(proc, root);
     Value* base = arguments[0];
-    Value* index = root->appendNew<Value>(
-        proc, ZExt32, Origin(),
-        root->appendNew<Value>(proc, Add, Origin(),
-            root->appendNew<Value>(
-                proc, Trunc, Origin(), arguments[1]),
-            root->appendNew<Const32Value>(proc, Origin(), 1)));
+    Value* index = arguments[1];
+    if (is64Bit()) {
+        index = root->appendNew<Value>(proc, ZExt32, Origin(),
+            root->appendNew<Value>(proc, Trunc, Origin(), index));
+    }
+    index = root->appendNew<Value>(proc, Add, Origin(),
+        index,
+        root->appendNew<ConstPtrValue>(proc, Origin(), 1));
 
     Value* ptr = root->appendNew<Value>(
         proc, Add, Origin(), base,
@@ -420,10 +424,12 @@ void testCheckTwoMegaCombos()
     auto arguments = cCallArgumentValues<intptr_t, size_t>(proc, root);
     Value* base = arguments[0];
     Value* index = arguments[1];
-    index = root->appendNew<Value>(
-        proc, ZExt32, Origin(),
-        root->appendNew<Value>(
-            proc, Trunc, Origin(), index));
+    if (is64Bit()) {
+        index = root->appendNew<Value>(
+            proc, ZExt32, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(), index));
+    }
 
     Value* ptr = root->appendNew<Value>(
         proc, Add, Origin(), base,
@@ -491,10 +497,12 @@ void testCheckTwoNonRedundantMegaCombos()
 
     Value* base = arguments[0];
     Value* index = arguments[1];
-    index = root->appendNew<Value>(
-        proc, ZExt32, Origin(),
-        root->appendNew<Value>(
-            proc, Trunc, Origin(), index));
+    if (is64Bit()) {
+        index = root->appendNew<Value>(
+            proc, ZExt32, Origin(),
+            root->appendNew<Value>(
+                proc, Trunc, Origin(), index));
+    }
     Value* branchPredicate = root->appendNew<Value>(
         proc, BitAnd, Origin(),
         arguments[2],

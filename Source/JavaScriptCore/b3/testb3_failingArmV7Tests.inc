@@ -5,7 +5,6 @@
 "testCallFunctionWithHellaArguments3",
 "testCallPairResult",
 "testCallPairResultRare",
-"testCheck",
 "testCheckAdd",
 "testCheckAdd64",
 "testCheckAdd64Range",
