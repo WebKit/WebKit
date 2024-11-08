@@ -139,7 +139,6 @@ static bool canReuseFromListOfAvailableImages(const CachedResourceRequest& reque
 ImageLoader::ImageLoader(Element& element)
     : m_element(element)
     , m_derefElementTimer(*this, &ImageLoader::timerFired)
-    , m_hasPendingBeforeLoadEvent(false)
     , m_hasPendingLoadEvent(false)
     , m_hasPendingErrorEvent(false)
     , m_imageComplete(true)
@@ -174,7 +173,6 @@ void ImageLoader::clearImageWithoutConsideringPendingLoadEvent()
     ASSERT(m_failedLoadURL.isEmpty());
     if (CachedResourceHandle oldImage = m_image) {
         m_image = nullptr;
-        m_hasPendingBeforeLoadEvent = false;
         if (m_hasPendingLoadEvent || m_hasPendingErrorEvent) {
             loadEventSender().cancelEvent(*this);
             m_hasPendingLoadEvent = m_hasPendingErrorEvent = false;
@@ -320,7 +318,6 @@ void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, Cached
     if (newImage != oldImage || relevantMutation == RelevantMutation::Yes) {
         LOG_WITH_STREAM(LazyLoading, stream << " switching from old image " << oldImage.get() << " to image " << newImage.get() << " " << (newImage ? newImage->url() : URL()));
 
-        m_hasPendingBeforeLoadEvent = false;
         if (m_hasPendingLoadEvent) {
             loadEventSender().cancelEvent(*this, eventNames().loadEvent);
             m_hasPendingLoadEvent = false;
@@ -336,14 +333,11 @@ void ImageLoader::didUpdateCachedImage(RelevantMutation relevantMutation, Cached
         }
 
         m_image = newImage;
-        m_hasPendingBeforeLoadEvent = !document->isImageDocument() && newImage;
         m_hasPendingLoadEvent = newImage;
         m_imageComplete = !newImage;
 
         if (newImage) {
-            if (!document->isImageDocument())
-                dispatchPendingBeforeLoadEvent();
-            else
+            if (document->isImageDocument())
                 updateRenderer();
 
             if (m_lazyImageLoadState == LazyImageLoadState::Deferred)
@@ -435,8 +429,6 @@ void ImageLoader::notifyFinished(CachedResource& resource, const NetworkLoadMetr
     }
 
     m_imageComplete = true;
-    if (!hasPendingBeforeLoadEvent())
-        updateRenderer();
 
     if (!m_hasPendingLoadEvent)
         return;
@@ -622,20 +614,6 @@ void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender, const Atom
         dispatchPendingLoadEvent();
     if (eventType == eventNames().errorEvent)
         dispatchPendingErrorEvent();
-}
-
-void ImageLoader::dispatchPendingBeforeLoadEvent()
-{
-    if (!m_hasPendingBeforeLoadEvent)
-        return;
-    if (!m_image)
-        return;
-    if (!element().document().hasLivingRenderTree())
-        return;
-    m_hasPendingBeforeLoadEvent = false;
-    if (!element().isConnected())
-        return;
-    updateRenderer();
 }
 
 void ImageLoader::dispatchPendingLoadEvent()

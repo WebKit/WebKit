@@ -143,9 +143,6 @@ void ImageInputType::attach()
     if (!renderer)
         return;
 
-    if (imageLoader.hasPendingBeforeLoadEvent())
-        return;
-
     auto& imageResource = renderer->imageResource();
     imageResource.setCachedImage(imageLoader.protectedImage());
 
