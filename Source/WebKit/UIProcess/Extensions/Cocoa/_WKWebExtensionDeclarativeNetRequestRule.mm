@@ -88,6 +88,8 @@ static NSString * const declarativeNetRequestRuleConditionDomainsKey = @"domains
 static NSString * const ruleConditionRequestDomainsKey = @"requestDomains";
 static NSString * const declarativeNetRequestRuleConditionExcludedDomainsKey = @"excludedDomains";
 static NSString * const ruleConditionExcludedRequestDomainsKey = @"excludedRequestDomains";
+static NSString * const ruleConditionInitiatorDomainsKey = @"initiatorDomains";
+static NSString * const ruleConditionExcludedInitiatorDomainsKey = @"excludedInitiatorDomains";
 static NSString * const declarativeNetRequestRuleConditionExcludedResourceTypesKey = @"excludedResourceTypes";
 static NSString * const declarativeNetRequestRuleConditionCaseSensitiveKey = @"isUrlFilterCaseSensitive";
 static NSString * const declarativeNetRequestRuleConditionRegexFilterKey = @"regexFilter";
@@ -208,6 +210,8 @@ using namespace WebKit;
         declarativeNetRequestRuleConditionRegexFilterKey: NSString.class,
         declarativeNetRequestRuleConditionResourceTypeKey: @[ NSString.class ],
         declarativeNetRequestRuleConditionURLFilterKey: NSString.class,
+        ruleConditionInitiatorDomainsKey: @[ NSString.class ],
+        ruleConditionExcludedInitiatorDomainsKey: @[ NSString.class ],
     };
 
     if (!validateDictionary(_condition, nil, @[ ], keyToExpectedValueTypeInConditionDictionary, &exceptionString)) {
@@ -333,6 +337,25 @@ using namespace WebKit;
             return nil;
         }
     }
+
+    if (NSArray<NSString *> *initiatorDomains = _condition[ruleConditionInitiatorDomainsKey]) {
+        if (!isArrayOfDomainsValid(initiatorDomains)) {
+            if (outErrorString)
+                *outErrorString = [NSString stringWithFormat:@"Rule with id %ld is invalid. `initiatorDomains` must be non-empty and cannot contain non-ASCII characters.", (long)_ruleID];
+
+            return nil;
+        }
+    }
+
+    if (NSArray<NSString *> *excludedInitiatorDomains = _condition[ruleConditionExcludedInitiatorDomainsKey]) {
+        if (!isArrayOfExcludedDomainsValid(excludedInitiatorDomains)) {
+            if (outErrorString)
+                *outErrorString = [NSString stringWithFormat:@"Rule with id %ld is invalid. `excludedInitiatorDomains` cannot contain non-ASCII characters.", (long)_ruleID];
+
+            return nil;
+        }
+    }
+
 
     if ([_action[declarativeNetRequestRuleActionTypeKey] isEqualToString:declarativeNetRequestRuleActionTypeRedirect]) {
         NSDictionary<NSString *, id> *redirectDictionary = _action[declarativeNetRequestRuleActionRedirect];
@@ -686,7 +709,6 @@ static BOOL isArrayOfExcludedDomainsValid(NSArray<NSString *> *excludedDomains)
     }
 }
 
-// If you are making changes to how Chrome's rules are translated into WebKit rules, increase the hash version number in _WKWebExtensionDeclarativeNetRequestTranslator -- currentDeclarativeNetRequestHashVersion.
 - (NSArray<NSDictionary<NSString *, id> *> *)ruleInWebKitFormat
 {
     static NSDictionary *chromeActionTypesToWebKitActionTypes = @{
@@ -846,6 +868,18 @@ static BOOL isArrayOfExcludedDomainsValid(NSArray<NSString *> *excludedDomains)
         triggerDictionary[@"unless-domain"] = mapObjects(excludedDomains, includeSubdomainConversionBlock);
     else if (NSArray *excludedDomains = _condition[ruleConditionExcludedRequestDomainsKey])
         triggerDictionary[@"unless-domain"] = mapObjects(excludedDomains, includeSubdomainConversionBlock);
+
+
+    id (^convertToURLRegexBlock)(id, NSString *) = ^(id key, NSString *domain) {
+        static NSString *regexDomainString = @"^[^:]+://+([^:/]+\\.)?";
+        return [[regexDomainString stringByAppendingString:escapeCharactersInString(domain, @"*?+[(){}^$|\\.")] stringByAppendingString:@"/.*"];
+    };
+
+    // FIXME: rdar://97014647 - If both `unless-frame-url` and `if-frame-url` are set, we should be generating multiple rules to handle this one DNR rule.
+    if (NSArray *excludedDomains = _condition[ruleConditionExcludedInitiatorDomainsKey])
+        triggerDictionary[@"unless-frame-url"] = mapObjects(excludedDomains, convertToURLRegexBlock);
+    else if (NSArray *domains = _condition[ruleConditionInitiatorDomainsKey])
+        triggerDictionary[@"if-frame-url"] = mapObjects(domains, convertToURLRegexBlock);
 
     // FIXME: <rdar://72203692> Support 'allowAllRequests' when the resource type is 'sub_frame'.
     if (isRuleForAllowAllRequests)
