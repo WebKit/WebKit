@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2013 Google Inc. All rights reserved.
- * Copyright (C) 2016-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,6 +34,7 @@
 #include "CSSColorDescriptors.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSValueKeywords.h"
+#include "Color.h"
 #include "StyleAbsoluteColor.h"
 #include "StyleCurrentColor.h"
 #include <wtf/OptionSet.h>
@@ -41,7 +42,7 @@
 
 namespace WebCore {
 
-class Color;
+class ExtendedStyleColor;
 
 enum class StyleColorOptions : uint8_t {
     ForVisitedLink = 1 << 0,
@@ -53,11 +54,12 @@ enum class StyleColorOptions : uint8_t {
 // The following style color kinds are forward declared and stored in
 // UniqueRefs to avoid unnecessarily growing the size of StyleColor for the
 // uncommon case of un-resolvability due to currentColor.
-struct StyleColorLayers;
-struct StyleColorMix;
+using ColorKind = std::variant<StyleAbsoluteColor, StyleCurrentColor, Ref<ExtendedStyleColor>>;
+
 struct StyleContrastColor;
-template<typename Descriptor>
-struct StyleRelativeColor;
+struct StyleColorMix;
+struct StyleColorLayers;
+template <typename T> struct StyleRelativeColor;
 
 class StyleColor {
 public:
@@ -65,14 +67,14 @@ public:
     // we might want to change it to invalid color at some point.
     StyleColor();
 
-    // Convenience constructors that create StyleAbsoluteColor.
     StyleColor(Color);
     StyleColor(SRGBA<uint8_t>);
 
     StyleColor(StyleAbsoluteColor&&);
     StyleColor(StyleCurrentColor&&);
-    StyleColor(StyleColorLayers&&);
+    StyleColor(Ref<ExtendedStyleColor>&&);
     StyleColor(StyleColorMix&&);
+    StyleColor(StyleColorLayers&&);
     StyleColor(StyleContrastColor&&);
     StyleColor(StyleRelativeColor<RGBFunctionModernRelative>&&);
     StyleColor(StyleRelativeColor<HSLFunctionModern>&&);
@@ -99,6 +101,7 @@ public:
     WEBCORE_EXPORT ~StyleColor();
 
     static StyleColor currentColor();
+    static StyleColor invalidColor();
 
     static Color colorFromKeyword(CSSValueID, OptionSet<StyleColorOptions>);
     static Color colorFromAbsoluteKeyword(CSSValueID);
@@ -123,60 +126,36 @@ public:
     static bool isColorKeyword(CSSValueID, OptionSet<CSSColorType> = { CSSColorType::Absolute, CSSColorType::Current, CSSColorType::System });
 
     bool containsCurrentColor() const;
+
     bool isCurrentColor() const;
+    bool isExtendedStyleColor() const;
     bool isColorMix() const;
     bool isContrastColor() const;
     bool isRelativeColor() const;
     bool isAbsoluteColor() const;
+
     const Color& absoluteColor() const;
+    const ExtendedStyleColor& extendedStyleColor() const;
+    Ref<const ExtendedStyleColor> protectedExtendedStyleColor() const;
 
     WEBCORE_EXPORT Color resolveColor(const Color& currentColor) const;
-
     bool operator==(const StyleColor&) const;
     friend WEBCORE_EXPORT String serializationForCSS(const StyleColor&);
     friend void serializationForCSS(StringBuilder&, const StyleColor&);
     friend WTF::TextStream& operator<<(WTF::TextStream&, const StyleColor&);
     String debugDescription() const;
 
-private:
-    using ColorKind = std::variant<
-        StyleAbsoluteColor,
-        StyleCurrentColor,
-        UniqueRef<StyleColorLayers>,
-        UniqueRef<StyleColorMix>,
-        UniqueRef<StyleContrastColor>,
-        UniqueRef<StyleRelativeColor<RGBFunctionModernRelative>>,
-        UniqueRef<StyleRelativeColor<HSLFunctionModern>>,
-        UniqueRef<StyleRelativeColor<HWBFunction>>,
-        UniqueRef<StyleRelativeColor<LabFunction>>,
-        UniqueRef<StyleRelativeColor<LCHFunction>>,
-        UniqueRef<StyleRelativeColor<OKLabFunction>>,
-        UniqueRef<StyleRelativeColor<OKLCHFunction>>,
-        UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedA98RGB<float>>>>,
-        UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedDisplayP3<float>>>>,
-        UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedProPhotoRGB<float>>>>,
-        UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedRec2020<float>>>>,
-        UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedSRGBA<float>>>>,
-        UniqueRef<StyleRelativeColor<ColorRGBFunction<ExtendedLinearSRGBA<float>>>>,
-        UniqueRef<StyleRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D50>>>>,
-        UniqueRef<StyleRelativeColor<ColorXYZFunction<XYZA<float, WhitePoint::D65>>>>
-    >;
-    StyleColor(ColorKind&&);
-
-    template<typename... F>
-    static decltype(auto) visit(const ColorKind&, F&&...);
+    void store(ColorKind&&);
 
     template<typename StyleColorType>
     static ColorKind makeIndirectColor(StyleColorType&&);
 
-    static ColorKind copy(const ColorKind&);
-
-    ColorKind m_color;
+private:
+    Color m_color;
 };
 
 void serializationForCSS(StringBuilder&, const StyleColor&);
 WEBCORE_EXPORT String serializationForCSS(const StyleColor&);
-
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleColor&);
 
 } // namespace WebCore

@@ -37,9 +37,7 @@ void serializationForCSS(StringBuilder& builder, const CSSUnresolvedAbsoluteReso
 
 String serializationForCSS(const CSSUnresolvedAbsoluteResolvedColor& unresolved)
 {
-    StringBuilder builder;
-    serializationForCSS(builder, unresolved);
-    return builder.toString();
+    return serializationForCSS(unresolved.value);
 }
 
 } // namespace WebCore
