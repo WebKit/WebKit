@@ -1787,9 +1787,6 @@ imported/w3c/web-platform-tests/webrtc/simulcast/setParameters-active.https.html
 # webkit.org/b/278801 REGRESSION (280449@main): [ macOS wk2 ] imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-intercept-interrupted.html is a flaky crash 
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-intercept-interrupted.html [ Pass Crash ]
 
-# webkit.org/b/278833 REGRESSION (282704@main): [ macOS wk2 ] media/media-vp8-hiddenframes.html is a flaky image only failure. 
-media/media-vp8-hiddenframes.html [ Pass ImageOnlyFailure ]
-
 # webkit.org/b/278881 [ Sonoma F wk2 ] fast/scrolling/rubber-band-shows-background.html is a flaky image only failure. 
 [ Sonoma+ ] fast/scrolling/rubber-band-shows-background.html [ Pass ImageOnlyFailure ]
 

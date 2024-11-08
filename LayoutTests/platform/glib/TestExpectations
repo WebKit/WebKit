@@ -1171,6 +1171,8 @@ webkit.org/b/218317 media/media-source/media-source-trackid-change.html [ Failur
 webkit.org/b/238201 media/media-source/media-mp4-hevc-bframes.html [ Failure ]
 webkit.org/b/270622 media/media-source/media-managedmse-noresumeafterpause.html [ Timeout ]
 webkit.org/b/271631 media/media-source/media-managedmse-stall-endofstream.html [ Failure ]
+webkit.org/b/282791 media/media-source/media-source-vp8-hiddenframes.html [ ImageOnlyFailure ]
+webkit.org/b/282791 media/media-vp8-hiddenframes.html [ ImageOnlyFailure ]
 
 # GStreamer (< 1.24) doesn't set the track's id to the container's value.
 webkit.org/b/265919 media/track/media-audio-track.html [ Failure ]

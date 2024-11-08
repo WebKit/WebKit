@@ -5669,7 +5669,6 @@ imported/w3c/web-platform-tests/webstorage/document-domain.html [ Skip ]
 
 webkit.org/b/221973 media/media-webm-no-duration.html [ Skip ]
 webkit.org/b/222493 media/media-source/media-source-webm-vp8-malformed-header.html [ Skip ]
-media/media-source/media-source-vp8-hiddenframes.html [ Skip ] # Requires VP8 decoder
 
 # WebXR - Missing modules.
 imported/w3c/web-platform-tests/webxr/anchors [ Skip ]

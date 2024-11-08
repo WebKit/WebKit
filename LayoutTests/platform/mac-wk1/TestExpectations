@@ -1151,6 +1151,7 @@ media/media-sources-selection.html [ ImageOnlyFailure ]
 media/media-video-fullrange.html [ Skip ]
 
 # VP9/VP8 are not supported on WK1 and turned off by default
+media/media-source/media-source-vp8-hiddenframes.html [ Skip ]
 media/media-source/media-source-webm-configuration-change.html [ Failure ]
 media/media-source/media-source-webm-configuration-framerate.html [ Failure ]
 media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failure ]
