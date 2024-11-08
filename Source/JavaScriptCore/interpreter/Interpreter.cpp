@@ -386,6 +386,8 @@ Interpreter::Interpreter()
 
 Interpreter::~Interpreter() = default;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #if ENABLE(COMPUTED_GOTO_OPCODES)
 #if !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
 UncheckedKeyHashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
@@ -404,6 +406,8 @@ UncheckedKeyHashMap<Opcode, OpcodeID>& Interpreter::opcodeIDTable()
 }
 #endif // !ENABLE(LLINT_EMBEDDED_OPCODE_ID) || ASSERT_ENABLED
 #endif // ENABLE(COMPUTED_GOTO_OPCODES)
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if ASSERT_ENABLED
 bool Interpreter::isOpcode(Opcode opcode)

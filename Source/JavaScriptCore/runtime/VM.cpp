@@ -1076,6 +1076,8 @@ void VM::updateStackLimits()
 }
 
 #if ENABLE(DFG_JIT)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 void VM::gatherScratchBufferRoots(ConservativeRoots& conservativeRoots)
 {
     Locker locker { m_scratchBufferLock };
@@ -1095,7 +1097,9 @@ void VM::scanSideState(ConservativeRoots& roots) const
         roots.add(sideState->tmps, sideState->tmps + maxNumCheckpointTmps);
     }
 }
-#endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+#endif // ENABLE(DFG_JIT)
 
 void VM::pushCheckpointOSRSideState(std::unique_ptr<CheckpointOSRExitSideState>&& payload)
 {

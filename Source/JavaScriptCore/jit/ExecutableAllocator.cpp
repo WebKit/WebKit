@@ -373,6 +373,8 @@ struct JITReservation {
     size_t size { 0 };
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 static ALWAYS_INLINE JITReservation initializeJITPageReservation()
 {
     JITReservation reservation;
@@ -460,6 +462,8 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
 
     return reservation;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 class FixedVMPoolExecutableAllocator final {
     WTF_MAKE_TZONE_ALLOCATED(FixedVMPoolExecutableAllocator);
@@ -1321,6 +1325,8 @@ void* endOfFixedExecutableMemoryPoolImpl()
     return allocator->memoryEnd();
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 void dumpJITMemory(const void* dst, const void* src, size_t size)
 {
     RELEASE_ASSERT(Options::dumpJITMemoryPath());
@@ -1399,6 +1405,8 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
     RELEASE_ASSERT_NOT_REACHED();
 #endif
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if ENABLE(MPROTECT_RX_TO_RWX)
 void ExecutableAllocator::startWriting(const void* start, size_t sizeInBytes) { g_jscConfig.fixedVMPoolExecutableAllocator->startWriting(start, sizeInBytes); }
