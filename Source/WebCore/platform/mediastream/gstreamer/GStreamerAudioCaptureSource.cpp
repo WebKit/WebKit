@@ -131,6 +131,14 @@ void GStreamerAudioCaptureSource::stopProducingData()
     m_capturer->stop();
 }
 
+std::pair<GstClockTime, GstClockTime> GStreamerAudioCaptureSource::queryLatency()
+{
+    if (!m_capturer)
+        return { GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE };
+
+    return m_capturer->queryLatency();
+}
+
 const RealtimeMediaSourceCapabilities& GStreamerAudioCaptureSource::capabilities()
 {
     if (m_capabilities)

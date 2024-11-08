@@ -2118,14 +2118,6 @@ void MediaPlayerPrivateGStreamer::handleMessage(GstMessage* message)
         gst_element_set_state(m_pipeline.get(), GST_STATE_PAUSED);
         gst_element_set_state(m_pipeline.get(), GST_STATE_PLAYING);
         break;
-    case GST_MESSAGE_LATENCY:
-        // Recalculate the latency, we don't need any special handling
-        // here other than the GStreamer default.
-        // This can happen if the latency of live elements changes, or
-        // for one reason or another a new live element is added or
-        // removed from the pipeline.
-        gst_bin_recalculate_latency(GST_BIN(m_pipeline.get()));
-        break;
     case GST_MESSAGE_ELEMENT:
 #if USE(GSTREAMER_MPEGTS)
         if (GstMpegtsSection* section = gst_message_parse_mpegts_section(message)) {
@@ -3148,6 +3140,13 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin(const URL& url)
     GST_INFO_OBJECT(m_pipeline.get(), "WebCore logs identifier for this pipeline is: %s", identifier.convertToASCIIUppercase().ascii().data());
 #endif
     registerActivePipeline(m_pipeline);
+
+    if (isMediaStream) {
+        auto clock = adoptGRef(gst_system_clock_obtain());
+        gst_pipeline_use_clock(GST_PIPELINE(m_pipeline.get()), clock.get());
+        gst_element_set_base_time(m_pipeline.get(), 0);
+        gst_element_set_start_time(m_pipeline.get(), GST_CLOCK_TIME_NONE);
+    }
 
     setStreamVolumeElement(GST_STREAM_VOLUME(m_pipeline.get()));
 

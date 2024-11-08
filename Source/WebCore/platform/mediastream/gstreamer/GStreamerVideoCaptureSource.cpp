@@ -176,6 +176,14 @@ void GStreamerVideoCaptureSource::sourceCapsChanged(const GstCaps* caps)
         ensureIntrinsicSizeMaintainsAspectRatio();
 }
 
+std::pair<GstClockTime, GstClockTime> GStreamerVideoCaptureSource::queryLatency()
+{
+    if (!m_capturer)
+        return { GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE };
+
+    return m_capturer->queryLatency();
+}
+
 void GStreamerVideoCaptureSource::captureEnded()
 {
     m_capturer->stop();
