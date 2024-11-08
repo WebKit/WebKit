@@ -48,21 +48,25 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
-RefPtr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create(CMBufferQueueTriggerCallback callback, void* callbackObject, AudioFormatID format)
+RefPtr<AudioSampleBufferCompressor> AudioSampleBufferCompressor::create(CMBufferQueueTriggerCallback callback, void* callbackObject, AudioFormatID format, std::optional<AudioStreamBasicDescription> description)
 {
-    Ref compressor = adoptRef(*new AudioSampleBufferCompressor(format));
+    Ref compressor = adoptRef(*new AudioSampleBufferCompressor(format, WTFMove(description)));
     if (!compressor->initialize(callback, callbackObject))
         return nullptr;
     return compressor;
 }
 
-AudioSampleBufferCompressor::AudioSampleBufferCompressor(AudioFormatID format)
+AudioSampleBufferCompressor::AudioSampleBufferCompressor(AudioFormatID format, std::optional<AudioStreamBasicDescription>&& description)
     : m_serialDispatchQueue(WorkQueue::create("com.apple.AudioSampleBufferCompressor"_s))
     , m_currentNativePresentationTimeStamp(PAL::kCMTimeInvalid)
     , m_currentOutputPresentationTimeStamp(PAL::kCMTimeInvalid)
     , m_remainingPrimeDuration(PAL::kCMTimeInvalid)
     , m_outputCodecType(format)
 {
+    if (description)
+        m_destinationFormat = *description;
+    else
+        memset(&m_destinationFormat, 0, sizeof(AudioStreamBasicDescription));
 }
 
 AudioSampleBufferCompressor::~AudioSampleBufferCompressor()
@@ -121,11 +125,7 @@ Ref<GenericPromise> AudioSampleBufferCompressor::drain()
 
 Ref<GenericPromise> AudioSampleBufferCompressor::flushInternal(bool isFinished)
 {
-    return invokeAsync(m_serialDispatchQueue, [weakThis = ThreadSafeWeakPtr { *this }, this, isFinished] {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return GenericPromise::createAndReject();
-
+    return invokeAsync(m_serialDispatchQueue, [protectedThis = Ref { *this }, this, isFinished] {
         m_isDraining = isFinished;
         processSampleBuffers();
         m_isDraining = false;
@@ -164,10 +164,13 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
     const auto *audioFormatListItem = PAL::CMAudioFormatDescriptionGetRichestDecodableFormat(formatDescription);
     m_sourceFormat = audioFormatListItem->mASBD;
 
-    memset(&m_destinationFormat, 0, sizeof(AudioStreamBasicDescription));
-    m_destinationFormat.mFormatID = outputFormatID;
-    m_destinationFormat.mSampleRate = outputFormatID == kAudioFormatOpus ? 48000 : m_sourceFormat.mSampleRate;
-    m_destinationFormat.mChannelsPerFrame = m_sourceFormat.mChannelsPerFrame;
+    if (!m_destinationFormat.mFormatID || !m_destinationFormat.mSampleRate) {
+        m_destinationFormat.mFormatID = outputFormatID;
+        m_destinationFormat.mChannelsPerFrame = m_sourceFormat.mChannelsPerFrame;
+        m_destinationFormat.mSampleRate = m_sourceFormat.mSampleRate;
+    }
+    if  (outputFormatID == kAudioFormatOpus)
+        m_destinationFormat.mSampleRate = 48000;
 
     UInt32 size = sizeof(m_destinationFormat);
     if (auto error = PAL::AudioFormatGetProperty(kAudioFormatProperty_FormatInfo, 0, NULL, &size, &m_destinationFormat)) {
@@ -177,7 +180,7 @@ bool AudioSampleBufferCompressor::initAudioConverterForSourceFormatDescription(C
 
     AudioConverterRef converter;
     auto error = PAL::AudioConverterNew(&m_sourceFormat, &m_destinationFormat, &converter);
-    if (error == 'fmt?') {
+    if (error == 'fmt?' && outputFormatID != kAudioFormatOpus) {
         m_destinationFormat.mSampleRate = 44100;
         error = PAL::AudioConverterNew(&m_sourceFormat, &m_destinationFormat, &converter);
     }

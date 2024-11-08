@@ -39,7 +39,7 @@ namespace WebCore {
 
 class AudioSampleBufferCompressor : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioSampleBufferCompressor, WTF::DestructionThread::Main> {
 public:
-    static RefPtr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject, AudioFormatID = kAudioFormatMPEG4AAC);
+    static RefPtr<AudioSampleBufferCompressor> create(CMBufferQueueTriggerCallback, void* callbackObject, AudioFormatID, std::optional<AudioStreamBasicDescription>);
     ~AudioSampleBufferCompressor();
 
     bool isEmpty() const;
@@ -54,7 +54,7 @@ public:
     unsigned bitRate() const;
 
 private:
-    explicit AudioSampleBufferCompressor(AudioFormatID);
+    AudioSampleBufferCompressor(AudioFormatID, std::optional<AudioStreamBasicDescription>&&);
     bool initialize(CMBufferQueueTriggerCallback, void* callbackObject);
     UInt32 defaultOutputBitRate(const AudioStreamBasicDescription&) const;
 
