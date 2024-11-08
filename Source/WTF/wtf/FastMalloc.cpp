@@ -531,7 +531,7 @@ void MallocCallTracker::dumpStats()
             // FIXME: Add a way to remove some entries in StackShot in a programable way.
             // https://bugs.webkit.org/show_bug.cgi?id=205701
             const size_t framesToSkip = 6;
-            WTFPrintBacktrace(mallocDataForStack->siteData[0]->stack.array() + framesToSkip, mallocDataForStack->siteData[0]->stack.size() - framesToSkip);
+            WTFPrintBacktrace(mallocDataForStack->siteData[0]->stack.span().subspan(framesToSkip));
             WTFLogAlways("\n");
         }
     }

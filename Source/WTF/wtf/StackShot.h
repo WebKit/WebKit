@@ -73,6 +73,8 @@ public:
     
     void** array() const { return m_array.get(); }
     size_t size() const { return m_size; }
+
+    std::span<void*> span() const { return unsafeMakeSpan(m_array.get(), m_size); }
     
     explicit operator bool() const { return !!m_array; }
     

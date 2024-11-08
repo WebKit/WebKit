@@ -24,8 +24,6 @@
 
 #include <wtf/ThreadSafeRefCounted.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 bool RefCountedBase::areThreadingChecksEnabledGlobally { false };
@@ -48,7 +46,7 @@ public:
     {
         if (size() < s_skip)
             return;
-        WTFPrintBacktrace(array() + s_skip, size() - s_skip);
+        WTFPrintBacktrace(span().subspan(s_skip));
     }
 
 private:
@@ -119,5 +117,3 @@ void RefCountedBase::printRefDuringDestructionLogAndCrash(const void* ptr)
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
