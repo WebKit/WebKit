@@ -441,10 +441,7 @@ add_custom_command(
     VERBATIM
 )
 
-WEBKIT_BUILD_INSPECTOR_GRESOURCES(
-    "${WebKitGTK_DERIVED_SOURCES_DIR}"
-    "${WebKitGTK_DERIVED_SOURCES_DIR}/InspectorGResourceBundle.c"
-)
+WEBKIT_BUILD_INSPECTOR_GRESOURCES(${WebKitGTK_DERIVED_SOURCES_DIR} "InspectorGResourceBundle.c")
 
 set(WebKitResources "")
 list(APPEND WebKitResources "<file alias=\"css/gtk-theme.css\">gtk-theme.css</file>\n")

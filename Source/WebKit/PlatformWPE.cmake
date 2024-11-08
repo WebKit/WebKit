@@ -533,10 +533,8 @@ if (ENABLE_BREAKPAD)
     )
 endif ()
 
-WEBKIT_BUILD_INSPECTOR_GRESOURCES(
-    "${WebInspectorUI_DERIVED_SOURCES_DIR}"
-    "${CMAKE_BINARY_DIR}/share/inspector.gresource"
-)
+WEBKIT_BUILD_INSPECTOR_GRESOURCES(${WebInspectorUI_DERIVED_SOURCES_DIR} "inspector.gresource")
+
 install(FILES ${WebInspectorUI_DERIVED_SOURCES_DIR}/inspector.gresource DESTINATION "${CMAKE_INSTALL_FULL_DATADIR}/wpe-webkit-${WPE_API_VERSION}")
 
 add_library(WPEInjectedBundle MODULE "${WEBKIT_DIR}/WebProcess/InjectedBundle/API/glib/WebKitInjectedBundleMain.cpp")

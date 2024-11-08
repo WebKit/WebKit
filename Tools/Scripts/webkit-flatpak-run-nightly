@@ -127,7 +127,6 @@ def run(path, build_type, args):
             f"--env=PATH=/app/webkit/WebKitBuild/{build_type}/bin:/usr/bin",
             f"--env=LD_LIBRARY_PATH=/app/webkit/WebKitBuild/{build_type}/lib",
             f"--env=WEBKIT_INJECTED_BUNDLE_PATH=/app/webkit/WebKitBuild/{build_type}/lib",
-            f"--env=WEBKIT_INSPECTOR_RESOURCES_PATH=/app/webkit/WebKitBuild/{build_type}/share",
             "--device=dri",
             "--share=ipc",
             "--share=network",

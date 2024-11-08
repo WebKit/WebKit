@@ -151,7 +151,6 @@ class GLibPort(Port):
         env = os.environ.copy()
         env['WEBKIT_EXEC_PATH'] = self._build_path('bin')
         env['WEBKIT_INJECTED_BUNDLE_PATH'] = self._build_path('lib')
-        env['WEBKIT_INSPECTOR_RESOURCES_PATH'] = self._build_path('share')
         env['LD_LIBRARY_PATH'] = self._prepend_to_env_value(self._build_path('lib'), env.get('LD_LIBRARY_PATH', ''))
         return env
 
