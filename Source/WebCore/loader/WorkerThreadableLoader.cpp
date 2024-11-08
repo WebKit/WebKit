@@ -58,14 +58,20 @@ namespace WebCore {
 
 WorkerThreadableLoader::WorkerThreadableLoader(WorkerOrWorkletGlobalScope& workerOrWorkletGlobalScope, ThreadableLoaderClient& client, const String& taskMode, ResourceRequest&& request, const ThreadableLoaderOptions& options, const String& referrer)
     : m_workerClientWrapper(ThreadableLoaderClientWrapper::create(client, options.initiatorType))
-    , m_bridge(*new MainThreadBridge(m_workerClientWrapper.get(), workerOrWorkletGlobalScope.workerOrWorkletThread()->workerLoaderProxy(), workerOrWorkletGlobalScope.identifier(), taskMode, WTFMove(request), options, referrer.isEmpty() ? workerOrWorkletGlobalScope.url().strippedForUseAsReferrer().string : referrer, workerOrWorkletGlobalScope))
+    , m_bridge(adoptRef(*new MainThreadBridge(m_workerClientWrapper.get(), workerOrWorkletGlobalScope.workerOrWorkletThread()->workerLoaderProxy(), workerOrWorkletGlobalScope.identifier(), taskMode, WTFMove(request), options, referrer.isEmpty() ? workerOrWorkletGlobalScope.url().strippedForUseAsReferrer().string : referrer, workerOrWorkletGlobalScope)))
 {
+}
+
+WorkerThreadableLoader::MainThreadBridge& WorkerThreadableLoader::bridge()
+{
+    return m_bridge;
 }
 
 WorkerThreadableLoader::~WorkerThreadableLoader()
 {
-    m_bridge.destroy();
+    bridge().destroy();
 }
+
 
 void WorkerThreadableLoader::loadResourceSynchronously(WorkerOrWorkletGlobalScope& workerOrWorkletGlobalScope, ResourceRequest&& request, ThreadableLoaderClient& client, const ThreadableLoaderOptions& options)
 {
@@ -85,12 +91,12 @@ void WorkerThreadableLoader::loadResourceSynchronously(WorkerOrWorkletGlobalScop
 
 void WorkerThreadableLoader::cancel()
 {
-    m_bridge.cancel();
+    bridge().cancel();
 }
 
 void WorkerThreadableLoader::computeIsDone()
 {
-    m_bridge.computeIsDone();
+    bridge().computeIsDone();
 }
 
 struct LoaderTaskOptions {
