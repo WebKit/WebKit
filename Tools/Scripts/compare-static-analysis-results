@@ -55,11 +55,19 @@ def parser():
         '--build-output',
         dest='build_output',
         help='Path to the static analyzer output from the new build',
+        required='--generate-results-only' in sys.argv
     )
     parser.add_argument(
         '--scan-build-path',
         dest='scan_build',
-        help='Path to scan-build executable'
+        help='Path to scan-build executable',
+        required='--generate-results-only' in sys.argv
+    )
+    parser.add_argument(
+        '--generate-results-only',
+        dest='generate_filtered_results',
+        action='store_true',
+        default=False
     )
     parser.add_argument(
         '--check-expectations',
@@ -109,6 +117,7 @@ def find_diff(args, file1, file2):
 
 def create_filtered_results_dir(args, project, result_paths, category='StaticAnalyzerRegressions'):
     # Create symlinks to new issues only so that we can run scan-build to generate new index.html files
+    subprocess.run(['rm', '-r', os.path.abspath(f'{args.build_output}/{category}')])
     prefix_path = os.path.abspath(f'{args.build_output}/{category}/{project}/StaticAnalyzerReports')
     subprocess.run(['mkdir', '-p', prefix_path])
     for path_to_report in result_paths:
@@ -276,8 +285,7 @@ def upload_results(options, results):
             sys.stderr.write(f'Failed to upload results\n')
 
 
-def main():
-    args = parser()
+def compare_results(args):
     new_issues_total = set()
     new_files_total = set()
     fixed_files_total = set()
@@ -308,6 +316,7 @@ def main():
         # JSON
         unexpected_results_data['passes'][project] = project_results_passes
         unexpected_results_data['failures'][project] = project_results_failures
+
         if args.report_urls:
             path_for_upload = archive_path or new_path
             if not project_results_for_upload:
@@ -334,8 +343,35 @@ def main():
         if type_total:
             print(f'Total {type}: {len(type_total)}')
 
-    if args.report_urls:
-        upload_results(args, results_for_upload)
+    return results_for_upload
+
+
+def generate_filtered_results(args):
+    report_paths = []
+    print(f'Generating new results index with results from {args.build_output}...')
+
+    with open(os.path.abspath(f"{args.build_output}/unexpected_results.json"), "r") as f:
+        results_data = json.load(f)
+    with open(f'{args.new_dir}/issues_per_file.json') as f:
+        issues_per_file = json.load(f)
+
+    for project, checkers in results_data.get('failures').items():
+        for checker, files in checkers.items():
+            for file in files:
+                report_paths += [path_to_report for path_to_report in issues_per_file[checker][file].values()]
+
+    create_filtered_results_dir(args, project, report_paths, category='StaticAnalyzerRegressions')
+
+
+def main():
+    args = parser()
+
+    if not args.generate_filtered_results:
+        results_for_upload = compare_results(args)
+        if args.report_urls:
+            upload_results(args, results_for_upload)
+    else:
+        generate_filtered_results(args)
 
     # We don't need the full results for EWS runs. Delete full results if option enabled.
     if args.delete_results:
