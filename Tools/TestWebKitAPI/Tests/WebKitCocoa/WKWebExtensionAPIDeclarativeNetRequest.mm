@@ -2016,6 +2016,48 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedInitiator
     EXPECT_NS_EQUAL(convertedRule, correctRuleConversion);
 }
 
+TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedInitiatorDomainsAndInitiatorDomains)
+{
+    NSDictionary *rule = @{
+        @"id": @1,
+        @"action": @{ @"type": @"block" },
+        @"condition": @{
+            @"initiatorDomains": @[ @"example.com" ],
+            @"excludedInitiatorDomains": @[ @"blog.example.com" ],
+            @"resourceTypes": @[ @"font" ],
+        },
+    };
+
+    _WKWebExtensionDeclarativeNetRequestRule *validatedRule = [[_WKWebExtensionDeclarativeNetRequestRule alloc] initWithDictionary:rule errorString:nil];
+    NSArray *convertedRules = validatedRule.ruleInWebKitFormat;
+    EXPECT_NOT_NULL(convertedRules);
+
+    NSArray *correctRuleConversion = @[
+        @{
+            @"action": @{
+                @"type": @"ignore-previous-rules",
+            },
+            @"trigger": @{
+                @"if-frame-url": @[ @"^[^:]+://+([^:/]+\\.)?blog\\.example\\.com/.*" ],
+                @"resource-type": @[ @"font" ],
+                @"url-filter": @".*",
+            }
+        },
+        @{
+            @"action": @{
+                @"type": @"block",
+            },
+            @"trigger": @{
+                @"if-frame-url": @[ @"^[^:]+://+([^:/]+\\.)?example\\.com/.*" ],
+                @"resource-type": @[ @"font" ],
+                @"url-filter": @".*",
+            }
+        }
+    ];
+
+    EXPECT_NS_EQUAL(convertedRules, correctRuleConversion);
+}
+
 TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithEmptyExcludedDomains)
 {
     NSDictionary *rule = @{

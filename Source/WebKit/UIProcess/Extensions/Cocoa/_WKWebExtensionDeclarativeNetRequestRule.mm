@@ -729,6 +729,23 @@ static BOOL isArrayOfExcludedDomainsValid(NSArray<NSString *> *excludedDomains)
         [convertedRules addObjectsFromArray:rulesToMaintainOrderingOfUpgradeSchemeRule];
     }
 
+    if (_condition[ruleConditionInitiatorDomainsKey] && _condition[ruleConditionExcludedInitiatorDomainsKey]) {
+        // If a rule specifies both initiatorDomains and excludedInitiatorDomains, we need to turn that into two rules. The first rule will have the excludedInitiatorDomains, and be implemented
+        // as an ignore-previous-rules using if-frame-url (instead of unless-frame-url).
+        // To do this, make a copy of the condition dictionary, make the initiatorDomains be the excludedInitiatorDomains of the original rule, and create an ignore-previous-rules rule.
+        NSDictionary *originalCondition = [_condition copy];
+
+        NSMutableDictionary *modifiedCondition = [_condition mutableCopy];
+
+        modifiedCondition[ruleConditionInitiatorDomainsKey] = modifiedCondition[ruleConditionExcludedInitiatorDomainsKey];
+        modifiedCondition[ruleConditionExcludedInitiatorDomainsKey] = nil;
+
+        _condition = [modifiedCondition copy];
+        [convertedRules addObjectsFromArray:[self _convertedRulesForWebKitActionType:@"ignore-previous-rules" chromeActionType:chromeActionType]];
+
+        _condition = [originalCondition copy];
+    }
+
     [convertedRules addObjectsFromArray:[self _convertedRulesForWebKitActionType:webKitActionType chromeActionType:chromeActionType]];
 
     return [convertedRules copy];
@@ -875,11 +892,13 @@ static BOOL isArrayOfExcludedDomainsValid(NSArray<NSString *> *excludedDomains)
         return [[regexDomainString stringByAppendingString:escapeCharactersInString(domain, @"*?+[(){}^$|\\.")] stringByAppendingString:@"/.*"];
     };
 
-    // FIXME: rdar://97014647 - If both `unless-frame-url` and `if-frame-url` are set, we should be generating multiple rules to handle this one DNR rule.
-    if (NSArray *excludedDomains = _condition[ruleConditionExcludedInitiatorDomainsKey])
-        triggerDictionary[@"unless-frame-url"] = mapObjects(excludedDomains, convertToURLRegexBlock);
-    else if (NSArray *domains = _condition[ruleConditionInitiatorDomainsKey])
+    // If `initiatorDomains` and `excludedInitiatorDomains` are specified, we will have already created a rule honoring the `excludedInitiatorDomains` with an `ignore-previous-action` (see rdar://139515419).
+    // Therefore, honor the `initiatorDomains` first and drop the excluded ones on the floor for this rule.
+    if (NSArray *domains = _condition[ruleConditionInitiatorDomainsKey])
         triggerDictionary[@"if-frame-url"] = mapObjects(domains, convertToURLRegexBlock);
+    else if (NSArray *excludedDomains = _condition[ruleConditionExcludedInitiatorDomainsKey])
+        triggerDictionary[@"unless-frame-url"] = mapObjects(excludedDomains, convertToURLRegexBlock);
+
 
     // FIXME: <rdar://72203692> Support 'allowAllRequests' when the resource type is 'sub_frame'.
     if (isRuleForAllowAllRequests)
