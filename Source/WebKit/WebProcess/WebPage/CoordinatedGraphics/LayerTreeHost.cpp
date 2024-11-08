@@ -32,7 +32,7 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "DrawingArea.h"
-#include "WebPage.h"
+#include "WebPageInlines.h"
 #include "WebPageProxyMessages.h"
 #include "WebProcess.h"
 #include <WebCore/AsyncScrollingCoordinator.h>
