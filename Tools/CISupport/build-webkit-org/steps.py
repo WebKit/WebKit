@@ -423,9 +423,6 @@ class CompileWebKit(shell.Compile, CustomFlagsMixin):
                 # Some projects (namely lldbWebKitTester) require full debug info, and may override this.
                 build_command += ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym']
                 build_command += ['CLANG_DEBUG_INFORMATION_LEVEL=\\$\\(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only\\)']
-        if platform == 'gtk':
-            prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration").title(), "install")
-            build_command += [f'--prefix={prefix}']
 
         build_command += self.customBuildFlag(platform, self.getProperty('fullPlatform'))
 
@@ -570,12 +567,9 @@ class ArchiveMinifiedBuiltProduct(ArchiveBuiltProduct):
                WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s"), "--minify"]
 
 
-# UploadBuiltProductViaSftp() is still unused. Check HOWTO_config_SFTP_uploads.md about how to enable it.
 class UploadBuiltProductViaSftp(shell.ShellCommandNewStyle):
     command = ["python3", "Tools/CISupport/Shared/transfer-archive-via-sftp",
                "--remote-config-file", "../../remote-built-product-upload-config.json",
-               "--user-name", WithProperties("%(buildername)s"),
-               "--remote-dir", WithProperties("%(buildername)s"),
                "--remote-file", WithProperties("%(archive_revision)s.zip"),
                WithProperties("WebKitBuild/%(configuration)s.zip")]
     name = "upload-built-product-via-sftp"

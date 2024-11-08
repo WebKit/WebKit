@@ -455,7 +455,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
                 workdir='wkdir',
                 timeout=3600,
                 logEnviron=True,
-                command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release', '--prefix=/app/webkit/WebKitBuild/Release/install', '--gtk'],
+                command=['perl', 'Tools/Scripts/build-webkit', '--no-fatal-warnings', '--release', '--gtk'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='compiled')
@@ -1378,46 +1378,6 @@ OSError: [Errno 2] No such file or directory''')
             + 1,
         )
         self.expectOutcome(result=FAILURE, state_string='Failed to print configuration')
-        return self.runStep()
-
-
-class TestInstallBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_success(self):
-        self.setupStep(InstallBuiltProduct())
-        self.setProperty('fullPlatform', 'ios-14')
-        self.setProperty('configuration', 'release')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        command=['python3', 'Tools/Scripts/install-built-product', '--platform=ios-14', '--release'],
-                        logEnviron=True,
-                        timeout=1200,
-                        )
-            + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Installed Built Product')
-        return self.runStep()
-
-    def test_failure(self):
-        self.setupStep(InstallBuiltProduct())
-        self.setProperty('fullPlatform', 'ios-14')
-        self.setProperty('configuration', 'debug')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        command=['python3', 'Tools/Scripts/install-built-product', '--platform=ios-14', '--debug'],
-                        logEnviron=True,
-                        timeout=1200,
-                        )
-            + ExpectShell.log('stdio', stdout='Unexpected error.')
-            + 2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Installed Built Product (failure)')
         return self.runStep()
 
 

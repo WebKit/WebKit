@@ -34,7 +34,7 @@ from .steps import (AddReviewerToCommitMessage, ApplyPatch, ApplyWatchList, Cano
                     RunWebKitPyTests, RunWebKitTests, RunWebKitTestsRedTree, RunWebKitTestsInStressMode, RunWebKitTestsInStressGuardmallocMode,
                     ScanBuild, SetBuildSummary, ShowIdentifier, TriggerCrashLogSubmission, UpdateClang, UpdateWorkingDirectory, UpdatePullRequest,
                     ValidateCommitMessage, ValidateChange, ValidateCommitterAndReviewer, WaitForCrashCollection,
-                    InstallBuiltProduct, ValidateRemote, ValidateSquashed, GITHUB_PROJECTS)
+                    ValidateRemote, ValidateSquashed, GITHUB_PROJECTS)
 
 class Factory(factory.BuildFactory):
     findModifiedLayoutTests = False
@@ -157,8 +157,6 @@ class BuildFactory(Factory):
         if platform in ['gtk', 'wpe']:
             self.addStep(CleanDerivedSources())
         self.addStep(CompileWebKit(skipUpload=self.skipUpload))
-        if platform == 'gtk':
-            self.addStep(InstallBuiltProduct())
 
 
 class TestFactory(Factory):

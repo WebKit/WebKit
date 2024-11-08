@@ -3265,9 +3265,6 @@ class CompileWebKit(shell.Compile, AddToLogMixin, ShellMixin):
                 # this much faster than full debug info, and crash logs still have line numbers.
                 # Some projects (namely lldbWebKitTester) require full debug info, and may override this.
                 build_command += ['DEBUG_INFORMATION_FORMAT=dwarf-with-dsym', 'CLANG_DEBUG_INFORMATION_LEVEL=$(WK_OVERRIDE_DEBUG_INFORMATION_LEVEL:default=line-tables-only)']
-        if platform == 'gtk':
-            prefix = os.path.join("/app", "webkit", "WebKitBuild", self.getProperty("configuration"), "install")
-            build_command += [f'--prefix={prefix}']
 
         build_command += customBuildFlag(platform, self.getProperty('fullPlatform'))
 
@@ -3879,14 +3876,6 @@ class AnalyzeJSCTestsResults(buildstep.BuildStep, AddToLogMixin):
             send_email_to_bot_watchers(email_subject, email_text, builder_name, 'preexisting-{}'.format(test_name))
         except Exception as e:
             print('Error in sending email for pre-existing failure: {}'.format(e))
-
-
-class InstallBuiltProduct(shell.ShellCommandNewStyle):
-    name = 'install-built-product'
-    description = ['Installing Built Product']
-    descriptionDone = ['Installed Built Product']
-    command = ["python3", "Tools/Scripts/install-built-product",
-               WithProperties("--platform=%(fullPlatform)s"), WithProperties("--%(configuration)s")]
 
 
 class CleanBuild(shell.Compile):

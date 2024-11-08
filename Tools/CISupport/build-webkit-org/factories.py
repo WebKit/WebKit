@@ -70,8 +70,6 @@ class BuildFactory(Factory):
             self.addStep(GenerateMiniBrowserBundle())
 
         if triggers:
-            if platform.startswith("gtk"):
-                self.addStep(InstallBuiltProduct())
             self.addStep(trigger.Trigger(schedulerNames=triggers))
 
 
@@ -184,7 +182,6 @@ class BuildAndTestAndArchiveAllButJSCFactory(BuildAndTestFactory):
         BuildAndTestFactory.__init__(self, platform, configuration, architectures, triggers, additionalArguments, device_model, **kwargs)
         # The parent class will already archive if triggered
         if not triggers:
-            self.addStep(InstallBuiltProduct())
             self.addStep(ArchiveBuiltProduct())
             self.addStep(UploadBuiltProduct())
         if platform == "gtk-3":
@@ -202,6 +199,14 @@ class BuildAndGenerateMiniBrowserBundleFactory(BuildFactory):
 class BuildAndGenerateMiniBrowserJSCBundleFactory(BuildFactory):
     shouldRunJSCBundleStep = True
     shouldRunMiniBrowserBundleStep = True
+
+
+class BuildAndUploadBuiltProductviaSftpFactory(BuildFactory):
+    def __init__(self, platform, configuration, architectures, triggers=None, additionalArguments=None, device_model=None):
+        BuildFactory.__init__(self, platform, configuration, architectures, triggers, additionalArguments, device_model)
+        self.addStep(InstallBuiltProduct())
+        self.addStep(ArchiveBuiltProduct())
+        self.addStep(UploadBuiltProductViaSftp())
 
 
 class TestJSCFactory(Factory):

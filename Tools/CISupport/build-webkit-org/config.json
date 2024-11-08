@@ -106,6 +106,7 @@
                   { "name": "gtk-linux-bot-20", "platform": "gtk" },
                   { "name": "gtk-linux-bot-21", "platform": "gtk" },
                   { "name": "gtk-linux-bot-22", "platform": "gtk" },
+                  { "name": "gtk-linux-bot-23", "platform": "gtk" },
                   { "name": "gtk-linux-bot-24", "platform": "gtk" },
 
                   { "name": "jsconly-linux-igalia-bot-1", "platform": "jsc-only" },
@@ -542,6 +543,12 @@
                     "workernames": ["gtk-linux-bot-17"]
                   },
                   {
+                    "name": "GTK-Linux-64bit-Release-GNOMEWebCanary-Packaging-Nightly", "factory": "BuildAndUploadBuiltProductviaSftpFactory",
+                    "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
+                    "additionalArguments": ["--prefix=/app/webkit/WebKitBuild/Release/install", "--cmakeargs=-DUSE_SYSTEM_UNIFDEF=OFF"],
+                    "workernames": ["gtk-linux-bot-23"]
+                  },
+                  {
                     "name": "GTK-Linux-64-bit-Release-GTK3-Tests", "factory": "BuildAndTestAndArchiveAllButJSCFactory",
                     "platform": "gtk-3", "configuration": "release", "architectures": ["x86_64"],
                     "workernames": ["gtk-linux-bot-18"]
@@ -956,7 +963,8 @@
                   },
                   { "type": "Nightly", "name": "NightlyScheduler", "change_filter": "main_filter",
                     "branch": "main", "hour": 22, "minute": 0,
-                    "builderNames": ["GTK-Linux-64bit-Release-Packaging-Nightly",
+                    "builderNames": ["GTK-Linux-64bit-Release-GNOMEWebCanary-Packaging-Nightly",
+                                     "GTK-Linux-64bit-Release-Packaging-Nightly",
                                      "WPE-Linux-64bit-Release-Packaging-Nightly"]
                   }
                 ]

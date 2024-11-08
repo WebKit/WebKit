@@ -51,7 +51,7 @@ from .steps import (AddReviewerToCommitMessage, AddMergeLabelsToPRs, AnalyzeAPIT
                     DetermineLandedIdentifier, DisplaySaferCPPResults, DownloadBuiltProduct, DownloadBuiltProductFromMaster,
                     EWS_BUILD_HOSTNAMES, ExtractBuiltProduct, ExtractTestResults,
                     FetchBranches, FindModifiedLayoutTests, FindUnexpectedStaticAnalyzerResults, GetTestExpectationsBaseline, GetUpdatedTestExpectations, GitHub, GitHubMixin, GenerateS3URL,
-                    InstallBuiltProduct, InstallGtkDependencies, InstallWpeDependencies, InstallHooks, LeaveComment, InstallCMake, InstallNinja,
+                    InstallGtkDependencies, InstallWpeDependencies, InstallHooks, LeaveComment, InstallCMake, InstallNinja,
                     KillOldProcesses, ParseStaticAnalyzerResults, PrintConfiguration, PrintClangVersion, PushCommitToWebKitRepo, PushPullRequestBranch, RemoveAndAddLabels, ReRunAPITests, ReRunWebKitPerlTests, RetrievePRDataFromLabel,
                     MapBranchAlias, ReRunWebKitTests, RevertAppliedChanges, RunAPITests, RunAPITestsWithoutChange, RunBindingsTests, RunBuildWebKitOrgUnitTests,
                     RunBuildbotCheckConfigForBuildWebKit, RunBuildbotCheckConfigForEWS, RunEWSUnitTests, RunResultsdbpyTests,
@@ -1210,7 +1210,7 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
             ExpectShell(workdir='wkdir',
                         timeout=3600,
                         logEnviron=False,
-                        command=['perl', 'Tools/Scripts/build-webkit', '--release', '--prefix=/app/webkit/WebKitBuild/release/install', '--gtk'],
+                        command=['perl', 'Tools/Scripts/build-webkit', '--release', '--gtk'],
                         )
             + 0,
         )
@@ -7651,46 +7651,6 @@ class TestFetchBranches(BuildStepMixinAdditions, unittest.TestCase):
             ) + 0,
         )
         self.expectOutcome(result=FAILURE)
-        return self.runStep()
-
-
-class TestInstallBuiltProduct(BuildStepMixinAdditions, unittest.TestCase):
-    def setUp(self):
-        self.longMessage = True
-        return self.setUpBuildStep()
-
-    def tearDown(self):
-        return self.tearDownBuildStep()
-
-    def test_success(self):
-        self.setupStep(InstallBuiltProduct())
-        self.setProperty('fullPlatform', 'ios-14')
-        self.setProperty('configuration', 'release')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        command=['python3', 'Tools/Scripts/install-built-product', '--platform=ios-14', '--release'],
-                        logEnviron=True,
-                        timeout=1200,
-                        )
-            + 0,
-        )
-        self.expectOutcome(result=SUCCESS, state_string='Installed Built Product')
-        return self.runStep()
-
-    def test_failure(self):
-        self.setupStep(InstallBuiltProduct())
-        self.setProperty('fullPlatform', 'ios-14')
-        self.setProperty('configuration', 'debug')
-        self.expectRemoteCommands(
-            ExpectShell(workdir='wkdir',
-                        command=['python3', 'Tools/Scripts/install-built-product', '--platform=ios-14', '--debug'],
-                        logEnviron=True,
-                        timeout=1200,
-                        )
-            + ExpectShell.log('stdio', stdout='Unexpected error.')
-            + 2,
-        )
-        self.expectOutcome(result=FAILURE, state_string='Installed Built Product (failure)')
         return self.runStep()
 
 

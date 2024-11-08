@@ -70,8 +70,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'jhbuild',
             'validate-change',
             'clean-derived-sources',
-            'compile-webkit',
-            'install-built-product'
+            'compile-webkit'
         ],
         'GTK-WK2-Tests-EWS': [
             'configure-build',
