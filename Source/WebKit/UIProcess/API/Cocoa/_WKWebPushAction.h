@@ -43,7 +43,7 @@ WK_EXTERN
 + (_WKWebPushAction *)_webPushActionWithNotificationResponse:(UNNotificationResponse *)response;
 
 @property (nonatomic, readonly) NSNumber *version;
-@property (nonatomic, readonly) NSString *pushPartition;
+@property (nonatomic, readonly) NSUUID *webClipIdentifier;
 @property (nonatomic, readonly) NSString *type;
 
 - (UIBackgroundTaskIdentifier)beginBackgroundTaskForHandling;

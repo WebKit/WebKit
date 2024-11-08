@@ -39,13 +39,35 @@ NSString * const _WKWebPushActionTypeNotificationClick = @"_WKWebPushActionTypeN
 NSString * const _WKWebPushActionTypeNotificationClose = @"_WKWebPushActionTypeNotificationClose";
 
 @interface _WKWebPushAction ()
-@property (nonatomic, readwrite) NSNumber *version;
-@property (nonatomic, readwrite) NSString *pushPartition;
-@property (nonatomic, readwrite) NSString *type;
-@property (nonatomic, readwrite) std::optional<WebCore::NotificationData> coreNotificationData;
+@property (nonatomic, readwrite, strong) NSNumber *version;
+@property (nonatomic, readwrite, strong) NSUUID *webClipIdentifier;
+@property (nonatomic, readwrite, strong) NSString *type;
+@property (nonatomic, readwrite, assign) std::optional<WebCore::NotificationData> coreNotificationData;
 @end
 
 @implementation _WKWebPushAction
+
+static RetainPtr<NSUUID> uuidFromPushPartition(NSString *pushPartition)
+{
+    if (pushPartition.length != 32)
+        return nil;
+
+    RetainPtr uuidString = [NSString stringWithFormat:@"%@-%@-%@-%@-%@",
+        [pushPartition substringWithRange:NSMakeRange(0, 8)],
+        [pushPartition substringWithRange:NSMakeRange(8, 4)],
+        [pushPartition substringWithRange:NSMakeRange(12, 4)],
+        [pushPartition substringWithRange:NSMakeRange(16, 4)],
+        [pushPartition substringWithRange:NSMakeRange(20, 12)]];
+    return adoptNS([[NSUUID alloc] initWithUUIDString:uuidString.get()]);
+}
+
+- (void)dealloc
+{
+    [_version release];
+    [_webClipIdentifier release];
+    [_type release];
+    [super dealloc];
+}
 
 + (_WKWebPushAction *)webPushActionWithDictionary:(NSDictionary *)dictionary
 {
@@ -57,13 +79,17 @@ NSString * const _WKWebPushActionTypeNotificationClose = @"_WKWebPushActionTypeN
     if (!pushPartition || ![pushPartition isKindOfClass:[NSString class]])
         return nil;
 
+    RetainPtr uuid = uuidFromPushPartition(pushPartition);
+    if (!uuid)
+        return nil;
+
     NSString *type = dictionary[WebKit::WebPushD::pushActionTypeKey()];
     if (!type || ![type isKindOfClass:[NSString class]])
         return nil;
 
     _WKWebPushAction *result = [[_WKWebPushAction alloc] init];
     result.version = version;
-    result.pushPartition = pushPartition;
+    result.webClipIdentifier = uuid.get();
     result.type = type;
 
     return [result autorelease];
@@ -75,11 +101,17 @@ NSString * const _WKWebPushActionTypeNotificationClose = @"_WKWebPushActionTypeN
     if (![response.notification.sourceIdentifier hasPrefix:@"com.apple.WebKit.PushBundle."])
         return nil;
 
+    NSString *pushPartition = [response.notification.sourceIdentifier substringFromIndex:28];
+    RetainPtr webClipIdentifier = uuidFromPushPartition(pushPartition);
+    if (!webClipIdentifier)
+        return nil;
+
     auto notificationData = WebCore::NotificationData::fromDictionary(response.notification.request.content.userInfo);
     if (!notificationData)
         return nil;
 
     _WKWebPushAction *result = [[[_WKWebPushAction alloc] init] autorelease];
+    result.webClipIdentifier = webClipIdentifier.get();
 
     if ([response.actionIdentifier isEqualToString:UNNotificationDefaultActionIdentifier])
         result.type = _WKWebPushActionTypeNotificationClick;
@@ -114,8 +146,8 @@ NSString * const _WKWebPushActionTypeNotificationClose = @"_WKWebPushActionTypeN
 {
 #if PLATFORM(IOS)
     NSString *taskName;
-    if (_pushPartition)
-        taskName = [NSString stringWithFormat:@"%@ for %@", self._nameForBackgroundTaskAndLogging, _pushPartition];
+    if (_webClipIdentifier)
+        taskName = [NSString stringWithFormat:@"%@ for %@", self._nameForBackgroundTaskAndLogging, _webClipIdentifier];
     else
         taskName = [NSString stringWithFormat:@"%@", self._nameForBackgroundTaskAndLogging];
 
