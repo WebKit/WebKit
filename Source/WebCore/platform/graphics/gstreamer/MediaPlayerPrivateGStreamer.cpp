@@ -280,6 +280,16 @@ bool MediaPlayerPrivateGStreamer::isAvailable()
     return true;
 }
 
+std::optional<bool> MediaPlayerPrivateGStreamer::isLiveStream() const
+{
+    if (m_isLiveStream && *m_isLiveStream && m_source && webKitSrcDidGetEOS(WEBKIT_WEB_SRC_CAST(m_source.get()))) {
+        m_isLiveStream = false;
+        GST_TRACE_OBJECT(pipeline(), "live stream corrected to false");
+    }
+
+    return m_isLiveStream;
+}
+
 class MediaPlayerFactoryGStreamer final : public MediaPlayerFactory {
 private:
     MediaPlayerEnums::MediaEngineIdentifier identifier() const final { return MediaPlayerEnums::MediaEngineIdentifier::GStreamer; };
@@ -593,7 +603,7 @@ void MediaPlayerPrivateGStreamer::seekToTarget(const SeekTarget& inTarget)
         return;
     }
 
-    if (m_isLiveStream.value_or(false)) {
+    if (isLiveStream().value_or(false)) {
         GST_DEBUG_OBJECT(pipeline(), "[Seek] Live stream seek unhandled");
         return;
     }
@@ -696,8 +706,8 @@ MediaTime MediaPlayerPrivateGStreamer::duration() const
         return m_cachedDuration;
 
     MediaTime duration = platformDuration();
-    if (!duration || duration.isInvalid())
-        return MediaTime::zeroTime();
+    if (duration.isInvalid())
+        return isLiveStream().value_or(true) ? MediaTime::positiveInfiniteTime() : MediaTime::zeroTime();
 
     m_cachedDuration = duration;
 
@@ -741,7 +751,7 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
         return;
     }
 
-    if (m_isLiveStream.value_or(false)) {
+    if (isLiveStream().value_or(false)) {
         // Notify upper layers that we cannot handle passed rate.
         m_isChangingRate = false;
         if (player)
@@ -802,7 +812,7 @@ void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
         return;
 
     GST_DEBUG_OBJECT(pipeline(), "Setting preload to %s", convertEnumerationToString(preload).utf8().data());
-    if (preload == MediaPlayer::Preload::Auto && m_isLiveStream.value_or(false))
+    if (preload == MediaPlayer::Preload::Auto && isLiveStream().value_or(false))
         return;
 
     m_preload = preload;
@@ -816,7 +826,7 @@ void MediaPlayerPrivateGStreamer::setPreload(MediaPlayer::Preload preload)
 
 const PlatformTimeRanges& MediaPlayerPrivateGStreamer::buffered() const
 {
-    if (m_didErrorOccur || m_isLiveStream.value_or(false) || !m_pipeline)
+    if (m_didErrorOccur || isLiveStream().value_or(false) || !m_pipeline)
         return PlatformTimeRanges::emptyRanges();
 
     MediaTime mediaDuration = duration();
@@ -855,9 +865,9 @@ MediaTime MediaPlayerPrivateGStreamer::maxTimeSeekable() const
     if (m_didErrorOccur)
         return MediaTime::zeroTime();
 
-    bool isLiveStream = m_isLiveStream.value_or(false);
-    GST_TRACE_OBJECT(pipeline(), "isLiveStream: %s", boolForPrinting(isLiveStream));
-    if (isLiveStream)
+    bool liveStream = isLiveStream().value_or(false);
+    GST_TRACE_OBJECT(pipeline(), "isLiveStream: %s (has value %s)", boolForPrinting(liveStream), boolForPrinting(isLiveStream().has_value()));
+    if (liveStream)
         return MediaTime::positiveInfiniteTime();
 
     if (isMediaStreamPlayer())
@@ -1289,7 +1299,7 @@ MediaTime MediaPlayerPrivateGStreamer::platformDuration() const
         // In order to be strict with the spec, consider that not "enough of the media data has been fetched to determine
         // the duration of the media resource" and therefore return invalidTime only when we know for sure that the
         // stream isn't live (treating empty value as unsure).
-        return m_isLiveStream.value_or(true) ? MediaTime::positiveInfiniteTime() : MediaTime::invalidTime();
+        return MediaTime::invalidTime();
     }
 
     GST_LOG_OBJECT(pipeline(), "Duration: %" GST_TIME_FORMAT, GST_TIME_ARGS(duration));
@@ -2307,7 +2317,7 @@ void MediaPlayerPrivateGStreamer::updateBufferingStatus(GstBufferingMode mode, d
 
     if (m_didDownloadFinish)
         m_fillTimer.stop();
-    else if (!m_isLiveStream.value_or(false) && m_preload == MediaPlayer::Preload::Auto
+    else if (!isLiveStream().value_or(false) && m_preload == MediaPlayer::Preload::Auto
         && !isMediaDiskCacheDisabled()) {
         // Should download, so restart the timer.
         m_fillTimer.startRepeating(200_ms);
@@ -2685,7 +2695,7 @@ void MediaPlayerPrivateGStreamer::updateStates()
         } else if (m_currentState == GST_STATE_PLAYING) {
             m_isPaused = false;
 
-            shouldPauseForBuffering = (!m_wasBuffering && m_isBuffering && !m_isLiveStream.value_or(false));
+            shouldPauseForBuffering = (!m_wasBuffering && m_isBuffering && !isLiveStream().value_or(false));
             if (shouldPauseForBuffering || !m_playbackRate) {
                 GST_INFO_OBJECT(pipeline(), "[Buffering] Pausing stream for buffering or because of zero playback rate.");
                 changePipelineState(GST_STATE_PAUSED);
@@ -3052,7 +3062,7 @@ void MediaPlayerPrivateGStreamer::updateDownloadBufferingFlag()
     bool diskCacheDisabled = isMediaDiskCacheDisabled();
     GST_DEBUG_OBJECT(pipeline(), "Media on-disk cache is %s", (diskCacheDisabled) ? "disabled" : "enabled");
 
-    bool shouldDownload = !m_isLiveStream.value_or(false) && m_preload == MediaPlayer::Preload::Auto && !diskCacheDisabled;
+    bool shouldDownload = !isLiveStream().value_or(false) && m_preload == MediaPlayer::Preload::Auto && !diskCacheDisabled;
     if (shouldDownload) {
         GST_INFO_OBJECT(pipeline(), "Enabling on-disk buffering");
         g_object_set(m_pipeline.get(), "flags", flags | flagDownload, nullptr);
@@ -3344,7 +3354,7 @@ bool MediaPlayerPrivateGStreamer::didPassCORSAccessCheck() const
 
 bool MediaPlayerPrivateGStreamer::canSaveMediaData() const
 {
-    if (m_isLiveStream.value_or(false))
+    if (isLiveStream().value_or(false))
         return false;
 
     if (m_url.protocolIsFile())
@@ -3845,7 +3855,7 @@ MediaPlayer::MovieLoadType MediaPlayerPrivateGStreamer::movieLoadType() const
     if (m_readyState == MediaPlayer::ReadyState::HaveNothing)
         return MediaPlayer::MovieLoadType::Unknown;
 
-    if (m_isLiveStream.value_or(false))
+    if (isLiveStream().value_or(false))
         return MediaPlayer::MovieLoadType::LiveStream;
 
     return MediaPlayer::MovieLoadType::Download;

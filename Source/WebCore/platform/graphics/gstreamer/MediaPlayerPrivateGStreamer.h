@@ -605,6 +605,7 @@ private:
 
 private:
     std::optional<VideoFrameMetadata> videoFrameMetadata() final;
+    std::optional<bool> isLiveStream() const;
     uint64_t m_sampleCount { 0 };
     uint64_t m_lastVideoFrameMetadataSampleCount { 0 };
     mutable PlatformTimeRanges m_buffered;

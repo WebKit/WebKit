@@ -1249,6 +1249,12 @@ bool webKitSrcIsCrossOrigin(WebKitWebSrc* src, const SecurityOrigin& origin)
     return false;
 }
 
+bool webKitSrcDidGetEOS(WebKitWebSrc* src)
+{
+    DataMutexLocker members { src->priv->dataMutex };
+    return members->doesHaveEOS;
+}
+
 #undef GST_CAT_DEFAULT
 
 #endif // ENABLE(VIDEO) && USE(GSTREAMER)
