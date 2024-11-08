@@ -292,6 +292,10 @@ TEST(WKWebExtension, SingleIconVariant)
     auto *icon = [testExtension iconForSize:CGSizeMake(32, 32)];
     EXPECT_NOT_NULL(icon);
     EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(32, 32)));
+
+    icon = [testExtension actionIconForSize:CGSizeMake(32, 32)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(32, 32)));
 }
 
 TEST(WKWebExtension, AnySizeIconVariant)
@@ -320,6 +324,10 @@ TEST(WKWebExtension, AnySizeIconVariant)
     auto *icon = [testExtension iconForSize:CGSizeMake(64, 64)];
     EXPECT_NOT_NULL(icon);
     EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(64, 64)));
+
+    icon = [testExtension actionIconForSize:CGSizeMake(64, 64)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(64, 64)));
 }
 
 TEST(WKWebExtension, NoIconVariants)
@@ -336,6 +344,9 @@ TEST(WKWebExtension, NoIconVariants)
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     auto *icon = [testExtension iconForSize:CGSizeMake(32, 32)];
+    EXPECT_NULL(icon);
+
+    icon = [testExtension actionIconForSize:CGSizeMake(32, 32)];
     EXPECT_NULL(icon);
 }
 
@@ -369,6 +380,11 @@ TEST(WKWebExtension, IconsAndIconVariantsSpecified)
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     auto *icon = [testExtension iconForSize:CGSizeMake(32, 32)];
+    EXPECT_NOT_NULL(icon);
+    EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(32, 32)));
+    EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor whiteColor]));
+
+    icon = [testExtension actionIconForSize:CGSizeMake(32, 32)];
     EXPECT_NOT_NULL(icon);
     EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(32, 32)));
     EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor whiteColor]));
@@ -460,6 +476,9 @@ TEST(WKWebExtension, ActionIconSingleVariant)
     EXPECT_NOT_NULL(icon);
     EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(32, 32)));
     EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor whiteColor]));
+
+    icon = [testExtension iconForSize:CGSizeMake(32, 32)];
+    EXPECT_NULL(icon);
 }
 
 TEST(WKWebExtension, ActionIconAnySizeVariant)
@@ -490,6 +509,9 @@ TEST(WKWebExtension, ActionIconAnySizeVariant)
     auto *icon = [testExtension actionIconForSize:CGSizeMake(64, 64)];
     EXPECT_NOT_NULL(icon);
     EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(64, 64)));
+
+    icon = [testExtension iconForSize:CGSizeMake(32, 32)];
+    EXPECT_NULL(icon);
 }
 
 TEST(WKWebExtension, ActionNoIconVariants)
@@ -506,6 +528,9 @@ TEST(WKWebExtension, ActionNoIconVariants)
     EXPECT_NS_EQUAL(testExtension.errors, @[ ]);
 
     auto *icon = [testExtension actionIconForSize:CGSizeMake(32, 32)];
+    EXPECT_NULL(icon);
+
+    icon = [testExtension iconForSize:CGSizeMake(32, 32)];
     EXPECT_NULL(icon);
 }
 
@@ -543,6 +568,9 @@ TEST(WKWebExtension, ActionIconsAndIconVariantsSpecified)
     EXPECT_NOT_NULL(icon);
     EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(32, 32)));
     EXPECT_TRUE(Util::compareColors(Util::pixelColor(icon), [CocoaColor whiteColor]));
+
+    icon = [testExtension iconForSize:CGSizeMake(32, 32)];
+    EXPECT_NULL(icon);
 }
 #endif // ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
 

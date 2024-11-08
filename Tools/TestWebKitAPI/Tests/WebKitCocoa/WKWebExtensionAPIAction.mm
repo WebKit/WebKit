@@ -749,6 +749,30 @@ TEST(WKWebExtensionAPIAction, SetIconMultipleSizesRelative)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPIAction, SetIconWithBadPath)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"await browser.action.setIcon({ path: 'bad.png' })",
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": @"Hello world!",
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
+        auto *icon = [action iconForSize:CGSizeMake(48, 48)];
+        EXPECT_NULL(icon);
+
+        [manager done];
+    };
+
+    [manager loadAndRun];
+}
+
 TEST(WKWebExtensionAPIAction, SetIconWithImageData)
 {
     auto *backgroundScript = Util::constructScript(@[
@@ -778,6 +802,17 @@ TEST(WKWebExtensionAPIAction, SetIconWithImageData)
     };
 
     [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIAction, SetIconWithBadImageData)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertThrows(() => browser.action.setIcon({ imageData: { 16: { data: [ 'bad' ] } } }))",
+
+        @"browser.test.notifyPass()"
+    ]);
+
+    Util::loadAndRunExtension(actionPopupManifest, @{ @"background.js": backgroundScript });
 }
 
 TEST(WKWebExtensionAPIAction, SetIconWithMultipleImageDataSizes)
@@ -854,6 +889,32 @@ TEST(WKWebExtensionAPIAction, SetIconWithDataURL)
         auto *icon = [action iconForSize:CGSizeMake(48, 48)];
         EXPECT_NOT_NULL(icon);
         EXPECT_TRUE(CGSizeEqualToSize(icon.size, CGSizeMake(48, 48)));
+
+        [manager done];
+    };
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIAction, SetIconWithBadDataURL)
+{
+    auto *backgroundScript = Util::constructScript(@[
+        @"const invalidDataURL = 'data:image/png;base64,INVALIDDATA'",
+
+        @"await browser.action.setIcon({ path: invalidDataURL })",
+    ]);
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"popup.html": @"Hello world!",
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:actionPopupManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    manager.get().internalDelegate.didUpdateAction = ^(WKWebExtensionAction *action) {
+        auto *icon = [action iconForSize:CGSizeMake(48, 48)];
+        EXPECT_NULL(icon);
 
         [manager done];
     };

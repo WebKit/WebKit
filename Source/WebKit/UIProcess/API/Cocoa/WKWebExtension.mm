@@ -223,16 +223,12 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (CocoaImage *)iconForSize:(CGSize)size
 {
-    if (RefPtr icon = self._protectedWebExtension->icon(WebCore::FloatSize(size)))
-        return icon->image().get();
-    return nil;
+    return WebKit::toCocoaImage(self._protectedWebExtension->icon(WebCore::FloatSize(size)));
 }
 
 - (CocoaImage *)actionIconForSize:(CGSize)size
 {
-    if (RefPtr icon = self._protectedWebExtension->actionIcon(WebCore::FloatSize(size)))
-        return icon->image().get();
-    return nil;
+    return WebKit::toCocoaImage(self._protectedWebExtension->actionIcon(WebCore::FloatSize(size)));
 }
 
 - (NSSet<WKWebExtensionPermission> *)requestedPermissions

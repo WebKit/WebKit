@@ -30,6 +30,7 @@
 #import "config.h"
 #import "WKWebExtensionActionInternal.h"
 
+#import "CocoaHelpers.h"
 #import "CocoaImage.h"
 #import "WebExtensionAction.h"
 #import "WebExtensionContext.h"
@@ -77,7 +78,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionAction, WebExtensionAction, 
 
 - (CocoaImage *)iconForSize:(CGSize)size
 {
-    return self._protectedWebExtensionAction->icon(WebCore::FloatSize(size))->image().get();
+    return WebKit::toCocoaImage(self._protectedWebExtensionAction->icon(WebCore::FloatSize(size)));
 }
 
 - (NSString *)label

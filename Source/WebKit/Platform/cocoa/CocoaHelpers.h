@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <WebCore/Icon.h>
 #import <wtf/HashSet.h>
 #import <wtf/OptionSet.h>
 #import <wtf/RetainPtr.h>
@@ -106,6 +107,11 @@ inline std::optional<String> toOptional(NSString *maybeNil)
     if (maybeNil)
         return maybeNil;
     return std::nullopt;
+}
+
+inline CocoaImage *toCocoaImage(RefPtr<WebCore::Icon> icon)
+{
+    return icon ? icon->image().get() : nil;
 }
 
 enum class JSONOptions {

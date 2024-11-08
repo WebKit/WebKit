@@ -275,11 +275,6 @@ NSArray *WebExtensionMenuItem::matchingPlatformMenuItems(const MenuItemVector& m
     }).get();
 }
 
-static inline CocoaImage* toCocoaImage(RefPtr<WebCore::Icon> icon)
-{
-    return icon ? icon->image().get() : nil;
-}
-
 CocoaMenuItem *WebExtensionMenuItem::platformMenuItem(const WebExtensionMenuItemContextParameters& contextParameters, WebExtensionMenuItem::ForceUnchecked forceUnchecked) const
 {
     ASSERT(extensionContext());

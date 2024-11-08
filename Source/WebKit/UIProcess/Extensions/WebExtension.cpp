@@ -1595,7 +1595,7 @@ RefPtr<WebCore::Icon> WebExtension::actionIcon(WebCore::FloatSize size)
     }
 
     if (!actionObject)
-        return nullptr;
+        return icon(size);
 
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
     if (actionObject->getValue(iconVariantsManifestKey)) {
