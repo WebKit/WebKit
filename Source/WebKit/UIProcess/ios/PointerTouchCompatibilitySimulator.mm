@@ -118,6 +118,11 @@ WebCore::FloatPoint PointerTouchCompatibilitySimulator::locationInScreen() const
     return [view() convertPoint:pointInView toCoordinateSpace:[[[window() windowScene] screen] coordinateSpace]];
 }
 
+RetainPtr<UIWindow> PointerTouchCompatibilitySimulator::window() const
+{
+    return [m_view window];
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(IOS_FAMILY)

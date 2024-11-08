@@ -33,6 +33,8 @@
 #import <wtf/RunLoop.h>
 #import <wtf/WeakObjCPtr.h>
 
+@class BEScrollViewScrollUpdate;
+@class UIScrollEvent;
 @class UIWindow;
 @class WKBaseScrollView;
 @class WKWebView;
@@ -61,7 +63,7 @@ public:
 #endif
 
     RetainPtr<WKWebView> view() const { return m_view.get(); }
-    RetainPtr<UIWindow> window() const { return [m_view window]; }
+    RetainPtr<UIWindow> window() const;
 
 private:
     void resetState();
