@@ -25,12 +25,12 @@
 
 class TVOSMediaControls extends MediaControls
 {
-    static topButtonsScaleFactor = 1;
-    static backForwardButtonScaleFactor = 1;
-    static playPauseButtonScaleFactor = 2;
-    static overflowButtonScaleFactor = 1;
-    static bottomControlsBarButtonMargin = 48;
-    static bottomControlsBarMargin = 24;
+    static topButtonsScaleFactor = 1.5;
+    static backForwardButtonScaleFactor = 2.5;
+    static playPauseButtonScaleFactor = 3;
+    static overflowButtonScaleFactor = 1.5;
+    static bottomControlsBarButtonMargin = 80;
+    static bottomControlsBarMargin = 48;
 
     constructor(options = {})
     {
@@ -41,6 +41,8 @@ class TVOSMediaControls extends MediaControls
         this.element.classList.add("fullscreen");
         this.element.classList.add("tvos");
 
+        this.closeButton = new CloseButton(this);
+
         this.timeControl.scrubber.allowsRelativeScrubbing = true;
         this.timeControl.scrubber.knobStyle = Slider.KnobStyle.None;
         this.timeControl.timeLabelsAttachment = TimeControl.TimeLabelsAttachment.Below;
@@ -50,17 +52,23 @@ class TVOSMediaControls extends MediaControls
         
         this.overflowButton.addExtraContextMenuOptions(this.tracksButton.contextMenuOptions);
 
+        const singleButtonContainerMargins = {
+            leftMargin: 0,
+            rightMargin: 0,
+            buttonMargin: 0
+        };
+
         this.topLeftControlsBar = new ControlsBar("top-left");
-        this._topLeftControlsBarContainer = this.topLeftControlsBar.addChild(new ButtonsContainer);
+        this._topLeftControlsBarContainer = this.topLeftControlsBar.addChild(new ButtonsContainer(singleButtonContainerMargins));
 
         this.topRightControlsBar = new ControlsBar("top-right");
-        this._topRightControlsBarContainer = this.topRightControlsBar.addChild(new ButtonsContainer);
+        this._topRightControlsBarContainer = this.topRightControlsBar.addChild(new ButtonsContainer(singleButtonContainerMargins));
 
         this.bottomControlsBar.addChild(this.timeControl);
         this._bottomControlsBarContainer = this.bottomControlsBar.addChild(new ButtonsContainer);
 
         this.overflowControlsBar = new ControlsBar("overflow");
-        this._overflowControlsBarContainer = this.overflowControlsBar.addChild(new ButtonsContainer);
+        this._overflowControlsBarContainer = this.overflowControlsBar.addChild(new ButtonsContainer(singleButtonContainerMargins));
 
         this.metadataContainer = new MetadataContainer();
 
@@ -84,7 +92,7 @@ class TVOSMediaControls extends MediaControls
         if (!this._isInitialized)
             return;
 
-        this.fullscreenButton.scaleFactor = TVOSMediaControls.topButtonsScaleFactor;
+        this.closeButton.scaleFactor = TVOSMediaControls.topButtonsScaleFactor;
         this.muteButton.scaleFactor = TVOSMediaControls.topButtonsScaleFactor;
         this.playPauseButton.scaleFactor = TVOSMediaControls.playPauseButtonScaleFactor;
         this.skipForwardButton.scaleFactor = TVOSMediaControls.backForwardButtonScaleFactor;
@@ -115,6 +123,7 @@ class TVOSMediaControls extends MediaControls
         this.overflowControlsBar.width = this._overflowControlsBarContainer.width;
 
         this.timeControl.width = this.bottomControlsBar.width;
+        this.metadataContainer.width = this.bottomControlsBar.width - this.overflowControlsBar.width - ButtonsContainer.Defaults.LeftMargin;
 
         this.topLeftControlsBar.visible = this._topLeftControlsBarContainer.children.some(button => button.visible);
         this.topRightControlsBar.visible = this._topRightControlsBarContainer.children.some(button => button.visible);
@@ -129,7 +138,7 @@ class TVOSMediaControls extends MediaControls
     _topLeftContainerButtons()
     {
         if (this.usesLTRUserInterfaceLayoutDirection)
-            return [this.fullscreenButton];
+            return [this.closeButton];
         return [this.muteButton];
     }
 
@@ -137,7 +146,7 @@ class TVOSMediaControls extends MediaControls
     {
         if (this.usesLTRUserInterfaceLayoutDirection)
             return [this.muteButton];
-        return [this.fullscreenButton];
+        return [this.closeButton];
     }
 
     _bottomContainerButtons()

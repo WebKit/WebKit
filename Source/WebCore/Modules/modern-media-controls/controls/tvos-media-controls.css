@@ -32,33 +32,34 @@
 }
 
 .media-controls.fullscreen.tvos {
-    --tvos-controls-horizontal-margin: 24px;
-    --tvos-controls-vertical-margin: 32px;
-    --tvos-controls-bar-height: 56px;
+    --tvos-bottom-bar-horizontal-margin: 48px;
+    --tvos-controls-bar-height: 62px;
+    --tvos-controls-bottom-margin: 84px;
+    --tvos-controls-top-margin: 60px;
     --tvos-metadata-container-bottom-margin: 16px;
+    --tvos-overflow-button-bottom-margin: 38px;
+    --tvos-time-control-bottom-margin: 30px;
+    --tvos-top-bar-horizontal-margin: 40px;
 }
 
 .media-controls.fullscreen.tvos.uses-ltr-user-interface-layout-direction > .controls-bar.top-left,
 .media-controls.fullscreen.tvos:not(.uses-ltr-user-interface-layout-direction) > .controls-bar.top-right {
     position: absolute;
-    left: var(--tvos-controls-horizontal-margin);
-    right: auto;
-    top: var(--tvos-controls-vertical-margin);
+    left: var(--tvos-top-bar-horizontal-margin);
+    top: var(--tvos-controls-top-margin);
 }
 
 .media-controls.fullscreen.tvos.uses-ltr-user-interface-layout-direction > .controls-bar.top-right,
 .media-controls.fullscreen.tvos:not(.uses-ltr-user-interface-layout-direction) > .controls-bar.top-left {
     position: absolute;
-    left: auto;
-    right: var(--tvos-controls-horizontal-margin);
-    top: var(--tvos-controls-vertical-margin);
+    right: var(--tvos-top-bar-horizontal-margin);
+    top: var(--tvos-controls-top-margin);
 }
 
 .media-controls.fullscreen.tvos > .controls-bar.bottom {
     position: absolute;
-    bottom: var(--tvos-controls-vertical-margin);
-    left: var(--tvos-controls-horizontal-margin);
-    right: var(--tvos-controls-horizontal-margin);
+    bottom: var(--tvos-controls-bottom-margin);
+    left: var(--tvos-bottom-bar-horizontal-margin);
     height: var(--tvos-controls-bar-height);
 }
 
@@ -70,9 +71,8 @@
 
 .media-controls.fullscreen.tvos > .metadata-container {
     position: absolute;
-    left: var(--tvos-controls-horizontal-margin);
-    right: var(--tvos-controls-horizontal-margin);
-    bottom: calc(var(--tvos-controls-vertical-margin) + var(--tvos-controls-bar-height) + var(--tvos-metadata-container-bottom-margin));
+    left: var(--tvos-bottom-bar-horizontal-margin);
+    bottom: calc(var(--tvos-controls-bottom-margin) + var(--tvos-controls-bar-height) + var(--tvos-metadata-container-bottom-margin));
 }
 
 .media-controls.fullscreen.tvos .slider.default.disabled > .appearance > .fill > :is(.primary, .secondary) {
@@ -81,7 +81,17 @@
 
 .media-controls.fullscreen.tvos > .controls-bar.overflow {
     position: absolute;
-    left: auto;
-    right: var(--tvos-controls-horizontal-margin);
-    bottom: calc(var(--tvos-controls-vertical-margin) + var(--tvos-controls-bar-height) + var(--tvos-metadata-container-bottom-margin));
+    bottom: calc(var(--tvos-controls-bottom-margin) + var(--tvos-controls-bar-height) + var(--tvos-overflow-button-bottom-margin));
+}
+
+.media-controls.fullscreen.tvos.uses-ltr-user-interface-layout-direction > .controls-bar.overflow {
+    right: var(--tvos-bottom-bar-horizontal-margin);
+}
+
+.media-controls.fullscreen.tvos:not(.uses-ltr-user-interface-layout-direction) > .controls-bar.overflow {
+    left: var(--tvos-bottom-bar-horizontal-margin);
+}
+
+.media-controls.fullscreen.tvos > .controls-bar.bottom > .time-control {
+    margin-bottom: var(--tvos-time-control-bottom-margin);
 }
