@@ -35,10 +35,9 @@
 
 #include <functional>
 #include <wtf/CommaPrinter.h>
+#include <wtf/IndexedRange.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 namespace JSONImpl {
@@ -67,19 +66,17 @@ constexpr auto trueToken = "true"_s;
 constexpr auto falseToken = "false"_s;
 
 template<typename CodeUnit>
-bool parseConstToken(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenEnd, const char* token)
+bool parseConstToken(std::span<const CodeUnit> data, std::span<const CodeUnit>& tokenEnd, ASCIILiteral token)
 {
-    while (!data.empty() && *token != '\0') {
-        auto character = data.front();
-        data = data.subspan(1);
-        if (character != *token++)
-            break;
-    }
-
-    if (*token != '\0')
+    if (data.size() < token.length())
         return false;
 
-    tokenEnd = data;
+    for (auto [i, tokenCharacter] : IndexedRange(token.span8())) {
+        if (tokenCharacter != data[i])
+            return false;
+    }
+
+    tokenEnd = data.subspan(token.length());
     return true;
 }
 
@@ -389,7 +386,7 @@ RefPtr<JSON::Value> buildValue(std::span<const CodeUnit> data, std::span<const C
         String value;
         if (tokenEnd.data() - tokenStart.data() < 2)
             return nullptr;
-        bool ok = decodeString(std::span { tokenStart.data() + 1, tokenEnd.data() - 1 }, value);
+        bool ok = decodeString(tokenStart.subspan(1, tokenEnd.begin() - tokenStart.begin() - 2), value);
         if (!ok)
             return nullptr;
         result = JSON::Value::create(value);
@@ -432,7 +429,7 @@ RefPtr<JSON::Value> buildValue(std::span<const CodeUnit> data, std::span<const C
             String key;
             if (tokenEnd.data() - tokenStart.data() < 2)
                 return nullptr;
-            if (!decodeString(std::span { tokenStart.data() + 1, tokenEnd.data() - 1 }, key))
+            if (!decodeString(tokenStart.subspan(1, tokenEnd.begin() - tokenStart.begin() - 2), key))
                 return nullptr;
             data = tokenEnd;
 
@@ -796,10 +793,13 @@ ArrayBase::~ArrayBase() = default;
 void ArrayBase::writeJSONImpl(StringBuilder& output) const
 {
     output.append('[');
-    for (auto it = m_map.begin(); it != m_map.end(); ++it) {
-        if (it != m_map.begin())
+    bool isFirst = true;
+    for (auto& value : m_map) {
+        if (isFirst)
+            isFirst = false;
+        else
             output.append(',');
-        (*it)->writeJSON(output);
+        value->writeJSON(output);
     }
     output.append(']');
 }
@@ -909,5 +909,3 @@ bool ObjectBase::getValue(const String& name, RefPtr<Value>& output) const
 
 } // namespace JSONImpl
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
