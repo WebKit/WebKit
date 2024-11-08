@@ -536,11 +536,11 @@ public:
 
     WEBCORE_EXPORT String defaultCharsetForLegacyBindings() const;
 
-    inline String charset() const;
-    WEBCORE_EXPORT String characterSetWithUTF8Fallback() const;
+    inline ASCIILiteral charset() const;
+    WEBCORE_EXPORT ASCIILiteral characterSetWithUTF8Fallback() const;
     inline PAL::TextEncoding textEncoding() const;
 
-    WEBCORE_EXPORT AtomString encoding() const;
+    inline ASCIILiteral encoding() const;
 
     WEBCORE_EXPORT void setCharset(const String&); // Used by ObjC / GOBject bindings only.
 

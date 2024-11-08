@@ -86,7 +86,7 @@ public:
     Node* singleOwnerNode() const;
     Document* singleOwnerDocument() const;
 
-    const String& charset() const { return m_parserContext.charset; }
+    ASCIILiteral charset() const { return m_parserContext.charset; }
 
     bool loadCompleted() const { return m_loadCompleted; }
 

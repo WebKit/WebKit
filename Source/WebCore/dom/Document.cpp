@@ -1942,9 +1942,9 @@ void Document::setVisualUpdatesAllowedByClient(bool visualUpdatesAllowedByClient
         removeVisualUpdatePreventedReasons(VisualUpdatesPreventedReason::Client);
 }
 
-String Document::characterSetWithUTF8Fallback() const
+ASCIILiteral Document::characterSetWithUTF8Fallback() const
 {
-    AtomString name = encoding();
+    auto name = encoding();
     if (!name.isNull())
         return name;
     return "UTF-8"_s;
@@ -2054,12 +2054,6 @@ String Document::contentType() const
         return mimeType;
 
     return "application/xml"_s;
-}
-
-AtomString Document::encoding() const
-{
-    auto encoding = textEncoding().domName();
-    return encoding.isNull() ? nullAtom() : AtomString { encoding };
 }
 
 RefPtr<Range> Document::caretRangeFromPoint(int x, int y, HitTestSource source)
@@ -10385,7 +10379,7 @@ CSSCounterStyleRegistry& Document::counterStyleRegistry()
 CSSParserContext Document::cssParserContext() const
 {
     if (!m_cachedCSSParserContext)
-        m_cachedCSSParserContext = makeUnique<CSSParserContext>(*this, URL { }, emptyString());
+        m_cachedCSSParserContext = makeUnique<CSSParserContext>(*this, URL { }, ""_s);
     return *m_cachedCSSParserContext;
 }
 

@@ -101,7 +101,7 @@ public:
     }
 
 private:
-    void setCSSStyleSheet(const String&, const URL&, const String&, const CachedCSSStyleSheet* resource) final
+    void setCSSStyleSheet(const String&, const URL&, ASCIILiteral, const CachedCSSStyleSheet* resource) final
     {
         ASSERT(resource);
         ASSERT(ownedResource() == resource);

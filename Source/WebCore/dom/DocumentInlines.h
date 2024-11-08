@@ -53,7 +53,15 @@ inline PAL::TextEncoding Document::textEncoding() const
     return PAL::TextEncoding();
 }
 
-inline String Document::charset() const { return Document::encoding(); }
+inline ASCIILiteral Document::encoding() const
+{
+    return textEncoding().domName();
+}
+
+inline ASCIILiteral Document::charset() const
+{
+    return Document::encoding();
+}
 
 inline Quirks& Document::quirks()
 {

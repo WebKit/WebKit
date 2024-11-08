@@ -229,9 +229,9 @@ String HTMLScriptElement::sourceAttributeValue() const
     return attributeWithoutSynchronization(srcAttr).string();
 }
 
-String HTMLScriptElement::charsetAttributeValue() const
+AtomString HTMLScriptElement::charsetAttributeValue() const
 {
-    return attributeWithoutSynchronization(charsetAttr).string();
+    return attributeWithoutSynchronization(charsetAttr);
 }
 
 String HTMLScriptElement::typeAttributeValue() const

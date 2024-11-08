@@ -235,8 +235,8 @@ bool ScriptElement::prepareScript(const TextPosition& scriptStartPosition)
     // According to the spec, the module tag ignores the "charset" attribute as the same to the worker's
     // importScript. But WebKit supports the "charset" for importScript intentionally. So to be consistent,
     // even for the module tags, we handle the "charset" attribute.
-    if (!charsetAttributeValue().isEmpty())
-        m_characterEncoding = charsetAttributeValue();
+    if (auto attributeValue = charsetAttributeValue(); !attributeValue.isEmpty())
+        m_characterEncoding = WTFMove(attributeValue);
     else
         m_characterEncoding = document->charset();
 

@@ -129,6 +129,17 @@ inline void add(Hasher& hasher, const AtomString& string)
     add(hasher, bitwise_cast<uintptr_t>(string.impl()));
 }
 
+inline void add(Hasher& hasher, ASCIILiteral literal)
+{
+    // Chose to hash the characters here. Assuming this is better than hashing the possibly-already-computed hash of the characters.
+    bool remainder = literal.length() & 1;
+    unsigned roundedLength = literal.length() - remainder;
+    for (unsigned i = 0; i < roundedLength; i += 2)
+        add(hasher, (literal[i] << 16) | literal[i + 1]);
+    if (remainder)
+        add(hasher, literal[roundedLength]);
+}
+
 inline void add(Hasher& hasher, const URL& url)
 {
     add(hasher, url.string());

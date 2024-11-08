@@ -46,7 +46,7 @@ private:
     const TextResourceDecoder* textResourceDecoder() const final { return m_decoder.ptr(); }
     Ref<TextResourceDecoder> protectedDecoder() const;
     void setEncoding(const String&) final;
-    String encoding() const final;
+    ASCIILiteral encoding() const final;
 
     Ref<TextResourceDecoder> m_decoder;
     std::optional<String> m_text;

@@ -61,7 +61,7 @@ struct CSSParserContext {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
 
     URL baseURL;
-    String charset;
+    ASCIILiteral charset;
     CSSParserMode mode { HTMLStandardMode };
     std::optional<StyleRuleType> enclosingRuleType;
     bool isHTMLDocument : 1 { false };
@@ -109,7 +109,7 @@ struct CSSParserContext {
 
     CSSParserContext(CSSParserMode, const URL& baseURL = URL());
     WEBCORE_EXPORT CSSParserContext(const Document&);
-    CSSParserContext(const Document&, const URL& baseURL, const String& charset = emptyString());
+    CSSParserContext(const Document&, const URL& baseURL, ASCIILiteral charset = ""_s);
     ResolvedURL completeURL(const String&) const;
 
     bool operator==(const CSSParserContext&) const = default;

@@ -190,8 +190,9 @@ void HTMLDetailsElement::didFinishInsertingNode()
 Vector<RefPtr<HTMLDetailsElement>> HTMLDetailsElement::otherElementsInNameGroup()
 {
     Vector<RefPtr<HTMLDetailsElement>> otherElementsInNameGroup;
+    const auto& detailElementName = attributeWithoutSynchronization(nameAttr);
     for (auto& element : descendantsOfType<HTMLDetailsElement>(rootNode())) {
-        if (&element != this && element.attributeWithoutSynchronization(nameAttr) == attributeWithoutSynchronization(nameAttr))
+        if (&element != this && element.attributeWithoutSynchronization(nameAttr) == detailElementName)
             otherElementsInNameGroup.append(&element);
     }
     return otherElementsInNameGroup;

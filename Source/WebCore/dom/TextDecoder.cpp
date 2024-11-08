@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2016-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -83,7 +83,7 @@ ExceptionOr<String> TextDecoder::decode(std::optional<BufferSource::VariantType>
 
 String TextDecoder::encoding() const
 {
-    return makeString(asASCIILowercase(StringView::fromLatin1(m_textEncoding.name())));
+    return StringView(m_textEncoding.name()).convertToASCIILowercase();
 }
 
 }
