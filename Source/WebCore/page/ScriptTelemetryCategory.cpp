@@ -26,6 +26,11 @@
 #include "config.h"
 #include "ScriptTelemetryCategory.h"
 
+#if !(USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ScriptTelemetryCategoryAdditions.cpp>))
+#include <wtf/URL.h>
+#include <wtf/text/MakeString.h>
+#endif
+
 namespace WebCore {
 
 ASCIILiteral description(ScriptTelemetryCategory category)

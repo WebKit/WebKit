@@ -27,12 +27,13 @@
 #include "IntelligenceTextEffectsSupport.h"
 
 #include "CharacterRange.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "DocumentMarkerController.h"
 #include "FloatRect.h"
 #include "RenderedDocumentMarker.h"
 #include "SimpleRange.h"
 #include "TextIndicator.h"
+#include "TextIterator.h"
 #include <wtf/UUID.h>
 
 namespace WebCore {

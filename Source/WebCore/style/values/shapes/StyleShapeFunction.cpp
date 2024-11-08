@@ -32,6 +32,7 @@
 #include "SVGPathByteStreamSource.h"
 #include "SVGPathParser.h"
 #include "SVGPathSource.h"
+#include "StylePathFunction.h"
 #include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 

@@ -28,6 +28,7 @@
 #include "CSSNumericFactory.h"
 #include "CSSPropertyParserConsumer+Timeline.h"
 #include "CSSValuePair.h"
+#include "CSSValuePool.h"
 #include "StyleBuilderConverter.h"
 #include "StyleBuilderState.h"
 

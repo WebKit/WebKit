@@ -25,6 +25,9 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
+#include <wtf/text/StringView.h>
+
 namespace WebCore {
 namespace URLPatternUtilities {
 

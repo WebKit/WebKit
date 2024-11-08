@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
+
 namespace WebCore {
 
 enum class BaseURLStringType : bool;

@@ -29,6 +29,7 @@
 #include "CSSNumericFactory.h"
 #include "CSSUnitValue.h"
 #include "CSSUnits.h"
+#include "WebAnimationUtilities.h"
 
 namespace WebCore {
 

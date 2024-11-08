@@ -26,7 +26,7 @@
 
 #include <optional>
 #include <wtf/Forward.h>
-#include <wtf/RefCounted.h>
+#include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebKit {
 

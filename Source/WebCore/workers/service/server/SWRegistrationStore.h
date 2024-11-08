@@ -27,6 +27,7 @@
 
 #include <optional>
 #include <wtf/Forward.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

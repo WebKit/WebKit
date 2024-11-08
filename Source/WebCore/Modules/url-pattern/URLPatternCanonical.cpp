@@ -26,6 +26,7 @@
 #include "config.h"
 #include "URLPatternCanonical.h"
 
+#include "URLPattern.h"
 #include <wtf/URLParser.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>

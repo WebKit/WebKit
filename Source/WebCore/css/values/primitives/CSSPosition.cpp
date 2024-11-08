@@ -25,6 +25,7 @@
 #include "config.h"
 #include "CSSPosition.h"
 
+#include "CSSCalcValue.h"
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"

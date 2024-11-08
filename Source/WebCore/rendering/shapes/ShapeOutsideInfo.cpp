@@ -30,6 +30,7 @@
 #include "config.h"
 #include "ShapeOutsideInfo.h"
 
+#include "BoxLayoutShape.h"
 #include "FloatingObjects.h"
 #include "LengthFunctions.h"
 #include "RenderBlockFlow.h"

@@ -34,12 +34,14 @@
 #include <wtf/Markable.h>
 #include <wtf/Seconds.h>
 #include <wtf/WeakHashSet.h>
+#include <wtf/text/AtomStringHash.h>
 
 namespace WebCore {
 
 class AnimationTimeline;
 class CSSTransition;
 class Document;
+class Element;
 class ScrollTimeline;
 class ViewTimeline;
 class WebAnimation;

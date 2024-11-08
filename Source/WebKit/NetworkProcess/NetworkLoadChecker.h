@@ -33,6 +33,7 @@
 #include <WebCore/NetworkLoadInformation.h>
 #include <pal/SessionID.h>
 #include <variant>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 

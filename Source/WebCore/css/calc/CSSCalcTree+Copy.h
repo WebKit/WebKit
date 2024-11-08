@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "CSSCalcTree.h"
+
 namespace WebCore {
 namespace CSSCalc {
 

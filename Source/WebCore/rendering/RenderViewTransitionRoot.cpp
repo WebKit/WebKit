@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RenderViewTransitionRoot.h"
 
+#include "RenderBoxModelObjectInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

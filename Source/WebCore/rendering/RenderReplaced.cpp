@@ -43,6 +43,7 @@
 #include "LocalFrame.h"
 #include "RenderBlock.h"
 #include "RenderBoxInlines.h"
+#include "RenderChildIterator.h"
 #include "RenderElementInlines.h"
 #include "RenderFragmentedFlow.h"
 #include "RenderHighlight.h"

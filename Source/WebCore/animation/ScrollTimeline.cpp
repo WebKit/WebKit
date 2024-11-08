@@ -30,7 +30,7 @@
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSScrollValue.h"
 #include "CSSValuePool.h"
-#include "Document.h"
+#include "DocumentInlines.h"
 #include "Element.h"
 #include "RenderLayerScrollableArea.h"
 #include "RenderView.h"

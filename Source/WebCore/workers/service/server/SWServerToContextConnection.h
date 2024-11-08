@@ -37,6 +37,7 @@
 #include "Site.h"
 #include <wtf/CheckedPtr.h>
 #include <wtf/Identified.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/URLHash.h>
 #include <wtf/WeakPtr.h>

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebProcessSyncClient.h"
 
+#include "MessageSenderInlines.h"
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/Page.h>

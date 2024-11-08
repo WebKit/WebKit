@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CSSCalcSymbolTable.h"
+#include "CSSCalcValue.h"
 #include "CSSValueTypes.h"
 #include <optional>
 #include <tuple>

@@ -42,6 +42,7 @@
 #include "NetworkProcess.h"
 #include "NetworkProcessConnectionMessages.h"
 #include "NetworkProcessProxyMessages.h"
+#include "NetworkSchemeRegistry.h"
 #include "NetworkSession.h"
 #include "NetworkStorageManager.h"
 #include "PrivateRelayed.h"

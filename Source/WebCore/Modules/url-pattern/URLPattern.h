@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ExceptionOr.h"
 #include <wtf/Forward.h>
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
@@ -75,7 +76,6 @@ private:
     String m_hash;
 
     bool m_hasRegExpGroups { false };
-    bool m_ignoreCase { false };
 };
 
 }

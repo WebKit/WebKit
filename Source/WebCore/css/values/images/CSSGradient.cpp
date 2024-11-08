@@ -29,6 +29,8 @@
 
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
+#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
+#include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CalculationValue.h"

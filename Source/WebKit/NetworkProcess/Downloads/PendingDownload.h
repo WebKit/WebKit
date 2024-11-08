@@ -30,6 +30,7 @@
 #include "NetworkLoadClient.h"
 #include "SandboxExtension.h"
 #include "UseDownloadPlaceholder.h"
+#include <WebCore/ProcessIdentifier.h>
 #include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 

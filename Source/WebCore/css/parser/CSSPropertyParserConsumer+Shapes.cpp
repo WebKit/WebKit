@@ -37,6 +37,7 @@
 #include "CSSPropertyParserConsumer+LengthPercentageDefinitions.h"
 #include "CSSPropertyParserConsumer+MetaConsumer.h"
 #include "CSSPropertyParserConsumer+Position.h"
+#include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+URL.h"
 #include "CSSPropertyParsing.h"
 #include "CSSValueKeywords.h"

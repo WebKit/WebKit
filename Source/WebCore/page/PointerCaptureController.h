@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "EventTarget.h"
 #include "ExceptionOr.h"
 #include "PlatformMouseEvent.h"
 #include "PointerID.h"

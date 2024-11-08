@@ -33,6 +33,7 @@
 #include "GeometryUtilities.h"
 #include "Gradient.h"
 #include "GradientColorStop.h"
+#include "RenderStyleInlines.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePrimitiveNumericTypes+Evaluation.h"
 

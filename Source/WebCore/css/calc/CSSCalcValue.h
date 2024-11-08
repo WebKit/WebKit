@@ -42,6 +42,10 @@ namespace Calculation {
 enum class Category : uint8_t;
 }
 
+namespace CSS {
+struct Range;
+}
+
 class CSSCalcSymbolTable;
 class CSSCalcSymbolsAllowed;
 class CSSParserTokenRange;

@@ -26,6 +26,7 @@
 #pragma once
 
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 
 namespace WebCore {
 

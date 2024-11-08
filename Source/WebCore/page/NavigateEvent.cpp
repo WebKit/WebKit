@@ -29,6 +29,7 @@
 #include "AbortController.h"
 #include "Element.h"
 #include "ExceptionCode.h"
+#include "HTMLBodyElement.h"
 #include "HistoryController.h"
 #include "LocalFrameView.h"
 #include "Navigation.h"

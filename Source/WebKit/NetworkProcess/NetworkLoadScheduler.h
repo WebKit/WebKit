@@ -31,6 +31,7 @@
 #include <tuple>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakListHashSet.h>
 #include <wtf/WeakPtr.h>

@@ -45,7 +45,7 @@ class SessionID;
 }
 
 namespace WebCore {
-
+class Site;
 struct ClientOrigin;
 struct WorkerFetchResult;
 struct WorkerInitializationData;

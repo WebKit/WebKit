@@ -33,6 +33,7 @@
 #include "DataTransferItemList.h"
 #include "DeprecatedGlobalSettings.h"
 #include "DocumentFragment.h"
+#include "DocumentInlines.h"
 #include "DragData.h"
 #include "Editor.h"
 #include "FileList.h"

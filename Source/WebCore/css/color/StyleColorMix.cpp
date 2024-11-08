@@ -28,6 +28,7 @@
 
 #include "CSSColorMixResolver.h"
 #include "CSSColorMixSerialization.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "ColorSerialization.h"
 #include <wtf/text/TextStream.h>
 

@@ -35,6 +35,8 @@ struct BorderRadius;
 }
 
 class CSSParserTokenRange;
+class CSSValue;
+enum CSSPropertyID : uint16_t;
 struct CSSParserContext;
 
 namespace CSSPropertyParserHelpers {

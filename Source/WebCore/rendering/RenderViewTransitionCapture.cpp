@@ -30,6 +30,7 @@
 #include "ImageQualityController.h"
 #include "PaintInfo.h"
 #include "RenderBoxModelObjectInlines.h"
+#include "RenderLayer.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

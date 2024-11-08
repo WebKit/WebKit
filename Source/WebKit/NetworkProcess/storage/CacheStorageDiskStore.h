@@ -31,8 +31,12 @@
 #include <wtf/WorkQueue.h>
 #include <wtf/text/WTFString.h>
 
-namespace WebCore::DOMCacheEngine {
+namespace WebCore {
+class FormData;
+class SharedBuffer;
+namespace DOMCacheEngine {
 using ResponseBody = std::variant<std::nullptr_t, Ref<FormData>, Ref<SharedBuffer>>;
+}
 }
 
 namespace WebKit {

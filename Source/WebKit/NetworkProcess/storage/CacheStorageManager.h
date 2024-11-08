@@ -27,6 +27,7 @@
 
 #include "Connection.h"
 #include <WebCore/DOMCacheEngine.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
 

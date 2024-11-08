@@ -57,6 +57,7 @@
 #include "HTMLFrameOwnerElement.h"
 #include "HTTPHeaderField.h"
 #include "InspectorInstrumentation.h"
+#include "LegacySchemeRegistry.h"
 #include "LoaderStrategy.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"

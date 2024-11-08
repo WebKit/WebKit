@@ -29,9 +29,11 @@
 #include "AnimationEffect.h"
 #include "AnimationTimelinesController.h"
 #include "CSSAnimationEvent.h"
+#include "DocumentTimeline.h"
 #include "InspectorInstrumentation.h"
 #include "KeyframeEffect.h"
 #include "RenderStyle.h"
+#include "ViewTimeline.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

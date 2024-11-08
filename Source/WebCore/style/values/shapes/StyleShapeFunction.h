@@ -34,6 +34,8 @@
 namespace WebCore {
 namespace Style {
 
+struct Path;
+
 // <coordinate-pair> = <length-percentage>{2}
 using CoordinatePair  = Point<LengthPercentage<>>;
 

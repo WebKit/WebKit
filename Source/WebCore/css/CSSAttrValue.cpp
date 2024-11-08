@@ -23,11 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
 #include "config.h"
 #include "CSSAttrValue.h"
 
+#include <wtf/text/MakeString.h>
 #include "CSSPrimitiveValue.h"
 
 namespace WebCore {
