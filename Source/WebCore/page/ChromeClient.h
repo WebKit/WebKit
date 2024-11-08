@@ -706,6 +706,8 @@ public:
 
     virtual void callAfterPendingSyntheticClick(CompletionHandler<void(SyntheticClickResult)>&& completion) { completion(SyntheticClickResult::Failed); }
 
+    virtual void didSwallowClickEvent(const PlatformMouseEvent&, Node&) { }
+
     WEBCORE_EXPORT virtual ~ChromeClient();
 
 protected:

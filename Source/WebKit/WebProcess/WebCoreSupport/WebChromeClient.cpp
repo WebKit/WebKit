@@ -1942,4 +1942,9 @@ void WebChromeClient::callAfterPendingSyntheticClick(CompletionHandler<void(Synt
     protectedPage()->callAfterPendingSyntheticClick(WTFMove(completion));
 }
 
+void WebChromeClient::didSwallowClickEvent(const PlatformMouseEvent& event, Node& node)
+{
+    protectedPage()->didSwallowClickEvent(event, node);
+}
+
 } // namespace WebKit

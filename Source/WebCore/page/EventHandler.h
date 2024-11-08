@@ -238,7 +238,7 @@ public:
     enum class InMotion : bool { No, Yes };
     void updateTouchLastGlobalPositionAndDelta(PointerID, const IntPoint&, InTouchEventHandling, InMotion);
     bool dispatchTouchEvent(const PlatformTouchEvent&, const AtomString&, const EventTargetTouchArrayMap&, float, float);
-    bool dispatchSimulatedTouchEvent(IntPoint location);
+    WEBCORE_EXPORT bool dispatchSimulatedTouchEvent(IntPoint location);
     Frame* touchEventTargetSubframe() const { return m_touchEventTargetSubframe.get(); }
     const TouchArray& touches() const { return m_touches; }
 #endif
