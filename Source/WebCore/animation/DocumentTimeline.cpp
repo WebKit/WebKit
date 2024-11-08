@@ -412,10 +412,8 @@ void DocumentTimeline::applyPendingAcceleratedAnimations()
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     if (m_document && m_document->settings().threadedAnimationResolutionEnabled()) {
         m_acceleratedAnimationsPendingRunningStateChange.clear();
-        if (CheckedPtr timelinesController = m_document->timelinesController()) {
-            if (auto* acceleratedEffectStackUpdater = timelinesController->existingAcceleratedEffectStackUpdater())
-                acceleratedEffectStackUpdater->updateEffectStacks();
-        }
+        if (CheckedPtr timelinesController = m_document->timelinesController())
+            timelinesController->updateAcceleratedEffectStacks();
         return;
     }
 #endif
@@ -536,5 +534,16 @@ Seconds DocumentTimeline::convertTimelineTimeToOriginRelativeTime(Seconds timeli
     // https://drafts.csswg.org/web-animations-1/#ref-for-timeline-time-to-origin-relative-time
     return timelineTime + m_originTime;
 }
+
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+Ref<AcceleratedTimeline> DocumentTimeline::createAcceleratedRepresentation()
+{
+    ASSERT(m_document);
+    ASSERT(m_document->timelinesController());
+    CheckedPtr timelinesController = RefPtr { m_document.get() }->timelinesController();
+    auto originTime = timelinesController->acceleratedEffectStackUpdater().originTime();
+    return AcceleratedTimeline::create(originTime);
+}
+#endif
 
 } // namespace WebCore

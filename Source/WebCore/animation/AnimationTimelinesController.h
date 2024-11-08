@@ -79,8 +79,8 @@ public:
     AnimationTimeline* timelineForName(const AtomString&, const Element&) const;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
-    AcceleratedEffectStackUpdater* existingAcceleratedEffectStackUpdater() const { return m_acceleratedEffectStackUpdater.get(); }
     AcceleratedEffectStackUpdater& acceleratedEffectStackUpdater();
+    void updateAcceleratedEffectStacks();
 #endif
 
 private:

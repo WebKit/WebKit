@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,32 +27,38 @@
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
-#include "AcceleratedEffect.h"
-#include <wtf/HashSet.h>
+#include "ScrollAxis.h"
+#include "ScrollingNodeID.h"
+#include "WebAnimationTime.h"
 #include <wtf/Seconds.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
-class Document;
-class Element;
-struct Styleable;
+class ScrollTimeline;
 
-class AcceleratedEffectStackUpdater {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
+class AcceleratedTimeline : public RefCounted<AcceleratedTimeline> {
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(AcceleratedTimeline);
 public:
-    AcceleratedEffectStackUpdater(Document&);
+    static Ref<AcceleratedTimeline> create(Seconds originTime);
 
-    void updateEffectStacks();
-    void updateEffectStackForTarget(const Styleable&);
+    std::optional<WebAnimationTime> currentTime() const { return m_currentTime; }
+    WEBCORE_EXPORT void setMonotonicTime(MonotonicTime);
 
-    Seconds originTime() const { return m_originTime; }
+    // Encoding support.
+    WEBCORE_EXPORT static Ref<AcceleratedTimeline> create(std::optional<WebAnimationTime>&& duration, Seconds originTime);
+    const std::optional<WebAnimationTime> duration() const { return m_duration; }
+    const Seconds originTime() const { return m_originTime; }
 
-protected:
+    virtual ~AcceleratedTimeline() = default;
 
 private:
-    using HashedStyleable = std::pair<Element*, std::optional<Style::PseudoElementIdentifier>>;
-    HashSet<HashedStyleable> m_targetsPendingUpdate;
+    AcceleratedTimeline(std::optional<WebAnimationTime>&& duration, Seconds originTime);
+
+    std::optional<WebAnimationTime> m_duration;
     Seconds m_originTime;
+
+    std::optional<WebAnimationTime> m_currentTime;
 };
 
 } // namespace WebCore

@@ -102,6 +102,8 @@ public:
     void animationsWereAddedToNode(RemoteLayerTreeNode&);
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&);
     void updateAnimations();
+    void clearAnimationTimelines();
+    void setAnimationTimelinesCurrentTime(MonotonicTime);
 #endif
 
 private:
@@ -191,6 +193,7 @@ private:
     friend class RemoteScrollingCoordinatorProxyMac;
     Lock m_effectStacksLock;
     HashMap<WebCore::PlatformLayerIdentifier, Ref<RemoteAcceleratedEffectStack>> m_effectStacks WTF_GUARDED_BY_LOCK(m_effectStacksLock);
+    HashSet<Ref<WebCore::AcceleratedTimeline>> m_animationTimelines;
 #endif
 
 #if ENABLE(MOMENTUM_EVENT_DISPATCHER)

@@ -378,7 +378,7 @@ void RemoteLayerTreeEventDispatcher::startOrStopDisplayLinkOnMainThread()
 
         {
             Locker lock { m_effectStacksLock };
-            if (!m_effectStacks.isEmpty())
+            if (!m_animationTimelines.isEmpty())
                 return true;
         }
 
@@ -607,8 +607,20 @@ void RemoteLayerTreeEventDispatcher::animationsWereAddedToNode(RemoteLayerTreeNo
 {
     ASSERT(isMainRunLoop());
     assertIsHeld(m_effectStacksLock);
+
     auto effectStack = node.takeEffectStack();
     ASSERT(effectStack);
+
+    auto addEffectTimelines = [&](const WebCore::AcceleratedEffects& effects) {
+        for (auto& effect : effects) {
+            auto& timeline = effect->timeline();
+            if (timeline)
+                m_animationTimelines.add(*timeline);
+        }
+    };
+    addEffectTimelines(effectStack->primaryLayerEffects());
+    addEffectTimelines(effectStack->backdropLayerEffects());
+
     m_effectStacks.set(node.layerID(), effectStack.releaseNonNull());
 }
 
@@ -620,6 +632,17 @@ void RemoteLayerTreeEventDispatcher::animationsWereRemovedFromNode(RemoteLayerTr
         effectStack->clear(node.layer());
 }
 
+void RemoteLayerTreeEventDispatcher::clearAnimationTimelines()
+{
+    m_animationTimelines.clear();
+}
+
+void RemoteLayerTreeEventDispatcher::setAnimationTimelinesCurrentTime(MonotonicTime now)
+{
+    for (auto& timeline : m_animationTimelines)
+        timeline->setMonotonicTime(now);
+}
+
 void RemoteLayerTreeEventDispatcher::updateAnimations()
 {
     ASSERT(!isMainRunLoop());
@@ -628,11 +651,11 @@ void RemoteLayerTreeEventDispatcher::updateAnimations()
     // FIXME: Rather than using 'now' at the point this is called, we
     // should probably be using the timestamp of the (next?) display
     // link update or vblank refresh.
-    auto now = MonotonicTime::now();
+    setAnimationTimelinesCurrentTime(MonotonicTime::now());
 
     auto effectStacks = std::exchange(m_effectStacks, { });
     for (auto& [layerID, effectStack] : effectStacks) {
-        effectStack->applyEffectsFromScrollingThread(now);
+        effectStack->applyEffectsFromScrollingThread();
 
         // We can clear the effect stack if it's empty, but the previous
         // call to applyEffects() is important so that the base values

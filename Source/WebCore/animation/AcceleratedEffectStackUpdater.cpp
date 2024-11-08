@@ -46,9 +46,9 @@ namespace WebCore {
 AcceleratedEffectStackUpdater::AcceleratedEffectStackUpdater(Document& document)
 {
     auto now = MonotonicTime::now();
-    m_timeOrigin = now.secondsSinceEpoch();
+    m_originTime = now.secondsSinceEpoch();
     if (RefPtr domWindow = document.domWindow())
-        m_timeOrigin -= Seconds::fromMilliseconds(domWindow->performance().relativeTimeFromTimeOriginInReducedResolution(now));
+        m_originTime -= Seconds::fromMilliseconds(domWindow->performance().relativeTimeFromTimeOriginInReducedResolution(now));
 }
 
 void AcceleratedEffectStackUpdater::updateEffectStacks()
