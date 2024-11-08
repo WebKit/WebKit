@@ -127,6 +127,8 @@ auto ContentExtensionsBackend::actionsFromContentRuleList(const ContentExtension
             return topURLActions.contains(actionAndFlags);
         case ActionCondition::IfFrameURL:
             return !frameURLActions.contains(actionAndFlags);
+        case ActionCondition::UnlessFrameURL:
+            return frameURLActions.contains(actionAndFlags);
         }
         ASSERT_NOT_REACHED();
         return false;

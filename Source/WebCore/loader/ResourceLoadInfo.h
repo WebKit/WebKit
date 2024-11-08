@@ -38,8 +38,9 @@ enum class ActionCondition : uint32_t {
     IfTopURL = 0x20000,
     UnlessTopURL = 0x40000,
     IfFrameURL = 0x60000,
+    UnlessFrameURL = 0x80000
 };
-static constexpr uint32_t ActionConditionMask = 0x60000;
+static constexpr uint32_t ActionConditionMask = 0xE0000;
 
 enum class ResourceType : uint32_t {
     Document = 0x0001,
@@ -75,9 +76,9 @@ using ResourceFlags = uint32_t;
 constexpr ResourceFlags AllResourceFlags = LoadTypeMask | ResourceTypeMask | LoadContextMask | ActionConditionMask;
 
 // The first 32 bits of a uint64_t action are used for the action location.
-// The next 19 bits are used for the flags (ResourceType, LoadType, LoadContext, ActionCondition).
+// The next 20 bits are used for the flags (ResourceType, LoadType, LoadContext, ActionCondition).
 // The values -1 and -2 are used for removed and empty values in HashTables.
-static constexpr uint64_t ActionFlagMask = 0x0007FFFF00000000;
+static constexpr uint64_t ActionFlagMask = 0x000FFFFF00000000;
 
 OptionSet<ResourceType> toResourceType(CachedResource::Type, ResourceRequestRequester);
 std::optional<OptionSet<ResourceType>> readResourceType(StringView);

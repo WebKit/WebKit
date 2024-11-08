@@ -57,7 +57,7 @@ struct Trigger {
         if (topURLFilterIsCaseSensitive)
             ASSERT(actionCondition == ActionCondition::IfTopURL || actionCondition == ActionCondition::UnlessTopURL);
         if (frameURLFilterIsCaseSensitive)
-            ASSERT(actionCondition == ActionCondition::IfFrameURL);
+            ASSERT(actionCondition == ActionCondition::IfFrameURL || actionCondition == ActionCondition::UnlessFrameURL);
     }
 
     bool isEmpty() const
