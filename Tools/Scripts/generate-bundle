@@ -307,6 +307,8 @@ class BundleCreator(object):
         else:
             self._bundler.generate_wrapper_script(interpreter, binary_to_wrap, variables)
         self._wrappers.append(binary_to_wrap)
+        self._bundler.generate_wrapper_script(interpreter, binary_to_wrap, variables)
+        self._wrapper_scripts.append(binary_to_wrap)
 
     def _generate_install_deps_script(self, system_packages_needed):
         if not system_packages_needed:

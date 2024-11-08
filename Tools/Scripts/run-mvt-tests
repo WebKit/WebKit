@@ -196,7 +196,7 @@ class WPEWebDriver:
             if os.path.exists(binary):
                 self.binary = binary
             elif os.path.exists(DEFAULT_WEBDRIVER):
-                self.binary = DEFAUlt_WEBDRIVER
+                self.binary = DEFAULT_WEBDRIVER
             else:
                 fatal("Could not find path to WPEWebDriver")
         if not os.path.exists(self.binary):
@@ -210,6 +210,7 @@ class WPEWebDriver:
             env = {
                 "WEBKIT_EXEC_PATH": "/app/webkit/WebKitBuild/{}/bin".format(self.configuration.capitalize()),
                 "WEBKIT_INJECTED_BUNDLE_PATH": "/app/webkit/WebKitBuild/{}/lib".format(self.configuration.capitalize()),
+                "WEBKIT_INSPECTOR_RESOURCES_PATH": "/app/webkit/WebKitBuild/{}/share".format(self.configuration.capitalize()),
                 "COG_MODULEDIR": "/app/webkit/WebKitBuild/{}/Tools/cog-prefix/src/cog-build/platform".format(self.configuration.capitalize()),
             }
             cmd = [os.path.join(top_level_directory, "Tools/Scripts/webkit-flatpak"),'--wpe','--{}'.format(self.configuration),'-c','/bin/bash','-c']
@@ -218,6 +219,7 @@ class WPEWebDriver:
             env = {
                 "WEBKIT_EXEC_PATH": "{}/WebKitBuild/{}/bin".format(top_level_directory, configuration),
                 "WEBKIT_INJECTED_BUNDLE_PATH": "{}/WebKitBuild/{}/lib".format(top_level_directory, configuration),
+                "WEBKIT_INSPECTOR_RESOURCES_PATH": "{}/WebKitBuild/{}/share".format(top_level_directory, configuration),
                 "COG_MODULEDIR": "{}/WebKitBuild/{}/Tools/cog-prefix/src/cog-build/platform".format(top_level_directory, configuration),
             }
             cmd = [os.path.join(top_level_directory, "Tools/jhbuild/jhbuild-wrapper"),'--wpe','--{}'.format(self.configuration),'run','/bin/bash','-c']
@@ -256,6 +258,7 @@ class WPEWebDriver:
             env = {
                 "WEBKIT_EXEC_PATH": "/app/webkit/WebKitBuild/{}/bin".format(self.configuration.capitalize()),
                 "WEBKIT_INJECTED_BUNDLE_PATH": "/app/webkit/WebKitBuild/{}/lib".format(self.configuration.capitalize()),
+                "WEBKIT_INSPECTOR_RESOURCES_PATH": "/app/webkit/WebKitBuild/{}/share".format(self.configuration.capitalize()),
                 "COG_MODULEDIR": "/app/webkit/WebKitBuild/{}/Tools/cog-prefix/src/cog-build/platform".format(self.configuration.capitalize()),
             }
             subcommand = "{} {} --host=all --port={}".format(dict_flat(env), self.binary, self.port)
