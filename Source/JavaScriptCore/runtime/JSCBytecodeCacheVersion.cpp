@@ -84,6 +84,7 @@ uint32_t computeJSCBytecodeCacheVersion()
             param.start = info.dli_fbase;
             if (!dl_iterate_phdr(static_cast<int(*)(struct dl_phdr_info*, size_t, void*)>(
                 [](struct dl_phdr_info* info, size_t, void* priv) -> int {
+                    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Unix port
                     auto* data = static_cast<DLParam*>(priv);
                     void* start = nullptr;
                     for (unsigned i = 0; i < info->dlpi_phnum; ++i) {
@@ -128,6 +129,7 @@ uint32_t computeJSCBytecodeCacheVersion()
                         }
                     }
                     return 0;
+                    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 }), &param))
                     return std::nullopt;
 

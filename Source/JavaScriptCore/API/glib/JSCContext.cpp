@@ -290,7 +290,9 @@ JSValueRef jscContextGArrayToJSArray(JSCContext* context, GPtrArray* gArray, JSV
         return JSValueMakeUndefined(priv->jsContext.get());
 
     for (unsigned i = 0; i < gArray->len; ++i) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         gpointer item = g_ptr_array_index(gArray, i);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         if (!item)
             JSObjectSetPropertyAtIndex(priv->jsContext.get(), jsArrayObject, i, JSValueMakeNull(priv->jsContext.get()), exception);
         else if (JSC_IS_VALUE(item))
@@ -383,7 +385,9 @@ GUniquePtr<char*> jscContextJSArrayToGStrv(JSCContext* context, JSValueRef jsArr
             return nullptr;
         }
 
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         strv.get()[i] = jsc_value_to_string(jsValueItem.get());
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     return strv;
@@ -443,11 +447,13 @@ JSValueRef jscContextGValueToJSValue(JSCContext* context, const GValue* value, J
                 return jscContextGArrayToJSArray(context, static_cast<GPtrArray*>(ptr), exception);
 
             if (g_type_is_a(G_VALUE_TYPE(value), G_TYPE_STRV)) {
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
                 auto** strv = static_cast<char**>(ptr);
                 auto strvLength = g_strv_length(strv);
                 GRefPtr<GPtrArray> gArray = adoptGRef(g_ptr_array_new_full(strvLength, g_object_unref));
                 for (unsigned i = 0; i < strvLength; i++)
                     g_ptr_array_add(gArray.get(), jsc_value_new_string(context, strv[i]));
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 return jscContextGArrayToJSArray(context, gArray.get(), exception);
             }
         } else
