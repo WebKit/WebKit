@@ -37,6 +37,11 @@
 #include <gtk/gtk.h>
 #include <wtf/glib/GUniquePtr.h>
 
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::DropTarget> : std::true_type { };
+}
+
 namespace WebKit {
 using namespace WebCore;
 
