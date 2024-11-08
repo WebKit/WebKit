@@ -182,14 +182,14 @@ static ExceptionOr<String> canonicalizeOpaquePathname(StringView value)
     if (!dummyURL.isValid())
         return Exception { ExceptionCode::TypeError, "Invalid input to canonicalize a URL opaque path string."_s };
 
-    return value.toString();
+    return dummyURL.path().toString();
 }
 
 // https://urlpattern.spec.whatwg.org/#canonicalize-a-pathname
 static ExceptionOr<String> canonicalizePathname(StringView pathnameValue)
 {
-    if (!pathnameValue)
-        return Exception { ExceptionCode::TypeError, "Null input to canonicalize a URL path string."_s };
+    if (pathnameValue.isEmpty())
+        return pathnameValue.toString();
 
     bool hasLeadingSlash = pathnameValue[0] == '/';
     auto maybeAddSlashPrefix = hasLeadingSlash ? pathnameValue : makeString("/-"_s, pathnameValue);
