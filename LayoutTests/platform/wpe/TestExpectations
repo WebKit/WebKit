@@ -831,8 +831,6 @@ webkit.org/b/252878 webrtc/datachannel/bufferedAmountLowThreshold-default.html [
 
 webkit.org/b/235885 webrtc/video-remote-mute.html [ Timeout ]
 
-webkit.org/b/276587 webrtc/video-av1.html [ Timeout ]
-
 webkit.org/b/265290 webrtc/datachannel/basic.html [ Pass Crash ]
 webkit.org/b/265290 webrtc/datachannel/bufferedAmount-afterClose.html [ Pass Crash ]
 webkit.org/b/265290 webrtc/datachannel/bufferedAmountLowThreshold.html [ Pass Crash Failure ]
