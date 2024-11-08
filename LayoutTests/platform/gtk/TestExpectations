@@ -956,6 +956,9 @@ webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/
 webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.http.html [ Failure ]
 webkit.org/b/244517 imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/sharedworker-import.https.html [ Failure ]
 
+# Test started timing out after changes on 11/6/24
+webkit.org/b/282711 imported/w3c/web-platform-tests/pointerevents/pointerevent_touch-action-keyboard.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures.
 #////////////////////////////////////////////////////////////////////////////////////////
