@@ -167,11 +167,6 @@ inline std::span<const uint8_t> span(CFDataRef data)
     return { static_cast<const uint8_t*>(CFDataGetBytePtr(data)), Checked<size_t>(CFDataGetLength(data)) };
 }
 
-inline std::span<uint8_t> mutableSpan(CFMutableDataRef data)
-{
-    return { static_cast<uint8_t*>(CFDataGetMutableBytePtr(data)), Checked<size_t>(CFDataGetLength(data)) };
-}
-
 inline RetainPtr<CFDataRef> toCFData(std::span<const uint8_t> span)
 {
     return adoptCF(CFDataCreate(kCFAllocatorDefault, span.data(), span.size()));
@@ -200,7 +195,6 @@ inline std::optional<float> makeVectorElement(const float*, CFNumberRef cfNumber
 
 using WTF::createCFArray;
 using WTF::makeVector;
-using WTF::mutableSpan;
 using WTF::span;
 using WTF::toCFData;
 

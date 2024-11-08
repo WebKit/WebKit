@@ -34,6 +34,8 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 namespace WebKit {
 
 static constexpr Seconds deltaHistoryMaximumAge = 500_ms;
@@ -466,8 +468,8 @@ void MomentumEventDispatcher::equalizeTailGaps()
         return;
 
     enum Axis { Horizontal, Vertical };
-    std::array<Vector<float>, 2> deltas;
-    std::array<unsigned, 2> firstZeroIndex = { 0, 0 };
+    Vector<float> deltas[2];
+    unsigned firstZeroIndex[2] = { 0, 0 };
     deltas[Horizontal].reserveInitialCapacity(initialTableSize);
     deltas[Vertical].reserveInitialCapacity(initialTableSize);
     for (unsigned i = 0; i < initialTableSize; i++) {
@@ -494,11 +496,11 @@ void MomentumEventDispatcher::equalizeTailGaps()
     sortDeltas(Vertical);
 
     // GapSize is a count of contiguous frames with zero deltas.
-    using GapSize = std::array<unsigned, 2>;
+    typedef unsigned GapSize[2];
     GapSize minimumGap = { 0, 0 };
     GapSize currentGap = { 0, 0 };
     GapSize remainingGapToGenerate = { 0, 0 };
-    std::array<unsigned, 2> originalTableIndex = { 0, 0 };
+    unsigned originalTableIndex[2] = { 0, 0 };
 
     auto takeNextDelta = [&] (uint8_t axis) -> float {
         if (originalTableIndex[axis] >= initialTableSize)
@@ -679,5 +681,7 @@ void MomentumEventDispatcher::flushLog()
 #endif
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

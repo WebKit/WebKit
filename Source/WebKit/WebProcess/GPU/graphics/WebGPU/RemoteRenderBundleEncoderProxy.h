@@ -87,7 +87,8 @@ private:
         std::optional<Vector<WebCore::WebGPU::BufferDynamicOffset>>&& dynamicOffsets) final;
 
     void setBindGroup(WebCore::WebGPU::Index32, const WebCore::WebGPU::BindGroup&,
-        std::span<const uint32_t> dynamicOffsetsArrayBuffer,
+        const uint32_t* dynamicOffsetsArrayBuffer,
+        size_t dynamicOffsetsArrayBufferLength,
         WebCore::WebGPU::Size64 dynamicOffsetsDataStart,
         WebCore::WebGPU::Size32 dynamicOffsetsDataLength) final;
 

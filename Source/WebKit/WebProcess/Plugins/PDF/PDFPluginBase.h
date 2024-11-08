@@ -305,7 +305,7 @@ private:
     // FIXME: It would be nice to avoid having both the "copy into a buffer" and "return a pointer" ways of getting data.
     std::span<const uint8_t> dataSpanForRange(uint64_t sourcePosition, size_t count, CheckValidRanges) const;
     // Returns true only if we can satisfy all of the requests.
-    bool getByteRanges(CFMutableArrayRef, std::span<const CFRange>) const;
+    bool getByteRanges(CFMutableArrayRef, const CFRange*, size_t count) const;
 
 protected:
     explicit PDFPluginBase(WebCore::HTMLPlugInElement&);

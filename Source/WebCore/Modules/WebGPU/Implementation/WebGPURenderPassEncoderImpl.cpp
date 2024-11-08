@@ -95,14 +95,18 @@ void RenderPassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGro
     wgpuRenderPassEncoderSetBindGroup(m_backing.get(), index, protectedConvertToBackingContext()->convertToBacking(bindGroup), backingOffsets.size(), backingOffsets.data());
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 void RenderPassEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindGroup,
-    std::span<const uint32_t> dynamicOffsetsArrayBuffer,
+    const uint32_t* dynamicOffsetsArrayBuffer,
+    size_t dynamicOffsetsArrayBufferLength,
     Size64 dynamicOffsetsDataStart,
     Size32 dynamicOffsetsDataLength)
 {
+    UNUSED_PARAM(dynamicOffsetsArrayBufferLength);
     // FIXME: Use checked algebra.
-    wgpuRenderPassEncoderSetBindGroup(m_backing.get(), index, protectedConvertToBackingContext()->convertToBacking(bindGroup), dynamicOffsetsDataLength, dynamicOffsetsArrayBuffer.subspan(dynamicOffsetsDataStart).data());
+    wgpuRenderPassEncoderSetBindGroup(m_backing.get(), index, protectedConvertToBackingContext()->convertToBacking(bindGroup), dynamicOffsetsDataLength, dynamicOffsetsArrayBuffer + dynamicOffsetsDataStart);
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void RenderPassEncoderImpl::pushDebugGroup(String&& groupLabel)
 {

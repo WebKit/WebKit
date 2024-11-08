@@ -79,7 +79,7 @@ public:
 
     // Only public for the callbacks
     size_t dataProviderGetBytesAtPosition(std::span<uint8_t> buffer, off_t position);
-    void dataProviderGetByteRanges(CFMutableArrayRef buffers, std::span<const CFRange> ranges);
+    void dataProviderGetByteRanges(CFMutableArrayRef buffers, const CFRange* ranges, size_t count);
 
 private:
     PDFIncrementalLoader(PDFPluginBase&);

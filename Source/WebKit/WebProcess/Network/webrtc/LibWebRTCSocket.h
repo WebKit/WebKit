@@ -98,7 +98,7 @@ private:
     State m_state { STATE_BINDING };
 
     static const unsigned MAX_SOCKET_OPTION { rtc::Socket::OPT_RTP_SENDTIME_EXTN_ID + 1 };
-    std::array<std::optional<int>, MAX_SOCKET_OPTION> m_options;
+    std::optional<int> m_options[MAX_SOCKET_OPTION];
 
     bool m_isSuspended { false };
     WebCore::ScriptExecutionContextIdentifier m_contextIdentifier;

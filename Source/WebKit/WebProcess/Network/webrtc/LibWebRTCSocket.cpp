@@ -38,8 +38,9 @@
 #include <WebCore/SharedBuffer.h>
 #include <wtf/Function.h>
 #include <wtf/MainThread.h>
-#include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebKit {
 
@@ -121,7 +122,7 @@ int LibWebRTCSocket::SendTo(const void *value, size_t size, const rtc::SocketAdd
     if (m_isSuspended)
         return size;
 
-    auto data = unsafeMakeSpan(static_cast<const uint8_t*>(value), size);
+    std::span data(static_cast<const uint8_t*>(value), size);
     connection->send(Messages::NetworkRTCProvider::SendToSocket { identifier(), data, RTCNetwork::SocketAddress { address }, RTCPacketOptions { options } }, 0);
 
     return size;
@@ -180,5 +181,7 @@ void LibWebRTCSocket::suspend()
 }
 
 } // namespace WebKit
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBWEBRTC)

@@ -63,7 +63,8 @@ public:
         std::optional<Vector<BufferDynamicOffset>>&&) = 0;
 
     virtual void setBindGroup(Index32, const BindGroup&,
-        std::span<const uint32_t> dynamicOffsetsArrayBuffer,
+        const uint32_t* dynamicOffsetsArrayBuffer,
+        size_t dynamicOffsetsArrayBufferLength,
         Size64 dynamicOffsetsDataStart,
         Size32 dynamicOffsetsDataLength) = 0;
 

@@ -89,7 +89,7 @@ ExceptionOr<void> GPUComputePassEncoder::setBindGroup(GPUIndex32 index, const GP
     if (offset.hasOverflowed() || offset > dynamicOffsetsData.length())
         return Exception { ExceptionCode::RangeError, "dynamic offsets overflowed"_s };
 
-    m_backing->setBindGroup(index, bindGroup.backing(), dynamicOffsetsData.span(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
+    m_backing->setBindGroup(index, bindGroup.backing(), dynamicOffsetsData.data(), dynamicOffsetsData.length(), dynamicOffsetsDataStart, dynamicOffsetsDataLength);
     return { };
 }
 
