@@ -231,6 +231,7 @@ public:
 
     void testProcessIncomingSyncMessagesWhenWaitingForSyncReply(WebPageProxyIdentifier, CompletionHandler<void(bool)>&&);
     void processHasUnresponseServiceWorker(WebCore::ProcessIdentifier);
+    void terminateIdleServiceWorkers(WebCore::ProcessIdentifier, CompletionHandler<void()>&&);
 
     void requestTermination();
 

@@ -2582,10 +2582,17 @@ Seconds WebProcessPool::webProcessSuspensionDelay() const
 
 void WebProcessPool::memoryPressureStatusChangedForProcess(WebProcessProxy& process, SystemMemoryPressureStatus status)
 {
-    if (!m_configuration->suspendsWebProcessesAggressivelyOnCriticalMemoryPressure())
+    if (status != SystemMemoryPressureStatus::Critical)
         return;
 
-    if (status != SystemMemoryPressureStatus::Critical)
+    if (process.isRunningServiceWorkers()) {
+        RefPtr store = process.websiteDataStore();
+        RefPtr networkProcess = store ? store->networkProcessIfExists() : nullptr;
+        if (networkProcess)
+            networkProcess->terminateIdleServiceWorkers(process.coreProcessIdentifier(), [activity = process.protectedThrottler()->backgroundActivity("Idle service worker processing"_s)] { });
+    }
+
+    if (!m_configuration->suspendsWebProcessesAggressivelyOnCriticalMemoryPressure())
         return;
 
     // Make sure this isn't a stale critical memory pressure event from a process that suspended

@@ -598,6 +598,11 @@ void NetworkProcessProxy::processHasUnresponseServiceWorker(WebCore::ProcessIden
         process->disableRemoteWorkers(RemoteWorkerType::ServiceWorker);
 }
 
+void NetworkProcessProxy::terminateIdleServiceWorkers(WebCore::ProcessIdentifier processIdentifier, CompletionHandler<void()>&& callback)
+{
+    sendWithAsyncReply(Messages::NetworkProcess::TerminateIdleServiceWorkers(processIdentifier), WTFMove(callback), 0);
+}
+
 void NetworkProcessProxy::logDiagnosticMessageWithResult(WebPageProxyIdentifier pageID, const String& message, const String& description, uint32_t result, WebCore::ShouldSample shouldSample)
 {
     auto page = WebProcessProxy::webPage(pageID);

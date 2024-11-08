@@ -91,6 +91,12 @@ void WebSWServerToContextConnection::stop()
         server->removeContextConnection(*this);
 }
 
+void WebSWServerToContextConnection::terminateIdleServiceWorkers()
+{
+    if (RefPtr server = this->server(); server && server->contextConnectionForRegistrableDomain(registrableDomain()) == this)
+        server->terminateIdleServiceWorkers(*this);
+}
+
 RefPtr<NetworkConnectionToWebProcess> WebSWServerToContextConnection::protectedConnection() const
 {
     return m_connection.get();

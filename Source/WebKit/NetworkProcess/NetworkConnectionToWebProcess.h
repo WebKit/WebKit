@@ -226,6 +226,7 @@ public:
 
     WebCore::ProcessIdentifier webProcessIdentifier() const { return m_webProcessIdentifier; }
 
+    void terminateIdleServiceWorkers();
     void serviceWorkerServerToContextConnectionNoLongerNeeded();
     void terminateSWContextConnectionDueToUnresponsiveness();
     WebSWServerConnection* swConnection();

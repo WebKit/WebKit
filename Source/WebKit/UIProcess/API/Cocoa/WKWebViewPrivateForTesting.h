@@ -146,6 +146,7 @@ struct WKAppPrivacyReportTestingData {
 
 @property (nonatomic, readonly) BOOL _isLoggerEnabledForTesting;
 
+- (void)_terminateIdleServiceWorkersForTesting;
 @end
 
 typedef NS_ENUM(NSInteger, _WKMediaSessionReadyState) {

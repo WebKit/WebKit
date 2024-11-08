@@ -37,6 +37,7 @@
 #include "ServiceWorkerTypes.h"
 #include "Site.h"
 #include "Timer.h"
+#include <wtf/ApproximateTime.h>
 #include <wtf/CompletionHandler.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RobinHoodHashMap.h>
@@ -150,6 +151,9 @@ public:
 
     void markActivateEventAsFired() { m_isActivateEventFired = true; }
 
+    void needsRunning() { m_lastNeedRunningTime = ApproximateTime::now(); }
+    bool isIdle(Seconds) const;
+
 private:
     SWServerWorker(SWServer&, SWServerRegistration&, const URL&, const ScriptBuffer&, const CertificateInfo&, const ContentSecurityPolicyResponseHeaders&, const CrossOriginEmbedderPolicy&, String&& referrerPolicy, WorkerType, ServiceWorkerIdentifier, MemoryCompactRobinHoodHashMap<URL, ServiceWorkerContextData::ImportedScript>&&);
 
@@ -190,6 +194,7 @@ private:
     int m_functionalEventCounter { 0 };
     bool m_isInspected { false };
     bool m_isActivateEventFired { false };
+    ApproximateTime m_lastNeedRunningTime;
 };
 
 } // namespace WebCore

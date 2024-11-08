@@ -970,6 +970,7 @@ void SWServer::runServiceWorkerIfNecessary(SWServerWorker& worker, RunServiceWor
     RefPtr contextConnection = worker.contextConnection();
     if (worker.isRunning()) {
         ASSERT(contextConnection);
+        worker.needsRunning();
         callback(contextConnection.get());
         return;
     }
@@ -1447,6 +1448,23 @@ void SWServer::removeContextConnection(SWServerToContextConnection& connection)
     markAllWorkersForRegistrableDomainAsTerminated(site.domain());
     if (needsContextConnectionForRegistrableDomain(site.domain()))
         createContextConnection(site, serviceWorkerPageIdentifier);
+}
+
+void SWServer::terminateIdleServiceWorkers(SWServerToContextConnection& connection)
+{
+    RELEASE_LOG(ServiceWorker, "SWServer::terminateIdleServiceWorkers %" PRIu64, connection.identifier().toUInt64());
+
+    auto domain = connection.site().domain();
+
+    Vector<Ref<SWServerWorker>> idleWorkers;
+    for (Ref worker : m_runningOrTerminatingWorkers.values()) {
+        if (worker->topRegistrableDomain() == domain && worker->isIdle(m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration))
+            idleWorkers.append(worker);
+    }
+    for (auto& worker : idleWorkers) {
+        RELEASE_LOG(ServiceWorker, "SWServer::terminateIdleServiceWorkers terminating worker %" PRIu64, worker->identifier().toUInt64());
+        worker->terminate();
+    }
 }
 
 SWServerToContextConnection* SWServer::contextConnectionForRegistrableDomain(const RegistrableDomain& domain)

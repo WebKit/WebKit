@@ -191,6 +191,8 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SetServiceWorkerFetchTimeoutForTesting(Seconds seconds) -> () Synchronous
     ResetServiceWorkerFetchTimeoutForTesting() -> () Synchronous
 
+    TerminateIdleServiceWorkers(WebCore::ProcessIdentifier processIdentifier) -> ()
+
     ResetQuota(PAL::SessionID sessionID) -> ()
     SetOriginQuotaRatioEnabledForTesting(PAL::SessionID sessionID, bool enabled) -> ();
 #if PLATFORM(IOS_FAMILY)

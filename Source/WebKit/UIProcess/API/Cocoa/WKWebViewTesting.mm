@@ -889,6 +889,15 @@ static void dumpCALayer(TextStream& ts, CALayer *layer, bool traverse)
     return _page->logger().enabled();
 }
 
+- (void)_terminateIdleServiceWorkersForTesting
+{
+    Ref protectedProcessProxy = _page->legacyMainFrameProcess();
+    RefPtr store = protectedProcessProxy->websiteDataStore();
+    RefPtr networkProcess = store ? store->networkProcessIfExists() : nullptr;
+    if (networkProcess)
+        networkProcess->terminateIdleServiceWorkers(protectedProcessProxy->coreProcessIdentifier(), [] { });
+}
+
 @end
 
 #if ENABLE(MEDIA_SESSION_COORDINATOR)

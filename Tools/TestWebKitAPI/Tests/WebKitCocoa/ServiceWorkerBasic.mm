@@ -4547,4 +4547,134 @@ TEST(ServiceWorkers, ServiceWorkerCacheReference)
     done = false;
 }
 
+static constexpr auto ServiceWorkerIdleOnMemoryPressureMain = R"SWRESOURCE(
+<!doctype html>
+<html>
+<body>
+<script>
+function waitForState(worker, state)
+{
+    if (!worker || worker.state == undefined)
+        return Promise.reject(new Error('waitForState must be passed a ServiceWorker'));
+
+    if (worker.state === state)
+        return Promise.resolve(state);
+
+    return new Promise(function(resolve, reject) {
+        worker.addEventListener('statechange', function() {
+            if (worker.state === state)
+                resolve(state);
+        });
+        setTimeout(() => reject("waitForState timed out, worker state is " + worker.state), 5000);
+    });
+}
+
+async function startServiceWorker(scope, hasActivity)
+{
+    const registration = await navigator.serviceWorker.register("sw.js", { scope });
+    const worker = registration.installing;
+    await waitForState(worker, "activated");
+
+    if (hasActivity) {
+        worker.postMessage("ping");
+        await new Promise((resolve, reject) => {
+            navigator.serviceWorker.onmessage = resolve;
+            setTimeout(() => reject('no pong'), 1000);
+        });
+    }
+    return worker;
+}
+
+function waitForTermination(worker)
+{
+    return new Promise(resolve => {
+        internals.whenServiceWorkerIsTerminated(worker).then(() => {
+            resolve(true);
+        });
+        setTimeout(() => resolve(false), 1000);
+    });
+}
+
+let promise1, promise2;
+onload = async () => {
+    let worker1, worker2;
+    try {
+        worker1 = await startServiceWorker("test1", false);
+        worker2 = await startServiceWorker("test2", true);
+    } catch (e) {
+        alert("startServiceWorker failed " + e);
+    }
+
+    // We need to wait two seconds so that worker1 is idle at memory pressure time.
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    promise1 = waitForTermination(worker1);
+    promise2 = waitForTermination(worker2);
+
+    alert("Ready");
+}
+
+async function checkServiceWorkers()
+{
+    const test1 = await promise1;
+    if (!test1) {
+        alert("test1 failed");
+        return;
+    }
+    const test2 = await promise2;
+    alert(test2 ? "test2 failed" : "PASS");
+}
+
+function doTest()
+{
+    checkServiceWorkers();
+}
+</script>
+</body>
+</html>
+)SWRESOURCE"_s;
+
+static constexpr auto ServiceWorkerIdleOnMemoryPressureJS = R"SWRESOURCE(
+onmessage = e => {
+    e.source.postMessage("pomg");
+    e.waitUntil(new Promise(resolve => setTimeout(resolve, 4000)));
+}
+)SWRESOURCE"_s;
+
+TEST(ServiceWorker, ServiceWorkerIdleOnMemoryPressure)
+{
+    [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
+
+    // Start with a clean slate data store
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
+        done = true;
+    }];
+    TestWebKitAPI::Util::run(&done);
+    done = false;
+
+    auto dataStoreConfiguration = adoptNS([[_WKWebsiteDataStoreConfiguration alloc] init]);
+    [dataStoreConfiguration setServiceWorkerProcessTerminationDelayEnabled:NO];
+    auto dataStore = adoptNS([[WKWebsiteDataStore alloc] _initWithConfiguration:dataStoreConfiguration.get()]);
+
+    auto configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    setConfigurationInjectedBundlePath(configuration.get());
+    configuration.get().websiteDataStore = dataStore.get();
+
+    auto webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 300, 300) configuration:configuration.get() addToWindow:YES]);
+
+    TestWebKitAPI::HTTPServer server({
+        { "/"_s, { ServiceWorkerIdleOnMemoryPressureMain } },
+        { "/sw.js"_s, { {{ "Content-Type"_s, "application/javascript"_s }}, ServiceWorkerIdleOnMemoryPressureJS } }
+    }, TestWebKitAPI::HTTPServer::Protocol::Http, nullptr, nullptr, 8091);
+
+    [webView loadRequest:server.request()];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "Ready");
+
+    // Need to trigger critical memory pressure.
+    [webView _terminateIdleServiceWorkersForTesting];
+
+    [webView evaluateJavaScript:@"doTest()" completionHandler: nil];
+    EXPECT_WK_STREQ([webView _test_waitForAlert], "PASS");
+}
+
 #endif // WK_HAVE_C_SPI

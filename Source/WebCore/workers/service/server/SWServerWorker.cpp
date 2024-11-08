@@ -324,6 +324,11 @@ void SWServerWorker::setHasPendingEvents(bool hasPendingEvents)
     registration->tryActivate();
 }
 
+bool SWServerWorker::isIdle(Seconds idleTime) const
+{
+    return !m_hasPendingEvents && (ApproximateTime::now() - m_lastNeedRunningTime) > idleTime;
+}
+
 void SWServerWorker::whenActivated(CompletionHandler<void(bool)>&& handler)
 {
     if (state() == ServiceWorkerState::Activating) {
@@ -367,6 +372,7 @@ void SWServerWorker::setState(State state)
 
     switch (state) {
     case State::Running:
+        needsRunning();
         m_shouldSkipHandleFetch = false;
         break;
     case State::Terminating:
