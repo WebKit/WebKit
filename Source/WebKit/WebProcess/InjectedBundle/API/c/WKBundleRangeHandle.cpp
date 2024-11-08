@@ -27,6 +27,7 @@
 #include "WKBundleRangeHandle.h"
 #include "WKBundleRangeHandlePrivate.h"
 
+#include "InjectedBundleNodeHandle.h"
 #include "InjectedBundleRangeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
@@ -54,4 +55,10 @@ WKImageRef WKBundleRangeHandleCopySnapshotWithOptions(WKBundleRangeHandleRef ran
 {
     RefPtr<WebKit::WebImage> image = WebKit::toImpl(rangeHandleRef)->renderedImage(WebKit::toSnapshotOptions(options));
     return toAPI(image.leakRef());
+}
+
+WKBundleFrameRef WKBundleRangeHandleDocumentFrame(WKBundleRangeHandleRef rangeHandleRef)
+{
+    RefPtr frame = WebKit::toImpl(rangeHandleRef)->document()->documentFrame();
+    return toAPI(frame.leakRef());
 }

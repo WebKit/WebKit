@@ -44,6 +44,7 @@
 #include <WebKit/WKBundleNodeHandlePrivate.h>
 #include <WebKit/WKBundlePagePrivate.h>
 #include <WebKit/WKBundlePrivate.h>
+#include <WebKit/WKBundleRangeHandlePrivate.h>
 #include <WebKit/WKSecurityOriginRef.h>
 #include <WebKit/WKURLRequest.h>
 #include <wtf/HashMap.h>
@@ -124,14 +125,12 @@ static WTF::String dumpPath(WKBundlePageRef page, WKBundleScriptWorldRef world, 
     return dumpPath(context, nodeObject);
 }
 
-static WTF::String string(WKBundlePageRef page, WKBundleScriptWorldRef world, WKBundleRangeHandleRef rangeRef)
+static WTF::String string(WKBundleScriptWorldRef world, WKBundleRangeHandleRef rangeRef)
 {
     if (!rangeRef)
         return "(null)"_s;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    auto frame = WKBundlePageGetMainFrame(page);
-    ALLOW_DEPRECATED_DECLARATIONS_END
+    auto frame = WKBundleRangeHandleDocumentFrame(rangeRef);
     auto context = WKBundleFrameGetJavaScriptContextForWorld(frame, world);
     auto rangeValue = WKBundleFrameGetJavaScriptWrapperForRangeForWorld(frame, rangeRef, world);
     ASSERT(JSValueIsObject(context, rangeValue));
@@ -1340,7 +1339,7 @@ bool InjectedBundlePage::shouldBeginEditing(WKBundleRangeHandleRef range)
         return true;
 
     if (testRunner->shouldDumpEditingCallbacks())
-        injectedBundle.outputText(makeString("EDITING DELEGATE: shouldBeginEditingInDOMRange:"_s, string(m_page, m_world.get(), range), '\n'));
+        injectedBundle.outputText(makeString("EDITING DELEGATE: shouldBeginEditingInDOMRange:"_s, string(m_world.get(), range), '\n'));
     return testRunner->shouldAllowEditing();
 }
 
@@ -1352,7 +1351,7 @@ bool InjectedBundlePage::shouldEndEditing(WKBundleRangeHandleRef range)
         return true;
 
     if (testRunner->shouldDumpEditingCallbacks())
-        injectedBundle.outputText(makeString("EDITING DELEGATE: shouldEndEditingInDOMRange:"_s, string(m_page, m_world.get(), range), '\n'));
+        injectedBundle.outputText(makeString("EDITING DELEGATE: shouldEndEditingInDOMRange:"_s, string(m_world.get(), range), '\n'));
     return testRunner->shouldAllowEditing();
 }
 
@@ -1372,7 +1371,7 @@ bool InjectedBundlePage::shouldInsertNode(WKBundleNodeHandleRef node, WKBundleRa
     if (testRunner->shouldDumpEditingCallbacks()) {
         injectedBundle.outputText(makeString("EDITING DELEGATE:"_s
             " shouldInsertNode:"_s, dumpPath(m_page, m_world.get(), node),
-            " replacingDOMRange:"_s, string(m_page, m_world.get(), rangeToReplace),
+            " replacingDOMRange:"_s, string(m_world.get(), rangeToReplace),
             " givenAction:"_s, insertactionstring[action], '\n'));
     }
     return testRunner->shouldAllowEditing();
@@ -1394,7 +1393,7 @@ bool InjectedBundlePage::shouldInsertText(WKStringRef text, WKBundleRangeHandleR
     if (testRunner->shouldDumpEditingCallbacks()) {
         injectedBundle.outputText(makeString("EDITING DELEGATE:"_s
             " shouldInsertText:"_s, text,
-            " replacingDOMRange:"_s, string(m_page, m_world.get(), rangeToReplace),
+            " replacingDOMRange:"_s, string(m_world.get(), rangeToReplace),
             " givenAction:"_s, insertactionstring[action], '\n'));
     }
     return testRunner->shouldAllowEditing();
@@ -1408,7 +1407,7 @@ bool InjectedBundlePage::shouldDeleteRange(WKBundleRangeHandleRef range)
         return true;
 
     if (testRunner->shouldDumpEditingCallbacks())
-        injectedBundle.outputText(makeString("EDITING DELEGATE: shouldDeleteDOMRange:"_s, string(m_page, m_world.get(), range), '\n'));
+        injectedBundle.outputText(makeString("EDITING DELEGATE: shouldDeleteDOMRange:"_s, string(m_world.get(), range), '\n'));
     return testRunner->shouldAllowEditing();
 }
 
@@ -1426,8 +1425,8 @@ bool InjectedBundlePage::shouldChangeSelectedRange(WKBundleRangeHandleRef fromRa
 
     if (testRunner->shouldDumpEditingCallbacks()) {
         injectedBundle.outputText(makeString("EDITING DELEGATE:"_s
-            " shouldChangeSelectedDOMRange:"_s, string(m_page, m_world.get(), fromRange),
-            " toDOMRange:"_s, string(m_page, m_world.get(), toRange),
+            " shouldChangeSelectedDOMRange:"_s, string(m_world.get(), fromRange),
+            " toDOMRange:"_s, string(m_world.get(), toRange),
             " affinity:"_s, affinitystring[affinity],
             " stillSelecting:"_s, stillSelecting ? "TRUE"_s : "FALSE"_s, '\n'));
     }
@@ -1444,7 +1443,7 @@ bool InjectedBundlePage::shouldApplyStyle(WKBundleCSSStyleDeclarationRef style, 
     if (testRunner->shouldDumpEditingCallbacks()) {
         injectedBundle.outputText(makeString("EDITING DELEGATE:"
             " shouldApplyStyle:"_s, styleDecToStr(style),
-            " toElementsInDOMRange:"_s, string(m_page, m_world.get(), range), '\n'));
+            " toElementsInDOMRange:"_s, string(m_world.get(), range), '\n'));
     }
     return testRunner->shouldAllowEditing();
 }
