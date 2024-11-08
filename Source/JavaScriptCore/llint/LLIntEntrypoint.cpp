@@ -34,8 +34,6 @@
 #include "MaxFrameExtentForSlowPathCall.h"
 #include "StackAlignment.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace JSC { namespace LLInt {
 
 #if CPU(ARM64E) && !ENABLE(C_LOOP)
@@ -275,5 +273,3 @@ unsigned frameRegisterCountFor(CodeBlock* codeBlock)
 }
 
 } } // namespace JSC::LLInt
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

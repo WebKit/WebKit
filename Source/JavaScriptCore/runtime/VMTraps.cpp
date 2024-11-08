@@ -44,8 +44,6 @@
 #include <wtf/ThreadMessage.h>
 #include <wtf/threads/Signals.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace JSC {
 
 #if ENABLE(SIGNAL_BASED_VM_TRAPS)
@@ -485,5 +483,3 @@ VMTraps::~VMTraps()
 }
 
 } // namespace JSC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

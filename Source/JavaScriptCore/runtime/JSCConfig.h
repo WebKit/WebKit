@@ -31,8 +31,6 @@
 #include "SecureARM64EHashPins.h"
 #include <wtf/WTFConfig.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace JSC {
 
 class ExecutableAllocator;
@@ -123,9 +121,13 @@ constexpr size_t alignmentOfJSCConfig = std::alignment_of<JSC::Config>::value;
 static_assert(WTF::offsetOfWTFConfigExtension + sizeof(JSC::Config) <= WTF::ConfigSizeToProtect);
 static_assert(roundUpToMultipleOf<alignmentOfJSCConfig>(WTF::offsetOfWTFConfigExtension) == WTF::offsetOfWTFConfigExtension);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 // Workaround to localize bounds safety warnings to this file.
 // FIXME: Use real types to make materializing JSC::Config* bounds-safe and type-safe.
 inline Config* addressOfJSCConfig() { return bitwise_cast<Config*>(&g_wtfConfig.spaceForExtensions); }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #define g_jscConfig (*JSC::addressOfJSCConfig())
 
@@ -140,5 +142,3 @@ ALWAYS_INLINE PURE_FUNCTION uintptr_t startOfStructureHeap()
 }
 
 } // namespace JSC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

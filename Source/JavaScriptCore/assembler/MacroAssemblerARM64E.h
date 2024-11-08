@@ -43,8 +43,6 @@
 #include <mach/vm_param.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace JSC {
 
 using Assembler = TARGET_ASSEMBLER;
@@ -398,7 +396,5 @@ public:
 };
 
 } // namespace JSC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(ASSEMBLER) && CPU(ARM64E)

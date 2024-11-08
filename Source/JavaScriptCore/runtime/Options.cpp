@@ -68,8 +68,6 @@
 extern "C" char **environ;
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace JSC {
 
 bool useOSLogOptionHasChanged = false;
@@ -1481,5 +1479,3 @@ bool hasCapacityToUseLargeGigacage()
 }
 
 } // namespace JSC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

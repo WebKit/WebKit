@@ -27,8 +27,6 @@
 #include "JSCConfig.h"
 #include <wtf/WTFConfig.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace JSC {
 
 Config& Config::singleton()
@@ -43,5 +41,3 @@ void Config::enableRestrictedOptions()
 }
 
 } // namespace JSC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

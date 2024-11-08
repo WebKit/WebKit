@@ -38,8 +38,6 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace JSC {
 
 /*
@@ -192,6 +190,7 @@ bool FunctionOverrides::initializeOverrideFor(const SourceCode& origCode, Functi
         exitProcess(EXIT_FAILURE); \
     } while (false)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static bool hasDisallowedCharacters(const char* str, size_t length)
 {
     while (length--) {
@@ -247,6 +246,7 @@ static String parseClause(const char* keyword, size_t keywordLength, FILE* file,
 
     FAIL_WITH_ERROR(SYNTAX_ERROR, ("'", keyword, "' clause end delimiter '", delimiter, "' not found:\n", builder.toString(), "\n", "Are you missing a '}' before the delimiter?\n"));
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void FunctionOverrides::parseOverridesInFile(const char* fileName)
 {
@@ -286,5 +286,3 @@ void FunctionOverrides::parseOverridesInFile(const char* fileName)
 }
     
 } // namespace JSC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

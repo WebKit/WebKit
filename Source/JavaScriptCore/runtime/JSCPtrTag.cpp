@@ -34,8 +34,6 @@
 #include <sys/types.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace JSC {
 
 #if CPU(ARM64E) && (ENABLE(PTRTAG_DEBUGGING) || ENABLE(DISASSEMBLER))
@@ -101,5 +99,3 @@ PtrTagCalleeType calleeType(PtrTag tag)
 #endif
 
 } // namespace JSC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

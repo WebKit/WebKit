@@ -90,8 +90,6 @@
 #include "WebAssemblyFunction.h"
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace JSC {
 
 JSValue eval(CallFrame* callFrame, JSValue thisValue, JSScope* callerScopeChain, LexicallyScopedFeatures lexicallyScopedFeatures)
@@ -319,6 +317,7 @@ void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValu
             jsCast<JSArray*>(object)->copyToArguments(globalObject, firstElementDest, offset, length);
             return;
         }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         unsigned i;
         for (i = 0; i < length && object->canGetIndexQuickly(i + offset); ++i)
             firstElementDest[i] = object->getIndexQuickly(i + offset);
@@ -327,6 +326,7 @@ void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValu
             RETURN_IF_EXCEPTION(scope, void());
             firstElementDest[i] = value;
         }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return;
     }
     }
@@ -354,7 +354,9 @@ void setupForwardArgumentsFrame(JSGlobalObject*, CallFrame* execCaller, CallFram
 {
     ASSERT(length == execCaller->argumentCount());
     unsigned offset = execCaller->argumentOffset(0) * sizeof(Register);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     memcpy(reinterpret_cast<char*>(execCallee) + offset, reinterpret_cast<char*>(execCaller) + offset, length * sizeof(Register));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     execCallee->setArgumentCountIncludingThis(length + 1);
 }
 
@@ -779,8 +781,9 @@ private:
                 // its frame.
                 continue;
             }
-
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             record->calleeSaveRegistersBuffer[calleeSavesEntry->offsetAsIndex()] = *(frame + currentEntry.offsetAsIndex());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
 #else
         UNUSED_PARAM(visitor);
@@ -1712,5 +1715,3 @@ void printInternal(PrintStream& out, JSC::DebugHookType type)
 }
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

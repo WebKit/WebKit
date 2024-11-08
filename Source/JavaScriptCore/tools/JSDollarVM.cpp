@@ -96,8 +96,6 @@
 #include <wtf/cocoa/CrashReporter.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 using namespace JSC;
 
 IGNORE_WARNINGS_BEGIN("frame-address")
@@ -2940,6 +2938,8 @@ static void callWithStackSizeProbeFunction(Probe::State* state)
 }
 #endif // ENABLE(ASSEMBLER) && OS(DARWIN) && CPU(X86_64)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASAN, (JSGlobalObject* globalObject, CallFrame* callFrame))
 {
     DollarVMAssertScope assertScope;
@@ -3029,6 +3029,8 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
     return throwVMError(globalObject, throwScope, "Not supported for this platform"_s);
 #endif // ENABLE(ASSEMBLER)
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 // Creates a new global object.
 // Usage: $vm.createGlobalObject()
@@ -4447,5 +4449,3 @@ REFTRACKER_IMPL(StrongRefTracker);
 } // namespace JSC
 
 IGNORE_WARNINGS_END
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

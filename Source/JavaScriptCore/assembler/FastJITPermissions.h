@@ -28,8 +28,6 @@
 #include <stdint.h>
 #include <wtf/Platform.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 enum class MemoryRestriction {
     kRwxToRw,
     kRwxToRx,
@@ -176,5 +174,3 @@ NO_RETURN_DUE_TO_CRASH ALWAYS_INLINE void threadSelfRestrict()
 
 #endif // OS(DARWIN) && CPU(ARM64)
 #endif // defined(OS_THREAD_SELF_RESTRICT) && defined(OS_THREAD_SELF_RESTRICT_SUPPORTED)
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

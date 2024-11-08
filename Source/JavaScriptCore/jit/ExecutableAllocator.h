@@ -55,8 +55,6 @@
 #define EXECUTABLE_POOL_WRITABLE true
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace JSC {
 
 static constexpr unsigned jitAllocationGranule = 32;
@@ -208,6 +206,8 @@ static NEVER_INLINE NO_RETURN_DUE_TO_CRASH NOT_TAIL_CALLED void dieByJumpingInto
     } while (false)
 #endif // ENABLE(JIT_SCAN_ASSEMBLER_BUFFER_FOR_ZEROES)
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n)
 {
 #if CPU(ARM64)
@@ -307,6 +307,8 @@ static ALWAYS_INLINE void* performJITMemcpy(void *dst, const void *src, size_t n
     return memcpyAtomicIfPossible(dst, src, n);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 class ExecutableAllocator : private ExecutableAllocatorBase {
     WTF_MAKE_TZONE_ALLOCATED(ExecutableAllocator);
 public:
@@ -377,5 +379,3 @@ inline bool isJITPC(void*) { return false; }
 #endif // ENABLE(JIT)
 
 } // namespace JSC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

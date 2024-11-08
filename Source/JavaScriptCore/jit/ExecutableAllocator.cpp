@@ -26,8 +26,6 @@
 #include "config.h"
 #include "ExecutableAllocator.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #if ENABLE(JIT)
 
 #include "ExecutableAllocationFuzz.h"
@@ -1474,5 +1472,3 @@ ExecutableAllocator& ExecutableAllocator::singleton()
 }
 
 } // namespace JSC
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
