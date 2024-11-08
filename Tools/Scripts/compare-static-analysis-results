@@ -117,7 +117,6 @@ def find_diff(args, file1, file2):
 
 def create_filtered_results_dir(args, project, result_paths, category='StaticAnalyzerRegressions'):
     # Create symlinks to new issues only so that we can run scan-build to generate new index.html files
-    subprocess.run(['rm', '-r', os.path.abspath(f'{args.build_output}/{category}')])
     prefix_path = os.path.abspath(f'{args.build_output}/{category}/{project}/StaticAnalyzerReports')
     subprocess.run(['mkdir', '-p', prefix_path])
     for path_to_report in result_paths:
