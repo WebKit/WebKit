@@ -437,7 +437,7 @@ AccessibilityObject* AXIsolatedObject::associatedAXObject() const
     return axObjectCache ? axObjectCache->objectForID(*objectID()) : nullptr;
 }
 
-void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AXCoreObject& object)
+void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AccessibilityObject& object)
 {
     AccessibilityMathMultiscriptPairs pairs;
     if (propertyName == AXPropertyName::MathPrescripts)
@@ -736,7 +736,7 @@ void AXIsolatedObject::accessibilityText(Vector<AccessibilityText>& texts) const
     texts = vectorAttributeValue<AccessibilityText>(AXPropertyName::AccessibilityText);
 }
 
-void AXIsolatedObject::insertMathPairs(Vector<std::pair<AXID, AXID>>& isolatedPairs, AccessibilityMathMultiscriptPairs& pairs)
+void AXIsolatedObject::insertMathPairs(Vector<std::pair<Markable<AXID>, Markable<AXID>>>& isolatedPairs, AccessibilityMathMultiscriptPairs& pairs)
 {
     for (const auto& pair : isolatedPairs) {
         AccessibilityMathMultiscriptPair prescriptPair;
@@ -750,13 +750,13 @@ void AXIsolatedObject::insertMathPairs(Vector<std::pair<AXID, AXID>>& isolatedPa
 
 void AXIsolatedObject::mathPrescripts(AccessibilityMathMultiscriptPairs& pairs)
 {
-    auto isolatedPairs = vectorAttributeValue<std::pair<AXID, AXID>>(AXPropertyName::MathPrescripts);
+    auto isolatedPairs = vectorAttributeValue<std::pair<Markable<AXID>, Markable<AXID>>>(AXPropertyName::MathPrescripts);
     insertMathPairs(isolatedPairs, pairs);
 }
 
 void AXIsolatedObject::mathPostscripts(AccessibilityMathMultiscriptPairs& pairs)
 {
-    auto isolatedPairs = vectorAttributeValue<std::pair<AXID, AXID>>(AXPropertyName::MathPostscripts);
+    auto isolatedPairs = vectorAttributeValue<std::pair<Markable<AXID>, Markable<AXID>>>(AXPropertyName::MathPostscripts);
     insertMathPairs(isolatedPairs, pairs);
 }
 
