@@ -47,6 +47,16 @@ typedef struct _GtkSelectionData GtkSelectionData;
 using PlatformDropContext = GdkDragContext;
 #endif
 
+#if !USE(GTK4)
+namespace WebKit {
+class DropTarget;
+}
+namespace WTF {
+template<typename T> struct IsDeprecatedTimerSmartPointerException;
+template<> struct IsDeprecatedTimerSmartPointerException<WebKit::DropTarget> : std::true_type { };
+}
+#endif
+
 namespace WebKit {
 
 class DropTarget {
