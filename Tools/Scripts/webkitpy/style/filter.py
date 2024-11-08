@@ -45,6 +45,9 @@ def validate_filter_rules(filter_rules, all_categories):
             raise ValueError('Invalid filter rule "%s": every rule '
                              "must start with + or -." % rule)
 
+        if rule[1:] == "*":
+            break
+
         for category in all_categories:
             if category.startswith(rule[1:]):
                 break
@@ -102,8 +105,8 @@ class _CategoryFilter(object):
 
         A filter rule applies to a category if the string after the
         leading plus/minus (+/-) matches the beginning of the category
-        name.  A plus (+) means the category should be checked, while a
-        minus (-) means the category should not be checked.
+        name or is "*".  A plus (+) means the category should be checked,
+        while a minus (-) means the category should not be checked.
 
         """
         if category in self._should_check_category:
@@ -111,7 +114,7 @@ class _CategoryFilter(object):
 
         should_check = True  # All categories checked by default.
         for rule in self._filter_rules:
-            if not category.startswith(rule[1:]):
+            if not category.startswith(rule[1:]) and rule[1:] != "*":
                 continue
             should_check = rule.startswith('+')
         self._should_check_category[category] = should_check  # Update cache.

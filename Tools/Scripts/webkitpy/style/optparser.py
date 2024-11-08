@@ -272,7 +272,7 @@ class ArgumentParser(object):
         filter_help = ('set a filter to control what categories of style '
                        'errors to report.  Specify a filter using a comma-'
                        'delimited list of boolean filter rules, for example '
-                       '"--filter -whitespace,+whitespace/braces".  To display '
+                       '"--filter +*,-whitespace,+whitespace/braces".  To display '
                        'all categories and which are enabled by default, pass '
                        """no value (e.g. '-f ""' or '--filter=').""")
         parser.add_option("-f", "--filter-rules", metavar="RULES",
