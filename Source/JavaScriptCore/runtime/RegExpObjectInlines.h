@@ -238,13 +238,18 @@ ALWAYS_INLINE void oneCharMatches(std::span<const Char> input, Char pattern, siz
     }
 }
 
-ALWAYS_INLINE void genericMatches(StringView input, StringView pattern, size_t& numberOfMatches, size_t& startIndex)
+template<typename SubjectChar, typename PatternChar>
+ALWAYS_INLINE void genericMatches(VM& vm, std::span<const SubjectChar> input, std::span<const PatternChar> pattern, size_t& numberOfMatches, size_t& startIndex)
 {
-    size_t found = input.find(pattern, startIndex);
+    ASSERT(!pattern.empty());
+    if (startIndex > input.size())
+        return;
+    AdaptiveStringSearcher<PatternChar, SubjectChar> search(vm.adaptiveStringSearcherTables(), pattern);
+    size_t found = search.search(input, startIndex);
     while (found != notFound) {
-        startIndex = found + pattern.length();
+        startIndex = found + pattern.size();
         numberOfMatches++;
-        found = input.find(pattern, startIndex);
+        found = search.search(input, startIndex);
         if (numberOfMatches > MAX_STORAGE_VECTOR_LENGTH)
             return;
     }
@@ -268,21 +273,21 @@ ALWAYS_INLINE JSValue collectGlobalAtomMatches(JSGlobalObject* globalObject, JSS
             if (pattern.length() == 1)
                 oneCharMatches(input->span8(), pattern.span8()[0], numberOfMatches, startIndex);
             else
-                genericMatches(input, pattern, numberOfMatches, startIndex);
+                genericMatches(vm, input->span8(), pattern.span8(), numberOfMatches, startIndex);
         } else {
             if (pattern.length() == 1)
                 oneCharMatches(input->span16(), pattern.characterAt(0), numberOfMatches, startIndex);
             else
-                genericMatches(input, pattern, numberOfMatches, startIndex);
+                genericMatches(vm, input->span16(), pattern.span8(), numberOfMatches, startIndex);
         }
     } else {
         if (input->is8Bit())
-            genericMatches(input, pattern, numberOfMatches, startIndex);
+            genericMatches(vm, input->span8(), pattern.span16(), numberOfMatches, startIndex);
         else {
             if (pattern.length() == 1)
                 oneCharMatches(input->span16(), pattern.characterAt(0), numberOfMatches, startIndex);
             else
-                genericMatches(input, pattern, numberOfMatches, startIndex);
+                genericMatches(vm, input->span16(), pattern.span16(), numberOfMatches, startIndex);
         }
     }
 
