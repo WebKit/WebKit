@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "WebInspector.h"
+#include "WebInspectorInternal.h"
 
 #include "WebFrame.h"
 #include "WebInspectorMessages.h"

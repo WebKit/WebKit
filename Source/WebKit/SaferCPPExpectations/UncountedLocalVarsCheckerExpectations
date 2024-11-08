@@ -94,8 +94,8 @@ WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.cpp
 WebProcess/InjectedBundle/InjectedBundlePageEditorClient.cpp
 WebProcess/InjectedBundle/InjectedBundleScriptWorld.cpp
 WebProcess/InjectedBundle/mac/InjectedBundleMac.mm
-WebProcess/Inspector/WebInspector.cpp
 WebProcess/Inspector/WebInspectorClient.cpp
+WebProcess/Inspector/WebInspectorInternal.cpp
 WebProcess/MediaStream/UserMediaPermissionRequestManager.cpp
 WebProcess/Model/mac/ARKitInlinePreviewModelPlayerMac.mm
 WebProcess/Network/NetworkProcessConnection.cpp
