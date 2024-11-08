@@ -530,10 +530,38 @@ std::optional<int64_t> parseUTCOffsetInMinutes(StringView string)
 template<typename CharacterType>
 static bool canBeCalendar(const StringParsingBuffer<CharacterType>& buffer)
 {
-    // https://tc39.es/proposal-temporal/#prod-Calendar
-    // Calendar :
-    //     [u-ca= CalendarName]
-    return buffer.lengthRemaining() >= 6 && buffer[0] == '[' && buffer[1] == 'u' && buffer[2] == '-' && buffer[3] == 'c' && buffer[4] == 'a' && buffer[5] == '=';
+    // https://tc39.es/proposal-temporal/#sec-temporal-parseisodatetime
+    // Step 4(a)(ii)(2)(a):
+    //  Let key be the source text matched by the AnnotationKey Parse Node contained within annotation
+    // This just checks for '[', followed by an optional '!' (critical flag),
+    // followed by a valid key, followed by an '='.
+
+    int32_t len = buffer.lengthRemaining();
+    // Check for [! or [, followed by any number of 'a'-'z' or '-', followed by '='
+    int32_t i = 0;
+    if (i < len) {
+        if (buffer[i] != '[')
+            return false;
+        i++;
+    }
+    if (i < len) {
+        if (buffer[i] == '!')
+            i++;
+    }
+    // '_' allowed as first char
+    if (i < len) {
+        if (buffer[i] == '_')
+            i++;
+    }
+    while (i < len) {
+        if (buffer[i] == '=')
+            return true;
+        if (isASCIILower(buffer[i]) || isASCIIDigit(buffer[i]) || buffer[i] == '-')
+            i++;
+        else
+            return false;
+    }
+    return false;
 }
 
 template<typename CharacterType>
@@ -760,7 +788,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
 }
 
 template<typename CharacterType>
-static std::optional<CalendarRecord> parseCalendar(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<CalendarRecord> parseOneCalendar(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
     // Calendar :
@@ -779,10 +807,35 @@ static std::optional<CalendarRecord> parseCalendar(StringParsingBuffer<Character
 
     if (!canBeCalendar(buffer))
         return std::nullopt;
-    buffer.advanceBy(6);
+    bool isCritical = buffer[1] == '!';
+    // Skip '[' or '[!'
+    buffer.advanceBy(isCritical ? 2 : 1);
+
+    // Parse the key and check if it's equal to "u-ca"
+    unsigned keyLength = 0;
+    while (buffer[keyLength] != '=')
+        keyLength++;
+    Vector<LChar, maxCalendarLength> key(buffer.consume(keyLength));
+    if (keyLength != 4
+        || key[0] != 'u' || key[1] != '-' || key[2] != 'c' || key[3] != 'a') {
+        // Annotation is unknown
+        // Consume the rest of the annotation
+        while (!buffer.atEnd() && *buffer != ']')
+            buffer.advance();
+        if (buffer.atEnd() || *buffer != ']') {
+            // Parse error
+            return std::nullopt;
+        }
+        // Consume the ']'
+        buffer.advance();
+        return CalendarRecord { isCritical, true, { } };
+    }
 
     if (buffer.atEnd())
         return std::nullopt;
+
+    // Consume the '='
+    buffer.advance();
 
     unsigned nameLength = 0;
     {
@@ -843,7 +896,33 @@ static std::optional<CalendarRecord> parseCalendar(StringParsingBuffer<Character
     if (*buffer != ']')
         return std::nullopt;
     buffer.advance();
-    return CalendarRecord { WTFMove(result) };
+
+    return CalendarRecord { isCritical, false, WTFMove(result) };
+}
+
+template<typename CharacterType>
+static std::tuple<std::optional<CalendarRecord>, std::optional<CalendarRecord>>
+parseCalendar(StringParsingBuffer<CharacterType>& buffer)
+{
+    std::optional<CalendarRecord> first = parseOneCalendar(buffer);
+    std::optional<CalendarRecord> second;
+    if (first && canBeCalendar(buffer))
+        second = parseOneCalendar(buffer);
+    // Check for multiple calendars and critical flag
+    // https://tc39.es/proposal-temporal/#sec-temporal-parseisodatetime
+    // step 4(a)(ii)(2)(c)(ii)
+    if (first && second) {
+        if (first->m_critical || second->m_critical)
+            first = second = std::nullopt;
+    }
+    // Check for unknown annotations with critical flag
+    // https://tc39.es/proposal-temporal/#sec-temporal-parseisodatetime
+    // step 4(a)(ii)(2)(d)(i)
+    if ((first && first->m_critical && first->m_unknown)
+        || (second && second->m_critical && second->m_unknown)) {
+        first = second = std::nullopt;
+    }
+    return std::tuple { first, second };
 }
 
 template<typename CharacterType>
@@ -1019,7 +1098,8 @@ static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::option
 }
 
 template<typename CharacterType>
-static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarTime(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>, std::optional<CalendarRecord>>>
+parseCalendarTime(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-CalendarTime
     // CalendarTime :
@@ -1037,7 +1117,7 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::o
     if (!plainTime)
         return std::nullopt;
     if (buffer.atEnd())
-        return std::tuple { WTFMove(plainTime.value()), std::nullopt, std::nullopt };
+        return std::tuple { WTFMove(plainTime.value()), std::nullopt, std::nullopt, std::nullopt };
 
     std::optional<TimeZoneRecord> timeZoneOptional;
     if (canBeTimeZone(buffer, *buffer)) {
@@ -1048,21 +1128,23 @@ static std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::o
     }
 
     if (buffer.atEnd())
-        return std::tuple { WTFMove(plainTime.value()), WTFMove(timeZoneOptional), std::nullopt };
+        return std::tuple { WTFMove(plainTime.value()), WTFMove(timeZoneOptional), std::nullopt, std::nullopt };
 
-    std::optional<CalendarRecord> calendarOptional;
+    std::optional<CalendarRecord> calendarOptional1;
+    std::optional<CalendarRecord> calendarOptional2;
     if (canBeCalendar(buffer)) {
         auto calendar = parseCalendar(buffer);
-        if (!calendar)
+        calendarOptional1 = std::get<0>(calendar);
+        calendarOptional2 = std::get<1>(calendar);
+        if (!calendarOptional1 && !calendarOptional2)
             return std::nullopt;
-        calendarOptional = WTFMove(calendar);
     }
 
-    return std::tuple { WTFMove(plainTime.value()), WTFMove(timeZoneOptional), WTFMove(calendarOptional) };
+    return std::tuple { WTFMove(plainTime.value()), WTFMove(timeZoneOptional), WTFMove(calendarOptional1), WTFMove(calendarOptional2) };
 }
 
 template<typename CharacterType>
-static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringParsingBuffer<CharacterType>& buffer)
+static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringParsingBuffer<CharacterType>& buffer)
 {
     // https://tc39.es/proposal-temporal/#prod-DateTime
     // CalendarDateTime :
@@ -1076,12 +1158,14 @@ static std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::option
 
     if (!buffer.atEnd() && canBeCalendar(buffer)) {
         auto calendar = parseCalendar(buffer);
-        if (!calendar)
+        auto calendarOptional1 = std::get<0>(calendar);
+        auto calendarOptional2 = std::get<1>(calendar);
+        if (!calendarOptional1 && !calendarOptional2)
             return std::nullopt;
-        return std::tuple { WTFMove(plainDate), WTFMove(plainTimeOptional), WTFMove(timeZoneOptional), WTFMove(calendar) };
+        return std::tuple { WTFMove(plainDate), WTFMove(plainTimeOptional), WTFMove(timeZoneOptional), WTFMove(calendarOptional1), WTFMove(calendarOptional2) };
     }
 
-    return std::tuple { WTFMove(plainDate), WTFMove(plainTimeOptional), WTFMove(timeZoneOptional), std::nullopt };
+    return std::tuple { WTFMove(plainDate), WTFMove(plainTimeOptional), WTFMove(timeZoneOptional), std::nullopt, std::nullopt };
 }
 
 std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>>> parseTime(StringView string)
@@ -1148,9 +1232,9 @@ static bool isAmbiguousCalendarTime(StringParsingBuffer<CharacterType>& buffer)
     return true;
 }
 
-std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarTime(StringView string)
+std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>, std::optional<CalendarRecord>>> parseCalendarTime(StringView string)
 {
-    auto tuple = readCharactersForParsing(string, [](auto buffer) -> std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> {
+    auto tuple = readCharactersForParsing(string, [](auto buffer) -> std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>, std::optional<CalendarRecord>>> {
         auto result = parseCalendarTime(buffer);
         if (!buffer.atEnd())
             return std::nullopt;
@@ -1158,7 +1242,7 @@ std::optional<std::tuple<PlainTime, std::optional<TimeZoneRecord>, std::optional
     });
 
     // Without a calendar, we need to verify that the parse isn't ambiguous with DateSpecYearMonth or DateSpecMonthDay.
-    if (tuple && !std::get<2>(tuple.value())) {
+    if (tuple && !std::get<2>(tuple.value()) && !std::get<3>(tuple.value())) {
         if (readCharactersForParsing(string, [](auto buffer) -> bool { return isAmbiguousCalendarTime(buffer); }))
             return std::nullopt;
     }
@@ -1176,9 +1260,9 @@ std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<Time
     });
 }
 
-std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringView string)
+std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>, std::optional<CalendarRecord>>> parseCalendarDateTime(StringView string)
 {
-    return readCharactersForParsing(string, [](auto buffer) -> std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>>> {
+    return readCharactersForParsing(string, [](auto buffer) -> std::optional<std::tuple<PlainDate, std::optional<PlainTime>, std::optional<TimeZoneRecord>, std::optional<CalendarRecord>, std::optional<CalendarRecord>>> {
         auto result = parseCalendarDateTime(buffer);
         if (!buffer.atEnd())
             return std::nullopt;
@@ -1201,7 +1285,7 @@ std::optional<ExactTime> parseInstant(StringView string)
         auto datetime = parseCalendarDateTime(buffer);
         if (!datetime)
             return std::nullopt;
-        auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional] = WTFMove(datetime.value());
+        auto [plainDate, plainTimeOptional, timeZoneOptional, calendarOptional1, calendarOptional2] = WTFMove(datetime.value());
         if (!timeZoneOptional || (!timeZoneOptional->m_z && !timeZoneOptional->m_offset))
             return std::nullopt;
         if (!buffer.atEnd())

@@ -333,9 +333,6 @@ skip:
     - test/built-ins/Temporal/Instant/compare/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/Instant/compare/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/Instant/compare/argument-string-unknown-annotation.js
-    - test/built-ins/Temporal/Instant/from/argument-string-calendar-annotation.js
-    - test/built-ins/Temporal/Instant/from/argument-string-time-zone-annotation.js
-    - test/built-ins/Temporal/Instant/from/argument-string-unknown-annotation.js
     - test/built-ins/Temporal/Instant/prototype/equals/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/Instant/prototype/equals/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/Instant/prototype/equals/argument-string-unknown-annotation.js
