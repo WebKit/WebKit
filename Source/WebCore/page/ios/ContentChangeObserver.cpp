@@ -33,6 +33,7 @@
 #include "DOMTimer.h"
 #include "Document.h"
 #include "DocumentInlines.h"
+#include "EventNames.h"
 #include "FullscreenManager.h"
 #include "HTMLIFrameElement.h"
 #include "HTMLImageElement.h"
@@ -438,6 +439,7 @@ void ContentChangeObserver::reset()
 
     m_contentObservationTimer.stop();
     m_elementsWithDestroyedVisibleRenderer.clear();
+    m_clickTarget = { };
     resetHiddenTouchTarget();
 }
 
@@ -464,6 +466,20 @@ void ContentChangeObserver::rendererWillBeDestroyed(const Element& element)
     if (!isVisuallyHidden(element))
         m_elementsWithDestroyedVisibleRenderer.add(element);
     elementDidBecomeHidden(element);
+}
+
+void ContentChangeObserver::didAddMouseMoveRelatedEventListener(const AtomString& eventType, const Node& node)
+{
+    if (!isObservingContentChanges())
+        return;
+
+    if (eventType != eventNames().mouseoutEvent)
+        return;
+
+    if (!m_clickTarget || !node.contains(m_clickTarget.get()))
+        return;
+
+    adjustObservedState(Event::DidAddMouseoutListenerAboveClickTarget);
 }
 
 void ContentChangeObserver::elementDidBecomeVisible(const Element& element)
@@ -694,6 +710,14 @@ void ContentChangeObserver::adjustObservedState(Event event)
         setHasVisibleChangeState();
         // Stop pending activities. We don't need to observe them anymore.
         stopObservingPendingActivities();
+        return;
+    }
+    if (event == Event::DidAddMouseoutListenerAboveClickTarget) {
+        // While not technically a visual state change, the addition of a mouseout event listener on the targeted node
+        // during content observation is a strong signal that the page wants to know when the mouse is no longer over
+        // the clicked target node.
+        setHasVisibleChangeState();
+        notifyClientIfNeeded();
         return;
     }
 }

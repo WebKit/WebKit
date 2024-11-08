@@ -49,7 +49,6 @@ namespace WebCore {
 
 class Animation;
 class DOMTimer;
-class Element;
 
 class ContentChangeObserver : public CanMakeWeakPtr<ContentChangeObserver> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ContentChangeObserver, WEBCORE_EXPORT);
@@ -76,12 +75,15 @@ public:
     WEBCORE_EXPORT static void didPreventDefaultForEvent(LocalFrame& mainFrame);
     WEBCORE_EXPORT static void didCancelPotentialTap(LocalFrame& mainFrame);
 
+    void setClickTarget(Node& target) { m_clickTarget = target; }
+
     void didSuspendActiveDOMObjects();
     void willDetachPage();
 
     void rendererWillBeDestroyed(const Element&);
     void willNotProceedWithClick();
 
+    void didAddMouseMoveRelatedEventListener(const AtomString& eventType, const Node&);
     void willNotProceedWithFixedObservationTimeWindow();
 
     void setHiddenTouchTarget(Element& targetElement) { m_hiddenTouchTargetElement = targetElement; }
@@ -196,7 +198,7 @@ private:
     
     bool isContentChangeObserverEnabled();
 
-    enum class Event {
+    enum class Event : uint8_t {
         StartedTouchStartEventDispatching,
         EndedTouchStartEventDispatching,
         WillNotProceedWithClick,
@@ -215,7 +217,8 @@ private:
         StartedFixedObservationTimeWindow,
         EndedFixedObservationTimeWindow,
         WillNotProceedWithFixedObservationTimeWindow,
-        ElementDidBecomeVisible
+        ElementDidBecomeVisible,
+        DidAddMouseoutListenerAboveClickTarget,
     };
     void adjustObservedState(Event);
 
@@ -226,6 +229,7 @@ private:
     WeakHashSet<const Element, WeakPtrImplWithEventTargetData> m_elementsWithDestroyedVisibleRenderer;
     WKContentChange m_observedContentState { WKContentNoChange };
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_hiddenTouchTargetElement;
+    WeakPtr<Node, WeakPtrImplWithEventTargetData> m_clickTarget;
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_visibilityCandidateList;
     bool m_touchEventIsBeingDispatched { false };
     bool m_isWaitingForStyleRecalc { false };

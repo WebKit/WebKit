@@ -1,0 +1,59 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+<script src="../../../../../resources/js-test.js"></script>
+<script src="../../../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+expandedContainer = false;
+window.internals?.settings.setContentChangeObserverEnabled(true);
+
+addEventListener("load", async () => {
+    description("To run this test manually, tap the green box above; it should expand vertically and stay green.");
+
+    const target = document.querySelector("div.target");
+    target.addEventListener("mouseenter", async () => {
+        target.addEventListener("mouseout", () => {
+            testFailed("Dispatched mouseout");
+            target.style.height = "48px";
+        }, { once: true });
+
+        await UIHelper.delayFor(150);
+        target.style.height = "400px";
+
+        await UIHelper.delayFor(300);
+        expandedContainer = true;
+    });
+
+    target.addEventListener("click", () => {
+        target.style.background = "tomato";
+        testFailed("Dispatched click");
+    });
+
+    await UIHelper.activateElement(target);
+    await shouldBecomeEqual("expandedContainer", "true");
+    finishJSTest();
+});
+</script>
+<style>
+div.target {
+    width: 240px;
+    height: 48px;
+    line-height: 48px;
+    color: white;
+    font-size: 24px;
+    background: green;
+    text-align: center;
+    transition: height 0.3s ease;
+    border-radius: 4px;
+    overflow: hidden;
+}
+</style>
+</head>
+<body>
+    <div class="target">Tap here</div>
+    <p id="console"></p>
+    <p id="description"></p>
+</body>
+</html>
