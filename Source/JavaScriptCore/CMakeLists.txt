@@ -862,6 +862,8 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     jit/JITCompilationEffort.h
     jit/JITCompilationMode.h
     jit/JITMathICForwards.h
+    jit/JITOpaqueByproduct.h
+    jit/JITOpaqueByproducts.h
     jit/JITOperations.h
     jit/JITStubRoutine.h
     jit/JITThunks.h
