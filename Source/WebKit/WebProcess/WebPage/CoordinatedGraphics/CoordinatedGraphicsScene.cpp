@@ -290,8 +290,10 @@ void CoordinatedGraphicsScene::updateSceneState()
                         if (layerState.backingStore) {
                             layer.acceptDamageVisitor(*this);
                             layersByBacking.backingStore.append({ std::ref(layer), layerState.backingStore->takePendingUpdate() });
-                        } else
+                        } else {
                             layer.setBackingStore(nullptr);
+                            m_backingStores.remove(&layer);
+                        }
 
                         if (layerState.contentLayer) {
                             layersByBacking.contentLayer.append(
