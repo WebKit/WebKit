@@ -122,6 +122,8 @@ TrackPrivateBaseGStreamer::TrackPrivateBaseGStreamer(TrackType type, TrackPrivat
 
 void TrackPrivateBaseGStreamer::setPad(GRefPtr<GstPad>&& pad)
 {
+    ASSERT(isMainThread()); // because this code writes to AtomString members.
+
     if (m_bestUpstreamPad && m_eventProbe)
         gst_pad_remove_probe(m_bestUpstreamPad.get(), m_eventProbe);
 
@@ -144,11 +146,10 @@ void TrackPrivateBaseGStreamer::setPad(GRefPtr<GstPad>&& pad)
                 track->streamChanged();
             break;
         case GST_EVENT_CAPS: {
-            String streamId = track->m_stringId;
-            if (!streamId)
-                break;
-
-            track->m_taskQueue.enqueueTask([track, streamId = WTFMove(streamId), event = GRefPtr<GstEvent>(event)]() {
+            track->m_taskQueue.enqueueTask([track, event = GRefPtr<GstEvent>(event)]() {
+                String streamId = track->m_stringId;
+                if (!streamId)
+                    return;
                 GstCaps* caps;
                 gst_event_parse_caps(event.get(), &caps);
                 if (!caps)
@@ -202,6 +203,7 @@ void TrackPrivateBaseGStreamer::disconnect()
 
 void TrackPrivateBaseGStreamer::tagsChanged()
 {
+    // May be called by any thread, including the streaming thread.
     GRefPtr<GstTagList> tags;
     if (m_bestUpstreamPad) {
         GRefPtr<GstEvent> tagEvent;
@@ -264,6 +266,7 @@ bool TrackPrivateBaseGStreamer::getTag(GstTagList* tags, const gchar* tagName, S
 
 void TrackPrivateBaseGStreamer::notifyTrackOfTagsChanged()
 {
+    ASSERT(isMainThread()); // because this code writes to AtomString members.
     GRefPtr<GstTagList> tags;
     {
         Locker locker { m_tagMutex };
@@ -303,6 +306,7 @@ void TrackPrivateBaseGStreamer::notifyTrackOfStreamChanged()
     if (!streamId)
         return;
 
+    ASSERT(isMainThread()); // because this code writes to AtomString members.
     GST_INFO("Track %d got stream start for stream %s.", m_index, streamId.get());
     m_stringId = trimStreamId(StringView::fromLatin1(streamId.get()));
 }
@@ -401,6 +405,7 @@ GRefPtr<GstTagList> TrackPrivateBaseGStreamer::getAllTags(const GRefPtr<GstPad>&
 
 bool TrackPrivateBaseGStreamer::updateTrackIDFromTags(const GRefPtr<GstTagList>& tags)
 {
+    ASSERT(isMainThread()); // because this code writes to AtomString members.
     GUniqueOutPtr<char> trackIDString;
     if (!gst_tag_list_get_string(tags.get(), "container-specific-track-id", &trackIDString.outPtr()))
         return false;

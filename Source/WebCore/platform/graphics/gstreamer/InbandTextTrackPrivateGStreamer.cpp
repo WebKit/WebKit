@@ -70,6 +70,7 @@ InbandTextTrackPrivateGStreamer::InbandTextTrackPrivateGStreamer(unsigned index,
 
 void InbandTextTrackPrivateGStreamer::tagsChanged(GRefPtr<GstTagList>&& tags)
 {
+    ASSERT(isMainThread());
     if (!tags)
         return;
 
