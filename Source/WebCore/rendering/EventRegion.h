@@ -101,6 +101,9 @@ public:
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     , Vector<WebCore::InteractionRegion>
 #endif
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    , WebCore::Region
+#endif
     );
 
     EventRegionContext makeContext() { return EventRegionContext(*this); }
@@ -144,12 +147,19 @@ public:
     void clearInteractionRegions();
 #endif
 
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    const Region& scrollOverlayRegion() const { return m_scrollOverlayRegion; }
+#endif
+
 private:
     friend struct IPC::ArgumentCoder<EventRegion, void>;
 #if ENABLE(TOUCH_ACTION_REGIONS)
     void uniteTouchActions(const Region&, OptionSet<TouchAction>);
 #endif
     void uniteEventListeners(const Region&, OptionSet<EventListenerRegionType>);
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    void uniteScrollOverlayRegion(const Region&, const RenderStyle&);
+#endif
 
     Region m_region;
 #if ENABLE(TOUCH_ACTION_REGIONS)
@@ -164,6 +174,9 @@ private:
 #endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     Vector<InteractionRegion> m_interactionRegions;
+#endif
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    Region m_scrollOverlayRegion;
 #endif
 };
 

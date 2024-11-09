@@ -6087,6 +6087,9 @@ class WebCore::EventRegion {
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
     Vector<WebCore::InteractionRegion> m_interactionRegions;
 #endif
+#if ENABLE(OVERLAY_REGIONS_IN_EVENT_REGION)
+    WebCore::Region m_scrollOverlayRegion;
+#endif
 };
 
 enum class WebCore::PasteboardItemPresentationStyle : uint8_t {
