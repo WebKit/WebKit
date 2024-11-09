@@ -29,6 +29,7 @@
 #include <wtf/FastMalloc.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TypeTraits.h>
 
 // MallocSpan is a smart pointer class that wraps a std::span and calls fastFree in its destructor.
 
@@ -46,7 +47,10 @@ public:
 
     ~MallocSpan()
     {
-        Malloc::free(m_span.data());
+        if constexpr (parameterCount(Malloc::free) == 2)
+            Malloc::free(m_span.data(), m_span.size());
+        else
+            Malloc::free(m_span.data());
     }
 
     MallocSpan& operator=(MallocSpan&& other)
@@ -86,6 +90,13 @@ public:
     {
         return MallocSpan { static_cast<T*>(Malloc::zeroedMalloc(sizeInBytes)), sizeInBytes };
     }
+
+#if HAVE(MMAP)
+    static MallocSpan mmap(size_t sizeInBytes, int pageProtection, int options, int fileDescriptor)
+    {
+        return MallocSpan { static_cast<T*>(Malloc::mmap(sizeInBytes, pageProtection, options, fileDescriptor)), sizeInBytes };
+    }
+#endif
 
     static MallocSpan tryMalloc(size_t sizeInBytes)
     {

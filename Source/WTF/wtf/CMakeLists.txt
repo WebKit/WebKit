@@ -172,6 +172,7 @@ set(WTF_PUBLIC_HEADERS
     MessageQueue.h
     MetaAllocator.h
     MetaAllocatorHandle.h
+    Mmap.h
     MonotonicTime.h
     NakedPtr.h
     NakedRef.h
