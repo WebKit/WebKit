@@ -419,6 +419,8 @@ bool overrideOptionWithHeuristic(T& variable, Options::ID id, const char* name, 
     return false;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 bool Options::overrideAliasedOptionWithHeuristic(const char* name)
 {
     const char* stringValue = getenv(name);
@@ -432,6 +434,8 @@ bool Options::overrideAliasedOptionWithHeuristic(const char* name)
     fprintf(stderr, "WARNING: failed to parse %s=%s\n", name, stringValue);
     return false;
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // !PLATFORM(COCOA)
 
