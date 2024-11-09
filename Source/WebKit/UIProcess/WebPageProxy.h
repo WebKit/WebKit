@@ -886,6 +886,18 @@ public:
     float topContentInset() const { return m_topContentInset; }
     void setTopContentInset(float);
 
+#if PLATFORM(MAC)
+    void setTopContentInsetAsync(float);
+    float pendingOrActualTopContentInset() const;
+
+    void scheduleSetTopContentInsetDispatch();
+    void dispatchSetTopContentInset();
+
+    void setAutomaticallyAdjustsContentInsets(bool);
+    bool automaticallyAdjustsContentInsets() const { return m_automaticallyAdjustsContentInsets; }
+    void updateContentInsetsIfAutomatic();
+#endif
+
     // Corresponds to the web content's `<meta name="theme-color">` or application manifest's `"theme_color"`.
     WebCore::Color themeColor() const;
 
@@ -3416,8 +3428,13 @@ private:
     double m_viewScaleFactor { 1 };
     float m_intrinsicDeviceScaleFactor { 1 };
     std::optional<float> m_customDeviceScaleFactor;
-    float m_topContentInset { 0 };
 
+    float m_topContentInset { 0 };
+#if PLATFORM(MAC)
+    std::optional<CGFloat> m_pendingTopContentInset;
+    bool m_didScheduleSetTopContentInsetDispatch { false };
+    bool m_automaticallyAdjustsContentInsets { false };
+#endif
     bool m_hasPendingUnderPageBackgroundColorOverrideToDispatch { false };
 
     bool m_useFixedLayout { false };

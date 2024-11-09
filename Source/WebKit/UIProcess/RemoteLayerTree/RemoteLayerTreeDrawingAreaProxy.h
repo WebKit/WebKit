@@ -130,6 +130,8 @@ private:
     virtual void scheduleDisplayRefreshCallbacks() { }
     virtual void pauseDisplayRefreshCallbacks() { }
 
+    virtual void dispatchSetTopContentInset() { }
+
     float indicatorScale(WebCore::IntSize contentsSize) const;
     void updateDebugIndicator() final;
     void updateDebugIndicator(WebCore::IntSize contentsSize, bool rootLayerChanged, float scale, const WebCore::IntPoint& scrollPosition);

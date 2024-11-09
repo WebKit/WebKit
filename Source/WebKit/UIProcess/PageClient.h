@@ -691,6 +691,8 @@ public:
 
     virtual bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) { return false; }
 
+    virtual std::optional<float> computeAutomaticTopContentInset() { return std::nullopt; }
+
     virtual WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection() = 0;
 
 #if USE(QUICK_LOOK)

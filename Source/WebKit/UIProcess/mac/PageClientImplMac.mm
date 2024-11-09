@@ -1019,6 +1019,17 @@ bool PageClientImpl::windowIsFrontWindowUnderMouse(const NativeWebMouseEvent& ev
     return m_impl->windowIsFrontWindowUnderMouse(event.nativeEvent());
 }
 
+std::optional<float> PageClientImpl::computeAutomaticTopContentInset()
+{
+    RetainPtr window = [m_view window];
+    if (([window styleMask] & NSWindowStyleMaskFullSizeContentView) && ![window titlebarAppearsTransparent] && ![m_view enclosingScrollView]) {
+        NSRect contentLayoutRectInWebViewCoordinates = [m_view convertRect:[window contentLayoutRect] fromView:nil];
+        return std::max<float>(contentLayoutRectInWebViewCoordinates.origin.y, 0);
+    }
+
+    return std::nullopt;
+}
+
 WebCore::UserInterfaceLayoutDirection PageClientImpl::userInterfaceLayoutDirection()
 {
     if (!m_view)

@@ -390,6 +390,68 @@ void WebPageProxy::handleAcceptsFirstMouse(bool acceptsFirstMouse)
     m_acceptsFirstMouse = acceptsFirstMouse;
 }
 
+void WebPageProxy::setAutomaticallyAdjustsContentInsets(bool automaticallyAdjustsContentInsets)
+{
+    m_automaticallyAdjustsContentInsets = automaticallyAdjustsContentInsets;
+    updateContentInsetsIfAutomatic();
+}
+
+void WebPageProxy::updateContentInsetsIfAutomatic()
+{
+    if (!m_automaticallyAdjustsContentInsets)
+        return;
+
+    m_pendingTopContentInset = std::nullopt;
+
+    scheduleSetTopContentInsetDispatch();
+}
+
+void WebPageProxy::setTopContentInsetAsync(float contentInset)
+{
+    m_pendingTopContentInset = contentInset;
+    scheduleSetTopContentInsetDispatch();
+}
+
+float WebPageProxy::pendingOrActualTopContentInset() const
+{
+    return m_pendingTopContentInset.value_or(m_topContentInset);
+}
+
+void WebPageProxy::scheduleSetTopContentInsetDispatch()
+{
+    if (m_didScheduleSetTopContentInsetDispatch)
+        return;
+
+    m_didScheduleSetTopContentInsetDispatch = true;
+
+    callOnMainRunLoop([weakThis = WeakPtr { *this }] {
+        if (!weakThis)
+            return;
+        weakThis->dispatchSetTopContentInset();
+    });
+}
+
+void WebPageProxy::dispatchSetTopContentInset()
+{
+    bool wasScheduled = std::exchange(m_didScheduleSetTopContentInsetDispatch, false);
+    if (!wasScheduled)
+        return;
+
+    if (!m_pendingTopContentInset) {
+        if (!m_automaticallyAdjustsContentInsets)
+            return;
+
+        if (RefPtr pageClient = this->pageClient())
+            m_pendingTopContentInset = pageClient->computeAutomaticTopContentInset();
+
+        if (!m_pendingTopContentInset)
+            m_pendingTopContentInset = 0;
+    }
+
+    setTopContentInset(*m_pendingTopContentInset);
+    m_pendingTopContentInset = std::nullopt;
+}
+
 void WebPageProxy::setRemoteLayerTreeRootNode(RemoteLayerTreeNode* rootNode)
 {
     if (RefPtr pageClient = this->pageClient())

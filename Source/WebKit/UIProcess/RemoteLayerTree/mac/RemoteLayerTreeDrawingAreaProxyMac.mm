@@ -507,6 +507,11 @@ void RemoteLayerTreeDrawingAreaProxyMac::didChangeViewExposedRect()
     updateDebugIndicatorPosition();
 }
 
+void RemoteLayerTreeDrawingAreaProxyMac::dispatchSetTopContentInset()
+{
+    protectedWebPageProxy()->dispatchSetTopContentInset();
+}
+
 void RemoteLayerTreeDrawingAreaProxyMac::colorSpaceDidChange()
 {
     forEachProcessState([&](ProcessState& state, WebProcessProxy& webProcess) {

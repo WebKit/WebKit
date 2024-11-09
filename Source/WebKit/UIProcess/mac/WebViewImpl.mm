@@ -1825,68 +1825,32 @@ NSPrintOperation *WebViewImpl::printOperationWithPrintInfo(NSPrintInfo *printInf
 
 void WebViewImpl::setAutomaticallyAdjustsContentInsets(bool automaticallyAdjustsContentInsets)
 {
-    m_automaticallyAdjustsContentInsets = automaticallyAdjustsContentInsets;
-    updateContentInsetsIfAutomatic();
+    m_page->setAutomaticallyAdjustsContentInsets(automaticallyAdjustsContentInsets);
+}
+
+bool WebViewImpl::automaticallyAdjustsContentInsets() const
+{
+    return m_page->automaticallyAdjustsContentInsets();
 }
 
 void WebViewImpl::updateContentInsetsIfAutomatic()
 {
-    if (!m_automaticallyAdjustsContentInsets)
-        return;
-
-    m_pendingTopContentInset = std::nullopt;
-
-    scheduleSetTopContentInsetDispatch();
+    m_page->updateContentInsetsIfAutomatic();
 }
 
 CGFloat WebViewImpl::topContentInset() const
 {
-    return m_pendingTopContentInset.value_or(m_page->topContentInset());
+    return m_page->pendingOrActualTopContentInset();
 }
 
 void WebViewImpl::setTopContentInset(CGFloat contentInset)
 {
-    m_pendingTopContentInset = contentInset;
-
-    scheduleSetTopContentInsetDispatch();
+    m_page->setTopContentInsetAsync(contentInset);
 }
 
-void WebViewImpl::scheduleSetTopContentInsetDispatch()
+void WebViewImpl::flushPendingTopContentInset()
 {
-    if (m_didScheduleSetTopContentInsetDispatch)
-        return;
-
-    m_didScheduleSetTopContentInsetDispatch = true;
-
-    RunLoop::main().dispatch([weakThis = WeakPtr { *this }] {
-        if (!weakThis)
-            return;
-        weakThis->dispatchSetTopContentInset();
-    });
-}
-
-void WebViewImpl::dispatchSetTopContentInset()
-{
-    if (!m_didScheduleSetTopContentInsetDispatch)
-        return;
-
-    m_didScheduleSetTopContentInsetDispatch = false;
-
-    if (!m_pendingTopContentInset) {
-        if (!m_automaticallyAdjustsContentInsets)
-            return;
-
-        NSWindow *window = [m_view window];
-        if ((window.styleMask & NSWindowStyleMaskFullSizeContentView) && !window.titlebarAppearsTransparent && ![m_view enclosingScrollView]) {
-            NSRect contentLayoutRectInWebViewCoordinates = [m_view convertRect:window.contentLayoutRect fromView:nil];
-            m_pendingTopContentInset = std::max<CGFloat>(contentLayoutRectInWebViewCoordinates.origin.y, 0);
-        } else
-            m_pendingTopContentInset = 0;
-    }
-
-    m_page->setTopContentInset(*m_pendingTopContentInset);
-
-    m_pendingTopContentInset = std::nullopt;
+    m_page->dispatchSetTopContentInset();
 }
 
 void WebViewImpl::prepareContentInRect(CGRect rect)
@@ -2467,7 +2431,7 @@ void WebViewImpl::endDeferringViewInWindowChanges()
     m_shouldDeferViewInWindowChanges = false;
 
     if (m_viewInWindowChangeWasDeferred) {
-        dispatchSetTopContentInset();
+        flushPendingTopContentInset();
         m_page->activityStateDidChange(WebCore::ActivityState::IsInWindow);
         m_viewInWindowChangeWasDeferred = false;
     }
@@ -2483,7 +2447,7 @@ void WebViewImpl::endDeferringViewInWindowChangesSync()
     m_shouldDeferViewInWindowChanges = false;
 
     if (m_viewInWindowChangeWasDeferred) {
-        dispatchSetTopContentInset();
+        flushPendingTopContentInset();
         m_page->activityStateDidChange(WebCore::ActivityState::IsInWindow);
         m_viewInWindowChangeWasDeferred = false;
     }
@@ -2502,7 +2466,7 @@ void WebViewImpl::prepareForMoveToWindow(NSWindow *targetWindow, WTF::Function<v
     WeakPtr weakThis { *this };
     m_page->installActivityStateChangeCompletionHandler(WTFMove(completionHandler));
 
-    dispatchSetTopContentInset();
+    flushPendingTopContentInset();
     m_page->activityStateDidChange(WebCore::ActivityState::IsInWindow, WebPageProxy::ActivityStateChangeDispatchMode::Immediate);
     m_viewInWindowChangeWasDeferred = false;
 }

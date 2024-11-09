@@ -296,6 +296,8 @@ private:
     void didRestoreScrollPosition() override;
     bool windowIsFrontWindowUnderMouse(const NativeWebMouseEvent&) override;
 
+    std::optional<float> computeAutomaticTopContentInset() override;
+
     void takeFocus(WebCore::FocusDirection) override;
 
     void performSwitchHapticFeedback() final;

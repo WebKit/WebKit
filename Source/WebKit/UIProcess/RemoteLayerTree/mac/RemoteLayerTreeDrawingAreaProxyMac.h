@@ -81,6 +81,9 @@ private:
     void setPreferredFramesPerSecond(IPC::Connection&, WebCore::FramesPerSecond) override;
     void windowScreenDidChange(WebCore::PlatformDisplayID) override;
     std::optional<WebCore::FramesPerSecond> displayNominalFramesPerSecond() override;
+
+    void dispatchSetTopContentInset() override;
+
     void colorSpaceDidChange() override;
 
     void viewIsBecomingVisible() final;

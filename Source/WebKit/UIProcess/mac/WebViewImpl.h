@@ -268,10 +268,11 @@ public:
     NSPrintOperation *printOperationWithPrintInfo(NSPrintInfo *, WebFrameProxy&);
 
     void setAutomaticallyAdjustsContentInsets(bool);
-    bool automaticallyAdjustsContentInsets() const { return m_automaticallyAdjustsContentInsets; }
+    bool automaticallyAdjustsContentInsets() const;
     void updateContentInsetsIfAutomatic();
     void setTopContentInset(CGFloat);
     CGFloat topContentInset() const;
+    void flushPendingTopContentInset();
 
     void prepareContentInRect(CGRect);
     void updateViewExposedRect();
@@ -807,9 +808,6 @@ private:
     bool supportsArbitraryLayoutModes() const;
     float intrinsicDeviceScaleFactor() const;
 
-    void scheduleSetTopContentInsetDispatch();
-    void dispatchSetTopContentInset();
-
     void sendToolTipMouseExited();
     void sendToolTipMouseEntered();
 
@@ -881,10 +879,6 @@ private:
     bool m_didScheduleWindowAndViewFrameUpdate { false };
     bool m_windowOcclusionDetectionEnabled { true };
 
-    bool m_automaticallyAdjustsContentInsets { false };
-    std::optional<CGFloat> m_pendingTopContentInset;
-    bool m_didScheduleSetTopContentInsetDispatch { false };
-    
     CGSize m_scrollOffsetAdjustment { 0, 0 };
 
     CGSize m_intrinsicContentSize { 0, 0 };

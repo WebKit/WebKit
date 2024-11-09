@@ -1473,12 +1473,19 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 
 - (void)_setTopContentInset:(CGFloat)contentInset
 {
-    return _impl->setTopContentInset(contentInset);
+    _impl->setTopContentInset(contentInset);
 }
 
 - (CGFloat)_topContentInset
 {
     return _impl->topContentInset();
+}
+
+- (void)_setTopContentInset:(CGFloat)contentInset immediate:(BOOL)immediate
+{
+    _impl->setTopContentInset(contentInset);
+    if (immediate)
+        _impl->flushPendingTopContentInset();
 }
 
 - (void)_setAutomaticallyAdjustsContentInsets:(BOOL)automaticallyAdjustsContentInsets
