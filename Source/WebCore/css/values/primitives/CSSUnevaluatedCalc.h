@@ -67,18 +67,30 @@ float unevaluatedCalcEvaluate(const Ref<CSSCalcValue>&, const CSSToLengthConvers
 float unevaluatedCalcEvaluateNoConversionDataRequired(const Ref<CSSCalcValue>&, Calculation::Category);
 float unevaluatedCalcEvaluateNoConversionDataRequired(const Ref<CSSCalcValue>&, const CSSCalcSymbolTable&, Calculation::Category);
 
-// `UnevaluatedCalc` annotates a `CSSCalcValue` with the raw value type that it
-// will be evaluated to, allowing the processing of calc in generic code.
-template<typename T> struct UnevaluatedCalc {
-    using RawType = T;
+struct BaseUnevaluatedCalc {
     Ref<CSSCalcValue> calc;
 
-    Ref<CSSCalcValue> protectedCalc() const { return calc; }
+    BaseUnevaluatedCalc(const BaseUnevaluatedCalc&);
+    BaseUnevaluatedCalc(BaseUnevaluatedCalc&&);
+    BaseUnevaluatedCalc(Ref<CSSCalcValue>&&);
+    ~BaseUnevaluatedCalc();
+    BaseUnevaluatedCalc& operator=(const BaseUnevaluatedCalc&);
+    BaseUnevaluatedCalc& operator=(BaseUnevaluatedCalc&&);
 
-    bool operator==(const UnevaluatedCalc<T>& other) const
+    Ref<CSSCalcValue> protectedCalc() const;
+
+    bool operator==(const BaseUnevaluatedCalc& other) const
     {
         return unevaluatedCalcEqual(calc, other.calc);
     }
+};
+
+// `UnevaluatedCalc` annotates a `CSSCalcValue` with the raw value type that it
+// will be evaluated to, allowing the processing of calc in generic code.
+template<typename T> struct UnevaluatedCalc : public BaseUnevaluatedCalc {
+    using RawType = T;
+    UnevaluatedCalc(Ref<CSSCalcValue>&& value)
+        : BaseUnevaluatedCalc(WTFMove(value)) { }
 };
 
 // MARK: - Utility templates

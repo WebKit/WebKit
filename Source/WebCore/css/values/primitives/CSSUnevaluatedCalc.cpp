@@ -34,6 +34,22 @@
 namespace WebCore {
 namespace CSS {
 
+BaseUnevaluatedCalc::~BaseUnevaluatedCalc() = default;
+BaseUnevaluatedCalc::BaseUnevaluatedCalc(const BaseUnevaluatedCalc&) = default;
+BaseUnevaluatedCalc::BaseUnevaluatedCalc(BaseUnevaluatedCalc&&) = default;
+BaseUnevaluatedCalc& BaseUnevaluatedCalc::operator=(const BaseUnevaluatedCalc&) = default;
+BaseUnevaluatedCalc& BaseUnevaluatedCalc::operator=(BaseUnevaluatedCalc&&) = default;
+
+BaseUnevaluatedCalc::BaseUnevaluatedCalc(Ref<CSSCalcValue>&& value)
+    : calc(WTFMove(value))
+{
+}
+
+Ref<CSSCalcValue> BaseUnevaluatedCalc::protectedCalc() const
+{
+    return calc;
+}
+
 bool unevaluatedCalcEqual(const Ref<CSSCalcValue>& a, const Ref<CSSCalcValue>& b)
 {
     return a->equals(b.get());
