@@ -27,6 +27,7 @@
 #include "URLPatternParser.h"
 
 #include "URLPatternTokenizer.h"
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace URLPatternUtilities {

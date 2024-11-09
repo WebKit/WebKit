@@ -31,6 +31,7 @@
 #include "InjectedBundleRangeHandle.h"
 #include "WKAPICast.h"
 #include "WKBundleAPICast.h"
+#include "WebFrame.h"
 #include "WebImage.h"
 #include <WebCore/IntRect.h>
 
