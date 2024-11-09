@@ -35,7 +35,7 @@ namespace WebCore {
 
 class LibWebRTCVPXInternalVideoDecoder;
 
-class LibWebRTCVPXVideoDecoder : public VideoDecoder {
+class LibWebRTCVPXVideoDecoder final : public VideoDecoder {
     WTF_MAKE_TZONE_ALLOCATED(LibWebRTCVPXVideoDecoder);
 public:
     enum class Type {
