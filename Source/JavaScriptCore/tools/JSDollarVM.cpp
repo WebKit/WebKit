@@ -2392,6 +2392,8 @@ JSC_DEFINE_HOST_FUNCTION(functionCpuPause, (JSGlobalObject*, CallFrame*))
     return JSValue::encode(jsUndefined());
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 // This takes either a JSArrayBuffer, JSArrayBufferView*, or any other object as its first
 // argument. The second argument is expected to be an integer.
 //
@@ -2441,6 +2443,8 @@ JSC_DEFINE_HOST_FUNCTION(functionCpuClflush, (JSGlobalObject*, CallFrame* callFr
     return JSValue::encode(jsBoolean(false));
 #endif
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 class CallerFrameJITTypeFunctor {
 public:

@@ -283,6 +283,8 @@ unsigned sizeFrameForVarargs(JSGlobalObject* globalObject, CallFrame* callFrame,
     return length;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValue arguments, uint32_t offset, uint32_t length)
 {
     if (UNLIKELY(!arguments.isCell()) || !length)
@@ -317,7 +319,6 @@ void loadVarargs(JSGlobalObject* globalObject, JSValue* firstElementDest, JSValu
             jsCast<JSArray*>(object)->copyToArguments(globalObject, firstElementDest, offset, length);
             return;
         }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         unsigned i;
         for (i = 0; i < length && object->canGetIndexQuickly(i + offset); ++i)
             firstElementDest[i] = object->getIndexQuickly(i + offset);
@@ -326,11 +327,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
             RETURN_IF_EXCEPTION(scope, void());
             firstElementDest[i] = value;
         }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return;
     }
     }
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void setupVarargsFrame(JSGlobalObject* globalObject, CallFrame* callFrame, CallFrame* newCallFrame, JSValue arguments, uint32_t offset, uint32_t length)
 {
@@ -748,6 +750,8 @@ public:
     }
 
 private:
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
     void copyCalleeSavesToEntryFrameCalleeSavesBuffer(StackVisitor& visitor) const
     {
 #if ENABLE(ASSEMBLER)
@@ -793,6 +797,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         UNUSED_PARAM(visitor);
 #endif
     }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     ALWAYS_INLINE static void notifyDebuggerOfUnwinding(VM& vm, CallFrame* callFrame)
     {
