@@ -57,7 +57,7 @@ WKImageRef WKBundleRangeHandleCopySnapshotWithOptions(WKBundleRangeHandleRef ran
     return toAPI(image.leakRef());
 }
 
-WKBundleFrameRef WKBundleRangeHandleDocumentFrame(WKBundleRangeHandleRef rangeHandleRef)
+WKBundleFrameRef WKBundleRangeHandleCopyDocumentFrame(WKBundleRangeHandleRef rangeHandleRef)
 {
     RefPtr frame = WebKit::toImpl(rangeHandleRef)->document()->documentFrame();
     return toAPI(frame.leakRef());

@@ -127,7 +127,7 @@ static WTF::String string(WKBundleScriptWorldRef world, WKBundleRangeHandleRef r
     if (!rangeRef)
         return "(null)"_s;
 
-    auto frame = adoptWK(WKBundleRangeHandleDocumentFrame(rangeRef));
+    auto frame = adoptWK(WKBundleRangeHandleCopyDocumentFrame(rangeRef));
     auto context = WKBundleFrameGetJavaScriptContextForWorld(frame.get(), world);
     auto rangeValue = WKBundleFrameGetJavaScriptWrapperForRangeForWorld(frame.get(), rangeRef, world);
     ASSERT(JSValueIsObject(context, rangeValue));
