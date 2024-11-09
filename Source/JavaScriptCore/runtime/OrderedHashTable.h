@@ -199,6 +199,35 @@ public:
         return Helper::get(storageRef(), keyIndex + 1);
     }
 
+    template<typename GetValueFunctor>
+    ALWAYS_INLINE JSValue getOrInsert(JSGlobalObject* globalObject, JSValue key, const GetValueFunctor& getValueFunctor)
+    {
+        VM& vm = getVM(globalObject);
+        auto scope = DECLARE_THROW_SCOPE(vm);
+
+        materializeIfNeeded(globalObject);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        Storage& storage = storageRef();
+
+        JSValue value;
+
+        auto result = Helper::find(globalObject, storage, key);
+        RETURN_IF_EXCEPTION(scope, { });
+
+        if (Helper::isValidTableIndex(result.entryKeyIndex))
+            value = Helper::get(storage, result.entryKeyIndex + 1);
+        else {
+            value = getValueFunctor();
+            RETURN_IF_EXCEPTION(scope, { });
+
+            Helper::addImpl(globalObject, this, storage, key, value, result);
+            RETURN_IF_EXCEPTION(scope, { });
+        }
+
+        return value;
+    }
+
     static JSCell* createSentinel(VM& vm) { return Helper::tryCreate(vm, 0); }
     static Symbol* createDeletedValue(VM& vm) { return Symbol::create(vm); }
 };

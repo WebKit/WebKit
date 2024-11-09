@@ -72,6 +72,25 @@ ALWAYS_INLINE void WeakMapImpl<WeakMapBucket>::add(VM& vm, JSCell* key, JSValue 
         rehash();
 }
 
+template <typename WeakMapBucket>
+ALWAYS_INLINE void WeakMapImpl<WeakMapBucket>::addBucket(VM& vm, JSCell* key, JSValue value, uint32_t hash, size_t index)
+{
+    UNUSED_PARAM(hash);
+    ASSERT(jsWeakMapHash(key) == hash);
+    ASSERT(!findBucket(key, hash));
+
+    WeakMapBucket* newEntry = buffer() + index;
+    ASSERT(newEntry);
+    ASSERT(newEntry->isEmpty());
+
+    newEntry->setKey(vm, this, key);
+    newEntry->setValue(vm, this, value);
+    ++m_keyCount;
+
+    if (shouldRehashAfterAdd())
+        rehash();
+}
+
 // Note that this function can be executed in parallel as long as the mutator stops.
 template<typename WeakMapBucket>
 void WeakMapImpl<WeakMapBucket>::finalizeUnconditionally(VM& vm, CollectionScope)
