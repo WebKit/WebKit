@@ -15,8 +15,6 @@ PASS .flexbox 13
 PASS .flexbox 14
 PASS .flexbox 15
 PASS .flexbox 16
-PASS .flexbox 17
-PASS .flexbox 18
 button
 
 object
@@ -35,9 +33,6 @@ object
 
 
 
-
-Some text
-Some more text
 
 
 

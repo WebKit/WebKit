@@ -752,10 +752,13 @@ LayoutUnit RenderBox::constrainLogicalWidthInFragmentByMinMax(LayoutUnit logical
 
 LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, std::optional<LayoutUnit> intrinsicContentHeight) const
 {
+    // Note that the values 'min-content', 'max-content' and 'fit-content' should
+    // behave as the initial value if specified in the block direction.
     const RenderStyle& styleToUse = style();
+    const auto& logicalMaxHeight = styleToUse.logicalMaxHeight();
     std::optional<LayoutUnit> computedLogicalMaxHeight;
-    if (!styleToUse.logicalMaxHeight().isUndefined())
-        computedLogicalMaxHeight = computeLogicalHeightUsing(SizeType::MaxSize, styleToUse.logicalMaxHeight(), intrinsicContentHeight);
+    if (!logicalMaxHeight.isUndefined() && !logicalMaxHeight.isMinContent() && !logicalMaxHeight.isMaxContent() && !logicalMaxHeight.isFitContent())
+        computedLogicalMaxHeight = computeLogicalHeightUsing(SizeType::MaxSize, logicalMaxHeight, intrinsicContentHeight);
 
     MinimumSizeIsAutomaticContentBased minimumSizeType = MinimumSizeIsAutomaticContentBased::No;
     auto logicalMinHeight = styleToUse.logicalMinHeight();
@@ -766,8 +769,8 @@ LayoutUnit RenderBox::constrainLogicalHeightByMinMax(LayoutUnit logicalHeight, s
         logicalMinHeight = Length(heightFromAspectRatio, LengthType::Fixed);
         minimumSizeType = MinimumSizeIsAutomaticContentBased::Yes;
     }
-    if (logicalMinHeight.isMinContent() || logicalMinHeight.isMaxContent())
-        logicalMinHeight = Length();
+    if (logicalMinHeight.isMinContent() || logicalMinHeight.isMaxContent() || logicalMinHeight.isFitContent())
+        logicalMinHeight = LengthType::Auto;
     std::optional<LayoutUnit> computedLogicalMinHeight = computeLogicalHeightUsing(SizeType::MinSize, logicalMinHeight, intrinsicContentHeight);
     LayoutUnit maxHeight = computedLogicalMaxHeight ? computedLogicalMaxHeight.value() : LayoutUnit::max();
     LayoutUnit minHeight = computedLogicalMinHeight ? computedLogicalMinHeight.value() : LayoutUnit();
@@ -3625,6 +3628,12 @@ bool RenderBox::replacedMinMaxLogicalHeightComputesAsNone(SizeType sizeType) con
     ASSERT(sizeType == SizeType::MinSize || sizeType == SizeType::MaxSize);
     
     auto logicalHeight = sizeType == SizeType::MinSize ? style().logicalMinHeight() : style().logicalMaxHeight();
+
+    // Note that the values 'min-content', 'max-content' and 'fit-content' should
+    // behave as the initial value if specified in the block direction.
+    if (logicalHeight.isMinContent() || logicalHeight.isMaxContent() || logicalHeight.isFitContent())
+        return true;
+
     auto initialLogicalHeight = sizeType == SizeType::MinSize ? RenderStyle::initialMinSize() : RenderStyle::initialMaxSize();
     
     if (logicalHeight == initialLogicalHeight)
@@ -4103,9 +4112,10 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
 
     LogicalExtentComputedValues minValues;
     minValues.m_extent = LayoutUnit::min();
+    const auto& logicalMinWidth = style().logicalMinWidth();
     // Calculate constraint equation values for 'min-width' case.
-    if (!style().logicalMinWidth().isZero() || style().logicalMinWidth().isIntrinsic()) {
-        computePositionedLogicalWidthUsing(SizeType::MinSize, style().logicalMinWidth(), containerBlock, containerWritingMode,
+    if (!logicalMinWidth.isZero() || logicalMinWidth.isIntrinsic()) {
+        computePositionedLogicalWidthUsing(SizeType::MinSize, logicalMinWidth, containerBlock, containerWritingMode,
             containerLogicalWidth, bordersPlusPadding,
             logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
             minValues);
@@ -4494,10 +4504,11 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
     // see FIXME 2
 
     // Calculate constraint equation values for 'max-height' case.
-    if (!styleToUse.logicalMaxHeight().isUndefined()) {
+    auto& logicalMaxHeight = styleToUse.logicalMaxHeight();
+    if (!logicalMaxHeight.isUndefined() && !logicalMaxHeight.isMinContent() && !logicalMaxHeight.isMaxContent() && !logicalMaxHeight.isFitContent()) {
         LogicalExtentComputedValues maxValues;
 
-        computePositionedLogicalHeightUsing(SizeType::MaxSize, styleToUse.logicalMaxHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight,
+        computePositionedLogicalHeightUsing(SizeType::MaxSize, logicalMaxHeight, containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight,
                                             logicalTopLength, logicalBottomLength, marginBefore, marginAfter,
                                             maxValues);
 
@@ -4510,8 +4521,10 @@ void RenderBox::computePositionedLogicalHeight(LogicalExtentComputedValues& comp
     }
 
     // Calculate constraint equation values for 'min-height' case.
-    Length logicalMinHeight = styleToUse.logicalMinHeight();
-    if (logicalMinHeight.isAuto() || !logicalMinHeight.isZero() || logicalMinHeight.isIntrinsic()) {
+    auto logicalMinHeight = styleToUse.logicalMinHeight();
+    if (logicalMinHeight.isMinContent() || logicalMinHeight.isMaxContent() || logicalMinHeight.isFitContent())
+        logicalMinHeight = LengthType::Auto;
+    if (logicalMinHeight.isAuto() || !logicalMinHeight.isZero() || logicalMinHeight.isFillAvailable()) {
         LogicalExtentComputedValues minValues;
 
         computePositionedLogicalHeightUsing(SizeType::MinSize, styleToUse.logicalMinHeight(), containerBlock, containerLogicalHeight, bordersPlusPadding, logicalHeight,
