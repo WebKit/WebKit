@@ -1168,7 +1168,7 @@ String WebExtensionAction::label(FallbackWhenEmpty fallback) const
         return fallback->label();
 
     // Default
-    if (auto *defaultLabel = extensionContext()->extension().displayActionLabel(); defaultLabel.length || fallback == FallbackWhenEmpty::No)
+    if (auto defaultLabel = extensionContext()->extension().displayActionLabel(); !defaultLabel.isEmpty() || fallback == FallbackWhenEmpty::No)
         return defaultLabel;
 
     return extensionContext()->extension().displayName();

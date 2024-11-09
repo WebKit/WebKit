@@ -51,6 +51,8 @@ static constexpr auto browserActionManifestKey = "browser_action"_s;
 static constexpr auto pageActionManifestKey = "page_action"_s;
 
 static constexpr auto defaultIconManifestKey = "default_icon"_s;
+static constexpr auto defaultTitleManifestKey = "default_title"_s;
+static constexpr auto defaultPopupManifestKey = "default_popup"_s;
 
 static constexpr auto manifestVersionManifestKey = "manifest_version"_s;
 
@@ -416,17 +418,8 @@ Ref<API::Error> WebExtension::createError(Error error, const String& customLocal
 
     case Error::InvalidActionIcon: {
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
-        RefPtr<JSON::Value> actionManifest;
-        if (supportsManifestVersion(3))
-            actionManifest = manifestObject()->getValue(actionManifestKey);
-        else {
-            actionManifest = manifestObject()->getValue(browserActionManifestKey);
-            if (!actionManifest)
-                actionManifest = manifestObject()->getValue(pageActionManifestKey);
-        }
-
-        if (actionManifest) {
-            if (auto actionObject = actionManifest->asObject(); actionObject->getValue(iconVariantsManifestKey)) {
+        if (RefPtr actionObject = m_actionObject) {
+            if (actionObject->getValue(iconVariantsManifestKey)) {
                 if (supportsManifestVersion(3))
                     localizedDescription = WEB_UI_STRING("Empty or invalid `icon_variants` for the `action` manifest entry.", "WKWebExtensionErrorInvalidManifestEntry description for icon_variants in action only");
                 else
@@ -1557,6 +1550,96 @@ void WebExtension::populatePermissionsPropertiesIfNeeded()
     }
 }
 
+void WebExtension::populateActionPropertiesIfNeeded()
+{
+    if (m_parsedManifestActionProperties)
+        return;
+
+    m_parsedManifestActionProperties = true;
+
+    RefPtr manifestObject = this->manifestObject();
+    if (!manifestObject)
+        return;
+
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/action
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/browser_action
+    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/page_action
+
+    RefPtr<JSON::Object> actionObject;
+    if (supportsManifestVersion(3))
+        actionObject = manifestObject->getObject(actionManifestKey);
+    else {
+        actionObject = manifestObject->getObject(browserActionManifestKey);
+        if (!actionObject)
+            actionObject = manifestObject->getObject(pageActionManifestKey);
+    }
+
+    if (!actionObject)
+        return;
+
+    // Look for the "default_icon" as a string, which is useful for SVG icons. Only supported by Firefox currently.
+    if (auto defaultIconPath = actionObject->getString(defaultIconManifestKey); !defaultIconPath.isEmpty()) {
+        RefPtr<API::Error> resourceError;
+        m_defaultActionIcon = iconForPath(defaultIconPath, resourceError);
+
+        if (!m_defaultActionIcon) {
+            recordErrorIfNeeded(resourceError);
+
+            String localizedErrorDescription;
+            if (supportsManifestVersion(3))
+                localizedErrorDescription = WEB_UI_STRING("Failed to load image for `default_icon` in the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load single image for action");
+            else
+                localizedErrorDescription = WEB_UI_STRING("Failed to load image for `default_icon` in the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load single image for browser_action or page_action");
+
+            recordError(createError(Error::InvalidActionIcon, localizedErrorDescription));
+        }
+    }
+
+    m_displayActionLabel = actionObject->getString(defaultTitleManifestKey);
+    m_actionPopupPath = actionObject->getString(defaultPopupManifestKey);
+
+    m_actionObject = actionObject;
+}
+
+const String& WebExtension::displayActionLabel()
+{
+    populateActionPropertiesIfNeeded();
+    return m_displayActionLabel;
+}
+
+const String& WebExtension::actionPopupPath()
+{
+    populateActionPropertiesIfNeeded();
+    return m_actionPopupPath;
+}
+
+bool WebExtension::hasAction()
+{
+    RefPtr manifestObject = this->manifestObject();
+    if (!manifestObject)
+        return false;
+
+    return supportsManifestVersion(3) && manifestObject->getValue(actionManifestKey);
+}
+
+bool WebExtension::hasBrowserAction()
+{
+    RefPtr manifestObject = this->manifestObject();
+    if (!manifestObject)
+        return false;
+
+    return !supportsManifestVersion(3) && manifestObject->getValue(browserActionManifestKey);
+}
+
+bool WebExtension::hasPageAction()
+{
+    RefPtr manifestObject = this->manifestObject();
+    if (!manifestObject)
+        return false;
+
+    return !supportsManifestVersion(3) && manifestObject->getValue(pageActionManifestKey);
+}
+
 RefPtr<WebCore::Icon> WebExtension::icon(WebCore::FloatSize size)
 {
     RefPtr manifestObject = this->manifestObject();
@@ -1585,35 +1668,26 @@ RefPtr<WebCore::Icon> WebExtension::actionIcon(WebCore::FloatSize size)
     if (m_defaultActionIcon)
         return m_defaultActionIcon;
 
-    RefPtr<JSON::Object> actionObject;
-    if (supportsManifestVersion(3))
-        actionObject = manifestObject->getObject(actionManifestKey);
-    else {
-        actionObject = manifestObject->getObject(browserActionManifestKey);
-        if (!actionObject)
-            actionObject = manifestObject->getObject(pageActionManifestKey);
-    }
-
-    if (!actionObject)
-        return icon(size);
-
+    if (RefPtr actionObject = m_actionObject) {
 #if ENABLE(WK_WEB_EXTENSIONS_ICON_VARIANTS)
-    if (actionObject->getValue(iconVariantsManifestKey)) {
-        String localizedErrorDescription = WEB_UI_STRING("Failed to load images in `icon_variants` for the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load image variants for action");
-        if (RefPtr result = bestIconVariantForManifestKey(*actionObject, iconVariantsManifestKey, size, m_actionIconsCache, Error::InvalidActionIcon, localizedErrorDescription))
-            return result;
-        return icon(size);
-    }
+        if (actionObject->getValue(iconVariantsManifestKey)) {
+            String localizedErrorDescription = WEB_UI_STRING("Failed to load images in `icon_variants` for the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load image variants for action");
+            if (RefPtr result = bestIconVariantForManifestKey(*actionObject, iconVariantsManifestKey, size, m_actionIconsCache, Error::InvalidActionIcon, localizedErrorDescription))
+                return result;
+            return icon(size);
+        }
 #endif
 
-    String localizedErrorDescription;
-    if (supportsManifestVersion(3))
-        localizedErrorDescription = WEB_UI_STRING("Failed to load images in `default_icon` for the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load images for action only");
-    else
-        localizedErrorDescription = WEB_UI_STRING("Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load images for browser_action or page_action");
+        String localizedErrorDescription;
+        if (supportsManifestVersion(3))
+            localizedErrorDescription = WEB_UI_STRING("Failed to load images in `default_icon` for the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load images for action only");
+        else
+            localizedErrorDescription = WEB_UI_STRING("Failed to load images in `default_icon` for the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load images for browser_action or page_action");
 
-    if (RefPtr result = bestIconForManifestKey(*actionObject, defaultIconManifestKey, size, m_actionIconsCache, Error::InvalidActionIcon, localizedErrorDescription))
-        return result;
+        if (RefPtr result = bestIconForManifestKey(*actionObject, defaultIconManifestKey, size, m_actionIconsCache, Error::InvalidActionIcon, localizedErrorDescription))
+            return result;
+        }
+
     return icon(size);
 }
 

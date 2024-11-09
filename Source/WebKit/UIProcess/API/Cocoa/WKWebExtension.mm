@@ -213,7 +213,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtension, WebExtension, _webExtensio
 
 - (NSString *)displayActionLabel
 {
-    return self._protectedWebExtension->displayActionLabel();
+    return nsStringNilIfEmpty(self._protectedWebExtension->displayActionLabel());
 }
 
 - (NSString *)version

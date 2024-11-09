@@ -71,10 +71,6 @@ SOFT_LINK(CoreSVG, CGSVGDocumentRelease, void, (CGSVGDocumentRef document), (doc
 
 namespace WebKit {
 
-static NSString * const actionManifestKey = @"action";
-static NSString * const browserActionManifestKey = @"browser_action";
-static NSString * const pageActionManifestKey = @"page_action";
-
 static NSString * const defaultIconManifestKey = @"default_icon";
 static NSString * const defaultLocaleManifestKey = @"default_locale";
 static NSString * const defaultTitleManifestKey = @"default_title";
@@ -496,80 +492,6 @@ _WKWebExtensionLocalization *WebExtension::localization()
         return nil;
 
     return m_localization.get();
-}
-
-NSString *WebExtension::displayActionLabel()
-{
-    populateActionPropertiesIfNeeded();
-    return m_displayActionLabel.get();
-}
-
-NSString *WebExtension::actionPopupPath()
-{
-    populateActionPropertiesIfNeeded();
-    return m_actionPopupPath.get();
-}
-
-bool WebExtension::hasAction()
-{
-    return supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, actionManifestKey, false);
-}
-
-bool WebExtension::hasBrowserAction()
-{
-    return !supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, browserActionManifestKey, false);
-}
-
-bool WebExtension::hasPageAction()
-{
-    return !supportsManifestVersion(3) && objectForKey<NSDictionary>(m_manifest, pageActionManifestKey, false);
-}
-
-void WebExtension::populateActionPropertiesIfNeeded()
-{
-    if (!manifestParsedSuccessfully())
-        return;
-
-    if (m_parsedManifestActionProperties)
-        return;
-
-    m_parsedManifestActionProperties = true;
-
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/action
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/browser_action
-    // Documentation: https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/manifest.json/page_action
-
-    if (supportsManifestVersion(3))
-        m_actionDictionary = objectForKey<NSDictionary>(m_manifest, actionManifestKey, false);
-    else {
-        m_actionDictionary = objectForKey<NSDictionary>(m_manifest, browserActionManifestKey, false);
-        if (!m_actionDictionary)
-            m_actionDictionary = objectForKey<NSDictionary>(m_manifest, pageActionManifestKey, false);
-    }
-
-    if (!m_actionDictionary)
-        return;
-
-    // Look for the "default_icon" as a string, which is useful for SVG icons. Only supported by Firefox currently.
-    if (auto *defaultIconPath = objectForKey<NSString>(m_actionDictionary, defaultIconManifestKey)) {
-        RefPtr<API::Error> resourceError;
-        m_defaultActionIcon = iconForPath(defaultIconPath, resourceError);
-
-        if (!m_defaultActionIcon) {
-            recordErrorIfNeeded(resourceError);
-
-            NSString *localizedErrorDescription;
-            if (supportsManifestVersion(3))
-                localizedErrorDescription = WEB_UI_STRING("Failed to load image for `default_icon` in the `action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load single image for action");
-            else
-                localizedErrorDescription = WEB_UI_STRING("Failed to load image for `default_icon` in the `browser_action` or `page_action` manifest entry.", "WKWebExtensionErrorInvalidActionIcon description for failing to load single image for browser_action or page_action");
-
-            recordError(createError(Error::InvalidActionIcon, localizedErrorDescription));
-        }
-    }
-
-    m_displayActionLabel = objectForKey<NSString>(m_actionDictionary, defaultTitleManifestKey);
-    m_actionPopupPath = objectForKey<NSString>(m_actionDictionary, defaultPopupManifestKey);
 }
 
 RefPtr<WebCore::Icon> WebExtension::iconForPath(const String& imagePath, RefPtr<API::Error>& outError, WebCore::FloatSize sizeForResizing)

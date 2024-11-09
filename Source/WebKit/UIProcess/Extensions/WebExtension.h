@@ -42,14 +42,10 @@
 #include <wtf/WeakPtr.h>
 #include <wtf/spi/cocoa/SecuritySPI.h>
 
-OBJC_CLASS NSArray;
 OBJC_CLASS NSBundle;
 OBJC_CLASS NSData;
 OBJC_CLASS NSDictionary;
 OBJC_CLASS NSError;
-OBJC_CLASS NSLocale;
-OBJC_CLASS NSMutableDictionary;
-OBJC_CLASS NSString;
 OBJC_CLASS NSURL;
 OBJC_CLASS WKWebExtension;
 OBJC_CLASS _WKWebExtensionLocalization;
@@ -257,8 +253,8 @@ public:
     RefPtr<WebCore::Icon> icon(WebCore::FloatSize idealSize);
 
     RefPtr<WebCore::Icon> actionIcon(WebCore::FloatSize idealSize);
-    NSString *displayActionLabel();
-    NSString *actionPopupPath();
+    const String& displayActionLabel();
+    const String& actionPopupPath();
 
     bool hasAction();
     bool hasBrowserAction();
@@ -410,11 +406,11 @@ private:
 
     IconsCache m_iconsCache;
 
-    RetainPtr<NSDictionary> m_actionDictionary;
+    RefPtr<JSON::Object> m_actionObject;
     IconsCache m_actionIconsCache;
     RefPtr<WebCore::Icon> m_defaultActionIcon;
-    RetainPtr<NSString> m_displayActionLabel;
-    RetainPtr<NSString> m_actionPopupPath;
+    String m_displayActionLabel;
+    String m_actionPopupPath;
 
 #if ENABLE(WK_WEB_EXTENSIONS_SIDEBAR)
     IconsCache m_sidebarIconsCache;
