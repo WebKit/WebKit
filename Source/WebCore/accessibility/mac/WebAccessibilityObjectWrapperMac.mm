@@ -1121,18 +1121,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         [tempArray addObject:NSAccessibilityFocusedAttribute];
         return tempArray;
     }();
-    static NeverDestroyed<RetainPtr<NSArray>> menuButtonAttrs = @[
-        NSAccessibilityRoleAttribute,
-        NSAccessibilityRoleDescriptionAttribute,
-        NSAccessibilityParentAttribute,
-        NSAccessibilityPositionAttribute,
-        NSAccessibilitySizeAttribute,
-        NSAccessibilityWindowAttribute,
-        NSAccessibilityEnabledAttribute,
-        NSAccessibilityFocusedAttribute,
-        NSAccessibilityTitleAttribute,
-        NSAccessibilityChildrenAttribute,
-    ];
     static NeverDestroyed<RetainPtr<NSArray>> sharedControlAttrs = @[
         NSAccessibilityAccessKeyAttribute,
         NSAccessibilityRequiredAttribute,
@@ -1349,8 +1337,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
         objectAttributes = menuAttrs.get().get();
     else if (backingObject->isMenuBar())
         objectAttributes = menuBarAttrs.get().get();
-    else if (backingObject->isMenuButton())
-        objectAttributes = menuButtonAttrs.get().get();
     else if (backingObject->isMenuItem())
         objectAttributes = menuItemAttrs.get().get();
     else if (backingObject->isVideo())
@@ -2048,13 +2034,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
 
     if ([attributeName isEqualToString: NSAccessibilityARIACurrentAttribute])
         return backingObject->currentValue();
-
-    if ([attributeName isEqualToString: NSAccessibilityServesAsTitleForUIElementsAttribute] && backingObject->isMenuButton()) {
-        if (auto* axRenderObject = dynamicDowncast<AccessibilityRenderObject>(backingObject.get())) {
-            if (auto* uiElement = axRenderObject->menuForMenuButton())
-                return @[uiElement->wrapper()];
-        }
-    }
 
     if ([attributeName isEqualToString:NSAccessibilityTitleUIElementAttribute]) {
         // FIXME: change to return an array instead of a single object.

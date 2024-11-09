@@ -112,7 +112,6 @@ static bool shouldAllowAccessibilityRoleAsPointerCursorReplacement(const Element
     case AccessibilityRole::Link:
     case AccessibilityRole::WebCoreLink:
     case AccessibilityRole::ListBoxOption:
-    case AccessibilityRole::MenuButton:
     case AccessibilityRole::MenuItem:
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:

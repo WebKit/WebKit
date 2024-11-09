@@ -1935,7 +1935,6 @@ bool AccessibilityObject::dependsOnTextUnderElement() const
     // MacOS does not expect native <li> elements to expose label information, it only expects leaf node elements to do that.
     case AccessibilityRole::ListItem:
 #endif
-    case AccessibilityRole::MenuButton:
     case AccessibilityRole::MenuItem:
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:

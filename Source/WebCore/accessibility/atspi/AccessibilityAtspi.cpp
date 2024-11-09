@@ -678,7 +678,6 @@ static constexpr std::pair<AccessibilityRole, RoleNameEntry> roleNames[] = {
     { AccessibilityRole::MathElement, { "math", N_("math") } },
     { AccessibilityRole::Menu, { "menu", N_("menu") } },
     { AccessibilityRole::MenuBar, { "menu bar", N_("menu bar") } },
-    { AccessibilityRole::MenuButton, { "menu item", N_("menu item") } },
     { AccessibilityRole::MenuItem, { "menu item", N_("menu item") } },
     { AccessibilityRole::MenuItemCheckbox, { "check menu item", N_("check menu item") } },
     { AccessibilityRole::MenuItemRadio, { "radio menu item", N_("radio menu item") } },

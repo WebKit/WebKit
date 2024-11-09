@@ -197,7 +197,6 @@ static Atspi::Role atspiRole(AccessibilityRole role)
         return Atspi::Role::Menu;
     case AccessibilityRole::MenuListOption:
     case AccessibilityRole::MenuItem:
-    case AccessibilityRole::MenuButton:
         return Atspi::Role::MenuItem;
     case AccessibilityRole::MenuItemCheckbox:
         return Atspi::Role::CheckMenuItem;
@@ -354,7 +353,6 @@ static Atspi::Role atspiRole(AccessibilityRole role)
     case AccessibilityRole::Details:
     case AccessibilityRole::Emphasis:
     case AccessibilityRole::Ignored:
-    case AccessibilityRole::Incrementor:
     case AccessibilityRole::LineBreak:
     case AccessibilityRole::Model:
     case AccessibilityRole::Presentational:

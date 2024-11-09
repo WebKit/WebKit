@@ -39,7 +39,6 @@ bool AXCoreObject::isMenuRelated() const
     switch (roleValue()) {
     case AccessibilityRole::Menu:
     case AccessibilityRole::MenuBar:
-    case AccessibilityRole::MenuButton:
     case AccessibilityRole::MenuItem:
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:

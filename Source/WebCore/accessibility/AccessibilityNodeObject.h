@@ -127,7 +127,6 @@ public:
     RefPtr<Element> popoverTargetElement() const final;
     AXCoreObject* internalLinkElement() const final;
     AccessibilityChildrenVector radioButtonGroup() const final;
-    AccessibilityObject* menuForMenuButton() const;
    
     virtual void changeValueByPercent(float percentChange);
  
@@ -207,9 +206,6 @@ protected:
     LayoutRect boundingBoxRect() const override;
     String ariaDescribedByAttribute() const override;
     
-    Element* menuElementForMenuButton() const;
-    Element* menuItemElementForMenu() const;
-    AccessibilityObject* menuButtonForMenu() const;
     AccessibilityObject* captionForFigure() const;
     virtual void labelText(Vector<AccessibilityText>&) const;
 private:

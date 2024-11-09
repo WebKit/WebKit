@@ -315,7 +315,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     case AccessibilityRole::Link:
     case AccessibilityRole::ListBox:
     case AccessibilityRole::ListBoxOption:
-    case AccessibilityRole::MenuButton:
     case AccessibilityRole::MenuItem:
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:
@@ -843,7 +842,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::SpinButton:
         traits |= [self _axAdjustableTrait];
         break;
-    case AccessibilityRole::MenuButton:
     case AccessibilityRole::MenuItem:
         traits |= [self _axMenuItemTrait];
         break;
@@ -908,7 +906,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::ColorWell:
     case AccessibilityRole::RadioButton:
     case AccessibilityRole::Slider:
-    case AccessibilityRole::MenuButton:
     case AccessibilityRole::Image:
     case AccessibilityRole::ImageMapLink:
     case AccessibilityRole::ProgressIndicator:
@@ -916,7 +913,6 @@ static AccessibilityObjectWrapper *ancestorWithRole(const AXCoreObject& descenda
     case AccessibilityRole::MenuItem:
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:
-    case AccessibilityRole::Incrementor:
     case AccessibilityRole::ComboBox:
     case AccessibilityRole::DateTime:
     case AccessibilityRole::ImageMap:

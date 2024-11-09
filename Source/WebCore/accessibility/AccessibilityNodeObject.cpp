@@ -948,7 +948,6 @@ bool AccessibilityNodeObject::supportsRequiredAttribute() const
     case AccessibilityRole::ComboBox:
     case AccessibilityRole::Grid:
     case AccessibilityRole::GridCell:
-    case AccessibilityRole::Incrementor:
     case AccessibilityRole::ListBox:
     case AccessibilityRole::PopUpButton:
     case AccessibilityRole::RadioButton:
@@ -1634,62 +1633,6 @@ String AccessibilityNodeObject::ariaAccessibilityDescription() const
         return ariaLabel;
 
     return String();
-}
-
-static Element* siblingWithAriaRole(Node* node, ASCIILiteral role)
-{
-    // FIXME: Either we should add a null check here or change the function to take a reference instead of a pointer.
-    ContainerNode* parent = node->parentNode();
-    if (!parent)
-        return nullptr;
-
-    for (auto& sibling : childrenOfType<Element>(*parent)) {
-        // FIXME: Should skip sibling that is the same as the node.
-        if (equalIgnoringASCIICase(sibling.attributeWithoutSynchronization(roleAttr), role))
-            return &sibling;
-    }
-
-    return nullptr;
-}
-
-Element* AccessibilityNodeObject::menuElementForMenuButton() const
-{
-    if (ariaRoleAttribute() != AccessibilityRole::MenuButton)
-        return nullptr;
-
-    return siblingWithAriaRole(node(), "menu"_s);
-}
-
-AccessibilityObject* AccessibilityNodeObject::menuForMenuButton() const
-{
-    if (AXObjectCache* cache = axObjectCache())
-        return cache->getOrCreate(menuElementForMenuButton());
-    return nullptr;
-}
-
-Element* AccessibilityNodeObject::menuItemElementForMenu() const
-{
-    if (ariaRoleAttribute() != AccessibilityRole::Menu)
-        return nullptr;
-
-    return siblingWithAriaRole(node(), "menuitem"_s);
-}
-
-AccessibilityObject* AccessibilityNodeObject::menuButtonForMenu() const
-{
-    AXObjectCache* cache = axObjectCache();
-    if (!cache)
-        return nullptr;
-
-    Element* menuItem = menuItemElementForMenu();
-
-    if (menuItem) {
-        // ARIA just has generic menu items. AppKit needs to know if this is a top level items like MenuBarButton or MenuBarItem
-        AccessibilityObject* menuItemAX = cache->getOrCreate(*menuItem);
-        if (menuItemAX && menuItemAX->isMenuButton())
-            return menuItemAX;
-    }
-    return nullptr;
 }
 
 AccessibilityObject* AccessibilityNodeObject::captionForFigure() const
@@ -2441,7 +2384,6 @@ String AccessibilityNodeObject::title() const
     case AccessibilityRole::Checkbox:
     case AccessibilityRole::ListBoxOption:
     case AccessibilityRole::ListItem:
-    case AccessibilityRole::MenuButton:
     case AccessibilityRole::MenuItem:
     case AccessibilityRole::MenuItemCheckbox:
     case AccessibilityRole::MenuItemRadio:
