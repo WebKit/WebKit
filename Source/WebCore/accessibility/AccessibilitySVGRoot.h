@@ -35,13 +35,13 @@ namespace WebCore {
 
 class AccessibilitySVGRoot final : public AccessibilitySVGObject {
 public:
-    static Ref<AccessibilitySVGRoot> create(RenderObject&, AXObjectCache*);
+    static Ref<AccessibilitySVGRoot> create(AXID, RenderObject&, AXObjectCache*);
     virtual ~AccessibilitySVGRoot();
 
     void setParent(AccessibilityRenderObject*);
     bool hasAccessibleContent() const;
 private:
-    explicit AccessibilitySVGRoot(RenderObject&, AXObjectCache*);
+    explicit AccessibilitySVGRoot(AXID, RenderObject&, AXObjectCache*);
 
     AccessibilityObject* parentObject() const override;
     bool isAccessibilitySVGRoot() const override { return true; }

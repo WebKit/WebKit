@@ -414,7 +414,7 @@ TextStream& operator<<(TextStream& stream, const AccessibilitySearchCriteria& cr
     TextStream::GroupScope groupScope(stream);
     auto streamCriteriaObject = [&stream] (ASCIILiteral objectLabel, auto* axObject) {
         stream.startGroup();
-        stream << objectLabel.characters() << " " << axObject << ", ID " << (axObject && axObject->objectID() ? axObject->objectID()->toUInt64() : 0);
+        stream << objectLabel.characters() << " " << axObject << ", ID " << (axObject ? axObject->objectID().toUInt64() : 0);
         stream.endGroup();
     };
 
@@ -1303,7 +1303,7 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
 
     if (options & AXStreamOptions::ParentID) {
         auto* parent = object.parentObjectUnignored();
-        stream.dumpProperty("parentID", parent && parent->objectID()? parent->objectID()->toUInt64() : 0);
+        stream.dumpProperty("parentID", parent ? parent->objectID().toUInt64() : 0);
     }
 
     auto id = options & AXStreamOptions::IdentifierAttribute ? object.identifierAttribute() : emptyString();

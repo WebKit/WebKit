@@ -443,7 +443,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_accessibleFunctions = {
             return g_variant_new_string(atspiObject->locale().utf8().data());
         if (!g_strcmp0(propertyName, "AccessibleId")) {
             auto objectID = atspiObject->m_coreObject->objectID();
-            return g_variant_new_string(atspiObject->m_coreObject ? String::number(objectID ? objectID->toUInt64() : 0).utf8().data() : "");
+            return g_variant_new_string(atspiObject->m_coreObject ? String::number(objectID.toUInt64()).utf8().data() : "");
         }
         if (!g_strcmp0(propertyName, "Parent"))
             return atspiObject->parentReference();

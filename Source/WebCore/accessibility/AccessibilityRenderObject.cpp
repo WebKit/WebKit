@@ -127,8 +127,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityRenderObject::AccessibilityRenderObject(RenderObject& renderer)
-    : AccessibilityNodeObject(renderer.node())
+AccessibilityRenderObject::AccessibilityRenderObject(AXID axID, RenderObject& renderer)
+    : AccessibilityNodeObject(axID, renderer.node())
     , m_renderer(renderer)
 {
 #if ASSERT_ENABLED
@@ -136,8 +136,8 @@ AccessibilityRenderObject::AccessibilityRenderObject(RenderObject& renderer)
 #endif
 }
 
-AccessibilityRenderObject::AccessibilityRenderObject(Node& node)
-    : AccessibilityNodeObject(&node)
+AccessibilityRenderObject::AccessibilityRenderObject(AXID axID, Node& node)
+    : AccessibilityNodeObject(axID, &node)
 {
     // We should only ever create an instance of this class with a node if that node has no renderer (i.e. because of display:contents).
     ASSERT(!node.renderer());
@@ -148,9 +148,9 @@ AccessibilityRenderObject::~AccessibilityRenderObject()
     ASSERT(isDetached());
 }
 
-Ref<AccessibilityRenderObject> AccessibilityRenderObject::create(RenderObject& renderer)
+Ref<AccessibilityRenderObject> AccessibilityRenderObject::create(AXID axID, RenderObject& renderer)
 {
-    return adoptRef(*new AccessibilityRenderObject(renderer));
+    return adoptRef(*new AccessibilityRenderObject(axID, renderer));
 }
 
 void AccessibilityRenderObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)

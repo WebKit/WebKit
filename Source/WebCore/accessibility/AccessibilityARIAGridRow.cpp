@@ -34,26 +34,26 @@
 
 namespace WebCore {
     
-AccessibilityARIAGridRow::AccessibilityARIAGridRow(RenderObject& renderer)
-    : AccessibilityTableRow(renderer)
+AccessibilityARIAGridRow::AccessibilityARIAGridRow(AXID axID, RenderObject& renderer)
+    : AccessibilityTableRow(axID, renderer)
 {
 }
 
-AccessibilityARIAGridRow::AccessibilityARIAGridRow(Node& node)
-    : AccessibilityTableRow(node)
+AccessibilityARIAGridRow::AccessibilityARIAGridRow(AXID axID, Node& node)
+    : AccessibilityTableRow(axID, node)
 {
 }
 
 AccessibilityARIAGridRow::~AccessibilityARIAGridRow() = default;
 
-Ref<AccessibilityARIAGridRow> AccessibilityARIAGridRow::create(RenderObject& renderer)
+Ref<AccessibilityARIAGridRow> AccessibilityARIAGridRow::create(AXID axID, RenderObject& renderer)
 {
-    return adoptRef(*new AccessibilityARIAGridRow(renderer));
+    return adoptRef(*new AccessibilityARIAGridRow(axID, renderer));
 }
 
-Ref<AccessibilityARIAGridRow> AccessibilityARIAGridRow::create(Node& node)
+Ref<AccessibilityARIAGridRow> AccessibilityARIAGridRow::create(AXID axID, Node& node)
 {
-    return adoptRef(*new AccessibilityARIAGridRow(node));
+    return adoptRef(*new AccessibilityARIAGridRow(axID, node));
 }
 
 bool AccessibilityARIAGridRow::isARIATreeGridRow() const

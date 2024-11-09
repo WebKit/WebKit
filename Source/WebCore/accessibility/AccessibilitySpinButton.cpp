@@ -31,13 +31,14 @@
 
 namespace WebCore {
 
-Ref<AccessibilitySpinButton> AccessibilitySpinButton::create()
+Ref<AccessibilitySpinButton> AccessibilitySpinButton::create(AXID axID)
 {
-    return adoptRef(*new AccessibilitySpinButton);
+    return adoptRef(*new AccessibilitySpinButton(axID));
 }
     
-AccessibilitySpinButton::AccessibilitySpinButton()
-    : m_spinButtonElement(nullptr)
+AccessibilitySpinButton::AccessibilitySpinButton(AXID axID)
+    : AccessibilityMockObject(axID)
+    , m_spinButtonElement(nullptr)
 {
 }
 
@@ -110,14 +111,15 @@ void AccessibilitySpinButton::step(int amount)
 
 // AccessibilitySpinButtonPart 
 
-AccessibilitySpinButtonPart::AccessibilitySpinButtonPart()
-    : m_isIncrementor(false)
+AccessibilitySpinButtonPart::AccessibilitySpinButtonPart(AXID axID)
+    : AccessibilityMockObject(axID)
+    , m_isIncrementor(false)
 {
 }
     
-Ref<AccessibilitySpinButtonPart> AccessibilitySpinButtonPart::create()
+Ref<AccessibilitySpinButtonPart> AccessibilitySpinButtonPart::create(AXID axID)
 {
-    return adoptRef(*new AccessibilitySpinButtonPart);
+    return adoptRef(*new AccessibilitySpinButtonPart(axID));
 }
 
 LayoutRect AccessibilitySpinButtonPart::elementRect() const

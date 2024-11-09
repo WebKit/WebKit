@@ -98,7 +98,6 @@ private:
 
     AXIsolatedTree* tree() const { return m_cachedTree.get(); }
 
-    AXIsolatedObject() = default;
     AXIsolatedObject(const Ref<AccessibilityObject>&, AXIsolatedTree*);
     bool isAXIsolatedObjectInstance() const final { return true; }
     AccessibilityObject* associatedAXObject() const;

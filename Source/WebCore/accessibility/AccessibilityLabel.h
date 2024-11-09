@@ -34,12 +34,12 @@ namespace WebCore {
 
 class AccessibilityLabel final : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilityLabel> create(RenderObject&);
+    static Ref<AccessibilityLabel> create(AXID, RenderObject&);
     virtual ~AccessibilityLabel();
 
     bool containsOnlyStaticText() const;
 private:
-    explicit AccessibilityLabel(RenderObject&);
+    explicit AccessibilityLabel(AXID, RenderObject&);
     bool computeIsIgnored() const final { return isIgnoredByDefault(); }
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::Label; }

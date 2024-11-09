@@ -56,15 +56,15 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityTable::AccessibilityTable(RenderObject& renderer)
-    : AccessibilityRenderObject(renderer)
+AccessibilityTable::AccessibilityTable(AXID axID, RenderObject& renderer)
+    : AccessibilityRenderObject(axID, renderer)
     , m_headerContainer(nullptr)
     , m_isExposable(true)
 {
 }
 
-AccessibilityTable::AccessibilityTable(Node& node)
-    : AccessibilityRenderObject(node)
+AccessibilityTable::AccessibilityTable(AXID axID, Node& node)
+    : AccessibilityRenderObject(axID, node)
     , m_headerContainer(nullptr)
     , m_isExposable(true)
 {
@@ -81,14 +81,14 @@ void AccessibilityTable::init()
     AccessibilityRenderObject::init();
 }
 
-Ref<AccessibilityTable> AccessibilityTable::create(RenderObject& renderer)
+Ref<AccessibilityTable> AccessibilityTable::create(AXID axID, RenderObject& renderer)
 {
-    return adoptRef(*new AccessibilityTable(renderer));
+    return adoptRef(*new AccessibilityTable(axID, renderer));
 }
 
-Ref<AccessibilityTable> AccessibilityTable::create(Node& node)
+Ref<AccessibilityTable> AccessibilityTable::create(AXID axID, Node& node)
 {
-    return adoptRef(*new AccessibilityTable(node));
+    return adoptRef(*new AccessibilityTable(axID, node));
 }
 
 bool AccessibilityTable::hasNonTableARIARole() const

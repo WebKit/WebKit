@@ -41,26 +41,26 @@ namespace WebCore {
     
 using namespace HTMLNames;
 
-AccessibilityList::AccessibilityList(RenderObject& renderer)
-    : AccessibilityRenderObject(renderer)
+AccessibilityList::AccessibilityList(AXID axID, RenderObject& renderer)
+    : AccessibilityRenderObject(axID, renderer)
 {
 }
 
-AccessibilityList::AccessibilityList(Node& node)
-    : AccessibilityRenderObject(node)
+AccessibilityList::AccessibilityList(AXID axID, Node& node)
+    : AccessibilityRenderObject(axID, node)
 {
 }
 
 AccessibilityList::~AccessibilityList() = default;
 
-Ref<AccessibilityList> AccessibilityList::create(RenderObject& renderer)
+Ref<AccessibilityList> AccessibilityList::create(AXID axID, RenderObject& renderer)
 {
-    return adoptRef(*new AccessibilityList(renderer));
+    return adoptRef(*new AccessibilityList(axID, renderer));
 }
 
-Ref<AccessibilityList> AccessibilityList::create(Node& node)
+Ref<AccessibilityList> AccessibilityList::create(AXID axID, Node& node)
 {
-    return adoptRef(*new AccessibilityList(node));
+    return adoptRef(*new AccessibilityList(axID, node));
 }
 
 bool AccessibilityList::computeIsIgnored() const

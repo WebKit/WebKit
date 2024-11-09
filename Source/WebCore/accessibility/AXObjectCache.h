@@ -58,6 +58,8 @@ class TextStream;
 namespace WebCore {
 
 class AXRemoteFrame;
+class AccessibilityNodeObject;
+class AccessibilityRenderObject;
 class AccessibilityTable;
 class AccessibilityTableCell;
 class Document;
@@ -300,7 +302,7 @@ public:
 
     // used for objects without backing elements
     AccessibilityObject* create(AccessibilityRole);
-    
+
     // Will only return the AccessibilityObject if it already exists.
     inline AccessibilityObject* get(RenderObject* renderer)
     {
@@ -673,8 +675,7 @@ private:
     AccessibilityObject* focusedObjectForNode(Node*);
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement&);
 
-    AXID getAXID(AccessibilityObject&);
-    AXID generateNewObjectID() const;
+    AXID generateNewObjectID();
 
     void notificationPostTimerFired();
 
@@ -762,7 +763,8 @@ private:
 #endif
 
     // Object creation.
-    Ref<AccessibilityObject> createObjectFromRenderer(RenderObject&);
+    Ref<AccessibilityRenderObject> createObjectFromRenderer(RenderObject&);
+    Ref<AccessibilityNodeObject> createFromNode(Node&);
 
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
     const std::optional<PageIdentifier> m_pageID; // constant for object's lifetime.

@@ -37,14 +37,14 @@ class HTMLSelectElement;
 
 class AccessibilityListBoxOption final : public AccessibilityNodeObject {
 public:
-    static Ref<AccessibilityListBoxOption> create(HTMLElement&);
+    static Ref<AccessibilityListBoxOption> create(AXID, HTMLElement&);
     virtual ~AccessibilityListBoxOption();
 
     bool isSelected() const final;
     void setSelected(bool) final;
 
 private:
-    explicit AccessibilityListBoxOption(HTMLElement&);
+    explicit AccessibilityListBoxOption(AXID, HTMLElement&);
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::ListBoxOption; }
     bool isEnabled() const final;

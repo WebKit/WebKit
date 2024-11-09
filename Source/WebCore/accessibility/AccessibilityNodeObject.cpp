@@ -98,8 +98,8 @@ using namespace HTMLNames;
 static String accessibleNameForNode(Node&, Node* labelledbyNode = nullptr);
 static void appendNameToStringBuilder(StringBuilder&, String&&, bool prependSpace = true);
 
-AccessibilityNodeObject::AccessibilityNodeObject(Node* node)
-    : AccessibilityObject()
+AccessibilityNodeObject::AccessibilityNodeObject(AXID axID, Node* node)
+    : AccessibilityObject(axID)
     , m_node(node)
 {
 }
@@ -118,9 +118,9 @@ void AccessibilityNodeObject::init()
     AccessibilityObject::init();
 }
 
-Ref<AccessibilityNodeObject> AccessibilityNodeObject::create(Node& node)
+Ref<AccessibilityNodeObject> AccessibilityNodeObject::create(AXID axID, Node& node)
 {
-    return adoptRef(*new AccessibilityNodeObject(&node));
+    return adoptRef(*new AccessibilityNodeObject(axID, &node));
 }
 
 void AccessibilityNodeObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)

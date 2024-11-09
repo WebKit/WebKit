@@ -37,11 +37,11 @@ class HTMLInputElement;
 
 class AccessibilitySlider : public AccessibilityRenderObject {
 public:
-    static Ref<AccessibilitySlider> create(RenderObject&);
+    static Ref<AccessibilitySlider> create(AXID, RenderObject&);
     virtual ~AccessibilitySlider() = default;
 
 private:
-    explicit AccessibilitySlider(RenderObject&);
+    explicit AccessibilitySlider(AXID, RenderObject&);
 
     HTMLInputElement* inputElement() const;
     AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const final;
@@ -63,14 +63,14 @@ private:
 
 class AccessibilitySliderThumb final : public AccessibilityMockObject {
 public:
-    static Ref<AccessibilitySliderThumb> create();
+    static Ref<AccessibilitySliderThumb> create(AXID);
     virtual ~AccessibilitySliderThumb() = default;
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::SliderThumb; }
     LayoutRect elementRect() const override;
 
 private:
-    AccessibilitySliderThumb();
+    explicit AccessibilitySliderThumb(AXID);
 
     bool isSliderThumb() const override { return true; }
     bool computeIsIgnored() const override;

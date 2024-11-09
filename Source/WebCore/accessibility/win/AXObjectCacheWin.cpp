@@ -119,7 +119,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
     ASSERT(object.objectID()->toUInt64() <= std::numeric_limits<LONG>::max());
 
     auto objectID = object.objectID();
-    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(objectID ? objectID->toUInt64() : 0));
+    NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(objectID.toUInt64()));
 }
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&)

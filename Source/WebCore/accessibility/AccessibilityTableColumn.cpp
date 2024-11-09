@@ -33,13 +33,16 @@
 
 namespace WebCore {
 
-AccessibilityTableColumn::AccessibilityTableColumn() = default;
+AccessibilityTableColumn::AccessibilityTableColumn(AXID axID)
+    : AccessibilityMockObject(axID)
+{
+}
 
 AccessibilityTableColumn::~AccessibilityTableColumn() = default;
 
-Ref<AccessibilityTableColumn> AccessibilityTableColumn::create()
+Ref<AccessibilityTableColumn> AccessibilityTableColumn::create(AXID axID)
 {
-    return adoptRef(*new AccessibilityTableColumn());
+    return adoptRef(*new AccessibilityTableColumn(axID));
 }
 
 void AccessibilityTableColumn::setParent(AccessibilityObject* parent)

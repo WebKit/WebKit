@@ -36,17 +36,17 @@
 
 namespace WebCore {
 
-AccessibilityMathMLElement::AccessibilityMathMLElement(RenderObject& renderer, bool isAnonymousOperator)
-    : AccessibilityRenderObject(renderer)
+AccessibilityMathMLElement::AccessibilityMathMLElement(AXID axID, RenderObject& renderer, bool isAnonymousOperator)
+    : AccessibilityRenderObject(axID, renderer)
     , m_isAnonymousOperator(isAnonymousOperator)
 {
 }
 
 AccessibilityMathMLElement::~AccessibilityMathMLElement() = default;
 
-Ref<AccessibilityMathMLElement> AccessibilityMathMLElement::create(RenderObject& renderer, bool isAnonymousOperator)
+Ref<AccessibilityMathMLElement> AccessibilityMathMLElement::create(AXID axID, RenderObject& renderer, bool isAnonymousOperator)
 {
-    return adoptRef(*new AccessibilityMathMLElement(renderer, isAnonymousOperator));
+    return adoptRef(*new AccessibilityMathMLElement(axID, renderer, isAnonymousOperator));
 }
 
 AccessibilityRole AccessibilityMathMLElement::determineAccessibilityRole()

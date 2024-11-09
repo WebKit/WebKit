@@ -32,7 +32,7 @@ namespace WebCore {
 
 class AccessibilitySpinButton final : public AccessibilityMockObject {
 public:
-    static Ref<AccessibilitySpinButton> create();
+    static Ref<AccessibilitySpinButton> create(AXID);
     virtual ~AccessibilitySpinButton();
 
     void setSpinButtonElement(SpinButtonElement* spinButton) { m_spinButtonElement = spinButton; }
@@ -43,7 +43,7 @@ public:
     void step(int amount);
 
 private:
-    AccessibilitySpinButton();
+    explicit AccessibilitySpinButton(AXID);
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::SpinButton; }
     bool isNativeSpinButton() const override { return true; }
@@ -55,14 +55,14 @@ private:
 
 class AccessibilitySpinButtonPart final : public AccessibilityMockObject {
 public:
-    static Ref<AccessibilitySpinButtonPart> create();
+    static Ref<AccessibilitySpinButtonPart> create(AXID);
     virtual ~AccessibilitySpinButtonPart() = default;
 
     bool isIncrementor() const override { return m_isIncrementor; }
     void setIsIncrementor(bool value) { m_isIncrementor = value; }
 
 private:
-    AccessibilitySpinButtonPart();
+    explicit AccessibilitySpinButtonPart(AXID);
 
     bool press() override;
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::SpinButtonPart; }

@@ -36,12 +36,10 @@ class Scrollbar;
 
 class AccessibilityScrollbar final : public AccessibilityMockObject {
 public:
-    static Ref<AccessibilityScrollbar> create(Scrollbar*);
+    static Ref<AccessibilityScrollbar> create(AXID, Scrollbar&);
 
-    Scrollbar* scrollbar() const { return m_scrollbar.get(); }
-    
 private:
-    explicit AccessibilityScrollbar(Scrollbar*);
+    explicit AccessibilityScrollbar(AXID, Scrollbar&);
 
     bool canSetValueAttribute() const override { return true; }
 
@@ -57,7 +55,7 @@ private:
     bool setValue(float) override;
     float valueForRange() const override;
 
-    RefPtr<Scrollbar> m_scrollbar;
+    Ref<Scrollbar> m_scrollbar;
 };
 
 } // namespace WebCore

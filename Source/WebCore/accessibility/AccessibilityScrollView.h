@@ -37,7 +37,7 @@ class ScrollView;
     
 class AccessibilityScrollView final : public AccessibilityObject {
 public:
-    static Ref<AccessibilityScrollView> create(ScrollView*);
+    static Ref<AccessibilityScrollView> create(AXID, ScrollView&);
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::ScrollArea; }
     ScrollView* scrollView() const override { return currentScrollView(); }
 
@@ -47,7 +47,7 @@ public:
     void setNeedsToUpdateChildren() override { m_childrenDirty = true; }
 
 private:
-    explicit AccessibilityScrollView(ScrollView*);
+    explicit AccessibilityScrollView(AXID, ScrollView&);
     void detachRemoteParts(AccessibilityDetachmentType) override;
 
     ScrollView* currentScrollView() const;

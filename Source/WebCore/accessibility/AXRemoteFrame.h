@@ -33,7 +33,7 @@ class RemoteFrame;
 
 class AXRemoteFrame final : public AccessibilityMockObject {
 public:
-    static Ref<AXRemoteFrame> create();
+    static Ref<AXRemoteFrame> create(AXID);
 
 #if PLATFORM(COCOA)
     void initializePlatformElementWithRemoteToken(std::span<const uint8_t>, int);
@@ -44,6 +44,7 @@ public:
 
 private:
     virtual ~AXRemoteFrame() = default;
+    explicit AXRemoteFrame(AXID);
 
     AccessibilityRole determineAccessibilityRole() { return AccessibilityRole::RemoteFrame; }
     bool computeIsIgnored() const { return false; }

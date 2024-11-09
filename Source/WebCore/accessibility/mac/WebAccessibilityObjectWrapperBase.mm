@@ -297,7 +297,7 @@ NSArray *makeNSArray(const WebCore::AXCoreObject::AccessibilityChildrenVector& c
 
 - (void)attachAXObject:(AccessibilityObject&)axObject
 {
-    ASSERT(!_identifier || *_identifier == axObject.objectID());
+    ASSERT(!_identifier || _identifier == axObject.objectID());
     m_axObject = axObject;
     if (!_identifier)
         _identifier = m_axObject->objectID();

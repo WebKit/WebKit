@@ -56,7 +56,6 @@ AXIsolatedObject::AXIsolatedObject(const Ref<AccessibilityObject>& axObject, AXI
     , m_cachedTree(tree)
 {
     ASSERT(isMainThread());
-    ASSERT(objectID());
 
     if (auto* axParent = axObject->parentInCoreTree())
         m_parentID = axParent->objectID();
@@ -81,7 +80,7 @@ String AXIsolatedObject::dbg() const
 {
     return makeString(
         "{role: "_s, accessibilityRoleToString(roleValue()),
-        ", ID "_s, objectID() ? objectID()->loggingString() : ""_s, '}'
+        ", ID "_s, objectID().loggingString(), '}'
     );
 }
 
@@ -199,7 +198,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::IsNonLayerSVGObject, object.isNonLayerSVGObject());
 
     RefPtr geometryManager = tree()->geometryManager();
-    std::optional frame = geometryManager ? geometryManager->cachedRectForID(*object.objectID()) : std::nullopt;
+    std::optional frame = geometryManager ? geometryManager->cachedRectForID(object.objectID()) : std::nullopt;
     if (frame)
         setProperty(AXPropertyName::RelativeFrame, WTFMove(*frame));
     else if (object.isScrollView() || object.isWebArea() || object.isScrollbar()) {
@@ -381,7 +380,7 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 
         auto range = object.textInputMarkedTextMarkerRange();
         if (auto characterRange = range.characterRange(); range && characterRange)
-            setProperty(AXPropertyName::TextInputMarkedTextMarkerRange, std::pair<Markable<AXID>, CharacterRange>(*range.start().objectID(), *characterRange));
+            setProperty(AXPropertyName::TextInputMarkedTextMarkerRange, std::pair<Markable<AXID>, CharacterRange>(range.start().objectID(), *characterRange));
 
         bool isNonNativeTextControl = object.isNonNativeTextControl();
         setProperty(AXPropertyName::CanBeMultilineTextField, canBeMultilineTextField(object, isNonNativeTextControl));
@@ -431,10 +430,9 @@ bool AXIsolatedObject::canBeMultilineTextField(AccessibilityObject& object, bool
 AccessibilityObject* AXIsolatedObject::associatedAXObject() const
 {
     ASSERT(isMainThread());
-    ASSERT(objectID());
 
     auto* axObjectCache = this->axObjectCache();
-    return axObjectCache ? axObjectCache->objectForID(*objectID()) : nullptr;
+    return axObjectCache ? axObjectCache->objectForID(objectID()) : nullptr;
 }
 
 void AXIsolatedObject::setMathscripts(AXPropertyName propertyName, AccessibilityObject& object)

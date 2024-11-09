@@ -36,7 +36,7 @@ namespace WebCore {
     
 class AccessibilityImageMapLink final : public AccessibilityMockObject {
 public:
-    static Ref<AccessibilityImageMapLink> create();
+    static Ref<AccessibilityImageMapLink> create(AXID);
     virtual ~AccessibilityImageMapLink();
     
     void setHTMLAreaElement(HTMLAreaElement*);
@@ -61,7 +61,7 @@ public:
     LayoutRect elementRect() const override;
 
 private:
-    AccessibilityImageMapLink();
+    explicit AccessibilityImageMapLink(AXID);
 
     void detachFromParent() override;
     Path elementPath() const override;

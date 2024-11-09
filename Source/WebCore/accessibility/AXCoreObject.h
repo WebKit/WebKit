@@ -732,8 +732,7 @@ public:
     virtual ~AXCoreObject() = default;
     virtual String dbg() const = 0;
 
-    void setObjectID(AXID axID) { m_id = axID; }
-    std::optional<AXID> objectID() const { return m_id; }
+    AXID objectID() const { return m_id; }
     virtual std::optional<AXID> treeID() const = 0;
     virtual ProcessID processID() const = 0;
 
@@ -1388,8 +1387,8 @@ public:
 #endif
 
 protected:
-    AXCoreObject() = default;
-    explicit AXCoreObject(std::optional<AXID> axID)
+    AXCoreObject() = delete;
+    explicit AXCoreObject(AXID axID)
         : m_id(axID)
     { }
 
@@ -1398,7 +1397,7 @@ private:
     virtual void detachRemoteParts(AccessibilityDetachmentType) = 0;
     virtual void detachPlatformWrapper(AccessibilityDetachmentType) = 0;
 
-    Markable<AXID> m_id;
+    AXID m_id;
 #if PLATFORM(COCOA)
     RetainPtr<WebAccessibilityObjectWrapper> m_wrapper;
 #elif PLATFORM(WIN)
@@ -1413,7 +1412,7 @@ private:
 inline Vector<AXID> axIDs(const AXCoreObject::AccessibilityChildrenVector& objects)
 {
     return WTF::map(objects, [](auto& object) {
-        return *object->objectID();
+        return object->objectID();
     });
 }
 

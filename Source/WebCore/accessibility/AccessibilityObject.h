@@ -864,7 +864,7 @@ public:
     }; // class iterator
 
 protected:
-    AccessibilityObject() = default;
+    explicit AccessibilityObject(AXID);
 
     // FIXME: Make more of these member functions private.
 

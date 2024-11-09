@@ -40,26 +40,26 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-AccessibilityTableCell::AccessibilityTableCell(RenderObject& renderer)
-    : AccessibilityRenderObject(renderer)
+AccessibilityTableCell::AccessibilityTableCell(AXID axID, RenderObject& renderer)
+    : AccessibilityRenderObject(axID, renderer)
 {
 }
 
-AccessibilityTableCell::AccessibilityTableCell(Node& node)
-    : AccessibilityRenderObject(node)
+AccessibilityTableCell::AccessibilityTableCell(AXID axID, Node& node)
+    : AccessibilityRenderObject(axID, node)
 {
 }
 
 AccessibilityTableCell::~AccessibilityTableCell() = default;
 
-Ref<AccessibilityTableCell> AccessibilityTableCell::create(RenderObject& renderer)
+Ref<AccessibilityTableCell> AccessibilityTableCell::create(AXID axID, RenderObject& renderer)
 {
-    return adoptRef(*new AccessibilityTableCell(renderer));
+    return adoptRef(*new AccessibilityTableCell(axID, renderer));
 }
 
-Ref<AccessibilityTableCell> AccessibilityTableCell::create(Node& node)
+Ref<AccessibilityTableCell> AccessibilityTableCell::create(AXID axID, Node& node)
 {
-    return adoptRef(*new AccessibilityTableCell(node));
+    return adoptRef(*new AccessibilityTableCell(axID, node));
 }
 
 bool AccessibilityTableCell::computeIsIgnored() const

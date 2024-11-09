@@ -46,7 +46,7 @@ enum MouseButtonListenerResultFilter {
 
 class AccessibilityNodeObject : public AccessibilityObject {
 public:
-    static Ref<AccessibilityNodeObject> create(Node&);
+    static Ref<AccessibilityNodeObject> create(AXID, Node&);
     virtual ~AccessibilityNodeObject();
 
     void init() override;
@@ -55,6 +55,7 @@ public:
 
     bool isBusy() const override;
     bool isControl() const override;
+    bool isDetached() const override { return !m_node; }
     bool isRadioInput() const override;
     bool isFieldset() const override;
     bool isHovered() const override;
@@ -149,15 +150,13 @@ public:
 #endif
 
 protected:
-    explicit AccessibilityNodeObject(Node*);
+    explicit AccessibilityNodeObject(AXID, Node*);
     void detachRemoteParts(AccessibilityDetachmentType) override;
 
     AccessibilityRole m_ariaRole { AccessibilityRole::Unknown };
 #ifndef NDEBUG
     bool m_initialized { false };
 #endif
-
-    bool isDetached() const override { return !m_node; }
 
     AccessibilityRole determineAccessibilityRole() override;
     enum class TreatStyleFormatGroupAsInline : bool { No, Yes };

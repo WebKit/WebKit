@@ -34,13 +34,16 @@
 
 namespace WebCore {
 
-AccessibilityTableHeaderContainer::AccessibilityTableHeaderContainer() = default;
+AccessibilityTableHeaderContainer::AccessibilityTableHeaderContainer(AXID axID)
+    : AccessibilityMockObject(axID)
+{
+}
 
 AccessibilityTableHeaderContainer::~AccessibilityTableHeaderContainer() = default;
 
-Ref<AccessibilityTableHeaderContainer> AccessibilityTableHeaderContainer::create()
+Ref<AccessibilityTableHeaderContainer> AccessibilityTableHeaderContainer::create(AXID axID)
 {
-    return adoptRef(*new AccessibilityTableHeaderContainer());
+    return adoptRef(*new AccessibilityTableHeaderContainer(axID));
 }
     
 LayoutRect AccessibilityTableHeaderContainer::elementRect() const
