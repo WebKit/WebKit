@@ -450,6 +450,14 @@ bool SVGRenderSupport::pointInClippingArea(const RenderElement& renderer, const 
     return true;
 }
 
+bool SVGRenderSupport::transformToUserSpaceAndCheckClipping(RenderElement& object, const AffineTransform& localTransform, const FloatPoint& pointInParent, FloatPoint& localPoint)
+{
+    if (!localTransform.isInvertible())
+        return false;
+    localPoint = localTransform.inverse()->mapPoint(pointInParent);
+    return pointInClippingArea(object, localPoint);
+}
+
 void SVGRenderSupport::applyStrokeStyleToContext(GraphicsContext& context, const RenderStyle& style, const RenderElement& renderer)
 {
     auto element = dynamicDowncast<SVGElement>(renderer.protectedElement());

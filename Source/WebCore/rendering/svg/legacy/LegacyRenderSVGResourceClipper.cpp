@@ -335,7 +335,11 @@ bool LegacyRenderSVGResourceClipper::hitTestClipContent(const FloatRect& objectB
         point = valueOrDefault(transform.inverse()).mapPoint(point);
     }
 
-    point = valueOrDefault(clipPathElement().animatedLocalTransform().inverse()).mapPoint(point);
+    AffineTransform animatedLocalTransform = clipPathElement().animatedLocalTransform();
+    if (!animatedLocalTransform.isInvertible())
+        return false;
+
+    point = animatedLocalTransform.inverse()->mapPoint(point);
 
     for (Node* childNode = clipPathElement().firstChild(); childNode; childNode = childNode->nextSibling()) {
         RenderObject* renderer = childNode->renderer();

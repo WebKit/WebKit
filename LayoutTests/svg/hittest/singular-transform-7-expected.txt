@@ -1,0 +1,5 @@
+PASS document.querySelector('.p:hover .a') is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

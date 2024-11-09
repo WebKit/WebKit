@@ -348,9 +348,8 @@ bool LegacyRenderSVGShape::nodeAtFloatPoint(const HitTestRequest& request, HitTe
     if (recursionTracking.isVisiting(*this))
         return false;
 
-    FloatPoint localPoint = valueOrDefault(m_localTransform.inverse()).mapPoint(pointInParent);
-
-    if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
+    FloatPoint localPoint;
+    if (!SVGRenderSupport::transformToUserSpaceAndCheckClipping(*this, localToParentTransform(), pointInParent, localPoint))
         return false;
 
     SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);

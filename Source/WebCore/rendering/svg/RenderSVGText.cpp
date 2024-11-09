@@ -445,8 +445,8 @@ bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResul
 
             SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
-            FloatPoint localPoint = valueOrDefault(localToParentTransform().inverse()).mapPoint(pointInParent);
-            if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
+            FloatPoint localPoint;
+            if (!SVGRenderSupport::transformToUserSpaceAndCheckClipping(*this, localToParentTransform(), pointInParent, localPoint))
                 return false;
 
             HitTestLocation hitTestLocation(LayoutPoint(flooredIntPoint(localPoint)));

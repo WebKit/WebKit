@@ -237,8 +237,8 @@ bool LegacyRenderSVGImage::nodeAtFloatPoint(const HitTestRequest& request, HitTe
 
         SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
-        FloatPoint localPoint = valueOrDefault(localToParentTransform().inverse()).mapPoint(pointInParent);
-        if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
+        FloatPoint localPoint;
+        if (!SVGRenderSupport::transformToUserSpaceAndCheckClipping(*this, localToParentTransform(), pointInParent, localPoint))
             return false;
 
         if (hitRules.canHitFill) {

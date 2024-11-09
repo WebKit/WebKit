@@ -8,4 +8,4 @@ layer at (0,0) size 800x600
           text run at (0,0) width 490: "Select this text using"
           text run at (0,61) width 478: "the mouse, it should"
           text run at (0,122) width 339: "not disappear!"
-caret: position 34 of child 0 {#text} of child 1 {div} of child 1 {foreignObject} of child 0 {svg} of document
+caret: position 7 of child 0 {#text} of child 1 {div} of child 1 {foreignObject} of child 0 {svg} of document
