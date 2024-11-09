@@ -117,6 +117,11 @@ void SessionHost::addBrowserTerminatedObserver(const BrowserTerminatedObserver& 
     ASSERT(!browserTerminatedObservers().contains(observer));
     browserTerminatedObservers().add(observer);
 }
+
+void SessionHost::removeBrowserTerminatedObserver(const BrowserTerminatedObserver& observer)
+{
+    browserTerminatedObservers().remove(observer);
+}
 #endif
 
 } // namespace WebDriver

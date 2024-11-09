@@ -60,7 +60,8 @@ public:
 
 #if ENABLE(WEBDRIVER_BIDI)
     using BrowserTerminatedObserver = WTF::Observer<void(const String&)>;
-    void addBrowserTerminatedObserver(const BrowserTerminatedObserver&);
+    static void addBrowserTerminatedObserver(const BrowserTerminatedObserver&);
+    static void removeBrowserTerminatedObserver(const BrowserTerminatedObserver&);
 #endif
 
     void setHostAddress(const String& ip, uint16_t port) { m_targetIp = ip; m_targetPort = port; }

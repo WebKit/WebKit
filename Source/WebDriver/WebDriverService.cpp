@@ -61,6 +61,16 @@ WebDriverService::WebDriverService()
     , m_browserTerminatedObserver([this](const String& sessionID) { onBrowserTerminated(sessionID); })
 #endif
 {
+#if ENABLE(WEBDRIVER_BIDI)
+    SessionHost::addBrowserTerminatedObserver(m_browserTerminatedObserver);
+#endif
+}
+
+WebDriverService::~WebDriverService()
+{
+#if ENABLE(WEBDRIVER_BIDI)
+    SessionHost::removeBrowserTerminatedObserver(m_browserTerminatedObserver);
+#endif
 }
 
 static void printUsageStatement(const char* programName)
@@ -1019,9 +1029,6 @@ void WebDriverService::connectToBrowser(Vector<Capabilities>&& capabilitiesList,
     }
 
     auto sessionHost = makeUnique<SessionHost>(capabilitiesList.takeLast());
-#if ENABLE(WEBDRIVER_BIDI)
-    sessionHost->addBrowserTerminatedObserver(m_browserTerminatedObserver);
-#endif
     auto* sessionHostPtr = sessionHost.get();
     sessionHostPtr->setHostAddress(m_targetAddress, m_targetPort);
     sessionHostPtr->connectToBrowser([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](std::optional<String> error) mutable {

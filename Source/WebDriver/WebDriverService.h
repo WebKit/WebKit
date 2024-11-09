@@ -49,7 +49,7 @@ class WebDriverService final : public HTTPRequestHandler
 {
 public:
     WebDriverService();
-    ~WebDriverService() = default;
+    ~WebDriverService();
 
     int run(int argc, char** argv);
 
