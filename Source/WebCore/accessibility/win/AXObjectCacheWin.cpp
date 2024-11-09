@@ -115,8 +115,8 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject& object, AXNoti
     // negate the AXID so we know that the caller is passing the ID of an
     // element, not the index of a child element.
 
-    ASSERT(object.objectID()->toUInt64() >= 1);
-    ASSERT(object.objectID()->toUInt64() <= std::numeric_limits<LONG>::max());
+    ASSERT(object.objectID().toUInt64() >= 1);
+    ASSERT(object.objectID().toUInt64() <= std::numeric_limits<LONG>::max());
 
     auto objectID = object.objectID();
     NotifyWinEvent(msaaEvent, page->chrome().platformPageClient(), OBJID_CLIENT, -static_cast<LONG>(objectID.toUInt64()));
