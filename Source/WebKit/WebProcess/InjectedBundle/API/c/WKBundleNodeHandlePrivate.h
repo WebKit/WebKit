@@ -99,6 +99,8 @@ WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementAutofilled(WKBundleNodeHandl
 /* Deprecated - use WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef, WKAutoFillButtonType)*/
 WK_EXPORT void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHandleRef htmlInputElementHandle, bool enabled);
 
+WK_EXPORT WKBundleFrameRef WKBundleNodeHandleCopyOwningDocumentFrame(WKBundleNodeHandleRef);
+
 #ifdef __cplusplus
 }
 #endif

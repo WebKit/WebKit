@@ -108,17 +108,14 @@ static WTF::String dumpPath(JSGlobalContextRef context, JSObjectRef nodeValue)
     return name;
 }
 
-static WTF::String dumpPath(WKBundlePageRef page, WKBundleScriptWorldRef world, WKBundleNodeHandleRef node)
+static WTF::String dumpPath(WKBundleScriptWorldRef world, WKBundleNodeHandleRef node)
 {
     if (!node)
         return "(null)"_s;
 
-    ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-    WKBundleFrameRef frame = WKBundlePageGetMainFrame(page);
-    ALLOW_DEPRECATED_DECLARATIONS_END
-
-    JSGlobalContextRef context = WKBundleFrameGetJavaScriptContextForWorld(frame, world);
-    JSValueRef nodeValue = WKBundleFrameGetJavaScriptWrapperForNodeForWorld(frame, node, world);
+    auto frame = adoptWK(WKBundleNodeHandleCopyOwningDocumentFrame(node));
+    JSGlobalContextRef context = WKBundleFrameGetJavaScriptContextForWorld(frame.get(), world);
+    JSValueRef nodeValue = WKBundleFrameGetJavaScriptWrapperForNodeForWorld(frame.get(), node, world);
     ASSERT(JSValueIsObject(context, nodeValue));
     JSObjectRef nodeObject = (JSObjectRef)nodeValue;
 
@@ -130,9 +127,9 @@ static WTF::String string(WKBundleScriptWorldRef world, WKBundleRangeHandleRef r
     if (!rangeRef)
         return "(null)"_s;
 
-    auto frame = WKBundleRangeHandleDocumentFrame(rangeRef);
-    auto context = WKBundleFrameGetJavaScriptContextForWorld(frame, world);
-    auto rangeValue = WKBundleFrameGetJavaScriptWrapperForRangeForWorld(frame, rangeRef, world);
+    auto frame = adoptWK(WKBundleRangeHandleDocumentFrame(rangeRef));
+    auto context = WKBundleFrameGetJavaScriptContextForWorld(frame.get(), world);
+    auto rangeValue = WKBundleFrameGetJavaScriptWrapperForRangeForWorld(frame.get(), rangeRef, world);
     ASSERT(JSValueIsObject(context, rangeValue));
     auto rangeObject = (JSObjectRef)rangeValue;
 
@@ -1370,7 +1367,7 @@ bool InjectedBundlePage::shouldInsertNode(WKBundleNodeHandleRef node, WKBundleRa
 
     if (testRunner->shouldDumpEditingCallbacks()) {
         injectedBundle.outputText(makeString("EDITING DELEGATE:"_s
-            " shouldInsertNode:"_s, dumpPath(m_page, m_world.get(), node),
+            " shouldInsertNode:"_s, dumpPath(m_world.get(), node),
             " replacingDOMRange:"_s, string(m_world.get(), rangeToReplace),
             " givenAction:"_s, insertactionstring[action], '\n'));
     }

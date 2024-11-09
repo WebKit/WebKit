@@ -232,3 +232,10 @@ void WKBundleNodeHandleSetHTMLInputElementAutoFillButtonEnabled(WKBundleNodeHand
 {
     // FIXME: Would put ASSERT_NOT_REACHED() here but some compilers are warning the function is "noreturn".
 }
+
+WKBundleFrameRef WKBundleNodeHandleCopyOwningDocumentFrame(WKBundleNodeHandleRef documentHandleRef)
+{
+    if (RefPtr document = WebKit::toImpl(documentHandleRef)->document())
+        return toAPI(document->documentFrame().leakRef());
+    return nullptr;
+}
