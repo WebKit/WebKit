@@ -1913,3 +1913,8 @@ fast/events/drag-and-drop-autoscroll-inner-frame.html [ Pass Failure ]
 webkit.org/b/282565 [ Sequoia+ Debug ] imported/w3c/web-platform-tests/css/css-writing-modes/text-combine-upright-sideways-001.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/282726 http/tests/media/fairplay/legacy-fairplay-hls.html [ Failure ]
+
+# webkit.org/b/281923  [ Sequoia wk2 Debug arm64 ] 3 tests in http/tests/cookies/same-site are constant failure (failure in EWS)
+[ Sequoia+ ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
+[ Sequoia+ ] http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
+[ Sequoia+ ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
