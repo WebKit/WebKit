@@ -3653,6 +3653,13 @@ bool RenderLayerCompositor::isCompositedPlugin(const RenderObject& renderer)
     return renderEmbeddedObject->requiresAcceleratedCompositing();
 }
 
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+bool RenderLayerCompositor::isSeparated(const RenderObject& renderer)
+{
+    return renderer.style().usedTransformStyle3D() == TransformStyle3D::Separated;
+}
+#endif
+
 // Return true if the given layer is a stacking context and has compositing child
 // layers that it needs to clip. In this case we insert a clipping GraphicsLayer
 // into the hierarchy between this layer and its children in the z-order hierarchy.

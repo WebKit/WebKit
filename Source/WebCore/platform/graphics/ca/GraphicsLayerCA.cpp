@@ -3009,6 +3009,14 @@ void GraphicsLayerCA::updateContentsColorLayer()
 // roundedRect is in the coordinate space of clippingLayer.
 void GraphicsLayerCA::updateClippingStrategy(PlatformCALayer& clippingLayer, RefPtr<PlatformCALayer>& shapeMaskLayer, const FloatRoundedRect& roundedRect)
 {
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    if (m_isSeparated && roundedRect.radii().hasEvenCorners() && clippingLayer.bounds() == roundedRect.rect()) {
+        m_layer->setCornerRadius(roundedRect.radii().topLeft().width());
+        return;
+    }
+    m_layer->setCornerRadius(0);
+#endif
+
     if (roundedRect.radii().isUniformCornerRadius() && clippingLayer.bounds() == roundedRect.rect()) {
         clippingLayer.setMaskLayer(nullptr);
         if (shapeMaskLayer) {
