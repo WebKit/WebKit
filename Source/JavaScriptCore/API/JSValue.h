@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSValue_h
-#define JSValue_h
+#pragma once
 
 #if defined(__OBJC__) && JSC_OBJC_API_ENABLED
 
@@ -820,5 +819,3 @@ JS_EXPORT extern NSString * _Null_unspecified const JSPropertyDescriptorSetKey;
 #endif
 
 #endif
-
-#endif /* JSValue_h */

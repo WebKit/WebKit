@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSObjectRefPrivate_h
-#define JSObjectRefPrivate_h
+#pragma once
 
 #include <JavaScriptCore/JSObjectRef.h>
 
@@ -74,5 +73,3 @@ JS_EXPORT JSGlobalContextRef JSObjectGetGlobalContext(JSObjectRef object);
 #ifdef __cplusplus
 }
 #endif
-
-#endif // JSObjectRefPrivate_h

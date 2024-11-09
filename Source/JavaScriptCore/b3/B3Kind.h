@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef B3Kind_h
-#define B3Kind_h
+#pragma once
 
 #if ENABLE(B3_JIT)
 
@@ -290,6 +289,3 @@ template<> struct HashTraits<JSC::B3::Kind> : public SimpleClassHashTraits<JSC::
 } // namespace WTF
 
 #endif // ENABLE(B3_JIT)
-
-#endif // B3Kind_h
-

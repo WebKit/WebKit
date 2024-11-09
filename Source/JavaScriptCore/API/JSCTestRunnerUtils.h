@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSCTestRunnerUtils_h
-#define JSCTestRunnerUtils_h
+#pragma once
 
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSValueRef.h>
@@ -37,5 +36,3 @@ JS_EXPORT_PRIVATE JSValueRef setNeverInline(JSContextRef, JSValueRef theFunction
 JS_EXPORT_PRIVATE JSValueRef setNeverOptimize(JSContextRef, JSValueRef theFunction);
 
 } // namespace JSC
-
-#endif // JSCTestRunnerUtils_h

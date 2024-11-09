@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSCallbackFunction_h
-#define JSCallbackFunction_h
+#pragma once
 
 #include "InternalFunction.h"
 #include "JSObjectRef.h"
@@ -68,5 +67,3 @@ private:
 #undef JSCALLBACK_FUNCTION_METHOD
 
 } // namespace JSC
-
-#endif // JSCallbackFunction_h

@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSAPIWrapperObject_h
-#define JSAPIWrapperObject_h
+#pragma once
 
 #include "JSBase.h"
 #include "JSDestructibleObject.h"
@@ -56,5 +55,3 @@ private:
 } // namespace JSC
 
 #endif // JSC_OBJC_API_ENABLED || defined(JSC_GLIB_API_ENABLED)
-
-#endif // JSAPIWrapperObject_h

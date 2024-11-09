@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSContextRef_h
-#define JSContextRef_h
+#pragma once
 
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSValueRef.h>
@@ -174,5 +173,3 @@ JS_EXPORT void JSGlobalContextSetInspectable(JSGlobalContextRef ctx, bool inspec
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSContextRef_h */

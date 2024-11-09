@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSStringRefPrivate_h
-#define JSStringRefPrivate_h
+#pragma once
 
 #include <JavaScriptCore/JSStringRef.h>
 
@@ -37,5 +36,3 @@ JS_EXPORT JSStringRef JSStringCreateWithCharactersNoCopy(const JSChar* chars, si
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSStringRefPrivate_h */

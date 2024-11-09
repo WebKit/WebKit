@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSBasePrivate_h
-#define JSBasePrivate_h
+#pragma once
 
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/WebKitAvailability.h>
@@ -78,5 +77,3 @@ JS_EXPORT JSObjectRef JSGetMemoryUsageStatistics(JSContextRef ctx);
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSBasePrivate_h */

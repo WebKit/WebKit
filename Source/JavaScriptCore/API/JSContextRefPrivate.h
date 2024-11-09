@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSContextRefPrivate_h
-#define JSContextRefPrivate_h
+#pragma once
 
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSValueRef.h>
@@ -175,5 +174,3 @@ JS_EXPORT void JSGlobalContextSetEvalEnabled(JSGlobalContextRef ctx, bool enable
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSContextRefPrivate_h */

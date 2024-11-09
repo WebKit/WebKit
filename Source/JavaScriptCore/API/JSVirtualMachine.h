@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSVirtualMachine_h
-#define JSVirtualMachine_h
+#pragma once
 
 #include <JavaScriptCore/JavaScriptCore.h>
 
@@ -88,5 +87,3 @@ NS_CLASS_AVAILABLE(10_9, 7_0)
 @end
 
 #endif
-
-#endif /* JSVirtualMachine_h */

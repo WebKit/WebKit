@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSClassRef_h
-#define JSClassRef_h
+#pragma once
 
 #include "OpaqueJSString.h"
 #include "Protect.h"
@@ -141,5 +140,3 @@ private:
 };
 
 #undef OPAQUE_JSCLASS_METHOD
-
-#endif // JSClassRef_h

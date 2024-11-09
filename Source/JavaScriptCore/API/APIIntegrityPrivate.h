@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef JSIntegrityPrivate_h
-#define JSIntegrityPrivate_h
+#pragma once
 
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSObjectRef.h>
@@ -73,5 +72,3 @@ JS_EXPORT JSValueRef jsAuditJSValueRef(JSValueRef value) JSC_API_AVAILABLE(macos
 #ifdef __cplusplus
 }
 #endif
-
-#endif /* JSIntegrityPrivate_h */

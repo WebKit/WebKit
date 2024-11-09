@@ -23,8 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef JSVirtualMachineInternal_h
-#define JSVirtualMachineInternal_h
+#pragma once
 
 #if JSC_OBJC_API_ENABLED
 
@@ -58,5 +57,3 @@ void scanExternalObjectGraph(JSC::VM&, JSC::AbstractSlotVisitor&, void* root);
 void scanExternalRememberedSet(JSC::VM&, JSC::AbstractSlotVisitor&);
 
 #endif // JSC_OBJC_API_ENABLED
-
-#endif // JSVirtualMachineInternal_h
