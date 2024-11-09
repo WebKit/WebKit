@@ -896,7 +896,7 @@ pas_local_allocator_try_allocate_in_primordial_partial_view(
         page_config);
 
     if (result.did_succeed) {
-        PAS_PROFILE(PRIMORDIAL_BUMP_ALLOCATION, result.begin, allocator->object_size, allocation_mode);
+        PAS_PROFILE(PRIMORDIAL_BUMP_ALLOCATION, &page_config, result.begin, allocator->object_size, allocation_mode);
     }
 
     pas_lock_switch(&held_lock, NULL);
@@ -1494,7 +1494,7 @@ pas_local_allocator_try_allocate_with_free_bits(
             (void*)result);
     }
 
-    PAS_PROFILE(LOCAL_FREEBITS_ALLOCATION, result, allocator->object_size, allocation_mode);
+    PAS_PROFILE(LOCAL_FREEBITS_ALLOCATION, &page_config, result, allocator->object_size, allocation_mode);
     
     return pas_allocation_result_create_success(result);
 }
@@ -1539,7 +1539,7 @@ pas_local_allocator_try_allocate_inline_cases(pas_local_allocator* allocator,
         if (verbose)
             pas_log("Returning bump allocation %p.\n", (void*)result);
 
-        PAS_PROFILE(LOCAL_BUMP_ALLOCATION, result, object_size, allocation_mode);
+        PAS_PROFILE(LOCAL_BUMP_ALLOCATION, &config, result, object_size, allocation_mode);
         return pas_allocation_result_create_success(result);
     }
 
