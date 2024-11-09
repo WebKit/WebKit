@@ -14,6 +14,7 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/WEB_FEATURES.yml
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/ctor-analyser.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-basic.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/realtimeanalyser-fft-scaling.html
@@ -21,5 +22,6 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-gain.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-minimum.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-output.html
+/LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-resume-after-suspended.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analyser-scale.html
 /LayoutTests/imported/w3c/web-platform-tests/webaudio/the-audio-api/the-analysernode-interface/test-analysernode.html
