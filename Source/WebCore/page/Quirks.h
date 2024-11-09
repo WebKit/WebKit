@@ -228,6 +228,8 @@ public:
 
     bool needsMozillaFileTypeForDataTransfer() const;
 
+    bool needsBingGestureEventQuirk(EventTarget*) const;
+
 private:
     bool needsQuirks() const;
     bool isDomain(const String&) const;

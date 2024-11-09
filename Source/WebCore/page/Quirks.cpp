@@ -2030,6 +2030,23 @@ bool Quirks::needsMozillaFileTypeForDataTransfer() const
     return false;
 }
 
+// bing.com rdar://126573838
+bool Quirks::needsBingGestureEventQuirk(EventTarget* target) const
+{
+    if (!needsQuirks())
+        return false;
+
+    auto url = topDocumentURL();
+    if (url.host() == "www.bing.com"_s && startsWithLettersIgnoringASCIICase(url.path(), "/maps"_s)) {
+        if (RefPtr element = dynamicDowncast<Element>(target)) {
+            static MainThreadNeverDestroyed<const AtomString> mapClass("atlas-map-canvas"_s);
+            return element->hasClassName(mapClass.get());
+        }
+    }
+
+    return false;
+}
+
 URL Quirks::topDocumentURL() const
 {
     if (UNLIKELY(!m_topDocumentURLForTesting.isEmpty()))
