@@ -1663,6 +1663,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         if (vm().typeProfiler())
             vm().typeProfiler()->invalidateTypeSetCache(vm());
 
+        cancelDeferredWorkIfNeeded();
         reapWeakHandles();
         pruneStaleEntriesFromWeakGCHashTables();
         sweepArrayBuffers();
@@ -2338,6 +2339,11 @@ void Heap::willStartCollection()
 void Heap::prepareForMarking()
 {
     m_objectSpace.prepareForMarking();
+}
+
+void Heap::cancelDeferredWorkIfNeeded()
+{
+    vm().deferredWorkTimer->cancelPendingWork(vm());
 }
 
 void Heap::reapWeakHandles()

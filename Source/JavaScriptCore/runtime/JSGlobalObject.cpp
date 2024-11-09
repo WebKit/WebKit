@@ -2759,7 +2759,7 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
                 // The check above is just an optimization since between the check and here the mutator could cancel the ticket.
                 constexpr bool mayBeCancelled = true;
                 for (auto& dependency : ticket->dependencies(mayBeCancelled))
-                    visitor.append(dependency);
+                    visitor.appendUnbarriered(dependency);
             }
         }
     }
