@@ -43,9 +43,9 @@
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <pal/spi/ios/UIKitSPI.h>
 #import <wtf/ListHashSet.h>
-#import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringHash.h>

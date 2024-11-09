@@ -35,6 +35,7 @@
 #include "PlaybackSessionInterfaceIOS.h"
 #include "SpatialVideoMetadata.h"
 #include "VideoFullscreenCaptions.h"
+#include "VideoPresentationLayerProvider.h"
 #include "VideoPresentationModel.h"
 #include <objc/objc.h>
 #include <wtf/Forward.h>
@@ -53,8 +54,6 @@ OBJC_CLASS UIView;
 OBJC_CLASS CALayer;
 OBJC_CLASS NSError;
 OBJC_CLASS WebAVPlayerController;
-OBJC_CLASS WebAVPlayerLayer;
-OBJC_CLASS WebAVPlayerLayerView;
 
 namespace WebCore {
 
@@ -65,6 +64,7 @@ class VideoPresentationInterfaceIOS
     : public VideoPresentationModelClient
     , public PlaybackSessionModelClient
     , public VideoFullscreenCaptions
+    , public VideoPresentationLayerProvider
     , public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<VideoPresentationInterfaceIOS, WTF::DestructionThread::MainRunLoop>
     , public CanMakeCheckedPtr<VideoPresentationInterfaceIOS> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoPresentationInterfaceIOS, WEBCORE_EXPORT);
@@ -85,12 +85,10 @@ public:
     WEBCORE_EXPORT void videoDimensionsChanged(const FloatSize&);
     virtual void setSpatialImmersive(bool) { }
     WEBCORE_EXPORT virtual void setPlayerIdentifier(std::optional<MediaPlayerIdentifier>);
-    WEBCORE_EXPORT virtual void setupFullscreen(UIView& videoView, const FloatRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
+    WEBCORE_EXPORT virtual void setupFullscreen(const FloatRect& initialRect, const FloatSize& videoDimensions, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture);
     WEBCORE_EXPORT virtual void externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String& localizedDeviceName);
     WEBCORE_EXPORT virtual AVPlayerViewController *avPlayerViewController() const = 0;
     WebAVPlayerController *playerController() const;
-    WebAVPlayerLayerView *playerLayerView() const { return m_playerLayerView.get(); }
-    WebAVPlayerLayer *playerLayer() const;
     WEBCORE_EXPORT void enterFullscreen();
     WEBCORE_EXPORT virtual bool exitFullscreen(const FloatRect& finalRect);
     WEBCORE_EXPORT void exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode);
@@ -212,8 +210,6 @@ protected:
     bool m_changingStandbyOnly { false };
     bool m_allowsPictureInPicturePlayback { false };
     RetainPtr<UIWindow> m_parentWindow;
-    RetainPtr<UIView> m_videoView;
-    RetainPtr<WebAVPlayerLayerView> m_playerLayerView;
 
     virtual void finalizeSetup();
     virtual void updateRouteSharingPolicy() = 0;
@@ -241,6 +237,7 @@ protected:
     virtual void setAllowsPictureInPicturePlayback(bool) = 0;
     virtual bool isExternalPlaybackActive() const = 0;
     virtual bool willRenderToLayer() const = 0;
+    WEBCORE_EXPORT virtual void returnVideoView();
 
 #if PLATFORM(WATCHOS)
     bool m_waitingForPreparedToExit { false };

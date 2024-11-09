@@ -50,6 +50,18 @@ static Class WebAVPlayerLayerView_layerClass(id, SEL)
     return [WebAVPlayerLayer class];
 }
 
+static void WebAVPlayerLayerView_transferVideoViewTo(id aSelf, SEL, WebAVPlayerLayerView *targetPlayerLayerView)
+{
+    WebAVPlayerLayerView *playerLayerView = aSelf;
+    RetainPtr videoView = [playerLayerView videoView];
+    if (!videoView)
+        return;
+
+    [videoView removeFromSuperview];
+    [playerLayerView setVideoView:nil];
+    [targetPlayerLayerView setVideoView:videoView.get()];
+}
+
 static AVPlayerController *WebAVPlayerLayerView_playerController(id aSelf, SEL)
 {
     __AVPlayerLayerView *playerLayer = aSelf;
@@ -160,6 +172,7 @@ WebAVPlayerLayerView *allocWebAVPlayerLayerViewInstance()
         ASSERT(get__AVPlayerLayerViewClass());
         theClass = objc_allocateClassPair(get__AVPlayerLayerViewClass(), "WebAVPlayerLayerView", 0);
         class_addMethod(theClass, @selector(dealloc), (IMP)WebAVPlayerLayerView_dealloc, "v@:");
+        class_addMethod(theClass, @selector(transferVideoViewTo:), (IMP)WebAVPlayerLayerView_transferVideoViewTo, "v@:@");
         class_addMethod(theClass, @selector(setPlayerController:), (IMP)WebAVPlayerLayerView_setPlayerController, "v@:@");
         class_addMethod(theClass, @selector(playerController), (IMP)WebAVPlayerLayerView_playerController, "@@:");
         class_addMethod(theClass, @selector(setVideoView:), (IMP)WebAVPlayerLayerView_setVideoView, "v@:@");
