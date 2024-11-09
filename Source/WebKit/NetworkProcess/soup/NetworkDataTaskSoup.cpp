@@ -1396,10 +1396,9 @@ void NetworkDataTaskSoup::download()
     m_downloadOutputStream = adoptGRef(G_OUTPUT_STREAM(outputStream.leakRef()));
 
     auto& downloadManager = m_session->networkProcess().downloadManager();
-    auto download = makeUnique<Download>(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
-    auto* downloadPtr = download.get();
-    downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, WTFMove(download));
-    downloadPtr->didCreateDestination(m_pendingDownloadLocation);
+    Ref download = Download::create(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
+    downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, download.copyRef());
+    download->didCreateDestination(m_pendingDownloadLocation);
 
     ASSERT(!m_client);
     read();

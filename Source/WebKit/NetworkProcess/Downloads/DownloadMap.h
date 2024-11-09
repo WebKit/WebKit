@@ -32,6 +32,6 @@ namespace WebKit {
 
 class Download;
 
-using DownloadMap = HashMap<DownloadID, std::unique_ptr<Download>>;
+using DownloadMap = HashMap<DownloadID, Ref<Download>>;
 
 } // namespace WebKit

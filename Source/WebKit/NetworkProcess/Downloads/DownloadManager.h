@@ -93,7 +93,7 @@ public:
     ~DownloadManager();
 
     void startDownload(PAL::SessionID, DownloadID, const WebCore::ResourceRequest&, const std::optional<WebCore::SecurityOriginData>& topOrigin, std::optional<NavigatingToAppBoundDomain>, const String& suggestedName = { }, WebCore::FromDownloadAttribute = WebCore::FromDownloadAttribute::No, std::optional<WebCore::FrameIdentifier> frameID = std::nullopt, std::optional<WebCore::PageIdentifier> = std::nullopt, std::optional<WebCore::ProcessIdentifier> = std::nullopt);
-    void dataTaskBecameDownloadTask(DownloadID, std::unique_ptr<Download>&&);
+    void dataTaskBecameDownloadTask(DownloadID, Ref<Download>&&);
     void convertNetworkLoadToDownload(DownloadID, Ref<NetworkLoad>&&, ResponseCompletionHandler&&,  Vector<RefPtr<WebCore::BlobDataFileReference>>&&, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);
     void downloadDestinationDecided(DownloadID, Ref<NetworkDataTask>&&);
 
@@ -108,7 +108,7 @@ public:
 #endif
 #endif
     
-    Download* download(DownloadID downloadID) { return m_downloads.get(downloadID); }
+    Download* download(DownloadID);
 
     void downloadFinished(Download&);
     bool isDownloading() const { return !m_downloads.isEmpty(); }

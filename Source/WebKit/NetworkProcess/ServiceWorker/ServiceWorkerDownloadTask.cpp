@@ -186,10 +186,9 @@ void ServiceWorkerDownloadTask::start()
     m_state = State::Running;
 
     auto& manager = protectedNetworkProcess()->downloadManager();
-    auto download = makeUnique<Download>(manager, m_downloadID, *this, *networkSession());
-    auto* downloadPtr = download.get();
-    manager.dataTaskBecameDownloadTask(m_downloadID, WTFMove(download));
-    downloadPtr->didCreateDestination(m_pendingDownloadLocation);
+    Ref download = Download::create(manager, m_downloadID, *this, *networkSession());
+    manager.dataTaskBecameDownloadTask(m_downloadID, download.copyRef());
+    download->didCreateDestination(m_pendingDownloadLocation);
 }
 
 void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference& data, uint64_t encodedDataLength)
@@ -208,7 +207,7 @@ void ServiceWorkerDownloadTask::didReceiveData(const IPC::SharedBufferReference&
 
     callOnMainRunLoop([this, protectedThis = Ref { *this }, bytesWritten] {
         m_downloadBytesWritten += bytesWritten;
-        if (auto* download = protectedNetworkProcess()->downloadManager().download(*m_pendingDownloadID))
+        if (RefPtr download = protectedNetworkProcess()->downloadManager().download(*m_pendingDownloadID))
             download->didReceiveData(bytesWritten, m_downloadBytesWritten, std::max(m_expectedContentLength.value_or(0), m_downloadBytesWritten));
     });
 }
@@ -236,7 +235,7 @@ void ServiceWorkerDownloadTask::didFinish()
         if (RefPtr sandboxExtension = std::exchange(m_sandboxExtension, nullptr))
             sandboxExtension->revoke();
 
-        if (auto download = protectedNetworkProcess()->downloadManager().download(*m_pendingDownloadID))
+        if (RefPtr download = protectedNetworkProcess()->downloadManager().download(*m_pendingDownloadID))
             download->didFinish();
 
         if (RefPtr client = m_client.get())
@@ -271,7 +270,7 @@ void ServiceWorkerDownloadTask::didFailDownload(std::optional<ResourceError>&& e
             sandboxExtension->revoke();
 
         auto resourceError = error.value_or(cancelledError(firstRequest()));
-        if (auto download = protectedNetworkProcess()->downloadManager().download(*m_pendingDownloadID))
+        if (RefPtr download = protectedNetworkProcess()->downloadManager().download(*m_pendingDownloadID))
             download->didFail(resourceError, { });
 
         if (RefPtr client = m_client.get())

@@ -318,10 +318,9 @@ void NetworkDataTaskCurl::invokeDidReceiveResponse()
             }
 
             auto& downloadManager = m_session->networkProcess().downloadManager();
-            auto download = makeUnique<Download>(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
-            auto* downloadPtr = download.get();
-            downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, WTFMove(download));
-            downloadPtr->didCreateDestination(m_pendingDownloadLocation);
+            Ref download = Download::create(downloadManager, *m_pendingDownloadID, *this, *m_session, suggestedFilename());
+            downloadManager.dataTaskBecameDownloadTask(*m_pendingDownloadID, download.copyRef());
+            download->didCreateDestination(m_pendingDownloadLocation);
             if (m_curlRequest)
                 m_curlRequest->completeDidReceiveResponse();
             break;

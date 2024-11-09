@@ -74,7 +74,7 @@ public:
 #else
     void publishProgress(const URL&, SandboxExtension::Handle&&);
 #endif
-    void didBecomeDownload(const std::unique_ptr<Download>&);
+    void didBecomeDownload(Download&);
 #endif
 
 private:    

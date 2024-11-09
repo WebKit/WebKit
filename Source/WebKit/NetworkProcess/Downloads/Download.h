@@ -37,6 +37,7 @@
 #include <memory>
 #include <pal/SessionID.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/RefCountedAndCanMakeWeakPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakPtr.h>
@@ -62,14 +63,13 @@ class NetworkDataTask;
 class NetworkSession;
 class WebPage;
 
-class Download : public IPC::MessageSender, public CanMakeWeakPtr<Download>, public CanMakeCheckedPtr<Download> {
+class Download final : public IPC::MessageSender, public RefCountedAndCanMakeWeakPtr<Download> {
     WTF_MAKE_TZONE_ALLOCATED(Download);
     WTF_MAKE_NONCOPYABLE(Download);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Download);
 public:
-    Download(DownloadManager&, DownloadID, NetworkDataTask&, NetworkSession&, const String& suggestedFilename = { });
+    static Ref<Download> create(DownloadManager&, DownloadID, NetworkDataTask&, NetworkSession&, const String& suggestedFilename = { });
 #if PLATFORM(COCOA)
-    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, NetworkSession&, const String& suggestedFilename = { });
+    static Ref<Download> create(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, NetworkSession&, const String& suggestedFilename = { });
 #endif
 
     ~Download();
@@ -97,13 +97,21 @@ public:
     void didFinish();
     void didFail(const WebCore::ResourceError&, std::span<const uint8_t> resumeData);
 
-    void applicationDidEnterBackground() { m_monitor.applicationDidEnterBackground(); }
-    void applicationWillEnterForeground() { m_monitor.applicationWillEnterForeground(); }
-    DownloadManager& manager() const { return m_downloadManager.get(); }
+    void applicationDidEnterBackground() { protectedMonitor()->applicationDidEnterBackground(); }
+    void applicationWillEnterForeground() { protectedMonitor()->applicationWillEnterForeground(); }
+    DownloadManager* manager() const { return m_downloadManager.get(); }
+    void clearManager() { m_downloadManager = nullptr; }
 
     unsigned testSpeedMultiplier() const { return m_testSpeedMultiplier; }
 
 private:
+    Download(DownloadManager&, DownloadID, NetworkDataTask&, NetworkSession&, const String& suggestedFilename = { });
+#if PLATFORM(COCOA)
+    Download(DownloadManager&, DownloadID, NSURLSessionDownloadTask*, NetworkSession&, const String& suggestedFilename = { });
+#endif
+
+    Ref<DownloadMonitor> protectedMonitor() { return m_monitor; }
+
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const override;
     uint64_t messageSenderDestinationID() const override;
@@ -118,7 +126,7 @@ private:
     static Vector<uint8_t> updateResumeDataWithPlaceholderURL(NSURL *, std::span<const uint8_t> resumeData);
 #endif
 
-    CheckedRef<DownloadManager> m_downloadManager;
+    CheckedPtr<DownloadManager> m_downloadManager;
     DownloadID m_downloadID;
     Ref<DownloadManager::Client> m_client;
 
