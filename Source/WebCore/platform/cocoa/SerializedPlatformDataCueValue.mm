@@ -27,6 +27,7 @@
 #import "SerializedPlatformDataCueValue.h"
 
 #import <AVFoundation/AVMetadataItem.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -76,14 +77,14 @@ SerializedPlatformDataCueValue::SerializedPlatformDataCueValue(AVMetadataItem *i
     if (item.locale)
         m_data->locale = item.locale;
 
-    if ([item.value isKindOfClass:NSString.class])
-        m_data->value = (NSString *)item.value;
-    else if ([item.value isKindOfClass:NSData.class])
-        m_data->value = (NSData *)item.value;
-    else if ([item.value isKindOfClass:NSDate.class])
-        m_data->value = (NSDate *)item.value;
-    else if ([item.value isKindOfClass:NSNumber.class])
-        m_data->value = (NSNumber *)item.value;
+    if (auto *str = dynamic_objc_cast<NSString>(item.value))
+        m_data->value = str;
+    else if (auto *data = dynamic_objc_cast<NSData>(item.value))
+        m_data->value = data;
+    else if (auto *date = dynamic_objc_cast<NSDate>(item.value))
+        m_data->value = date;
+    else if (auto *number = dynamic_objc_cast<NSNumber>(item.value))
+        m_data->value = number;
 }
 
 RetainPtr<NSDictionary> SerializedPlatformDataCueValue::toNSDictionary() const

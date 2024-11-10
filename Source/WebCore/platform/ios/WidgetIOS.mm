@@ -43,6 +43,7 @@
 #import "WebCoreFrameView.h"
 #import "WebCoreView.h"
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @interface NSView (WebSetSelectedMethods)
 - (void)setIsSelected:(BOOL)isSelected;
@@ -194,8 +195,7 @@ IntRect Widget::convertFromRootToContainingWindow(const Widget* rootWidget, cons
         return rect;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    ASSERT([rootWidget->platformWidget() isKindOfClass:[NSScrollView class]]);
-    WAKScrollView *view = static_cast<WAKScrollView *>(rootWidget->platformWidget());
+    WAKScrollView *view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
     if (WAKView *documentView = [view documentView])
         return enclosingIntRect([documentView convertRect:rect toView:nil]);
     return enclosingIntRect([view convertRect:rect toView:nil]);
@@ -210,8 +210,7 @@ IntRect Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, cons
         return rect;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    ASSERT([rootWidget->platformWidget() isKindOfClass:[NSScrollView class]]);
-    WAKScrollView *view = static_cast<WAKScrollView *>(rootWidget->platformWidget());
+    WAKScrollView *view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
     if (WAKView *documentView = [view documentView])
         return enclosingIntRect([documentView convertRect:rect fromView:nil]);
     return enclosingIntRect([view convertRect:rect fromView:nil]);
@@ -226,8 +225,7 @@ IntPoint Widget::convertFromRootToContainingWindow(const Widget* rootWidget, con
         return point;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    ASSERT([rootWidget->platformWidget() isKindOfClass:[NSScrollView class]]);
-    WAKScrollView *view = static_cast<WAKScrollView *>(rootWidget->platformWidget());
+    WAKScrollView *view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
     NSPoint convertedPoint;
     if (WAKView *documentView = [view documentView])
         convertedPoint = [documentView convertPoint:point toView:nil];
@@ -245,8 +243,7 @@ IntPoint Widget::convertFromContainingWindowToRoot(const Widget* rootWidget, con
         return point;
 
     BEGIN_BLOCK_OBJC_EXCEPTIONS
-    ASSERT([rootWidget->platformWidget() isKindOfClass:[NSScrollView class]]);
-    WAKScrollView *view = static_cast<WAKScrollView *>(rootWidget->platformWidget());
+    WAKScrollView *view = checked_objc_cast<WAKScrollView>(rootWidget->platformWidget());
     NSPoint convertedPoint;
     if (WAKView *documentView = [view documentView])
         convertedPoint = IntPoint([documentView convertPoint:point fromView:nil]);

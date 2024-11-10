@@ -306,8 +306,7 @@ static NSString * const _WKARQLWebsiteURLParameterKey = @"ARQLWebsiteURLParamete
 
 - (void)dataTask:(_WKDataTask *)dataTask didReceiveResponse:(NSURLResponse *)response decisionHandler:(void (^)(_WKDataTaskResponsePolicy))decisionHandler
 {
-    if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-        NSHTTPURLResponse *HTTPResponse = (NSHTTPURLResponse *)response;
+    if (auto *HTTPResponse = dynamic_objc_cast<NSHTTPURLResponse>(response)) {
         if ([NSHTTPURLResponse isErrorStatusCode:HTTPResponse.statusCode]) {
             RELEASE_LOG(SystemPreview, "cancelling subresource load due to error status code: %ld", (long)HTTPResponse.statusCode);
             decisionHandler(_WKDataTaskResponsePolicyCancel);

@@ -46,10 +46,11 @@
     if (object == self)
         return YES;
 
-    if (![object isKindOfClass:[_WKFrameHandle class]])
+    auto *handle = dynamic_objc_cast<_WKFrameHandle>(object);
+    if (!handle)
         return NO;
 
-    return _frameHandle->frameID() == ((_WKFrameHandle *)object)->_frameHandle->frameID();
+    return _frameHandle->frameID() == handle->_frameHandle->frameID();
 }
 
 - (NSUInteger)hash

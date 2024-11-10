@@ -46,6 +46,7 @@
 #import <wtf/RuntimeApplicationChecks.h>
 #import <wtf/URL.h>
 #import <wtf/cocoa/NSURLExtras.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 #import <wtf/text/StringHash.h>
 

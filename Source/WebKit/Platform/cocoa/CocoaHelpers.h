@@ -30,6 +30,7 @@
 #import <wtf/URLHash.h>
 #import <wtf/UUID.h>
 #import <wtf/WallTime.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/StringHash.h>
 
 OBJC_CLASS NSArray;

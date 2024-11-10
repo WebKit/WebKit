@@ -61,11 +61,12 @@ using namespace WebKit;
 
 - (id)objectForKey:(id)key
 {
-    if (![key isKindOfClass:[NSString class]])
+    auto *str = dynamic_objc_cast<NSString>(key);
+    if (!str)
         return nil;
 
     bool exists;
-    RefPtr value = _dictionary->get((NSString *)key, exists);
+    RefPtr value = _dictionary->get(str, exists);
     if (!exists)
         return nil;
 

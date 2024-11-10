@@ -65,8 +65,8 @@ static void safeRemoveFromSuperview(NSView *view)
     // If the view is the first responder, then set the window's first responder to nil so
     // we don't leave the window pointing to a view that's no longer in it.
     NSWindow *window = [view window];
-    NSResponder *firstResponder = [window firstResponder];
-    if ([firstResponder isKindOfClass:[NSView class]] && [(NSView *)firstResponder isDescendantOf:view])
+    auto *firstResponderView = dynamic_objc_cast<NSView>([window firstResponder]);
+    if ([firstResponderView isDescendantOf:view])
         [window makeFirstResponder:nil];
 
     // Suppress the resetting of drag margins since we know we can't affect them.
@@ -219,8 +219,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     NSView *innerView = platformWidget();
     NSScrollView *scrollView = 0;
     if ([innerView conformsToProtocol:@protocol(WebCoreFrameScrollView)]) {
-        ASSERT([innerView isKindOfClass:[NSScrollView class]]);
-        NSScrollView *scrollView = static_cast<NSScrollView *>(innerView);
+        NSScrollView *scrollView = checked_objc_cast<NSScrollView>(innerView);
         // -copiesOnScroll will return NO whenever the content view is not fully opaque.
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
         if ([scrollView drawsBackground] && ![[scrollView contentView] copiesOnScroll])

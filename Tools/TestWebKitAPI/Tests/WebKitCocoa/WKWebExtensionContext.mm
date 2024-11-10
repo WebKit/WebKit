@@ -35,6 +35,7 @@
 #import <WebKit/WKWebExtensionMatchPatternPrivate.h>
 #import <WebKit/WKWebExtensionPermission.h>
 #import <WebKit/WKWebExtensionPrivate.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS_FAMILY)
 #import <UIKit/UIKit.h>

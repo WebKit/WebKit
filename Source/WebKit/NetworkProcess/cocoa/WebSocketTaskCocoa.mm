@@ -123,8 +123,8 @@ void WebSocketTask::didConnect(const String& protocol)
 {
     String extensionsValue;
     auto response = [m_task response];
-    if ([response isKindOfClass:[NSHTTPURLResponse class]])
-        extensionsValue = [(NSHTTPURLResponse *)response valueForHTTPHeaderField:@"Sec-WebSocket-Extensions"];
+    if (auto *httpResponse  = dynamic_objc_cast<NSHTTPURLResponse>(response))
+        extensionsValue = [httpResponse  valueForHTTPHeaderField:@"Sec-WebSocket-Extensions"];
 
     m_receivedDidConnect = true;
     RefPtr channel = m_channel.get();

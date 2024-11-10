@@ -64,10 +64,9 @@
     if (self == otherObject)
         return YES;
 
-    if (![otherObject isKindOfClass:[_WKTextInputContext class]])
+    auto *other = dynamic_objc_cast<_WKTextInputContext>(otherObject);
+    if (!other)
         return NO;
-
-    _WKTextInputContext *other = (_WKTextInputContext *)otherObject;
 
     return _textInputContext == other->_textInputContext;
 }

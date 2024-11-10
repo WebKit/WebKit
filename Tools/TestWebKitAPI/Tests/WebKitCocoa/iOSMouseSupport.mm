@@ -44,6 +44,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/MonotonicTime.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if HAVE(MOUSE_DEVICE_OBSERVATION)
 

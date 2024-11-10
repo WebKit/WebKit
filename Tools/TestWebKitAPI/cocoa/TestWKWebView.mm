@@ -47,6 +47,7 @@
 #import <wtf/BlockPtr.h>
 #import <wtf/Deque.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(MAC)
 #import <AppKit/AppKit.h>

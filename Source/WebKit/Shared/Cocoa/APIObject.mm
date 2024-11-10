@@ -587,14 +587,13 @@ RetainPtr<NSObject<NSSecureCoding>> Object::toNSObject()
 
 RefPtr<API::Object> Object::fromNSObject(NSObject<NSSecureCoding> *object)
 {
-    if ([object isKindOfClass:NSString.class])
-        return API::String::create((NSString *)object);
-    if ([object isKindOfClass:NSData.class])
-        return API::Data::createWithoutCopying((NSData *)object);
-    if ([object isKindOfClass:NSNumber.class])
-        return API::Double::create([(NSNumber *)object doubleValue]);
-    if ([object isKindOfClass:NSArray.class]) {
-        NSArray *array = (NSArray *)object;
+    if (auto *str = dynamic_objc_cast<NSString>(object))
+        return API::String::create(str);
+    if (auto *data = dynamic_objc_cast<NSData>(object))
+        return API::Data::createWithoutCopying(data);
+    if (auto *number = dynamic_objc_cast<NSNumber>(object))
+        return API::Double::create([number doubleValue]);
+    if (auto *array = dynamic_objc_cast<NSArray>(object)) {
         Vector<RefPtr<API::Object>> result;
         result.reserveInitialCapacity(array.count);
         for (id member in array) {
@@ -603,9 +602,9 @@ RefPtr<API::Object> Object::fromNSObject(NSObject<NSSecureCoding> *object)
         }
         return API::Array::create(WTFMove(result));
     }
-    if ([object isKindOfClass:NSDictionary.class]) {
+    if (auto *dictionary = dynamic_objc_cast<NSDictionary>(object)) {
         __block HashMap<WTF::String, RefPtr<API::Object>> result;
-        [(NSDictionary *)object enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
+        [dictionary enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
             if (auto valueObject = fromNSObject(value); valueObject && [key isKindOfClass:NSString.class])
                 result.add(key, WTFMove(valueObject));
         }];

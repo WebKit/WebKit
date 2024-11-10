@@ -54,9 +54,9 @@ static constexpr CMItemCount CompressedSampleQueueLowWaterMark = 15;
 VideoMediaSampleRenderer::VideoMediaSampleRenderer(WebSampleBufferVideoRendering *renderering)
     : m_workQueue(WorkQueue::create("VideoMediaSampleRenderer Queue"_s))
 {
-    if (auto *displayLayer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(renderering, PAL::getAVSampleBufferDisplayLayerClass()))
+    if (auto *displayLayer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(renderering))
         m_displayLayer = displayLayer;
-    else if (auto *renderer = dynamic_objc_cast<AVSampleBufferVideoRenderer>(renderering, PAL::getAVSampleBufferVideoRendererClass()))
+    else if (auto *renderer = dynamic_objc_cast<AVSampleBufferVideoRenderer>(renderering))
         m_renderer = renderer;
 }
 

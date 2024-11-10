@@ -165,12 +165,12 @@ using namespace WebKit;
     for (NSString *key in localizedDictionary.allKeys) {
         id value = localizedDictionary[key];
 
-        if ([value isKindOfClass:NSString.class])
-            localizedDictionary[key] = [self localizedStringForString:(NSString *)value];
-        else if ([value isKindOfClass:NSArray.class])
-            localizedDictionary[key] = [self _localizedArrayForArray:(NSArray *)value];
-        else if ([value isKindOfClass:NSDictionary.class])
-            localizedDictionary[key] = [self localizedDictionaryForDictionary:(NSDictionary *)value];
+        if (auto *str = dynamic_objc_cast<NSString>(value))
+            localizedDictionary[key] = [self localizedStringForString:str];
+        else if (auto *arr = dynamic_objc_cast<NSArray>(value))
+            localizedDictionary[key] = [self _localizedArrayForArray:arr];
+        else if (auto* dict = dynamic_objc_cast<NSDictionary>(value))
+            localizedDictionary[key] = [self localizedDictionaryForDictionary:dict];
     }
 
     return localizedDictionary;

@@ -52,6 +52,7 @@
 #import <pal/spi/cocoa/WritingToolsUISPI.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(MAC)

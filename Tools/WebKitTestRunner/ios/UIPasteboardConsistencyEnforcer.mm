@@ -30,6 +30,7 @@
 
 #import <UIKit/UIKit.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 @implementation UIPasteboardConsistencyEnforcer {
     RetainPtr<UIPasteboard> _pasteboardToReset;

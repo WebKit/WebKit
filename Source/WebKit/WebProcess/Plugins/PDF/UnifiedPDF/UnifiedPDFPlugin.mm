@@ -44,6 +44,8 @@
 #include "PasteboardTypes.h"
 #include "PluginView.h"
 #include "WKAccessibilityPDFDocumentObject.h"
+#include "WKAccessibilityWebPageObjectIOS.h"
+#include "WKAccessibilityWebPageObjectMac.h"
 #include "WebEventConversion.h"
 #include "WebEventModifier.h"
 #include "WebEventType.h"
@@ -98,6 +100,7 @@
 #include <wtf/Algorithms.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/cocoa/TypeCastsCocoa.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 #include <wtf/text/TextStream.h>
@@ -173,7 +176,7 @@ UnifiedPDFPlugin::UnifiedPDFPlugin(HTMLPlugInElement& element)
     m_accessibilityDocumentObject = adoptNS([[WKAccessibilityPDFDocumentObject alloc] initWithPDFDocument:m_pdfDocument andElement:&element]);
     [m_accessibilityDocumentObject setPDFPlugin:this];
     if (this->isFullFramePlugin() && m_frame && m_frame->page() && m_frame->isMainFrame())
-        [m_accessibilityDocumentObject setParent:dynamic_objc_cast<NSObject>(m_frame->protectedPage()->accessibilityRemoteObject())];
+        [m_accessibilityDocumentObject setParent:m_frame->protectedPage()->accessibilityRemoteObject()];
 #endif
 
     if (m_presentationController->wantsWheelEvents())

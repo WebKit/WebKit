@@ -27,6 +27,7 @@
 #import "IOSMouseEventTestHarness.h"
 
 #import <wtf/MonotonicTime.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if PLATFORM(IOS) || PLATFORM(MACCATALYST) || PLATFORM(VISION)
 

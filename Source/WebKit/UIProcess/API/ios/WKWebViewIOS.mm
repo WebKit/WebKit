@@ -1212,8 +1212,8 @@ static void configureScrollViewWithOverlayRegionsIDs(WKBaseScrollView* scrollVie
         HashSet<UIView *> overlayAncestorsChain;
         for (UIView *overlayAncestor = (UIView *)overlayView; overlayAncestor; overlayAncestor = [overlayAncestor superview]) {
             overlayAncestorsChain.add(overlayAncestor);
-            if ([overlayAncestor isKindOfClass:[WKBaseScrollView class]]) {
-                enclosingScrollView = (WKBaseScrollView *)overlayAncestor;
+            if (auto *layer = dynamic_objc_cast<WKBaseScrollView>(overlayAncestor)) {
+                enclosingScrollView = layer;
                 break;
             }
         }

@@ -41,6 +41,7 @@
 #import <WebKit/_WKFormInputSession.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/SoftLinking.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 
 #if USE(BROWSERENGINEKIT)
 #import <BrowserEngineKit/BrowserEngineKit.h>
