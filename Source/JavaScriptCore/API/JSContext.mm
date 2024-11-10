@@ -55,7 +55,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 @implementation JSContext {
     RetainPtr<JSVirtualMachine> m_virtualMachine;
     JSGlobalContextRef m_context;
-    JSC::Strong<JSC::JSObject> m_exception;
+    RetainPtr<JSValue> m_exception;
     WeakObjCPtr<id <JSModuleLoaderDelegate>> m_moduleLoaderDelegate;
 }
 
@@ -98,7 +98,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 - (void)dealloc
 {
-    m_exception.clear();
+    m_exception = nil;
     JSGlobalContextRelease(m_context);
     [_exceptionHandler release];
     [super dealloc];
@@ -193,17 +193,12 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     JSC::JSGlobalObject* globalObject = toJS(m_context);
     JSC::VM& vm = globalObject->vm();
     JSC::JSLockHolder locker(vm);
-    if (value)
-        m_exception.set(vm, toJS(JSValueToObject(m_context, valueInternalValue(value), 0)));
-    else
-        m_exception.clear();
+    m_exception = value;
 }
 
 - (JSValue *)exception
 {
-    if (!m_exception)
-        return nil;
-    return [JSValue valueWithJSValueRef:toRef(m_exception.get()) inContext:self];
+    return m_exception.get();
 }
 
 - (JSValue *)globalObject
