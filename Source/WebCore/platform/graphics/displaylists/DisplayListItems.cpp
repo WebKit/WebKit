@@ -572,8 +572,8 @@ void FillRectWithGradient::apply(GraphicsContext& context) const
 
 void FillRectWithGradient::dump(TextStream& ts, OptionSet<AsTextFlag>) const
 {
-    // FIXME: log gradient.
     ts.dumpProperty("rect", rect());
+    ts.dumpProperty("gradient", m_gradient);
 }
 
 FillRectWithGradientAndSpaceTransform::FillRectWithGradientAndSpaceTransform(const FloatRect& rect, Gradient& gradient, const AffineTransform& gradientSpaceTransform, GraphicsContext::RequiresClipToRect requiresClipToRect)
