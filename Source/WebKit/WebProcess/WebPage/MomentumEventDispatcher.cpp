@@ -34,8 +34,6 @@
 #include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 
 static constexpr Seconds deltaHistoryMaximumAge = 500_ms;
@@ -681,7 +679,5 @@ void MomentumEventDispatcher::flushLog()
 #endif
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif
