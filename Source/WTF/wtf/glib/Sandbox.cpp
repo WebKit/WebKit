@@ -126,6 +126,8 @@ const CString& sandboxedUserRuntimeDirectory()
         static constexpr ASCIILiteral baseDirectory = "webkitgtk"_s;
 #elif PLATFORM(WPE)
         static constexpr ASCIILiteral baseDirectory = "wpe"_s;
+#else
+        static constexpr ASCIILiteral baseDirectory = "javascriptcore"_s;
 #endif
         userRuntimeDirectory.construct(FileSystem::pathByAppendingComponent(FileSystem::stringFromFileSystemRepresentation(g_get_user_runtime_dir()), baseDirectory).utf8());
     });

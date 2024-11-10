@@ -35,7 +35,6 @@ extern "C" {
     void g_dbus_node_info_unref(GDBusNodeInfo*);
 };
 extern "C" void g_object_unref(gpointer);
-extern "C" gpointer g_object_ref_sink(gpointer);
 
 namespace WTF {
 
