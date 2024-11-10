@@ -1648,6 +1648,9 @@ private:
             case ValueRep::SomeEarlyRegister:
             case ValueRep::Stack:
             case ValueRep::Constant:
+#if USE(JSVALUE32_64)
+            case ValueRep::RegisterPair:
+#endif
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             }
@@ -4987,6 +4990,9 @@ private:
                     after.append(Inst(moveForType(type), m_value, arg, tmp));
                     return;
                 }
+#if USE(JSVALUE32_64)
+                case ValueRep::RegisterPair:
+#endif
                 default:
                     RELEASE_ASSERT_NOT_REACHED();
                     return;

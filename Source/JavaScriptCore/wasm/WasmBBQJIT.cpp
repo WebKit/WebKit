@@ -3244,6 +3244,10 @@ B3::Type BBQJIT::toB3Type(TypeKind kind)
 
 B3::ValueRep BBQJIT::toB3Rep(Location location)
 {
+#if USE(JSVALUE32_64)
+    if (location.isGPR2())
+        return B3::ValueRep(B3::ValueRep::OSRValueRep, Reg(location.asGPRlo()), Reg(location.asGPRhi()));
+#endif
     if (location.isRegister())
         return B3::ValueRep(location.isGPR() ? Reg(location.asGPR()) : Reg(location.asFPR()));
     if (location.isStack())

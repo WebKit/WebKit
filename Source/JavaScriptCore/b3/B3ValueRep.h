@@ -88,6 +88,15 @@ public:
         // representation, this tells us what register B3 picked.
         Register,
 
+#if USE(JSVALUE32_64)
+        // This is only used for BBQ OSR on 32-bits.
+        // LLInt uses 64-bit stack values to represent I64s.
+        // BBQ uses register pairs.
+        // OMG treats I64 values as tuples, and tries to agressively de-structure them. It
+        // should never see this representation, except when tiering up from BBQ.
+        RegisterPair,
+#endif
+
         // As an input representation, this forces a particular register and states that
         // the register is used late. This means that the register is used after the result
         // is defined (i.e, the result will interfere with this as an input).
@@ -154,7 +163,18 @@ public:
             ASSERT_NOT_REACHED();
         }
     }
-#endif
+
+#if USE(JSVALUE32_64)
+    // Only use this for OSR stackmaps.
+    enum OSRValueRepTag { OSRValueRep };
+    ValueRep(OSRValueRepTag, Reg lo, Reg hi)
+    {
+        m_kind = RegisterPair;
+        u.regPair.regLo = lo;
+        u.regPair.regHi = hi;
+    }
+#endif // USE(JSVALUE32_64)
+#endif // ENABLE(WEBASSEMBLY)
 
     static ValueRep reg(Reg reg)
     {
@@ -228,6 +248,22 @@ public:
     bool isAny() const { return kind() == WarmAny || kind() == ColdAny || kind() == LateColdAny; }
 
     bool isReg() const { return kind() == Register || kind() == LateRegister || kind() == SomeLateRegister; }
+
+#if USE(JSVALUE32_64)
+    bool isRegPair(OSRValueRepTag) const { return kind() == RegisterPair; }
+
+    GPRReg gprLo(OSRValueRepTag) const
+    {
+        ASSERT(isRegPair(OSRValueRep));
+        return u.regPair.regLo.gpr();
+    }
+
+    GPRReg gprHi(OSRValueRepTag) const
+    {
+        ASSERT(isRegPair(OSRValueRep));
+        return u.regPair.regHi.gpr();
+    }
+#endif
 
     Reg reg() const
     {
@@ -319,6 +355,12 @@ private:
         intptr_t offsetFromFP;
         intptr_t offsetFromSP;
         int64_t value;
+
+        struct RegisterPair {
+            Reg regLo;
+            Reg regHi;
+        };
+        RegisterPair regPair;
 
         U()
         {

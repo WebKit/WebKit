@@ -1013,8 +1013,13 @@ private:
     void restoreWebAssemblyGlobalState(const MemoryInformation&, Value* instance, BasicBlock*);
     void reloadMemoryRegistersFromInstance(const MemoryInformation&, Value* instance, BasicBlock*);
 
-    Value* loadFromScratchBuffer(unsigned& indexInBuffer, Value* pointer, B3::Type);
-    void connectControlAtEntrypoint(unsigned& indexInBuffer, Value* pointer, ControlData&, Stack& expressionStack, ControlData& currentData, bool fillLoopPhis = false);
+    enum OSRBufferMode {
+        LoadI64, // Load I64 values directly, and let later passes lower them; Needed for interacting with lower tiers.
+        SplitI64, // Split I64 values into two I32 values.
+    };
+
+    Value* loadFromScratchBuffer(OSRBufferMode, unsigned& indexInBuffer, Value* pointer, B3::Type);
+    void connectControlAtEntrypoint(OSRBufferMode, unsigned& indexInBuffer, Value* pointer, ControlData&, Stack& expressionStack, ControlData& currentData, bool fillLoopPhis = false);
     Value* emitCatchImpl(CatchKind, ControlType&, unsigned exceptionIndex = 0);
     void emitCatchTableImpl(ControlData& entryData, const ControlData::TryTableTarget&, const Stack&);
     PatchpointExceptionHandle preparePatchpointForExceptions(BasicBlock*, PatchpointValue*);
@@ -2296,7 +2301,7 @@ void OMGIRGenerator::traceCF(Args&&... info)
     patch->effects.reads = HeapRange::top();
     patch->effects.writes = HeapRange::top();
     StringPrintStream sb;
-    sb.print("TRACE OMG EXECUTION fn[", m_functionIndex, "] stack height ", m_stackSize.value(), " CF ");
+    sb.print("TRACE OMG EXECUTION fn[", m_functionIndex, " <inlined into ", m_inlineParent ? m_inlineParent->m_functionIndex : -1, ">] stack height ", m_stackSize.value(), " CF ");
     sb.print(info...);
     dataLogLn("static: ", sb.toString());
     patch->setGenerator([infoString = sb.toString()] (CCallHelpers& jit, const B3::StackmapGenerationParams& params) {
@@ -4364,27 +4369,37 @@ auto OMGIRGenerator::addSIMDLoadPad(SIMDLaneOperation op, ExpressionType pointer
     return { };
 }
 
-Value* OMGIRGenerator::loadFromScratchBuffer(unsigned& indexInBuffer, Value* pointer, B3::Type type)
+// OMG prefers not to see I64s as one value, but rather as two stitched I32s. BBQ prefers to see pairs
+// of registers to represent I64s. These two different ways of restoring live values represent this;
+// OSR directly loads I64s from the buffer, exceptions load two I32s and stitch them.
+Value* OMGIRGenerator::loadFromScratchBuffer(OSRBufferMode mode, unsigned& indexInBuffer, Value* pointer, B3::Type type)
 {
     unsigned valueSize = m_proc.usesSIMD() ? 2 : 1;
+    ASSERT(!m_proc.usesSIMD());
     size_t offset = valueSize * sizeof(uint64_t) * (indexInBuffer++);
     RELEASE_ASSERT(type.isNumeric());
+    if (mode == SplitI64 && type.kind() == B3::TypeKind::Int64) {
+        size_t offsetHi = valueSize * sizeof(uint64_t) * (indexInBuffer++);
+        auto* lo = append<MemoryValue>(heapTop(), m_proc, Load, Int32, origin(), pointer, offset);
+        auto* hi = append<MemoryValue>(heapTop(), m_proc, Load, Int32, origin(), pointer, offsetHi);
+        return append<Value>(m_proc, Stitch, type, origin(), lo, hi);
+    }
     return append<MemoryValue>(heapTop(), m_proc, Load, type, origin(), pointer, offset);
 }
 
-void OMGIRGenerator::connectControlAtEntrypoint(unsigned& indexInBuffer, Value* pointer, ControlData& data, Stack& expressionStack, ControlData& currentData, bool fillLoopPhis)
+void OMGIRGenerator::connectControlAtEntrypoint(OSRBufferMode mode, unsigned& indexInBuffer, Value* pointer, ControlData& data, Stack& expressionStack, ControlData& currentData, bool fillLoopPhis)
 {
     TRACE_CF("Connect control at entrypoint");
     for (unsigned i = 0; i < expressionStack.size(); i++) {
         TypedExpression value = expressionStack[i];
-        auto* load = loadFromScratchBuffer(indexInBuffer, pointer, value->type());
+        auto* load = loadFromScratchBuffer(mode, indexInBuffer, pointer, value->type());
         if (fillLoopPhis)
             append<UpsilonValue>(m_proc, origin(), load, data.phis[i]);
         else
             append<VariableValue>(m_proc, Set, origin(), value.value(), load);
     }
     if (ControlType::isAnyCatch(data) && &data != &currentData) {
-        auto* load = loadFromScratchBuffer(indexInBuffer, pointer, Int64);
+        auto* load = loadFromScratchBuffer(mode, indexInBuffer, pointer, pointerType());
         append<VariableValue>(m_proc, Set, origin(), data.exception(), load);
     }
 };
@@ -4418,15 +4433,15 @@ auto OMGIRGenerator::addLoop(BlockSignature signature, Stack& enclosingStack, Co
         unsigned indexInBuffer = 0;
 
         for (auto& local : m_locals)
-            append<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(indexInBuffer, pointer, local->type()));
+            append<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(LoadI64, indexInBuffer, pointer, local->type()));
 
         for (unsigned controlIndex = 0; controlIndex < m_parser->controlStack().size(); ++controlIndex) {
             auto& data = m_parser->controlStack()[controlIndex].controlData;
             auto& expressionStack = m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-            connectControlAtEntrypoint(indexInBuffer, pointer, data, expressionStack, block);
+            connectControlAtEntrypoint(LoadI64, indexInBuffer, pointer, data, expressionStack, block);
         }
-        connectControlAtEntrypoint(indexInBuffer, pointer, block, enclosingStack, block);
-        connectControlAtEntrypoint(indexInBuffer, pointer, block, newStack, block, true);
+        connectControlAtEntrypoint(LoadI64, indexInBuffer, pointer, block, enclosingStack, block);
+        connectControlAtEntrypoint(LoadI64, indexInBuffer, pointer, block, newStack, block, true);
 
         ASSERT(!m_proc.usesSIMD() || m_compilationMode == CompilationMode::OMGForOSREntryMode);
         unsigned valueSize = m_proc.usesSIMD() ? 2 : 1;
@@ -4568,21 +4583,29 @@ PatchpointExceptionHandle OMGIRGenerator::preparePatchpointForExceptions(BasicBl
         frames.append(currentFrame);
     frames.reverse();
 
+    auto addLiveValue = [&] (Value* v) {
+        if (is32Bit() && v->type().kind() == Int64) {
+            liveValues.append(block->appendNew<ExtractValue>(m_proc, origin, Int32, v, ExtractValue::s_int64LowBits));
+            liveValues.append(block->appendNew<ExtractValue>(m_proc, origin, Int32, v, ExtractValue::s_int64HighBits));
+        } else
+            liveValues.append(v);
+    };
+
     for (auto* currentFrame : frames) {
         for (Variable* local : currentFrame->m_locals) {
             Value* result = append<VariableValue>(block, m_proc, B3::Get, origin, local);
-            liveValues.append(result);
+            addLiveValue(result);
         }
         for (unsigned controlIndex = 0; controlIndex < currentFrame->m_parser->controlStack().size(); ++controlIndex) {
             ControlData& data = currentFrame->m_parser->controlStack()[controlIndex].controlData;
             Stack& expressionStack = currentFrame->m_parser->controlStack()[controlIndex].enclosedExpressionStack;
             for (Variable* value : expressionStack)
-                liveValues.append(get(block, value));
+                addLiveValue(get(block, value));
             if (ControlType::isAnyCatch(data))
-                liveValues.append(get(block, data.exception()));
+                addLiveValue(get(block, data.exception()));
         }
         for (Variable* value : currentFrame->m_parser->expressionStack())
-            liveValues.append(get(block, value));
+            addLiveValue(get(block, value));
     }
 
     patch->effects.exitsSideways = true;
@@ -4654,17 +4677,17 @@ Value* OMGIRGenerator::emitCatchImpl(CatchKind kind, ControlType& data, unsigned
 
     for (auto* currentFrame : frames) {
         for (auto& local : currentFrame->m_locals)
-            append<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(indexInBuffer, pointer, local->type()));
+            append<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(SplitI64, indexInBuffer, pointer, local->type()));
 
         for (unsigned controlIndex = 0; controlIndex < currentFrame->m_parser->controlStack().size(); ++controlIndex) {
             auto& controlData = currentFrame->m_parser->controlStack()[controlIndex].controlData;
             auto& expressionStack = currentFrame->m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-            connectControlAtEntrypoint(indexInBuffer, pointer, controlData, expressionStack, data);
+            connectControlAtEntrypoint(SplitI64, indexInBuffer, pointer, controlData, expressionStack, data);
         }
 
         auto& topControlData = currentFrame->m_parser->controlStack().last().controlData;
         auto& topExpressionStack = currentFrame->m_parser->expressionStack();
-        connectControlAtEntrypoint(indexInBuffer, pointer, topControlData, topExpressionStack, data);
+        connectControlAtEntrypoint(SplitI64, indexInBuffer, pointer, topControlData, topExpressionStack, data);
     }
 
     set(data.exception(), exception);
@@ -4714,17 +4737,17 @@ auto OMGIRGenerator::emitCatchTableImpl(ControlData& data, const ControlData::Tr
 
     for (auto* currentFrame : frames) {
         for (auto& local : currentFrame->m_locals)
-            append<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(indexInBuffer, pointer, local->type()));
+            append<VariableValue>(m_proc, Set, Origin(), local, loadFromScratchBuffer(SplitI64, indexInBuffer, pointer, local->type()));
 
         for (unsigned controlIndex = 0; controlIndex < currentFrame->m_parser->controlStack().size(); ++controlIndex) {
             auto& controlData = currentFrame->m_parser->controlStack()[controlIndex].controlData;
             auto& expressionStack = currentFrame->m_parser->controlStack()[controlIndex].enclosedExpressionStack;
-            connectControlAtEntrypoint(indexInBuffer, pointer, controlData, expressionStack, data);
+            connectControlAtEntrypoint(SplitI64, indexInBuffer, pointer, controlData, expressionStack, data);
         }
 
         auto& topControlData = currentFrame->m_parser->controlStack().last().controlData;
         auto& topExpressionStack = currentFrame->m_parser->expressionStack();
-        connectControlAtEntrypoint(indexInBuffer, pointer, topControlData, topExpressionStack, data);
+        connectControlAtEntrypoint(SplitI64, indexInBuffer, pointer, topControlData, topExpressionStack, data);
     }
 
     auto newStack = stack;

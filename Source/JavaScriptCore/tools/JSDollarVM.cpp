@@ -49,6 +49,7 @@
 #include "JSPromise.h"
 #include "JSString.h"
 #include "LinkBuffer.h"
+#include "NativeCallee.h"
 #include "OperationResult.h"
 #include "Options.h"
 #include "Parser.h"
@@ -2137,6 +2138,7 @@ static JSC_DECLARE_HOST_FUNCTION(functionBreakpoint);
 static JSC_DECLARE_HOST_FUNCTION(functionExit);
 static JSC_DECLARE_HOST_FUNCTION(functionDFGTrue);
 static JSC_DECLARE_HOST_FUNCTION(functionFTLTrue);
+static JSC_DECLARE_HOST_FUNCTION(functionOMGTrue);
 static JSC_DECLARE_HOST_FUNCTION(functionCpuMfence);
 static JSC_DECLARE_HOST_FUNCTION(functionCpuRdtsc);
 static JSC_DECLARE_HOST_FUNCTION(functionCpuCpuid);
@@ -2350,6 +2352,84 @@ JSC_DEFINE_HOST_FUNCTION(functionFTLTrue, (JSGlobalObject*, CallFrame*))
 {
     DollarVMAssertScope assertScope;
     return JSValue::encode(jsBoolean(false));
+}
+
+// Returns true if the calling frame is an OMG frame.
+// Usage: isOMG = $vm.omgTrue() (from WASM only)
+JSC_DEFINE_HOST_FUNCTION(functionOMGTrue, (JSGlobalObject* globalObject, CallFrame* callFrame))
+{
+    DollarVMAssertScope assertScope;
+#if ENABLE(WEBASSEMBLY)
+    VM& vm = globalObject->vm();
+
+    bool allFramesAreValid = true;
+    bool seenOMGFrame = false;
+    bool seenOtherWasmFrame = false;
+
+    auto modeForWasm = [&](StackVisitor& visitor) {
+        if (visitor->codeType() != StackVisitor::Frame::Wasm
+            || !visitor->callee().isNativeCallee()) {
+            allFramesAreValid = false;
+            return Wasm::CompilationMode::LLIntMode;
+        }
+        return static_cast<Wasm::Callee*>(visitor->callee().asNativeCallee())->compilationMode();
+    };
+
+    auto expectWasmToJS = [&](StackVisitor& visitor) {
+        if (visitor->codeType() != StackVisitor::Frame::Wasm
+            || !visitor->callee().isNativeCallee()
+            || !isAnyWasmToJS(static_cast<Wasm::Callee*>(visitor->callee().asNativeCallee())->compilationMode())) {
+            allFramesAreValid = false;
+            return;
+        }
+    };
+
+    auto expectNative = [&](StackVisitor& visitor) {
+        if (visitor->codeType() != StackVisitor::Frame::Native
+            || !visitor->callee().isCell()) {
+            allFramesAreValid = false;
+            return;
+        }
+    };
+
+    unsigned frameIndex = 0;
+    StackVisitor::visit(callFrame, vm, [&] (StackVisitor& visitor) {
+        DollarVMAssertScope assertScope;
+
+        switch (frameIndex) {
+        case 0:
+            expectNative(visitor);
+            break;
+        case 1:
+            expectWasmToJS(visitor);
+            break;
+        case 2: {
+            auto mode = modeForWasm(visitor);
+            seenOMGFrame = isAnyOMG(mode);
+            seenOtherWasmFrame = isAnyBBQ(mode) || isAnyInterpreter(mode);
+            return IterationStatus::Done;
+        }
+        default:
+            return IterationStatus::Done;
+        }
+
+        ++frameIndex;
+        return IterationStatus::Continue;
+    });
+
+    if (allFramesAreValid && seenOMGFrame && !seenOtherWasmFrame)
+        return JSValue::encode(jsNumber(1));
+
+    if (allFramesAreValid && !seenOMGFrame && seenOtherWasmFrame)
+        return JSValue::encode(jsNumber(0));
+
+    dataLogLn("omgTrue INVALID FRAME: ", allFramesAreValid, " ", seenOMGFrame, " ", seenOtherWasmFrame);
+#else
+    UNUSED_PARAM(globalObject);
+    UNUSED_PARAM(callFrame);
+#endif // ENABLE(WEBASSEMBLY)
+
+    return JSValue::encode(jsNumber(2));
 }
 
 JSC_DEFINE_HOST_FUNCTION(functionCpuMfence, (JSGlobalObject*, CallFrame*))
@@ -4245,6 +4325,7 @@ void JSDollarVM::finishCreation(VM& vm)
 
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "dfgTrue"_s), 0, functionDFGTrue, ImplementationVisibility::Public, DFGTrueIntrinsic, jsDollarVMPropertyAttributes);
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "ftlTrue"_s), 0, functionFTLTrue, ImplementationVisibility::Public, FTLTrueIntrinsic, jsDollarVMPropertyAttributes);
+    putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "omgTrue"_s), 0, functionOMGTrue, ImplementationVisibility::Public, NoIntrinsic, jsDollarVMPropertyAttributes);
 
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "cpuMfence"_s), 0, functionCpuMfence, ImplementationVisibility::Public, CPUMfenceIntrinsic, jsDollarVMPropertyAttributes);
     putDirectNativeFunction(vm, globalObject, Identifier::fromString(vm, "cpuRdtsc"_s), 0, functionCpuRdtsc, ImplementationVisibility::Public, CPURdtscIntrinsic, jsDollarVMPropertyAttributes);

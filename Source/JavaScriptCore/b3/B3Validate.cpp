@@ -929,6 +929,9 @@ private:
                     VALIDATE(value.value()->type().isFloat() || value.value()->type().isVector(), ("At ", *context, ": ", value));
             }
             break;
+#if USE(JSVALUE32_64)
+        case ValueRep::RegisterPair:
+#endif
         case ValueRep::Constant:
         case ValueRep::Stack:
             VALIDATE(false, ("At ", *context, ": ", value));

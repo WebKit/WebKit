@@ -705,6 +705,15 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
     for (unsigned index = 0; index < values.size(); ++index) {
         const OSREntryValue& value = values[index];
         dataLogLnIf(Options::verboseOSR() || WasmOperationsInternal::verbose, "OMG OSR entry values[", index, "] ", value.type(), " ", value);
+#if USE(JSVALUE32_64)
+        if (value.isRegPair(B3::ValueRep::OSRValueRep)) {
+            bitwise_cast<uint32_t*>(buffer + index * valueSize)[0] = context.gpr(value.gprLo(B3::ValueRep::OSRValueRep));
+            bitwise_cast<uint32_t*>(buffer + index * valueSize)[1] = context.gpr(value.gprHi(B3::ValueRep::OSRValueRep));
+            dataLogLnIf(WasmOperationsInternal::verbose, "GPR Pair for value ", index, " ",
+                value.gprLo(B3::ValueRep::OSRValueRep), " = ", context.gpr(value.gprLo(B3::ValueRep::OSRValueRep)), " ",
+                value.gprHi(B3::ValueRep::OSRValueRep), " = ", context.gpr(value.gprHi(B3::ValueRep::OSRValueRep)));
+        } else
+#endif
         if (value.isGPR()) {
             switch (value.type().kind()) {
             case B3::Float:
@@ -751,11 +760,12 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
             auto* baseLoad = bitwise_cast<uint8_t*>(context.fp()) + value.offsetFromFP();
             auto* baseStore = bitwise_cast<uint8_t*>(buffer + index * valueSize);
 
-            if (WasmOperationsInternal::verbose && (value.type().isFloat() || value.type().isVector())) {
-                dataLogLn("Stack float or vector for value ", index, " fp offset ", value.offsetFromFP(), " = ",
+            if (value.type().isFloat() || value.type().isVector()) {
+                dataLogLnIf(WasmOperationsInternal::verbose, "Stack float or vector for value ", index, " fp offset ", value.offsetFromFP(), " = ",
                     *bitwise_cast<v128_t*>(baseLoad),
                     " or double ", *bitwise_cast<double*>(baseLoad));
-            }
+            } else
+                dataLogLnIf(WasmOperationsInternal::verbose, "Stack for value ", index, " fp[", value.offsetFromFP(), "] = ", RawHex(*bitwise_cast<uint64_t*>(baseLoad)), " ", static_cast<int32_t>(*bitwise_cast<uint64_t*>(baseLoad)), " ", *bitwise_cast<int64_t*>(baseLoad));
 
             switch (value.type().kind()) {
             case B3::Float:

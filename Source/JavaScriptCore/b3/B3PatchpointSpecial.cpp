@@ -130,6 +130,9 @@ bool PatchpointSpecial::admitsStack(Inst& inst, unsigned argIndex)
         case ValueRep::Register:
         case ValueRep::LateRegister:
             return false;
+#if USE(JSVALUE32_64)
+        case ValueRep::RegisterPair:
+#endif
         default:
             RELEASE_ASSERT_NOT_REACHED();
             return false;

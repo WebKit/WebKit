@@ -35,6 +35,7 @@
 #include "B3ExtractValue.h"
 #include "B3InsertionSet.h"
 #include "B3InsertionSetInlines.h"
+#include "B3MemoryValue.h"
 #include "B3PhaseScope.h"
 #include "B3Procedure.h"
 #include "B3StackmapGenerationParams.h"
@@ -306,22 +307,6 @@ private:
     {
         Value* functionAddress = m_insertionSet.insert<ConstPtrValue>(m_index, m_origin, tagCFunction<OperationPtrTag>(function));
         return m_insertionSet.insert<CCallValue>(m_index, type, m_origin, Effects::none(), functionAddress, argLo, argHi);
-    }
-
-    void splitRange(const HeapRange& original, HeapRange&lo, HeapRange&hi)
-    {
-        if (original.distance() == 1) {
-            // XXX: testb3 uses single-byte range for Int64 access.
-            hi = HeapRange(original.begin() + bytesForWidth(Width32));
-            lo = original;
-        } else if (!original || (original == HeapRange::top())) {
-            hi = original;
-            lo = original;
-        } else {
-            hi = HeapRange(original.begin() + bytesForWidth(Width32), original.end());
-            lo = HeapRange(original.begin(), original.begin() + bytesForWidth(Width32));
-            RELEASE_ASSERT(!hi.overlaps(lo));
-        }
     }
 
     bool hasInt64Arg()
@@ -1086,11 +1071,6 @@ private:
             }
             if (!(m_value->type() == Int64 || (!hasUnalignedFPMemoryAccess() && m_value->type() == Double)))
                 return;
-            HeapRange rangeHi, rangeLo;
-            splitRange(memory->range(), rangeLo, rangeHi);
-
-            HeapRange fenceRangeHi, fenceRangeLo;
-            splitRange(memory->fenceRange(), fenceRangeLo, fenceRangeHi);
 
             // Assumes little-endian arch.
             CheckedInt32 offsetHi = CheckedInt32(memory->offset()) + CheckedInt32(bytesForWidth(Width32));
@@ -1098,13 +1078,13 @@ private:
 
             MemoryValue* hi = insert<MemoryValue>(m_index, Load, Int32, m_origin, memory->child(0));
             hi->setOffset(offsetHi);
-            hi->setRange(rangeHi);
-            hi->setFenceRange(fenceRangeHi);
+            hi->setRange(memory->range());
+            hi->setFenceRange(memory->fenceRange());
 
             MemoryValue* lo = insert<MemoryValue>(m_index, Load, Int32, m_origin, memory->child(0));
             lo->setOffset(memory->offset());
-            lo->setRange(rangeLo);
-            lo->setFenceRange(fenceRangeLo);
+            lo->setRange(memory->range());
+            lo->setFenceRange(memory->fenceRange());
             if (m_value->type() == Double) {
                 Value* result = insert<Value>(m_index, BitwiseCast, m_origin, valueLoHi(lo, hi));
                 m_value->replaceWithIdentity(result);
@@ -1137,24 +1117,18 @@ private:
             else
                 return;
 
-            HeapRange rangeHi, rangeLo;
-            splitRange(memory->range(), rangeLo, rangeHi);
-
-            HeapRange fenceRangeHi, fenceRangeLo;
-            splitRange(memory->fenceRange(), fenceRangeLo, fenceRangeHi);
-
 
             MemoryValue* hi = insert<MemoryValue>(m_index, Store, m_origin, value.second, memory->child(1));
             CheckedInt32 offsetHi = CheckedInt32(memory->offset()) + CheckedInt32(bytesForWidth(Width32));
             RELEASE_ASSERT(!offsetHi.hasOverflowed());
             hi->setOffset(offsetHi);
-            hi->setRange(rangeHi);
-            hi->setFenceRange(fenceRangeHi);
+            hi->setRange(memory->range());
+            hi->setFenceRange(memory->fenceRange());
 
             MemoryValue* lo = insert<MemoryValue>(m_index, Store, m_origin, value.first, memory->child(1));
             lo->setOffset(memory->offset());
-            lo->setRange(rangeLo);
-            lo->setFenceRange(fenceRangeLo);
+            lo->setRange(memory->range());
+            lo->setFenceRange(memory->fenceRange());
             valueReplaced();
             return;
         }
