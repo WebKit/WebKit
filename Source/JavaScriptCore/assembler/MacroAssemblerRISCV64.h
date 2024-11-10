@@ -171,6 +171,14 @@ public:
     static constexpr RegisterID framePointerRegister = RISCV64Registers::fp;
     static constexpr RegisterID linkRegister = RISCV64Registers::ra;
 
+    void add8(TrustedImm32 imm, Address address)
+    {
+        auto temp = temps<Data>();
+        load8(address, temp.data());
+        add32(imm, temp.data());
+        store8(temp.data(), address);
+    }
+
     void add32(RegisterID src, RegisterID dest)
     {
         add32(src, dest, dest);
