@@ -1128,9 +1128,9 @@ void WebProcessProxy::updateBackForwardItem(Ref<FrameState>&& frameState)
 
     if (!!item->backForwardCacheEntry() != frameState->hasCachedPage) {
         if (frameState->hasCachedPage)
-            protectedProcessPool()->checkedBackForwardCache()->addEntry(*item, coreProcessIdentifier());
+            protectedProcessPool()->protectedBackForwardCache()->addEntry(*item, coreProcessIdentifier());
         else if (!item->suspendedPage())
-            protectedProcessPool()->checkedBackForwardCache()->removeEntry(*item);
+            protectedProcessPool()->protectedBackForwardCache()->removeEntry(*item);
     }
 
     frameItem->setFrameState(WTFMove(frameState));

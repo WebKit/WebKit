@@ -108,7 +108,7 @@ bool WebProcessCache::addProcessIfPossible(Ref<WebProcessProxy>&& process)
     // CachedProcess can destroy the process pool (which owns the WebProcessCache), by making its reference weak in WebProcessProxy::setIsInProcessCache.
     Ref protectedProcessPool = process->processPool();
     uint64_t requestIdentifier = generateAddRequestIdentifier();
-    m_pendingAddRequests.add(requestIdentifier, makeUnique<CachedProcess>(process.copyRef()));
+    m_pendingAddRequests.add(requestIdentifier, CachedProcess::create(process.copyRef()));
 
     WEBPROCESSCACHE_RELEASE_LOG("addProcessIfPossible: Checking if process is responsive before caching it", process->processID());
     process->isResponsive([this, processPool = WTFMove(protectedProcessPool), process, requestIdentifier](bool isResponsive) {
@@ -120,12 +120,12 @@ bool WebProcessCache::addProcessIfPossible(Ref<WebProcessProxy>&& process)
             WEBPROCESSCACHE_RELEASE_LOG_ERROR("addProcessIfPossible(): Not caching process because it is not responsive", cachedProcess->process().processID());
             return;
         }
-        processPool->webProcessCache().addProcess(WTFMove(cachedProcess));
+        processPool->webProcessCache().addProcess(cachedProcess.releaseNonNull());
     });
     return true;
 }
 
-bool WebProcessCache::addProcess(std::unique_ptr<CachedProcess>&& cachedProcess)
+bool WebProcessCache::addProcess(Ref<CachedProcess>&& cachedProcess)
 {
     ASSERT(!cachedProcess->process().pageCount());
     ASSERT(!cachedProcess->process().provisionalPageCount());
@@ -274,7 +274,7 @@ void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProc
     RELEASE_ASSERT(process.optionalSite());
     WEBPROCESSCACHE_RELEASE_LOG("removeProcess: Evicting process from WebProcess cache because it expired", process.processID());
 
-    std::unique_ptr<CachedProcess> cachedProcess;
+    RefPtr<CachedProcess> cachedProcess;
     auto it = m_processesPerSite.find(*process.optionalSite());
     if (it != m_processesPerSite.end() && &it->value->process() == &process) {
         cachedProcess = WTFMove(it->value);
@@ -295,6 +295,11 @@ void WebProcessCache::removeProcess(WebProcessProxy& process, ShouldShutDownProc
     ASSERT(&cachedProcess->process() == &process);
     if (shouldShutDownProcess == ShouldShutDownProcess::No)
         cachedProcess->takeProcess();
+}
+
+Ref<WebProcessCache::CachedProcess> WebProcessCache::CachedProcess::create(Ref<WebProcessProxy>&& process)
+{
+    return adoptRef(*new WebProcessCache::CachedProcess(WTFMove(process)));
 }
 
 WebProcessCache::CachedProcess::CachedProcess(Ref<WebProcessProxy>&& process)

@@ -39,6 +39,11 @@ static const Seconds expirationDelay { 30_min };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebBackForwardCacheEntry);
 
+Ref<WebBackForwardCacheEntry> WebBackForwardCacheEntry::create(WebBackForwardCache& backForwardCache, WebCore::BackForwardItemIdentifier backForwardItemID, WebCore::ProcessIdentifier processIdentifier, std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
+{
+    return adoptRef(*new WebBackForwardCacheEntry(backForwardCache, backForwardItemID, processIdentifier, WTFMove(suspendedPage)));
+}
+
 WebBackForwardCacheEntry::WebBackForwardCacheEntry(WebBackForwardCache& backForwardCache, WebCore::BackForwardItemIdentifier backForwardItemID, WebCore::ProcessIdentifier processIdentifier, std::unique_ptr<SuspendedPageProxy>&& suspendedPage)
     : m_backForwardCache(backForwardCache)
     , m_processIdentifier(processIdentifier)
@@ -57,7 +62,7 @@ WebBackForwardCacheEntry::~WebBackForwardCacheEntry()
     }
 }
 
-WebBackForwardCache& WebBackForwardCacheEntry::backForwardCache() const
+WebBackForwardCache* WebBackForwardCacheEntry::backForwardCache() const
 {
     return m_backForwardCache.get();
 }
@@ -84,7 +89,8 @@ void WebBackForwardCacheEntry::expirationTimerFired()
     RELEASE_LOG(BackForwardCache, "%p - WebBackForwardCacheEntry::expirationTimerFired backForwardItemID=%s, hasSuspendedPage=%d", this, m_backForwardItemID->toString().utf8().data(), !!m_suspendedPage);
     auto* item = WebBackForwardListItem::itemForID(*m_backForwardItemID);
     ASSERT(item);
-    m_backForwardCache->removeEntry(*item); // Will destroy |this|.
+    if (RefPtr backForwardCache = m_backForwardCache.get())
+        backForwardCache->removeEntry(*item);
 }
 
 } // namespace WebKit

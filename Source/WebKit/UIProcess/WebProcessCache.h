@@ -68,10 +68,10 @@ private:
     static Seconds cachedProcessLifetime;
     static Seconds clearingDelayAfterApplicationResignsActive;
 
-    class CachedProcess {
+    class CachedProcess : public RefCounted<CachedProcess> {
         WTF_MAKE_TZONE_ALLOCATED(CachedProcess);
     public:
-        CachedProcess(Ref<WebProcessProxy>&&);
+        static Ref<CachedProcess> create(Ref<WebProcessProxy>&&);
         ~CachedProcess();
 
         Ref<WebProcessProxy> takeProcess();
@@ -83,6 +83,8 @@ private:
 #endif
 
     private:
+        explicit CachedProcess(Ref<WebProcessProxy>&&);
+
         void evictionTimerFired();
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WPE)
         void suspensionTimerFired();
@@ -98,18 +100,13 @@ private:
 
     bool canCacheProcess(WebProcessProxy&) const;
     void platformInitialize();
-    bool addProcess(std::unique_ptr<CachedProcess>&&);
+    bool addProcess(Ref<CachedProcess>&&);
 
     unsigned m_capacity { 0 };
 
-    HashMap<uint64_t, std::unique_ptr<CachedProcess>> m_pendingAddRequests;
-    HashMap<WebCore::Site, std::unique_ptr<CachedProcess>> m_processesPerSite;
+    HashMap<uint64_t, Ref<CachedProcess>> m_pendingAddRequests;
+    HashMap<WebCore::Site, Ref<CachedProcess>> m_processesPerSite;
     RunLoop::Timer m_evictionTimer;
 };
 
 } // namespace WebKit
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebKit::WebProcessCache::CachedProcess> : std::true_type { };
-}

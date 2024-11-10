@@ -173,12 +173,19 @@ void WebBackForwardListItem::wasRemovedFromBackForwardList()
 
 void WebBackForwardListItem::removeFromBackForwardCache()
 {
-    if (m_backForwardCacheEntry)
-        m_backForwardCacheEntry->backForwardCache().removeEntry(*this);
+    if (RefPtr backForwardCacheEntry = m_backForwardCacheEntry) {
+        if (RefPtr backForwardCache = backForwardCacheEntry->backForwardCache())
+            backForwardCache->removeEntry(*this);
+    }
     ASSERT(!m_backForwardCacheEntry);
 }
 
-void WebBackForwardListItem::setBackForwardCacheEntry(std::unique_ptr<WebBackForwardCacheEntry>&& backForwardCacheEntry)
+RefPtr<WebBackForwardCacheEntry> WebBackForwardListItem::protectedBackForwardCacheEntry() const
+{
+    return m_backForwardCacheEntry;
+}
+
+void WebBackForwardListItem::setBackForwardCacheEntry(RefPtr<WebBackForwardCacheEntry>&& backForwardCacheEntry)
 {
     m_backForwardCacheEntry = WTFMove(backForwardCacheEntry);
 }

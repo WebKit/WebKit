@@ -259,7 +259,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
 #endif
     , m_foregroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
     , m_backgroundWebProcessCounter([this](RefCounterEvent) { updateProcessAssertions(); })
-    , m_backForwardCache(makeUniqueRef<WebBackForwardCache>())
+    , m_backForwardCache(makeUniqueRefWithoutRefCountedCheck<WebBackForwardCache>(*this))
     , m_webProcessCache(makeUniqueRef<WebProcessCache>(*this))
     , m_webProcessWithAudibleMediaCounter([this](RefCounterEvent) { updateAudibleMediaAssertions(); })
     , m_audibleActivityTimer(RunLoop::main(), this, &WebProcessPool::clearAudibleActivity)
@@ -1127,7 +1127,7 @@ void WebProcessPool::disconnectProcess(WebProcessProxy& process)
     // Clearing everything causes assertion failures, so it's less trouble to skip that for now.
     Ref protectedProcess { process };
 
-    checkedBackForwardCache()->removeEntriesForProcess(process);
+    protectedBackForwardCache()->removeEntriesForProcess(process);
 
     if (process.isRunningWorkers())
         process.disableRemoteWorkers({ RemoteWorkerType::ServiceWorker, RemoteWorkerType::SharedWorker });
@@ -1383,7 +1383,7 @@ void WebProcessPool::handleMemoryPressureWarning(Critical)
 
     // Clear back/forward cache first as processes removed from the back/forward cache will likely
     // be added to the WebProcess cache.
-    checkedBackForwardCache()->clear();
+    protectedBackForwardCache()->clear();
     checkedWebProcessCache()->clear();
 
     if (RefPtr prewarmedProcess = m_prewarmedProcess.get())
@@ -1517,7 +1517,7 @@ void WebProcessPool::updateBackForwardCacheCapacity()
     unsigned backForwardCacheCapacity = 0;
     calculateMemoryCacheSizes(LegacyGlobalSettings::singleton().cacheModel(), dummy, dummy, dummy, dummyInterval, backForwardCacheCapacity);
 
-    checkedBackForwardCache()->setCapacity(*this, backForwardCacheCapacity);
+    protectedBackForwardCache()->setCapacity(*this, backForwardCacheCapacity);
 }
 
 void WebProcessPool::setCacheModel(CacheModel cacheModel)
@@ -2403,7 +2403,7 @@ CheckedRef<WebProcessCache> WebProcessPool::checkedWebProcessCache()
     return m_webProcessCache.get();
 }
 
-CheckedRef<WebBackForwardCache> WebProcessPool::checkedBackForwardCache()
+Ref<WebBackForwardCache> WebProcessPool::protectedBackForwardCache()
 {
     return m_backForwardCache.get();
 }
