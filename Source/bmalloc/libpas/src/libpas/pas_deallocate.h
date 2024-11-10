@@ -196,7 +196,7 @@ static PAS_ALWAYS_INLINE bool pas_try_deallocate(void* ptr,
     uintptr_t begin;
 
     begin = (uintptr_t)ptr;
-    PAS_PROFILE(TRY_DEALLOCATE, &config, begin);
+    PAS_PROFILE(TRY_DEALLOCATE, begin);
     ptr = (void*)begin;
 
     if (verbose)

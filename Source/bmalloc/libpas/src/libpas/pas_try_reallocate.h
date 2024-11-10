@@ -210,7 +210,7 @@ pas_try_reallocate(void* old_ptr,
 {
     uintptr_t begin;
     begin = (uintptr_t)old_ptr;
-    PAS_PROFILE(TRY_REALLOCATE, &config, begin);
+    PAS_PROFILE(TRY_REALLOCATE, begin);
     old_ptr = (void*)begin;
 
     switch (config.fast_megapage_kind_func(begin)) {

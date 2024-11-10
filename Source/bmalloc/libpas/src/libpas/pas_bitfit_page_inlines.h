@@ -246,7 +246,7 @@ static PAS_ALWAYS_INLINE pas_bitfit_allocation_result pas_bitfit_page_finish_all
     
     pas_bitfit_page_testing_verify(page);
 
-    PAS_PROFILE(BITFIT_ALLOCATION, &page_config, begin, size, allocation_mode);
+    PAS_PROFILE(BITFIT_ALLOCATION, begin, size, allocation_mode);
 
     return pas_bitfit_allocation_result_create_success(begin);
 }

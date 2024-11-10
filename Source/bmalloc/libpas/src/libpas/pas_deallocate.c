@@ -42,7 +42,7 @@ bool pas_try_deallocate_known_large(void* ptr,
     uintptr_t begin;
 
     begin = (uintptr_t)ptr;
-    PAS_PROFILE(TRY_DEALLOCATE_KNOWN_LARGE, config, begin);
+    PAS_PROFILE(TRY_DEALLOCATE_KNOWN_LARGE, begin);
     
     pas_heap_lock_lock();
     

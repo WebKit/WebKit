@@ -139,7 +139,7 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
     uint8_t right_align = pas_get_fast_random(2);
 
     uintptr_t key = (right_align ? (result.begin + page_size + mem_to_waste) : (result.begin + page_size));
-    PAS_PROFILE(PGM_ALLOCATE, heap_config, key);
+    PAS_PROFILE(PGM_ALLOCATE, key);
 
     /* create struct to hold hash map value */
     pas_pgm_storage *value = pas_utility_heap_try_allocate(sizeof(pas_pgm_storage), "pas_pgm_hash_map_VALUE");
