@@ -36,8 +36,6 @@
 #import <wtf/text/StringView.h>
 #import <wtf/text/WTFString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit::PDFScriptEvaluation {
 
 static bool isPrintScript(const String& script)
@@ -106,9 +104,9 @@ static bool pdfDocumentContainsPrintScript(RetainPtr<CGPDFDocumentRef> pdfDocume
         if (!CGPDFDictionaryGetName(javaScriptAction, "S", &actionType) || strcmp(actionType, "JavaScript"))
             continue;
 
-        auto scriptFromBytes = [](const UInt8* bytes, CFIndex length) {
-            CFStringEncoding encoding = (length > 1 && bytes[0] == 0xFE && bytes[1] == 0xFF) ? kCFStringEncodingUnicode : kCFStringEncodingUTF8;
-            return adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, bytes, length, encoding, true));
+        auto scriptFromBytes = [](std::span<const uint8_t> bytes) {
+            CFStringEncoding encoding = (bytes.size() > 1 && bytes[0] == 0xFE && bytes[1] == 0xFF) ? kCFStringEncodingUnicode : kCFStringEncodingUTF8;
+            return adoptCF(CFStringCreateWithBytes(kCFAllocatorDefault, bytes.data(), bytes.size(), encoding, true));
         };
 
         auto scriptFromStream = [&] -> RetainPtr<CFStringRef> {
@@ -119,14 +117,14 @@ static bool pdfDocumentContainsPrintScript(RetainPtr<CGPDFDocumentRef> pdfDocume
             RetainPtr<CFDataRef> data = adoptCF(CGPDFStreamCopyData(stream, &format));
             if (!data)
                 return nullptr;
-            return scriptFromBytes(CFDataGetBytePtr(data.get()), CFDataGetLength(data.get()));
+            return scriptFromBytes(span(data.get()));
         };
 
         auto scriptFromString = [&] -> RetainPtr<CFStringRef> {
             CGPDFStringRef string = nullptr;
             if (!CGPDFDictionaryGetString(javaScriptAction, "JS", &string))
                 return nullptr;
-            return scriptFromBytes(CGPDFStringGetBytePtr(string), CGPDFStringGetLength(string));
+            return scriptFromBytes(unsafeMakeSpan(CGPDFStringGetBytePtr(string), CGPDFStringGetLength(string)));
         };
 
         if (RetainPtr<CFStringRef> script = scriptFromStream() ?: scriptFromString(); script && isPrintScript({ script.get() }))
@@ -143,7 +141,5 @@ void runScripts(CGPDFDocumentRef document, PrintingCallback&& callback)
 }
 
 } // namespace WebKit::PDFScriptEvaluation
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(PDF_PLUGIN)

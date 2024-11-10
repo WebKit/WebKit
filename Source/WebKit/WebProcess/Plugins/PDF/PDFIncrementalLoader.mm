@@ -45,8 +45,6 @@
 
 #import "PDFKitSoftLink.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 using namespace WebCore;
 
@@ -576,13 +574,13 @@ void PDFIncrementalLoader::requestDidCompleteWithAccumulatedData(ByteRangeReques
 static void dataProviderGetByteRangesCallback(void* info, CFMutableArrayRef buffers, const CFRange* ranges, size_t count)
 {
     RefPtr loader = reinterpret_cast<PDFIncrementalLoader*>(info);
-    loader->dataProviderGetByteRanges(buffers, ranges, count);
+    loader->dataProviderGetByteRanges(buffers, unsafeMakeSpan(ranges, count));
 }
 
 static size_t dataProviderGetBytesAtPositionCallback(void* info, void* buffer, off_t position, size_t count)
 {
     RefPtr loader = reinterpret_cast<PDFIncrementalLoader*>(info);
-    return loader->dataProviderGetBytesAtPosition({ static_cast<uint8_t*>(buffer), count }, position);
+    return loader->dataProviderGetBytesAtPosition(unsafeMakeSpan(static_cast<uint8_t*>(buffer), count), position);
 }
 
 static void dataProviderReleaseInfoCallback(void* info)
@@ -674,7 +672,7 @@ auto PDFIncrementalLoader::createDataSemaphore() -> RefPtr<SemaphoreWrapper>
     return dataSemaphore;
 }
 
-void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, const CFRange* ranges, size_t count)
+void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, std::span<const CFRange> ranges)
 {
     ASSERT(!isMainRunLoop());
 
@@ -685,20 +683,20 @@ void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, 
 #if !LOG_DISABLED
     incrementThreadsWaitingOnCallback();
     TextStream stream;
-    stream << "PDF data provider requesting " << count << " byte ranges (";
-    for (size_t i = 0; i < count; ++i) {
+    stream << "PDF data provider requesting " << ranges.size() << " byte ranges (";
+    for (size_t i = 0; i < ranges.size(); ++i) {
         stream << ranges[i].length << " at " << ranges[i].location;
-        if (i < count - 1)
+        if (i < ranges.size() - 1)
             stream << ", ";
     }
     stream << ")";
     incrementalLoaderLog(stream.release());
 #endif
 
-    if (plugin->getByteRanges(buffers, ranges, count)) {
+    if (plugin->getByteRanges(buffers, ranges)) {
 #if !LOG_DISABLED
         decrementThreadsWaitingOnCallback();
-        incrementalLoaderLog(makeString("Satisfied "_s, count, " get byte ranges synchronously"_s));
+        incrementalLoaderLog(makeString("Satisfied "_s, ranges.size(), " get byte ranges synchronously"_s));
 #endif
         return;
     }
@@ -707,16 +705,16 @@ void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, 
     if (!dataSemaphore)
         return;
 
-    Vector<RetainPtr<CFDataRef>> dataResults(count);
+    Vector<RetainPtr<CFDataRef>> dataResults(ranges.size());
 
-    // FIXME: Once we support multi-range requests, make a single request for all ranges instead of <count> individual requests.
-    RunLoop::protectedMain()->dispatch([protectedLoader = Ref { *this }, &dataResults, ranges, count, dataSemaphore]() mutable {
+    // FIXME: Once we support multi-range requests, make a single request for all ranges instead of <ranges.size()> individual requests.
+    RunLoop::protectedMain()->dispatch([protectedLoader = Ref { *this }, &dataResults, ranges, dataSemaphore]() mutable {
         if (dataSemaphore->wasSignaled())
             return;
         Ref callbackAggregator = CallbackAggregator::create([dataSemaphore] {
             dataSemaphore->signal();
         });
-        for (size_t i = 0; i < count; ++i) {
+        for (size_t i = 0; i < ranges.size(); ++i) {
             protectedLoader->getResourceBytesAtPosition(ranges[i].length, ranges[i].location, [i, &dataResults, dataSemaphore, callbackAggregator](std::span<const uint8_t> bytes) {
                 if (dataSemaphore->wasSignaled())
                     return;
@@ -729,7 +727,7 @@ void PDFIncrementalLoader::dataProviderGetByteRanges(CFMutableArrayRef buffers, 
 
 #if !LOG_DISABLED
     decrementThreadsWaitingOnCallback();
-    incrementalLoaderLog(makeString("PDF data provider finished receiving the requested "_s, count, " byte ranges"_s));
+    incrementalLoaderLog(makeString("PDF data provider finished receiving the requested "_s, ranges.size(), " byte ranges"_s));
 #endif
 
     for (auto& result : dataResults) {
@@ -865,7 +863,5 @@ void PDFIncrementalLoader::logState(TextStream& ts)
 #endif
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(PDF_PLUGIN) && HAVE(INCREMENTAL_PDF_APIS)
