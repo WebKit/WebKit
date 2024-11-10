@@ -14,6 +14,8 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/WEB_FEATURES.yml
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/invalid-pseudos.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-anplusb.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-attribute.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-child.html
@@ -22,6 +24,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-focus-visible.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-has-disallow-nesting-has-inside-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-has-forgiving-selector.html
+/LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-has-slotted.tentative.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-has.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-id.html
 /LayoutTests/imported/w3c/web-platform-tests/css/selectors/parsing/parse-is-where.html

@@ -1,0 +1,6 @@
+Silver
+White
+Silver
+
+PASS CSS Selectors Invalidation: :nth-child(... of :not()) combined with whole subtree invalidation
+

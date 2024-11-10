@@ -9,6 +9,7 @@ PASS input element whose type attribute is in the email state
 PASS input element whose type attribute is in the submit state
 PASS input element whose type attribute is in the reset state
 PASS input element whose type attribute is in the button state
+PASS input element whose type attribute is in the hidden state
 PASS dynamic changes to type of input elements affect whether value is used for dir=auto
 PASS input element whose type attribute is in the date state
 PASS input element whose type attribute is in the time state

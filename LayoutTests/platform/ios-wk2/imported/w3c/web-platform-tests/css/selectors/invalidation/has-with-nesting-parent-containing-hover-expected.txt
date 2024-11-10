@@ -1,0 +1,7 @@
+#dt1
+#dd1, Hover me, the DT above should go lime
+#dt2
+#dd2, Hover me, both DTs above should go lime
+
+FAIL CSS Selector Invalidation: :has() with nesting parent containing :hover assert_equals: #dt1 should go lime when hover #dd1 expected "rgb(0, 255, 0)" but got "rgb(255, 255, 255)"
+

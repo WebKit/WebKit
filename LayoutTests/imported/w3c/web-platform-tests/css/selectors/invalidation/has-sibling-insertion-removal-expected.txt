@@ -25,4 +25,6 @@ PASS subject12: initial color should be rgb(128, 128, 128)
 FAIL subject12: color after #sibling12_1 removed should be rgb(255, 255, 0) assert_equals: expected "rgb(255, 255, 0)" but got "rgb(128, 128, 128)"
 PASS subject13: initial color should be rgb(128, 128, 128)
 FAIL subject13: color after #sibling12_1 removed should be rgb(0, 128, 0) assert_equals: expected "rgb(0, 128, 0)" but got "rgb(128, 128, 128)"
+PASS subject14: initial color should be rgb(0, 128, 0)
+FAIL subject14: color after #sibling14_2 removed should be rgb(128, 128, 128) assert_equals: expected "rgb(128, 128, 128)" but got "rgb(0, 128, 0)"
 

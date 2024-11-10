@@ -17,11 +17,18 @@ PASS "::part(foo)::file-selector-button" should be a valid selector
 PASS "::part(foo):is(:focus)" should be a valid selector
 PASS ":lang(en)::part(foo)" should be a valid selector
 PASS ":dir(ltr)::part(foo)" should be a valid selector
+PASS "::part(foo):lang(en)" should be a valid selector
+PASS "::part(foo):dir(ltr)" should be a valid selector
+PASS "::part(foo):disabled" should be a valid selector
+PASS "::part(foo):checked" should be a valid selector
 PASS ":part()" should be an invalid selector
 PASS ":part(0)" should be an invalid selector
 PASS ":part('foo')" should be an invalid selector
 PASS ":part([foo])" should be an invalid selector
-FAIL "::part(foo):lang(en)" should be an invalid selector assert_throws_dom: "::part(foo):lang(en)" should throw in querySelector function "() => document.querySelector(selector)" did not throw
-FAIL "::part(foo):dir(ltr)" should be an invalid selector assert_throws_dom: "::part(foo):dir(ltr)" should throw in querySelector function "() => document.querySelector(selector)" did not throw
 PASS "::part(foo) + ::part(bar)" should be an invalid selector
+FAIL "::part(foo):is(ul)" should be a valid selector assert_equals: CSS.supports() reports the expected value expected false but got true
+FAIL "::part(foo):is(nav ul)" should be a valid selector assert_equals: CSS.supports() reports the expected value expected false but got true
+FAIL "::part(foo):where(ul)" should be a valid selector assert_equals: CSS.supports() reports the expected value expected false but got true
+FAIL "::part(foo):where(nav ul)" should be a valid selector assert_equals: CSS.supports() reports the expected value expected false but got true
+FAIL "::part(foo):has(li)" should be an invalid selector assert_throws_dom: "::part(foo):has(li)" should throw in querySelector function "() => document.querySelector(selector)" did not throw
 

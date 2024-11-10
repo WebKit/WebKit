@@ -8137,3 +8137,7 @@ imported/w3c/web-platform-tests/WebIDL/idlharness.any.worker.html [ Skip ]
 # Platform-specific tests enabled on macOS and iOS separately.
 webanimations/scroll-timeline-clamped-current-time-while-rubber-banding-mac.html [ Skip ]
 webanimations/scroll-timeline-clamped-current-time-while-rubber-banding-ios.html [ Skip ]
+
+# webkit.org/b/280685 imported/w3c/web-platform-tests/css/selectors/featureless-004/5.html are failures.
+imported/w3c/web-platform-tests/css/selectors/featureless-004.html [ ImageOnlyFailure ]
+imported/w3c/web-platform-tests/css/selectors/featureless-005.html [ ImageOnlyFailure ]
