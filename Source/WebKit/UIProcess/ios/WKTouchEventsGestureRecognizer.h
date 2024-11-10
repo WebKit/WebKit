@@ -34,11 +34,10 @@
 namespace WebKit {
 
 struct WKTouchPoint {
-    CGPoint locationInScreenCoordinates;
-    CGPoint locationInDocumentCoordinates;
+    CGPoint locationInRootViewCoordinates;
     unsigned identifier { 0 };
     UITouchPhase phase { UITouchPhaseBegan };
-    CGFloat majorRadiusInScreenCoordinates { 0 };
+    CGFloat majorRadiusInWindowCoordinates { 0 };
     CGFloat force { 0 };
     CGFloat altitudeAngle { 0 };
     CGFloat azimuthAngle { 0 };
@@ -48,8 +47,7 @@ struct WKTouchPoint {
 struct WKTouchEvent {
     WKTouchEventType type { WKTouchEventType::Begin };
     NSTimeInterval timestamp { 0 };
-    CGPoint locationInScreenCoordinates;
-    CGPoint locationInDocumentCoordinates;
+    CGPoint locationInRootViewCoordinates;
     CGFloat scale { 0 };
     CGFloat rotation { 0 };
 

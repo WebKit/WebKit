@@ -2127,7 +2127,7 @@ typedef NS_ENUM(NSInteger, EndEditingReason) {
         return;
 
     auto& lastTouchEvent = gestureRecognizer.lastTouchEvent;
-    _lastInteractionLocation = lastTouchEvent.locationInDocumentCoordinates;
+    _lastInteractionLocation = lastTouchEvent.locationInRootViewCoordinates;
 
     if (lastTouchEvent.type == WebKit::WKTouchEventType::Begin) {
         if (!_failedTouchStartDeferringGestures)
