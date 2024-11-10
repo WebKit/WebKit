@@ -204,6 +204,7 @@ class BundleManager
         @fileCount = 0
         @bundleCount = 0
         @currentBundleText = ""
+        @currentBundleText += "#pragma clang diagnostic ignored \"-Wunknown-pragmas\"\n"
         @maxCount = max
         @extraFiles = []
         @currentDirectory = nil
@@ -242,6 +243,7 @@ class BundleManager
 
         writeFile(bundleFile, @currentBundleText)
         @currentBundleText = ""
+        @currentBundleText += "#pragma clang diagnostic ignored \"-Wunknown-pragmas\"\n"
         @fileCount = 0
     end
 
@@ -270,6 +272,7 @@ class BundleManager
             flush
         end
         @currentBundleText += "#include \"#{sourceFile}\"\n"
+        @currentBundleText += "WTF_ALLOW_UNSAFE_BUFFER_USAGE_END\n"
         @fileCount += 1
     end
 end
