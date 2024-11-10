@@ -2977,3 +2977,15 @@ imported/w3c/web-platform-tests/content-security-policy/reporting-api/reporting-
 imported/w3c/web-platform-tests/clipboard-apis/clipboard-item.https.html [ Skip ]
 
 webkit.org/b/281594 imported/w3c/web-platform-tests/html/semantics/document-metadata/the-link-element/link-load-error-events.html [ Pass Failure ]
+
+# webkit.org/b/282889 REGRESSION (284079@main): [ MacOS Wk1 ] 5X imported/w3c/web-platform-tests & 4X http/tests/xmlhttprequest tests are constant crashes 
+[ Sonoma+ ] http/tests/xmlhttprequest/access-control-and-redirects-async.html [ Skip ]
+[ Sonoma+ ] http/tests/xmlhttprequest/access-control-preflight-not-successful.html [ Skip ]
+[ Sonoma+ ] http/tests/xmlhttprequest/on-network-timeout-error-during-preflight.html [ Skip ]
+[ Sonoma+ ] http/tests/xmlhttprequest/simple-cross-origin-denied-events-post.html [ Skip ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/cors/preflight-failure.htm [ Skip ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async.any.html [ Skip ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/xhr/access-control-and-redirects-async.any.worker.html [ Skip ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/xhr/event-error-order.sub.html [ Skip ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/xhr/send-authentication-basic-cors.htm [ Skip ]
+[ Sonoma+ ] imported/w3c/web-platform-tests/xhr/send-network-error-async-events.sub.htm [ Skip ]
