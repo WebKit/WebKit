@@ -55,11 +55,15 @@
 #import <WebKit/_WKRemoteObjectRegistry.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <WebKit/_WKWebsiteDataStoreDelegate.h>
+#import <mach/mach_init.h>
+#import <mach/task.h>
+#import <mach/task_info.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/Deque.h>
 #import <wtf/FileSystem.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/Scope.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
 #import <wtf/cocoa/TypeCastsCocoa.h>
@@ -2086,6 +2090,24 @@ TEST(ServiceWorkers, SuspendServiceWorkerProcessBasedOnClientProcessesWithoutSep
     testSuspendServiceWorkerProcessBasedOnClientProcesses(UseSeparateServiceWorkerProcess::No);
 }
 
+static bool isPIDSuspended(pid_t pid)
+{
+    mach_port_t task = MACH_PORT_NULL;
+    if (task_name_for_pid(mach_task_self(), pid, &task) != KERN_SUCCESS)
+        return false;
+
+    auto scope = makeScopeExit([task]() {
+        mach_port_deallocate(mach_task_self(), task);
+    });
+
+    mach_task_basic_info_data_t basicInfo;
+    mach_msg_type_number_t basicInfoCount = MACH_TASK_BASIC_INFO_COUNT;
+    if (task_info(task, MACH_TASK_BASIC_INFO, (task_info_t)&basicInfo, &basicInfoCount) != KERN_SUCCESS)
+        return false;
+
+    return basicInfo.suspend_count;
+}
+
 TEST(ServiceWorkers, SuspendAndTerminateWorker)
 {
     [WKWebsiteDataStore _allowWebsiteDataRecordsForAllOrigins];
@@ -2125,24 +2147,41 @@ TEST(ServiceWorkers, SuspendAndTerminateWorker)
         return ![webView _hasServiceWorkerForegroundActivityForTesting] && ![webView _hasServiceWorkerBackgroundActivityForTesting];
     }));
 
-    waitUntilEvaluatesToTrue([&] { return [webView _webProcessState] == _WKWebProcessStateSuspended; }, 500);
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return [webView _webProcessState] == _WKWebProcessStateSuspended; }));
 
-    EXPECT_EQ([webView _webProcessState], _WKWebProcessStateSuspended);
+    // Due to the process assertion cache, the process can actually run for a little while after it
+    // enters the suspended state. Wait until the OS tells us the process is actually suspended.
+    pid_t pidBeforeTerminatingServiceWorker = [webView _webProcessIdentifier];
+    EXPECT_TRUE(waitUntilEvaluatesToTrue([&] { return isPIDSuspended(pidBeforeTerminatingServiceWorker); }));
 
     // Process with service worker and page is suspended, let's terminate the service worker.
-    auto typesToRemove = adoptNS([[NSSet alloc] initWithArray:@[WKWebsiteDataTypeServiceWorkerRegistrations]]);
-    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:typesToRemove.get() modifiedSince:[NSDate distantPast] completionHandler:^() {
+    [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[NSSet setWithObject:WKWebsiteDataTypeServiceWorkerRegistrations] modifiedSince:[NSDate distantPast] completionHandler:^() {
         done = true;
     }];
     TestWebKitAPI::Util::run(&done);
     done = false;
 
-    TestWebKitAPI::Util::runFor(1_s);
+    bool serviceWorkersAllTerminated = waitUntilEvaluatesToTrue([&]() {
+        __block bool done;
+        __block NSUInteger serviceWorkerCount;
 
-    // Let's verify the WKWebView did not crash.
+        [[WKWebsiteDataStore defaultDataStore] _runningOrTerminatingServiceWorkerCountForTesting:^(NSUInteger count) {
+            serviceWorkerCount = count;
+            done = true;
+        }];
+        TestWebKitAPI::Util::run(&done);
+
+        return !serviceWorkerCount;
+    }, 20);
+    EXPECT_TRUE(serviceWorkersAllTerminated);
+
+    // Let's verify the WKWebView did not crash and has the same PID as before.
     [webView evaluateJavaScript:@"log('OK')" completionHandler: nil];
     TestWebKitAPI::Util::run(&done);
     done = false;
+
+    pid_t pidAfterTerminatingServiceWorker = [webView _webProcessIdentifier];
+    EXPECT_EQ(pidBeforeTerminatingServiceWorker, pidAfterTerminatingServiceWorker);
 }
 
 TEST(ServiceWorkers, ThrottleCrash)

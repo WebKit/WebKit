@@ -300,6 +300,8 @@ public:
 
     bool isProcessTerminationDelayEnabled() const { return m_isProcessTerminationDelayEnabled; }
 
+    unsigned runningOrTerminatingCount() const { return m_runningOrTerminatingWorkers.size(); }
+
 private:
     SWServer(SWServerDelegate&, UniqueRef<SWOriginStore>&&, bool processTerminationDelayEnabled, String&& registrationDatabaseDirectory, PAL::SessionID, bool shouldRunServiceWorkersOnMainThreadForTesting, bool hasServiceWorkerEntitlement, std::optional<unsigned> overrideServiceWorkerRegistrationCountTestingValue, ServiceWorkerIsInspectable);
 

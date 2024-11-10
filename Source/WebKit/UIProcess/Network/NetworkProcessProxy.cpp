@@ -594,8 +594,10 @@ void NetworkProcessProxy::terminateWebProcess(WebCore::ProcessIdentifier webProc
 
 void NetworkProcessProxy::processHasUnresponseServiceWorker(WebCore::ProcessIdentifier processIdentifier)
 {
-    if (auto process = WebProcessProxy::processForIdentifier(processIdentifier))
+    if (auto process = WebProcessProxy::processForIdentifier(processIdentifier)) {
+        process->endServiceWorkerBackgroundProcessing();
         process->disableRemoteWorkers(RemoteWorkerType::ServiceWorker);
+    }
 }
 
 void NetworkProcessProxy::terminateIdleServiceWorkers(WebCore::ProcessIdentifier processIdentifier, CompletionHandler<void()>&& callback)

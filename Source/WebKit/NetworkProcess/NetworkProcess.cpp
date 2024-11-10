@@ -2271,6 +2271,15 @@ void NetworkProcess::terminateRemoteWorkerContextConnectionWhenPossible(RemoteWo
     }
 }
 
+void NetworkProcess::runningOrTerminatingServiceWorkerCountForTesting(PAL::SessionID sessionID, CompletionHandler<void(unsigned)>&& completionHandler) const
+{
+    auto* session = networkSession(sessionID);
+    if (!session)
+        return completionHandler(0);
+
+    completionHandler(session->ensureSWServer().runningOrTerminatingCount());
+}
+
 void NetworkProcess::prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&& completionHandler)
 {
 #if !RELEASE_LOG_DISABLED
