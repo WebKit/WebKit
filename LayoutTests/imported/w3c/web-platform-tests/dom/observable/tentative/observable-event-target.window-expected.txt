@@ -1,4 +1,4 @@
 
-FAIL EventTarget Observables can listen for events in the capturing or bubbling phase body.on is not a function. (In 'body.on('click', {capture: true})', 'body.on' is undefined)
-FAIL EventTarget Observables can be 'passive' target.on is not a function. (In 'target.on('event', {passive: true})', 'target.on' is undefined)
+FAIL EventTarget Observables can listen for events in the capturing or bubbling phase body.when is not a function. (In 'body.when('click', {capture: true})', 'body.when' is undefined)
+FAIL EventTarget Observables can be 'passive' target.when is not a function. (In 'target.when('event', {passive: true})', 'target.when' is undefined)
 

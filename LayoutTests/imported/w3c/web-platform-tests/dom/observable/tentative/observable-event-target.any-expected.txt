@@ -1,5 +1,5 @@
 
-FAIL EventTarget.on() returns an Observable assert_implements: The EventTarget interface has an `on` method undefined
-FAIL Aborting the subscription should stop the emission of events target.on is not a function. (In 'target.on("test")', 'target.on' is undefined)
-FAIL EventTarget Observables can multicast subscriptions for event handling target.on is not a function. (In 'target.on("test")', 'target.on' is undefined)
+FAIL EventTarget.when() returns an Observable assert_implements: The EventTarget interface has an `when` method undefined
+FAIL Aborting the subscription should stop the emission of events target.when is not a function. (In 'target.when("test")', 'target.when' is undefined)
+FAIL EventTarget Observables can multicast subscriptions for event handling target.when is not a function. (In 'target.when("test")', 'target.when' is undefined)
 

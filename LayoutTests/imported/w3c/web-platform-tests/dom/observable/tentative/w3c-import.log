@@ -15,6 +15,7 @@ None
 ------------------------------------------------------------------------
 List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/idlharness.html
+/LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-catch.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-constructor.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-constructor.window.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-drop.any.js
@@ -32,6 +33,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-last.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-map.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-map.window.js
+/LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-reduce.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-some.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-switchMap.any.js
 /LayoutTests/imported/w3c/web-platform-tests/dom/observable/tentative/observable-take.any.js

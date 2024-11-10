@@ -1,0 +1,55 @@
+
+FAIL catch(): Returns an Observable that is a pass-through for next()/complete() source.catch is not a function. (In 'source.catch(() => {
+    assert_unreached("catch() is not called");
+  })', 'source.catch' is undefined)
+FAIL catch(): Handle errors from source and flatten to a new Observable source.catch is not a function. (In 'source.catch(error => {
+    assert_equals(error, sourceError);
+    return new Observable(subscriber => {
+      subscriber.next(3);
+      subscriber.complete();
+    });
+  })', 'source.catch' is undefined)
+FAIL catch(): Errors thrown in the catch() callback are sent to the consumer's error handler source.catch is not a function. (In 'source.catch(error => {
+    assert_equals(error, sourceError);
+    throw catchCallbackError;
+  })', 'source.catch' is undefined)
+FAIL catch(): CatchHandler can return an empty iterable source.flatMap is not a function. (In 'source.flatMap(value => errorsOnTwo(value)
+    .catch(error => {
+      results.push(error);
+      // This empty array converts to an Observable which automatically
+      // completes.
+      return [];
+    })
+  )', 'source.flatMap' is undefined)
+FAIL catch(): CatchHandler can return a Promise promise_test: Unhandled rejection with value: object "TypeError: source.catch is not a function. (In 'source.catch(error => {
+    assert_equals(error, sourceError);
+    return Promise.resolve(error.message);
+  })', 'source.catch' is undefined)"
+FAIL catch(): should handle returning an async iterable promise_test: Unhandled rejection with value: object "TypeError: source.catch is not a function. (In 'source.catch(async function* (error) {
+    assert_true(error instanceof Error);
+    assert_equals(error.message, 'from the source');
+    yield 3;
+  })', 'source.catch' is undefined)"
+FAIL catch(): CatchHandler emits an error if the value returned is not convertible to an Observable source.catch is not a function. (In 'source.catch(error => {
+    assert_equals(error, sourceError);
+    // Primitive values like this are not convertible to an Observable, via the
+    // `from()` semantics.
+    return 3;
+  })', 'source.catch' is undefined)
+FAIL catch(): CatchHandler returns an Observable that throws immediately on subscription source.catch is not a function. (In 'source.catch(() => {
+    results.push('CatchHandler invoked');
+    return new Observable(subscriber => {
+      throw innerSubscriptionError;
+    });
+  })', 'source.catch' is undefined)
+FAIL catch(): Abort order between outer AbortSignal and inner CatchHandler subscriber's AbortSignal source.catch is not a function. (In 'source.catch(() => {
+    return new Observable(subscriber => {
+      subscriber.addTeardown(() => results.push('inner teardown'));
+      subscriber.signal.addEventListener('abort',
+          e => results.push('inner signal abort'));
+
+      // No values or completion. We'll just wait for the subscriber to abort
+      // its subscription.
+    });
+  })', 'source.catch' is undefined)
+
