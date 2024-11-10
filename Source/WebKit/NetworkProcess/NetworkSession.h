@@ -185,6 +185,7 @@ public:
     NetworkCache::Cache* cache() { return m_cache.get(); }
 
     PrefetchCache& prefetchCache() { return m_prefetchCache; }
+    CheckedRef<PrefetchCache> checkedPrefetchCache();
     void clearPrefetchCache() { m_prefetchCache.clear(); }
 
     virtual std::unique_ptr<WebSocketTask> createWebSocketTask(WebPageProxyIdentifier, std::optional<WebCore::FrameIdentifier>, std::optional<WebCore::PageIdentifier>, NetworkSocketChannel&, const WebCore::ResourceRequest&, const String& protocol, const WebCore::ClientOrigin&, bool hadMainFrameMainResourcePrivateRelayed, bool allowPrivacyProxy, OptionSet<WebCore::AdvancedPrivacyProtections>, WebCore::ShouldRelaxThirdPartyCookieBlocking, WebCore::StoredCredentialsPolicy);
@@ -321,17 +322,20 @@ protected:
 
     HashSet<Ref<NetworkResourceLoader>> m_keptAliveLoads;
 
-    class CachedNetworkResourceLoader {
+    class CachedNetworkResourceLoader : public RefCounted<CachedNetworkResourceLoader> {
         WTF_MAKE_TZONE_ALLOCATED(CachedNetworkResourceLoader);
     public:
-        explicit CachedNetworkResourceLoader(Ref<NetworkResourceLoader>&&);
+        static Ref<CachedNetworkResourceLoader> create(Ref<NetworkResourceLoader>&&);
         RefPtr<NetworkResourceLoader> takeLoader();
+
     private:
+        explicit CachedNetworkResourceLoader(Ref<NetworkResourceLoader>&&);
         void expirationTimerFired();
+
         WebCore::Timer m_expirationTimer;
         RefPtr<NetworkResourceLoader> m_loader;
     };
-    HashMap<NetworkResourceLoadIdentifier, std::unique_ptr<CachedNetworkResourceLoader>> m_loadersAwaitingWebProcessTransfer;
+    HashMap<NetworkResourceLoadIdentifier, Ref<CachedNetworkResourceLoader>> m_loadersAwaitingWebProcessTransfer;
 
     PrefetchCache m_prefetchCache;
 
@@ -384,8 +388,3 @@ protected:
 };
 
 } // namespace WebKit
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebKit::NetworkSession::CachedNetworkResourceLoader> : std::true_type { };
-}

@@ -557,6 +557,11 @@ void NetworkSession::removeKeptAliveLoad(NetworkResourceLoader& loader)
     m_keptAliveLoads.remove(loader);
 }
 
+Ref<NetworkSession::CachedNetworkResourceLoader> NetworkSession::CachedNetworkResourceLoader::create(Ref<NetworkResourceLoader>&& loader)
+{
+    return adoptRef(*new NetworkSession::CachedNetworkResourceLoader(WTFMove(loader)));
+}
+
 NetworkSession::CachedNetworkResourceLoader::CachedNetworkResourceLoader(Ref<NetworkResourceLoader>&& loader)
     : m_expirationTimer(*this, &CachedNetworkResourceLoader::expirationTimerFired)
     , m_loader(WTFMove(loader))
@@ -584,7 +589,7 @@ void NetworkSession::addLoaderAwaitingWebProcessTransfer(Ref<NetworkResourceLoad
     ASSERT(m_sessionID == loader->sessionID());
     auto identifier = loader->identifier();
     ASSERT(!m_loadersAwaitingWebProcessTransfer.contains(identifier));
-    m_loadersAwaitingWebProcessTransfer.add(identifier, makeUnique<CachedNetworkResourceLoader>(WTFMove(loader)));
+    m_loadersAwaitingWebProcessTransfer.add(identifier, CachedNetworkResourceLoader::create(WTFMove(loader)));
 }
 
 RefPtr<NetworkResourceLoader> NetworkSession::takeLoaderAwaitingWebProcessTransfer(NetworkResourceLoadIdentifier identifier)
@@ -881,6 +886,11 @@ void NetworkSession::setPersistedDomains(HashSet<WebCore::RegistrableDomain>&& d
 
     if (m_resourceLoadStatistics)
         m_resourceLoadStatistics->setPersistedDomains(m_persistedDomains);
+}
+
+CheckedRef<PrefetchCache> NetworkSession::checkedPrefetchCache()
+{
+    return m_prefetchCache;
 }
 
 } // namespace WebKit

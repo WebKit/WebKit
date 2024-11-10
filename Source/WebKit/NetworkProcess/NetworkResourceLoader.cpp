@@ -307,7 +307,7 @@ void NetworkResourceLoader::retrieveCacheEntry(const ResourceRequest& request)
     if (isMainFrameLoad()) {
         ASSERT(m_parameters.options.mode == FetchOptions::Mode::Navigate);
         if (auto* session = protectedConnectionToWebProcess()->protectedNetworkProcess()->networkSession(sessionID())) {
-            if (auto entry = session->prefetchCache().take(request.url())) {
+            if (auto entry = session->checkedPrefetchCache()->take(request.url())) {
                 LOADER_RELEASE_LOG("retrieveCacheEntry: retrieved an entry from the prefetch cache (isRedirect=%d)", !entry->redirectRequest.isNull());
                 if (!entry->redirectRequest.isNull()) {
                     auto cacheEntry = cache->makeRedirectEntry(request, entry->response, entry->redirectRequest);
@@ -1369,7 +1369,7 @@ void NetworkResourceLoader::didFinishWithRedirectResponse(WebCore::ResourceReque
     if (!isCrossOriginPrefetch())
         didReceiveResponse(WTFMove(redirectResponse), PrivateRelayed::No, [] (auto) { });
     else if (auto* session = protectedConnectionToWebProcess()->protectedNetworkProcess()->networkSession(sessionID()))
-        session->prefetchCache().storeRedirect(request.url(), WTFMove(redirectResponse), WTFMove(redirectRequest));
+        session->checkedPrefetchCache()->storeRedirect(request.url(), WTFMove(redirectResponse), WTFMove(redirectRequest));
 
     WebCore::NetworkLoadMetrics networkLoadMetrics;
     networkLoadMetrics.markComplete();
@@ -1586,7 +1586,7 @@ void NetworkResourceLoader::tryStoreAsCacheEntry()
     if (isCrossOriginPrefetch()) {
         if (auto* session = protectedConnectionToWebProcess()->protectedNetworkProcess()->networkSession(sessionID())) {
             LOADER_RELEASE_LOG("tryStoreAsCacheEntry: Storing entry in prefetch cache");
-            session->prefetchCache().store(m_networkLoad->currentRequest().url(), WTFMove(m_response), m_privateRelayed, m_bufferedDataForCache.take());
+            session->checkedPrefetchCache()->store(m_networkLoad->currentRequest().url(), WTFMove(m_response), m_privateRelayed, m_bufferedDataForCache.take());
         }
         return;
     }
