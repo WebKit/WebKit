@@ -1067,7 +1067,7 @@ RefPtr<StyleRuleScope> CSSParserImpl::consumeScopeRule(CSSParserTokenRange prelu
                 CSSParserTokenRange selectorListRange = prelude.makeSubRange(selectorListRangeStart, &prelude.peek());
 
                 // Parse the selector list range
-                auto mutableSelectorList = parseMutableCSSSelectorList(selectorListRange, m_context, protectedStyleSheet().get(), ancestorRuleType, CSSParserEnum::IsForgiving::Yes);
+                auto mutableSelectorList = parseMutableCSSSelectorList(selectorListRange, m_context, protectedStyleSheet().get(), ancestorRuleType, CSSParserEnum::IsForgiving::No);
                 if (mutableSelectorList.isEmpty())
                     return false;
 
