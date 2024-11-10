@@ -39,6 +39,7 @@ struct SameSizeAsElementRareData : NodeRareData {
     uint8_t contentRelevancy;
     IntPoint savedLayerScrollPosition;
     HashMap<std::optional<Style::PseudoElementIdentifier>, std::unique_ptr<ElementAnimationRareData>> animationRareData;
+    HashMap<std::optional<Style::PseudoElementIdentifier>, AtomString> viewTransitionCapture;
     void* pointers[17];
     void* intersectionObserverData;
     void* typedOMData[2];

@@ -701,10 +701,8 @@ void ViewTransition::activateViewTransition()
     setupTransitionPseudoElements();
 
     for (auto& [name, capturedElement] : m_namedElements.map()) {
-        if (auto newStyleable = capturedElement->newElement.styleable()) {
-            if (CheckedPtr renderer = newStyleable->renderer())
-                renderer->setCapturedInViewTransition(true);
-        }
+        if (auto newStyleable = capturedElement->newElement.styleable())
+            newStyleable->setCapturedInViewTransition(name);
     }
 
     m_phase = ViewTransitionPhase::Animating;
@@ -789,10 +787,8 @@ void ViewTransition::clearViewTransition()
     }
 
     for (auto& [name, capturedElement] : m_namedElements.map()) {
-        if (auto newStyleable = capturedElement->newElement.styleable()) {
-            if (CheckedPtr renderer = newStyleable->renderer())
-                renderer->setCapturedInViewTransition(false);
-        }
+        if (auto newStyleable = capturedElement->newElement.styleable())
+            newStyleable->setCapturedInViewTransition(nullAtom());
     }
 
     document->setHasViewTransitionPseudoElementTree(false);
@@ -919,15 +915,15 @@ ExceptionOr<void> ViewTransition::updatePseudoElementSizes()
 
 RenderViewTransitionCapture* ViewTransition::viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject& renderer)
 {
-    for (auto& [name, capturedElement] : m_namedElements.map()) {
-        if (auto newStyleable = capturedElement->newElement.styleable()) {
-            if (newStyleable->renderer() == &renderer) {
-                Styleable styleable(*renderer.document().documentElement(), Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, name });
-                return dynamicDowncast<RenderViewTransitionCapture>(styleable.renderer());
-            }
-        }
-    }
-    return nullptr;
+    auto styleable = Styleable::fromRenderer(renderer);
+    if (!styleable)
+        return nullptr;
+    auto capturedName = styleable->element.viewTransitionCapturedName(styleable->pseudoElementIdentifier);
+    if (capturedName.isNull())
+        return nullptr;
+
+    Styleable pseudoStyleable(*renderer.document().documentElement(), Style::PseudoElementIdentifier { PseudoId::ViewTransitionNew, capturedName });
+    return dynamicDowncast<RenderViewTransitionCapture>(pseudoStyleable.renderer());
 }
 
 // https://drafts.csswg.org/css-view-transitions/#page-visibility-change-steps

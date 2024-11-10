@@ -116,6 +116,9 @@ public:
     ElementAnimationRareData* animationRareData(const std::optional<Style::PseudoElementIdentifier>&) const;
     ElementAnimationRareData& ensureAnimationRareData(const std::optional<Style::PseudoElementIdentifier>&);
 
+    AtomString viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&) const;
+    void setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>&, AtomString);
+
     DOMTokenList* partList() const { return m_partList.get(); }
     void setPartList(std::unique_ptr<DOMTokenList>&& partList) { m_partList = WTFMove(partList); }
 
@@ -244,6 +247,8 @@ private:
 
     HashMap<std::optional<Style::PseudoElementIdentifier>, std::unique_ptr<ElementAnimationRareData>> m_animationRareData;
 
+    HashMap<std::optional<Style::PseudoElementIdentifier>, AtomString> m_viewTransitionCapturedName;
+
     RefPtr<PseudoElement> m_beforePseudoElement;
     RefPtr<PseudoElement> m_afterPseudoElement;
 
@@ -318,6 +323,16 @@ inline ElementAnimationRareData& ElementRareData::ensureAnimationRareData(const 
     auto result = m_animationRareData.add(pseudoElementIdentifier, makeUnique<ElementAnimationRareData>());
     ASSERT(result.isNewEntry);
     return *result.iterator->value.get();
+}
+
+inline AtomString ElementRareData::viewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier) const
+{
+    return m_viewTransitionCapturedName.get(pseudoElementIdentifier);
+}
+
+inline void ElementRareData::setViewTransitionCapturedName(const std::optional<Style::PseudoElementIdentifier>& pseudoElementIdentifier, AtomString captureName)
+{
+    m_viewTransitionCapturedName.set(pseudoElementIdentifier, captureName);
 }
 
 inline ElementRareData* Element::elementRareData() const
