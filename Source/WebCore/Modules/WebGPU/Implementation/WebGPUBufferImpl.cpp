@@ -33,8 +33,6 @@
 #include <wtf/BlockPtr.h>
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore::WebGPU {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(BufferImpl);
@@ -83,7 +81,9 @@ void BufferImpl::getMappedRange(Size64 offset, std::optional<Size64> size, Funct
     auto bufferSize = wgpuBufferGetInitialSize(m_backing.get());
     size_t actualSize = pointer ? static_cast<size_t>(bufferSize) : 0;
     size_t actualOffset = pointer ? static_cast<size_t>(offset) : 0;
-    callback({ static_cast<uint8_t*>(pointer) - actualOffset, actualSize });
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+    callback(unsafeMakeSpan(static_cast<uint8_t*>(pointer) - actualOffset, actualSize));
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 std::span<uint8_t> BufferImpl::getBufferContents()
@@ -123,7 +123,5 @@ void BufferImpl::setLabelInternal(const String& label)
 }
 
 } // namespace WebCore::WebGPU
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

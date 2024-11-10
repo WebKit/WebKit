@@ -45,6 +45,12 @@ public:
     {
     }
 
+    template<typename U>
+    MallocSpan(MallocSpan<U, Malloc>&& other) requires (std::is_same_v<T, uint8_t>)
+        : m_span(asWritableBytes(other.leakSpan()))
+    {
+    }
+
     ~MallocSpan()
     {
         if constexpr (parameterCount(Malloc::free) == 2)
@@ -70,6 +76,9 @@ public:
     std::span<const T> span() const { return spanConstCast<const T>(m_span); }
     std::span<T> mutableSpan() { return m_span; }
     std::span<T> leakSpan() WARN_UNUSED_RETURN { return std::exchange(m_span, std::span<T>()); }
+
+    T& operator[](size_t i) { return m_span[i]; }
+    const T& operator[](size_t i) const { return m_span[i]; }
 
     explicit operator bool() const
     {

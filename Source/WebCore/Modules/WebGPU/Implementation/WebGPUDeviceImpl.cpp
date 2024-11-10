@@ -68,8 +68,6 @@
 #include <wtf/SegmentedVector.h>
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore::WebGPU {
 
 static auto invalidEntryPointName()
@@ -808,7 +806,5 @@ Ref<ComputePassEncoder> DeviceImpl::invalidComputePassEncoder()
 }
 
 } // namespace WebCore::WebGPU
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // HAVE(WEBGPU_IMPLEMENTATION)

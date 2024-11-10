@@ -95,8 +95,7 @@ void RenderBundleEncoderImpl::setBindGroup(Index32 index, const BindGroup& bindG
 }
 
 void RenderBundleEncoderImpl::setBindGroup(Index32, const BindGroup&,
-    const uint32_t*,
-    size_t,
+    std::span<const uint32_t>,
     Size64,
     Size32)
 {
