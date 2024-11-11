@@ -210,7 +210,7 @@ pas_try_reallocate(void* old_ptr,
 {
     uintptr_t begin;
     begin = (uintptr_t)old_ptr;
-    PAS_PROFILE(TRY_REALLOCATE, begin);
+    PAS_PROFILE(TRY_REALLOCATE, &config, begin);
     old_ptr = (void*)begin;
 
     switch (config.fast_megapage_kind_func(begin)) {
@@ -350,7 +350,7 @@ pas_try_reallocate(void* old_ptr,
                 pas_reallocation_did_fail("Source object not allocated", NULL, heap, old_ptr, 0, new_size);
         }
 
-        PAS_PROFILE(LARGE_MAP_FOUND_ENTRY, entry.begin, entry.end);
+        PAS_PROFILE(LARGE_MAP_FOUND_ENTRY, &config, entry.begin, entry.end);
         PAS_ASSERT(entry.begin == begin);
         PAS_ASSERT(entry.end > begin);
         PAS_ASSERT(entry.heap);

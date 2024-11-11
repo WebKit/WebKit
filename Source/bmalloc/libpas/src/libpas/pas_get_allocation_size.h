@@ -123,7 +123,7 @@ static PAS_ALWAYS_INLINE size_t pas_get_allocation_size(void* ptr,
         entry = pas_large_map_find(begin);
         
         if (!pas_large_map_entry_is_empty(entry)) {
-            PAS_PROFILE(LARGE_MAP_FOUND_ENTRY, entry.begin, entry.end);
+            PAS_PROFILE(LARGE_MAP_FOUND_ENTRY, &config, entry.begin, entry.end);
             PAS_ASSERT(entry.begin == begin);
             PAS_ASSERT(entry.end > begin);
             
