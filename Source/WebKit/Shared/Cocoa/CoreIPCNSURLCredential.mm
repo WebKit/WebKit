@@ -174,20 +174,20 @@ RetainPtr<id> CoreIPCNSURLCredential::toID() const
     RetainPtr<NSNumber> persistence;
     switch (m_data.persistence) {
     case CoreIPCNSURLCredentialPersistence::None:
-        persistence = adoptNS([NSNumber numberWithInt:kCFURLCredentialPersistenceNone]);
+        persistence = @(kCFURLCredentialPersistenceNone);
         break;
     case CoreIPCNSURLCredentialPersistence::Session:
-        persistence = adoptNS([NSNumber numberWithInt:kCFURLCredentialPersistenceForSession]);
+        persistence = @(kCFURLCredentialPersistenceForSession);
         break;
     case CoreIPCNSURLCredentialPersistence::Permanent:
-        persistence = adoptNS([NSNumber numberWithInt:kCFURLCredentialPersistencePermanent]);
+        persistence = @(kCFURLCredentialPersistencePermanent);
         break;
     case CoreIPCNSURLCredentialPersistence::Synchronizable:
-        persistence = adoptNS([NSNumber numberWithInt:kCFURLCredentialPersistenceSynchronizable]);
+        persistence = @(kCFURLCredentialPersistenceSynchronizable);
         break;
     default:
         ASSERT_NOT_REACHED();
-        persistence = adoptNS([NSNumber numberWithInt:kCFURLCredentialPersistenceNone]);
+        persistence = @(kCFURLCredentialPersistenceNone);
         break;
     }
     [dict setObject:persistence.get() forKey:@"persistence"];
