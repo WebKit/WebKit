@@ -38,6 +38,9 @@ namespace WebKit {
 
 class CoreIPCSecTrust {
 public:
+    CoreIPCSecTrust()
+        : m_trustData() { };
+
     CoreIPCSecTrust(SecTrustRef trust)
         : m_trustData(adoptCF(SecTrustSerialize(trust, NULL)))
     {

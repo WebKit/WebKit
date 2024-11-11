@@ -237,6 +237,14 @@ typedef enum {
 @property (nonatomic, readwrite) BOOL _overrideSessionCookieAcceptPolicy;
 @end
 
+typedef CF_ENUM(int, CFURLCredentialPersistence)
+{
+    kCFURLCredentialPersistenceNone = 1,
+    kCFURLCredentialPersistenceForSession = 2,
+    kCFURLCredentialPersistencePermanent = 3,
+    kCFURLCredentialPersistenceSynchronizable = 4
+};
+
 @interface NSURLCredentialStorage ()
 - (id)_initWithIdentifier:(NSString *)identifier private:(bool)isPrivate;
 @end
@@ -444,6 +452,17 @@ enum : NSUInteger {
 #endif // defined(__OBJC__)
 
 #endif // USE(APPLE_INTERNAL_SDK)
+
+enum URLCredentialType {
+    kURLCredentialInternetPassword = 0,
+    kURLCredentialServerTrust,
+    kURLCredentialKerberosTicket,
+    kURLCredentialClientCertificate,
+    kURLCredentialXMobileMeAuthToken,
+    kURLCredentialUnknown,
+    kURLCredentialOAuth2,
+    kURLCredentialOAuth1
+};
 
 WTF_EXTERN_C_BEGIN
 
