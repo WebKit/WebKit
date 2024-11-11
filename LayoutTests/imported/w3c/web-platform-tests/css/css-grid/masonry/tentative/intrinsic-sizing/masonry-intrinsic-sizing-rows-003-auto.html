@@ -9,6 +9,7 @@
   <link rel="author" title="Mats Palmgren" href="mailto:mats@mozilla.com">
   <link rel="help" href="https://drafts.csswg.org/css-grid-3/#track-sizing">
   <link rel="match" href="masonry-intrinsic-sizing-rows-003-ref.html">
+  <link rel="stylesheet" type="text/css" href="/fonts/ahem.css">
   <style>
 
 @import "support/masonry-intrinsic-sizing-visual.css";
@@ -21,6 +22,7 @@ grid {
   border: 1px solid;
   padding: 1px 0 2px 0;
   vertical-align: top;
+  font-family: Ahem;
   height: min-content;
 }
 
@@ -28,6 +30,30 @@ item {
   /* allow for differing min-content and max-content sizes */
   writing-mode: vertical-rl;
   text-orientation: sideways;
+}
+
+grid > item:nth-child(1) {
+  background-color: #89CFF0;
+}
+
+grid > item:nth-child(2) {
+  background-color: #FF6F61;
+}
+
+grid > item:nth-child(3) {
+  background-color: #FDF3E7;
+}
+
+grid > item:nth-child(4) {
+  background-color: #F4C542;
+}
+
+grid > item:nth-child(5) {
+  background-color: #333333;
+}
+
+grid > item:nth-child(6) {
+  background-color: #B2C8A5;
 }
 </style>
 
