@@ -17,6 +17,7 @@ List of files:
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/BlobEvent-constructor.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/META.yml
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-bitrate.https.html
+/LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-blob-timecode.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-creation.https.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-destroy-script-execution.html
 /LayoutTests/imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-detached-context.html

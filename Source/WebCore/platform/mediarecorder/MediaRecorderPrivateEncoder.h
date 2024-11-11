@@ -95,7 +95,7 @@ private:
 
     static void compressedAudioOutputBufferCallback(void*, CMBufferQueueTriggerToken);
 
-    RefPtr<FragmentedSharedBuffer> takeData();
+    Ref<FragmentedSharedBuffer> takeData();
 
     MediaTime nextVideoFrameTime(const MediaTime&);
     MediaTime lastMuxedSampleTime() const;
@@ -115,9 +115,9 @@ private:
     Ref<GenericPromise> flushPendingData(const MediaTime&);
     void partiallyFlushEncodedQueues();
     Ref<GenericPromise> waitForMatchingAudio(const MediaTime&);
-    void flushToEndSegment(const MediaTime&);
-    void flushAllEncodedQueues();
     using Result = MediaRecorderPrivateWriter::Result;
+    std::pair<Result, MediaTime> flushToEndSegment(const MediaTime&);
+    void flushAllEncodedQueues();
     Result muxNextFrame();
 
     void maybeStartWriter();
@@ -132,8 +132,8 @@ private:
     bool m_writerIsClosed WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     MediaTime m_lastMuxedSampleStartTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
     MediaTime m_lastMuxedAudioSampleEndTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
-    bool m_hasMuxedAudioFrameSinceTakeData WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
-    bool m_hasMuxedVideoFrameSinceTakeData WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
+    bool m_hasMuxedAudioFrameSinceEndSegment WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
+    bool m_hasMuxedVideoFrameSinceEndSegment WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     bool m_nextVideoFrameMuxedShouldBeKeyframe WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { true };
     size_t m_pendingFlush WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { 0 };
     Ref<GenericPromise> m_currentFlushOperations WTF_GUARDED_BY_CAPABILITY(mainThread) { GenericPromise::createAndResolve() };
@@ -190,9 +190,11 @@ private:
 
     bool m_hadError WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     bool m_isPaused WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
+    bool m_hasStartedAudibleAudioFrame WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { false };
     bool m_needKeyFrame WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { true };
-    std::optional<MediaTime> m_endMuxedTime WTF_GUARDED_BY_CAPABILITY(queueSingleton());
+    MediaTime m_startSegmentTime WTF_GUARDED_BY_CAPABILITY(queueSingleton()) { MediaTime::zeroTime() };
 
+    const MediaTime m_minimumSegmentDuration { MediaTime::createWithDouble(1) };
     const MediaTime m_maxGOPDuration { MediaTime::createWithDouble(2) };
     const bool m_hasAudio { false };
     const bool m_hasVideo { false };

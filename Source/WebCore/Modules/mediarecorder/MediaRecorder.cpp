@@ -113,7 +113,7 @@ MediaRecorder::MediaRecorder(Document& document, Ref<MediaStream>&& stream, Opti
     : ActiveDOMObject(document)
     , m_options(WTFMove(options))
     , m_stream(WTFMove(stream))
-    , m_timeSliceTimer([this] { Ref { *this }->requestData(); })
+    , m_timeSliceTimer([this] { Ref { *this }->requestDataInternal(ReturnDataIfEmpty::No); })
 {
     computeInitialBitRates();
 
@@ -205,7 +205,7 @@ ExceptionOr<void> MediaRecorder::startRecording(std::optional<unsigned> timeSlic
         track->addObserver(*this);
 
     m_state = RecordingState::Recording;
-    m_timeSlice = timeSlice;
+    m_timeSlice = timeSlice ? std::make_optional(std::max(m_mimimumTimeSlice, *timeSlice)) : std::nullopt;
     if (m_timeSlice)
         m_timeSliceTimer.startOneShot(Seconds::fromMilliseconds(*m_timeSlice));
     return { };
@@ -240,17 +240,23 @@ void MediaRecorder::stopRecording()
 
 ExceptionOr<void> MediaRecorder::requestData()
 {
+    return requestDataInternal(ReturnDataIfEmpty::Yes);
+}
+
+ExceptionOr<void> MediaRecorder::requestDataInternal(ReturnDataIfEmpty returnDataIfEmpty)
+{
     if (state() == RecordingState::Inactive)
         return Exception { ExceptionCode::InvalidStateError, "The MediaRecorder's state cannot be inactive"_s };
 
     if (m_timeSliceTimer.isActive())
         m_timeSliceTimer.stop();
 
-    fetchData([this](auto&& buffer, auto& mimeType, auto timeCode) {
+    fetchData([this, returnDataIfEmpty](auto&& buffer, auto& mimeType, auto timeCode) {
         if (!m_isActive)
             return;
 
-        dispatchEvent(createDataAvailableEvent(scriptExecutionContext(), WTFMove(buffer), mimeType, timeCode));
+        if (returnDataIfEmpty == ReturnDataIfEmpty::Yes || !buffer->isEmpty())
+            dispatchEvent(createDataAvailableEvent(scriptExecutionContext(), WTFMove(buffer), mimeType, timeCode));
 
         switch (state()) {
         case RecordingState::Inactive:
