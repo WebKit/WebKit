@@ -50,6 +50,8 @@ private:
 
     void logOnBehalfOfWebContent(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, uint8_t logType);
 
+#include "LogEntriesDeclarations.h"
+
     RefPtr<IPC::StreamServerConnection> m_logStreamConnection;
     RefPtr<IPC::StreamConnectionWorkQueue> m_logWorkQueue;
     uint64_t m_pid { 0 };
