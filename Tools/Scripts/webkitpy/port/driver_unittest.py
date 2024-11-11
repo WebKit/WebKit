@@ -358,6 +358,22 @@ class DriverTest(unittest.TestCase):
             self.assertIn('WEBKIT_OUTPUTDIR', environment_driver_test)
             self.assertEqual(environment_user['WEBKIT_OUTPUTDIR'], environment_driver_test['WEBKIT_OUTPUTDIR'])
 
+    def test_setup_environ_for_test_webkit_prefix(self):
+        environment_user = {}
+        environment_user['WEBKIT2_PAUSE_WEB_PROCESS_ON_LAUNCH'] = '1'
+        environment_user['WEBKIT_ENABLE_RANDOM_FEATURE'] = '1'
+        environment_user['WEBKIT_DISABLE_ANOTHER_RANDOM_FEATURE'] = '1'
+        environment_user['WEBKIT_SET_RANDOM_VALUE'] = 'rand0m'
+        environment_user['WEBKIT_GST_USE_PLAYBIN3'] = '0'
+        environment_user['WEBKIT_DISABLE_MEMORY_PRESSURE_MONITOR'] = '0'
+        with patch('os.environ', environment_user):
+            port = self.make_port()
+            driver = Driver(port, None, pixel_tests=False)
+            environment_driver_test = driver._setup_environ_for_test()
+            for var in environment_user:
+                self.assertIn(var, environment_driver_test)
+                self.assertEqual(environment_user[var], environment_driver_test[var])
+
     def test_setup_environ_base_vars(self):
         # This are essential environment variables that should be copied
         # as part of base:setup_environ_for_server for all drivers
