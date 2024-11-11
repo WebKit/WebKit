@@ -387,10 +387,6 @@ SANDBOX_IMPORT_DIR=$(SDKROOT)/usr/local/share/sandbox/profiles/embedded/imports
 
 .PHONY : all
 
-#LogEntries.h LogStream.messages.in : LogEntries.in
-#	@echo Generate log entries for $< ...
-#	$(PYTHON) $(WebKit2)/Scripts/generate-log-entries.py $< LogEntries.h LogStream.messages.in
-
 all : $(GENERATED_MESSAGES_FILES)
 
 $(GENERATED_MESSAGES_FILES_AS_PATTERNS) : $(MESSAGES_IN_FILES) $(GENERATE_MESSAGE_RECEIVER_SCRIPTS)
