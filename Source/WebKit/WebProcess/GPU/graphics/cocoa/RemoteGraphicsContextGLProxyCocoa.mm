@@ -39,8 +39,6 @@
 #import <WebCore/PlatformCALayer.h>
 #import <WebCore/PlatformCALayerDelegatedContents.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebKit {
 
 namespace {
@@ -152,7 +150,7 @@ private:
     void addNewFence(Ref<DisplayBufferFence> newFence);
     static constexpr size_t maxPendingFences = 3;
     size_t m_oldestFenceIndex { 0 };
-    RefPtr<DisplayBufferFence> m_frameCompletionFences[maxPendingFences];
+    std::array<RefPtr<DisplayBufferFence>, maxPendingFences> m_frameCompletionFences;
 
     Ref<DisplayBufferDisplayDelegate> m_layerContentsDisplayDelegate;
     friend class RemoteGraphicsContextGLProxy;
@@ -202,7 +200,5 @@ Ref<RemoteGraphicsContextGLProxy> RemoteGraphicsContextGLProxy::platformCreate(c
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

@@ -37,6 +37,7 @@
 #include <WebCore/AudioUtilities.h>
 #include <WebCore/SharedMemory.h>
 #include <algorithm>
+#include <wtf/StdLibExtras.h>
 
 #if PLATFORM(COCOA)
 #include <WebCore/AudioUtilitiesCocoa.h>
@@ -44,8 +45,6 @@
 #include <WebCore/WebAudioBufferList.h>
 #include <mach/mach_time.h>
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebKit {
 
@@ -82,7 +81,7 @@ RemoteAudioDestinationProxy::RemoteAudioDestinationProxy(AudioIOCallback& callba
 uint32_t RemoteAudioDestinationProxy::totalFrameCount() const
 {
     RELEASE_ASSERT(m_frameCount->size() == sizeof(std::atomic<uint32_t>));
-    return WTF::atomicLoad(reinterpret_cast<uint32_t*>(m_frameCount->mutableSpan().data()));
+    return WTF::atomicLoad(&spanReinterpretCast<uint32_t>(m_frameCount->mutableSpan())[0]);
 }
 
 void RemoteAudioDestinationProxy::startRenderingThread()
@@ -242,8 +241,9 @@ void RemoteAudioDestinationProxy::renderAudio(unsigned frameCount)
         frameCount -= numberOfFrames;
         auto* ioData = m_audioBufferList->list();
 
-        auto* buffers = ioData->mBuffers;
+
         auto numberOfBuffers = std::min<UInt32>(ioData->mNumberBuffers, m_outputBus->numberOfChannels());
+        auto buffers = unsafeMakeSpan(ioData->mBuffers, numberOfBuffers);
 
         // Associate the destination data array with the output bus then fill the FIFO.
         for (UInt32 i = 0; i < numberOfBuffers; ++i) {
@@ -270,7 +270,5 @@ void RemoteAudioDestinationProxy::gpuProcessConnectionDidClose(GPUProcessConnect
 }
 
 } // namespace WebKit
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEB_AUDIO)
