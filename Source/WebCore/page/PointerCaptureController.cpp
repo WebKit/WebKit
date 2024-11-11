@@ -327,7 +327,7 @@ void PointerCaptureController::dispatchEventForTouchAtIndex(EventTarget& target,
 
 #if PLATFORM(IOS_FAMILY)
     if (pointerEvent->type() == eventNames().pointercancelEvent) {
-        cancelPointer(pointerEvent->pointerId(), platformTouchEvent.touchLocationAtIndex(index), pointerEvent.ptr());
+        cancelPointer(pointerEvent->pointerId(), platformTouchEvent.touchLocationInRootViewAtIndex(index), pointerEvent.ptr());
         return;
     }
 #endif

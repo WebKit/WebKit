@@ -60,7 +60,7 @@ ScrollAnimatorIOS::~ScrollAnimatorIOS()
 bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
 {
     if (touchEvent.type() == PlatformEvent::Type::TouchStart && touchEvent.touchCount() == 1) {
-        m_firstTouchPoint = touchEvent.touchLocationAtIndex(0);
+        m_firstTouchPoint = touchEvent.touchLocationInRootViewAtIndex(0);
         m_lastTouchPoint = m_firstTouchPoint;
         m_inTouchSequence = true;
         m_committedToScrollAxis = false;
@@ -91,7 +91,7 @@ bool ScrollAnimatorIOS::handleTouchEvent(const PlatformTouchEvent& touchEvent)
         return false;
     }
     
-    IntPoint currentPoint = touchEvent.touchLocationAtIndex(0);
+    IntPoint currentPoint = touchEvent.touchLocationInRootViewAtIndex(0);
 
     IntSize touchDelta = m_lastTouchPoint - currentPoint;
     m_lastTouchPoint = currentPoint;

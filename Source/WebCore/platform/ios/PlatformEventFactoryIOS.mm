@@ -590,8 +590,8 @@ static PlatformTouchPoint::TouchPhaseType touchPhaseFromPlatformEventType(Platfo
 
 class PlatformTouchPointBuilder : public PlatformTouchPoint {
 public:
-    PlatformTouchPointBuilder(unsigned identifier, const IntPoint& location, TouchPhaseType phase)
-        : PlatformTouchPoint(identifier, location, phase)
+    PlatformTouchPointBuilder(unsigned identifier, const IntPoint& locationInRootView, std::optional<IntPoint>&& locationInViewport, TouchPhaseType phase)
+        : PlatformTouchPoint(identifier, locationInRootView, WTFMove(locationInViewport), phase)
     {
     }
 };
@@ -615,7 +615,7 @@ public:
             unsigned identifier = [(NSNumber *)[event.touchIdentifiers objectAtIndex:i] unsignedIntValue];
             IntPoint location = IntPoint([(NSValue *)[event.touchLocations objectAtIndex:i] pointValue]);
             PlatformTouchPoint::TouchPhaseType touchPhase = convertTouchPhase([event.touchPhases objectAtIndex:i]);
-            return PlatformTouchPointBuilder(identifier, location, touchPhase);
+            return PlatformTouchPointBuilder(identifier, location, std::nullopt, touchPhase);
         });
     }
     
@@ -631,7 +631,7 @@ public:
         m_globalPosition = location;
         m_isPotentialTap = true;
         
-        m_touchPoints = Vector<PlatformTouchPoint>({ PlatformTouchPointBuilder(1, location, touchPhaseFromPlatformEventType(type)) });
+        m_touchPoints = Vector<PlatformTouchPoint>({ PlatformTouchPointBuilder(1, location, std::nullopt, touchPhaseFromPlatformEventType(type)) });
     }
 };
 

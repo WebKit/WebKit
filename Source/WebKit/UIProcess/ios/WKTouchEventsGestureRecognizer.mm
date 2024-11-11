@@ -29,6 +29,8 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "UIKitSPI.h"
+#import "WKContentViewInteraction.h"
+#import "WKWebViewIOS.h"
 #import <objc/message.h>
 #import <objc/runtime.h>
 #import <wtf/RetainPtr.h>
@@ -41,10 +43,6 @@ static char associatedTouchIdentifierKey;
 static unsigned incrementingTouchIdentifier = 1;
 
 @implementation WKTouchEventsGestureRecognizer {
-    __weak id _touchTarget;
-    SEL _touchAction;
-    __weak id<WKTouchEventsGestureRecognizerDelegate> _touchEventDelegate;
-
     BOOL _passedHitTest;
     BOOL _defaultPrevented;
     BOOL _dispatchingTouchEvents;
@@ -86,7 +84,7 @@ static double approximateWallTime(NSTimeInterval timestamp)
     }
 }
 
-- (id)initWithTarget:(id)target action:(SEL)action touchDelegate:(id<WKTouchEventsGestureRecognizerDelegate>)delegate
+- (instancetype)initWithContentView:(WKContentView *)view
 {
     self = [super initWithTarget:nil action:nil];
     if (!self)
@@ -95,10 +93,8 @@ static double approximateWallTime(NSTimeInterval timestamp)
     // Remove our target/action pair, and hold onto it.
     // This gesture recognizer calls its single target/action pair
     // itself, and is not called via the standard mechanism.
-    _touchTarget = target;
-    _touchAction = action;
-    _touchEventDelegate = delegate;
     _activeTouchesByIdentifier = NSMapTable.strongToWeakObjectsMapTable;
+    _contentView = view;
 
     [self reset];
 
@@ -228,13 +224,24 @@ static unsigned nextTouchIdentifier()
     }
 }
 
+static CGPoint mapRootViewToViewport(CGPoint pointInRootView, WKContentView *contentView)
+{
+    RetainPtr webView = [contentView webView];
+    CGPoint origin = [webView bounds].origin;
+    auto inset = [webView _computedObscuredInset];
+    auto offsetInRootView = [webView convertPoint:CGPointMake(origin.x + inset.left, origin.y + inset.top) toView:contentView];
+    return CGPointMake(pointInRootView.x - offsetInRootView.x, pointInRootView.y - offsetInRootView.y);
+}
+
 - (WebKit::WKTouchEvent)_touchEventForTouch:(UITouch *)touch
 {
     auto locationInWindow = [touch locationInView:nil];
     auto locationInRootView = [[self view] convertPoint:locationInWindow fromView:nil];
+    RetainPtr contentView = [self contentView];
 
     WebKit::WKTouchPoint touchPoint;
     touchPoint.locationInRootViewCoordinates = locationInRootView;
+    touchPoint.locationInViewport = mapRootViewToViewport(locationInRootView, contentView.get());
     touchPoint.identifier = 0;
     touchPoint.phase = touch.phase;
     touchPoint.majorRadiusInWindowCoordinates = touch.majorRadius;
@@ -292,6 +299,7 @@ static unsigned nextTouchIdentifier()
             _lastTouchEvent.predictedEvents.append([self _touchEventForTouch:predictedTouch]);
     }
 
+    RetainPtr contentView = [self contentView];
     NSUInteger touchIndex = 0;
 
     [_activeTouchesByIdentifier removeAllObjects];
@@ -320,6 +328,7 @@ static unsigned nextTouchIdentifier()
         auto locationInWindow = [touch locationInView:nil];
         auto locationInRootView = [[self view] convertPoint:locationInWindow fromView:nil];
         touchPoint.locationInRootViewCoordinates = locationInRootView;
+        touchPoint.locationInViewport = mapRootViewToViewport(locationInRootView, contentView.get());
         touchPoint.identifier = [associatedIdentifier unsignedIntValue];
         touchPoint.phase = touch.phase;
         touchPoint.majorRadiusInWindowCoordinates = touch.majorRadius;
@@ -435,8 +444,7 @@ static WebKit::WKTouchEventType lastExpectedWKEventTypeForTouches(NSSet *touches
 
 - (void)performAction
 {
-    // Call our target ourselves to determine preventDefault state.
-    ((void(*)(id, SEL, id))objc_msgSend)(_touchTarget, _touchAction, self);
+    [_contentView _touchEventsRecognized];
 }
 
 - (BOOL)_hasActiveTouchesForEvent:(UIEvent *)event
@@ -501,15 +509,10 @@ static WebKit::WKTouchEventType lastExpectedWKEventTypeForTouches(NSSet *touches
 {
     auto activeTouches = [event touchesForGestureRecognizer:self];
 
-    auto delegate = _touchEventDelegate;
-    if ([delegate respondsToSelector:@selector(shouldIgnoreTouchEvent)] && [delegate shouldIgnoreTouchEvent]) {
-        self.state = UIGestureRecognizerStateFailed;
-        return;
-    }
-
+    RetainPtr contentView = [self contentView];
     // Only hitTest when when we haven't already passed the hitTest.
     if (!_passedHitTest) {
-        if (([delegate respondsToSelector:@selector(gestureRecognizer:shouldIgnoreTouchEvent:)] && [delegate gestureRecognizer:self shouldIgnoreTouchEvent:event]) || ![delegate isAnyTouchOverActiveArea:activeTouches]) {
+        if ([contentView _shouldIgnoreTouchEvent:event]) {
             self.state = UIGestureRecognizerStateFailed;
             return;
         }

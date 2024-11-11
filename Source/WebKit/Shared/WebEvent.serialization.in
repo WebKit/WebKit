@@ -123,7 +123,8 @@ class WebKit::WebTouchEvent : WebKit::WebEvent {
 [CustomHeader] class WebKit::WebPlatformTouchPoint {
 #if PLATFORM(IOS_FAMILY)
     unsigned identifier()
-    WebCore::IntPoint location()
+    WebCore::IntPoint locationInRootView()
+    WebCore::IntPoint locationInViewport()
     WebKit::WebPlatformTouchPoint::State phase()
 #endif
 #if PLATFORM(IOS_FAMILY) && ENABLE(IOS_TOUCH_EVENTS)
