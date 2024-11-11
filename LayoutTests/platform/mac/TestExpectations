@@ -2442,3 +2442,6 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-trave
 
 # Modern AVContentKeySession is only available on Sonoma
 [ Ventura Sonoma ] http/tests/media/fairplay/legacy-fairplay-mse-muxed-nowait.html [ Skip ]
+
+# webkit.org/b/280304 [ Sequoia ] fast/ruby/ruby-expansion-cjk-4.html is a constant image only failure.
+[ Sequoia ] fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
