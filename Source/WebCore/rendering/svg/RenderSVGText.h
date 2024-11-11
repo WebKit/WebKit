@@ -105,6 +105,7 @@ private:
     bool m_needsPositioningValuesUpdate : 1 { false };
     bool m_needsTransformUpdate : 1 { true }; // FIXME: [LBSE] Only needed for legacy SVG engine.
     bool m_needsTextMetricsUpdate : 1 { false };
+    bool m_hasPerformedLayout : 1 { false }; // Needed to distinguish between when we perform a full pass of layout and everHadLayout (which can be set be content visibility for skipped content).
     AffineTransform m_localTransform; // FIXME: [LBSE] Only needed for legacy SVG engine.
     SVGTextLayoutAttributesBuilder m_layoutAttributesBuilder;
     Vector<SVGTextLayoutAttributes*> m_layoutAttributes;
