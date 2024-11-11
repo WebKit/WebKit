@@ -580,7 +580,7 @@ void generateLoopNotBackwardsDominant(Procedure& proc, std::array<int, 100>& arr
                 loopHeader->appendNew<ConstPtrValue>(proc, Origin(), &array),
                 loopHeader->appendNew<Value>(
                     proc, Mul, Origin(),
-                    loopHeader->appendNew<Value>(proc, ZExt32, Origin(), index),
+                    is32Bit() ? index : loopHeader->appendNew<Value>(proc, ZExt32, Origin(), index),
                     loopHeader->appendNew<ConstPtrValue>(proc, Origin(), sizeof(int))))));
     loopHeader->setSuccessors(loopCall, loopFooter);
 

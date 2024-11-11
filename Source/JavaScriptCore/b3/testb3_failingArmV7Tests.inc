@@ -40,7 +40,6 @@
 "testInsertBitField64",
 "testInterpreter",
 "testLateRegister",
-"testLICM",
 "testLoadPreIndex32WithStore",
 "testPinRegisters",
 "testReduceFloatToDoubleValidates",
