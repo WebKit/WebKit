@@ -26,7 +26,6 @@
 #pragma once
 
 #import <wtf/OSObjectPtr.h>
-#import <wtf/RunLoop.h>
 #import <wtf/Seconds.h>
 #import <wtf/spi/darwin/XPCSPI.h>
 
@@ -39,15 +38,6 @@
 #endif
 
 namespace WebKit {
-class XPCConnectionTerminationWatchdog;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebKit::XPCConnectionTerminationWatchdog> : std::true_type { };
-}
-
-namespace WebKit {
 
 class AuxiliaryProcessProxy;
 class ProcessAndUIAssertion;
@@ -57,14 +47,16 @@ class ProcessAndUIAssertion;
 // 2) On iOS, make the process runnable for the duration of the watchdog
 //    to ensure it has a chance to terminate cleanly.
 class XPCConnectionTerminationWatchdog {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
     static void startConnectionTerminationWatchdog(AuxiliaryProcessProxy&, Seconds interval);
 
 private:
-    XPCConnectionTerminationWatchdog(AuxiliaryProcessProxy&, Seconds interval);
-    void watchdogTimerFired();
+    friend UniqueRef<XPCConnectionTerminationWatchdog> WTF::makeUniqueRefWithoutFastMallocCheck<XPCConnectionTerminationWatchdog>(AuxiliaryProcessProxy&);
 
-    RunLoop::Timer m_watchdogTimer;
+    explicit XPCConnectionTerminationWatchdog(AuxiliaryProcessProxy&);
+    void terminateProcess();
+
     Ref<ProcessAndUIAssertion> m_assertion;
 #if USE(EXTENSIONKIT_PROCESS_TERMINATION)
     std::optional<ExtensionProcess> m_process;

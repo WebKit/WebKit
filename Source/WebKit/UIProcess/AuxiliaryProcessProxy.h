@@ -205,6 +205,8 @@ public:
 
     ResponsivenessTimer& responsivenessTimer() { return m_responsivenessTimer; }
     const ResponsivenessTimer& responsivenessTimer() const { return m_responsivenessTimer; }
+    CheckedRef<ResponsivenessTimer> checkedResponsivenessTimer() { return m_responsivenessTimer; }
+    CheckedRef<const ResponsivenessTimer> checkedResponsivenessTimer() const { return m_responsivenessTimer; }
 
     void ref() const final { ThreadSafeRefCounted::ref(); }
     void deref() const final { ThreadSafeRefCounted::deref(); }

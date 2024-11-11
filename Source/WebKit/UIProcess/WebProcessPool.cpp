@@ -243,7 +243,7 @@ WebProcessPool::WebProcessPool(API::ProcessPoolConfiguration& configuration)
     , m_historyClient(makeUnique<API::LegacyContextHistoryClient>())
     , m_visitedLinkStore(VisitedLinkStore::create())
 #if PLATFORM(MAC)
-    , m_perActivityStateCPUUsageSampler(makeUnique<PerActivityStateCPUUsageSampler>(*this))
+    , m_perActivityStateCPUUsageSampler(makeUniqueRefWithoutRefCountedCheck<PerActivityStateCPUUsageSampler>(*this))
 #endif
     , m_alwaysRunsAtBackgroundPriority(m_configuration->alwaysRunsAtBackgroundPriority())
     , m_shouldTakeUIBackgroundAssertion(m_configuration->shouldTakeUIBackgroundAssertion())
@@ -1882,8 +1882,7 @@ void WebProcessPool::updateHiddenPageThrottlingAutoIncreaseLimit()
 void WebProcessPool::reportWebContentCPUTime(Seconds cpuTime, uint64_t activityState)
 {
 #if PLATFORM(MAC)
-    if (m_perActivityStateCPUUsageSampler)
-        m_perActivityStateCPUUsageSampler->reportWebContentCPUTime(cpuTime, static_cast<WebCore::ActivityStateForCPUSampling>(activityState));
+    Ref { m_perActivityStateCPUUsageSampler.get() }->reportWebContentCPUTime(cpuTime, static_cast<WebCore::ActivityStateForCPUSampling>(activityState));
 #else
     UNUSED_PARAM(cpuTime);
     UNUSED_PARAM(activityState);

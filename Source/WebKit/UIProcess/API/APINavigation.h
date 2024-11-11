@@ -157,7 +157,7 @@ public:
 
     const std::optional<WebCore::PrivateClickMeasurement>& privateClickMeasurement() const { return m_lastNavigationAction.privateClickMeasurement; }
 
-    void setClientNavigationActivity(RefPtr<WebKit::ProcessThrottler::Activity>&& activity) { m_clientNavigationActivity = WTFMove(activity); }
+    void setClientNavigationActivity(RefPtr<WebKit::ProcessThrottler::Activity>&& activity) { Ref { m_clientNavigationActivity }->setActivity(WTFMove(activity)); }
 
     void setIsLoadedWithNavigationShared(bool value) { m_isLoadedWithNavigationShared = value; }
     bool isLoadedWithNavigationShared() const { return m_isLoadedWithNavigationShared; }
@@ -197,7 +197,7 @@ private:
     WebCore::SecurityOriginData m_destinationFrameSecurityOrigin;
     bool m_userContentExtensionsEnabled { true };
     WebKit::WebContentMode m_effectiveContentMode { WebKit::WebContentMode::Recommended };
-    WebKit::ProcessThrottler::TimedActivity m_clientNavigationActivity;
+    Ref<WebKit::ProcessThrottler::TimedActivity> m_clientNavigationActivity;
     bool m_isLoadedWithNavigationShared { false };
     RefPtr<API::WebsitePolicies> m_websitePolicies;
     std::optional<OptionSet<WebCore::AdvancedPrivacyProtections>> m_originatorAdvancedPrivacyProtections;

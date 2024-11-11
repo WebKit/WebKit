@@ -35,15 +35,8 @@
 #include <wtf/UniqueRef.h>
 #include <wtf/WeakPtr.h>
 
-namespace WebKit {
-class ProcessThrottlerTimedActivity;
-}
-
 namespace WTF {
 class TextStream;
-
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebKit::ProcessThrottlerTimedActivity> : std::true_type { };
 }
 
 namespace WebKit {
@@ -94,17 +87,20 @@ private:
     IsQuietActivity m_isQuietActivity;
 };
 
-class ProcessThrottlerTimedActivity {
+class ProcessThrottlerTimedActivity : public RefCounted<ProcessThrottlerTimedActivity> {
     WTF_MAKE_TZONE_ALLOCATED(ProcessThrottlerTimedActivity);
     WTF_MAKE_NONCOPYABLE(ProcessThrottlerTimedActivity);
     using Activity = ProcessThrottlerActivity;
 public:
-    explicit ProcessThrottlerTimedActivity(Seconds, RefPtr<Activity>&& = nullptr);
-    ProcessThrottlerTimedActivity& operator=(RefPtr<Activity>&&);
+    static Ref<ProcessThrottlerTimedActivity> create(Seconds, RefPtr<Activity>&& = nullptr);
     const RefPtr<Activity> activity() const { return m_activity; }
     void setTimeout(Seconds);
 
+    void setActivity(RefPtr<Activity>&&);
+
 private:
+    explicit ProcessThrottlerTimedActivity(Seconds, RefPtr<Activity>&&);
+
     void activityTimedOut();
     void updateTimer();
 

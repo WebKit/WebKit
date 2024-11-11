@@ -66,7 +66,7 @@ public:
         auto type = assertion->type();
         assertion->setInvalidationHandler(nullptr);
         ASSERT(!m_entries.contains(type));
-        m_entries.add(type, makeUniqueRef<CachedAssertion>(*this, WTFMove(assertion)));
+        m_entries.add(type, CachedAssertion::create(*this, WTFMove(assertion)));
     }
 
     RefPtr<ProcessAssertion> tryTake(ProcessAssertionType type)
@@ -89,9 +89,18 @@ public:
     }
 
 private:
-    class CachedAssertion {
+    class CachedAssertion : public RefCounted<CachedAssertion> {
         WTF_MAKE_TZONE_ALLOCATED(CachedAssertion);
     public:
+        static Ref<CachedAssertion> create(ProcessAssertionCache& cache, Ref<ProcessAssertion>&& assertion)
+        {
+            return adoptRef(*new CachedAssertion(cache, WTFMove(assertion)));
+        }
+
+        bool isValid() const { return m_assertion->isValid(); }
+        Ref<ProcessAssertion> release() { return m_assertion.releaseNonNull(); }
+
+    private:
         CachedAssertion(ProcessAssertionCache& cache, Ref<ProcessAssertion>&& assertion)
             : m_cache(cache)
             , m_assertion(WTFMove(assertion))
@@ -100,10 +109,6 @@ private:
             m_expirationTimer.startOneShot(processAssertionCacheLifetime);
         }
 
-        bool isValid() const { return m_assertion->isValid(); }
-        Ref<ProcessAssertion> release() { return m_assertion.releaseNonNull(); }
-
-    private:
         void entryExpired()
         {
             ASSERT(m_assertion);
@@ -115,16 +120,11 @@ private:
         RunLoop::Timer m_expirationTimer;
     };
 
-    HashMap<ProcessAssertionType, UniqueRef<CachedAssertion>, IntHash<ProcessAssertionType>, WTF::StrongEnumHashTraits<ProcessAssertionType>> m_entries;
+    HashMap<ProcessAssertionType, Ref<CachedAssertion>, IntHash<ProcessAssertionType>, WTF::StrongEnumHashTraits<ProcessAssertionType>> m_entries;
     bool m_isEnabled { true };
 };
 
 } // namespace WebKit
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebKit::ProcessThrottler::ProcessAssertionCache::CachedAssertion> : std::true_type { };
-}
 
 namespace WebKit {
 
@@ -538,6 +538,11 @@ Ref<AuxiliaryProcessProxy> ProcessThrottler::protectedProcess() const
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(ProcessThrottlerTimedActivity);
 
+Ref<ProcessThrottlerTimedActivity> ProcessThrottlerTimedActivity::create(Seconds timeout, RefPtr<Activity>&& activity)
+{
+    return adoptRef(*new ProcessThrottlerTimedActivity(timeout, WTFMove(activity)));
+}
+
 ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, RefPtr<ProcessThrottlerTimedActivity::Activity>&& activity)
     : m_timer(RunLoop::main(), this, &ProcessThrottlerTimedActivity::activityTimedOut)
     , m_timeout(timeout)
@@ -546,11 +551,10 @@ ProcessThrottlerTimedActivity::ProcessThrottlerTimedActivity(Seconds timeout, Re
     updateTimer();
 }
 
-auto ProcessThrottlerTimedActivity::operator=(RefPtr<ProcessThrottlerTimedActivity::Activity>&& activity) -> ProcessThrottlerTimedActivity&
+void ProcessThrottlerTimedActivity::setActivity(RefPtr<ProcessThrottlerTimedActivity::Activity>&& activity)
 {
     m_activity = WTFMove(activity);
     updateTimer();
-    return *this;
 }
 
 void ProcessThrottlerTimedActivity::activityTimedOut()

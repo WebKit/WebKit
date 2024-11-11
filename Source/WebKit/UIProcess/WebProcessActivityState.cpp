@@ -52,7 +52,7 @@ static Seconds webProcessSuspensionDelay(const WebPageProxy* page)
 WebProcessActivityState::WebProcessActivityState(WebPageProxy& page)
     : m_page(page)
 #if PLATFORM(MAC)
-    , m_wasRecentlyVisibleActivity(makeUniqueRef<ProcessThrottlerTimedActivity>(webProcessSuspensionDelay(&page)))
+    , m_wasRecentlyVisibleActivity(ProcessThrottlerTimedActivity::create(webProcessSuspensionDelay(&page)))
 #endif
 {
 }
@@ -60,7 +60,7 @@ WebProcessActivityState::WebProcessActivityState(WebPageProxy& page)
 WebProcessActivityState::WebProcessActivityState(RemotePageProxy& page)
     : m_page(page)
 #if PLATFORM(MAC)
-    , m_wasRecentlyVisibleActivity(makeUniqueRef<ProcessThrottlerTimedActivity>(webProcessSuspensionDelay(page.protectedPage().get())))
+    , m_wasRecentlyVisibleActivity(ProcessThrottlerTimedActivity::create(webProcessSuspensionDelay(page.protectedPage().get())))
 #endif
 {
 }
@@ -69,7 +69,7 @@ void WebProcessActivityState::takeVisibleActivity()
 {
     m_isVisibleActivity = process().throttler().foregroundActivity("View is visible"_s);
 #if PLATFORM(MAC)
-    *m_wasRecentlyVisibleActivity = nullptr;
+    m_wasRecentlyVisibleActivity->setActivity(nullptr);
 #endif
 }
 
@@ -106,7 +106,7 @@ void WebProcessActivityState::reset()
 {
     m_isVisibleActivity = nullptr;
 #if PLATFORM(MAC)
-    *m_wasRecentlyVisibleActivity = nullptr;
+    m_wasRecentlyVisibleActivity->setActivity(nullptr);
 #endif
     m_isAudibleActivity = nullptr;
     m_isCapturingActivity = nullptr;
@@ -120,9 +120,9 @@ void WebProcessActivityState::dropVisibleActivity()
 {
 #if PLATFORM(MAC)
     if (WTF::numberOfProcessorCores() > 4)
-        *m_wasRecentlyVisibleActivity = process().throttler().backgroundActivity("View was recently visible"_s);
+        m_wasRecentlyVisibleActivity->setActivity(process().throttler().backgroundActivity("View was recently visible"_s));
     else
-        *m_wasRecentlyVisibleActivity = process().throttler().foregroundActivity("View was recently visible"_s);
+        m_wasRecentlyVisibleActivity->setActivity(process().throttler().foregroundActivity("View was recently visible"_s));
 #endif
     m_isVisibleActivity = nullptr;
 }
