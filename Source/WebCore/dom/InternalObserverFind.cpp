@@ -64,7 +64,7 @@ private:
 
             // The exception is not reported, instead it is forwarded to the
             // abort signal and promise rejection.
-            // As such, PredicateCallback `[RethrowsException]` and here a
+            // As such, PredicateCallback has `[RethrowException]` and here a
             // catch scope is declared so the error can be passed to any promise
             // rejection handlers and abort handlers.
             auto scope = DECLARE_CATCH_SCOPE(vm);

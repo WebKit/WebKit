@@ -93,7 +93,7 @@ private:
         JSC::JSLockHolder lock(vm);
 
         // The exception is not reported, instead it is forwarded to the
-        // error handler. As such, MapperCallback `[RethrowsException]`
+        // error handler. As such, MapperCallback has `[RethrowException]`
         // and here a catch scope is declared so the error can be passed
         // to the subscription error handler.
         JSC::Exception* previousException = nullptr;
