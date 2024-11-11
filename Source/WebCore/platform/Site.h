@@ -33,7 +33,6 @@ namespace WebCore {
 // https://html.spec.whatwg.org/multipage/browsers.html#site
 class Site {
 public:
-    WEBCORE_EXPORT explicit Site();
     WEBCORE_EXPORT explicit Site(const URL&);
     WEBCORE_EXPORT explicit Site(String&& protocol, RegistrableDomain&&);
     WEBCORE_EXPORT explicit Site(const SecurityOriginData&);

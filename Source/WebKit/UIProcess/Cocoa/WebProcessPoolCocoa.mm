@@ -285,7 +285,7 @@ static void logProcessPoolState(const WebProcessPool& pool)
         WTF::TextStream processDescription;
         processDescription << process;
 
-        RegistrableDomain domain = valueOrDefault(process->optionalSite()).domain();
+        RegistrableDomain domain = process->optionalSite() ? process->optionalSite()->domain() : RegistrableDomain();
         String domainString = domain.isEmpty() ? "unknown"_s : domain.string();
 
         WTF::TextStream pageURLs;

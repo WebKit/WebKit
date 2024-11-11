@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-Site::Site() = default;
-
 Site::Site(const URL& url)
     : m_protocol(url.protocol().toString())
     , m_domain(url) { }

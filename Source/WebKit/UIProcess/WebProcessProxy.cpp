@@ -2212,7 +2212,7 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
     if (!url.protocolIsInHTTPFamily() && !processPool().configuration().processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol()) {
         // Unless the processSwapsOnNavigationWithinSameNonHTTPFamilyProtocol flag is set, we don't process swap on navigations withing the same
         // non HTTP(s) protocol. For this reason, we ignore the registrable domain and processes are not eligible for the process cache.
-        m_site = WebCore::Site { };
+        m_site = std::nullopt;
         return;
     }
 
@@ -2225,7 +2225,7 @@ void WebProcessProxy::didStartProvisionalLoadForMainFrame(const URL& url)
             dataStore->protectedNetworkProcess()->terminateRemoteWorkerContextConnectionWhenPossible(RemoteWorkerType::SharedWorker, dataStore->sessionID(), m_site->domain(), coreProcessIdentifier());
 
         // Null out registrable domain since this process has now been used for several domains.
-        m_site = WebCore::Site { };
+        m_site = std::nullopt;
         return;
     }
 
