@@ -53,6 +53,8 @@ def main(inputfile, identifier_template):
     for line in inputfile.readlines():
         lines.append(line.rstrip())
 
+    identifier_template_key = identifier_template.format('').split(':', maxsplit=1)[0]
+
     identifier_index = len(lines)
     if identifier_index and repository.GIT_SVN_REVISION.match(lines[-1]):
         identifier_index -= 1
@@ -67,12 +69,12 @@ def main(inputfile, identifier_template):
     #     Canonical link: ...
     #
     #     git-svn-id: ...
-    if identifier_index and lines[identifier_index - 1].startswith(identifier_template.format('').split(':')[0]):
+    if identifier_index and lines[identifier_index - 1].startswith(identifier_template_key):
         lines[identifier_index - 1] = identifier_template.format(commit)
         identifier_index = identifier_index - 2
     else:
         for index in [2, 3]:
-            if identifier_index - index > 0 and lines[identifier_index - index].startswith(identifier_template.format('').split(':')[0]):
+            if identifier_index - index > 0 and lines[identifier_index - index].startswith(identifier_template_key):
                 del lines[identifier_index - index]
                 lines.insert(identifier_index - 1, identifier_template.format(commit))
                 identifier_index = identifier_index - 2
