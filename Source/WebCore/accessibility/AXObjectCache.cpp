@@ -1107,7 +1107,7 @@ AccessibilityObject* AXObjectCache::create(AccessibilityRole role)
         object = AccessibilityMenuListPopup::create(generateNewObjectID());
         break;
     case AccessibilityRole::SpinButton:
-        object = AccessibilitySpinButton::create(generateNewObjectID());
+        object = AccessibilitySpinButton::create(generateNewObjectID(), *this);
         break;
     case AccessibilityRole::SpinButtonPart:
         object = AccessibilitySpinButtonPart::create(generateNewObjectID());

@@ -575,6 +575,7 @@ accessibility/AccessibilityScrollView.cpp
 accessibility/AccessibilityScrollbar.cpp
 accessibility/AccessibilitySlider.cpp
 accessibility/AccessibilitySpinButton.cpp
+accessibility/AccessibilitySpinButtonPart.cpp
 accessibility/AccessibilityTable.cpp
 accessibility/AccessibilityTableCell.cpp
 accessibility/AccessibilityTableColumn.cpp

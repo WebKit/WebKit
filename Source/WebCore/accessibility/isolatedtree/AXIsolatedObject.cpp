@@ -297,7 +297,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     }
 
     if (object.isSpinButton()) {
-        // FIXME: These properties get out of date every time AccessibilitySpinButton::{clearChildren, addChildren} is called. We should probably just not cache these properties.
         setObjectProperty(AXPropertyName::DecrementButton, object.decrementButton());
         setObjectProperty(AXPropertyName::IncrementButton, object.incrementButton());
     }

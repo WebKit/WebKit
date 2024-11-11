@@ -470,7 +470,6 @@ accessibility/AccessibilitySVGObject.cpp
 accessibility/AccessibilitySVGRoot.cpp
 accessibility/AccessibilityScrollView.cpp
 accessibility/AccessibilitySlider.cpp
-accessibility/AccessibilitySpinButton.cpp
 accessibility/AccessibilityTable.cpp
 accessibility/AccessibilityTableCell.cpp
 accessibility/AccessibilityTableColumn.cpp
