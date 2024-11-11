@@ -2170,18 +2170,6 @@ void CommandEncoder::lock(bool shouldLock)
 
 void CommandEncoder::trackEncoder(CommandEncoder& commandEncoder, WeakHashSet<CommandEncoder>& encoderHashSet)
 {
-    bool removedItem;
-    do {
-        removedItem = false;
-        for (Ref commandEncoder : encoderHashSet) {
-            if (!commandEncoder->isValid()) {
-                encoderHashSet.remove(commandEncoder.get());
-                removedItem = true;
-                break;
-            }
-        }
-    } while (removedItem);
-
     encoderHashSet.add(commandEncoder);
 }
 
