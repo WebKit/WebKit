@@ -25,11 +25,13 @@
 
 #include "WindowViewBackend.h"
 
+#include <cassert>
 #include <cstdio>
 #include <cstring>
 #include <linux/input.h>
 #include <memory>
 #include <mutex>
+#include <span>
 #include <sys/mman.h>
 #include <unistd.h>
 
@@ -552,12 +554,10 @@ const struct xdg_toplevel_listener WindowViewBackend::XDGStable::s_toplevelListe
         // wl_array_for_each, but at the time of writing it relies on
         // GCC specific extension to work properly:
         // https://gitlab.freedesktop.org/wayland/wayland/issues/34
-        uint32_t* pos = static_cast<uint32_t*>(states->data);
-        uint32_t* end = static_cast<uint32_t*>(states->data) + states->size;
 
-        for (; pos < end; pos++) {
-            uint32_t state = *pos;
-
+        assert(!(states->size % sizeof(uint32_t)));
+        auto statesSpan = std::span(static_cast<uint32_t*>(states->data), states->size / sizeof(uint32_t));
+        for (auto state : statesSpan) {
             switch (state) {
             case XDG_TOPLEVEL_STATE_ACTIVATED:
                 isFocused = true;
@@ -617,12 +617,9 @@ const struct zxdg_toplevel_v6_listener WindowViewBackend::XDGUnstable::s_topleve
         // wl_array_for_each, but at the time of writing it relies on
         // GCC specific extension to work properly:
         // https://gitlab.freedesktop.org/wayland/wayland/issues/34
-        uint32_t* pos = static_cast<uint32_t*>(states->data);
-        uint32_t* end = static_cast<uint32_t*>(states->data) + states->size;
-
-        for (; pos < end; pos++) {
-            uint32_t state = *pos;
-
+        assert(!(states->size % sizeof(uint32_t)));
+        auto statesSpan = std::span(static_cast<uint32_t*>(states->data), states->size / sizeof(uint32_t));
+        for (auto state : statesSpan) {
             switch (state) {
             case ZXDG_TOPLEVEL_V6_STATE_ACTIVATED:
                 isFocused = true;
