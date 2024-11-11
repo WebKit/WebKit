@@ -144,7 +144,7 @@ def get_log_entries(log_entries_input_file):
     with open(log_entries_input_file) as input_file:
         input_file_lines = input_file.readlines()
         for line in input_file_lines:
-            match = re.search(r'([A-Z_0-9]*)\s*,\s*(\"[\w:;%\'\-\[\]=,\.\(\) ]*\")\s*,\s*\((.*)\)\s*,\s*(DEFAULT|INFO|ERROR|FAULT)\s*,\s*([\w]*)', line)
+            match = re.search(r'([A-Z_0-9]*)\s*,\s*(\"[\w:;%\'\-\[\]=,\.\(\)\{\} ]*\")\s*,\s*\((.*)\)\s*,\s*(DEFAULT|INFO|ERROR|FAULT)\s*,\s*([\w]*)', line)
             log_entry = []
             if match:
                 log_entry.append(match.groups()[0])

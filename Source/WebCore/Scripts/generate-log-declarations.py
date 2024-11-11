@@ -44,16 +44,26 @@ def get_log_entries(log_entries_input_file):
     log_entries = []
     with open(log_entries_input_file) as input_file:
         input_file_lines = input_file.readlines()
+        identifier_regexp = '(?P<identifier>[A-Z_0-9]*)'
+        inner_format_string_regexp = '(\"[\w:;%\'\-\[\]=,\.\(\)\{\} ]*\")|([A-Za-z]+)'
+        parameter_list_regexp = '\((?P<parameter_list>.*)\)'
+        log_type_regexp = '(?P<log_type>DEFAULT|INFO|ERROR|FAULT)'
+        log_category_regexp = '(?P<category>[\w]*)'
+        format_string_regexp = '(?P<format_string>' + inner_format_string_regexp + '(\s*' + inner_format_string_regexp + ')*)'
         for line in input_file_lines:
-            match = re.search(r'([A-Z_0-9]*)\s*,\s*(\"[\w:;%\'\-\[\]=,\.\(\) ]*\")\s*,\s*\((.*)\)\s*,\s*(DEFAULT|INFO|ERROR|FAULT)\s*,\s*([\w]*)', line)
+            match = re.search(identifier_regexp + '\s*,\s*' + format_string_regexp + '\s*,\s*' + parameter_list_regexp + '\s*,\s*' + log_type_regexp + '\s*,\s*' + log_category_regexp, line)
             log_entry = []
             if match:
-                log_entry.append(match.groups()[0])
-                log_entry.append(match.groups()[1])
-                log_entry.append(match.groups()[2])
-                log_entry.append(match.groups()[3])
-                log_entry.append(match.groups()[4])
+                log_entry.append(match.group('identifier'))
+                log_entry.append(match.group('format_string'))
+                log_entry.append(match.group('parameter_list'))
+                log_entry.append(match.group('log_type'))
+                log_entry.append(match.group('category'))
                 log_entries.append(log_entry)
+            else:
+                # FIXME: exit on error
+                print("Unable to match format string " + line)
+
     return log_entries
 
 

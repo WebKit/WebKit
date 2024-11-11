@@ -33,7 +33,7 @@ namespace WebCore {
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 std::unique_ptr<WebCoreLogClient>& webCoreLogClient()
 {
-    static LazyNeverDestroyed<std::unique_ptr<WebCoreLogClient>> client;
+    static NeverDestroyed<std::unique_ptr<WebCoreLogClient>> client;
     return client;
 }
 #endif

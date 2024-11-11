@@ -23,6 +23,8 @@
 
 #pragma once
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+
 #include "LogStream.h"
 #include "LogStreamIdentifier.h"
 #include "LogStreamMessages.h"
@@ -53,3 +55,5 @@ private:
 std::unique_ptr<WebKitLogClient>& webkitLogClient();
 
 }
+
+#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)

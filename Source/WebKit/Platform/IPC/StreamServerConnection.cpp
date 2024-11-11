@@ -128,9 +128,10 @@ void StreamServerConnection::didClose(Connection&)
     // Client is expected to listen to didClose from the main connection.
 }
 
-void StreamServerConnection::didReceiveInvalidMessage(Connection&, MessageName, int32_t)
+void StreamServerConnection::didReceiveInvalidMessage(Connection&, MessageName name, int32_t i)
 {
     // The sender is expected to be trusted, so all invalid messages are programming errors.
+    fprintf(stderr, "StreamServerConnection::didReceiveInvalidMessage name %hu i %d", name, i);
     ASSERT_NOT_REACHED();
 }
 

@@ -36,7 +36,7 @@ namespace WebKit {
 
 std::unique_ptr<WebKitLogClient>& webkitLogClient()
 {
-    static LazyNeverDestroyed<std::unique_ptr<WebKitLogClient>> client;
+    static NeverDestroyed<std::unique_ptr<WebKitLogClient>> client;
     return client;
 }
 

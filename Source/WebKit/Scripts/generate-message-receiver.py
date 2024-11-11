@@ -49,8 +49,8 @@ def main(argv):
         message_receiver = parameter
         receiver_name = message_receiver.rsplit('/', 1).pop()
 
-        if os.path.isabs(message_receiver):
-            with open('%s.messages.in' % (message_receiver)) as source_file:
+        if os.path.exists('%s/%s.messages.in' % (os.getcwd(), message_receiver)):
+            with open('%s/%s.messages.in' % (os.getcwd(), message_receiver)) as source_file:
                 receiver = webkit.parser.parse(source_file)
         else:
             with open('%s/%s.messages.in' % (base_dir, message_receiver)) as source_file:

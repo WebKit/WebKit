@@ -24,6 +24,8 @@
 #include "config.h"
 #include "WebKitLogClient.h"
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+
 namespace WebKit {
 
 WebKitLogClient::WebKitLogClient(IPC::StreamClientConnection* connection, const LogStreamIdentifier &identifier)
@@ -33,3 +35,5 @@ WebKitLogClient::WebKitLogClient(IPC::StreamClientConnection* connection, const 
 }
 
 }
+
+#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)

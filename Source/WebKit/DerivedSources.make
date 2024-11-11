@@ -129,7 +129,7 @@ endif
 to-pattern = $(join $(basename $1), $(subst .,%,$(suffix $1)))
 
 MESSAGE_RECEIVERS = \
-	$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStream \
+	LogStream \
 	NetworkProcess/NetworkBroadcastChannelRegistry \
 	NetworkProcess/NetworkConnectionToWebProcess \
 	NetworkProcess/NetworkContentRuleListManager \
@@ -943,3 +943,27 @@ $(WEBKIT_ADDITIONS_SWIFT_FILES): %.swift : %.swift.in
 
 all : $(WEBKIT_ADDITIONS_SWIFT_FILES)
 endif
+
+# Log messages
+
+all : WebCoreLogDefinitions.h WebKitLogDefinitions.h
+
+WebCoreLogDefinitions.h : $(WebCorePrivateHeaders)/WebCoreLogEntries.in
+	@echo Creating WebCore log definitions $@
+	$(PYTHON) $(WebCorePrivateHeaders)/generate-log-declarations.py WebCore $< $@
+
+WebKitLogDefinitions.h : Shared/WebKitLogEntries.in
+	@echo Creating WebKit log definitions $@
+	$(PYTHON) $(WebCorePrivateHeaders)/generate-log-declarations.py WebKit $< $@
+
+all : LogEntriesDeclarations.h LogEntriesImplementations.h WebKitLogClientDeclarations.h WebCoreLogClientDeclarations.h
+
+LOG_OUTPUT_FILES = \
+    LogStream.messages.in \
+    LogEntriesDeclarations.h \
+    LogEntriesImplementations.h \
+    WebKitLogClientDeclarations.h \
+    WebCoreLogClientDeclarations.h \
+
+$(LOG_OUTPUT_FILES) : Shared/WebKitLogEntries.in $(WebCorePrivateHeaders)/WebCoreLogEntries.in
+	$(PYTHON) $(WebKit2)/Scripts/generate-log-entries.py $^ $(LOG_OUTPUT_FILES)

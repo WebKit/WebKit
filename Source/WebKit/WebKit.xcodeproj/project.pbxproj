@@ -81,7 +81,6 @@
 			buildConfigurationList = C0CE72891247E68600BC0EC4 /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
 			buildPhases = (
 				DDB04F3C278E55D0008D3678 /* Product Dependencies */,
-				E30604FE2CCD9E9C0033AC72 /* Generate log entries */,
 				C0CE72841247E66800BC0EC4 /* Generate Derived Sources */,
 				7B7A089228B738D800FF1239 /* Copy Profiling Data */,
 			);
@@ -2440,6 +2439,7 @@
 		E1D26A53175964D90095BFD1 /* WebContentProcess.xib in Resources */ = {isa = PBXBuildFile; fileRef = E1D26A4C1759634E0095BFD1 /* WebContentProcess.xib */; };
 		E1E552C516AE065F004ED653 /* SandboxInitializationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */; };
 		E1EE53E311F8CFC000CCBEE4 /* InjectedBundlePageEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */; };
+		E307448F2CE5C181007B99A7 /* WebKitLogClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E307448D2CE5C181007B99A7 /* WebKitLogClient.h */; };
 		E31586CD2AD610F30062ED2A /* ExtensionEventHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = E31586CB2AD610F30062ED2A /* ExtensionEventHandler.h */; };
 		E31586CE2AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */; };
 		E31586CF2AD610F30062ED2A /* ExtensionEventHandler.mm in Sources */ = {isa = PBXBuildFile; fileRef = E31586CC2AD610F30062ED2A /* ExtensionEventHandler.mm */; };
@@ -2459,8 +2459,6 @@
 		E33E8FFD2C7FD2980002BEB3 /* UseDownloadPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8FFC2C7FD2980002BEB3 /* UseDownloadPlaceholder.h */; };
 		E34DAD392B753FA700FABEE2 /* ExtensionProcess.mm in Sources */ = {isa = PBXBuildFile; fileRef = E34DAD372B753FA700FABEE2 /* ExtensionProcess.mm */; };
 		E34DAD3A2B753FA700FABEE2 /* ExtensionProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = E34DAD382B753FA700FABEE2 /* ExtensionProcess.h */; };
-		E350B8A52CDD312700CB9B51 /* WebKitLogClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E350B8A42CDD312700CB9B51 /* WebKitLogClient.h */; };
-		E350B8A72CDD314B00CB9B51 /* WebKitLogClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E350B8A62CDD314B00CB9B51 /* WebKitLogClient.cpp */; };
 		E3607DEA2C7FE92200956766 /* WKDownloadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = E3607DE92C7FE92200956766 /* WKDownloadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E36A00E329CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E36A00E229CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm */; };
 		E36FF00327F36FBD004BE21A /* SandboxStateVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = E36FF00127F36FBD004BE21A /* SandboxStateVariables.h */; };
@@ -8045,6 +8043,8 @@
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
 		E30604F92CCC0A730033AC72 /* generate-log-entries.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "generate-log-entries.py"; sourceTree = "<group>"; };
+		E307448D2CE5C181007B99A7 /* WebKitLogClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitLogClient.h; sourceTree = "<group>"; };
+		E307448E2CE5C181007B99A7 /* WebKitLogClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitLogClient.cpp; sourceTree = "<group>"; };
 		E30CFB9D2660663C0094D9C0 /* com.apple.WebKit.WebContent.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = com.apple.WebKit.WebContent.sb; sourceTree = "<group>"; };
 		E313664D265EE5AF0051084F /* com.apple.WebKit.WebContent.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.WebContent.sb.in; sourceTree = "<group>"; };
 		E31586CB2AD610F30062ED2A /* ExtensionEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionEventHandler.h; path = Cocoa/ExtensionEventHandler.h; sourceTree = "<group>"; };
@@ -8063,8 +8063,6 @@
 		E350A7C52934F1C100A06C29 /* common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = common.sb; sourceTree = "<group>"; };
 		E350A7C82934F75F00A06C29 /* common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = common.sb; sourceTree = "<group>"; };
 		E350A7DF29364D3800A06C29 /* util.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = util.sb; sourceTree = "<group>"; };
-		E350B8A42CDD312700CB9B51 /* WebKitLogClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitLogClient.h; sourceTree = "<group>"; };
-		E350B8A62CDD314B00CB9B51 /* WebKitLogClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitLogClient.cpp; sourceTree = "<group>"; };
 		E350B8B42CE0385100CB9B51 /* WebKitLogEntries.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebKitLogEntries.in; sourceTree = "<group>"; };
 		E3607DE92C7FE92200956766 /* WKDownloadDelegatePrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKDownloadDelegatePrivate.h; sourceTree = "<group>"; };
 		E36A00E129CF4EBA00AC4E8A /* TextTrackRepresentationCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextTrackRepresentationCocoa.h; sourceTree = "<group>"; };
@@ -9449,8 +9447,6 @@
 				0F4000FF2527D6F700E91DA7 /* WebKeyboardEvent.h */,
 				BC9BA5021697C45300E44616 /* WebKit2Initialize.cpp */,
 				BC9BA5031697C45300E44616 /* WebKit2Initialize.h */,
-				E350B8A62CDD314B00CB9B51 /* WebKitLogClient.cpp */,
-				E350B8A42CDD312700CB9B51 /* WebKitLogClient.h */,
 				E350B8B42CE0385100CB9B51 /* WebKitLogEntries.in */,
 				905620E812BC248B000799B6 /* WebMemorySampler.cpp */,
 				905620E912BC248B000799B6 /* WebMemorySampler.h */,
@@ -14892,6 +14888,8 @@
 				0FDCD7F61D47E92A009F08BC /* LogInitialization.h */,
 				C0E3AA451209E2BA00A49D01 /* Module.cpp */,
 				C0E3AA441209E2BA00A49D01 /* Module.h */,
+				E307448E2CE5C181007B99A7 /* WebKitLogClient.cpp */,
+				E307448D2CE5C181007B99A7 /* WebKitLogClient.h */,
 			);
 			path = Platform;
 			sourceTree = "<group>";
@@ -17285,7 +17283,7 @@
 				BCB63478116BF10600603215 /* WebKit2_C.h in Headers */,
 				BC9BA5051697C45300E44616 /* WebKit2Initialize.h in Headers */,
 				0744DA552CE05FE400AACC81 /* WebKitInternal.h in Headers */,
-				E350B8A52CDD312700CB9B51 /* WebKitLogClient.h in Headers */,
+				E307448F2CE5C181007B99A7 /* WebKitLogClient.h in Headers */,
 				DD4BDE9C2CA73B60001A3339 /* WebKitSwiftOverlayMacros.h in Headers */,
 				BC032D7F10F4378D0058C15A /* WebLocalFrameLoaderClient.h in Headers */,
 				465FA7262757D93D0072362B /* WebLockRegistryProxy.h in Headers */,
@@ -19324,34 +19322,6 @@
 			shellPath = /bin/sh;
 			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
 		};
-		E30604FE2CCD9E9C0033AC72 /* Generate log entries */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Shared/WebKitLogEntries.in",
-				"${WebCorePrivateHeaders}/WebCoreLogEntries.in",
-			);
-			name = "Generate log entries";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKitLogs.h",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogStream.messages.in",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntriesDeclarations.h",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntriesImplementations.h",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKitLogClientDeclarations.h",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKitLogDefinitions.h",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebCoreLogDefinitions.h",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebCoreLogClientDeclarations.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\n\n${WEBCORE_PRIVATE_HEADERS_DIR}/generate-log-declarations.py WebCore ${WEBCORE_PRIVATE_HEADERS_DIR}/WebCoreLogEntries.in  ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebCoreLogDefinitions.h\n\n${WEBCORE_PRIVATE_HEADERS_DIR}/generate-log-declarations.py WebKit ${SRCROOT}/Shared/WebKitLogEntries.in ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKitLogDefinitions.h\n\nScripts/generate-log-entries.py ${SRCROOT}/Shared/WebKitLogEntries.in ${WEBCORE_PRIVATE_HEADERS_DIR}/WebCoreLogEntries.in ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogStream.messages.in ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntriesDeclarations.h ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntriesImplementations.h ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKitLogClientDeclarations.h ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebCoreLogClientDeclarations.h\n";
-		};
 		E3067ED02B758FEA007C7A03 /* Create symlinks for extensions */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -20230,7 +20200,6 @@
 				1CA8B945127C882A00576C2B /* WebInspectorUIProxyMessageReceiver.cpp in Sources */,
 				1A6280F31919982A006AD9F9 /* WebKit.m in Sources */,
 				A181A79821ACC74B0059A316 /* WebKitAdditions.mm in Sources */,
-				E350B8A72CDD314B00CB9B51 /* WebKitLogClient.cpp in Sources */,
 				DD4BDE902CA38269001A3339 /* WebKitSwiftOverlay.swift in Sources */,
 				CDF1B91B267025550007EC10 /* WebKitSwiftSoftLink.mm in Sources */,
 				E3816B3D27E2463A005EAFC0 /* WebMockContentFilterManager.cpp in Sources */,

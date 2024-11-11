@@ -171,6 +171,7 @@
 #define PAGE_ID (pageID() ? pageID()->toUInt64() : 0)
 #define FRAME_ID (frameID().object().toUInt64())
 #define FRAMELOADER_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] FrameLoader::" fmt, this, PAGE_ID, FRAME_ID, m_frame->isMainFrame(), ##__VA_ARGS__)
+#define FRAMELOADER_RELEASE_LOG_FORWARDABLE(fmt, ...) RELEASE_LOG_FORWARDABLE(ResourceLoading, fmt, PAGE_ID, FRAME_ID, m_frame->isMainFrame(), ##__VA_ARGS__)
 #define FRAMELOADER_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, "%p - [pageID=%" PRIu64 ", frameID=%" PRIu64 ", isMainFrame=%d] FrameLoader::" fmt, this, PAGE_ID, FRAME_ID, m_frame->isMainFrame(), ##__VA_ARGS__)
 
 #if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/FrameLoaderAdditions.h>)
@@ -503,7 +504,7 @@ void FrameLoader::changeLocation(const URL& url, const AtomString& passedTarget,
 
 void FrameLoader::changeLocation(FrameLoadRequest&& frameRequest, Event* triggeringEvent, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "changeLocation: frame load started");
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_CHANGELOCATION);
     ASSERT(frameRequest.resourceRequest().httpMethod() == "GET"_s);
 
     Ref frame = m_frame.get();
@@ -1040,7 +1041,7 @@ void FrameLoader::checkCallImplicitClose()
 
 void FrameLoader::loadURLIntoChildFrame(const URL& url, const String& referer, LocalFrame* childFrame)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadURLIntoChildFrame: frame load started");
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_LOADURLINTOCHILDFRAME);
 
     ASSERT(childFrame);
 
@@ -1372,7 +1373,7 @@ void FrameLoader::started()
 
 void FrameLoader::prepareForLoadStart()
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "prepareForLoadStart: Starting frame load");
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_PREPAREFORLOADSTART);
 
     m_progressTracker->progressStarted();
     m_client->dispatchDidStartProvisionalLoad();
@@ -1397,7 +1398,7 @@ void FrameLoader::setupForReplace()
 
 void FrameLoader::loadFrameRequest(FrameLoadRequest&& request, Event* event, RefPtr<FormState>&& formState, std::optional<PrivateClickMeasurement>&& privateClickMeasurement)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadFrameRequest: frame load started");
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_LOADFRAMEREQUEST_FRAME_LOAD_STARTED);
 
     m_errorOccurredInLoading = false;
 
@@ -1525,7 +1526,7 @@ bool FrameLoader::isStopLoadingAllowed() const
 
 void FrameLoader::loadURL(FrameLoadRequest&& frameLoadRequest, const String& referrer, FrameLoadType newLoadType, Event* event, RefPtr<FormState>&& formState, std::optional<PrivateClickMeasurement>&& privateClickMeasurement, CompletionHandler<void()>&& completionHandler)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadURL: frame load started");
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_LOAD_URL);
     ASSERT(frameLoadRequest.resourceRequest().httpMethod() == "GET"_s);
 
     m_errorOccurredInLoading = false;
@@ -1731,7 +1732,7 @@ void FrameLoader::load(FrameLoadRequest&& request)
 
 void FrameLoader::loadWithNavigationAction(const ResourceRequest& request, NavigationAction&& action, FrameLoadType type, RefPtr<FormState>&& formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, ShouldTreatAsContinuingLoad shouldTreatAsContinuingLoad, CompletionHandler<void()>&& completionHandler)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithNavigationAction: frame load started");
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_LOADWITHNAVIGATIONACTION);
 
     m_errorOccurredInLoading = false;
 
@@ -1802,7 +1803,7 @@ void FrameLoader::load(DocumentLoader& newDocumentLoader, const SecurityOrigin* 
 
 void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType type, RefPtr<FormState>&& formState, AllowNavigationToInvalidURL allowNavigationToInvalidURL, CompletionHandler<void()>&& completionHandler)
 {
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithDocumentLoader: frame load started");
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_LOADWITHDOCUMENTLOADER_FRAME_LOAD_STARTED);
 
     m_errorOccurredInLoading = false;
 
@@ -1833,7 +1834,7 @@ void FrameLoader::loadWithDocumentLoader(DocumentLoader* loader, FrameLoadType t
     // Log main frame navigation types.
     if (frame->isMainFrame()) {
         if (RefPtr page = frame->page()) {
-            FRAMELOADER_RELEASE_LOG(ResourceLoading, "loadWithDocumentLoader: main frame load started");
+            FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_LOADWITHDOCUMENTLOADER_MAIN_FRAME_LOAD_STARTED);
             page->mainFrameLoadStarted(newURL, type);
             page->performanceLogging().didReachPointOfInterest(PerformanceLogging::MainFrameLoadStarted);
         }
@@ -2075,7 +2076,7 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItem clearProvisionalItem, Stop
             localChild->protectedLoader()->stopAllLoaders(clearProvisionalItem);
     }
 
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "stopAllLoaders: m_provisionalDocumentLoader=%p, m_documentLoader=%p", m_provisionalDocumentLoader.get(), m_documentLoader.get());
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_STOPALLLOADERS, (uintptr_t)m_provisionalDocumentLoader.get(), (uintptr_t)m_documentLoader.get());
 
     if (RefPtr provisionalDocumentLoader = m_provisionalDocumentLoader)
         provisionalDocumentLoader->stopLoading();
@@ -2084,7 +2085,7 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItem clearProvisionalItem, Stop
     if (frame->page() && !frame->page()->chrome().client().isSVGImageChromeClient())
         platformStrategies()->loaderStrategy()->browsingContextRemoved(frame);
 
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "stopAllLoaders: Clearing provisional document loader (m_provisionalDocumentLoader=%p)", m_provisionalDocumentLoader.get());
+    //FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_STOPALLLOADERS_CLEARING_PROVISIONAL_DOCUMENT_LOADER, (uintptr_t)m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(nullptr);
 
     m_inStopAllLoaders = false;    
@@ -2181,7 +2182,7 @@ void FrameLoader::setDocumentLoader(RefPtr<DocumentLoader>&& loader)
     if (loader == m_documentLoader)
         return;
 
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "setDocumentLoader: Setting document loader to %p (was %p)", loader.get(), m_documentLoader.get());
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_SETDOCUMENTLOADER, (uintptr_t)loader.get(), (uintptr_t)m_documentLoader.get());
     
     RELEASE_ASSERT(!loader || loader->frameLoader() == this);
 
@@ -2209,7 +2210,7 @@ void FrameLoader::setPolicyDocumentLoader(RefPtr<DocumentLoader>&& loader, LoadW
     if (m_policyDocumentLoader == loader)
         return;
 
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "setPolicyDocumentLoader: Setting policy document loader to %p (was %p)", loader.get(), m_policyDocumentLoader.get());
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_SETPOLICYDOCUMENTLOADER, (uintptr_t)loader.get(), (uintptr_t)m_policyDocumentLoader.get());
 
     if (loader)
         loader->attachToFrame(protectedFrame());
@@ -2228,7 +2229,7 @@ void FrameLoader::setProvisionalDocumentLoader(RefPtr<DocumentLoader>&& loader)
     if (m_provisionalDocumentLoader == loader)
         return;
 
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "setProvisionalDocumentLoader: Setting provisional document loader to %p (was %p)", loader.get(), m_provisionalDocumentLoader.get());
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_SETPROVISIONALDOCUMENTLOADER, (uintptr_t)loader.get(), (uintptr_t)m_provisionalDocumentLoader.get());
 
     ASSERT(!loader || !m_provisionalDocumentLoader);
     RELEASE_ASSERT(!loader || loader->frameLoader() == this);
@@ -2251,7 +2252,7 @@ void FrameLoader::setState(FrameState newState)
         if (RefPtr documentLoader = m_documentLoader)
             documentLoader->stopRecordingResponses();
         if (m_frame->isMainFrame() && oldState != newState) {
-            FRAMELOADER_RELEASE_LOG(ResourceLoading, "setState: main frame load completed");
+            FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_SETSTATE_MAIN_FRAME_LOAD_COMPLETED);
             protectedFrame()->protectedPage()->performanceLogging().didReachPointOfInterest(PerformanceLogging::MainFrameLoadCompleted);
         }
     }
@@ -2482,7 +2483,7 @@ void FrameLoader::transitionToCommitted(CachedPage* cachedPage)
     setDocumentLoader(m_provisionalDocumentLoader.copyRef());
     if (originalProvisionalDocumentLoader != m_provisionalDocumentLoader)
         return;
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "transitionToCommitted: Clearing provisional document loader (m_provisionalDocumentLoader=%p)", m_provisionalDocumentLoader.get());
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_TRANSITIONTOCOMMITTED, (uintptr_t)m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(nullptr);
 
     // Nothing else can interrupt this commit - set the Provisional->Committed transition in stone
@@ -2915,7 +2916,7 @@ void FrameLoader::checkLoadCompleteForThisFrame(LoadWillContinueInAnotherProcess
             loadingEvent = AXObjectCache::AXLoadingFailed;
             m_errorOccurredInLoading = true;
         } else {
-            FRAMELOADER_RELEASE_LOG(ResourceLoading, "checkLoadCompleteForThisFrame: Finished frame load");
+            FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_CHECKLOADCOMPLETEFORTHISFRAME);
 #if ENABLE(DATA_DETECTION)
             RefPtr document = m_frame->document();
             auto types = OptionSet<DataDetectorType>::fromRaw(enumToUnderlyingType(m_frame->settings().dataDetectorTypes()));
@@ -3954,13 +3955,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     bool canContinue = navigationPolicyDecision == NavigationPolicyDecision::ContinueLoad && shouldClose() && !urlIsDisallowed;
 
     if (!canContinue) {
-        FRAMELOADER_RELEASE_LOG(ResourceLoading, "continueLoadAfterNavigationPolicy: can't continue loading frame due to the following reasons ("
-            "allowNavigationToInvalidURL = %d, "
-            "requestURLIsValid = %d, "
-            "navigationPolicyDecision = %d)",
-            static_cast<int>(allowNavigationToInvalidURL),
-            request.url().isValid(),
-            static_cast<int>(navigationPolicyDecision));
+        FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_CONTINUELOADAFTERNAVIGATIONPOLICY_CANNOT_CONTINUE, static_cast<int>(allowNavigationToInvalidURL), request.url().isValid(), static_cast<int>(navigationPolicyDecision));
 
         // If we were waiting for a quick redirect, but the policy delegate decided to ignore it, then we 
         // need to report that the client redirect was cancelled.
@@ -4017,7 +4012,7 @@ void FrameLoader::continueLoadAfterNavigationPolicy(const ResourceRequest& reque
     }
 
     setProvisionalDocumentLoader(m_policyDocumentLoader.copyRef());
-    FRAMELOADER_RELEASE_LOG(ResourceLoading, "continueLoadAfterNavigationPolicy: Setting provisional document loader (m_provisionalDocumentLoader=%p)", m_provisionalDocumentLoader.get());
+    FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_CONTINUELOADAFTERNAVIGATIONPOLICY, (uintptr_t)m_provisionalDocumentLoader.get());
     m_loadType = type;
     setState(FrameState::Provisional);
 
