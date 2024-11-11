@@ -1,0 +1,3826 @@
+<style>
+  :root { background: #102030e0; color: #99ddbbcc; font-size: 15px; }
+</style>
+<script id="shared">
+const log = console.log;
+
+async function gc() {
+  await 0;
+  if (globalThis.GCController) {
+    globalThis.GCController.collect();
+  } else if (globalThis.$vm) {
+    globalThis.$vm.gc();
+  } else {
+    log('no GC available');
+  }
+}
+
+/**
+ * @param {GPUDevice} device
+ * @param {GPUComputePassEncoder} computePassEncoder
+ */
+function clearResourceUsages(device, computePassEncoder) {
+  let code = `@compute @workgroup_size(1) fn c() {}`;
+  let module = device.createShaderModule({code});
+  computePassEncoder.setPipeline(device.createComputePipeline(
+    {
+      layout: 'auto',
+      compute: {module},
+    }));
+  computePassEncoder.dispatchWorkgroups(1);
+}
+
+/**
+ * @template {any} T
+ * @param {GPUDevice} device
+ * @param {string} label
+ * @param {()=>T} payload
+ * @returns {Promise<T>}
+ */
+async function validationWrapper(device, label, payload)  {
+  device.pushErrorScope('internal');
+  device.pushErrorScope('out-of-memory');
+  device.pushErrorScope('validation');
+  let result = payload();
+  let validationError = await device.popErrorScope();
+  let outOfMemoryError = await device.popErrorScope();
+  let internalError = await device.popErrorScope();
+  let error = validationError ?? outOfMemoryError ?? internalError;
+  if (error) {
+    log('*'.repeat(25));
+    log(error[Symbol.toStringTag]);
+    log(error.message);
+    log(label);
+    if (error.stack != `_`) {
+      log(error.stack);
+    }
+    log(location);
+    log('*'.repeat(25));
+    throw error;
+  }
+  return result;
+}
+
+const videoUrls = [
+
+];
+
+/**
+ * @param {number} index
+ * @returns {Promise<HTMLVideoElement>}
+ */
+function videoWithData(index) {
+  let video = document.createElement('video');
+  video.src = videoUrls[index % videoUrls.length];
+  return new Promise(resolve => {
+    video.onloadeddata = () => {
+      resolve(video);
+    };
+  });
+}
+
+/**
+* @returns {Promise<string>}
+*/
+async function makeDataUrl(width, height, color0, color1) {
+  let offscreenCanvas = new OffscreenCanvas(width, height);
+  let ctx = offscreenCanvas.getContext('2d');
+  let gradient = ctx.createLinearGradient(0, 0, width, height);
+  gradient.addColorStop(0, color0);
+  gradient.addColorStop(0.1, color1);
+  gradient.addColorStop(0.3, color0);
+  gradient.addColorStop(0.7, color1);
+  gradient.addColorStop(0.9, color0);
+  gradient.addColorStop(1, color1);
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, width, height);
+  let blob = await offscreenCanvas.convertToBlob();
+  let fileReader = new FileReader();
+  fileReader.readAsDataURL(blob);
+  return new Promise(resolve => {
+    fileReader.onload = () => {
+      resolve(fileReader.result);
+    };
+  });
+}
+
+async function imageWithData(width, height, color0, color1) {
+  let dataUrl = await makeDataUrl(width, height, color0, color1);
+  let img = document.createElement('img');
+  img.src = dataUrl;
+  await img.decode();
+  return img;
+}
+
+/**
+ * @param {string} payload
+ * @returns {string}
+ */
+function toBlobUrl(payload) {
+  let blob = new Blob([payload], {type: 'text/javascript'});
+  return URL.createObjectURL(blob);
+}
+</script>
+<script>
+globalThis.testRunner?.waitUntilDone();
+
+async function window0() {
+let adapter0 = await navigator.gpu.requestAdapter({powerPreference: 'high-performance'});
+let adapter1 = await navigator.gpu.requestAdapter();
+let device0 = await adapter0.requestDevice({
+  defaultQueue: {},
+  requiredFeatures: [
+    'depth-clip-control',
+    'depth32float-stencil8',
+    'texture-compression-etc2',
+    'texture-compression-astc',
+    'indirect-first-instance',
+    'shader-f16',
+    'rg11b10ufloat-renderable',
+    'bgra8unorm-storage',
+  ],
+  requiredLimits: {
+    maxBindingsPerBindGroup: 1000,
+    maxUniformBufferBindingSize: 19613585,
+    maxStorageBufferBindingSize: 150679438,
+  },
+});
+let commandEncoder0 = device0.createCommandEncoder();
+let imageData0 = new ImageData(16, 40);
+let computePassEncoder0 = commandEncoder0.beginComputePass();
+let imageData1 = new ImageData(128, 20);
+try {
+commandEncoder0.label = '\u0652\u{1ff72}\u{1fe73}\u1b06';
+} catch {}
+let bindGroupLayout0 = device0.createBindGroupLayout({
+  entries: [
+    {
+      binding: 943,
+      visibility: GPUShaderStage.COMPUTE,
+      buffer: { type: 'read-only-storage', hasDynamicOffset: false },
+    },
+    {binding: 163, visibility: GPUShaderStage.COMPUTE, sampler: { type: 'filtering' }},
+    {binding: 14, visibility: GPUShaderStage.COMPUTE, sampler: { type: 'non-filtering' }},
+    {
+      binding: 19,
+      visibility: GPUShaderStage.VERTEX,
+      storageTexture: { format: 'rgba8uint', access: 'read-only', viewDimension: '3d' },
+    },
+    {binding: 365, visibility: GPUShaderStage.FRAGMENT, sampler: { type: 'non-filtering' }},
+    {
+      binding: 24,
+      visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT,
+      sampler: { type: 'non-filtering' },
+    },
+    {
+      binding: 7,
+      visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+      texture: { viewDimension: '3d', sampleType: 'sint', multisampled: false },
+    },
+    {
+      binding: 32,
+      visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+      externalTexture: {},
+    },
+    {
+      binding: 647,
+      visibility: GPUShaderStage.COMPUTE,
+      storageTexture: { format: 'r32uint', access: 'read-write', viewDimension: '2d' },
+    },
+    {
+      binding: 92,
+      visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT,
+      storageTexture: { format: 'r32sint', access: 'write-only', viewDimension: '1d' },
+    },
+    {
+      binding: 0,
+      visibility: GPUShaderStage.COMPUTE,
+      texture: { viewDimension: '2d', sampleType: 'uint', multisampled: false },
+    },
+    {
+      binding: 35,
+      visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+      buffer: { type: 'uniform', hasDynamicOffset: false },
+    },
+    {binding: 51, visibility: GPUShaderStage.VERTEX, sampler: { type: 'comparison' }},
+    {binding: 67, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'uniform', hasDynamicOffset: false }},
+    {
+      binding: 558,
+      visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+      texture: { viewDimension: '2d', sampleType: 'sint', multisampled: false },
+    },
+    {binding: 149, visibility: GPUShaderStage.VERTEX, buffer: { type: 'uniform', hasDynamicOffset: false }},
+  ],
+});
+let pipelineLayout0 = device0.createPipelineLayout({bindGroupLayouts: []});
+let buffer0 = device0.createBuffer({
+  size: 398,
+  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.INDEX | GPUBufferUsage.STORAGE | GPUBufferUsage.VERTEX,
+});
+let sampler0 = device0.createSampler({
+  addressModeU: 'repeat',
+  addressModeV: 'clamp-to-edge',
+  addressModeW: 'mirror-repeat',
+  mipmapFilter: 'nearest',
+  lodMinClamp: 13.15,
+  lodMaxClamp: 14.10,
+  compare: 'not-equal',
+});
+let sampler1 = device0.createSampler({
+  label: '\u08cf\ue377\u0550\u0107\u8ccf\u0a4c\u7b0e\u{1fe4d}\u0dc4\u5161',
+  addressModeU: 'clamp-to-edge',
+  addressModeV: 'mirror-repeat',
+  addressModeW: 'repeat',
+  magFilter: 'nearest',
+  lodMinClamp: 83.95,
+  lodMaxClamp: 84.51,
+});
+let img0 = await imageWithData(22, 47, '#10101010', '#20202020');
+let texture0 = device0.createTexture({
+  size: {width: 504, height: 1, depthOrArrayLayers: 32},
+  mipLevelCount: 2,
+  format: 'rgba16uint',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let texture1 = device0.createTexture({
+  size: [126, 1, 108],
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST,
+  viewFormats: ['rg16float', 'rg16float'],
+});
+let pipelineLayout1 = device0.createPipelineLayout({bindGroupLayouts: []});
+let commandEncoder1 = device0.createCommandEncoder({});
+let querySet0 = device0.createQuerySet({type: 'occlusion', count: 347});
+let textureView0 = texture0.createView({dimension: '2d', mipLevelCount: 1, baseArrayLayer: 2});
+let texture2 = device0.createTexture({
+  size: [1008, 1, 1],
+  mipLevelCount: 2,
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+});
+let sampler2 = device0.createSampler({
+  addressModeV: 'mirror-repeat',
+  addressModeW: 'clamp-to-edge',
+  magFilter: 'nearest',
+  minFilter: 'nearest',
+  mipmapFilter: 'nearest',
+});
+document.body.prepend(img0);
+let imageBitmap0 = await createImageBitmap(imageData0);
+let pipelineLayout2 = device0.createPipelineLayout({bindGroupLayouts: [bindGroupLayout0]});
+let texture3 = device0.createTexture({
+  size: [16],
+  dimension: '1d',
+  format: 'r32sint',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING,
+  viewFormats: [],
+});
+let computePassEncoder1 = commandEncoder1.beginComputePass();
+let sampler3 = device0.createSampler({
+  addressModeU: 'clamp-to-edge',
+  addressModeV: 'mirror-repeat',
+  addressModeW: 'repeat',
+  magFilter: 'linear',
+  minFilter: 'linear',
+  mipmapFilter: 'linear',
+  lodMinClamp: 37.35,
+  lodMaxClamp: 71.31,
+  maxAnisotropy: 6,
+});
+let bindGroupLayout1 = device0.createBindGroupLayout({
+  label: '\u{1fcfe}\u7ed3\ud4e8\u{1fa86}\u{1f918}\u9c9c\ue474',
+  entries: [{binding: 117, visibility: GPUShaderStage.VERTEX, externalTexture: {}}],
+});
+let textureView1 = texture0.createView({dimension: '2d', mipLevelCount: 1, baseArrayLayer: 7});
+let sampler4 = device0.createSampler({
+  addressModeU: 'mirror-repeat',
+  addressModeV: 'mirror-repeat',
+  addressModeW: 'repeat',
+  mipmapFilter: 'nearest',
+  lodMinClamp: 84.12,
+  lodMaxClamp: 84.84,
+  compare: 'greater',
+});
+let buffer1 = device0.createBuffer({size: 4531, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.INDIRECT | GPUBufferUsage.VERTEX});
+let texture4 = device0.createTexture({
+  size: {width: 16, height: 16, depthOrArrayLayers: 226},
+  dimension: '3d',
+  format: 'rgba8uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING,
+  viewFormats: [],
+});
+try {
+device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+} catch {}
+try {
+device0.lost.then(r => { console.log('device0 lost!'); console.log(r.message, r.reason); });
+} catch {}
+let bindGroupLayout2 = device0.createBindGroupLayout({
+  entries: [
+    {
+      binding: 7,
+      visibility: GPUShaderStage.COMPUTE,
+      texture: { viewDimension: '2d', sampleType: 'unfilterable-float', multisampled: false },
+    },
+    {
+      binding: 75,
+      visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT,
+      buffer: { type: 'uniform', hasDynamicOffset: false },
+    },
+  ],
+});
+let texture5 = device0.createTexture({
+  size: [16, 16, 723],
+  dimension: '3d',
+  format: 'rgba8uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+try {
+device0.lost.then(({reason, message}) => { console.log('device0 lost!'); console.log(message, reason); });
+} catch {}
+document.body.append(img0);
+let texture6 = device0.createTexture({
+  size: [1008, 1, 1],
+  mipLevelCount: 1,
+  format: 'r8sint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let textureView2 = texture5.createView({dimension: '3d', aspect: 'all'});
+try {
+device0.queue.writeBuffer(buffer0, 16, new DataView(new ArrayBuffer(42862)), 2857, 8);
+} catch {}
+let shaderModule0 = device0.createShaderModule({
+  code: `
+requires readonly_and_readwrite_storage_textures;
+
+diagnostic(info, xyz);
+
+enable f16;
+
+@group(0) @binding(67) var<uniform> buffer3: i32;
+
+@group(0) @binding(943) var<storage, read> buffer5: array<array<i32, 97>>;
+
+@group(0) @binding(35) var<uniform> buffer2: vec2f;
+
+struct T5 {
+  @align(8) @size(8) f0: vec2h,
+}
+
+struct T0 {
+  @align(8) @size(8) f0: vec2h,
+  @size(80) f1: vec2i,
+}
+
+fn unconst_f16(v: f16) -> f16 { return v; }
+
+struct T1 {
+  @align(16) @size(960) f0: array<vec2u>,
+}
+
+@group(0) @binding(163) var sam2: sampler;
+
+@group(0) @binding(365) var sam3: sampler;
+
+@group(0) @binding(19) var st0: texture_storage_3d<rgba8uint, read>;
+
+@group(0) @binding(51) var sam1: sampler_comparison;
+
+fn fn0() -> mat2x2h {
+  var out: mat2x2h;
+  out = mat2x2h(vec2h(textureDimensions(tex1, bitcast<i32>(buffer2.x)).zz), vec2h(textureDimensions(tex1, bitcast<i32>(buffer2.x)).yy));
+  var vf0: vec3h = trunc(vec3h(unconst_f16(2358.2), unconst_f16(13960.7), unconst_f16(-8582.2)));
+  let vf1: f32 = min(f32(unconst_f32(0.1024)), f32(unconst_f32(0.1034)));
+  vf0 = vec3h(buffer2.rrg);
+  var vf2: vec4f = textureLoad(et0, vec2u(unconst_u32(291), unconst_u32(102)));
+  var vf3: vec4f = textureLoad(et0, vec2u(unconst_u32(249), unconst_u32(161)));
+  var vf4: f32 = (*&buffer2)[u32(unconst_u32(324))];
+  out = mat2x2h(vec2h(textureDimensions(tex1).gg), vec2h(textureDimensions(tex1).bb));
+  let vf5: vec4f = textureLoad(et0, vec2u(unconst_u32(400), unconst_u32(114)));
+  vf4 += bitcast<vec3f>(textureDimensions(tex1, i32(unconst_i32(111)))).y;
+  var vf6: f32 = buffer2[u32(unconst_u32(65))];
+  vf0 += vec3h(f16(firstLeadingBit(i32(unconst_i32(29)))));
+  return out;
+}
+
+@group(0) @binding(92) var st1: texture_storage_1d<r32sint, write>;
+
+fn unconst_u32(v: u32) -> u32 { return v; }
+
+struct T3 {
+  @align(16) @size(688) f0: array<T2>,
+}
+
+@group(0) @binding(0) var tex0: texture_2d<u32>;
+
+@group(0) @binding(24) var sam0: sampler;
+
+@group(0) @binding(7) var tex1: texture_3d<i32>;
+
+struct T2 {
+  @align(8) @size(24) f0: mat3x2h,
+  f1: vec2i,
+  @align(8) f2: mat2x2h,
+  @size(16) f3: vec2h,
+}
+
+alias vec3b = vec3<bool>;
+
+@group(0) @binding(647) var st2: texture_storage_2d<r32uint, read_write>;
+
+fn unconst_i32(v: i32) -> i32 { return v; }
+
+@group(0) @binding(558) var tex2: texture_2d<i32>;
+
+@group(0) @binding(32) var et0: texture_external;
+
+struct T4 {
+  @size(208) f0: array<mat2x4f, 1>,
+  @size(128) f1: array<mat3x3f, 1>,
+  @size(64) f2: array<array<mat4x3h, 1>, 1>,
+  f3: vec2u,
+  @size(80) f4: mat4x3f,
+  @size(16) f5: vec2i,
+  @size(232) f6: array<array<array<mat2x4h, 8>, 1>, 1>,
+  @align(8) @size(16) f7: mat2x2h,
+  @size(232) f8: array<mat2x2f, 7>,
+  @size(88) f9: array<mat2x4h, 1>,
+}
+
+@group(0) @binding(149) var<uniform> buffer4: array<mat2x2f, 1>;
+
+fn unconst_bool(v: bool) -> bool { return v; }
+
+fn unconst_f32(v: f32) -> f32 { return v; }
+
+@compute @workgroup_size(1, 1, 1)
+fn compute0(@builtin(num_workgroups) a0: vec3u, @builtin(local_invocation_id) a1: vec3u) {
+  var vf7 = fn0();
+  vf7 = mat2x2h(f16(buffer5[arrayLength(&buffer5) - 1][96]), f16(buffer5[arrayLength(&buffer5) - 1][96]), f16(buffer5[arrayLength(&buffer5) - 1][96]), f16(buffer5[arrayLength(&buffer5) - 1][96]));
+  var vf8 = fn0();
+  let vf9: vec3f = faceForward(vec3f(unconst_f32(0.3001), unconst_f32(0.2838), unconst_f32(0.1965)), vec3f(unconst_f32(0.2345), unconst_f32(0.08397), unconst_f32(0.03533)), vec3f(unconst_f32(0.01167), unconst_f32(0.07265), unconst_f32(0.1252)));
+  fn0();
+  textureStore(st1, i32(unconst_i32(125)), vec4i(vec4i(mix(vec2f(unconst_f32(0.05071), unconst_f32(0.1068)), vec2f(unconst_f32(0.3177), unconst_f32(0.09042)), f32(unconst_f32(0.1025))).yyxx)));
+  textureStore(st2, vec2i(unconst_i32(159), unconst_i32(46)), vec4u(vec4u(unconst_u32(15), unconst_u32(37), unconst_u32(188), unconst_u32(128))));
+  var vf10: vec3f = faceForward(vec3f(unconst_f32(0.02330), unconst_f32(0.1398), unconst_f32(0.02002)), vec3f(unconst_f32(-0.08229), unconst_f32(0.07821), unconst_f32(0.1980)), vec3f(unconst_f32(0.1713), unconst_f32(0.03738), unconst_f32(-0.1260)));
+  fn0();
+  var vf11 = fn0();
+  let ptr0: ptr<uniform, vec2f> = &(*&buffer2);
+  var vf12 = fn0();
+  vf12 -= mat2x2h(f16((*&buffer5)[arrayLength(&(*&buffer5))][96]), f16((*&buffer5)[arrayLength(&(*&buffer5))][96]), f16((*&buffer5)[arrayLength(&(*&buffer5))][96]), f16((*&buffer5)[arrayLength(&(*&buffer5))][96]));
+  var vf13: vec4u = textureGather(178 % 4, tex0, sam2, vec2f(unconst_f32(0.06021), unconst_f32(0.00389)));
+  fn0();
+  fn0();
+  vf13 = unpack4xU8(u32((*&buffer2)[u32(unconst_u32(19))]));
+}`,
+  sourceMap: {},
+  hints: {},
+});
+let buffer6 = device0.createBuffer({size: 6230, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC | GPUBufferUsage.STORAGE});
+let querySet1 = device0.createQuerySet({type: 'occlusion', count: 277});
+let textureView3 = texture6.createView({baseMipLevel: 0});
+try {
+device0.label = '\uc739\u{1fd9c}\uc852';
+} catch {}
+let buffer7 = device0.createBuffer({size: 5151, usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE});
+let commandEncoder2 = device0.createCommandEncoder({});
+let textureView4 = texture2.createView({mipLevelCount: 1});
+let computePassEncoder2 = commandEncoder2.beginComputePass();
+let renderBundleEncoder0 = device0.createRenderBundleEncoder({colorFormats: ['rg32uint', 'rg16float'], stencilReadOnly: true});
+document.body.prepend(img0);
+let texture7 = device0.createTexture({
+  label: '\u0b57\u4b83\u6e50\u128e\uea47\u006a\u8554\ua25a',
+  size: [126, 1, 302],
+  dimension: '3d',
+  format: 'rg16sint',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let texture8 = device0.createTexture({
+  label: '\u{1f92a}\u05fc\u56ce\u02ee\u8e07\u844d\u8c5c\u{1ff82}',
+  size: {width: 126},
+  dimension: '1d',
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING,
+  viewFormats: [],
+});
+try {
+renderBundleEncoder0.insertDebugMarker('\udc08');
+} catch {}
+try {
+device0.queue.writeBuffer(buffer1, 160, new BigUint64Array(11249), 2088, 316);
+} catch {}
+try {
+device0.queue.writeTexture({
+  texture: texture2,
+  mipLevel: 1,
+  origin: {x: 108, y: 0, z: 0},
+  aspect: 'all',
+}, new Uint8Array(104).fill(29), /* required buffer size: 104 */
+{offset: 104, rowsPerImage: 10}, {width: 107, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let buffer8 = device0.createBuffer({
+  size: 5539,
+  usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDEX | GPUBufferUsage.INDIRECT | GPUBufferUsage.STORAGE | GPUBufferUsage.UNIFORM,
+});
+let texture9 = device0.createTexture({
+  size: {width: 504, height: 1, depthOrArrayLayers: 5},
+  format: 'r32uint',
+  usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING,
+  viewFormats: [],
+});
+let texture10 = device0.createTexture({
+  size: [1008, 1, 1],
+  mipLevelCount: 3,
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+});
+let renderBundleEncoder1 = device0.createRenderBundleEncoder({
+  label: '\u{1f74b}\u0c1e',
+  colorFormats: ['rg32uint', 'rg16float'],
+  depthReadOnly: true,
+  stencilReadOnly: false,
+});
+let renderBundle0 = renderBundleEncoder0.finish({});
+let sampler5 = device0.createSampler({
+  addressModeU: 'mirror-repeat',
+  addressModeW: 'repeat',
+  minFilter: 'nearest',
+  mipmapFilter: 'nearest',
+  lodMinClamp: 25.49,
+  lodMaxClamp: 62.31,
+});
+try {
+device0.queue.writeTexture({
+  texture: texture4,
+  mipLevel: 0,
+  origin: {x: 0, y: 7, z: 60},
+  aspect: 'all',
+}, new Uint8Array(7_888).fill(44), /* required buffer size: 7_888 */
+{offset: 41, bytesPerRow: 59, rowsPerImage: 7}, {width: 4, height: 0, depthOrArrayLayers: 20});
+} catch {}
+await gc();
+let shaderModule1 = device0.createShaderModule({
+  code: `
+enable f16;
+
+diagnostic(info, xyz);
+
+requires packed_4x8_integer_dot_product;
+
+@group(0) @binding(943) var<storage, read> buffer12: array<array<array<f16, 97>, 1>, 2>;
+
+override override4: u32;
+
+var<workgroup> vw2: atomic<u32>;
+
+@group(0) @binding(19) var st3: texture_storage_3d<rgba8uint, read>;
+
+@group(0) @binding(558) var tex5: texture_2d<i32>;
+
+struct T2 {
+  @size(32) f0: vec2i,
+  @align(8) @size(8) f1: vec2h,
+  @size(112) f2: mat2x2f,
+  @size(48) f3: mat4x2f,
+  @size(848) f4: mat3x2f,
+}
+
+@group(0) @binding(92) var st4: texture_storage_1d<r32sint, write>;
+
+override override3 = true;
+
+struct T1 {
+  f0: vec4h,
+}
+
+@group(0) @binding(7) var tex4: texture_3d<i32>;
+
+struct T0 {
+  @size(64) f0: array<array<array<array<vec4f, 1>, 1>, 3>, 1>,
+}
+
+@id(52864) override override7: u32;
+
+struct T3 {
+  @size(56) f0: array<T1>,
+}
+
+struct FragmentOutput0 {
+  @location(0) @interpolate(flat) f0: vec2u,
+  @location(7) @interpolate(flat) f1: vec2u,
+  @location(1) @interpolate(perspective, center) f2: vec4f,
+}
+
+@id(32458) override override10: i32 = 2;
+
+override override2: f16 = 41504.0;
+
+@id(41992) override override6: u32;
+
+@group(0) @binding(67) var<uniform> buffer10: array<array<vec4f, 13>, 1>;
+
+@group(0) @binding(14) var sam4: sampler;
+
+fn unconst_i32(v: i32) -> i32 { return v; }
+
+@group(0) @binding(0) var tex3: texture_2d<u32>;
+
+@group(0) @binding(149) var<uniform> buffer11: mat2x3h;
+@group(0) @binding(32) var<uniform> hello: u32;
+
+var<workgroup> vw0: f16;
+
+@id(36899) override override0: f32;
+
+@group(0) @binding(647) var st5: texture_storage_2d<r32uint, read_write>;
+
+fn unconst_f32(v: f32) -> f32 { return v; }
+
+@group(0) @binding(24) var sam5: sampler;
+
+fn unconst_bool(v: bool) -> bool { return v; }
+
+@id(42462) override override1: u32;
+
+@group(0) @binding(51) var sam6: sampler_comparison;
+
+@id(37388) override override9: bool;
+
+var<workgroup> vw3: atomic<i32>;
+
+override override8: f16;
+
+override override5 = 0.00065;
+
+struct VertexOutput0 {
+  @location(12) @interpolate(flat, sample) f0: i32,
+  @builtin(position) f1: vec4f,
+  @location(2) f2: vec4f,
+}
+
+@group(0) @binding(35) var<uniform> buffer9: vec2i;
+
+@group(0) @binding(163) var sam7: sampler;
+
+var<workgroup> vw4: T1;
+
+var<workgroup> vw1: array<mat2x2f, 5>;
+
+fn unconst_f16(v: f16) -> f16 { return v; }
+
+var<workgroup> vw5: vec2h;
+
+fn unconst_u32(v: u32) -> u32 { return v; }
+
+@vertex @must_use
+fn vertex0(@location(2) a0: i32) -> VertexOutput0 {
+  var out: VertexOutput0;
+  out.f0 = vec2i(floor(vec2f(unconst_f32(0.08023), unconst_f32(0.1292)))).g;
+  out.f2 -= vec4f(textureDimensions(tex4).brrr);
+  out = VertexOutput0(i32(cos(f16(unconst_f16(-14891.4)))), vec4f(f32(cos(f16(unconst_f16(-14891.4))))), vec4f(f32(cos(f16(unconst_f16(-14891.4))))));
+  out.f2 += vec4f(f32(fma(f16(unconst_f16(1450.2)), f16(pack2x16unorm(vec2f(unconst_f32(0.00894), unconst_f32(0.2759)))), f16(unconst_f16(48669.7)))));
+  out.f2 = vec4f(bitcast<f32>(dot(vec2i(unconst_i32(54), unconst_i32(91)), vec2i(unconst_i32(162), unconst_i32(-153)))));
+  let vf14: f16 = cos(f16(unconst_f16(9220.7)));
+  var vf15: f32 = override0;
+  out.f1 = vec4f(f32(pack4xI8(vec4i(unconst_i32(726), unconst_i32(17), unconst_i32(4), unconst_i32(126)))));
+  vf15 = bitcast<f32>(override1);
+  var vf16: vec3u = textureDimensions(tex4);
+  var vf17: vec4i = textureLoad(tex5, vec2i(unconst_i32(334), unconst_i32(292)), i32(unconst_i32(230)));
+  let ptr1: ptr<function, f32> = &vf15;
+  let vf18: i32 = a0;
+  out.f2 = vec4f(bitcast<f32>(vf17[bitcast<u32>(vf18)]));
+  var vf19: f16 = override2;
+  let vf20: f16 = distance(vec3h(unconst_f16(8346.4), unconst_f16(-20722.7), unconst_f16(5161.4)), vec3h(unconst_f16(-9662.7), unconst_f16(16701.2), unconst_f16(3093.9)));
+  out = VertexOutput0(vec3i((*&buffer11)[u32(unconst_u32(165))])[2], vec4f((*&buffer11)[u32(unconst_u32(165))].zxxy), vec4f((*&buffer11)[u32(unconst_u32(165))].xxyx));
+  return out;
+  _ = override1;
+  _ = override2;
+  _ = override0;
+}
+
+@fragment
+fn fragment0(@location(2) @interpolate(linear) a0: vec4f, @builtin(position) a1: vec4f, @location(12) a2: i32, @builtin(sample_index) a3: u32) -> FragmentOutput0 {
+  var out: FragmentOutput0;
+  let vf21: vec3f = faceForward(vec3f(a1[u32(unconst_u32(196))]), vec3f(unconst_f32(0.1376), unconst_f32(0.5632), unconst_f32(0.04608)), vec3f(unconst_f32(0.02119), unconst_f32(0.1740), unconst_f32(0.1710)));
+  var vf22: vec2f = radians(vec2f(unconst_f32(0.5502), unconst_f32(0.5563)));
+  var vf23: vec3h = fma(vec3h(unconst_f16(8759.0), unconst_f16(23799.2), unconst_f16(1353.7)), vec3h(unconst_f16(2650.9), unconst_f16(13567.1), unconst_f16(14026.5)), vec3h(unconst_f16(10175.0), unconst_f16(2887.3), unconst_f16(29606.1)));
+  vf22 -= unpack4x8snorm(u32(unconst_u32(12))).yx;
+  let vf24: vec3f = asin(vec3f(unconst_f32(0.03617), unconst_f32(0.3663), unconst_f32(0.1467)));
+  var vf25: vec2f = radians(vec2f(unconst_f32(0.1272), unconst_f32(-0.3523)));
+  out.f1 = vec2u(u32(override2));
+  out.f2 = vec4f(f32(override2));
+  textureStore(st4, i32(unconst_i32(176)), vec4i(vec4i(unconst_i32(143), unconst_i32(155), unconst_i32(16), unconst_i32(240))));
+  var vf26: f16 = vf23[u32(unconst_u32(80))];
+  var vf27: vec4i = textureLoad(tex5, vec2i(unconst_i32(8), unconst_i32(29)), i32(unconst_i32(91)));
+  var vf28: vec4f = fma(vec4f(unconst_f32(0.00524), unconst_f32(0.3386), unconst_f32(0.1774), unconst_f32(0.5096)), vec4f(bitcast<f32>(vf27[u32(unconst_u32(65))])), vec4f(unconst_f32(0.1287), unconst_f32(0.3390), unconst_f32(0.2000), unconst_f32(0.2170)));
+  var vf29: f32 = sign(f32(unconst_f32(0.1696)));
+  var vf30: u32 = a3;
+  vf29 = bitcast<vec3f>(textureDimensions(tex4, i32(unconst_i32(51))))[1];
+  var vf31: vec3f = cross(vec3f(unconst_f32(0.3931), unconst_f32(0.00666), unconst_f32(0.2850)), vec3f(unconst_f32(0.06505), unconst_f32(0.06231), unconst_f32(0.2510)));
+  vf23 = vec3h(f16(vf29));
+  let ptr2: ptr<uniform, vec2i> = &buffer9;
+  let vf32: vec3f = asin(vec3f(unconst_f32(0.1373), unconst_f32(0.05133), unconst_f32(0.3162)));
+  let ptr3: ptr<function, vec3f> = &vf31;
+  let vf33: vec3f = vf24;
+  vf31 *= vec3f(f32(buffer9[u32(unconst_u32(6))]));
+  return out;
+  _ = override2;
+}`,
+  hints: {},
+});
+let commandEncoder3 = device0.createCommandEncoder({});
+let textureView5 = texture9.createView({dimension: '2d'});
+let textureView6 = texture4.createView({});
+try {
+device0.pushErrorScope('validation');
+} catch {}
+try {
+buffer0.unmap();
+} catch {}
+try {
+commandEncoder3.copyBufferToBuffer(buffer7, 1676, buffer1, 280, 300);
+} catch {}
+try {
+commandEncoder3.copyTextureToTexture({
+  texture: texture2,
+  mipLevel: 0,
+  origin: {x: 2, y: 0, z: 0},
+  aspect: 'all',
+},
+{
+  texture: texture2,
+  mipLevel: 1,
+  origin: {x: 79, y: 0, z: 0},
+  aspect: 'all',
+},
+{width: 138, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let buffer13 = device0.createBuffer({size: 1047, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ});
+let commandEncoder4 = device0.createCommandEncoder({});
+let textureView7 = texture3.createView({baseArrayLayer: 0});
+let textureView8 = texture0.createView({mipLevelCount: 1, baseArrayLayer: 14, arrayLayerCount: 10});
+try {
+buffer13.unmap();
+} catch {}
+try {
+device0.queue.writeTexture({
+  texture: texture5,
+  mipLevel: 0,
+  origin: {x: 1, y: 0, z: 242},
+  aspect: 'all',
+}, new Uint8Array(328_628).fill(216), /* required buffer size: 328_628 */
+{offset: 120, bytesPerRow: 73, rowsPerImage: 25}, {width: 2, height: 1, depthOrArrayLayers: 181});
+} catch {}
+document.body.prepend(img0);
+let textureView9 = texture7.createView({label: '\u5aaf\u02da\u2810\u0f32\u{1fd41}\ud523\u0190', dimension: '3d'});
+let texture11 = device0.createTexture({
+  size: {width: 1008},
+  dimension: '1d',
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let texture12 = device0.createTexture({
+  label: '\u7d07\u3ee5\u0b90\u0b74\u4968\u5f91\ue82d\u091e',
+  size: [16, 16, 16],
+  format: 'rgba32sint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let computePassEncoder3 = commandEncoder4.beginComputePass({});
+try {
+device0.queue.writeBuffer(buffer13, 364, new Int16Array(6109), 871, 16);
+} catch {}
+let shaderModule2 = device0.createShaderModule({
+  code: `
+enable f16;
+
+requires pointer_composite_access;
+
+diagnostic(info, xyz);
+
+struct T0 {
+  @size(8) f0: vec2h,
+}
+
+@group(0) @binding(163) var sam11: sampler;
+
+fn fn0(a0: ptr<function, vec4f>, a1: T2) {
+  let vf34: mat2x2f = a1.f0[0];
+  var vf35: vec2u = textureDimensions(tex8, i32(unconst_i32(83)));
+  var vf36: vec3h = reflect(vec3h(unconst_f16(23752.8), unconst_f16(20522.1), unconst_f16(8688.6)), vec3h(unconst_f16(2920.5), unconst_f16(9549.8), unconst_f16(10405.5)));
+}
+
+struct T3 {
+  @size(400) f0: array<vec4i>,
+}
+
+@group(0) @binding(647) var st8: texture_storage_2d<r32uint, read_write>;
+
+@group(0) @binding(67) var<uniform> buffer15: S0;
+
+@group(0) @binding(943) var<storage, read> buffer17: array<array<array<array<array<f16, 1>, 1>, 97>, 1>, 2>;
+
+alias vec3b = vec3<bool>;
+
+@group(0) @binding(149) var<uniform> buffer16: S0;
+
+fn unconst_u32(v: u32) -> u32 { return v; }
+
+@group(0) @binding(558) var tex8: texture_2d<i32>;
+
+fn fn1() -> S0 {
+  var out: S0;
+  out.f0 *= bitcast<vec4f>(buffer14.yyxx);
+  let vf37: vec4f = textureLoad(et1, vec2u(unconst_u32(271), unconst_u32(7)));
+  var vf38: vec3u = textureDimensions(tex7);
+  return out;
+}
+
+@group(0) @binding(19) var st6: texture_storage_3d<rgba8uint, read>;
+
+struct S0 {
+  @location(2) f0: vec4f,
+}
+
+fn unconst_bool(v: bool) -> bool { return v; }
+
+struct VertexOutput1 {
+  @invariant @builtin(position) f3: vec4f,
+  @location(2) @interpolate(flat) f4: u32,
+  @location(1) @interpolate(linear, centroid) f5: vec4h,
+  @location(11) @interpolate(flat, center) f6: vec4i,
+  @location(8) @interpolate(linear, sample) f7: vec4h,
+  @location(4) f8: vec2h,
+  @location(15) f9: u32,
+  @location(12) @interpolate(flat, sample) f10: i32,
+  @location(13) @interpolate(flat, centroid) f11: u32,
+}
+
+fn unconst_f32(v: f32) -> f32 { return v; }
+
+@group(0) @binding(32) var et1: texture_external;
+
+@group(0) @binding(0) var tex6: texture_2d<u32>;
+
+@group(0) @binding(51) var sam10: sampler_comparison;
+
+@group(0) @binding(7) var tex7: texture_3d<i32>;
+
+struct FragmentOutput1 {
+  @location(0) f0: vec4u,
+  @location(1) @interpolate(flat) f1: vec4f,
+  @location(7) @interpolate(flat) f2: vec2i,
+}
+
+@group(0) @binding(35) var<uniform> buffer14: vec2u;
+
+@group(0) @binding(92) var st7: texture_storage_1d<r32sint, write>;
+
+var<workgroup> vw7: FragmentOutput1;
+
+var<workgroup> vw6: vec2f;
+
+fn unconst_i32(v: i32) -> i32 { return v; }
+
+@group(0) @binding(24) var sam9: sampler;
+
+struct T1 {
+  @align(8) @size(144) f0: u32,
+  @size(272) f1: vec2h,
+  @align(8) f2: array<mat4x2h, 1>,
+  @size(624) f3: array<mat4x3f, 6>,
+}
+
+struct T2 {
+  f0: array<mat2x2f, 1>,
+  f1: vec2f,
+  @size(32) f2: vec4u,
+}
+
+fn unconst_f16(v: f16) -> f16 { return v; }
+
+@group(0) @binding(365) var sam12: sampler;
+
+@group(0) @binding(14) var sam8: sampler;
+
+@vertex
+fn vertex1(@location(11) @interpolate(flat) a0: vec2u) -> VertexOutput1 {
+  var out: VertexOutput1;
+  out.f8 = vec2h(buffer14);
+  let vf39: vec3h = fract(vec3h(unconst_f16(45266.3), unconst_f16(8857.6), unconst_f16(20509.0)));
+  let vf40: vec2f = inverseSqrt(vec2f(unconst_f32(0.03254), unconst_f32(0.05923)));
+  out.f8 *= vec2h(textureLoad(st6, vec3i(unconst_i32(23), unconst_i32(78), unconst_i32(26))).ra);
+  out.f11 >>= pack2x16snorm(vec2f(unconst_f32(0.00279), unconst_f32(0.1527)));
+  out.f9 -= u32(dot4I8Packed(u32(unconst_u32(45)), u32(unconst_u32(17))));
+  let vf41: u32 = pack4xU8Clamp(vec4u(unconst_u32(59), unconst_u32(89), unconst_u32(77), unconst_u32(77)));
+  out.f8 = vec2h(f16(all(vec4<bool>(unconst_bool(true), unconst_bool(false), unconst_bool(true), unconst_bool(true)))));
+  var vf42 = fn1();
+  return out;
+}
+
+@fragment
+fn fragment1(@location(12) a0: i32, a1: S0, @builtin(sample_mask) a2: u32) -> FragmentOutput1 {
+  var out: FragmentOutput1;
+  let vf43: vec4f = textureLoad(et1, vec2u(unconst_u32(197), unconst_u32(341)));
+  out = FragmentOutput1((*&buffer14).gggg, vec4f((*&buffer14).xyxx), bitcast<vec2i>((*&buffer14)));
+  out = FragmentOutput1(vec4u(sinh(vec4h(unconst_f16(9673.3), unconst_f16(37743.3), unconst_f16(7707.1), unconst_f16(-13043.2)))), vec4f(sinh(vec4h(unconst_f16(9673.3), unconst_f16(37743.3), unconst_f16(7707.1), unconst_f16(-13043.2)))), bitcast<vec2i>(sinh(vec4h(unconst_f16(9673.3), unconst_f16(37743.3), unconst_f16(7707.1), unconst_f16(-13043.2)))));
+  textureStore(st7, bitcast<i32>(a1.f0[u32(unconst_u32(55))]), vec4i(vec4i(unconst_i32(64), unconst_i32(-252), unconst_i32(47), unconst_i32(65))));
+  out.f0 <<= textureDimensions(tex7, i32(unconst_i32(-170))).ggbb;
+  out.f1 *= bitcast<vec4f>(buffer14.xyyx);
+  out.f2 = bitcast<vec2i>(textureDimensions(tex8, i32(unconst_i32(11))));
+  let vf44: f32 = a1.f0[u32(unconst_u32(56))];
+  var vf45: vec4f = a1.f0;
+  vf45 *= vec4f(textureDimensions(tex7).xyyz);
+  out.f2 = vec2i(vf43.xx);
+  var vf46: vec2u = textureDimensions(et1);
+  out.f1 -= bitcast<vec4f>(buffer14.rrrr);
+  return out;
+}
+
+@compute @workgroup_size(3, 1, 1)
+fn compute1() {
+  textureStore(st8, vec2i(i32(buffer17[u32(unconst_u32(186))][u32(unconst_u32(95))][96][u32(unconst_u32(188))][0])), vec4u(vec4u(unconst_u32(581), unconst_u32(282), unconst_u32(45), unconst_u32(75))));
+  vw6 *= vec2f(workgroupUniformLoad(&vw7).f0.yw);
+  textureStore(st7, i32(unconst_i32(175)), vec4i(vec4i(unconst_i32(99), unconst_i32(224), unconst_i32(-271), unconst_i32(107))));
+  let ptr4: ptr<storage, f16, read> = &buffer17[1][u32(unconst_u32(623))][96][0][0];
+  fn1();
+  textureStore(st7, i32(unconst_i32(237)), vec4i(vec4i(i32((*&buffer17)[u32(unconst_u32(1000))][u32(unconst_u32(151))][u32(unconst_u32(242))][0][0]))));
+  let ptr5: ptr<storage, array<f16, 1>, read> = &(*&buffer17)[1][u32(unconst_u32(95))][96][0];
+  fn1();
+  textureStore(st8, vec2i(unconst_i32(331), unconst_i32(111)), vec4u(unpack4xU8(u32(buffer17[1][u32(unconst_u32(304))][u32(unconst_u32(193))][0][u32(unconst_u32(20))]))));
+  fn1();
+  vw6 *= (*&vw6);
+  let ptr6: ptr<storage, array<array<array<f16, 1>, 1>, 97>, read> = &(*&buffer17)[u32(unconst_u32(78))][0];
+  var vf47 = fn1();
+  vw6 += vec2f(f32((*&buffer17)[u32(unconst_u32(111))][u32(unconst_u32(16))][u32(unconst_u32(88))][u32(unconst_u32(186))][0]));
+}`,
+  sourceMap: {},
+});
+let computePassEncoder4 = commandEncoder3.beginComputePass({});
+try {
+device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+} catch {}
+await gc();
+let commandEncoder5 = device0.createCommandEncoder();
+let renderBundle1 = renderBundleEncoder1.finish({label: '\u{1fab2}\ue8c8\u2868\u7fd4'});
+let pipeline0 = device0.createRenderPipeline({
+  layout: pipelineLayout2,
+  fragment: {
+  module: shaderModule2,
+  constants: {},
+  targets: [{format: 'rg32uint', writeMask: GPUColorWrite.ALL | GPUColorWrite.ALPHA | GPUColorWrite.BLUE}, {format: 'rg16float', writeMask: GPUColorWrite.ALL | GPUColorWrite.BLUE}],
+},
+  vertex: {
+    module: shaderModule1,
+    constants: {36_899: 0, 42_462: 0},
+    buffers: [
+      {
+        arrayStride: 660,
+        stepMode: 'instance',
+        attributes: [{format: 'sint32x2', offset: 156, shaderLocation: 2}],
+      },
+    ],
+  },
+  primitive: {
+  topology: 'triangle-strip',
+  stripIndexFormat: 'uint32',
+  frontFace: 'cw',
+  cullMode: 'front',
+  unclippedDepth: true,
+},
+});
+document.body.append(img0);
+let commandEncoder6 = device0.createCommandEncoder();
+let computePassEncoder5 = commandEncoder5.beginComputePass({});
+let pipeline1 = await device0.createComputePipelineAsync({layout: pipelineLayout2, compute: {module: shaderModule0, constants: {}}});
+let commandEncoder7 = device0.createCommandEncoder({});
+let textureView10 = texture11.createView({});
+let computePassEncoder6 = commandEncoder6.beginComputePass({});
+let sampler6 = device0.createSampler({
+  addressModeV: 'clamp-to-edge',
+  addressModeW: 'repeat',
+  magFilter: 'nearest',
+  minFilter: 'nearest',
+  lodMinClamp: 81.35,
+  lodMaxClamp: 84.02,
+});
+let texture13 = device0.createTexture({
+  size: {width: 1008},
+  dimension: '1d',
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: ['rg16float'],
+});
+let computePassEncoder7 = commandEncoder7.beginComputePass({label: '\u0a48\u6156\u8609\u098b\u5a23\u92de'});
+document.body.prepend(img0);
+let texture14 = device0.createTexture({
+  size: [504, 1, 169],
+  mipLevelCount: 2,
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: ['rg32uint'],
+});
+try {
+computePassEncoder1.setPipeline(pipeline1);
+} catch {}
+let commandEncoder8 = device0.createCommandEncoder({label: '\u1db3\u{1fce6}'});
+try {
+buffer1.unmap();
+} catch {}
+try {
+commandEncoder8.copyTextureToTexture({
+  texture: texture4,
+  mipLevel: 0,
+  origin: {x: 3, y: 0, z: 72},
+  aspect: 'all',
+},
+{
+  texture: texture5,
+  mipLevel: 0,
+  origin: {x: 2, y: 0, z: 19},
+  aspect: 'all',
+},
+{width: 8, height: 14, depthOrArrayLayers: 16});
+} catch {}
+let textureView11 = texture3.createView({});
+let computePassEncoder8 = commandEncoder8.beginComputePass({label: '\u07bd\u0b25\uec90\u47be\u47ef\ue857\u3046\u4886'});
+try {
+computePassEncoder0.setPipeline(pipeline1);
+} catch {}
+try {
+device0.queue.writeTexture({
+  texture: texture13,
+  mipLevel: 0,
+  origin: {x: 305, y: 0, z: 0},
+  aspect: 'all',
+}, new Uint8Array(106).fill(249), /* required buffer size: 106 */
+{offset: 106}, {width: 77, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let bindGroupLayout3 = device0.createBindGroupLayout({
+  entries: [
+    {
+      binding: 194,
+      visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT,
+      texture: { viewDimension: '2d', sampleType: 'float', multisampled: false },
+    },
+    {
+      binding: 57,
+      visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+      sampler: { type: 'non-filtering' },
+    },
+    {binding: 23, visibility: GPUShaderStage.COMPUTE, sampler: { type: 'comparison' }},
+    {
+      binding: 116,
+      visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+      texture: { viewDimension: '2d', sampleType: 'depth', multisampled: false },
+    },
+    {binding: 46, visibility: GPUShaderStage.COMPUTE, buffer: { type: 'storage', hasDynamicOffset: false }},
+    {binding: 432, visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX, externalTexture: {}},
+    {
+      binding: 106,
+      visibility: GPUShaderStage.COMPUTE,
+      texture: { viewDimension: '2d', sampleType: 'uint', multisampled: false },
+    },
+    {
+      binding: 52,
+      visibility: GPUShaderStage.COMPUTE,
+      storageTexture: { format: 'r32sint', access: 'read-write', viewDimension: '2d-array' },
+    },
+  ],
+});
+let texture15 = device0.createTexture({
+  label: '\u0d04\ua915\u5594\u5fea\u{1fe0b}\u0052\u08d4\u082e',
+  size: {width: 16, height: 16, depthOrArrayLayers: 16},
+  format: 'r32sint',
+  usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING,
+  viewFormats: [],
+});
+let texture16 = device0.createTexture({
+  label: '\u05d8\u{1f6c5}\u{1f6d9}\u0e62',
+  size: [1008, 1, 448],
+  sampleCount: 1,
+  dimension: '3d',
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
+});
+let texture17 = device0.createTexture({
+  size: [504, 1, 9],
+  mipLevelCount: 3,
+  format: 'depth32float-stencil8',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let textureView12 = texture3.createView({});
+try {
+computePassEncoder3.setPipeline(pipeline1);
+} catch {}
+let commandEncoder9 = device0.createCommandEncoder({});
+let texture18 = device0.createTexture({
+  size: [252, 1, 1],
+  mipLevelCount: 3,
+  format: 'depth24plus-stencil8',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let computePassEncoder9 = commandEncoder9.beginComputePass({});
+let renderBundleEncoder2 = device0.createRenderBundleEncoder({
+  label: '\u734e\u2152\u{1fcd5}\u0595\u3a89\u0e1e\u{1fbdd}\u1608\u0764\u{1ff61}\u{1ff93}',
+  colorFormats: ['rg32uint', 'rg16float'],
+});
+try {
+  await buffer13.mapAsync(GPUMapMode.READ, 0, 12);
+} catch {}
+try {
+device0.queue.writeBuffer(buffer1, 372, new Float32Array(1213), 45, 204);
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+{width: 1008, height: 1, depthOrArrayLayers: 1}
+*/
+{
+  source: imageData0,
+  origin: { x: 4, y: 20 },
+  flipY: false,
+}, {
+  texture: texture2,
+  mipLevel: 0,
+  origin: {x: 101, y: 1, z: 0},
+  aspect: 'all',
+  colorSpace: 'srgb',
+  premultipliedAlpha: false,
+}, {width: 3, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let offscreenCanvas0 = new OffscreenCanvas(110, 23);
+let texture19 = device0.createTexture({
+  size: [1008, 1, 1],
+  mipLevelCount: 3,
+  format: 'depth24plus',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let texture20 = device0.createTexture({
+  size: {width: 16, height: 16, depthOrArrayLayers: 16},
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC,
+});
+let textureView13 = texture0.createView({dimension: '2d-array', mipLevelCount: 1, baseArrayLayer: 4, arrayLayerCount: 2});
+try {
+computePassEncoder2.setPipeline(pipeline1);
+} catch {}
+let buffer18 = device0.createBuffer({
+  label: '\ua1f9\u1b5d\u20ac\ub215\u016e\u7485\u2ccb\u{1ff10}\ua759',
+  size: 28500,
+  usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE,
+});
+let commandEncoder10 = device0.createCommandEncoder();
+let textureView14 = texture17.createView({dimension: '2d', mipLevelCount: 1});
+let textureView15 = texture19.createView({aspect: 'depth-only', mipLevelCount: 1});
+let computePassEncoder10 = commandEncoder10.beginComputePass({});
+let bindGroupLayout4 = device0.createBindGroupLayout({
+  label: '\u03af\u01de\u3210\u7797\u{1f68c}\u4cdd\u23bf\u0ea5\u{1fba8}\u{1fec0}\u0f4e',
+  entries: [
+    {
+      binding: 269,
+      visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+      texture: { viewDimension: '2d', sampleType: 'float', multisampled: false },
+    },
+    {
+      binding: 35,
+      visibility: GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+      buffer: { type: 'read-only-storage', hasDynamicOffset: false },
+    },
+  ],
+});
+let pipelineLayout3 = device0.createPipelineLayout({bindGroupLayouts: []});
+let textureView16 = texture15.createView({baseArrayLayer: 3, arrayLayerCount: 1});
+let renderBundle2 = renderBundleEncoder2.finish();
+try {
+buffer0.unmap();
+} catch {}
+let texture21 = device0.createTexture({
+  size: [1008, 1, 17],
+  mipLevelCount: 5,
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC,
+});
+let pipelineLayout4 = device0.createPipelineLayout({bindGroupLayouts: []});
+let buffer19 = device0.createBuffer({
+  size: 3853,
+  usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDEX | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.STORAGE | GPUBufferUsage.VERTEX,
+  mappedAtCreation: false,
+});
+let commandEncoder11 = device0.createCommandEncoder({});
+let computePassEncoder11 = commandEncoder11.beginComputePass();
+try {
+device0.lost.then(({reason, message}) => { console.log('device0 lost!'); console.log(message, reason); });
+} catch {}
+try {
+navigator.gpu.getPreferredCanvasFormat();
+} catch {}
+try {
+computePassEncoder9.setPipeline(pipeline1);
+} catch {}
+let videoFrame0 = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'BGRA',  timestamp: 0, colorSpace: {fullRange: true, matrix: 'bt2020-cl', primaries: 'bt470bg', transfer: 'pq'} });
+let pipelineLayout5 = device0.createPipelineLayout({bindGroupLayouts: []});
+let textureView17 = texture10.createView({dimension: '2d-array', mipLevelCount: 1});
+try {
+computePassEncoder10.setPipeline(pipeline1);
+} catch {}
+try {
+buffer19.unmap();
+} catch {}
+let texture22 = device0.createTexture({
+  label: '\ua290\u057f\u5b23\u{1f97a}',
+  size: [504, 1, 19],
+  dimension: '3d',
+  format: 'rg16float',
+  usage: GPUTextureUsage.RENDER_ATTACHMENT,
+});
+try {
+computePassEncoder7.setPipeline(pipeline1);
+} catch {}
+document.body.prepend(img0);
+let texture23 = device0.createTexture({
+  size: {width: 16},
+  dimension: '1d',
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+await gc();
+let commandEncoder12 = device0.createCommandEncoder({});
+let computePassEncoder12 = commandEncoder12.beginComputePass();
+let sampler7 = device0.createSampler({
+  addressModeU: 'repeat',
+  addressModeV: 'clamp-to-edge',
+  lodMinClamp: 17.31,
+  lodMaxClamp: 23.16,
+  compare: 'not-equal',
+});
+let texture24 = device0.createTexture({
+  size: {width: 16, height: 16, depthOrArrayLayers: 16},
+  format: 'etc2-rgba8unorm-srgb',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let textureView18 = texture19.createView({mipLevelCount: 1});
+let gpuCanvasContext0 = offscreenCanvas0.getContext('webgpu');
+try {
+device0.label = '\uca05\u7419\ue14b\u{1fedd}\uf34f\u{1f799}\u{1fbc0}';
+} catch {}
+let texture25 = device0.createTexture({
+  size: [16, 16, 16],
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+let buffer20 = device0.createBuffer({size: 1680, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.UNIFORM});
+let textureView19 = texture10.createView({mipLevelCount: 1});
+let buffer21 = device0.createBuffer({
+  size: 6671,
+  usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDIRECT | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.STORAGE | GPUBufferUsage.VERTEX,
+});
+let textureView20 = texture9.createView({baseArrayLayer: 1, arrayLayerCount: 1});
+let sampler8 = device0.createSampler({
+  addressModeU: 'clamp-to-edge',
+  addressModeV: 'repeat',
+  addressModeW: 'repeat',
+  magFilter: 'linear',
+  minFilter: 'linear',
+  mipmapFilter: 'nearest',
+  lodMinClamp: 42.21,
+  lodMaxClamp: 60.28,
+});
+try {
+gpuCanvasContext0.configure({
+  device: device0,
+  format: 'rgba16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC,
+  alphaMode: 'premultiplied',
+});
+} catch {}
+let buffer22 = device0.createBuffer({size: 7276, usage: GPUBufferUsage.UNIFORM});
+let sampler9 = device0.createSampler({addressModeU: 'mirror-repeat', addressModeW: 'clamp-to-edge', lodMinClamp: 78.28, lodMaxClamp: 94.95});
+try {
+computePassEncoder11.setPipeline(pipeline1);
+} catch {}
+try {
+device0.queue.writeTexture({
+  texture: texture2,
+  mipLevel: 1,
+  origin: {x: 28, y: 0, z: 0},
+  aspect: 'all',
+}, new Uint8Array(227).fill(233), /* required buffer size: 227 */
+{offset: 227}, {width: 89, height: 0, depthOrArrayLayers: 0});
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+let videoFrame1 = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'RGBX',  timestamp: 0, colorSpace: {fullRange: true, matrix: 'smpte240m', primaries: 'unspecified', transfer: 'logSqrt'} });
+let textureView21 = texture7.createView({baseArrayLayer: 0});
+let externalTexture0 = device0.importExternalTexture({source: videoFrame1});
+try {
+computePassEncoder4.setPipeline(pipeline1);
+} catch {}
+try {
+computePassEncoder1.pushDebugGroup('\uc336');
+} catch {}
+let buffer23 = device0.createBuffer({size: 17228, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ});
+let sampler10 = device0.createSampler({
+  label: '\u0b8f\u5a35\u07c1\u1390\u0bcd\u02f8\u6183\u2b75\u8070\u2789\u0953',
+  addressModeU: 'mirror-repeat',
+  addressModeW: 'mirror-repeat',
+  mipmapFilter: 'nearest',
+  lodMinClamp: 76.55,
+  lodMaxClamp: 99.66,
+  maxAnisotropy: 1,
+});
+try {
+computePassEncoder12.setPipeline(pipeline1);
+} catch {}
+try {
+computePassEncoder1.popDebugGroup();
+} catch {}
+let videoFrame2 = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'RGBA',  timestamp: 0, colorSpace: {fullRange: false, matrix: 'fcc', primaries: 'film', transfer: 'smpte170m'} });
+let buffer24 = device0.createBuffer({
+  size: 5370,
+  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDIRECT | GPUBufferUsage.UNIFORM | GPUBufferUsage.VERTEX,
+});
+let texture26 = device0.createTexture({
+  size: {width: 252, height: 1, depthOrArrayLayers: 38},
+  sampleCount: 1,
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+});
+let sampler11 = device0.createSampler({
+  addressModeU: 'clamp-to-edge',
+  addressModeV: 'clamp-to-edge',
+  addressModeW: 'clamp-to-edge',
+  lodMinClamp: 2.946,
+  lodMaxClamp: 63.70,
+});
+try {
+computePassEncoder5.setPipeline(pipeline1);
+} catch {}
+let bindGroup0 = device0.createBindGroup({
+  label: '\ue877\u0c87\u6c4a\u{1f69c}\u6de4\u{1f6d3}\u02fc\u{1faa4}\u0709',
+  layout: bindGroupLayout4,
+  entries: [
+    {binding: 35, resource: {buffer: buffer19, offset: 256, size: 340}},
+    {binding: 269, resource: textureView4},
+  ],
+});
+let commandEncoder13 = device0.createCommandEncoder({});
+try {
+computePassEncoder6.setPipeline(pipeline1);
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+{width: 252, height: 1, depthOrArrayLayers: 38}
+*/
+{
+  source: videoFrame0,
+  origin: { x: 0, y: 0 },
+  flipY: false,
+}, {
+  texture: texture26,
+  mipLevel: 0,
+  origin: {x: 9, y: 0, z: 0},
+  aspect: 'all',
+  colorSpace: 'display-p3',
+  premultipliedAlpha: false,
+}, {width: 1, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let videoFrame3 = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'RGBA',  timestamp: 0, colorSpace: {fullRange: true, matrix: 'bt709', primaries: 'unspecified', transfer: 'smpteSt4281'} });
+let texture27 = device0.createTexture({
+  size: [16, 16, 54],
+  dimension: '3d',
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let computePassEncoder13 = commandEncoder13.beginComputePass({label: '\ubb79\u5bc2'});
+let sampler12 = device0.createSampler({
+  addressModeU: 'mirror-repeat',
+  addressModeV: 'repeat',
+  magFilter: 'linear',
+  minFilter: 'linear',
+  mipmapFilter: 'linear',
+  lodMinClamp: 62.06,
+  lodMaxClamp: 78.78,
+  maxAnisotropy: 9,
+});
+try {
+computePassEncoder7.setBindGroup(2, bindGroup0, new Uint32Array(357), 68, 0);
+} catch {}
+try {
+device0.queue.writeBuffer(buffer6, 676, new DataView(new ArrayBuffer(1020)), 65, 52);
+} catch {}
+let imageData2 = new ImageData(52, 92);
+let bindGroup1 = device0.createBindGroup({
+  layout: bindGroupLayout0,
+  entries: [
+    {binding: 365, resource: sampler11},
+    {binding: 51, resource: sampler7},
+    {binding: 163, resource: sampler1},
+    {binding: 0, resource: textureView1},
+    {binding: 32, resource: externalTexture0},
+    {binding: 14, resource: sampler5},
+    {binding: 943, resource: {buffer: buffer21, offset: 3584, size: 692}},
+    {binding: 558, resource: textureView3},
+    {binding: 24, resource: sampler6},
+    {binding: 647, resource: textureView5},
+    {binding: 19, resource: textureView6},
+    {binding: 7, resource: textureView9},
+    {binding: 92, resource: textureView12},
+    {binding: 35, resource: {buffer: buffer8, offset: 2560, size: 57}},
+    {binding: 67, resource: {buffer: buffer22, offset: 256}},
+    {binding: 149, resource: {buffer: buffer22, offset: 0}},
+  ],
+});
+let commandEncoder14 = device0.createCommandEncoder({});
+let textureView22 = texture5.createView({});
+let texture28 = device0.createTexture({
+  size: [126],
+  dimension: '1d',
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING,
+});
+let textureView23 = texture4.createView({});
+try {
+computePassEncoder0.setBindGroup(2, bindGroup0);
+} catch {}
+try {
+gpuCanvasContext0.configure({
+  device: device0,
+  format: 'rgba16float',
+  usage: GPUTextureUsage.RENDER_ATTACHMENT,
+  colorSpace: 'display-p3',
+  alphaMode: 'premultiplied',
+});
+} catch {}
+try {
+device0.queue.writeTexture({
+  texture: texture11,
+  mipLevel: 0,
+  origin: {x: 112, y: 0, z: 0},
+  aspect: 'all',
+}, new Uint8Array(51).fill(189), /* required buffer size: 51 */
+{offset: 51, bytesPerRow: 2298, rowsPerImage: 95}, {width: 256, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let bindGroup2 = device0.createBindGroup({
+  layout: bindGroupLayout0,
+  entries: [
+    {binding: 365, resource: sampler2},
+    {binding: 51, resource: sampler7},
+    {binding: 163, resource: sampler9},
+    {binding: 92, resource: textureView7},
+    {binding: 0, resource: textureView0},
+    {binding: 35, resource: {buffer: buffer22, offset: 0}},
+    {binding: 19, resource: textureView22},
+    {binding: 24, resource: sampler9},
+    {binding: 647, resource: textureView5},
+    {binding: 943, resource: {buffer: buffer0, offset: 0, size: 388}},
+    {binding: 14, resource: sampler5},
+    {binding: 32, resource: externalTexture0},
+    {binding: 7, resource: textureView21},
+    {binding: 67, resource: {buffer: buffer20, offset: 0}},
+    {binding: 558, resource: textureView3},
+    {binding: 149, resource: {buffer: buffer22, offset: 1024, size: 1153}},
+  ],
+});
+let commandEncoder15 = device0.createCommandEncoder({label: '\u5241\u0705\u0e17'});
+let computePassEncoder14 = commandEncoder15.beginComputePass({});
+try {
+device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+{width: 252, height: 1, depthOrArrayLayers: 38}
+*/
+{
+  source: videoFrame1,
+  origin: { x: 0, y: 0 },
+  flipY: true,
+}, {
+  texture: texture26,
+  mipLevel: 0,
+  origin: {x: 20, y: 0, z: 7},
+  aspect: 'all',
+  colorSpace: 'srgb',
+  premultipliedAlpha: true,
+}, {width: 0, height: 0, depthOrArrayLayers: 0});
+} catch {}
+document.body.prepend(img0);
+try {
+commandEncoder5.label = '\u0500\u0db1\ud678\u{1ffef}\u0417\uc0c4\u003b\u5db1';
+} catch {}
+let commandEncoder16 = device0.createCommandEncoder({});
+let textureView24 = texture9.createView({dimension: '2d'});
+let computePassEncoder15 = commandEncoder16.beginComputePass({});
+try {
+commandEncoder14.copyBufferToBuffer(buffer18, 5076, buffer20, 460, 200);
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+{width: 252, height: 1, depthOrArrayLayers: 38}
+*/
+{
+  source: offscreenCanvas0,
+  origin: { x: 10, y: 9 },
+  flipY: true,
+}, {
+  texture: texture26,
+  mipLevel: 0,
+  origin: {x: 15, y: 0, z: 1},
+  aspect: 'all',
+  colorSpace: 'srgb',
+  premultipliedAlpha: true,
+}, {width: 13, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let buffer25 = device0.createBuffer({size: 26995, usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE});
+let computePassEncoder16 = commandEncoder14.beginComputePass({});
+let sampler13 = device0.createSampler({
+  addressModeU: 'repeat',
+  addressModeV: 'clamp-to-edge',
+  addressModeW: 'mirror-repeat',
+  magFilter: 'linear',
+  minFilter: 'linear',
+  mipmapFilter: 'linear',
+  lodMinClamp: 54.05,
+  lodMaxClamp: 85.16,
+  compare: 'equal',
+  maxAnisotropy: 10,
+});
+let bindGroupLayout5 = device0.createBindGroupLayout({
+  label: '\ud8c5\u1eba\u{1f62e}\u73a1\uce01\u02e5\u2070\u0f91',
+  entries: [
+    {binding: 221, visibility: GPUShaderStage.VERTEX, sampler: { type: 'comparison' }},
+    {
+      binding: 76,
+      visibility: GPUShaderStage.FRAGMENT,
+      storageTexture: { format: 'rgba16uint', access: 'write-only', viewDimension: '2d' },
+    },
+  ],
+});
+let texture29 = device0.createTexture({
+  size: {width: 504, height: 1, depthOrArrayLayers: 29},
+  mipLevelCount: 1,
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT,
+});
+try {
+computePassEncoder11.setPipeline(pipeline1);
+} catch {}
+try {
+buffer6.unmap();
+} catch {}
+try {
+computePassEncoder10.pushDebugGroup('\u098c');
+} catch {}
+document.body.append(img0);
+offscreenCanvas0.height = 1078;
+let bindGroup3 = device0.createBindGroup({layout: bindGroupLayout1, entries: [{binding: 117, resource: externalTexture0}]});
+let commandEncoder17 = device0.createCommandEncoder();
+let textureView25 = texture26.createView({
+  label: '\u{1f735}\u30dc\u7f6d\u66e4\u1731\u{1fcd5}\u0101\uad24\u7e17\uca57\u{1fd95}',
+  aspect: 'all',
+  baseArrayLayer: 13,
+  arrayLayerCount: 1,
+});
+let renderBundleEncoder3 = device0.createRenderBundleEncoder({colorFormats: ['rg32uint', 'rg16float'], stencilReadOnly: true});
+let externalTexture1 = device0.importExternalTexture({source: videoFrame0, colorSpace: 'srgb'});
+try {
+computePassEncoder8.setBindGroup(2, bindGroup0);
+} catch {}
+try {
+computePassEncoder14.setPipeline(pipeline1);
+} catch {}
+try {
+renderBundleEncoder3.setPipeline(pipeline0);
+} catch {}
+try {
+commandEncoder17.copyTextureToBuffer({
+  texture: texture24,
+  mipLevel: 0,
+  origin: {x: 0, y: 0, z: 0},
+  aspect: 'all',
+}, {
+  /* bytesInLastRow: 0 widthInBlocks: 0 aspectSpecificFormat.texelBlockSize: 16 */
+  /* end: 16 */
+  offset: 16,
+  buffer: buffer1,
+}, {width: 0, height: 0, depthOrArrayLayers: 0});
+} catch {}
+try {
+commandEncoder17.copyTextureToTexture({
+  texture: texture21,
+  mipLevel: 2,
+  origin: {x: 40, y: 0, z: 0},
+  aspect: 'all',
+},
+{
+  texture: texture2,
+  mipLevel: 1,
+  origin: {x: 96, y: 0, z: 0},
+  aspect: 'all',
+},
+{width: 20, height: 0, depthOrArrayLayers: 0});
+} catch {}
+try {
+device0.queue.writeTexture({
+  texture: texture23,
+  mipLevel: 0,
+  origin: {x: 3, y: 0, z: 0},
+  aspect: 'all',
+}, new Uint8Array(37).fill(143), /* required buffer size: 37 */
+{offset: 37}, {width: 0, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let promise0 = device0.queue.onSubmittedWorkDone();
+let imageData3 = new ImageData(8, 44);
+let commandEncoder18 = device0.createCommandEncoder({});
+let textureView26 = texture15.createView({dimension: '2d', baseArrayLayer: 2});
+let computePassEncoder17 = commandEncoder17.beginComputePass({});
+try {
+computePassEncoder12.setBindGroup(2, bindGroup3);
+} catch {}
+try {
+computePassEncoder4.setBindGroup(3, bindGroup0, new Uint32Array(284), 2, 0);
+} catch {}
+try {
+renderBundleEncoder3.setBindGroup(1, bindGroup0, new Uint32Array(3851), 139, 0);
+} catch {}
+try {
+buffer7.unmap();
+} catch {}
+try {
+commandEncoder18.copyBufferToTexture({
+  /* bytesInLastRow: 80 widthInBlocks: 10 aspectSpecificFormat.texelBlockSize: 8 */
+  /* end: 4816 */
+  offset: 4816,
+  bytesPerRow: 17408,
+  buffer: buffer25,
+}, {
+  texture: texture8,
+  mipLevel: 0,
+  origin: {x: 35, y: 0, z: 0},
+  aspect: 'all',
+}, {width: 10, height: 0, depthOrArrayLayers: 0});
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+await gc();
+let imageData4 = new ImageData(96, 12);
+let texture30 = device0.createTexture({
+  label: '\u0b3a\ubbaf\u651d\u{1fbdb}\u1f84\uf417',
+  size: {width: 1008, height: 1, depthOrArrayLayers: 1},
+  format: 'rg32uint',
+  usage: GPUTextureUsage.RENDER_ATTACHMENT,
+});
+let textureView27 = texture8.createView({dimension: '1d', format: 'rg32uint'});
+let sampler14 = device0.createSampler({
+  addressModeU: 'repeat',
+  addressModeW: 'repeat',
+  minFilter: 'nearest',
+  mipmapFilter: 'linear',
+  lodMinClamp: 60.39,
+  lodMaxClamp: 72.29,
+});
+try {
+computePassEncoder8.setPipeline(pipeline1);
+} catch {}
+try {
+renderBundleEncoder3.setBindGroup(0, bindGroup2);
+} catch {}
+try {
+renderBundleEncoder3.setVertexBuffer(7, buffer21, 1_272);
+} catch {}
+let arrayBuffer0 = buffer13.getMappedRange(0, 0);
+try {
+navigator.gpu.getPreferredCanvasFormat();
+} catch {}
+let bindGroup4 = device0.createBindGroup({
+  layout: bindGroupLayout5,
+  entries: [{binding: 221, resource: sampler0}, {binding: 76, resource: textureView1}],
+});
+let buffer26 = device0.createBuffer({size: 2140, usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.MAP_WRITE});
+let textureView28 = texture12.createView({dimension: 'cube', baseMipLevel: 0, baseArrayLayer: 1});
+let computePassEncoder18 = commandEncoder18.beginComputePass({});
+try {
+computePassEncoder15.setPipeline(pipeline1);
+} catch {}
+try {
+renderBundleEncoder3.setBindGroup(0, bindGroup2, new Uint32Array(259), 45, 0);
+} catch {}
+try {
+device0.queue.writeBuffer(buffer6, 1528, new BigUint64Array(18628), 1001, 24);
+} catch {}
+try {
+if (!arrayBuffer0.detached) { new Uint8Array(arrayBuffer0).fill(0x55); };
+} catch {}
+let buffer27 = device0.createBuffer({
+  size: 152,
+  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDEX | GPUBufferUsage.INDIRECT | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.VERTEX,
+});
+let sampler15 = device0.createSampler({
+  addressModeU: 'repeat',
+  addressModeV: 'mirror-repeat',
+  addressModeW: 'clamp-to-edge',
+  magFilter: 'linear',
+  minFilter: 'linear',
+  mipmapFilter: 'linear',
+  lodMinClamp: 42.12,
+  lodMaxClamp: 84.62,
+  maxAnisotropy: 4,
+});
+try {
+renderBundleEncoder3.setBindGroup(2, bindGroup3, new Uint32Array(239), 26, 0);
+} catch {}
+try {
+buffer18.unmap();
+} catch {}
+let textureView29 = texture18.createView({dimension: '2d-array', aspect: 'depth-only', mipLevelCount: 1});
+let renderBundle3 = renderBundleEncoder3.finish({});
+try {
+computePassEncoder13.setBindGroup(0, bindGroup3);
+} catch {}
+try {
+computePassEncoder15.setBindGroup(1, bindGroup0, new Uint32Array(1449), 32, 0);
+} catch {}
+try {
+computePassEncoder7.setPipeline(pipeline1);
+} catch {}
+try {
+computePassEncoder18.setPipeline(pipeline1);
+} catch {}
+let arrayBuffer1 = buffer13.getMappedRange(8, 0);
+try {
+computePassEncoder5.pushDebugGroup('\u4573');
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+{width: 252, height: 1, depthOrArrayLayers: 38}
+*/
+{
+  source: imageData2,
+  origin: { x: 14, y: 8 },
+  flipY: true,
+}, {
+  texture: texture26,
+  mipLevel: 0,
+  origin: {x: 57, y: 0, z: 37},
+  aspect: 'all',
+  colorSpace: 'display-p3',
+  premultipliedAlpha: false,
+}, {width: 5, height: 0, depthOrArrayLayers: 0});
+} catch {}
+try {
+gpuCanvasContext0.unconfigure();
+} catch {}
+document.body.prepend(img0);
+let commandEncoder19 = device0.createCommandEncoder();
+try {
+commandEncoder19.copyBufferToTexture({
+  /* bytesInLastRow: 0 widthInBlocks: 0 aspectSpecificFormat.texelBlockSize: 4 */
+  /* end: 196 */
+  offset: 196,
+  bytesPerRow: 0,
+  rowsPerImage: 253,
+  buffer: buffer25,
+}, {
+  texture: texture25,
+  mipLevel: 0,
+  origin: {x: 4, y: 3, z: 0},
+  aspect: 'all',
+}, {width: 0, height: 1, depthOrArrayLayers: 5});
+} catch {}
+try {
+if (!arrayBuffer1.detached) { new Uint8Array(arrayBuffer1).fill(0x55); };
+} catch {}
+let bindGroup5 = device0.createBindGroup({
+  layout: bindGroupLayout0,
+  entries: [
+    {binding: 51, resource: sampler7},
+    {binding: 558, resource: textureView3},
+    {binding: 7, resource: textureView21},
+    {binding: 32, resource: externalTexture0},
+    {binding: 14, resource: sampler1},
+    {binding: 24, resource: sampler11},
+    {binding: 647, resource: textureView5},
+    {binding: 35, resource: {buffer: buffer22, offset: 2304}},
+    {binding: 943, resource: {buffer: buffer0, offset: 0, size: 388}},
+    {binding: 0, resource: textureView0},
+    {binding: 92, resource: textureView7},
+    {binding: 149, resource: {buffer: buffer8, offset: 1280, size: 747}},
+    {binding: 67, resource: {buffer: buffer24, offset: 0, size: 1665}},
+    {binding: 19, resource: textureView6},
+    {binding: 163, resource: sampler5},
+    {binding: 365, resource: sampler1},
+  ],
+});
+let texture31 = device0.createTexture({
+  label: '\u7034\u{1f642}\ufeb5\ube6a\uc26e\u4455',
+  size: [252],
+  sampleCount: 1,
+  dimension: '1d',
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let textureView30 = texture28.createView({baseArrayLayer: 0});
+let sampler16 = device0.createSampler({
+  addressModeU: 'mirror-repeat',
+  addressModeW: 'clamp-to-edge',
+  magFilter: 'nearest',
+  minFilter: 'nearest',
+  mipmapFilter: 'nearest',
+  lodMaxClamp: 34.31,
+});
+let bindGroup6 = device0.createBindGroup({layout: bindGroupLayout1, entries: [{binding: 117, resource: externalTexture1}]});
+let commandEncoder20 = device0.createCommandEncoder({label: '\u899f\uc885\u072c\u9c08\u{1ff41}'});
+try {
+computePassEncoder12.setBindGroup(0, bindGroup2);
+} catch {}
+try {
+gpuCanvasContext0.configure({
+  device: device0,
+  format: 'rgba8unorm',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING,
+  viewFormats: [],
+  colorSpace: 'srgb',
+});
+} catch {}
+try {
+gpuCanvasContext0.unconfigure();
+} catch {}
+try {
+  await promise0;
+} catch {}
+let buffer28 = device0.createBuffer({
+  label: '\u{1f68e}\uc6d6\u005f\u009c\uce8b\u8174\u3d2c\u{1f695}',
+  size: 8581,
+  usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.STORAGE | GPUBufferUsage.UNIFORM | GPUBufferUsage.VERTEX,
+});
+let renderBundleEncoder4 = device0.createRenderBundleEncoder({
+  label: '\u4ddc\u73a1\u{1fcb8}',
+  colorFormats: ['rg32uint', 'rg16float'],
+  depthReadOnly: false,
+  stencilReadOnly: true,
+});
+let sampler17 = device0.createSampler({
+  addressModeU: 'clamp-to-edge',
+  addressModeW: 'repeat',
+  magFilter: 'nearest',
+  minFilter: 'linear',
+  mipmapFilter: 'linear',
+  lodMinClamp: 1.208,
+  lodMaxClamp: 98.47,
+});
+try {
+renderBundleEncoder4.setIndexBuffer(buffer19, 'uint32', 1_088, 114);
+} catch {}
+try {
+commandEncoder20.copyBufferToTexture({
+  /* bytesInLastRow: 68 widthInBlocks: 17 aspectSpecificFormat.texelBlockSize: 4 */
+  /* end: 844 */
+  offset: 844,
+  bytesPerRow: 28160,
+  buffer: buffer7,
+}, {
+  texture: texture10,
+  mipLevel: 0,
+  origin: {x: 45, y: 0, z: 0},
+  aspect: 'all',
+}, {width: 17, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let bindGroupLayout6 = device0.createBindGroupLayout({
+  entries: [
+    {
+      binding: 17,
+      visibility: GPUShaderStage.VERTEX,
+      buffer: { type: 'read-only-storage', hasDynamicOffset: false },
+    },
+    {
+      binding: 145,
+      visibility: GPUShaderStage.COMPUTE,
+      buffer: { type: 'storage', hasDynamicOffset: false },
+    },
+  ],
+});
+let bindGroup7 = device0.createBindGroup({layout: bindGroupLayout1, entries: [{binding: 117, resource: externalTexture0}]});
+try {
+computePassEncoder17.setBindGroup(1, bindGroup7);
+} catch {}
+try {
+computePassEncoder7.setBindGroup(1, bindGroup7, new Uint32Array(2405), 239, 0);
+} catch {}
+try {
+{ clearResourceUsages(device0, computePassEncoder12); computePassEncoder12.dispatchWorkgroups(1); };
+} catch {}
+try {
+renderBundleEncoder4.setBindGroup(1, bindGroup2);
+} catch {}
+try {
+renderBundleEncoder4.setBindGroup(3, bindGroup7, new Uint32Array(454), 83, 0);
+} catch {}
+try {
+renderBundleEncoder4.setIndexBuffer(buffer8, 'uint16', 206, 1_061);
+} catch {}
+try {
+renderBundleEncoder4.setPipeline(pipeline0);
+} catch {}
+try {
+buffer23.unmap();
+} catch {}
+let shaderModule3 = device0.createShaderModule({
+  code: `
+enable f16;
+
+requires packed_4x8_integer_dot_product;
+
+diagnostic(info, xyz);
+
+requires packed_4x8_integer_dot_product;
+
+@group(0) @binding(51) var sam15: sampler_comparison;
+
+fn unconst_u32(v: u32) -> u32 { return v; }
+
+var<private> vp1: mat2x3h = mat2x3h(4529.9, 6704.2, 2864.4, 2203.9, 37268.8, 14853.6);
+
+@group(0) @binding(7) var tex10: texture_3d<i32>;
+
+struct T0 {
+  @align(8) @size(848) f0: f32,
+  @size(112) f1: mat2x4h,
+  @size(96) f2: mat2x3f,
+}
+
+@group(0) @binding(558) var tex11: texture_2d<i32>;
+
+fn fn0() -> array<array<array<array<f16, 2>, 1>, 1>, 8> {
+  var out: array<array<array<array<f16, 2>, 1>, 1>, 8>;
+  let ptr7: ptr<private, vec2i> = &vp2;
+  let vf48: f32 = fract(f32(unconst_f32(0.05443)));
+  return out;
+}
+
+@group(0) @binding(14) var sam13: sampler;
+
+@group(0) @binding(32) var et2: texture_external;
+
+struct T3 {
+  @align(8) @size(8) f0: f32,
+}
+
+fn unconst_f32(v: f32) -> f32 { return v; }
+
+@group(0) @binding(365) var sam17: sampler;
+
+@group(0) @binding(24) var sam14: sampler;
+
+fn unconst_f16(v: f16) -> f16 { return v; }
+
+var<private> vp2: vec2i = vec2i(40, 432);
+
+@group(0) @binding(67) var<uniform> buffer30: vec4u;
+
+@group(0) @binding(149) var<uniform> buffer31: mat2x3h;
+
+@group(0) @binding(19) var st9: texture_storage_3d<rgba8uint, read>;
+
+var<private> vp0: T1 = T1(vec2u(426, 13), vec2i(183, 169), i32(268));
+
+@group(0) @binding(647) var st11: texture_storage_2d<r32uint, read_write>;
+
+@group(0) @binding(943) var<storage, read> buffer32: array<array<array<array<array<f16, 1>, 1>, 1>, 1>, 194>;
+
+@group(0) @binding(92) var st10: texture_storage_1d<r32sint, write>;
+
+fn unconst_bool(v: bool) -> bool { return v; }
+
+struct T1 {
+  f0: vec2u,
+  f1: vec2i,
+  @align(8) @size(40) f2: i32,
+}
+
+@group(0) @binding(0) var tex9: texture_2d<u32>;
+
+struct FragmentOutput2 {
+  @location(4) @interpolate(flat, center) f0: f32,
+  @location(0) @interpolate(flat) f1: vec2u,
+}
+
+struct T2 {
+  @size(16) f0: f32,
+}
+
+@group(0) @binding(163) var sam16: sampler;
+
+var<workgroup> vw8: vec4f;
+
+fn unconst_i32(v: i32) -> i32 { return v; }
+
+struct S1 {
+  @location(1) f0: vec4u,
+  @location(4) @interpolate(linear, centroid) f1: vec4f,
+  @location(11) @interpolate(flat, centroid) f2: i32,
+  @location(10) f3: vec2u,
+  @location(15) @interpolate(flat, sample) f4: u32,
+  @location(9) @interpolate(flat, sample) f5: f32,
+}
+
+fn fn1() -> FragmentOutput2 {
+  var out: FragmentOutput2;
+  let ptr8: ptr<uniform, mat2x2h> = &buffer29;
+  out.f1 += vec2u(u32(vp0.f2));
+  out.f0 -= bitcast<f32>(vp0.f2);
+  vp1 = mat2x3h(vec3h(textureLoad(tex11, vec2i(unconst_i32(163), unconst_i32(323)), i32(unconst_i32(110))).yzz), vec3h(textureLoad(tex11, vec2i(unconst_i32(163), unconst_i32(323)), i32(unconst_i32(110))).wxz));
+  var vf49: u32 = textureNumLevels(tex10);
+  out.f0 -= bitcast<vec2f>(vp0.f0)[0];
+  let ptr9: ptr<uniform, mat2x2h> = &(*ptr8);
+  let vf50: u32 = clamp(textureDimensions(tex11, i32(unconst_i32(175)))[0], u32(unconst_u32(241)), u32(unconst_u32(401)));
+  var vf51: vec2h = buffer29[u32(unconst_u32(227))];
+  let ptr10: ptr<function, vec2h> = &vf51;
+  vf49 &= u32(vp0.f1[u32(unconst_u32(212))]);
+  var vf52: f16 = vp1[u32(unconst_u32(39))][u32(unconst_u32(7))];
+  out.f0 = ceil(f32(unconst_f32(0.01384)));
+  out.f1 = vec2u(buffer29[u32(unconst_u32(99))]);
+  let ptr11: ptr<function, f16> = &vf52;
+  let vf53: u32 = clamp(u32(unconst_u32(81)), u32(unconst_u32(180)), u32(unconst_u32(95)));
+  vp1 = mat2x3h((*ptr9)[u32(unconst_u32(44))].xyy, (*ptr9)[u32(unconst_u32(44))].xyy);
+  return out;
+}
+
+@group(0) @binding(35) var<uniform> buffer29: mat2x2h;
+
+struct VertexOutput2 {
+  @builtin(position) f12: vec4f,
+  @location(2) @interpolate(flat) f13: vec4u,
+  @location(3) @interpolate(flat, sample) f14: i32,
+  @location(10) f15: u32,
+  @location(11) f16: vec2u,
+}
+
+struct S2 {
+  @location(14) @interpolate(flat) f0: i32,
+  @location(5) f1: vec4i,
+}
+
+@vertex
+fn vertex2(@location(8) @interpolate(flat, sample) a0: vec4i, @location(2) @interpolate(linear) a1: vec2f, @location(13) @interpolate(flat, sample) a2: vec4i, a3: S1, a4: S2, @location(7) a5: f32, @location(12) @interpolate(flat) a6: vec2i, @location(6) @interpolate(perspective) a7: vec4h, @location(3) @interpolate(perspective) a8: f32, @location(0) a9: vec4i, @builtin(vertex_index) a10: u32, @builtin(instance_index) a11: u32) -> VertexOutput2 {
+  var out: VertexOutput2;
+  var vf54 = fn1();
+  var vf55 = fn1();
+  var vf56 = fn1();
+  var vf57: vec2f = tan(vec2f(unconst_f32(0.1198), unconst_f32(0.00437)));
+  let ptr12: ptr<function, f32> = &vf55.f0;
+  let vf58: f16 = vp1[u32(unconst_u32(1))][u32(unconst_u32(76))];
+  var vf59 = fn1();
+  var vf60: f32 = ceil(f32(unconst_f32(0.08792)));
+  vf56 = FragmentOutput2(vf59.f0, vec2u(u32(vf59.f0)));
+  let vf61: f32 = a8;
+  var vf62 = fn1();
+  var vf63 = fn1();
+  var vf64: i32 = a9[u32(unconst_u32(257))];
+  fn1();
+  out.f14 += bitcast<i32>((*&buffer29)[u32(unconst_u32(85))]);
+  fn1();
+  var vf65: vec2u = a3.f3;
+  return out;
+}
+
+@fragment
+fn fragment2() -> FragmentOutput2 {
+  var out: FragmentOutput2;
+  out.f1 <<= vec2u(vp2);
+  out.f1 &= bitcast<vec2u>(textureLoad(tex10, vec3i(unconst_i32(89), unconst_i32(22), unconst_i32(155)), i32(unconst_i32(201))).rb);
+  fn0();
+  var vf66 = fn0();
+  vp1 = mat2x3h(vf66[7][u32(vf66[7][0][u32(unconst_u32(281))][1])][u32(unconst_u32(38))][u32(unconst_u32(204))], vf66[7][u32(vf66[7][0][u32(unconst_u32(281))][1])][u32(unconst_u32(38))][u32(unconst_u32(204))], vf66[7][u32(vf66[7][0][u32(unconst_u32(281))][1])][u32(unconst_u32(38))][u32(unconst_u32(204))], vf66[7][u32(vf66[7][0][u32(unconst_u32(281))][1])][u32(unconst_u32(38))][u32(unconst_u32(204))], vf66[7][u32(vf66[7][0][u32(unconst_u32(281))][1])][u32(unconst_u32(38))][u32(unconst_u32(204))], vf66[7][u32(vf66[7][0][u32(unconst_u32(281))][1])][u32(unconst_u32(38))][u32(unconst_u32(204))]);
+  out = FragmentOutput2(f32(vf66[u32(unconst_u32(32))][0][0][u32(unconst_u32(451))]), vec2u(u32(vf66[u32(unconst_u32(32))][0][0][u32(unconst_u32(451))])));
+  out.f0 -= f32(vf66[u32(unconst_u32(164))][u32(unconst_u32(128))][u32(unconst_u32(364))][1]);
+  vp0 = T1(vec2u(u32(vf66[7][u32(unconst_u32(400))][0][1])), vec2i(i32(vf66[7][u32(unconst_u32(400))][0][1])), i32(vf66[7][u32(unconst_u32(400))][0][1]));
+  fn0();
+  let ptr13: ptr<function, array<array<f16, 2>, 1>> = &vf66[u32(unconst_u32(350))][u32(vf66[7][u32(unconst_u32(432))][0][1])];
+  let ptr14: ptr<private, vec2i> = &vp2;
+  let ptr15: ptr<function, array<array<f16, 2>, 1>> = &vf66[u32(unconst_u32(27))][u32(unconst_u32(646))];
+  return out;
+}`,
+  hints: {},
+});
+let bindGroup8 = device0.createBindGroup({
+  layout: bindGroupLayout0,
+  entries: [
+    {binding: 0, resource: textureView0},
+    {binding: 51, resource: sampler4},
+    {binding: 149, resource: {buffer: buffer20, offset: 0}},
+    {binding: 647, resource: textureView24},
+    {binding: 558, resource: textureView3},
+    {binding: 14, resource: sampler11},
+    {binding: 92, resource: textureView7},
+    {binding: 19, resource: textureView22},
+    {binding: 943, resource: {buffer: buffer8, offset: 768, size: 1436}},
+    {binding: 365, resource: sampler5},
+    {binding: 67, resource: {buffer: buffer24, offset: 256, size: 1122}},
+    {binding: 35, resource: {buffer: buffer24, offset: 0, size: 4462}},
+    {binding: 163, resource: sampler2},
+    {binding: 32, resource: externalTexture1},
+    {binding: 7, resource: textureView21},
+    {binding: 24, resource: sampler10},
+  ],
+});
+let querySet2 = device0.createQuerySet({label: '\u6e74\u0b82\u63cc\u2f8f', type: 'occlusion', count: 905});
+let texture32 = device0.createTexture({
+  size: [504],
+  dimension: '1d',
+  format: 'rgba32uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let computePassEncoder19 = commandEncoder19.beginComputePass({});
+try {
+computePassEncoder12.setBindGroup(0, bindGroup2);
+} catch {}
+try {
+{ clearResourceUsages(device0, computePassEncoder12); computePassEncoder12.dispatchWorkgroups(3); };
+} catch {}
+try {
+computePassEncoder16.setPipeline(pipeline1);
+} catch {}
+try {
+renderBundleEncoder4.setPipeline(pipeline0);
+} catch {}
+try {
+renderBundleEncoder4.setVertexBuffer(3, buffer27, 60);
+} catch {}
+let pipeline2 = await device0.createRenderPipelineAsync({
+  layout: pipelineLayout2,
+  fragment: {
+  module: shaderModule2,
+  constants: {},
+  targets: [{format: 'rg32uint', writeMask: GPUColorWrite.ALL | GPUColorWrite.ALPHA | GPUColorWrite.RED}, {
+  format: 'rg16float',
+  blend: {
+    color: {operation: 'min', srcFactor: 'one', dstFactor: 'one'},
+    alpha: {operation: 'add', srcFactor: 'one-minus-src', dstFactor: 'constant'},
+  },
+}],
+},
+  vertex: {
+    module: shaderModule1,
+    constants: {42_462: 0, 36_899: 0},
+    buffers: [
+      {
+        arrayStride: 160,
+        stepMode: 'instance',
+        attributes: [{format: 'sint8x4', offset: 0, shaderLocation: 2}],
+      },
+    ],
+  },
+  primitive: {
+  topology: 'line-strip',
+  stripIndexFormat: 'uint16',
+  frontFace: 'cw',
+  cullMode: 'front',
+  unclippedDepth: true,
+},
+});
+try {
+computePassEncoder13.setPipeline(pipeline1);
+} catch {}
+try {
+renderBundleEncoder4.setIndexBuffer(buffer27, 'uint32', 4, 0);
+} catch {}
+try {
+device0.queue.writeBuffer(buffer24, 408, new Int16Array(10686), 1281, 332);
+} catch {}
+let pipeline3 = device0.createRenderPipeline({
+  layout: pipelineLayout2,
+  fragment: {
+  module: shaderModule3,
+  constants: {},
+  targets: [{format: 'rg32uint', writeMask: GPUColorWrite.ALL | GPUColorWrite.BLUE | GPUColorWrite.GREEN}],
+},
+  vertex: {
+    module: shaderModule2,
+    buffers: [
+      {
+        arrayStride: 820,
+        stepMode: 'vertex',
+        attributes: [{format: 'uint32', offset: 120, shaderLocation: 11}],
+      },
+    ],
+  },
+  primitive: {topology: 'triangle-strip', stripIndexFormat: 'uint16', cullMode: 'back', unclippedDepth: false},
+});
+let texture33 = device0.createTexture({
+  label: '\u5817\ub50a',
+  size: [252, 1, 106],
+  dimension: '3d',
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST,
+  viewFormats: [],
+});
+try {
+computePassEncoder17.setPipeline(pipeline1);
+} catch {}
+try {
+renderBundleEncoder4.setBindGroup(3, bindGroup3, []);
+} catch {}
+try {
+computePassEncoder10.popDebugGroup();
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+document.body.append(img0);
+try {
+adapter0.label = '\u{1f8cf}\u085b\u{1f962}\ub5f1\u2b60\u{1f96b}\u0180';
+} catch {}
+let bindGroupLayout7 = device0.createBindGroupLayout({
+  entries: [
+    {
+      binding: 142,
+      visibility: GPUShaderStage.FRAGMENT,
+      texture: { viewDimension: '2d', sampleType: 'unfilterable-float', multisampled: false },
+    },
+  ],
+});
+let buffer33 = device0.createBuffer({size: 13326, usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDEX | GPUBufferUsage.VERTEX});
+let commandEncoder21 = device0.createCommandEncoder({label: '\u7a89\u{1f8b3}\u03fb'});
+let textureView31 = texture12.createView({dimension: 'cube-array', arrayLayerCount: 6});
+let computePassEncoder20 = commandEncoder20.beginComputePass({});
+let sampler18 = device0.createSampler({
+  label: '\ub886\u36f8',
+  addressModeU: 'clamp-to-edge',
+  addressModeV: 'mirror-repeat',
+  addressModeW: 'mirror-repeat',
+  lodMinClamp: 68.41,
+  lodMaxClamp: 81.40,
+});
+try {
+computePassEncoder20.setPipeline(pipeline1);
+} catch {}
+try {
+renderBundleEncoder4.setBindGroup(3, bindGroup3);
+} catch {}
+try {
+renderBundleEncoder4.setIndexBuffer(buffer33, 'uint32', 6_860, 307);
+} catch {}
+let commandEncoder22 = device0.createCommandEncoder({});
+let texture34 = device0.createTexture({
+  size: [1008, 1, 1],
+  sampleCount: 1,
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+});
+let textureView32 = texture34.createView({dimension: '2d'});
+try {
+computePassEncoder9.setBindGroup(0, bindGroup8, new Uint32Array(164), 2, 0);
+} catch {}
+try {
+{ clearResourceUsages(device0, computePassEncoder12); computePassEncoder12.dispatchWorkgroups(1, 1); };
+} catch {}
+try {
+computePassEncoder6.setPipeline(pipeline1);
+} catch {}
+try {
+computePassEncoder19.setPipeline(pipeline1);
+} catch {}
+let promise1 = shaderModule3.getCompilationInfo();
+let buffer34 = device0.createBuffer({
+  label: '\u0378\uf610\u03ba\u2da4\udb90\u{1f71d}\ube99\u0831\uaec6\u03bc',
+  size: 48673,
+  usage: GPUBufferUsage.INDIRECT,
+});
+let commandEncoder23 = device0.createCommandEncoder({});
+let texture35 = device0.createTexture({
+  size: {width: 126},
+  dimension: '1d',
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING,
+  viewFormats: [],
+});
+let computePassEncoder21 = commandEncoder22.beginComputePass();
+let renderBundle4 = renderBundleEncoder4.finish({});
+try {
+computePassEncoder3.setBindGroup(0, bindGroup0, new Uint32Array(7343), 1_587, 0);
+} catch {}
+try {
+computePassEncoder16.setBindGroup(3, bindGroup3);
+} catch {}
+try {
+{ clearResourceUsages(device0, computePassEncoder9); computePassEncoder9.dispatchWorkgroups(2); };
+} catch {}
+try {
+computePassEncoder21.setPipeline(pipeline1);
+} catch {}
+try {
+gpuCanvasContext0.configure({
+  device: device0,
+  format: 'bgra8unorm',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.TEXTURE_BINDING,
+  colorSpace: 'srgb',
+});
+} catch {}
+let imageData5 = new ImageData(16, 20);
+let buffer35 = device0.createBuffer({
+  size: 49194,
+  usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDEX | GPUBufferUsage.INDIRECT | GPUBufferUsage.STORAGE,
+});
+let commandEncoder24 = device0.createCommandEncoder({});
+let computePassEncoder22 = commandEncoder24.beginComputePass({label: '\u0556\uec1c\udeb2\u6688\u{1fcf3}\u0ee0\u{1f9be}\u{1f66c}\u{1fe9f}\u9ef3\ub2b5'});
+let sampler19 = device0.createSampler({
+  addressModeU: 'mirror-repeat',
+  magFilter: 'nearest',
+  minFilter: 'nearest',
+  mipmapFilter: 'nearest',
+  lodMinClamp: 91.94,
+  lodMaxClamp: 95.91,
+});
+try {
+computePassEncoder22.setPipeline(pipeline1);
+} catch {}
+try {
+device0.queue.writeTexture({
+  texture: texture4,
+  mipLevel: 0,
+  origin: {x: 0, y: 2, z: 19},
+  aspect: 'all',
+}, new Uint8Array(14_143).fill(157), /* required buffer size: 14_143 */
+{offset: 103, bytesPerRow: 10, rowsPerImage: 27}, {width: 2, height: 0, depthOrArrayLayers: 53});
+} catch {}
+try {
+gpuCanvasContext0.unconfigure();
+} catch {}
+let buffer36 = device0.createBuffer({size: 2366, usage: GPUBufferUsage.MAP_WRITE});
+let commandEncoder25 = device0.createCommandEncoder({});
+try {
+{ clearResourceUsages(device0, computePassEncoder9); computePassEncoder9.dispatchWorkgroups(2); };
+} catch {}
+try {
+navigator.gpu.getPreferredCanvasFormat();
+} catch {}
+let textureView33 = texture12.createView({
+  label: '\u02f8\uaef7\u096c\u8a92\ufa4e\ue2b0\u6d1a\u6331\u0d9d',
+  baseArrayLayer: 4,
+  arrayLayerCount: 1,
+});
+try {
+computePassEncoder22.setBindGroup(1, bindGroup6);
+} catch {}
+try {
+commandEncoder21.copyBufferToBuffer(buffer27, 4, buffer13, 68, 12);
+} catch {}
+try {
+computePassEncoder5.popDebugGroup();
+} catch {}
+await gc();
+let buffer37 = device0.createBuffer({
+  label: '\u{1fc4c}\u0e38\udb69\u06c1',
+  size: 19265,
+  usage: GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.STORAGE,
+});
+let texture36 = device0.createTexture({
+  size: {width: 16, height: 16, depthOrArrayLayers: 16},
+  format: 'rg32uint',
+  usage: GPUTextureUsage.STORAGE_BINDING,
+  viewFormats: [],
+});
+try {
+device0.queue.writeBuffer(buffer1, 424, new DataView(new ArrayBuffer(777)), 265, 16);
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+{width: 1008, height: 1, depthOrArrayLayers: 1}
+*/
+{
+  source: videoFrame3,
+  origin: { x: 0, y: 0 },
+  flipY: true,
+}, {
+  texture: texture2,
+  mipLevel: 0,
+  origin: {x: 41, y: 0, z: 0},
+  aspect: 'all',
+  colorSpace: 'srgb',
+  premultipliedAlpha: false,
+}, {width: 0, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let pipeline4 = device0.createComputePipeline({
+  label: '\uf819\ua9c1\uff8b\u{1fa8a}\u0548\u0b65\u0766\u0fe6',
+  layout: pipelineLayout2,
+  compute: {module: shaderModule0, constants: {}},
+});
+await gc();
+let bindGroup9 = device0.createBindGroup({
+  layout: bindGroupLayout0,
+  entries: [
+    {binding: 51, resource: sampler7},
+    {binding: 35, resource: {buffer: buffer22, offset: 2048}},
+    {binding: 67, resource: {buffer: buffer28, offset: 1536, size: 1133}},
+    {binding: 92, resource: textureView7},
+    {binding: 14, resource: sampler18},
+    {binding: 163, resource: sampler9},
+    {binding: 558, resource: textureView3},
+    {binding: 149, resource: {buffer: buffer28, offset: 256, size: 370}},
+    {binding: 943, resource: {buffer: buffer35, offset: 7680, size: 7840}},
+    {binding: 0, resource: textureView1},
+    {binding: 647, resource: textureView5},
+    {binding: 32, resource: externalTexture1},
+    {binding: 365, resource: sampler16},
+    {binding: 7, resource: textureView21},
+    {binding: 19, resource: textureView6},
+    {binding: 24, resource: sampler11},
+  ],
+});
+let commandEncoder26 = device0.createCommandEncoder({label: '\u0613\u030d\ud498\u{1fa62}\u631b\uc459\u0900\u{1f708}'});
+let querySet3 = device0.createQuerySet({type: 'occlusion', count: 523});
+let computePassEncoder23 = commandEncoder23.beginComputePass({});
+try {
+computePassEncoder21.setBindGroup(0, bindGroup2, new Uint32Array(1294), 1_011, 0);
+} catch {}
+try {
+commandEncoder26.copyTextureToTexture({
+  texture: texture2,
+  mipLevel: 1,
+  origin: {x: 34, y: 0, z: 0},
+  aspect: 'all',
+},
+{
+  texture: texture1,
+  mipLevel: 0,
+  origin: {x: 30, y: 0, z: 0},
+  aspect: 'all',
+},
+{width: 25, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let videoFrame4 = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'I420',  timestamp: 0, colorSpace: {fullRange: false, matrix: 'smpte170m', primaries: 'bt470m', transfer: 'logSqrt'} });
+let textureView34 = texture15.createView({baseArrayLayer: 7, arrayLayerCount: 4});
+let texture37 = device0.createTexture({
+  size: {width: 1008},
+  dimension: '1d',
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+});
+let textureView35 = texture6.createView({dimension: '2d-array', format: 'r8sint'});
+try {
+commandEncoder21.copyBufferToTexture({
+  /* bytesInLastRow: 636 widthInBlocks: 159 aspectSpecificFormat.texelBlockSize: 4 */
+  /* end: 1552 */
+  offset: 1552,
+  rowsPerImage: 569,
+  buffer: buffer6,
+}, {
+  texture: texture31,
+  mipLevel: 0,
+  origin: {x: 2, y: 0, z: 0},
+  aspect: 'all',
+}, {width: 159, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let textureView36 = texture33.createView({dimension: '3d', arrayLayerCount: 1});
+let computePassEncoder24 = commandEncoder26.beginComputePass({label: '\u76a3\u4208\uf71d\u07e0\u0202\ua40b\u06ca\ua28c\u51d5'});
+try {
+device0.queue.writeTexture({
+  texture: texture27,
+  mipLevel: 0,
+  origin: {x: 0, y: 0, z: 0},
+  aspect: 'all',
+}, new Uint8Array(113_553).fill(61), /* required buffer size: 113_553 */
+{offset: 453, bytesPerRow: 87, rowsPerImage: 130}, {width: 5, height: 0, depthOrArrayLayers: 11});
+} catch {}
+let videoFrame5 = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'I420',  timestamp: 0, colorSpace: {fullRange: false, matrix: 'smpte240m', primaries: 'smpte432', transfer: 'pq'} });
+try {
+computePassEncoder17.setBindGroup(0, bindGroup3);
+} catch {}
+try {
+computePassEncoder24.setPipeline(pipeline1);
+} catch {}
+try {
+computePassEncoder20.insertDebugMarker('\u3c4d');
+} catch {}
+let buffer38 = device0.createBuffer({
+  size: 2126,
+  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC | GPUBufferUsage.INDIRECT | GPUBufferUsage.STORAGE,
+});
+let commandEncoder27 = device0.createCommandEncoder({});
+let renderBundleEncoder5 = device0.createRenderBundleEncoder({colorFormats: ['rg32uint', 'rg16float'], stencilReadOnly: true});
+let sampler20 = device0.createSampler({
+  addressModeU: 'clamp-to-edge',
+  addressModeV: 'clamp-to-edge',
+  addressModeW: 'mirror-repeat',
+  magFilter: 'linear',
+  minFilter: 'linear',
+  mipmapFilter: 'linear',
+  lodMinClamp: 45.37,
+  lodMaxClamp: 86.88,
+  maxAnisotropy: 6,
+});
+try {
+computePassEncoder23.setPipeline(pipeline1);
+} catch {}
+try {
+renderBundleEncoder5.setBindGroup(2, bindGroup6);
+} catch {}
+try {
+renderBundleEncoder5.setIndexBuffer(buffer8, 'uint16', 1_298, 1_944);
+} catch {}
+try {
+renderBundleEncoder5.setPipeline(pipeline2);
+} catch {}
+try {
+  await shaderModule0.getCompilationInfo();
+} catch {}
+try {
+device0.queue.writeBuffer(buffer38, 304, new DataView(new ArrayBuffer(2149)), 141, 360);
+} catch {}
+let pipeline5 = device0.createRenderPipeline({
+  layout: pipelineLayout2,
+  fragment: {
+  module: shaderModule2,
+  constants: {},
+  targets: [{format: 'rg32uint', writeMask: GPUColorWrite.ALL | GPUColorWrite.GREEN}, {format: 'rg16float', writeMask: GPUColorWrite.ALPHA | GPUColorWrite.GREEN | GPUColorWrite.RED}],
+},
+  vertex: {
+    module: shaderModule1,
+    constants: {36_899: 0, 42_462: 0},
+    buffers: [
+      {
+        arrayStride: 276,
+        stepMode: 'instance',
+        attributes: [{format: 'sint8x2', offset: 234, shaderLocation: 2}],
+      },
+    ],
+  },
+  primitive: {
+  topology: 'triangle-strip',
+  stripIndexFormat: 'uint32',
+  frontFace: 'cw',
+  cullMode: 'back',
+  unclippedDepth: false,
+},
+});
+await gc();
+let commandEncoder28 = device0.createCommandEncoder();
+try {
+computePassEncoder17.setBindGroup(0, bindGroup2, new Uint32Array(2524), 650, 0);
+} catch {}
+try {
+renderBundleEncoder5.setBindGroup(1, bindGroup0, new Uint32Array(7699), 1_002, 0);
+} catch {}
+try {
+renderBundleEncoder5.setVertexBuffer(4, buffer0, 0, 11);
+} catch {}
+try {
+computePassEncoder14.insertDebugMarker('\uf576');
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+try {
+navigator.gpu.getPreferredCanvasFormat();
+} catch {}
+let pipelineLayout6 = device0.createPipelineLayout({label: '\uea35\u{1fd4a}', bindGroupLayouts: []});
+let buffer39 = device0.createBuffer({size: 6146, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ});
+let texture38 = device0.createTexture({
+  size: [504, 1, 19],
+  format: 'r32uint',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let textureView37 = texture14.createView({dimension: '2d', mipLevelCount: 1, baseArrayLayer: 21});
+let computePassEncoder25 = commandEncoder28.beginComputePass({});
+try {
+computePassEncoder2.setBindGroup(0, bindGroup2);
+} catch {}
+try {
+renderBundleEncoder5.setIndexBuffer(buffer33, 'uint16', 650, 45);
+} catch {}
+try {
+buffer33.unmap();
+} catch {}
+try {
+gpuCanvasContext0.configure({
+  device: device0,
+  format: 'rgba16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  alphaMode: 'opaque',
+});
+} catch {}
+let buffer40 = device0.createBuffer({
+  size: 18975,
+  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.COPY_SRC | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.STORAGE | GPUBufferUsage.VERTEX,
+});
+let texture39 = device0.createTexture({
+  size: [504, 1, 1],
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+});
+let renderPassEncoder0 = commandEncoder21.beginRenderPass({
+  label: '\ud6b7\u02bc\ua9f9\u0dc1\u{1f6a5}\uc3d7\u0657',
+  colorAttachments: [{
+  view: textureView37,
+  clearValue: { r: -84.92, g: -861.1, b: -481.7, a: -201.2, },
+  loadOp: 'load',
+  storeOp: 'discard',
+}],
+  occlusionQuerySet: querySet0,
+  maxDrawCount: 907512,
+});
+let sampler21 = device0.createSampler({
+  addressModeU: 'mirror-repeat',
+  addressModeV: 'mirror-repeat',
+  addressModeW: 'clamp-to-edge',
+  magFilter: 'nearest',
+  lodMaxClamp: 75.10,
+  maxAnisotropy: 1,
+});
+try {
+computePassEncoder18.setBindGroup(0, bindGroup2);
+} catch {}
+try {
+computePassEncoder5.setBindGroup(0, bindGroup2, new Uint32Array(1617), 734, 0);
+} catch {}
+try {
+computePassEncoder25.setPipeline(pipeline1);
+} catch {}
+try {
+renderBundleEncoder5.setBindGroup(3, bindGroup0);
+} catch {}
+try {
+renderBundleEncoder5.setIndexBuffer(buffer8, 'uint32', 412, 1_955);
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+{width: 252, height: 1, depthOrArrayLayers: 38}
+*/
+{
+  source: videoFrame3,
+  origin: { x: 0, y: 0 },
+  flipY: true,
+}, {
+  texture: texture26,
+  mipLevel: 0,
+  origin: {x: 59, y: 0, z: 2},
+  aspect: 'all',
+  colorSpace: 'display-p3',
+  premultipliedAlpha: false,
+}, {width: 0, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let textureView38 = texture30.createView({dimension: '2d-array'});
+let computePassEncoder26 = commandEncoder25.beginComputePass({});
+try {
+computePassEncoder23.setBindGroup(1, bindGroup0);
+} catch {}
+try {
+computePassEncoder12.end();
+} catch {}
+try {
+renderPassEncoder0.setIndexBuffer(buffer0, 'uint32', 28, 3);
+} catch {}
+try {
+renderBundleEncoder5.setBindGroup(0, bindGroup2);
+} catch {}
+try {
+renderBundleEncoder5.setBindGroup(1, bindGroup0, new Uint32Array(1327), 235, 0);
+} catch {}
+try {
+renderBundleEncoder5.setPipeline(pipeline5);
+} catch {}
+try {
+gpuCanvasContext0.configure({
+  device: device0,
+  format: 'rgba16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  colorSpace: 'display-p3',
+});
+} catch {}
+let bindGroup10 = device0.createBindGroup({
+  label: '\u{1fe5a}\u63cb',
+  layout: bindGroupLayout7,
+  entries: [{binding: 142, resource: textureView32}],
+});
+let buffer41 = device0.createBuffer({label: '\u41c2\u35f2\u534d\u0540\u0ec9', size: 1527, usage: GPUBufferUsage.MAP_READ});
+let computePassEncoder27 = commandEncoder27.beginComputePass({});
+let renderPassEncoder1 = commandEncoder12.beginRenderPass({
+  colorAttachments: [{
+  view: textureView38,
+  clearValue: { r: -721.0, g: 822.2, b: -377.5, a: -844.2, },
+  loadOp: 'clear',
+  storeOp: 'store',
+}, {
+  view: textureView4,
+  clearValue: { r: 165.9, g: -912.3, b: -147.3, a: -966.2, },
+  loadOp: 'clear',
+  storeOp: 'discard',
+}],
+});
+try {
+computePassEncoder1.setBindGroup(0, bindGroup6);
+} catch {}
+try {
+computePassEncoder26.setPipeline(pipeline1);
+} catch {}
+try {
+renderPassEncoder1.setBindGroup(0, bindGroup6);
+} catch {}
+try {
+renderPassEncoder1.setIndexBuffer(buffer0, 'uint32', 84, 91);
+} catch {}
+try {
+renderBundleEncoder5.setBindGroup(2, bindGroup10, new Uint32Array(2467), 10, 0);
+} catch {}
+try {
+renderPassEncoder0.insertDebugMarker('\u03b5');
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+{width: 504, height: 1, depthOrArrayLayers: 1}
+*/
+{
+  source: videoFrame4,
+  origin: { x: 0, y: 1 },
+  flipY: true,
+}, {
+  texture: texture2,
+  mipLevel: 1,
+  origin: {x: 50, y: 0, z: 0},
+  aspect: 'all',
+  colorSpace: 'srgb',
+  premultipliedAlpha: false,
+}, {width: 0, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let buffer42 = device0.createBuffer({
+  size: 1147,
+  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.INDIRECT | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.VERTEX,
+});
+let textureView39 = texture8.createView({});
+try {
+computePassEncoder7.setBindGroup(0, bindGroup7, new Uint32Array(2087), 0, 0);
+} catch {}
+try {
+computePassEncoder27.setPipeline(pipeline4);
+} catch {}
+try {
+renderPassEncoder0.setBindGroup(3, bindGroup6);
+} catch {}
+try {
+renderPassEncoder1.setPipeline(pipeline2);
+} catch {}
+try {
+renderBundleEncoder5.setBindGroup(0, bindGroup8);
+} catch {}
+try {
+renderBundleEncoder5.setPipeline(pipeline2);
+} catch {}
+let buffer43 = device0.createBuffer({size: 1491, usage: GPUBufferUsage.INDEX | GPUBufferUsage.INDIRECT | GPUBufferUsage.QUERY_RESOLVE});
+let commandEncoder29 = device0.createCommandEncoder({});
+let texture40 = device0.createTexture({
+  size: [504, 1, 1],
+  format: 'rg32uint',
+  usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+});
+let textureView40 = texture15.createView({dimension: 'cube', format: 'r32sint', baseArrayLayer: 1});
+let externalTexture2 = device0.importExternalTexture({source: videoFrame4});
+try {
+computePassEncoder4.setBindGroup(2, bindGroup7, []);
+} catch {}
+try {
+renderPassEncoder0.setBindGroup(1, bindGroup6);
+} catch {}
+try {
+renderPassEncoder0.setVertexBuffer(2, buffer24, 544, 391);
+} catch {}
+try {
+renderBundleEncoder5.setBindGroup(2, bindGroup6, new Uint32Array(3802), 62, 0);
+} catch {}
+try {
+renderBundleEncoder5.setPipeline(pipeline2);
+} catch {}
+try {
+device0.queue.writeBuffer(buffer23, 3256, new Float32Array(10850), 627, 732);
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+try {
+adapter0.label = '\u0e8c\u9580\u{1f8b9}\ucbef\u{1fdb7}';
+} catch {}
+let renderBundle5 = renderBundleEncoder5.finish({});
+let sampler22 = device0.createSampler({
+  addressModeU: 'repeat',
+  addressModeV: 'mirror-repeat',
+  addressModeW: 'mirror-repeat',
+  lodMinClamp: 60.20,
+  lodMaxClamp: 86.04,
+  compare: 'greater',
+});
+try {
+renderPassEncoder1.setBindGroup(2, bindGroup7);
+} catch {}
+try {
+renderPassEncoder0.end();
+} catch {}
+try {
+renderPassEncoder1.setBlendConstant({ r: 225.1, g: -291.6, b: 838.2, a: -733.1, });
+} catch {}
+try {
+renderPassEncoder1.setIndexBuffer(buffer35, 'uint16', 2_188, 928);
+} catch {}
+try {
+device0.pushErrorScope('internal');
+} catch {}
+try {
+device0.queue.writeBuffer(buffer0, 84, new BigUint64Array(6093), 1094, 0);
+} catch {}
+try {
+gpuCanvasContext0.unconfigure();
+} catch {}
+let bindGroupLayout8 = device0.createBindGroupLayout({entries: []});
+let buffer44 = device0.createBuffer({size: 19384, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE});
+let commandEncoder30 = device0.createCommandEncoder({label: '\u08a4\u06c0\uad42\u0921\u6222\u0151\u{1f883}\u1946\ueb6e'});
+let textureView41 = texture37.createView({arrayLayerCount: 1});
+let sampler23 = device0.createSampler({
+  addressModeU: 'mirror-repeat',
+  addressModeW: 'repeat',
+  minFilter: 'nearest',
+  mipmapFilter: 'nearest',
+  lodMinClamp: 88.45,
+  lodMaxClamp: 93.48,
+  compare: 'not-equal',
+});
+try {
+computePassEncoder9.setBindGroup(3, bindGroup7);
+} catch {}
+try {
+computePassEncoder9.end();
+} catch {}
+try {
+// renderPassEncoder1.executeBundles([renderBundle0]);
+} catch {}
+try {
+commandEncoder30.copyBufferToTexture({
+  /* bytesInLastRow: 248 widthInBlocks: 31 aspectSpecificFormat.texelBlockSize: 8 */
+  /* end: 6856 */
+  offset: 6856,
+  bytesPerRow: 13056,
+  buffer: buffer33,
+}, {
+  texture: texture8,
+  mipLevel: 0,
+  origin: {x: 2, y: 0, z: 0},
+  aspect: 'all',
+}, {width: 31, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let bindGroup11 = device0.createBindGroup({
+  layout: bindGroupLayout6,
+  entries: [
+    {binding: 17, resource: {buffer: buffer44, offset: 5632}},
+    {binding: 145, resource: {buffer: buffer40, offset: 1280, size: 1884}},
+  ],
+});
+let pipelineLayout7 = device0.createPipelineLayout({label: '\ud34e\u{1fd33}\u0879\u{1fc10}', bindGroupLayouts: []});
+let computePassEncoder28 = commandEncoder29.beginComputePass({label: '\u9477\u0119\u5a5c\u52ac\uba4a\ue343'});
+try {
+computePassEncoder24.setBindGroup(0, bindGroup4);
+} catch {}
+try {
+computePassEncoder0.setBindGroup(0, bindGroup8, new Uint32Array(2571), 830, 0);
+} catch {}
+try {
+computePassEncoder28.setPipeline(pipeline1);
+} catch {}
+try {
+renderPassEncoder1.setBindGroup(0, bindGroup7);
+} catch {}
+try {
+renderPassEncoder1.setBindGroup(0, bindGroup3, new Uint32Array(428), 65, 0);
+} catch {}
+try {
+// renderPassEncoder1.executeBundles([renderBundle0]);
+} catch {}
+try {
+renderPassEncoder1.setIndexBuffer(buffer8, 'uint16', 8, 1_797);
+} catch {}
+try {
+renderPassEncoder1.setPipeline(pipeline5);
+} catch {}
+try {
+renderPassEncoder1.setVertexBuffer(6, buffer40, 456, 3_126);
+} catch {}
+try {
+computePassEncoder21.insertDebugMarker('\u03d2');
+} catch {}
+let textureView42 = texture0.createView({dimension: '2d', mipLevelCount: 1, baseArrayLayer: 5});
+let computePassEncoder29 = commandEncoder30.beginComputePass();
+try {
+computePassEncoder10.setBindGroup(1, bindGroup10);
+} catch {}
+try {
+renderPassEncoder1.setBindGroup(1, bindGroup3, new Uint32Array(1760), 108, 0);
+} catch {}
+try {
+renderPassEncoder1.setPipeline(pipeline0);
+} catch {}
+let offscreenCanvas1 = new OffscreenCanvas(88, 88);
+let computePassEncoder30 = commandEncoder21.beginComputePass({});
+try {
+renderPassEncoder1.setBlendConstant({ r: 143.8, g: 172.0, b: 461.1, a: -679.3, });
+} catch {}
+try {
+renderPassEncoder1.setPipeline(pipeline2);
+} catch {}
+try {
+gpuCanvasContext0.configure({
+  device: device0,
+  format: 'rgba16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  colorSpace: 'display-p3',
+  alphaMode: 'opaque',
+});
+} catch {}
+let bindGroup12 = device0.createBindGroup({
+  label: '\u024d\ue086\uc81c\u52ee\u2bed\u{1fe67}',
+  layout: bindGroupLayout4,
+  entries: [
+    {binding: 35, resource: {buffer: buffer40, offset: 0, size: 1836}},
+    {binding: 269, resource: textureView32},
+  ],
+});
+let commandEncoder31 = device0.createCommandEncoder({});
+let texture41 = device0.createTexture({
+  size: [504],
+  dimension: '1d',
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+});
+let textureView43 = texture24.createView({dimension: 'cube-array', arrayLayerCount: 6});
+try {
+renderPassEncoder1.setScissorRect(97, 0, 45, 0);
+} catch {}
+try {
+device0.queue.writeTexture({
+  texture: texture8,
+  mipLevel: 0,
+  origin: {x: 12, y: 0, z: 0},
+  aspect: 'all',
+}, new Uint8Array(106).fill(219), /* required buffer size: 106 */
+{offset: 106, rowsPerImage: 9}, {width: 14, height: 0, depthOrArrayLayers: 0});
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+{width: 252, height: 1, depthOrArrayLayers: 38}
+*/
+{
+  source: videoFrame0,
+  origin: { x: 0, y: 0 },
+  flipY: true,
+}, {
+  texture: texture26,
+  mipLevel: 0,
+  origin: {x: 3, y: 0, z: 0},
+  aspect: 'all',
+  colorSpace: 'srgb',
+  premultipliedAlpha: false,
+}, {width: 0, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let videoFrame6 = videoFrame0.clone();
+let bindGroup13 = device0.createBindGroup({layout: bindGroupLayout8, entries: []});
+let commandEncoder32 = device0.createCommandEncoder({});
+let texture42 = device0.createTexture({size: [504], dimension: '1d', format: 'rg32uint', usage: GPUTextureUsage.STORAGE_BINDING});
+let computePassEncoder31 = commandEncoder32.beginComputePass({});
+try {
+computePassEncoder16.setBindGroup(0, bindGroup2);
+} catch {}
+try {
+// renderPassEncoder1.executeBundles([renderBundle4]);
+} catch {}
+try {
+renderPassEncoder1.setViewport(810.668180566003, 0.5539632892219869, 136.6375111288968, 0.16831799358335953, 0.8989216523680433, 0.9748419819717387);
+} catch {}
+try {
+renderPassEncoder1.setIndexBuffer(buffer33, 'uint16', 1_838, 706);
+} catch {}
+try {
+device0.queue.writeBuffer(buffer27, 0, new DataView(new ArrayBuffer(27853)), 1116, 12);
+} catch {}
+let buffer45 = device0.createBuffer({size: 41966, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.QUERY_RESOLVE});
+let texture43 = gpuCanvasContext0.getCurrentTexture();
+try {
+computePassEncoder30.setPipeline(pipeline4);
+} catch {}
+try {
+renderPassEncoder1.setBindGroup(2, bindGroup10);
+} catch {}
+try {
+renderPassEncoder1.setBindGroup(0, bindGroup8, new Uint32Array(2081), 29, 0);
+} catch {}
+try {
+renderPassEncoder1.setPipeline(pipeline0);
+} catch {}
+try {
+if (!arrayBuffer0.detached) { new Uint8Array(arrayBuffer0).fill(0x55); };
+} catch {}
+document.body.prepend(img0);
+let buffer46 = device0.createBuffer({
+  size: 15554,
+  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.INDEX | GPUBufferUsage.INDIRECT | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.VERTEX,
+});
+let textureView44 = texture10.createView({aspect: 'all', mipLevelCount: 1});
+let computePassEncoder32 = commandEncoder9.beginComputePass({});
+let renderPassEncoder2 = commandEncoder31.beginRenderPass({colorAttachments: [{view: textureView37, loadOp: 'clear', storeOp: 'discard'}]});
+let renderBundleEncoder6 = device0.createRenderBundleEncoder({colorFormats: ['rg32uint', 'rg16float'], depthReadOnly: true, stencilReadOnly: true});
+let sampler24 = device0.createSampler({
+  label: '\u{1f7f7}\uefee\u084d\ufd5b\u0abf\ue0fd\u6ee1\u7855\u0308\u3548\u8c8d',
+  addressModeV: 'mirror-repeat',
+  magFilter: 'nearest',
+  minFilter: 'nearest',
+  lodMinClamp: 73.78,
+  lodMaxClamp: 74.09,
+});
+try {
+computePassEncoder14.setBindGroup(1, bindGroup7, new Uint32Array(1024), 203, 0);
+} catch {}
+try {
+computePassEncoder29.setPipeline(pipeline1);
+} catch {}
+try {
+renderPassEncoder2.setBindGroup(2, bindGroup13);
+} catch {}
+try {
+renderBundleEncoder6.setBindGroup(3, bindGroup8);
+} catch {}
+try {
+renderBundleEncoder6.setIndexBuffer(buffer43, 'uint16', 262, 489);
+} catch {}
+document.body.append(img0);
+let bindGroup14 = device0.createBindGroup({
+  layout: bindGroupLayout0,
+  entries: [
+    {binding: 365, resource: sampler2},
+    {binding: 14, resource: sampler6},
+    {binding: 943, resource: {buffer: buffer35, offset: 7424, size: 5568}},
+    {binding: 7, resource: textureView21},
+    {binding: 0, resource: textureView37},
+    {binding: 19, resource: textureView2},
+    {binding: 558, resource: textureView3},
+    {binding: 163, resource: sampler12},
+    {binding: 24, resource: sampler9},
+    {binding: 647, resource: textureView5},
+    {binding: 92, resource: textureView12},
+    {binding: 35, resource: {buffer: buffer20, offset: 256, size: 655}},
+    {binding: 32, resource: externalTexture1},
+    {binding: 67, resource: {buffer: buffer8, offset: 1280, size: 1051}},
+    {binding: 51, resource: sampler22},
+    {binding: 149, resource: {buffer: buffer20, offset: 0}},
+  ],
+});
+let commandEncoder33 = device0.createCommandEncoder({});
+let texture44 = device0.createTexture({
+  label: '\udabe\u1898\u{1fc54}\u09ea\ufddb\u{1fe8f}\u{1fa55}\u{1fbb3}',
+  size: [504, 1, 63],
+  mipLevelCount: 2,
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST,
+  viewFormats: [],
+});
+let textureView45 = texture10.createView({
+  label: '\ua920\u{1f73c}\u0782\u5778\u0a2f\u1335\u0ec5\ub694\u{1f9c8}\u094f\u{1fc12}',
+  mipLevelCount: 1,
+});
+try {
+computePassEncoder32.setPipeline(pipeline1);
+} catch {}
+try {
+renderPassEncoder2.setBindGroup(0, bindGroup2, new Uint32Array(4284), 323, 0);
+} catch {}
+try {
+renderPassEncoder2.end();
+} catch {}
+try {
+renderPassEncoder1.setIndexBuffer(buffer0, 'uint32', 328, 8);
+} catch {}
+try {
+renderBundleEncoder6.setVertexBuffer(2, buffer0, 0, 41);
+} catch {}
+try {
+commandEncoder33.copyTextureToTexture({
+  texture: texture39,
+  mipLevel: 0,
+  origin: {x: 48, y: 0, z: 0},
+  aspect: 'all',
+},
+{
+  texture: texture31,
+  mipLevel: 0,
+  origin: {x: 21, y: 0, z: 0},
+  aspect: 'all',
+},
+{width: 75, height: 0, depthOrArrayLayers: 0});
+} catch {}
+try {
+gpuCanvasContext0.configure({
+  device: device0,
+  format: 'rgba8unorm',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING,
+  colorSpace: 'display-p3',
+  alphaMode: 'premultiplied',
+});
+} catch {}
+let gpuCanvasContext1 = offscreenCanvas1.getContext('webgpu');
+try {
+  await promise1;
+} catch {}
+let bindGroup15 = device0.createBindGroup({
+  label: '\u{1f93f}\u0875\u0d25\u0667\u761f\u69d4\u0b03',
+  layout: bindGroupLayout5,
+  entries: [{binding: 221, resource: sampler22}, {binding: 76, resource: textureView42}],
+});
+let commandBuffer0 = commandEncoder31.finish();
+let textureView46 = texture24.createView({dimension: 'cube-array', baseArrayLayer: 1, arrayLayerCount: 6});
+let computePassEncoder33 = commandEncoder33.beginComputePass({label: '\u5ee7\u{1ff51}'});
+try {
+computePassEncoder31.setPipeline(pipeline1);
+} catch {}
+try {
+renderPassEncoder1.setIndexBuffer(buffer19, 'uint32', 108, 280);
+} catch {}
+try {
+renderPassEncoder1.setVertexBuffer(2, buffer42, 88, 44);
+} catch {}
+try {
+device0.queue.writeTexture({
+  texture: texture26,
+  mipLevel: 0,
+  origin: {x: 8, y: 0, z: 10},
+  aspect: 'all',
+}, new Uint8Array(47_159).fill(204), /* required buffer size: 47_159 */
+{offset: 35, bytesPerRow: 187, rowsPerImage: 21}, {width: 22, height: 0, depthOrArrayLayers: 13});
+} catch {}
+document.body.prepend(img0);
+let videoFrame7 = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'BGRX',  timestamp: 0, colorSpace: {fullRange: true, matrix: 'bt470bg', primaries: 'smpte170m', transfer: 'gamma22curve'} });
+let bindGroup16 = device0.createBindGroup({layout: bindGroupLayout8, entries: []});
+try {
+computePassEncoder33.setPipeline(pipeline1);
+} catch {}
+try {
+renderPassEncoder1.setBindGroup(0, bindGroup2, new Uint32Array(3668), 169, 0);
+} catch {}
+try {
+renderPassEncoder1.setStencilReference(297);
+} catch {}
+try {
+renderPassEncoder1.setPipeline(pipeline5);
+} catch {}
+try {
+renderBundleEncoder6.setPipeline(pipeline2);
+} catch {}
+try {
+buffer38.unmap();
+} catch {}
+try {
+gpuCanvasContext1.configure({
+  device: device0,
+  format: 'rgba8unorm',
+  usage: GPUTextureUsage.COPY_SRC | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+  colorSpace: 'display-p3',
+  alphaMode: 'opaque',
+});
+} catch {}
+try {
+externalTexture2.label = '\u{1f650}\ub242';
+} catch {}
+let commandEncoder34 = device0.createCommandEncoder();
+let renderPassEncoder3 = commandEncoder34.beginRenderPass({
+  label: '\u0fde\u{1f8f8}\u0021\u192b\uadbd',
+  colorAttachments: [{
+  view: textureView38,
+  clearValue: { r: -132.2, g: -905.8, b: 454.4, a: 956.7, },
+  loadOp: 'load',
+  storeOp: 'discard',
+}, {view: textureView4, loadOp: 'clear', storeOp: 'store'}],
+  occlusionQuerySet: querySet3,
+});
+let sampler25 = device0.createSampler({
+  addressModeU: 'clamp-to-edge',
+  addressModeV: 'mirror-repeat',
+  addressModeW: 'repeat',
+  magFilter: 'linear',
+  minFilter: 'linear',
+  mipmapFilter: 'linear',
+  lodMinClamp: 62.66,
+  lodMaxClamp: 87.99,
+  maxAnisotropy: 9,
+});
+try {
+renderPassEncoder3.setIndexBuffer(buffer0, 'uint16', 28, 12);
+} catch {}
+try {
+renderBundleEncoder6.setBindGroup(3, bindGroup0);
+} catch {}
+try {
+renderBundleEncoder6.setVertexBuffer(6, buffer24, 3_020);
+} catch {}
+try {
+device0.addEventListener('uncapturederror', e => { console.log('device0.uncapturederror'); console.log(e); e.label = device0.label; });
+} catch {}
+document.body.append(img0);
+let textureView47 = texture12.createView({dimension: 'cube-array', arrayLayerCount: 6});
+try {
+computePassEncoder33.setBindGroup(0, bindGroup10, []);
+} catch {}
+try {
+computePassEncoder6.setBindGroup(0, bindGroup8, new Uint32Array(2166), 232, 0);
+} catch {}
+try {
+renderBundleEncoder6.setBindGroup(2, bindGroup13, new Uint32Array(7049), 3_803, 0);
+} catch {}
+try {
+device0.pushErrorScope('internal');
+} catch {}
+document.body.prepend(img0);
+let imageData6 = new ImageData(8, 4);
+let buffer47 = device0.createBuffer({
+  label: '\uc610\u0751',
+  size: 8383,
+  usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.INDEX | GPUBufferUsage.INDIRECT | GPUBufferUsage.STORAGE | GPUBufferUsage.VERTEX,
+});
+let commandEncoder35 = device0.createCommandEncoder({label: '\u{1f66e}\u0e49\u4b4c\u798b'});
+let renderBundle6 = renderBundleEncoder6.finish({});
+try {
+computePassEncoder19.setBindGroup(3, bindGroup13, new Uint32Array(697), 11, 0);
+} catch {}
+let bindGroupLayout9 = device0.createBindGroupLayout({
+  entries: [
+    {
+      binding: 12,
+      visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT | GPUShaderStage.VERTEX,
+      texture: { viewDimension: '2d', sampleType: 'float', multisampled: false },
+    },
+    {
+      binding: 906,
+      visibility: GPUShaderStage.FRAGMENT,
+      buffer: { type: 'uniform', minBindingSize: 0, hasDynamicOffset: false },
+    },
+    {
+      binding: 253,
+      visibility: GPUShaderStage.COMPUTE,
+      buffer: { type: 'storage', hasDynamicOffset: false },
+    },
+    {
+      binding: 312,
+      visibility: GPUShaderStage.COMPUTE | GPUShaderStage.FRAGMENT,
+      texture: { viewDimension: '2d', sampleType: 'sint', multisampled: true },
+    },
+  ],
+});
+let texture45 = device0.createTexture({
+  size: {width: 252, height: 1, depthOrArrayLayers: 1},
+  mipLevelCount: 1,
+  sampleCount: 4,
+  format: 'r16sint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+});
+let textureView48 = texture25.createView({dimension: 'cube-array', arrayLayerCount: 6});
+let computePassEncoder34 = commandEncoder35.beginComputePass({});
+try {
+computePassEncoder34.setPipeline(pipeline4);
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+{width: 252, height: 1, depthOrArrayLayers: 38}
+*/
+{
+  source: imageData3,
+  origin: { x: 0, y: 2 },
+  flipY: true,
+}, {
+  texture: texture26,
+  mipLevel: 0,
+  origin: {x: 10, y: 0, z: 13},
+  aspect: 'all',
+  colorSpace: 'display-p3',
+  premultipliedAlpha: false,
+}, {width: 0, height: 0, depthOrArrayLayers: 0});
+} catch {}
+try {
+if (!arrayBuffer0.detached) { new Uint8Array(arrayBuffer0).fill(0x55); };
+} catch {}
+let textureView49 = texture45.createView({});
+let textureView50 = texture29.createView({label: '\u09db\u2866', dimension: '2d', format: 'rg16float', baseMipLevel: 0, baseArrayLayer: 5});
+let sampler26 = device0.createSampler({
+  label: '\u{1fd71}\u{1fe14}\u{1fd63}\u762f\ua4a3\u0588',
+  addressModeU: 'mirror-repeat',
+  addressModeV: 'repeat',
+  addressModeW: 'repeat',
+  magFilter: 'linear',
+  minFilter: 'linear',
+  mipmapFilter: 'linear',
+  lodMinClamp: 48.94,
+  lodMaxClamp: 55.42,
+  maxAnisotropy: 9,
+});
+try {
+renderPassEncoder1.setBindGroup(0, bindGroup14, new Uint32Array(95), 59, 0);
+} catch {}
+try {
+renderPassEncoder1.setStencilReference(1567);
+} catch {}
+try {
+device0.queue.writeBuffer(buffer1, 892, new Int16Array(8755), 181, 712);
+} catch {}
+try {
+if (!arrayBuffer0.detached) { new Uint8Array(arrayBuffer0).fill(0x55); };
+} catch {}
+document.body.prepend(img0);
+let bindGroup17 = device0.createBindGroup({layout: bindGroupLayout7, entries: [{binding: 142, resource: textureView15}]});
+let buffer48 = device0.createBuffer({size: 1225, usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ});
+let commandEncoder36 = device0.createCommandEncoder({});
+let texture46 = device0.createTexture({
+  size: [1008, 1, 1],
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING,
+});
+let textureView51 = texture17.createView({baseMipLevel: 0, mipLevelCount: 1, arrayLayerCount: 1});
+let renderPassEncoder4 = commandEncoder36.beginRenderPass({
+  label: '\u{1fb0f}\uf587\u2757',
+  colorAttachments: [{
+  view: textureView37,
+  clearValue: { r: 377.9, g: -248.3, b: 432.4, a: -276.2, },
+  loadOp: 'clear',
+  storeOp: 'store',
+}],
+});
+try {
+renderPassEncoder3.executeBundles([renderBundle4, renderBundle2]);
+} catch {}
+try {
+renderPassEncoder1.setStencilReference(41);
+} catch {}
+try {
+renderPassEncoder4.setVertexBuffer(1, buffer27, 0, 16);
+} catch {}
+try {
+if (!arrayBuffer1.detached) { new Uint8Array(arrayBuffer1).fill(0x55); };
+} catch {}
+let pipelineLayout8 = device0.createPipelineLayout({bindGroupLayouts: []});
+let texture47 = device0.createTexture({
+  size: {width: 1008, height: 1, depthOrArrayLayers: 1},
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING,
+  viewFormats: [],
+});
+try {
+device0.queue.submit([commandBuffer0]);
+} catch {}
+let canvas0 = document.createElement('canvas');
+let commandEncoder37 = device0.createCommandEncoder({});
+let texture48 = device0.createTexture({
+  size: [252, 1, 1],
+  mipLevelCount: 3,
+  sampleCount: 1,
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+});
+let renderBundleEncoder7 = device0.createRenderBundleEncoder({colorFormats: ['rg32uint', 'rg16float']});
+let renderBundle7 = renderBundleEncoder7.finish({});
+try {
+renderPassEncoder1.setBindGroup(0, bindGroup8);
+} catch {}
+try {
+renderPassEncoder1.setBindGroup(3, bindGroup16, new Uint32Array(43), 22, 0);
+} catch {}
+try {
+renderPassEncoder3.setScissorRect(342, 0, 191, 0);
+} catch {}
+try {
+commandEncoder37.resolveQuerySet(querySet1, 55, 1, buffer27, 0);
+} catch {}
+document.body.append(img0);
+let bindGroup18 = device0.createBindGroup({
+  layout: bindGroupLayout9,
+  entries: [
+    {binding: 906, resource: {buffer: buffer22, offset: 1024}},
+    {binding: 12, resource: textureView44},
+    {binding: 312, resource: textureView49},
+    {binding: 253, resource: {buffer: buffer21, offset: 768, size: 2296}},
+  ],
+});
+let texture49 = device0.createTexture({
+  size: [504, 1, 143],
+  mipLevelCount: 2,
+  dimension: '2d',
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: ['rg32uint'],
+});
+let sampler27 = device0.createSampler({
+  addressModeU: 'repeat',
+  addressModeV: 'clamp-to-edge',
+  magFilter: 'linear',
+  minFilter: 'linear',
+  mipmapFilter: 'linear',
+  lodMinClamp: 62.51,
+  lodMaxClamp: 99.03,
+  maxAnisotropy: 6,
+});
+try {
+computePassEncoder3.setBindGroup(0, bindGroup14, new Uint32Array(1779), 405, 0);
+} catch {}
+try {
+{ clearResourceUsages(device0, computePassEncoder17); computePassEncoder17.dispatchWorkgroupsIndirect(buffer42, 92); };
+} catch {}
+try {
+computePassEncoder4.setPipeline(pipeline1);
+} catch {}
+try {
+renderPassEncoder4.setPipeline(pipeline3);
+} catch {}
+try {
+commandEncoder37.copyBufferToBuffer(buffer35, 2212, buffer23, 1020, 5856);
+} catch {}
+let querySet4 = device0.createQuerySet({type: 'occlusion', count: 432});
+let textureView52 = texture17.createView({dimension: '2d-array', baseMipLevel: 0, mipLevelCount: 1, baseArrayLayer: 1, arrayLayerCount: 1});
+let computePassEncoder35 = commandEncoder37.beginComputePass({});
+try {
+computePassEncoder17.end();
+} catch {}
+try {
+renderPassEncoder4.setBindGroup(1, bindGroup17);
+} catch {}
+try {
+gpuCanvasContext0.configure({
+  device: device0,
+  format: 'rgba8unorm',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  alphaMode: 'premultiplied',
+});
+} catch {}
+let gpuCanvasContext2 = canvas0.getContext('webgpu');
+document.body.prepend(img0);
+let bindGroup19 = device0.createBindGroup({layout: bindGroupLayout8, entries: []});
+let texture50 = device0.createTexture({
+  size: {width: 252, height: 1, depthOrArrayLayers: 284},
+  mipLevelCount: 2,
+  sampleCount: 1,
+  dimension: '3d',
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.TEXTURE_BINDING,
+});
+let computePassEncoder36 = commandEncoder17.beginComputePass();
+let sampler28 = device0.createSampler({
+  addressModeU: 'repeat',
+  addressModeV: 'mirror-repeat',
+  addressModeW: 'clamp-to-edge',
+  magFilter: 'linear',
+  minFilter: 'linear',
+  mipmapFilter: 'linear',
+  lodMinClamp: 28.52,
+  maxAnisotropy: 4,
+});
+try {
+computePassEncoder29.setBindGroup(1, bindGroup19);
+} catch {}
+try {
+computePassEncoder36.setPipeline(pipeline4);
+} catch {}
+try {
+device0.queue.copyExternalImageToTexture(/*
+{width: 63, height: 1, depthOrArrayLayers: 1}
+*/
+{
+  source: videoFrame5,
+  origin: { x: 0, y: 0 },
+  flipY: false,
+}, {
+  texture: texture48,
+  mipLevel: 2,
+  origin: {x: 21, y: 0, z: 0},
+  aspect: 'all',
+  colorSpace: 'srgb',
+  premultipliedAlpha: false,
+}, {width: 0, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let buffer49 = device0.createBuffer({size: 9121, usage: GPUBufferUsage.STORAGE});
+let texture51 = device0.createTexture({
+  size: {width: 1008, height: 1, depthOrArrayLayers: 1011},
+  mipLevelCount: 2,
+  dimension: '3d',
+  format: 'rg32uint',
+  usage: GPUTextureUsage.COPY_SRC,
+  viewFormats: [],
+});
+try {
+renderPassEncoder1.setBindGroup(3, bindGroup13);
+} catch {}
+try {
+renderPassEncoder3.setBindGroup(0, bindGroup19, new Uint32Array(1832), 29, 0);
+} catch {}
+try {
+if (!arrayBuffer1.detached) { new Uint8Array(arrayBuffer1).fill(0x55); };
+} catch {}
+let bindGroup20 = device0.createBindGroup({layout: bindGroupLayout1, entries: [{binding: 117, resource: externalTexture0}]});
+let buffer50 = device0.createBuffer({
+  size: 9482,
+  usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.QUERY_RESOLVE | GPUBufferUsage.STORAGE | GPUBufferUsage.UNIFORM | GPUBufferUsage.VERTEX,
+});
+let externalTexture3 = device0.importExternalTexture({label: '\u7291\u0fae\u11de\uc15b\u0d42\u{1f7f7}\u081c\u{1feab}\u{1f716}', source: videoFrame0});
+try {
+computePassEncoder35.setPipeline(pipeline1);
+} catch {}
+try {
+renderPassEncoder1.setIndexBuffer(buffer35, 'uint16', 5_138, 6_347);
+} catch {}
+try {
+renderPassEncoder1.setVertexBuffer(0, buffer28, 0);
+} catch {}
+try {
+device0.queue.writeTexture({
+  texture: texture10,
+  mipLevel: 0,
+  origin: {x: 632, y: 0, z: 0},
+  aspect: 'all',
+}, new Uint8Array(204).fill(31), /* required buffer size: 204 */
+{offset: 204}, {width: 21, height: 0, depthOrArrayLayers: 0});
+} catch {}
+try {
+navigator.gpu.getPreferredCanvasFormat();
+} catch {}
+await gc();
+let canvas1 = document.createElement('canvas');
+try {
+sampler17.label = '\u{1f68f}\u2fe2\ud289\u{1fc58}\u30c5\ub42b\u8b17';
+} catch {}
+try {
+computePassEncoder15.setBindGroup(0, bindGroup3, new Uint32Array(991), 84, 0);
+} catch {}
+try {
+{ clearResourceUsages(device0, computePassEncoder18); computePassEncoder18.dispatchWorkgroups(1); };
+} catch {}
+try {
+renderPassEncoder1.setBindGroup(3, bindGroup6);
+} catch {}
+try {
+// renderPassEncoder1.draw(3, 0, 161_500_057, 18);
+} catch {}
+try {
+// renderPassEncoder1.drawIndirect(buffer35, 4_396);
+} catch {}
+try {
+renderPassEncoder1.setIndexBuffer(buffer27, 'uint16', 30, 13);
+} catch {}
+try {
+if (!arrayBuffer0.detached) { new Uint8Array(arrayBuffer0).fill(0x55); };
+} catch {}
+let textureView53 = texture10.createView({label: '\uf5d9\u{1faf6}\ubd89\u02c9', dimension: '2d-array', mipLevelCount: 1});
+try {
+computePassEncoder15.setPipeline(pipeline4);
+} catch {}
+try {
+renderPassEncoder1.setBindGroup(1, bindGroup13);
+} catch {}
+try {
+// renderPassEncoder1.draw(15, 8, 1_589_188_704, 1);
+} catch {}
+try {
+device0.pushErrorScope('internal');
+} catch {}
+let gpuCanvasContext3 = canvas1.getContext('webgpu');
+let imageData7 = new ImageData(48, 12);
+let bindGroup21 = device0.createBindGroup({
+  label: '\u8bde\u063b\u5619\ud822\u{1f967}\uf98b\u099c',
+  layout: bindGroupLayout7,
+  entries: [{binding: 142, resource: textureView32}],
+});
+let textureView54 = texture14.createView({dimension: '2d', baseMipLevel: 0, mipLevelCount: 1, baseArrayLayer: 12});
+try {
+computePassEncoder20.setBindGroup(0, bindGroup2);
+} catch {}
+try {
+computePassEncoder34.setBindGroup(1, bindGroup17, new Uint32Array(226), 30, 0);
+} catch {}
+try {
+renderPassEncoder4.setBindGroup(0, bindGroup17);
+} catch {}
+try {
+// renderPassEncoder1.draw(58, 1, 979_705_716);
+} catch {}
+try {
+  await device0.queue.onSubmittedWorkDone();
+} catch {}
+let bindGroupLayout10 = device0.createBindGroupLayout({
+  entries: [
+    {
+      binding: 241,
+      visibility: GPUShaderStage.COMPUTE | GPUShaderStage.VERTEX,
+      buffer: { type: 'uniform', hasDynamicOffset: false },
+    },
+  ],
+});
+let texture52 = device0.createTexture({
+  size: [126, 1, 126],
+  mipLevelCount: 3,
+  sampleCount: 1,
+  dimension: '3d',
+  format: 'rg16float',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.COPY_SRC | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.TEXTURE_BINDING,
+});
+try {
+computePassEncoder18.end();
+} catch {}
+try {
+renderPassEncoder1.draw(290, 6, 1_085_436_300);
+} catch {}
+try {
+renderPassEncoder1.drawIndexedIndirect(buffer46, 2_376);
+} catch {}
+try {
+renderPassEncoder1.drawIndirect(buffer34, 4_256);
+} catch {}
+try {
+gpuCanvasContext0.configure({
+  device: device0,
+  format: 'bgra8unorm',
+  usage: GPUTextureUsage.COPY_DST | GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.STORAGE_BINDING | GPUTextureUsage.TEXTURE_BINDING,
+  viewFormats: [],
+  alphaMode: 'premultiplied',
+});
+} catch {}
+try {
+gpuCanvasContext3.unconfigure();
+} catch {}
+document.body.prepend(canvas0);
+let videoFrame8 = new VideoFrame(new ArrayBuffer(16), { codedWidth: 2, codedHeight: 2, format: 'NV12',  timestamp: 0, colorSpace: {fullRange: false, matrix: 'yCgCo', primaries: 'unspecified', transfer: 'hlg'} });
+let textureView55 = texture15.createView({dimension: 'cube', baseArrayLayer: 2});
+let textureView56 = texture47.createView({dimension: '2d-array'});
+let renderPassEncoder5 = commandEncoder18.beginRenderPass({
+  colorAttachments: [{
+  view: textureView37,
+  clearValue: { r: 767.7, g: -577.7, b: -167.1, a: -726.8, },
+  loadOp: 'load',
+  storeOp: 'discard',
+}, {
+  view: textureView50,
+  clearValue: { r: 283.5, g: -606.1, b: 977.8, a: 236.4, },
+  loadOp: 'load',
+  storeOp: 'store',
+}],
+  maxDrawCount: 603928450,
+});
+try {
+computePassEncoder21.setBindGroup(0, bindGroup14);
+} catch {}
+try {
+computePassEncoder15.setBindGroup(3, bindGroup21, new Uint32Array(640), 84, 0);
+} catch {}
+try {
+renderPassEncoder1.drawIndirect(buffer21, 556);
+} catch {}
+try {
+renderPassEncoder4.setIndexBuffer(buffer19, 'uint16', 1_856, 265);
+} catch {}
+try {
+renderPassEncoder3.setVertexBuffer(7, buffer19, 180);
+} catch {}
+requestAnimationFrame(startTime => globalThis.startTime=startTime);
+try {
+{ clearResourceUsages(device0, computePassEncoder21); computePassEncoder21.dispatchWorkgroupsIndirect(buffer24, 828); };
+} catch {}
+try {
+renderPassEncoder1.end();
+} catch {}
+try {
+commandEncoder12.copyTextureToTexture({
+  texture: texture2,
+  mipLevel: 1,
+  origin: {x: 34, y: 0, z: 0},
+  aspect: 'all',
+},
+{
+  texture: texture44,
+  mipLevel: 1,
+  origin: {x: 6, y: 0, z: 0},
+  aspect: 'all',
+},
+{width: 4, height: 0, depthOrArrayLayers: 0});
+} catch {}
+let promise2 = device0.queue.onSubmittedWorkDone();
+let commandEncoder38 = device0.createCommandEncoder({label: '\u2e60\u2b3c'});
+let commandBuffer1 = commandEncoder12.finish();
+
+
+try {
+device0.queue.submit([commandBuffer1]);
+} catch {}
+
+
+
+videoFrame1.close();
+videoFrame2.close();
+videoFrame3.close();
+videoFrame4.close();
+videoFrame6.close();
+videoFrame7.close();
+videoFrame8.close();
+videoFrame10.close();
+videoFrame12.close();
+videoFrame14.close();
+videoFrame15.close();
+videoFrame16.close();
+videoFrame18.close();
+videoFrame19.close();
+videoFrame21.close();
+videoFrame22.close();
+videoFrame23.close();
+videoFrame24.close();
+videoFrame25.close();
+videoFrame27.close();
+videoFrame29.close();
+videoFrame31.close();
+videoFrame32.close();
+videoFrame33.close();
+videoFrame34.close();
+videoFrame35.close();
+videoFrame36.close();
+videoFrame37.close();
+videoFrame38.close();
+videoFrame39.close();
+videoFrame40.close();
+videoFrame43.close();
+videoFrame44.close();
+videoFrame45.close();
+videoFrame46.close();
+videoFrame47.close();
+videoFrame49.close();
+videoFrame50.close();
+videoFrame52.close();
+videoFrame53.close();
+videoFrame54.close();
+videoFrame56.close();
+videoFrame59.close();
+}
+
+onload = async () => {
+  try {
+  let sharedScript = document.querySelector('#shared').textContent;
+
+  let workers = [
+
+  ];
+  let promises = [ window0() ];
+  log('promises created');
+  let results = await Promise.allSettled(promises);
+  for (let result of results) {
+    if (result.status === 'rejected') { throw result.reason; }
+  }
+  log('the end')
+  log(location);
+  } catch (e) {
+    log('error');
+    log(e);
+    log(e[Symbol.toStringTag]);
+    log(e.stack);
+    if (e instanceof GPUPipelineError) {
+      log(`${e} - ${e.reason}`);
+      
+    } else if (e instanceof DOMException) {
+      if (e.name === 'OperationError') {
+      log(e.message);
+      
+      } else if (e.name === 'InvalidStateError') {
+      } else {
+        log(e);
+        
+      }
+    } else if (e instanceof GPUValidationError) {
+      
+    } else if (e instanceof GPUOutOfMemoryError) {
+      
+    } else if (e instanceof TypeError) {
+      log(e);
+      
+    } else {
+      log('unexpected error type');
+      log(e);
+      
+    }
+  }
+  globalThis.testRunner?.notifyDone();
+};
+</script>

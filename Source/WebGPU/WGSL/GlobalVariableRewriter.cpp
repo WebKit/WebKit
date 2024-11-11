@@ -1967,12 +1967,19 @@ Result<Vector<unsigned>> RewriteGlobalVariables::insertStructs(PipelineLayout& l
             }();
 
             AST::Variable* variable = nullptr;
-            auto it = m_globalsByBinding.find({ group + 1, entry.binding + 1 });
-            if (it != m_globalsByBinding.end()) {
-                variable = it->value;
-                serializedVariables.add(variable, &entry);
-                entries.append({ entry.binding, &createArgumentBufferEntry(*argumentBufferIndex, *variable) });
-            } else {
+
+            auto groupIt = usedResources.find(group);
+            if (groupIt != usedResources.end()) {
+                auto& bindings = groupIt->value;
+                auto bindingIt = bindings.find(entry.binding);
+                if (bindingIt != bindings.end()) {
+                    variable = bindingIt->value->declaration;
+                    serializedVariables.add(variable, &entry);
+                    entries.append({ entry.binding, &createArgumentBufferEntry(*argumentBufferIndex, *variable) });
+                }
+            }
+
+            if (!variable) {
                 auto& type = m_shaderModule.astBuilder().construct<AST::IdentifierExpression>(SourceSpan::empty(), AST::Identifier::make("void"_s));
                 type.m_inferredType = WTF::switchOn(entry.bindingMember,
                     [&](const BufferBindingLayout& buffer) -> const Type* {
