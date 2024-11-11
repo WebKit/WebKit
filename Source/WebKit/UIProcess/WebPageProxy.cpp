@@ -15213,6 +15213,15 @@ void WebPageProxy::sendToProcessContainingFrameWithoutDestinationIdentifier(std:
     );
 }
 
+template<typename M, typename C> void WebPageProxy::sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier(std::optional<WebCore::FrameIdentifier> frameID, M&& message, C&& completionHandler, OptionSet<IPC::SendOption> options)
+{
+    sendToWebPage(frameID,
+        [&message, &completionHandler, options] (auto& targetPage) {
+        return targetPage.siteIsolatedProcess().sendWithAsyncReply(std::forward<M>(message), std::forward<C>(completionHandler), { }, options);
+        }
+    );
+}
+
 template<typename M>
 void WebPageProxy::sendToProcessContainingFrame(std::optional<FrameIdentifier> frameID, M&& message, OptionSet<IPC::SendOption> options)
 {
@@ -15258,8 +15267,9 @@ INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME(WebPage::CollapseSelectionInFrame);
 #define INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(message) \
     template void WebPageProxy::sendToProcessContainingFrameWithoutDestinationIdentifier<Messages::message>(std::optional<WebCore::FrameIdentifier>, Messages::message&&, OptionSet<IPC::SendOption>)
 INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(WebAutomationSessionProxy::TakeScreenshot);
-INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID(WebAutomationSessionProxy::EvaluateJavaScriptFunction);
 #undef INSTANTIATE_SEND_TO_PROCESS_CONTAINING_FRAME_WITHOUT_DESTINATION_ID
+
+template void WebPageProxy::sendWithAsyncReplyToProcessContainingFrameWithoutDestinationIdentifier<Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction, Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction::Reply>(std::optional<WebCore::FrameIdentifier>, Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction&&, Messages::WebAutomationSessionProxy::EvaluateJavaScriptFunction::Reply&&, OptionSet<IPC::SendOption>);
 
 #define INSTANTIATE_SEND_WITH_ASYNC_REPLY_TO_PROCESS_CONTAINING_FRAME(message) \
     template std::optional<IPC::AsyncReplyID> WebPageProxy::sendWithAsyncReplyToProcessContainingFrame<Messages::message, Messages::message::Reply>(std::optional<WebCore::FrameIdentifier>, Messages::message&&, Messages::message::Reply&&, OptionSet<IPC::SendOption>)

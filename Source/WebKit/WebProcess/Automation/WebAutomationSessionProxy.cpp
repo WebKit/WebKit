@@ -217,7 +217,11 @@ static JSValueRef evaluateJavaScriptCallback(JSContextRef context, JSObjectRef f
         ObjectIdentifier<WebCore::FrameIdentifierType>(rawFrameID),
         ObjectIdentifier<WebCore::ProcessIdentifierType>(rawProcessID)
     };
-    uint64_t callbackID = JSValueToNumber(context, arguments[2], exception);
+    uint64_t rawCallbackID = JSValueToNumber(context, arguments[2], exception);
+    if (!WebAutomationSessionProxy::JSCallbackIdentifier::isValidIdentifier(rawCallbackID))
+        return JSValueMakeUndefined(context);
+    WebAutomationSessionProxy::JSCallbackIdentifier callbackID(rawCallbackID);
+
     if (JSValueIsString(context, arguments[3])) {
         auto result = adoptRef(JSValueToStringCopy(context, arguments[3], exception));
         automationSessionProxy->didEvaluateJavaScriptFunction(frameID, callbackID, result->string(), { });
@@ -396,27 +400,21 @@ void WebAutomationSessionProxy::willDestroyGlobalObjectForFrame(WebCore::FrameId
     String errorMessage = "Callback was not called before the unload event."_s;
     String errorType = Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound);
 
-    auto pendingFrameCallbacks = m_webFramePendingEvaluateJavaScriptCallbacksMap.take(frameID);
-    for (uint64_t callbackID : pendingFrameCallbacks)
-        WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, errorMessage, errorType), 0);
+    auto map = m_webFramePendingEvaluateJavaScriptCallbacksMap.take(frameID);
+    for (auto& callback : map.values())
+        callback(String(errorMessage), String(errorType));
 }
 
-void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, uint64_t callbackID)
+void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> optionalFrameID, const String& function, Vector<String> arguments, bool expectsImplicitCallbackArgument, bool forceUserGesture, std::optional<double> callbackTimeout, CompletionHandler<void(String&&, String&&)>&& completionHandler)
 {
     RefPtr page = WebProcess::singleton().webPage(pageID);
-    if (!page) {
-        WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, { },
-            Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound)), 0);
-        return;
-    }
+    if (!page)
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::WindowNotFound));
     RefPtr frame = optionalFrameID ? WebProcess::singleton().webFrame(*optionalFrameID) : &page->mainWebFrame();
     RefPtr coreLocalFrame = frame ? frame->coreLocalFrame() : nullptr;
     RefPtr window = coreLocalFrame ? coreLocalFrame->window() : nullptr;
-    if (!window || !window->frame()) {
-        WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, { },
-            Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound)), 0);
-        return;
-    }
+    if (!window || !window->frame())
+        return completionHandler({ }, Inspector::Protocol::AutomationHelpers::getEnumConstantValue(Inspector::Protocol::Automation::ErrorMessage::FrameNotFound));
 
     // No need to track the main frame, this is handled by didClearWindowObjectForFrame.
     if (!coreLocalFrame->isMainFrame())
@@ -428,10 +426,11 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifi
     auto frameID = frame->frameID();
     JSValueRef exception = nullptr;
     JSGlobalContextRef context = frame->jsContext();
+    auto callbackID = JSCallbackIdentifier::generate();
 
     if (expectsImplicitCallbackArgument) {
-        auto result = m_webFramePendingEvaluateJavaScriptCallbacksMap.add(frameID, Vector<uint64_t>());
-        result.iterator->value.append(callbackID);
+        auto result = m_webFramePendingEvaluateJavaScriptCallbacksMap.add(frameID, HashMap<JSCallbackIdentifier, CompletionHandler<void(String&&, String&&)>>());
+        result.iterator->value.set(callbackID, WTFMove(completionHandler));
     }
 
     JSValueRef functionArguments[] = {
@@ -441,7 +440,7 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifi
         JSValueMakeBoolean(context, forceUserGesture),
         JSValueMakeNumber(context, frameID.object().toUInt64()),
         JSValueMakeNumber(context, frameID.processIdentifier().toUInt64()),
-        JSValueMakeNumber(context, callbackID),
+        JSValueMakeNumber(context, callbackID.toUInt64()),
         JSObjectMakeFunctionWithCallback(context, nullptr, evaluateJavaScriptCallback),
         JSValueMakeNumber(context, callbackTimeout.value_or(-1))
     };
@@ -465,17 +464,19 @@ void WebAutomationSessionProxy::evaluateJavaScriptFunction(WebCore::PageIdentifi
     didEvaluateJavaScriptFunction(frameID, callbackID, exceptionMessage, errorType);
 }
 
-void WebAutomationSessionProxy::didEvaluateJavaScriptFunction(WebCore::FrameIdentifier frameID, uint64_t callbackID, const String& result, const String& errorType)
+void WebAutomationSessionProxy::didEvaluateJavaScriptFunction(WebCore::FrameIdentifier frameID, JSCallbackIdentifier callbackID, const String& result, const String& errorType)
 {
+    CompletionHandler<void(String&&, String&&)> callback;
+
     auto findResult = m_webFramePendingEvaluateJavaScriptCallbacksMap.find(frameID);
     if (findResult != m_webFramePendingEvaluateJavaScriptCallbacksMap.end()) {
-        findResult->value.removeFirst(callbackID);
-        ASSERT(!findResult->value.contains(callbackID));
+        callback = findResult->value.take(callbackID);
         if (findResult->value.isEmpty())
             m_webFramePendingEvaluateJavaScriptCallbacksMap.remove(findResult);
     }
 
-    WebProcess::singleton().protectedParentProcessConnection()->send(Messages::WebAutomationSession::DidEvaluateJavaScriptFunction(callbackID, result, errorType), 0);
+    if (callback)
+        callback(String(result), String(errorType));
 }
 
 void WebAutomationSessionProxy::resolveChildFrameWithOrdinal(WebCore::PageIdentifier pageID, std::optional<WebCore::FrameIdentifier> frameID, uint32_t ordinal, CompletionHandler<void(std::optional<String>, std::optional<WebCore::FrameIdentifier>)>&& completionHandler)

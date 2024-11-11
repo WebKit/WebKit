@@ -282,7 +282,6 @@ private:
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
     // Called by WebAutomationSession messages.
-    void didEvaluateJavaScriptFunction(uint64_t callbackID, const String& result, const String& errorType);
     void didTakeScreenshot(uint64_t callbackID, std::optional<WebCore::ShareableBitmap::Handle>&&, const String& errorType);
 
     // Platform-dependent implementations.
