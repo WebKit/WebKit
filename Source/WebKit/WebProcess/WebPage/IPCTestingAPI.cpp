@@ -547,13 +547,13 @@ static JSValueRef jsSendWithAsyncReply(IPC::Connection& connection, uint64_t des
             JSC::JSObject* jsResult = nullptr;
             if (replyDecoder && replyDecoder->isValid())
                 jsResult = jsResultFromReplyDecoder(globalObject, messageName, *replyDecoder);
-            JSValueRef arguments[1] = { nullptr };
+            std::array<JSValueRef, 1> arguments { nullptr };
             if (auto* exception = scope.exception()) {
                 arguments[0] = toRef(globalObject, exception);
                 scope.clearException();
             } else
                 arguments[0] = toRef(globalObject, jsResult);
-            JSObjectCallAsFunction(context, callback, callback, 1, arguments, nullptr);
+            JSObjectCallAsFunction(context, callback, callback, 1, arguments.data(), nullptr);
         },
         IPC::Connection::AsyncReplyID::generate()
     };
