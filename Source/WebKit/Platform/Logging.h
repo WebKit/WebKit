@@ -30,34 +30,43 @@
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
-#if __has_include("WebKitLogDefinitions.h")
 #include "WebKitLogDefinitions.h"
-#endif
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 #include "WebKitLogClient.h"
 
-#define RELEASE_LOG_FORWARDABLE(category, logMessage, ...) \
-do { \
+#define RELEASE_LOG_FORWARDABLE(category, logMessage, ...) do { \
     if (webkitLogClient()) \
         webkitLogClient()->webKitLog(WebKitLogMessage::logMessage __VA_OPT__(,) __VA_ARGS__); \
     else \
         RELEASE_LOG(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__); \
 } while (0)
 
-#define RELEASE_LOG_ERROR_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_FORWARDABLE(category, logMessage, __VA_ARGS__)
-#define RELEASE_LOG_FAULT_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_FORWARDABLE(category, logMessage, __VA_ARGS__)
+#define RELEASE_LOG_INFO_FORWARDABLE(category, logMessage, ...) do { \
+    if (webkitLogClient()) \
+        webkitLogClient()->webKitLog(WebKitLogMessage::logMessage __VA_OPT__(,) __VA_ARGS__); \
+    else \
+        RELEASE_LOG_INFO(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__); \
+} while (0)
 
-namespace WebKit {
+#define RELEASE_LOG_ERROR_FORWARDABLE(category, logMessage, ...) do { \
+    if (webkitLogClient()) \
+        webkitLogClient()->webKitLog(WebKitLogMessage::logMessage __VA_OPT__(,) __VA_ARGS__); \
+    else \
+        RELEASE_LOG_ERROR(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__); \
+} while (0)
 
-std::unique_ptr<WebKitLogClient>& webkitLogClient();
-
-}
+#define RELEASE_LOG_FAULT_FORWARDABLE(category, logMessage, ...) do { \
+    if (webkitLogClient()) \
+        webkitLogClient()->webKitLog(WebKitLogMessage::logMessage __VA_OPT__(,) __VA_ARGS__); \
+    else \
+        RELEASE_LOG_FAULT(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__); \
+} while (0)
 #else
-#define RELEASE_LOG_FORWARDABLE RELEASE_LOG
-#define RELEASE_LOG_INFO_FORWARDABLE RELEASE_LOG_INFO
-#define RELEASE_LOG_ERROR_FORWARDABLE RELEASE_LOG_ERROR
-#define RELEASE_LOG_FAULT_FORWARDABLE RELEASE_LOG_FAULT
+#define RELEASE_LOG_FORWARDABLE(category, logMessage, ...) RELEASE_LOG(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__)
+#define RELEASE_LOG_INFO_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_INFO(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__)
+#define RELEASE_LOG_ERROR_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_ERROR(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__)
+#define RELEASE_LOG_FAULT_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_FAULT(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__)
 #endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
 #ifndef LOG_CHANNEL_PREFIX
