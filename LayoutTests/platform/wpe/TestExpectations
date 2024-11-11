@@ -1673,19 +1673,9 @@ webkit.org/b/278719 fast/events/touch/touch-slider.html [ Timeout Pass ]
 webkit.org/b/278719 fast/events/touch/touch-slider-no-js-touch-listener.html [ Pass Crash ]
 webkit.org/b/278719 fast/events/touch/touch-target-limited.html [ Pass Timeout ]
 
-# The following tests should pass when assertion is disabled
-webkit.org/b/279967 fast/events/touch/removed-fragment-touch-target.html [ Pass Crash ]
-webkit.org/b/279967 fast/events/touch/removed-touch-target.html [ Pass Crash ]
-webkit.org/b/279967 fast/events/touch/textarea-touch-target.html [ Pass Crash ]
-webkit.org/b/279967 fast/events/touch/text-node-touch-target.html [ Pass Crash ]
-webkit.org/b/279967 fast/events/touch/touch-active-state.html [ Pass Crash ]
-webkit.org/b/279967 fast/events/touch/touch-before-pressing-spin-button.html [ Pass Crash ]
-webkit.org/b/279967 fast/events/touch/touch-coords-in-zoom-and-scroll.html [ Pass Crash ]
-webkit.org/b/279967 fast/events/touch/touch-event-pageXY.html [ Pass Crash ]
-webkit.org/b/279967 fast/events/touch/touch-inside-iframe-scrolled.html [ Pass Crash ]
-webkit.org/b/279967 fast/events/touch/touch-inside-iframe.html [ Pass Crash ]
+# The assertion failure occurs to WPE only.
+webkit.org/b/279178 fast/scrolling/scroll-into-view-on-composited-scrollable-overflow-layer-crash.html [ Skip ]
 
-webkit.org/b/279178 [ Debug ] fast/scrolling/scroll-into-view-on-composited-scrollable-overflow-layer-crash.html [ Pass Crash ]
 webkit.org/b/279179 imported/w3c/web-platform-tests/eventsource/eventsource-constructor-empty-url.any.sharedworker.html [ Pass Failure Crash ]
 
 webkit.org/b/281053 fast/storage/serialized-script-value.html [ Pass Crash ]
