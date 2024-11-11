@@ -1919,3 +1919,6 @@ webkit.org/b/282726 http/tests/media/fairplay/legacy-fairplay-hls.html [ Failure
 [ Sequoia+ ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
 [ Sequoia+ ] http/tests/cookies/same-site/fetch-in-cross-origin-service-worker.html [ Failure ]
 [ Sequoia+ ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
+
+# webkit.org/b/282665 [Ventura wk2] imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-timeline.tentative.html is a flaky failure
+[ Ventura ] imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-timeline.tentative.html [ Pass Failure ]
