@@ -19,9 +19,9 @@ sources:
 - kind: patch
   path: patches/fdo-0009-gst-plugins-bad-Enable-x265-encoder.patch
 - kind: patch
-  path: patches/fdo-0010-gst-plugins-bad-webrtcbin-create-and-associate-trans.patch
+  path: patches/fdo-0010-GStreamer-Vendor-WebRTC-related-patches-scheduled-to.patch
 - kind: patch
-  path: patches/fdo-0011-gst-plugins-bad-webrtcbin-connect-transportreceivebi.patch
+  path: patches/fdo-0011-GStreamer-Vendor-rtpfunnel-patch-scheduled-to-ship-i.patch
 config:
   options:
     target_arch: '%{arch}'

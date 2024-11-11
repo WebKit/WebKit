@@ -1,0 +1,1416 @@
+From 40b6603e282bb15805078260cd31a65150e3141c Mon Sep 17 00:00:00 2001
+From: Philippe Normand <philn@igalia.com>
+Date: Mon, 11 Nov 2024 10:29:47 +0000
+Subject: [PATCH 1/2] GStreamer: Vendor WebRTC-related patches scheduled to
+ ship in 1.26
+
+---
+ ...-and-associate-transceivers-earlier-.patch | 912 ++++++++++++++++++
+ ...-reverse-direction-from-remote-media.patch |  87 ++
+ ...t-output-stream-on-recv-transceivers.patch | 120 +++
+ ...-matching-pads-to-unassociated-trans.patch |  46 +
+ ...5-webrtcbin-Fix-renegotiation-checks.patch | 275 ++++++
+ ...SRC-attributes-getting-CAPS-for-a-PT.patch | 144 +++
+ ...allback-to-pad-default-handling-for-.patch | 192 ++++
+ ...le-forward-unknown-ssrc-on-rtpfunnel.patch |  30 +
+ 8 files changed, 1806 insertions(+)
+ create mode 100644 patches/gstreamer/gst-plugins-bad-0001-webrtcbin-create-and-associate-transceivers-earlier-.patch
+ create mode 100644 patches/gstreamer/gst-plugins-bad-0002-webrtcbin-reverse-direction-from-remote-media.patch
+ create mode 100644 patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch
+ create mode 100644 patches/gstreamer/gst-plugins-bad-0004-webrtc-Fixes-for-matching-pads-to-unassociated-trans.patch
+ create mode 100644 patches/gstreamer/gst-plugins-bad-0005-webrtcbin-Fix-renegotiation-checks.patch
+ create mode 100644 patches/gstreamer/gst-plugins-bad-0006-webrtc-add-all-SSRC-attributes-getting-CAPS-for-a-PT.patch
+ create mode 100644 patches/gstreamer/gst-plugins-bad-0007-rtpfunnel-also-fallback-to-pad-default-handling-for-.patch
+ create mode 100644 patches/gstreamer/gst-plugins-bad-0008-webrtcbin-enable-forward-unknown-ssrc-on-rtpfunnel.patch
+
+diff --git a/patches/gstreamer/gst-plugins-bad-0001-webrtcbin-create-and-associate-transceivers-earlier-.patch b/patches/gstreamer/gst-plugins-bad-0001-webrtcbin-create-and-associate-transceivers-earlier-.patch
+new file mode 100644
+index 0000000..ed87b7f
+--- /dev/null
++++ b/patches/gstreamer/gst-plugins-bad-0001-webrtcbin-create-and-associate-transceivers-earlier-.patch
+@@ -0,0 +1,661 @@
++From 8edcb3957601ba1237d3f60bbfc0f115a614aa75 Mon Sep 17 00:00:00 2001
++From: Carlos Bentzen <cadubentzen@igalia.com>
++Date: Wed, 10 Jul 2024 10:34:19 +0200
++Subject: [PATCH 1/9] webrtcbin: create and associate transceivers earlier in
++ negotation
++
++According to https://w3c.github.io/webrtc-pc/#set-the-session-description
++(steps in 4.6.10.), we should be creating and associating transceivers when
++setting session descriptions.
++
++Before this commit, webrtcbin deviated from the spec:
++1. Transceivers from sink pads where created when the sink pad was
++   requested, but not associated after setting local description, only
++   when signaling is STABLE.
++2. Transceivers from remote offers were not created after applying the
++   the remote description, only when the answer is created, and were then
++   only associated once signaling is STABLE.
++
++This commit makes webrtcbin follow the spec more closely with regards to
++timing of transceivers creation and association.
++
++A unit test is added, checking that the transceivers are created and
++associated after every session description is set.
++
++Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7156>
++---
++ .../gst-plugins-bad/ext/webrtc/gstwebrtcbin.c | 495 ++++++++++--------
++ .../gst-plugins-bad/ext/webrtc/webrtcsdp.c    |  11 +
++ .../gst-plugins-bad/ext/webrtc/webrtcsdp.h    |   2 +
++ .../tests/check/elements/webrtcbin.c          | 120 ++++-
++ 4 files changed, 388 insertions(+), 240 deletions(-)
++
++diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++index f170f512bf..b4196e3435 100644
++--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
+++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++@@ -748,6 +748,13 @@ transceiver_match_for_mid (GstWebRTCRTPTransceiver * trans, const gchar * mid)
++   return g_strcmp0 (trans->mid, mid) == 0;
++ }
++ 
+++static gboolean
+++transceiver_match_for_pending_mid (GstWebRTCRTPTransceiver * trans,
+++    const gchar * mid)
+++{
+++  return g_strcmp0 (WEBRTC_TRANSCEIVER (trans)->pending_mid, mid) == 0;
+++}
+++
++ static gboolean
++ transceiver_match_for_mline (GstWebRTCRTPTransceiver * trans, guint * mline)
++ {
++@@ -786,6 +793,20 @@ _find_transceiver_for_mid (GstWebRTCBin * webrtc, const char *mid)
++   return trans;
++ }
++ 
+++static GstWebRTCRTPTransceiver *
+++_find_transceiver_for_pending_mid (GstWebRTCBin * webrtc, const char *mid)
+++{
+++  GstWebRTCRTPTransceiver *trans;
+++
+++  trans = _find_transceiver (webrtc, mid,
+++      (FindTransceiverFunc) transceiver_match_for_pending_mid);
+++
+++  GST_TRACE_OBJECT (webrtc, "Found transceiver %" GST_PTR_FORMAT " for "
+++      "pending mid %s", trans, mid);
+++
+++  return trans;
+++}
+++
++ typedef gboolean (*FindTransportFunc) (TransportStream * p1,
++     gconstpointer data);
++ 
++@@ -4553,146 +4574,51 @@ _create_answer_task (GstWebRTCBin * webrtc, const GstStructure * options,
++ 
++       _remove_optional_offer_fields (offer_caps);
++ 
++-      if (last_answer && i < gst_sdp_message_medias_len (last_answer)
++-          && (rtp_trans = _find_transceiver_for_mid (webrtc, mid))) {
+++      rtp_trans = _find_transceiver_for_mid (webrtc, mid);
+++      if (!rtp_trans) {
+++        g_set_error (error, GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INVALID_STATE,
+++            "Transceiver for media with mid %s not found", mid);
+++        gst_caps_unref (offer_caps);
+++        goto rejected;
+++      }
+++      GstCaps *current_caps =
+++          _find_codec_preferences (webrtc, rtp_trans, i, error);
+++      if (*error) {
+++        gst_caps_unref (offer_caps);
+++        goto rejected;
+++      }
+++
+++      if (last_answer && i < gst_sdp_message_medias_len (last_answer)) {
++         const GstSDPMedia *last_media =
++             gst_sdp_message_get_media (last_answer, i);
++         const gchar *last_mid =
++             gst_sdp_media_get_attribute_val (last_media, "mid");
++-        GstCaps *current_caps;
++-
++         /* FIXME: assumes no shenanigans with recycling transceivers */
++         g_assert (g_strcmp0 (mid, last_mid) == 0);
++-
++-        current_caps = _find_codec_preferences (webrtc, rtp_trans, i, error);
++-        if (*error) {
++-          gst_caps_unref (offer_caps);
++-          goto rejected;
++-        }
++         if (!current_caps)
++           current_caps = _rtp_caps_from_media (last_media);
++-
++-        if (current_caps) {
++-          answer_caps = gst_caps_intersect (offer_caps, current_caps);
++-          if (gst_caps_is_empty (answer_caps)) {
++-            GST_WARNING_OBJECT (webrtc, "Caps from offer for m-line %d (%"
++-                GST_PTR_FORMAT ") don't intersect with caps from codec"
++-                " preferences and transceiver %" GST_PTR_FORMAT, i, offer_caps,
++-                current_caps);
++-            gst_caps_unref (current_caps);
++-            gst_caps_unref (answer_caps);
++-            gst_caps_unref (offer_caps);
++-            goto rejected;
++-          }
++-          gst_caps_unref (current_caps);
++-        }
++-
++-        /* XXX: In theory we're meant to use the sendrecv formats for the
++-         * inactive direction however we don't know what that may be and would
++-         * require asking outside what it expects to possibly send later */
++-
++-        GST_LOG_OBJECT (webrtc, "Found existing previously negotiated "
++-            "transceiver %" GST_PTR_FORMAT " from mid %s for mline %u "
++-            "using caps %" GST_PTR_FORMAT, rtp_trans, mid, i, answer_caps);
++-      } else {
++-        for (j = 0; j < webrtc->priv->transceivers->len; j++) {
++-          GstCaps *trans_caps;
++-
++-          rtp_trans = g_ptr_array_index (webrtc->priv->transceivers, j);
++-
++-          if (g_list_find (seen_transceivers, rtp_trans)) {
++-            /* Don't double allocate a transceiver to multiple mlines */
++-            rtp_trans = NULL;
++-            continue;
++-          }
++-
++-          trans_caps = _find_codec_preferences (webrtc, rtp_trans, j, error);
++-          if (*error) {
++-            gst_caps_unref (offer_caps);
++-            goto rejected;
++-          }
++-
++-          GST_LOG_OBJECT (webrtc, "trying to compare %" GST_PTR_FORMAT
++-              " and %" GST_PTR_FORMAT, offer_caps, trans_caps);
++-
++-          /* FIXME: technically this is a little overreaching as some fields we
++-           * we can deal with not having and/or we may have unrecognized fields
++-           * that we cannot actually support */
++-          if (trans_caps) {
++-            answer_caps = gst_caps_intersect (offer_caps, trans_caps);
++-            gst_caps_unref (trans_caps);
++-            if (answer_caps) {
++-              if (!gst_caps_is_empty (answer_caps)) {
++-                GST_LOG_OBJECT (webrtc,
++-                    "found compatible transceiver %" GST_PTR_FORMAT
++-                    " for offer media %u", rtp_trans, i);
++-                break;
++-              }
++-              gst_caps_unref (answer_caps);
++-              answer_caps = NULL;
++-            }
++-          }
++-          rtp_trans = NULL;
++-        }
++       }
++ 
++-      if (rtp_trans) {
++-        answer_dir = rtp_trans->direction;
++-        g_assert (answer_caps != NULL);
++-      } else {
++-        /* if no transceiver, then we only receive that stream and respond with
++-         * the intersection with the transceivers codec preferences caps */
++-        answer_dir = GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY;
++-        GST_WARNING_OBJECT (webrtc, "did not find compatible transceiver for "
++-            "offer caps %" GST_PTR_FORMAT ", will only receive", offer_caps);
++-      }
++-
++-      if (!rtp_trans) {
++-        GstCaps *trans_caps;
++-        GstWebRTCKind kind = GST_WEBRTC_KIND_UNKNOWN;
++-
++-        if (g_strcmp0 (gst_sdp_media_get_media (offer_media), "audio") == 0)
++-          kind = GST_WEBRTC_KIND_AUDIO;
++-        else if (g_strcmp0 (gst_sdp_media_get_media (offer_media),
++-                "video") == 0)
++-          kind = GST_WEBRTC_KIND_VIDEO;
++-        else
++-          GST_LOG_OBJECT (webrtc, "Unknown media kind %s",
++-              GST_STR_NULL (gst_sdp_media_get_media (offer_media)));
++-
++-        trans = _create_webrtc_transceiver (webrtc, answer_dir, i, kind, NULL);
++-        rtp_trans = GST_WEBRTC_RTP_TRANSCEIVER (trans);
++-
++-        PC_UNLOCK (webrtc);
++-        g_signal_emit (webrtc,
++-            gst_webrtc_bin_signals[ON_NEW_TRANSCEIVER_SIGNAL], 0, rtp_trans);
++-        PC_LOCK (webrtc);
++-
++-        GST_LOG_OBJECT (webrtc, "Created new transceiver %" GST_PTR_FORMAT
++-            " for mline %u with media kind %d", trans, i, kind);
++-
++-        trans_caps = _find_codec_preferences (webrtc, rtp_trans, i, error);
++-        if (*error) {
+++      if (current_caps) {
+++        answer_caps = gst_caps_intersect (offer_caps, current_caps);
+++        if (gst_caps_is_empty (answer_caps)) {
+++          GST_WARNING_OBJECT (webrtc, "Caps from offer for m-line %d (%"
+++              GST_PTR_FORMAT ") don't intersect with caps from codec"
+++              " preferences and transceiver %" GST_PTR_FORMAT, i, offer_caps,
+++              current_caps);
+++          gst_caps_unref (current_caps);
+++          gst_caps_unref (answer_caps);
++           gst_caps_unref (offer_caps);
++           goto rejected;
++         }
++-
++-        GST_TRACE_OBJECT (webrtc, "trying to compare %" GST_PTR_FORMAT
++-            " and %" GST_PTR_FORMAT, offer_caps, trans_caps);
++-
++-        /* FIXME: technically this is a little overreaching as some fields we
++-         * we can deal with not having and/or we may have unrecognized fields
++-         * that we cannot actually support */
++-        if (trans_caps) {
++-          answer_caps = gst_caps_intersect (offer_caps, trans_caps);
++-          gst_clear_caps (&trans_caps);
++-        } else {
++-          answer_caps = gst_caps_ref (offer_caps);
++-        }
+++        gst_caps_unref (current_caps);
++       } else {
++-        trans = WEBRTC_TRANSCEIVER (rtp_trans);
+++        answer_caps = gst_caps_ref (offer_caps);
++       }
++ 
+++      answer_dir = rtp_trans->direction;
+++      trans = WEBRTC_TRANSCEIVER (rtp_trans);
+++
++       seen_transceivers = g_list_prepend (seen_transceivers, rtp_trans);
++ 
++       if (gst_caps_is_empty (answer_caps)) {
++@@ -5739,6 +5665,7 @@ _update_transceiver_from_sdp_media (GstWebRTCBin * webrtc,
++     if (g_strcmp0 (attr->key, "mid") == 0) {
++       g_free (rtp_trans->mid);
++       rtp_trans->mid = g_strdup (attr->value);
+++      g_object_notify (G_OBJECT (rtp_trans), "mid");
++     }
++   }
++ 
++@@ -6079,24 +6006,6 @@ _update_data_channel_from_sdp_media (GstWebRTCBin * webrtc,
++   transport_receive_bin_set_receive_state (receive, RECEIVE_STATE_PASS);
++ }
++ 
++-static gboolean
++-_find_compatible_unassociated_transceiver (GstWebRTCRTPTransceiver * p1,
++-    gconstpointer data)
++-{
++-  GstWebRTCKind kind = GPOINTER_TO_INT (data);
++-
++-  if (p1->mid)
++-    return FALSE;
++-  if (p1->mline != -1)
++-    return FALSE;
++-  if (p1->stopped)
++-    return FALSE;
++-  if (p1->kind != GST_WEBRTC_KIND_UNKNOWN && p1->kind != kind)
++-    return FALSE;
++-
++-  return TRUE;
++-}
++-
++ static void
++ _connect_rtpfunnel (GstWebRTCBin * webrtc, guint session_id)
++ {
++@@ -6179,7 +6088,6 @@ _update_transceivers_from_sdp (GstWebRTCBin * webrtc, SDPSource source,
++   for (i = 0; i < gst_sdp_message_medias_len (sdp->sdp); i++) {
++     const GstSDPMedia *media = gst_sdp_message_get_media (sdp->sdp, i);
++     TransportStream *stream;
++-    GstWebRTCRTPTransceiver *trans;
++     guint transport_idx;
++ 
++     /* skip rejected media */
++@@ -6191,8 +6099,6 @@ _update_transceivers_from_sdp (GstWebRTCBin * webrtc, SDPSource source,
++     else
++       transport_idx = i;
++ 
++-    trans = _find_transceiver_for_sdp_media (webrtc, sdp->sdp, i);
++-
++     stream = _get_or_create_transport_stream (webrtc, transport_idx,
++         _message_media_is_datachannel (sdp->sdp, transport_idx));
++     if (!bundled) {
++@@ -6203,60 +6109,28 @@ _update_transceivers_from_sdp (GstWebRTCBin * webrtc, SDPSource source,
++       ensure_rtx_hdr_ext (stream);
++     }
++ 
++-    if (trans)
++-      webrtc_transceiver_set_transport ((WebRTCTransceiver *) trans, stream);
++-
++-    if (source == SDP_LOCAL && sdp->type == GST_WEBRTC_SDP_TYPE_OFFER && !trans) {
++-      g_set_error (error, GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_SDP_SYNTAX_ERROR,
++-          "State mismatch.  Could not find local transceiver by mline %u", i);
++-      goto done;
++-    } else {
++-      if (g_strcmp0 (gst_sdp_media_get_media (media), "audio") == 0 ||
++-          g_strcmp0 (gst_sdp_media_get_media (media), "video") == 0) {
++-        GstWebRTCKind kind = GST_WEBRTC_KIND_UNKNOWN;
+++    if (g_strcmp0 (gst_sdp_media_get_media (media), "audio") == 0 ||
+++        g_strcmp0 (gst_sdp_media_get_media (media), "video") == 0) {
+++      GstWebRTCRTPTransceiver *trans;
++ 
++-        /* No existing transceiver, find an unused one */
++-        if (!trans) {
++-          if (g_strcmp0 (gst_sdp_media_get_media (media), "audio") == 0)
++-            kind = GST_WEBRTC_KIND_AUDIO;
++-          else if (g_strcmp0 (gst_sdp_media_get_media (media), "video") == 0)
++-            kind = GST_WEBRTC_KIND_VIDEO;
++-          else
++-            GST_LOG_OBJECT (webrtc, "Unknown media kind %s",
++-                GST_STR_NULL (gst_sdp_media_get_media (media)));
++-
++-          trans = _find_transceiver (webrtc, GINT_TO_POINTER (kind),
++-              (FindTransceiverFunc) _find_compatible_unassociated_transceiver);
++-        }
++-
++-        /* Still no transceiver? Create one */
++-        /* XXX: default to the advertised direction in the sdp for new
++-         * transceivers.  The spec doesn't actually say what happens here, only
++-         * that calls to setDirection will change the value.  Nothing about
++-         * a default value when the transceiver is created internally */
++-        if (!trans) {
++-          WebRTCTransceiver *t = _create_webrtc_transceiver (webrtc,
++-              _get_direction_from_media (media), i, kind, NULL);
++-          webrtc_transceiver_set_transport (t, stream);
++-          trans = GST_WEBRTC_RTP_TRANSCEIVER (t);
++-          PC_UNLOCK (webrtc);
++-          g_signal_emit (webrtc,
++-              gst_webrtc_bin_signals[ON_NEW_TRANSCEIVER_SIGNAL], 0, trans);
++-          PC_LOCK (webrtc);
++-        }
++-
++-        _update_transceiver_from_sdp_media (webrtc, sdp->sdp, i, stream,
++-            trans, bundled, bundle_idx, error);
++-        if (error && *error)
++-          goto done;
++-      } else if (_message_media_is_datachannel (sdp->sdp, i)) {
++-        _update_data_channel_from_sdp_media (webrtc, sdp->sdp, i, stream,
++-            error);
++-        if (error && *error)
++-          goto done;
++-      } else {
++-        GST_ERROR_OBJECT (webrtc, "Unknown media type in SDP at index %u", i);
+++      trans = _find_transceiver_for_sdp_media (webrtc, sdp->sdp, i);
+++      if (!trans) {
+++        g_set_error (error, GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_INVALID_STATE,
+++            "Transceiver for mline %d not found", i);
+++        goto done;
++       }
+++      webrtc_transceiver_set_transport (WEBRTC_TRANSCEIVER (trans), stream);
+++
+++      _update_transceiver_from_sdp_media (webrtc, sdp->sdp, i, stream,
+++          trans, bundled, bundle_idx, error);
+++      if (error && *error)
+++        goto done;
+++    } else if (_message_media_is_datachannel (sdp->sdp, i)) {
+++      _update_data_channel_from_sdp_media (webrtc, sdp->sdp, i, stream, error);
+++      if (error && *error)
+++        goto done;
+++    } else {
+++      GST_ERROR_OBJECT (webrtc, "Unknown media type in SDP at index %u", i);
++     }
++   }
++ 
++@@ -6406,6 +6280,210 @@ get_last_generated_description (GstWebRTCBin * webrtc, SDPSource source,
++   return NULL;
++ }
++ 
+++/* https://w3c.github.io/webrtc-pc/#set-description (steps in 4.6.10.) */
+++static gboolean
+++_create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
+++    struct set_description *sd, GError ** error)
+++{
+++  gboolean ret = FALSE;
+++  GStrv bundled = NULL;
+++  guint bundle_idx = 0;
+++  int i;
+++
+++  if (sd->sdp->type == GST_WEBRTC_SDP_TYPE_ROLLBACK) {
+++    /* FIXME:
+++     * If the mid value of an RTCRtpTransceiver was set to a non-null value
+++     * by the RTCSessionDescription that is being rolled back, set the mid
+++     * value of that transceiver to null, as described by [JSEP]
+++     * (section 4.1.7.2.).
+++     * If an RTCRtpTransceiver was created by applying the
+++     * RTCSessionDescription that is being rolled back, and a track has not
+++     * been attached to it via addTrack, remove that transceiver from
+++     * connection's set of transceivers, as described by [JSEP]
+++     * (section 4.1.7.2.).
+++     * Restore the value of connection's [[ sctpTransport]] internal slot
+++     * to its value at the last stable signaling state.
+++     */
+++    return ret;
+++  }
+++
+++  /* FIXME: With some peers, it's possible we could have
+++   * multiple bundles to deal with, although I've never seen one yet */
+++  if (webrtc->bundle_policy != GST_WEBRTC_BUNDLE_POLICY_NONE)
+++    if (!_parse_bundle (sd->sdp->sdp, &bundled, error))
+++      goto out;
+++
+++  if (bundled) {
+++    if (!_get_bundle_index (sd->sdp->sdp, bundled, &bundle_idx)) {
+++      g_set_error (error, GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_SDP_SYNTAX_ERROR,
+++          "Bundle tag is %s but no media found matching", bundled[0]);
+++      goto out;
+++    }
+++  }
+++
+++  for (i = 0; i < gst_sdp_message_medias_len (sd->sdp->sdp); i++) {
+++    GstWebRTCRTPTransceiver *trans;
+++    WebRTCTransceiver *wtrans;
+++    const GstSDPMedia *media;
+++    const gchar *mid;
+++    guint transport_idx;
+++    TransportStream *stream;
+++
+++    if (_message_media_is_datachannel (sd->sdp->sdp, i))
+++      continue;
+++
+++    media = gst_sdp_message_get_media (sd->sdp->sdp, i);
+++    mid = gst_sdp_media_get_attribute_val (media, "mid");
+++
+++    /* XXX: not strictly required but a lot of functionality requires a mid */
+++    if (!mid) {
+++      g_set_error (error, GST_WEBRTC_ERROR, GST_WEBRTC_ERROR_SDP_SYNTAX_ERROR,
+++          "Missing mid attribute in media");
+++      goto out;
+++    }
+++
+++    if (bundled)
+++      transport_idx = bundle_idx;
+++    else
+++      transport_idx = i;
+++
+++    trans = _find_transceiver_for_mid (webrtc, mid);
+++
+++    if (sd->source == SDP_LOCAL) {
+++      /* If the media description was not yet associated with an RTCRtpTransceiver object then run the following steps: */
+++      if (!trans) {
+++        /* Let transceiver be the RTCRtpTransceiver used to create the media description. */
+++        trans = _find_transceiver_for_pending_mid (webrtc, mid);
+++        if (!trans) {
+++          g_set_error (error, GST_WEBRTC_ERROR,
+++              GST_WEBRTC_ERROR_INVALID_STATE,
+++              "Transceiver used to created media with mid %s not found", mid);
+++          goto out;
+++        }
+++        wtrans = WEBRTC_TRANSCEIVER (trans);
+++        if (wtrans->mline_locked && trans->mline != i) {
+++          g_set_error (error, GST_WEBRTC_ERROR,
+++              GST_WEBRTC_ERROR_INTERNAL_FAILURE,
+++              "Transceiver <%s> with mid %s has mline %d from session description "
+++              "but transceiver has locked mline %u",
+++              GST_OBJECT_NAME (trans), GST_STR_NULL (trans->mid), i,
+++              trans->mline);
+++        }
+++        trans->mline = i;
+++        /* Set transceiver.[[Mid]] to transceiver.[[JsepMid]] */
+++        g_free (trans->mid);
+++        trans->mid = g_strdup (mid);
+++        g_object_notify (G_OBJECT (trans), "mid");
+++        /* If transceiver.[[Stopped]] is true, abort these sub steps */
+++        if (trans->stopped)
+++          continue;
+++        /* If the media description is indicated as using an existing media transport according to [RFC8843], let
+++         * transport be the RTCDtlsTransport object representing the RTP/RTCP component of that transport.
+++         * Otherwise, let transport be a newly created RTCDtlsTransport object with a new underlying RTCIceTransport.
+++         */
+++        stream = _get_or_create_transport_stream (webrtc, transport_idx, FALSE);
+++        webrtc_transceiver_set_transport (wtrans, stream);
+++      }
+++    } else {
+++      if (!trans) {
+++        /* RFC9429: If the "m=" section is "sendrecv" or "recvonly", and there are RtpTransceivers of the same type
+++         * that were added to the PeerConnection by addTrack and are not associated with any "m=" section
+++         * and are not stopped, find the first (according to the canonical order described in Section 5.2.1)
+++         * such RtpTransceiver. */
+++        GstWebRTCRTPTransceiverDirection direction =
+++            _get_direction_from_media (media);
+++        if (direction == GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDRECV
+++            || direction == GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY) {
+++          int j;
+++          for (j = 0; j < webrtc->priv->transceivers->len; ++j) {
+++            trans = g_ptr_array_index (webrtc->priv->transceivers, j);
+++            if (trans->mid || trans->stopped) {
+++              trans = NULL;
+++              continue;
+++            }
+++
+++            /* FIXME: Here we shouldn't in theory need to match caps, as the spec says only about
+++             * "RtpTransceivers of the same type". However, transceivers created by requesting sink
+++             * pads (aka addTrack) may still have unknown type at this point. We may be missing updating
+++             * the transceiver type early enough during caps negotation.
+++             */
+++            GstCaps *trans_caps =
+++                _find_codec_preferences (webrtc, trans, i, error);
+++            if (error && *error)
+++              goto out;
+++
+++            if (trans_caps) {
+++              GstCaps *offer_caps = _rtp_caps_from_media (media);
+++              GstCaps *caps = gst_caps_intersect (offer_caps, trans_caps);
+++              gst_caps_unref (offer_caps);
+++              gst_caps_unref (trans_caps);
+++              if (caps) {
+++                if (!gst_caps_is_empty (caps)) {
+++                  GST_LOG_OBJECT (webrtc,
+++                      "found compatible transceiver %" GST_PTR_FORMAT
+++                      " for offer media %u", trans, i);
+++                  gst_caps_unref (caps);
+++                  break;
+++                }
+++                gst_caps_unref (caps);
+++                caps = NULL;
+++              }
+++            }
+++            trans = NULL;
+++          }
+++        }
+++      }
+++
+++      /* If no RtpTransceiver was found in the previous step, create one with a "recvonly" direction. */
+++      if (!trans) {
+++        wtrans = _create_webrtc_transceiver (webrtc,
+++            GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY, i,
+++            _get_kind_from_media (media), NULL);
+++        trans = GST_WEBRTC_RTP_TRANSCEIVER (wtrans);
+++
+++        PC_UNLOCK (webrtc);
+++        g_signal_emit (webrtc,
+++            gst_webrtc_bin_signals[ON_NEW_TRANSCEIVER_SIGNAL], 0, trans);
+++        PC_LOCK (webrtc);
+++      }
+++
+++      /* Associate the found or created RtpTransceiver with the "m=" section by setting the value of
+++       * the RtpTransceiver's mid property to the MID of the "m=" section, and establish a mapping
+++       * between the transceiver and the index of the "m=" section. */
+++      wtrans = WEBRTC_TRANSCEIVER (trans);
+++      if (wtrans->mline_locked && trans->mline != i) {
+++        g_set_error (error, GST_WEBRTC_ERROR,
+++            GST_WEBRTC_ERROR_INTERNAL_FAILURE,
+++            "Transceiver <%s> with mid %s has mline %d from session description "
+++            "but transceiver has locked mline %u",
+++            GST_OBJECT_NAME (trans), GST_STR_NULL (trans->mid), i,
+++            trans->mline);
+++      }
+++      trans->mline = i;
+++      g_free (trans->mid);
+++      trans->mid = g_strdup (mid);
+++      g_object_notify (G_OBJECT (trans), "mid");
+++
+++      /* If description is of type "answer" or "pranswer", then run the following steps: */
+++      if (sd->sdp->type == GST_WEBRTC_SDP_TYPE_ANSWER
+++          || sd->sdp->type == GST_WEBRTC_SDP_TYPE_PRANSWER) {
+++        /* Set transceiver.[[CurrentDirection]] to direction. */
+++        trans->current_direction = _get_direction_from_media (media);
+++      }
+++      /* Let transport be the RTCDtlsTransport object representing the RTP/RTCP component of the media transport
+++       * used by transceiver's associated media description, according to [RFC8843]. */
+++      if (!wtrans->stream) {
+++        stream = _get_or_create_transport_stream (webrtc, transport_idx, FALSE);
+++        webrtc_transceiver_set_transport (wtrans, stream);
+++      }
+++    }
+++  }
+++
+++  ret = TRUE;
+++out:
+++  g_strfreev (bundled);
+++  return ret;
+++}
++ 
++ /* http://w3c.github.io/webrtc-pc/#set-description */
++ static GstStructure *
++@@ -6568,21 +6646,8 @@ _set_description_task (GstWebRTCBin * webrtc, struct set_description *sd)
++     }
++   }
++ 
++-  if (sd->sdp->type == GST_WEBRTC_SDP_TYPE_ROLLBACK) {
++-    /* FIXME:
++-     * If the mid value of an RTCRtpTransceiver was set to a non-null value
++-     * by the RTCSessionDescription that is being rolled back, set the mid
++-     * value of that transceiver to null, as described by [JSEP]
++-     * (section 4.1.7.2.).
++-     * If an RTCRtpTransceiver was created by applying the
++-     * RTCSessionDescription that is being rolled back, and a track has not
++-     * been attached to it via addTrack, remove that transceiver from
++-     * connection's set of transceivers, as described by [JSEP]
++-     * (section 4.1.7.2.).
++-     * Restore the value of connection's [[ sctpTransport]] internal slot
++-     * to its value at the last stable signaling state.
++-     */
++-  }
+++  if (!_create_and_associate_transceivers_from_sdp (webrtc, sd, &error))
+++    goto out;
++ 
++   if (webrtc->signaling_state != new_signaling_state) {
++     webrtc->signaling_state = new_signaling_state;
++@@ -6642,6 +6707,12 @@ _set_description_task (GstWebRTCBin * webrtc, struct set_description *sd)
++         continue;
++       }
++ 
+++      if (!pad->trans->mid) {
+++        GST_DEBUG_OBJECT (pad, "transceiver not associated. Skipping");
+++        tmp = tmp->next;
+++        continue;
+++      }
+++
++       media = gst_sdp_message_get_media (sd->sdp->sdp, pad->trans->mline);
++       /* skip rejected media */
++       if (gst_sdp_media_get_port (media) == 0) {
++diff --git a/subprojects/gst-plugins-bad/ext/webrtc/webrtcsdp.c b/subprojects/gst-plugins-bad/ext/webrtc/webrtcsdp.c
++index 67c8143d99..0ece0c6250 100644
++--- a/subprojects/gst-plugins-bad/ext/webrtc/webrtcsdp.c
+++++ b/subprojects/gst-plugins-bad/ext/webrtc/webrtcsdp.c
++@@ -399,6 +399,17 @@ _get_direction_from_media (const GstSDPMedia * media)
++   return new_dir;
++ }
++ 
+++GstWebRTCKind
+++_get_kind_from_media (const GstSDPMedia * media)
+++{
+++  GstWebRTCKind kind = GST_WEBRTC_KIND_UNKNOWN;
+++  if (!g_strcmp0 (gst_sdp_media_get_media (media), "audio"))
+++    kind = GST_WEBRTC_KIND_AUDIO;
+++  else if (!g_strcmp0 (gst_sdp_media_get_media (media), "video"))
+++    kind = GST_WEBRTC_KIND_VIDEO;
+++  return kind;
+++}
+++
++ #define DIR(val) GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_ ## val
++ GstWebRTCRTPTransceiverDirection
++ _intersect_answer_directions (GstWebRTCRTPTransceiverDirection offer,
++diff --git a/subprojects/gst-plugins-bad/ext/webrtc/webrtcsdp.h b/subprojects/gst-plugins-bad/ext/webrtc/webrtcsdp.h
++index 80d21203c2..abeb5dba33 100644
++--- a/subprojects/gst-plugins-bad/ext/webrtc/webrtcsdp.h
+++++ b/subprojects/gst-plugins-bad/ext/webrtc/webrtcsdp.h
++@@ -46,6 +46,8 @@ gboolean                            validate_sdp                            (Gst
++ G_GNUC_INTERNAL
++ GstWebRTCRTPTransceiverDirection    _get_direction_from_media               (const GstSDPMedia * media);
++ G_GNUC_INTERNAL
+++GstWebRTCKind                       _get_kind_from_media                    (const GstSDPMedia * media);
+++G_GNUC_INTERNAL
++ GstWebRTCRTPTransceiverDirection    _intersect_answer_directions            (GstWebRTCRTPTransceiverDirection offer,
++                                                                              GstWebRTCRTPTransceiverDirection answer);
++ G_GNUC_INTERNAL
++-- 
++2.47.0
++
+diff --git a/patches/gstreamer/gst-plugins-bad-0002-webrtcbin-reverse-direction-from-remote-media.patch b/patches/gstreamer/gst-plugins-bad-0002-webrtcbin-reverse-direction-from-remote-media.patch
+new file mode 100644
+index 0000000..b65e003
+--- /dev/null
++++ b/patches/gstreamer/gst-plugins-bad-0002-webrtcbin-reverse-direction-from-remote-media.patch
+@@ -0,0 +1,87 @@
++From 8615a8ac712bc173c0c3585392683053b7b8ee94 Mon Sep 17 00:00:00 2001
++From: Carlos Bentzen <cadubentzen@igalia.com>
++Date: Fri, 2 Aug 2024 11:19:56 +0200
++Subject: [PATCH 2/9] webrtcbin: reverse direction from remote media
++
++This had been overlooked from the spec. We need to reverse
++the remote media direction when setting the transceiver direction.
++
++Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7294>
++---
++ .../gst-plugins-bad/ext/webrtc/gstwebrtcbin.c | 29 +++++++++++++++++--
++ 1 file changed, 26 insertions(+), 3 deletions(-)
++
++diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++index b4196e3435..5ad6550d88 100644
++--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
+++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++@@ -6280,6 +6280,22 @@ get_last_generated_description (GstWebRTCBin * webrtc, SDPSource source,
++   return NULL;
++ }
++ 
+++static GstWebRTCRTPTransceiverDirection
+++_reverse_direction (GstWebRTCRTPTransceiverDirection direction)
+++{
+++  switch (direction) {
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_NONE:
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_INACTIVE:
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDRECV:
+++      return direction;
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDONLY:
+++      return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY;
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY:
+++      return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDONLY;
+++  }
+++  return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_NONE;
+++}
+++
++ /* https://w3c.github.io/webrtc-pc/#set-description (steps in 4.6.10.) */
++ static gboolean
++ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++@@ -6328,12 +6344,14 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++     const gchar *mid;
++     guint transport_idx;
++     TransportStream *stream;
+++    GstWebRTCRTPTransceiverDirection direction;
++ 
++     if (_message_media_is_datachannel (sd->sdp->sdp, i))
++       continue;
++ 
++     media = gst_sdp_message_get_media (sd->sdp->sdp, i);
++     mid = gst_sdp_media_get_attribute_val (media, "mid");
+++    direction = _get_direction_from_media (media);
++ 
++     /* XXX: not strictly required but a lot of functionality requires a mid */
++     if (!mid) {
++@@ -6390,8 +6408,6 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++          * that were added to the PeerConnection by addTrack and are not associated with any "m=" section
++          * and are not stopped, find the first (according to the canonical order described in Section 5.2.1)
++          * such RtpTransceiver. */
++-        GstWebRTCRTPTransceiverDirection direction =
++-            _get_direction_from_media (media);
++         if (direction == GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDRECV
++             || direction == GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY) {
++           int j;
++@@ -6464,11 +6480,18 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++       trans->mid = g_strdup (mid);
++       g_object_notify (G_OBJECT (trans), "mid");
++ 
+++      /* Let direction be an RTCRtpTransceiverDirection value representing the direction from the media
+++         description, but with the send and receive directions reversed to represent this peer's point of view. */
+++      direction = _reverse_direction (direction);
+++      /* If the media description is rejected, set direction to "inactive". */
+++      if (gst_sdp_media_get_port (media) == 0)
+++        direction = GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_INACTIVE;
+++
++       /* If description is of type "answer" or "pranswer", then run the following steps: */
++       if (sd->sdp->type == GST_WEBRTC_SDP_TYPE_ANSWER
++           || sd->sdp->type == GST_WEBRTC_SDP_TYPE_PRANSWER) {
++         /* Set transceiver.[[CurrentDirection]] to direction. */
++-        trans->current_direction = _get_direction_from_media (media);
+++        trans->current_direction = direction;
++       }
++       /* Let transport be the RTCDtlsTransport object representing the RTP/RTCP component of the media transport
++        * used by transceiver's associated media description, according to [RFC8843]. */
++-- 
++2.47.0
++
+diff --git a/patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch b/patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch
+new file mode 100644
+index 0000000..22ee11b
+--- /dev/null
++++ b/patches/gstreamer/gst-plugins-bad-0003-webrtcbin-connect-output-stream-on-recv-transceivers.patch
+@@ -0,0 +1,37 @@
++From cd27befcb7a75a1cca00027a195c1f40aa8f0c26 Mon Sep 17 00:00:00 2001
++From: Carlos Bentzen <cadubentzen@igalia.com>
++Date: Fri, 2 Aug 2024 11:21:13 +0200
++Subject: [PATCH 3/9] webrtcbin: connect output stream on recv transceivers
++
++With MR 7156, transceivers and transports are created earlier,
++but for sendrecv media we could get `not-linked` errors due to
++transportreceivebin not being connected to rtpbin yet when incoming
++data arrives.
++
++This condition wasn't being tested in elements_webrtcbin, but could be
++reproduced in the webrtcbidirectional example. This commit now also
++adds a test for this, so that this doesn't regress anymore.
++
++Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7294>
++---
++ .../gst-plugins-bad/ext/webrtc/gstwebrtcbin.c |  6 ++
++ .../tests/check/elements/webrtcbin.c          | 62 +++++++++++++++++++
++ 2 files changed, 68 insertions(+)
++
++diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++index 5ad6550d88..ec8fc47490 100644
++--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
+++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++@@ -6500,6 +6500,12 @@ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++         webrtc_transceiver_set_transport (wtrans, stream);
++       }
++     }
+++
+++    wtrans = WEBRTC_TRANSCEIVER (trans);
+++    if (wtrans->stream
+++        && (direction == GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDRECV
+++            || direction == GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY))
+++      _connect_output_stream (webrtc, wtrans->stream, transport_idx);
++   }
++ 
++   ret = TRUE;
++-- 
++2.47.0
++
+diff --git a/patches/gstreamer/gst-plugins-bad-0004-webrtc-Fixes-for-matching-pads-to-unassociated-trans.patch b/patches/gstreamer/gst-plugins-bad-0004-webrtc-Fixes-for-matching-pads-to-unassociated-trans.patch
+new file mode 100644
+index 0000000..51a5c6d
+--- /dev/null
++++ b/patches/gstreamer/gst-plugins-bad-0004-webrtc-Fixes-for-matching-pads-to-unassociated-trans.patch
+@@ -0,0 +1,46 @@
++From aaf06f221975d4ef771e81438da7179b4b3bdd00 Mon Sep 17 00:00:00 2001
++From: Jan Schmidt <jan@centricular.com>
++Date: Wed, 24 Jul 2024 20:59:51 +1000
++Subject: [PATCH 4/9] webrtc: Fixes for matching pads to unassociated
++ transceivers
++
++Fix an inverted condition when checking if sink pad caps match
++the codec-preference of an unassociated transceiver, and
++fix a condition check for transceiver media kind to
++avoid matching sinkpad requests where caps aren't provided
++against unassociated transceivers where the caps might
++not match later.
++
++Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7237>
++---
++ subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c | 6 +++---
++ 1 file changed, 3 insertions(+), 3 deletions(-)
++
++diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++index ec8fc47490..6a9484a2bc 100644
++--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
+++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++@@ -8355,9 +8355,9 @@ gst_webrtc_bin_request_new_pad (GstElement * element, GstPadTemplate * templ,
++       GstWebRTCBinPad *pad2;
++       gboolean has_matching_caps;
++ 
++-      /* Ignore transceivers with a non-matching kind */
+++      /* Ignore transceivers with a non-matching kind or where we don't know the kind we want */
++       if (tmptrans->kind != GST_WEBRTC_KIND_UNKNOWN &&
++-          kind != GST_WEBRTC_KIND_UNKNOWN && tmptrans->kind != kind)
+++          (kind == GST_WEBRTC_KIND_UNKNOWN || tmptrans->kind != kind))
++         continue;
++ 
++       /* Ignore stopped transmitters */
++@@ -8379,7 +8379,7 @@ gst_webrtc_bin_request_new_pad (GstElement * element, GstPadTemplate * templ,
++ 
++       GST_OBJECT_LOCK (tmptrans);
++       has_matching_caps = (caps && tmptrans->codec_preferences &&
++-          !gst_caps_can_intersect (caps, tmptrans->codec_preferences));
+++          gst_caps_can_intersect (caps, tmptrans->codec_preferences));
++       GST_OBJECT_UNLOCK (tmptrans);
++       /* Ignore transceivers with non-matching caps */
++       if (!has_matching_caps)
++-- 
++2.47.0
++
+diff --git a/patches/gstreamer/gst-plugins-bad-0005-webrtcbin-Fix-renegotiation-checks.patch b/patches/gstreamer/gst-plugins-bad-0005-webrtcbin-Fix-renegotiation-checks.patch
+new file mode 100644
+index 0000000..0d9748e
+--- /dev/null
++++ b/patches/gstreamer/gst-plugins-bad-0005-webrtcbin-Fix-renegotiation-checks.patch
+@@ -0,0 +1,137 @@
++From 22e49d68ab4095379df2f0e3fa09ee61f3fb5624 Mon Sep 17 00:00:00 2001
++From: Jan Schmidt <jan@centricular.com>
++Date: Thu, 1 Aug 2024 13:42:52 +1000
++Subject: [PATCH 5/9] webrtcbin: Fix renegotiation checks
++
++When checking for renegotiation against a local offer,
++reverse the remote direction in the corresponding answer
++to fix falsely not triggering on-negotiation needed when
++switching (for example) from local sendrecv -> recvonly
++against a peer that answered 'recvonly'.
++
++In the other direction, when the local was the answerer,
++renegotiation might trigger when it didn't need to -
++whenever the local transceiver direction differs from
++the intersected direction we chose. Instead what we want
++is to check if the intersected direction we would now
++choose differs from what was previously chosen.
++
++This makes the behaviour in both cases match the
++behaviour described in
++https://www.w3.org/TR/webrtc/#dfn-check-if-negotiation-is-needed
++
++Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7303>
++---
++ .../gst-plugins-bad/ext/webrtc/gstwebrtcbin.c |  70 ++++++-----
++ .../tests/check/elements/webrtcbin.c          | 113 ++++++++++++++++++
++ 2 files changed, 151 insertions(+), 32 deletions(-)
++
++diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++index 6a9484a2bc..d8cf348f99 100644
++--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
+++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++@@ -1772,6 +1772,22 @@ done:
++   return res;
++ }
++ 
+++static GstWebRTCRTPTransceiverDirection
+++_reverse_direction (GstWebRTCRTPTransceiverDirection direction)
+++{
+++  switch (direction) {
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_NONE:
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_INACTIVE:
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDRECV:
+++      return direction;
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDONLY:
+++      return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY;
+++    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY:
+++      return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDONLY;
+++  }
+++  return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_NONE;
+++}
+++
++ /* http://w3c.github.io/webrtc-pc/#dfn-check-if-negotiation-is-needed */
++ static gboolean
++ _check_if_negotiation_is_needed (GstWebRTCBin * webrtc)
++@@ -1861,33 +1877,39 @@ _check_if_negotiation_is_needed (GstWebRTCBin * webrtc)
++         /* If connection's currentLocalDescription if of type "offer", and
++          * the direction of the associated m= section in neither the offer
++          * nor answer matches t's direction, return "true". */
++-
++-        if (local_dir != trans->direction && remote_dir != trans->direction) {
++-          GST_LOG_OBJECT (webrtc, "transceiver direction (%s) doesn't match "
++-              "description (local %s remote %s)",
+++        if (local_dir != trans->direction
+++            && _reverse_direction (remote_dir) != trans->direction) {
+++          GST_LOG_OBJECT (webrtc,
+++              "transceiver direction (%s) doesn't match "
+++              "description (local %s remote %s (reversed %s))",
++               gst_webrtc_rtp_transceiver_direction_to_string (trans->direction),
++               gst_webrtc_rtp_transceiver_direction_to_string (local_dir),
++-              gst_webrtc_rtp_transceiver_direction_to_string (remote_dir));
+++              gst_webrtc_rtp_transceiver_direction_to_string (remote_dir),
+++              gst_webrtc_rtp_transceiver_direction_to_string (_reverse_direction
+++                  (remote_dir))
+++              );
++           return TRUE;
++         }
++       } else if (webrtc->current_local_description->type ==
++           GST_WEBRTC_SDP_TYPE_ANSWER) {
++-        GstWebRTCRTPTransceiverDirection intersect_dir;
++-
++         /* If connection's currentLocalDescription if of type "answer", and
++-         * the direction of the associated m= section in the answer does not
++-         * match t's direction intersected with the offered direction (as
++-         * described in [JSEP] (section 5.3.1.)), return "true". */
+++         * the direction of the associated m= section in the answer we sent
+++         * (local_dir) does not match t's direction intersected with the
+++         * offer direction (as described in [JSEP] (section 5.3.1.)),
+++         * return "true" because we want to propose a different
+++         * direction now. */
++ 
++         /* remote is the offer, local is the answer */
++-        intersect_dir = _intersect_answer_directions (remote_dir, local_dir);
++-
++-        if (intersect_dir != trans->direction) {
++-          GST_LOG_OBJECT (webrtc, "transceiver direction (%s) doesn't match "
++-              "description intersected direction %s (local %s remote %s)",
+++        GstWebRTCRTPTransceiverDirection now_intersect_dir =
+++            _intersect_answer_directions (remote_dir, trans->direction);
+++        if (now_intersect_dir != local_dir) {
+++          GST_LOG_OBJECT (webrtc,
+++              "transceiver direction (%s) doesn't match for the "
+++              "new description intersected direction %s (prev local %s remote %s)",
++               gst_webrtc_rtp_transceiver_direction_to_string (trans->direction),
++               gst_webrtc_rtp_transceiver_direction_to_string (local_dir),
++-              gst_webrtc_rtp_transceiver_direction_to_string (intersect_dir),
+++              gst_webrtc_rtp_transceiver_direction_to_string
+++              (now_intersect_dir),
++               gst_webrtc_rtp_transceiver_direction_to_string (remote_dir));
++           return TRUE;
++         }
++@@ -6280,22 +6302,6 @@ get_last_generated_description (GstWebRTCBin * webrtc, SDPSource source,
++   return NULL;
++ }
++ 
++-static GstWebRTCRTPTransceiverDirection
++-_reverse_direction (GstWebRTCRTPTransceiverDirection direction)
++-{
++-  switch (direction) {
++-    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_NONE:
++-    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_INACTIVE:
++-    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDRECV:
++-      return direction;
++-    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDONLY:
++-      return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY;
++-    case GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_RECVONLY:
++-      return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_SENDONLY;
++-  }
++-  return GST_WEBRTC_RTP_TRANSCEIVER_DIRECTION_NONE;
++-}
++-
++ /* https://w3c.github.io/webrtc-pc/#set-description (steps in 4.6.10.) */
++ static gboolean
++ _create_and_associate_transceivers_from_sdp (GstWebRTCBin * webrtc,
++-- 
++2.47.0
++
+diff --git a/patches/gstreamer/gst-plugins-bad-0006-webrtc-add-all-SSRC-attributes-getting-CAPS-for-a-PT.patch b/patches/gstreamer/gst-plugins-bad-0006-webrtc-add-all-SSRC-attributes-getting-CAPS-for-a-PT.patch
+new file mode 100644
+index 0000000..b28949e
+--- /dev/null
++++ b/patches/gstreamer/gst-plugins-bad-0006-webrtc-add-all-SSRC-attributes-getting-CAPS-for-a-PT.patch
+@@ -0,0 +1,144 @@
++From e2db93c386bb133ca7e4d3641007771de573695b Mon Sep 17 00:00:00 2001
++From: =?UTF-8?q?Fran=C3=A7ois=20Laignel?= <francois@centricular.com>
++Date: Thu, 7 Mar 2024 17:36:33 +0100
++Subject: [PATCH 6/9] webrtc: add all SSRC attributes getting CAPS for a PT
++
++The transport stream only returned the CAPS for the first matching PT entry
++from the `ptmap`. Other SSRC with the same PT where not included. For a stream
++which bundled multiple audio streams for instance, only the first SSRC was
++knowed to the SSRC demux and downstream elements.
++
++This commit adds all the `ssrc-` attributes from the matching PT entries.
++
++The RTP jitter buffer can now find the CNAME corresponding its SSRC even if it
++was not the first to be registered for a particular PT.
++
++The RTP PT demux removes `ssrc-*` attributes cooresponding to other SSRCs
++before pushing SSRC specific CAPS to downstream elements.
++
++Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/6119>
++---
++ .../gst-plugins-bad/ext/webrtc/gstwebrtcbin.c |  5 ++--
++ .../ext/webrtc/transportstream.c              | 30 ++++++++++++++++---
++ .../gst/rtpmanager/gstrtpptdemux.c            | 28 +++++++++++++++++
++ 3 files changed, 57 insertions(+), 6 deletions(-)
++
++diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++index d8cf348f99..2b920313d6 100644
++--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
+++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++@@ -5080,6 +5080,8 @@ _set_internal_rtpbin_element_props_from_stream (GstWebRTCBin * webrtc,
++ 
++     GST_LOG_OBJECT (stream, "setting rtx mapping: %s -> %u", apt, rtx_pt[i]);
++     gst_structure_set (pt_map, apt, G_TYPE_UINT, rtx_pt[i], NULL);
+++
+++    gst_caps_unref (rtx_caps);
++   }
++ 
++   GST_DEBUG_OBJECT (stream, "setting payload map on %" GST_PTR_FORMAT " : %"
++@@ -7562,8 +7564,7 @@ on_rtpbin_request_pt_map (GstElement * rtpbin, guint session_id, guint pt,
++   if (!stream)
++     goto unknown_session;
++ 
++-  if ((ret = transport_stream_get_caps_for_pt (stream, pt)))
++-    gst_caps_ref (ret);
+++  ret = transport_stream_get_caps_for_pt (stream, pt);
++ 
++   GST_DEBUG_OBJECT (webrtc, "Found caps %" GST_PTR_FORMAT " for pt %d in "
++       "session %d", ret, pt, session_id);
++diff --git a/subprojects/gst-plugins-bad/ext/webrtc/transportstream.c b/subprojects/gst-plugins-bad/ext/webrtc/transportstream.c
++index f1811a025c..7462384df0 100644
++--- a/subprojects/gst-plugins-bad/ext/webrtc/transportstream.c
+++++ b/subprojects/gst-plugins-bad/ext/webrtc/transportstream.c
++@@ -47,15 +47,37 @@ enum
++ GstCaps *
++ transport_stream_get_caps_for_pt (TransportStream * stream, guint pt)
++ {
++-  guint i, len;
+++  GstCaps *ret = NULL;
+++  GstStructure *ret_s, *item_s;
+++  guint i, len, si, slen;
+++  const gchar *field_name;
++ 
++   len = stream->ptmap->len;
++   for (i = 0; i < len; i++) {
++     PtMapItem *item = &g_array_index (stream->ptmap, PtMapItem, i);
++-    if (item->pt == pt)
++-      return item->caps;
+++    if (item->pt == pt) {
+++      if (item->caps) {
+++        if (ret == NULL) {
+++          ret = gst_caps_copy (item->caps);
+++          ret_s = gst_caps_get_structure (ret, 0);
+++        } else {
+++          /* Append the "ssrc-*" fields for current PT entry to ret */
+++          item_s = gst_caps_get_structure (item->caps, 0);
+++          slen = gst_structure_n_fields (item_s);
+++          for (si = 0; si < slen; ++si) {
+++            field_name = gst_structure_nth_field_name (item_s, si);
+++            if (!g_str_has_prefix (field_name, "ssrc-"))
+++              continue;
+++
+++            gst_structure_set (ret_s, field_name, G_TYPE_STRING,
+++                gst_structure_get_string (item_s, field_name), NULL);
+++          }
+++        }
+++      }
+++    }
++   }
++-  return NULL;
+++
+++  return ret;
++ }
++ 
++ int
++diff --git a/subprojects/gst-plugins-good/gst/rtpmanager/gstrtpptdemux.c b/subprojects/gst-plugins-good/gst/rtpmanager/gstrtpptdemux.c
++index 0454d97134..7be4cc8945 100644
++--- a/subprojects/gst-plugins-good/gst/rtpmanager/gstrtpptdemux.c
+++++ b/subprojects/gst-plugins-good/gst/rtpmanager/gstrtpptdemux.c
++@@ -312,6 +312,29 @@ gst_rtp_pt_demux_finalize (GObject * object)
++   G_OBJECT_CLASS (parent_class)->finalize (object);
++ }
++ 
+++/* Removes "ssrc-*" attributes matching other SSRCs. */
+++static gboolean
+++_filter_ssrc (GQuark field_id, GValue * value, gpointer ssrc)
+++{
+++  const gchar *field_name = g_quark_to_string (field_id);
+++
+++  if (!g_str_has_prefix (field_name, "ssrc-"))
+++    return TRUE;
+++
+++  gchar *endptr;
+++  guint32 field_ssrc = g_ascii_strtoll (field_name + 5, &endptr, 10);
+++
+++  if (!endptr || *endptr != '-')
+++    return TRUE;
+++
+++  /* Found a valid "ssrc-*" */
+++  if (field_ssrc != *(guint32 *) ssrc)
+++    /* Not the expected SSRC => remove this field */
+++    return FALSE;
+++
+++  return TRUE;
+++}
+++
++ static GstCaps *
++ gst_rtp_pt_demux_get_caps (GstRtpPtDemux * rtpdemux, guint pt)
++ {
++@@ -349,7 +372,12 @@ gst_rtp_pt_demux_get_caps (GstRtpPtDemux * rtpdemux, guint pt)
++   }
++ 
++   if (caps != NULL) {
+++    GstStructure *s;
+++
++     caps = gst_caps_make_writable (caps);
+++    s = gst_caps_get_structure (caps, 0);
+++    gst_structure_filter_and_map_in_place (s, _filter_ssrc, &ssrc);
+++
++     gst_caps_set_simple (caps, "payload", G_TYPE_INT, pt, NULL);
++     if (have_ssrc)
++       gst_caps_set_simple (caps, "ssrc", G_TYPE_UINT, ssrc, NULL);
++-- 
++2.47.0
++
+diff --git a/patches/gstreamer/gst-plugins-bad-0007-rtpfunnel-also-fallback-to-pad-default-handling-for-.patch b/patches/gstreamer/gst-plugins-bad-0007-rtpfunnel-also-fallback-to-pad-default-handling-for-.patch
+new file mode 100644
+index 0000000..695e961
+--- /dev/null
++++ b/patches/gstreamer/gst-plugins-bad-0007-rtpfunnel-also-fallback-to-pad-default-handling-for-.patch
+@@ -0,0 +1,192 @@
++From 49ff577a13a5b0e62ad7d06efedc3a91071e80fb Mon Sep 17 00:00:00 2001
++From: Matthew Waters <matthew@centricular.com>
++Date: Fri, 23 Aug 2024 20:01:32 +1000
++Subject: [PATCH 7/9] rtpfunnel: also fallback to pad default handling for
++ unknown ssrcs
++
++If two (or more) rtpfunnel elements are cascaded, then only one will
++realistically have information on the particular ssrc that is in use for a
++particular input stream.  As such, any key unit requests may never reach the
++corresponding encoder.
++
++This has been discovered by combining simulcast and BUNDLE with webrtcbin.
++simulcast uses one rtpfunnel, and BUNDLE uses another rtpfunnel.
++
++Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7405>
++---
++ .../docs/gst_plugins_cache.json               | 12 +++++++
++ .../gst/rtpmanager/gstrtpfunnel.c             | 34 +++++++++++++++++--
++ .../tests/check/elements/rtpfunnel.c          | 18 +++++++---
++ 3 files changed, 58 insertions(+), 6 deletions(-)
++
++diff --git a/subprojects/gst-plugins-good/docs/gst_plugins_cache.json b/subprojects/gst-plugins-good/docs/gst_plugins_cache.json
++index d270728a03..d02d1436d5 100644
++--- a/subprojects/gst-plugins-good/docs/gst_plugins_cache.json
+++++ b/subprojects/gst-plugins-good/docs/gst_plugins_cache.json
++@@ -18376,6 +18376,18 @@
++                         "readable": true,
++                         "type": "gint",
++                         "writable": true
+++                    },
+++                    "forward-unknown-ssrc": {
+++                        "blurb": "Whether to forward events or queries that reference unknown SSRCs",
+++                        "conditionally-available": false,
+++                        "construct": false,
+++                        "construct-only": false,
+++                        "controllable": false,
+++                        "default": "false",
+++                        "mutable": "null",
+++                        "readable": true,
+++                        "type": "gboolean",
+++                        "writable": true
++                     }
++                 },
++                 "rank": "none"
++diff --git a/subprojects/gst-plugins-good/gst/rtpmanager/gstrtpfunnel.c b/subprojects/gst-plugins-good/gst/rtpmanager/gstrtpfunnel.c
++index d403015e14..0e33d05b24 100644
++--- a/subprojects/gst-plugins-good/gst/rtpmanager/gstrtpfunnel.c
+++++ b/subprojects/gst-plugins-good/gst/rtpmanager/gstrtpfunnel.c
++@@ -109,9 +109,11 @@ enum
++ {
++   PROP_0,
++   PROP_COMMON_TS_OFFSET,
+++  PROP_FORWARD_UNKNOWN_SSRC,
++ };
++ 
++ #define DEFAULT_COMMON_TS_OFFSET -1
+++#define DEFAULT_FORWARD_UNKNOWN_SSRC FALSE
++ 
++ struct _GstRtpFunnelClass
++ {
++@@ -136,6 +138,7 @@ struct _GstRtpFunnel
++ 
++   /* properties */
++   gint common_ts_offset;
+++  gboolean forward_unknown_ssrcs;
++ };
++ 
++ #define RTP_CAPS "application/x-rtp"
++@@ -529,9 +532,10 @@ gst_rtp_funnel_src_event (GstPad * pad, GstObject * parent, GstEvent * event)
++     GstPad *fpad;
++     guint ssrc;
++     if (s && gst_structure_get_uint (s, "ssrc", &ssrc)) {
++-      handled = TRUE;
+++      gboolean forward_unknown = FALSE;
++ 
++       GST_OBJECT_LOCK (funnel);
+++      forward_unknown = funnel->forward_unknown_ssrcs;
++       fpad = g_hash_table_lookup (funnel->ssrc_to_pad, GUINT_TO_POINTER (ssrc));
++       if (fpad)
++         gst_object_ref (fpad);
++@@ -542,8 +546,10 @@ gst_rtp_funnel_src_event (GstPad * pad, GstObject * parent, GstEvent * event)
++             event, fpad);
++         ret = gst_pad_push_event (fpad, event);
++         gst_object_unref (fpad);
++-      } else {
+++        handled = TRUE;
+++      } else if (!forward_unknown) {
++         gst_event_unref (event);
+++        handled = TRUE;
++       }
++     }
++   }
++@@ -600,6 +606,11 @@ gst_rtp_funnel_set_property (GObject * object, guint prop_id,
++     case PROP_COMMON_TS_OFFSET:
++       funnel->common_ts_offset = g_value_get_int (value);
++       break;
+++    case PROP_FORWARD_UNKNOWN_SSRC:
+++      GST_OBJECT_LOCK (funnel);
+++      funnel->forward_unknown_ssrcs = g_value_get_boolean (value);
+++      GST_OBJECT_UNLOCK (funnel);
+++      break;
++     default:
++       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
++       break;
++@@ -616,6 +627,11 @@ gst_rtp_funnel_get_property (GObject * object, guint prop_id, GValue * value,
++     case PROP_COMMON_TS_OFFSET:
++       g_value_set_int (value, funnel->common_ts_offset);
++       break;
+++    case PROP_FORWARD_UNKNOWN_SSRC:
+++      GST_OBJECT_LOCK (funnel);
+++      g_value_set_boolean (value, funnel->forward_unknown_ssrcs);
+++      GST_OBJECT_UNLOCK (funnel);
+++      break;
++     default:
++       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
++       break;
++@@ -706,6 +722,19 @@ gst_rtp_funnel_class_init (GstRtpFunnelClass * klass)
++           -1, G_MAXINT32, DEFAULT_COMMON_TS_OFFSET,
++           G_PARAM_CONSTRUCT | G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
++ 
+++  /**
+++   * rtpfunnel:forward-unknown-ssrc:
+++   *
+++   * Whether to forward events or queries that reference unknown SSRCs.
+++   *
+++   * Since: 1.26
+++   */
+++  g_object_class_install_property (gobject_class, PROP_FORWARD_UNKNOWN_SSRC,
+++      g_param_spec_boolean ("forward-unknown-ssrc", "Forward Unknown SSRC",
+++          "Whether to forward events or queries that reference unknown SSRCs",
+++          DEFAULT_FORWARD_UNKNOWN_SSRC,
+++          G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS));
+++
++   GST_DEBUG_CATEGORY_INIT (gst_rtp_funnel_debug,
++       "gstrtpfunnel", 0, "funnel element");
++ }
++@@ -723,4 +752,5 @@ gst_rtp_funnel_init (GstRtpFunnel * funnel)
++   funnel->srccaps = gst_caps_new_empty_simple (RTP_CAPS);
++   funnel->ssrc_to_pad = g_hash_table_new (NULL, NULL);
++   funnel->current_pad = NULL;
+++  funnel->forward_unknown_ssrcs = DEFAULT_FORWARD_UNKNOWN_SSRC;
++ }
++diff --git a/subprojects/gst-plugins-good/tests/check/elements/rtpfunnel.c b/subprojects/gst-plugins-good/tests/check/elements/rtpfunnel.c
++index 676127ca18..1bb6be2a3d 100644
++--- a/subprojects/gst-plugins-good/tests/check/elements/rtpfunnel.c
+++++ b/subprojects/gst-plugins-good/tests/check/elements/rtpfunnel.c
++@@ -55,7 +55,7 @@ GST_START_TEST (rtpfunnel_ssrc_demuxing)
++   fail_unless_equals_int (2, gst_harness_upstream_events_received (h0));
++   fail_unless_equals_int (2, gst_harness_upstream_events_received (h1));
++ 
++-  /* unknown ssrc, we drop it */
+++  /* unknown ssrc, we drop it by default */
++   gst_harness_push_upstream_event (h,
++       gst_event_new_custom (GST_EVENT_CUSTOM_UPSTREAM,
++           gst_structure_new ("GstForceKeyUnit",
++@@ -63,12 +63,22 @@ GST_START_TEST (rtpfunnel_ssrc_demuxing)
++   fail_unless_equals_int (2, gst_harness_upstream_events_received (h0));
++   fail_unless_equals_int (2, gst_harness_upstream_events_received (h1));
++ 
++-  /* no ssrc, we send to all */
+++  /* unknown ssrc, we forward if property says to */
+++  g_object_set (h->element, "forward-unknown-ssrc", TRUE, NULL);
++   gst_harness_push_upstream_event (h,
++       gst_event_new_custom (GST_EVENT_CUSTOM_UPSTREAM,
++-          gst_structure_new_empty ("GstForceKeyUnit")));
+++          gst_structure_new ("GstForceKeyUnit",
+++              "ssrc", G_TYPE_UINT, 666, NULL)));
++   fail_unless_equals_int (3, gst_harness_upstream_events_received (h0));
++   fail_unless_equals_int (3, gst_harness_upstream_events_received (h1));
+++  g_object_set (h->element, "forward-unknown-ssrc", FALSE, NULL);
+++
+++  /* no ssrc, we send to all */
+++  gst_harness_push_upstream_event (h,
+++      gst_event_new_custom (GST_EVENT_CUSTOM_UPSTREAM,
+++          gst_structure_new_empty ("GstForceKeyUnit")));
+++  fail_unless_equals_int (4, gst_harness_upstream_events_received (h0));
+++  fail_unless_equals_int (4, gst_harness_upstream_events_received (h1));
++ 
++   /* remove pad 0, and send an event referencing the now dead ssrc */
++   gst_harness_teardown (h0);
++@@ -76,7 +86,7 @@ GST_START_TEST (rtpfunnel_ssrc_demuxing)
++       gst_event_new_custom (GST_EVENT_CUSTOM_UPSTREAM,
++           gst_structure_new ("GstForceKeyUnit",
++               "ssrc", G_TYPE_UINT, 123, NULL)));
++-  fail_unless_equals_int (3, gst_harness_upstream_events_received (h1));
+++  fail_unless_equals_int (4, gst_harness_upstream_events_received (h1));
++ 
++   gst_harness_teardown (h);
++   gst_harness_teardown (h1);
++-- 
++2.47.0
++
+diff --git a/patches/gstreamer/gst-plugins-bad-0008-webrtcbin-enable-forward-unknown-ssrc-on-rtpfunnel.patch b/patches/gstreamer/gst-plugins-bad-0008-webrtcbin-enable-forward-unknown-ssrc-on-rtpfunnel.patch
+new file mode 100644
+index 0000000..9b76b3b
+--- /dev/null
++++ b/patches/gstreamer/gst-plugins-bad-0008-webrtcbin-enable-forward-unknown-ssrc-on-rtpfunnel.patch
+@@ -0,0 +1,30 @@
++From aae237495054cd49d7183f43d694736b9d71d64c Mon Sep 17 00:00:00 2001
++From: Matthew Waters <matthew@centricular.com>
++Date: Mon, 26 Aug 2024 14:46:59 +1000
++Subject: [PATCH 8/9] webrtcbin: enable forward-unknown-ssrc on rtpfunnel
++
++See also: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7405
++
++Part-of: <https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/7409>
++---
++ subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c | 4 ++++
++ 1 file changed, 4 insertions(+)
++
++diff --git a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++index 2b920313d6..7d25858318 100644
++--- a/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
+++++ b/subprojects/gst-plugins-bad/ext/webrtc/gstwebrtcbin.c
++@@ -6044,6 +6044,10 @@ _connect_rtpfunnel (GstWebRTCBin * webrtc, guint session_id)
++     goto done;
++ 
++   webrtc->rtpfunnel = gst_element_factory_make ("rtpfunnel", NULL);
+++  if (g_object_class_find_property (G_OBJECT_GET_CLASS (webrtc->rtpfunnel),
+++          "forward-unknown-ssrc") != NULL) {
+++    g_object_set (webrtc->rtpfunnel, "forward-unknown-ssrc", TRUE, NULL);
+++  }
++   gst_bin_add (GST_BIN (webrtc), webrtc->rtpfunnel);
++   gst_element_sync_state_with_parent (webrtc->rtpfunnel);
++ 
++-- 
++2.47.0
++
+-- 
+2.47.0
+
