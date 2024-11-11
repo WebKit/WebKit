@@ -75,7 +75,12 @@ public:
 
     WebSampleBufferVideoRendering *renderer() const;
     AVSampleBufferDisplayLayer *displayLayer() const;
-    RetainPtr<CVPixelBufferRef> copyDisplayedPixelBuffer();
+
+    struct DisplayedPixelBufferEntry {
+        RetainPtr<CVPixelBufferRef> pixelBuffer;
+        MediaTime presentationTimeStamp;
+    };
+    DisplayedPixelBufferEntry copyDisplayedPixelBuffer();
     CGRect bounds() const;
 
     unsigned totalVideoFrames() const;

@@ -414,16 +414,19 @@ AVSampleBufferDisplayLayer *VideoMediaSampleRenderer::displayLayer() const
     return m_displayLayer.get();
 }
 
-RetainPtr<CVPixelBufferRef> VideoMediaSampleRenderer::copyDisplayedPixelBuffer()
+auto VideoMediaSampleRenderer::copyDisplayedPixelBuffer() -> DisplayedPixelBufferEntry
 {
     assertIsMainThread();
 
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    if (auto buffer = adoptCF([renderer() copyDisplayedPixelBuffer]))
-        return buffer;
+    if (!m_decompressionSession) {
+        if (auto buffer = adoptCF([renderer() copyDisplayedPixelBuffer]))
+            return { WTFMove(buffer), MediaTime::invalidTime() };
+    }
 #endif
 
     RetainPtr<CVPixelBufferRef> imageBuffer;
+    MediaTime presentationTimeStamp;
 
     m_workQueue->dispatchSync([&] {
         if (!m_timebase)
@@ -440,15 +443,16 @@ RetainPtr<CVPixelBufferRef> VideoMediaSampleRenderer::copyDisplayedPixelBuffer()
 
         RetainPtr sampleToBePurged = adoptCF((CMSampleBufferRef)const_cast<void*>(PAL::CMBufferQueueDequeueAndRetain(m_decodedSampleQueue.get())));
         imageBuffer = (CVPixelBufferRef)PAL::CMSampleBufferGetImageBuffer(sampleToBePurged.get());
+        presentationTimeStamp = PAL::toMediaTime(presentationTime);
     });
 
     if (!imageBuffer)
-        return nullptr;
+        return { nullptr, MediaTime::invalidTime() };
 
     ASSERT(CFGetTypeID(imageBuffer.get()) == CVPixelBufferGetTypeID());
     if (CFGetTypeID(imageBuffer.get()) != CVPixelBufferGetTypeID())
-        return nullptr;
-    return imageBuffer;
+        return { nullptr, MediaTime::invalidTime() };
+    return { WTFMove(imageBuffer), presentationTimeStamp };
 }
 
 CGRect VideoMediaSampleRenderer::bounds() const

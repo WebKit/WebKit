@@ -326,6 +326,7 @@ private:
     RetainPtr<AVSampleBufferRenderSynchronizer> m_synchronizer;
     RetainPtr<id> m_durationObserver;
     RetainPtr<CVPixelBufferRef> m_lastPixelBuffer;
+    MediaTime m_lastPixelBufferPresentationTimeStamp;
     RefPtr<NativeImage> m_lastImage;
     std::unique_ptr<PixelBufferConformerCV> m_rgbConformer;
     RefPtr<WebCoreDecompressionSession> m_decompressionSession;

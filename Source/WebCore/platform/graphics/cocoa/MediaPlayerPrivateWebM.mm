@@ -651,9 +651,11 @@ bool MediaPlayerPrivateWebM::updateLastPixelBuffer()
 {
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     if (m_videoRenderer && isCopyDisplayedPixelBufferAvailable()) {
-        if (RetainPtr pixelBuffer = m_videoRenderer->copyDisplayedPixelBuffer()) {
-            INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", currentTime());
-            m_lastPixelBuffer = WTFMove(pixelBuffer);
+        auto entry = m_videoRenderer->copyDisplayedPixelBuffer();
+        if (entry.pixelBuffer) {
+            INFO_LOG(LOGIDENTIFIER, "displayed pixelbuffer copied for time ", entry.presentationTimeStamp);
+            m_lastPixelBuffer = WTFMove(entry.pixelBuffer);
+            m_lastPixelBufferPresentationTimeStamp = entry.presentationTimeStamp;
             return true;
         }
     }
@@ -1741,7 +1743,7 @@ void MediaPlayerPrivateWebM::stopVideoFrameMetadataGathering()
     m_videoFrameMetadataGatheringObserver = nil;
 }
 
-void MediaPlayerPrivateWebM::checkNewVideoFrameMetadata(CMTime currentTime)
+void MediaPlayerPrivateWebM::checkNewVideoFrameMetadata(CMTime currentCMTime)
 {
     auto player = m_player.get();
     if (!player)
@@ -1750,11 +1752,20 @@ void MediaPlayerPrivateWebM::checkNewVideoFrameMetadata(CMTime currentTime)
     if (!updateLastPixelBuffer())
         return;
 
+    auto currentTime = PAL::toMediaTime(currentCMTime);
+    auto presentationTime = m_lastPixelBufferPresentationTimeStamp;
+    if (!presentationTime.isValid())
+        presentationTime = currentTime;
+
+    auto displayTime = MonotonicTime::now().secondsSinceEpoch().seconds() - (currentTime - presentationTime).toDouble();
+
     VideoFrameMetadata metadata;
     metadata.width = m_naturalSize.width();
     metadata.height = m_naturalSize.height();
     metadata.presentedFrames = ++m_sampleCount;
-    metadata.presentationTime = PAL::CMTimeGetSeconds(currentTime);
+    metadata.presentationTime = displayTime;
+    metadata.expectedDisplayTime = displayTime;
+    metadata.mediaTime = presentationTime.toDouble();
 
     m_videoFrameMetadata = metadata;
     player->onNewVideoFrameMetadata(WTFMove(metadata), m_lastPixelBuffer.get());
