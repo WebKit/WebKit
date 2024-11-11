@@ -29,7 +29,6 @@
 
 #include "FidoAuthenticator.h"
 #include <WebCore/AuthenticatorGetInfoResponse.h>
-#include <WebCore/PublicKeyCredentialDescriptor.h>
 
 namespace fido {
 namespace pin {
@@ -58,8 +57,6 @@ private:
     void makeCredential() final;
     void continueMakeCredentialAfterResponseReceived(Vector<uint8_t>&&);
     void getAssertion() final;
-    void continueCheckExcludedCredentialsAfterResponseRecieved(Vector<uint8_t>&& data);
-    void continueMakeCredentialAfterCheckExcludedCredentials(bool includeCurrentBatch = false);
     void continueGetAssertionAfterResponseReceived(Vector<uint8_t>&&);
     void continueGetNextAssertionAfterResponseReceived(Vector<uint8_t>&&);
 
@@ -80,9 +77,7 @@ private:
     bool m_isDowngraded { false };
     bool m_isKeyStoreFull { false };
     size_t m_remainingAssertionResponses { 0 };
-    size_t m_currentBatch { 0 };
     Vector<Ref<WebCore::AuthenticatorAssertionResponse>> m_assertionResponses;
-    Vector<Vector<WebCore::PublicKeyCredentialDescriptor>> m_batches;
     Vector<uint8_t> m_pinAuth;
 };
 
