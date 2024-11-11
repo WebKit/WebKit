@@ -34,15 +34,6 @@
 #include <wtf/WeakRef.h>
 
 namespace WebCore {
-class DocumentFontLoader;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::DocumentFontLoader> : std::true_type { };
-}
-
-namespace WebCore {
 
 class CachedFont;
 
@@ -51,6 +42,9 @@ class DocumentFontLoader {
 public:
     DocumentFontLoader(Document&);
     ~DocumentFontLoader();
+
+    void ref() const;
+    void deref() const;
 
     CachedFont* cachedFont(URL&&, bool, bool, LoadedFromOpaqueSource);
     void beginLoadingFontSoon(CachedFont&);

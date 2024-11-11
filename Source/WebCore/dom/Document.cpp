@@ -771,7 +771,7 @@ Document::~Document()
         extensionStyleSheets->detachFromDocument();
 
     styleScope().clearResolver(); // We need to destroy CSSFontSelector before destroying m_cachedResourceLoader.
-    if (auto* fontLoader = m_fontLoader.get())
+    if (RefPtr fontLoader = m_fontLoader.get())
         fontLoader->stopLoadingAndClearFonts();
 
     if (RefPtr fontSelector = m_fontSelector)
@@ -824,7 +824,7 @@ void Document::removedLastRef()
         m_associatedFormControls.clear();
         m_pendingRenderTreeUpdate = { };
 
-        if (auto* fontLoader = m_fontLoader.get())
+        if (RefPtr fontLoader = m_fontLoader.get())
             fontLoader->stopLoadingAndClearFonts();
 
         detachParser();
@@ -1015,11 +1015,16 @@ inline DocumentFontLoader& Document::fontLoader()
     return *m_fontLoader;
 }
 
+Ref<DocumentFontLoader> Document::protectedFontLoader()
+{
+    return fontLoader();
+}
+
 DocumentFontLoader& Document::ensureFontLoader()
 {
     ASSERT(m_constructionDidFinish);
     ASSERT(!m_fontLoader);
-    m_fontLoader = makeUnique<DocumentFontLoader>(*this);
+    m_fontLoader = makeUniqueWithoutRefCountedCheck<DocumentFontLoader>(*this);
     return *m_fontLoader;
 }
 
@@ -2595,7 +2600,7 @@ void Document::resolveStyle(ResolveStyleType type)
 
         m_inStyleRecalc = false;
 
-        if (auto* fontLoader = m_fontLoader.get())
+        if (RefPtr fontLoader = m_fontLoader.get())
             fontLoader->loadPendingFonts();
 
         if (styleUpdate) {
@@ -3310,7 +3315,7 @@ void Document::resumeDeviceMotionAndOrientationUpdates()
 
 void Document::suspendFontLoading()
 {
-    if (auto* fontLoader = m_fontLoader.get())
+    if (RefPtr fontLoader = m_fontLoader.get())
         fontLoader->suspendFontLoading();
 }
 
@@ -3650,14 +3655,14 @@ void Document::implicitOpen()
 
 std::unique_ptr<FontLoadRequest> Document::fontLoadRequest(const String& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
-    CachedResourceHandle cachedFont = fontLoader().cachedFont(completeURL(url), isSVG, isInitiatingElementInUserAgentShadowTree, loadedFromOpaqueSource);
+    CachedResourceHandle cachedFont = protectedFontLoader()->cachedFont(completeURL(url), isSVG, isInitiatingElementInUserAgentShadowTree, loadedFromOpaqueSource);
     return cachedFont ? makeUnique<CachedFontLoadRequest>(*cachedFont, *this) : nullptr;
 }
 
 void Document::beginLoadingFontSoon(FontLoadRequest& request)
 {
     CachedResourceHandle font = downcast<CachedFontLoadRequest>(request).cachedFont();
-    fontLoader().beginLoadingFontSoon(*font);
+    protectedFontLoader()->beginLoadingFontSoon(*font);
 }
 
 HTMLBodyElement* Document::body() const
@@ -6953,7 +6958,7 @@ void Document::suspend(ReasonForSuspension reason)
 
     addVisualUpdatePreventedReason(VisualUpdatesPreventedReason::Suspension);
 
-    if (auto* fontLoader = m_fontLoader.get())
+    if (RefPtr fontLoader = m_fontLoader.get())
         fontLoader->suspendFontLoading();
 
     m_isSuspended = true;
@@ -6982,7 +6987,7 @@ void Document::resume(ReasonForSuspension reason)
 
     removeVisualUpdatePreventedReasons(VisualUpdatesPreventedReason::Suspension);
 
-    if (auto* fontLoader = m_fontLoader.get())
+    if (RefPtr fontLoader = m_fontLoader.get())
         fontLoader->resumeFontLoading();
 
     m_isSuspended = false;

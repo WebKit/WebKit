@@ -54,6 +54,16 @@ DocumentFontLoader::~DocumentFontLoader()
     stopLoadingAndClearFonts();
 }
 
+void DocumentFontLoader::ref() const
+{
+    m_document->ref();
+}
+
+void DocumentFontLoader::deref() const
+{
+    m_document->deref();
+}
+
 CachedFont* DocumentFontLoader::cachedFont(URL&& url, bool isSVG, bool isInitiatingElementInUserAgentShadowTree, LoadedFromOpaqueSource loadedFromOpaqueSource)
 {
     ResourceLoaderOptions options = CachedResourceLoader::defaultCachedResourceOptions();

@@ -2012,6 +2012,7 @@ private:
     ScriptModuleLoader& ensureModuleLoader();
     WEBCORE_EXPORT FullscreenManager& ensureFullscreenManager();
     inline DocumentFontLoader& fontLoader();
+    Ref<DocumentFontLoader> protectedFontLoader();
     DocumentFontLoader& ensureFontLoader();
     CSSFontSelector& ensureFontSelector();
     UndoManager& ensureUndoManager();
