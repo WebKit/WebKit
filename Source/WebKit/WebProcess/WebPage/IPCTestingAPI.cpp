@@ -3159,4 +3159,4 @@ template<> JSC::JSValue jsValueForDecodedArgumentValue(JSC::JSGlobalObject* glob
 
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
