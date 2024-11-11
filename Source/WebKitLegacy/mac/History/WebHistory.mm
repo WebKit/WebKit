@@ -520,7 +520,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (BOOL)loadHistoryGutsFromURL:(NSURL *)URL savedItemsCount:(int *)numberOfItemsLoaded collectDiscardedItemsInto:(NSMutableArray *)discardedItems error:(NSError **)error
 {
     *numberOfItemsLoaded = 0;
-    NSDictionary *dictionary = nil;
+    __block NSDictionary *dictionary = nil;
 
     // Optimize loading from local file, which is faster than using the general URL loading mechanism
     if ([URL isFileURL]) {
@@ -534,17 +534,36 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             return NO;
         }
     } else {
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-        NSData *data = [NSURLConnection sendSynchronousRequest:[NSURLRequest requestWithURL:URL] returningResponse:nil error:error];
-ALLOW_DEPRECATED_DECLARATIONS_END
-        if (data.length)
-            dictionary = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:nullptr error:nullptr];
-    }
 
-    // We used to support NSArrays here, but that was before Safari 1.0 shipped. We will no longer support
-    // that ancient format, so anything that isn't an NSDictionary is bogus.
-    if (![dictionary isKindOfClass:[NSDictionary class]])
-        return NO;
+        NSURLSession *session = [NSURLSession sharedSession];
+        __block NSError *outerError = nil;
+        [[session dataTaskWithURL:URL
+                completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+                    if (error) {
+                        outerError = error;
+                        return;
+                    }
+
+                    if (data.length) {
+                        NSError *plistError = nil;
+                        id innerDictionary = [NSPropertyListSerialization propertyListWithData:data options:NSPropertyListImmutable format:NULL error:&plistError];
+                        if (plistError) {
+                            outerError = plistError;
+                            return;
+                        }
+                        if ([innerDictionary isKindOfClass:[NSDictionary class]])
+                            dictionary = innerDictionary;
+                    }
+                }] resume];
+
+        if (outerError)
+            *error = outerError;
+
+        // We used to support NSArrays here, but that was before Safari 1.0 shipped. We will no longer support
+        // that ancient format, so anything that isn't an NSDictionary is bogus.
+        if (!dictionary)
+            return NO;
+    }
 
     NSNumber *fileVersionObject = [dictionary objectForKey:FileVersionKey];
     int fileVersion;
@@ -555,7 +574,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     }
     fileVersion = [fileVersionObject intValue];
     if (fileVersion > currentFileVersion) {
-        LOG_ERROR("history file version is %d, newer than newest known version %d, therefore not loading", fileVersion, currentFileVersion);
+        LOG_ERROR("history file version is %d, newer than newest known version 1, therefore not loading", fileVersion);
         return NO;
     }    
 
