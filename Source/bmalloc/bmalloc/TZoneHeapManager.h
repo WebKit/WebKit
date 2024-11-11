@@ -42,6 +42,9 @@
 
 namespace bmalloc { namespace api {
 
+static constexpr unsigned defaultBucketsForSmallSizes = 5;
+static constexpr unsigned defaultBucketsForLargeSizes = 3;
+static constexpr unsigned defaultMaxSmallSize = 128;
 
 class TZoneHeapManager {
     enum State {
@@ -147,10 +150,23 @@ public:
 
     BINLINE static TZoneHeapManager& singleton()
     {
-        if (!theTZoneHeapManager)
+        if (!theTZoneHeapManager) {
             ensureSingleton();
+            theTZoneHeapManager->init();
+        }
         BASSERT(theTZoneHeapManager);
         return *theTZoneHeapManager;
+    }
+
+    BINLINE static void initWithBucketSettings(unsigned smallSizeCount, unsigned largeSizeCount = 0, unsigned smallSizeLimit = 0)
+    {
+        RELEASE_BASSERT(!theTZoneHeapManager);
+        if (!theTZoneHeapManager) {
+            ensureSingleton();
+            RELEASE_BASSERT(theTZoneHeapManager);
+            theTZoneHeapManager->setBucketParams(smallSizeCount, largeSizeCount, smallSizeLimit);
+            theTZoneHeapManager->init();
+        }
     }
 
     BEXPORT pas_heap_ref* heapRefForTZoneType(bmalloc_type* classType);
@@ -158,6 +174,8 @@ public:
 
 private:
     BEXPORT static void ensureSingleton();
+
+    BEXPORT void setBucketParams(unsigned smallSizeCount, unsigned largeSizeCount = 0, unsigned smallSizeLimit = 0);
 
     BEXPORT void init();
 
@@ -175,6 +193,9 @@ private:
     TZoneHeapManager::State m_state;
     Mutex m_mutex;
     TZoneHeapRandomizeKey m_tzoneKey;
+    unsigned bucketsForSmallSizes { defaultBucketsForSmallSizes };
+    unsigned bucketsForLargeSizes { defaultBucketsForLargeSizes };
+    unsigned maxSmallSize { defaultMaxSmallSize };
     unsigned largestBucketCount { 0 };
     Vector<SizeAndAlign> m_typeSizes;
     Map<SizeAndAlign, TZoneTypeBuckets*, SizeAndAlign> m_heapRefsBySizeAndAlignment;

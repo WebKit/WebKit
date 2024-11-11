@@ -59,16 +59,6 @@ static const unsigned AlignmentBase64Size = 1;
 static const unsigned IndexSize = 2;
 static const unsigned typeNameLen = 12;
 
-#if BUSE(BUCKETS_FOR_SIZE_CLASSES_FROM_ENVVAR)
-static unsigned bucketsForSmallSizes = 8;
-static unsigned bucketsForLargeSizes = 4;
-static unsigned maxSmallSize = 128;
-#else
-static constexpr unsigned bucketsForSmallSizes = 8;
-static constexpr unsigned bucketsForLargeSizes = 4;
-static constexpr unsigned maxSmallSize = 128;
-#endif
-
 typedef union {
     struct {
         char prefix[3];
@@ -89,6 +79,20 @@ static TypeNameTemplate typeNameTemplate;
 static void dumpRegisteredTypesAtExit(void)
 {
     TZoneHeapManager::singleton().dumpRegisteredTypes();
+}
+
+void TZoneHeapManager::setBucketParams(unsigned smallSizeCount, unsigned largeSizeCount, unsigned smallSizeLimit)
+{
+    RELEASE_BASSERT(m_state == TZoneHeapManager::Uninitialized);
+
+    bucketsForSmallSizes = smallSizeCount;
+    if (largeSizeCount)
+        bucketsForLargeSizes = largeSizeCount;
+    if (smallSizeLimit)
+        maxSmallSize = smallSizeLimit;
+
+    if constexpr (verbose)
+        TZONE_LOG_DEBUG("Buckets params set to smallSizes: %u, largeSizes: %u, small sizes <= %u bytes\n",   bucketsForSmallSizes, bucketsForLargeSizes, maxSmallSize);
 }
 
 void TZoneHeapManager::init()
@@ -116,18 +120,24 @@ void TZoneHeapManager::init()
         auto tempString = buffer;
         char* param = nullptr;
 
+        unsigned smallSizeCount { 0 };
+        unsigned largeSizeCount { 0 };
+        unsigned smallSizeLimit { 0 };
+
         for (paramsProvided = 0; paramsProvided < numParams && (param = strsep(&tempString, ":")) != nullptr; paramsProvided++)
             paramsAsNumbers[paramsProvided] = static_cast<unsigned>(atol(param));
 
         if (paramsProvided > 0)
-            bucketsForSmallSizes = paramsAsNumbers[0];
+            smallSizeCount = paramsAsNumbers[0];
         if (paramsProvided > 1)
-            bucketsForLargeSizes = paramsAsNumbers[1];
+            largeSizeCount = paramsAsNumbers[1];
         if (paramsProvided > 2)
-            maxSmallSize = paramsAsNumbers[2];
+            smallSizeLimit = paramsAsNumbers[2];
 
         if constexpr (verbose)
-            TZONE_LOG_DEBUG("Buckets from env (%s): bucketsForSmallSizes: %u, bucketsForLargeSizes: %u, small sizes <= %u bytes\n",  bucketsForSizeClassesValue, bucketsForSmallSizes, bucketsForLargeSizes, maxSmallSize);
+            TZONE_LOG_DEBUG("Buckets from env (%s):\n",  bucketsForSizeClassesValue);
+
+        setBucketParams(smallSizeCount, largeSizeCount, smallSizeLimit);
     }
 #endif
 
@@ -336,7 +346,6 @@ void TZoneHeapManager::ensureSingleton()
         onceFlag,
         [] {
             theTZoneHeapManager = new TZoneHeapManager();
-            theTZoneHeapManager->init();
         }
     );
 };
