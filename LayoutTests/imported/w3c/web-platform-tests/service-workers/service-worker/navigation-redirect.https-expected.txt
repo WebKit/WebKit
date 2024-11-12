@@ -13,7 +13,7 @@ PASS SW-fallbacked redirect to other-origin out-scope.
 PASS SW-fallbacked redirect to other-origin in-scope.
 PASS SW-fallbacked redirect to other-origin and back to same-origin.
 PASS SW-generated redirect to same-origin out-scope.
-FAIL SW-generated redirect to same-origin out-scope with a hash fragment. assert_equals: Last URL should match. expected "https://localhost:9443/service-workers/service-worker/resources/navigation-redirect-out-scope.py?#ref" but got "https://localhost:9443/service-workers/service-worker/resources/navigation-redirect-out-scope.py?"
+PASS SW-generated redirect to same-origin out-scope with a hash fragment.
 PASS SW-generated redirect to same-origin out-scope with different hash fragments.
 PASS SW-generated redirect to same-origin same-scope.
 PASS SW-generated redirect to same-origin other-scope.
