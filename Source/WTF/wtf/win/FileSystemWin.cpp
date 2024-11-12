@@ -118,10 +118,10 @@ CString fileSystemRepresentation(const String& path)
     auto characters = StringView(path).upconvertedCharacters();
     int size = WideCharToMultiByte(CP_ACP, 0, wcharFrom(characters), path.length(), 0, 0, 0, 0);
 
-    char* buffer;
+    std::span<char> buffer;
     CString string = CString::newUninitialized(size, buffer);
 
-    WideCharToMultiByte(CP_ACP, 0, wcharFrom(characters), path.length(), buffer, size, 0, 0);
+    WideCharToMultiByte(CP_ACP, 0, wcharFrom(characters), path.length(), buffer.data(), buffer.size(), 0, 0);
 
     return string;
 }

@@ -285,10 +285,10 @@ CString TextCodecWin::encode(const UChar* characters, size_t length, Unencodable
     if (resultLength <= 0)
         return "?";
 
-    char* characterBuffer;
+    std::span<char> characterBuffer;
     CString result = CString::newUninitialized(resultLength, characterBuffer);
 
-    WideCharToMultiByte(m_codePage, WC_COMPOSITECHECK, characters, length, characterBuffer, resultLength, 0, 0);
+    WideCharToMultiByte(m_codePage, WC_COMPOSITECHECK, characters, length, characterBuffer.data(), characterBuffer.size(), 0, 0);
 
     return result;
 }

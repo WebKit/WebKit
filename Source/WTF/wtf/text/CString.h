@@ -54,6 +54,8 @@ private:
 
     CStringBuffer(size_t length) : m_length(length) { }
     char* mutableData() { return reinterpret_cast_ptr<char*>(this + 1); }
+    std::span<char> mutableSpan() { return unsafeMakeSpan(mutableData(), m_length); }
+    std::span<char> mutableSpanIncludingNullCharacter() { return unsafeMakeSpan(mutableData(), m_length + 1); }
 
     const size_t m_length;
 };
@@ -69,7 +71,7 @@ public:
     CString(std::span<const uint8_t>);
     CString(std::span<const char8_t> characters) : CString(byteCast<uint8_t>(characters)) { }
     CString(CStringBuffer* buffer) : m_buffer(buffer) { }
-    WTF_EXPORT_PRIVATE static CString newUninitialized(size_t length, char*& characterBuffer);
+    WTF_EXPORT_PRIVATE static CString newUninitialized(size_t length, std::span<char>& characterBuffer);
     CString(HashTableDeletedValueType) : m_buffer(HashTableDeletedValue) { }
 
     const char* data() const;

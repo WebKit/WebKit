@@ -37,8 +37,6 @@
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/UTF8Conversion.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 // Construct a string with UTF-16 data.
@@ -383,28 +381,30 @@ CString String::ascii() const
     // preserved, characters outside of this range are converted to '?'.
 
     if (isEmpty()) {
-        char* characterBuffer;
+        std::span<char> characterBuffer;
         return CString::newUninitialized(0, characterBuffer);
     }
 
     if (this->is8Bit()) {
         auto characters = this->span8();
 
-        char* characterBuffer;
+        std::span<char> characterBuffer;
         CString result = CString::newUninitialized(characters.size(), characterBuffer);
 
+        size_t characterBufferIndex = 0;
         for (auto character : characters)
-            *characterBuffer++ = character && (character < 0x20 || character > 0x7f) ? '?' : character;
+            characterBuffer[characterBufferIndex++] = character && (character < 0x20 || character > 0x7f) ? '?' : character;
 
         return result;        
     }
 
     auto characters = span16();
-    char* characterBuffer;
+    std::span<char> characterBuffer;
     CString result = CString::newUninitialized(characters.size(), characterBuffer);
 
+    size_t characterBufferIndex = 0;
     for (auto character : characters)
-        *characterBuffer++ = character && (character < 0x20 || character > 0x7f) ? '?' : character;
+        characterBuffer[characterBufferIndex++] = character && (character < 0x20 || character > 0x7f) ? '?' : character;
 
     return result;
 }
@@ -421,11 +421,12 @@ CString String::latin1() const
         return CString(this->span8());
 
     auto characters = this->span16();
-    char* characterBuffer;
+    std::span<char> characterBuffer;
     CString result = CString::newUninitialized(characters.size(), characterBuffer);
 
+    size_t characterBufferIndex = 0;
     for (auto character : characters)
-        *characterBuffer++ = !isLatin1(character) ? '?' : character;
+        characterBuffer[characterBufferIndex++] = !isLatin1(character) ? '?' : character;
 
     return result;
 }
@@ -515,11 +516,11 @@ String String::fromUTF8WithLatin1Fallback(std::span<const char8_t> string)
 
 String String::fromCodePoint(char32_t codePoint)
 {
-    UChar buffer[2];
+    std::array<UChar, 2> buffer;
     uint8_t length = 0;
     UBool error = false;
     U16_APPEND(buffer, length, 2, codePoint, error);
-    return error ? String() : String({ buffer, length });
+    return error ? String() : String(std::span { buffer }.first(length));
 }
 
 // String Operations
@@ -631,5 +632,3 @@ Vector<char> asciiDebug(String& string)
 }
 
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -34,6 +34,7 @@
 
 #include <cstddef>
 #include <wtf/Assertions.h>
+#include <wtf/HexNumber.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -242,14 +243,7 @@ void SHA1::addUTF8Bytes(CFStringRef string)
 
 CString SHA1::hexDigest(const Digest& digest)
 {
-    char* start = nullptr;
-    CString result = CString::newUninitialized(40, start);
-    char* buffer = start;
-    for (size_t i = 0; i < hashSize; ++i) {
-        snprintf(buffer, 3, "%02X", digest.at(i));
-        buffer += 2;
-    }
-    return result;
+    return toHexCString(digest);
 }
 
 CString SHA1::computeHexDigest()

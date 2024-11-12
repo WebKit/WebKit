@@ -20,14 +20,18 @@
 #include "config.h"
 #include "HexNumber.h"
 
+#include <wtf/ASCIICType.h>
+#include <wtf/CheckedArithmetic.h>
+#include <wtf/IndexedRange.h>
 #include <wtf/PrintStream.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/text/StringView.h>
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WTF {
 
 namespace Internal {
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 std::pair<LChar*, unsigned> appendHex(LChar* buffer, unsigned bufferSize, std::uintmax_t number, unsigned minimumDigits, HexConversionMode mode)
 {
@@ -46,6 +50,8 @@ std::pair<LChar*, unsigned> appendHex(LChar* buffer, unsigned bufferSize, std::u
     return { start, end - start };
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 }
 
 void printInternal(PrintStream& out, HexNumberBuffer buffer)
@@ -53,6 +59,28 @@ void printInternal(PrintStream& out, HexNumberBuffer buffer)
     out.print(StringView(buffer.span()));
 }
 
-} // namespace WTF
+static void toHexInternal(std::span<const uint8_t> values, std::span<LChar> hexadecimalOutput)
+{
+    for (auto [i, digestValue] : IndexedRange(values)) {
+        hexadecimalOutput[i * 2] = upperNibbleToASCIIHexDigit(digestValue);
+        hexadecimalOutput[i * 2 + 1] = lowerNibbleToASCIIHexDigit(digestValue);
+    }
+}
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+CString toHexCString(std::span<const uint8_t> values)
+{
+    std::span<char> buffer;
+    auto result = CString::newUninitialized(CheckedSize(values.size()) * 2U, buffer);
+    toHexInternal(values, byteCast<LChar>(buffer));
+    return result;
+}
+
+String toHexString(std::span<const uint8_t> values)
+{
+    std::span<LChar> buffer;
+    auto result = String::createUninitialized(CheckedSize(values.size()) * 2U, buffer);
+    toHexInternal(values, buffer);
+    return result;
+}
+
+} // namespace WTF

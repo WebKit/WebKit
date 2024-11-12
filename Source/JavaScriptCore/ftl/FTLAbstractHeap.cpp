@@ -214,14 +214,14 @@ void IndexedAbstractHeap::initialize(AbstractHeap& field, ptrdiff_t signedIndex)
         unsigned numHexlets = power >> 2;
         
         size_t stringLength = m_heapNameLength + (negative ? strlen(negSplit) : strlen(posSplit)) + numHexlets;
-        char* characters;
+        std::span<char> characters;
         m_largeIndexNames.append(CString::newUninitialized(stringLength, characters));
         
-        memcpy(characters, m_heapForAnyIndex.heapName(), m_heapNameLength);
+        memcpy(characters.data(), m_heapForAnyIndex.heapName(), m_heapNameLength);
         if (negative)
-            memcpy(characters + m_heapNameLength, negSplit, strlen(negSplit));
+            memcpy(characters.data() + m_heapNameLength, negSplit, strlen(negSplit));
         else
-            memcpy(characters + m_heapNameLength, posSplit, strlen(posSplit));
+            memcpy(characters.data() + m_heapNameLength, posSplit, strlen(posSplit));
         
         size_t accumulator = index;
         for (unsigned i = 0; i < numHexlets; ++i) {
@@ -229,7 +229,7 @@ void IndexedAbstractHeap::initialize(AbstractHeap& field, ptrdiff_t signedIndex)
             accumulator >>= 4;
         }
         
-        field.initialize(&m_heapForAnyIndex, characters, m_offset + signedIndex * m_elementSize);
+        field.initialize(&m_heapForAnyIndex, characters.data(), m_offset + signedIndex * m_elementSize);
         return;
     }
     

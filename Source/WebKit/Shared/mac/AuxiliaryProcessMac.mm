@@ -496,7 +496,9 @@ static bool tryApplyCachedSandbox(const SandboxInfo& info)
     profile.builtin = nullptr;
     profile.size = cachedSandboxHeader.dataSize;
     if (haveBuiltin) {
-        builtin = CString::newUninitialized(cachedSandboxHeader.builtinSize, profile.builtin);
+        std::span<char> cstringBuffer;
+        builtin = CString::newUninitialized(cachedSandboxHeader.builtinSize, cstringBuffer);
+        profile.builtin = cstringBuffer.data();
         if (builtin.isNull())
             return false;
         memcpy(profile.builtin, sandboxBuiltin.data(), cachedSandboxHeader.builtinSize);

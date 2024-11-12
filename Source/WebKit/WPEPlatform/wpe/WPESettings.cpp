@@ -114,11 +114,11 @@ static void wpe_settings_class_init(WPESettingsClass* settingsClass)
 
 static CString makeKeyPath(const char* group, const char* key)
 {
-    char* buffer;
+    std::span<char> buffer;
     size_t length = strlen(group) + strlen(key) + 3;
 
     CString path = CString::newUninitialized(length - 1, buffer);
-    g_snprintf(buffer, length, "/%s/%s", group, key);
+    g_snprintf(buffer.data(), length, "/%s/%s", group, key);
 
     return path;
 }

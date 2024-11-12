@@ -87,12 +87,17 @@ private:
     const HexNumberBuffer& m_buffer;
 };
 
+WTF_EXPORT_PRIVATE CString toHexCString(std::span<const uint8_t>);
+WTF_EXPORT_PRIVATE String toHexString(std::span<const uint8_t>);
+
 class PrintStream;
 WTF_EXPORT_PRIVATE void printInternal(PrintStream&, HexNumberBuffer);
 
 } // namespace WTF
 
 using WTF::hex;
+using WTF::toHexCString;
+using WTF::toHexString;
 using WTF::Lowercase;
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

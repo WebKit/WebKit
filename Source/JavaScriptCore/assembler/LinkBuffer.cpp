@@ -145,13 +145,13 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
         size_t stringLength = vsnprintf(nullptr, 0, format, preflightArgs);
         va_end(preflightArgs);
 
-        const char prefix[] = "thunk: ";
-        char* buffer = 0;
-        size_t length = stringLength + sizeof(prefix);
+        constexpr auto prefix = "thunk: "_s;
+        std::span<char> buffer;
+        size_t length = stringLength + prefix.length() + 1;
         CString label = CString::newUninitialized(length, buffer);
-        snprintf(buffer, length, "%s", prefix);
-        vsnprintf(buffer + sizeof(prefix) - 1, stringLength + 1, format, argList);
-        out.printf("%s", buffer);
+        memcpySpan(buffer, prefix.span8());
+        vsnprintf(buffer.subspan(prefix.length()).data(), stringLength + 1, format, argList);
+        out.printf("%s", buffer.data());
 
         registerLabel(result.code().untaggedPtr(), WTFMove(label));
     } else
