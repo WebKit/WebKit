@@ -1100,7 +1100,9 @@ WASM_SLOW_PATH_DECL(retrieve_and_clear_exception)
     else if (pc->is<WasmCatchAll>())
         handleCatchAll(pc->as<WasmCatchAll>());
     else if (pc->is<WasmTryTableCatch>()) {
-        payload = bitwise_cast<void*>(jsDynamicCast<JSWebAssemblyException*>(thrownValue)->payload().span().data());
+        JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue);
+        RELEASE_ASSERT(!!wasmException);
+        payload = bitwise_cast<void*>(wasmException->payload().span().data());
         auto instr = pc->as<WasmTryTableCatch>();
         if (instr.m_kind == static_cast<unsigned>(Wasm::CatchKind::CatchRef) || instr.m_kind == static_cast<unsigned>(Wasm::CatchKind::CatchAllRef))
             callFrame->uncheckedR(pc->as<WasmTryTableCatch>().m_exception) = thrownValue;
