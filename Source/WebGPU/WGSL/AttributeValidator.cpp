@@ -450,7 +450,7 @@ void AttributeValidator::visit(AST::StructureMember& member)
 
             auto* type = member.type().inferredType();
             if (type && (alignmentValue % type->alignment()))
-                error(attribute.span(), "@align attribute "_s, alignmentValue, " of struct member is not a multiple of the type's alignemnt "_s, type->alignment());
+                error(attribute.span(), "@align attribute "_s, alignmentValue, " of struct member is not a multiple of the type's alignment "_s, type->alignment());
 
             update<unsigned>(attribute.span(), member.m_alignment, alignmentValue);
             continue;
