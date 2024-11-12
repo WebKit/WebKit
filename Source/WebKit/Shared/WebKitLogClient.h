@@ -50,4 +50,6 @@ private:
     Lock m_logStreamLock;
 };
 
+std::unique_ptr<WebKitLogClient>& webkitLogClient();
+
 }
