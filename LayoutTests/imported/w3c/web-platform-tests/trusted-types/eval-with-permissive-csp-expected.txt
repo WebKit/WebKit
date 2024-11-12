@@ -1,11 +1,10 @@
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
+CONSOLE MESSAGE: This requires a TrustedScript value else it violates the following Content Security Policy directive: "require-trusted-types-for 'script'"
 
 PASS eval with plain string with Trusted Types and permissive CSP throws (no type).
 PASS indirect eval with plain string with Trusted Types and permissive CSP throws (no type).
-FAIL Function constructor with plain string with Trusted Types and permissive CSP throws (no type). assert_throws_js: function "_ => {
-      new Function('a="hello there"');
-    }" did not throw
+PASS Function constructor with plain string with Trusted Types and permissive CSP throws (no type).
 PASS eval with TrustedScript and permissive CSP works.
 PASS indirect eval with TrustedScript and permissive CSP works.
 PASS new Function with TrustedScript and permissive CSP works.

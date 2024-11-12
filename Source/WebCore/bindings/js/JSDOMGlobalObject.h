@@ -85,7 +85,9 @@ public:
 
     ScriptExecutionContext* scriptExecutionContext() const;
 
-    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String, JSC::JSValue);
+    static String codeForEval(JSC::JSGlobalObject*, JSC::JSValue);
+    static bool canCompileStrings(JSC::JSGlobalObject*, JSC::CompilationType, String, const JSC::ArgList&);
+    static JSC::Structure* trustedScriptStructure(JSC::JSGlobalObject*);
 
     // https://tc39.es/ecma262/#sec-agent-clusters
     String agentClusterID() const;

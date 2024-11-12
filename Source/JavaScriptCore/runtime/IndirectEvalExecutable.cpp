@@ -42,7 +42,7 @@ inline IndirectEvalExecutable* IndirectEvalExecutable::createImpl(JSGlobalObject
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     if (!globalObject->evalEnabled()) {
-        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, source.provider() ? jsNontrivialString(vm, source.provider()->source().toString()) : nullptr);
+        globalObject->globalObjectMethodTable()->reportViolationForUnsafeEval(globalObject, source.provider() ? source.provider()->source().toString() : nullString());
         throwException(globalObject, scope, createEvalError(globalObject, globalObject->evalDisabledErrorMessage()));
         return nullptr;
     }

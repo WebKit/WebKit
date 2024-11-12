@@ -108,7 +108,8 @@ const GlobalObjectMethodTable* JSDOMWindowBase::globalObjectMethodTable()
 #endif
         deriveShadowRealmGlobalObject,
         codeForEval,
-        canCompileStrings
+        canCompileStrings,
+        trustedScriptStructure,
     };
     return &table;
 };
@@ -280,7 +281,7 @@ JSC::ScriptExecutionStatus JSDOMWindowBase::scriptExecutionStatus(JSC::JSGlobalO
     return jsCast<JSDocument*>(owner)->wrapped().jscScriptExecutionStatus();
 }
 
-void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object, JSString* source)
+void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object, const String& source)
 {
     const JSDOMWindowBase* thisObject = static_cast<const JSDOMWindowBase*>(object);
     CheckedPtr<ContentSecurityPolicy> contentSecurityPolicy;
@@ -296,25 +297,7 @@ void JSDOMWindowBase::reportViolationForUnsafeEval(JSGlobalObject* object, JSStr
     if (!contentSecurityPolicy)
         return;
 
-    String sourceString;
-    if (source)
-        sourceString = source->tryGetValue();
-    contentSecurityPolicy->allowEval(object, LogToConsole::No, sourceString);
-}
-
-String JSDOMWindowBase::codeForEval(JSGlobalObject* globalObject, JSValue value)
-{
-    VM& vm = globalObject->vm();
-
-    if (auto* script = JSTrustedScript::toWrapped(vm, value))
-        return script->toString();
-
-    return nullString();
-}
-
-bool JSDOMWindowBase::canCompileStrings(JSGlobalObject* globalObject, CompilationType compilationType, String codeString, JSValue bodyArgument)
-{
-    return JSDOMGlobalObject::canCompileStrings(globalObject, compilationType, codeString, bodyArgument);
+    contentSecurityPolicy->allowEval(object, LogToConsole::No, source);
 }
 
 void JSDOMWindowBase::willRemoveFromWindowProxy()
