@@ -149,6 +149,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
     auto validateCell = [&] (JSCell* jsCell) {
         StructureID structureID = jsCell->structureID();
         
+        // XXX
         auto die = [&] (const char* text) {
             WTF::dataFile().atomically(
                 [&] (PrintStream& out) {
