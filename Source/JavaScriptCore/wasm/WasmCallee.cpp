@@ -527,7 +527,7 @@ void OptimizingJITCallee::linkExceptionHandlers(Vector<UnlinkedHandlerInfo> unli
 
 BBQCallee::~BBQCallee()
 {
-    if (m_osrEntryCallee) {
+    if (Options::freeRetiredWasmCode() && m_osrEntryCallee) {
         ASSERT(m_osrEntryCallee->hasOneRef());
         m_osrEntryCallee->reportToVMsForDestruction();
     }
