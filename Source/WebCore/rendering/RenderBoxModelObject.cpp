@@ -717,7 +717,8 @@ void RenderBoxModelObject::paintMaskForTextFillBox(GraphicsContext& context, con
         for (auto box = inlineBox->firstLeafBox(), end = inlineBox->endLeafBox(); box != end; box.traverseNextOnLine()) {
             if (!box->isText())
                 continue;
-            TextBoxPainter { box->modernPath().inlineContent(), box->modernPath().box(), box->modernPath().box().style(), maskInfo, paintOffset }.paint();
+            TextBoxPainter textBoxPainter(box->modernPath().inlineContent(), box->modernPath().box(), maskInfo, paintOffset);
+            textBoxPainter.paint();
         }
         return;
     }

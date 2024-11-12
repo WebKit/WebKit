@@ -382,8 +382,8 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     if (needsResetText || oldTransform != newStyle.textTransform() || oldSecurity != newStyle.textSecurity())
         RenderText::setText(originalText(), true);
 
-    // FIXME: First line change on the block comes in as equal on text.
-    auto needsLayoutBoxStyleUpdate = layoutBox() && (diff >= StyleDifference::Repaint || (&style() != &firstLineStyle()));
+    // FIXME: First line change on the block comes in as equal on text with inline box parent.
+    auto needsLayoutBoxStyleUpdate = (diff >= StyleDifference::Repaint || (is<RenderInline>(parent()) && &style() != &firstLineStyle())) && layoutBox();
     if (needsLayoutBoxStyleUpdate)
         LayoutIntegration::LineLayout::updateStyle(*this);
 }
