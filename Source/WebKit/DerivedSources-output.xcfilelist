@@ -130,6 +130,7 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LibWebRTCRemoteCodecsMessageReceiver
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LibWebRTCRemoteCodecsMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogEntriesDeclarations.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogEntriesImplementations.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStream.messages.in
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStreamMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStreamMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaPlayerPrivateRemoteMessageReceiver.cpp

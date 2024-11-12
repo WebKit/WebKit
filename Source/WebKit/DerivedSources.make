@@ -127,7 +127,7 @@ else
 endif
 
 MESSAGE_RECEIVERS = \
-	$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStream \
+	LogStream \
 	NetworkProcess/NetworkBroadcastChannelRegistry \
 	NetworkProcess/NetworkConnectionToWebProcess \
 	NetworkProcess/NetworkContentRuleListManager \
@@ -955,5 +955,12 @@ WebKitLogDefinitions.h : Shared/WebKitLogEntries.in
 
 all : LogEntriesDeclarations.h LogEntriesImplementations.h WebKitLogClientDeclarations.h WebCoreLogClientDeclarations.h
 
-LogStream.messages.in LogEntriesDeclarations.h LogEntriesImplementations.h WebKitLogClientDeclarations.h WebCoreLogClientDeclarations.h : Shared/WebKitLogEntries.in $(WebCorePrivateHeaders)/WebCoreLogEntries.in
-	$(PYTHON) $(WebKit2)/Scripts/generate-log-entries.py $^ LogStream.messages.in LogEntriesDeclarations.h LogEntriesImplementations.h WebKitLogClientDeclarations.h WebCoreLogClientDeclarations.h
+LOG_OUTPUT_FILES = \
+    LogStream.messages.in \
+    LogEntriesDeclarations.h \
+    LogEntriesImplementations.h \
+    WebKitLogClientDeclarations.h \
+    WebCoreLogClientDeclarations.h \
+
+$(LOG_OUTPUT_FILES) : Shared/WebKitLogEntries.in $(WebCorePrivateHeaders)/WebCoreLogEntries.in
+	$(PYTHON) $(WebKit2)/Scripts/generate-log-entries.py $^ $(LOG_OUTPUT_FILES)
