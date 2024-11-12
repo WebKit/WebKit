@@ -57,9 +57,23 @@ class SystemHost(object):
     def path_to_lldb_python_directory(self):
         if not self.platform.is_mac():
             return ''
-        # Explicitly use Python 2.7
         path = self.executive.run_command(['xcrun', 'lldb', '--python-path'], return_stderr=False).rstrip()
-        return self.filesystem.join(self.filesystem.dirname(path), 'Python')
+
+        xcode_python = self.executive.run_command(
+            ['xcrun', 'python3', '-c', 'import sys; print(sys.executable)'],
+            return_stderr=False,
+        ).rstrip()
+
+        try:
+            this_python = sys._base_executable
+        except AttributeError:
+            this_python = sys.executable
+
+        if self.filesystem.realpath(this_python) != self.filesystem.realpath(xcode_python):
+            msg = 'Cannot load lldb module from a different Python, try running the script with xcrun python3 ...'
+            raise RuntimeError(msg)
+
+        return path
 
     @property
     def device_type(self):
