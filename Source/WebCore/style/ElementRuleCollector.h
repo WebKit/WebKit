@@ -87,19 +87,22 @@ private:
 
     void addElementInlineStyleProperties(bool includeSMILProperties);
 
-    void matchUserAgentPartRules(CascadeLevel);
-    void matchHostPseudoClassRules(CascadeLevel);
-    void matchSlottedPseudoElementRules(CascadeLevel);
-    void matchPartPseudoElementRules(CascadeLevel);
-    void matchPartPseudoElementRulesForScope(const Element& partMatchingElement, CascadeLevel);
+    enum class CollectRulesOrMatchAny : uint8_t { CollectRules, MatchAny };
+    std::optional<bool> matchUserAgentPartRules(CascadeLevel, const CollectRulesOrMatchAny);
+    std::optional<bool> matchHostPseudoClassRules(CascadeLevel, const CollectRulesOrMatchAny);
+    std::optional<bool> matchSlottedPseudoElementRules(CascadeLevel, const CollectRulesOrMatchAny);
+    std::optional<bool> matchPartPseudoElementRules(CascadeLevel, const CollectRulesOrMatchAny);
+    std::optional<bool> matchPartPseudoElementRulesForScope(const Element& partMatchingElement, CascadeLevel, const CollectRulesOrMatchAny);
 
-    void collectMatchingUserAgentPartRules(const MatchRequest&);
-
-    void collectMatchingRules(CascadeLevel);
-    void collectMatchingRules(const MatchRequest&);
+    std::optional<bool> collectMatchingUserAgentPartRules(const MatchRequest&, const CollectRulesOrMatchAny);
+    std::optional<bool> collectMatchingRulesForListOrCheckIfAnyRuleMatches(const RuleSet::RuleDataVector* rules, const MatchRequest&, const CollectRulesOrMatchAny);
+    std::optional<bool> collectMatchingRulesOrCheckIfAnyRuleMatches(CascadeLevel, const CollectRulesOrMatchAny);
+    std::optional<bool> collectMatchingRulesOrCheckIfAnyRuleMatches(const MatchRequest&, const CollectRulesOrMatchAny);
+    bool checkIfAnyRuleMatches(const RuleSet::RuleDataVector* rules, const MatchRequest&);
     void collectMatchingRulesForList(const RuleSet::RuleDataVector*, const MatchRequest&);
+    bool shouldSkipIteration(const RuleData&, const MatchRequest&) const;
     bool ruleMatches(const RuleData&, unsigned& specificity, ScopeOrdinal, const ContainerNode* scopingRoot = nullptr);
-    bool containerQueriesMatch(const RuleData&, const MatchRequest&);
+    bool containerQueriesMatch(const RuleData&, const MatchRequest&) const;
     struct ScopingRootWithDistance {
         RefPtr<const ContainerNode> scopingRoot;
         unsigned distance { std::numeric_limits<unsigned>::max() };
