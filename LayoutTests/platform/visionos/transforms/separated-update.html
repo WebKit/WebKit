@@ -1,5 +1,4 @@
-
-<!DOCTYPE HTML><!-- webkit-test-runner [ CSSTransformStyleSeparatedEnabled=true ] -->
+<!DOCTYPE HTML><!-- webkit-test-runner [ CSSTransformStyleSeparatedEnabled=true useFlexibleViewport=false ] -->
 <html>
 <style>
     body { margin: 0; }
@@ -39,10 +38,12 @@ window.onload = async function () {
 
     // Hide first separated layer, bring the second one into view.
     window.scrollTo(0, 2500);
+    await UIHelper.ensureStablePresentationUpdate();
+
     // Separate the last layer, already in view.
     document.querySelector("div.transformed:last-child").classList.add("separated");
-
     await UIHelper.ensureStablePresentationUpdate();
+
     results.textContent = await UIHelper.getCALayerTree();
     document.getElementById('test').remove();
 
