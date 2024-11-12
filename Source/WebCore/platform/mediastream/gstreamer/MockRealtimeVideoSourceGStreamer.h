@@ -37,6 +37,8 @@ public:
     // GStreamerCapturerObserver
     void captureEnded() final;
 
+    std::pair<GstClockTime, GstClockTime> queryCaptureLatency() const final;
+
 private:
     friend class MockRealtimeVideoSource;
 

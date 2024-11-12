@@ -131,6 +131,14 @@ void MockRealtimeAudioSourceGStreamer::captureEnded()
     captureFailed();
 }
 
+std::pair<GstClockTime, GstClockTime> MockRealtimeAudioSourceGStreamer::queryCaptureLatency() const
+{
+    if (!m_capturer)
+        return { GST_CLOCK_TIME_NONE, GST_CLOCK_TIME_NONE };
+
+    return m_capturer->queryLatency();
+}
+
 void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
 {
     if (!m_bipBopBuffer.size())

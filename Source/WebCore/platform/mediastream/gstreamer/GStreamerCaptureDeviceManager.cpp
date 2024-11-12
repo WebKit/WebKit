@@ -136,10 +136,10 @@ void GStreamerCaptureDeviceManager::deviceWillBeRemoved(const String& persistent
     stopCapturing(persistentId);
 }
 
-void GStreamerCaptureDeviceManager::registerCapturer(const RefPtr<GStreamerCapturer>& capturer)
+void GStreamerCaptureDeviceManager::registerCapturer(RefPtr<GStreamerCapturer>&& capturer)
 {
     GST_DEBUG("Registering capturer for device %s", capturer->devicePersistentId().ascii().data());
-    m_capturers.append(capturer);
+    m_capturers.append(WTFMove(capturer));
 }
 
 void GStreamerCaptureDeviceManager::unregisterCapturer(const GStreamerCapturer& capturer)

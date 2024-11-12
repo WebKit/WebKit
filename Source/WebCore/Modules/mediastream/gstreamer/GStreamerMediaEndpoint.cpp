@@ -100,6 +100,11 @@ bool GStreamerMediaEndpoint::initializePipeline()
     m_pipeline = gst_pipeline_new(pipelineName.ascii().data());
     registerActivePipeline(m_pipeline);
 
+    auto clock = adoptGRef(gst_system_clock_obtain());
+    gst_pipeline_use_clock(GST_PIPELINE(m_pipeline.get()), clock.get());
+    gst_element_set_base_time(m_pipeline.get(), 0);
+    gst_element_set_start_time(m_pipeline.get(), GST_CLOCK_TIME_NONE);
+
     connectSimpleBusMessageCallback(m_pipeline.get(), [this](GstMessage* message) {
         handleMessage(message);
     });
@@ -108,6 +113,9 @@ bool GStreamerMediaEndpoint::initializePipeline()
     m_webrtcBin = makeGStreamerElement("webrtcbin", binName.ascii().data());
     if (!m_webrtcBin)
         return false;
+
+    // Lower default latency from 200ms to 40ms.
+    g_object_set(m_webrtcBin.get(), "latency", 40, nullptr);
 
     auto rtpBin = adoptGRef(gst_bin_get_by_name(GST_BIN_CAST(m_webrtcBin.get()), "rtpbin"));
     if (!rtpBin) {

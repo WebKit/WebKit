@@ -53,7 +53,7 @@ public:
     void devicesChanged() final;
     void deviceWillBeRemoved(const String& persistentId) final;
 
-    void registerCapturer(const RefPtr<GStreamerCapturer>&);
+    void registerCapturer(RefPtr<GStreamerCapturer>&&);
     void unregisterCapturer(const GStreamerCapturer&);
     void stopCapturing(const String& persistentId);
 
