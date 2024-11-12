@@ -159,6 +159,7 @@ bool Quirks::isEmbedDomain(const String& domainString) const
 }
 
 // ceac.state.gov https://bugs.webkit.org/show_bug.cgi?id=193478
+// weather.com rdar://139689157
 bool Quirks::needsFormControlToBeMouseFocusable() const
 {
 #if PLATFORM(MAC)
@@ -166,10 +167,14 @@ bool Quirks::needsFormControlToBeMouseFocusable() const
         return false;
 
     auto host = topDocumentURL().host();
-    return host == "ceac.state.gov"_s || host.endsWith(".ceac.state.gov"_s);
-#else
+    if (host == "ceac.state.gov"_s || host.endsWith(".ceac.state.gov"_s))
+        return true;
+
+    if (host == "weather.com"_s)
+        return true;
+#endif // PLATFORM(MAC)
+
     return false;
-#endif
 }
 
 bool Quirks::needsAutoplayPlayPauseEvents() const
