@@ -2945,17 +2945,20 @@ FileSystemAccessEnabled:
 
 FilterLinkDecorationByDefaultEnabled:
   type: bool
-  status: stable
+  status: internal
   category: networking
   humanReadableName: "Filter Link Decoration"
   humanReadableDescription: "Enable Filtering Link Decoration"
   defaultValue:
     WebKitLegacy:
-      default: true
+      "ENABLE(LINK_DECORATION_FILTERING_BY_DEFAULT)": true
+      default: false
     WebKit:
-      default: true
+      "ENABLE(LINK_DECORATION_FILTERING_BY_DEFAULT)": true
+      default: false
     WebCore:
-      default: true
+      "ENABLE(LINK_DECORATION_FILTERING_BY_DEFAULT)": true
+      default: false
 
 FixedFontFamily:
   type: String
