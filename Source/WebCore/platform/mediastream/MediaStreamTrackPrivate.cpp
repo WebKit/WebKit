@@ -493,7 +493,7 @@ Ref<MediaStreamTrackPrivate> MediaStreamTrackPrivate::clone()
     clonedMediaStreamTrackPrivate->m_captureDidFail = this->m_captureDidFail;
     clonedMediaStreamTrackPrivate->updateReadyState();
 
-    if (m_isProducingData)
+    if (m_isProducingData && !m_isMuted && !m_isInterrupted)
         clonedMediaStreamTrackPrivate->startProducingData();
 
     return clonedMediaStreamTrackPrivate;

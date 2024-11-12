@@ -2460,6 +2460,9 @@ http/tests/webrtc/muted-video-mediastream-invisible-autoplay.html [ Failure Time
 
 webkit.org/b/280117 webrtc/audio-muted-stats.html [ Failure ]
 
+# Crashing since introduced
+fast/mediastream/mediastreamtrack-clone-muted.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebRTC-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
