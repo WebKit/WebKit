@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "PlatformVideoColorSpace.h"
 #include "ScreenDataOverrides.h"
 #include <wtf/text/StringView.h>
 #include <wtf/text/WTFString.h>
@@ -131,7 +132,9 @@ std::optional<VPCodecConfigurationRecord> createVPCodecConfigurationRecordFromVP
 void setConfigurationColorSpaceFromVP9ColorSpace(VPCodecConfigurationRecord&, uint8_t);
 
 enum class VPXCodec : uint8_t { Vp8, Vp9 };
-std::optional<Vector<uint8_t>> vpcCFromVPXByteStream(VPXCodec, std::span<const uint8_t>);
+std::optional<VPCodecConfigurationRecord> vPCodecConfigurationRecordFromVPXByteStream(VPXCodec, std::span<const uint8_t>);
 Vector<uint8_t> vpcCFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord&);
+
+PlatformVideoColorSpace colorSpaceFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord&);
 
 }

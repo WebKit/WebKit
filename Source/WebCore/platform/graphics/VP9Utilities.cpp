@@ -497,7 +497,7 @@ void setConfigurationColorSpaceFromVP9ColorSpace(VPCodecConfigurationRecord& rec
     }
 }
 
-std::optional<Vector<uint8_t>> vpcCFromVPXByteStream(VPXCodec codec, std::span<const uint8_t> data)
+std::optional<VPCodecConfigurationRecord> vPCodecConfigurationRecordFromVPXByteStream(VPXCodec codec, std::span<const uint8_t> data)
 {
     if (data.size() < 11)
         return { };
@@ -527,7 +527,7 @@ std::optional<Vector<uint8_t>> vpcCFromVPXByteStream(VPXCodec codec, std::span<c
         record.colorPrimaries = colorSpace ? VPConfigurationColorPrimaries::Unspecified : VPConfigurationColorPrimaries::BT_601_7;
         record.transferCharacteristics =  colorSpace ? VPConfigurationTransferCharacteristics::Unspecified : VPConfigurationTransferCharacteristics::BT_601_7;
         record.matrixCoefficients = colorSpace ? VPConfigurationMatrixCoefficients::Unspecified : VPConfigurationMatrixCoefficients::BT_601_7;
-        return vpcCFromVPCodecConfigurationRecord(record);
+        return record;
     }
 
     BitReader br(data);
@@ -593,7 +593,116 @@ std::optional<Vector<uint8_t>> vpcCFromVPXByteStream(VPXCodec codec, std::span<c
 
     setConfigurationColorSpaceFromVP9ColorSpace(record, colorSpace);
 
-    return vpcCFromVPCodecConfigurationRecord(record);
+    return record;
+}
+
+static PlatformVideoColorPrimaries convertToPlatformVideoColorPrimaries(uint8_t primaries)
+{
+    switch (primaries) {
+    case VPConfigurationColorPrimaries::BT_709_6:
+        return PlatformVideoColorPrimaries::Bt709;
+    case VPConfigurationColorPrimaries::BT_470_6_M:
+        return PlatformVideoColorPrimaries::Bt470m;
+    case VPConfigurationColorPrimaries::BT_470_7_BG:
+        return PlatformVideoColorPrimaries::Bt470bg;
+    case VPConfigurationColorPrimaries::BT_601_7:
+        return PlatformVideoColorPrimaries::Smpte170m;
+    case VPConfigurationColorPrimaries::SMPTE_ST_240:
+        return PlatformVideoColorPrimaries::Smpte240m;
+    case VPConfigurationColorPrimaries::Film:
+        return PlatformVideoColorPrimaries::Film;
+    case VPConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance:
+        return PlatformVideoColorPrimaries::Bt2020;
+    case VPConfigurationColorPrimaries::SMPTE_ST_428_1:
+        return PlatformVideoColorPrimaries::SmpteSt4281;
+    case VPConfigurationColorPrimaries::SMPTE_RP_431_2:
+        return PlatformVideoColorPrimaries::SmpteRp431;
+    case VPConfigurationColorPrimaries::SMPTE_EG_432_1:
+        return PlatformVideoColorPrimaries::SmpteEg432;
+    case VPConfigurationColorPrimaries::EBU_Tech_3213_E:
+        return PlatformVideoColorPrimaries::JedecP22Phosphors;
+    case VPConfigurationColorPrimaries::Unspecified:
+    default:
+        return PlatformVideoColorPrimaries::Unspecified;
+    }
+}
+
+static PlatformVideoTransferCharacteristics convertToPlatformVideoTransferCharacteristics(uint8_t characteristics)
+{
+    switch (characteristics) {
+    case VPConfigurationTransferCharacteristics::BT_709_6:
+        return PlatformVideoTransferCharacteristics::Bt709;
+    case VPConfigurationTransferCharacteristics::BT_470_6_M:
+        return PlatformVideoTransferCharacteristics::Gamma22curve;
+    case VPConfigurationTransferCharacteristics::BT_470_7_BG:
+        return PlatformVideoTransferCharacteristics::Gamma28curve;
+    case VPConfigurationTransferCharacteristics::BT_601_7:
+        return PlatformVideoTransferCharacteristics::Smpte170m;
+    case VPConfigurationTransferCharacteristics::SMPTE_ST_240:
+        return PlatformVideoTransferCharacteristics::Smpte240m;
+    case VPConfigurationTransferCharacteristics::Linear:
+        return PlatformVideoTransferCharacteristics::Linear;
+    case VPConfigurationTransferCharacteristics::Logrithmic:
+        return PlatformVideoTransferCharacteristics::Log;
+    case VPConfigurationTransferCharacteristics::Logrithmic_Sqrt:
+        return PlatformVideoTransferCharacteristics::LogSqrt;
+    case VPConfigurationTransferCharacteristics::IEC_61966_2_4:
+        return PlatformVideoTransferCharacteristics::Iec6196624;
+    case VPConfigurationTransferCharacteristics::BT_1361_0:
+        return PlatformVideoTransferCharacteristics::Bt1361ExtendedColourGamut;
+    case VPConfigurationTransferCharacteristics::IEC_61966_2_1:
+        return PlatformVideoTransferCharacteristics::Iec6196621;
+    case VPConfigurationTransferCharacteristics::BT_2020_10bit:
+        return PlatformVideoTransferCharacteristics::Bt2020_10bit;
+    case VPConfigurationTransferCharacteristics::BT_2020_12bit:
+        return PlatformVideoTransferCharacteristics::Bt2020_12bit;
+    case VPConfigurationTransferCharacteristics::SMPTE_ST_2084:
+        return PlatformVideoTransferCharacteristics::SmpteSt2084;
+    case VPConfigurationTransferCharacteristics::SMPTE_ST_428_1:
+        return PlatformVideoTransferCharacteristics::SmpteSt4281;
+    case VPConfigurationTransferCharacteristics::BT_2100_HLG:
+        return PlatformVideoTransferCharacteristics::AribStdB67Hlg;
+    case VPConfigurationTransferCharacteristics::Unspecified:
+    default:
+        return PlatformVideoTransferCharacteristics::Unspecified;
+    }
+}
+
+static PlatformVideoMatrixCoefficients convertToPlatformVideoMatrixCoefficients(uint8_t coefficients)
+{
+    switch (coefficients) {
+    case VPConfigurationMatrixCoefficients::Identity:
+        return PlatformVideoMatrixCoefficients::Rgb;
+    case VPConfigurationMatrixCoefficients::BT_709_6:
+        return PlatformVideoMatrixCoefficients::Bt709;
+    case VPConfigurationMatrixCoefficients::FCC:
+        return PlatformVideoMatrixCoefficients::Fcc;
+    case VPConfigurationMatrixCoefficients::BT_470_7_BG:
+        return PlatformVideoMatrixCoefficients::Bt470bg;
+    case VPConfigurationMatrixCoefficients::BT_601_7:
+        return PlatformVideoMatrixCoefficients::Smpte170m;
+    case VPConfigurationMatrixCoefficients::SMPTE_ST_240:
+        return PlatformVideoMatrixCoefficients::Smpte240m;
+    case VPConfigurationMatrixCoefficients::YCgCo:
+        return PlatformVideoMatrixCoefficients::YCgCo;
+    case VPConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance:
+        return PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance;
+    case VPConfigurationMatrixCoefficients::BT_2020_Constant_Luminance:
+        return PlatformVideoMatrixCoefficients::Bt2020ConstantLuminance;
+    case VPConfigurationMatrixCoefficients::Unspecified:
+    default:
+        return PlatformVideoMatrixCoefficients::Unspecified;
+    }
+}
+
+PlatformVideoColorSpace colorSpaceFromVPCodecConfigurationRecord(const VPCodecConfigurationRecord& record)
+{
+    return {
+        .primaries = convertToPlatformVideoColorPrimaries(record.colorPrimaries),
+        .transfer = convertToPlatformVideoTransferCharacteristics(record.transferCharacteristics),
+        .matrix = convertToPlatformVideoMatrixCoefficients(record.matrixCoefficients),
+        .fullRange = record.videoFullRangeFlag == VPConfigurationRange::FullRange
+    };
 }
 
 } // namespace WebCore

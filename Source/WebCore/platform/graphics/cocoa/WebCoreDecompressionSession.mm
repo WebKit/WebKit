@@ -26,6 +26,7 @@
 #import "config.h"
 #import "WebCoreDecompressionSession.h"
 
+#import "FormatDescriptionUtilities.h"
 #import "IOSurface.h"
 #import "Logging.h"
 #import "PixelBufferConformerCV.h"
@@ -43,6 +44,7 @@
 #import <wtf/Vector.h>
 #import <wtf/WTFSemaphore.h>
 #import <wtf/cf/TypeCastsCF.h>
+#import <wtf/cf/VectorCF.h>
 
 #import "CoreVideoSoftLink.h"
 #import "VideoToolboxSoftLink.h"
@@ -376,7 +378,9 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
                 if (!configurationRecord)
                     return DecodingPromise::createAndReject(0);
 
-                initPromise = initializeVideoDecoder(fourCC, unsafeMakeSpan(CFDataGetBytePtr(configurationRecord.get()), CFDataGetLength(configurationRecord.get())));
+                auto colorSpace = colorSpaceFromFormatDescription(videoFormatDescription.get());
+
+                initPromise = initializeVideoDecoder(fourCC, span(configurationRecord.get()), colorSpace);
             }
         }
         auto decode = [protectedThis = Ref { *this }, this, cmSamples = RetainPtr { sample }, displaying] {
@@ -617,7 +621,7 @@ void WebCoreDecompressionSession::enqueueDecodedSample(CMSampleBufferRef sample)
         auto currentTime = PAL::toMediaTime(PAL::CMTimebaseGetTime(timebase.get()));
         auto presentationStartTime = PAL::toMediaTime(PAL::CMSampleBufferGetPresentationTimeStamp(sample));
         auto presentationEndTime = presentationStartTime + PAL::toMediaTime(PAL::CMSampleBufferGetDuration(sample));
-        if (currentTime < presentationStartTime || currentTime >= presentationEndTime)
+        if (currentTime < presentationStartTime || (currentTime >= presentationEndTime && currentTime != presentationStartTime))
             shouldNotify = false;
 
         if (currentRate > 0 && presentationEndTime < currentTime) {
@@ -876,9 +880,15 @@ void WebCoreDecompressionSession::updateQosWithDecodeTimeStatistics(double ratio
     m_framesSinceLastQosCheck = 0;
 }
 
-Ref<MediaPromise> WebCoreDecompressionSession::initializeVideoDecoder(FourCharCode codec, std::span<const uint8_t> description)
+Ref<MediaPromise> WebCoreDecompressionSession::initializeVideoDecoder(FourCharCode codec, std::span<const uint8_t> description, const std::optional<PlatformVideoColorSpace>& colorSpace)
 {
-    VideoDecoder::Config config { description, 0, 0, VideoDecoder::HardwareAcceleration::Yes, VideoDecoder::HardwareBuffer::Yes, VideoDecoder::TreatNoOutputAsError::No };
+    VideoDecoder::Config config {
+        .description = description,
+        .colorSpace = colorSpace,
+        .decoding = VideoDecoder::HardwareAcceleration::Yes,
+        .pixelBuffer = VideoDecoder::HardwareBuffer::Yes,
+        .noOutputAsError = VideoDecoder::TreatNoOutputAsError::No
+    };
     MediaPromise::Producer producer;
     auto promise = producer.promise();
 

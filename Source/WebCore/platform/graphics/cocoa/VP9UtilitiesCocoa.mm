@@ -401,37 +401,6 @@ static uint8_t convertToColorPrimaries(const Primaries& coefficients)
     }
 }
 
-static PlatformVideoColorPrimaries convertToPlatformVideoColorPrimaries(uint8_t primaries)
-{
-    switch (primaries) {
-    case VPConfigurationColorPrimaries::BT_709_6:
-        return PlatformVideoColorPrimaries::Bt709;
-    case VPConfigurationColorPrimaries::BT_470_6_M:
-        return PlatformVideoColorPrimaries::Bt470m;
-    case VPConfigurationColorPrimaries::BT_470_7_BG:
-        return PlatformVideoColorPrimaries::Bt470bg;
-    case VPConfigurationColorPrimaries::BT_601_7:
-        return PlatformVideoColorPrimaries::Smpte170m;
-    case VPConfigurationColorPrimaries::SMPTE_ST_240:
-        return PlatformVideoColorPrimaries::Smpte240m;
-    case VPConfigurationColorPrimaries::Film:
-        return PlatformVideoColorPrimaries::Film;
-    case VPConfigurationColorPrimaries::BT_2020_Nonconstant_Luminance:
-        return PlatformVideoColorPrimaries::Bt2020;
-    case VPConfigurationColorPrimaries::SMPTE_ST_428_1:
-        return PlatformVideoColorPrimaries::SmpteSt4281;
-    case VPConfigurationColorPrimaries::SMPTE_RP_431_2:
-        return PlatformVideoColorPrimaries::SmpteRp431;
-    case VPConfigurationColorPrimaries::SMPTE_EG_432_1:
-        return PlatformVideoColorPrimaries::SmpteEg432;
-    case VPConfigurationColorPrimaries::EBU_Tech_3213_E:
-        return PlatformVideoColorPrimaries::JedecP22Phosphors;
-    case VPConfigurationColorPrimaries::Unspecified:
-    default:
-        return PlatformVideoColorPrimaries::Unspecified;
-    }
-}
-
 static uint8_t convertToTransferCharacteristics(const TransferCharacteristics& characteristics)
 {
     switch (characteristics) {
@@ -472,47 +441,6 @@ static uint8_t convertToTransferCharacteristics(const TransferCharacteristics& c
     }
 }
 
-static PlatformVideoTransferCharacteristics convertToPlatformVideoTransferCharacteristics(uint8_t characteristics)
-{
-    switch (characteristics) {
-    case VPConfigurationTransferCharacteristics::BT_709_6:
-        return PlatformVideoTransferCharacteristics::Bt709;
-    case VPConfigurationTransferCharacteristics::BT_470_6_M:
-        return PlatformVideoTransferCharacteristics::Gamma22curve;
-    case VPConfigurationTransferCharacteristics::BT_470_7_BG:
-        return PlatformVideoTransferCharacteristics::Gamma28curve;
-    case VPConfigurationTransferCharacteristics::BT_601_7:
-        return PlatformVideoTransferCharacteristics::Smpte170m;
-    case VPConfigurationTransferCharacteristics::SMPTE_ST_240:
-        return PlatformVideoTransferCharacteristics::Smpte240m;
-    case VPConfigurationTransferCharacteristics::Linear:
-        return PlatformVideoTransferCharacteristics::Linear;
-    case VPConfigurationTransferCharacteristics::Logrithmic:
-        return PlatformVideoTransferCharacteristics::Log;
-    case VPConfigurationTransferCharacteristics::Logrithmic_Sqrt:
-        return PlatformVideoTransferCharacteristics::LogSqrt;
-    case VPConfigurationTransferCharacteristics::IEC_61966_2_4:
-        return PlatformVideoTransferCharacteristics::Iec6196624;
-    case VPConfigurationTransferCharacteristics::BT_1361_0:
-        return PlatformVideoTransferCharacteristics::Bt1361ExtendedColourGamut;
-    case VPConfigurationTransferCharacteristics::IEC_61966_2_1:
-        return PlatformVideoTransferCharacteristics::Iec6196621;
-    case VPConfigurationTransferCharacteristics::BT_2020_10bit:
-        return PlatformVideoTransferCharacteristics::Bt2020_10bit;
-    case VPConfigurationTransferCharacteristics::BT_2020_12bit:
-        return PlatformVideoTransferCharacteristics::Bt2020_12bit;
-    case VPConfigurationTransferCharacteristics::SMPTE_ST_2084:
-        return PlatformVideoTransferCharacteristics::SmpteSt2084;
-    case VPConfigurationTransferCharacteristics::SMPTE_ST_428_1:
-        return PlatformVideoTransferCharacteristics::SmpteSt4281;
-    case VPConfigurationTransferCharacteristics::BT_2100_HLG:
-        return PlatformVideoTransferCharacteristics::AribStdB67Hlg;
-    case VPConfigurationTransferCharacteristics::Unspecified:
-    default:
-        return PlatformVideoTransferCharacteristics::Unspecified;
-    }
-}
-
 static uint8_t convertToMatrixCoefficients(const MatrixCoefficients& coefficients)
 {
     switch (coefficients) {
@@ -538,34 +466,6 @@ static uint8_t convertToMatrixCoefficients(const MatrixCoefficients& coefficient
         return VPConfigurationMatrixCoefficients::BT_2020_Constant_Luminance;
     }
 }
-
-static PlatformVideoMatrixCoefficients convertToPlatformVideoMatrixCoefficients(uint8_t coefficients)
-{
-    switch (coefficients) {
-    case VPConfigurationMatrixCoefficients::Identity:
-        return PlatformVideoMatrixCoefficients::Rgb;
-    case VPConfigurationMatrixCoefficients::BT_709_6:
-        return PlatformVideoMatrixCoefficients::Bt709;
-    case VPConfigurationMatrixCoefficients::FCC:
-        return PlatformVideoMatrixCoefficients::Fcc;
-    case VPConfigurationMatrixCoefficients::BT_470_7_BG:
-        return PlatformVideoMatrixCoefficients::Bt470bg;
-    case VPConfigurationMatrixCoefficients::BT_601_7:
-        return PlatformVideoMatrixCoefficients::Smpte170m;
-    case VPConfigurationMatrixCoefficients::SMPTE_ST_240:
-        return PlatformVideoMatrixCoefficients::Smpte240m;
-    case VPConfigurationMatrixCoefficients::YCgCo:
-        return PlatformVideoMatrixCoefficients::YCgCo;
-    case VPConfigurationMatrixCoefficients::BT_2020_Nonconstant_Luminance:
-        return PlatformVideoMatrixCoefficients::Bt2020NonconstantLuminance;
-    case VPConfigurationMatrixCoefficients::BT_2020_Constant_Luminance:
-        return PlatformVideoMatrixCoefficients::Bt2020ConstantLuminance;
-    case VPConfigurationMatrixCoefficients::Unspecified:
-    default:
-        return PlatformVideoMatrixCoefficients::Unspecified;
-    }
-}
-
 static uint8_t convertSubsamplingXYToChromaSubsampling(uint64_t x, uint64_t y)
 {
     if (x & y)
@@ -587,10 +487,7 @@ static Ref<VideoInfo> createVideoInfoFromVPCodecConfigurationRecord(const VPCode
     videoInfo->size = size;
     videoInfo->displaySize = displaySize;
     videoInfo->atomData = SharedBuffer::create(vpcCFromVPCodecConfigurationRecord(record));
-    videoInfo->colorSpace.fullRange = record.videoFullRangeFlag == VPConfigurationRange::FullRange;
-    videoInfo->colorSpace.primaries = convertToPlatformVideoColorPrimaries(record.colorPrimaries);
-    videoInfo->colorSpace.transfer = convertToPlatformVideoTransferCharacteristics(record.transferCharacteristics);
-    videoInfo->colorSpace.matrix = convertToPlatformVideoMatrixCoefficients(record.matrixCoefficients);
+    videoInfo->colorSpace = colorSpaceFromVPCodecConfigurationRecord(record);
     videoInfo->codecName = record.codecName == "vp09"_s ? 'vp09' : 'vp08';
     videoInfo->codecString = createVPCodecParametersString(record);
     return videoInfo;

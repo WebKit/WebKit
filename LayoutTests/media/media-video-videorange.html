@@ -1,7 +1,7 @@
 <!-- webkit-test-runner [ SWVPDecodersAlwaysEnabled=true ] -->
 <html>
 <head>
-<title>videos with full range color</title>
+<title>videos with video range color</title>
 <script src=video-test.js></script>
 <script>
     var pixelData;
@@ -23,10 +23,14 @@
 
         ctx.drawImage(element, 0, 0);
         pixelData = ctx.getImageData(20, 20, 1, 1).data;
+        testExpected("pixelData[0]", 0, "==");
+        testExpected("pixelData[1]", 0, "==");
+        testExpected("pixelData[2]", 0, "==");
 
-        testExpected("pixelData[0]", 12, ">=");
-        testExpected("pixelData[1]", 12, ">=");
-        testExpected("pixelData[2]", 12, ">=");            
+        pixelData = ctx.getImageData(canvas.width / 2 + 20, canvas.width / 2 + 20, 1, 1).data;
+        testExpected("pixelData[0]", 253, ">=");
+        testExpected("pixelData[1]", 253, ">=");
+        testExpected("pixelData[2]", 2, "<=");
     };
 
     async function init()
@@ -35,10 +39,9 @@
             testRunner.waitUntilDone();
 
         const files = [
-            'content/test-h264-709-videorange.mp4',
-            'content/test-h264-709-fullrange.mp4',
-            'content/test-vp9-709-fullrange.webm',
-            'content/test-vp8-709-fullrange.webm',
+            'content/test-h264-601-videorange.mp4',
+            'content/test-vp9-601-videorange.webm',
+            'content/test-vp8-601-videorange.webm',
         ]
 
         for (const file of files) {

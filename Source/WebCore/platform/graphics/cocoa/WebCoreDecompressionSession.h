@@ -55,6 +55,7 @@ typedef struct OpaqueVTDecompressionSession*  VTDecompressionSessionRef;
 namespace WebCore {
 
 class VideoDecoder;
+struct PlatformVideoColorSpace;
 
 class WEBCORE_EXPORT WebCoreDecompressionSession : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<WebCoreDecompressionSession> {
 public:
@@ -132,7 +133,7 @@ private:
     void updateQosWithDecodeTimeStatistics(double ratio);
 
     bool isUsingVideoDecoder(CMSampleBufferRef) const;
-    Ref<MediaPromise> initializeVideoDecoder(FourCharCode, std::span<const uint8_t> description);
+    Ref<MediaPromise> initializeVideoDecoder(FourCharCode, std::span<const uint8_t>, const std::optional<PlatformVideoColorSpace>&);
 
     static const CMItemCount kMaximumCapacity = 120;
     static const CMItemCount kHighWaterMark = 60;

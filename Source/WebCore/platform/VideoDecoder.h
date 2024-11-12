@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "PlatformVideoColorSpace.h"
 #include "ProcessIdentity.h"
 #include <span>
 #include <wtf/CompletionHandler.h>
@@ -46,6 +47,7 @@ public:
         std::span<const uint8_t> description;
         uint64_t width { 0 };
         uint64_t height { 0 };
+        std::optional<PlatformVideoColorSpace> colorSpace;
         HardwareAcceleration decoding { HardwareAcceleration::No };
         HardwareBuffer pixelBuffer { HardwareBuffer::No };
         TreatNoOutputAsError noOutputAsError { TreatNoOutputAsError::Yes };
