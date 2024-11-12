@@ -168,14 +168,6 @@ using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
 #define WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS \
 + (BOOL)accessInstanceVariablesDirectly \
 { \
-    if (!linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ThrowOnKVCInstanceVariableAccess)) { \
-        static bool didLogFault; \
-        if (!didLogFault) { \
-            didLogFault = true; \
-            RELEASE_LOG_FAULT(API, "Do not access private instance variables of %{public}s via key-value coding. This will raise an exception when linking against newer SDKs.", class_getName(self)); \
-        } \
-        return YES; \
-    } \
-    return NO; \
+    return !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::ThrowOnKVCInstanceVariableAccess); \
 } \
 using __thisIsHereToForceASemicolonAfterThisMacro UNUSED_TYPE_ALIAS = int
