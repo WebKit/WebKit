@@ -600,7 +600,9 @@ static NSArray * processDataDetectorScannerResults(DDScannerRef scanner, OptionS
     RefPtr<Text> lastTextNodeToUpdate;
     String lastNodeContent;
     unsigned contentOffset = 0;
-    DDQueryOffset lastModifiedQueryOffset = { .queryIndex = -1, .offset = 0 };
+    DDQueryOffset lastModifiedQueryOffset = { };
+    lastModifiedQueryOffset.queryIndex = -1;
+    lastModifiedQueryOffset.offset = 0;
 
     // For each result add the link.
     // Since there could be multiple results in the same text node, the node is only modified when
