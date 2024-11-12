@@ -103,13 +103,22 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebLoaderStrategy);
 
-WebLoaderStrategy::WebLoaderStrategy()
-    : m_internallyFailedLoadTimer(RunLoop::main(), this, &WebLoaderStrategy::internallyFailedLoadTimerFired)
+WebLoaderStrategy::WebLoaderStrategy(WebProcess& webProcess)
+    : m_webProcess(webProcess)
+    , m_internallyFailedLoadTimer(RunLoop::main(), this, &WebLoaderStrategy::internallyFailedLoadTimerFired)
 {
 }
 
-WebLoaderStrategy::~WebLoaderStrategy()
+WebLoaderStrategy::~WebLoaderStrategy() = default;
+
+void WebLoaderStrategy::ref() const
 {
+    m_webProcess->ref();
+}
+
+void WebLoaderStrategy::deref() const
+{
+    m_webProcess->deref();
 }
 
 void WebLoaderStrategy::loadResource(LocalFrame& frame, CachedResource& resource, ResourceRequest&& request, const ResourceLoaderOptions& options, CompletionHandler<void(RefPtr<SubresourceLoader>&&)>&& completionHandler)
