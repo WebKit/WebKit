@@ -47,7 +47,8 @@ public:
     void registerCallee(NativeCallee* callee)
     {
         Locker locker { m_lock };
-        m_calleeSet.add(callee);
+        auto addResult = m_calleeSet.add(callee);
+        ASSERT_UNUSED(addResult, addResult.isNewEntry);
     }
 
     void unregisterCallee(NativeCallee* callee)

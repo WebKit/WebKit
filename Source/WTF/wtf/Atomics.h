@@ -128,8 +128,7 @@ struct Atomic {
 
     // func is supposed to return false if the value is already in the desired state.
     // Returns true if the value was changed. Else returns false.
-    template<typename Func>
-    ALWAYS_INLINE bool transaction(const Func& func, std::memory_order order = std::memory_order_seq_cst)
+    ALWAYS_INLINE bool transaction(const Invocable<bool(T&)> auto& func, std::memory_order order = std::memory_order_seq_cst)
     {
         for (;;) {
             T oldValue = load(std::memory_order_relaxed);

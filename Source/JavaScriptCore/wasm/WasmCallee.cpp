@@ -67,8 +67,8 @@ Callee::Callee(Wasm::CompilationMode compilationMode)
 Callee::Callee(Wasm::CompilationMode compilationMode, FunctionSpaceIndex index, std::pair<const Name*, RefPtr<NameSection>>&& name)
     : NativeCallee(NativeCallee::Category::Wasm, ImplementationVisibility::Public)
     , m_compilationMode(compilationMode)
-    , m_indexOrName(index, WTFMove(name))
     , m_index(index)
+    , m_indexOrName(index, WTFMove(name))
 {
 }
 
