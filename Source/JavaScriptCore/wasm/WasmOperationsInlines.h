@@ -53,7 +53,7 @@ inline EncodedJSValue refFunc(JSWebAssemblyInstance* instance, uint32_t index)
 }
 
 template <typename T>
-JSWebAssemblyArray* fillArray(JSWebAssemblyInstance* instance, Wasm::FieldType fieldType, uint32_t size, EncodedJSValue value, RefPtr<const Wasm::RTT> rtt)
+JSWebAssemblyArray* fillArray(JSWebAssemblyInstance* instance, Wasm::FieldType fieldType, uint32_t size, T value, RefPtr<const Wasm::RTT> rtt)
 {
     JSGlobalObject* globalObject = instance->globalObject();
     VM& vm = instance->vm();
@@ -62,7 +62,7 @@ JSWebAssemblyArray* fillArray(JSWebAssemblyInstance* instance, Wasm::FieldType f
     if (!size)
         return JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
 
-    values.fill(static_cast<T>(value));
+    values.fill(value);
     return JSWebAssemblyArray::tryCreate(vm, globalObject->webAssemblyArrayStructure(), fieldType, size, WTFMove(values), rtt);
 }
 
@@ -84,19 +84,15 @@ inline JSValue arrayNew(JSWebAssemblyInstance* instance, uint32_t typeIndex, uin
 
     switch (elementSize) {
     case sizeof(uint8_t): {
-        // `encValue` must be an unboxed int32 (since the typechecker guarantees that its type is i32); so it's safe to truncate it in the cases below.
-        ASSERT(encValue <= UINT32_MAX);
-        array = fillArray<uint8_t>(instance, fieldType, size, encValue, arrayRTT);
+        array = fillArray<uint8_t>(instance, fieldType, size, static_cast<uint8_t>(encValue), arrayRTT);
         break;
     }
     case sizeof(uint16_t): {
-        ASSERT(encValue <= UINT32_MAX);
-        array = fillArray<uint16_t>(instance, fieldType, size, encValue, arrayRTT);
+        array = fillArray<uint16_t>(instance, fieldType, size, static_cast<uint16_t>(encValue), arrayRTT);
         break;
     }
     case sizeof(uint32_t): {
-        ASSERT(encValue <= UINT32_MAX);
-        array = fillArray<uint32_t>(instance, fieldType, size, encValue, arrayRTT);
+        array = fillArray<uint32_t>(instance, fieldType, size, static_cast<uint32_t>(encValue), arrayRTT);
         break;
     }
     case sizeof(uint64_t): {
