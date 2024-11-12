@@ -78,7 +78,6 @@ public:
         return *bitwise_cast<PreciseAllocation*>(m_encodedPointer - isPreciseAllocationBit);
     }
     
-    void aboutToMark(HeapVersion markingVersion);
     bool areMarksStale() const;
     
     bool isMarked(HeapCell*) const;
