@@ -42,6 +42,7 @@ public:
     }
 
     FrameInfo& frame() { return m_frame.get(); }
+    Ref<FrameInfo> protectedFrame() { return m_frame.get(); }
 
     const WebCore::ResourceRequest& request() const { return m_request; }
     const WebCore::ResourceResponse& response() const { return m_response; }

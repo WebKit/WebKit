@@ -60,8 +60,7 @@ template<typename WrappedObjectClass> struct WrapperTraits;
 
 template<typename DestinationClass, typename SourceClass> inline DestinationClass *checkedObjCCast(SourceClass *source)
 {
-    ASSERT([source isKindOfClass:[DestinationClass class]]);
-    return (DestinationClass *)source;
+    return checked_objc_cast<DestinationClass>(source);
 }
 
 template<typename ObjectClass> inline typename WrapperTraits<ObjectClass>::WrapperClass *wrapper(ObjectClass& object)

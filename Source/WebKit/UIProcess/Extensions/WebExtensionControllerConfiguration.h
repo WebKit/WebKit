@@ -69,6 +69,7 @@ public:
     void setWebViewConfiguration(WKWebViewConfiguration *configuration) { m_webViewConfiguration = configuration; }
 
     WebsiteDataStore& defaultWebsiteDataStore() const;
+    Ref<WebsiteDataStore> protectedDefaultWebsiteDataStore() const { return defaultWebsiteDataStore(); }
     void setDefaultWebsiteDataStore(WebsiteDataStore* dataStore) { m_defaultWebsiteDataStore = dataStore; }
 
     bool operator==(const WebExtensionControllerConfiguration&) const;

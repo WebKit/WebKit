@@ -48,9 +48,14 @@ WebPagePreferencesLockdownModeObserver::~WebPagePreferencesLockdownModeObserver(
     removeLockdownModeObserver(*this);
 }
 
+RefPtr<API::WebsitePolicies> WebPagePreferencesLockdownModeObserver::protectedPolicies()
+{
+    return m_policies.get();
+}
+
 void WebPagePreferencesLockdownModeObserver::willChangeLockdownMode()
 {
-    if (auto preferences = wrapper(m_policies.get())) {
+    if (auto preferences = wrapper(protectedPolicies().get())) {
         [preferences willChangeValueForKey:@"_captivePortalModeEnabled"];
         [preferences willChangeValueForKey:@"lockdownModeEnabled"];
     }
@@ -58,7 +63,7 @@ void WebPagePreferencesLockdownModeObserver::willChangeLockdownMode()
 
 void WebPagePreferencesLockdownModeObserver::didChangeLockdownMode()
 {
-    if (auto preferences = wrapper(m_policies.get())) {
+    if (auto preferences = wrapper(protectedPolicies().get())) {
         [preferences didChangeValueForKey:@"_captivePortalModeEnabled"];
         [preferences didChangeValueForKey:@"lockdownModeEnabled"];
     }

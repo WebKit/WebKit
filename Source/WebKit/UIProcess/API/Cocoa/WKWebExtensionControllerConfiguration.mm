@@ -181,7 +181,7 @@ WK_OBJECT_DEALLOC_IMPL_ON_MAIN_THREAD(WKWebExtensionControllerConfiguration, Web
 
 - (WKWebsiteDataStore *)defaultWebsiteDataStore
 {
-    return wrapper(self._protectedWebExtensionControllerConfiguration->defaultWebsiteDataStore());
+    return wrapper(self._protectedWebExtensionControllerConfiguration->protectedDefaultWebsiteDataStore().get());
 }
 
 - (void)setDefaultWebsiteDataStore:(WKWebsiteDataStore *)dataStore

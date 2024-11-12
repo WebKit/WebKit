@@ -47,6 +47,8 @@ public:
     void deref() const final;
 
 private:
+    RefPtr<API::WebsitePolicies> protectedPolicies();
+
     void willChangeLockdownMode() final;
     void didChangeLockdownMode() final;
 
