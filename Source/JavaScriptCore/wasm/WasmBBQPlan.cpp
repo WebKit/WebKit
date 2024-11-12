@@ -155,7 +155,7 @@ void BBQPlan::work(CompilationEffort)
         m_calleeGroup->updateCallsitesToCallUs(locker, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex);
 
         {
-            // These locks store barrier the set of OMG callee above.
+            WTF::storeStoreFence();
             if (Options::useWasmIPInt()) {
                 IPIntCallee& ipintCallee = m_calleeGroup->m_ipintCallees->at(m_functionIndex).get();
                 Locker locker { ipintCallee.tierUpCounter().m_lock };

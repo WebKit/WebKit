@@ -207,7 +207,7 @@ void OMGPlan::work(CompilationEffort)
         ASSERT(*m_calleeGroup->entrypointLoadLocationFromFunctionIndexSpace(functionIndexSpace) == entrypoint);
 
         {
-            // These locks store barrier the set of OMG callee above.
+            WTF::storeStoreFence();
             if (BBQCallee* bbqCallee = m_calleeGroup->bbqCallee(locker, m_functionIndex)) {
                 Locker locker { bbqCallee->tierUpCounter().getLock() };
                 bbqCallee->tierUpCounter().setCompilationStatusForOMG(mode(), TierUpCount::CompilationStatus::Compiled);
@@ -230,7 +230,7 @@ void OMGPlan::work(CompilationEffort)
         jsEntrypointCallee->setReplacementTarget(entrypoint);
 
     if (Options::freeRetiredWasmCode()) {
-        // Taking the lock here fences all the stores above.
+        WTF::storeStoreFence();
         Locker locker { m_calleeGroup->m_lock };
         m_calleeGroup->releaseBBQCallee(locker, m_functionIndex);
     }
