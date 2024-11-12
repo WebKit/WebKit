@@ -99,6 +99,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , pseudoElementNameArgument(nullAtom())
     , anchorNames(RenderStyle::initialAnchorNames())
     , positionAnchor(RenderStyle::initialPositionAnchor())
+    , positionArea(RenderStyle::initialPositionArea())
     , blockStepSize(RenderStyle::initialBlockStepSize())
     , blockStepInsert(static_cast<unsigned>(RenderStyle::initialBlockStepInsert()))
     , overscrollBehaviorX(static_cast<unsigned>(RenderStyle::initialOverscrollBehaviorX()))
@@ -195,6 +196,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , pseudoElementNameArgument(o.pseudoElementNameArgument)
     , anchorNames(o.anchorNames)
     , positionAnchor(o.positionAnchor)
+    , positionArea(o.positionArea)
     , blockStepSize(o.blockStepSize)
     , blockStepInsert(o.blockStepInsert)
     , overscrollBehaviorX(o.overscrollBehaviorX)
@@ -296,6 +298,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && pseudoElementNameArgument == o.pseudoElementNameArgument
         && anchorNames == o.anchorNames
         && positionAnchor == o.positionAnchor
+        && positionArea == o.positionArea
         && blockStepSize == o.blockStepSize
         && blockStepInsert == o.blockStepInsert
         && overscrollBehaviorX == o.overscrollBehaviorX

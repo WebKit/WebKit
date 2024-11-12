@@ -2527,6 +2527,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/NinePieceImage.h
     rendering/style/OffsetRotation.h
     rendering/style/OutlineValue.h
+    rendering/style/PositionArea.h
     rendering/style/RenderStyle.h
     rendering/style/RenderStyleConstants.h
     rendering/style/RenderStyleInlines.h

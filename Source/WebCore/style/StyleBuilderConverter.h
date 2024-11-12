@@ -237,6 +237,7 @@ public:
     static Vector<ViewTimelineInsets> convertViewTimelineInset(const BuilderState&, const CSSValue&);
 
     static Vector<AtomString> convertAnchorName(const BuilderState&, const CSSValue&);
+    static std::optional<PositionArea> convertPositionArea(BuilderState&, const CSSValue&);
 
     static BlockEllipsis convertBlockEllipsis(const BuilderState&, const CSSValue&);
     static size_t convertMaxLines(const BuilderState&, const CSSValue&);
@@ -2139,6 +2140,214 @@ inline Vector<AtomString> BuilderConverter::convertAnchorName(const BuilderState
     return WTF::map(*list, [&](auto& item) {
         return AtomString { downcast<CSSPrimitiveValue>(item).stringValue() };
     });
+}
+
+inline std::optional<PositionArea> BuilderConverter::convertPositionArea(BuilderState&, const CSSValue& value)
+{
+    auto isDescribingCols = [](const CSSValueID id) {
+        return (
+            id == CSSValueInlineEnd
+            || id == CSSValueInlineStart
+            || id == CSSValueLeft
+            || id == CSSValueRight
+            || id == CSSValueSelfInlineEnd
+            || id == CSSValueSelfInlineStart
+            || id == CSSValueSpanInlineEnd
+            || id == CSSValueSpanInlineStart
+            || id == CSSValueSpanLeft
+            || id == CSSValueSpanRight
+            || id == CSSValueSpanSelfInlineEnd
+            || id == CSSValueSpanSelfInlineStart
+            || id == CSSValueSpanXEnd
+            || id == CSSValueSpanXSelfEnd
+            || id == CSSValueSpanXSelfStart
+            || id == CSSValueSpanXStart
+            || id == CSSValueXEnd
+            || id == CSSValueXSelfEnd
+            || id == CSSValueXSelfStart
+            || id == CSSValueXStart
+        );
+    };
+    auto isDescribingRows = [&isDescribingCols](const CSSValueID id) {
+        return !PositionArea::isAmbiguous(id) && !isDescribingCols(id);
+    };
+    auto toPositionAreaCols = [](const CSSValueID id) {
+        switch (id) {
+        case CSSValueCenter:
+            return PositionArea::Cols::Center;
+        case CSSValueEnd:
+            return PositionArea::Cols::End;
+        case CSSValueInlineEnd:
+            return PositionArea::Cols::InlineEnd;
+        case CSSValueInlineStart:
+            return PositionArea::Cols::InlineStart;
+        case CSSValueLeft:
+            return PositionArea::Cols::Left;
+        case CSSValueRight:
+            return PositionArea::Cols::Right;
+        case CSSValueSelfEnd:
+            return PositionArea::Cols::SelfEnd;
+        case CSSValueSelfInlineEnd:
+            return PositionArea::Cols::SelfInlineEnd;
+        case CSSValueSelfInlineStart:
+            return PositionArea::Cols::SelfInlineStart;
+        case CSSValueSelfStart:
+            return PositionArea::Cols::SelfStart;
+        case CSSValueSpanAll:
+            return PositionArea::Cols::SpanAll;
+        case CSSValueSpanEnd:
+            return PositionArea::Cols::SpanEnd;
+        case CSSValueSpanInlineEnd:
+            return PositionArea::Cols::SpanInlineEnd;
+        case CSSValueSpanInlineStart:
+            return PositionArea::Cols::SpanInlineStart;
+        case CSSValueSpanLeft:
+            return PositionArea::Cols::SpanLeft;
+        case CSSValueSpanRight:
+            return PositionArea::Cols::SpanRight;
+        case CSSValueSpanSelfEnd:
+            return PositionArea::Cols::SpanSelfEnd;
+        case CSSValueSpanSelfInlineEnd:
+            return PositionArea::Cols::SpanSelfInlineEnd;
+        case CSSValueSpanSelfInlineStart:
+            return PositionArea::Cols::SpanSelfInlineStart;
+        case CSSValueSpanSelfStart:
+            return PositionArea::Cols::SpanSelfStart;
+        case CSSValueSpanStart:
+            return PositionArea::Cols::SpanStart;
+        case CSSValueSpanXEnd:
+            return PositionArea::Cols::SpanXEnd;
+        case CSSValueSpanXSelfEnd:
+            return PositionArea::Cols::SpanXSelfEnd;
+        case CSSValueSpanXSelfStart:
+            return PositionArea::Cols::SpanXSelfStart;
+        case CSSValueSpanXStart:
+            return PositionArea::Cols::SpanXStart;
+        case CSSValueStart:
+            return PositionArea::Cols::Start;
+        case CSSValueXEnd:
+            return PositionArea::Cols::XEnd;
+        case CSSValueXSelfEnd:
+            return PositionArea::Cols::XSelfEnd;
+        case CSSValueXSelfStart:
+            return PositionArea::Cols::XSelfStart;
+        case CSSValueXStart:
+            return PositionArea::Cols::XStart;
+        default:
+            break;
+        }
+        ASSERT_NOT_REACHED();
+        return PositionArea::Cols::SpanAll;
+    };
+    auto toPositionAreaRows = [](const CSSValueID id) {
+        switch (id) {
+        case CSSValueBlockEnd:
+            return PositionArea::Rows::BlockEnd;
+        case CSSValueBlockStart:
+            return PositionArea::Rows::BlockStart;
+        case CSSValueBottom:
+            return PositionArea::Rows::Bottom;
+        case CSSValueCenter:
+            return PositionArea::Rows::Center;
+        case CSSValueEnd:
+            return PositionArea::Rows::End;
+        case CSSValueSelfBlockEnd:
+            return PositionArea::Rows::SelfBlockEnd;
+        case CSSValueSelfBlockStart:
+            return PositionArea::Rows::SelfBlockStart;
+        case CSSValueSelfEnd:
+            return PositionArea::Rows::SelfEnd;
+        case CSSValueSelfStart:
+            return PositionArea::Rows::SelfStart;
+        case CSSValueSpanAll:
+            return PositionArea::Rows::SpanAll;
+        case CSSValueSpanBlockEnd:
+            return PositionArea::Rows::SpanBlockEnd;
+        case CSSValueSpanBlockStart:
+            return PositionArea::Rows::SpanBlockStart;
+        case CSSValueSpanBottom:
+            return PositionArea::Rows::SpanBottom;
+        case CSSValueSpanEnd:
+            return PositionArea::Rows::SpanEnd;
+        case CSSValueSpanSelfBlockEnd:
+            return PositionArea::Rows::SpanSelfBlockEnd;
+        case CSSValueSpanSelfBlockStart:
+            return PositionArea::Rows::SpanSelfBlockStart;
+        case CSSValueSpanSelfEnd:
+            return PositionArea::Rows::SpanSelfEnd;
+        case CSSValueSpanSelfStart:
+            return PositionArea::Rows::SpanSelfStart;
+        case CSSValueSpanStart:
+            return PositionArea::Rows::SpanStart;
+        case CSSValueSpanTop:
+            return PositionArea::Rows::SpanTop;
+        case CSSValueSpanYEnd:
+            return PositionArea::Rows::SpanYEnd;
+        case CSSValueSpanYSelfEnd:
+            return PositionArea::Rows::SpanYSelfEnd;
+        case CSSValueSpanYSelfStart:
+            return PositionArea::Rows::SpanYSelfStart;
+        case CSSValueSpanYStart:
+            return PositionArea::Rows::SpanYStart;
+        case CSSValueStart:
+            return PositionArea::Rows::Start;
+        case CSSValueTop:
+            return PositionArea::Rows::Top;
+        case CSSValueYEnd:
+            return PositionArea::Rows::YEnd;
+        case CSSValueYSelfEnd:
+            return PositionArea::Rows::YSelfEnd;
+        case CSSValueYSelfStart:
+            return PositionArea::Rows::YSelfStart;
+        case CSSValueYStart:
+            return PositionArea::Rows::YStart;
+        default:
+            break;
+        }
+        ASSERT_NOT_REACHED();
+        return PositionArea::Rows::SpanAll;
+    };
+
+    if (is<CSSPrimitiveValue>(value)) {
+        if (value.valueID() == CSSValueNone)
+            return std::nullopt;
+
+        PositionArea positionArea;
+        if (PositionArea::isAmbiguous(value.valueID())) {
+            positionArea.cols = toPositionAreaCols(value.valueID());
+            positionArea.rows = toPositionAreaRows(value.valueID());
+            return positionArea;
+        }
+        if (isDescribingCols(value.valueID())) {
+            positionArea.cols = toPositionAreaCols(value.valueID());
+            positionArea.rows = PositionArea::Rows::SpanAll;
+            return positionArea;
+        }
+        positionArea.cols = PositionArea::Cols::SpanAll;
+        positionArea.rows = toPositionAreaRows(value.valueID());
+        return positionArea;
+    }
+
+    if (auto* pair = dynamicDowncast<CSSValuePair>(value)) {
+        ASSERT(is<CSSPrimitiveValue>(pair->first()) && is<CSSPrimitiveValue>(pair->second()));
+        const auto firstValueID = dynamicDowncast<CSSPrimitiveValue>(pair->first())->valueID();
+        const auto secondValueID = dynamicDowncast<CSSPrimitiveValue>(pair->second())->valueID();
+        PositionArea positionArea;
+        if ((!isDescribingRows(firstValueID) && isDescribingRows(secondValueID))
+            || (isDescribingCols(firstValueID) && !isDescribingCols(secondValueID))) {
+            positionArea.cols = toPositionAreaCols(firstValueID);
+            positionArea.rows = toPositionAreaRows(secondValueID);
+            return positionArea;
+        }
+        if ((!isDescribingRows(secondValueID) && isDescribingRows(firstValueID))
+            || (isDescribingCols(secondValueID) && !isDescribingCols(firstValueID))) {
+            positionArea.cols = toPositionAreaCols(secondValueID);
+            positionArea.rows = toPositionAreaRows(firstValueID);
+            return positionArea;
+        }
+    }
+
+    return std::nullopt;
 }
 
 inline BlockEllipsis BuilderConverter::convertBlockEllipsis(const BuilderState& builderState, const CSSValue& value)

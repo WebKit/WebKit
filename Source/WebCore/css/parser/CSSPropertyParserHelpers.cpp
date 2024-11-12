@@ -84,6 +84,7 @@
 #include "ColorInterpolation.h"
 #include "LengthPoint.h"
 #include "Logging.h"
+#include "PositionArea.h"
 #include "RenderStyleConstants.h"
 #include "SVGPathByteStream.h"
 #include "SVGPathUtilities.h"
@@ -1465,6 +1466,153 @@ RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange& range, const CSSParse
     if (list.isEmpty())
         return nullptr;
     return CSSValueList::createSpaceSeparated(WTFMove(list));
+}
+
+// https://drafts.csswg.org/css-anchor-position-1/#position-area
+RefPtr<CSSValue> consumePositionArea(CSSParserTokenRange& range, const CSSParserContext&)
+{
+    auto matchesBranch1A = [](const CSSValueID id) {
+        return (
+            id == CSSValueLeft
+            || id == CSSValueCenter
+            || id == CSSValueRight
+            || id == CSSValueSpanLeft
+            || id == CSSValueSpanRight
+            || id == CSSValueXStart
+            || id == CSSValueXEnd
+            || id == CSSValueSpanXStart
+            || id == CSSValueSpanXEnd
+            || id == CSSValueXSelfStart
+            || id == CSSValueXSelfEnd
+            || id == CSSValueSpanXSelfStart
+            || id == CSSValueSpanXSelfEnd
+            || id == CSSValueSpanAll
+        );
+    };
+    auto matchesBranch1B = [](const CSSValueID id) {
+        return (
+            id == CSSValueTop
+            || id == CSSValueCenter
+            || id == CSSValueBottom
+            || id == CSSValueSpanTop
+            || id == CSSValueSpanBottom
+            || id == CSSValueYStart
+            || id == CSSValueYEnd
+            || id == CSSValueSpanYStart
+            || id == CSSValueSpanYEnd
+            || id == CSSValueYSelfStart
+            || id == CSSValueYSelfEnd
+            || id == CSSValueSpanYSelfStart
+            || id == CSSValueSpanYSelfEnd
+            || id == CSSValueSpanAll
+        );
+    };
+    auto matchesBranch2A = [](const CSSValueID id) {
+        return (
+            id == CSSValueBlockStart
+            || id == CSSValueCenter
+            || id == CSSValueBlockEnd
+            || id == CSSValueSpanBlockStart
+            || id == CSSValueSpanBlockEnd
+            || id == CSSValueSpanAll
+        );
+    };
+    auto matchesBranch2B = [](const CSSValueID id) {
+        return (
+            id == CSSValueInlineStart
+            || id == CSSValueCenter
+            || id == CSSValueInlineEnd
+            || id == CSSValueSpanInlineStart
+            || id == CSSValueSpanInlineEnd
+            || id == CSSValueSpanAll
+        );
+    };
+    auto matchesBranch3A = [](const CSSValueID id) {
+        return (
+            id == CSSValueSelfBlockStart
+            || id == CSSValueCenter
+            || id == CSSValueSelfBlockEnd
+            || id == CSSValueSpanSelfBlockStart
+            || id == CSSValueSpanSelfBlockEnd
+            || id == CSSValueSpanAll
+        );
+    };
+    auto matchesBranch3B = [](const CSSValueID id) {
+        return (
+            id == CSSValueSelfInlineStart
+            || id == CSSValueCenter
+            || id == CSSValueSelfInlineEnd
+            || id == CSSValueSpanSelfInlineStart
+            || id == CSSValueSpanSelfInlineEnd
+            || id == CSSValueSpanAll
+        );
+    };
+    auto matchesBranch4 = [](const CSSValueID id) {
+        return (
+            id == CSSValueStart
+            || id == CSSValueCenter
+            || id == CSSValueEnd
+            || id == CSSValueSpanStart
+            || id == CSSValueSpanEnd
+            || id == CSSValueSpanAll
+        );
+    };
+    auto matchesBranch5 = [](const CSSValueID id) {
+        return (
+            id == CSSValueSelfStart
+            || id == CSSValueCenter
+            || id == CSSValueSelfEnd
+            || id == CSSValueSpanSelfStart
+            || id == CSSValueSpanSelfEnd
+            || id == CSSValueSpanAll
+        );
+    };
+
+    if (range.peek().id() != CSSValueNone
+        && !matchesBranch1A(range.peek().id())
+        && !matchesBranch1B(range.peek().id())
+        && !matchesBranch2A(range.peek().id())
+        && !matchesBranch2B(range.peek().id())
+        && !matchesBranch3A(range.peek().id())
+        && !matchesBranch3B(range.peek().id())
+        && !matchesBranch4(range.peek().id())
+        && !matchesBranch5(range.peek().id()))
+        return nullptr;
+
+    auto firstIdentifier = consumeIdent(range);
+
+    if (range.atEnd())
+        return firstIdentifier;
+
+    if ((matchesBranch1A(firstIdentifier->valueID()) && matchesBranch1B(range.peek().id()))
+        || (matchesBranch2A(firstIdentifier->valueID()) && matchesBranch2B(range.peek().id()))
+        || (matchesBranch3A(firstIdentifier->valueID()) && matchesBranch3B(range.peek().id()))
+        || (matchesBranch4(firstIdentifier->valueID()) && matchesBranch4(range.peek().id()))
+        || (matchesBranch5(firstIdentifier->valueID()) && matchesBranch5(range.peek().id()))) {
+        auto secondIdentifier = consumeIdent(range);
+        if (firstIdentifier == secondIdentifier)
+            return firstIdentifier;
+        if (firstIdentifier->valueID() == CSSValueSpanAll && !PositionArea::isAmbiguous(secondIdentifier->valueID()))
+            return secondIdentifier;
+        if (secondIdentifier->valueID() == CSSValueSpanAll && !PositionArea::isAmbiguous(firstIdentifier->valueID()))
+            return firstIdentifier;
+        return CSSValuePair::create(firstIdentifier.releaseNonNull(), secondIdentifier.releaseNonNull());
+    }
+
+    if ((matchesBranch1B(firstIdentifier->valueID()) && matchesBranch1A(range.peek().id()))
+        || (matchesBranch2B(firstIdentifier->valueID()) && matchesBranch2A(range.peek().id()))
+        || (matchesBranch3B(firstIdentifier->valueID()) && matchesBranch3A(range.peek().id()))) {
+        auto secondIdentifier = consumeIdent(range);
+        if (firstIdentifier == secondIdentifier)
+            return firstIdentifier;
+        if (firstIdentifier->valueID() == CSSValueSpanAll && !PositionArea::isAmbiguous(secondIdentifier->valueID()))
+            return secondIdentifier;
+        if (secondIdentifier->valueID() == CSSValueSpanAll && !PositionArea::isAmbiguous(firstIdentifier->valueID()))
+            return firstIdentifier;
+        return CSSValuePair::create(secondIdentifier.releaseNonNull(), firstIdentifier.releaseNonNull());
+    }
+
+    return nullptr;
 }
 
 } // namespace CSSPropertyParserHelpers
