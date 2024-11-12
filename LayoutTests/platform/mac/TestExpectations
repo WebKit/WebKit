@@ -2437,6 +2437,9 @@ webkit.org/b/280792 inspector/worker/debugger-pause-subworker.html [ Skip ]
 # Platform-specific test enabled on macOS and iOS separately.
 webanimations/scroll-timeline-clamped-current-time-while-rubber-banding-mac.html [ Pass ]
 
+# macOS-only test.
+media/webkit-media-controls-not-visible-after-exiting-fullscreen.html [ Pass ]
+
 # webkit.org/b/281765 PROGRESSION (285251@main): [ macOS iOS ] imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-redirect.html is a constant failure. 
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-traversal-redirect.html [ Skip ]
 
