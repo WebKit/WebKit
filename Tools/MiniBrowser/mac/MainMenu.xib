@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23028.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="23504" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23028.2"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="23504"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -96,6 +96,11 @@
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
                                     <action selector="newEditorWindow:" target="-1" id="kk6-R4-iec"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="New SwiftUI Window" keyEquivalent="u" id="Rib-KW-cpD">
+                                <connections>
+                                    <action selector="newSwiftUIWindow:" target="494" id="cOo-bH-zEp"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Open…" keyEquivalent="o" id="72">
@@ -931,6 +936,7 @@
         </menu>
         <customObject id="494" customClass="BrowserAppDelegate">
             <connections>
+                <outlet property="_newSwiftUIWindowItem" destination="Rib-KW-cpD" id="gbY-Jj-RBd"/>
                 <outlet property="_newWebKit1EditorItem" destination="jNR-Z3-YWi" id="6wB-Aa-CK7"/>
                 <outlet property="_newWebKit1WindowItem" destination="573" id="ZCj-u2-PU7"/>
                 <outlet property="_newWebKit2EditorItem" destination="IdI-wb-1JD" id="DIr-pe-XI8"/>

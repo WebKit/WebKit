@@ -81,3 +81,8 @@ SDKROOT = macosx.internal;
 ADDITIONAL_SDKS = $(WK_ADDITIONAL_SDKS);
 
 CODE_SIGN_IDENTITY = -;
+
+SWIFT_OBJC_BRIDGING_HEADER = MiniBrowser-Bridging-Header.h;
+SWIFT_VERSION = 6.0;
+SWIFT_VERSION[sdk=macosx13*] = 5.0;
+SWIFT_VERSION[sdk=macosx14*] = 5.0;

@@ -21,6 +21,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		071430942CE16E0600430FFA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 071430932CE16E0600430FFA /* AppDelegate.swift */; };
 		0FE643A1161FA8940059E3FF /* BrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FE643A0161FA8940059E3FF /* BrowserWindowController.m */; };
 		0FE643A4161FAC660059E3FF /* WK1BrowserWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FE643A3161FAC660059E3FF /* WK1BrowserWindowController.m */; };
 		256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 256AC3D90F4B6AC300CF3369 /* AppDelegate.m */; };
@@ -48,6 +49,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		071430922CE16E0500430FFA /* MiniBrowser-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MiniBrowser-Bridging-Header.h"; sourceTree = "<group>"; };
+		071430932CE16E0600430FFA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0FE6439F161FA8940059E3FF /* BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BrowserWindowController.h; path = mac/BrowserWindowController.h; sourceTree = "<group>"; };
 		0FE643A0161FA8940059E3FF /* BrowserWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BrowserWindowController.m; path = mac/BrowserWindowController.m; sourceTree = "<group>"; };
 		0FE643A2161FAC660059E3FF /* WK1BrowserWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WK1BrowserWindowController.h; path = mac/WK1BrowserWindowController.h; sourceTree = "<group>"; };
@@ -102,6 +105,7 @@
 			children = (
 				256AC3D80F4B6AC300CF3369 /* AppDelegate.h */,
 				256AC3D90F4B6AC300CF3369 /* AppDelegate.m */,
+				071430932CE16E0600430FFA /* AppDelegate.swift */,
 				0FE6439F161FA8940059E3FF /* BrowserWindowController.h */,
 				0FE643A0161FA8940059E3FF /* BrowserWindowController.m */,
 				7CA3793F1AC381C10079DC37 /* ExtensionManagerWindowController.h */,
@@ -110,6 +114,7 @@
 				BC329486116A92E2008635D0 /* main.m */,
 				51E244F811EFCE07008228D1 /* MBToolbarItem.h */,
 				51E244F911EFCE07008228D1 /* MBToolbarItem.m */,
+				071430922CE16E0500430FFA /* MiniBrowser-Bridging-Header.h */,
 				37BAF90620218053000EA879 /* MiniBrowser.entitlements */,
 				2DC37341198B62D300EC33E9 /* SettingsController.h */,
 				2DC37342198B62D300EC33E9 /* SettingsController.m */,
@@ -216,6 +221,7 @@
 				LastUpgradeCheck = 1000;
 				TargetAttributes = {
 					8D1107260486CEB800E47090 = {
+						LastSwiftMigration = 1620;
 						SystemCapabilities = {
 							com.apple.Sandbox = {
 								enabled = 1;
@@ -260,6 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				256AC3DA0F4B6AC300CF3369 /* AppDelegate.m in Sources */,
+				071430942CE16E0600430FFA /* AppDelegate.swift in Sources */,
 				0FE643A1161FA8940059E3FF /* BrowserWindowController.m in Sources */,
 				7CA379421AC381C10079DC37 /* ExtensionManagerWindowController.m in Sources */,
 				BC329487116A92E2008635D0 /* main.m in Sources */,
@@ -288,6 +295,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BCA8CBDF11E578A000812FB7 /* MiniBrowser.xcconfig */;
 			buildSettings = {
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
