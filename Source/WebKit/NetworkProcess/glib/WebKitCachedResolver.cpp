@@ -32,10 +32,10 @@
 
 using namespace WebKit;
 
-typedef struct {
+struct WebKitCachedResolverPrivate {
     GRefPtr<GResolver> wrappedResolver;
     DNSCache cache;
-} WebKitCachedResolverPrivate;
+};
 
 struct _WebKitCachedResolver {
     GResolver parentInstance;
