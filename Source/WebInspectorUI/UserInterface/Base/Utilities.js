@@ -633,7 +633,7 @@ Object.defineProperty(Array, "isTypedArray",
             || constructor === Uint8ClampedArray
             || constructor === Uint16Array
             || constructor === Uint32Array
-            || constructor === Float16Array
+            || constructor === window.Float16Array
             || constructor === Float32Array
             || constructor === Float64Array;
     }
