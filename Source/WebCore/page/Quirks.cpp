@@ -1899,16 +1899,24 @@ std::optional<TargetedElementSelectors> Quirks::defaultVisibilityAdjustmentSelec
 
 String Quirks::scriptToEvaluateBeforeRunningScriptFromURL(const URL& scriptURL)
 {
-#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
     if (!needsQuirks())
         return { };
 
+#if PLATFORM(IOS_FAMILY)
     auto topDomain = RegistrableDomain(topDocumentURL()).string();
+
+    // player.anyclip.com rdar://138789765
+    if (UNLIKELY(topDomain == "thesaurus.com"_s && scriptURL.lastPathComponent().endsWith("lre.js"_s)) && scriptURL.host() == "player.anyclip.com"_s)
+        return "(function() { let userAgent = navigator.userAgent; Object.defineProperty(navigator, 'userAgent', { get: () => { return userAgent + ' Chrome/130.0.0.0 Android/15.0'; }, configurable: true }); })();"_s;
+
+#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
     if (UNLIKELY(topDomain == "webex.com"_s && scriptURL.lastPathComponent().startsWith("pushdownload."_s)))
         return "Object.defineProperty(window, 'Touch', { get: () => undefined });"_s;
+#endif
 #else
     UNUSED_PARAM(scriptURL);
 #endif
+
     return { };
 }
 
