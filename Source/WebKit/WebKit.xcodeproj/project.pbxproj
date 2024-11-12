@@ -81,7 +81,6 @@
 			buildConfigurationList = C0CE72891247E68600BC0EC4 /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
 			buildPhases = (
 				DDB04F3C278E55D0008D3678 /* Product Dependencies */,
-				E30604FE2CCD9E9C0033AC72 /* Generate log entries */,
 				C0CE72841247E66800BC0EC4 /* Generate Derived Sources */,
 				7B7A089228B738D800FF1239 /* Copy Profiling Data */,
 			);
@@ -19290,34 +19289,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
-		};
-		E30604FE2CCD9E9C0033AC72 /* Generate log entries */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Shared/WebKitLogEntries.in",
-				"${WebCorePrivateHeaders}/WebCoreLogEntries.in",
-			);
-			name = "Generate log entries";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKitLogs.h",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogStream.messages.in",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntriesDeclarations.h",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntriesImplementations.h",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKitLogClientDeclarations.h",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKitLogDefinitions.h",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebCoreLogDefinitions.h",
-				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebCoreLogClientDeclarations.h",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "set -e\n\n${WEBCORE_PRIVATE_HEADERS_DIR}/generate-log-declarations.py WebCore ${WEBCORE_PRIVATE_HEADERS_DIR}/WebCoreLogEntries.in  ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebCoreLogDefinitions.h\n\n${WEBCORE_PRIVATE_HEADERS_DIR}/generate-log-declarations.py WebKit ${SRCROOT}/Shared/WebKitLogEntries.in ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKitLogDefinitions.h\n\nScripts/generate-log-entries.py ${SRCROOT}/Shared/WebKitLogEntries.in ${WEBCORE_PRIVATE_HEADERS_DIR}/WebCoreLogEntries.in ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogStream.messages.in ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntriesDeclarations.h ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntriesImplementations.h ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebKitLogClientDeclarations.h ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/WebCoreLogClientDeclarations.h\n";
 		};
 		E3067ED02B758FEA007C7A03 /* Create symlinks for extensions */ = {
 			isa = PBXShellScriptBuildPhase;

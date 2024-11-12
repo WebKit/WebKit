@@ -128,6 +128,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LibWebRTCNetworkMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LibWebRTCNetworkMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LibWebRTCRemoteCodecsMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LibWebRTCRemoteCodecsMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogEntriesDeclarations.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogEntriesImplementations.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStreamMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStreamMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/MediaPlayerPrivateRemoteMessageReceiver.cpp
@@ -469,6 +471,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebBroadcastChannelRegistryMessages.
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCacheStorageConnectionMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCookieManagerMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCookieManagerMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCoreLogClientDeclarations.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebCoreLogDefinitions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebDeviceOrientationUpdateProviderProxyMessageReceiver.cpp
@@ -510,6 +514,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIMessages.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebInspectorUIProxyMessages.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKitLogClientDeclarations.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKitLogDefinitions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebKitPlatformGeneratedSerializers.mm
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebLockRegistryProxyMessageReceiver.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/WebLockRegistryProxyMessages.h

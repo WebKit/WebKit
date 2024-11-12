@@ -50,4 +50,7 @@ LogEntries {
     SUBRESOURCELOADER_DIDFINISHLOADING_DID_NOT_REACH_TERMINAL_STATE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didFinishLoading: Did not reach terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
     SUBRESOURCELOADER_DIDFAIL, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didFail: (type=%d, code=%d)", (uint64_t, uint64_t, uint64_t, int, int), DEFAULT, ResourceLoading
     SUBRESOURCELOADER_WILLCANCEL, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willCancel: (type=%d, code=%d)", (uint64_t, uint64_t, uint64_t, int, int), DEFAULT, ResourceLoading
+    PROGRESSTRACKER_PROGRESSSTARTED, "ProgressTracker::progressStarted: frameID %llu, value %f, tracked frames %d, originating frameID %llu, isMainLoad %d", (uint64_t, double, int, uint64_t, int), DEFAULT, Network
+    PROGRESSTRACKER_PROGRESSCOMPLETED, "ProgressTracker::progressCompleted: frameID %llu, value %f, tracked frames %d, originating frameID %llu, isMainLoad %d", (uint64_t, double, int, uint64_t, int), DEFAULT, Network
+    PROGRESSTRACKER_FINALPROGRESSCOMPLETE, "ProgressTracker::finalProgressComplete: value %f, tracked frames %d, originating frameID %llu, isMainLoad %d, isMainLoadProgressing %d", (double, int, uint64_t, int, int), DEFAULT, Network
 }

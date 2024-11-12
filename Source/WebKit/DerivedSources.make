@@ -940,3 +940,20 @@ $(WEBKIT_ADDITIONS_SWIFT_FILES): %.swift : %.swift.in
 
 all : $(WEBKIT_ADDITIONS_SWIFT_FILES)
 endif
+
+# Log messages
+
+all : WebCoreLogDefinitions.h WebKitLogDefinitions.h
+
+WebCoreLogDefinitions.h : $(WebCorePrivateHeaders)/WebCoreLogEntries.in
+	@echo Creating WebCore log definitions $@
+	$(PYTHON) $(WebCorePrivateHeaders)/generate-log-declarations.py WebCore $< $@
+
+WebKitLogDefinitions.h : Shared/WebKitLogEntries.in
+	@echo Creating WebKit log definitions $@
+	$(PYTHON) $(WebCorePrivateHeaders)/generate-log-declarations.py WebKit $< $@
+
+all : LogEntriesDeclarations.h LogEntriesImplementations.h WebKitLogClientDeclarations.h WebCoreLogClientDeclarations.h
+
+LogStream.messages.in LogEntriesDeclarations.h LogEntriesImplementations.h WebKitLogClientDeclarations.h WebCoreLogClientDeclarations.h : Shared/WebKitLogEntries.in $(WebCorePrivateHeaders)/WebCoreLogEntries.in
+	$(PYTHON) $(WebKit2)/Scripts/generate-log-entries.py $^ LogStream.messages.in LogEntriesDeclarations.h LogEntriesImplementations.h WebKitLogClientDeclarations.h WebCoreLogClientDeclarations.h

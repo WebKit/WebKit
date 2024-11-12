@@ -1920,6 +1920,7 @@ $(PROJECT_DIR)/page/WindowSessionStorage.idl
 $(PROJECT_DIR)/page/WorkerNavigator.idl
 $(PROJECT_DIR)/page/csp/CSPViolationReportBody.idl
 $(PROJECT_DIR)/platform/ColorData.gperf
+$(PROJECT_DIR)/platform/WebCoreLogEntries.in
 $(PROJECT_DIR)/platform/network/HTTPHeaderNames.in
 $(PROJECT_DIR)/platform/network/create-http-header-name-table
 $(PROJECT_DIR)/plugins/DOMMimeType.idl

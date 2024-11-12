@@ -2671,3 +2671,11 @@ vpath %.js $(sort $(foreach f,$(WebCore_BUILTINS_SOURCES),$(realpath $(dir $(f))
 all : $(notdir $(WebCore_BUILTINS_SOURCES:%.js=%Builtins.h)) $(WebCore_BUILTINS_WRAPPERS)
 
 # ------------------------
+
+# Log messages
+
+all : WebCoreLogDefinitions.h
+
+WebCoreLogDefinitions.h : $(WebCore)/platform/WebCoreLogEntries.in
+	@echo Creating WebCore log definitions $@
+	$(PYTHON) $(WebCore)/Scripts/generate-log-declarations.py WebCore $< $@

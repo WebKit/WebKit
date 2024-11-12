@@ -54,6 +54,10 @@ def get_log_entries(log_entries_input_file):
                 log_entry.append(match.groups()[3])
                 log_entry.append(match.groups()[4])
                 log_entries.append(log_entry)
+            else:
+                # FIXME: exit on error
+                print("Unable to match format string " + line)
+
     return log_entries
 
 
