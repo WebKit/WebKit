@@ -62,6 +62,8 @@ BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 SWIFT_INSTALL_OBJC_HEADER = NO;
 SWIFT_LIBRARY_LEVEL = api;
 
+SWIFT_INCLUDE_PATHS = $(SRCROOT)/Modules/Internal;
+
 // No need for automatic generation of Swift code for referencing resource bundle colors.
 ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS = NO;
 

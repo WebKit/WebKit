@@ -145,6 +145,7 @@
 		07297F9F1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297F9D1C17BBEA003F0735 /* UserMediaPermissionCheckProxy.h */; };
 		07297F9F1C17BBEA015F0735 /* DeviceIdHashSaltStorage.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297F9D1C17BBEA223F0735 /* DeviceIdHashSaltStorage.h */; };
 		07297FA31C186ADB003F0735 /* WKUserMediaPermissionCheck.h in Headers */ = {isa = PBXBuildFile; fileRef = 07297FA11C186ADB003F0735 /* WKUserMediaPermissionCheck.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0744DA552CE05FE400AACC81 /* WebKitInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 0744DA542CE05FE400AACC81 /* WebKitInternal.h */; };
 		074879B92373A90900F5678E /* AppKitSoftLink.h in Headers */ = {isa = PBXBuildFile; fileRef = 074879B72373A90900F5678E /* AppKitSoftLink.h */; };
 		074E75FE1DF2211900D318EC /* UserMediaProcessManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 074E75FB1DF1FD1300D318EC /* UserMediaProcessManager.h */; };
 		074F34812CC5F7D500CA5301 /* WKIntelligenceTextEffectCoordinator.h in Headers */ = {isa = PBXBuildFile; fileRef = 074F34802CC5F7D500CA5301 /* WKIntelligenceTextEffectCoordinator.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -3188,6 +3189,8 @@
 		0736B75D260D4A4F00E06994 /* RemoteMediaSessionCoordinatorProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = RemoteMediaSessionCoordinatorProxy.messages.in; sourceTree = "<group>"; };
 		0736B75E260D4A5000E06994 /* RemoteMediaSessionCoordinatorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteMediaSessionCoordinatorProxy.h; sourceTree = "<group>"; };
 		0744720525E5BD020054B231 /* MediaOverridesForTesting.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaOverridesForTesting.h; sourceTree = "<group>"; };
+		0744DA532CE05F9500AACC81 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		0744DA542CE05FE400AACC81 /* WebKitInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitInternal.h; sourceTree = "<group>"; };
 		074879B72373A90900F5678E /* AppKitSoftLink.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AppKitSoftLink.h; path = ios/AppKitSoftLink.h; sourceTree = "<group>"; };
 		074879B82373A90900F5678E /* AppKitSoftLink.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = AppKitSoftLink.mm; path = ios/AppKitSoftLink.mm; sourceTree = "<group>"; };
 		074E75FB1DF1FD1300D318EC /* UserMediaProcessManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserMediaProcessManager.h; sourceTree = "<group>"; };
@@ -8585,6 +8588,15 @@
 			path = MediaSession;
 			sourceTree = "<group>";
 		};
+		0744DA522CE05F5300AACC81 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				0744DA532CE05F9500AACC81 /* module.modulemap */,
+				0744DA542CE05FE400AACC81 /* WebKitInternal.h */,
+			);
+			path = Internal;
+			sourceTree = "<group>";
+		};
 		0785E7FE2CBCDFDD00F68126 /* WritingTools */ = {
 			isa = PBXGroup;
 			children = (
@@ -13349,6 +13361,7 @@
 		84120B2828258B82002988E2 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				0744DA522CE05F5300AACC81 /* Internal */,
 				84120B2928258B82002988E2 /* iOS.modulemap */,
 				849944302943E2550086CDBB /* iOS_Private.modulemap */,
 				84120B2B28258BB5002988E2 /* MacCatalyst.modulemap */,
@@ -17229,6 +17242,7 @@
 				1A85E4721E303F3700914599 /* WebKit.apinotes in Headers */,
 				BCB63478116BF10600603215 /* WebKit2_C.h in Headers */,
 				BC9BA5051697C45300E44616 /* WebKit2Initialize.h in Headers */,
+				0744DA552CE05FE400AACC81 /* WebKitInternal.h in Headers */,
 				DD4BDE9C2CA73B60001A3339 /* WebKitSwiftOverlayMacros.h in Headers */,
 				BC032D7F10F4378D0058C15A /* WebLocalFrameLoaderClient.h in Headers */,
 				465FA7262757D93D0072362B /* WebLockRegistryProxy.h in Headers */,

@@ -23,6 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "WKWebView.h"
+
+#ifdef __cplusplus
+
 #import "PDFPluginIdentifier.h"
 #import "WKIntelligenceTextEffectCoordinator.h"
 #import "WKTextAnimationType.h"
@@ -493,4 +497,10 @@ RetainPtr<NSError> nsErrorFromExceptionDetails(const WebCore::ExceptionDetails&)
 @interface WKWebView (WKTextExtraction)
 - (void)_requestTextExtractionForSwift:(WKTextExtractionRequest *)context;
 - (void)_requestTextExtraction:(CGRect)rect completionHandler:(void(^)(WKTextExtractionItem *))completionHandler;
+@end
+
+#endif // __cplusplus
+
+@interface WKWebView (NonCpp)
+
 @end

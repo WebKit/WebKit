@@ -1,0 +1,4 @@
+module WebKit_Internal {
+    header "WebKitInternal.h"
+    export *
+}
