@@ -46,8 +46,6 @@ public:
     GstElement* pipeline() { return m_capturer->pipeline(); }
     GStreamerCapturer* capturer() { return m_capturer.get(); }
 
-    std::pair<GstClockTime, GstClockTime> queryLatency();
-
     // GStreamerCapturerObserver
     void sourceCapsChanged(const GstCaps*) final;
     void captureEnded() final;

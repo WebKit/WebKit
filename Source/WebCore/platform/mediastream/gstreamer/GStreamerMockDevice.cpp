@@ -42,7 +42,7 @@ static GstElement* webkitMockDeviceCreateElement([[maybe_unused]] GstDevice* dev
 {
     GST_INFO_OBJECT(device, "Creating source element for device %s", name);
     auto* element = makeGStreamerElement("appsrc", name);
-    g_object_set(element, "format", GST_FORMAT_TIME, "is-live", TRUE, "do-timestamp", TRUE, nullptr);
+    g_object_set(element, "format", GST_FORMAT_TIME, "is-live", TRUE, nullptr);
     return element;
 }
 

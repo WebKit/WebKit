@@ -66,8 +66,6 @@ public:
     void stop();
     WARN_UNUSED_RETURN GRefPtr<GstCaps> caps();
 
-    std::pair<GstClockTime, GstClockTime> queryLatency();
-
     GstElement* makeElement(const char* factoryName);
     virtual GstElement* createSource();
     GstElement* source() { return m_src.get();  }

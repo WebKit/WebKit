@@ -829,11 +829,6 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
             break;
         }
         case GST_MESSAGE_LATENCY:
-            // Recalculate the latency, we don't need any special handling
-            // here other than the GStreamer default.
-            // This can happen if the latency of live elements changes, or
-            // for one reason or another a new live element is added or
-            // removed from the pipeline.
             gst_bin_recalculate_latency(GST_BIN_CAST(pipeline.get()));
             break;
         default:

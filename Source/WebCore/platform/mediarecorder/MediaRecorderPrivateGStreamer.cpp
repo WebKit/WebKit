@@ -401,12 +401,6 @@ bool MediaRecorderPrivateBackend::preparePipeline()
     m_transcoder = adoptGRef(gst_transcoder_new_full("mediastream://", "appsink://", GST_ENCODING_PROFILE(profile.get())));
     gst_transcoder_set_avoid_reencoding(m_transcoder.get(), true);
     m_pipeline = gst_transcoder_get_pipeline(m_transcoder.get());
-
-    auto clock = adoptGRef(gst_system_clock_obtain());
-    gst_pipeline_use_clock(GST_PIPELINE(m_pipeline.get()), clock.get());
-    gst_element_set_base_time(m_pipeline.get(), 0);
-    gst_element_set_start_time(m_pipeline.get(), GST_CLOCK_TIME_NONE);
-
     registerActivePipeline(m_pipeline);
 
     g_signal_connect_swapped(m_pipeline.get(), "source-setup", G_CALLBACK(+[](MediaRecorderPrivateBackend* recorder, GstElement* sourceElement) {
