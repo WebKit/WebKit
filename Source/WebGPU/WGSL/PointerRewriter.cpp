@@ -160,7 +160,12 @@ void PointerRewriter::visit(AST::UnaryExpression& unary)
     if (!nestedUnary || nestedUnary->operation() != AST::UnaryOperation::AddressOf)
         return;
 
-    m_shaderModule.replace(unary, nestedUnary->expression());
+    auto& identity = m_shaderModule.astBuilder().construct<AST::IdentityExpression>(
+        unary.span(),
+        nestedUnary->expression()
+    );
+    identity.m_inferredType = unary.m_inferredType;
+    m_shaderModule.replace(unary, identity);
 }
 
 void rewritePointers(ShaderModule& shaderModule)
