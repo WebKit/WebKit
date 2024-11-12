@@ -402,6 +402,8 @@ static void imageBytesForSource(const auto& sourceDescriptor, const auto& destin
         return getImageBytesFromImageBuffer(imageBitmap->buffer(), destination, needsPremultipliedAlpha, WTFMove(callback));
 #if ENABLE(VIDEO) && ENABLE(WEB_CODECS)
     }, [&](const RefPtr<ImageData> imageData) -> ResultType {
+        if (!imageData)
+            return callback({ }, 0, 0);
         callback(imageData->pixelBuffer()->bytes(), imageData->width(), imageData->height());
     }, [&](const RefPtr<HTMLImageElement> imageElement) -> ResultType {
 #if PLATFORM(COCOA)
@@ -990,7 +992,7 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
         bool supportedFormat;
         auto newImageBytes = copyToDestinationFormat(imageBytes, destination.texture->format(), supportedFormat, rows, needsYFlip, needsPremultipliedAlpha, source.origin);
         uint32_t sourceX = 0, sourceY = 0;
-        auto widthInBytes = sizeInBytes / rows;
+        auto widthInBytes = (newImageBytes ? newImageBytes.sizeInBytes() : sizeInBytes) / rows;
         auto channels = widthInBytes / columns;
         GPUImageDataLayout dataLayout { 0, widthInBytes, rows };
 
