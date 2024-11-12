@@ -1041,6 +1041,8 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     manager->saveScrollPosition();
 
     page->setSuppressVisibilityUpdates(true);
+    page->startDeferringResizeEvents();
+    page->startDeferringScrollEvents();
 
     _viewState.store(webView.get());
 
@@ -1190,6 +1192,8 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
             manager->didEnterFullScreen();
             manager->setAnimatingFullScreen(false);
             page->setSuppressVisibilityUpdates(false);
+            page->flushDeferredResizeEvents();
+            page->flushDeferredScrollEvents();
 
             [_fullscreenViewController showBanner];
 
@@ -1348,8 +1352,11 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
     _finalFrame.size = WebKit::sizeExpandedToSize(_finalFrame.size, CGSizeMake(1, 1));
     _finalFrame = WebKit::safeInlineRect(_finalFrame, [_rootViewController view].frame.size);
 
-    if (auto page = [self._webView _page])
+    if (auto page = [self._webView _page]) {
         page->setSuppressVisibilityUpdates(true);
+        page->startDeferringResizeEvents();
+        page->startDeferringScrollEvents();
+    }
 
     CompletionHandler<void()> completionHandler = [strongSelf = retainPtr(self), self] () mutable {
         [_fullscreenViewController setPrefersStatusBarHidden:NO];
@@ -1415,6 +1422,11 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         manager->didExitFullScreen();
     }
 
+    if (auto page = [self._webView _page]) {
+        page->flushDeferredResizeEvents();
+        page->flushDeferredScrollEvents();
+    }
+
     RefPtr videoPresentationInterface = self._videoPresentationManager ? self._videoPresentationManager->controlsManagerInterface() : nullptr;
     _shouldReturnToFullscreenFromPictureInPicture = videoPresentationInterface && videoPresentationInterface->inPictureInPicture();
 
@@ -1433,6 +1445,8 @@ static constexpr NSString *kPrefersFullScreenDimmingKey = @"WebKitPrefersFullScr
         if (auto page = [self._webView _page]) {
             page->setSuppressVisibilityUpdates(false);
             page->setNeedsDOMWindowResizeEvent();
+            page->flushDeferredResizeEvents();
+            page->flushDeferredScrollEvents();
         }
 
         _exitRequested = NO;

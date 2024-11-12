@@ -131,6 +131,8 @@ static bool alertReceived = false;
 
 namespace TestWebKitAPI {
 
+static bool done;
+
 static RetainPtr<NSURL> testWebPushDaemonLocation()
 {
     return [currentExecutableDirectory() URLByAppendingPathComponent:@"webpushd" isDirectory:NO];

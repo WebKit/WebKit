@@ -5201,6 +5201,32 @@ bool Page::isFullscreenManagerEnabled() const
 }
 #endif
 
+void Page::startDeferringResizeEvents()
+{
+    m_shouldDeferResizeEvents = true;
+}
+
+void Page::flushDeferredResizeEvents()
+{
+    m_shouldDeferResizeEvents = false;
+    forEachDocument([&] (Document& document) {
+        document.flushDeferredResizeEvents();
+    });
+}
+
+void Page::startDeferringScrollEvents()
+{
+    m_shouldDeferScrollEvents = true;
+}
+
+void Page::flushDeferredScrollEvents()
+{
+    m_shouldDeferScrollEvents = false;
+    forEachDocument([&] (Document& document) {
+        document.flushDeferredScrollEvents();
+    });
+}
+
 bool Page::reportScriptTelemetry(const URL& url, ScriptTelemetryCategory category)
 {
     return !url.isEmpty() && m_reportedScriptsWithTelemetry.add({ url, category }).isNewEntry;

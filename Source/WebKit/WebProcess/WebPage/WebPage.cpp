@@ -3579,6 +3579,26 @@ void WebPage::setLastKnownMousePosition(WebCore::FrameIdentifier frameID, IntPoi
     frame->coreLocalFrame()->eventHandler().setLastKnownMousePosition(eventPoint, globalPoint);
 }
 
+void WebPage::startDeferringResizeEvents()
+{
+    corePage()->startDeferringResizeEvents();
+}
+
+void WebPage::flushDeferredResizeEvents()
+{
+    corePage()->flushDeferredResizeEvents();
+}
+
+void WebPage::startDeferringScrollEvents()
+{
+    corePage()->startDeferringScrollEvents();
+}
+
+void WebPage::flushDeferredScrollEvents()
+{
+    corePage()->flushDeferredScrollEvents();
+}
+
 void WebPage::flushDeferredDidReceiveMouseEvent()
 {
     if (auto info = std::exchange(m_deferredDidReceiveMouseEvent, std::nullopt))

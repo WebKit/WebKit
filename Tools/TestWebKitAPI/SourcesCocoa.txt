@@ -128,6 +128,7 @@ Tests/WebKitCocoa/FullscreenAlert.mm
 Tests/WebKitCocoa/FullscreenDelegate.mm
 Tests/WebKitCocoa/FullscreenLayoutConstraints.mm
 Tests/WebKitCocoa/FullscreenRemoveNodeBeforeEnter.mm
+Tests/WebKitCocoa/FullscreenScrollAndResize.mm
 Tests/WebKitCocoa/FullscreenVideoTextRecognition.mm
 Tests/WebKitCocoa/GPUProcess.mm
 Tests/WebKitCocoa/Geolocation.mm
