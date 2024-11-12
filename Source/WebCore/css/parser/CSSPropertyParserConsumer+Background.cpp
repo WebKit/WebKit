@@ -68,7 +68,7 @@ template<typename ElementType> static void complete4Sides(std::array<ElementType
 
 // MARK: - Border Radius
 
-enum class SupportWebKitBorderRadiusQuirk : bool { Yes, No };
+enum class SupportWebKitBorderRadiusQuirk : bool { No, Yes };
 
 template<SupportWebKitBorderRadiusQuirk supportQuirk> static std::optional<CSS::BorderRadius> consumeBorderRadius(CSSParserTokenRange& range, const CSSParserContext& context)
 {

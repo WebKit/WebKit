@@ -4503,6 +4503,148 @@ class NoNonVirtualDestructorsTest(CppStyleTestBase):
                 enum Foo { FOO_ONE, FOO_TWO };''',
             '')
 
+    def test_enum_no_yes(self):
+        self.assert_multi_line_lint(
+            '''\
+                enum { No, Yes };
+                enum {
+                    No, Yes
+                };
+                enum {
+                    No,
+                    Yes
+                };
+                enum Foo { No, Yes };
+                enum Foo {
+                    No, Yes
+                };
+                enum Foo {
+                    No,
+                    Yes
+                };
+                enum class Foo { No, Yes };
+                enum class Foo {
+                    No, Yes
+                };
+                enum class Foo {
+                    No,
+                    Yes
+                };''',
+            '')
+
+        self.assert_multi_line_lint(
+            '''\
+                enum : bool { No, Yes };
+                enum : bool {
+                    No, Yes
+                };
+                enum : bool {
+                    No,
+                    Yes
+                };
+                enum Foo : bool { No, Yes };
+                enum Foo : bool {
+                    No, Yes
+                };
+                enum Foo : bool {
+                    No,
+                    Yes
+                };
+                enum class Foo : bool { No, Yes };
+                enum class Foo : bool {
+                    No, Yes
+                };
+                enum class Foo : bool {
+                    No,
+                    Yes
+                };''',
+            '')
+
+        self.assert_multi_line_lint(
+            '''\
+                enum { Yes, No };
+                enum {
+                    Yes, No
+                };
+                enum {
+                    Yes,
+                    No
+                };
+                enum Foo { Yes, No };
+                enum Foo {
+                    Yes, No
+                };
+                enum Foo {
+                    Yes,
+                    No
+                };
+                enum class Foo { Yes, No };
+                enum class Foo {
+                    Yes, No
+                };
+                enum class Foo {
+                    Yes,
+                    No
+                };''',
+            '')
+
+        self.assert_lint(
+            'enum : bool { Yes, No };',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            '''\
+                enum : bool {
+                    Yes, No
+                };''',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            '''\
+                enum : bool {
+                    Yes,
+                    No
+                };''',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            'enum Foo : bool { Yes, No };',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            '''\
+                enum Foo : bool {
+                    Yes, No
+                };''',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            '''\
+                enum Foo : bool {
+                    Yes,
+                    No
+                };''',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            'enum class Foo : bool { Yes, No };',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            '''\
+                enum class Foo : bool {
+                    Yes, No
+                };''',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
+        self.assert_lint(
+            '''\
+                enum class Foo : bool {
+                    Yes,
+                    No
+                };''',
+            'Change the order to { No, Yes }.  [readability/enum_no_yes] [5]')
+
     def test_enum_trailing_semicolon(self):
         self.assert_lint(
             'enum MyEnum { Value1, Value2 };',

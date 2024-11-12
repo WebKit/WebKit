@@ -1348,50 +1348,70 @@ class _EnumState(object):
         self.in_enum_decl = False
         self.is_webidl_enum = False
         self.enum_decl_name = None
+        self.enum_underlying_type = None
+        self.enum_members = []
 
-    def process_clean_line(self, line):
+    def process_clean_line(self, line, line_number, error):
         # FIXME: The regular expressions for expr_all_uppercase and expr_enum_end only accept integers
         # and identifiers for the value of the enumerator, but do not accept any other constant
         # expressions. However, this is sufficient for now (11/27/2012).
         expr_all_uppercase = r'\s*(?P<value>[A-Z0-9_]+)\s*(?:=\s*[a-zA-Z0-9]+\s*)?,?\s*$'
         expr_starts_lowercase = r'\s*[a-jl-z]'
         expr_enum_end = r'}\s*(?:[a-zA-Z0-9]+\s*(?:=\s*[a-zA-Z0-9]+)?)?\s*;\s*'
-        expr_enum_start = r'\s*(?:enum(?:\s+class)?(?:\s+(?P<identifier>[a-zA-Z0-9]+))?)(?:\s*:\s*[a-zA-Z0-9_]+?)?\s*\{?\s*'
+        expr_enum_start = r'\s*(?:enum(?:\s+class)?(?:\s+(?P<identifier>[a-zA-Z0-9]+))?)(?:\s*:\s*(?P<underlying>[a-zA-Z0-9_]+)?)?\s*\{?\s*'
 
-        def is_case_error(enum_name, value_declaration):
-            all_uppercase = match(expr_all_uppercase, value_declaration)
-            if all_uppercase:
-                if self.is_webidl_enum:
-                    return False
-                if enum_name in _ALLOW_ALL_UPPERCASE_ENUM:
-                    return False
-                if len(all_uppercase.group('value')) < 2:
-                    return False
-                return not all_uppercase.group('value') in _ALLOW_ABBREVIATION_ENUM_VALUES
-            return match(expr_starts_lowercase, value_declaration)
+        def check_case_error(enum_name, value_declaration):
+            def is_case_error(enum_name, value_declaration):
+                # print(f'is_case_error("{enum_name}", "{value_declaration}")')
+                all_uppercase = match(expr_all_uppercase, value_declaration)
+                if all_uppercase:
+                    if self.is_webidl_enum:
+                        return False
+                    if enum_name in _ALLOW_ALL_UPPERCASE_ENUM:
+                        return False
+                    if len(all_uppercase.group('value')) < 2:
+                        return False
+                    return not all_uppercase.group('value') in _ALLOW_ABBREVIATION_ENUM_VALUES
+                return match(expr_starts_lowercase, value_declaration)
+
+            if is_case_error(enum_name, value_declaration):
+                error(line_number, 'readability/enum_casing', 4,
+                      'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.')
+                return True
+            return False
+
+        def check_member_list(enum_underlying_type, members):
+            # print(f'check_member_list({enum_underlying_type}, {members})')
+            if enum_underlying_type == 'bool' and len(members) == 2 and members[0].strip().strip(',') == 'Yes' and members[1].strip().strip(',') == 'No':
+                error(line_number, 'readability/enum_no_yes', 5, 'Change the order to { No, Yes }.')
 
         if self.in_enum_decl:
             if match(r'\s*' + expr_enum_end + r'$', line):
                 self.in_enum_decl = False
                 self.is_webidl_enum = False
-                return True
-            elif is_case_error(self.enum_decl_name, line):
-                return False
+                # print(f'"{line}" -> end, members={self.enum_members}')
+                check_member_list(self.enum_underlying_type, self.enum_members)
+            else:
+                self.enum_members += line.strip().strip(',').split(',')
+                check_case_error(self.enum_decl_name, line)
         matched = match(expr_enum_start + r'$', line)
         if matched:
             self.in_enum_decl = True
             self.enum_decl_name = matched.group('identifier')
+            self.enum_underlying_type = matched.group('underlying')
+            # print(f'"{line}" -> start, enum_decl_name="{self.enum_decl_name}" enum_underlying_type="{self.enum_underlying_type}"')
         else:
             matched = match(expr_enum_start + r'(?P<members>[^{]*)' + expr_enum_end + r'$', line)
             if matched:
                 members = matched.group('members').split(',')
                 enum_name = matched.group('identifier')
+                enum_underlying_type = matched.group('underlying')
+                # print(f'"{line}" -> enum_name="{enum_name}" members={members}')
                 for member in members:
-                    if is_case_error(enum_name, member):
+                    if check_case_error(enum_name, member):
                         self.is_webidl_enum = False
-                        return False
-                return True
-        return True
+                        return
+                check_member_list(enum_underlying_type, members)
 
 
 def regex_for_lambdas_and_blocks(line, line_number, file_state, error):
@@ -2559,7 +2579,8 @@ _ALLOW_ALL_UPPERCASE_ENUM = ['JSTokenType']
 # Enum value allowlist
 _ALLOW_ABBREVIATION_ENUM_VALUES = ['AM', 'CF', 'GPU', 'PM', 'URL', 'XHR']
 
-def check_enum_casing(clean_lines, line_number, enum_state, error):
+
+def check_enum_members(clean_lines, line_number, enum_state, error):
     """Looks for incorrectly named enum values.
 
     Args:
@@ -2572,9 +2593,7 @@ def check_enum_casing(clean_lines, line_number, enum_state, error):
     enum_state.is_webidl_enum |= bool(match(r'\s*// Web(?:Kit)?IDL enum\s*$', clean_lines.raw_lines[line_number]))
 
     line = clean_lines.elided[line_number]  # Get rid of comments and strings.
-    if not enum_state.process_clean_line(line):
-        error(line_number, 'readability/enum_casing', 4,
-              'enum members should use InterCaps with an initial capital letter or initial \'k\' for C-style enums.')
+    enum_state.process_clean_line(line, line_number, error)
 
 
 def check_once_flag(clean_lines, line_number, error):
@@ -3511,7 +3530,7 @@ def check_style(clean_lines, line_number, file_extension, class_state, file_stat
     check_for_null(clean_lines, line_number, file_state, error)
     check_soft_link_class_alloc(clean_lines, line_number, error)
     check_indentation_amount(clean_lines, line_number, error)
-    check_enum_casing(clean_lines, line_number, enum_state, error)
+    check_enum_members(clean_lines, line_number, enum_state, error)
     check_once_flag(clean_lines, line_number, error)
     check_arguments_for_wk_api_available(clean_lines, line_number, error)
     check_objc_protocol(clean_lines, line_number, file_extension, error)
@@ -4711,6 +4730,7 @@ class CppChecker(object):
         'readability/constructors',
         'readability/control_flow',
         'readability/enum_casing',
+        'readability/enum_no_yes',
         'readability/fn_size',
         'readability/function',
         'readability/inheritance',

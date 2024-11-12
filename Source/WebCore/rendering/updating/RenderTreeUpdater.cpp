@@ -711,7 +711,7 @@ void RenderTreeUpdater::tearDownRenderer(Text& text)
     invalidateRebuildRootIfNeeded(text);
 }
 
-enum class DidRepaintAndMarkContainingBlock : bool { Yes, No };
+enum class DidRepaintAndMarkContainingBlock : bool { No, Yes };
 static std::optional<DidRepaintAndMarkContainingBlock> repaintAndMarkContainingBlockDirtyBeforeTearDown(const Element& root, auto composedTreeDescendantsIterator)
 {
     auto* destroyRootRenderer = root.renderer();

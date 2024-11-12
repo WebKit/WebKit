@@ -27,6 +27,6 @@
 
 namespace WebKit {
 
-enum class ColorControlSupportsAlpha : bool { Yes, No };
+enum class ColorControlSupportsAlpha : bool { No, Yes };
 
 }
