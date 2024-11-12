@@ -56,11 +56,11 @@ static void* outputObscuredDueToInsufficientExternalProtectionContext = &outputO
 namespace WebCore {
 static bool isSampleBufferVideoRenderer(id object)
 {
-    if (dynamic_objc_cast<AVSampleBufferDisplayLayer>(object))
+    if (is_objc<AVSampleBufferDisplayLayer>(object))
         return true;
 
 #if HAVE(AVSAMPLEBUFFERVIDEORENDERER)
-    if (dynamic_objc_cast<AVSampleBufferVideoRenderer>(object))
+    if (is_objc<AVSampleBufferVideoRenderer>(object))
         return true;
 #endif
 
