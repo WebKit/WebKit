@@ -80,6 +80,7 @@ void OMGPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffe
     dataLogLnIf(context.procedure->shouldDumpIR() || shouldDumpDisassemblyFor(CompilationMode::OMGMode), "Generated OMG code for WebAssembly OMG function[", functionIndex, "] ", signature.toString().ascii().data(), " name ", makeString(IndexOrName(functionIndexSpace, m_moduleInformation->nameSection->get(functionIndexSpace))).ascii().data());
     if (UNLIKELY(shouldDumpDisassemblyFor(CompilationMode::OMGMode))) {
         ScopedPrintStream out;
+        HashSet<B3::Value*> printedValues;
         auto* disassembler = context.procedure->code().disassembler();
 
         const char* b3Prefix = "b3    ";
@@ -91,9 +92,25 @@ void OMGPlan::dumpDisassembly(CompilationContext& context, LinkBuffer& linkBuffe
             if (inst.origin && inst.origin != prevOrigin && context.procedure->code().shouldPreserveB3Origins()) {
                 if (String string = inst.origin->compilerConstructionSite(); !string.isNull())
                     out.println(string);
-                out.print(b3Prefix);
-                inst.origin->deepDump(context.procedure.get(), out);
-                out.println();
+                Vector<B3::Value*> children;
+                Vector<B3::Value*> worklist;
+                children.append(inst.origin);
+                worklist.append(inst.origin);
+                while (!worklist.isEmpty()) {
+                    B3::Value* current = worklist.takeLast();
+                    for (B3::Value* child : current->children()) {
+                        if (printedValues.add(child).isNewEntry) {
+                            children.append(child);
+                            worklist.append(child);
+                        }
+                    }
+                }
+                for (size_t i = children.size(); i--;) {
+                    out.print(b3Prefix);
+                    children[i]->deepDump(context.procedure.get(), out);
+                    out.println();
+                }
+
                 prevOrigin = inst.origin;
             }
         });

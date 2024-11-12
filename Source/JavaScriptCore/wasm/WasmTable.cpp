@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBASSEMBLY)
 
+#include "IntegrityInlines.h"
 #include "JSCJSValueInlines.h"
 #include "JSWebAssemblyInstance.h"
 #include "WasmTypeDefinitionInlines.h"
@@ -190,6 +191,7 @@ void Table::set(uint32_t index, JSValue value)
 {
     ASSERT(index < length());
     ASSERT(m_owner);
+    Integrity::auditCell<Integrity::AuditLevel::Full>(owner()->vm(), value);
     visitDerived([&](auto& table) {
         table.set(index, value);
     });

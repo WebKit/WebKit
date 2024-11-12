@@ -650,8 +650,14 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
 }
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-static bool shouldTriggerOMGCompile(TierUpCount& tierUp, OMGCallee* replacement, uint32_t functionIndex)
+static bool shouldTriggerOMGCompile(TierUpCount& tierUp, OMGCallee* replacement, FunctionCodeIndex functionIndex)
 {
+    if (!OMGPlan::ensureGlobalOMGAllowlist().containsWasmFunction(functionIndex)) {
+        dataLogLnIf(Options::verboseOSR(), "\tNot optimizing ", functionIndex, " as it's not in the allow list.");
+        tierUp.deferIndefinitely();
+        return false;
+    }
+
     if (!replacement && !tierUp.checkIfOptimizationThresholdReached()) {
         dataLogLnIf(Options::verboseOSR(), "\tdelayOMGCompile counter = ", tierUp, " for ", functionIndex);
         dataLogLnIf(Options::verboseOSR(), "\tChoosing not to OMG-optimize ", functionIndex, " yet.");
@@ -701,19 +707,21 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
     ASSERT(Options::useWasmSIMD() || savedFPWidth == SavedFPWidth::DontSaveVectors);
     unsigned valueSize = (savedFPWidth == SavedFPWidth::SaveVectors) ? 2 : 1;
 
-    dataLogLnIf(WasmOperationsInternal::verbose, "loadValuesIntoBuffer: valueSize = ", valueSize, "; values.size() = ", values.size());
+    constexpr bool verbose = false || WasmOperationsInternal::verbose;
+    dataLogLnIf(verbose, "loadValuesIntoBuffer: valueSize = ", valueSize, "; values.size() = ", values.size());
     for (unsigned index = 0; index < values.size(); ++index) {
         const OSREntryValue& value = values[index];
-        dataLogLnIf(Options::verboseOSR() || WasmOperationsInternal::verbose, "OMG OSR entry values[", index, "] ", value.type(), " ", value);
+        dataLogLnIf(Options::verboseOSR() || verbose, "OMG OSR entry values[", index, "] ", value.type(), " ", value);
 #if USE(JSVALUE32_64)
         if (value.isRegPair(B3::ValueRep::OSRValueRep)) {
             bitwise_cast<uint32_t*>(buffer + index * valueSize)[0] = context.gpr(value.gprLo(B3::ValueRep::OSRValueRep));
             bitwise_cast<uint32_t*>(buffer + index * valueSize)[1] = context.gpr(value.gprHi(B3::ValueRep::OSRValueRep));
-            dataLogLnIf(WasmOperationsInternal::verbose, "GPR Pair for value ", index, " ",
+            dataLogLnIf(verbose, "GPR Pair for value ", index, " ",
                 value.gprLo(B3::ValueRep::OSRValueRep), " = ", context.gpr(value.gprLo(B3::ValueRep::OSRValueRep)), " ",
                 value.gprHi(B3::ValueRep::OSRValueRep), " = ", context.gpr(value.gprHi(B3::ValueRep::OSRValueRep)));
         } else
 #endif
+
         if (value.isGPR()) {
             switch (value.type().kind()) {
             case B3::Float:
@@ -722,18 +730,18 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
             default:
                 *bitwise_cast<uint64_t*>(buffer + index * valueSize) = context.gpr(value.gpr());
             }
-            dataLogLnIf(WasmOperationsInternal::verbose, "GPR for value ", index, " ", value.gpr(), " = ", context.gpr(value.gpr()));
+            dataLogLnIf(verbose, "GPR for value ", index, " ", value.gpr(), " = ", context.gpr(value.gpr()));
         } else if (value.isFPR()) {
             switch (value.type().kind()) {
             case B3::Float:
             case B3::Double:
-                dataLogLnIf(WasmOperationsInternal::verbose, "FPR for value ", index, " ", value.fpr(), " = ", context.fpr(value.fpr(), savedFPWidth));
+                dataLogLnIf(verbose, "FPR for value ", index, " ", value.fpr(), " = ", context.fpr(value.fpr(), savedFPWidth));
                 *bitwise_cast<double*>(buffer + index * valueSize) = context.fpr(value.fpr(), savedFPWidth);
                 break;
             case B3::V128:
                 RELEASE_ASSERT(valueSize == 2);
 #if CPU(X86_64) || CPU(ARM64)
-                dataLogLnIf(WasmOperationsInternal::verbose, "Vector FPR for value ", index, " ", value.fpr(), " = ", context.vector(value.fpr()));
+                dataLogLnIf(verbose, "Vector FPR for value ", index, " ", value.fpr(), " = ", context.vector(value.fpr()));
                 *bitwise_cast<v128_t*>(buffer + index * valueSize) = context.vector(value.fpr());
 #else
                 UNREACHABLE_FOR_PLATFORM();
@@ -761,11 +769,11 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
             auto* baseStore = bitwise_cast<uint8_t*>(buffer + index * valueSize);
 
             if (value.type().isFloat() || value.type().isVector()) {
-                dataLogLnIf(WasmOperationsInternal::verbose, "Stack float or vector for value ", index, " fp offset ", value.offsetFromFP(), " = ",
+                dataLogLnIf(verbose, "Stack float or vector for value ", index, " fp offset ", value.offsetFromFP(), " = ",
                     *bitwise_cast<v128_t*>(baseLoad),
                     " or double ", *bitwise_cast<double*>(baseLoad));
             } else
-                dataLogLnIf(WasmOperationsInternal::verbose, "Stack for value ", index, " fp[", value.offsetFromFP(), "] = ", RawHex(*bitwise_cast<uint64_t*>(baseLoad)), " ", static_cast<int32_t>(*bitwise_cast<uint64_t*>(baseLoad)), " ", *bitwise_cast<int64_t*>(baseLoad));
+                dataLogLnIf(verbose, "Stack for value ", index, " fp[", value.offsetFromFP(), "] = ", RawHex(*bitwise_cast<uint64_t*>(baseLoad)), " ", static_cast<int32_t>(*bitwise_cast<uint64_t*>(baseLoad)), " ", *bitwise_cast<int64_t*>(baseLoad));
 
             switch (value.type().kind()) {
             case B3::Float:
