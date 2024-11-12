@@ -58,6 +58,7 @@ public:
     virtual void stop() = 0;
     virtual void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&) = 0;
     virtual void setAudioOutputDevice(const String&) = 0;
+    virtual const String& audioOutputDeviceID() const = 0;
 };
 
 }

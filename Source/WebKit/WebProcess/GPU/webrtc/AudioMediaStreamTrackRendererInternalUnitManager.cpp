@@ -72,6 +72,7 @@ private:
     void stop() final;
     void retrieveFormatDescription(CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>&&) final;
     void setAudioOutputDevice(const String&) final;
+    const String& audioOutputDeviceID() const final { return m_deviceId; }
 
     void initialize(const WebCore::CAAudioStreamDescription&, size_t frameChunkSize);
     void storageChanged(WebCore::SharedMemory*, const WebCore::CAAudioStreamDescription&, size_t);
