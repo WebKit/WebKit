@@ -902,7 +902,8 @@ void RenderBundleEncoder::endCurrentICB()
     }
 
     uint64_t completedDraws = 0, lastIndexOfRecordedCommand = 0;
-    for (auto& command : m_recordedCommands) {
+    auto recordedCommands = std::exchange(m_recordedCommands, { });
+    for (auto& command : recordedCommands) {
         completedDraws += command() ? 1 : 0;
         ++lastIndexOfRecordedCommand;
 
@@ -910,15 +911,18 @@ void RenderBundleEncoder::endCurrentICB()
             break;
     }
 
-    if (m_renderPassEncoder)
+    if (m_renderPassEncoder) {
+        m_recordedCommands = std::exchange(recordedCommands, { });
         return;
+    }
 
-    if (lastIndexOfRecordedCommand == m_recordedCommands.size()) {
-        m_recordedCommands.clear();
+    if (lastIndexOfRecordedCommand == recordedCommands.size()) {
+        recordedCommands.clear();
         m_icbDescriptor.commandTypes = 0;
     } else
-        m_recordedCommands.remove(0, lastIndexOfRecordedCommand);
+        recordedCommands.remove(0, lastIndexOfRecordedCommand);
 
+    m_recordedCommands = std::exchange(recordedCommands, { });
     m_currentCommandIndex = commandCount - completedDraws;
     [m_icbArray addObject:makeRenderBundleICBWithResources(m_indirectCommandBuffer, m_resources, m_currentPipelineState, m_depthStencilState, m_cullMode, m_frontFace, m_depthClipMode, m_depthBias, m_depthBiasSlopeScale, m_depthBiasClamp, m_dynamicOffsetsFragmentBuffer, m_pipeline.get(), device.get(), m_minVertexCountForDrawCommand)];
     cleanup();
@@ -1200,6 +1204,7 @@ void RenderBundleEncoder::recordCommand(WTF::Function<bool(void)>&& function)
         return;
 
     ASSERT(!m_renderPassEncoder || m_renderPassEncoder->renderCommandEncoder());
+    RELEASE_ASSERT(!m_dynamicOffsetsFragmentBuffer);
     m_recordedCommands.append(WTFMove(function));
 }
 
