@@ -78,11 +78,6 @@ OffscreenCanvasRenderingContext2D::OffscreenCanvasRenderingContext2D(CanvasBase&
 
 OffscreenCanvasRenderingContext2D::~OffscreenCanvasRenderingContext2D() = default;
 
-void OffscreenCanvasRenderingContext2D::commit()
-{
-    downcast<OffscreenCanvas>(canvasBase()).commitToPlaceholderCanvas();
-}
-
 void OffscreenCanvasRenderingContext2D::setFont(const String& newFont)
 {
     auto& context = *canvasBase().scriptExecutionContext();

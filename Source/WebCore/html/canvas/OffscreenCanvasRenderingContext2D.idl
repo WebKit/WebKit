@@ -36,7 +36,6 @@
     CallTracer=InspectorCanvasCallTracer,
 ] interface OffscreenCanvasRenderingContext2D {
     readonly attribute OffscreenCanvas canvas;
-    [EnabledBySetting=OffscreenCanvasDeprecatedCommitEnabled] undefined commit();
 };
 
 OffscreenCanvasRenderingContext2D includes CanvasState;
