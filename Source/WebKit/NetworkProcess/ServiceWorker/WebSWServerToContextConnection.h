@@ -101,6 +101,9 @@ private:
 
     RefPtr<NetworkConnectionToWebProcess> protectedConnection() const;
 
+    template<typename T> void sendToParentProcess(T&&);
+    template<typename T, typename C> void sendWithAsyncReplyToParentProcess(T&&, C&&);
+
     // IPC::MessageSender
     IPC::Connection* messageSenderConnection() const final;
     uint64_t messageSenderDestinationID() const final;
