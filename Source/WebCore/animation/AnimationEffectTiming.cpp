@@ -45,7 +45,7 @@ void AnimationEffectTiming::updateComputedProperties(IsProgressBased isProgressB
     // active duration = iteration duration × iteration count
     // If either the iteration duration or iteration count are zero, the active duration is zero.
     if (intrinsicIterationDuration.isZero() || !iterations)
-        activeDuration = 0_s;
+        activeDuration = intrinsicIterationDuration.matchingZero();
     else
         activeDuration = intrinsicIterationDuration * iterations;
 
