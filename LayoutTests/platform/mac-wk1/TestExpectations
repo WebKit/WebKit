@@ -2989,3 +2989,7 @@ webkit.org/b/281594 imported/w3c/web-platform-tests/html/semantics/document-meta
 [ Sonoma+ ] imported/w3c/web-platform-tests/xhr/event-error-order.sub.html [ Skip ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/xhr/send-authentication-basic-cors.htm [ Skip ]
 [ Sonoma+ ] imported/w3c/web-platform-tests/xhr/send-network-error-async-events.sub.htm [ Skip ]
+
+# webkit.org/b/281923  [ Sequoia+ ] 3 tests in http/tests/cookies/same-site are constant failure (failure in EWS)
+[ Sequoia+ ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
+[ Sequoia+ ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
