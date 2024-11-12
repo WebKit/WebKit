@@ -71,7 +71,9 @@ const CString& backendCommandsHash()
         gconstpointer data = g_bytes_get_data(bytes.get(), &dataSize);
         ASSERT(dataSize);
         SHA1 sha1;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         sha1.addBytes(std::span { static_cast<const uint8_t*>(data), dataSize });
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         hexDigest = sha1.computeHexDigest();
     }
     return hexDigest;

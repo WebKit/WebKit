@@ -371,7 +371,9 @@ JSCValue* jsc_value_new_string_from_bytes(JSCContext* context, GBytes* bytes)
 
     gsize dataSize;
     const auto* data = static_cast<const char*>(g_bytes_get_data(bytes, &dataSize));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     auto string = String::fromUTF8(std::span(data, dataSize));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     JSRetainPtr<JSStringRef> jsString(Adopt, OpaqueJSString::tryCreate(WTFMove(string)).leakRef());
     return jscContextGetOrCreateValue(context, JSValueMakeString(jscContextGetJSContext(context), jsString.get())).leakRef();
 }
