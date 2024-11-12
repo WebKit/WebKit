@@ -34,18 +34,10 @@
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 namespace WebKit {
 
-Lock g_logStreamLock;
-
-RefPtr<IPC::StreamClientConnection>& logStreamConnection()
+std::unique_ptr<WebKitLogClient>& webkitLogClient()
 {
-    static LazyNeverDestroyed<RefPtr<IPC::StreamClientConnection>> connection;
-    return connection.get();
-}
-
-LogStreamIdentifier& logStreamIdentifier()
-{
-    static LazyNeverDestroyed<LogStreamIdentifier> identifier;
-    return identifier.get();
+    static LazyNeverDestroyed<std::unique_ptr<WebKitLogClient>> client;
+    return client;
 }
 
 }

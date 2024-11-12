@@ -863,8 +863,10 @@ void WebProcess::setupLogStream()
         CRASH();
     auto [streamConnection, serverHandle] = WTFMove(*connectionPair);
     m_logStreamConnection = WTFMove(streamConnection);
-    logStreamConnection() = m_logStreamConnection;
-    logStreamIdentifier() = m_logStreamIdentifier;
+
+    webkitLogClient() = WTF::makeUnique<WebKitLogClient>(m_logStreamConnection.get(), m_logStreamIdentifier);
+    webCoreLogClient() = WTF::makeUnique<WebKitLogClient>(m_logStreamConnection.get(), m_logStreamIdentifier);
+
     if (RefPtr logStreamConnection = m_logStreamConnection)
         logStreamConnection->open(*this);
 
