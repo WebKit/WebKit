@@ -2600,6 +2600,7 @@ void Element::invalidateForQueryContainerSizeChange()
 
 void Element::invalidateForResumingQueryContainerResolution()
 {
+    setChildNeedsStyleRecalc();
     markAncestorsForInvalidatedStyle();
 }
 

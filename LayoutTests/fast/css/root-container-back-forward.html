@@ -1,0 +1,14 @@
+<!-- webkit-test-runner [ UsesBackForwardCache=true ] -->
+<style>
+:root {
+  container: root / inline-size;
+}
+@container root (width >= 100px) {
+  div { color: green }
+}
+</style>
+<div>Green</div>
+<script>
+testRunner.queueLoad("about:blank");
+testRunner.queueBackNavigation(1);
+</script>
