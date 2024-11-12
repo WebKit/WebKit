@@ -759,23 +759,38 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
     }
 
     if (selector.match() == CSSSelector::Match::PseudoClass) {
-        // Handle :not up front.
+        // FIXME: we should unifiy the :not() implementation with :is()/:where()
         if (selector.pseudoClass() == CSSSelector::PseudoClass::Not) {
             const CSSSelectorList* selectorList = selector.selectorList();
+            ASSERT(selectorList);
 
-            for (const CSSSelector* subselector = selectorList->first(); subselector; subselector = CSSSelectorList::next(subselector)) {
+            for (const auto& subselector : *selectorList) {
                 LocalContext subcontext(context);
                 subcontext.inFunctionalPseudoClass = true;
+                subcontext.matchedHostPseudoClass = false;
                 subcontext.pseudoElementEffective = false;
-                subcontext.selector = subselector;
-                subcontext.firstSelectorOfTheFragment = selectorList->first();
-                PseudoIdSet ignoreDynamicPseudo;
+                subcontext.selector = &subselector;
 
-                if (matchRecursively(checkingContext, subcontext, ignoreDynamicPseudo).match == Match::SelectorMatches) {
+                // FIXME: it seems wrong, should it be &subselector?
+                subcontext.firstSelectorOfTheFragment = selectorList->first();
+
+                PseudoIdSet ignoreDynamicPseudo;
+                auto match = matchRecursively(checkingContext, subcontext, ignoreDynamicPseudo).match == Match::SelectorMatches;
+
+                if (context.mustMatchHostPseudoClass) {
+                    // We ignore :not() arguments which don't combine with :host
+                    if (!subcontext.matchedHostPseudoClass)
+                        continue;
+                    context.matchedHostPseudoClass = true;
+                }
+
+                if (match) {
                     ASSERT(!ignoreDynamicPseudo);
                     return false;
                 }
             }
+            if (context.mustMatchHostPseudoClass && !context.matchedHostPseudoClass)
+                return false;
             return true;
         }
         if (context.hasScrollbarPseudo) {
@@ -891,13 +906,20 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
                 for (const auto& subselector : *selector.selectorList()) {
                     LocalContext subcontext(context);
                     subcontext.inFunctionalPseudoClass = true;
+                    subcontext.matchedHostPseudoClass = false;
                     subcontext.pseudoElementEffective = context.pseudoElementEffective;
                     subcontext.selector = &subselector;
                     subcontext.firstSelectorOfTheFragment = &subselector;
                     subcontext.pseudoElementIdentifier = std::nullopt;
                     PseudoIdSet localDynamicPseudoIdSet;
                     MatchResult result = matchRecursively(checkingContext, subcontext, localDynamicPseudoIdSet);
-                    context.matchedHostPseudoClass |= subcontext.matchedHostPseudoClass;
+
+                    // We ignore subselector which don't match the shadow dom
+                    if (context.mustMatchHostPseudoClass) {
+                        if (!subcontext.matchedHostPseudoClass)
+                            continue;
+                        context.matchedHostPseudoClass = true;
+                    }
 
                     // Pseudo elements are not valid inside :is()/:matches()
                     // They should also have a specificity of 0 (CSSSelector::simpleSelectorSpecificity)
