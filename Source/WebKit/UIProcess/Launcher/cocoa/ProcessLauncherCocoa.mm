@@ -408,7 +408,7 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     xpc_dictionary_set_string(bootstrapMessage.get(), "service-name", name);
 
     if (m_launchOptions.processType == ProcessLauncher::ProcessType::Web) {
-        bool disableLogging = m_client->shouldEnableLockdownMode();
+        bool disableLogging = true;
         xpc_dictionary_set_bool(bootstrapMessage.get(), "disable-logging", disableLogging);
     }
 

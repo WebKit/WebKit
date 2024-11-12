@@ -81,6 +81,7 @@
 			buildConfigurationList = C0CE72891247E68600BC0EC4 /* Build configuration list for PBXAggregateTarget "Derived Sources" */;
 			buildPhases = (
 				DDB04F3C278E55D0008D3678 /* Product Dependencies */,
+				E30604FE2CCD9E9C0033AC72 /* Generate log entries */,
 				C0CE72841247E66800BC0EC4 /* Generate Derived Sources */,
 				7B7A089228B738D800FF1239 /* Copy Profiling Data */,
 			);
@@ -8031,6 +8032,8 @@
 		E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxInitializationParameters.h; sourceTree = "<group>"; };
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
+		E30604F92CCC0A730033AC72 /* generate-log-entries.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "generate-log-entries.py"; sourceTree = "<group>"; };
+		E30604FA2CCC34D70033AC72 /* LogEntries.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = LogEntries.in; sourceTree = "<group>"; };
 		E30CFB9D2660663C0094D9C0 /* com.apple.WebKit.WebContent.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = com.apple.WebKit.WebContent.sb; sourceTree = "<group>"; };
 		E313664D265EE5AF0051084F /* com.apple.WebKit.WebContent.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.WebContent.sb.in; sourceTree = "<group>"; };
 		E31586CB2AD610F30062ED2A /* ExtensionEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionEventHandler.h; path = Cocoa/ExtensionEventHandler.h; sourceTree = "<group>"; };
@@ -8040,7 +8043,6 @@
 		E326E356284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuxiliaryProcessProxyCocoa.mm; sourceTree = "<group>"; };
 		E326F4D92CA6C44F00182187 /* LogStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogStream.h; sourceTree = "<group>"; };
 		E326F4DA2CA6C44F00182187 /* LogStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LogStream.cpp; sourceTree = "<group>"; };
-		E326F4E12CA6F95B00182187 /* LogStream.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = LogStream.messages.in; sourceTree = "<group>"; };
 		E33E8FFC2C7FD2980002BEB3 /* UseDownloadPlaceholder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UseDownloadPlaceholder.h; sourceTree = "<group>"; };
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
 		E34B110C27C46BC6006D2F2E /* libWebCoreTestShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -9259,9 +9261,9 @@
 				5C37A5BE2970DB6000D222A0 /* LoadedWebArchive.h */,
 				2D10875F1D2C573E00B85F82 /* LoadParameters.h */,
 				46B9E2372B04228A008346A5 /* LoadParameters.serialization.in */,
+				E30604FA2CCC34D70033AC72 /* LogEntries.in */,
 				E326F4DA2CA6C44F00182187 /* LogStream.cpp */,
 				E326F4D92CA6C44F00182187 /* LogStream.h */,
-				E326F4E12CA6F95B00182187 /* LogStream.messages.in */,
 				E3DC5B1A2C9AE09700D73BB3 /* LogStreamIdentifier.h */,
 				462CD80B28204DF100F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h */,
 				49917DB0252E30750050313F /* MediaPlaybackState.h */,
@@ -15635,6 +15637,7 @@
 				0FC0856E187CE0A900780D86 /* __init__.py */,
 				E3A997B92AFFCEA2006C90F1 /* compile-sandbox.sh */,
 				4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */,
+				E30604F92CCC0A730033AC72 /* generate-log-entries.py */,
 				C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */,
 				5CD4F01C28B6ADDB00F9ECEA /* generate-serializers.py */,
 				0FC0856F187CE0A900780D86 /* messages.py */,
@@ -19280,6 +19283,29 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "UNLOCK_SCRIPT_PATH=\"${SRCROOT}/../../../Internal/Tools/Scripts/unlock-safari-engineering-keychain-if-needed\"\n\n[[ -x \"${UNLOCK_SCRIPT_PATH}\" ]] && exec \"${UNLOCK_SCRIPT_PATH}\"\n\nexit 0\n";
+		};
+		E30604FE2CCD9E9C0033AC72 /* Generate log entries */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Shared/LogEntries.in",
+			);
+			name = "Generate log entries";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntries.h",
+				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogStream.messages.in",
+				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntriesDeclarations.h",
+				"${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntriesImplementations.h",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "Scripts/generate-log-entries.py ${SRCROOT}/Shared/LogEntries.in ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntries.h ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogStream.messages.in ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntriesDeclarations.h ${BUILT_PRODUCTS_DIR}/DerivedSources/WebKit/LogEntriesImplementations.h\n";
 		};
 		E3067ED02B758FEA007C7A03 /* Create symlinks for extensions */ = {
 			isa = PBXShellScriptBuildPhase;

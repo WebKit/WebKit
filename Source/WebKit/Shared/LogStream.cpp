@@ -96,6 +96,8 @@ void LogStream::setup(uint64_t pid, IPC::StreamServerConnectionHandle&& serverCo
     completionHandler(m_logWorkQueue->wakeUpSemaphore(), m_logStreamConnection->clientWaitSemaphore());
 }
 
+#include "LogEntriesImplementations.h"
+
 }
 
 #endif

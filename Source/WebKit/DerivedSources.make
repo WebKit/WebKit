@@ -127,6 +127,7 @@ else
 endif
 
 MESSAGE_RECEIVERS = \
+	$(BUILT_PRODUCTS_DIR)/DerivedSources/WebKit/LogStream \
 	NetworkProcess/NetworkBroadcastChannelRegistry \
 	NetworkProcess/NetworkConnectionToWebProcess \
 	NetworkProcess/NetworkContentRuleListManager \
@@ -157,7 +158,6 @@ MESSAGE_RECEIVERS = \
 	Shared/IPCStreamTesterProxy \
 	Shared/IPCTester \
 	Shared/IPCTesterReceiver \
-	Shared/LogStream \
 	UIProcess/WebFullScreenManagerProxy \
 	UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy \
 	UIProcess/GPU/GPUProcessProxy \
@@ -385,6 +385,10 @@ MESSAGES_IN_FILES := $(addsuffix .messages.in,$(MESSAGE_RECEIVERS))
 SANDBOX_IMPORT_DIR=$(SDKROOT)/usr/local/share/sandbox/profiles/embedded/imports
 
 .PHONY : all
+
+#LogEntries.h LogStream.messages.in : LogEntries.in
+#	@echo Generate log entries for $< ...
+#	$(PYTHON) $(WebKit2)/Scripts/generate-log-entries.py $< LogEntries.h LogStream.messages.in
 
 all : $(GENERATED_MESSAGES_FILES)
 

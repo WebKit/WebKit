@@ -30,6 +30,37 @@
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
 
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#include "LogStream.h"
+#include "LogStreamMessages.h"
+#include "StreamClientConnection.h"
+#include <wtf/Lock.h>
+
+#define RELEASE_LOG_FORWARDABLE(category, logMessage, ...) \
+    if (WebKit::logStreamConnection()) { \
+        g_logStreamLock.lock(); \
+        WebKit::logStreamConnection()->send(Messages::LogStream::logMessage(__VA_ARGS__), WebKit::logStreamIdentifier()); \
+        g_logStreamLock.unlock(); \
+    }
+#define RELEASE_LOG_ERROR_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_FORWARDABLE(category, logMessage, __VA_ARGS__)
+#define RELEASE_LOG_FAULT_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_FORWARDABLE(category, logMessage, __VA_ARGS__)
+
+namespace WebKit {
+
+RefPtr<IPC::StreamClientConnection>& logStreamConnection();
+LogStreamIdentifier& logStreamIdentifier();
+extern Lock g_logStreamLock;
+
+}
+#else
+#if __has_include("LogEntries.h")
+#include "LogEntries.h"
+#endif
+#define RELEASE_LOG_FORWARDABLE RELEASE_LOG
+#define RELEASE_LOG_ERROR_FORWARDABLE RELEASE_LOG_ERROR
+#define RELEASE_LOG_FAULT_FORWARDABLE RELEASE_LOG_FAULT
+#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX WebKit2Log
 #endif

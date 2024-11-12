@@ -27,7 +27,29 @@
 #include "config.h"
 #include "Logging.h"
 
+#include <wtf/NeverDestroyed.h>
+
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+namespace WebKit {
+
+Lock g_logStreamLock;
+
+RefPtr<IPC::StreamClientConnection>& logStreamConnection()
+{
+    static LazyNeverDestroyed<RefPtr<IPC::StreamClientConnection>> connection;
+    return connection.get();
+}
+
+LogStreamIdentifier& logStreamIdentifier()
+{
+    static LazyNeverDestroyed<LogStreamIdentifier> identifier;
+    return identifier.get();
+}
+
+}
+#endif
 
 #define DEFINE_WEBKIT2_LOG_CHANNEL(name) DEFINE_LOG_CHANNEL(name, LOG_CHANNEL_WEBKIT_SUBSYSTEM)
 WEBKIT2_LOG_CHANNELS(DEFINE_WEBKIT2_LOG_CHANNEL)
