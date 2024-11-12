@@ -2994,3 +2994,8 @@ webkit.org/b/281594 imported/w3c/web-platform-tests/html/semantics/document-meta
 # webkit.org/b/281923  [ Sequoia+ ] 3 tests in http/tests/cookies/same-site are constant failure (failure in EWS)
 [ Sequoia+ ] http/tests/cookies/same-site/fetch-after-navigating-iframe-in-cross-origin-page.html [ Failure ]
 [ Sequoia+ ] http/tests/cookies/same-site/popup-cross-site-post.html [ Failure ]
+
+webkit.org/b/283013 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/predefined-011.html [ ImageOnlyFailure ]
+webkit.org/b/283013 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/predefined-012.html [ ImageOnlyFailure ]
+webkit.org/b/283013 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/rec2020-001.html [ ImageOnlyFailure ]
+webkit.org/b/283013 [ Sequoia+ ] imported/w3c/web-platform-tests/css/css-color/relative-currentcolor-rec2020-01.html [ ImageOnlyFailure ]
