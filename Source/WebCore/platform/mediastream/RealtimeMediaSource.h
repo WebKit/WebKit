@@ -302,6 +302,10 @@ public:
 
     virtual bool isPowerEfficient() const { return false; }
 
+#if USE(GSTREAMER)
+    virtual std::pair<GstClockTime, GstClockTime> queryCaptureLatency() const;
+#endif
+
 protected:
     RealtimeMediaSource(const CaptureDevice&, MediaDeviceHashSalts&& hashSalts = { }, std::optional<PageIdentifier> = std::nullopt);
 
