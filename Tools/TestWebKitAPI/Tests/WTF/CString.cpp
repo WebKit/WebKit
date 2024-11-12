@@ -81,7 +81,7 @@ TEST(WTF, CStringUninitializedConstructor)
     CString emptyString = CString::newUninitialized(0, buffer);
     ASSERT_FALSE(emptyString.isNull());
     ASSERT_EQ(buffer.data(), emptyString.data());
-    ASSERT_EQ(buffer[0], 0);
+    ASSERT_TRUE(buffer.empty());
 
     const size_t length = 25;
     CString uninitializedString = CString::newUninitialized(length, buffer);
