@@ -713,7 +713,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
         if (!indexCount || !instanceCount || !indexBuffer || m_indexBuffer->isDestroyed())
             return finalizeRenderCommand();
 
-        storeVertexBufferCountsForValidation(indexCount, instanceCount, firstIndex, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes);
+        storeVertexBufferCountsForValidation(indexCount, instanceCount, indexBufferOffsetInBytes / indexSizeInBytes, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes);
 
         RefPtr renderPassEncoder = m_renderPassEncoder.get();
         if (renderPassEncoder && (useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw || useIndirectCall == RenderPassEncoder::IndexCall::CachedIndirectDraw)) {

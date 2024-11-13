@@ -1047,7 +1047,7 @@ void RenderPassEncoder::executeBundles(Vector<Ref<RenderBundle>>&& bundles)
                     CHECKED_SET_PSO(commandEncoder, renderPipelineState);
                     [commandEncoder setVertexBytes:&data.indexData length:sizeof(data.indexData) atIndex:0];
                     [commandEncoder setVertexBuffer:icb.indirectCommandBufferContainer offset:0 atIndex:1];
-
+                    [commandEncoder useResource:indexBuffer->buffer() usage:MTLResourceUsageRead stages:MTLRenderStageVertex];
                     [commandEncoder drawPrimitives:MTLPrimitiveTypePoint vertexStart:0 vertexCount:data.indexData.indexCount];
                     indexBuffer->indirectBufferRecomputed(data.indexData.firstIndex, data.indexData.indexCount, data.indexData.minVertexCount, data.indexData.minInstanceCount, data.indexType, data.indexData.firstInstance);
                     splitPass = true;
