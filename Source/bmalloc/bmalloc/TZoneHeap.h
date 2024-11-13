@@ -68,7 +68,11 @@ static inline constexpr size_t roundUpToMulipleOf8(size_t x) { return ((x + 7) /
 // The name "LibPasBmallocHeapType" is important for the pas_status_reporter to work right.
 template<typename LibPasBmallocHeapType>
 struct TZoneHeapBase {
+#if BENABLE_MALLOC_HEAP_BREAKDOWN
+    TZoneHeapBase(const char* = nullptr);
+#else
     constexpr TZoneHeapBase(const char* = nullptr) { }
+#endif
 
     void scavenge() { }
     void initialize() { }
