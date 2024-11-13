@@ -31,8 +31,6 @@
 #include <wtf/OptionSet.h>
 #include <wtf/text/StringView.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 enum class Base64EncodeOption {
@@ -197,7 +195,7 @@ public:
 
     template<typename CharacterType> void writeTo(CharacterType* destination) const
     {
-        base64Encode(m_base64.input, std::span(destination, m_encodedLength), m_base64.options);
+        base64Encode(m_base64.input, unsafeMakeSpan(destination, m_encodedLength), m_base64.options);
     }
 
 private:
@@ -226,5 +224,3 @@ using WTF::base64URLEncoded;
 using WTF::isBase64OrBase64URLCharacter;
 using WTF::fromBase64;
 using WTF::maxLengthFromBase64;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
