@@ -42,7 +42,7 @@ namespace WebKit {
 namespace NetworkCache {
 
 BlobStorage::BlobStorage(const String& blobDirectoryPath, Salt salt)
-    : m_blobDirectoryPath(blobDirectoryPath)
+    : m_blobDirectoryPath(crossThreadCopy(blobDirectoryPath))
     , m_salt(salt)
 {
 }
