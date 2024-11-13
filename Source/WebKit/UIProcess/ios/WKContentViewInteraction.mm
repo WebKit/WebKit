@@ -4525,7 +4525,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 - (BOOL)shouldAllowHighlightLinkCreation
 {
     URL url { _page->currentURL() };
-    if (!url.isValid() || !url.protocolIsInHTTPFamily())
+    if (!url.isValid() || !url.protocolIsInHTTPFamily() || [_webView _isDisplayingPDF])
         return NO;
 
     auto editorState = _page->editorState();
