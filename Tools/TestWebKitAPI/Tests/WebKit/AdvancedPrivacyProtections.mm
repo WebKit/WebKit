@@ -39,9 +39,12 @@
 #import "UserInterfaceSwizzler.h"
 #import <WebCore/LinkDecorationFilteringData.h>
 #import <WebKit/WKErrorPrivate.h>
+#import <WebKit/WKPreferencesPrivate.h>
+#import <WebKit/WKWebViewConfigurationPrivate.h>
 #import <WebKit/WKWebViewPrivateForTesting.h>
 #import <WebKit/WKWebpagePreferencesPrivate.h>
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKFeature.h>
 #import <WebKit/_WKWebsiteDataStoreConfiguration.h>
 #import <pal/spi/cf/CFNetworkSPI.h>
 #import <wtf/BlockPtr.h>
@@ -189,6 +192,14 @@ static RetainPtr<TestWKWebView> createWebViewWithAdvancedPrivacyProtections(BOOL
     [configuration setWebsiteDataStore:store];
     [configuration setMediaTypesRequiringUserActionForPlayback:WKAudiovisualMediaTypeNone];
     [configuration setDefaultWebpagePreferences:preferences.get()];
+    if (!enabled) {
+        for (_WKFeature *feature in [WKPreferences _features]) {
+            if ([feature.key isEqualToString:@"FilterLinkDecorationByDefaultEnabled"]) {
+                [[configuration preferences] _setEnabled:YES forFeature:feature];
+                break;
+            }
+        }
+    }
 
     return adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 800, 600) configuration:configuration.get()]);
 }
