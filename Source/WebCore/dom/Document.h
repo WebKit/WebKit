@@ -2144,7 +2144,7 @@ private:
 
     const Ref<const Settings> m_settings;
 
-    std::unique_ptr<Quirks> m_quirks;
+    const std::unique_ptr<Quirks> m_quirks;
 
     RefPtr<LocalDOMWindow> m_domWindow;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_contextDocument;
@@ -2199,7 +2199,7 @@ private:
     HashSet<SingleThreadWeakRef<Range>> m_ranges;
 
     UniqueRef<Style::Scope> m_styleScope;
-    std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
+    const std::unique_ptr<ExtensionStyleSheets> m_extensionStyleSheets;
     RefPtr<StyleSheetList> m_styleSheetList;
 
     std::unique_ptr<FormController> m_formController;
@@ -2213,14 +2213,14 @@ private:
     Color m_linkColor;
     Color m_visitedLinkColor;
     Color m_activeLinkColor;
-    std::unique_ptr<VisitedLinkState> m_visitedLinkState;
+    const std::unique_ptr<VisitedLinkState> m_visitedLinkState;
 
     StringWithDirection m_title;
     StringWithDirection m_rawTitle;
     RefPtr<Element> m_titleElement;
 
     std::unique_ptr<AXObjectCache> m_axObjectCache;
-    std::unique_ptr<DocumentMarkerController> m_markers;
+    const std::unique_ptr<DocumentMarkerController> m_markers;
     
     Timer m_styleRecalcTimer;
 
@@ -2235,7 +2235,7 @@ private:
 #if !LOG_DISABLED
     MonotonicTime m_documentCreationTime;
 #endif
-    std::unique_ptr<ScriptRunner> m_scriptRunner;
+    const std::unique_ptr<ScriptRunner> m_scriptRunner;
     std::unique_ptr<ScriptModuleLoader> m_moduleLoader;
 
     Vector<RefPtr<Element>> m_currentScriptStack;
@@ -2304,7 +2304,7 @@ private:
 #endif
 
 #if ENABLE(FULLSCREEN_API)
-    std::unique_ptr<FullscreenManager> m_fullscreenManager;
+    const std::unique_ptr<FullscreenManager> m_fullscreenManager;
 #endif
 
     WeakHashSet<HTMLImageElement, WeakPtrImplWithEventTargetData> m_dynamicMediaQueryDependentImages;
@@ -2312,7 +2312,7 @@ private:
     Vector<WeakPtr<IntersectionObserver>> m_intersectionObservers;
     Timer m_intersectionObserversInitialUpdateTimer;
     // This is only non-null when this document is an explicit root.
-    std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
+    const std::unique_ptr<IntersectionObserverData> m_intersectionObserverData;
 
     Vector<WeakPtr<ResizeObserver>> m_resizeObservers;
 
@@ -2377,13 +2377,13 @@ private:
     using LocaleIdentifierToLocaleMap = UncheckedKeyHashMap<AtomString, std::unique_ptr<Locale>>;
     LocaleIdentifierToLocaleMap m_localeCache;
 
-    RefPtr<Document> m_templateDocument;
+    const RefPtr<Document> m_templateDocument;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_templateDocumentHost; // Manually managed weakref (backpointer from m_templateDocument).
 
     RefPtr<DocumentFragment> m_documentFragmentForInnerOuterHTML;
 
-    RefPtr<CSSFontSelector> m_fontSelector;
-    std::unique_ptr<DocumentFontLoader> m_fontLoader;
+    const RefPtr<CSSFontSelector> m_fontSelector;
+    const std::unique_ptr<DocumentFontLoader> m_fontLoader;
 
     WeakHashSet<MediaProducer> m_audioProducers;
     WeakPtr<SpeechRecognition> m_activeSpeechRecognition;
@@ -2421,7 +2421,7 @@ private:
     RefPtr<StringCallback> m_consoleMessageListener;
 
     RefPtr<DocumentTimeline> m_timeline;
-    std::unique_ptr<AnimationTimelinesController> m_timelinesController;
+    const std::unique_ptr<AnimationTimelinesController> m_timelinesController;
 
     RefPtr<WindowEventLoop> m_eventLoop;
     std::unique_ptr<EventLoopTaskGroup> m_documentTaskGroup;
@@ -2433,7 +2433,7 @@ private:
     
     std::optional<FixedVector<CSSPropertyID>> m_exposedComputedCSSPropertyIDs;
 
-    RefPtr<PaintWorklet> m_paintWorklet;
+    const RefPtr<PaintWorklet> m_paintWorklet;
     UncheckedKeyHashMap<String, Ref<PaintWorkletGlobalScope>> m_paintWorkletGlobalScopes;
 
 #if ENABLE(CONTENT_CHANGE_OBSERVER)
@@ -2447,8 +2447,8 @@ private:
 
     std::unique_ptr<TextManipulationController> m_textManipulationController;
 
-    RefPtr<UndoManager> m_undoManager;
-    std::unique_ptr<Editor> m_editor;
+    const RefPtr<UndoManager> m_undoManager;
+    const std::unique_ptr<Editor> m_editor;
     UniqueRef<FrameSelection> m_selection;
 
     String m_fragmentDirective;
@@ -2470,7 +2470,7 @@ private:
 
     WeakHashSet<Element, WeakPtrImplWithEventTargetData> m_renderBlockingElements;
 
-    RefPtr<ReportingScope> m_reportingScope;
+    const RefPtr<ReportingScope> m_reportingScope;
 
     std::unique_ptr<WakeLockManager> m_wakeLockManager;
     std::unique_ptr<SleepDisabler> m_sleepDisabler;
@@ -2675,7 +2675,7 @@ private:
 
     static bool hasEverCreatedAnAXObjectCache;
 
-    RefPtr<ResizeObserver> m_resizeObserverForContainIntrinsicSize;
+    const RefPtr<ResizeObserver> m_resizeObserverForContainIntrinsicSize;
 
     const std::optional<FrameIdentifier> m_frameIdentifier;
     std::optional<bool> m_cachedCookiesEnabled;

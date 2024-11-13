@@ -1091,6 +1091,13 @@ ALWAYS_INLINE constexpr void forEachSetBit(std::span<const WordType> bits, size_
     }
 }
 
+template<typename T, typename U>
+ALWAYS_INLINE void lazyInitialize(const std::unique_ptr<T>& ptr, std::unique_ptr<U>&& obj)
+{
+    RELEASE_ASSERT(!ptr);
+    const_cast<std::unique_ptr<T>&>(ptr) = std::move(obj);
+}
+
 } // namespace WTF
 
 #define WTFMove(value) std::move<WTF::CheckMoveParameter>(value)
@@ -1145,5 +1152,6 @@ using WTF::valueOrCompute;
 using WTF::valueOrDefault;
 using WTF::toTwosComplement;
 using WTF::Invocable;
+using WTF::lazyInitialize;
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
