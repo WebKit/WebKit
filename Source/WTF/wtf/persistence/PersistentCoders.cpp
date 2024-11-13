@@ -31,8 +31,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF::Persistence {
 
 void Coder<AtomString>::encodeForPersistence(Encoder& encoder, const AtomString& atomString)
@@ -201,5 +199,3 @@ std::optional<Seconds> Coder<Seconds>::decodeForPersistence(Decoder& decoder)
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

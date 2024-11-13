@@ -337,11 +337,11 @@ static std::optional<RetainPtr<CFDataRef>> decodeCFData(Decoder& decoder)
     if (UNLIKELY(!isInBounds<size_t>(*size)))
         return std::nullopt;
 
-    auto pointer = decoder.bufferPointerForDirectRead(static_cast<size_t>(*size));
-    if (!pointer)
+    auto buffer = decoder.bufferPointerForDirectRead(static_cast<size_t>(*size));
+    if (!buffer.data())
         return std::nullopt;
 
-    return adoptCF(CFDataCreate(nullptr, pointer, *size));
+    return toCFData(buffer);
 }
 
 static void encodeSecTrustRef(Encoder& encoder, SecTrustRef trust)
