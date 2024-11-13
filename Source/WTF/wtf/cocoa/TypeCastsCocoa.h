@@ -121,6 +121,7 @@ template<typename T> inline T *checked_objc_cast(id object)
 
 template<typename T, typename U> inline T *checked_objc_cast(U *object)
 {
+    static_assert(std::is_base_of_v<U, T>);
     if (!object)
         return nullptr;
 
@@ -136,12 +137,30 @@ template<typename T, typename U> inline T *checked_objc_cast(U *object)
 
 template<typename T, typename U> RetainPtr<T> dynamic_objc_cast(RetainPtr<U>&& object)
 {
+    static_assert(std::is_base_of_v<U, T>);
+    static_assert(!std::is_same_v<U, T>);
     if (!is_objc<T>(object.get()))
         return nullptr;
-    return WTFMove(object);
+    return adoptNS(reinterpret_cast<T*>(object.leakRef()));
+}
+
+template<typename T> RetainPtr<T> dynamic_objc_cast(RetainPtr<id>&& object)
+{
+    if (!is_objc<T>(object.get()))
+        return nullptr;
+    return adoptNS(reinterpret_cast<T*>(object.leakRef()));
 }
 
 template<typename T, typename U> RetainPtr<T> dynamic_objc_cast(const RetainPtr<U>& object)
+{
+    static_assert(std::is_base_of_v<U, T>);
+    static_assert(!std::is_same_v<U, T>);
+    if (!is_objc<T>(object.get()))
+        return nullptr;
+    return reinterpret_cast<T*>(object.get());
+}
+
+template<typename T, typename U> RetainPtr<T> dynamic_objc_cast(const RetainPtr<id>& object)
 {
     if (!is_objc<T>(object.get()))
         return nullptr;
