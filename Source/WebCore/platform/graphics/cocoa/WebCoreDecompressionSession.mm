@@ -181,7 +181,7 @@ void WebCoreDecompressionSession::enqueueSample(CMSampleBufferRef sampleBuffer, 
 
     LOG(Media, "WebCoreDecompressionSession::enqueueSample(%p) - framesBeingDecoded(%d)", this, int(m_framesBeingDecoded));
 
-    m_decompressionQueue->dispatch([protectedThis = Ref { *this }, strongBuffer = retainPtr(sampleBuffer), displaying, flushId = m_flushId] {
+    m_decompressionQueue->dispatch([protectedThis = Ref { *this }, strongBuffer = retainPtr(sampleBuffer), displaying, flushId = m_flushId.load()] {
         protectedThis->enqueueCompressedSample(strongBuffer.get(), displaying, flushId);
     });
 }
@@ -281,9 +281,15 @@ void WebCoreDecompressionSession::maybeDecodeNextSample()
     if (m_pendingSamples.isEmpty() || m_isDecodingSample)
         return;
 
-    m_isDecodingSample = true;
     auto tuple = m_pendingSamples.takeFirst();
-    decodeSampleInternal(std::get<RetainPtr<CMSampleBufferRef>>(tuple).get(), std::get<bool>(tuple))->whenSettled(m_decompressionQueue, [weakThis = ThreadSafeWeakPtr { *this }, this, flushId = std::get<uint32_t>(tuple)](auto&& result) {
+    auto flushId = std::get<uint32_t>(tuple);
+    if (flushId != m_flushId) {
+        maybeDecodeNextSample();
+        return;
+    }
+
+    m_isDecodingSample = true;
+    decodeSampleInternal(std::get<RetainPtr<CMSampleBufferRef>>(tuple).get(), std::get<bool>(tuple))->whenSettled(m_decompressionQueue, [weakThis = ThreadSafeWeakPtr { *this }, this, flushId](auto&& result) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis || isInvalidated())
             return;
@@ -333,8 +339,9 @@ auto WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, bool di
 {
     DecodingPromise::Producer producer;
     auto promise = producer.promise();
-    m_decompressionQueue->dispatch([protectedThis = RefPtr { this }, producer = WTFMove(producer), sample = RetainPtr { sample }, displaying] () mutable {
-        protectedThis->decodeSampleInternal(sample.get(), displaying)->chainTo(WTFMove(producer));
+    m_decompressionQueue->dispatch([protectedThis = RefPtr { this }, producer = WTFMove(producer), sample = RetainPtr { sample }, displaying, flushId = m_flushId.load()]() mutable {
+        if (flushId == protectedThis->m_flushId)
+            protectedThis->decodeSampleInternal(sample.get(), displaying)->chainTo(WTFMove(producer));
     });
     return promise;
 }

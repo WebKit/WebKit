@@ -103,16 +103,15 @@ private:
     void flushCompressedSampleQueue();
     void flushDecodedSampleQueue();
     void purgeDecodedSampleQueue();
-    CMBufferQueueRef ensureCompressedSampleQueue();
     CMBufferQueueRef ensureDecodedSampleQueue();
     void assignResourceOwner(CMSampleBufferRef);
     void maybeBecomeReadyForMoreMediaData();
 
-    Ref<WTF::WorkQueue> m_workQueue;
+    const Ref<WTF::WorkQueue> m_workQueue;
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
     RetainPtr<AVSampleBufferVideoRenderer> m_renderer;
     RetainPtr<CMTimebaseRef> m_timebase;
-    RetainPtr<CMBufferQueueRef> m_compressedSampleQueue;
+    RetainPtr<CMBufferQueueRef> m_compressedSampleQueue; // created on the main thread, always set if m_decompressionSession and on workQueue.
     RetainPtr<CMBufferQueueRef> m_decodedSampleQueue;
     OSObjectPtr<dispatch_source_t> m_timerSource;
     RefPtr<WebCoreDecompressionSession> m_decompressionSession;

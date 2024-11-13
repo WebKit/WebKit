@@ -178,7 +178,7 @@ void VideoMediaSampleRenderer::enqueueSample(const MediaSample& sample)
         return;
     }
 
-    PAL::CMBufferQueueEnqueue(ensureCompressedSampleQueue(), cmSampleBuffer);
+    PAL::CMBufferQueueEnqueue(m_compressedSampleQueue.get(), cmSampleBuffer);
     m_workQueue->dispatch([weakThis = ThreadSafeWeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get())
             protectedThis->decodeNextSample();
@@ -189,8 +189,7 @@ void VideoMediaSampleRenderer::decodeNextSample()
 {
     assertIsCurrent(m_workQueue);
 
-    if (!m_compressedSampleQueue)
-        return;
+    ASSERT(m_compressedSampleQueue);
 
     if (m_isDecodingSample)
         return;
@@ -202,7 +201,7 @@ void VideoMediaSampleRenderer::decodeNextSample()
     bool displaying = !MediaSampleAVFObjC::isCMSampleBufferNonDisplaying(sample.get());
     auto decodePromise = m_decompressionSession->decodeSample(sample.get(), displaying);
     m_isDecodingSample = true;
-    decodePromise->whenSettled(m_workQueue, [weakThis = ThreadSafeWeakPtr { *this }, displaying] (auto&& result) {
+    decodePromise->whenSettled(m_workQueue, [weakThis = ThreadSafeWeakPtr { *this }, displaying](auto&& result) {
         RefPtr protectedThis = weakThis.get();
         if (!protectedThis)
             return;
@@ -210,7 +209,7 @@ void VideoMediaSampleRenderer::decodeNextSample()
         protectedThis->m_isDecodingSample = false;
 
         if (!result) {
-            ensureOnMainThread([protectedThis = WTFMove(protectedThis), status = result.error()] {
+            callOnMainThread([protectedThis = WTFMove(protectedThis), status = result.error()] {
                 assertIsMainThread();
 
                 // Simulate AVSBDL decoding error.
@@ -242,6 +241,10 @@ void VideoMediaSampleRenderer::initializeDecompressionSession()
     if (m_decompressionSession)
         m_decompressionSession->invalidate();
 
+    if (!m_compressedSampleQueue)
+        m_compressedSampleQueue = WebCoreDecompressionSession::createBufferQueue();
+    else
+        flushCompressedSampleQueue();
     m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
     m_decompressionSession->setTimebase(m_timebase.get());
     m_decompressionSession->setResourceOwner(m_resourceOwner);
@@ -274,7 +277,10 @@ void VideoMediaSampleRenderer::decodedFrameAvailable(RetainPtr<CMSampleBufferRef
 
 void VideoMediaSampleRenderer::flushCompressedSampleQueue()
 {
-    assertIsCurrent(m_workQueue);
+    assertIsMainThread();
+
+    ASSERT(m_compressedSampleQueue);
+
     if (!m_compressedSampleQueue)
         return;
 
@@ -323,14 +329,6 @@ void VideoMediaSampleRenderer::purgeDecodedSampleQueue()
     PAL::CMTimebaseSetTimerDispatchSourceNextFireTime(m_timebase.get(), m_timerSource.get(), nextPurgeTime, 0);
 }
 
-CMBufferQueueRef VideoMediaSampleRenderer::ensureCompressedSampleQueue()
-{
-    assertIsMainThread();
-    if (!m_compressedSampleQueue)
-        m_compressedSampleQueue = WebCoreDecompressionSession::createBufferQueue();
-    return m_compressedSampleQueue.get();
-}
-
 CMBufferQueueRef VideoMediaSampleRenderer::ensureDecodedSampleQueue()
 {
     assertIsCurrent(m_workQueue);
@@ -344,21 +342,19 @@ void VideoMediaSampleRenderer::flush()
     assertIsMainThread();
     [renderer() flush];
 
-    if (m_decompressionSession)
-        m_decompressionSession->flush();
+    if (!m_decompressionSession)
+        return;
 
-    m_workQueue->dispatch([weakThis = ThreadSafeWeakPtr { *this }] () mutable {
-        RefPtr protectedThis = weakThis.get();
-        if (!protectedThis)
-            return;
-
-        protectedThis->flushCompressedSampleQueue();
-        protectedThis->flushDecodedSampleQueue();
-
-        callOnMainThread([weakThis = WTFMove(weakThis)] {
-            if (RefPtr protectedThis = weakThis.get())
-                protectedThis->maybeBecomeReadyForMoreMediaData();
-        });
+    flushCompressedSampleQueue();
+    m_decompressionSession->flush();
+    m_workQueue->dispatch([weakThis = ThreadSafeWeakPtr { *this }]() mutable {
+        if (RefPtr protectedThis = weakThis.get()) {
+            protectedThis->flushDecodedSampleQueue();
+            callOnMainThread([weakThis = WTFMove(weakThis)] {
+                if (RefPtr protectedThis = weakThis.get())
+                    protectedThis->maybeBecomeReadyForMoreMediaData();
+            });
+        }
     });
 }
 
