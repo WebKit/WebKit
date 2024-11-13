@@ -37,7 +37,35 @@ TEST(TextBoundariesTest, FindWordBoundaryEmpty)
 
     WebCore::findWordBoundary(stringView, 0, &start, &end);
 
-    ASSERT(!start);
-    ASSERT(!end);
+    EXPECT_EQ(start, 0);
+    EXPECT_EQ(end, 0);
+}
+
+TEST(TextBoundariesTest, FindWordBoundaryPositionTooBig)
+{
+    WTF::String aString("Hello World"_s);
+    WTF::StringView stringView(aString);
+    int start = -1;
+    int end = -1;
+
+    WebCore::findWordBoundary(stringView, aString.length(), &start, &end);
+
+    EXPECT_EQ(start >= 0 && start < static_cast<int>(stringView.length()), true);
+    EXPECT_EQ(end >= 0 && end < static_cast<int>(stringView.length()), true);
+    EXPECT_EQ(start <= end, true);
+}
+
+TEST(TextBoundariesTest, FindWordBoundaryPositionTooSmall)
+{
+    WTF::String aString("Hello World"_s);
+    WTF::StringView stringView(aString);
+    int start = -1;
+    int end = -1;
+
+    WebCore::findWordBoundary(stringView, -1, &start, &end);
+
+    EXPECT_EQ(start >= 0 && start < static_cast<int>(stringView.length()), true);
+    EXPECT_EQ(end >= 0 && end < static_cast<int>(stringView.length()), true);
+    EXPECT_EQ(start <= end, true);
 }
 }
