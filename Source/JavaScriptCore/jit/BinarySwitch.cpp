@@ -42,6 +42,7 @@ BinarySwitch::BinarySwitch(GPRReg value, std::span<const int64_t> cases, Type ty
     : m_weakRandom(globalCounter++)
     , m_type(type)
     , m_value(value)
+    , m_totalCases(cases.size())
 {
     if (cases.empty())
         return;
@@ -50,20 +51,31 @@ BinarySwitch::BinarySwitch(GPRReg value, std::span<const int64_t> cases, Type ty
         dataLog("Original cases: ", listDump(cases), "\n");
     
     m_cases.reserveInitialCapacity(cases.size());
-    for (unsigned i = 0; i < cases.size(); ++i)
-        m_cases.append(Case(cases[i], i));
-    
-    std::sort(m_cases.begin(), m_cases.end());
+    if (type == Int32 || type == IntPtr) {
+        for (unsigned i = 0; i < cases.size(); ++i)
+            m_cases.append(Case(cases[i], i));
 
-    if (BinarySwitchInternal::verbose)
-        dataLog("Sorted cases: ", listDump(m_cases), "\n");
+        std::sort(m_cases.begin(), m_cases.end());
+
+        if (BinarySwitchInternal::verbose)
+            dataLog("Sorted cases: ", listDump(m_cases), "\n");
 
 #if ASSERT_ENABLED
-    for (unsigned i = 1; i < m_cases.size(); ++i)
-        ASSERT(m_cases[i - 1] < m_cases[i], i, m_cases.size(), m_cases[i].value, m_cases[i].index);
+        for (unsigned i = 1; i < m_cases.size(); ++i)
+            ASSERT(m_cases[i - 1] < m_cases[i], i, m_cases.size(), m_cases[i].value, m_cases[i].index);
 #endif
+        build(0, false, m_cases.size());
+    } else {
+        m_cases.reserveInitialCapacity(cases.size());
+        for (unsigned i = 0; i < cases.size(); ++i) {
+            if (!i || cases[i-1] != cases[i])
+                m_cases.append(Case(cases[i], i));
+        }
 
-    build(0, false, m_cases.size());
+        if (BinarySwitchInternal::verbose)
+            dataLog("New cases: ", listDump(m_cases), "\n");
+        buildCheckRuns(0, m_cases.size());
+    }
 }
 
 BinarySwitch::~BinarySwitch() = default;
@@ -83,6 +95,38 @@ bool BinarySwitch::advance(MacroAssembler& jit)
     for (;;) {
         const BranchCode& code = m_branches[m_index++];
         switch (code.kind) {
+        case NegativeToFallThrough:
+            switch (m_type) {
+            case Int32:
+            case Int32CheckRuns:
+                m_fallThrough.append(jit.branch32(
+                    MacroAssembler::LessThan, m_value,
+                    MacroAssembler::Imm32(0)));
+                break;
+            case IntPtr:
+            case IntPtrCheckRuns:
+                m_fallThrough.append(jit.branchPtr(
+                    MacroAssembler::LessThan, m_value,
+                    MacroAssembler::ImmPtr(0)));
+                break;
+            }
+            break;
+        case NotLessThanToFallThrough:
+            switch (m_type) {
+            case Int32:
+            case Int32CheckRuns:
+                m_fallThrough.append(jit.branch32(
+                    MacroAssembler::AboveOrEqual, m_value,
+                    MacroAssembler::Imm32(static_cast<int32_t>(code.value))));
+                break;
+            case IntPtr:
+            case IntPtrCheckRuns:
+                m_fallThrough.append(jit.branchPtr(
+                    MacroAssembler::AboveOrEqual, m_value,
+                    MacroAssembler::ImmPtr(bitwise_cast<const void*>(static_cast<intptr_t>(code.value)))));
+                break;
+            }
+            break;
         case NotEqualToFallThrough:
             switch (m_type) {
             case Int32:
@@ -90,10 +134,20 @@ bool BinarySwitch::advance(MacroAssembler& jit)
                     MacroAssembler::NotEqual, m_value,
                     MacroAssembler::Imm32(static_cast<int32_t>(m_cases[code.index].value))));
                 break;
+            case Int32CheckRuns:
+                m_jumpStack.append(jit.branch32(
+                    MacroAssembler::NotEqual, m_value,
+                    MacroAssembler::Imm32(static_cast<int32_t>(code.value))));
+                break;
             case IntPtr:
                 m_fallThrough.append(jit.branchPtr(
                     MacroAssembler::NotEqual, m_value,
                     MacroAssembler::ImmPtr(bitwise_cast<const void*>(static_cast<intptr_t>(m_cases[code.index].value)))));
+                break;
+            case IntPtrCheckRuns:
+                m_fallThrough.append(jit.branchPtr(
+                    MacroAssembler::NotEqual, m_value,
+                    MacroAssembler::ImmPtr(bitwise_cast<const void*>(static_cast<intptr_t>(code.value)))));
                 break;
             }
             break;
@@ -104,10 +158,20 @@ bool BinarySwitch::advance(MacroAssembler& jit)
                     MacroAssembler::NotEqual, m_value,
                     MacroAssembler::Imm32(static_cast<int32_t>(m_cases[code.index].value))));
                 break;
+            case Int32CheckRuns:
+                m_jumpStack.append(jit.branch32(
+                    MacroAssembler::NotEqual, m_value,
+                    MacroAssembler::Imm32(static_cast<int32_t>(code.value))));
+                break;
             case IntPtr:
                 m_jumpStack.append(jit.branchPtr(
                     MacroAssembler::NotEqual, m_value,
                     MacroAssembler::ImmPtr(bitwise_cast<const void*>(static_cast<intptr_t>(m_cases[code.index].value)))));
+                break;
+            case IntPtrCheckRuns:
+                m_fallThrough.append(jit.branchPtr(
+                    MacroAssembler::NotEqual, m_value,
+                    MacroAssembler::ImmPtr(bitwise_cast<const void*>(static_cast<intptr_t>(code.value)))));
                 break;
             }
             break;
@@ -118,10 +182,20 @@ bool BinarySwitch::advance(MacroAssembler& jit)
                     MacroAssembler::LessThan, m_value,
                     MacroAssembler::Imm32(static_cast<int32_t>(m_cases[code.index].value))));
                 break;
+            case Int32CheckRuns:
+                m_jumpStack.append(jit.branch32(
+                    MacroAssembler::LessThan, m_value,
+                    MacroAssembler::Imm32(static_cast<int32_t>(code.value))));
+                break;
             case IntPtr:
                 m_jumpStack.append(jit.branchPtr(
                     MacroAssembler::LessThan, m_value,
                     MacroAssembler::ImmPtr(bitwise_cast<const void*>(static_cast<intptr_t>(m_cases[code.index].value)))));
+                break;
+            case IntPtrCheckRuns:
+                m_jumpStack.append(jit.branchPtr(
+                    MacroAssembler::LessThan, m_value,
+                    MacroAssembler::ImmPtr(bitwise_cast<const void*>(static_cast<intptr_t>(code.value)))));
                 break;
             }
             break;
@@ -129,7 +203,10 @@ bool BinarySwitch::advance(MacroAssembler& jit)
             m_jumpStack.takeLast().link(&jit);
             break;
         case ExecuteCase:
-            m_caseIndex = code.index;
+            if (m_type == Int32 || m_type == IntPtr)
+                m_caseIndex = code.index;
+            else
+                m_caseIndex = code.value;
             return true;
         }
     }
@@ -374,6 +451,45 @@ void BinarySwitch::build(unsigned start, bool hardStart, unsigned end)
     build(start, hardStart, medianIndex);
 }
 
+void BinarySwitch::buildCheckRuns(unsigned start, unsigned end)
+{
+    if (BinarySwitchInternal::verbose)
+        dataLog("Building with start = ", start, ", end = ", end, "\n");
+
+    auto append = [&] (const BranchCode& code) {
+        if (BinarySwitchInternal::verbose)
+            dataLog("==> ", code, "\n");
+        m_branches.append(code);
+    };
+
+    unsigned size = end - start;
+
+    if (size == 1) {
+        if (end == m_cases.size()) {
+            if (BinarySwitchInternal::verbose)
+                dataLog("Leaf with default!\n");
+            append(BranchCode(NotLessThanToFallThrough, m_cases[start].value, m_totalCases));
+            append(BranchCode(ExecuteCase, 0, start));
+        } else if (!start) {
+            if (BinarySwitchInternal::verbose)
+                dataLog("Leaf with first case!\n");
+            append(BranchCode(NegativeToFallThrough, 0, 0));
+            append(BranchCode(ExecuteCase, 0, start));
+        } else {
+            if (BinarySwitchInternal::verbose)
+                dataLog("It's a leaf!\n");
+            append(BranchCode(ExecuteCase, 0, start));
+        }
+        return;
+    }
+    unsigned medianIndex = (start + end) / 2;
+    // Check if it's less than m_cases[medianIndex].index: if so left, else right
+    append(BranchCode(LessThanToPush, m_cases[medianIndex].value, m_cases[medianIndex].index));
+    buildCheckRuns(medianIndex, end);
+    append(BranchCode(Pop));
+    buildCheckRuns(start, medianIndex);
+}
+
 void BinarySwitch::Case::dump(PrintStream& out) const
 {
     out.print("<value: " , value, ", index: ", index, ">");
@@ -381,24 +497,7 @@ void BinarySwitch::Case::dump(PrintStream& out) const
 
 void BinarySwitch::BranchCode::dump(PrintStream& out) const
 {
-    switch (kind) {
-    case NotEqualToFallThrough:
-        out.print("NotEqualToFallThrough");
-        break;
-    case NotEqualToPush:
-        out.print("NotEqualToPush");
-        break;
-    case LessThanToPush:
-        out.print("LessThanToPush");
-        break;
-    case Pop:
-        out.print("Pop");
-        break;
-    case ExecuteCase:
-        out.print("ExecuteCase");
-        break;
-    }
-
+    out.print(kind);
     if (index != UINT_MAX)
         out.print("(", index, ")");
 }
