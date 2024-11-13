@@ -129,6 +129,8 @@ public:
     {
     }
 
+    void copyOnly8BitCharacterData(const CharacterClass& other);
+
     bool hasNonBMPCharacters() const { return m_characterWidths & CharacterClassWidths::HasNonBMPChars; }
 
     bool hasOneCharacterSize() const { return m_characterWidths == CharacterClassWidths::HasBMPChars || m_characterWidths == CharacterClassWidths::HasNonBMPChars; }

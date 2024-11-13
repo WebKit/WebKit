@@ -866,8 +866,18 @@ private:
             auto addCharToResults = [&]() {
                 if (lo == hi)
                     resultMatches.append(lo);
-                else
+                else {
+                    // Coalesce the prior range with the new (lo, hi) range if they are adjacent.
+                    if (resultRanges.size() > 0) {
+                        auto lastIndex = resultRanges.size() - 1;
+                        if (resultRanges[lastIndex].end + 1 == lo) {
+                            resultRanges[lastIndex].end = hi;
+                            return;
+                        }
+                    }
+
                     resultRanges.append(CharacterRange(lo, hi));
+                }
             };
 
             for (auto setVal : lhsChunkBitSet) {
@@ -905,18 +915,25 @@ private:
             size_t rangesIndex = 0;
 
             while (matchesIndex < matches.size() && rangesIndex < ranges.size()) {
-                while (matchesIndex < matches.size() && matches[matchesIndex] < ranges[rangesIndex].begin - 1)
-                    matchesIndex++;
+                if (ranges[rangesIndex].begin) {
+                    while (matchesIndex < matches.size() && matches[matchesIndex] < ranges[rangesIndex].begin - 1)
+                        matchesIndex++;
 
-                if (matchesIndex < matches.size() && matches[matchesIndex] == ranges[rangesIndex].begin - 1) {
-                    ranges[rangesIndex].begin = matches[matchesIndex];
-                    matches.remove(matchesIndex);
+                    if (matchesIndex < matches.size() && matches[matchesIndex] == ranges[rangesIndex].begin - 1) {
+                        ranges[rangesIndex].begin = matches[matchesIndex];
+                        matches.remove(matchesIndex);
+                    }
                 }
 
                 while (matchesIndex < matches.size() && matches[matchesIndex] < ranges[rangesIndex].end + 1)
                     matchesIndex++;
 
                 if (matchesIndex < matches.size()) {
+                    if (matches[matchesIndex] > ranges[rangesIndex].end + 1) {
+                        rangesIndex++;
+                        continue;
+                    }
+
                     if (matches[matchesIndex] == ranges[rangesIndex].end + 1) {
                         ranges[rangesIndex].end = matches[matchesIndex];
                         matches.remove(matchesIndex);
@@ -924,6 +941,15 @@ private:
                         mergeRangesFrom(ranges, rangesIndex);
                     } else
                         matchesIndex++;
+                }
+            }
+
+            if (ranges.size() > 1) {
+                for (auto rangesIndex = ranges.size() - 1; rangesIndex > 0; rangesIndex--) {
+                    if (ranges[rangesIndex].begin == ranges[rangesIndex - 1].end + 1) {
+                        ranges[rangesIndex - 1].end = ranges[rangesIndex].end;
+                        ranges.remove(rangesIndex);
+                    }
                 }
             }
         };
@@ -1274,14 +1300,17 @@ public:
         m_currentCharacterClassConstructor->reset();
         auto hasStrings = newCharacterClass->hasStrings();
 
-        if (!m_invertCharacterClass && newCharacterClass.get()->m_anyCharacter) {
-            ASSERT(!hasStrings);
-            m_alternative->m_terms.append(PatternTerm(m_pattern.anyCharacterClass(), false));
-            return;
-        }
+        auto addCharacterClassTerm = [&] () {
+            if (!m_invertCharacterClass && newCharacterClass.get()->m_anyCharacter) {
+                m_alternative->m_terms.append(PatternTerm(m_pattern.anyCharacterClass(), false));
+                return;
+            }
+
+            m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), m_invertCharacterClass));
+        };
 
         if (!hasStrings)
-            m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), m_invertCharacterClass));
+            addCharacterClassTerm();
         else {
             if (m_invertCharacterClass) {
                 m_error = ErrorCode::NegatedClassSetMayContainStrings;
@@ -1306,7 +1335,7 @@ public:
                 if (alternativeCount)
                     disjunction(CreateDisjunctionPurpose::ForNextAlternative);
 
-                m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), m_invertCharacterClass));
+                addCharacterClassTerm();
             }
 
             atomParenthesesEnd();
@@ -2535,6 +2564,43 @@ std::unique_ptr<CharacterClass> anycharCreate()
     characterClass->m_characterWidths = CharacterClassWidths::HasBothBMPAndNonBMP;
     characterClass->m_anyCharacter = true;
     return characterClass;
+}
+
+void CharacterClass::copyOnly8BitCharacterData(const CharacterClass& other)
+{
+    RELEASE_ASSERT(!m_table);
+
+    m_strings.clear();
+    m_matches.clear();
+    m_ranges.clear();
+    m_matchesUnicode.clear();
+    m_rangesUnicode.clear();
+    m_characterWidths = CharacterClassWidths::Unknown;
+    m_tableInverted = false;
+    m_anyCharacter = false;
+    m_inCanonicalForm = other.m_inCanonicalForm;
+
+    for (auto match : other.m_matches)
+        m_matches.append(match);
+
+    for (auto range : other.m_ranges)
+        m_ranges.append(range);
+
+    for (auto match : other.m_matchesUnicode) {
+        if (match <= 0xff)
+            m_matchesUnicode.append(match);
+    }
+
+    for (auto range : other.m_rangesUnicode) {
+        if (range.begin <= 0xff)
+            m_rangesUnicode.append(CharacterRange(range.begin, std::min<char32_t>(range.end, 0xff)));
+    }
+
+    if (m_matches.isEmpty() && m_matchesUnicode.isEmpty()
+        && m_ranges.size() == 1 && m_rangesUnicode.size() == 1
+        && !m_ranges[0].begin && m_rangesUnicode[0].end == 0xff
+        && m_ranges[0].end == m_rangesUnicode[0].begin - 1)
+        m_anyCharacter = true;
 }
 
 } } // namespace JSC::Yarr
