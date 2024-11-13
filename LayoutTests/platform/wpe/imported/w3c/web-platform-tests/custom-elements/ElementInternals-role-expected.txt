@@ -22,7 +22,7 @@ PASS Applies "heading" via Element Internals
 PASS Applies "img" via Element Internals
 PASS Applies "feed" via Element Internals
 PASS Applies "link" via Element Internals
-FAIL Applies "list" via Element Internals assert_equals: [object HTMLElement] expected "list" but got "group"
+PASS Applies "list" via Element Internals
 PASS Applies "listbox" via Element Internals
 PASS Applies "log" via Element Internals
 PASS Applies "main" via Element Internals
@@ -57,7 +57,7 @@ PASS Applies "tree" via Element Internals
 PASS Applies "treegrid" via Element Internals
 PASS Applies parent/child relationship of "table"/"row"/"columnheader" via Element Internals
 PASS Applies parent/child relationship of "grid"/"row"/"gridcell" via Element Internals
-FAIL Applies parent/child relationship of "list"/"listitem" via Element Internals assert_equals: [object HTMLElement] expected "list" but got "group"
+PASS Applies parent/child relationship of "list"/"listitem" via Element Internals
 PASS Applies parent/child relationship of "menu"/"menuitem" via Element Internals
 PASS Applies parent/child relationship of "menu"/"menuitemcheckbox" via Element Internals
 PASS Applies parent/child relationship of "menu"/"menuitemradio" via Element Internals

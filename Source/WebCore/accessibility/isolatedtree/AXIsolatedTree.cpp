@@ -31,6 +31,7 @@
 #include "AXIsolatedObject.h"
 #include "AXLogger.h"
 #include "AccessibilityTable.h"
+#include "AccessibilityTableCell.h"
 #include "AccessibilityTableRow.h"
 #include "FrameSelection.h"
 #include "LocalFrameView.h"
@@ -528,6 +529,32 @@ void AXIsolatedTree::updateNode(AccessibilityObject& axObject)
     }
 }
 
+void AXIsolatedTree::objectChangedIgnoredState(const AccessibilityObject& object)
+{
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    ASSERT(isMainThread());
+
+    if (auto* cell = dynamicDowncast<AccessibilityTableCell>(object)) {
+        if (auto* parentTable = cell->parentTable()) {
+            // FIXME: This should be as simple as:
+            //     queueNodeUpdate(*parentTable->objectID(), { { AXPropertyName::Cells, AXPropertyName::CellSlots, AXPropertyName::Columns } });
+            // As these are the table properties that depend on cells. But we can't do that, because we compute "new" column accessibility objects
+            // every time we clearChildren() and addChildren(), so just re-computing AXPropertyName::Columns means that we won't have AXIsolatedObjects
+            // for the columns. Instead we have to do a significantly more wasteful children update.
+            queueNodeUpdate(parentTable->objectID(), NodeUpdateOptions::childrenUpdate());
+            queueNodeUpdate(parentTable->objectID(), { { AXPropertyName::Cells, AXPropertyName::CellSlots } });
+        }
+    }
+
+    if (object.isLink()) {
+        if (RefPtr webArea = m_axObjectCache ? m_axObjectCache->rootWebArea() : nullptr)
+            queueNodeUpdate(webArea->objectID(), { AXPropertyName::DocumentLinks });
+    }
+#else
+    UNUSED_PARAM(object);
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+}
+
 void AXIsolatedTree::updatePropertiesForSelfAndDescendants(AccessibilityObject& axObject, const AXPropertyNameSet& properties)
 {
     AXTRACE("AXIsolatedTree::updatePropertiesForSelfAndDescendants"_s);
@@ -540,7 +567,7 @@ void AXIsolatedTree::updatePropertiesForSelfAndDescendants(AccessibilityObject& 
     for (const auto& property : properties)
         propertySet.add(property);
 
-    Accessibility::enumerateUnignoredDescendants<AXCoreObject>(axObject, true, [&propertySet, this] (auto& descendant) {
+    Accessibility::enumerateDescendantsIncludingIgnored<AXCoreObject>(axObject, true, [&propertySet, this] (auto& descendant) {
         queueNodeUpdate(descendant.objectID(), { propertySet });
     });
 }
@@ -598,6 +625,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
         case AXPropertyName::CanSetValueAttribute:
             propertyMap.set(AXPropertyName::CanSetValueAttribute, axObject.canSetValueAttribute());
             break;
+        case AXPropertyName::Cells:
+            propertyMap.set(AXPropertyName::Cells, axIDs(axObject.cells()));
+            break;
         case AXPropertyName::CellSlots:
             propertyMap.set(AXPropertyName::CellSlots, dynamicDowncast<AccessibilityObject>(axObject)->cellSlots());
             break;
@@ -612,6 +642,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
             break;
         case AXPropertyName::DisclosedRows:
             propertyMap.set(AXPropertyName::DisclosedRows, axIDs(axObject.disclosedRows()));
+            break;
+        case AXPropertyName::DocumentLinks:
+            propertyMap.set(AXPropertyName::DocumentLinks, axIDs(axObject.documentLinks()));
             break;
         case AXPropertyName::ExtendedDescription:
             propertyMap.set(AXPropertyName::ExtendedDescription, axObject.extendedDescription().isolatedCopy());
@@ -637,6 +670,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
             break;
         case AXPropertyName::IsExpanded:
             propertyMap.set(AXPropertyName::IsExpanded, axObject.isExpanded());
+            break;
+        case AXPropertyName::IsIgnored:
+            propertyMap.set(AXPropertyName::IsIgnored, axObject.isIgnored());
             break;
         case AXPropertyName::IsRequired:
             propertyMap.set(AXPropertyName::IsRequired, axObject.isRequired());
@@ -783,8 +819,11 @@ void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
     };
     updateRelatedObjects(axObject);
 
-    // When a row gains or loses cells, the column count of the table can change.
+    // When a row gains or loses cells, or a table changes rows in a row group, the column count of the table can change.
     bool updateTableAncestorColumns = is<AccessibilityTableRow>(axObject);
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    updateTableAncestorColumns = updateTableAncestorColumns || isRowGroup(axObject.node());
+#endif
     for (RefPtr ancestor = axObject.parentObject(); ancestor; ancestor = ancestor->parentObject()) {
         if (ancestor->isTree()) {
             queueNodeUpdate(ancestor->objectID(), { AXPropertyName::ARIATreeRows });
@@ -823,7 +862,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     if (!axObject.document() || !axObject.document()->hasLivingRenderTree())
         return;
 
-    // We're about to a lot of read-only work, so start the attribute cache.
+    // We're about to do a lot of work, so start the attribute cache.
     AXAttributeCacheEnabler enableCache(axObject.axObjectCache());
 
     // updateChildren may be called as the result of a children changed
@@ -831,9 +870,13 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
     // An example of this is when an empty element such as a <canvas> or <div>
     // has added a new child. So find the closest ancestor of axObject that has
     // an associated isolated object and update its children.
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    auto* axAncestor = &axObject;
+#else
     auto* axAncestor = Accessibility::findAncestor(axObject, true, [this] (auto& ancestor) {
         return m_nodeMap.contains(ancestor.objectID());
     });
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
     if (!axAncestor || axAncestor->isDetached()) {
         // This update was triggered before the isolated tree has been repopulated.
@@ -842,6 +885,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
         return;
     }
 
+#if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     if (axAncestor != &axObject) {
         AXLOG(makeString("Original object with ID "_s, axObject.objectID().loggingString(), " wasn't in the isolated tree, so instead updating the closest in-isolated-tree ancestor:"_s));
         AXLOG(axAncestor);
@@ -874,6 +918,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
             updateChildren(liveChild, ResolveNodeChanges::No);
         }
     }
+#endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
     auto oldIDs = m_nodeMap.get(axAncestor->objectID());
     auto& oldChildrenIDs = oldIDs.childrenIDs;

@@ -344,6 +344,7 @@ public:
     void childrenChanged(RenderObject*, RenderObject* newChild = nullptr);
     void childrenChanged(AccessibilityObject*);
     void onFocusChange(Element* oldElement, Element* newElement);
+    void onInertOrVisibilityChange(RenderElement&);
     void onPopoverToggle(const HTMLElement&);
     void onScrollbarFrameRectChange(const Scrollbar&);
     void onSelectedChanged(Element&);
@@ -554,13 +555,23 @@ public:
     Ref<Document> protectedDocument() const;
     constexpr const std::optional<PageIdentifier>& pageID() const { return m_pageID; }
 
-#if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) && ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    void objectBecameIgnored(AXID axID)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    void objectBecameIgnored(const AccessibilityObject& object)
     {
         if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID))
-            tree->objectBecameIgnored(axID);
+            tree->objectBecameIgnored(object);
     }
-#endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+
+    void objectBecameUnignored(const AccessibilityObject& object)
+    {
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+        if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID))
+            tree->objectBecameUnignored(object);
+#else
+        UNUSED_PARAM(object);
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    }
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
 #if PLATFORM(MAC)
     static void setShouldRepostNotificationsForTests(bool);
@@ -921,9 +932,11 @@ private:
 bool hasRole(Element&, StringView role);
 bool hasAnyRole(Element&, Vector<StringView>&& roles);
 bool hasAnyRole(Element*, Vector<StringView>&& roles);
-bool nodeHasCellRole(Element&);
-bool nodeHasPresentationRole(Element&);
-bool nodeHasTableRole(Element&);
+bool hasCellRole(Element&);
+bool hasPresentationRole(Element&);
+bool hasTableRole(Element&);
+bool isRowGroup(Element&);
+bool isRowGroup(Node*);
 ContainerNode* composedParentIgnoringDocumentFragments(Node&);
 ContainerNode* composedParentIgnoringDocumentFragments(Node*);
 

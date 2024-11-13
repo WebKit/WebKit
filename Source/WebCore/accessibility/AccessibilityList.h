@@ -49,6 +49,8 @@ private:
     bool computeIsIgnored() const override;
     AccessibilityRole determineAccessibilityRole() override;
     bool childHasPseudoVisibleListItemMarkers(Node*);
+    void updateRoleAfterChildrenCreation() final { updateRole(); }
+    AccessibilityRole determineAccessibilityRoleWithCleanChildren();
 };
 
 } // namespace WebCore

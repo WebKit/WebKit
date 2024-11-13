@@ -386,15 +386,15 @@ public:
     void updateLoadingProgress(double);
 
     void addUnconnectedNode(Ref<AccessibilityObject>);
-    bool isUnconnectedNode(AXID axID) const { return m_unconnectedNodes.contains(axID); }
+    bool isUnconnectedNode(std::optional<AXID> axID) const { return axID && m_unconnectedNodes.contains(*axID); }
     // Removes the corresponding isolated object and all descendants from the m_nodeMap and queues their removal from the tree.
     void removeNode(const AccessibilityObject&);
     // Removes the given node and all its descendants from m_nodeMap.
     void removeSubtreeFromNodeMap(std::optional<AXID>, AccessibilityObject*);
 
-#if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-    void objectBecameIgnored(AXID axID)
+    void objectBecameIgnored(const AccessibilityObject& object)
     {
+#if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
         // When an object becomes ignored, we should immediately remove it from the nodemap.
         // This is critical because objects can become ignored at any point, including in the
         // middle of AXObjectCache::handleChildrenChanged(). Consider this tree structure:
@@ -416,12 +416,27 @@ public:
         // just with a different parent (the next unignored ancestor). So we can safely only remove the given
         // object from the nodemap, and rely on the normal updateChildren flow to repair parent relationships
         // as needed.
-        m_nodeMap.remove(axID);
+        m_nodeMap.remove(object.objectID());
         // Any queued parent updates no longer need to happen (and if we do try to process them, we'll crash,
         // since this object is no longer in the node map).
-        m_needsParentUpdate.remove(axID);
-    }
+        m_needsParentUpdate.remove(object.objectID());
 #endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+        objectChangedIgnoredState(object);
+        queueNodeUpdate(object.objectID(), { AXPropertyName::IsIgnored });
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    }
+    void objectBecameUnignored(const AccessibilityObject& object)
+    {
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+        // We only cache minimal properties for ignored objects, so do a full node update to ensure all properties are cached.
+        queueNodeUpdate(object.objectID(), NodeUpdateOptions::nodeUpdate());
+        objectChangedIgnoredState(object);
+#else
+        UNUSED_PARAM(object);
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    }
 
     // Both setRootNodeID and setFocusedNodeID are called during the generation
     // of the IsolatedTree.
@@ -492,6 +507,8 @@ private:
     void queueRemovalsAndUnresolvedChanges();
     Vector<NodeChange> resolveAppends();
     void queueAppendsAndRemovals(Vector<NodeChange>&&, Vector<AXID>&&);
+
+    void objectChangedIgnoredState(const AccessibilityObject&);
 
     const ProcessID m_processID { presentingApplicationPID() };
     unsigned m_maxTreeDepth { 0 };

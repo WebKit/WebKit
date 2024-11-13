@@ -78,7 +78,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityMenuListPo
         addChildren();
 
     AccessibilityChildrenVector result;
-    for (const auto& child : unignoredChildren(/* updateChildrenIfNeeded */ false)) {
+    for (const auto& child : unignoredChildren()) {
         auto* liveChild = dynamicDowncast<AccessibilityObject>(child.get());
         if (liveChild && liveChild->isMenuListOption() && liveChild->isSelected())
             result.append(child.get());
@@ -145,7 +145,7 @@ void AccessibilityMenuListPopup::handleChildrenChanged()
 void AccessibilityMenuListPopup::didUpdateActiveOption(int optionIndex)
 {
     ASSERT_ARG(optionIndex, optionIndex >= 0);
-    const auto& children = unignoredChildren(/* updateChildrenIfNeeded */ false);
+    const auto& children = unignoredChildren();
     ASSERT_ARG(optionIndex, optionIndex < static_cast<int>(children.size()));
 
     auto* cache = axObjectCache();

@@ -31,12 +31,9 @@ if (window.accessibilityController) {
     output += "DIV has aria-hidden unset:\n";
     document.getElementById("container").removeAttribute("aria-hidden");
     setTimeout(async function() {
-        headingElement = accessibilityController.accessibleElementById("heading");
-        output += await expectAsync("!!headingElement", "true");
-        paragraphElement = accessibilityController.accessibleElementById("paragraph");
-        output += await expectAsync("!!paragraphElement", "true");
-        buttonElement = accessibilityController.accessibleElementById("button");
-        output += await expectAsync("!!buttonElement", "true");
+        output += await expectAsync("!!accessibilityController.accessibleElementById('heading')", "true");
+        output += await expectAsync("!!accessibilityController.accessibleElementById('paragraph')", "true");
+        output += await expectAsync("!!accessibilityController.accessibleElementById('button')", "true");
 
         debug(output);
         finishJSTest();

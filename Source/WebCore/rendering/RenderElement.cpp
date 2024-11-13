@@ -880,7 +880,7 @@ void RenderElement::styleWillChange(StyleDifference diff, const RenderStyle& new
         if (visibilityChanged || inertChanged) {
             Ref document = this->document();
             if (CheckedPtr cache = document->existingAXObjectCache())
-                cache->childrenChanged(checkedParent().get(), this);
+                cache->onInertOrVisibilityChange(*this);
         }
 
         // Keep layer hierarchy visibility bits up to date if visibility or skipped content state changes.

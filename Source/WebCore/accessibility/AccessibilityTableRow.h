@@ -63,6 +63,8 @@ protected:
     AccessibilityRole determineAccessibilityRole() final;
 
 private:
+    // FIXME: This implementation of isTableRow() causes us to do an ancestry traversal every time is<AccessibilityTableRow>
+    // is called. Can we replace this with a simpler check? And this function should then maybe be called isExposedTableRow()?
     bool isTableRow() const final;
     AccessibilityObject* observableObject() const final;
     bool computeIsIgnored() const final;

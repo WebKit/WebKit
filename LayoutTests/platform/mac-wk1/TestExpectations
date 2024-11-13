@@ -912,6 +912,9 @@ accessibility/dynamic-table-descendants.html [ Skip ]
 accessibility/indeterminate-progressbar-custom-element.html [ Skip ]
 accessibility/progress-indeterminate-value.html [ Skip ]
 
+# Missing AccessibilityUIElement::isInTable() implementation.
+accessibility/table-ancestry.html [ Skip ]
+
 # Missing AccessibilityUIElement::brailleLabel and AccessibilityUIElement::brailleRoleDescription implementations.
 accessibility/aria-braillelabel.html [ Skip ]
 accessibility/aria-brailleroledescription.html [ Skip ]

@@ -338,7 +338,7 @@ public:
     AccessibilityObject* previousSiblingUnignored(unsigned limit = std::numeric_limits<unsigned>::max()) const;
     AccessibilityObject* parentObject() const override { return nullptr; }
     AccessibilityObject* displayContentsParent() const;
-    AccessibilityObject* parentObjectUnignored() const override { return downcast<AccessibilityObject>(AXCoreObject::parentObjectUnignored()); }
+    AccessibilityObject* parentObjectUnignored() const final { return downcast<AccessibilityObject>(AXCoreObject::parentObjectUnignored()); }
     // Returns the parent in the "core", platform-agnostic accessibility tree, which is not necessarily
     // the same parent that is actually exposed to assistive technologies (i.e. one that is unignored).
     AccessibilityObject* parentInCoreTree() const

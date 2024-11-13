@@ -590,6 +590,9 @@ imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/key-id-b
 # AXObjectCache::announce not implemented.
 accessibility/announcement-notification.html [ Skip ]
 
+# AccessibilityUIElement::isInTable is not implemented.
+accessibility/table-ancestry.html [ Skip ]
+
 accessibility/search-misspellings.html [ Skip ]
 accessibility/shadow-dom-hit-test.html [ Skip ]
 

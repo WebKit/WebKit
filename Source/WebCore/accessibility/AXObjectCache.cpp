@@ -669,19 +669,31 @@ bool hasAnyRole(Element* element, Vector<StringView>&& roles)
     return element ? hasAnyRole(*element, WTFMove(roles)) : false;
 }
 
-bool nodeHasTableRole(Element& element)
+bool hasTableRole(Element& element)
 {
     return hasAnyRole(element, { "grid"_s, "table"_s, "treegrid"_s });
 }
 
-bool nodeHasCellRole(Element& element)
+bool hasCellRole(Element& element)
 {
     return hasAnyRole(element, { "gridcell"_s, "cell"_s, "columnheader"_s, "rowheader"_s });
 }
 
-bool nodeHasPresentationRole(Element& element)
+bool hasPresentationRole(Element& element)
 {
     return hasAnyRole(element, { "presentation"_s, "none"_s });
+}
+
+bool isRowGroup(Element& element)
+{
+    auto tagName = element.localName();
+    return tagName == theadTag || tagName == tbodyTag || tagName == tfootTag || hasRole(element, "rowgroup"_s);
+}
+
+bool isRowGroup(Node* node)
+{
+    auto* element = dynamicDowncast<Element>(node);
+    return element && isRowGroup(*element);
 }
 
 static bool isAccessibilityList(Element& element)
@@ -721,7 +733,7 @@ static bool isAccessibilityTableCell(Node* node)
 
 static bool isAccessibilityARIATable(Element& element)
 {
-    return nodeHasTableRole(element);
+    return hasTableRole(element);
 }
 
 static bool isAccessibilityARIAGridRow(Element& element)
@@ -731,7 +743,7 @@ static bool isAccessibilityARIAGridRow(Element& element)
 
 static bool isAccessibilityARIAGridCell(Element& element)
 {
-    return nodeHasCellRole(element);
+    return hasCellRole(element);
 }
 
 Ref<AccessibilityRenderObject> AXObjectCache::createObjectFromRenderer(RenderObject& renderer)
@@ -1235,7 +1247,8 @@ void AXObjectCache::handleTextChanged(AccessibilityObject* object)
 
         if (isText) {
             bool dependsOnTextUnderElement = ancestor->dependsOnTextUnderElement();
-            dependsOnTextUnderElement |= ancestor->roleValue() == AccessibilityRole::Label;
+            auto role = ancestor->roleValue();
+            dependsOnTextUnderElement |= role == AccessibilityRole::Label || role == AccessibilityRole::TextField;
 
             // If the starting object is a static text, its underlying text has changed.
             if (dependsOnTextUnderElement) {
@@ -1805,6 +1818,26 @@ void AXObjectCache::onFocusChange(Element* oldElement, Element* newElement)
         handleFocusedUIElementChanged(oldElement, newElement);
 }
 
+void AXObjectCache::onInertOrVisibilityChange(RenderElement& renderer)
+{
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    RefPtr axObject = get(renderer);
+    if (!axObject)
+        return
+    // Both of these change the is-ignored state of all descendants of `renderer`, so throw away
+    // the is-ignored cache.
+    stopCachingComputedObjectAttributes();
+
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (RefPtr tree = AXIsolatedTree::treeForPageID(m_pageID))
+        tree->updatePropertiesForSelfAndDescendants(*axObject, { AXPropertyName::IsIgnored });
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+
+#else // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+    childrenChanged(renderer.checkedParent().get(), &renderer);
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+}
+
 void AXObjectCache::onPopoverToggle(const HTMLElement& popover)
 {
     RefPtr axPopover = get(const_cast<HTMLElement*>(&popover));
@@ -1877,7 +1910,7 @@ void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar& scrollbar)
 
 void AXObjectCache::onSelectedChanged(Element& element)
 {
-    if (nodeHasCellRole(element))
+    if (hasCellRole(element))
         postNotification(&element, AXSelectedCellsChanged);
     else if (is<HTMLOptionElement>(element))
         postNotification(&element, AXSelectedStateChanged);
@@ -4283,9 +4316,10 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
         recomputeIsIgnored(m_deferredFocusedNodeChange->second.get());
     }
     bool updatedFocusedElement = m_deferredFocusedNodeChange.has_value();
-    m_deferredFocusedNodeChange = std::nullopt;
     // If we changed the focused element, that could affect what modal should be active, so recompute it.
     bool shouldRecomputeModal = updatedFocusedElement;
+    RefPtr newFocusElement = m_deferredFocusedNodeChange ? m_deferredFocusedNodeChange->second.get() : nullptr;
+    m_deferredFocusedNodeChange = std::nullopt;
 
     AXLOGDeferredCollection("ModalChangedList"_s, m_deferredModalChangedList);
     for (auto& element : m_deferredModalChangedList) {
@@ -4309,11 +4343,15 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
     m_deferredModalChangedList.clear();
 
     if (shouldRecomputeModal) {
-        updateCurrentModalNode(updatedFocusedElement ? WillRecomputeFocus::No : WillRecomputeFocus::Yes);
+        // If we are re-computing the modal, automatically focus into it if the author didn't explicitly change focus, or
+        // they did change focus but the focused element has become unfocusable since it was set (e.g. it gained display:none).
+        bool shouldFocusIntoModal = !updatedFocusedElement || (newFocusElement && !newFocusElement->isFocusable());
+
+        updateCurrentModalNode(shouldFocusIntoModal ? WillRecomputeFocus::Yes : WillRecomputeFocus::No);
         // "When a modal element is displayed, assistive technologies SHOULD navigate to the element unless focus has explicitly been set elsewhere."
         // `updatedFocusedElement` indicates focus was explicitly set elsewhere, so don't autofocus into the modal.
         // https://w3c.github.io/aria/#aria-modal
-        if (!updatedFocusedElement)
+        if (shouldFocusIntoModal)
             focusCurrentModal();
     }
 
@@ -4332,9 +4370,16 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
     if (m_deferredRegenerateIsolatedTree) {
         if (auto tree = AXIsolatedTree::treeForPageID(m_pageID)) {
             // Re-generate the subtree rooted at the webarea.
-            if (auto* webArea = rootWebArea()) {
+            if (RefPtr webArea = rootWebArea()) {
                 AXLOG("Regenerating isolated tree from AXObjectCache::performDeferredCacheUpdate().");
+#if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
+                // m_deferredRegenerateIsolatedTree is only set when we change the active modal, which effects the ignored
+                // status of every object on the page. With ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE), this means we only have
+                // to re-compute is-ignored for every object, rather than re-compute all objects entirely as when this flag is off.
+                tree->updatePropertiesForSelfAndDescendants(*webArea, { AXPropertyName::IsIgnored });
+#else
                 tree->generateSubtree(*webArea);
+#endif // ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
                 // In some cases, the ID of the focus after a dialog pops up doesn't match the ID in the last focus change notification, creating a mismatch between the isolated tree cached focused object ID and the actual focused object ID.
                 // For this reason, reset the focused object ID.
@@ -4344,7 +4389,7 @@ void AXObjectCache::performDeferredCacheUpdate(ForceLayout forceLayout)
         }
     }
     m_deferredRegenerateIsolatedTree = false;
-#endif
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
 
     platformPerformDeferredCacheUpdate();
 }
@@ -4547,7 +4592,7 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
             break;
         case AXTextUnderElementChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { { AXPropertyName::AccessibilityText, AXPropertyName::Title } });
-            if (notification.first->isAccessibilityLabelInstance())
+            if (notification.first->isAccessibilityLabelInstance() || notification.first->roleValue() == AccessibilityRole::TextField)
                 tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::StringValue });
             break;
 #if ENABLE(AX_THREAD_TEXT_APIS)
@@ -4937,6 +4982,8 @@ bool AXObjectCache::addRelation(AccessibilityObject* origin, AccessibilityObject
 
     if (relationType == AXRelationType::OwnerFor) {
         // Before adding the new OwnerFor relationship, that alters the AX parent-child hierarchy, notify the current target-s parent that one child is being removed.
+        // FIXME: This kicks off children-changed notifications every time relations are dirtied and cleaned,
+        // even if this specific relationship existed before, incurring unnecessary work.
         RefPtr targetParent = target->parentObject();
         if (targetParent && targetParent.get() != origin)
             childrenChanged(targetParent.get());

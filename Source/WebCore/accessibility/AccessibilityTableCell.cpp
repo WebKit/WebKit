@@ -72,7 +72,7 @@ bool AccessibilityTableCell::computeIsIgnored() const
 
     // Ignore anonymous table cells as long as they're not in a table (ie. when display:table is used).
     WeakPtr parentTable = this->parentTable();
-    bool inTable = parentTable && parentTable->element() && (parentTable->element()->hasTagName(tableTag) || nodeHasTableRole(*parentTable->element()));
+    bool inTable = parentTable && parentTable->element() && (parentTable->element()->hasTagName(tableTag) || hasTableRole(*parentTable->element()));
     if (!element() && !inTable)
         return true;
 
@@ -320,13 +320,6 @@ AccessibilityTableRow* AccessibilityTableCell::ariaOwnedByParent() const
     if (owners.size() == 1 && owners[0]->isTableRow())
         return downcast<AccessibilityTableRow>(owners[0].get());
     return nullptr;
-}
-
-AccessibilityObject* AccessibilityTableCell::parentObjectUnignored() const
-{
-    if (auto ownerParent = ariaOwnedByParent())
-        return ownerParent;
-    return AccessibilityRenderObject::parentObjectUnignored();
 }
 
 AccessibilityTableRow* AccessibilityTableCell::parentRow() const

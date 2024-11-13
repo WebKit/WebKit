@@ -2341,6 +2341,13 @@ id attributeValueForTesting(const RefPtr<AXCoreObject>& backingObject, NSString 
     if ([attributeName isEqualToString:@"AXIsOnScreen"])
         return [NSNumber numberWithBool:backingObject->isOnScreen()];
 
+    if ([attributeName isEqualToString:@"_AXIsInTable"]) {
+        auto* table = Accessibility::findAncestor(*backingObject, false, [&] (const auto& ancestor) {
+            return ancestor.isTable();
+        });
+        return [NSNumber numberWithBool:!!table];
+    }
+
     return nil;
 }
 

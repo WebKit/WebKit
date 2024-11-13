@@ -128,6 +128,16 @@ bool AccessibilityList::childHasPseudoVisibleListItemMarkers(Node* node)
 
 AccessibilityRole AccessibilityList::determineAccessibilityRole()
 {
+    if (!m_childrenDirty && childrenInitialized())
+        return determineAccessibilityRoleWithCleanChildren();
+
+    m_ariaRole = determineAriaRoleAttribute();
+    return isDescriptionList() ? AccessibilityRole::DescriptionList : AccessibilityRole::List;
+}
+
+AccessibilityRole AccessibilityList::determineAccessibilityRoleWithCleanChildren()
+{
+    ASSERT(!m_childrenDirty && childrenInitialized());
     m_ariaRole = determineAriaRoleAttribute();
 
     // Directory is mapped to list for now, but does not adhere to the same heuristics.
@@ -151,7 +161,7 @@ AccessibilityRole AccessibilityList::determineAccessibilityRole()
     unsigned listItemCount = 0;
     bool hasVisibleMarkers = false;
 
-    const auto& children = this->unignoredChildren();
+    const auto& children = unignoredChildren();
     // DescriptionLists are always semantically a description list, so do not apply heuristics.
     if (isDescriptionList() && children.size())
         return AccessibilityRole::DescriptionList;

@@ -5,9 +5,9 @@ PASS: !headingElement === true
 PASS: !paragraphElement === true
 PASS: !buttonElement === true
 DIV has aria-hidden unset:
-PASS: !!headingElement === true
-PASS: !!paragraphElement === true
-PASS: !!buttonElement === true
+PASS: !!accessibilityController.accessibleElementById('heading') === true
+PASS: !!accessibilityController.accessibleElementById('paragraph') === true
+PASS: !!accessibilityController.accessibleElementById('button') === true
 
 PASS successfullyParsed is true
 

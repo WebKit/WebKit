@@ -1,9 +1,9 @@
 This tests that input type of hidden are not exposed when aria-hidden=false
 
 PASS: content.childrenCount === 0
-PASS: !content || !content.isValid() === true
-PASS: content.childrenCount === 0
-PASS: !content || !content.isValid() === true
+PASS: !accessibilityController.accessibleElementById('content') === true
+PASS: accessibilityController.accessibleElementById('content')?.childrenCount === 0 === true
+PASS: !accessibilityController.accessibleElementById('content') === true
 
 PASS successfullyParsed is true
 

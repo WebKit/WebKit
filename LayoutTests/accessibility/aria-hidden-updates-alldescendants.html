@@ -1,55 +1,50 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-<body id="body">
+<body>
 
 <div>
-        <h1 id="heading">Steps</h1>
+    <h1 id="heading">Steps</h1>
 
-        <main id="main" tabindex=0>
-         test
-                <div tabindex="-1" class="step-one" aria-hidden="true"><span>Step 1: Do something</span></div>
-                <div tabindex="-1" class="step-two" aria-hidden="true"><span>Step 2: Do another thing</span></div>
-                <div tabindex="-1" class="step-three" aria-hidden="true"><span>Step 3: Do one last thing</span></div>
-        </main>
-
+    <main id="main" tabindex=0>
+     test
+        <div tabindex="-1" class="step-one" aria-hidden="true"><span>Step 1: Do something</span></div>
+        <div tabindex="-1" class="step-two" aria-hidden="true"><span>Step 2: Do another thing</span></div>
+        <div tabindex="-1" class="step-three" aria-hidden="true"><span>Step 3: Do one last thing</span></div>
+    </main>
 </div>
 
-
-<p id="description"></p>
-<div id="console"></div>
-
 <script>
+var output = "This tests that if aria-hidden changes on an element, all it's existing children will update their children caches\n\n";
 
-    description("This tests that if aria-hidden changes on an element, all it's existing children will update their children caches");
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
 
-    if (window.accessibilityController) {
-          jsTestIsAsync = true;
-          document.getElementById("main").focus();
-          
-          var main = accessibilityController.focusedElement;
-          // Access the element so the children cache is generated.
-          main.childAtIndex(0);
-          main.childAtIndex(1);
-          shouldBe("main.childrenCount", "1");
+    var main = accessibilityController.accessibleElementById("main");
+    // Access the element so the children cache is generated.
+    main.childAtIndex(0);
+    main.childAtIndex(1);
+    output += expect("main.childrenCount", "1");
 
-          var group = document.getElementsByTagName('main')[0];
-          var items = group.getElementsByTagName('div');          
-          items[0].removeAttribute('aria-hidden');
-          setTimeout(function() {
-              // After removing aria-hidden, the new count should be 2.
-              shouldBe("main.childrenCount", "2");          
-          
-              // And most importantly, the DIV that was made non-hidden should have one child now.
-              shouldBe("main.childAtIndex(1).childrenCount", "1");
-              finishJSTest();
-          }, 0);
-    }
+    var group = document.getElementsByTagName('main')[0];
+    var items = group.getElementsByTagName('div');
+    items[0].removeAttribute('aria-hidden');
 
+    setTimeout(async function() {
+        // After removing aria-hidden, the new count should be 2.
+        output += await expectAsync("main.childrenCount", "2");
+
+        // And most importantly, the DIV that was made non-hidden should have one child now.
+        output += await expectAsync("main.childAtIndex(1).childrenCount", "1");
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

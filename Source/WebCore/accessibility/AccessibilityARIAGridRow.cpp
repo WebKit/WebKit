@@ -124,13 +124,6 @@ AXCoreObject* AccessibilityARIAGridRow::disclosedByRow() const
     return nullptr;
 }
 
-AccessibilityObject* AccessibilityARIAGridRow::parentObjectUnignored() const
-{
-    if (auto* table = parentTable())
-        return table;
-    return AccessibilityTableRow::parentObjectUnignored();
-}
-
 AccessibilityTable* AccessibilityARIAGridRow::parentTable() const
 {
     // The parent table might not be the direct ancestor of the row unfortunately. ARIA states that role="grid" should

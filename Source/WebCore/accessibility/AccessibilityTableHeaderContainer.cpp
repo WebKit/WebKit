@@ -54,14 +54,10 @@ LayoutRect AccessibilityTableHeaderContainer::elementRect() const
 
 bool AccessibilityTableHeaderContainer::computeIsIgnored() const
 {
-    if (!m_parent)
-        return true;
-    
 #if PLATFORM(IOS_FAMILY) || USE(ATSPI)
     return true;
 #endif
-
-    return m_parent->isIgnored();
+    return !m_parent || m_parent->isIgnored();
 }
 
 void AccessibilityTableHeaderContainer::addChildren()

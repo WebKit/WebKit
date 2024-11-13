@@ -204,12 +204,12 @@ AccessibilityObject* AccessibilityNodeObject::parentObject() const
         return ownerParent;
 
     CheckedPtr cache = axObjectCache();
-#if !USE(ATSPI)
-    return cache ? cache->getOrCreate(composedParentIgnoringDocumentFragments(*node)) : nullptr;
-#else
+#if USE(ATSPI)
     // FIXME: Consider removing this ATSPI-only branch with https://bugs.webkit.org/show_bug.cgi?id=282117.
     return cache ? cache->getOrCreate(node->parentNode()) : nullptr;
-#endif // !USE(ATSPI)
+#else
+    return cache ? cache->getOrCreate(composedParentIgnoringDocumentFragments(*node)) : nullptr;
+#endif // USE(ATSPI)
 }
 
 LayoutRect AccessibilityNodeObject::checkboxOrRadioRect() const
@@ -245,7 +245,7 @@ LayoutRect AccessibilityNodeObject::boundingBoxRect() const
 {
     if (hasDisplayContents()) {
         LayoutRect contentsRect;
-        for (const auto& child : const_cast<AccessibilityNodeObject*>(this)->unignoredChildren(/* updateChildrenIfNeeded */ false))
+        for (const auto& child : const_cast<AccessibilityNodeObject*>(this)->unignoredChildren())
             contentsRect.unite(child->elementRect());
 
         if (!contentsRect.isEmpty())
@@ -594,16 +594,16 @@ void AccessibilityNodeObject::addChildren()
     if (!cache)
         return;
 
-#if !USE(ATSPI)
+#if USE(ATSPI)
+    // FIXME: Consider removing this ATSPI-only branch with https://bugs.webkit.org/show_bug.cgi?id=282117.
+    for (auto* child = node->firstChild(); child; child = child->nextSibling())
+        addChild(cache->getOrCreate(*child));
+#else
     if (auto* containerNode = dynamicDowncast<ContainerNode>(*node)) {
         for (Ref child : composedTreeChildren(*containerNode))
             addChild(cache->getOrCreate(child.get()));
     }
-#else
-    // FIXME: Consider removing this ATSPI-only branch with https://bugs.webkit.org/show_bug.cgi?id=282117.
-    for (auto* child = node->firstChild(); child; child = child->nextSibling())
-        addChild(cache->getOrCreate(*child));
-#endif // !USE(ATSPI)
+#endif // USE(ATSPI)
 
     updateOwnedChildren();
 }

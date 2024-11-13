@@ -81,7 +81,6 @@ protected:
 
     AccessibilityTableRow* parentRow() const;
     AccessibilityRole determineAccessibilityRole() final;
-    AccessibilityObject* parentObjectUnignored() const override;
 
 private:
     // If a table cell is not exposed as a table cell, a TH element can serve as its title UI element.

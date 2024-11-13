@@ -1932,7 +1932,7 @@ bool AccessibilityObject::dependsOnTextUnderElement() const
     case AccessibilityRole::Checkbox:
     case AccessibilityRole::ListBoxOption:
 #if !PLATFORM(COCOA)
-    // MacOS does not expect native <li> elements to expose label information, it only expects leaf node elements to do that.
+    // macOS does not expect native <li> elements to expose label information, it only expects leaf node elements to do that.
     case AccessibilityRole::ListItem:
 #endif
     case AccessibilityRole::MenuItem:
@@ -2952,7 +2952,7 @@ bool AccessibilityObject::supportsPressAction() const
         return false;
 
     // [Bug: 133613] Heuristic: If the action element is presentational, we shouldn't expose press as a supported action.
-    if (nodeHasPresentationRole(*actionElement))
+    if (hasPresentationRole(*actionElement))
         return false;
 
     auto* cache = axObjectCache();
@@ -4134,12 +4134,18 @@ bool AccessibilityObject::isIgnoredWithoutCache(AXObjectCache* cache) const
         bool becameUnignored = previousLastKnownIsIgnoredValue == AccessibilityObjectInclusion::IgnoreObject && !ignored;
         bool becameIgnored = !becameUnignored && previousLastKnownIsIgnoredValue == AccessibilityObjectInclusion::IncludeObject && ignored;
 
-#if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) && ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
         if (becameIgnored)
-            cache->objectBecameIgnored(objectID());
-#endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) && ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-        if (becameUnignored || becameIgnored)
+            cache->objectBecameIgnored(*this);
+        else if (becameUnignored)
+            cache->objectBecameUnignored(*this);
+#endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+
+        if (becameUnignored || becameIgnored) {
+            // FIXME: We should not have to submit a children-changed when ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE), but that causes a few failing
+            // tests. We should fix that or remove this comment before enabling ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) by default for any port.
             cache->childrenChanged(parentObject());
+        }
     }
     return ignored;
 }

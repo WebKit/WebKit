@@ -178,6 +178,7 @@ static id attributeValue(id element, NSString *attribute)
         @"AXErrorMessageFor",
         @"AXFlowFrom",
         @"AXIsInCell",
+        @"_AXIsInTable",
         @"AXIsInDescriptionListDetail",
         @"AXIsInDescriptionListTerm",
         @"AXIsIndeterminate",
@@ -2031,6 +2032,11 @@ bool AccessibilityUIElement::isInDescriptionListTerm() const
 bool AccessibilityUIElement::isInCell() const
 {
     return boolAttributeValueNS(@"AXIsInCell");
+}
+
+bool AccessibilityUIElement::isInTable() const
+{
+    return boolAttributeValueNS(@"_AXIsInTable");
 }
 
 void AccessibilityUIElement::takeFocus()

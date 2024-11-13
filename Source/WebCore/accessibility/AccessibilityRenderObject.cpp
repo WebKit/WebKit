@@ -1069,7 +1069,7 @@ static bool webAreaIsPresentational(RenderObject* renderer)
         return false;
     
     RefPtr ownerElement = renderer->document().ownerElement();
-    return ownerElement && nodeHasPresentationRole(*ownerElement);
+    return ownerElement && hasPresentationRole(*ownerElement);
 }
 
 bool AccessibilityRenderObject::computeIsIgnored() const
@@ -1654,9 +1654,13 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
     AccessibilityChildrenVector result;
     Document& document = m_renderer->document();
     Ref<HTMLCollection> links = document.links();
+    CheckedPtr cache = document.existingAXObjectCache();
+    if (!cache)
+        return { };
+
     for (unsigned i = 0; auto* current = links->item(i); ++i) {
         if (auto* renderer = current->renderer()) {
-            RefPtr<AccessibilityObject> axObject = document.axObjectCache()->getOrCreate(*renderer);
+            RefPtr axObject = cache->getOrCreate(*renderer);
             ASSERT(axObject);
             if (!axObject->isIgnored() && axObject->isLink())
                 result.append(axObject);
@@ -1665,7 +1669,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
             if (auto* parentMap = dynamicDowncast<HTMLMapElement>(parent); parentMap && is<HTMLAreaElement>(*current)) {
                 RefPtr parentImage = parentMap->imageElement();
                 auto* parentImageRenderer = parentImage ? parentImage->renderer() : nullptr;
-                if (auto* parentImageAxObject = document.axObjectCache()->getOrCreate(parentImageRenderer)) {
+                if (auto* parentImageAxObject = cache->getOrCreate(parentImageRenderer)) {
                     for (const auto& child : parentImageAxObject->unignoredChildren()) {
                         if (is<AccessibilityImageMapLink>(child) && !result.contains(child))
                             result.append(child);
@@ -1673,7 +1677,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
                 } else {
                     // We couldn't retrieve the already existing image-map links from the parent image, so create a new one.
                     ASSERT_NOT_REACHED("Unexpectedly missing image-map link parent AX object.");
-                    auto& areaObject = uncheckedDowncast<AccessibilityImageMapLink>(*axObjectCache()->create(AccessibilityRole::ImageMapLink));
+                    auto& areaObject = downcast<AccessibilityImageMapLink>(*cache->create(AccessibilityRole::ImageMapLink));
                     areaObject.setHTMLAreaElement(uncheckedDowncast<HTMLAreaElement>(current));
                     areaObject.setHTMLMapElement(parentMap);
                     areaObject.setParent(associatedAXImage(*parentMap));
@@ -2107,6 +2111,9 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if (!m_renderer)
         return AccessibilityNodeObject::determineAccessibilityRole();
 
+    if (m_renderer->isRenderText())
+        return AccessibilityRole::StaticText;
+
 #if ENABLE(APPLE_PAY)
     if (isApplePayButton())
         return AccessibilityRole::Button;
@@ -2117,18 +2124,15 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown && !shouldIgnoreAttributeRole())
         return m_ariaRole;
 
-    Node* node = m_renderer->node();
-
     if (m_renderer->isRenderListItem())
         return AccessibilityRole::ListItem;
     if (m_renderer->isRenderListMarker())
         return AccessibilityRole::ListMarker;
-    if (m_renderer->isRenderText())
-        return AccessibilityRole::StaticText;
 #if ENABLE(AX_THREAD_TEXT_APIS)
     if (m_renderer->isBR())
         return AccessibilityRole::LineBreak;
 #endif
+    RefPtr node = m_renderer->node();
     if (RefPtr img = dynamicDowncast<HTMLImageElement>(node); img && img->hasAttributeWithoutSynchronization(usemapAttr))
         return AccessibilityRole::ImageMap;
     if (m_renderer->isImage()) {
@@ -2180,7 +2184,6 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     // the cell should not be treated as a cell (e.g. because it is a layout table.
     if (is<RenderTableCell>(m_renderer.get()))
         return AccessibilityRole::TextGroup;
-    // Table sections should be ignored.
     if (m_renderer->isRenderTableSection())
         return AccessibilityRole::Ignored;
 

@@ -1,10 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html>
 <head>
-<script src="../resources/js-test-pre.js"></script>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
 </head>
-
-<body id="body">
+<body>
 
 <div id="bg">
 <p id="bgContent">Other page content with <a href="#">a dummy focusable element</a></p>
@@ -16,40 +16,25 @@
     </div>
 </div>
 
-
 <script>
+var output = "This tests that when something is aria-modal inside an aria-hidden it is ignored.\n\n";
 
-    description("This tests that when something is aria-modal inside an aria-hidden it is ignored.");
+if (window.accessibilityController) {
     window.jsTestIsAsync = true;
+    output += expect("accessibilityController.accessibleElementById('bgContent').isIgnored", "false")
 
-    async function test() {
-        if (window.accessibilityController) {
-            shouldBeFalse("accessibilityController.accessibleElementById('bgContent').isIgnored");
+    document.getElementById("box").setAttribute("aria-modal", "true");
+    setTimeout(async function() {
+        output += await expectAsync("!accessibilityController.accessibleElementById('bgContent')", "true");
 
-            await new Promise(requestAnimationFrame);
+        document.getElementById("container").setAttribute("aria-hidden", "true");
+        output += await expectAsync("accessibilityController.accessibleElementById('bgContent')?.isIgnored", "false")
 
-            document.getElementById("box").setAttribute("aria-modal", "true");
-
-            await new Promise(requestAnimationFrame);
-
-            backgroundContent = accessibilityController.accessibleElementById('bgContent');
-            shouldBeTrue("!backgroundContent || backgroundContent.isIgnored");
-
-            await new Promise(requestAnimationFrame);
-
-            document.getElementById("container").setAttribute("aria-hidden", "true");
-
-            await new Promise(requestAnimationFrame);
-
-            shouldBeFalse("accessibilityController.accessibleElementById('bgContent').isIgnored");
-            finishJSTest();
-        }
-    }
-    test();
-
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
 </script>
-
-
-<script src="../resources/js-test-post.js"></script>
 </body>
 </html>
+

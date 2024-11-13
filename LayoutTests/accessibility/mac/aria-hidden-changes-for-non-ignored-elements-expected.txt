@@ -2,7 +2,7 @@ This tests that when aria-hidden is toggled, it will clear out the cached childr
 
 PASS: axBody.childAtIndex(3).childAtIndex(0).role === 'AXRole: AXButton'
 PASS: axBody.childAtIndex(0).role === 'AXRole: AXCheckBox'
-PASS: axBody.childAtIndex(3).childAtIndex(0).role === 'AXRole: AXButton'
+PASS: axBody.childAtIndex(3)?.childAtIndex(0)?.role === 'AXRole: AXButton'
 
 PASS successfullyParsed is true
 

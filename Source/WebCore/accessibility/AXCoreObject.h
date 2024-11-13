@@ -1182,8 +1182,7 @@ public:
         return children(updateChildrenIfNeeded);
     };
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-    // FIXME: Tables returning true here is a problem for ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE), as we need ignored table rows for text marker APIs.
-    bool onlyAddsUnignoredChildren() const { return isTable() || isTableColumn() || roleValue() == AccessibilityRole::TableHeaderContainer; }
+    bool onlyAddsUnignoredChildren() const { return isTableColumn() || roleValue() == AccessibilityRole::TableHeaderContainer; }
     virtual AccessibilityChildrenVector unignoredChildren(bool updateChildrenIfNeeded = true);
 #else
     const AccessibilityChildrenVector& unignoredChildren(bool updateChildrenIfNeeded = true) { return children(updateChildrenIfNeeded); }
@@ -1579,6 +1578,16 @@ void enumerateAncestors(const T& object, bool includeSelf, const F& lambda)
 
     if (auto* parent = object.parentObject())
         enumerateAncestors(*parent, true, lambda);
+}
+
+template<typename T, typename F>
+void enumerateDescendantsIncludingIgnored(T& object, bool includeSelf, const F& lambda)
+{
+    if (includeSelf)
+        lambda(object);
+
+    for (const auto& child : object.childrenIncludingIgnored())
+        enumerateDescendantsIncludingIgnored(*child, true, lambda);
 }
 
 template<typename T, typename F>

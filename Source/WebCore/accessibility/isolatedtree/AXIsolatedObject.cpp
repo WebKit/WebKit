@@ -94,9 +94,12 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     if (object.includeIgnoredInCoreTree()) {
         bool isIgnored = object.isIgnored();
         setProperty(AXPropertyName::IsIgnored, isIgnored);
-        // If an object is unconnected, it is involved in a relation or part of an outgoing notification,
-        // both of which require all properties to maintain correct AT behavior.
-        bool needsAllProperties = !isIgnored || tree()->isUnconnectedNode(axObject->objectID());
+        // Maintain full properties for objects meeting this criteria:
+        //   - Unconnected objects, which are involved in relations or outgoing notifications
+        //   - Static text. We sometimes ignore static text (e.g. because it descends from a text field),
+        //     but need full properties for proper text marker behavior.
+        // FIXME: We shouldn't cache all properties for empty / non-rendered text?
+        bool needsAllProperties = !isIgnored || tree()->isUnconnectedNode(axObject->objectID()) || is<RenderText>(axObject->renderer());
         if (!needsAllProperties) {
             // FIXME: If isIgnored, we should only cache a small subset of necessary properties, e.g. those used in the text marker APIs.
             return;

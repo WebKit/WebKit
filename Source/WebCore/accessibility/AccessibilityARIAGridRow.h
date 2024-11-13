@@ -52,7 +52,6 @@ private:
 
     bool isARIATreeGridRow() const override;
     AccessibilityTable* parentTable() const override;
-    AccessibilityObject* parentObjectUnignored() const override;
 };
 
 } // namespace WebCore 
