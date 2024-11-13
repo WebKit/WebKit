@@ -87,6 +87,8 @@ private:
 
     bool isScrollTimeline() const final { return true; }
 
+    void animationTimingDidChange(WebAnimation&) override;
+
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_source;
     ScrollAxis m_axis { ScrollAxis::Block };
     AtomString m_name;

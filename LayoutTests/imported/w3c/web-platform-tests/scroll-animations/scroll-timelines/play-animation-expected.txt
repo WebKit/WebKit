@@ -1,6 +1,4 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Playing an animations aligns the start time with the start of the active range
 PASS Playing an animations with a negative playback rate aligns the start time with the end of the active range
 PASS Start time set while play pending is preserved.
@@ -12,9 +10,9 @@ FAIL Playing a pause-pending but previously finished animation realigns with the
 FAIL Playing a finished animation clears the start time assert_approx_equals: values do not match for "start time is zero" expected 0 +/- 0.125 but got -100
 PASS The ready promise should be replaced if the animation is not already pending
 PASS A pending ready promise should be resolved and not replaced when the animation enters the running state
-TIMEOUT Resuming an animation from paused realigns with scroll position. Test timed out
-NOTRUN If a pause operation is interrupted, the ready promise is reused
-NOTRUN A pending playback rate is used when determining timeline range alignment
-NOTRUN Playing a canceled animation sets the start time
-NOTRUN Playing a canceled animation backwards sets the start time
+FAIL Resuming an animation from paused realigns with scroll position. assert_approx_equals: values do not match for "undefined" expected 0 +/- 0.125 but got -50
+PASS If a pause operation is interrupted, the ready promise is reused
+FAIL A pending playback rate is used when determining timeline range alignment assert_approx_equals: values do not match for "undefined" expected 100 +/- 0.125 but got -100
+PASS Playing a canceled animation sets the start time
+PASS Playing a canceled animation backwards sets the start time
 
