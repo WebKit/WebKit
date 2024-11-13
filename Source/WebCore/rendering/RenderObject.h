@@ -101,7 +101,7 @@ enum class RepaintOutlineBounds : bool { No, Yes };
 enum class RequiresFullRepaint : bool { No, Yes };
 
 // Base class for all rendering tree objects.
-class RenderObject : public CachedImageClient, public CanMakeCheckedPtr<RenderObject> {
+class RenderObject : public CachedImageClient {
     WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(RenderObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderObject);
     friend class RenderBlock;

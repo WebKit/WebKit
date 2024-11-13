@@ -218,7 +218,7 @@ void HTMLPlugInImageElement::updateAfterStyleResolution()
     if (renderer() && !useFallbackContent()) {
         if (isImageType()) {
             if (!m_imageLoader)
-                m_imageLoader = makeUnique<HTMLImageLoader>(*this);
+                m_imageLoader = makeUniqueWithoutRefCountedCheck<HTMLImageLoader>(*this);
             if (m_needsImageReload)
                 m_imageLoader->updateFromElementIgnoringPreviousError();
             else

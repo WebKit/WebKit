@@ -111,7 +111,7 @@ void HTMLVideoElement::didAttachRenderers()
 
     if (shouldDisplayPosterImage()) {
         if (!m_imageLoader)
-            m_imageLoader = makeUnique<HTMLImageLoader>(*this);
+            m_imageLoader = makeUniqueWithoutRefCountedCheck<HTMLImageLoader>(*this);
         m_imageLoader->updateFromElement();
         if (CheckedPtr renderer = this->renderer())
             renderer->checkedImageResource()->setCachedImage(m_imageLoader->protectedImage());
@@ -191,7 +191,7 @@ void HTMLVideoElement::attributeChanged(const QualifiedName& name, const AtomStr
     if (name == posterAttr) {
         if (shouldDisplayPosterImage()) {
             if (!m_imageLoader)
-                m_imageLoader = makeUnique<HTMLImageLoader>(*this);
+                m_imageLoader = makeUniqueWithoutRefCountedCheck<HTMLImageLoader>(*this);
             m_imageLoader->updateFromElementIgnoringPreviousError();
         } else {
             if (CheckedPtr renderer = this->renderer()) {

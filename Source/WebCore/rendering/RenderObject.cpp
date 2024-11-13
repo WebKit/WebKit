@@ -112,7 +112,7 @@ RenderObject::SetLayoutNeededForbiddenScope::~SetLayoutNeededForbiddenScope()
 
 #endif
 
-struct SameSizeAsRenderObject final : public CachedImageClient, public CanMakeCheckedPtr<SameSizeAsRenderObject> {
+struct SameSizeAsRenderObject final : public CachedImageClient {
     WTF_MAKE_STRUCT_FAST_ALLOCATED;
     WTF_STRUCT_OVERRIDE_DELETE_FOR_CHECKED_PTR(SameSizeAsRenderObject);
 

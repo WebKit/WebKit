@@ -35,6 +35,8 @@ namespace WebCore {
 struct BlendingContext;
 
 class StyleCrossfadeImage final : public StyleGeneratedImage, private CachedImageClient {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(StyleCrossfadeImage);
 public:
     static Ref<StyleCrossfadeImage> create(RefPtr<StyleImage> from, RefPtr<StyleImage> to, double percentage, bool isPrefixed)
     {

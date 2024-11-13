@@ -59,8 +59,9 @@ namespace WebCore {
 
 #if ENABLE(DRAG_SUPPORT)
 
-class DragImageLoader final : private CachedImageClient {
+class DragImageLoader final : public CachedImageClient {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(DragImageLoader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(DragImageLoader);
     WTF_MAKE_NONCOPYABLE(DragImageLoader);
 public:
     explicit DragImageLoader(DataTransfer&);

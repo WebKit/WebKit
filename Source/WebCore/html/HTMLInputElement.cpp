@@ -136,7 +136,7 @@ Ref<Element> HTMLInputElement::cloneElementWithoutAttributesAndChildren(Document
 HTMLImageLoader& HTMLInputElement::ensureImageLoader()
 {
     if (!m_imageLoader)
-        m_imageLoader = makeUnique<HTMLImageLoader>(*this);
+        m_imageLoader = makeUniqueWithoutRefCountedCheck<HTMLImageLoader>(*this);
     return *m_imageLoader;
 }
 

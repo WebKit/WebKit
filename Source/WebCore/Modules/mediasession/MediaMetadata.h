@@ -50,6 +50,7 @@ using MediaSessionMetadata = MediaMetadataInit;
 
 class ArtworkImageLoader final : public CachedImageClient {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(ArtworkImageLoader, WEBCORE_EXPORT);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ArtworkImageLoader);
 public:
     using ArtworkImageLoaderCallback = Function<void(Image*)>;
     // The callback will only be called upon success or explicit failure to retrieve the image. If the operation is interrupted following the
