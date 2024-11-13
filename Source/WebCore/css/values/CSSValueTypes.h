@@ -31,6 +31,7 @@
 #include <utility>
 #include <variant>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/AtomString.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -45,11 +46,19 @@ namespace CSS {
 // NOTE: This gets automatically specialized when using the CSS_TUPLE_LIKE_CONFORMANCE macro.
 template<class> inline constexpr bool TreatAsTupleLike = false;
 
-// Helper type used to represent a constant identifier.
+// Helper type used to represent a known constant identifier.
 template<CSSValueID C> struct Constant {
     static constexpr auto value = C;
 
     constexpr bool operator==(const Constant<C>&) const = default;
+};
+
+// Helper type used to represent an arbitrary constant identifier.
+struct CustomIdentifier {
+    AtomString value;
+
+    bool operator==(const CustomIdentifier&) const = default;
+    bool operator==(const AtomString& other) const { return value == other; }
 };
 
 // Helper type used to represent a CSS function.
@@ -358,6 +367,11 @@ template<CSSValueID C> struct Serialize<Constant<C>> {
     }
 };
 
+// Specialization for `CustomIdentifier`.
+template<> struct Serialize<CustomIdentifier> {
+    void operator()(StringBuilder&, const CustomIdentifier&);
+};
+
 // Specialization for `FunctionNotation`.
 template<CSSValueID Name, typename CSSType> struct Serialize<FunctionNotation<Name, CSSType>> {
     void operator()(StringBuilder& builder, const FunctionNotation<Name, CSSType>& value)
@@ -537,6 +551,14 @@ template<CSSValueID C> struct ComputedStyleDependenciesCollector<Constant<C>> {
     }
 };
 
+// Specialization for `CustomIdentifier`.
+template<> struct ComputedStyleDependenciesCollector<CustomIdentifier> {
+    constexpr void operator()(ComputedStyleDependencies&, const CustomIdentifier&)
+    {
+        // Nothing to do.
+    }
+};
+
 // Specialization for `FunctionNotation`.
 template<CSSValueID Name, typename CSSType> struct ComputedStyleDependenciesCollector<FunctionNotation<Name, CSSType>> {
     constexpr void operator()(ComputedStyleDependencies& dependencies, const FunctionNotation<Name, CSSType>& value)
@@ -693,6 +715,14 @@ template<CSSValueID C> struct CSSValueChildrenVisitor<Constant<C>> {
     }
 };
 
+// Specialization for `CustomIdentifier`.
+template<> struct CSSValueChildrenVisitor<CustomIdentifier> {
+    constexpr IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const CustomIdentifier&)
+    {
+        return IterationStatus::Continue;
+    }
+};
+
 // Specialization for `Function`.
 template<CSSValueID Name, typename CSSType> struct CSSValueChildrenVisitor<FunctionNotation<Name, CSSType>> {
     IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const FunctionNotation<Name, CSSType>& value)
@@ -780,6 +810,10 @@ template<typename CSSType> struct CSSValueChildrenVisitor<RectEdges<CSSType>> {
         return IterationStatus::Continue;
     }
 };
+
+// MARK: - Text Stream
+
+WTF::TextStream& operator<<(WTF::TextStream&, const CustomIdentifier&);
 
 } // namespace CSS
 } // namespace WebCore

@@ -1,13 +1,13 @@
 
 PASS Property color-scheme value 'normal'
 PASS Property color-scheme value 'light dark'
-FAIL Property color-scheme value 'dark light' assert_equals: expected "dark light" but got "light dark"
-FAIL Property color-scheme value 'light unknown' assert_equals: expected "light unknown" but got "light"
+PASS Property color-scheme value 'dark light'
+PASS Property color-scheme value 'light unknown'
 PASS Property color-scheme value 'only light'
 PASS Property color-scheme value 'only light dark'
-FAIL Property color-scheme value 'light light' assert_true: 'light light' is a supported value for color-scheme. expected true got false
+PASS Property color-scheme value 'light light'
 PASS Property color-scheme value 'light only'
-FAIL Property color-scheme value 'none' assert_equals: expected "none" but got "normal"
+PASS Property color-scheme value 'none'
 PASS Property color-scheme value 'initial'
 PASS Property color-scheme value 'inherit'
 PASS Property color-scheme value 'unset'

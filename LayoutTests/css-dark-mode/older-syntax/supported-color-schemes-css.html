@@ -93,9 +93,9 @@ test(function() {
 
 test(function() {
     document.body.style.setProperty("supported-color-schemes", "light foo");
-    test_prop(document.body, "supported-color-schemes", "light");
-    test_prop(document.body, "color-scheme", "light");
-}, "Supported color schemes changed to light and a bogus value");
+    test_prop(document.body, "supported-color-schemes", "light foo");
+    test_prop(document.body, "color-scheme", "light foo");
+}, "Supported color schemes changed to light and an unknown value");
 
 test(function() {
     // The semantic text color should be black again.
@@ -154,9 +154,9 @@ test(function() {
 
 test(function() {
     document.body.style.setProperty("supported-color-schemes", "foo dark");
-    test_prop(document.body, "supported-color-schemes", "dark");
-    test_prop(document.body, "color-scheme", "dark");
-}, "Supported color schemes changed to a bogus value and dark");
+    test_prop(document.body, "supported-color-schemes", "foo dark");
+    test_prop(document.body, "color-scheme", "foo dark");
+}, "Supported color schemes changed to an unknown value and dark");
 
 test(function() {
     // The semantic text color should be white still.

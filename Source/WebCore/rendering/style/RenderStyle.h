@@ -82,7 +82,6 @@ class ScrollTimeline;
 class ShadowData;
 class ShapeValue;
 class StyleColor;
-class StyleColorScheme;
 class StyleContentAlignmentData;
 class StyleCustomPropertyData;
 class StyleImage;
@@ -285,6 +284,7 @@ using LayoutBoxExtent = RectEdges<LayoutUnit>;
 namespace Style {
 class CustomPropertyRegistry;
 class ViewTransitionName;
+struct ColorScheme;
 struct ScopedName;
 }
 
@@ -913,7 +913,7 @@ public:
     inline RubyOverhang rubyOverhang() const;
 
 #if ENABLE(DARK_MODE_CSS)
-    inline StyleColorScheme colorScheme() const;
+    inline Style::ColorScheme colorScheme() const;
     inline void setHasExplicitlySetColorScheme();
     inline bool hasExplicitlySetColorScheme() const;
 #endif
@@ -1531,7 +1531,7 @@ public:
     inline void setRubyOverhang(RubyOverhang);
 
 #if ENABLE(DARK_MODE_CSS)
-    inline void setColorScheme(StyleColorScheme);
+    inline void setColorScheme(Style::ColorScheme);
 #endif
 
     inline void setTableLayout(TableLayoutType);
@@ -2032,7 +2032,7 @@ public:
     static QuotesData* initialQuotes() { return nullptr; }
 
 #if ENABLE(DARK_MODE_CSS)
-    static constexpr StyleColorScheme initialColorScheme();
+    static inline Style::ColorScheme initialColorScheme();
 #endif
 
     static constexpr TextIndentLine initialTextIndentLine();

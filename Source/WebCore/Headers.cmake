@@ -948,6 +948,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/values/backgrounds/CSSBorderRadius.h
     css/values/backgrounds/CSSMinimallySerializingRectEdges.h
 
+    css/values/color-adjust/CSSColorScheme.h
+
     css/values/images/CSSGradient.h
 
     css/values/motion/CSSRayFunction.h
@@ -2541,7 +2543,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     rendering/style/ShapeValue.h
     rendering/style/StyleBackgroundData.h
     rendering/style/StyleBoxData.h
-    rendering/style/StyleColorScheme.h
     rendering/style/StyleContentAlignmentData.h
     rendering/style/StyleCustomPropertyData.h
     rendering/style/StyleDeprecatedFlexibleBoxData.h
@@ -2596,6 +2597,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/backgrounds/StyleBorderRadius.h
     style/values/backgrounds/StyleMinimallySerializingRectEdges.h
+
+    style/values/color-adjust/StyleColorScheme.h
 
     style/values/images/StyleGradient.h
 

@@ -89,9 +89,6 @@ RefPtr<CSSValue> consumeHangingPunctuation(CSSParserTokenRange&, const CSSParser
 RefPtr<CSSValue> consumeContain(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeContainIntrinsicSize(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange&, const CSSParserContext&);
-#if ENABLE(DARK_MODE_CSS)
-RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange&, const CSSParserContext&);
-#endif
 RefPtr<CSSValue> consumeTextAutospace(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeTextUnderlinePosition(CSSParserTokenRange&, const CSSParserContext&);
 RefPtr<CSSValue> consumeWebKitRubyPosition(CSSParserTokenRange&, const CSSParserContext&);

@@ -8,10 +8,6 @@
     color-scheme: normal;
 }
 
-#testOnly {
-    color-scheme: only;
-}
-
 #testLight {
     color-scheme: light;
 }
@@ -36,10 +32,6 @@
     color-scheme: only dark;
 }
 
-#testLightOnlyDark {
-    color-scheme: light only dark;
-}
-
 #testLightUnknown {
     color-scheme: light foo;
 }
@@ -52,16 +44,24 @@
     color-scheme: light baz only;
 }
 
+#testLightDarkLight {
+    color-scheme: light dark light;
+}
+
+#testInvalidOnly {
+    color-scheme: only;
+}
+
+#testInvalidLightOnlyDark {
+    color-scheme: light only dark;
+}
+
 #testInvalidLightNormal {
     color-scheme: light normal;
 }
 
 #testInvalidNormalDark {
     color-scheme: normal dark;
-}
-
-#testInvalidLightDarkLight {
-    color-scheme: light dark light;
 }
 
 #testInvalidNumber {
@@ -78,20 +78,20 @@
 </style>
 
 <div id="testNormal"></div>
-<div id="testOnly"></div>
 <div id="testLight"></div>
 <div id="testDark"></div>
 <div id="testLightDark"></div>
 <div id="testDarkLight"></div>
 <div id="testLightDarkOnly"></div>
 <div id="testOnlyDark"></div>
-<div id="testLightOnlyDark"></div>
 <div id="testLightUnknown"></div>
 <div id="testUnknownDarkOnly"></div>
+<div id="testLightDarkLight"></div>
 
+<div id="testInvalidOnly"></div>
+<div id="testInvalidLightOnlyDark"></div>
 <div id="testInvalidLightNormal"></div>
 <div id="testInvalidNormalDark"></div>
-<div id="testInvalidLightDarkLight"></div>
 <div id="testInvalidNumber"></div>
 <div id="testInvalidString"></div>
 <div id="testInvalidLightString"></div>
@@ -103,22 +103,22 @@ function test_prop(id, property, expected) {
 
 test(function() {
     test_prop("testNormal", "color-scheme", "normal");
-    test_prop("testOnly", "color-scheme", "light only");
     test_prop("testLight", "color-scheme", "light");
     test_prop("testDark", "color-scheme", "dark");
     test_prop("testLightDark", "color-scheme", "light dark");
-    test_prop("testDarkLight", "color-scheme", "light dark");
+    test_prop("testDarkLight", "color-scheme", "dark light");
     test_prop("testLightDarkOnly", "color-scheme", "light dark only");
     test_prop("testOnlyDark", "color-scheme", "dark only");
-    test_prop("testLightOnlyDark", "color-scheme", "light dark only");
-    test_prop("testLightUnknown", "color-scheme", "light");
-    test_prop("testUnknownDarkOnly", "color-scheme", "dark only");
+    test_prop("testLightUnknown", "color-scheme", "light foo");
+    test_prop("testUnknownDarkOnly", "color-scheme", "bar dark only");
+    test_prop("testLightDarkLight", "color-scheme", "light dark light");
 }, "Test valid values");
 
 test(function() {
+    test_prop("testInvalidOnly", "color-scheme", "normal");
+    test_prop("testInvalidLightOnlyDark", "color-scheme", "normal");
     test_prop("testInvalidLightNormal", "color-scheme", "normal");
     test_prop("testInvalidNormalDark", "color-scheme", "normal");
-    test_prop("testInvalidLightDarkLight", "color-scheme", "normal");
     test_prop("testInvalidNumber", "color-scheme", "normal");
     test_prop("testInvalidString", "color-scheme", "normal");
     test_prop("testInvalidLightString", "color-scheme", "normal");

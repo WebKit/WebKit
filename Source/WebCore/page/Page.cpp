@@ -3917,8 +3917,8 @@ void Page::setUseSystemAppearance(bool value)
 
     appearanceDidChange();
 
-    forEachDocument([&] (Document& document) {
-        // System apperance change may affect stylesheet parsing. We need to reparse.
+    forEachDocument([&](Document& document) {
+        // System appearance change may affect stylesheet parsing. We need to re-parse.
         if (CheckedPtr extensionStyleSheets = document.extensionStyleSheetsIfExists()) {
             extensionStyleSheets->clearPageUserSheet();
             extensionStyleSheets->invalidateInjectedStyleSheetCache();

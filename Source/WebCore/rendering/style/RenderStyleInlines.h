@@ -805,8 +805,8 @@ constexpr CursorVisibility RenderStyle::initialCursorVisibility() { return Curso
 #endif
 
 #if ENABLE(DARK_MODE_CSS)
-inline StyleColorScheme RenderStyle::colorScheme() const { return m_rareInheritedData->colorScheme; }
-constexpr StyleColorScheme RenderStyle::initialColorScheme() { return { }; }
+inline Style::ColorScheme RenderStyle::colorScheme() const { return m_rareInheritedData->colorScheme; }
+inline Style::ColorScheme RenderStyle::initialColorScheme() { return Style::ColorScheme { .schemes = { }, .only = { } }; }
 inline bool RenderStyle::hasExplicitlySetColorScheme() const { return m_nonInheritedData->miscData->hasExplicitlySetColorScheme; }
 #endif
 

@@ -184,7 +184,7 @@ public:
     short hyphenationLimitLines { -1 };
 
 #if ENABLE(DARK_MODE_CSS)
-    StyleColorScheme colorScheme;
+    Style::ColorScheme colorScheme;
 #endif
 
     AtomString textEmphasisCustomMark;

@@ -12,7 +12,7 @@ PASS Supported color schemes changed to dark
 PASS Element colors are correct in light color scheme with only dark supported color scheme
 PASS Dark color scheme enabled 3
 PASS Element colors are correct in dark color scheme with only dark supported color scheme
-PASS Supported color schemes changed to light and a bogus value
+PASS Supported color schemes changed to light and an unknown value
 PASS Element colors are correct in dark color scheme with only light supported color scheme 2
 PASS Supported color schemes changed to normal value
 PASS Element colors are correct in dark color scheme with implicit light supported color scheme
@@ -23,6 +23,6 @@ PASS Element colors are correct in dark color scheme with explicit light, overri
 PASS Remove test meta element
 PASS Supported color schemes changed to light and dark 2
 PASS Element colors are correct in dark color scheme with light and dark supported color scheme 2
-PASS Supported color schemes changed to a bogus value and dark
+PASS Supported color schemes changed to an unknown value and dark
 PASS Element colors are correct in dark color scheme with dark supported color scheme
 

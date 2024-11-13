@@ -28,6 +28,7 @@
 #include "CSSBasicShapeValue.h"
 #include "CSSBorderImage.h"
 #include "CSSBorderImageSliceValue.h"
+#include "CSSColorSchemeValue.h"
 #include "CSSCounterValue.h"
 #include "CSSFontFeatureValue.h"
 #include "CSSFontStyleWithAngleValue.h"
@@ -81,6 +82,7 @@
 #include "ScaleTransformOperation.h"
 #include "ScrollTimeline.h"
 #include "SkewTransformOperation.h"
+#include "StyleColorScheme.h"
 #include "StylePathData.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
 #include "StylePropertyShorthand.h"
@@ -4833,21 +4835,8 @@ RefPtr<CSSValue> ComputedStyleExtractor::valueForPropertyInStyle(const RenderSty
 #endif
 
 #if ENABLE(DARK_MODE_CSS)
-    case CSSPropertyColorScheme: {
-        auto colorScheme = style.colorScheme();
-        if (colorScheme.isNormal())
-            return CSSPrimitiveValue::create(CSSValueNormal);
-
-        CSSValueListBuilder list;
-        if (colorScheme.contains(ColorScheme::Light))
-            list.append(CSSPrimitiveValue::create(CSSValueLight));
-        if (colorScheme.contains(ColorScheme::Dark))
-            list.append(CSSPrimitiveValue::create(CSSValueDark));
-        if (!colorScheme.allowsTransformations())
-            list.append(CSSPrimitiveValue::create(CSSValueOnly));
-        ASSERT(!list.isEmpty());
-        return CSSValueList::createSpaceSeparated(WTFMove(list));
-    }
+    case CSSPropertyColorScheme:
+        return CSSColorSchemeValue::create(Style::toCSS(style.colorScheme(), style));
 #endif
 
     // Length properties for SVG.

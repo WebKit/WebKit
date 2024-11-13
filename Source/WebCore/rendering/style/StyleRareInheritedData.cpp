@@ -61,7 +61,7 @@ struct GreaterThanOrSameSizeAsStyleRareInheritedData : public RefCounted<Greater
 #endif
 
 #if ENABLE(DARK_MODE_CSS)
-    StyleColorScheme colorScheme;
+    Style::ColorScheme colorScheme;
 #endif
     ListStyleType listStyleType;
 

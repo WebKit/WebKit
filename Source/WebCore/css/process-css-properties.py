@@ -3934,6 +3934,7 @@ class GenerateCSSPropertyParsing:
                     "CSSPropertyParserConsumer+Angle.h",
                     "CSSPropertyParserConsumer+Background.h",
                     "CSSPropertyParserConsumer+Color.h",
+                    "CSSPropertyParserConsumer+ColorAdjust.h",
                     "CSSPropertyParserConsumer+CounterStyles.h",
                     "CSSPropertyParserConsumer+Filter.h",
                     "CSSPropertyParserConsumer+Font.h",

@@ -1370,53 +1370,6 @@ RefPtr<CSSValue> consumeTextEmphasisPosition(CSSParserTokenRange& range, const C
         CSSPrimitiveValue::create(*leftRightValueID));
 }
 
-#if ENABLE(DARK_MODE_CSS)
-
-RefPtr<CSSValue> consumeColorScheme(CSSParserTokenRange& range, const CSSParserContext&)
-{
-    if (range.peek().id() == CSSValueNormal)
-        return consumeIdent(range);
-
-    Vector<CSSValueID, 3> identifiers;
-
-    while (!range.atEnd()) {
-        if (range.peek().type() != IdentToken)
-            return nullptr;
-
-        CSSValueID id = range.peek().id();
-
-        switch (id) {
-        case CSSValueNormal:
-            // `normal` is only allowed as a single value, and was handled earlier.
-            // Don't allow it in the list.
-            return nullptr;
-
-        // FIXME: Specification seems to indicate that we can only have "only" once.
-        // FIXME: Specification seems to indicate "only" by itself without some other keyword is not valid.
-        // FIXME: Specification seems to indicate that "only" should be put at the end of the list rather than where it appeared in parsing sequence.
-        case CSSValueOnly:
-        case CSSValueLight:
-        case CSSValueDark:
-            if (!identifiers.appendIfNotContains(id))
-                return nullptr;
-            break;
-
-        default:
-            // Unknown identifiers are allowed and ignored.
-            break;
-        }
-
-        range.consumeIncludingWhitespace();
-    }
-
-    CSSValueListBuilder list;
-    for (auto id : identifiers)
-        list.append(CSSPrimitiveValue::create(id));
-    return CSSValueList::createSpaceSeparated(WTFMove(list));
-}
-
-#endif
-
 RefPtr<CSSValue> consumeDeclarationValue(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     return CSSVariableParser::parseDeclarationValue(nullAtom(), range.consumeAll(), context);

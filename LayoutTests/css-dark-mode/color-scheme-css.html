@@ -91,8 +91,8 @@ test(function() {
 
 test(function() {
     document.body.style.setProperty("color-scheme", "light foo");
-    test_prop(document.body, "color-scheme", "light");
-}, "Color schemes changed to light and a bogus value");
+    test_prop(document.body, "color-scheme", "light foo");
+}, "Color schemes changed to light and an unknown value");
 
 test(function() {
     // The semantic text color should be black again.
@@ -148,8 +148,8 @@ test(function() {
 
 test(function() {
     document.body.style.setProperty("color-scheme", "foo dark");
-    test_prop(document.body, "color-scheme", "dark");
-}, "Color schemes changed to a bogus value and dark");
+    test_prop(document.body, "color-scheme", "foo dark");
+}, "Color schemes changed to an unknown value and dark");
 
 test(function() {
     // The semantic text color should be white still.

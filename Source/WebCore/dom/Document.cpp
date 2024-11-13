@@ -38,6 +38,7 @@
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParserConsumer+ColorAdjust.h"
 #include "CSSStyleDeclaration.h"
 #include "CSSStyleSheet.h"
 #include "CSSViewTransitionRule.h"
@@ -267,6 +268,7 @@
 #include "StringCallback.h"
 #include "StyleAdjuster.h"
 #include "StyleColor.h"
+#include "StyleColorScheme.h"
 #include "StyleProperties.h"
 #include "StyleResolveForDocument.h"
 #include "StyleResolver.h"
@@ -4857,13 +4859,19 @@ void Document::processColorScheme(const String& colorSchemeString)
 
 void Document::metaElementColorSchemeChanged()
 {
-    RefPtr<CSSValue> colorScheme;
-    auto colorSchemeString = emptyString();
-    auto cssParserContext = CSSParserContext(document());
-    for (auto& metaElement : descendantsOfType<HTMLMetaElement>(rootNode())) {
+    const auto& context = this->cssParserContext();
+
+    auto parseColorScheme = [&](const auto& metaElement) -> std::optional<CSS::ColorScheme> {
         const AtomString& nameValue = metaElement.attributeWithoutSynchronization(nameAttr);
-        if ((equalLettersIgnoringASCIICase(nameValue, "color-scheme"_s) || equalLettersIgnoringASCIICase(nameValue, "supported-color-schemes"_s)) && (colorScheme = CSSParser::parseSingleValue(CSSPropertyColorScheme, metaElement.attributeWithoutSynchronization(contentAttr), cssParserContext))) {
-            colorSchemeString = colorScheme->cssText();
+        if (!equalLettersIgnoringASCIICase(nameValue, "color-scheme"_s) && !equalLettersIgnoringASCIICase(nameValue, "supported-color-schemes"_s))
+            return { };
+        return CSSPropertyParserHelpers::parseUnresolvedColorScheme(metaElement.attributeWithoutSynchronization(contentAttr), context);
+    };
+
+    auto colorSchemeString = emptyString();
+    for (auto& metaElement : descendantsOfType<HTMLMetaElement>(rootNode())) {
+        if (auto colorScheme = parseColorScheme(metaElement)) {
+            colorSchemeString = CSS::serializationForCSS(*colorScheme);
             break;
         }
     }
@@ -9114,15 +9122,8 @@ bool Document::useSystemAppearance() const
 bool Document::useDarkAppearance(const RenderStyle* style) const
 {
 #if ENABLE(DARK_MODE_CSS)
-    OptionSet<ColorScheme> colorScheme;
-
-    // Use the style's supported color schemes, if supplied.
-    if (style)
-        colorScheme = style->colorScheme().colorScheme();
-
-    // Fallback to the document's supported color schemes if style was empty (auto).
-    if (colorScheme.isEmpty())
-        colorScheme = m_colorScheme;
+    bool isNormal = !style || style->colorScheme().isNormal();
+    auto colorScheme = isNormal ? m_colorScheme : style->colorScheme().colorScheme();
 
     if (colorScheme.contains(ColorScheme::Dark) && !colorScheme.contains(ColorScheme::Light))
         return true;

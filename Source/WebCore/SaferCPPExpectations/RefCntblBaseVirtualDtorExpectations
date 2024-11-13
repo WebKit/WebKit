@@ -7,6 +7,7 @@ css/CSSBasicShapeValue.h
 css/CSSBorderImageSliceValue.h
 css/CSSBorderImageWidthValue.h
 css/CSSCanvasValue.h
+css/CSSColorSchemeValue.h
 css/CSSContentDistributionValue.h
 css/CSSCounterStyleRule.h
 css/CSSCounterValue.h
