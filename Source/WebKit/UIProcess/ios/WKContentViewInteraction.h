@@ -743,6 +743,7 @@ FOR_EACH_PRIVATE_WKCONTENTVIEW_ACTION(DECLARE_WKCONTENTVIEW_ACTION_FOR_WEB_VIEW)
 - (void)_elementDidBlur;
 - (void)_didUpdateInputMode:(WebCore::InputMode)mode;
 - (void)_didUpdateEditorState;
+- (void)_reconcileEnclosingScrollViewContentOffset:(WebKit::EditorState&)state;
 - (void)_hardwareKeyboardAvailabilityChanged;
 - (void)_selectionChanged;
 - (void)_updateChangedSelection;

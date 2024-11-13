@@ -139,6 +139,15 @@ void SelectionGeometry::setRect(const IntRect& rect)
     m_cachedEnclosingRect = rect;
 }
 
+void SelectionGeometry::move(float x, float y)
+{
+    m_quad.move(x, y);
+    m_minX += x;
+    m_maxX += x;
+    m_maxY += y;
+    m_cachedEnclosingRect.reset();
+}
+
 TextStream& operator<<(TextStream& stream, const SelectionGeometry& rect)
 {
     TextStream::GroupScope group(stream);

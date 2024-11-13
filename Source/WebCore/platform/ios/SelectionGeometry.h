@@ -92,6 +92,8 @@ public:
     void setBehavior(SelectionRenderingBehavior behavior) { m_behavior = behavior; }
     void setMayAppearLogicallyDiscontiguous(bool value) { m_mayAppearLogicallyDiscontiguous = value; }
 
+    WEBCORE_EXPORT void move(float x, float y);
+
 private:
     FloatQuad m_quad;
     SelectionRenderingBehavior m_behavior { SelectionRenderingBehavior::CoalesceBoundingRects };

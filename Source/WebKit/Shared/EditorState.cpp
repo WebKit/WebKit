@@ -180,4 +180,33 @@ void EditorState::clipOwnedRectExtentsToNumericLimits()
         sanitizeVisualData(*visualData);
 }
 
+void EditorState::move(float x, float y)
+{
+    if (!hasVisualData())
+        return;
+
+    if (!x && !y)
+        return;
+
+#if PLATFORM(IOS_FAMILY) || PLATFORM(GTK) || PLATFORM(WPE)
+    int roundedX = std::round(x);
+    int roundedY = std::round(y);
+    visualData->caretRectAtStart.move(roundedX, roundedY);
+#endif
+
+#if PLATFORM(IOS_FAMILY)
+    visualData->selectionClipRect.move(roundedX, roundedY);
+    visualData->editableRootBounds.move(roundedX, roundedY);
+    visualData->caretRectAtEnd.move(roundedX, roundedY);
+    visualData->markedTextCaretRectAtStart.move(roundedX, roundedY);
+    visualData->markedTextCaretRectAtEnd.move(roundedX, roundedY);
+    for (auto& geometry : visualData->selectionGeometries)
+        geometry.move(x, y);
+    for (auto& geometry : visualData->markedTextRects)
+        geometry.move(x, y);
+#endif // PLATFORM(IOS_FAMILY)
+
+    clipOwnedRectExtentsToNumericLimits();
+}
+
 } // namespace WebKit

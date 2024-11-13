@@ -8457,6 +8457,30 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     _actionsToPerformAfterEditorStateUpdate.append(makeBlockPtr(block));
 }
 
+- (void)_reconcileEnclosingScrollViewContentOffset:(WebKit::EditorState&)state
+{
+    if (!state.hasVisualData())
+        return;
+
+    auto scrollingNodeID = state.visualData->enclosingScrollingNodeID;
+    if (!scrollingNodeID)
+        return;
+
+    RetainPtr scroller = [self _scrollViewForScrollingNodeID:*scrollingNodeID];
+    if (!scroller)
+        return;
+
+    auto possiblyStaleScrollPosition = state.visualData->enclosingScrollPosition;
+    auto scrollDelta = possiblyStaleScrollPosition - WebCore::roundedIntPoint([scroller contentOffset]);
+
+    static constexpr auto adjustmentThreshold = 1;
+    if (std::abs(scrollDelta.width()) <= adjustmentThreshold && std::abs(scrollDelta.height()) <= adjustmentThreshold)
+        return;
+
+    CGSize contentDelta = [scroller convertRect:CGRectMake(0, 0, scrollDelta.width(), scrollDelta.height()) toView:self].size;
+    state.move(std::copysign(contentDelta.width, scrollDelta.width()), std::copysign(contentDelta.height, scrollDelta.height()));
+}
+
 - (void)_didUpdateEditorState
 {
     [self _updateInitialWritingDirectionIfNecessary];
@@ -9001,6 +9025,14 @@ static bool canUseQuickboardControllerFor(UITextContentType type)
 - (void)_updateChangedSelection
 {
     [self _updateChangedSelection:NO];
+}
+
+- (UIScrollView *)_scrollViewForScrollingNodeID:(WebCore::ScrollingNodeID)scrollingNodeID
+{
+    if (WeakPtr coordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy()))
+        return coordinator->scrollViewForScrollingNodeID(scrollingNodeID);
+
+    return nil;
 }
 
 - (void)_updateChangedSelection:(BOOL)force
@@ -9883,10 +9915,8 @@ static WebCore::DataOwnerType coreDataOwnerType(_UIDataOwner platformType)
 - (void)_updateTargetedPreviewScrollViewUsingContainerScrollingNodeID:(std::optional<WebCore::ScrollingNodeID>)scrollingNodeID
 {
     if (scrollingNodeID) {
-        if (auto* scrollingCoordinator = downcast<WebKit::RemoteScrollingCoordinatorProxyIOS>(_page->scrollingCoordinatorProxy())) {
-            if (UIScrollView *scrollViewForScrollingNode = scrollingCoordinator->scrollViewForScrollingNodeID(*scrollingNodeID))
-                _scrollViewForTargetedPreview = scrollViewForScrollingNode;
-        }
+        if (RetainPtr scrollViewForScrollingNode = [self _scrollViewForScrollingNodeID:*scrollingNodeID])
+            _scrollViewForTargetedPreview = scrollViewForScrollingNode.get();
     }
 
     if (!_scrollViewForTargetedPreview)

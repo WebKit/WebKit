@@ -300,7 +300,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
         m_activityStateChangeID = layerTreeTransaction.activityStateChangeID();
 
         // FIXME(site-isolation): Editor state should be updated for subframes.
-        didUpdateEditorState = layerTreeTransaction.hasEditorState() && webPageProxy->updateEditorState(layerTreeTransaction.editorState(), WebPageProxy::ShouldMergeVisualEditorState::Yes);
+        didUpdateEditorState = layerTreeTransaction.hasEditorState() && webPageProxy->updateEditorState(EditorState { layerTreeTransaction.editorState() }, WebPageProxy::ShouldMergeVisualEditorState::Yes);
     }
 
 #if ENABLE(ASYNC_SCROLLING)

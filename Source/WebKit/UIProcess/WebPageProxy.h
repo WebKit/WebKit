@@ -2014,9 +2014,9 @@ public:
 #if PLATFORM(COCOA)
     void createSandboxExtensionsIfNeeded(const Vector<String>& files, SandboxExtensionHandle& fileReadHandle, Vector<SandboxExtensionHandle>& fileUploadHandles);
 #endif
-    void editorStateChanged(const EditorState&);
+    void editorStateChanged(EditorState&&);
     enum class ShouldMergeVisualEditorState : uint8_t { No, Yes, Default };
-    bool updateEditorState(const EditorState& newEditorState, ShouldMergeVisualEditorState = ShouldMergeVisualEditorState::Default);
+    bool updateEditorState(EditorState&& newEditorState, ShouldMergeVisualEditorState = ShouldMergeVisualEditorState::Default);
     void scheduleFullEditorStateUpdate();
     void dispatchDidUpdateEditorState();
 
@@ -2928,7 +2928,7 @@ private:
     void didReceiveEvent(IPC::Connection&, WebEventType, bool handled, std::optional<WebCore::RemoteUserInputEventData>);
     void didUpdateRenderingAfterCommittingLoad();
 #if PLATFORM(IOS_FAMILY)
-    void interpretKeyEvent(const EditorState&, bool isCharEvent, CompletionHandler<void(bool)>&&);
+    void interpretKeyEvent(EditorState&&, bool isCharEvent, CompletionHandler<void(bool)>&&);
     void showPlaybackTargetPicker(bool hasVideo, const WebCore::IntRect& elementRect, WebCore::RouteSharingPolicy, const String&);
 
     void updateStringForFind(const String&);

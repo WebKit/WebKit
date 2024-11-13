@@ -195,6 +195,7 @@ class WebProcessProxy;
 
 enum class ContinueUnsafeLoad : bool { No, Yes };
 
+struct EditorState;
 struct FocusedElementInformation;
 struct FrameInfoData;
 struct InteractionInformationAtPosition;
@@ -536,6 +537,8 @@ public:
 
     virtual CocoaWindow *platformWindow() const = 0;
 #endif
+
+    virtual void reconcileEnclosingScrollViewContentOffset(EditorState&) { };
 
 #if PLATFORM(IOS_FAMILY)
     virtual void commitPotentialTapFailed() = 0;

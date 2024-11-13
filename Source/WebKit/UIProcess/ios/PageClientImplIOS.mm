@@ -700,6 +700,11 @@ void PageClientImpl::didUpdateEditorState()
     [contentView() _didUpdateEditorState];
 }
 
+void PageClientImpl::reconcileEnclosingScrollViewContentOffset(EditorState& state)
+{
+    [contentView() _reconcileEnclosingScrollViewContentOffset:state];
+}
+
 void PageClientImpl::showPlaybackTargetPicker(bool hasVideo, const IntRect& elementRect, WebCore::RouteSharingPolicy policy, const String& contextUID)
 {
     [contentView() _showPlaybackTargetPicker:hasVideo fromRect:elementRect routeSharingPolicy:policy routingContextUID:contextUID];

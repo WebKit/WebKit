@@ -144,10 +144,12 @@
 #import <WebCore/RenderImage.h>
 #import <WebCore/RenderLayer.h>
 #import <WebCore/RenderLayerBacking.h>
+#import <WebCore/RenderLayerScrollableArea.h>
 #import <WebCore/RenderThemeIOS.h>
 #import <WebCore/RenderVideo.h>
 #import <WebCore/RenderView.h>
 #import <WebCore/RenderedDocumentMarker.h>
+#import <WebCore/ScrollableArea.h>
 #import <WebCore/Settings.h>
 #import <WebCore/ShadowRoot.h>
 #import <WebCore/SharedBuffer.h>
@@ -5627,6 +5629,7 @@ void WebPage::computeEnclosingLayerID(EditorState& state, const VisibleSelection
     if (!endLayer)
         return;
 
+    CheckedPtr<RenderLayer> enclosingLayer;
     for (CheckedPtr layer = startLayer->commonAncestorWithLayer(*endLayer); layer; layer = layer->enclosingContainingBlockLayer(CrossFrameBoundaries::Yes)) {
         if (!layer->isComposited())
             continue;
@@ -5640,8 +5643,37 @@ void WebPage::computeEnclosingLayerID(EditorState& state, const VisibleSelection
         if (!identifier)
             continue;
 
+        enclosingLayer = layer;
         state.visualData->enclosingLayerID = WTFMove(identifier);
+        break;
+    }
+
+    if (!state.visualData->enclosingLayerID)
         return;
+
+    auto nextScroller = [](RenderLayer& layer, IncludeSelfOrNot includeSelf) {
+        return layer.enclosingScrollableLayer(includeSelf, CrossFrameBoundaries::Yes);
+    };
+
+    for (CheckedPtr layer = nextScroller(*enclosingLayer, IncludeSelfOrNot::IncludeSelf); layer; layer = nextScroller(*layer, IncludeSelfOrNot::ExcludeSelf)) {
+        CheckedRef renderer = layer->renderer();
+        WeakPtr scrollableArea = [&] -> ScrollableArea* {
+            if (renderer->isRenderView())
+                return renderer->document().isTopDocument() ? nullptr : renderer->frame().view();
+
+            return layer->scrollableArea();
+        }();
+
+        if (!scrollableArea)
+            continue;
+
+        auto scrollingNodeID = scrollableArea->scrollingNodeID();
+        if (!scrollingNodeID)
+            continue;
+
+        state.visualData->enclosingScrollPosition = scrollableArea->scrollPosition();
+        state.visualData->enclosingScrollingNodeID = WTFMove(scrollingNodeID);
+        break;
     }
 }
 

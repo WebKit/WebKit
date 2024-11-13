@@ -10367,16 +10367,19 @@ void WebPageProxy::didReceiveEvent(IPC::Connection& connection, WebEventType eve
     }
 }
 
-void WebPageProxy::editorStateChanged(const EditorState& editorState)
+void WebPageProxy::editorStateChanged(EditorState&& editorState)
 {
     // FIXME: This should not merge VisualData; they should only be merged
     // if the drawing area says to.
-    if (updateEditorState(editorState, ShouldMergeVisualEditorState::Yes))
+    if (updateEditorState(WTFMove(editorState), ShouldMergeVisualEditorState::Yes))
         dispatchDidUpdateEditorState();
 }
 
-bool WebPageProxy::updateEditorState(const EditorState& newEditorState, ShouldMergeVisualEditorState shouldMergeVisualEditorState)
+bool WebPageProxy::updateEditorState(EditorState&& newEditorState, ShouldMergeVisualEditorState shouldMergeVisualEditorState)
 {
+    if (RefPtr pageClient = this->pageClient())
+        pageClient->reconcileEnclosingScrollViewContentOffset(newEditorState);
+
     if (shouldMergeVisualEditorState == ShouldMergeVisualEditorState::Default)
         shouldMergeVisualEditorState = (!m_drawingArea || !m_drawingArea->shouldCoalesceVisualEditorStateUpdates()) ? ShouldMergeVisualEditorState::Yes : ShouldMergeVisualEditorState::No;
 
@@ -10386,16 +10389,16 @@ bool WebPageProxy::updateEditorState(const EditorState& newEditorState, ShouldMe
     
     std::optional<EditorState> oldEditorState;
     if (!isStaleEditorState) {
-        oldEditorState = std::exchange(internals().editorState, newEditorState);
+        oldEditorState = std::exchange(internals().editorState, WTFMove(newEditorState));
         if (shouldKeepExistingVisualEditorState)
             internals().editorState.visualData = oldEditorState->visualData;
     } else if (shouldMergeNewVisualEditorState) {
         oldEditorState = internals().editorState;
-        internals().editorState.visualData = newEditorState.visualData;
+        internals().editorState.visualData = WTFMove(newEditorState.visualData);
     }
 
     if (oldEditorState) {
-        didUpdateEditorState(*oldEditorState, newEditorState);
+        didUpdateEditorState(*oldEditorState, internals().editorState);
         return true;
     }
 

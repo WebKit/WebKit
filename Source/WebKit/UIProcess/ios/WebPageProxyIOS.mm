@@ -736,9 +736,9 @@ void WebPageProxy::moveSelectionByOffset(int32_t offset, CompletionHandler<void(
     }, webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::interpretKeyEvent(const EditorState& state, bool isCharEvent, CompletionHandler<void(bool)>&& completionHandler)
+void WebPageProxy::interpretKeyEvent(EditorState&& state, bool isCharEvent, CompletionHandler<void(bool)>&& completionHandler)
 {
-    updateEditorState(state);
+    updateEditorState(WTFMove(state));
     if (!hasQueuedKeyEvent())
         return completionHandler(false);
     RefPtr pageClient = this->pageClient();

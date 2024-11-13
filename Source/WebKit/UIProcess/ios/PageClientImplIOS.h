@@ -201,6 +201,7 @@ private:
     void elementDidBlur() override;
     void focusedElementDidChangeInputMode(WebCore::InputMode) override;
     void didUpdateEditorState() override;
+    void reconcileEnclosingScrollViewContentOffset(EditorState&) final;
     bool isFocusingElement() override;
     void selectionDidChange() override;
     bool interpretKeyEvent(const NativeWebKeyboardEvent&, bool isCharEvent) override;
