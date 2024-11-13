@@ -2035,20 +2035,20 @@ TEST(WKWebExtensionAPIDeclarativeNetRequest, RuleConversionWithExcludedInitiator
     NSArray *correctRuleConversion = @[
         @{
             @"action": @{
-                @"type": @"ignore-previous-rules",
+                @"type": @"block",
             },
             @"trigger": @{
-                @"if-frame-url": @[ @"^[^:]+://+([^:/]+\\.)?blog\\.example\\.com/.*" ],
+                @"if-frame-url": @[ @"^[^:]+://+([^:/]+\\.)?example\\.com/.*" ],
                 @"resource-type": @[ @"font" ],
                 @"url-filter": @".*",
             }
         },
         @{
             @"action": @{
-                @"type": @"block",
+                @"type": @"ignore-previous-rules",
             },
             @"trigger": @{
-                @"if-frame-url": @[ @"^[^:]+://+([^:/]+\\.)?example\\.com/.*" ],
+                @"if-frame-url": @[ @"^[^:]+://+([^:/]+\\.)?blog\\.example\\.com/.*" ],
                 @"resource-type": @[ @"font" ],
                 @"url-filter": @".*",
             }

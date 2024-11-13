@@ -729,6 +729,8 @@ static BOOL isArrayOfExcludedDomainsValid(NSArray<NSString *> *excludedDomains)
         [convertedRules addObjectsFromArray:rulesToMaintainOrderingOfUpgradeSchemeRule];
     }
 
+    [convertedRules addObjectsFromArray:[self _convertedRulesForWebKitActionType:webKitActionType chromeActionType:chromeActionType]];
+
     if (_condition[ruleConditionInitiatorDomainsKey] && _condition[ruleConditionExcludedInitiatorDomainsKey]) {
         // If a rule specifies both initiatorDomains and excludedInitiatorDomains, we need to turn that into two rules. The first rule will have the excludedInitiatorDomains, and be implemented
         // as an ignore-previous-rules using if-frame-url (instead of unless-frame-url).
@@ -745,8 +747,6 @@ static BOOL isArrayOfExcludedDomainsValid(NSArray<NSString *> *excludedDomains)
 
         _condition = [originalCondition copy];
     }
-
-    [convertedRules addObjectsFromArray:[self _convertedRulesForWebKitActionType:webKitActionType chromeActionType:chromeActionType]];
 
     return [convertedRules copy];
 }
