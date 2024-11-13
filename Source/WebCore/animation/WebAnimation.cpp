@@ -1164,7 +1164,7 @@ ExceptionOr<void> WebAnimation::play(AutoRewind autoRewind)
     } else if (!playbackRate && !previousCurrentTime) {
         // If animation’s effective playback rate = 0 and animation’s current time is unresolved,
         // Set the animation’s hold time to zero.
-        m_holdTime = 0_s;
+        m_holdTime = zeroTime();
     }
 
     // 7. If has finite timeline and previous current time is unresolved:

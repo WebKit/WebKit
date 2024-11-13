@@ -1,18 +1,16 @@
 
-Harness Error (TIMEOUT), message = null
-
 PASS Zero current time is not affected by playbackRate set while the animation is in idle state.
 PASS Zero current time is not affected by playbackRate set while the animation is in play-pending state.
 PASS Initial current time is scaled by playbackRate set while scroll-linked animation is in running state.
-TIMEOUT The current time is scaled by playbackRate set while the scroll-linked animation is in play state. Test timed out
-NOTRUN The playback rate set before scroll-linked animation started playing affects the rate of progress of the current time
-NOTRUN The playback rate affects the rate of progress of the current time when scrolling
-NOTRUN Setting the playback rate while play-pending does not scale current time.
-NOTRUN Setting the playback rate while playing scales current time.
-NOTRUN Setting the playback rate while playing scales the set current time.
-NOTRUN Negative initial playback rate should correctly modify initial current time.
-NOTRUN Reversing the playback rate while playing correctly impacts current time during future scrolls
-NOTRUN Zero initial playback rate should correctly modify initial current time.
-NOTRUN Setting a zero playback rate while running preserves the start time
-NOTRUN Reversing an animation with non-boundary aligned start time symmetrically adjusts the start time
+FAIL The current time is scaled by playbackRate set while the scroll-linked animation is in play state. assert_approx_equals: values do not match for "The current time is scaled by the playback rate." expected 40 +/- 0.125 but got 20
+PASS The playback rate set before scroll-linked animation started playing affects the rate of progress of the current time
+PASS The playback rate affects the rate of progress of the current time when scrolling
+PASS Setting the playback rate while play-pending does not scale current time.
+FAIL Setting the playback rate while playing scales current time. assert_approx_equals: values do not match for "undefined" expected 50 +/- 0.125 but got 25
+FAIL Setting the playback rate while playing scales the set current time. assert_approx_equals: values do not match for "undefined" expected 50 +/- 0.125 but got 25
+PASS Negative initial playback rate should correctly modify initial current time.
+PASS Reversing the playback rate while playing correctly impacts current time during future scrolls
+PASS Zero initial playback rate should correctly modify initial current time.
+FAIL Setting a zero playback rate while running preserves the start time assert_approx_equals: values do not match for "undefined" expected 0 +/- 0.125 but got 20
+FAIL Reversing an animation with non-boundary aligned start time symmetrically adjusts the start time assert_approx_equals: values do not match for "undefined" expected 60 +/- 0.125 but got -0
 
