@@ -257,8 +257,6 @@ set(WebKit_MESSAGES_IN_FILES
     UIProcess/WebProcessProxy
     UIProcess/WebScreenOrientationManagerProxy
 
-    UIProcess/Automation/WebAutomationSession
-
     UIProcess/Downloads/DownloadProxy
 
     UIProcess/GPU/GPUProcessProxy
