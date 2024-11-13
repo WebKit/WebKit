@@ -405,11 +405,11 @@ static StringView mergeIfAdjacent(StringView a, StringView b)
 {
     if (a.is8Bit() && b.is8Bit()) {
         auto characters = a.span8();
-        if (characters.end() == b.span8().begin())
+        if (std::to_address(characters.end()) == std::to_address(b.span8().begin()))
             return std::span { characters.data(), a.length() + b.length() };
     } else if (!a.is8Bit() && !b.is8Bit()) {
         auto characters = a.span16();
-        if (characters.end() == b.span16().begin())
+        if (std::to_address(characters.end()) == std::to_address(b.span16().begin()))
             return std::span { characters.data(), a.length() + b.length() };
     }
     return { };
