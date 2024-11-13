@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include "CSSValue.h"
+#include "CSSCalcValue.h"
 #include "CSSValueTypes.h"
 #include <optional>
 #include <variant>
@@ -37,7 +37,6 @@
 namespace WebCore {
 
 class CSSCalcSymbolTable;
-class CSSCalcValue;
 class CSSToLengthConversionData;
 struct ComputedStyleDependencies;
 
@@ -67,30 +66,28 @@ float unevaluatedCalcEvaluate(const Ref<CSSCalcValue>&, const CSSToLengthConvers
 float unevaluatedCalcEvaluateNoConversionDataRequired(const Ref<CSSCalcValue>&, Calculation::Category);
 float unevaluatedCalcEvaluateNoConversionDataRequired(const Ref<CSSCalcValue>&, const CSSCalcSymbolTable&, Calculation::Category);
 
-struct BaseUnevaluatedCalc {
-    Ref<CSSCalcValue> calc;
+// `UnevaluatedCalc` annotates a `CSSCalcValue` with the raw value type that it
+// will be evaluated to, allowing the processing of calc in generic code.
+template<typename T> struct UnevaluatedCalc {
+    using RawType = T;
 
-    BaseUnevaluatedCalc(const BaseUnevaluatedCalc&);
-    BaseUnevaluatedCalc(BaseUnevaluatedCalc&&);
-    BaseUnevaluatedCalc(Ref<CSSCalcValue>&&);
-    ~BaseUnevaluatedCalc();
-    BaseUnevaluatedCalc& operator=(const BaseUnevaluatedCalc&);
-    BaseUnevaluatedCalc& operator=(BaseUnevaluatedCalc&&);
+    UnevaluatedCalc(Ref<CSSCalcValue>&& value)
+        : calc { WTFMove(value) }
+    {
+    }
 
-    Ref<CSSCalcValue> protectedCalc() const;
+    Ref<CSSCalcValue> protectedCalc() const
+    {
+        return calc;
+    }
 
-    bool operator==(const BaseUnevaluatedCalc& other) const
+    bool operator==(const UnevaluatedCalc& other) const
     {
         return unevaluatedCalcEqual(calc, other.calc);
     }
-};
 
-// `UnevaluatedCalc` annotates a `CSSCalcValue` with the raw value type that it
-// will be evaluated to, allowing the processing of calc in generic code.
-template<typename T> struct UnevaluatedCalc : public BaseUnevaluatedCalc {
-    using RawType = T;
-    UnevaluatedCalc(Ref<CSSCalcValue>&& value)
-        : BaseUnevaluatedCalc(WTFMove(value)) { }
+private:
+    Ref<CSSCalcValue> calc;
 };
 
 // MARK: - Utility templates
@@ -101,7 +98,7 @@ template<typename T> struct IsUnevaluatedCalc : public std::integral_constant<bo
 
 template<typename T> bool requiresConversionData(const UnevaluatedCalc<T>& unevaluatedCalc)
 {
-    return unevaluatedCalcRequiresConversionData(unevaluatedCalc.calc);
+    return unevaluatedCalcRequiresConversionData(unevaluatedCalc.protectedCalc());
 }
 
 template<typename T> bool requiresConversionData(const T&)
@@ -147,7 +144,7 @@ template<typename T> bool isUnevaluatedCalc(const std::optional<T>& component)
 
 template<typename T> auto simplifyUnevaluatedCalc(const UnevaluatedCalc<T>& unevaluatedCalc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> UnevaluatedCalc<T>
 {
-    return { .calc = unevaluatedCalcSimplify(unevaluatedCalc, conversionData, symbolTable) };
+    return { unevaluatedCalcSimplify(unevaluatedCalc, conversionData, symbolTable) };
 }
 
 template<typename T> auto simplifyUnevaluatedCalc(const T& component, const CSSToLengthConversionData&, const CSSCalcSymbolTable&) -> T
@@ -171,7 +168,7 @@ template<typename T> decltype(auto) simplifyUnevaluatedCalc(const std::optional<
 template<typename T> struct Serialize<UnevaluatedCalc<T>> {
     inline void operator()(StringBuilder& builder, const UnevaluatedCalc<T>& value)
     {
-        unevaluatedCalcSerialization(builder, value.calc);
+        unevaluatedCalcSerialization(builder, value.protectedCalc());
     }
 };
 
@@ -180,7 +177,7 @@ template<typename T> struct Serialize<UnevaluatedCalc<T>> {
 template<typename T> struct ComputedStyleDependenciesCollector<UnevaluatedCalc<T>> {
     inline void operator()(ComputedStyleDependencies& dependencies, const UnevaluatedCalc<T>& value)
     {
-        unevaluatedCalcCollectComputedStyleDependencies(dependencies, value.calc);
+        unevaluatedCalcCollectComputedStyleDependencies(dependencies, value.protectedCalc());
     }
 };
 
@@ -189,7 +186,7 @@ template<typename T> struct ComputedStyleDependenciesCollector<UnevaluatedCalc<T
 template<typename T> struct CSSValueChildrenVisitor<UnevaluatedCalc<T>> {
     inline IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const UnevaluatedCalc<T>& value)
     {
-        return func(value.calc.get());
+        return func(value.protectedCalc());
     }
 };
 

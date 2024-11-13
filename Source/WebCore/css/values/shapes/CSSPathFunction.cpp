@@ -25,7 +25,6 @@
 #include "config.h"
 #include "CSSPathFunction.h"
 
-#include "CSSCalcValue.h"
 #include "CSSMarkup.h"
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"

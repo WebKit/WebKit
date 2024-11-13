@@ -48,9 +48,6 @@ template<RawNumeric RawType> struct Serialize<PrimitiveNumeric<RawType>> {
     }
 };
 
-template<> struct Serialize<NoneRaw> { void operator()(StringBuilder&, const NoneRaw&); };
-template<> struct Serialize<None> { void operator()(StringBuilder&, const None&); };
-
 template<> struct Serialize<SymbolRaw> { void operator()(StringBuilder&, const SymbolRaw&); };
 template<> struct Serialize<Symbol> { void operator()(StringBuilder&, const Symbol&); };
 

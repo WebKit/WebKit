@@ -111,11 +111,5 @@ template<auto R> struct Blending<LengthPercentage<R>> {
     }
 };
 
-// None just needs its trivial implementation.
-template<> struct Blending<None> {
-    constexpr auto canBlend(const None&, const None&) -> bool { return true; }
-    constexpr auto blend(const None&, const None&, const BlendingContext&) -> None { return { }; }
-};
-
 } // namespace Style
 } // namespace WebCore

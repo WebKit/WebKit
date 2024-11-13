@@ -67,9 +67,7 @@ template<RawNumeric RawType> struct ComputedStyleDependenciesCollector<Primitive
     }
 };
 
-// None/Symbol have trivially nothing to collect.
-template<> struct ComputedStyleDependenciesCollector<NoneRaw> { constexpr void operator()(ComputedStyleDependencies&, const NoneRaw&) { } };
-template<> struct ComputedStyleDependenciesCollector<None> { constexpr void operator()(ComputedStyleDependencies&, const None&) { } };
+// Symbol has trivially nothing to collect.
 template<> struct ComputedStyleDependenciesCollector<Symbol> { constexpr void operator()(ComputedStyleDependencies&, const SymbolRaw&) { } };
 template<> struct ComputedStyleDependenciesCollector<SymbolRaw> { constexpr void operator()(ComputedStyleDependencies&, const Symbol&) { } };
 

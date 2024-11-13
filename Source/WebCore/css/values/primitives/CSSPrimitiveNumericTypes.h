@@ -24,6 +24,8 @@
 
 #pragma once
 
+#include "CSSNone.h"
+#include "CSSPrimitiveNumericRange.h"
 #include "CSSUnevaluatedCalc.h"
 #include "CSSUnits.h"
 #include "CSSValueTypes.h"
@@ -32,30 +34,6 @@
 
 namespace WebCore {
 namespace CSS {
-
-// Representation for `CSS bracketed range notation`. Represents a closed range between (and including) `min` and `max`.
-// https://drafts.csswg.org/css-values-4/#numeric-ranges
-struct Range {
-    // Convenience to allow for a shorter spelling of the appropriate infinity.
-    static constexpr auto infinity = std::numeric_limits<double>::infinity();
-
-    double min { -infinity };
-    double max {  infinity };
-
-    constexpr bool operator==(const Range&) const = default;
-};
-
-// Constant value for `[−∞,∞]`.
-inline constexpr auto All = Range { -Range::infinity, Range::infinity };
-
-// Constant value for `[0,∞]`.
-inline constexpr auto Nonnegative = Range { 0, Range::infinity };
-
-// Clamps a floating point value to within `range`.
-template<Range range, std::floating_point T> constexpr float clampToRange(T value)
-{
-    return std::clamp<T>(value, range.min, range.max);
-}
 
 // Concept for use in generic contexts to filter on *Raw types.
 template<typename T> concept RawNumeric = requires(T raw) {
@@ -209,10 +187,6 @@ template<Range R = All> struct LengthPercentageRaw {
 
 // MARK: Additional Numeric Adjacent Types Raw
 
-struct NoneRaw {
-    constexpr bool operator==(const NoneRaw&) const = default;
-};
-
 struct SymbolRaw {
     CSSValueID value;
 
@@ -296,16 +270,6 @@ template<Range R = All> using AnglePercentage = PrimitiveNumeric<AnglePercentage
 template<Range R = All> using LengthPercentage = PrimitiveNumeric<LengthPercentageRaw<R>>;
 
 // MARK: Additional Numeric Adjacent Types
-
-struct None {
-    using Raw = NoneRaw;
-
-    constexpr None() = default;
-    constexpr None(NoneRaw&&) { }
-    constexpr None(const NoneRaw&) { }
-
-    constexpr bool operator==(const None&) const = default;
-};
 
 struct Symbol {
     using Raw = SymbolRaw;

@@ -22,26 +22,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSRectFunction.h"
+#pragma once
 
-#include "CSSPrimitiveNumericTypes+Serialization.h"
-#include <wtf/text/StringBuilder.h>
+#include "CSSValueTypes.h"
 
 namespace WebCore {
 namespace CSS {
 
-void Serialize<Rect>::operator()(StringBuilder& builder, const Rect& value)
-{
-    // <rect()> = rect( [ <length-percentage> | auto ]{4} [ round <'border-radius'> ]? )
+struct NoneRaw {
+    constexpr bool operator==(const NoneRaw&) const = default;
+};
 
-    serializationForCSS(builder, value.edges);
+struct None {
+    using Raw = NoneRaw;
 
-    if (!hasDefaultValue(value.radii)) {
-        builder.append(' ', nameLiteralForSerialization(CSSValueRound), ' ');
-        serializationForCSS(builder, value.radii);
-    }
-}
+    constexpr None() = default;
+    constexpr None(NoneRaw&&) { }
+    constexpr None(const NoneRaw&) { }
+
+    constexpr bool operator==(const None&) const = default;
+};
+
+template<> struct Serialize<NoneRaw> { void operator()(StringBuilder&, const NoneRaw&); };
+template<> struct Serialize<None> { void operator()(StringBuilder&, const None&); };
+
+template<> struct ComputedStyleDependenciesCollector<NoneRaw> { constexpr void operator()(ComputedStyleDependencies&, const NoneRaw&) { } };
+template<> struct ComputedStyleDependenciesCollector<None> { constexpr void operator()(ComputedStyleDependencies&, const None&) { } };
 
 } // namespace CSS
 } // namespace WebCore

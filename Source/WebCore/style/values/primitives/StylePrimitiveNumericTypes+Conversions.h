@@ -104,15 +104,11 @@ template<StyleNumeric StylePrimitive> struct ToCSS<StylePrimitive> {
     }
 };
 
-// None just needs its trivial implementation.
-template<> struct ToCSS<None> { constexpr auto operator()(const None&, const RenderStyle&) -> CSS::None { return { }; } };
-
 // MARK: - Conversion from CSS -> Style
 
 // Define the CSS (a.k.a. primitive) type the primary representation of `Raw` and `UnevaluatedCalc` types.
 template<CSS::RawNumeric RawType> struct ToPrimaryCSSTypeMapping<RawType> { using type = CSS::PrimitiveNumeric<RawType>; };
 template<CSS::RawNumeric RawType> struct ToPrimaryCSSTypeMapping<CSS::UnevaluatedCalc<RawType>> { using type = CSS::PrimitiveNumeric<RawType>; };
-template<> struct ToPrimaryCSSTypeMapping<CSS::NoneRaw> { using type = CSS::None; };
 
 // AnglePercentage / LengthPercentage require specialized implementations due to additional `calc` field.
 template<auto R> struct ToStyle<CSS::AnglePercentage<R>> {
@@ -245,7 +241,7 @@ template<CSS::RawNumeric RawType> struct ToStyle<CSS::PrimitiveNumeric<RawType>>
     }
     auto operator()(const typename From::Calc& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> To
     {
-        return { CSS::unevaluatedCalcEvaluate(value.calc, conversionData, symbolTable, RawType::category) };
+        return { CSS::unevaluatedCalcEvaluate(value.protectedCalc(), conversionData, symbolTable, RawType::category) };
     }
     auto operator()(const From& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> To
     {
@@ -271,19 +267,12 @@ template<CSS::RawNumeric RawType> struct ToStyle<CSS::PrimitiveNumeric<RawType>>
     }
     auto operator()(const typename From::Calc& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable) -> To
     {
-        return { CSS::unevaluatedCalcEvaluateNoConversionDataRequired(value.calc, symbolTable, RawType::category) };
+        return { CSS::unevaluatedCalcEvaluateNoConversionDataRequired(value.protectedCalc(), symbolTable, RawType::category) };
     }
     auto operator()(const From& value, NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) -> To
     {
         return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, token, symbolTable); });
     }
-};
-
-// None just needs its trivial implementation.
-template<> struct ToStyle<CSS::None> {
-    auto operator()(const CSS::None&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&) -> None { return { }; }
-    auto operator()(const CSS::None&, const BuilderState&, const CSSCalcSymbolTable&) -> None { return { }; }
-    auto operator()(const CSS::None&, NoConversionDataRequiredToken, const CSSCalcSymbolTable&) -> None { return { }; }
 };
 
 } // namespace Style

@@ -22,25 +22,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CSSRectFunction.h"
+#pragma once
 
-#include "CSSPrimitiveNumericTypes+Serialization.h"
-#include <wtf/text/StringBuilder.h>
+#include <algorithm>
+#include <limits>
 
 namespace WebCore {
 namespace CSS {
 
-void Serialize<Rect>::operator()(StringBuilder& builder, const Rect& value)
+// Representation for `CSS bracketed range notation`. Represents a closed range between (and including) `min` and `max`.
+// https://drafts.csswg.org/css-values-4/#numeric-ranges
+struct Range {
+    // Convenience to allow for a shorter spelling of the appropriate infinity.
+    static constexpr auto infinity = std::numeric_limits<double>::infinity();
+
+    double min { -infinity };
+    double max {  infinity };
+
+    constexpr bool operator==(const Range&) const = default;
+};
+
+// Constant value for `[−∞,∞]`.
+inline constexpr auto All = Range { -Range::infinity, Range::infinity };
+
+// Constant value for `[0,∞]`.
+inline constexpr auto Nonnegative = Range { 0, Range::infinity };
+
+// Clamps a floating point value to within `range`.
+template<Range range, std::floating_point T> constexpr float clampToRange(T value)
 {
-    // <rect()> = rect( [ <length-percentage> | auto ]{4} [ round <'border-radius'> ]? )
-
-    serializationForCSS(builder, value.edges);
-
-    if (!hasDefaultValue(value.radii)) {
-        builder.append(' ', nameLiteralForSerialization(CSSValueRound), ' ');
-        serializationForCSS(builder, value.radii);
-    }
+    return std::clamp<T>(value, range.min, range.max);
 }
 
 } // namespace CSS

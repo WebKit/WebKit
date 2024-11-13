@@ -27,8 +27,6 @@
 #include "config.h"
 #include "CSSGradient.h"
 
-#include "CSSCalcSymbolTable.h"
-#include "CSSCalcValue.h"
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
@@ -82,7 +80,7 @@ void Serialize<GradientDeprecatedColorStop>::operator()(StringBuilder& builder, 
     };
 
     auto appendCalc = [&](const auto& calc) {
-        builder.append("color-stop("_s, calc.calc->cssText(), ", "_s, stop.protectedColor()->cssText(), ')');
+        builder.append("color-stop("_s, calc.protectedCalc()->cssText(), ", "_s, stop.protectedColor()->cssText(), ')');
     };
 
     WTF::switchOn(stop.position,

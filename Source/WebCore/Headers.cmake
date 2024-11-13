@@ -952,7 +952,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     css/values/motion/CSSRayFunction.h
 
+    css/values/primitives/CSSNone.h
     css/values/primitives/CSSPosition.h
+    css/values/primitives/CSSPrimitiveNumericRange.h
     css/values/primitives/CSSPrimitiveNumericTypes.h
     css/values/primitives/CSSUnevaluatedCalc.h
 
@@ -2599,6 +2601,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/motion/StyleRayFunction.h
 
+    style/values/primitives/StyleNone.h
     style/values/primitives/StylePosition.h
     style/values/primitives/StylePrimitiveNumericTypes.h
 

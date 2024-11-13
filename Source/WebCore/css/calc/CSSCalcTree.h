@@ -25,7 +25,8 @@
 #pragma once
 
 #include "CSSCalcType.h"
-#include "CSSPrimitiveNumericTypes.h"
+#include "CSSNone.h"
+#include "CSSPrimitiveNumericRange.h"
 #include "CSSUnits.h"
 #include "CSSValueKeywords.h"
 #include "CalculationTree.h"

@@ -54,7 +54,7 @@ struct CSSPrimitiveValueResolverBase {
 
     template<typename T> static RefPtr<CSSPrimitiveValue> resolve(CSS::UnevaluatedCalc<T> value, const CSSCalcSymbolTable&, CSSPropertyParserOptions)
     {
-        return CSSPrimitiveValue::create(WTFMove(value.calc));
+        return CSSPrimitiveValue::create(value.protectedCalc());
     }
 
     template<typename T> static RefPtr<CSSPrimitiveValue> resolve(CSS::PrimitiveNumeric<T> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)

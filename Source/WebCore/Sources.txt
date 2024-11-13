@@ -1127,6 +1127,7 @@ css/typedom/transform/CSSTransformValue.cpp
 css/typedom/transform/CSSTranslate.cpp
 css/values/backgrounds/CSSBorderRadius.cpp
 css/values/images/CSSGradient.cpp
+css/values/primitives/CSSNone.cpp
 css/values/primitives/CSSPosition.cpp
 css/values/primitives/CSSPrimitiveNumericTypes+ComputedStyleDependencies.cpp
 css/values/primitives/CSSPrimitiveNumericTypes+Serialization.cpp

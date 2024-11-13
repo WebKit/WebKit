@@ -36,7 +36,7 @@ namespace CSS {
 
 template<RawNumeric T> auto evaluateCalcNoConversionDataRequired(const UnevaluatedCalc<T>& calc, const CSSCalcSymbolTable& symbolTable) -> T
 {
-    return { unevaluatedCalcEvaluateNoConversionDataRequired(calc.calc, symbolTable, T::category) };
+    return { unevaluatedCalcEvaluateNoConversionDataRequired(calc.protectedCalc(), symbolTable, T::category) };
 }
 
 template<typename T> constexpr auto evaluateCalcNoConversionDataRequired(const T& component, const CSSCalcSymbolTable&) -> T

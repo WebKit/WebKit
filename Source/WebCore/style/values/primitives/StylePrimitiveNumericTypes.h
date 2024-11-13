@@ -27,6 +27,7 @@
 #include "CSSPrimitiveNumericTypes.h"
 #include "CalculationValue.h"
 #include "FloatConversion.h"
+#include "StyleNone.h"
 #include "StyleValueTypes.h"
 #include <variant>
 #include <wtf/Forward.h>
@@ -946,15 +947,6 @@ using LengthPercentagePointNonnegative = Point<LengthPercentageNonnegative>;
 // Standing Sizes
 using LengthPercentageSizeAll = Size<LengthPercentageAll>;
 using LengthPercentageSizeNonnegative = Size<LengthPercentageNonnegative>;
-
-// MARK: Additional Numeric Adjacent Types
-
-struct None {
-    using CSS = WebCore::CSS::None;
-    using Raw = WebCore::CSS::NoneRaw;
-
-    constexpr bool operator==(const None&) const = default;
-};
 
 } // namespace Style
 

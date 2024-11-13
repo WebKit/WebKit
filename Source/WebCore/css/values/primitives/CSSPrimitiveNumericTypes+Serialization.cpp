@@ -39,21 +39,10 @@ void rawNumericSerialization(StringBuilder& builder, double value, CSSUnitType t
     formatCSSNumberValue(builder, value, CSSPrimitiveValue::unitTypeString(type));
 }
 
-void Serialize<NoneRaw>::operator()(StringBuilder& builder, const NoneRaw&)
-{
-    builder.append("none"_s);
-}
-
-void Serialize<None>::operator()(StringBuilder& builder, const None&)
-{
-    builder.append("none"_s);
-}
-
 void Serialize<SymbolRaw>::operator()(StringBuilder& builder, const SymbolRaw& value)
 {
     builder.append(nameLiteralForSerialization(value.value));
 }
-
 
 void Serialize<Symbol>::operator()(StringBuilder& builder, const Symbol& value)
 {

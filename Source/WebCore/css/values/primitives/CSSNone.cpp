@@ -23,24 +23,24 @@
  */
 
 #include "config.h"
-#include "CSSRectFunction.h"
+#include "CSSNone.h"
 
-#include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSValueKeywords.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace CSS {
 
-void Serialize<Rect>::operator()(StringBuilder& builder, const Rect& value)
+// MARK: - Serialization
+
+void Serialize<NoneRaw>::operator()(StringBuilder& builder, const NoneRaw&)
 {
-    // <rect()> = rect( [ <length-percentage> | auto ]{4} [ round <'border-radius'> ]? )
+    builder.append(nameLiteralForSerialization(CSSValueNone));
+}
 
-    serializationForCSS(builder, value.edges);
-
-    if (!hasDefaultValue(value.radii)) {
-        builder.append(' ', nameLiteralForSerialization(CSSValueRound), ' ');
-        serializationForCSS(builder, value.radii);
-    }
+void Serialize<None>::operator()(StringBuilder& builder, const None&)
+{
+    builder.append(nameLiteralForSerialization(CSSValueNone));
 }
 
 } // namespace CSS
