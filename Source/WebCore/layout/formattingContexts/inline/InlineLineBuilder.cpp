@@ -257,10 +257,10 @@ inline void LineCandidate::reset()
 }
 
 
-LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList, InlineBoxBoundaryTextSpacings inlineBoxBoundaryTextSpacings)
+LineBuilder::LineBuilder(InlineFormattingContext& inlineFormattingContext, HorizontalConstraints rootHorizontalConstraints, const InlineItemList& inlineItemList, TextSpacingContext textSpacingContext)
     : AbstractLineBuilder(inlineFormattingContext, inlineFormattingContext.root(), rootHorizontalConstraints, inlineItemList)
     , m_floatingContext(inlineFormattingContext.floatingContext())
-    , m_inlineBoxBoundaryTextSpacings(WTFMove(inlineBoxBoundaryTextSpacings))
+    , m_textSpacingContext(WTFMove(textSpacingContext))
 {
 }
 
@@ -676,7 +676,7 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         auto& inlineItem = m_inlineItemList[index];
         auto& style = isFirstFormattedLine() ? inlineItem.firstLineStyle() : inlineItem.style();
         if (inlineItem.isInlineBoxStart()) {
-            if (auto inlineBoxBoundaryTextSpacing = m_inlineBoxBoundaryTextSpacings.find(index); inlineBoxBoundaryTextSpacing != m_inlineBoxBoundaryTextSpacings.end())
+            if (auto inlineBoxBoundaryTextSpacing = m_textSpacingContext.inlineBoxBoundaryTextSpacings.find(index); inlineBoxBoundaryTextSpacing != m_textSpacingContext.inlineBoxBoundaryTextSpacings.end())
                 textSpacingAdjustment = inlineBoxBoundaryTextSpacing->value;
         }
 
