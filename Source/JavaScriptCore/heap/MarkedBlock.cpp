@@ -233,6 +233,8 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, HeapCell* cell)
     //dataLogLn("aboutToMarkSlow ", Options::aboutToMarkSlowCrash(), " ", count);
     if (Options::aboutToMarkSlowCrash() && count++ > Options::aboutToMarkSlowCrash()) {
         handle = nullptr;
+        if (Options::aboutToMarkSlowCrash() & 1)
+            *const_cast<VM**>(&header().m_vm) = bitwise_cast<VM*>(0xdeadbeefdeadbeef);
     }
     // End testing
     if (UNLIKELY(!handle))
@@ -529,9 +531,6 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(freeList, emptyMode, sweepMode, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode, [] (VM&, JSCell*) { });
 }
 
-
-static char *np;
-
 NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalidHandle(AbstractLocker&, HeapCell* heapCell)
 {
     //WTF::setDataFile(OSLogPrintStream::open("com.apple.JavaScriptCore", "InvalidHandle", OS_LOG_TYPE_ERROR));
@@ -583,7 +582,6 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
         foundInBlockVM = isBlockInSet || isBlockInDirectory;
         updateCrashLogMsg(__LINE__);
     }
-    *np = 0;
 
     if (!foundInBlockVM) {
         // Search all VMs to see if this block belongs to any VM.
