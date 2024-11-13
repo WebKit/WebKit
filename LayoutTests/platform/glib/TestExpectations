@@ -4319,6 +4319,8 @@ webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/historical.html
 webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/touch-retargeting.html [ Failure ]
 webkit.org/b/278719 imported/w3c/web-platform-tests/touch-events/touch-touchevent-constructor.html [ Failure ]
 
+webkit.org/b/282966 imported/w3c/web-platform-tests/scroll-to-text-fragment/iframe-scroll.sub.html [ Failure ]
+
 # End: Common failures between GTK and WPE.
 
 #////////////////////////////////////////////////////////////////////////////////////////

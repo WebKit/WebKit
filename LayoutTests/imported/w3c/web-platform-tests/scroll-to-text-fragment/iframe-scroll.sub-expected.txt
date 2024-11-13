@@ -1,0 +1,5 @@
+
+
+FAIL CROSS-ORIGIN: Text directive in iframe doesn't bubble to outer frame. step_wait_func: iframe scrolled to text directive Timed out waiting on condition
+FAIL SAME-ORIGIN: Text directive in iframe bubbles to outer frame. step_wait_func: iframe scrolled to text directive Timed out waiting on condition
+

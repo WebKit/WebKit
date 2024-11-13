@@ -1,0 +1,8 @@
+This is a line of text.
+This div has an id: 'elementid'.
+
+PASS Basic element fragment navigation
+PASS Basic text directive navigation
+FAIL Basic element id fallback step_wait_func: Wait for scroll Timed out waiting on condition
+FAIL Malformed text directive element id fallback step_wait_func: Wait for scroll Timed out waiting on condition
+

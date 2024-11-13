@@ -2137,6 +2137,9 @@ webkit.org/b/187039 imported/w3c/web-platform-tests/infrastructure/testdriver [ 
 webkit.org/b/187093 [ Debug ] imported/w3c/web-platform-tests/infrastructure/assumptions/html-elements.html [ Skip ]
 imported/w3c/web-platform-tests/infrastructure/server/wpt-server-websocket.sub.html [ Skip ] # non deterministic URL in text dump
 
+# application-xml.xml doesn't dispatch load event
+imported/w3c/web-platform-tests/scroll-to-text-fragment/non-html-documents.html [ Skip ]
+
 # Imported W3C SVG failed tests
 imported/w3c/web-platform-tests/svg/animations/beginelement-instance-time-1.html [ Skip ]
 imported/w3c/web-platform-tests/svg/animations/correct-events-for-short-animations-with-syncbases.html [ Skip ]

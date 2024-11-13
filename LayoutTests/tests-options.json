@@ -5492,6 +5492,24 @@
     "imported/w3c/web-platform-tests/scroll-to-text-fragment/find-range-from-text-directive.html": [
         "slow"
     ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/force-load-at-top.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/iframes.sub.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/non-html-documents.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/redirects.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-after-DOMContentLoaded.html": [
+        "slow"
+    ],
+    "imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-scroll-to-center.html": [
+        "slow"
+    ],
     "imported/w3c/web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment.html": [
         "slow"
     ],

@@ -1,6 +1,7 @@
 <!doctype html>
 <title>Navigating to a text fragment anchor</title>
 <script src="stash.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <script>
 function isInView(element) {
   let rect = element.getBoundingClientRect();
@@ -42,7 +43,8 @@ function checkScroll() {
   let results = {
     scrollPosition: position,
     href: window.location.href,
-    performanceEntry: performance.getEntries()[0].name,
+    performanceNavigationEntries: performance.getEntriesByType("navigation").map(e => e.name),
+    performanceResourcesEntries: performance.getEntriesByType("resource").map(e => e.name),
     target: target ? target.id : 'undefined'
   };
 
@@ -60,8 +62,8 @@ window.onload = function() {
 </script>
 <style>
   .scroll-section {
-    /* 1000px margin on top and bottom so only one section can be in view. */
-    margin: 1000px 0px;
+    /* 100vh margin on top and bottom so only one section can be in view. */
+    margin: 100vh 0px;
   }
   #hidden {
     visibility: hidden;

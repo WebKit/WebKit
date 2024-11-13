@@ -10693,6 +10693,8 @@
         "web-platform-tests/scroll-to-text-fragment/no-force-load-at-top-target.html",
         "web-platform-tests/scroll-to-text-fragment/redirects-target.html",
         "web-platform-tests/scroll-to-text-fragment/redirects-target2.html",
+        "web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-after-DOMContentLoaded-target.html",
+        "web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-scroll-to-center-target.html",
         "web-platform-tests/scroll-to-text-fragment/scroll-to-text-fragment-target.html",
         "web-platform-tests/secure-contexts/postMessage-helper.html",
         "web-platform-tests/secure-contexts/postMessage-helper.https.html",

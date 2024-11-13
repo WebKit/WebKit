@@ -14,9 +14,11 @@ Property values requiring vendor prefixes:
 None
 ------------------------------------------------------------------------
 List of files:
-/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/non-html.css
-/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/non-html.js
-/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/non-html.json
-/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/non-html.txt
-/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/non-html.xml
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/application-json.json
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/application-xml.xml
 /LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/self-text-directive-iframe.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/text-css.css
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/text-html.html
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/text-javascript.js
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/text-plain.txt
+/LayoutTests/imported/w3c/web-platform-tests/scroll-to-text-fragment/resources/util.js

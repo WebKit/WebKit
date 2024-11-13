@@ -1,0 +1,23 @@
+
+PASS idl_test setup
+PASS idl_test validation
+PASS Partial interface Document: original interface defined
+PASS Partial interface Document: member names are unique
+PASS Partial interface Document[2]: member names are unique
+PASS Partial interface Document[3]: member names are unique
+PASS Document includes NonElementParentNode: member names are unique
+PASS Document includes ParentNode: member names are unique
+PASS Document includes XPathEvaluatorBase: member names are unique
+PASS Document includes GlobalEventHandlers: member names are unique
+PASS Document includes DocumentAndElementEventHandlers: member names are unique
+PASS FragmentDirective interface: existence and properties of interface object
+PASS FragmentDirective interface object length
+PASS FragmentDirective interface object name
+PASS FragmentDirective interface: existence and properties of interface prototype object
+PASS FragmentDirective interface: existence and properties of interface prototype object's "constructor" property
+PASS FragmentDirective interface: existence and properties of interface prototype object's @@unscopables property
+PASS FragmentDirective must be primary interface of document.fragmentDirective
+PASS Stringification of document.fragmentDirective
+PASS Document interface: attribute fragmentDirective
+PASS Document interface: document must inherit property "fragmentDirective" with the proper type
+

@@ -1,0 +1,10 @@
+
+FAIL force-load-at-top must block scroll on load from text fragment. assert_equals: expected false but got true
+FAIL force-load-at-top must block scroll on load from text fragment with element fallback. assert_equals: expected false but got true
+FAIL force-load-at-top must block scroll on load from element fragment. assert_equals: expected false but got true
+FAIL force-load-at-top must block scroll on load from history scroll restoration. assert_equals: expected false but got true
+PASS no-force-load-at-top must not block scroll on load from text fragment.
+PASS no-force-load-at-top must not block scroll on load from text fragment with element fallback.
+PASS no-force-load-at-top must not block scroll on load from element fragment.
+PASS no-force-load-at-top must not block scroll on load from history scroll restoration.
+

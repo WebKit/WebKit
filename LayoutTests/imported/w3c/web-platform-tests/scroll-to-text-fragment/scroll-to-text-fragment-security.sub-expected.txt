@@ -1,0 +1,8 @@
+
+
+PASS Test that a text fragment directive requires a user activation (user_activation=true).
+FAIL Test that a text fragment directive requires a user activation (user_activation=false). assert_equals: Expected window.open() with no user activation to not activate text fragment directive. expected "top" but got "text"
+PASS Test that a text fragment directive is not activated when there is a window opener (noopener=true).
+FAIL Test that a text fragment directive is not activated when there is a window opener (noopener=false). assert_equals: Expected window.open() with opener to not activate text fragment directive. expected "top" but got "text"
+PASS Test that a text fragment directive is not activated within an iframe.
+
