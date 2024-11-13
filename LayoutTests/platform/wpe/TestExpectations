@@ -301,6 +301,7 @@ media/video-unmuted-after-play-holds-sleep-assertion.html [ Failure ]
 svg/hixie/viewbox/002.xml [ Failure ]
 
 webkit.org/b/282686 media/media-video-fullrange.html [ Failure ]
+webkit.org/b/282686 media/media-video-fullrange-offscreen.html [ Failure ]
 
 # Pending to create bug.
 imported/w3c/web-platform-tests/cookies/attributes/domain.sub.html [ Failure ]

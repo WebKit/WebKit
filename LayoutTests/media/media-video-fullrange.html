@@ -14,7 +14,8 @@
         let promise = new Promise(resolve => element.requestVideoFrameCallback(resolve));
         await waitFor(element, 'loadedmetadata');
 
-        await Promise.all([ element.play(), promise ]);
+        await element.play();
+        await promise;
 
         const canvas = document.createElement('canvas');
         canvas.width = element.videoWidth;
@@ -43,11 +44,6 @@
 
         for (const file of files) {
             await test(document.getElementsByTagName('video')[0], file);
-        }
-
-        // Same test, but with video not in the DOM.
-        for (const file of files) {
-            await test(document.createElement('video'), file);
         }
 
         if (window.testRunner)

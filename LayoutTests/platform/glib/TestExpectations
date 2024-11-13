@@ -1178,6 +1178,7 @@ webkit.org/b/271631 media/media-source/media-managedmse-stall-endofstream.html [
 webkit.org/b/282791 media/media-source/media-source-vp8-hiddenframes.html [ ImageOnlyFailure ]
 webkit.org/b/282791 media/media-vp8-hiddenframes.html [ ImageOnlyFailure ]
 webkit.org/b/282827 media/media-video-videorange.html [ Failure ]
+webkit.org/b/282827 media/media-video-videorange-offscreen.html [ Failure ]
 
 # GStreamer (< 1.24) doesn't set the track's id to the container's value.
 webkit.org/b/265919 media/track/media-audio-track.html [ Failure ]

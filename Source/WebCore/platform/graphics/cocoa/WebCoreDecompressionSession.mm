@@ -582,8 +582,13 @@ void WebCoreDecompressionSession::automaticDequeue()
     bool releasedImageBuffers = false;
 
     while (CMSampleBufferRef firstSample = checked_cf_cast<CMSampleBufferRef>(PAL::CMBufferQueueGetHead(m_producerQueue.get()))) {
-        MediaTime presentationTimestamp = PAL::toMediaTime(PAL::CMSampleBufferGetPresentationTimeStamp(firstSample));
         MediaTime duration = PAL::toMediaTime(PAL::CMSampleBufferGetDuration(firstSample));
+
+        // Always leave the last sample if it doesn't have a duration. It is valid until the next one.
+        if (PAL::CMBufferQueueGetBufferCount(m_producerQueue.get()) == 1 && !duration)
+            break;
+
+        MediaTime presentationTimestamp = PAL::toMediaTime(PAL::CMSampleBufferGetPresentationTimeStamp(firstSample));
         MediaTime presentationEndTimestamp = presentationTimestamp + duration;
         if (time > presentationEndTimestamp) {
             CFRelease(PAL::CMBufferQueueDequeueAndRetain(m_producerQueue.get()));
@@ -628,8 +633,8 @@ void WebCoreDecompressionSession::enqueueDecodedSample(CMSampleBufferRef sample)
         auto currentTime = PAL::toMediaTime(PAL::CMTimebaseGetTime(timebase.get()));
         auto presentationStartTime = PAL::toMediaTime(PAL::CMSampleBufferGetPresentationTimeStamp(sample));
         auto presentationEndTime = presentationStartTime + PAL::toMediaTime(PAL::CMSampleBufferGetDuration(sample));
-        if (currentTime < presentationStartTime || (currentTime >= presentationEndTime && currentTime != presentationStartTime))
-            shouldNotify = false;
+        if (currentTime != presentationStartTime) // Handle the case where the frame doesn't have a duration.
+            shouldNotify = currentTime < presentationStartTime || currentTime >= presentationEndTime;
 
         if (currentRate > 0 && presentationEndTime < currentTime) {
 #if !LOG_DISABLED
@@ -742,7 +747,8 @@ RetainPtr<CVPixelBufferRef> WebCoreDecompressionSession::imageForTime(const Medi
         MediaTime presentationEndTimestamp = presentationTimestamp + duration;
         if (!allowLater && presentationTimestamp > time)
             return nullptr;
-        if (!allowEarlier && presentationEndTimestamp < time) {
+        // If the sample doesn't have a duration and is the last decoded one, it is valid until the next sample is decoded.
+        if (!allowEarlier && presentationEndTimestamp < time && (duration || PAL::CMBufferQueueGetBufferCount(m_producerQueue.get()) > 1)) {
             CFRelease(PAL::CMBufferQueueDequeueAndRetain(m_producerQueue.get()));
             releasedImageBuffers = true;
             continue;

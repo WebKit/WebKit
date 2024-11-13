@@ -46,7 +46,7 @@
         ]
 
         for (const file of files) {
-            await test(document.getElementsByTagName('video')[0], file);
+            await test(document.createElement('video'), file);
         }
 
         if (window.testRunner)
