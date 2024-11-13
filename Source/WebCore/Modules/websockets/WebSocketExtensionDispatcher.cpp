@@ -38,8 +38,6 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 void WebSocketExtensionDispatcher::reset()
@@ -97,7 +95,7 @@ bool WebSocketExtensionDispatcher::processHeaderValue(const String& headerValue)
     }
 
     const CString headerValueData = headerValue.utf8();
-    WebSocketExtensionParser parser(headerValueData.data(), headerValueData.data() + headerValueData.length());
+    WebSocketExtensionParser parser(headerValueData.span());
     while (!parser.finished()) {
         String extensionToken;
         HashMap<String, String> extensionParameters;
@@ -140,5 +138,3 @@ String WebSocketExtensionDispatcher::failureReason() const
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

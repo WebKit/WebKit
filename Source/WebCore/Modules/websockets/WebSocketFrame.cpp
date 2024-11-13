@@ -27,8 +27,6 @@
 #include <wtf/MathExtras.h>
 #include <wtf/text/MakeString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 // Constants for hybi-10 frame format.
@@ -49,6 +47,7 @@ bool WebSocketFrame::needsExtendedLengthField(size_t payloadLength)
     return payloadLength > maxPayloadLengthWithoutExtendedLengthField;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 WebSocketFrame::ParseFrameResult WebSocketFrame::parseFrame(uint8_t* data, size_t dataLength, WebSocketFrame& frame, const uint8_t*& frameEnd, String& errorString)
 {
     auto p = data;
@@ -121,6 +120,7 @@ WebSocketFrame::ParseFrameResult WebSocketFrame::parseFrame(uint8_t* data, size_
     frameEnd = p + maskingKeyLength + payloadLength;
     return FrameOK;
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void appendFramePayload(const WebSocketFrame& frame, Vector<uint8_t>& frameData)
 {
@@ -156,7 +156,7 @@ void WebSocketFrame::makeFrameData(Vector<uint8_t>& frameData)
         frameData.append(payload.size() & 0xFF);
     } else {
         frameData.at(1) |= payloadLengthWithEightByteExtendedLengthField;
-        uint8_t extendedPayloadLength[8];
+        std::array<uint8_t, 8> extendedPayloadLength;
         size_t remaining = payload.size();
         // Fill the length into extendedPayloadLength in the network byte order.
         for (int i = 0; i < 8; ++i) {
@@ -182,5 +182,3 @@ WebSocketFrame::WebSocketFrame(OpCode opCode, bool final, bool compress, bool ma
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

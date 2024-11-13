@@ -28,8 +28,6 @@
 #include "SQLTransactionState.h"
 #include <wtf/Forward.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 template<typename T>
@@ -54,9 +52,9 @@ protected:
     // s_sizeOfStateAuditTrail states that the state machine enters. The audit
     // trail is updated before entering each state. This is for debugging use
     // only.
-    static const int s_sizeOfStateAuditTrail = 20;
+    static constexpr size_t s_sizeOfStateAuditTrail = 20;
     int m_nextStateAuditEntry;
-    SQLTransactionState m_stateAuditTrail[s_sizeOfStateAuditTrail];
+    std::array<SQLTransactionState, s_sizeOfStateAuditTrail> m_stateAuditTrail;
 #endif
 };
 
@@ -73,7 +71,7 @@ SQLTransactionStateMachine<T>::SQLTransactionStateMachine()
 #endif
 {
 #ifndef NDEBUG
-    for (int i = 0; i < s_sizeOfStateAuditTrail; i++)
+    for (size_t i = 0; i < s_sizeOfStateAuditTrail; ++i)
         m_stateAuditTrail[i] = SQLTransactionState::NumberOfStates;
 #endif
 }
@@ -110,5 +108,3 @@ void SQLTransactionStateMachine<T>::runStateMachine()
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

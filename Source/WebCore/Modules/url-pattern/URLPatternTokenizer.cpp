@@ -29,8 +29,6 @@
 #include <unicode/utf16.h>
 #include <unicode/utf8.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 namespace URLPatternUtilities {
 
@@ -52,6 +50,7 @@ bool Token::isNull() const
     return false;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 // https://urlpattern.spec.whatwg.org/#get-the-next-code-point
 void Tokenizer::getNextCodePoint()
 {
@@ -63,6 +62,7 @@ void Tokenizer::getNextCodePoint()
         U16_NEXT_OR_FFFD(characters, m_nextIndex, m_input.length(), m_codepoint);
     }
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 // https://urlpattern.spec.whatwg.org/#seek-and-get-the-next-code-point
 void Tokenizer::seekNextCodePoint(size_t index)
@@ -276,5 +276,3 @@ ExceptionOr<Vector<Token>> Tokenizer::tokenize()
 
 } // namespace URLPatternUtilities
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

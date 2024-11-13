@@ -55,8 +55,6 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringToIntegerConversion.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 using namespace JSC;
 namespace IDBServer {
@@ -996,7 +994,7 @@ IDBError SQLiteIDBBackingStore::getOrEstablishDatabaseInfo(IDBDatabaseInfo& info
     m_sqliteDB->enableAutomaticWALTruncation();
 
     m_sqliteDB->setCollationFunction("IDBKEY"_s, [](int aLength, const void* a, int bLength, const void* b) {
-        return idbKeyCollate(std::span { static_cast<const uint8_t*>(a), static_cast<size_t>(aLength) }, std::span { static_cast<const uint8_t*>(b), static_cast<size_t>(bLength) });
+        return idbKeyCollate(unsafeMakeSpan(static_cast<const uint8_t*>(a), aLength), unsafeMakeSpan(static_cast<const uint8_t*>(b), bLength));
     });
 
     IDBError error = ensureValidRecordsTable();
@@ -2857,5 +2855,3 @@ void SQLiteIDBBackingStore::handleLowMemoryWarning()
 
 } // namespace IDBServer
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

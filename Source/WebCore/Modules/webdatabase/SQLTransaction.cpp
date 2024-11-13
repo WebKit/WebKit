@@ -51,8 +51,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 Ref<SQLTransaction> SQLTransaction::create(Ref<Database>&& database, RefPtr<SQLTransactionCallback>&& callback, RefPtr<VoidCallback>&& successCallback, RefPtr<SQLTransactionErrorCallback>&& errorCallback, RefPtr<SQLTransactionWrapper>&& wrapper, bool readOnly)
@@ -151,7 +149,7 @@ void SQLTransaction::enqueueStatement(std::unique_ptr<SQLStatement> statement)
 
 SQLTransaction::StateFunction SQLTransaction::stateFunctionFor(SQLTransactionState state)
 {
-    static const StateFunction stateFunctions[] = {
+    static constexpr std::array<StateFunction, 13> stateFunctions {
         &SQLTransaction::unreachableState,                // 0. illegal
         &SQLTransaction::unreachableState,                // 1. idle
         &SQLTransaction::unreachableState,                // 2. acquireLock
@@ -167,7 +165,7 @@ SQLTransaction::StateFunction SQLTransaction::stateFunctionFor(SQLTransactionSta
         &SQLTransaction::deliverSuccessCallback           // 12.
     };
 
-    ASSERT(std::size(stateFunctions) == static_cast<int>(SQLTransactionState::NumberOfStates));
+    ASSERT(stateFunctions.size() == static_cast<int>(SQLTransactionState::NumberOfStates));
     ASSERT(state < SQLTransactionState::NumberOfStates);
 
     return stateFunctions[static_cast<int>(state)];
@@ -678,5 +676,3 @@ ASCIILiteral SQLTransaction::debugStepName(void (SQLTransaction::*step)())
 #endif
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

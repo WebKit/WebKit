@@ -44,8 +44,6 @@
 #include <wtf/URLParser.h>
 #include <wtf/text/MakeString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 static inline Ref<Blob> blobFromData(ScriptExecutionContext* context, Vector<uint8_t>&& data, const String& contentType)
@@ -140,6 +138,7 @@ FetchBodyConsumer::FetchBodyConsumer(FetchBodyConsumer&&) = default;
 FetchBodyConsumer::~FetchBodyConsumer() = default;
 FetchBodyConsumer& FetchBodyConsumer::operator=(FetchBodyConsumer&&) = default;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 // https://fetch.spec.whatwg.org/#concept-body-package-data
 RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* context, const String& contentType, std::span<const uint8_t> data)
 {
@@ -221,6 +220,7 @@ RefPtr<DOMFormData> FetchBodyConsumer::packageFormData(ScriptExecutionContext* c
 
     return form;
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void resolveWithTypeAndData(Ref<DeferredPromise>&& promise, FetchBodyConsumer::Type type, const String& contentType, std::span<const uint8_t> data)
 {
@@ -514,5 +514,3 @@ FetchBodyConsumer FetchBodyConsumer::clone()
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -35,18 +35,16 @@
 #include <wtf/ASCIICType.h>
 #include <wtf/text/CString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 bool WebSocketExtensionParser::finished()
 {
-    return m_current >= m_end;
+    return m_data.empty();
 }
 
 bool WebSocketExtensionParser::parsedSuccessfully()
 {
-    return m_current == m_end;
+    return m_data.empty() && !m_didFailParsing;
 }
 
 static bool isSeparator(char character)
@@ -58,18 +56,20 @@ static bool isSeparator(char character)
 
 void WebSocketExtensionParser::skipSpaces()
 {
-    while (m_current < m_end && (*m_current == ' ' || *m_current == '\t'))
-        ++m_current;
+    while (!m_data.empty() && (m_data[0] == ' ' || m_data[0] == '\t'))
+        m_data = m_data.subspan(1);
 }
 
 bool WebSocketExtensionParser::consumeToken()
 {
     skipSpaces();
-    const char* start = m_current;
-    while (m_current < m_end && isASCIIPrintable(*m_current) && !isSeparator(*m_current))
-        ++m_current;
-    if (start < m_current) {
-        m_currentToken = String({ start, m_current });
+    auto start = m_data;
+    size_t tokenLength = 0;
+    while (tokenLength < m_data.size() && isASCIIPrintable(m_data[tokenLength]) && !isSeparator(m_data[tokenLength]))
+        ++tokenLength;
+    if (tokenLength) {
+        m_currentToken = String(start.first(tokenLength));
+        m_data = m_data.subspan(tokenLength);
         return true;
     }
     return false;
@@ -78,38 +78,41 @@ bool WebSocketExtensionParser::consumeToken()
 bool WebSocketExtensionParser::consumeQuotedString()
 {
     skipSpaces();
-    if (m_current >= m_end || *m_current != '"')
+    if (m_data.empty() || m_data[0] != '"')
         return false;
 
     Vector<char> buffer;
-    ++m_current;
-    while (m_current < m_end && *m_current != '"') {
-        if (*m_current == '\\' && ++m_current >= m_end)
-            return false;
-        buffer.append(*m_current);
-        ++m_current;
+    m_data = m_data.subspan(1);
+    while (!m_data.empty() && m_data[0] != '"') {
+        if (m_data[0] == '\\') {
+            m_data = m_data.subspan(1);
+            if (m_data.empty())
+                return false;
+        }
+        buffer.append(m_data[0]);
+        m_data = m_data.subspan(1);
     }
-    if (m_current >= m_end || *m_current != '"')
+    if (m_data.empty() || m_data[0] != '"')
         return false;
     m_currentToken = String::fromUTF8(buffer.span());
     if (m_currentToken.isNull())
         return false;
-    ++m_current;
+    m_data = m_data.subspan(1);
     return true;
 }
 
 bool WebSocketExtensionParser::consumeQuotedStringOrToken()
 {
-    // This is ok because consumeQuotedString() doesn't update m_current or
-    // makes it same as m_end on failure.
+    // This is ok because consumeQuotedString() doesn't update m_data or
+    // set m_didFailParsing to true on failure.
     return consumeQuotedString() || consumeToken();
 }
 
 bool WebSocketExtensionParser::consumeCharacter(char character)
 {
     skipSpaces();
-    if (m_current < m_end && *m_current == character) {
-        ++m_current;
+    if (!m_data.empty() && m_data[0] == character) {
+        m_data = m_data.subspan(1);
         return true;
     }
     return false;
@@ -118,31 +121,37 @@ bool WebSocketExtensionParser::consumeCharacter(char character)
 bool WebSocketExtensionParser::parseExtension(String& extensionToken, HashMap<String, String>& extensionParameters)
 {
     // Parse extension-token.
-    if (!consumeToken())
+    if (!consumeToken()) {
+        m_didFailParsing = true;
         return false;
+    }
 
     extensionToken = currentToken();
 
     // Parse extension-parameters if exists.
     while (consumeCharacter(';')) {
-        if (!consumeToken())
+        if (!consumeToken()) {
+            m_didFailParsing = true;
             return false;
+        }
 
         String parameterToken = currentToken();
         if (consumeCharacter('=')) {
             if (consumeQuotedStringOrToken())
                 extensionParameters.add(parameterToken, currentToken());
-            else
+            else {
+                m_didFailParsing = true;
                 return false;
+            }
         } else
             extensionParameters.add(parameterToken, String());
     }
-    if (!finished() && !consumeCharacter(','))
+    if (!finished() && !consumeCharacter(',')) {
+        m_didFailParsing = true;
         return false;
+    }
 
     return true;
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
