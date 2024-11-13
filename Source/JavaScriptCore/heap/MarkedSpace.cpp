@@ -194,7 +194,7 @@ void MarkedSpace::freeMemory()
 {
     forEachBlock(
         [&] (MarkedBlock::Handle* block) {
-            freeBlock(block);
+            freeBlock(block, true);
         });
     for (PreciseAllocation* allocation : m_preciseAllocations)
         allocation->destroy();
@@ -375,8 +375,9 @@ MarkedBlock::Handle* MarkedSpace::findMarkedBlockHandleDebug(MarkedBlock* block)
     return result;
 }
 
-void MarkedSpace::freeBlock(MarkedBlock::Handle* block)
+void MarkedSpace::freeBlock(MarkedBlock::Handle* block, bool notEmptyOkay)
 {
+    RELEASE_ASSERT(notEmptyOkay || block->isEmpty());
     m_capacity -= MarkedBlock::blockSize;
     m_blocks.remove(&block->block());
     delete block;

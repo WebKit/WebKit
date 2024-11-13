@@ -84,7 +84,7 @@ void initialize()
         WriteBarrierCounters::initialize();
 #endif
         WTF::setDataFile(OSLogPrintStream::open("com.apple.JavaScriptCore", "DataLog", OS_LOG_TYPE_ERROR));;
-        dataLogLn("JSC::initialize() hello");
+        dataLogLn("JSC::initialize() MarkedBlock instrumentation enabled");
 
         {
             Options::AllowUnfinalizedAccessScope scope;

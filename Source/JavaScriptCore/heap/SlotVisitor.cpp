@@ -192,6 +192,8 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
         // It's not OK for the structure to be nuked at any GC scan point.
         if (structureID.isNuked())
             die("GC scan found object in bad state: structureID is nuked!\n");
+        
+        jsCell->checkConsistency(heap());
 
         // This detects the worst of the badness.
         Integrity::auditStructureID(structureID);
@@ -199,7 +201,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
 
     // In debug mode, we validate before marking since this makes it clearer what the problem
     // was. It's also slower, so we don't do it normally.
-    if (ASSERT_ENABLED && isJSCellKind(heapCell->cellKind()))
+    if ((true || ASSERT_ENABLED) && isJSCellKind(heapCell->cellKind()))
         validateCell(static_cast<JSCell*>(heapCell));
     
     if (Heap::testAndSetMarked(m_markingVersion, heapCell))
@@ -259,7 +261,7 @@ ALWAYS_INLINE void SlotVisitor::setMarkedAndAppendToMarkStack(ContainerType& con
     if (container.testAndSetMarked(cell, dependency))
         return;
     
-    ASSERT(cell->structure());
+    RELEASE_ASSERT(cell->structure());
     
     // Indicate that the object is grey and that:
     // In case of concurrent GC: it's the first time it is grey in this GC cycle.
@@ -287,7 +289,7 @@ ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCe
             reportZappedCellAndCrash(m_heap, cell);
     }
 #endif
-    ASSERT(!cell->isZapped());
+    RELEASE_ASSERT(!cell->isZapped());
 
     container.noteMarked();
     
@@ -301,7 +303,7 @@ void SlotVisitor::markAuxiliary(const void* base)
 {
     HeapCell* cell = bitwise_cast<HeapCell*>(base);
     
-    ASSERT(cell->heap() == heap());
+    RELEASE_ASSERT(cell->heap() == heap());
     
     if (Heap::testAndSetMarked(m_markingVersion, cell))
         return;

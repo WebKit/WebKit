@@ -83,6 +83,8 @@ MarkedBlock::Handle::~Handle()
         if (!(balance % 10))
             dataLog("MarkedBlock Balance: ", balance, "\n");
     }
+    RELEASE_ASSERT(&m_block->handle() == this);
+    RELEASE_ASSERT(m_block->heap() == &heap);
     m_directory->removeBlock(this, BlockDirectory::WillDeleteBlock::Yes);
     m_block->~MarkedBlock();
     m_alignedMemoryAllocator->freeAlignedMemory(m_block);

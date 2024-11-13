@@ -132,7 +132,7 @@ public:
     template<typename Functor> void forEachSubspace(const Functor&);
 
     void shrink();
-    void freeBlock(MarkedBlock::Handle*);
+    void freeBlock(MarkedBlock::Handle*, bool notEmptyOkay=false);
     void freeOrShrinkBlock(MarkedBlock::Handle*);
 
     void didAddBlock(MarkedBlock::Handle*);
