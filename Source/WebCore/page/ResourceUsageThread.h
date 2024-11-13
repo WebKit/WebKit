@@ -81,7 +81,7 @@ private:
     RefPtr<Thread> m_thread;
     Lock m_observersLock;
     Condition m_condition;
-    UncheckedKeyHashMap<void*, std::pair<ResourceUsageCollectionMode, std::function<void(const ResourceUsageData&)>>> m_observers WTF_GUARDED_BY_LOCK(m_observersLock);
+    HashMap<void*, std::pair<ResourceUsageCollectionMode, std::function<void(const ResourceUsageData&)>>> m_observers WTF_GUARDED_BY_LOCK(m_observersLock);
     ResourceUsageCollectionMode m_collectionMode { None };
 
     // Platforms may need to access some data from the common VM.

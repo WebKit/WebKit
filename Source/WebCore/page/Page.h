@@ -1636,7 +1636,7 @@ private:
     Ref<BadgeClient> m_badgeClient;
     Ref<HistoryItemClient> m_historyItemClient;
 
-    UncheckedKeyHashMap<RegistrableDomain, uint64_t> m_noiseInjectionHashSalts;
+    HashMap<RegistrableDomain, uint64_t> m_noiseInjectionHashSalts;
 
 #if PLATFORM(IOS_FAMILY)
     String m_sceneIdentifier;

@@ -59,7 +59,7 @@ private:
     void updateIsUsingProxy() final;
     void platformResolve(const String&) final;
 
-    UncheckedKeyHashMap<uint64_t, GRefPtr<GCancellable>> m_requestCancellables;
+    HashMap<uint64_t, GRefPtr<GCancellable>> m_requestCancellables;
 };
 
 using DNSResolveQueuePlatform = DNSResolveQueueGLib;

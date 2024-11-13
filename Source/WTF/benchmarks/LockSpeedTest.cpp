@@ -62,7 +62,7 @@ struct WithPadding {
     char buf[300]; // It's best if this isn't perfect to avoid false sharing.
 };
 
-UncheckedKeyHashMap<CString, Vector<double>> results;
+HashMap<CString, Vector<double>> results;
 
 void reportResult(const char* name, double value)
 {

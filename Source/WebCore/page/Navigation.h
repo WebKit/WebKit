@@ -191,7 +191,7 @@ private:
     bool m_suppressNormalScrollRestorationDuringOngoingNavigation { false };
     RefPtr<NavigationAPIMethodTracker> m_ongoingAPIMethodTracker;
     RefPtr<NavigationAPIMethodTracker> m_upcomingNonTraverseMethodTracker;
-    UncheckedKeyHashMap<String, Ref<NavigationAPIMethodTracker>> m_upcomingTraverseMethodTrackers;
+    HashMap<String, Ref<NavigationAPIMethodTracker>> m_upcomingTraverseMethodTrackers;
 };
 
 } // namespace WebCore

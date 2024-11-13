@@ -501,8 +501,8 @@ private:
     // default order
     UBool fFirstDateInPtnIsLaterDate;
 
-    // UncheckedKeyHashMap<UnicodeString, UnicodeString[kIPI_MAX_INDEX]>
-    // UncheckedKeyHashMap( skeleton, pattern[largest_different_field] )
+    // HashMap<UnicodeString, UnicodeString[kIPI_MAX_INDEX]>
+    // HashMap( skeleton, pattern[largest_different_field] )
     Hashtable* fIntervalPatterns;
 
 };// end class DateIntervalInfo

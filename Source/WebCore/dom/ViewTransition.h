@@ -142,7 +142,7 @@ public:
 
 private:
     ListHashSet<AtomString> m_keys;
-    UncheckedKeyHashMap<AtomString, UniqueRef<CapturedElement>> m_map;
+    HashMap<AtomString, UniqueRef<CapturedElement>> m_map;
 };
 
 struct ViewTransitionParams {

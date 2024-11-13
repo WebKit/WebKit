@@ -59,7 +59,7 @@ private:
     GRefPtr<GstElement> m_bin;
     GRefPtr<GstElement> m_sink;
     Lock m_clientLock;
-    UncheckedKeyHashMap<int, GRefPtr<GstElement>> m_clients WTF_GUARDED_BY_LOCK(m_clientLock);
+    HashMap<int, GRefPtr<GstElement>> m_clients WTF_GUARDED_BY_LOCK(m_clientLock);
 };
 
 } // namespace WebCore

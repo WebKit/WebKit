@@ -48,7 +48,7 @@ static IdentifierSet& identifierSet()
     return identifierSet;
 }
     
-typedef UncheckedKeyHashMap<int, IdentifierRep*> IntIdentifierMap;
+using IntIdentifierMap = HashMap<int, IdentifierRep*>;
 
 static IntIdentifierMap& intIdentifierMap()
 {
@@ -82,7 +82,7 @@ IdentifierRep* IdentifierRep::get(int intID)
     return result.iterator->value;
 }
 
-typedef UncheckedKeyHashMap<RefPtr<StringImpl>, IdentifierRep*> StringIdentifierMap;
+using StringIdentifierMap = HashMap<RefPtr<StringImpl>, IdentifierRep*>;
 
 static StringIdentifierMap& stringIdentifierMap()
 {

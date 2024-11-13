@@ -61,8 +61,8 @@ private:
     CurlStreamID m_currentStreamID = 1;
 
     Vector<Function<void()>> m_taskQueue;
-    UncheckedKeyHashMap<CurlStreamID, CurlStream::Client*> m_clientList;
-    UncheckedKeyHashMap<CurlStreamID, std::unique_ptr<CurlStream>> m_streamList;
+    HashMap<CurlStreamID, CurlStream::Client*> m_clientList;
+    HashMap<CurlStreamID, std::unique_ptr<CurlStream>> m_streamList;
 };
 
 } // namespace WebCore

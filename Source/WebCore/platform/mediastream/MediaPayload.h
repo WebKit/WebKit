@@ -53,7 +53,7 @@ public:
     bool nackpli { false };
     bool nack { false };
 
-    UncheckedKeyHashMap<String, unsigned> parameters;
+    HashMap<String, unsigned> parameters;
 };
 
 } // namespace WebCore

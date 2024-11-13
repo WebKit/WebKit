@@ -81,7 +81,7 @@ private:
     inline friend RefPtr<DeferredPromise> getPromise(DeferredPromise*, WeakPtr<SubtleCrypto>);
 
     Ref<WorkQueue> m_workQueue;
-    UncheckedKeyHashMap<DeferredPromise*, Ref<DeferredPromise>> m_pendingPromises;
+    HashMap<DeferredPromise*, Ref<DeferredPromise>> m_pendingPromises;
 };
 
 } // namespace WebCore

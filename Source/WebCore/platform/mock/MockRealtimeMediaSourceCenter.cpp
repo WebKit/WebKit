@@ -333,10 +333,10 @@ static Vector<MockMediaDevice>& devices()
     return devices;
 }
 
-static UncheckedKeyHashMap<String, MockMediaDevice>& deviceMap()
+static HashMap<String, MockMediaDevice>& deviceMap()
 {
     static NeverDestroyed map = [] {
-        UncheckedKeyHashMap<String, MockMediaDevice> map;
+        HashMap<String, MockMediaDevice> map;
         for (auto& device : devices())
             map.add(device.persistentId, device);
         return map;

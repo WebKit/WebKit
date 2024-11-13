@@ -87,11 +87,11 @@ private:
     std::unique_ptr<Inspector::LayerTreeFrontendDispatcher> m_frontendDispatcher;
     RefPtr<Inspector::LayerTreeBackendDispatcher> m_backendDispatcher;
 
-    UncheckedKeyHashMap<const RenderLayer*, Inspector::Protocol::LayerTree::LayerId> m_documentLayerToIdMap;
-    UncheckedKeyHashMap<Inspector::Protocol::LayerTree::LayerId, const RenderLayer*> m_idToLayer;
+    HashMap<const RenderLayer*, Inspector::Protocol::LayerTree::LayerId> m_documentLayerToIdMap;
+    HashMap<Inspector::Protocol::LayerTree::LayerId, const RenderLayer*> m_idToLayer;
 
     WeakHashMap<PseudoElement, Inspector::Protocol::LayerTree::PseudoElementId, WeakPtrImplWithEventTargetData> m_pseudoElementToIdMap;
-    UncheckedKeyHashMap<Inspector::Protocol::LayerTree::PseudoElementId, WeakPtr<PseudoElement, WeakPtrImplWithEventTargetData>> m_idToPseudoElement;
+    HashMap<Inspector::Protocol::LayerTree::PseudoElementId, WeakPtr<PseudoElement, WeakPtrImplWithEventTargetData>> m_idToPseudoElement;
 
     bool m_suppressLayerChangeEvents { false };
 };

@@ -60,7 +60,7 @@ static Vector<String>& preferredLanguagesOverride() WTF_REQUIRES_LOCK(languagesL
 }
 static std::optional<bool> cachedUserPrefersSimplifiedChinese WTF_GUARDED_BY_LOCK(languagesLock);
 
-typedef UncheckedKeyHashMap<void*, LanguageChangeObserverFunction> ObserverMap;
+using ObserverMap = HashMap<void*, LanguageChangeObserverFunction>;
 static ObserverMap& observerMap()
 {
     static LazyNeverDestroyed<ObserverMap> map;

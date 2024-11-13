@@ -97,10 +97,10 @@ static inline OptionSet<AutoplayQuirk> allowedAutoplayQuirks(Document& document)
     return loader->allowedAutoplayQuirks();
 }
 
-static UncheckedKeyHashMap<RegistrableDomain, String>& updatableStorageAccessUserAgentStringQuirks()
+static HashMap<RegistrableDomain, String>& updatableStorageAccessUserAgentStringQuirks()
 {
     // FIXME: Make this a member of Quirks.
-    static MainThreadNeverDestroyed<UncheckedKeyHashMap<RegistrableDomain, String>> map;
+    static MainThreadNeverDestroyed<HashMap<RegistrableDomain, String>> map;
     return map.get();
 }
 

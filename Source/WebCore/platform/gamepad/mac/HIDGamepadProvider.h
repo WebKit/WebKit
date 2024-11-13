@@ -82,7 +82,7 @@ private:
     unsigned indexForNewlyConnectedDevice();
 
     Vector<WeakPtr<PlatformGamepad>> m_gamepadVector;
-    UncheckedKeyHashMap<IOHIDDeviceRef, std::unique_ptr<HIDGamepad>> m_gamepadMap;
+    HashMap<IOHIDDeviceRef, std::unique_ptr<HIDGamepad>> m_gamepadMap;
 
     RetainPtr<IOHIDManagerRef> m_manager;
 

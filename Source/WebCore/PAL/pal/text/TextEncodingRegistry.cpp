@@ -109,8 +109,8 @@ struct HashTranslatorTextEncodingName {
     }
 };
 
-using TextEncodingNameMap = UncheckedKeyHashMap<ASCIILiteral, ASCIILiteral, TextEncodingNameHash>;
-using TextCodecMap = UncheckedKeyHashMap<ASCIILiteral, NewTextCodecFunction>;
+using TextEncodingNameMap = HashMap<ASCIILiteral, ASCIILiteral, TextEncodingNameHash>;
+using TextCodecMap = HashMap<ASCIILiteral, NewTextCodecFunction>;
 
 static Lock encodingRegistryLock;
 

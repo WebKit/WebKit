@@ -72,7 +72,7 @@ private:
 
     Vector<Function<void()>> m_taskQueue;
     HashSet<CurlRequestSchedulerClient*> m_activeJobs;
-    UncheckedKeyHashMap<CURL*, CurlRequestSchedulerClient*> m_clientMaps;
+    HashMap<CURL*, CurlRequestSchedulerClient*> m_clientMaps;
 
     Lock m_multiHandleMutex;
     std::optional<CurlMultiHandle> m_curlMultiHandle;

@@ -70,7 +70,7 @@ private:
     virtual Ref<StorageNamespace> createTransientLocalStorageNamespace(SecurityOrigin&, unsigned quota, PAL::SessionID) = 0;
 
     RefPtr<StorageNamespace> m_localStorageNamespace;
-    UncheckedKeyHashMap<SecurityOriginData, RefPtr<StorageNamespace>> m_transientLocalStorageNamespaces;
+    HashMap<SecurityOriginData, RefPtr<StorageNamespace>> m_transientLocalStorageNamespaces;
 
     unsigned m_sessionStorageQuota { 0 };
 };

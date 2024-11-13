@@ -65,8 +65,8 @@ protected:
     InstrumentingAgents& m_instrumentingAgents;
 
 private:
-    UncheckedKeyHashMap<const RegisteredEventListener*, int> m_registeredEventListeners;
-    UncheckedKeyHashMap<const RegisteredEventListener*, int> m_dispatchedEventListeners;
+    HashMap<const RegisteredEventListener*, int> m_registeredEventListeners;
+    HashMap<const RegisteredEventListener*, int> m_dispatchedEventListeners;
     HashSet<int> m_postMessageTasks;
     int m_nextEventListenerIdentifier { 1 };
     int m_nextPostMessageIdentifier { 1 };

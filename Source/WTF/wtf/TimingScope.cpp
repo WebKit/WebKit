@@ -59,7 +59,7 @@ public:
     }
 
 private:
-    UncheckedKeyHashMap<const char*, CallData> totals WTF_GUARDED_BY_LOCK(lock);
+    HashMap<const char*, CallData> totals WTF_GUARDED_BY_LOCK(lock);
     Lock lock;
 };
 

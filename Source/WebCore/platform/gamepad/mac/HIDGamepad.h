@@ -52,7 +52,7 @@ public:
 protected:
     HIDGamepad(HIDDevice&&, unsigned index);
 
-    UncheckedKeyHashMap<IOHIDElementCookie, std::unique_ptr<HIDGamepadElement>> m_elementMap;
+    HashMap<IOHIDElementCookie, std::unique_ptr<HIDGamepadElement>> m_elementMap;
     Vector<SharedGamepadValue> m_buttonValues;
     Vector<SharedGamepadValue> m_axisValues;
 
