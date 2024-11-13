@@ -218,7 +218,7 @@ sub quoteUrls {
     my $safe_protocols = SAFE_URL_REGEXP();
     $text =~ s~\b($safe_protocols)
               ~($tmp = html_quote($1)) &&
-               ($things[$count++] = "<a href=\"$tmp\">$tmp</a>") &&
+               ($things[$count++] = "<a rel=\"nofollow\" href=\"$tmp\">$tmp</a>") &&
                ("\x{FDD2}" . ($count-1) . "\x{FDD3}")
               ~egox;
 
