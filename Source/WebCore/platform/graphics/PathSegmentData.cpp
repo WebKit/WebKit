@@ -243,8 +243,17 @@ static std::pair<float, float> calculateBezierExtremities(float p0, float p1, fl
     float b = 6 * j - 6 * i;
     float c = 3 * i;
 
-    if (abs(a) < 0.00001) {
-        float t = -c / b;
+    static constexpr float epsilon = 0.1;
+
+    // Solve for the linear equation bt + c = 0.
+    if (abs(a) < epsilon) {
+        float t;
+        // Get the t-coordinate of the quadartic curve vertex. It has to
+        // be the mid-point between the current point and the end point.
+        if (abs(b) < epsilon)
+            t = 0.5;
+        else
+            t = -c / b;
         float s = calculateBezier(t, p0, p1, p2, p3);
         return std::make_pair(s, s);
     }
