@@ -73,6 +73,7 @@ void FidoService::continueAfterGetInfo(WeakPtr<CtapDriver>&& weakDriver, Vector<
 
     auto info = readCTAPGetInfoResponse(response);
     if (info && info->versions().find(ProtocolVersion::kCtap) != info->versions().end()) {
+        driver->setMaxMsgSize(info->maxMsgSize());
         observer()->authenticatorAdded(CtapAuthenticator::create(driver.releaseNonNull(), WTFMove(*info)));
         return;
     }

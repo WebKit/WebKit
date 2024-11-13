@@ -28,7 +28,9 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "Logging.h"
 #include <WebCore/FidoConstants.h>
+#include <wtf/Assertions.h>
 #include <wtf/RunLoop.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -176,6 +178,8 @@ CtapHidDriver::CtapHidDriver(Ref<HidConnection>&& connection)
 
 void CtapHidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callback)
 {
+    if (!isValidSize(data.size()))
+        RELEASE_LOG(WebAuthn, "CtapHidDriver::transact Sending data larger than maxSize. msgSize=%ld", data.size());
     ASSERT(m_state == State::Idle);
     m_state = State::AllocateChannel;
     m_channelId = kHidBroadcastChannel;

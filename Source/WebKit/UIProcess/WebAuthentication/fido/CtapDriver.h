@@ -49,10 +49,11 @@ public:
 
     WebCore::AuthenticatorTransport transport() const { return m_transport; }
     fido::ProtocolVersion protocol() const { return m_protocol; }
+    void setMaxMsgSize(std::optional<uint32_t> maxMsgSize) { m_maxMsgSize = maxMsgSize; }
+    bool isValidSize(size_t msgSize) { return !m_maxMsgSize || msgSize <= static_cast<size_t>(*m_maxMsgSize); }
 
     virtual void transact(Vector<uint8_t>&& data, ResponseCallback&&) = 0;
     virtual void cancel() { };
-
 protected:
     explicit CtapDriver(WebCore::AuthenticatorTransport transport)
         : m_transport(transport)
@@ -61,6 +62,7 @@ protected:
 private:
     fido::ProtocolVersion m_protocol { fido::ProtocolVersion::kCtap };
     WebCore::AuthenticatorTransport m_transport;
+    std::optional<uint32_t> m_maxMsgSize;
 };
 
 } // namespace WebKit

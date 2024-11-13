@@ -27,7 +27,7 @@
 #include "CtapCcidDriver.h"
 
 #if ENABLE(WEB_AUTHN)
-
+#include "Logging.h"
 #include <WebCore/ApduCommand.h>
 #include <WebCore/ApduResponse.h>
 #include <wtf/RunLoop.h>
@@ -52,6 +52,9 @@ void CtapCcidDriver::transact(Vector<uint8_t>&& data, ResponseCallback&& callbac
     // For CTAP2, commands follow:
     // https://fidoalliance.org/specs/fido-v2.0-ps-20190130/fido-client-to-authenticator-protocol-v2.0-ps-20190130.html#nfc-command-framing
     if (protocol() == ProtocolVersion::kCtap) {
+
+        if (!isValidSize(data.size()))
+            RELEASE_LOG(WebAuthn, "CtapCcidDriver::transact Sending data larger than maxSize. msgSize=%ld", data.size());
         ApduCommand command;
         command.setCla(kCtapNfcApduCla);
         command.setIns(kCtapNfcApduIns);
