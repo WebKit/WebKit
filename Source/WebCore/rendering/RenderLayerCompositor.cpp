@@ -165,6 +165,7 @@ struct RenderLayerCompositor::CompositingState {
         childState.fullPaintOrderTraversalRequired = fullPaintOrderTraversalRequired;
         childState.descendantsRequireCompositingUpdate = descendantsRequireCompositingUpdate;
         childState.ancestorHasTransformAnimation = ancestorHasTransformAnimation;
+        childState.ancestorAllowsBackingStoreDetachingForFixed = ancestorAllowsBackingStoreDetachingForFixed;
         childState.hasCompositedNonContainedDescendants = false;
         childState.hasNotIsolatedCompositedBlendingDescendants = false; // FIXME: should this only be reset for stacking contexts?
         childState.hasBackdropFilterDescendantsWithoutRoot = false;
@@ -226,6 +227,7 @@ struct RenderLayerCompositor::CompositingState {
     bool fullPaintOrderTraversalRequired { false };
     bool descendantsRequireCompositingUpdate { false };
     bool ancestorHasTransformAnimation { false };
+    bool ancestorAllowsBackingStoreDetachingForFixed { false };
     bool hasCompositedNonContainedDescendants { false };
     bool hasNotIsolatedCompositedBlendingDescendants { false };
     bool hasBackdropFilterDescendantsWithoutRoot { false };
@@ -1192,6 +1194,24 @@ static bool canSkipComputeCompositingRequirementsForSubtree(const RenderLayer& l
     return layer.renderer().hasNonVisibleOverflow();
 }
 
+bool RenderLayerCompositor::allowBackingStoreDetachingForFixedPosition(RenderLayer& layer, const LayoutRect& absoluteBounds)
+{
+    ASSERT_UNUSED(layer, layer.behavesAsFixed());
+
+    // We'll allow detaching if the layer is outside the layout viewport. Fixed layers inside
+    // the layout viewport can be revealed by async scrolling, so we want to pin their backing store.
+    LocalFrameView& frameView = m_renderView.frameView();
+    LayoutRect fixedLayoutRect;
+    if (frameView.useFixedLayout())
+        fixedLayoutRect = m_renderView.unscaledDocumentRect();
+    else
+        fixedLayoutRect = frameView.rectForFixedPositionLayout();
+
+    bool allowDetaching = !fixedLayoutRect.intersects(absoluteBounds);
+    LOG_WITH_STREAM(Compositing, stream << "RenderLayerCompositor (layer " << &layer << ") allowsBackingStoreDetaching - absoluteBounds " << absoluteBounds << " layoutViewportRect " << fixedLayoutRect << ", allowDetaching " << allowDetaching);
+    return allowDetaching;
+}
+
 void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestorLayer, RenderLayer& layer, LayerOverlapMap& overlapMap, CompositingState& compositingState, BackingSharingState& backingSharingState)
 {
 #if !LOG_DISABLED
@@ -1310,10 +1330,19 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
         willBeComposited = true;
     };
 
+
+    // Unless we leave the containing block chain, or have an animated transform,
+    // then we can continue to use the inherited backing store attachment.
+    bool allowsBackingStoreDetachingForFixed = false;
+    if (currentState.ancestorAllowsBackingStoreDetachingForFixed && ancestorLayer && layer.ancestorLayerIsInContainingBlockChain(*ancestorLayer) && !layerExtent.hasTransformAnimation)
+        allowsBackingStoreDetachingForFixed = true;
+
     auto layerWillCompositePostDescendants = [&] {
         layerWillComposite();
         currentState.subtreeIsCompositing = true;
         becameCompositedAfterDescendantTraversal = true;
+        if (layer.behavesAsFixed())
+            allowsBackingStoreDetachingForFixed = allowBackingStoreDetachingForFixedPosition(layer, layerExtent.bounds);
     };
 
     if (willBeComposited) {
@@ -1321,6 +1350,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
 
         computeExtent(overlapMap, layer, layerExtent);
         currentState.ancestorHasTransformAnimation |= layerExtent.hasTransformAnimation;
+
+        if (!allowsBackingStoreDetachingForFixed && layer.behavesAsFixed())
+            currentState.ancestorAllowsBackingStoreDetachingForFixed = allowsBackingStoreDetachingForFixed = allowBackingStoreDetachingForFixedPosition(layer, layerExtent.bounds);
+
         // Too hard to compute animated bounds if both us and some ancestor is animating transform.
         layerExtent.animationCausesExtentUncertainty |= layerExtent.hasTransformAnimation && compositingState.ancestorHasTransformAnimation;
     } else if (layerPaintsIntoProvidedBacking) {
@@ -1479,7 +1512,7 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* ancestor
     updateOverlapMap(overlapMap, layer, layerExtent, didPushOverlapContainer, layerContributesToOverlap, becameCompositedAfterDescendantTraversal && !descendantsAddedToOverlap);
 
     if (layer.isComposited())
-        layer.backing()->updateAllowsBackingStoreDetaching(layerExtent.bounds);
+        layer.backing()->updateAllowsBackingStoreDetaching(allowsBackingStoreDetachingForFixed);
 
     overlapMap.geometryMap().popMappingsToAncestor(ancestorLayer);
 

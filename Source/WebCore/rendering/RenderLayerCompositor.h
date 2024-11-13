@@ -492,6 +492,8 @@ private:
     bool layerHas3DContent(const RenderLayer&) const;
     bool isRunningTransformAnimation(RenderLayerModelObject&) const;
 
+    bool allowBackingStoreDetachingForFixedPosition(RenderLayer&, const LayoutRect& absoluteBounds);
+
     void appendDocumentOverlayLayers(Vector<Ref<GraphicsLayer>>&);
 
     bool needsCompositingForContentOrOverlays() const;

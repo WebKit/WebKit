@@ -969,7 +969,7 @@ bool RenderLayerBacking::updateCompositedBounds()
     return setCompositedBounds(layerBounds);
 }
 
-void RenderLayerBacking::updateAllowsBackingStoreDetaching(const LayoutRect& absoluteBounds)
+void RenderLayerBacking::updateAllowsBackingStoreDetaching(bool allowDetachingForFixed)
 {
     auto setAllowsBackingStoreDetaching = [&](bool allowDetaching) {
         m_graphicsLayer->setAllowsBackingStoreDetaching(allowDetaching);
@@ -986,18 +986,7 @@ void RenderLayerBacking::updateAllowsBackingStoreDetaching(const LayoutRect& abs
         return;
     }
 
-    // We'll allow detaching if the layer is outside the layout viewport. Fixed layers inside
-    // the layout viewport can be revealed by async scrolling, so we want to pin their backing store.
-    LocalFrameView& frameView = renderer().view().frameView();
-    LayoutRect fixedLayoutRect;
-    if (frameView.useFixedLayout())
-        fixedLayoutRect = renderer().view().unscaledDocumentRect();
-    else
-        fixedLayoutRect = frameView.rectForFixedPositionLayout();
-
-    bool allowDetaching = !fixedLayoutRect.intersects(absoluteBounds);
-    LOG_WITH_STREAM(Compositing, stream << "RenderLayerBacking (layer " << &m_owningLayer << ") updateAllowsBackingStoreDetaching - absoluteBounds " << absoluteBounds << " layoutViewportRect " << fixedLayoutRect << ", allowDetaching " << allowDetaching);
-    setAllowsBackingStoreDetaching(allowDetaching);
+    setAllowsBackingStoreDetaching(allowDetachingForFixed);
 }
 
 void RenderLayerBacking::updateAfterWidgetResize()
