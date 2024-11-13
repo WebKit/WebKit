@@ -6481,6 +6481,7 @@ SelectionHonorsOverflowScrolling:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
+      "ENABLE(SELECTION_HONORS_OVERFLOW_SCROLLING_BY_DEFAULT)" : true
       default: false
     WebKitLegacy:
       default: false
