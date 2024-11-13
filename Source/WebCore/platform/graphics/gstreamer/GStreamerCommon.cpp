@@ -46,12 +46,14 @@
 #include <wtf/RuntimeApplicationChecks.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/UUID.h>
 #include <wtf/glib/GThreadSafeWeakPtr.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/RunLoopSourcePriority.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringHash.h>
+#include <wtf/text/StringToIntegerConversion.h>
 
 #if USE(GSTREAMER_MPEGTS)
 #define GST_USE_UNSTABLE_API
@@ -229,6 +231,51 @@ bool getSampleVideoInfo(GstSample* sample, GstVideoInfo& videoInfo)
 }
 #endif
 
+std::optional<TrackID> getStreamIdFromPad(const GRefPtr<GstPad>& pad)
+{
+    GUniquePtr<gchar> streamIdAsCharacters(gst_pad_get_stream_id(pad.get()));
+    if (!streamIdAsCharacters) {
+        GST_DEBUG_OBJECT(pad.get(), "Failed to get stream-id from pad");
+        return std::nullopt;
+    }
+
+    std::optional<TrackID> streamId(parseStreamId(StringView::fromLatin1(streamIdAsCharacters.get())));
+    if (!streamId)
+        GST_WARNING_OBJECT(pad.get(), "Got invalid stream-id from pad: %s", streamIdAsCharacters.get());
+
+    return streamId;
+}
+
+std::optional<TrackID> getStreamIdFromStream(const GRefPtr<GstStream>& stream)
+{
+    const gchar* streamIdAsCharacters = gst_stream_get_stream_id(stream.get());
+    if (!streamIdAsCharacters) {
+        GST_DEBUG_OBJECT(stream.get(), "Failed to get stream-id from stream");
+        return std::nullopt;
+    }
+
+    std::optional<TrackID> streamId(parseStreamId(StringView::fromLatin1(streamIdAsCharacters)));
+    if (!streamId)
+        GST_WARNING_OBJECT(stream.get(), "Got invalid stream-id from stream: %s", streamIdAsCharacters);
+
+    return streamId;
+}
+
+std::optional<TrackID> parseStreamId(StringView stringId)
+{
+    auto maybeUUID = WTF::UUID::parse(stringId);
+    if (maybeUUID.has_value())
+        return maybeUUID.value().low();
+
+    // GStreamer docs advise against interpreting contents of a stream-id,
+    // however this is the format qtdemux uses for stream-id creation,
+    // so we can reasonably rely on it.
+    size_t position = stringId.find('/');
+    if (position == notFound || position + 1 == stringId.length())
+        return parseIntegerAllowingTrailingJunk<TrackID>(stringId);
+
+    return parseIntegerAllowingTrailingJunk<TrackID>(stringId.substring(position + 1));
+}
 
 StringView capsMediaType(const GstCaps* caps)
 {

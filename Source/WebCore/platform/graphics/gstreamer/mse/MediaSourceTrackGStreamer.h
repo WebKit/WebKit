@@ -41,12 +41,11 @@ namespace WebCore {
 
 class MediaSourceTrackGStreamer final: public ThreadSafeRefCounted<MediaSourceTrackGStreamer> {
 public:
-    static Ref<MediaSourceTrackGStreamer> create(TrackPrivateBaseGStreamer::TrackType, TrackID, const AtomString&, GRefPtr<GstCaps>&& initialCaps);
+    static Ref<MediaSourceTrackGStreamer> create(TrackPrivateBaseGStreamer::TrackType, TrackID, GRefPtr<GstCaps>&& initialCaps);
     virtual ~MediaSourceTrackGStreamer();
 
     TrackPrivateBaseGStreamer::TrackType type() const { return m_type; }
     TrackID id() const { return m_id; }
-    const AtomString& stringId() const { return m_stringId; }
     GRefPtr<GstCaps>& initialCaps() { return m_initialCaps; }
     DataMutex<TrackQueue>& queueDataMutex() { return m_queueDataMutex; }
 
@@ -65,11 +64,10 @@ public:
     void remove();
 
 private:
-    explicit MediaSourceTrackGStreamer(TrackPrivateBaseGStreamer::TrackType, TrackID, const AtomString&, GRefPtr<GstCaps>&& initialCaps);
+    explicit MediaSourceTrackGStreamer(TrackPrivateBaseGStreamer::TrackType, TrackID, GRefPtr<GstCaps>&& initialCaps);
 
     TrackPrivateBaseGStreamer::TrackType m_type;
     TrackID m_id;
-    const AtomString m_stringId;
     GRefPtr<GstCaps> m_initialCaps;
     DataMutex<TrackQueue> m_queueDataMutex;
 

@@ -81,6 +81,9 @@ public:
 
     ContentType type() const { return m_type; }
 
+    std::optional<TrackID> tryRegisterTrackId(TrackID);
+    bool tryUnregisterTrackId(TrackID);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger.get(); }
     ASCIILiteral logClassName() const override { return "SourceBufferPrivateGStreamer"_s; }

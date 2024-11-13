@@ -71,16 +71,14 @@ private:
         WTF_MAKE_NONCOPYABLE(Track);
     public:
 
-        Track(TrackID trackId, const AtomString& trackStringId, StreamType streamType, const GRefPtr<GstCaps>& caps, const FloatSize& presentationSize)
+        Track(TrackID trackId, StreamType streamType, const GRefPtr<GstCaps>& caps, const FloatSize& presentationSize)
             : trackId(trackId)
-            , trackStringId(trackStringId)
             , streamType(streamType)
             , caps(caps)
             , presentationSize(presentationSize)
         { }
 
         TrackID trackId;
-        const AtomString trackStringId;
         StreamType streamType;
         GRefPtr<GstCaps> caps;
         FloatSize presentationSize;
@@ -116,7 +114,7 @@ private:
 
     void hookTrackEvents(Track&);
     static std::tuple<GRefPtr<GstCaps>, AppendPipeline::StreamType, FloatSize> parseDemuxerSrcPadCaps(GstCaps*);
-    Ref<WebCore::TrackPrivateBase> makeWebKitTrack(int trackIndex);
+    Ref<WebCore::TrackPrivateBase> makeWebKitTrack(int trackIndex, TrackID);
     void appsinkCapsChanged(Track&);
     void appsinkNewSample(const Track&, GRefPtr<GstSample>&&);
     void handleEndOfAppend();
@@ -127,7 +125,7 @@ private:
 
     static AtomString generateTrackId(StreamType, int padIndex);
     enum class CreateTrackResult { TrackCreated, TrackIgnored, AppendParsingFailed };
-    std::pair<CreateTrackResult, AppendPipeline::Track*> tryCreateTrackFromPad(GstPad* demuxerSrcPad, int padIndex);
+    std::pair<CreateTrackResult, AppendPipeline::Track*> tryCreateTrackFromPad(GstPad* demuxerSrcPad);
 
     bool recycleTrackForPad(GstPad*);
     void linkPadWithTrack(GstPad* demuxerSrcPad, Track&);

@@ -57,6 +57,14 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPl
     installUpdateConfigurationHandlers();
 }
 
+VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, TrackID trackId)
+    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, WTFMove(pad), trackId)
+    , m_player(WTFMove(player))
+{
+    ensureVideoTrackDebugCategoryInitialized();
+    installUpdateConfigurationHandlers();
+}
+
 VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Video, this, index, stream)
     , m_player(WTFMove(player))
@@ -71,7 +79,7 @@ VideoTrackPrivateGStreamer::VideoTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPl
     updateConfigurationFromTags(WTFMove(tags));
 }
 
-void VideoTrackPrivateGStreamer::capsChanged(const String& streamId, GRefPtr<GstCaps>&& caps)
+void VideoTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&& caps)
 {
     ASSERT(isMainThread());
     updateConfigurationFromCaps(WTFMove(caps));
