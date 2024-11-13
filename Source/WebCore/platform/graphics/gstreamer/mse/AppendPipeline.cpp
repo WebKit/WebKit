@@ -795,7 +795,7 @@ std::pair<AppendPipeline::CreateTrackResult, AppendPipeline::Track*> AppendPipel
     }
 
     size_t newTrackIndex = m_tracks.size();
-    TrackID preferredTrackId = getStreamIdFromPad(demuxerSrcPad).value_or((reinterpret_cast<TrackID>(newTrackIndex)));
+    TrackID preferredTrackId = getStreamIdFromPad(demuxerSrcPad).value_or((static_cast<TrackID>(newTrackIndex)));
     auto assignedTrackId = m_sourceBufferPrivate.tryRegisterTrackId(preferredTrackId);
     TrackID trackId = assignedTrackId.value_or(preferredTrackId);
 
