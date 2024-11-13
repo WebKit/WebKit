@@ -972,6 +972,12 @@ bool RenderLayerBacking::updateCompositedBounds()
 void RenderLayerBacking::updateAllowsBackingStoreDetaching(bool allowDetachingForFixed)
 {
     auto setAllowsBackingStoreDetaching = [&](bool allowDetaching) {
+        if (m_graphicsLayer->allowsBackingStoreDetaching() == allowDetaching)
+            return;
+
+        // isDirectlyCompositedImage depends on this value
+        m_owningLayer.setNeedsCompositingConfigurationUpdate();
+
         m_graphicsLayer->setAllowsBackingStoreDetaching(allowDetaching);
         if (m_foregroundLayer)
             m_foregroundLayer->setAllowsBackingStoreDetaching(allowDetaching);
@@ -3134,6 +3140,11 @@ bool RenderLayerBacking::containsPaintedContent(PaintedContentsInfo& contentsInf
 bool RenderLayerBacking::isDirectlyCompositedImage() const
 {
     if (m_owningLayer.hasVisibleBoxDecorationsOrBackground() || m_owningLayer.paintsWithFilters() || renderer().hasClip())
+        return false;
+
+    // Fixed layers that allow detaching won't have a backing store,
+    // so using a directly composited image doesn't help (and has non-zero cost)
+    if (m_owningLayer.behavesAsFixed() && m_graphicsLayer->allowsBackingStoreDetaching())
         return false;
 
 #if (PLATFORM(GTK) || PLATFORM(WPE))
