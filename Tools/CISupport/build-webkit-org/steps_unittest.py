@@ -1194,6 +1194,153 @@ class TestCleanUpGitIndexLock(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
 
+class TestCheckOutSourceNextSteps(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        def fakeaddStepsAfterCurrentStep(self, step_factories):
+            self.addedStepsAfterCurrentStep = step_factories
+
+        FakeBuild.addedStepsAfterCurrentStep = []
+        FakeBuild.addStepsAfterCurrentStep = fakeaddStepsAfterCurrentStep
+        self.longMessage = True
+        self.patch(git.Git, 'checkFeatureSupport', lambda *args, **kwargs: True)
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    @defer.inlineCallbacks
+    def test_sucess_checkout_source(self):
+        self.setupStep(CheckOutSource(alwaysUseLatest=True))
+        self.expectRemoteCommands(
+            Expect(
+                'stat', dict(
+                    file='wkdir/.buildbot-patched',
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                command=['git', 'clean', '-f', '-f', '-d', '-x'],
+            ) + 0,
+            Expect(
+                'listdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                command=['git', 'clone', 'https://github.com/WebKit/WebKit.git', '.'],
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                command=['git', 'rev-parse', 'HEAD'],
+            ) + ExpectShell.log('stdio', stdout='3b84731a5f6a0a38b6f48a16ab927e5dbcb5c770\n') + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                command=['git', 'remote', 'set-url', '--push', 'origin', 'PUSH_DISABLED_BY_ADMIN'],
+            ) + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='Cleaned and updated working directory')
+        rc = yield self.runStep()
+        self.assertFalse(CleanUpGitIndexLock() in self.build.addedStepsAfterCurrentStep)
+        defer.returnValue(rc)
+
+    @defer.inlineCallbacks
+    def test_failure_checkout_source(self):
+        self.setupStep(CheckOutSource(alwaysUseLatest=True))
+        self.expectRemoteCommands(
+            Expect(
+                'stat', dict(
+                    file='wkdir/.buildbot-patched',
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                command=['git', 'clean', '-f', '-f', '-d', '-x'],
+            ) + 0,
+            Expect(
+                'listdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                command=['git', 'clone', 'https://github.com/WebKit/WebKit.git', '.'],
+            ) + 1,
+            Expect(
+                'rmdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            )
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to update working directory')
+        rc = yield self.runStep()
+        self.assertTrue(CleanUpGitIndexLock() in self.build.addedStepsAfterCurrentStep)
+        defer.returnValue(rc)
+
+    @defer.inlineCallbacks
+    def test_failure_checkout_source_retry(self):
+        self.setupStep(CheckOutSource(alwaysUseLatest=True))
+        self.setProperty('cleanUpGitIndexLockAlreadyTried', True)
+        self.expectRemoteCommands(
+            Expect(
+                'stat', dict(
+                    file='wkdir/.buildbot-patched',
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                command=['git', 'clean', '-f', '-f', '-d', '-x'],
+            ) + 0,
+            Expect(
+                'listdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            ) + 0,
+            ExpectShell(
+                workdir='wkdir',
+                timeout=7200,
+                logEnviron=False,
+                command=['git', 'clone', 'https://github.com/WebKit/WebKit.git', '.'],
+            ) + 1,
+            Expect(
+                'rmdir', dict(
+                    dir='wkdir',
+                    timeout=7200,
+                    logEnviron=False,
+                ),
+            )
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to update working directory')
+        rc = yield self.runStep()
+        self.assertFalse(CleanUpGitIndexLock() in self.build.addedStepsAfterCurrentStep)
+        defer.returnValue(rc)
+
+
 class TestPrintConfiguration(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
