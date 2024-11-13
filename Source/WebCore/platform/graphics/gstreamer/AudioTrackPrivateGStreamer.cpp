@@ -56,6 +56,14 @@ AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPl
     installUpdateConfigurationHandlers();
 }
 
+AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GRefPtr<GstPad>&& pad, TrackID trackId)
+    : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, WTFMove(pad), trackId)
+    , m_player(WTFMove(player))
+{
+    ensureDebugCategoryInitialized();
+    installUpdateConfigurationHandlers();
+}
+
 AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPlayerPrivateGStreamer>&& player, unsigned index, GstStream* stream)
     : TrackPrivateBaseGStreamer(TrackPrivateBaseGStreamer::TrackType::Audio, this, index, stream)
     , m_player(WTFMove(player))
@@ -70,7 +78,7 @@ AudioTrackPrivateGStreamer::AudioTrackPrivateGStreamer(ThreadSafeWeakPtr<MediaPl
     updateConfigurationFromTags(WTFMove(tags));
 }
 
-void AudioTrackPrivateGStreamer::capsChanged(const String& streamId, GRefPtr<GstCaps>&& caps)
+void AudioTrackPrivateGStreamer::capsChanged(TrackID streamId, GRefPtr<GstCaps>&& caps)
 {
     ASSERT(isMainThread());
     updateConfigurationFromCaps(WTFMove(caps));

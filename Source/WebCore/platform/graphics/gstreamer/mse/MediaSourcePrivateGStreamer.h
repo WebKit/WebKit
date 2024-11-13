@@ -73,6 +73,9 @@ public:
     void startPlaybackIfHasAllTracks();
     bool hasAllTracks() const { return m_hasAllTracks; }
 
+    TrackID registerTrackId(TrackID);
+    bool unregisterTrackId(TrackID);
+
 #if !RELEASE_LOG_DISABLED
     const Logger& logger() const final { return m_logger; }
     ASCIILiteral logClassName() const override { return "MediaSourcePrivateGStreamer"_s; }
@@ -91,6 +94,11 @@ private:
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
     uint64_t m_nextSourceBufferID { 0 };
+
+    // Stores known track IDs, so we can work around ID collisions between multiple source buffers.
+    // The registry is placed here to enforce ID uniqueness specifically by player, not by process,
+    // since its not an issue if multiple players use the same ID, and we want to preserve IDs as much as possible.
+    HashSet<TrackID> m_trackIdRegistry;
 #endif
 };
 

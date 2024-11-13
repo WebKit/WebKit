@@ -1144,7 +1144,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
     ASSERT(m_isLegacyPlaybin);
 
     using TrackType = TrackPrivateBaseGStreamer::TrackType;
-    std::variant<HashMap<AtomString, Ref<AudioTrackPrivateGStreamer>>*, HashMap<AtomString, Ref<VideoTrackPrivateGStreamer>>*, HashMap<AtomString, Ref<InbandTextTrackPrivateGStreamer>>*> variantTracks = static_cast<HashMap<AtomString, Ref<TrackPrivateType>>*>(0);
+    std::variant<TrackIDHashMap<Ref<AudioTrackPrivateGStreamer>>*, TrackIDHashMap<Ref<VideoTrackPrivateGStreamer>>*, TrackIDHashMap<Ref<InbandTextTrackPrivateGStreamer>>*> variantTracks = static_cast<TrackIDHashMap<Ref<TrackPrivateType>>*>(0);
     auto type(static_cast<TrackType>(variantTracks.index()));
     const char* typeName;
     bool* hasType;
@@ -1167,7 +1167,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
     default:
         ASSERT_NOT_REACHED();
     }
-    auto& tracks = *std::get<HashMap<AtomString, Ref<TrackPrivateType>>*>(variantTracks);
+    auto& tracks = *std::get<TrackIDHashMap<Ref<TrackPrivateType>>*>(variantTracks);
 
     // Ignore notifications after a EOS. We don't want the tracks to disappear when the video is finished.
     if (m_isEndReached && (type == TrackType::Audio || type == TrackType::Video))
@@ -1190,7 +1190,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
             player->sizeChanged();
     }
 
-    Vector<AtomString> validStreams;
+    Vector<TrackID> validStreams;
     StringPrintStream getPadProperty;
     getPadProperty.printf("get-%s-pad", typeName);
 
@@ -1202,7 +1202,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
         if (!pad)
             continue;
 
-        AtomString streamId(TrackPrivateBaseGStreamer::trackIdFromPadStreamStartOrUniqueID(type, i, pad));
+        TrackID streamId(getStreamIdFromPad(pad).value_or(i));
         validStreams.append(streamId);
 
         if (i < tracks.size()) {
@@ -1220,7 +1220,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
         }
 
         auto track = TrackPrivateType::create(*this, i, GRefPtr(pad));
-        ASSERT(track->stringId() == streamId);
+        ASSERT(track->streamId() == streamId);
         if (!track->trackIndex() && (type == TrackType::Audio || type == TrackType::Video))
             track->setActive(true);
 
@@ -1236,7 +1236,7 @@ void MediaPlayerPrivateGStreamer::notifyPlayerOfTrack()
             player->addTextTrack(*std::get<InbandTextTrackPrivate*>(variantTrack));
             break;
         }
-        tracks.add(track->stringId(), WTFMove(track));
+        tracks.add(track->streamId(), WTFMove(track));
         changed = true;
     }
 
@@ -1281,16 +1281,16 @@ void MediaPlayerPrivateGStreamer::videoSinkCapsChanged(GstPad* videoSinkPad)
     });
 }
 
-void MediaPlayerPrivateGStreamer::handleTextSample(GRefPtr<GstSample>&& sample, const String& streamId)
+void MediaPlayerPrivateGStreamer::handleTextSample(GRefPtr<GstSample>&& sample, TrackID streamId)
 {
     for (auto& track : m_textTracks.values()) {
-        if (track->stringId() == streamId) {
+        if (track->streamId() == streamId) {
             track->handleSample(WTFMove(sample));
             return;
         }
     }
 
-    GST_WARNING_OBJECT(m_pipeline.get(), "Got sample with unknown stream ID %s.", streamId.utf8().data());
+    GST_WARNING_OBJECT(m_pipeline.get(), "Got sample with unknown stream ID %" PRIu64 ".", streamId);
 }
 
 MediaTime MediaPlayerPrivateGStreamer::platformDuration() const
@@ -1581,7 +1581,7 @@ void MediaPlayerPrivateGStreamer::updateEnabledVideoTrack()
         GST_DEBUG_OBJECT(m_pipeline.get(), "Setting playbin2 current-video=%d", wantedTrack->trackIndex());
         g_object_set(m_pipeline.get(), "current-video", wantedTrack->trackIndex(), nullptr);
     } else {
-        m_wantedVideoStreamId = wantedTrack->stringId();
+        m_wantedVideoStreamId = wantedTrack->streamId();
         playbin3SendSelectStreamsIfAppropriate();
     }
 }
@@ -1605,7 +1605,7 @@ void MediaPlayerPrivateGStreamer::updateEnabledAudioTrack()
         GST_DEBUG_OBJECT(m_pipeline.get(), "Setting playbin2 current-audio=%d", wantedTrack->trackIndex());
         g_object_set(m_pipeline.get(), "current-audio", wantedTrack->trackIndex(), nullptr);
     } else {
-        m_wantedAudioStreamId = wantedTrack->stringId();
+        m_wantedAudioStreamId = wantedTrack->streamId();
         playbin3SendSelectStreamsIfAppropriate();
     }
 }
@@ -1622,17 +1622,20 @@ void MediaPlayerPrivateGStreamer::playbin3SendSelectStreamsIfAppropriate()
         return;
 
     GList* streams = nullptr;
-    if (!m_wantedVideoStreamId.isNull()) {
+    if (m_wantedVideoStreamId) {
+        auto track = m_videoTracks.get(m_wantedVideoStreamId.value());
         m_requestedVideoStreamId = m_wantedVideoStreamId;
-        streams = g_list_append(streams, g_strdup(m_wantedVideoStreamId.string().utf8().data()));
+        streams = g_list_append(streams, g_strdup(track->gstStreamId().string().utf8().data()));
     }
-    if (!m_wantedAudioStreamId.isNull()) {
+    if (m_wantedAudioStreamId) {
+        auto track = m_audioTracks.get(m_wantedAudioStreamId.value());
         m_requestedAudioStreamId = m_wantedAudioStreamId;
-        streams = g_list_append(streams, g_strdup(m_wantedAudioStreamId.string().utf8().data()));
+        streams = g_list_append(streams, g_strdup(track->gstStreamId().string().utf8().data()));
     }
-    if (!m_wantedTextStreamId.isNull()) {
+    if (m_wantedTextStreamId) {
+        auto track = m_textTracks.get(m_wantedTextStreamId.value());
         m_requestedTextStreamId = m_wantedTextStreamId;
-        streams = g_list_append(streams, g_strdup(m_wantedTextStreamId.string().utf8().data()));
+        streams = g_list_append(streams, g_strdup(track->gstStreamId().string().utf8().data()));
     }
 
     if (!streams)
@@ -1710,7 +1713,7 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
         auto track = m_##type##Tracks.get(streamId);                    \
         if (isTrackCached)                                              \
             track->updateConfigurationFromCaps(WTFMove(caps));          \
-        auto trackId = track->stringId();                               \
+        auto trackId = track->streamId();                               \
         if (!type##TrackIndex) { \
             m_wanted##Type##StreamId = trackId;                         \
             m_requested##Type##StreamId = trackId;                      \
@@ -1728,11 +1731,11 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
     for (unsigned i = 0; i < length; i++) {
         auto* stream = gst_stream_collection_get_stream(m_streamCollection.get(), i);
         RELEASE_ASSERT(stream);
-        auto streamId = AtomString::fromLatin1(gst_stream_get_stream_id(stream));
+        auto streamId = getStreamIdFromStream(stream).value();
         auto type = gst_stream_get_stream_type(stream);
         auto caps = adoptGRef(gst_stream_get_caps(stream));
 
-        GST_DEBUG_OBJECT(pipeline(), "#%u %s track with ID %s and caps %" GST_PTR_FORMAT, i, gst_stream_type_get_name(type), streamId.string().ascii().data(), caps.get());
+        GST_DEBUG_OBJECT(pipeline(), "#%u %s track with ID %" PRIu64 " and caps %" GST_PTR_FORMAT, i, gst_stream_type_get_name(type), streamId, caps.get());
 
         if (type & GST_STREAM_TYPE_AUDIO) {
             CREATE_OR_SELECT_TRACK(audio, Audio);
@@ -1742,7 +1745,7 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
         else if (type & GST_STREAM_TYPE_TEXT && !useMediaSource)
             CREATE_OR_SELECT_TRACK(text, Text);
         else
-            GST_WARNING("Unknown track type found for stream %s", streamId.string().ascii().data());
+            GST_WARNING("Unknown track type found for stream %" PRIu64 "", streamId);
     }
 #undef CREATE_OR_SELECT_TRACK
 }
@@ -3277,17 +3280,17 @@ void MediaPlayerPrivateGStreamer::setupCodecProbe(GstElement* element)
         if (!codec)
             return GST_PAD_PROBE_REMOVE;
 
-        GUniquePtr<char> streamId(gst_pad_get_stream_id(pad));
+        std::optional<TrackID> streamId(getStreamIdFromPad(pad));
         if (UNLIKELY(!streamId)) {
             // FIXME: This is a workaround for https://bugs.webkit.org/show_bug.cgi?id=256428.
             GST_WARNING_OBJECT(player->pipeline(), "Caps event received before stream-start. This shouldn't happen!");
             return GST_PAD_PROBE_REMOVE;
         }
 
-        GST_INFO_OBJECT(player->pipeline(), "Setting codec for stream %s to %s", streamId.get(), codec.get());
+        GST_INFO_OBJECT(player->pipeline(), "Setting codec for stream %" PRIu64 " to %s", streamId.value(), codec.get());
         {
             Locker locker { player->m_codecsLock };
-            player->m_codecs.add(String::fromLatin1(streamId.get()), String::fromLatin1(codec.get()));
+            player->m_codecs.add(streamId.value(), String::fromLatin1(codec.get()));
         }
         return GST_PAD_PROBE_REMOVE;
     }), this, nullptr);
@@ -4686,7 +4689,7 @@ void MediaPlayerPrivateGStreamer::checkPlayingConsistency()
     }
 }
 
-String MediaPlayerPrivateGStreamer::codecForStreamId(const String& streamId)
+String MediaPlayerPrivateGStreamer::codecForStreamId(TrackID streamId)
 {
     Locker locker { m_codecsLock };
     if (UNLIKELY(!m_codecs.contains(streamId)))
