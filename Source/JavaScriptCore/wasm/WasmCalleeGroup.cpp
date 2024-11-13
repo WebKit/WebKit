@@ -59,10 +59,15 @@ CalleeGroup::CalleeGroup(MemoryMode mode, const CalleeGroup& other)
     , m_mode(mode)
     , m_llintCallees(other.m_llintCallees)
     , m_jsEntrypointCallees(other.m_jsEntrypointCallees)
+#if ENABLE(WASM_CODE_RECLAIMATION)
     , m_callers(m_calleeCount)
+#endif
     , m_wasmIndirectCallEntryPoints(other.m_wasmIndirectCallEntryPoints)
     , m_wasmIndirectCallWasmCallees(other.m_wasmIndirectCallWasmCallees)
     , m_wasmToWasmExitStubs(other.m_wasmToWasmExitStubs)
+#if !ENABLE(WASM_CODE_RECLAIMATION)
+    , m_callsiteCollection(m_calleeCount)
+#endif
 {
     Locker locker { m_lock };
     setCompilationFinished();
@@ -72,7 +77,12 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
     : m_calleeCount(moduleInformation.internalFunctionCount())
     , m_mode(mode)
     , m_llintCallees(llintCallees)
+#if ENABLE(WASM_CODE_RECLAIMATION)
     , m_callers(m_calleeCount)
+#else
+    , m_callsiteCollection(m_calleeCount)
+#endif
+
 {
     RefPtr<CalleeGroup> protectedThis = this;
     m_plan = adoptRef(*new LLIntPlan(vm, moduleInformation, m_llintCallees->data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
@@ -97,6 +107,9 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
         }
 
         m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
+#if !ENABLE(WASM_CODE_RECLAIMATION)
+        m_callsiteCollection.addCalleeGroupCallsites(locker, *this, m_plan->takeWasmToWasmCallsites());
+#endif
         m_jsEntrypointCallees = static_cast<LLIntPlan*>(m_plan.get())->takeJSCallees();
 
         setCompilationFinished();
@@ -117,7 +130,11 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
     : m_calleeCount(moduleInformation.internalFunctionCount())
     , m_mode(mode)
     , m_ipintCallees(ipintCallees)
+#if ENABLE(WASM_CODE_RECLAIMATION)
     , m_callers(m_calleeCount)
+#else
+    , m_callsiteCollection(m_calleeCount)
+#endif
 {
     RefPtr<CalleeGroup> protectedThis = this;
     m_plan = adoptRef(*new IPIntPlan(vm, moduleInformation, m_ipintCallees->data(), createSharedTask<Plan::CallbackType>([this, protectedThis = WTFMove(protectedThis)] (Plan&) {
@@ -137,6 +154,9 @@ CalleeGroup::CalleeGroup(VM& vm, MemoryMode mode, ModuleInformation& moduleInfor
         }
 
         m_wasmToWasmExitStubs = m_plan->takeWasmToWasmExitStubs();
+#if !ENABLE(WASM_CODE_RECLAIMATION)
+        m_callsiteCollection.addCalleeGroupCallsites(locker, *this, m_plan->takeWasmToWasmCallsites());
+#endif
         m_jsEntrypointCallees = static_cast<IPIntPlan*>(m_plan.get())->takeJSCallees();
 
         setCompilationFinished();
@@ -199,6 +219,7 @@ BBQCallee* CalleeGroup::tryGetBBQCalleeForLoopOSR(const AbstractLocker&, VM& vm,
         return nullptr;
 
     auto& maybeCallee = m_bbqCallees[functionIndex];
+#if ENABLE(WASM_CODE_RECLAIMATION)
     if (maybeCallee.isStrong())
         return maybeCallee.ptr();
 
@@ -211,8 +232,13 @@ BBQCallee* CalleeGroup::tryGetBBQCalleeForLoopOSR(const AbstractLocker&, VM& vm,
     BBQCallee* result = bbqCallee.get();
     vm.heap.reportWasmCalleePendingDestruction(bbqCallee.releaseNonNull());
     return result;
+#else
+    UNUSED_PARAM(vm);
+    return maybeCallee.get();
+#endif
 }
 
+#if ENABLE(WASM_CODE_RECLAIMATION)
 void CalleeGroup::releaseBBQCallee(const AbstractLocker&, FunctionCodeIndex functionIndex)
 {
     if (!Options::freeRetiredWasmCode())
@@ -230,7 +256,9 @@ void CalleeGroup::releaseBBQCallee(const AbstractLocker&, FunctionCodeIndex func
     bbqCallee->reportToVMsForDestruction();
 }
 #endif
+#endif
 
+#if ENABLE(WASM_CODE_RECLAIMATION)
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 void CalleeGroup::updateCallsitesToCallUs(const AbstractLocker& locker, CodeLocationLabel<WasmEntryPtrTag> entrypoint, FunctionCodeIndex functionIndex)
 {
@@ -349,7 +377,7 @@ void CalleeGroup::reportCallees(const AbstractLocker&, JITCallee* caller, const 
         );
     }
 }
-#endif
+#endif // ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
 
 TriState CalleeGroup::calleeIsReferenced(const AbstractLocker&, Wasm::Callee* callee) const
 {
@@ -389,6 +417,7 @@ TriState CalleeGroup::calleeIsReferenced(const AbstractLocker&, Wasm::Callee* ca
         RELEASE_ASSERT_NOT_REACHED();
     }
 }
+#endif // ENABLE(WASM_CODE_RECLAIMATION)
 
 bool CalleeGroup::isSafeToRun(MemoryMode memoryMode)
 {

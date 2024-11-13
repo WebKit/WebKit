@@ -1137,6 +1137,7 @@ wasm/WasmBranchHintsSectionParser.cpp
 wasm/WasmCallee.cpp
 wasm/WasmCalleeGroup.cpp
 wasm/WasmCallingConvention.cpp
+wasm/WasmCallsiteCollection.cpp
 wasm/WasmCompilationContext.cpp
 wasm/WasmCompilationMode.cpp
 wasm/WasmConstExprGenerator.cpp

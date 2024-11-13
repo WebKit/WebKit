@@ -136,7 +136,9 @@ void BBQPlan::work(CompilationEffort)
 
         m_calleeGroup->setBBQCallee(locker, m_functionIndex, callee.copyRef());
         ASSERT(m_calleeGroup->replacement(locker, callee->index()) == callee.ptr());
+#if ENABLE(WASM_CODE_RECLAIMATION)
         m_calleeGroup->reportCallees(locker, callee.ptr(), function->outgoingJITDirectCallees);
+#endif
 
         for (auto& call : callee->wasmToWasmCallsites()) {
             CodePtr<WasmEntryPtrTag> entrypoint;
@@ -152,7 +154,12 @@ void BBQPlan::work(CompilationEffort)
             MacroAssembler::repatchPointer(call.calleeLocation, CalleeBits::boxNativeCalleeIfExists(calleeCallee));
         }
 
+#if ENABLE(WASM_CODE_RECLAIMATION)
         m_calleeGroup->updateCallsitesToCallUs(locker, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex);
+#else
+        m_calleeGroup->callsiteCollection().addCallsites(locker, m_calleeGroup.get(), callee->wasmToWasmCallsites());
+        m_calleeGroup->callsiteCollection().updateCallsitesToCallUs(locker, m_calleeGroup.get(), CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex, functionIndexSpace);
+#endif
 
         {
             WTF::storeStoreFence();

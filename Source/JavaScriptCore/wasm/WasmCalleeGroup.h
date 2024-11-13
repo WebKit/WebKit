@@ -30,6 +30,7 @@
 #include "MacroAssemblerCodeRef.h"
 #include "MemoryMode.h"
 #include "WasmCallee.h"
+#include "WasmCallsiteCollection.h"
 #include "WasmJS.h"
 #include <wtf/CrossThreadCopier.h>
 #include <wtf/FixedBitVector.h>
@@ -52,6 +53,7 @@ struct UnlinkedWasmToWasmCall;
 
 class CalleeGroup final : public ThreadSafeRefCounted<CalleeGroup> {
 public:
+    friend class CallsiteCollection;
     typedef void CallbackType(Ref<CalleeGroup>&&, bool);
     using AsyncCompilationCallback = RefPtr<WTF::SharedTask<CallbackType>>;
     static Ref<CalleeGroup> createFromLLInt(VM&, MemoryMode, ModuleInformation&, RefPtr<LLIntCallees>);
@@ -151,7 +153,7 @@ public:
     void setBBQCallee(const AbstractLocker&, FunctionCodeIndex functionIndex, Ref<BBQCallee>&& callee) WTF_REQUIRES_LOCK(m_lock)
     {
         if (m_bbqCallees.isEmpty())
-            m_bbqCallees = FixedVector<ThreadSafeWeakOrStrongPtr<BBQCallee>>(m_calleeCount);
+            m_bbqCallees = FixedVector<BBQSmartPtrType>(m_calleeCount);
         m_bbqCallees[functionIndex] = WTFMove(callee);
     }
 
@@ -174,11 +176,13 @@ public:
         m_omgCallees[functionIndex] = WTFMove(callee);
     }
 
+#if ENABLE(WASM_CODE_RECLAIMATION)
     void recordOMGOSREntryCallee(const AbstractLocker&, FunctionCodeIndex functionIndex, OMGOSREntryCallee& callee) WTF_REQUIRES_LOCK(m_lock)
     {
         auto result = m_osrEntryCallees.add(functionIndex, callee);
         ASSERT_UNUSED(result, result.isNewEntry);
     }
+#endif
 #endif
 
     CodePtr<WasmEntryPtrTag>* entrypointLoadLocationFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace)
@@ -205,6 +209,7 @@ public:
 
     MemoryMode mode() const { return m_mode; }
 
+#if ENABLE(WASM_CODE_RECLAIMATION)
 #if ENABLE(WEBASSEMBLY_OMGJIT) || ENABLE(WEBASSEMBLY_BBQJIT)
     void updateCallsitesToCallUs(const AbstractLocker&, CodeLocationLabel<WasmEntryPtrTag> entrypoint, FunctionCodeIndex functionIndex) WTF_REQUIRES_LOCK(m_lock);
     void reportCallees(const AbstractLocker&, JITCallee* caller, const FixedBitVector& callees) WTF_REQUIRES_LOCK(m_lock);
@@ -212,6 +217,12 @@ public:
 
     // TriState::Indeterminate means weakly referenced.
     TriState calleeIsReferenced(const AbstractLocker&, Wasm::Callee*) const WTF_REQUIRES_LOCK(m_lock);
+
+#else
+
+    CallsiteCollection& callsiteCollection() { return m_callsiteCollection; }
+    const CallsiteCollection& callsiteCollection() const { return m_callsiteCollection; }
+#endif
 
     ~CalleeGroup();
 private:
@@ -235,12 +246,19 @@ private:
     FixedVector<RefPtr<OMGCallee>> m_omgCallees;
 #endif
 #if ENABLE(WEBASSEMBLY_BBQJIT)
-    FixedVector<ThreadSafeWeakOrStrongPtr<BBQCallee>> m_bbqCallees;
+#if ENABLE(WASM_CODE_RECLAIMATION)
+    using BBQSmartPtrType = ThreadSafeWeakOrStrongPtr<BBQCallee>;
+#else
+    using BBQSmartPtrType = RefPtr<BBQCallee>;
+#endif
+
+    FixedVector<BBQSmartPtrType> m_bbqCallees;
 #endif
     RefPtr<IPIntCallees> m_ipintCallees;
     RefPtr<LLIntCallees> m_llintCallees;
     UncheckedKeyHashMap<uint32_t, RefPtr<JSEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_jsEntrypointCallees;
-#if ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
+#if ENABLE(WASM_CODE_RECLAIMATION)
+#if (ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT))
     // FIXME: We should probably find some way to prune dead entries periodically.
     UncheckedKeyHashMap<uint32_t, ThreadSafeWeakPtr<OMGOSREntryCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_osrEntryCallees;
 #endif
@@ -252,10 +270,14 @@ private:
     using SparseCallers = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using DenseCallers = BitVector;
     FixedVector<std::variant<SparseCallers, DenseCallers>> m_callers;
+#endif // ENABLE(WASM_CODE_RECLAIMATION)
     FixedVector<CodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
     FixedVector<RefPtr<Wasm::Callee>> m_wasmIndirectCallWasmCallees;
     FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
     RefPtr<EntryPlan> m_plan;
+#if !ENABLE(WASM_CODE_RECLAIMATION)
+    CallsiteCollection m_callsiteCollection;
+#endif
     std::atomic<bool> m_compilationFinished { false };
     String m_errorMessage;
 public:

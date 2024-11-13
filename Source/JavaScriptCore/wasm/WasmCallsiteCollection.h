@@ -25,39 +25,40 @@
 
 #pragma once
 
-#include "ImplementationVisibility.h"
-#include <wtf/TZoneMalloc.h>
-#include <wtf/ThreadSafeWeakPtr.h>
+#include "WasmFormat.h"
+#include <wtf/FixedVector.h>
+#include <wtf/Lock.h>
+#include <wtf/Vector.h>
 
-namespace JSC {
+#if ENABLE(WEBASSEMBLY)
 
-class LLIntOffsetsExtractor;
+namespace JSC { namespace Wasm {
 
-#if ENABLE(WASM_CODE_RECLAIMATION)
-class NativeCallee : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<NativeCallee> {
-#else
-class NativeCallee : public ThreadSafeRefCounted<NativeCallee> {
-#endif
-    WTF_MAKE_COMPACT_TZONE_ALLOCATED(NativeCallee);
+class CalleeGroup;
+
+class CallsiteCollection {
 public:
-    enum class Category : uint8_t {
-        InlineCache,
-        Wasm,
-    };
+    CallsiteCollection(unsigned functionsExcudingImport)
+        : m_callsites(functionsExcudingImport)
+    {
+    }
 
-    Category category() const { return m_category; }
-    ImplementationVisibility implementationVisibility() const { return m_implementationVisibility; }
+    void addCalleeGroupCallsites(const AbstractLocker& calleeGroupLocker, CalleeGroup&, Vector<Vector<UnlinkedWasmToWasmCall>>&&);
+    void addCallsites(const AbstractLocker& calleeGroupLocker, CalleeGroup&, const FixedVector<UnlinkedWasmToWasmCall>&);
 
-    void dump(PrintStream&) const;
+    void updateCallsitesToCallUs(const AbstractLocker& calleeGroupLocker, CalleeGroup&, CodeLocationLabel<WasmEntryPtrTag> entrypoint, uint32_t functionIndex, uint32_t functionIndexSpace);
 
-    JS_EXPORT_PRIVATE void operator delete(NativeCallee*, std::destroying_delete_t);
-
-protected:
-    JS_EXPORT_PRIVATE NativeCallee(Category, ImplementationVisibility);
+    const Vector<Vector<UnlinkedWasmToWasmCall>>& calleeGroupCallsites() const { return m_calleeGroupCallsites; }
 
 private:
-    Category m_category;
-    ImplementationVisibility m_implementationVisibility { ImplementationVisibility::Public };
+    struct Callsite {
+        CodeLocationNearCall<WasmEntryPtrTag> m_callLocation;
+        CodeLocationLabel<WasmEntryPtrTag> m_target;
+    };
+    Vector<Vector<UnlinkedWasmToWasmCall>> m_calleeGroupCallsites;
+    FixedVector<Vector<Callsite>> m_callsites;
 };
 
-} // namespace JSC
+} } // namespace JSC::Wasm
+
+#endif // ENABLE(WEBASSEMBLY)
