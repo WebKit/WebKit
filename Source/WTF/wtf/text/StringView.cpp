@@ -39,8 +39,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <wtf/text/TextBreakIterator.h>
 #include <wtf/unicode/icu/ICUHelpers.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 bool StringView::containsIgnoringASCIICase(StringView matchString) const
@@ -316,6 +314,9 @@ AtomString StringView::convertToASCIILowercaseAtom() const
     return convertASCIILowercaseAtom(span16());
 }
 
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+// FIXME: Take in a span.
 template<typename DestinationCharacterType, typename SourceCharacterType>
 void getCharactersWithASCIICaseInternal(StringView::CaseConvertType type, DestinationCharacterType* destination, std::span<const SourceCharacterType> source)
 {
@@ -326,13 +327,16 @@ void getCharactersWithASCIICaseInternal(StringView::CaseConvertType type, Destin
     for (auto character : source)
         *destination++ = caseConvert(character);
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
+// FIXME: Take in a span.
 void StringView::getCharactersWithASCIICase(CaseConvertType type, LChar* destination) const
 {
     ASSERT(is8Bit());
     getCharactersWithASCIICaseInternal(type, destination, span8());
 }
 
+// FIXME: Take in a span.
 void StringView::getCharactersWithASCIICase(CaseConvertType type, UChar* destination) const
 {
     if (is8Bit()) {
@@ -610,5 +614,3 @@ std::atomic<int> wtfStringCopyCount;
 #endif
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

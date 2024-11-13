@@ -45,8 +45,6 @@
 
 OBJC_CLASS NSString;
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 class AdaptiveStringSearcherTables;
@@ -207,8 +205,6 @@ public:
 private:
     // Clients should use StringView(ASCIILiteral) or StringView::fromLatin1() instead.
     explicit StringView(const char*);
-
-    UChar unsafeCharacterAt(unsigned index) const;
 
     friend bool equal(StringView, StringView);
     friend bool equal(StringView, StringView, unsigned length);
@@ -480,14 +476,14 @@ inline std::span<const LChar> StringView::span8() const
 {
     ASSERT(is8Bit());
     ASSERT(underlyingStringIsValid());
-    return { static_cast<const LChar*>(m_characters), m_length };
+    return unsafeMakeSpan(static_cast<const LChar*>(m_characters), m_length);
 }
 
 inline std::span<const UChar> StringView::span16() const
 {
     ASSERT(!is8Bit() || isEmpty());
     ASSERT(underlyingStringIsValid());
-    return { static_cast<const UChar*>(m_characters), m_length };
+    return unsafeMakeSpan(static_cast<const UChar*>(m_characters), m_length);
 }
 
 inline unsigned StringView::hash() const
@@ -587,14 +583,6 @@ inline UChar StringView::characterAt(unsigned index) const
     if (is8Bit())
         return span8()[index];
     return span16()[index];
-}
-
-inline UChar StringView::unsafeCharacterAt(unsigned index) const
-{
-    ASSERT(index < length());
-    if (is8Bit())
-        return span8().data()[index];
-    return span16().data()[index];
 }
 
 inline UChar StringView::operator[](unsigned index) const
@@ -748,7 +736,7 @@ template<typename CharacterType, size_t inlineCapacity> void append(Vector<Chara
 {
     size_t oldSize = buffer.size();
     buffer.grow(oldSize + string.length());
-    string.getCharacters(buffer.data() + oldSize);
+    string.getCharacters(buffer.mutableSpan().subspan(oldSize).data());
 }
 
 ALWAYS_INLINE bool equal(StringView a, StringView b, unsigned length)
@@ -985,16 +973,17 @@ inline StringView::CodePoints::Iterator::Iterator(StringView stringView, unsigne
 #endif
 {
     if (m_is8Bit) {
-        const LChar* begin = stringView.span8().data();
-        m_current = begin + index;
-        m_end = begin + stringView.length();
+        auto characters = stringView.span8();
+        m_current = characters.subspan(index).data();
+        m_end = std::to_address(characters.end());
     } else {
-        const UChar* begin = stringView.span16().data();
-        m_current = begin + index;
-        m_end = begin + stringView.length();
+        auto characters = stringView.span16();
+        m_current = characters.subspan(index).data();
+        m_end = std::to_address(characters.end());
     }
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 inline auto StringView::CodePoints::Iterator::operator++() -> Iterator&
 {
 #if CHECK_STRINGVIEW_LIFETIME
@@ -1025,6 +1014,7 @@ inline char32_t StringView::CodePoints::Iterator::operator*() const
     U16_GET(static_cast<const UChar*>(m_current), 0, 0, length, codePoint);
     return codePoint;
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 inline bool StringView::CodePoints::Iterator::operator==(const Iterator& other) const
 {
@@ -1065,7 +1055,7 @@ inline auto StringView::CodeUnits::Iterator::operator++() -> Iterator&
 
 inline UChar StringView::CodeUnits::Iterator::operator*() const
 {
-    return m_stringView.unsafeCharacterAt(m_index);
+    return m_stringView.characterAt(m_index);
 }
 
 inline bool StringView::CodeUnits::Iterator::operator==(const Iterator& other) const
@@ -1208,7 +1198,7 @@ inline size_t findCommon(StringView haystack, StringView needle, unsigned start)
     unsigned needleLength = needle.length();
 
     if (needleLength == 1) {
-        UChar firstCharacter = needle.unsafeCharacterAt(0);
+        UChar firstCharacter = needle[0];
         if (haystack.is8Bit())
             return WTF::find(haystack.span8(), firstCharacter, start);
         return WTF::find(haystack.span16(), firstCharacter, start);
@@ -1302,12 +1292,12 @@ inline bool endsWith(StringView reference, StringView suffix)
 
     if (reference.is8Bit()) {
         if (suffix.is8Bit())
-            return equal(reference.span8().data() + startOffset, suffix.span8());
-        return equal(reference.span8().data() + startOffset, suffix.span16());
+            return equal(reference.span8().subspan(startOffset).data(), suffix.span8());
+        return equal(reference.span8().subspan(startOffset).data(), suffix.span16());
     }
     if (suffix.is8Bit())
-        return equal(reference.span16().data() + startOffset, suffix.span8());
-    return equal(reference.span16().data() + startOffset, suffix.span16());
+        return equal(reference.span16().subspan(startOffset).data(), suffix.span8());
+    return equal(reference.span16().subspan(startOffset).data(), suffix.span16());
 }
 
 inline bool endsWithIgnoringASCIICase(StringView reference, StringView suffix)
@@ -1503,5 +1493,3 @@ using WTF::StringViewWithUnderlyingString;
 using WTF::hasUnpairedSurrogate;
 using WTF::nullStringView;
 using WTF::emptyStringView;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
