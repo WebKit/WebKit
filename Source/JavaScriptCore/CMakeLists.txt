@@ -983,6 +983,7 @@ set(JavaScriptCore_PRIVATE_FRAMEWORK_HEADERS
     runtime/DateInstanceCache.h
     runtime/DeferTermination.h
     runtime/DeferredWorkTimer.h
+    runtime/DeferredWorkTimerInlines.h
     runtime/DefinePropertyAttributes.h
     runtime/DeletePropertySlot.h
     runtime/DirectArguments.h

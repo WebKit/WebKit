@@ -27,6 +27,7 @@
 #include "DeferredWorkTimer.h"
 
 #include "CatchScope.h"
+#include "DeferredWorkTimerInlines.h"
 #include "GlobalObjectMethodTable.h"
 #include "JSGlobalObject.h"
 #include "VM.h"
@@ -47,6 +48,7 @@ inline DeferredWorkTimer::TicketData::TicketData(WorkType type, JSObject* script
     , m_scriptExecutionOwner(scriptExecutionOwner)
 {
     ASSERT_WITH_MESSAGE(!m_dependencies.isEmpty(), "dependencies shouldn't be empty since it should contain the target");
+    ASSERT_WITH_MESSAGE(isTargetObject(), "target must be a JSObject");
     target()->globalObject()->addWeakTicket(this);
 }
 

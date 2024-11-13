@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WaiterListManager.h"
 
+#include "DeferredWorkTimerInlines.h"
 #include "HeapCellInlines.h"
 #include "JSGlobalObject.h"
 #include "JSLock.h"

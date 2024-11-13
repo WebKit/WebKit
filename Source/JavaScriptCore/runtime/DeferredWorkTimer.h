@@ -61,6 +61,7 @@ public:
         WorkType type() const { return m_type; }
         inline VM& vm();
         JSObject* target();
+        bool isTargetObject();
         inline const FixedVector<JSCell*>& dependencies(bool mayBeCancelled = false);
         inline JSObject* scriptExecutionOwner();
 
@@ -118,8 +119,10 @@ private:
 
 inline JSObject* DeferredWorkTimer::TicketData::target()
 {
-    ASSERT(!isCancelled());
-    return jsCast<JSObject*>(m_dependencies.last());
+    ASSERT(!isCancelled() && isTargetObject());
+    // This function can be triggered on the main thread with a GC end phase
+    // and a sweeping state. So, jsCast is not wanted here.
+    return bitwise_cast<JSObject*>(m_dependencies.last());
 }
 
 inline const FixedVector<JSCell*>& DeferredWorkTimer::TicketData::dependencies(bool mayBeCancelled)
