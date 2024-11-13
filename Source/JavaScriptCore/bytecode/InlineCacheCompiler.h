@@ -447,8 +447,10 @@ private:
     Vector<std::unique_ptr<OptimizingCallLinkInfo>, 16> m_callLinkInfos;
 };
 
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandler(VM&);
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnInLinePropertyHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnOutOfLinePropertyHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypeInLinePropertyHandler(VM&);
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypeOutOfLinePropertyHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomAccessorHandler(VM&);
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomValueHandler(VM&);

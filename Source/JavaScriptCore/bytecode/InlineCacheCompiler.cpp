@@ -5109,20 +5109,42 @@ AccessGenerationResult InlineCacheCompiler::compile(const GCSafeConcurrentJSLock
 
 #if CPU(ADDRESS64)
 
-template<bool ownProperty>
+enum class PropertySlotLocation {
+    InLine,
+    OutOfLine,
+    Unsure,
+};
+
+// Note that these clobber offsetGPR.
+template<PropertySlotLocation slotLocation>
+static void loadProperty(CCallHelpers& jit, GPRReg objectGPR, GPRReg offsetGPR, JSValueRegs resultJSR)
+{
+    ASSERT(noOverlap(offsetGPR, resultJSR));
+    if constexpr (slotLocation == PropertySlotLocation::InLine)
+        jit.loadValue(CCallHelpers::BaseIndex(objectGPR, offsetGPR, CCallHelpers::TimesEight, static_cast<int32_t>(sizeof(JSObject))), resultJSR);
+    else if constexpr (slotLocation == PropertySlotLocation::OutOfLine) {
+        jit.neg32(offsetGPR);
+        jit.signExtend32ToPtr(offsetGPR, offsetGPR);
+        jit.loadPtr(CCallHelpers::Address(objectGPR, JSObject::butterflyOffset()), resultJSR.payloadGPR());
+        jit.loadValue(CCallHelpers::BaseIndex(resultJSR.payloadGPR(), offsetGPR, CCallHelpers::TimesEight, (firstOutOfLineOffset - 2) * sizeof(EncodedJSValue)), resultJSR);
+    } else
+        jit.loadProperty(objectGPR, offsetGPR, resultJSR);
+}
+
+template<bool ownProperty, PropertySlotLocation slotLocation>
 static void loadHandlerImpl(VM&, CCallHelpers& jit, JSValueRegs baseJSR, JSValueRegs resultJSR, GPRReg scratch1GPR, GPRReg scratch2GPR)
 {
     jit.load32(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfOffset()), scratch2GPR);
     if constexpr (ownProperty)
-        jit.loadProperty(baseJSR.payloadGPR(), scratch2GPR, resultJSR);
+        loadProperty<slotLocation>(jit, baseJSR.payloadGPR(), scratch2GPR, resultJSR);
     else {
         jit.loadPtr(CCallHelpers::Address(GPRInfo::handlerGPR, InlineCacheHandler::offsetOfHolder()), scratch1GPR);
-        jit.loadProperty(scratch1GPR, scratch2GPR, resultJSR);
+        loadProperty<slotLocation>(jit, scratch1GPR, scratch2GPR, resultJSR);
     }
 }
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
-template<bool ownProperty>
+template<bool ownProperty, PropertySlotLocation propertySlotLocation>
 static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadHandlerImpl(VM& vm)
 {
     CCallHelpers jit;
@@ -5137,7 +5159,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadHandlerImpl(VM& vm)
     CCallHelpers::JumpList fallThrough;
 
     fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseJSR.payloadGPR(), scratch1GPR));
-    loadHandlerImpl<ownProperty>(vm, jit, baseJSR, resultJSR, scratch1GPR, scratch2GPR);
+    loadHandlerImpl<ownProperty, propertySlotLocation>(vm, jit, baseJSR, resultJSR, scratch1GPR, scratch2GPR);
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
@@ -5148,16 +5170,28 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadHandlerImpl(VM& vm)
     return FINALIZE_THUNK(patchBuffer, JITThunkPtrTag, "GetById Load handler"_s, "GetById Load handler");
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandler(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnInLinePropertyHandler(VM& vm)
 {
     constexpr bool ownProperty = true;
-    return getByIdLoadHandlerImpl<ownProperty>(vm);
+    return getByIdLoadHandlerImpl<ownProperty, PropertySlotLocation::InLine>(vm);
 }
 
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandler(VM& vm)
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnOutOfLinePropertyHandler(VM& vm)
+{
+    constexpr bool ownProperty = true;
+    return getByIdLoadHandlerImpl<ownProperty, PropertySlotLocation::OutOfLine>(vm);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypeInLinePropertyHandler(VM& vm)
 {
     constexpr bool ownProperty = false;
-    return getByIdLoadHandlerImpl<ownProperty>(vm);
+    return getByIdLoadHandlerImpl<ownProperty, PropertySlotLocation::InLine>(vm);
+}
+
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypeOutOfLinePropertyHandler(VM& vm)
+{
+    constexpr bool ownProperty = false;
+    return getByIdLoadHandlerImpl<ownProperty, PropertySlotLocation::OutOfLine>(vm);
 }
 
 // FIXME: We may need to implement it in offline asm eventually to share it with non JIT environment.
@@ -6005,7 +6039,7 @@ static MacroAssemblerCodeRef<JITThunkPtrTag> getByValLoadHandlerImpl(VM& vm)
     fallThrough.append(InlineCacheCompiler::emitDataICCheckStructure(jit, baseJSR.payloadGPR(), scratch1GPR));
     fallThrough.append(InlineCacheCompiler::emitDataICCheckUid(jit, isSymbol, propertyJSR, scratch1GPR));
 
-    loadHandlerImpl<ownProperty>(vm, jit, baseJSR, resultJSR, scratch1GPR, scratch2GPR);
+    loadHandlerImpl<ownProperty, PropertySlotLocation::Unsure>(vm, jit, baseJSR, resultJSR, scratch1GPR, scratch2GPR);
     InlineCacheCompiler::emitDataICEpilogue(jit);
     jit.ret();
 
@@ -6832,10 +6866,16 @@ AccessGenerationResult InlineCacheCompiler::compileOneAccessCaseHandler(const Ve
                             CacheType cacheType = CacheType::Unset;
                             if (!accessCase.tryGetAlternateBase()) {
                                 cacheType = CacheType::GetByIdSelf;
-                                code = vm.getCTIStub(CommonJITThunkID::GetByIdLoadOwnPropertyHandler).retagged<JITStubRoutinePtrTag>();
+                                if (isInlineOffset(accessCase.m_offset))
+                                    code = vm.getCTIStub(CommonJITThunkID::GetByIdLoadOwnInLinePropertyHandler).retagged<JITStubRoutinePtrTag>();
+                                else
+                                    code = vm.getCTIStub(CommonJITThunkID::GetByIdLoadOwnOutOfLinePropertyHandler).retagged<JITStubRoutinePtrTag>();
                             } else {
                                 cacheType = CacheType::GetByIdPrototype;
-                                code = vm.getCTIStub(CommonJITThunkID::GetByIdLoadPrototypePropertyHandler).retagged<JITStubRoutinePtrTag>();
+                                if (isInlineOffset(accessCase.m_offset))
+                                    code = vm.getCTIStub(CommonJITThunkID::GetByIdLoadPrototypeInLinePropertyHandler).retagged<JITStubRoutinePtrTag>();
+                                else
+                                    code = vm.getCTIStub(CommonJITThunkID::GetByIdLoadPrototypeOutOfLinePropertyHandler).retagged<JITStubRoutinePtrTag>();
                             }
                             auto stub = createPreCompiledICJITStubRoutine(WTFMove(code), vm);
                             connectWatchpointSets(stub->watchpoints(), stub->watchpointSet(), WTFMove(watchedConditions), WTFMove(additionalWatchpointSets));
@@ -7632,8 +7672,10 @@ MacroAssemblerCodeRef<JITStubRoutinePtrTag> InlineCacheCompiler::compileGetByDOM
 }
 
 #else
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnPropertyHandler(VM&) { return { }; }
-MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypePropertyHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnInLinePropertyHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadOwnOutOfLinePropertyHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypeInLinePropertyHandler(VM&) { return { }; }
+MacroAssemblerCodeRef<JITThunkPtrTag> getByIdLoadPrototypeOutOfLinePropertyHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdMissHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomAccessorHandler(VM&) { return { }; }
 MacroAssemblerCodeRef<JITThunkPtrTag> getByIdCustomValueHandler(VM&) { return { }; }
