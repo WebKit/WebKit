@@ -38,6 +38,7 @@
 #include "PublicKeyCredentialRpEntity.h"
 #include "PublicKeyCredentialUserEntity.h"
 #include "ResidentKeyRequirement.h"
+#include "WebAuthenticationConstants.h"
 #include <wtf/Vector.h>
 
 namespace fido {
@@ -88,13 +89,41 @@ static CBORValue convertDescriptorToCBOR(const PublicKeyCredentialDescriptor& de
     return CBORValue(WTFMove(cborDescriptorMap));
 }
 
-Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, UVAvailability uvCapability, AuthenticatorSupportedOptions::ResidentKeyAvailability residentKeyAvailability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> pin)
+static Vector<PublicKeyCredentialParameters> trimmedParameters(const Vector<PublicKeyCredentialParameters>& parameters, const std::optional<Vector<WebCore::PublicKeyCredentialParameters>>& authenticatorSupportedParameters)
+{
+    HashSet<int64_t> authenticatorSupportedAlgorithms;
+    if (authenticatorSupportedParameters) {
+        for (auto& parameters : *authenticatorSupportedParameters) {
+            if (parameters.type == PublicKeyCredentialType::PublicKey)
+                authenticatorSupportedAlgorithms.add(parameters.alg);
+        }
+    }
+
+    for (auto& parameter : parameters) {
+        if (parameter.type != PublicKeyCredentialType::PublicKey)
+            continue;
+        if (authenticatorSupportedAlgorithms.contains(parameter.alg))
+            return { parameter };
+        // Support for ES256 required by U2F backwards compatibility.
+        // https://fidoalliance.org/specs/fido-v2.0-id-20180227/fido-client-to-authenticator-protocol-v2.0-id-20180227.html#u2f-authenticatorMakeCredential-interoperability
+        if (parameter.alg == COSE::ES256)
+            return { parameter };
+    }
+
+    // We know the algorithms the authenticator supports and none of those were requested.
+    if (authenticatorSupportedAlgorithms.size())
+        return { parameters.first() };
+
+    return parameters;
+}
+
+Vector<uint8_t> encodeMakeCredentialRequestAsCBOR(const Vector<uint8_t>& hash, const PublicKeyCredentialCreationOptions& options, UVAvailability uvCapability, AuthenticatorSupportedOptions::ResidentKeyAvailability residentKeyAvailability, const Vector<String>& authenticatorSupportedExtensions, std::optional<PinParameters> pin, const std::optional<Vector<WebCore::PublicKeyCredentialParameters>>& authenticatorSupportedParameters)
 {
     CBORValue::MapValue cborMap;
     cborMap[CBORValue(1)] = CBORValue(hash);
     cborMap[CBORValue(2)] = convertRpEntityToCBOR(options.rp);
     cborMap[CBORValue(3)] = convertUserEntityToCBOR(options.user);
-    cborMap[CBORValue(4)] = convertParametersToCBOR(options.pubKeyCredParams);
+    cborMap[CBORValue(4)] = convertParametersToCBOR(trimmedParameters(options.pubKeyCredParams, authenticatorSupportedParameters));
     if (!options.excludeCredentials.isEmpty()) {
         CBORValue::ArrayValue excludeListArray;
         for (const auto& descriptor : options.excludeCredentials)
