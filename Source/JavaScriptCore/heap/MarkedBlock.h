@@ -117,7 +117,8 @@ public:
         friend class MarkedBlock;
         friend struct VerifyMarked;
     public:
-            
+        static constexpr uintptr_t invalid = 1;
+
         ~Handle();
             
         MarkedBlock& block();
@@ -411,6 +412,8 @@ public:
     
     void setVerifierMemo(void*);
     template<typename T> T verifierMemo() const;
+
+    void checkConsistency(Heap*, JSCell*);
 
 private:
     MarkedBlock(VM&, Handle&);

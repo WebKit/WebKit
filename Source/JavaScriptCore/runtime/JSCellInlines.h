@@ -486,6 +486,12 @@ inline bool isWebAssemblyInstance(const JSCell* cell)
     return cell->type() == WebAssemblyInstanceType;
 }
 
+inline void JSCell::checkConsistency(Heap* heap) const
+{
+    if (!isPreciseAllocation())
+        markedBlock().checkConsistency(heap, const_cast<JSCell*>(this));
+}
+
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

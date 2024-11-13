@@ -625,6 +625,16 @@ inline IterationStatus MarkedBlock::Handle::forEachMarkedCell(const Functor& fun
     return IterationStatus::Continue;
 }
 
+inline void MarkedBlock::checkConsistency(Heap* heap, JSCell* cell)
+{
+    uintptr_t handle = bitwise_cast<uintptr_t>(header().handlePointerForNullCheck());
+    if (UNLIKELY(handle <= MarkedBlock::Handle::invalid)) {
+        Locker locker { header().m_lock };
+        dumpInfoAndCrashForInvalidHandle(locker, cell);
+    } else
+        RELEASE_ASSERT(&heap->vm() == &vm());
+}
+
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

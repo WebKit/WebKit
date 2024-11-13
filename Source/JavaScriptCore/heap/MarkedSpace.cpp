@@ -592,6 +592,15 @@ void MarkedSpace::addBlockDirectory(const AbstractLocker&, BlockDirectory* direc
     m_directories.append(std::mem_fn(&BlockDirectory::setNextDirectory), directory);
 }
 
+void MarkedSpace::checkConsistency()
+{
+    RELEASE_ASSERT(heap().worldIsStopped() || heap().vm().currentThreadIsHoldingAPILock());
+    auto& set = blocks().set();
+    for (auto& block: set) {
+        block->checkConsistency(&heap(), nullptr);
+    }
+}
+
 } // namespace JSC
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

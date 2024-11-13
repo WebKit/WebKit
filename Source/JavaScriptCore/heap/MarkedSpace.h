@@ -180,6 +180,8 @@ public:
     bool isMarking() const { return m_isMarking; }
     
     void dumpBits(PrintStream& = WTF::dataFile());
+
+    void checkConsistency();
     
     JS_EXPORT_PRIVATE static std::array<unsigned, numSizeClasses> s_sizeClassForSizeStep;
     

@@ -1423,6 +1423,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
         m_verifier->startGC();
         m_verifier->gatherLiveCells(HeapVerifier::Phase::BeforeMarking);
     }
+    objectSpace().checkConsistency();
         
     prepareForMarking();
         
@@ -1692,6 +1693,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
         m_verifier->trimDeadCells();
         m_verifier->verify(HeapVerifier::Phase::AfterGC);
     }
+    objectSpace().checkConsistency();
 
     auto endingCollectionScope = *m_collectionScope;
 

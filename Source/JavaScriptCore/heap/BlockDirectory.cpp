@@ -174,9 +174,9 @@ void BlockDirectory::addBlock(MarkedBlock::Handle* block)
 void BlockDirectory::removeBlock(MarkedBlock::Handle* block, WillDeleteBlock willDelete)
 {
     assertIsMutatorOrMutatorIsStopped();
-    ASSERT(block->directory() == this);
-    ASSERT(m_blocks[block->index()] == block);
-    ASSERT(isInUse(block));
+    RELEASE_ASSERT(block->directory() == this);
+    RELEASE_ASSERT(m_blocks[block->index()] == block);
+    RELEASE_ASSERT(isInUse(block));
     
     subspace()->didRemoveBlock(block->index());
     

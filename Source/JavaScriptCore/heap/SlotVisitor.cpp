@@ -360,6 +360,8 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
             dataLog(" (subsequent)");
         dataLog("\n");
     }
+
+    cell->checkConsistency(heap());
     
     // Funny story: it's possible for the object to be black already, if we barrier the object at
     // about the same time that it's marked. That's fine. It's a gnarly and super-rare race. It's

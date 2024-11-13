@@ -109,7 +109,12 @@ MarkedBlock::Header::Header(VM& vm, Handle& handle)
 {
 }
 
-MarkedBlock::Header::~Header() = default; // XXX leave a cookie in Header to try to distinguish deleted blocks
+MarkedBlock::Header::~Header()
+{
+    memset(this, 0xba, sizeof(*this));
+    char* handle = bitwise_cast<char*>(this) + OBJECT_OFFSETOF(Header, m_handle);
+    *bitwise_cast<uintptr_t*>(handle) = MarkedBlock::Handle::invalid;
+}
 
 void MarkedBlock::Handle::unsweepWithNoNewlyAllocated()
 {
@@ -220,17 +225,17 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, HeapCell* cell)
         return;
 
     MarkedBlock::Handle* handle = header().handlePointerForNullCheck();
-#if PLATFORM(COCOA) && CPU(ARM64)
+
     // Testing
     static unsigned count = 0;
-    dataLogLn("aboutToMarkSlow ", Options::aboutToMarkSlowCrash(), " ", count);
+    //dataLogLn("aboutToMarkSlow ", Options::aboutToMarkSlowCrash(), " ", count);
     if (Options::aboutToMarkSlowCrash() && count++ > Options::aboutToMarkSlowCrash()) {
         handle = nullptr;
     }
     // End testing
     if (UNLIKELY(!handle))
         dumpInfoAndCrashForInvalidHandle(locker, cell);
-#endif
+
     BlockDirectory* directory = handle->directory();
     bool isAllocated;
     {
@@ -531,8 +536,8 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
 
     VM* blockVM = header().m_vm;
     VM* actualVM = nullptr;
-    JSCell* cell = bitwise_cast<JSCell*>(heapCell);
-    JSType cellType = cell->type();
+    JSCell* cell = heapCell ? bitwise_cast<JSCell*>(heapCell) : nullptr;
+    JSType cellType = cell ? cell->type() : MaxJSType;
     bool isBlockVMValid = false;
     bool isBlockInSet = false;
     bool isBlockInDirectory = false;
@@ -596,6 +601,8 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
     updateCrashLogMsg(__LINE__);
 
     uint64_t bitfield = 0xab00ab01ab020000;
+    if (!header().handlePointerForNullCheck())
+        bitfield |= 1 << 8;
     if (!isBlockVMValid)
         bitfield |= 1 << 7;
     if (!isBlockInSet)
