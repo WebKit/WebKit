@@ -236,6 +236,14 @@ void GStreamerCapturer::stop()
     tearDown(false);
 }
 
+bool GStreamerCapturer::isStopped() const
+{
+    if (!m_pipeline)
+        return true;
+
+    return GST_STATE(m_pipeline.get()) == GST_STATE_NULL;
+}
+
 bool GStreamerCapturer::isInterrupted() const
 {
     gboolean isInterrupted;
