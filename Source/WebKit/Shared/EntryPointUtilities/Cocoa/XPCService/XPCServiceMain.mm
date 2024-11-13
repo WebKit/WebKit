@@ -160,6 +160,8 @@ void XPCServiceEventHandler(xpc_connection_t peer)
             return;
         }
         if (!strcmp(messageName, "bootstrap")) {
+            WTF::initialize();
+
             bool disableLogging = xpc_dictionary_get_bool(event, "disable-logging");
             initializeLogd(disableLogging);
 
