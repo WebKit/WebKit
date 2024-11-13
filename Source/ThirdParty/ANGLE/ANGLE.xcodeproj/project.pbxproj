@@ -3724,6 +3724,7 @@
 			buildConfigurationList = 7BF5549C2C81EDE0002B101E /* Build configuration list for PBXNativeTarget "translator" */;
 			buildPhases = (
 				7BF554972C81EDE0002B101E /* Headers */,
+				DD1605122CE4042800E0220F /* Use WTF's derived Public SDK Headers */,
 				7BF554982C81EDE0002B101E /* Sources */,
 				7BF554992C81EDE0002B101E /* Frameworks */,
 			);
@@ -3895,6 +3896,26 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		DD1605122CE4042800E0220F /* Use WTF's derived Public SDK Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(WK_DERIVED_SDK_HEADERS_DIR)",
+			);
+			name = "Use WTF's derived Public SDK Headers";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/use-derived-public-sdk-headers.timestamp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "[ -z \"${WK_DERIVED_SDK_HEADERS_DIR}\" -o -d \"${WK_DERIVED_SDK_HEADERS_DIR}\" ] && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
 		FFDA50D5269F895400AE11E2 /* Bake Metal Library to NSData */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
