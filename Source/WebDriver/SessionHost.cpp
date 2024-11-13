@@ -43,6 +43,7 @@ static WeakHashSet<SessionHost::BrowserTerminatedObserver>& browserTerminatedObs
 
 void SessionHost::inspectorDisconnected()
 {
+    Ref<SessionHost> protectedThis(*this);
     // Browser closed or crashed, finish all pending commands with error.
     for (auto messageID : copyToVector(m_commandRequests.keys())) {
         auto responseHandler = m_commandRequests.take(messageID);

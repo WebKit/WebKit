@@ -222,6 +222,7 @@ void SessionHost::connectToBrowser(std::unique_ptr<ConnectToBrowserAsyncData>&& 
 
 void SessionHost::connectionDidClose()
 {
+    Ref<SessionHost> protectedThis(*this);
     m_browser = nullptr;
     m_isRemoteBrowser = false;
 

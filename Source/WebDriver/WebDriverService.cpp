@@ -1028,10 +1028,10 @@ void WebDriverService::connectToBrowser(Vector<Capabilities>&& capabilitiesList,
         return;
     }
 
-    auto sessionHost = makeUnique<SessionHost>(capabilitiesList.takeLast());
-    auto* sessionHostPtr = sessionHost.get();
-    sessionHostPtr->setHostAddress(m_targetAddress, m_targetPort);
-    sessionHostPtr->connectToBrowser([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](std::optional<String> error) mutable {
+    auto sessionHost = SessionHost::create(capabilitiesList.takeLast());
+    sessionHost->setHostAddress(m_targetAddress, m_targetPort);
+    auto protectedSessionHost = Ref<SessionHost>(sessionHost);
+    protectedSessionHost->connectToBrowser([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](std::optional<String> error) mutable {
         if (error) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::SessionNotCreated, makeString("Failed to connect to browser: "_s, error.value())));
             return;
@@ -1041,10 +1041,10 @@ void WebDriverService::connectToBrowser(Vector<Capabilities>&& capabilitiesList,
     });
 }
 
-void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, std::unique_ptr<SessionHost>&& sessionHost, Function<void (CommandResult&&)>&& completionHandler)
+void WebDriverService::createSession(Vector<Capabilities>&& capabilitiesList, Ref<SessionHost>&& sessionHost, Function<void (CommandResult&&)>&& completionHandler)
 {
-    auto* sessionHostPtr = sessionHost.get();
-    sessionHostPtr->startAutomationSession([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](bool capabilitiesDidMatch, std::optional<String> errorMessage) mutable {
+    auto protectedSessionHost = Ref<SessionHost>(sessionHost);
+    protectedSessionHost->startAutomationSession([this, capabilitiesList = WTFMove(capabilitiesList), sessionHost = WTFMove(sessionHost), completionHandler = WTFMove(completionHandler)](bool capabilitiesDidMatch, std::optional<String> errorMessage) mutable {
         if (errorMessage) {
             completionHandler(CommandResult::fail(CommandResult::ErrorCode::UnknownError, errorMessage.value()));
             return;

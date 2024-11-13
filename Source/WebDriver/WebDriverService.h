@@ -150,7 +150,7 @@ private:
     void parseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void platformParseCapabilities(const JSON::Object& desiredCapabilities, Capabilities&) const;
     void connectToBrowser(Vector<Capabilities>&&, Function<void (CommandResult&&)>&&);
-    void createSession(Vector<Capabilities>&&, std::unique_ptr<SessionHost>&&, Function<void (CommandResult&&)>&&);
+    void createSession(Vector<Capabilities>&&, Ref<SessionHost>&&, Function<void (CommandResult&&)>&&);
     bool findSessionOrCompleteWithError(JSON::Object&, Function<void (CommandResult&&)>&);
 
     void handleRequest(HTTPRequestHandler::Request&&, Function<void (HTTPRequestHandler::Response&&)>&& replyHandler) override;
