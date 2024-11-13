@@ -512,7 +512,12 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         if (!payload)
             return null;
 
-        return new WI.TextRange(payload.startLine, payload.startColumn, payload.endLine, payload.endColumn);
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): CSS.SourceRange was renamed to GenericTypes.SourceRange.
+        let startLine = payload.start?.line ?? payload.startLine;
+        let startColumn = payload.start?.column ?? payload.startColumn;
+        let endLine = payload.end?.line ?? payload.endLine;
+        let endColumn = payload.end?.column ?? payload.endColumn;
+        return new WI.TextRange(startLine, startColumn, endLine, endColumn);
     }
 
     _parseStylePropertyPayload(payload, index, styleDeclaration)
@@ -521,7 +526,9 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         var name = payload.name;
         var value = payload.value || "";
         var priority = payload.priority || "";
-        let range = payload.range || null;
+
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): CSS.SourceRange was renamed to GenericTypes.SourceRange.
+        let styleSheetTextRange = this._parseSourceRangePayload(payload.sourceRange ?? payload.range);
 
         var enabled = true;
         var overridden = false;
@@ -546,20 +553,19 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             break;
         }
 
-        if (range) {
+        if (styleSheetTextRange) {
             // Last property of inline style has mismatching range.
             // The actual text has one line, but the range spans two lines.
-            let rangeLineCount = 1 + range.endLine - range.startLine;
+            let rangeLineCount = 1 + styleSheetTextRange.endLine - styleSheetTextRange.startLine;
             if (rangeLineCount > 1) {
                 let textLineCount = text.lineCount;
                 if (textLineCount === rangeLineCount - 1) {
-                    range.endLine = range.startLine + (textLineCount - 1);
-                    range.endColumn = range.startColumn + text.lastLine.length;
+                    let endLine = styleSheetTextRange.startLine + (textLineCount - 1);
+                    let endColumn = styleSheetTextRange.startColumn + text.lastLine.length;
+                    styleSheetTextRange = new WI.TextRange(styleSheetTextRange.startLine, styleSheetTextRange.startColumn, endLine, endColumn);
                 }
             }
         }
-
-        var styleSheetTextRange = this._parseSourceRangePayload(payload.range);
 
         if (styleDeclaration) {
             // Use propertyForName when the index is NaN since propertyForName is fast in that case.
@@ -639,7 +645,9 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         }
 
         let text = payload.cssText;
-        var styleSheetTextRange = this._parseSourceRangePayload(payload.range);
+
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): CSS.SourceRange was renamed to GenericTypes.SourceRange.
+        let styleSheetTextRange = this._parseSourceRangePayload(payload.sourceRange ?? payload.range);
 
         if (style) {
             style.update(text, properties, styleSheetTextRange);
@@ -706,11 +714,12 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         var type = WI.CSSManager.protocolStyleSheetOriginToEnum(payload.origin);
 
         var sourceCodeLocation = null;
-        var sourceRange = payload.selectorList.range;
-        if (sourceRange) {
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): CSS.SourceRange was renamed to GenericTypes.SourceRange.
+        let selectorSourceRange = this._parseSourceRangePayload(payload.selectorList.sourceRange ?? payload.selectorList.range);
+        if (selectorSourceRange) {
             sourceCodeLocation = DOMNodeStyles.createSourceCodeLocation(payload.sourceURL, {
-                line: sourceRange.startLine,
-                column: sourceRange.startColumn,
+                line: selectorSourceRange.startLine,
+                column: selectorSourceRange.startColumn,
                 documentNode: this._node.ownerDocument,
             });
         } else {
@@ -722,8 +731,8 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
         }
 
         if (styleSheet) {
-            if (!sourceCodeLocation && sourceRange)
-                sourceCodeLocation = styleSheet.createSourceCodeLocation(sourceRange.startLine, sourceRange.startColumn);
+            if (!sourceCodeLocation && selectorSourceRange)
+                sourceCodeLocation = styleSheet.createSourceCodeLocation(selectorSourceRange.startLine, selectorSourceRange.startColumn);
             sourceCodeLocation = styleSheet.offsetSourceCodeLocation(sourceCodeLocation);
         }
 
@@ -747,9 +756,11 @@ WI.DOMNodeStyles = class DOMNodeStyles extends WI.Object
             let groupingType = WI.CSSManager.protocolGroupingTypeToEnum(grouping.type || grouping.source);
 
             let location = {};
-            if (payload.range) {
-                location.line = payload.range.startLine;
-                location.column = payload.range.startColumn;
+            // COMPATIBILITY (macOS X.Y, iOS X.Y): CSS.SourceRange was renamed to GenericTypes.SourceRange.
+            let groupingGourceRange = this._parseSourceRangePayload(grouping.sourceRange ?? grouping.range);
+            if (groupingGourceRange) {
+                location.line = groupingGourceRange.startLine;
+                location.column = groupingGourceRange.startColumn;
                 location.documentNode = this._node.ownerDocument;
             }
 

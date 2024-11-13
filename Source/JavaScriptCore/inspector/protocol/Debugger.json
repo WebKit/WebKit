@@ -274,14 +274,14 @@
             ]
         },
         {
-            "name": "getBreakpointLocations",
-            "description": "Returns a list of valid breakpoint locations within the given location range.",
+            "name": "getBreakpointSourcePositions",
+            "description": "Returns a list of valid breakpoint source positions within the given location range.",
             "parameters": [
-                { "name": "start", "$ref": "Location", "description": "Starting location to look for breakpoint locations after (inclusive). Must have same scriptId as end." },
-                { "name": "end", "$ref": "Location", "description": "Ending location to look for breakpoint locations before (exclusive). Must have same scriptId as start." }
+                { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to search." },
+                { "name": "sourceRange", "$ref": "GenericTypes.SourceRange", "description": "Range to look for breakpoint source positions." }
             ],
             "returns": [
-                { "name": "locations", "type": "array", "items": { "$ref": "Location" }, "description": "List of resolved breakpoint locations." }
+                { "name": "sourcePositions", "type": "array", "items": { "$ref": "GenericTypes.SourcePosition" }, "description": "List of resolved breakpoint source positions." }
             ]
         },
         {

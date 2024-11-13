@@ -127,18 +127,22 @@ WI.CSSRule = class CSSRule extends WI.Object
         let selectors = WI.DOMNodeStyles.parseSelectorListPayload(rulePayload.selectorList);
 
         let sourceCodeLocation = null;
-        let sourceRange = rulePayload.selectorList.range;
+        // COMPATIBILITY (macOS X.Y, iOS X.Y): CSS.SourceRange was renamed to GenericTypes.SourceRange.
+        let sourceRange = rulePayload.selectorList.sourceRange ?? rulePayload.selectorList.range;
         if (sourceRange) {
             sourceCodeLocation = WI.DOMNodeStyles.createSourceCodeLocation(rulePayload.sourceURL, {
-                line: sourceRange.startLine,
-                column: sourceRange.startColumn,
+                // COMPATIBILITY (macOS X.Y, iOS X.Y): CSS.SourceRange was renamed to GenericTypes.SourceRange.
+                line: sourceRange.start?.line ?? sourceRange.startLine,
+                column: sourceRange.start?.column ?? sourceRange.startColumn,
                 documentNode: this._nodeStyles.node.ownerDocument,
             });
         }
 
         if (this._ownerStyleSheet) {
-            if (!sourceCodeLocation && sourceRange)
-                sourceCodeLocation = this._ownerStyleSheet.createSourceCodeLocation(sourceRange.startLine, sourceRange.startColumn);
+            if (!sourceCodeLocation && sourceRange) {
+                // COMPATIBILITY (macOS X.Y, iOS X.Y): CSS.SourceRange was renamed to GenericTypes.SourceRange.
+                sourceCodeLocation = this._ownerStyleSheet.createSourceCodeLocation(sourceRange.start?.line ?? sourceRange.startLine, sourceRange.start?.column ?? sourceRange.startColumn);
+            }
             sourceCodeLocation = this._ownerStyleSheet.offsetSourceCodeLocation(sourceCodeLocation);
         }
 

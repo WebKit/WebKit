@@ -3,6 +3,22 @@
     "description": "Exposes generic types to be used by any domain.",
     "types": [
         {
+            "id": "SourcePosition",
+            "type": "object",
+            "properties": [
+                { "name": "line", "type": "integer", "description": "Line number (0-based)." },
+                { "name": "column", "type": "integer", "description": "Column number (0-based)." }
+            ]
+        },
+        {
+            "id": "SourceRange",
+            "type": "object",
+            "properties": [
+                { "name": "start", "$ref": "SourcePosition", "description": "Start of range (inclusive)." },
+                { "name": "end", "$ref": "SourcePosition", "description": "End of range (exclusive)." }
+            ]
+        },
+        {
             "id": "SearchMatch",
             "type": "object",
             "description": "Search match in a resource.",
