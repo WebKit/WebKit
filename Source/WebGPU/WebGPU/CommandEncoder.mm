@@ -661,7 +661,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             return RenderPassEncoder::createInvalid(*this, m_device, @"depth clear value is invalid");
 
         if (zeroColorTargets) {
-            mtlDescriptor.defaultRasterSampleCount = textureView->sampleCount();
+            mtlDescriptor.defaultRasterSampleCount = metalDepthStencilTexture.sampleCount;
             if (!mtlDescriptor.defaultRasterSampleCount)
                 return RenderPassEncoder::createInvalid(*this, m_device, @"no color targets and depth-stencil texture is nil");
             mtlDescriptor.renderTargetWidth = metalDepthStencilTexture.width;
