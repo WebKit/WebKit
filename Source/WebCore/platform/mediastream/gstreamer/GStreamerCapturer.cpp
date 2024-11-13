@@ -241,6 +241,14 @@ void GStreamerCapturer::stop()
     tearDown(false);
 }
 
+bool GStreamerCapturer::isStopped() const
+{
+    if (!m_pipeline)
+        return true;
+
+    return GST_STATE(m_pipeline.get()) == GST_STATE_NULL;
+}
+
 std::pair<GstClockTime, GstClockTime> GStreamerCapturer::queryLatency()
 {
     if (!m_sink)

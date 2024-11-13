@@ -153,7 +153,7 @@ void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
         uint32_t bipBopCount = std::min(frameCount, bipBopRemain);
 
         // We might have stopped producing data. Break out of the loop earlier if that happens.
-        if (!m_caps)
+        if (m_capturer && m_capturer->isStopped())
             break;
 
         ASSERT(m_streamFormat);
@@ -183,6 +183,12 @@ void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
         ASSERT(GST_IS_APP_SRC(m_capturer->source()));
         gst_app_src_push_sample(GST_APP_SRC_CAST(m_capturer->source()), sample.get());
     }
+}
+
+void MockRealtimeAudioSourceGStreamer::settingsDidChange(OptionSet<RealtimeMediaSourceSettings::Flag> flags)
+{
+    MockRealtimeAudioSource::settingsDidChange(flags);
+    reconfigure();
 }
 
 void MockRealtimeAudioSourceGStreamer::addHum(float amplitude, float frequency, float sampleRate, uint64_t start, float *p, uint64_t count)
