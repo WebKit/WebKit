@@ -565,6 +565,13 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             style.setUsedZIndex(0);
     }
 
+    // Handle user-select: auto;
+    if (style.hasAutoUserSelect()) {
+        // FIXME: Make ::before & ::after use 'none' as used value.
+        // FIXME: Convert 'contain' parent value to 'text' once it's implemented.
+        style.setUsedUserSelect(m_parentStyle.userSelect());
+    }
+
     if (RefPtr element = m_element) {
         // Textarea considers overflow visible as auto.
         if (is<HTMLTextAreaElement>(*element)) {

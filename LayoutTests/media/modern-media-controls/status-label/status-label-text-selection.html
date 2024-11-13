@@ -16,7 +16,8 @@ document.body.appendChild(mediaControls.element);
 
 scheduler.frameDidFire = function()
 {
-    shouldBeEqualToString("window.getComputedStyle(mediaControls.statusLabel.element).webkitUserSelect", "none");
+    shouldBeTrue("mediaControls.bottomControlsBar.element == mediaControls.statusLabel.element.parentElement");
+    shouldBeEqualToString("window.getComputedStyle(mediaControls.bottomControlsBar.element).webkitUserSelect", "none");
     shouldBeEqualToString("window.getComputedStyle(mediaControls.statusLabel.element).cursor", "default");
     mediaControls.element.remove();
     debug("");

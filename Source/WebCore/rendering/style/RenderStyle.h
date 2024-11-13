@@ -855,6 +855,7 @@ public:
     inline UserModify usedUserModify() const;
     inline UserModify userModify() const;
     inline UserDrag userDrag() const;
+    inline bool hasAutoUserSelect() const;
     WEBCORE_EXPORT UserSelect usedUserSelect() const;
     inline UserSelect userSelect() const;
     inline TextOverflow textOverflow() const;
@@ -1476,7 +1477,9 @@ public:
     inline void setMarqueeLoopCount(int);
     inline void setUserModify(UserModify);
     inline void setUserDrag(UserDrag);
+    inline void setHasAutoUserSelect();
     inline void setUserSelect(UserSelect);
+    inline void setUsedUserSelect(UserSelect);
     inline void setTextOverflow(TextOverflow);
     inline void setWordBreak(WordBreak);
     inline void setOverflowWrap(OverflowWrap);

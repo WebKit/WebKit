@@ -14,7 +14,8 @@ document.body.appendChild(mediaControls.element);
 
 scheduler.frameDidFire = function()
 {
-    shouldBeEqualToString("window.getComputedStyle(document.querySelector('.description')).webkitUserSelect", "none");
+    shouldBeTrue("document.querySelector('.placard').querySelector('.description') == document.querySelector('.description')");
+    shouldBeEqualToString("window.getComputedStyle(document.querySelector('.placard')).webkitUserSelect", "none");
     shouldBeEqualToString("window.getComputedStyle(document.querySelector('.description')).cursor", "default");
 
     mediaControls.element.remove();

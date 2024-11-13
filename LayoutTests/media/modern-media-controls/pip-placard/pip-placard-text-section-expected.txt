@@ -3,7 +3,8 @@ Testing that text selection is turned off for PiPPlacard.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS window.getComputedStyle(document.querySelector('.description')).webkitUserSelect is "none"
+PASS document.querySelector('.placard').querySelector('.description') == document.querySelector('.description') is true
+PASS window.getComputedStyle(document.querySelector('.placard')).webkitUserSelect is "none"
 PASS window.getComputedStyle(document.querySelector('.description')).cursor is "default"
 
 PASS successfullyParsed is true

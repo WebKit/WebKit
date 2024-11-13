@@ -238,7 +238,7 @@ rect: style.getPropertyValue(-webkit-text-stroke-color) : rgb(0, 0, 0)
 rect: style.getPropertyValue(-webkit-text-stroke-width) : 0px
 rect: style.getPropertyValue(-webkit-user-drag) : auto
 rect: style.getPropertyValue(-webkit-user-modify) : read-only
-rect: style.getPropertyValue(-webkit-user-select) : text
+rect: style.getPropertyValue(-webkit-user-select) : auto
 g: style.getPropertyValue(align-content) : normal
 g: style.getPropertyValue(align-items) : normal
 g: style.getPropertyValue(align-self) : auto
@@ -479,5 +479,5 @@ g: style.getPropertyValue(-webkit-text-stroke-color) : rgb(0, 0, 0)
 g: style.getPropertyValue(-webkit-text-stroke-width) : 0px
 g: style.getPropertyValue(-webkit-user-drag) : auto
 g: style.getPropertyValue(-webkit-user-modify) : read-only
-g: style.getPropertyValue(-webkit-user-select) : text
+g: style.getPropertyValue(-webkit-user-select) : auto
 

@@ -104,6 +104,8 @@ public:
     unsigned usedAppearance : appearanceBitWidth; // EAppearance
     unsigned textOverflow : 1; // Whether or not lines that spill out should be truncated with "..."
     unsigned userDrag : 2; // UserDrag
+    unsigned userSelect : 2; // UserSelect
+    unsigned hasAutoUserSelect : 1; // bool
     unsigned objectFit : 3; // ObjectFit
     unsigned resize : 3; // Resize
 

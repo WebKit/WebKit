@@ -68,6 +68,8 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData()
     , usedAppearance(static_cast<unsigned>(RenderStyle::initialAppearance()))
     , textOverflow(static_cast<unsigned>(RenderStyle::initialTextOverflow()))
     , userDrag(static_cast<unsigned>(RenderStyle::initialUserDrag()))
+    , userSelect(static_cast<unsigned>(RenderStyle::initialUserSelect()))
+    , hasAutoUserSelect(true)
     , objectFit(static_cast<unsigned>(RenderStyle::initialObjectFit()))
     , resize(static_cast<unsigned>(RenderStyle::initialResize()))
 {
@@ -111,6 +113,8 @@ StyleMiscNonInheritedData::StyleMiscNonInheritedData(const StyleMiscNonInherited
     , usedAppearance(o.usedAppearance)
     , textOverflow(o.textOverflow)
     , userDrag(o.userDrag)
+    , userSelect(o.userSelect)
+    , hasAutoUserSelect(o.hasAutoUserSelect)
     , objectFit(o.objectFit)
     , resize(o.resize)
 {
@@ -161,6 +165,8 @@ bool StyleMiscNonInheritedData::operator==(const StyleMiscNonInheritedData& o) c
         && usedAppearance == o.usedAppearance
         && textOverflow == o.textOverflow
         && userDrag == o.userDrag
+        && userSelect == o.userSelect
+        && hasAutoUserSelect == o.hasAutoUserSelect
         && objectFit == o.objectFit
         && resize == o.resize;
 }
