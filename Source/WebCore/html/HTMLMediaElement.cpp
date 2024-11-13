@@ -9836,10 +9836,7 @@ void HTMLMediaElement::defaultSpatialTrackingLabelChanged(const String& defaultS
 
 bool HTMLMediaElement::shouldLogWatchtimeEvent() const
 {
-    // Silent, autoplaying content should not produce watchtime diagnostics:
-    if (!m_hasEverHadAudio || m_muted)
-        return false;
-
+    // Autoplaying content should not produce watchtime diagnostics:
     if (!m_mediaSession || m_mediaSession->hasBehaviorRestriction(MediaElementSession::RequireUserGestureForAudioRateChange))
         return false;
 
@@ -9871,6 +9868,20 @@ void HTMLMediaElement::invalidateWatchtimeTimer()
     watchtimeTimerFired();
     m_watchtimeTimer->stop();
     m_watchtimeTimer = nullptr;
+}
+
+void HTMLMediaElement::logTextTrackDiagnostics(Ref<TextTrack> track, double numberOfSeconds)
+{
+    if (track->mode() == TextTrack::Mode::Disabled)
+        return;
+
+    WebCore::DiagnosticLoggingClient::ValueDictionary textTrackDictionary;
+    textTrackDictionary.set(DiagnosticLoggingKeys::textTrackTypeKey(), static_cast<uint64_t>(track->trackType()));
+    textTrackDictionary.set(DiagnosticLoggingKeys::textTrackKindKey(), static_cast<uint64_t>(track->kind()));
+    textTrackDictionary.set(DiagnosticLoggingKeys::textTrackModeKey(), static_cast<uint64_t>(track->mode()));
+    textTrackDictionary.set(DiagnosticLoggingKeys::secondsKey(), numberOfSeconds);
+
+    document().protectedPage()->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::mediaVideoCodecWatchTimeKey(), "Media Watchtime Interval By Enabled Text Track"_s, textTrackDictionary, ShouldSample::Yes);
 }
 
 void HTMLMediaElement::watchtimeTimerFired()
@@ -9946,6 +9957,11 @@ void HTMLMediaElement::watchtimeTimerFired()
         audioCodecDictionary.set(DiagnosticLoggingKeys::secondsKey(), numberOfSeconds);
         page->diagnosticLoggingClient().logDiagnosticMessageWithValueDictionary(DiagnosticLoggingKeys::mediaAudioCodecWatchTimeKey(), "Media Watchtime Interval By Audio Codec"_s, audioCodecDictionary, ShouldSample::Yes);
     }();
+
+    if (RefPtr textTracks = m_textTracks) {
+        for (unsigned i = 0; i < textTracks->length(); ++i)
+            logTextTrackDiagnostics(Ref { *textTracks->item(i) }, numberOfSeconds);
+    }
 }
 
 void HTMLMediaElement::startBufferingStopwatch()

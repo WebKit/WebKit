@@ -1118,6 +1118,8 @@ private:
     void watchtimeTimerFired();
     void startBufferingStopwatch();
     void invalidateBufferingStopwatch();
+    void logTextTrackDiagnostics(Ref<TextTrack>, double);
+
 
     enum ForceMuteChange { False, True };
     void setMutedInternal(bool muted, ForceMuteChange);
