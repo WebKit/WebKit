@@ -304,9 +304,6 @@ public:
     WriteBarrier<ArrayIteratorPrototype> m_arrayIteratorPrototype;
     WriteBarrier<MapIteratorPrototype> m_mapIteratorPrototype;
     WriteBarrier<SetIteratorPrototype> m_setIteratorPrototype;
-    WriteBarrier<WrapForValidIteratorPrototype> m_wrapForValidIteratorPrototype;
-    WriteBarrier<AsyncFromSyncIteratorPrototype> m_asyncFromSyncIteratorPrototype;
-    WriteBarrier<RegExpStringIteratorPrototype> m_regExpStringIteratorPrototype;
 
     LazyProperty<JSGlobalObject, Structure> m_debuggerScopeStructure;
     LazyProperty<JSGlobalObject, Structure> m_withScopeStructure;
@@ -355,7 +352,7 @@ public:
     WriteBarrierStructureID m_regExpStructure;
 
     WriteBarrierStructureID m_asyncFunctionStructure;
-    WriteBarrierStructureID m_asyncFromSyncIteratorStructure;
+    LazyProperty<JSGlobalObject, Structure> m_asyncFromSyncIteratorStructure;
     WriteBarrierStructureID m_asyncGeneratorFunctionStructure;
     WriteBarrierStructureID m_generatorFunctionStructure;
     WriteBarrierStructureID m_generatorStructure;
@@ -365,11 +362,11 @@ public:
     WriteBarrierStructureID m_arrayIteratorStructure;
     WriteBarrierStructureID m_mapIteratorStructure;
     WriteBarrierStructureID m_setIteratorStructure;
-    WriteBarrierStructureID m_wrapForValidIteratorStructure;
+    LazyProperty<JSGlobalObject, Structure> m_wrapForValidIteratorStructure;
     WriteBarrierStructureID m_regExpMatchesArrayStructure;
     WriteBarrierStructureID m_regExpMatchesArrayWithIndicesStructure;
     WriteBarrierStructureID m_regExpMatchesIndicesArrayStructure;
-    WriteBarrierStructureID m_regExpStringIteratorStructure;
+    LazyProperty<JSGlobalObject, Structure> m_regExpStringIteratorStructure;
 
     LazyProperty<JSGlobalObject, Structure> m_customGetterFunctionStructure;
     LazyProperty<JSGlobalObject, Structure> m_customSetterFunctionStructure;
@@ -773,12 +770,9 @@ public:
     GeneratorFunctionPrototype* generatorFunctionPrototype() const { return m_generatorFunctionPrototype.get(); }
     GeneratorPrototype* generatorPrototype() const { return m_generatorPrototype.get(); }
     AsyncFunctionPrototype* asyncFunctionPrototype() const { return m_asyncFunctionPrototype.get(); }
-    AsyncFromSyncIteratorPrototype* asyncFromSyncIteratorPrototype() const { return m_asyncFromSyncIteratorPrototype.get(); }
     ArrayIteratorPrototype* arrayIteratorPrototype() const { return m_arrayIteratorPrototype.get(); }
     MapIteratorPrototype* mapIteratorPrototype() const { return m_mapIteratorPrototype.get(); }
     SetIteratorPrototype* setIteratorPrototype() const { return m_setIteratorPrototype.get(); }
-    WrapForValidIteratorPrototype* wrapForValidIteratorPrototype() const { return m_wrapForValidIteratorPrototype.get(); }
-    RegExpStringIteratorPrototype* regExpStringIteratorPrototype() const { return m_regExpStringIteratorPrototype.get(); }
     JSObject* mapPrototype() const { return m_mapStructure.prototype(this); }
     // Workaround for the name conflict between JSCell::setPrototype.
     JSObject* jsSetPrototype() const { return m_setStructure.prototype(this); }
@@ -862,7 +856,7 @@ public:
     Structure* regExpStructure() const { return m_regExpStructure.get(); }
     Structure* shadowRealmStructure() const { return m_shadowRealmObjectStructure.get(); }
     Structure* generatorStructure() const { return m_generatorStructure.get(); }
-    Structure* asyncFromSyncIteratorStructure() const { return m_asyncFromSyncIteratorStructure.get(); }
+    Structure* asyncFromSyncIteratorStructure() const { return m_asyncFromSyncIteratorStructure.get(this); }
     Structure* asyncGeneratorStructure() const { return m_asyncGeneratorStructure.get(); }
     Structure* generatorFunctionStructure() const { return m_generatorFunctionStructure.get(); }
     Structure* asyncFunctionStructure() const { return m_asyncFunctionStructure.get(); }
@@ -872,7 +866,7 @@ public:
     Structure* arrayIteratorStructure() const { return m_arrayIteratorStructure.get(); }    
     Structure* mapIteratorStructure() const { return m_mapIteratorStructure.get(); }
     Structure* setIteratorStructure() const { return m_setIteratorStructure.get(); }
-    Structure* wrapForValidIteratorStructure() const { return m_wrapForValidIteratorStructure.get(); }
+    Structure* wrapForValidIteratorStructure() const { return m_wrapForValidIteratorStructure.get(this); }
     Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
     Structure* symbolObjectStructure() const { return m_symbolObjectStructure.get(); }
     Structure* iteratorResultObjectStructure() const { return m_iteratorResultObjectStructure.get(this); }
@@ -881,7 +875,7 @@ public:
     Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
     Structure* regExpMatchesArrayWithIndicesStructure() const { return m_regExpMatchesArrayWithIndicesStructure.get(); }
     Structure* regExpMatchesIndicesArrayStructure() const { return m_regExpMatchesIndicesArrayStructure.get(); }
-    Structure* regExpStringIteratorStructure() const { return m_regExpStringIteratorStructure.get(); }
+    Structure* regExpStringIteratorStructure() const { return m_regExpStringIteratorStructure.get(this); }
     Structure* remoteFunctionStructure() const { return m_remoteFunctionStructure.get(this); }
     Structure* moduleRecordStructure() const { return m_moduleRecordStructure.get(this); }
     Structure* syntheticModuleRecordStructure() const { return m_syntheticModuleRecordStructure.get(this); }

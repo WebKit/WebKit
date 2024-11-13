@@ -1144,18 +1144,25 @@ void JSGlobalObject::init(VM& vm)
     m_setIteratorPrototype.set(vm, this, setIteratorPrototype);
     m_setIteratorStructure.set(vm, this, JSSetIterator::createStructure(vm, this, setIteratorPrototype));
 
-    auto* asyncFromSyncIteratorPrototype = AsyncFromSyncIteratorPrototype::create(vm, this, AsyncFromSyncIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
-    m_asyncFromSyncIteratorPrototype.set(vm, this, asyncFromSyncIteratorPrototype);
-    m_asyncFromSyncIteratorStructure.set(vm, this, JSAsyncFromSyncIterator::createStructure(vm, this, asyncFromSyncIteratorPrototype));
+    m_asyncFromSyncIteratorStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            auto* asyncFromSyncIteratorPrototype = AsyncFromSyncIteratorPrototype::create(init.vm, init.owner, AsyncFromSyncIteratorPrototype::createStructure(init.vm, init.owner, init.owner->m_iteratorPrototype.get()));
+            init.set(JSAsyncFromSyncIterator::createStructure(init.vm, init.owner, asyncFromSyncIteratorPrototype));
+    });
 
-    auto* regExpStringIteratorPrototype = RegExpStringIteratorPrototype::create(vm, this, RegExpStringIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
-    m_regExpStringIteratorPrototype.set(vm, this, regExpStringIteratorPrototype);
-    m_regExpStringIteratorStructure.set(vm, this, JSRegExpStringIterator::createStructure(vm, this, regExpStringIteratorPrototype));
+    m_regExpStringIteratorStructure.initLater(
+        [] (const Initializer<Structure>& init) {
+            auto* regExpStringIteratorPrototype = RegExpStringIteratorPrototype::create(init.vm, init.owner, RegExpStringIteratorPrototype::createStructure(init.vm, init.owner, init.owner->m_iteratorPrototype.get()));
+            init.set(JSRegExpStringIterator::createStructure(init.vm, init.owner, regExpStringIteratorPrototype));
+    });
 
     if (Options::useIteratorHelpers()) {
-        auto* wrapForValidIteratorPrototype = WrapForValidIteratorPrototype::create(vm, this, WrapForValidIteratorPrototype::createStructure(vm, this, m_iteratorPrototype.get()));
-        m_wrapForValidIteratorPrototype.set(vm, this, wrapForValidIteratorPrototype);
-        m_wrapForValidIteratorStructure.set(vm, this, JSWrapForValidIterator::createStructure(vm, this, wrapForValidIteratorPrototype));
+        m_wrapForValidIteratorStructure.initLater(
+            [] (const Initializer<Structure>& init) {
+                auto* wrapForValidIteratorPrototype = WrapForValidIteratorPrototype::create(init.vm, init.owner, WrapForValidIteratorPrototype::createStructure(init.vm, init.owner, init.owner->m_iteratorPrototype.get()));
+                init.set(JSWrapForValidIterator::createStructure(init.vm, init.owner, wrapForValidIteratorPrototype));
+        });
+
     }
 
     m_linkTimeConstants[static_cast<unsigned>(LinkTimeConstant::sentinelString)].set(vm, this, vm.smallStrings.sentinelString());
@@ -2630,9 +2637,6 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_asyncGeneratorPrototype);
     visitor.append(thisObject->m_asyncIteratorPrototype);
     visitor.append(thisObject->m_asyncGeneratorFunctionPrototype);
-    visitor.append(thisObject->m_wrapForValidIteratorPrototype);
-    visitor.append(thisObject->m_asyncFromSyncIteratorPrototype);
-    visitor.append(thisObject->m_regExpStringIteratorPrototype);
 
     thisObject->m_debuggerScopeStructure.visit(visitor);
     thisObject->m_withScopeStructure.visit(visitor);
@@ -2687,9 +2691,9 @@ void JSGlobalObject::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_arrayIteratorStructure);
     visitor.append(thisObject->m_mapIteratorStructure);
     visitor.append(thisObject->m_setIteratorStructure);
-    visitor.append(thisObject->m_wrapForValidIteratorStructure);
-    visitor.append(thisObject->m_asyncFromSyncIteratorStructure);
-    visitor.append(thisObject->m_regExpStringIteratorStructure);
+    thisObject->m_wrapForValidIteratorStructure.visit(visitor);
+    thisObject->m_asyncFromSyncIteratorStructure.visit(visitor);
+    thisObject->m_regExpStringIteratorStructure.visit(visitor);
     thisObject->m_iteratorResultObjectStructure.visit(visitor);
     thisObject->m_dataPropertyDescriptorObjectStructure.visit(visitor);
     thisObject->m_accessorPropertyDescriptorObjectStructure.visit(visitor);
