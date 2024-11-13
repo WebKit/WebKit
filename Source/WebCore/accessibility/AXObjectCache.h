@@ -206,7 +206,6 @@ protected:
     macro(SelectedStateChanged) \
     macro(SelectedTextChanged) \
     macro(SetSizeChanged) \
-    macro(TableHeadersChanged) \
     macro(TextCompositionBegan) \
     macro(TextCompositionEnded) \
     macro(URLChanged) \

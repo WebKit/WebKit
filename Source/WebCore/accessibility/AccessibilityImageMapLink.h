@@ -53,7 +53,6 @@ public:
     Element* anchorElement() const override;
     Element* actionElement() const override;
     URL url() const override;
-    bool isLink() const override { return true; }
     String title() const override;
     String description() const override;
     AccessibilityObject* parentObject() const override;

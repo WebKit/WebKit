@@ -2654,8 +2654,6 @@ void AXObjectCache::handleAttributeChange(Element* element, const QualifiedName&
         }
     }
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
-    else if (attrName == headersAttr)
-        updateIsolatedTree(get(*element), AXTableHeadersChanged);
     else if (attrName == langAttr)
         updateIsolatedTree(get(*element), AXLanguageChanged);
     else if (attrName == nameAttr)
@@ -4583,9 +4581,6 @@ void AXObjectCache::updateIsolatedTree(const Vector<std::pair<Ref<AccessibilityO
             break;
         case AXSetSizeChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { { AXPropertyName::SetSize, AXPropertyName::SupportsSetSize } });
-            break;
-        case AXTableHeadersChanged:
-            tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::ColumnHeaders });
             break;
         case AXTextCompositionChanged:
             tree->queueNodeUpdate(notification.first->objectID(), { AXPropertyName::TextInputMarkedTextMarkerRange });

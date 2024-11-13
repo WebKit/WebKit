@@ -60,7 +60,6 @@ public:
     bool isFieldset() const override;
     bool isHovered() const override;
     bool isInputImage() const override;
-    bool isLink() const override;
     bool isMultiSelectable() const override;
     bool isNativeImage() const;
     bool isNativeTextControl() const override;

@@ -1108,11 +1108,6 @@ AccessibilityOrientation AccessibilityNodeObject::orientation() const
     return AccessibilityObject::orientation();
 }
 
-bool AccessibilityNodeObject::isLink() const
-{
-    return roleValue() == AccessibilityRole::WebCoreLink;
-}
-
 bool AccessibilityNodeObject::isBusy() const
 {
     return elementAttributeValue(aria_busyAttr);

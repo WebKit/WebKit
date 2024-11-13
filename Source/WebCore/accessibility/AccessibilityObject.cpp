@@ -1194,15 +1194,6 @@ bool AccessibilityObject::isRangeControl() const
     }
 }
 
-bool AccessibilityObject::isMeter() const
-{
-    if (ariaRoleAttribute() == AccessibilityRole::Meter)
-        return true;
-
-    RenderObject* renderer = this->renderer();
-    return renderer && renderer->isRenderMeter();
-}
-
 static IntRect boundsForRects(const LayoutRect& rect1, const LayoutRect& rect2, const SimpleRange& dataRange)
 {
     LayoutRect ourRect = rect1;

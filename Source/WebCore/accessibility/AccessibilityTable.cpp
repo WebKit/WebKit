@@ -888,13 +888,6 @@ AccessibilityObject* AccessibilityTable::cellForColumnAndRow(unsigned column, un
     return nullptr;
 }
 
-bool AccessibilityTable::hasGridAriaRole() const
-{
-    auto ariaRole = ariaRoleAttribute();
-    // Notably, this excludes role="table".
-    return ariaRole == AccessibilityRole::Grid || ariaRole == AccessibilityRole::TreeGrid;
-}
-
 AccessibilityRole AccessibilityTable::determineAccessibilityRole()
 {
     if (!isExposable())

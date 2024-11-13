@@ -43,8 +43,6 @@ private:
     explicit AccessibilityARIATable(AXID, RenderObject&);
     explicit AccessibilityARIATable(AXID, Node&);
 
-    // ARIA treegrids and grids support selected rows.
-    bool supportsSelectedRows() const final { return hasGridAriaRole(); }
     bool isMultiSelectable() const final;
     bool computeIsTableExposableThroughAccessibility() const final { return true; }
     bool isAriaTable() const final { return true; }

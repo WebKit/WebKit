@@ -115,7 +115,6 @@ public:
     bool isAXIsolatedObjectInstance() const final { return false; }
 
     virtual bool isAttachmentElement() const { return false; }
-    bool isLink() const override { return false; }
     bool isSecureField() const override { return false; }
     bool isContainedBySecureField() const;
     bool isNativeTextControl() const override { return false; }
@@ -129,7 +128,7 @@ public:
     bool isRadioInput() const override { return false; }
     bool isLabel() const { return isAccessibilityLabelInstance() || labelForObjects().size(); }
 
-    bool isList() const override { return false; }
+    virtual bool isListInstance() const { return false; }
     virtual bool isUnorderedList() const { return false; }
     virtual bool isOrderedList() const { return false; }
     virtual bool isDescriptionList() const { return false; }
@@ -137,7 +136,6 @@ public:
     // Table support.
     bool isTable() const override { return false; }
     bool isExposable() const override { return true; }
-    bool supportsSelectedRows() const override { return false; }
     AccessibilityChildrenVector columns() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector rows() override { return AccessibilityChildrenVector(); }
     unsigned columnCount() override { return 0; }
@@ -193,7 +191,6 @@ public:
     bool isARIATextControl() const;
     bool isNonNativeTextControl() const override;
     bool isRangeControl() const;
-    bool isMeter() const final;
     bool isStyleFormatGroup() const;
     bool isFigureElement() const;
     bool isKeyboardFocusable() const override;

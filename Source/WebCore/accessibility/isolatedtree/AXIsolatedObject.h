@@ -159,19 +159,16 @@ private:
     }
 
     // Attribute retrieval overrides.
-    bool isLink() const final { return boolAttributeValue(AXPropertyName::IsLink); }
     bool isSecureField() const final { return boolAttributeValue(AXPropertyName::IsSecureField); }
     bool isAttachment() const final { return boolAttributeValue(AXPropertyName::IsAttachment); }
     bool isInputImage() const final { return boolAttributeValue(AXPropertyName::IsInputImage); }
     bool isControl() const final { return boolAttributeValue(AXPropertyName::IsControl); }
     bool isRadioInput() const final { return boolAttributeValue(AXPropertyName::IsRadioInput); }
 
-    bool isList() const final { return boolAttributeValue(AXPropertyName::IsList); }
     bool isKeyboardFocusable() const final { return boolAttributeValue(AXPropertyName::IsKeyboardFocusable); }
     
     // Table support.
     AXIsolatedObject* exposedTableAncestor(bool includeSelf = false) const final { return Accessibility::exposedTableAncestor(*this, includeSelf); }
-    bool supportsSelectedRows() const final { return boolAttributeValue(AXPropertyName::SupportsSelectedRows); }
     AccessibilityChildrenVector columns() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Columns)); }
     AccessibilityChildrenVector rows() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Rows)); }
     unsigned columnCount() final { return static_cast<unsigned>(columns().size()); }
@@ -225,7 +222,6 @@ private:
     bool supportsRequiredAttribute() const final { return boolAttributeValue(AXPropertyName::SupportsRequiredAttribute); }
     bool isExpanded() const final { return boolAttributeValue(AXPropertyName::IsExpanded); }
     bool isFileUploadButton() const final { return boolAttributeValue(AXPropertyName::IsFileUploadButton); }
-    bool isMeter() const final { return boolAttributeValue(AXPropertyName::IsMeter); };
     FloatPoint screenRelativePosition() const final;
     IntPoint remoteFrameOffset() const final;
     FloatRect relativeFrame() const final;

@@ -61,7 +61,7 @@ bool AccessibilityARIATable::isMultiSelectable() const
 {
     // Per https://w3c.github.io/aria/#table, role="table" elements don't support selection,
     // or aria-multiselectable — only role="grid" and role="treegrid".
-    if (!hasGridAriaRole())
+    if (!hasGridRole())
         return false;
 
     const AtomString& ariaMultiSelectable = getAttribute(HTMLNames::aria_multiselectableAttr);

@@ -34,6 +34,18 @@
 
 namespace WebCore {
 
+bool AXCoreObject::isLink() const
+{
+    auto role = roleValue();
+    return role == AccessibilityRole::Link || role == AccessibilityRole::WebCoreLink || role == AccessibilityRole::ImageMapLink;
+}
+
+bool AXCoreObject::isList() const
+{
+    auto role = roleValue();
+    return role == AccessibilityRole::List || role == AccessibilityRole::DescriptionList;
+}
+
 bool AXCoreObject::isMenuRelated() const
 {
     switch (roleValue()) {
@@ -86,6 +98,12 @@ bool AXCoreObject::isGroup() const
     default:
         return false;
     }
+}
+
+bool AXCoreObject::hasGridRole() const
+{
+    auto role = roleValue();
+    return role == AccessibilityRole::Grid || role == AccessibilityRole::TreeGrid;
 }
 
 bool AXCoreObject::isButton() const

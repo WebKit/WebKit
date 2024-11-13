@@ -45,7 +45,6 @@ public:
     void init() final;
 
     virtual bool isAriaTable() const { return false; }
-    bool hasGridAriaRole() const;
 
     void addChildren() final;
     void clearChildren() final;

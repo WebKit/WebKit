@@ -746,7 +746,7 @@ public:
     virtual bool isAXRemoteFrame() const = 0;
 
     bool isHeading() const { return roleValue() == AccessibilityRole::Heading; }
-    virtual bool isLink() const = 0;
+    bool isLink() const;
     bool isCode() const { return roleValue() == AccessibilityRole::Code; }
     bool isImage() const { return roleValue() == AccessibilityRole::Image; }
     bool isImageMap() const { return roleValue() == AccessibilityRole::ImageMap; }
@@ -769,14 +769,15 @@ public:
     virtual bool isControl() const = 0;
     virtual bool isRadioInput() const = 0;
     // lists support (l, ul, ol, dl)
-    virtual bool isList() const = 0;
+    bool isList() const;
     virtual bool isFileUploadButton() const = 0;
 
     // Table support.
     virtual bool isTable() const = 0;
     virtual bool isExposable() const = 0;
     unsigned tableLevel() const;
-    virtual bool supportsSelectedRows() const = 0;
+    bool hasGridRole() const;
+    bool supportsSelectedRows() const { return hasGridRole(); }
     virtual AccessibilityChildrenVector columns() = 0;
     virtual AccessibilityChildrenVector rows() = 0;
     virtual unsigned columnCount() = 0;
@@ -855,7 +856,7 @@ public:
     virtual bool hasRemoteFrameChild() const = 0;
 
     bool isButton() const;
-    virtual bool isMeter() const = 0;
+    bool isMeter() const { return roleValue() == AccessibilityRole::Meter; }
 
     virtual UncheckedKeyHashMap<String, AXEditingStyleValueVariant> resolvedEditingStyles() const = 0;
 

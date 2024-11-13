@@ -147,7 +147,7 @@ AccessibilityRole AccessibilityTableCell::determineAccessibilityRole()
     if (!parentTable || !parentTable->isExposable())
         return defaultRole;
 
-    auto cellRole = parentTable->hasGridAriaRole() ? AccessibilityRole::GridCell : AccessibilityRole::Cell;
+    auto cellRole = parentTable->hasGridRole() ? AccessibilityRole::GridCell : AccessibilityRole::Cell;
     // It's important that we temporarily set our m_role because:
     // 1. isColumnHeader() and isRowHeader() call rowIndexRange() and columnIndexRange(), in turn calling
     //    ensureIndexesUpToDate()
