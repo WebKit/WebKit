@@ -61,7 +61,7 @@
 
 - (void)detach
 {
-    ASSERT(isMainRunLoop());
+    ASSERT(isMainThread());
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSProcessInfoPowerStateDidChangeNotification object:nil];
     _notifier = nullptr;
 }
@@ -85,12 +85,12 @@ LowPowerModeNotifier::LowPowerModeNotifier(LowPowerModeChangeCallback&& callback
     : m_observer(adoptNS([[WebLowPowerModeObserver alloc] initWithNotifier:*this]))
     , m_callback(WTFMove(callback))
 {
-    ASSERT(isMainRunLoop());
+    ASSERT(isMainThread());
 }
 
 LowPowerModeNotifier::~LowPowerModeNotifier()
 {
-    ASSERT(isMainRunLoop());
+    ASSERT(isMainThread());
     [m_observer detach];
 }
 
