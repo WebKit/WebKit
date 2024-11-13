@@ -996,7 +996,7 @@ ExceptionOr<void> GPUQueue::copyExternalImageToTexture(ScriptExecutionContext& c
         auto channels = widthInBytes / columns;
         GPUImageDataLayout dataLayout { 0, widthInBytes, rows };
 
-        if (source.origin) {
+        if (source.origin && supportedFormat) {
             populdateXYFromOrigin(*source.origin, sourceX, sourceY);
             if (sourceX || sourceY) {
                 RELEASE_ASSERT(newImageBytes);
