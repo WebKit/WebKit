@@ -1198,7 +1198,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe:
 
 ALWAYS_INLINE void assertCalleeIsReferenced(CallFrame* frame, JSWebAssemblyInstance* instance)
 {
-#if ASSERT_ENABLED && ENABLE(WASM_CODE_RECLAIMATION)
+#if ASSERT_ENABLED
     CalleeGroup& calleeGroup = *instance->calleeGroup();
     Wasm::Callee* callee = static_cast<Wasm::Callee*>(frame->callee().asNativeCallee());
     TriState status;

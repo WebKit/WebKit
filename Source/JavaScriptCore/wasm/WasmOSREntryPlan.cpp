@@ -140,10 +140,8 @@ void OSREntryPlan::work(CompilationEffort)
     callee->setEntrypoint(WTFMove(omgEntrypoint), internalFunction->osrEntryScratchBufferSize, WTFMove(unlinkedCalls), WTFMove(internalFunction->stackmaps), WTFMove(internalFunction->exceptionHandlers), WTFMove(exceptionHandlerLocations));
     {
         Locker locker { m_calleeGroup->m_lock };
-#if ENABLE(WASM_CODE_RECLAIMATION)
         m_calleeGroup->recordOMGOSREntryCallee(locker, m_functionIndex, callee.get());
         m_calleeGroup->reportCallees(locker, callee.ptr(), internalFunction->outgoingJITDirectCallees);
-#endif
 
         for (auto& call : callee->wasmToWasmCallsites()) {
             CodePtr<WasmEntryPtrTag> entrypoint;

@@ -185,9 +185,7 @@ void OMGPlan::work(CompilationEffort)
 
         m_calleeGroup->setOMGCallee(locker, m_functionIndex, callee.copyRef());
         ASSERT(m_calleeGroup->replacement(locker, callee->index()) == callee.ptr());
-#if ENABLE(WASM_CODE_RECLAIMATION)
         m_calleeGroup->reportCallees(locker, callee.ptr(), internalFunction->outgoingJITDirectCallees);
-#endif
 
         for (auto& call : callee->wasmToWasmCallsites()) {
             CodePtr<WasmEntryPtrTag> entrypoint;
@@ -205,13 +203,8 @@ void OMGPlan::work(CompilationEffort)
             MacroAssembler::repatchPointer(call.calleeLocation, CalleeBits::boxNativeCalleeIfExists(calleeCallee));
         }
 
-#if ENABLE(WASM_CODE_RECLAIMATION)
         m_calleeGroup->updateCallsitesToCallUs(locker, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex);
         ASSERT(*m_calleeGroup->entrypointLoadLocationFromFunctionIndexSpace(functionIndexSpace) == entrypoint);
-#else
-        m_calleeGroup->callsiteCollection().addCallsites(locker, m_calleeGroup.get(), callee->wasmToWasmCallsites());
-        m_calleeGroup->callsiteCollection().updateCallsitesToCallUs(locker, m_calleeGroup, CodeLocationLabel<WasmEntryPtrTag>(entrypoint), m_functionIndex, functionIndexSpace);
-#endif
 
         {
             WTF::storeStoreFence();
@@ -236,13 +229,11 @@ void OMGPlan::work(CompilationEffort)
     if (jsEntrypointCallee)
         jsEntrypointCallee->setReplacementTarget(entrypoint);
 
-#if ENABLE(WASM_CODE_RECLAIMATION)
     if (Options::freeRetiredWasmCode()) {
         WTF::storeStoreFence();
         Locker locker { m_calleeGroup->m_lock };
         m_calleeGroup->releaseBBQCallee(locker, m_functionIndex);
     }
-#endif
 
     dataLogLnIf(WasmOMGPlanInternal::verbose, "Finished OMG ", m_functionIndex);
     Locker locker { m_lock };

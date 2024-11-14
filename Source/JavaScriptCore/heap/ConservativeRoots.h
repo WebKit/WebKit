@@ -34,7 +34,6 @@ class HeapCell;
 class JITStubRoutineSet;
 
 class ConservativeRoots {
-    WTF_FORBID_HEAP_ALLOCATION;
 public:
     ConservativeRoots(Heap&);
     ~ConservativeRoots();
