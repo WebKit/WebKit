@@ -114,6 +114,17 @@ void Config::initialize()
     }();
     g_wtfConfig.highestAccessibleAddress = static_cast<uintptr_t>((1ULL << OS_CONSTANT(EFFECTIVE_ADDRESS_WIDTH)) - 1);
     SignalHandlers::initialize();
+
+    uint8_t* reservedConfigBytes = reinterpret_cast_ptr<uint8_t*>(WebConfig::g_config + WebConfig::reservedSlotsForExecutableAllocator);
+    reservedConfigBytes[WebConfig::ReservedByteForAllocationProfiling] = 0;
+    const char* useAllocationProfilingRaw = getenv("JSC_useAllocationProfiling");
+    if (useAllocationProfilingRaw) {
+        auto useAllocationProfiling = span(useAllocationProfilingRaw);
+        if (equalLettersIgnoringASCIICase(useAllocationProfiling, "true"_s)
+            || equalLettersIgnoringASCIICase(useAllocationProfiling, "yes"_s)
+            || equal(useAllocationProfiling, "1"_s))
+            reservedConfigBytes[WebConfig::ReservedByteForAllocationProfiling] = 1;
+    }
 }
 
 void Config::finalize()
