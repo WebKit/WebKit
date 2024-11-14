@@ -24,7 +24,7 @@
 
 namespace WebCore {
 
-inline const BorderValue& RenderTableRow::borderAdjoiningTableStart() const { return style().borderStart(table()->style()); }
-inline const BorderValue& RenderTableRow::borderAdjoiningTableEnd() const { return style().borderEnd(table()->style()); }
+inline const BorderValue& RenderTableRow::borderAdjoiningTableStart() const { return style().borderStart(table()->writingMode()); }
+inline const BorderValue& RenderTableRow::borderAdjoiningTableEnd() const { return style().borderEnd(table()->writingMode()); }
 
 } // namespace WebCore

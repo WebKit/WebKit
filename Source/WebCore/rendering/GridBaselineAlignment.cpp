@@ -63,7 +63,9 @@ LayoutUnit GridBaselineAlignment::ascentForGridItem(const RenderBox& gridItem, G
 
     ASSERT(position == ItemPosition::Baseline || position == ItemPosition::LastBaseline);
     auto baseline = 0_lu;
-    auto gridItemMargin = alignmentAxis == GridAxis::GridColumnAxis ? gridItem.marginBlockStart(m_writingMode) : gridItem.marginInlineStart(m_writingMode);
+    auto gridItemMargin = alignmentAxis == GridAxis::GridColumnAxis
+        ? gridItem.marginBefore(m_writingMode)
+        : gridItem.marginStart(m_writingMode);
     auto& parentStyle = gridItem.parent()->style();
 
     if (alignmentAxis == GridAxis::GridColumnAxis) {

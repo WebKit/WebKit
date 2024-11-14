@@ -3164,9 +3164,9 @@ Color RenderStyle::usedScrollbarTrackColor() const
     return colorResolvingCurrentColor(scrollbarColor().value().trackColor);
 }
 
-const BorderValue& RenderStyle::borderBefore(const RenderStyle& styleForFlow) const
+const BorderValue& RenderStyle::borderBefore(const WritingMode writingMode) const
 {
-    switch (styleForFlow.writingMode().blockDirection()) {
+    switch (writingMode.blockDirection()) {
     case FlowDirection::TopToBottom:
         return borderTop();
     case FlowDirection::BottomToTop:
@@ -3180,9 +3180,9 @@ const BorderValue& RenderStyle::borderBefore(const RenderStyle& styleForFlow) co
     return borderTop();
 }
 
-const BorderValue& RenderStyle::borderAfter(const RenderStyle& styleForFlow) const
+const BorderValue& RenderStyle::borderAfter(const WritingMode writingMode) const
 {
-    switch (styleForFlow.writingMode().blockDirection()) {
+    switch (writingMode.blockDirection()) {
     case FlowDirection::TopToBottom:
         return borderBottom();
     case FlowDirection::BottomToTop:
@@ -3196,23 +3196,23 @@ const BorderValue& RenderStyle::borderAfter(const RenderStyle& styleForFlow) con
     return borderBottom();
 }
 
-const BorderValue& RenderStyle::borderStart(const RenderStyle& styleForFlow) const
+const BorderValue& RenderStyle::borderStart(const WritingMode writingMode) const
 {
-    if (styleForFlow.writingMode().isHorizontal())
-        return styleForFlow.writingMode().isInlineLeftToRight() ? borderLeft() : borderRight();
-    return styleForFlow.writingMode().isInlineTopToBottom() ? borderTop() : borderBottom();
+    if (writingMode.isHorizontal())
+        return writingMode.isInlineLeftToRight() ? borderLeft() : borderRight();
+    return writingMode.isInlineTopToBottom() ? borderTop() : borderBottom();
 }
 
-const BorderValue& RenderStyle::borderEnd(const RenderStyle& styleForFlow) const
+const BorderValue& RenderStyle::borderEnd(const WritingMode writingMode) const
 {
-    if (styleForFlow.writingMode().isHorizontal())
-        return styleForFlow.writingMode().isInlineLeftToRight() ? borderRight() : borderLeft();
-    return styleForFlow.writingMode().isInlineTopToBottom() ? borderBottom() : borderTop();
+    if (writingMode.isHorizontal())
+        return writingMode.isInlineLeftToRight() ? borderRight() : borderLeft();
+    return writingMode.isInlineTopToBottom() ? borderBottom() : borderTop();
 }
 
-float RenderStyle::borderBeforeWidth() const
+float RenderStyle::borderBeforeWidth(const WritingMode writingMode) const
 {
-    switch (writingMode().blockDirection()) {
+    switch (writingMode.blockDirection()) {
     case FlowDirection::TopToBottom:
         return borderTopWidth();
     case FlowDirection::BottomToTop:
@@ -3226,9 +3226,9 @@ float RenderStyle::borderBeforeWidth() const
     return borderTopWidth();
 }
 
-float RenderStyle::borderAfterWidth() const
+float RenderStyle::borderAfterWidth(const WritingMode writingMode) const
 {
-    switch (writingMode().blockDirection()) {
+    switch (writingMode.blockDirection()) {
     case FlowDirection::TopToBottom:
         return borderBottomWidth();
     case FlowDirection::BottomToTop:
@@ -3242,18 +3242,18 @@ float RenderStyle::borderAfterWidth() const
     return borderBottomWidth();
 }
 
-float RenderStyle::borderStartWidth() const
+float RenderStyle::borderStartWidth(const WritingMode writingMode) const
 {
-    if (writingMode().isHorizontal())
-        return writingMode().isInlineLeftToRight() ? borderLeftWidth() : borderRightWidth();
-    return writingMode().isInlineTopToBottom() ? borderTopWidth() : borderBottomWidth();
+    if (writingMode.isHorizontal())
+        return writingMode.isInlineLeftToRight() ? borderLeftWidth() : borderRightWidth();
+    return writingMode.isInlineTopToBottom() ? borderTopWidth() : borderBottomWidth();
 }
 
-float RenderStyle::borderEndWidth() const
+float RenderStyle::borderEndWidth(const WritingMode writingMode) const
 {
-    if (writingMode().isHorizontal())
-        return writingMode().isInlineLeftToRight() ? borderRightWidth() : borderLeftWidth();
-    return writingMode().isInlineTopToBottom() ? borderBottomWidth() : borderTopWidth();
+    if (writingMode.isHorizontal())
+        return writingMode.isInlineLeftToRight() ? borderRightWidth() : borderLeftWidth();
+    return writingMode.isInlineTopToBottom() ? borderBottomWidth() : borderTopWidth();
 }
 
 void RenderStyle::setMarginStart(Length&& margin)

@@ -864,8 +864,8 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
     // A margin has three types: fixed, percentage, and auto (variable).
     // Auto and percentage margins become 0 when computing min/max width.
     // Fixed margins can be added in as is.
-    Length marginLeft = child.style().marginStartUsing(&style());
-    Length marginRight = child.style().marginEndUsing(&style());
+    Length marginLeft = child.style().marginStart(writingMode());
+    Length marginRight = child.style().marginEnd(writingMode());
     LayoutUnit margin;
     if (marginLeft.isFixed() && !shouldTrimChildMargin(MarginTrimType::InlineStart, child))
         margin += marginLeft.value();
@@ -2287,8 +2287,8 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
         // A margin basically has three types: fixed, percentage, and auto (variable).
         // Auto and percentage margins simply become 0 when computing min/max width.
         // Fixed margins can be added in as is.
-        Length startMarginLength = childStyle.marginStartUsing(&styleToUse);
-        Length endMarginLength = childStyle.marginEndUsing(&styleToUse);
+        Length startMarginLength = childStyle.marginStart(writingMode());
+        Length endMarginLength = childStyle.marginEnd(writingMode());
         LayoutUnit margin;
         LayoutUnit marginStart;
         LayoutUnit marginEnd;
@@ -2315,7 +2315,9 @@ void RenderBlock::computeBlockPreferredLogicalWidths(LayoutUnit& minLogicalWidth
                 // Determine a left and right max value based off whether or not the floats can fit in the
                 // margins of the object.  For negative margins, we will attempt to overlap the float if the negative margin
                 // is smaller than the float width.
-                bool ltr = containingBlock ? containingBlock->writingMode().isLogicalLeftInlineStart() : styleToUse.writingMode().isLogicalLeftInlineStart();
+                bool ltr = containingBlock
+                    ? containingBlock->writingMode().isLogicalLeftInlineStart()
+                    : writingMode().isLogicalLeftInlineStart();
                 LayoutUnit marginLogicalLeft = ltr ? marginStart : marginEnd;
                 LayoutUnit marginLogicalRight = ltr ? marginEnd : marginStart;
                 LayoutUnit maxLeft = marginLogicalLeft > 0 ? std::max(floatLeftWidth, marginLogicalLeft) : floatLeftWidth + marginLogicalLeft;
@@ -3440,8 +3442,8 @@ bool RenderBlock::computePreferredWidthsForExcludedChildren(LayoutUnit& minWidth
     maxWidth -= scrollbarWidth;
     
     const auto& childStyle = legend->style();
-    auto startMarginLength = childStyle.marginStartUsing(&style());
-    auto endMarginLength = childStyle.marginEndUsing(&style());
+    auto startMarginLength = childStyle.marginStart(writingMode());
+    auto endMarginLength = childStyle.marginEnd(writingMode());
     LayoutUnit margin;
     LayoutUnit marginStart;
     LayoutUnit marginEnd;

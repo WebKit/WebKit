@@ -102,8 +102,6 @@ inline const BlockEllipsis& RenderStyle::blockEllipsis() const { return m_rareIn
 inline BlockStepInsert RenderStyle::blockStepInsert() const { return static_cast<BlockStepInsert>(m_nonInheritedData->rareData->blockStepInsert); }
 inline std::optional<Length> RenderStyle::blockStepSize() const { return m_nonInheritedData->rareData->blockStepSize; }
 inline const BorderData& RenderStyle::border() const { return m_nonInheritedData->surroundData->border; }
-inline const BorderValue& RenderStyle::borderAfter() const { return borderAfter(*this); }
-inline const BorderValue& RenderStyle::borderBefore() const { return borderBefore(*this); }
 inline const BorderValue& RenderStyle::borderBottom() const { return border().bottom(); }
 inline const StyleColor& RenderStyle::borderBottomColor() const { return border().bottom().color(); }
 inline bool RenderStyle::borderBottomIsTransparent() const { return border().bottom().isTransparent(); }
@@ -111,7 +109,6 @@ inline const LengthSize& RenderStyle::borderBottomLeftRadius() const { return bo
 inline const LengthSize& RenderStyle::borderBottomRightRadius() const { return border().bottomRightRadius(); }
 inline BorderStyle RenderStyle::borderBottomStyle() const { return border().bottom().style(); }
 inline float RenderStyle::borderBottomWidth() const { return border().borderBottomWidth(); }
-inline const BorderValue& RenderStyle::borderEnd() const { return borderEnd(*this); }
 inline const NinePieceImage& RenderStyle::borderImage() const { return border().image(); }
 inline NinePieceImageRule RenderStyle::borderImageHorizontalRule() const { return border().image().horizontalRule(); }
 inline const LengthBox& RenderStyle::borderImageOutset() const { return border().image().outset(); }
@@ -132,7 +129,6 @@ inline const StyleColor& RenderStyle::borderRightColor() const { return border()
 inline bool RenderStyle::borderRightIsTransparent() const { return border().right().isTransparent(); }
 inline BorderStyle RenderStyle::borderRightStyle() const { return border().right().style(); }
 inline float RenderStyle::borderRightWidth() const { return border().borderRightWidth(); }
-inline const BorderValue& RenderStyle::borderStart() const { return borderStart(*this); }
 inline const BorderValue& RenderStyle::borderTop() const { return border().top(); }
 inline const StyleColor& RenderStyle::borderTopColor() const { return border().top().color(); }
 inline bool RenderStyle::borderTopIsTransparent() const { return border().top().isTransparent(); }
@@ -563,26 +559,33 @@ inline const AtomString& RenderStyle::lineGrid() const { return m_rareInheritedD
 inline LineSnap RenderStyle::lineSnap() const { return static_cast<LineSnap>(m_rareInheritedData->lineSnap); }
 inline ListStyleType RenderStyle::listStyleType() const { return m_rareInheritedData->listStyleType; }
 inline const Length& RenderStyle::logicalBottom() const { return m_nonInheritedData->surroundData->offset.after(writingMode()); }
-inline const Length& RenderStyle::logicalHeight() const { return writingMode().isHorizontal() ? height() : width(); }
+inline const Length& RenderStyle::logicalHeight() const { return logicalHeight(writingMode()); }
+inline const Length& RenderStyle::logicalHeight(const WritingMode writingMode) const { return writingMode.isHorizontal() ? height() : width(); }
 inline const Length& RenderStyle::logicalLeft() const { return m_nonInheritedData->surroundData->offset.logicalLeft(writingMode()); }
-inline const Length& RenderStyle::logicalMaxHeight() const { return writingMode().isHorizontal() ? maxHeight() : maxWidth(); }
-inline const Length& RenderStyle::logicalMaxWidth() const { return writingMode().isHorizontal() ? maxWidth() : maxHeight(); }
-inline const Length& RenderStyle::logicalMinHeight() const { return writingMode().isHorizontal() ? minHeight() : minWidth(); }
-inline const Length& RenderStyle::logicalMinWidth() const { return writingMode().isHorizontal() ? minWidth() : minHeight(); }
+inline const Length& RenderStyle::logicalMaxHeight() const { return logicalMaxHeight(writingMode()); }
+inline const Length& RenderStyle::logicalMaxHeight(const WritingMode writingMode) const { return writingMode.isHorizontal() ? maxHeight() : maxWidth(); }
+inline const Length& RenderStyle::logicalMaxWidth() const { return logicalMaxWidth(writingMode()); }
+inline const Length& RenderStyle::logicalMaxWidth(const WritingMode writingMode) const { return writingMode.isHorizontal() ? maxWidth() : maxHeight(); }
+inline const Length& RenderStyle::logicalMinHeight() const { return logicalMinHeight(writingMode()); }
+inline const Length& RenderStyle::logicalMinHeight(const WritingMode writingMode) const { return writingMode.isHorizontal() ? minHeight() : minWidth(); }
+inline const Length& RenderStyle::logicalMinWidth() const { return logicalMinWidth(writingMode()); }
+inline const Length& RenderStyle::logicalMinWidth(const WritingMode writingMode) const { return writingMode.isHorizontal() ? minWidth() : minHeight(); }
 inline const Length& RenderStyle::logicalRight() const { return m_nonInheritedData->surroundData->offset.logicalRight(writingMode()); }
 inline const Length& RenderStyle::logicalTop() const { return m_nonInheritedData->surroundData->offset.before(writingMode()); }
-inline const Length& RenderStyle::logicalWidth() const { return writingMode().isHorizontal() ? width() : height(); }
-inline const Length& RenderStyle::marginAfter() const { return m_nonInheritedData->surroundData->margin.after(writingMode()); }
-inline const Length& RenderStyle::marginAfterUsing(const RenderStyle* otherStyle) const { return m_nonInheritedData->surroundData->margin.after(otherStyle->writingMode()); }
-inline const Length& RenderStyle::marginBefore() const { return m_nonInheritedData->surroundData->margin.before(writingMode()); }
-inline const Length& RenderStyle::marginBeforeUsing(const RenderStyle* otherStyle) const { return m_nonInheritedData->surroundData->margin.before(otherStyle->writingMode()); }
+inline const Length& RenderStyle::logicalWidth() const { return logicalWidth(writingMode()); }
+inline const Length& RenderStyle::logicalWidth(const WritingMode writingMode) const { return writingMode.isHorizontal() ? width() : height(); }
+inline const LengthBox& RenderStyle::marginBox() const { return m_nonInheritedData->surroundData->margin; }
+inline const Length& RenderStyle::marginAfter() const { return marginAfter(writingMode()); }
+inline const Length& RenderStyle::marginAfter(const WritingMode writingMode) const { return m_nonInheritedData->surroundData->margin.after(writingMode); }
+inline const Length& RenderStyle::marginBefore() const { return marginBefore(writingMode()); }
+inline const Length& RenderStyle::marginBefore(const WritingMode writingMode) const { return m_nonInheritedData->surroundData->margin.before(writingMode); }
 inline const Length& RenderStyle::marginBottom() const { return m_nonInheritedData->surroundData->margin.bottom(); }
-inline const Length& RenderStyle::marginEnd() const { return m_nonInheritedData->surroundData->margin.end(writingMode()); }
-inline const Length& RenderStyle::marginEndUsing(const RenderStyle* otherStyle) const { return m_nonInheritedData->surroundData->margin.end(otherStyle->writingMode()); }
+inline const Length& RenderStyle::marginEnd() const { return marginEnd(writingMode()); }
+inline const Length& RenderStyle::marginEnd(const WritingMode writingMode) const { return m_nonInheritedData->surroundData->margin.end(writingMode); }
 inline const Length& RenderStyle::marginLeft() const { return m_nonInheritedData->surroundData->margin.left(); }
 inline const Length& RenderStyle::marginRight() const { return m_nonInheritedData->surroundData->margin.right(); }
-inline const Length& RenderStyle::marginStart() const { return m_nonInheritedData->surroundData->margin.start(writingMode()); }
-inline const Length& RenderStyle::marginStartUsing(const RenderStyle* otherStyle) const { return m_nonInheritedData->surroundData->margin.start(otherStyle->writingMode()); }
+inline const Length& RenderStyle::marginStart() const { return marginStart(writingMode()); }
+inline const Length& RenderStyle::marginStart(const WritingMode writingMode) const { return m_nonInheritedData->surroundData->margin.start(writingMode); }
 inline const Length& RenderStyle::marginTop() const { return m_nonInheritedData->surroundData->margin.top(); }
 inline OptionSet<MarginTrimType> RenderStyle::marginTrim() const { return m_nonInheritedData->rareData->marginTrim; }
 inline MarqueeBehavior RenderStyle::marqueeBehavior() const { return static_cast<MarqueeBehavior>(m_nonInheritedData->rareData->marquee->behavior); }
@@ -644,14 +647,18 @@ inline OverflowContinue RenderStyle::overflowContinue() const { return m_nonInhe
 inline OverflowWrap RenderStyle::overflowWrap() const { return static_cast<OverflowWrap>(m_rareInheritedData->overflowWrap); }
 inline OverscrollBehavior RenderStyle::overscrollBehaviorX() const { return static_cast<OverscrollBehavior>(m_nonInheritedData->rareData->overscrollBehaviorX); }
 inline OverscrollBehavior RenderStyle::overscrollBehaviorY() const { return static_cast<OverscrollBehavior>(m_nonInheritedData->rareData->overscrollBehaviorY); }
-inline const Length& RenderStyle::paddingAfter() const { return paddingBox().after(writingMode()); }
-inline const Length& RenderStyle::paddingBefore() const { return paddingBox().before(writingMode()); }
+inline const Length& RenderStyle::paddingAfter() const { return paddingAfter(writingMode()); }
+inline const Length& RenderStyle::paddingAfter(const WritingMode writingMode) const { return paddingBox().after(writingMode); }
+inline const Length& RenderStyle::paddingBefore() const { return paddingBefore(writingMode()); }
+inline const Length& RenderStyle::paddingBefore(const WritingMode writingMode) const { return paddingBox().before(writingMode); }
 inline const Length& RenderStyle::paddingBottom() const { return paddingBox().bottom(); }
 inline const LengthBox& RenderStyle::paddingBox() const { return m_nonInheritedData->surroundData->padding; }
-inline const Length& RenderStyle::paddingEnd() const { return paddingBox().end(writingMode()); }
+inline const Length& RenderStyle::paddingEnd() const { return paddingEnd(writingMode()); }
+inline const Length& RenderStyle::paddingEnd(const WritingMode writingMode) const { return paddingBox().end(writingMode); }
 inline const Length& RenderStyle::paddingLeft() const { return paddingBox().left(); }
 inline const Length& RenderStyle::paddingRight() const { return paddingBox().right(); }
-inline const Length& RenderStyle::paddingStart() const { return paddingBox().start(writingMode()); }
+inline const Length& RenderStyle::paddingStart() const { return paddingStart(writingMode()); }
+inline const Length& RenderStyle::paddingStart(const WritingMode writingMode) const { return paddingBox().start(writingMode); }
 inline const Length& RenderStyle::paddingTop() const { return paddingBox().top(); }
 inline const LengthSize& RenderStyle::pageSize() const { return m_nonInheritedData->rareData->pageSize; }
 inline PageSizeType RenderStyle::pageSizeType() const { return static_cast<PageSizeType>(m_nonInheritedData->rareData->pageSizeType); }

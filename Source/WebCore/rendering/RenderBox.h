@@ -225,36 +225,28 @@ public:
     void setMarginLeft(LayoutUnit margin) { m_marginBox.setLeft(margin); }
     void setMarginRight(LayoutUnit margin) { m_marginBox.setRight(margin); }
 
-    LayoutUnit marginLogicalLeft(const RenderStyle* overrideStyle = nullptr) const { return m_marginBox.logicalLeft((overrideStyle ? overrideStyle : &style())->writingMode()); }
-    LayoutUnit marginLogicalRight(const RenderStyle* overrideStyle = nullptr) const { return m_marginBox.logicalRight((overrideStyle ? overrideStyle : &style())->writingMode()); }
+    LayoutUnit marginLogicalLeft(const WritingMode writingMode) const { return m_marginBox.logicalLeft(writingMode); }
+    LayoutUnit marginLogicalRight(const WritingMode writingMode) const { return m_marginBox.logicalRight(writingMode); }
+    LayoutUnit marginLogicalLeft() const { return marginLogicalLeft(writingMode()); }
+    LayoutUnit marginLogicalRight() const { return marginLogicalRight(writingMode()); }
 
-    LayoutUnit marginBefore(const RenderStyle* overrideStyle = nullptr) const final { return m_marginBox.before((overrideStyle ? overrideStyle : &style())->writingMode()); }
-    LayoutUnit marginAfter(const RenderStyle* overrideStyle = nullptr) const final { return m_marginBox.after((overrideStyle ? overrideStyle : &style())->writingMode()); }
-    LayoutUnit marginStart(const RenderStyle* overrideStyle = nullptr) const final
-    {
-        const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
-        return m_marginBox.start(styleToUse->writingMode());
-    }
-    LayoutUnit marginEnd(const RenderStyle* overrideStyle = nullptr) const final
-    {
-        const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
-        return m_marginBox.end(styleToUse->writingMode());
-    }
-    LayoutUnit marginBlockStart(const WritingMode writingMode) const { return m_marginBox.before(writingMode); }
-    LayoutUnit marginInlineStart(const WritingMode writingMode) const { return m_marginBox.start(writingMode); }
+    LayoutUnit marginBefore(const WritingMode writingMode) const override { return m_marginBox.before(writingMode); }
+    LayoutUnit marginAfter(const WritingMode writingMode) const override { return m_marginBox.after(writingMode); }
+    LayoutUnit marginStart(const WritingMode writingMode) const override { return m_marginBox.start(writingMode); }
+    LayoutUnit marginEnd(const WritingMode writingMode) const override { return m_marginBox.end(writingMode); }
+    LayoutUnit marginBefore() const { return marginBefore(writingMode()); }
+    LayoutUnit marginAfter() const { return marginAfter(writingMode()); }
+    LayoutUnit marginStart() const { return marginStart(writingMode()); }
+    LayoutUnit marginEnd() const { return marginEnd(writingMode()); }
 
-    void setMarginBefore(LayoutUnit value, const RenderStyle* overrideStyle = nullptr) { m_marginBox.setBefore(value, (overrideStyle ? overrideStyle : &style())->writingMode()); }
-    void setMarginAfter(LayoutUnit value, const RenderStyle* overrideStyle = nullptr) { m_marginBox.setAfter(value, (overrideStyle ? overrideStyle : &style())->writingMode()); }
-    void setMarginStart(LayoutUnit value, const RenderStyle* overrideStyle = nullptr)
-    {
-        const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
-        m_marginBox.setStart(value, styleToUse->writingMode());
-    }
-    void setMarginEnd(LayoutUnit value, const RenderStyle* overrideStyle = nullptr)
-    {
-        const RenderStyle* styleToUse = overrideStyle ? overrideStyle : &style();
-        m_marginBox.setEnd(value, styleToUse->writingMode());
-    }
+    void setMarginBefore(LayoutUnit value, const WritingMode writingMode) { m_marginBox.setBefore(value, writingMode); }
+    void setMarginAfter(LayoutUnit value, const WritingMode writingMode) { m_marginBox.setAfter(value, writingMode); }
+    void setMarginStart(LayoutUnit value, const WritingMode writingMode) { m_marginBox.setStart(value, writingMode); }
+    void setMarginEnd(LayoutUnit value, const WritingMode writingMode) { m_marginBox.setEnd(value, writingMode); }
+    void setMarginBefore(LayoutUnit value) { setMarginBefore(value, writingMode()); }
+    void setMarginAfter(LayoutUnit value) { setMarginAfter(value, writingMode()); }
+    void setMarginStart(LayoutUnit value) { setMarginStart(value, writingMode()); }
+    void setMarginEnd(LayoutUnit value) { setMarginEnd(value, writingMode()); }
 
     virtual bool isSelfCollapsingBlock() const { return false; }
     virtual LayoutUnit collapsedMarginBefore() const { return marginBefore(); }

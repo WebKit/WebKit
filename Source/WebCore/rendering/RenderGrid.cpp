@@ -1767,9 +1767,8 @@ void RenderGrid::updateAutoMarginsInRowAxisIfNeeded(RenderBox& gridItem)
 {
     ASSERT(!gridItem.isOutOfFlowPositioned());
 
-    const RenderStyle& parentStyle = style();
-    Length marginStart = gridItem.style().marginStartUsing(&parentStyle);
-    Length marginEnd = gridItem.style().marginEndUsing(&parentStyle);
+    Length marginStart = gridItem.style().marginStart(writingMode());
+    Length marginEnd = gridItem.style().marginEnd(writingMode());
     LayoutUnit marginLogicalWidth;
     // We should only consider computed margins if their specified value isn't
     // 'auto', since such computed value may come from a previous layout and may
@@ -1784,12 +1783,12 @@ void RenderGrid::updateAutoMarginsInRowAxisIfNeeded(RenderBox& gridItem)
         return;
 
     if (marginStart.isAuto() && marginEnd.isAuto()) {
-        gridItem.setMarginStart(availableAlignmentSpace / 2, &parentStyle);
-        gridItem.setMarginEnd(availableAlignmentSpace / 2, &parentStyle);
+        gridItem.setMarginStart(availableAlignmentSpace / 2, writingMode());
+        gridItem.setMarginEnd(availableAlignmentSpace / 2, writingMode());
     } else if (marginStart.isAuto()) {
-        gridItem.setMarginStart(availableAlignmentSpace, &parentStyle);
+        gridItem.setMarginStart(availableAlignmentSpace, writingMode());
     } else if (marginEnd.isAuto()) {
-        gridItem.setMarginEnd(availableAlignmentSpace, &parentStyle);
+        gridItem.setMarginEnd(availableAlignmentSpace, writingMode());
     }
 }
 
@@ -1798,9 +1797,8 @@ void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& gridItem)
 {
     ASSERT(!gridItem.isOutOfFlowPositioned());
 
-    const RenderStyle& parentStyle = style();
-    Length marginBefore = gridItem.style().marginBeforeUsing(&parentStyle);
-    Length marginAfter = gridItem.style().marginAfterUsing(&parentStyle);
+    Length marginBefore = gridItem.style().marginBefore(writingMode());
+    Length marginAfter = gridItem.style().marginAfter(writingMode());
     LayoutUnit marginLogicalHeight;
     // We should only consider computed margins if their specified value isn't
     // 'auto', since such computed value may come from a previous layout and may
@@ -1815,12 +1813,12 @@ void RenderGrid::updateAutoMarginsInColumnAxisIfNeeded(RenderBox& gridItem)
         return;
 
     if (marginBefore.isAuto() && marginAfter.isAuto()) {
-        gridItem.setMarginBefore(availableAlignmentSpace / 2, &parentStyle);
-        gridItem.setMarginAfter(availableAlignmentSpace / 2, &parentStyle);
+        gridItem.setMarginBefore(availableAlignmentSpace / 2, writingMode());
+        gridItem.setMarginAfter(availableAlignmentSpace / 2, writingMode());
     } else if (marginBefore.isAuto()) {
-        gridItem.setMarginBefore(availableAlignmentSpace, &parentStyle);
+        gridItem.setMarginBefore(availableAlignmentSpace, writingMode());
     } else if (marginAfter.isAuto()) {
-        gridItem.setMarginAfter(availableAlignmentSpace, &parentStyle);
+        gridItem.setMarginAfter(availableAlignmentSpace, writingMode());
     }
 }
 
@@ -2230,7 +2228,7 @@ LayoutUnit RenderGrid::logicalOffsetForOutOfFlowGridItem(const RenderBox& gridIt
     bool isFlowAwareRowAxis = GridLayoutFunctions::flowAwareDirectionForGridItem(*this, gridItem, direction) == GridTrackSizingDirection::ForColumns;
     LayoutUnit gridItemPosition = isFlowAwareRowAxis ? gridItem.logicalLeft() : gridItem.logicalTop();
     LayoutUnit gridBorder = isRowAxis ? borderLogicalLeft() : borderBefore();
-    LayoutUnit gridItemMargin = isRowAxis ? gridItem.marginLogicalLeft(&style()) : gridItem.marginBefore(&style());
+    LayoutUnit gridItemMargin = isRowAxis ? gridItem.marginLogicalLeft(writingMode()) : gridItem.marginBefore(writingMode());
     LayoutUnit offset = gridItemPosition - gridBorder - gridItemMargin;
     if (!isRowAxis || writingMode().isLogicalLeftInlineStart())
         return offset;

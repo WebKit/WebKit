@@ -68,10 +68,10 @@ private:
     LayoutUnit marginBottom() const final { return 0; }
     LayoutUnit marginLeft() const final { return 0; }
     LayoutUnit marginRight() const final { return 0; }
-    LayoutUnit marginBefore(const RenderStyle*) const final { return 0; }
-    LayoutUnit marginAfter(const RenderStyle*) const final { return 0; }
-    LayoutUnit marginStart(const RenderStyle*) const final { return 0; }
-    LayoutUnit marginEnd(const RenderStyle*) const final { return 0; }
+    LayoutUnit marginBefore(const WritingMode) const final { return 0; }
+    LayoutUnit marginAfter(const WritingMode) const final { return 0; }
+    LayoutUnit marginStart(const WritingMode) const final { return 0; }
+    LayoutUnit marginEnd(const WritingMode) const final { return 0; }
     LayoutUnit offsetWidth() const final { return linesBoundingBox().width(); }
     LayoutUnit offsetHeight() const final { return linesBoundingBox().height(); }
     LayoutRect borderBoundingBox() const final { return LayoutRect(LayoutPoint(), linesBoundingBox().size()); }

@@ -241,13 +241,13 @@ static LayoutUnit logicalTopOffset(const RenderBox& renderer)
 {
     switch (renderer.style().shapeOutside()->effectiveCSSBox()) {
     case CSSBoxType::MarginBox:
-        return -renderer.marginBefore(&renderer.containingBlock()->style());
+        return -renderer.marginBefore(renderer.containingBlock()->writingMode());
     case CSSBoxType::BorderBox:
         return 0_lu;
     case CSSBoxType::PaddingBox:
-        return borderBeforeInWritingMode(renderer, renderer.containingBlock()->style().writingMode());
+        return borderBeforeInWritingMode(renderer, renderer.containingBlock()->writingMode());
     case CSSBoxType::ContentBox:
-        return borderAndPaddingBeforeInWritingMode(renderer, renderer.containingBlock()->style().writingMode());
+        return borderAndPaddingBeforeInWritingMode(renderer, renderer.containingBlock()->writingMode());
     case CSSBoxType::FillBox:
         break;
     case CSSBoxType::StrokeBox:
@@ -297,7 +297,7 @@ static LayoutUnit logicalLeftOffset(const RenderBox& renderer)
     
     switch (renderer.style().shapeOutside()->effectiveCSSBox()) {
     case CSSBoxType::MarginBox:
-        return -renderer.marginStart(&renderer.containingBlock()->style());
+        return -renderer.marginStart(renderer.containingBlock()->writingMode());
     case CSSBoxType::BorderBox:
         return 0_lu;
     case CSSBoxType::PaddingBox:

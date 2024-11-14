@@ -27,25 +27,25 @@ namespace WebCore {
 inline const BorderValue& RenderTableCell::borderAdjoiningCellAfter(const RenderTableCell& cell)
 {
     ASSERT_UNUSED(cell, table()->cellBefore(&cell) == this);
-    return style().borderEnd(table()->style());
+    return style().borderEnd(tableWritingMode());
 }
 
 inline const BorderValue& RenderTableCell::borderAdjoiningCellBefore(const RenderTableCell& cell)
 {
     ASSERT_UNUSED(cell, table()->cellAfter(&cell) == this);
-    return style().borderStart(table()->style());
+    return style().borderStart(tableWritingMode());
 }
 
 inline const BorderValue& RenderTableCell::borderAdjoiningTableEnd() const
 {
     ASSERT(isFirstOrLastCellInRow());
-    return style().borderEnd(table()->style());
+    return style().borderEnd(tableWritingMode());
 }
 
 inline const BorderValue& RenderTableCell::borderAdjoiningTableStart() const
 {
     ASSERT(isFirstOrLastCellInRow());
-    return style().borderStart(table()->style());
+    return style().borderStart(tableWritingMode());
 }
 
 inline LayoutUnit RenderTableCell::logicalHeightForRowSizing() const

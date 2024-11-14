@@ -686,13 +686,13 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
 
     LayoutUnit borderWidth;
 
-    const BorderValue& sb = style().borderBefore(table()->style());
+    const BorderValue& sb = style().borderBefore(table()->writingMode());
     if (sb.style() == BorderStyle::Hidden)
         return -1;
     if (sb.style() > BorderStyle::Hidden)
         borderWidth = sb.width();
 
-    const BorderValue& rb = firstRow()->style().borderBefore(table()->style());
+    const BorderValue& rb = firstRow()->style().borderBefore(table()->writingMode());
     if (rb.style() == BorderStyle::Hidden)
         return -1;
     if (rb.style() > BorderStyle::Hidden && rb.width() > borderWidth)
@@ -703,11 +703,11 @@ LayoutUnit RenderTableSection::calcOuterBorderBefore() const
         const CellStruct& current = cellAt(0, c);
         if (current.inColSpan || !current.hasCells())
             continue;
-        const BorderValue& cb = current.primaryCell()->style().borderBefore(table()->style()); // FIXME: Make this work with perpendicular and flipped cells.
+        const BorderValue& cb = current.primaryCell()->style().borderBefore(table()->writingMode()); // FIXME: Make this work with perpendicular and flipped cells.
         // FIXME: Don't repeat for the same col group
         RenderTableCol* colGroup = table()->colElement(c);
         if (colGroup) {
-            const BorderValue& gb = colGroup->style().borderBefore(table()->style());
+            const BorderValue& gb = colGroup->style().borderBefore(table()->writingMode());
             if (gb.style() == BorderStyle::Hidden || cb.style() == BorderStyle::Hidden)
                 continue;
             allHidden = false;
@@ -736,13 +736,13 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
 
     LayoutUnit borderWidth;
 
-    const BorderValue& sb = style().borderAfter(table()->style());
+    const BorderValue& sb = style().borderAfter(table()->writingMode());
     if (sb.style() == BorderStyle::Hidden)
         return -1;
     if (sb.style() > BorderStyle::Hidden)
         borderWidth = sb.width();
 
-    const BorderValue& rb = lastRow()->style().borderAfter(table()->style());
+    const BorderValue& rb = lastRow()->style().borderAfter(table()->writingMode());
     if (rb.style() == BorderStyle::Hidden)
         return -1;
     if (rb.style() > BorderStyle::Hidden && rb.width() > borderWidth)
@@ -753,11 +753,11 @@ LayoutUnit RenderTableSection::calcOuterBorderAfter() const
         const CellStruct& current = cellAt(m_grid.size() - 1, c);
         if (current.inColSpan || !current.hasCells())
             continue;
-        const BorderValue& cb = current.primaryCell()->style().borderAfter(table()->style()); // FIXME: Make this work with perpendicular and flipped cells.
+        const BorderValue& cb = current.primaryCell()->style().borderAfter(table()->writingMode()); // FIXME: Make this work with perpendicular and flipped cells.
         // FIXME: Don't repeat for the same col group
         RenderTableCol* colGroup = table()->colElement(c);
         if (colGroup) {
-            const BorderValue& gb = colGroup->style().borderAfter(table()->style());
+            const BorderValue& gb = colGroup->style().borderAfter(table()->writingMode());
             if (gb.style() == BorderStyle::Hidden || cb.style() == BorderStyle::Hidden)
                 continue;
             allHidden = false;
@@ -786,14 +786,14 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
 
     LayoutUnit borderWidth;
 
-    const BorderValue& sb = style().borderStart(table()->style());
+    const BorderValue& sb = style().borderStart(table()->writingMode());
     if (sb.style() == BorderStyle::Hidden)
         return -1;
     if (sb.style() > BorderStyle::Hidden)
         borderWidth = sb.width();
 
     if (RenderTableCol* colGroup = table()->colElement(0)) {
-        const BorderValue& gb = colGroup->style().borderStart(table()->style());
+        const BorderValue& gb = colGroup->style().borderStart(table()->writingMode());
         if (gb.style() == BorderStyle::Hidden)
             return -1;
         if (gb.style() > BorderStyle::Hidden && gb.width() > borderWidth)
@@ -806,8 +806,8 @@ LayoutUnit RenderTableSection::calcOuterBorderStart() const
         if (!current.hasCells())
             continue;
         // FIXME: Don't repeat for the same cell
-        const BorderValue& cb = current.primaryCell()->style().borderStart(table()->style()); // FIXME: Make this work with perpendicular and flipped cells.
-        const BorderValue& rb = current.primaryCell()->parent()->style().borderStart(table()->style());
+        const BorderValue& cb = current.primaryCell()->style().borderStart(table()->writingMode()); // FIXME: Make this work with perpendicular and flipped cells.
+        const BorderValue& rb = current.primaryCell()->parent()->style().borderStart(table()->writingMode());
         if (cb.style() == BorderStyle::Hidden || rb.style() == BorderStyle::Hidden)
             continue;
         allHidden = false;
@@ -829,14 +829,14 @@ LayoutUnit RenderTableSection::calcOuterBorderEnd() const
 
     LayoutUnit borderWidth;
 
-    const BorderValue& sb = style().borderEnd(table()->style());
+    const BorderValue& sb = style().borderEnd(table()->writingMode());
     if (sb.style() == BorderStyle::Hidden)
         return -1;
     if (sb.style() > BorderStyle::Hidden)
         borderWidth = sb.width();
 
     if (RenderTableCol* colGroup = table()->colElement(totalCols - 1)) {
-        const BorderValue& gb = colGroup->style().borderEnd(table()->style());
+        const BorderValue& gb = colGroup->style().borderEnd(table()->writingMode());
         if (gb.style() == BorderStyle::Hidden)
             return -1;
         if (gb.style() > BorderStyle::Hidden && gb.width() > borderWidth)
@@ -849,8 +849,8 @@ LayoutUnit RenderTableSection::calcOuterBorderEnd() const
         if (!current.hasCells())
             continue;
         // FIXME: Don't repeat for the same cell
-        const BorderValue& cb = current.primaryCell()->style().borderEnd(table()->style()); // FIXME: Make this work with perpendicular and flipped cells.
-        const BorderValue& rb = current.primaryCell()->parent()->style().borderEnd(table()->style());
+        const BorderValue& cb = current.primaryCell()->style().borderEnd(table()->writingMode()); // FIXME: Make this work with perpendicular and flipped cells.
+        const BorderValue& rb = current.primaryCell()->parent()->style().borderEnd(table()->writingMode());
         if (cb.style() == BorderStyle::Hidden || rb.style() == BorderStyle::Hidden)
             continue;
         allHidden = false;
@@ -1420,13 +1420,13 @@ unsigned RenderTableSection::numColumns() const
 const BorderValue& RenderTableSection::borderAdjoiningStartCell(const RenderTableCell& cell) const
 {
     ASSERT_UNUSED(cell, cell.isFirstOrLastCellInRow());
-    return style().borderStart(table()->style());
+    return style().borderStart(table()->writingMode());
 }
 
 const BorderValue& RenderTableSection::borderAdjoiningEndCell(const RenderTableCell& cell) const
 {
     ASSERT_UNUSED(cell, cell.isFirstOrLastCellInRow());
-    return style().borderEnd(table()->style());
+    return style().borderEnd(table()->writingMode());
 }
 
 void RenderTableSection::appendColumn(unsigned pos)

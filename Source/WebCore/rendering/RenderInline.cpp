@@ -376,24 +376,24 @@ LayoutUnit RenderInline::marginBottom() const
     return computeMargin(this, style().marginBottom());
 }
 
-LayoutUnit RenderInline::marginStart(const RenderStyle* otherStyle) const
+LayoutUnit RenderInline::marginStart(const WritingMode writingMode) const
 {
-    return computeMargin(this, style().marginStartUsing(otherStyle ? otherStyle : &style()));
+    return computeMargin(this, style().marginStart(writingMode));
 }
 
-LayoutUnit RenderInline::marginEnd(const RenderStyle* otherStyle) const
+LayoutUnit RenderInline::marginEnd(const WritingMode writingMode) const
 {
-    return computeMargin(this, style().marginEndUsing(otherStyle ? otherStyle : &style()));
+    return computeMargin(this, style().marginEnd(writingMode));
 }
 
-LayoutUnit RenderInline::marginBefore(const RenderStyle* otherStyle) const
+LayoutUnit RenderInline::marginBefore(const WritingMode writingMode) const
 {
-    return computeMargin(this, style().marginBeforeUsing(otherStyle ? otherStyle : &style()));
+    return computeMargin(this, style().marginBefore(writingMode));
 }
 
-LayoutUnit RenderInline::marginAfter(const RenderStyle* otherStyle) const
+LayoutUnit RenderInline::marginAfter(const WritingMode writingMode) const
 {
-    return computeMargin(this, style().marginAfterUsing(otherStyle ? otherStyle : &style()));
+    return computeMargin(this, style().marginAfter(writingMode));
 }
 
 ASCIILiteral RenderInline::renderName() const

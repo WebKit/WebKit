@@ -458,7 +458,13 @@ public:
     inline const Length& maxWidth() const;
     inline const Length& minHeight() const;
     inline const Length& maxHeight() const;
-    
+
+    inline const Length& logicalWidth(const WritingMode) const;
+    inline const Length& logicalHeight(const WritingMode) const;
+    inline const Length& logicalMinWidth(const WritingMode) const;
+    inline const Length& logicalMaxWidth(const WritingMode) const;
+    inline const Length& logicalMinHeight(const WritingMode) const;
+    inline const Length& logicalMaxHeight(const WritingMode) const;
     inline const Length& logicalWidth() const;
     inline const Length& logicalHeight() const;
     inline const Length& logicalMinWidth() const;
@@ -472,15 +478,14 @@ public:
     inline const BorderValue& borderTop() const;
     inline const BorderValue& borderBottom() const;
 
-
-    inline const BorderValue& borderBefore() const;
-    inline const BorderValue& borderAfter() const;
-    inline const BorderValue& borderStart() const;
-    inline const BorderValue& borderEnd() const;
-    const BorderValue& borderBefore(const RenderStyle& styleForFlow) const;
-    const BorderValue& borderAfter(const RenderStyle& styleForFlow) const;
-    const BorderValue& borderStart(const RenderStyle& styleForFlow) const;
-    const BorderValue& borderEnd(const RenderStyle& styleForFlow) const;
+    const BorderValue& borderBefore(const WritingMode) const;
+    const BorderValue& borderAfter(const WritingMode) const;
+    const BorderValue& borderStart(const WritingMode) const;
+    const BorderValue& borderEnd(const WritingMode) const;
+    const BorderValue& borderBefore() const { return borderBefore(writingMode()); }
+    const BorderValue& borderAfter() const { return borderAfter(writingMode()); }
+    const BorderValue& borderStart() const { return borderStart(writingMode()); }
+    const BorderValue& borderEnd() const { return borderEnd(writingMode()); }
 
     inline const NinePieceImage& borderImage() const;
     inline StyleImage* borderImageSource() const;
@@ -516,10 +521,14 @@ public:
     inline bool borderBottomIsTransparent() const;
     inline FloatBoxExtent borderWidth() const;
 
-    float borderBeforeWidth() const;
-    float borderAfterWidth() const;
-    float borderStartWidth() const;
-    float borderEndWidth() const;
+    float borderBeforeWidth(const WritingMode) const;
+    float borderAfterWidth(const WritingMode) const;
+    float borderStartWidth(const WritingMode) const;
+    float borderEndWidth(const WritingMode) const;
+    float borderBeforeWidth() const { return borderBeforeWidth(writingMode()); }
+    float borderAfterWidth() const { return borderAfterWidth(writingMode()); }
+    float borderStartWidth() const { return borderStartWidth(writingMode()); }
+    float borderEndWidth() const { return borderEndWidth(writingMode()); }
 
     inline bool borderIsEquivalentForPainting(const RenderStyle&) const;
 
@@ -666,24 +675,30 @@ public:
     StyleImage* listStyleImage() const;
     ListStylePosition listStylePosition() const { return static_cast<ListStylePosition>(m_inheritedFlags.listStylePosition); }
     inline bool isFixedTableLayout() const;
+
+    inline const LengthBox& marginBox() const;
     inline const Length& marginTop() const;
     inline const Length& marginBottom() const;
     inline const Length& marginLeft() const;
     inline const Length& marginRight() const;
+    inline const Length& marginStart(const WritingMode) const;
+    inline const Length& marginEnd(const WritingMode) const;
+    inline const Length& marginBefore(const WritingMode) const;
+    inline const Length& marginAfter(const WritingMode) const;
     inline const Length& marginBefore() const;
     inline const Length& marginAfter() const;
     inline const Length& marginStart() const;
     inline const Length& marginEnd() const;
-    inline const Length& marginStartUsing(const RenderStyle* otherStyle) const;
-    inline const Length& marginEndUsing(const RenderStyle* otherStyle) const;
-    inline const Length& marginBeforeUsing(const RenderStyle* otherStyle) const;
-    inline const Length& marginAfterUsing(const RenderStyle* otherStyle) const;
 
     inline const LengthBox& paddingBox() const;
     inline const Length& paddingTop() const;
     inline const Length& paddingBottom() const;
     inline const Length& paddingLeft() const;
     inline const Length& paddingRight() const;
+    inline const Length& paddingBefore(const WritingMode) const;
+    inline const Length& paddingAfter(const WritingMode) const;
+    inline const Length& paddingStart(const WritingMode) const;
+    inline const Length& paddingEnd(const WritingMode) const;
     inline const Length& paddingBefore() const;
     inline const Length& paddingAfter() const;
     inline const Length& paddingStart() const;
