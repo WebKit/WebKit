@@ -359,9 +359,89 @@ static ALWAYS_INLINE JSString* removeUsingRegExpSearch(VM& vm, JSGlobalObject* g
     
     size_t lastIndex = 0;
     unsigned startPosition = 0;
-
-    Vector<Range<int32_t>, 16> sourceRanges;
+    Vector<Range<int32_t>, 64> sourceRanges;
     unsigned sourceLen = source.length();
+
+    auto genericMatches = [&](VM& vm, auto input, auto pattern) ALWAYS_INLINE_LAMBDA -> size_t {
+        ASSERT(!pattern.empty());
+        unsigned startIndex = 0;
+        if (pattern.size() == 1) {
+            size_t lastFound = notFound;
+            auto patternCharacter = pattern[0];
+            for (size_t i = 0; i < input.size(); ++i) {
+                if (input[i] != patternCharacter)
+                    continue;
+                if (startIndex < i) {
+                    if (UNLIKELY(!sourceRanges.tryConstructAndAppend(startIndex, i))) {
+                        throwOutOfMemoryError(globalObject, scope);
+                        return notFound;
+                    }
+                }
+                lastFound = i;
+                startIndex = i + 1;
+            }
+            if (lastFound == notFound)
+                return lastFound;
+
+            if (startIndex < sourceLen) {
+                if (UNLIKELY(!sourceRanges.tryConstructAndAppend(startIndex, sourceLen))) {
+                    throwOutOfMemoryError(globalObject, scope);
+                    return notFound;
+                }
+            }
+            return lastFound;
+        }
+
+        AdaptiveStringSearcher<typename decltype(pattern)::value_type, typename decltype(input)::value_type> search(vm.adaptiveStringSearcherTables(), pattern);
+        size_t found = search.search(input, startIndex);
+        if (found == notFound)
+            return notFound;
+
+        size_t lastFound = notFound;
+        do {
+            if (startIndex < found) {
+                if (UNLIKELY(!sourceRanges.tryConstructAndAppend(startIndex, found))) {
+                    throwOutOfMemoryError(globalObject, scope);
+                    return notFound;
+                }
+            }
+            startIndex = found + pattern.size();
+            lastFound = found;
+            found = search.search(input, startIndex);
+        } while (found != notFound);
+
+        if (startIndex < sourceLen) {
+            if (UNLIKELY(!sourceRanges.tryConstructAndAppend(startIndex, sourceLen))) {
+                throwOutOfMemoryError(globalObject, scope);
+                return notFound;
+            }
+        }
+        return lastFound;
+    };
+
+    if (regExp->hasValidAtom()) {
+        const String& pattern = regExp->atom();
+        ASSERT(!pattern.isEmpty());
+        size_t lastIndex = 0;
+        if (pattern.is8Bit()) {
+            if (source.is8Bit())
+                lastIndex = genericMatches(vm, source.span8(), pattern.span8());
+            else
+                lastIndex = genericMatches(vm, source.span16(), pattern.span8());
+        } else {
+            if (source.is8Bit())
+                lastIndex = genericMatches(vm, source.span8(), pattern.span16());
+            else
+                lastIndex = genericMatches(vm, source.span16(), pattern.span16());
+        }
+        RETURN_IF_EXCEPTION(scope, nullptr);
+        if (lastIndex == notFound)
+            return string;
+
+        // Record the last matching.
+        globalObject->regExpGlobalData().recordMatch(vm, globalObject, regExp, string, MatchResult { static_cast<unsigned>(lastIndex), static_cast<unsigned>(lastIndex + pattern.length()) });
+        RELEASE_AND_RETURN(scope, jsSpliceSubstrings(globalObject, string, source, sourceRanges.span()));
+    }
 
     while (true) {
         MatchResult result = globalObject->regExpGlobalData().performMatch(globalObject, regExp, string, source, startPosition);

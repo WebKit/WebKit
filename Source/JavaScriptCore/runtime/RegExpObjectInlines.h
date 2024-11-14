@@ -38,8 +38,7 @@ inline Structure* RegExpObject::createStructure(VM& vm, JSGlobalObject* globalOb
     return Structure::create(vm, globalObject, prototype, TypeInfo(RegExpObjectType, StructureFlags), info());
 }
 
-ALWAYS_INLINE unsigned getRegExpObjectLastIndexAsUnsigned(
-    JSGlobalObject* globalObject, RegExpObject* regExpObject, const String& input)
+ALWAYS_INLINE unsigned getRegExpObjectLastIndexAsUnsigned(JSGlobalObject* globalObject, RegExpObject* regExpObject, const String& input)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -59,7 +58,7 @@ ALWAYS_INLINE unsigned getRegExpObjectLastIndexAsUnsigned(
     return lastIndex;
 }
 
-inline JSValue RegExpObject::execInline(JSGlobalObject* globalObject, JSString* string)
+ALWAYS_INLINE JSValue RegExpObject::execInline(JSGlobalObject* globalObject, JSString* string)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -99,8 +98,7 @@ inline JSValue RegExpObject::execInline(JSGlobalObject* globalObject, JSString* 
 }
 
 // Shared implementation used by test and exec.
-inline MatchResult RegExpObject::matchInline(
-    JSGlobalObject* globalObject, JSString* string)
+ALWAYS_INLINE MatchResult RegExpObject::matchInline(JSGlobalObject* globalObject, JSString* string)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
