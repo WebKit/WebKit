@@ -658,8 +658,8 @@ public:
     void lshift32(TrustedImm32 imm, RegisterID shiftAmount, RegisterID dest)
     {
         auto temp = temps<Data>();
-        move(imm, temp);
-        m_assembler.sllwInsn(dest, temp, shiftAmount);
+        move(imm, temp.data());
+        m_assembler.sllwInsn(dest, temp.data(), shiftAmount);
         m_assembler.maskRegister<32>(dest);
     }
 
