@@ -56,7 +56,6 @@ public:
     // Returns the start location and column span of the cell.
     std::pair<unsigned, unsigned> columnIndexRange() const final;
 
-    AccessibilityChildrenVector columnHeaders() override;
     AccessibilityChildrenVector rowHeaders() override;
 
     int axColumnIndex() const override;

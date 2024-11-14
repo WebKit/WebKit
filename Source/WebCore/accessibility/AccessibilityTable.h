@@ -62,7 +62,6 @@ public:
     AccessibilityChildrenVector cells() final;
     AccessibilityObject* cellForColumnAndRow(unsigned column, unsigned row) final;
 
-    AccessibilityChildrenVector columnHeaders() final;
     AccessibilityChildrenVector rowHeaders() final;
     AccessibilityChildrenVector visibleRows() final;
 

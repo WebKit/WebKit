@@ -2027,44 +2027,6 @@ OptionSet<AXAncestorFlag> AXIsolatedObject::ancestorFlags() const
     );
 }
 
-AXCoreObject::AccessibilityChildrenVector AXIsolatedObject::columnHeaders()
-{
-    AccessibilityChildrenVector headers;
-    if (isTable()) {
-        auto columnsCopy = columns();
-        for (const auto& column : columnsCopy) {
-            if (auto* header = column->columnHeader())
-                headers.append(header);
-        }
-    } else if (isExposedTableCell()) {
-        auto* parent = exposedTableAncestor();
-        if (!parent)
-            return { };
-
-        // Choose columnHeaders as the place where the "headers" attribute is reported.
-        headers = relatedObjects(AXRelationType::Headers);
-        // If the headers attribute returned valid values, then do not further search for column headers.
-        if (!headers.isEmpty())
-            return headers;
-
-        auto rowRange = rowIndexRange();
-        auto colRange = columnIndexRange();
-
-        for (unsigned row = 0; row < rowRange.first; row++) {
-            auto* tableCell = parent->cellForColumnAndRow(colRange.first, row);
-            if (!tableCell || tableCell == this || headers.contains(tableCell))
-                continue;
-
-            if (tableCell->cellScope() == "colgroup"_s && isTableCellInSameColGroup(tableCell))
-                headers.append(tableCell);
-            else if (tableCell->isColumnHeader())
-                headers.append(tableCell);
-        }
-    }
-
-    return headers;
-}
-
 String AXIsolatedObject::innerHTML() const
 {
     return const_cast<AXIsolatedObject*>(this)->getOrRetrievePropertyValue<String>(AXPropertyName::InnerHTML);

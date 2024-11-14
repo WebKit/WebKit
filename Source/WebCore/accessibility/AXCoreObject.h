@@ -786,6 +786,7 @@ public:
     virtual bool isExposable() const = 0;
     unsigned tableLevel() const;
     bool hasGridRole() const;
+    bool hasCellRole() const;
     bool supportsSelectedRows() const { return hasGridRole(); }
     virtual AccessibilityChildrenVector columns() = 0;
     virtual AccessibilityChildrenVector rows() = 0;
@@ -794,7 +795,7 @@ public:
     // All the cells in the table.
     virtual AccessibilityChildrenVector cells() = 0;
     virtual AXCoreObject* cellForColumnAndRow(unsigned column, unsigned row) = 0;
-    virtual AccessibilityChildrenVector columnHeaders() = 0;
+    AccessibilityChildrenVector columnHeaders();
     virtual AccessibilityChildrenVector rowHeaders() = 0;
     virtual AccessibilityChildrenVector visibleRows() = 0;
     AccessibilityChildrenVector selectedCells();

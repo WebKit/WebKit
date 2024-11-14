@@ -933,7 +933,7 @@ private:
 bool hasRole(Element&, StringView role);
 bool hasAnyRole(Element&, Vector<StringView>&& roles);
 bool hasAnyRole(Element*, Vector<StringView>&& roles);
-bool hasCellRole(Element&);
+bool hasCellARIARole(Element&);
 bool hasPresentationRole(Element&);
 bool hasTableRole(Element&);
 bool isRowGroup(Element&);

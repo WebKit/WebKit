@@ -142,7 +142,6 @@ public:
     unsigned rowCount() override { return 0; }
     AccessibilityChildrenVector cells() override { return AccessibilityChildrenVector(); }
     AccessibilityObject* cellForColumnAndRow(unsigned, unsigned) override { return nullptr; }
-    AccessibilityChildrenVector columnHeaders() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector rowHeaders() override { return AccessibilityChildrenVector(); }
     AccessibilityChildrenVector visibleRows() override { return AccessibilityChildrenVector(); }
     String cellScope() const final { return getAttribute(HTMLNames::scopeAttr); }

@@ -286,7 +286,7 @@ bool AccessibilityTable::isDataTable() const
                 }
 
                 // In this case, the developer explicitly assigned a "data" table attribute.
-                if (!cell->headers().isEmpty() || !cell->abbr().isEmpty() || !cell->axis().isEmpty() || !cell->scope().isEmpty() || hasCellRole(*cell))
+                if (!cell->headers().isEmpty() || !cell->abbr().isEmpty() || !cell->axis().isEmpty() || !cell->scope().isEmpty() || hasCellARIARole(*cell))
                     return true;
 
                 // If the author has used ARIA to specify a valid column or row index, assume they want us
@@ -808,21 +808,6 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTable::rows()
     updateChildrenIfNecessary();
     
     return m_rows;
-}
-
-AXCoreObject::AccessibilityChildrenVector AccessibilityTable::columnHeaders()
-{
-    updateChildrenIfNecessary();
-
-    AccessibilityChildrenVector headers;
-    // Sometimes m_columns can be reset during the iteration, we cache it here to be safe.
-    AccessibilityChildrenVector columnsCopy = m_columns;
-    for (const auto& column : columnsCopy) {
-        if (auto* header = column->columnHeader())
-            headers.append(header);
-    }
-
-    return headers;
 }
 
 AXCoreObject::AccessibilityChildrenVector AccessibilityTable::rowHeaders()

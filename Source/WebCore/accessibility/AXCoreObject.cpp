@@ -143,6 +143,12 @@ bool AXCoreObject::hasGridRole() const
     return role == AccessibilityRole::Grid || role == AccessibilityRole::TreeGrid;
 }
 
+bool AXCoreObject::hasCellRole() const
+{
+    auto role = roleValue();
+    return role == AccessibilityRole::Cell || role == AccessibilityRole::GridCell || role == AccessibilityRole::ColumnHeader || role == AccessibilityRole::RowHeader;
+}
+
 bool AXCoreObject::isButton() const
 {
     switch (roleValue()) {
@@ -430,6 +436,43 @@ unsigned AXCoreObject::tableLevel() const
         current = current->exposedTableAncestor(false);
     }
     return level;
+}
+
+AXCoreObject::AccessibilityChildrenVector AXCoreObject::columnHeaders()
+{
+    AccessibilityChildrenVector headers;
+    if (hasCellRole()) {
+        RefPtr parentTable = exposedTableAncestor();
+        if (!parentTable)
+            return { };
+
+        // Choose columnHeaders as the place where the "headers" attribute is reported.
+        headers = relatedObjects(AXRelationType::Headers);
+        // If the headers attribute returned valid values, then do not further search for column headers.
+        if (!headers.isEmpty())
+            return headers;
+
+        auto rowRange = rowIndexRange();
+        auto colRange = columnIndexRange();
+        auto rowGroupAncestor = rowGroupAncestorID();
+        for (unsigned row = 0; row < rowRange.first; row++) {
+            RefPtr tableCell = parentTable->cellForColumnAndRow(colRange.first, row);
+            if (!tableCell || tableCell == this || headers.contains(tableCell))
+                continue;
+
+            if (tableCell->cellScope() == "colgroup"_s && tableCell->rowGroupAncestorID() == rowGroupAncestor)
+                headers.append(tableCell);
+            else if (tableCell->isColumnHeader())
+                headers.append(tableCell);
+        }
+    } else if (isTable()) {
+        auto columns = this->columns();
+        for (const auto& column : columns) {
+            if (auto* header = column->columnHeader())
+                headers.append(header);
+        }
+    }
+    return headers;
 }
 
 bool AXCoreObject::isTableCellInSameRowGroup(AXCoreObject* otherTableCell)

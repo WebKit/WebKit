@@ -260,36 +260,6 @@ bool AccessibilityTableCell::supportsExpandedTextValue() const
     return isTableHeaderCell() && hasAttribute(abbrAttr);
 }
 
-AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::columnHeaders()
-{
-    RefPtr parent = parentTable();
-    if (!parent)
-        return { };
-
-    // Choose columnHeaders as the place where the "headers" attribute is reported.
-    auto headers = relatedObjects(AXRelationType::Headers);
-    // If the headers attribute returned valid values, then do not further search for column headers.
-    if (!headers.isEmpty())
-        return headers;
-
-    auto rowRange = rowIndexRange();
-    auto colRange = columnIndexRange();
-
-    for (unsigned row = 0; row < rowRange.first; row++) {
-        RefPtr tableCell = parent->cellForColumnAndRow(colRange.first, row);
-        if (!tableCell || tableCell == this || headers.contains(tableCell))
-            continue;
-
-        ASSERT(is<AccessibilityObject>(tableCell));
-        if (tableCell->cellScope() == "colgroup"_s && isTableCellInSameColGroup(tableCell.get()))
-            headers.append(tableCell);
-        else if (tableCell->isColumnHeader())
-            headers.append(tableCell);
-    }
-
-    return headers;
-}
-
 AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
 {
     AccessibilityChildrenVector headers;

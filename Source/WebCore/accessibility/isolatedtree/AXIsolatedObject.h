@@ -178,7 +178,6 @@ private:
     unsigned rowCount() final { return static_cast<unsigned>(rows().size()); }
     AccessibilityChildrenVector cells() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::Cells)); }
     AXIsolatedObject* cellForColumnAndRow(unsigned, unsigned) final;
-    AccessibilityChildrenVector columnHeaders() final;
     AccessibilityChildrenVector rowHeaders() final;
     AccessibilityChildrenVector visibleRows() final { return tree()->objectsForIDs(vectorAttributeValue<AXID>(AXPropertyName::VisibleRows)); }
     AXIsolatedObject* headerContainer() final { return objectAttributeValue(AXPropertyName::HeaderContainer); }

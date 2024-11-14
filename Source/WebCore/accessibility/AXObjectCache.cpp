@@ -675,7 +675,7 @@ bool hasTableRole(Element& element)
     return hasAnyRole(element, { "grid"_s, "table"_s, "treegrid"_s });
 }
 
-bool hasCellRole(Element& element)
+bool hasCellARIARole(Element& element)
 {
     return hasAnyRole(element, { "gridcell"_s, "cell"_s, "columnheader"_s, "rowheader"_s });
 }
@@ -744,7 +744,7 @@ static bool isAccessibilityARIAGridRow(Element& element)
 
 static bool isAccessibilityARIAGridCell(Element& element)
 {
-    return hasCellRole(element);
+    return hasCellARIARole(element);
 }
 
 Ref<AccessibilityRenderObject> AXObjectCache::createObjectFromRenderer(RenderObject& renderer)
@@ -1948,7 +1948,7 @@ void AXObjectCache::onScrollbarFrameRectChange(const Scrollbar& scrollbar)
 
 void AXObjectCache::onSelectedChanged(Element& element)
 {
-    if (hasCellRole(element))
+    if (hasCellARIARole(element))
         postNotification(&element, AXSelectedCellsChanged);
     else if (is<HTMLOptionElement>(element))
         postNotification(&element, AXSelectedStateChanged);
