@@ -468,6 +468,8 @@ class SDKBase:
         else:
             return True
 
+    def programs_lookup_paths(self):
+        return "/usr/bin"
 
 class WebKitSDK(SDKBase):
     # Our SDK branch matches with the FDO SDK branch. When updating the FDO SDK release branch
@@ -505,6 +507,9 @@ class WebKitSDK(SDKBase):
                                             self.flathub_repo, arch))
         self.packages.append(FlatpakPackage("org.freedesktop.Platform.GL.Debug.default", f"{self.branch}-extra",
                                             self.flathub_repo, arch))
+
+    def programs_lookup_paths(self):
+        return "/usr/lib/sdk/llvm18/bin:/usr/bin:/usr/lib/sdk/rust-stable/bin/"
 
     def check_remote(self):
         remote = "webkit-sdk"
@@ -546,7 +551,11 @@ class GnomeSDK(SDKBase):
         self.repos = FlatpakRepos([self.sdk_repo, self.flathub_repo])
         self.packages = [self.runtime, self.sdk]
         self.packages.append(FlatpakPackage('org.gnome.Sdk.Debug', self.branch, self.sdk_repo, arch))
+        self.packages.append(FlatpakPackage("org.freedesktop.Sdk.Extension.llvm19", self.fdo_branch,
+                                            self.flathub_repo, arch))
 
+    def programs_lookup_paths(self):
+        return "/usr/lib/sdk/llvm19/bin:/usr/bin"
 
 SUPPORTED_SDKS = {'webkit': WebKitSDK, 'gnome': GnomeSDK}
 
@@ -896,7 +905,7 @@ class WebkitFlatpak:
         sandbox_build_path = os.path.join(SANDBOX_SOURCE_ROOT, BUILD_ROOT_DIR_NAME, self.build_type)
         sandbox_environment = {
             "TEST_RUNNER_INJECTED_BUNDLE_FILENAME": os.path.join(sandbox_build_path, "lib/libTestRunnerInjectedBundle.so"),
-            "PATH": "/usr/lib/sdk/llvm18/bin:/usr/bin:/usr/lib/sdk/rust-stable/bin/",
+            "PATH": self.sdk.programs_lookup_paths(),
         }
 
         if not args:
