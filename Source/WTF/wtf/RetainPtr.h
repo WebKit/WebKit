@@ -53,12 +53,6 @@
 typedef struct objc_object *id;
 #endif
 
-// Because ARC enablement is a compile-time choice, and we compile this header
-// both ways, we need a separate copy of our code when ARC is enabled.
-#if __has_feature(objc_arc)
-#define adoptNS adoptNSArc
-#endif
-
 namespace WTF {
 
 // Unlike most most of our smart pointers, RetainPtr can take either the pointer type or the pointed-to type,
@@ -325,15 +319,18 @@ template<typename T> inline RetainPtr<typename RetainPtr<T>::HelperPtrType> adop
 {
     static_assert(std::is_convertible_v<T, id>, "Don't use adoptNS with Core Foundation pointer types, use adoptCF.");
 #if __has_feature(objc_arc)
-    return ptr;
-#elif defined(OBJC_NO_GC)
-    using ReturnType = RetainPtr<typename RetainPtr<T>::HelperPtrType>;
-    return ReturnType { ptr, ReturnType::Adopt };
-#else
-    RetainPtr<typename RetainPtr<T>::HelperPtrType> result = ptr;
-    [ptr release];
-    return result;
+    // When ARC is enabled, NS_RELEASES_ARGUMENT emits a release into the
+    // callee. Since we're going to hold on to the pointer, we need to balance
+    // that release with a matching retain.
+
+    // In most ARC code, this all happens automatically when you store to an
+    // ObjC property. We're storing to a C++ object, so we need to do this step
+    // manually.
+
+    // Perhaps surprisingly, the net effect is an adopt, with zero refcount churn.
+    ptr = (__bridge T)(__bridge_retained CFTypeRef)ptr;
 #endif
+    return { ptr, RetainPtr<typename RetainPtr<T>::HelperPtrType>::Adopt };
 }
 #endif
 
