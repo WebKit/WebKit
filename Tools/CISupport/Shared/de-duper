@@ -22,6 +22,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import argparse
+import errno
 import hashlib
 import os
 import sys
@@ -86,7 +87,7 @@ def main(args):
     de_duped = 0
     processed = 0
 
-    existing_links = set()
+    link_count = 0
     with os.scandir(args.storage) as existing_files:
         for existing_file in existing_files:
             if not existing_file.name.startswith('.') and existing_file.is_file():
@@ -96,16 +97,20 @@ def main(args):
             sha_value, extension = existing_file.name.split('.', 1)
             if extension != 'png':
                 continue
-            if not existing_file.inode() <= 1:
+            connected_to = existing_file.inode()
+            if connected_to <= 1:
                 if args.dry_run:
                     print(f'[dry-run] Removing {existing_file.path}')
                 else:
                     os.remove(existing_file.path)
                 cleaned_up += 1
             else:
-                existing_links.add(sha_value)
+                link_count += 1
 
     for root, _, files in os.walk(args.root, topdown=False):
+        if os.path.samefile(root, args.storage):
+            continue
+
         for file in files:
             if not file.endswith('.png'):
                 continue
@@ -114,12 +119,28 @@ def main(args):
             if os.stat(full_path).st_nlink > 1:
                 continue
             sha_value = sha1(full_path)
-            if sha_value in existing_links:
+            sha_path = os.path.join(args.storage, f'{sha_value}.png')
+            assert sha_path != full_path
+            if os.path.isfile(sha_path):
                 if args.dry_run:
                     print(f'[dry-run] Linking {full_path} to {sha_value}.png')
                 else:
-                    os.remove(full_path)
-                    os.link(os.path.join(args.storage, f'{sha_value}.png'), full_path)
+                    try:
+                        tempfile = os.path.join(root, f'{sha_value}.png')
+                        os.link(sha_path, tempfile)
+                        os.replace(tempfile, full_path)
+                    except OSError as e:
+                        if e.errno == errno.EMLINK:
+                            # sha_path already has LINK_MAX links, so create a copy of that file at
+                            # full_path, and create a new hard link within storage pointing at another
+                            # identical file. In practice, the previous network of hard-linked files will
+                            # slowly be deleted as old results are pruned.
+
+                            # We don't use os.replace here because we don't care if the reference file is deleted.
+                            os.remove(sha_path)
+                            os.link(full_path, sha_path)
+                        else:
+                            raise
                 de_duped += 1
             elif not sha_value:
                 print(f"Failed to compute SHA for '{full_path}'\n", file=sys.stderr)
@@ -127,10 +148,10 @@ def main(args):
                 if args.dry_run:
                     print(f'[dry-run] Storing and linking {full_path} to {sha_value}.png')
                 else:
-                    os.link(full_path, os.path.join(args.storage, f'{sha_value}.png'))
-                existing_links.add(sha_value)
+                    os.link(full_path, sha_path)
+                link_count += 1
 
-    print(f'{len(existing_links)} unique png files in storage of {processed} processed')
+    print(f'{link_count} unique png files in storage of {processed} processed')
     print(f'{cleaned_up} files removed, {de_duped} de-duped')
 
     return 0
