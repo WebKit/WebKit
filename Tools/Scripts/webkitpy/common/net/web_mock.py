@@ -30,10 +30,7 @@
 from webkitcorepy import StringIO
 
 import sys
-if sys.version_info > (3, 0):
-    from urllib.error import HTTPError
-else:
-    from urllib2 import HTTPError
+from urllib.error import HTTPError
 
 class MockWeb(object):
     def __init__(self, urls=None, responses=[]):

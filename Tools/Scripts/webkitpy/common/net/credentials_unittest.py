@@ -41,10 +41,7 @@ from webkitpy.common.system.executive_mock import MockExecutive
 
 from webkitcorepy import OutputCapture
 
-if sys.version_info > (3, 0):
-    input_func = input
-else:
-    input_func = raw_input
+input_func = input
 
 
 # FIXME: Other unit tests probably want this class.

@@ -333,10 +333,6 @@ def main():
     all_tests = set(tester.finder.find_names([], True))
     assert len(py2_tests - all_tests) == 0, py2_tests - all_tests
 
-    if sys.version_info < (3,):
-        tester.expect_error_on_import(
-            sorted(all_tests - py2_tests), "aren't in the Python 2 allowlist", 264431
-        )
 
     return not tester.run()
 

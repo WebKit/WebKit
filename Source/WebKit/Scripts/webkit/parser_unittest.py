@@ -30,10 +30,7 @@ import re
 import sys
 import unittest
 
-if sys.version_info > (3, 0):
-    from io import StringIO
-else:
-    from StringIO import StringIO
+from io import StringIO
 
 module_directory = os.path.dirname(os.path.abspath(__file__))
 

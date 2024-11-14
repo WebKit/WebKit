@@ -37,8 +37,7 @@ class Terminal(object):
             cls.index += 1
             return args[cls.index - 1]
 
-        if sys.version_info > (3, 0):
-            return patch('builtins.input', new=function)
+        return patch('builtins.input', new=function)
 
         import __builtin__
         return patch.object(__builtin__, 'raw_input', new=function)

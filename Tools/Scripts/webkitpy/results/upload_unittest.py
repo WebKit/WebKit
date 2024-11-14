@@ -36,8 +36,7 @@ except ImportError:
 from webkitpy.results.upload import Upload
 from webkitpy.thirdparty import mock
 
-if sys.version_info > (3, 0):
-    basestring = str
+basestring = str
 
 
 class UploadTest(unittest.TestCase):

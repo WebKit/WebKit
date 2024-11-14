@@ -22,37 +22,34 @@
 
 import sys
 
-if sys.version_info > (3, 0):
-    import html5lib
-    import bs4
-    from bs4.builder import builder_registry, TreeBuilder
-    from bs4.builder._htmlparser import HTMLParserTreeBuilder
+import html5lib
+import bs4
+from bs4.builder import builder_registry, TreeBuilder
+from bs4.builder._htmlparser import HTMLParserTreeBuilder
 
-    class BeautifulSoup(bs4.BeautifulSoup):
-        HTML_ENTITIES = 'html'
+class BeautifulSoup(bs4.BeautifulSoup):
+    HTML_ENTITIES = 'html'
 
-        def __init__(self, *args, **kwargs):
-            if 'convertEntities' in kwargs:
-                del kwargs['convertEntities']
-            if 'parseOnlyThese' in kwargs:
-                kwargs['parse_only'] = kwargs['parseOnlyThese']
-                del kwargs['parseOnlyThese']
-            kwargs['features'] = self.HTML_ENTITIES
-            kwargs['builder'] = HTMLParserTreeBuilder
-            super(BeautifulSoup, self).__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        if 'convertEntities' in kwargs:
+            del kwargs['convertEntities']
+        if 'parseOnlyThese' in kwargs:
+            kwargs['parse_only'] = kwargs['parseOnlyThese']
+            del kwargs['parseOnlyThese']
+        kwargs['features'] = self.HTML_ENTITIES
+        kwargs['builder'] = HTMLParserTreeBuilder
+        super(BeautifulSoup, self).__init__(*args, **kwargs)
 
-    class BeautifulStoneSoup(bs4.BeautifulSoup):
-        XML_ENTITIES = 'xml'
+class BeautifulStoneSoup(bs4.BeautifulSoup):
+    XML_ENTITIES = 'xml'
 
-        def __init__(self, *args, **kwargs):
-            if 'convertEntities' in kwargs:
-                del kwargs['convertEntities']
-            kwargs['features'] = self.XML_ENTITIES
+    def __init__(self, *args, **kwargs):
+        if 'convertEntities' in kwargs:
+            del kwargs['convertEntities']
+        kwargs['features'] = self.XML_ENTITIES
 
-            # FIXME: This hack isn't strictly accurate, but getting lxml to work with the autoinstaller is a non-trivial task
-            kwargs['builder'] = HTMLParserTreeBuilder
-            super(BeautifulStoneSoup, self).__init__(*args, **kwargs)
+        # FIXME: This hack isn't strictly accurate, but getting lxml to work with the autoinstaller is a non-trivial task
+        kwargs['builder'] = HTMLParserTreeBuilder
+        super(BeautifulStoneSoup, self).__init__(*args, **kwargs)
 
-    SoupStrainer = bs4.SoupStrainer
-else:
-    from ews.thirdparty.BeautifulSoup_legacy import BeautifulSoup, SoupStrainer
+SoupStrainer = bs4.SoupStrainer

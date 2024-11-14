@@ -82,8 +82,7 @@ class Setup(Command):
         from webkitscmpy.mocks.local import Git as MockGit
 
         kwargs = dict()
-        if sys.version_info >= (3, 6):
-            kwargs = dict(encoding='utf-8')
+        kwargs = dict(encoding='utf-8')
         remote_cmd = run(
             [repository.executable(), 'remote'],
             capture_output=True, cwd=repository.root_path,

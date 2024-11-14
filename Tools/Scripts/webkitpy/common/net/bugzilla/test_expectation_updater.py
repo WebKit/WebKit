@@ -93,12 +93,9 @@ def argument_parser(prog=None):
         help="Log debug messages",
     )
 
-    if sys.version_info >= (3, 7):
-        subparsers = parser.add_subparsers(
-            title="Subcommands", dest="subcommand", required=True
-        )
-    else:
-        subparsers = parser.add_subparsers(title="Subcommands", dest="subcommand")
+    subparsers = parser.add_subparsers(
+        title="Subcommands", dest="subcommand", required=True
+    )
 
     bugzilla_parser = subparsers.add_parser(
         "bugzilla", help="Update from Bugzilla patch, from EWS bots"

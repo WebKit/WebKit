@@ -889,15 +889,9 @@ class LayoutTestFinderTests(unittest.TestCase, TestCaseMixin):
         path = fs.join(w3c_path, "resources", "resource-files.json")
         fs.remove(path)
 
-        if sys.version_info >= (3, 3):
-            with self.assertRaises(FileNotFoundError):
-                finder = LayoutTestFinder(self.port, None)
-                finder.find_tests_by_path(["imported/w3c"])
-        else:
-            with self.assertRaises(IOError) as cm:
-                finder = LayoutTestFinder(self.port, None)
-                finder.find_tests_by_path(["imported/w3c"])
-                self.assertEqual(errno.ENOENT, cm.exception.errno)
+        with self.assertRaises(FileNotFoundError):
+            finder = LayoutTestFinder(self.port, None)
+            finder.find_tests_by_path(["imported/w3c"])
 
     def test_chooses_best_expectation(self):
         finder = self.finder

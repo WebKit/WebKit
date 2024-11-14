@@ -110,8 +110,7 @@ def main(
         else:
             help = program.help
         kwargs = dict(help=help)
-        if sys.version_info > (3, 0):
-            kwargs['aliases'] = program.aliases
+        kwargs['aliases'] = program.aliases
         subparser = subparsers.add_parser(program.name, **kwargs)
         subparser.set_defaults(main=program.main)
         subparser.set_defaults(program=program.name)

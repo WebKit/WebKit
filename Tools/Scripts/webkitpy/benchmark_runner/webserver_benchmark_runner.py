@@ -12,10 +12,7 @@ from webkitcorepy import NullContext, Timeout
 from webkitpy.benchmark_runner.benchmark_runner import BenchmarkRunner
 from webkitpy.benchmark_runner.http_server_driver.http_server_driver_factory import HTTPServerDriverFactory
 
-if sys.version_info > (3, 0):
-    from urllib.parse import urljoin
-else:
-    from urlparse import urljoin
+from urllib.parse import urljoin
 
 _log = logging.getLogger(__name__)
 

@@ -91,10 +91,7 @@ class WatchListParserTest(unittest.TestCase):
 
         with OutputCapture(level=logging.INFO) as captured:
             self._watch_list_parser.parse(watch_list)
-        if sys.version_info > (3, 0):
-            expected_log = 'The regex "*" is invalid due to "nothing to repeat at position 0".\n'
-        else:
-            expected_log = 'The regex "*" is invalid due to "nothing to repeat".\n'
+        expected_log = 'The regex "*" is invalid due to "nothing to repeat at position 0".\n'
         self.assertEqual(captured.root.log.getvalue(), expected_log)
 
     def test_bad_more_regex(self):
@@ -113,10 +110,7 @@ class WatchListParserTest(unittest.TestCase):
 
         with OutputCapture(level=logging.INFO) as captured:
             self._watch_list_parser.parse(watch_list)
-        if sys.version_info > (3, 0):
-            expected_log = 'The regex "*" is invalid due to "nothing to repeat at position 0".\n'
-        else:
-            expected_log = 'The regex "*" is invalid due to "nothing to repeat".\n'
+        expected_log = 'The regex "*" is invalid due to "nothing to repeat at position 0".\n'
         self.assertEqual(captured.root.log.getvalue(), expected_log)
 
     def test_bad_match_type(self):

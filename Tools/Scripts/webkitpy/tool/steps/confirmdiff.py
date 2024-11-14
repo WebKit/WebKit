@@ -35,10 +35,7 @@ from webkitpy.common.system.executive import ScriptError
 from webkitpy.tool.steps.abstractstep import AbstractStep
 from webkitpy.tool.steps.options import Options
 
-if sys.version_info > (3, 0):
-    from urllib.request import pathname2url
-else:
-    from urllib import pathname2url
+from urllib.request import pathname2url
 
 _log = logutils.get_logger(__file__)
 

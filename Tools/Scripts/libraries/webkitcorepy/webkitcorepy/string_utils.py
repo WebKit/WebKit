@@ -26,10 +26,7 @@ import sys
 
 basestring = str if sys.version_info > (3, 0) else basestring
 BytesIO = io.BytesIO
-if sys.version_info > (3, 0):
-    StringIO = io.StringIO
-else:
-    from StringIO import StringIO
+StringIO = io.StringIO
 UnicodeIO = io.StringIO
 
 unicode = str if sys.version_info > (3, 0) else unicode

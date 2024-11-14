@@ -30,10 +30,7 @@ import logging
 import sys
 import time
 
-if sys.version_info > (3, 0):
-    from urllib.error import HTTPError, URLError
-else:
-    from urllib2 import HTTPError, URLError
+from urllib.error import HTTPError, URLError
 
 _log = logging.getLogger(__name__)
 

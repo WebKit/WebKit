@@ -53,10 +53,7 @@ class Branch(Command):
             action=arguments.NoAction,
         )
 
-        if sys.version_info > (3, 0):
-            has_radar = bool(radar.Tracker.radarclient())
-        else:
-            has_radar = bool(radar.Tracker().radarclient())
+        has_radar = bool(radar.Tracker.radarclient())
         if has_radar:
             parser.add_argument(
                 '--cc-radar', '--no-cc-radar',

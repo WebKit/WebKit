@@ -33,10 +33,7 @@ from .radar import Tracker as RadarTracker
 from datetime import datetime
 from webkitbugspy import User, log
 
-if sys.version_info > (3, 0):
-    from html.parser import HTMLParser
-else:
-    from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
 requests = webkitcorepy.CallByNeed(lambda: __import__('requests'))
 

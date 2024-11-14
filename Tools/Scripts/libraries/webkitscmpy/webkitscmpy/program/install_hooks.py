@@ -185,8 +185,7 @@ class InstallHooks(Command):
         trailers_to_strip = ['Identifier'] + ([identifier_template.split(':', 1)[0]] if identifier_template else [])
         source_remotes = repository.source_remotes() or ['origin']
         perl = 'perl'
-        if sys.version_info >= (3, 3):
-            perl = shutil.which('perl')
+        perl = shutil.which('perl')
 
         default_target_directory = os.path.join(repository.common_directory, 'hooks')
         target_directory = repository.config().get('core.hookspath', default_target_directory)

@@ -501,8 +501,7 @@ class Executive(AbstractExecutive):
                 try:
                     # On Python 2 'encoding' is an invalid keyword argument for this function
                     open_kwargs = {}
-                    if sys.version_info[0] >= 3:
-                        open_kwargs['encoding'] = 'cp437'
+                    open_kwargs['encoding'] = 'cp437'
 
                     with open(args[0], 'r', **open_kwargs) as f:
                         line = f.readline()
@@ -528,20 +527,12 @@ class Executive(AbstractExecutive):
         env = kwargs.pop('env', None)
         if self._is_native_win and env is not None:
             mod_env = {}
-            if sys.version_info[0] >= 3:
-                for key, value in env.items():
-                    if not isinstance(key, str):
-                        key = key.decode('utf-8')
-                    if not isinstance(value, str):
-                        value = value.decode('utf-8')
-                    mod_env[key] = value
-            else:
-                for key, value in env.items():
-                    if not isinstance(key, bytes):
-                        key = key.encode('utf-8')
-                    if not isinstance(value, bytes):
-                        value = value.encode('utf-8')
-                    mod_env[key] = value
+            for key, value in env.items():
+                if not isinstance(key, str):
+                    key = key.decode('utf-8')
+                if not isinstance(value, str):
+                    value = value.decode('utf-8')
+                mod_env[key] = value
             env = mod_env
 
         # Python 3 treats Popen as a context manager, we should allow this in Python 2

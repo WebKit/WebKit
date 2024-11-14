@@ -44,12 +44,9 @@ from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 from mechanize import Browser
 
-if sys.version_info > (3, 0):
-    from urllib.error import HTTPError, URLError
-    from urllib.parse import quote
-    from urllib.request import urlopen
-else:
-    from urllib2 import HTTPError, quote, URLError, urlopen
+from urllib.error import HTTPError, URLError
+from urllib.parse import quote
+from urllib.request import urlopen
 
 
 _log = get_logger(__file__)

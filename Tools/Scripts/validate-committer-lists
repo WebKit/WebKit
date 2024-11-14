@@ -40,10 +40,7 @@ import sys
 from datetime import date, datetime, timedelta
 from optparse import OptionParser
 
-if sys.version_info > (3, 0):
-    from urllib.request import urlopen
-else:
-    from urllib2 import urlopen
+from urllib.request import urlopen
 
 from webkitpy.common.config.committers import CommitterList
 from webkitpy.common.checkout.changelog import ChangeLogEntry

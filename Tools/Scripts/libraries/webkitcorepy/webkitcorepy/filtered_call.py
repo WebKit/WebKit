@@ -24,10 +24,7 @@ import sys
 
 
 def filtered_call(function, *args, **kwargs):
-    if sys.version_info > (3, 0):
-        import inspect
-    else:
-        import inspect2 as inspect
+    import inspect
 
     signature_args = inspect.signature(function).parameters.keys()
     filtered_kwargs = {}

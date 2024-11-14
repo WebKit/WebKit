@@ -200,10 +200,6 @@ class DiffParser(object):
                     pass
                 else:
                     line_repr = repr(line)
-                    if sys.version_info < (3,):
-                        assert isinstance(line, unicode)
-                        assert line_repr[0] == "u"
-                        line_repr = line_repr[1:]
                     _log.error('Unexpected diff format when parsing a '
                                'chunk: %s' % line_repr)
         return files

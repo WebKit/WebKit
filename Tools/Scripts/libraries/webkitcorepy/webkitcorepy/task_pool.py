@@ -28,10 +28,7 @@ import multiprocessing
 import signal
 import sys
 
-if sys.version_info < (3, 0):
-    import Queue
-else:
-    import queue as Queue
+import queue as Queue
 
 from webkitcorepy import OutputCapture, Timeout, log
 
@@ -538,16 +535,7 @@ class TaskPool(object):
                 if not worker.is_alive():
                     continue
 
-                if sys.version_info >= (3, 7):
-                    worker.kill()
-                # With python2 killing directly the workers causes the queue to hang on close() <https://webkit.org/b/227715>
-                elif hasattr(signal, 'SIGKILL') and sys.version_info.major > 2:
-                    try:
-                        os.kill(worker.pid, signal.SIGKILL)
-                    except OSError as e:
-                        log.warn('Failed to terminate worker ' + str(worker.pid) + ' with error ' + str(e))
-                else:
-                    worker.terminate()
+                worker.kill()
 
             self.queue.close()
             self.queue = None

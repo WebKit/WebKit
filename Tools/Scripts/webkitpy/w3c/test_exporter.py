@@ -41,10 +41,7 @@ from webkitpy.w3c.wpt_linter import WPTLinter
 from webkitpy.w3c.common import WPT_GH_ORG, WPT_GH_REPO_NAME, WPT_GH_URL, WPTPaths
 from webkitpy.common.memoized import memoized
 
-if sys.version_info > (3, 0):
-    from urllib.error import HTTPError
-else:
-    from urllib2 import HTTPError
+from urllib.error import HTTPError
 
 _log = logging.getLogger(__name__)
 

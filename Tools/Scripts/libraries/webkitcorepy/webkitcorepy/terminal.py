@@ -31,8 +31,7 @@ if not sys.platform.startswith('win'):
 
 from webkitcorepy import StringIO, run, Timer, run
 
-if sys.version_info > (3, 0):
-    file = io.IOBase
+file = io.IOBase
 
 
 class Terminal(object):

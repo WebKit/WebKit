@@ -87,8 +87,7 @@ class Svn(Scm):
                     branch_arg = '^/branches/{}'.format(branch)
 
                 kwargs = dict()
-                if sys.version_info >= (3, 0):
-                    kwargs = dict(encoding='utf-8')
+                kwargs = dict(encoding='utf-8')
 
                 self._last_populated[branch] = time.time()
                 log = subprocess.Popen(

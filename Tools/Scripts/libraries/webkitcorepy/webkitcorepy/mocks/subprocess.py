@@ -154,8 +154,7 @@ class Subprocess(ContextStack):
         if candidates:
             return candidates
 
-        if sys.version_info > (3, 0):
-            raise FileNotFoundError("No such file or directory: '{path}': '{path}'".format(path=program))
+        raise FileNotFoundError("No such file or directory: '{path}': '{path}'".format(path=program))
         raise OSError('[Errno 2] No such file or directory')
 
     @classmethod
