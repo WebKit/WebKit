@@ -97,7 +97,9 @@
             rename-tarball="gstreamer-${version}.tar.gz"
             module="gstreamer/tarball/${version}"
             version="1.22.7"
-            hash="sha256:5d38ad36449e755a11f8235eb80d68360c0ad4e8b422aebecad0e895d24f3834" />
+            hash="sha256:5d38ad36449e755a11f8235eb80d68360c0ad4e8b422aebecad0e895d24f3834">
+      <patch file="0001-pad-Never-push-sticky-events-in-response-to-a-FLUSH_.patch" strip="1"/>
+    </branch>
     <dependencies>
       <dep package="openh264"/>
     </dependencies>
