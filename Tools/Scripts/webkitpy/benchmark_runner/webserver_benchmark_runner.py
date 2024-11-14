@@ -4,7 +4,6 @@ import logging
 import os
 import subprocess
 import signal
-import sys
 import time
 
 from webkitcorepy import NullContext, Timeout

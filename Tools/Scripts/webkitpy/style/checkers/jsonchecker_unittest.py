@@ -22,7 +22,6 @@
 
 """Unit test for jsonchecker.py."""
 
-import sys
 import unittest
 
 from mock import Mock

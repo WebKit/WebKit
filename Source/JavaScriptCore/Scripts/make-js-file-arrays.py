@@ -25,7 +25,6 @@ from __future__ import print_function
 import io
 import os
 from optparse import OptionParser
-import sys
 from jsmin import jsmin
 
 

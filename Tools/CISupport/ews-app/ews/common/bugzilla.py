@@ -27,7 +27,6 @@ import os
 import re
 import requests
 import socket
-import sys
 import time
 
 from datetime import datetime, timedelta
