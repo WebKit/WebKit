@@ -336,7 +336,8 @@ public:
     WEBCORE_EXPORT bool insertText(const String&, Event* triggeringEvent, TextEventInputType = TextEventInputKeyboard);
     bool insertTextForConfirmedComposition(const String& text);
     WEBCORE_EXPORT bool insertDictatedText(const String&, const Vector<DictationAlternative>& dictationAlternatives, Event* triggeringEvent);
-    bool insertTextWithoutSendingTextEvent(const String&, bool selectInsertedText, TextEvent* triggeringEvent);
+    bool insertTextWithoutSendingTextEventNew(const String&, bool selectInsertedText, EventTarget* = nullptr, TextEventInputType = TextEventInputKeyboard, const Vector<DictationAlternative>* dictationAlternatives = nullptr);
+    bool insertTextWithoutSendingTextEventOld(const String&, bool selectInsertedText, TextEvent* triggeringEvent);
     bool insertLineBreak();
     bool insertParagraphSeparator();
     WEBCORE_EXPORT bool insertParagraphSeparatorInQuotedContent();
@@ -443,6 +444,7 @@ public:
 
     void clear();
 
+    VisibleSelection selectionForCommand(EventTarget*);
     VisibleSelection selectionForCommand(Event*);
 
     PAL::KillRing& killRing() const { return *m_killRing; }

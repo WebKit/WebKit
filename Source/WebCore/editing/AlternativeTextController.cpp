@@ -710,6 +710,8 @@ bool AlternativeTextController::insertDictatedText(const String& text, const Vec
     if (!target)
         return false;
 
+    if (document->settings().conformantBeforeinputEventFiringOrderEnabled())
+        return document->frame()->editor().insertTextWithoutSendingTextEventNew(text, false, target.get(), TextEventInputDictation, &dictationAlternatives);
     Ref windowProxy = document->frame()->windowProxy();
     auto event = TextEvent::createForDictation(windowProxy.ptr(), text, dictationAlternatives);
     event->setUnderlyingEvent(triggeringEvent);
