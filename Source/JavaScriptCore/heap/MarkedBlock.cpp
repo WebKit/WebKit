@@ -537,18 +537,22 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
 
     VM* blockVM = header().m_vm;
     VM* actualVM = nullptr;
-    JSCell* cell = heapCell ? bitwise_cast<JSCell*>(heapCell) : nullptr;
-    JSType cellType = cell ? cell->type() : MaxJSType;
     bool isBlockVMValid = false;
     bool isBlockInSet = false;
     bool isBlockInDirectory = false;
     bool foundInBlockVM = false;
     size_t contiguousZeroCountAfterHandle = 0;
+    uint64_t cellFirst8Bytes = 0;
+
+    if (heapCell) {
+        uint64_t* p = bitwise_cast<uint64_t*>(heapCell);
+        cellFirst8Bytes = *p; // Safe since its MarkedBlock::Header::m_handle has already been dereferenced.
+    }
 
     auto updateCrashLogMsg = [&](int line) {
         StringPrintStream out;
-        out.printf("INVALID HANDLE [%d]: MarkedBlock=%p; heapCell=%p; cellType=%d; CZC=%lu; blockVM=%p; actualVM=%p; isBlockVMValid=%d; isBlockInSet=%d; isBlockInDir=%d; foundInBlockVM=%d;",
-            line, this, heapCell, cellType, contiguousZeroCountAfterHandle, blockVM, actualVM, isBlockVMValid, isBlockInSet, isBlockInDirectory, foundInBlockVM);
+        out.printf("INVALID HANDLE [%d]: MarkedBlock=%p; heapCell=%p; cell8Bytes=%llu; CZC=%lu; blockVM=%p; actualVM=%p; isBlockVMValid=%d; isBlockInSet=%d; isBlockInDir=%d; foundInBlockVM=%d;",
+            line, this, heapCell, cellFirst8Bytes, contiguousZeroCountAfterHandle, blockVM, actualVM, isBlockVMValid, isBlockInSet, isBlockInDirectory, foundInBlockVM);
         WTF::setCrashLogMessage(out.toCString().data());
         dataLogLn(out.toCString().data());
     };
@@ -616,7 +620,8 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
     if (!foundInBlockVM)
         bitfield |= 1 << 4;
 
-    CRASH_WITH_INFO(cell, cellType, contiguousZeroCountAfterHandle, bitfield, this, blockVM, actualVM);
+    // XXX: could save something other than 'this', which can be derived from heapCell.
+    CRASH_WITH_INFO(heapCell, cellFirst8Bytes, contiguousZeroCountAfterHandle, bitfield, this, blockVM, actualVM);
 }
 
 } // namespace JSC
