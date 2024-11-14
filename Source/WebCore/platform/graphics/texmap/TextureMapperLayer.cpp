@@ -25,6 +25,7 @@
 #include "FloatQuad.h"
 #include "Region.h"
 #include "TextureMapper.h"
+#include "TextureMapperLayer3DRenderingContext.h"
 #include <wtf/MathExtras.h>
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -50,9 +51,6 @@ public:
     IntSize offset;
     TextureMapperLayer* backdropLayer { nullptr };
     TextureMapperLayer* replicaLayer { nullptr };
-    bool preserves3D { false };
-    Vector<IntRect> holePunchRects;
-    bool isPreserves3DFirstTile { false };
 };
 
 struct TextureMapperLayer::ComputeTransformData {
@@ -318,9 +316,6 @@ void TextureMapperLayer::computeTransformsRecursive(ComputeTransformData& data)
     data.updateDepthRange(calculateZ(rect.x(), rect.y() + rect.height()));
     data.updateDepthRange(calculateZ(rect.x() + rect.width(), rect.y() + rect.height()));
 
-    if (m_parent && m_parent->m_state.preserves3D)
-        m_centerZ = calculateZ(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);
-
     if (m_state.backdropLayer)
         m_state.backdropLayer->computeTransformsRecursive(data);
 
@@ -334,10 +329,6 @@ void TextureMapperLayer::computeTransformsRecursive(ComputeTransformData& data)
             child->computeTransformsRecursive(data);
         }
     }
-
-    // Reorder children if needed on the way back up.
-    if (m_state.preserves3D)
-        sortByZOrder(m_children);
 
 #if USE(COORDINATED_GRAPHICS)
     if (m_backingStore && m_animatedBackingStoreClient)
@@ -442,50 +433,13 @@ void TextureMapperLayer::paintSelf(TextureMapperPaintOptions& options)
         options.textureMapper.beginClip(transform, m_state.contentsClippingRect);
     }
 
-    if (options.preserves3D && contentsLayer->isHolePunchBuffer())
-        paintPreserves3DHolePunch(contentsLayer, transform, options);
-    else
-        contentsLayer->paintToTextureMapper(options.textureMapper, m_state.contentsRect, transform, options.opacity);
+    contentsLayer->paintToTextureMapper(options.textureMapper, m_state.contentsRect, transform, options.opacity);
 
     if (shouldClip)
         options.textureMapper.endClip();
 
     if (m_state.showDebugBorders)
         contentsLayer->drawBorder(options.textureMapper, m_state.debugBorderColor, m_state.debugBorderWidth, m_state.contentsRect, transform);
-}
-
-void TextureMapperLayer::paintPreserves3DHolePunch(TextureMapperPlatformLayer* contentsLayer, const TransformationMatrix& transform, TextureMapperPaintOptions& options)
-{
-    // In preserve3D mode we're painting into an intermediate surface. To make holepunch work we need to
-    // paint the transparent rectangle in this layer, but also in the background layer.
-    // The rendering to the intermediate surface is also tiled, which means that this layer can be painted
-    // several times in different tiles. We need to notify the video position and queue the paint of the
-    // background hole only once, while the transparent rectangle to this layer needs to be painted
-    // for each tile.
-
-    if (options.isPreserves3DFirstTile) {
-        // We can't use the passed transform here cause it was created with a modified offset to paint
-        // into the intermediate surface. We need to calculate the real position of the video sink
-        // here by using a transform that doesn't have the intermediate surface offset.
-        TransformationMatrix videoSinkTransform;
-        videoSinkTransform.multiply(options.transform);
-        videoSinkTransform.multiply(m_layerTransforms.combined);
-
-        // Enqueue the holepunch rect to be painted in the background and notify the position to the
-        // video sink.
-        options.holePunchRects.append(enclosingIntRect(videoSinkTransform.mapRect(m_state.contentsRect)));
-        contentsLayer->notifyVideoPosition(m_state.contentsRect, videoSinkTransform);
-    }
-    // Paint the transparent rectangle in the intermediate surface with the original transform.
-    contentsLayer->paintTransparentRectangle(options.textureMapper, m_state.contentsRect, transform);
-}
-
-void TextureMapperLayer::sortByZOrder(Vector<TextureMapperLayer* >& array)
-{
-    std::sort(array.begin(), array.end(),
-        [](TextureMapperLayer* a, TextureMapperLayer* b) {
-            return a->m_centerZ < b->m_centerZ;
-        });
 }
 
 void TextureMapperLayer::paintBackdrop(TextureMapperPaintOptions& options)
@@ -1047,64 +1001,38 @@ void TextureMapperLayer::paintFlattened(TextureMapperPaintOptions& options)
 
 void TextureMapperLayer::paintWith3DRenderingContext(TextureMapperPaintOptions& options)
 {
-    if (options.preserves3D) {
-        paintSelfAndChildrenWithReplica(options);
-        return;
+    Vector<TextureMapperLayer*> layers;
+    collect3DSceneLayers(layers);
+
+    TextureMapperLayer3DRenderingContext context;
+    context.paint(layers, [&](TextureMapperLayer* layer, const FloatPolygon& clipArea) {
+        if (!clipArea.isEmpty())
+            options.textureMapper.beginClip(layer->toSurfaceTransform(), clipArea);
+
+        if (layer->preserves3D())
+            layer->paintSelf(options);
+        else
+            layer->paintRecursive(options);
+
+        if (!clipArea.isEmpty())
+            options.textureMapper.endClip();
+    });
+}
+
+void TextureMapperLayer::collect3DSceneLayers(Vector<TextureMapperLayer*>& layers)
+{
+    bool isLeafOf3DScene = !m_state.preserves3D && (m_parent && m_parent->preserves3D());
+    if (preserves3D() || isLeafOf3DScene) {
+        if (m_state.visible)
+            layers.append(this);
+
+        // Stop recursion on scene leaf
+        if (isLeafOf3DScene)
+            return;
     }
-    SetForScope scopedPreserves3D(options.preserves3D, true);
 
-    Region overlapRegion;
-    Region nonOverlapRegion;
-    ComputeOverlapRegionData data {
-        ComputeOverlapRegionMode::Union,
-        options.textureMapper.clipBounds(),
-        overlapRegion,
-        nonOverlapRegion
-    };
-    data.clipBounds.move(-options.offset);
-    computeOverlapRegions(data, options.transform, false);
-    ASSERT(nonOverlapRegion.isEmpty());
-
-    auto rects = overlapRegion.rects();
-    static const size_t OverlapRegionConsolidationThreshold = 4;
-    if (rects.size() > OverlapRegionConsolidationThreshold) {
-        rects.clear();
-        rects.append(overlapRegion.bounds());
-    }
-
-    IntSize maxTextureSize = options.textureMapper.maxTextureSize();
-    for (auto& rect : rects) {
-        for (int x = rect.x(); x < rect.maxX(); x += maxTextureSize.width()) {
-            for (int y = rect.y(); y < rect.maxY(); y += maxTextureSize.height()) {
-                IntRect tileRect(IntPoint(x, y), maxTextureSize);
-                tileRect.intersect(rect);
-                auto surface = options.textureMapper.acquireTextureFromPool(tileRect.size(), { BitmapTexture::Flags::SupportsAlpha, BitmapTexture::Flags::DepthBuffer });
-                {
-                    SetForScope scopedSurface(options.surface, surface.ptr());
-                    SetForScope scopedOffset(options.offset, -toIntSize(tileRect.location()));
-                    SetForScope scopedOpacity(options.opacity, 1);
-                    SetForScope scopedFirstPass(options.isPreserves3DFirstTile, x == rect.x() && y == rect.y());
-
-                    options.textureMapper.bindSurface(options.surface.get());
-                    paintSelfAndChildrenWithReplica(options);
-                }
-
-                // Once the subtree is painted into the intermediate surface, we need to blend it into the main framebuffer.
-                tileRect.move(options.offset);
-                options.textureMapper.bindSurface(options.surface.get());
-
-                // There can't be nested preserves3D contexts, so the previous bindSurface always puts us on the
-                // main framebuffer. Draw the holepunch rectangles that we got from the subtree before blending
-                // the intermediate texture.
-                for (auto rect : options.holePunchRects)
-                    options.textureMapper.drawSolidColor(rect, { }, Color::transparentBlack, false);
-                options.holePunchRects.clear();
-
-                // And finally, blend the intermediate surface.
-                options.textureMapper.drawTexture(surface.get(), tileRect, { }, options.opacity);
-            }
-        }
-    }
+    for (auto* child : m_children)
+        child->collect3DSceneLayers(layers);
 }
 
 void TextureMapperLayer::setChildren(const Vector<TextureMapperLayer*>& newChildren)
@@ -1390,6 +1318,13 @@ void TextureMapperLayer::recordDamage(const FloatRect& rect, const Transformatio
     transformedRect.intersect(clipBounds);
 
     m_visitor->recordDamage(transformedRect);
+}
+
+FloatRect TextureMapperLayer::effectiveLayerRect() const
+{
+    if (isFlattened())
+        return m_flattenedLayer->layerRect();
+    return layerRect();
 }
 
 }
