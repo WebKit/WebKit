@@ -217,7 +217,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesExternalTextures()) {
         m_shaderModule.clearUsesExternalTextures();
-        m_stringBuilder.append("struct texture_external {\n"_s);
+        m_stringBuilder.append("struct __attribute__((packed)) texture_external {\n"_s);
         {
             IndentationScope scope(m_indent);
             m_stringBuilder.append(m_indent, "texture2d<float> FirstPlane;\n"_s,
