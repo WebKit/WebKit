@@ -52,9 +52,6 @@ class CachedResourceCallback;
 namespace WTF {
 template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
 template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::CachedResource> : std::true_type { };
-
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::CachedResourceCallback> : std::true_type { };
 }
 
 namespace WebCore {
@@ -452,14 +449,9 @@ class CachedResourceCallback {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
 public:
     CachedResourceCallback(CachedResource&, CachedResourceClient&);
-
     void cancel();
 
 private:
-    void timerFired();
-
-    WeakRef<CachedResource> m_resource;
-    SingleThreadWeakRef<CachedResourceClient> m_client;
     Timer m_timer;
 };
 

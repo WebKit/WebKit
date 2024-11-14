@@ -392,7 +392,7 @@ Page::Page(PageConfiguration&& pageConfiguration)
     , m_playbackControlsManagerUpdateTimer(*this, &Page::playbackControlsManagerUpdateTimerFired)
 #endif
     , m_isUtilityPage(isUtilityPageChromeClient(chrome().client()))
-    , m_performanceMonitor(isUtilityPage() ? nullptr : makeUnique<PerformanceMonitor>(*this))
+    , m_performanceMonitor(isUtilityPage() ? nullptr : makeUniqueWithoutRefCountedCheck<PerformanceMonitor>(*this))
     , m_lowPowerModeNotifier(makeUnique<LowPowerModeNotifier>([this](bool isLowPowerModeEnabled) { handleLowPowerModeChange(isLowPowerModeEnabled); }))
     , m_thermalMitigationNotifier(makeUnique<ThermalMitigationNotifier>([this](bool thermalMitigationEnabled) { handleThermalMitigationChange(thermalMitigationEnabled); }))
     , m_performanceLogging(makeUnique<PerformanceLogging>(*this))
@@ -1008,10 +1008,11 @@ std::optional<FrameIdentifier> Page::findString(const String& target, FindOption
 void Page::analyzeImagesForFindInPage(Function<void()>&& callback)
 {
     if (settings().imageAnalysisDuringFindInPageEnabled()) {
-        imageAnalysisQueue().setDidBecomeEmptyCallback(WTFMove(callback));
+        Ref imageAnalysisQueue = this->imageAnalysisQueue();
+        imageAnalysisQueue->setDidBecomeEmptyCallback(WTFMove(callback));
         auto* localMainFrame = dynamicDowncast<LocalFrame>(m_mainFrame.get());
         if (RefPtr mainDocument = localMainFrame ? localMainFrame->document() : nullptr)
-            imageAnalysisQueue().enqueueAllImagesIfNeeded(*mainDocument, { }, { });
+            imageAnalysisQueue->enqueueAllImagesIfNeeded(*mainDocument, { }, { });
     }
 }
 #endif
@@ -1595,8 +1596,8 @@ void Page::updateMediaElementRateChangeRestrictions()
 
 void Page::didStartProvisionalLoad()
 {
-    if (m_performanceMonitor)
-        m_performanceMonitor->didStartProvisionalLoad();
+    if (RefPtr performanceMonitor = m_performanceMonitor.get())
+        performanceMonitor->didStartProvisionalLoad();
 
     if (m_settings->resourceLoadSchedulingEnabled())
         setLoadSchedulingMode(LoadSchedulingMode::Prioritized);
@@ -1640,8 +1641,8 @@ void Page::didFinishLoad()
 {
     resetRelevantPaintedObjectCounter();
 
-    if (m_performanceMonitor)
-        m_performanceMonitor->didFinishLoad();
+    if (RefPtr performanceMonitor = m_performanceMonitor.get())
+        performanceMonitor->didFinishLoad();
 
     setLoadSchedulingMode(LoadSchedulingMode::Direct);
 
@@ -2996,8 +2997,8 @@ void Page::setActivityState(OptionSet<ActivityState> activityState)
             cache->onPageActivityStateChange(m_activityState);
     }
 
-    if (m_performanceMonitor)
-        m_performanceMonitor->activityStateChanged(oldActivityState, activityState);
+    if (RefPtr performanceMonitor = m_performanceMonitor.get())
+        performanceMonitor->activityStateChanged(oldActivityState, activityState);
 }
 
 void Page::stopKeyboardScrollAnimation()
@@ -4403,7 +4404,7 @@ void Page::didFinishLoadingImageForElement(HTMLImageElement& element)
 
         if (RefPtr page = frame->page()) {
 #if ENABLE(IMAGE_ANALYSIS)
-            if (auto* queue = page->imageAnalysisQueueIfExists())
+            if (RefPtr queue = page->imageAnalysisQueueIfExists())
                 queue->enqueueIfNeeded(element);
 #endif
             page->chrome().client().didFinishLoadingImageForElement(element);
@@ -4601,13 +4602,18 @@ Page* Page::serviceWorkerPage(ScriptExecutionContextIdentifier serviceWorkerPage
 ImageAnalysisQueue& Page::imageAnalysisQueue()
 {
     if (!m_imageAnalysisQueue)
-        m_imageAnalysisQueue = makeUnique<ImageAnalysisQueue>(*this);
+        m_imageAnalysisQueue = ImageAnalysisQueue::create(*this);
     return *m_imageAnalysisQueue;
+}
+
+Ref<ImageAnalysisQueue> Page::protectedImageAnalysisQueue()
+{
+    return imageAnalysisQueue();
 }
 
 void Page::resetImageAnalysisQueue()
 {
-    if (auto previousQueue = std::exchange(m_imageAnalysisQueue, { }))
+    if (RefPtr previousQueue = std::exchange(m_imageAnalysisQueue, { }))
         previousQueue->clear();
 }
 

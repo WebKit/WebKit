@@ -436,7 +436,7 @@ void FindController::hideFindUI()
     resetMatchIndex();
 
 #if ENABLE(IMAGE_ANALYSIS)
-    if (auto imageAnalysisQueue = m_webPage->corePage()->imageAnalysisQueueIfExists())
+    if (RefPtr imageAnalysisQueue = m_webPage->corePage()->imageAnalysisQueueIfExists())
         imageAnalysisQueue->clearDidBecomeEmptyCallback();
 #endif
 }

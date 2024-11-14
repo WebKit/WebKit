@@ -33,19 +33,16 @@
 #include "Timer.h"
 #include "WebVTTParser.h"
 #include <memory>
+#include <wtf/CheckedPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class TextTrackLoader;
 class TextTrackLoaderClient;
 }
 
 namespace WTF {
 template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
 template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::TextTrackLoaderClient> : std::true_type { };
-
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::TextTrackLoader> : std::true_type { };
 }
 
 namespace WebCore {
@@ -66,9 +63,10 @@ public:
     virtual void newStyleSheetsAvailable(TextTrackLoader&) = 0;
 };
 
-class TextTrackLoader final : public CachedResourceClient, private WebVTTParserClient {
+class TextTrackLoader final : public CachedResourceClient, private WebVTTParserClient, public CanMakeCheckedPtr<TextTrackLoader> {
     WTF_MAKE_NONCOPYABLE(TextTrackLoader); 
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Loader);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextTrackLoader);
 public:
     TextTrackLoader(TextTrackLoaderClient&, Document&);
     virtual ~TextTrackLoader();

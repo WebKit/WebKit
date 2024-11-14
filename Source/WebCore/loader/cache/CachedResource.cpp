@@ -1017,22 +1017,17 @@ unsigned CachedResource::decodedSize() const
 }
 
 inline CachedResourceCallback::CachedResourceCallback(CachedResource& resource, CachedResourceClient& client)
-    : m_resource(resource)
-    , m_client(client)
-    , m_timer(*this, &CachedResourceCallback::timerFired)
+    : m_timer([resource = CachedResourceHandle { resource }, client = WeakPtr { client }] {
+        if (client)
+            resource->didAddClient(*client);
+    })
 {
     m_timer.startOneShot(0_s);
 }
 
 inline void CachedResourceCallback::cancel()
 {
-    if (m_timer.isActive())
-        m_timer.stop();
-}
-
-void CachedResourceCallback::timerFired()
-{
-    CachedResourceHandle { m_resource.get() }->didAddClient(m_client);
+    m_timer.stop();
 }
 
 #if ENABLE(SHAREABLE_RESOURCE)

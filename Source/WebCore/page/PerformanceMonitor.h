@@ -31,15 +31,6 @@
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
-class PerformanceMonitor;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::PerformanceMonitor> : std::true_type { };
-}
-
-namespace WebCore {
 
 class Page;
 
@@ -47,6 +38,9 @@ class PerformanceMonitor {
     WTF_MAKE_TZONE_ALLOCATED(PerformanceMonitor);
 public:
     explicit PerformanceMonitor(Page&);
+
+    void ref() const;
+    void deref() const;
 
     void didStartProvisionalLoad();
     void didFinishLoad();
