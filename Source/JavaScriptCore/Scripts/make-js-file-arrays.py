@@ -27,7 +27,6 @@ import os
 from optparse import OptionParser
 import sys
 from jsmin import jsmin
-is_3 = sys.version_info >= (3, 0)
 
 
 def stringifyCodepoint(code):
@@ -73,10 +72,7 @@ def main():
         variableName = os.path.splitext(os.path.basename(inputFileName))[0]
         sourceURLDirective = "//# sourceURL=__InjectedScript_" + variableName + ".js\n"
 
-        if is_3:
-            inputStream = io.open(inputFileName, encoding='utf-8')
-        else:
-            inputStream = io.FileIO(inputFileName)
+        inputStream = io.open(inputFileName, encoding='utf-8')
 
         data = inputStream.read()
 
@@ -90,10 +86,7 @@ def main():
                 if ord(character) >= 128:
                     raise Exception("%s is not ASCII" % character)
 
-        if is_3:
-            codepoints = bytearray(characters, encoding='utf-8')
-        else:
-            codepoints = list(map(ord, characters))
+        codepoints = bytearray(characters, encoding='utf-8')
 
         # Use the size of codepoints instead of the characters
         # because UTF-8 characters may need more than one byte.

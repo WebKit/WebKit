@@ -86,9 +86,6 @@ def pytest_pycollect_makeitem(collector, name, obj):
                     % (new_attr_name, obj, method, existing_attr)
                 )
 
-        if sys.version_info < (3,) and isinstance(method, types.MethodType):
-            method = method.im_func
-
         if serial:
             method = pytest.mark.serial(method)
 

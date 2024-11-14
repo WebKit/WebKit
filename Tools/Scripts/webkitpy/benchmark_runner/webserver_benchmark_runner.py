@@ -32,7 +32,7 @@ class WebServerBenchmarkRunner(BenchmarkRunner):
         return result
 
     def _construct_subtest_url(self, subtests):
-        if not subtests or not isinstance(subtests, collections.abc.Mapping if sys.version_info >= (3, 10) else collections.Mapping) or 'subtest_url_format' not in self._plan:
+        if not subtests or not isinstance(subtests, collections.abc.Mapping) or 'subtest_url_format' not in self._plan:
             return ''
         subtest_url = ''
         for suite, tests in subtests.items():

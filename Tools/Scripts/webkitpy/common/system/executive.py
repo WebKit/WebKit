@@ -453,12 +453,6 @@ class Executive(AbstractExecutive):
             return output
 
     def _child_process_encoding(self):
-        # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
-        # to launch subprocesses, so we have to encode arguments using the
-        # current code page.
-        if self._is_native_win and sys.version_info < (3,):
-            return 'mbcs'
-        # All other platforms use UTF-8.
         # FIXME: Using UTF-8 on Cygwin will confuse Windows-native commands
         # which will expect arguments to be encoded using the current code
         # page.
@@ -468,12 +462,6 @@ class Executive(AbstractExecutive):
         # Cygwin's Python's os.execv doesn't support unicode command
         # arguments, and neither does Cygwin's execv itself.
         if self._is_cygwin:
-            return True
-
-        # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
-        # to launch subprocesses, so we have to encode arguments using the
-        # current code page.
-        if self._is_native_win and sys.version_info < (3,):
             return True
 
         return False

@@ -24,12 +24,12 @@ import io
 import sys
 
 
-basestring = str if sys.version_info > (3, 0) else basestring
+basestring = str
 BytesIO = io.BytesIO
 StringIO = io.StringIO
 UnicodeIO = io.StringIO
 
-unicode = str if sys.version_info > (3, 0) else unicode
+unicode = str
 
 
 def encode(string, encoding='utf-8', errors='strict', target_type=bytes):

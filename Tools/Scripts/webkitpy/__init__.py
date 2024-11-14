@@ -60,7 +60,6 @@ AutoInstall.register(
     Package("pytest", Version(7, 2, 0),
             implicit_deps=["attr", "pluggy", "iniconfig"]
             + (["exceptiongroup"] if sys.version_info < (3, 11) else [])
-            + (["importlib_metadata"] if sys.version_info < (3, 8) else [])
             )
 )
 AutoInstall.register(Package('pytest_asyncio', Version(0, 18, 3), pypi_name='pytest-asyncio', implicit_deps=['pytest'], wheel=True))

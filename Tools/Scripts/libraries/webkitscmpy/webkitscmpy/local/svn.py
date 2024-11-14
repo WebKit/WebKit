@@ -523,7 +523,7 @@ class Svn(Scm):
                 cwd=self.root_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                **(dict(encoding='utf-8') if sys.version_info > (3, 0) else dict())
+                encoding='utf-8',
             )
             if log.poll():
                 raise self.Exception('Failed to find commits between {} and {} on {}'.format(begin, end, branch_arg))

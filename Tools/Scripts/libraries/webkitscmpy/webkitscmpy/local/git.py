@@ -391,7 +391,7 @@ class Git(Scm):
             prod_branches=None,
             contributors=None,
             id=None,
-            cached=sys.version_info > (3, 0),
+            cached=True,
             classifier=None,
     ):
         super(Git, self).__init__(
@@ -921,7 +921,7 @@ class Git(Scm):
                 cwd=self.root_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                **(dict(encoding='utf-8') if sys.version_info > (3, 6) else dict())
+                encoding='utf-8',
             )
             if log.poll():
                 raise self.Exception("Failed to construct history for '{}'".format(end.branch))

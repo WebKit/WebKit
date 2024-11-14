@@ -32,13 +32,7 @@ from webkitpy.common.host import Host
 from webkitpy.common.test_expectations import TestExpectations
 from webkitcorepy import Timeout
 
-if os.name == 'posix' and sys.version_info[0] < 3:
-    try:
-        import subprocess32 as subprocess
-    except ImportError:
-        import subprocess
-else:
-    import subprocess
+import subprocess
 
 class TestRunner(object):
     TEST_TARGETS = []
