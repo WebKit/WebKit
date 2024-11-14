@@ -80,7 +80,7 @@ struct TZoneHeapBase {
 
     static pas_heap_ref& provideHeap()
     {
-        static bmalloc_type type = BMALLOC_TYPE_INITIALIZER(roundUpToMulipleOf8(sizeof(LibPasBmallocHeapType)), roundUpToMulipleOf8(alignof(LibPasBmallocHeapType)), __PRETTY_FUNCTION__);
+        static const bmalloc_type type = BMALLOC_TYPE_INITIALIZER(roundUpToMulipleOf8(sizeof(LibPasBmallocHeapType)), roundUpToMulipleOf8(alignof(LibPasBmallocHeapType)), __PRETTY_FUNCTION__);
         static pas_heap_ref* heap = nullptr;
 
         if (!heap)
@@ -93,11 +93,7 @@ struct TZoneHeapBase {
     {
         bmalloc_type type = BMALLOC_TYPE_INITIALIZER((unsigned)roundUpToMulipleOf8(differentSize), roundUpToMulipleOf8(alignof(LibPasBmallocHeapType)), __PRETTY_FUNCTION__);
 
-        TZONE_LOG_DEBUG("Unannotated TZone type %s:%d\n", __FILE__, __LINE__);
-        TZONE_LOG_DEBUG("  Super Class: %s\n", __PRETTY_FUNCTION__);
-
-        //  &&&& Should we figure out a way to cache this different sized heap?
-        return *TZoneHeapManager::singleton().heapRefForTZoneType(&type);
+        return *TZoneHeapManager::singleton().heapRefForTZoneTypeDifferentSize(&type);
     }
 };
 

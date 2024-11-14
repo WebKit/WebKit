@@ -25,6 +25,8 @@
 
 #pragma once
 
+BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
 #include "BInline.h"
 #include "Sizes.h"
 #include "Vector.h"
@@ -174,3 +176,5 @@ void Map<Key, Value, Hash, allowDeleting>::rehash()
 template<typename Key, typename Value, typename Hash, enum AllowDeleting allowDeleting> const unsigned Map<Key, Value, Hash, allowDeleting>::minCapacity;
 
 } // namespace bmalloc
+
+BALLOW_UNSAFE_BUFFER_USAGE_END

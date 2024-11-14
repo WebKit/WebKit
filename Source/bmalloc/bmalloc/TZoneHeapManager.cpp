@@ -35,10 +35,10 @@
 #include "VMAllocate.h"
 #include "bmalloc.h"
 #include "bmalloc_heap_inlines.h"
-#include <string.h>
 
 #if BOS(DARWIN)
 #include <stdlib.h>
+#include <string.h>
 #include <sys/sysctl.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -360,7 +360,7 @@ BINLINE unsigned TZoneHeapManager::bucketCountForSizeClass(SizeAndAlign typeSize
 
 BALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
-BINLINE unsigned TZoneHeapManager::tzoneBucketForKey(UniqueLockHolder&, bmalloc_type* type, unsigned bucketCountForSize)
+BINLINE unsigned TZoneHeapManager::tzoneBucketForKey(UniqueLockHolder&, const bmalloc_type* type, unsigned bucketCountForSize)
 {
     static constexpr bool verboseBucketSelection = false;
 
@@ -428,7 +428,7 @@ TZoneHeapManager::TZoneTypeBuckets* TZoneHeapManager::populateBucketsForSizeClas
     return buckets;
 }
 
-pas_heap_ref* TZoneHeapManager::heapRefForTZoneType(bmalloc_type* classType)
+pas_heap_ref* TZoneHeapManager::heapRefForTZoneType(const bmalloc_type* classType)
 {
     RELEASE_BASSERT(m_state >= TZoneHeapManager::Seeded);
 
@@ -457,6 +457,28 @@ pas_heap_ref* TZoneHeapManager::heapRefForTZoneType(bmalloc_type* classType)
     }
 
     return &bucketsForSize->buckets[bucket].heapref;
+}
+
+pas_heap_ref* TZoneHeapManager::TZoneHeapManager::heapRefForTZoneTypeDifferentSize(const bmalloc_type* classType)
+{
+    UniqueLockHolder lock(differentSizeMutex());
+
+    TZoneTypeAndSize typeAndSize(classType);
+
+    if (m_heapRefsByTypeAndSize.contains(typeAndSize))
+        return m_heapRefsByTypeAndSize.get(typeAndSize);
+
+    TZONE_LOG_DEBUG("Unannotated TZone type with size: %zu alignment: %zu\n", bmalloc_type_size(classType), bmalloc_type_alignment(classType));
+    const char* realName = strchr(bmalloc_type_name(classType), '[');
+    if (!realName)
+        realName = bmalloc_type_name(classType);
+    TZONE_LOG_DEBUG("  Super Class: %s\n", realName);
+
+    pas_heap_ref* result = heapRefForTZoneType(classType);
+
+    m_heapRefsByTypeAndSize.set(typeAndSize, result);
+
+    return result;
 }
 
 } } // namespace bmalloc::api
