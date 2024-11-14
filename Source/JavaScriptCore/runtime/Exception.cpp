@@ -63,6 +63,7 @@ void Exception::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     visitor.append(thisObject->m_value);
     for (StackFrame& frame : thisObject->m_stack)
         frame.visitAggregate(visitor);
+    visitor.reportExtraMemoryVisited(thisObject->m_stack.size() * sizeof(StackFrame));
 }
 
 DEFINE_VISIT_CHILDREN(Exception);
@@ -83,6 +84,7 @@ void Exception::finishCreation(VM& vm, StackCaptureAction action)
     if (action == StackCaptureAction::CaptureStack)
         vm.interpreter.getStackTrace(this, stackTrace, 0, Options::exceptionStackTraceLimit());
     m_stack = WTFMove(stackTrace);
+    vm.heap.reportExtraMemoryAllocated(this, m_stack.size() * sizeof(StackFrame));
 }
 
 } // namespace JSC

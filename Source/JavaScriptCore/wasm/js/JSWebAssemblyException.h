@@ -69,7 +69,7 @@ public:
 protected:
     JSWebAssemblyException(VM&, Structure*, const Wasm::Tag&, FixedVector<uint64_t>&&);
 
-    DECLARE_DEFAULT_FINISH_CREATION;
+    void finishCreation(VM&);
 
     Ref<const Wasm::Tag> m_tag;
     Payload m_payload;
