@@ -1159,7 +1159,6 @@ webkit.org/b/254522 media/video-volume.html [ Pass Failure ]
 webkit.org/b/254525 http/tests/media/video-throttled-load-metadata.html [ Pass Failure ]
 media/video-seek-to-current-time.html [ Pass Failure ]
 
-webkit.org/b/281489 http/wpt/mediarecorder/MediaRecorder-first-frame.html [ Pass Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/mute-tracks.html [ Failure Crash ]
 webkit.org/b/213699 http/wpt/mediarecorder/video-rotation.html [ Failure ]
 webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-mimetype.html [ Pass Timeout ]
@@ -1168,7 +1167,6 @@ webkit.org/b/213699 imported/w3c/web-platform-tests/mediacapture-record/MediaRec
 webkit.org/b/213699 http/wpt/mediarecorder/set-srcObject-MediaStream-Blob.html [ Pass Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-audio-bitrate.html [ Pass Failure ]
 webkit.org/b/213699 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Timeout Failure ]
-webkit.org/b/282911 imported/w3c/web-platform-tests/mediacapture-record/MediaRecorder-blob-timecode.https.html [ Failure Crash ]
 
 # The mp4 test here is passing but the webm test fails, matroskademux fails to seek in push mode,
 # due to missing index. GLib baselines reflect this, the Pass expectation is kept here for future reference.

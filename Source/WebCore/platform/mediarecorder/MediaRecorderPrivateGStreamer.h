@@ -70,7 +70,7 @@ private:
     GRefPtr<GstEncodingContainerProfile> containerProfile();
     MediaStreamPrivate& stream() const { return m_stream; }
     void processSample(GRefPtr<GstSample>&&);
-    void notifyPosition(GstClockTime position) { m_position = GST_TIME_AS_SECONDS(position); }
+    void notifyPosition(GstClockTime);
     void notifyEOS();
 
     GRefPtr<GstEncodingProfile> m_audioEncodingProfile;
@@ -84,10 +84,11 @@ private:
     Condition m_eosCondition;
     Lock m_eosLock;
     bool m_eos WTF_GUARDED_BY_LOCK(m_eosLock);
-    double m_position { 0 };
 
     Lock m_dataLock;
     SharedBufferBuilder m_data WTF_GUARDED_BY_LOCK(m_dataLock);
+    MediaTime m_position WTF_GUARDED_BY_LOCK(m_dataLock) { MediaTime::invalidTime() };
+    double m_timeCode WTF_GUARDED_BY_LOCK(m_dataLock) { 0 };
 
     MediaStreamPrivate& m_stream;
     const MediaRecorderPrivateOptions& m_options;

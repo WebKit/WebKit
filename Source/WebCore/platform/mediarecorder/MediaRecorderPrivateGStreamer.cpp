@@ -180,7 +180,7 @@ void MediaRecorderPrivateBackend::stopRecording(CompletionHandler<void()>&& comp
         completionHandler();
     });
 
-    if (!m_position) {
+    if (m_position.isInvalid()) {
         GST_DEBUG_OBJECT(m_transcoder.get(), "Transcoder has not started yet, no need for EOS event");
         m_eos = true;
         return;
@@ -207,10 +207,20 @@ void MediaRecorderPrivateBackend::fetchData(MediaRecorderPrivate::FetchDataCallb
             completionHandler(nullptr, mimeType, 0);
             return;
         }
-        Locker locker { m_dataLock };
-        GST_DEBUG_OBJECT(m_transcoder.get(), "Transfering %zu encoded bytes, mimeType: %s", m_data.size(), mimeType.ascii().data());
-        auto buffer = m_data.take();
-        completionHandler(WTFMove(buffer), mimeType, m_position);
+        double timeCode = 0;
+        RefPtr<FragmentedSharedBuffer> buffer;
+        {
+            Locker locker { m_dataLock };
+            GST_DEBUG_OBJECT(m_transcoder.get(), "Transfering %zu encoded bytes, mimeType: %s", m_data.size(), mimeType.ascii().data());
+            buffer = m_data.take();
+            timeCode = m_timeCode;
+        }
+        completionHandler(WTFMove(buffer), mimeType, timeCode);
+        {
+            Locker locker { m_dataLock };
+            if (m_position.isValid())
+                m_timeCode = m_position.toDouble();
+        }
     });
 }
 
@@ -454,6 +464,12 @@ void MediaRecorderPrivateBackend::processSample(GRefPtr<GstSample>&& sample)
 
     GST_LOG_OBJECT(m_transcoder.get(), "Queueing %zu bytes of encoded data, caps: %" GST_PTR_FORMAT, buffer.size(), gst_sample_get_caps(sample.get()));
     m_data.append(std::span<const uint8_t> { buffer.data(), buffer.size() });
+}
+
+void MediaRecorderPrivateBackend::notifyPosition(GstClockTime position)
+{
+    Locker locker { m_dataLock };
+    m_position = fromGstClockTime(position);
 }
 
 void MediaRecorderPrivateBackend::notifyEOS()
