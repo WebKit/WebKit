@@ -89,6 +89,9 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     AXTRACE("AXIsolatedObject::initializeProperties"_s);
     auto& object = axObject.get();
 
+    // These properties are cached for all objects, ignored and unignored.
+    setProperty(AXPropertyName::HasBodyTag, object.hasBodyTag());
+    setProperty(AXPropertyName::HasClickHandler, object.hasClickHandler());
 
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     if (object.includeIgnoredInCoreTree()) {
@@ -170,7 +173,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::PosInSet, object.posInSet());
     setProperty(AXPropertyName::SupportsDropping, object.supportsDropping());
     setProperty(AXPropertyName::SupportsDragging, object.supportsDragging());
-    setProperty(AXPropertyName::SupportsPressAction, object.supportsPressAction());
     setProperty(AXPropertyName::IsGrabbed, object.isGrabbed());
     setProperty(AXPropertyName::PlaceholderValue, object.placeholderValue().isolatedCopy());
     setProperty(AXPropertyName::ExpandedTextValue, object.expandedTextValue().isolatedCopy());
@@ -528,9 +530,6 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
             return;
         case AXPropertyName::SupportsPosInSet:
             setPropertyFlag(AXPropertyFlag::SupportsPosInSet, std::get<bool>(value));
-            return;
-        case AXPropertyName::SupportsPressAction:
-            setPropertyFlag(AXPropertyFlag::SupportsPressAction, std::get<bool>(value));
             return;
         case AXPropertyName::SupportsRequiredAttribute:
             setPropertyFlag(AXPropertyFlag::SupportsRequiredAttribute, std::get<bool>(value));
@@ -1126,8 +1125,6 @@ bool AXIsolatedObject::boolAttributeValue(AXPropertyName propertyName) const
         return hasPropertyFlag(AXPropertyFlag::SupportsPath);
     case AXPropertyName::SupportsPosInSet:
         return hasPropertyFlag(AXPropertyFlag::SupportsPosInSet);
-    case AXPropertyName::SupportsPressAction:
-        return hasPropertyFlag(AXPropertyFlag::SupportsPressAction);
     case AXPropertyName::SupportsRequiredAttribute:
         return hasPropertyFlag(AXPropertyFlag::SupportsRequiredAttribute);
     case AXPropertyName::SupportsSetSize:

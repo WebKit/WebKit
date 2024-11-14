@@ -99,6 +99,11 @@ struct AccessibilityText;
 struct CharacterRange;
 struct ScrollRectToVisibleOptions;
 
+enum class ClickHandlerFilter : bool {
+    ExcludeBody,
+    IncludeBody,
+};
+
 enum class DateComponentsType : uint8_t;
 
 enum class AXIDType { };
@@ -771,6 +776,10 @@ public:
     // lists support (l, ul, ol, dl)
     bool isList() const;
     virtual bool isFileUploadButton() const = 0;
+    // Returns true for objects whose role implies interactivity. For example, when a screen
+    // reader announces "link", it doesn't need to announce "clickable" or "pressable" — that
+    // is implicit in the concept of a link.
+    bool isImplicitlyInteractive() const;
 
     // Table support.
     virtual bool isTable() const = 0;
@@ -1089,7 +1098,7 @@ public:
 
     virtual AXObjectCache* axObjectCache() const = 0;
 
-    virtual bool supportsPressAction() const = 0;
+    bool supportsPressAction() const;
     virtual Element* actionElement() const = 0;
 
     // Rect relative to root document origin (i.e. absolute coordinates), disregarding viewport state.
@@ -1365,6 +1374,8 @@ public:
     virtual void setCaretBrowsingEnabled(bool) = 0;
 #endif
 
+    virtual bool hasClickHandler() const = 0;
+    virtual AXCoreObject* clickableSelfOrAncestor(ClickHandlerFilter = ClickHandlerFilter::ExcludeBody) const = 0;
     virtual AXCoreObject* focusableAncestor() = 0;
     virtual AXCoreObject* editableAncestor() = 0;
     virtual AXCoreObject* highestEditableAncestor() = 0;
@@ -1372,6 +1383,7 @@ public:
 
     virtual AccessibilityChildrenVector documentLinks() = 0;
 
+    virtual bool hasBodyTag() const = 0;
     virtual String innerHTML() const = 0;
     virtual String outerHTML() const = 0;
 
@@ -1475,25 +1487,31 @@ inline Vector<AXID> AXCoreObject::childrenIDs(bool updateChildrenIfNeeded)
 
 namespace Accessibility {
 
-template<typename T, typename F>
-T* findAncestor(const T& object, bool includeSelf, const F& matches)
+template<typename T, typename MatchFunctionT, typename StopFunctionT>
+T* findAncestor(const T& object, bool includeSelf, const MatchFunctionT& matches, const StopFunctionT& shouldStop)
 {
-    T* parent;
+    RefPtr<T> current;
     if (includeSelf)
-        parent = const_cast<T*>(&object);
-    else {
-        auto* parentPtr = object.parentObject();
-        if (!is<T>(parentPtr))
+        current = const_cast<T*>(&object);
+    else
+        current = object.parentObject();
+
+    for (; current; current = current->parentObject()) {
+        if (shouldStop(*current))
             return nullptr;
-        parent = parentPtr;
-    }
 
-    for (; parent; parent = parent->parentObject()) {
-        if (matches(*parent))
-            return parent;
+        if (matches(*current))
+            return current.get();
     }
-
     return nullptr;
+}
+
+template<typename T, typename MatchFunctionT>
+T* findAncestor(const T& object, bool includeSelf, const MatchFunctionT& matches)
+{
+    return findAncestor(object, includeSelf, matches, [] (const auto&) {
+        return false;
+    });
 }
 
 template<typename T>
@@ -1502,6 +1520,34 @@ T* focusableAncestor(T& startObject)
     return findAncestor<T>(startObject, false, [] (const auto& ancestor) {
         return ancestor.canSetFocusAttribute();
     });
+}
+
+template<typename T>
+T* clickableSelfOrAncestor(const T& startObject, ClickHandlerFilter filter)
+{
+    if (filter == ClickHandlerFilter::IncludeBody) {
+        return clickableSelfOrAncestor<T>(startObject, [] (const T&) {
+            return false;
+        });
+    }
+
+    return clickableSelfOrAncestor<T>(startObject, [] (const T& ancestor) {
+        // Stop iterating if we get to the <body>.
+        return ancestor.hasBodyTag();
+    });
+}
+
+template<typename T, typename F>
+T* clickableSelfOrAncestor(const T& startObject, const F& shouldStop)
+{
+    T* ancestor = findAncestor<T>(startObject, true, [] (const auto& ancestor) {
+        return ancestor.hasClickHandler();
+    }, shouldStop);
+
+    // Presentational objects should not be allowed to be clicked.
+    if (ancestor && ancestor->roleValue() == AccessibilityRole::Presentational)
+        return nullptr;
+    return ancestor;
 }
 
 template<typename T>

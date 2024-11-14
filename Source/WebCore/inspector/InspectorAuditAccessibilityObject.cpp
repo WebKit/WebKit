@@ -276,8 +276,10 @@ ExceptionOr<RefPtr<Node>> InspectorAuditAccessibilityObject::getMouseEventNode(N
 {
     ERROR_IF_NO_ACTIVE_AUDIT();
 
-    if (auto* accessibilityNodeObject = dynamicDowncast<AccessibilityNodeObject>(accessibilityObjectForNode(node)))
-        return accessibilityNodeObject->mouseButtonListener(MouseButtonListenerResultFilter::IncludeBodyElement);
+    if (auto* axObject = accessibilityObjectForNode(node)) {
+        if (auto* clickableObject = axObject->clickableSelfOrAncestor(ClickHandlerFilter::IncludeBody))
+            return clickableObject->node();
+    }
 
     return nullptr;
 }

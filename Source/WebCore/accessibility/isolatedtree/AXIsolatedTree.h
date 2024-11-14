@@ -79,9 +79,8 @@ enum class AXPropertyFlag : uint32_t {
     SupportsExpanded                              = 1 << 18,
     SupportsPath                                  = 1 << 19,
     SupportsPosInSet                              = 1 << 20,
-    SupportsPressAction                           = 1 << 21,
-    SupportsRequiredAttribute                     = 1 << 22,
-    SupportsSetSize                               = 1 << 23
+    SupportsRequiredAttribute                     = 1 << 21,
+    SupportsSetSize                               = 1 << 22
 };
 
 enum class AXPropertyName : uint16_t {
@@ -132,6 +131,8 @@ enum class AXPropertyName : uint16_t {
     ExtendedDescription,
     HasApplePDFAnnotationAttribute,
     HasBoldFont,
+    HasBodyTag,
+    HasClickHandler,
     HasHighlighting,
     HasItalicFont,
     HasPlainText,
@@ -261,7 +262,6 @@ enum class AXPropertyName : uint16_t {
     SupportsKeyShortcuts,
     SupportsPath,
     SupportsPosInSet,
-    SupportsPressAction,
     SupportsRangeValue,
     SupportsRequiredAttribute,
     SupportsSetSize,
@@ -369,6 +369,11 @@ public:
     void updateChildrenForObjects(const ListHashSet<Ref<AccessibilityObject>>&);
     void updateNodeProperty(AXCoreObject& object, AXPropertyName property) { updateNodeProperties(object, { property }); }
     void updateNodeProperties(AXCoreObject&, const AXPropertyNameSet&);
+    void updateNodeProperties(AccessibilityObject* axObject, const AXPropertyNameSet& properties)
+    {
+        if (axObject)
+            updateNodeProperties(*axObject, properties);
+    }
     void updateDependentProperties(AccessibilityObject&);
     void updatePropertiesForSelfAndDescendants(AccessibilityObject&, const AXPropertyNameSet&);
     void updateFrame(AXID, IntRect&&);

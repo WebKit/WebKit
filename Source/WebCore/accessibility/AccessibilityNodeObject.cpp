@@ -1271,31 +1271,19 @@ Element* AccessibilityNodeObject::actionElement() const
         break;
     }
 
-    Element* elt = anchorElement();
-    if (!elt)
-        elt = mouseButtonListener();
-    return elt;
-}
+    if (auto* element = anchorElement())
+        return element;
 
-Element* AccessibilityNodeObject::mouseButtonListener(MouseButtonListenerResultFilter filter) const
-{
-    WeakPtr node = this->node();
-    if (!node)
-        return nullptr;
-
-    // check if our parent is a mouse button listener
-    // FIXME: Do the continuation search like anchorElement does
-    for (auto& element : lineageOfType<Element>(*node)) {
-        // If we've reached the body and this is not a control element, do not expose press action for this element unless filter is IncludeBodyElement.
-        // It can cause false positives, where every piece of text is labeled as accepting press actions.
-        if (element.hasTagName(bodyTag) && isStaticText() && filter == ExcludeBodyElement)
-            break;
-
-        if (element.hasEventListeners(eventNames().clickEvent) || element.hasEventListeners(eventNames().mousedownEvent) || element.hasEventListeners(eventNames().mouseupEvent))
-            return &element;
-    }
+    if (auto* clickableObject = this->clickableSelfOrAncestor())
+        return clickableObject->element();
 
     return nullptr;
+}
+
+bool AccessibilityNodeObject::hasClickHandler() const
+{
+    RefPtr element = this->element();
+    return element && element->hasAnyEventListeners({ eventNames().clickEvent, eventNames().mousedownEvent, eventNames().mouseupEvent });
 }
 
 bool AccessibilityNodeObject::isDescendantOfBarrenParent() const

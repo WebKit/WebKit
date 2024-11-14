@@ -5,7 +5,6 @@
 </head>
 <body id="body">
 
-<div role="group" id="group" tabindex="0">group</div>
 <div role="button" id="button" tabindex="0">button</div>
 <div role="tab" id="tab" tabindex="0">tab button</div>
 <div role="radio" id="radio" tabindex="0">radio</div>
@@ -20,61 +19,55 @@
 <div id="console"></div>
 
 <script>
+document.getElementById("body").onmousedown = handlePress;
 
-    document.getElementById("body").onmousedown = handlePress;
+var pressCount = 0;
+var eventSrcElement;
+function handlePress(e) {
+   eventSrcElement = e.srcElement;
 
-    var pressCount = 0;
-    var eventSrcElement;
-    function handlePress(e) {
-       eventSrcElement = e.srcElement;
+   if (pressCount == 0)
+      shouldBeTrue("eventSrcElement == document.getElementById('button')");
+   else if (pressCount == 1)
+      shouldBeTrue("eventSrcElement == document.getElementById('tab')");
+   else if (pressCount == 2)
+      shouldBeTrue("eventSrcElement == document.getElementById('radio')");
+   else if (pressCount == 3)
+      shouldBeTrue("eventSrcElement == document.getElementById('checkbox')");
+   else if (pressCount == 4)
+      shouldBeTrue("eventSrcElement == document.getElementById('menuitem')");
+   else if (pressCount == 5)
+      shouldBeTrue("eventSrcElement == document.getElementById('menuitemcheckbox')");
+   else if (pressCount == 6)
+      shouldBeTrue("eventSrcElement == document.getElementById('menuitemradio')");
+   else if (pressCount == 7)
+      shouldBeTrue("eventSrcElement == document.getElementById('listitem')");
+   else if (pressCount == 8)
+      shouldBeTrue("eventSrcElement == document.getElementById('subbutton')");
 
-       if (pressCount == 0)
-          shouldBeTrue("eventSrcElement == document.getElementById('group')");
-       else if (pressCount == 1)
-          shouldBeTrue("eventSrcElement == document.getElementById('button')");
-       else if (pressCount == 2)
-          shouldBeTrue("eventSrcElement == document.getElementById('tab')");
-       else if (pressCount == 3)
-          shouldBeTrue("eventSrcElement == document.getElementById('radio')");
-       else if (pressCount == 4)
-          shouldBeTrue("eventSrcElement == document.getElementById('checkbox')");
-       else if (pressCount == 5)
-          shouldBeTrue("eventSrcElement == document.getElementById('menuitem')");
-       else if (pressCount == 6)
-          shouldBeTrue("eventSrcElement == document.getElementById('menuitemcheckbox')");
-       else if (pressCount == 7)
-          shouldBeTrue("eventSrcElement == document.getElementById('menuitemradio')");
-       else if (pressCount == 8)
-          shouldBeTrue("eventSrcElement == document.getElementById('listitem')");
-       else if (pressCount == 9)
-          shouldBeTrue("eventSrcElement == document.getElementById('subbutton')");
+   pressCount++;
+}
 
-       pressCount++;
-    }
-
-    description("This tests that when certain control type elements are pressed, a valid event is sent that references the right element.");
-
-    var items = new Array("group", "button", "tab", "radio", "checkbox", "menuitem", "menuitemcheckbox", "menuitemradio", "listitem", "button2");
-    var length = items.length;
+var items = ["button", "tab", "radio", "checkbox", "menuitem", "menuitemcheckbox", "menuitemradio", "listitem", "button2"];
+var length = items.length;
+function accessibilityPress(k) {
+   if (k == length)
+      finishJSTest();
     
-    if (window.accessibilityController) {
-        jsTestIsAsync = true;
-        // AXPress on Mac is async, let's give it some delay and do it recursively.
-        accessibilityPress(0);
-    }
-    
-    function accessibilityPress(k) {
-        if (k == length)
-            finishJSTest();
-        
-        accessibilityController.accessibleElementById(items[k]).press();
-        setTimeout(function() {
-            accessibilityPress(k+1);
-        }, 10);
-    }
+   accessibilityController.accessibleElementById(items[k]).press();
+   setTimeout(function() {
+       accessibilityPress(k+1);
+   }, 10);
+}
 
+if (window.accessibilityController) {
+   description("This tests that when certain control type elements are pressed, a valid event is sent that references the right element.");
+
+   jsTestIsAsync = true;
+   // AXPress on Mac is async, let's give it some delay and do it recursively.
+   accessibilityPress(0);
+}
 </script>
-
 <script src="../resources/js-test-post.js"></script>
 </body>
 </html>

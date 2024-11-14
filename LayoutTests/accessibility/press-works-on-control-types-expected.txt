@@ -1,4 +1,3 @@
-group
 button
 tab button
 radio
@@ -13,7 +12,6 @@ This tests that when certain control type elements are pressed, a valid event is
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS eventSrcElement == document.getElementById('group') is true
 PASS eventSrcElement == document.getElementById('button') is true
 PASS eventSrcElement == document.getElementById('tab') is true
 PASS eventSrcElement == document.getElementById('radio') is true

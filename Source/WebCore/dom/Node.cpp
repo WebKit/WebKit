@@ -2465,6 +2465,9 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomString& event
     }
 #endif
 
+    if (CheckedPtr cache = document->existingAXObjectCache())
+        cache->onEventListenerAdded(*targetNode, eventType);
+
     return true;
 }
 
@@ -2506,6 +2509,9 @@ static inline bool didRemoveEventListenerOfType(Node& targetNode, const AtomStri
     if (typeInfo.isInCategory(EventCategory::Gesture))
         document->removeTouchEventHandler(targetNode);
 #endif
+
+    if (CheckedPtr cache = document->existingAXObjectCache())
+        cache->onEventListenerRemoved(targetNode, eventType);
 
     return true;
 }

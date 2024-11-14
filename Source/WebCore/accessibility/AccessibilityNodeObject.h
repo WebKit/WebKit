@@ -39,11 +39,6 @@ class Element;
 class HTMLLabelElement;
 class Node;
 
-enum MouseButtonListenerResultFilter {
-    ExcludeBodyElement = 1,
-    IncludeBodyElement,
-};
-
 class AccessibilityNodeObject : public AccessibilityObject {
 public:
     static Ref<AccessibilityNodeObject> create(AXID, Node&);
@@ -118,10 +113,10 @@ public:
     String ariaLabeledByAttribute() const override;
     bool hasAccNameAttribute() const;
     bool hasAttributesRequiredForInclusion() const final;
+    bool hasClickHandler() const final;
     void setIsExpanded(bool) override;
 
     Element* actionElement() const override;
-    Element* mouseButtonListener(MouseButtonListenerResultFilter = ExcludeBodyElement) const;
     Element* anchorElement() const override;
     RefPtr<Element> popoverTargetElement() const final;
     AXCoreObject* internalLinkElement() const final;

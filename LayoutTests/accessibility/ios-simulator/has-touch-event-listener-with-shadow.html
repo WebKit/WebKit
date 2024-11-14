@@ -28,7 +28,7 @@ var successfullyParsed = false;
     function go() {
         if (window.accessibilityController) {
             audioElement = accessibilityController.accessibleElementById("audio1");
-            button = audioElement.childAtIndex(0).childAtIndex(0);
+            button = audioElement.childAtIndex(0).childAtIndex(0).childAtIndex(1);
             shouldBeTrue("button.boolAttributeValue('AXHasTouchEventListener')");
             shouldBe("button.description", "'AXLabel: Play'");
             finishJSTest();

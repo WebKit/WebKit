@@ -762,8 +762,14 @@ TextStream& operator<<(WTF::TextStream& stream, AXPropertyName property)
     case AXPropertyName::HasApplePDFAnnotationAttribute:
         stream << "HasApplePDFAnnotationAttribute";
         break;
+    case AXPropertyName::HasBodyTag:
+        stream << "HasBodyTag";
+        break;
     case AXPropertyName::HasBoldFont:
         stream << "HasBoldFont";
+        break;
+    case AXPropertyName::HasClickHandler:
+        stream << "HasClickHandler";
         break;
     case AXPropertyName::HasHighlighting:
         stream << "HasHighlighting";
@@ -1151,9 +1157,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXPropertyName property)
         break;
     case AXPropertyName::SupportsPosInSet:
         stream << "SupportsPosInSet";
-        break;
-    case AXPropertyName::SupportsPressAction:
-        stream << "SupportsPressAction";
         break;
     case AXPropertyName::SupportsRangeValue:
         stream << "SupportsRangeValue";

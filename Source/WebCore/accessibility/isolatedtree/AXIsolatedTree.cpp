@@ -646,6 +646,9 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
         case AXPropertyName::ExtendedDescription:
             propertyMap.set(AXPropertyName::ExtendedDescription, axObject.extendedDescription().isolatedCopy());
             break;
+        case AXPropertyName::HasClickHandler:
+            propertyMap.set(AXPropertyName::HasClickHandler, axObject.hasClickHandler());
+            break;
         case AXPropertyName::IdentifierAttribute:
             propertyMap.set(AXPropertyName::IdentifierAttribute, axObject.identifierAttribute().isolatedCopy());
             break;

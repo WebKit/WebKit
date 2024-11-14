@@ -72,6 +72,43 @@ bool AXCoreObject::isMenuItem() const
     }
 }
 
+bool AXCoreObject::isImplicitlyInteractive() const
+{
+    switch (roleValue()) {
+    case AccessibilityRole::Button:
+    case AccessibilityRole::Checkbox:
+    case AccessibilityRole::ColorWell:
+    case AccessibilityRole::ComboBox:
+    case AccessibilityRole::DateTime:
+    case AccessibilityRole::Details:
+    case AccessibilityRole::ImageMapLink:
+    case AccessibilityRole::LandmarkSearch:
+    case AccessibilityRole::Link:
+    case AccessibilityRole::ListBox:
+    case AccessibilityRole::ListBoxOption:
+    case AccessibilityRole::MenuItemCheckbox:
+    case AccessibilityRole::MenuItemRadio:
+    case AccessibilityRole::MenuListOption:
+    case AccessibilityRole::MenuListPopup:
+    case AccessibilityRole::PopUpButton:
+    case AccessibilityRole::RadioButton:
+    case AccessibilityRole::SearchField:
+    case AccessibilityRole::Slider:
+    case AccessibilityRole::SliderThumb:
+    case AccessibilityRole::SpinButton:
+    case AccessibilityRole::SpinButtonPart:
+    case AccessibilityRole::Switch:
+    case AccessibilityRole::Tab:
+    case AccessibilityRole::TextArea:
+    case AccessibilityRole::TextField:
+    case AccessibilityRole::ToggleButton:
+    case AccessibilityRole::WebCoreLink:
+        return true;
+    default:
+        return false;
+    }
+}
+
 bool AXCoreObject::isLandmark() const
 {
     switch (roleValue()) {
@@ -464,6 +501,47 @@ String AXCoreObject::ariaLandmarkRoleDescription() const
     default:
         return { };
     }
+}
+
+bool AXCoreObject::supportsPressAction() const
+{
+    if (roleValue() == AccessibilityRole::Presentational)
+        return false;
+
+    if (isImplicitlyInteractive() || hasClickHandler())
+        return true;
+
+    if ((isStaticText() || isImage()) && !isIgnored()) {
+        // These roles are not interactive, but sometimes authors expose click handlers on them or ancestors without
+        // other appropriate ARIA markup indicating interactivity (e.g. by applying role="button"). We can repair these
+        // scenarios by checking for a clickable ancestor. But want to do so selectively, as naively exposing press on
+        // every text can be annoying as some screenreaders read "clickable" for each static text.
+        if (RefPtr clickableAncestor = Accessibility::clickableSelfOrAncestor(*this, [&] (const auto& ancestor) {
+            // Stop iterating if we walk over an implicitly interactive element on our way to the click handler, as
+            // we can rely on the semantics of that element to imply pressability. Also stop when encountering the body
+            // or main to avoid exposing pressability for everything in web apps that implement an event-delegation mechanism.
+            return ancestor.isImplicitlyInteractive() || ancestor.roleValue() == AccessibilityRole::LandmarkMain || ancestor.hasBodyTag();
+        })) {
+            unsigned matches = 0;
+            unsigned candidatesChecked = 0;
+            RefPtr candidate = clickableAncestor;
+            while ((candidate = candidate->nextInPreOrder(/* updateChildren */ true, /* stayWithin */ *clickableAncestor))) {
+                if (candidate->isStaticText() || candidate->isControl() || candidate->isImage() || candidate->isHeading() || candidate->isLink()) {
+                    if (!candidate->isIgnored())
+                        ++matches;
+
+                    if (matches >= 2)
+                        return false;
+                }
+
+                ++candidatesChecked;
+                if (candidatesChecked > 256)
+                    return false;
+            }
+            return true;
+        }
+    }
+    return false;
 }
 
 bool AXCoreObject::supportsActiveDescendant() const
