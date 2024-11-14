@@ -29,7 +29,6 @@
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
 
 #import "Logging.h"
-#import "WKCrashReporter.h"
 #import <CoreRE/RECGCommandsContext.h>
 #import <WebCore/DynamicContentScalingDisplayList.h>
 #import <WebCore/GraphicsContextCG.h>
@@ -121,18 +120,6 @@ std::optional<ImageBufferBackendHandle> DynamicContentScalingImageBufferBackend:
     Vector<MachSendRight> sendRights;
     if (m_resourceCache) {
         sendRights = makeVector(ports.get(), [] (CFTypeRef port) -> std::optional<MachSendRight> {
-            // FIXME: Remove this once rdar://131143854 is resolved.
-            if (!dynamic_cf_cast<CAMachPortRef>(port)) {
-                auto typeID = CFGetTypeID(port);
-                String typeDescription { adoptCF(CFCopyTypeIDDescription(typeID)).get() };
-                String objectDescription { adoptCF(CFCopyDescription(port)).get() };
-                auto description = makeString("Unexpected type in DCS ports array: "_s, typeID, " "_s, typeDescription, " "_s, objectDescription);
-                logAndSetCrashLogMessage(description.utf8().data());
-
-                std::array<uint64_t, 6> values { 0, 0, 0, 0, 0, 0 };
-                strncpy(reinterpret_cast<char*>(values.data()), typeDescription.utf8().data(), sizeof(values));
-                CRASH_WITH_INFO(values[0], values[1], values[2], values[3], values[4], values[5]);
-            }
             // We `create` instead of `adopt` because CAMachPort has no API to leak its reference.
             return { MachSendRight::create(CAMachPortGetPort(checked_cf_cast<CAMachPortRef>(port))) };
         });
