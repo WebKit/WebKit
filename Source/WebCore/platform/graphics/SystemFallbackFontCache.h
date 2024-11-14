@@ -67,6 +67,7 @@ class SystemFallbackFontCache {
     WTF_MAKE_NONCOPYABLE(SystemFallbackFontCache);
 public:
     static SystemFallbackFontCache& forCurrentThread();
+    static SystemFallbackFontCache* forCurrentThreadIfExists();
 
     SystemFallbackFontCache() = default;
 
