@@ -937,24 +937,25 @@ AXTextMarker AXTextMarker::findMarker(AXDirection direction, AXTextUnit textUnit
     // Paragraphs must be handled differently from word + sentence boundaries, as there is no paragraph break iterator.
     // Rather, paragraph boundaries are based on rendered newlines and differences in node editability and block-grouping (through containing blocks).
     if (textUnit == AXTextUnit::Paragraph) {
-        size_t startLineIndex = currentRuns->lineID(runIndex).lineIndex;
-        unsigned offsetInStartLine =  startLineIndex ? offset() - currentRuns->runLengthSumTo(startLineIndex) : offset();
+        unsigned sumToRunIndex = runIndex ? currentRuns->runLengthSumTo(runIndex - 1) : 0;
+        unsigned offsetInStartLine = offset() - sumToRunIndex;
 
         while (currentObject) {
             RELEASE_ASSERT(currentRuns->size());
-            unsigned cumulativeOffset = direction == AXDirection::Next ? 0 : currentRuns->runLengthSumTo(startLineIndex);
-            for (size_t i = startLineIndex; i < currentRuns->size() && i >= 0; direction == AXDirection::Next ? i++ : i--) {
+            for (size_t i = runIndex; i < currentRuns->size() && i >= 0; direction == AXDirection::Next ? i++ : i--) {
                 // If a text run starts or ends with a newline character, that indicates a paragraph boundary. However, if the direction
                 // is Next, and our starting offset points to the end of the line (past the newline character), we are past the boundary.
-                if (currentRuns->at(i).endsWithLineBreak() && (i != startLineIndex || (direction == AXDirection::Next && currentRuns->runLength(i) != offsetInStartLine))) {
-                    unsigned newlineOffsetConsideringDirection = direction == AXDirection::Next ? cumulativeOffset + currentRuns->runLength(i) - 1 : cumulativeOffset;
+                if (currentRuns->at(i).endsWithLineBreak() && (i != runIndex || (direction == AXDirection::Next && currentRuns->runLength(i) != offsetInStartLine))) {
+                    unsigned sumIncludingCurrentLine = currentRuns->runLengthSumTo(i);
+                    unsigned newlineOffsetConsideringDirection = direction == AXDirection::Next ? sumIncludingCurrentLine - 1 : sumIncludingCurrentLine;
                     return { *currentObject, newlineOffsetConsideringDirection };
                 }
-                if (currentRuns->at(i).startsWithLineBreak() && (i != startLineIndex || direction == AXDirection::Previous)) {
+
+                if (currentRuns->at(i).startsWithLineBreak() && (i != runIndex || (direction == AXDirection::Previous && offsetInStartLine))) {
+                    unsigned sumUpToCurrentLine = i ? currentRuns->runLengthSumTo(i - 1) : 0;
                     unsigned newlineOffsetConsideringDirection = direction == AXDirection::Next ? 0 : 1;
-                    return { *currentObject, cumulativeOffset + newlineOffsetConsideringDirection };
+                    return { *currentObject, sumUpToCurrentLine + newlineOffsetConsideringDirection };
                 }
-                cumulativeOffset = direction == AXDirection::Next ? cumulativeOffset + currentRuns->runLength(i) : cumulativeOffset - currentRuns->runLength(i);
             }
 
             RefPtr previousObject = currentObject;
@@ -973,6 +974,35 @@ AXTextMarker AXTextMarker::findMarker(AXDirection direction, AXTextUnit textUnit
 
     return { };
 }
+
+AXTextMarker AXTextMarker::previousParagraphStart(std::optional<AXID> stopAtID) const
+{
+    // Mimic previousParagraphStartCharacterOffset and move off the current text marker.
+    auto adjacentMarker = findMarker(AXDirection::Previous, CoalesceObjectBreaks::Yes, IgnoreBRs::No, stopAtID);
+    // Like previousParagraphStartCharacterOffset, advance one if the object is a line break.
+    RefPtr currentObject = isolatedObject();
+    if (RefPtr adjacentObject = adjacentMarker.isolatedObject(); currentObject && adjacentObject) {
+        if (currentObject->roleValue() != AccessibilityRole::LineBreak && adjacentObject->roleValue() == AccessibilityRole::LineBreak)
+            adjacentMarker = adjacentMarker.findMarker(AXDirection::Previous, CoalesceObjectBreaks::No, IgnoreBRs::No, stopAtID);
+    }
+
+    return adjacentMarker.findMarker(AXDirection::Previous, AXTextUnit::Paragraph, AXTextUnitBoundary::Start, stopAtID);
+}
+
+AXTextMarker AXTextMarker::nextParagraphEnd(std::optional<AXID> stopAtID) const
+{
+    // Mimic nextParagraphEndCharacterOffset and move off the current text marker.
+    auto adjacentMarker = findMarker(AXDirection::Next, CoalesceObjectBreaks::Yes, IgnoreBRs::No, stopAtID);
+    // Like nextParagraphEndCharacterOffset, advance one if the object is a line break.
+    RefPtr currentObject = isolatedObject();
+    if (RefPtr adjacentObject = adjacentMarker.isolatedObject(); currentObject && adjacentObject) {
+        if (currentObject->roleValue() != AccessibilityRole::LineBreak && adjacentObject->roleValue() == AccessibilityRole::LineBreak)
+            adjacentMarker = adjacentMarker.findMarker(AXDirection::Next, CoalesceObjectBreaks::No, IgnoreBRs::No, stopAtID);
+    }
+
+    return adjacentMarker.findMarker(AXDirection::Next, AXTextUnit::Paragraph, AXTextUnitBoundary::End, stopAtID);
+}
+
 
 AXTextMarker AXTextMarker::toTextRunMarker(std::optional<AXID> stopAtID) const
 {
@@ -1100,8 +1130,13 @@ AXTextMarkerRange AXTextMarker::paragraphRange() const
     if (!isValid())
         return { { }, { } };
 
-    AXTextMarker startMarker = previousParagraphStart();
-    AXTextMarker endMarker = startMarker.nextParagraphEnd();
+    // paragraphForCharacterOffset on the main thread doesn't directly call nextParagraphEnd and previousParagraphStart.
+    // When actually computing the range from the current position, directly call findMarker.
+    AXTextMarker startMarker = findMarker(AXDirection::Previous, AXTextUnit::Paragraph, AXTextUnitBoundary::Start);
+    AXTextMarker endMarker = findMarker(AXDirection::Next, AXTextUnit::Paragraph, AXTextUnitBoundary::End);
+    auto rangeString = AXTextMarkerRange { startMarker, endMarker }.toString();
+    if (rangeString.containsOnly<isASCIIWhitespace>())
+        endMarker = startMarker;
 
     return { WTFMove(startMarker), WTFMove(endMarker) };
 }

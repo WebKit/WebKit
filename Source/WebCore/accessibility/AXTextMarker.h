@@ -193,8 +193,8 @@ public:
     AXTextMarker previousWordEnd(std::optional<AXID> stopAtID = std::nullopt) const { return findMarker(AXDirection::Previous, AXTextUnit::Word, AXTextUnitBoundary::End, stopAtID); }
     AXTextMarker previousSentenceStart(std::optional<AXID> stopAtID = std::nullopt) const { return findMarker(AXDirection::Previous, AXTextUnit::Sentence, AXTextUnitBoundary::Start, stopAtID); }
     AXTextMarker nextSentenceEnd(std::optional<AXID> stopAtID = std::nullopt) const { return findMarker(AXDirection::Next, AXTextUnit::Sentence, AXTextUnitBoundary::End, stopAtID); }
-    AXTextMarker previousParagraphStart(std::optional<AXID> stopAtID = std::nullopt) const { return findMarker(AXDirection::Previous, AXTextUnit::Paragraph, AXTextUnitBoundary::Start, stopAtID); }
-    AXTextMarker nextParagraphEnd(std::optional<AXID> stopAtID = std::nullopt) const { return findMarker(AXDirection::Next, AXTextUnit::Paragraph, AXTextUnitBoundary::End, stopAtID); }
+    AXTextMarker previousParagraphStart(std::optional<AXID> stopAtID = std::nullopt) const;
+    AXTextMarker nextParagraphEnd(std::optional<AXID> stopAtID = std::nullopt) const;
 
     // Creates a range for the line this marker points to.
     AXTextMarkerRange lineRange(LineRangeType) const;

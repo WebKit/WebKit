@@ -3130,6 +3130,10 @@ enum class TextUnit {
             return inputMarker.nextSentenceEnd().platformData().autorelease();
         case TextUnit::PreviousSentenceStart:
             return inputMarker.previousSentenceStart().platformData().autorelease();
+        case TextUnit::NextParagraphEnd:
+            return inputMarker.nextParagraphEnd().platformData().autorelease();
+        case TextUnit::PreviousParagraphStart:
+            return inputMarker.previousParagraphStart().platformData().autorelease();
         default:
             // TODO: Not implemented!
             break;

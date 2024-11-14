@@ -53,98 +53,161 @@ this is my third paragraph. Of text. it has some text.<br><br>
 </div>
 
 <script>
+var output = "This tests that paragraph navigation is working correctly.\n\n";
 
-    var output = "This tests that paragraph navigation is working correctly.\n\n";
+if (window.accessibilityController) {
+    // Check that we can get the paragraph range with span tag.
+    var text = accessibilityController.accessibleElementById("text1");
+    var textMarkerRange = text.textMarkerRangeForElement(text);
+    var startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    var currentMarker = advanceAndVerify(startMarker, 1, text);
+
+    // Check with contenteditable.
+    text = accessibilityController.accessibleElementById("text2");
+    textMarkerRange = text.textMarkerRangeForElement(text);
+    startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    currentMarker = advanceAndVerify(startMarker, 1, text);
+
+    // Check with replaced elements.
+    text = accessibilityController.accessibleElementById("text3");
+    textMarkerRange = text.textMarkerRangeForElement(text);
+    startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    currentMarker = advanceAndVerify(startMarker, 1, text);
+    currentMarker = advanceAndVerify(currentMarker, 3, text);
+
+    // Audio tag.
+    text = accessibilityController.accessibleElementById("text4");
+    textMarkerRange = text.textMarkerRangeForElement(text);
+    startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    currentMarker = advanceAndVerify(startMarker, 1, text);
+
+    // Check with user-select:none.
+    text = accessibilityController.accessibleElementById("text5");
+    textMarkerRange = text.textMarkerRangeForElement(text);
+    startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    currentMarker = advanceAndVerify(startMarker, 1, text);
     
-    if (window.accessibilityController) {
-        
-        // Check that we can get the paragraph range with span tag.
-        var text = accessibilityController.accessibleElementById("text1");
-        var textMarkerRange = text.textMarkerRangeForElement(text);
-        var startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
-        var currentMarker = advanceAndVerify(startMarker, 1, text);
+    // Multi-languages.
+    text = accessibilityController.accessibleElementById("text6");
+    textMarkerRange = text.textMarkerRangeForElement(text);
+    startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    currentMarker = advanceAndVerify(startMarker, 1, text);
+    
+    text = accessibilityController.accessibleElementById("text6a");
+    textMarkerRange = text.textMarkerRangeForElement(text);
+    startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    currentMarker = advanceAndVerify(startMarker, 1, text);
 
-        // Check with contenteditable.
-        text = accessibilityController.accessibleElementById("text2");
-        textMarkerRange = text.textMarkerRangeForElement(text);
-        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
-        currentMarker = advanceAndVerify(startMarker, 1, text);
+    // Check the case with pre tag.
+    text = accessibilityController.accessibleElementById("text7");
+    textMarkerRange = text.textMarkerRangeForElement(text);
+    startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    currentMarker = advanceAndVerify(startMarker, 1, text);
+    currentMarker = advanceAndVerify(currentMarker, 15, text);
+    
+    // Check the case with br tag.
+    text = accessibilityController.accessibleElementById("text8");
+    textMarkerRange = text.textMarkerRangeForElement(text);
+    startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    currentMarker = advanceAndVerify(startMarker, 1, text);
+    currentMarker = advanceAndVerify(currentMarker, 5, text);
 
-        // Check with replaced elements.
-        text = accessibilityController.accessibleElementById("text3");
-        textMarkerRange = text.textMarkerRangeForElement(text);
-        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
-        currentMarker = advanceAndVerify(startMarker, 1, text);
-        currentMarker = advanceAndVerify(currentMarker, 3, text);
+    text = accessibilityController.accessibleElementById("text9");
+    textMarkerRange = text.textMarkerRangeForElement(text);
+    startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
+    startMarker = text.nextTextMarker(startMarker);
+    var endMarker = text.endTextMarkerForTextMarkerRange(textMarkerRange);
+    verifyParagraphs(text, startMarker, 5);
 
-        // Audio tag.
-        text = accessibilityController.accessibleElementById("text4");
-        textMarkerRange = text.textMarkerRangeForElement(text);
-        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
-        currentMarker = advanceAndVerify(startMarker, 1, text);
+    // Check the paragraph marker runs from start to end, and backwards.
+    // Make sure it won't hang.
+    verifyDocument(text);
 
-        // Check with user-select:none.
-        text = accessibilityController.accessibleElementById("text5");
-        textMarkerRange = text.textMarkerRangeForElement(text);
-        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
-        currentMarker = advanceAndVerify(startMarker, 1, text);
-        
-        // Multi-languages.
-        text = accessibilityController.accessibleElementById("text6");
-        textMarkerRange = text.textMarkerRangeForElement(text);
-        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
-        currentMarker = advanceAndVerify(startMarker, 1, text);
-        
-        text = accessibilityController.accessibleElementById("text6a");
-        textMarkerRange = text.textMarkerRangeForElement(text);
-        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
-        currentMarker = advanceAndVerify(startMarker, 1, text);
-
-        // Check the case with pre tag.
-        text = accessibilityController.accessibleElementById("text7");
-        textMarkerRange = text.textMarkerRangeForElement(text);
-        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
-        currentMarker = advanceAndVerify(startMarker, 1, text);
-        currentMarker = advanceAndVerify(currentMarker, 15, text);
-        
-        // Check the case with br tag.
-        text = accessibilityController.accessibleElementById("text8");
-        textMarkerRange = text.textMarkerRangeForElement(text);
-        startMarker = text.startTextMarkerForTextMarkerRange(textMarkerRange);
-        currentMarker = advanceAndVerify(startMarker, 1, text);
-        currentMarker = advanceAndVerify(currentMarker, 5, text);
-
-        // FIXME: add verifyParagraphs and verifyDocument from original test once nextParagraphEnd and previousParagraphStart APIs are implemented off the main thread
-        debug(output);
-        
-        function advanceAndVerify(currentMarker, offset, obj) {
-            var previousMarker = currentMarker;
-            for (var i = 0; i < offset; i++) {
-                previousMarker = currentMarker;
-                currentMarker = obj.nextTextMarker(previousMarker);
-            }
-            verifyParagraphRangeForTextMarker(previousMarker, currentMarker, obj);
-            return currentMarker;
+    debug(output);
+    
+    function advanceAndVerify(currentMarker, offset, obj) {
+        var previousMarker = currentMarker;
+        for (var i = 0; i < offset; i++) {
+            previousMarker = currentMarker;
+            currentMarker = obj.nextTextMarker(previousMarker);
         }
+        verifyParagraphRangeForTextMarker(previousMarker, currentMarker, obj);
+        return currentMarker;
+    }
+    
+    function replaceAttachmentInString(str) {
+        str =  str.replace(String.fromCharCode(65532), "[ATTACHMENT]");
+        return str;
+    }
+    
+    function verifyParagraphRangeForTextMarker(preMarker, textMarker, obj) {
+        var markerRange = obj.textMarkerRangeForMarkers(preMarker, textMarker);
+        var currentCharacter = replaceAttachmentInString(obj.stringForTextMarkerRange(markerRange));
+        output += `Current character is: ${currentCharacter}\n`;
         
-        function replaceAttachmentInString(str) {
-            str =  str.replace(String.fromCharCode(65532), "[ATTACHMENT]");
-            return str;
+        var paragraphRange = obj.paragraphTextMarkerRangeForTextMarker(textMarker);
+        var paragraph = replaceAttachmentInString(obj.stringForTextMarkerRange(paragraphRange));
+        output += `Current paragraph is: ${paragraph}\n`;
+
+        var preStart = obj.previousParagraphStartTextMarkerForTextMarker(textMarker);
+        var nextEnd = obj.nextParagraphEndTextMarkerForTextMarker(textMarker);
+        var preAndNextParagraphRange = obj.textMarkerRangeForMarkers(preStart, nextEnd);
+        var preAndNextParagraph = replaceAttachmentInString(obj.stringForTextMarkerRange(preAndNextParagraphRange));
+        output += `Pre paragraph start to next paragraph end: ${preAndNextParagraph}\n`;
+    }
+
+    function verifyParagraphs(obj, startMarker, paragraphCount) {
+        output += "Verify Paragraphs: Forward\n";
+        var current = startMarker;
+        var i = 0;
+        while(i < paragraphCount) {
+            current = obj.nextParagraphEndTextMarkerForTextMarker(current);
+            var currRange = obj.paragraphTextMarkerRangeForTextMarker(current);
+            var currParagraph = obj.stringForTextMarkerRange(currRange);
+            output += `Paragraph: ${currParagraph}\n`;
+            i++;
         }
+
+        // Backwards.
+        output += "Verify Paragraphs: Backward\n";
+        i = 0;
+        while(i < paragraphCount) {
+            current = obj.previousParagraphStartTextMarkerForTextMarker(current);
+            var currRange = obj.paragraphTextMarkerRangeForTextMarker(current);
+            var currParagraph = obj.stringForTextMarkerRange(currRange);
+            output += `Paragraph: ${currParagraph}\n`;
+            i++;
+        }
+    }
+    
+    function verifyDocument(obj) {
+        var start = obj.startTextMarker;
         
-        function verifyParagraphRangeForTextMarker(preMarker, textMarker, obj) {
-            var markerRange = obj.textMarkerRangeForMarkers(preMarker, textMarker);
-            var currentCharacter = replaceAttachmentInString(obj.stringForTextMarkerRange(markerRange));
-            output += `Current character is: ${currentCharacter}\n`;
-            
-            var paragraphRange = obj.paragraphTextMarkerRangeForTextMarker(textMarker);
-            var paragraph = replaceAttachmentInString(obj.stringForTextMarkerRange(paragraphRange));
-            output += `Current paragraph is: ${paragraph}\n`;
-            
-            // FIXME: Add "Pre paragraph start to next paragraph end" once nextParagraphEnd and previousParagraphStart are implemented off the main thread
+        // Going forward.
+        output += "Test going forward.\n";
+        var current = start;
+        var end = "text";
+        var currParagraph = "";
+        while(currParagraph != end) {
+            var currRange = obj.paragraphTextMarkerRangeForTextMarker(current);
+            currParagraph = obj.stringForTextMarkerRange(currRange);
+            current = obj.nextParagraphEndTextMarkerForTextMarker(current);
         }
+        output += `End paragraph: ${replaceAttachmentInString(currParagraph)}\n`;
+        
+        // Going backwards.
+        
+        output += "Test going backwards.\n";
+        var start = "paragraph test";
+        currParagraph = "";
+        while(currParagraph != start) {
+            var currentRange = obj.paragraphTextMarkerRangeForTextMarker(current);
+            currParagraph = obj.stringForTextMarkerRange(currentRange);
+            current = obj.previousParagraphStartTextMarkerForTextMarker(current);
+        }
+        output += `Start paragraph: ${replaceAttachmentInString(currParagraph)}\n`;
+    }
 }
-
 </script>
 
 </body>
