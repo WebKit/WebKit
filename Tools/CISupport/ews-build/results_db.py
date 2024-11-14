@@ -38,9 +38,9 @@ class ResultsDatabase(object):
     HOSTNAME = 'https://results.webkit.org'
     # TODO: Support more suites (Note, the API we're talking to already does)
     DEFAULT_SUITE = 'layout-tests'
-    SUITES = ('layout-tests', 'api-tests')
+    SUITES = ('layout-tests', 'api-tests', 'safer-cpp-checks')
     PERCENT_THRESHOLD = 10
-    PERECENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE = 80
+    PERCENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE = 80
     CONFIGURATION_KEYS = [
         'architecture',
         'platform',
@@ -55,14 +55,10 @@ class ResultsDatabase(object):
 
     @classmethod
     @defer.inlineCallbacks
-    def get_results_summary(cls, test, commit=None, configuration=None, logger=None, suite=None):
+    def make_request(cls, endpoint, suite=None, test=None, commit=None, configuration=None, logger=None):
         logger = logger or (lambda log: None)
         params = dict()
         suite = suite or cls.DEFAULT_SUITE
-        if not test:
-            logger('Test name not provided\n')
-            defer.returnValue({})
-            return
         if suite not in cls.SUITES:
             logger(f"'{suite}' is not a valid suite name\n")
             defer.returnValue({})
@@ -76,7 +72,7 @@ class ResultsDatabase(object):
         if commit:
             params['ref'] = commit
 
-        response = yield TwistedAdditions.request(f'{cls.HOSTNAME}/api/results-summary/{urllib.parse.quote(suite)}/{urllib.parse.quote(test)}', params=params, logger=logger)
+        response = yield TwistedAdditions.request(f"{cls.HOSTNAME}/api/{endpoint}/{urllib.parse.quote(suite)}{f'/{urllib.parse.quote(test)}' if test else ''}", params=params, logger=logger)
 
         if not response:
             logger(f'No response from {cls.HOSTNAME}\n')
@@ -90,14 +86,52 @@ class ResultsDatabase(object):
 
     @classmethod
     @defer.inlineCallbacks
+    def get_results_summary(cls, test, commit=None, configuration=None, logger=None, suite=None):
+        if not test:
+            logger('Test name not provided\n')
+            defer.returnValue({})
+            return
+        response = yield cls.make_request('results-summary', suite=suite, test=test, commit=commit, configuration=configuration, logger=logger)
+        return defer.returnValue(response)
+
+    @classmethod
+    @defer.inlineCallbacks
+    def get_results(cls, suite, test=None, commit=None, configuration=None, logger=None):
+        response = yield cls.make_request('results', suite=suite, test=test, commit=commit, configuration=configuration, logger=logger)
+        return defer.returnValue(response)
+
+    @classmethod
+    @defer.inlineCallbacks
     def is_test_pre_existing_failure(cls, test, commit=None, configuration=None, suite=None):
         logs = []
         data = yield cls.get_results_summary(test, commit, configuration, logger=lambda log: logs.append(log), suite=suite)
         pass_rate = data.get('pass', 100) + data.get('warning', 0)
-        is_existing_failure = (pass_rate <= cls.PERECENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE)
+        is_existing_failure = (pass_rate <= cls.PERCENT_SUCCESS_RATE_FOR_PRE_EXISTING_FAILURE)
         output = {
             'is_existing_failure': is_existing_failure,
             'pass_rate': data.get('pass', 'Unknown'),
+            'raw_data': data,
+            'logs': ''.join(logs),
+        }
+        defer.returnValue(output)
+
+    @classmethod
+    @defer.inlineCallbacks
+    def does_result_match(cls, test, result_type=None, commit=None, configuration=None, suite=None, default=None):
+        logs = []
+        data = yield cls.get_results(suite, test, commit, configuration, logger=lambda log: logs.append(log))
+        if not data:
+            if not default:
+                defer.returnValue(None)
+                return
+            actual = default
+        else:
+            results = data[0].get('results')[0]
+            actual = results.get('actual')
+
+        does_result_match = actual == result_type
+        output = {
+            'does_result_match': does_result_match,
             'raw_data': data,
             'logs': ''.join(logs),
         }
