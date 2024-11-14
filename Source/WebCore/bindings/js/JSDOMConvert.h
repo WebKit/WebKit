@@ -44,4 +44,5 @@
 #include "JSDOMConvertSequences.h"
 #include "JSDOMConvertSerializedScriptValue.h"
 #include "JSDOMConvertStrings.h"
+#include "JSDOMConvertUndefined.h"
 #include "JSDOMConvertUnion.h"

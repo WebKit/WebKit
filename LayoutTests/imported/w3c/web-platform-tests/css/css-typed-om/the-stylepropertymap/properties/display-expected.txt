@@ -51,8 +51,8 @@ PASS Setting 'display' to a number: calc(2 + 3) throws TypeError
 PASS Setting 'display' to a transform: translate(50%, 50%) throws TypeError
 PASS Setting 'display' to a transform: perspective(10em) throws TypeError
 PASS Setting 'display' to a transform: translate3d(0px, 1px, 2px) translate(0px, 1px) rotate3d(1, 2, 3, 45deg) rotate(45deg) scale3d(1, 2, 3) scale(1, 2) skew(1deg, 1deg) skewX(1deg) skewY(45deg) perspective(1px) matrix3d(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16) matrix(1, 2, 3, 4, 5, 6) throws TypeError
-FAIL 'display' does not support setting 'inline math' assert_not_equals: got disallowed value null
-FAIL 'display' does not support setting 'math inline' assert_not_equals: got disallowed value null
-FAIL 'display' does not support 'block math' assert_not_equals: Unsupported value must not be null got disallowed value null
-FAIL 'display' does not support 'math block' assert_not_equals: Unsupported value must not be null got disallowed value null
+FAIL 'display' does not support setting 'inline math' assert_in_array: value "[object Undefined]" not in array ["[object CSSStyleValue]", "[object CSSKeywordValue]"]
+FAIL 'display' does not support setting 'math inline' assert_in_array: value "[object Undefined]" not in array ["[object CSSStyleValue]", "[object CSSKeywordValue]"]
+FAIL 'display' does not support 'block math' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object Undefined]"
+FAIL 'display' does not support 'math block' assert_class_string: Unsupported value must be a CSSStyleValue and not one of its subclasses expected "[object CSSStyleValue]" but got "[object Undefined]"
 

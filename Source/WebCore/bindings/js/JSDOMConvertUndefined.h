@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2024 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,27 +25,29 @@
 
 #pragma once
 
-#include "URLPattern.h"
+#include "IDLTypes.h"
+#include "JSDOMConvertBase.h"
 
 namespace WebCore {
 
-struct URLPatternComponentResult {
-    using GroupsRecord = Vector<KeyValuePair<String, std::variant<std::monostate, String>>>;
-    String input;
-    GroupsRecord groups;
+template<> struct Converter<IDLUndefined> : DefaultConverter<IDLUndefined> {
+    static constexpr bool conversionHasSideEffects = false;
+    using Result = ConversionResult<IDLUndefined>;
+
+    static Result convert(JSC::JSGlobalObject&, JSC::JSValue)
+    {
+        return Result { std::monostate { } };
+    }
 };
 
-struct URLPatternResult {
-    Vector<URLPattern::URLPatternInput> inputs;
+template<> struct JSConverter<IDLUndefined> {
+    static constexpr bool needsState = false;
+    static constexpr bool needsGlobalObject = false;
 
-    URLPatternComponentResult protocol;
-    URLPatternComponentResult username;
-    URLPatternComponentResult password;
-    URLPatternComponentResult hostname;
-    URLPatternComponentResult port;
-    URLPatternComponentResult pathname;
-    URLPatternComponentResult search;
-    URLPatternComponentResult hash;
+    static JSC::JSValue convert(std::monostate)
+    {
+        return JSC::jsUndefined();
+    }
 };
 
-}
+} // namespace WebCore

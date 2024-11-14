@@ -32,6 +32,7 @@
 #include "JSDOMConvertBufferSource.h"
 #include "JSDOMConvertInterface.h"
 #include "JSDOMConvertNull.h"
+#include "JSDOMConvertUndefined.h"
 #include <JavaScriptCore/IteratorOperations.h>
 #include <JavaScriptCore/JSArrayBufferViewInlines.h>
 #include <variant>
@@ -142,25 +143,32 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         JSC::VM& vm = JSC::getVM(&lexicalGlobalObject);
         auto scope = DECLARE_THROW_SCOPE(vm);
 
-        // 1. If the union type includes a nullable type and V is null or undefined, then return the IDL value null.
+        // 1. If the union type includes undefined and V is undefined, then return the unique undefined value.
+        constexpr bool hasUndefinedType = brigand::any<TypeList, std::is_same<IDLUndefined, brigand::_1>>::value;
+        if constexpr (hasUndefinedType) {
+            if (value.isUndefined())
+                RELEASE_AND_RETURN(scope, (Converter<IDLUndefined>::convert(lexicalGlobalObject, value)));
+        }
+
+        // 2. If the union type includes a nullable type and V is null or undefined, then return the IDL value null.
         constexpr bool hasNullType = brigand::any<TypeList, std::is_same<IDLNull, brigand::_1>>::value;
         if constexpr (hasNullType) {
             if (value.isUndefinedOrNull())
                 RELEASE_AND_RETURN(scope, (Converter<IDLNull>::convert(lexicalGlobalObject, value)));
         }
         
-        // 2. Let types be the flattened member types of the union type.
+        // 3. Let types be the flattened member types of the union type.
         // NOTE: Union is expected to be pre-flattened.
         
-        // 3. If V is null or undefined then:
+        // 4. If V is null or undefined then:
+        //     1. If types includes a dictionary type, then return the result of converting V to that dictionary type.
         if constexpr (hasDictionaryType) {
             if (value.isUndefinedOrNull()) {
-                //     1. If types includes a dictionary type, then return the result of converting V to that dictionary type.
                 RELEASE_AND_RETURN(scope, (Converter<DictionaryType>::convert(lexicalGlobalObject, value)));
             }
         }
 
-        // 4. If V is a platform object, then:
+        // 5. If V is a platform object, then:
         //     1. If types includes an interface type that V implements, then return the IDL value that is a reference to the object V.
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
         //         (FIXME: Add support for object and step 4.2)
@@ -184,18 +192,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                 return WTFMove(*returnValue);
         }
 
-        // FIXME: Add support for steps 5 & 6.
-        //
-        // 5. If V is a DOMException platform object, then:
-        //     1. If types includes DOMException or Error, then return the result of converting V to that type.
-        //     2 If types includes object, then return the IDL value that is a reference to the object V.
-        //
-        // 6. If Type(V) is Object and V has an [[ErrorData]] internal slot), then:
-        //     1. If types includes Error, then return the result of converting V to Error.
-        //     2. If types includes object, then return the IDL value that is a reference to the object V.
-
-
-        // 7. If Type(V) is Object and V has an [[ArrayBufferData]] internal slot, then:
+        // 6. If V is an Object, V has an [[ArrayBufferData]] internal slot, and IsSharedArrayBuffer(V) is false, then:
         //     1. If types includes ArrayBuffer, then return the result of converting V to ArrayBuffer.
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
         constexpr bool hasArrayBufferType = brigand::any<TypeList, IsIDLArrayBuffer<brigand::_1>>::value;
@@ -220,6 +217,12 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
             }
         }
 
+        // FIXME: Add support for step 7.
+        //
+        // 7. If V is an Object, V, has an [[ArrayBufferData]] internal slot, and IsSharedArrayBuffer(V) is true, then:
+        //     1. If types includes SharedArrayBuffer, then return the result of converting V to SharedArrayBuffer..
+        //     2. If types includes object, then return the IDL value that is a reference to the object V.
+
         // 8. If Type(V) is Object and V has a [[DataView]] internal slot, then:
         //     1. If types includes DataView, then return the result of converting V to DataView.
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
@@ -237,7 +240,7 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
         // 9. If Type(V) is Object and V has a [[TypedArrayName]] internal slot, then:
         //     1. If types includes a typed array type whose name is the value of V’s [[TypedArrayName]] internal slot, then return the result of converting V to that type.
         //     2. If types includes object, then return the IDL value that is a reference to the object V.
-        //         (FIXME: Add support for object and step 9.2)
+        //         (FIXME: Add support for step 9.2)
         constexpr bool hasTypedArrayType = brigand::any<TypeList, IsIDLTypedArray<brigand::_1>>::value;
         if constexpr (hasTypedArrayType) {
             std::optional<ReturnType> returnValue;
@@ -259,18 +262,16 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                 return WTFMove(*returnValue);
         }
 
-        // FIXME: Add support for step 10.
-        //
         // 10. If IsCallable(V) is true, then:
+        //     1. If types includes a callback function type, then return the result of converting V to that callback function type.
+        //     2. If types includes object, then return the IDL value that is a reference to the object V.
+        //         (FIXME: Add support for step 10.2)
         if (value.isCallable()) {
-            //     1. If types includes a callback function type, then return the result of converting V to that callback function type.
             if constexpr (hasCallbackFunctionType)
                 RELEASE_AND_RETURN(scope, (Converter<CallbackFunctionType>::convert(lexicalGlobalObject, value, *JSC::jsCast<JSDOMGlobalObject*>(&lexicalGlobalObject))));
-            //     2. If types includes object, then return the IDL value that is a reference to the object V.
-            //         (FIXME: Add support for object and step 10.2)
         }
 
-        // 11. If V is any kind of object, then:
+        // 11. If V is an Object, then:
         if constexpr (hasAnyObjectType) {
             if (value.isCell()) {
                 JSC::JSCell* cell = value.asCell();
@@ -278,10 +279,8 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                     auto object = asObject(value);
                 
                     //     1. If types includes a sequence type, then:
-                    //         1. Let method be the result of GetMethod(V, @@iterator).
-                    //         2. ReturnIfAbrupt(method).
-                    //         3. If method is not undefined, return the result of creating a
-                    //            sequence of that type from V and method.        
+                    //         1. Let method be ? GetMethod(V, %Symbol.iterator%).
+                    //         2. If method is not undefined, return the result of creating a sequence of that type from V and method.
                     constexpr bool hasSequenceType = numberOfSequenceTypes != 0;
                     if constexpr (hasSequenceType) {
                         auto method = JSC::iteratorMethod(&lexicalGlobalObject, object);
@@ -291,10 +290,8 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
                     }
 
                     //     2. If types includes a frozen array type, then:
-                    //         1. Let method be the result of GetMethod(V, @@iterator).
-                    //         2. ReturnIfAbrupt(method).
-                    //         3. If method is not undefined, return the result of creating a
-                    //            frozen array of that type from V and method.
+                    //         1. Let method be ? GetMethod(V, %Symbol.iterator%).
+                    //         2. If method is not undefined, return the result of creating a frozen array of that type from V and method.
                     constexpr bool hasFrozenArrayType = numberOfFrozenArrayTypes != 0;
                     if constexpr (hasFrozenArrayType) {
                         auto method = JSC::iteratorMethod(&lexicalGlobalObject, object);
@@ -337,21 +334,34 @@ template<typename... T> struct Converter<IDLUnion<T...>> : DefaultConverter<IDLU
             if (value.isNumber())
                 RELEASE_AND_RETURN(scope, (Converter<NumericType>::convert(lexicalGlobalObject, value)));
         }
-        
-        // 14. If types includes a string type, then return the result of converting V to that type.
+
+        // FIXME: Add support for step 14.
+        //
+        // 14. If V is a BigInt, then:
+        //     1. If types includes bigint, then return the result of converting V to bigint.
+
+        // 15. If types includes a string type, then return the result of converting V to that type.
         constexpr bool hasStringType = brigand::size<StringTypeList>::value != 0;
         if constexpr (hasStringType)
             RELEASE_AND_RETURN(scope, (Converter<StringType>::convert(lexicalGlobalObject, value)));
 
-        // 15. If types includes a numeric type, then return the result of converting V to that numeric type.
+        // FIXME: Add support for step 16.
+        //
+        // 16. If types includes a numeric type and bigint, then return the result of converting V to either that numeric type or bigint.
+
+        // 17. If types includes a numeric type, then return the result of converting V to that numeric type.
         if constexpr (hasNumericType)
             RELEASE_AND_RETURN(scope, (Converter<NumericType>::convert(lexicalGlobalObject, value)));
 
-        // 16. If types includes a boolean, then return the result of converting V to boolean.
+        // 18. If types includes a boolean, then return the result of converting V to boolean.
         if constexpr (hasBooleanType)
             RELEASE_AND_RETURN(scope, (Converter<IDLBoolean>::convert(lexicalGlobalObject, value)));
 
-        // 17. Throw a TypeError.
+        // FIXME: Add support for step 19.
+        //
+        // 19. If types includes bigint, then return the result of converting V to bigint.
+
+        // 20. Throw a TypeError.
         throwTypeError(&lexicalGlobalObject, scope);
         return Result::exception();
     }

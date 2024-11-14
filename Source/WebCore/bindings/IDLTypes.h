@@ -119,7 +119,10 @@ struct IDLAny : IDLType<JSC::Strong<JSC::Unknown>> {
     template<typename U> static inline U&& extractValueFromNullable(U&& value) { return std::forward<U>(value); }
 };
 
-struct IDLUndefined : IDLType<void> { };
+struct IDLUndefined : IDLType<std::monostate> {
+    using CallbackReturnType = void;
+    using NullableCallbackReturnType = void;
+};
 
 struct IDLBoolean : IDLType<bool> { };
 

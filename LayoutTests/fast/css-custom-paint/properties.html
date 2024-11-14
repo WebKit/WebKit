@@ -40,8 +40,8 @@ class MyPaint {
     assert_equals(properties.get('height').unit, 'px');
     assert_equals(properties.get('--my-prop').toString(), args[1].toString());
     assert_equals(properties.get('--my-registered-prop').toString(), args[2].toString());
-    assert_equals(properties.get('width'), null);
-    assert_equals(properties.get('--never-specified'), null);
+    assert_equals(properties.get('width'), undefined);
+    assert_equals(properties.get('--never-specified'), undefined);
 
     assert_equals(this.testThis(), 42);
 

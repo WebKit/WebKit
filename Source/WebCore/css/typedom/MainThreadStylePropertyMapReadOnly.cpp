@@ -58,13 +58,13 @@ ExceptionOr<MainThreadStylePropertyMapReadOnly::CSSStyleValueOrUndefined> MainTh
 {
     auto* document = documentFromContext(context);
     if (!document)
-        return nullptr;
+        return { std::monostate { } };
 
     if (isCustomPropertyName(property)) {
         if (auto value = reifyValue(customPropertyValue(property), std::nullopt, *document))
-            return CSSStyleValueOrUndefined { WTFMove(value) };
+            return { WTFMove(value) };
 
-        return nullptr;
+        return { std::monostate { } };
     }
 
     auto propertyID = cssPropertyID(property);
@@ -73,15 +73,15 @@ ExceptionOr<MainThreadStylePropertyMapReadOnly::CSSStyleValueOrUndefined> MainTh
 
     if (isShorthand(propertyID)) {
         if (auto value = CSSStyleValueFactory::constructStyleValueForShorthandSerialization(shorthandPropertySerialization(propertyID), { *document }))
-            return CSSStyleValueOrUndefined { WTFMove(value) };
+            return { WTFMove(value) };
 
-        return nullptr;
+        return { std::monostate { } };
     }
 
     if (auto value = reifyValue(propertyValue(propertyID), propertyID, *document))
-        return CSSStyleValueOrUndefined { WTFMove(value) };
+        return { WTFMove(value) };
 
-    return nullptr;
+    return { std::monostate { } };
 }
 
 // https://drafts.css-houdini.org/css-typed-om-1/#dom-stylepropertymapreadonly-getall
@@ -114,12 +114,15 @@ ExceptionOr<bool> MainThreadStylePropertyMapReadOnly::has(ScriptExecutionContext
     if (result.hasException())
         return result.releaseException();
 
-    return WTF::switchOn(result.returnValue(), [](const RefPtr<CSSStyleValue>& value) {
-        ASSERT(value);
-        return !!value;
-    }, [](const auto&) {
-        return false;
-    });
+    return WTF::switchOn(result.returnValue(),
+        [](const RefPtr<CSSStyleValue>& value) {
+            ASSERT(value);
+            return !!value;
+        },
+        [](std::monostate) {
+            return false;
+        }
+    );
 }
 
 } // namespace WebCore
