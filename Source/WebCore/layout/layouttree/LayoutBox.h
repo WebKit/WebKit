@@ -223,6 +223,7 @@ private:
     bool hasRareData() const { return m_hasRareData; }
     void setHasRareData(bool hasRareData) { m_hasRareData = hasRareData; }
     const BoxRareData& rareData() const;
+    Box::BoxRareData& rareData();
     BoxRareData& ensureRareData();
     void removeRareData();
     

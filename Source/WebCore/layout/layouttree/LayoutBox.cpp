@@ -84,6 +84,8 @@ void Box::updateStyle(RenderStyle&& newStyle, std::unique_ptr<RenderStyle>&& new
     m_style = WTFMove(newStyle);
     if (newFirstLineStyle)
         ensureRareData().firstLineStyle = WTFMove(newFirstLineStyle);
+    else if (hasRareData())
+        rareData().firstLineStyle = { };
 }
 
 bool Box::establishesFormattingContext() const
@@ -526,6 +528,12 @@ Box::RareDataMap& Box::rareDataMap()
 }
 
 const Box::BoxRareData& Box::rareData() const
+{
+    ASSERT(hasRareData());
+    return *rareDataMap().get(this);
+}
+
+Box::BoxRareData& Box::rareData()
 {
     ASSERT(hasRareData());
     return *rareDataMap().get(this);
