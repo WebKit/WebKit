@@ -28,6 +28,7 @@
 #include "PlatformAudioData.h"
 #include <wtf/IteratorRange.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 struct AudioBuffer;
@@ -40,6 +41,7 @@ namespace WebCore {
 class CAAudioStreamDescription;
 
 class WebAudioBufferList final : public PlatformAudioData {
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebAudioBufferList, WEBCORE_EXPORT);
 public:
     WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&);
     WEBCORE_EXPORT WebAudioBufferList(const CAAudioStreamDescription&, size_t sampleCount);

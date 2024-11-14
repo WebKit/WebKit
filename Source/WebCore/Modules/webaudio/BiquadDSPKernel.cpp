@@ -34,6 +34,7 @@
 #include "BiquadProcessor.h"
 #include "FloatConversion.h"
 #include <limits.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/Vector.h>
 
 #if CPU(X86_SSE2)
@@ -47,6 +48,8 @@
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(BiquadDSPKernel);
 
 static bool hasConstantValue(float* values, int framesToProcess)
 {

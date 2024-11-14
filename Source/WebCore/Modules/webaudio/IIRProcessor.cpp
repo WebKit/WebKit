@@ -29,8 +29,11 @@
 #include "IIRProcessor.h"
 
 #include "IIRDSPKernel.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(IIRProcessor);
 
 IIRProcessor::IIRProcessor(float sampleRate, unsigned numberOfChannels, const Vector<double>& feedforward, const Vector<double>& feedback, bool isFilterStable)
     : AudioDSPKernelProcessor(sampleRate, numberOfChannels)

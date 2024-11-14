@@ -27,6 +27,7 @@
 #include "AudioDSPKernel.h"
 #include "Biquad.h"
 #include "BiquadProcessor.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,7 +36,8 @@ class BiquadProcessor;
 // BiquadDSPKernel is an AudioDSPKernel and is responsible for filtering one channel of a BiquadProcessor using a Biquad object.
 
 class BiquadDSPKernel final : public AudioDSPKernel {
-public:  
+    WTF_MAKE_TZONE_ALLOCATED(BiquadDSPKernel);
+public:
     explicit BiquadDSPKernel(BiquadProcessor* processor)
     : AudioDSPKernel(processor)
     {

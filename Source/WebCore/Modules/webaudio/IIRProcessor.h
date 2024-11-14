@@ -26,6 +26,7 @@
 #pragma once
 
 #include "AudioDSPKernelProcessor.h"
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -33,6 +34,7 @@ namespace WebCore {
 class IIRDSPKernel;
 
 class IIRProcessor final : public AudioDSPKernelProcessor {
+    WTF_MAKE_TZONE_ALLOCATED(IIRProcessor);
 public:
     IIRProcessor(float sampleRate, unsigned numberOfChannels, const Vector<double>& feedforward, const Vector<double>& feedback, bool isFilterStable);
     ~IIRProcessor();

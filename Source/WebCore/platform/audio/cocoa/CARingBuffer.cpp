@@ -41,6 +41,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CARingBuffer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(InProcessCARingBuffer);
 
 CARingBuffer::CARingBuffer(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStreams)
     : m_pointers(numChannelStreams)

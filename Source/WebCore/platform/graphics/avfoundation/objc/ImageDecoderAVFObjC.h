@@ -31,6 +31,7 @@
 #include "ProcessIdentity.h"
 #include "SampleMap.h"
 #include <wtf/Lock.h>
+#include <wtf/TZoneMalloc.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -53,6 +54,7 @@ class PixelBufferConformerCV;
 class WebCoreDecompressionSession;
 
 class ImageDecoderAVFObjC : public ImageDecoder {
+    WTF_MAKE_TZONE_ALLOCATED(ImageDecoderAVFObjC);
 public:
     WEBCORE_EXPORT static RefPtr<ImageDecoderAVFObjC> create(const FragmentedSharedBuffer&, const String& mimeType, AlphaOption, GammaAndColorProfileOption, ProcessIdentity resourceOwner);
     virtual ~ImageDecoderAVFObjC();

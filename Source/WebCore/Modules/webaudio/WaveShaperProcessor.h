@@ -31,12 +31,14 @@
 #include <memory>
 #include <wtf/Lock.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 // WaveShaperProcessor is an AudioDSPKernelProcessor which uses WaveShaperDSPKernel objects to implement non-linear distortion effects.
 
 class WaveShaperProcessor final : public AudioDSPKernelProcessor {
+    WTF_MAKE_TZONE_ALLOCATED(WaveShaperProcessor);
 public:
     enum OverSampleType {
         OverSampleNone,

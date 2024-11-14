@@ -33,9 +33,12 @@
 #import "WKBaseScrollView.h"
 #import "WKWebViewInternal.h"
 #import "_WKTouchEventGeneratorInternal.h"
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(PointerTouchCompatibilitySimulator);
 
 bool PointerTouchCompatibilitySimulator::requiresPointerTouchCompatibility()
 {
