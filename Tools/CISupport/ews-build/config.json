@@ -62,9 +62,9 @@
     { "name": "ews106", "platform": "mac-ventura" },
     { "name": "ews107", "platform": "mac-ventura" },
     { "name": "ews108", "platform": "*" },
-    { "name": "ews109", "platform": "ios-17" },
-    { "name": "ews110", "platform": "ios-simulator-17" },
-    { "name": "ews111", "platform": "ios-simulator-17" },
+    { "name": "ews109", "platform": "ios-18" },
+    { "name": "ews110", "platform": "ios-simulator-18" },
+    { "name": "ews111", "platform": "ios-simulator-18" },
     { "name": "ews112", "platform": "mac-ventura" },
     { "name": "ews113", "platform": "mac-ventura" },
     { "name": "ews114", "platform": "*" },
@@ -76,16 +76,16 @@
     { "name": "ews120", "platform": "mac-ventura" },
     { "name": "ews129", "platform": "mac-ventura" },
     { "name": "ews169", "platform": "mac-ventura" },
-    { "name": "ews121", "platform": "ios-simulator-17" },
-    { "name": "ews122", "platform": "ios-simulator-17" },
-    { "name": "ews123", "platform": "ios-simulator-17" },
-    { "name": "ews124", "platform": "ios-simulator-17" },
-    { "name": "ews125", "platform": "ios-simulator-17" },
-    { "name": "ews126", "platform": "ios-simulator-17" },
+    { "name": "ews121", "platform": "ios-simulator-18" },
+    { "name": "ews122", "platform": "ios-simulator-18" },
+    { "name": "ews123", "platform": "ios-simulator-18" },
+    { "name": "ews124", "platform": "ios-simulator-18" },
+    { "name": "ews125", "platform": "ios-simulator-18" },
+    { "name": "ews126", "platform": "ios-simulator-18" },
     { "name": "ews127", "platform": "mac-ventura" },
     { "name": "ews128", "platform": "mac-ventura" },
     { "name": "ews130", "platform": "*" },
-    { "name": "ews131", "platform": "ios-17" },
+    { "name": "ews131", "platform": "ios-18" },
     { "name": "ews132", "platform": "*" },
     { "name": "ews133", "platform": "*" },
     { "name": "ews134", "platform": "*" },
@@ -137,21 +137,21 @@
     { "name": "ews181", "platform": "mac-ventura" },
     { "name": "ews182", "platform": "mac-ventura" },
     { "name": "ews183", "platform": "*" },
-    { "name": "ews184", "platform": "ios-simulator-17" },
-    { "name": "ews185", "platform": "ios-simulator-17" },
+    { "name": "ews184", "platform": "ios-simulator-18" },
+    { "name": "ews185", "platform": "ios-simulator-18" },
     { "name": "ews186", "platform": "mac-ventura" },
     { "name": "ews187", "platform": "mac-ventura" },
     { "name": "ews188", "platform": "mac-ventura" },
     { "name": "ews189", "platform": "mac-ventura" },
-    { "name": "ews190", "platform": "ios-simulator-17" },
-    { "name": "ews191", "platform": "ios-simulator-17" },
-    { "name": "ews192", "platform": "ios-simulator-17" },
-    { "name": "ews193", "platform": "ios-simulator-17" },
-    { "name": "ews194", "platform": "ios-simulator-17" },
-    { "name": "ews195", "platform": "ios-simulator-17" },
-    { "name": "ews196", "platform": "ios-simulator-17" },
-    { "name": "ews197", "platform": "ios-simulator-17" },
-    { "name": "ews198", "platform": "ios-simulator-17" },
+    { "name": "ews190", "platform": "ios-simulator-18" },
+    { "name": "ews191", "platform": "ios-simulator-18" },
+    { "name": "ews192", "platform": "ios-simulator-18" },
+    { "name": "ews193", "platform": "ios-simulator-18" },
+    { "name": "ews194", "platform": "ios-simulator-18" },
+    { "name": "ews195", "platform": "ios-simulator-18" },
+    { "name": "ews196", "platform": "ios-simulator-18" },
+    { "name": "ews197", "platform": "ios-simulator-18" },
+    { "name": "ews198", "platform": "ios-simulator-18" },
     { "name": "ews200", "platform": "mac-ventura" },
     { "name": "ews201", "platform": "mac-ventura" },
     { "name": "ews202", "platform": "mac-ventura" },
@@ -219,31 +219,31 @@
       "workernames": ["igalia5-gtk-wk2-ews", "igalia6-gtk-wk2-ews", "igalia7-gtk-wk2-ews", "igalia8-gtk-wk2-ews", "igalia9-gtk-wk2-ews", "igalia10-gtk-wk2-ews", "igalia11-gtk-wk2-ews", "igalia12-gtk-wk2-ews"]
     },
     {
-      "name": "iOS-17-Build-EWS", "shortname": "ios", "icon": "buildOnly",
-      "factory": "iOSEmbeddedBuildFactory", "platform": "ios-17",
+      "name": "iOS-18-Build-EWS", "shortname": "ios", "icon": "buildOnly",
+      "factory": "iOSEmbeddedBuildFactory", "platform": "ios-18",
       "configuration": "release", "architectures": ["arm64"],
       "workernames": ["ews152", "ews154", "ews108", "ews109", "ews130", "ews131", "ews132", "ews133"]
     },
     {
-      "name": "iOS-17-Simulator-Build-EWS", "shortname": "ios-sim", "icon": "buildOnly",
-      "factory": "iOSBuildFactory", "platform": "ios-simulator-17",
+      "name": "iOS-18-Simulator-Build-EWS", "shortname": "ios-sim", "icon": "buildOnly",
+      "factory": "iOSBuildFactory", "platform": "ios-simulator-18",
       "configuration": "release", "architectures": ["arm64"],
-      "triggers": ["api-tests-ios-sim-ews", "ios-17-sim-wk2-tests-ews", "ios-17-sim-wpt-wk2-tests-ews"],
+      "triggers": ["api-tests-ios-sim-ews", "ios-18-sim-wk2-tests-ews", "ios-18-sim-wpt-wk2-tests-ews"],
       "workernames": ["ews152", "ews154", "ews108", "ews130", "ews132", "ews133", "ews134", "ews135"]
     },
     {
-      "name": "iOS-17-Simulator-WK2-Tests-EWS", "shortname": "ios-wk2", "icon": "testOnly",
-      "factory": "iOSTestsFactory", "platform": "ios-simulator-17",
+      "name": "iOS-18-Simulator-WK2-Tests-EWS", "shortname": "ios-wk2", "icon": "testOnly",
+      "factory": "iOSTestsFactory", "platform": "ios-simulator-18",
       "configuration": "release",
-      "triggered_by": ["ios-17-sim-build-ews"],
+      "triggered_by": ["ios-18-sim-build-ews"],
       "additionalArguments": ["--child-processes=5", "--exclude-tests", "imported/w3c/web-platform-tests"],
       "workernames": ["ews121", "ews122", "ews123", "ews124", "ews125", "ews126", "ews184", "ews185"]
     },
     {
-      "name": "iOS-17-Simulator-WPT-WK2-Tests-EWS", "shortname": "ios-wk2-wpt", "icon": "testOnly",
-      "factory": "iOSTestsFactory", "platform": "ios-simulator-17",
+      "name": "iOS-18-Simulator-WPT-WK2-Tests-EWS", "shortname": "ios-wk2-wpt", "icon": "testOnly",
+      "factory": "iOSTestsFactory", "platform": "ios-simulator-18",
       "configuration": "release",
-      "triggered_by": ["ios-17-sim-build-ews"],
+      "triggered_by": ["ios-18-sim-build-ews"],
       "additionalArguments": ["--child-processes=5", "imported/w3c/web-platform-tests"],
       "workernames": ["ews191", "ews192", "ews193", "ews194", "ews195", "ews196", "ews197", "ews198"]
     },
@@ -425,7 +425,7 @@
     {
       "name": "API-Tests-iOS-Simulator-EWS", "shortname": "api-ios", "icon": "testOnly",
       "factory": "APITestsFactory", "platform": "*",
-      "triggered_by": ["ios-17-sim-build-ews"],
+      "triggered_by": ["ios-18-sim-build-ews"],
       "workernames": ["ews110", "ews111", "ews114", "ews156", "ews157", "ews158", "ews159", "ews160", "ews183"]
     },
     {
@@ -481,7 +481,7 @@
     {
       "type": "Try_Userpass", "name": "try", "port": 5555,
       "builderNames": [
-            "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
+            "Apply-WatchList-EWS", "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-18-Build-EWS", "iOS-18-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-Sequoia-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "tvOS-18-Build-EWS", "tvOS-18-Simulator-Build-EWS", "visionOS-2-Build-EWS", "visionOS-2-Simulator-Build-EWS",
@@ -496,7 +496,7 @@
     {
       "type": "AnyBranchScheduler", "name": "pull_request",
       "builderNames": [
-            "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-17-Build-EWS", "iOS-17-Simulator-Build-EWS",
+            "Bindings-Tests-EWS", "GTK-Build-EWS", "iOS-18-Build-EWS", "iOS-18-Simulator-Build-EWS",
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-Sequoia-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-18-Build-EWS", "tvOS-18-Simulator-Build-EWS", "visionOS-2-Build-EWS", "visionOS-2-Simulator-Build-EWS",
@@ -545,16 +545,16 @@
       "builderNames": ["macOS-Sequoia-Debug-WK2-Tests-EWS"]
     },
     {
-      "type": "Triggerable", "name": "ios-17-sim-build-ews",
-      "builderNames": ["iOS-17-Simulator-Build-EWS"]
+      "type": "Triggerable", "name": "ios-18-sim-build-ews",
+      "builderNames": ["iOS-18-Simulator-Build-EWS"]
     },
     {
-      "type": "Triggerable", "name": "ios-17-sim-wk2-tests-ews",
-      "builderNames": ["iOS-17-Simulator-WK2-Tests-EWS"]
+      "type": "Triggerable", "name": "ios-18-sim-wk2-tests-ews",
+      "builderNames": ["iOS-18-Simulator-WK2-Tests-EWS"]
     },
     {
-      "type": "Triggerable", "name": "ios-17-sim-wpt-wk2-tests-ews",
-      "builderNames": ["iOS-17-Simulator-WPT-WK2-Tests-EWS"]
+      "type": "Triggerable", "name": "ios-18-sim-wpt-wk2-tests-ews",
+      "builderNames": ["iOS-18-Simulator-WPT-WK2-Tests-EWS"]
     },
     {
       "type": "Triggerable", "name": "api-tests-ios-sim-ews",
