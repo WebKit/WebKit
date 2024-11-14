@@ -627,7 +627,7 @@ TEST(WKWebExtensionAPICookies, SetCookieWithExpirationDate)
     auto *backgroundScript = Util::constructScript(@[
         @"const cookieName = 'token'",
         @"const testUrl = 'http://www.example.com/'",
-        @"const expirationDate = Math.floor(Date.now() / 1000) + 1",
+        @"const expirationDate = Math.floor(Date.now() / 1000) + 2",
 
         @"await browser.cookies.set({",
         @"  url: testUrl,",
@@ -646,7 +646,7 @@ TEST(WKWebExtensionAPICookies, SetCookieWithExpirationDate)
         @"browser.test.assertEq(cookie?.value, 'value', 'Cookie should be set successfully')",
         @"browser.test.assertEq(cookie?.expirationDate, expirationDate, 'expirationDate should be the same as it was set')",
 
-        @"await new Promise(resolve => setTimeout(resolve, 1500))",
+        @"await new Promise(resolve => setTimeout(resolve, 2500))",
 
         @"cookie = await browser.cookies.get({",
         @"  url: testUrl,",
