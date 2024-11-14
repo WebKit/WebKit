@@ -1414,7 +1414,7 @@ bool RenderStyle::scrollAnchoringSuppressionStyleDidChange(const RenderStyle* ot
             return true;
     }
 
-    if (hasTransformRelatedProperty() != other->hasTransformRelatedProperty())
+    if (hasTransformRelatedProperty() != other->hasTransformRelatedProperty() || transform() != other->transform())
         return true;
 
     return false;
