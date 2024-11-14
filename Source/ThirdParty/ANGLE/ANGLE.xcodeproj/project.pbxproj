@@ -13,6 +13,9 @@
 			buildPhases = (
 			);
 			dependencies = (
+				314C6E9F2CD33603001EA6B3 /* PBXTargetDependency */,
+				314C6E8C2CD2FA12001EA6B3 /* PBXTargetDependency */,
+				314C6E8A2CD2F9F8001EA6B3 /* PBXTargetDependency */,
 				31DB79572491C35400982878 /* PBXTargetDependency */,
 			);
 			name = ANGLE;
@@ -46,6 +49,7 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		310403082CD5A5DB00766464 /* libtranslator.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7BF5549B2C81EDE0002B101E /* libtranslator.a */; };
 		3154A847266C4AFF00BF33B7 /* ImageMtl.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3154A845266C4AFE00BF33B7 /* ImageMtl.mm */; };
 		31CD002D249184F400486F27 /* TransformFeedbackImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB304D81DE4164800D2C405 /* TransformFeedbackImpl.h */; };
 		31CD002E249184F400486F27 /* renderer_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 5CB304CE1DE4164800D2C405 /* renderer_utils.h */; };
@@ -356,7 +360,6 @@
 		3A7AA54E28E1319D009E09C2 /* PixelLocalStorage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A7AA54C28E1319D009E09C2 /* PixelLocalStorage.cpp */; };
 		3AD0D2242988C96D0080D728 /* renderermtl_utils.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AD0D2222988C96D0080D728 /* renderermtl_utils.cpp */; };
 		3AD0D2252988C96D0080D728 /* renderermtl_utils.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AD0D2232988C96D0080D728 /* renderermtl_utils.h */; };
-		4458D1242B635DDB00B64F47 /* libANGLE-shared.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 31CDFDF42491819E00486F27 /* libANGLE-shared.dylib */; };
 		4458D1272B635E1000B64F47 /* translator_fuzzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4458D1172B63500B00B64F47 /* translator_fuzzer.cpp */; };
 		6E27925927EA43F500B1BA86 /* BaseTypes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E27925827EA43F500B1BA86 /* BaseTypes.cpp */; };
 		7B1538852BBC2C7A00B50C74 /* IntermRebuild.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B1538812BBC2C7A00B50C74 /* IntermRebuild.cpp */; };
@@ -1001,19 +1004,33 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		314C6E892CD2F9F8001EA6B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4458D11B2B635DCC00B64F47;
+			remoteInfo = metal_translator_fuzzer;
+		};
+		314C6E8B2CD2FA12001EA6B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BF554B52C81EEDB002B101E;
+			remoteInfo = ANGLETranslatorFuzzer;
+		};
+		314C6E9E2CD33603001EA6B3 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7BF5549A2C81EDE0002B101E;
+			remoteInfo = translator;
+		};
 		31DB79562491C35400982878 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 31CDFDF32491819E00486F27;
 			remoteInfo = "ANGLE (dynamic)";
-		};
-		4458D1252B635E0000B64F47 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 31DB794F2491C33300982878;
-			remoteInfo = ANGLE;
 		};
 		7BF554BE2C81EEF5002B101E /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1967,7 +1984,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4458D1242B635DDB00B64F47 /* libANGLE-shared.dylib in Frameworks */,
+				310403082CD5A5DB00766464 /* libtranslator.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3712,7 +3729,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				4458D1262B635E0000B64F47 /* PBXTargetDependency */,
 			);
 			name = metal_translator_fuzzer;
 			productName = metal_translator_fuzzer;
@@ -4520,15 +4536,25 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		314C6E8A2CD2F9F8001EA6B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4458D11B2B635DCC00B64F47 /* metal_translator_fuzzer */;
+			targetProxy = 314C6E892CD2F9F8001EA6B3 /* PBXContainerItemProxy */;
+		};
+		314C6E8C2CD2FA12001EA6B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7BF554B52C81EEDB002B101E /* ANGLETranslatorFuzzer */;
+			targetProxy = 314C6E8B2CD2FA12001EA6B3 /* PBXContainerItemProxy */;
+		};
+		314C6E9F2CD33603001EA6B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7BF5549A2C81EDE0002B101E /* translator */;
+			targetProxy = 314C6E9E2CD33603001EA6B3 /* PBXContainerItemProxy */;
+		};
 		31DB79572491C35400982878 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 31CDFDF32491819E00486F27 /* ANGLE (dynamic) */;
 			targetProxy = 31DB79562491C35400982878 /* PBXContainerItemProxy */;
-		};
-		4458D1262B635E0000B64F47 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 31DB794F2491C33300982878 /* ANGLE */;
-			targetProxy = 4458D1252B635E0000B64F47 /* PBXContainerItemProxy */;
 		};
 		7BF554BF2C81EEF5002B101E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
