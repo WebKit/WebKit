@@ -456,7 +456,7 @@ class Executive(AbstractExecutive):
         # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
         # to launch subprocesses, so we have to encode arguments using the
         # current code page.
-        if self._is_native_win and sys.version < '3':
+        if self._is_native_win and sys.version_info < (3,):
             return 'mbcs'
         # All other platforms use UTF-8.
         # FIXME: Using UTF-8 on Cygwin will confuse Windows-native commands
@@ -473,7 +473,7 @@ class Executive(AbstractExecutive):
         # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
         # to launch subprocesses, so we have to encode arguments using the
         # current code page.
-        if self._is_native_win and sys.version < '3':
+        if self._is_native_win and sys.version_info < (3,):
             return True
 
         return False
