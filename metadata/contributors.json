@@ -8067,6 +8067,18 @@
    },
    {
       "emails" : [
+         "vwatermeier@igalia.com"
+      ],
+      "expertise" : "GStreamer",
+      "github" : "vivienne-w",
+      "name" : "Vivienne Watermeier",
+      "nicks" : [
+         "vwatermeier",
+         "vivienne-w"
+      ]
+   },
+   {
+      "emails" : [
          "vsevik@chromium.org"
       ],
       "expertise" : "Developer Tools, Web Inspector",
