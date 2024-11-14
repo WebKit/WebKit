@@ -55,7 +55,7 @@ ExceptionOr<void> UndoManager::addItem(Ref<UndoItem>&& item)
         return Exception { ExceptionCode::SecurityError, "A browsing context is required to add an UndoItem"_s };
 
     item->setUndoManager(this);
-    frame->editor().registerCustomUndoStep(CustomUndoStep::create(item));
+    frame->protectedEditor()->registerCustomUndoStep(CustomUndoStep::create(item));
     m_items.add(WTFMove(item));
     return { };
 }

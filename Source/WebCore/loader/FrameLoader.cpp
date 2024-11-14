@@ -632,7 +632,7 @@ void FrameLoader::closeURL()
     stopLoading(unloadEventPolicy);
     
     if (currentDocument)
-        currentDocument->checkedEditor()->clearUndoRedoOperations();
+        currentDocument->protectedEditor()->clearUndoRedoOperations();
 }
 
 bool FrameLoader::didOpenURL()
@@ -2317,7 +2317,7 @@ void FrameLoader::commitProvisionalLoad()
         // be connected to its frame yet, so the following call with be a no-op. We will
         // attempt to confirm any active composition once again in this scenario after we
         // finish restoring from the cached page.
-        document->checkedEditor()->confirmOrCancelCompositionAndNotifyClient();
+        document->protectedEditor()->confirmOrCancelCompositionAndNotifyClient();
     }
 
     if (!frame->tree().parent() && frame->history().currentItem() && (!frame->history().provisionalItem() || frame->history().currentItem()->identifier() != frame->history().provisionalItem()->identifier())) {
@@ -2400,7 +2400,7 @@ void FrameLoader::commitProvisionalLoad()
         didOpenURL();
 
     if (RefPtr document = frame->document())
-        document->checkedEditor()->confirmOrCancelCompositionAndNotifyClient();
+        document->protectedEditor()->confirmOrCancelCompositionAndNotifyClient();
 
 IGNORE_GCC_WARNINGS_BEGIN("format-overflow")
     LOG(Loading, "WebCoreLoading frame %" PRIu64 ": Finished committing provisional load to URL %s", frame->frameID().object().toUInt64(),

@@ -91,7 +91,7 @@ void WebPageTesting::isEditingCommandEnabled(const String& commandName, Completi
         return completionHandler(pluginView->isEditingCommandEnabled(commandName));
 #endif
 
-    auto command = frame->checkedEditor()->command(commandName);
+    auto command = frame->protectedEditor()->command(commandName);
     completionHandler(command.isSupported() && command.isEnabled());
 }
 

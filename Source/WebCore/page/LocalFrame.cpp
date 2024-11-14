@@ -279,12 +279,12 @@ void LocalFrame::setView(RefPtr<LocalFrameView>&& view)
     protectedLoader()->resetMultipleFormSubmissionProtection();
 }
 
-CheckedRef<Editor> LocalFrame::checkedEditor()
+Ref<Editor> LocalFrame::protectedEditor()
 {
     return editor();
 }
 
-CheckedRef<const Editor> LocalFrame::checkedEditor() const
+Ref<const Editor> LocalFrame::protectedEditor() const
 {
     return editor();
 }
@@ -307,7 +307,7 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
     if (RefPtr previousDocument = m_doc) {
 #if ENABLE(ATTACHMENT_ELEMENT)
         for (Ref attachment : previousDocument->attachmentElementsByIdentifier().values())
-            checkedEditor()->didRemoveAttachmentElement(attachment);
+            protectedEditor()->didRemoveAttachmentElement(attachment);
 #endif
 
         if (previousDocument->backForwardCacheState() != Document::InBackForwardCache)
@@ -325,7 +325,7 @@ void LocalFrame::setDocument(RefPtr<Document>&& newDocument)
 
 #if ENABLE(ATTACHMENT_ELEMENT)
     if (RefPtr document = m_doc) {
-        CheckedRef editor = this->editor();
+        Ref editor = this->editor();
         for (Ref attachment : document->attachmentElementsByIdentifier().values())
             editor->didInsertAttachmentElement(attachment);
     }
@@ -893,12 +893,12 @@ std::optional<SimpleRange> LocalFrame::rangeForPoint(const IntPoint& framePoint)
         return std::nullopt;
 
     if (auto previousCharacterRange = makeSimpleRange(position.previous(), position)) {
-        if (checkedEditor()->firstRectForRange(*previousCharacterRange).contains(framePoint))
+        if (protectedEditor()->firstRectForRange(*previousCharacterRange).contains(framePoint))
             return *previousCharacterRange;
     }
 
     if (auto nextCharacterRange = makeSimpleRange(position, position.next())) {
-        if (checkedEditor()->firstRectForRange(*nextCharacterRange).contains(framePoint))
+        if (protectedEditor()->firstRectForRange(*nextCharacterRange).contains(framePoint))
             return *nextCharacterRange;
     }
 
@@ -1013,7 +1013,7 @@ void LocalFrame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomF
     if (!document)
         return;
 
-    checkedEditor()->dismissCorrectionPanelAsIgnored();
+    protectedEditor()->dismissCorrectionPanelAsIgnored();
 
     // Respect SVGs zoomAndPan="disabled" property in standalone SVG documents.
     // FIXME: How to handle compound documents + zoomAndPan="disabled"? Needs SVG WG clarification.

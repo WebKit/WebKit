@@ -44,7 +44,7 @@
 #include "WritingDirection.h"
 #include <memory>
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/WeakRef.h>
+#include <wtf/WeakPtr.h>
 
 #if PLATFORM(COCOA)
 OBJC_CLASS NSAttributedString;
@@ -177,9 +177,8 @@ private:
     TemporarySelectionChange m_selectionChange;
 };
 
-class Editor final : public CanMakeCheckedPtr<Editor> {
+class Editor final : public CanMakeWeakPtr<Editor> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(Editor, WEBCORE_EXPORT);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Editor);
 public:
     explicit Editor(Document&);
     ~Editor();
@@ -194,6 +193,12 @@ public:
     WEBCORE_EXPORT TextCheckerClient* textChecker() const;
 
     CompositeEditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
+
+    Document& document() const { return m_document.get(); }
+    Ref<Document> protectedDocument() const { return m_document.get(); }
+
+    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void deref() const;
 
     void handleKeyboardEvent(KeyboardEvent&);
     void handleInputMethodKeydown(KeyboardEvent&);
@@ -635,9 +640,6 @@ public:
     WEBCORE_EXPORT void closeTyping();
 
 private:
-    Document& document() const { return m_document.get(); }
-    Ref<Document> protectedDocument() const { return m_document.get(); }
-
     bool canDeleteRange(const SimpleRange&) const;
     bool canSmartReplaceWithPasteboard(Pasteboard&);
     void pasteAsPlainTextWithPasteboard(Pasteboard&);
@@ -703,9 +705,9 @@ private:
     bool m_ignoreSelectionChanges { false };
     bool m_shouldStartNewKillRingSequence { false };
     bool m_shouldStyleWithCSS { false };
-    const std::unique_ptr<PAL::KillRing> m_killRing;
-    const std::unique_ptr<SpellChecker> m_spellChecker;
-    const std::unique_ptr<AlternativeTextController> m_alternativeTextController;
+    const UniqueRef<PAL::KillRing> m_killRing;
+    const UniqueRef<SpellChecker> m_spellChecker;
+    const UniqueRef<AlternativeTextController> m_alternativeTextController;
     EditorParagraphSeparator m_defaultParagraphSeparator { EditorParagraphSeparator::div };
     bool m_overwriteModeEnabled { false };
 

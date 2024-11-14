@@ -36,19 +36,8 @@
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
-class SpellChecker;
-}
 
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::SpellChecker> : std::true_type { };
-
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::SpellChecker> : std::true_type { };
-}
-
-namespace WebCore {
-
+class Editor;
 class SpellChecker;
 class TextCheckerClient;
 
@@ -86,8 +75,11 @@ class SpellChecker : public CanMakeSingleThreadWeakPtr<SpellChecker> {
 public:
     friend class SpellCheckRequest;
 
-    explicit SpellChecker(Document&);
+    explicit SpellChecker(Editor&);
     ~SpellChecker();
+
+    void ref() const;
+    void deref() const;
 
     bool isAsynchronousEnabled() const;
     bool isCheckable(const SimpleRange&) const;
@@ -107,9 +99,10 @@ private:
     void didCheckCancel(TextCheckingRequestIdentifier);
     void didCheck(TextCheckingRequestIdentifier, const Vector<TextCheckingResult>&);
 
-    Ref<Document> protectedDocument() const { return m_document.get(); }
+    Document& document() const;
+    Ref<Document> protectedDocument() const;
 
-    WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
+    WeakRef<Editor> m_editor;
     Markable<TextCheckingRequestIdentifier> m_lastRequestIdentifier;
     Markable<TextCheckingRequestIdentifier> m_lastProcessedIdentifier;
 

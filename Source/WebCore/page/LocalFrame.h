@@ -150,8 +150,8 @@ public:
 
     Editor& editor() { return document()->editor(); }
     const Editor& editor() const { return document()->editor(); }
-    WEBCORE_EXPORT CheckedRef<Editor> checkedEditor();
-    CheckedRef<const Editor> checkedEditor() const;
+    WEBCORE_EXPORT Ref<Editor> protectedEditor();
+    Ref<const Editor> protectedEditor() const;
 
     EventHandler& eventHandler() { return m_eventHandler; }
     const EventHandler& eventHandler() const { return m_eventHandler; }

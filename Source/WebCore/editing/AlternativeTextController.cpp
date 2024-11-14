@@ -743,10 +743,10 @@ Vector<String> AlternativeTextController::dictationAlternativesForMarker(const D
 void AlternativeTextController::applyDictationAlternative(const String& alternativeString)
 {
 #if USE(DICTATION_ALTERNATIVES)
-    auto document = protectedDocument();
-    auto& editor = document->editor();
-    auto selection = editor.selectedRange();
-    if (!selection || !editor.shouldInsertText(alternativeString, *selection, EditorInsertAction::Pasted))
+    Ref document = m_document.get();
+    Ref editor = document->editor();
+    auto selection = editor->selectedRange();
+    if (!selection || !editor->shouldInsertText(alternativeString, *selection, EditorInsertAction::Pasted))
         return;
     for (auto& marker : selection->startContainer().document().markers().markersInRange(*selection, DocumentMarker::Type::DictationAlternatives))
         removeDictationAlternativesForMarker(*marker);
