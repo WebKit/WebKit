@@ -1925,6 +1925,13 @@ bool TransformationMatrix::isBackFaceVisible() const
     return zComponentOfTransformedNormal < 0;
 }
 
+TransformationMatrix TransformationMatrix::transpose() const
+{
+    TransformationMatrix transpose;
+    transposeMatrix4(m_matrix, transpose.m_matrix);
+    return transpose;
+}
+
 TextStream& operator<<(TextStream& ts, const TransformationMatrix& transform)
 {
     TextStream::IndentScope indentScope(ts);

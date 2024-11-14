@@ -6,12 +6,15 @@ list(APPEND WebCore_SOURCES
     platform/graphics/texmap/BitmapTexture.cpp
     platform/graphics/texmap/BitmapTexturePool.cpp
     platform/graphics/texmap/ClipStack.cpp
+    platform/graphics/texmap/FloatPlane3D.cpp
+    platform/graphics/texmap/FloatPolygon3D.cpp
     platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.cpp
     platform/graphics/texmap/TextureMapper.cpp
     platform/graphics/texmap/TextureMapperBackingStore.cpp
     platform/graphics/texmap/TextureMapperFPSCounter.cpp
     platform/graphics/texmap/TextureMapperGCGLPlatformLayer.cpp
     platform/graphics/texmap/TextureMapperLayer.cpp
+    platform/graphics/texmap/TextureMapperLayer3DRenderingContext.cpp
     platform/graphics/texmap/TextureMapperShaderProgram.cpp
     platform/graphics/texmap/TextureMapperTile.cpp
 )
@@ -20,6 +23,8 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/BitmapTexture.h
     platform/graphics/texmap/BitmapTexturePool.h
     platform/graphics/texmap/ClipStack.h
+    platform/graphics/texmap/FloatPlane3D.h
+    platform/graphics/texmap/FloatPolygon3D.h
     platform/graphics/texmap/GraphicsContextGLTextureMapperANGLE.h
     platform/graphics/texmap/GraphicsLayerTextureMapper.h
     platform/graphics/texmap/TextureMapper.h
@@ -28,6 +33,7 @@ list(APPEND WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/texmap/TextureMapperFPSCounter.h
     platform/graphics/texmap/TextureMapperGLHeaders.h
     platform/graphics/texmap/TextureMapperLayer.h
+    platform/graphics/texmap/TextureMapperLayer3DRenderingContext.h
     platform/graphics/texmap/TextureMapperPlatformLayer.h
     platform/graphics/texmap/TextureMapperPlatformLayerProxy.h
     platform/graphics/texmap/TextureMapperPlatformLayerProxyGL.h

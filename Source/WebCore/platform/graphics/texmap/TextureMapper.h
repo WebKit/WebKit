@@ -41,6 +41,7 @@ namespace WebCore {
 class TextureMapperGLData;
 class TextureMapperShaderProgram;
 class FilterOperations;
+class FloatPolygon;
 class FloatRoundedRect;
 enum class TextureMapperFlags : uint16_t;
 
@@ -76,6 +77,7 @@ public:
     void bindSurface(BitmapTexture* surface);
     BitmapTexture* currentSurface();
     void beginClip(const TransformationMatrix&, const FloatRoundedRect&);
+    void beginClip(const TransformationMatrix&, const FloatPolygon&);
     WEBCORE_EXPORT void beginPainting(FlipY = FlipY::No, BitmapTexture* = nullptr);
     WEBCORE_EXPORT void endPainting();
     void endClip();

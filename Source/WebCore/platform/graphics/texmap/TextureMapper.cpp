@@ -26,6 +26,7 @@
 
 #include "BitmapTexture.h"
 #include "FilterOperations.h"
+#include "FloatPolygon.h"
 #include "FloatQuad.h"
 #include "FloatRoundedRect.h"
 #include "GLContext.h"
@@ -1306,6 +1307,68 @@ void TextureMapper::beginClip(const TransformationMatrix& modelViewMatrix, const
     program->setMatrix(program->projectionMatrixLocation(), data().projectionMatrix);
     program->setMatrix(program->modelViewMatrixLocation(), matrix);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+    // Clear the state.
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDisableVertexAttribArray(program->vertexLocation());
+    glStencilMask(0);
+
+    // Increase stencilIndex and apply stencil testing.
+    clipStack().setStencilIndex(stencilIndex * 2);
+    clipStack().applyIfNeeded();
+}
+
+void TextureMapper::beginClip(const TransformationMatrix& modelViewMatrix, const FloatPolygon& polygon)
+{
+    clipStack().push();
+    data().initializeStencil();
+
+    Ref<TextureMapperShaderProgram> program = data().getShaderProgram(TextureMapperShaderProgram::SolidColor);
+
+    glUseProgram(program->programID());
+    glEnableVertexAttribArray(program->vertexLocation());
+
+    unsigned numberOfVertices = polygon.numberOfVertices();
+    Vector<GLfloat> polygonVertices;
+    polygonVertices.reserveCapacity(numberOfVertices * 2);
+    for (unsigned i = 0; i < numberOfVertices; i++) {
+        auto v = polygon.vertexAt(i);
+        polygonVertices.append(v.x());
+        polygonVertices.append(v.y());
+    }
+
+    int stencilIndex = clipStack().getStencilIndex();
+
+    glEnable(GL_STENCIL_TEST);
+
+    // Make sure we don't do any actual drawing.
+    glStencilFunc(GL_NEVER, stencilIndex, stencilIndex);
+
+    // Operate only on the stencilIndex and above.
+    glStencilMask(0xff & ~(stencilIndex - 1));
+
+    // First clear the entire buffer at the current index.
+    static const TransformationMatrix fullProjectionMatrix = TransformationMatrix::rectToRect(FloatRect(0, 0, 1, 1), FloatRect(-1, -1, 2, 2));
+    const GLfloat unitRect[] = { 0, 0, 1, 0, 1, 1, 0, 1 };
+    GLuint vbo = data().getStaticVBO(GL_ARRAY_BUFFER, sizeof(GLfloat) * 8, unitRect);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glVertexAttribPointer(program->vertexLocation(), 2, GL_FLOAT, false, 0, 0);
+    program->setMatrix(program->projectionMatrixLocation(), fullProjectionMatrix);
+    program->setMatrix(program->modelViewMatrixLocation(), TransformationMatrix());
+    glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+    // Now apply the current index to the new polygon.
+    GLuint polygonVBO;
+    glGenBuffers(1, &polygonVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, polygonVBO);
+    glBufferData(GL_ARRAY_BUFFER, polygonVertices.size() * sizeof(GLfloat), polygonVertices.data(), GL_STATIC_DRAW);
+    glVertexAttribPointer(program->vertexLocation(), 2, GL_FLOAT, false, 0, 0);
+    glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);
+    program->setMatrix(program->projectionMatrixLocation(), data().projectionMatrix);
+    program->setMatrix(program->modelViewMatrixLocation(), modelViewMatrix);
+    glDrawArrays(GL_TRIANGLE_FAN, 0, polygonVertices.size() / 2);
+    glDeleteBuffers(1, &polygonVBO);
 
     // Clear the state.
     glBindBuffer(GL_ARRAY_BUFFER, 0);
