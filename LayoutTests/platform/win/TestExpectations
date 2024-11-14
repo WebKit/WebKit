@@ -1029,11 +1029,7 @@ webkit.org/b/53675 fast/animation/request-animation-frame-during-modal.html [ Sk
 
 webkit.org/b/191584 fast/animation/css-animation-resuming-when-visible-with-style-change.html [ Pass Timeout ]
 
-webkit.org/b/282662 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/progress-based-animation-animation-longhand-properties.tentative.html [ Skip ] # Crash
-
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/layout-changes-on-percentage-based-timeline.html [ Pass ]
-
-imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/setting-timeline.tentative.html [ Failure ]
 
 
 #//////////////////////////////////////////////////////////////////////////////////////////
