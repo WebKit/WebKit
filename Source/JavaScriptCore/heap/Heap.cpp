@@ -3255,18 +3255,17 @@ void Heap::verifyGC()
 {
     RELEASE_ASSERT(m_verifierSlotVisitor);
     RELEASE_ASSERT(!m_isMarkingForGCVerifier);
-    m_isMarkingForGCVerifier = true;
 
     VerifierSlotVisitor& visitor = *m_verifierSlotVisitor;
-
-    do {
-        while (!visitor.isEmpty())
-            visitor.drain();
-        m_constraintSet->executeAllSynchronously(visitor);
-        visitor.executeConstraintTasks();
-    } while (!visitor.isEmpty());
-
-    m_isMarkingForGCVerifier = false;
+    {
+        SetForScope isMarkingForGCVerifierScope(m_isMarkingForGCVerifier, true);
+        do {
+            while (!visitor.isEmpty())
+                visitor.drain();
+            m_constraintSet->executeAllSynchronously(visitor);
+            visitor.executeConstraintTasks();
+        } while (!visitor.isEmpty());
+    }
 
     visitor.forEachLiveCell([&] (HeapCell* cell) {
         if (Heap::isMarked(cell))
