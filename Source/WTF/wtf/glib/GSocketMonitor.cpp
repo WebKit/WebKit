@@ -47,8 +47,8 @@ gboolean GSocketMonitor::socketSourceCallback(GSocket*, GIOCondition condition, 
     monitor->m_isExecutingCallback = false;
 
     if (monitor->m_shouldDestroyCallback) {
-        monitor->m_callback = nullptr;
         monitor->m_shouldDestroyCallback = false;
+        monitor->m_callback = nullptr;
     }
 
     return result;
