@@ -710,8 +710,12 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
         // :host doesn't combine with anything except pseudo elements.
         bool isHostPseudoClass = selector.match() == CSSSelector::Match::PseudoClass && selector.pseudoClass() == CSSSelector::PseudoClass::Host;
         bool isPseudoElement = selector.match() == CSSSelector::Match::PseudoElement;
-        // We can early return when we know it's neither :host, a compound like :is(:host), a pseudo-element.
-        if (!isHostPseudoClass && !isPseudoElement && !selector.selectorList())
+        // FIXME: We do not support combining :host with :not() functional pseudoclass. Combination with functional pseudoclass has been allowed for the useful :is(:host) ; but combining with :not() doesn't sound useful like :host():not(:not(:host))
+        // https://bugs.webkit.org/show_bug.cgi?id=283062
+        bool isNotPseudoClass = selector.match() == CSSSelector::Match::PseudoClass && selector.pseudoClass() == CSSSelector::PseudoClass::Not;
+
+        // We can early return when we know it's neither :host, a compound :is(:host) , a pseudo-element.
+        if (!isHostPseudoClass && !isPseudoElement && (!selector.selectorList() || isNotPseudoClass))
             return false;
     }
 
