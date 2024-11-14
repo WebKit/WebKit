@@ -47,10 +47,8 @@ QUIET = -1
 VERBOSE = 1
 VERBOSITY = int(os.environ.get('VERBOSITY', '0'))
 
-SECURITY_LEVELS = { {% for key, value in security_levels.items() %}
-    '{{ key }}': {{ value }},{% endfor %}
-}
-MAX_LEVEL = max(list(SECURITY_LEVELS.values()) + [0])
+SECURITY_LEVELS = {{ security_levels }}
+MAX_LEVEL = max(SECURITY_LEVELS.values(), default=0)
 
 
 def print_error(why):

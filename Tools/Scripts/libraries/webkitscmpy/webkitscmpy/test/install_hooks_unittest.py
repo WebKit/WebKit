@@ -26,7 +26,8 @@ import sys
 
 from webkitcorepy import OutputCapture, Version, run, testing
 from webkitcorepy.mocks import Terminal as MockTerminal
-from webkitscmpy import local, program, mocks
+
+from webkitscmpy import local, mocks, program
 
 
 class TestInstallHooks(testing.PathTestCase):
@@ -39,9 +40,7 @@ class TestInstallHooks(testing.PathTestCase):
             if version:
                 f.write("VERSION = '{}'\n".format(version))
             if security_levels:
-                f.write('SECURITY_LEVELS = { {% for item in security_levels|dictsort %}\n')
-                f.write("    '{{ item[0] }}': {{ item[1] }},{% endfor %}\n")
-                f.write('}\n')
+                f.write('SECURITY_LEVELS = {{ security_levels }}\n')
             f.write("print('Hello, world!\\n')\n")
 
     def write_config(self, **kwargs):
@@ -79,7 +78,7 @@ class TestInstallHooks(testing.PathTestCase):
         )
 
     def test_security_levels(self):
-        with OutputCapture(level=logging.INFO), mocks.local.Git(self.path, remote='git@example.org:project/project') as git, mocks.local.Svn():
+        with OutputCapture(level=logging.INFO), mocks.local.Git(self.path, remote='git@example.org:project/project'), mocks.local.Svn():
             self.write_config(
                 origin={
                     'url': 'git@example.org:project/project',
@@ -260,10 +259,8 @@ class TestInstallHooks(testing.PathTestCase):
         with open(resolved_hook, 'r') as f:
             self.assertEqual(
                 f.read(), '''#!/usr/bin/env {}
-SECURITY_LEVELS = {{ 
-    'example.org:project/project': 0,
-    'example.org:project/project-security': 1,
-}}
+SECURITY_LEVELS = {{'example.org:project/project': 0,
+ 'example.org:project/project-security': 1}}
 print('Hello, world!\\n')
 '''.format(os.path.basename(sys.executable)),
             )
@@ -301,11 +298,9 @@ print('Hello, world!\\n')
         with open(resolved_hook, 'r') as f:
             self.assertEqual(
                 f.read(), '''#!/usr/bin/env {}
-SECURITY_LEVELS = {{ 
-    'example.org:organization/project': 2,
-    'example.org:project/project': 0,
-    'example.org:project/project-security': 1,
-}}
+SECURITY_LEVELS = {{'example.org:project/project': 0,
+ 'example.org:project/project-security': 1,
+ 'example.org:organization/project': 2}}
 print('Hello, world!\\n')
 '''.format(os.path.basename(sys.executable)),
             )
