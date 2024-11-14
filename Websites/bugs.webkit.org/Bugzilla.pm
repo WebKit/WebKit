@@ -307,6 +307,16 @@ sub page_requires_login {
     return $_[0]->request_cache->{page_requires_login};
 }
 
+sub github_secret {
+    my ($class) = @_;
+    my $cache = $class->request_cache;
+    my $cgi   = $class->cgi;
+
+    $cache->{github_secret} //= $cgi->cookie('github_secret') // generate_random_password(16);
+
+    return $cache->{github_secret};
+}
+
 sub login {
     my ($class, $type) = @_;
 

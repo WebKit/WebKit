@@ -20,12 +20,14 @@ use fields qw(
 use Bugzilla::Constants;
 use Bugzilla::Error;
 use Bugzilla::Mailer;
-use Bugzilla::Util qw(datetime_from);
+use Bugzilla::Util qw(datetime_from i_am_webservice);
 use Bugzilla::User::Setting ();
 use Bugzilla::Auth::Login::Stack;
 use Bugzilla::Auth::Verify::Stack;
 use Bugzilla::Auth::Persist::Cookie;
 use Socket;
+use URI;
+use URI::QueryParam;
 
 sub new {
     my ($class, $params) = @_;
@@ -46,6 +48,7 @@ sub new {
 
 sub login {
     my ($self, $type) = @_;
+    my $dbh = Bugzilla->dbh;
 
     # Get login info from the cookie, form, environment variables, etc.
     my $login_info = $self->{_info_getter}->get_login_info();
@@ -152,12 +155,11 @@ sub _handle_login_result {
         # because the persistance information can't be re-used again.
         # (See Bugzilla::WebService::Server::JSONRPC for more info.)
         if ($self->{_info_getter}->{successful}->requires_persistence
-            and !Bugzilla->request_cache->{auth_no_automatic_login}) 
-        {
+            and !Bugzilla->request_cache->{auth_no_automatic_login}
+        ) {
             $user->{_login_token} = $self->{_persister}->persist_login($user);
         }
-    }
-    elsif ($fail_code == AUTH_ERROR) {
+    } elsif ($fail_code == AUTH_ERROR) {
         if ($result->{user_error}) {
             ThrowUserError($result->{user_error}, $result->{details});
         }
@@ -177,9 +179,9 @@ sub _handle_login_result {
     # the password was just wrong. (This makes it harder for a cracker
     # to find account names by brute force)
     elsif ($fail_code == AUTH_LOGINFAILED or $fail_code == AUTH_NO_SUCH_USER) {
-        my $remaining_attempts = MAX_LOGIN_ATTEMPTS 
+        my $remaining_attempts = MAX_LOGIN_ATTEMPTS
                                  - ($result->{failure_count} || 0);
-        ThrowUserError("invalid_login_or_password", 
+        ThrowUserError("invalid_login_or_password",
                        { remaining => $remaining_attempts });
     }
     # The account may be disabled
@@ -216,7 +218,8 @@ sub _handle_login_result {
             # For IPv6 we'll need to use inet_pton which requires Perl 5.12.
             my $n = inet_aton($address);
             if ($n) {
-                $address = gethostbyaddr($n, AF_INET) . " ($address)"
+                my $host = gethostbyaddr($n, AF_INET);
+                $address = "$host ($address)" if $host;
             }
             my $vars = {
                 locked_user => $user,
@@ -231,10 +234,10 @@ sub _handle_login_result {
         }
 
         $unlock_at->set_time_zone($user->timezone);
-        ThrowUserError('account_locked', 
+        ThrowUserError('account_locked',
             { ip_addr => $determiner->{ip_addr}, unlock_at => $unlock_at });
     }
-    # If we get here, then we've run out of options, which shouldn't happen.
+    # If we get here, then we've run out of options, which shouldn't happen.    
     else {
         ThrowCodeError("authres_unhandled", { value => $fail_code });
     }

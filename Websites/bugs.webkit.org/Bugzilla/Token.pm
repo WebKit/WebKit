@@ -21,10 +21,14 @@ use Date::Format;
 use Date::Parse;
 use File::Basename;
 use Digest::SHA qw(hmac_sha256_base64);
+use Encode;
+use JSON qw(encode_json decode_json);
 
 use parent qw(Exporter);
 
 @Bugzilla::Token::EXPORT = qw(issue_api_token issue_session_token
+                              issue_short_lived_session_token set_token_extra_data
+                              get_token_extra_data
                               check_token_data delete_token
                               issue_hash_token check_hash_token);
 
@@ -175,6 +179,15 @@ sub issue_session_token {
 
     my $data = shift;
     return _create_token(Bugzilla->user->id, 'session', $data);
+}
+
+sub issue_short_lived_session_token {
+    my ($data, $user) = @_;
+    # Generates a random token, adds it to the tokens table, and returns
+    # the token to the caller.
+
+    $user //= Bugzilla->user;
+    return _create_token($user->id ? $user->id : undef, 'session.short', $data);
 }
 
 sub issue_hash_token {
@@ -425,6 +438,36 @@ sub check_token_data {
     }
     return 1;
 }
+
+sub set_token_extra_data {
+    my ($token, $data) = @_;
+
+    $data = encode_json($data) if ref($data);
+
+    # extra_data is MEDIUMTEXT, max 16M
+    if (length($data) > 16_777_215) {
+        ThrowCodeError('token_data_too_big');
+    }
+
+    Bugzilla->dbh->do(
+        "INSERT INTO token_data (token, extra_data) VALUES (?, ?) ON CONFLICT (token) DO UPDATE SET extra_data = ?",
+        undef, $token, $data, $data);
+}
+
+sub get_token_extra_data {
+    my ($token) = @_;
+    trick_taint($token);
+    my ($data) = Bugzilla->dbh->selectrow_array(
+        "SELECT extra_data FROM token_data WHERE token = ?",
+        undef, $token);
+    return undef unless defined $data;
+    $data = encode('UTF-8', $data);
+    eval {
+        $data = decode_json($data);
+    };
+    return $data;
+}
+
 
 ################################################################################
 # Internal Functions

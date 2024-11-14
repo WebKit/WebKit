@@ -76,31 +76,29 @@ sub check_credentials {
     Bugzilla::Token::DeletePasswordTokens($user->id, "user_logged_in");
     $user->clear_login_failures();
 
-    my $update_password = 0;
-
     # If their old password was using crypt() or some different hash
     # than we're using now, convert the stored password to using
     # whatever hashing system we're using now.
     my $current_algorithm = PASSWORD_DIGEST_ALGORITHM;
-    $update_password = 1 if ($real_password_crypted !~ /{\Q$current_algorithm\E}$/);
-
-    # If their old password was using a different length salt than what
-    # we're using now, update the password to use the new salt length.
-    if ($real_password_crypted =~ /^([^,]+),/) {
-        $update_password = 1 if (length($1) != PASSWORD_SALT_LENGTH);
-    }
-
-    # If needed, update the user's password.
-    if ($update_password) {
+    if ($real_password_crypted !~ /{\Q$current_algorithm\E}$/) {
         # We can't call $user->set_password because we don't want the password
         # complexity rules to apply here.
         $user->{cryptpassword} = bz_crypt($password);
         $user->update();
     }
 
+    if (i_am_webservice() && $user->settings->{api_key_only}->{value} eq 'on') {
+        # api-key verification happens in Auth/Login/APIKey
+        # token verification happens in Auth/Login/Cookie
+        # if we get here from an api call then we must be using user/pass
+        return {
+            failure    => AUTH_ERROR,
+            user_error => 'invalid_auth_method',
+        };
+    }
+
     return $login_data;
 }
-
 sub change_password {
     my ($self, $user, $password) = @_;
     my $dbh = Bugzilla->dbh;
