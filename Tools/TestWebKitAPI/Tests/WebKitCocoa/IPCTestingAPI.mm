@@ -376,6 +376,39 @@ TEST(IPCTestingAPI, DecodesReplyArgumentsForAsyncMessage)
     EXPECT_STREQ([alertMessage UTF8String], "[{\"type\":\"bool\",\"value\":false}]");
 }
 
+TEST(IPCTestingAPI, EmptyFirstPartyForCookiesCookieRequestHeaderFieldValue)
+{
+    RetainPtr webView = createWebViewWithIPCTestingAPI();
+    RetainPtr delegate = adoptNS([[IPCTestingAPIDelegate alloc] init]);
+    [webView setUIDelegate:delegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><script>document.cookie='a=b';</script>" baseURL:[NSURL URLWithString:@"https://webkit.org/"]];
+    auto sendMessage = @"const connection = IPC.connectionForProcessTarget('Networking');"
+        "const result = connection.sendSyncMessage("
+        "    0,"
+        "    IPC.messages.NetworkConnectionToWebProcess_CookieRequestHeaderFieldValue.name,"
+        "    1000,"
+        "    ["
+        "        {type: 'String', value: null},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'String', value: location.href},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'FrameID', value: IPC.frameID},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'uint64_t', value: IPC.pageID},"
+        "        {type: 'uint8_t', value: 1},"
+        "        {type: 'uint8_t', value: 0},"
+        "        {type: 'uint8_t', value: 1},"
+        "    ]"
+        ");";
+    [webView evaluateJavaScript:sendMessage completionHandler:nil];
+    while (![webView objectByEvaluatingJavaScript:@"result"])
+        TestWebKitAPI::Util::spinRunLoop();
+    EXPECT_STREQ([[webView stringByEvaluatingJavaScript:@"result.arguments[0].value"] UTF8String], "<null>");
+}
+
 TEST(IPCTestingAPI, DescribesArguments)
 {
     auto webView = createWebViewWithIPCTestingAPI();
