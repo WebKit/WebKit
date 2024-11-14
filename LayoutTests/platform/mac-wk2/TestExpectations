@@ -1927,3 +1927,7 @@ swipe/main-frame-pinning-requirement.html [ Failure Timeout ]
 
 # webkit.org/b/283074 [macOS Debug wk2 ] ASSERTION FAILED: !workerInformation in imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker.https.html result of flaky crash (failure in EWS)
 imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker.https.html [ Pass Crash ]
+imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch.any.serviceworker.html [ Pass Crash ]
+imported/w3c/web-platform-tests/fetch/private-network-access/service-worker-background-fetch.https.window.html [ Pass Crash ]
+imported/w3c/web-platform-tests/urlpattern/urlpattern-compare.tentative.any.serviceworker.html [ Pass Crash ]
+imported/w3c/web-platform-tests/urlpattern/urlpattern-hasregexpgroups.any.serviceworker.html [ Pass Crash ]
