@@ -175,6 +175,7 @@ void ensureGigacage()
             g_gigacageConfig.start = base;
             g_gigacageConfig.totalSize = totalSize;
             g_gigacageConfig.isEnabled = true;
+            BPROFILE_ALLOCATION(INITIAL_GIGACAGE, totalSize);
         });
 }
 

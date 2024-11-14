@@ -127,6 +127,9 @@ inline void vmValidatePhysical(void* p, size_t vmSize)
 inline void* tryVMAllocate(size_t vmSize, VMTag usage = VMTag::Malloc)
 {
     vmValidate(vmSize);
+
+    BPROFILE_ALLOCATION(VM_ALLOCATION, vmSize, usage);
+
     void* result = mmap(0, vmSize, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON | BMALLOC_NORESERVE, static_cast<int>(usage), 0);
     if (result == MAP_FAILED)
         return nullptr;
