@@ -34,8 +34,6 @@
 #import <wtf/ResourceUsage.h>
 #import <wtf/spi/darwin/DispatchSPI.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #define ENABLE_FMW_FOOTPRINT_COMPARISON 0
 
 extern "C" void cache_simulate_memory_warning_event(uint64_t);
@@ -66,7 +64,7 @@ static OSObjectPtr<dispatch_source_t>& timerEventSource()
 // One token for each of the memory pressure/memory warning notifications we listen for.
 // notifyutil -p org.WebKit.lowMemory[.begin/.end]
 // notifyutil -p org.WebKit.memoryWarning[.begin/.end]
-static int notifyTokens[6];
+static std::array<int, 6> notifyTokens;
 
 // Disable memory event reception for a minimum of s_minimumHoldOffTime
 // seconds after receiving an event. Don't let events fire any sooner than
@@ -246,5 +244,3 @@ std::optional<MemoryPressureHandler::ReliefLogger::MemoryUsage> MemoryPressureHa
 } // namespace WTF
 
 #undef LOG_CHANNEL_PREFIX
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

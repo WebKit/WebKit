@@ -33,8 +33,6 @@
 #include <wtf/cf/TypeCastsCF.h>
 #include <wtf/text/WTFString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 template <typename A, typename... B>
@@ -164,12 +162,12 @@ template<typename MapLambdaType> Vector<typename LambdaTypeTraits<MapLambdaType>
 
 inline std::span<const uint8_t> span(CFDataRef data)
 {
-    return { static_cast<const uint8_t*>(CFDataGetBytePtr(data)), Checked<size_t>(CFDataGetLength(data)) };
+    return unsafeMakeSpan(static_cast<const uint8_t*>(CFDataGetBytePtr(data)), Checked<size_t>(CFDataGetLength(data)));
 }
 
 inline std::span<uint8_t> mutableSpan(CFMutableDataRef data)
 {
-    return { static_cast<uint8_t*>(CFDataGetMutableBytePtr(data)), Checked<size_t>(CFDataGetLength(data)) };
+    return unsafeMakeSpan(static_cast<uint8_t*>(CFDataGetMutableBytePtr(data)), Checked<size_t>(CFDataGetLength(data)));
 }
 
 inline RetainPtr<CFDataRef> toCFData(std::span<const uint8_t> span)
@@ -203,7 +201,5 @@ using WTF::makeVector;
 using WTF::mutableSpan;
 using WTF::span;
 using WTF::toCFData;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(CF)

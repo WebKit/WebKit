@@ -31,8 +31,6 @@
 #import <dispatch/dispatch.h>
 #import <mach/mach_time.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 bool WTFSignpostIndirectLoggingEnabled;
 
 os_log_t WTFSignpostLogHandle()
@@ -102,9 +100,9 @@ static void emitSignpost(os_log_t log, WTFOSSignpostType type, WTFOSSignpostName
     }
 }
 
-bool WTFSignpostHandleIndirectLog(os_log_t log, pid_t pid, const char* logString)
+bool WTFSignpostHandleIndirectLog(os_log_t log, pid_t pid, std::span<const char> nullTerminatedLogString)
 {
-    if (log != WTFSignpostLogHandle() || !logString)
+    if (log != WTFSignpostLogHandle() || !nullTerminatedLogString.data())
         return false;
 
     int signpostType = 0;
@@ -113,7 +111,7 @@ bool WTFSignpostHandleIndirectLog(os_log_t log, pid_t pid, const char* logString
     uint64_t timestamp = 0;
     int bytesConsumed = 0;
 
-    if (sscanf(logString, "type=%d name=%d p=%" SCNuPTR " ts=%llu %n", &signpostType, &signpostName, &signpostIdentifierPointer, &timestamp, &bytesConsumed) != 4)
+    if (sscanf(nullTerminatedLogString.data(), "type=%d name=%d p=%" SCNuPTR " ts=%llu %n", &signpostType, &signpostName, &signpostIdentifierPointer, &timestamp, &bytesConsumed) != 4)
         return false;
 
     if (signpostType < 0 || signpostType >= WTFOSSignpostTypeCount)
@@ -126,7 +124,7 @@ bool WTFSignpostHandleIndirectLog(os_log_t log, pid_t pid, const char* logString
     signpostIdentifierPointer ^= pid;
     auto signpostIdentifier = os_signpost_id_make_with_pointer(log, reinterpret_cast<const void *>(signpostIdentifierPointer));
 
-    emitSignpost(log, static_cast<WTFOSSignpostType>(signpostType), static_cast<WTFOSSignpostName>(signpostName), signpostIdentifier, timestamp, pid, logString + bytesConsumed);
+    emitSignpost(log, static_cast<WTFOSSignpostType>(signpostType), static_cast<WTFOSSignpostName>(signpostName), signpostIdentifier, timestamp, pid, nullTerminatedLogString.subspan(bytesConsumed).data());
     return true;
 }
 
@@ -153,7 +151,5 @@ uint64_t WTFCurrentContinuousTime(Seconds deltaFromNow)
 
     return static_cast<uint64_t>((timestamp.seconds() * 1.0e9 * info.denom) / info.numer);
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif

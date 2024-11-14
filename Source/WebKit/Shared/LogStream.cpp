@@ -51,7 +51,7 @@ LogStream::~LogStream()
         logWorkQueue->stopAndWaitForCompletion();
 }
 
-void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, uint8_t logType)
+void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, std::span<const uint8_t> logCategory, std::span<const uint8_t> nullTerminatedLogString, uint8_t logType)
 {
     ASSERT(!isMainRunLoop());
 
@@ -60,7 +60,7 @@ void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, s
     };
 
     bool isValidLogType = logType == OS_LOG_TYPE_DEFAULT || logType == OS_LOG_TYPE_INFO || logType == OS_LOG_TYPE_DEBUG || logType == OS_LOG_TYPE_ERROR || logType == OS_LOG_TYPE_FAULT;
-    MESSAGE_CHECK(isNullTerminated(logString) && isValidLogType, m_logStreamConnection->connection());
+    MESSAGE_CHECK(isNullTerminated(nullTerminatedLogString) && isValidLogType, m_logStreamConnection->connection());
 
     // os_log_hook on sender side sends a null category and subsystem when logging to OS_LOG_DEFAULT.
     auto osLog = OSObjectPtr<os_log_t>();
@@ -71,16 +71,15 @@ void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, s
     }
 
     auto osLogPointer = osLog.get() ? osLog.get() : OS_LOG_DEFAULT;
-    auto logData = byteCast<char>(logString.data());
 
 #if HAVE(OS_SIGNPOST)
-    if (WTFSignpostHandleIndirectLog(osLogPointer, m_pid, logData))
+    if (WTFSignpostHandleIndirectLog(osLogPointer, m_pid, byteCast<char>(nullTerminatedLogString)))
         return;
 #endif
 
     // Use '%{public}s' in the format string for the preprocessed string from the WebContent process.
     // This should not reveal any redacted information in the string, since it has already been composed in the WebContent process.
-    os_log_with_type(osLogPointer, static_cast<os_log_type_t>(logType), "WP[%llu] %{public}s", m_pid, logData);
+    os_log_with_type(osLogPointer, static_cast<os_log_type_t>(logType), "WP[%llu] %{public}s", m_pid, byteCast<char>(nullTerminatedLogString).data());
 }
 
 void LogStream::setup(uint64_t pid, IPC::StreamServerConnectionHandle&& serverConnection, LogStreamIdentifier logStreamIdentifier, CompletionHandler<void(IPC::Semaphore& streamWakeUpSemaphore, IPC::Semaphore& streamClientWaitSemaphore)>&& completionHandler)

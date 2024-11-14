@@ -34,38 +34,38 @@
 
 #include <wtf/Vector.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 Vector<uint8_t> normalizeLineEndingsToLF(Vector<uint8_t>&& vector)
 {
-    auto q = vector.data();
-    for (auto p = vector.data(), end = p + vector.size(); p != end; ) {
-        auto character = *p++;
+    size_t inputIndex = 0;
+    size_t outputIndex = 0;
+    while (inputIndex < vector.size()) {
+        auto character = vector[inputIndex++];
         if (character == '\r') {
             // Turn CRLF and CR into LF.
-            if (p != end && *p == '\n')
-                ++p;
-            *q++ = '\n';
+            if (inputIndex < vector.size() && vector[inputIndex] == '\n')
+                ++inputIndex;
+            vector[outputIndex++] = '\n';
         } else {
             // Leave other characters alone.
-            *q++ = character;
+            vector[outputIndex++] = character;
         }
     }
-    vector.shrink(q - vector.data());
-    return WTFMove(vector);
+    vector.shrink(outputIndex);
+    return vector;
 }
 
 Vector<uint8_t> normalizeLineEndingsToCRLF(Vector<uint8_t>&& source)
 {
+    size_t sourceIndex = 0;
     size_t resultLength = 0;
-    for (auto p = source.data(), end = p + source.size(); p != end; ) {
-        auto character = *p++;
+    while (sourceIndex < source.size()) {
+        auto character = source[sourceIndex++];
         if (character == '\r') {
             // Turn CR or CRLF into CRLF;
-            if (p != end && *p == '\n')
-                ++p;
+            if (sourceIndex < source.size() && source[sourceIndex] == '\n')
+                ++sourceIndex;
             resultLength += 2;
         } else if (character == '\n') {
             // Turn LF into CRLF.
@@ -77,28 +77,29 @@ Vector<uint8_t> normalizeLineEndingsToCRLF(Vector<uint8_t>&& source)
     }
 
     if (resultLength == source.size())
-        return WTFMove(source);
+        return source;
 
     Vector<uint8_t> result(resultLength);
-    auto q = result.data();
-    for (auto p = source.data(), end = p + source.size(); p != end; ) {
-        auto character = *p++;
+    sourceIndex = 0;
+    size_t resultIndex = 0;
+    while (sourceIndex < source.size()) {
+        auto character = source[sourceIndex++];
         if (character == '\r') {
             // Turn CR or CRLF into CRLF;
-            if (p != end && *p == '\n')
-                ++p;
-            *q++ = '\r';
-            *q++ = '\n';
+            if (sourceIndex < source.size() && source[sourceIndex] == '\n')
+                ++sourceIndex;
+            result[resultIndex++] = '\r';
+            result[resultIndex++] = '\n';
         } else if (character == '\n') {
             // Turn LF into CRLF.
-            *q++ = '\r';
-            *q++ = '\n';
+            result[resultIndex++] = '\r';
+            result[resultIndex++] = '\n';
         } else {
             // Leave other characters alone.
-            *q++ = character;
+            result[resultIndex++] = character;
         }
     }
-    ASSERT(q == result.data() + resultLength);
+    ASSERT(resultIndex == resultLength);
     return result;
 }
 
@@ -112,5 +113,3 @@ Vector<uint8_t> normalizeLineEndingsToNative(Vector<uint8_t>&& from)
 }
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
