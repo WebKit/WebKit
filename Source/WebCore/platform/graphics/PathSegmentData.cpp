@@ -141,12 +141,32 @@ static float calculateQuadraticExtremity(float p0, float p1, float p2)
     // B'(t) = 2(1 - t) (P1 - P0) + 2t (P2 - P1)
     //       = 2 (P1 - P0) + 2t (P0 - 2P1 + P2)
     //
+    // Let i = P1 - P0
+    //     j = P2 - P1
+    //
+    // B'(t) = 2i - 2t (i - j)
+    //
+    // Let k = i - j
+    //
+    // B'(t) = 2i - 2kt
+    //
     // Solve for B'(t) = 0
     //
-    //     t = (P0 - P1) / (P0 - 2P1 + P2)
+    //     t = i / k
     //
-    float t = (p0 - p1) / (p0 - 2 * p1 + p2);
+    float i = p1 - p0;
+    float j = p2 - p1;
 
+    float k = i - j;
+
+    static constexpr float epsilon = 0.1;
+
+    if (abs(k) < epsilon) {
+        float t = 0.5;
+        return calculateQuadratic(t, p0, p1, p2);
+    }
+
+    float t = i / k;
     return calculateQuadratic(t, p0, p1, p2);
 }
 
