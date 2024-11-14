@@ -1704,7 +1704,7 @@ void MediaPlayerPrivateGStreamer::updateTracks([[maybe_unused]] const GRefPtr<Gs
     for (unsigned i = 0; i < length; i++) {
         auto* stream = gst_stream_collection_get_stream(m_streamCollection.get(), i);
         RELEASE_ASSERT(stream);
-        auto streamId = getStreamIdFromStream(stream).value();
+        auto streamId = getStreamIdFromStream(stream).value_or(0);
         auto type = gst_stream_get_stream_type(stream);
         auto caps = adoptGRef(gst_stream_get_caps(stream));
 
