@@ -318,7 +318,7 @@ def archiveBuiltProduct(configuration, platform, fullPlatform, minify=False):
                         contents.append(realRelativePath)
 
         if platform == 'gtk':
-            contents.extend([os.path.join('install', directory) for directory in ['include', os.path.join('lib', 'pkgconfig')]])
+            contents.extend([os.path.join('install', directory) for directory in ['include', os.path.join('lib64', 'pkgconfig')]])
 
         # When debug fission is enabled the dwo files have information needed to generate backtraces with GDB.
         contents.extend(listRecursiveFilesInDirWithSuffix(_configurationBuildDirectory, '.dwo'))
