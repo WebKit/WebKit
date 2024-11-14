@@ -38,6 +38,7 @@
 #import <WebKit/WKPreferencesPrivate.h>
 #import <pal/spi/cocoa/NSAttributedStringSPI.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/WTFString.h>
 
 #if PLATFORM(IOS_FAMILY)
@@ -246,5 +247,32 @@ TEST(CopyHTML, WriteRichTextSelectionToPasteboard)
 }
 
 #endif // PLATFORM(MAC)
+
+TEST(CopyHTML, CopySelectedTextInTextDocument)
+{
+    RetainPtr webView = createWebViewWithCustomPasteboardDataEnabled();
+    RetainPtr fileURL = [NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"json"];
+
+    [webView synchronouslyLoadRequest:[NSURLRequest requestWithURL:fileURL.get()]];
+    [webView stringByEvaluatingJavaScript:@"getSelection().selectAllChildren(document.body)"];
+    RetainPtr expectedString = [webView stringByEvaluatingJavaScript:@"getSelection().toString()"];
+    [webView copy:nil];
+    [webView waitForNextPresentationUpdate];
+
+#if PLATFORM(MAC)
+    RetainPtr pastedObjects = [[NSPasteboard generalPasteboard] readObjectsForClasses:@[ NSAttributedString.class ] options:nil];
+    RetainPtr copiedText = dynamic_objc_cast<NSAttributedString>([pastedObjects firstObject]);
+#else
+    RetainPtr itemProvider = [[[UIPasteboard generalPasteboard] itemProviders] firstObject];
+    __block bool doneLoading = false;
+    __block RetainPtr<NSAttributedString> copiedText;
+    [itemProvider loadObjectOfClass:NSAttributedString.class completionHandler:^(NSAttributedString *result, NSError *) {
+        copiedText = result;
+        doneLoading = true;
+    }];
+    TestWebKitAPI::Util::run(&doneLoading);
+#endif
+    EXPECT_WK_STREQ(expectedString.get(), [copiedText string]);
+}
 
 #endif // PLATFORM(COCOA)

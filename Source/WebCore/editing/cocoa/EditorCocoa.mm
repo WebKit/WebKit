@@ -179,11 +179,16 @@ void Editor::writeSelectionToPasteboard(Pasteboard& pasteboard)
     content.contentOrigin = document->originIdentifierForPasteboard();
     content.canSmartCopyOrDelete = canSmartCopyOrDelete();
     if (!pasteboard.isStatic()) {
-        content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
-        populateRichTextDataIfNeeded(content, document);
+        if (!document->isTextDocument()) {
+            content.dataInWebArchiveFormat = selectionInWebArchiveFormat();
+            populateRichTextDataIfNeeded(content, document);
+        }
         client()->getClientPasteboardData(selectedRange(), content.clientTypesAndData);
     }
-    content.dataInHTMLFormat = selectionInHTMLFormat();
+
+    if (!document->isTextDocument())
+        content.dataInHTMLFormat = selectionInHTMLFormat();
+
     content.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
 
     pasteboard.write(content);
@@ -196,11 +201,13 @@ void Editor::writeSelection(PasteboardWriterData& pasteboardWriterData)
     PasteboardWriterData::WebContent webContent;
     webContent.contentOrigin = document->originIdentifierForPasteboard();
     webContent.canSmartCopyOrDelete = canSmartCopyOrDelete();
-    webContent.dataInWebArchiveFormat = selectionInWebArchiveFormat();
-    populateRichTextDataIfNeeded(webContent, document);
-    webContent.dataInHTMLFormat = selectionInHTMLFormat();
-    webContent.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
+    if (!document->isTextDocument()) {
+        webContent.dataInWebArchiveFormat = selectionInWebArchiveFormat();
+        populateRichTextDataIfNeeded(webContent, document);
+        webContent.dataInHTMLFormat = selectionInHTMLFormat();
+    }
     client()->getClientPasteboardData(selectedRange(), webContent.clientTypesAndData);
+    webContent.dataInStringFormat = stringSelectionForPasteboardWithImageAltText();
 
     pasteboardWriterData.setWebContent(WTFMove(webContent));
 }
