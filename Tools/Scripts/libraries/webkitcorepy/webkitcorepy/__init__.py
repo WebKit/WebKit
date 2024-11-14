@@ -55,6 +55,7 @@ from webkitcorepy.partial_proxy import PartialProxy
 version = Version(1, 0, 1)
 
 from webkitcorepy.autoinstall import Package, AutoInstall
+
 AutoInstall.register(Package('mock', Version(5, 1, 0), wheel=True))
 
 if sys.version_info >= (3, 12):
@@ -63,30 +64,22 @@ else:
     AutoInstall.register(Package('setuptools', Version(59, 8, 0)))
 
 AutoInstall.register(Package('certifi', Version(2022, 12, 7)))
-
 AutoInstall.register(Package('chardet', Version(3, 0, 4)))
 AutoInstall.register(Package('dateutil', Version(2, 8, 1), pypi_name='python-dateutil', wheel=True))
 AutoInstall.register(Package('entrypoints', Version(0, 3, 0)))
 AutoInstall.register(Package('funcsigs', Version(1, 0, 2)))
 AutoInstall.register(Package('idna', Version(2, 10)))
-
 AutoInstall.register(Package('packaging', Version(21, 3), implicit_deps=['pyparsing']))
-
 AutoInstall.register(Package('pyparsing', Version(2, 4, 7)))
-
 AutoInstall.register(Package('requests', Version(2, 26, 0)))
-
 AutoInstall.register(Package('tomli', Version(2, 0, 1), wheel=True))
 AutoInstall.register(Package('setuptools_scm', Version(6, 4, 2), pypi_name='setuptools-scm', implicit_deps=['tomli']))
 AutoInstall.register(Package('socks', Version(1, 7, 1), pypi_name='PySocks'))
 AutoInstall.register(Package('six', Version(1, 16, 0)))
 AutoInstall.register(Package('tblib', Version(1, 7, 0)))
-
 AutoInstall.register(Package('urllib3', Version(1, 26, 17)))
-
 AutoInstall.register(Package('wheel', Version(0, 35, 1)))
 AutoInstall.register(Package('cffi', Version(1, 17, 1)))
-
 AutoInstall.register(Package('OpenSSL', Version(23, 2, 0), pypi_name='pyOpenSSL'))
 
 # There are no prebuilt binaries for arm-32 of 'cryptography' and building it requires cargo/rust
@@ -101,6 +94,7 @@ if not (platform.machine().startswith('arm') and platform.architecture()[0] == '
 if sys.platform == 'linux':
     AutoInstall.register(Package('jeepney', Version(0, 7, 1)))
     AutoInstall.register(Package('secretstorage', Version(3, 3, 1)))
+
 AutoInstall.register(Package('keyring', Version(23, 2, 1)))
 
 

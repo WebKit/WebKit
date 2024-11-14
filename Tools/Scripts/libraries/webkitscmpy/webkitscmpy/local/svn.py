@@ -86,16 +86,13 @@ class Svn(Scm):
                 else:
                     branch_arg = '^/branches/{}'.format(branch)
 
-                kwargs = dict()
-                kwargs = dict(encoding='utf-8')
-
                 self._last_populated[branch] = time.time()
                 log = subprocess.Popen(
                     [self.repo.executable(), 'log', '-q', branch_arg],
                     cwd=self.repo.root_path,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
-                    **kwargs
+                    encoding='utf-8',
                 )
                 if log.poll():
                     raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))

@@ -29,7 +29,6 @@
 
 from webkitcorepy import StringIO
 
-import sys
 from urllib.error import HTTPError
 
 class MockWeb(object):

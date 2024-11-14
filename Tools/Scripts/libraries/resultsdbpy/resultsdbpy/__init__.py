@@ -57,7 +57,6 @@ AutoInstall.register(Package('aenum', Version(2, 2, 6)))
 AutoInstall.register(Package('attrs', Version(21, 3, 0)))
 AutoInstall.register(Package('aioredis', Version(1, 3, 1)))
 AutoInstall.register(Package('async-timeout', Version(3, 0, 1)))
-
 AutoInstall.register(Package('boto3', Version(1, 33, 10), wheel=True))
 AutoInstall.register(Package('botocore', Version(1, 34, 5), wheel=True))
 AutoInstall.register(Package('jmespath', Version(1, 0, 1), wheel=True))
@@ -66,6 +65,7 @@ if platform.machine() == 'arm64':
     AutoInstall.register(Package('cassandra', Version(3, 25, 0), pypi_name='cassandra-driver', slow_install=True))
 else:
     AutoInstall.register(Package('cassandra', Version(3, 25, 0), pypi_name='cassandra-driver', wheel=True))
+
 AutoInstall.register(Package('Crypto', Version(3, 10, 1), pypi_name='pycryptodome'))
 AutoInstall.register(Package('fakeredis', Version(1, 5, 2)))
 AutoInstall.register(Package('geomet', Version(0, 2, 1)))
@@ -73,10 +73,12 @@ AutoInstall.register(Package('gremlinpython', Version(3, 4, 6)))
 AutoInstall.register(Package('isodate', Version(0, 6, 0)))
 AutoInstall.register(Package('pyasn1_modules', Version(0, 2, 8), pypi_name='pyasn1-modules'))
 AutoInstall.register(Package('redis', Version(3, 5, 3)))
+
 if sys.platform == 'linux':
     AutoInstall.register(Package('selenium', Version(4, 19, 0), wheel=True))
 else:
     AutoInstall.register(Package('selenium', Version(4, 12, 0), wheel=True))
+
 AutoInstall.register(Package('service_identity', Version(21, 1, 0), pypi_name='service-identity'))
 AutoInstall.register(Package('sortedcontainers', Version(2, 4, 0)))
 AutoInstall.register(Package('tornado', Version(4, 5, 3)))

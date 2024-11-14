@@ -26,8 +26,6 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-
 from webkitpy.common.net.networktransaction import NetworkTransaction
 
 from urllib.request import build_opener, Request, urlopen, HTTPHandler

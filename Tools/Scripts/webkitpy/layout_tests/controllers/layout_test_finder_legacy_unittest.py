@@ -23,9 +23,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import errno
 import json
-import sys
 import unittest
 
 from pyfakefs.fake_filesystem_unittest import TestCaseMixin

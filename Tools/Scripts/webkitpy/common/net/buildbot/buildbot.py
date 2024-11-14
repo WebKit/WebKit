@@ -29,7 +29,6 @@
 
 import json
 import re
-import sys
 
 from webkitcorepy import string_utils, unicode
 

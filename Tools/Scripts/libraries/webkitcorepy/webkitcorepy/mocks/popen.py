@@ -27,7 +27,7 @@ import signal
 import sys
 import time
 
-from webkitcorepy import log, string_utils, Timeout, TimeoutExpired, unicode
+from webkitcorepy import log, string_utils, TimeoutExpired
 from webkitcorepy.mocks import Subprocess
 
 # This file is mocked version of the subprocess.Popen object. This object differs slightly between Python 2 and 3.

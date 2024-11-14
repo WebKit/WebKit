@@ -31,7 +31,6 @@
 
 import logging
 import re
-import sys
 
 from webkitcorepy import string_utils
 

@@ -24,7 +24,6 @@ import fnmatch
 import itertools
 import json
 import re
-import sys
 import urllib
 from collections import OrderedDict
 

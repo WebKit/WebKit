@@ -66,15 +66,14 @@ AutoInstall.register(
 AutoInstall.register(Package('pytest_asyncio', Version(0, 18, 3), pypi_name='pytest-asyncio', implicit_deps=['pytest'], wheel=True))
 AutoInstall.register(Package('pytest_timeout', Version(2, 1, 0), pypi_name='pytest-timeout', implicit_deps=['pytest'], wheel=True))
 AutoInstall.register(Package('websockets', Version(12, 0), wheel=True))
+
 if sys.version_info < (3, 11):
     AutoInstall.register(Package('exceptiongroup', Version(1, 1, 0), wheel=True))
 
 AutoInstall.register(Package('importlib_metadata', Version(4, 8, 1)))
 AutoInstall.register(Package('typing_extensions', Version(4, 8, 0), wheel=True))
-
 AutoInstall.register(Package('atomicwrites', Version(1, 1, 5)))
 AutoInstall.register(Package('attr', Version(21, 3, 0), pypi_name='attrs'))
-
 AutoInstall.register(Package('bs4', Version(4, 12, 0), pypi_name='beautifulsoup4'))
 AutoInstall.register(Package('configparser', Version(4, 0, 2), implicit_deps=['pyparsing']))
 AutoInstall.register(Package('contextlib2', Version(0, 6, 0)))
@@ -90,9 +89,7 @@ AutoInstall.register(Package('mozterm', Version(1, 0, 0)))
 AutoInstall.register(Package('pluggy', Version(0, 13, 1)))
 AutoInstall.register(Package('py', Version(1, 11, 0)))
 AutoInstall.register(Package('pycodestyle', Version(2, 5, 0)))
-
 AutoInstall.register(Package('pyfakefs', Version(5, 2, 4)))
-
 AutoInstall.register(Package('soupsieve', Version(2, 2, 1)))
 
 if sys.platform == 'linux':
@@ -105,9 +102,7 @@ AutoInstall.register(Package('wcwidth', Version(0, 2, 5)))
 AutoInstall.register(Package('webencodings', Version(0, 5, 1)))
 AutoInstall.register(Package('zipp', Version(1, 2, 0)))
 AutoInstall.register(Package('zope.interface', Version(7, 0, 1), aliases=['zope'], pypi_name='zope-interface', wheel=True))
-
 AutoInstall.register(Package('reporelaypy', Version(0, 4, 1)), local=True)
-
 AutoInstall.register(Package('webkitflaskpy', Version(0, 3, 0)), local=True)
 AutoInstall.register(Package('webkitscmpy', Version(4, 0, 0)), local=True)
 AutoInstall.register(Package('webkitbugspy', Version(0, 3, 1)), local=True)

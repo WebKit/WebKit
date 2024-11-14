@@ -131,15 +131,13 @@ class Git(Scm):
             intersected = False
             log = None
             try:
-                kwargs = dict()
-                kwargs = dict(encoding='utf-8')
                 self._last_populated[branch] = time.time()
                 log = subprocess.Popen(
                     [self.repo.executable(), 'log', '{}/{}'.format(remote, branch) if remote else branch, '--no-decorate', '--date=unix', '--'],
                     cwd=self.repo.root_path,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
-                    **kwargs
+                    encoding='utf-8',
                 )
                 if log.poll():
                     raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))
@@ -1315,15 +1313,13 @@ class Git(Scm):
         else:
             command = [self.executable(), 'diff', '{}..{}'.format(base, head)]
 
-        kwargs = dict()
-        kwargs = dict(encoding='utf-8')
         target = '{}..{}'.format(base, head) if head else base
         proc = subprocess.Popen(
             command,
             cwd=self.root_path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            **kwargs
+            encoding='utf-8',
         )
 
         if proc.poll():

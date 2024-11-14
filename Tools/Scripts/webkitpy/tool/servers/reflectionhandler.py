@@ -32,7 +32,6 @@ import json
 import mimetypes
 import os.path
 import shutil
-import sys
 import threading
 import time
 import wsgiref.handlers

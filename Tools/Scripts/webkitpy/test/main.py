@@ -333,7 +333,6 @@ def main():
     all_tests = set(tester.finder.find_names([], True))
     assert len(py2_tests - all_tests) == 0, py2_tests - all_tests
 
-
     return not tester.run()
 
 

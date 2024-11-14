@@ -28,7 +28,6 @@
 
 import mimetypes
 import time
-import sys
 
 from webkitpy.common.net.networktransaction import NetworkTransaction, NetworkTimeout
 from webkitcorepy import string_utils, unicode

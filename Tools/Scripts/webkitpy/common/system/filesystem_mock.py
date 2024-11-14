@@ -30,7 +30,6 @@ import errno
 import hashlib
 import os
 import re
-import sys
 
 from webkitcorepy import UnicodeIO, string_utils
 

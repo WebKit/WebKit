@@ -29,7 +29,6 @@
 import fnmatch
 import os
 import os.path
-import sys
 
 from webkitpy.common.system.executive import ScriptError
 from webkitpy.port.base import Port

@@ -499,11 +499,7 @@ class Executive(AbstractExecutive):
             # Must include proper interpreter
             if self._needs_interpreter_check(args[0]):
                 try:
-                    # On Python 2 'encoding' is an invalid keyword argument for this function
-                    open_kwargs = {}
-                    open_kwargs['encoding'] = 'cp437'
-
-                    with open(args[0], 'r', **open_kwargs) as f:
+                    with open(args[0], 'r', encoding='cp437') as f:
                         line = f.readline()
                         if "perl" in line:
                             args.insert(0, "perl")

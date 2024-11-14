@@ -29,7 +29,6 @@
 import argparse
 import io
 import logging
-import sys
 import zipfile
 
 import requests

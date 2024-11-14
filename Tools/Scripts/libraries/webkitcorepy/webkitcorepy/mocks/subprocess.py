@@ -21,7 +21,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import re
-import sys
 
 from functools import cmp_to_key
 from webkitcorepy import string_utils, unicode

@@ -209,8 +209,11 @@ class Package(object):
                                 # This is a subset of compatible tags, but these are the
                                 # only ones that are particularly common; we need these
                                 # to be able to install packaging and its dependencies.
-                                generic_tags = ["py2.py3-none-any", "py3.py2-none-any"]
-                                generic_tags.append("py3-none-any")
+                                generic_tags = [
+                                    "py2.py3-none-any",
+                                    "py3.py2-none-any",
+                                    "py3-none-any",
+                                ]
 
                                 if match.group(1) not in generic_tags:
                                     continue
@@ -458,8 +461,7 @@ class AutoInstall(object):
     CA_CERT_PATH_ENV_VAR = 'AUTOINSTALL_CA_CERT_PATH'
 
     # This list of libraries is required to install other libraries, and must be installed first
-    BASE_LIBRARIES = ['setuptools', 'wheel', 'six', 'pyparsing', 'packaging', 'setuptools_scm']
-    BASE_LIBRARIES.insert(-1, 'tomli')
+    BASE_LIBRARIES = ['setuptools', 'wheel', 'six', 'pyparsing', 'packaging', 'tomli', 'setuptools_scm']
 
     directory = None
     index = _default_pypi_index()

@@ -39,7 +39,6 @@ class Pickable(Command):
 
         @classmethod
         def fuzzy(cls, string, ratio=None):
-
             try:
                 from rapidfuzz import fuzz
             except ModuleNotFoundError:

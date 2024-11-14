@@ -35,7 +35,6 @@ import logging
 import mimetypes
 import re
 import socket
-import sys
 
 from datetime import datetime  # used in timestamp()
 from webkitcorepy import BytesIO, StringIO, string_utils, unicode

@@ -24,7 +24,6 @@
 """Supports checking WebKit style in Python files."""
 
 import re
-import sys
 
 from webkitcorepy import StringIO
 

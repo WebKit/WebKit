@@ -30,7 +30,6 @@
 import optparse
 import os
 import re
-import sys
 
 header = """/*
 * Copyright (C) 2016 Apple Inc. All rights reserved.

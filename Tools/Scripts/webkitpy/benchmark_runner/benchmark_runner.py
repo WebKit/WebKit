@@ -1,7 +1,6 @@
 import json
 import logging
 import shutil
-import sys
 import os
 from collections import defaultdict, OrderedDict
 

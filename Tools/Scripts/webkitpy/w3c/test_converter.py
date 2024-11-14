@@ -29,7 +29,6 @@ import json
 import logging
 import os
 import re
-import sys
 
 from webkitpy.common.host import Host
 from webkitpy.common.webkit_finder import WebKitFinder

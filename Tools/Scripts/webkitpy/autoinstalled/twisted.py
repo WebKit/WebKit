@@ -26,7 +26,6 @@ import sys
 from webkitscmpy import AutoInstall, Package, Version
 
 AutoInstall.install(Package('constantly', Version(15, 1, 0), pypi_name='constantly'))
-
 AutoInstall.install(Package('hyperlink', Version(21, 0, 0), pypi_name='hyperlink'))
 AutoInstall.install(Package('incremental', Version(21, 3, 0), pypi_name='incremental'))
 
@@ -43,6 +42,5 @@ if not (platform.machine().startswith('arm') and platform.architecture()[0] == '
 AutoInstall.install(Package('pycparser', Version(2, 21), wheel=True))
 
 from twisted.protocols.tls import TLSMemoryBIOFactory
-from twisted.python import threadpool
 
 sys.modules[__name__] = __import__('twisted')

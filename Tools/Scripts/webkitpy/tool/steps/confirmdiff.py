@@ -27,7 +27,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
-import sys
 
 from webkitpy.common.prettypatch import PrettyPatch
 from webkitpy.common.system import logutils

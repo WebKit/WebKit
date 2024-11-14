@@ -56,6 +56,5 @@ AutoInstall.install(Package('tempita', Version(0, 5, 2), pypi_name='Tempita'))
 AutoInstall.install(Package('buildbot', Version(2, 10, 5), wheel=False))
 AutoInstall.install(Package('buildbot-worker', Version(2, 10, 5)))
 
-from buildbot import statistics
 
 sys.modules[__name__] = __import__('buildbot')

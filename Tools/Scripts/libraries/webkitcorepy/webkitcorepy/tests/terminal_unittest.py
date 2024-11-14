@@ -21,7 +21,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import sys
 import unittest
 
 from mock import patch

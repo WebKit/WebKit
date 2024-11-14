@@ -21,7 +21,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import io
-import os
 import logging
 import math
 import multiprocessing

@@ -30,7 +30,6 @@
 
 import logging
 import re
-import sys
 import unittest
 
 from webkitcorepy import StringIO

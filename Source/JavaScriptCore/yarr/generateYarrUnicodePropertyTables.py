@@ -27,7 +27,6 @@
 # canonicalization table as decribed in ECMAScript 6 standard in section
 # "21.2.2.8.2 Runtime Semantics: Canonicalize()", step 2.
 
-import sys
 import copy
 import optparse
 import os

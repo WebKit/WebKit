@@ -30,7 +30,6 @@ import base64
 import json
 import logging
 import re
-import sys
 
 from collections import namedtuple
 from webkitcorepy import string_utils
@@ -38,7 +37,6 @@ from webkitcorepy import string_utils
 from webkitpy.common.memoized import memoized
 from webkitpy.w3c.common import WPT_GH_ORG, WPT_GH_REPO_NAME
 
-from urllib.error import HTTPError
 from urllib.parse import quote
 
 _log = logging.getLogger(__name__)

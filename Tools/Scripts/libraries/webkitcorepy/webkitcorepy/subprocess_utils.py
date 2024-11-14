@@ -26,10 +26,11 @@ import sys
 import time
 import threading
 
-from webkitcorepy import Timeout, string_utils
+from webkitcorepy import Timeout
 
 TimeoutExpired = subprocess.TimeoutExpired
 CompletedProcess = subprocess.CompletedProcess
+
 
 # Allows native integration with the Timeout context
 def run(*popenargs, **kwargs):

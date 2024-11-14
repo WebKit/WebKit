@@ -23,7 +23,6 @@
 """Unit tests for python.py."""
 
 import os
-import sys
 import unittest
 
 from webkitpy.style.checkers.python import PythonChecker

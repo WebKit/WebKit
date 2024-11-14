@@ -28,7 +28,6 @@ import argparse
 import logging
 import os
 import json
-import sys
 
 from webkitcorepy import string_utils
 
