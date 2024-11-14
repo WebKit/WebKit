@@ -413,7 +413,7 @@ public:
     void setVerifierMemo(void*);
     template<typename T> T verifierMemo() const;
 
-    void checkConsistency(Heap*, JSCell*);
+    inline void checkConsistency(Heap*, JSCell*);
 
 private:
     MarkedBlock(VM&, Handle&);
@@ -429,7 +429,7 @@ private:
     inline bool marksConveyLivenessDuringMarking(HeapVersion myMarkingVersion, HeapVersion markingVersion);
 
     // This is only used for debugging. We should remove this once the issue is resolved (rdar://136782494)
-    NO_RETURN_DUE_TO_CRASH NEVER_INLINE void dumpInfoAndCrashForInvalidHandle(AbstractLocker&, HeapCell*);
+    NO_RETURN_DUE_TO_CRASH NEVER_INLINE void dumpInfoAndCrashForInvalidHandle(AbstractLocker&, HeapCell*, VM*);
 };
 
 inline MarkedBlock::Header& MarkedBlock::header()

@@ -238,7 +238,7 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, HeapCell* cell)
     }
     // End testing
     if (UNLIKELY(!handle))
-        dumpInfoAndCrashForInvalidHandle(locker, cell);
+        dumpInfoAndCrashForInvalidHandle(locker, cell, nullptr);
 
     BlockDirectory* directory = handle->directory();
     bool isAllocated;
@@ -531,7 +531,7 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(freeList, emptyMode, sweepMode, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode, [] (VM&, JSCell*) { });
 }
 
-NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalidHandle(AbstractLocker&, HeapCell* heapCell)
+NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalidHandle(AbstractLocker&, HeapCell* heapCell, VM* expectedVM)
 {
     //WTF::setDataFile(OSLogPrintStream::open("com.apple.JavaScriptCore", "InvalidHandle", OS_LOG_TYPE_ERROR));
 
@@ -601,6 +601,10 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
     updateCrashLogMsg(__LINE__);
 
     uint64_t bitfield = 0xab00ab01ab020000;
+    if (expectedVM && actualVM && actualVM != expectedVM)
+        bitfield |= 1 << 10;
+    if (expectedVM && blockVM != expectedVM)
+        bitfield |= 1 << 9;
     if (!header().handlePointerForNullCheck())
         bitfield |= 1 << 8;
     if (!isBlockVMValid)
