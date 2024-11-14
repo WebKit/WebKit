@@ -501,7 +501,7 @@ class Executive(AbstractExecutive):
                 try:
                     # On Python 2 'encoding' is an invalid keyword argument for this function
                     open_kwargs = {}
-                    if sys.version_info.major >= 3:
+                    if sys.version_info[0] >= 3:
                         open_kwargs['encoding'] = 'cp437'
 
                     with open(args[0], 'r', **open_kwargs) as f:
@@ -528,7 +528,7 @@ class Executive(AbstractExecutive):
         env = kwargs.pop('env', None)
         if self._is_native_win and env is not None:
             mod_env = {}
-            if sys.version_info.major >= 3:
+            if sys.version_info[0] >= 3:
                 for key, value in env.items():
                     if not isinstance(key, str):
                         key = key.decode('utf-8')

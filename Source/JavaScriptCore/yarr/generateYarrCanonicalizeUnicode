@@ -77,7 +77,7 @@ def openOrExit(path, mode):
         dirname = os.path.dirname(path)
         if not os.path.isdir(dirname):
             os.makedirs(dirname)
-        if sys.version_info.major >= 3:
+        if sys.version_info[0] >= 3:
             return open(path, mode, encoding="UTF-8")
         else:
             return open(path, mode)

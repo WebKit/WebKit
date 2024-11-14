@@ -99,7 +99,7 @@ aliases = None
 
 def openOrExit(path, mode):
     try:
-        if sys.version_info.major >= 3:
+        if sys.version_info[0] >= 3:
             return open(path, mode, encoding="UTF-8")
         else:
             return open(path, mode)

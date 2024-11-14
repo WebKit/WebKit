@@ -50,7 +50,7 @@ def concatenated_output_filename(builtins_files, framework_name, generate_only_w
 
 
 def do_open(file, mode):
-    if sys.version_info.major == 2:
+    if sys.version_info[0] == 2:
         return open(file, mode)
     else:
         return open(file, mode, encoding="UTF-8")

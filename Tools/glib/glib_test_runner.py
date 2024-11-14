@@ -248,7 +248,7 @@ class GLibTestRunner(object):
         if not self._results:
             sys.stdout.write('TEST: %s...\n' % self._test_binary)
             sys.stdout.flush()
-        if sys.version_info.major > 2:
+        if sys.version_info[0] > 2:
             p = subprocess.Popen(command, stderr=subprocess.PIPE, env=env, pass_fds=[pipe_w])
         else:
             p = subprocess.Popen(command, stderr=subprocess.PIPE, env=env)
