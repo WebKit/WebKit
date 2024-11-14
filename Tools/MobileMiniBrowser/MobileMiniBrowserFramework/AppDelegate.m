@@ -27,10 +27,11 @@
 
 #import "WebViewController.h"
 #import <WebKit/WKWebsiteDataStorePrivate.h>
+#import <WebKit/_WKWebsiteDataStoreDelegate.h>
 
 #import <WebKit/WebKit.h>
 
-@interface AppDelegate ()
+@interface AppDelegate () <_WKWebsiteDataStoreDelegate>
 @end
 
 @implementation AppDelegate
@@ -49,6 +50,7 @@
     [WKWebsiteDataStore _setWebPushActionHandler:^(_WKWebPushAction *action) {
         return dataStore;
     }];
+    dataStore._delegate = self;
 
     NSURL *url = launchOptions[UIApplicationLaunchOptionsURLKey];
     if (url)
@@ -100,5 +102,12 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
 
+- (void)websiteDataStore:(WKWebsiteDataStore *)dataStore openWindow:(NSURL *)url fromServiceWorkerOrigin:(WKSecurityOrigin *)serviceWorkerOrigin completionHandler:(void (^)(WKWebView *newWebView))completionHandler
+{
+    WebViewController *controller = (WebViewController *)self.window.rootViewController;
+    [controller addWebView];
+    [controller.currentWebView loadRequest:[NSURLRequest requestWithURL:url]];
+    completionHandler(controller.currentWebView);
+}
 
 @end
