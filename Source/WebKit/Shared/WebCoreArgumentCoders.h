@@ -52,7 +52,7 @@ class FontPlatformData;
 
 namespace IPC {
 
-#if !USE(CORE_TEXT)
+#if !USE(CORE_TEXT) && !USE(SKIA)
 template<> struct ArgumentCoder<WebCore::Font> {
     static void encode(Encoder&, const WebCore::Font&);
     static std::optional<Ref<WebCore::Font>> decode(Decoder&);

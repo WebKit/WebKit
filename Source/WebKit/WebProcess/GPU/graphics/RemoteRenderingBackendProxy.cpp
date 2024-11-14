@@ -378,7 +378,7 @@ void RemoteRenderingBackendProxy::cacheFont(const WebCore::Font::Attributes& fon
 void RemoteRenderingBackendProxy::cacheFontCustomPlatformData(Ref<const FontCustomPlatformData>&& customPlatformData)
 {
     Ref<FontCustomPlatformData> data = adoptRef(const_cast<FontCustomPlatformData&>(customPlatformData.leakRef()));
-#if PLATFORM(COCOA)
+#if PLATFORM(COCOA) || USE(SKIA)
     send(Messages::RemoteRenderingBackend::CacheFontCustomPlatformData(data->serializedData()));
 #else
     send(Messages::RemoteRenderingBackend::CacheFontCustomPlatformData(WTFMove(data)));

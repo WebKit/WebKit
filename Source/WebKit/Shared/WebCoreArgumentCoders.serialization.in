@@ -4271,27 +4271,6 @@ header: <WebCore/FontAttributes.h>
     bool hasMultipleFonts
 };
 
-#if USE(CORE_TEXT)
-using WebCore::FontPlatformData::IPCData = std::variant<WebCore::FontPlatformSerializedData, WebCore::FontPlatformSerializedCreationData>;
-#endif
-
-#if USE(CORE_TEXT)
-[RefCounted] class WebCore::Font {
-    WebCore::FontInternalAttributes attributes();
-    WebCore::FontPlatformData platformData();
-}
-
-[CreateUsing=fromIPCData] class WebCore::FontPlatformData {
-    float size();
-    WebCore::FontOrientation orientation();
-    WebCore::FontWidthVariant widthVariant();
-    WebCore::TextRenderingMode textRenderingMode();
-    bool syntheticBold();
-    bool syntheticOblique();
-    WebCore::FontPlatformData::IPCData toIPCData();
-}
-#endif
-
 header: <WebCore/WritingDirection.h>
 enum class WebCore::WritingDirection : uint8_t {
     Natural,

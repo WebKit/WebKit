@@ -35,28 +35,6 @@
 
 namespace IPC {
 
-void ArgumentCoder<WebCore::Font>::encodePlatformData(Encoder&, const WebCore::Font&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-std::optional<WebCore::FontPlatformData> ArgumentCoder<WebCore::Font>::decodePlatformData(Decoder&)
-{
-    ASSERT_NOT_REACHED();
-    return std::nullopt;
-}
-
-void ArgumentCoder<WebCore::FontPlatformData::Attributes>::encodePlatformData(Encoder&, const WebCore::FontPlatformData::Attributes&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(Decoder&, WebCore::FontPlatformData::Attributes&)
-{
-    ASSERT_NOT_REACHED();
-    return false;
-}
-
 void ArgumentCoder<sk_sp<SkColorSpace>>::encode(Encoder& encoder, const sk_sp<SkColorSpace>& colorSpace)
 {
     encoder << WebKit::CoreIPCSkColorSpace(colorSpace);
