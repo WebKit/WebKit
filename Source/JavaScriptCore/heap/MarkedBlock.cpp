@@ -218,9 +218,38 @@ void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
     sweep(&freeList);
 }
 
+#if ENABLE(MARKEDBLOCK_TEST_DUMP_INFO)
+inline void MarkedBlock::setupTestForDumpInfoAndCrash()
+{
+    static std::atomic<uint64_t> count = 0;
+    // Option set to 0 disables testing.
+    if (++count == Options::markedBlockDumpInfoCount()) {
+        memset(&header(), 0, sizeof(uintptr_t));
+        switch (Options::markedBlockDumpInfoCount() & 0xf) {
+        case 1: // Test null VM pointer.
+            dataLogLn("Zeroing MarkedBlock::Header::m_vm");
+            *const_cast<VM**>(&header().m_vm) = nullptr;
+            break;
+        case 2: // Test non-null invalid VM pointer.
+            dataLogLn("Corrupting MarkedBlock::Header::m_vm");
+            *const_cast<VM**>(&header().m_vm) = bitwise_cast<VM*>(0xdeadbeefdeadbeef);
+            break;
+        case 3: // Test contiguous and total zero byte counts.
+            dataLogLn("Zeroing start and end of MarkedBlock");
+            char* blockMem = bitwise_cast<char*>(this);
+            memset(blockMem, 0, blockSize / 4);
+            memset(blockMem + 3 * blockSize / 4, 0, blockSize / 4);
+            break;
+        }
+    }
+}
+#endif
+
 void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, HeapCell* cell)
 {
     ASSERT(vm().heap.objectSpace().isMarking());
+    setupTestForDumpInfoAndCrash();
+
     Locker locker { header().m_lock };
     
     if (!areMarksStale(markingVersion))
@@ -228,17 +257,8 @@ void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, HeapCell* cell)
 
     MarkedBlock::Handle* handle = header().handlePointerForNullCheck();
 
-    // Testing
-    static unsigned count = 0;
-    //dataLogLn("aboutToMarkSlow ", Options::aboutToMarkSlowCrash(), " ", count);
-    if (Options::aboutToMarkSlowCrash() && count++ > Options::aboutToMarkSlowCrash()) {
-        handle = nullptr;
-        if (Options::aboutToMarkSlowCrash() & 1)
-            *const_cast<VM**>(&header().m_vm) = bitwise_cast<VM*>(0xdeadbeefdeadbeef);
-    }
-    // End testing
     if (UNLIKELY(!handle))
-        dumpInfoAndCrashForInvalidHandle(locker, cell, nullptr);
+        dumpInfoAndCrashForInvalidHandleV2(locker, cell, nullptr);
 
     BlockDirectory* directory = handle->directory();
     bool isAllocated;
@@ -531,42 +551,49 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(freeList, emptyMode, sweepMode, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode, [] (VM&, JSCell*) { });
 }
 
-NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalidHandle(AbstractLocker&, HeapCell* heapCell, VM* expectedVM)
-{
-    //WTF::setDataFile(OSLogPrintStream::open("com.apple.JavaScriptCore", "InvalidHandle", OS_LOG_TYPE_ERROR));
-
+NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalidHandleV2(AbstractLocker&, HeapCell* heapCell, VM* expectedVM)
+{   
     VM* blockVM = header().m_vm;
     VM* actualVM = nullptr;
     bool isBlockVMValid = false;
     bool isBlockInSet = false;
     bool isBlockInDirectory = false;
     bool foundInBlockVM = false;
-    size_t contiguousZeroCountAfterHandle = 0;
+    size_t contigousZeroBytesHeadOfBlock = 0;
+    size_t totalZeroBytesInBlock = 0;
     uint64_t cellFirst8Bytes = 0;
 
     if (heapCell) {
         uint64_t* p = bitwise_cast<uint64_t*>(heapCell);
-        cellFirst8Bytes = *p; // Safe since its MarkedBlock::Header::m_handle has already been dereferenced.
+        cellFirst8Bytes = *p;
     }
 
     auto updateCrashLogMsg = [&](int line) {
         StringPrintStream out;
-        out.printf("INVALID HANDLE [%d]: MarkedBlock=%p; heapCell=%p; cell8Bytes=%llu; CZC=%lu; blockVM=%p; actualVM=%p; isBlockVMValid=%d; isBlockInSet=%d; isBlockInDir=%d; foundInBlockVM=%d;",
-            line, this, heapCell, cellFirst8Bytes, contiguousZeroCountAfterHandle, blockVM, actualVM, isBlockVMValid, isBlockInSet, isBlockInDirectory, foundInBlockVM);
-        WTF::setCrashLogMessage(out.toCString().data());
-        dataLogLn(out.toCString().data());
+        out.printf("INVALID HANDLE [%d]: markedBlock=%p; heapCell=%p; cellFirst8Bytes=%#llx; contiguousZeros=%lu; totalZeros=%lu; blockVM=%p; actualVM=%p; isBlockVMValid=%d; isBlockInSet=%d; isBlockInDir=%d; foundInBlockVM=%d;",
+            line, this, heapCell, cellFirst8Bytes, contigousZeroBytesHeadOfBlock, totalZeroBytesInBlock, blockVM, actualVM, isBlockVMValid, isBlockInSet, isBlockInDirectory, foundInBlockVM);
+        const char* msg = out.toCString().data();
+        WTF::setCrashLogMessage(msg);
+        dataLogLn(msg);
     };
     updateCrashLogMsg(__LINE__);
 
-    static_assert(!offsetOfHeader);
-    static_assert(!OBJECT_OFFSETOF(Header, m_handle));
-    {
-        char* mem = WTF::bitwise_cast<char*>(&header());
-        for (; contiguousZeroCountAfterHandle < MarkedBlock::blockSize; ++contiguousZeroCountAfterHandle) {
-            if (*mem)
-                break;
-            ++mem;
-        }
+    char* blockStart = bitwise_cast<char*>(this);
+    bool sawNonZero = false;
+    for (auto mem = blockStart; mem < blockStart + MarkedBlock::blockSize; mem++) {
+        // Exclude the MarkedBlock::Header::m_lock from the zero scan since taking the lock writes a non-zero value.
+        auto isMLockBytes = [blockStart](char* p) ALWAYS_INLINE_LAMBDA {
+            constexpr size_t lockOffset = offsetOfHeader + OBJECT_OFFSETOF(MarkedBlock::Header, m_lock);
+            size_t offset = p - blockStart;
+            return lockOffset <= offset && offset < lockOffset + sizeof(MarkedBlock::Header::m_lock);
+        };
+        bool byteIsZero = !*mem;
+        if (byteIsZero || isMLockBytes(mem)) {
+            totalZeroBytesInBlock++;
+            if (!sawNonZero)
+                contigousZeroBytesHeadOfBlock++;
+        } else
+            sawNonZero = true;
     }
     updateCrashLogMsg(__LINE__);
 
@@ -605,6 +632,7 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
     updateCrashLogMsg(__LINE__);
 
     uint64_t bitfield = 0xab00ab01ab020000;
+
     if (expectedVM && actualVM && actualVM != expectedVM)
         bitfield |= 1 << 10;
     if (expectedVM && blockVM != expectedVM)
@@ -620,8 +648,11 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
     if (!foundInBlockVM)
         bitfield |= 1 << 4;
 
-    // XXX: could save something other than 'this', which can be derived from heapCell.
-    CRASH_WITH_INFO(heapCell, cellFirst8Bytes, contiguousZeroCountAfterHandle, bitfield, this, blockVM, actualVM);
+    static_assert(MarkedBlock::blockSize < (1ull << 32));
+    uint64_t zeroCounts = contigousZeroBytesHeadOfBlock | (totalZeroBytesInBlock << 32);
+
+    // NB: could save something other than 'this' since it can be derived from heapCell.
+    CRASH_WITH_INFO(heapCell, cellFirst8Bytes, zeroCounts, bitfield, this, blockVM, actualVM);
 }
 
 } // namespace JSC

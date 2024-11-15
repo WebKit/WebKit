@@ -147,6 +147,8 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
     ASSERT(!m_isCheckingForDefaultMarkViolation);
     
     auto validateCell = [&] (JSCell* jsCell) {
+        jsCell->checkConsistency(heap());
+
         StructureID structureID = jsCell->structureID();
         
         // XXX
@@ -193,8 +195,6 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
         if (structureID.isNuked())
             die("GC scan found object in bad state: structureID is nuked!\n");
         
-        jsCell->checkConsistency(heap());
-
         // This detects the worst of the badness.
         Integrity::auditStructureID(structureID);
     };

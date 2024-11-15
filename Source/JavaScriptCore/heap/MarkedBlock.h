@@ -429,7 +429,14 @@ private:
     inline bool marksConveyLivenessDuringMarking(HeapVersion myMarkingVersion, HeapVersion markingVersion);
 
     // This is only used for debugging. We should remove this once the issue is resolved (rdar://136782494)
-    JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NEVER_INLINE void dumpInfoAndCrashForInvalidHandle(AbstractLocker&, HeapCell*, VM*);
+    JS_EXPORT_PRIVATE NO_RETURN_DUE_TO_CRASH NEVER_INLINE void dumpInfoAndCrashForInvalidHandleV2(AbstractLocker&, HeapCell*, VM*);
+
+#define ENABLE_MARKEDBLOCK_TEST_DUMP_INFO 1
+#if ENABLE(MARKEDBLOCK_TEST_DUMP_INFO)
+    inline void setupTestForDumpInfoAndCrash();
+#else
+    inline void setupTestForDumpInfoAndCrash() { }
+#endif
 };
 
 inline MarkedBlock::Header& MarkedBlock::header()

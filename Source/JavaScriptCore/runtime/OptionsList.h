@@ -604,7 +604,8 @@ bool hasCapacityToUseLargeGigacage();
     v(Bool, useWasmSIMD, true, Normal, "Allow the new simd instructions and types from the wasm simd spec."_s) \
     v(Bool, useWasmRelaxedSIMD, false, Normal, "Allow the relaxed simd instructions and types from the wasm relaxed simd spec."_s) \
     v(Bool, useWasmTailCalls, true, Normal, "Allow the new instructions from the wasm tail calls spec."_s) \
-    v(Unsigned, aboutToMarkSlowCrash, 0, Normal, nullptr) \
+    v(Unsigned, markedBlockDumpInfoCount, 0, Normal, nullptr) /* FIXME: rdar://136782494 */ \
+
 
 
 enum OptionEquivalence {
