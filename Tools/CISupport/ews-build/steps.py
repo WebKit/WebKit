@@ -7258,15 +7258,23 @@ class ParseStaticAnalyzerResultsWithoutChange(ParseStaticAnalyzerResults):
     scan_build_output = SCAN_BUILD_OUTPUT_DIR + '-baseline'
 
 
-class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
+class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle, AddToLogMixin):
     name = 'find-unexpected-static-analyzer-results'
     description = ['finding unexpected static analyzer results']
     descriptionDone = ['found unexpected static analyzer results']
     result_message = ''
+    results_db_log_name = 'results-db'
+    jsonFileName = f'{SCAN_BUILD_OUTPUT_DIR}/unexpected_results.json'
+    logfiles = {'json': jsonFileName}
+    suite = 'safer-cpp-checks'
 
-    def __init__(self, expectations=False, **kwargs):
+    def __init__(self, expectations=False, filtered_changes=False, **kwargs):
         self.expectations = expectations  # If true, results will be compared against checked-in expectations. Otherwise, they're compared against a previous run.
         super().__init__(logEnviron=False, **kwargs)
+        self.unexpected_results_filtered = {}
+        self.unexpected_failures_filtered = set()
+        self.unexpected_passes_filtered = set()
+        self.filtered_changes = filtered_changes  # Allow the unit test to override filtered_changes
 
     @defer.inlineCallbacks
     def run(self):
@@ -7274,7 +7282,7 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
         if api_key:
             self.env[RESULTS_SERVER_API_KEY] = api_key
         else:
-            self._addToLog('stdio', 'No API key for {} found'.format(RESULTS_DB_URL))
+            yield self._addToLog('stdio', 'No API key for {} found'.format(RESULTS_DB_URL))
 
         self.command = ['python3', 'Tools/Scripts/compare-static-analysis-results', os.path.join(self.getProperty('builddir'), 'build/new')]
         self.command += ['--build-output', SCAN_BUILD_OUTPUT_DIR]
@@ -7282,7 +7290,7 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
             self.command += ['--archived-dir', os.path.join(self.getProperty('builddir'), 'build/baseline')]
             self.command += ['--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build']  # Only generate results page on the second comparison
             self.command += ['--delete-results']
-            if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES and self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH:
+            if CURRENT_HOSTNAME in EWS_BUILD_HOSTNAMES + TESTING_ENVIRONMENT_HOSTNAMES and self.getProperty('github.base.ref', DEFAULT_BRANCH) == DEFAULT_BRANCH:
                 self.command += [
                     '--builder-name', self.getProperty('buildername', ''),
                     '--build-number', self.getProperty('buildnumber', ''),
@@ -7302,43 +7310,169 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
         self.log_observer = logobserver.BufferLogObserver()
         self.addLogObserver('stdio', self.log_observer)
 
+        self.log_observer_json = logobserver.BufferLogObserver()
+        self.addLogObserver('json', self.log_observer_json)
+
         rc = yield super().run()
         if rc != SUCCESS:
             return defer.returnValue(rc)
 
+        self.find_unexpected_results()
+        unexpected_results = self.getProperty('num_failing_files', 0) or self.getProperty('num_unexpected_issues', 0) or self.getProperty('num_passing_files', 0)
+        unexpected_results_after_filter = None
+        if self.expectations and unexpected_results:  # Only consult results database on the first run
+            logTextJson = self.log_observer_json.getStdout()
+            yield self._addToLog('stdio', f'Checking results database for unexpected results...\n')
+            successful_filter = yield self.filter_results_using_results_db(logTextJson)
+            unexpected_results_after_filter = self.getProperty('num_failing_files', 0) or self.getProperty('num_unexpected_issues', 0) or self.getProperty('num_passing_files', 0)
+            if successful_filter and self.filtered_changes and unexpected_results_after_filter:  # If there are unexpected results
+                yield self._addToLog('stdio', f'\nSuccessfully filtered results! Updating unexpected_results.json on disk.\n')
+                self.write_unexpected_results_file()
+            if not successful_filter:
+                yield self._addToLog('stdio', f'\nFailed to consult results database. Falling back to tip-of-tree...\n')
+                # If results db failed, rebuild without changes to verify causation
+                self.build.addStepsAfterCurrentStep([ValidateChange(verifyBugClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()])
+                self.createResultMessage()
+                return defer.returnValue(rc)
+
+        # Only save the results if there are unexpected results
+        if self.expectations:
+            if not unexpected_results_after_filter:
+                yield self._addToLog('stdio', f'Found no unexpected results after filtering through results database!\n')
+            else:
+                yield self._addToLog('stdio', f'Found unexpected results after filtering through results database!\n')
+                steps_to_add = [DownloadUnexpectedResultsFromMaster(), DeleteStaticAnalyzerResults(results_dir='StaticAnalyzerUnexpectedRegressions')] if self.filtered_changes else []
+                steps_to_add += [GenerateSaferCPPResultsIndex(), DeleteStaticAnalyzerResults(), ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults(), DisplaySaferCPPResults()]
+                self.build.addStepsAfterCurrentStep(steps_to_add)
+        elif unexpected_results:
+            self.build.addStepsAfterCurrentStep([ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults(), DisplaySaferCPPResults()])
+
         self.createResultMessage()
 
-        unexpected_results = self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_new_issues', 0) or self.getProperty('unexpected_passing_files', 0)
-        if self.expectations and unexpected_results:
-            # If there are unexpected results, rebuild without changes to verify causation
-            self.build.addStepsAfterCurrentStep([ValidateChange(verifyBugClosed=False, addURLs=False), RevertAppliedChanges(exclude=['new*', 'scan-build-output*']), ScanBuildWithoutChange()])
-        elif unexpected_results:
-            # Only save the results if there are failures and it is not the first run
-            self.build.addStepsAfterCurrentStep([ArchiveStaticAnalyzerResults(), UploadStaticAnalyzerResults(), ExtractStaticAnalyzerTestResults(), DisplaySaferCPPResults()])
         return defer.returnValue(rc)
 
-    def createResultMessage(self):
+    def write_unexpected_results_file(self):
+        resultDirectory = f"public_html/results/{self.getProperty('buildername')}/{self.getProperty('change_id')}-{self.getProperty('buildnumber')}"
+        results_data_file = os.path.join(resultDirectory, 'unexpected_results.json')
+        os.makedirs(os.path.dirname(results_data_file), exist_ok=True)
+        with open(results_data_file, "w") as f:
+            results_data_obj = json.dumps(self.unexpected_results_filtered, indent=4)
+            f.write(results_data_obj)
+
+    @defer.inlineCallbacks
+    def filter_results_using_results_db(self, string):
+        if not string:
+            return defer.returnValue(False)
+
+        content_string = LayoutTestFailures._strip_json_wrapper(string.strip())
+        # Workaround for https://github.com/buildbot/buildbot/issues/4906
+        content_string = ''.join(content_string.splitlines())
+        try:
+            results_json = json.loads(content_string)
+        except json.JSONDecodeError:
+            yield self._addToLog(self.results_db_log_name, f'Failed to decode JSON, retrying with workaround\n')
+            content_string += '}'  # Workaround for getStdout() removing the last bracket
+            try:
+                results_json = json.loads(content_string)
+            except json.JSONDecodeError:
+                yield self._addToLog(self.results_db_log_name, f'Failed to decode JSON\n')
+                return defer.returnValue(False)
+
+        self.unexpected_results_filtered = results_json
+
+        identifier = self.getProperty('identifier', None)
+        platform = self.getProperty('platform', None)
+        configuration = {}
+        if platform:
+            configuration['platform'] = platform
+        style = self.getProperty('configuration', None)
+        if style and style in ['debug', 'release']:
+            configuration['style'] = style
+
+        yield self._addToLog(self.results_db_log_name, f'Checking Results database for unexpected results. Identifier: {identifier}, configuration: {configuration}\n')
+        has_commit = False
+        if identifier:
+            has_commit = yield ResultsDatabase.has_commit(commit=identifier)
+            if not has_commit:
+                yield self._addToLog(self.results_db_log_name, f"'{identifier}' could not be found on the results database, falling back to tip-of-tree\n")
+                return defer.returnValue(False)
+
+        has_results = yield ResultsDatabase.get_results(self.suite, commit=identifier, configuration=configuration)
+        if not has_results:
+            yield self._addToLog(self.results_db_log_name, f"{self.suite} results for '{identifier}' could not be found on the results database, falling back to tip-of-tree\n")
+            return defer.returnValue(False)
+
+        filtered_failures = yield self.check_results_db(results_json.get('failures'), 'failures', configuration, identifier)
+        filtered_passes = yield self.check_results_db(results_json.get('passes'), 'passes', configuration, identifier)
+        if filtered_failures is not None:
+            if self.filtered_changes:
+                self.setProperty('num_unexpected_issues', 0)
+            self.setProperty('unexpected_failures', list(filtered_failures))
+            self.setProperty('num_failing_files', len(filtered_failures))
+        if filtered_passes is not None:
+            self.setProperty('unexpected_passes', list(filtered_passes))
+            self.setProperty('num_passing_files', len(filtered_passes))
+        successful_filter = filtered_failures is not None or filtered_passes is not None
+        return defer.returnValue(successful_filter)
+
+    @defer.inlineCallbacks
+    def check_results_db(self, results_json, result_type, configuration, identifier):
+        yield self._addToLog(self.results_db_log_name, f'\nChecking for unexpected {result_type}...\n')
+        filtered_results = set()
+        for project, checkers in results_json.items():
+            for checker, files in checkers.items():
+                files_per_checker = list(files)
+                for file in files_per_checker:
+                    test_name = f'{project}/{file}/{checker}'
+                    data = yield ResultsDatabase.does_result_match(
+                        test_name, result_type='FAIL' if result_type == 'failures' else 'PASS',
+                        configuration=configuration,
+                        commit=identifier,
+                        suite=self.suite,
+                        default='PASS'
+                    )
+                    if not data:
+                        yield self._addToLog(self.results_db_log_name, f"Failed to match results for {test_name}, falling back to tip-of-tree\n")
+                        return defer.returnValue(None)
+                    self._addToLog(self.results_db_log_name, f"\n{test_name}: pre-existing={data['does_result_match']}\nResponse from results-db: {data}\n{data['logs']}")
+                    if data['does_result_match']:
+                        yield self._addToLog('stdio', f'Removing {test_name} from unexpected {result_type}.\n')
+                        self.filtered_changes = True
+                        self.unexpected_results_filtered[result_type][project][checker].remove(file)
+                    else:
+                        yield self._addToLog('stdio', f'Adding {file} to unexpected {result_type}.\n')
+                        filtered_results.add(file)
+        return defer.returnValue(filtered_results)
+
+    def find_unexpected_results(self):
         log_text = self.log_observer.getStdout()
         match = re.search(r'^Total (new issues|unexpected issues): (\d+)', log_text, re.MULTILINE)
         if match:
-            self.result_message += f"{match.group(2)} new issue{'s' if int(match.group(2)) > 1 else ''} "
-            self.setProperty('unexpected_new_issues', int(match.group(2)))
+            self.setProperty('num_unexpected_issues', int(match.group(2)))
         else:
-            self.setProperty('unexpected_new_issues', 0)
+            self.setProperty('num_unexpected_issues', 0)
 
         match = re.search(r'^Total (new files|unexpected failing files): (\d+)', log_text, re.MULTILINE)
         if match:
-            self.result_message += f"{match.group(2)} failing file{'s' if int(match.group(2)) > 1 else ''} "
-            self.setProperty('unexpected_failing_files', int(match.group(2)))
+            self.setProperty('num_failing_files', int(match.group(2)))
         else:
-            self.setProperty('unexpected_failing_files', 0)
+            self.setProperty('num_failing_files', 0)
 
         match = re.search(r'^Total (fixed files|unexpected passing files): (\d+)', log_text, re.MULTILINE)
         if match:
-            self.result_message += f"{match.group(2)} fixed file{'s' if int(match.group(2)) > 1 else ''}"
-            self.setProperty('unexpected_passing_files', int(match.group(2)))
+            self.setProperty('num_passing_files', int(match.group(2)))
         else:
-            self.setProperty('unexpected_passing_files', 0)
+            self.setProperty('num_passing_files', 0)
+
+    def createResultMessage(self):
+        new_issues = self.getProperty('num_unexpected_issues', 0)
+        failing_files = self.getProperty('num_failing_files', 0)
+        fixed_files = self.getProperty('num_passing_files', 0)
+
+        if not self.filtered_changes:
+            self.result_message += f"{new_issues} new issue{'s' if new_issues > 1 else ''} " if new_issues else ''
+        self.result_message += f"{failing_files} failing file{'s' if failing_files > 1 else ''} " if failing_files else ''
+        self.result_message += f"{fixed_files} fixed file{'s' if fixed_files > 1 else ''}" if fixed_files else ''
 
     def getResultSummary(self):
         status = ''
@@ -7365,7 +7499,7 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
     @defer.inlineCallbacks
     def run(self):
         commands_for_comment = set()
-        num_issues = self.getProperty('unexpected_new_issues', 0)
+        num_issues = self.getProperty('num_unexpected_issues', 0)
         self.resultDirectory = f"public_html/results/{self.getProperty('buildername')}/{self.getProperty('change_id')}-{self.getProperty('buildnumber')}"
         unexpected_results_data = self.loadResultsData(os.path.join(self.resultDirectory, SCAN_BUILD_OUTPUT_DIR, 'unexpected_results.json'))
         is_log = yield self.getFilesPerProject(unexpected_results_data, 'passes', commands_for_comment)
@@ -7376,7 +7510,7 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
                 yield self._addToLog('stdio', f'Ignored {num_issues} pre-existing failure{pluralSuffix}')
             self.addURL("View failures", self.resultDirectoryURL() + SCAN_BUILD_OUTPUT_DIR + "/new-results.html")
         self.createComment(commands_for_comment)
-        if self.getProperty('unexpected_failing_files', 0):
+        if self.getProperty('num_failing_files', 0):
             return defer.returnValue(FAILURE)
         return defer.returnValue(SUCCESS)
 
@@ -7407,9 +7541,9 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
         return defer.returnValue(is_log)
 
     def createComment(self, commands_for_comment):
-        num_failures = self.getProperty('unexpected_failing_files', 0)
-        num_passes = self.getProperty('unexpected_passing_files', 0)
-        num_issues = self.getProperty('unexpected_new_issues', 0)
+        num_failures = self.getProperty('num_failing_files', 0)
+        num_passes = self.getProperty('num_passing_files', 0)
+        num_issues = self.getProperty('num_unexpected_issues', 0)
 
         if not num_failures and not num_passes:
             return
@@ -7440,7 +7574,7 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
         return 'patch'
 
     def doStepIf(self, step):
-        return self.getProperty('unexpected_failing_files', 0) or self.getProperty('unexpected_passing_files', 0) or self.getProperty('unexpected_new_issues', 0)
+        return self.getProperty('num_failing_files', 0) or self.getProperty('num_passing_files', 0) or self.getProperty('num_unexpected_issues', 0)
 
     def hideStepIf(self, results, step):
         return not self.doStepIf(step)
@@ -7449,9 +7583,9 @@ class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
         return f"{S3_RESULTS_URL}{self.resultDirectory.replace('public_html/results/', '') + '/'}"
 
     def getResultSummary(self):
-        num_failures = self.getProperty('unexpected_failing_files', 0)
-        num_passes = self.getProperty('unexpected_passing_files', 0)
-        num_issues = self.getProperty('unexpected_new_issues', 0)
+        num_failures = self.getProperty('num_failing_files', 0)
+        num_passes = self.getProperty('num_passing_files', 0)
+        num_issues = self.getProperty('num_unexpected_issues', 0)
         failing_files = (", ").join(self.getProperty('failures', [])[:self.NUM_TO_DISPLAY])
         passing_files = (", ").join(self.getProperty('passes', [])[:self.NUM_TO_DISPLAY])
         results_summary = ''
