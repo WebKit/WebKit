@@ -34,3 +34,6 @@ base_url = "https://github.com/WebKit/WebKit/tree/main/"
 
 [extra]
 urlmap_file = "wpe@WPE_API_MAJOR_VERSION@-urlmap.js"
+content_files = [
+    "environment-variables.md"
+]
