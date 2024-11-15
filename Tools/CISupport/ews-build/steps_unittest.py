@@ -3869,7 +3869,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'cherry-pick', 'HEAD..remotes/Contributor/eng/pull-request-branch'],
+                command=['git', 'cherry-pick', '--allow-empty', 'HEAD..remotes/Contributor/eng/pull-request-branch'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Checked out pull request')
@@ -3921,7 +3921,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'cherry-pick', 'HEAD..remotes/Contributor-apple/eng/pull-request-branch'],
+                command=['git', 'cherry-pick', '--allow-empty', 'HEAD..remotes/Contributor-apple/eng/pull-request-branch'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Checked out pull request')
@@ -3973,7 +3973,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'cherry-pick', 'HEAD..remotes/WebKit-integration/integration/ci/1234'],
+                command=['git', 'cherry-pick', '--allow-empty', 'HEAD..remotes/WebKit-integration/integration/ci/1234'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Checked out pull request')
@@ -4025,7 +4025,7 @@ class TestCheckOutPullRequest(BuildStepMixinAdditions, unittest.TestCase):
                 timeout=600,
                 logEnviron=False,
                 env=self.ENV,
-                command=['git', 'cherry-pick', 'HEAD..remotes/Contributor/eng/pull-request-branch'],
+                command=['git', 'cherry-pick', '--allow-empty', 'HEAD..remotes/Contributor/eng/pull-request-branch'],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='Checked out pull request')
