@@ -40,6 +40,7 @@
 #import <WebKit/WKWebExtensionPermissionPrivate.h>
 #import <WebKit/WKWebExtensionPrivate.h>
 #import <WebKit/WKWebViewConfigurationPrivate.h>
+#import <WebKit/WKWebViewControllerPrivate.h>
 #import <WebKit/WKWebViewPrivate.h>
 #import <WebKit/_WKActivatedElementInfo.h>
 #import <WebKit/_WKAttachment.h>

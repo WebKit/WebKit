@@ -2368,6 +2368,7 @@
 		CDCA85C9132ABA4E00E961DF /* WKFullScreenWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCA85C7132ABA4E00E961DF /* WKFullScreenWindowController.h */; };
 		CDCDC99D248FE8DA00A69522 /* EndowmentStateTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = CDCDC99B248FE8DA00A69522 /* EndowmentStateTracker.h */; };
 		CDCDC99E248FE8DA00A69522 /* EndowmentStateTracker.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDCDC99C248FE8DA00A69522 /* EndowmentStateTracker.mm */; };
+		CDD90E122CE3F5B0004EEABD /* WKWebViewControllerPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = CDD90E102CE3EC61004EEABD /* WKWebViewControllerPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		CDE555322406EB8C008A3DDB /* RemoteLegacyCDMFactoryProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE555292406B896008A3DDB /* RemoteLegacyCDMFactoryProxyMessageReceiver.cpp */; };
 		CDE555332406EB8C008A3DDB /* RemoteLegacyCDMProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552A2406B896008A3DDB /* RemoteLegacyCDMProxyMessageReceiver.cpp */; };
 		CDE555342406EB8C008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CDE5552E2406B897008A3DDB /* RemoteLegacyCDMSessionMessageReceiver.cpp */; };
@@ -7904,6 +7905,8 @@
 		CDD53572240DDE0600F7B8C4 /* RemoteAudioSessionProxyMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSessionProxyMessages.h; sourceTree = "<group>"; };
 		CDD53575240DDE0700F7B8C4 /* RemoteAudioSessionMessages.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteAudioSessionMessages.h; sourceTree = "<group>"; };
 		CDD53576240DDE0700F7B8C4 /* RemoteAudioSessionMessageReceiver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteAudioSessionMessageReceiver.cpp; sourceTree = "<group>"; };
+		CDD90E102CE3EC61004EEABD /* WKWebViewControllerPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKWebViewControllerPrivate.h; sourceTree = "<group>"; };
+		CDD90E112CE3EC61004EEABD /* WKWebViewController.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewController.mm; sourceTree = "<group>"; };
 		CDE554E224058114008A3DDB /* RemoteLegacyCDMFactory.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLegacyCDMFactory.h; sourceTree = "<group>"; };
 		CDE554E324058114008A3DDB /* RemoteLegacyCDMFactory.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteLegacyCDMFactory.cpp; sourceTree = "<group>"; };
 		CDE554EA24058183008A3DDB /* RemoteLegacyCDM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteLegacyCDM.h; sourceTree = "<group>"; };
@@ -11885,6 +11888,8 @@
 				1ADF59181890528E0043C145 /* WKWebViewConfiguration.mm */,
 				2D7AAFD518C956AF00A7ACD4 /* WKWebViewConfigurationInternal.h */,
 				1AC1415018AC47EE006C602C /* WKWebViewConfigurationPrivate.h */,
+				CDD90E112CE3EC61004EEABD /* WKWebViewController.mm */,
+				CDD90E102CE3EC61004EEABD /* WKWebViewControllerPrivate.h */,
 				1A66BF8E18A052ED002071B4 /* WKWebViewInternal.h */,
 				26F9A83A18A3463F00AEB88A /* WKWebViewPrivate.h */,
 				0F45A33B239D8CC400294ABF /* WKWebViewPrivateForTesting.h */,
@@ -17870,6 +17875,7 @@
 				1AC1415118AC47EE006C602C /* WKWebViewConfigurationPrivate.h in Headers */,
 				2D7AAFD318C8640600A7ACD4 /* WKWebViewContentProvider.h in Headers */,
 				2DC6D9C318C44A610043BAD4 /* WKWebViewContentProviderRegistry.h in Headers */,
+				CDD90E122CE3F5B0004EEABD /* WKWebViewControllerPrivate.h in Headers */,
 				1A66BF8F18A052ED002071B4 /* WKWebViewInternal.h in Headers */,
 				0FFED98E23A3200A00EEF459 /* WKWebViewIOS.h in Headers */,
 				0FFED99323A3203D00EEF459 /* WKWebViewMac.h in Headers */,
