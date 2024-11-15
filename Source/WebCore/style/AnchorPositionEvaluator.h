@@ -74,6 +74,17 @@ enum class AnchorSizeDimension : uint8_t {
 
 using AnchorPositionedStates = WeakHashMap<Element, std::unique_ptr<AnchorPositionedState>, WeakPtrImplWithEventTargetData>;
 
+// https://drafts.csswg.org/css-anchor-position-1/#position-try-order-property
+enum class PositionTryOrder : uint8_t {
+    Normal,
+    MostWidth,
+    MostHeight,
+    MostBlockSize,
+    MostInlineSize
+};
+
+WTF::TextStream& operator<<(WTF::TextStream&, PositionTryOrder);
+
 class AnchorPositionEvaluator {
 public:
     // Find the anchor element indicated by `elementName` and update the associated anchor resolution data.

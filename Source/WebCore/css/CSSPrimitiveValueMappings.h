@@ -29,6 +29,7 @@
 
 #pragma once
 
+#include "AnchorPositionEvaluator.h"
 #include "CSSCalcSymbolTable.h"
 #include "CSSCalcValue.h"
 #include "CSSFontFaceSrcValue.h"
@@ -2544,6 +2545,12 @@ DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 
 #define TYPE OverflowContinue
 #define FOR_EACH(CASE) CASE(Auto) CASE(Discard)
+DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
+#undef TYPE
+#undef FOR_EACH
+
+#define TYPE Style::PositionTryOrder
+#define FOR_EACH(CASE) CASE(Normal) CASE(MostWidth) CASE(MostHeight) CASE(MostBlockSize) CASE(MostInlineSize)
 DEFINE_TO_FROM_CSS_VALUE_ID_FUNCTIONS
 #undef TYPE
 #undef FOR_EACH

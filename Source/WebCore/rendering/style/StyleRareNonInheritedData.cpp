@@ -127,6 +127,7 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , textBoxTrim(static_cast<unsigned>(RenderStyle::initialTextBoxTrim()))
     , overflowAnchor(static_cast<unsigned>(RenderStyle::initialOverflowAnchor()))
     , hasClip(false)
+    , positionTryOrder(static_cast<unsigned>(RenderStyle::initialPositionTryOrder()))
     , fieldSizing(RenderStyle::initialFieldSizing())
 {
 }
@@ -223,6 +224,7 @@ inline StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonIn
     , textBoxTrim(o.textBoxTrim)
     , overflowAnchor(o.overflowAnchor)
     , hasClip(o.hasClip)
+    , positionTryOrder(o.positionTryOrder)
     , fieldSizing(o.fieldSizing)
 {
 }
@@ -326,6 +328,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && viewTransitionClasses == o.viewTransitionClasses
         && viewTransitionName == o.viewTransitionName
         && hasClip == o.hasClip
+        && positionTryOrder == o.positionTryOrder
         && fieldSizing == o.fieldSizing;
 }
 

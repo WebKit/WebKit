@@ -840,4 +840,17 @@ void AnchorPositionEvaluator::cleanupAnchorPositionedState(Element& element)
     }
 }
 
+WTF::TextStream& operator<<(WTF::TextStream& ts, PositionTryOrder order)
+{
+    switch (order) {
+    case PositionTryOrder::Normal: ts << "normal"; break;
+    case PositionTryOrder::MostWidth: ts << "most-width"; break;
+    case PositionTryOrder::MostHeight: ts << "most-height"; break;
+    case PositionTryOrder::MostBlockSize: ts << "most-block-size"; break;
+    case PositionTryOrder::MostInlineSize: ts << "most-inline-size"; break;
+    }
+
+    return ts;
+}
+
 } // namespace WebCore::Style

@@ -248,6 +248,8 @@ public:
 
     bool hasClip : 1;
 
+    unsigned positionTryOrder : 3; // Style::PositionTryOrder; 5 values so 3 bits.
+
     FieldSizing fieldSizing { FieldSizing::Fixed };
 
 private:

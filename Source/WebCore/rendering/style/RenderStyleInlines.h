@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "AnchorPositionEvaluator.h"
 #include "AnimationList.h"
 #include "CSSLineBoxContainValue.h"
 #include "Element.h"
@@ -448,6 +449,7 @@ inline Length RenderStyle::initialPerspectiveOriginY() { return { 50.0f, LengthT
 constexpr PointerEvents RenderStyle::initialPointerEvents() { return PointerEvents::Auto; }
 constexpr PositionType RenderStyle::initialPosition() { return PositionType::Static; }
 inline const AtomString& RenderStyle::initialPositionAnchor() { return nullAtom(); }
+constexpr Style::PositionTryOrder RenderStyle::initialPositionTryOrder() { return Style::PositionTryOrder::Normal; }
 constexpr PrintColorAdjust RenderStyle::initialPrintColorAdjust() { return PrintColorAdjust::Economy; }
 constexpr Order RenderStyle::initialRTLOrdering() { return Order::Logical; }
 inline Length RenderStyle::initialRadius() { return LengthType::Auto; }
@@ -668,6 +670,7 @@ inline LengthPoint RenderStyle::perspectiveOrigin() const { return m_nonInherite
 inline const Length& RenderStyle::perspectiveOriginX() const { return m_nonInheritedData->rareData->perspectiveOriginX; }
 inline const Length& RenderStyle::perspectiveOriginY() const { return m_nonInheritedData->rareData->perspectiveOriginY; }
 inline const AtomString& RenderStyle::positionAnchor() const { return m_nonInheritedData->rareData->positionAnchor; }
+inline Style::PositionTryOrder RenderStyle::positionTryOrder() const { return static_cast<Style::PositionTryOrder>(m_nonInheritedData->rareData->positionTryOrder); }
 inline bool RenderStyle::preserveNewline() const { return preserveNewline(whiteSpace()); }
 inline bool RenderStyle::preserves3D() const { return usedTransformStyle3D() == TransformStyle3D::Preserve3D; }
 inline QuotesData* RenderStyle::quotes() const { return m_rareInheritedData->quotes.get(); }

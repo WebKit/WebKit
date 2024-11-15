@@ -461,88 +461,88 @@ FAIL Web Animations: property <position-try-fallbacks> from [--foo] to [flip-blo
 FAIL Web Animations: property <position-try-fallbacks> from [--foo] to [flip-block] at (0.6) should be [flip-block] assert_true: 'from' value should be supported expected true got false
 FAIL Web Animations: property <position-try-fallbacks> from [--foo] to [flip-block] at (1) should be [flip-block] assert_true: 'from' value should be supported expected true got false
 FAIL Web Animations: property <position-try-fallbacks> from [--foo] to [flip-block] at (1.5) should be [flip-block] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (-0.3) should be [normal] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0) should be [normal] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0.3) should be [normal] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0.5) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0.6) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (1) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (1.5) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (-0.3) should be [normal] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0) should be [normal] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0.3) should be [normal] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0.5) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0.6) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (1) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (1.5) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [normal] to [most-width] at (-0.3) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [normal] to [most-width] at (0) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [normal] to [most-width] at (0.3) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [normal] to [most-width] at (0.5) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [normal] to [most-width] at (0.6) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [normal] to [most-width] at (1) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [normal] to [most-width] at (1.5) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (-0.3) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (0) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (0.3) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (0.5) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (0.6) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (1) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (1.5) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [normal] to [most-width] at (-0.3) should be [normal] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [normal] to [most-width] at (0) should be [normal] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [normal] to [most-width] at (0.3) should be [normal] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [normal] to [most-width] at (0.5) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [normal] to [most-width] at (0.6) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [normal] to [most-width] at (1) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [normal] to [most-width] at (1.5) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [normal] to [most-width] at (-0.3) should be [normal] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [normal] to [most-width] at (0) should be [normal] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [normal] to [most-width] at (0.3) should be [normal] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [normal] to [most-width] at (0.5) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [normal] to [most-width] at (0.6) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [normal] to [most-width] at (1) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [normal] to [most-width] at (1.5) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (-0.3) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0.3) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0.5) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0.6) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (1) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (1.5) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (-0.3) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0.3) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0.5) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0.6) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (1) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (1.5) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (-0.3) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (0) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (0.3) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (0.5) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (0.6) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (1) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (1.5) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (-0.3) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (0) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (0.3) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (0.5) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (0.6) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (1) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (1.5) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [most-width] to [most-height] at (-0.3) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [most-width] to [most-height] at (0) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [most-width] to [most-height] at (0.3) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [most-width] to [most-height] at (0.5) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [most-width] to [most-height] at (0.6) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [most-width] to [most-height] at (1) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL CSS Animations: property <position-try-order> from [most-width] to [most-height] at (1.5) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [most-width] to [most-height] at (-0.3) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [most-width] to [most-height] at (0) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [most-width] to [most-height] at (0.3) should be [most-width] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [most-width] to [most-height] at (0.5) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [most-width] to [most-height] at (0.6) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [most-width] to [most-height] at (1) should be [most-height] assert_true: 'from' value should be supported expected true got false
-FAIL Web Animations: property <position-try-order> from [most-width] to [most-height] at (1.5) should be [most-height] assert_true: 'from' value should be supported expected true got false
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (-0.3) should be [normal]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0) should be [normal]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0.3) should be [normal]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0.5) should be [most-width]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0.6) should be [most-width]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (1) should be [most-width]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [normal] to [most-width] at (1.5) should be [most-width]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (-0.3) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0.3) should be [normal]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0.5) should be [most-width]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (0.6) should be [most-width]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (1) should be [most-width]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [normal] to [most-width] at (1.5) should be [most-width]
+PASS CSS Transitions: property <position-try-order> from [normal] to [most-width] at (-0.3) should be [most-width]
+PASS CSS Transitions: property <position-try-order> from [normal] to [most-width] at (0) should be [most-width]
+PASS CSS Transitions: property <position-try-order> from [normal] to [most-width] at (0.3) should be [most-width]
+PASS CSS Transitions: property <position-try-order> from [normal] to [most-width] at (0.5) should be [most-width]
+PASS CSS Transitions: property <position-try-order> from [normal] to [most-width] at (0.6) should be [most-width]
+PASS CSS Transitions: property <position-try-order> from [normal] to [most-width] at (1) should be [most-width]
+PASS CSS Transitions: property <position-try-order> from [normal] to [most-width] at (1.5) should be [most-width]
+PASS CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (-0.3) should be [most-width]
+PASS CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (0) should be [most-width]
+PASS CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (0.3) should be [most-width]
+PASS CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (0.5) should be [most-width]
+PASS CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (0.6) should be [most-width]
+PASS CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (1) should be [most-width]
+PASS CSS Transitions with transition: all: property <position-try-order> from [normal] to [most-width] at (1.5) should be [most-width]
+PASS CSS Animations: property <position-try-order> from [normal] to [most-width] at (-0.3) should be [normal]
+PASS CSS Animations: property <position-try-order> from [normal] to [most-width] at (0) should be [normal]
+PASS CSS Animations: property <position-try-order> from [normal] to [most-width] at (0.3) should be [normal]
+PASS CSS Animations: property <position-try-order> from [normal] to [most-width] at (0.5) should be [most-width]
+PASS CSS Animations: property <position-try-order> from [normal] to [most-width] at (0.6) should be [most-width]
+PASS CSS Animations: property <position-try-order> from [normal] to [most-width] at (1) should be [most-width]
+PASS CSS Animations: property <position-try-order> from [normal] to [most-width] at (1.5) should be [most-width]
+PASS Web Animations: property <position-try-order> from [normal] to [most-width] at (-0.3) should be [normal]
+PASS Web Animations: property <position-try-order> from [normal] to [most-width] at (0) should be [normal]
+PASS Web Animations: property <position-try-order> from [normal] to [most-width] at (0.3) should be [normal]
+PASS Web Animations: property <position-try-order> from [normal] to [most-width] at (0.5) should be [most-width]
+PASS Web Animations: property <position-try-order> from [normal] to [most-width] at (0.6) should be [most-width]
+PASS Web Animations: property <position-try-order> from [normal] to [most-width] at (1) should be [most-width]
+PASS Web Animations: property <position-try-order> from [normal] to [most-width] at (1.5) should be [most-width]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (-0.3) should be [most-width]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0) should be [most-width]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0.3) should be [most-width]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0.5) should be [most-height]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0.6) should be [most-height]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (1) should be [most-height]
+PASS CSS Transitions with transition-behavior:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (1.5) should be [most-height]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (-0.3) should be [most-width]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0) should be [most-width]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0.3) should be [most-width]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0.5) should be [most-height]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (0.6) should be [most-height]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (1) should be [most-height]
+PASS CSS Transitions with transition-property:all and transition-behavor:allow-discrete: property <position-try-order> from [most-width] to [most-height] at (1.5) should be [most-height]
+PASS CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (-0.3) should be [most-height]
+PASS CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (0) should be [most-height]
+PASS CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (0.3) should be [most-height]
+PASS CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (0.5) should be [most-height]
+PASS CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (0.6) should be [most-height]
+PASS CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (1) should be [most-height]
+PASS CSS Transitions: property <position-try-order> from [most-width] to [most-height] at (1.5) should be [most-height]
+PASS CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (-0.3) should be [most-height]
+PASS CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (0) should be [most-height]
+PASS CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (0.3) should be [most-height]
+PASS CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (0.5) should be [most-height]
+PASS CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (0.6) should be [most-height]
+PASS CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (1) should be [most-height]
+PASS CSS Transitions with transition: all: property <position-try-order> from [most-width] to [most-height] at (1.5) should be [most-height]
+PASS CSS Animations: property <position-try-order> from [most-width] to [most-height] at (-0.3) should be [most-width]
+PASS CSS Animations: property <position-try-order> from [most-width] to [most-height] at (0) should be [most-width]
+PASS CSS Animations: property <position-try-order> from [most-width] to [most-height] at (0.3) should be [most-width]
+PASS CSS Animations: property <position-try-order> from [most-width] to [most-height] at (0.5) should be [most-height]
+PASS CSS Animations: property <position-try-order> from [most-width] to [most-height] at (0.6) should be [most-height]
+PASS CSS Animations: property <position-try-order> from [most-width] to [most-height] at (1) should be [most-height]
+PASS CSS Animations: property <position-try-order> from [most-width] to [most-height] at (1.5) should be [most-height]
+PASS Web Animations: property <position-try-order> from [most-width] to [most-height] at (-0.3) should be [most-width]
+PASS Web Animations: property <position-try-order> from [most-width] to [most-height] at (0) should be [most-width]
+PASS Web Animations: property <position-try-order> from [most-width] to [most-height] at (0.3) should be [most-width]
+PASS Web Animations: property <position-try-order> from [most-width] to [most-height] at (0.5) should be [most-height]
+PASS Web Animations: property <position-try-order> from [most-width] to [most-height] at (0.6) should be [most-height]
+PASS Web Animations: property <position-try-order> from [most-width] to [most-height] at (1) should be [most-height]
+PASS Web Animations: property <position-try-order> from [most-width] to [most-height] at (1.5) should be [most-height]
 

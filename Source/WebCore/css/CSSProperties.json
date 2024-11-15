@@ -9424,6 +9424,23 @@
                 "url": "https://drafts.csswg.org/css-anchor-position-1/#position-anchor"
             }
         },
+        "position-try-order": {
+            "values": [
+                "normal",
+                "most-width",
+                "most-height",
+                "most-block-size",
+                "most-inline-size"
+            ],
+            "codegen-properties": {
+                "settings-flag": "cssAnchorPositioningEnabled",
+                "parser-grammar": "<<values>>"
+            },
+            "specification": {
+                "category": "css-anchor-position",
+                "url": "https://drafts.csswg.org/css-anchor-position-1/#position-try-order-property"
+            }
+        },
         "-webkit-tap-highlight-color": {
             "inherited": true,
             "codegen-properties": {

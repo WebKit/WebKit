@@ -286,6 +286,8 @@ class CustomPropertyRegistry;
 class ViewTransitionName;
 struct ColorScheme;
 struct ScopedName;
+
+enum class PositionTryOrder : uint8_t;
 }
 
 constexpr auto PublicPseudoIDBits = 17;
@@ -2261,6 +2263,10 @@ public:
     static inline const AtomString& initialPositionAnchor();
     inline const AtomString& positionAnchor() const;
     inline void setPositionAnchor(const AtomString&);
+
+    static constexpr Style::PositionTryOrder initialPositionTryOrder();
+    inline Style::PositionTryOrder positionTryOrder() const;
+    inline void setPositionTryOrder(Style::PositionTryOrder);
 
 private:
     struct NonInheritedFlags {
