@@ -14,7 +14,7 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:TestWebKitAPI.xcodeproj",
+        "containerPath" : "container:..\/OpenSource\/Tools\/TestWebKitAPI\/TestWebKitAPI.xcodeproj",
         "identifier" : "A17C582D2C9B3EAD009DD0B5",
         "name" : "TestWebKitAPIBundle"
       }
