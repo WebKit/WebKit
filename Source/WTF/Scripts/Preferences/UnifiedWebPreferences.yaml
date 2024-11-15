@@ -4935,22 +4935,6 @@ MediaSourceInWorkerEnabled:
     WebCore:
       default: true
 
-MediaSourceInlinePaintingEnabled:
-  type: bool
-  status: mature
-  category: media
-  humanReadableName: "Experimental MediaSource Inline Painting"
-  humanReadableDescription: "Experimental MediaSource Inline Painting"
-  condition: ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
-  webcoreBinding: DeprecatedGlobalSettings
-  defaultValue:
-    WebKitLegacy:
-      "HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)": true
-      default: false
-    WebKit:
-      "HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)": true
-      default: false
-
 # FIXME: Is this implemented for WebKitLegacy? If not, this should be excluded from WebKitLegacy entirely (though we should still set the default value to false when initializing settings).
 # FIXME: Seems to be unused. Remove once verified.
 MediaStreamEnabled:

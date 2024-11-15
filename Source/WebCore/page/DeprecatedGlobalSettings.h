@@ -131,11 +131,6 @@ public:
     static bool opusDecoderEnabled() { return shared().m_opusDecoderEnabled; }
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
-    WEBCORE_EXPORT static void setMediaSourceInlinePaintingEnabled(bool);
-    static bool mediaSourceInlinePaintingEnabled() { return shared().m_mediaSourceInlinePaintingEnabled; }
-#endif
-
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
     static void setBuiltInNotificationsEnabled(bool isEnabled) { shared().m_builtInNotificationsEnabled = isEnabled; }
     WEBCORE_EXPORT static bool builtInNotificationsEnabled();
@@ -207,10 +202,6 @@ private:
 
 #if ENABLE(OPUS)
     bool m_opusDecoderEnabled { false };
-#endif
-
-#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
-    bool m_mediaSourceInlinePaintingEnabled { false };
 #endif
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)

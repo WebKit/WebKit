@@ -3339,10 +3339,6 @@ ExceptionOr<void> WebGLRenderingContextBase::texImageSource(TexImageFunctionID f
     // elements' size for WebGL 1.0 as late as possible.
     bool sourceImageRectIsDefault = inputSourceImageRect == sentinelEmptyRect() || inputSourceImageRect == IntRect(0, 0, source.videoWidth(), source.videoHeight());
 
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    if (RefPtr player = source.player())
-        player->willBeAskedToPaintGL();
-#endif
     // Go through the fast path doing a GPU-GPU textures copy without a readback to system memory if possible.
     // Otherwise, it will fall back to the normal SW path.
     // FIXME: The current restrictions require that format shoud be RGB or RGBA,

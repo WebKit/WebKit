@@ -32,9 +32,6 @@ struct WebKit::GPUProcessPreferences {
 #if ENABLE(MEDIA_SOURCE) && ENABLE(VP9)
     std::optional<bool> webMParserEnabled;
 #endif
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    std::optional<bool> mediaSourceInlinePaintingEnabled;
-#endif
 #if USE(MODERN_AVCONTENTKEYSESSION)
     std::optional<bool> shouldUseModernAVContentKeySession;
 #endif

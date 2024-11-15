@@ -96,19 +96,6 @@ void MediaSessionManagerCocoa::ensureCodecsRegistered()
 #endif
 }
 
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-static bool s_mediaSourceInlinePaintingEnabled = false;
-void MediaSessionManagerCocoa::setMediaSourceInlinePaintingEnabled(bool enabled)
-{
-    s_mediaSourceInlinePaintingEnabled = enabled;
-}
-
-bool MediaSessionManagerCocoa::mediaSourceInlinePaintingEnabled()
-{
-    return s_mediaSourceInlinePaintingEnabled;
-}
-#endif
-
 static bool s_shouldUseModernAVContentKeySession;
 void MediaSessionManagerCocoa::setShouldUseModernAVContentKeySession(bool enabled)
 {

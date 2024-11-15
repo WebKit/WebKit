@@ -298,11 +298,6 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
         PlatformMediaSessionManager::setVorbisDecoderEnabled(*m_preferences.vorbisDecoderEnabled);
 #endif
     
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    if (updatePreference(m_preferences.mediaSourceInlinePaintingEnabled, preferences.mediaSourceInlinePaintingEnabled))
-        DeprecatedGlobalSettings::setMediaSourceInlinePaintingEnabled(*m_preferences.mediaSourceInlinePaintingEnabled);
-#endif
-
 #if USE(MODERN_AVCONTENTKEYSESSION)
     if (updatePreference(m_preferences.shouldUseModernAVContentKeySession, preferences.shouldUseModernAVContentKeySession))
         MediaSessionManagerCocoa::setShouldUseModernAVContentKeySession(*m_preferences.shouldUseModernAVContentKeySession);

@@ -526,10 +526,6 @@ public:
     void paint(GraphicsContext&, const FloatRect& destination);
     void paintCurrentFrameInContext(GraphicsContext&, const FloatRect& destination);
 
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    void willBeAskedToPaintGL();
-#endif
-
     RefPtr<VideoFrame> videoFrameForCurrentTime();
     RefPtr<NativeImage> nativeImageForCurrentTime();
     DestinationColorSpace colorSpace();

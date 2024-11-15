@@ -125,9 +125,6 @@ messages -> RemoteMediaPlayerProxy {
 #if PLATFORM(COCOA)
     NativeImageForCurrentTime() -> (std::optional<MachSendRight> sendRight, WebCore::DestinationColorSpace colorSpace) Synchronous
     ColorSpace() -> (WebCore::DestinationColorSpace colorSpace) Synchronous
-#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    void WillBeAskedToPaintGL()
-#endif
 #endif
     VideoFrameForCurrentTimeIfChanged() -> (std::optional<WebKit::RemoteVideoFrameProxyProperties> videoFrame, bool changed) Synchronous
 

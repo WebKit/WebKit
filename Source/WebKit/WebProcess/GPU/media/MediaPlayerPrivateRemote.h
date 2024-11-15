@@ -343,9 +343,6 @@ private:
 
     void paint(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
     void paintCurrentFrameInContext(WebCore::GraphicsContext&, const WebCore::FloatRect&) final;
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    void willBeAskedToPaintGL() final;
-#endif
     RefPtr<WebCore::VideoFrame> videoFrameForCurrentTime() final;
     RefPtr<WebCore::NativeImage> nativeImageForCurrentTime() final;
     WebCore::DestinationColorSpace colorSpace() final;
@@ -539,9 +536,6 @@ private:
     LayerHostingContextID m_layerHostingContextID { 0 };
     std::optional<WebCore::VideoFrameMetadata> m_videoFrameMetadata;
     bool m_isGatheringVideoFrameMetadata { false };
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    bool m_hasBeenAskedToPaintGL { false };
-#endif
     String m_defaultSpatialTrackingLabel;
     String m_spatialTrackingLabel;
 };

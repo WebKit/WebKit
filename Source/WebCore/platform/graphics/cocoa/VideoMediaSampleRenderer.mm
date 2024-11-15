@@ -417,12 +417,10 @@ auto VideoMediaSampleRenderer::copyDisplayedPixelBuffer() -> DisplayedPixelBuffe
 {
     assertIsMainThread();
 
-#if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
     if (!m_decompressionSession) {
         if (auto buffer = adoptCF([renderer() copyDisplayedPixelBuffer]))
             return { WTFMove(buffer), MediaTime::invalidTime() };
     }
-#endif
 
     RetainPtr<CVPixelBufferRef> imageBuffer;
     MediaTime presentationTimeStamp;

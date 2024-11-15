@@ -64,7 +64,6 @@ enum UserInterfaceDirectionPolicy { "Content", "System" };
     undefined setCustomPasteboardDataEnabled(boolean enabled);
 
     readonly attribute boolean vp9DecoderEnabled;
-    readonly attribute boolean mediaSourceInlinePaintingEnabled;
 
     undefined setShouldManageAudioSessionCategory(boolean should);
 

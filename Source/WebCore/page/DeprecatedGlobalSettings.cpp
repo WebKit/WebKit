@@ -66,16 +66,6 @@ void DeprecatedGlobalSettings::setOpusDecoderEnabled(bool isEnabled)
 }
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && (HAVE(AVSAMPLEBUFFERVIDEOOUTPUT) || USE(GSTREAMER))
-void DeprecatedGlobalSettings::setMediaSourceInlinePaintingEnabled(bool isEnabled)
-{
-    shared().m_mediaSourceInlinePaintingEnabled = isEnabled;
-#if HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    MediaSessionManagerCocoa::setMediaSourceInlinePaintingEnabled(isEnabled);
-#endif
-}
-#endif
-
 #if USE(AVFOUNDATION)
 void DeprecatedGlobalSettings::setAVFoundationEnabled(bool enabled)
 {

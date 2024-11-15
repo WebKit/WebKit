@@ -180,14 +180,6 @@ void RemoteMediaPlayerProxy::colorSpace(CompletionHandler<void(WebCore::Destinat
     completionHandler(player->colorSpace());
 }
 
-#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-void RemoteMediaPlayerProxy::willBeAskedToPaintGL()
-{
-    if (RefPtr player = m_player)
-        player->willBeAskedToPaintGL();
-}
-#endif
-
 } // namespace WebKit
 
 #endif // ENABLE(GPU_PROCESS) && PLATFORM(COCOA)

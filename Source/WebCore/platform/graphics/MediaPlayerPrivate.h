@@ -191,10 +191,6 @@ public:
 
     virtual void paintCurrentFrameInContext(GraphicsContext& c, const FloatRect& r) { paint(c, r); }
 
-#if PLATFORM(COCOA) && !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    virtual void willBeAskedToPaintGL() { }
-#endif
-
     virtual RefPtr<VideoFrame> videoFrameForCurrentTime();
     virtual RefPtr<NativeImage> nativeImageForCurrentTime() { return nullptr; }
     virtual DestinationColorSpace colorSpace() = 0;

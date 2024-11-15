@@ -53,11 +53,6 @@ void GPUProcessPreferences::copyEnabledWebPreferences(const WebPreferences& webP
         webMParserEnabled = true;
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    if (webPreferences.mediaSourceInlinePaintingEnabled())
-        mediaSourceInlinePaintingEnabled = true;
-#endif
-
 #if USE(MODERN_AVCONTENTKEYSESSION)
     if (webPreferences.shouldUseModernAVContentKeySession())
         shouldUseModernAVContentKeySession = true;

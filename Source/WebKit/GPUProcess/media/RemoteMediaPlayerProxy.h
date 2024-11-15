@@ -365,9 +365,6 @@ private:
     void setVideoLayerSizeIfPossible(const WebCore::FloatSize&);
     void nativeImageForCurrentTime(CompletionHandler<void(std::optional<WTF::MachSendRight>&&, WebCore::DestinationColorSpace)>&&);
     void colorSpace(CompletionHandler<void(WebCore::DestinationColorSpace)>&&);
-#if !HAVE(AVSAMPLEBUFFERDISPLAYLAYER_COPYDISPLAYEDPIXELBUFFER)
-    void willBeAskedToPaintGL();
-#endif
 #endif
     void videoFrameForCurrentTimeIfChanged(CompletionHandler<void(std::optional<RemoteVideoFrameProxy::Properties>&&, bool)>&&);
 

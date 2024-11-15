@@ -48,10 +48,6 @@ struct GPUProcessPreferences {
     std::optional<bool> webMParserEnabled;
 #endif
 
-#if ENABLE(MEDIA_SOURCE) && HAVE(AVSAMPLEBUFFERVIDEOOUTPUT)
-    std::optional<bool> mediaSourceInlinePaintingEnabled;
-#endif
-
 #if USE(MODERN_AVCONTENTKEYSESSION)
     std::optional<bool> shouldUseModernAVContentKeySession;
 #endif
