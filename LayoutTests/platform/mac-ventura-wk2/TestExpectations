@@ -1,6 +1,5 @@
-# These are the layout test expectations for Apple's macOS Monterey port of WebKit.
+# These are the layout test expectations for Apple's macOS Ventura port of WebKit.
 #
-
 
 #//////////////////////////////////////////////////////////////////////////////////////////
 # Platform-specific directories. Skipped globally, then re-enabled here.
