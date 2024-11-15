@@ -219,7 +219,7 @@ public final class WKSRKEntity: NSObject {
     }
 
     @objc(removeIBL) public func removeIBL() {
-        entity.components[ImageBasedLightComponent.self] = nil
+        entity.components[ImageBasedLightComponent.self] = .init(source: .none)
         entity.components[ImageBasedLightReceiverComponent.self] = nil
     }
 
