@@ -598,7 +598,7 @@ void MarkedSpace::checkConsistency()
     RELEASE_ASSERT(heap().worldIsStopped() || heap().vm().currentThreadIsHoldingAPILock());
     auto& set = blocks().set();
     for (auto& block: set) {
-        block->checkConsistency(&heap(), nullptr);
+        block->checkConsistency(&heap(), nullptr, false);
     }
 }
 

@@ -151,7 +151,7 @@ void HeapVerifier::printVerificationHeader()
         RawPointer(&m_heap->vm()), " on ", scope, " GC @ ", gcCycleTimestamp, "\n");
 }
 
-bool HeapVerifier::verifyCellList(Phase phase, CellList& list)
+JSCell* HeapVerifier::verifyCellList(Phase phase, CellList& list)
 {
     VM& vm = m_heap->vm();
     auto& liveCells = list.cells();
@@ -167,7 +167,6 @@ bool HeapVerifier::verifyCellList(Phase phase, CellList& list)
         m_didPrintLogs = true;
     });
     
-    bool success = true;
     for (size_t i = 0; i < liveCells.size(); i++) {
         CellProfile& profile = liveCells[i];
         if (!profile.isLive())
@@ -177,10 +176,11 @@ bool HeapVerifier::verifyCellList(Phase phase, CellList& list)
             continue;
 
         JSCell* cell = profile.jsCell();
-        success |= validateJSCell(&vm, cell, &profile, &list, printHeaderIfNeeded, "  ");
+        if (!validateJSCell(&vm, cell, &profile, &list, printHeaderIfNeeded, "  "))
+            return cell;
     }
 
-    return success;
+    return nullptr;
 }
 
 bool HeapVerifier::validateCell(HeapCell* cell, VM* expectedVM)
@@ -355,8 +355,10 @@ bool HeapVerifier::validateJSCell(VM* expectedVM, JSCell* cell, CellProfile* pro
 void HeapVerifier::verify(HeapVerifier::Phase phase)
 {
     if (phase == Phase::AfterGC) {
-        bool verified = verifyCellList(phase, currentCycle().after);
-        RELEASE_ASSERT(verified);
+        JSCell* badCell = verifyCellList(phase, currentCycle().after);
+        //RELEASE_ASSERT(verified); // XXX checkConsistency
+        if (badCell)
+            badCell->checkConsistency(m_heap, true);
     }
 }
 

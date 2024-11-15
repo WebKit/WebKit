@@ -182,6 +182,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
                         out.print("Newly allocated version: ", block.newlyAllocatedVersion(), "\n");
                         out.print("Heap newly allocated version: ", heap()->objectSpace().newlyAllocatedVersion(), "\n");
                     }
+                    jsCell->checkConsistency(heap(), true);
                     UNREACHABLE_FOR_PLATFORM();
                 });
         };

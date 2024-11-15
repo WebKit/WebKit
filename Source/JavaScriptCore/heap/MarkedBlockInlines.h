@@ -625,12 +625,12 @@ inline IterationStatus MarkedBlock::Handle::forEachMarkedCell(const Functor& fun
     return IterationStatus::Continue;
 }
 
-inline void MarkedBlock::checkConsistency(Heap* heap, JSCell* cell)
+inline void MarkedBlock::checkConsistency(Heap* heap, JSCell* cell, bool knownBad)
 {
     uintptr_t handle = bitwise_cast<uintptr_t>(header().handlePointerForNullCheck());
-    if (UNLIKELY(handle <= MarkedBlock::Handle::invalid || &heap->vm() != &vm())) {
+    if (UNLIKELY(knownBad || handle <= MarkedBlock::Handle::invalid || &heap->vm() != &vm())) {
         Locker locker { header().m_lock };
-        dumpInfoAndCrashForInvalidHandle(locker, cell, &heap->vm());
+        dumpInfoAndCrashForInvalidHandleV2(locker, cell, &heap->vm());
     }
 }
 

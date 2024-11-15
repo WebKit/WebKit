@@ -413,7 +413,7 @@ public:
     void setVerifierMemo(void*);
     template<typename T> T verifierMemo() const;
 
-    inline void checkConsistency(Heap*, JSCell*);
+    inline void checkConsistency(Heap*, JSCell*, bool knownBad);
 
 private:
     MarkedBlock(VM&, Handle&);

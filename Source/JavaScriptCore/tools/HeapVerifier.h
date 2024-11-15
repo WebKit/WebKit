@@ -100,7 +100,7 @@ private:
     }
 
     CellList* cellListForGathering(Phase);
-    bool verifyCellList(Phase, CellList&);
+    JSCell* verifyCellList(Phase, CellList&);
     static bool validateJSCell(VM* expectedVM, JSCell*, CellProfile*, CellList*, const ScopedLambda<void()>& printHeaderIfNeeded, const char* prefix = "");
 
     void printVerificationHeader();

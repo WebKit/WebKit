@@ -487,10 +487,10 @@ inline bool isWebAssemblyInstance(const JSCell* cell)
     return cell->type() == WebAssemblyInstanceType;
 }
 
-inline void JSCell::checkConsistency(Heap* heap) const
+inline void JSCell::checkConsistency(Heap* heap, bool knownBad) const
 {
     if (!isPreciseAllocation())
-        markedBlock().checkConsistency(heap, const_cast<JSCell*>(this));
+        markedBlock().checkConsistency(heap, const_cast<JSCell*>(this), knownBad);
 }
 
 } // namespace JSC
