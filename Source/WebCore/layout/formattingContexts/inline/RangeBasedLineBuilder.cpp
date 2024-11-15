@@ -110,7 +110,7 @@ bool RangeBasedLineBuilder::isEligibleForRangeInlineLayout(const InlineFormattin
         return false;
 
     // Check the nested text content.
-    if (!inlineItems.hasTextAndLineBreakOnlyContent() || inlineItems.requiresVisualReordering() || !placedFloats.isEmpty())
+    if (!inlineItems.hasTextAndLineBreakOnlyContent() || inlineItems.requiresVisualReordering() || !placedFloats.isEmpty() || inlineItems.hasTextAutospace())
         return false;
 
     if (!TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(inlineFormattingContext.root().style()) || !TextOnlySimpleLineBuilder::isEligibleForSimplifiedInlineLayoutByStyle(inlineBox.style()))

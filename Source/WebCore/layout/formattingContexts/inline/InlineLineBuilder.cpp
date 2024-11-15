@@ -695,6 +695,11 @@ void LineBuilder::candidateContentForLine(LineCandidate& lineCandidate, size_t c
         }
         if (auto* inlineTextItem = dynamicDowncast<InlineTextItem>(inlineItem)) {
             auto logicalWidth = m_overflowingLogicalWidth ? *std::exchange(m_overflowingLogicalWidth, std::nullopt) : formattingContext().formattingUtils().inlineItemWidth(*inlineTextItem, currentLogicalRight, isFirstFormattedLine());
+            // if (!currentLogicalRight) {
+            if (!currentLogicalRight) {
+                if (auto trimmableSpacing = m_textSpacingContext.trimmableTextSpacings.find(index); trimmableSpacing != m_textSpacingContext.trimmableTextSpacings.end())
+                    logicalWidth -= trimmableSpacing->value;
+            }
             lineCandidate.inlineContent.appendInlineItem(*inlineTextItem, style, logicalWidth);
             // Word spacing does not make the run longer, but it produces an offset instead. See Line::appendTextContent as well.
             currentLogicalRight += logicalWidth + (inlineTextItem->isWordSeparator() ? style.fontCascade().wordSpacing() : 0.f);

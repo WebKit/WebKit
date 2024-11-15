@@ -48,6 +48,7 @@ public:
             bool requiresVisualReordering { false };
             // Note that <span>this is text</span> returns true as inline boxes are not considered 'content' here.
             bool hasTextAndLineBreakOnlyContent { false };
+            bool hasTextAutospace { false };
             size_t inlineBoxCount { 0 };
         };
         void set(InlineItemList&&, ContentAttributes);
@@ -59,6 +60,7 @@ public:
 
         bool requiresVisualReordering() const { return m_contentAttributes.requiresVisualReordering; }
         bool hasTextAndLineBreakOnlyContent() const { return m_contentAttributes.hasTextAndLineBreakOnlyContent; }
+        bool hasTextAutospace() const { return m_contentAttributes.hasTextAutospace; }
         bool hasInlineBoxes() const { return !!inlineBoxCount(); }
         size_t inlineBoxCount() const { return m_contentAttributes.inlineBoxCount; }
 

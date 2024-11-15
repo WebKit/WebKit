@@ -3194,7 +3194,6 @@ imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-003.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-align/text-align-justify-tabs-004.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-text/text-autospace/text-autospace-break-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-justify/text-justify-word-separators.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/text-transform/text-transform-uppercase-dynamic.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-text/white-space/eol-spaces-bidi-004.html [ ImageOnlyFailure ]

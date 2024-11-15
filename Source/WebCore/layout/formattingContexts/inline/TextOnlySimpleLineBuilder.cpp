@@ -445,7 +445,7 @@ bool TextOnlySimpleLineBuilder::isEligibleForSimplifiedTextOnlyInlineLayoutByCon
 {
     if (inlineItems.isEmpty())
         return false;
-    if (!inlineItems.hasTextAndLineBreakOnlyContent() || inlineItems.hasInlineBoxes() || inlineItems.requiresVisualReordering())
+    if (!inlineItems.hasTextAndLineBreakOnlyContent() || inlineItems.hasInlineBoxes() || inlineItems.requiresVisualReordering() || inlineItems.hasTextAutospace())
         return false;
     if (!placedFloats.isEmpty())
         return false;
