@@ -123,6 +123,24 @@
 
 #if PLATFORM(WIN)
 #include <windows.h>
+
+#elif PLATFORM(GTK) || PLATFORM(WPE)
+
+#include <glib-object.h>
+#include <gio/gio.h>
+
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#endif
+
+#if USE(GSTREAMER)
+#include <gst/gst.h>
+#endif
+
+#if USE(HARFBUZZ)
+#include <hb.h>
+#endif
+
 #else
 
 #if OS(WINDOWS)

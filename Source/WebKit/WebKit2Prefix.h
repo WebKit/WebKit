@@ -51,6 +51,25 @@
 
 #endif // PLATFORM(COCOA)
 
+#if PLATFORM(GTK) || PLATFORM(WPE)
+
+#include <glib-object.h>
+#include <gio/gio.h>
+
+#if PLATFORM(GTK)
+#include <gtk/gtk.h>
+#endif
+
+#if USE(GSTREAMER)
+#include <gst/gst.h>
+#endif
+
+#if USE(HARFBUZZ)
+#include <hb.h>
+#endif
+
+#endif // PLATFORM(GTK) || PLATFORM(WPE)
+
 /* When C++ exceptions are disabled, the C++ library defines |try| and |catch|
 * to allow C++ code that expects exceptions to build. These definitions
 * interfere with Objective-C++ uses of Objective-C exception handlers, which
