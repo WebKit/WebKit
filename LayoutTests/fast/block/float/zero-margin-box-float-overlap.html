@@ -1,0 +1,25 @@
+<style>
+.container {
+  margin: 200px;
+  height: 300px;
+  width: 500px;
+}
+.content {
+  margin-left: -50px;
+  margin-right: -50px;
+  overflow: hidden;
+  height: 50px;
+  background-color: green;
+}
+
+.float {
+  float:left;
+
+  width: 100px;
+  margin-left: -100px;
+
+  height: 100px;
+}
+</style>
+<!-- float's margin box is shrunk to zero so float avoider could simply "overlap" it -->
+<div class=container><div class=float></div><div class=content></div></div>
