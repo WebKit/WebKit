@@ -448,6 +448,21 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'validate-change',
             'compile-webkit'
         ],
+        'PlayStation-Build-EWS': [
+            'configure-build',
+            'validate-change',
+            'configuration',
+            'clean-up-git-repo',
+            'checkout-source',
+            'fetch-branch-references',
+            'checkout-specific-revision',
+            'show-identifier',
+            'apply-patch',
+            'checkout-pull-request',
+            'kill-old-processes',
+            'validate-change',
+            'compile-webkit'
+        ],
         'Win-Build-EWS': [
             'configure-build',
             'validate-change',
