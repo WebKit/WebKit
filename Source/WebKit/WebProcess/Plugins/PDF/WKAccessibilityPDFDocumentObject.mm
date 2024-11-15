@@ -36,6 +36,7 @@
 #include <WebCore/AXObjectCache.h>
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/WebAccessibilityObjectWrapperMac.h>
+#include <pal/spi/cocoa/NSAccessibilitySPI.h>
 #include <wtf/CheckedPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -52,6 +53,10 @@
 
     _pdfDocument = document;
     _pluginElement = element;
+    // We are setting the presenter ID of the WKAccessibilityPDFDocumentObject to the hosting application's PID.
+    // This way VoiceOver can set AX observers on all the PDF AX nodes which are descendant of this element.
+    if ([self respondsToSelector:@selector(accessibilitySetPresenterProcessIdentifier:)])
+        [(id)self accessibilitySetPresenterProcessIdentifier:presentingApplicationPID()];
     return self;
 }
 
