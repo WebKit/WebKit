@@ -690,27 +690,27 @@ TEST(WKWebExtensionAPIPermissions, ClipboardWriteWithRequest)
     EXPECT_NS_EQUAL(clipboardContent, @"Test Clipboard Write After Permission");
 }
 
-TEST(WKWebExtensionAPIPermissions, CORS)
+static auto *corsManifest = @{
+    @"manifest_version": @3,
+
+    @"name": @"Permissions Test",
+    @"description": @"Permissions Test",
+    @"version": @"1",
+
+    @"background": @{
+        @"scripts": @[ @"background.js" ],
+        @"type": @"module",
+        @"persistent": @NO,
+    },
+
+    @"optional_host_permissions": @[ @"*://*/*" ]
+};
+
+TEST(WKWebExtensionAPIPermissions, CORSUsingFetchWithPermissions)
 {
     TestWebKitAPI::HTTPServer server({
         { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
     });
-
-    static auto *manifest = @{
-        @"manifest_version": @3,
-
-        @"name": @"Permissions Test",
-        @"description": @"Permissions Test",
-        @"version": @"1",
-
-        @"background": @{
-            @"scripts": @[ @"background.js" ],
-            @"type": @"module",
-            @"persistent": @NO,
-        },
-
-        @"optional_host_permissions": @[ @"*://*/*" ]
-    };
 
     auto *backgroundScript = Util::constructScript(@[
         [NSString stringWithFormat:@"const subresourceURL = 'http://127.0.0.1:%d/subresource'", server.port()],
@@ -724,13 +724,281 @@ TEST(WKWebExtensionAPIPermissions, CORS)
         @"  if (json.testKey !== 'testValue')",
         @"    throw new Error('CORS failed: Incorrect JSON value')",
 
-        @"  browser.test.notifyPass('CORS disabled: Fetch succeeded')",
+        @"  browser.test.notifyPass()",
         @"} catch (error) {",
-        @"  browser.test.notifyFail(error.message)",
+        @"  browser.test.notifyFail('CORS failed unexpectedly: ' + error.message)",
         @"}"
     ]);
 
-    Util::loadAndRunExtension(manifest, @{ @"background.js": backgroundScript });
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:corsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.request();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIPermissions, CORSUsingFetchWithoutPermissions)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
+    });
+
+    auto *subresourceURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/subresource", server.port()]];
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const subresourceURL = '%@'", subresourceURL],
+
+        @"browser.permissions.onAdded.addListener(async () => {",
+        @"  try {",
+        @"    const response = await fetch(subresourceURL)",
+        @"    if (response.headers.get('headerName') !== 'headerValue')",
+        @"      throw new Error('CORS failed: Incorrect header value')",
+
+        @"    const json = await response.json()",
+        @"    if (json.testKey !== 'testValue')",
+        @"      throw new Error('CORS failed: Incorrect JSON value')",
+
+        @"    browser.test.notifyPass()",
+        @"  } catch (error) {",
+        @"    browser.test.notifyFail('CORS failed unexpectedly after permission was granted: ' + error.message)",
+        @"  }",
+        @"})",
+
+        @"try {",
+        @"  const response = await fetch(subresourceURL)",
+        @"  browser.test.notifyFail('CORS enabled: Fetch succeeded when it should have failed')",
+        @"} catch (error) {",
+        @"  // CORS failed as expected",
+        @"}",
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:corsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    __block size_t promptCount = 0;
+
+    manager.get().internalDelegate.promptForPermissionToAccessURLs = ^(id<WKWebExtensionTab>, NSSet<NSURL *> *requestedURLs, void (^completionHandler)(NSSet<NSURL *> *allowedURLs, NSDate *)) {
+        EXPECT_EQ(requestedURLs.count, 1ul);
+        EXPECT_TRUE([requestedURLs containsObject:subresourceURL]);
+
+        ++promptCount;
+
+        completionHandler(requestedURLs, nil);
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(promptCount, 1ul);
+}
+
+TEST(WKWebExtensionAPIPermissions, CORSUsingFetchWithoutGrantingPermission)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
+    });
+
+    auto *subresourceURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/subresource", server.port()]];
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const subresourceURL = '%@'", subresourceURL],
+
+        @"let fetchAttempt = 0",
+
+        @"async function performFetch() {",
+        @"  try {",
+        @"    const response = await fetch(subresourceURL)",
+        @"    browser.test.notifyFail(`CORS enabled on attempt ${fetchAttempt + 1}, when it should have failed`)",
+        @"  } catch (error) {",
+        @"    if (++fetchAttempt < 2)",
+        @"      performFetch()",
+        @"    else",
+        @"      browser.test.notifyPass()",
+        @"  }",
+        @"}",
+
+        @"performFetch()"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:corsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    __block size_t promptCount = 0;
+
+    manager.get().internalDelegate.promptForPermissionToAccessURLs = ^(id<WKWebExtensionTab>, NSSet<NSURL *> *requestedURLs, void (^completionHandler)(NSSet<NSURL *> *allowedURLs, NSDate *)) {
+        EXPECT_EQ(requestedURLs.count, 1ul);
+        EXPECT_TRUE([requestedURLs containsObject:subresourceURL]);
+
+        ++promptCount;
+
+        completionHandler(NSSet.set, nil);
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(promptCount, 2ul);
+}
+
+TEST(WKWebExtensionAPIPermissions, CORSUsingXHRWithPermissions)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
+    });
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const subresourceURL = 'http://127.0.0.1:%d/subresource'", server.port()],
+
+        @"const xhr = new XMLHttpRequest()",
+
+        @"xhr.onload = () => {",
+        @"  if (xhr.getResponseHeader('headerName') !== 'headerValue')",
+        @"    return browser.test.notifyFail('CORS failed: Incorrect header value')",
+
+        @"  try {",
+        @"    const json = JSON.parse(xhr.responseText)",
+        @"    if (json.testKey !== 'testValue')",
+        @"      throw new Error('Incorrect JSON value')",
+
+        @"    browser.test.notifyPass()",
+        @"  } catch (error) {",
+        @"    browser.test.notifyFail('CORS failed: JSON parsing error - ' + error.message)",
+        @"  }",
+        @"}",
+
+        @"xhr.onerror = () => browser.test.notifyFail('CORS failed unexpectedly')",
+
+        @"xhr.open('GET', subresourceURL, true)",
+        @"xhr.send()"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:corsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    auto *urlRequest = server.request();
+    [manager.get().context setPermissionStatus:WKWebExtensionContextPermissionStatusGrantedExplicitly forURL:urlRequest.URL];
+
+    [manager loadAndRun];
+}
+
+TEST(WKWebExtensionAPIPermissions, CORSUsingXHRWithoutPermissions)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
+    });
+
+    auto *subresourceURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/subresource", server.port()]];
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const subresourceURL = '%@'", subresourceURL],
+
+        @"browser.permissions.onAdded.addListener(() => {",
+        @"  const xhr = new XMLHttpRequest()",
+
+        @"  xhr.onload = () => {",
+        @"    if (xhr.getResponseHeader('headerName') !== 'headerValue')",
+        @"      return browser.test.notifyFail('CORS failed: Incorrect header value')",
+
+        @"    try {",
+        @"      const json = JSON.parse(xhr.responseText)",
+        @"      if (json.testKey !== 'testValue')",
+        @"        throw new Error('Incorrect JSON value')",
+
+        @"      browser.test.notifyPass()",
+        @"    } catch (error) {",
+        @"      browser.test.notifyFail('CORS failed: JSON parsing error - ' + error.message)",
+        @"    }",
+        @"  }",
+
+        @"  xhr.onerror = () => browser.test.notifyFail('CORS failed unexpectedly after permission was granted')",
+
+        @"  xhr.open('GET', subresourceURL, true)",
+        @"  xhr.send()",
+        @"})",
+
+        @"const xhr = new XMLHttpRequest()",
+
+        @"xhr.onload = () => browser.test.notifyFail('CORS enabled: XHR succeeded when it should have failed')",
+
+        @"xhr.onerror = () => {",
+        @"  // Expected CORS failure",
+        @"}",
+
+        @"xhr.open('GET', subresourceURL, true)",
+        @"xhr.send()"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:corsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    __block size_t promptCount = 0;
+
+    manager.get().internalDelegate.promptForPermissionToAccessURLs = ^(id<WKWebExtensionTab>, NSSet<NSURL *> *requestedURLs, void (^completionHandler)(NSSet<NSURL *> *allowedURLs, NSDate *)) {
+        EXPECT_EQ(requestedURLs.count, 1ul);
+        EXPECT_TRUE([requestedURLs containsObject:subresourceURL]);
+
+        ++promptCount;
+
+        completionHandler(requestedURLs, nil);
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(promptCount, 1ul);
+}
+
+TEST(WKWebExtensionAPIPermissions, CORSUsingXHRWithoutGrantingPermission)
+{
+    TestWebKitAPI::HTTPServer server({
+        { "/subresource"_s, { {{ "Content-Type"_s, "application/json"_s }, { "headerName"_s, "headerValue"_s }}, "{ \"testKey\": \"testValue\" }"_s } }
+    });
+
+    auto *subresourceURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://127.0.0.1:%d/subresource", server.port()]];
+
+    auto *backgroundScript = Util::constructScript(@[
+        [NSString stringWithFormat:@"const subresourceURL = '%@'", subresourceURL],
+
+        @"let fetchAttempt = 0",
+
+        @"function performXHR() {",
+        @"  const xhr = new XMLHttpRequest()",
+
+        @"  xhr.onload = () => {",
+        @"    browser.test.notifyFail(`CORS enabled on attempt ${fetchAttempt + 1}, when it should have failed`)",
+        @"  }",
+
+        @"  xhr.onerror = () => {",
+        @"    if (++fetchAttempt < 2)",
+        @"      performXHR()",
+        @"    else",
+        @"      browser.test.notifyPass()",
+        @"  }",
+
+        @"  xhr.open('GET', subresourceURL, true)",
+        @"  xhr.send()",
+        @"}",
+
+        @"performXHR()"
+    ]);
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:corsManifest resources:@{ @"background.js": backgroundScript }]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    __block size_t promptCount = 0;
+
+    manager.get().internalDelegate.promptForPermissionToAccessURLs = ^(id<WKWebExtensionTab>, NSSet<NSURL *> *requestedURLs, void (^completionHandler)(NSSet<NSURL *> *allowedURLs, NSDate *)) {
+        EXPECT_EQ(requestedURLs.count, 1ul);
+        EXPECT_TRUE([requestedURLs containsObject:subresourceURL]);
+
+        ++promptCount;
+
+        // Do not grant the permission in the prompt.
+        completionHandler(NSSet.set, nil);
+    };
+
+    [manager loadAndRun];
+
+    EXPECT_EQ(promptCount, 2ul);
 }
 
 } // namespace TestWebKitAPI

@@ -932,6 +932,8 @@ void WebExtensionContext::permissionsDidChange(NSNotificationName notificationNa
     clearCachedPermissionStates();
 
     if (isLoaded()) {
+        updateCORSDisablingPatternsOnAllExtensionPages();
+
         if ([notificationName isEqualToString:WKWebExtensionContextPermissionMatchPatternsWereGrantedNotification]) {
             addInjectedContent(injectedContents(), matchPatterns);
             firePermissionsEventListenerIfNecessary(WebExtensionEventListenerType::PermissionsOnAdded, { }, matchPatterns);
@@ -1236,13 +1238,15 @@ void WebExtensionContext::requestPermissionMatchPatterns(const MatchPatternSet& 
     }
 
     if (!isLoaded() || neededMatchPatterns.isEmpty()) {
-        completionHandler(WTFMove(neededMatchPatterns), { }, WallTime::infinity());
+        if (completionHandler)
+            completionHandler(WTFMove(neededMatchPatterns), { }, WallTime::infinity());
         return;
     }
 
     auto delegate = extensionController()->delegate();
     if (![delegate respondsToSelector:@selector(webExtensionController:promptForPermissionMatchPatterns:inTab:forExtensionContext:completionHandler:)]) {
-        completionHandler(WTFMove(neededMatchPatterns), { }, WallTime::infinity());
+        if (completionHandler)
+            completionHandler(WTFMove(neededMatchPatterns), { }, WallTime::infinity());
         return;
     }
 
@@ -1292,13 +1296,15 @@ void WebExtensionContext::requestPermissionToAccessURLs(const URLVector& request
     }
 
     if (!isLoaded() || neededURLs.isEmpty()) {
-        completionHandler(WTFMove(neededURLs), { }, WallTime::infinity());
+        if (completionHandler)
+            completionHandler(WTFMove(neededURLs), { }, WallTime::infinity());
         return;
     }
 
     auto delegate = extensionController()->delegate();
     if (![delegate respondsToSelector:@selector(webExtensionController:promptForPermissionToAccessURLs:inTab:forExtensionContext:completionHandler:)]) {
-        completionHandler(WTFMove(neededURLs), { }, WallTime::infinity());
+        if (completionHandler)
+            completionHandler(WTFMove(neededURLs), { }, WallTime::infinity());
         return;
     }
 
@@ -2698,6 +2704,13 @@ void WebExtensionContext::resourceLoadDidReceiveResponse(WebPageProxyIdentifier 
 void WebExtensionContext::resourceLoadDidCompleteWithError(WebPageProxyIdentifier pageID, const ResourceLoadInfo& loadInfo, const WebCore::ResourceResponse& response, const WebCore::ResourceError& error)
 {
     RefPtr tab = getTab(pageID);
+
+    // If a Fetch or XHR fails due to CORS, prompt the user for permission to the URL. This won’t help the failed request, but future requests might succeed if the user grants access.
+    if (error.isAccessControl() && (loadInfo.type == ResourceLoadInfo::Type::Fetch || loadInfo.type == ResourceLoadInfo::Type::XMLHTTPRequest)) {
+        RELEASE_LOG_ERROR(Extensions, "Requesting permission to access URL due to CORS failure: %{sensitive}s", loadInfo.originalURL.string().utf8().data());
+        requestPermissionToAccessURLs({ loadInfo.originalURL }, tab, nullptr, GrantOnCompletion::Yes, { PermissionStateOptions::RequestedWithTabsPermission, PermissionStateOptions::IncludeOptionalPermissions });
+    }
+
     if (!hasPermissionToSendWebRequestEvent(tab.get(), response.url(), loadInfo))
         return;
 
@@ -3340,20 +3353,23 @@ ALLOW_NONLITERAL_FORMAT_END
 NSArray *WebExtensionContext::corsDisablingPatterns()
 {
     NSMutableSet<NSString *> *patterns = [NSMutableSet set];
-    RefPtr extension = m_extension;
 
-    auto requestedMatchPatterns = extension->allRequestedMatchPatterns();
-    for (auto& requestedMatchPattern : requestedMatchPatterns)
-        [patterns addObjectsFromArray:createNSArray(requestedMatchPattern->expandedStrings()).get()];
-
-    // Include manifest optional permission origins here, these should be dynamically added when the are granted
-    // but we need SPI to update corsDisablingPatterns outside of the WKWebViewConfiguration to do that.
-    // FIXME: rdar://102912898 (CORS for Web Extension pages should respect granted per-site permissions)
-    auto optionalPermissionMatchPatterns = extension->optionalPermissionMatchPatterns();
-    for (auto& optionalMatchPattern : optionalPermissionMatchPatterns)
-        [patterns addObjectsFromArray:createNSArray(optionalMatchPattern->expandedStrings()).get()];
+    auto grantedMatchPatterns = grantedPermissionMatchPatterns();
+    for (auto& entry : grantedMatchPatterns) {
+        Ref pattern = entry.key;
+        [patterns addObjectsFromArray:createNSArray(pattern->expandedStrings()).get()];
+    }
 
     return [patterns allObjects];
+}
+
+void WebExtensionContext::updateCORSDisablingPatternsOnAllExtensionPages()
+{
+    auto *patterns = corsDisablingPatterns();
+    enumerateExtensionPages([&](auto& page, bool& stop) {
+        auto *webView = page.cocoaView().get();
+        webView._corsDisablingPatterns = patterns;
+    });
 }
 
 WKWebViewConfiguration *WebExtensionContext::webViewConfiguration(WebViewPurpose purpose)
