@@ -348,7 +348,7 @@ def dump_mailmap(committer_list):
         return "<{0}>".format(email)
 
     def format_email_with_gitsvn_uuid(email):
-        return "<{0}@268f45cc-cd09-0410-ab3c-d52691b4dbfc>".format(email)        
+        return "<{0}@268f45cc-cd09-0410-ab3c-d52691b4dbfc>".format(email)
 
     email_to_legacy_username = dict(list(map(reversed, list(CommitterListFromGit.login_to_email_address.items()))))
     def map_emails_to_legacy_username(emails):
@@ -368,8 +368,8 @@ def dump_mailmap(committer_list):
             other_emails.append(legacy_username)
 
         for other_email in other_emails:
-            print(full_name, format_email(canonical_email), format_email(other_email))
-            print(full_name, format_email(canonical_email), format_email_with_uuid(other_email))
+            print(str(full_name, "utf-8"), format_email(canonical_email), format_email(other_email))
+            print(str(full_name, "utf-8"), format_email(canonical_email), format_email_with_gitsvn_uuid(other_email))
 
 
 def main():
