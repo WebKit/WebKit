@@ -219,11 +219,14 @@ void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style,
             if ((decorationStyle.skipInk == TextDecorationSkipInk::Auto || decorationStyle.skipInk == TextDecorationSkipInk::All) && m_isHorizontal) {
                 if (!m_context.paintingDisabled()) {
                     auto underlineBoundingBox = m_context.computeUnderlineBoundsForText(rect, m_isPrinting);
-                    DashArray intersections = m_font.dashesForIntersectionsWithRect(textRun, decorationGeometry.textOrigin, underlineBoundingBox);
-                    DashArray boundaries = translateIntersectionPointsToSkipInkBoundaries(intersections, underlineBoundingBox.height(), rect.width());
-                    ASSERT(!(boundaries.size() % 2));
-                    // We don't use underlineBoundingBox here because drawLinesForText() will run computeUnderlineBoundsForText() internally.
-                    m_context.drawLinesForText(rect.location(), rect.height(), boundaries, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
+                    auto intersections = m_font.dashesForIntersectionsWithRect(textRun, decorationGeometry.textOrigin, underlineBoundingBox);
+                    if (!intersections.isEmpty()) {
+                        auto boundaries = translateIntersectionPointsToSkipInkBoundaries(intersections, underlineBoundingBox.height(), rect.width());
+                        ASSERT(!(boundaries.size() % 2));
+                        // We don't use underlineBoundingBox here because drawLinesForText() will run computeUnderlineBoundsForText() internally.
+                        m_context.drawLinesForText(rect.location(), rect.height(), boundaries, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
+                    } else
+                    m_context.drawLineForText(rect, m_isPrinting, style == TextDecorationStyle::Double, strokeStyle);
                 }
             } else {
                 // FIXME: Need to support text-decoration-skip: none.
