@@ -1,8 +1,8 @@
 
 PASS Scroll timeline with percentage range [JavaScript API]
 PASS Scroll timeline with px range [JavaScript API]
-FAIL Scroll timeline with calculated range [JavaScript API] assert_approx_equals: expected a number but got a "object"
-FAIL Scroll timeline with EM range [JavaScript API] assert_approx_equals: expected a number but got a "object"
+PASS Scroll timeline with calculated range [JavaScript API]
+FAIL Scroll timeline with EM range [JavaScript API] assert_approx_equals: expected 0.625 +/- 0.001 but got 0.6111111068725585
 FAIL Scroll timeline with percentage range [CSS] promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
 FAIL Scroll timeline with px range [CSS] promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
 FAIL Scroll timeline with calculated range [CSS] promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"

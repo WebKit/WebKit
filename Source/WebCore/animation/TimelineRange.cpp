@@ -66,11 +66,11 @@ TimelineRangeValue SingleTimelineRange::serialize() const
 
 static const std::optional<CSSToLengthConversionData> cssToLengthConversionData(RefPtr<Element> element)
 {
+    Ref document = element->document();
     CheckedPtr elementRenderer = element->renderer();
     if (!elementRenderer)
         return std::nullopt;
     CheckedPtr elementParentRenderer = elementRenderer->parent();
-    Ref document = element->document();
     CheckedPtr documentElement = document->documentElement();
     if (!documentElement)
         return std::nullopt;
@@ -86,13 +86,17 @@ static const std::optional<CSSToLengthConversionData> cssToLengthConversionData(
 
 Length SingleTimelineRange::lengthForCSSValue(RefPtr<const CSSPrimitiveValue> value, RefPtr<Element> element)
 {
-    if (!value || value->isCalculated() || !element)
+    if (!value || !element)
         return { };
     if (value->valueID() == CSSValueAuto)
         return { };
 
+    element->protectedDocument()->updateLayoutIgnorePendingStylesheets();
+
     auto conversionData = cssToLengthConversionData(element);
     if (!conversionData) {
+        if (value->isCalculated())
+            return { };
         if (value->isPercentage())
             return Length(value->resolveAsPercentageNoConversionDataRequired(), LengthType::Percent);
         if (value->isPx())
