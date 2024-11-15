@@ -318,6 +318,9 @@ static void clearBackingSharingLayerProviders(SingleThreadWeakListHashSet<Render
 void RenderLayerBacking::setBackingSharingLayers(SingleThreadWeakListHashSet<RenderLayer>&& sharingLayers)
 {
     bool sharingLayersChanged = m_backingSharingLayers.computeSize() != sharingLayers.computeSize();
+
+    clearBackingSharingLayerProviders(m_backingSharingLayers, m_owningLayer);
+
     // For layers that used to share and no longer do, and are not composited, recompute repaint rects.
     for (auto& oldSharingLayer : m_backingSharingLayers) {
         // Layers that go from shared to composited have their repaint rects recomputed in RenderLayerCompositor::updateBacking().
@@ -327,8 +330,6 @@ void RenderLayerBacking::setBackingSharingLayers(SingleThreadWeakListHashSet<Ren
                 oldSharingLayer.compositingStatusChanged(LayoutUpToDate::Yes);
         }
     }
-
-    clearBackingSharingLayerProviders(m_backingSharingLayers, m_owningLayer);
 
     if (sharingLayersChanged) {
         if (!sharingLayers.isEmptyIgnoringNullReferences())
