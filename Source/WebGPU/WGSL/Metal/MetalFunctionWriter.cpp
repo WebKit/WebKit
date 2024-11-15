@@ -217,7 +217,7 @@ void FunctionDefinitionWriter::emitNecessaryHelpers()
 
     if (m_shaderModule.usesExternalTextures()) {
         m_shaderModule.clearUsesExternalTextures();
-        m_stringBuilder.append("struct __attribute__((packed)) texture_external {\n"_s);
+        m_stringBuilder.append("struct texture_external {\n"_s);
         {
             IndentationScope scope(m_indent);
             m_stringBuilder.append(m_indent, "texture2d<float> FirstPlane;\n"_s,
@@ -600,7 +600,7 @@ void FunctionDefinitionWriter::visit(AST::Structure& structDecl)
         for (auto& member : structDecl.members()) {
             auto& name = member.name();
             auto* type = member.type().inferredType();
-            if (isPrimitiveReference(type, Types::Primitive::TextureExternal)) {
+            if (isPrimitive(type, Types::Primitive::TextureExternal) || isPrimitiveReference(type, Types::Primitive::TextureExternal))  {
                 m_stringBuilder.append(m_indent, "texture2d<float> __"_s, name, "_FirstPlane;\n"_s,
                     m_indent, "texture2d<float> __"_s, name, "_SecondPlane;\n"_s,
                     m_indent, "float3x2 __"_s, name, "_UVRemapMatrix;\n"_s,
