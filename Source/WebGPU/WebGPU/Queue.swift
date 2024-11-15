@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import WebGPU_Internal
+
 private let largeBufferSize = 32 * 1024 * 1024
 
 public func writeBuffer(

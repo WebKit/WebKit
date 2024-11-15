@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import WebGPU_Internal
+
 public func copySpan(destination: SpanUInt8, source: SpanConstUInt8) {
     precondition(source.size_bytes() <= destination.size_bytes(), "Destination buffer not big enough.")
     memcpy(destination.__dataUnsafe(), source.__dataUnsafe(), source.size_bytes())

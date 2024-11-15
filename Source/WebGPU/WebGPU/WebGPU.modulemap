@@ -1,7 +1,6 @@
 framework module WebGPU {
   umbrella header "WebGPU.h"
   header "WebGPUExt.h"
-  header "WebGPUSwift.h"
   export *
   module * { export * }
 }

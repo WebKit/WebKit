@@ -24,8 +24,14 @@
  */
 
 #pragma once
-#include "WebGPUSwift.h"
 
-#if ENABLE(WEBGPU_SWIFT)
+#include "WebGPUSwift.h"
+#include <span>
+#include <cstdint>
+
+using SpanConstUInt8 = std::span<const uint8_t>;
+using SpanUInt8 = std::span<uint8_t>;
+
+#ifndef __swift__
 #include "WebGPUSwift-Generated.h"
 #endif

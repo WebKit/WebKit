@@ -25,11 +25,4 @@
 
 #pragma once
 
-#ifdef __cplusplus
-#include <span>
-#include <stdint.h>
-
-using SpanConstUInt8 = std::span<const uint8_t>;
-using SpanUInt8 = std::span<uint8_t>;
-
-#endif
+// Reserved for WebGPUSwift-related declarations needed by WebGPU's clients.

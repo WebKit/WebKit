@@ -535,6 +535,7 @@
 		97FA1A7F29C085740052D650 /* wgslc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wgslc; sourceTree = BUILT_PRODUCTS_DIR; };
 		97FA1A8729C085A60052D650 /* wgslc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgslc.cpp; path = WGSL/wgslc.cpp; sourceTree = SOURCE_ROOT; };
 		97FA1AA229C0BB700052D650 /* wgslc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = wgslc.xcconfig; sourceTree = "<group>"; };
+		DD8EE22F2CE6B4B3004DD6F8 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -608,6 +609,7 @@
 		1CEBD7E52716AFBA00A5254D /* WebGPU */ = {
 			isa = PBXGroup;
 			children = (
+				DD8EE22E2CE6B490004DD6F8 /* Internal */,
 				1C5ACAB2273A426D0095F8D5 /* Adapter.h */,
 				1C5ACAA9273A426D0095F8D5 /* Adapter.mm */,
 				1C58301727E16823009B40F0 /* APIConversions.h */,
@@ -679,7 +681,6 @@
 				1C5ACAD2273A4C860095F8D5 /* WebGPUExt.h */,
 				1CA7CDB12A2B284A0094071F /* WebGPUInternal.h */,
 				9478714B2C98D314003DB695 /* WebGPUSwift.h */,
-				94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */,
 				0D943C0D2C6571BC00D33BA5 /* XRBinding.h */,
 				0D943C0E2C6571BC00D33BA5 /* XRBinding.mm */,
 				0DD5FD332C66947B004AF552 /* XRProjectionLayer.h */,
@@ -894,6 +895,15 @@
 				979240B3297018290050EA2C /* MetalFunctionWriter.h */,
 			);
 			path = Metal;
+			sourceTree = "<group>";
+		};
+		DD8EE22E2CE6B490004DD6F8 /* Internal */ = {
+			isa = PBXGroup;
+			children = (
+				DD8EE22F2CE6B4B3004DD6F8 /* module.modulemap */,
+				94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */,
+			);
+			path = Internal;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
