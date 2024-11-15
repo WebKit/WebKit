@@ -191,7 +191,7 @@ void VideoMediaSampleRenderer::decodeNextSample()
 
     ASSERT(m_compressedSampleQueue);
 
-    if (m_isDecodingSample)
+    if (m_isDecodingSample || m_gotDecodingError)
         return;
 
     auto sample = adoptCF(checked_cf_cast<CMSampleBufferRef>(PAL::CMBufferQueueDequeueAndRetain(m_compressedSampleQueue.get())));
@@ -209,6 +209,8 @@ void VideoMediaSampleRenderer::decodeNextSample()
         protectedThis->m_isDecodingSample = false;
 
         if (!result) {
+            protectedThis->m_gotDecodingError = true;
+
             callOnMainThread([protectedThis = WTFMove(protectedThis), status = result.error()] {
                 assertIsMainThread();
 
@@ -286,6 +288,7 @@ void VideoMediaSampleRenderer::flushCompressedSampleQueue()
 
     PAL::CMBufferQueueReset(m_compressedSampleQueue.get());
     PAL::CMTimebaseSetTimerDispatchSourceNextFireTime(m_timebase.get(), m_timerSource.get(), PAL::kCMTimeInvalid, 0);
+    m_gotDecodingError = false;
 }
 
 void VideoMediaSampleRenderer::flushDecodedSampleQueue()

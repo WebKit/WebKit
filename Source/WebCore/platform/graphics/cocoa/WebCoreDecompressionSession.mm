@@ -296,8 +296,6 @@ void WebCoreDecompressionSession::maybeDecodeNextSample()
         assertIsCurrent(m_decompressionQueue.get());
         --m_framesBeingDecoded;
         m_isDecodingSample = false;
-        m_lastDecodingError = noErr;
-        m_lastDecodedSample = nullptr;
 
         if (!result) {
             ensureOnMainThread([protectedThis = Ref { *this }, this, status = result.error(), flushId] {
@@ -342,6 +340,8 @@ auto WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, bool di
     m_decompressionQueue->dispatch([protectedThis = RefPtr { this }, producer = WTFMove(producer), sample = RetainPtr { sample }, displaying, flushId = m_flushId.load()]() mutable {
         if (flushId == protectedThis->m_flushId)
             protectedThis->decodeSampleInternal(sample.get(), displaying)->chainTo(WTFMove(producer));
+        else
+            producer.resolve(nullptr);
     });
     return promise;
 }
@@ -349,6 +349,9 @@ auto WebCoreDecompressionSession::decodeSample(CMSampleBufferRef sample, bool di
 Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::decodeSampleInternal(CMSampleBufferRef sample, bool displaying)
 {
     assertIsCurrent(m_decompressionQueue.get());
+
+    m_lastDecodingError = noErr;
+    m_lastDecodedSample = nullptr;
 
     VTDecodeInfoFlags flags { kVTDecodeFrame_EnableTemporalProcessing };
     if (!displaying)
@@ -422,15 +425,15 @@ Ref<WebCoreDecompressionSession::DecodingPromise> WebCoreDecompressionSession::d
             }
             DecodingPromise::Producer producer;
             auto promise = producer.promise();
-            VideoDecoder::DecodePromise::all(promises)->whenSettled(m_decompressionQueue.get(), [weakThis = ThreadSafeWeakPtr { *this }, totalDuration = PAL::toCMTime(totalDuration), producer = WTFMove(producer)] (auto&&) {
+            VideoDecoder::DecodePromise::all(promises)->whenSettled(m_decompressionQueue.get(), [weakThis = ThreadSafeWeakPtr { *this }, totalDuration = PAL::toCMTime(totalDuration), producer = WTFMove(producer)] (auto&& result) {
                 RefPtr protectedThis = weakThis.get();
                 if (!protectedThis || protectedThis->isInvalidated()) {
                     producer.reject(0);
                     return;
                 }
                 assertIsCurrent(protectedThis->m_decompressionQueue.get());
-                if (protectedThis->m_lastDecodingError)
-                    producer.reject(protectedThis->m_lastDecodingError);
+                if (!result)
+                    producer.reject(kVTVideoDecoderBadDataErr);
                 else
                     producer.resolve(std::exchange(protectedThis->m_lastDecodedSample, { }));
                 if (!protectedThis->m_pendingDecodeData)

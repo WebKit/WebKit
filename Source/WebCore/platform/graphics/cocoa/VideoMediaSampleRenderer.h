@@ -119,6 +119,7 @@ private:
     Function<void()> m_readyForMoreSampleFunction;
     bool m_prefersDecompressionSession { false };
     std::optional<uint32_t> m_currentCodec;
+    std::atomic<bool> m_gotDecodingError { false };
 
     ProcessIdentity m_resourceOwner;
 };
