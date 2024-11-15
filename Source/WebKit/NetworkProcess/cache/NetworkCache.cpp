@@ -431,15 +431,15 @@ void Cache::retrieve(const WebCore::ResourceRequest& request, std::optional<Glob
     m_storage->retrieve(storageKey, priority, [this, protectedThis = Ref { *this }, request, completionHandler = WTFMove(completionHandler), info = WTFMove(info), storageKey, networkProcess = Ref { networkProcess() }, sessionID = m_sessionID, frameID, isNavigatingToAppBoundDomain, allowPrivacyProxy, advancedPrivacyProtections](auto record, auto timings) mutable {
         info.storageTimings = timings;
 
-        if (!record) {
+        if (record.isNull()) {
             LOG(NetworkCache, "(NetworkProcess) not found in storage");
             completeRetrieve(WTFMove(completionHandler), nullptr, info);
             return false;
         }
 
-        ASSERT(record->key == storageKey);
+        ASSERT(record.key == storageKey);
 
-        auto entry = Entry::decodeStorageRecord(*record);
+        auto entry = Entry::decodeStorageRecord(record);
 
         auto useDecision = entry ? makeUseDecision(networkProcess, sessionID, *entry, request) : UseDecision::NoDueToDecodeFailure;
         switch (useDecision) {

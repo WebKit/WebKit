@@ -428,11 +428,12 @@ void SpeculativeLoadManager::addPreloadedEntry(std::unique_ptr<Entry> entry, con
 void SpeculativeLoadManager::retrieveEntryFromStorage(const SubresourceInfo& info, RetrieveCompletionHandler&& completionHandler)
 {
     protectedStorage()->retrieve(info.key(), static_cast<unsigned>(info.priority()), [completionHandler = WTFMove(completionHandler)](auto record, auto timings) {
-        if (!record) {
+        if (record.isNull()) {
             completionHandler(nullptr);
             return false;
         }
-        auto entry = Entry::decodeStorageRecord(*record);
+
+        auto entry = Entry::decodeStorageRecord(record);
         if (!entry) {
             completionHandler(nullptr);
             return false;
@@ -628,12 +629,12 @@ void SpeculativeLoadManager::retrieveSubresourcesEntry(const Key& storageKey, WT
     RefPtr storage = m_storage.get();
     auto subresourcesStorageKey = makeSubresourcesKey(storageKey, storage->salt());
     storage->retrieve(subresourcesStorageKey, static_cast<unsigned>(ResourceLoadPriority::Medium), [completionHandler = WTFMove(completionHandler)](auto record, auto timings) {
-        if (!record) {
+        if (record.isNull()) {
             completionHandler(nullptr);
             return false;
         }
 
-        auto subresourcesEntry = SubresourcesEntry::decodeStorageRecord(*record);
+        auto subresourcesEntry = SubresourcesEntry::decodeStorageRecord(record);
         if (!subresourcesEntry) {
             completionHandler(nullptr);
             return false;
