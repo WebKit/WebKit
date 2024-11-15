@@ -22,6 +22,7 @@
 
 #if ENABLE(WEB_RTC)
 
+[EnabledBy=WebCodecsVideoEnabled || PeerConnectionEnabled]
 messages -> RTCDataChannelRemoteManagerProxy NotRefCounted {
     // To source
     SendData(struct WebCore::RTCDataChannelIdentifier source, bool isRaw, std::span<const uint8_t> text);

@@ -97,6 +97,13 @@ void RTCDataChannelRemoteManagerProxy::bufferedAmountIsDecreasing(WebCore::RTCDa
         IPC::Connection::send(*connectionID, Messages::RTCDataChannelRemoteManager::BufferedAmountIsDecreasing { identifier, amount }, 0);
 }
 
+void RTCDataChannelRemoteManagerProxy::updateSharedPreferencesForWebProcess(SharedPreferencesForWebProcess sharedPreferencesForWebProcess)
+{
+    protectedQueue()->dispatch([this, sharedPreferencesForWebProcess = WTFMove(sharedPreferencesForWebProcess)] {
+        m_sharedPreferencesForWebProcess = sharedPreferencesForWebProcess;
+    });
+}
+
 }
 
 #endif
