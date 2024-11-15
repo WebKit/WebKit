@@ -2431,8 +2431,6 @@ webkit.org/b/257011 imported/w3c/web-platform-tests/css/css-text/hyphens/hyphena
 # webkit.org/b/280646 [macOS Debug EWS] media/video-webkit-playsinline.html is a flaky crash
 [ Debug ] media/video-webkit-playsinline.html [ Skip ]
 
-webkit.org/b/280792 inspector/worker/debugger-pause-subworker.html [ Skip ]
-
 # webkit.org/b/280985 [macOS Debug]: media/track/track-text-track-destructor-crash.html is a flaky crash (failure in EWS)
 [ Debug ] media/track/track-text-track-destructor-crash.html [ Pass Crash ]
 
@@ -2456,3 +2454,7 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-trave
 
 # webkit.org/b/280304 [ Sequoia ] fast/ruby/ruby-expansion-cjk-4.html is a constant image only failure.
 [ Sequoia ] fast/ruby/ruby-expansion-cjk-4.html [ ImageOnlyFailure ]
+
+# webkit.org/b/280792 [macOS] ASSERTION FAILED: Unsafe to ref/deref from different threads (flaky in EWS)
+inspector/worker/debugger-pause-subworker.html [ Skip ]
+inspector/worker/console-basic-subworker.html [ Skip ]
