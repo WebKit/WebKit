@@ -614,7 +614,11 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-WebKitBuild-directory',
             'delete-stale-build-files',
             'prune-coresymbolicationd-cache-if-too-large',
+            'install-cmake',
+            'install-ninja',
             'print-clang-version',
+            'checkout-llvm-project',
+            'update-clang',
             'scan-build'
         ],
         'Apple-Ventura-Release-WK1-Tests': [

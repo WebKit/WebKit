@@ -68,6 +68,7 @@ def download_and_install(package):
         print('Detaching and removing /tmp/cmake...')
         run(['hdiutil', 'detach', '/tmp/cmake'])
         run(['rm', '-rf', '/tmp/cmake'])
+        run(['xattr', '-dr', 'com.apple.quarantine', '/Applications/CMake.app'])
     elif package == 'ninja':
         print('Downloading ninja.zip...')
         run(['curl', NINJA_DOWNLOAD_URL, '-L', '-o', 'ninja.zip'])

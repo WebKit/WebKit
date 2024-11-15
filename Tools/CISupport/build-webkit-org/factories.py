@@ -24,6 +24,7 @@ from buildbot.process import factory
 from buildbot.steps import trigger
 
 from .steps import *
+from Shared.steps import *
 
 
 class Factory(factory.BuildFactory):
@@ -291,7 +292,11 @@ class DownloadAndPerfTestFactory(Factory):
 class SaferCPPStaticAnalyzerFactory(Factory):
     def __init__(self, platform, configuration, architectures, additionalArguments=None, device_model=None, **kwargs):
         Factory.__init__(self, platform, configuration, architectures, False, additionalArguments, device_model, **kwargs)
+        self.addStep(InstallCMake())
+        self.addStep(InstallNinja())
         self.addStep(PrintClangVersion())
+        self.addStep(CheckOutLLVMProject())
+        self.addStep(UpdateClang())
         self.addStep(ScanBuild())
 
 
