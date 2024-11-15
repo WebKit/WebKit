@@ -35,13 +35,16 @@
 /// conversion to a `Result`.
 /// - `boxingNilAsAnyForCompatibility` exists as a workaround for http://webkit.org/b/216198, and
 /// should not be used by new code.
+///
+/// Following WebKit API conventions, closures returned are isolated to MainActor so that they can
+/// be safely called from the main thread.
 enum ObjCBlockConversion {
     /// Converts a block from `(Result<Value, Error>) -> Void` to `(Value?, Error?) -> Void`.
     ///
     /// The result block must be called with exactly one non-null argument. If both arguments are
     /// non-null then `handler` will be called with `.success(T)`. If both arguments are `nil`
     /// the conversion will trap.
-    static func exclusive<Value>(_ handler: @escaping (Result<Value, Error>) -> Void) -> (Value?, Error?) -> Void {
+    static nonisolated func exclusive<Value>(_ handler: @MainActor @escaping (Result<Value, Error>) -> Void) -> @MainActor (Value?, Error?) -> Void {
         return { value, error in
             if let value = value {
                 handler(.success(value))
@@ -57,7 +60,7 @@ enum ObjCBlockConversion {
     ///
     /// This performs the same conversion as `Self.exclusive(_:)`, but if the result block is called
     /// with `(nil, nil)` then `handler` is called with `.success(nil)`.
-    static func treatNilAsSuccess<Value>(_ handler: @escaping (Result<Value?, Error>) -> Void) -> (Value?, Error?) -> Void {
+    static nonisolated func treatNilAsSuccess<Value>(_ handler: @MainActor @escaping (Result<Value?, Error>) -> Void) -> @MainActor (Value?, Error?) -> Void {
         return { value, error in
             if let error = error {
                 handler(.failure(error))
@@ -73,7 +76,7 @@ enum ObjCBlockConversion {
     /// with `(nil, nil)` then `handler` is called with `.success(Optional<Any>.none as Any)`. This
     /// is a compatibility behavior for http://webkit.org/b/216198, and should not be adopted by
     /// new code.
-    static func boxingNilAsAnyForCompatibility(_ handler: @escaping (Result<Any, Error>) -> Void) -> (Any?, Error?) -> Void {
+    static nonisolated func boxingNilAsAnyForCompatibility(_ handler: @MainActor @escaping (Result<Any, Error>) -> Void) -> @MainActor (Any?, Error?) -> Void {
         return { value, error in
             if let error = error {
                 handler(.failure(error))

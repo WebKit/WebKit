@@ -39,23 +39,25 @@ extension WKPDFConfiguration {
 
 @available(iOS 14.0, macOS 10.16, *)
 extension WKWebView {
-    public func callAsyncJavaScript(_ functionBody: String, arguments: [String:Any] = [:], in frame: WKFrameInfo? = nil, in contentWorld: WKContentWorld, completionHandler: ((Result<Any, Error>) -> Void)? = nil) {
-        __callAsyncJavaScript(functionBody, arguments: arguments, inFrame: frame, in: contentWorld, completionHandler: completionHandler.map(ObjCBlockConversion.boxingNilAsAnyForCompatibility))
+    @preconcurrency public func callAsyncJavaScript(_ functionBody: String, arguments: [String:Any] = [:], in frame: WKFrameInfo? = nil, in contentWorld: WKContentWorld, completionHandler: (@MainActor (Result<Any, Error>) -> Void)? = nil) {
+        let thunk = completionHandler.map { ObjCBlockConversion.boxingNilAsAnyForCompatibility($0) }
+        __callAsyncJavaScript(functionBody, arguments: arguments, inFrame: frame, in: contentWorld, completionHandler: thunk)
     }
 
-    public func createPDF(configuration: WKPDFConfiguration = .init(), completionHandler: @escaping (Result<Data, Error>) -> Void) {
+    @preconcurrency public func createPDF(configuration: WKPDFConfiguration = .init(), completionHandler: @MainActor @escaping (Result<Data, Error>) -> Void) {
         __createPDF(with: configuration, completionHandler: ObjCBlockConversion.exclusive(completionHandler))
     }
 
-    public func createWebArchiveData(completionHandler: @escaping (Result<Data, Error>) -> Void) {
+    @preconcurrency public func createWebArchiveData(completionHandler: @MainActor @escaping (Result<Data, Error>) -> Void) {
         __createWebArchiveData(completionHandler: ObjCBlockConversion.exclusive(completionHandler))
     }
 
-    public func evaluateJavaScript(_ javaScript: String, in frame: WKFrameInfo? = nil, in contentWorld: WKContentWorld, completionHandler: ((Result<Any, Error>) -> Void)? = nil) {
-        __evaluateJavaScript(javaScript, inFrame: frame, in: contentWorld, completionHandler: completionHandler.map(ObjCBlockConversion.boxingNilAsAnyForCompatibility))
+    @preconcurrency public func evaluateJavaScript(_ javaScript: String, in frame: WKFrameInfo? = nil, in contentWorld: WKContentWorld, completionHandler: (@MainActor (Result<Any, Error>) -> Void)? = nil) {
+        let thunk = completionHandler.map { ObjCBlockConversion.boxingNilAsAnyForCompatibility($0) }
+        __evaluateJavaScript(javaScript, inFrame: frame, in: contentWorld, completionHandler: thunk)
     }
 
-    public func find(_ string: String, configuration: WKFindConfiguration = .init(), completionHandler: @escaping (WKFindResult) -> Void) {
+    @preconcurrency public func find(_ string: String, configuration: WKFindConfiguration = .init(), completionHandler: @MainActor @escaping (WKFindResult) -> Void) {
         __find(string, with: configuration, completionHandler: completionHandler)
     }
 }
