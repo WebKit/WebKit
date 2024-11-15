@@ -123,7 +123,7 @@ void U2fAuthenticator::issueSignCommand(size_t index)
 
 void U2fAuthenticator::issueNewCommand(Vector<uint8_t>&& command, CommandType type)
 {
-    U2F_RELEASE_LOG("issueNewCommand");
+    U2F_RELEASE_LOG("issueNewCommand, type=%hhu", type);
     m_lastCommand = WTFMove(command);
     m_lastCommandType = type;
     issueCommand(m_lastCommand, m_lastCommandType);
@@ -176,7 +176,10 @@ void U2fAuthenticator::continueRegisterCommandAfterResponseReceived(ApduResponse
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR: {
         auto& options = std::get<PublicKeyCredentialCreationOptions>(requestData().options);
-        ASSERT(options.rp.id);
+        if (!options.rp.id) {
+            U2F_RELEASE_LOG("continueRegisterCommandAfterResponseReceived: rp.id empty. Should not be.");
+            ASSERT(false);
+        }
         auto response = readU2fRegisterResponse(options.rp.id, apduResponse.data(), AuthenticatorAttachment::CrossPlatform, { driver().transport() }, options.attestation);
         if (!response) {
             receiveRespond(ExceptionData { ExceptionCode::UnknownError, "Couldn't parse the U2F register response."_s });
@@ -247,13 +250,18 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
     auto& requestOptions = std::get<PublicKeyCredentialRequestOptions>(requestData().options);
     switch (apduResponse.status()) {
     case ApduResponse::Status::SW_NO_ERROR: {
+        U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: m_isAppId=%d", m_isAppId);
         RefPtr<AuthenticatorAssertionResponse> response;
         if (m_isAppId) {
-            ASSERT(requestOptions.extensions && !requestOptions.extensions->appid.isNull());
+            if (requestOptions.extensions && !requestOptions.extensions->appid.isNull()) {
+                U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: appid and m_isAppId mismatch");
+                ASSERT(false);
+            }
             response = readU2fSignResponse(requestOptions.extensions->appid, requestOptions.allowCredentials[m_nextListIndex - 1].id, apduResponse.data(), AuthenticatorAttachment::CrossPlatform);
         } else
             response = readU2fSignResponse(requestOptions.rpId, requestOptions.allowCredentials[m_nextListIndex - 1].id, apduResponse.data(), AuthenticatorAttachment::CrossPlatform);
         if (!response) {
+            U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: Couldn't parse the U2F sign response.");
             receiveRespond(ExceptionData { ExceptionCode::UnknownError, "Couldn't parse the U2F sign response."_s });
             return;
         }
@@ -264,16 +272,20 @@ void U2fAuthenticator::continueSignCommandAfterResponseReceived(ApduResponse&& a
         return;
     }
     case ApduResponse::Status::SW_CONDITIONS_NOT_SATISFIED:
+        U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: SW_CONDITIONS_NOT_SATISFIED");
         // Polling is required during test of user presence.
         m_retryTimer.startOneShot(Seconds::fromMilliseconds(retryTimeOutValueMs));
         return;
     case ApduResponse::Status::SW_WRONG_DATA:
+        U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: SW_WRONG_DATA");
         if (requestOptions.extensions && !requestOptions.extensions->appid.isNull()) {
             if (!m_isAppId) {
+                U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: trying appID extension.");
                 m_isAppId = true;
                 issueSignCommand(m_nextListIndex - 1);
                 return;
             }
+            U2F_RELEASE_LOG("continueSignCommandAfterResponseReceived: SW_WRONG_DATA and m_IsAppId");
             m_isAppId = false;
         }
         issueSignCommand(m_nextListIndex++);
