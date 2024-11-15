@@ -2593,7 +2593,6 @@ http/tests/inspector/network/resource-security-certificate.html [ Pass Failure ]
 [ Ventura+ arm64 ] fast/writing-mode/english-bt-text-with-spelling-marker.html [ ImageOnlyFailure ]
 css3/scroll-snap/scroll-padding-mainframe-paging.html [ Failure ]
 [ Ventura+ ] compositing/fixed-with-main-thread-scrolling.html [ ImageOnlyFailure ]
-[ Debug x86_64 ] editing/execCommand/delete-non-editable-range-crash.html [ Pass Timeout ]
 
 # https://bugs.webkit.org/show_bug.cgi?id=249544
 # Generic Permissions API is not supported in WK1

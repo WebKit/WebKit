@@ -2053,6 +2053,7 @@ http/tests/media/fairplay/fps-mse-unmuxed-key-rotation.html [ Pass Failure ]
 imported/w3c/web-platform-tests/html/semantics/embedded-content/media-elements/autoplay-allowed-by-feature-policy-attribute-redirect-on-load.https.sub.html [ Pass Failure ]
 [ Ventura+ ] fast/text/synthetic-bold-transformed.html [ Pass ImageOnlyFailure ]
 [ x86_64 ] js/promises-tests/promises-tests-2-3-3.html [ Pass Timeout ]
+[ Ventura+ ] editing/execCommand/delete-non-editable-range-crash.html [ Pass Timeout ]
 
 webkit.org/b/254637 fast/text/web-font-load-invisible-during-loading.html [ Pass Failure ]
 
