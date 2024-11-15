@@ -330,19 +330,26 @@ static AtomString effectiveViewTransitionName(RenderLayerModelObject& renderer, 
 {
     if (renderer.isSkippedContent())
         return nullAtom();
+
     auto transitionName = renderer.style().viewTransitionName();
     if (transitionName.isNone())
         return nullAtom();
+
     auto scope = Style::Scope::forOrdinal(originatingElement, transitionName.scopeOrdinal());
     if (!scope || scope != &documentScope)
         return nullAtom();
+
     if (transitionName.isCustomIdent())
         return transitionName.customIdent();
-    ASSERT(transitionName.isAuto());
+
+    ASSERT(transitionName.isAuto() || transitionName.isMatchElement());
+
     if (!renderer.element())
         return nullAtom();
-    if (scope == &Style::Scope::forNode(*renderer.element()) && renderer.element()->hasID())
+
+    if (transitionName.isAuto() && scope == &Style::Scope::forNode(*renderer.element()) && renderer.element()->hasID())
         return renderer.element()->getIdAttribute();
+
     if (isCrossDocument)
         return nullAtom();
 

@@ -1812,3 +1812,6 @@ height
 self-block
 self-inline
 anchor-center
+
+// view-transition-name
+match-element
