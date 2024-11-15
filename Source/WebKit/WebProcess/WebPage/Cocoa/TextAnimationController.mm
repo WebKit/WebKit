@@ -383,7 +383,10 @@ std::optional<WebCore::TextIndicatorData> TextAnimationController::createTextInd
         WebCore::TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
         WebCore::TextIndicatorOption::ExpandClipBeyondVisibleRect,
         WebCore::TextIndicatorOption::SkipReplacedContent,
-        WebCore::TextIndicatorOption::RespectTextColor
+        WebCore::TextIndicatorOption::RespectTextColor,
+#if PLATFORM(VISION)
+        WebCore::TextIndicatorOption::SnapshotContentAt3xBaseScale,
+#endif
     };
 
     if (auto textIndicator = WebCore::TextIndicator::createWithRange(range, textIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, { }))

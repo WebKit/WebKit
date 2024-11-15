@@ -85,6 +85,9 @@ std::optional<TextIndicatorData> textPreviewDataForRange(Document&, const Simple
         TextIndicatorOption::SkipReplacedContent,
         TextIndicatorOption::RespectTextColor,
         TextIndicatorOption::DoNotClipToVisibleRect,
+#if PLATFORM(VISION)
+        TextIndicatorOption::SnapshotContentAt3xBaseScale,
+#endif
     };
 
     RefPtr textIndicator = WebCore::TextIndicator::createWithRange(resolvedRange, textIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, { });

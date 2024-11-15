@@ -6238,6 +6238,7 @@ enum class WebCore::TextIndicatorPresentationTransition : uint8_t {
     ComputeEstimatedBackgroundColor,
     UseUserSelectAllCommonAncestor,
     SkipReplacedContent,
+    SnapshotContentAt3xBaseScale,
 };
 
 using WebCore::IDBConnectionIdentifier = WebCore::ProcessIdentifier;

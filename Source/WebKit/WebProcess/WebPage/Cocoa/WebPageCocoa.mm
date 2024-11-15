@@ -1152,7 +1152,10 @@ void WebPage::createTextIndicatorForElementWithID(const String& elementID, Compl
         WebCore::TextIndicatorOption::IncludeSnapshotOfAllVisibleContentWithoutSelection,
         WebCore::TextIndicatorOption::ExpandClipBeyondVisibleRect,
         WebCore::TextIndicatorOption::SkipReplacedContent,
-        WebCore::TextIndicatorOption::RespectTextColor
+        WebCore::TextIndicatorOption::RespectTextColor,
+#if PLATFORM(VISION)
+        WebCore::TextIndicatorOption::SnapshotContentAt3xBaseScale,
+#endif
     };
 
     RefPtr textIndicator = WebCore::TextIndicator::createWithRange(elementRange, textIndicatorOptions, WebCore::TextIndicatorPresentationTransition::None, { });
