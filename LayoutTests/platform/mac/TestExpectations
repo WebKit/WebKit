@@ -2458,3 +2458,6 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-origin-trave
 # webkit.org/b/280792 [macOS] ASSERTION FAILED: Unsafe to ref/deref from different threads (flaky in EWS)
 inspector/worker/debugger-pause-subworker.html [ Skip ]
 inspector/worker/console-basic-subworker.html [ Skip ]
+
+webkit.org/b/283203 [ Ventura+ ] fast/canvas/imageData-consistency.html [ Pass Timeout ]
+
