@@ -1001,7 +1001,10 @@ static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle
         return CSSValueList::createSpaceSeparated(value(translate->x()), value(translate->y()), value(translate->z()));
     if (includeLength(translate->y()))
         return CSSValueList::createSpaceSeparated(value(translate->x()), value(translate->y()));
-    return CSSValueList::createSpaceSeparated(value(translate->x()));
+    if (!translate->x().isUndefined() && !translate->x().isEmptyValue())
+        return CSSValueList::createSpaceSeparated(value(translate->x()));
+
+    return CSSPrimitiveValue::create(CSSValueNone);
 }
 
 static Ref<CSSValue> computedScale(RenderObject* renderer, const RenderStyle& style)
