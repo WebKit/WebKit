@@ -26,32 +26,24 @@
 #pragma once
 
 #import "TextIndicator.h"
+#import <wtf/CheckedPtr.h>
 #import <wtf/Noncopyable.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/RunLoop.h>
-#include <wtf/TZoneMalloc.h>
+#import <wtf/TZoneMalloc.h>
 
 OBJC_CLASS NSView;
 OBJC_CLASS WebTextIndicatorLayer;
 
 namespace WebCore {
-class TextIndicatorWindow;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::TextIndicatorWindow> : std::true_type { };
-}
-
-namespace WebCore {
 
 #if PLATFORM(MAC)
 
-class TextIndicatorWindow {
+class TextIndicatorWindow final : public CanMakeCheckedPtr<TextIndicatorWindow> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(TextIndicatorWindow, WEBCORE_EXPORT);
     WTF_MAKE_NONCOPYABLE(TextIndicatorWindow);
-
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(TextIndicatorWindow);
 public:
     WEBCORE_EXPORT explicit TextIndicatorWindow(NSView *);
     WEBCORE_EXPORT ~TextIndicatorWindow();

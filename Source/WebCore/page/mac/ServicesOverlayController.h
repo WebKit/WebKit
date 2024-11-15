@@ -38,15 +38,6 @@
 #include <wtf/WeakHashSet.h>
 
 namespace WebCore {
-class ServicesOverlayController;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::ServicesOverlayController> : std::true_type { };
-}
-
-namespace WebCore {
     
 class LayoutRect;
 class Page;
@@ -60,6 +51,9 @@ class ServicesOverlayController : private DataDetectorHighlightClient, private P
 public:
     explicit ServicesOverlayController(Page&);
     ~ServicesOverlayController();
+
+    void ref() const;
+    void deref() const;
 
     void selectedTelephoneNumberRangesChanged();
     void selectionRectsDidChange(const Vector<LayoutRect>&, const Vector<GapRects>&, bool isTextOnly);

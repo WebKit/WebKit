@@ -30,7 +30,7 @@
 #include "IntRect.h"
 #include "ScrollbarsController.h"
 #include "Timer.h"
-
+#include <wtf/CheckedPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/TZoneMalloc.h>
 
@@ -40,21 +40,13 @@ OBJC_CLASS WebScrollerImpDelegate;
 typedef id ScrollerImpPair;
 
 namespace WebCore {
-class ScrollbarsControllerMac;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::ScrollbarsControllerMac> : std::true_type { };
-}
-
-namespace WebCore {
 
 class WheelEventTestMonitor;
 
-class ScrollbarsControllerMac final : public ScrollbarsController {
+class ScrollbarsControllerMac final : public ScrollbarsController, public CanMakeCheckedPtr<ScrollbarsControllerMac> {
     WTF_MAKE_TZONE_ALLOCATED(ScrollbarsControllerMac);
     WTF_MAKE_NONCOPYABLE(ScrollbarsControllerMac);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollbarsControllerMac);
 public:
     explicit ScrollbarsControllerMac(ScrollableArea&);
     ~ScrollbarsControllerMac();

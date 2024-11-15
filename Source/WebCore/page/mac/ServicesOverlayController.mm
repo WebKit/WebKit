@@ -66,6 +66,16 @@ ServicesOverlayController::ServicesOverlayController(Page& page)
 
 ServicesOverlayController::~ServicesOverlayController() = default;
 
+void ServicesOverlayController::ref() const
+{
+    m_page->ref();
+}
+
+void ServicesOverlayController::deref() const
+{
+    m_page->deref();
+}
+
 void ServicesOverlayController::willMoveToPage(PageOverlay&, Page* page)
 {
     if (page)

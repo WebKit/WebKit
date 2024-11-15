@@ -29,6 +29,7 @@
 #include "Timer.h"
 
 #include <CoreGraphics/CoreGraphics.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
 #include <wtf/HashTraits.h>
@@ -40,22 +41,13 @@
 #define CACHE_SUBIMAGES 1
 
 namespace WebCore {
-class CGSubimageCacheWithTimer;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::CGSubimageCacheWithTimer> : std::true_type { };
-}
-
-namespace WebCore {
 
 #if CACHE_SUBIMAGES
 
-class CGSubimageCacheWithTimer {
+class CGSubimageCacheWithTimer final : public CanMakeThreadSafeCheckedPtr<CGSubimageCacheWithTimer> {
     WTF_MAKE_TZONE_ALLOCATED(CGSubimageCacheWithTimer);
     WTF_MAKE_NONCOPYABLE(CGSubimageCacheWithTimer);
-
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(CGSubimageCacheWithTimer);
 public:
     struct CacheEntry {
         RetainPtr<CGImageRef> image;

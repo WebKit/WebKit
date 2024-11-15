@@ -64,7 +64,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument& document, OptionSet<ParserC
     , m_tokenizer(m_options)
     , m_scriptRunner(makeUnique<HTMLScriptRunner>(document, static_cast<HTMLScriptRunnerHost&>(*this)))
     , m_treeBuilder(makeUnique<HTMLTreeBuilder>(*this, document, parserContentPolicy(), m_options))
-    , m_parserScheduler(makeUnique<HTMLParserScheduler>(*this))
+    , m_parserScheduler(HTMLParserScheduler::create(*this))
     , m_preloader(makeUnique<HTMLResourcePreloader>(document))
     , m_shouldEmitTracePoints(isMainDocumentLoadingFromHTTP(document))
 {
@@ -110,13 +110,15 @@ void HTMLDocumentParser::detach()
     // Yet during fast/dom/HTMLScriptElement/script-load-events.html we do.
     m_preloadScanner = nullptr;
     m_insertionPreloadScanner = nullptr;
-    m_parserScheduler = nullptr; // Deleting the scheduler will clear any timers.
+    if (RefPtr parserScheduler = std::exchange(m_parserScheduler, nullptr))
+        parserScheduler->detach(); // Will clear any timers.
 }
 
 void HTMLDocumentParser::stopParsing()
 {
     DocumentParser::stopParsing();
-    m_parserScheduler = nullptr; // Deleting the scheduler will clear any timers.
+    if (RefPtr parserScheduler = std::exchange(m_parserScheduler, nullptr))
+        parserScheduler->detach(); // Will clear any timers.
 }
 
 // This kicks off "Once the user agent stops parsing" as described by:
@@ -168,14 +170,14 @@ inline bool HTMLDocumentParser::shouldDelayEnd() const
 
 void HTMLDocumentParser::didBeginYieldingParser()
 {
-    if (m_parserScheduler)
-        m_parserScheduler->didBeginYieldingParser();
+    if (RefPtr parserScheduler = m_parserScheduler)
+        parserScheduler->didBeginYieldingParser();
 }
 
 void HTMLDocumentParser::didEndYieldingParser()
 {
-    if (m_parserScheduler)
-        m_parserScheduler->didEndYieldingParser();
+    if (RefPtr parserScheduler = m_parserScheduler)
+        parserScheduler->didEndYieldingParser();
 }
 
 bool HTMLDocumentParser::isParsingFragment() const
@@ -263,9 +265,10 @@ Document* HTMLDocumentParser::contextForParsingSession()
 
 bool HTMLDocumentParser::pumpTokenizerLoop(SynchronousMode mode, bool parsingFragment, PumpSession& session)
 {
+    RefPtr parserScheduler = m_parserScheduler;
     do {
         if (UNLIKELY(isWaitingForScripts())) {
-            if (mode == SynchronousMode::AllowYield && m_parserScheduler->shouldYieldBeforeExecutingScript(m_treeBuilder->scriptToProcess(), session))
+            if (mode == SynchronousMode::AllowYield && parserScheduler->shouldYieldBeforeExecutingScript(m_treeBuilder->scriptToProcess(), session))
                 return true;
             
             runScriptsForPausedTreeBuilder();
@@ -281,7 +284,7 @@ bool HTMLDocumentParser::pumpTokenizerLoop(SynchronousMode mode, bool parsingFra
         if (UNLIKELY(!parsingFragment && document()->frame() && document()->frame()->protectedNavigationScheduler()->locationChangePending()))
             return false;
 
-        if (UNLIKELY(mode == SynchronousMode::AllowYield && m_parserScheduler->shouldYieldBeforeToken(session)))
+        if (UNLIKELY(mode == SynchronousMode::AllowYield && parserScheduler->shouldYieldBeforeToken(session)))
             return true;
 
         auto token = m_tokenizer.nextToken(m_input.current());
@@ -324,7 +327,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         return;
 
     if (shouldResume)
-        m_parserScheduler->scheduleForResume();
+        Ref { *m_parserScheduler }->scheduleForResume();
 
     if (isWaitingForScripts() && !isDetached()) {
         ASSERT(m_tokenizer.isInDataState());
@@ -630,14 +633,14 @@ void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFra
     
 void HTMLDocumentParser::suspendScheduledTasks()
 {
-    if (m_parserScheduler)
-        m_parserScheduler->suspend();
+    if (RefPtr parserScheduler = m_parserScheduler)
+        parserScheduler->suspend();
 }
 
 void HTMLDocumentParser::resumeScheduledTasks()
 {
-    if (m_parserScheduler)
-        m_parserScheduler->resume();
+    if (RefPtr parserScheduler = m_parserScheduler)
+        parserScheduler->resume();
 }
 
 }

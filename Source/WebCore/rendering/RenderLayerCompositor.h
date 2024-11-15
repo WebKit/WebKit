@@ -30,6 +30,7 @@
 #include "LayerAncestorClippingStack.h"
 #include "RenderLayer.h"
 #include <pal/HysteresisActivity.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/OptionSet.h>
 #include <wtf/TZoneMalloc.h>
@@ -161,8 +162,9 @@ private:
 // 
 // There is one RenderLayerCompositor per RenderView.
 
-class RenderLayerCompositor final : public GraphicsLayerClient {
+class RenderLayerCompositor final : public GraphicsLayerClient, public CanMakeCheckedPtr<RenderLayerCompositor> {
     WTF_MAKE_TZONE_ALLOCATED(RenderLayerCompositor);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderLayerCompositor);
     friend class LegacyWebKitScrollingLayerCoordinator;
 public:
     explicit RenderLayerCompositor(RenderView&);

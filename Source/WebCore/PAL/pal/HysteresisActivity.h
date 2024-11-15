@@ -30,17 +30,8 @@
 #include <wtf/TZoneMallocInlines.h>
 
 namespace PAL {
-class HysteresisActivity;
-}
 
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<PAL::HysteresisActivity> : std::true_type { };
-}
-
-namespace PAL {
-
-static const Seconds defaultHysteresisDuration { 5_s };
+static constexpr Seconds defaultHysteresisDuration { 5_s };
 
 enum class HysteresisState : bool { Started, Stopped };
 
@@ -50,7 +41,7 @@ public:
     explicit HysteresisActivity(Function<void(HysteresisState)>&& callback = [](HysteresisState) { }, Seconds hysteresisSeconds = defaultHysteresisDuration)
         : m_callback(WTFMove(callback))
         , m_hysteresisSeconds(hysteresisSeconds)
-        , m_timer(RunLoop::main(), this, &HysteresisActivity::hysteresisTimerFired)
+        , m_timer(RunLoop::main(), [this] { m_callback(HysteresisState::Stopped); })
     {
     }
 
@@ -103,12 +94,6 @@ public:
     }
     
 private:
-    void hysteresisTimerFired()
-    {
-        m_timer.stop();
-        m_callback(HysteresisState::Stopped);
-    }
-
     Function<void(HysteresisState)> m_callback;
     Seconds m_hysteresisSeconds;
     RunLoop::Timer m_timer;

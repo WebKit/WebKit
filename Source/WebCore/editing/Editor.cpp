@@ -4144,8 +4144,8 @@ void Editor::scanSelectionForTelephoneNumbers()
     m_detectedTelephoneNumberRanges.clear();
     
     auto notifyController = makeScopeExit([&] {
-        if (auto* page = document().page())
-            page->servicesOverlayController().selectedTelephoneNumberRangesChanged();
+        if (RefPtr page = document().page())
+            page->protectedServicesOverlayController()->selectedTelephoneNumberRangesChanged();
     });
 
     auto selection = document().selection().selection();

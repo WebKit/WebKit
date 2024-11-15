@@ -76,7 +76,7 @@ SelectionGeometryGatherer::Notifier::~Notifier()
     if (!page)
         return;
 
-    page->servicesOverlayController().selectionRectsDidChange(m_gatherer.boundingRects(), m_gatherer.m_gapRects, m_gatherer.isTextOnly());
+    page->protectedServicesOverlayController()->selectionRectsDidChange(m_gatherer.boundingRects(), m_gatherer.m_gapRects, m_gatherer.isTextOnly());
     page->imageOverlayController().selectionQuadsDidChange(m_gatherer.m_renderView->frame(), m_gatherer.m_quads);
 }
 

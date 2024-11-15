@@ -46,25 +46,18 @@
 #include "Length.h"
 #include "RenderStyleConstants.h"
 #include "Timer.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/TZoneMalloc.h>
-
-namespace WebCore {
-class RenderMarquee;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::RenderMarquee> : std::true_type { };
-}
 
 namespace WebCore {
 
 class RenderLayer;
 
 // This class handles the auto-scrolling for <marquee>
-class RenderMarquee final {
+class RenderMarquee final : public CanMakeCheckedPtr<RenderMarquee> {
     WTF_MAKE_TZONE_ALLOCATED(RenderMarquee);
     WTF_MAKE_NONCOPYABLE(RenderMarquee);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderMarquee);
 public:
     explicit RenderMarquee(RenderLayer*);
     ~RenderMarquee();
