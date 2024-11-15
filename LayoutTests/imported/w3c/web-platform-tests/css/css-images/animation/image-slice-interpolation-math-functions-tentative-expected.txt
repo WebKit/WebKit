@@ -47,28 +47,28 @@ PASS Web Animations: property <border-image-slice> from [100%] to [calc(sign(20r
 PASS Web Animations: property <border-image-slice> from [100%] to [calc(sign(20rem - 20px) * 180%)] at (0.875) should be [170%]
 PASS Web Animations: property <border-image-slice> from [100%] to [calc(sign(20rem - 20px) * 180%)] at (1) should be [180%]
 PASS Web Animations: property <border-image-slice> from [100%] to [calc(sign(20rem - 20px) * 180%)] at (2) should be [260%]
-FAIL CSS Transitions: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (-1) should be [20%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Transitions: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0) should be [100%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Transitions: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.125) should be [110%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Transitions: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.875) should be [170%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Transitions: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (1) should be [180%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Transitions: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (2) should be [260%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (-1) should be [20%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0) should be [100%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.125) should be [110%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.875) should be [170%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (1) should be [180%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Transitions with transition: all: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (2) should be [260%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (-1) should be [20%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0) should be [100%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.125) should be [110%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.875) should be [170%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (1) should be [180%] assert_true: 'to' value should be supported expected true got false
-FAIL CSS Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (2) should be [260%] assert_true: 'to' value should be supported expected true got false
-FAIL Web Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (-1) should be [20%] assert_true: 'to' value should be supported expected true got false
-FAIL Web Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0) should be [100%] assert_true: 'to' value should be supported expected true got false
-FAIL Web Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.125) should be [110%] assert_true: 'to' value should be supported expected true got false
-FAIL Web Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.875) should be [170%] assert_true: 'to' value should be supported expected true got false
-FAIL Web Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (1) should be [180%] assert_true: 'to' value should be supported expected true got false
-FAIL Web Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (2) should be [260%] assert_true: 'to' value should be supported expected true got false
+PASS CSS Transitions: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (-1) should be [20%]
+PASS CSS Transitions: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0) should be [100%]
+PASS CSS Transitions: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.125) should be [110%]
+PASS CSS Transitions: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.875) should be [170%]
+PASS CSS Transitions: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (1) should be [180%]
+PASS CSS Transitions: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (2) should be [260%]
+PASS CSS Transitions with transition: all: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (-1) should be [20%]
+PASS CSS Transitions with transition: all: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0) should be [100%]
+PASS CSS Transitions with transition: all: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.125) should be [110%]
+PASS CSS Transitions with transition: all: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.875) should be [170%]
+PASS CSS Transitions with transition: all: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (1) should be [180%]
+PASS CSS Transitions with transition: all: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (2) should be [260%]
+PASS CSS Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (-1) should be [20%]
+PASS CSS Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0) should be [100%]
+PASS CSS Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.125) should be [110%]
+PASS CSS Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.875) should be [170%]
+PASS CSS Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (1) should be [180%]
+PASS CSS Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (2) should be [260%]
+PASS Web Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (-1) should be [20%]
+PASS Web Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0) should be [100%]
+PASS Web Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.125) should be [110%]
+PASS Web Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (0.875) should be [170%]
+PASS Web Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (1) should be [180%]
+PASS Web Animations: property <border-image-slice> from [calc(sign(20rem - 20px) * 100%)] to [calc(progress(10rem from 20px to 100px) * 180%)] at (2) should be [260%]
 
