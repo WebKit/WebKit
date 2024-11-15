@@ -108,6 +108,23 @@ sub new {
     return $self;
 }
 
+sub target_uri {
+    my ($self) = @_;
+
+    my $base = correct_urlbase();
+    if (my $request_uri = $self->request_uri) {
+        my $base_uri = URI->new($base);
+        $base_uri->path('');
+        $base_uri->query(undef);
+        # return $base_uri . $request_uri;
+        return URI->new_abs($request_uri, $base_uri);
+    }
+    else {
+        # return $base . ($self->url(-relative => 1, -query => 1) || 'index.cgi');
+        return URI->new_abs(($self->url(-relative => 1, -query => 1) || 'index.cgi'), $base)
+    }
+}
+
 # We want this sorted plus the ability to exclude certain params
 sub canonicalise_query {
     my ($self, @exclude) = @_;
@@ -381,6 +398,16 @@ sub header {
                            -value => generate_random_password(),
                            -httponly => 1,
                            %args);
+    }
+
+    # We generate a cookie and store it in the request cache
+    # To initiate github login, a form POSTs to github.cgi with the
+    # github_secret as a parameter. It must match the github_secret cookie.
+    # this prevents some types of redirection attacks.
+    unless ($user->id || $self->{bz_redirecting}) {
+        $self->send_cookie(-name     => 'github_secret',
+                           -value    => Bugzilla->github_secret,
+                           -httponly => 1);
     }
 
     # Add the cookies in if we have any

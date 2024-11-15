@@ -38,7 +38,7 @@ sub bug_format_comment {
         my $regexes = $args->{'regexes'};
 
     # See: <https://radar.apple.com/information/urls.html> for Radar URI documentation
-    push(@$regexes, { match => qr/\b(r[a]?dar:\/\/[[:word:]-.~&\/=%:,]*)([-.~&%=:,]?)\b/, replace => \&_replace_radar });
+    push(@$regexes, { match => qr/\b(r[a]?dar:\/\/[[:word:]\-.~&\/=%:,]*)([-.~&%=:,]?)\b/, replace => \&_replace_radar });
 }
 
 sub _replace_radar {

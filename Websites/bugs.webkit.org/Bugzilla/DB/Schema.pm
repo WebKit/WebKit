@@ -1198,9 +1198,20 @@ use constant ABSTRACT_SCHEMA => {
         ],
     },
 
+    token_data => {
+        FIELDS => [
+            id         => { TYPE => 'INTSERIAL', NOTNULL => 1, PRIMARYKEY => 1 },
+            token      => { TYPE => 'varchar(22)', NOTNULL => 1,
+                            REFERENCES => { TABLE => 'tokens', COLUMN => 'token', DELETE => 'CASCADE' }},
+            extra_data => { TYPE => 'MEDIUMTEXT', NOTNULL => 1 },
+        ],
+        INDEXES => [
+            token_data_idx => { FIELDS => ['token'], TYPE => 'UNIQUE' },
+        ],
+    },
+
     # GROUPS
     # ------
-
     groups => {
         FIELDS => [
             id           => {TYPE => 'MEDIUMSERIAL', NOTNULL => 1,

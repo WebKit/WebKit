@@ -1,0 +1,41 @@
+[%# This Source Code Form is subject to the terms of the Mozilla Public
+  # License, v. 2.0. If a copy of the MPL was not distributed with this
+  # file, You can obtain one at http://mozilla.org/MPL/2.0/.
+  #
+  # This Source Code Form is "Incompatible With Secondary Licenses", as
+  # defined by the Mozilla Public License, v. 2.0.
+  #%]
+
+[% RETURN IF !bug %]
+
+
+[% SET my_search = user.recent_search_for(bug) %]
+[% IF my_search %]
+  <div class="navigation[% IF bottom_navigator == 1 %] bottom[% ELSE %] top[% END %]">
+  [% SET last_bug_list = my_search.bug_list %]
+  [% SET this_bug_idx = lsearch(last_bug_list, bug.id) %]
+
+<a href="buglist.cgi?regetlastlist=[%- my_search.id FILTER uri %]" class="button small">[% terms.Bug FILTER html %] List page [% this_bug_idx + 1 %] of [% last_bug_list.size %]</a>   
+
+[% IF this_bug_idx > 0 %]<a href="show_bug.cgi?id=[%- last_bug_list.first FILTER uri %]&amp;list_id=[%- my_search.id FILTER uri %]" class="tab tab-start">&laquo;&nbsp;First</a>[% ELSE %]<span class="tab tab-start">&laquo;&nbsp;First</span>[% END %]
+[% IF this_bug_idx + 1 < last_bug_list.size %]<a href="show_bug.cgi?id=[%- last_bug_list.last FILTER uri %]&amp;list_id=[%- my_search.id FILTER uri %]" class="tab tab-end">Last&nbsp;&raquo;</a>[% ELSE %]<span class="tab tab-end">Last&nbsp;&raquo;</span>[% END %]
+
+[% IF this_bug_idx > 0 %][% prev_bug = this_bug_idx - 1 %]<a href="show_bug.cgi?id=[%- last_bug_list.$prev_bug FILTER uri %]&amp;list_id=[%- my_search.id FILTER uri %]" class="tab tab-start">&#x25c0;&nbsp;Prev</a>[% ELSE %]<span class="tab tab-start">&#x25c0;&nbsp;Prev</span>[% END %][% IF this_bug_idx + 1 < last_bug_list.size %][% next_bug = this_bug_idx + 1 %]<a href="show_bug.cgi?id=[%- last_bug_list.$next_bug FILTER uri %]&amp;list_id=[%- my_search.id FILTER uri %]" class="tab tab-end">Next&nbsp;&#x25b6;</a>[% ELSE %]<span class="tab tab-end">Next&nbsp;&#x25b6;</span>[% END %]
+
+  </div>
+[% END %]
+
+[% IF bottom_navigator == 1 %]
+  <ul class="related_actions">
+    <li><a href="#" class="button small">Top of Page </a></li>
+    <li><a href="show_bug.cgi?format=multiple&amp;id=
+                [% bug.bug_id FILTER uri %]" class="button small">Format For Printing</a></li>
+    <li><a href="show_bug.cgi?ctype=xml&amp;id=
+                        [% bug.bug_id  FILTER uri %]" class="button small">XML</a></li>
+    <li><a href="enter_bug.cgi?cloned_bug_id=
+                        [% bug.bug_id  FILTER uri %]" class="button small">Clone This 
+                        [% terms.Bug %]</a></li>
+    [%# Links to more things users can do with this bug. %]
+    [% Hook.process("links") %]
+    </ul>
+[% END %]
