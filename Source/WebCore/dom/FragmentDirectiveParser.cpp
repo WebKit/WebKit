@@ -90,6 +90,11 @@ void FragmentDirectiveParser::parseFragmentDirective(StringView fragmentDirectiv
                 LOG_WITH_STREAM(TextFragment, stream << " could not decode prefix ");
         }
         
+        if (tokens.isEmpty()) {
+            LOG_WITH_STREAM(TextFragment, stream << " not enough tokens ");
+            continue;
+        }
+
         if (tokens.last().startsWith('-') && tokens.last().length() > 1) {
             tokens.last() = tokens.last().substring(1);
             
