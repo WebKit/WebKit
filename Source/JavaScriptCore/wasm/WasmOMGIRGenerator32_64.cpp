@@ -2171,10 +2171,8 @@ auto OMGIRGenerator::addCurrentMemory(ExpressionType& result) -> PartialResult
 
     constexpr uint32_t shiftValue = 16;
     static_assert(PageCount::pageSize == 1ull << shiftValue, "This must hold for the code below to be correct.");
-    Value* numPages = append<Value>(m_proc, ZShr, origin(),
+    result = push<Value>(m_proc, ZShr, origin(),
         size, append<Const32Value>(m_proc, origin(), shiftValue));
-
-    result = push<Value>(m_proc, Trunc, origin(), numPages);
 
     return { };
 }
