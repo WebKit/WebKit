@@ -1655,4 +1655,34 @@ TEST(DocumentEditingContext, RequestAnnotationsForTextChecking)
 
 #endif // ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
 
+TEST(DocumentEditingContext, ContextWithWritingSuggestions)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:CGRectMake(0, 0, 320, 500)]);
+    [webView _setEditable:YES];
+    [webView synchronouslyLoadHTMLString:@"<body></body>"];
+    [webView selectAll:nil];
+    [[webView textInputContentView] insertText:@"Hel"];
+    [webView waitForNextPresentationUpdate];
+
+    RetainPtr attributedText = adoptNS([[NSAttributedString alloc] initWithString:@"lo" attributes:@{
+        NSBackgroundColorAttributeName : UIColor.clearColor,
+        NSForegroundColorAttributeName : UIColor.systemGrayColor,
+    }]);
+    [[webView textInputContentView] setAttributedMarkedText:attributedText.get() selectedRange:NSMakeRange(0, 0)];
+
+    RetainPtr context = [webView synchronouslyRequestDocumentContext:makeRequest(UIWKDocumentRequestText, UITextGranularityWord, 2)];
+    RetainPtr contextBefore = dynamic_objc_cast<NSString>([context contextBefore]) ?: @"";
+    RetainPtr selectedText = dynamic_objc_cast<NSString>([context selectedText]) ?: @"";
+    RetainPtr contextAfter = dynamic_objc_cast<NSString>([context contextAfter]) ?: @"";
+    RetainPtr markedText = dynamic_objc_cast<NSString>([context markedText]) ?: @"";
+    NSRange selectedRangeInMarkedText = [context selectedRangeInMarkedText];
+
+    EXPECT_WK_STREQ("Hel", contextBefore.get());
+    EXPECT_WK_STREQ("", selectedText.get());
+    EXPECT_WK_STREQ("", contextAfter.get());
+    EXPECT_WK_STREQ("lo", markedText.get());
+    EXPECT_EQ(selectedRangeInMarkedText.location, 0U);
+    EXPECT_EQ(selectedRangeInMarkedText.length, 0U);
+}
+
 #endif // HAVE(UI_WK_DOCUMENT_CONTEXT)
