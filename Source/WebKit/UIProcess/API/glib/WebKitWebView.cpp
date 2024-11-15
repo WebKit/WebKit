@@ -1477,9 +1477,16 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /**
      * WebKitWebView:is-controlled-by-automation:
      *
-     * Whether the #WebKitWebView is controlled by automation. This should only be used when
-     * creating a new #WebKitWebView as a response to #WebKitAutomationSession::create-web-view
-     * signal request.
+     * Whether the #WebKitWebView is controlled by automation tools (e.g. WebDriver, Selenium). This is
+     * required for views returned as a response to #WebKitAutomationSession::create-web-view signal,
+     * alongside any view you want to control during an automation session.
+     *
+     * As a %G_PARAM_CONSTRUCT_ONLY, you need to set it during construction and it can't be modified.
+     *
+     * If #WebKitWebView:related-view is also passed during construction, #WebKitWebView:is-controlled-by-automation
+     * ignores its own parameter and inherits directly from the related view #WebKitWebView:is-controlled-by-automation
+     * property. This is the recommended way when creating new views as a response to the #WebKitWebView::create
+     * signal. For example, as response to JavaScript `window.open()` calls during an automation session.
      *
      * Since: 2.18
      */
@@ -1841,6 +1848,9 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
      *
      * The new #WebKitWebView should not be displayed to the user
      * until the #WebKitWebView::ready-to-show signal is emitted.
+     *
+     * For creating views as response to automation tools requests, see the
+     * #WebKitAutomationSession::create-web-view signal.
      *
      * Returns: (transfer full): a newly allocated #WebKitWebView widget
      *    or %NULL to propagate the event further.
