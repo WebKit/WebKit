@@ -34,6 +34,7 @@
 #include "HTMLDivElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
+#include "HTMLSpanElement.h"
 #include "HTMLStyleElement.h"
 #include "MouseEvent.h"
 #include "RenderImage.h"
@@ -115,10 +116,22 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
         if (hasSpatialImageControls(*element))
             return;
 
+        double paddingValue = 20;
+        unsigned imageHeight = element->height();
+        if (imageHeight >= 400 && imageHeight < 490)
+            paddingValue = 24;
+        else if (imageHeight >= 490)
+            paddingValue = 28;
+
         Ref controlLayer = HTMLDivElement::create(document.get());
         controlLayer->setIdAttribute(spatialImageControlsElementIdentifier());
         controlLayer->setAttributeWithoutSynchronization(HTMLNames::contenteditableAttr, falseAtom());
-        controlLayer->setAttributeWithoutSynchronization(HTMLNames::styleAttr, "position: relative;"_s);
+        controlLayer->setInlineStyleProperty(CSSPropertyDisplay, "flex"_s);
+        controlLayer->setInlineStyleProperty(CSSPropertyFlexDirection, "column"_s);
+        controlLayer->setInlineStyleProperty(CSSPropertyJustifyContent, "space-between"_s);
+        controlLayer->setInlineStyleProperty(CSSPropertyPosition, "relative"_s);
+        controlLayer->setInlineStyleProperty(CSSPropertyBoxSizing, "border-box"_s);
+        controlLayer->setInlineStyleProperty(CSSPropertyPadding, paddingValue, CSSUnitType::CSS_PX);
         shadowRoot->appendChild(controlLayer);
 
         static MainThreadNeverDestroyed<const String> shadowStyle(StringImpl::createWithoutCopying(spatialImageControlsUserAgentStyleSheet));
@@ -129,6 +142,31 @@ void ensureSpatialControls(HTMLImageElement& imageElement)
         Ref button = HTMLButtonElement::create(HTMLNames::buttonTag, document.get(), nullptr);
         button->setIdAttribute(spatialImageControlsButtonIdentifier());
         controlLayer->appendChild(button);
+
+        Ref backgroundBlurLayer = HTMLDivElement::create(document.get());
+        backgroundBlurLayer->setIdAttribute("background-tint"_s);
+        controlLayer->appendChild(backgroundBlurLayer);
+
+        Ref blur = HTMLDivElement::create(document.get());
+        blur->setIdAttribute("blur"_s);
+        backgroundBlurLayer->appendChild(blur);
+
+        Ref tint = HTMLDivElement::create(document.get());
+        tint->setIdAttribute("tint"_s);
+        backgroundBlurLayer->appendChild(tint);
+
+        Ref bottomGradient = HTMLDivElement::create(document.get());
+        bottomGradient->setIdAttribute("bottom-gradient"_s);
+        controlLayer->appendChild(bottomGradient);
+
+        Ref bottomLabelText = HTMLDivElement::create(document.get());
+        bottomLabelText->setIdAttribute("label"_s);
+        bottomLabelText->setTextContent("SPATIAL"_s);
+        controlLayer->appendChild(bottomLabelText);
+
+        Ref glyphSpan = HTMLSpanElement::create(document.get());
+        glyphSpan->setIdAttribute("spatial-glyph"_s);
+        bottomLabelText->insertBefore(glyphSpan, bottomLabelText->protectedFirstChild());
 
         if (CheckedPtr renderImage = dynamicDowncast<RenderImage>(element->renderer()))
             renderImage->setHasShadowControls(true);

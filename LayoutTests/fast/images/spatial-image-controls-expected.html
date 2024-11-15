@@ -3,34 +3,118 @@
     img {
         width: 200px;
         height: 200px;
+        position: absolute;
     }
-    div {
+    div.image-container {
         width: 200px;
+        height: 200px;
         position: relative;
     }
-    #controls {
-        width: 50px;
-        height: 50px;
-        background-color: rgba(0, 0, 0, 0.6);
+    button.spatial-image-controls-button {
+        width: 45px;
+        height: 45px;
         border: medium;
         border-radius: 40px;
-        padding: 8px;
-        position: absolute;
-        top: 1rlh;
-        right: 1rlh;
         background-position: center;
         background-repeat: no-repeat;
+        z-index: 1;
         background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPHN2ZyB3aWR0aD0iMTVweCIgaGVpZ2h0PSIxNXB4IiB2aWV3Qm94PSIwIDAgMTUgMTUiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGZpbGw9IndoaXRlIiBkPSJNMC43OTE4NDA0MjYsNi4zNjg0OTQ2OCBDMS4yMDQ3ODcyMyw2LjM2ODQ5NDY4IDEuNTAwODc3NjYsNi4wNTY4Mjk3OSAxLjUwMDg3NzY2LDUuNjQzODY3MDIgTDEuNTAwODc3NjYsNC45ODkzNTYzOCBMMS4zNDUwNTMxOSwyLjI3MDA0Nzg3IEwzLjM5NDI3NjYsNC40MjgzNTYzOCBMNS43OTQxMTcwMiw2Ljg0Mzc4NzIzIEM1LjkyNjU3OTc5LDYuOTg0MDM3MjMgNi4wOTc5OTQ2OCw3LjA0NjM4Mjk4IDYuMjg1LDcuMDQ2MzgyOTggQzYuNzI5MTI3NjYsNy4wNDYzODI5OCA3LjA1NjM4Mjk4LDYuNzU4MDc5NzkgNy4wNTYzODI5OCw2LjMyMTczOTM2IEM3LjA1NjM4Mjk4LDYuMTExMzcyMzQgNi45ODYyNSw1LjkyNDM2NzAyIDYuODQ2LDUuNzg0MTE3MDIgTDQuNDM4MzU2MzgsMy4zODQyNjA2NCBMMi4yODAwNDc4NywxLjMzNTAzNzIzIEw1LjAwNzE1OTU3LDEuNDkwODc3NjYgTDUuNjUzODY3MDIsMS40OTA4Nzc2NiBDNi4wNjY4Mjk3OSwxLjQ5MDg3NzY2IDYuMzg2Mjk3ODcsMS4yMDI1OTA0MyA2LjM4NjI5Nzg3LDAuNzgxODI0NDY4IEM2LjM4NjI5Nzg3LDAuMzYxMDc0NDY4IDYuMDc0NjE3MDIsMC4wNjUgNS42NTM4NjcwMiwwLjA2NSBMMS4zMjk0NjI3NywwLjA2NSBDMC41MzQ3MDIxMjgsMC4wNjUgMC4wNzUsMC41MjQ3MDIxMjggMC4wNzUsMS4zMTk0NjI3NyBMMC4wNzUsNS42NDM4NjcwMiBDMC4wNzUsNi4wNDkwNDI1NSAwLjM3ODg3NzY2LDYuMzY4NDk0NjggMC43OTE4NDA0MjYsNi4zNjg0OTQ2OCBaIE05LjMzOTM1MTA2LDE0LjkzMTU5NTcgTDEzLjY2Mzc1NTMsMTQuOTMxNTk1NyBDMTQuNDU4NTMxOSwxNC45MzE1OTU3IDE0LjkyNjA4NTEsMTQuNDcxODg4OCAxNC45MjYwODUxLDEzLjY3NzEzMyBMMTQuOTI2MDg1MSw5LjM1MjcyODcyIEMxNC45MjYwODUxLDguOTQ3NTUzMTkgMTQuNjIyMDk1Nyw4LjYyODEwMTA2IDE0LjIwMTQ1NzQsOC42MjgxMDEwNiBDMTMuNzk2MjE4MSw4LjYyODEwMTA2IDEzLjQ5MjM0MDQsOC45Mzk3NjU5NiAxMy40OTIzNDA0LDkuMzUyNzI4NzIgTDEzLjQ5MjM0MDQsMTAuMDA3MjM5NCBMMTMuNjU1OTY4MSwxMi43MjY1NDMxIEwxMS41OTg5NTc0LDEwLjU2ODIzOTQgTDkuMjA2ODg4Myw4LjE1MjgwODUxIEM5LjA3NDQ0MTQ5LDguMDEyNTU4NTEgOC44OTUyMjM0LDcuOTUwMjEyNzcgOC43MDgyMTgwOSw3Ljk1MDIxMjc3IEM4LjI3MTg5MzYyLDcuOTUwMjEyNzcgNy45MzY4NTEwNiw4LjIzODUxNTk2IDcuOTM2ODUxMDYsOC42NzQ4NDA0MyBDNy45MzY4NTEwNiw4Ljg4NTIyMzQgOC4wMTQ3NTUzMiw5LjA3MjIyODcyIDguMTU1MDA1MzIsOS4yMTI0Nzg3MiBMMTAuNTU0ODYxNywxMS42MTIzMjU1IEwxMi43MjA5NTc0LDEzLjY2MTU0ODkgTDkuOTkzODYxNywxMy41MDU3MTQ5IEw5LjMzOTM1MTA2LDEzLjUwNTcxNDkgQzguOTI2Mzg4MywxMy41MDU3MTQ5IDguNjA2OTM2MTcsMTMuNzk0MDA4NSA4LjYwNjkzNjE3LDE0LjIxNDc2MTcgQzguNjA2OTM2MTcsMTQuNjM1NTE0OSA4LjkyNjM4ODMsMTQuOTMxNTk1NyA5LjMzOTM1MTA2LDE0LjkzMTU5NTcgWiIvPgo8L3N2Zz4');
+    }
+
+    div.background-tint {
+        width: 45px;
+        height: 45px;
+        position: absolute;
+        border-radius: 45px;
+    }
+
+    div.blur {
+        background-color: rgba(0, 0, 0, 0.55);
+        -webkit-backdrop-filter: saturate(180%) blur(17.5px);
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: absolute;
+        border-radius: 45px;
+    }
+
+    div.tint {
+        background-color: rgba(255, 255, 255, 0.14);
+        mix-blend-mode: lighten;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: absolute;
+        border-radius: 45px;
+    }
+
+    div.bottom-gradient {
+        background-image: linear-gradient(hsla(0,0%,0%,0),
+        hsla(0,0%,0%,.01) 10%,
+        hsla(0,0%,0%,.04) 20%,
+        hsla(0,0%,0%,.09) 30%,
+        hsla(0,0%,0%,.16) 40%,
+        hsla(0,0%,0%,.25) 50%,
+        hsla(0,0%,0%,.34) 60%,
+        hsla(0,0%,0%,.41) 70%,
+        hsla(0,0%,0%,.46) 80%,
+        hsla(0,0%,0%,.49) 90%,
+        hsla(0,0%,0%,.5));
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 33%;
+        width: 100%;
+    }
+
+    div.label {
+        color: rgba(255,255,255,0.5);
+        mix-blend-mode: plus-lighter;
+        font-family: -apple-system;
+        z-index: 1;
+        margin-bottom: 8px;
+        margin-left: -7px;
+    }
+
+    span.spatial-glyph {
+        width: 45px;
+        height: 45px;
+        background-image: url('data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMjY3LjkyOTgwOTU3MDMxMjUgMTU4LjA4NDk2MDkzNzUiIHZlcnNpb249IjEuMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZyB0cmFuc2Zvcm09Im1hdHJpeCgxIDAgMCAxIDcyLjIwNDkzODk2NDg0MzY4IDExNC4yNzI0NjA5Mzc1KSI+CiAgICA8cGF0aCBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LC41KSIgZD0iTTE5LjI5NTktNC40NTE5NEw1Ny42OTIxIDE3LjMxMzVDNjAuNDcyNyAxOC44OTAyIDYzLjAyNTIgMTguOTAwOCA2NS43NzUyIDE3LjMxMzVMMTA0LjE3MS00LjQ1MTk0QzEwOC42NTMtNi45ODMzMyAxMTEuMDU4LTkuNTQ2MzcgMTExLjA1OC0xNi41ODUzTDExMS4wNTgtNTUuMjMwM0MxMTEuMDU4LTYwLjI1NjQgMTA5LjE1LTYzLjQyNzkgMTA1LjA0Ni02NS44MTE2TDcwLjUzMS04NS40NjY3QzY0LjYxMTUtODguODQ2MiA1OC45MDc2LTg4Ljg0NjIgNTIuOTg4MS04NS40NjY3TDE4LjQ3MzQtNjUuODExNkMxNC4zMTc1LTYzLjQyNzkgMTIuNDYwOS02MC4yNTY0IDEyLjQ2MDktNTUuMjMwM0wxMi40NjA5LTE2LjU4NTNDMTIuNDYwOS05LjU0NjM3IDE0Ljg1NTItNi45ODMzMyAxOS4yOTU5LTQuNDUxOTRaTTIzLjY2MDgtMTAuODUzM0MyMC44NDQ1LTEyLjQ3NDIgMTkuODkwOC0xNC4wODI2IDE5Ljg5MDgtMTYuODM0NkwxOS44OTA4LTUzLjY1NDVMNTcuODk0Ni0zMS45NDU0TDU3Ljg5NDYgOC42MDIzMlpNOTkuODU4My0xMC44NTMzTDY1LjYxMzkgOC42MDIzMkw2NS42MTM5LTMxLjk0NTRMMTAzLjYyOC01My42NTQ1TDEwMy42MjgtMTYuODM0NkMxMDMuNjI4LTE0LjA4MjYgMTAyLjYyMy0xMi40NzQyIDk5Ljg1ODMtMTAuODUzM1pNNjEuNzI4NC0zOC43NjI4TDI0LjA2MzgtNjAuMDY5NUw1Ni4yMTM0LTc4LjQxMjZDNjAuMDE3NS04MC41OTk4IDYzLjUwMTYtODAuNjUxNiA2Ny4yNTM5LTc4LjQxMjZMOTkuNDQ0OC02MC4wNjk1WiIgLz4KICA8L2c+Cjwvc3ZnPg==');
+        background-position: bottom;
+        background-repeat: no-repeat;
+        display: inline-block;
+        margin-bottom: -8px;
+        margin-right: -8px;
     }
 </style>
 <body>
-    <div>
+    <div class="image-container">
         <img src="resources/spatial.heic">
-        <button id="controls"></button>
+        <div class="spatial-image-controls" contenteditable="false" style="height: 100%; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-sizing: border-box; padding: 20px;">
+            <button class="spatial-image-controls-button"></button>
+            <div class="background-tint">
+                <div class="blur"></div>
+                <div class="tint"></div>
+            </div>
+            <div class="bottom-gradient"></div>
+            <div class="label">
+                <span class="spatial-glyph"></span>SPATIAL</div>
+        </div>
     </div>
-    <div>
+    <div class="image-container">
         <img src="resources/spatial.heic">
-        <button id="controls"></button>
+            <div class="spatial-image-controls" contenteditable="false" style="width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; position: relative; box-sizing: border-box; padding: 20px;">
+                <button class="spatial-image-controls-button"></button>
+                <div class="background-tint">
+                    <div class="blur"></div>
+                    <div class="tint"></div>
+                </div>
+                <div class="bottom-gradient"></div>
+                <div class="label">
+                    <span class="spatial-glyph"></span>SPATIAL</div>
+            </div>
     </div>
     <img src="resources/green.jpg">
 </body>
