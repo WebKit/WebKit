@@ -68,23 +68,20 @@ std::optional<IPC::AsyncReplyID> WebPasteboardProxy::grantAccessToCurrentData(We
         return std::nullopt;
     }
     Vector<String> paths;
-    bool containsFileURL = false;
     for (auto& info : *allInfo) {
-        paths.appendVector(info.platformTypesForFileUpload);
-        if (info.containsFileURLAndFileUploadContent)
-            containsFileURL = true;
+        paths.appendVector(info.pathsForFileUpload);
     }
-    if (!containsFileURL) {
-        completionHandler();
-        return std::nullopt;
-    }
+#if PLATFORM(MAC)
+    if (!paths.size())
+        pasteboard.getPathnamesForType(paths, legacyFilenamesPasteboardType());
+#endif
 
-    RefPtr networkProcess = process.websiteDataStore()->networkProcessIfExists();
-    if (!networkProcess || !paths.size()) {
+    if (!paths.size()) {
         completionHandler();
         return std::nullopt;
     }
-    return networkProcess->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(process.coreProcessIdentifier(), paths), WTFMove(completionHandler));
+    auto processIdentifier = process.coreProcessIdentifier();
+    return process.protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::AllowFilesAccessFromWebProcess(processIdentifier, paths), WTFMove(completionHandler));
 }
 
 void WebPasteboardProxy::grantAccess(WebProcessProxy& process, const String& pasteboardName, PasteboardAccessType type)
