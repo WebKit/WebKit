@@ -321,8 +321,11 @@ void ProcessLauncher::finishLaunchingProcess(ASCIILiteral name)
     // 1. When the application and system frameworks simply have different localized resources available, we should match the application.
     // 1.1. An important case is WebKitTestRunner, where we should use English localizations for all system frameworks.
     // 2. When AppleLanguages is passed as command line argument for UI process, or set in its preferences, we should respect it in child processes.
+#if !USE(EXTENSIONKIT)
     auto initializationMessage = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
     _CFBundleSetupXPCBootstrap(initializationMessage.get());
+    xpc_connection_set_bootstrap(m_xpcConnection.get(), initializationMessage.get());
+#endif
 
     // Create the listening port.
     mach_port_t listeningPort = MACH_PORT_NULL;
