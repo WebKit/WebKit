@@ -36,6 +36,8 @@ namespace IPC {
 
 using namespace WebCore;
 
+#if USE(CAIRO)
+
 template<> struct ArgumentCoder<LOGFONT> {
     static void encode(Encoder& encoder, const LOGFONT& logFont)
     {
@@ -137,5 +139,6 @@ bool ArgumentCoder<WebCore::FontPlatformData::Attributes>::decodePlatformData(De
     return true;
 }
 
+#endif
 
 } // namespace IPC

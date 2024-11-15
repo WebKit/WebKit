@@ -42,6 +42,13 @@
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
 
+#if USE(SKIA)
+#include <skia/core/SkImage.h>
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkPixmap.h>
+IGNORE_CLANG_WARNINGS_END
+#endif
+
 // MFSamplePresenterSampleCounter
 // Data type: UINT32
 //
@@ -2803,6 +2810,57 @@ HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::presentSample(IMFS
     }
     return hr;
 }
+
+#if USE(SKIA)
+void MediaPlayerPrivateMediaFoundation::Direct3DPresenter::paintCurrentFrame(GraphicsContext& context, const FloatRect& destRect)
+{
+    int width = m_destRect.right - m_destRect.left;
+    int height = m_destRect.bottom - m_destRect.top;
+
+    if (!width || !height)
+        return;
+
+    Locker<Lock> locker { m_lock };
+
+    if (!m_memSurface)
+        return;
+
+    D3DLOCKED_RECT lockedRect;
+    if (SUCCEEDED(m_memSurface->LockRect(&lockedRect, nullptr, D3DLOCK_READONLY))) {
+        void* data = lockedRect.pBits;
+        int pitch = lockedRect.Pitch;
+        D3DFORMAT format = D3DFMT_UNKNOWN;
+        D3DSURFACE_DESC desc;
+        if (SUCCEEDED(m_memSurface->GetDesc(&desc)))
+            format = desc.Format;
+
+        SkColorType colorType = kUnknown_SkColorType;
+
+        switch (format) {
+        case D3DFMT_A8R8G8B8:
+            // FIXME: Needs swizzling
+            colorType = kRGBA_8888_SkColorType;
+            break;
+        case D3DFMT_X8R8G8B8:
+            // FIXME: Needs swizzling
+            colorType = kRGB_888x_SkColorType;
+            break;
+        default:
+            break;
+        }
+        ASSERT(colorType != kUnknown_SkColorType);
+
+        auto imageInfo = SkImageInfo::Make(width, height, colorType, kUnpremul_SkAlphaType);
+        auto pixmap = SkPixmap(imageInfo, data, pitch);
+        auto skImage = SkImages::RasterFromPixmap(pixmap, nullptr, nullptr);
+        auto image = NativeImage::create(WTFMove(skImage));
+        FloatRect srcRect(0, 0, width, height);
+        context.drawNativeImage(*image, destRect, srcRect);
+
+        m_memSurface->UnlockRect();
+    }
+}
+#endif
 
 HRESULT MediaPlayerPrivateMediaFoundation::Direct3DPresenter::initializeD3D()
 {

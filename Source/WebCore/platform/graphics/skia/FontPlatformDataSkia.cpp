@@ -166,17 +166,22 @@ RefPtr<SharedBuffer> FontPlatformData::openTypeTable(uint32_t table) const
 
 FontPlatformData FontPlatformData::create(const Attributes& data, const FontCustomPlatformData* custom)
 {
-    ASSERT(custom);
-    sk_sp<SkTypeface> typeface = custom->m_typeface;
     Vector<hb_feature_t> features = data.m_features;
-    return FontPlatformData(WTFMove(typeface), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, data.m_widthVariant, data.m_textRenderingMode, WTFMove(features), custom);
+    if (custom) {
+        sk_sp<SkTypeface> typeface = custom->m_typeface;
+        return { WTFMove(typeface), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, data.m_widthVariant, data.m_textRenderingMode, WTFMove(features), custom };
+    }
+    sk_sp<SkTypeface> typeface = FontCache::forCurrentThread().fontManager().matchFamilyStyle(data.m_familyName.c_str(), data.m_style);
+    return { WTFMove(typeface), data.m_size, data.m_syntheticBold, data.m_syntheticOblique, data.m_orientation, data.m_widthVariant, data.m_textRenderingMode, WTFMove(features) };
 }
 
 FontPlatformData::Attributes FontPlatformData::attributes() const
 {
-    Attributes result(m_size, m_orientation, m_widthVariant, m_textRenderingMode, m_syntheticBold, m_syntheticOblique);
-    result.m_features = m_features;
-    return result;
+    SkString familyName;
+    skFont().getTypeface()->getFamilyName(&familyName);
+    SkFontStyle style = skFont().getTypeface()->fontStyle();
+    Vector<hb_feature_t> features = m_features;
+    return { m_size, m_orientation, m_widthVariant, m_textRenderingMode, m_syntheticBold, m_syntheticOblique, familyName, style, WTFMove(features) };
 }
 
 hb_font_t* FontPlatformData::hbFont() const

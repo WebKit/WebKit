@@ -70,6 +70,7 @@
 #include <windows.h>
 #include <objidl.h>
 #include <mlang.h>
+struct IDWriteFactory;
 #endif
 
 #if USE(FREETYPE)
@@ -215,7 +216,7 @@ public:
 
 #if USE(SKIA)
     static Vector<hb_feature_t> computeFeatures(const FontDescription&, const FontCreationContext&);
-    SkFontMgr& fontManager() const;
+    WEBCORE_EXPORT SkFontMgr& fontManager() const;
     SkiaHarfBuzzFontCache& harfBuzzFontCache() { return m_harfBuzzFontCache; }
 #endif
 
@@ -286,6 +287,10 @@ private:
 #if USE(SKIA)
     mutable sk_sp<SkFontMgr> m_fontManager;
     SkiaHarfBuzzFontCache m_harfBuzzFontCache;
+#endif
+
+#if PLATFORM(WIN) && USE(SKIA)
+    COMPtr<IDWriteFactory> m_DWFactory;
 #endif
 
     friend class Font;

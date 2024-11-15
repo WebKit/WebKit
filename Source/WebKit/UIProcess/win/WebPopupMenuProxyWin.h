@@ -34,6 +34,10 @@
 #include <WebCore/Scrollbar.h>
 #include <wtf/TZoneMalloc.h>
 
+#if USE(SKIA)
+class SkSurface;
+#endif
+
 namespace WebKit {
 
 class WebView;
@@ -137,8 +141,12 @@ private:
     int m_newSelectedIndex { 0 };
 
     RefPtr<WebCore::Scrollbar> m_scrollbar;
+#if USE(CAIRO)
     GDIObject<HDC> m_DC;
     GDIObject<HBITMAP> m_bmp;
+#elif USE(SKIA)
+    sk_sp<SkSurface> m_surface;
+#endif
     HWND m_popup { nullptr };
     WebCore::IntRect m_windowRect;
     WebCore::IntSize m_clientSize;

@@ -1,3 +1,5 @@
 if (USE_CAIRO)
     include(Cairo.cmake)
+elseif (USE_SKIA)
+    include(Skia.cmake)
 endif ()

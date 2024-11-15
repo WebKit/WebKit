@@ -32,8 +32,36 @@
 #include "CoreIPCSkData.h"
 #include "StreamConnectionEncoder.h"
 #include <WebCore/Font.h>
+#include <WebCore/FontCache.h>
+#include <WebCore/FontCustomPlatformData.h>
 
 namespace IPC {
+
+void ArgumentCoder<SkString>::encode(Encoder& encoder, const SkString& string)
+{
+    encoder << std::span { string.data(), string.size() };
+}
+
+std::optional<SkString> ArgumentCoder<SkString>::decode(Decoder& decoder)
+{
+    auto span = decoder.decode<std::span<const char>>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return SkString(span->data(), span->size());
+}
+
+void ArgumentCoder<SkFontStyle::Slant>::encode(Encoder& encoder, const SkFontStyle::Slant& slant)
+{
+    encoder << static_cast<int8_t>(slant);
+}
+
+std::optional<SkFontStyle::Slant> ArgumentCoder<SkFontStyle::Slant>::decode(Decoder& decoder)
+{
+    auto slant = decoder.decode<int8_t>();
+    if (UNLIKELY(!decoder.isValid()))
+        return std::nullopt;
+    return static_cast<SkFontStyle::Slant>(*slant);
+}
 
 void ArgumentCoder<sk_sp<SkColorSpace>>::encode(Encoder& encoder, const sk_sp<SkColorSpace>& colorSpace)
 {

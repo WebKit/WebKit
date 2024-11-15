@@ -74,6 +74,16 @@ template<> struct ArgumentCoder<WebCore::FontCustomPlatformData> {
 #endif
 
 #if USE(SKIA)
+template<> struct ArgumentCoder<SkString> {
+    static void encode(Encoder&, const SkString&);
+    static std::optional<SkString> decode(Decoder&);
+};
+
+template<> struct ArgumentCoder<SkFontStyle::Slant> {
+    static void encode(Encoder&, const SkFontStyle::Slant&);
+    static std::optional<SkFontStyle::Slant> decode(Decoder&);
+};
+
 template<> struct ArgumentCoder<sk_sp<SkColorSpace>> {
     static void encode(Encoder&, const sk_sp<SkColorSpace>&);
     static void encode(StreamConnectionEncoder&, const sk_sp<SkColorSpace>&);

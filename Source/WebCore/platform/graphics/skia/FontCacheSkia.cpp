@@ -31,6 +31,8 @@
 #include "StyleFontSizeFunctions.h"
 #if defined(__ANDROID__) || defined(ANDROID)
 #include <skia/ports/SkFontMgr_android.h>
+#elif PLATFORM(WIN)
+#include <skia/ports/SkTypeface_win.h>
 #else
 #include <skia/ports/SkFontMgr_fontconfig.h>
 #endif
@@ -43,10 +45,18 @@
 #include "GtkUtilities.h"
 #endif
 
+#if PLATFORM(WIN)
+#include <dwrite.h>
+#endif
+
 namespace WebCore {
 
 void FontCache::platformInit()
 {
+#if PLATFORM(WIN)
+    HRESULT hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), reinterpret_cast<IUnknown**>(&m_DWFactory));
+    RELEASE_ASSERT(SUCCEEDED(hr));
+#endif
 }
 
 SkFontMgr& FontCache::fontManager() const
@@ -54,6 +64,8 @@ SkFontMgr& FontCache::fontManager() const
     if (!m_fontManager) {
 #if defined(__ANDROID__) || defined(ANDROID)
         m_fontManager = SkFontMgr_New_Android(nullptr);
+#elif OS(WINDOWS)
+        m_fontManager = SkFontMgr_New_DirectWrite(m_DWFactory.get(), nullptr);
 #else
         m_fontManager = SkFontMgr_New_FontConfig(FcConfigReference(nullptr));
 #endif

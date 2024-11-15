@@ -42,8 +42,6 @@
 #include "WebPageProxy.h"
 #include "WebProcessPool.h"
 #include <Commctrl.h>
-#include <WebCore/BitmapInfo.h>
-#include <WebCore/CairoUtilities.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/Editor.h>
 #include <WebCore/FloatRect.h>
@@ -64,6 +62,7 @@
 #endif
 
 #if USE(CAIRO)
+#include <WebCore/CairoUtilities.h>
 #include <cairo-win32.h>
 #include <cairo.h>
 #endif
@@ -500,6 +499,8 @@ void WebView::paint(HDC hdc, const IntRect& dirtyRect)
     
             cairo_destroy(context);
             cairo_surface_destroy(surface);
+#elif USE(SKIA)
+            drawingArea->paint(hdc, dirtyRect, unpaintedRegion);
 #endif
     
             auto unpaintedRects = unpaintedRegion.rects();

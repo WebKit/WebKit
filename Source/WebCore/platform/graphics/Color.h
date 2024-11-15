@@ -166,7 +166,7 @@ public:
 
 #if USE(SKIA)
     Color(const SkColor&);
-    operator SkColor() const;
+    WEBCORE_EXPORT operator SkColor() const;
 
     Color(const SkColor4f&);
     operator SkColor4f() const;

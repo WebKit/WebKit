@@ -36,7 +36,6 @@
 #include "WebView.h"
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/GDIUtilities.h>
-#include <WebCore/GraphicsContextCairo.h>
 #include <WebCore/HWndDC.h>
 #include <WebCore/PlatformMouseEvent.h>
 #include <WebCore/ScrollbarTheme.h>
@@ -45,6 +44,17 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
 #include <wtf/text/StringBuilder.h>
+
+#if USE(CAIRO)
+#include <WebCore/GraphicsContextCairo.h>
+#endif
+
+#if USE(SKIA)
+#include <WebCore/GraphicsContextSkia.h>
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkSurface.h>
+IGNORE_CLANG_WARNINGS_END
+#endif
 
 namespace WebKit {
 using namespace WebCore;
@@ -863,6 +873,7 @@ void WebPopupMenuProxyWin::paint(const IntRect& damageRect, HDC hdc)
     if (!m_popup)
         return;
 
+#if USE(CAIRO)
     if (!m_DC) {
         m_DC = adoptGDIObject(::CreateCompatibleDC(HWndDC(m_popup)));
         if (!m_DC)
@@ -888,6 +899,21 @@ void WebPopupMenuProxyWin::paint(const IntRect& damageRect, HDC hdc)
     }
 
     GraphicsContextCairo context(m_DC.get());
+#elif USE(SKIA)
+    if (m_surface) {
+        if (!(WebCore::IntSize { m_surface->width(), m_surface->height() } == m_clientSize))
+            m_surface.reset();
+    }
+    if (!m_surface) {
+        auto info = SkImageInfo::MakeN32Premul(m_clientSize.width(), m_clientSize.height(), SkColorSpace::MakeSRGB());
+        m_surface = SkSurfaces::Raster(info);
+        RELEASE_ASSERT(m_surface);
+    }
+    SkCanvas* canvas = m_surface->getCanvas();
+    if (!canvas)
+        return;
+    WebCore::GraphicsContextSkia context(*canvas, WebCore::RenderingMode::Unaccelerated, WebCore::RenderingPurpose::ShareableLocalSnapshot);
+#endif
 
     int moveX = 0;
     int selectedBackingStoreWidth = m_data.m_selectedBackingStore->size().width();
@@ -918,10 +944,18 @@ void WebPopupMenuProxyWin::paint(const IntRect& damageRect, HDC hdc)
         context.restore();
     }
 
+#if USE(CAIRO)
     HWndDC hWndDC;
     HDC localDC = hdc ? hdc : hWndDC.setHWnd(m_popup);
 
     ::BitBlt(localDC, damageRect.x(), damageRect.y(), damageRect.width(), damageRect.height(), m_DC.get(), damageRect.x(), damageRect.y(), SRCCOPY);
+#elif USE(SKIA)
+    SkPixmap pixmap;
+    if (m_surface->peekPixels(&pixmap)) {
+        auto bitmapInfo = WebCore::BitmapInfo::createBottomUp(m_clientSize);
+        SetDIBitsToDevice(hdc, 0, 0, m_clientSize.width(), m_clientSize.height(), 0, 0, 0, m_clientSize.height(), pixmap.addr(), &bitmapInfo, DIB_RGB_COLORS);
+    }
+#endif
 }
 
 bool WebPopupMenuProxyWin::setFocusedIndex(int i, bool hotTracking)

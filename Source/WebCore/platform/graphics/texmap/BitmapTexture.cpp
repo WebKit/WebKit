@@ -44,6 +44,13 @@
 #include <wtf/text/CString.h>
 #endif
 
+#if USE(SKIA)
+#include <skia/core/SkImage.h>
+IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+#include <skia/core/SkPixmap.h>
+IGNORE_CLANG_WARNINGS_END
+#endif
+
 #if OS(DARWIN)
 #define GL_UNSIGNED_INT_8_8_8_8_REV 0x8367
 static const GLenum s_pixelDataType = GL_UNSIGNED_INT_8_8_8_8_REV;
@@ -209,6 +216,11 @@ void BitmapTexture::updateContents(NativeImage* frameImage, const IntRect& targe
     int bytesPerLine = cairo_image_surface_get_stride(surface);
 
     updateContents(imageData, targetRect, offset, bytesPerLine, PixelFormat::BGRA8);
+#elif USE(SKIA)
+    sk_sp<SkImage> surface = frameImage->platformImage();
+    SkPixmap pixmap;
+    if (surface->peekPixels(&pixmap))
+        updateContents(pixmap.addr(), targetRect, offset, pixmap.rowBytes(), PixelFormat::BGRA8);
 #else
     UNUSED_PARAM(targetRect);
     UNUSED_PARAM(offset);

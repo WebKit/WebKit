@@ -111,7 +111,7 @@ struct FontPlatformDataAttributes {
         { }
 #endif
 
-#if USE(WIN)
+#if USE(WIN) && USE(CAIRO)
     FontPlatformDataAttributes(float size, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, bool syntheticBold, bool syntheticOblique, LOGFONT font)
         : m_size(size)
         , m_orientation(orientation)
@@ -124,13 +124,15 @@ struct FontPlatformDataAttributes {
 #endif
 
 #if USE(SKIA)
-    FontPlatformDataAttributes(float size, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, bool syntheticBold, bool syntheticOblique, Vector<hb_feature_t>&& features)
+    FontPlatformDataAttributes(float size, FontOrientation orientation, FontWidthVariant widthVariant, TextRenderingMode textRenderingMode, bool syntheticBold, bool syntheticOblique, SkString familyName, SkFontStyle style, Vector<hb_feature_t>&& features)
         : m_size(size)
         , m_orientation(orientation)
         , m_widthVariant(widthVariant)
         , m_textRenderingMode(textRenderingMode)
         , m_syntheticBold(syntheticBold)
         , m_syntheticOblique(syntheticOblique)
+        , m_familyName(familyName)
+        , m_style(style)
         , m_features(WTFMove(features))
         { }
 #endif
@@ -144,7 +146,7 @@ struct FontPlatformDataAttributes {
     bool m_syntheticBold { false };
     bool m_syntheticOblique { false };
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CAIRO)
     LOGFONT m_font;
 #elif USE(CORE_TEXT)
     RetainPtr<CFDictionaryRef> m_attributes;
@@ -152,6 +154,8 @@ struct FontPlatformDataAttributes {
     RetainPtr<CFStringRef> m_url;
     RetainPtr<CFStringRef> m_psName;
 #elif USE(SKIA)
+    SkString m_familyName;
+    SkFontStyle m_style;
     Vector<hb_feature_t> m_features;
 #endif
 };
@@ -276,7 +280,7 @@ public:
     WEBCORE_EXPORT FontPlatformData(RetainPtr<CTFontRef>&&, float size, bool syntheticBold = false, bool syntheticOblique = false, FontOrientation = FontOrientation::Horizontal, FontWidthVariant = FontWidthVariant::RegularWidth, TextRenderingMode = TextRenderingMode::AutoTextRendering, const FontCustomPlatformData* = nullptr);
 #endif
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CAIRO)
     WEBCORE_EXPORT FontPlatformData(GDIObject<HFONT>, float size, bool syntheticBold, bool syntheticOblique, const FontCustomPlatformData* = nullptr);
     FontPlatformData(GDIObject<HFONT>, cairo_font_face_t*, float size, bool bold, bool italic, const FontCustomPlatformData* = nullptr);
 #endif
@@ -284,7 +288,7 @@ public:
 #if USE(FREETYPE) && USE(CAIRO)
     FontPlatformData(cairo_font_face_t*, RefPtr<FcPattern>&&, float size, bool fixedWidth, bool syntheticBold, bool syntheticOblique, FontOrientation, const FontCustomPlatformData* = nullptr);
 #elif USE(SKIA)
-    FontPlatformData(sk_sp<SkTypeface>&&, float size, bool syntheticBold, bool syntheticOblique, FontOrientation, FontWidthVariant, TextRenderingMode, Vector<hb_feature_t>&&, const FontCustomPlatformData* = nullptr);
+    WEBCORE_EXPORT FontPlatformData(sk_sp<SkTypeface>&&, float size, bool syntheticBold, bool syntheticOblique, FontOrientation, FontWidthVariant, TextRenderingMode, Vector<hb_feature_t>&&, const FontCustomPlatformData* = nullptr);
 #endif
 
     using Attributes = FontPlatformDataAttributes;
@@ -302,7 +306,7 @@ public:
     void updateSizeWithFontSizeAdjust(const FontSizeAdjust&, float);
 
 #if PLATFORM(WIN)
-    HFONT hfont() const { return m_font ? m_font->get() : 0; }
+    HFONT hfont() const { return m_hfont ? m_hfont->get() : 0; }
 #endif
 
 #if USE(CORE_TEXT) || USE(SKIA)
@@ -402,7 +406,7 @@ public:
     struct CreationData {
         Ref<SharedBuffer> fontFaceData;
         String itemInCollection;
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CAIRO)
         Ref<FontMemoryResource> m_fontResource;
 #endif
     };
@@ -438,7 +442,7 @@ private:
 #endif
 
 #if PLATFORM(WIN)
-    RefPtr<SharedGDIObject<HFONT>> m_font; // FIXME: Delete this in favor of m_ctFont or m_dwFont or m_scaledFont.
+    RefPtr<SharedGDIObject<HFONT>> m_hfont; // FIXME: Delete this in favor of m_hbFont
 #elif USE(CORE_TEXT)
     RetainPtr<CTFontRef> m_font;
 #endif

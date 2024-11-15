@@ -72,7 +72,7 @@ public:
     WEBCORE_EXPORT static RefPtr<FontCustomPlatformData> create(SharedBuffer&, const String&);
     WEBCORE_EXPORT static RefPtr<FontCustomPlatformData> createMemorySafe(SharedBuffer&, const String&);
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CAIRO)
     FontCustomPlatformData(const String& name, FontPlatformData::CreationData&&);
 #elif USE(CORE_TEXT)
     FontCustomPlatformData(CTFontDescriptorRef fontDescriptor, FontPlatformData::CreationData&& creationData)
@@ -97,7 +97,7 @@ public:
     static bool supportsFormat(const String&);
     static bool supportsTechnology(const FontTechnology&);
 
-#if PLATFORM(WIN)
+#if PLATFORM(WIN) && USE(CAIRO)
     String name;
 #elif USE(CORE_TEXT)
     RetainPtr<CTFontDescriptorRef> fontDescriptor;

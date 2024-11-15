@@ -54,6 +54,8 @@ header: <WebCore/FontPlatformData.h>
     RetainPtr<CFStringRef> m_psName;
 #endif
 #if USE(SKIA)
+    SkString m_familyName;
+    SkFontStyle m_style;
     Vector<hb_feature_t> m_features;
 #endif
 };

@@ -164,3 +164,11 @@ if (USE_CAIRO)
         Shared/API/c/cairo/WKImageCairo.h
     )
 endif ()
+
+if (USE_SKIA)
+    include(Platform/Skia.cmake)
+
+    list(APPEND WebKit_PUBLIC_FRAMEWORK_HEADERS
+        Shared/API/c/skia/WKImageSkia.h
+    )
+endif ()

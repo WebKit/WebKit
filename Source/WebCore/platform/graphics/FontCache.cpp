@@ -52,6 +52,10 @@
 #include "OpenTypeVerticalData.h"
 #endif
 
+#if PLATFORM(WIN)
+#include <dwrite.h>
+#endif
+
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
