@@ -48,6 +48,7 @@
 #import "LocalFrame.h"
 #import "LocalFrameView.h"
 #import "LocalizedStrings.h"
+#import "Logging.h"
 #import "PaintInfo.h"
 #import "PathUtilities.h"
 #import "RenderAttachment.h"
@@ -1234,13 +1235,19 @@ LayoutSize RenderThemeMac::attachmentIntrinsicSize(const RenderAttachment& attac
 
 static RefPtr<Icon> iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
 {
+// FIXME: Remove after rdar://136373445 is fixed.
+#define LOG_ATTACHMENT(fmt, ...) RELEASE_LOG(Editing, "iconForAttachment(type='%s') " fmt, attachmentType.utf8().data(), ##__VA_ARGS__);
+
     if (!attachmentType.isEmpty() && !equalLettersIgnoringASCIICase(attachmentType, "public.data"_s)) {
         if (equalLettersIgnoringASCIICase(attachmentType, "public.directory"_s) || equalLettersIgnoringASCIICase(attachmentType, "multipart/x-folder"_s) || equalLettersIgnoringASCIICase(attachmentType, "application/vnd.apple.folder"_s)) {
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
             auto type = kUTTypeFolder;
 ALLOW_DEPRECATED_DECLARATIONS_END
-            if (auto icon = Icon::createIconForUTI(type))
+            if (auto icon = Icon::createIconForUTI(type)) {
+                LOG_ATTACHMENT("-> Got icon for kUTTypeFolder");
                 return icon;
+            }
+            LOG_ATTACHMENT("-> No icon for kUTTypeFolder! Will fallback to filename or title...");
         } else {
             String type;
             if (isDeclaredUTI(attachmentType))
@@ -1248,23 +1255,34 @@ ALLOW_DEPRECATED_DECLARATIONS_END
             else
                 type = UTIFromMIMEType(attachmentType);
 
-            if (auto icon = Icon::createIconForUTI(type))
+            if (auto icon = Icon::createIconForUTI(type)) {
+                LOG_ATTACHMENT("-> Got icon for %s '%s'", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8().data());
                 return icon;
+            }
+            LOG_ATTACHMENT("-> No icon for %s '%s'! Will fallback to filename or title...", type == attachmentType ? "declared UTI" : "UTI-from-MIMEtype", type.utf8().data());
         }
     }
 
     if (!fileName.isEmpty()) {
-        if (auto icon = Icon::createIconForFiles({ fileName }))
+        if (auto icon = Icon::createIconForFiles({ fileName })) {
+            LOG_ATTACHMENT("-> Got icon for filename");
             return icon;
+        }
+        LOG_ATTACHMENT("-> No icon for filename! Will fallback to title...");
     }
 
     NSString *cocoaTitle = title;
     if (auto fileExtension = cocoaTitle.pathExtension; fileExtension.length) {
-        if (auto icon = Icon::createIconForFileExtension(fileExtension))
+        if (auto icon = Icon::createIconForFileExtension(fileExtension)) {
+            LOG_ATTACHMENT("-> Got icon for title file extension '%s'", String(fileExtension).utf8().data());
             return icon;
-    }
+        }
+        LOG_ATTACHMENT("-> No icon for title file extension '%s'! Will fallback to public.data icon", String(fileExtension).utf8().data());
+    } else
+        LOG_ATTACHMENT("-> No file extension in title! Will fallback to public.data icon");
 
     return Icon::createIconForUTI("public.data"_s);
+#undef LOG_ATTACHMENT
 }
 
 RetainPtr<NSImage> RenderThemeMac::iconForAttachment(const String& fileName, const String& attachmentType, const String& title)
