@@ -582,6 +582,9 @@ public:
 
     bool isMarkingForGCVerifier() const { return m_isMarkingForGCVerifier; }
 
+    void setKeepVerifierSlotVisitor();
+    void clearVerifierSlotVisitor();
+
     void appendPossiblyAccessedStringFromConcurrentThreads(String&& string)
     {
         m_possiblyAccessedStringsFromConcurrentThreads.append(WTFMove(string));
@@ -594,6 +597,9 @@ public:
     void reportWasmCalleePendingDestruction(Ref<Wasm::Callee>&&);
     bool isWasmCalleePendingDestruction(Wasm::Callee&);
 #endif
+
+    // This is a debug function for checking who marked the target cell.
+    void dumpVerifierMarkerData(HeapCell*);
 
 private:
     friend class AllocatingScope;
@@ -783,8 +789,9 @@ private:
 
     static bool useGenerationalGC();
     static bool shouldSweepSynchronously();
-    
+
     void verifyGC();
+    void verifierMark();
 
     Lock m_lock;
     const HeapType m_heapType;
@@ -854,6 +861,7 @@ private:
     bool m_isShuttingDown { false };
     bool m_mutatorShouldBeFenced { Options::forceFencedBarrier() };
     bool m_isMarkingForGCVerifier { false };
+    bool m_keepVerifierSlotVisitor { false };
     Lock m_wasmCalleesPendingDestructionLock;
 
     unsigned m_barrierThreshold { Options::forceFencedBarrier() ? tautologicalThreshold : blackThreshold };

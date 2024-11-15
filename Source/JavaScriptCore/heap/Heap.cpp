@@ -3251,21 +3251,52 @@ void Heap::runTaskInParallel(RefPtr<SharedTask<void(SlotVisitor&)>> task)
     }
 }
 
+void Heap::verifierMark()
+{
+    RELEASE_ASSERT(!m_isMarkingForGCVerifier);
+
+    SetForScope isMarkingForGCVerifierScope(m_isMarkingForGCVerifier, true);
+    VerifierSlotVisitor& visitor = *m_verifierSlotVisitor;
+    do {
+        while (!visitor.isEmpty())
+            visitor.drain();
+        m_constraintSet->executeAllSynchronously(visitor);
+        visitor.executeConstraintTasks();
+    } while (!visitor.isEmpty());
+
+    visitor.setDoneMarking();
+}
+
+void Heap::dumpVerifierMarkerData(HeapCell* cell)
+{
+    if (!Options::verifyGC())
+        return;
+
+    if (!Heap::isMarked(cell)) {
+        dataLogLn("\n" "GC Verifier: cell ", RawPointer(cell), " was not marked by SlotVisitor");
+        return;
+    }
+
+    // Use VerifierSlotVisitorScope to keep it live.
+    RELEASE_ASSERT(m_verifierSlotVisitor && !m_isMarkingForGCVerifier);
+    VerifierSlotVisitor& visitor = *m_verifierSlotVisitor;
+    RELEASE_ASSERT(visitor.doneMarking());
+
+    if (!visitor.isMarked(cell)) {
+        dataLogLn("\n" "GC Verifier: ERROR cell ", RawPointer(cell), " was not marked by VerifierSlotVisitor");
+        return;
+    }
+
+    dataLogLn("\n" "GC Verifier: Found marked cell ", RawPointer(cell), " with MarkerData:");
+    visitor.dumpMarkerData(cell);
+}
+
 void Heap::verifyGC()
 {
     RELEASE_ASSERT(m_verifierSlotVisitor);
-    RELEASE_ASSERT(!m_isMarkingForGCVerifier);
-
+    verifierMark();
     VerifierSlotVisitor& visitor = *m_verifierSlotVisitor;
-    {
-        SetForScope isMarkingForGCVerifierScope(m_isMarkingForGCVerifier, true);
-        do {
-            while (!visitor.isEmpty())
-                visitor.drain();
-            m_constraintSet->executeAllSynchronously(visitor);
-            visitor.executeConstraintTasks();
-        } while (!visitor.isEmpty());
-    }
+    RELEASE_ASSERT(visitor.doneMarking() && !m_isMarkingForGCVerifier);
 
     visitor.forEachLiveCell([&] (HeapCell* cell) {
         if (Heap::isMarked(cell))
@@ -3277,7 +3308,16 @@ void Heap::verifyGC()
         RELEASE_ASSERT(this->isMarked(cell));
     });
 
+    if (!m_keepVerifierSlotVisitor)
+        clearVerifierSlotVisitor();
+}
+
+void Heap::setKeepVerifierSlotVisitor() { m_keepVerifierSlotVisitor = true; }
+
+void Heap::clearVerifierSlotVisitor()
+{
     m_verifierSlotVisitor = nullptr;
+    m_keepVerifierSlotVisitor = false;
 }
 
 void Heap::scheduleOpportunisticFullCollection()

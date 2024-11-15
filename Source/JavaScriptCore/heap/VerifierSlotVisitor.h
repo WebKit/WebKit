@@ -115,6 +115,13 @@ public:
 
     JS_EXPORT_PRIVATE void dumpMarkerData(HeapCell*);
 
+    bool doneMarking() { return m_doneMarking; }
+    void setDoneMarking()
+    {
+        ASSERT(!m_doneMarking);
+        m_doneMarking = true;
+    }
+
 private:
     class MarkedBlockData {
         WTF_MAKE_TZONE_ALLOCATED(MarkedBlockData);
@@ -187,6 +194,7 @@ private:
     MarkedBlockMap m_markedBlockMap;
     ConcurrentPtrHashSet m_opaqueRootStorage;
     Deque<RefPtr<SharedTask<void(AbstractSlotVisitor&)>>, 32> m_constraintTasks;
+    bool m_doneMarking { false };
 };
 
 } // namespace JSC
