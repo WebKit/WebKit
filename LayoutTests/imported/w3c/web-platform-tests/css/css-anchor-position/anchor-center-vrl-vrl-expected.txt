@@ -1,32 +1,12 @@
 
 PASS .target 1
-FAIL .target 2 assert_equals:
-<div class="container">
-  <div class="anchor"></div>
-  <div class="target" style="max-height: 60px;" data-expected-height="60" data-offset-y="35"></div>
-</div>
-offsetTop expected 35 but got 0
+PASS .target 2
 PASS .target 3
-FAIL .target 4 assert_equals:
-<div class="container">
-  <div class="anchor"></div>
-  <div class="target" style="bottom: 20px;" data-expected-height="80" data-offset-y="20"></div>
-</div>
-offsetTop expected 20 but got 0
+PASS .target 4
 PASS .target 5
-FAIL .target 6 assert_equals:
-<div class="container">
-  <div class="anchor"></div>
-  <div class="target" style="max-height: 100px; bottom: -20px;" data-expected-height="100" data-offset-y="15"></div>
-</div>
-offsetTop expected 15 but got 20
+PASS .target 6
 PASS .target 7
-FAIL .target 8 assert_equals:
-<div class="container">
-  <div class="anchor"></div>
-  <div class="target" style="top: 10px; bottom: 20px;" data-expected-height="70" data-offset-y="30"></div>
-</div>
-offsetTop expected 30 but got 10
+PASS .target 8
 PASS .target 9
 PASS .target 10
 

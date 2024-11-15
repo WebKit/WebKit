@@ -38,6 +38,8 @@ namespace WebCore {
 
 class Document;
 class Element;
+class LayoutRect;
+class RenderBlock;
 class RenderBoxModelObject;
 
 namespace Style {
@@ -99,6 +101,8 @@ public:
     static void updateAnchorPositioningStatesAfterInterleavedLayout(const Document&);
     static void cleanupAnchorPositionedState(Element&);
     static void updateSnapshottedScrollOffsets(Document&);
+
+    static LayoutRect computeAnchorRectRelativeToContainingBlock(CheckedRef<const RenderBoxModelObject> anchorBox, const RenderBlock& containingBlock);
 
 private:
     static AnchorElements findAnchorsForAnchorPositionedElement(const Element&, const HashSet<AtomString>& anchorNames, const AnchorsForAnchorName&);
