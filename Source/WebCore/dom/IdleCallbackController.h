@@ -59,9 +59,8 @@ public:
     bool isEmpty() const { return m_idleRequestCallbacks.isEmpty() && m_runnableIdleCallbacks.isEmpty(); }
 
 private:
-    void queueTaskToStartIdlePeriod();
     void queueTaskToInvokeIdleCallbacks();
-    void invokeIdleCallbacks();
+    bool invokeIdleCallbacks();
     void invokeIdleCallbackTimeout(unsigned identifier);
 
     unsigned m_idleCallbackIdentifier { 0 };
@@ -69,6 +68,7 @@ private:
     struct IdleRequest {
         unsigned identifier { 0 };
         Ref<IdleRequestCallback> callback;
+        std::optional<MonotonicTime> timeout;
     };
 
     Deque<IdleRequest> m_idleRequestCallbacks;
