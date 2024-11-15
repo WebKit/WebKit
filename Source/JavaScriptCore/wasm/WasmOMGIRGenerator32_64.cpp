@@ -3626,8 +3626,13 @@ auto OMGIRGenerator::addArrayFill(uint32_t typeIndex, ExpressionType arrayref, E
 
     Value* resultValue;
     RELEASE_ASSERT(!elementType.unpacked().isV128());
+    Value* adjustedValue = get(value);
+    if (adjustedValue->type().isFloat())
+        adjustedValue = append<Value>(m_proc, BitwiseCast, origin(), adjustedValue);
+    if (adjustedValue->type() == Int32)
+        adjustedValue = append<Value>(m_proc, ZExt32, origin(), adjustedValue);
     resultValue = callWasmOperation(m_currentBlock, toB3Type(Types::I32), operationWasmArrayFill,
-        instanceValue(), get(arrayref), get(offset), get(value), get(size));
+        instanceValue(), get(arrayref), get(offset), adjustedValue, get(size));
 
     {
         CheckValue* check = append<CheckValue>(m_proc, Check, origin(),
