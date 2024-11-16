@@ -151,7 +151,7 @@
         [% can_edit_short_desc = bug.check_can_change_field('short_desc', 0, 1) %]
         [% IF can_edit_short_desc %]
           <a href="#" id="summary_edit_action" class="button small">Edit</a>
-        [% END %] <pre id="commit-urls">[% urlbase FILTER uri %]show_bug.cgi?id=[% bug.bug_id FILTER uri %]</pre></span>
+        [% END %] <pre id="commit-urls">[% urlbase FILTER html %]show_bug.cgi?id=[% bug.bug_id FILTER html %]</pre></span>
      </span>
     <div id="summary_input">
       [% INCLUDE "bug/field-label.html.tmpl"
