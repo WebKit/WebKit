@@ -37,8 +37,6 @@
 #include "StylePropertyShorthand.h"
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 namespace Style {
 
@@ -385,15 +383,15 @@ void PropertyCascade::addImportantMatches(CascadeLevel cascadeLevel)
 
 void PropertyCascade::sortLogicalGroupPropertyIDs()
 {
-    auto begin = m_logicalGroupPropertyIDs.begin();
-    auto end = begin;
+    size_t endIndex = 0;
     for (uint16_t id = m_lowestSeenLogicalGroupProperty; id <= m_highestSeenLogicalGroupProperty; ++id) {
         auto propertyID = static_cast<CSSPropertyID>(id);
         if (hasLogicalGroupProperty(propertyID))
-            *end++ = propertyID;
+            m_logicalGroupPropertyIDs[endIndex++] = propertyID;
     }
-    m_seenLogicalGroupPropertyCount = end - begin;
-    std::sort(begin, end, [&](auto id1, auto id2) {
+    m_seenLogicalGroupPropertyCount = endIndex;
+    auto logicalGroupPropertyIDs = std::span { m_logicalGroupPropertyIDs }.first(endIndex);
+    std::sort(logicalGroupPropertyIDs.begin(), logicalGroupPropertyIDs.end(), [&](auto id1, auto id2) {
         return logicalGroupPropertyIndex(id1) < logicalGroupPropertyIndex(id2);
     });
 }
@@ -407,5 +405,3 @@ const HashSet<AnimatableCSSProperty> PropertyCascade::overriddenAnimatedProperti
 
 }
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

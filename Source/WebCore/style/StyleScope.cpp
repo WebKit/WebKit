@@ -65,8 +65,6 @@
 #include <wtf/SetForScope.h>
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -640,7 +638,7 @@ void Scope::updateResolver(Vector<RefPtr<CSSStyleSheet>>& activeStyleSheets, Res
 
     unsigned firstNewIndex = m_activeStyleSheets.size();
     Vector<RefPtr<CSSStyleSheet>> newStyleSheets;
-    newStyleSheets.appendRange(activeStyleSheets.begin() + firstNewIndex, activeStyleSheets.end());
+    newStyleSheets.append(activeStyleSheets.subspan(firstNewIndex));
     m_resolver->appendAuthorStyleSheets(newStyleSheets);
 }
 
@@ -1049,5 +1047,3 @@ void Scope::clearAnchorPositioningState()
 
 }
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
