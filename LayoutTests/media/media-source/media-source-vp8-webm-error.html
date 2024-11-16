@@ -1,0 +1,48 @@
+<html>
+<head>
+<title>MSE webm with error offscreen</title>
+<script src="../../resources/testharness.js"></script>
+<script src=../video-test.js></script>
+<script src="../utilities.js"></script>
+<script>
+    var video;
+    var ms;
+
+    const MediaSource = self.ManagedMediaSource || self.MediaSource;
+
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        run("video = document.getElementsByTagName('video')[0]");       
+        run('ms = new MediaSource()');
+        run('video.src = URL.createObjectURL(ms)');
+        run('video.disableRemotePlayback = true');
+        run('video.preload = "metadata"');
+        await waitFor(ms, 'sourceopen');
+
+        let videosb = ms.addSourceBuffer("video/webm; codecs=vp8");
+
+        video.onerror = (event) => {
+            consoleWrite("received error event");
+            endTest();
+        };
+
+        video.oncanplay = () => {
+            video.play();
+        };
+
+        video.onloadedmetadata = (event) => {
+            consoleWrite("metadataloaded");
+        }
+
+        await fetchAndLoad(videosb, '../content/garbage', [''], '.webm');
+    }
+            
+</script>
+</head>
+<body onload="init();">
+<video/>
+</body>
+</html>

@@ -1039,6 +1039,10 @@ void MediaPlayerPrivateMediaSourceAVFObjC::ensureDecompressionSession()
     m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
     m_decompressionSession->setTimebase([m_synchronizer timebase]);
     m_decompressionSession->setResourceOwner(m_resourceOwner);
+    m_decompressionSession->setErrorListener([weakThis = WeakPtr { *this }](OSStatus) {
+        if (RefPtr protectedThis = weakThis.get())
+            protectedThis->setNetworkState(MediaPlayer::NetworkState::DecodeError);
+    });
 
     if (m_mediaSourcePrivate)
         m_mediaSourcePrivate->setDecompressionSession(m_decompressionSession.get());
