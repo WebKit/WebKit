@@ -726,10 +726,17 @@ struct AccessibilityIsIgnoredFromParentData {
     bool isNull() const { return !parent; }
 };
 
+enum class AXDebugStringOption {
+    Ignored,
+    RelativeFrame,
+    RemoteFrameOffset
+};
+
 class AXCoreObject : public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AXCoreObject> {
 public:
     virtual ~AXCoreObject() = default;
-    virtual String dbg() const = 0;
+    String dbg(bool verbose = false) const { return dbgInternal(verbose, { }); }
+    String dbg(OptionSet<AXDebugStringOption> options) const { return dbgInternal(false, options); }
 
     AXID objectID() const { return m_id; }
     virtual std::optional<AXID> treeID() const = 0;
@@ -1399,6 +1406,8 @@ protected:
     { }
 
 private:
+    virtual String dbgInternal(bool, OptionSet<AXDebugStringOption>) const = 0;
+
     // Detaches this object from the objects it references and it is referenced by.
     virtual void detachRemoteParts(AccessibilityDetachmentType) = 0;
     virtual void detachPlatformWrapper(AccessibilityDetachmentType) = 0;

@@ -56,7 +56,7 @@ public:
     ~AXIsolatedObject();
 
     std::optional<AXID> treeID() const final { return tree()->treeID(); }
-    String dbg() const final;
+    String dbgInternal(bool, OptionSet<AXDebugStringOption>) const final;
 
     AccessibilityRole roleValue() const final { return static_cast<AccessibilityRole>(intAttributeValue(AXPropertyName::RoleValue)); }
 

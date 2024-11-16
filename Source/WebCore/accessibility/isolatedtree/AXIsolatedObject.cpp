@@ -76,12 +76,26 @@ AXIsolatedObject::~AXIsolatedObject()
     ASSERT(!wrapper());
 }
 
-String AXIsolatedObject::dbg() const
+String AXIsolatedObject::dbgInternal(bool verbose, OptionSet<AXDebugStringOption> debugOptions) const
 {
-    return makeString(
-        "{role: "_s, accessibilityRoleToString(roleValue()),
-        ", ID "_s, objectID().loggingString(), '}'
-    );
+    StringBuilder result;
+    result.append("{"_s);
+    result.append("role: "_s, accessibilityRoleToString(roleValue()));
+    result.append(", ID "_s, objectID().loggingString());
+
+    if (verbose || debugOptions & AXDebugStringOption::Ignored)
+        result.append(isIgnored() ? ", ignored"_s : emptyString());
+
+    if (verbose || debugOptions & AXDebugStringOption::RelativeFrame) {
+        FloatRect frame = relativeFrame();
+        result.append(", relativeFrame ((x: "_s, frame.x(), ", y: "_s, frame.y(), "), (w: "_s, frame.width(), ", h: "_s, frame.height(), "))"_s);
+    }
+
+    if (verbose || debugOptions & AXDebugStringOption::RemoteFrameOffset)
+        result.append(", remoteFrameOffset ("_s, remoteFrameOffset().x(), ", "_s, remoteFrameOffset().y(), ")"_s);
+
+    result.append("}"_s);
+    return result.toString();
 }
 
 void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axObject)

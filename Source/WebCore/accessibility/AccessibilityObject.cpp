@@ -131,21 +131,31 @@ std::optional<AXID> AccessibilityObject::treeID() const
     return cache ? std::optional { cache->treeID() } : std::nullopt;
 }
 
-String AccessibilityObject::dbg() const
+String AccessibilityObject::dbgInternal(bool verbose, OptionSet<AXDebugStringOption> debugOptions) const
 {
-    String backingEntityDescription;
-    if (auto* renderer = this->renderer())
-        backingEntityDescription = makeString(", "_s, renderer->debugDescription());
-    else if (auto* node = this->node())
-        backingEntityDescription = makeString(", "_s, node->debugDescription());
+    StringBuilder result;
+    result.append("{"_s);
+    result.append("role: "_s, accessibilityRoleToString(roleValue()));
+    result.append(", ID "_s, objectID().loggingString());
 
-    return makeString(
-        "{role: "_s, accessibilityRoleToString(roleValue()),
-        ", ID "_s, objectID().loggingString(),
-        isIgnored() ? ", ignored"_s : emptyString(),
-        backingEntityDescription,
-        '}'
-    );
+    if (verbose || debugOptions & AXDebugStringOption::Ignored)
+        result.append(isIgnored() ? ", ignored"_s : emptyString());
+
+    if (verbose || debugOptions & AXDebugStringOption::RelativeFrame) {
+        FloatRect frame = relativeFrame();
+        result.append(", relativeFrame ((x: "_s, frame.x(), ", y: "_s, frame.y(), "), (w: "_s, frame.width(), ", h: "_s, frame.height(), "))"_s);
+    }
+
+    if (verbose || debugOptions & AXDebugStringOption::RemoteFrameOffset)
+        result.append(", remoteFrameOffset ("_s, remoteFrameOffset().x(), ", "_s, remoteFrameOffset().y(), ")"_s);
+
+    if (auto* renderer = this->renderer())
+        result.append(", "_s, renderer->debugDescription());
+    else if (auto* node = this->node())
+        result.append(", "_s, node->debugDescription());
+
+    result.append("}"_s);
+    return result.toString();
 }
 
 void AccessibilityObject::detachRemoteParts(AccessibilityDetachmentType detachmentType)
