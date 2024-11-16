@@ -47,7 +47,9 @@ ALWAYS_INLINE void SlotVisitor::appendUnbarriered(JSCell* cell)
     
     if (!cell)
         return;
-    
+
+    cell->checkConsistency(heap());
+
     Dependency dependency;
     if (UNLIKELY(cell->isPreciseAllocation())) {
         if (LIKELY(cell->preciseAllocation().isMarked())) {
@@ -85,7 +87,9 @@ ALWAYS_INLINE void SlotVisitor::appendHiddenUnbarriered(JSCell* cell)
     
     if (!cell)
         return;
-    
+
+    cell->checkConsistency(heap());
+
     Dependency dependency;
     if (UNLIKELY(cell->isPreciseAllocation())) {
         if (LIKELY(cell->preciseAllocation().isMarked()))

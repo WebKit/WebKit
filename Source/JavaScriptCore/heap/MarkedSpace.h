@@ -132,7 +132,7 @@ public:
     template<typename Functor> void forEachSubspace(const Functor&);
 
     void shrink();
-    void freeBlock(MarkedBlock::Handle*);
+    void freeBlock(MarkedBlock::Handle*, bool notEmptyOkay=false);
     void freeOrShrinkBlock(MarkedBlock::Handle*);
 
     void didAddBlock(MarkedBlock::Handle*);
@@ -180,6 +180,8 @@ public:
     bool isMarking() const { return m_isMarking; }
     
     void dumpBits(PrintStream& = WTF::dataFile());
+
+    void checkConsistency();
     
     JS_EXPORT_PRIVATE static std::array<unsigned, numSizeClasses> s_sizeClassForSizeStep;
     

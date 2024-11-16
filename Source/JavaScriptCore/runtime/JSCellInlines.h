@@ -47,6 +47,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include "JSString.h"
 #include "LocalAllocatorInlines.h"
 #include "MarkedBlock.h"
+#include "MarkedBlockInlines.h"
 #include "SlotVisitorInlines.h"
 #include "Structure.h"
 #include "Symbol.h"
@@ -484,6 +485,12 @@ ALWAYS_INLINE bool JSCell::putInline(JSGlobalObject* globalObject, PropertyName 
 inline bool isWebAssemblyInstance(const JSCell* cell)
 {
     return cell->type() == WebAssemblyInstanceType;
+}
+
+inline void JSCell::checkConsistency(Heap* heap, bool knownBad) const
+{
+    if (!isPreciseAllocation())
+        markedBlock().checkConsistency(heap, const_cast<JSCell*>(this), knownBad);
 }
 
 } // namespace JSC

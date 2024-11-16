@@ -260,6 +260,8 @@ public:
 
     void setPerCellBit(bool);
     bool perCellBit() const;
+
+    void checkConsistency(Heap*, bool knownBad = false) const;
 protected:
 
     void finishCreation(VM&);

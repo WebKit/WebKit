@@ -405,7 +405,7 @@ Heap::Heap(VM& vm, HeapType heapType)
         m_scheduler = makeUnique<SynchronousStopTheWorldMutatorScheduler>();
     }
     
-    if (Options::verifyHeap())
+    if (Options::verifyHeap() || true)
         m_verifier = makeUnique<HeapVerifier>(this, Options::numberOfGCCyclesToRecordForVerification());
     
     m_collectorSlotVisitor->optimizeForStoppedMutator();
@@ -1415,6 +1415,7 @@ NEVER_INLINE bool Heap::runBeginPhase(GCConductor conn)
     
     willStartCollection();
         
+    objectSpace().checkConsistency();
     if (UNLIKELY(m_verifier)) {
         // Verify that live objects from the last GC cycle haven't been corrupted by
         // mutators before we begin this new GC cycle.
@@ -1649,6 +1650,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     if (UNLIKELY(Options::verifyGC()))
         verifyGC();
 
+    objectSpace().checkConsistency();
     if (UNLIKELY(m_verifier)) {
         m_verifier->gatherLiveCells(HeapVerifier::Phase::AfterMarking);
         m_verifier->verify(HeapVerifier::Phase::AfterMarking);
@@ -1688,6 +1690,7 @@ NEVER_INLINE bool Heap::runEndPhase(GCConductor conn)
     m_objectSpace.prepareForAllocation();
     updateAllocationLimits();
 
+    objectSpace().checkConsistency();
     if (UNLIKELY(m_verifier)) {
         m_verifier->trimDeadCells();
         m_verifier->verify(HeapVerifier::Phase::AfterGC);

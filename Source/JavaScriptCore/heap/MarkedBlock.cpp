@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,7 @@
 #include <wtf/CommaPrinter.h>
 
 #if PLATFORM(COCOA)
+#include <wtf/darwin/OSLogPrintStream.h> // FIXME: rdar://136782494
 #include <wtf/cocoa/CrashReporter.h>
 #endif
 
@@ -82,6 +83,8 @@ MarkedBlock::Handle::~Handle()
         if (!(balance % 10))
             dataLog("MarkedBlock Balance: ", balance, "\n");
     }
+    RELEASE_ASSERT(&m_block->handle() == this);
+    RELEASE_ASSERT(m_block->heap() == &heap);
     m_directory->removeBlock(this, BlockDirectory::WillDeleteBlock::Yes);
     m_block->~MarkedBlock();
     m_alignedMemoryAllocator->freeAlignedMemory(m_block);
@@ -108,7 +111,12 @@ MarkedBlock::Header::Header(VM& vm, Handle& handle)
 {
 }
 
-MarkedBlock::Header::~Header() = default;
+MarkedBlock::Header::~Header()
+{
+    memset(this, 0xba, sizeof(*this));
+    char* handle = bitwise_cast<char*>(this) + OBJECT_OFFSETOF(Header, m_handle);
+    *bitwise_cast<uintptr_t*>(handle) = MarkedBlock::Handle::invalid;
+}
 
 void MarkedBlock::Handle::unsweepWithNoNewlyAllocated()
 {
@@ -210,17 +218,47 @@ void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
     sweep(&freeList);
 }
 
+#if ENABLE(MARKEDBLOCK_TEST_DUMP_INFO)
+inline void MarkedBlock::setupTestForDumpInfoAndCrash()
+{
+    static std::atomic<uint64_t> count = 0;
+    // Option set to 0 disables testing.
+    if (++count == Options::markedBlockDumpInfoCount()) {
+        memset(&header(), 0, sizeof(uintptr_t));
+        switch (Options::markedBlockDumpInfoCount() & 0xf) {
+        case 1: // Test null VM pointer.
+            dataLogLn("Zeroing MarkedBlock::Header::m_vm");
+            *const_cast<VM**>(&header().m_vm) = nullptr;
+            break;
+        case 2: // Test non-null invalid VM pointer.
+            dataLogLn("Corrupting MarkedBlock::Header::m_vm");
+            *const_cast<VM**>(&header().m_vm) = bitwise_cast<VM*>(0xdeadbeefdeadbeef);
+            break;
+        case 3: // Test contiguous and total zero byte counts.
+            dataLogLn("Zeroing start and end of MarkedBlock");
+            char* blockMem = bitwise_cast<char*>(this);
+            memset(blockMem, 0, blockSize / 4);
+            memset(blockMem + 3 * blockSize / 4, 0, blockSize / 4);
+            break;
+        }
+    }
+}
+#endif
+
 void MarkedBlock::aboutToMarkSlow(HeapVersion markingVersion, HeapCell* cell)
 {
     ASSERT(vm().heap.objectSpace().isMarking());
+    setupTestForDumpInfoAndCrash();
+
     Locker locker { header().m_lock };
     
     if (!areMarksStale(markingVersion))
         return;
 
     MarkedBlock::Handle* handle = header().handlePointerForNullCheck();
+
     if (UNLIKELY(!handle))
-        dumpInfoAndCrashForInvalidHandle(locker, cell);
+        dumpInfoAndCrashForInvalidHandleV2(locker, cell, nullptr);
 
     BlockDirectory* directory = handle->directory();
     bool isAllocated;
@@ -513,156 +551,108 @@ void MarkedBlock::Handle::sweep(FreeList* freeList)
     specializedSweep<false, IsEmpty, SweepOnly, BlockHasNoDestructors, DontScribble, HasNewlyAllocated, MarksStale>(freeList, emptyMode, sweepMode, BlockHasNoDestructors, scribbleMode, newlyAllocatedMode, marksMode, [] (VM&, JSCell*) { });
 }
 
-#if PLATFORM(COCOA)
-#define LOG_INVALID_HANDLE_DETAILS(s, ...) do { \
-    out.printf("INVALID HANDLE: " s, __VA_ARGS__); \
-    WTF::setCrashLogMessage(out.toCString().data()); \
-} while (false)
-#else
-#define LOG_INVALID_HANDLE_DETAILS(s, ...) do { \
-    out.printf("INVALID HANDLE: " s, __VA_ARGS__); \
-    dataLog(out.toCString().data()); \
-} while (false)
-#endif
-
-#if CPU(ARM64) && !COMPILER(GCC)
-#define DEFINE_SAVED_VALUE(name, reg, value) \
-    volatile register decltype(value) name asm(reg) = value; \
-    WTF::opaque(name); \
-    WTF::compilerFence();
-#else
-#define DEFINE_SAVED_VALUE(name, reg, value) \
-    decltype(value) name = value; \
-    UNUSED_VARIABLE(reg);
-#endif
-
-#define SAVE_TO_REG(name, value) do { \
-    name = WTF::opaque(value); \
-    WTF::compilerFence(); \
-} while (false)
-
-NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalidHandle(AbstractLocker&, HeapCell* heapCell)
-{
-    JSCell* cell = bitwise_cast<JSCell*>(heapCell);
-    JSType cellType = cell->type();
-
-    StringPrintStream out;
-    LOG_INVALID_HANDLE_DETAILS("MarkedBlock = %p ; heapCell = %p ; type = %d\n", this, heapCell, cellType);
-
-    DEFINE_SAVED_VALUE(savedMarkedBlock, "x19", this);
-    DEFINE_SAVED_VALUE(savedType, "x20", cellType);
-    DEFINE_SAVED_VALUE(savedHeapCell, "x21", heapCell);
-
-    static_assert(!offsetOfHeader);
-    static_assert(!OBJECT_OFFSETOF(Header, m_handle));
-    size_t contiguousZeroCountAfterHandle = 0;
-    {
-        char* mem = WTF::bitwise_cast<char*>(&header());
-        for (; contiguousZeroCountAfterHandle < MarkedBlock::blockSize; ++contiguousZeroCountAfterHandle) {
-            if (*mem)
-                break;
-            ++mem;
-        }
-    }
-    LOG_INVALID_HANDLE_DETAILS("found %zd 0s at beginning of block\n", contiguousZeroCountAfterHandle);
-    SAVE_TO_REG(savedMarkedBlock, this);
-    SAVE_TO_REG(savedHeapCell, heapCell);
-    SAVE_TO_REG(savedType, cellType);
-    DEFINE_SAVED_VALUE(savedCount, "x22", contiguousZeroCountAfterHandle);
-
-    bool isValidBlockVM = false;
-    bool foundBlockInThisVM = false;
-    bool isBlockInVM = false;
-    bool isBlockHandleInVM = false;
-
+NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalidHandleV2(AbstractLocker&, HeapCell* heapCell, VM* expectedVM)
+{   
     VM* blockVM = header().m_vm;
     VM* actualVM = nullptr;
-    DEFINE_SAVED_VALUE(savedBlockVM, "x23", blockVM);
-    DEFINE_SAVED_VALUE(savedActualVM, "x24", actualVM);
-    DEFINE_SAVED_VALUE(savedBitfield, "x25", 0L);
+    bool isBlockVMValid = false;
+    bool isBlockInSet = false;
+    bool isBlockInDirectory = false;
+    bool foundInBlockVM = false;
+    size_t contigousZeroBytesHeadOfBlock = 0;
+    size_t totalZeroBytesInBlock = 0;
+    uint64_t cellFirst8Bytes = 0;
 
-    {
-        VMInspector::forEachVM([&](VM& vm) {
-            if (blockVM == &vm) {
-                isValidBlockVM = true;
-                SAVE_TO_REG(savedActualVM, &vm);
-                SAVE_TO_REG(savedBitfield, 8);
-                LOG_INVALID_HANDLE_DETAILS("block VM %p is valid\n", &vm);
-                return IterationStatus::Done;
-            }
-            return IterationStatus::Continue;
-        });
+    if (heapCell) {
+        uint64_t* p = bitwise_cast<uint64_t*>(heapCell);
+        cellFirst8Bytes = *p;
     }
 
-    SAVE_TO_REG(savedMarkedBlock, this);
-    SAVE_TO_REG(savedHeapCell, heapCell);
-    SAVE_TO_REG(savedType, cellType);
-    SAVE_TO_REG(savedCount, contiguousZeroCountAfterHandle);
-    SAVE_TO_REG(savedBlockVM, blockVM);
+    auto updateCrashLogMsg = [&](int line) {
+        StringPrintStream out;
+        out.printf("INVALID HANDLE [%d]: markedBlock=%p; heapCell=%p; cellFirst8Bytes=%#llx; contiguousZeros=%lu; totalZeros=%lu; blockVM=%p; actualVM=%p; isBlockVMValid=%d; isBlockInSet=%d; isBlockInDir=%d; foundInBlockVM=%d;",
+            line, this, heapCell, cellFirst8Bytes, contigousZeroBytesHeadOfBlock, totalZeroBytesInBlock, blockVM, actualVM, isBlockVMValid, isBlockInSet, isBlockInDirectory, foundInBlockVM);
+        const char* msg = out.toCString().data();
+        WTF::setCrashLogMessage(msg);
+        dataLogLn(msg);
+    };
+    updateCrashLogMsg(__LINE__);
 
-    if (isValidBlockVM) {
+    char* blockStart = bitwise_cast<char*>(this);
+    bool sawNonZero = false;
+    for (auto mem = blockStart; mem < blockStart + MarkedBlock::blockSize; mem++) {
+        // Exclude the MarkedBlock::Header::m_lock from the zero scan since taking the lock writes a non-zero value.
+        auto isMLockBytes = [blockStart](char* p) ALWAYS_INLINE_LAMBDA {
+            constexpr size_t lockOffset = offsetOfHeader + OBJECT_OFFSETOF(MarkedBlock::Header, m_lock);
+            size_t offset = p - blockStart;
+            return lockOffset <= offset && offset < lockOffset + sizeof(MarkedBlock::Header::m_lock);
+        };
+        bool byteIsZero = !*mem;
+        if (byteIsZero || isMLockBytes(mem)) {
+            totalZeroBytesInBlock++;
+            if (!sawNonZero)
+                contigousZeroBytesHeadOfBlock++;
+        } else
+            sawNonZero = true;
+    }
+    updateCrashLogMsg(__LINE__);
+
+    VMInspector::forEachVM([&](VM& vm) {
+        if (blockVM == &vm) {
+            isBlockVMValid = true;
+            return IterationStatus::Done;
+        }
+        return IterationStatus::Continue;
+    });
+    updateCrashLogMsg(__LINE__);
+
+    if (isBlockVMValid) {
         MarkedSpace& objectSpace = blockVM->heap.objectSpace();
-        isBlockInVM = objectSpace.blocks().set().contains(this);
-        isBlockHandleInVM = !!objectSpace.findMarkedBlockHandleDebug(this);
-        foundBlockInThisVM = isBlockInVM || isBlockHandleInVM;
-        LOG_INVALID_HANDLE_DETAILS("block in our VM = %d, block handle in our VM = %d\n", isBlockInVM, isBlockHandleInVM);
-
-        SAVE_TO_REG(savedBitfield, (isValidBlockVM ? 8 : 0) | (isBlockInVM ? 4 : 0) | (isBlockHandleInVM ? 2 : 0) | (foundBlockInThisVM ? 1 : 0));
+        isBlockInSet = objectSpace.blocks().set().contains(this);
+        isBlockInDirectory = !!objectSpace.findMarkedBlockHandleDebug(this);
+        foundInBlockVM = isBlockInSet || isBlockInDirectory;
+        updateCrashLogMsg(__LINE__);
     }
 
-    SAVE_TO_REG(savedMarkedBlock, this);
-    SAVE_TO_REG(savedHeapCell, heapCell);
-    SAVE_TO_REG(savedType, cellType);
-    SAVE_TO_REG(savedCount, contiguousZeroCountAfterHandle);
-    SAVE_TO_REG(savedBlockVM, blockVM);
-
-    if (!isBlockInVM && !isBlockHandleInVM) {
-        // worst case path
+    if (!foundInBlockVM) {
+        // Search all VMs to see if this block belongs to any VM.
         VMInspector::forEachVM([&](VM& vm) {
             MarkedSpace& objectSpace = vm.heap.objectSpace();
-            isBlockInVM = objectSpace.blocks().set().contains(this);
-            isBlockHandleInVM = !!objectSpace.findMarkedBlockHandleDebug(this);
-            // Either of them is true indicates that the block belongs or used to belong to the VM.
-            if (isBlockInVM || isBlockHandleInVM) {
+            isBlockInSet = objectSpace.blocks().set().contains(this);
+            isBlockInDirectory = !!objectSpace.findMarkedBlockHandleDebug(this);
+            // Either of them is true indicates that the block belongs to the VM.
+            if (isBlockInSet || isBlockInDirectory) {
                 actualVM = &vm;
-                LOG_INVALID_HANDLE_DETAILS("block in another VM: %d, block in another VM: %d; other VM is %p\n", isBlockInVM, isBlockHandleInVM, &vm);
-
-                SAVE_TO_REG(savedActualVM, actualVM);
-                SAVE_TO_REG(savedBitfield, (isValidBlockVM ? 8 : 0) | (isBlockInVM ? 4 : 0) | (isBlockHandleInVM ? 2 : 0) | (foundBlockInThisVM ? 1 : 0));
-
+                updateCrashLogMsg(__LINE__);
                 return IterationStatus::Done;
             }
             return IterationStatus::Continue;
         });
     }
-
-    SAVE_TO_REG(savedMarkedBlock, this);
-    SAVE_TO_REG(savedHeapCell, heapCell);
-    SAVE_TO_REG(savedType, cellType);
-    SAVE_TO_REG(savedCount, contiguousZeroCountAfterHandle);
-    SAVE_TO_REG(savedBlockVM, blockVM);
-    SAVE_TO_REG(savedActualVM, savedActualVM);
-    SAVE_TO_REG(savedBitfield, savedBitfield);
+    updateCrashLogMsg(__LINE__);
 
     uint64_t bitfield = 0xab00ab01ab020000;
-    if (!isValidBlockVM)
+
+    if (expectedVM && actualVM && actualVM != expectedVM)
+        bitfield |= 1 << 10;
+    if (expectedVM && blockVM != expectedVM)
+        bitfield |= 1 << 9;
+    if (!header().handlePointerForNullCheck())
+        bitfield |= 1 << 8;
+    if (!isBlockVMValid)
         bitfield |= 1 << 7;
-    if (!isBlockInVM)
+    if (!isBlockInSet)
         bitfield |= 1 << 6;
-    if (!isBlockHandleInVM)
+    if (!isBlockInDirectory)
         bitfield |= 1 << 5;
-    if (!foundBlockInThisVM)
+    if (!foundInBlockVM)
         bitfield |= 1 << 4;
 
-    // Make sure that the compiler doesn't think of these as "unused"
-    WTF::compilerFence();
-    WTF::opaque(savedMarkedBlock);
-    WTF::opaque(savedHeapCell);
-    WTF::opaque(savedType);
-    WTF::opaque(savedCount);
-    WTF::opaque(savedBlockVM);
+    static_assert(MarkedBlock::blockSize < (1ull << 32));
+    uint64_t zeroCounts = contigousZeroBytesHeadOfBlock | (totalZeroBytesInBlock << 32);
 
-    CRASH_WITH_INFO(cell, cellType, contiguousZeroCountAfterHandle, bitfield, this, blockVM, actualVM);
+    // NB: could save something other than 'this' since it can be derived from heapCell.
+    CRASH_WITH_INFO(heapCell, cellFirst8Bytes, zeroCounts, bitfield, this, blockVM, actualVM);
 }
 
 } // namespace JSC

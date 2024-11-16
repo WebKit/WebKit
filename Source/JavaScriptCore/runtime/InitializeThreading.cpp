@@ -56,6 +56,10 @@
 #endif
 #endif
 
+#if PLATFORM(COCOA)
+#include <wtf/darwin/OSLogPrintStream.h> // FIXME: rdar://136782494
+#endif
+
 #if ENABLE(LLVM_PROFILE_GENERATION)
 extern "C" char __llvm_profile_filename[] = "/private/tmp/WebKitPGO/JavaScriptCore_%m_pid%p%c.profraw";
 #endif
@@ -79,6 +83,9 @@ void initialize()
 #if ENABLE(WRITE_BARRIER_PROFILING)
         WriteBarrierCounters::initialize();
 #endif
+        WTF::setDataFile(OSLogPrintStream::open("com.apple.JavaScriptCore", "DataLog", OS_LOG_TYPE_ERROR));;
+        dataLogLn("JSC::initialize() MarkedBlock instrumentation v3 enabled");
+
         {
             Options::AllowUnfinalizedAccessScope scope;
             JITOperationList::initialize();

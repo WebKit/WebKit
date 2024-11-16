@@ -750,6 +750,8 @@ void Options::notifyOptionsChanged()
 {
     AllowUnfinalizedAccessScope scope;
 
+    Options::scribbleFreeCells() = true;
+
     unsigned thresholdForGlobalLexicalBindingEpoch = Options::thresholdForGlobalLexicalBindingEpoch();
     if (thresholdForGlobalLexicalBindingEpoch == 0 || thresholdForGlobalLexicalBindingEpoch == 1)
         Options::thresholdForGlobalLexicalBindingEpoch() = UINT_MAX;

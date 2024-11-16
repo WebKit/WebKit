@@ -147,8 +147,11 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
     ASSERT(!m_isCheckingForDefaultMarkViolation);
     
     auto validateCell = [&] (JSCell* jsCell) {
+        jsCell->checkConsistency(heap());
+
         StructureID structureID = jsCell->structureID();
         
+        // XXX
         auto die = [&] (const char* text) {
             WTF::dataFile().atomically(
                 [&] (PrintStream& out) {
@@ -179,6 +182,7 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
                         out.print("Newly allocated version: ", block.newlyAllocatedVersion(), "\n");
                         out.print("Heap newly allocated version: ", heap()->objectSpace().newlyAllocatedVersion(), "\n");
                     }
+                    jsCell->checkConsistency(heap(), true);
                     UNREACHABLE_FOR_PLATFORM();
                 });
         };
@@ -191,14 +195,14 @@ void SlotVisitor::appendJSCellOrAuxiliary(HeapCell* heapCell)
         // It's not OK for the structure to be nuked at any GC scan point.
         if (structureID.isNuked())
             die("GC scan found object in bad state: structureID is nuked!\n");
-
+        
         // This detects the worst of the badness.
         Integrity::auditStructureID(structureID);
     };
 
     // In debug mode, we validate before marking since this makes it clearer what the problem
     // was. It's also slower, so we don't do it normally.
-    if (ASSERT_ENABLED && isJSCellKind(heapCell->cellKind()))
+    if ((true || ASSERT_ENABLED) && isJSCellKind(heapCell->cellKind()))
         validateCell(static_cast<JSCell*>(heapCell));
     
     if (Heap::testAndSetMarked(m_markingVersion, heapCell))
@@ -258,7 +262,7 @@ ALWAYS_INLINE void SlotVisitor::setMarkedAndAppendToMarkStack(ContainerType& con
     if (container.testAndSetMarked(cell, dependency))
         return;
     
-    ASSERT(cell->structure());
+    RELEASE_ASSERT(cell->structure());
     
     // Indicate that the object is grey and that:
     // In case of concurrent GC: it's the first time it is grey in this GC cycle.
@@ -286,7 +290,7 @@ ALWAYS_INLINE void SlotVisitor::appendToMarkStack(ContainerType& container, JSCe
             reportZappedCellAndCrash(m_heap, cell);
     }
 #endif
-    ASSERT(!cell->isZapped());
+    RELEASE_ASSERT(!cell->isZapped());
 
     container.noteMarked();
     
@@ -300,7 +304,7 @@ void SlotVisitor::markAuxiliary(const void* base)
 {
     HeapCell* cell = bitwise_cast<HeapCell*>(base);
     
-    ASSERT(cell->heap() == heap());
+    RELEASE_ASSERT(cell->heap() == heap());
     
     if (Heap::testAndSetMarked(m_markingVersion, cell))
         return;
@@ -359,6 +363,8 @@ ALWAYS_INLINE void SlotVisitor::visitChildren(const JSCell* cell)
             dataLog(" (subsequent)");
         dataLog("\n");
     }
+
+    cell->checkConsistency(heap());
     
     // Funny story: it's possible for the object to be black already, if we barrier the object at
     // about the same time that it's marked. That's fine. It's a gnarly and super-rare race. It's

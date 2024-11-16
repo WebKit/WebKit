@@ -194,7 +194,7 @@ void MarkedSpace::freeMemory()
 {
     forEachBlock(
         [&] (MarkedBlock::Handle* block) {
-            freeBlock(block);
+            freeBlock(block, true);
         });
     for (PreciseAllocation* allocation : m_preciseAllocations)
         allocation->destroy();
@@ -375,8 +375,9 @@ MarkedBlock::Handle* MarkedSpace::findMarkedBlockHandleDebug(MarkedBlock* block)
     return result;
 }
 
-void MarkedSpace::freeBlock(MarkedBlock::Handle* block)
+void MarkedSpace::freeBlock(MarkedBlock::Handle* block, bool notEmptyOkay)
 {
+    RELEASE_ASSERT(notEmptyOkay || block->isEmpty());
     m_capacity -= MarkedBlock::blockSize;
     m_blocks.remove(&block->block());
     delete block;
@@ -590,6 +591,15 @@ void MarkedSpace::addBlockDirectory(const AbstractLocker&, BlockDirectory* direc
     WTF::storeStoreFence();
 
     m_directories.append(std::mem_fn(&BlockDirectory::setNextDirectory), directory);
+}
+
+void MarkedSpace::checkConsistency()
+{
+    RELEASE_ASSERT(heap().worldIsStopped() || heap().vm().currentThreadIsHoldingAPILock());
+    auto& set = blocks().set();
+    for (auto& block: set) {
+        block->checkConsistency(&heap(), nullptr, false);
+    }
 }
 
 } // namespace JSC
