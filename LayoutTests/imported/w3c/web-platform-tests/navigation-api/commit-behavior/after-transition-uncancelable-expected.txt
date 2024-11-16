@@ -1,4 +1,0 @@
-
-
-PASS { commit: 'after-transition' } for an uncancelable traverse navigation
-

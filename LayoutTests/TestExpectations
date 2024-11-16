@@ -7413,10 +7413,6 @@ imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-e
 # -- Navigation API -- #
 # webkit.org/b/258384 Navigation API is not yet fully implemented.
 
-# On mac-wk2-stress a large amount of these *very* inconsistently timeout.
-# This needs to be investigated but doesn't seem to reproduce easily locally.
-imported/w3c/web-platform-tests/navigation-api/ [ Timeout Pass ]
-
 # This is not part of the spec yet and hasn't been implemented.
 imported/w3c/web-platform-tests/navigation-api/commit-behavior/ [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/scroll-behavior/manual-scroll-before-after-transition-commit.html [ Skip ]
@@ -7427,15 +7423,34 @@ imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-form-requ
 # These cross-window tests won't work on ports that don't run on the web-platform.test domains (not glib).
 imported/w3c/web-platform-tests/navigation-api/navigate-event/cross-window/ [ Skip ]
 
+# webkit.org/b/282609
+imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-blob-navigation.html [ Pass Timeout ]
+
+# webkit.org/b/282627
+imported/w3c/web-platform-tests/navigation-api/state/same-document-away-and-back-location-api.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/navigation-api/updateCurrentEntry-method/same-document-away-and-back-location-api.html [ Pass Timeout ]
+
+# Unknown cross document traveral issues
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/back-forward-multiple-frames.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/traverseTo-detach-between-navigate-and-navigatesuccess.html [ Timeout ]
+imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-for-full-session-history.tentative.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/navigation-api/per-entry-events/dispose-for-navigation-in-child.html [ Pass Timeout ]
+
+# This one is fixed in https://github.com/WebKit/WebKit/pull/35286
+imported/w3c/web-platform-tests/navigation-api/navigation-history-entry/entries-after-bfcache-in-iframe.html [ Pass Timeout ]
+
+# webkit.org/b/60206 HTTP 204 isn't handled by WebKit correctly.
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html [ Pass Timeout ]
+imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/navigate-204-205-download.html [ Pass Timeout ]
+
+# Many, but not necessarily all, of these are https://bugs.webkit.org/show_bug.cgi?id=277948
+imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/ [ Pass Timeout ]
+
 # webkit.org/b/277948 WebKit can fire the load event before JS module starts executing
 imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-double-intercept.html?currententrychange [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-double-intercept.html?no-currententrychange [ Skip ]
 
-# General flakes, almost exclusively on mac-wk2-stress.
-imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-204-205-download.html [ Failure Pass ]
-imported/w3c/web-platform-tests/navigation-api/ordering-and-transition/navigate-204-205-download-then-same-document.html [ Failure Pass ]
-
-# beforeunload event listeners are not allowed on subframes.
+# webkit.org/b/282593 beforeunload event listeners are not allowed on subframes.
 imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-back-cross-document.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/back-beforeunload.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/forward-beforeunload.html [ Skip ]
@@ -7445,6 +7460,10 @@ imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/n
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-beforeunload.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/reload-rejection-order-beforeunload-unserializablestate.html [ Skip ]
 imported/w3c/web-platform-tests/navigation-api/navigation-methods/return-value/traverseTo-beforeunload.html [ Skip ]
+
+# These always pass but sometimes a promise rejection happens and prints an unhandled warning.
+imported/w3c/web-platform-tests/navigation-api/focus-reset/basic.html [ Pass Failure ]
+imported/w3c/web-platform-tests/navigation-api/navigate-event/intercept-handler-throws.html [ Pass Failure ]
 
 webkit.org/b/282758 [ Debug ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-back-same-document-in-iframe.html [ Crash ]
 webkit.org/b/282758 [ Debug ] imported/w3c/web-platform-tests/navigation-api/navigate-event/navigate-navigation-back-same-document.html [ Crash ]
