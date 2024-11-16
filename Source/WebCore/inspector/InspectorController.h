@@ -37,6 +37,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
+#include <wtf/WeakRef.h>
 #include <wtf/text/WTFString.h>
 
 namespace Inspector {
@@ -63,13 +64,15 @@ class PageDebugger;
 class WebInjectedScriptManager;
 struct PageAgentContext;
 
-class InspectorController final : public Inspector::InspectorEnvironment, public CanMakeCheckedPtr<InspectorController> {
+class InspectorController final : public Inspector::InspectorEnvironment, public CanMakeWeakPtr<InspectorController> {
     WTF_MAKE_NONCOPYABLE(InspectorController);
     WTF_MAKE_TZONE_ALLOCATED(InspectorController);
-    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorController);
 public:
     InspectorController(Page&, std::unique_ptr<InspectorClient>&&);
     ~InspectorController() override;
+
+    WEBCORE_EXPORT void ref() const;
+    WEBCORE_EXPORT void deref() const;
 
     void inspectedPageDestroyed();
 
@@ -104,7 +107,7 @@ public:
     WEBCORE_EXPORT void didComposite(LocalFrame&);
 
     // Testing support.
-    WEBCORE_EXPORT bool isUnderTest() const;
+    bool isUnderTest() const { return m_isUnderTest; }
     void setIsUnderTest(bool isUnderTest) { m_isUnderTest = isUnderTest; }
     WEBCORE_EXPORT void evaluateForTestInFrontend(const String& script);
     WEBCORE_EXPORT unsigned gridOverlayCount() const;
@@ -134,16 +137,16 @@ private:
     PageAgentContext pageAgentContext();
     void createLazyAgents();
 
+    WeakRef<Page> m_page;
     Ref<InstrumentingAgents> m_instrumentingAgents;
     std::unique_ptr<WebInjectedScriptManager> m_injectedScriptManager;
     Ref<Inspector::FrontendRouter> m_frontendRouter;
     Ref<Inspector::BackendDispatcher> m_backendDispatcher;
-    std::unique_ptr<InspectorOverlay> m_overlay;
+    const UniqueRef<InspectorOverlay> m_overlay;
     Ref<WTF::Stopwatch> m_executionStopwatch;
     std::unique_ptr<PageDebugger> m_debugger;
     Inspector::AgentRegistry m_agents;
 
-    Page& m_page;
     std::unique_ptr<InspectorClient> m_inspectorClient;
     InspectorFrontendClient* m_inspectorFrontendClient { nullptr };
 

@@ -126,13 +126,13 @@ private:
         }
 
         if (!m_messages.isEmpty())
-            m_inspectedPageController->dispatchMessageFromFrontend(m_messages.takeFirst());
+            Ref { *m_inspectedPageController }->dispatchMessageFromFrontend(m_messages.takeFirst());
 
         if (!m_messages.isEmpty() && m_inspectedPageController)
             scheduleOneShot();
     }
 
-    InspectorController* m_inspectedPageController { nullptr };
+    WeakPtr<InspectorController> m_inspectedPageController;
     Deque<String> m_messages;
     bool m_hasScheduledTask { false };
 };
@@ -232,7 +232,8 @@ void InspectorFrontendClientLocal::requestSetDockSide(DockSide dockSide)
 bool InspectorFrontendClientLocal::canAttachWindow()
 {
     // Don't allow attaching to another inspector -- two inspectors in one window is too much!
-    bool isInspectorPage = m_inspectedPageController->inspectionLevel() > 0;
+    RefPtr inspectedPageController = m_inspectedPageController.get();
+    bool isInspectorPage = inspectedPageController->inspectionLevel() > 0;
     if (isInspectorPage)
         return false;
 
@@ -241,7 +242,7 @@ bool InspectorFrontendClientLocal::canAttachWindow()
         return true;
 
     // Don't allow the attach if the window would be too small to accommodate the minimum inspector size.
-    Ref mainFrame = m_inspectedPageController->inspectedPage().mainFrame();
+    Ref mainFrame = inspectedPageController->inspectedPage().mainFrame();
     unsigned inspectedPageHeight = mainFrame->virtualView()->visibleHeight();
     unsigned inspectedPageWidth = mainFrame->virtualView()->visibleWidth();
     unsigned maximumAttachedHeight = inspectedPageHeight * maximumAttachedHeightRatio;
@@ -253,9 +254,14 @@ void InspectorFrontendClientLocal::setDockingUnavailable(bool unavailable)
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("setDockingUnavailable"_s, { JSON::Value::create(unavailable) });
 }
 
+RefPtr<InspectorController> InspectorFrontendClientLocal::protectedInspectedPageController() const
+{
+    return m_inspectedPageController.get();
+}
+
 void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
 {
-    unsigned totalHeight = m_frontendPage->mainFrame().virtualView()->visibleHeight() + m_inspectedPageController->inspectedPage().mainFrame().virtualView()->visibleHeight();
+    unsigned totalHeight = m_frontendPage->mainFrame().virtualView()->visibleHeight() + protectedInspectedPageController()->inspectedPage().mainFrame().virtualView()->visibleHeight();
     unsigned attachedHeight = constrainedAttachedWindowHeight(height, totalHeight);
     m_settings->setProperty(inspectorAttachedHeightSetting, String::number(attachedHeight));
     setAttachedWindowHeight(attachedHeight);
@@ -263,7 +269,7 @@ void InspectorFrontendClientLocal::changeAttachedWindowHeight(unsigned height)
 
 void InspectorFrontendClientLocal::changeAttachedWindowWidth(unsigned width)
 {
-    unsigned totalWidth = m_frontendPage->mainFrame().virtualView()->visibleWidth() + m_inspectedPageController->inspectedPage().mainFrame().virtualView()->visibleWidth();
+    unsigned totalWidth = m_frontendPage->mainFrame().virtualView()->visibleWidth() + protectedInspectedPageController()->inspectedPage().mainFrame().virtualView()->visibleWidth();
     unsigned attachedWidth = constrainedAttachedWindowWidth(width, totalWidth);
     setAttachedWindowWidth(attachedWidth);
 }
@@ -275,7 +281,7 @@ void InspectorFrontendClientLocal::changeSheetRect(const FloatRect& rect)
 
 void InspectorFrontendClientLocal::openURLExternally(const String& url)
 {
-    auto* localMainFrame = dynamicDowncast<LocalFrame>(m_inspectedPageController->inspectedPage().mainFrame());
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(protectedInspectedPageController()->inspectedPage().mainFrame());
     if (!localMainFrame)
         return;
     Ref mainFrame = *localMainFrame;
@@ -331,7 +337,7 @@ void InspectorFrontendClientLocal::setAttachedWindow(DockSide dockSide)
 
 void InspectorFrontendClientLocal::restoreAttachedWindowHeight()
 {
-    unsigned inspectedPageHeight = m_inspectedPageController->inspectedPage().mainFrame().virtualView()->visibleHeight();
+    unsigned inspectedPageHeight = protectedInspectedPageController()->inspectedPage().mainFrame().virtualView()->visibleHeight();
     String value = m_settings->getProperty(inspectorAttachedHeightSetting);
     unsigned preferredHeight = value.isEmpty() ? defaultAttachedHeight : parseIntegerAllowingTrailingJunk<unsigned>(value).value_or(0);
 
@@ -402,7 +408,7 @@ void InspectorFrontendClientLocal::showResources()
 
 void InspectorFrontendClientLocal::showMainResourceForFrame(LocalFrame* frame)
 {
-    String frameId = m_inspectedPageController->ensurePageAgent().frameId(frame);
+    String frameId = protectedInspectedPageController()->ensurePageAgent().frameId(frame);
     m_frontendAPIDispatcher->dispatchCommandWithResultAsync("showMainResourceForFrame"_s, { JSON::Value::create(frameId) });
 }
 
@@ -428,15 +434,13 @@ bool InspectorFrontendClientLocal::isUnderTest()
 
 unsigned InspectorFrontendClientLocal::inspectionLevel() const
 {
-    return m_inspectedPageController->inspectionLevel() + 1;
+    return protectedInspectedPageController()->inspectionLevel() + 1;
 }
 
 Page* InspectorFrontendClientLocal::inspectedPage() const
 {
-    if (!m_inspectedPageController)
-        return nullptr;
-
-    return &m_inspectedPageController->inspectedPage();
+    RefPtr inspectedPageController = m_inspectedPageController.get();
+    return inspectedPageController ? &inspectedPageController->inspectedPage() : nullptr;
 }
 
 } // namespace WebCore

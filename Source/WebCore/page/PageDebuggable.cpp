@@ -97,9 +97,10 @@ String PageDebuggable::url() const
 
 bool PageDebuggable::hasLocalDebugger() const
 {
-    bool hasLocalDebugger;
+    bool hasLocalDebugger = false;
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, &hasLocalDebugger] {
-        hasLocalDebugger = m_page && m_page->inspectorController().hasLocalFrontend();
+        if (RefPtr page = m_page.get())
+            hasLocalDebugger = page->protectedInspectorController()->hasLocalFrontend();
     });
     return hasLocalDebugger;
 }
@@ -108,7 +109,7 @@ void PageDebuggable::connect(FrontendChannel& channel, bool isAutomaticConnectio
 {
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, &channel, isAutomaticConnection, immediatelyPause] {
         if (RefPtr page = m_page.get())
-            page->inspectorController().connectFrontend(channel, isAutomaticConnection, immediatelyPause);
+            page->protectedInspectorController()->connectFrontend(channel, isAutomaticConnection, immediatelyPause);
     });
 }
 
@@ -116,7 +117,7 @@ void PageDebuggable::disconnect(FrontendChannel& channel)
 {
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, &channel] {
         if (RefPtr page = m_page.get())
-            page->inspectorController().disconnectFrontend(channel);
+            page->protectedInspectorController()->disconnectFrontend(channel);
     });
 }
 
@@ -124,7 +125,7 @@ void PageDebuggable::dispatchMessageFromRemote(String&& message)
 {
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, message = WTFMove(message).isolatedCopy()]() mutable {
         if (RefPtr page = m_page.get())
-            page->inspectorController().dispatchMessageFromFrontend(WTFMove(message));
+            page->protectedInspectorController()->dispatchMessageFromFrontend(WTFMove(message));
     });
 }
 
@@ -132,7 +133,7 @@ void PageDebuggable::setIndicating(bool indicating)
 {
     callOnMainThreadAndWait([this, protectedThis = Ref { *this }, indicating] {
         if (RefPtr page = m_page.get())
-            page->inspectorController().setIndicating(indicating);
+            page->protectedInspectorController()->setIndicating(indicating);
     });
 }
 

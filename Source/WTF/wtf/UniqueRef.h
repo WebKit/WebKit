@@ -77,20 +77,13 @@ public:
         ASSERT(m_ref);
     }
 
-    T* ptr() RETURNS_NONNULL { ASSERT(m_ref); return m_ref.get(); }
     T* ptr() const RETURNS_NONNULL { ASSERT(m_ref); return m_ref.get(); }
+    T& get() const { ASSERT(m_ref); return *m_ref; }
 
-    T& get() { ASSERT(m_ref); return *m_ref; }
-    const T& get() const { ASSERT(m_ref); return *m_ref; }
-
-    T* operator&() { ASSERT(m_ref); return m_ref.get(); }
-    const T* operator&() const { ASSERT(m_ref); return m_ref.get(); }
-
+    T* operator&() const { ASSERT(m_ref); return m_ref.get(); }
     T* operator->() const { ASSERT(m_ref); return m_ref.get(); }
 
-    operator T&() { ASSERT(m_ref); return *m_ref; }
-    operator const T&() const { ASSERT(m_ref); return *m_ref; }
-
+    operator T&() const { ASSERT(m_ref); return *m_ref; }
     T& operator*() const { ASSERT(m_ref); return *m_ref.get(); }
 
     std::unique_ptr<T> moveToUniquePtr() { return WTFMove(m_ref); }

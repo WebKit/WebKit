@@ -437,6 +437,7 @@ public:
     const ContextMenuController& contextMenuController() const { return m_contextMenuController.get(); }
 #endif
     InspectorController& inspectorController() { return m_inspectorController.get(); }
+    WEBCORE_EXPORT Ref<InspectorController> protectedInspectorController();
     PointerCaptureController& pointerCaptureController() { return m_pointerCaptureController.get(); }
 #if ENABLE(POINTER_LOCK)
     PointerLockController& pointerLockController() { return m_pointerLockController.get(); }
@@ -1324,7 +1325,7 @@ private:
 #if ENABLE(CONTEXT_MENUS)
     UniqueRef<ContextMenuController> m_contextMenuController;
 #endif
-    UniqueRef<InspectorController> m_inspectorController;
+    const UniqueRef<InspectorController> m_inspectorController;
     UniqueRef<PointerCaptureController> m_pointerCaptureController;
 #if ENABLE(POINTER_LOCK)
     UniqueRef<PointerLockController> m_pointerLockController;

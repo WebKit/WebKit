@@ -188,7 +188,7 @@ private:
 
     // Keep a pointer to the frontend's inspector controller rather than going through
     // corePage(), since we may need it after the frontend's page has started destruction.
-    CheckedPtr<WebCore::InspectorController> m_frontendController;
+    WeakPtr<WebCore::InspectorController> m_frontendController;
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     RefPtr<WebInspectorUIExtensionController> m_extensionController;

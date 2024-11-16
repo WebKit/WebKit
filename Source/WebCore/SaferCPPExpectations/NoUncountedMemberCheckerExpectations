@@ -61,7 +61,6 @@ inspector/DOMPatchSupport.cpp
 inspector/DOMPatchSupport.h
 inspector/InspectorFrontendHost.cpp
 inspector/InspectorFrontendHost.h
-inspector/InspectorOverlay.h
 inspector/InspectorShaderProgram.h
 inspector/InspectorStyleSheet.cpp
 inspector/InspectorStyleSheet.h

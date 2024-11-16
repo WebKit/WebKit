@@ -58,7 +58,7 @@ void WebPageInspectorTarget::connect(Inspector::FrontendChannel::ConnectionType 
     Ref page = m_page.get();
     m_channel = makeUnique<WebPageInspectorTargetFrontendChannel>(page, identifier(), connectionType);
     if (RefPtr corePage = page->corePage())
-        corePage->inspectorController().connectFrontend(*m_channel);
+        corePage->protectedInspectorController()->connectFrontend(*m_channel);
 }
 
 void WebPageInspectorTarget::disconnect()
@@ -66,14 +66,14 @@ void WebPageInspectorTarget::disconnect()
     if (!m_channel)
         return;
     if (RefPtr corePage = m_page->corePage())
-        corePage->inspectorController().disconnectFrontend(*m_channel);
+        corePage->protectedInspectorController()->disconnectFrontend(*m_channel);
     m_channel.reset();
 }
 
 void WebPageInspectorTarget::sendMessageToTargetBackend(const String& message)
 {
     if (RefPtr corePage = m_page->corePage())
-        corePage->inspectorController().dispatchMessageFromFrontend(message);
+        corePage->protectedInspectorController()->dispatchMessageFromFrontend(message);
 }
 
 String WebPageInspectorTarget::toTargetID(WebCore::PageIdentifier pageID)
