@@ -44,8 +44,8 @@ typedef WTF::double_conversion::StringBuilder DoubleConversionStringBuilder;
 class DragonBoxTest {
 public:
     DragonBoxTest()
-        : builder1(&buffer1[0], sizeof(buffer1))
-        , builder2(&buffer2[0], sizeof(buffer2))
+        : builder1(std::span<char> { buffer1 })
+        , builder2(std::span<char> { buffer2 })
         , converter(DoubleToStringConverter::EcmaScriptConverter())
     {
     }

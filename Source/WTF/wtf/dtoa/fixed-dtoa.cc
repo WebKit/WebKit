@@ -120,28 +120,29 @@ class UInt128 {
 static const int kDoubleSignificandSize = 53;  // Includes the hidden bit.
 
 
-static void FillDigits32FixedLength(uint32_t number, int requested_length,
-                                    BufferReference<char> buffer, int* length) {
+static void FillDigits32FixedLength(uint32_t number, int requested_length, BufferReference<char> buffer, int& length)
+{
   for (int i = requested_length - 1; i >= 0; --i) {
-    buffer[(*length) + i] = '0' + number % 10;
+    buffer[length + i] = '0' + number % 10;
     number /= 10;
   }
-  *length += requested_length;
+  length += requested_length;
 }
 
 
-static void FillDigits32(uint32_t number, BufferReference<char> buffer, int* length) {
+static void FillDigits32(uint32_t number, BufferReference<char> buffer, int& length)
+{
   int number_length = 0;
   // We fill the digits in reverse order and exchange them afterwards.
   while (number != 0) {
     int digit = number % 10;
     number /= 10;
-    buffer[(*length) + number_length] = static_cast<char>('0' + digit);
+    buffer[length + number_length] = static_cast<char>('0' + digit);
     number_length++;
   }
   // Exchange the digits.
-  int i = *length;
-  int j = *length + number_length - 1;
+  int i = length;
+  int j = length + number_length - 1;
   while (i < j) {
     char tmp = buffer[i];
     buffer[i] = buffer[j];
@@ -149,12 +150,12 @@ static void FillDigits32(uint32_t number, BufferReference<char> buffer, int* len
     i++;
     j--;
   }
-  *length += number_length;
+  length += number_length;
 }
 
 
-static void FillDigits64FixedLength(uint64_t number,
-                                    BufferReference<char> buffer, int* length) {
+static void FillDigits64FixedLength(uint64_t number, BufferReference<char> buffer, int& length)
+{
   const uint32_t kTen7 = 10000000;
   // For efficiency cut the number into 3 uint32_t parts, and print those.
   uint32_t part2 = static_cast<uint32_t>(number % kTen7);
@@ -168,7 +169,8 @@ static void FillDigits64FixedLength(uint64_t number,
 }
 
 
-static void FillDigits64(uint64_t number, BufferReference<char> buffer, int* length) {
+static void FillDigits64(uint64_t number, BufferReference<char> buffer, int& length)
+{
   const uint32_t kTen7 = 10000000;
   // For efficiency cut the number into 3 uint32_t parts, and print those.
   uint32_t part2 = static_cast<uint32_t>(number % kTen7);
@@ -189,18 +191,18 @@ static void FillDigits64(uint64_t number, BufferReference<char> buffer, int* len
 }
 
 
-static void RoundUp(BufferReference<char> buffer, int* length, int* decimal_point) {
+static void RoundUp(BufferReference<char> buffer, int& length, int& decimal_point) {
   // An empty buffer represents 0.
-  if (*length == 0) {
+  if (length == 0) {
     buffer[0] = '1';
-    *decimal_point = 1;
-    *length = 1;
+    decimal_point = 1;
+    length = 1;
     return;
   }
   // Round the last digit until we either have a digit that was not '9' or until
   // we reached the first digit.
-  buffer[(*length) - 1]++;
-  for (int i = (*length) - 1; i > 0; --i) {
+  buffer[length - 1]++;
+  for (int i = length - 1; i > 0; --i) {
     if (buffer[i] != '0' + 10) {
       return;
     }
@@ -214,7 +216,7 @@ static void RoundUp(BufferReference<char> buffer, int* length, int* decimal_poin
   // (indicating that the point is now one digit to the right).
   if (buffer[0] == '0' + 10) {
     buffer[0] = '1';
-    (*decimal_point)++;
+    ++decimal_point;
   }
 }
 
@@ -232,7 +234,7 @@ static void RoundUp(BufferReference<char> buffer, int* length, int* decimal_poin
 // rounding-up will change the contents of the buffer to "20000".
 static void FillFractionals(uint64_t fractionals, int exponent,
                             int fractional_count, BufferReference<char> buffer,
-                            int* length, int* decimal_point) {
+                            int& length, int& decimal_point) {
   ASSERT(-128 <= exponent && exponent <= 0);
   // 'fractionals' is a fixed-point number, with binary point at bit
   // (-exponent). Inside the function the non-converted remainder of fractionals
@@ -257,15 +259,13 @@ static void FillFractionals(uint64_t fractionals, int exponent,
       point--;
       int digit = static_cast<int>(fractionals >> point);
       ASSERT(digit <= 9);
-      buffer[*length] = static_cast<char>('0' + digit);
-      (*length)++;
+      buffer[length++] = static_cast<char>('0' + digit);
       fractionals -= static_cast<uint64_t>(digit) << point;
     }
     // If the first bit after the point is set we have to round up.
     ASSERT(fractionals == 0 || point - 1 >= 0);
-    if ((fractionals != 0) && ((fractionals >> (point - 1)) & 1) == 1) {
+    if ((fractionals != 0) && ((fractionals >> (point - 1)) & 1) == 1)
       RoundUp(buffer, length, decimal_point);
-    }
   } else {  // We need 128 bits.
     ASSERT(64 < -exponent && -exponent <= 128);
     UInt128 fractionals128 = UInt128(fractionals, 0);
@@ -280,32 +280,30 @@ static void FillFractionals(uint64_t fractionals, int exponent,
       point--;
       int digit = fractionals128.DivModPowerOf2(point);
       ASSERT(digit <= 9);
-      buffer[*length] = static_cast<char>('0' + digit);
-      (*length)++;
+      buffer[length++] = static_cast<char>('0' + digit);
     }
-    if (fractionals128.BitAt(point - 1) == 1) {
+    if (fractionals128.BitAt(point - 1) == 1)
       RoundUp(buffer, length, decimal_point);
-    }
   }
 }
 
 
 // Removes leading and trailing zeros.
 // If leading zeros are removed then the decimal point position is adjusted.
-static void TrimZeros(BufferReference<char> buffer, int* length, int* decimal_point) {
-  while (*length > 0 && buffer[(*length) - 1] == '0') {
-    (*length)--;
+static void TrimZeros(BufferReference<char> buffer, int& length, int& decimal_point) {
+  while (length > 0 && buffer[length - 1] == '0') {
+    length--;
   }
   int first_non_zero = 0;
-  while (first_non_zero < *length && buffer[first_non_zero] == '0') {
+  while (first_non_zero < length && buffer[first_non_zero] == '0') {
     first_non_zero++;
   }
   if (first_non_zero != 0) {
-    for (int i = first_non_zero; i < *length; ++i) {
+    for (int i = first_non_zero; i < length; ++i) {
       buffer[i - first_non_zero] = buffer[i];
     }
-    *length -= first_non_zero;
-    *decimal_point -= first_non_zero;
+    length -= first_non_zero;
+    decimal_point -= first_non_zero;
   }
 }
 
@@ -313,8 +311,8 @@ static void TrimZeros(BufferReference<char> buffer, int* length, int* decimal_po
 bool FastFixedDtoa(double v,
                    int fractional_count,
                    BufferReference<char> buffer,
-                   int* length,
-                   int* decimal_point) {
+                   int& length,
+                   int& decimal_point) {
   const uint32_t kMaxUInt32 = 0xFFFFFFFF;
   uint64_t significand = Double(v).Significand();
   int exponent = Double(v).Exponent();
@@ -323,9 +321,11 @@ bool FastFixedDtoa(double v,
   // don't know how to compute the representation. 2^73 ~= 9.5*10^21.
   // If necessary this limit could probably be increased, but we don't need
   // more.
-  if (exponent > 20) return false;
-  if (fractional_count > 20) return false;
-  *length = 0;
+  if (exponent > 20)
+      return false;
+  if (fractional_count > 20)
+      return false;
+  length = 0;
   // At most kDoubleSignificandSize bits of the significand are non-zero.
   // Given a 64 bit integer we have 11 0s followed by 53 potentially non-zero
   // bits:  0..11*..0xxx..53*..xx
@@ -365,12 +365,12 @@ bool FastFixedDtoa(double v,
     }
     FillDigits32(quotient, buffer, length);
     FillDigits64FixedLength(remainder, buffer, length);
-    *decimal_point = *length;
+    decimal_point = length;
   } else if (exponent >= 0) {
     // 0 <= exponent <= 11
     significand <<= exponent;
     FillDigits64(significand, buffer, length);
-    *decimal_point = *length;
+    decimal_point = length;
   } else if (exponent > -kDoubleSignificandSize) {
     // We have to cut the number.
     uint64_t integrals = significand >> -exponent;
@@ -380,27 +380,25 @@ bool FastFixedDtoa(double v,
     } else {
       FillDigits32(static_cast<uint32_t>(integrals), buffer, length);
     }
-    *decimal_point = *length;
-    FillFractionals(fractionals, exponent, fractional_count,
-                    buffer, length, decimal_point);
+    decimal_point = length;
+    FillFractionals(fractionals, exponent, fractional_count, buffer, length, decimal_point);
   } else if (exponent < -128) {
     // This configuration (with at most 20 digits) means that all digits must be
     // 0.
     ASSERT(fractional_count <= 20);
     buffer[0] = '\0';
-    *length = 0;
-    *decimal_point = -fractional_count;
+    length = 0;
+    decimal_point = -fractional_count;
   } else {
-    *decimal_point = 0;
-    FillFractionals(significand, exponent, fractional_count,
-                    buffer, length, decimal_point);
+    decimal_point = 0;
+    FillFractionals(significand, exponent, fractional_count, buffer, length, decimal_point);
   }
   TrimZeros(buffer, length, decimal_point);
-  buffer[*length] = '\0';
-  if ((*length) == 0) {
+  buffer[length] = '\0';
+  if (length == 0) {
     // The string is empty and the decimal_point thus has no importance. Mimick
     // Gay's dtoa and and set it to -fractional_count.
-    *decimal_point = -fractional_count;
+    decimal_point = -fractional_count;
   }
   return true;
 }

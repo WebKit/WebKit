@@ -32,8 +32,6 @@
 #include <cstring>
 #include <wtf/Assertions.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #ifndef UNIMPLEMENTED
 #define UNIMPLEMENTED() ASSERT_NOT_REACHED()
 #endif
@@ -203,42 +201,37 @@ inline int StrLength(const char* string) {
 template <typename T>
 class BufferReference {
  public:
-  BufferReference() : start_(nullptr), length_(0) {}
-  BufferReference(T* data, int len) : start_(data), length_(len) {
-    ASSERT_WITH_SECURITY_IMPLICATION(!len || (len > 0 && data));
-  }
+  BufferReference() = default;
+  BufferReference(std::span<T> data) : start_(data) { }
 
   // Returns a BufferReference using the same backing storage as this one,
   // spanning from and including 'from', to but not including 'to'.
-  BufferReference<T> SubBufferReference(int from, int to) {
-    ASSERT_WITH_SECURITY_IMPLICATION(to <= length_);
+  BufferReference<T> SubBufferReference(size_t from, size_t to) {
+    ASSERT_WITH_SECURITY_IMPLICATION(to <= length());
     ASSERT_WITH_SECURITY_IMPLICATION(from < to);
-    ASSERT_WITH_SECURITY_IMPLICATION(0 <= from);
-    return BufferReference<T>(start() + from, to - from);
+    return BufferReference<T>(start_.subspan(from, to - from));
   }
 
   // Returns the length of the BufferReference.
-  int length() const { return length_; }
+  size_t length() const { return start_.size(); }
 
   // Returns whether or not the BufferReference is empty.
-  bool is_empty() const { return length_ == 0; }
+  bool is_empty() const { return start_.empty(); }
 
   // Returns the pointer to the start of the data in the BufferReference.
-  T* start() const { return start_; }
+  std::span<T> start() const { return start_; }
 
   // Access individual BufferReference elements - checks bounds in debug mode.
-  T& operator[](int index) const {
-    ASSERT_WITH_SECURITY_IMPLICATION(0 <= index && index < length_);
+  T& operator[](size_t index) const {
     return start_[index];
   }
 
   T& first() { return start_[0]; }
 
-  T& last() { return start_[length_ - 1]; }
+  T& last() { return start_.back(); }
 
  private:
-  T* start_;
-  int length_;
+  std::span<T> start_;
 };
 
 
@@ -247,8 +240,8 @@ class BufferReference {
 // buffer bounds on all operations in debug mode.
 class StringBuilder {
  public:
-  StringBuilder(char* buffer, int buffer_size)
-      : buffer_(buffer, buffer_size), position_(0) { }
+  StringBuilder(std::span<char> buffer)
+      : buffer_(buffer) { }
 
   ~StringBuilder() { if (!is_finalized()) Finalize(); }
 
@@ -268,7 +261,7 @@ class StringBuilder {
   // instead.
   void AddCharacter(char c) {
     ASSERT(c != '\0');
-    ASSERT_WITH_SECURITY_IMPLICATION(!is_finalized() && position_ < buffer_.length());
+    ASSERT_WITH_SECURITY_IMPLICATION(!is_finalized() && position_ < static_cast<int>(buffer_.length()));
     buffer_[position_++] = c;
   }
 
@@ -281,7 +274,7 @@ class StringBuilder {
   // Add the first 'n' characters of the given string 's' to the
   // builder. The input string must have enough characters.
   void AddSubstring(const char* s, int n) {
-    ASSERT_WITH_SECURITY_IMPLICATION(!is_finalized() && position_ + n < buffer_.length());
+    ASSERT_WITH_SECURITY_IMPLICATION(!is_finalized() && position_ + n < static_cast<int>(buffer_.length()));
     ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(n) <= strnlen(s, n));
     memmove(&buffer_[position_], s, n * kCharSize);
     position_ += n;
@@ -290,37 +283,34 @@ class StringBuilder {
 
   // Add character padding to the builder. If count is non-positive,
   // nothing is added to the builder.
-  void AddPadding(char c, int count) {
-    for (int i = 0; i < count; i++) {
+  void AddPadding(char c, size_t count) {
+    for (size_t i = 0; i < count; ++i)
       AddCharacter(c);
-    }
   }
 
-  void RemoveCharacters(int start, int end) {
-    ASSERT_WITH_SECURITY_IMPLICATION(start >= 0);
-    ASSERT_WITH_SECURITY_IMPLICATION(end >= 0);
+  void RemoveCharacters(size_t start, size_t end) {
     ASSERT_WITH_SECURITY_IMPLICATION(start <= end);
-    ASSERT_WITH_SECURITY_IMPLICATION(end <= position_);
+    ASSERT_WITH_SECURITY_IMPLICATION(static_cast<int>(end) <= position_);
     std::memmove(&buffer_[start], &buffer_[end], position_ - end);
     position_ -= end - start;
   }
 
   // Finalize the string by 0-terminating it and returning the buffer.
   std::span<char> Finalize() {
-    ASSERT_WITH_SECURITY_IMPLICATION(!is_finalized() && position_ < buffer_.length());
-    size_t length = (position_ < 0) ? 0 : static_cast<size_t>(position_);
+    ASSERT_WITH_SECURITY_IMPLICATION(!is_finalized() && position_ < static_cast<int>(buffer_.length()));
+    size_t length = position_ < 0 ? 0 : static_cast<size_t>(position_);
     buffer_[length] = '\0';
     // Make sure nobody managed to add a 0-character to the
     // buffer while building the string.
-    ASSERT(strlen(buffer_.start()) == length);
+    ASSERT(strlen(buffer_.start().data()) == length);
     position_ = -1;
     ASSERT(is_finalized());
-    return std::span { buffer_.start(), length };
+    return buffer_.start().first(length);
   }
 
  private:
   BufferReference<char> buffer_;
-  int position_;
+  int position_ { 0 };
 
   bool is_finalized() const { return position_ < 0; }
 
@@ -382,5 +372,3 @@ constexpr int default_decimal_in_shortest_high = 21;
 
 }  // namespace double_conversion
 }  // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
