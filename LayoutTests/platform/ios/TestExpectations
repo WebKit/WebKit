@@ -7539,3 +7539,8 @@ fast/events/ios/key-events-comprehensive/key-events-shift.html [ Pass Timeout ]
 [ x86_64 ] webgl/1.0.x/conformance/ogles/GL/swizzlers/swizzlers_041_to_048.html [ Pass Failure ]
 [ x86_64 ] webgl/1.0.x/conformance/ogles/GL/swizzlers/swizzlers_113_to_120.html [ Pass Failure ]
 [ x86_64 ] webgl/2.0.y/conformance/ogles/GL/swizzlers/swizzlers_097_to_104.html [ Pass Failure ]
+
+# webkit.org/b/280991 (NEW TEST (280648@main): [ wk2 ] 2 media/media-vp8-webm*.html tests are flaky ImageOnlyFailures.)
+# Missing AVSampleBufferDisplayLayer's ReadyForDisplayDidChangeNotification
+media/media-vp8-webm.html [ Pass ImageOnlyFailure ]
+media/media-vp8-webm-seek-to-start.html [ Pass ImageOnlyFailure ]
