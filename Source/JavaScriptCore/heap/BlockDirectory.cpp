@@ -388,6 +388,7 @@ void BlockDirectory::shrink()
     }
 }
 
+// FIXME: rdar://139998916
 MarkedBlock::Handle* BlockDirectory::findMarkedBlockHandleDebug(MarkedBlock* block)
 {
     for (size_t index = 0; index < m_blocks.size(); ++index) {
