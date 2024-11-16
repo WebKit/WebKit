@@ -1235,7 +1235,7 @@ WI.Resource = class Resource extends WI.SourceCode
         for (let key in this.requestHeaders)
             command.push("-H " + escapeStringPosix(`${key}: ${this.requestHeaders[key]}`));
 
-        if (this.requestDataContentType && this.requestMethod !== "GET" && this.requestData) {
+        if (this.requestDataContentType && this.requestMethod !== WI.HTTPUtilities.RequestMethod.GET && this.requestData) {
             if (this.requestDataContentType.match(/^application\/x-www-form-urlencoded\s*(;.*)?$/i))
                 command.push("--data " + escapeStringPosix(this.requestData));
             else

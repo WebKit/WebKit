@@ -101,6 +101,7 @@ localizedStrings["(local override)"] = "(local override)";
 localizedStrings["(many)"] = "(many)";
 localizedStrings["(memory)"] = "(memory)";
 localizedStrings["(multiple)"] = "(multiple)";
+localizedStrings["(passthrough)"] = "(passthrough)";
 localizedStrings["(program)"] = "(program)";
 localizedStrings["(service worker)"] = "(service worker)";
 localizedStrings["(uninitialized)"] = "(uninitialized)";

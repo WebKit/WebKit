@@ -96,7 +96,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         switch (data.type) {
         case WI.LocalResourceOverride.InterceptType.Request:
             data.requestURL = this._requestURLCodeMirror.getValue();
-            data.requestMethod = this._methodSelectElement.value;
+            data.requestMethod = this._methodSelectElement.value || "";
             data.requestHeaders = headers;
             break;
 
@@ -180,7 +180,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
         placeholderData.url ||= this._defaultURL();
         placeholderData.requestURL ||= placeholderData.url;
-        placeholderData.method ||= "GET";
+        placeholderData.method ??= WI.HTTPUtilities.RequestMethod.GET;
         placeholderData.mimeType ||= "text/javascript";
         if (!placeholderData.statusCode || placeholderData.statusCode === "NaN") {
             placeholderData.statusCode = "200";
@@ -315,6 +315,7 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
         let requestURLRow = null;
         let methodRowElement = null;
+        let updateMethodOptions = null;
         if (WI.NetworkManager.supportsOverridingRequests()) {
             requestURLRow = createRow(WI.UIString("Redirect"), "redirect", valueData.requestURL || "", placeholderData.requestURL);
             this._requestURLCodeMirror = requestURLRow.codeMirror;
@@ -330,29 +331,49 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
 
             this._methodSelectElement = methodDataElement.appendChild(document.createElement("select"));
 
-            [
-                WI.HTTPUtilities.RequestMethod.GET,
-                WI.HTTPUtilities.RequestMethod.POST,
-                null, // divider
-                WI.HTTPUtilities.RequestMethod.HEAD,
-                WI.HTTPUtilities.RequestMethod.PATCH,
-                WI.HTTPUtilities.RequestMethod.PUT,
-                WI.HTTPUtilities.RequestMethod.DELETE,
-                null, // divider
-                WI.HTTPUtilities.RequestMethod.OPTIONS,
-                WI.HTTPUtilities.RequestMethod.CONNECT,
-                WI.HTTPUtilities.RequestMethod.TRACE,
-            ].forEach((method) => {
-                if (!method) {
-                    this._methodSelectElement.appendChild(document.createElement("hr"));
-                    return;
+            updateMethodOptions = () => {
+                let isPassthrough = !!this._isPassthroughCheckbox?.checked;
+
+                let oldValue = this._methodSelectElement.value;
+
+                this._methodSelectElement.removeChildren();
+
+                let groups = [];
+                if (isPassthrough)
+                    groups.push([""]);
+                groups.push([
+                    WI.HTTPUtilities.RequestMethod.GET,
+                    WI.HTTPUtilities.RequestMethod.POST,
+                ]);
+                groups.push([
+                    WI.HTTPUtilities.RequestMethod.HEAD,
+                    WI.HTTPUtilities.RequestMethod.PATCH,
+                    WI.HTTPUtilities.RequestMethod.PUT,
+                    WI.HTTPUtilities.RequestMethod.DELETE,
+                ]);
+                groups.push([
+                    WI.HTTPUtilities.RequestMethod.OPTIONS,
+                    WI.HTTPUtilities.RequestMethod.CONNECT,
+                    WI.HTTPUtilities.RequestMethod.TRACE,
+                ]);
+
+                for (let group of groups) {
+                    if (this._methodSelectElement.children.length)
+                        this._methodSelectElement.appendChild(document.createElement("hr"));
+
+                    for (let method of group) {
+                        let optionElement = this._methodSelectElement.appendChild(document.createElement("option"));
+                        if (method)
+                            optionElement.textContent = method;
+                        else {
+                            optionElement.textContent = WI.UIString("(passthrough)");
+                            optionElement.value = "";
+                        }
+                    }
                 }
 
-                let optionElement = this._methodSelectElement.appendChild(document.createElement("option"));
-                optionElement.textContent = method;
-            });
-
-            this._methodSelectElement.value = valueData.method || placeholderData.method;
+                this._methodSelectElement.value = oldValue || (!isPassthrough && ("method" in valueData ? valueData.method : placeholderData.method)) || "";
+            };
 
             this._methodSelectElement.id = "local-resource-override-popover-method-input-field";
             methodLabelElement.setAttribute("for", this._methodSelectElement.id);
@@ -531,6 +552,9 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         this._isPassthroughCheckbox = isPassthroughLabel.appendChild(document.createElement("input"));
         this._isPassthroughCheckbox.type = "checkbox";
         this._isPassthroughCheckbox.checked = !!localResourceOverride?.isPassthrough;
+        this._isPassthroughCheckbox.addEventListener("change", (event) => {
+            updateMethodOptions?.();
+        });
 
         let isPassthroughLabelText = isPassthroughLabel.appendChild(document.createTextNode(""));
 
@@ -547,6 +571,8 @@ WI.LocalResourceOverridePopover = class LocalResourceOverridePopover extends WI.
         }
 
         popoverContentElement.appendChild(WI.ReferencePage.LocalOverrides.ConfiguringLocalOverrides.createLinkElement());
+
+        updateMethodOptions?.();
 
         let incrementStatusCode = () => {
             let x = parseInt(this._statusCodeCodeMirror.getValue());
