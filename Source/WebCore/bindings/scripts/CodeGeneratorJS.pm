@@ -6771,6 +6771,7 @@ sub GenerateCallbackHeaderContent
             
             # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
             my $functionName = $operation->extendedAttributes->{ImplementedAs} || $operation->name || "handleEvent";
+            $functionName .= "RethrowingException" if $operation->extendedAttributes->{RethrowException};
 
             push(@$contentRef, "    ${nativeReturnType} ${functionName}(" . join(", ", @arguments) . ") override;\n");
         }
@@ -6896,7 +6897,9 @@ sub GenerateCallbackImplementationContent
             
             # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
             my $functionName = $operation->name || "handleEvent";
+
             my $functionImplementationName = $operation->extendedAttributes->{ImplementedAs} || $functionName;
+            $functionImplementationName .= "RethrowingException" if $operation->extendedAttributes->{RethrowException};
 
             my @arguments = ();
 

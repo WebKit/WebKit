@@ -391,7 +391,7 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterfac
     return { returnValue.releaseReturnValue() };
 }
 
-CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterface::callbackThatRethrowsExceptions(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam)
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackInterface::callbackThatRethrowsExceptionsRethrowingException(typename IDLEnumeration<TestCallbackInterface::Enum>::ParameterType enumParam)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

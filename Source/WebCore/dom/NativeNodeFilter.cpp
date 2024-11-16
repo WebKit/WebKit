@@ -39,7 +39,7 @@ bool NativeNodeFilter::hasCallback() const
     return true;
 }
 
-CallbackResult<unsigned short> NativeNodeFilter::acceptNode(Node& node)
+CallbackResult<unsigned short> NativeNodeFilter::acceptNodeRethrowingException(Node& node)
 {
     return Ref { m_condition }->acceptNode(node);
 }

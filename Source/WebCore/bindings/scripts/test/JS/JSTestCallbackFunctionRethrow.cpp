@@ -55,7 +55,7 @@ JSTestCallbackFunctionRethrow::~JSTestCallbackFunctionRethrow()
 #endif
 }
 
-CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunctionRethrow::handleEvent(typename IDLSequence<IDLLong>::ParameterType argument)
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunctionRethrow::handleEventRethrowingException(typename IDLSequence<IDLLong>::ParameterType argument)
 {
     if (!canInvokeCallback())
         return CallbackResultType::UnableToExecute;

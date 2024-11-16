@@ -802,7 +802,7 @@ WebCore::NodeFilter* core(DOMNodeFilter *wrapper)
     if (!node)
         raiseTypeErrorException();
     
-    auto result = core(self)->acceptNode(*core(node));
+    auto result = core(self)->acceptNodeRethrowingException(*core(node));
     return result.type() == CallbackResultType::Success ? result.releaseReturnValue() : NodeFilter::FILTER_REJECT;
 }
 
