@@ -133,9 +133,9 @@ public:
     template<size_t N = 32>
     UpconvertedCharactersWithSize<N> upconvertedCharacters() const;
 
-    template<typename CharacterType> void getCharacters(CharacterType*) const;
-    template<typename CharacterType> void getCharacters8(CharacterType*) const;
-    template<typename CharacterType> void getCharacters16(CharacterType*) const;
+    template<typename CharacterType> void getCharacters(std::span<CharacterType>) const;
+    template<typename CharacterType> void getCharacters8(std::span<CharacterType>) const;
+    template<typename CharacterType> void getCharacters16(std::span<CharacterType>) const;
 
     enum class CaseConvertType { Upper, Lower };
     WTF_EXPORT_PRIVATE void getCharactersWithASCIICase(CaseConvertType, LChar*) const;
@@ -608,17 +608,17 @@ template<bool isSpecialCharacter(UChar)> inline bool StringView::containsOnly() 
     return WTF::containsOnly<isSpecialCharacter>(span16());
 }
 
-template<typename CharacterType> inline void StringView::getCharacters8(CharacterType* destination) const
+template<typename CharacterType> inline void StringView::getCharacters8(std::span<CharacterType> destination) const
 {
-    StringImpl::copyCharacters(destination, span8());
+    StringImpl::copyCharacters(destination.data(), span8());
 }
 
-template<typename CharacterType> inline void StringView::getCharacters16(CharacterType* destination) const
+template<typename CharacterType> inline void StringView::getCharacters16(std::span<CharacterType> destination) const
 {
-    StringImpl::copyCharacters(destination, span16());
+    StringImpl::copyCharacters(destination.data(), span16());
 }
 
-template<typename CharacterType> inline void StringView::getCharacters(CharacterType* destination) const
+template<typename CharacterType> inline void StringView::getCharacters(std::span<CharacterType> destination) const
 {
     if (is8Bit())
         getCharacters8(destination);
@@ -726,7 +726,7 @@ public:
 
     unsigned length() const { return m_string.length(); }
     bool is8Bit() const { return m_string.is8Bit(); }
-    template<typename CharacterType> void writeTo(CharacterType* destination) { m_string.getCharacters(destination); }
+    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) { m_string.getCharacters(destination); }
 
 private:
     StringView m_string;
@@ -736,7 +736,7 @@ template<typename CharacterType, size_t inlineCapacity> void append(Vector<Chara
 {
     size_t oldSize = buffer.size();
     buffer.grow(oldSize + string.length());
-    string.getCharacters(buffer.mutableSpan().subspan(oldSize).data());
+    string.getCharacters(buffer.mutableSpan().subspan(oldSize));
 }
 
 ALWAYS_INLINE bool equal(StringView a, StringView b, unsigned length)

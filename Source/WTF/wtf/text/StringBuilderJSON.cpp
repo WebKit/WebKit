@@ -38,7 +38,7 @@ void StringBuilder::appendQuotedJSONString(const String& string)
     auto stringLengthValue = stringLength.value();
 
     if (is8Bit() && string.is8Bit()) {
-        if (auto* output = extendBufferForAppending<LChar>(saturatedSum<int32_t>(m_length, stringLengthValue))) {
+        if (auto* output = extendBufferForAppending<LChar>(saturatedSum<int32_t>(m_length, stringLengthValue)).data()) {
             auto* end = output + stringLengthValue;
             *output++ = '"';
             appendEscapedJSONStringContent(output, string.span8());
@@ -47,7 +47,7 @@ void StringBuilder::appendQuotedJSONString(const String& string)
                 shrink(m_length - (end - output));
         }
     } else {
-        if (auto* output = extendBufferForAppendingWithUpconvert(saturatedSum<int32_t>(m_length, stringLengthValue))) {
+        if (auto* output = extendBufferForAppendingWithUpconvert(saturatedSum<int32_t>(m_length, stringLengthValue)).data()) {
             auto* end = output + stringLengthValue;
             *output++ = '"';
             if (string.is8Bit())

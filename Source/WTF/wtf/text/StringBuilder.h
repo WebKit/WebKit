@@ -108,10 +108,10 @@ private:
     template<typename CharacterType> void reallocateBuffer(unsigned requiredCapacity);
     void reallocateBuffer(unsigned requiredCapacity);
 
-    template<typename CharacterType> CharacterType* extendBufferForAppending(unsigned requiredLength);
-    template<typename CharacterType> CharacterType* extendBufferForAppendingSlowCase(unsigned requiredLength);
-    WTF_EXPORT_PRIVATE LChar* extendBufferForAppendingLChar(unsigned requiredLength);
-    WTF_EXPORT_PRIVATE UChar* extendBufferForAppendingWithUpconvert(unsigned requiredLength);
+    template<typename CharacterType> std::span<CharacterType> extendBufferForAppending(unsigned requiredLength);
+    template<typename CharacterType> std::span<CharacterType> extendBufferForAppendingSlowCase(unsigned requiredLength);
+    WTF_EXPORT_PRIVATE std::span<LChar> extendBufferForAppendingLChar(unsigned requiredLength);
+    WTF_EXPORT_PRIVATE std::span<UChar> extendBufferForAppendingWithUpconvert(unsigned requiredLength);
 
     WTF_EXPORT_PRIVATE void reifyString() const;
 
@@ -309,12 +309,12 @@ template<typename... StringTypeAdapters> void StringBuilder::appendFromAdapters(
         auto requiredLength = saturatedSum<uint32_t>(m_length, adapters.length()...);
         if (is8Bit() && are8Bit(adapters...)) {
             auto destination = extendBufferForAppendingLChar(requiredLength);
-            if (!destination)
+            if (!destination.data())
                 return;
             stringTypeAdapterAccumulator(destination, adapters...);
         } else {
             auto destination = extendBufferForAppendingWithUpconvert(requiredLength);
-            if (!destination)
+            if (!destination.data())
                 return;
             stringTypeAdapterAccumulator(destination, adapters...);
         }

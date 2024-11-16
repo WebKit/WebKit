@@ -182,14 +182,14 @@ inline JSString* repeatCharacter(JSGlobalObject* globalObject, CharacterType cha
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    CharacterType* buffer = nullptr;
+    std::span<CharacterType> buffer;
     auto impl = StringImpl::tryCreateUninitialized(repeatCount, buffer);
     if (!impl) {
         throwOutOfMemoryError(globalObject, scope);
         return nullptr;
     }
 
-    std::fill_n(buffer, repeatCount, character);
+    std::fill_n(buffer.data(), repeatCount, character);
 
     RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
 }
@@ -222,7 +222,8 @@ void JSRopeString::resolveToBufferSlow(JSString* fiber0, JSString* fiber1, JSStr
     // Keep in mind that resolveToBufferSlow signature must be the same to resolveToBuffer to encourage tail-calls by clang, that's the reason why
     // it takes the last stackLimit parameter still while it is not used here.
 
-    CharacterType* position = buffer + length; // We will be working backwards over the rope.
+    CharacterType* end = buffer + length; // We will be working backwards over the rope.
+    CharacterType* position = end; // We will be working backwards over the rope.
     Vector<JSString*, 32, UnsafeVectorOverflow> workQueue; // These strings are kept alive by the parent rope, so using a Vector is OK.
 
     workQueue.append(fiber0);
@@ -243,7 +244,7 @@ void JSRopeString::resolveToBufferSlow(JSString* fiber0, JSString* fiber1, JSStr
                 unsigned offset = currentFiberAsRope->substringOffset();
                 unsigned length = currentFiberAsRope->length();
                 position -= length;
-                view.substring(offset, length).getCharacters(position);
+                view.substring(offset, length).getCharacters(unsafeMakeSpan(position, end - position));
                 continue;
             }
             for (size_t i = 0; i < JSRopeString::s_maxInternalRopeLength && currentFiberAsRope->fiber(i); ++i)
@@ -253,7 +254,7 @@ void JSRopeString::resolveToBufferSlow(JSString* fiber0, JSString* fiber1, JSStr
 
         StringView view = *currentFiber->valueInternal().impl();
         position -= view.length();
-        view.getCharacters(position);
+        view.getCharacters(unsafeMakeSpan(position, end - position));
     } while (!workQueue.isEmpty());
 
     ASSERT(buffer == position);
@@ -278,11 +279,11 @@ inline void JSRopeString::resolveToBuffer(JSString* fiber0, JSString* fiber1, JS
             MUST_TAIL_CALL return JSRopeString::resolveToBufferSlow(fiber0, fiber1, fiber2, buffer, length, stackLimit);
 
         StringView view0 = fiber0->valueInternal().impl();
-        view0.getCharacters(buffer);
+        view0.getCharacters(unsafeMakeSpan(buffer, length));
         StringView view1 = fiber1->valueInternal().impl();
-        view1.getCharacters(buffer + view0.length());
+        view1.getCharacters(unsafeMakeSpan(buffer + view0.length(), length - view0.length()));
         StringView view2 = fiber2->valueInternal().impl();
-        view2.getCharacters(buffer + view0.length() + view1.length());
+        view2.getCharacters(unsafeMakeSpan(buffer + view0.length() + view1.length(), length - view0.length() - view1.length()));
         return;
     }
 
@@ -295,13 +296,13 @@ inline void JSRopeString::resolveToBuffer(JSString* fiber0, JSString* fiber1, JS
             auto* rope0 = static_cast<const JSRopeString*>(fiber0);
             {
                 StringView view1 = fiber1->valueInternal().impl();
-                view1.getCharacters(buffer + rope0->length());
+                view1.getCharacters(unsafeMakeSpan(buffer + rope0->length(), length - rope0->length()));
             }
             if (rope0->isSubstring()) {
                 StringView view0 = *rope0->substringBase()->valueInternal().impl();
                 unsigned offset = rope0->substringOffset();
-                unsigned length = rope0->length();
-                view0.substring(offset, length).getCharacters(buffer);
+
+                view0.substring(offset, rope0->length()).getCharacters(unsafeMakeSpan(buffer, length - rope0->length()));
                 return;
             }
             MUST_TAIL_CALL return resolveToBuffer(rope0->fiber0(), rope0->fiber1(), rope0->fiber2(), buffer, rope0->length(), stackLimit);
@@ -311,30 +312,29 @@ inline void JSRopeString::resolveToBuffer(JSString* fiber0, JSString* fiber1, JS
             auto* rope1 = static_cast<const JSRopeString*>(fiber1);
             {
                 StringView view0 = fiber0->valueInternal().impl();
-                view0.getCharacters(buffer);
+                view0.getCharacters(unsafeMakeSpan(buffer, length));
                 buffer += view0.length();
             }
             if (rope1->isSubstring()) {
                 StringView view1 = *rope1->substringBase()->valueInternal().impl();
                 unsigned offset = rope1->substringOffset();
-                unsigned length = rope1->length();
-                view1.substring(offset, length).getCharacters(buffer);
+                view1.substring(offset, rope1->length()).getCharacters(unsafeMakeSpan(buffer, length));
                 return;
             }
             MUST_TAIL_CALL return resolveToBuffer(rope1->fiber0(), rope1->fiber1(), rope1->fiber2(), buffer, rope1->length(), stackLimit);
         }
 
         StringView view0 = fiber0->valueInternal().impl();
-        view0.getCharacters(buffer);
+        view0.getCharacters(unsafeMakeSpan(buffer, length));
         StringView view1 = fiber1->valueInternal().impl();
-        view1.getCharacters(buffer + view0.length());
+        view1.getCharacters(unsafeMakeSpan(buffer + view0.length(), length - view0.length()));
         return;
     }
 
     // 1 fiber.
     if (!fiber0->isRope()) {
         StringView view0 = fiber0->valueInternal().impl();
-        view0.getCharacters(buffer);
+        view0.getCharacters(unsafeMakeSpan(buffer, length));
         return;
     }
 
@@ -342,8 +342,7 @@ inline void JSRopeString::resolveToBuffer(JSString* fiber0, JSString* fiber1, JS
     if (rope0->isSubstring()) {
         StringView view0 = *rope0->substringBase()->valueInternal().impl();
         unsigned offset = rope0->substringOffset();
-        unsigned length = rope0->length();
-        view0.substring(offset, length).getCharacters(buffer);
+        view0.substring(offset, rope0->length()).getCharacters(unsafeMakeSpan(buffer, length));
         return;
     }
     MUST_TAIL_CALL return resolveToBuffer(rope0->fiber0(), rope0->fiber1(), rope0->fiber2(), buffer, rope0->length(), stackLimit);
@@ -453,12 +452,11 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* s1
 
             auto* rope0 = static_cast<const JSRopeString*>(fiber0);
             StringView view1 = fiber1->valueInternal().impl();
-            view1.getCharacters(buffer + rope0->length());
+            view1.getCharacters(unsafeMakeSpan(buffer + rope0->length(), length - rope0->length()));
             if (rope0->isSubstring()) {
                 StringView view0 = *rope0->substringBase()->valueInternal().impl();
                 unsigned offset = rope0->substringOffset();
-                unsigned length = rope0->length();
-                view0.substring(offset, length).getCharacters(buffer);
+                view0.substring(offset, rope0->length()).getCharacters(unsafeMakeSpan(buffer, length));
                 return;
             }
             return JSRopeString::resolveToBuffer(rope0->fiber0(), rope0->fiber1(), rope0->fiber2(), buffer, rope0->length(), stackLimit);
@@ -466,22 +464,21 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* s1
 
         if (fiber1->isRope()) {
             StringView view0 = fiber0->valueInternal().impl();
-            view0.getCharacters(buffer);
+            view0.getCharacters(unsafeMakeSpan(buffer, length));
             auto* rope1 = static_cast<const JSRopeString*>(fiber1);
             if (rope1->isSubstring()) {
                 StringView view1 = *rope1->substringBase()->valueInternal().impl();
                 unsigned offset = rope1->substringOffset();
-                unsigned length = rope1->length();
-                view1.substring(offset, length).getCharacters(buffer + view0.length());
+                view1.substring(offset, rope1->length()).getCharacters(unsafeMakeSpan(buffer + view0.length(), length - view0.length()));
                 return;
             }
             return JSRopeString::resolveToBuffer(rope1->fiber0(), rope1->fiber1(), rope1->fiber2(), buffer + view0.length(), rope1->length(), stackLimit);
         }
 
         StringView view0 = fiber0->valueInternal().impl();
-        view0.getCharacters(buffer);
+        view0.getCharacters(unsafeMakeSpan(buffer, length));
         StringView view1 = fiber1->valueInternal().impl();
-        view1.getCharacters(buffer + view0.length());
+        view1.getCharacters(unsafeMakeSpan(buffer + view0.length(), length - view0.length()));
     };
 
     if (s1->is8Bit() && s2->is8Bit()) {
@@ -536,11 +533,11 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* s1
             return JSRopeString::resolveToBufferSlow(fiber0, fiber1, fiber2, buffer, length, bitwise_cast<uint8_t*>(vm.softStackLimit()));
 
         StringView view0 = fiber0->valueInternal().impl();
-        view0.getCharacters(buffer);
+        view0.getCharacters(unsafeMakeSpan(buffer, length));
         StringView view1 = fiber1->valueInternal().impl();
-        view1.getCharacters(buffer + view0.length());
+        view1.getCharacters(unsafeMakeSpan(buffer + view0.length(), length - view0.length()));
         StringView view2 = fiber2->valueInternal().impl();
-        view2.getCharacters(buffer + view0.length() + view1.length());
+        view2.getCharacters(unsafeMakeSpan(buffer + view0.length() + view1.length(), length - view0.length() - view1.length()));
     };
 
     if (s1->is8Bit() && s2->is8Bit() && s3->is8Bit()) {

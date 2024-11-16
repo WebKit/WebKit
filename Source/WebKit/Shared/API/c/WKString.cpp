@@ -66,7 +66,7 @@ size_t WKStringGetCharacters(WKStringRef stringRef, WKChar* buffer, size_t buffe
     unsigned unsignedBufferLength = std::min<size_t>(bufferLength, std::numeric_limits<unsigned>::max());
     auto substring = WebKit::toImpl(stringRef)->stringView().left(unsignedBufferLength);
 
-    substring.getCharacters(reinterpret_cast<UChar*>(buffer));
+    substring.getCharacters(unsafeMakeSpan(reinterpret_cast<UChar*>(buffer), bufferLength));
     return substring.length();
 }
 

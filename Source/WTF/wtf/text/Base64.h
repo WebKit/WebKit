@@ -193,9 +193,9 @@ public:
     unsigned length() const { return m_encodedLength; }
     bool is8Bit() const { return true; }
 
-    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const
     {
-        base64Encode(m_base64.input, unsafeMakeSpan(destination, m_encodedLength), m_base64.options);
+        base64Encode(m_base64.input, destination.first(m_encodedLength), m_base64.options);
     }
 
 private:

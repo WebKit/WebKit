@@ -35,25 +35,25 @@ namespace JSC {
 JSStringJoiner::~JSStringJoiner() = default;
 
 template<typename CharacterType>
-static inline void appendStringToData(CharacterType*& data, StringView string)
+static inline void appendStringToData(std::span<CharacterType>& data, StringView string)
 {
     if constexpr (std::is_same_v<CharacterType, LChar>) {
         ASSERT(string.is8Bit());
         string.getCharacters8(data);
     } else
         string.getCharacters(data);
-    data += string.length();
+    data = data.subspan(string.length());
 }
 
 template<typename OutputCharacterType, typename SeparatorCharacterType>
-static inline void appendStringToData(OutputCharacterType*& data, std::span<const SeparatorCharacterType> separator)
+static inline void appendStringToData(std::span<OutputCharacterType>& data, std::span<const SeparatorCharacterType> separator)
 {
-    StringImpl::copyCharacters(data, separator);
-    data += separator.size();
+    StringImpl::copyCharacters(data.data(), separator);
+    data = data.subspan(separator.size());
 }
 
 template<typename CharacterType>
-static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(CharacterType*& data, UChar separatorCharacter, StringView string, unsigned count)
+static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(std::span<CharacterType>& data, UChar separatorCharacter, StringView string, unsigned count)
 {
 #if OS(DARWIN)
     if constexpr (std::is_same_v<CharacterType, LChar>) {
@@ -63,28 +63,28 @@ static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(Charact
             case 16: {
                 alignas(16) LChar pattern[16];
                 pattern[0] = separatorCharacter;
-                string.getCharacters8(pattern + 1);
+                string.getCharacters8(std::span { pattern }.subspan(1));
                 size_t fillLength = count * 16;
-                memset_pattern16(data, pattern, fillLength);
-                data += fillLength;
+                memset_pattern16(data.data(), pattern, fillLength);
+                data = data.subspan(fillLength);
                 return;
             }
             case 8: {
                 alignas(8) LChar pattern[8];
                 pattern[0] = separatorCharacter;
-                string.getCharacters8(pattern + 1);
+                string.getCharacters8(std::span { pattern }.subspan(1));
                 size_t fillLength = count * 8;
-                memset_pattern8(data, pattern, fillLength);
-                data += fillLength;
+                memset_pattern8(data.data(), pattern, fillLength);
+                data = data.subspan(fillLength);
                 return;
             }
             case 4: {
                 alignas(4) LChar pattern[4];
                 pattern[0] = separatorCharacter;
-                string.getCharacters8(pattern + 1);
+                string.getCharacters8(std::span { pattern }.subspan(1));
                 size_t fillLength = count * 4;
-                memset_pattern4(data, pattern, fillLength);
-                data += fillLength;
+                memset_pattern4(data.data(), pattern, fillLength);
+                data = data.subspan(fillLength);
                 return;
             }
             default:
@@ -95,7 +95,8 @@ static inline void appendStringToDataWithOneCharacterSeparatorRepeatedly(Charact
 #endif
 
     while (count--) {
-        *data++ = separatorCharacter;
+        data[0] = separatorCharacter;
+        data = data.subspan(1);
         appendStringToData(data, string);
     }
 }
@@ -105,7 +106,7 @@ static inline String joinStrings(const JSStringJoiner::Entries& strings, std::sp
 {
     ASSERT(joinedLength);
 
-    OutputCharacterType* data;
+    std::span<OutputCharacterType> data;
     String result = StringImpl::tryCreateUninitialized(joinedLength, data);
     if (UNLIKELY(result.isNull()))
         return result;
@@ -159,7 +160,7 @@ static inline String joinStrings(const JSStringJoiner::Entries& strings, std::sp
         break;
     }
     }
-    ASSERT(data == result.span<OutputCharacterType>().data() + joinedLength);
+    ASSERT(data.data() == result.span<OutputCharacterType>().data() + joinedLength);
 
     return result;
 }

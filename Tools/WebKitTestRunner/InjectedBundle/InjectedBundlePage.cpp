@@ -69,7 +69,7 @@ public:
     StringTypeAdapter(WKStringRef);
     unsigned length() const { return m_string ? WKStringGetLength(m_string) : 0; }
     bool is8Bit() const { return !m_string; }
-    template<typename CharacterType> void writeTo(CharacterType*) const;
+    template<typename CharacterType> void writeTo(std::span<CharacterType>) const;
 
 private:
     WKStringRef m_string;
@@ -80,14 +80,14 @@ inline StringTypeAdapter<WKStringRef>::StringTypeAdapter(WKStringRef string)
 {
 }
 
-template<> inline void StringTypeAdapter<WKStringRef>::writeTo<LChar>(LChar*) const
+template<> inline void StringTypeAdapter<WKStringRef>::writeTo<LChar>(std::span<LChar>) const
 {
 }
 
-template<> inline void StringTypeAdapter<WKStringRef>::writeTo<UChar>(UChar* destination) const
+template<> inline void StringTypeAdapter<WKStringRef>::writeTo<UChar>(std::span<UChar> destination) const
 {
     if (m_string)
-        WKStringGetCharacters(m_string, reinterpret_cast<WKChar*>(destination), WKStringGetLength(m_string));
+        WKStringGetCharacters(m_string, reinterpret_cast<WKChar*>(destination.data()), WKStringGetLength(m_string));
 }
 
 }

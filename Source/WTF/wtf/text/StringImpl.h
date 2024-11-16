@@ -270,7 +270,7 @@ public:
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(size_t length, std::span<LChar>&);
     WTF_EXPORT_PRIVATE static Ref<StringImpl> createUninitialized(size_t length, std::span<UChar>&);
 
-    template<typename CharacterType> static RefPtr<StringImpl> tryCreateUninitialized(size_t length, CharacterType*&);
+    template<typename CharacterType> static RefPtr<StringImpl> tryCreateUninitialized(size_t length, std::span<CharacterType>&);
 
     static Ref<StringImpl> createByReplacingInCharacters(std::span<const LChar>, UChar target, UChar replacement, size_t indexOfFirstTargetCharacter);
     static Ref<StringImpl> createByReplacingInCharacters(std::span<const UChar>, UChar target, UChar replacement, size_t indexOfFirstTargetCharacter);
@@ -1036,25 +1036,25 @@ ALWAYS_INLINE Ref<StringImpl> StringImpl::createSubstringSharingImpl(StringImpl&
     return adoptRef(*new (NotNull, stringImpl) StringImpl(rep.span16().subspan(offset, length), *ownerRep));
 }
 
-template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> StringImpl::tryCreateUninitialized(size_t length, CharacterType*& output)
+template<typename CharacterType> ALWAYS_INLINE RefPtr<StringImpl> StringImpl::tryCreateUninitialized(size_t length, std::span<CharacterType>& output)
 {
     if (!length) {
-        output = nullptr;
+        output = { };
         return empty();
     }
 
     if (length > maxInternalLength<CharacterType>()) {
-        output = nullptr;
+        output = { };
         return nullptr;
     }
     StringImpl* result;
 
     result = (StringImpl*)StringImplMalloc::tryMalloc(allocationSize<CharacterType>(length));
     if (!result) {
-        output = nullptr;
+        output = { };
         return nullptr;
     }
-    output = result->tailPointer<CharacterType>();
+    output = unsafeMakeSpan(result->tailPointer<CharacterType>(), length);
 
     return constructInternal<CharacterType>(*result, length);
 }

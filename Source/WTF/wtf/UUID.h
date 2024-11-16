@@ -211,7 +211,7 @@ public:
     bool is8Bit() const { return true; }
 
     template<typename CharacterType>
-    void writeTo(CharacterType* destination) const
+    void writeTo(std::span<CharacterType> destination) const
     {
         handle([&](auto&&... adapters) {
             stringTypeAdapterAccumulator(destination, std::forward<decltype(adapters)>(adapters)...);

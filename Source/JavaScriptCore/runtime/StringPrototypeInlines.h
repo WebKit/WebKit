@@ -145,7 +145,7 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
         return jsEmptyString(vm);
 
     if (source.is8Bit() && allSeparators8Bit) {
-        LChar* buffer;
+        std::span<LChar> buffer;
         auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
         if (!impl) {
             throwOutOfMemoryError(globalObject, scope);
@@ -157,12 +157,12 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
         for (int i = 0; i < maxCount; i++) {
             if (i < rangeCount) {
                 auto substring = StringView { source }.substring(substringRanges[i].begin(), substringRanges[i].distance());
-                substring.getCharacters8(buffer + bufferPos.value());
+                substring.getCharacters8(buffer.subspan(bufferPos.value()));
                 bufferPos += substring.length();
             }
             if (i < separatorCount) {
                 StringView separator = separators[i];
-                separator.getCharacters8(buffer + bufferPos.value());
+                separator.getCharacters8(buffer.subspan(bufferPos.value()));
                 bufferPos += separator.length();
             }
         }
@@ -170,7 +170,7 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
         RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
     }
 
-    UChar* buffer;
+    std::span<UChar> buffer;
     auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
     if (!impl) {
         throwOutOfMemoryError(globalObject, scope);
@@ -182,12 +182,12 @@ ALWAYS_INLINE JSString* jsSpliceSubstringsWithSeparators(JSGlobalObject* globalO
     for (int i = 0; i < maxCount; i++) {
         if (i < rangeCount) {
             auto substring = StringView { source }.substring(substringRanges[i].begin(), substringRanges[i].distance());
-            substring.getCharacters(buffer + bufferPos.value());
+            substring.getCharacters(buffer.subspan(bufferPos.value()));
             bufferPos += substring.length();
         }
         if (i < separatorCount) {
             StringView separator = separators[i];
-            separator.getCharacters(buffer + bufferPos.value());
+            separator.getCharacters(buffer.subspan(bufferPos.value()));
             bufferPos += separator.length();
         }
     }

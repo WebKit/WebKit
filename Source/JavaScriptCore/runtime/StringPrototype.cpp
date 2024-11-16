@@ -309,7 +309,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
         return jsEmptyString(vm);
 
     if (source.is8Bit()) {
-        LChar* buffer;
+        std::span<LChar> buffer;
         auto sourceData = source.span8();
         auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
         if (!impl) {
@@ -320,14 +320,14 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
         Checked<size_t, AssertNoOverflow> bufferPos = 0;
         for (auto range : substringRanges) {
             size_t srcLen = range.distance();
-            StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData.subspan(range.begin(), srcLen));
+            StringImpl::copyCharacters(buffer.subspan(bufferPos.value()).data(), sourceData.subspan(range.begin(), srcLen));
             bufferPos += srcLen;
         }
 
         RELEASE_AND_RETURN(scope, jsString(vm, impl.releaseNonNull()));
     }
 
-    UChar* buffer;
+    std::span<UChar> buffer;
     auto sourceData = source.span16();
 
     auto impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
@@ -339,7 +339,7 @@ static ALWAYS_INLINE JSString* jsSpliceSubstrings(JSGlobalObject* globalObject, 
     Checked<size_t, AssertNoOverflow> bufferPos = 0;
     for (auto& range : substringRanges) {
         size_t srcLen = range.distance();
-        StringImpl::copyCharacters(buffer + bufferPos.value(), sourceData.subspan(range.begin(), srcLen));
+        StringImpl::copyCharacters(buffer.subspan(bufferPos.value()).data(), sourceData.subspan(range.begin(), srcLen));
         bufferPos += srcLen;
     }
 
@@ -2022,13 +2022,13 @@ static JSValue normalize(JSGlobalObject* globalObject, JSString* string, Normali
     int32_t normalizedStringLength = unorm2_normalize(normalizer, characters, view->length(), nullptr, 0, &status);
     ASSERT(needsToGrowToProduceBuffer(status));
 
-    UChar* buffer;
+    std::span<UChar> buffer;
     auto result = StringImpl::tryCreateUninitialized(normalizedStringLength, buffer);
     if (!result)
         return throwOutOfMemoryError(globalObject, scope);
 
     status = U_ZERO_ERROR;
-    unorm2_normalize(normalizer, characters, view->length(), buffer, normalizedStringLength, &status);
+    unorm2_normalize(normalizer, characters, view->length(), buffer.data(), buffer.size(), &status);
     ASSERT(U_SUCCESS(status));
 
     RELEASE_AND_RETURN(scope, jsString(vm, result.releaseNonNull()));

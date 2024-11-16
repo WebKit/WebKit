@@ -165,12 +165,12 @@ class ProcessQualifiedStringTypeAdapter {
 public:
     unsigned length() const { return lengthOfIntegerAsString(m_processIdentifier) + lengthOfIntegerAsString(m_objectIdentifier) + 1; }
     bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(CharacterType* destination) const
+    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const
     {
         auto processIdentifierLength = lengthOfIntegerAsString(m_processIdentifier);
-        writeIntegerToBuffer(m_processIdentifier, destination);
-        *(destination + processIdentifierLength) = '-';
-        writeIntegerToBuffer(m_objectIdentifier, destination + processIdentifierLength + 1);
+        writeIntegerToBuffer(m_processIdentifier, destination.data());
+        destination[processIdentifierLength] = '-';
+        writeIntegerToBuffer(m_objectIdentifier, destination.subspan(processIdentifierLength + 1).data());
     }
 protected:
     explicit ProcessQualifiedStringTypeAdapter(uint64_t processIdentifier, uint64_t objectIdentifier)

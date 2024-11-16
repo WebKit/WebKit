@@ -36,7 +36,7 @@ public:
     StringTypeAdapter(CFStringRef);
     unsigned length() const { return m_string ? CFStringGetLength(m_string) : 0; }
     bool is8Bit() const { return !m_string || CFStringGetCStringPtr(m_string, kCFStringEncodingISOLatin1); }
-    template<typename CharacterType> void writeTo(CharacterType*) const;
+    template<typename CharacterType> void writeTo(std::span<CharacterType>) const;
 
 private:
     CFStringRef m_string;
@@ -47,16 +47,16 @@ inline StringTypeAdapter<CFStringRef>::StringTypeAdapter(CFStringRef string)
 {
 }
 
-template<> inline void StringTypeAdapter<CFStringRef>::writeTo<LChar>(LChar* destination) const
+template<> inline void StringTypeAdapter<CFStringRef>::writeTo<LChar>(std::span<LChar> destination) const
 {
     if (m_string)
-        std::memcpy(destination, CFStringGetCStringPtr(m_string, kCFStringEncodingISOLatin1), CFStringGetLength(m_string));
+        std::memcpy(destination.data(), CFStringGetCStringPtr(m_string, kCFStringEncodingISOLatin1), CFStringGetLength(m_string));
 }
 
-template<> inline void StringTypeAdapter<CFStringRef>::writeTo<UChar>(UChar* destination) const
+template<> inline void StringTypeAdapter<CFStringRef>::writeTo<UChar>(std::span<UChar> destination) const
 {
     if (m_string)
-        CFStringGetCharacters(m_string, CFRangeMake(0, CFStringGetLength(m_string)), reinterpret_cast<UniChar*>(destination));
+        CFStringGetCharacters(m_string, CFRangeMake(0, CFStringGetLength(m_string)), reinterpret_cast<UniChar*>(destination.data()));
 }
 
 #ifdef __OBJC__

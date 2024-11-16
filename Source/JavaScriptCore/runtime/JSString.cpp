@@ -239,7 +239,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
     }
     
     if (is8Bit()) {
-        LChar* buffer;
+        std::span<LChar> buffer;
         auto newImpl = StringImpl::tryCreateUninitialized(length(), buffer);
         if (!newImpl) {
             outOfMemory(nullOrGlobalObjectForOOM);
@@ -248,14 +248,14 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
 
         size_t sizeToReport = newImpl->cost();
         uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
-        resolveRopeInternalNoSubstring(buffer, stackLimit);
+        resolveRopeInternalNoSubstring(buffer.data(), stackLimit);
         convertToNonRope(function(newImpl.releaseNonNull()));
         if constexpr (reportAllocation)
             vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
         return valueInternal();
     }
     
-    UChar* buffer;
+    std::span<UChar> buffer;
     auto newImpl = StringImpl::tryCreateUninitialized(length(), buffer);
     if (!newImpl) {
         outOfMemory(nullOrGlobalObjectForOOM);
@@ -264,7 +264,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
     
     size_t sizeToReport = newImpl->cost();
     uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
-    resolveRopeInternalNoSubstring(buffer, stackLimit);
+    resolveRopeInternalNoSubstring(buffer.data(), stackLimit);
     convertToNonRope(function(newImpl.releaseNonNull()));
     if constexpr (reportAllocation)
         vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
