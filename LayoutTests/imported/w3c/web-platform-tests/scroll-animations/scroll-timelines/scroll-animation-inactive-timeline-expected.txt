@@ -1,6 +1,6 @@
 
 PASS Play pending task doesn't run when the timeline is inactive.
 PASS Animation start and current times are correct if scroll timeline is activated after animation.play call.
-FAIL Animation start and current times are correct if scroll timeline is activated after setting start time. assert_equals: Animation has an effect when the timeline is active. expected 0 but got 1
+PASS Animation start and current times are correct if scroll timeline is activated after setting start time.
 PASS Animation current time is correct when the timeline becomes newly inactive and then active again.
 

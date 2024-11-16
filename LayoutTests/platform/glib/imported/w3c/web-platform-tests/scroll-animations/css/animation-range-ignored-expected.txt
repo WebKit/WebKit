@@ -1,0 +1,6 @@
+
+Harness Error (TIMEOUT), message = null
+
+FAIL Animation API call rangeStart overrides animation-range-start assert_approx_equals: values do not match for "timeline's current time before style change" expected 16.666666666666668 +/- 0.125 but got 230
+TIMEOUT Animation API call rangeEnd overrides animation-range-end Test timed out
+

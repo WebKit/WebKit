@@ -1,14 +1,14 @@
 
-FAIL animation-duration assert_equals: expected "25px" but got "none"
-FAIL animation-duration: 0s assert_equals: expected "100px" but got "none"
-FAIL animation-iteration-count assert_equals: expected "25px" but got "none"
-FAIL animation-iteration-count: 0 assert_equals: expected "0px" but got "none"
-FAIL animation-iteration-count: infinite assert_equals: expected "100px" but got "none"
-FAIL animation-direction: normal assert_equals: expected "25px" but got "none"
-FAIL animation-direction: reverse assert_equals: expected "75px" but got "none"
-FAIL animation-direction: alternate assert_equals: expected "20px" but got "none"
-FAIL animation-direction: alternate-reverse assert_equals: expected "80px" but got "none"
-FAIL animation-delay with a positive value assert_equals: expected "25px" but got "none"
-FAIL animation-delay with a negative value assert_equals: expected "60px" but got "none"
-FAIL animation-fill-mode assert_equals: expected "0px" but got "none"
+PASS animation-duration
+FAIL animation-duration: 0s assert_equals: expected "100px" but got "25px"
+PASS animation-iteration-count
+PASS animation-iteration-count: 0
+PASS animation-iteration-count: infinite
+PASS animation-direction: normal
+PASS animation-direction: reverse
+FAIL animation-direction: alternate assert_equals: expected "80px" but got "79.999992px"
+FAIL animation-direction: alternate-reverse assert_equals: expected "20px" but got "20.000008px"
+FAIL animation-delay with a positive value assert_equals: expected "0px" but got "50px"
+FAIL animation-delay with a negative value assert_equals: expected "60px" but got "20px"
+FAIL animation-fill-mode assert_equals: expected "none" but got "25px"
 

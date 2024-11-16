@@ -1584,6 +1584,10 @@ void WebAnimation::updateRelevance()
 
 bool WebAnimation::computeRelevance()
 {
+    // https://drafts.csswg.org/web-animations-1/#relevant-animations-section
+    // https://drafts.csswg.org/web-animations-1/#current
+    // https://drafts.csswg.org/web-animations-1/#in-effect
+
     // An animation is relevant if:
     // - its associated effect is current or in effect, and
     if (!m_effect)
@@ -1609,6 +1613,11 @@ bool WebAnimation::computeRelevance()
 
     // - the animation effect is associated with an animation with a playback rate < 0 and the animation effect is in the after phase.
     if (m_playbackRate < 0 && timing.phase == AnimationEffectPhase::After)
+        return true;
+
+    // - the animation effect is associated with an animation not in the idle play state with a non-null
+    // associated timeline that is not monotonically increasing.
+    if (m_timeline && !m_timeline->isMonotonic() && playState() != PlayState::Idle)
         return true;
 
     // An animation effect is in effect if its active time, as calculated according to the procedure in

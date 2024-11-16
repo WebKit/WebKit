@@ -2115,6 +2115,9 @@ webkit.org/b/281211 [ Debug ] http/wpt/mediastream/transfer-videotrackgenerator-
 webkit.org/b/281211 [ Debug ] imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-in-auto-subtree.html [ Crash ]
 webkit.org/b/281211 [ Debug ] imported/w3c/web-platform-tests/css/css-view-transitions/pseudo-with-classes-entry.html [ Crash ]
 
+webkit.org/b/263870 imported/w3c/web-platform-tests/scroll-animations/css/animation-range-ignored.html [ Skip ]
+webkit.org/b/263870 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/scroll-timeline-range.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAnimations-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

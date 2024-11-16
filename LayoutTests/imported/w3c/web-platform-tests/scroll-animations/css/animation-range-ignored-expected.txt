@@ -1,4 +1,4 @@
 
-FAIL Animation API call rangeStart overrides animation-range-start promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
-FAIL Animation API call rangeEnd overrides animation-range-end promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anim.ready')"
+FAIL Animation API call rangeStart overrides animation-range-start assert_approx_equals: values do not match for "timeline's current time before style change" expected 16.666666666666668 +/- 0.125 but got 230
+FAIL Animation API call rangeEnd overrides animation-range-end assert_approx_equals: values do not match for "timeline's current time after first set of range updates" expected 16.666666666666668 +/- 0.125 but got 230
 

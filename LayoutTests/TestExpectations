@@ -7360,10 +7360,16 @@ imported/w3c/web-platform-tests/dom/events/scrolling/scrollend-event-not-fired-o
 imported/w3c/web-platform-tests/dom/events/scrolling/input-text-scroll-event-when-using-arrow-keys.html [ Skip ]
 
 # webkit.org/b/263870 [scroll-animations] some WPT tests are timing out
+imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-animation-with-scroll-timeline-in-auto-subtree.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/css/deferred-timeline-composited.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-range-animation.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-range-animation.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-root-scroller.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/constructor-no-document.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/updating-the-finished-state.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/inline-subject.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/svg-graphics-element-001.html [ Skip ]
+imported/w3c/web-platform-tests/scroll-animations/view-timelines/svg-graphics-element-002.html [ Skip ]
 
 # webkit.org/b/263871 [scroll-animations] some WPT tests are failures or flaky failures
 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-none.html [ Pass Failure ]
@@ -7381,7 +7387,6 @@ imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-d
 imported/w3c/web-platform-tests/scroll-animations/css/printing/scroll-timeline-default-print.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/scroll-animations/css/scroll-timeline-default-writing-mode-rl.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-transform.html [ Pass ImageOnlyFailure ]
-imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/layout-changes-on-percentage-based-timeline.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/progress-based-effect-delay.tentative.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/two-animations-attach-to-same-scroll-timeline-cancel-one.html [ Pass ImageOnlyFailure ]

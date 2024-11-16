@@ -1,10 +1,12 @@
 
+Harness Error (TIMEOUT), message = null
+
 PASS Animation with ranges [initial, initial]
-FAIL Animation with ranges [0%, 100%] assert_equals: expected "0" but got "-1"
-FAIL Animation with ranges [10%, 100%] assert_equals: expected "0" but got "-1"
-FAIL Animation with ranges [0%, 50%] assert_equals: expected "0" but got "-1"
-FAIL Animation with ranges [10%, 50%] assert_equals: expected "0" but got "-1"
-FAIL Animation with ranges [150px, 75em] assert_equals: expected "0" but got "-1"
-FAIL Animation with ranges [calc(1% + 135px), calc(70em + 50px)] assert_equals: expected "0" but got "-1"
-FAIL Animation with ranges [calc(1% + 135px), calc(70em + 50px)] (scoped) assert_equals: expected "0" but got "-1"
+TIMEOUT Animation with ranges [0%, 100%] Test timed out
+NOTRUN Animation with ranges [10%, 100%]
+NOTRUN Animation with ranges [0%, 50%]
+NOTRUN Animation with ranges [10%, 50%]
+NOTRUN Animation with ranges [150px, 75em]
+NOTRUN Animation with ranges [calc(1% + 135px), calc(70em + 50px)]
+NOTRUN Animation with ranges [calc(1% + 135px), calc(70em + 50px)] (scoped)
 
