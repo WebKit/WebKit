@@ -7024,12 +7024,12 @@ void WebPageProxy::observeAndCreateRemoteSubframesInOtherProcesses(WebFrameProxy
     });
 }
 
-void WebPageProxy::broadcastMainFrameURLChangeToOtherProcesses(IPC::Connection& connection, const URL& newURL)
+void WebPageProxy::broadcastProcessSyncData(IPC::Connection& connection, const WebCore::ProcessSyncData& data)
 {
     forEachWebContentProcess([&](auto& webProcess, auto pageID) {
         if (!webProcess.hasConnection() || &webProcess.connection() == &connection)
             return;
-        webProcess.send(Messages::WebPage::MainFrameURLChangedInAnotherProcess(newURL), pageID);
+        webProcess.send(Messages::WebPage::ProcessSyncDataChangedInAnotherProcess(data), pageID);
     });
 }
 

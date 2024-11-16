@@ -1171,6 +1171,7 @@ $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.h.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/InternalSettingsGenerated.idl.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/Settings.cpp.erb
 $(PROJECT_DIR)/Scripts/SettingsTemplates/Settings.h.erb
+$(PROJECT_DIR)/Scripts/generate-process-sync-data.py
 $(PROJECT_DIR)/accessibility/AccessibilityRole.idl
 $(PROJECT_DIR)/accessibility/AriaAttributes.idl
 $(PROJECT_DIR)/animation/Animatable.idl
@@ -1886,6 +1887,7 @@ $(PROJECT_DIR)/page/PerformanceResourceTiming.idl
 $(PROJECT_DIR)/page/PerformanceServerTiming.idl
 $(PROJECT_DIR)/page/PerformanceTiming.idl
 $(PROJECT_DIR)/page/PostMessageOptions.idl
+$(PROJECT_DIR)/page/ProcessSyncData.in
 $(PROJECT_DIR)/page/ResizeObserver.idl
 $(PROJECT_DIR)/page/ResizeObserverBoxOptions.idl
 $(PROJECT_DIR)/page/ResizeObserverCallback.idl

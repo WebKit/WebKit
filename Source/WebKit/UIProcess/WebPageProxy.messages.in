@@ -638,7 +638,7 @@ messages -> WebPageProxy {
 #endif
 
     DidApplyLinkDecorationFiltering(URL originalURL, URL adjustedURL)
-    [EnabledBy=SiteIsolationEnabled] BroadcastMainFrameURLChangeToOtherProcesses(URL newURL)
+    [EnabledBy=SiteIsolationEnabled] BroadcastProcessSyncData(struct WebCore::ProcessSyncData processSyncData)
 
     [EnabledBy=SiteIsolationEnabled] DispatchLoadEventToFrameOwnerElement(WebCore::FrameIdentifier frameID)
 

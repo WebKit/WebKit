@@ -1895,6 +1895,7 @@ all : \
     Namespace.h \
     NodeName.cpp \
     NodeName.h \
+    ProcessSyncClient.cpp \
     SVGElementFactory.cpp \
     SVGElementFactory.h \
     SVGElementTypeHelpers.h \
@@ -2669,5 +2670,23 @@ vpath %.js $(sort $(foreach f,$(WebCore_BUILTINS_SOURCES),$(realpath $(dir $(f))
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --output-directory . --framework WebCore $<
 
 all : $(notdir $(WebCore_BUILTINS_SOURCES:%.js=%Builtins.h)) $(WebCore_BUILTINS_WRAPPERS)
+
+#
+
+PROCESS_SYNC_DATA_INPUT_FILES = \
+    $(WebCore)/page/ProcessSyncData.in \
+
+GENERATED_PROCESS_SYNC_CLIENT_OUTPUT_FILES = \
+	ProcessSyncClient.cpp \
+	ProcessSyncClient.h \
+	ProcessSyncData.h \
+	ProcessSyncData.serialization.in \
+
+GENERATED_PROCESS_SYNC_CLIENT_OUTPUT_PATTERNS = $(subst .,%,$(GENERATED_PROCESS_SYNC_CLIENT_OUTPUT_FILES))
+
+all : $(GENERATED_PROCESS_SYNC_CLIENT_OUTPUT_FILES)
+
+$(GENERATED_PROCESS_SYNC_CLIENT_OUTPUT_PATTERNS) : $(WebCore)/Scripts/generate-process-sync-data.py $(PROCESS_SYNC_DATA_INPUT_FILES)
+	$(PYTHON) $(WebCore)/Scripts/generate-process-sync-data.py $(PROCESS_SYNC_DATA_INPUT_FILES)
 
 # ------------------------

@@ -200,7 +200,8 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     GetFrameTree() -> (struct WebKit::FrameTreeNodeData data)
     DidFinishLoadInAnotherProcess(WebCore::FrameIdentifier frameID)
     FrameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)
-    MainFrameURLChangedInAnotherProcess(URL newURL)
+
+    ProcessSyncDataChangedInAnotherProcess(struct WebCore::ProcessSyncData processSyncData)
 
     NavigateToPDFLinkWithSimulatedClick(String url, WebCore::IntPoint documentPoint, WebCore::IntPoint screenPoint)
     GetPDFFirstPageSize(WebCore::FrameIdentifier frameID) -> (WebCore::FloatSize size)

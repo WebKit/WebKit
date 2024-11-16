@@ -39,10 +39,10 @@ public:
     WebProcessSyncClient(WebPage&);
     ~WebProcessSyncClient() = default;
 
-    void broadcastMainFrameURLChangeToOtherProcesses(const URL&) final;
-
 private:
     bool siteIsolationEnabled();
+
+    void broadcastProcessSyncDataToOtherProcesses(const WebCore::ProcessSyncData&) final;
 
     Ref<WebPage> protectedPage() const;
 
