@@ -23,18 +23,6 @@ use constant requires_verification => 0;
 use constant can_login             => 0;
 use constant can_logout            => 0;
 
-use fields qw(app_id);
-
-sub set_app_id {
-    my ($self, $app_id) = @_;
-    $self->{app_id} = $app_id;
-}
-
-sub app_id {
-    my ($self) = @_;
-    return $self->{app_id};
-}
-
 # This method is only available to web services. An API key can never
 # be used to authenticate a Web request.
 sub get_login_info {
@@ -58,7 +46,6 @@ sub get_login_info {
     }
 
     $api_key->update_last_used();
-    $self->set_app_id($api_key->app_id);
 
     return { user_id => $api_key->user_id };
 }
