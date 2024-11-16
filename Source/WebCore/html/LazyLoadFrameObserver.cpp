@@ -48,6 +48,11 @@ public:
     }
 
 private:
+    LazyFrameLoadIntersectionObserverCallback(Document& document)
+        : IntersectionObserverCallback(&document)
+    {
+    }
+
     bool hasCallback() const final { return true; }
 
     CallbackResult<void> handleEvent(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver&) final
@@ -65,9 +70,9 @@ private:
         return { };
     }
 
-    LazyFrameLoadIntersectionObserverCallback(Document& document)
-        : IntersectionObserverCallback(&document)
+    CallbackResult<void> handleEventRethrowingException(IntersectionObserver& thisObserver, const Vector<Ref<IntersectionObserverEntry>>& entries, IntersectionObserver& observer) final
     {
+        return handleEvent(thisObserver, entries, observer);
     }
 };
 

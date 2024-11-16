@@ -42,6 +42,7 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(WebCodecsAudioData&) = 0;
+    virtual CallbackResult<void> handleEventRethrowingException(WebCodecsAudioData&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

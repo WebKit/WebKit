@@ -84,6 +84,38 @@ CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction
     return { returnValue.releaseReturnValue() };
 }
 
+CallbackResult<typename IDLDOMString::CallbackReturnType> JSTestCallbackFunction::handleEventRethrowingException(typename IDLLong::ParameterType argument)
+{
+    if (!canInvokeCallback())
+        return CallbackResultType::UnableToExecute;
+
+    Ref<JSTestCallbackFunction> protectedThis(*this);
+
+    auto& globalObject = *m_data->globalObject();
+    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();
+
+    JSLockHolder lock(vm);
+    auto& lexicalGlobalObject = globalObject;
+    JSValue thisValue = jsUndefined();
+    MarkedArgumentBuffer args;
+    args.append(toJS<IDLLong>(argument));
+    ASSERT(!args.hasOverflowed());
+
+    NakedPtr<JSC::Exception> returnedException;
+    auto jsResult = m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException);
+    if (returnedException) {
+        auto throwScope = DECLARE_THROW_SCOPE(vm);
+        throwException(&lexicalGlobalObject, throwScope, returnedException);
+        return CallbackResultType::ExceptionThrown;
+     }
+
+    auto throwScope = DECLARE_THROW_SCOPE(vm);
+    auto returnValue = convert<IDLDOMString>(lexicalGlobalObject, jsResult);
+    if (UNLIKELY(returnValue.hasException(throwScope)))
+        return CallbackResultType::ExceptionThrown;
+    return { returnValue.releaseReturnValue() };
+}
+
 void JSTestCallbackFunction::visitJSFunction(JSC::AbstractSlotVisitor& visitor)
 {
     m_data->visitJSFunction(visitor);

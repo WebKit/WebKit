@@ -23,4 +23,5 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-[ RethrowException ] callback CreateHTMLCallback = DOMString? (DOMString input, any... arguments);
+// https://w3c.github.io/trusted-types/dist/spec/#callbackdef-createhtmlcallback
+callback CreateHTMLCallback = DOMString? (DOMString input, any... arguments);

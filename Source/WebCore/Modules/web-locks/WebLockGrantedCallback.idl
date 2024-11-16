@@ -22,7 +22,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://w3c.github.io/web-locks/#callbackdef-lockgrantedcallback
 [
-    RethrowException,
     GenerateIsReachable=ImplScriptExecutionContext
 ] callback WebLockGrantedCallback = Promise<any> (WebLock? webLock);

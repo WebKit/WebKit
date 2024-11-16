@@ -106,6 +106,11 @@ private:
         return { };
     }
 
+    CallbackResult<void> handleEventRethrowingException(SQLTransaction& transaction, SQLResultSet& resultSet) final
+    {
+        return handleEvent(transaction, resultSet);
+    }
+
     Ref<ExecuteSQLCallback> m_requestCallback;
 };
 
@@ -129,6 +134,11 @@ private:
     {
         reportTransactionFailed(m_requestCallback.copyRef(), error);
         return true;
+    }
+
+    CallbackResult<bool> handleEventRethrowingException(SQLTransaction& transaction, SQLError& error) final
+    {
+        return handleEvent(transaction, error);
     }
 
     Ref<ExecuteSQLCallback> m_requestCallback;
@@ -162,6 +172,11 @@ private:
         return { };
     }
 
+    CallbackResult<void> handleEventRethrowingException(SQLTransaction& transaction) final
+    {
+        return handleEvent(transaction);
+    }
+
     String m_sqlStatement;
     Ref<ExecuteSQLCallback> m_requestCallback;
 };
@@ -188,6 +203,11 @@ private:
         return { };
     }
 
+    CallbackResult<void> handleEventRethrowingException(SQLError& error) final
+    {
+        return handleEvent(error);
+    }
+
     Ref<ExecuteSQLCallback> m_requestCallback;
 };
 
@@ -199,6 +219,7 @@ public:
     }
 
     CallbackResult<void> handleEvent() final { return { }; }
+    CallbackResult<void> handleEventRethrowingException() final { return { }; }
 
     bool hasCallback() const final { return true; }
 

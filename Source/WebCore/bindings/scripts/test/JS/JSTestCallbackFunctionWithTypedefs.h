@@ -41,6 +41,7 @@ public:
 
     // Functions
     CallbackResult<typename IDLUndefined::CallbackReturnType> handleEvent(typename IDLSequence<IDLNullable<IDLLong>>::ParameterType sequenceArg, typename IDLLong::ParameterType longArg) override;
+    CallbackResult<typename IDLUndefined::CallbackReturnType> handleEventRethrowingException(typename IDLSequence<IDLNullable<IDLLong>>::ParameterType sequenceArg, typename IDLLong::ParameterType longArg) override;
 
 private:
     JSTestCallbackFunctionWithTypedefs(JSC::JSObject*, JSDOMGlobalObject*);

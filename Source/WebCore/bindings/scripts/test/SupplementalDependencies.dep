@@ -20,7 +20,6 @@ JSTestCEReactionsStringifier.h:
 JSTestCallTracer.h: 
 JSTestCallbackFunction.h: 
 JSTestCallbackFunctionGenerateIsReachable.h: 
-JSTestCallbackFunctionRethrow.h: 
 JSTestCallbackFunctionWithThisObject.h: 
 JSTestCallbackFunctionWithTypedefs.h: 
 JSTestCallbackFunctionWithVariadic.h: 

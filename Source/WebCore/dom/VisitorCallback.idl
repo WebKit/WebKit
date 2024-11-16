@@ -23,4 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[ RethrowException ] callback VisitorCallback = undefined (any value, unsigned long long index);
+// https://wicg.github.io/observable/#callbackdef-visitor
+callback VisitorCallback = undefined (any value, unsigned long long index);

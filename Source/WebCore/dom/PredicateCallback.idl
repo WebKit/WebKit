@@ -23,5 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[ RethrowException ] callback PredicateCallback = boolean (any value, unsigned long long index);
+// https://wicg.github.io/observable/#callbackdef-predicate
+callback PredicateCallback = boolean (any value, unsigned long long index);
 

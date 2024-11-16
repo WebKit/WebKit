@@ -53,7 +53,7 @@ public:
             return adoptRef(*new InternalObserverMap::SubscriberCallbackMap(context, source, mapper));
         }
 
-        CallbackResult<void> handleEventRethrowingException(Subscriber& subscriber) final
+        CallbackResult<void> handleEvent(Subscriber& subscriber) final
         {
             RefPtr context = scriptExecutionContext();
 
@@ -67,6 +67,11 @@ public:
             m_sourceObservable->subscribeInternal(*context, InternalObserverMap::create(*context, subscriber, m_mapper), options);
 
             return { };
+        }
+
+        CallbackResult<void> handleEventRethrowingException(Subscriber& subscriber) final
+        {
+            return handleEvent(subscriber);
         }
 
     private:
@@ -93,9 +98,7 @@ private:
         JSC::JSLockHolder lock(vm);
 
         // The exception is not reported, instead it is forwarded to the
-        // error handler. As such, MapperCallback has `[RethrowException]`
-        // and here a catch scope is declared so the error can be passed
-        // to the subscription error handler.
+        // error handler.
         JSC::Exception* previousException = nullptr;
         {
             auto catchScope = DECLARE_CATCH_SCOPE(vm);

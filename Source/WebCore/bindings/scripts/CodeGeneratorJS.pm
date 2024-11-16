@@ -6771,9 +6771,13 @@ sub GenerateCallbackHeaderContent
             
             # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
             my $functionName = $operation->extendedAttributes->{ImplementedAs} || $operation->name || "handleEvent";
-            $functionName .= "RethrowingException" if $operation->extendedAttributes->{RethrowException};
-
             push(@$contentRef, "    ${nativeReturnType} ${functionName}(" . join(", ", @arguments) . ") override;\n");
+
+            # Unless the callback function returns a promise, also generate a version that rethrows any exception it might encounter.
+            unless ($codeGenerator->IsPromiseType($operation->type)) {
+                my $rethrowingFunctionName = $functionName . "RethrowingException";
+                push(@$contentRef, "    ${nativeReturnType} ${rethrowingFunctionName}(" . join(", ", @arguments) . ") override;\n");
+            }
         }
     }
 
@@ -6799,6 +6803,131 @@ sub GenerateCallbackHeaderContent
     push(@$contentRef, "template<> struct JSDOMCallbackConverterTraits<${className}> {\n");
     push(@$contentRef, "    using Base = ${name};\n");
     push(@$contentRef, "};\n");
+}
+
+sub GenerateCallbackImplementationOperationBody
+{
+    my ($object, $interfaceOrCallback, $operations, $contentRef, $includesRef, $operation, $isForRethrowingHandler) = @_;
+
+    my $name = $interfaceOrCallback->type->name;
+    my $className = "JS${name}";
+
+    AddToIncludesForIDLType($operation->type, $includesRef);
+
+    my $nativeReturnType = "CallbackResult<typename " . GetIDLType($interfaceOrCallback, $operation->type) . "::CallbackReturnType>";
+
+    # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
+    my $functionName = $operation->name || "handleEvent";
+
+    my $functionImplementationName = $operation->extendedAttributes->{ImplementedAs} || $functionName;
+    $functionImplementationName .= "RethrowingException" if $isForRethrowingHandler;
+
+    my @arguments = ();
+
+    my $thisValue = "jsUndefined()";
+
+    my $callbackThisObject = $operation->extendedAttributes->{CallbackThisObject};
+    if ($callbackThisObject) {
+        my $thisObjectType = $codeGenerator->ParseType($callbackThisObject);
+
+        AddToIncludesForIDLType($thisObjectType, $includesRef, 1);
+        my $IDLType = GetIDLType($interfaceOrCallback, $thisObjectType);
+        push(@arguments, "typename ${IDLType}::ParameterType thisObject");
+
+        my $thisObjectArgument = IDLArgument->new();
+        $thisObjectArgument->type($thisObjectType);
+
+        $thisValue = NativeToJSValueUsingReferences($thisObjectArgument, $interfaceOrCallback, "thisObject", "globalObject");
+    }
+
+    foreach my $argument (@{$operation->arguments}) {
+        my $IDLType = GetIDLType($interfaceOrCallback, $argument->type);
+        if ($argument->isVariadic) {
+            push(@arguments, "VariadicArguments<${IDLType}>&& " . $argument->name);
+        } else {
+            AddToIncludesForIDLType($argument->type, $includesRef, 1);
+            push(@arguments, "typename ${IDLType}::ParameterType " . $argument->name);
+        }
+    }
+
+    push(@$contentRef, "${nativeReturnType} ${className}::${functionImplementationName}(" . join(", ", @arguments) . ")\n");
+    push(@$contentRef, "{\n");
+
+    # FIXME: This is needed for NodeFilter, which works even for disconnected iframes. We should investigate
+    # if that behavior is needed for other callbacks.
+    if (!$operation->extendedAttributes->{SkipCallbackInvokeCheck}) {
+        push(@$contentRef, "    if (!canInvokeCallback())\n");
+        push(@$contentRef, "        return CallbackResultType::UnableToExecute;\n\n");
+    }
+
+    push(@$contentRef, "    Ref<$className> protectedThis(*this);\n\n");
+    push(@$contentRef, "    auto& globalObject = *m_data->globalObject();\n");
+    push(@$contentRef, "    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();\n\n");
+    push(@$contentRef, "    JSLockHolder lock(vm);\n");
+
+    push(@$contentRef, "    auto& lexicalGlobalObject = globalObject;\n");
+
+    push(@$contentRef, "    JSValue thisValue = ${thisValue};\n");
+    push(@$contentRef, "    MarkedArgumentBuffer args;\n");
+
+    foreach my $argument (@{$operation->arguments}) {
+        if ($argument->isVariadic) {
+            my $argumentName = $argument->name;
+            push(@$contentRef, "    for (auto&& ${argumentName}Item : WTFMove(${argumentName})) {\n");
+            push(@$contentRef, "        args.append(" . NativeToJSValueUsingReferences($argument, $interfaceOrCallback, "WTFMove(${argumentName}Item)", "globalObject") . ");\n");
+            push(@$contentRef, "    }\n");
+        } else {
+            push(@$contentRef, "    args.append(" . NativeToJSValueUsingReferences($argument, $interfaceOrCallback, $argument->name, "globalObject") . ");\n");
+        }
+    }
+    push(@$contentRef, "    ASSERT(!args.hasOverflowed());\n");
+
+    push(@$contentRef, "\n    NakedPtr<JSC::Exception> returnedException;\n");
+
+    my $callbackInvocation;
+    if (ref($interfaceOrCallback) eq "IDLCallbackFunction") {
+        $callbackInvocation = "m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException)";
+    } else {
+        my $callbackType = @{$operations} > 1 ? "Object" : "FunctionOrObject";
+        $callbackInvocation = "m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::${callbackType}, Identifier::fromString(vm, \"${functionName}\"_s), returnedException)";
+    }
+
+    if ($operation->type->name eq "undefined") {
+        push(@$contentRef, "    ${callbackInvocation};\n");
+    } else {
+        push(@$contentRef, "    auto jsResult = ${callbackInvocation};\n");
+    }
+
+    $includesRef->{"JSDOMExceptionHandling.h"} = 1;
+    push(@$contentRef, "    if (returnedException) {\n");
+    if ($codeGenerator->IsPromiseType($operation->type)) {
+        push(@$contentRef, "        auto* jsPromise = JSC::JSPromise::create(vm, globalObject.promiseStructure());\n");
+        push(@$contentRef, "        jsPromise->reject(&globalObject, returnedException->value());\n");
+        push(@$contentRef, "        return { DOMPromise::create(globalObject, *jsPromise) };\n");
+    } elsif ($isForRethrowingHandler) {
+        push(@$contentRef, "        auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
+        push(@$contentRef, "        throwException(&lexicalGlobalObject, throwScope, returnedException);\n");
+        push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
+    } else {
+        push(@$contentRef, "        UNUSED_PARAM(lexicalGlobalObject);\n");
+        push(@$contentRef, "        reportException(m_data->callback()->globalObject(), returnedException);\n");
+        push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
+    }
+    push(@$contentRef, "     }\n\n");
+
+    if ($operation->type->name eq "undefined") {
+        push(@$contentRef, "    return { };\n");
+    } else {
+        my $nativeValue = JSValueToNative($interfaceOrCallback, $operation, "jsResult", "", "&lexicalGlobalObject", "lexicalGlobalObject");
+
+        push(@$contentRef, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
+        push(@$contentRef, "    auto returnValue = ${nativeValue};\n");
+        push(@$contentRef, "    if (UNLIKELY(returnValue.hasException(throwScope)))\n");
+        push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
+        push(@$contentRef, "    return { returnValue.releaseReturnValue() };\n");
+    }
+
+    push(@$contentRef, "}\n\n");
 }
 
 sub GenerateCallbackImplementationContent
@@ -6890,125 +7019,12 @@ sub GenerateCallbackImplementationContent
     if ($numOperations > 0) {
         foreach my $operation (@{$operations}) {
             next if $operation->extendedAttributes->{Custom};
-        
-            AddToIncludesForIDLType($operation->type, $includesRef);
 
-            my $nativeReturnType = "CallbackResult<typename " . GetIDLType($interfaceOrCallback, $operation->type) . "::CallbackReturnType>";
-            
-            # FIXME: Change the default name (used for callback functions) to something other than handleEvent. It makes little sense.
-            my $functionName = $operation->name || "handleEvent";
+            GenerateCallbackImplementationOperationBody($object, $interfaceOrCallback, $operations, $contentRef, $includesRef, $operation, 0);
 
-            my $functionImplementationName = $operation->extendedAttributes->{ImplementedAs} || $functionName;
-            $functionImplementationName .= "RethrowingException" if $operation->extendedAttributes->{RethrowException};
-
-            my @arguments = ();
-
-            my $thisValue = "jsUndefined()";
-
-            my $callbackThisObject = $operation->extendedAttributes->{CallbackThisObject};
-            if ($callbackThisObject) {
-                my $thisObjectType = $codeGenerator->ParseType($callbackThisObject);
-
-                AddToIncludesForIDLType($thisObjectType, $includesRef, 1);
-                my $IDLType = GetIDLType($interfaceOrCallback, $thisObjectType);
-                push(@arguments, "typename ${IDLType}::ParameterType thisObject");
-
-                my $thisObjectArgument = IDLArgument->new();
-                $thisObjectArgument->type($thisObjectType);
-
-                $thisValue = NativeToJSValueUsingReferences($thisObjectArgument, $interfaceOrCallback, "thisObject", "globalObject");
+            unless ($codeGenerator->IsPromiseType($operation->type)) {
+                GenerateCallbackImplementationOperationBody($object, $interfaceOrCallback, $operations, $contentRef, $includesRef, $operation, 1);
             }
-
-            foreach my $argument (@{$operation->arguments}) {
-                my $IDLType = GetIDLType($interfaceOrCallback, $argument->type);
-                if ($argument->isVariadic) {
-                    push(@arguments, "VariadicArguments<${IDLType}>&& " . $argument->name);
-                } else {
-                    AddToIncludesForIDLType($argument->type, $includesRef, 1);
-                    push(@arguments, "typename ${IDLType}::ParameterType " . $argument->name);
-                }
-            }
-            
-            push(@$contentRef, "${nativeReturnType} ${className}::${functionImplementationName}(" . join(", ", @arguments) . ")\n");
-            push(@$contentRef, "{\n");
-
-            # FIXME: This is needed for NodeFilter, which works even for disconnected iframes. We should investigate
-            # if that behavior is needed for other callbacks.
-            if (!$operation->extendedAttributes->{SkipCallbackInvokeCheck}) {
-                push(@$contentRef, "    if (!canInvokeCallback())\n");
-                push(@$contentRef, "        return CallbackResultType::UnableToExecute;\n\n");
-            }
-
-            push(@$contentRef, "    Ref<$className> protectedThis(*this);\n\n");
-            push(@$contentRef, "    auto& globalObject = *m_data->globalObject();\n");
-            push(@$contentRef, "    SUPPRESS_UNCOUNTED_LOCAL auto& vm = globalObject.vm();\n\n");
-            push(@$contentRef, "    JSLockHolder lock(vm);\n");
-
-            push(@$contentRef, "    auto& lexicalGlobalObject = globalObject;\n");
-
-            push(@$contentRef, "    JSValue thisValue = ${thisValue};\n");
-            push(@$contentRef, "    MarkedArgumentBuffer args;\n");
-
-            foreach my $argument (@{$operation->arguments}) {
-                if ($argument->isVariadic) {
-                    my $argumentName = $argument->name;
-                    push(@$contentRef, "    for (auto&& ${argumentName}Item : WTFMove(${argumentName})) {\n");
-                    push(@$contentRef, "        args.append(" . NativeToJSValueUsingReferences($argument, $interfaceOrCallback, "WTFMove(${argumentName}Item)", "globalObject") . ");\n");
-                    push(@$contentRef, "    }\n");
-                } else {
-                    push(@$contentRef, "    args.append(" . NativeToJSValueUsingReferences($argument, $interfaceOrCallback, $argument->name, "globalObject") . ");\n");
-                }
-            }
-            push(@$contentRef, "    ASSERT(!args.hasOverflowed());\n");
-
-            push(@$contentRef, "\n    NakedPtr<JSC::Exception> returnedException;\n");
-
-            my $callbackInvocation;
-            if (ref($interfaceOrCallback) eq "IDLCallbackFunction") {
-                $callbackInvocation = "m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::Function, Identifier(), returnedException)";
-            } else {
-                my $callbackType = $numOperations > 1 ? "Object" : "FunctionOrObject";
-                $callbackInvocation = "m_data->invokeCallback(thisValue, args, JSCallbackData::CallbackType::${callbackType}, Identifier::fromString(vm, \"${functionName}\"_s), returnedException)";             
-            }
-
-            if ($operation->type->name eq "undefined") {
-                push(@$contentRef, "    ${callbackInvocation};\n");
-            } else {
-                push(@$contentRef, "    auto jsResult = ${callbackInvocation};\n");
-            }
-
-            my $hasPromiseReturnType = $codeGenerator->IsPromiseType($operation->type);
-
-            $includesRef->{"JSDOMExceptionHandling.h"} = 1;
-            push(@$contentRef, "    if (returnedException) {\n");
-            if ($hasPromiseReturnType) {
-                push(@$contentRef, "        auto* jsPromise = JSC::JSPromise::create(vm, globalObject.promiseStructure());\n");
-                push(@$contentRef, "        jsPromise->reject(&globalObject, returnedException->value());\n");
-                push(@$contentRef, "        return { DOMPromise::create(globalObject, *jsPromise) };\n");
-            } elsif ($operation->extendedAttributes->{RethrowException}) {
-                push(@$contentRef, "        auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-                push(@$contentRef, "        throwException(&lexicalGlobalObject, throwScope, returnedException);\n");
-                push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
-            } else {
-                push(@$contentRef, "        UNUSED_PARAM(lexicalGlobalObject);\n");
-                push(@$contentRef, "        reportException(m_data->callback()->globalObject(), returnedException);\n");
-                push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
-            }
-            push(@$contentRef, "     }\n\n");
-
-            if ($operation->type->name eq "undefined") {
-                push(@$contentRef, "    return { };\n");
-            } else {
-                my $nativeValue = JSValueToNative($interfaceOrCallback, $operation, "jsResult", "", "&lexicalGlobalObject", "lexicalGlobalObject");
-
-                push(@$contentRef, "    auto throwScope = DECLARE_THROW_SCOPE(vm);\n");
-                push(@$contentRef, "    auto returnValue = ${nativeValue};\n");
-                push(@$contentRef, "    if (UNLIKELY(returnValue.hasException(throwScope)))\n");
-                push(@$contentRef, "        return CallbackResultType::ExceptionThrown;\n");
-                push(@$contentRef, "    return { returnValue.releaseReturnValue() };\n");
-            }
-
-            push(@$contentRef, "}\n\n");
         }
     }
 

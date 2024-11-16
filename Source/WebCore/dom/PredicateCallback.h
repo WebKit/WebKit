@@ -35,6 +35,7 @@ class PredicateCallback : public RefCounted<PredicateCallback>, public ActiveDOM
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    virtual CallbackResult<bool> handleEvent(JSC::JSValue, uint64_t) = 0;
     virtual CallbackResult<bool> handleEventRethrowingException(JSC::JSValue, uint64_t) = 0;
 
 private:

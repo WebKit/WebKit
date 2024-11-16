@@ -37,6 +37,7 @@ class NodeFilter : public RefCounted<NodeFilter>, public ActiveDOMCallback {
 public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
+    virtual CallbackResult<unsigned short> acceptNode(Node&) = 0;
     virtual CallbackResult<unsigned short> acceptNodeRethrowingException(Node&) = 0;
 
     virtual bool hasCallback() const = 0;

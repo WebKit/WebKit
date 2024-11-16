@@ -52,7 +52,7 @@ public:
             return adoptRef(*new InternalObserverTake::SubscriberCallbackTake(context, source, amount));
         }
 
-        CallbackResult<void> handleEventRethrowingException(Subscriber& subscriber) final
+        CallbackResult<void> handleEvent(Subscriber& subscriber) final
         {
             RefPtr context = scriptExecutionContext();
 
@@ -66,6 +66,11 @@ public:
             m_sourceObservable->subscribeInternal(*context, InternalObserverTake::create(*context, subscriber, m_amount), options);
 
             return { };
+        }
+
+        CallbackResult<void> handleEventRethrowingException(Subscriber& subscriber) final
+        {
+            return handleEvent(subscriber);
         }
 
     private:

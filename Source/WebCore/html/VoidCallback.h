@@ -37,6 +37,7 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent() = 0;
+    virtual CallbackResult<void> handleEventRethrowingException() = 0;
 
 private:
     virtual bool hasCallback() const = 0;

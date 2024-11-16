@@ -41,6 +41,7 @@ public:
 
     // Functions
     CallbackResult<typename IDLUndefined::CallbackReturnType> handleEvent(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter) override;
+    CallbackResult<typename IDLUndefined::CallbackReturnType> handleEventRethrowingException(typename IDLInterface<TestNode>::ParameterType thisObject, typename IDLSequence<IDLInterface<TestNode>>::ParameterType parameter) override;
 
 private:
     JSTestCallbackFunctionWithThisObject(JSC::JSObject*, JSDOMGlobalObject*);

@@ -44,6 +44,7 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<RefPtr<AudioWorkletProcessor>> handleEvent(JSC::Strong<JSC::JSObject> options) = 0;
+    virtual CallbackResult<RefPtr<AudioWorkletProcessor>> handleEventRethrowingException(JSC::Strong<JSC::JSObject> options) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

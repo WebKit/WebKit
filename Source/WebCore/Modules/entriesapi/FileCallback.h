@@ -39,6 +39,7 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(File&) = 0;
+    virtual CallbackResult<void> handleEventRethrowingException(File&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;
