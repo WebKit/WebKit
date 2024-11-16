@@ -1,5 +1,3 @@
-@import url('/fonts/sfpro/fonts.css');
-@import url('/fonts/sfmono/fonts.css');
 :root {
     --header-background-color: hsl(203.6, 100%, 12%);
     --header-text-color: hsl(0, 100%, 100%);
