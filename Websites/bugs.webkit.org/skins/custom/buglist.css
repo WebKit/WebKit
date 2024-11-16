@@ -253,11 +253,6 @@ tr.bz_secure td.first-child, a.bz_secure {
     width: 5rem;
 }
 
-.bz_buglist:has(td.bz_resolution_column:empty) th.bz_resolution_column,
-td.bz_resolution_column:empty {
-    display: none;
-}
-
 .bz_buglist .bz_assigned_to_column {
     width: 15%;
 }
