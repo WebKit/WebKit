@@ -1926,13 +1926,6 @@ webkit.org/b/282726 http/tests/media/fairplay/legacy-fairplay-hls.html [ Failure
 # webkit.org/b/282126 NEW TEST [ Sequoia+ x86_64 ] 5 swipe layout tests are timing due to "Timed out waiting for notifyDone to be called"
 swipe/main-frame-pinning-requirement.html [ Failure Timeout ]
 
-# webkit.org/b/283074 [macOS Debug wk2 ] ASSERTION FAILED: !workerInformation in imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker.https.html result of flaky crash (failure in EWS)
-imported/w3c/web-platform-tests/content-security-policy/script-src/script-src-strict_dynamic_worker.https.html [ Pass Crash ]
-imported/w3c/web-platform-tests/fetch/stale-while-revalidate/fetch.any.serviceworker.html [ Pass Crash ]
-imported/w3c/web-platform-tests/fetch/private-network-access/service-worker-background-fetch.https.window.html [ Pass Crash ]
-imported/w3c/web-platform-tests/urlpattern/urlpattern-compare.tentative.any.serviceworker.html [ Pass Crash ]
-imported/w3c/web-platform-tests/urlpattern/urlpattern-hasregexpgroups.any.serviceworker.html [ Pass Crash ]
-
 webkit.org/b/283144 [ Sequoia ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture-ephemeral.https.html [ Failure ]
 webkit.org/b/283144 [ Sequoia ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.https.html [ Failure ]
 webkit.org/b/283144 [ Sequoia ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.https.html [ Failure ]
