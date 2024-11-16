@@ -559,6 +559,14 @@ sub remove_cookie {
                        '-value'   => 'X');
 }
 
+# To avoid infinite redirection recursion, track when we're within a redirect
+# request.
+sub redirect {
+  my $self = shift;
+  $self->{bz_redirecting} = 1;
+  return $self->SUPER::redirect(@_);
+}
+
 # This helps implement Bugzilla::Search::Recent, and also shortens search
 # URLs that get POSTed to buglist.cgi.
 sub redirect_search_url {
