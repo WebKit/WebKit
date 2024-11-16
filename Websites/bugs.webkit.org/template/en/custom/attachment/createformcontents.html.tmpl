@@ -13,8 +13,8 @@
   <td>
     <div id="file-selection">
     <input type="file" id="data" name="data" size="50" onchange="DataFieldHandler()">
-    <p><em>Select or drag-and-drop a file here, max size: <span id="attachment_file_size_limit">[% max_limit FILTER html %] KB</span></em> (or <a id="attachment_data_controller" href="javascript:TUI_toggle_class('attachment_text_field'); javascript:TUI_toggle_class('attachment_data')">paste text as an attachment</a>).</p>
     </div>
+    <p><em>Select or drag-and-drop a file here, max size: <span id="attachment_file_size_limit">[% max_limit FILTER html %] KB</span></em> (or <a id="attachment_data_controller" href="javascript:TUI_toggle_class('attachment_text_field'); javascript:TUI_toggle_class('attachment_data')">paste text as an attachment</a>).</p>
     <script>
     document.addEventListener('DOMContentLoaded', () => {
       let fileInput = document.getElementById('data');
