@@ -1936,3 +1936,5 @@ webkit.org/b/283144 [ Sequoia ] http/tests/storageAccess/grant-storage-access-un
 webkit.org/b/283144 [ Sequoia ] http/tests/storageAccess/grant-storage-access-under-opener-at-popup-user-gesture.https.html [ Failure ]
 webkit.org/b/283144 [ Sequoia ] http/tests/storageAccess/request-and-grant-access-then-navigate-cross-site-should-not-have-access.https.html [ Failure ]
 webkit.org/b/283144 [ Sequoia ] http/tests/storageAccess/request-and-grant-access-then-navigate-same-site-should-have-access.https.html [ Failure ]
+
+webkit.org/b/283210 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavailable.html [ Pass Failure ]
