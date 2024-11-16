@@ -74,3 +74,34 @@ FRAMELOADER_LOADURLINTOCHILDFRAME, "[pageID=%llu frameID=%llu isMainFrame=%d] Fr
 FRAMELOADER_CONTINUELOADAFTERNAVIGATIONPOLICY_CANNOT_CONTINUE, "[pageID=%llu frameID=%llu isMainFrame=%d] FrameLoader::continueLoadAfterNavigationPolicy: can't continue loading frame due to the following reasons (allowNavigationToInvalidURL = %d, requestURLIsValid = %d, navigationPolicyDecision = %d)", (uint64_t, uint64_t, int, int, int, int), DEFAULT, ResourceLoading
 
 RESOURCELOADER_WILLSENDREQUESTINTERNAL, "[pageID=%llu, frameID=%llu, resourceID=%llu] ResourceLoader::willSendRequestInternal: calling completion handler", (uint64_t, uint64_t, uint64_t), DEFAULT, Network
+
+DOCUMENTLOADER_STARTLOADINGMAINRESOURCE_EMTPY_DOCUMENT, "[pageID=%llu, frameID=%llu, isMainFrame=%d] DocumentLoader::startLoadingMainResource: Returning empty document", (uint64_t, uint64_t, int), DEFAULT, Network
+DOCUMENTLOADER_STARTLOADINGMAINRESOURCE_STARTING_LOAD, "[pageID=%llu, frameID=%llu, isMainFrame=%d] DocumentLoader::startLoadingMainResource: Starting load", (uint64_t, uint64_t, int), DEFAULT, Network
+DOCUMENTLOADER_ATTACHTOFRAME, "[pageID=%llu, frameID=%llu, isMainFrame=%d] DocumentLoader::attachToFrame", (uint64_t, uint64_t, int), DEFAULT, Network
+DOCUMENTLOADER_DETACHFROMFRAME, "[pageID=%llu, frameID=%llu, isMainFrame=%d] DocumentLoader::detachFromFrame", (uint64_t, uint64_t, int), DEFAULT, Network
+DOCUMENTLOADER_STOPLOADING, "[pageID=%llu, frameID=%llu, isMainFrame=%d] DocumentLoader::stopLoading", (uint64_t, uint64_t, int), DEFAULT, Network
+
+MEDIASESSIONMANAGERCOCOA_SESSIONCANPRODUCEAUDIOCHANGED, "MediaSessionManagerCocoa::sessionCanProduceAudioChanged", (), DEFAULT, Media
+MEDIASESSIONMANAGERCOCOA_CLIENTCHARACTERISTICSCHANGED, "MediaSessionManagerCocoa::clientCharacteristicsChanged, session ID = %llu", (uint64_t), DEFAULT, Media
+MEDIASESSIONMANAGERCOCOA_UPDATESESSIONSTATE, "MediaSessionManagerCocoa::updateSessionState: AudioCapture(%d), AudioTrack(%d), Video(%d), Audio(%d), VideoAudio(%d), WebAudio(%d)", (int, int, int, int, int, int), DEFAULT, Media
+
+PLATFORMMEDIASESSIONMANAGER_REMOVESESSION, "PlatformMediaSessionManager::removeSession, session ID = %llu", (uint64_t), DEFAULT, Media
+PLATFORMMEDIASESSIONMANAGER_SESSIONWILLENDPLAYBACK, "PlatformMediaSessionManager::sessionWillEndPlayback, session ID = %llu", (uint64_t), DEFAULT, Media
+PLATFORMMEDIASESSIONMANAGER_SESSIONCANPRODUCEAUDIOCHANGED, "PlatformMediaSessionManager::sessionCanProduceAudioChanged", (), DEFAULT, Media
+PLATFORMMEDIASESSIONMANAGER_ADDSESSION, "PlatformMediaSessionManager::addSession, session ID = %llu", (uint64_t), DEFAULT, Media
+PLATFORMMEDIASESSIONMANAGER_MAYBEACTIVATEAUDIOSESSION_ACTIVE_SESSION_NOT_REQUIRED, "PlatformMediaSessionManager::maybeActivateAudioSession:  active audio session not required", (), DEFAULT, Media
+
+HTMLMEDIAELEMENT_CONSTRUCTOR, "HTMLMediaElement::HTMLMediaElement(%llu)", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_DESTRUCTOR, "HTMLMediaElement::~HTMLMediaElement(%llu)", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SETBUFFERINGPOLICY, "HTMLMediaElement::setBufferingPolicy(%llu): %hhu", (uint64_t, uint8_t), DEFAULT, Media
+HTMLMEDIAELEMENT_INSERTEDINTOANCESTOR, "HTMLMediaElement::insertedIntoAncestor(%llu)", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_REMOVEDFROMANCESTOR, "HTMLMediaElement::removedFromAncestor(%llu)", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_DIDFINISHINSERTINGNODE, "HTMLMediaElement::didFinishInsertingNode(%llu)", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_MEDIAPLAYERRATECHANGED, "HTMLMediaElement::mediaPlayerRateChanged(%llu) rate: %f", (uint64_t, double), DEFAULT, Media
+HTMLMEDIAELEMENT_MEDIAPLAYERTIMECHANGED, "HTMLMediaElement::mediaPlayerTimeChanged(%llu)", (uint64_t), DEFAULT, Media
+HTMLMEDIAELEMENT_SETSHOULDDELAYLOADEVENT, "HTMLMediaElement::setShouldDelayLoadEvent(%llu) %hhu", (uint64_t, uint8_t), DEFAULT, Media
+HTMLMEDIAELEMENT_MEDIAPLAYERENGINEUPDATED, "HTMLMediaElement::mediaPlayerEngineUpdated(%llu) %s", (uint64_t, CString), DEFAULT, Media
+HTMLMEDIAELEMENT_CURRENTMEDIATIME_SEEKING, "HTMLMediaElement::currentMediaTime(%llu) seeking, returning %f", (uint64_t, float), DEFAULT, Media
+HTMLMEDIAELEMENT_UPDATEPLAYSTATE, "HTMLMediaElement::updatePlayState(%llu) shouldBePlaying = %d, playerPaused = %d", (uint64_t, int, int), DEFAULT, Media
+
+HTMLVIDEOELEMENT_MEDIAPLAYERRENDERINGMODECHANGED, "HTMLVideoElement::mediaPlayerRenderingModeChanged(%llu)", (uint64_t), DEFAULT, Media

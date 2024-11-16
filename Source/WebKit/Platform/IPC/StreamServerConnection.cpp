@@ -128,10 +128,16 @@ void StreamServerConnection::didClose(Connection&)
     // Client is expected to listen to didClose from the main connection.
 }
 
-void StreamServerConnection::didReceiveInvalidMessage(Connection&, MessageName name, int32_t i)
+void StreamServerConnection::didReceiveInvalidMessage(Connection&, MessageName name, int32_t index)
 {
     // The sender is expected to be trusted, so all invalid messages are programming errors.
-    fprintf(stderr, "StreamServerConnection::didReceiveInvalidMessage name %hu i %d", name, i);
+#if PLATFORM(COCOA)
+    WTFLogAlways("StreamServerConnection::didReceiveInvalidMessage name %hu index %d", name, index);
+    fprintf(stderr, "StreamServerConnection::didReceiveInvalidMessage name %hu index %d", name, index);
+#else
+    UNUSED_PARAM(name);
+    UNUSED_PARAM(index);
+#endif
     ASSERT_NOT_REACHED();
 }
 

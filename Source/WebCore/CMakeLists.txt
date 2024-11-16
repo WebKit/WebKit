@@ -2650,7 +2650,7 @@ add_custom_command(
     MAIN_DEPENDENCY ${WEBCORE_DIR}/platform/WebCoreLogEntries.in
     DEPENDS ${WEBCORE_DIR}/Scripts/generate-log-declarations.py
     WORKING_DIRECTORY ${WebCore_DERIVED_SOURCES_DIR}
-    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/Scripts/generate-log-declarations.py WebCore ${WEBCORE_DIR}/platform/WebCoreLogEntries.in ${WebCore_DERIVED_SOURCES_DIR}/WebCoreLogDefinitions.h
+    COMMAND ${PYTHON_EXECUTABLE} ${WEBCORE_DIR}/Scripts/generate-log-declarations.py ${WEBCORE_DIR}/platform/WebCoreLogEntries.in ${WebCore_DERIVED_SOURCES_DIR}/WebCoreLogDefinitions.h
     VERBATIM)
 list(APPEND WebCore_SOURCES ${WebCore_DERIVED_SOURCES_DIR}/WebCoreLogDefinitions.h)
 

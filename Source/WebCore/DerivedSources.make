@@ -2698,6 +2698,10 @@ $(GENERATED_PROCESS_SYNC_CLIENT_OUTPUT_PATTERNS) : $(WebCore)/Scripts/generate-p
 
 all : WebCoreLogDefinitions.h
 
-WebCoreLogDefinitions.h : $(WebCore)/platform/WebCoreLogEntries.in
+WEBCORE_LOG_DECLARATIONS_FILES = \
+    WebCoreLogDefinitions.h \
+    WebCoreVirtualLogFunctions.h \
+
+$(WEBCORE_LOG_DECLARATIONS_FILES) : $(WebCore)/platform/WebCoreLogEntries.in
 	@echo Creating WebCore log definitions $@
-	$(PYTHON) $(WebCore)/Scripts/generate-log-declarations.py WebCore $< $@
+	$(PYTHON) $(WebCore)/Scripts/generate-log-declarations.py $< $(WEBCORE_LOG_DECLARATIONS_FILES)

@@ -27,7 +27,7 @@ webkit_platform_headers: "StreamConnectionEncoder.h"
 }
 
 header: <wtf/text/CString.h>
-[CustomHeader] class WTF::CString {
+[CustomHeader, WebKitPlatform, AdditionalEncoder=StreamConnectionEncoder] class WTF::CString {
    std::span<const uint8_t> span()
 }
 

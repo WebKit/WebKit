@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
+import importlib
 import re
 import sys
+
+log_declarations_module = importlib.import_module("generate-log-declarations")
 
 
 def generate_messages_file(log_entries, log_entries_messages_file):
@@ -14,10 +17,35 @@ def generate_messages_file(log_entries, log_entries_messages_file):
         for log_entry in log_entries:
             message_name = log_entry[0]
             parameters = log_entry[2]
-            messages_file.write("    " + message_name + "(" + get_arguments_string(parameters, True) + ")\n")
+            arguments_string = log_declarations_module.get_arguments_string(parameters, log_declarations_module.PARAMETER_LIST_INCLUDE_TYPE | log_declarations_module.PARAMETER_LIST_INCLUDE_NAME)
+            messages_file.write("    " + message_name + "(" + arguments_string + ")\n")
         messages_file.write("}\n")
         messages_file.write("#endif\n")
         messages_file.close()
+
+    return
+
+
+def generate_log_client_declarations_file(namespace, log_entries, log_client_declarations_file):
+    print("Log entries message receiver header file:", log_client_declarations_file)
+
+    namespace_camel_case = namespace[0].lower() + namespace[1:]
+
+    with open(log_client_declarations_file, 'w') as file:
+
+        for log_entry in log_entries:
+            function_name = log_entry[0]
+            parameters = log_entry[2]
+            arguments_string = log_declarations_module.get_arguments_string(parameters, log_declarations_module.PARAMETER_LIST_INCLUDE_TYPE | log_declarations_module.PARAMETER_LIST_INCLUDE_NAME | log_declarations_module.PARAMETER_LIST_MODIFY_CSTRING)
+            file.write("    virtual void " + function_name + "(" + arguments_string + ")\n")
+            file.write("    {\n")
+            file.write("        m_logStreamLock.lock();\n")
+            file.write("        if (RefPtr connection = logStreamConnection())\n")
+            parameters_string = log_declarations_module.get_arguments_string(parameters, log_declarations_module.PARAMETER_LIST_INCLUDE_NAME)
+            file.write("            connection->send(Messages::LogStream::" + function_name + "(" + parameters_string + "), m_logStreamIdentifier);\n")
+            file.write("        m_logStreamLock.unlock();\n")
+            file.write("    }\n")
+        file.close()
 
     return
 
@@ -30,64 +58,9 @@ def generate_message_receiver_declarations_file(log_entries, log_entries_message
             function_name = log_entry[0]
             function_name = function_name[0].lower() + function_name[1:]
             parameters = log_entry[2]
-            message_receiver_declarations_file.write("    void " + function_name + "(" + parameters + ");\n")
+            arguments_string = log_declarations_module.get_arguments_string(parameters, log_declarations_module.PARAMETER_LIST_INCLUDE_TYPE | log_declarations_module.PARAMETER_LIST_INCLUDE_NAME | log_declarations_module.PARAMETER_LIST_MODIFY_CSTRING)
+            message_receiver_declarations_file.write("    void " + function_name + "(" + arguments_string + ");\n")
         message_receiver_declarations_file.close()
-
-    return
-
-
-def get_arguments_string(parameters, include_type):
-    arguments = re.findall(r'(\w+)\s*,?', parameters)
-    arguments_string = ""
-    for index, argument in enumerate(arguments):
-        if include_type:
-            arguments_string += argument + " "
-        arguments_string += "argument" + str(index)
-        if index < len(arguments) - 1:
-            arguments_string += ", "
-    return arguments_string
-
-
-def generate_log_client_declarations_file(namespace, log_entries, log_client_declarations_file):
-    print("Log entries message receiver header file:", log_client_declarations_file)
-
-    namespace_camel_case = namespace[0].lower() + namespace[1:]
-
-    with open(log_client_declarations_file, 'w') as file:
-
-        file.write("virtual void " + namespace_camel_case + "Log(" + namespace + "::" + namespace + "LogMessage message, ...)\n")
-        file.write("{\n")
-        file.write("    va_list list;\n")
-        file.write("    va_start(list, message);\n")
-        file.write("    m_logStreamLock.lock();\n")
-        file.write("    switch (message) {\n")
-        for log_entry in log_entries:
-            function_name = log_entry[0]
-            parameters = log_entry[2]
-            file.write("    case " + namespace + "::" + namespace + "LogMessage::" + function_name + ":\n")
-            file.write("        m_logStreamConnection->send(Messages::LogStream::" + function_name + "(")
-            arguments = re.findall(r'(\w+)\s*,?', parameters)
-            for index, argument in enumerate(arguments):
-                file.write("va_arg(list, " + argument + ")")
-                if index < len(arguments) - 1:
-                    file.write(", ")
-            file.write("), m_logStreamIdentifier);\n")
-            file.write("        break;\n")
-        file.write("    }\n")
-        file.write("    m_logStreamLock.unlock();\n")
-        file.write("    va_end(list);\n")
-        file.write("}\n")
-
-#        for log_entry in log_entries:
-#            function_name = log_entry[0]
-#            parameters = log_entry[2]
-#            file.write("    virtual void " + function_name + "(" + get_arguments_string(parameters, True) + ")\n")
-#            file.write("    {\n")
-#            file.write("        m_logStreamLock.lock();\n")
-#            file.write("        m_logStreamConnection->send(Messages::LogStream::" + function_name + "(" + get_arguments_string(parameters, False) + "), m_logStreamIdentifier);\n")
-#            file.write("        m_logStreamLock.unlock();\n")
-#            file.write("    }\n")
-#        file.close()
 
     return
 
@@ -115,7 +88,7 @@ def generate_message_receiver_implementations_file(log_entries, log_entries_mess
 
             message_receiver_implementations_file.write("void LogStream::" + function_name + "(")
 
-            message_receiver_implementations_file.write(get_arguments_string(parameters, True))
+            message_receiver_implementations_file.write(log_declarations_module.get_arguments_string(parameters, log_declarations_module.PARAMETER_LIST_INCLUDE_TYPE | log_declarations_module.PARAMETER_LIST_INCLUDE_NAME | log_declarations_module.PARAMETER_LIST_MODIFY_CSTRING))
 
             message_receiver_implementations_file.write(")\n")
             message_receiver_implementations_file.write("{\n")
@@ -128,7 +101,7 @@ def generate_message_receiver_implementations_file(log_entries, log_entries_mess
 
             message_receiver_implementations_file.write("    os_log_with_type(osLogPointer, " + os_log_type + ", \"[PID=%d]: \"" + format_string)
             message_receiver_implementations_file.write(", static_cast<uint32_t>(m_pid)")
-            arguments_string = get_arguments_string(parameters, False)
+            arguments_string = log_declarations_module.get_arguments_string(parameters, log_declarations_module.PARAMETER_LIST_INCLUDE_NAME | log_declarations_module.PARAMETER_LIST_MODIFY_CSTRING)
             if arguments_string:
                 message_receiver_implementations_file.write(", ")
             message_receiver_implementations_file.write(arguments_string)
@@ -137,23 +110,6 @@ def generate_message_receiver_implementations_file(log_entries, log_entries_mess
         message_receiver_implementations_file.close()
 
     return
-
-
-def get_log_entries(log_entries_input_file):
-    log_entries = []
-    with open(log_entries_input_file) as input_file:
-        input_file_lines = input_file.readlines()
-        for line in input_file_lines:
-            match = re.search(r'([A-Z_0-9]*)\s*,\s*(\"[\w:;%\'\-\[\]=,\.\(\)\{\} ]*\")\s*,\s*\((.*)\)\s*,\s*(DEFAULT|INFO|ERROR|FAULT)\s*,\s*([\w]*)', line)
-            log_entry = []
-            if match:
-                log_entry.append(match.groups()[0])
-                log_entry.append(match.groups()[1])
-                log_entry.append(match.groups()[2])
-                log_entry.append(match.groups()[3])
-                log_entry.append(match.groups()[4])
-                log_entries.append(log_entry)
-    return log_entries
 
 
 def main(argv):
@@ -169,8 +125,8 @@ def main(argv):
     print("WebKit Log entries input file:", webkit_log_entries_input_file)
     print("WebCore Log entries input file:", webcore_log_entries_input_file)
 
-    webkit_log_entries = get_log_entries(webkit_log_entries_input_file)
-    webcore_log_entries = get_log_entries(webcore_log_entries_input_file)
+    webkit_log_entries = log_declarations_module.get_log_entries(webkit_log_entries_input_file)
+    webcore_log_entries = log_declarations_module.get_log_entries(webcore_log_entries_input_file)
 
     log_entries = webkit_log_entries + webcore_log_entries
 

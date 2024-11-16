@@ -39,6 +39,8 @@
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
+#define PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(fmt, ...) RELEASE_LOG_FORWARDABLE(Media, fmt, ##__VA_ARGS__)
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(PlatformMediaSessionManager);
@@ -225,7 +227,8 @@ void PlatformMediaSessionManager::endInterruption(PlatformMediaSession::EndInter
 
 void PlatformMediaSessionManager::addSession(PlatformMediaSession& session)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
+    PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(PLATFORMMEDIASESSIONMANAGER_ADDSESSION, session.logIdentifier());
+
     m_sessions.append(session);
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
     if (m_currentInterruption)
@@ -246,7 +249,7 @@ bool PlatformMediaSessionManager::hasNoSession() const
 
 void PlatformMediaSessionManager::removeSession(PlatformMediaSession& session)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
+    PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(PLATFORMMEDIASESSIONMANAGER_REMOVESESSION, session.logIdentifier());
 
     size_t index = m_sessions.find(&session);
     if (index == notFound)
@@ -317,7 +320,7 @@ bool PlatformMediaSessionManager::sessionWillBeginPlayback(PlatformMediaSession&
     
 void PlatformMediaSessionManager::sessionWillEndPlayback(PlatformMediaSession& session, DelayCallingUpdateNowPlaying)
 {
-    ALWAYS_LOG(LOGIDENTIFIER, session.logIdentifier());
+    PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(PLATFORMMEDIASESSIONMANAGER_SESSIONWILLENDPLAYBACK, session.logIdentifier());
 
     if (m_sessions.size() < 2)
         return;
@@ -506,7 +509,8 @@ void PlatformMediaSessionManager::sessionIsPlayingToWirelessPlaybackTargetChange
 
 void PlatformMediaSessionManager::sessionCanProduceAudioChanged()
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
+    PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(PLATFORMMEDIASESSIONMANAGER_SESSIONCANPRODUCEAUDIOCHANGED);
+
     if (m_alreadyScheduledSessionStatedUpdate)
         return;
 
@@ -697,7 +701,7 @@ bool PlatformMediaSessionManager::maybeActivateAudioSession()
 {
 #if USE(AUDIO_SESSION)
     if (!activeAudioSessionRequired()) {
-        ALWAYS_LOG(LOGIDENTIFIER, "active audio session not required");
+        PLATFORMMEDIASESSIONMANAGER_RELEASE_LOG(PLATFORMMEDIASESSIONMANAGER_MAYBEACTIVATEAUDIOSESSION_ACTIVE_SESSION_NOT_REQUIRED);
         return true;
     }
 

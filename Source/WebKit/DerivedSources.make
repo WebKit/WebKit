@@ -948,13 +948,21 @@ endif
 
 all : WebCoreLogDefinitions.h WebKitLogDefinitions.h
 
-WebCoreLogDefinitions.h : $(WebCorePrivateHeaders)/WebCoreLogEntries.in
-	@echo Creating WebCore log definitions $@
-	$(PYTHON) $(WebCorePrivateHeaders)/generate-log-declarations.py WebCore $< $@
+WEBCORE_LOG_DECLARATIONS_FILES = \
+    WebCoreLogDefinitions.h \
+    WebCoreVirtualLogFunctions.h \
 
-WebKitLogDefinitions.h : Shared/WebKitLogEntries.in
+$(WEBCORE_LOG_DECLARATIONS_FILES) : $(WebCorePrivateHeaders)/WebCoreLogEntries.in
+	@echo Creating WebCore log definitions $@
+	$(PYTHON) $(WebCorePrivateHeaders)/generate-log-declarations.py $< $(WEBCORE_LOG_DECLARATIONS_FILES)
+
+WEBKIT_LOG_DECLARATIONS_FILES = \
+    WebKitLogDefinitions.h \
+    WebKitVirtualLogFunctions.h \
+
+$(WEBKIT_LOG_DECLARATIONS_FILES) : Shared/WebKitLogEntries.in
 	@echo Creating WebKit log definitions $@
-	$(PYTHON) $(WebCorePrivateHeaders)/generate-log-declarations.py WebKit $< $@
+	$(PYTHON) $(WebCorePrivateHeaders)/generate-log-declarations.py $< $(WEBKIT_LOG_DECLARATIONS_FILES)
 
 all : LogEntriesDeclarations.h LogEntriesImplementations.h WebKitLogClientDeclarations.h WebCoreLogClientDeclarations.h
 
@@ -966,4 +974,4 @@ LOG_OUTPUT_FILES = \
     WebCoreLogClientDeclarations.h \
 
 $(LOG_OUTPUT_FILES) : Shared/WebKitLogEntries.in $(WebCorePrivateHeaders)/WebCoreLogEntries.in
-	$(PYTHON) $(WebKit2)/Scripts/generate-log-entries.py $^ $(LOG_OUTPUT_FILES)
+	PYTHONPATH=$(WebCorePrivateHeaders) $(PYTHON) $(WebKit2)/Scripts/generate-log-entries.py $^ $(LOG_OUTPUT_FILES)

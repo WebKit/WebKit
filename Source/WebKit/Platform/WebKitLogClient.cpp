@@ -28,7 +28,9 @@
 
 namespace WebKit {
 
-WebKitLogClient::WebKitLogClient(IPC::StreamClientConnection* connection, const LogStreamIdentifier &identifier)
+Lock WebKitLogClient::m_logStreamLock;
+
+WebKitLogClient::WebKitLogClient(IPC::StreamClientConnection& connection, const LogStreamIdentifier &identifier)
     : m_logStreamConnection(connection)
     , m_logStreamIdentifier(identifier)
 {

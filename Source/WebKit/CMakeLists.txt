@@ -885,7 +885,7 @@ add_custom_command(
     MAIN_DEPENDENCY ${WEBKIT_DIR}/Shared/WebKitLogEntries.in
     DEPENDS ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/generate-log-declarations.py
     WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
-    COMMAND ${PYTHON_EXECUTABLE} ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/generate-log-declarations.py WebKit ${WEBKIT_DIR}/Shared/WebKitLogEntries.in ${WebKit_DERIVED_SOURCES_DIR}/WebKitLogDefinitions.h
+    COMMAND ${PYTHON_EXECUTABLE} ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/generate-log-declarations.py ${WEBKIT_DIR}/Shared/WebKitLogEntries.in ${WebKit_DERIVED_SOURCES_DIR}/WebKitLogDefinitions.h
     VERBATIM)
 list(APPEND WebKit_HEADERS ${WebKit_DERIVED_SOURCES_DIR}/WebKitLogDefinitions.h)
 

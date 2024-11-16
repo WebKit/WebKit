@@ -184,7 +184,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         if (navigationAction.processingUserGesture() || navigationAction.isFromNavigationAPI() || shouldUseSyncIPCForFragmentNavigations) {
             auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(*navigationActionData));
             if (!sendResult.succeeded()) {
-                WebFrameLoaderClient_RELEASE_LOG_ERROR(WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_SYNC_IPC_FAILED, (uint32_t)sendResult.error());
+                WebFrameLoaderClient_RELEASE_LOG_ERROR(WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_SYNC_IPC_FAILED, (uint8_t)sendResult.error());
                 m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { });
                 return;
             }

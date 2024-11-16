@@ -34,6 +34,11 @@ public:
     virtual ~WebCoreLogClient() { }
 
     virtual void webCoreLog(WebCoreLogMessage, ...) { }
+
+#if __has_include("WebCoreVirtualLogFunctions.h")
+#include "WebCoreVirtualLogFunctions.h"
+#endif
+
 };
 
 WEBCORE_EXPORT std::unique_ptr<WebCoreLogClient>& webCoreLogClient();

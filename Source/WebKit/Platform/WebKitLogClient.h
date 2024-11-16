@@ -32,24 +32,36 @@
 #include <WebCore/WebCoreLogClient.h>
 #include <wtf/Lock.h>
 
+#if __has_include("WebCoreLogDefinitions.h")
 #include "WebCoreLogDefinitions.h"
+#endif
+#if __has_include("WebKitLogDefinitions.h")
 #include "WebKitLogDefinitions.h"
+#endif
 
 namespace WebKit {
 
 class WebKitLogClient : public WebCore::WebCoreLogClient {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    WebKitLogClient(IPC::StreamClientConnection*, const LogStreamIdentifier&);
+    WebKitLogClient(IPC::StreamClientConnection&, const LogStreamIdentifier&);
     virtual ~WebKitLogClient() { };
 
+    Ref<IPC::StreamClientConnection> logStreamConnection() const { return m_logStreamConnection; }
+    LogStreamIdentifier logStreamIdentifier() const { return m_logStreamIdentifier; }
+    Lock& logStreamLock() { return m_logStreamLock; }
+
+#if __has_include("WebKitLogClientDeclarations.h")
 #include "WebKitLogClientDeclarations.h"
+#endif
+#if __has_include("WebCoreLogClientDeclarations.h")
 #include "WebCoreLogClientDeclarations.h"
+#endif
 
 private:
-    RefPtr<IPC::StreamClientConnection> m_logStreamConnection;
+    Ref<IPC::StreamClientConnection> m_logStreamConnection;
     LogStreamIdentifier m_logStreamIdentifier;
-    Lock m_logStreamLock;
+    static Lock m_logStreamLock;
 };
 
 std::unique_ptr<WebKitLogClient>& webkitLogClient();

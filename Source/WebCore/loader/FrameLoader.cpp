@@ -2085,7 +2085,6 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItem clearProvisionalItem, Stop
     if (frame->page() && !frame->page()->chrome().client().isSVGImageChromeClient())
         platformStrategies()->loaderStrategy()->browsingContextRemoved(frame);
 
-    //FRAMELOADER_RELEASE_LOG_FORWARDABLE(FRAMELOADER_STOPALLLOADERS_CLEARING_PROVISIONAL_DOCUMENT_LOADER, (uintptr_t)m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(nullptr);
 
     m_inStopAllLoaders = false;    

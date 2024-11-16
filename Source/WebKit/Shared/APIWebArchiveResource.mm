@@ -38,9 +38,9 @@
 namespace API {
 using namespace WebCore;
 
-Ref<WebArchiveResource> WebArchiveResource::create(API::Data* data, const WTF::String& URL, const WTF::String& MIMEType, const WTF::String& textEncoding)
+Ref<WebArchiveResource> WebArchiveResource::create(API::Data* data, const WTF::String& url, const WTF::String& mimeType, const WTF::String& textEncoding)
 {
-    return adoptRef(*new WebArchiveResource(data, URL, MIMEType, textEncoding));
+    return adoptRef(*new WebArchiveResource(data, url, mimeType, textEncoding));
 }
 
 Ref<WebArchiveResource> WebArchiveResource::create(RefPtr<ArchiveResource>&& archiveResource)
@@ -48,8 +48,8 @@ Ref<WebArchiveResource> WebArchiveResource::create(RefPtr<ArchiveResource>&& arc
     return adoptRef(*new WebArchiveResource(WTFMove(archiveResource)));
 }
 
-WebArchiveResource::WebArchiveResource(API::Data* data, const WTF::String& url, const WTF::String& MIMEType, const WTF::String& textEncoding)
-    : m_archiveResource(ArchiveResource::create(SharedBuffer::create(data->span()), WTF::URL { url }, MIMEType, textEncoding, WTF::String()))
+WebArchiveResource::WebArchiveResource(API::Data* data, const WTF::String& url, const WTF::String& mimeType, const WTF::String& textEncoding)
+    : m_archiveResource(ArchiveResource::create(SharedBuffer::create(data->span()), WTF::URL { url }, mimeType, textEncoding, WTF::String()))
 {
 }
 

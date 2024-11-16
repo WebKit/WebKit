@@ -862,28 +862,34 @@ void WebProcess::setupLogStream()
     if (!connectionPair)
         CRASH();
     auto [streamConnection, serverHandle] = WTFMove(*connectionPair);
-    m_logStreamConnection = WTFMove(streamConnection);
 
-    webkitLogClient() = WTF::makeUnique<WebKitLogClient>(m_logStreamConnection.get(), m_logStreamIdentifier);
-    webCoreLogClient() = WTF::makeUnique<WebKitLogClient>(m_logStreamConnection.get(), m_logStreamIdentifier);
+    LogStreamIdentifier logStreamIdentifier { LogStreamIdentifier::generate() };
 
-    if (RefPtr logStreamConnection = m_logStreamConnection)
-        logStreamConnection->open(*this);
+    RefPtr logStreamConnection = WTFMove(streamConnection);
+    if (!logStreamConnection)
+        return;
 
-    parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::SetupLogStream(getpid(), WTFMove(serverHandle), WebProcess::singleton().m_logStreamIdentifier), [] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) {
-        if (RefPtr logStreamConnection = WebProcess::singleton().m_logStreamConnection)
-            logStreamConnection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
+    logStreamConnection->open(*this);
+
+    parentProcessConnection()->sendWithAsyncReply(Messages::WebProcessProxy::SetupLogStream(getpid(), WTFMove(serverHandle), logStreamIdentifier), [logStreamConnection, logStreamIdentifier] (IPC::Semaphore&& wakeUpSemaphore, IPC::Semaphore&& clientWaitSemaphore) {
+        logStreamConnection->setSemaphores(WTFMove(wakeUpSemaphore), WTFMove(clientWaitSemaphore));
 #if PLATFORM(IOS_FAMILY)
         prewarmLogs();
 #endif
+        webkitLogClient() = WTF::makeUnique<WebKitLogClient>(*logStreamConnection.get(), logStreamIdentifier);
+        webCoreLogClient() = WTF::makeUnique<WebKitLogClient>(*logStreamConnection.get(), logStreamIdentifier);
+
         WebProcess::singleton().registerLogHook();
     });
 }
 
 void WebProcess::sendLogOnStream(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, os_log_type_t type)
 {
-    if (RefPtr logStreamConnection = m_logStreamConnection)
-        logStreamConnection->send(Messages::LogStream::LogOnBehalfOfWebContent(logChannel, logCategory, logString, type), m_logStreamIdentifier);
+    if (RefPtr logStreamConnection = webkitLogClient()->logStreamConnection()) {
+        webkitLogClient()->logStreamLock().lock();
+        logStreamConnection->send(Messages::LogStream::LogOnBehalfOfWebContent(logChannel, logCategory, logString, type), webkitLogClient()->logStreamIdentifier());
+        webkitLogClient()->logStreamLock().unlock();
+    }
 }
 #endif
 
