@@ -7542,3 +7542,8 @@ fast/events/ios/key-events-comprehensive/key-events-shift.html [ Pass Timeout ]
 # Missing AVSampleBufferDisplayLayer's ReadyForDisplayDidChangeNotification
 media/media-vp8-webm.html [ Pass ImageOnlyFailure ]
 media/media-vp8-webm-seek-to-start.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/283218 ([ iOS ] 3 CSS filters tests are flaky ImageOnlyFailures.)
+css3/color-filters/color-filter-animation.html [ Pass ImageOnlyFailure ]
+css3/color-filters/svg/color-filter-inline-svg.html [ Pass ImageOnlyFailure ]
+css3/filters/hidpi-backdrop-filter-rasterization-scale.html [ Pass ImageOnlyFailure ]
