@@ -731,7 +731,7 @@ void TileGrid::drawTileMapContents(CGContextRef context, CGRect layerBounds) con
 
         auto repaintCount = m_tileRepaintCounts.count(tileLayer);
         std::array<char8_t, lengthOfIntegerAsString(std::numeric_limits<decltype(repaintCount)>::max())> repaintCountCharacters;
-        writeIntegerToBuffer(repaintCount, repaintCountCharacters.data());
+        writeIntegerToBuffer(repaintCount, std::span<char8_t> { repaintCountCharacters });
         tileLayer->drawTextAtPoint(context, frame.origin.x + 64, frame.origin.y + 192, CGSizeMake(3, -3), 58, repaintCountCharacters);
 
         CGContextRestoreGState(context);

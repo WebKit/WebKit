@@ -260,7 +260,7 @@ class ObjectIdentifierGenericBaseStringTypeAdapter<uint64_t> {
 public:
     unsigned length() const { return lengthOfIntegerAsString(m_identifier); }
     bool is8Bit() const { return true; }
-    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const { writeIntegerToBuffer(m_identifier, destination.data()); }
+    template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const { writeIntegerToBuffer(m_identifier, destination); }
 protected:
     explicit ObjectIdentifierGenericBaseStringTypeAdapter(uint64_t identifier)
         : m_identifier(identifier) { }

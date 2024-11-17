@@ -69,11 +69,11 @@ inline typename IntegerToStringConversionTrait<T>::ReturnType numberToStringUnsi
 }
 
 template<typename CharacterType, typename UnsignedIntegerType, PositiveOrNegativeNumber NumberType>
-static void writeIntegerToBufferImpl(UnsignedIntegerType number, CharacterType* destination)
+static void writeIntegerToBufferImpl(UnsignedIntegerType number, std::span<CharacterType> destination)
 {
     static_assert(!std::is_same_v<bool, std::remove_cv_t<UnsignedIntegerType>>, "'bool' not supported");
-    LChar buf[sizeof(UnsignedIntegerType) * 3 + 1];
-    LChar* end = std::end(buf);
+    std::array<LChar, sizeof(UnsignedIntegerType) * 3 + 1> buf;
+    LChar* end = std::to_address(buf.end());
     LChar* p = end;
 
     do {
@@ -84,12 +84,12 @@ static void writeIntegerToBufferImpl(UnsignedIntegerType number, CharacterType* 
     if (NumberType == NegativeNumber)
         *--p = '-';
     
-    while (p < end)
-        *destination++ = static_cast<CharacterType>(*p++);
+    for (size_t i = 0; i < static_cast<size_t>(end - p); ++i)
+        destination[i] = static_cast<CharacterType>(p[i]);
 }
 
 template<typename CharacterType, typename IntegerType>
-inline void writeIntegerToBuffer(IntegerType integer, CharacterType* destination)
+inline void writeIntegerToBuffer(IntegerType integer, std::span<CharacterType> destination)
 {
     static_assert(std::is_integral_v<IntegerType>);
     if constexpr (std::is_same_v<IntegerType, bool>)

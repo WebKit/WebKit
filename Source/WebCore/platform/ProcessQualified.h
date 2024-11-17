@@ -168,9 +168,9 @@ public:
     template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const
     {
         auto processIdentifierLength = lengthOfIntegerAsString(m_processIdentifier);
-        writeIntegerToBuffer(m_processIdentifier, destination.data());
+        writeIntegerToBuffer(m_processIdentifier, destination);
         destination[processIdentifierLength] = '-';
-        writeIntegerToBuffer(m_objectIdentifier, destination.subspan(processIdentifierLength + 1).data());
+        writeIntegerToBuffer(m_objectIdentifier, destination.subspan(processIdentifierLength + 1));
     }
 protected:
     explicit ProcessQualifiedStringTypeAdapter(uint64_t processIdentifier, uint64_t objectIdentifier)

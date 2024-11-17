@@ -44,7 +44,7 @@ public:
     unsigned length() const { return lengthOfIntegerAsString(m_number); }
     bool is8Bit() const { return true; }
     template<typename CharacterType>
-    void writeTo(std::span<CharacterType> destination) const { writeIntegerToBuffer(m_number, destination.data()); }
+    void writeTo(std::span<CharacterType> destination) const { writeIntegerToBuffer(m_number, destination); }
 
 private:
     Integer m_number;
@@ -62,7 +62,7 @@ public:
     unsigned length() const { return lengthOfIntegerAsString(static_cast<UnderlyingType>(m_enum)); }
     bool is8Bit() const { return true; }
     template<typename CharacterType>
-    void writeTo(std::span<CharacterType> destination) const { writeIntegerToBuffer(static_cast<UnderlyingType>(m_enum), destination.data()); }
+    void writeTo(std::span<CharacterType> destination) const { writeIntegerToBuffer(static_cast<UnderlyingType>(m_enum), destination); }
 
 private:
     Enum m_enum;
