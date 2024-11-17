@@ -494,8 +494,8 @@ void CDMInstanceFairPlayStreamingAVFObjC::handleUnexpectedRequests(Vector<Retain
         auto request = requests.takeLast();
         m_unexpectedKeyRequests.add(request);
 
-        if (m_client)
-            m_client->unrequestedInitializationDataReceived(initTypeForRequest(request.get()), initializationDataForRequest(request.get()));
+        if (RefPtr client = m_client.get())
+            client->unrequestedInitializationDataReceived(initTypeForRequest(request.get()), initializationDataForRequest(request.get()));
     }
 }
 

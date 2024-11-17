@@ -34,6 +34,7 @@
 #include "RemoteCDMProxy.h"
 #include <WebCore/CDMInstance.h>
 #include <wtf/Ref.h>
+#include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
 
 namespace WebCore {
@@ -50,12 +51,15 @@ namespace WebKit {
 struct RemoteCDMInstanceConfiguration;
 class RemoteCDMInstanceSessionProxy;
 
-class RemoteCDMInstanceProxy : public WebCore::CDMInstanceClient, private IPC::MessageReceiver  {
+class RemoteCDMInstanceProxy : public WebCore::CDMInstanceClient, private IPC::MessageReceiver, public RefCounted<RemoteCDMInstanceProxy>  {
 public:
     USING_CAN_MAKE_WEAKPTR(WebCore::CDMInstanceClient);
 
-    static std::unique_ptr<RemoteCDMInstanceProxy> create(RemoteCDMProxy&, Ref<WebCore::CDMInstance>&&, RemoteCDMInstanceIdentifier);
+    static Ref<RemoteCDMInstanceProxy> create(RemoteCDMProxy&, Ref<WebCore::CDMInstance>&&, RemoteCDMInstanceIdentifier);
     ~RemoteCDMInstanceProxy();
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     const RemoteCDMInstanceConfiguration& configuration() const { return m_configuration.get(); }
     WebCore::CDMInstance& instance() { return m_instance; }

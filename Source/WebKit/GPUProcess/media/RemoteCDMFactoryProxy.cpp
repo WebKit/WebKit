@@ -104,7 +104,7 @@ void RemoteCDMFactoryProxy::didReceiveCDMMessage(IPC::Connection& connection, IP
 void RemoteCDMFactoryProxy::didReceiveCDMInstanceMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
     if (ObjectIdentifier<RemoteCDMInstanceIdentifierType>::isValidIdentifier(decoder.destinationID())) {
-        if (auto* instance = m_instances.get(ObjectIdentifier<RemoteCDMInstanceIdentifierType>(decoder.destinationID())))
+        if (RefPtr instance = m_instances.get(ObjectIdentifier<RemoteCDMInstanceIdentifierType>(decoder.destinationID())))
             instance->didReceiveMessage(connection, decoder);
     }
 }
@@ -129,7 +129,7 @@ bool RemoteCDMFactoryProxy::didReceiveSyncCDMMessage(IPC::Connection& connection
 bool RemoteCDMFactoryProxy::didReceiveSyncCDMInstanceMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& encoder)
 {
     if (ObjectIdentifier<RemoteCDMInstanceIdentifierType>::isValidIdentifier(decoder.destinationID())) {
-        if (auto* instance = m_instances.get(ObjectIdentifier<RemoteCDMInstanceIdentifierType>(decoder.destinationID())))
+        if (RefPtr instance = m_instances.get(ObjectIdentifier<RemoteCDMInstanceIdentifierType>(decoder.destinationID())))
             return instance->didReceiveSyncMessage(connection, decoder, encoder);
     }
     return false;
@@ -156,7 +156,7 @@ void RemoteCDMFactoryProxy::removeProxy(const RemoteCDMIdentifier& identifier)
     m_proxies.remove(identifier);
 }
 
-void RemoteCDMFactoryProxy::addInstance(const RemoteCDMInstanceIdentifier& identifier, std::unique_ptr<RemoteCDMInstanceProxy>&& instance)
+void RemoteCDMFactoryProxy::addInstance(const RemoteCDMInstanceIdentifier& identifier, Ref<RemoteCDMInstanceProxy>&& instance)
 {
     ASSERT(!m_instances.contains(identifier));
     m_instances.set(identifier, WTFMove(instance));

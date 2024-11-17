@@ -67,8 +67,8 @@ RemoteCDMInstance::~RemoteCDMInstance()
 
 void RemoteCDMInstance::unrequestedInitializationDataReceived(const String& type, Ref<SharedBuffer>&& initData)
 {
-    if (m_client)
-        m_client->unrequestedInitializationDataReceived(type, WTFMove(initData));
+    if (RefPtr client = m_client.get())
+        client->unrequestedInitializationDataReceived(type, WTFMove(initData));
 }
 
 void RemoteCDMInstance::initializeWithConfiguration(const WebCore::CDMKeySystemConfiguration& configuration, AllowDistinctiveIdentifiers distinctiveIdentifiers, AllowPersistentState persistentState, SuccessCallback&& callback)
