@@ -29,10 +29,7 @@ import webbrowser
 if not sys.platform.startswith('win'):
     import readline
 
-from webkitcorepy import StringIO, run, Timer, run
-
-if sys.version_info > (3, 0):
-    file = io.IOBase
+from webkitcorepy import Timer, run
 
 
 class Terminal(object):
@@ -110,9 +107,22 @@ class Terminal(object):
 
     @classmethod
     def assert_writeable_stream(cls, target):
-        if not isinstance(target, (io.IOBase, file, StringIO)):
+        file_like_object = (
+            hasattr(target, 'read') and callable(target.read)
+            or hasattr(target, 'write') and callable(target.write)
+        )
+        if not file_like_object:
             raise ValueError('{} is not an IO object'.format(target))
-        if not isinstance(target, StringIO) and not (getattr(target, 'writable', None) and target.writable()) and 'w' not in getattr(target, 'mode', 'r'):
+
+        try:
+            file_like_appears_writable = (
+                (target.writable() or target.mode and 'w' in target.mode)
+                and hasattr(target, 'write') and callable(target.write)
+            )
+        except (io.UnsupportedOperation, AttributeError):
+            file_like_appears_writable = False
+
+        if not file_like_appears_writable:
             raise ValueError('{} is an IO object, but is not writable'.format(target))
 
     @classmethod
@@ -131,7 +141,11 @@ class Terminal(object):
     @classmethod
     @contextlib.contextmanager
     def override_atty(cls, target, isatty=True):
-        if not isinstance(target, (io.IOBase, file, StringIO)):
+        file_like_object = (
+            hasattr(target, 'read') and callable(target.read)
+            or hasattr(target, 'write') and callable(target.write)
+        )
+        if not file_like_object:
             raise ValueError('{} is not an IO object'.format(target))
 
         try:
