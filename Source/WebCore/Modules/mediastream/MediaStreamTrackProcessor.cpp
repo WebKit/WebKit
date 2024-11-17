@@ -32,6 +32,7 @@
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLVideoElement.h"
+#include "ImageBitmap.h"
 #include "JSWebCodecsVideoFrame.h"
 #include "Logging.h"
 #include "OffscreenCanvas.h"

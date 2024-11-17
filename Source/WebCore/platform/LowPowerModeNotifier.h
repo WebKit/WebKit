@@ -34,7 +34,9 @@ OBJC_CLASS WebLowPowerModeObserver;
 
 #if USE(GLIB)
 #include <wtf/glib/GRefPtr.h>
+extern "C" {
 typedef struct _GPowerProfileMonitor GPowerProfileMonitor;
+};
 #endif
 
 namespace WebCore {

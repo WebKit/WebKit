@@ -27,7 +27,6 @@
 #include <wtf/glib/Sandbox.h>
 
 #include <gio/gio.h>
-#include <glib.h>
 #include <wtf/FileSystem.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/glib/GRefPtr.h>
