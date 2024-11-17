@@ -4837,7 +4837,7 @@ void FrameLoader::updateNavigationAPIEntries(std::optional<NavigationNavigationT
     if (startingIndex != notFound) {
         Ref startingOrigin = SecurityOrigin::create(rawEntries[startingIndex]->url());
 
-        for (int64_t i = startingIndex - 1; i >= 0; i--) {
+        for (int64_t i = static_cast<int64_t>(startingIndex) - 1; i >= 0; i--) {
             Ref item = rawEntries[i];
 
             if (!SecurityOrigin::create(item->url())->isSameOriginAs(startingOrigin))
