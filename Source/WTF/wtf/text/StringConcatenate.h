@@ -464,7 +464,7 @@ public:
     bool is8Bit() const { return m_converter.string.is8Bit(); }
     template<typename CharacterType> void writeTo(std::span<CharacterType> destination) const
     {
-        m_converter.string.getCharactersWithASCIICase(m_converter.type, destination.data());
+        m_converter.string.getCharactersWithASCIICase(m_converter.type, destination);
     }
 
 private:

@@ -138,8 +138,8 @@ public:
     template<typename CharacterType> void getCharacters16(std::span<CharacterType>) const;
 
     enum class CaseConvertType { Upper, Lower };
-    WTF_EXPORT_PRIVATE void getCharactersWithASCIICase(CaseConvertType, LChar*) const;
-    WTF_EXPORT_PRIVATE void getCharactersWithASCIICase(CaseConvertType, UChar*) const;
+    WTF_EXPORT_PRIVATE void getCharactersWithASCIICase(CaseConvertType, std::span<LChar>) const;
+    WTF_EXPORT_PRIVATE void getCharactersWithASCIICase(CaseConvertType, std::span<UChar>) const;
 
     StringView substring(unsigned start, unsigned length = std::numeric_limits<unsigned>::max()) const;
     StringView left(unsigned length) const { return substring(0, length); }
