@@ -218,7 +218,6 @@ void CalleeGroup::releaseBBQCallee(const AbstractLocker&, FunctionCodeIndex func
     if (!Options::freeRetiredWasmCode())
         return;
 
-    RefPtr<BBQCallee> bbqCallee = m_bbqCallees[functionIndex].convertToWeak();
     // It's possible there are still a LLInt/IPIntCallee around even when the BBQCallee
     // is destroyed. Since this function was clearly hot enough to get to OMG we should
     // tier it up soon.
@@ -227,7 +226,17 @@ void CalleeGroup::releaseBBQCallee(const AbstractLocker&, FunctionCodeIndex func
     else if (m_llintCallees)
         m_llintCallees->at(functionIndex)->tierUpCounter().resetAndOptimizeSoon(m_mode);
 
-    bbqCallee->reportToVMsForDestruction();
+    // We could have triggered a tier up from a BBQCallee has MemoryMode::BoundsChecking
+    // but is currently running a MemoryMode::Signaling memory. In that case there may
+    // be nothing to release.
+    if (LIKELY(!m_bbqCallees.isEmpty())) {
+        if (RefPtr bbqCallee = m_bbqCallees[functionIndex].convertToWeak()) {
+            bbqCallee->reportToVMsForDestruction();
+            return;
+        }
+    }
+
+    ASSERT(mode() == MemoryMode::Signaling);
 }
 #endif
 
@@ -334,6 +343,7 @@ void CalleeGroup::reportCallees(const AbstractLocker&, JITCallee* caller, const 
     for (uint32_t calleeIndex : callees) {
         WTF::switchOn(m_callers[calleeIndex],
             [&](SparseCallers& callers) {
+                assertIsHeld(m_lock);
                 callers.add(callerIndex.rawIndex());
                 // FIXME: We should do this when we would resize to be bigger than the bitvectors count rather than after we've already resized.
                 if (callers.memoryUse() >= DenseCallers::outOfLineMemoryUse(m_calleeCount)) {

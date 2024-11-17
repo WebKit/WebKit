@@ -131,7 +131,7 @@ public:
 
 
 #if ENABLE(WEBASSEMBLY_BBQJIT)
-    BBQCallee& wasmBBQCalleeFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace)
+    BBQCallee& wasmBBQCalleeFromFunctionIndexSpace(FunctionSpaceIndex functionIndexSpace) WTF_IGNORES_THREAD_SAFETY_ANALYSIS
     {
         // We do not look up without locking because this function is called from this BBQCallee itself.
         ASSERT(runnable());
@@ -232,17 +232,17 @@ private:
     unsigned m_calleeCount;
     MemoryMode m_mode;
 #if ENABLE(WEBASSEMBLY_OMGJIT)
-    FixedVector<RefPtr<OMGCallee>> m_omgCallees;
+    FixedVector<RefPtr<OMGCallee>> m_omgCallees WTF_GUARDED_BY_LOCK(m_lock);
 #endif
 #if ENABLE(WEBASSEMBLY_BBQJIT)
-    FixedVector<ThreadSafeWeakOrStrongPtr<BBQCallee>> m_bbqCallees;
+    FixedVector<ThreadSafeWeakOrStrongPtr<BBQCallee>> m_bbqCallees WTF_GUARDED_BY_LOCK(m_lock);
 #endif
-    RefPtr<IPIntCallees> m_ipintCallees;
-    RefPtr<LLIntCallees> m_llintCallees;
+    RefPtr<IPIntCallees> m_ipintCallees WTF_GUARDED_BY_LOCK(m_lock);
+    RefPtr<LLIntCallees> m_llintCallees WTF_GUARDED_BY_LOCK(m_lock);
     UncheckedKeyHashMap<uint32_t, RefPtr<JSEntrypointCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_jsEntrypointCallees;
 #if ENABLE(WEBASSEMBLY_BBQJIT) || ENABLE(WEBASSEMBLY_OMGJIT)
     // FIXME: We should probably find some way to prune dead entries periodically.
-    UncheckedKeyHashMap<uint32_t, ThreadSafeWeakPtr<OMGOSREntryCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_osrEntryCallees;
+    UncheckedKeyHashMap<uint32_t, ThreadSafeWeakPtr<OMGOSREntryCallee>, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>> m_osrEntryCallees WTF_GUARDED_BY_LOCK(m_lock);
 #endif
 
     // functionCodeIndex -> functionCodeIndex of internal functions that have direct JIT callsites to the lhs.
@@ -251,7 +251,7 @@ private:
     // FIXME: This should be a WTF class and we should use it in the JIT Plans.
     using SparseCallers = HashSet<uint32_t, DefaultHash<uint32_t>, WTF::UnsignedWithZeroKeyHashTraits<uint32_t>>;
     using DenseCallers = BitVector;
-    FixedVector<std::variant<SparseCallers, DenseCallers>> m_callers;
+    FixedVector<std::variant<SparseCallers, DenseCallers>> m_callers WTF_GUARDED_BY_LOCK(m_lock);
     FixedVector<CodePtr<WasmEntryPtrTag>> m_wasmIndirectCallEntryPoints;
     FixedVector<RefPtr<Wasm::Callee>> m_wasmIndirectCallWasmCallees;
     FixedVector<MacroAssemblerCodeRef<WasmEntryPtrTag>> m_wasmToWasmExitStubs;
