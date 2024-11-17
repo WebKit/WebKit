@@ -21,11 +21,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# A webkitpy import needs to go first for autoinstaller to work with subsequent imports.
-import webkitpy
-
 import os
-import six
 import sys
 
 REBASE_DICTIONARY = {
@@ -52,7 +48,7 @@ def needs_rebase(line):
     if not is_editable_line(line):
         return RebaseStatus.DO_NOT_NEED
 
-    for current_name, rebased_name in six.iteritems(REBASE_DICTIONARY):
+    for current_name, rebased_name in REBASE_DICTIONARY.items():
         # Check if we've already rebased. We need to check if the rebased_name is already in the REBASE_DICTIONARY,
         # in this case, we don't know if we've already been rebased.
         if append_source(rebased_name) in line and rebased_name not in REBASE_DICTIONARY:
@@ -64,7 +60,7 @@ def needs_rebase(line):
             return RebaseStatus.NEED
 
     # Check if we might need a rebase
-    for current_name, rebased_name in six.iteritems(REBASE_DICTIONARY):
+    for current_name, rebased_name in REBASE_DICTIONARY.items():
         if append_source(current_name) in line:
             return RebaseStatus.MAYBE_NEED
 
@@ -73,11 +69,11 @@ def needs_rebase(line):
 
 def rebase_line(line):
     if not is_editable_line(line):
-        for current_name, rebased_name in six.iteritems(REBASE_DICTIONARY):
+        for current_name, rebased_name in REBASE_DICTIONARY.items():
             if current_name in line:
                 sys.stderr.write('Found an instance of {} in the patch.  Did you mean to replace it with {}?\n'.format(current_name, rebased_name))
         return line
-    for current_name, rebased_name in six.iteritems(REBASE_DICTIONARY):
+    for current_name, rebased_name in REBASE_DICTIONARY.items():
         if append_source(current_name) in line:
             return line.replace(append_source(current_name), append_source(rebased_name))
     return line

@@ -28,8 +28,6 @@ import re
 import sys
 from collections import defaultdict
 
-import six
-
 
 class JSONChecker(object):
     """Processes JSON lines for checking style."""
@@ -475,7 +473,7 @@ class JSONImportExpectationsChecker(JSONChecker):
             valid = True
 
             # This is an assert because JSON requires it, and thus should be infallible.
-            assert isinstance(key, six.text_type)
+            assert isinstance(key, str)
 
             if key != "web-platform-tests" and not key.startswith(
                 "web-platform-tests/"
