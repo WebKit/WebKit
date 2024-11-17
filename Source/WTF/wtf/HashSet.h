@@ -150,6 +150,13 @@ public:
     template<typename OtherCollection>
     HashSet intersectionWith(const OtherCollection&) const;
 
+    // Returns a new set with the elements of this set that are not in
+    // the given collection (a.k.a. A - B).
+    //
+    // NOTE: OtherCollection is required to implement `bool contains(Value)`.
+    template<typename OtherCollection>
+    HashSet differenceWith(const OtherCollection&) const;
+
     // Returns a new set with the elements that are either in this set or
     // in the given collection, but not in both. (a.k.a. XOR).
     template<typename OtherCollection>
@@ -158,6 +165,12 @@ public:
     // Adds the elements of the given collection to the set (a.k.a. OR).
     template<typename OtherCollection>
     void formUnion(const OtherCollection&);
+
+    // Removes the elements of this set that are in the given collection (a.k.a. A - B).
+    //
+    // NOTE: OtherCollection is required to implement `bool contains(Value)`.
+    template<typename OtherCollection>
+    void formDifference(const OtherCollection&);
 
     // Removes the elements of this set that aren't also in the given
     // collection (a.k.a. AND).
@@ -433,6 +446,18 @@ inline auto HashSet<T, U, V, W>::intersectionWith(const OtherCollection& other) 
 
 template<typename T, typename U, typename V, typename W>
 template<typename OtherCollection>
+inline auto HashSet<T, U, V, W>::differenceWith(const OtherCollection& other) const -> HashSet<T, U, V, W>
+{
+    HashSet result;
+    for (const auto& value : *this) {
+        if (!other.contains(value))
+            result.add(value);
+    }
+    return result;
+}
+
+template<typename T, typename U, typename V, typename W>
+template<typename OtherCollection>
 inline auto HashSet<T, U, V, W>::symmetricDifferenceWith(const OtherCollection& other) const -> HashSet<T, U, V, W>
 {
     auto copy = *this;
@@ -452,6 +477,13 @@ template<typename OtherCollection>
 inline void HashSet<T, U, V, W>::formIntersection(const OtherCollection& other)
 {
     *this = intersectionWith(other);
+}
+
+template<typename T, typename U, typename V, typename W>
+template<typename OtherCollection>
+inline void HashSet<T, U, V, W>::formDifference(const OtherCollection& other)
+{
+    *this = differenceWith(other);
 }
 
 template<typename T, typename U, typename V, typename W>

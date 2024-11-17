@@ -755,6 +755,99 @@ TEST(WTF_HashSet, FormIntersection)
     }
 }
 
+TEST(WTF_HashSet, DifferenceWith)
+{
+    HashSet<int> emptySet;
+    HashSet<int> set1 { 1, 2, 3 };
+    HashSet<int> set2 { 2, 3, 4 };
+    Vector<int> sequence { 2, 3, 4 };
+
+    {
+        auto result = emptySet.differenceWith(set1);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1.differenceWith(emptySet);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = emptySet.differenceWith(emptySet);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1.differenceWith(set1);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1.differenceWith(set2);
+        EXPECT_EQ(result, HashSet<int> { 1 });
+    }
+
+    {
+        auto result = set2.differenceWith(set1);
+        EXPECT_EQ(result, HashSet<int> { 4 });
+    }
+
+    {
+        auto result = set1.differenceWith(sequence);
+        EXPECT_EQ(result, HashSet<int> { 1 });
+    }
+}
+
+TEST(WTF_HashSet, FormDifference)
+{
+    HashSet<int> emptySet;
+    HashSet<int> set1 { 1, 2, 3 };
+    HashSet<int> set2 { 2, 3, 4 };
+    Vector<int> sequence { 2, 3, 4 };
+
+    {
+        auto result = emptySet;
+        result.formDifference(set1);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1;
+        result.formDifference(emptySet);
+        EXPECT_EQ(result, set1);
+    }
+
+    {
+        auto result = emptySet;
+        result.formDifference(emptySet);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1;
+        result.formDifference(set1);
+        EXPECT_EQ(result, emptySet);
+    }
+
+    {
+        auto result = set1;
+        result.formDifference(set2);
+        EXPECT_EQ(result, HashSet<int> { 1 });
+    }
+
+    {
+        auto result = set2;
+        result.formDifference(set1);
+        EXPECT_EQ(result, HashSet<int> { 4 });
+    }
+
+    {
+        auto result = set1;
+        result.formDifference(sequence);
+        EXPECT_EQ(result, HashSet<int> { 1 });
+    }
+}
+
 TEST(WTF_HashSet, SymmetricDifferenceWith)
 {
     HashSet<int> emptySet;
