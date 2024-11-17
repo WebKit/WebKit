@@ -36,6 +36,7 @@
 #include "ImageBuffer.h"
 #include "PixelBuffer.h"
 #include "Timer.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/Lock.h>
 #include <wtf/MathExtras.h>
 #include <wtf/NeverDestroyed.h>
@@ -45,15 +46,6 @@
 #include <wtf/TZoneMallocInlines.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
-namespace WebCore {
-class ScratchBuffer;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::ScratchBuffer> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -71,8 +63,9 @@ static inline int roundUpToMultipleOf32(int d)
 // ShadowBlur needs a scratch image as the buffer for the blur filter.
 // Instead of creating and destroying the buffer for every operation,
 // we create a buffer which will be automatically purged via a timer.
-class ScratchBuffer {
+class ScratchBuffer final : public CanMakeThreadSafeCheckedPtr<ScratchBuffer> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(ScratchBuffer);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScratchBuffer);
 public:
     ScratchBuffer()
         : m_purgeTimer(RunLoop::main(), this, &ScratchBuffer::purgeTimerFired)

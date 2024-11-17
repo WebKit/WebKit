@@ -32,19 +32,13 @@
 
 #include "ScrollbarsController.h"
 #include "Timer.h"
-
-namespace WebCore {
-class ScrollbarsControllerGeneric;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::ScrollbarsControllerGeneric> : std::true_type { };
-}
+#include <wtf/CheckedPtr.h>
 
 namespace WebCore {
 
-class ScrollbarsControllerGeneric final : public ScrollbarsController {
+class ScrollbarsControllerGeneric final : public ScrollbarsController, public CanMakeCheckedPtr<ScrollbarsControllerGeneric> {
+    WTF_MAKE_FAST_ALLOCATED;
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ScrollbarsControllerGeneric);
 public:
     explicit ScrollbarsControllerGeneric(ScrollableArea&);
     virtual ~ScrollbarsControllerGeneric();

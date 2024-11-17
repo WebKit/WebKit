@@ -87,7 +87,7 @@ ImageFrameAnimator* BitmapImageSource::frameAnimator() const
     if (!isAnimated())
         return nullptr;
 
-    m_frameAnimator = ImageFrameAnimator::create(const_cast<BitmapImageSource&>(*this));
+    m_frameAnimator = makeUniqueWithoutRefCountedCheck<ImageFrameAnimator>(const_cast<BitmapImageSource&>(*this));
     return m_frameAnimator.get();
 }
 
@@ -267,7 +267,7 @@ void BitmapImageSource::startAnimation()
 
 bool BitmapImageSource::startAnimation(SubsamplingLevel subsamplingLevel, const DecodingOptions& options)
 {
-    auto frameAnimator = this->frameAnimator();
+    RefPtr frameAnimator = this->frameAnimator();
     if (!frameAnimator)
         return false;
 
@@ -363,7 +363,7 @@ void BitmapImageSource::decode(Function<void(DecodingStatus)>&& decodeCallback)
     }
 
     bool isCompatibleNativeImage = isCompatibleWithOptionsAtIndex(index, SubsamplingLevel::Default, DecodingMode::Asynchronous);
-    auto frameAnimator = this->frameAnimator();
+    RefPtr frameAnimator = this->frameAnimator();
 
     if (frameAnimator && (frameAnimator->hasEverAnimated() || isCompatibleNativeImage)) {
         // startAnimation() always decodes the nextFrame which is currentFrameIndex + 1.

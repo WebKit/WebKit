@@ -103,7 +103,6 @@ platform/graphics/ComplexTextController.h
 platform/graphics/DrawGlyphsRecorder.h
 platform/graphics/GraphicsLayer.h
 platform/graphics/ImageBuffer.h
-platform/graphics/ImageFrameAnimator.h
 platform/graphics/avfoundation/AudioSourceProviderAVFObjC.mm
 platform/graphics/avfoundation/MediaSelectionGroupAVFObjC.h
 platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h
