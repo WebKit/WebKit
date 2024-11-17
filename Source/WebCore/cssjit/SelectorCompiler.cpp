@@ -1262,6 +1262,9 @@ static inline FunctionType addPseudoClassType(const CSSSelector& selector, Selec
         if (selectorContext == SelectorContext::QuerySelector)
             return FunctionType::SimpleSelectorChecker;
         return FunctionType::SelectorCheckerWithCheckingContext;
+    case CSSSelector::PseudoClass::TargetWithin:
+        return FunctionType::CannotCompile;
+
 
     case CSSSelector::PseudoClass::NthChild:
         return addNthChildType(selector, selectorContext, positionInRootFragments, CSSSelector::PseudoClass::FirstChild, visitedMatchEnabled, fragment.nthChildFilters, fragment.nthChildOfFilters, fragment.pseudoClasses);

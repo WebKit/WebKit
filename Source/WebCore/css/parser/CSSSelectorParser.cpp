@@ -484,6 +484,7 @@ static bool isUserActionPseudoClass(CSSSelector::PseudoClass pseudo)
     case CSSSelector::PseudoClass::Active:
     case CSSSelector::PseudoClass::FocusVisible:
     case CSSSelector::PseudoClass::FocusWithin:
+    case CSSSelector::PseudoClass::TargetWithin:
         return true;
     default:
         return false;

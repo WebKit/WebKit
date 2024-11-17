@@ -5990,12 +5990,22 @@ void Document::setCSSTarget(Element* newTarget)
         return;
 
     std::optional<Style::PseudoClassChangeInvalidation> oldInvalidation;
-    if (m_cssTarget)
+    if (m_cssTarget) {
         emplace(oldInvalidation, *m_cssTarget, { { CSSSelector::PseudoClass::Target, false } });
+        for (auto* element = m_cssTarget->parentElement(); element; element = element->parentElement()) {
+            Style::PseudoClassChangeInvalidation styleInvalidation(*element, CSSSelector::PseudoClass::TargetWithin, false);
+            element->document().userActionElements().setHasTargetWithin(*element, false);
+        }
+    }
 
     std::optional<Style::PseudoClassChangeInvalidation> newInvalidation;
-    if (newTarget)
+    if (newTarget) {
         emplace(newInvalidation, *newTarget, { { CSSSelector::PseudoClass::Target, true } });
+        for (auto* element = newTarget->parentElement(); element; element = element->parentElement()) {
+            Style::PseudoClassChangeInvalidation styleInvalidation(*element, CSSSelector::PseudoClass::TargetWithin, true);
+            element->document().userActionElements().setHasTargetWithin(*element, true);
+        }
+    }
     m_cssTarget = newTarget;
 }
 
