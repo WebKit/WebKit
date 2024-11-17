@@ -308,7 +308,7 @@ void WTFReportBacktraceWithPrefixAndStackDepth(const char* prefix, int framesToS
 {
     int frames = framesToShow + kDefaultFramesToSkip;
     Vector<void*> samples;
-    samples.reserveInitialCapacity(frames);
+    samples.resize(frames);
 
     WTFGetBacktrace(samples.data(), &frames);
     CrashLogPrintStream out;
