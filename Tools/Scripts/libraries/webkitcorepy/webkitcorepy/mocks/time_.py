@@ -67,25 +67,7 @@ class _MetaTime(type):
         self.patches = self.patches[:-1]
 
 
-# Python 2/3 compatible metaclass assigner from six
-def add_metaclass(metaclass):
-    def wrapper(cls):
-        orig_vars = cls.__dict__.copy()
-        slots = orig_vars.get('__slots__')
-        if slots is not None:
-            if isinstance(slots, str):
-                slots = [slots]
-            for slots_var in slots:
-                orig_vars.pop(slots_var)
-        orig_vars.pop('__dict__', None)
-        orig_vars.pop('__weakref__', None)
-        if hasattr(cls, '__qualname__'):
-            orig_vars['__qualname__'] = cls.__qualname__
-        return metaclass(cls.__name__, cls.__bases__, orig_vars)
-    return wrapper
-
-
-class Time(object):
+class Time(metaclass=_MetaTime):
     """
     Mock out time.sleep, time.time and datetime.datetime for testing.
     Like mock.patch, this class can be used as both a decorator and a context manager.
@@ -100,7 +82,6 @@ class Time(object):
             ...
         ...
     """
-    __metaclass__ = _MetaTime
 
     def __init__(self, obj):
         self._callable = obj
@@ -111,6 +92,3 @@ class Time(object):
     def __call__(self, *args, **kwargs):
         with Time:
             self._callable(*args, **kwargs)
-
-
-Time = add_metaclass(_MetaTime)(Time)

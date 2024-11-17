@@ -26,13 +26,6 @@ from webkitpy.benchmark_runner.benchmark_results import BenchmarkResults
 
 
 class BenchmarkResultsTest(unittest.TestCase):
-    def assertRaisesRegex(self, *args, **kwargs):
-        try:
-            return super(BenchmarkResultsTest, self).assertRaisesRegex(*args, **kwargs)
-        except AttributeError:
-            # Python 2
-            return self.assertRaisesRegexp(*args, **kwargs)
-
     def test_init(self):
         results = BenchmarkResults({'SomeTest': {'metrics': {'Time': {'current': [1, 2, 3]}}}})
         self.assertEqual(results._results, {'SomeTest': {'metrics': {'Time': {None: {'current': [1, 2, 3]}}}, 'tests': {}}})

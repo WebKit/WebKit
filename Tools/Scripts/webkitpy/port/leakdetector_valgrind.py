@@ -287,6 +287,6 @@ class LeakDetectorValgrind(object):
 
         if self._errors:
             _log.info("Valgrind detected %s leaks:" % len(self._errors))
-            # Force the same order in Python 2 and Python 3
+            # Sets are unordered in Python, so we need to sort them.
             for leak in sorted(self._errors, key=lambda error: error.unique_string()):
                 _log.info(leak)

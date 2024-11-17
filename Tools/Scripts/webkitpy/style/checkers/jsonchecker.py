@@ -25,7 +25,6 @@
 import json
 import os
 import re
-import sys
 from collections import defaultdict
 
 
@@ -447,15 +446,9 @@ class JSONImportExpectationsChecker(JSONChecker):
         # strings. Thus, iterating over non-overlapping matches of this regex will give
         # all strings, and it can be applied on a per line basis as strings cannot
         # contain line breaks.
-        if sys.maxunicode == 0xFFFF:
-            # Python 2 (sometimes, depending on configuration)
-            json_string_re = re.compile(
-                u'"(?:[\\x20-\\x21\\x23-\\x5B\\x5D-\uFFFF]|\\\\(?:[\\x22\\x5C\\x2F\\x08\\x0C\\x0A\\x0D\\x09]|u[0-9a-fA-F]{4}))*"'
-            )
-        else:
-            json_string_re = re.compile(
-                u'"(?:[\\x20-\\x21\\x23-\\x5B\\x5D-\U0010FFFF]|\\\\(?:[\\x22\\x5C\\x2F\\x08\\x0C\\x0A\\x0D\\x09]|u[0-9a-fA-F]{4}))*"'
-            )
+        json_string_re = re.compile(
+            u'"(?:[\\x20-\\x21\\x23-\\x5B\\x5D-\U0010FFFF]|\\\\(?:[\\x22\\x5C\\x2F\\x08\\x0C\\x0A\\x0D\\x09]|u[0-9a-fA-F]{4}))*"'
+        )
 
         string_to_lines = defaultdict(set)
         for i, line in enumerate(lines):

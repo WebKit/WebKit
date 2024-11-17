@@ -344,13 +344,6 @@ class ParsingTest(unittest.TestCase):
 
 
 class UnsupportedPrecompilerDirectiveTest(unittest.TestCase):
-    def assertRaisesRegex(self, *args, **kwargs):
-        try:
-            return super(UnsupportedPrecompilerDirectiveTest, self).assertRaisesRegex(*args, **kwargs)
-        except AttributeError:
-            # Python 2
-            return self.assertRaisesRegexp(*args, **kwargs)
-
     def test_error_at_else(self):
         with self.assertRaisesRegex(Exception, r"ERROR: '#else.*' is not supported in the \*\.in files"):
             parser.parse(StringIO("asd\n#else bla\nfoo"))

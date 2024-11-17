@@ -7,11 +7,14 @@ from contextlib import contextmanager
 _log = logging.getLogger(__name__)
 
 
-class BrowserDriver(object):
+# This should be: class BrowserDriver(metaclass=ABCMeta), as otherwise
+# the @abstractmethod decorators do nothing. However, per
+# https://bugs.webkit.org/show_bug.cgi?id=283256, we've never actually
+# properly set the metaclass, and thus we've ended up with none of the
+# concrete subclasses actually implementing all the abstract methods.
+class BrowserDriver:
     platform = None
     browser_name = None
-
-    ___metaclass___ = ABCMeta
 
     def __init__(self, browser_args):
         self.browser_args = browser_args

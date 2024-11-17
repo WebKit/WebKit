@@ -29,10 +29,29 @@
 
 """
 
-import lldb
+import re
 import string
 import struct
-import re
+import sys
+
+import lldb
+
+if sys.version_info >= (3, 10):
+    # The key argument was added in 3.10.
+    from bisect import bisect_right
+else:
+    def bisect_right(a, x, lo=0, hi=None, *, key=lambda x: x):
+        if lo < 0:
+            raise ValueError('lo must be non-negative')
+        if hi is None:
+            hi = len(a)
+        while lo < hi:
+            mid = (lo + hi) // 2
+            if x < key(a[mid]):
+                hi = mid
+            else:
+                lo = mid + 1
+        return lo
 
 
 def addSummaryAndSyntheticFormattersForRawBitmaskType(debugger, type_name, enumerator_value_to_name_map, flags_mask=None):
@@ -350,19 +369,6 @@ def btjs(debugger, command, result, internal_dict):
                 print(frameFormat.format(num=frame.GetFrameID(), addr=frame.GetPC(), desc=JSFrameDescription))
                 continue
         print('    %s' % frame)
-
-
-# FIXME: We should just use the builtin bisect_right but at the time of writing the latest clang ships with Python 3.9.6 and key was added in 3.10.0
-def bisect_right(a, x, key=lambda x: x):
-    lo = 0
-    hi = len(a)
-    while lo < hi:
-        mid = (lo + hi) // 2
-        if x < key(a[mid]):
-            hi = mid
-        else:
-            lo = mid + 1
-    return lo
 
 
 # FIXME: This seems like we should be able to do this with a formatter https://lldb.llvm.org/use/formatting.html

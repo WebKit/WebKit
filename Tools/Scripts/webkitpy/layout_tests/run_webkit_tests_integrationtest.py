@@ -1182,7 +1182,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
                 "/tmp/layout-test-results/layout_test_perf_metrics.json",
                 "/tmp/layout-test-results/stats.json",
             },
-            set(file_list),  # On Python 2 dict.keys returns a list, not a set-like object.
+            file_list,
         )
 
     def test_missing_results(self):
@@ -1210,7 +1210,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
                 "/tmp/layout-test-results/layout_test_perf_metrics.json",
                 "/tmp/layout-test-results/stats.json",
             },
-            set(file_list),  # On Python 2 dict.keys returns a list, not a set-like object.
+            file_list,
         )
 
     def test_new_baseline(self):
@@ -1233,7 +1233,7 @@ class RebaselineTest(unittest.TestCase, StreamTestingMixin):
                 "/tmp/layout-test-results/layout_test_perf_metrics.json",
                 "/tmp/layout-test-results/stats.json",
             },
-            set(file_list),  # On Python 2 dict.keys returns a list, not a set-like object.
+            file_list,
         )
 
 
