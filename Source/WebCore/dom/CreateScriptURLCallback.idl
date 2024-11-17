@@ -23,4 +23,5 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-[ RethrowException ] callback CreateScriptURLCallback = USVString? (DOMString input, any... arguments);
+// https://w3c.github.io/trusted-types/dist/spec/#callbackdef-createscripturlcallback
+callback CreateScriptURLCallback = USVString? (DOMString input, any... arguments);

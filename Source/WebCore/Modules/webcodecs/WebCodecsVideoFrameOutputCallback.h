@@ -41,6 +41,7 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(WebCodecsVideoFrame&) = 0;
+    virtual CallbackResult<void> handleEventRethrowingException(WebCodecsVideoFrame&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

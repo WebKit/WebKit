@@ -39,6 +39,7 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(AudioBuffer*) = 0;
+    virtual CallbackResult<void> handleEventRethrowingException(AudioBuffer*) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

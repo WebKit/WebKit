@@ -43,6 +43,7 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(Database&) = 0;
+    virtual CallbackResult<void> handleEventRethrowingException(Database&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

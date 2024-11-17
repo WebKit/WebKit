@@ -43,6 +43,7 @@ public:
 
     // Functions
     CallbackResult<typename IDLDOMString::CallbackReturnType> handleEvent(VariadicArguments<IDLAny>&& arguments) override;
+    CallbackResult<typename IDLDOMString::CallbackReturnType> handleEventRethrowingException(VariadicArguments<IDLAny>&& arguments) override;
 
 private:
     JSTestCallbackFunctionWithVariadic(JSC::JSObject*, JSDOMGlobalObject*);

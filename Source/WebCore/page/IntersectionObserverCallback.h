@@ -42,6 +42,7 @@ public:
     virtual bool hasCallback() const = 0;
 
     virtual CallbackResult<void> handleEvent(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>&, IntersectionObserver&) = 0;
+    virtual CallbackResult<void> handleEventRethrowingException(IntersectionObserver&, const Vector<Ref<IntersectionObserverEntry>>&, IntersectionObserver&) = 0;
 };
 
 } // namespace WebCore

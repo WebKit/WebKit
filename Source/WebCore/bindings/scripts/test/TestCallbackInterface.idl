@@ -49,9 +49,9 @@ dictionary TestCallbackInterfaceDictionary {
     [Custom] long customCallback(TestObj testObjParam, TestNode testNodeParam);
     undefined callbackWithStringList(DOMStringList listParam);
     undefined callbackWithBoolean(boolean boolParam);
+    DOMString callbackWithEnum(TestCallbackInterfaceEnum enumParam);
     undefined callbackRequiresThisToPass(long longParam, TestNode testNodeParam);
     DOMString callbackWithAReturnValue();
-    [RethrowException] DOMString callbackThatRethrowsExceptions(TestCallbackInterfaceEnum enumParam);
     Promise<undefined> callbackThatTreatsExceptionAsRejectedPromise(TestCallbackInterfaceEnum enumParam);
     [CallbackThisObject=TestNode] DOMString callbackWithThisObject(TestObj testObjParam);
 };

@@ -69,6 +69,11 @@ public:
             return { };
         }
 
+        CallbackResult<void> handleEventRethrowingException(Subscriber& subscriber) final
+        {
+            return handleEvent(subscriber);
+        }
+
     private:
         SubscriberCallbackMap(ScriptExecutionContext& context, Ref<Observable> source, Ref<MapperCallback> mapper)
             : SubscriberCallback(&context)
@@ -93,13 +98,11 @@ private:
         JSC::JSLockHolder lock(vm);
 
         // The exception is not reported, instead it is forwarded to the
-        // error handler. As such, MapperCallback has `[RethrowException]`
-        // and here a catch scope is declared so the error can be passed
-        // to the subscription error handler.
+        // error handler.
         JSC::Exception* previousException = nullptr;
         {
             auto catchScope = DECLARE_CATCH_SCOPE(vm);
-            auto result = m_mapper->handleEvent(value, m_idx);
+            auto result = m_mapper->handleEventRethrowingException(value, m_idx);
             previousException = catchScope.exception();
             if (previousException) {
                 catchScope.clearException();

@@ -41,6 +41,7 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(SQLTransaction&) = 0;
+    virtual CallbackResult<void> handleEventRethrowingException(SQLTransaction&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

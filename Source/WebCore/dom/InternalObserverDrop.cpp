@@ -68,6 +68,11 @@ public:
             return { };
         }
 
+        CallbackResult<void> handleEventRethrowingException(Subscriber& subscriber) final
+        {
+            return handleEvent(subscriber);
+        }
+
     private:
         SubscriberCallbackDrop(ScriptExecutionContext& context, Ref<Observable> source, uint64_t amount)
             : SubscriberCallback(&context)

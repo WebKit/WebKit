@@ -61,12 +61,9 @@ private:
 
             // The exception is not reported, instead it is forwarded to the
             // abort signal and promise rejection.
-            // As such, VisitorCallback has `[RethrowException]` and here a
-            // catch scope is declared so the error can be passed to any promise
-            // rejection handlers and abort handlers.
             auto scope = DECLARE_CATCH_SCOPE(vm);
 
-            protectedCallback()->handleEvent(value, m_idx++);
+            protectedCallback()->handleEventRethrowingException(value, m_idx++);
 
             JSC::Exception* exception = scope.exception();
             if (UNLIKELY(exception)) {

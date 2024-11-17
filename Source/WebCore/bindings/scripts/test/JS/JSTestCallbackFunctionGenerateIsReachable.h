@@ -42,6 +42,7 @@ public:
 
     // Functions
     CallbackResult<typename IDLDOMString::CallbackReturnType> handleEvent(typename IDLLong::ParameterType argument) override;
+    CallbackResult<typename IDLDOMString::CallbackReturnType> handleEventRethrowingException(typename IDLLong::ParameterType argument) override;
 
 private:
     JSTestCallbackFunctionGenerateIsReachable(JSC::JSObject*, JSDOMGlobalObject*);

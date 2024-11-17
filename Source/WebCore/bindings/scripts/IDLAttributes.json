@@ -436,9 +436,6 @@
         "RequiresExistingAtomString": {
             "contextsAllowed": ["type"]
         },
-        "RethrowException": {
-            "contextsAllowed": ["operation", "callback-function"]
-        },
         "ReturnsOwnPromise": {
             "contextsAllowed": ["operation"]
         },

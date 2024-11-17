@@ -39,6 +39,7 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(const Vector<Ref<FileSystemEntry>>&) = 0;
+    virtual CallbackResult<void> handleEventRethrowingException(const Vector<Ref<FileSystemEntry>>&) = 0;
 
     // Helper to post callback task.
     void scheduleCallback(ScriptExecutionContext&, const Vector<Ref<FileSystemEntry>>&);

@@ -640,6 +640,11 @@ private:
         return { };
     }
 
+    CallbackResult<void> handleEventRethrowingException(double now) final
+    {
+        return handleEvent(now);
+    }
+
     Function<void()> m_callback;
 };
 

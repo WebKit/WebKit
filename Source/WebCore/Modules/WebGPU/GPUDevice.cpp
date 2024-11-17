@@ -314,6 +314,24 @@ GPUExternalTexture* GPUDevice::externalTextureForDescriptor(const GPUExternalTex
 
 class GPUDeviceVideoFrameRequestCallback final : public VideoFrameRequestCallback {
 public:
+    static Ref<GPUDeviceVideoFrameRequestCallback> create(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, GPUDevice& gpuDevice, ScriptExecutionContext* scriptExecutionContext)
+    {
+        return adoptRef(*new GPUDeviceVideoFrameRequestCallback(externalTexture, videoElement, gpuDevice, scriptExecutionContext));
+    }
+
+    ~GPUDeviceVideoFrameRequestCallback() final { }
+
+private:
+    GPUDeviceVideoFrameRequestCallback(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, GPUDevice& gpuDevice, ScriptExecutionContext* scriptExecutionContext)
+        : VideoFrameRequestCallback(scriptExecutionContext)
+        , m_externalTexture(externalTexture)
+        , m_videoElement(videoElement)
+        , m_gpuDevice(gpuDevice)
+    {
+    }
+
+    bool hasCallback() const final { return true; }
+
     CallbackResult<void> handleEvent(double, const VideoFrameMetadata&) override
     {
         if (!m_videoElement)
@@ -327,21 +345,10 @@ public:
             m_externalTexture->destroy();
         return { };
     }
-    static Ref<GPUDeviceVideoFrameRequestCallback> create(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, GPUDevice& gpuDevice, ScriptExecutionContext* scriptExecutionContext)
-    {
-        return adoptRef(*new GPUDeviceVideoFrameRequestCallback(externalTexture, videoElement, gpuDevice, scriptExecutionContext));
-    }
 
-    bool hasCallback() const final { return true; }
-
-    ~GPUDeviceVideoFrameRequestCallback() final { }
-private:
-    GPUDeviceVideoFrameRequestCallback(GPUExternalTexture& externalTexture, HTMLVideoElement& videoElement, GPUDevice& gpuDevice, ScriptExecutionContext* scriptExecutionContext)
-        : VideoFrameRequestCallback(scriptExecutionContext)
-        , m_externalTexture(externalTexture)
-        , m_videoElement(videoElement)
-        , m_gpuDevice(gpuDevice)
+    CallbackResult<void> handleEventRethrowingException(double now, const VideoFrameMetadata& metadata) override
     {
+        return handleEvent(now, metadata);
     }
 
     Ref<GPUExternalTexture> m_externalTexture;

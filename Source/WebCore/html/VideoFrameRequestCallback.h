@@ -41,6 +41,7 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(double, const VideoFrameMetadata&) = 0;
+    virtual CallbackResult<void> handleEventRethrowingException(double, const VideoFrameMetadata&) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

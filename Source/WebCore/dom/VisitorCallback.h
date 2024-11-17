@@ -36,6 +36,7 @@ public:
     using ActiveDOMCallback::ActiveDOMCallback;
 
     virtual CallbackResult<void> handleEvent(JSC::JSValue, uint64_t) = 0;
+    virtual CallbackResult<void> handleEventRethrowingException(JSC::JSValue, uint64_t) = 0;
 
 private:
     virtual bool hasCallback() const = 0;

@@ -23,5 +23,5 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-[ RethrowException ] callback MapperCallback = any (any value, unsigned long long index);
-
+// https://wicg.github.io/observable/#callbackdef-mapper
+callback MapperCallback = any (any value, unsigned long long index);
