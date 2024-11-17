@@ -32,8 +32,6 @@
 #include <wtf/text/Base64.h>
 #include <wtf/text/StringParsingBuffer.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 template<typename CharacterType> static std::optional<ResourceCryptographicDigest::Algorithm> parseHashAlgorithmAdvancingPosition(StringParsingBuffer<CharacterType>& buffer)
@@ -63,15 +61,15 @@ template<typename CharacterType> static std::optional<ResourceCryptographicDiges
     if (!skipExactly(buffer, '-'))
         return std::nullopt;
 
-    auto beginHashValue = buffer.position();
+    auto beginHashValue = buffer.span();
     skipWhile<isBase64OrBase64URLCharacter>(buffer);
     skipExactly(buffer, '=');
     skipExactly(buffer, '=');
 
-    if (buffer.position() == beginHashValue)
+    if (buffer.position() == beginHashValue.data())
         return std::nullopt;
 
-    StringView hashValue(std::span(beginHashValue, buffer.position()));
+    StringView hashValue(beginHashValue.first(buffer.position() - beginHashValue.data()));
 
     if (auto digest = base64Decode(hashValue))
         return ResourceCryptographicDigest { *algorithm, WTFMove(*digest) };
@@ -104,15 +102,15 @@ template<typename CharacterType> static std::optional<EncodedResourceCryptograph
     if (!skipExactly(buffer, '-'))
         return std::nullopt;
 
-    auto beginHashValue = buffer.position();
+    auto beginHashValue = buffer.span();
     skipWhile<isBase64OrBase64URLCharacter>(buffer);
     skipExactly(buffer, '=');
     skipExactly(buffer, '=');
 
-    if (buffer.position() == beginHashValue)
+    if (buffer.position() == beginHashValue.data())
         return std::nullopt;
 
-    return EncodedResourceCryptographicDigest { *algorithm, String({ beginHashValue, buffer.position() }) };
+    return EncodedResourceCryptographicDigest { *algorithm, beginHashValue.first(buffer.position() - beginHashValue.data()) };
 }
 
 std::optional<EncodedResourceCryptographicDigest> parseEncodedCryptographicDigest(StringParsingBuffer<UChar>& buffer)
@@ -169,5 +167,3 @@ ResourceCryptographicDigest cryptographicDigestForSharedBuffer(ResourceCryptogra
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
