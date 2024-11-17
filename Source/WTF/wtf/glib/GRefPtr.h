@@ -31,10 +31,20 @@
 extern "C" {
     typedef struct _GDBusConnection GDBusConnection;
     typedef struct _GDBusNodeInfo GDBusNodeInfo;
+
     GDBusNodeInfo* g_dbus_node_info_ref(GDBusNodeInfo*);
     void g_dbus_node_info_unref(GDBusNodeInfo*);
+
+    // Since GLib 2.56 a g_object_ref_sink() macro may be defined which propagates
+    // the type of the parameter to the returned value, but it conflicts with the
+    // declaration below, causing an error when glib-object.h is included before
+    // this file. Thus, add the forward declarations only when the macro is not
+    // present.
+#ifndef g_object_ref_sink
+    void g_object_unref(gpointer);
+    gpointer g_object_ref_sink(gpointer);
+#endif
 };
-extern "C" void g_object_unref(gpointer);
 
 namespace WTF {
 

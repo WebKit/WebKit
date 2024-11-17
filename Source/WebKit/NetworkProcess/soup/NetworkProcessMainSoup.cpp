@@ -29,6 +29,7 @@
 
 #include "AuxiliaryProcessMain.h"
 #include "NetworkProcess.h"
+#include "NetworkSession.h"
 #include <WebCore/NetworkStorageSession.h>
 
 #if USE(GCRYPT)

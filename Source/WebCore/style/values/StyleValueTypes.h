@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class CSSToLengthConversionData;
 class RenderStyle;
 struct BlendingContext;
 

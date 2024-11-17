@@ -27,6 +27,7 @@
 
 #if ENABLE(DARK_MODE_CSS)
 
+#include "CSSToLengthConversionData.h"
 #include "CSSValueKeywords.h"
 #include <wtf/text/TextStream.h>
 
