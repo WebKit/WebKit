@@ -261,7 +261,7 @@ void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bo
             }
 
             auto lock = WebLock::create(*request.lockIdentifier, request.name, request.mode);
-            auto result = request.grantedCallback->handleEvent(lock.ptr());
+            auto result = request.grantedCallback->handleEventRethrowingException(lock.ptr());
             RefPtr<DOMPromise> waitingPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
             if (!waitingPromise || waitingPromise->isSuspended()) {
                 m_mainThreadBridge->releaseLock(*request.lockIdentifier, request.name);
@@ -276,7 +276,7 @@ void WebLockManager::didCompleteLockRequest(WebLockIdentifier lockIdentifier, bo
                 settleReleasePromise(lockIdentifier, static_cast<JSC::JSValue>(waitingPromise->promise()));
             });
         } else {
-            auto result = request.grantedCallback->handleEvent(nullptr);
+            auto result = request.grantedCallback->handleEventRethrowingException(nullptr);
             RefPtr<DOMPromise> waitingPromise = result.type() == CallbackResultType::Success ? result.releaseReturnValue() : nullptr;
             if (!waitingPromise || waitingPromise->isSuspended()) {
                 settleReleasePromise(*request.lockIdentifier, Exception { ExceptionCode::ExistingExceptionError });

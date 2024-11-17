@@ -66,7 +66,7 @@ private:
             // rejection handlers and abort handlers.
             auto scope = DECLARE_CATCH_SCOPE(vm);
 
-            protectedCallback()->handleEvent(value, m_idx++);
+            protectedCallback()->handleEventRethrowingException(value, m_idx++);
 
             JSC::Exception* exception = scope.exception();
             if (UNLIKELY(exception)) {

@@ -53,7 +53,7 @@ public:
             return adoptRef(*new InternalObserverMap::SubscriberCallbackMap(context, source, mapper));
         }
 
-        CallbackResult<void> handleEvent(Subscriber& subscriber) final
+        CallbackResult<void> handleEventRethrowingException(Subscriber& subscriber) final
         {
             RefPtr context = scriptExecutionContext();
 
@@ -99,7 +99,7 @@ private:
         JSC::Exception* previousException = nullptr;
         {
             auto catchScope = DECLARE_CATCH_SCOPE(vm);
-            auto result = m_mapper->handleEvent(value, m_idx);
+            auto result = m_mapper->handleEventRethrowingException(value, m_idx);
             previousException = catchScope.exception();
             if (previousException) {
                 catchScope.clearException();
