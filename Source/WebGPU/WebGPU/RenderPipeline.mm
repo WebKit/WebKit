@@ -564,7 +564,7 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, 
     }
 
     ShaderModule::VertexStageIn shaderLocations;
-    for (auto [ bufferIndex, buffer ] : IndexedRange(vertexState.buffersSpan())) {
+    for (auto [ bufferIndex, buffer ] : indexedRange(vertexState.buffersSpan())) {
         if (buffer.arrayStride == WGPU_COPY_STRIDE_UNDEFINED)
             continue;
 
@@ -1418,7 +1418,7 @@ std::pair<Ref<RenderPipeline>, NSString*> Device::createRenderPipeline(const WGP
         fragmentInputs = fragmentModule->fragmentInputsForEntryPoint(fragmentEntryPoint);
         fragmentReturnTypes = fragmentModule->fragmentReturnTypeForEntryPoint(fragmentEntryPoint);
         colorAttachmentCount = fragmentDescriptor.targetCount;
-        for (auto [ i, targetDescriptor ] : IndexedRange(fragmentDescriptor.targetsSpan())) {
+        for (auto [ i, targetDescriptor ] : indexedRange(fragmentDescriptor.targetsSpan())) {
             if (targetDescriptor.format == WGPUTextureFormat_Undefined)
                 continue;
 

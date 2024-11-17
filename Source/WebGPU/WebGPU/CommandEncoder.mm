@@ -502,7 +502,7 @@ Ref<RenderPassEncoder> CommandEncoder::beginRenderPass(const WGPURenderPassDescr
     uint32_t textureWidth = 0, textureHeight = 0, sampleCount = 0;
     using SliceSet = HashSet<uint64_t, DefaultHash<uint64_t>, WTF::UnsignedWithZeroKeyHashTraits<uint64_t>>;
     HashMap<void*, SliceSet> depthSlices;
-    for (auto [ i, attachment ] : IndexedRange(descriptor.colorAttachmentsSpan())) {
+    for (auto [ i, attachment ] : indexedRange(descriptor.colorAttachmentsSpan())) {
         if (!attachment.view)
             continue;
 

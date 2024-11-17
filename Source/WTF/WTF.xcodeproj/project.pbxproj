@@ -45,6 +45,7 @@
 		143DDE9620C8BC37007F76FA /* Entitlements.mm in Sources */ = {isa = PBXBuildFile; fileRef = 143DDE9520C8BC37007F76FA /* Entitlements.mm */; };
 		143F611F1565F0F900DB514A /* RAMSize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 143F611D1565F0F900DB514A /* RAMSize.cpp */; };
 		144EB7462CBC94B100926E1B /* AbstractRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 144EB7452CBC94B100926E1B /* AbstractRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		145DE2882CE95CE700F9F1D2 /* ZippedRange.h in Headers */ = {isa = PBXBuildFile; fileRef = 145DE2872CE95CE700F9F1D2 /* ZippedRange.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1469419D16EAB10A0024E146 /* AutodrainedPool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */; };
 		1470EAF32BD6F6D900E26254 /* WeakPtrImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 1470EAF22BD6F6D900E26254 /* WeakPtrImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1470EAF52BD6F8AF00E26254 /* WeakPtrFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 1470EAF42BD6F8AF00E26254 /* WeakPtrFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1135,6 +1136,7 @@
 		1447AEC518FCE57700B3D7FF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
 		1447AECA18FCE5B900B3D7FF /* libicucore.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libicucore.dylib; path = /usr/lib/libicucore.dylib; sourceTree = "<absolute>"; };
 		144EB7452CBC94B100926E1B /* AbstractRefCounted.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = AbstractRefCounted.h; path = wtf/AbstractRefCounted.h; sourceTree = "<group>"; };
+		145DE2872CE95CE700F9F1D2 /* ZippedRange.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZippedRange.h; sourceTree = "<group>"; };
 		1469419416EAAFF80024E146 /* SchedulePair.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SchedulePair.h; sourceTree = "<group>"; };
 		1469419A16EAB10A0024E146 /* AutodrainedPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AutodrainedPool.h; sourceTree = "<group>"; };
 		1469419B16EAB10A0024E146 /* AutodrainedPool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AutodrainedPool.cpp; sourceTree = "<group>"; };
@@ -2606,6 +2608,7 @@
 				E36BA9DC29E275DB00300057 /* WTFProcess.cpp */,
 				E36BA9DD29E275DB00300057 /* WTFProcess.h */,
 				A36E16F7216FF828008DD87E /* WTFSemaphore.h */,
+				145DE2872CE95CE700F9F1D2 /* ZippedRange.h */,
 			);
 			path = wtf;
 			sourceTree = "<group>";
@@ -3715,6 +3718,7 @@
 				FFE39CB02B1D7472004972B0 /* wuint.h in Headers */,
 				FF41AC672A79C9BA00AC0FA5 /* WYHash.h in Headers */,
 				DDF306EA27C08654006A526F /* XPCSPI.h in Headers */,
+				145DE2882CE95CE700F9F1D2 /* ZippedRange.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

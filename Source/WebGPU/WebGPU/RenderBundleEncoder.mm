@@ -172,7 +172,7 @@ Ref<RenderBundleEncoder> Device::createRenderBundleEncoder(const WGPURenderBundl
         generateAValidationError(error);
         return RenderBundleEncoder::createInvalid(*this, error);
     }
-    for (auto [ i, textureFormat ] : IndexedRange(descriptor.colorFormatsSpan())) {
+    for (auto [ i, textureFormat ] : indexedRange(descriptor.colorFormatsSpan())) {
         if (textureFormat == WGPUTextureFormat_Undefined)
             continue;
         if (!Texture::isColorRenderableFormat(textureFormat, *this)) {

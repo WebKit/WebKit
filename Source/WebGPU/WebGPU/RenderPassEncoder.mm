@@ -96,7 +96,7 @@ RenderPassEncoder::RenderPassEncoder(id<MTLRenderCommandEncoder> renderCommandEn
     parentEncoder->lock(true);
 
     m_attachmentsToClear = [NSMutableDictionary dictionary];
-    for (auto [ i, attachment ] : IndexedRange(colorAttachments)) {
+    for (auto [ i, attachment ] : indexedRange(colorAttachments)) {
         if (!attachment.view)
             continue;
 

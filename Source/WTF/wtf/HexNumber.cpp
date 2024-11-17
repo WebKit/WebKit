@@ -61,7 +61,7 @@ void printInternal(PrintStream& out, HexNumberBuffer buffer)
 
 static void toHexInternal(std::span<const uint8_t> values, std::span<LChar> hexadecimalOutput)
 {
-    for (auto [i, digestValue] : IndexedRange(values)) {
+    for (auto [i, digestValue] : indexedRange(values)) {
         hexadecimalOutput[i * 2] = upperNibbleToASCIIHexDigit(digestValue);
         hexadecimalOutput[i * 2 + 1] = lowerNibbleToASCIIHexDigit(digestValue);
     }

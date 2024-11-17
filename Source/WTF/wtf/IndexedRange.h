@@ -27,16 +27,21 @@
 
 namespace WTF {
 
-template<typename Collection, typename Iterator> class BoundsCheckedIterator {
+template<typename Iterator> class BoundsCheckedIterator {
 public:
-    static BoundsCheckedIterator begin(const Collection& collection)
+    // We require the caller to ask for 'begin' or 'end', rather than passing
+    // us arbitrary 'it' and 'end' iterators, because that way we can prove by
+    // construction that we have the correct 'end'.
+    template<typename Collection>
+    static BoundsCheckedIterator begin(Collection&& collection)
     {
-        return BoundsCheckedIterator(collection, collection.begin());
+        return BoundsCheckedIterator(std::forward<Collection>(collection), collection.begin());
     }
 
-    static BoundsCheckedIterator end(const Collection& collection)
+    template<typename Collection>
+    static BoundsCheckedIterator end(Collection&& collection)
     {
-        return BoundsCheckedIterator(collection, collection.end());
+        return BoundsCheckedIterator(std::forward<Collection>(collection), collection.end());
     }
 
     BoundsCheckedIterator& operator++()
@@ -49,7 +54,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return *this;
     }
 
-    auto operator*() const
+    auto&& operator*() const
     {
         RELEASE_ASSERT(m_iterator != m_end);
         return *m_iterator;
@@ -61,7 +66,8 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
 private:
-    BoundsCheckedIterator(const Collection& collection, Iterator&& iterator)
+    template<typename Collection>
+    BoundsCheckedIterator(Collection&& collection, Iterator&& iterator)
         : m_iterator(WTFMove(iterator))
         , m_end(collection.end())
     {
@@ -71,14 +77,14 @@ private:
     Iterator m_end;
 };
 
-template<typename Collection> auto boundsCheckedBegin(const Collection& collection)
+template<typename Collection> auto boundsCheckedBegin(Collection&& collection)
 {
-    return BoundsCheckedIterator<Collection, decltype(collection.begin())>::begin(collection);
+    return BoundsCheckedIterator<decltype(collection.begin())>::begin(std::forward<Collection>(collection));
 }
 
-template<typename Collection> auto boundsCheckedEnd(const Collection& collection)
+template<typename Collection> auto boundsCheckedEnd(Collection&& collection)
 {
-    return BoundsCheckedIterator<Collection, decltype(collection.end())>::end(collection);
+    return BoundsCheckedIterator<decltype(collection.end())>::end(std::forward<Collection>(collection));
 }
 
 template<typename Iterator> class IndexedRangeIterator {
@@ -97,7 +103,7 @@ public:
 
     auto operator*()
     {
-        return std::tuple<size_t, decltype(*m_iterator)> { m_index, *m_iterator };
+        return std::pair<size_t, decltype(*m_iterator)> { m_index, *m_iterator };
     }
 
     bool operator==(const IndexedRangeIterator& other) const
@@ -110,20 +116,13 @@ private:
     Iterator m_iterator;
 };
 
-// Usage: for (auto [ index, value ] : IndexedRange(collection)) { ... }
-template<typename Collection>
+template<typename Iterator>
 class IndexedRange {
-    using Iterator = IndexedRangeIterator<decltype(boundsCheckedBegin(std::declval<Collection>()))>;
 public:
-    IndexedRange(const Collection& collection)
-        : m_begin(boundsCheckedBegin(collection))
-        , m_end(boundsCheckedEnd(collection))
-    {
-    }
-
+    template<typename Collection>
     IndexedRange(Collection&& collection)
-        : m_begin(boundsCheckedBegin(collection))
-        , m_end(boundsCheckedEnd(collection))
+        : m_begin(boundsCheckedBegin(std::forward<Collection>(collection)))
+        , m_end(boundsCheckedEnd(std::forward<Collection>(collection)))
     {
         // Prevent use after destruction of a returned temporary.
         static_assert(std::ranges::borrowed_range<Collection>);
@@ -137,6 +136,13 @@ private:
     Iterator m_end;
 };
 
+// Usage: for (auto [ index, value ] : indexedRange(collection)) { ... }
+template<typename Collection> auto indexedRange(Collection&& collection)
+{
+    using Iterator = IndexedRangeIterator<decltype(boundsCheckedBegin(std::forward<Collection>(collection)))>;
+    return IndexedRange<Iterator>(std::forward<Collection>(collection));
+}
+
 } // namespace WTF
 
-using WTF::IndexedRange;
+using WTF::indexedRange;

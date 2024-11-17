@@ -115,7 +115,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     if (!self)
         return nil;
 
-    for (auto [i, fingerIdentifier] : IndexedRange(fingerIdentifiers))
+    for (auto [i, fingerIdentifier] : indexedRange(fingerIdentifiers))
         _activePoints[i].identifier = fingerIdentifier;
 
     _eventCallbacks = [[NSMutableDictionary alloc] init];
@@ -259,7 +259,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
     _activePointCount = points.size();
 
     // Update point locations.
-    for (auto [i, point] : IndexedRange(points))
+    for (auto [i, point] : indexedRange(points))
         _activePoints[i].point = point;
 
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:handEventType]);
@@ -273,7 +273,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
     _activePointCount = touchCount;
 
-    for (auto [i, location] : IndexedRange(locations))
+    for (auto [i, location] : indexedRange(locations))
         _activePoints[i].point = location;
 
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:HandEventTouched]);
@@ -294,7 +294,7 @@ static void delayBetweenMove(int eventIndex, double elapsed)
 
     NSUInteger newPointCount = _activePointCount - touchCount;
 
-    for (auto [i, location] : IndexedRange(locations))
+    for (auto [i, location] : indexedRange(locations))
         _activePoints[newPointCount + i].point = location;
 
     RetainPtr<IOHIDEventRef> eventRef = adoptCF([self _createIOHIDEventType:HandEventLifted]);

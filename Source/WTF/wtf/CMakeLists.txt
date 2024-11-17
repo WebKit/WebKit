@@ -371,6 +371,7 @@ set(WTF_PUBLIC_HEADERS
     WordLock.h
     WorkQueue.h
     WorkerPool.h
+    ZippedRange.h
     dtoa.h
 
     dragonbox/dragonbox.h
