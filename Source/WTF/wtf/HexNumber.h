@@ -23,27 +23,25 @@
 #include <array>
 #include <wtf/text/StringImpl.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 enum HexConversionMode { Lowercase, Uppercase };
 
 namespace Internal {
 
-inline const LChar* hexDigitsForMode(HexConversionMode mode)
+inline const std::array<LChar, 16>& hexDigitsForMode(HexConversionMode mode)
 {
-    static const LChar lowercaseHexDigits[17] = "0123456789abcdef";
-    static const LChar uppercaseHexDigits[17] = "0123456789ABCDEF";
+    static constexpr std::array<LChar, 16> lowercaseHexDigits { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+    static constexpr std::array<LChar, 16> uppercaseHexDigits { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
     return mode == Lowercase ? lowercaseHexDigits : uppercaseHexDigits;
 }
 
-WTF_EXPORT_PRIVATE std::pair<LChar*, unsigned> appendHex(LChar* buffer, unsigned bufferSize, std::uintmax_t number, unsigned minimumDigits, HexConversionMode);
+WTF_EXPORT_PRIVATE std::span<LChar> appendHex(std::span<LChar> buffer, std::uintmax_t number, unsigned minimumDigits, HexConversionMode);
 
 template<size_t arraySize, typename NumberType>
-inline std::pair<LChar*, unsigned> appendHex(std::array<LChar, arraySize>& buffer, NumberType number, unsigned minimumDigits, HexConversionMode mode)
+inline std::span<LChar> appendHex(std::array<LChar, arraySize>& buffer, NumberType number, unsigned minimumDigits, HexConversionMode mode)
 {
-    return appendHex(&buffer.front(), buffer.size(), static_cast<typename std::make_unsigned<NumberType>::type>(number), minimumDigits, mode);
+    return appendHex(std::span<LChar> { buffer }, static_cast<typename std::make_unsigned<NumberType>::type>(number), minimumDigits, mode);
 }
 
 } // namespace Internal
@@ -63,7 +61,7 @@ template<typename NumberType> HexNumberBuffer hex(NumberType number, unsigned mi
     HexNumberBuffer buffer;
     static_assert(sizeof(buffer.buffer) >= sizeof(NumberType) * 2, "number too large for hexNumber");
     auto result = Internal::appendHex(buffer.buffer, number, minimumDigits, mode);
-    buffer.length = result.second;
+    buffer.length = result.size();
     return buffer;
 }
 
@@ -99,5 +97,3 @@ using WTF::hex;
 using WTF::toHexCString;
 using WTF::toHexString;
 using WTF::Lowercase;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
