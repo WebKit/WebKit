@@ -193,6 +193,16 @@ RemoteAudioDestinationManager::RemoteAudioDestinationManager(GPUConnectionToWebP
 
 RemoteAudioDestinationManager::~RemoteAudioDestinationManager() = default;
 
+void RemoteAudioDestinationManager::ref() const
+{
+    m_gpuConnectionToWebProcess.get()->ref();
+}
+
+void RemoteAudioDestinationManager::deref() const
+{
+    m_gpuConnectionToWebProcess.get()->deref();
+}
+
 void RemoteAudioDestinationManager::createAudioDestination(RemoteAudioDestinationIdentifier identifier, const String& inputDeviceId, uint32_t numberOfInputChannels, uint32_t numberOfOutputChannels, float sampleRate, float hardwareSampleRate, IPC::Semaphore&& renderSemaphore, WebCore::SharedMemory::Handle&& handle)
 {
     auto connection = m_gpuConnectionToWebProcess.get();

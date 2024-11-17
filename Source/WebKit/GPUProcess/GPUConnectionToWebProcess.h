@@ -272,6 +272,7 @@ private:
 
 #if ENABLE(WEB_AUDIO)
     RemoteAudioDestinationManager& remoteAudioDestinationManager();
+    Ref<RemoteAudioDestinationManager> protectedRemoteAudioDestinationManager();
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
     Ref<RemoteSampleBufferDisplayLayerManager> protectedSampleBufferDisplayLayerManager() const;

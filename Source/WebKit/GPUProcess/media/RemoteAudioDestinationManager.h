@@ -42,14 +42,12 @@
 #include "SharedCARingBuffer.h"
 #endif
 
-
 namespace WebCore {
 #if PLATFORM(COCOA)
 class CAAudioStreamDescription;
 #endif
 class SharedMemoryHandle;
 }
-
 
 namespace WebKit {
 
@@ -63,6 +61,9 @@ class RemoteAudioDestinationManager : private IPC::MessageReceiver {
 public:
     RemoteAudioDestinationManager(GPUConnectionToWebProcess&);
     ~RemoteAudioDestinationManager();
+
+    void ref() const;
+    void deref() const;
 
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
 

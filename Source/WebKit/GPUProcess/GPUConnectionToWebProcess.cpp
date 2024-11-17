@@ -510,7 +510,8 @@ bool GPUConnectionToWebProcess::allowsExitUnderMemoryPressure() const
         return false;
 
 #if ENABLE(WEB_AUDIO)
-    if (m_remoteAudioDestinationManager && !m_remoteAudioDestinationManager->allowsExitUnderMemoryPressure())
+    RefPtr remoteAudioDestinationManager = m_remoteAudioDestinationManager.get();
+    if (remoteAudioDestinationManager && !remoteAudioDestinationManager->allowsExitUnderMemoryPressure())
         return false;
 #endif
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
@@ -578,9 +579,14 @@ void GPUConnectionToWebProcess::lowMemoryHandler(Critical critical, Synchronous 
 RemoteAudioDestinationManager& GPUConnectionToWebProcess::remoteAudioDestinationManager()
 {
     if (!m_remoteAudioDestinationManager)
-        m_remoteAudioDestinationManager = makeUnique<RemoteAudioDestinationManager>(*this);
+        m_remoteAudioDestinationManager = makeUniqueWithoutRefCountedCheck<RemoteAudioDestinationManager>(*this);
 
     return *m_remoteAudioDestinationManager;
+}
+
+Ref<RemoteAudioDestinationManager> GPUConnectionToWebProcess::protectedRemoteAudioDestinationManager()
+{
+    return remoteAudioDestinationManager();
 }
 #endif
 
@@ -927,7 +933,7 @@ bool GPUConnectionToWebProcess::dispatchMessage(IPC::Connection& connection, IPC
 {
 #if ENABLE(WEB_AUDIO)
     if (decoder.messageReceiverName() == Messages::RemoteAudioDestinationManager::messageReceiverName()) {
-        remoteAudioDestinationManager().didReceiveMessageFromWebProcess(connection, decoder);
+        protectedRemoteAudioDestinationManager()->didReceiveMessageFromWebProcess(connection, decoder);
         return true;
     }
 #endif
