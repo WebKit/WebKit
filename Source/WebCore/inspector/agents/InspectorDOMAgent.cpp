@@ -138,15 +138,6 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
-namespace WebCore {
-class RevalidateStyleAttributeTask;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::RevalidateStyleAttributeTask> : std::true_type { };
-}
-
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
@@ -207,8 +198,9 @@ static bool parseQuad(Ref<JSON::Array>&& quadArray, FloatQuad* quad)
     return true;
 }
 
-class RevalidateStyleAttributeTask {
+class RevalidateStyleAttributeTask final : public CanMakeCheckedPtr<RevalidateStyleAttributeTask> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(RevalidateStyleAttributeTask);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RevalidateStyleAttributeTask);
 public:
     RevalidateStyleAttributeTask(InspectorDOMAgent*);
     void scheduleFor(Element*);

@@ -36,6 +36,7 @@
 #include <JavaScriptCore/Breakpoint.h>
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
@@ -52,15 +53,6 @@ class InjectedScriptManager;
 namespace JSC {
 class CallFrame;
 class JSValue;
-}
-
-namespace WebCore {
-class InspectorDOMAgent;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::InspectorDOMAgent> : std::true_type { };
 }
 
 namespace WebCore {
@@ -90,9 +82,10 @@ enum class PlatformEventModifier : uint8_t;
 
 struct Styleable;
 
-class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler {
+class InspectorDOMAgent final : public InspectorAgentBase, public Inspector::DOMBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorDOMAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorDOMAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorDOMAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorDOMAgent);
 public:
     InspectorDOMAgent(PageAgentContext&, InspectorOverlay&);
     ~InspectorDOMAgent();

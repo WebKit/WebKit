@@ -34,15 +34,6 @@
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
-class SendGarbageCollectionEventsTask;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::SendGarbageCollectionEventsTask> : std::true_type { };
-}
-
-namespace WebCore {
 
 using namespace Inspector;
 
@@ -54,8 +45,9 @@ struct GarbageCollectionData {
     Seconds endTime;
 };
 
-class SendGarbageCollectionEventsTask final {
+class SendGarbageCollectionEventsTask final : public CanMakeCheckedPtr<SendGarbageCollectionEventsTask> {
     WTF_MAKE_TZONE_ALLOCATED_INLINE(SendGarbageCollectionEventsTask);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(SendGarbageCollectionEventsTask);
 public:
     SendGarbageCollectionEventsTask(WebHeapAgent&);
     void addGarbageCollection(GarbageCollectionData&&);

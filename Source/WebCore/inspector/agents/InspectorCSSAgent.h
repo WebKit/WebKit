@@ -32,6 +32,7 @@
 #include "SecurityContext.h"
 #include "Timer.h"
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/JSONValues.h>
@@ -44,15 +45,6 @@
 
 namespace Inspector {
 class CSSFrontendDispatcher;
-}
-
-namespace WebCore {
-class InspectorCSSAgent;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::InspectorCSSAgent> : std::true_type { };
 }
 
 namespace WebCore {
@@ -74,9 +66,10 @@ namespace Style {
 class Resolver;
 }
 
-class InspectorCSSAgent final : public InspectorAgentBase , public Inspector::CSSBackendDispatcherHandler , public InspectorStyleSheet::Listener {
+class InspectorCSSAgent final : public InspectorAgentBase , public Inspector::CSSBackendDispatcherHandler , public InspectorStyleSheet::Listener, public CanMakeCheckedPtr<InspectorCSSAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorCSSAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorCSSAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorCSSAgent);
 public:
     explicit InspectorCSSAgent(PageAgentContext&);
     ~InspectorCSSAgent();

@@ -31,19 +31,11 @@
 #include <JavaScriptCore/InspectorBackendDispatchers.h>
 #include <JavaScriptCore/InspectorFrontendDispatchers.h>
 #include <JavaScriptCore/InspectorProtocolObjects.h>
+#include <wtf/CheckedPtr.h>
 #include <wtf/Forward.h>
 #include <wtf/RobinHoodHashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
-
-namespace WebCore {
-class InspectorAnimationAgent;
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedTimerSmartPointerException;
-template<> struct IsDeprecatedTimerSmartPointerException<WebCore::InspectorAnimationAgent> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -59,9 +51,10 @@ class WeakPtrImplWithEventTargetData;
 
 struct Styleable;
 
-class InspectorAnimationAgent final : public InspectorAgentBase, public Inspector::AnimationBackendDispatcherHandler {
+class InspectorAnimationAgent final : public InspectorAgentBase, public Inspector::AnimationBackendDispatcherHandler, public CanMakeCheckedPtr<InspectorAnimationAgent> {
     WTF_MAKE_NONCOPYABLE(InspectorAnimationAgent);
     WTF_MAKE_TZONE_ALLOCATED(InspectorAnimationAgent);
+    WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(InspectorAnimationAgent);
 public:
     InspectorAnimationAgent(PageAgentContext&);
     ~InspectorAnimationAgent();
