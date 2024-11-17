@@ -982,6 +982,8 @@ http/wpt/service-workers/fetch-service-worker-preload-changing-request.https.htm
 
 webkit.org/b/212532 http/wpt/service-workers/service-worker-crashing-while-fetching.https.html [ Pass Failure ]
 
+webkit.org/b/283229 [ Debug ] http/wpt/service-workers/persistent-modules.html [ Skip ] # Crash
+
 http/wpt/push-api [ Skip ]
 
 webkit.org/b/282475 http/wpt/navigation-api/transition-promises.html [ Failure Pass ]
@@ -4332,7 +4334,7 @@ http/tests/navigation/keyboard-events-during-provisional-navigation.html [ Failu
 
 # waitForCompositorReady().then(takeScreenshot) times out on the internal Buildbot
 imported/w3c/web-platform-tests/scroll-animations/css/animation-range-visual-test.html [ ImageOnlyFailure Timeout ]
-imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property.html [ ImageOnlyFailure Timeout ]
+imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/custom-property.html [ Pass Timeout ]
 [ Debug ] imported/w3c/web-platform-tests/scroll-animations/css/animation-inactive-outside-range-test.html [ Skip ] # Timeout
 
 imported/w3c/web-platform-tests/scroll-animations/view-timelines/animation-events.html [ Failure Pass ]
