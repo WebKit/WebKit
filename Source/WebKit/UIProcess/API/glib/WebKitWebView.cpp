@@ -237,6 +237,7 @@ enum {
 
     PROP_WEB_EXTENSION_MODE,
     PROP_DEFAULT_CONTENT_SECURITY_POLICY,
+    PROP_THEME_COLOR,
 
     N_PROPERTIES,
 };
@@ -499,7 +500,6 @@ void webkitWebViewMediaCaptureStateDidChange(WebKitWebView* webView, WebCore::Me
         g_object_notify_by_pspec(G_OBJECT(webView), sObjProperties[PROP_DISPLAY_CAPTURE_STATE]);
 }
 
-
 #if PLATFORM(WPE)
 WebKitWebViewClient::WebKitWebViewClient(WebKitWebView* webView)
     : m_webView(webView)
@@ -549,6 +549,11 @@ void WebKitWebViewClient::didReceiveUserMessage(WKWPE::View&, UserMessage&& mess
 WebKitWebResourceLoadManager* WebKitWebViewClient::webResourceLoadManager()
 {
     return webkitWebViewGetWebResourceLoadManager(m_webView);
+}
+
+void WebKitWebViewClient::themeColorDidChange()
+{
+    g_object_notify_by_pspec(G_OBJECT(m_webView), sObjProperties[PROP_THEME_COLOR]);
 }
 
 #if ENABLE(FULLSCREEN_API)
@@ -1168,6 +1173,12 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     case PROP_DEFAULT_CONTENT_SECURITY_POLICY:
         g_value_set_string(value, webkit_web_view_get_default_content_security_policy(webView));
         break;
+    case PROP_THEME_COLOR: {
+        auto* color = static_cast<WebKitColor*>(fastMalloc(sizeof(WebKitColor)));
+        webkit_web_view_get_theme_color(webView, color);
+        g_value_take_boxed(value, static_cast<gconstpointer>(color));
+        break;
+    }
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, propId, paramSpec);
     }
@@ -1700,6 +1711,19 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         nullptr, nullptr,
         nullptr,
         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+
+    /**
+     * WebKitWebView::theme-color:
+     *
+     * The theme color of the WebView's current page.
+     *
+     * Since: 2.48
+     */
+    sObjProperties[PROP_THEME_COLOR] = g_param_spec_boxed(
+        "theme-color",
+        nullptr, nullptr,
+        WEBKIT_TYPE_COLOR,
+        static_cast<GParamFlags>(WEBKIT_PARAM_READABLE));
 
     g_object_class_install_properties(gObjectClass, N_PROPERTIES, sObjProperties.data());
 
@@ -5746,4 +5770,23 @@ webkit_web_view_get_default_content_security_policy(WebKitWebView* webView)
         return nullptr;
 
     return webView->priv->defaultContentSecurityPolicy.data();
+}
+
+/**
+ * webkit_web_view_get_theme_color:
+ * @web_view: a #WebKitWebView
+ * @color: (out): a #WebKitColor to fill in with the theme color
+ *
+ * Gets the theme color that is specified by the content in the @web_view.
+ *
+ * Since: 2.48
+ */
+void
+webkit_web_view_get_theme_color(WebKitWebView* webView, WebKitColor* color)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    auto& page = webkitWebViewGetPage(webView);
+
+    g_return_if_fail(page.themeColor().isValid());
+    webkitColorFillFromWebCoreColor(page.themeColor(), color);
 }

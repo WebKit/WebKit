@@ -702,6 +702,7 @@ void DrawingAreaCoordinatedGraphics::display(UpdateInfo& updateInfo)
     webPage->updateRendering();
     webPage->finalizeRenderingUpdate({ });
     webPage->flushPendingEditorStateUpdate();
+    webPage->flushPendingThemeColorChange();
 
     // The layout may have put the page into accelerated compositing mode. If the LayerTreeHost is
     // in charge of displaying, we have nothing more to do.
