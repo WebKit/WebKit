@@ -33,9 +33,9 @@ struct WeakSimpleRange {
     WeakBoundaryPoint start;
     WeakBoundaryPoint end;
 
-    WeakSimpleRange(const WeakBoundaryPoint&, const WeakBoundaryPoint&);
-    WeakSimpleRange(WeakBoundaryPoint&&, WeakBoundaryPoint&&);
-    WeakSimpleRange(const BoundaryPoint&&, const BoundaryPoint&&);
+    WEBCORE_EXPORT WeakSimpleRange(const WeakBoundaryPoint&, const WeakBoundaryPoint&);
+    WEBCORE_EXPORT WeakSimpleRange(WeakBoundaryPoint&&, WeakBoundaryPoint&&);
+    WEBCORE_EXPORT WeakSimpleRange(const BoundaryPoint&&, const BoundaryPoint&&);
 };
 
 struct SimpleRange {
@@ -62,11 +62,14 @@ SimpleRange makeSimpleRangeHelper(BoundaryPoint&&, BoundaryPoint&&);
 std::optional<SimpleRange> makeSimpleRangeHelper(std::optional<BoundaryPoint>&&, std::optional<BoundaryPoint>&&);
 SimpleRange makeSimpleRangeHelper(BoundaryPoint&&);
 std::optional<SimpleRange> makeSimpleRangeHelper(std::optional<BoundaryPoint>&&);
+std::optional<SimpleRange> makeSimpleRangeHelper(const WeakBoundaryPoint&, const WeakBoundaryPoint&);
+std::optional<SimpleRange> makeSimpleRange(const WeakSimpleRange&);
 
 inline BoundaryPoint makeBoundaryPointHelper(const BoundaryPoint& point) { return point; }
 inline BoundaryPoint makeBoundaryPointHelper(BoundaryPoint&& point) { return WTFMove(point); }
 inline std::optional<BoundaryPoint> makeBoundaryPointHelper(const std::optional<BoundaryPoint>& point) { return point; }
 inline std::optional<BoundaryPoint> makeBoundaryPointHelper(std::optional<BoundaryPoint>&& point) { return WTFMove(point); }
+std::optional<BoundaryPoint> makeBoundaryPointHelper(const WeakBoundaryPoint&);
 template<typename T> auto makeBoundaryPointHelper(T&& argument) -> decltype(makeBoundaryPoint(std::forward<T>(argument))) { return makeBoundaryPoint(std::forward<T>(argument)); }
 
 template<typename ...T> auto makeSimpleRange(T&& ...arguments) -> decltype(makeSimpleRangeHelper(makeBoundaryPointHelper(std::forward<T>(arguments))...)) { return makeSimpleRangeHelper(makeBoundaryPointHelper(std::forward<T>(arguments))...); }
@@ -217,6 +220,23 @@ inline std::optional<SimpleRange> makeSimpleRangeHelper(std::optional<BoundaryPo
     if (!point)
         return std::nullopt;
     return makeSimpleRangeHelper(WTFMove(*point));
+}
+
+inline std::optional<BoundaryPoint> makeBoundaryPointHelper(const WeakBoundaryPoint& point)
+{
+    if (!point.container)
+        return { };
+    return BoundaryPoint { *point.container, point.offset };
+}
+
+inline std::optional<SimpleRange> makeSimpleRangeHelper(const WeakBoundaryPoint& start, const WeakBoundaryPoint& end)
+{
+    return makeSimpleRangeHelper(makeBoundaryPointHelper(start), makeBoundaryPointHelper(end));
+}
+
+inline std::optional<SimpleRange> makeSimpleRange(const WeakSimpleRange& range)
+{
+    return makeSimpleRangeHelper(range.start, range.end);
 }
 
 }

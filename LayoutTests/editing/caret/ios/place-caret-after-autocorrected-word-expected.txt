@@ -1,0 +1,15 @@
+Testing
+Verifies that the text cursor can be placed after the end of an autocorrected word. This test requires WebKitTestRunner
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS Typed 'Testign'
+PASS Applied autocorrection
+PASS getSelection().type is "Range"
+PASS Selected autocorrection
+PASS Moved selection to end
+PASS getSelection().type is "Caret"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -253,7 +253,8 @@ interface UIScriptController {
     undefined keyboardAccessoryBarNext();
     undefined keyboardAccessoryBarPrevious();
 
-    undefined applyAutocorrection(DOMString newString, DOMString oldString, object callback);
+    undefined selectWordForReplacement();
+    undefined applyAutocorrection(DOMString newString, DOMString oldString, object callback, boolean underline);
 
     // Returned object is a dictionary with the passed in string as a key for returned object
     object contentsOfUserInterfaceItem(DOMString interfaceItem);

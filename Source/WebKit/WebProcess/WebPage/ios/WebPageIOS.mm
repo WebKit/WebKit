@@ -2043,7 +2043,38 @@ void WebPage::extendSelectionForReplacement(CompletionHandler<void()>&& completi
     if (!rangeToSelect)
         return;
 
+    if (auto lastRange = std::exchange(m_lastSelectedReplacementRange, { }); lastRange && makeSimpleRange(*lastRange) == rangeToSelect)
+        return;
+
     setSelectedRangeDispatchingSyntheticMouseEventsIfNeeded(*rangeToSelect, position.affinity());
+    m_lastSelectedReplacementRange = rangeToSelect->makeWeakSimpleRange();
+}
+
+void WebPage::resetLastSelectedReplacementRangeIfNeeded()
+{
+    if (!m_lastSelectedReplacementRange)
+        return;
+
+    auto replacementRange = makeSimpleRange(*m_lastSelectedReplacementRange);
+    if (!replacementRange) {
+        m_lastSelectedReplacementRange = { };
+        return;
+    }
+
+    RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
+    if (!frame) {
+        m_lastSelectedReplacementRange = { };
+        return;
+    }
+
+    auto selectedRange = frame->selection().selection().toNormalizedRange();
+    if (!selectedRange) {
+        m_lastSelectedReplacementRange = { };
+        return;
+    }
+
+    if (!contains(ComposedTree, *replacementRange, *selectedRange))
+        m_lastSelectedReplacementRange = { };
 }
 
 void WebPage::extendSelection(WebCore::TextGranularity granularity, CompletionHandler<void()>&& completionHandler)

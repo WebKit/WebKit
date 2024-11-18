@@ -1,0 +1,66 @@
+<!DOCTYPE html> <!-- webkit-test-runner [ useFlexibleViewport=true ] -->
+<html>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<head>
+<style>
+body {
+    font-family: monospace;
+    font-size: 24px;
+}
+</style>
+<script src="../../../resources/js-test.js"></script>
+<script src="../../../resources/ui-helper.js"></script>
+<script>
+jsTestIsAsync = true;
+
+addEventListener("load", async () => {
+    description("Verifies that the text cursor can be placed after the end of an autocorrected word. This test requires WebKitTestRunner");
+
+    if (!window.testRunner)
+        return;
+
+    const editor = document.querySelector("div[contenteditable]");
+    let rect = document.getElementById("target1").getBoundingClientRect();
+    const afterEndOfWord = { x : 250, y : rect.top + rect.height / 2 };
+
+    await UIHelper.activateAndWaitForInputSessionAt(afterEndOfWord.x, afterEndOfWord.y);
+
+    for (let character of [..."Testign"]) {
+        await UIHelper.callFunctionAndWaitForEvent(async () => {
+            await UIHelper.typeCharacter(character);
+            await UIHelper.ensurePresentationUpdate();
+        }, editor, "input");
+    }
+    testPassed("Typed 'Testign'");
+
+    await UIHelper.applyAutocorrection("Testing", "Testign", true);
+    testPassed("Applied autocorrection");
+
+    await UIHelper.callFunctionAndWaitForEvent(async () => {
+        await UIHelper.selectWordForReplacement();
+        await UIHelper.ensurePresentationUpdate();
+    }, document, "selectionchange");
+    shouldBeEqualToString("getSelection().type", "Range");
+    testPassed("Selected autocorrection");
+
+    await UIHelper.callFunctionAndWaitForEvent(async () => {
+        await UIHelper.activateAt(afterEndOfWord.x, afterEndOfWord.y);
+        await UIHelper.ensurePresentationUpdate();
+    }, document, "selectionchange");
+    testPassed("Moved selection to end");
+
+    await UIHelper.selectWordForReplacement();
+    await UIHelper.ensurePresentationUpdate();
+    shouldBeEqualToString("getSelection().type", "Caret");
+    finishJSTest();
+});
+</script>
+</head>
+<body>
+    <div contenteditable>
+        <div><br id="target1"></div>
+    </div>
+    <pre id="description"></pre>
+    <pre id="console"></pre>
+</body>
+</html>
