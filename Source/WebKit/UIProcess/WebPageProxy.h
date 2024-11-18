@@ -1004,6 +1004,7 @@ public:
 
 #if PLATFORM(COCOA)
     void scrollingNodeScrollViewDidScroll(WebCore::ScrollingNodeID);
+    WebCore::FloatRect selectionBoundingRectInRootViewCoordinates() const;
 #endif
 
 #if PLATFORM(IOS_FAMILY)
@@ -1116,7 +1117,6 @@ public:
     bool isScrollingOrZooming() const { return m_isScrollingOrZooming; }
     void requestEvasionRectsAboveSelection(CompletionHandler<void(const Vector<WebCore::FloatRect>&)>&&);
     void updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&&);
-    WebCore::FloatRect selectionBoundingRectInRootViewCoordinates() const;
     void requestDocumentEditingContext(DocumentEditingContextRequest&&, CompletionHandler<void(DocumentEditingContext&&)>&&);
     void generateSyntheticEditingCommand(SyntheticEditingCommandType);
     void showDataDetectorsUIForPositionInformation(const InteractionInformationAtPosition&);
@@ -1983,7 +1983,7 @@ public:
     WebCore::UserInterfaceLayoutDirection userInterfaceLayoutDirection();
     void setUserInterfaceLayoutDirection(WebCore::UserInterfaceLayoutDirection);
 
-    bool hasHadSelectionChangesFromUserInteraction() const { return m_hasHadSelectionChangesFromUserInteraction; }
+    bool hasFocusedElementWithUserInteraction() const { return m_hasFocusedElementWithUserInteraction; }
 
 #if HAVE(TOUCH_BAR)
     bool isTouchBarUpdateSuppressedForHiddenContentEditable() const { return m_isTouchBarUpdateSuppressedForHiddenContentEditable; }
@@ -2606,6 +2606,10 @@ public:
     void isPotentialTapInProgress(CompletionHandler<void(bool)>&&);
 #endif
 
+#if PLATFORM(COCOA) && ENABLE(ASYNC_SCROLLING)
+    WebCore::FloatPoint mainFrameScrollPosition() const;
+#endif
+
 private:
     void getWebCryptoMasterKey(CompletionHandler<void(std::optional<Vector<uint8_t>>&&)>&&);
     WebPageProxy(PageClient&, WebProcessProxy&, Ref<API::PageConfiguration>&&);
@@ -2821,7 +2825,7 @@ private:
     void closeOverlayedViews();
 
     void compositionWasCanceled();
-    void setHasHadSelectionChangesFromUserInteraction(bool);
+    void setHasFocusedElementWithUserInteraction(bool);
 
 #if HAVE(TOUCH_BAR)
     void setIsTouchBarUpdateSuppressedForHiddenContentEditable(bool);
@@ -3597,7 +3601,7 @@ private:
 
     WebCore::IntDegrees m_orientationForMediaCapture { 0 };
 
-    bool m_hasHadSelectionChangesFromUserInteraction { false };
+    bool m_hasFocusedElementWithUserInteraction { false };
 
 #if HAVE(TOUCH_BAR)
     bool m_isTouchBarUpdateSuppressedForHiddenContentEditable { false };

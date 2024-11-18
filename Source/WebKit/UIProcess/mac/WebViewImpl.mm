@@ -2172,6 +2172,15 @@ bool WebViewImpl::shouldDelayWindowOrderingForEvent(NSEvent *event)
     if (![m_view hitTest:event.locationInWindow])
         return false;
 
+    if (!protectedPage()->legacyMainFrameProcess().isResponsive())
+        return false;
+
+    if (protectedPage()->editorState().hasPostLayoutData()) {
+        auto locationInView = [m_view convertPoint:event.locationInWindow fromView:nil];
+        if (!protectedPage()->selectionBoundingRectInRootViewCoordinates().contains(roundedIntPoint(locationInView)))
+            return false;
+    }
+
     auto previousEvent = setLastMouseDownEvent(event);
     bool result = m_page->shouldDelayWindowOrderingForEvent(WebEventFactory::createWebMouseEvent(event, m_lastPressureEvent.get(), m_view.getAutoreleased()));
     setLastMouseDownEvent(previousEvent.get());
@@ -4609,11 +4618,11 @@ void WebViewImpl::removeTextPlaceholder(NSTextPlaceholder *placeholder, bool wil
 
 void WebViewImpl::showWritingTools(WTRequestedTool tool)
 {
-    IntRect selectionRect;
+    FloatRect selectionRect;
 
     auto& editorState = m_page->editorState();
-    if (editorState.selectionIsRange && editorState.hasPostLayoutData())
-        selectionRect = editorState.postLayoutData->selectionBoundingRect;
+    if (editorState.selectionIsRange)
+        selectionRect = protectedPage()->selectionBoundingRectInRootViewCoordinates();
 
 ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     [[PAL::getWTWritingToolsClass() sharedInstance] showTool:tool forSelectionRect:selectionRect ofView:m_view.getAutoreleased() forDelegate:(NSObject<WTWritingToolsDelegate> *)m_view.getAutoreleased()];
@@ -5952,7 +5961,7 @@ void WebViewImpl::updateTouchBar()
         return;
 
     NSTouchBar *touchBar = nil;
-    bool userActionRequirementsHaveBeenMet = !requiresUserActionForEditingControlsManager() || m_page->hasHadSelectionChangesFromUserInteraction();
+    bool userActionRequirementsHaveBeenMet = !requiresUserActionForEditingControlsManager() || m_page->hasFocusedElementWithUserInteraction();
     if (m_page->editorState().isContentEditable && !m_page->isTouchBarUpdateSuppressedForHiddenContentEditable()) {
         updateTextTouchBar();
         if (userActionRequirementsHaveBeenMet)

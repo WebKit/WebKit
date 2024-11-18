@@ -437,6 +437,10 @@ public:
     RunLoop::Timer activityStateChangeTimer;
 #endif
 
+#if PLATFORM(MAC)
+    WebCore::FloatPoint scrollPositionDuringLastEditorStateUpdate;
+#endif
+
     bool allowsLayoutViewportHeightExpansion { true };
 
     explicit Internals(WebPageProxy&);

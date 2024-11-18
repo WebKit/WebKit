@@ -2667,8 +2667,12 @@ private:
     bool m_userIsInteracting { false };
     bool m_hasEverDisplayedContextMenu { false };
 
+    enum class UserInteractionFlag : uint8_t {
+        FocusedElement      = 1 << 0,
+        SelectedRange       = 1 << 1,
+    };
+    OptionSet<UserInteractionFlag> m_userInteractionsSincePageTransition;
 #if HAVE(TOUCH_BAR)
-    bool m_hasEverFocusedElementDueToUserInteractionSincePageTransition { false };
     bool m_requiresUserActionForEditingControlsManager { false };
     bool m_isTouchBarUpdateSuppressedForHiddenContentEditable { false };
     bool m_isNeverRichlyEditableForTouchBar { false };

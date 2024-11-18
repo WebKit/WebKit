@@ -231,7 +231,7 @@ messages -> WebPageProxy {
     # Editor notifications
     EditorStateChanged(struct WebKit::EditorState editorState)
     CompositionWasCanceled()
-    SetHasHadSelectionChangesFromUserInteraction(bool hasHadUserSelectionChanges)
+    SetHasFocusedElementWithUserInteraction(bool hasFocusedElement)
 
 #if ENABLE(IMAGE_ANALYSIS)
     RequestTextRecognition(URL imageURL, WebCore::ShareableBitmapHandle imageData, String source, String target) -> (struct WebCore::TextRecognitionResult result)

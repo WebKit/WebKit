@@ -932,6 +932,19 @@ void WebPageProxy::handleContextMenuWritingTools(WebCore::WritingTools::Requeste
 
 #endif
 
+WebCore::FloatRect WebPageProxy::selectionBoundingRectInRootViewCoordinates() const
+{
+    if (editorState().selectionIsNone)
+        return { };
+
+    if (!editorState().hasPostLayoutData())
+        return { };
+
+    auto bounds = WebCore::FloatRect { editorState().postLayoutData->selectionBoundingRect };
+    bounds.move(internals().scrollPositionDuringLastEditorStateUpdate - mainFrameScrollPosition());
+    return bounds;
+}
+
 } // namespace WebKit
 
 #endif // PLATFORM(MAC)
