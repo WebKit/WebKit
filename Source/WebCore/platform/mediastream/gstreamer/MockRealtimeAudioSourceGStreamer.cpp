@@ -141,7 +141,7 @@ std::pair<GstClockTime, GstClockTime> MockRealtimeAudioSourceGStreamer::queryCap
 
 void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
 {
-    if (!m_bipBopBuffer.size())
+    if (!m_bipBopBuffer.size() || !m_streamFormat)
         reconfigure();
 
     uint32_t totalFrameCount = GST_ROUND_UP_16(static_cast<size_t>(delta.seconds() * sampleRate()));
@@ -153,7 +153,7 @@ void MockRealtimeAudioSourceGStreamer::render(Seconds delta)
         uint32_t bipBopCount = std::min(frameCount, bipBopRemain);
 
         // We might have stopped producing data. Break out of the loop earlier if that happens.
-        if (m_capturer && m_capturer->isStopped())
+        if (!isProducingData())
             break;
 
         ASSERT(m_streamFormat);
