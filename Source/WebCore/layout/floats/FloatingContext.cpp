@@ -65,28 +65,28 @@ class Iterator;
 
 class FloatPair {
 public:
-    struct LeftRightIndex {
-        bool isEmpty() const { return !left && !right;}
+    struct InlineStartEndIndex {
+        bool isEmpty() const { return !inlineStart && !inlineEnd; }
 
-        std::optional<unsigned> left;
-        std::optional<unsigned> right;
+        std::optional<size_t> inlineStart;
+        std::optional<size_t> inlineEnd;
     };
 
     bool isEmpty() const { return m_floatPair.isEmpty(); }
-    const PlacedFloats::Item* left() const;
-    const PlacedFloats::Item* right() const;
+    const PlacedFloats::Item* inlineStart() const;
+    const PlacedFloats::Item* inlineEnd() const;
     bool intersects(const FloatAvoider&) const;
     bool intersects(BoxGeometry::HorizontalEdges) const;
     bool containsFloatFromFormattingContext() const;
-    PositionInContextRoot verticalConstraint() const { return m_verticalPosition; }
+    PositionInContextRoot blockAxisConstraint() const { return m_blockAxisPosition; }
 
-    struct HorizontalConstraints {
-        std::optional<PositionInContextRoot> left;
-        std::optional<PositionInContextRoot> right;
+    struct InlineAxisConstraints {
+        std::optional<PositionInContextRoot> start;
+        std::optional<PositionInContextRoot> end;
     };
-    HorizontalConstraints horizontalConstraints() const;
+    InlineAxisConstraints inlineAxisConstraints() const;
     PositionInContextRoot bottom() const;
-    LeftRightIndex operator*() const { return m_floatPair; };
+    InlineStartEndIndex operator*() const { return m_floatPair; };
     bool operator==(const FloatPair&) const;
 
 private:
@@ -94,8 +94,8 @@ private:
     FloatPair(const PlacedFloats::List&);
 
     const PlacedFloats::List& m_floats;
-    LeftRightIndex m_floatPair;
-    PositionInContextRoot m_verticalPosition;
+    InlineStartEndIndex m_floatPair;
+    PositionInContextRoot m_blockAxisPosition;
 };
 
 class Iterator {
@@ -128,71 +128,71 @@ static Iterator end(const PlacedFloats::List& floats)
 static bool areFloatsHorizontallySorted(const PlacedFloats& placedFloats)
 {
     auto& floats = placedFloats.list();
-    auto rightEdgeOfLeftFloats = LayoutUnit::min();
-    auto leftEdgeOfRightFloats = LayoutUnit::max();
-    std::optional<LayoutUnit> leftBottom;
-    std::optional<LayoutUnit> rightBottom;
+    auto rightEdgeOfInlineStartFloats = LayoutUnit::min();
+    auto leftEdgeOfInlineEndFloats = LayoutUnit::max();
+    auto inlineStartBottom = std::optional<LayoutUnit> { };
+    auto inlineEndBottom = std::optional<LayoutUnit> { };
 
     for (auto& floatItem : floats) {
         if (floatItem.isStartPositioned()) {
             auto rightEdge = floatItem.absoluteRectWithMargin().right();
-            if (rightEdge < rightEdgeOfLeftFloats) {
-                if (leftBottom && floatItem.absoluteRectWithMargin().top() < *leftBottom)
+            if (rightEdge < rightEdgeOfInlineStartFloats) {
+                if (inlineStartBottom && floatItem.absoluteRectWithMargin().top() < *inlineStartBottom)
                     return false;
             }
-            leftBottom = floatItem.absoluteRectWithMargin().bottom();
-            rightEdgeOfLeftFloats = rightEdge;
+            inlineStartBottom = floatItem.absoluteRectWithMargin().bottom();
+            rightEdgeOfInlineStartFloats = rightEdge;
         } else {
             auto leftEdge = floatItem.absoluteRectWithMargin().left();
-            if (leftEdge > leftEdgeOfRightFloats) {
-                if (rightBottom && floatItem.absoluteRectWithMargin().top() < *rightBottom)
+            if (leftEdge > leftEdgeOfInlineEndFloats) {
+                if (inlineEndBottom && floatItem.absoluteRectWithMargin().top() < *inlineEndBottom)
                     return false;
             }
-            rightBottom = floatItem.absoluteRectWithMargin().bottom();
-            leftEdgeOfRightFloats = leftEdge;
+            inlineEndBottom = floatItem.absoluteRectWithMargin().bottom();
+            leftEdgeOfInlineEndFloats = leftEdge;
         }
     }
     return true;
 }
 #endif
 
-static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoider, const PlacedFloats::List& floats, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges)
+static FloatPair::InlineStartEndIndex findAvailablePosition(FloatAvoider& floatAvoider, const PlacedFloats::List& floats, BoxGeometry::HorizontalEdges containingBlockContentBoxEdges)
 {
     std::optional<PositionInContextRoot> bottomMost;
-    std::optional<FloatPair::LeftRightIndex> innerMostLeftAndRight;
+    std::optional<FloatPair::InlineStartEndIndex> innerMostInlineStartAndEnd;
     auto end = Layout::end(floats);
     for (auto iterator = begin(floats, { floatAvoider.top() }); iterator != end; ++iterator) {
         ASSERT(!(*iterator).isEmpty());
-        auto leftRightFloatPair = *iterator;
-        innerMostLeftAndRight = innerMostLeftAndRight.value_or(*leftRightFloatPair);
+        auto inlineStartEndFloatPair = *iterator;
+        innerMostInlineStartAndEnd = innerMostInlineStartAndEnd.value_or(*inlineStartEndFloatPair);
 
         // Move the box horizontally so that it either
         // 1. aligns with the current floating pair (always constrained by containing block e.g. when current float on this position is outside of containing block i.e. not intrusive).
         // 2. or with the containing block's content box if there's no float to align with at this vertical position.
-        auto leftRightEdge = leftRightFloatPair.horizontalConstraints();
+        auto inlineStartEndEdge = inlineStartEndFloatPair.inlineAxisConstraints();
 
         // Ensure that the float avoider
         // 1. avoids floats on both sides (with the exception of non-intrusive floats from other FCs)
         // 2. does not overflow its containing block if the horizontal position is constrained by other floats
         // (i.e. a float avoider may overflow its containing block just fine unless this overflow is the result of getting it pushed by other floats on this vertical position -out of available space)
         // 3. Move to the next floating pair if this vertical position is over-constrained.
-        if (auto horizontalConstraint = floatAvoider.isLeftAligned() ? leftRightEdge.left : leftRightEdge.right)
-            floatAvoider.setHorizontalPosition(*horizontalConstraint);
+        if (auto inlineAxisConstraints = floatAvoider.isLeftAligned() ? inlineStartEndEdge.start : inlineStartEndEdge.end)
+            floatAvoider.setHorizontalPosition(*inlineAxisConstraints);
         else
             floatAvoider.resetHorizontalPosition();
-        floatAvoider.setVerticalPosition(leftRightFloatPair.verticalConstraint());
+        floatAvoider.setVerticalPosition(inlineStartEndFloatPair.blockAxisConstraint());
 
-        if (!leftRightFloatPair.intersects(floatAvoider) && !floatAvoider.overflowsContainingBlock())
-            return *innerMostLeftAndRight;
+        if (!inlineStartEndFloatPair.intersects(floatAvoider) && !floatAvoider.overflowsContainingBlock())
+            return *innerMostInlineStartAndEnd;
 
         // Is this float pair is outside of our containing block's content box? In some cases we _may_ overlap them.
-        if (!leftRightFloatPair.intersects(containingBlockContentBoxEdges) && !leftRightFloatPair.containsFloatFromFormattingContext()) {
+        if (!inlineStartEndFloatPair.intersects(containingBlockContentBoxEdges) && !inlineStartEndFloatPair.containsFloatFromFormattingContext()) {
             // Surprisingly floats do overlap each other on the non-floating side (e.g. float: left may overlap a float: right)
             // when they are not considered intrusive (i.e. they are outside of our containing block's content box) and coming from outside of the formatting context.
-            return *innerMostLeftAndRight;
+            return *innerMostInlineStartAndEnd;
         }
 
-        bottomMost = leftRightFloatPair.bottom();
+        bottomMost = inlineStartEndFloatPair.bottom();
         // Move to the next floating pair.
     }
 
@@ -203,8 +203,8 @@ static FloatPair::LeftRightIndex findAvailablePosition(FloatAvoider& floatAvoide
     // Passed all the floats and still does not fit? Push it below the last float.
     floatAvoider.setVerticalPosition(*bottomMost);
     floatAvoider.resetHorizontalPosition();
-    ASSERT(innerMostLeftAndRight);
-    return *innerMostLeftAndRight;
+    ASSERT(innerMostInlineStartAndEnd);
+    return *innerMostInlineStartAndEnd;
 }
 
 struct FloatingContext::AbsoluteCoordinateValuesForFloatAvoider {
@@ -502,8 +502,8 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
     // 3. Align the box with the intersected float and probe for placement again (#1). 
     auto& floats = m_placedFloats.list();
     while (true) {
-        auto innerMostLeftAndRight = findAvailablePosition(floatAvoider, floats, containingBlockContentBoxEdges);
-        if (innerMostLeftAndRight.isEmpty())
+        auto innerMostInlineStartAndEnd = findAvailablePosition(floatAvoider, floats, containingBlockContentBoxEdges);
+        if (innerMostInlineStartAndEnd.isEmpty())
             return;
 
         auto overlappingFloatBox = [&floats](auto startFloatIndex, auto& floatAvoider) -> const PlacedFloats::Item* {
@@ -522,7 +522,7 @@ void FloatingContext::findPositionForFormattingContextRoot(FloatAvoider& floatAv
             return nullptr;
         };
 
-        auto startIndex = std::max(innerMostLeftAndRight.left.value_or(0), innerMostLeftAndRight.right.value_or(0)) + 1;
+        auto startIndex = std::max(innerMostInlineStartAndEnd.inlineStart.value_or(0), innerMostInlineStartAndEnd.inlineEnd.value_or(0)) + 1;
         auto* intersectedFloatBox = overlappingFloatBox(startIndex, floatAvoider);
         if (!intersectedFloatBox)
             return;
@@ -620,22 +620,22 @@ FloatPair::FloatPair(const PlacedFloats::List& floats)
 {
 }
 
-const PlacedFloats::Item* FloatPair::left() const
+const PlacedFloats::Item* FloatPair::inlineStart() const
 {
-    if (!m_floatPair.left)
-        return nullptr;
+    if (!m_floatPair.inlineStart)
+        return { };
 
-    ASSERT(m_floats[*m_floatPair.left].isStartPositioned());
-    return &m_floats[*m_floatPair.left];
+    ASSERT(m_floats[*m_floatPair.inlineStart].isStartPositioned());
+    return &m_floats[*m_floatPair.inlineStart];
 }
 
-const PlacedFloats::Item* FloatPair::right() const
+const PlacedFloats::Item* FloatPair::inlineEnd() const
 {
-    if (!m_floatPair.right)
-        return nullptr;
+    if (!m_floatPair.inlineEnd)
+        return { };
 
-    ASSERT(!m_floats[*m_floatPair.right].isStartPositioned());
-    return &m_floats[*m_floatPair.right];
+    ASSERT(!m_floats[*m_floatPair.inlineEnd].isStartPositioned());
+    return &m_floats[*m_floatPair.inlineEnd];
 }
 
 bool FloatPair::intersects(const FloatAvoider& floatAvoider) const
@@ -650,18 +650,18 @@ bool FloatPair::intersects(const FloatAvoider& floatAvoider) const
     };
 
     ASSERT(!m_floatPair.isEmpty());
-    return intersects(left()) || intersects(right());
+    return intersects(inlineStart()) || intersects(inlineEnd());
 }
 
 bool FloatPair::intersects(BoxGeometry::HorizontalEdges containingBlockContentBoxEdges) const
 {
     ASSERT(!m_floatPair.isEmpty());
 
-    auto leftRightEdge = horizontalConstraints();
-    if (leftRightEdge.left && *leftRightEdge.left > containingBlockContentBoxEdges.start)
+    auto inlineAxisEdge = inlineAxisConstraints();
+    if (inlineAxisEdge.start && *inlineAxisEdge.start > containingBlockContentBoxEdges.start)
         return true;
 
-    if (leftRightEdge.right && *leftRightEdge.right < containingBlockContentBoxEdges.end)
+    if (inlineAxisEdge.end && *inlineAxisEdge.end < containingBlockContentBoxEdges.end)
         return true;
 
     return false;
@@ -676,61 +676,62 @@ bool FloatPair::containsFloatFromFormattingContext() const
         // FloatingContext's formatting context (e.g. float may come from parent and sibling formatting contexts)
         return floatBox && floatBox->layoutBox();
     };
-    return isInsideCurrentFormattingContext(left()) || isInsideCurrentFormattingContext(right());
+    return isInsideCurrentFormattingContext(inlineStart()) || isInsideCurrentFormattingContext(inlineEnd());
 }
 
 bool FloatPair::operator ==(const FloatPair& other) const
 {
-    return m_floatPair.left == other.m_floatPair.left && m_floatPair.right == other.m_floatPair.right;
+    return m_floatPair.inlineStart == other.m_floatPair.inlineStart && m_floatPair.inlineEnd == other.m_floatPair.inlineEnd;
 }
 
-FloatPair::HorizontalConstraints FloatPair::horizontalConstraints() const
+FloatPair::InlineAxisConstraints FloatPair::inlineAxisConstraints() const
 {
-    std::optional<PositionInContextRoot> leftEdge;
-    std::optional<PositionInContextRoot> rightEdge;
+    auto startEdge = std::optional<PositionInContextRoot> { };
+    auto endEdge = std::optional<PositionInContextRoot> { };
 
-    if (left())
-        leftEdge = PositionInContextRoot { left()->absoluteRectWithMargin().right() };
+    if (auto* inlineStart = this->inlineStart())
+        startEdge = PositionInContextRoot { inlineStart->absoluteRectWithMargin().right() };
 
-    if (right())
-        rightEdge = PositionInContextRoot { right()->absoluteRectWithMargin().left() };
+    if (auto* inlineEnd = this->inlineEnd())
+        endEdge = PositionInContextRoot { inlineEnd->absoluteRectWithMargin().left() };
 
-    return { leftEdge, rightEdge };
+    return { startEdge, endEdge };
 }
 
 PositionInContextRoot FloatPair::bottom() const
 {
-    auto* left = this->left();
-    auto* right = this->right();
-    ASSERT(left || right);
+    auto* inlineStart = this->inlineStart();
+    auto* inlineEnd = this->inlineEnd();
+    ASSERT(inlineStart || inlineEnd);
 
-    auto leftBottom = left ? std::optional<PositionInContextRoot>(PositionInContextRoot { left->absoluteRectWithMargin().bottom() }) : std::nullopt;
-    auto rightBottom = right ? std::optional<PositionInContextRoot>(PositionInContextRoot { right->absoluteRectWithMargin().bottom() }) : std::nullopt;
+    auto inlineStartBottom = inlineStart ? std::optional<PositionInContextRoot>(PositionInContextRoot { inlineStart->absoluteRectWithMargin().bottom() }) : std::nullopt;
+    auto inlineEndBottom = inlineEnd ? std::optional<PositionInContextRoot>(PositionInContextRoot { inlineEnd->absoluteRectWithMargin().bottom() }) : std::nullopt;
 
-    if (leftBottom && rightBottom)
-        return std::max(*leftBottom, *rightBottom);
+    if (inlineStartBottom && inlineEndBottom)
+        return std::max(*inlineStartBottom, *inlineEndBottom);
 
-    if (leftBottom)
-        return *leftBottom;
+    if (inlineStartBottom)
+        return *inlineStartBottom;
 
-    return *rightBottom;
+    return *inlineEndBottom;
 }
 
-Iterator::Iterator(const PlacedFloats::List& floats, std::optional<PositionInContextRoot> verticalPosition)
+Iterator::Iterator(const PlacedFloats::List& floats, std::optional<PositionInContextRoot> blockAxisPosition)
     : m_floats(floats)
     , m_current(floats)
 {
-    if (verticalPosition)
-        set(*verticalPosition);
+    if (blockAxisPosition)
+        set(*blockAxisPosition);
 }
 
-inline static std::optional<unsigned> previousFloatingIndex(Float floatingType, const PlacedFloats::List& floats, unsigned currentIndex)
+inline static std::optional<size_t> previousFloatingIndex(Float floatingType, const PlacedFloats::List& floats, size_t currentIndex)
 {
+    ASSERT(floatingType == Float::InlineStart || floatingType == Float::InlineEnd);
     RELEASE_ASSERT(currentIndex <= floats.size());
 
     while (currentIndex) {
         auto& floating = floats[--currentIndex];
-        if ((floatingType == Float::Left && floating.isStartPositioned()) || (floatingType == Float::Right && !floating.isStartPositioned()))
+        if ((floatingType == Float::InlineStart && floating.isStartPositioned()) || (floatingType == Float::InlineEnd && !floating.isStartPositioned()))
             return currentIndex;
     }
 
@@ -744,8 +745,8 @@ Iterator& Iterator::operator++()
         return *this;
     }
 
-    auto findPreviousFloatingWithLowerBottom = [&](Float floatingType, unsigned currentIndex) -> std::optional<unsigned> {
-
+    auto findPreviousFloatingWithLowerBottom = [&](auto floatingType, auto currentIndex) -> std::optional<size_t> {
+        ASSERT(floatingType == Float::InlineStart || floatingType == Float::InlineEnd);
         RELEASE_ASSERT(currentIndex < m_floats.size());
 
         // Last floating? There's certainly no previous floating at this point.
@@ -754,7 +755,7 @@ Iterator& Iterator::operator++()
 
         auto currentBottom = m_floats[currentIndex].absoluteRectWithMargin().bottom();
 
-        std::optional<unsigned> index = currentIndex;
+        std::optional<size_t> index = currentIndex;
         while (true) {
             index = previousFloatingIndex(floatingType, m_floats, *index);
             if (!index)
@@ -774,33 +775,33 @@ Iterator& Iterator::operator++()
     // Ensure that the new floating bottom edge is positioned lower than the current one -which essentially means skipping in-between floats that are positioned higher).
     // 3. Reset the vertical position and align it with the new left-right pair. These floats are now the inner-most boxes for the current vertical position.
     // As the result we have more horizontal space on the current vertical position.
-    auto leftBottom = m_current.left() ? std::optional<PositionInContextRoot>(m_current.left()->absoluteBottom()) : std::nullopt;
-    auto rightBottom = m_current.right() ? std::optional<PositionInContextRoot>(m_current.right()->absoluteBottom()) : std::nullopt;
+    auto inlineStartBottom = m_current.inlineStart() ? std::optional<PositionInContextRoot>(m_current.inlineStart()->absoluteBottom()) : std::nullopt;
+    auto inlineEndBottom = m_current.inlineEnd() ? std::optional<PositionInContextRoot>(m_current.inlineEnd()->absoluteBottom()) : std::nullopt;
 
-    auto updateLeft = (leftBottom == rightBottom) || (!rightBottom || (leftBottom && *leftBottom < *rightBottom));
-    auto updateRight = (leftBottom == rightBottom) || (!leftBottom || (rightBottom && *leftBottom > *rightBottom));
+    auto updateInlineStart = (inlineStartBottom == inlineEndBottom) || (!inlineEndBottom || (inlineStartBottom && *inlineStartBottom < *inlineEndBottom));
+    auto updateInlineEnd = (inlineStartBottom == inlineEndBottom) || (!inlineStartBottom || (inlineEndBottom && *inlineStartBottom > *inlineEndBottom));
 
-    if (updateLeft) {
-        ASSERT(m_current.m_floatPair.left);
-        m_current.m_verticalPosition = *leftBottom;
-        m_current.m_floatPair.left = findPreviousFloatingWithLowerBottom(Float::Left, *m_current.m_floatPair.left);
+    if (updateInlineStart) {
+        ASSERT(m_current.m_floatPair.inlineStart);
+        m_current.m_blockAxisPosition = *inlineStartBottom;
+        m_current.m_floatPair.inlineStart = findPreviousFloatingWithLowerBottom(Float::InlineStart, *m_current.m_floatPair.inlineStart);
     }
     
-    if (updateRight) {
-        ASSERT(m_current.m_floatPair.right);
-        m_current.m_verticalPosition = *rightBottom;
-        m_current.m_floatPair.right = findPreviousFloatingWithLowerBottom(Float::Right, *m_current.m_floatPair.right);
+    if (updateInlineEnd) {
+        ASSERT(m_current.m_floatPair.inlineEnd);
+        m_current.m_blockAxisPosition = *inlineEndBottom;
+        m_current.m_floatPair.inlineEnd = findPreviousFloatingWithLowerBottom(Float::InlineEnd, *m_current.m_floatPair.inlineEnd);
     }
 
     return *this;
 }
 
-void Iterator::set(PositionInContextRoot verticalPosition)
+void Iterator::set(PositionInContextRoot blockAxisPosition)
 {
     // Move the iterator to the initial vertical position by starting at the inner-most floating pair (last floats on left/right).
     // 1. Check if the inner-most pair covers the vertical position.
     // 2. Move outwards from the inner-most pair until the vertical position intersects.
-    m_current.m_verticalPosition = verticalPosition;
+    m_current.m_blockAxisPosition = blockAxisPosition;
     // No floats at all?
     if (m_floats.isEmpty()) {
         ASSERT_NOT_REACHED();
@@ -808,11 +809,12 @@ void Iterator::set(PositionInContextRoot verticalPosition)
         return;
     }
 
-    auto findFloatingBelow = [&](Float floatingType) -> std::optional<unsigned> {
+    auto findFloatingBelow = [&](auto floatingType) -> std::optional<size_t> {
+        ASSERT(floatingType == Float::InlineStart || floatingType == Float::InlineEnd);
 
         ASSERT(!m_floats.isEmpty());
 
-        auto index = floatingType == Float::Left ? m_current.m_floatPair.left : m_current.m_floatPair.right;
+        auto index = floatingType == Float::InlineStart ? m_current.m_floatPair.inlineStart : m_current.m_floatPair.inlineEnd;
         // Start from the end if we don't have current yet.
         index = index.value_or(m_floats.size());
         while (true) {
@@ -822,18 +824,18 @@ void Iterator::set(PositionInContextRoot verticalPosition)
 
             // Is this floating intrusive on this position?
             auto rect = m_floats[*index].absoluteRectWithMargin();
-            if (rect.top() <= verticalPosition && rect.bottom() > verticalPosition)
+            if (rect.top() <= blockAxisPosition && rect.bottom() > blockAxisPosition)
                 return index;
         }
 
         return { };
     };
 
-    m_current.m_floatPair.left = findFloatingBelow(Float::Left);
-    m_current.m_floatPair.right = findFloatingBelow(Float::Right);
+    m_current.m_floatPair.inlineStart = findFloatingBelow(Float::InlineStart);
+    m_current.m_floatPair.inlineEnd = findFloatingBelow(Float::InlineEnd);
 
-    ASSERT(!m_current.m_floatPair.left || (*m_current.m_floatPair.left < m_floats.size() && m_floats[*m_current.m_floatPair.left].isStartPositioned()));
-    ASSERT(!m_current.m_floatPair.right || (*m_current.m_floatPair.right < m_floats.size() && !m_floats[*m_current.m_floatPair.right].isStartPositioned()));
+    ASSERT(!m_current.m_floatPair.inlineStart || (*m_current.m_floatPair.inlineStart < m_floats.size() && m_floats[*m_current.m_floatPair.inlineStart].isStartPositioned()));
+    ASSERT(!m_current.m_floatPair.inlineEnd || (*m_current.m_floatPair.inlineEnd < m_floats.size() && !m_floats[*m_current.m_floatPair.inlineEnd].isStartPositioned()));
 }
 
 bool Iterator::operator==(const Iterator& other) const
