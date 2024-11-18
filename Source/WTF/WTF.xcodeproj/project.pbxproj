@@ -878,6 +878,8 @@
 		E3B8E6032961EA7600A8AEE3 /* AccessibleAddress.h in Headers */ = {isa = PBXBuildFile; fileRef = E3B8E6012961EA7600A8AEE3 /* AccessibleAddress.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E3BE09A724A5854D009DF2B4 /* ICUHelpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3BE09A624A58545009DF2B4 /* ICUHelpers.cpp */; };
 		E3DA37E7287AD1A10066808F /* StringCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3DA37E6287AD1A10066808F /* StringCommon.cpp */; };
+		E3FFF1632CACF8A400636764 /* LibraryHash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E3FFF1622CACF8A400636764 /* LibraryHash.cpp */; };
+		E3FFF1642CACF8A400636764 /* LibraryHash.h in Headers */ = {isa = PBXBuildFile; fileRef = E3FFF1612CACF8A400636764 /* LibraryHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E4A0AD391A96245500536DF6 /* WorkQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD371A96245500536DF6 /* WorkQueue.cpp */; };
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
 		EB2C86D9267B275D0052CB9A /* CPUTimePOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB2C86D8267B275C0052CB9A /* CPUTimePOSIX.cpp */; };
@@ -1884,6 +1886,8 @@
 		E3E64F0B22813428001E55B4 /* Nonmovable.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Nonmovable.h; sourceTree = "<group>"; };
 		E3E8162F2764799300BAA45B /* RefCountedFixedVector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RefCountedFixedVector.h; sourceTree = "<group>"; };
 		E3FD6D6627A1F6AD00935000 /* GenericHashKey.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GenericHashKey.h; sourceTree = "<group>"; };
+		E3FFF1612CACF8A400636764 /* LibraryHash.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LibraryHash.h; sourceTree = "<group>"; };
+		E3FFF1622CACF8A400636764 /* LibraryHash.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LibraryHash.cpp; sourceTree = "<group>"; };
 		E419F2E623AB9E2300B26129 /* VectorHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorHash.h; sourceTree = "<group>"; };
 		E4A0AD371A96245500536DF6 /* WorkQueue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkQueue.cpp; sourceTree = "<group>"; };
 		E4A0AD381A96245500536DF6 /* WorkQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkQueue.h; sourceTree = "<group>"; };
@@ -2302,6 +2306,8 @@
 				E32AB4FF2B5CE35D00B9FAAE /* LazyRef.h */,
 				E32AB5002B5CE35D00B9FAAE /* LazyUniqueRef.h */,
 				539EB0621D55284200C82EF7 /* LEBDecoder.h */,
+				E3FFF1622CACF8A400636764 /* LibraryHash.cpp */,
+				E3FFF1612CACF8A400636764 /* LibraryHash.h */,
 				337B2D6826546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp */,
 				337B2D6926546EAA00DDFD3D /* LikelyDenseUnsignedIntegerSet.h */,
 				A70DA0831799F04D00529A9B /* ListDump.h */,
@@ -3398,6 +3404,7 @@
 				E32AB5022B5CE35D00B9FAAE /* LazyUniqueRef.h in Headers */,
 				DDF307D327C086DF006A526F /* LChar.h in Headers */,
 				DD3DC88927A4BF8E007E5B61 /* LEBDecoder.h in Headers */,
+				E3FFF1642CACF8A400636764 /* LibraryHash.h in Headers */,
 				6311592628989A55006A9A12 /* LibraryPathDiagnostics.h in Headers */,
 				DD3DC8B427A4BF8E007E5B61 /* LikelyDenseUnsignedIntegerSet.h in Headers */,
 				DDF307D527C086DF006A526F /* LineEnding.h in Headers */,
@@ -4142,6 +4149,7 @@
 				C2BCFC401F61D13000C9222C /* Language.cpp in Sources */,
 				C2BCFC421F61D61600C9222C /* LanguageCF.cpp in Sources */,
 				1C503BE623AAE0AE0072E66B /* LanguageCocoa.mm in Sources */,
+				E3FFF1632CACF8A400636764 /* LibraryHash.cpp in Sources */,
 				6311592728989A55006A9A12 /* LibraryPathDiagnostics.mm in Sources */,
 				337B2D6A26546EB300DDFD3D /* LikelyDenseUnsignedIntegerSet.cpp in Sources */,
 				C2BCFC551F621F3F00C9222C /* LineEnding.cpp in Sources */,
