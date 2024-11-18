@@ -70,8 +70,8 @@ public:
     bool isStartPositioned(const Box& floatBox) const;
 
 private:
-    bool isFloatingCandidateStartPositionedInPlacedFloats(const Box&) const;
-    Clear clearInPlacedFloats(const Box&) const;
+    bool isFloatingCandidateStartPositionedInBlockFormattingContext(const Box&) const;
+    Clear clearInBlockFormattingContext(const Box&) const;
 
     const ElementBox& root() const { return m_formattingContextRoot; }
     // FIXME: Turn this into an actual geometry cache.
@@ -81,8 +81,8 @@ private:
 
     struct AbsoluteCoordinateValuesForFloatAvoider;
     AbsoluteCoordinateValuesForFloatAvoider absoluteCoordinates(const Box&, LayoutPoint borderBoxTopLeft) const;
-    LayoutPoint mapTopLeftToPlacedFloatsRoot(const Box&, LayoutPoint borderBoxTopLeft) const;
-    Point mapPointFromFormattingContextRootToPlacedFloatsRoot(Point) const;
+    LayoutPoint mapTopLeftToBlockFormattingContextRoot(const Box&, LayoutPoint borderBoxTopLeft) const;
+    Point mapPointFromFloatingContextRootToBlockFormattingContextRoot(Point) const;
 
     CheckedRef<const ElementBox> m_formattingContextRoot;
     const LayoutState& m_layoutState;
