@@ -98,6 +98,7 @@ uint64_t JSWebAssemblyStruct::get(uint32_t fieldIndex) const
     case TypeKind::I64:
     case TypeKind::F64:
         return *bitwise_cast<const uint64_t*>(targetPointer);
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Funcref:
     case TypeKind::Ref:

@@ -2702,6 +2702,9 @@ FOR_EACH_WASM_MEMORY_STORE_OP(CREATE_CASE)
                 case TypeKind::Nullexternref:
                     WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), externrefType()), opName, " to type "_s, ref.type(), " expected an externref"_s);
                     break;
+                case TypeKind::Exn:
+                    WASM_VALIDATOR_FAIL_IF(!isSubtype(ref.type(), exnrefType()), opName, " to type "_s, ref.type(), " expected an exn"_s);
+                    break;
                 case TypeKind::Eqref:
                 case TypeKind::Anyref:
                 case TypeKind::Nullref:

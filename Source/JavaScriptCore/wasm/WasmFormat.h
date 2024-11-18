@@ -80,6 +80,7 @@ inline bool isValueType(Type type)
     case TypeKind::F32:
     case TypeKind::F64:
         return true;
+    case TypeKind::Exn:
     case TypeKind::Externref:
     case TypeKind::Funcref:
         return false;
