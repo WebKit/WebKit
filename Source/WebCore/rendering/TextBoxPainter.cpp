@@ -107,14 +107,19 @@ void TextBoxPainter::paint()
         return;
     }
 
-    if (m_paintInfo.phase == PaintPhase::Accessibility) {
-        m_paintInfo.accessibilityRegionContext()->takeBounds(m_renderer, m_paintRect);
-        return;
-    }
-
     bool shouldRotate = !textBox().isHorizontal() && !m_isCombinedText;
     if (shouldRotate)
         m_paintInfo.context().concatCTM(rotation(m_paintRect, RotationDirection::Clockwise));
+
+    if (m_paintInfo.phase == PaintPhase::Accessibility) {
+        if (shouldRotate) {
+            auto transform = rotation(m_paintRect, RotationDirection::Clockwise);
+            m_paintInfo.accessibilityRegionContext()->takeBounds(m_renderer, transform.mapRect(m_paintRect));
+        } else
+            m_paintInfo.accessibilityRegionContext()->takeBounds(m_renderer, m_paintRect);
+
+        return;
+    }
 
     if (m_paintInfo.phase == PaintPhase::Foreground) {
         if (!m_isPrinting)
