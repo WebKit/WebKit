@@ -47,8 +47,6 @@ WallTime wallTimeForEvent(const GdkEventType* event)
 template<>
 WallTime wallTimeForEvent(const GdkEvent*);
 
-String defaultGtkSystemFont();
-
 WEBCORE_EXPORT unsigned stateModifierForGdkButton(unsigned button);
 
 WEBCORE_EXPORT OptionSet<DragOperation> gdkDragActionToDragOperation(GdkDragAction);

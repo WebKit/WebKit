@@ -31,6 +31,7 @@
 #include "NotificationService.h"
 #include "PageLoadState.h"
 #include "ProvisionalPageProxy.h"
+#include "SystemSettingsManagerProxy.h"
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
 #include "WebFrameProxy.h"
@@ -905,6 +906,9 @@ static void webkitWebViewConstructed(GObject* object)
             priv->display = wpe_display_get_default();
         }
     }
+
+    if (priv->display)
+        SystemSettingsManagerProxy::initialize();
 #endif
 
     if (!priv->settings)

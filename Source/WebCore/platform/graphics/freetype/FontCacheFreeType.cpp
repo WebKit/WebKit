@@ -43,8 +43,8 @@
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(GTK)
-#include "GtkUtilities.h"
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
+#include "SystemSettings.h"
 #endif
 
 #if ENABLE(VARIATION_FONTS)
@@ -212,9 +212,9 @@ static String getFamilyNameStringFromFamily(const String& family)
     if (family == familyNamesData->at(FamilyNamesIndex::FantasyFamily))
         return "fantasy"_s;
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || (PLATFORM(WPE) && ENABLE(WPE_PLATFORM))
     if (family == familyNamesData->at(FamilyNamesIndex::SystemUiFamily) || family == "-webkit-system-font"_s)
-        return defaultGtkSystemFont();
+        return SystemSettings::singleton().defaultSystemFont();
 #endif
 
     return emptyString();

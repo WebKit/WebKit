@@ -136,6 +136,19 @@ std::optional<FontRenderOptions::Antialias> SystemSettings::antialiasMode() cons
     return antialiasMode;
 }
 
+String SystemSettings::defaultSystemFont() const
+{
+    auto fontDescription = fontName();
+    if (!fontDescription || fontDescription->isEmpty())
+        return "Sans"_s;
+
+    // We need to remove the size from the value of the property,
+    // which is separated from the font family using a space.
+    if (auto index = fontDescription->reverseFind(' '); index != notFound)
+        fontDescription = fontDescription->left(index);
+    return *fontDescription;
+}
+
 void SystemSettings::addObserver(Function<void(const SystemSettings::State&)>&& handler, void* context)
 {
     m_observers.add(context, WTFMove(handler));

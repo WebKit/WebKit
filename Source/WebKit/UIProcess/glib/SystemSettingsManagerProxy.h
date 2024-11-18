@@ -33,6 +33,9 @@
 #if PLATFORM(GTK)
 typedef struct _GtkSettings GtkSettings;
 using PlatformSettings = GtkSettings;
+#elif PLATFORM(WPE) && ENABLE(WPE_PLATFORM)
+typedef struct _WPESettings WPESettings;
+using PlatformSettings = WPESettings;
 #else
 using PlatformSettings = void;
 #endif

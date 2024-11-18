@@ -54,6 +54,117 @@ typedef enum {
 WPE_API GQuark wpe_settings_error_quark(void);
 
 /**
+ * WPE_SETTING_FONT_NAME:
+ *
+ * String representing the font in the format of
+ * "name size", e.g. "Deja Vu Sans, 16"
+ *
+ * VariantType: string
+ *
+ * Default: Sans 10
+ */
+#define WPE_SETTING_FONT_NAME "/wpe-platform/font-name"
+/**
+ * WPE_SETTING_DARK_MODE:
+ *
+ * Enables dark mode for websites.
+ *
+ * VariantType: boolean
+ *
+ * Default: false
+ */
+#define WPE_SETTING_DARK_MODE "/wpe-platform/dark-mode"
+/**
+ * WPE_SETTING_DISABLE_ANIMATIONS:
+ *
+ * Disables animations on websites.
+ *
+ * VariantType: boolean
+ *
+ * Default: false
+ */
+#define WPE_SETTING_DISABLE_ANIMATIONS "/wpe-platform/disable-animations"
+/**
+ * WPE_SETTING_FONT_ANTIALIAS:
+ *
+ * If antialiasing is applied to fonts.
+ *
+ * VariantType: boolean
+ *
+ * Default: true
+ */
+#define WPE_SETTING_FONT_ANTIALIAS "/wpe-platform/font-antialias"
+/**
+ * WPESettingsHintingStyle:
+ * @WPE_SETTINGS_HINTING_STYLE_NONE
+ * @WPE_SETTINGS_HINTING_STYLE_SLIGHT
+ * @WPE_SETTINGS_HINTING_STYLE_MEDIUM
+ * @WPE_SETTINGS_HINTING_STYLE_FULL
+ */
+typedef enum {
+    WPE_SETTINGS_HINTING_STYLE_NONE,
+    WPE_SETTINGS_HINTING_STYLE_SLIGHT,
+    WPE_SETTINGS_HINTING_STYLE_MEDIUM,
+    WPE_SETTINGS_HINTING_STYLE_FULL,
+} WPESettingsHintingStyle;
+/**
+ * WPE_SETTING_FONT_HINTING_STYLE:
+ *
+ * Style of hinting to apply to font.
+ *
+ * VariantType: byte (WPESettingsHintingStyle)
+ *
+ * Default: WPE_SETTINGS_HINTING_STYLE_SLIGHT
+ */
+#define WPE_SETTING_FONT_HINTING_STYLE "/wpe-platform/font-hinting-style"
+/**
+ * WPESettingsSubpixelLayout:
+ * @WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB
+ * @WPE_SETTINGS_SUBPIXEL_LAYOUT_BGR
+ * @WPE_SETTINGS_SUBPIXEL_LAYOUT_VRGB
+ * @WPE_SETTINGS_SUBPIXEL_LAYOUT_VBGR
+ */
+typedef enum {
+    WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB,
+    WPE_SETTINGS_SUBPIXEL_LAYOUT_BGR,
+    WPE_SETTINGS_SUBPIXEL_LAYOUT_VRGB,
+    WPE_SETTINGS_SUBPIXEL_LAYOUT_VBGR,
+} WPESettingsSubpixelLayout;
+/**
+ * WPE_SETTING_FONT_SUBPIXEL_LAYOUT:
+ *
+ * Layout of subpixels used for fonts.
+ *
+ * VariantType: byte (WPESettingsSubpixelLayout)
+ *
+ * Default: WPE_SETTINGS_SUBPIXEL_LAYOUT_RGB
+ */
+#define WPE_SETTING_FONT_SUBPIXEL_LAYOUT "/wpe-platform/font-subpixel-layout"
+/**
+ * WPE_SETTING_FONT_DPI:
+ *
+ * DPI used for fonts.
+ *
+ * VariantType: double
+ *
+ * Default: 96.0
+ */
+#define WPE_SETTING_FONT_DPI "/wpe-platform/font-dpi"
+/**
+ * WPE_SETTING_CURSOR_BLINK_TIME:
+ *
+ * Rate of cursor blinking in ms.
+ *
+ * Setting to 0 will disable blinking.
+ *
+ * VariantType: uint32
+ *
+ * Default: 1200
+ */
+#define WPE_SETTING_CURSOR_BLINK_TIME "/wpe-platform/cursor-blink-time"
+
+
+/**
  * WPESettingsSource:
  * @WPE_SETTINGS_SOURCE_PLATFORM: Set by the platform
  * @WPE_SETTINGS_SOURCE_APPLICATION: Set by the application
@@ -100,6 +211,10 @@ WPE_API gint64       wpe_settings_get_int64                       (WPESettings  
                                                                    const char         *key,
                                                                    GError            **error);
 
+WPE_API guint8       wpe_settings_get_byte                        (WPESettings        *settings,
+                                                                   const char         *key,
+                                                                   GError            **error);
+
 WPE_API guint32      wpe_settings_get_uint32                      (WPESettings        *settings,
                                                                    const char         *key,
                                                                    GError            **error);
@@ -129,6 +244,12 @@ WPE_API gboolean     wpe_settings_set_int32                       (WPESettings  
 WPE_API gboolean     wpe_settings_set_int64                       (WPESettings        *settings,
                                                                    const char         *key,
                                                                    gint64              value,
+                                                                   WPESettingsSource   source,
+                                                                   GError            **error);
+
+WPE_API gboolean     wpe_settings_set_byte                        (WPESettings        *settings,
+                                                                   const char         *key,
+                                                                   guint8              value,
                                                                    WPESettingsSource   source,
                                                                    GError            **error);
 

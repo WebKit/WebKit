@@ -140,19 +140,6 @@ WallTime wallTimeForEvent(const GdkEvent* event)
     return MonotonicTime::fromRawSeconds(time / 1000.).approximateWallTime();
 }
 
-String defaultGtkSystemFont()
-{
-    auto fontName = SystemSettings::singleton().fontName();
-    if (!fontName || fontName->isEmpty())
-        return "Sans"_s;
-
-    // We need to remove the size from the value of the property,
-    // which is separated from the font family using a space.
-    if (auto index = fontName->reverseFind(' '); index != notFound)
-        fontName = fontName->left(index);
-    return *fontName;
-}
-
 unsigned stateModifierForGdkButton(unsigned button)
 {
     return 1 << (8 + button - 1);

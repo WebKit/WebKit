@@ -82,6 +82,8 @@ public:
     std::optional<FontRenderOptions::SubpixelOrder> subpixelOrder() const;
     std::optional<FontRenderOptions::Antialias> antialiasMode() const;
 
+    String defaultSystemFont() const;
+
 private:
     SystemSettings();
 
