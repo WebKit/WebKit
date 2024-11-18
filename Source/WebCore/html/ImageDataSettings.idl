@@ -26,4 +26,5 @@
 // https://html.spec.whatwg.org/multipage/canvas.html#imagedatasettings
 dictionary ImageDataSettings {
     [EnabledBySetting=CanvasColorSpaceEnabled] PredefinedColorSpace colorSpace;
+    [EnabledBySetting=CanvasPixelFormatEnabled] ImageDataStorageFormat storageFormat = "uint8";
 };

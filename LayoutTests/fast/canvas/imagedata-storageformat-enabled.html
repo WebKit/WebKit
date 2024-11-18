@@ -1,0 +1,33 @@
+<!-- webkit-test-runner [ CanvasPixelFormatEnabled=true ] -->
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Tests that ImageDataSettings contains storageFormat.");
+
+var canvas = document.createElement("canvas");
+canvas.width = 10;
+canvas.height = 10;
+var context = canvas.getContext("2d");
+
+var created_imageData_uint8 = context.createImageData(1, 1, { storageFormat: "uint8" });
+shouldBe('created_imageData_uint8.data.constructor', 'Uint8ClampedArray');
+var gotten_imageData_uint8 = context.getImageData(0, 0, 1, 1, { storageFormat: "uint8" });
+shouldBe('gotten_imageData_uint8.data.constructor', 'Uint8ClampedArray');
+
+var created_imageData_float16 = context.createImageData(1, 1, { storageFormat: "float16" });
+// FIXME: This should eventually become Float16Array.
+shouldBe('created_imageData_float16.data.constructor', 'Uint8ClampedArray');
+var gotten_imageData_float16 = context.getImageData(0, 0, 1, 1, { storageFormat: "float16" });
+// FIXME: This should eventually become Float16Array.
+shouldBe('gotten_imageData_float16.data.constructor', 'Uint8ClampedArray');
+
+shouldThrowErrorName(`context.createImageData(1, 1, { storageFormat: "foo" })`, "TypeError")
+shouldThrowErrorName(`context.getImageData(0, 0, 1, 1, { storageFormat: "foo" })`, "TypeError")
+</script>
+<script src="../../resources/js-test-post.js"></script>
+</body>
+</html>

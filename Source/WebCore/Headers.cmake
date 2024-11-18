@@ -1336,6 +1336,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     html/ImageBitmap.h
     html/ImageData.h
     html/ImageDataSettings.h
+    html/ImageDataStorageFormat.h
     html/ImageDocument.h
     html/InputMode.h
     html/LinkIconCollector.h
