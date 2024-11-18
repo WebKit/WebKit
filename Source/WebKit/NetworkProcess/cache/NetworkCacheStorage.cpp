@@ -246,27 +246,57 @@ void Storage::WriteOperation::invokeCompletionHandler(int result)
         m_completionHandler(result);
 }
 
-struct Storage::TraverseOperation {
-    WTF_MAKE_TZONE_ALLOCATED(Storage::TraverseOperation);
+class TraverseOperation final : public ThreadSafeRefCounted<TraverseOperation, WTF::DestructionThread::MainRunLoop> {
 public:
-    TraverseOperation(Ref<Storage>&& storage, const String& type, OptionSet<TraverseFlag> flags, TraverseHandler&& handler)
-        : storage(WTFMove(storage))
-        , type(type)
-        , flags(flags)
-        , handler(WTFMove(handler))
+    static Ref<TraverseOperation> create(Storage::TraverseHandler&& handler)
+    {
+        ASSERT(isMainRunLoop());
+        return adoptRef(*new TraverseOperation(WTFMove(handler)));
+    }
+
+    void invokeHandler(const Storage::Record* record, const Storage::RecordInfo& info)
+    {
+        ASSERT(isMainRunLoop());
+        m_handler(record, info);
+    }
+
+    static constexpr unsigned maxParallelActivityCount = 5;
+    void waitAndIncrementActivityCount()
+    {
+        Locker locker { m_lock };
+        m_activeCondition.wait(m_lock, [this] {
+            assertIsHeld(m_lock);
+            return m_activityCount < maxParallelActivityCount;
+        });
+        ++m_activityCount;
+    }
+
+    void decrementActivityCount()
+    {
+        Locker locker { m_lock };
+        --m_activityCount;
+        m_activeCondition.notifyOne();
+    }
+
+    void waitUntilActivitiesFinished()
+    {
+        Locker locker { m_lock };
+        m_activeCondition.wait(m_lock, [this] {
+            assertIsHeld(m_lock);
+            return !m_activityCount;
+        });
+    }
+
+private:
+    explicit TraverseOperation(Storage::TraverseHandler&& handler)
+        : m_handler(WTFMove(handler))
     { }
-    Ref<Storage> storage;
 
-    const String type;
-    const OptionSet<TraverseFlag> flags;
-    const TraverseHandler handler;
-
-    Lock activeLock;
-    Condition activeCondition;
-    unsigned activeCount WTF_GUARDED_BY_LOCK(activeLock) { 0 };
+    Storage::TraverseHandler m_handler;
+    Lock m_lock;
+    Condition m_activeCondition;
+    unsigned m_activityCount WTF_GUARDED_BY_LOCK(m_lock) { 0 };
 };
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(StorageTraverseOperation, Storage::TraverseOperation);
 
 static String makeCachePath(const String& baseCachePath)
 {
@@ -398,7 +428,6 @@ Storage::~Storage()
     ASSERT(RunLoop::isMain());
     ASSERT(m_activeReadOperations.isEmpty());
     ASSERT(m_activeWriteOperations.isEmpty());
-    ASSERT(m_activeTraverseOperations.isEmpty());
     ASSERT(!m_synchronizationInProgress);
     ASSERT(!m_shrinkInProgress);
 }
@@ -1102,32 +1131,26 @@ void Storage::traverseWithinRootPath(const String& rootPath, const String& type,
 {
     ASSERT(RunLoop::isMain());
     ASSERT(traverseHandler);
-    // Avoid non-thread safe Function copies.
 
-    auto traverseOperationPtr = makeUnique<TraverseOperation>(Ref { *this }, type, flags, WTFMove(traverseHandler));
-    auto& traverseOperation = *traverseOperationPtr;
-    m_activeTraverseOperations.add(WTFMove(traverseOperationPtr));
-
-    ioQueue().dispatch([this, &traverseOperation, rootPath = rootPath.isolatedCopy()] {
-        traverseRecordsFiles(rootPath, traverseOperation.type, [this, &traverseOperation](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
-            ASSERT(type == traverseOperation.type || traverseOperation.type.isEmpty());
+    auto traverseOperation = TraverseOperation::create(WTFMove(traverseHandler));
+    ioQueue().dispatch([this, protectedThis = Ref { *this }, traverseOperation = WTFMove(traverseOperation), flags, rootPath = crossThreadCopy(rootPath), type = crossThreadCopy(type)]() mutable {
+        traverseRecordsFiles(rootPath, type, [this, expectedType = type, flags, traverseOperation](const String& fileName, const String& hashString, const String& type, bool isBlob, const String& recordDirectoryPath) {
+            ASSERT(type == expectedType || expectedType.isEmpty());
             if (isBlob)
                 return;
 
             auto recordPath = FileSystem::pathByAppendingComponent(recordDirectoryPath, fileName);
-
             double worth = -1;
-            if (traverseOperation.flags & TraverseFlag::ComputeWorth)
+            if (flags & TraverseFlag::ComputeWorth)
                 worth = computeRecordWorth(fileTimes(recordPath));
+
             unsigned bodyShareCount = 0;
-            if (traverseOperation.flags & TraverseFlag::ShareCount)
+            if (flags & TraverseFlag::ShareCount)
                 bodyShareCount = m_blobStorage.shareCount(blobPathForRecordPath(recordPath));
 
-            Locker lock { traverseOperation.activeLock };
-            ++traverseOperation.activeCount;
-
+            traverseOperation->waitAndIncrementActivityCount();
             auto channel = IOChannel::open(WTFMove(recordPath), IOChannel::Type::Read);
-            channel->read(0, std::numeric_limits<size_t>::max(), WorkQueue::main(), [this, &traverseOperation, worth, bodyShareCount](auto fileData, int) {
+            channel->read(0, std::numeric_limits<size_t>::max(), WorkQueue::main(), [this, traverseOperation, worth, bodyShareCount](auto fileData, int) {
                 RecordMetaData metaData;
                 Data headerData;
                 if (decodeRecordHeader(fileData, metaData, headerData, m_salt)) {
@@ -1144,34 +1167,16 @@ void Storage::traverseWithinRootPath(const String& rootPath, const String& type,
                         bodyShareCount,
                         String::fromUTF8(SHA1::hexDigest(metaData.bodyHash).span())
                     };
-                    traverseOperation.handler(&record, info);
+                    traverseOperation->invokeHandler(&record, info);
                 }
-
-                Locker locker { traverseOperation.activeLock };
-                --traverseOperation.activeCount;
-                traverseOperation.activeCondition.notifyOne();
-            });
-
-            static const unsigned maximumParallelReadCount = 5;
-            traverseOperation.activeCondition.wait(traverseOperation.activeLock, [&traverseOperation] {
-                assertIsHeld(traverseOperation.activeLock);
-                return traverseOperation.activeCount <= maximumParallelReadCount;
+                traverseOperation->decrementActivityCount();
             });
         });
-        {
-            // Wait for all reads to finish.
-            Locker locker { traverseOperation.activeLock };
-            traverseOperation.activeCondition.wait(traverseOperation.activeLock, [&traverseOperation] {
-                assertIsHeld(traverseOperation.activeLock);
-                return !traverseOperation.activeCount;
-            });
-        }
-        RunLoop::main().dispatch([this, &traverseOperation] {
-            traverseOperation.handler(nullptr, { });
 
-            Ref protectedThis { *this };
-
-            m_activeTraverseOperations.remove(&traverseOperation);
+        traverseOperation->waitUntilActivitiesFinished();
+        RunLoop::main().dispatch([traverseOperation = WTFMove(traverseOperation)]() mutable {
+            // Invoke with nullptr to indicate this is the last record.
+            traverseOperation->invokeHandler(nullptr, { });
         });
     });
 }

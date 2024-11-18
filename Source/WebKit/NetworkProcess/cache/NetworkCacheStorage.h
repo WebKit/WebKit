@@ -224,9 +224,6 @@ private:
     HashMap<WriteOperationIdentifier, std::unique_ptr<WriteOperation>> m_activeWriteOperations;
     WebCore::Timer m_writeOperationDispatchTimer;
 
-    struct TraverseOperation;
-    HashSet<std::unique_ptr<TraverseOperation>> m_activeTraverseOperations;
-
     Ref<ConcurrentWorkQueue> m_ioQueue;
     Ref<ConcurrentWorkQueue> m_backgroundIOQueue;
     Ref<WorkQueue> m_serialBackgroundIOQueue;
