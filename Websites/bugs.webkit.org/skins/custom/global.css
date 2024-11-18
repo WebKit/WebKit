@@ -2350,6 +2350,11 @@ form[name=login] table tr {
    border: 0;
 }
 
+.yui-skin-sam .yui-ac-content {
+    background-color: var(--input-background-color);
+    border-color: var(--input-border-color);
+}
+
 @media only screen and (max-width: 800px) {
     #bugzilla-body .navigation {
         margin: 1rem 0 1rem;
