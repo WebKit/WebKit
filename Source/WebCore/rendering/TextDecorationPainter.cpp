@@ -216,7 +216,7 @@ void TextDecorationPainter::paintBackgroundDecorations(const RenderStyle& style,
         if (underlineStyle == TextDecorationStyle::Wavy)
             strokeWavyTextDecoration(m_context, rect, decorationGeometry.wavyStrokeParameters);
         else if (decoration == TextDecorationLine::Underline || decoration == TextDecorationLine::Overline) {
-            if ((decorationStyle.skipInk == TextDecorationSkipInk::Auto || decorationStyle.skipInk == TextDecorationSkipInk::All) && m_isHorizontal) {
+            if ((style.textDecorationSkipInk() == TextDecorationSkipInk::Auto || style.textDecorationSkipInk() == TextDecorationSkipInk::All) && m_isHorizontal) {
                 if (!m_context.paintingDisabled()) {
                     auto underlineBoundingBox = m_context.computeUnderlineBoundsForText(rect, m_isPrinting);
                     auto intersections = m_font.dashesForIntersectionsWithRect(textRun, decorationGeometry.textOrigin, underlineBoundingBox);
@@ -408,7 +408,6 @@ auto TextDecorationPainter::stylesForRenderer(const RenderObject& renderer, Opti
     collectStylesForRenderer(result, renderer, requestedDecorations, false, paintBehavior, pseudoId);
     if (firstLineStyle)
         collectStylesForRenderer(result, renderer, requestedDecorations, true, paintBehavior, pseudoId);
-    result.skipInk = renderer.style().textDecorationSkipInk();
     return result;
 }
 
