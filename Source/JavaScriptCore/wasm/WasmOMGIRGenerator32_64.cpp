@@ -1272,10 +1272,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(FunctionParserOMGIRGenerator);
 int32_t OMGIRGenerator::fixupPointerPlusOffset(Value*& ptr, uint32_t offset)
 {
     if (static_cast<uint64_t>(offset) > static_cast<uint64_t>(std::numeric_limits<int32_t>::max())) {
-        if (isARM_THUMB2())
-            RELEASE_ASSERT_NOT_REACHED();
-        ptr = append<Value>(m_proc, Add, origin(), ptr, append<Const64Value>(m_proc, origin(), offset));
-        return 0;
+        uint32_t half = offset / 2;
+        ptr = append<Value>(m_proc, Add, origin(), ptr, append<Const32Value>(m_proc, origin(), half));
+        return half + (offset % 2);
     }
     return offset;
 }

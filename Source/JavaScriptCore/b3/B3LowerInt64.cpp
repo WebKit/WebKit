@@ -1072,11 +1072,15 @@ private:
             if (!(m_value->type() == Int64 || (!hasUnalignedFPMemoryAccess() && m_value->type() == Double)))
                 return;
 
+            Value* hiBase = memory->child(0);
             // Assumes little-endian arch.
             CheckedInt32 offsetHi = CheckedInt32(memory->offset()) + CheckedInt32(bytesForWidth(Width32));
-            RELEASE_ASSERT(!offsetHi.hasOverflowed());
+            if (offsetHi.hasOverflowed()) {
+                hiBase = insert<Value>(m_index, Add, m_origin, hiBase, insert<Const32Value>(m_index, m_origin, bytesForWidth(Width32)));
+                offsetHi = CheckedInt32(memory->offset());
+            }
 
-            MemoryValue* hi = insert<MemoryValue>(m_index, Load, Int32, m_origin, memory->child(0));
+            MemoryValue* hi = insert<MemoryValue>(m_index, Load, Int32, m_origin, hiBase);
             hi->setOffset(offsetHi);
             hi->setRange(memory->range());
             hi->setFenceRange(memory->fenceRange());
@@ -1118,9 +1122,14 @@ private:
                 return;
 
 
-            MemoryValue* hi = insert<MemoryValue>(m_index, Store, m_origin, value.second, memory->child(1));
+            Value* hiBase = memory->child(1);
             CheckedInt32 offsetHi = CheckedInt32(memory->offset()) + CheckedInt32(bytesForWidth(Width32));
-            RELEASE_ASSERT(!offsetHi.hasOverflowed());
+            // B3 offsets are signed, and it's valid for offset + width to overflow.
+            if (offsetHi.hasOverflowed()) {
+                hiBase = insert<Value>(m_index, Add, m_origin, hiBase, insert<Const32Value>(m_index, m_origin, bytesForWidth(Width32)));
+                offsetHi = CheckedInt32(memory->offset());
+            }
+            MemoryValue* hi = insert<MemoryValue>(m_index, Store, m_origin, value.second, hiBase);
             hi->setOffset(offsetHi);
             hi->setRange(memory->range());
             hi->setFenceRange(memory->fenceRange());
