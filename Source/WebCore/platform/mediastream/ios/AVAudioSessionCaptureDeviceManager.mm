@@ -123,9 +123,9 @@ AVAudioSessionCaptureDeviceManager::~AVAudioSessionCaptureDeviceManager()
 
 const Vector<CaptureDevice>& AVAudioSessionCaptureDeviceManager::captureDevices()
 {
-    if (!m_devices)
+    if (!m_captureDevices)
         refreshAudioCaptureDevices();
-    return m_devices.value();
+    return m_captureDevices.value();
 }
 
 std::optional<CaptureDevice> AVAudioSessionCaptureDeviceManager::captureDeviceWithPersistentID(CaptureDevice::DeviceType type, const String& deviceID)
@@ -218,7 +218,7 @@ Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieve
     auto currentInput = [m_audioSession currentRoute].inputs.firstObject;
     if (currentInput) {
         if (currentInput != m_lastDefaultMicrophone.get()) {
-            auto device = AVAudioSessionCaptureDevice::create(currentInput, currentInput);
+            auto device = AVAudioSessionCaptureDevice::createInput(currentInput, currentInput);
             callOnWebThreadOrDispatchAsyncOnMainThread(makeBlockPtr([device = crossThreadCopy(WTFMove(device))] () mutable {
                 CoreAudioSharedUnit::singleton().handleNewCurrentMicrophoneDevice(WTFMove(device));
             }).get());
@@ -231,7 +231,29 @@ Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieve
     Vector<AVAudioSessionCaptureDevice> newAudioDevices;
     newAudioDevices.reserveInitialCapacity(availableInputs.count);
     for (AVAudioSessionPortDescription *portDescription in availableInputs) {
-        auto device = AVAudioSessionCaptureDevice::create(portDescription, currentInput);
+        auto device = AVAudioSessionCaptureDevice::createInput(portDescription, currentInput);
+        newAudioDevices.append(WTFMove(device));
+    }
+
+    auto currentOutput = [m_audioSession currentRoute].outputs.firstObject;
+    auto availableOutputs = [m_audioSession availableOutputs];
+    for (AVAudioSessionPortDescription* portDescription in availableOutputs) {
+        auto device = AVAudioSessionCaptureDevice::createOutput(portDescription, currentOutput);
+
+        size_t index = newAudioDevices.findIf([&](auto& existingDevice) {
+            return existingDevice.type() == CaptureDevice::DeviceType::Microphone && device.label() == existingDevice.label();
+        });
+        if (index == notFound) {
+            if (device.isBuiltin())
+                index = newAudioDevices.findIf([&](auto& existingDevice) { return existingDevice.isBuiltin(); });
+            else if (device.isLine())
+                index = newAudioDevices.findIf([&](auto& existingDevice) { return existingDevice.isLine(); });
+            else if (device.isHeadset())
+                index = newAudioDevices.findIf([&](auto& existingDevice) { return existingDevice.isHeadset(); });
+        }
+        if (index != notFound)
+            device.setGroupId(newAudioDevices[index].persistentId());
+
         newAudioDevices.append(WTFMove(device));
     }
 
@@ -240,28 +262,21 @@ Vector<AVAudioSessionCaptureDevice> AVAudioSessionCaptureDeviceManager::retrieve
 
 void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSessionCaptureDevice>&& newAudioDevices)
 {
-    bool firstTime = !m_devices;
-    bool deviceListChanged = !m_devices || newAudioDevices.size() != m_devices->size();
+    bool firstTime = !m_captureDevices;
+    bool deviceListChanged = !m_audioSessionCaptureDevices || newAudioDevices.size() != m_audioSessionCaptureDevices->size();
     bool defaultDeviceChanged = false;
     if (!deviceListChanged && !firstTime) {
         for (auto& newState : newAudioDevices) {
 
             std::optional<CaptureDevice> oldState;
-            for (const auto& device : m_devices.value()) {
+            for (const auto& device : m_audioSessionCaptureDevices.value()) {
                 if (device.type() == newState.type() && device.persistentId() == newState.persistentId()) {
                     oldState = device;
                     break;
                 }
             }
 
-            if (!oldState.has_value()) {
-                deviceListChanged = true;
-                break;
-            }
-            if (newState.isDefault() != oldState.value().isDefault())
-                defaultDeviceChanged  = true;
-
-            if (newState.enabled() != oldState.value().enabled()) {
+            if (!oldState || newState.isDefault() != oldState->isDefault() || newState.enabled() != oldState->enabled()) {
                 deviceListChanged = true;
                 break;
             }
@@ -271,12 +286,28 @@ void AVAudioSessionCaptureDeviceManager::setAudioCaptureDevices(Vector<AVAudioSe
     if (!deviceListChanged && !firstTime && !defaultDeviceChanged)
         return;
 
-    auto newDevices = copyToVectorOf<CaptureDevice>(newAudioDevices);
     m_audioSessionCaptureDevices = WTFMove(newAudioDevices);
-    std::sort(newDevices.begin(), newDevices.end(), [] (auto& first, auto& second) -> bool {
+
+    Vector<CaptureDevice> newCaptureDevices;
+    Vector<CaptureDevice> newSpeakerDevices;
+    for (auto& device : *m_audioSessionCaptureDevices) {
+        if (device.type() == CaptureDevice::DeviceType::Microphone)
+            newCaptureDevices.append(device);
+        else {
+            ASSERT(device.type() == CaptureDevice::DeviceType::Speaker);
+            newSpeakerDevices.append(device);
+        }
+    }
+
+    std::sort(newCaptureDevices.begin(), newCaptureDevices.end(), [] (auto& first, auto& second) -> bool {
         return first.isDefault() && !second.isDefault();
     });
-    m_devices = WTFMove(newDevices);
+    m_captureDevices = WTFMove(newCaptureDevices);
+
+    std::sort(newSpeakerDevices.begin(), newSpeakerDevices.end(), [] (auto& first, auto& second) -> bool {
+        return first.isDefault() && !second.isDefault();
+    });
+    m_speakerDevices = WTFMove(newSpeakerDevices);
 
     if (deviceListChanged && !firstTime)
         deviceChanged();
