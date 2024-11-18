@@ -34,7 +34,7 @@ namespace WebKit {
 class WebPage;
 
 class WebProcessSyncClient :  public WebCore::ProcessSyncClient {
-    WTF_MAKE_TZONE_ALLOCATED(WebCryptoClient);
+    WTF_MAKE_TZONE_ALLOCATED(WebProcessSyncClient);
 public:
     WebProcessSyncClient(WebPage&);
     ~WebProcessSyncClient() = default;

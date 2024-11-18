@@ -31,8 +31,11 @@
 #include "WebPageProxyMessages.h"
 #include <WebCore/Page.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(WebProcessSyncClient);
 
 WebProcessSyncClient::WebProcessSyncClient(WebPage& webPage)
     : m_page(webPage)
