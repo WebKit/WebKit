@@ -48,6 +48,7 @@ public:
     JS_EXPORT_PRIVATE virtual ~Subspace();
 
     const char* name() const { return m_name.data(); }
+    unsigned nameHash() const { return m_name.hash(); } // FIXME: rdar://139998916
     MarkedSpace& space() const { return m_space; }
 
     CellAttributes attributes() const;
