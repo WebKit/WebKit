@@ -938,6 +938,8 @@ static ASCIILiteral convertToSampleMode(InterpolationType type, InterpolationSam
         return "flat"_s;
     case InterpolationType::Linear:
         switch (sampleType) {
+        case InterpolationSampling::First:
+        case InterpolationSampling::Either:
         case InterpolationSampling::Center:
             return "center_no_perspective"_s;
         case InterpolationSampling::Centroid:
@@ -947,6 +949,8 @@ static ASCIILiteral convertToSampleMode(InterpolationType type, InterpolationSam
         }
     case InterpolationType::Perspective:
         switch (sampleType) {
+        case InterpolationSampling::First:
+        case InterpolationSampling::Either:
         case InterpolationSampling::Center:
             return "center_perspective"_s;
         case InterpolationSampling::Centroid:

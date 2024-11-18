@@ -1632,6 +1632,8 @@ http/tests/webgpu/webgpu/api/validation/queue/submit.html [ Pass ]
 http/tests/webgpu/webgpu/api/validation/queue/destroyed [ Pass ]
 
 http/tests/webgpu/webgpu/shader/execution/flow_control/switch.html [ Pass ]
+# arm64 release only because the tests are incredibly slow due to their extensiveness
+[ Release arm64 ] http/tests/webgpu/webgpu/shader/execution/shader_io [ Pass ]
 
 webkit.org/b/264266 [ Ventura+ x86_64 ] imported/w3c/web-platform-tests/css/filter-effects/filters-drop-shadow-002.html [ ImageOnlyFailure ]
 

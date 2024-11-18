@@ -742,7 +742,7 @@ Result<AST::Attribute::Ref> Parser<Lexer>::parseAttribute()
             PARSE(sampling, Identifier);
             auto* interpolationSampling = parseInterpolationSampling(sampling);
             if (!interpolationSampling)
-                FAIL("Unknown interpolation sampling. Expected 'center', 'centroid' or 'sample'"_s);
+                FAIL("Unknown interpolation sampling. Expected 'center', 'centroid', 'sample', 'first' or 'either"_s);
             sampleType = *interpolationSampling;
         }
         if (current().type == TokenType::Comma)
