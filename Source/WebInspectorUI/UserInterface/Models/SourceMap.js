@@ -319,7 +319,7 @@ WI.SourceMap = class SourceMap
             let relativeNameIndex = this._decodeVLQ(stringCharIterator);
             if (relativeNameIndex !== WI.SourceMap.VLQ_AT_SEPARATOR) {
                 nameIndex += relativeNameIndex;
-                if (nameIndex < 0 || nameIndex > map.names.length)
+                if (nameIndex < 0 || nameIndex >= map.names.length)
                     throw this._invalidPropertyError(WI.unlocalizedString("mappings"));
                 // Currently `names` is unused, but check it anyways for conformance.
             }
