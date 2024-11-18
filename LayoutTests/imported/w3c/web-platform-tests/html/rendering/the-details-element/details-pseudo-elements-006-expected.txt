@@ -1,0 +1,5 @@
+summary
+contents
+
+FAIL ::details-content matches :hover when mouse pointer is over it assert_equals: :hover styles when pointer is inside expected "rgb(0, 128, 0)" but got "rgb(0, 0, 0)"
+
