@@ -25,7 +25,8 @@ import os
 import argparse
 
 EXPECTATIONS_PATH = '../../Source/{project}/SaferCPPExpectations/{checker_type}Expectations'
-CHECKERS = ['NoUncountedMemberChecker', 'NoUncheckedPtrMemberChecker', 'RefCntblBaseVirtualDtor', 'UncountedCallArgsChecker', 'UncountedLocalVarsChecker']
+CHECKERS = ['NoUncountedMemberChecker', 'NoUncheckedPtrMemberChecker', 'RefCntblBaseVirtualDtor', 'UncheckedCallArgsChecker', 'UncheckedLocalVarsChecker',
+    'UncountedCallArgsChecker', 'UncountedLambdaCapturesChecker', 'UncountedLocalVarsChecker']
 PROJECTS = ['WebCore', 'WebKit']
 
 
