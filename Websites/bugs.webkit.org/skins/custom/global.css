@@ -2256,7 +2256,7 @@ table.attachment_entry {
 }
 
 .bz_comment_text {
-   font-family: initial;
+   font-family: unset;
    white-space: pre-wrap;
 }
 
