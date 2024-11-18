@@ -1393,14 +1393,29 @@ Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForCanvasPattern(cons
     return array;
 }
 
+template <typename Array> struct CTypeForStorageFormat;
+template <> struct CTypeForStorageFormat<Uint8ClampedArray> {
+    using CType = int;
+};
+template <> struct CTypeForStorageFormat<Float16Array> {
+    using CType = double;
+};
+
+template <typename ImageDataArray>
+static Ref<JSON::ArrayOf<typename CTypeForStorageFormat<ImageDataArray>::CType>> copyImageDataToJSONArray(const ImageDataArray& imageDataArray)
+{
+    auto jsArray = JSON::ArrayOf<typename CTypeForStorageFormat<ImageDataArray>::CType>::create();
+    for (size_t i = 0; i < imageDataArray.length(); ++i)
+        jsArray->addItem(imageDataArray.item(i));
+    return jsArray;
+}
+
 Ref<JSON::ArrayOf<JSON::Value>> InspectorCanvas::buildArrayForImageData(const ImageData& imageData)
 {
-    auto data = JSON::ArrayOf<int>::create();
-    for (size_t i = 0; i < imageData.data().length(); ++i)
-        data->addItem(imageData.data().item(i));
-
     auto array = JSON::ArrayOf<JSON::Value>::create();
-    array->addItem(WTFMove(data));
+    imageData.data().visit([&array](const auto& imageData) {
+        array->addItem(copyImageDataToJSONArray(imageData));
+    });
     array->addItem(imageData.width());
     array->addItem(imageData.height());
     return array;
