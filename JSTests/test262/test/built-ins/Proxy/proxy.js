@@ -10,6 +10,8 @@ description: >
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(this, "Proxy");
-verifyWritable(this, "Proxy");
-verifyConfigurable(this, "Proxy");
+verifyProperty(this, "Proxy", {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

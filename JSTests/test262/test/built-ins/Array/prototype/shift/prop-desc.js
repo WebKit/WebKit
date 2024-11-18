@@ -16,6 +16,8 @@ includes: [propertyHelper.js]
 
 assert.sameValue(typeof Array.prototype.shift, 'function', 'typeof');
 
-verifyNotEnumerable(Array.prototype, "shift");
-verifyWritable(Array.prototype, "shift");
-verifyConfigurable(Array.prototype, "shift");
+verifyProperty(Array.prototype, "shift", {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

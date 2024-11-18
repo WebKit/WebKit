@@ -12,6 +12,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(WeakSet.prototype, 'constructor');
-verifyWritable(WeakSet.prototype, 'constructor');
-verifyConfigurable(WeakSet.prototype, 'constructor');
+verifyProperty(WeakSet.prototype, 'constructor', {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

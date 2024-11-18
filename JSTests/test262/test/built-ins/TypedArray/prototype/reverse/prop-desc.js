@@ -14,6 +14,8 @@ features: [TypedArray]
 
 var TypedArrayPrototype = TypedArray.prototype;
 
-verifyNotEnumerable(TypedArrayPrototype, 'reverse');
-verifyWritable(TypedArrayPrototype, 'reverse');
-verifyConfigurable(TypedArrayPrototype, 'reverse');
+verifyProperty(TypedArrayPrototype, 'reverse', {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

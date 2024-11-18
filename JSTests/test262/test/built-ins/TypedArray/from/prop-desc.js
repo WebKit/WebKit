@@ -12,6 +12,8 @@ includes: [propertyHelper.js, testTypedArray.js]
 features: [TypedArray]
 ---*/
 
-verifyNotEnumerable(TypedArray, 'from');
-verifyWritable(TypedArray, 'from');
-verifyConfigurable(TypedArray, 'from');
+verifyProperty(TypedArray, 'from', {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

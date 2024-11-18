@@ -27,6 +27,8 @@ var re = new RegExp('');
 
 assert.sameValue(re.lastIndex, 0);
 
-verifyNotEnumerable(re, 'lastIndex');
-verifyWritable(re, 'lastIndex');
-verifyNotConfigurable(re, 'lastIndex');
+verifyProperty(re, 'lastIndex', {
+  writable: true,
+  enumerable: false,
+  configurable: false,
+});

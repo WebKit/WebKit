@@ -18,6 +18,8 @@ var GeneratorFunction = Object.getPrototypeOf(function*() {}).constructor;
 
 assert.sameValue(GeneratorFunction.prototype.constructor, GeneratorFunction);
 
-verifyNotEnumerable(GeneratorFunction.prototype, 'constructor');
-verifyNotWritable(GeneratorFunction.prototype, 'constructor');
-verifyConfigurable(GeneratorFunction.prototype, 'constructor');
+verifyProperty(GeneratorFunction.prototype, 'constructor', {
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

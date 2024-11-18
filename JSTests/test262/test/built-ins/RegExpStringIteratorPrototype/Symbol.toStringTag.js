@@ -18,6 +18,8 @@ var RegExpStringIteratorProto = Object.getPrototypeOf(/./[Symbol.matchAll](''));
 
 assert.sameValue(RegExpStringIteratorProto[Symbol.toStringTag], 'RegExp String Iterator');
 
-verifyNotEnumerable(RegExpStringIteratorProto, Symbol.toStringTag);
-verifyNotWritable(RegExpStringIteratorProto, Symbol.toStringTag);
-verifyConfigurable(RegExpStringIteratorProto, Symbol.toStringTag);
+verifyProperty(RegExpStringIteratorProto, Symbol.toStringTag, {
+  writable: false,
+  enumerable: false,
+  configurable: true,
+});

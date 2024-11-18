@@ -11,3 +11,4 @@ const timeZone = "+01:00";
 
 const properties = { year: 2021, month: 10, day: 28, offset: "-07:00", timeZone };
 assert.throws(RangeError, () => Temporal.ZonedDateTime.from(properties), "offset property not matching time zone is rejected");
+assert.throws(RangeError, () => Temporal.ZonedDateTime.from(properties, { offset: "reject" }), "offset property not matching time zone is rejected");

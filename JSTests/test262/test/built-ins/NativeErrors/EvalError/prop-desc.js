@@ -11,6 +11,8 @@ info: |
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(this, "EvalError");
-verifyWritable(this, "EvalError");
-verifyConfigurable(this, "EvalError");
+verifyProperty(this, "EvalError", {
+  writable: true,
+  enumerable: false,
+  configurable: true
+});

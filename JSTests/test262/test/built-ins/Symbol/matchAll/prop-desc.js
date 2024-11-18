@@ -12,6 +12,8 @@ features: [Symbol.matchAll]
 ---*/
 
 assert.sameValue(typeof Symbol.matchAll, 'symbol');
-verifyNotEnumerable(Symbol, 'matchAll');
-verifyNotWritable(Symbol, 'matchAll');
-verifyNotConfigurable(Symbol, 'matchAll');
+verifyProperty(Symbol, 'matchAll', {
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

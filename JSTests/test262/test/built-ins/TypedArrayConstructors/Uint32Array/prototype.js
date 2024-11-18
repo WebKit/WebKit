@@ -15,6 +15,8 @@ features: [TypedArray]
 
 assert.sameValue(Uint32Array.prototype, Object.getPrototypeOf(new Uint32Array(0)));
 
-verifyNotEnumerable(Uint32Array, "prototype");
-verifyNotWritable(Uint32Array, "prototype");
-verifyNotConfigurable(Uint32Array, "prototype");
+verifyProperty(Uint32Array, "prototype", {
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

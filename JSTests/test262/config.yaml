@@ -11,6 +11,7 @@ flags:
   uint8array-base64: useUint8ArrayBase64Methods
   RegExp.escape: useRegExpEscape
   Math.sumPrecise: useMathSumPreciseMethod
+  Error.isError: useErrorIsError
 skip:
   features:
     - callable-boundary-realms
@@ -19,6 +20,7 @@ skip:
     - explicit-resource-management
     - regexp-modifiers
     - source-phase-imports
+    - json-parse-with-source
   paths:
     - test/built-ins/Temporal/Instant/prototype/toZonedDateTimeISO
     - test/built-ins/Temporal/Now/plainDateISO

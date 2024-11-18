@@ -18,6 +18,8 @@ assert.sameValue(
   'typeof WeakMap.prototype.has is "function"'
 );
 
-verifyNotEnumerable(WeakMap.prototype, 'has');
-verifyWritable(WeakMap.prototype, 'has');
-verifyConfigurable(WeakMap.prototype, 'has');
+verifyProperty(WeakMap.prototype, 'has', {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

@@ -52,9 +52,11 @@ assert.sameValue(
   desc.value, 42,
   'sets a data descriptor to set a new property'
 );
-verifyWritable(o1, 'p');
-verifyEnumerable(o1, 'p');
-verifyConfigurable(o1, 'p');
+verifyProperty(o1, 'p', {
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});
 
 var o2 = {};
 var receiver = {};
@@ -73,6 +75,8 @@ assert.sameValue(
   desc.value, 43,
   'sets a data descriptor on the receiver object to set a new property'
 );
-verifyWritable(receiver, 'p');
-verifyEnumerable(receiver, 'p');
-verifyConfigurable(receiver, 'p');
+verifyProperty(receiver, 'p', {
+  writable: true,
+  enumerable: true,
+  configurable: true,
+});

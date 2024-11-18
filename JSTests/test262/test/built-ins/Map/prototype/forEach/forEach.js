@@ -17,6 +17,8 @@ assert.sameValue(
   '`typeof Map.prototype.forEach` is `function`'
 );
 
-verifyNotEnumerable(Map.prototype, 'forEach');
-verifyWritable(Map.prototype, 'forEach');
-verifyConfigurable(Map.prototype, 'forEach');
+verifyProperty(Map.prototype, 'forEach', {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

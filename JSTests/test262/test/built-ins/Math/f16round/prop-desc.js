@@ -9,6 +9,8 @@ features: [Float16Array]
 includes: [propertyHelper.js]
 ---*/
 
-verifyNotEnumerable(Math, "f16round");
-verifyWritable(Math, "f16round");
-verifyConfigurable(Math, "f16round");
+verifyProperty(Math, "f16round", {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

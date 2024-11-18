@@ -12,6 +12,8 @@ features: [generators]
 
 var GeneratorFunction = Object.getPrototypeOf(function*() {}).constructor;
 
-verifyNotEnumerable(GeneratorFunction, 'prototype');
-verifyNotWritable(GeneratorFunction, 'prototype');
-verifyNotConfigurable(GeneratorFunction, 'prototype');
+verifyProperty(GeneratorFunction, 'prototype', {
+  writable: false,
+  enumerable: false,
+  configurable: false,
+});

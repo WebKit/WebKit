@@ -17,6 +17,8 @@ features: [Symbol.iterator]
 
 assert.sameValue(TypedArray.prototype[Symbol.iterator], TypedArray.prototype.values);
 
-verifyNotEnumerable(TypedArray.prototype, Symbol.iterator);
-verifyWritable(TypedArray.prototype, Symbol.iterator);
-verifyConfigurable(TypedArray.prototype, Symbol.iterator);
+verifyProperty(TypedArray.prototype, Symbol.iterator, {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});

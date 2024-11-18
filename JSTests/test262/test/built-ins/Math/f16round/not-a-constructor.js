@@ -12,5 +12,5 @@ features: [Float16Array, Reflect.construct]
 assert(!isConstructor(Math.f16round), "Math.f16round is not a constructor");
 
 assert.throws(TypeError, function () {
-  new Math.fround();
+  new Math.f16round();
 });

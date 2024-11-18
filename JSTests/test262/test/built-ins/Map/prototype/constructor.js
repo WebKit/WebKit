@@ -11,6 +11,8 @@ includes: [propertyHelper.js]
 assert.sameValue(Map.prototype.constructor, Map);
 assert.sameValue((new Map()).constructor, Map);
 
-verifyNotEnumerable(Map.prototype, 'constructor');
-verifyWritable(Map.prototype, 'constructor');
-verifyConfigurable(Map.prototype, 'constructor');
+verifyProperty(Map.prototype, 'constructor', {
+  writable: true,
+  enumerable: false,
+  configurable: true,
+});
