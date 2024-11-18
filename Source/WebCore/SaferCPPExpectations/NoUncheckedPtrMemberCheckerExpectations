@@ -1,6 +1,5 @@
 Modules/webaudio/AudioWorkletThread.h
 Modules/websockets/WorkerThreadableWebSocketChannel.h
-html/parser/HTMLParserScheduler.h
 html/parser/HTMLTreeBuilder.h
 loader/WorkerThreadableLoader.h
 page/LocalFrameViewLayoutContext.cpp

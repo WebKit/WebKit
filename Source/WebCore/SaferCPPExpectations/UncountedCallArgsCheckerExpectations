@@ -4,7 +4,6 @@ CompressionStreamBuiltins.h
 CountQueuingStrategyBuiltins.h
 DecompressionStreamBuiltins.h
 EventNames.h
-HTMLNames.cpp
 InternalSettingsGenerated.cpp
 JSAbortController.cpp
 JSAbortSignal.cpp
@@ -92,6 +91,7 @@ JSDOMMimeTypeArray.cpp
 JSDOMPlugin.cpp
 JSDOMPluginArray.cpp
 JSDOMQuad.cpp
+JSDOMRectList.cpp
 JSDOMSelection.cpp
 JSDOMStringList.cpp
 JSDOMStringMap.cpp
@@ -103,6 +103,7 @@ JSDataTransferItemList.cpp
 JSDedicatedWorkerGlobalScope.cpp
 JSDelayNode.cpp
 JSDeprecatedCSSOMRGBColor.cpp
+JSDeprecatedCSSOMValueList.cpp
 JSDocument.cpp
 JSDocumentFragment.cpp
 JSDocumentType.cpp
@@ -418,7 +419,6 @@ JSXMLSerializer.cpp
 JSXPathEvaluator.cpp
 JSXPathExpression.cpp
 JSXSLTProcessor.cpp
-MathMLNames.cpp
 Modules/ShapeDetection/BarcodeDetector.cpp
 Modules/ShapeDetection/FaceDetector.cpp
 Modules/ShapeDetection/TextDetector.cpp
@@ -470,6 +470,7 @@ Modules/encryptedmedia/MediaKeyStatusMap.cpp
 Modules/encryptedmedia/MediaKeySystemAccess.cpp
 Modules/encryptedmedia/MediaKeySystemRequest.cpp
 Modules/encryptedmedia/MediaKeys.cpp
+Modules/encryptedmedia/legacy/LegacyCDMSessionClearKey.cpp
 Modules/encryptedmedia/legacy/WebKitMediaKeySession.cpp
 Modules/encryptedmedia/legacy/WebKitMediaKeys.cpp
 Modules/entriesapi/DOMFileSystem.cpp
@@ -504,8 +505,6 @@ Modules/identity/CredentialRequestCoordinator.cpp
 Modules/indexeddb/IDBActiveDOMObject.h
 Modules/indexeddb/IDBCursor.cpp
 Modules/indexeddb/IDBDatabase.cpp
-Modules/indexeddb/IDBDatabaseNameAndVersionRequest.cpp
-Modules/indexeddb/IDBDatabaseNameAndVersionRequest.h
 Modules/indexeddb/IDBFactory.cpp
 Modules/indexeddb/IDBIndex.cpp
 Modules/indexeddb/IDBKey.cpp
@@ -630,6 +629,7 @@ Modules/webaudio/BaseAudioContext.cpp
 Modules/webaudio/BiquadDSPKernel.cpp
 Modules/webaudio/BiquadFilterNode.cpp
 Modules/webaudio/BiquadProcessor.cpp
+Modules/webaudio/ChannelMergerNode.cpp
 Modules/webaudio/ConstantSourceNode.cpp
 Modules/webaudio/ConvolverNode.cpp
 Modules/webaudio/DefaultAudioDestinationNode.cpp
@@ -680,20 +680,15 @@ ReadableStreamBYOBRequestBuiltins.h
 ReadableStreamDefaultControllerBuiltins.h
 ReadableStreamDefaultReaderBuiltins.h
 ReadableStreamInternalsBuiltins.h
-SVGNames.cpp
 StreamInternalsBuiltins.h
 StyleBuilderGenerated.cpp
 TextDecoderStreamBuiltins.h
 TextEncoderStreamBuiltins.h
 TransformStreamDefaultControllerBuiltins.h
 TransformStreamInternalsBuiltins.h
-WebKitFontFamilyNames.cpp
 WritableStreamDefaultControllerBuiltins.h
 WritableStreamDefaultWriterBuiltins.h
 WritableStreamInternalsBuiltins.h
-XLinkNames.cpp
-XMLNSNames.cpp
-XMLNames.cpp
 accessibility/AXCoreObject.cpp
 accessibility/AXImage.cpp
 accessibility/AXLogger.cpp
@@ -775,7 +770,6 @@ bindings/js/JSDOMConvertDate.cpp
 bindings/js/JSDOMConvertEnumeration.h
 bindings/js/JSDOMConvertEventListener.h
 bindings/js/JSDOMConvertInterface.h
-bindings/js/JSDOMConvertResult.h
 bindings/js/JSDOMConvertScheduledAction.h
 bindings/js/JSDOMConvertStrings.h
 bindings/js/JSDOMConvertWebGL.cpp
@@ -879,6 +873,7 @@ contentextensions/ContentExtension.cpp
 contentextensions/ContentExtensionStyleSheet.cpp
 contentextensions/ContentExtensionsBackend.cpp
 crypto/SubtleCrypto.cpp
+crypto/parameters/CryptoAlgorithmRsaKeyGenParams.h
 css/CSSComputedStyleDeclaration.cpp
 css/CSSCounterStyle.cpp
 css/CSSCounterStyleDescriptors.cpp
@@ -937,7 +932,6 @@ css/CSSStyleRule.cpp
 css/CSSStyleSheet.cpp
 css/CSSStyleSheetObservableArray.cpp
 css/CSSTimingFunctionValue.cpp
-css/CSSTimingFunctionValue.h
 css/CSSToStyleMap.cpp
 css/CSSValueList.cpp
 css/CSSValuePair.cpp
@@ -1036,7 +1030,6 @@ dom/ElementInlines.h
 dom/ElementInternals.cpp
 dom/ElementIteratorInlines.h
 dom/EmptyScriptExecutionContext.h
-dom/EventContext.cpp
 dom/EventDispatcher.cpp
 dom/EventLoop.cpp
 dom/EventLoop.h
@@ -1081,7 +1074,6 @@ dom/QualifiedName.cpp
 dom/Range.cpp
 dom/RangeBoundaryPoint.h
 dom/RejectedPromiseTracker.cpp
-dom/ScriptDisallowedScope.h
 dom/ScriptElement.cpp
 dom/ScriptExecutionContext.cpp
 dom/ScriptExecutionContext.h
@@ -1101,10 +1093,8 @@ dom/Subscriber.cpp
 dom/TextDecoderStreamDecoder.h
 dom/Traversal.cpp
 dom/TreeScope.cpp
-dom/TreeScopeOrderedMap.cpp
 dom/TreeWalker.cpp
 dom/TrustedType.cpp
-dom/UserGestureIndicator.cpp
 dom/ViewTransition.cpp
 dom/ViewTransitionTypeSet.cpp
 dom/VisitedLinkState.cpp
@@ -1120,6 +1110,7 @@ editing/ChangeListTypeCommand.cpp
 editing/CompositeEditCommand.cpp
 editing/CustomUndoStep.cpp
 editing/DeleteSelectionCommand.cpp
+editing/EditCommand.cpp
 editing/Editing.cpp
 editing/EditingStyle.cpp
 editing/Editor.cpp
@@ -1131,7 +1122,6 @@ editing/InsertIntoTextNodeCommand.cpp
 editing/InsertLineBreakCommand.cpp
 editing/InsertListCommand.cpp
 editing/InsertNestedListCommand.cpp
-editing/InsertNodeBeforeCommand.cpp
 editing/InsertParagraphSeparatorCommand.cpp
 editing/InsertTextCommand.cpp
 editing/ModifySelectionListLevel.cpp
@@ -1179,7 +1169,6 @@ html/CanvasBase.cpp
 html/CheckboxInputType.cpp
 html/ColorInputType.cpp
 html/CustomPaintCanvas.cpp
-html/CustomPaintImage.cpp
 html/DOMFormData.cpp
 html/DOMTokenList.cpp
 html/DOMURL.cpp
@@ -1189,7 +1178,6 @@ html/FTPDirectoryDocument.cpp
 html/FileInputType.cpp
 html/FormAssociatedCustomElement.cpp
 html/FormAssociatedElement.cpp
-html/FormController.cpp
 html/FormListedElement.cpp
 html/HTMLAllCollection.cpp
 html/HTMLAnchorElement.cpp
@@ -1251,6 +1239,7 @@ html/HTMLVideoElement.cpp
 html/HTMLVideoElement.h
 html/HiddenInputType.cpp
 html/ImageBitmap.cpp
+html/ImageData.cpp
 html/ImageDocument.cpp
 html/ImageInputType.cpp
 html/InputType.cpp
@@ -1314,7 +1303,6 @@ html/parser/HTMLConstructionSite.h
 html/parser/HTMLDocumentParser.cpp
 html/parser/HTMLDocumentParserFastPath.cpp
 html/parser/HTMLElementStack.cpp
-html/parser/HTMLFormattingElementList.cpp
 html/parser/HTMLParserScheduler.cpp
 html/parser/HTMLScriptRunner.cpp
 html/parser/HTMLTreeBuilder.cpp
@@ -1385,14 +1373,9 @@ inspector/agents/page/PageDOMDebuggerAgent.cpp
 inspector/agents/page/PageNetworkAgent.cpp
 inspector/agents/page/PageRuntimeAgent.cpp
 inspector/agents/worker/ServiceWorkerAgent.cpp
-inspector/agents/worker/WorkerAuditAgent.cpp
-inspector/agents/worker/WorkerCanvasAgent.cpp
-inspector/agents/worker/WorkerConsoleAgent.cpp
 inspector/agents/worker/WorkerDebuggerAgent.cpp
 inspector/agents/worker/WorkerNetworkAgent.cpp
 inspector/agents/worker/WorkerRuntimeAgent.cpp
-inspector/agents/worker/WorkerWorkerAgent.cpp
-layout/Verification.cpp
 layout/formattingContexts/inline/InlineItemsBuilder.cpp
 layout/integration/inline/LayoutIntegrationInlineContentBuilder.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
@@ -1478,7 +1461,6 @@ page/NavigationDestination.h
 page/NavigationHistoryEntry.cpp
 page/NavigationTransition.cpp
 page/Navigator.cpp
-page/NavigatorBase.cpp
 page/NavigatorLoginStatus.cpp
 page/OpportunisticTaskScheduler.cpp
 page/Page.cpp
@@ -1558,7 +1540,9 @@ platform/animation/Animation.cpp
 platform/animation/AnimationList.cpp
 platform/audio/AudioResampler.cpp
 platform/audio/HRTFDatabaseLoader.cpp
+platform/audio/MultiChannelResampler.cpp
 platform/audio/PlatformMediaSessionManager.cpp
+platform/audio/PushPullFIFO.cpp
 platform/audio/Reverb.cpp
 platform/audio/ReverbConvolver.cpp
 platform/audio/cocoa/AudioDestinationCocoa.cpp
@@ -1580,6 +1564,7 @@ platform/graphics/BitmapImage.cpp
 platform/graphics/BitmapImage.h
 platform/graphics/BitmapImageDescriptor.cpp
 platform/graphics/BitmapImageSource.cpp
+platform/graphics/ByteArrayPixelBuffer.cpp
 platform/graphics/Color.cpp
 platform/graphics/Color.h
 platform/graphics/ComplexTextController.cpp
@@ -1695,7 +1680,6 @@ platform/mac/ScrollbarsControllerMac.mm
 platform/mac/VideoPresentationInterfaceMac.mm
 platform/mediarecorder/MediaRecorderPrivate.h
 platform/mediarecorder/MediaRecorderPrivateAVFImpl.cpp
-platform/mediarecorder/MediaRecorderPrivateEncoder.cpp
 platform/mediarecorder/MediaRecorderPrivateMock.cpp
 platform/mediarecorder/cocoa/AudioSampleBufferCompressor.mm
 platform/mediastream/AudioTrackPrivateMediaStream.cpp
@@ -1713,7 +1697,6 @@ platform/mediastream/cocoa/IncomingAudioMediaStreamTrackRendererUnit.cpp
 platform/mediastream/libwebrtc/LibWebRTCAudioModule.cpp
 platform/mediastream/mac/AVCaptureDeviceManager.mm
 platform/mediastream/mac/AVVideoCaptureSource.mm
-platform/mediastream/mac/BaseAudioSharedUnit.cpp
 platform/mediastream/mac/CoreAudioSharedUnit.cpp
 platform/mediastream/mac/MediaStreamTrackAudioSourceProviderCocoa.cpp
 platform/mediastream/mac/MockAudioSharedUnit.mm
@@ -2047,6 +2030,7 @@ svg/properties/SVGValuePropertyAnimator.h
 svg/properties/SVGValuePropertyListAnimatorImpl.h
 testing/InternalSettings.cpp
 testing/Internals.cpp
+testing/LegacyMockCDM.cpp
 testing/MockContentFilter.cpp
 testing/MockContentFilterManager.cpp
 testing/MockMediaSessionCoordinator.cpp
@@ -2056,7 +2040,6 @@ testing/MockPaymentCoordinator.cpp
 testing/ServiceWorkerInternals.cpp
 testing/js/WebCoreTestSupport.cpp
 workers/DedicatedWorkerGlobalScope.cpp
-workers/ScriptBuffer.cpp
 workers/Worker.cpp
 workers/WorkerAnimationController.cpp
 workers/WorkerConsoleClient.cpp

@@ -9,8 +9,6 @@ NetworkProcess/cocoa/NetworkProcessCocoa.mm
 NetworkProcess/cocoa/NetworkSessionCocoa.mm
 NetworkProcess/storage/NetworkStorageManager.cpp
 NetworkProcess/storage/OriginStorageManager.cpp
-Platform/IPC/JSIPCBinding.cpp
-Platform/IPC/JSIPCBinding.h
 Platform/IPC/MessageSenderInlines.h
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm
 Shared/API/APIArray.cpp
@@ -132,7 +130,6 @@ WebProcess/WebCoreSupport/mac/WebDragClientMac.mm
 WebProcess/WebPage/Cocoa/WebPageCocoa.mm
 WebProcess/WebPage/EventDispatcher.cpp
 WebProcess/WebPage/FindController.cpp
-WebProcess/WebPage/IPCTestingAPI.cpp
 WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.mm
 WebProcess/WebPage/RemoteLayerTree/RemoteLayerTreeContext.mm

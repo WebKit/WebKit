@@ -1,4 +1,3 @@
-ByteLengthQueuingStrategyBuiltins.h
 CommandLineAPIModuleSourceBuiltins.h
 Modules/WebGPU/GPUPresentationContextDescriptor.h
 Modules/encryptedmedia/MediaKeyStatusMap.h
@@ -45,7 +44,6 @@ css/StyleSheetList.h
 css/color/CSSUnresolvedStyleColorResolutionState.h
 css/parser/SizesCalcParser.h
 dom/CollectionIndexCache.h
-dom/ContainerNodeAlgorithms.h
 dom/ElementAncestorIterator.h
 dom/Node.cpp
 dom/Node.h

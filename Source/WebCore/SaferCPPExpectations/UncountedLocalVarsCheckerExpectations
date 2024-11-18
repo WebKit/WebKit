@@ -427,6 +427,7 @@ Modules/webaudio/PannerNode.cpp
 Modules/webaudio/ScriptProcessorNode.cpp
 Modules/webaudio/StereoPannerNode.cpp
 Modules/webaudio/WaveShaperDSPKernel.cpp
+Modules/webaudio/WaveShaperNode.cpp
 Modules/webauthn/AuthenticatorCoordinator.cpp
 Modules/webauthn/PublicKeyCredential.cpp
 Modules/webcodecs/WebCodecsAudioData.cpp
@@ -632,7 +633,6 @@ css/CSSKeyframeRule.cpp
 css/CSSLayerBlockRule.cpp
 css/CSSPageRule.cpp
 css/CSSPrimitiveValue.cpp
-css/CSSPrimitiveValueMappings.h
 css/CSSRule.cpp
 css/CSSStyleRule.cpp
 css/CSSStyleSheet.cpp
@@ -769,6 +769,7 @@ fileapi/ThreadableBlobRegistry.cpp
 history/BackForwardCache.cpp
 history/CachedFrame.cpp
 history/CachedPage.cpp
+history/HistoryItem.cpp
 html/Autofill.cpp
 html/BaseCheckableInputType.cpp
 html/BaseDateAndTimeInputType.cpp
@@ -865,9 +866,11 @@ html/track/InbandGenericTextTrack.cpp
 html/track/TextTrack.cpp
 html/track/TextTrackCue.cpp
 html/track/TextTrackCueGeneric.cpp
+html/track/TextTrackList.cpp
 html/track/TrackBase.cpp
 html/track/VTTCue.cpp
 html/track/VTTRegion.cpp
+html/track/VideoTrackList.cpp
 inspector/CommandLineAPIHost.cpp
 inspector/DOMPatchSupport.cpp
 inspector/InspectorAuditAccessibilityObject.cpp
@@ -1008,7 +1011,6 @@ page/mac/ServicesOverlayController.mm
 page/scrolling/AsyncScrollingCoordinator.cpp
 page/scrolling/ScrollAnchoringController.cpp
 page/scrolling/ScrollingCoordinator.cpp
-page/scrolling/ScrollingStateStickyNode.cpp
 page/scrolling/ScrollingTree.cpp
 page/scrolling/ScrollingTreeFixedNode.cpp
 page/scrolling/ScrollingTreeOverflowScrollProxyNode.cpp
@@ -1026,7 +1028,6 @@ platform/ScrollableArea.cpp
 platform/ScrollbarsController.cpp
 platform/ThreadGlobalData.cpp
 platform/ThreadGlobalData.h
-platform/Timer.cpp
 platform/animation/AcceleratedEffect.cpp
 platform/animation/AcceleratedEffectValues.cpp
 platform/audio/AudioBus.cpp
@@ -1041,6 +1042,7 @@ platform/graphics/FontCache.cpp
 platform/graphics/FontCascade.h
 platform/graphics/FontCascadeFonts.cpp
 platform/graphics/FontRanges.cpp
+platform/graphics/GlyphBuffer.h
 platform/graphics/GraphicsLayer.cpp
 platform/graphics/Image.cpp
 platform/graphics/Path.cpp
@@ -1117,7 +1119,6 @@ plugins/PluginInfoProvider.cpp
 rendering/AccessibilityRegionContext.cpp
 rendering/BackgroundPainter.cpp
 rendering/BorderPainter.cpp
-rendering/CounterNode.cpp
 rendering/GlyphDisplayListCache.cpp
 rendering/HitTestResult.cpp
 rendering/ImageQualityController.cpp
