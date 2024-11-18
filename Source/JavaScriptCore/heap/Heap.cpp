@@ -1267,7 +1267,7 @@ void Heap::collectAsync(GCRequest request)
     }
     if (alreadyRequested)
         return;
-
+    m_isCollectionSynchronous = false;
     requestCollection(request);
 }
 
@@ -1281,7 +1281,7 @@ void Heap::collectSync(GCRequest request)
 
     if (!m_isSafeToCollect)
         return;
-
+    m_isCollectionSynchronous = true;
     waitForCollection(requestCollection(request));
 }
 

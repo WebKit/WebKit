@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<script src="../../../resources/js-test-pre.js"></script>
+</head>
+<body>
+    <p>test</p>
+</body>
+<script>
+
+
+    $vm.recordDocumentPointer(document)
+    document.foo = 1;
+    // window.location.href = "about:blank"
+    // looking at stderr output, a document pointer on the stack should be found
+    // when the synchronous gc runs for this simple test
+    gc();
+
+
+</script>
+</html>

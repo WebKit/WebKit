@@ -80,6 +80,7 @@ private:
     DECLARE_VISIT_CHILDREN;
 
     WriteBarrierStructureID m_objectDoingSideEffectPutWithoutCorrectSlotStatusStructureID;
+    uintptr_t m_addressOfDocument;
 };
 
 } // namespace JSC
