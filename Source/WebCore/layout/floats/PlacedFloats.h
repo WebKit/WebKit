@@ -66,7 +66,7 @@ public:
 
         Rect absoluteRectWithMargin() const { return BoxGeometry::marginBoxRect(m_absoluteBoxGeometry); }
         Rect absoluteBorderBoxRect() const { return BoxGeometry::borderBoxRect(m_absoluteBoxGeometry); }
-        BoxGeometry::HorizontalEdges horizontalMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
+        BoxGeometry::HorizontalEdges inlineAxisMargin() const { return m_absoluteBoxGeometry.horizontalMargin(); }
         PositionInContextRoot absoluteBottom() const { return { absoluteRectWithMargin().bottom() }; }
 
         const LayoutShape* shape() const { return m_shape.get(); }
@@ -94,8 +94,8 @@ public:
     bool hasStartPositioned() const;
     bool hasEndPositioned() const;
 
-    std::optional<LayoutUnit> topmost() const;
-    std::optional<LayoutUnit> bottommost(Clear = Clear::Both) const;
+    std::optional<LayoutUnit> highestPositionOnBlockAxis() const;
+    std::optional<LayoutUnit> lowestPositionOnBlockAxis(Clear = Clear::Both) const;
 
     void shrinkToFit();
 

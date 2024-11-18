@@ -50,11 +50,11 @@ public:
     LayoutPoint positionForFloat(const Box&, const BoxGeometry&, const HorizontalConstraints&) const;
     LayoutPoint positionForNonFloatingFloatAvoider(const Box&, const BoxGeometry&) const;
 
-    struct PositionWithClearance {
+    struct BlockAxisPositionWithClearance {
         LayoutUnit position;
         std::optional<LayoutUnit> clearance;
     };
-    std::optional<PositionWithClearance> verticalPositionWithClearance(const Box&, const BoxGeometry&) const;
+    std::optional<BlockAxisPositionWithClearance> blockAxisPositionWithClearance(const Box&, const BoxGeometry&) const;
 
     bool isEmpty() const { return m_placedFloats.list().isEmpty(); }
 

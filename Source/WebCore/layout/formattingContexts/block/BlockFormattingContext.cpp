@@ -304,9 +304,9 @@ LayoutUnit BlockFormattingContext::usedContentHeight() const
     }
 
     auto floatingContext = FloatingContext { root(), layoutState(), formattingState().placedFloats() };
-    if (auto floatTop = floatingContext.placedFloats().topmost()) {
+    if (auto floatTop = floatingContext.placedFloats().highestPositionOnBlockAxis()) {
         top = std::min(*floatTop, top.value_or(*floatTop));
-        auto floatBottom = *floatingContext.placedFloats().bottommost();
+        auto floatBottom = *floatingContext.placedFloats().lowestPositionOnBlockAxis();
         bottom = std::max(floatBottom, bottom.value_or(floatBottom));
     }
     return *bottom - *top;
@@ -455,7 +455,7 @@ void BlockFormattingContext::computeVerticalPositionForFloatClear(const Floating
     if (floatingContext.isEmpty())
         return;
     auto& boxGeometry = formattingState().boxGeometry(layoutBox);
-    auto verticalPositionAndClearance = floatingContext.verticalPositionWithClearance(layoutBox, boxGeometry);
+    auto verticalPositionAndClearance = floatingContext.blockAxisPositionWithClearance(layoutBox, boxGeometry);
     if (!verticalPositionAndClearance)
         return;
 
