@@ -1,7 +1,14 @@
 AutomationBackendDispatchers.cpp
 AutomationFrontendDispatchers.cpp
 AutomationProtocolObjects.h
-GPUProcess/media/RemoteMediaPlayerManagerProxy.cpp
+GPUProcess/graphics/RemoteGraphicsContextGL.cpp
+GPUProcess/graphics/RemoteGraphicsContextGLCocoa.cpp
+GPUProcess/graphics/RemoteGraphicsContextGLFunctionsGenerated.h
+GPUProcess/graphics/RemoteImageBuffer.cpp
+GPUProcess/graphics/RemoteImageBufferSet.cpp
+GPUProcess/graphics/RemoteRenderingBackend.cpp
+GPUProcess/graphics/WebGPU/RemoteGPU.cpp
+GPUProcess/webrtc/LibWebRTCCodecsProxy.mm
 JSWebExtensionAPIAction.mm
 JSWebExtensionAPIAlarms.mm
 JSWebExtensionAPICommands.mm
@@ -79,8 +86,9 @@ NetworkProcess/storage/OriginStorageManager.cpp
 NetworkProcess/storage/SQLiteStorageArea.cpp
 NetworkProcess/webrtc/NetworkRTCUDPSocketCocoa.mm
 Platform/IPC/ArgumentCoders.h
+Platform/IPC/Connection.cpp
 Platform/IPC/SharedBufferReference.cpp
-Platform/IPC/StreamServerConnection.h
+Platform/IPC/StreamClientConnection.h
 Platform/cocoa/WKPaymentAuthorizationDelegate.mm
 Platform/cocoa/WebPrivacyHelpers.mm
 Shared/API/APIArray.h
@@ -125,6 +133,7 @@ Shared/Cocoa/WKNSURL.mm
 Shared/Cocoa/WebKit2InitializeCocoa.mm
 Shared/ContextMenuContextData.cpp
 Shared/EntryPointUtilities/Cocoa/XPCService/XPCServiceMain.mm
+Shared/IPCTester.cpp
 Shared/RemoteLayerTree/RemoteLayerBackingStore.mm
 Shared/RemoteLayerTree/RemoteLayerBackingStoreCollection.mm
 Shared/RemoteLayerTree/RemoteLayerWithInProcessRenderingBackingStore.mm
@@ -141,6 +150,7 @@ UIProcess/API/APIDataTask.cpp
 UIProcess/API/APIDownloadClient.h
 UIProcess/API/APIHTTPCookieStore.cpp
 UIProcess/API/APIInspectorExtension.cpp
+UIProcess/API/APINavigation.cpp
 UIProcess/API/APINavigationClient.h
 UIProcess/API/APIPageConfiguration.cpp
 UIProcess/API/APIWebAuthenticationAssertionResponse.cpp
@@ -266,6 +276,7 @@ UIProcess/Cocoa/WebInspectorPreferenceObserver.mm
 UIProcess/DeviceIdHashSaltStorage.cpp
 UIProcess/Extensions/Cocoa/WebExtensionActionCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionCommandCocoa.mm
+UIProcess/Extensions/Cocoa/WebExtensionContextCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionControllerCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionTabCocoa.mm
 UIProcess/Extensions/Cocoa/WebExtensionURLSchemeHandlerCocoa.mm
@@ -521,6 +532,7 @@ WebProcess/WebPage/Cocoa/WebPageCocoa.mm
 WebProcess/WebPage/DrawingArea.cpp
 WebProcess/WebPage/EventDispatcher.cpp
 WebProcess/WebPage/FindController.cpp
+WebProcess/WebPage/IPCTestingAPI.cpp
 WebProcess/WebPage/RemoteLayerTree/GraphicsLayerCARemote.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCAAnimationRemote.mm
 WebProcess/WebPage/RemoteLayerTree/PlatformCALayerRemote.mm
