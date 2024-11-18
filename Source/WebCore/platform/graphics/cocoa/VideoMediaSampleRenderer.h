@@ -28,6 +28,7 @@
 #include "ProcessIdentity.h"
 #include "SampleMap.h"
 #include <wtf/Function.h>
+#include <wtf/Lock.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -58,7 +59,7 @@ public:
     void setPrefersDecompressionSession(bool);
 
     void setTimebase(RetainPtr<CMTimebaseRef>&&);
-    RetainPtr<CMTimebaseRef> timebase() const { return m_timebase; }
+    RetainPtr<CMTimebaseRef> timebase() const;
 
     bool isReadyForMoreMediaData() const;
     void requestMediaDataWhenReady(Function<void()>&&);
@@ -90,13 +91,13 @@ public:
 private:
     VideoMediaSampleRenderer(WebSampleBufferVideoRendering *);
 
-    void setPrefersDecompressionSessionInternal(bool);
-    void setTimebaseInternal(RetainPtr<CMTimebaseRef>&&);
+    void clearTimebase();
 
     void resetReadyForMoreSample();
     void initializeDecompressionSession();
     void decodeNextSample();
     void decodedFrameAvailable(RetainPtr<CMSampleBufferRef>&&);
+    void maybeQueueFrameForDisplay(CMSampleBufferRef);
     void flushCompressedSampleQueue();
     void flushDecodedSampleQueue();
     void purgeDecodedSampleQueue();
@@ -104,15 +105,21 @@ private:
     void assignResourceOwner(CMSampleBufferRef);
     void maybeBecomeReadyForMoreMediaData();
 
+    void cancelTimer();
+
     const Ref<WTF::WorkQueue> m_workQueue;
     RetainPtr<AVSampleBufferDisplayLayer> m_displayLayer;
     RetainPtr<AVSampleBufferVideoRenderer> m_renderer;
-    RetainPtr<CMTimebaseRef> m_timebase;
-    RetainPtr<CMBufferQueueRef> m_compressedSampleQueue; // created on the main thread, always set if m_decompressionSession and on workQueue.
-    RetainPtr<CMBufferQueueRef> m_decodedSampleQueue;
-    OSObjectPtr<dispatch_source_t> m_timerSource;
+    mutable Lock m_lock;
+    RetainPtr<CMTimebaseRef> m_timebase WTF_GUARDED_BY_LOCK(m_lock);
+    OSObjectPtr<dispatch_source_t> m_timerSource WTF_GUARDED_BY_LOCK(m_lock);
+    std::atomic<ssize_t> m_framesBeingDecoded { 0 };
+    std::atomic<int> m_flushId { 0 };
+    Deque<std::pair<RetainPtr<CMSampleBufferRef>, int>> m_compressedSampleQueue WTF_GUARDED_BY_CAPABILITY(m_workQueue.get());
+    RetainPtr<CMBufferQueueRef> m_decodedSampleQueue WTF_GUARDED_BY_CAPABILITY(m_workQueue.get());
     RefPtr<WebCoreDecompressionSession> m_decompressionSession;
-    bool m_isDecodingSample { false };
+    bool m_isDecodingSample WTF_GUARDED_BY_CAPABILITY(m_workQueue.get()) { false };
+    bool m_isDisplayingSample WTF_GUARDED_BY_CAPABILITY(m_workQueue.get()) { false };
     Function<void()> m_readyForMoreSampleFunction;
     bool m_prefersDecompressionSession { false };
     std::optional<uint32_t> m_currentCodec;
