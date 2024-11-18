@@ -15,8 +15,6 @@
 #include <wtf/text/EscapedFormsForJSON.h>
 #include <wtf/text/WTFString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 void StringBuilder::appendQuotedJSONString(const String& string)
@@ -38,29 +36,31 @@ void StringBuilder::appendQuotedJSONString(const String& string)
     auto stringLengthValue = stringLength.value();
 
     if (is8Bit() && string.is8Bit()) {
-        if (auto* output = extendBufferForAppending<LChar>(saturatedSum<int32_t>(m_length, stringLengthValue)).data()) {
-            auto* end = output + stringLengthValue;
-            *output++ = '"';
+        if (auto output = extendBufferForAppending<LChar>(saturatedSum<int32_t>(m_length, stringLengthValue)); output.data()) {
+            output = output.first(stringLengthValue);
+            output[0] = '"';
+            output = output.subspan(1);
             appendEscapedJSONStringContent(output, string.span8());
-            *output++ = '"';
-            if (output < end)
-                shrink(m_length - (end - output));
+            output[0] = '"';
+            output = output.subspan(1);
+            if (!output.empty())
+                shrink(m_length - output.size());
         }
     } else {
-        if (auto* output = extendBufferForAppendingWithUpconvert(saturatedSum<int32_t>(m_length, stringLengthValue)).data()) {
-            auto* end = output + stringLengthValue;
-            *output++ = '"';
+        if (auto output = extendBufferForAppendingWithUpconvert(saturatedSum<int32_t>(m_length, stringLengthValue)); output.data()) {
+            output = output.first(stringLengthValue);
+            output[0] = '"';
+            output = output.subspan(1);
             if (string.is8Bit())
                 appendEscapedJSONStringContent(output, string.span8());
             else
                 appendEscapedJSONStringContent(output, string.span16());
-            *output++ = '"';
-            if (output < end)
-                shrink(m_length - (end - output));
+            output[0] = '"';
+            output = output.subspan(1);
+            if (!output.empty())
+                shrink(m_length - output.size());
         }
     }
 }
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

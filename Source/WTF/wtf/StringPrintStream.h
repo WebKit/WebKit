@@ -38,21 +38,20 @@ public:
     
     WTF_EXPORT_PRIVATE void vprintf(const char* format, va_list) final WTF_ATTRIBUTE_PRINTF(2, 0);
 
-    size_t length() const { return m_next; }
+    size_t length() const { return m_length; }
     
-    WTF_EXPORT_PRIVATE CString toCString();
-    WTF_EXPORT_PRIVATE Expected<String, UTF8ConversionError> tryToString();
-    WTF_EXPORT_PRIVATE String toString();
-    WTF_EXPORT_PRIVATE String toStringWithLatin1Fallback();
+    WTF_EXPORT_PRIVATE CString toCString() const;
+    WTF_EXPORT_PRIVATE Expected<String, UTF8ConversionError> tryToString() const;
+    WTF_EXPORT_PRIVATE String toString() const;
+    WTF_EXPORT_PRIVATE String toStringWithLatin1Fallback() const;
     WTF_EXPORT_PRIVATE void reset();
     
 private:
     void increaseSize(size_t);
     
-    char* m_buffer;
-    size_t m_next;
-    size_t m_size;
-    char m_inlineBuffer[128];
+    std::array<char, 128> m_inlineBuffer;
+    std::span<char> m_buffer;
+    size_t m_length { 0 };
 };
 
 // Stringify any type T that has a WTF::printInternal(PrintStream&, const T&)

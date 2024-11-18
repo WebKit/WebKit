@@ -721,6 +721,7 @@ private:
 
     CharType* buffer();
     const CharType* buffer() const;
+    std::span<CharType> bufferSpan();
 
     JSGlobalObject& m_globalObject;
     VM& m_vm;
@@ -794,6 +795,15 @@ ALWAYS_INLINE const CharType* FastStringifier<CharType, bufferMode>::buffer() co
         return m_buffer;
     else
         return m_dynamicBuffer.data();
+}
+
+template<typename CharType, BufferMode bufferMode>
+ALWAYS_INLINE std::span<CharType> FastStringifier<CharType, bufferMode>::bufferSpan()
+{
+    if constexpr (bufferMode == BufferMode::StaticBuffer)
+        return std::span<CharType> { m_buffer };
+    else
+        return m_dynamicBuffer.mutableSpan();
 }
 
 template<typename CharType, BufferMode bufferMode>
@@ -1273,7 +1283,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             recordBufferFull();
             return;
         }
-        auto* output = buffer() + m_length + 1;
+        auto output = bufferSpan().subspan(m_length + 1);
         if constexpr (sizeof(CharType) == 2) {
             if (string.data.is8Bit())
                 WTF::appendEscapedJSONStringContent(output, string.data.span8());
@@ -1281,8 +1291,9 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
                 WTF::appendEscapedJSONStringContent(output, string.data.span16());
         } else
             WTF::appendEscapedJSONStringContent(output, string.data.span8());
-        *output++ = '"';
-        m_length = output - buffer();
+        output[0] = '"';
+        output = output.subspan(1);
+        m_length = output.data() - buffer();
         return;
     }
 

@@ -38,8 +38,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 #if PLATFORM(COCOA)
@@ -222,7 +220,7 @@ void SHA1::addUTF8Bytes(StringView string)
 void SHA1::addUTF8Bytes(CFStringRef string)
 {
     if (auto* characters = CFStringGetCStringPtr(string, kCFStringEncodingASCII)) {
-        addBytes(std::span { byteCast<uint8_t>(characters), static_cast<size_t>(CFStringGetLength(string)) });
+        addBytes(unsafeMakeSpan(byteCast<uint8_t>(characters), CFStringGetLength(string)));
         return;
     }
 
@@ -254,5 +252,3 @@ CString SHA1::computeHexDigest()
 }
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

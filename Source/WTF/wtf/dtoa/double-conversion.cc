@@ -451,14 +451,14 @@ static double SignedZero(bool sign) {
 }
 
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 // Returns true, when the iterator is equal to end.
 template<class Iterator>
 static inline bool Advance(Iterator* it, Iterator& end) {
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
   ++(*it);
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
   return *it == end;
 }
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 template <typename FloatingPointType>
 inline FloatingPointType StringToFloatingPointType(BufferReference<const char> buffer, int exponent);

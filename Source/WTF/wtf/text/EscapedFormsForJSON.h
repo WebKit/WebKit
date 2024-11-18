@@ -11,10 +11,12 @@
 
 #pragma once
 
+#include <array>
+
 namespace WTF {
 
 // This table for escaping was originally taken from SpiderMonkey.
-constexpr char escapedFormsForJSON[0x100] = {
+constexpr std::array<char, 0x100> escapedFormsForJSON {
     'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u',
     'b', 't', 'n', 'u', 'f', 'r', 'u', 'u',
     'u', 'u', 'u', 'u', 'u', 'u', 'u', 'u',

@@ -28,8 +28,6 @@
 
 #include <wtf/ASCIICType.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 unsigned sixCharacterHashStringToInteger(std::span<const char, 6> string)
@@ -56,7 +54,11 @@ unsigned sixCharacterHashStringToInteger(std::span<const char, 6> string)
 
 std::array<char, 6> integerToSixCharacterHashString(unsigned hash)
 {
-    static const char table[63] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    static constexpr std::array<char, 62> table {
+        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+        '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+    };
     std::array<char, 6> buffer;
     unsigned accumulator = hash;
     for (unsigned i = 6; i--;) {
@@ -67,5 +69,3 @@ std::array<char, 6> integerToSixCharacterHashString(unsigned hash)
 }
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
