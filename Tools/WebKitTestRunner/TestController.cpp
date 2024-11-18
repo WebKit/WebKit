@@ -1071,6 +1071,7 @@ void TestController::ensureViewSupportsOptionsForTest(const TestInvocation& test
         m_createdOtherPage = false;
     }
 
+    platformEnsureGPUProcessConfiguredForOptions(options);
     createWebViewWithOptions(options);
 
     if (!resetStateToConsistentValues(options, ResetStage::BeforeTest))
@@ -4274,6 +4275,10 @@ bool TestController::keyExistsInKeychain(const String&, const String&)
 }
 
 void TestController::setAllowedMenuActions(const Vector<String>&)
+{
+}
+
+void TestController::platformEnsureGPUProcessConfiguredForOptions(const TestOptions&)
 {
 }
 #endif

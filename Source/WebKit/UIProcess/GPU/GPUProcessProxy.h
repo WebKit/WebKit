@@ -60,6 +60,11 @@ enum class VideoFrameRotation : uint16_t;
 
 namespace WebKit {
 
+#if PLATFORM(COCOA)
+void enableMetalDebugDeviceInNextGPUProcessForTesting();
+void enableMetalShaderValidationInNextGPUProcessForTesting();
+#endif
+
 enum class ProcessTerminationReason : uint8_t;
 
 class SandboxExtensionHandle;
@@ -136,6 +141,15 @@ public:
 
     void terminateForTesting();
     void webProcessConnectionCountForTesting(CompletionHandler<void(uint64_t)>&&);
+
+#if PLATFORM(COCOA)
+    static void setEnableMetalDebugDeviceInNewGPUProcessesForTesting(bool enable) { s_enableMetalDebugDeviceInNewGPUProcessesForTesting = enable; }
+    static void setEnableMetalShaderValidationInNewGPUProcessesForTesting(bool enable) { s_enableMetalShaderValidationInNewGPUProcessesForTesting = enable; }
+    static bool isMetalDebugDeviceEnabledInNewGPUProcessesForTesting() { return s_enableMetalDebugDeviceInNewGPUProcessesForTesting; }
+    static bool isMetalShaderValidationEnabledInNewGPUProcessesForTesting() { return s_enableMetalShaderValidationInNewGPUProcessesForTesting; }
+    bool isMetalDebugDeviceEnabledForTesting() const { return m_isMetalDebugDeviceEnabledForTesting; }
+    bool isMetalShaderValidationEnabledForTesting() const { return m_isMetalShaderValidationEnabledForTesting; }
+#endif
 
 #if ENABLE(VIDEO)
     void requestBitmapImageForCurrentTime(WebCore::ProcessIdentifier, WebCore::MediaPlayerIdentifier, CompletionHandler<void(std::optional<WebCore::ShareableBitmap::Handle>&&)>&&);
@@ -225,6 +239,8 @@ private:
     bool m_hasSentMicrophoneSandboxExtension { false };
     bool m_hasSentDisplayCaptureSandboxExtension { false };
     bool m_hasSentGPUToolsSandboxExtensions { false };
+    bool m_isMetalDebugDeviceEnabledForTesting { false };
+    bool m_isMetalShaderValidationEnabledForTesting { false };
 #endif
 
 #if HAVE(SCREEN_CAPTURE_KIT)
@@ -235,6 +251,10 @@ private:
 #endif
 #if ENABLE(AV1)
     static std::optional<bool> s_hasAV1HardwareDecoder;
+#endif
+#if PLATFORM(COCOA)
+    static bool s_enableMetalDebugDeviceInNewGPUProcessesForTesting;
+    static bool s_enableMetalShaderValidationInNewGPUProcessesForTesting;
 #endif
 
     HashSet<PAL::SessionID> m_sessionIDs;

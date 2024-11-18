@@ -206,6 +206,11 @@ GPUProcessProxy::GPUProcessProxy()
     parameters.renderDeviceFile = drmRenderNodeDevice();
 #endif
 
+#if PLATFORM(COCOA)
+    m_isMetalDebugDeviceEnabledForTesting = s_enableMetalDebugDeviceInNewGPUProcessesForTesting;
+    m_isMetalShaderValidationEnabledForTesting = s_enableMetalShaderValidationInNewGPUProcessesForTesting;
+#endif
+
     platformInitializeGPUProcessParameters(parameters);
 
 #if PLATFORM(COCOA)

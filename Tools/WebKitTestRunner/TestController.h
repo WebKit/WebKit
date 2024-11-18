@@ -462,6 +462,7 @@ private:
     void platformDestroy();
     WKContextRef platformAdjustContext(WKContextRef, WKContextConfigurationRef);
     void platformInitializeContext();
+    void platformEnsureGPUProcessConfiguredForOptions(const TestOptions&);
     void platformCreateWebView(WKPageConfigurationRef, const TestOptions&);
     static UniqueRef<PlatformWebView> platformCreateOtherPage(PlatformWebView* parentView, WKPageConfigurationRef, const TestOptions&);
 

@@ -292,6 +292,26 @@ void TestController::platformInitializeDataStore(WKPageConfigurationRef, const T
         m_websiteDataStore = (__bridge WKWebsiteDataStoreRef)[globalWebViewConfiguration() websiteDataStore];
 }
 
+static bool currentGPUProcessConfigurationCompatibleWithOptions(const TestOptions& options)
+{
+    if ([WKProcessPool _isMetalDebugDeviceEnabledInGPUProcessForTesting] != options.enableMetalDebugDevice())
+        return false;
+
+    if ([WKProcessPool _isMetalShaderValidationEnabledInGPUProcessForTesting] != options.enableMetalShaderValidation())
+        return false;
+
+    return true;
+}
+
+void TestController::platformEnsureGPUProcessConfiguredForOptions(const TestOptions& options)
+{
+    [WKProcessPool _setEnableMetalDebugDeviceInNewGPUProcessesForTesting:options.enableMetalDebugDevice()];
+    [WKProcessPool _setEnableMetalShaderValidationInNewGPUProcessesForTesting:options.enableMetalShaderValidation()];
+
+    if (!currentGPUProcessConfigurationCompatibleWithOptions(options))
+        terminateGPUProcess();
+}
+
 void TestController::platformCreateWebView(WKPageConfigurationRef, const TestOptions& options)
 {
     auto copiedConfiguration = adoptNS([globalWebViewConfiguration() copy]);

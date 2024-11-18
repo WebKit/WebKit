@@ -72,6 +72,10 @@ struct GPUProcessCreationParameters {
     String renderDeviceFile;
 #endif
     Vector<String> overrideLanguages;
+#if PLATFORM(COCOA)
+    bool enableMetalDebugDeviceForTesting { false };
+    bool enableMetalShaderValidationForTesting { false };
+#endif
 };
 
 } // namespace WebKit

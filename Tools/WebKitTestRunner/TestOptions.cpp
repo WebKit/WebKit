@@ -207,6 +207,8 @@ const TestFeatures& TestOptions::defaults()
             { "enhancedWindowingEnabled", false },
             { "textExtractionEnabled", false },
             { "useHardwareKeyboardMode", false },
+            { "enableMetalDebugDevice", false },
+            { "enableMetalShaderValidation", false },
         };
         features.doubleTestRunnerFeatures = {
             { "contentInset.top", 0 },
@@ -280,6 +282,9 @@ const std::unordered_map<std::string, TestHeaderKeyType>& TestOptions::keyTypeMa
         { "enhancedWindowingEnabled", TestHeaderKeyType::BoolTestRunner },
         { "textExtractionEnabled", TestHeaderKeyType::BoolTestRunner },
         { "useHardwareKeyboardMode", TestHeaderKeyType::BoolTestRunner },
+        { "enableMetalDebugDevice", TestHeaderKeyType::BoolTestRunner },
+        { "enableMetalShaderValidation", TestHeaderKeyType::BoolTestRunner },
+
         { "contentInset.top", TestHeaderKeyType::DoubleTestRunner },
         { "obscuredInset.top", TestHeaderKeyType::DoubleTestRunner },
         { "horizontalSystemMinimumLayoutMargin", TestHeaderKeyType::DoubleTestRunner },
