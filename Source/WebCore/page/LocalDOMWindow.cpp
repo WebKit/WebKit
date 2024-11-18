@@ -1071,7 +1071,7 @@ void LocalDOMWindow::focus(bool allowFocus)
         return;
 
     // Clear the current frame's focused node if a new frame is about to be focused.
-    RefPtr focusedFrame = page->checkedFocusController()->focusedLocalFrame();
+    RefPtr focusedFrame = page->focusController().focusedLocalFrame();
     if (focusedFrame && focusedFrame != frame)
         focusedFrame->protectedDocument()->setFocusedElement(nullptr);
 
