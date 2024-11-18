@@ -1147,9 +1147,36 @@ test/intl402/Locale/extensions-grandfathered.js:
 test/intl402/NumberFormat/currency-digits-nonstandard-notation.js:
   default: "Test262Error: Didn't get correct maximumFractionDigits for JPY in compact notation. Expected SameValue(«0», «3») to be true"
   strict mode: "Test262Error: Didn't get correct maximumFractionDigits for JPY in compact notation. Expected SameValue(«0», «3») to be true"
-test/intl402/NumberFormat/prototype/format/useGrouping-extended-en-IN.js:
-  default: 'Test262Error: notation: "compact" Expected SameValue(«"1T"», «"1K"») to be true'
-  strict mode: 'Test262Error: notation: "compact" Expected SameValue(«"1T"», «"1K"») to be true'
+test/intl402/NumberFormat/prototype/format/unit-ja-JP.js:
+  default: 'Test262Error: Expected SameValue(«"時速-987キロメートル"», «"時速 -987 キロメートル"») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«"時速-987キロメートル"», «"時速 -987 キロメートル"») to be true'
+test/intl402/NumberFormat/prototype/format/unit-zh-TW.js:
+  default: 'Test262Error: Expected SameValue(«"-987公里/小時"», «"-987 公里/小時"») to be true'
+  strict mode: 'Test262Error: Expected SameValue(«"-987公里/小時"», «"-987 公里/小時"») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/unit-ja-JP.js:
+  default: 'Test262Error: undefined: length Expected SameValue(«4», «6») to be true'
+  strict mode: 'Test262Error: undefined: length Expected SameValue(«4», «6») to be true'
+test/intl402/NumberFormat/prototype/formatToParts/unit-zh-TW.js:
+  default: 'Test262Error: undefined: length Expected SameValue(«3», «4») to be true'
+  strict mode: 'Test262Error: undefined: length Expected SameValue(«3», «4») to be true'
+test/intl402/DateTimeFormat/prototype/format/dayPeriod-long-en.js:
+  default: 'Test262Error: 00:00, long format Expected SameValue(«"in the morning"», «"at night"») to be true'
+  strict mode: 'Test262Error: 00:00, long format Expected SameValue(«"in the morning"», «"at night"») to be true'
+test/intl402/DateTimeFormat/prototype/format/dayPeriod-narrow-en.js:
+  default: 'Test262Error: 00:00, narrow format Expected SameValue(«"in the morning"», «"at night"») to be true'
+  strict mode: 'Test262Error: 00:00, narrow format Expected SameValue(«"in the morning"», «"at night"») to be true'
+test/intl402/DateTimeFormat/prototype/format/dayPeriod-short-en.js:
+  default: 'Test262Error: 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
+  strict mode: 'Test262Error: 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
+test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-long-en.js:
+  default: 'Test262Error: expected part value. 00:00, long format Expected SameValue(«"in the morning"», «"at night"») to be true'
+  strict mode: 'Test262Error: expected part value. 00:00, long format Expected SameValue(«"in the morning"», «"at night"») to be true'
+test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-narrow-en.js:
+  default: 'Test262Error: expected part value. 00:00, narrow format Expected SameValue(«"in the morning"», «"at night"») to be true'
+  strict mode: 'Test262Error: expected part value. 00:00, narrow format Expected SameValue(«"in the morning"», «"at night"») to be true'
+test/intl402/DateTimeFormat/prototype/formatToParts/dayPeriod-short-en.js:
+  default: 'Test262Error: expected part value. 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
+  strict mode: 'Test262Error: expected part value. 00:00, short format Expected SameValue(«"in the morning"», «"at night"») to be true'
 test/intl402/Temporal/Duration/compare/relativeto-sub-minute-offset.js:
   default: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
   strict mode: 'RangeError: Cannot compare a duration of years, months, or weeks without a relativeTo option'
@@ -1187,8 +1214,8 @@ test/intl402/Temporal/Instant/prototype/toLocaleString/default-includes-time-not
   default: 'Test262Error: Instant formatted with no options 12/26/2024 should include hour'
   strict mode: 'Test262Error: Instant formatted with no options 12/26/2024 should include hour'
 test/intl402/Temporal/Instant/prototype/toLocaleString/lone-options-accepted.js:
-  default: 'Test262Error: Instant.toLocaleString should format lone option {"timeZoneName":"short"} Expected SameValue(«"12/26/2024, GMT+9"», «"12/26/2024, 8:46:40 PM GMT+9"») to be true'
-  strict mode: 'Test262Error: Instant.toLocaleString should format lone option {"timeZoneName":"short"} Expected SameValue(«"12/26/2024, GMT+9"», «"12/26/2024, 8:46:40 PM GMT+9"») to be true'
+  default: 'Test262Error: Instant.toLocaleString should format lone option {"timeZoneName":"short"} Expected SameValue(«"12/26/2024, PST"», «"12/26/2024, 3:46:40 AM PST"») to be true'
+  strict mode: 'Test262Error: Instant.toLocaleString should format lone option {"timeZoneName":"short"} Expected SameValue(«"12/26/2024, PST"», «"12/26/2024, 3:46:40 AM PST"») to be true'
 test/language/destructuring/binding/keyed-destructuring-property-reference-target-evaluation-order-with-bindings.js:
   default: 'Test262Error: Actual [binding::source, binding::sourceKey, sourceKey, get source, binding::defaultValue, binding::varTarget] and expected [binding::source, binding::sourceKey, sourceKey, binding::varTarget, get source, binding::defaultValue] should have the same contents. '
 test/language/eval-code/direct/arrow-fn-body-cntns-arguments-func-decl-arrow-func-declare-arguments-assign-incl-def-param-arrow-arguments.js:
