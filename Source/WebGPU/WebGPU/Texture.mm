@@ -2986,8 +2986,8 @@ Ref<TextureView> Texture::createView(const WGPUTextureViewDescriptor& inputDescr
 
 void Texture::recreateIfNeeded()
 {
-    RELEASE_ASSERT(m_canvasBacking);
-    m_destroyed = false;
+    if (m_canvasBacking)
+        m_destroyed = false;
 }
 
 void Texture::makeCanvasBacking()
