@@ -164,6 +164,10 @@ bool Storage::ReadOperation::finish()
     if (m_blobBodyHash && m_blobBodyHash != m_record.bodyHash)
         m_record = { };
 
+    // Failed to read body from both blob storage and record storage.
+    if (m_record.body.isNull())
+        m_record = { };
+
     return m_completionHandler(WTFMove(m_record), m_timings);
 }
 
@@ -172,7 +176,7 @@ void Storage::ReadOperation::finishReadRecord(Record&& record, MonotonicTime rec
     ASSERT(RunLoop::isMain());
 
     m_waitsForRecord = false;
-    // Body may have been set from reading blob storage.
+    // Body is already read from blob storage, and it is not null.
     if (m_blobBodyHash) {
         // Body should not be stored in both blob storage and record storage.
         ASSERT(record.body.isNull());
@@ -188,6 +192,9 @@ void Storage::ReadOperation::finishReadBlob(BlobStorage::Blob&& blob, MonotonicT
     ASSERT(RunLoop::isMain());
 
     m_waitsForBlob = false;
+    if (blob.data.isNull())
+        return;
+
     m_record.body = WTFMove(blob.data);
     m_blobBodyHash = WTFMove(blob.hash);
     m_timings.blobIOStartTime = blobIOStartTime;
