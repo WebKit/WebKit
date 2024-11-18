@@ -246,6 +246,7 @@ void NetworkProcess::didClose(IPC::Connection&)
     forEachNetworkSession([&](auto& session) {
         platformFlushCookies(session.sessionID(), [callbackAggregator] { });
         session.protectedStorageManager()->syncLocalStorage([callbackAggregator] { });
+        session.notifyAdAttributionKitOfSessionTermination();
     });
 
 #if PLATFORM(COCOA)
