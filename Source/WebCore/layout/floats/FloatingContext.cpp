@@ -326,7 +326,7 @@ std::optional<FloatingContext::PositionWithClearance> FloatingContext::verticalP
 
         // The return vertical position needs to be in the containing block's coordinate system.
         auto& containingBlock = FormattingContext::containingBlock(layoutBox);
-        if (&containingBlock == &m_placedFloats.formattingContextRoot())
+        if (&containingBlock == &m_placedFloats.blockFormattingContextRoot())
             return PositionWithClearance { logicalTopRelativeToPlacedFloatsRoot, clearance };
 
         auto containingBlockTopLeft = BoxGeometry::borderBoxTopLeft(containingBlockGeometries().geometryForBox(containingBlock));
@@ -377,7 +377,7 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
     // 2. Find the inner left/right floats at candidateTop/candidateBottom. Note when MayBeAboveLastFloat is 'no', we can just stop at the inner most (last) float (block vs. inline case).
     // 3. Convert left/right positions back to formattingContextRoot's coordinate system.
     auto& placedFloats = this->placedFloats();
-    auto coordinateMappingIsRequired = &placedFloats.formattingContextRoot() != &root();
+    auto coordinateMappingIsRequired = &placedFloats.blockFormattingContextRoot() != &root();
     auto adjustedCandidateTop = candidateTop;
     LayoutSize adjustingDelta;
     if (coordinateMappingIsRequired) {
@@ -480,7 +480,7 @@ FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTo
             constraints.end->move(-adjustingDelta);
     }
 
-    if (placedFloats.writingMode().isInlineOpposing(root().writingMode())) {
+    if (placedFloats.blockFormattingContextRoot().style().writingMode().isInlineOpposing(root().writingMode())) {
         // FIXME: Move it under coordinateMappingIsRequired when the integration codepath starts initiating the floating state with the
         // correct containing block (i.e. when the float comes from the parent BFC).
 
@@ -557,7 +557,7 @@ FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absolu
     auto& containingBlockGeometry = containingBlockGeometries().geometryForBox(containingBlock);
     auto absoluteTopLeft = mapTopLeftToPlacedFloatsRoot(floatAvoider, borderBoxTopLeft);
 
-    if (&containingBlock == &placedFloats().formattingContextRoot())
+    if (&containingBlock == &placedFloats().blockFormattingContextRoot())
         return { absoluteTopLeft, { }, { containingBlockGeometry.contentBoxLeft(), containingBlockGeometry.contentBoxRight() } };
 
     auto containingBlockAbsoluteTopLeft = mapTopLeftToPlacedFloatsRoot(containingBlock, BoxGeometry::borderBoxTopLeft(containingBlockGeometry));
@@ -567,7 +567,7 @@ FloatingContext::AbsoluteCoordinateValuesForFloatAvoider FloatingContext::absolu
 LayoutPoint FloatingContext::mapTopLeftToPlacedFloatsRoot(const Box& layoutBox, LayoutPoint borderBoxTopLeft) const
 {
     ASSERT(layoutBox.isFloatingPositioned() || layoutBox.isInFlow());
-    auto& placedFloatsRoot = placedFloats().formattingContextRoot();
+    auto& placedFloatsRoot = placedFloats().blockFormattingContextRoot();
     for (auto& containingBlock : containingBlockChain(layoutBox, placedFloatsRoot))
         borderBoxTopLeft.moveBy(BoxGeometry::borderBoxTopLeft(containingBlockGeometries().geometryForBox(containingBlock)));
     return borderBoxTopLeft;
@@ -576,7 +576,7 @@ LayoutPoint FloatingContext::mapTopLeftToPlacedFloatsRoot(const Box& layoutBox, 
 Point FloatingContext::mapPointFromFormattingContextRootToPlacedFloatsRoot(Point position) const
 {
     auto& from = root();
-    auto& to = placedFloats().formattingContextRoot();
+    auto& to = placedFloats().blockFormattingContextRoot();
     if (&from == &to)
         return position;
     auto mappedPosition = position;
@@ -605,9 +605,9 @@ bool FloatingContext::isFloatingCandidateStartPositionedInPlacedFloats(const Box
     // - "float: inline-start" inline left-to-right floating state
     // If the floating state is right-to-left (meaning that the PlacedFloats is constructed by a BFC root with "direction: rtl")
     // visually left positioned floats are logically right (Note that FloatingContext's direction may not be the same as the PlacedFloats's direction
-    // when dealing with inherited PlacedFloatss across nested IFCs).
+    // when dealing with inherited PlacedFloats across nested IFCs).
     auto floatingContextIsLeftToRight = root().writingMode().isBidiLTR();
-    auto placedFloatsIsLeftToRight = m_placedFloats.writingMode().isBidiLTR();
+    auto placedFloatsIsLeftToRight = m_placedFloats.blockFormattingContextRoot().style().writingMode().isBidiLTR();
     if (floatingContextIsLeftToRight == placedFloatsIsLeftToRight)
         return isStartPositioned(floatBox);
 
@@ -634,7 +634,7 @@ Clear FloatingContext::clearInPlacedFloats(const Box& clearBox) const
     else if (clearValue == Clear::InlineEnd)
         clearValue = clearBoxIsInLeftToRightDirection ? Clear::Right : Clear::Left;
 
-    auto floatsAreInLeftToRightDirection = m_placedFloats.writingMode().isBidiLTR();
+    auto floatsAreInLeftToRightDirection = m_placedFloats.blockFormattingContextRoot().style().writingMode().isBidiLTR();
     return (floatsAreInLeftToRightDirection && clearValue == Clear::Left)
         || (!floatsAreInLeftToRightDirection && clearValue == Clear::Right) ? Clear::Left : Clear::Right;
 }

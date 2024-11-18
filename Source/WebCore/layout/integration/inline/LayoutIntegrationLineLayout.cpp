@@ -550,12 +550,12 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
         return;
 
     auto& blockFlow = flow();
-    auto placedFloatsFlow = m_blockFormattingState.placedFloats().writingMode();
+    auto placedFloatsWritingMode = m_blockFormattingState.placedFloats().blockFormattingContextRoot().style().writingMode();
 
     auto visualAdjustmentOffset = [&](auto lineIndex) {
         if (lineAdjustments.isEmpty())
             return LayoutSize { };
-        if (!placedFloatsFlow.isHorizontal())
+        if (!placedFloatsWritingMode.isHorizontal())
             return LayoutSize { lineAdjustments[lineIndex].offset, 0_lu };
         return LayoutSize { 0_lu, lineAdjustments[lineIndex].offset };
     };
@@ -597,7 +597,7 @@ void LineLayout::updateRenderTreePositions(const Vector<LineAdjustment>& lineAdj
             auto isInitialLetter = layoutBox.style().pseudoElementType() == PseudoId::FirstLetter;
             auto& floatingObject = flow().insertFloatingObjectForIFC(renderer);
             auto containerLogicalWidth = m_inlineContentConstraints->visualLeft() + m_inlineContentConstraints->horizontal().logicalWidth + m_inlineContentConstraints->horizontal().logicalLeft;
-            auto [marginBoxVisualRect, borderBoxVisualRect] = toMarginAndBorderBoxVisualRect(logicalGeometry, containerLogicalWidth, placedFloatsFlow);
+            auto [marginBoxVisualRect, borderBoxVisualRect] = toMarginAndBorderBoxVisualRect(logicalGeometry, containerLogicalWidth, placedFloatsWritingMode);
 
             auto paginationOffset = floatPaginationOffsetMap.getOptional(layoutBox);
             if (paginationOffset) {
@@ -666,8 +666,7 @@ void LineLayout::preparePlacedFloats()
     if (!flow().containsFloats())
         return;
 
-    auto placedFloatsWritingMode = flow().containingBlock() ? flow().containingBlock()->style().writingMode() : WritingMode();
-    placedFloats.setWritingMode(placedFloatsWritingMode);
+    auto placedFloatsWritingMode = placedFloats.blockFormattingContextRoot().style().writingMode();
     auto placedFloatsIsLeftToRight = placedFloatsWritingMode.isBidiLTR();
     auto isHorizontalWritingMode = placedFloatsWritingMode.isHorizontal();
     for (auto& floatingObject : *flow().floatingObjectSet()) {
