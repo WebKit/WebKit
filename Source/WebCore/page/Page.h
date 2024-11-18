@@ -1312,6 +1312,9 @@ private:
     void initializeGamepadAccessForPageLoad();
 #endif
 
+    void computeSampledPageTopColorIfNecessary();
+    void clearSampledPageTopColor();
+
     std::optional<PageIdentifier> m_identifier;
     UniqueRef<Chrome> m_chrome;
     UniqueRef<DragCaretController> m_dragCaretController;

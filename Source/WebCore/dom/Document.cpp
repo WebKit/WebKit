@@ -3509,6 +3509,29 @@ void Document::updateHighlightPositions()
     }
 }
 
+#if ENABLE(APP_HIGHLIGHTS)
+void Document::restoreUnrestoredAppHighlights(MonotonicTime renderingUpdateTime)
+{
+    auto appHighlightStorage = appHighlightStorageIfExists();
+    if (!appHighlightStorage)
+        return;
+
+    if (!appHighlightStorage->hasUnrestoredHighlights())
+        return;
+
+    if (appHighlightStorage->shouldRestoreHighlights(renderingUpdateTime)) {
+        eventLoop().queueTask(TaskSource::InternalAsyncTask, [weakDocument = WeakPtr { *this }] {
+            RefPtr document { weakDocument.get() };
+            if (!document)
+                return;
+
+            if (auto* appHighlightStorage = document->appHighlightStorageIfExists())
+                appHighlightStorage->restoreUnrestoredAppHighlights();
+        });
+    }
+}
+#endif
+
 ScriptableDocumentParser* Document::scriptableDocumentParser() const
 {
     return parser() ? parser()->asScriptableDocumentParser() : nullptr;

@@ -1897,6 +1897,8 @@ public:
 
     WEBCORE_EXPORT AppHighlightStorage& appHighlightStorage();
     AppHighlightStorage* appHighlightStorageIfExists() const { return m_appHighlightStorage.get(); };
+
+    void restoreUnrestoredAppHighlights(MonotonicTime renderingUpdateTime);
 #endif
 
     bool allowsContentJavaScript() const;
