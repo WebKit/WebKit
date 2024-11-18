@@ -702,7 +702,7 @@ bool SkContourMeasure::getSegment(SkScalar startD, SkScalar stopD, SkPath* dst,
     return true;
 }
 
-SkContourMeasure::VerbMeasure SkContourMeasure::VerbIterator::operator*() const {
+SkContourMeasure::VerbMeasure SkContourMeasure::ForwardVerbIterator::operator*() const {
     static constexpr size_t seg_pt_count[] = {
         2, // kLine  (current_pt, 1 line pt)
         3, // kQuad  (current_pt, 2 quad pts)
@@ -721,12 +721,12 @@ SkContourMeasure::VerbMeasure SkContourMeasure::VerbIterator::operator*() const 
     static_assert(static_cast<size_t>(kCubic_SegType) < std::size(seg_pt_count));
     static_assert(static_cast<size_t>(kConic_SegType) < std::size(seg_pt_count));
 
-    SkASSERT(SkToSizeT(fSegment->fType) < std::size(seg_pt_count));
-    SkASSERT(fSegment->fPtIndex + seg_pt_count[fSegment->fType] <= fPts.size());
+    SkASSERT(SkToSizeT(fSegments.front().fType) < std::size(seg_pt_count));
+    SkASSERT(fSegments.front().fPtIndex + seg_pt_count[fSegments.front().fType] <= fPts.size());
 
     return {
-        fSegment->fDistance,
-        seg_verb[fSegment->fType],
-        SkSpan(fPts.data() + fSegment->fPtIndex, seg_pt_count[fSegment->fType]),
+        fSegments.front().fDistance,
+        seg_verb[fSegments.front().fType],
+        SkSpan(fPts.data() + fSegments.front().fPtIndex, seg_pt_count[fSegments.front().fType]),
     };
 }

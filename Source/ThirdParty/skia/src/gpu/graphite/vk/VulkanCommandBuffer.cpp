@@ -91,7 +91,7 @@ public:
         uint32_t offset = (fSlotsUsed++) * stride;
         mapPtr = SkTAddOffset<void>(mapPtr, static_cast<ptrdiff_t>(offset));
         memcpy(mapPtr, intrinsicValues.data(), intrinsicValues.size());
-
+        fCurrentBuffer->unmap();
         BindBufferInfo binding{
                 fCurrentBuffer.get(), offset, SkTo<uint32_t>(intrinsicValues.size())};
         fCachedIntrinsicValues.set(UniformDataBlock::Make(intrinsicValues, &fUniformData), binding);
@@ -490,8 +490,16 @@ bool VulkanCommandBuffer::onAddRenderPass(const RenderPassDesc& renderPassDesc,
                                           VK_ACCESS_SHADER_READ_BIT,
                                           VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
                                           false);
-            this->submitPipelineBarriers();
         }
+    }
+    if (fDstCopy.first) {
+        VulkanTexture* vulkanTexture =
+                const_cast<VulkanTexture*>(static_cast<const VulkanTexture*>(fDstCopy.first));
+        vulkanTexture->setImageLayout(this,
+                                      VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL,
+                                      VK_ACCESS_SHADER_READ_BIT,
+                                      VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT,
+                                      false);
     }
 
     if (!this->updateIntrinsicUniforms(viewport)) {
@@ -512,32 +520,6 @@ bool VulkanCommandBuffer::onAddRenderPass(const RenderPassDesc& renderPassDesc,
     }
 
     this->endRenderPass();
-    return true;
-}
-
-bool VulkanCommandBuffer::updateLoadMSAAVertexBuffer() {
-    const Buffer* vertexBuffer = fResourceProvider->loadMSAAVertexBuffer();
-    if (!vertexBuffer) {
-        return false;
-    }
-    const VulkanBuffer* vulkanVertexBuffer = static_cast<const VulkanBuffer*>(vertexBuffer);
-    SkASSERT(vulkanVertexBuffer->bufferUsageFlags() & VK_BUFFER_USAGE_VERTEX_BUFFER_BIT);
-
-    // Determine vertices in NDC. TODO: When only wanting to draw a portion of the resolve
-    // texture, these values will need to be dynamically determined. For now, simply span the
-    // range of NDC since we want to reference the entire resolve texture.
-    static constexpr float kVertices[8] = { 1.f,  1.f,
-                                            1.f, -1.f,
-                                           -1.f,  1.f,
-                                           -1.f, -1.f };
-    this->updateBuffer(vulkanVertexBuffer,
-                       &kVertices,
-                       VulkanResourceProvider::kLoadMSAAVertexBufferSize);
-
-    // Ensure the buffer update is completed and made visible before reading
-    vulkanVertexBuffer->setBufferAccess(this, VK_ACCESS_VERTEX_ATTRIBUTE_READ_BIT,
-                                        VK_PIPELINE_STAGE_VERTEX_INPUT_BIT);
-
     return true;
 }
 
@@ -595,7 +577,8 @@ bool VulkanCommandBuffer::updateAndBindLoadMSAAInputAttachment(const VulkanTextu
 
 bool VulkanCommandBuffer::loadMSAAFromResolve(const RenderPassDesc& renderPassDesc,
                                               VulkanTexture& resolveTexture,
-                                              SkISize dstDimensions) {
+                                              SkISize dstDimensions,
+                                              const SkIRect nativeDrawBounds) {
     sk_sp<VulkanGraphicsPipeline> loadPipeline =
             fResourceProvider->findOrCreateLoadMSAAPipeline(renderPassDesc);
     if (!loadPipeline) {
@@ -609,7 +592,7 @@ bool VulkanCommandBuffer::loadMSAAFromResolve(const RenderPassDesc& renderPassDe
     fBindUniformBuffers = false;
     fBindTextureSamplers = false;
 
-    this->setScissor(/*left=*/0, /*top=*/0, dstDimensions.width(), dstDimensions.height());
+    this->setScissor(SkIRect::MakeXYWH(0, 0, dstDimensions.width(), dstDimensions.height()));
 
     if (!this->updateAndBindLoadMSAAInputAttachment(resolveTexture)) {
         SKGPU_LOG_E("Unable to update and bind an input attachment descriptor for loading MSAA "
@@ -617,11 +600,23 @@ bool VulkanCommandBuffer::loadMSAAFromResolve(const RenderPassDesc& renderPassDe
         return false;
     }
 
-    SkASSERT(fResourceProvider->loadMSAAVertexBuffer());
-    this->bindVertexBuffers(fResourceProvider->loadMSAAVertexBuffer(),
-                            /*vertexOffset=*/0,
-                            /*instanceBuffer=*/nullptr,
-                            /*instanceOffset=*/0);
+    // Update and bind uniform descriptor set
+    int w = nativeDrawBounds.width();
+    int h = nativeDrawBounds.height();
+
+    // dst rect edges in NDC (-1 to 1)
+    int dw = dstDimensions.width();
+    int dh = dstDimensions.height();
+    float dx0 = 2.f * nativeDrawBounds.fLeft / dw - 1.f;
+    float dx1 = 2.f * (nativeDrawBounds.fLeft + w) / dw - 1.f;
+    float dy0 = 2.f * nativeDrawBounds.fTop / dh - 1.f;
+    float dy1 = 2.f * (nativeDrawBounds.fTop + h) / dh - 1.f;
+    float uniData[] = {dx1 - dx0, dy1 - dy0, dx0, dy0};  // posXform
+
+    this->pushConstants(VK_SHADER_STAGE_VERTEX_BIT,
+                        /*offset=*/0,
+                        /*size=*/sizeof(uniData),
+                        uniData);
 
     this->draw(PrimitiveType::kTriangleStrip, /*baseVertex=*/0, /*vertexCount=*/4);
     this->nextSubpass();
@@ -890,7 +885,13 @@ bool VulkanCommandBuffer::beginRenderPass(const RenderPassDesc& renderPassDesc,
                 GetRenderAreaGranularity(fSharedContext->device(),
                                          vulkanRenderPass->renderPass(),
                                          &granularity));
-    VkRect2D renderArea = get_render_area(renderPassBounds,
+
+    bool useFullBounds = loadMSAAFromResolve &&
+                         fSharedContext->vulkanCaps().mustLoadFullImageForMSAA();
+
+    VkRect2D renderArea = get_render_area(useFullBounds ? SkIRect::MakeWH(frameBufferWidth,
+                                                                          frameBufferHeight)
+                                                        : renderPassBounds,
                                           granularity,
                                           frameBufferWidth,
                                           frameBufferHeight);
@@ -905,22 +906,6 @@ bool VulkanCommandBuffer::beginRenderPass(const RenderPassDesc& renderPassDesc,
     beginInfo.clearValueCount = clearValues.size();
     beginInfo.pClearValues = clearValues.begin();
 
-    // If loading MSAA from resolve, we need to update and bind a vertex buffer w/ NDC. This entails
-    // take care of some necessary preparations that must be performed while there is not an active
-    // renderpass.
-    if (loadMSAAFromResolve) {
-        // We manually load the contents of the resolve texture into the MSAA attachment as a draw,
-        // so the MSAA attachment's load op should be LoadOp::kDiscard.
-        SkASSERT(renderPassDesc.fColorAttachment.fLoadOp == LoadOp::kDiscard);
-        SkASSERT(!fActiveRenderPass);
-        SkASSERT(resolveTexture);
-
-        if (!this->updateLoadMSAAVertexBuffer()) {
-            SKGPU_LOG_E("Failed to update vertex buffer for loading MSAA from resolve");
-            return false;
-        }
-    }
-
     // Submit pipeline barriers to ensure any image layout transitions are recorded prior to
     // beginning the render pass.
     this->submitPipelineBarriers();
@@ -931,9 +916,14 @@ bool VulkanCommandBuffer::beginRenderPass(const RenderPassDesc& renderPassDesc,
                                    VK_SUBPASS_CONTENTS_INLINE));
     fActiveRenderPass = true;
 
+    SkIRect nativeBounds = SkIRect::MakeXYWH(renderArea.offset.x,
+                                             renderArea.offset.y,
+                                             renderArea.extent.width,
+                                             renderArea.extent.height);
     if (loadMSAAFromResolve && !this->loadMSAAFromResolve(renderPassDesc,
                                                           *vulkanResolveTexture,
-                                                          vulkanColorTexture->dimensions())) {
+                                                          vulkanColorTexture->dimensions(),
+                                                          nativeBounds)) {
         SKGPU_LOG_E("Failed to load MSAA from resolve");
         this->endRenderPass();
         return false;
@@ -982,8 +972,7 @@ void VulkanCommandBuffer::addDrawPass(const DrawPass* drawPass) {
             }
             case DrawPassCommands::Type::kSetScissor: {
                 auto ss = static_cast<DrawPassCommands::SetScissor*>(cmdPtr);
-                const SkIRect& rect = ss->fScissor;
-                this->setScissor(rect.fLeft, rect.fTop, rect.width(), rect.height());
+                this->setScissor(ss->fScissor);
                 break;
             }
             case DrawPassCommands::Type::kDraw: {
@@ -1382,12 +1371,14 @@ void VulkanCommandBuffer::bindTextureSamplers() {
     }
 }
 
-void VulkanCommandBuffer::setScissor(unsigned int left, unsigned int top, unsigned int width,
-                                     unsigned int height) {
+void VulkanCommandBuffer::setScissor(const Scissor& scissor) {
+    this->setScissor(scissor.getRect(fReplayTranslation, fReplayClip));
+}
+
+void VulkanCommandBuffer::setScissor(const SkIRect& rect) {
     VkRect2D scissor = {
-        {(int32_t)left, (int32_t)top},
-        {width, height}
-    };
+            {rect.x(), rect.y()},
+            {static_cast<unsigned int>(rect.width()), static_cast<unsigned int>(rect.height())}};
     VULKAN_CALL(fSharedContext->interface(),
                 CmdSetScissor(fPrimaryCommandBuffer,
                               /*firstScissor=*/0,
@@ -1660,6 +1651,26 @@ bool VulkanCommandBuffer::onCopyTextureToTexture(const Texture* src,
                              /*regionCount=*/1,
                              &copyRegion));
 
+    return true;
+}
+
+
+bool VulkanCommandBuffer::pushConstants(VkShaderStageFlags stageFlags,
+                                        uint32_t offset,
+                                        uint32_t size,
+                                        const void* values) {
+    SkASSERT(fActiveGraphicsPipeline);
+    // offset and size must be a multiple of 4
+    SkASSERT(!SkToBool(offset & 0x3));
+    SkASSERT(!SkToBool(size & 0x3));
+
+    VULKAN_CALL(fSharedContext->interface(),
+                CmdPushConstants(fPrimaryCommandBuffer,
+                                 fActiveGraphicsPipeline->layout(),
+                                 stageFlags,
+                                 offset,
+                                 size,
+                                 values));
     return true;
 }
 

@@ -372,7 +372,7 @@ DEF_TEST(contour_measure_verbs, reporter) {
     sk_sp<SkContourMeasure> cmeasure = measure.next();
     REPORTER_ASSERT(reporter, cmeasure);
 
-    SkContourMeasure::VerbIterator viter = cmeasure->begin();
+    SkContourMeasure::ForwardVerbIterator viter = cmeasure->begin();
     {
         REPORTER_ASSERT(reporter, viter != cmeasure->end());
         const auto vmeasure = *viter;
@@ -399,7 +399,7 @@ DEF_TEST(contour_measure_verbs, reporter) {
         REPORTER_ASSERT(reporter, viter != cmeasure->end());
         const auto vmeasure = *viter;
         REPORTER_ASSERT(reporter, vmeasure.fVerb == SkPathVerb::kQuad);
-        REPORTER_ASSERT(reporter, SkScalarNearlyEqual(vmeasure.fDistance, 44.419418f));
+        REPORTER_ASSERT(reporter, SkScalarNearlyEqual(vmeasure.fDistance, 56.127525f));
         REPORTER_ASSERT(reporter, vmeasure.fPts.size() == 3);
         REPORTER_ASSERT(reporter, vmeasure.fPts[0] == SkPoint::Make(30, 30));
         REPORTER_ASSERT(reporter, vmeasure.fPts[1] == SkPoint::Make(40, 30));
@@ -411,7 +411,7 @@ DEF_TEST(contour_measure_verbs, reporter) {
         REPORTER_ASSERT(reporter, viter != cmeasure->end());
         const auto vmeasure = *viter;
         REPORTER_ASSERT(reporter, vmeasure.fVerb == SkPathVerb::kCubic);
-        REPORTER_ASSERT(reporter, SkScalarNearlyEqual(vmeasure.fDistance, 59.436790f));
+        REPORTER_ASSERT(reporter, SkScalarNearlyEqual(vmeasure.fDistance, 76.004692f));
         REPORTER_ASSERT(reporter, vmeasure.fPts.size() == 4);
         REPORTER_ASSERT(reporter, vmeasure.fPts[0] == SkPoint::Make(40, 40));
         REPORTER_ASSERT(reporter, vmeasure.fPts[1] == SkPoint::Make(50, 40));
@@ -424,12 +424,15 @@ DEF_TEST(contour_measure_verbs, reporter) {
         REPORTER_ASSERT(reporter, viter != cmeasure->end());
         const auto vmeasure = *viter;
         REPORTER_ASSERT(reporter, vmeasure.fVerb == SkPathVerb::kConic);
-        REPORTER_ASSERT(reporter, SkScalarNearlyEqual(vmeasure.fDistance, 80.807449f));
+        REPORTER_ASSERT(reporter, SkScalarNearlyEqual(vmeasure.fDistance, 92.428185f));
         REPORTER_ASSERT(reporter, vmeasure.fPts.size() == 4);
         REPORTER_ASSERT(reporter, vmeasure.fPts[0] == SkPoint::Make(40, 50));
         REPORTER_ASSERT(reporter, vmeasure.fPts[1] == SkPoint::Make(1.2f, 0));
         REPORTER_ASSERT(reporter, vmeasure.fPts[2] == SkPoint::Make(50, 50));
         REPORTER_ASSERT(reporter, vmeasure.fPts[3] == SkPoint::Make(50, 60));
+
+        // The last verb distance should also match the contour length.
+        REPORTER_ASSERT(reporter, SkScalarNearlyEqual(vmeasure.fDistance, cmeasure->length()));
     }
 
     ++viter;

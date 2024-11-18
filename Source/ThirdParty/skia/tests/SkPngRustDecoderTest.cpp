@@ -139,12 +139,7 @@ void AssertSingleGreenFrame(skiatest::Reporter* r,
     AssertGreenPixel(r, pixmap, expectedWidth / 2, expectedHeight / 2);
 }
 
-sk_sp<SkImage> DecodeLastFrame(skiatest::Reporter* r, const char* resourcePath) {
-    std::unique_ptr<SkCodec> codec = SkPngRustDecoderDecode(r, resourcePath);
-    if (!codec) {
-        return nullptr;
-    }
-
+sk_sp<SkImage> DecodeLastFrame(skiatest::Reporter* r, SkCodec* codec) {
     int frameCount = codec->getFrameCount();
     sk_sp<SkImage> image;
     SkCodec::Result result = SkCodec::kSuccess;
@@ -180,6 +175,15 @@ sk_sp<SkImage> DecodeLastFrame(skiatest::Reporter* r, const char* resourcePath) 
     }
 
     return image;
+}
+
+sk_sp<SkImage> DecodeLastFrame(skiatest::Reporter* r, const char* resourcePath) {
+    std::unique_ptr<SkCodec> codec = SkPngRustDecoderDecode(r, resourcePath);
+    if (!codec) {
+        return nullptr;
+    }
+
+    return DecodeLastFrame(r, codec.get());
 }
 
 void AssertAnimationRepetitionCount(skiatest::Reporter* r,
@@ -447,8 +451,12 @@ DEF_TEST(Codec_apng_dispose_op_none_basic_incomplete_input2, r) {
 // Test based on
 // https://philip.html5.org/tests/apng/tests.html#apng-blend-op-source-on-solid-colour
 DEF_TEST(Codec_apng_blend_ops_source_on_solid, r) {
-    sk_sp<SkImage> image =
-            DecodeLastFrame(r, "images/apng-test-suite--blend-ops--source-on-solid.png");
+    std::unique_ptr<SkCodec> codec =
+            SkPngRustDecoderDecode(r, "images/apng-test-suite--blend-ops--source-on-solid.png");
+    if (!codec) {
+        return;
+    }
+    sk_sp<SkImage> image = DecodeLastFrame(r, codec.get());
     if (!image) {
         return;
     }
@@ -456,6 +464,11 @@ DEF_TEST(Codec_apng_blend_ops_source_on_solid, r) {
     SkPixmap pixmap;
     REPORTER_ASSERT(r, image->peekPixels(&pixmap));
     AssertGreenPixel(r, pixmap, 0, 0);
+
+    SkCodec::FrameInfo info;
+    REPORTER_ASSERT(r, codec->getFrameInfo(1, &info));
+    REPORTER_ASSERT(r, info.fBlend == SkCodecAnimation::Blend::kSrc);
+    REPORTER_ASSERT(r, info.fRequiredFrame == SkCodec::kNoFrame);
 }
 
 // Test based on
@@ -592,4 +605,23 @@ DEF_TEST(Codec_png_swizzling_target_unimplemented, r) {
     auto [image, result] = codec->getImage(dstInfo);
     REPORTER_ASSERT(r, result == SkCodec::kUnimplemented);
     REPORTER_ASSERT(r, !image);
+}
+
+DEF_TEST(Codec_png_was_encoded_with_16_bits_or_more_per_component, r) {
+    struct Test {
+        const char* fFilename;
+        bool fEncodedWith16bits;
+    };
+    const std::array<Test, 4> kTests = {
+            Test{"images/pngsuite/basn0g04.png", false},  // 4 bit (16 level) grayscale
+            Test{"images/pngsuite/basn2c08.png", false},  // 3x8 bits rgb color
+            Test{"images/pngsuite/basn2c16.png", true},   // 3x16 bits rgb color
+            Test{"images/pngsuite/basn3p01.png", false}   // 1 bit (2 color) paletted
+    };
+    for (const auto& test : kTests) {
+        std::unique_ptr<SkCodec> codec = SkPngRustDecoderDecode(r, test.fFilename);
+        if (codec) {
+            REPORTER_ASSERT(r, codec->hasHighBitDepthEncodedData() == test.fEncodedWith16bits);
+        }
+    }
 }

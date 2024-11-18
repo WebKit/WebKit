@@ -41,6 +41,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <limits>
 
 namespace skif {
 
@@ -1064,7 +1065,7 @@ static bool compatible_sampling(const SkSamplingOptions& currentSampling,
 }
 
 FilterResult FilterResult::applyTransform(const Context& ctx,
-                                          const LayerSpace<SkMatrix> &transform,
+                                          const LayerSpace<SkMatrix>& transform,
                                           const SkSamplingOptions &sampling) const {
     if (!fImage || ctx.desiredOutput().isEmpty()) {
         // Transformed transparent black remains transparent black.
@@ -1695,9 +1696,17 @@ FilterResult FilterResult::rescale(const Context& ctx,
     }
 
     srcRect = srcRect.relevantSubset(ctx.desiredOutput(), tileMode);
-    if (srcRect.isEmpty()) {
+    // To avoid incurring error from rounding up the dimensions at every step, the logical size of
+    // the image is tracked in floats through the whole process; rounding to integers is only done
+    // to produce a conservative pixel buffer and clamp-tiling is used so that partially covered
+    // pixels are filled with the un-weighted color.
+    PixelSpace<SkRect> stepBoundsF{srcRect};
+    if (stepBoundsF.isEmpty()) {
         return {};
     }
+    // stepPixelBounds holds integer pixel values (as floats) and includes any padded outsetting
+    // that was rendered by the previous step, while stepBoundsF does not have any padding.
+    PixelSpace<SkRect> stepPixelBounds{srcRect};
 
     // If we made it here, at least one iteration is required, even if xSteps and ySteps are 0.
     FilterResult image = *this;
@@ -1705,9 +1714,13 @@ FilterResult FilterResult::rescale(const Context& ctx,
         // If the source image has a deferred transform with a downscaling factor, we don't want to
         // necessarily compose the first rescale step's transform with it because we will then be
         // missing pixels in the bilinear filtering and create sampling artifacts during animations.
+        // NOTE: Force nextSteps counts to the max integer value when the accumulated scale factor
+        // is not finite, to force the input image to be resolved.
         LayerSpace<SkSize> netScale = image.fTransform.mapSize(scale);
-        int nextXSteps = downscale_step_count(netScale.width());
-        int nextYSteps = downscale_step_count(netScale.height());
+        int nextXSteps = std::isfinite(netScale.width()) ? downscale_step_count(netScale.width())
+                                                         : std::numeric_limits<int>::max();
+        int nextYSteps = std::isfinite(netScale.height()) ? downscale_step_count(netScale.height())
+                                                          : std::numeric_limits<int>::max();
         // We only need to resolve the deferred transform if the rescaling along an axis is not
         // near identity (steps > 0). If it's near identity, there's no real difference in sampling
         // between resolving here and deferring it to the first rescale iteration.
@@ -1726,15 +1739,6 @@ FilterResult FilterResult::rescale(const Context& ctx,
             } // else leave it as kDecal when cfBorder is true
         }
     }
-
-    // To avoid incurring error from rounding up the dimensions at every step, the logical size of
-    // the image is tracked in floats through the whole process; rounding to integers is only done
-    // to produce a conservative pixel buffer and clamp-tiling is used so that partially covered
-    // pixels are filled with the un-weighted color.
-    PixelSpace<SkRect> stepBoundsF{srcRect};
-    // stepPixelBounds holds integer pixel values (as floats) and includes any padded outsetting
-    // that was rendered by the previous step, while stepBoundsF does not have any padding.
-    PixelSpace<SkRect> stepPixelBounds{srcRect};
 
     // For now, if we are deferring periodic tiling, we need to ensure that the low-res image bounds
     // are pixel aligned. This is because the tiling is applied at the pixel level in SkImageShader,
@@ -2161,14 +2165,13 @@ FilterResult FilterResult::Builder::blur(const LayerSpace<SkSize>& sigma) {
              !algorithm->supportsOnlyDecalTiling());
 
     // Map 'sigma' into the low-res image's pixel space to determine the low-res blur params to pass
-    // into the blur engine.
-    PixelSpace<SkMatrix> layerToLowRes;
-    SkAssertResult(lowResImage.fTransform.invert(&layerToLowRes));
-    PixelSpace<SkSize> lowResSigma = layerToLowRes.mapSize(sigma);
-    // The layerToLowRes mapped size should be <= maxSigma, but clamp it just in case floating point
-    // error made it slightly higher.
-    lowResSigma = PixelSpace<SkSize>{{std::min(algorithm->maxSigma(), lowResSigma.width()),
-                                      std::min(algorithm->maxSigma(), lowResSigma.height())}};
+    // into the blur engine. This relies on rescale() producing an image with a scale+translate
+    // transform, so it's possible to derive the inverse scale factors directly. We also clamp to
+    // be <= maxSigma just in case floating point error made it slightly higher.
+    const float invScaleX = sk_ieee_float_divide(1.f, lowResImage.fTransform.rc(0,0));
+    const float invScaleY = sk_ieee_float_divide(1.f, lowResImage.fTransform.rc(1,1));
+    PixelSpace<SkSize> lowResSigma{{std::min(sigma.width() * invScaleX, algorithm->maxSigma()),
+                                    std::min(sigma.height()* invScaleY, algorithm->maxSigma())}};
     PixelSpace<SkIRect> lowResMaxOutput{SkISize{lowResImage.fImage->width(),
                                                 lowResImage.fImage->height()}};
 
@@ -2181,7 +2184,7 @@ FilterResult FilterResult::Builder::blur(const LayerSpace<SkSize>& sigma) {
     } else {
         // For decal and clamp tiling, the blurred image stops being interesting outside the radii
         // outset, so redo the max output analysis with the 'outputBounds' mapped into pixel space.
-        srcRelativeOutput = layerToLowRes.mapRect(outputBounds);
+        SkAssertResult(lowResImage.fTransform.inverseMapRect(outputBounds, &srcRelativeOutput));
 
         // NOTE: Since 'lowResMaxOutput' is based on the actual image and deferred tiling, this can
         // be smaller than the pessimistic filling for a clamp-tiled blur.
@@ -2205,6 +2208,9 @@ FilterResult FilterResult::Builder::blur(const LayerSpace<SkSize>& sigma) {
         lowResImage.canClampToTransparentBoundary(BoundsAnalysis::kSimple)) {
         // Have to manage this manually since the BlurEngine isn't aware of the known pixel padding.
         lowResBlur = lowResBlur->makePixelOutset();
+        // This offset() is intentional; `blurOutputBounds` already includes an outset from an
+        // earlier modification of `srcRelativeOutput`. This offset is to align the SkBlurAlgorithm
+        // output bounds with the adjusted source image.
         blurOutputBounds.offset(1, 1);
         tileMode = SkTileMode::kClamp;
     }
@@ -2214,6 +2220,12 @@ FilterResult FilterResult::Builder::blur(const LayerSpace<SkSize>& sigma) {
                                  SkIRect::MakeSize(lowResBlur->dimensions()),
                                  tileMode,
                                  blurOutputBounds);
+    if (!lowResBlur) {
+        // The blur output bounds may exceed max texture size even if the source image did not.
+        // TODO(b/377932106): Can we handle this more gracefully by rendering a smaller image and
+        // then transforming it to fill the large space?
+        return {};
+    }
 
     FilterResult result{std::move(lowResBlur), srcRelativeOutput.topLeft()};
     if (lowResImage.tileMode() == SkTileMode::kClamp ||

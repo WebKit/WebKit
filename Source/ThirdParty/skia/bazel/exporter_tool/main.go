@@ -273,6 +273,11 @@ var gniExportDescs = []exporter.GNIExportDesc{
 				"//src/ports:typeface_fontations_hdrs",
 				"//src/ports:typeface_fontations_srcs",
 			}},
+		{Var: "skia_ports_typeface_proxy_sources",
+			Rules: []string{
+				"//src/ports:typeface_proxy_hdrs",
+				"//src/ports:typeface_proxy_srcs",
+			}},
 		{Var: "skia_ports_windows_sources",
 			Rules: []string{
 				"//src/ports:osfile_win",
@@ -310,7 +315,6 @@ var gniExportDescs = []exporter.GNIExportDesc{
 	{GNI: "gn/sksl.gni", Vars: []exporter.GNIFileListExportDesc{
 		{Var: "skia_sksl_core_sources",
 			Rules: []string{
-				"//include/private:sksl_private_hdrs",
 				"//include/sksl:core_hdrs",
 				"//src/sksl/analysis:analysis_hdrs",
 				"//src/sksl/analysis:analysis_srcs",
@@ -355,6 +359,8 @@ var gniExportDescs = []exporter.GNIExportDesc{
 			}},
 		{Var: "skia_sksl_codegen_sources",
 			Rules: []string{
+				"//src/sksl/codegen:codegen_shared_exported",
+				"//src/sksl/codegen:codegen_shared_priv",
 				"//src/sksl/codegen:glsl",
 				"//src/sksl/codegen:metal",
 				"//src/sksl/codegen:spirv",

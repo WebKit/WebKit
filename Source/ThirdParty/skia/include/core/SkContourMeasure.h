@@ -13,8 +13,10 @@
 #include "include/core/SkScalar.h"
 #include "include/core/SkSpan.h"
 #include "include/private/base/SkAPI.h"
+#include "include/private/base/SkAssert.h"
 #include "include/private/base/SkTDArray.h"
 
+#include <cstddef>
 #include <memory>
 
 class SkMatrix;
@@ -77,27 +79,58 @@ public:
      *     ...
      *   }
      */
-    class VerbIterator final {
+    class ForwardVerbIterator final {
     public:
-        VerbIterator(const Segment* seg, SkSpan<const SkPoint> pts) : fSegment(seg), fPts(pts) {}
-
         VerbMeasure operator*() const;
 
-        VerbIterator& operator++() { fSegment = Segment::Next(fSegment); return *this; }
+        ForwardVerbIterator& operator++() {
+            SkASSERT(!fSegments.empty());
 
-        bool operator==(const VerbIterator& other) { return fSegment == other.fSegment; }
-        bool operator!=(const VerbIterator& other) { return fSegment != other.fSegment; }
+            fSegments = LastSegForCurrentVerb(fSegments.subspan(1));
+
+            return *this;
+        }
+
+        bool operator==(const ForwardVerbIterator& other) {
+            SkASSERT(fSegments.data() != other.fSegments.data() ||
+                     fSegments.size() == other.fSegments.size());
+            return fSegments.data() == other.fSegments.data();
+        }
+
+        bool operator!=(const ForwardVerbIterator& other) {
+            return !((*this) == other);
+        }
 
     private:
-        const SkContourMeasure::Segment* fSegment;
-        const SkSpan<const SkPoint>      fPts;
+        friend class SkContourMeasure;
+
+        ForwardVerbIterator(SkSpan<const Segment> segs, SkSpan<const SkPoint> pts)
+            : fSegments(LastSegForCurrentVerb(segs))
+            , fPts(pts) {}
+
+        static SkSpan<const Segment> LastSegForCurrentVerb(const SkSpan<const Segment>& segs) {
+            size_t i = 1;
+            while (i < segs.size() && segs[0].fPtIndex == segs[i].fPtIndex) {
+                ++i;
+            }
+
+            return segs.subspan(i - 1);
+        }
+
+        // Remaining segments for forward iteration. The first segment in the span is
+        // adjusted to always point to the last segment of the current verb, such that its distance
+        // corresponds to the verb distance.
+        SkSpan<const Segment> fSegments;
+
+        // All path points (indexed in segments).
+        SkSpan<const SkPoint> fPts;
     };
 
-    VerbIterator begin() const {
-        return VerbIterator(fSegments.begin(), SkSpan(fPts.data(), fPts.size()));
+    ForwardVerbIterator begin() const {
+        return ForwardVerbIterator(fSegments, fPts);
     }
-    VerbIterator end() const {
-        return VerbIterator(fSegments.end(), SkSpan(fPts.data(), fPts.size()));
+    ForwardVerbIterator end() const {
+        return ForwardVerbIterator(SkSpan(fSegments.end(), 0), fPts);
     }
 
 private:
