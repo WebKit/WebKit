@@ -2136,25 +2136,6 @@ webkit.org/b/218010 imported/w3c/web-platform-tests/webaudio/the-audio-api/the-a
 
 webkit.org/b/264729 imported/w3c/web-platform-tests/fetch/metadata/generated/audioworklet.https.sub.html [ Pass Crash DumpJSConsoleLogInStdErr ]
 
-webkit.org/b/282331 [ Debug ] http/wpt/webaudio/the-audio-api/the-audioworklet-interface/audioworklet-postmessage-message-port.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-self/worklet-paint-import-data.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/script-src-wildcard/worklet-paint-import-data.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-none/worklet-paint-import-data.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worklet-audio-import-data.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-self/worklet-layout-import-data.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/gen/top.http-rp/worker-src-wildcard/worklet-paint-import-data.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-self/worklet-layout.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/script-src-wildcard/worklet-audio.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-none/worklet-layout-import-data.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-self/worklet-audio.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/content-security-policy/gen/top.meta/worker-src-wildcard/worklet-audio.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/mixed-content/gen/top.http-rp/opt-in/worklet-layout-import-data.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/mixed-content/gen/top.meta/opt-in/worklet-paint-import-data.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/mixed-content/gen/top.meta/unset/worklet-layout-import-data.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/iframe-blank-inherit.meta/unset/worklet-audio.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/iframe-blank-inherit.meta/upgrade/worklet-audio.https.html [ Crash ]
-webkit.org/b/282331 [ Debug ] imported/w3c/web-platform-tests/upgrade-insecure-requests/gen/srcdoc-inherit.meta/unset/worklet-audio.https.html [ Crash ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of WebAudio-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////
