@@ -247,6 +247,7 @@ private:
     bool m_respondsToDuplicate : 1 { false };
     bool m_respondsToClose : 1 { false };
     bool m_respondsToShouldGrantTabPermissionsOnUserGesture : 1 { false };
+    bool m_respondsToShouldBypassPermissions : 1 { false };
 };
 
 } // namespace WebKit

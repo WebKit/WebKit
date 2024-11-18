@@ -89,6 +89,7 @@ WebExtensionTab::WebExtensionTab(const WebExtensionContext& context, WKWebExtens
     , m_respondsToDuplicate([delegate respondsToSelector:@selector(duplicateUsingConfiguration:forWebExtensionContext:completionHandler:)])
     , m_respondsToClose([delegate respondsToSelector:@selector(closeForWebExtensionContext:completionHandler:)])
     , m_respondsToShouldGrantTabPermissionsOnUserGesture([delegate respondsToSelector:@selector(shouldGrantPermissionsOnUserGestureForWebExtensionContext:)])
+    , m_respondsToShouldBypassPermissions([delegate respondsToSelector:@selector(shouldBypassPermissionsForWebExtensionContext:)])
 {
     // Access to cache the result early, when the window is associated.
     isPrivate();
@@ -251,6 +252,9 @@ bool WebExtensionTab::extensionHasAccess() const
 bool WebExtensionTab::extensionHasPermission() const
 {
     ASSERT(extensionHasAccess());
+
+    if (m_respondsToShouldBypassPermissions && [m_delegate shouldBypassPermissionsForWebExtensionContext:m_extensionContext->wrapper()])
+        return true;
 
     return extensionContext()->hasPermission(url(), const_cast<WebExtensionTab*>(this));
 }

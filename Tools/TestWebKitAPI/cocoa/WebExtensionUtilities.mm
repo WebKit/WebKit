@@ -580,6 +580,11 @@ static WKUserContentController *userContentController(BOOL usingPrivateBrowsing)
     });
 }
 
+- (BOOL)shouldBypassPermissionsForWebExtensionContext:(WKWebExtensionContext *)context
+{
+    return _shouldBypassPermissions;
+}
+
 @end
 
 @implementation TestWebExtensionWindow {
