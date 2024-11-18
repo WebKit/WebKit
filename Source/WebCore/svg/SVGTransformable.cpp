@@ -30,13 +30,11 @@
 #include <wtf/text/StringParsingBuffer.h>
 #include <wtf/text/StringView.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 SVGTransformable::~SVGTransformable() = default;
 
-template<typename CharacterType> static int parseTransformParamList(StringParsingBuffer<CharacterType>& buffer, float* values, int required, int optional)
+template<typename CharacterType> static int parseTransformParamList(StringParsingBuffer<CharacterType>& buffer, std::span<float, 6> values, int required, int optional)
 {
     int optionalParams = 0, requiredParams = 0;
     
@@ -98,8 +96,8 @@ template<typename CharacterType> static int parseTransformParamList(StringParsin
 }
 
 // These should be kept in sync with enum SVGTransformType
-static constexpr int requiredValuesForType[] =  { 0, 6, 1, 1, 1, 1, 1 };
-static constexpr int optionalValuesForType[] =  { 0, 0, 1, 1, 2, 0, 0 };
+static constexpr std::array requiredValuesForType { 0, 6, 1, 1, 1, 1, 1 };
+static constexpr std::array optionalValuesForType { 0, 0, 1, 1, 2, 0, 0 };
 
 template<typename CharacterType> static std::optional<SVGTransformValue> parseTransformValueGeneric(SVGTransformValue::SVGTransformType type, StringParsingBuffer<CharacterType>& buffer)
 {
@@ -107,7 +105,7 @@ template<typename CharacterType> static std::optional<SVGTransformValue> parseTr
         return std::nullopt;
 
     int valueCount = 0;
-    float values[] = { 0, 0, 0, 0, 0, 0 };
+    std::array<float, 6> values { 0, 0, 0, 0, 0, 0 };
     if ((valueCount = parseTransformParamList(buffer, values, requiredValuesForType[type], optionalValuesForType[type])) < 0)
         return std::nullopt;
 
@@ -214,5 +212,3 @@ std::optional<SVGTransformValue::SVGTransformType> SVGTransformable::parseTransf
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

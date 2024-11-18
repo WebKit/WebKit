@@ -205,8 +205,8 @@ void PathSkia::addPath(const PathSkia& path, const AffineTransform& transform)
 
 bool PathSkia::applyElements(const PathElementApplier& applier) const
 {
-    auto convertPoints = [](FloatPoint dst[], const SkPoint src[], int count) {
-        for (int i = 0; i < count; i++) {
+    auto convertPoints = [](std::span<FloatPoint, 3> dst, const SkPoint src[], int count) {
+        for (int i = 0; i < count; ++i) {
             dst[i].setX(SkScalarToFloat(src[i].fX));
             dst[i].setY(SkScalarToFloat(src[i].fY));
         }

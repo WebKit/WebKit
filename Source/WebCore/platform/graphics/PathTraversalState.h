@@ -42,7 +42,7 @@ public:
     PathTraversalState(Action, float desiredLength = 0);
 
 public:
-    bool processPathElement(PathElement::Type, const FloatPoint*);
+    bool processPathElement(PathElement::Type, std::span<const FloatPoint>);
     bool processPathElement(const PathElement& element) { return processPathElement(element.type, element.points); }
 
     Action action() const { return m_action; }
@@ -64,7 +64,7 @@ private:
     void cubicBezierTo(const FloatPoint&, const FloatPoint&, const FloatPoint&);
 
     bool finalizeAppendPathElement();
-    bool appendPathElement(PathElement::Type, const FloatPoint*);
+    bool appendPathElement(PathElement::Type, std::span<const FloatPoint>);
 
 private:
     Action m_action;

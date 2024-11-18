@@ -228,7 +228,7 @@ bool PathTraversalState::finalizeAppendPathElement()
     return m_success;
 }
 
-bool PathTraversalState::appendPathElement(PathElement::Type type, const FloatPoint* points)
+bool PathTraversalState::appendPathElement(PathElement::Type type, std::span<const FloatPoint> points)
 {
     switch (type) {
     case PathElement::Type::MoveToPoint:
@@ -251,7 +251,7 @@ bool PathTraversalState::appendPathElement(PathElement::Type type, const FloatPo
     return finalizeAppendPathElement();
 }
 
-bool PathTraversalState::processPathElement(PathElement::Type type, const FloatPoint* points)
+bool PathTraversalState::processPathElement(PathElement::Type type, std::span<const FloatPoint> points)
 {
     if (m_success)
         return true;

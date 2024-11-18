@@ -23,8 +23,6 @@
 #include "SVGPathByteStream.h"
 #include "SVGPathSource.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 class SVGPathByteStreamSource final : public SVGPathSource {
@@ -56,9 +54,11 @@ private:
         DataType data;
         size_t dataSize = sizeof(DataType);
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         ASSERT_WITH_SECURITY_IMPLICATION(m_streamCurrent + dataSize <= m_streamEnd);
         memcpy(&data, m_streamCurrent, dataSize);
         m_streamCurrent += dataSize;
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return data;
     }
 
@@ -88,5 +88,3 @@ private:
 };
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
