@@ -682,9 +682,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXPropertyName property)
     case AXPropertyName::CanSetSelectedAttribute:
         stream << "CanSetSelectedAttribute";
         break;
-    case AXPropertyName::CanSetSelectedChildren:
-        stream << "CanSetSelectedChildren";
-        break;
     case AXPropertyName::CanSetValueAttribute:
         stream << "CanSetValueAttribute";
         break;
@@ -836,9 +833,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXPropertyName property)
         break;
     case AXPropertyName::IsColumnHeader:
         stream << "IsColumnHeader";
-        break;
-    case AXPropertyName::IsControl:
-        stream << "IsControl";
         break;
     case AXPropertyName::IsEnabled:
         stream << "IsEnabled";
@@ -1160,9 +1154,6 @@ TextStream& operator<<(WTF::TextStream& stream, AXPropertyName property)
         break;
     case AXPropertyName::SupportsRangeValue:
         stream << "SupportsRangeValue";
-        break;
-    case AXPropertyName::SupportsRequiredAttribute:
-        stream << "SupportsRequiredAttribute";
         break;
     case AXPropertyName::SupportsSetSize:
         stream << "SupportsSetSize";

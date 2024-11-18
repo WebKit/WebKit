@@ -135,7 +135,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
 
     setProperty(AXPropertyName::IsAttachment, object.isAttachment());
     setProperty(AXPropertyName::IsBusy, object.isBusy());
-    setProperty(AXPropertyName::IsControl, object.isControl());
     setProperty(AXPropertyName::IsEnabled, object.isEnabled());
     setProperty(AXPropertyName::IsExpanded, object.isExpanded());
     setProperty(AXPropertyName::IsFileUploadButton, object.isFileUploadButton());
@@ -152,13 +151,9 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::RolePlatformString, object.rolePlatformString().isolatedCopy());
     setProperty(AXPropertyName::RoleValue, static_cast<int>(object.roleValue()));
     setProperty(AXPropertyName::SubrolePlatformString, object.subrolePlatformString().isolatedCopy());
-    setProperty(AXPropertyName::SupportsDatetimeAttribute, object.supportsDatetimeAttribute());
-    setProperty(AXPropertyName::DatetimeAttributeValue, object.datetimeAttributeValue().isolatedCopy());
     setProperty(AXPropertyName::CanSetFocusAttribute, object.canSetFocusAttribute());
     setProperty(AXPropertyName::CanSetValueAttribute, object.canSetValueAttribute());
-    setProperty(AXPropertyName::SupportsRequiredAttribute, object.supportsRequiredAttribute());
     setProperty(AXPropertyName::CanSetSelectedAttribute, object.canSetSelectedAttribute());
-    setProperty(AXPropertyName::CanSetSelectedChildren, object.canSetSelectedChildren());
     setProperty(AXPropertyName::BlockquoteLevel, object.blockquoteLevel());
     setProperty(AXPropertyName::HeadingLevel, object.headingLevel());
     setProperty(AXPropertyName::ValueDescription, object.valueDescription().isolatedCopy());
@@ -176,21 +171,10 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     // Don't cache ID when logging is disabled because we don't expect non-test AX clients to actually request it.
     setProperty(AXPropertyName::IdentifierAttribute, object.identifierAttribute().isolatedCopy());
 #endif
-    setProperty(AXPropertyName::CurrentState, static_cast<int>(object.currentState()));
-    setProperty(AXPropertyName::SupportsCurrent, object.supportsCurrent());
-    setProperty(AXPropertyName::SupportsKeyShortcuts, object.supportsKeyShortcuts());
-    setProperty(AXPropertyName::KeyShortcuts, object.keyShortcuts().isolatedCopy());
-    setProperty(AXPropertyName::SupportsSetSize, object.supportsSetSize());
-    setProperty(AXPropertyName::SupportsPath, object.supportsPath());
-    setProperty(AXPropertyName::SupportsPosInSet, object.supportsPosInSet());
-    setProperty(AXPropertyName::SetSize, object.setSize());
-    setProperty(AXPropertyName::PosInSet, object.posInSet());
     setProperty(AXPropertyName::SupportsDropping, object.supportsDropping());
     setProperty(AXPropertyName::SupportsDragging, object.supportsDragging());
     setProperty(AXPropertyName::IsGrabbed, object.isGrabbed());
     setProperty(AXPropertyName::PlaceholderValue, object.placeholderValue().isolatedCopy());
-    setProperty(AXPropertyName::ExpandedTextValue, object.expandedTextValue().isolatedCopy());
-    setProperty(AXPropertyName::SupportsExpandedTextValue, object.supportsExpandedTextValue());
     setProperty(AXPropertyName::ValueAutofillButtonType, static_cast<int>(object.valueAutofillButtonType()));
     setProperty(AXPropertyName::URL, std::make_shared<URL>(object.url().isolatedCopy()));
     setProperty(AXPropertyName::AccessKey, object.accessKey().isolatedCopy());
@@ -202,7 +186,6 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::LiveRegionStatus, object.liveRegionStatus().isolatedCopy());
     setProperty(AXPropertyName::LiveRegionRelevant, object.liveRegionRelevant().isolatedCopy());
     setProperty(AXPropertyName::LiveRegionAtomic, object.liveRegionAtomic());
-    setProperty(AXPropertyName::Path, std::make_shared<Path>(object.elementPath()));
     setProperty(AXPropertyName::HasHighlighting, object.hasHighlighting());
     setProperty(AXPropertyName::HasBoldFont, object.hasBoldFont());
     setProperty(AXPropertyName::HasItalicFont, object.hasItalicFont());
@@ -229,6 +212,41 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
         setProperty(AXPropertyName::RelativeFrame, IntRect());
     } else
         setProperty(AXPropertyName::InitialFrameRect, object.frameRect());
+
+    if (object.supportsPath()) {
+        setProperty(AXPropertyName::SupportsPath, true);
+        setProperty(AXPropertyName::Path, std::make_shared<Path>(object.elementPath()));
+    }
+
+    if (object.supportsKeyShortcuts()) {
+        setProperty(AXPropertyName::SupportsKeyShortcuts, true);
+        setProperty(AXPropertyName::KeyShortcuts, object.keyShortcuts().isolatedCopy());
+    }
+
+    if (object.supportsCurrent()) {
+        setProperty(AXPropertyName::SupportsCurrent, true);
+        setProperty(AXPropertyName::CurrentState, static_cast<int>(object.currentState()));
+    }
+
+    if (object.supportsSetSize()) {
+        setProperty(AXPropertyName::SupportsSetSize, true);
+        setProperty(AXPropertyName::SetSize, object.setSize());
+    }
+
+    if (object.supportsPosInSet()) {
+        setProperty(AXPropertyName::SupportsPosInSet, true);
+        setProperty(AXPropertyName::PosInSet, object.posInSet());
+    }
+
+    if (object.supportsExpandedTextValue()) {
+        setProperty(AXPropertyName::SupportsExpandedTextValue, true);
+        setProperty(AXPropertyName::ExpandedTextValue, object.expandedTextValue().isolatedCopy());
+    }
+
+    if (object.supportsDatetimeAttribute()) {
+        setProperty(AXPropertyName::SupportsDatetimeAttribute, true);
+        setProperty(AXPropertyName::DatetimeAttributeValue, object.datetimeAttributeValue().isolatedCopy());
+    }
 
     if (object.supportsCheckedState()) {
         setProperty(AXPropertyName::SupportsCheckedState, true);
@@ -500,9 +518,6 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
         case AXPropertyName::HasPlainText:
             setPropertyFlag(AXPropertyFlag::HasPlainText, std::get<bool>(value));
             return;
-        case AXPropertyName::IsControl:
-            setPropertyFlag(AXPropertyFlag::IsControl, std::get<bool>(value));
-            return;
         case AXPropertyName::IsEnabled:
             setPropertyFlag(AXPropertyFlag::IsEnabled, std::get<bool>(value));
             return;
@@ -544,9 +559,6 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
             return;
         case AXPropertyName::SupportsPosInSet:
             setPropertyFlag(AXPropertyFlag::SupportsPosInSet, std::get<bool>(value));
-            return;
-        case AXPropertyName::SupportsRequiredAttribute:
-            setPropertyFlag(AXPropertyFlag::SupportsRequiredAttribute, std::get<bool>(value));
             return;
         case AXPropertyName::SupportsSetSize:
             setPropertyFlag(AXPropertyFlag::SupportsSetSize, std::get<bool>(value));
@@ -1109,8 +1121,6 @@ bool AXIsolatedObject::boolAttributeValue(AXPropertyName propertyName) const
         return hasPropertyFlag(AXPropertyFlag::HasItalicFont);
     case AXPropertyName::HasPlainText:
         return hasPropertyFlag(AXPropertyFlag::HasPlainText);
-    case AXPropertyName::IsControl:
-        return hasPropertyFlag(AXPropertyFlag::IsControl);
     case AXPropertyName::IsEnabled:
         return hasPropertyFlag(AXPropertyFlag::IsEnabled);
     case AXPropertyName::IsExposedTableCell:
@@ -1139,8 +1149,6 @@ bool AXIsolatedObject::boolAttributeValue(AXPropertyName propertyName) const
         return hasPropertyFlag(AXPropertyFlag::SupportsPath);
     case AXPropertyName::SupportsPosInSet:
         return hasPropertyFlag(AXPropertyFlag::SupportsPosInSet);
-    case AXPropertyName::SupportsRequiredAttribute:
-        return hasPropertyFlag(AXPropertyFlag::SupportsRequiredAttribute);
     case AXPropertyName::SupportsSetSize:
         return hasPropertyFlag(AXPropertyFlag::SupportsSetSize);
     default:

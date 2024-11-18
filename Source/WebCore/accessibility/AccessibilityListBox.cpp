@@ -54,12 +54,6 @@ Ref<AccessibilityListBox> AccessibilityListBox::create(AXID axID, RenderObject& 
     return adoptRef(*new AccessibilityListBox(axID, renderer));
 }
 
-bool AccessibilityListBox::canSetSelectedChildren() const
-{
-    auto* selectElement = dynamicDowncast<HTMLSelectElement>(node());
-    return selectElement && !selectElement->isDisabledFormControl();
-}
-
 void AccessibilityListBox::addChildren()
 {
     m_childrenInitialized = true;

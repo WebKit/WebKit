@@ -124,7 +124,6 @@ public:
     bool isFileUploadButton() const final;
     bool isInputImage() const override { return false; }
     virtual bool isSliderThumb() const { return false; }
-    bool isControl() const override { return false; }
     bool isRadioInput() const override { return false; }
     bool isLabel() const { return isAccessibilityLabelInstance() || labelForObjects().size(); }
 
@@ -208,7 +207,6 @@ public:
     bool isPressed() const override { return false; }
     InsideLink insideLink() const final;
     bool isRequired() const override { return false; }
-    bool supportsRequiredAttribute() const override { return false; }
     bool isExpanded() const override;
     bool isVisible() const override { return !isHidden(); }
     virtual bool isCollapsed() const { return false; }
@@ -244,7 +242,6 @@ public:
     bool canSetFocusAttribute() const override { return false; }
     bool canSetValueAttribute() const override { return false; }
     bool canSetSelectedAttribute() const override { return false; }
-    bool canSetSelectedChildren() const override { return false; }
 
     Element* element() const override;
     Node* node() const override { return nullptr; }

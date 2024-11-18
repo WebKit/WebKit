@@ -48,8 +48,6 @@ private:
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::Slider; }
 
-    bool isControl() const override { return true; }
-    
     void addChildren() override;
     
     bool canSetValueAttribute() const override { return true; }

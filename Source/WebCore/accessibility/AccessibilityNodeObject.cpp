@@ -937,35 +937,6 @@ bool AccessibilityNodeObject::supportsARIAOwns() const
     return !getAttribute(aria_ownsAttr).isEmpty();
 }
 
-bool AccessibilityNodeObject::supportsRequiredAttribute() const
-{
-    switch (roleValue()) {
-    case AccessibilityRole::Button:
-        return isFileUploadButton();
-    case AccessibilityRole::Cell:
-    case AccessibilityRole::ColumnHeader:
-    case AccessibilityRole::Checkbox:
-    case AccessibilityRole::ComboBox:
-    case AccessibilityRole::Grid:
-    case AccessibilityRole::GridCell:
-    case AccessibilityRole::ListBox:
-    case AccessibilityRole::PopUpButton:
-    case AccessibilityRole::RadioButton:
-    case AccessibilityRole::RadioGroup:
-    case AccessibilityRole::RowHeader:
-    case AccessibilityRole::Slider:
-    case AccessibilityRole::SpinButton:
-    case AccessibilityRole::Switch:
-    case AccessibilityRole::TableHeaderContainer:
-    case AccessibilityRole::TextArea:
-    case AccessibilityRole::TextField:
-    case AccessibilityRole::ToggleButton:
-        return true;
-    default:
-        return false;
-    }
-}
-
 AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::radioButtonGroup() const
 {
     AccessibilityChildrenVector result;
@@ -1111,15 +1082,6 @@ AccessibilityOrientation AccessibilityNodeObject::orientation() const
 bool AccessibilityNodeObject::isBusy() const
 {
     return elementAttributeValue(aria_busyAttr);
-}
-
-bool AccessibilityNodeObject::isControl() const
-{
-    Node* node = this->node();
-    if (!node)
-        return false;
-
-    return is<HTMLFormControlElement>(*node) || AccessibilityObject::isARIAControl(ariaRoleAttribute()) || roleValue() == AccessibilityRole::Button;
 }
 
 bool AccessibilityNodeObject::isRadioInput() const

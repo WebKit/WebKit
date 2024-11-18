@@ -165,7 +165,6 @@ private:
     bool isSecureField() const final { return boolAttributeValue(AXPropertyName::IsSecureField); }
     bool isAttachment() const final { return boolAttributeValue(AXPropertyName::IsAttachment); }
     bool isInputImage() const final { return boolAttributeValue(AXPropertyName::IsInputImage); }
-    bool isControl() const final { return boolAttributeValue(AXPropertyName::IsControl); }
     bool isRadioInput() const final { return boolAttributeValue(AXPropertyName::IsRadioInput); }
 
     bool isKeyboardFocusable() const final { return boolAttributeValue(AXPropertyName::IsKeyboardFocusable); }
@@ -221,7 +220,6 @@ private:
     bool isMultiSelectable() const final { return boolAttributeValue(AXPropertyName::IsMultiSelectable); }
     InsideLink insideLink() const final { return propertyValue<InsideLink>(AXPropertyName::InsideLink); }
     bool isRequired() const final { return boolAttributeValue(AXPropertyName::IsRequired); }
-    bool supportsRequiredAttribute() const final { return boolAttributeValue(AXPropertyName::SupportsRequiredAttribute); }
     bool isExpanded() const final { return boolAttributeValue(AXPropertyName::IsExpanded); }
     bool isFileUploadButton() const final { return boolAttributeValue(AXPropertyName::IsFileUploadButton); }
     FloatPoint screenRelativePosition() const final;
@@ -239,7 +237,6 @@ private:
     String datetimeAttributeValue() const final { return stringAttributeValue(AXPropertyName::DatetimeAttributeValue); }
     bool canSetValueAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetValueAttribute); }
     bool canSetSelectedAttribute() const final { return boolAttributeValue(AXPropertyName::CanSetSelectedAttribute); }
-    bool canSetSelectedChildren() const final { return boolAttributeValue(AXPropertyName::CanSetSelectedChildren); }
 #if ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
     bool isIgnored() const final { return boolAttributeValue(AXPropertyName::IsIgnored); }
 #else

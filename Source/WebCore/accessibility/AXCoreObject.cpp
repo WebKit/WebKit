@@ -72,6 +72,31 @@ bool AXCoreObject::isMenuItem() const
     }
 }
 
+bool AXCoreObject::isControl() const
+{
+    switch (roleValue()) {
+    case AccessibilityRole::Button:
+    case AccessibilityRole::Checkbox:
+    case AccessibilityRole::ColorWell:
+    case AccessibilityRole::ComboBox:
+    case AccessibilityRole::DateTime:
+    case AccessibilityRole::LandmarkSearch:
+    case AccessibilityRole::ListBox:
+    case AccessibilityRole::PopUpButton:
+    case AccessibilityRole::RadioButton:
+    case AccessibilityRole::SearchField:
+    case AccessibilityRole::Slider:
+    case AccessibilityRole::SliderThumb:
+    case AccessibilityRole::Switch:
+    case AccessibilityRole::TextArea:
+    case AccessibilityRole::TextField:
+    case AccessibilityRole::ToggleButton:
+        return true;
+    default:
+        return isFieldset();
+    }
+}
+
 bool AXCoreObject::isImplicitlyInteractive() const
 {
     switch (roleValue()) {
@@ -407,6 +432,34 @@ AXCoreObject* AXCoreObject::selectedTabItem()
             return child.get();
     }
     return nullptr;
+}
+
+bool AXCoreObject::supportsRequiredAttribute() const
+{
+    switch (roleValue()) {
+    case AccessibilityRole::Button:
+        return isFileUploadButton();
+    case AccessibilityRole::Cell:
+    case AccessibilityRole::ColumnHeader:
+    case AccessibilityRole::Checkbox:
+    case AccessibilityRole::ComboBox:
+    case AccessibilityRole::Grid:
+    case AccessibilityRole::GridCell:
+    case AccessibilityRole::ListBox:
+    case AccessibilityRole::PopUpButton:
+    case AccessibilityRole::RadioButton:
+    case AccessibilityRole::RadioGroup:
+    case AccessibilityRole::RowHeader:
+    case AccessibilityRole::Slider:
+    case AccessibilityRole::SpinButton:
+    case AccessibilityRole::Switch:
+    case AccessibilityRole::TextArea:
+    case AccessibilityRole::TextField:
+    case AccessibilityRole::ToggleButton:
+        return true;
+    default:
+        return false;
+    }
 }
 
 bool AXCoreObject::hasPopup() const

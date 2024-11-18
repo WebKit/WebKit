@@ -37,7 +37,6 @@ public:
     static Ref<AccessibilityListBox> create(AXID, RenderObject&);
     virtual ~AccessibilityListBox();
 
-    bool canSetSelectedChildren() const override;
     WEBCORE_EXPORT void setSelectedChildren(const AccessibilityChildrenVector&) override;
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::ListBox; }

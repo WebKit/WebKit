@@ -49,7 +49,6 @@ public:
     bool canvasHasFallbackContent() const override;
 
     bool isBusy() const override;
-    bool isControl() const override;
     bool isDetached() const override { return !m_node; }
     bool isRadioInput() const override;
     bool isFieldset() const override;
@@ -67,7 +66,6 @@ public:
     bool isPressed() const final;
     bool isRequired() const override;
     bool supportsARIAOwns() const final;
-    bool supportsRequiredAttribute() const override;
 
     bool supportsDropping() const override;
     bool supportsDragging() const override;

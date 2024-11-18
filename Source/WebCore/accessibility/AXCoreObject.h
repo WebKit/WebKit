@@ -778,7 +778,7 @@ public:
     virtual bool isInputImage() const = 0;
     bool isProgressIndicator() const { return roleValue() == AccessibilityRole::ProgressIndicator || roleValue() == AccessibilityRole::Meter; }
     bool isSlider() const { return roleValue() == AccessibilityRole::Slider; }
-    virtual bool isControl() const = 0;
+    bool isControl() const;
     virtual bool isRadioInput() const = 0;
     // lists support (l, ul, ol, dl)
     bool isList() const;
@@ -909,7 +909,7 @@ public:
     bool isUnvisited() const { return insideLink() == InsideLink::InsideUnvisited; }
     bool isVisited() const { return insideLink() == InsideLink::InsideVisited; }
     virtual bool isRequired() const = 0;
-    virtual bool supportsRequiredAttribute() const = 0;
+    bool supportsRequiredAttribute() const;
     virtual bool isExpanded() const = 0;
     virtual bool isVisible() const = 0;
     virtual void setIsExpanded(bool) = 0;
@@ -944,7 +944,7 @@ public:
     virtual bool canSetValueAttribute() const = 0;
     bool canSetNumericValue() const { return roleValue() == AccessibilityRole::ScrollBar; }
     virtual bool canSetSelectedAttribute() const = 0;
-    virtual bool canSetSelectedChildren() const = 0;
+    bool canSetSelectedChildren() const;
     bool canSetExpandedAttribute() const;
 
     virtual Element* element() const = 0;
@@ -1475,6 +1475,11 @@ inline bool AXCoreObject::canSetTextRangeAttributes() const
 inline bool AXCoreObject::canSetExpandedAttribute() const
 {
     return supportsExpanded();
+}
+
+inline bool AXCoreObject::canSetSelectedChildren() const
+{
+    return isListBox() && isEnabled();
 }
 
 inline void AXCoreObject::detach(AccessibilityDetachmentType detachmentType)
