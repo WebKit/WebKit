@@ -217,6 +217,11 @@ headers: <WebCore/DisplayListItems.h>
     WebCore::Color color();
 };
 
+[Nested] enum class WebCore::GraphicsContext::RequiresClipToRect : bool {
+    No,
+    Yes
+};
+
 [CustomHeader, AdditionalEncoder=StreamConnectionEncoder] class WebCore::DisplayList::FillRect {
     WebCore::FloatRect rect();
     WebCore::GraphicsContext::RequiresClipToRect requiresClipToRect();

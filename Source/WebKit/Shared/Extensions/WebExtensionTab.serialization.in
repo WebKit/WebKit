@@ -71,6 +71,9 @@ enum class WebKit::WebExtensionTabImageFormat : uint8_t {
     JPEG,
 }
 
-[Nested] enum class WebKit::WebExtensionContext::ReloadFromOrigin : bool;
+[Nested] enum class WebKit::WebExtensionTab::ReloadFromOrigin : bool {
+    No,
+    Yes
+};
 
 #endif

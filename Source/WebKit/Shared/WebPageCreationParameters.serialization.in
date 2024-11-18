@@ -22,7 +22,10 @@
 
 headers: "ArgumentCoders.h"
 
-enum class WebCore::UserInterfaceLayoutDirection : bool;
+enum class WebCore::UserInterfaceLayoutDirection : bool {
+    LTR,
+    RTL
+};
 
 [RValue, DebugDecodingFailure] struct WebKit::WebPageCreationParameters {
     WebCore::IntSize viewSize;

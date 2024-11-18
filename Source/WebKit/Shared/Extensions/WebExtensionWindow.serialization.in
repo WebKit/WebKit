@@ -38,7 +38,10 @@ struct WebKit::WebExtensionWindowParameters {
     std::optional<bool> privateBrowsing;
 };
 
-[Nested] enum class WebKit::WebExtensionWindow::PopulateTabs : bool;
+[Nested] enum class WebKit::WebExtensionWindow::PopulateTabs : bool {
+    No,
+    Yes
+};
 
 [Nested] enum class WebKit::WebExtensionWindow::Type : uint8_t {
     Normal,

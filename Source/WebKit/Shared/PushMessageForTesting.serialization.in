@@ -22,7 +22,10 @@
 
 webkit_platform_headers: "ArgumentCoders.h" "PushMessageForTesting.h"
 
-enum class WebKit::WebPushD::PushMessageDisposition : bool;
+[CustomHeader, WebKitPlatform] enum class WebKit::WebPushD::PushMessageDisposition : bool {
+    Legacy,
+    Notification
+};
 
 [CustomHeader, WebKitPlatform] struct WebKit::WebPushD::PushMessageForTesting {
     String targetAppCodeSigningIdentifier;

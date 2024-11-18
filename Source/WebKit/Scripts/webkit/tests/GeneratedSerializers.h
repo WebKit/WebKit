@@ -415,15 +415,15 @@ template<> struct ArgumentCoder<WebCore::RectEdges<bool>> {
 
 namespace WTF {
 
-template<> bool isValidEnum<EnumWithoutNamespace, void>(uint8_t);
+template<> bool isValidEnum<EnumWithoutNamespace>(uint8_t);
 #if ENABLE(UINT16_ENUM)
-template<> bool isValidEnum<EnumNamespace::EnumType, void>(uint16_t);
+template<> bool isValidEnum<EnumNamespace::EnumType>(uint16_t);
 #endif
 template<> bool isValidOptionSet<OptionSetEnumFirstCondition>(OptionSet<OptionSetEnumFirstCondition>);
 template<> bool isValidOptionSet<OptionSetEnumLastCondition>(OptionSet<OptionSetEnumLastCondition>);
 template<> bool isValidOptionSet<OptionSetEnumAllCondition>(OptionSet<OptionSetEnumAllCondition>);
 #if (ENABLE(OUTER_CONDITION)) && (ENABLE(INNER_CONDITION))
-template<> bool isValidEnum<EnumNamespace::InnerEnumType, void>(uint8_t);
+template<> bool isValidEnum<EnumNamespace::InnerEnumType>(uint8_t);
 #endif
 
 } // namespace WTF

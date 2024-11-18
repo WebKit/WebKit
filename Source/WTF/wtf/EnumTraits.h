@@ -72,6 +72,7 @@ template<typename E, E...> struct EnumValues;
 
 template<typename E, E... values>
 struct EnumValues {
+    static_assert(((std::is_same_v<E, decltype(values)>) && ...));
     static constexpr E max = std::max({ values... });
     static constexpr E min = std::min({ values... });
     static constexpr size_t count = sizeof...(values);
@@ -86,33 +87,24 @@ struct EnumValues {
 
 template<typename T, typename E> struct EnumValueChecker;
 
-template<typename T, typename E, E e, E... es>
-struct EnumValueChecker<T, EnumValues<E, e, es...>> {
+template<typename T, typename E, E... es>
+struct EnumValueChecker<T, EnumValues<E, es...>> {
     static constexpr bool isValidEnum(T t)
     {
-        return (static_cast<T>(e) == t) ? true : EnumValueChecker<T, EnumValues<E, es...>>::isValidEnum(t);
+        return ((static_cast<T>(es) == t) || ...);
     }
 };
 
-template<typename T, typename E>
-struct EnumValueChecker<T, EnumValues<E>> {
-    static constexpr bool isValidEnum(T)
-    {
-        return false;
-    }
-};
-
-template<typename E, typename = std::enable_if_t<!std::is_same_v<std::underlying_type_t<E>, bool>>>
-bool isValidEnum(std::underlying_type_t<E> t)
+template<typename E> requires (requires { typename EnumTraits<E>::values; })
+constexpr bool isValidEnum(std::underlying_type_t<E> t)
 {
     return EnumValueChecker<std::underlying_type_t<E>, typename EnumTraits<E>::values>::isValidEnum(t);
 }
 
-template<typename E, typename = std::enable_if_t<std::is_same_v<std::underlying_type_t<E>, bool>>>
-constexpr bool isValidEnum(bool t)
-{
-    return !t || t == 1;
-}
+// If there is no EnumTraits<E>, the definition should be generated from a .serialization.in annotation,
+// or explicitly written if necessary.
+template<typename E> requires (!requires { typename EnumTraits<E>::values; })
+bool isValidEnum(std::underlying_type_t<E>);
 
 template<typename E, typename = std::enable_if_t<!std::is_same_v<std::underlying_type_t<E>, bool>>>
 bool isValidEnumForPersistence(std::underlying_type_t<E> t)

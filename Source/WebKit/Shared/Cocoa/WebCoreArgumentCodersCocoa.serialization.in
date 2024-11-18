@@ -149,7 +149,10 @@ header: <WebCore/AttributedString.h>
 }
 
 header: <WebCore/AttributedString.h>
-[CustomHeader] enum class WebCore::TextTableLayoutAlgorithm : bool;
+[CustomHeader] enum class WebCore::TextTableLayoutAlgorithm : bool {
+    Automatic,
+    Fixed
+};
 
 header: <WebCore/AttributedString.h>
 [CustomHeader] struct WebCore::ParagraphStyleTextList {
@@ -306,7 +309,10 @@ class WebCore::PaymentSessionError {
     bool phoneticName;
 };
 
-[Nested] enum class WebCore::ApplePaySessionPaymentRequest::Requester : bool;
+[Nested] enum class WebCore::ApplePaySessionPaymentRequest::Requester : bool {
+    ApplePayJS,
+    PaymentRequest
+};
 
 [CustomHeader] class WebCore::ApplePaySessionPaymentRequest {
     String countryCode();

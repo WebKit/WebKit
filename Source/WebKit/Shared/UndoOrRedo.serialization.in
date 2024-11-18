@@ -22,4 +22,7 @@
 
 header: "UndoOrRedo.h"
 
-enum class WebKit::UndoOrRedo : bool;
+enum class WebKit::UndoOrRedo : bool {
+    Undo,
+    Redo
+};

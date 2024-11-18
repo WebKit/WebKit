@@ -72,3 +72,33 @@ enum class WebCore::PlatformMediaSessionRemoteControlCommandType : uint8_t {
     NoFlags,
     MayResumePlaying,
 };
+
+#if PLATFORM(IOS_FAMILY)
+
+header: <WebCore/MediaSessionHelperIOS.h>
+[Nested] enum class WebCore::MediaSessionHelperClient::SuspendedUnderLock : bool {
+    No,
+    Yes
+};
+[Nested] enum class WebCore::MediaSessionHelperClient::HasAvailableTargets : bool {
+    No,
+    Yes
+};
+[Nested] enum class WebCore::MediaSessionHelperClient::PlayingToAutomotiveHeadUnit : bool {
+    No,
+    Yes
+};
+[Nested] enum class WebCore::MediaSessionHelperClient::ShouldPause : bool {
+    No,
+    Yes
+};
+[Nested] enum class WebCore::MediaSessionHelperClient::SupportsAirPlayVideo : bool {
+    No,
+    Yes
+};
+[Nested] enum class WebCore::MediaSessionHelperClient::SupportsSpatialAudioPlayback : bool {
+    No,
+    Yes
+};
+
+#endif

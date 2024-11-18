@@ -66,11 +66,43 @@ headers: "NetworkProcessCreationParameters.h" "AuxiliaryProcessCreationParameter
     Vector<WebCore::OrganizationStorageAccessPromptQuirk> storageAccessPromptQuirksData;
 }
 
-enum class WebKit::LoadedWebArchive : bool
-enum class WebKit::DidFilterKnownLinkDecoration : bool
-enum class WebKit::ShouldGrandfatherStatistics : bool
-enum class WebKit::PrivateRelayed : bool
-enum class WebKit::ContentAsStringIncludesChildFrames : bool
-enum class WebKit::CallDownloadDidStart : bool
-enum class WebKit::AllowOverwrite : bool
-enum class WebKit::UseDownloadPlaceholder : bool
+header: "LoadedWebArchive.h"
+enum class WebKit::LoadedWebArchive : bool {
+    No,
+    Yes
+};
+header: "DidFilterKnownLinkDecoration.h"
+enum class WebKit::DidFilterKnownLinkDecoration : bool {
+    No,
+    Yes
+};
+header: "ShouldGrandfatherStatistics.h"
+enum class WebKit::ShouldGrandfatherStatistics : bool {
+    No,
+    Yes
+};
+header: "PrivateRelayed.h"
+enum class WebKit::PrivateRelayed : bool {
+    No,
+    Yes
+};
+header: "ContentAsStringIncludesChildFrames.h"
+enum class WebKit::ContentAsStringIncludesChildFrames : bool {
+    No,
+    Yes
+};
+header: "DownloadManager.h"
+enum class WebKit::CallDownloadDidStart : bool {
+    No,
+    Yes
+};
+header: "DownloadID.h"
+enum class WebKit::AllowOverwrite : bool {
+    No,
+    Yes
+};
+header: "UseDownloadPlaceholder.h"
+enum class WebKit::UseDownloadPlaceholder : bool {
+    No,
+    Yes
+};
