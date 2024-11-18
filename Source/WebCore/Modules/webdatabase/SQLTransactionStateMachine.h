@@ -28,6 +28,10 @@
 #include "SQLTransactionState.h"
 #include <wtf/Forward.h>
 
+#ifndef NDEBUG
+#include <array>
+#endif
+
 namespace WebCore {
 
 template<typename T>

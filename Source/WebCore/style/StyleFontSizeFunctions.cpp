@@ -101,7 +101,6 @@ float computedFontSizeFromSpecifiedSizeForSVGInlineText(float specifiedSize, boo
 
 constexpr int fontSizeTableMax = 16;
 constexpr int fontSizeTableMin = 9;
-constexpr int totalKeywords = 8;
 
 // WinIE/Nav4 table for font sizes. Designed to match the legacy font mapping system of HTML.
 static constexpr std::array quirksFontSizeTable {
