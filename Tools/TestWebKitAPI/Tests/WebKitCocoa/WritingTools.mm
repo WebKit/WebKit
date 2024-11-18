@@ -36,6 +36,7 @@
 #import "TestWKWebView.h"
 #import "UIKitSPIForTesting.h"
 #import "WKWebViewConfigurationExtras.h"
+#import <SoftLinking/WeakLinking.h>
 #import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 #import <WebCore/ColorCocoa.h>
 #import <WebCore/FloatRect.h>
@@ -56,10 +57,13 @@
 #import <wtf/unicode/CharacterNames.h>
 
 #if PLATFORM(MAC)
+#import <pal/cocoa/WritingToolsUISoftLink.h>
 #import <pal/spi/mac/NSTextInputContextSPI.h>
 #endif
 
-#import <pal/cocoa/WritingToolsUISoftLink.h>
+WEAK_IMPORT_OBJC_CLASS(WTContext);
+WEAK_IMPORT_OBJC_CLASS(WTSession);
+WEAK_IMPORT_OBJC_CLASS(WTTextSuggestion);
 
 #if PLATFORM(VISION)
 asm(".linker_option \"-framework\", \"WritingTools\"");
