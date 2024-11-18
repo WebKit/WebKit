@@ -94,6 +94,9 @@ public:
     bool hasStartPositioned() const;
     bool hasEndPositioned() const;
 
+    std::optional<LayoutUnit> topmost() const;
+    std::optional<LayoutUnit> bottommost(Clear = Clear::Both) const;
+
     void shrinkToFit();
 
 private:

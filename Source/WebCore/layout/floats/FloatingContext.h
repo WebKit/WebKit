@@ -56,11 +56,6 @@ public:
     };
     std::optional<PositionWithClearance> verticalPositionWithClearance(const Box&, const BoxGeometry&) const;
 
-    std::optional<LayoutUnit> top() const;
-    std::optional<LayoutUnit> leftBottom() const { return bottom(Clear::Left); }
-    std::optional<LayoutUnit> rightBottom() const { return bottom(Clear::Right); }
-    std::optional<LayoutUnit> bottom() const { return bottom(Clear::Both); }
-
     bool isEmpty() const { return m_placedFloats.list().isEmpty(); }
 
     struct Constraints {
@@ -75,8 +70,6 @@ public:
     bool isStartPositioned(const Box& floatBox) const;
 
 private:
-    std::optional<LayoutUnit> bottom(Clear) const;
-
     bool isFloatingCandidateStartPositionedInPlacedFloats(const Box&) const;
     Clear clearInPlacedFloats(const Box&) const;
 

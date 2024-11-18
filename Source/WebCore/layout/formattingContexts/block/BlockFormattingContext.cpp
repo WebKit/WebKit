@@ -304,9 +304,9 @@ LayoutUnit BlockFormattingContext::usedContentHeight() const
     }
 
     auto floatingContext = FloatingContext { root(), layoutState(), formattingState().placedFloats() };
-    if (auto floatTop = floatingContext.top()) {
+    if (auto floatTop = floatingContext.placedFloats().topmost()) {
         top = std::min(*floatTop, top.value_or(*floatTop));
-        auto floatBottom = *floatingContext.bottom();
+        auto floatBottom = *floatingContext.placedFloats().bottommost();
         bottom = std::max(floatBottom, bottom.value_or(floatBottom));
     }
     return *bottom - *top;

@@ -129,6 +129,27 @@ void PlacedFloats::clear()
     m_positionTypes = { };
 }
 
+std::optional<LayoutUnit> PlacedFloats::topmost() const
+{
+    auto top = std::optional<LayoutUnit> { };
+    for (auto& floatItem : m_list)
+        top = !top ? floatItem.absoluteRectWithMargin().top() : std::min(*top, floatItem.absoluteRectWithMargin().top());
+    return top;
+}
+
+std::optional<LayoutUnit> PlacedFloats::bottommost(Clear type) const
+{
+    // TODO: Currently this is only called once for each formatting context root with floats per layout.
+    // Cache the value if we end up calling it more frequently (and update it at append/remove).
+    auto bottom = std::optional<LayoutUnit> { };
+    for (auto& floatItem : m_list) {
+        if ((type == Clear::InlineStart && !floatItem.isStartPositioned()) || (type == Clear::InlineEnd && floatItem.isStartPositioned()))
+            continue;
+        bottom = !bottom ? floatItem.absoluteRectWithMargin().bottom() : std::max(*bottom, floatItem.absoluteRectWithMargin().bottom());
+    }
+    return bottom;
+}
+
 void PlacedFloats::shrinkToFit()
 {
     m_list.shrinkToFit();

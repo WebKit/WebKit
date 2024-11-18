@@ -245,11 +245,11 @@ LayoutPoint FloatingContext::positionForFloat(const Box& layoutBox, const BoxGeo
         // The vertical position candidate needs to clear the existing floats in this context.
         switch (clearInPlacedFloats(layoutBox)) {
         case Clear::Left:
-            return leftBottom();
+            return placedFloats().bottommost(Clear::InlineStart);
         case Clear::Right:
-            return rightBottom();
+            return placedFloats().bottommost(Clear::InlineEnd);
         case Clear::Both:
-            return bottom();
+            return placedFloats().bottommost();
         default:
             ASSERT_NOT_REACHED();
         }
@@ -336,37 +336,16 @@ std::optional<FloatingContext::PositionWithClearance> FloatingContext::verticalP
 
     auto clear = clearInPlacedFloats(layoutBox);
     if (clear == Clear::Left)
-        return bottom(leftBottom());
+        return bottom(placedFloats().bottommost(Clear::InlineStart));
 
     if (clear == Clear::Right)
-        return bottom(rightBottom());
+        return bottom(placedFloats().bottommost(Clear::InlineEnd));
 
     if (clear == Clear::Both)
-        return bottom(this->bottom());
+        return bottom(placedFloats().bottommost());
 
     ASSERT_NOT_REACHED();
     return { };
-}
-
-std::optional<LayoutUnit> FloatingContext::bottom(Clear type) const
-{
-    // TODO: Currently this is only called once for each formatting context root with floats per layout.
-    // Cache the value if we end up calling it more frequently (and update it at append/remove).
-    auto bottom = std::optional<LayoutUnit> { };
-    for (auto& floatItem : placedFloats().list()) {
-        if ((type == Clear::Left && !floatItem.isStartPositioned()) || (type == Clear::Right && floatItem.isStartPositioned()))
-            continue;
-        bottom = !bottom ? floatItem.absoluteRectWithMargin().bottom() : std::max(*bottom, floatItem.absoluteRectWithMargin().bottom());
-    }
-    return bottom;
-}
-
-std::optional<LayoutUnit> FloatingContext::top() const
-{
-    auto top = std::optional<LayoutUnit> { };
-    for (auto& floatItem : placedFloats().list())
-        top = !top ? floatItem.absoluteRectWithMargin().top() : std::min(*top, floatItem.absoluteRectWithMargin().top());
-    return top;
 }
 
 FloatingContext::Constraints FloatingContext::constraints(LayoutUnit candidateTop, LayoutUnit candidateBottom, MayBeAboveLastFloat mayBeAboveLastFloat) const
@@ -601,11 +580,9 @@ bool FloatingContext::isFloatingCandidateStartPositionedInPlacedFloats(const Box
 {
     ASSERT(floatBox.isFloatingPositioned());
     // A floating candidate is start positioned when:
-    // - "float: left" in left-to-right floating state
-    // - "float: inline-start" inline left-to-right floating state
-    // If the floating state is right-to-left (meaning that the PlacedFloats is constructed by a BFC root with "direction: rtl")
-    // visually left positioned floats are logically right (Note that FloatingContext's direction may not be the same as the PlacedFloats's direction
-    // when dealing with inherited PlacedFloats across nested IFCs).
+    // - "float: inline-start or left" in left-to-right floating context with matching floating state.
+    // - "float: inline-end or right" in mismatching floating state where floating state is right-to-left.
+    // (FloatingContext's direction may not be the same as the PlacedFloats's direction when dealing with inherited PlacedFloats across nested IFCs).
     auto floatingContextIsLeftToRight = root().writingMode().isBidiLTR();
     auto placedFloatsIsLeftToRight = m_placedFloats.blockFormattingContextRoot().style().writingMode().isBidiLTR();
     if (floatingContextIsLeftToRight == placedFloatsIsLeftToRight)
