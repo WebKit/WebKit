@@ -49,7 +49,7 @@ namespace WebCore {
 class AffineTransform;
 class GraphicsContext;
 
-class Pattern final : public RefCounted<Pattern> {
+class Pattern final : public ThreadSafeRefCounted<Pattern> {
 public:
     struct Parameters {
         Parameters(bool repeatX = true, bool repeatY = true, AffineTransform patternSpaceTransform = { })
