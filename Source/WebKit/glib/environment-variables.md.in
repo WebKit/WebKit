@@ -1,9 +1,11 @@
 Title: Environment variables
 Slug: environment-variables
 
-# List of environment varibles
+# List of environment variables
 
-WebKit uses several environment variables, most of which are designed for developers or debugging purposes. These variables should be used carefully, as they can impact the behavior of the software. These environment variables and their behavior are not guaranteed to remain stable across versions of WPE WebKit. Always ensure that your WPE WebKit version corresponds to the documentation you are referencing to avoid compatibility issues.
+WebKit uses several environment variables, most of which are designed for developers or debugging purposes. These variables should be used carefully, as they can impact the behavior of the software. These environment variables and their behavior are not guaranteed to remain stable across versions of WebKit. Always ensure that your WebKit version corresponds to the documentation you are referencing to avoid compatibility issues.
+
+#if WPE
 
 - `WPE_DRM_DEVICE`
 Specifies the primary device that WebKit will use for gpu buffer allocation when it needs access to the main device. It is interesting for DRM backend. You need to specify a file path.
@@ -20,4 +22,4 @@ You can ask WebKit to try to use a format instead the one that is recommended by
     - Usage, indicates how the buffers is going to be used: `rendering`, `mapping` and `scanout`
 Example: `AR24:0:scanout`
 
-
+#endif

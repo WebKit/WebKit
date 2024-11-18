@@ -180,10 +180,32 @@ function(GI_DOCGEN namespace toml)
     endif ()
     set(outdir "${CMAKE_BINARY_DIR}/Documentation/${package}")
 
+    set(unifdef_defines)
+    if (PORT STREQUAL GTK)
+        list(APPEND unifdef_defines -DWPE=0 -DGTK=1)
+        if (USE_GTK4)
+            list(APPEND unifdef_defines -DGTK4=1 -DGTK3=0)
+        else ()
+            list(APPEND unifdef_defines -DGTK4=0 -DGTK3=1)
+        endif ()
+    else ()
+        list(APPEND unifdef_defines -DWPE=1 -DGTK=0)
+    endif ()
+
     set(docdeps "${toml_path};${gir_path}")
     foreach (item IN LISTS opt_CONTENT_TEMPLATES)
         get_filename_component(filename "${item}" NAME)
-        configure_file("${item}.in" "${contentdir}/${filename}" @ONLY)
+        configure_file("${item}.in" "${contentdir}/${filename}.in" @ONLY)
+        add_custom_command(
+            OUTPUT "${contentdir}/${filename}"
+            DEPENDS "${contentdir}/${filename}.in"
+            COMMENT "Generating (unifdef): ${namespace}/${filename}"
+            VERBATIM
+            COMMAND "${UNIFDEF_EXECUTABLE}" -t -x 2
+                ${unifdef_defines}
+                -o "${contentdir}/${filename}"
+                "${contentdir}/${filename}.in"
+        )
         list(APPEND docdeps "${contentdir}/${filename}")
     endforeach ()
 

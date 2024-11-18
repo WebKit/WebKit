@@ -38,3 +38,8 @@ show_class_hierarchy = true
 base_url = "https://github.com/WebKit/WebKit/tree/main/"
 
 urlmap_file = "gtk@GTK_API_VERSION@-urlmap.js"
+
+[extra]
+content_files = [
+    "environment-variables.md",
+]

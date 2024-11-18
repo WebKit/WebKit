@@ -763,7 +763,10 @@ GI_INTROSPECT(WPEWebKit ${WPE_API_VERSION} wpe/webkit.h
         UIProcess/API/glib
     NO_IMPLICIT_SOURCES
 )
-GI_DOCGEN(WPEWebKit wpe/wpewebkit.toml.in)
+GI_DOCGEN(WPEWebKit wpe/wpewebkit.toml.in
+    CONTENT_TEMPLATES
+        glib/environment-variables.md
+)
 
 if (ENABLE_2022_GLIB_API)
     set(WPE_WEB_PROCESS_EXTENSION_API_NAME "WPEWebProcessExtension")
