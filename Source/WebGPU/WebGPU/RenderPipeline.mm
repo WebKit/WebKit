@@ -555,7 +555,7 @@ static bool matchesFormat(const ShaderModule::VertexStageIn& stageIn, uint32_t s
 static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, const WGPULimits& limits, const ShaderModule::VertexStageIn& stageIn, RenderPipeline::RequiredBufferIndicesContainer& requiredBufferIndices, NSString** error)
 {
     MTLVertexDescriptor *vertexDescriptor = [MTLVertexDescriptor new];
-    uint32_t totalAttributeCount = 0;
+    Checked<uint32_t> totalAttributeCount = 0;
     ASSERT(error);
 
     if (vertexState.bufferCount > limits.maxVertexBuffers) {
@@ -576,7 +576,12 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, 
         if (!buffer.attributeCount)
             continue;
 
-        totalAttributeCount += buffer.attributeCount;
+        totalAttributeCount = checkedSum<uint32_t>(totalAttributeCount, buffer.attributeCount);
+        if (totalAttributeCount.hasOverflowed()) {
+            *error = @"Over 2^32 - 1 attributes in the vertex descriptor, failing due to out-of-memory.";
+            return nil;
+        }
+
         auto stride = std::max<NSUInteger>(sizeof(int), buffer.arrayStride);
         RELEASE_ASSERT(!requiredBufferIndices.contains(bufferIndex));
         ASSERT(bufferIndex <= std::numeric_limits<uint32_t>::max() && stride <= std::numeric_limits<uint32_t>::max());
@@ -642,7 +647,7 @@ static MTLVertexDescriptor *createVertexDescriptor(WGPUVertexState vertexState, 
         }
     }
 
-    if (totalAttributeCount > limits.maxVertexAttributes) {
+    if (totalAttributeCount.value() > limits.maxVertexAttributes) {
         *error = @"totalAttributeCount > limits.maxVertexAttributes";
         return nil;
     }
