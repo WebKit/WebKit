@@ -1,7 +1,5 @@
 Hello world
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT View timeline attached to SVG graphics element Test timed out
+PASS View timeline attached to SVG graphics element
 

@@ -39,7 +39,10 @@
 #include "CSSViewValue.h"
 #include "Document.h"
 #include "Element.h"
+#include "LegacyRenderSVGModelObject.h"
 #include "RenderBox.h"
+#include "RenderInline.h"
+#include "RenderSVGModelObject.h"
 #include "ScrollAnchoringController.h"
 #include "StyleBuilderConverter.h"
 
@@ -240,8 +243,8 @@ ScrollTimeline::Data ViewTimeline::computeTimelineData(const TimelineRange& rang
 
     Ref document = m_subject->document();
 
-    CheckedPtr subjectRenderBox = dynamicDowncast<RenderBox>(m_subject->renderer());
-    if (!subjectRenderBox)
+    CheckedPtr subjectRenderer = m_subject->renderer();
+    if (!subjectRenderer)
         return { };
 
     auto* sourceScrollableArea = scrollableAreaForSourceRenderer(sourceScrollerRenderer(), document);
@@ -260,10 +263,22 @@ ScrollTimeline::Data ViewTimeline::computeTimelineData(const TimelineRange& rang
     float currentScrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->scrollPosition().y() : sourceScrollableArea->scrollPosition().x();
     float scrollContainerSize = axis() == ScrollAxis::Block ? sourceScrollableArea->visibleHeight() : sourceScrollableArea->visibleWidth();
 
-    auto subjectOffsetFromSource = subjectRenderBox->localToContainerPoint(FloatPoint(), sourceScrollerRenderer());
+    auto subjectOffsetFromSource = subjectRenderer->localToContainerPoint(FloatPoint(), sourceScrollerRenderer());
     float subjectOffset = axis() == ScrollAxis::Block ? subjectOffsetFromSource.y() : subjectOffsetFromSource.x();
 
-    float subjectSize = axis() == ScrollAxis::Block ? subjectRenderBox->borderBoxRect().height() : subjectRenderBox->borderBoxRect().width();
+    auto subjectBounds = [&] -> FloatSize {
+        if (CheckedPtr subjectRenderBox = dynamicDowncast<RenderBox>(subjectRenderer.get()))
+            return subjectRenderBox->borderBoxRect().size();
+        if (CheckedPtr subjectRenderInline = dynamicDowncast<RenderInline>(subjectRenderer.get()))
+            return subjectRenderInline->borderBoundingBox().size();
+        if (CheckedPtr subjectRenderSVGModelObject = dynamicDowncast<RenderSVGModelObject>(subjectRenderer.get()))
+            return subjectRenderSVGModelObject->borderBoxRectEquivalent().size();
+        if (is<LegacyRenderSVGModelObject>(subjectRenderer.get()))
+            return subjectRenderer->objectBoundingBox().size();
+        return { };
+    }();
+
+    auto subjectSize = axis() == ScrollAxis::Block ? subjectBounds.height() : subjectBounds.width();
 
     auto insetStart = m_insets.start.value_or(Length());
     auto insetEnd = m_insets.end.value_or(insetStart);

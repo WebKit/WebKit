@@ -7374,9 +7374,6 @@ imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-range-animat
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/animation-with-root-scroller.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/constructor-no-document.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/scroll-timelines/updating-the-finished-state.html [ Skip ]
-imported/w3c/web-platform-tests/scroll-animations/view-timelines/inline-subject.html [ Skip ]
-imported/w3c/web-platform-tests/scroll-animations/view-timelines/svg-graphics-element-001.html [ Skip ]
-imported/w3c/web-platform-tests/scroll-animations/view-timelines/svg-graphics-element-002.html [ Skip ]
 
 # webkit.org/b/263871 [scroll-animations] some WPT tests are failures or flaky failures
 imported/w3c/web-platform-tests/scroll-animations/css/animation-timeline-none.html [ Pass Failure ]
