@@ -843,7 +843,6 @@ WEBCORE_SERIALIZATION_DESCRIPTION_FILES = \
 	PlatformScreen.serialization.in \
 	PlatformWheelEvent.serialization.in \
 	PlaybackSessionModel.serialization.in \
-	ProcessSyncData.serialization.in \
 	ProtectionSpaceBase.serialization.in \
 	ScrollTypes.serialization.in \
 	WebGPU.serialization.in \

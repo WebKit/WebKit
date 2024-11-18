@@ -678,8 +678,7 @@ public:
     void getFrameTree(CompletionHandler<void(FrameTreeNodeData&&)>&&);
     void didFinishLoadInAnotherProcess(WebCore::FrameIdentifier);
     void frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier);
-
-    void processSyncDataChangedInAnotherProcess(const WebCore::ProcessSyncData&);
+    void mainFrameURLChangedInAnotherProcess(const URL&);
 
     std::optional<WebCore::SimpleRange> currentSelectionAsRange();
 

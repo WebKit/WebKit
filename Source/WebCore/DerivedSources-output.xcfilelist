@@ -1161,12 +1161,12 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasAlphaMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasAlphaMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasConfiguration.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasConfiguration.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasContext.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasToneMapping.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasToneMapping.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasToneMappingMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasToneMappingMode.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasContext.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUCanvasContext.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorDict.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorDict.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSGPUColorTargetState.cpp
@@ -3570,9 +3570,6 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/NodeName.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PaintWorkletGlobalScopeConstructors.idl
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PlugInsResources.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/PlugInsResourcesData.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ProcessSyncClient.cpp
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ProcessSyncClient.h
-$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ProcessSyncData.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableByteStreamControllerBuiltins.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableByteStreamControllerBuiltins.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/ReadableByteStreamInternalsBuiltins.cpp

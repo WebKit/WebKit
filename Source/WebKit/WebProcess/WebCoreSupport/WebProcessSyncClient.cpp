@@ -50,12 +50,12 @@ bool WebProcessSyncClient::siteIsolationEnabled()
     return corePage ? corePage->settings().siteIsolationEnabled() : false;
 }
 
-void WebProcessSyncClient::broadcastProcessSyncDataToOtherProcesses(const WebCore::ProcessSyncData& data)
+void WebProcessSyncClient::broadcastMainFrameURLChangeToOtherProcesses(const URL& url)
 {
     if (!siteIsolationEnabled())
         return;
 
-    protectedPage()->send(Messages::WebPageProxy::BroadcastProcessSyncData(data));
+    protectedPage()->send(Messages::WebPageProxy::BroadcastMainFrameURLChangeToOtherProcesses(url));
 }
 
 } // namespace WebKit

@@ -1640,6 +1640,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/PointerLockController.h
     page/PrewarmInformation.h
     page/PrintContext.h
+    page/ProcessSyncClient.h
     page/ProcessWarming.h
     page/Quirks.h
     page/ReducedResolutionSeconds.h
@@ -2792,8 +2793,6 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     ${WebCore_DERIVED_SOURCES_DIR}/Namespace.h
     ${WebCore_DERIVED_SOURCES_DIR}/NodeName.h
     ${WebCore_DERIVED_SOURCES_DIR}/PlugInsResources.h
-    ${WebCore_DERIVED_SOURCES_DIR}/ProcessSyncClient.h
-    ${WebCore_DERIVED_SOURCES_DIR}/ProcessSyncData.h
     ${WebCore_DERIVED_SOURCES_DIR}/ReadableByteStreamInternalsBuiltins.h
     ${WebCore_DERIVED_SOURCES_DIR}/ReadableStreamInternalsBuiltins.h
     ${WebCore_DERIVED_SOURCES_DIR}/Settings.h

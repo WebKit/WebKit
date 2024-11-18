@@ -1192,10 +1192,10 @@ void WebPage::frameWasRemovedInAnotherProcess(WebCore::FrameIdentifier frameID)
     frame->removeFromTree();
 }
 
-void WebPage::processSyncDataChangedInAnotherProcess(const WebCore::ProcessSyncData& data)
+void WebPage::mainFrameURLChangedInAnotherProcess(const URL& newURL)
 {
     if (auto* page = corePage())
-        page->updateProcessSyncData(data);
+        page->setMainFrameURL(newURL);
 }
 
 #if ENABLE(GPU_PROCESS)

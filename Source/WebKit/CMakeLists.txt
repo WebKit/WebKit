@@ -634,7 +634,6 @@ set(WebCore_SERIALIZATION_IN_FILES
     PlatformMediaSession.serialization.in
     PlatformScreen.serialization.in
     PlatformWheelEvent.serialization.in
-    ProcessSyncData.serialization.in
     ProtectionSpaceBase.serialization.in
     ScrollTypes.serialization.in
     WebGPU.serialization.in
