@@ -362,7 +362,9 @@ bool ensureGStreamerInitialized()
         // is to register the playbin3 element under the playbin namespace. We
         // can't allow this, when we create playbin, we want playbin2, not
         // playbin3.
-        if (g_getenv("USE_PLAYBIN3"))
+        // The USE_PLAYBIN3 environment variable is no longer supported.
+        // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/6255
+        if (!webkitGstCheckVersion(1, 24, 0) && g_getenv("USE_PLAYBIN3"))
             WTFLogAlways("The USE_PLAYBIN3 variable was detected in the environment. Expect playback issues or please unset it.");
 
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
