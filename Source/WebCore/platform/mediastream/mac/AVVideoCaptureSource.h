@@ -194,7 +194,7 @@ private:
 
 #if PLATFORM(IOS_FAMILY)
     bool m_shouldCallNotifyMutedChange { false };
-    Timer m_startupTimer;
+    std::unique_ptr<Timer> m_startupTimer;
 #endif
     Timer m_verifyCapturingTimer;
     uint64_t m_framesCount { 0 };
