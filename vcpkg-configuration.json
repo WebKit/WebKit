@@ -1,0 +1,27 @@
+{
+  "default-registry": {
+    "kind": "git",
+    "baseline": "cd041f4e0ca6a20ba263bf0453c3844b0f382dd6",
+    "repository": "https://github.com/microsoft/vcpkg"
+  },
+  "registries": [
+    {
+      "kind": "git",
+      "baseline": "7a7550bf46af872765f55f91c36469b92425dbe8",
+      "repository": "https://github.com/WebKitForWindows/WebKitRequirements",
+      "packages": [
+        "cairo",
+        "curl",
+        "icu",
+        "lcms",
+        "libjxl",
+        "libpng",
+        "libwebp",
+        "libxml2",
+        "libxslt",
+        "sqlite3",
+        "zlib"
+      ]
+    }
+  ]
+}
