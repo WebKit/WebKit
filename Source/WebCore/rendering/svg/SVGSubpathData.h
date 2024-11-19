@@ -22,8 +22,6 @@
 #include "Path.h"
 #include <wtf/Forward.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 class SVGSubpathData {
@@ -89,5 +87,3 @@ private:
 };
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -36,8 +36,6 @@
 // Set to a value > 0 to dump the text fragments
 #define DUMP_SVG_TEXT_LAYOUT_FRAGMENTS 0
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 SVGTextLayoutEngine::SVGTextLayoutEngine(Vector<SVGTextLayoutAttributes*>& layoutAttributes)
@@ -420,7 +418,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
     ASSERT(!visualMetricsValues.isEmpty());
 
     auto upconvertedCharacters = StringView(text.text()).upconvertedCharacters();
-    const UChar* characters = upconvertedCharacters;
+    auto characters = upconvertedCharacters.span();
     const FontCascade& font = style.fontCascade();
 
     SVGTextLayoutEngineSpacing spacingLayout(font);
@@ -523,7 +521,7 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
         float angle = SVGTextLayoutAttributes::isEmptyValue(data.rotate) ? 0 : data.rotate;
 
         // Calculate glyph orientation angle.
-        const UChar* currentCharacter = characters + m_visualCharacterOffset;
+        const UChar* currentCharacter = characters.subspan(m_visualCharacterOffset).data();
         float orientationAngle = baselineLayout.calculateGlyphOrientationAngle(m_isVerticalText, svgStyle, *currentCharacter);
 
         // Calculate glyph advance & x/y orientation shifts.
@@ -686,5 +684,3 @@ void SVGTextLayoutEngine::layoutTextOnLineOrPath(InlineIterator::SVGTextBoxItera
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
