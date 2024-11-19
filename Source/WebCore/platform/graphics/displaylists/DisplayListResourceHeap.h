@@ -26,6 +26,7 @@
 #pragma once
 
 #include "DecomposedGlyphs.h"
+#include "DisplayListItem.h"
 #include "Filter.h"
 #include "Font.h"
 #include "FontCustomPlatformData.h"
@@ -92,23 +93,41 @@ public:
         add<FontCustomPlatformData>(renderingResourceIdentifier, WTFMove(customPlatformData), m_customPlatformDataCount);
     }
 
-    ImageBuffer* getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier) const
+    ImageBuffer* getImageBuffer(RenderingResourceIdentifier renderingResourceIdentifier, OptionSet<ReplayOption> options = { }) const
     {
-        return get<ImageBuffer>(renderingResourceIdentifier);
+        auto* imageBuffer = get<ImageBuffer>(renderingResourceIdentifier);
+
+#if USE(SKIA)
+        if (imageBuffer && options.contains(ReplayOption::FlushImagesAndWaitForCompletion))
+            imageBuffer->waitForAcceleratedRenderingFenceCompletion();
+#else
+        UNUSED_PARAM(options);
+#endif
+
+        return imageBuffer;
     }
 
-    NativeImage* getNativeImage(RenderingResourceIdentifier renderingResourceIdentifier) const
+    NativeImage* getNativeImage(RenderingResourceIdentifier renderingResourceIdentifier, OptionSet<ReplayOption> options = { }) const
     {
         auto* renderingResource = get<RenderingResource>(renderingResourceIdentifier);
-        return dynamicDowncast<NativeImage>(renderingResource);
+        auto* nativeImage = dynamicDowncast<NativeImage>(renderingResource);
+
+#if USE(SKIA)
+        if (nativeImage && options.contains(ReplayOption::FlushImagesAndWaitForCompletion))
+            nativeImage->backend().waitForAcceleratedRenderingFenceCompletion();
+#else
+        UNUSED_PARAM(options);
+#endif
+
+        return nativeImage;
     }
 
-    std::optional<SourceImage> getSourceImage(RenderingResourceIdentifier renderingResourceIdentifier) const
+    std::optional<SourceImage> getSourceImage(RenderingResourceIdentifier renderingResourceIdentifier, OptionSet<ReplayOption> options = { }) const
     {
-        if (auto nativeImage = getNativeImage(renderingResourceIdentifier))
+        if (auto nativeImage = getNativeImage(renderingResourceIdentifier, options))
             return { { *nativeImage } };
 
-        if (auto imageBuffer = getImageBuffer(renderingResourceIdentifier))
+        if (auto imageBuffer = getImageBuffer(renderingResourceIdentifier, options))
             return { { *imageBuffer } };
 
         return std::nullopt;

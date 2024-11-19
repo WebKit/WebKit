@@ -489,12 +489,22 @@ void RecorderImpl::applyDeviceScaleFactor(float scaleFactor)
 
 bool RecorderImpl::recordResourceUse(NativeImage& nativeImage)
 {
+#if USE(SKIA)
+    if (m_displayList.replayOptions().contains(ReplayOption::FlushImagesAndWaitForCompletion))
+        nativeImage.backend().finishAcceleratedRenderingAndCreateFence();
+#endif
+
     m_displayList.cacheNativeImage(nativeImage);
     return true;
 }
 
 bool RecorderImpl::recordResourceUse(ImageBuffer& imageBuffer)
 {
+#if USE(SKIA)
+    if (m_displayList.replayOptions().contains(ReplayOption::FlushImagesAndWaitForCompletion))
+        imageBuffer.finishAcceleratedRenderingAndCreateFence();
+#endif
+
     m_displayList.cacheImageBuffer(imageBuffer);
     return true;
 }

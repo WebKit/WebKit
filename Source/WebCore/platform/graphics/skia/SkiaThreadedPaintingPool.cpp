@@ -54,7 +54,7 @@ std::unique_ptr<SkiaThreadedPaintingPool> SkiaThreadedPaintingPool::create()
 
 std::unique_ptr<DisplayList::DisplayList> SkiaThreadedPaintingPool::recordDisplayList(const CoordinatedGraphicsLayer& layer, const IntRect& dirtyRect) const
 {
-    auto displayList = makeUnique<DisplayList::DisplayList>();
+    auto displayList = makeUnique<DisplayList::DisplayList>(DisplayList::ReplayOption::FlushImagesAndWaitForCompletion);
     DisplayList::RecorderImpl recordingContext(*displayList, GraphicsContextState(), FloatRect({ }, dirtyRect.size()), AffineTransform());
     layer.paintIntoGraphicsContext(recordingContext, dirtyRect);
     return displayList;
