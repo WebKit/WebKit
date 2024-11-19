@@ -73,15 +73,14 @@ RetainPtr<CFArrayRef> CertificateInfo::certificateChainFromSecTrust(SecTrustRef 
 bool CertificateInfo::containsNonRootSHA1SignedCertificate() const
 {
     if (m_trust) {
-        auto chain = adoptCF(SecTrustCopyCertificateChain(trust().get()));
-        // Allow only the root certificate (the last in the chain) to be SHA1.
-        for (CFIndex i = 0, size = SecTrustGetCertificateCount(trust().get()) - 1; i < size; ++i) {
-            auto certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), i));
-            if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
-                return true;
+        if (auto chain = adoptCF(SecTrustCopyCertificateChain(m_trust.get()))) {
+            // Allow only the root certificate (the last in the chain) to be SHA1.
+            for (CFIndex i = 0, size = CFArrayGetCount(chain.get()) - 1; i < size; ++i) {
+                auto certificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), i));
+                if (SecCertificateGetSignatureHashAlgorithm(certificate) == kSecSignatureHashAlgorithmSHA1)
+                    return true;
+            }
         }
-
-        return false;
     }
 
     return false;
@@ -98,28 +97,43 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
     auto leafCertificate = checked_cf_cast<SecCertificateRef>(CFArrayGetValueAtIndex(chain.get(), 0));
     auto subjectCF = adoptCF(SecCertificateCopySubjectSummary(leafCertificate));
     summaryInfo.subject = subjectCF.get();
-#endif
+
+#if HAVE(SEC_CERTIFICATE_DATE)
+    if (auto validNotBefore = adoptCF(SecCertificateCopyNotValidBeforeDate(leafCertificate))) {
+        // CFAbsoluteTime is relative to 01/01/1970 00:00:00 GMT.
+        summaryInfo.validFrom = Seconds(kCFAbsoluteTimeIntervalSince1970 + CFDateGetAbsoluteTime(validNotBefore.get()));
+    }
+
+    if (auto validNotAfter = adoptCF(SecCertificateCopyNotValidAfterDate(leafCertificate))) {
+        // CFAbsoluteTime is relative to 01/01/1970 00:00:00 GMT.
+        summaryInfo.validUntil = Seconds(kCFAbsoluteTimeIntervalSince1970 + CFDateGetAbsoluteTime(validNotBefore.get()));
+    }
+#endif // HAVE(SEC_CERTIFICATE_DATE)
+#endif // !PLATFORM(IOS_FAMILY_SIMULATOR) && !PLATFORM(MACCATALYST)
 
 #if PLATFORM(MAC)
     if (auto certificateDictionary = adoptCF(SecCertificateCopyValues(leafCertificate, nullptr, nullptr))) {
-        // CFAbsoluteTime is relative to 01/01/1970 00:00:00 GMT.
-        const Seconds absoluteReferenceDate(978307200);
-
+#if !HAVE(SEC_CERTIFICATE_DATE)
         if (auto validNotBefore = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), kSecOIDX509V1ValidityNotBefore))) {
             if (auto number = checked_cf_cast<CFNumberRef>(CFDictionaryGetValue(validNotBefore, CFSTR("value")))) {
                 double numberValue;
-                if (CFNumberGetValue(number, kCFNumberDoubleType, &numberValue))
-                    summaryInfo.validFrom = absoluteReferenceDate + Seconds(numberValue);
+                if (CFNumberGetValue(number, kCFNumberDoubleType, &numberValue)) {
+                    // CFAbsoluteTime is relative to 01/01/1970 00:00:00 GMT.
+                    summaryInfo.validFrom = Seconds(kCFAbsoluteTimeIntervalSince1970 + numberValue);
+                }
             }
         }
 
         if (auto validNotAfter = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), kSecOIDX509V1ValidityNotAfter))) {
             if (auto number = checked_cf_cast<CFNumberRef>(CFDictionaryGetValue(validNotAfter, CFSTR("value")))) {
                 double numberValue;
-                if (CFNumberGetValue(number, kCFNumberDoubleType, &numberValue))
-                    summaryInfo.validUntil = absoluteReferenceDate + Seconds(numberValue);
+                if (CFNumberGetValue(number, kCFNumberDoubleType, &numberValue)) {
+                    // CFAbsoluteTime is relative to 01/01/1970 00:00:00 GMT.
+                    summaryInfo.validUntil = Seconds(kCFAbsoluteTimeIntervalSince1970 + numberValue);
+                }
             }
         }
+#endif
 
         if (auto dnsNames = checked_cf_cast<CFDictionaryRef>(CFDictionaryGetValue(certificateDictionary.get(), CFSTR("DNSNAMES")))) {
             if (auto dnsNamesArray = checked_cf_cast<CFArrayRef>(CFDictionaryGetValue(dnsNames, CFSTR("value")))) {
