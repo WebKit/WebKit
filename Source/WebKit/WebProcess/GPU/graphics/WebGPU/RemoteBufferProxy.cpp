@@ -85,7 +85,7 @@ std::span<uint8_t> RemoteBufferProxy::getBufferContents()
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-void RemoteBufferProxy::copy(std::span<const uint8_t> span, size_t offset)
+void RemoteBufferProxy::copyFrom(std::span<const uint8_t> span, size_t offset)
 {
     if (!m_mapModeFlags.contains(WebCore::WebGPU::MapMode::Write))
         return;

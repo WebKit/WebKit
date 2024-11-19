@@ -63,7 +63,7 @@ private:
     void getMappedRange(Size64 offset, std::optional<Size64>, Function<void(std::span<uint8_t>)>&&) final;
     std::span<uint8_t> getBufferContents() final;
     void unmap() final;
-    void copy(std::span<const uint8_t>, size_t offset) final;
+    void copyFrom(std::span<const uint8_t>, size_t offset) final;
 
     void destroy() final;
 

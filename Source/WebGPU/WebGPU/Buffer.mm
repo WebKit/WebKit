@@ -28,12 +28,16 @@
 
 #import "APIConversions.h"
 #import "Device.h"
-#if ENABLE(WEBGPU_SWIFT)
-#import "WebGPUSwiftInternal.h"
-#endif
+
 #import <wtf/CheckedArithmetic.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
+
+#if ENABLE(WEBGPU_SWIFT)
+#import "WebGPUSwiftInternal.h"
+
+DEFINE_SWIFTCXX_THUNK(WebGPU::Buffer, copyFrom, void, const std::span<const uint8_t>, const size_t);
+#endif
 
 namespace WebGPU {
 
@@ -474,20 +478,6 @@ void Buffer::indirectBufferInvalidated()
     indirectBufferRecomputed(0, 0, 0, 0, MTLIndexTypeUInt16, 0);
 }
 
-#if ENABLE(WEBGPU_SWIFT)
-void Buffer::copy(const std::span<const uint8_t> data, const size_t offset)
-{
-    RELEASE_ASSERT(m_buffer.contents);
-    auto buffer = getBufferContents();
-    auto endOffset = checkedSum<size_t>(offset, data.size());
-    RELEASE_ASSERT(!(endOffset.hasOverflowed() || endOffset.value() > currentSize()));
-    auto checkSize = checkedSum<size_t>(currentSize());
-    RELEASE_ASSERT(!checkSize.hasOverflowed());
-    auto destination = buffer.subspan(offset);
-    WebGPU::copySpan(destination, data);
-}
-#endif
-
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs
@@ -575,6 +565,6 @@ WGPUBufferUsageFlags wgpuBufferGetUsage(WGPUBuffer buffer)
 #if ENABLE(WEBGPU_SWIFT)
 void wgpuBufferCopy(WGPUBuffer buffer, std::span<const uint8_t> data, size_t offset)
 {
-    WebGPU::protectedFromAPI(buffer)->copy(data, offset);
+    WebGPU::protectedFromAPI(buffer)->copyFrom(data, offset);
 }
 #endif

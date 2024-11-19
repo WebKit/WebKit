@@ -109,7 +109,7 @@ public:
     void indirectIndexedBufferRecomputed(MTLIndexType, NSUInteger indexBufferOffsetInBytes, uint64_t indirectOffset, uint32_t minVertexCount, uint32_t minInstanceCount);
     void indirectBufferInvalidated();
 #if ENABLE(WEBGPU_SWIFT)
-    void copy(const std::span<const uint8_t>, const size_t offset);
+    void copyFrom(const std::span<const uint8_t>, const size_t offset) HAS_SWIFTCXX_THUNK;
 #endif
 
 private:
@@ -123,7 +123,9 @@ private:
     void incrementBufferMapCount();
     void decrementBufferMapCount();
 
+private PUBLIC_IN_WEBGPU_SWIFT:
     id<MTLBuffer> m_buffer { nil };
+private:
     id<MTLBuffer> m_indirectBuffer { nil };
     id<MTLBuffer> m_indirectIndexedBuffer { nil };
 

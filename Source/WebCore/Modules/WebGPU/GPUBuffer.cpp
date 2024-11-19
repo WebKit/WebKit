@@ -215,7 +215,7 @@ void GPUBuffer::internalUnmap(ScriptExecutionContext& scriptExecutionContext)
     for (auto& arrayBufferAndOffset : m_arrayBuffers) {
         auto& arrayBuffer = arrayBufferAndOffset.buffer;
         if (arrayBuffer && arrayBuffer->data() && arrayBuffer->byteLength()) {
-            m_backing->copy(arrayBuffer->span(), arrayBufferAndOffset.offset);
+            m_backing->copyFrom(arrayBuffer->span(), arrayBufferAndOffset.offset);
             JSC::ArrayBufferContents emptyBuffer;
             arrayBuffer->unpin();
             arrayBuffer->transferTo(scriptExecutionContext.vm(), emptyBuffer);

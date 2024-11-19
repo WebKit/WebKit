@@ -25,7 +25,22 @@
 
 import WebGPU_Internal
 
-public func copySpan(destination: SpanUInt8, source: SpanConstUInt8) {
-    precondition(source.size_bytes() <= destination.size_bytes(), "Destination buffer not big enough.")
-    memcpy(destination.__dataUnsafe(), source.__dataUnsafe(), source.size_bytes())
+extension WebGPU.Buffer {
+    var bufferContents: UnsafeMutableRawBufferPointer {
+        UnsafeMutableRawBufferPointer(start: m_buffer.contents(), count: m_buffer.length)
+    }
+
+    func copy(from data: SpanConstUInt8, offset: Int) {
+        let slice = bufferContents[offset...]
+        // copyBytes(from:) checks bounds in debug builds only.
+        // FIXME: Use a bounds-checking implementation when one is available.
+        precondition(slice.count <= data.size_bytes())
+        slice.copyBytes(from: data)
+    }
+}
+
+// FIXME(emw): Find a way to generate thunks like these, maybe via a macro?
+@_expose(Cxx)
+public func Buffer_copyFrom_thunk(_ buffer: WebGPU.Buffer, from data: SpanConstUInt8, offset: Int) {
+    buffer.copy(from: data, offset: offset)
 }

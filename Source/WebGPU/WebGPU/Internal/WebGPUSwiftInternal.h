@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "WebGPUSwift.h"
+#include "SwiftCXXThunk.h"
 #include <span>
 #include <cstdint>
 

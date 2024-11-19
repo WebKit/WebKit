@@ -142,7 +142,6 @@
 		94200C512CADBD7200484401 /* CommandEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94200C502CADBD6B00484401 /* CommandEncoder.swift */; };
 		94200C522CADBE5200484401 /* CommandsMixin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C582FF827E04131009B40F0 /* CommandsMixin.h */; };
 		9478714A2C98CECB003DB695 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947871492C98CEC6003DB695 /* Buffer.swift */; };
-		9478714C2C98D31A003DB695 /* WebGPUSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 9478714B2C98D314003DB695 /* WebGPUSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		94CC0FE62CA203B300CB3264 /* WebGPUSwiftInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */; };
 		97099AC12AA60D58003B41F8 /* ASTElaboratedTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */; };
 		97099AC22AA60D58003B41F8 /* ASTReferenceTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */; };
@@ -465,7 +464,6 @@
 		941C1EE42CA328EE004D4220 /* Queue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Queue.swift; sourceTree = "<group>"; };
 		94200C502CADBD6B00484401 /* CommandEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandEncoder.swift; sourceTree = "<group>"; };
 		947871492C98CEC6003DB695 /* Buffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buffer.swift; sourceTree = "<group>"; };
-		9478714B2C98D314003DB695 /* WebGPUSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwift.h; sourceTree = "<group>"; };
 		94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUSwiftInternal.h; sourceTree = "<group>"; };
 		97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTElaboratedTypeExpression.h; sourceTree = "<group>"; };
 		97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ASTReferenceTypeExpression.h; sourceTree = "<group>"; };
@@ -535,6 +533,7 @@
 		97FA1A7F29C085740052D650 /* wgslc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = wgslc; sourceTree = BUILT_PRODUCTS_DIR; };
 		97FA1A8729C085A60052D650 /* wgslc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = wgslc.cpp; path = WGSL/wgslc.cpp; sourceTree = SOURCE_ROOT; };
 		97FA1AA229C0BB700052D650 /* wgslc.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = wgslc.xcconfig; sourceTree = "<group>"; };
+		DD8EE22A2CE6AC77004DD6F8 /* SwiftCXXThunk.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SwiftCXXThunk.h; sourceTree = "<group>"; };
 		DD8EE22F2CE6B4B3004DD6F8 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -672,6 +671,7 @@
 				1CEBD80D2716C3D800A5254D /* ShaderModule.h */,
 				1C5ACAB0273A426D0095F8D5 /* ShaderModule.mm */,
 				0DE2BFAC2C150DF700D04AEB /* ShaderStage.h */,
+				DD8EE22A2CE6AC77004DD6F8 /* SwiftCXXThunk.h */,
 				1C5ACA99273A426D0095F8D5 /* Texture.h */,
 				1C5ACAB1273A426D0095F8D5 /* Texture.mm */,
 				1C5ACADD273A4F3D0095F8D5 /* TextureView.h */,
@@ -680,7 +680,6 @@
 				1CC0C8C9273A7D8900D0B481 /* WebGPU.modulemap */,
 				1C5ACAD2273A4C860095F8D5 /* WebGPUExt.h */,
 				1CA7CDB12A2B284A0094071F /* WebGPUInternal.h */,
-				9478714B2C98D314003DB695 /* WebGPUSwift.h */,
 				0D943C0D2C6571BC00D33BA5 /* XRBinding.h */,
 				0D943C0E2C6571BC00D33BA5 /* XRBinding.mm */,
 				0DD5FD332C66947B004AF552 /* XRProjectionLayer.h */,
@@ -925,7 +924,6 @@
 				941C1EE62CA33255004D4220 /* Queue.h in Headers */,
 				0DE2BFAD2C150DF700D04AEB /* ShaderStage.h in Headers */,
 				1C5ACAD3273A4C860095F8D5 /* WebGPUExt.h in Headers */,
-				9478714C2C98D31A003DB695 /* WebGPUSwift.h in Headers */,
 				94CC0FE62CA203B300CB3264 /* WebGPUSwiftInternal.h in Headers */,
 				0D943C0F2C6571BC00D33BA5 /* XRBinding.h in Headers */,
 				0DD5FD352C66947B004AF552 /* XRProjectionLayer.h in Headers */,
