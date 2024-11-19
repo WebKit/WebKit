@@ -159,7 +159,7 @@ void SHA1::processBlock()
 {
     ASSERT(m_cursor == 64);
 
-    uint32_t w[80] = { 0 };
+    std::array <uint32_t, 80> w { };
     for (int t = 0; t < 16; ++t)
         w[t] = (m_buffer[t * 4] << 24) | (m_buffer[t * 4 + 1] << 16) | (m_buffer[t * 4 + 2] << 8) | m_buffer[t * 4 + 3];
     for (int t = 16; t < 80; ++t)
@@ -200,7 +200,7 @@ void SHA1::reset()
     m_hash[4] = 0xc3d2e1f0;
 
     // Clear the buffer after use in case it's sensitive.
-    memset(m_buffer, 0, sizeof(m_buffer));
+    m_buffer.fill(0);
 }
 
 #endif
