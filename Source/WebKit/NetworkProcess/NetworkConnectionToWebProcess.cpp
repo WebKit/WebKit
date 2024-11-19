@@ -759,9 +759,24 @@ void NetworkConnectionToWebProcess::registerURLSchemesAsCORSEnabled(Vector<Strin
         registry->registerURLSchemeAsCORSEnabled(WTFMove(scheme));
 }
 
+static bool shouldTreatAsSameSite(const URL& firstParty, const URL& url)
+{
+    if (SecurityPolicy::shouldInheritSecurityOriginFromOwner(url))
+        return true;
+
+    return RegistrableDomain(firstParty) == RegistrableDomain(url);
+}
+
 void NetworkConnectionToWebProcess::cookiesForDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, FrameIdentifier frameID, PageIdentifier pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(String cookieString, bool secureCookiesAccessed)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(protectedNetworkProcess()->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty), completionHandler({ }, false));
+    auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
+    MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler({ }, false));
+    if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
+        return completionHandler({ }, false);
+    if (sameSiteInfo.isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
+        CONNECTION_RELEASE_LOG_ERROR(IPC, "cookiesForDOM: Rejecting cookie access due to invalid sameSiteInfo");
+        return completionHandler({ }, false);
+    }
 
     auto* networkStorageSession = storageSession();
     if (!networkStorageSession)
@@ -778,11 +793,14 @@ void NetworkConnectionToWebProcess::cookiesForDOM(const URL& firstParty, const S
 
 void NetworkConnectionToWebProcess::setCookiesFromDOM(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, WebCore::FrameIdentifier frameID, PageIdentifier pageID, ApplyTrackingPrevention applyTrackingPrevention, const String& cookieString, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking)
 {
-    MESSAGE_CHECK(protectedNetworkProcess()->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty));
+    auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
+    if (sameSiteInfo.isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
+        CONNECTION_RELEASE_LOG_ERROR(IPC, "setCookiesFromDOM: Rejecting cookie access due to invalid sameSiteInfo");
+        return;
+    }
 
     auto* networkStorageSession = storageSession();
     if (!networkStorageSession)
-        return;
     networkStorageSession->setCookiesFromDOM(firstParty, sameSiteInfo, url, frameID, pageID, applyTrackingPrevention, cookieString, shouldRelaxThirdPartyCookieBlocking);
 #if !RELEASE_LOG_DISABLED
     if (auto* session = networkSession()) {
@@ -813,7 +831,14 @@ void NetworkConnectionToWebProcess::cookiesEnabled(const URL& firstParty, const 
 
 void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(String, bool)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(protectedNetworkProcess()->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty), completionHandler({ }, false));
+    auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
+    MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler({ }, false));
+    if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
+        return completionHandler({ }, false);
+    if (sameSiteInfo.isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
+        CONNECTION_RELEASE_LOG_ERROR(IPC, "cookieRequestHeaderFieldValue: Rejecting cookie access due to invalid sameSiteInfo");
+        return completionHandler({ }, false);
+    }
 
     auto* networkStorageSession = storageSession();
     if (!networkStorageSession)
@@ -824,7 +849,14 @@ void NetworkConnectionToWebProcess::cookieRequestHeaderFieldValue(const URL& fir
 
 void NetworkConnectionToWebProcess::getRawCookies(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<FrameIdentifier> frameID, std::optional<PageIdentifier> pageID, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(Vector<WebCore::Cookie>&&)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(protectedNetworkProcess()->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty), completionHandler({ }));
+    auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
+    MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler({ }));
+    if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
+        return completionHandler({ });
+    if (sameSiteInfo.isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
+        CONNECTION_RELEASE_LOG_ERROR(IPC, "getRawCookies: Rejecting cookie access due to invalid sameSiteInfo");
+        return completionHandler({ });
+    }
 
     auto* networkStorageSession = storageSession();
     if (!networkStorageSession)
@@ -859,7 +891,14 @@ void NetworkConnectionToWebProcess::deleteCookie(const URL& url, const String& c
 
 void NetworkConnectionToWebProcess::cookiesForDOMAsync(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, IncludeSecureCookies includeSecureCookies, ApplyTrackingPrevention applyTrackingPrevention, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, WebCore::CookieStoreGetOptions&& options, CompletionHandler<void(std::optional<Vector<WebCore::Cookie>>&&)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(protectedNetworkProcess()->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty), completionHandler(std::nullopt));
+    auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
+    MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler(std::nullopt));
+    if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
+        return completionHandler(std::nullopt);
+    if (sameSiteInfo.isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
+        CONNECTION_RELEASE_LOG_ERROR(IPC, "cookiesForDOMAsync: Rejecting cookie access due to invalid sameSiteInfo");
+        return completionHandler(std::nullopt);
+    }
 
     auto* networkStorageSession = storageSession();
     if (!networkStorageSession)
@@ -876,7 +915,14 @@ void NetworkConnectionToWebProcess::cookiesForDOMAsync(const URL& firstParty, co
 
 void NetworkConnectionToWebProcess::setCookieFromDOMAsync(const URL& firstParty, const SameSiteInfo& sameSiteInfo, const URL& url, std::optional<WebCore::FrameIdentifier> frameID, std::optional<WebCore::PageIdentifier> pageID, ApplyTrackingPrevention applyTrackingPrevention, WebCore::Cookie&& cookie, ShouldRelaxThirdPartyCookieBlocking shouldRelaxThirdPartyCookieBlocking, CompletionHandler<void(bool)>&& completionHandler)
 {
-    MESSAGE_CHECK_COMPLETION(protectedNetworkProcess()->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty), completionHandler(false));
+    auto allowCookieAccess = m_networkProcess->allowsFirstPartyForCookies(m_webProcessIdentifier, firstParty);
+    MESSAGE_CHECK_COMPLETION(allowCookieAccess != NetworkProcess::AllowCookieAccess::Terminate, completionHandler(false));
+    if (allowCookieAccess != NetworkProcess::AllowCookieAccess::Allow)
+        return completionHandler(false);
+    if (sameSiteInfo.isSameSite && !shouldTreatAsSameSite(firstParty, url)) {
+        CONNECTION_RELEASE_LOG_ERROR(IPC, "setCookieFromDOMAsync: Rejecting cookie access due to invalid sameSiteInfo");
+        return completionHandler(false);
+    }
 
     auto* networkStorageSession = storageSession();
     if (!networkStorageSession)

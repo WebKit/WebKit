@@ -1241,8 +1241,10 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     // See if we can use an existing resource from the cache.
     CachedResourceHandle<CachedResource> resource;
-    if (RefPtr document = this->document())
+    if (RefPtr document = this->document()) {
         request.setDomainForCachePartition(*document);
+        request.resourceRequest().setFirstPartyForCookies(document->firstPartyForCookies());
+    }
 
     if (request.allowsCaching())
         resource = memoryCache->resourceForRequest(request.resourceRequest(), page->sessionID());
@@ -1252,7 +1254,7 @@ ResourceErrorOr<CachedResourceHandle<CachedResource>> CachedResourceLoader::requ
 
     Ref cookieJar = page->cookieJar();
 
-    FrameLoader::addSameSiteInfoToRequestIfNeeded(request.resourceRequest(), document(), frame->page());
+    FrameLoader::addSameSiteInfoToRequestIfNeeded(request.resourceRequest(), document());
 
     auto mayAddToMemoryCache = computeMayAddToMemoryCache(request, resource.get()) ? MayAddToMemoryCache::Yes : MayAddToMemoryCache::No;
     RevalidationPolicy policy = determineRevalidationPolicy(type, request, resource.get(), forPreload, imageLoading);

@@ -2739,10 +2739,10 @@ TEST(SOAuthorizationSubFrame, InterceptionSucceedWithCookie)
     auto delegate = adoptNS([[TestSOAuthorizationDelegate alloc] init]);
     configureSOAuthorizationWebView(webView.get(), delegate.get());
 
-    [webView loadHTMLString:testHtml baseURL:nil];
+    [webView loadHTMLString:testHtml baseURL:[NSURL URLWithString:@"http://example.com"]];
     Util::run(&allMessagesReceived);
 
-    checkAuthorizationOptions(false, "null"_s, 2);
+    checkAuthorizationOptions(false, "http://example.com"_s, 2);
     EXPECT_TRUE(policyForAppSSOPerformed);
     [messageHandler extendExpectations:@[@"http://www.example.com", @"Hello.", @"http://www.example.com", @"Cookies: sessionid=38afes7a8"]];
 

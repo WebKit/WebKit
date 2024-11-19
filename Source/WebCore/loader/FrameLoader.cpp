@@ -2999,7 +2999,7 @@ void FrameLoader::setOriginalURLForDownloadRequest(ResourceRequest& request)
         request.setFirstPartyForCookies(URL());
     else
         request.setFirstPartyForCookies(originalURL);
-    addSameSiteInfoToRequestIfNeeded(request, initiator.get(), protectedFrame()->protectedPage().get());
+    addSameSiteInfoToRequestIfNeeded(request, initiator.get());
 }
 
 void FrameLoader::didReachLayoutMilestone(OptionSet<LayoutMilestone> milestones)
@@ -3326,7 +3326,7 @@ void FrameLoader::updateRequestAndAddExtraFields(Frame& targetFrame, ResourceReq
                 ASSERT(ownerFrame || localFrame->isMainFrame() || localFrame->settings().siteIsolationEnabled());
             }
         }
-        addSameSiteInfoToRequestIfNeeded(request, initiator, page.get());
+        addSameSiteInfoToRequestIfNeeded(request, initiator);
     }
 
     // In case of service worker navigation load, we inherit isTopSite from the FetchEvent request directly.
@@ -3434,7 +3434,7 @@ void FrameLoader::addHTTPOriginIfNeeded(ResourceRequest& request, const String& 
 // Implements the "'Same-site' and 'cross-site' Requests" algorithm from <https://tools.ietf.org/html/draft-ietf-httpbis-cookie-same-site-00#section-2.1>.
 // The algorithm is ammended to treat URLs that inherit their security origin from their owner (e.g. about:blank)
 // as same-site. This matches the behavior of Chrome and Firefox.
-void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, const Document* initiator, const Page* page)
+void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, const Document* initiator)
 {
     if (!request.isSameSiteUnspecified())
         return;
@@ -3446,23 +3446,6 @@ void FrameLoader::addSameSiteInfoToRequestIfNeeded(ResourceRequest& request, con
         request.setIsSameSite(true);
         return;
     }
-    if (page && page->shouldAssumeSameSiteForRequestTo(request.url())) {
-        request.setIsSameSite(true);
-        return;
-    }
-#if PLATFORM(COCOA)
-    bool isFullBrowser { true };
-    if (auto frame = initiator->frame())
-        isFullBrowser = frame->loader().client().isParentProcessAFullWebBrowser();
-    if (initiator->url().protocolIsFile() && !isFullBrowser && !linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::LaxCookieSameSiteAttribute)) {
-        request.setIsSameSite(true);
-        return;
-    }
-    if (initiator->quirks().needsLaxSameSiteCookieQuirk(request.url())) {
-        request.setIsSameSite(true);
-        return;
-    }
-#endif
 
     request.setIsSameSite(initiator->isSameSiteForCookies(request.url()));
 }
