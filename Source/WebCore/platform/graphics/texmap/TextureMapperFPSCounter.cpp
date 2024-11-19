@@ -24,6 +24,7 @@
 #include "TextureMapperFPSCounter.h"
 
 #include "TextureMapper.h"
+#include <wtf/SystemTracing.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
@@ -34,7 +35,7 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(TextureMapperFPSCounter);
 TextureMapperFPSCounter::TextureMapperFPSCounter()
     : m_isShowingFPS(false)
     , m_fpsInterval(0_s)
-    , m_lastFPS(0)
+    , m_lastFPS(0.0)
     , m_frameCount(0)
 {
     auto showFPSEnvironment = String::fromLatin1(getenv("WEBKIT_SHOW_FPS"));
@@ -48,18 +49,18 @@ TextureMapperFPSCounter::TextureMapperFPSCounter()
 
 void TextureMapperFPSCounter::updateFPSAndDisplay(TextureMapper& textureMapper, const FloatPoint& location, const TransformationMatrix& matrix)
 {
-    if (!m_isShowingFPS)
-        return;
-
     m_frameCount++;
     Seconds delta = MonotonicTime::now() - m_fpsTimestamp;
     if (delta >= m_fpsInterval) {
-        m_lastFPS = int(m_frameCount / delta.seconds());
+        m_lastFPS = m_frameCount / delta.seconds();
         m_frameCount = 0;
         m_fpsTimestamp += delta;
     }
 
-    textureMapper.drawNumber(m_lastFPS, Color::black, location, matrix);
+    WTFSetCounterDouble(FPS, m_lastFPS);
+
+    if (m_isShowingFPS)
+        textureMapper.drawNumber(m_lastFPS, Color::black, location, matrix);
 }
 
 } // namespace WebCore

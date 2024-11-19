@@ -42,7 +42,7 @@ private:
     bool m_isShowingFPS;
     Seconds m_fpsInterval;
     MonotonicTime m_fpsTimestamp;
-    int m_lastFPS;
+    double m_lastFPS;
     int m_frameCount;
 };
 
