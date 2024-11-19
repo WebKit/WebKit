@@ -108,6 +108,33 @@ ImageBufferSkiaAcceleratedBackend::~ImageBufferSkiaAcceleratedBackend()
 #endif
 }
 
+void ImageBufferSkiaAcceleratedBackend::finishAcceleratedRenderingAndCreateFence()
+{
+    auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
+    if (!glContext || !glContext->makeContextCurrent())
+        return;
+
+    auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
+    RELEASE_ASSERT(grContext);
+
+    if (GLFence::isSupported()) {
+        grContext->flushAndSubmit(m_surface.get(), GrSyncCpu::kNo);
+        m_fence = GLFence::create();
+        if (!m_fence)
+            grContext->submit(GrSyncCpu::kYes);
+    } else
+        grContext->flushAndSubmit(m_surface.get(), GrSyncCpu::kYes);
+}
+
+void ImageBufferSkiaAcceleratedBackend::waitForAcceleratedRenderingFenceCompletion()
+{
+    if (!m_fence)
+        return;
+
+    m_fence->serverWait();
+    m_fence = nullptr;
+}
+
 RefPtr<NativeImage> ImageBufferSkiaAcceleratedBackend::copyNativeImage()
 {
     // SkSurface uses a copy-on-write mechanism for makeImageSnapshot(), so it's

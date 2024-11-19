@@ -185,6 +185,13 @@ public:
     WEBCORE_EXPORT RefPtr<cairo_surface_t> createCairoSurface();
 #endif
 
+#if USE(SKIA)
+    // During DisplayList recording a fence is created, so that we can wait until the SkSurface finished rendering
+    // before we attempt to access the GPU resource from a secondary thread during replay (in threaded GPU painting mode).
+    void finishAcceleratedRenderingAndCreateFence();
+    void waitForAcceleratedRenderingFenceCompletion();
+#endif
+
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
     WEBCORE_EXPORT virtual std::optional<DynamicContentScalingDisplayList> dynamicContentScalingDisplayList();
 #endif

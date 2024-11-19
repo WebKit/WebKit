@@ -133,6 +133,11 @@ public:
     virtual RefPtr<cairo_surface_t> createCairoSurface() { return nullptr; }
 #endif
 
+#if USE(SKIA)
+    virtual void finishAcceleratedRenderingAndCreateFence() { }
+    virtual void waitForAcceleratedRenderingFenceCompletion() { }
+#endif
+
     virtual bool isInUse() const { return false; }
     virtual void releaseGraphicsContext() { ASSERT_NOT_REACHED(); }
 

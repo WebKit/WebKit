@@ -415,6 +415,20 @@ RefPtr<cairo_surface_t> ImageBuffer::createCairoSurface()
 }
 #endif
 
+#if USE(SKIA)
+void ImageBuffer::finishAcceleratedRenderingAndCreateFence()
+{
+    if (auto* backend = ensureBackend())
+        backend->finishAcceleratedRenderingAndCreateFence();
+}
+
+void ImageBuffer::waitForAcceleratedRenderingFenceCompletion()
+{
+    if (auto* backend = ensureBackend())
+        backend->waitForAcceleratedRenderingFenceCompletion();
+}
+#endif
+
 RefPtr<GraphicsLayerContentsDisplayDelegate> ImageBuffer::layerContentsDisplayDelegate()
 {
     if (auto* backend = ensureBackend())

@@ -37,8 +37,11 @@
 
 namespace WebCore {
 
-class GraphicsContext;
+#if USE(SKIA)
+class GLFence;
+#endif
 
+class GraphicsContext;
 class NativeImageBackend;
 
 class NativeImage final : public RenderingResource {
@@ -82,6 +85,11 @@ public:
     virtual DestinationColorSpace colorSpace() const = 0;
     virtual Headroom headroom() const = 0;
     WEBCORE_EXPORT virtual bool isRemoteNativeImageBackendProxy() const;
+
+#if USE(SKIA)
+    virtual void finishAcceleratedRenderingAndCreateFence() { }
+    virtual void waitForAcceleratedRenderingFenceCompletion() { }
+#endif
 };
 
 class PlatformImageNativeImageBackend final : public NativeImageBackend {
@@ -93,8 +101,16 @@ public:
     WEBCORE_EXPORT bool hasAlpha() const final;
     WEBCORE_EXPORT DestinationColorSpace colorSpace() const final;
     WEBCORE_EXPORT Headroom headroom() const final;
+
+#if USE(SKIA)
+    void finishAcceleratedRenderingAndCreateFence() final;
+    void waitForAcceleratedRenderingFenceCompletion() final;
+#endif
 private:
     PlatformImagePtr m_platformImage;
+#if USE(SKIA)
+    std::unique_ptr<GLFence> m_fence;
+#endif
 };
 
 } // namespace WebCore

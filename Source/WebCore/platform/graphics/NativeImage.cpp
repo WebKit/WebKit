@@ -25,6 +25,11 @@
 
 #include "config.h"
 #include "NativeImage.h"
+
+#if USE(SKIA)
+#include "GLFence.h"
+#endif
+
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {

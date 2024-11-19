@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-class BitmapTexture;
+class GLFence;
 
 class ImageBufferSkiaAcceleratedBackend final : public ImageBufferSkiaSurfaceBackend
 {
@@ -54,11 +54,16 @@ private:
     void getPixelBuffer(const IntRect&, PixelBuffer&) final;
     void putPixelBuffer(const PixelBuffer&, const IntRect& srcRect, const IntPoint& destPoint, AlphaPremultiplication destFormat) final;
 
+    void finishAcceleratedRenderingAndCreateFence() final;
+    void waitForAcceleratedRenderingFenceCompletion() final;
+
 #if USE(COORDINATED_GRAPHICS)
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() const final;
 
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 #endif
+
+    std::unique_ptr<GLFence> m_fence;
 };
 
 } // namespace WebCore
