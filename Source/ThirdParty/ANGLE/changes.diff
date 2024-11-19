@@ -1966,7 +1966,7 @@ index 004dc07b5c05616155a45dd52cbaf5c0522be256..de757d25f1b9305f2e06b6cbd9724d51
      bool isAMDBronzeDriver() const;
      bool isAMDFireProDevice() const;
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 92d19572a78fe5e77fc7600dd7f202de0f2a12a1..d791304d52cf6cf4887e1fc382a7983dd19c8fad 100644
+index 92d19572a78fe5e77fc7600dd7f202de0f2a12a1..ba9271deda0f4ccf36f0e97a0c049ebfb038743e 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -176,12 +176,22 @@ void DisplayMtl::terminate()
@@ -1992,7 +1992,24 @@ index 92d19572a78fe5e77fc7600dd7f202de0f2a12a1..d791304d52cf6cf4887e1fc382a7983d
  }
  
  std::string DisplayMtl::getRendererDescription()
-@@ -1130,6 +1140,14 @@ void DisplayMtl::initializeExtensions() const
+@@ -716,11 +726,15 @@ void DisplayMtl::ensureCapsInitialized() const
+     // https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf
+     mNativeCaps.maxElementIndex  = std::numeric_limits<GLuint>::max() - 1;
+     mNativeCaps.max3DTextureSize = 2048;
+-#if TARGET_OS_OSX || TARGET_OS_MACCATALYST || TARGET_OS_SIMULATOR
++#if TARGET_OS_OSX || TARGET_OS_MACCATALYST
+     mNativeCaps.max2DTextureSize = 16384;
+     // On macOS exclude [[position]] from maxVaryingVectors.
+     mNativeCaps.maxVaryingVectors         = 31 - 1;
+     mNativeCaps.maxVertexOutputComponents = mNativeCaps.maxFragmentInputComponents = 124 - 4;
++#elif TARGET_OS_SIMULATOR
++    mNativeCaps.max2DTextureSize          = 8192;
++    mNativeCaps.maxVaryingVectors         = 31 - 1;
++    mNativeCaps.maxVertexOutputComponents = mNativeCaps.maxFragmentInputComponents = 124 - 4;
+ #else
+     if (supportsAppleGPUFamily(3))
+     {
+@@ -1130,6 +1144,14 @@ void DisplayMtl::initializeExtensions() const
              mNativeCaps.maxImageUnits = gl::IMPLEMENTATION_MAX_PIXEL_LOCAL_STORAGE_PLANES;
          }
      }
@@ -2007,7 +2024,7 @@ index 92d19572a78fe5e77fc7600dd7f202de0f2a12a1..d791304d52cf6cf4887e1fc382a7983d
      // "The GPUs in Apple3 through Apple8 families only support memory barriers for compute command
      // encoders, and for vertex-to-vertex and vertex-to-fragment stages of render command encoders."
      mHasFragmentMemoryBarriers = !supportsAppleGPUFamily(3);
-@@ -1201,6 +1219,8 @@ void DisplayMtl::initializeFeatures()
+@@ -1201,6 +1223,8 @@ void DisplayMtl::initializeFeatures()
      ANGLE_FEATURE_CONDITION((&mFeatures), hasExplicitMemBarrier, (isOSX || isCatalyst) && !isARM);
      ANGLE_FEATURE_CONDITION((&mFeatures), hasDepthAutoResolve, supportsEitherGPUFamily(3, 2));
      ANGLE_FEATURE_CONDITION((&mFeatures), hasStencilAutoResolve, supportsEitherGPUFamily(5, 2));
@@ -2016,7 +2033,7 @@ index 92d19572a78fe5e77fc7600dd7f202de0f2a12a1..d791304d52cf6cf4887e1fc382a7983d
      ANGLE_FEATURE_CONDITION((&mFeatures), allowMultisampleStoreAndResolve,
                              supportsEitherGPUFamily(3, 1));
  
-@@ -1391,6 +1411,17 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
+@@ -1391,6 +1415,17 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
      return false;
  #endif
  }
