@@ -49,6 +49,7 @@ const GlobalObjectMethodTable* JSWorkletGlobalScopeBase::globalObjectMethodTable
         &shouldInterruptScript,
         &javaScriptRuntimeFlags,
         nullptr, // queueMicrotaskToEventLoop
+        nullptr, // queueMicrotaskToIncubatingRealm
         &shouldInterruptScriptBeforeTimeout,
         &moduleLoaderImportModule,
         &moduleLoaderResolve,

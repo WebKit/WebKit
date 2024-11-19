@@ -56,6 +56,7 @@ const GlobalObjectMethodTable* JSWorkerGlobalScopeBase::globalObjectMethodTable(
         &shouldInterruptScript,
         &javaScriptRuntimeFlags,
         &queueMicrotaskToEventLoop,
+        nullptr, // queueMicrotaskToIncubatingRealm
         &shouldInterruptScriptBeforeTimeout,
         &moduleLoaderImportModule,
         &moduleLoaderResolve,

@@ -613,6 +613,7 @@ const GlobalObjectMethodTable* JSGlobalObject::baseGlobalObjectMethodTable()
         &shouldInterruptScript,
         &javaScriptRuntimeFlags,
         nullptr, // queueMicrotaskToEventLoop
+        nullptr, // queueMicrotaskToIncubatingRealm
         &shouldInterruptScriptBeforeTimeout,
         nullptr, // moduleLoaderImportModule
         nullptr, // moduleLoaderResolve
@@ -3288,6 +3289,11 @@ void JSGlobalObject::queueMicrotask(Ref<Microtask>&& task)
 
 void JSGlobalObject::queueMicrotask(JSValue job, JSValue argument0, JSValue argument1, JSValue argument2, JSValue argument3)
 {
+    if (globalObjectMethodTable()->queueMicrotaskToIncubatingRealm) {
+        globalObjectMethodTable()->queueMicrotaskToIncubatingRealm(*this, job, argument0, argument1, argument2, argument3);
+        return;
+    }
+
     if (globalObjectMethodTable()->queueMicrotaskToEventLoop) {
         queueMicrotask(createJSMicrotask(vm(), job, argument0, argument1, argument2, argument3));
         return;
