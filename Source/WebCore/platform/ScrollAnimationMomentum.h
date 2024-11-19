@@ -25,12 +25,14 @@
 #pragma once
 
 #include "ScrollAnimation.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class ScrollingMomentumCalculator;
 
 class ScrollAnimationMomentum final : public ScrollAnimation {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollAnimationMomentum);
 public:
     ScrollAnimationMomentum(ScrollAnimationClient&);
     virtual ~ScrollAnimationMomentum();

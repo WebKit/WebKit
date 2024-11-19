@@ -40,6 +40,7 @@
 #import <WebCore/FrameIdentifier.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/RetainPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/WTFString.h>
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
@@ -50,6 +51,7 @@
 #endif
 
 class InspectorClient final : public API::InspectorClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(InspectorClient);
 public:
     explicit InspectorClient(id <_WKInspectorDelegate> delegate)
         : m_delegate(delegate)

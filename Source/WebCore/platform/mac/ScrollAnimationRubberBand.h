@@ -25,12 +25,14 @@
 #pragma once
 
 #include "ScrollAnimation.h"
+#include <wtf/TZoneMalloc.h>
 
 #if HAVE(RUBBER_BANDING)
 
 namespace WebCore {
 
 class ScrollAnimationRubberBand final: public ScrollAnimation {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollAnimationRubberBand);
 public:
     ScrollAnimationRubberBand(ScrollAnimationClient&);
     virtual ~ScrollAnimationRubberBand();

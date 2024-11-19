@@ -30,8 +30,13 @@
 
 #include "Logging.h"
 #include <WebCore/CARingBuffer.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(SharedCARingBufferBase);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ConsumerSharedCARingBuffer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ProducerSharedCARingBuffer);
 
 SharedCARingBufferBase::SharedCARingBufferBase(size_t bytesPerFrame, size_t frameCount, uint32_t numChannelStream, Ref<WebCore::SharedMemory> storage)
     : CARingBuffer(bytesPerFrame, frameCount, numChannelStream)

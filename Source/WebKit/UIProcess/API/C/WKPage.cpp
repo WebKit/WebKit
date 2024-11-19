@@ -986,6 +986,7 @@ void WKPageSetPageContextMenuClient(WKPageRef pageRef, const WKPageContextMenuCl
     CRASH_IF_SUSPENDED;
 #if ENABLE(CONTEXT_MENUS)
     class ContextMenuClient final : public API::Client<WKPageContextMenuClientBase>, public API::ContextMenuClient {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(ContextMenuClient);
     public:
         explicit ContextMenuClient(const WKPageContextMenuClientBase* client)
         {

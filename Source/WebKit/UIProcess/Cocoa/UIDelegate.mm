@@ -87,6 +87,9 @@ namespace WebKit {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(UIDelegate);
 WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(UIDelegateUIClient, UIDelegate::UIClient);
+#if ENABLE(CONTEXT_MENUS)
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(UIDelegateContextMenuClient, UIDelegate::ContextMenuClient);
+#endif
 
 UIDelegate::UIDelegate(WKWebView *webView)
     : m_webView(webView)

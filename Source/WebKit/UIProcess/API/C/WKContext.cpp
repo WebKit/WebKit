@@ -49,6 +49,7 @@
 #include "WebProcessPool.h"
 #include <WebCore/GamepadProvider.h>
 #include <wtf/RefPtr.h>
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/WTFString.h>
 
 // Supplements
@@ -104,6 +105,7 @@ void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextIn
 void WKContextSetHistoryClient(WKContextRef contextRef, const WKContextHistoryClientBase* wkClient)
 {
     class HistoryClient final : public API::Client<WKContextHistoryClientBase>, public API::LegacyContextHistoryClient {
+        WTF_MAKE_TZONE_ALLOCATED_INLINE(HistoryClient);
     public:
         explicit HistoryClient(const WKContextHistoryClientBase* client)
         {

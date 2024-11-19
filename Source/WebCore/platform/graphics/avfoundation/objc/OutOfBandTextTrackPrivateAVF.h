@@ -29,12 +29,14 @@
 #if ENABLE(VIDEO) && (USE(AVFOUNDATION) || PLATFORM(IOS_FAMILY))
 
 #include "InbandTextTrackPrivateAVF.h"
+#include <wtf/TZoneMallocInlines.h>
 
 OBJC_CLASS AVMediaSelectionOption;
 
 namespace WebCore {
     
 class OutOfBandTextTrackPrivateAVF : public InbandTextTrackPrivateAVF {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(OutOfBandTextTrackPrivateAVF);
 public:
     static Ref<OutOfBandTextTrackPrivateAVF> create(AVFInbandTrackParent* player,  AVMediaSelectionOption* selection, TrackID trackID)
     {

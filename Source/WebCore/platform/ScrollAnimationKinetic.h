@@ -28,12 +28,14 @@
 
 #include "FloatPoint.h"
 #include "ScrollAnimation.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
 class PlatformWheelEvent;
 
 class ScrollAnimationKinetic final : public ScrollAnimation {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollAnimationKinetic);
 private:
     class PerAxisData {
     public:

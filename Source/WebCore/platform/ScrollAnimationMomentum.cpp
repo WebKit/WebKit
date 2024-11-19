@@ -27,9 +27,12 @@
 
 #include "Logging.h"
 #include "ScrollingMomentumCalculator.h"
+#include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/TextStream.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollAnimationMomentum);
 
 ScrollAnimationMomentum::ScrollAnimationMomentum(ScrollAnimationClient& client)
     : ScrollAnimation(Type::Momentum, client)

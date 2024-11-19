@@ -37,9 +37,11 @@
 #import <WebCore/ResourceRequest.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/cocoa/SpanCocoa.h>
 
 class WKDataTaskClient final : public API::DataTaskClient {
+    WTF_MAKE_TZONE_ALLOCATED_INLINE(WKDataTaskClient);
 public:
     static Ref<WKDataTaskClient> create(id <_WKDataTaskDelegate> delegate) { return adoptRef(*new WKDataTaskClient(delegate)); }
 private:

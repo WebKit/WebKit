@@ -33,8 +33,11 @@
 #include "ScrollingTree.h"
 #include "ScrollingTreeFrameScrollingNode.h"
 #include "ScrollingTreeScrollingNode.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ThreadedScrollingTreeScrollingNodeDelegate);
 
 ThreadedScrollingTreeScrollingNodeDelegate::ThreadedScrollingTreeScrollingNodeDelegate(ScrollingTreeScrollingNode& scrollingNode)
     : ScrollingTreeScrollingNodeDelegate(scrollingNode)

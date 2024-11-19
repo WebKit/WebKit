@@ -37,8 +37,11 @@
 #import <QuartzCore/QuartzCore.h>
 #import <pal/spi/mac/NSScrollerImpSPI.h>
 #import <wtf/BlockObjCExceptions.h>
+#import <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(ScrollingTreeScrollingNodeDelegateMac);
 
 ScrollingTreeScrollingNodeDelegateMac::ScrollingTreeScrollingNodeDelegateMac(ScrollingTreeScrollingNode& scrollingNode)
     : ThreadedScrollingTreeScrollingNodeDelegate(scrollingNode)

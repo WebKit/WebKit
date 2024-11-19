@@ -59,6 +59,8 @@ public:
     using WriteOperationIdentifier = ObjectIdentifier<WriteOperationIdentifierType>;
 
     struct Record {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(Record);
+
         Record() = default;
         Record(const Key& key, WallTime timeStamp, const Data& header, const Data& body, std::optional<SHA1::Digest> bodyHash)
             : key(key)
@@ -80,6 +82,8 @@ public:
     };
 
     struct Timings {
+        WTF_MAKE_STRUCT_TZONE_ALLOCATED(Timings);
+
         MonotonicTime startTime;
         MonotonicTime dispatchTime;
         MonotonicTime recordIOStartTime;
@@ -92,8 +96,6 @@ public:
         bool synchronizationInProgressAtDispatch { false };
         bool shrinkInProgressAtDispatch { false };
         bool wasCanceled { false };
-
-        WTF_MAKE_TZONE_ALLOCATED(Timings);
     };
 
     // This may call completion handler synchronously on failure.

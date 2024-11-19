@@ -53,6 +53,7 @@ namespace WebKit {
 using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageBufferProxy);
+WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteSerializedImageBufferProxy);
 
 RemoteImageBufferProxy::RemoteImageBufferProxy(Parameters parameters, const ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier identifier)
     : ImageBuffer(parameters, info, { }, WTFMove(backend), identifier)

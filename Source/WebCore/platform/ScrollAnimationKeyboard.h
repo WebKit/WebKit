@@ -28,6 +28,7 @@
 #include "KeyboardScroll.h"
 #include "RectEdges.h"
 #include "ScrollAnimation.h"
+#include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ class FloatPoint;
 class TimingFunction;
 
 class ScrollAnimationKeyboard final: public ScrollAnimation {
+    WTF_MAKE_TZONE_ALLOCATED(ScrollAnimationKeyboard);
 public:
     ScrollAnimationKeyboard(ScrollAnimationClient&);
     virtual ~ScrollAnimationKeyboard();

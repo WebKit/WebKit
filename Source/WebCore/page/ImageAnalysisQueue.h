@@ -48,7 +48,7 @@ class Timer;
 class WeakPtrImplWithEventTargetData;
 
 class ImageAnalysisQueue final : public RefCounted<ImageAnalysisQueue> {
-    WTF_MAKE_TZONE_ALLOCATED(ImageAnalysisQueue);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(ImageAnalysisQueue, WEBCORE_EXPORT);
 public:
     static Ref<ImageAnalysisQueue> create(Page&);
     WEBCORE_EXPORT ~ImageAnalysisQueue();
