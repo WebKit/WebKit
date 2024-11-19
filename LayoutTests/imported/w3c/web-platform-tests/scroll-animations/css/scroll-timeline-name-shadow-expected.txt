@@ -1,6 +1,6 @@
 
-FAIL Outer animation can see scroll timeline defined by :host assert_equals: expected "y" but got "x"
-FAIL Outer animation can see scroll timeline defined by ::slotted assert_equals: expected "y" but got "x"
+PASS Outer animation can see scroll timeline defined by :host
+PASS Outer animation can see scroll timeline defined by ::slotted
 PASS Inner animation can see scroll timeline defined by ::part
 FAIL Slotted element can see scroll timeline within the shadow assert_equals: expected "y" but got "x"
 

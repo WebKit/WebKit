@@ -26,9 +26,11 @@
 #pragma once
 
 #include "AnimationTimeline.h"
+#include "Element.h"
 #include "ScrollAxis.h"
 #include "ScrollTimelineOptions.h"
 #include <wtf/Ref.h>
+#include <wtf/WeakHashSet.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -67,6 +69,9 @@ public:
 
     std::optional<WebAnimationTime> currentTime(const TimelineRange&) override;
     TimelineRange defaultRange() const override;
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> timelineScopeDeclaredElement() const { return m_timelineScopeElement; }
+    void setTimelineScopeElement(const Element&);
+    void clearTimelineScopeDeclaredElement() { m_timelineScopeElement = nullptr; }
 
 protected:
     explicit ScrollTimeline(const AtomString&, ScrollAxis);
@@ -93,6 +98,7 @@ private:
     ScrollAxis m_axis { ScrollAxis::Block };
     AtomString m_name;
     Scroller m_scroller { Scroller::Self };
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_timelineScopeElement;
 };
 
 } // namespace WebCore

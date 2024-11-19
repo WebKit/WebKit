@@ -1,4 +1,4 @@
 
 FAIL Use the last value from view-timeline-axis if omitted assert_equals: expected "35" but got "45"
-FAIL Use the last value from view-timeline-inset if omitted assert_equals: expected "0" but got "-1"
+FAIL Use the last value from view-timeline-inset if omitted assert_equals: expected "50" but got "100"
 

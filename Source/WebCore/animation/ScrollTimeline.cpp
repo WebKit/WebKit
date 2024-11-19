@@ -189,6 +189,11 @@ Element* ScrollTimeline::sourceElementForProgressCalculation() const
     return nullptr;
 }
 
+void ScrollTimeline::setTimelineScopeElement(const Element& element)
+{
+    m_timelineScopeElement = WeakPtr { &element };
+}
+
 ScrollableArea* ScrollTimeline::scrollableAreaForSourceRenderer(RenderElement* renderer, Ref<Document> document)
 {
     CheckedPtr renderBox = dynamicDowncast<RenderBox>(renderer);

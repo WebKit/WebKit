@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: Error: assert_equals: expected "1px" but got "100px"
 
-FAIL Multiple style/layout passes occur when necessary assert_equals: expected "1px" but got "100px"
+FAIL Multiple style/layout passes occur when necessary assert_equals: expected 100 but got 1
 

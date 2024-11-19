@@ -1,9 +1,9 @@
 
 PASS view-timeline on self
-FAIL timeline-scope on preceding sibling assert_equals: expected "75" but got "-1"
-FAIL view-timeline on ancestor assert_equals: expected "25" but got "auto"
-FAIL timeline-scope on ancestor sibling assert_equals: expected "75" but got "auto"
+PASS timeline-scope on preceding sibling
+PASS view-timeline on ancestor
+PASS timeline-scope on ancestor sibling
 PASS timeline-scope on ancestor sibling, conflict remains unresolved
 PASS timeline-scope on ancestor sibling, closer timeline wins
-FAIL view-timeline on ancestor sibling, scroll-timeline wins on same element assert_equals: expected "0" but got "-1"
+PASS view-timeline on ancestor sibling, scroll-timeline wins on same element
 

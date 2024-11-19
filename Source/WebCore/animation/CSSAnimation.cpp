@@ -126,10 +126,8 @@ void CSSAnimation::syncPropertiesWithBackingAnimation()
             [&] (Animation::TimelineKeyword keyword) {
                 setTimeline(keyword == Animation::TimelineKeyword::None ? nullptr : RefPtr { document->existingTimeline() });
             }, [&] (const AtomString& name) {
-                // FIXME: we should account for timeline-scope here.
                 CheckedRef timelinesController = document->ensureTimelinesController();
-                if (RefPtr timeline = timelinesController->timelineForName(name, target))
-                    setTimeline(WTFMove(timeline));
+                timelinesController->setTimelineForName(name, target, *this);
             }, [&] (Ref<ScrollTimeline> anonymousTimeline) {
                 if (RefPtr viewTimeline = dynamicDowncast<ViewTimeline>(anonymousTimeline))
                     viewTimeline->setSubject(target.ptr());

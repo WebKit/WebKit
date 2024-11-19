@@ -28,6 +28,7 @@
 #include "FrameRateAligner.h"
 #include "ReducedResolutionSeconds.h"
 #include "ScrollAxis.h"
+#include "TimelineScope.h"
 #include "Timer.h"
 #include <wtf/CancellableTask.h>
 #include <wtf/CheckedRef.h>
@@ -51,6 +52,11 @@ class AcceleratedEffectStackUpdater;
 #endif
 
 struct ViewTimelineInsets;
+struct TimelineMapAttachOperation {
+    WeakPtr<Element, WeakPtrImplWithEventTargetData> element;
+    AtomString name;
+    WeakPtr<WebAnimation, WeakPtrImplWithEventTargetData> animation;
+};
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
 class AnimationTimelinesController final : public CanMakeCheckedPtr<AnimationTimelinesController> {
@@ -76,7 +82,9 @@ public:
     void registerNamedScrollTimeline(const AtomString&, const Element&, ScrollAxis);
     void registerNamedViewTimeline(const AtomString&, const Element&, ScrollAxis, ViewTimelineInsets&&);
     void unregisterNamedTimeline(const AtomString&, const Element&);
-    AnimationTimeline* timelineForName(const AtomString&, const Element&) const;
+    void setTimelineForName(const AtomString&, const Element&, WebAnimation&);
+    void updateNamedTimelineMapForTimelineScope(const TimelineScope&, const Element&);
+    void updateTimelineForTimelineScope(const Ref<ScrollTimeline>&, const AtomString&);
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     AcceleratedEffectStackUpdater* existingAcceleratedEffectStackUpdater() const { return m_acceleratedEffectStackUpdater.get(); }
@@ -84,12 +92,17 @@ public:
 #endif
 
 private:
+
     ReducedResolutionSeconds liveCurrentTime() const;
     void cacheCurrentTime(ReducedResolutionSeconds);
     void maybeClearCachedCurrentTime();
 
     Vector<Ref<ScrollTimeline>>& timelinesForName(const AtomString&);
+    Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> relatedTimelineScopeElements(const AtomString&);
+    void attachPendingOperations();
 
+    Vector<TimelineMapAttachOperation> m_pendingAttachOperations;
+    Vector<std::pair<TimelineScope, WeakPtr<Element, WeakPtrImplWithEventTargetData>>> m_timelineScopeEntries;
     UncheckedKeyHashMap<AtomString, Vector<Ref<ScrollTimeline>>> m_nameToTimelineMap;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
