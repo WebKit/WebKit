@@ -137,6 +137,11 @@ private:
     void connectionClosed();
 
     void setInspectable(WebCore::ServiceWorkerIsInspectable) final;
+    void serviceWorkerNeedsRunning() final;
+
+    void processAssertionTimerFired();
+    void startProcessAssertionTimer();
+    bool areServiceWorkersIdle() const;
 
     WebCore::ProcessIdentifier m_webProcessIdentifier;
     WeakPtr<NetworkConnectionToWebProcess> m_connection;
@@ -144,8 +149,9 @@ private:
     HashMap<WebCore::FetchIdentifier, ThreadSafeWeakPtr<ServiceWorkerDownloadTask>> m_ongoingDownloads;
     bool m_isThrottleable { true };
     WebPageProxyIdentifier m_webPageProxyID;
-    size_t m_processingFunctionalEventCount { 0 };
     WebCore::ServiceWorkerIsInspectable m_isInspectable { WebCore::ServiceWorkerIsInspectable::Yes };
+    bool m_isTakingProcessAssertion { false };
+    WebCore::Timer m_processAssertionTimer;
 }; // class WebSWServerToContextConnection
 
 } // namespace WebKit

@@ -971,6 +971,7 @@ void SWServer::runServiceWorkerIfNecessary(SWServerWorker& worker, RunServiceWor
     if (worker.isRunning()) {
         ASSERT(contextConnection);
         worker.needsRunning();
+        contextConnection->serviceWorkerNeedsRunning();
         callback(contextConnection.get());
         return;
     }
@@ -1003,6 +1004,8 @@ void SWServer::runServiceWorkerIfNecessary(SWServerWorker& worker, RunServiceWor
     }
 
     bool success = runServiceWorker(worker.identifier());
+    if (success)
+        contextConnection->serviceWorkerNeedsRunning();
     callback(success ? contextConnection.get() : nullptr);
 }
 
@@ -1465,6 +1468,16 @@ void SWServer::terminateIdleServiceWorkers(SWServerToContextConnection& connecti
         RELEASE_LOG(ServiceWorker, "SWServer::terminateIdleServiceWorkers terminating worker %" PRIu64, worker->identifier().toUInt64());
         worker->terminate();
     }
+}
+
+bool SWServer::areServiceWorkersIdle(const SWServerToContextConnection& connection)
+{
+    auto domain = connection.site().domain();
+    for (Ref worker : m_runningOrTerminatingWorkers.values()) {
+        if (worker->topRegistrableDomain() == domain && !worker->isIdle(m_isProcessTerminationDelayEnabled ? defaultTerminationDelay : defaultFunctionalEventDuration))
+            return false;
+    }
+    return true;
 }
 
 SWServerToContextConnection* SWServer::contextConnectionForRegistrableDomain(const RegistrableDomain& domain)
