@@ -33,7 +33,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 namespace WTF {
 
 // Allocate a new buffer, copying in currentCharacters (these may come from either m_string or m_buffer.
-template<typename AllocationCharacterType, typename CurrentCharacterType> void StringBuilder::allocateBuffer(const CurrentCharacterType* currentCharacters, unsigned requiredCapacity)
+template<typename AllocationCharacterType, typename CurrentCharacterType> void StringBuilder::allocateBuffer(std::span<const CurrentCharacterType> currentCharacters, unsigned requiredCapacity)
 {
     std::span<AllocationCharacterType> bufferCharacters;
     auto buffer = StringImpl::tryCreateUninitialized(requiredCapacity, bufferCharacters);
@@ -43,7 +43,7 @@ template<typename AllocationCharacterType, typename CurrentCharacterType> void S
     }
 
     ASSERT(!hasOverflowed());
-    StringImpl::copyCharacters(bufferCharacters.data(), { currentCharacters, m_length });
+    StringImpl::copyCharacters(bufferCharacters.data(), currentCharacters);
 
     m_buffer = WTFMove(buffer);
     m_string = { };
@@ -66,7 +66,7 @@ template<typename CharacterType> void StringBuilder::reallocateBuffer(unsigned r
         }
     }
 
-    allocateBuffer<CharacterType>(characters<CharacterType>(), requiredCapacity);
+    allocateBuffer<CharacterType>(span<CharacterType>(), requiredCapacity);
 }
 
 // Make 'additionalLength' additional capacity be available in m_buffer, update m_string & m_length to use,

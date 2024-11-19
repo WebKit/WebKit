@@ -397,7 +397,7 @@ TEST(StringBuilderTest, Equal)
     StringBuilder builder1;
     StringBuilder builder2;
     EXPECT_TRUE(builder1 == builder2);
-    EXPECT_TRUE(equal(builder1, static_cast<LChar*>(0), 0));
+    EXPECT_TRUE(equal(builder1, std::span<const LChar>()));
     EXPECT_TRUE(builder1 == String());
     EXPECT_TRUE(String() == builder1);
     EXPECT_TRUE(builder1 != String("abc"_s));

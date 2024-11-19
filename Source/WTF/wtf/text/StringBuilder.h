@@ -30,8 +30,6 @@
 #include <wtf/SaturatedArithmetic.h>
 #include <wtf/text/StringConcatenateNumbers.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 class StringBuilder {
@@ -87,9 +85,9 @@ public:
     UChar operator[](unsigned i) const;
 
     bool is8Bit() const;
-    std::span<const LChar> span8() const { return { characters<LChar>(), length() }; }
-    std::span<const UChar> span16() const { return { characters<UChar>(), length() }; }
-    template<typename CharacterType> std::span<const CharacterType> span() const { return std::span(characters<CharacterType>(), length()); }
+    std::span<const LChar> span8() const { return span<LChar>(); }
+    std::span<const UChar> span16() const { return span<UChar>(); }
+    template<typename CharacterType> std::span<const CharacterType> span() const;
     
     unsigned capacity() const;
     WTF_EXPORT_PRIVATE void reserveCapacity(unsigned newCapacity);
@@ -102,9 +100,8 @@ public:
 
 private:
     static unsigned expandedCapacity(unsigned capacity, unsigned requiredCapacity);
-    template<typename CharacterType> const CharacterType* characters() const;
 
-    template<typename AllocationCharacterType, typename CurrentCharacterType> void allocateBuffer(const CurrentCharacterType* currentCharacters, unsigned requiredCapacity);
+    template<typename AllocationCharacterType, typename CurrentCharacterType> void allocateBuffer(std::span<const CurrentCharacterType> currentCharacters, unsigned requiredCapacity);
     template<typename CharacterType> void reallocateBuffer(unsigned requiredCapacity);
     void reallocateBuffer(unsigned requiredCapacity);
 
@@ -128,7 +125,7 @@ private:
 template<> struct IntegerToStringConversionTrait<StringBuilder>;
 
 // FIXME: Move this to StringView and make it take a StringView instead of a StringBuilder?
-template<typename CharacterType> bool equal(const StringBuilder&, const CharacterType*, unsigned length);
+template<typename CharacterType> bool equal(const StringBuilder&, std::span<const CharacterType>);
 
 // Inline function implementations.
 
@@ -278,8 +275,7 @@ inline unsigned StringBuilder::capacity() const
 
 inline UChar StringBuilder::operator[](unsigned i) const
 {
-    RELEASE_ASSERT_WITH_SECURITY_IMPLICATION(i < length());
-    return is8Bit() ? characters<LChar>()[i] : characters<UChar>()[i];
+    return is8Bit() ? span8()[i] : span16()[i];
 }
 
 inline bool StringBuilder::is8Bit() const
@@ -287,13 +283,15 @@ inline bool StringBuilder::is8Bit() const
     return m_buffer ? m_buffer->is8Bit() : m_string.is8Bit();
 }
 
-template<typename CharacterType> inline const CharacterType* StringBuilder::characters() const
+template<typename CharacterType> inline std::span<const CharacterType> StringBuilder::span() const
 {
     if (!m_length)
-        return nullptr;
-    if (!m_string.isNull())
-        return m_string.span<CharacterType>().data();
-    return m_buffer->span<CharacterType>().data();
+        return { };
+    if (!m_string.isNull()) {
+        ASSERT(m_string.length() == m_length);
+        return m_string.span<CharacterType>();
+    }
+    return m_buffer->span<CharacterType>().first(m_length);
 }
 
 template<typename StringTypeAdapter> constexpr bool stringBuilderSlowPathRequiredForAdapter = requires(const StringTypeAdapter& adapter) {
@@ -341,9 +339,9 @@ template<StringTypeAdaptable... StringTypes> void StringBuilder::append(const St
     appendFromAdapters(StringTypeAdapter<StringTypes>(strings)...);
 }
 
-template<typename CharacterType> bool equal(const StringBuilder& builder, const CharacterType* buffer, unsigned length)
+template<typename CharacterType> bool equal(const StringBuilder& builder, std::span<const CharacterType> buffer)
 {
-    return builder == StringView { std::span { buffer, length } };
+    return builder == StringView { buffer };
 }
 
 template<> struct IntegerToStringConversionTrait<StringBuilder> {
@@ -367,5 +365,3 @@ struct SerializeUsingStringBuilder {
 
 using WTF::StringBuilder;
 using WTF::SerializeUsingStringBuilder;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
