@@ -700,7 +700,7 @@ class BundleCreator(object):
             objects_to_copy.extend(self._get_webkit_binaries())
             objects_to_copy.append(self._get_webkit_lib('InjectedBundle'))
             if self._platform == 'wpe':
-                webinspector_gresource = os.path.join(self._buildpath, 'WebInspectorUI', 'DerivedSources', 'inspector.gresource')
+                webinspector_gresource = os.path.join(self._buildpath, 'share', 'inspector.gresource')
                 self._bundler.copy(webinspector_gresource, subdir='share')
             # Bundle extra system related libraries
             gio_modules = self._get_gio_modules()
