@@ -108,7 +108,7 @@
 #include "PDFKitSoftLink.h"
 
 @interface WKPDFFormMutationObserver : NSObject {
-    WebKit::UnifiedPDFPlugin* _plugin;
+    ThreadSafeWeakPtr<WebKit::UnifiedPDFPlugin> _plugin;
 }
 @end
 
@@ -124,10 +124,11 @@
 
 - (void)formChanged:(NSNotification *)notification
 {
-    _plugin->didMutatePDFDocument();
+    RefPtr plugin = _plugin.get();
+    plugin->didMutatePDFDocument();
 
     NSString *fieldName = (NSString *)[[notification userInfo] objectForKey:@"PDFFormFieldName"];
-    _plugin->repaintAnnotationsForFormField(fieldName);
+    plugin->repaintAnnotationsForFormField(fieldName);
 }
 @end
 
