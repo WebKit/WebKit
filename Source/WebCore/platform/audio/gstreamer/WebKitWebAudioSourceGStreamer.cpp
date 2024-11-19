@@ -437,7 +437,6 @@ static GstStateChangeReturn webKitWebAudioSrcChangeState(GstElement* element, Gs
     case GST_STATE_CHANGE_PAUSED_TO_READY:
         {
             Locker locker { priv->dispatchLock };
-            priv->dispatchDone = false;
             priv->dispatchCondition.notifyAll();
         }
         gst_buffer_pool_set_flushing(priv->pool.get(), TRUE);
