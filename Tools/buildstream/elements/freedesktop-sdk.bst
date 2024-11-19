@@ -22,6 +22,8 @@ sources:
   path: patches/fdo-0010-GStreamer-Vendor-WebRTC-related-patches-scheduled-to.patch
 - kind: patch
   path: patches/fdo-0011-GStreamer-Vendor-rtpfunnel-patch-scheduled-to-ship-i.patch
+- kind: patch
+  path: patches/fdo-0012-GStreamer-Vendor-GstPad-patch-scheduled-to-ship-in-1.patch
 config:
   options:
     target_arch: '%{arch}'
