@@ -477,13 +477,13 @@ void Buffer::indirectBufferInvalidated()
 #if ENABLE(WEBGPU_SWIFT)
 void Buffer::copy(const std::span<const uint8_t> data, const size_t offset)
 {
+    RELEASE_ASSERT(m_buffer.contents);
     auto buffer = getBufferContents();
-    RELEASE_ASSERT(buffer);
     auto endOffset = checkedSum<size_t>(offset, data.size());
     RELEASE_ASSERT(!(endOffset.hasOverflowed() || endOffset.value() > currentSize()));
     auto checkSize = checkedSum<size_t>(currentSize());
     RELEASE_ASSERT(!checkSize.hasOverflowed());
-    auto destination = std::span<uint8_t> { buffer + offset, static_cast<size_t>(currentSize()) - offset };
+    auto destination = buffer.subspan(offset);
     WebGPU::copySpan(destination, data);
 }
 #endif
