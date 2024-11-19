@@ -1,8 +1,6 @@
 "testAbsMem",
 "tailDupedTuplePair",
 "testCall",
-"testCallFunctionWithHellaArguments",
-"testCallFunctionWithHellaArguments3",
 "testCallPairResult",
 "testCallPairResultRare",
 "testCheckAdd",
