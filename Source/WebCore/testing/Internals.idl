@@ -594,6 +594,8 @@ enum RenderingMode {
 
     DOMString documentBackgroundColor();
 
+    boolean displayP3Available();
+
     undefined setPagination(DOMString mode, long gap, optional long pageLength = 0);
     unsigned long long lineIndexAfterPageBreak(Element element);
 

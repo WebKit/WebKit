@@ -5,6 +5,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS testSettings.colorSpace is "srgb"
 PASS testSettings.colorSpace is "srgb"
+PASS correct handling of "display-p3"
 PASS document.createElement("canvas").getContext("2d", { colorSpace: "foo" }) threw exception TypeError: Type error.
 PASS successfullyParsed is true
 

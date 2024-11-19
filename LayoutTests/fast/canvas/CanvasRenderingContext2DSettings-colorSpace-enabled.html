@@ -5,11 +5,15 @@
 <script>
     description("Test that the colorSpace member of CanvasRenderingContext2DSettings is supported.");
 
-    function testColorSpace(settings, expectedColorSpace) {
+    function tryColorSpace(settings) {
         let canvas = document.createElement("canvas");
         let context = canvas.getContext("2d", settings);
-        window.testSettings = context.getContextAttributes();
-        shouldBeEqualToString("testSettings.colorSpace", "srgb");
+        return context.getContextAttributes();
+    }
+
+    function testColorSpace(settings, expectedColorSpace) {
+        window.testSettings = tryColorSpace(settings);
+        shouldBeEqualToString("testSettings.colorSpace", expectedColorSpace);
     }
 
     // Test default value of colorSpace is "srgb".
@@ -17,6 +21,35 @@
 
     // Test setting colorSpace to "srgb" works.
     testColorSpace({ colorSpace: "srgb" }, "srgb");
+
+    // Test "display-p3", support may vary per platform.
+    function testDisplayP3Error() {
+        const settings = { colorSpace: "display-p3" };
+        if (window.internals && internals.displayP3Available()) {
+            let contextAttributes = tryColorSpace(settings);
+            if (contextAttributes.colorSpace == "display-p3") {
+                return "";
+            }
+            return 'colorSpace:"display-p3" returned "' + JSON.stringify(contextAttributes) + '"';
+        }
+        let contextAttributes;
+        try {
+            contextAttributes = tryColorSpace(settings);
+        } catch (e) {
+            if (e.name == "TypeError") {
+                return "";
+            }
+            return 'expected "TypeError" for colorSpace:"display-p3"';
+        }
+        return 'colorSpace:"display-p3" did not throw but returned "' + JSON.stringify(contextAttributes) + '"';
+    }
+    const error = testDisplayP3Error();
+    if (!error) {
+        // Note: The "pass" message must be the same on all platforms, to match the unified expected results.
+        testPassed('correct handling of "display-p3"');
+    } else {
+        testFailed(error);
+    }
 
     // Test setting colorSpace to an unsupported value.
     shouldThrowErrorName(`document.createElement("canvas").getContext("2d", { colorSpace: "foo" })`, "TypeError")

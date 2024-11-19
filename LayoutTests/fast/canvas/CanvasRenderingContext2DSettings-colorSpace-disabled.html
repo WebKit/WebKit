@@ -6,7 +6,7 @@
 <script>
     description("Test that the colorSpace member of CanvasRenderingContext2DSettings is unsupported when CanvasColorSpaceEnabled=false.");
 
-    function testColorSpaceUnsupported(settings, expectedColorSpace) {
+    function testColorSpaceUnsupported(settings) {
         let canvas = document.createElement("canvas");
         let context = canvas.getContext("2d", settings);
         window.testSettings = context.getContextAttributes();
@@ -15,6 +15,7 @@
 
     testColorSpaceUnsupported(undefined);
     testColorSpaceUnsupported({ colorSpace: "srgb" });
+    testColorSpaceUnsupported({ colorSpace: "display-p3" });
     testColorSpaceUnsupported({ colorSpace: "foo" });
 </script>
     
