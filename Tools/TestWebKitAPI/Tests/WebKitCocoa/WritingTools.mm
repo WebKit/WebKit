@@ -3126,6 +3126,48 @@ TEST(WritingTools, FocusWebViewAfterAnimation)
     EXPECT_EQ([[webView window] firstResponder], webView.get());
 }
 
+TEST(WritingTools, FocusWebViewAfterProofreadingAnimation)
+{
+    RetainPtr session = adoptNS([[WTSession alloc] initWithType:WTSessionTypeProofreading textViewDelegate:nil]);
+
+    RetainPtr webView = adoptNS([[WritingToolsWKWebView alloc] initWithHTMLString:@"<body id='p' contenteditable><p id='first'>AAAA BBBB CCCC</p></body>"]);
+    [webView focusDocumentBodyAndSelectAll];
+
+    __block bool writingToolsFinished = false;
+
+    [[webView writingToolsDelegate] willBeginWritingToolsSession:session.get() requestContexts:^(NSArray<WTContext *> *contexts) {
+        EXPECT_EQ(1UL, contexts.count);
+
+        EXPECT_WK_STREQ(@"AAAA BBBB CCCC", contexts.firstObject.attributedText.string);
+
+        [[webView writingToolsDelegate] didBeginWritingToolsSession:session.get() contexts:contexts];
+
+        RetainPtr firstSuggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(0, 4) replacement:@"ZZZZ"]);
+        RetainPtr secondSuggestion = adoptNS([[WTTextSuggestion alloc] initWithOriginalRange:NSMakeRange(10, 4) replacement:@"YYYY"]);
+
+        auto suggestions = [NSMutableArray array];
+        [suggestions addObject:firstSuggestion.get()];
+        [suggestions addObject:secondSuggestion.get()];
+
+        [[webView writingToolsDelegate] proofreadingSession:session.get() didReceiveSuggestions:suggestions processedRange:NSMakeRange(0, 14) inContext:contexts.firstObject finished:YES];
+        [webView waitForProofreadingSuggestionsToBeReplaced];
+
+        [[webView writingToolsDelegate] didEndWritingToolsSession:session.get() accepted:YES];
+
+        writingToolsFinished = true;
+    }];
+
+    TestWebKitAPI::Util::run(&writingToolsFinished);
+
+    // FIXME: Remove the additional wait for the animations to finish.
+    TestWebKitAPI::Util::runFor(2_s);
+
+    [[webView window] makeFirstResponder:nil];
+    [webView sendClickAtPoint:NSMakePoint(50, 50)];
+
+    EXPECT_EQ([[webView window] firstResponder], webView.get());
+}
+
 TEST(WritingTools, ContextMenuItemsNonEditable)
 {
     RetainPtr delegate = adoptNS([[TestUIDelegate alloc] init]);

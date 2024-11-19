@@ -239,6 +239,9 @@ import WebKitSwift
             return
         }
 
+        let oldEffect = self.activePonderingEffect
+        self.activePonderingEffect = effect
+
         if let effect {
             self.setupViewIfNeeded()
             await self.effectView?.addEffect(effect)
@@ -250,14 +253,12 @@ import WebKitSwift
             //
             // Therefore, the delegate method itself must avoid any work so that it can be synchronous, which is what the platform
             // interfaces expect.
-            await self.updateTextChunkVisibility(self.activePonderingEffect!.chunk, visible: true, force: true)
+            await self.updateTextChunkVisibility(oldEffect!.chunk, visible: true, force: true)
 
-            await self.effectView?.removeEffect(self.activePonderingEffect!.id)
+            await self.effectView?.removeEffect(oldEffect!.id)
 
             self.destroyViewIfNeeded()
         }
-
-        self.activePonderingEffect = effect
     }
 
     @nonobjc final private func setActiveReplacementEffect(_ effect: PlatformIntelligenceReplacementTextEffect<Chunk>?) async {
@@ -266,15 +267,16 @@ import WebKitSwift
             return
         }
 
+        let oldEffect = self.activeReplacementEffect
+        self.activeReplacementEffect = effect
+
         if let effect {
             self.setupViewIfNeeded()
             await self.effectView?.addEffect(effect)
         } else {
-            await self.effectView?.removeEffect(self.activeReplacementEffect!.id)
+            await self.effectView?.removeEffect(oldEffect!.id)
             self.destroyViewIfNeeded()
         }
-
-        self.activeReplacementEffect = effect
     }
 
     @nonobjc final private func reset() {
