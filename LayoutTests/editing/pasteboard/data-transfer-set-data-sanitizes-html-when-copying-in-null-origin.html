@@ -24,7 +24,7 @@ function runTest() {
 
 let container = document.getElementById('container');
 
-var originalHTML = '<meta content="secret"><b onmouseover="dangerousCode()">hello</b><!-- secret-->, world<script>dangerousCode()</scr' + 'ipt>';
+var originalHTML = '<meta content="secret"><u style="content-visibility: hidden">secret</u><b onmouseover="dangerousCode()">hello</b><!-- secret-->, world<script>dangerousCode()</scr' + 'ipt>';
 function doCopy(event) {
     event.clipboardData.setData('text/html', originalHTML);
     event.preventDefault();

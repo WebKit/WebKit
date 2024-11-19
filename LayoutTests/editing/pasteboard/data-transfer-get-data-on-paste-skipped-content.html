@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+<script src="../../resources/js-test.js"></script>
+<div id="container">
+<button onclick="runTest()">Copy</button>
+<div id="source" contenteditable="true">hello, <b>world</b><br>WebKit<span style="content-visibility: hidden;">super sensitive content</span></div>
+<div id="destination" onpaste="check(event)" contenteditable="true" style="width: 500px; height: 100px; border: solid red 1px"></div>
+</div>
+</body>
+<script>
+description('Tests that skipped content is successfully removed from pasted content. To manually test, press "Copy" below and paste (Command+V on macOS and Control+V elsewhere).');
+jsTestIsAsync = true;
+
+function runTest()
+{
+    if (window.internals)
+        internals.settings.setCustomPasteboardDataEnabled(true);
+
+    document.getElementById("source").focus();
+    document.execCommand("SelectAll");
+    document.execCommand("Copy");
+
+    document.getElementById("destination").focus();
+    if (window.testRunner)
+        document.execCommand("Paste");
+}
+
+function check(event)
+{
+    shouldBeEqualToString('JSON.stringify(event.clipboardData.types)', '["text/html","text/plain"]');
+    shouldBeEqualToString('event.clipboardData.getData("text/plain")', 'hello, world\nWebKit');
+    shouldBeGreaterThan('event.clipboardData.getData("text/html").length', '0');
+    shouldBeFalse('event.clipboardData.getData("text/html").includes("sensitive")');
+    shouldBe('event.clipboardData.items.length', '2');
+    shouldBeEqualToString('item = event.clipboardData.items[0]; item.kind', 'string');
+    shouldBeEqualToString('item.type', 'text/html');
+
+    document.getElementById('container').remove();
+
+    finishJSTest();
+}
+
+if (window.testRunner)
+    runTest();
+
+</script>
+</html>
