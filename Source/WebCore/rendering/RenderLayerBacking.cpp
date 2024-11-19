@@ -110,8 +110,6 @@
 #include <wtf/WeakListHashSet.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RenderLayerBacking);
@@ -3730,17 +3728,17 @@ static RefPtr<Pattern> patternForTouchAction(TouchAction touchAction, FloatSize 
 
     constexpr auto fillColor = Color::black.colorWithAlphaByte(128);
 
-    static const PatternDescription patternDescriptions[] = {
-        { "auto"_s, { }, fillColor },
-        { "none"_s, { }, fillColor },
-        { "manip"_s, { }, fillColor },
-        { "pan-x"_s, { }, fillColor },
-        { "pan-y"_s, { 0, 9 }, fillColor },
-        { "p-z"_s, { 16, 4.5 }, fillColor },
+    static const std::array patternDescriptions {
+        PatternDescription { "auto"_s, { }, fillColor },
+        PatternDescription { "none"_s, { }, fillColor },
+        PatternDescription { "manip"_s, { }, fillColor },
+        PatternDescription { "pan-x"_s, { }, fillColor },
+        PatternDescription { "pan-y"_s, { 0, 9 }, fillColor },
+        PatternDescription { "p-z"_s, { 16, 4.5 }, fillColor },
     };
     
     auto actionIndex = toIndex(touchAction);
-    if (!actionIndex || actionIndex >= ARRAY_SIZE(patternDescriptions))
+    if (!actionIndex || actionIndex >= patternDescriptions.size())
         return nullptr;
 
     return patternForDescription(patternDescriptions[actionIndex], contentOffset, destContext);
@@ -4475,5 +4473,3 @@ void RenderLayerBacking::dumpProperties(const GraphicsLayer* layer, TextStream& 
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

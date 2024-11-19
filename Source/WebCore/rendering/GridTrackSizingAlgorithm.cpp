@@ -41,8 +41,6 @@
 #include <wtf/Vector.h>
 #include <wtf/WeakPtr.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GridTrack);
@@ -509,6 +507,7 @@ static void markAsInfinitelyGrowableForTrackSizeComputationPhase(TrackSizeComput
     ASSERT_NOT_REACHED();
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 template <TrackSizeComputationVariant variant, TrackSizeComputationPhase phase>
 void GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan, GridLayoutState& gridLayoutState)
 {
@@ -560,6 +559,7 @@ void GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems(const Gri
         updateTrackSizeForTrackSizeComputationPhase(phase, track);
     }
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 template <TrackSizeComputationVariant variant>
 void GridTrackSizingAlgorithm::increaseSizesToAccommodateSpanningItems(const GridItemsSpanGroupRange& gridItemsWithSpan, GridLayoutState& gridLayoutState)
@@ -1538,7 +1538,7 @@ void DefiniteSizeStrategy::maximizeTracks(Vector<GridTrack>& tracks, std::option
     size_t tracksSize = tracks.size();
     Vector<WeakPtr<GridTrack>> tracksForDistribution(tracksSize);
     for (size_t i = 0; i < tracksSize; ++i) {
-        tracksForDistribution[i] = tracks.data() + i;
+        tracksForDistribution[i] = tracks[i];
         tracksForDistribution[i]->setPlannedSize(tracksForDistribution[i]->baseSize());
     }
 
@@ -2194,5 +2194,3 @@ bool GridTrackSizingAlgorithm::isDirectionInMasonryDirection() const
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

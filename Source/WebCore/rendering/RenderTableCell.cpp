@@ -53,8 +53,6 @@
 #include "MathMLNames.h"
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1234,7 +1232,7 @@ public:
         return 0;
     }
     
-    CollapsedBorder m_borders[4];
+    std::array<CollapsedBorder, 4> m_borders;
     unsigned m_count;
 };
 
@@ -1527,5 +1525,3 @@ bool RenderTableCell::hasLineIfEmpty() const
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

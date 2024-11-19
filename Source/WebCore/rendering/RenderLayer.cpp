@@ -157,8 +157,6 @@
 #include <wtf/text/MakeString.h>
 #include <wtf/text/TextStream.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -264,7 +262,7 @@ public:
     }
 
 #if ASSERT_ENABLED
-    const RenderLayer* m_clipRectsRoot[NumCachedClipRectsTypes];
+    std::array<const RenderLayer*, NumCachedClipRectsTypes> m_clipRectsRoot;
 #endif
 private:
     unsigned getIndex(ClipRectsType clipRectsType, bool respectOverflowClip) const
@@ -276,7 +274,7 @@ private:
         return index;
     }
 
-    RefPtr<ClipRects> m_clipRects[NumCachedClipRectsTypes * 2];
+    std::array<RefPtr<ClipRects>, NumCachedClipRectsTypes * 2> m_clipRects;
 };
 
 void makeMatrixRenderable(TransformationMatrix& matrix, bool has3DRendering)
@@ -6660,5 +6658,3 @@ void showLayerPositionTree(const WebCore::RenderLayer* layer)
 }
 
 #endif
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

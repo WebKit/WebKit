@@ -46,8 +46,6 @@
 #include <wtf/StackStats.h>
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 static constexpr auto borderStartEdgeColor = SRGBA<uint8_t> { 170, 170, 170 };
@@ -164,13 +162,13 @@ void RenderFrameSet::GridAxis::resize(int size)
     m_allowBorder.resize(size + 1);
 }
 
-void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availableLen)
+void RenderFrameSet::layOutAxis(GridAxis& axis, std::span<const Length> grid, int availableLen)
 {
     availableLen = std::max(availableLen, 0);
 
-    int* gridLayout = axis.m_sizes.data();
+    auto gridLayout = axis.m_sizes.mutableSpan();
 
-    if (!grid) {
+    if (grid.empty()) {
         gridLayout[0] = availableLen;
         return;
     }
@@ -341,7 +339,7 @@ void RenderFrameSet::layOutAxis(GridAxis& axis, const Length* grid, int availabl
 
     // now we have the final layout, distribute the delta over it
     bool worked = true;
-    int* gridDelta = axis.m_deltas.data();
+    auto gridDelta = axis.m_deltas.mutableSpan();
     for (int i = 0; i < gridLen; ++i) {
         if (gridLayout[i] && gridLayout[i] + gridDelta[i] <= 0)
             worked = false;
@@ -666,5 +664,3 @@ CursorDirective RenderFrameSet::getCursor(const LayoutPoint& point, Cursor& curs
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

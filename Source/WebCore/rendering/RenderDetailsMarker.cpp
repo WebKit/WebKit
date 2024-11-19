@@ -31,8 +31,6 @@
 #include "RenderBoxModelObjectInlines.h"
 #include <wtf/TZoneMallocInlines.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -47,7 +45,7 @@ RenderDetailsMarker::RenderDetailsMarker(DetailsMarkerControl& element, RenderSt
 
 RenderDetailsMarker::~RenderDetailsMarker() = default;
 
-static Path createPath(const FloatPoint* path)
+static Path createPath(std::span<const FloatPoint, 4> path)
 {
     Path result;
     result.moveTo(FloatPoint(path[0].x(), path[0].y()));
@@ -58,25 +56,25 @@ static Path createPath(const FloatPoint* path)
 
 static Path createDownArrowPath()
 {
-    FloatPoint points[4] = { FloatPoint(0.0f, 0.07f), FloatPoint(0.5f, 0.93f), FloatPoint(1.0f, 0.07f), FloatPoint(0.0f, 0.07f) };
+    std::array points { FloatPoint(0.0f, 0.07f), FloatPoint(0.5f, 0.93f), FloatPoint(1.0f, 0.07f), FloatPoint(0.0f, 0.07f) };
     return createPath(points);
 }
 
 static Path createUpArrowPath()
 {
-    FloatPoint points[4] = { FloatPoint(0.0f, 0.93f), FloatPoint(0.5f, 0.07f), FloatPoint(1.0f, 0.93f), FloatPoint(0.0f, 0.93f) };
+    std::array points { FloatPoint(0.0f, 0.93f), FloatPoint(0.5f, 0.07f), FloatPoint(1.0f, 0.93f), FloatPoint(0.0f, 0.93f) };
     return createPath(points);
 }
 
 static Path createLeftArrowPath()
 {
-    FloatPoint points[4] = { FloatPoint(1.0f, 0.0f), FloatPoint(0.14f, 0.5f), FloatPoint(1.0f, 1.0f), FloatPoint(1.0f, 0.0f) };
+    std::array points { FloatPoint(1.0f, 0.0f), FloatPoint(0.14f, 0.5f), FloatPoint(1.0f, 1.0f), FloatPoint(1.0f, 0.0f) };
     return createPath(points);
 }
 
 static Path createRightArrowPath()
 {
-    FloatPoint points[4] = { FloatPoint(0.0f, 0.0f), FloatPoint(0.86f, 0.5f), FloatPoint(0.0f, 1.0f), FloatPoint(0.0f, 0.0f) };
+    std::array points { FloatPoint(0.0f, 0.0f), FloatPoint(0.86f, 0.5f), FloatPoint(0.0f, 1.0f), FloatPoint(0.0f, 0.0f) };
     return createPath(points);
 }
 
@@ -159,5 +157,3 @@ bool RenderDetailsMarker::isOpen() const
 }
 
 }
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

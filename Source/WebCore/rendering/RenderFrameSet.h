@@ -97,7 +97,7 @@ private:
 
     void setIsResizing(bool);
 
-    void layOutAxis(GridAxis&, const Length*, int availableSpace);
+    void layOutAxis(GridAxis&, std::span<const Length>, int availableSpace);
     void computeEdgeInfo();
     void fillFromEdgeInfo(const FrameEdgeInfo& edgeInfo, int r, int c);
     void positionFrames();

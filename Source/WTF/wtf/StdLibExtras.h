@@ -856,6 +856,16 @@ bool equalSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
     return !memcmp(a.data(), b.data(), a.size_bytes());
 }
 
+template<typename T>
+int compareSpans(std::span<const T> a, std::span<const T> b)
+{
+    static_assert(std::has_unique_object_representations_v<T>);
+    int result = memcmp(a.data(), b.data(), std::min(a.size(), b.size()));
+    if (!result && a.size() != b.size())
+        result = (a.size() > b.size()) ? 1 : -1;
+    return result;
+}
+
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
 void memcpySpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
 {
@@ -864,6 +874,16 @@ void memcpySpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
     static_assert(std::is_trivially_copyable_v<U>);
     RELEASE_ASSERT(destination.size() >= source.size());
     memcpy(destination.data(), source.data(), source.size_bytes());
+}
+
+template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
+void memmoveSpan(std::span<T, TExtent> destination, std::span<U, UExtent> source)
+{
+    static_assert(sizeof(T) == sizeof(U));
+    static_assert(std::is_trivially_copyable_v<T>);
+    static_assert(std::is_trivially_copyable_v<U>);
+    RELEASE_ASSERT(destination.size() >= source.size());
+    memmove(destination.data(), source.data(), source.size_bytes());
 }
 
 template<typename T, std::size_t Extent>
@@ -1124,6 +1144,7 @@ using WTF::bitwise_cast;
 using WTF::byteCast;
 using WTF::callStatelessLambda;
 using WTF::checkAndSet;
+using WTF::compareSpans;
 using WTF::constructFixedSizeArrayWithArguments;
 using WTF::equalSpans;
 using WTF::findBitInWord;
@@ -1132,10 +1153,12 @@ using WTF::is8ByteAligned;
 using WTF::isCompilationThread;
 using WTF::isPointerAligned;
 using WTF::isStatelessLambda;
+using WTF::lazyInitialize;
 using WTF::makeUnique;
 using WTF::makeUniqueWithoutFastMallocCheck;
 using WTF::makeUniqueWithoutRefCountedCheck;
 using WTF::memcpySpan;
+using WTF::memmoveSpan;
 using WTF::memsetSpan;
 using WTF::mergeDeduplicatedSorted;
 using WTF::reinterpretCastSpanStartTo;
@@ -1146,12 +1169,11 @@ using WTF::safeCast;
 using WTF::singleElementSpan;
 using WTF::spanConstCast;
 using WTF::spanReinterpretCast;
+using WTF::toTwosComplement;
 using WTF::tryBinarySearch;
 using WTF::unsafeMakeSpan;
 using WTF::valueOrCompute;
 using WTF::valueOrDefault;
-using WTF::toTwosComplement;
 using WTF::Invocable;
-using WTF::lazyInitialize;
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

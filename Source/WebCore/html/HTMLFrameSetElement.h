@@ -45,8 +45,8 @@ public:
 
     bool hasBorderColor() const { return m_borderColorSet; }
 
-    const Length* rowLengths() const { return m_rowLengths.get(); }
-    const Length* colLengths() const { return m_colLengths.get(); }
+    std::span<const Length> rowLengths() const { return m_rowLengths ? unsafeMakeSpan(m_rowLengths.get(), m_totalRows) : std::span<const Length> { }; }
+    std::span<const Length> colLengths() const { return m_colLengths ? unsafeMakeSpan(m_colLengths.get(), m_totalCols) : std::span<const Length> { }; }
 
     static RefPtr<HTMLFrameSetElement> findContaining(Element* descendant);
     
