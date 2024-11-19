@@ -178,6 +178,9 @@ public:
 #if CPU(X86_64)
     using MacroAssemblerBase::branch64;
 #endif
+#if CPU(RISCV64)
+    using MacroAssemblerRISCV64::lshift64;
+#endif
     using MacroAssemblerBase::branchSub32;
     using MacroAssemblerBase::lshift32;
     using MacroAssemblerBase::or32;
