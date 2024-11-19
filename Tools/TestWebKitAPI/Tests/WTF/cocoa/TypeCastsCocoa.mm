@@ -154,7 +154,8 @@ TEST(TypeCastsCocoa, checked_objc_cast)
         AUTORELEASEPOOL_FOR_ARC_DEBUG {
             objectNS = adoptNS([[NSString alloc] initWithFormat:@"%s", helloWorldCString]);
             objectNSPtr = reinterpret_cast<uintptr_t>(objectNS.get());
-            EXPECT_EQ(objectNS.get(), checked_objc_cast<NSObject>(objectNS.get()));
+            NSObject* objPtr = objectNS.get();
+            EXPECT_EQ(objectNS.get(), objPtr);
         }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectNSPtr));
     }
@@ -224,7 +225,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast)
 TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
 {
     @autoreleasepool {
-        RetainPtr<NSString> object;
+        RetainPtr<NSObject> object;
         auto objectCast = dynamic_objc_cast<NSString>(WTFMove(object));
         SUPPRESS_USE_AFTER_MOVE EXPECT_EQ(nil, object.get());
         EXPECT_EQ(nil, objectCast.get());
@@ -289,7 +290,7 @@ TEST(TypeCastsCocoa, dynamic_objc_cast_RetainPtr)
         }
         EXPECT_EQ(1L, CFGetRetainCount((CFTypeRef)objectPtr));
 
-        auto objectCast = dynamic_objc_cast<NSObject>(WTFMove(object));
+        RetainPtr<NSObject> objectCast = WTFMove(object);
         uintptr_t objectCastPtr;
         AUTORELEASEPOOL_FOR_ARC_DEBUG {
             objectCastPtr = reinterpret_cast<uintptr_t>(objectCast.get());
