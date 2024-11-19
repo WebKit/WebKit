@@ -536,6 +536,8 @@ constexpr bool RenderStyle::isDisplayGridBox(DisplayType display) { return displ
 constexpr bool RenderStyle::isDisplayInlineType() const { return isDisplayInlineType(display()); }
 constexpr bool RenderStyle::isDisplayListItemType(DisplayType display) { return display == DisplayType::ListItem; }
 constexpr bool RenderStyle::isDisplayTableOrTablePart() const { return isDisplayTableOrTablePart(display()); }
+constexpr bool RenderStyle::isInternalTableBox() const { return isInternalTableBox(display()); }
+constexpr bool RenderStyle::isRubyContainerOrInternalRubyBox() const { return isRubyContainerOrInternalRubyBox(display()); }
 inline bool RenderStyle::isFixedTableLayout() const { return tableLayout() == TableLayoutType::Fixed && (logicalWidth().isSpecified() || logicalWidth().isFitContent() || logicalWidth().isFillAvailable() || logicalWidth().isMinContent()); }
 inline bool RenderStyle::isFloating() const { return floating() != Float::None; }
 inline bool RenderStyle::isGridAutoFlowAlgorithmDense() const { return m_nonInheritedData->rareData->grid->gridAutoFlow & InternalAutoFlowAlgorithmDense; }
@@ -955,6 +957,25 @@ constexpr bool RenderStyle::isDisplayTableOrTablePart(DisplayType display)
         || display == DisplayType::TableColumn;
 }
 
+constexpr bool RenderStyle::isInternalTableBox(DisplayType display)
+{
+    // https://drafts.csswg.org/css-display-3/#layout-specific-display
+    return display == DisplayType::TableCell
+        || display == DisplayType::TableRowGroup
+        || display == DisplayType::TableHeaderGroup
+        || display == DisplayType::TableFooterGroup
+        || display == DisplayType::TableRow
+        || display == DisplayType::TableColumnGroup
+        || display == DisplayType::TableColumn;
+}
+
+constexpr bool RenderStyle::isRubyContainerOrInternalRubyBox(DisplayType display)
+{
+    return display == DisplayType::Ruby
+        || display == DisplayType::RubyAnnotation
+        || display == DisplayType::RubyBase;
+}
+
 inline double RenderStyle::logicalAspectRatio() const
 {
     ASSERT(aspectRatioType() != AspectRatioType::Auto);
@@ -973,9 +994,21 @@ inline bool isSkippedContentRoot(const RenderStyle& style, const Element* elemen
 {
     if (style.contentVisibility() == ContentVisibility::Visible)
         return false;
-    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=265020): check more display types.
-    // FIXME: try to avoid duplication with shouldApplySizeOrStyleContainment.
-    if (auto displayType = style.display(); (displayType != DisplayType::TableCaption && style.isDisplayTableOrTablePart()) || displayType == DisplayType::Contents)
+
+    auto doesContentVisibilityApply = [&] {
+        // content-visibility applies to elements for which size containment can apply (https://drafts.csswg.org/css-contain/#content-visibility)
+
+        // https://drafts.csswg.org/css-contain-2/#containment-size
+        // Giving an element size containment has no effect if any of the following are true:
+        // if the element does not generate a principal box (as is the case with display: contents or display: none)
+        // if its inner display type is table
+        // if its principal box is an internal table box
+        // if its principal box is an internal ruby box or a non-atomic inline-level box
+        auto displayType = style.display();
+        auto doesNotApply = displayType == DisplayType::None || displayType == DisplayType::Contents || displayType == DisplayType::Table || displayType == DisplayType::InlineTable || style.isInternalTableBox() || style.isRubyContainerOrInternalRubyBox();
+        return !doesNotApply;
+    };
+    if (!doesContentVisibilityApply())
         return false;
     if (style.contentVisibility() == ContentVisibility::Hidden)
         return true;

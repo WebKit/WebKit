@@ -1827,6 +1827,8 @@ public:
     constexpr bool isDisplayBlockLevel() const;
     constexpr bool isOriginalDisplayBlockType() const;
     constexpr bool isDisplayTableOrTablePart() const;
+    constexpr bool isInternalTableBox() const;
+    constexpr bool isRubyContainerOrInternalRubyBox() const;
     constexpr bool isOriginalDisplayListItemType() const;
 
     inline bool setDirection(TextDirection bidiDirection);
@@ -2367,6 +2369,8 @@ private:
     static constexpr bool isDisplayDeprecatedFlexibleBox(DisplayType);
     static constexpr bool isDisplayListItemType(DisplayType);
     static constexpr bool isDisplayTableOrTablePart(DisplayType);
+    static constexpr bool isInternalTableBox(DisplayType);
+    static constexpr bool isRubyContainerOrInternalRubyBox(DisplayType);
 
     static void getShadowHorizontalExtent(const ShadowData*, LayoutUnit& left, LayoutUnit& right);
     static void getShadowVerticalExtent(const ShadowData*, LayoutUnit& top, LayoutUnit& bottom);
