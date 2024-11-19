@@ -28,7 +28,9 @@
 
 #include "AST.h"
 #include "MetalFunctionWriter.h"
+#if PLATFORM(__APPLE__)
 #include <notify.h>
+#endif
 #include <wtf/DataLog.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -48,6 +50,7 @@ static StringView metalCodePrologue()
 
 }
 
+#if PLATFORM(__APPLE__)
 static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
 {
     static bool dumpMetalCode = false;
@@ -64,6 +67,7 @@ static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
         dataLogLn(stringBuilder.toString());
     }
 }
+#endif
 
 String generateMetalCode(ShaderModule& shaderModule, PrepareResult& prepareResult, const HashMap<String, ConstantValue>& constantValues)
 {
@@ -72,7 +76,9 @@ String generateMetalCode(ShaderModule& shaderModule, PrepareResult& prepareResul
 
     Metal::emitMetalFunctions(stringBuilder, shaderModule, prepareResult, constantValues);
 
+#if PLATFORM(__APPLE__)
     dumpMetalCodeIfNeeded(stringBuilder);
+#endif
 
     return stringBuilder.toString();
 }
