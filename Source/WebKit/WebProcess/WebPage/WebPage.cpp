@@ -575,7 +575,7 @@ WebPage::WebPage(PageIdentifier pageID, WebPageCreationParameters&& parameters)
     , m_textCheckingControllerProxy(makeUniqueRef<TextCheckingControllerProxy>(*this))
 #endif
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-    , m_viewGestureGeometryCollector(makeUnique<ViewGestureGeometryCollector>(*this))
+    , m_viewGestureGeometryCollector(ViewGestureGeometryCollector::create(*this))
 #elif PLATFORM(GTK)
     , m_accessibilityObject(nullptr)
 #endif
@@ -6062,8 +6062,8 @@ void WebPage::mainFrameDidLayout()
     }
 
 #if PLATFORM(COCOA) || PLATFORM(GTK)
-    if (m_viewGestureGeometryCollector)
-        m_viewGestureGeometryCollector->mainFrameDidLayout();
+    if (RefPtr viewGestureGeometryCollector = m_viewGestureGeometryCollector)
+        viewGestureGeometryCollector->mainFrameDidLayout();
 #endif
 #if PLATFORM(IOS_FAMILY)
     if (RefPtr frameView = localMainFrameView()) {
