@@ -51,6 +51,8 @@ public:
             m_items.append(emptyString());
     }
 
+    bool resetCommaSeparatedTokens(StringView data);
+
     bool parse(StringView, UChar delimiter);
     String valueAsString() const override;
 };

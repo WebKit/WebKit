@@ -63,6 +63,38 @@ bool SVGStringList::parse(StringView data, UChar delimiter)
     });
 }
 
+bool SVGStringList::resetCommaSeparatedTokens(StringView data)
+{
+    clearItems();
+
+    return readCharactersForParsing(data, [&](auto buffer) {
+
+        auto start = buffer.position();
+        auto end = start;
+
+        while (skipOptionalSVGSpaces(buffer)) {
+            start = buffer.position();
+            end = start;
+            while (buffer.hasCharactersRemaining()) {
+                auto ch = *buffer++;
+
+                if (ch == ',') {
+                    m_items.append(String({ start, end }));
+                    end = start;
+                    break;
+                }
+
+                if (!isASCIIWhitespace(ch))
+                    end = buffer.position();
+            }
+        }
+
+        m_items.append(String({ start, end }));
+
+        return buffer.atEnd();
+    });
+}
+
 String SVGStringList::valueAsString() const
 {
     StringBuilder builder;

@@ -103,7 +103,7 @@ void SVGTests::parseAttribute(const QualifiedName& attributeName, const AtomStri
         protectedRequiredExtensions()->reset(value);
         break;
     case AttributeNames::systemLanguageAttr:
-        protectedSystemLanguage()->reset(value);
+        protectedSystemLanguage()->resetCommaSeparatedTokens(value);
         break;
     default:
         break;
