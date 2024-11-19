@@ -77,7 +77,7 @@ public:
     const Font& primaryFont(const FontCascadeDescription&);
     WEBCORE_EXPORT const FontRanges& realizeFallbackRangesAt(const FontCascadeDescription&, unsigned fallbackIndex);
 
-    void pruneSystemFallbacks();
+    void pruneGlyphPageCacheAndSystemFallbacks();
 
 private:
     FontCascadeFonts(RefPtr<FontSelector>&&);

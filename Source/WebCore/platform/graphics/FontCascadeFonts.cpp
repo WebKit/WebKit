@@ -559,11 +559,9 @@ GlyphData FontCascadeFonts::glyphDataForCharacter(char32_t c, const FontCascadeD
     return glyphData;
 }
 
-void FontCascadeFonts::pruneSystemFallbacks()
+void FontCascadeFonts::pruneGlyphPageCacheAndSystemFallbacks()
 {
-    if (m_systemFallbackFontSet.isEmpty())
-        return;
-    // Mutable glyph pages may reference fallback fonts.
+    // Mutable glyph pages may reference cached fonts.
     for (auto& cachedPages : m_cachedPages) {
         cachedPages.removeIf([](auto& keyAndValue) {
             return keyAndValue.value.isMixedFont();
