@@ -69,8 +69,18 @@ void GStreamerIncomingTrackProcessor::configure(ThreadSafeWeakPtr<GStreamerMedia
 
     auto structure = gst_caps_get_structure(m_data.caps.get(), 0);
     if (auto ssrc = gstStructureGet<unsigned>(structure, "ssrc"_s)) {
+        m_data.ssrc = *ssrc;
         auto msIdAttributeName = makeString("ssrc-"_s, *ssrc, "-msid"_s);
         if (auto msIdAttribute = gstStructureGetString(structure, msIdAttributeName)) {
+            auto components = msIdAttribute.toStringWithoutCopying().split(' ');
+            if (components.size() == 2)
+                m_sdpMsIdAndTrackId = { components[0], components[1] };
+        }
+    }
+    if (auto msIdAttribute = gstStructureGetString(structure, "a-msid"_s)) {
+        if (msIdAttribute.startsWith(' '))
+            m_sdpMsIdAndTrackId = { emptyString(), msIdAttribute.substring(1).toString() };
+        else {
             auto components = msIdAttribute.toStringWithoutCopying().split(' ');
             if (components.size() == 2)
                 m_sdpMsIdAndTrackId = { components[0], components[1] };
@@ -313,7 +323,7 @@ void GStreamerIncomingTrackProcessor::trackReady()
         return;
 
     m_isReady = true;
-    GST_DEBUG_OBJECT(m_bin.get(), "Track %s on pad %" GST_PTR_FORMAT " is ready", m_data.mediaStreamId.utf8().data(), m_pad.get());
+    GST_DEBUG_OBJECT(m_bin.get(), "MediaStream %s track %s on pad %" GST_PTR_FORMAT " is ready", m_data.mediaStreamId.utf8().data(), m_data.trackId.utf8().data(), m_pad.get());
     callOnMainThread([endPoint = Ref { *endPoint }, this] {
         if (endPoint->isStopped())
             return;

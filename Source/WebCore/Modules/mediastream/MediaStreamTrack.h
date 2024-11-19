@@ -182,6 +182,9 @@ public:
     bool isDetached() const { return m_isDetached; }
     UniqueRef<MediaStreamTrackDataHolder> detach();
 
+    void setMediaStreamId(const String& id) { m_mediaStreamId = id; }
+    const String& mediaStreamId() const { return m_mediaStreamId; }
+
 protected:
     MediaStreamTrack(ScriptExecutionContext&, Ref<MediaStreamTrackPrivate>&&);
 
@@ -225,6 +228,7 @@ private:
 
     MediaTrackConstraints m_constraints;
 
+    String m_mediaStreamId;
     String m_groupId;
     State m_readyState { State::Live };
     bool m_muted { false };

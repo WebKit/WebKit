@@ -126,6 +126,7 @@ platform/mediastream/libwebrtc/gstreamer/RealtimeOutgoingVideoSourceLibWebRTC.cp
 
 platform/mediastream/gstreamer/GStreamerAudioCaptureSource.cpp
 platform/mediastream/gstreamer/GStreamerAudioCapturer.cpp
+platform/mediastream/gstreamer/GStreamerAudioRTPPacketizer.cpp
 platform/mediastream/gstreamer/GStreamerCaptureDeviceManager.cpp
 platform/mediastream/gstreamer/GStreamerCapturer.cpp
 platform/mediastream/gstreamer/GStreamerDTMFSenderBackend.cpp
@@ -134,8 +135,10 @@ platform/mediastream/gstreamer/GStreamerIncomingTrackProcessor.cpp
 platform/mediastream/gstreamer/GStreamerMediaStreamSource.cpp @no-unify
 platform/mediastream/gstreamer/GStreamerMockDevice.cpp @no-unify
 platform/mediastream/gstreamer/GStreamerMockDeviceProvider.cpp @no-unify
+platform/mediastream/gstreamer/GStreamerRTPPacketizer.cpp
 platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp
 platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp
+platform/mediastream/gstreamer/GStreamerVideoRTPPacketizer.cpp
 platform/mediastream/gstreamer/GStreamerWebRTCProvider.cpp
 platform/mediastream/gstreamer/MockDisplayCaptureSourceGStreamer.cpp
 platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.cpp

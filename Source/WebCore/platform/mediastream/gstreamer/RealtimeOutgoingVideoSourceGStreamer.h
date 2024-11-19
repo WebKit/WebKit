@@ -29,41 +29,28 @@ namespace WebCore {
 class RealtimeOutgoingVideoSourceGStreamer final : public RealtimeOutgoingMediaSourceGStreamer {
 public:
     static Ref<RealtimeOutgoingVideoSourceGStreamer> create(const RefPtr<UniqueSSRCGenerator>& ssrcGenerator, const String& mediaStreamId, MediaStreamTrack& track) { return adoptRef(*new RealtimeOutgoingVideoSourceGStreamer(ssrcGenerator, mediaStreamId, track)); }
+    static Ref<RealtimeOutgoingVideoSourceGStreamer> createMuted(const RefPtr<UniqueSSRCGenerator>& ssrcGenerator) { return adoptRef(*new RealtimeOutgoingVideoSourceGStreamer(ssrcGenerator)); }
+    ~RealtimeOutgoingVideoSourceGStreamer();
 
     void setApplyRotation(bool shouldApplyRotation) { m_shouldApplyRotation = shouldApplyRotation; }
 
-    bool setPayloadType(const GRefPtr<GstCaps>&) final;
-    void teardown() final;
-    void flush() final;
+    WARN_UNUSED_RETURN GRefPtr<GstPad> outgoingSourcePad() const final;
+    RefPtr<GStreamerRTPPacketizer> createPacketizer(RefPtr<UniqueSSRCGenerator>, const GstStructure*, GUniquePtr<GstStructure>&&) final;
 
-    void setParameters(GUniquePtr<GstStructure>&&) final;
-    void fillEncodingParameters(const GUniquePtr<GstStructure>&) final;
-
-    const GstStructure* stats() const { return m_stats.get(); }
+    void teardown() override;
 
 protected:
     explicit RealtimeOutgoingVideoSourceGStreamer(const RefPtr<UniqueSSRCGenerator>&, const String& mediaStreamId, MediaStreamTrack&);
-
-    void sourceEnabledChanged() final;
+    explicit RealtimeOutgoingVideoSourceGStreamer(const RefPtr<UniqueSSRCGenerator>&);
 
     bool m_shouldApplyRotation { false };
 
 private:
+    void initializePreProcessor();
+
     RTCRtpCapabilities rtpCapabilities() const final;
-
-    void startUpdatingStats();
-    void stopUpdatingStats();
-
-    void updateStats(GstBuffer*);
-
-    GRefPtr<GstElement> m_videoConvert;
-    GRefPtr<GstElement> m_videoFlip;
-    GRefPtr<GstElement> m_videoRate;
-    GRefPtr<GstElement> m_frameRateCapsFilter;
-
-    GUniquePtr<GstStructure> m_stats;
-
-    unsigned long m_statsPadProbeId { 0 };
+    bool linkTee() final;
+    GRefPtr<GstElement> m_preProcessor;
 };
 
 } // namespace WebCore

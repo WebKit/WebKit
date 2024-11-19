@@ -1,5 +1,6 @@
 /*
- *  Copyright (C) 2024 Igalia S.L.
+ *  Copyright (C) 2024 Igalia S.L. All rights reserved.
+ *  Copyright (C) 2024 Metrological Group B.V.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,16 +21,22 @@
 
 #if USE(GSTREAMER_WEBRTC)
 
+#include "GStreamerRTPPacketizer.h"
+#include "GStreamerWebRTCUtils.h"
+
 namespace WebCore {
 
-using WebRTCTrackData = struct _WebRTCTrackData {
-    String mediaStreamId;
-    String trackId;
-    String mediaStreamBinName;
-    GRefPtr<GstWebRTCRTPTransceiver> transceiver;
-    RealtimeMediaSource::Type type;
-    GRefPtr<GstCaps> caps;
-    unsigned ssrc;
+class GStreamerAudioRTPPacketizer final : public GStreamerRTPPacketizer {
+public:
+    static RefPtr<GStreamerAudioRTPPacketizer> create(RefPtr<UniqueSSRCGenerator>, const GstStructure* codecParameters, GUniquePtr<GstStructure>&& encodingParameters);
+
+private:
+    explicit GStreamerAudioRTPPacketizer(GRefPtr<GstCaps>&& inputCaps, GRefPtr<GstElement>&& encoder, GRefPtr<GstElement>&& payloader, GUniquePtr<GstStructure>&& encodingParameters, GRefPtr<GstCaps>&& rtpCaps);
+
+    GRefPtr<GstElement> m_audioconvert;
+    GRefPtr<GstElement> m_audioresample;
+    GRefPtr<GstElement> m_inputCapsFilter;
+    GRefPtr<GstCaps> m_inputCaps;
 };
 
 } // namespace WebCore

@@ -104,9 +104,10 @@ private:
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(const String&, const RTCRtpTransceiverInit&, IgnoreNegotiationNeededFlag) final;
     ExceptionOr<Ref<RTCRtpTransceiver>> addTransceiver(Ref<MediaStreamTrack>&&, const RTCRtpTransceiverInit&) final;
 
-    GStreamerRtpSenderBackend::Source createLinkedSourceForTrack(MediaStreamTrack&);
+    GStreamerRtpSenderBackend::Source createSourceForTrack(MediaStreamTrack&);
 
     RTCRtpTransceiver* existingTransceiver(WTF::Function<bool(GStreamerRtpTransceiverBackend&)>&&);
+    RTCRtpTransceiver* existingTransceiverForTrackId(const String& trackId);
     RTCRtpTransceiver& newRemoteTransceiver(std::unique_ptr<GStreamerRtpTransceiverBackend>&&, RealtimeMediaSource::Type, String&&);
 
     void collectTransceivers() final;

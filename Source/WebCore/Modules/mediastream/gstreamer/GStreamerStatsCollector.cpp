@@ -34,8 +34,8 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/glib/WTFGType.h>
 
-GST_DEBUG_CATEGORY_EXTERN(webkit_webrtc_endpoint_debug);
-#define GST_CAT_DEFAULT webkit_webrtc_endpoint_debug
+GST_DEBUG_CATEGORY(webkit_webrtc_stats_debug);
+#define GST_CAT_DEFAULT webkit_webrtc_stats_debug
 
 namespace WebCore {
 
@@ -82,10 +82,11 @@ RTCStatsReport::CodecStats::CodecStats(const GstStructure* structure)
 RTCStatsReport::ReceivedRtpStreamStats::ReceivedRtpStreamStats(Type type, const GstStructure* structure)
     : RtpStreamStats(type, structure)
 {
-    GstStructure* rtpSourceStats;
-    gst_structure_get(structure, "gst-rtpsource-stats", GST_TYPE_STRUCTURE, &rtpSourceStats, nullptr);
+    GUniqueOutPtr<GstStructure> rtpSourceStats;
+    gst_structure_get(structure, "gst-rtpsource-stats", GST_TYPE_STRUCTURE, &rtpSourceStats.outPtr(), nullptr);
 
-    packetsReceived = gstStructureGet<uint64_t>(rtpSourceStats, "packets-received"_s);
+    if (rtpSourceStats)
+        packetsReceived = gstStructureGet<uint64_t>(rtpSourceStats.get(), "packets-received"_s);
 
 #if GST_CHECK_VERSION(1, 22, 0)
     packetsLost = gstStructureGet<int64_t>(structure, "packets-lost"_s);
@@ -164,6 +165,14 @@ RTCStatsReport::OutboundRtpStreamStats::OutboundRtpStreamStats(const GstStructur
     framesSent = gstStructureGet<uint64_t>(structure, "frames-sent"_s);
     framesEncoded = gstStructureGet<uint64_t>(structure, "frames-encoded"_s);
     targetBitrate = gstStructureGet<double>(structure, "target-bitrate"_s);
+    frameWidth = gstStructureGet<unsigned>(structure, "frame-width"_s);
+    frameHeight = gstStructureGet<unsigned>(structure, "frame-height"_s);
+    framesPerSecond = gstStructureGet<double>(structure, "frames-per-second"_s);
+
+    if (auto midValue = gstStructureGetString(structure, "mid"_s))
+        mid = midValue.toString();
+    if (auto ridValue = gstStructureGetString(structure, "rid"_s))
+        rid = ridValue.toString();
 }
 
 RTCStatsReport::PeerConnectionStats::PeerConnectionStats(const GstStructure* structure)
@@ -350,6 +359,11 @@ WEBKIT_DEFINE_ASYNC_DATA_STRUCT(CallbackHolder)
 
 void GStreamerStatsCollector::getStats(CollectorCallback&& callback, const GRefPtr<GstPad>& pad, PreprocessCallback&& preprocessCallback)
 {
+    static std::once_flag debugRegisteredFlag;
+    std::call_once(debugRegisteredFlag, [] {
+        GST_DEBUG_CATEGORY_INIT(webkit_webrtc_stats_debug, "webkitwebrtcstats", 0, "WebKit WebRTC Stats");
+    });
+
     if (!m_webrtcBin) {
         callback(nullptr);
         return;
