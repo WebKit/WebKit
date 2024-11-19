@@ -35,10 +35,8 @@ loader/cache/MemoryCache.cpp
 page/DebugPageOverlays.cpp
 page/EventHandler.cpp
 page/FocusController.cpp
-page/FrameTree.cpp
 page/FrameView.cpp
 page/LocalFrameView.cpp
-page/Page.cpp
 page/PageOverlay.cpp
 page/ResourceUsageOverlay.cpp
 page/SpatialNavigation.cpp
@@ -85,4 +83,3 @@ workers/service/context/ServiceWorkerThread.cpp
 workers/service/context/ServiceWorkerThreadProxy.cpp
 workers/shared/context/SharedWorkerContextManager.cpp
 xml/XSLTProcessor.cpp
-xml/XSLTProcessor.cppModules/mediarecorder/MediaRecorder.cpp

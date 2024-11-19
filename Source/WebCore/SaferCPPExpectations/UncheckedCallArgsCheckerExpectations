@@ -10,7 +10,6 @@ accessibility/mac/WebAccessibilityObjectWrapperMac.mm
 css/MediaQueryMatcher.cpp
 css/query/MediaQueryFeatures.cpp
 dom/Document.cpp
-dom/DocumentMarkerController.cpp
 dom/Element.cpp
 dom/MouseRelatedEvent.cpp
 dom/PendingScript.cpp
@@ -22,10 +21,8 @@ editing/FrameSelection.cpp
 editing/TextManipulationController.cpp
 history/BackForwardCache.cpp
 history/CachedFrame.cpp
-history/CachedPage.cpp
 html/BaseDateAndTimeInputType.cpp
 html/ColorInputType.cpp
-html/HTMLFormElement.cpp
 html/HTMLLinkElement.cpp
 html/HTMLVideoElement.cpp
 html/ImageDocument.cpp
@@ -46,7 +43,6 @@ page/IntersectionObserver.cpp
 page/LocalFrameView.cpp
 page/LocalFrameViewLayoutContext.cpp
 page/NavigateEvent.cpp
-page/Page.cpp
 page/PageColorSampler.cpp
 page/PageConsoleClient.cpp
 page/PageOverlay.cpp
