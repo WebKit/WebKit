@@ -13,6 +13,9 @@ fast/forms/switch/pointer-tracking-there-and-back-again-rtl.html [ Timeout Image
 fast/forms/switch/pointer-tracking-there-and-back-again.html [ Timeout ImageOnlyFailure ]
 fast/forms/switch/pointer-tracking.html [ Pass Timeout ] # appears to be timing out only in stress mode
 
+# Week input control is only available starting in iOS 18
+fast/forms/ios/date-picker-value-crash.html [ Skip ]
+
 # -- The below regressed on iOS 18 but are passing on iOS 17 --
 
 # rdar://130594018 (REGRESSION (278344@main?): [ iOS 18 Release ] 2 http/tests/xmlhttprequest/* layout tests are constantly failing.)
