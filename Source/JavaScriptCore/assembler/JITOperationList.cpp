@@ -129,7 +129,7 @@ LLINT_DECLARE_ROUTINE_VALIDATE(ipint_trampoline);
 LLINT_DECLARE_ROUTINE_VALIDATE(ipint_entry);
 
 #if ENABLE(JIT_OPERATION_VALIDATION)
-#define LLINT_OP_EXTRAS(validateLabel) std::bit_cast<void*>(validateLabel)
+#define LLINT_OP_EXTRAS(validateLabel) reinterpret_cast<void*>(validateLabel)
 #else // ENABLE(JIT_OPERATION_DISASSEMBLY)
 #define LLINT_OP_EXTRAS(validateLabel)
 #endif
