@@ -1,6 +1,6 @@
 
-FAIL ShadowRoot.createElement() for autonomous custom element Illegal constructor
-FAIL ShadowRoot.createElementNS() for autonomous custom element Illegal constructor
-FAIL ShadowRoot.createElement() for customized built-in element Illegal constructor
-FAIL ShadowRoot.createElementNS() for customized built-in element Illegal constructor
+PASS ShadowRoot.createElement() for autonomous custom element
+PASS ShadowRoot.createElementNS() for autonomous custom element
+FAIL ShadowRoot.createElement() for customized built-in element assert_true: expected true got false
+FAIL ShadowRoot.createElementNS() for customized built-in element assert_true: expected true got false
 

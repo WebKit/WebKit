@@ -29,6 +29,7 @@
 
 #include "CSSTokenizerInputStream.h"
 #include "CommonAtomStrings.h"
+#include "CustomElementRegistry.h"
 #include "DocumentFragment.h"
 #include "HTMLDocument.h"
 #include "HTMLDocumentParser.h"
@@ -67,8 +68,9 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLTreeBuilder);
 using namespace ElementNames;
 using namespace HTMLNames;
 
-CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElementInterface>&& customElementInterface, const AtomString& name, Vector<Attribute>&& attributes)
+CustomElementConstructionData::CustomElementConstructionData(Ref<JSCustomElementInterface>&& customElementInterface, Ref<CustomElementRegistry>&& registry, const AtomString& name, Vector<Attribute>&& attributes)
     : elementInterface(WTFMove(customElementInterface))
+    , registry(WTFMove(registry))
     , name(name)
     , attributes(WTFMove(attributes))
 {

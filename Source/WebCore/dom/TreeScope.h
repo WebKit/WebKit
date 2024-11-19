@@ -43,6 +43,7 @@ namespace WebCore {
 class CSSStyleSheet;
 class CSSStyleSheetObservableArray;
 class ContainerNode;
+class CustomElementRegistry;
 class Document;
 class Element;
 class FloatPoint;
@@ -54,6 +55,7 @@ class LayoutPoint;
 class LegacyRenderSVGResourceContainer;
 class IdTargetObserverRegistry;
 class Node;
+class QualifiedName;
 class RadioButtonGroups;
 class SVGElement;
 class ShadowRoot;
@@ -73,6 +75,12 @@ public:
 
     Element* focusedElementInScope();
     Element* pointerLockElement() const;
+
+    void setCustomElementRegistry(Ref<CustomElementRegistry>&&);
+    CustomElementRegistry* customElementRegistry() const { return m_customElementRegistry.get(); }
+    WEBCORE_EXPORT ExceptionOr<Ref<Element>> createElementForBindings(const AtomString& tagName);
+    WEBCORE_EXPORT ExceptionOr<Ref<Element>> createElementNS(const AtomString& namespaceURI, const AtomString& qualifiedName);
+    WEBCORE_EXPORT Ref<Element> createElement(const QualifiedName&, bool createdByParser);
 
     WEBCORE_EXPORT RefPtr<Element> getElementById(const AtomString&) const;
     WEBCORE_EXPORT RefPtr<Element> getElementById(const String&) const;
@@ -149,7 +157,7 @@ public:
     RefPtr<SVGElement> takeElementFromPendingSVGResourcesForRemovalMap(const AtomString&);
 
 protected:
-    TreeScope(ShadowRoot&, Document&);
+    TreeScope(ShadowRoot&, Document&, RefPtr<CustomElementRegistry>&&);
     explicit TreeScope(Document&);
     ~TreeScope();
 
@@ -171,6 +179,8 @@ private:
     CheckedRef<ContainerNode> m_rootNode;
     std::reference_wrapper<Document> m_documentScope;
     TreeScope* m_parentTreeScope;
+
+    RefPtr<CustomElementRegistry> m_customElementRegistry;
 
     std::unique_ptr<TreeScopeOrderedMap> m_elementsById;
     std::unique_ptr<TreeScopeOrderedMap> m_elementsByName;

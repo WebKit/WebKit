@@ -67,13 +67,16 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
 
     Ref document = downcast<Document>(*context);
 
-    RefPtr window = document->domWindow();
-    if (!window)
-        return throwVMTypeError(lexicalGlobalObject, scope, "new.target is not a valid custom element constructor"_s);
+    RefPtr registry = document->activeCustomElementRegistry();
+    if (!registry) {
+        RefPtr window = document->domWindow();
+        if (!window)
+            return throwVMTypeError(lexicalGlobalObject, scope, "new.target is not a valid custom element constructor"_s);
 
-    RefPtr registry = window->customElementRegistry();
-    if (!registry)
-        return throwVMTypeError(lexicalGlobalObject, scope, "new.target is not a valid custom element constructor"_s);
+        registry = window->customElementRegistry();
+        if (!registry)
+            return throwVMTypeError(lexicalGlobalObject, scope, "new.target is not a valid custom element constructor"_s);
+    }
 
     RefPtr elementInterface = registry->findInterface(newTarget);
     if (!elementInterface)

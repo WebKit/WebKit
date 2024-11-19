@@ -1,4 +1,4 @@
 
-FAIL Same constructor can be registered to different registries Illegal constructor
-FAIL Non-global registries still reject duplicate registrations of the same constructor Illegal constructor
+PASS Same constructor can be registered to different registries
+PASS Non-global registries still reject duplicate registrations of the same constructor
 
