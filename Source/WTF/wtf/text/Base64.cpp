@@ -115,7 +115,7 @@ template<typename CharacterType> static void base64EncodeInternal(std::span<cons
     ASSERT(calculateBase64EncodedSize(inputDataBuffer.size(), options) == destinationDataBuffer.size());
 
     if constexpr (sizeof(CharacterType) == 1) {
-        size_t bytesWritten = simdutf::binary_to_base64(bitwise_cast<const char*>(inputDataBuffer.data()), inputDataBuffer.size(), bitwise_cast<char*>(destinationDataBuffer.data()), toSIMDUTFOptions(options));
+        size_t bytesWritten = simdutf::binary_to_base64(std::bit_cast<const char*>(inputDataBuffer.data()), inputDataBuffer.size(), std::bit_cast<char*>(destinationDataBuffer.data()), toSIMDUTFOptions(options));
         ASSERT_UNUSED(bytesWritten, bytesWritten == destinationDataBuffer.size());
         return;
     }
@@ -455,7 +455,7 @@ static std::tuple<FromBase64ShouldThrowError, size_t, size_t> fromBase64Impl(std
         return { FromBase64ShouldThrowError::No, 0, 0 };
 
     size_t outputLength = output.size();
-    auto result = simdutf::base64_to_binary_safe(bitwise_cast<const UTFType*>(span.data()), span.size(), bitwise_cast<char*>(output.data()), outputLength, options);
+    auto result = simdutf::base64_to_binary_safe(std::bit_cast<const UTFType*>(span.data()), span.size(), std::bit_cast<char*>(output.data()), outputLength, options);
     switch (result.error) {
     case simdutf::error_code::INVALID_BASE64_CHARACTER:
         return { FromBase64ShouldThrowError::Yes, result.count, outputLength };
@@ -485,8 +485,8 @@ size_t maxLengthFromBase64(StringView string)
 {
     size_t length = string.length();
     if (string.is8Bit())
-        return simdutf::maximal_binary_length_from_base64(bitwise_cast<const char*>(string.span8().data()), length);
-    return simdutf::maximal_binary_length_from_base64(bitwise_cast<const char16_t*>(string.span16().data()), length);
+        return simdutf::maximal_binary_length_from_base64(std::bit_cast<const char*>(string.span8().data()), length);
+    return simdutf::maximal_binary_length_from_base64(std::bit_cast<const char16_t*>(string.span16().data()), length);
 }
 
 } // namespace WTF

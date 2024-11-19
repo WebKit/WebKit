@@ -124,8 +124,8 @@ public:
     bool isEmpty() const { return !size(); }
     unsigned byteSize() const { return size() * sizeof(T); }
 
-    pointer data() { return bitwise_cast<T*>(bitwise_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfData()); }
-    const_pointer data() const { return bitwise_cast<const T*>(bitwise_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfData()); }
+    pointer data() { return std::bit_cast<T*>(std::bit_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfData()); }
+    const_pointer data() const { return std::bit_cast<const T*>(std::bit_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfData()); }
     std::span<T> span() { return { data(), size() }; }
     std::span<const T> span() const { return { data(), size() }; }
 

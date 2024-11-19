@@ -99,7 +99,7 @@ ALWAYS_INLINE bool FixedBitVector::concurrentTestAndSet(size_t bitIndex, Depende
     WordType mask = one << (bitIndex % wordSize);
     size_t wordIndex = bitIndex / wordSize;
     WordType* data = dependency.consume(m_bitVector.bits()) + wordIndex;
-    return !bitwise_cast<Atomic<WordType>*>(data)->transactionRelaxed(
+    return !std::bit_cast<Atomic<WordType>*>(data)->transactionRelaxed(
         [&](WordType& value) -> bool {
             if (value & mask)
                 return false;
@@ -117,7 +117,7 @@ ALWAYS_INLINE bool FixedBitVector::concurrentTestAndClear(size_t bitIndex, Depen
     WordType mask = one << (bitIndex % wordSize);
     size_t wordIndex = bitIndex / wordSize;
     WordType* data = dependency.consume(m_bitVector.bits()) + wordIndex;
-    return bitwise_cast<Atomic<WordType>*>(data)->transactionRelaxed(
+    return std::bit_cast<Atomic<WordType>*>(data)->transactionRelaxed(
         [&](WordType& value) -> bool {
             if (!(value & mask))
                 return false;

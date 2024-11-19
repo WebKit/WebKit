@@ -49,7 +49,7 @@ public:
     }
     
     PureValue(NodeType op, const AdjacencyList& children, const void* ptr)
-        : PureValue(op, children, bitwise_cast<uintptr_t>(ptr))
+        : PureValue(op, children, std::bit_cast<uintptr_t>(ptr))
     {
     }
     

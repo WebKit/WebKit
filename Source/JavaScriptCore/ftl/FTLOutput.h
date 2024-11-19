@@ -110,14 +110,14 @@ public:
     {
         ASSERT(graph.m_plan.weakReferences().contains(cell));
 
-        return constIntPtr(bitwise_cast<intptr_t>(cell));
+        return constIntPtr(std::bit_cast<intptr_t>(cell));
     }
 
     LValue alreadyRegisteredFrozenPointer(DFG::FrozenValue* value)
     {
         RELEASE_ASSERT(value->value().isCell());
 
-        return constIntPtr(bitwise_cast<intptr_t>(value->cell()));
+        return constIntPtr(std::bit_cast<intptr_t>(value->cell()));
     }
 
     template<typename T>
@@ -125,8 +125,8 @@ public:
     {
         static_assert(!std::is_base_of<HeapCell, T>::value, "To use a GC pointer, the graph must be aware of it. Use gcPointer instead and make sure the graph is aware of this reference.");
         if (sizeof(void*) == 8)
-            return constInt64(bitwise_cast<intptr_t>(value));
-        return constInt32(bitwise_cast<intptr_t>(value));
+            return constInt64(std::bit_cast<intptr_t>(value));
+        return constInt32(std::bit_cast<intptr_t>(value));
     }
     template<typename T>
     LValue constIntPtr(T value)

@@ -340,7 +340,7 @@ void setupVarargsFrame(JSGlobalObject* globalObject, CallFrame* callFrame, CallF
     
     loadVarargs(
         globalObject,
-        bitwise_cast<JSValue*>(&callFrame->r(calleeFrameOffset + CallFrame::argumentOffset(0))),
+        std::bit_cast<JSValue*>(&callFrame->r(calleeFrameOffset + CallFrame::argumentOffset(0))),
         arguments, offset, length);
     
     newCallFrame->setArgumentCountIncludingThis(length + 1);

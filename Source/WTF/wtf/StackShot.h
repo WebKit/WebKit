@@ -110,7 +110,7 @@ public:
     bool operator>(const StackShot&) const { return false; }
     
 private:
-    static void** deletedValueArray() { return bitwise_cast<void**>(static_cast<uintptr_t>(1)); }
+    static void** deletedValueArray() { return std::bit_cast<void**>(static_cast<uintptr_t>(1)); }
 
     UniqueArray<void*> m_array;
     size_t m_size { 0 };

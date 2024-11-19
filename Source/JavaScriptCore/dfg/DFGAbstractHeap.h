@@ -320,8 +320,8 @@ private:
     {
         uint64_t kindAsInt = static_cast<uint64_t>(kind);
         ASSERT(kindAsInt < (1u << kindBits));
-        ASSERT(!(bitwise_cast<uint64_t>(payload.valueImpl()) & kindAndTopMask));
-        return (kindAsInt << kindShift) | (static_cast<uint64_t>(payload.isTop()) << topShift) | bitwise_cast<uint64_t>(payload.valueImpl());
+        ASSERT(!(std::bit_cast<uint64_t>(payload.valueImpl()) & kindAndTopMask));
+        return (kindAsInt << kindShift) | (static_cast<uint64_t>(payload.isTop()) << topShift) | std::bit_cast<uint64_t>(payload.valueImpl());
     }
     
     // The layout of the value is:

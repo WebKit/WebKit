@@ -173,7 +173,7 @@ EncodedJSValue getData(JSGlobalObject* globalObject, CallFrame* callFrame)
             rawBytes[i] = *dataPtr++;
     }
 
-    RELEASE_AND_RETURN(scope, JSValue::encode(Adaptor::toJSValue(globalObject, bitwise_cast<typename Adaptor::Type>(rawBytes))));
+    RELEASE_AND_RETURN(scope, JSValue::encode(Adaptor::toJSValue(globalObject, std::bit_cast<typename Adaptor::Type>(rawBytes))));
 }
 
 template<typename Adaptor>
@@ -190,7 +190,7 @@ EncodedJSValue setData(JSGlobalObject* globalObject, CallFrame* callFrame)
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
 
     constexpr unsigned dataSize = sizeof(typename Adaptor::Type);
-    auto rawBytes = bitwise_cast<std::array<uint8_t, dataSize>>(toNativeFromValue<Adaptor>(globalObject, callFrame->argument(1)));
+    auto rawBytes = std::bit_cast<std::array<uint8_t, dataSize>>(toNativeFromValue<Adaptor>(globalObject, callFrame->argument(1)));
     RETURN_IF_EXCEPTION(scope, encodedJSValue());
     
     bool littleEndian = false;

@@ -56,11 +56,11 @@ bool tryToDisassemble(const CodePtr<DisassemblyPtrTag>& codePtr, size_t size, vo
     ZydisDecodedInstruction instruction;
     char formatted[1024];
     while (ZYAN_SUCCESS(ZydisDecoderDecodeBuffer(&decoder, data + offset, size - offset, &instruction))) {
-        if (ZYAN_SUCCESS(ZydisFormatterFormatInstruction(&formatter, &instruction, formatted, sizeof(formatted), bitwise_cast<unsigned long long>(data + offset))))
-            out.printf("%s%#16llx: %s", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)), formatted);
+        if (ZYAN_SUCCESS(ZydisFormatterFormatInstruction(&formatter, &instruction, formatted, sizeof(formatted), std::bit_cast<unsigned long long>(data + offset))))
+            out.printf("%s%#16llx: %s", prefix, static_cast<unsigned long long>(std::bit_cast<uintptr_t>(data + offset)), formatted);
         else
-            out.printf("%s%#16llx: failed-to-format", prefix, static_cast<unsigned long long>(bitwise_cast<uintptr_t>(data + offset)));
-        if (auto str = AssemblyCommentRegistry::singleton().comment(reinterpret_cast<void*>(bitwise_cast<uintptr_t>(data + offset))))
+            out.printf("%s%#16llx: failed-to-format", prefix, static_cast<unsigned long long>(std::bit_cast<uintptr_t>(data + offset)));
+        if (auto str = AssemblyCommentRegistry::singleton().comment(reinterpret_cast<void*>(std::bit_cast<uintptr_t>(data + offset))))
             out.printf("; %s\n", str->ascii().data());
         else
             out.printf("\n");

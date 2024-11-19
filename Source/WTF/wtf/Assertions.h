@@ -921,7 +921,7 @@ inline void isIntegralOrPointerType() { }
 template<typename T, typename... Types>
 void isIntegralOrPointerType(T, Types... types)
 {
-    static_assert(std::is_integral<T>::value || std::is_enum<T>::value || std::is_pointer<T>::value, "All types need to be bitwise_cast-able to integral type for logging");
+    static_assert(std::is_integral<T>::value || std::is_enum<T>::value || std::is_pointer<T>::value, "All types need to be std::bit_cast-able to integral type for logging");
     isIntegralOrPointerType(types...);
 }
 

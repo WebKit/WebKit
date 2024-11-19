@@ -96,7 +96,7 @@ public:
 
         Page* next { nullptr };
     private:
-        Entry* entries() { return bitwise_cast<Entry*>(this + 1); }
+        Entry* entries() { return std::bit_cast<Entry*>(this + 1); }
         WTF::BitSet<numEntriesPerPage> isInUseMap;
     };
 
@@ -121,7 +121,7 @@ private:
     FindResult findFirstEntry();
 
     Metadata* metadata();
-    inline Page* firstPage() { return bitwise_cast<Page*>(m_memory); }
+    inline Page* firstPage() { return std::bit_cast<Page*>(m_memory); }
 
     template <typename Function>
     void forEachPage(Function);

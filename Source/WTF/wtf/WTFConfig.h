@@ -118,7 +118,7 @@ WTF_EXPORT_PRIVATE void setPermissionsOfConfigPage();
 
 // Workaround to localize bounds safety warnings to this file.
 // FIXME: Use real types to make materializing WTF::Config* bounds-safe and type-safe.
-inline Config* addressOfWTFConfig() { return bitwise_cast<Config*>(&WebConfig::g_config[startSlotOfWTFConfig]); }
+inline Config* addressOfWTFConfig() { return std::bit_cast<Config*>(&WebConfig::g_config[startSlotOfWTFConfig]); }
 
 #define g_wtfConfig (*WTF::addressOfWTFConfig())
 

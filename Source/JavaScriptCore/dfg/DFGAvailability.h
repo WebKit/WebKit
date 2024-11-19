@@ -144,7 +144,7 @@ private:
     
     static Node* unavailableMarker()
     {
-        return bitwise_cast<Node*>(static_cast<intptr_t>(1));
+        return std::bit_cast<Node*>(static_cast<intptr_t>(1));
     }
     
     Node* m_node;

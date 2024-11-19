@@ -48,7 +48,7 @@ void BitVector::setSlow(const BitVector& other)
     else {
         OutOfLineBits* newOutOfLineBits = OutOfLineBits::create(other.size());
         memcpy(newOutOfLineBits->bits(), other.bits(), byteCount(other.size()));
-        newBitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits) >> 1;
+        newBitsOrPointer = std::bit_cast<uintptr_t>(newOutOfLineBits) >> 1;
     }
     if (!isInline() && !isEmptyOrDeletedValue())
         OutOfLineBits::destroy(outOfLineBits());
@@ -122,7 +122,7 @@ void BitVector::resizeOutOfLine(size_t numBits, size_t shiftInWords)
             memcpy(newOutOfLineBits->bits(), outOfLineBits()->bits(), newOutOfLineBits->numWords() * sizeof(void*));
         OutOfLineBits::destroy(outOfLineBits());
     }
-    m_bitsOrPointer = bitwise_cast<uintptr_t>(newOutOfLineBits) >> 1;
+    m_bitsOrPointer = std::bit_cast<uintptr_t>(newOutOfLineBits) >> 1;
 }
 
 void BitVector::mergeSlow(const BitVector& other)
@@ -215,7 +215,7 @@ bool BitVector::isEmptySlow() const
 
     using UnitType = std::conditional_t<sizeof(uintptr_t) == sizeof(uint32_t), uint32_t, uint64_t>;
     const auto* bits = outOfLineBits();
-    const auto* begin = bitwise_cast<const UnitType*>(bits->bits());
+    const auto* begin = std::bit_cast<const UnitType*>(bits->bits());
     const auto* end = begin + bits->numWords();
     return SIMD::find(std::span { begin, end }, vectorMatch, scalarMatch) == end;
 }

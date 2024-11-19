@@ -179,7 +179,7 @@ public:
 
     static ALWAYS_INLINE StorageType encode(T* ptr)
     {
-        uintptr_t intPtr = bitwise_cast<uintptr_t>(ptr);
+        uintptr_t intPtr = std::bit_cast<uintptr_t>(ptr);
 #if HAVE(36BIT_ADDRESS)
         static_assert(alignof(T) >= (1ULL << bitsShift));
         ASSERT(!(intPtr & alignmentMask));
@@ -195,9 +195,9 @@ public:
     {
 #if HAVE(36BIT_ADDRESS)
         static_assert(alignof(T) >= (1ULL << bitsShift));
-        return bitwise_cast<T*>(static_cast<uintptr_t>(ptr) << bitsShift);
+        return std::bit_cast<T*>(static_cast<uintptr_t>(ptr) << bitsShift);
 #else
-        return bitwise_cast<T*>(ptr);
+        return std::bit_cast<T*>(ptr);
 #endif
     }
 

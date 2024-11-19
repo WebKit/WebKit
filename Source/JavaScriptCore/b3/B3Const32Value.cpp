@@ -189,7 +189,7 @@ Value* Const32Value::rotLConstant(Procedure& proc, const Value* other) const
 
 Value* Const32Value::bitwiseCastConstant(Procedure& proc) const
 {
-    return proc.add<ConstFloatValue>(origin(), bitwise_cast<float>(m_value));
+    return proc.add<ConstFloatValue>(origin(), std::bit_cast<float>(m_value));
 }
 
 Value* Const32Value::iToDConstant(Procedure& proc) const

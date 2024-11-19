@@ -76,7 +76,7 @@ public:
     {
         ASSERT(!!bytecodeIndex);
 #if CPU(ADDRESS64)
-        ASSERT(!(bitwise_cast<uintptr_t>(inlineCallFrame) & ~s_maskCompositeValueForPointer));
+        ASSERT(!(std::bit_cast<uintptr_t>(inlineCallFrame) & ~s_maskCompositeValueForPointer));
 #endif
     }
     
@@ -193,7 +193,7 @@ public:
 #if CPU(ADDRESS64)
         if (UNLIKELY(isOutOfLine()))
             return outOfLineCodeOrigin()->inlineCallFrame;
-        return bitwise_cast<InlineCallFrame*>(m_compositeValue & s_maskCompositeValueForPointer);
+        return std::bit_cast<InlineCallFrame*>(m_compositeValue & s_maskCompositeValueForPointer);
 #else
         return m_inlineCallFrame;
 #endif
@@ -224,7 +224,7 @@ private:
     OutOfLineCodeOrigin* outOfLineCodeOrigin() const
     {
         ASSERT(isOutOfLine());
-        return bitwise_cast<OutOfLineCodeOrigin*>(m_compositeValue & s_maskCompositeValueForOutOfLinePointer);
+        return std::bit_cast<OutOfLineCodeOrigin*>(m_compositeValue & s_maskCompositeValueForOutOfLinePointer);
     }
 #endif
 
@@ -235,7 +235,7 @@ private:
         ASSERT(value & s_maskCompositeValueForPointer);
         ASSERT(!(value & ~s_maskCompositeValueForPointer));
 #endif
-        return bitwise_cast<InlineCallFrame*>(value);
+        return std::bit_cast<InlineCallFrame*>(value);
     }
 
 #if CPU(ADDRESS64)
@@ -245,16 +245,16 @@ private:
     static uintptr_t buildCompositeValue(InlineCallFrame* inlineCallFrame, BytecodeIndex bytecodeIndex)
     {
         if (!bytecodeIndex)
-            return bitwise_cast<uintptr_t>(inlineCallFrame) | s_maskIsBytecodeIndexInvalid;
+            return std::bit_cast<uintptr_t>(inlineCallFrame) | s_maskIsBytecodeIndexInvalid;
 
         if (UNLIKELY(bytecodeIndex.asBits() >= 1 << s_freeBitsAtTop)) {
             auto* outOfLine = new OutOfLineCodeOrigin(inlineCallFrame, bytecodeIndex);
-            return bitwise_cast<uintptr_t>(outOfLine) | s_maskIsOutOfLine;
+            return std::bit_cast<uintptr_t>(outOfLine) | s_maskIsOutOfLine;
         }
 
         uintptr_t encodedBytecodeIndex = static_cast<uintptr_t>(bytecodeIndex.asBits()) << (64 - s_freeBitsAtTop);
-        ASSERT(!(encodedBytecodeIndex & bitwise_cast<uintptr_t>(inlineCallFrame)));
-        return encodedBytecodeIndex | bitwise_cast<uintptr_t>(inlineCallFrame);
+        ASSERT(!(encodedBytecodeIndex & std::bit_cast<uintptr_t>(inlineCallFrame)));
+        return encodedBytecodeIndex | std::bit_cast<uintptr_t>(inlineCallFrame);
     }
 
     // The bottom bit indicates whether to look at an out-of-line implementation (because of a bytecode index which is too big for us to store).

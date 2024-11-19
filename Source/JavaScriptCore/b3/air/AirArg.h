@@ -588,7 +588,7 @@ public:
 
     static Arg immPtr(const void* address)
     {
-        return bigImm(bitwise_cast<intptr_t>(address));
+        return bigImm(std::bit_cast<intptr_t>(address));
     }
 
     static Arg simpleAddr(Air::Tmp ptr)
@@ -631,7 +631,7 @@ public:
     {
         Arg result;
         result.m_kind = Stack;
-        result.m_offset = bitwise_cast<intptr_t>(value);
+        result.m_offset = std::bit_cast<intptr_t>(value);
         result.m_scale = offset; // I know, yuck.
         return result;
     }
@@ -774,7 +774,7 @@ public:
     {
         Arg result;
         result.m_kind = Special;
-        result.m_offset = bitwise_cast<intptr_t>(special);
+        result.m_offset = std::bit_cast<intptr_t>(special);
         return result;
     }
 
@@ -1082,7 +1082,7 @@ public:
     void* pointerValue() const
     {
         ASSERT(kind() == BigImm);
-        return bitwise_cast<void*>(static_cast<intptr_t>(m_offset));
+        return std::bit_cast<void*>(static_cast<intptr_t>(m_offset));
     }
     
     Air::Tmp ptr() const
@@ -1110,7 +1110,7 @@ public:
     StackSlot* stackSlot() const
     {
         ASSERT(kind() == Stack);
-        return bitwise_cast<StackSlot*>(static_cast<uintptr_t>(m_offset));
+        return std::bit_cast<StackSlot*>(static_cast<uintptr_t>(m_offset));
     }
 
     Air::Tmp index() const
@@ -1133,7 +1133,7 @@ public:
     Air::Special* special() const
     {
         ASSERT(kind() == Special);
-        return bitwise_cast<Air::Special*>(static_cast<uintptr_t>(m_offset));
+        return std::bit_cast<Air::Special*>(static_cast<uintptr_t>(m_offset));
     }
 
     Width width() const

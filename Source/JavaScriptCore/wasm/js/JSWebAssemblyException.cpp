@@ -64,7 +64,7 @@ void JSWebAssemblyException::visitChildrenImpl(JSCell* cell, Visitor& visitor)
     unsigned offset = 0;
     for (unsigned i = 0; i < tagType.argumentCount(); ++i) {
         if (isRefType(tagType.argumentType(i)))
-            visitor.append(bitwise_cast<WriteBarrier<Unknown>>(exception->payload()[offset]));
+            visitor.append(std::bit_cast<WriteBarrier<Unknown>>(exception->payload()[offset]));
         offset += tagType.argumentType(i).kind == Wasm::TypeKind::V128 ? 2 : 1;
     }
 }

@@ -401,10 +401,10 @@ void testReduceStrengthTruncConstant(Type64 filler, Type32 value)
     Procedure proc;
     BasicBlock* root = proc.addBlock();
 
-    int64_t bits = bitwise_cast<int64_t>(filler);
-    int32_t loBits = bitwise_cast<int32_t>(value);
+    int64_t bits = std::bit_cast<int64_t>(filler);
+    int32_t loBits = std::bit_cast<int32_t>(value);
     bits = ((bits >> 32) << 32) | loBits;
-    Type64 testValue = bitwise_cast<Type64>(bits);
+    Type64 testValue = std::bit_cast<Type64>(bits);
 
     Value* b2  = root->appendNew<B3ContType>(proc, Origin(), testValue);
     Value* b3  = root->appendNew<Value>(proc, JSC::B3::Trunc, Origin(), b2);
@@ -417,7 +417,7 @@ void testReduceStrengthTruncConstant(Type64 filler, Type32 value)
     CHECK_EQ(root->last()->opcode(), Return);
     if constexpr (std::is_same_v<B3ContType, ConstDoubleValue>) {
         CHECK_EQ(root->last()->child(0)->opcode(), ConstFloat);
-        CHECK_EQ(bitwise_cast<int32_t>(root->last()->child(0)->asFloat()), bitwise_cast<int32_t>(value));
+        CHECK_EQ(std::bit_cast<int32_t>(root->last()->child(0)->asFloat()), std::bit_cast<int32_t>(value));
     } else
         CHECK(root->last()->child(0)->isInt32(value));
 }
@@ -452,7 +452,7 @@ void testLoadBaseIndexShift2()
     if (isX86() && proc.optLevel() > 1)
         checkUsesInstruction(*code, "(%rdi,%rsi,4)");
     int32_t value = 12341234;
-    char* ptr = bitwise_cast<char*>(&value);
+    char* ptr = std::bit_cast<char*>(&value);
     for (unsigned i = 0; i < 10; ++i)
         CHECK_EQ(invoke<int32_t>(*code, ptr - (static_cast<intptr_t>(1) << static_cast<intptr_t>(2)) * i, i), 12341234);
 }
@@ -476,7 +476,7 @@ void testLoadBaseIndexShift32()
                     root->appendNew<Const32Value>(proc, Origin(), 32)))));
     auto code = compileProc(proc);
     int32_t value = 12341234;
-    char* ptr = bitwise_cast<char*>(&value);
+    char* ptr = std::bit_cast<char*>(&value);
     for (unsigned i = 0; i < 10; ++i)
         CHECK_EQ(invoke<int32_t>(*code, ptr - (static_cast<intptr_t>(1) << static_cast<intptr_t>(32)) * i, i), 12341234);
 #endif
@@ -1305,7 +1305,7 @@ void testWasmAddressWithOffset()
 void testFastTLSLoad()
 {
 #if ENABLE(FAST_TLS_JIT)
-    _pthread_setspecific_direct(WTF_TESTING_KEY, bitwise_cast<void*>(static_cast<uintptr_t>(0xbeef)));
+    _pthread_setspecific_direct(WTF_TESTING_KEY, std::bit_cast<void*>(static_cast<uintptr_t>(0xbeef)));
 
     Procedure proc;
     BasicBlock* root = proc.addBlock();
@@ -1344,7 +1344,7 @@ void testFastTLSStore()
     root->appendNewControlValue(proc, Return, Origin());
 
     compileAndRun<void>(proc);
-    CHECK_EQ(bitwise_cast<uintptr_t>(_pthread_getspecific_direct(WTF_TESTING_KEY)), static_cast<uintptr_t>(0xdead));
+    CHECK_EQ(std::bit_cast<uintptr_t>(_pthread_getspecific_direct(WTF_TESTING_KEY)), static_cast<uintptr_t>(0xdead));
 #endif
 }
 
@@ -1413,9 +1413,9 @@ void testFloatEqualOrUnorderedFolding()
 void testFloatEqualOrUnorderedFoldingNaN()
 {
     StdList<float> nans = {
-        bitwise_cast<float>(0xfffffffd),
-        bitwise_cast<float>(0xfffffffe),
-        bitwise_cast<float>(0xfffffff0),
+        std::bit_cast<float>(0xfffffffd),
+        std::bit_cast<float>(0xfffffffe),
+        std::bit_cast<float>(0xfffffff0),
         static_cast<float>(PNaN),
     };
 
@@ -1704,7 +1704,7 @@ static void testSimpleTuplePairUnused(unsigned first, int64_t second)
         jit.move(CCallHelpers::TrustedImm32(first), params[0].gpr());
 #if !CPU(ARM_THUMB2) // FIXME
         jit.move(CCallHelpers::TrustedImm64(second), params[1].gpr());
-        jit.move64ToDouble(CCallHelpers::Imm64(bitwise_cast<uint64_t>(0.0)), params[2].fpr());
+        jit.move64ToDouble(CCallHelpers::Imm64(std::bit_cast<uint64_t>(0.0)), params[2].fpr());
 #endif
     });
     Value* i32 = root->appendNew<Value>(proc, ZExt32, Origin(),
@@ -1807,7 +1807,7 @@ static void tailDupedTuplePair(unsigned first, double second)
         AllowMacroScratchRegisterUsage allowScratch(jit);
         jit.move(CCallHelpers::TrustedImm32(first), params[0].gpr());
 #if !CPU(ARM_THUMB2) // FIXME
-        jit.store64(CCallHelpers::TrustedImm64(bitwise_cast<uint64_t>(second)), CCallHelpers::Address(CCallHelpers::framePointerRegister, params[1].offsetFromFP()));
+        jit.store64(CCallHelpers::TrustedImm64(std::bit_cast<uint64_t>(second)), CCallHelpers::Address(CCallHelpers::framePointerRegister, params[1].offsetFromFP()));
 #endif
     });
     root->appendNew<VariableValue>(proc, Set, Origin(), var, patchpoint);

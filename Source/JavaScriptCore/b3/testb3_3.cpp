@@ -80,7 +80,7 @@ void testCSEStoreWithLoop()
 
     auto code = compileProc(proc);
     int64_t num = 1;
-    invoke<int64_t>(*code, bitwise_cast<intptr_t>(&num), 2);
+    invoke<int64_t>(*code, std::bit_cast<intptr_t>(&num), 2);
     CHECK_EQ(num, 5);
 }
 
@@ -155,7 +155,7 @@ void testLoadPreIndex32()
         return r;
     };
 
-    CHECK_EQ(invoke<int32_t>(*code, bitwise_cast<intptr_t>(ptr)), expected());
+    CHECK_EQ(invoke<int32_t>(*code, std::bit_cast<intptr_t>(ptr)), expected());
 }
 
 void testLoadPreIndex64()
@@ -229,7 +229,7 @@ void testLoadPreIndex64()
         return r;
     };
 
-    CHECK_EQ(invoke<int64_t>(*code, bitwise_cast<intptr_t>(ptr)), expected());
+    CHECK_EQ(invoke<int64_t>(*code, std::bit_cast<intptr_t>(ptr)), expected());
 }
 
 void testLoadPostIndex32()
@@ -303,7 +303,7 @@ void testLoadPostIndex32()
         return r;
     };
 
-    CHECK_EQ(invoke<int32_t>(*code, bitwise_cast<intptr_t>(ptr)), expected());
+    CHECK_EQ(invoke<int32_t>(*code, std::bit_cast<intptr_t>(ptr)), expected());
 }
 
 void testLoadPostIndex64()
@@ -377,7 +377,7 @@ void testLoadPostIndex64()
         return r;
     };
 
-    CHECK_EQ(invoke<int64_t>(*code, bitwise_cast<intptr_t>(ptr)), expected());
+    CHECK_EQ(invoke<int64_t>(*code, std::bit_cast<intptr_t>(ptr)), expected());
 }
 
 void testLoadPreIndex32WithStore()
@@ -455,7 +455,7 @@ void testLoadPreIndex32WithStore()
         return r;
     };
 
-    CHECK_EQ(invoke<int32_t>(*code, bitwise_cast<intptr_t>(ptr)), expected());
+    CHECK_EQ(invoke<int32_t>(*code, std::bit_cast<intptr_t>(ptr)), expected());
 }
 
 void testStorePreIndex32()
@@ -480,8 +480,8 @@ void testStorePreIndex32()
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "#4]!");
-    intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
-    ptr = bitwise_cast<int32_t*>(res);
+    intptr_t res = invoke<intptr_t>(*code, std::bit_cast<intptr_t>(ptr), 4);
+    ptr = std::bit_cast<int32_t*>(res);
     CHECK_EQ(nums[2], *ptr);
 }
 
@@ -507,8 +507,8 @@ void testStorePreIndex64()
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "#8]!");
-    intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
-    ptr = bitwise_cast<int64_t*>(res);
+    intptr_t res = invoke<intptr_t>(*code, std::bit_cast<intptr_t>(ptr), 4);
+    ptr = std::bit_cast<int64_t*>(res);
     CHECK_EQ(nums[2], *ptr);
 }
 
@@ -534,8 +534,8 @@ void testStorePostIndex32()
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "], #4");
-    intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4);
-    ptr = bitwise_cast<int32_t*>(res);
+    intptr_t res = invoke<intptr_t>(*code, std::bit_cast<intptr_t>(ptr), 4);
+    ptr = std::bit_cast<int32_t*>(res);
     CHECK_EQ(nums[1], 4);
     CHECK_EQ(nums[2], *ptr);
 }
@@ -562,8 +562,8 @@ void testStorePostIndex64()
     auto code = compileProc(proc);
     if (isARM64() && Options::useB3CanonicalizePrePostIncrements())
         checkUsesInstruction(*code, "], #8");
-    intptr_t res = invoke<intptr_t>(*code, bitwise_cast<intptr_t>(ptr), 4ULL);
-    ptr = bitwise_cast<int64_t*>(res);
+    intptr_t res = invoke<intptr_t>(*code, std::bit_cast<intptr_t>(ptr), 4ULL);
+    ptr = std::bit_cast<int64_t*>(res);
     CHECK_EQ(nums[1], 4);
     CHECK_EQ(nums[2], *ptr);
 }
@@ -780,7 +780,7 @@ void testBitOrImmBitOrArgImm32(int32_t a, int32_t b, int32_t c)
 
 double bitOrDouble(double a, double b)
 {
-    return bitwise_cast<double>(bitwise_cast<uint64_t>(a) | bitwise_cast<uint64_t>(b));
+    return std::bit_cast<double>(std::bit_cast<uint64_t>(a) | std::bit_cast<uint64_t>(b));
 }
 
 void testBitOrArgDouble(double a)
@@ -835,7 +835,7 @@ void testBitOrImmsDouble(double a, double b)
 
 float bitOrFloat(float a, float b)
 {
-    return bitwise_cast<float>(bitwise_cast<uint32_t>(a) | bitwise_cast<uint32_t>(b));
+    return std::bit_cast<float>(std::bit_cast<uint32_t>(a) | std::bit_cast<uint32_t>(b));
 }
 
 void testBitOrArgFloat(float a)
@@ -847,7 +847,7 @@ void testBitOrArgFloat(float a)
     Value* result = root->appendNew<Value>(proc, BitOr, Origin(), argument, argument);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), bitOrFloat(a, a)));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a)), bitOrFloat(a, a)));
 }
 
 void testBitOrArgsFloat(float a, float b)
@@ -860,7 +860,7 @@ void testBitOrArgsFloat(float a, float b)
     Value* result = root->appendNew<Value>(proc, BitOr, Origin(), argumentA, argumentB);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b)), bitOrFloat(a, b)));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a), std::bit_cast<int32_t>(b)), bitOrFloat(a, b)));
 }
 
 void testBitOrArgImmFloat(float a, float b)
@@ -873,7 +873,7 @@ void testBitOrArgImmFloat(float a, float b)
     Value* result = root->appendNew<Value>(proc, BitOr, Origin(), argumentA, argumentB);
     root->appendNewControlValue(proc, Return, Origin(), result);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b)), bitOrFloat(a, b)));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a), std::bit_cast<int32_t>(b)), bitOrFloat(a, b)));
 }
 
 void testBitOrImmsFloat(float a, float b)
@@ -904,7 +904,7 @@ void testBitOrArgsFloatWithUselessDoubleConversion(float a, float b)
     double doubleA = a;
     double doubleB = b;
     float expected = static_cast<float>(bitOrDouble(doubleA, doubleB));
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b)), expected));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a), std::bit_cast<int32_t>(b)), expected));
 }
 
 void testBitXorArgs(int64_t a, int64_t b)
@@ -1872,7 +1872,7 @@ void testAbsBitwiseCastArg(double a)
     Value* absValue = root->appendNew<Value>(proc, Abs, Origin(), argumentAsDouble);
     root->appendNewControlValue(proc, Return, Origin(), absValue);
 
-    CHECK(isIdentical(compileAndRun<double>(proc, bitwise_cast<int64_t>(a)), std::abs(a)));
+    CHECK(isIdentical(compileAndRun<double>(proc, std::bit_cast<int64_t>(a)), std::abs(a)));
 }
 
 void testBitwiseCastAbsBitwiseCastArg(double a)
@@ -1887,8 +1887,8 @@ void testBitwiseCastAbsBitwiseCastArg(double a)
 
     root->appendNewControlValue(proc, Return, Origin(), resultAsInt64);
 
-    int64_t expectedResult = bitwise_cast<int64_t>(std::abs(a));
-    CHECK(isIdentical(compileAndRun<int64_t>(proc, bitwise_cast<int64_t>(a)), expectedResult));
+    int64_t expectedResult = std::bit_cast<int64_t>(std::abs(a));
+    CHECK(isIdentical(compileAndRun<int64_t>(proc, std::bit_cast<int64_t>(a)), expectedResult));
 }
 
 void testAbsArg(float a)
@@ -1902,7 +1902,7 @@ void testAbsArg(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(std::abs(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a)), std::bit_cast<int32_t>(static_cast<float>(std::abs(a)))));
 }
 
 void testAbsImm(float a)
@@ -1914,7 +1914,7 @@ void testAbsImm(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(std::abs(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a)), std::bit_cast<int32_t>(static_cast<float>(std::abs(a)))));
 }
 
 void testAbsMem(float a)
@@ -1928,7 +1928,7 @@ void testAbsMem(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(static_cast<float>(std::abs(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), std::bit_cast<int32_t>(static_cast<float>(std::abs(a)))));
 }
 
 void testAbsAbsArg(float a)
@@ -1943,7 +1943,7 @@ void testAbsAbsArg(float a)
     Value* secondAbs = root->appendNew<Value>(proc, Abs, Origin(), firstAbs);
     root->appendNewControlValue(proc, Return, Origin(), secondAbs);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), static_cast<float>(std::abs(std::abs(a)))));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a)), static_cast<float>(std::abs(std::abs(a)))));
 }
 
 void testAbsNegArg(float a)
@@ -1957,7 +1957,7 @@ void testAbsNegArg(float a)
     Value* abs = root->appendNew<Value>(proc, Abs, Origin(), neg);
     root->appendNewControlValue(proc, Return, Origin(), abs);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), static_cast<float>(std::abs(- a))));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a)), static_cast<float>(std::abs(- a))));
 }
 
 void testAbsBitwiseCastArg(float a)
@@ -1970,7 +1970,7 @@ void testAbsBitwiseCastArg(float a)
     Value* absValue = root->appendNew<Value>(proc, Abs, Origin(), argumentAsfloat);
     root->appendNewControlValue(proc, Return, Origin(), absValue);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), static_cast<float>(std::abs(a))));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a)), static_cast<float>(std::abs(a))));
 }
 
 void testBitwiseCastAbsBitwiseCastArg(float a)
@@ -1985,8 +1985,8 @@ void testBitwiseCastAbsBitwiseCastArg(float a)
 
     root->appendNewControlValue(proc, Return, Origin(), resultAsInt64);
 
-    int32_t expectedResult = bitwise_cast<int32_t>(static_cast<float>(std::abs(a)));
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), expectedResult));
+    int32_t expectedResult = std::bit_cast<int32_t>(static_cast<float>(std::abs(a)));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a)), expectedResult));
 }
 
 void testAbsArgWithUselessDoubleConversion(float a)
@@ -2002,7 +2002,7 @@ void testAbsArgWithUselessDoubleConversion(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(std::abs(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a)), std::bit_cast<int32_t>(static_cast<float>(std::abs(a)))));
 }
 
 void testAbsArgWithEffectfulDoubleConversion(float a)
@@ -2021,8 +2021,8 @@ void testAbsArgWithEffectfulDoubleConversion(float a)
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
     double effect = 0;
-    int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
-    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(static_cast<float>(std::abs(a)))));
+    int32_t resultValue = compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a), &effect);
+    CHECK(isIdentical(resultValue, std::bit_cast<int32_t>(static_cast<float>(std::abs(a)))));
     CHECK(isIdentical(effect, static_cast<double>(std::abs(a))));
 }
 
@@ -2130,7 +2130,7 @@ void testCeilArg(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(ceilf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a)), std::bit_cast<int32_t>(ceilf(a))));
 }
 
 void testCeilImm(float a)
@@ -2142,7 +2142,7 @@ void testCeilImm(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc), bitwise_cast<int32_t>(ceilf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc), std::bit_cast<int32_t>(ceilf(a))));
 }
 
 void testCeilMem(float a)
@@ -2156,7 +2156,7 @@ void testCeilMem(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(ceilf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), std::bit_cast<int32_t>(ceilf(a))));
 }
 
 void testCeilCeilArg(float a)
@@ -2170,7 +2170,7 @@ void testCeilCeilArg(float a)
     Value* secondCeil = root->appendNew<Value>(proc, Ceil, Origin(), firstCeil);
     root->appendNewControlValue(proc, Return, Origin(), secondCeil);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), ceilf(a)));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a)), ceilf(a)));
 }
 
 void testFloorCeilArg(float a)
@@ -2184,7 +2184,7 @@ void testFloorCeilArg(float a)
     Value* wrappingFloor = root->appendNew<Value>(proc, Floor, Origin(), firstCeil);
     root->appendNewControlValue(proc, Return, Origin(), wrappingFloor);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), ceilf(a)));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a)), ceilf(a)));
 }
 
 void testCeilArgWithUselessDoubleConversion(float a)
@@ -2200,7 +2200,7 @@ void testCeilArgWithUselessDoubleConversion(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(ceilf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a)), std::bit_cast<int32_t>(ceilf(a))));
 }
 
 void testCeilArgWithEffectfulDoubleConversion(float a)
@@ -2219,8 +2219,8 @@ void testCeilArgWithEffectfulDoubleConversion(float a)
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
     double effect = 0;
-    int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
-    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(ceilf(a))));
+    int32_t resultValue = compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a), &effect);
+    CHECK(isIdentical(resultValue, std::bit_cast<int32_t>(ceilf(a))));
     CHECK(isIdentical(effect, static_cast<double>(ceilf(a))));
 }
 
@@ -2327,7 +2327,7 @@ void testFloorArg(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(floorf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a)), std::bit_cast<int32_t>(floorf(a))));
 }
 
 void testFloorImm(float a)
@@ -2339,7 +2339,7 @@ void testFloorImm(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc), bitwise_cast<int32_t>(floorf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc), std::bit_cast<int32_t>(floorf(a))));
 }
 
 void testFloorMem(float a)
@@ -2353,7 +2353,7 @@ void testFloorMem(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(floorf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), std::bit_cast<int32_t>(floorf(a))));
 }
 
 void testFloorFloorArg(float a)
@@ -2367,7 +2367,7 @@ void testFloorFloorArg(float a)
     Value* secondFloor = root->appendNew<Value>(proc, Floor, Origin(), firstFloor);
     root->appendNewControlValue(proc, Return, Origin(), secondFloor);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), floorf(a)));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a)), floorf(a)));
 }
 
 void testCeilFloorArg(float a)
@@ -2381,7 +2381,7 @@ void testCeilFloorArg(float a)
     Value* wrappingCeil = root->appendNew<Value>(proc, Ceil, Origin(), firstFloor);
     root->appendNewControlValue(proc, Return, Origin(), wrappingCeil);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a)), floorf(a)));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a)), floorf(a)));
 }
 
 void testFloorArgWithUselessDoubleConversion(float a)
@@ -2397,7 +2397,7 @@ void testFloorArgWithUselessDoubleConversion(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(floorf(a))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a)), std::bit_cast<int32_t>(floorf(a))));
 }
 
 void testFloorArgWithEffectfulDoubleConversion(float a)
@@ -2416,8 +2416,8 @@ void testFloorArgWithEffectfulDoubleConversion(float a)
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
     double effect = 0;
-    int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
-    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(floorf(a))));
+    int32_t resultValue = compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a), &effect);
+    CHECK(isIdentical(resultValue, std::bit_cast<int32_t>(floorf(a))));
     CHECK(isIdentical(effect, static_cast<double>(floorf(a))));
 }
 
@@ -2481,7 +2481,7 @@ void testSqrtArg(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a)), std::bit_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
 }
 
 void testSqrtImm(float a)
@@ -2493,7 +2493,7 @@ void testSqrtImm(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc), bitwise_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc), std::bit_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
 }
 
 void testSqrtMem(float a)
@@ -2507,7 +2507,7 @@ void testSqrtMem(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), result);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), bitwise_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, &a), std::bit_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
 }
 
 void testSqrtArgWithUselessDoubleConversion(float a)
@@ -2523,7 +2523,7 @@ void testSqrtArgWithUselessDoubleConversion(float a)
     Value* result32 = root->appendNew<Value>(proc, BitwiseCast, Origin(), floatResult);
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a)), bitwise_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a)), std::bit_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
 }
 
 void testSqrtArgWithEffectfulDoubleConversion(float a)
@@ -2542,8 +2542,8 @@ void testSqrtArgWithEffectfulDoubleConversion(float a)
     root->appendNewControlValue(proc, Return, Origin(), result32);
 
     double effect = 0;
-    int32_t resultValue = compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), &effect);
-    CHECK(isIdentical(resultValue, bitwise_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
+    int32_t resultValue = compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a), &effect);
+    CHECK(isIdentical(resultValue, std::bit_cast<int32_t>(static_cast<float>(correctSqrt(a)))));
     double expected = static_cast<double>(correctSqrt(a));
     CHECK(isIdentical(effect, expected));
 }
@@ -2565,7 +2565,7 @@ void testCompareTwoFloatToDouble(float a, float b)
 
     root->appendNewControlValue(proc, Return, Origin(), equal);
 
-    CHECK(compileAndRun<intptr_t>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b)) == (a == b));
+    CHECK(compileAndRun<intptr_t>(proc, std::bit_cast<int32_t>(a), std::bit_cast<int32_t>(b)) == (a == b));
 }
 
 void testCompareOneFloatToDouble(float a, double b)
@@ -2583,7 +2583,7 @@ void testCompareOneFloatToDouble(float a, double b)
 
     root->appendNewControlValue(proc, Return, Origin(), equal);
 
-    CHECK(compileAndRun<intptr_t>(proc, bitwise_cast<int32_t>(a), b) == (a == b));
+    CHECK(compileAndRun<intptr_t>(proc, std::bit_cast<int32_t>(a), b) == (a == b));
 }
 
 void testCompareFloatToDoubleThroughPhi(float a, float b)
@@ -2624,7 +2624,7 @@ void testCompareFloatToDoubleThroughPhi(float a, float b)
     tail->appendNewControlValue(proc, Return, Origin(), equal);
 
     auto code = compileProc(proc);
-    int32_t integerA = bitwise_cast<int32_t>(a);
+    int32_t integerA = std::bit_cast<int32_t>(a);
     double doubleB = b;
     CHECK_EQ(invoke<intptr_t>(*code, 1L, integerA, doubleB), (a == b));
     CHECK_EQ(invoke<intptr_t>(*code, 0L, integerA, doubleB), (b == 0)); 
@@ -2673,8 +2673,8 @@ void testDoubleToFloatThroughPhi(float value)
     tail->appendNewControlValue(proc, Return, Origin(), floatResult);
 
     auto code = compileProc(proc);
-    CHECK(isIdentical(invoke<float>(*code, 1L, bitwise_cast<int32_t>(value)), value + 42.5f));
-    CHECK(isIdentical(invoke<float>(*code, 0L, bitwise_cast<int32_t>(value)), static_cast<float>(M_PI)));
+    CHECK(isIdentical(invoke<float>(*code, 1L, std::bit_cast<int32_t>(value)), value + 42.5f));
+    CHECK(isIdentical(invoke<float>(*code, 0L, std::bit_cast<int32_t>(value)), static_cast<float>(M_PI)));
 }
 
 void testReduceFloatToDoubleValidates()
@@ -2729,8 +2729,8 @@ void testReduceFloatToDoubleValidates()
     tail->appendNewControlValue(proc, Return, Origin(), result);
 
     auto code = compileProc(proc);
-    CHECK(isIdentical(invoke<float>(*code, static_cast<uint64_t>(1)), 11.5f * 11.5f + static_cast<float>(bitwise_cast<double>(static_cast<uint64_t>(1))) + 11.5f));
-    CHECK(isIdentical(invoke<float>(*code, static_cast<uint64_t>(0)), 10.5f * 10.5f + static_cast<float>(bitwise_cast<double>(static_cast<uint64_t>(0))) + 10.5f));
+    CHECK(isIdentical(invoke<float>(*code, static_cast<uint64_t>(1)), 11.5f * 11.5f + static_cast<float>(std::bit_cast<double>(static_cast<uint64_t>(1))) + 11.5f));
+    CHECK(isIdentical(invoke<float>(*code, static_cast<uint64_t>(0)), 10.5f * 10.5f + static_cast<float>(std::bit_cast<double>(static_cast<uint64_t>(0))) + 10.5f));
 }
 
 void testDoubleProducerPhiToFloatConversion(float value)
@@ -2769,8 +2769,8 @@ void testDoubleProducerPhiToFloatConversion(float value)
     tail->appendNewControlValue(proc, Return, Origin(), floatResult);
 
     auto code = compileProc(proc);
-    CHECK(isIdentical(invoke<float>(*code, 1L, bitwise_cast<int32_t>(value)), value + value));
-    CHECK(isIdentical(invoke<float>(*code, 0L, bitwise_cast<int32_t>(value)), 42.5f + value));
+    CHECK(isIdentical(invoke<float>(*code, 1L, std::bit_cast<int32_t>(value)), value + value));
+    CHECK(isIdentical(invoke<float>(*code, 0L, std::bit_cast<int32_t>(value)), 42.5f + value));
 }
 
 void testDoubleProducerPhiToFloatConversionWithDoubleConsumer(float value)
@@ -2818,8 +2818,8 @@ void testDoubleProducerPhiToFloatConversionWithDoubleConsumer(float value)
     tail->appendNewControlValue(proc, Return, Origin(), doubleAdd);
 
     auto code = compileProc(proc);
-    CHECK(isIdentical(invoke<double>(*code, 1L, bitwise_cast<int32_t>(value)), (value + value) + static_cast<double>(value)));
-    CHECK(isIdentical(invoke<double>(*code, 0L, bitwise_cast<int32_t>(value)), static_cast<double>((42.5f + value) + 42.5f)));
+    CHECK(isIdentical(invoke<double>(*code, 1L, std::bit_cast<int32_t>(value)), (value + value) + static_cast<double>(value)));
+    CHECK(isIdentical(invoke<double>(*code, 0L, std::bit_cast<int32_t>(value)), static_cast<double>((42.5f + value) + 42.5f)));
 }
 
 void testDoubleProducerPhiWithNonFloatConst(float value, double constValue)
@@ -2858,8 +2858,8 @@ void testDoubleProducerPhiWithNonFloatConst(float value, double constValue)
     tail->appendNewControlValue(proc, Return, Origin(), floatResult);
 
     auto code = compileProc(proc);
-    CHECK(isIdentical(invoke<float>(*code, 1L, bitwise_cast<int32_t>(value)), value + value));
-    CHECK(isIdentical(invoke<float>(*code, 0L, bitwise_cast<int32_t>(value)), static_cast<float>(constValue + value)));
+    CHECK(isIdentical(invoke<float>(*code, 1L, std::bit_cast<int32_t>(value)), value + value));
+    CHECK(isIdentical(invoke<float>(*code, 0L, std::bit_cast<int32_t>(value)), static_cast<float>(constValue + value)));
 }
 
 void testDoubleArgToInt64BitwiseCast(double value)
@@ -2874,7 +2874,7 @@ void testDoubleArgToInt64BitwiseCast(double value)
         root->appendNew<Value>(
             proc, BitwiseCast, Origin(), argument));
 
-    CHECK(isIdentical(compileAndRun<int64_t>(proc, value), bitwise_cast<int64_t>(value)));
+    CHECK(isIdentical(compileAndRun<int64_t>(proc, value), std::bit_cast<int64_t>(value)));
 }
 
 void testDoubleImmToInt64BitwiseCast(double value)
@@ -2888,7 +2888,7 @@ void testDoubleImmToInt64BitwiseCast(double value)
         root->appendNew<Value>(
             proc, BitwiseCast, Origin(), argument));
 
-    CHECK(isIdentical(compileAndRun<int64_t>(proc), bitwise_cast<int64_t>(value)));
+    CHECK(isIdentical(compileAndRun<int64_t>(proc), std::bit_cast<int64_t>(value)));
 }
 
 void testTwoBitwiseCastOnDouble(double value)
@@ -2914,7 +2914,7 @@ void testBitwiseCastOnDoubleInMemory(double value)
     Value* cast = root->appendNew<Value>(proc, BitwiseCast, Origin(), loadDouble);
     root->appendNewControlValue(proc, Return, Origin(), cast);
 
-    CHECK(isIdentical(compileAndRun<int64_t>(proc, &value), bitwise_cast<int64_t>(value)));
+    CHECK(isIdentical(compileAndRun<int64_t>(proc, &value), std::bit_cast<int64_t>(value)));
 }
 
 void testBitwiseCastOnDoubleInMemoryIndexed(double value)
@@ -2932,7 +2932,7 @@ void testBitwiseCastOnDoubleInMemoryIndexed(double value)
     Value* cast = root->appendNew<Value>(proc, BitwiseCast, Origin(), loadDouble);
     root->appendNewControlValue(proc, Return, Origin(), cast);
 
-    CHECK(isIdentical(compileAndRun<int64_t>(proc, &value, static_cast<ptrdiff_t>(0)), bitwise_cast<int64_t>(value)));
+    CHECK(isIdentical(compileAndRun<int64_t>(proc, &value, static_cast<ptrdiff_t>(0)), std::bit_cast<int64_t>(value)));
 }
 
 void testInt64BArgToDoubleBitwiseCast(int64_t value)
@@ -2947,7 +2947,7 @@ void testInt64BArgToDoubleBitwiseCast(int64_t value)
         root->appendNew<Value>(
             proc, BitwiseCast, Origin(), argument));
 
-    CHECK(isIdentical(compileAndRun<double>(proc, value), bitwise_cast<double>(value)));
+    CHECK(isIdentical(compileAndRun<double>(proc, value), std::bit_cast<double>(value)));
 }
 
 void testInt64BImmToDoubleBitwiseCast(int64_t value)
@@ -2961,7 +2961,7 @@ void testInt64BImmToDoubleBitwiseCast(int64_t value)
         root->appendNew<Value>(
             proc, BitwiseCast, Origin(), argument));
 
-    CHECK(isIdentical(compileAndRun<double>(proc), bitwise_cast<double>(value)));
+    CHECK(isIdentical(compileAndRun<double>(proc), std::bit_cast<double>(value)));
 }
 
 void testTwoBitwiseCastOnInt64(int64_t value)
@@ -2987,7 +2987,7 @@ void testBitwiseCastOnInt64InMemory(int64_t value)
     Value* cast = root->appendNew<Value>(proc, BitwiseCast, Origin(), loadDouble);
     root->appendNewControlValue(proc, Return, Origin(), cast);
 
-    CHECK(isIdentical(compileAndRun<double>(proc, &value), bitwise_cast<double>(value)));
+    CHECK(isIdentical(compileAndRun<double>(proc, &value), std::bit_cast<double>(value)));
 }
 
 void testBitwiseCastOnInt64InMemoryIndexed(int64_t value)
@@ -3005,7 +3005,7 @@ void testBitwiseCastOnInt64InMemoryIndexed(int64_t value)
     Value* cast = root->appendNew<Value>(proc, BitwiseCast, Origin(), loadDouble);
     root->appendNewControlValue(proc, Return, Origin(), cast);
 
-    CHECK(isIdentical(compileAndRun<double>(proc, &value, static_cast<ptrdiff_t>(0)), bitwise_cast<double>(value)));
+    CHECK(isIdentical(compileAndRun<double>(proc, &value, static_cast<ptrdiff_t>(0)), std::bit_cast<double>(value)));
 }
 
 void testFloatImmToInt32BitwiseCast(float value)
@@ -3019,7 +3019,7 @@ void testFloatImmToInt32BitwiseCast(float value)
         root->appendNew<Value>(
             proc, BitwiseCast, Origin(), argument));
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc), bitwise_cast<int32_t>(value)));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc), std::bit_cast<int32_t>(value)));
 }
 
 void testBitwiseCastOnFloatInMemory(float value)
@@ -3032,7 +3032,7 @@ void testBitwiseCastOnFloatInMemory(float value)
     Value* cast = root->appendNew<Value>(proc, BitwiseCast, Origin(), loadFloat);
     root->appendNewControlValue(proc, Return, Origin(), cast);
 
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, &value), bitwise_cast<int32_t>(value)));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, &value), std::bit_cast<int32_t>(value)));
 }
 
 void testInt32BArgToFloatBitwiseCast(int32_t value)
@@ -3047,7 +3047,7 @@ void testInt32BArgToFloatBitwiseCast(int32_t value)
         root->appendNew<Value>(
             proc, BitwiseCast, Origin(), argument));
 
-    CHECK(isIdentical(compileAndRun<float>(proc, value), bitwise_cast<float>(value)));
+    CHECK(isIdentical(compileAndRun<float>(proc, value), std::bit_cast<float>(value)));
 }
 
 void testInt32BImmToFloatBitwiseCast(int32_t value)
@@ -3061,7 +3061,7 @@ void testInt32BImmToFloatBitwiseCast(int32_t value)
         root->appendNew<Value>(
             proc, BitwiseCast, Origin(), argument));
 
-    CHECK(isIdentical(compileAndRun<float>(proc), bitwise_cast<float>(value)));
+    CHECK(isIdentical(compileAndRun<float>(proc), std::bit_cast<float>(value)));
 }
 
 void testTwoBitwiseCastOnInt32(int32_t value)
@@ -3087,7 +3087,7 @@ void testBitwiseCastOnInt32InMemory(int32_t value)
     Value* cast = root->appendNew<Value>(proc, BitwiseCast, Origin(), loadFloat);
     root->appendNewControlValue(proc, Return, Origin(), cast);
 
-    CHECK(isIdentical(compileAndRun<float>(proc, &value), bitwise_cast<float>(value)));
+    CHECK(isIdentical(compileAndRun<float>(proc, &value), std::bit_cast<float>(value)));
 }
 
 void testConvertDoubleToFloatArg(double value)
@@ -3136,7 +3136,7 @@ void testConvertFloatToDoubleArg(float value)
     Value* asDouble = root->appendNew<Value>(proc, FloatToDouble, Origin(), floatValue);
     root->appendNewControlValue(proc, Return, Origin(), asDouble);
 
-    CHECK(isIdentical(compileAndRun<double>(proc, bitwise_cast<int32_t>(value)), static_cast<double>(value)));
+    CHECK(isIdentical(compileAndRun<double>(proc, std::bit_cast<int32_t>(value)), static_cast<double>(value)));
 }
 
 void testConvertFloatToDoubleImm(float value)

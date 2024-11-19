@@ -314,7 +314,7 @@ JSBigInt* JSBigInt::createFrom(JSGlobalObject* globalObject, double value)
         RELEASE_AND_RETURN(scope, createZero(globalObject));
 
     bool sign = value < 0; // -0 was already handled above.
-    uint64_t doubleBits = bitwise_cast<uint64_t>(value);
+    uint64_t doubleBits = std::bit_cast<uint64_t>(value);
     int32_t rawExponent = static_cast<int32_t>(doubleBits >> doublePhysicalMantissaSize) & 0x7ff;
     ASSERT(rawExponent != 0x7ff); // Since value is integer, exponent should not be 0x7ff (full bits, used for infinity etc.).
     ASSERT(rawExponent >= 0x3ff); // Since value is integer, exponent should be >= 0 + bias (0x3ff).
@@ -2710,7 +2710,7 @@ JSBigInt::ComparisonResult JSBigInt::compareToDouble(BigIntImpl x, double y)
 {
     // This algorithm expect that the double format is IEEE 754
 
-    uint64_t doubleBits = bitwise_cast<uint64_t>(y);
+    uint64_t doubleBits = std::bit_cast<uint64_t>(y);
     int rawExponent = static_cast<int>(doubleBits >> 52) & 0x7FF;
 
     // Handle finite doubles for {y}.
@@ -2994,7 +2994,7 @@ JSValue JSBigInt::toNumberHeap(JSBigInt* bigInt)
     ASSERT((doubleBits & (static_cast<uint64_t>(1) << 63)) == signBit);
     ASSERT((doubleBits & (static_cast<uint64_t>(0x7ff) << 52)) == exponent);
     ASSERT((doubleBits & ((static_cast<uint64_t>(1) << 52) - 1)) == mantissa);
-    return jsNumber(bitwise_cast<double>(doubleBits));
+    return jsNumber(std::bit_cast<double>(doubleBits));
 }
 
 template <typename BigIntImpl>

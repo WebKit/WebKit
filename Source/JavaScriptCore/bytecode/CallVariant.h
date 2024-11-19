@@ -175,7 +175,7 @@ public:
     }
     
 private:
-    static JSCell* deletedToken() { return bitwise_cast<JSCell*>(static_cast<uintptr_t>(1)); }
+    static JSCell* deletedToken() { return std::bit_cast<JSCell*>(static_cast<uintptr_t>(1)); }
     
     JSCell* m_callee;
 };

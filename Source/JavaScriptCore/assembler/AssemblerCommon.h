@@ -362,16 +362,16 @@ static ALWAYS_INLINE void* memcpyAtomicIfPossible(void* dst, const void* src, si
     // We would like to do atomic write here.
     switch (n) {
     case 1:
-        WTF::atomicStore(bitwise_cast<uint8_t*>(dst), *bitwise_cast<const uint8_t*>(src), std::memory_order_relaxed);
+        WTF::atomicStore(std::bit_cast<uint8_t*>(dst), *std::bit_cast<const uint8_t*>(src), std::memory_order_relaxed);
         return dst;
     case 2:
-        WTF::atomicStore(bitwise_cast<uint16_t*>(dst), *bitwise_cast<const uint16_t*>(src), std::memory_order_relaxed);
+        WTF::atomicStore(std::bit_cast<uint16_t*>(dst), *std::bit_cast<const uint16_t*>(src), std::memory_order_relaxed);
         return dst;
     case 4:
-        WTF::atomicStore(bitwise_cast<uint32_t*>(dst), *bitwise_cast<const uint32_t*>(src), std::memory_order_relaxed);
+        WTF::atomicStore(std::bit_cast<uint32_t*>(dst), *std::bit_cast<const uint32_t*>(src), std::memory_order_relaxed);
         return dst;
     case 8:
-        WTF::atomicStore(bitwise_cast<uint64_t*>(dst), *bitwise_cast<const uint64_t*>(src), std::memory_order_relaxed);
+        WTF::atomicStore(std::bit_cast<uint64_t*>(dst), *std::bit_cast<const uint64_t*>(src), std::memory_order_relaxed);
         return dst;
     default:
         break;

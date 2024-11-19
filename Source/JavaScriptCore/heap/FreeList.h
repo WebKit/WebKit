@@ -67,9 +67,9 @@ struct FreeCell {
     static ALWAYS_INLINE void advance(uint64_t secret, FreeCell*& interval, char*& intervalStart, char*& intervalEnd)
     {
         auto [offsetToNext, lengthInBytes] = interval->decode(secret);
-        intervalStart = bitwise_cast<char*>(interval);
+        intervalStart = std::bit_cast<char*>(interval);
         intervalEnd = intervalStart + lengthInBytes;
-        interval = bitwise_cast<FreeCell*>(intervalStart + offsetToNext);
+        interval = std::bit_cast<FreeCell*>(intervalStart + offsetToNext);
     }
 
     static constexpr ptrdiff_t offsetOfScrambledBits() { return OBJECT_OFFSETOF(FreeCell, scrambledBits); }
@@ -98,7 +98,7 @@ public:
     
     unsigned originalSize() const { return m_originalSize; }
 
-    static bool isSentinel(FreeCell* cell) { return bitwise_cast<uintptr_t>(cell) & 1; }
+    static bool isSentinel(FreeCell* cell) { return std::bit_cast<uintptr_t>(cell) & 1; }
     static constexpr ptrdiff_t offsetOfNextInterval() { return OBJECT_OFFSETOF(FreeList, m_nextInterval); }
     static constexpr ptrdiff_t offsetOfSecret() { return OBJECT_OFFSETOF(FreeList, m_secret); }
     static constexpr ptrdiff_t offsetOfIntervalStart() { return OBJECT_OFFSETOF(FreeList, m_intervalStart); }
@@ -115,7 +115,7 @@ private:
     
     char* m_intervalStart { nullptr };
     char* m_intervalEnd { nullptr };
-    FreeCell* m_nextInterval { bitwise_cast<FreeCell*>(static_cast<uintptr_t>(1)) };
+    FreeCell* m_nextInterval { std::bit_cast<FreeCell*>(static_cast<uintptr_t>(1)) };
     uint64_t m_secret { 0 };
     unsigned m_originalSize { 0 };
     unsigned m_cellSize { 0 };

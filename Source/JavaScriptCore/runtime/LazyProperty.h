@@ -85,7 +85,7 @@ public:
         uintptr_t pointer = m_pointer;
         if (pointer & lazyTag)
             return nullptr;
-        return bitwise_cast<ElementType*>(pointer);
+        return std::bit_cast<ElementType*>(pointer);
     }
 
     bool isInitialized() const { return !(m_pointer & lazyTag); }
@@ -94,10 +94,10 @@ public:
     {
         if (UNLIKELY(m_pointer & lazyTag)) {
             ASSERT(!isCompilationThread());
-            FuncType func = *bitwise_cast<FuncType*>(m_pointer & ~(lazyTag | initializingTag));
+            FuncType func = *std::bit_cast<FuncType*>(m_pointer & ~(lazyTag | initializingTag));
             return func(Initializer(const_cast<OwnerType*>(owner), *const_cast<LazyProperty*>(this)));
         }
-        return bitwise_cast<ElementType*>(m_pointer);
+        return std::bit_cast<ElementType*>(m_pointer);
     }
     
     void setMayBeNull(VM&, const OwnerType* owner, ElementType*);

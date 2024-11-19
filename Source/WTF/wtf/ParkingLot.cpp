@@ -82,7 +82,7 @@ struct Bucket {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     Bucket()
-        : random(static_cast<unsigned>(bitwise_cast<intptr_t>(this))) // Cannot use default seed since that recurses into Lock.
+        : random(static_cast<unsigned>(std::bit_cast<intptr_t>(this))) // Cannot use default seed since that recurses into Lock.
     {
     }
     

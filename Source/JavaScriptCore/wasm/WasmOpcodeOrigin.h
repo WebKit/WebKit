@@ -57,7 +57,7 @@ public:
         packedData = (static_cast<uint64_t>(opcode) << 40) | (static_cast<uint64_t>(prefix) << 32) | offset;
     }
     OpcodeOrigin(B3::Origin origin)
-        : packedData(bitwise_cast<uint64_t>(origin))
+        : packedData(std::bit_cast<uint64_t>(origin))
     {
     }
 
@@ -86,7 +86,7 @@ private:
     }
 
     OpcodeOrigin(B3::Origin origin)
-        : packedData(bitwise_cast<uint32_t>(origin))
+        : packedData(std::bit_cast<uint32_t>(origin))
     {
     }
 

@@ -55,10 +55,10 @@ struct Fits<T, size, std::enable_if_t<sizeof(T) == size && std::is_constructible
 
     static bool check(T) { return true; }
 
-    static TargetType convert(T t) { return bitwise_cast<TargetType>(t); }
+    static TargetType convert(T t) { return std::bit_cast<TargetType>(t); }
 
     template<class T1 = T, OpcodeSize size1 = size, typename = std::enable_if_t<!std::is_same<T1, TargetType>::value, std::true_type>>
-    static T1 convert(TargetType t) { return bitwise_cast<T1>(t); }
+    static T1 convert(TargetType t) { return std::bit_cast<T1>(t); }
 };
 
 template<typename T, OpcodeSize size>

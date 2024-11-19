@@ -355,7 +355,7 @@ public:
         {
             data.realTypes.m_from = from;
 #if CPU(ARM64E)
-            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ bitwise_cast<intptr_t>(assembler)));
+            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ std::bit_cast<intptr_t>(assembler)));
 #else
             UNUSED_PARAM(assembler);
             data.realTypes.m_to = to;
@@ -368,7 +368,7 @@ public:
         {
             data.realTypes.m_from = from;
 #if CPU(ARM64E)
-            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ bitwise_cast<intptr_t>(assembler)));
+            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ std::bit_cast<intptr_t>(assembler)));
 #else
             UNUSED_PARAM(assembler);
             data.realTypes.m_to = to;
@@ -381,7 +381,7 @@ public:
         {
             data.realTypes.m_from = from;
 #if CPU(ARM64E)
-            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ bitwise_cast<intptr_t>(assembler)));
+            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ std::bit_cast<intptr_t>(assembler)));
 #else
             UNUSED_PARAM(assembler);
             data.realTypes.m_to = to;
@@ -396,7 +396,7 @@ public:
         {
             data.realTypes.m_from = from;
 #if CPU(ARM64E)
-            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ bitwise_cast<intptr_t>(assembler)));
+            data.realTypes.m_to = tagInt(to, static_cast<PtrTag>(from ^ std::bit_cast<intptr_t>(assembler)));
 #else
             UNUSED_PARAM(assembler);
             data.realTypes.m_to = to;
@@ -423,7 +423,7 @@ public:
         void setFrom(const ARM64Assembler* assembler, intptr_t from)
         {
 #if CPU(ARM64E)
-            data.realTypes.m_to = tagInt(to(assembler), static_cast<PtrTag>(from ^ bitwise_cast<intptr_t>(assembler)));
+            data.realTypes.m_to = tagInt(to(assembler), static_cast<PtrTag>(from ^ std::bit_cast<intptr_t>(assembler)));
 #else
             UNUSED_PARAM(assembler);
 #endif
@@ -432,7 +432,7 @@ public:
         intptr_t to(const ARM64Assembler* assembler) const
         {
 #if CPU(ARM64E)
-            return untagInt(data.realTypes.m_to, static_cast<PtrTag>(data.realTypes.m_from ^ bitwise_cast<intptr_t>(assembler)));
+            return untagInt(data.realTypes.m_to, static_cast<PtrTag>(data.realTypes.m_from ^ std::bit_cast<intptr_t>(assembler)));
 #else
             UNUSED_PARAM(assembler);
             return data.realTypes.m_to;
@@ -2347,7 +2347,7 @@ public:
     ALWAYS_INLINE static void fillNearTailCall(void* from, void* to)
     {
         RELEASE_ASSERT(roundUpToMultipleOf<instructionSize>(from) == from);
-        intptr_t offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(from)) >> 2;
+        intptr_t offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(from)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
         ASSERT(isInt<26>(offset));
         constexpr bool isCall = false;
@@ -3545,28 +3545,28 @@ public:
     {
         ASSERT(to);
         ASSERT(from.isSet());
-        m_jumpsToLink.append(LinkRecord(this, from.offset(), bitwise_cast<intptr_t>(to), type, condition, ThunkOrNot::Thunk));
+        m_jumpsToLink.append(LinkRecord(this, from.offset(), std::bit_cast<intptr_t>(to), type, condition, ThunkOrNot::Thunk));
     }
 
     void linkJumpThunk(AssemblerLabel from, void* to, JumpType type, Condition condition, bool is64Bit, RegisterID compareRegister)
     {
         ASSERT(to);
         ASSERT(from.isSet());
-        m_jumpsToLink.append(LinkRecord(this, from.offset(), bitwise_cast<intptr_t>(to), type, condition, is64Bit, compareRegister, ThunkOrNot::Thunk));
+        m_jumpsToLink.append(LinkRecord(this, from.offset(), std::bit_cast<intptr_t>(to), type, condition, is64Bit, compareRegister, ThunkOrNot::Thunk));
     }
 
     void linkJumpThunk(AssemblerLabel from, void* to, JumpType type, Condition condition, unsigned bitNumber, RegisterID compareRegister)
     {
         ASSERT(to);
         ASSERT(from.isSet());
-        m_jumpsToLink.append(LinkRecord(this, from.offset(), bitwise_cast<intptr_t>(to), type, condition, bitNumber, compareRegister, ThunkOrNot::Thunk));
+        m_jumpsToLink.append(LinkRecord(this, from.offset(), std::bit_cast<intptr_t>(to), type, condition, bitNumber, compareRegister, ThunkOrNot::Thunk));
     }
 
     void linkNearCallThunk(AssemblerLabel from, void* to)
     {
         ASSERT(to);
         ASSERT(from.isSet());
-        m_jumpsToLink.append(LinkRecord(this, from.offset() - sizeof(int), bitwise_cast<intptr_t>(to), ThunkOrNot::Thunk));
+        m_jumpsToLink.append(LinkRecord(this, from.offset() - sizeof(int), std::bit_cast<intptr_t>(to), ThunkOrNot::Thunk));
     }
 
     static void linkJump(void* code, AssemblerLabel from, void* to)
@@ -3603,7 +3603,7 @@ public:
 #if ENABLE(JUMP_ISLANDS)
         if (!isInt<26>(offset)) {
             to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(where, to);
-            offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(where)) >> 2;
+            offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(where)) >> 2;
             RELEASE_ASSERT(isInt<26>(offset));
         }
 #endif
@@ -3716,7 +3716,7 @@ public:
 #if ENABLE(JUMP_ISLANDS)
     static void* prepareForAtomicRelinkJumpConcurrently(void* from, void* to)
     {
-        intptr_t offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(from)) >> 2;
+        intptr_t offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(from)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
 
         if (isInt<26>(offset))
@@ -3727,7 +3727,7 @@ public:
 
     static void* prepareForAtomicRelinkCallConcurrently(void* from, void* to)
     {
-        from = static_cast<void*>(bitwise_cast<int*>(from) - 1);
+        from = static_cast<void*>(std::bit_cast<int*>(from) - 1);
         return prepareForAtomicRelinkJumpConcurrently(from, to);
     }
 #endif
@@ -3904,7 +3904,7 @@ public:
 
     static ALWAYS_INLINE bool canEmitJump(void* from, void* to)
     {
-        intptr_t diff = (bitwise_cast<intptr_t>(from) - bitwise_cast<intptr_t>(to)) >> 2;
+        intptr_t diff = (std::bit_cast<intptr_t>(from) - std::bit_cast<intptr_t>(to)) >> 2;
         return isInt<26>(diff);
     }
 
@@ -3960,16 +3960,16 @@ protected:
         ASSERT(!(reinterpret_cast<intptr_t>(to) & 3));
         assertIsNotTagged(to);
         assertIsNotTagged(fromInstruction);
-        intptr_t offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction)) >> 2;
+        intptr_t offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(fromInstruction)) >> 2;
         ASSERT(static_cast<int>(offset) == offset);
 
 #if ENABLE(JUMP_ISLANDS)
         if (!isInt<26>(offset)) {
             if constexpr (copy == MachineCodeCopyMode::JITMemcpy)
-                to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(bitwise_cast<void*>(fromInstruction), to);
+                to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(std::bit_cast<void*>(fromInstruction), to);
             else
-                to = ExecutableAllocator::singleton().getJumpIslandToUsingMemcpy(bitwise_cast<void*>(fromInstruction), to);
-            offset = (bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction)) >> 2;
+                to = ExecutableAllocator::singleton().getJumpIslandToUsingMemcpy(std::bit_cast<void*>(fromInstruction), to);
+            offset = (std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(fromInstruction)) >> 2;
             RELEASE_ASSERT(isInt<26>(offset));
         }
 #endif

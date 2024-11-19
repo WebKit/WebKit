@@ -213,8 +213,8 @@ void PerfLog::log(CString&& name, const uint8_t* executableAddress, size_t size)
     record.header.totalSize = sizeof(JITDump::CodeLoadRecord) + (name.length() + 1) + size;
     record.pid = getCurrentProcessID();
     record.tid = getCurrentThreadID();
-    record.vma = bitwise_cast<uintptr_t>(executableAddress);
-    record.codeAddress = bitwise_cast<uintptr_t>(executableAddress);
+    record.vma = std::bit_cast<uintptr_t>(executableAddress);
+    record.codeAddress = std::bit_cast<uintptr_t>(executableAddress);
     record.codeSize = size;
     record.codeIndex = logger.m_codeIndex++;
 

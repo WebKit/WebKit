@@ -184,8 +184,8 @@ using OperationReturnType = std::conditional_t<(assertNotOperationSignature<T> &
 
 static ALWAYS_INLINE ExceptionOperationResultTag asExceptionResultBase(uint32_t value, Exception* exception)
 {
-    uint32_t v = bitwise_cast<uint32_t>(value);
-    return bitwise_cast<ExceptionOperationResultTag>(
+    uint32_t v = std::bit_cast<uint32_t>(value);
+    return std::bit_cast<ExceptionOperationResultTag>(
         static_cast<long long>(v)
         | (static_cast<long long>(reinterpret_cast<uint32_t>(exception)) << 32));
 }
@@ -194,7 +194,7 @@ template<typename T>
 requires (sizeof(T) == sizeof(uint32_t))
 static ALWAYS_INLINE ExceptionOperationResultTag asExceptionResult(T value, Exception* exception)
 {
-    uint32_t v = bitwise_cast<uint32_t>(value);
+    uint32_t v = std::bit_cast<uint32_t>(value);
     return asExceptionResultBase(v, exception);
 }
 

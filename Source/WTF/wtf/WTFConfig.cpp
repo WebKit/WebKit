@@ -67,7 +67,7 @@ void setPermissionsOfConfigPage()
 #if PLATFORM(COCOA)
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        mach_vm_address_t addr = bitwise_cast<uintptr_t>(static_cast<void*>(WebConfig::g_config));
+        mach_vm_address_t addr = std::bit_cast<uintptr_t>(static_cast<void*>(WebConfig::g_config));
         auto flags = VM_FLAGS_FIXED | VM_FLAGS_OVERWRITE | VM_FLAGS_PERMANENT;
 
         auto attemptVMMapping = [&] {
@@ -104,7 +104,7 @@ void Config::initialize()
             if (!data && size) {
                 // If __PAGEZERO starts with 0 address and it has size. [0, size] region cannot be
                 // mapped for accessible pages.
-                uintptr_t afterZeroPages = bitwise_cast<uintptr_t>(data) + size;
+                uintptr_t afterZeroPages = std::bit_cast<uintptr_t>(data) + size;
                 g_wtfConfig.lowestAccessibleAddress = roundDownToMultipleOf(onePage, std::max<uintptr_t>(onePage, afterZeroPages));
                 return;
             }

@@ -225,17 +225,17 @@ inline void MarkedBlock::setupTestForDumpInfoAndCrash()
             break;
         case 2: // Test non-null invalid VM pointer.
             dataLogLn("Corrupting MarkedBlock::Header::m_vm");
-            *const_cast<VM**>(&header().m_vm) = bitwise_cast<VM*>(0xdeadbeefdeadbeef);
+            *const_cast<VM**>(&header().m_vm) = std::bit_cast<VM*>(0xdeadbeefdeadbeef);
             break;
         case 3: // Test contiguous and total zero byte counts: start and end zeroed.
             dataLogLn("Zeroing start and end of MarkedBlock");
-            char* blockMem = bitwise_cast<char*>(this);
+            char* blockMem = std::bit_cast<char*>(this);
             memset(blockMem, 0, blockSize / 4);
             memset(blockMem + 3 * blockSize / 4, 0, blockSize / 4);
             break;
         case 4: // Test contiguous and total zero byte counts: entire block zeroed.
             dataLogLn("Zeroing MarkedBlock");
-            char* blockMem = bitwise_cast<char*>(this);
+            char* blockMem = std::bit_cast<char*>(this);
             memset(blockMem, 0, blockSize);
             break;
         }
@@ -566,7 +566,7 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
     uint64_t cellFirst8Bytes = 0;
 
     if (heapCell) {
-        uint64_t* p = bitwise_cast<uint64_t*>(heapCell);
+        uint64_t* p = std::bit_cast<uint64_t*>(heapCell);
         cellFirst8Bytes = *p;
     }
 
@@ -584,7 +584,7 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
     };
     updateCrashLogMsg(__LINE__);
 
-    char* blockStart = bitwise_cast<char*>(this);
+    char* blockStart = std::bit_cast<char*>(this);
     bool sawNonZero = false;
     for (auto mem = blockStart; mem < blockStart + MarkedBlock::blockSize; mem++) {
         // Exclude the MarkedBlock::Header::m_lock from the zero scan since taking the lock writes a non-zero value.

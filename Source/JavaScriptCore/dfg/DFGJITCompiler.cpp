@@ -381,7 +381,7 @@ void JITCompiler::exceptionJumpWithCallFrameRollback()
 void* JITCompiler::addressOfDoubleConstant(Node* node)
 {
     double value = node->asNumber();
-    int64_t valueBits = bitwise_cast<int64_t>(value);
+    int64_t valueBits = std::bit_cast<int64_t>(value);
     return m_graph.m_doubleConstantsMap.ensure(valueBits, [&]{
         double* addressInConstantPool = m_graph.m_doubleConstants.add();
         *addressInConstantPool = value;
@@ -593,7 +593,7 @@ std::tuple<CompileTimeStructureStubInfo, StructureStubInfoIndex> JITCompiler::ad
 std::tuple<CompileTimeCallLinkInfo, JITCompiler::LinkableConstant> JITCompiler::addCallLinkInfo(CodeOrigin codeOrigin)
 {
     if (m_graph.m_plan.isUnlinked()) {
-        void* unlinkedCallLinkInfoIndex = bitwise_cast<void*>(static_cast<uintptr_t>(m_unlinkedCallLinkInfos.size()));
+        void* unlinkedCallLinkInfoIndex = std::bit_cast<void*>(static_cast<uintptr_t>(m_unlinkedCallLinkInfos.size()));
         UnlinkedCallLinkInfo* callLinkInfo = &m_unlinkedCallLinkInfos.alloc();
         callLinkInfo->codeOrigin = codeOrigin;
         LinkerIR::Constant callLinkInfoIndex = addToConstantPool(LinkerIR::Type::CallLinkInfo, unlinkedCallLinkInfoIndex);

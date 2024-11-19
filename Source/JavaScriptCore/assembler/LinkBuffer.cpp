@@ -169,7 +169,7 @@ LinkBuffer::CodeRef<LinkBufferPtrTag> LinkBuffer::finalizeCodeWithDisassemblyImp
     }
     
     void* codeStart = entrypoint<DisassemblyPtrTag>().untaggedPtr();
-    void* codeEnd = bitwise_cast<uint8_t*>(codeStart) + size();
+    void* codeEnd = std::bit_cast<uint8_t*>(codeStart) + size();
 
     disassemble(result.retaggedCode<DisassemblyPtrTag>(), m_size, codeStart, codeEnd, "    ", out);
     return result;
@@ -269,7 +269,7 @@ private:
 static ALWAYS_INLINE void recordLinkOffsets(AssemblerData& assemblerData, int32_t regionStart, int32_t regionEnd, int32_t offset)
 {
 #if OS(DARWIN)
-    memset_pattern4(bitwise_cast<uint8_t*>(assemblerData.buffer()) + regionStart, &offset, regionEnd - regionStart);
+    memset_pattern4(std::bit_cast<uint8_t*>(assemblerData.buffer()) + regionStart, &offset, regionEnd - regionStart);
 #else
     int32_t ptr = regionStart / sizeof(int32_t);
     const int32_t end = regionEnd / sizeof(int32_t);
@@ -289,11 +289,11 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 
     auto& jumpsToLink = macroAssembler.jumpsToLink();
     m_assemblerStorage = macroAssembler.m_assembler.buffer().releaseAssemblerData();
-    uint8_t* inData = bitwise_cast<uint8_t*>(m_assemblerStorage.buffer());
+    uint8_t* inData = std::bit_cast<uint8_t*>(m_assemblerStorage.buffer());
 #if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
     ARM64EHash<ShouldSign::No> verifyUncompactedHash;
     m_assemblerHashesStorage = macroAssembler.m_assembler.buffer().releaseAssemblerHashes();
-    uint32_t* inHashes = bitwise_cast<uint32_t*>(m_assemblerHashesStorage.buffer());
+    uint32_t* inHashes = std::bit_cast<uint32_t*>(m_assemblerHashesStorage.buffer());
 #endif
 
     uint8_t* codeOutData = m_code.dataLocation<uint8_t*>();
@@ -313,7 +313,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
     auto read = [&](const InstructionType* ptr) -> InstructionType {
         InstructionType value = *ptr;
 #if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-        unsigned index = (bitwise_cast<uint8_t*>(ptr) - inData) / 4;
+        unsigned index = (std::bit_cast<uint8_t*>(ptr) - inData) / 4;
         uint32_t hash = verifyUncompactedHash.update(value, index);
         RELEASE_ASSERT(inHashes[index] == hash);
 #endif
@@ -353,7 +353,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
             const uint8_t* target;
             const intptr_t to = linkRecord.to(&macroAssembler.m_assembler);
             if (linkRecord.isThunk())
-                target = bitwise_cast<uint8_t*>(to);
+                target = std::bit_cast<uint8_t*>(to);
             else if (to >= linkRecord.from())
                 target = codeOutData + to - offset; // Compensate for what we have collapsed so far
             else
@@ -380,13 +380,13 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
 
     // Copy everything after the last jump
     {
-        InstructionType* dst = bitwise_cast<InstructionType*>(outData + writePtr);
-        InstructionType* src = bitwise_cast<InstructionType*>(inData + readPtr);
+        InstructionType* dst = std::bit_cast<InstructionType*>(outData + writePtr);
+        InstructionType* src = std::bit_cast<InstructionType*>(inData + readPtr);
         size_t bytes = initialSize - readPtr;
 
-        RELEASE_ASSERT(bitwise_cast<uintptr_t>(dst) % sizeof(InstructionType) == 0);
-        RELEASE_ASSERT(bitwise_cast<uintptr_t>(src) % sizeof(InstructionType) == 0);
-        RELEASE_ASSERT(bytes % sizeof(InstructionType) == 0);
+        RELEASE_ASSERT(!(std::bit_cast<uintptr_t>(dst) % sizeof(InstructionType)));
+        RELEASE_ASSERT(!(std::bit_cast<uintptr_t>(src) % sizeof(InstructionType)));
+        RELEASE_ASSERT(!(bytes % sizeof(InstructionType)));
 
         for (size_t i = 0; i < bytes; i += sizeof(InstructionType)) {
             InstructionType insn = read(src++);
@@ -403,7 +403,7 @@ void LinkBuffer::copyCompactAndLinkCode(MacroAssembler& macroAssembler, JITCompi
         const intptr_t to = linkRecord.to(&macroAssembler.m_assembler);
         uint8_t* target = nullptr;
         if (linkRecord.isThunk())
-            target = bitwise_cast<uint8_t*>(to);
+            target = std::bit_cast<uint8_t*>(to);
         else
             target = codeOutData + to - executableOffsetFor(to);
         if (g_jscConfig.useFastJITPermissions)

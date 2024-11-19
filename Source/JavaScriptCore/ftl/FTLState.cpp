@@ -74,7 +74,7 @@ State::State(Graph& graph)
 
     proc->setOriginPrinter(
         [] (PrintStream& out, B3::Origin origin) {
-            out.print(bitwise_cast<Node*>(origin.data()));
+            out.print(std::bit_cast<Node*>(origin.data()));
         });
 
     proc->setFrontendData(&graph);
@@ -129,7 +129,7 @@ void State::dumpDisassembly(PrintStream& out, LinkBuffer& linkBuffer, const Scop
         if (!currentB3Value)
             return;
 
-        printDFGNode(bitwise_cast<Node*>(value->origin().data()));
+        printDFGNode(std::bit_cast<Node*>(value->origin().data()));
 
         HashSet<B3::Value*> localPrintedValues;
         auto printValueRecursive = recursableLambda([&] (auto self, B3::Value* value) -> void {

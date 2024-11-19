@@ -1215,7 +1215,7 @@ public:
     void absDouble(FPRegisterID src, FPRegisterID dst)
     {
         ASSERT(src != dst);
-        move64ToDouble(TrustedImm64(bitwise_cast<int64_t>(-0.0)), dst);
+        move64ToDouble(TrustedImm64(std::bit_cast<int64_t>(-0.0)), dst);
         if (supportsAVX())
             m_assembler.vandnpd_rrr(src, dst, dst);
         else
@@ -4991,7 +4991,7 @@ public:
     void and64(TrustedImmPtr imm, RegisterID srcDest)
     {
         static_assert(sizeof(void*) == sizeof(int64_t));
-        and64(TrustedImm64(bitwise_cast<int64_t>(imm.m_value)), srcDest);
+        and64(TrustedImm64(std::bit_cast<int64_t>(imm.m_value)), srcDest);
     }
 
     void and64(TrustedImm64 imm, RegisterID srcDest)

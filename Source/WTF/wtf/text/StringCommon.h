@@ -761,7 +761,7 @@ inline size_t find(std::span<const CharacterType> characters, CharacterType matc
     if constexpr (sizeof(CharacterType) == 1) {
         if (index >= characters.size())
             return notFound;
-        auto* result = reinterpret_cast<const CharacterType*>(find8(bitwise_cast<const uint8_t*>(characters.data() + index), matchCharacter, characters.size() - index));
+        auto* result = reinterpret_cast<const CharacterType*>(find8(std::bit_cast<const uint8_t*>(characters.data() + index), matchCharacter, characters.size() - index));
         ASSERT(!result || static_cast<unsigned>(result - characters.data()) >= index);
         if (result)
             return result - characters.data();
@@ -771,7 +771,7 @@ inline size_t find(std::span<const CharacterType> characters, CharacterType matc
     if constexpr (sizeof(CharacterType) == 2) {
         if (index >= characters.size())
             return notFound;
-        auto* result = reinterpret_cast<const CharacterType*>(find16(bitwise_cast<const uint16_t*>(characters.data() + index), matchCharacter, characters.size() - index));
+        auto* result = reinterpret_cast<const CharacterType*>(find16(std::bit_cast<const uint16_t*>(characters.data() + index), matchCharacter, characters.size() - index));
         ASSERT(!result || static_cast<unsigned>(result - characters.data()) >= index);
         if (result)
             return result - characters.data();
@@ -933,16 +933,16 @@ inline void copyElements(uint16_t* __restrict destination, const uint8_t* __rest
         const auto* simdEnd = destination + (length & ~memoryAccessMask);
         simde_uint8x16_t zeros = simde_vdupq_n_u8(0);
         do {
-            simde_uint8x16x4_t bytes = simde_vld1q_u8_x4(bitwise_cast<const uint8_t*>(source));
+            simde_uint8x16x4_t bytes = simde_vld1q_u8_x4(std::bit_cast<const uint8_t*>(source));
             source += memoryAccessSize;
 
-            simde_vst2q_u8(bitwise_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[0], zeros }));
+            simde_vst2q_u8(std::bit_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[0], zeros }));
             destination += memoryAccessSize / 4;
-            simde_vst2q_u8(bitwise_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[1], zeros }));
+            simde_vst2q_u8(std::bit_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[1], zeros }));
             destination += memoryAccessSize / 4;
-            simde_vst2q_u8(bitwise_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[2], zeros }));
+            simde_vst2q_u8(std::bit_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[2], zeros }));
             destination += memoryAccessSize / 4;
-            simde_vst2q_u8(bitwise_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[3], zeros }));
+            simde_vst2q_u8(std::bit_cast<uint8_t*>(destination), (simde_uint8x16x2_t { bytes.val[3], zeros }));
             destination += memoryAccessSize / 4;
         } while (destination != simdEnd);
     }
@@ -1127,12 +1127,12 @@ inline void copyElements(uint8_t* __restrict destination, const uint64_t* __rest
 #ifndef __swift__ // FIXME: rdar://136156228
 inline void copyElements(UChar* __restrict destination, const LChar* __restrict source, size_t length)
 {
-    copyElements(bitwise_cast<uint16_t*>(destination), bitwise_cast<const uint8_t*>(source), length);
+    copyElements(std::bit_cast<uint16_t*>(destination), std::bit_cast<const uint8_t*>(source), length);
 }
 
 inline void copyElements(LChar* __restrict destination, const UChar* __restrict source, size_t length)
 {
-    copyElements(bitwise_cast<uint8_t*>(destination), bitwise_cast<const uint16_t*>(source), length);
+    copyElements(std::bit_cast<uint8_t*>(destination), std::bit_cast<const uint16_t*>(source), length);
 }
 #endif
 
@@ -1157,10 +1157,10 @@ ALWAYS_INLINE bool charactersContain(std::span<const CharacterType> span)
         size_t index = 0;
         BulkType accumulated { };
         for (; index + (stride - 1) < length; index += stride)
-            accumulated = SIMD::bitOr(accumulated, SIMD::equal<characters...>(SIMD::load(bitwise_cast<const UnsignedType*>(data + index))));
+            accumulated = SIMD::bitOr(accumulated, SIMD::equal<characters...>(SIMD::load(std::bit_cast<const UnsignedType*>(data + index))));
 
         if (index < length)
-            accumulated = SIMD::bitOr(accumulated, SIMD::equal<characters...>(SIMD::load(bitwise_cast<const UnsignedType*>(data + length - stride))));
+            accumulated = SIMD::bitOr(accumulated, SIMD::equal<characters...>(SIMD::load(std::bit_cast<const UnsignedType*>(data + length - stride))));
 
         return SIMD::isNonZero(accumulated);
     }

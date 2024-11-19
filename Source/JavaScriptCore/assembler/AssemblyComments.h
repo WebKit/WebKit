@@ -53,8 +53,8 @@ public:
             return;
         Locker locker { m_lock };
 
-        auto newStart = bitwise_cast<uintptr_t>(start);
-        auto newEnd = bitwise_cast<uintptr_t>(end);
+        auto newStart = std::bit_cast<uintptr_t>(start);
+        auto newEnd = std::bit_cast<uintptr_t>(end);
         RELEASE_ASSERT(newStart < newEnd);
 
 #if ASSERT_ENABLED
@@ -83,7 +83,7 @@ public:
             return;
 
         auto& [foundEnd, _] = it->second; 
-        RELEASE_ASSERT(foundEnd == bitwise_cast<uintptr_t>(end));
+        RELEASE_ASSERT(foundEnd == std::bit_cast<uintptr_t>(end));
         m_comments.erase(it);
     }
 
@@ -98,10 +98,10 @@ public:
             return { };
         
         auto& [end, map] = it->second;
-        if (bitwise_cast<uintptr_t>(in) > bitwise_cast<uintptr_t>(end))
+        if (std::bit_cast<uintptr_t>(in) > std::bit_cast<uintptr_t>(end))
             return { };
 
-        auto it2 = map.find(bitwise_cast<uintptr_t>(in));
+        auto it2 = map.find(std::bit_cast<uintptr_t>(in));
 
         if (it2 == map.end())
             return { };
@@ -114,7 +114,7 @@ public:
 private:
 
     // Flip ordering for lower_bound comparator to work.
-    inline uintptr_t orderedKey(void* in) { return std::numeric_limits<uintptr_t>::max() - bitwise_cast<uintptr_t>(in); }
+    inline uintptr_t orderedKey(void* in) { return std::numeric_limits<uintptr_t>::max() - std::bit_cast<uintptr_t>(in); }
     inline uintptr_t orderedKeyInverse(uintptr_t in) { return std::numeric_limits<uintptr_t>::max() - in; }
 
     Lock m_lock;

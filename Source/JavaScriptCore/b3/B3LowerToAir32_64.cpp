@@ -1615,10 +1615,10 @@ private:
                     arg = Arg::bigImm(value.value()->asInt64());
                 else if (value.value()->hasDouble() && canBeInternal(value.value())) {
                     commitInternal(value.value());
-                    arg = Arg::bigImm(bitwise_cast<int64_t>(value.value()->asDouble()));
+                    arg = Arg::bigImm(std::bit_cast<int64_t>(value.value()->asDouble()));
                 } else if (value.value()->hasFloat() && canBeInternal(value.value())) {
                     commitInternal(value.value());
-                    arg = Arg::bigImm(static_cast<uint64_t>(bitwise_cast<uint32_t>(value.value()->asFloat())));
+                    arg = Arg::bigImm(static_cast<uint64_t>(std::bit_cast<uint32_t>(value.value()->asFloat())));
                 } else
                     arg = tmp(value.value());
                 break;
@@ -1909,7 +1909,7 @@ private:
 
             ArgPromise leftPromise = tmpPromise(left);
             if (value->child(0)->type() == Double) {
-                if (right->hasDouble() && bitwise_cast<uint64_t>(right->asDouble()) == bitwise_cast<uint64_t>(0.0)) {
+                if (right->hasDouble() && std::bit_cast<uint64_t>(right->asDouble()) == std::bit_cast<uint64_t>(0.0)) {
                     if (Inst result = compareDoubleWithZero(doubleCond, leftPromise)) {
                         if (canBeInternal(right))
                             commitInternal(right);
@@ -1919,7 +1919,7 @@ private:
             }
 
             if (value->child(0)->type() == Float) {
-                if (right->hasFloat() && bitwise_cast<uint32_t>(right->asFloat()) == bitwise_cast<uint32_t>(0.0f)) {
+                if (right->hasFloat() && std::bit_cast<uint32_t>(right->asFloat()) == std::bit_cast<uint32_t>(0.0f)) {
                     if (Inst result = compareFloatWithZero(doubleCond, leftPromise)) {
                         if (canBeInternal(right))
                             commitInternal(right);

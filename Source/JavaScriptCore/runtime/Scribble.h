@@ -42,14 +42,14 @@ inline bool scribbleFreeCells()
 
 inline bool isScribbledValue(JSValue value)
 {
-    return JSValue::encode(value) == JSValue::encode(bitwise_cast<JSCell*>(SCRIBBLE_WORD));
+    return JSValue::encode(value) == JSValue::encode(std::bit_cast<JSCell*>(SCRIBBLE_WORD));
 }
 
 inline void scribble(void* base, size_t size)
 {
     for (size_t i = size / sizeof(EncodedJSValue); i--;) {
         // Use a 16-byte aligned value to ensure that it passes the cell check.
-        static_cast<EncodedJSValue*>(base)[i] = JSValue::encode(bitwise_cast<JSCell*>(SCRIBBLE_WORD));
+        static_cast<EncodedJSValue*>(base)[i] = JSValue::encode(std::bit_cast<JSCell*>(SCRIBBLE_WORD));
     }
 }
 

@@ -49,12 +49,12 @@ public:
     }
     
     CellContainer(MarkedBlock& markedBlock)
-        : m_encodedPointer(bitwise_cast<uintptr_t>(&markedBlock))
+        : m_encodedPointer(std::bit_cast<uintptr_t>(&markedBlock))
     {
     }
     
     CellContainer(PreciseAllocation& preciseAllocation)
-        : m_encodedPointer(bitwise_cast<uintptr_t>(&preciseAllocation) | isPreciseAllocationBit)
+        : m_encodedPointer(std::bit_cast<uintptr_t>(&preciseAllocation) | isPreciseAllocationBit)
     {
     }
     
@@ -69,13 +69,13 @@ public:
     MarkedBlock& markedBlock() const
     {
         ASSERT(isMarkedBlock());
-        return *bitwise_cast<MarkedBlock*>(m_encodedPointer);
+        return *std::bit_cast<MarkedBlock*>(m_encodedPointer);
     }
     
     PreciseAllocation& preciseAllocation() const
     {
         ASSERT(isPreciseAllocation());
-        return *bitwise_cast<PreciseAllocation*>(m_encodedPointer - isPreciseAllocationBit);
+        return *std::bit_cast<PreciseAllocation*>(m_encodedPointer - isPreciseAllocationBit);
     }
     
     bool areMarksStale() const;

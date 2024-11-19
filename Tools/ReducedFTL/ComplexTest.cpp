@@ -60,9 +60,9 @@ using namespace std;
 namespace {
 
 template<typename ToType, typename FromType>
-inline ToType bitwise_cast(FromType from)
+inline ToType std::bit_cast(FromType from)
 {
-    static_assert(sizeof(FromType) == sizeof(ToType), "bitwise_cast size of FromType and ToType must be equal!");
+    static_assert(sizeof(FromType) == sizeof(ToType), "std::bit_cast size of FromType and ToType must be equal!");
     union {
         FromType from;
         ToType to;
@@ -94,7 +94,7 @@ void run(unsigned numVars, unsigned numConstructs)
 
     vector<Value*> vars;
     for (int32_t& varSlot : varSlots) {
-        Value* ptr = builder->CreateIntToPtr(builder->getInt64(bitwise_cast<intptr_t>(&varSlot)),
+        Value* ptr = builder->CreateIntToPtr(builder->getInt64(std::bit_cast<intptr_t>(&varSlot)),
                                             int32Ty->getPointerTo());
         vars.push_back(builder->CreateLoad(ptr));
     }
@@ -156,7 +156,7 @@ void run(unsigned numVars, unsigned numConstructs)
                 builder->CreateLoad(
                     builder->CreateIntToPtr(
                         builder->CreateAdd(
-                            builder->getInt64(bitwise_cast<intptr_t>(&varSlots[0])),
+                            builder->getInt64(std::bit_cast<intptr_t>(&varSlots[0])),
                             builder->CreateShl(
                                 builder->CreateZExt(
                                     builder->CreateAnd(

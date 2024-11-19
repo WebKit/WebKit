@@ -570,11 +570,11 @@ inline bool JSValue::isInt32() const
 
 inline int64_t reinterpretDoubleToInt64(double value)
 {
-    return bitwise_cast<int64_t>(value);
+    return std::bit_cast<int64_t>(value);
 }
 inline double reinterpretInt64ToDouble(int64_t value)
 {
-    return bitwise_cast<double>(value);
+    return std::bit_cast<double>(value);
 }
 
 ALWAYS_INLINE JSValue::JSValue(EncodeAsDoubleTag, double d)
@@ -625,7 +625,7 @@ inline JSValue::JSValue(EncodeAsBigInt32Tag, int32_t value)
 #if ENABLE(WEBASSEMBLY) && USE(JSVALUE32_64)
 inline JSValue::JSValue(EncodeAsUnboxedFloatTag, float value)
 {
-    u.asBits.payload = bitwise_cast<int32_t>(value);
+    u.asBits.payload = std::bit_cast<int32_t>(value);
 }
 #endif
 
@@ -1476,7 +1476,7 @@ ALWAYS_INLINE bool sameValue(JSGlobalObject* globalObject, JSValue a, JSValue b)
     bool yIsNaN = std::isnan(y);
     if (xIsNaN || yIsNaN)
         return xIsNaN && yIsNaN;
-    return bitwise_cast<uint64_t>(x) == bitwise_cast<uint64_t>(y);
+    return std::bit_cast<uint64_t>(x) == std::bit_cast<uint64_t>(y);
 }
 
 } // namespace JSC

@@ -84,7 +84,7 @@ inline JSC::JSValue toJS(JSC::JSGlobalObject* globalObject, JSValueRef v)
     else
         result = jsCell;
 #else
-    JSC::JSValue result = bitwise_cast<JSC::JSValue>(v);
+    JSC::JSValue result = std::bit_cast<JSC::JSValue>(v);
 #endif
     if (!result)
         return JSC::jsNull();
@@ -98,7 +98,7 @@ inline JSC::JSValue toJS(JSC::JSGlobalObject* globalObject, JSValueRef v)
 #if CPU(ADDRESS64)
 inline JSC::JSValue toJS(JSValueRef value)
 {
-    return JSC::Integrity::audit(bitwise_cast<JSC::JSValue>(value));
+    return JSC::Integrity::audit(std::bit_cast<JSC::JSValue>(value));
 }
 #endif
 
@@ -111,7 +111,7 @@ inline JSC::JSValue toJSForGC(JSC::JSGlobalObject* globalObject, JSValueRef v)
         return JSC::JSValue();
     JSC::JSValue result = jsCell;
 #else
-    JSC::JSValue result = bitwise_cast<JSC::JSValue>(v);
+    JSC::JSValue result = std::bit_cast<JSC::JSValue>(v);
 #endif
     if (result && result.isCell()) {
         JSC::Integrity::audit(result.asCell());
@@ -155,7 +155,7 @@ inline JSValueRef toRef(JSC::VM& vm, JSC::JSValue v)
     return reinterpret_cast<JSValueRef>(v.asCell());
 #else
     UNUSED_PARAM(vm);
-    return bitwise_cast<JSValueRef>(JSC::Integrity::audit(v));
+    return std::bit_cast<JSValueRef>(JSC::Integrity::audit(v));
 #endif
 }
 
@@ -167,7 +167,7 @@ inline JSValueRef toRef(JSC::JSGlobalObject* globalObject, JSC::JSValue v)
 #if CPU(ADDRESS64)
 inline JSValueRef toRef(JSC::JSValue v)
 {
-    return bitwise_cast<JSValueRef>(JSC::Integrity::audit(v));
+    return std::bit_cast<JSValueRef>(JSC::Integrity::audit(v));
 }
 #endif
 

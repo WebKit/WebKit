@@ -177,7 +177,7 @@ static ALWAYS_INLINE void buildEntryBufferForCatch(Probe::Context& context)
     unsigned valueSize = (savedFPWidth == SavedFPWidth::SaveVectors) ? 2 : 1;
     CallFrame* callFrame = context.fp<CallFrame*>();
     CallSiteIndex callSiteIndex = callFrame->callSiteIndex();
-    OptimizingJITCallee* callee = bitwise_cast<OptimizingJITCallee*>(callFrame->callee().asNativeCallee());
+    OptimizingJITCallee* callee = std::bit_cast<OptimizingJITCallee*>(callFrame->callee().asNativeCallee());
     const StackMap& stackmap = callee->stackmap(callSiteIndex);
     JSWebAssemblyInstance* instance = context.gpr<JSWebAssemblyInstance*>(GPRInfo::wasmContextInstancePointer);
     EncodedJSValue exception = context.gpr<EncodedJSValue>(GPRInfo::returnValueGPR);
@@ -187,11 +187,11 @@ static ALWAYS_INLINE void buildEntryBufferForCatch(Probe::Context& context)
     JSValue thrownValue = JSValue::decode(exception);
     void* payload = nullptr;
     if (JSWebAssemblyException* wasmException = jsDynamicCast<JSWebAssemblyException*>(thrownValue))
-        payload = bitwise_cast<void*>(wasmException->payload().span().data());
+        payload = std::bit_cast<void*>(wasmException->payload().span().data());
 
-    context.gpr(GPRInfo::argumentGPR0) = bitwise_cast<uintptr_t>(buffer);
+    context.gpr(GPRInfo::argumentGPR0) = std::bit_cast<uintptr_t>(buffer);
     context.gpr(GPRInfo::argumentGPR1) = exception;
-    context.gpr(GPRInfo::argumentGPR2) = bitwise_cast<uintptr_t>(payload);
+    context.gpr(GPRInfo::argumentGPR2) = std::bit_cast<uintptr_t>(payload);
 }
 
 static inline void SYSV_ABI buildEntryBufferForCatchSIMD(Probe::Context& context) { buildEntryBufferForCatch<SavedFPWidth::SaveVectors>(context); }

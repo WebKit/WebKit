@@ -2723,7 +2723,7 @@ public:
         ASSERT(isEven(from));
         ASSERT(isEven(to));
 
-        intptr_t offset = bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(from);
+        intptr_t offset = std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(from);
         ASSERT(static_cast<int>(offset) == offset);
 
         if (isInt<25>(offset))
@@ -2759,8 +2759,8 @@ public:
 
     static void replaceWithJump(void* instructionStart, void* to)
     {
-        ASSERT(!(bitwise_cast<uintptr_t>(instructionStart) & 1));
-        ASSERT(!(bitwise_cast<uintptr_t>(to) & 1));
+        ASSERT(!(std::bit_cast<uintptr_t>(instructionStart) & 1));
+        ASSERT(!(std::bit_cast<uintptr_t>(to) & 1));
 
 #if OS(LINUX)
         if (canBeJumpT4(reinterpret_cast<uint16_t*>(instructionStart), to)) {
@@ -2849,7 +2849,7 @@ public:
     {
         // 'from' holds the address of the branch instruction. The branch range however is relative
         // to the architectural value of the PC which is 4 larger than the address of the branch.
-        intptr_t offset = bitwise_cast<intptr_t>(to) - (bitwise_cast<intptr_t>(from) + 4);
+        intptr_t offset = std::bit_cast<intptr_t>(to) - (std::bit_cast<intptr_t>(from) + 4);
         return isInt<25>(offset);
     }
 
@@ -3226,11 +3226,11 @@ private:
         ASSERT(isEven(to));
         ASSERT(link == BranchWithLink::Yes ? isBL(from - 2) : isB(from - 2));
 
-        intptr_t offset = bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction);
+        intptr_t offset = std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(fromInstruction);
 #if ENABLE(JUMP_ISLANDS)
         if (!isInt<25>(offset)) {
-            to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(bitwise_cast<void*>(fromInstruction), to);
-            offset = bitwise_cast<intptr_t>(to) - bitwise_cast<intptr_t>(fromInstruction);
+            to = ExecutableAllocator::singleton().getJumpIslandToUsingJITMemcpy(std::bit_cast<void*>(fromInstruction), to);
+            offset = std::bit_cast<intptr_t>(to) - std::bit_cast<intptr_t>(fromInstruction);
         }
 #endif
         RELEASE_ASSERT(isInt<25>(offset));

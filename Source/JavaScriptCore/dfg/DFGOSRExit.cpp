@@ -511,7 +511,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case UnboxedBooleanInGPR:
             jit.store32(
                 recovery.gpr(),
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
+                &std::bit_cast<EncodedValueDescriptor*>(scratch + index)->asBits.payload);
             break;
             
         case InPair:
@@ -594,7 +594,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 #else
             jit.store32(
                 AssemblyHelpers::TrustedImm32(JSValue::Int32Tag),
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+                &std::bit_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
 #endif
             break;
 
@@ -617,7 +617,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
         case UnboxedBooleanInGPR:
             jit.store32(
                 AssemblyHelpers::TrustedImm32(JSValue::BooleanTag),
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+                &std::bit_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
             break;
 
         case BooleanDisplacedInJSStack:
@@ -630,7 +630,7 @@ void OSRExit::compileExit(CCallHelpers& jit, VM& vm, const OSRExit& exit, const 
 
         case UnboxedCellInGPR:
             jit.storeCell(
-                &bitwise_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
+                &std::bit_cast<EncodedValueDescriptor*>(scratch + index)->asBits.tag);
             break;
 
         case CellDisplacedInJSStack:
@@ -880,7 +880,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (
     auto* debugInfo = context.arg<SpeculationFailureDebugInfo*>();
     CodeBlock* codeBlock = debugInfo->codeBlock;
     CodeBlock* alternative = codeBlock->alternative();
-    CallFrame* callFrame = bitwise_cast<CallFrame*>(context.fp());
+    CallFrame* callFrame = std::bit_cast<CallFrame*>(context.fp());
 
     VM& vm = codeBlock->vm();
     NativeCallFrameTracer tracer(vm, callFrame);
@@ -906,7 +906,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationDebugPrintSpeculationFailure, void, (
         FPRReg fpr = FPRInfo::toRegister(i);
         dataLog(" ", FPRInfo::debugName(fpr), ":");
         uint64_t bits = context.fpr<uint64_t>(fpr);
-        double value = bitwise_cast<double>(bits);
+        double value = std::bit_cast<double>(bits);
         dataLogF("%llx:%lf", static_cast<long long>(bits), value);
     }
     dataLog("\n");

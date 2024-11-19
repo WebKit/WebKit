@@ -78,7 +78,7 @@ inline JSInstruction* exceptionInstructions()
 
 inline WasmInstruction* wasmExceptionInstructions()
 {
-    return bitwise_cast<WasmInstruction*>(g_jscConfig.llint.wasmExceptionInstructions);
+    return reinterpret_cast<WasmInstruction*>(g_jscConfig.llint.wasmExceptionInstructions);
 }
 
 inline JSC::Opcode* opcodeMap()

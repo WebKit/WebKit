@@ -74,7 +74,7 @@ ALWAYS_INLINE static ExecutableMemoryHandle::MemoryPtr allocateInExecutableMemor
     ExecutableMemoryHandle* handle = ExecutableAllocator::singleton().allocate(size, JITCompilationMustSucceed).leakRef();
     RELEASE_ASSERT(handle);
     void* memory = handle->start().untaggedPtr<char*>();
-    RELEASE_ASSERT(isJITPC(memory) && isJITPC(bitwise_cast<char*>(memory) + size - 1));
+    RELEASE_ASSERT(isJITPC(memory) && isJITPC(std::bit_cast<char*>(memory) + size - 1));
     return handle->start();
 }
 
@@ -101,7 +101,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 ALWAYS_INLINE auto SecureARM64EHashPins::metadata() -> Metadata*
 {
     VALIDATE_THIS_VALUE();
-    return bitwise_cast<Metadata*>(m_memory) - 1;
+    return std::bit_cast<Metadata*>(m_memory) - 1;
 }
 
 void SecureARM64EHashPins::initializeAtStartup()

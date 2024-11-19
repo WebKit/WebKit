@@ -302,7 +302,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, bool, (void* sp,
         return &reinterpret_cast<V*>(arr)[i / sizeof(V)];
     };
 
-    CallFrame* calleeFrame = bitwise_cast<CallFrame*>(reinterpret_cast<uintptr_t>(sp) - sizeof(CallerFrameAndPC));
+    CallFrame* calleeFrame = std::bit_cast<CallFrame*>(reinterpret_cast<uintptr_t>(sp) - sizeof(CallerFrameAndPC));
     ASSERT(instance);
     ASSERT(instance->globalObject());
     VM& vm = instance->vm();
@@ -394,7 +394,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, bool, (void* sp,
                 val = *access.operator()<float>(argumentRegisters, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(wasmParam.fpr()) * bytesForWidth(Width::Width64));
 
             double marshalled = purifyNaN(val);
-            uint64_t raw = bitwise_cast<uint64_t>(marshalled);
+            uint64_t raw = std::bit_cast<uint64_t>(marshalled);
 #if USE(JSVALUE64)
             raw += JSValue::DoubleEncodeOffset;
 #endif
@@ -409,7 +409,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, bool, (void* sp,
                 val = *access.operator()<double>(argumentRegisters, GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(wasmParam.fpr()) * bytesForWidth(Width::Width64));
 
             double marshalled = purifyNaN(val);
-            uint64_t raw = bitwise_cast<uint64_t>(marshalled);
+            uint64_t raw = std::bit_cast<uint64_t>(marshalled);
 #if USE(JSVALUE64)
             raw += JSValue::DoubleEncodeOffset;
 #endif
@@ -423,13 +423,13 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, bool, (void* sp,
 
     // materializeImportJSCell and store
     auto* newCallee = instance->importFunctionInfo(functionIndex);
-    *access.operator()<uintptr_t>(calleeFrame, CallFrameSlot::callee * static_cast<int>(sizeof(Register))) = bitwise_cast<uintptr_t>(newCallee->importFunction);
+    *access.operator()<uintptr_t>(calleeFrame, CallFrameSlot::callee * static_cast<int>(sizeof(Register))) = std::bit_cast<uintptr_t>(newCallee->importFunction);
     *access.operator()<uint32_t>(calleeFrame, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset) = argCount + 1; // including this = +1
 
     // set up codeblock
     auto singletonCallee = CalleeBits::boxNativeCallee(&WasmToJSCallee::singleton());
-    *access.operator()<uintptr_t>(cfr, CallFrameSlot::codeBlock * sizeof(Register)) = bitwise_cast<uintptr_t>(instance);
-    *access.operator()<uintptr_t>(cfr, CallFrameSlot::callee * sizeof(Register)) = bitwise_cast<uintptr_t>(singletonCallee);
+    *access.operator()<uintptr_t>(cfr, CallFrameSlot::codeBlock * sizeof(Register)) = std::bit_cast<uintptr_t>(instance);
+    *access.operator()<uintptr_t>(cfr, CallFrameSlot::callee * sizeof(Register)) = std::bit_cast<uintptr_t>(singletonCallee);
 
     OPERATION_RETURN(scope, true);
 }
@@ -465,7 +465,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
         case TypeKind::I32: {
             if (!returned.isNumber() || !returned.isInt32()) {
                 // slow path
-                uint32_t result = JSValue::decode(bitwise_cast<EncodedJSValue>(returned)).toInt32(globalObject);
+                uint32_t result = JSValue::decode(std::bit_cast<EncodedJSValue>(returned)).toInt32(globalObject);
                 *access.operator()<uint32_t>(registerSpace, 0) = result;
             } else {
                 uint64_t result = static_cast<uint64_t>(*access.operator()<uint32_t>(registerSpace, 0));
@@ -474,7 +474,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
             break;
         }
         case TypeKind::I64: {
-            uint64_t result = JSValue::decode(bitwise_cast<EncodedJSValue>(returned)).toBigInt64(globalObject);
+            uint64_t result = JSValue::decode(std::bit_cast<EncodedJSValue>(returned)).toBigInt64(globalObject);
             *access.operator()<uint64_t>(registerSpace, 0) = result;
             break;
         }
@@ -491,11 +491,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
 #else
                     uint64_t intermediate = *access.operator()<uint64_t>(registerSpace, 0);
 #endif
-                    double d = bitwise_cast<double>(intermediate);
+                    double d = std::bit_cast<double>(intermediate);
                     *access.operator()<float>(registerSpace, offset) = static_cast<float>(d);
                 }
             } else {
-                float result = static_cast<float>(JSValue::decode(bitwise_cast<EncodedJSValue>(returned)).toNumber(globalObject));
+                float result = static_cast<float>(JSValue::decode(std::bit_cast<EncodedJSValue>(returned)).toNumber(globalObject));
                 *access.operator()<float>(registerSpace, offset) = result;
             }
             break;
@@ -513,11 +513,11 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
 #else
                     uint64_t intermediate = *access.operator()<uint64_t>(registerSpace, 0);
 #endif
-                    double d = bitwise_cast<double>(intermediate);
+                    double d = std::bit_cast<double>(intermediate);
                     *access.operator()<double>(registerSpace, offset) = d;
                 }
             } else {
-                double result = static_cast<double>(JSValue::decode(bitwise_cast<EncodedJSValue>(returned)).toNumber(globalObject));
+                double result = static_cast<double>(JSValue::decode(std::bit_cast<EncodedJSValue>(returned)).toNumber(globalObject));
                 *access.operator()<double>(registerSpace, offset) = result;
             }
             break;
@@ -528,7 +528,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                     // Do nothing.
                 } else if (Wasm::isFuncref(returnType) || (!Options::useWasmGC() && isRefWithTypeIndex(returnType))) {
                     // operationConvertToFuncref
-                    JSValue value = JSValue::decode(bitwise_cast<EncodedJSValue>(returned));
+                    JSValue value = JSValue::decode(std::bit_cast<EncodedJSValue>(returned));
                     WebAssemblyFunction* wasmFunction = nullptr;
                     WebAssemblyWrapperFunction* wasmWrapperFunction = nullptr;
                     if (UNLIKELY(!isWebAssemblyHostFunction(value, wasmFunction, wasmWrapperFunction) && !value.isNull())) {
@@ -546,7 +546,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                     }
                 } else {
                     // operationConvertToAnyref
-                    JSValue value = JSValue::decode(bitwise_cast<EncodedJSValue>(returned));
+                    JSValue value = JSValue::decode(std::bit_cast<EncodedJSValue>(returned));
                     value = Wasm::internalizeExternref(value);
                     if (UNLIKELY(!Wasm::TypeInformation::castReference(value, returnType.isNullable(), returnType.index))) {
                         throwTypeError(globalObject, scope, "Argument value did not match reference type"_s);
@@ -560,7 +560,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
         }
     } else if (signature.returnCount() > 1) {
         // operationIterateResults
-        JSValue result = JSValue::decode(bitwise_cast<EncodedJSValue>(returned));
+        JSValue result = JSValue::decode(std::bit_cast<EncodedJSValue>(returned));
 
         unsigned iterationCount = 0;
         MarkedArgumentBuffer buffer;
@@ -597,10 +597,10 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                 unboxedValue = value.toBigInt64(globalObject);
                 break;
             case TypeKind::F32:
-                unboxedValue = bitwise_cast<uint32_t>(value.toFloat(globalObject));
+                unboxedValue = std::bit_cast<uint32_t>(value.toFloat(globalObject));
                 break;
             case TypeKind::F64:
-                unboxedValue = bitwise_cast<uint64_t>(value.toNumber(globalObject));
+                unboxedValue = std::bit_cast<uint64_t>(value.toNumber(globalObject));
                 break;
             default: {
                 if (Wasm::isRefType(returnType)) {
@@ -631,7 +631,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                     }
                 } else
                     RELEASE_ASSERT_NOT_REACHED();
-                unboxedValue = bitwise_cast<uint64_t>(value);
+                unboxedValue = std::bit_cast<uint64_t>(value);
             }
             }
             OPERATION_RETURN_IF_EXCEPTION(scope);
@@ -714,8 +714,8 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
         dataLogLnIf(Options::verboseOSR() || verbose, "OMG OSR entry values[", index, "] ", value.type(), " ", value);
 #if USE(JSVALUE32_64)
         if (value.isRegPair(B3::ValueRep::OSRValueRep)) {
-            bitwise_cast<uint32_t*>(buffer + index * valueSize)[0] = context.gpr(value.gprLo(B3::ValueRep::OSRValueRep));
-            bitwise_cast<uint32_t*>(buffer + index * valueSize)[1] = context.gpr(value.gprHi(B3::ValueRep::OSRValueRep));
+            std::bit_cast<uint32_t*>(buffer + index * valueSize)[0] = context.gpr(value.gprLo(B3::ValueRep::OSRValueRep));
+            std::bit_cast<uint32_t*>(buffer + index * valueSize)[1] = context.gpr(value.gprHi(B3::ValueRep::OSRValueRep));
             dataLogLnIf(verbose, "GPR Pair for value ", index, " ",
                 value.gprLo(B3::ValueRep::OSRValueRep), " = ", context.gpr(value.gprLo(B3::ValueRep::OSRValueRep)), " ",
                 value.gprHi(B3::ValueRep::OSRValueRep), " = ", context.gpr(value.gprHi(B3::ValueRep::OSRValueRep)));
@@ -728,7 +728,7 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
             case B3::Double:
                 RELEASE_ASSERT_NOT_REACHED();
             default:
-                *bitwise_cast<uint64_t*>(buffer + index * valueSize) = context.gpr(value.gpr());
+                *std::bit_cast<uint64_t*>(buffer + index * valueSize) = context.gpr(value.gpr());
             }
             dataLogLnIf(verbose, "GPR for value ", index, " ", value.gpr(), " = ", context.gpr(value.gpr()));
         } else if (value.isFPR()) {
@@ -736,13 +736,13 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
             case B3::Float:
             case B3::Double:
                 dataLogLnIf(verbose, "FPR for value ", index, " ", value.fpr(), " = ", context.fpr(value.fpr(), savedFPWidth));
-                *bitwise_cast<double*>(buffer + index * valueSize) = context.fpr(value.fpr(), savedFPWidth);
+                *std::bit_cast<double*>(buffer + index * valueSize) = context.fpr(value.fpr(), savedFPWidth);
                 break;
             case B3::V128:
                 RELEASE_ASSERT(valueSize == 2);
 #if CPU(X86_64) || CPU(ARM64)
                 dataLogLnIf(verbose, "Vector FPR for value ", index, " ", value.fpr(), " = ", context.vector(value.fpr()));
-                *bitwise_cast<v128_t*>(buffer + index * valueSize) = context.vector(value.fpr());
+                *std::bit_cast<v128_t*>(buffer + index * valueSize) = context.vector(value.fpr());
 #else
                 UNREACHABLE_FOR_PLATFORM();
 #endif
@@ -753,40 +753,40 @@ void loadValuesIntoBuffer(Probe::Context& context, const StackMap& values, uint6
         } else if (value.isConstant()) {
             switch (value.type().kind()) {
             case B3::Float:
-                *bitwise_cast<float*>(buffer + index * valueSize) = value.floatValue();
+                *std::bit_cast<float*>(buffer + index * valueSize) = value.floatValue();
                 break;
             case B3::Double:
-                *bitwise_cast<double*>(buffer + index * valueSize) = value.doubleValue();
+                *std::bit_cast<double*>(buffer + index * valueSize) = value.doubleValue();
                 break;
             case B3::V128:
                 RELEASE_ASSERT_NOT_REACHED();
                 break;
             default:
-                *bitwise_cast<uint64_t*>(buffer + index * valueSize) = value.value();
+                *std::bit_cast<uint64_t*>(buffer + index * valueSize) = value.value();
             }
         } else if (value.isStack()) {
-            auto* baseLoad = bitwise_cast<uint8_t*>(context.fp()) + value.offsetFromFP();
-            auto* baseStore = bitwise_cast<uint8_t*>(buffer + index * valueSize);
+            auto* baseLoad = std::bit_cast<uint8_t*>(context.fp()) + value.offsetFromFP();
+            auto* baseStore = std::bit_cast<uint8_t*>(buffer + index * valueSize);
 
             if (value.type().isFloat() || value.type().isVector()) {
                 dataLogLnIf(verbose, "Stack float or vector for value ", index, " fp offset ", value.offsetFromFP(), " = ",
-                    *bitwise_cast<v128_t*>(baseLoad),
-                    " or double ", *bitwise_cast<double*>(baseLoad));
+                    *std::bit_cast<v128_t*>(baseLoad),
+                    " or double ", *std::bit_cast<double*>(baseLoad));
             } else
-                dataLogLnIf(verbose, "Stack for value ", index, " fp[", value.offsetFromFP(), "] = ", RawHex(*bitwise_cast<uint64_t*>(baseLoad)), " ", static_cast<int32_t>(*bitwise_cast<uint64_t*>(baseLoad)), " ", *bitwise_cast<int64_t*>(baseLoad));
+                dataLogLnIf(verbose, "Stack for value ", index, " fp[", value.offsetFromFP(), "] = ", RawHex(*std::bit_cast<uint64_t*>(baseLoad)), " ", static_cast<int32_t>(*std::bit_cast<uint64_t*>(baseLoad)), " ", *std::bit_cast<int64_t*>(baseLoad));
 
             switch (value.type().kind()) {
             case B3::Float:
-                *bitwise_cast<float*>(baseStore) = *bitwise_cast<float*>(baseLoad);
+                *std::bit_cast<float*>(baseStore) = *std::bit_cast<float*>(baseLoad);
                 break;
             case B3::Double:
-                *bitwise_cast<double*>(baseStore) = *bitwise_cast<double*>(baseLoad);
+                *std::bit_cast<double*>(baseStore) = *std::bit_cast<double*>(baseLoad);
                 break;
             case B3::V128:
-                *bitwise_cast<v128_t*>(baseStore) = *bitwise_cast<v128_t*>(baseLoad);
+                *std::bit_cast<v128_t*>(baseStore) = *std::bit_cast<v128_t*>(baseLoad);
                 break;
             default:
-                *bitwise_cast<uint64_t*>(baseStore) = *bitwise_cast<uint64_t*>(baseLoad);
+                *std::bit_cast<uint64_t*>(baseStore) = *std::bit_cast<uint64_t*>(baseLoad);
                 break;
             }
         } else
@@ -819,48 +819,48 @@ static void doOSREntry(JSWebAssemblyInstance* instance, Probe::Context& context,
         if (dontRestoreRegisters.contains(entry.reg(), IgnoreVectors))
             continue;
         if (entry.reg().isGPR())
-            context.gpr(entry.reg().gpr()) = *bitwise_cast<UCPURegister*>(bitwise_cast<uint8_t*>(context.fp()) + entry.offset());
+            context.gpr(entry.reg().gpr()) = *std::bit_cast<UCPURegister*>(std::bit_cast<uint8_t*>(context.fp()) + entry.offset());
         else
-            context.fpr(entry.reg().fpr(), callee.savedFPWidth()) = *bitwise_cast<double*>(bitwise_cast<uint8_t*>(context.fp()) + entry.offset());
+            context.fpr(entry.reg().fpr(), callee.savedFPWidth()) = *std::bit_cast<double*>(std::bit_cast<uint8_t*>(context.fp()) + entry.offset());
     }
 
     // 3. Function epilogue, like a tail-call.
-    UCPURegister* framePointer = bitwise_cast<UCPURegister*>(context.fp());
+    UCPURegister* framePointer = std::bit_cast<UCPURegister*>(context.fp());
 #if CPU(X86_64)
     // move(framePointerRegister, stackPointerRegister);
     // pop(framePointerRegister);
-    context.fp() = bitwise_cast<UCPURegister*>(*framePointer);
+    context.fp() = std::bit_cast<UCPURegister*>(*framePointer);
     context.sp() = framePointer + 1;
     static_assert(prologueStackPointerDelta() == sizeof(void*) * 1);
 #elif CPU(ARM64E) || CPU(ARM64)
     // move(framePointerRegister, stackPointerRegister);
     // popPair(framePointerRegister, linkRegister);
-    context.fp() = bitwise_cast<UCPURegister*>(*framePointer);
-    context.gpr(ARM64Registers::lr) = bitwise_cast<UCPURegister>(*(framePointer + 1));
+    context.fp() = std::bit_cast<UCPURegister*>(*framePointer);
+    context.gpr(ARM64Registers::lr) = std::bit_cast<UCPURegister>(*(framePointer + 1));
     context.sp() = framePointer + 2;
     static_assert(prologueStackPointerDelta() == sizeof(void*) * 2);
 #if CPU(ARM64E)
     // LR needs to be untagged since OSR entry function prologue will tag it with SP. This is similar to tail-call.
-    context.gpr(ARM64Registers::lr) = bitwise_cast<UCPURegister>(untagCodePtrWithStackPointerForJITCall(context.gpr<void*>(ARM64Registers::lr), context.sp()));
+    context.gpr(ARM64Registers::lr) = std::bit_cast<UCPURegister>(untagCodePtrWithStackPointerForJITCall(context.gpr<void*>(ARM64Registers::lr), context.sp()));
 #endif
 #elif CPU(RISCV64)
     // move(framePointerRegister, stackPointerRegister);
     // popPair(framePointerRegister, linkRegister);
-    context.fp() = bitwise_cast<UCPURegister*>(*framePointer);
-    context.gpr(RISCV64Registers::ra) = bitwise_cast<UCPURegister>(*(framePointer + 1));
+    context.fp() = std::bit_cast<UCPURegister*>(*framePointer);
+    context.gpr(RISCV64Registers::ra) = std::bit_cast<UCPURegister>(*(framePointer + 1));
     context.sp() = framePointer + 2;
     static_assert(prologueStackPointerDelta() == sizeof(void*) * 2);
 #elif CPU(ARM)
-    context.fp() = bitwise_cast<UCPURegister*>(*framePointer);
-    context.gpr(ARMRegisters::lr) = bitwise_cast<UCPURegister>(*(framePointer + 1));
+    context.fp() = std::bit_cast<UCPURegister*>(*framePointer);
+    context.gpr(ARMRegisters::lr) = std::bit_cast<UCPURegister>(*(framePointer + 1));
     context.sp() = framePointer + 2;
     static_assert(prologueStackPointerDelta() == sizeof(void*) * 2);
 #else
 #error Unsupported architecture.
 #endif
     // 4. Configure argument registers to jump to OSR entry from the caller of this runtime function.
-    context.gpr(GPRInfo::argumentGPR0) = bitwise_cast<UCPURegister>(buffer); // Modify this only when we definitely tier up.
-    context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = bitwise_cast<UCPURegister>(osrEntryCallee.entrypoint().taggedPtr<>());
+    context.gpr(GPRInfo::argumentGPR0) = std::bit_cast<UCPURegister>(buffer); // Modify this only when we definitely tier up.
+    context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = std::bit_cast<UCPURegister>(osrEntryCallee.entrypoint().taggedPtr<>());
 }
 
 inline bool shouldOMGJIT(JSWebAssemblyInstance* instance, unsigned functionIndex)
@@ -1142,7 +1142,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmTriggerOSREntryNow, void, (Probe:
 
 JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe::Context & context))
 {
-    uint64_t* osrEntryScratchBuffer = bitwise_cast<uint64_t*>(context.gpr(GPRInfo::argumentGPR0));
+    uint64_t* osrEntryScratchBuffer = std::bit_cast<uint64_t*>(context.gpr(GPRInfo::argumentGPR0));
     unsigned loopIndex = osrEntryScratchBuffer[0]; // First entry in scratch buffer is the loop index when tiering up to BBQ.
 
     // We just populated the callee in the frame before we entered this operation, so let's use it.
@@ -1162,19 +1162,19 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe:
             ASSERT(type.isFloat()); // We don't expect vectors from LLInt right now.
             context.fpr(value.fpr()) = encodedValue;
         } else if (value.isStack()) {
-            auto* baseStore = bitwise_cast<uint8_t*>(context.fp()) + value.offsetFromFP();
+            auto* baseStore = std::bit_cast<uint8_t*>(context.fp()) + value.offsetFromFP();
             switch (type.kind()) {
             case B3::Int32:
-                *bitwise_cast<uint32_t*>(baseStore) = static_cast<uint32_t>(encodedValue);
+                *std::bit_cast<uint32_t*>(baseStore) = static_cast<uint32_t>(encodedValue);
                 break;
             case B3::Int64:
-                *bitwise_cast<uint64_t*>(baseStore) = encodedValue;
+                *std::bit_cast<uint64_t*>(baseStore) = encodedValue;
                 break;
             case B3::Float:
-                *bitwise_cast<float*>(baseStore) = bitwise_cast<float>(static_cast<uint32_t>(encodedValue));
+                *std::bit_cast<float*>(baseStore) = std::bit_cast<float>(static_cast<uint32_t>(encodedValue));
                 break;
             case B3::Double:
-                *bitwise_cast<double*>(baseStore) = bitwise_cast<double>(encodedValue);
+                *std::bit_cast<double*>(baseStore) = std::bit_cast<double>(encodedValue);
                 break;
             case B3::V128:
                 RELEASE_ASSERT_NOT_REACHED_WITH_MESSAGE("We shouldn't be receiving v128 values when tiering up from LLInt into BBQ.");
@@ -1190,7 +1190,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationWasmLoopOSREnterBBQJIT, void, (Probe:
     for (const auto& entry : stackMap)
         writeValueToRep(osrEntryScratchBuffer[indexInScratchBuffer++], entry);
 
-    context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = bitwise_cast<UCPURegister>(callee.loopEntrypoints()[loopIndex].taggedPtr());
+    context.gpr(GPRInfo::nonPreservedNonArgumentGPR0) = std::bit_cast<UCPURegister>(callee.loopEntrypoints()[loopIndex].taggedPtr());
 }
 
 #endif
@@ -1383,10 +1383,10 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyI
             unboxedValue = value.toBigInt64(globalObject);
             break;
         case TypeKind::F32:
-            unboxedValue = bitwise_cast<uint32_t>(value.toFloat(globalObject));
+            unboxedValue = std::bit_cast<uint32_t>(value.toFloat(globalObject));
             break;
         case TypeKind::F64:
-            unboxedValue = bitwise_cast<uint64_t>(value.toNumber(globalObject));
+            unboxedValue = std::bit_cast<uint64_t>(value.toNumber(globalObject));
             break;
         default: {
             if (Wasm::isRefType(returnType)) {
@@ -1417,7 +1417,7 @@ JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationIterateResults, void, (JSWebAssemblyI
                 }
             } else
                 RELEASE_ASSERT_NOT_REACHED();
-            unboxedValue = bitwise_cast<uint64_t>(value);
+            unboxedValue = std::bit_cast<uint64_t>(value);
         }
         }
         RETURN_IF_EXCEPTION(scope, void());

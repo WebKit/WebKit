@@ -97,7 +97,7 @@ private:
 
 ALWAYS_INLINE static bool isSanePointer(const void* pointer)
 {
-    uintptr_t pointerAsInt = bitwise_cast<uintptr_t>(pointer);
+    uintptr_t pointerAsInt = std::bit_cast<uintptr_t>(pointer);
 #if CPU(ARM64) && CPU(ADDRESS64)
     // On ARM64, top byte ignore means we can ignore these bits for addresses.
     pointerAsInt &= std::numeric_limits<uintptr_t>::max() >> CHAR_BIT;
@@ -174,7 +174,7 @@ ALWAYS_INLINE void auditCell(VM&, JSValue);
 ALWAYS_INLINE void auditStructureID(StructureID);
 
 #if ENABLE(EXTRA_INTEGRITY_CHECKS) && USE(JSVALUE64)
-template<typename T> ALWAYS_INLINE T audit(T value) { return bitwise_cast<T>(doAudit(value)); }
+template<typename T> ALWAYS_INLINE T audit(T value) { return std::bit_cast<T>(doAudit(value)); }
 #else
 template<typename T> ALWAYS_INLINE T audit(T value) { return value; }
 #endif

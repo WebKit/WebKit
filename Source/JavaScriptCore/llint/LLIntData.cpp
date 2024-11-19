@@ -72,15 +72,15 @@ static void neuterOpcodeMaps()
 {
 #if CPU(ARM64E)
 #define SET_CRASH_TARGET(entry) do { \
-        void* crashTarget = bitwise_cast<void*>(llint_check_vm_entry_permission); \
-        uint64_t address = bitwise_cast<uint64_t>(&entry); \
-        uint64_t newTag = (bitwise_cast<uint64_t>(BytecodePtrTag) << 48) | address; \
+        void* crashTarget = reinterpret_cast<void*>(llint_check_vm_entry_permission); \
+        uint64_t address = std::bit_cast<uint64_t>(&entry); \
+        uint64_t newTag = (std::bit_cast<uint64_t>(BytecodePtrTag) << 48) | address; \
         void* signedTarget = ptrauth_auth_and_resign(crashTarget, ptrauth_key_function_pointer, 0, ptrauth_key_process_dependent_code, newTag); \
-        entry = bitwise_cast<Opcode>(signedTarget); \
+        entry = std::bit_cast<Opcode>(signedTarget); \
     } while (false)
 #else
 #define SET_CRASH_TARGET(entry) do { \
-        entry = bitwise_cast<Opcode>(llint_check_vm_entry_permission); \
+        entry = reinterpret_cast<Opcode>(llint_check_vm_entry_permission); \
     } while (false)
 #endif
     for (unsigned i = 0; i < numOpcodeIDs + numWasmOpcodeIDs; ++i) {

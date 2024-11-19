@@ -144,33 +144,33 @@ public:
     ALWAYS_INLINE int8_t i8() const { return m_value; }
     ALWAYS_INLINE uint8_t u8() const { return m_value; }
 
-    ALWAYS_INLINE intptr_t* ip() const { return bitwise_cast<intptr_t*>(m_value); }
-    ALWAYS_INLINE int8_t* i8p() const { return bitwise_cast<int8_t*>(m_value); }
-    ALWAYS_INLINE void* vp() const { return bitwise_cast<void*>(m_value); }
-    ALWAYS_INLINE const void* cvp() const { return bitwise_cast<const void*>(m_value); }
-    ALWAYS_INLINE CallFrame* callFrame() const { return bitwise_cast<CallFrame*>(m_value); }
-    ALWAYS_INLINE const void* instruction() const { return bitwise_cast<const void*>(m_value); }
-    ALWAYS_INLINE VM* vm() const { return bitwise_cast<VM*>(m_value); }
-    ALWAYS_INLINE JSCell* cell() const { return bitwise_cast<JSCell*>(m_value); }
-    ALWAYS_INLINE ProtoCallFrame* protoCallFrame() const { return bitwise_cast<ProtoCallFrame*>(m_value); }
-    ALWAYS_INLINE NativeFunction nativeFunc() const { return bitwise_cast<NativeFunction>(m_value); }
+    ALWAYS_INLINE intptr_t* ip() const { return std::bit_cast<intptr_t*>(m_value); }
+    ALWAYS_INLINE int8_t* i8p() const { return std::bit_cast<int8_t*>(m_value); }
+    ALWAYS_INLINE void* vp() const { return std::bit_cast<void*>(m_value); }
+    ALWAYS_INLINE const void* cvp() const { return std::bit_cast<const void*>(m_value); }
+    ALWAYS_INLINE CallFrame* callFrame() const { return std::bit_cast<CallFrame*>(m_value); }
+    ALWAYS_INLINE const void* instruction() const { return std::bit_cast<const void*>(m_value); }
+    ALWAYS_INLINE VM* vm() const { return std::bit_cast<VM*>(m_value); }
+    ALWAYS_INLINE JSCell* cell() const { return std::bit_cast<JSCell*>(m_value); }
+    ALWAYS_INLINE ProtoCallFrame* protoCallFrame() const { return std::bit_cast<ProtoCallFrame*>(m_value); }
+    ALWAYS_INLINE NativeFunction nativeFunc() const { return std::bit_cast<NativeFunction>(m_value); }
 #if USE(JSVALUE64)
     ALWAYS_INLINE int64_t i64() const { return m_value; }
     ALWAYS_INLINE uint64_t u64() const { return m_value; }
-    ALWAYS_INLINE EncodedJSValue encodedJSValue() const { return bitwise_cast<EncodedJSValue>(m_value); }
+    ALWAYS_INLINE EncodedJSValue encodedJSValue() const { return std::bit_cast<EncodedJSValue>(m_value); }
 #endif
-    ALWAYS_INLINE Opcode opcode() const { return bitwise_cast<Opcode>(m_value); }
+    ALWAYS_INLINE Opcode opcode() const { return std::bit_cast<Opcode>(m_value); }
 
-    operator CallFrame*() { return bitwise_cast<CallFrame*>(m_value); }
-    operator const JSInstruction*() { return bitwise_cast<const JSInstruction*>(m_value); }
-    operator JSCell*() { return bitwise_cast<JSCell*>(m_value); }
-    operator ProtoCallFrame*() { return bitwise_cast<ProtoCallFrame*>(m_value); }
-    operator Register*() { return bitwise_cast<Register*>(m_value); }
-    operator VM*() { return bitwise_cast<VM*>(m_value); }
-    operator CallLinkInfo*() { return bitwise_cast<CallLinkInfo*>(m_value); }
+    operator CallFrame*() { return std::bit_cast<CallFrame*>(m_value); }
+    operator const JSInstruction*() { return std::bit_cast<const JSInstruction*>(m_value); }
+    operator JSCell*() { return std::bit_cast<JSCell*>(m_value); }
+    operator ProtoCallFrame*() { return std::bit_cast<ProtoCallFrame*>(m_value); }
+    operator Register*() { return std::bit_cast<Register*>(m_value); }
+    operator VM*() { return std::bit_cast<VM*>(m_value); }
+    operator CallLinkInfo*() { return std::bit_cast<CallLinkInfo*>(m_value); }
 
     template<typename T, typename = std::enable_if_t<sizeof(T) == sizeof(uintptr_t)>>
-    ALWAYS_INLINE void operator=(T value) { m_value = bitwise_cast<uintptr_t>(value); }
+    ALWAYS_INLINE void operator=(T value) { m_value = std::bit_cast<uintptr_t>(value); }
 #if USE(JSVALUE64)
     ALWAYS_INLINE void operator=(int32_t value) { m_value = static_cast<intptr_t>(value); }
     ALWAYS_INLINE void operator=(uint32_t value) { m_value = static_cast<uintptr_t>(value); }
@@ -182,8 +182,8 @@ public:
     ALWAYS_INLINE void operator=(bool value) { m_value = static_cast<uintptr_t>(value); }
 
 #if USE(JSVALUE64)
-    ALWAYS_INLINE double bitsAsDouble() const { return bitwise_cast<double>(m_value); }
-    ALWAYS_INLINE int64_t bitsAsInt64() const { return bitwise_cast<int64_t>(m_value); }
+    ALWAYS_INLINE double bitsAsDouble() const { return std::bit_cast<double>(m_value); }
+    ALWAYS_INLINE int64_t bitsAsInt64() const { return std::bit_cast<int64_t>(m_value); }
 #endif
 
 private:
@@ -193,15 +193,15 @@ private:
 class CLoopDoubleRegister {
 public:
     template<typename T>
-    explicit operator T() const { return bitwise_cast<T>(m_value); }
+    explicit operator T() const { return std::bit_cast<T>(m_value); }
 
     ALWAYS_INLINE double d() const { return m_value; }
-    ALWAYS_INLINE int64_t bitsAsInt64() const { return bitwise_cast<int64_t>(m_value); }
+    ALWAYS_INLINE int64_t bitsAsInt64() const { return std::bit_cast<int64_t>(m_value); }
 
     ALWAYS_INLINE void operator=(double value) { m_value = value; }
 
     template<typename T, typename = std::enable_if_t<sizeof(T) == sizeof(uintptr_t) && std::is_integral<T>::value>>
-    ALWAYS_INLINE void operator=(T value) { m_value = bitwise_cast<double>(value); }
+    ALWAYS_INLINE void operator=(T value) { m_value = std::bit_cast<double>(value); }
 
 private:
     double m_value;
@@ -217,12 +217,12 @@ namespace LLInt {
 static double ints2Double(uint32_t lo, uint32_t hi)
 {
     uint64_t value = (static_cast<uint64_t>(hi) << 32) | lo;
-    return bitwise_cast<double>(value);
+    return std::bit_cast<double>(value);
 }
 
 static void double2Ints(double val, CLoopRegister& lo, CLoopRegister& hi)
 {
-    uint64_t value = bitwise_cast<uint64_t>(val);
+    uint64_t value = std::bit_cast<uint64_t>(val);
     hi = static_cast<uint32_t>(value >> 32);
     lo = static_cast<uint32_t>(value);
 }
@@ -245,7 +245,7 @@ static void decodeResult(UGPRPair result, CLoopRegister& t0, CLoopRegister& t1)
 
 JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, ProtoCallFrame* protoCallFrame, bool isInitializationPass)
 {
-#define CAST bitwise_cast
+#define CAST std::bit_cast
 
     // One-time initialization of our address tables. We have to put this code
     // here because our labels are only in scope inside this function. The
@@ -259,12 +259,12 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
 
 #if ENABLE(COMPUTED_GOTO_OPCODES)
         #define OPCODE_ENTRY(__opcode, length) \
-            opcodeMap[__opcode] = bitwise_cast<void*>(&&__opcode); \
-            opcodeMapWide16[__opcode] = bitwise_cast<void*>(&&__opcode##_wide16); \
-            opcodeMapWide32[__opcode] = bitwise_cast<void*>(&&__opcode##_wide32);
+            opcodeMap[__opcode] = std::bit_cast<void*>(&&__opcode); \
+            opcodeMapWide16[__opcode] = std::bit_cast<void*>(&&__opcode##_wide16); \
+            opcodeMapWide32[__opcode] = std::bit_cast<void*>(&&__opcode##_wide32);
 
         #define LLINT_OPCODE_ENTRY(__opcode, length) \
-            opcodeMap[__opcode] = bitwise_cast<void*>(&&__opcode);
+            opcodeMap[__opcode] = std::bit_cast<void*>(&&__opcode);
 #else
         // FIXME: this mapping is unnecessarily expensive in the absence of COMPUTED_GOTO
         //   narrow opcodes don't need any mapping and wide opcodes just need to add numOpcodeIDs

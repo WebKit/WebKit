@@ -421,7 +421,7 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
     reservation.pageReservation = tryCreatePageReservation(reservation.size);
 
     if (Options::verboseExecutablePoolAllocation())
-        dataLog(getpid(), ": Got executable pool reservation at ", RawPointer(reservation.pageReservation.base()), "...", RawPointer(reservation.pageReservation.end()), ", while I'm at ", RawPointer(bitwise_cast<void*>(initializeJITPageReservation)), "\n");
+        dataLog(getpid(), ": Got executable pool reservation at ", RawPointer(reservation.pageReservation.base()), "...", RawPointer(reservation.pageReservation.end()), ", while I'm at ", RawPointer(reinterpret_cast<void*>(initializeJITPageReservation)), "\n");
     
     if (reservation.pageReservation) {
         ASSERT(reservation.pageReservation.size() == reservation.size);
@@ -447,15 +447,15 @@ static ALWAYS_INLINE JITReservation initializeJITPageReservation()
 
 #if !USE(SYSTEM_MALLOC)
         static_assert(WebConfig::reservedSlotsForExecutableAllocator >= 2);
-        WebConfig::g_config[0] = bitwise_cast<uintptr_t>(reservation.base);
-        WebConfig::g_config[1] = bitwise_cast<uintptr_t>(reservationEnd);
+        WebConfig::g_config[0] = std::bit_cast<uintptr_t>(reservation.base);
+        WebConfig::g_config[1] = std::bit_cast<uintptr_t>(reservationEnd);
 #endif
 
 #if HAVE(KDEBUG_H)
         {
             uint64_t pid = getCurrentProcessID();
-            auto uuid = WTF::UUID::createVersion5(jscJITNamespace, std::span { bitwise_cast<const uint8_t*>(&pid), sizeof(pid) });
-            kdebug_trace(KDBG_CODE(DBG_DYLD, DBG_DYLD_UUID, DBG_DYLD_UUID_MAP_A), WTF::byteSwap64(uuid.high()), WTF::byteSwap64(uuid.low()), bitwise_cast<uintptr_t>(reservation.base), 0);
+            auto uuid = WTF::UUID::createVersion5(jscJITNamespace, std::span { std::bit_cast<const uint8_t*>(&pid), sizeof(pid) });
+            kdebug_trace(KDBG_CODE(DBG_DYLD, DBG_DYLD_UUID, DBG_DYLD_UUID_MAP_A), WTF::byteSwap64(uuid.high()), WTF::byteSwap64(uuid.low()), std::bit_cast<uintptr_t>(reservation.base), 0);
         }
 #endif
     }
@@ -519,8 +519,8 @@ public:
             const unsigned numAllocators = (reservation.size + m_regionSize - 1) / m_regionSize;
             m_allocators = FixedVector<RegionAllocator>::createWithSizeAndConstructorArguments(numAllocators, *this);
 
-            uintptr_t start = bitwise_cast<uintptr_t>(memoryStart());
-            uintptr_t reservationEnd = bitwise_cast<uintptr_t>(memoryEnd());
+            uintptr_t start = std::bit_cast<uintptr_t>(memoryStart());
+            uintptr_t reservationEnd = std::bit_cast<uintptr_t>(memoryEnd());
             for (size_t i = 0; i < numAllocators; ++i) {
                 uintptr_t end = start + m_regionSize;
                 uintptr_t islandBegin = end - islandRegionSize;
@@ -539,8 +539,8 @@ public:
 #endif
 
 #if ENABLE(MPROTECT_RX_TO_RWX)
-            ptrdiff_t pagesInReservation = (bitwise_cast<uint8_t*>(g_jscConfig.endExecutableMemory) - bitwise_cast<uint8_t*>(g_jscConfig.startExecutableMemory)) / executablePageSize();
-            m_pageWriterCounts = bitwise_cast<uint8_t*>(WTF::fastZeroedMalloc(pagesInReservation));
+            ptrdiff_t pagesInReservation = (std::bit_cast<uint8_t*>(g_jscConfig.endExecutableMemory) - std::bit_cast<uint8_t*>(g_jscConfig.startExecutableMemory)) / executablePageSize();
+            m_pageWriterCounts = std::bit_cast<uint8_t*>(WTF::fastZeroedMalloc(pagesInReservation));
 #endif
         }
     }
@@ -665,7 +665,7 @@ public:
     bool isInAllocatedMemory(const AbstractLocker& locker, void* address)
     {
 #if ENABLE(JUMP_ISLANDS)
-        if (RegionAllocator* allocator = findRegion(bitwise_cast<uintptr_t>(address)))
+        if (RegionAllocator* allocator = findRegion(std::bit_cast<uintptr_t>(address)))
             return allocator->isInAllocatedMemory(locker, address);
         return false;
 #else
@@ -685,8 +685,8 @@ public:
 #if ENABLE(MPROTECT_RX_TO_RWX)
     static std::pair<size_t, size_t> pageRangeForWrittenRegion(const void* start, size_t sizeInBytes, size_t pageSize)
     {
-        size_t startPage = bitwise_cast<uintptr_t>(bitwise_cast<uint8_t*>(start) - bitwise_cast<uint8_t*>(g_jscConfig.startExecutableMemory)) / pageSize;
-        size_t endPage = WTF::roundUpToMultipleOf(pageSize, bitwise_cast<uintptr_t>(start) - bitwise_cast<uintptr_t>(g_jscConfig.startExecutableMemory) + sizeInBytes) / pageSize;
+        size_t startPage = std::bit_cast<uintptr_t>(std::bit_cast<uint8_t*>(start) - std::bit_cast<uint8_t*>(g_jscConfig.startExecutableMemory)) / pageSize;
+        size_t endPage = WTF::roundUpToMultipleOf(pageSize, std::bit_cast<uintptr_t>(start) - std::bit_cast<uintptr_t>(g_jscConfig.startExecutableMemory) + sizeInBytes) / pageSize;
         return { startPage, endPage };
     }
 
@@ -694,7 +694,7 @@ public:
     {
         size_t pageSize = executablePageSize();
         auto [startPage, endPage] = pageRangeForWrittenRegion(start, sizeInBytes, pageSize);
-        uint8_t* startAddress = bitwise_cast<uint8_t*>(g_jscConfig.startExecutableMemory);
+        uint8_t* startAddress = std::bit_cast<uint8_t*>(g_jscConfig.startExecutableMemory);
 
         {
             Locker locker(m_pageLock);
@@ -717,7 +717,7 @@ public:
     {
         size_t pageSize = executablePageSize();
         auto [startPage, endPage] = pageRangeForWrittenRegion(start, sizeInBytes, pageSize);
-        uint8_t* startAddress = bitwise_cast<uint8_t*>(g_jscConfig.startExecutableMemory);
+        uint8_t* startAddress = std::bit_cast<uint8_t*>(g_jscConfig.startExecutableMemory);
 
         {
             Locker locker(m_pageLock);
@@ -824,7 +824,7 @@ private:
     void freeJumpIslands(const Locker<Lock>&, Islands* islands)
     {
         for (CodeLocationLabel<ExecutableMemoryPtrTag> jumpIsland : islands->jumpIslands) {
-            uintptr_t untaggedJumpIsland = bitwise_cast<uintptr_t>(jumpIsland.dataLocation());
+            uintptr_t untaggedJumpIsland = std::bit_cast<uintptr_t>(jumpIsland.dataLocation());
             RegionAllocator* allocator = findRegion(untaggedJumpIsland);
             RELEASE_ASSERT(allocator);
             allocator->freeIsland(untaggedJumpIsland);
@@ -841,7 +841,7 @@ private:
 
     void* islandForJumpLocation(const Locker<Lock>& locker, uintptr_t jumpLocation, uintptr_t target, bool concurrently, bool useMemcpy)
     {
-        Islands* islands = m_islandsForJumpSourceLocation.findExact(bitwise_cast<void*>(jumpLocation));
+        Islands* islands = m_islandsForJumpSourceLocation.findExact(std::bit_cast<void*>(jumpLocation));
         if (islands) {
             // FIXME: We could create some method of reusing already allocated islands here, but it's
             // unlikely to matter in practice.
@@ -849,7 +849,7 @@ private:
                 freeJumpIslands(locker, islands);
         } else {
             islands = new Islands;
-            islands->jumpSourceLocation = CodeLocationLabel<ExecutableMemoryPtrTag>(tagCodePtr<ExecutableMemoryPtrTag>(bitwise_cast<void*>(jumpLocation)));
+            islands->jumpSourceLocation = CodeLocationLabel<ExecutableMemoryPtrTag>(tagCodePtr<ExecutableMemoryPtrTag>(std::bit_cast<void*>(jumpLocation)));
             m_islandsForJumpSourceLocation.insert(islands);
         }
 
@@ -857,20 +857,20 @@ private:
         RELEASE_ASSERT(allocator);
         void* result = allocator->allocateIsland();
         void* currentIsland = result;
-        jumpLocation = bitwise_cast<uintptr_t>(currentIsland);
+        jumpLocation = std::bit_cast<uintptr_t>(currentIsland);
         while (true) {
             islands->jumpIslands.append(CodeLocationLabel<ExecutableMemoryPtrTag>(tagCodePtr<ExecutableMemoryPtrTag>(currentIsland)));
 
             auto emitJumpTo = [&] (void* target) {
-                RELEASE_ASSERT(Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), target));
+                RELEASE_ASSERT(Assembler::canEmitJump(std::bit_cast<void*>(jumpLocation), target));
                 if (useMemcpy)
                     Assembler::fillNearTailCall<MachineCodeCopyMode::Memcpy>(currentIsland, target);
                 else
                     Assembler::fillNearTailCall<MachineCodeCopyMode::JITMemcpy>(currentIsland, target);
             };
 
-            if (Assembler::canEmitJump(bitwise_cast<void*>(jumpLocation), bitwise_cast<void*>(target))) {
-                emitJumpTo(bitwise_cast<void*>(target));
+            if (Assembler::canEmitJump(std::bit_cast<void*>(jumpLocation), std::bit_cast<void*>(target))) {
+                emitJumpTo(std::bit_cast<void*>(target));
                 break;
             }
 
@@ -884,7 +884,7 @@ private:
             RELEASE_ASSERT(allocator);
             void* nextIsland = allocator->allocateIsland();
             emitJumpTo(nextIsland);
-            jumpLocation = bitwise_cast<uintptr_t>(nextIsland);
+            jumpLocation = std::bit_cast<uintptr_t>(nextIsland);
             currentIsland = nextIsland;
         }
 
@@ -969,21 +969,21 @@ private:
         {
             RELEASE_ASSERT(start < islandBegin);
             RELEASE_ASSERT(islandBegin <= end);
-            m_start = bitwise_cast<void*>(start);
-            m_islandBegin = bitwise_cast<void*>(islandBegin);
-            m_end = bitwise_cast<void*>(end);
+            m_start = std::bit_cast<void*>(start);
+            m_islandBegin = std::bit_cast<void*>(islandBegin);
+            m_end = std::bit_cast<void*>(end);
             RELEASE_ASSERT(!((this->islandBegin() - this->start()) % executablePageSize()));
             RELEASE_ASSERT(!((this->end() - this->islandBegin()) % executablePageSize()));
-            addFreshFreeSpace(bitwise_cast<void*>(this->start()), allocatorSize());
+            addFreshFreeSpace(std::bit_cast<void*>(this->start()), allocatorSize());
         }
 
         //  ------------------------------------
         //  | jit allocations -->   <-- islands |
         //  -------------------------------------
 
-        uintptr_t start() { return bitwise_cast<uintptr_t>(m_start); }
-        uintptr_t islandBegin() { return bitwise_cast<uintptr_t>(m_islandBegin); }
-        uintptr_t end() { return bitwise_cast<uintptr_t>(m_end); }
+        uintptr_t start() { return reinterpret_cast<uintptr_t>(m_start); }
+        uintptr_t islandBegin() { return reinterpret_cast<uintptr_t>(m_islandBegin); }
+        uintptr_t end() { return reinterpret_cast<uintptr_t>(m_end); }
 
         size_t maxIslandsInThisRegion() { return (end() - islandBegin()) / islandSizeInBytes; }
 
@@ -1018,7 +1018,7 @@ private:
                     return nullptr;
                 islandBits[resultBit] = true;
                 uintptr_t result = end - ((resultBit + 1) * islandSizeInBytes); 
-                return bitwise_cast<void*>(result);
+                return std::bit_cast<void*>(result);
             };
 
             if (void* result = findResult())
@@ -1035,7 +1035,7 @@ private:
             islandBits.resize(newSize);
 
             uintptr_t islandsBegin = end - (newSize * islandSizeInBytes); // [islandsBegin, end)
-            m_fixedAllocator.m_reservation.commit(bitwise_cast<void*>(islandsBegin), (newSize - oldSize) * islandSizeInBytes);
+            m_fixedAllocator.m_reservation.commit(std::bit_cast<void*>(islandsBegin), (newSize - oldSize) * islandSizeInBytes);
 
             void* result = findResult();
             RELEASE_ASSERT(result);
@@ -1067,7 +1067,7 @@ private:
         {
             if (Base::isInAllocatedMemory(locker, address))
                 return true;
-            if (std::optional<size_t> bit = islandBit(bitwise_cast<uintptr_t>(address))) {
+            if (std::optional<size_t> bit = islandBit(std::bit_cast<uintptr_t>(address))) {
                 if (bit.value() < islandBits.size())
                     return !!islandBits[bit.value()];
             }
@@ -1283,7 +1283,7 @@ void* ExecutableAllocator::getJumpIslandToUsingJITMemcpy(void* from, void* newDe
 
     constexpr bool concurrently = false;
     constexpr bool useMemcpy = false;
-    return allocator->makeIsland(bitwise_cast<uintptr_t>(from), bitwise_cast<uintptr_t>(newDestination), concurrently, useMemcpy);
+    return allocator->makeIsland(std::bit_cast<uintptr_t>(from), std::bit_cast<uintptr_t>(newDestination), concurrently, useMemcpy);
 }
 
 void* ExecutableAllocator::getJumpIslandToUsingMemcpy(void* from, void* newDestination)
@@ -1294,7 +1294,7 @@ void* ExecutableAllocator::getJumpIslandToUsingMemcpy(void* from, void* newDesti
 
     constexpr bool concurrently = false;
     constexpr bool useMemcpy = true;
-    return allocator->makeIsland(bitwise_cast<uintptr_t>(from), bitwise_cast<uintptr_t>(newDestination), concurrently, useMemcpy);
+    return allocator->makeIsland(std::bit_cast<uintptr_t>(from), std::bit_cast<uintptr_t>(newDestination), concurrently, useMemcpy);
 }
 
 void* ExecutableAllocator::getJumpIslandToConcurrently(void* from, void* newDestination)
@@ -1305,7 +1305,7 @@ void* ExecutableAllocator::getJumpIslandToConcurrently(void* from, void* newDest
 
     constexpr bool concurrently = true;
     constexpr bool useMemcpy = false;
-    return allocator->makeIsland(bitwise_cast<uintptr_t>(from), bitwise_cast<uintptr_t>(newDestination), concurrently, useMemcpy);
+    return allocator->makeIsland(std::bit_cast<uintptr_t>(from), std::bit_cast<uintptr_t>(newDestination), concurrently, useMemcpy);
 }
 #endif
 
@@ -1379,7 +1379,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
 
     static std::once_flag once;
     std::call_once(once, [] {
-        buffer = bitwise_cast<uint8_t*>(malloc(bufferSize));
+        buffer = std::bit_cast<uint8_t*>(malloc(bufferSize));
         flushQueue.construct(WorkQueue::create("jsc.dumpJITMemory.queue"_s, WorkQueue::QOS::Background));
         std::atexit([] {
             Locker locker { dumpJITMemoryLock };
@@ -1391,7 +1391,7 @@ void dumpJITMemory(const void* dst, const void* src, size_t size)
 
     Locker locker { dumpJITMemoryLock };
     uint64_t time = mach_absolute_time();
-    uint64_t dst64 = bitwise_cast<uintptr_t>(dst);
+    uint64_t dst64 = std::bit_cast<uintptr_t>(dst);
     uint64_t size64 = size;
     TraceScope(DumpJITMemoryStart, DumpJITMemoryStop, time, dst64, size64);
     DumpJIT::write(&time, sizeof(time));

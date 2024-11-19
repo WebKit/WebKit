@@ -205,7 +205,7 @@ public:
     unsigned size() const { return m_size; }
     ValueProfileAndVirtualRegister* data() const
     {
-        return bitwise_cast<ValueProfileAndVirtualRegister*>(this + 1);
+        return std::bit_cast<ValueProfileAndVirtualRegister*>(this + 1);
     }
 
     std::span<ValueProfileAndVirtualRegister> span() { return { data(), size() }; }

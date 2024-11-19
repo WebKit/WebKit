@@ -324,7 +324,7 @@ bool VerifierSlotVisitor::isFirstVisit() const
 
 bool VerifierSlotVisitor::isMarked(const void* rawCell) const
 {
-    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
+    HeapCell* cell = std::bit_cast<HeapCell*>(rawCell);
     if (cell->isPreciseAllocation())
         return isMarked(cell->preciseAllocation(), cell);
     return isMarked(cell->markedBlock(), cell);
@@ -348,7 +348,7 @@ bool VerifierSlotVisitor::isMarked(MarkedBlock& block, HeapCell* cell) const
 
 void VerifierSlotVisitor::markAuxiliary(const void* base)
 {
-    HeapCell* cell = bitwise_cast<HeapCell*>(base);
+    HeapCell* cell = std::bit_cast<HeapCell*>(base);
 
     ASSERT(cell->heap() == heap());
     testAndSetMarked(cell);
@@ -361,7 +361,7 @@ bool VerifierSlotVisitor::mutatorIsStopped() const
 
 bool VerifierSlotVisitor::testAndSetMarked(const void* rawCell)
 {
-    HeapCell* cell = bitwise_cast<HeapCell*>(rawCell);
+    HeapCell* cell = std::bit_cast<HeapCell*>(rawCell);
     if (cell->isPreciseAllocation())
         return testAndSetMarked(cell->preciseAllocation());
     return testAndSetMarked(cell->markedBlock(), cell);

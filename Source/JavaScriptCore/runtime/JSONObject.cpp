@@ -853,8 +853,8 @@ inline unsigned FastStringifier<CharType, bufferMode>::usableBufferSize(unsigned
     //    a workload that recurses deeply. We expect such workloads to be rare.
 
     auto& stack = Thread::current().stack();
-    uint8_t* stackPointer = bitwise_cast<uint8_t*>(currentStackPointer());
-    uint8_t* stackLimit = bitwise_cast<uint8_t*>(stack.recursionLimit());
+    uint8_t* stackPointer = std::bit_cast<uint8_t*>(currentStackPointer());
+    uint8_t* stackLimit = std::bit_cast<uint8_t*>(stack.recursionLimit());
     size_t stackCapacityForRecursion = stackPointer - stackLimit;
 
 #if ASAN_ENABLED
@@ -883,7 +883,7 @@ inline FastStringifier<CharType, bufferMode>::FastStringifier(JSGlobalObject& gl
     else {
         m_dynamicBuffer.grow(dynamicBufferInlineCapacity);
         m_capacity = dynamicBufferInlineCapacity;
-        m_stackLimit = bitwise_cast<uint8_t*>(m_vm.softStackLimit());
+        m_stackLimit = std::bit_cast<uint8_t*>(m_vm.softStackLimit());
     }
 }
 
@@ -1072,8 +1072,8 @@ static ALWAYS_INLINE bool stringCopySameType(std::span<const CharType> span, Cha
         auto* cursorEnd = cursor + span.size();
         BulkType accumulated { };
         for (; ptr + (stride - 1) < end; ptr += stride, cursor += stride) {
-            auto input = SIMD::load(bitwise_cast<const UnsignedType*>(ptr));
-            SIMD::store(input, bitwise_cast<UnsignedType*>(cursor));
+            auto input = SIMD::load(std::bit_cast<const UnsignedType*>(ptr));
+            SIMD::store(input, std::bit_cast<UnsignedType*>(cursor));
             auto quotes = SIMD::equal(input, quoteMask);
             auto escapes = SIMD::equal(input, escapeMask);
             auto controls = SIMD::lessThan(input, controlMask);
@@ -1085,8 +1085,8 @@ static ALWAYS_INLINE bool stringCopySameType(std::span<const CharType> span, Cha
             }
         }
         if (ptr < end) {
-            auto input = SIMD::load(bitwise_cast<const UnsignedType*>(end - stride));
-            SIMD::store(input, bitwise_cast<UnsignedType*>(cursorEnd - stride));
+            auto input = SIMD::load(std::bit_cast<const UnsignedType*>(end - stride));
+            SIMD::store(input, std::bit_cast<UnsignedType*>(cursorEnd - stride));
             auto quotes = SIMD::equal(input, quoteMask);
             auto escapes = SIMD::equal(input, escapeMask);
             auto controls = SIMD::lessThan(input, controlMask);
@@ -1128,16 +1128,16 @@ static ALWAYS_INLINE bool stringCopyUpconvert(std::span<const LChar> span, UChar
         auto* cursorEnd = cursor + span.size();
         BulkType accumulated { };
         for (; ptr + (stride - 1) < end; ptr += stride, cursor += stride) {
-            auto input = SIMD::load(bitwise_cast<const UnsignedType*>(ptr));
-            simde_vst2q_u8(bitwise_cast<UnsignedType*>(cursor), (simde_uint8x16x2_t { input, zeros }));
+            auto input = SIMD::load(std::bit_cast<const UnsignedType*>(ptr));
+            simde_vst2q_u8(std::bit_cast<UnsignedType*>(cursor), (simde_uint8x16x2_t { input, zeros }));
             auto quotes = SIMD::equal(input, quoteMask);
             auto escapes = SIMD::equal(input, escapeMask);
             auto controls = SIMD::lessThan(input, controlMask);
             accumulated = SIMD::bitOr(accumulated, quotes, escapes, controls);
         }
         if (ptr < end) {
-            auto input = SIMD::load(bitwise_cast<const UnsignedType*>(end - stride));
-            simde_vst2q_u8(bitwise_cast<UnsignedType*>(cursorEnd - stride), (simde_uint8x16x2_t { input, zeros }));
+            auto input = SIMD::load(std::bit_cast<const UnsignedType*>(end - stride));
+            simde_vst2q_u8(std::bit_cast<UnsignedType*>(cursorEnd - stride), (simde_uint8x16x2_t { input, zeros }));
             auto quotes = SIMD::equal(input, quoteMask);
             auto escapes = SIMD::equal(input, escapeMask);
             auto controls = SIMD::lessThan(input, controlMask);
@@ -1158,7 +1158,7 @@ template<typename CharType, BufferMode bufferMode>
 void FastStringifier<CharType, bufferMode>::append(JSValue value)
 {
     if constexpr (bufferMode == BufferMode::DynamicBuffer) {
-        if (UNLIKELY(bitwise_cast<uint8_t*>(currentStackPointer()) < m_stackLimit)) {
+        if (UNLIKELY(std::bit_cast<uint8_t*>(currentStackPointer()) < m_stackLimit)) {
             recordFailure(FailureReason::StackOverflow, "stack overflow"_s);
             return;
         }
@@ -1187,7 +1187,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             return;
         }
         if constexpr (sizeof(CharType) == 1) {
-            char* cursor = bitwise_cast<char*>(buffer()) + m_length;
+            char* cursor = std::bit_cast<char*>(buffer()) + m_length;
             auto result = std::to_chars(cursor, cursor + maxInt32StringLength, number);
             ASSERT(result.ec != std::errc::value_too_large);
             m_length += result.ptr - cursor;
@@ -1196,7 +1196,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             auto result = std::to_chars(temporary.data(), temporary.data() + maxInt32StringLength, number);
             ASSERT(result.ec != std::errc::value_too_large);
             unsigned lengthToCopy = result.ptr - temporary.data();
-            WTF::copyElements(bitwise_cast<uint16_t*>(buffer() + m_length), bitwise_cast<const uint8_t*>(temporary.data()), lengthToCopy);
+            WTF::copyElements(std::bit_cast<uint16_t*>(buffer() + m_length), std::bit_cast<const uint8_t*>(temporary.data()), lengthToCopy);
             m_length += lengthToCopy;
         }
         return;
@@ -1219,7 +1219,7 @@ void FastStringifier<CharType, bufferMode>::append(JSValue value)
             std::array<char, WTF::dragonbox::max_string_length<WTF::dragonbox::ieee754_binary64>()> temporary;
             const char* cursor = WTF::dragonbox::detail::to_chars_n<WTF::dragonbox::Mode::ToShortest>(number, temporary.data());
             size_t length = cursor - temporary.data();
-            WTF::copyElements(bitwise_cast<uint16_t*>(buffer() + m_length), bitwise_cast<const uint8_t*>(temporary.data()), length);
+            WTF::copyElements(std::bit_cast<uint16_t*>(buffer() + m_length), std::bit_cast<const uint8_t*>(temporary.data()), length);
             m_length += length;
         }
         return;
@@ -1470,8 +1470,8 @@ inline String FastStringifier<CharType, bufferMode>::stringify(JSGlobalObject& g
 static NEVER_INLINE String stringify(JSGlobalObject& globalObject, JSValue value, JSValue replacer, JSValue space)
 {
     VM& vm = globalObject.vm();
-    uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
-    if (LIKELY(bitwise_cast<uint8_t*>(currentStackPointer()) >= stackLimit)) {
+    uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
+    if (LIKELY(std::bit_cast<uint8_t*>(currentStackPointer()) >= stackLimit)) {
         std::optional<FailureReason> failureReason;
         failureReason = std::nullopt;
         if (String result = FastStringifier<LChar, BufferMode::StaticBuffer>::stringify(globalObject, value, replacer, space, failureReason); !result.isNull())

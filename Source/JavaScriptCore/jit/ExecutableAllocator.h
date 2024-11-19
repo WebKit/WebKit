@@ -100,13 +100,13 @@ JS_EXPORT_PRIVATE void* endOfFixedExecutableMemoryPoolImpl();
 template<typename T = void*>
 T startOfFixedExecutableMemoryPool()
 {
-    return bitwise_cast<T>(startOfFixedExecutableMemoryPoolImpl());
+    return std::bit_cast<T>(startOfFixedExecutableMemoryPoolImpl());
 }
 
 template<typename T = void*>
 T endOfFixedExecutableMemoryPool()
 {
-    return bitwise_cast<T>(endOfFixedExecutableMemoryPoolImpl());
+    return std::bit_cast<T>(endOfFixedExecutableMemoryPoolImpl());
 }
 
 ALWAYS_INLINE bool isJITPC(void* pc)

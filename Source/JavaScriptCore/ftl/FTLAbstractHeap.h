@@ -198,7 +198,7 @@ public:
     
     const AbstractHeap& at(const void* address)
     {
-        return m_indexedHeap.at(bitwise_cast<ptrdiff_t>(address));
+        return m_indexedHeap.at(std::bit_cast<ptrdiff_t>(address));
     }
     
     const AbstractHeap& operator[](const void* address) { return at(address); }

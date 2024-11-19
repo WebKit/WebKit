@@ -955,13 +955,13 @@ TypedPointer Output::absolute(const void* address)
 
 void Output::incrementSuperSamplerCount()
 {
-    TypedPointer counter = absolute(bitwise_cast<void*>(&g_superSamplerCount));
+    TypedPointer counter = absolute(std::bit_cast<void*>(&g_superSamplerCount));
     store32(add(load32(counter), int32One), counter);
 }
 
 void Output::decrementSuperSamplerCount()
 {
-    TypedPointer counter = absolute(bitwise_cast<void*>(&g_superSamplerCount));
+    TypedPointer counter = absolute(std::bit_cast<void*>(&g_superSamplerCount));
     store32(sub(load32(counter), int32One), counter);
 }
 

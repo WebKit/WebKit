@@ -41,7 +41,7 @@ void doTest(const char* commands)
 {
     ConcurrentPtrHashSet set;
     for (const char* command = commands; command[0] && command[1]; command += 2) {
-        void* ptr = bitwise_cast<void*>(static_cast<uintptr_t>(command[1]));
+        void* ptr = std::bit_cast<void*>(static_cast<uintptr_t>(command[1]));
         switch (command[0]) {
         case '+':
             EXPECT_TRUE(set.add(ptr));

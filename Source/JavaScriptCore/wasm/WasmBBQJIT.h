@@ -1451,22 +1451,22 @@ public:
 
     inline float floatCopySign(float lhs, float rhs)
     {
-        uint32_t lhsAsInt32 = bitwise_cast<uint32_t>(lhs);
-        uint32_t rhsAsInt32 = bitwise_cast<uint32_t>(rhs);
+        uint32_t lhsAsInt32 = std::bit_cast<uint32_t>(lhs);
+        uint32_t rhsAsInt32 = std::bit_cast<uint32_t>(rhs);
         lhsAsInt32 &= 0x7fffffffu;
         rhsAsInt32 &= 0x80000000u;
         lhsAsInt32 |= rhsAsInt32;
-        return bitwise_cast<float>(lhsAsInt32);
+        return std::bit_cast<float>(lhsAsInt32);
     }
 
     inline double doubleCopySign(double lhs, double rhs)
     {
-        uint64_t lhsAsInt64 = bitwise_cast<uint64_t>(lhs);
-        uint64_t rhsAsInt64 = bitwise_cast<uint64_t>(rhs);
+        uint64_t lhsAsInt64 = std::bit_cast<uint64_t>(lhs);
+        uint64_t rhsAsInt64 = std::bit_cast<uint64_t>(rhs);
         lhsAsInt64 &= 0x7fffffffffffffffu;
         rhsAsInt64 &= 0x8000000000000000u;
         lhsAsInt64 |= rhsAsInt64;
-        return bitwise_cast<double>(lhsAsInt64);
+        return std::bit_cast<double>(lhsAsInt64);
     }
 
     PartialResult WARN_UNUSED_RETURN addI32And(Value lhs, Value rhs, Value& result);

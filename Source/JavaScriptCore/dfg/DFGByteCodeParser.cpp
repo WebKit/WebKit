@@ -7701,7 +7701,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     } else if (auto* string = property->dynamicCastConstant<JSString*>()) {
                         auto* impl = string->tryGetValueImpl();
                         if (impl && impl->isAtom() && !parseIndex(*const_cast<StringImpl*>(impl))) {
-                            uid = bitwise_cast<UniquedStringImpl*>(impl);
+                            uid = std::bit_cast<UniquedStringImpl*>(impl);
                             propertyCell = string;
                             m_graph.freezeStrong(string);
                             addToGraph(CheckIdent, OpInfo(uid), property);
@@ -9191,7 +9191,7 @@ void ByteCodeParser::parseBlock(unsigned limit)
                     // though accessing the global itself is. The segmentation involves a vector spine
                     // that resizes with malloc/free, so if new globals unrelated to the one we are
                     // reading are added, we might access freed memory if we do variableAt().
-                    WriteBarrier<Unknown>* pointer = bitwise_cast<WriteBarrier<Unknown>*>(operand);
+                    WriteBarrier<Unknown>* pointer = std::bit_cast<WriteBarrier<Unknown>*>(operand);
                     
                     ASSERT(scopeObject->findVariableIndex(pointer) == offset);
                     
@@ -10296,7 +10296,7 @@ void ByteCodeParser::handlePutByVal(Bytecode bytecode, BytecodeIndex osrExitInde
             } else if (auto* string = property->dynamicCastConstant<JSString*>()) {
                 auto* impl = string->tryGetValueImpl();
                 if (impl && impl->isAtom() && !parseIndex(*const_cast<StringImpl*>(impl))) {
-                    uid = bitwise_cast<UniquedStringImpl*>(impl);
+                    uid = std::bit_cast<UniquedStringImpl*>(impl);
                     propertyCell = string;
                     m_graph.freezeStrong(string);
                     addToGraph(CheckIdent, OpInfo(uid), property);

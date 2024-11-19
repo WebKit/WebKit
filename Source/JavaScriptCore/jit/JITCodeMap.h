@@ -67,12 +67,12 @@ public:
 private:
     CodeLocationLabel<JSEntryPtrTag>* codeLocations() const
     {
-        return bitwise_cast<CodeLocationLabel<JSEntryPtrTag>*>(m_pointer.get());
+        return std::bit_cast<CodeLocationLabel<JSEntryPtrTag>*>(m_pointer.get());
     }
 
     BytecodeIndex* indexes() const
     {
-        return bitwise_cast<BytecodeIndex*>(m_pointer.get() + sizeof(CodeLocationLabel<JSEntryPtrTag>) * m_size);
+        return std::bit_cast<BytecodeIndex*>(m_pointer.get() + sizeof(CodeLocationLabel<JSEntryPtrTag>) * m_size);
     }
 
     MallocPtr<uint8_t, JITCodeMapMalloc> m_pointer;

@@ -218,7 +218,7 @@ private:
     constexpr static T emptyValue()
     {
         if constexpr (std::is_pointer<T>::value)
-            return static_cast<T>(bitwise_cast<void*>(std::numeric_limits<uintptr_t>::max()));
+            return static_cast<T>(std::bit_cast<void*>(std::numeric_limits<uintptr_t>::max()));
         return std::numeric_limits<T>::max();
     }
 
@@ -256,15 +256,15 @@ private:
         // We memset the new buffer with -1, so for consistency emptyValue() must return something which is all 1s.
 #if !defined(NDEBUG)
         if constexpr (std::is_pointer<T>::value)
-            ASSERT(bitwise_cast<intptr_t>(emptyValue()) == -1ll);
+            ASSERT(std::bit_cast<intptr_t>(emptyValue()) == -1ll);
         else if constexpr (sizeof(T) == 8)
-            ASSERT(bitwise_cast<int64_t>(emptyValue()) == -1ll);
+            ASSERT(std::bit_cast<int64_t>(emptyValue()) == -1ll);
         else if constexpr (sizeof(T) == 4)
-            ASSERT(bitwise_cast<int32_t>(emptyValue()) == -1);
+            ASSERT(std::bit_cast<int32_t>(emptyValue()) == -1);
         else if constexpr (sizeof(T) == 2)
-            ASSERT(bitwise_cast<int16_t>(emptyValue()) == -1);
+            ASSERT(std::bit_cast<int16_t>(emptyValue()) == -1);
         else if constexpr (sizeof(T) == 1)
-            ASSERT(bitwise_cast<int8_t>(emptyValue()) == -1);
+            ASSERT(std::bit_cast<int8_t>(emptyValue()) == -1);
         else
             RELEASE_ASSERT_NOT_REACHED();
 #endif

@@ -242,7 +242,7 @@ WASM_IPINT_EXTERN_CPP_DECL(retrieve_and_clear_exception, CallFrame* callFrame, I
     Wasm::IPIntCallee* callee = IPINT_CALLEE(callFrame);
     if (callee->rethrowSlots()) {
         RELEASE_ASSERT(vm.targetTryDepthForThrow <= callee->rethrowSlots());
-        pl[callee->localSizeToAlloc() + vm.targetTryDepthForThrow - 1].i64 = bitwise_cast<uint64_t>(throwScope.exception()->value());
+        pl[callee->localSizeToAlloc() + vm.targetTryDepthForThrow - 1].i64 = std::bit_cast<uint64_t>(throwScope.exception()->value());
     }
 
     if (stackPointer) {
@@ -315,8 +315,8 @@ WASM_IPINT_EXTERN_CPP_DECL(table_get, unsigned tableIndex, unsigned index)
 #if CPU(ARM64) || CPU(X86_64)
     EncodedJSValue result = Wasm::tableGet(instance, tableIndex, index);
     if (!result)
-        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
-    WASM_RETURN_TWO(bitwise_cast<void*>(result), 0);
+        WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(1)), std::bit_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
+    WASM_RETURN_TWO(std::bit_cast<void*>(result), 0);
 #else
     UNUSED_PARAM(instance);
     UNUSED_PARAM(tableIndex);
@@ -329,7 +329,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_set, unsigned tableIndex, unsigned index, Encod
 {
 #if CPU(ARM64) || CPU(X86_64)
     if (!Wasm::tableSet(instance, tableIndex, index, value))
-        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
+        WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(1)), std::bit_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -348,7 +348,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_init, IPIntStackEntry* sp, TableInitMetadata* m
     int32_t dst = sp[2].i32;
 
     if (!Wasm::tableInit(instance, metadata->elementIndex, metadata->tableIndex, dst, src, n))
-        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
+        WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(1)), std::bit_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -366,7 +366,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_fill, IPIntStackEntry* sp, TableFillMetadata* m
     int32_t offset = sp[2].i32;
 
     if (!Wasm::tableFill(instance, metadata->tableIndex, offset, fill, n))
-        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
+        WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(1)), std::bit_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -382,7 +382,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_grow, IPIntStackEntry* sp, TableGrowMetadata* m
     int32_t n = sp[0].i32;
     EncodedJSValue fill = sp[1].ref;
 
-    WASM_RETURN_TWO(bitwise_cast<void*>(Wasm::tableGrow(instance, metadata->tableIndex, fill, n)), 0);
+    WASM_RETURN_TWO(std::bit_cast<void*>(Wasm::tableGrow(instance, metadata->tableIndex, fill, n)), 0);
 #else
     UNUSED_PARAM(instance);
     UNUSED_PARAM(sp);
@@ -395,7 +395,7 @@ WASM_IPINT_EXTERN_CPP_DECL_1P(current_memory)
 {
 #if CPU(ARM64) || CPU(X86_64)
     size_t size = instance->memory()->memory().handle().size() >> 16;
-    WASM_RETURN_TWO(bitwise_cast<void*>(size), 0);
+    WASM_RETURN_TWO(std::bit_cast<void*>(size), 0);
 #else
     UNUSED_PARAM(instance);
     RELEASE_ASSERT_NOT_REACHED("IPInt only supported on ARM64 and X86_64 (for now)");
@@ -415,7 +415,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_init, int32_t dataIndex, IPIntStackEntry* sp)
     int32_t d = sp[2].i32;
 
     if (!Wasm::memoryInit(instance, dataIndex, d, s, n))
-        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
+        WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(1)), std::bit_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -435,7 +435,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_copy, int32_t dst, int32_t src, int32_t count)
 {
 #if CPU(ARM64) || CPU(X86_64)
     if (!Wasm::memoryCopy(instance, dst, src, count))
-        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
+        WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(1)), std::bit_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -450,7 +450,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_fill, int32_t dst, int32_t targetValue, int32_
 {
 #if CPU(ARM64) || CPU(X86_64)
     if (!Wasm::memoryFill(instance, dst, targetValue, count))
-        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
+        WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(1)), std::bit_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsMemoryAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -475,7 +475,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_copy, IPIntStackEntry* sp, TableCopyMetadata* m
     int32_t dst = sp[2].i32;
 
     if (!Wasm::tableCopy(instance, metadata->dstTableIndex, metadata->srcTableIndex, dst, src, n))
-        WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<uintptr_t>(1)), bitwise_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
+        WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<uintptr_t>(1)), std::bit_cast<void*>(static_cast<uintptr_t>(Wasm::ExceptionType::OutOfBoundsTableAccess)));
     WASM_RETURN_TWO(0, 0);
 #else
     UNUSED_PARAM(instance);
@@ -489,7 +489,7 @@ WASM_IPINT_EXTERN_CPP_DECL(table_size, int32_t tableIndex)
 {
 #if CPU(ARM64) || CPU(X86_64)
     int32_t result = Wasm::tableSize(instance, tableIndex);
-    WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<EncodedJSValue>(result)), 0);
+    WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<EncodedJSValue>(result)), 0);
 #else
     UNUSED_PARAM(instance);
     UNUSED_PARAM(tableIndex);
@@ -508,9 +508,9 @@ static inline UGPRPair doWasmCall(JSWebAssemblyInstance* instance, Wasm::Functio
         JSWebAssemblyInstance::ImportFunctionInfo* functionInfo = instance->importFunctionInfo(functionIndex);
         codePtr = functionInfo->importFunctionStub;
 #if USE(JSVALUE64)
-        *callee = bitwise_cast<uint64_t>(functionInfo->boxedTargetCalleeLoadLocation);
+        *callee = std::bit_cast<uint64_t>(functionInfo->boxedTargetCalleeLoadLocation);
 #else
-        *callee = bitwise_cast<uint32_t>(functionInfo->boxedTargetCalleeLoadLocation);
+        *callee = std::bit_cast<uint32_t>(functionInfo->boxedTargetCalleeLoadLocation);
 #endif
     } else {
         // Target is a wasm function within the same instance
@@ -549,7 +549,7 @@ WASM_IPINT_EXTERN_CPP_DECL(call_indirect, CallFrame* callFrame, Wasm::FunctionSp
     if (callSignature.index() != function.m_function.typeIndex)
         WASM_THROW(callFrame, Wasm::ExceptionType::BadSignature);
 
-    EncodedJSValue* calleeReturn = bitwise_cast<EncodedJSValue*>(functionIndex);
+    EncodedJSValue* calleeReturn = std::bit_cast<EncodedJSValue*>(functionIndex);
     EncodedJSValue boxedCallee = CalleeBits::encodeNullCallee();
     if (function.m_function.boxedWasmCalleeLoadLocation)
         boxedCallee = CalleeBits::encodeBoxedNativeCallee(reinterpret_cast<void*>(*function.m_function.boxedWasmCalleeLoadLocation));
@@ -577,7 +577,7 @@ WASM_IPINT_EXTERN_CPP_DECL(set_global_64, unsigned index, uint64_t value)
 WASM_IPINT_EXTERN_CPP_DECL(get_global_64, unsigned index)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    WASM_RETURN_TWO(bitwise_cast<void*>(instance->loadI64Global(index)), 0);
+    WASM_RETURN_TWO(std::bit_cast<void*>(instance->loadI64Global(index)), 0);
 #else
     UNUSED_PARAM(instance);
     UNUSED_PARAM(index);
@@ -589,7 +589,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait32, uint64_t pointerWithOffset, uin
 {
 #if CPU(ARM64) || CPU(X86_64)
     int32_t result = Wasm::memoryAtomicWait32(instance, pointerWithOffset, value, timeout);
-    WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<intptr_t>(result)), nullptr);
+    WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<intptr_t>(result)), nullptr);
 #else
     UNUSED_PARAM(instance);
     UNUSED_PARAM(pointerWithOffset);
@@ -603,7 +603,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_wait64, uint64_t pointerWithOffset, uin
 {
 #if CPU(ARM64) || CPU(X86_64)
     int32_t result = Wasm::memoryAtomicWait64(instance, pointerWithOffset, value, timeout);
-    WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<intptr_t>(result)), nullptr);
+    WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<intptr_t>(result)), nullptr);
 #else
     UNUSED_PARAM(instance);
     UNUSED_PARAM(pointerWithOffset);
@@ -617,7 +617,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_notify, unsigned base, unsigned offset,
 {
 #if CPU(ARM64) || CPU(X86_64)
     int32_t result = Wasm::memoryAtomicNotify(instance, base, offset, count);
-    WASM_RETURN_TWO(bitwise_cast<void*>(static_cast<intptr_t>(result)), nullptr);
+    WASM_RETURN_TWO(std::bit_cast<void*>(static_cast<intptr_t>(result)), nullptr);
 #else
     UNUSED_PARAM(instance);
     UNUSED_PARAM(base);
@@ -630,7 +630,7 @@ WASM_IPINT_EXTERN_CPP_DECL(memory_atomic_notify, unsigned base, unsigned offset,
 WASM_IPINT_EXTERN_CPP_DECL(ref_func, unsigned index)
 {
 #if CPU(ARM64) || CPU(X86_64)
-    WASM_RETURN_TWO(bitwise_cast<void*>(Wasm::refFunc(instance, index)), 0);
+    WASM_RETURN_TWO(std::bit_cast<void*>(Wasm::refFunc(instance, index)), 0);
 #else
     UNUSED_PARAM(instance);
     UNUSED_PARAM(index);

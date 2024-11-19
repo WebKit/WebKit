@@ -309,7 +309,7 @@ void BBQJIT::emitCCall(Func function, const Vector<Value, N>& arguments)
 
     // Materialize address of native function and call register
     void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
-    m_jit.move(TrustedImmPtr(bitwise_cast<uintptr_t>(taggedFunctionPtr)), wasmScratchGPR);
+    m_jit.move(TrustedImmPtr(std::bit_cast<uintptr_t>(taggedFunctionPtr)), wasmScratchGPR);
     m_jit.call(wasmScratchGPR, OperationPtrTag);
 }
 
@@ -338,7 +338,7 @@ void BBQJIT::emitCCall(Func function, const Vector<Value, N>& arguments, Value& 
 
     // Materialize address of native function and call register
     void* taggedFunctionPtr = tagCFunctionPtr<void*, OperationPtrTag>(function);
-    m_jit.move(TrustedImmPtr(bitwise_cast<uintptr_t>(taggedFunctionPtr)), wasmScratchGPR);
+    m_jit.move(TrustedImmPtr(std::bit_cast<uintptr_t>(taggedFunctionPtr)), wasmScratchGPR);
     m_jit.call(wasmScratchGPR, OperationPtrTag);
 
     Location resultLocation;

@@ -43,7 +43,7 @@ extern "C" {
 
 ALWAYS_INLINE bool isLLIntPC(void* pc)
 {
-    uintptr_t pcAsInt = bitwise_cast<uintptr_t>(pc);
+    uintptr_t pcAsInt = std::bit_cast<uintptr_t>(pc);
     uintptr_t llintStart = untagCodePtr<uintptr_t, CFunctionPtrTag>(llintPCRangeStart);
     uintptr_t llintEnd = untagCodePtr<uintptr_t, CFunctionPtrTag>(llintPCRangeEnd);
     RELEASE_ASSERT(llintStart < llintEnd);
@@ -53,7 +53,7 @@ ALWAYS_INLINE bool isLLIntPC(void* pc)
 #if ENABLE(WEBASSEMBLY)
 ALWAYS_INLINE bool isWasmLLIntPC(void* pc)
 {
-    uintptr_t pcAsInt = bitwise_cast<uintptr_t>(pc);
+    uintptr_t pcAsInt = std::bit_cast<uintptr_t>(pc);
     uintptr_t start = untagCodePtr<uintptr_t, CFunctionPtrTag>(wasmLLIntPCRangeStart);
     uintptr_t end = untagCodePtr<uintptr_t, CFunctionPtrTag>(wasmLLIntPCRangeEnd);
     RELEASE_ASSERT(start < end);

@@ -56,7 +56,7 @@ protected:
     template<typename... Args>
     static Derived* createImpl(unsigned leadingSize, unsigned trailingSize, Args&&... args)
     {
-        uint8_t* memory = bitwise_cast<uint8_t*>(fastMalloc(allocationSize(leadingSize, trailingSize)));
+        uint8_t* memory = std::bit_cast<uint8_t*>(fastMalloc(allocationSize(leadingSize, trailingSize)));
         return new (NotNull, memory + memoryOffsetForDerived(leadingSize)) Derived(leadingSize, trailingSize, std::forward<Args>(args)...);
     }
 
@@ -102,7 +102,7 @@ public:
     {
         unsigned leadingSize = base->m_leadingSize;
         std::destroy_at(static_cast<Derived*>(base));
-        fastFree(bitwise_cast<uint8_t*>(static_cast<Derived*>(base)) - memoryOffsetForDerived(leadingSize));
+        fastFree(std::bit_cast<uint8_t*>(static_cast<Derived*>(base)) - memoryOffsetForDerived(leadingSize));
     }
 
     ~ButterflyArray()
@@ -116,22 +116,22 @@ public:
 protected:
     LeadingType* leadingData()
     {
-        return bitwise_cast<LeadingType*>(static_cast<Derived*>(this)) - m_leadingSize;
+        return std::bit_cast<LeadingType*>(static_cast<Derived*>(this)) - m_leadingSize;
     }
 
     const LeadingType leadingData() const
     {
-        return bitwise_cast<const LeadingType*>(static_cast<const Derived*>(this)) - m_leadingSize;
+        return std::bit_cast<const LeadingType*>(static_cast<const Derived*>(this)) - m_leadingSize;
     }
 
     TrailingType* trailingData()
     {
-        return bitwise_cast<TrailingType*>(bitwise_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfTrailingData());
+        return std::bit_cast<TrailingType*>(std::bit_cast<uint8_t*>(static_cast<Derived*>(this)) + offsetOfTrailingData());
     }
 
     const TrailingType* trailingData() const
     {
-        return bitwise_cast<const TrailingType*>(bitwise_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfTrailingData());
+        return std::bit_cast<const TrailingType*>(std::bit_cast<const uint8_t*>(static_cast<const Derived*>(this)) + offsetOfTrailingData());
     }
 
     unsigned m_leadingSize { 0 };

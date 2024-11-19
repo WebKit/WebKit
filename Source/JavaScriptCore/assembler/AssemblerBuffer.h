@@ -81,7 +81,7 @@ namespace JSC {
         inline uint32_t offset() const
         {
 #if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-            return static_cast<uint32_t>(untagInt(m_offset, bitwise_cast<PtrTag>(this)));
+            return static_cast<uint32_t>(untagInt(m_offset, std::bit_cast<PtrTag>(this)));
 #else
             return m_offset;
 #endif
@@ -91,7 +91,7 @@ namespace JSC {
         inline void setOffset(uint32_t offset)
         {
 #if ENABLE(JIT_SIGN_ASSEMBLER_BUFFER)
-            m_offset = tagInt(static_cast<uint64_t>(offset), bitwise_cast<PtrTag>(this));
+            m_offset = tagInt(static_cast<uint64_t>(offset), std::bit_cast<PtrTag>(this));
 #else
             m_offset = offset;
 #endif

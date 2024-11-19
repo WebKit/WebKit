@@ -141,7 +141,7 @@ void testSelectCompareFloat(float a, float b, bool (*operation)(float, float))
                 floatValue2),
             value3,
             value4));
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b), 42, -5), operation(a, b) ? 42 : -5));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a), std::bit_cast<int32_t>(b), 42, -5), operation(a, b) ? 42 : -5));
 }
 
 void testSelectCompareFloat(float a, float b)
@@ -181,7 +181,7 @@ void testSelectCompareFloatToDouble(float a, float b, bool (*operation)(float, f
                 doubleValue2),
             value3,
             value4));
-    CHECK(isIdentical(compileAndRun<int32_t>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b), 42, -5), operation(a, b) ? 42 : -5));
+    CHECK(isIdentical(compileAndRun<int32_t>(proc, std::bit_cast<int32_t>(a), std::bit_cast<int32_t>(b), 42, -5), operation(a, b) ? 42 : -5));
 }
 
 void testSelectCompareFloatToDouble(float a, float b)
@@ -281,7 +281,7 @@ void testSelectDoubleCompareFloat(float a, float b)
             arguments[2],
             arguments[3]));
 
-    CHECK(isIdentical(compileAndRun<double>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b), 42.1, -M_PI), a < b ? 42.1 : -M_PI));
+    CHECK(isIdentical(compileAndRun<double>(proc, std::bit_cast<int32_t>(a), std::bit_cast<int32_t>(b), 42.1, -M_PI), a < b ? 42.1 : -M_PI));
 }
 
 void testSelectFloatCompareFloat(float a, float b)
@@ -305,7 +305,7 @@ void testSelectFloatCompareFloat(float a, float b)
             floatValue3,
             floatValue4));
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b), bitwise_cast<int32_t>(1.1f), bitwise_cast<int32_t>(-42.f)), a < b ? 1.1f : -42.f));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a), std::bit_cast<int32_t>(b), std::bit_cast<int32_t>(1.1f), std::bit_cast<int32_t>(-42.f)), a < b ? 1.1f : -42.f));
 }
 
 
@@ -498,7 +498,7 @@ void testSelectFloatCompareFloat(bool (*operation)(float, float))
         for (auto& left : floatingPointOperands<float>()) {
             for (auto& right : floatingPointOperands<float>()) {
                 float expected = operation(left.value, right.value) ? 42.5 : -66.5;
-                CHECK(isIdentical(invoke<float>(*code, bitwise_cast<int32_t>(left.value), bitwise_cast<int32_t>(right.value), bitwise_cast<int32_t>(42.5f), bitwise_cast<int32_t>(-66.5f)), expected));
+                CHECK(isIdentical(invoke<float>(*code, std::bit_cast<int32_t>(left.value), std::bit_cast<int32_t>(right.value), std::bit_cast<int32_t>(42.5f), std::bit_cast<int32_t>(-66.5f)), expected));
             }
         }
     }
@@ -527,7 +527,7 @@ void testSelectFloatCompareFloat(bool (*operation)(float, float))
         for (auto& left : floatingPointOperands<float>()) {
             for (auto& right : floatingPointOperands<float>()) {
                 float expected = operation(left.value, right.value) ? 42.5 : -66.5;
-                CHECK(isIdentical(invoke<float>(*code, bitwise_cast<int32_t>(left.value), bitwise_cast<int32_t>(right.value), bitwise_cast<int32_t>(42.5f), bitwise_cast<int32_t>(-66.5f)), expected));
+                CHECK(isIdentical(invoke<float>(*code, std::bit_cast<int32_t>(left.value), std::bit_cast<int32_t>(right.value), std::bit_cast<int32_t>(42.5f), std::bit_cast<int32_t>(-66.5f)), expected));
             }
         }
     }
@@ -555,7 +555,7 @@ void testSelectFloatCompareFloat(bool (*operation)(float, float))
         for (auto& left : floatingPointOperands<float>()) {
             for (auto& right : floatingPointOperands<float>()) {
                 float expected = operation(left.value, right.value) ? 42.5 : -66.5;
-                CHECK(isIdentical(invoke<float>(*code, bitwise_cast<int32_t>(left.value), bitwise_cast<int32_t>(right.value), bitwise_cast<int32_t>(42.5f), bitwise_cast<int32_t>(-66.5f)), expected));
+                CHECK(isIdentical(invoke<float>(*code, std::bit_cast<int32_t>(left.value), std::bit_cast<int32_t>(right.value), std::bit_cast<int32_t>(42.5f), std::bit_cast<int32_t>(-66.5f)), expected));
             }
         }
     }
@@ -584,7 +584,7 @@ void testSelectFloatCompareFloat(bool (*operation)(float, float))
         for (auto& left : floatingPointOperands<float>()) {
             for (auto& right : floatingPointOperands<float>()) {
                 float expected = operation(left.value, right.value) ? 42.5 : -66.5;
-                CHECK(isIdentical(invoke<float>(*code, bitwise_cast<int32_t>(left.value), bitwise_cast<int32_t>(right.value), bitwise_cast<int32_t>(42.5f), bitwise_cast<int32_t>(-66.5f)), expected));
+                CHECK(isIdentical(invoke<float>(*code, std::bit_cast<int32_t>(left.value), std::bit_cast<int32_t>(right.value), std::bit_cast<int32_t>(42.5f), std::bit_cast<int32_t>(-66.5f)), expected));
             }
         }
     }
@@ -612,7 +612,7 @@ void testSelectFloatCompareFloat(bool (*operation)(float, float))
         for (auto& left : floatingPointOperands<float>()) {
             for (auto& right : floatingPointOperands<float>()) {
                 float expected = operation(left.value, right.value) ? 42.5 : left.value;
-                CHECK(isIdentical(invoke<float>(*code, bitwise_cast<int32_t>(left.value), bitwise_cast<int32_t>(right.value), bitwise_cast<int32_t>(42.5f), bitwise_cast<int32_t>(left.value)), expected));
+                CHECK(isIdentical(invoke<float>(*code, std::bit_cast<int32_t>(left.value), std::bit_cast<int32_t>(right.value), std::bit_cast<int32_t>(42.5f), std::bit_cast<int32_t>(left.value)), expected));
             }
         }
     }
@@ -640,7 +640,7 @@ void testSelectFloatCompareFloat(bool (*operation)(float, float))
         for (auto& left : floatingPointOperands<float>()) {
             for (auto& right : floatingPointOperands<float>()) {
                 float expected = operation(left.value, right.value) ? 42.5 : left.value;
-                CHECK(isIdentical(invoke<float>(*code, bitwise_cast<int32_t>(left.value), bitwise_cast<int32_t>(right.value), bitwise_cast<int32_t>(42.5f), bitwise_cast<int32_t>(left.value)), expected));
+                CHECK(isIdentical(invoke<float>(*code, std::bit_cast<int32_t>(left.value), std::bit_cast<int32_t>(right.value), std::bit_cast<int32_t>(42.5f), std::bit_cast<int32_t>(left.value)), expected));
             }
         }
     }
@@ -1639,7 +1639,7 @@ void testInterpreter()
             AllowMacroScratchRegisterUsage allowScratch(jit);
             Vector<Box<CCallHelpers::Label>> labels = params.successorLabels();
 
-            CodePtr<JSSwitchPtrTag>* jumpTable = bitwise_cast<CodePtr<JSSwitchPtrTag>*>(
+            CodePtr<JSSwitchPtrTag>* jumpTable = std::bit_cast<CodePtr<JSSwitchPtrTag>*>(
                 params.proc().addDataSection(sizeof(CodePtr<JSSwitchPtrTag>) * labels.size()));
 
             GPRReg scratch = params.gpScratch(0);

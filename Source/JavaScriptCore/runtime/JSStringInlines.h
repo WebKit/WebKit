@@ -77,7 +77,7 @@ JSString* JSString::tryReplaceOneCharImpl(JSGlobalObject* globalObject, UChar se
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    if (UNLIKELY(bitwise_cast<uint8_t*>(currentStackPointer()) < stackLimit))
+    if (UNLIKELY(std::bit_cast<uint8_t*>(currentStackPointer()) < stackLimit))
         return nullptr; // Stack overflow
 
     if (this->isNonSubstringRope()) {
@@ -151,7 +151,7 @@ JSString* JSString::tryReplaceOneCharImpl(JSGlobalObject* globalObject, UChar se
 
 JSString* JSString::tryReplaceOneChar(JSGlobalObject* globalObject, UChar search, JSString* replacement)
 {
-    uint8_t* stackLimit = bitwise_cast<uint8_t*>(globalObject->vm().softStackLimit());
+    uint8_t* stackLimit = std::bit_cast<uint8_t*>(globalObject->vm().softStackLimit());
     bool found = false;
     if (JSString* result = tryReplaceOneCharImpl(globalObject, search, replacement, stackLimit, found); result && found)
         return result;
@@ -270,7 +270,7 @@ inline void JSRopeString::resolveToBuffer(JSString* fiber0, JSString* fiber1, JS
     // This allows clang to make these calls tail-calls, constructing significantly efficient rope resolution here.
     static_assert(3 == JSRopeString::s_maxInternalRopeLength);
 
-    if (UNLIKELY(bitwise_cast<uint8_t*>(currentStackPointer()) < stackLimit))
+    if (UNLIKELY(std::bit_cast<uint8_t*>(currentStackPointer()) < stackLimit))
         MUST_TAIL_CALL return JSRopeString::resolveToBufferSlow(fiber0, fiber1, fiber2, buffer, length, stackLimit);
 
     // 3 fibers.
@@ -388,7 +388,7 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* st
 
     AtomString atomString;
     if (!ropeString->isSubstring()) {
-        uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
+        uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
         JSString* fiber0 = ropeString->fiber0();
         JSString* fiber1 = ropeString->fiber1();
         JSString* fiber2 = ropeString->fiber2();
@@ -445,7 +445,7 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* s1
     // This is quite unfortunate, but duplicating this part here is the key of performance improvement in JetStream2/WSL,
     // which stress this jsAtomString significantly.
     auto resolveWith2Fibers = [&](JSString* fiber0, JSString* fiber1, auto* buffer, unsigned length) {
-        uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
+        uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
         if (fiber0->isRope()) {
             if (fiber1->isRope())
                 return JSRopeString::resolveToBufferSlow(fiber0, fiber1, nullptr, buffer, length, stackLimit);
@@ -530,7 +530,7 @@ inline JSString* jsAtomString(JSGlobalObject* globalObject, VM& vm, JSString* s1
 
     auto resolveWith3Fibers = [&](JSString* fiber0, JSString* fiber1, JSString* fiber2, auto* buffer, unsigned length) {
         if (fiber0->isRope() || fiber1->isRope() || fiber2->isRope())
-            return JSRopeString::resolveToBufferSlow(fiber0, fiber1, fiber2, buffer, length, bitwise_cast<uint8_t*>(vm.softStackLimit()));
+            return JSRopeString::resolveToBufferSlow(fiber0, fiber1, fiber2, buffer, length, std::bit_cast<uint8_t*>(vm.softStackLimit()));
 
         StringView view0 = fiber0->valueInternal().impl();
         view0.getCharacters(unsafeMakeSpan(buffer, length));

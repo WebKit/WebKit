@@ -93,7 +93,7 @@ struct UniqueArrayMaker<false, T> {
         struct Deleter {
             void operator()(T* pointer)
             {
-                delete [] bitwise_cast<UniqueArrayElement*>(pointer);
+                delete [] std::bit_cast<UniqueArrayElement*>(pointer);
             };
         };
 
@@ -107,7 +107,7 @@ struct UniqueArrayMaker<false, T> {
 
     static ResultType make(size_t size)
     {
-        return ResultType(bitwise_cast<T*>(new UniqueArrayElement[size]()));
+        return ResultType(std::bit_cast<T*>(new UniqueArrayElement[size]()));
     }
 };
 

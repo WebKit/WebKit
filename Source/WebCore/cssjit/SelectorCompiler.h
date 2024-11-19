@@ -54,7 +54,7 @@ inline unsigned ruleCollectorSimpleSelectorChecker(CompiledSelector& compiledSel
     ASSERT(compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker);
 #if CPU(ARM64E) && !ENABLE(C_LOOP)
     if (JSC::Options::useJITCage())
-        return JSC::vmEntryToCSSJIT(bitwise_cast<uintptr_t>(element), bitwise_cast<uintptr_t>(value), 0, compiledSelector.codeRef.code().taggedPtr());
+        return JSC::vmEntryToCSSJIT(std::bit_cast<uintptr_t>(element), std::bit_cast<uintptr_t>(value), 0, compiledSelector.codeRef.code().taggedPtr());
 #endif
     using RuleCollectorSimpleSelectorChecker = unsigned SYSV_ABI (*)(const Element*, unsigned*);
     return untagCFunctionPtr<RuleCollectorSimpleSelectorChecker, JSC::CSSSelectorPtrTag>(compiledSelector.codeRef.code().taggedPtr())(element, value);
@@ -65,7 +65,7 @@ inline unsigned querySelectorSimpleSelectorChecker(CompiledSelector& compiledSel
     ASSERT(compiledSelector.status == SelectorCompilationStatus::SimpleSelectorChecker);
 #if CPU(ARM64E) && !ENABLE(C_LOOP)
     if (JSC::Options::useJITCage())
-        return JSC::vmEntryToCSSJIT(bitwise_cast<uintptr_t>(element), 0, 0, compiledSelector.codeRef.code().taggedPtr());
+        return JSC::vmEntryToCSSJIT(std::bit_cast<uintptr_t>(element), 0, 0, compiledSelector.codeRef.code().taggedPtr());
 #endif
     using QuerySelectorSimpleSelectorChecker = unsigned SYSV_ABI (*)(const Element*);
     return untagCFunctionPtr<QuerySelectorSimpleSelectorChecker, JSC::CSSSelectorPtrTag>(compiledSelector.codeRef.code().taggedPtr())(element);
@@ -76,7 +76,7 @@ inline unsigned ruleCollectorSelectorCheckerWithCheckingContext(CompiledSelector
     ASSERT(compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
 #if CPU(ARM64E) && !ENABLE(C_LOOP)
     if (JSC::Options::useJITCage())
-        return JSC::vmEntryToCSSJIT(bitwise_cast<uintptr_t>(element), bitwise_cast<uintptr_t>(context), bitwise_cast<uintptr_t>(value), compiledSelector.codeRef.code().taggedPtr());
+        return JSC::vmEntryToCSSJIT(std::bit_cast<uintptr_t>(element), std::bit_cast<uintptr_t>(context), std::bit_cast<uintptr_t>(value), compiledSelector.codeRef.code().taggedPtr());
 #endif
     using RuleCollectorSelectorCheckerWithCheckingContext = unsigned SYSV_ABI (*)(const Element*, SelectorChecker::CheckingContext*, unsigned*);
     return untagCFunctionPtr<RuleCollectorSelectorCheckerWithCheckingContext, JSC::CSSSelectorPtrTag>(compiledSelector.codeRef.code().taggedPtr())(element, context, value);
@@ -87,7 +87,7 @@ inline unsigned querySelectorSelectorCheckerWithCheckingContext(CompiledSelector
     ASSERT(compiledSelector.status == SelectorCompilationStatus::SelectorCheckerWithCheckingContext);
 #if CPU(ARM64E) && !ENABLE(C_LOOP)
     if (JSC::Options::useJITCage())
-        return JSC::vmEntryToCSSJIT(bitwise_cast<uintptr_t>(element), bitwise_cast<uintptr_t>(context), 0, compiledSelector.codeRef.code().taggedPtr());
+        return JSC::vmEntryToCSSJIT(std::bit_cast<uintptr_t>(element), std::bit_cast<uintptr_t>(context), 0, compiledSelector.codeRef.code().taggedPtr());
 #endif
     using QuerySelectorSelectorCheckerWithCheckingContext = unsigned SYSV_ABI (*)(const Element*, const SelectorChecker::CheckingContext*);
     return untagCFunctionPtr<QuerySelectorSelectorCheckerWithCheckingContext, JSC::CSSSelectorPtrTag>(compiledSelector.codeRef.code().taggedPtr())(element, context);

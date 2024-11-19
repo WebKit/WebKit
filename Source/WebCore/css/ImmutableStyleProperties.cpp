@@ -41,7 +41,7 @@ ImmutableStyleProperties::ImmutableStyleProperties(const CSSProperty* properties
     : StyleProperties(mode, length)
 {
     auto* metadataArray = const_cast<StylePropertyMetadata*>(this->metadataArray());
-    auto* valueArray = bitwise_cast<PackedPtr<CSSValue>*>(this->valueArray());
+    auto* valueArray = std::bit_cast<PackedPtr<CSSValue>*>(this->valueArray());
     for (unsigned i = 0; i < length; ++i) {
         metadataArray[i] = properties[i].metadata();
         RefPtr value = properties[i].value();
@@ -52,7 +52,7 @@ ImmutableStyleProperties::ImmutableStyleProperties(const CSSProperty* properties
 
 ImmutableStyleProperties::~ImmutableStyleProperties()
 {
-    auto* valueArray = bitwise_cast<PackedPtr<CSSValue>*>(this->valueArray());
+    auto* valueArray = std::bit_cast<PackedPtr<CSSValue>*>(this->valueArray());
     for (unsigned i = 0; i < m_arraySize; ++i)
         valueArray[i]->deref();
 }

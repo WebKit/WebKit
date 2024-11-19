@@ -2688,7 +2688,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addI32ReinterpretF32(Value operand, Val
 {
     EMIT_UNARY(
         "I32ReinterpretF32", TypeKind::I32,
-        BLOCK(Value::fromI32(bitwise_cast<int32_t>(operand.asF32()))),
+        BLOCK(Value::fromI32(std::bit_cast<int32_t>(operand.asF32()))),
         BLOCK(
             m_jit.moveFloatTo32(operandLocation.asFPR(), resultLocation.asGPR());
         )
@@ -2699,7 +2699,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32ReinterpretI32(Value operand, Val
 {
     EMIT_UNARY(
         "F32ReinterpretI32", TypeKind::F32,
-        BLOCK(Value::fromF32(bitwise_cast<float>(operand.asI32()))),
+        BLOCK(Value::fromF32(std::bit_cast<float>(operand.asI32()))),
         BLOCK(
             m_jit.move32ToFloat(operandLocation.asGPR(), resultLocation.asFPR());
         )
@@ -2784,7 +2784,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32Copysign(Value lhs, Value rhs, Va
                 emitMoveConst(Value::fromF32(std::abs(lhs.asF32())), resultLocation);
                 m_jit.orFloat(resultLocation.asFPR(), wasmScratchFPR, resultLocation.asFPR());
             } else {
-                bool signBit = bitwise_cast<uint32_t>(rhs.asF32()) & 0x80000000u;
+                bool signBit = std::bit_cast<uint32_t>(rhs.asF32()) & 0x80000000u;
 #if CPU(X86_64)
                 m_jit.moveDouble(lhsLocation.asFPR(), resultLocation.asFPR());
                 m_jit.move32ToFloat(TrustedImm32(0x7fffffff), wasmScratchFPR);
@@ -2865,7 +2865,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF32Neg(Value operand, Value& result)
         BLOCK(
 #if CPU(X86_64)
             m_jit.moveFloatTo32(operandLocation.asFPR(), wasmScratchGPR);
-            m_jit.xor32(TrustedImm32(bitwise_cast<uint32_t>(static_cast<float>(-0.0))), wasmScratchGPR);
+            m_jit.xor32(TrustedImm32(std::bit_cast<uint32_t>(static_cast<float>(-0.0))), wasmScratchGPR);
             m_jit.move32ToFloat(wasmScratchGPR, resultLocation.asFPR());
 #else
             m_jit.negateFloat(operandLocation.asFPR(), resultLocation.asFPR());
@@ -2882,7 +2882,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addF64Neg(Value operand, Value& result)
         BLOCK(
 #if CPU(X86_64)
             m_jit.moveDoubleTo64(operandLocation.asFPR(), wasmScratchGPR);
-            m_jit.xor64(TrustedImm64(bitwise_cast<uint64_t>(static_cast<double>(-0.0))), wasmScratchGPR);
+            m_jit.xor64(TrustedImm64(std::bit_cast<uint64_t>(static_cast<double>(-0.0))), wasmScratchGPR);
             m_jit.move64ToDouble(wasmScratchGPR, resultLocation.asFPR());
 #else
             m_jit.negateDouble(operandLocation.asFPR(), resultLocation.asFPR());
@@ -2960,7 +2960,7 @@ void BBQJIT::emitEntryTierUpCheck()
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
     static_assert(GPRInfo::nonPreservedNonArgumentGPR0 == wasmScratchGPR);
-    m_jit.move(TrustedImmPtr(bitwise_cast<uintptr_t>(&m_callee.tierUpCounter().m_counter)), wasmScratchGPR);
+    m_jit.move(TrustedImmPtr(std::bit_cast<uintptr_t>(&m_callee.tierUpCounter().m_counter)), wasmScratchGPR);
     Jump tierUp = m_jit.branchAdd32(CCallHelpers::PositiveOrZero, TrustedImm32(TierUpCount::functionEntryIncrement()), Address(wasmScratchGPR));
     MacroAssembler::Label tierUpResume = m_jit.label();
     addLatePath([tierUp, tierUpResume](BBQJIT& generator, CCallHelpers& jit) {
@@ -3085,7 +3085,7 @@ ControlData WARN_UNUSED_RETURN BBQJIT::addTopLevel(BlockSignature signature)
     auto clear = [&](ClearMode mode, TypeKind type, Location location) {
         if (mode == ClearMode::JSNull) {
             flushZeroClear();
-            emitStoreConst(Value::fromI64(bitwise_cast<uint64_t>(JSValue::encode(jsNull()))), location);
+            emitStoreConst(Value::fromI64(std::bit_cast<uint64_t>(JSValue::encode(jsNull()))), location);
             return;
         }
         if (!highest)
@@ -3325,7 +3325,7 @@ void BBQJIT::emitLoopTierUpCheckAndOSREntryData(const ControlData& data, Stack& 
 
 #if ENABLE(WEBASSEMBLY_OMGJIT)
     static_assert(GPRInfo::nonPreservedNonArgumentGPR0 == wasmScratchGPR);
-    m_jit.move(TrustedImmPtr(bitwise_cast<uintptr_t>(&tierUpCounter.m_counter)), wasmScratchGPR);
+    m_jit.move(TrustedImmPtr(std::bit_cast<uintptr_t>(&tierUpCounter.m_counter)), wasmScratchGPR);
 
     TierUpCount::TriggerReason* forceEntryTrigger = &(tierUpCounter.osrEntryTriggers().last());
     static_assert(!static_cast<uint8_t>(TierUpCount::TriggerReason::DontTrigger), "the JIT code assumes non-zero means 'enter'");
@@ -3886,7 +3886,7 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::endTopLevel(BlockSignature, const Stack
     CCallHelpers& jit = m_jit;
     m_jit.addLinkTask([frameSize, labels = WTFMove(m_frameSizeLabels), &jit](LinkBuffer& linkBuffer) {
         for (auto label : labels)
-            jit.repatchPointer(linkBuffer.locationOf<NoPtrTag>(label), bitwise_cast<void*>(static_cast<uintptr_t>(frameSize)));
+            jit.repatchPointer(linkBuffer.locationOf<NoPtrTag>(label), std::bit_cast<void*>(static_cast<uintptr_t>(frameSize)));
     });
 
     LOG_DEDENT();

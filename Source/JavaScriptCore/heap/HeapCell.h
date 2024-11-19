@@ -55,12 +55,12 @@ public:
     enum ZapReason : int8_t { Unspecified, Destruction, StopAllocating };
     void zap(ZapReason reason)
     {
-        uint32_t* cellWords = bitwise_cast<uint32_t*>(this);
+        uint32_t* cellWords = std::bit_cast<uint32_t*>(this);
         cellWords[0] = 0;
         // Leaving cellWords[1] alone for crash analysis if needed.
         cellWords[2] = reason;
     }
-    bool isZapped() const { return !*bitwise_cast<const uint32_t*>(this); }
+    bool isZapped() const { return !*std::bit_cast<const uint32_t*>(this); }
 
     // isPendingDestruction returns true iff the cell is no longer alive but has not yet
     // been swept and therefore its destructor (if it has one) has not yet run.

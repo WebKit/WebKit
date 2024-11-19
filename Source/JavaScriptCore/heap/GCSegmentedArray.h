@@ -54,7 +54,7 @@ public:
 
     T* data()
     {
-        return bitwise_cast<T*>(this + 1);
+        return std::bit_cast<T*>(this + 1);
     }
 
     static constexpr size_t blockSize = 4 * KB;

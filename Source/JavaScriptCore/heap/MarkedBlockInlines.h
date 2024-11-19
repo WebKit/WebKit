@@ -316,8 +316,8 @@ void MarkedBlock::Handle::specializedSweep(FreeList* freeList, MarkedBlock::Hand
                 });
         }
 
-        char* payloadEnd = bitwise_cast<char*>(block.atoms() + numberOfAtoms);
-        char* payloadBegin = bitwise_cast<char*>(block.atoms() + m_startAtom);
+        char* payloadEnd = std::bit_cast<char*>(block.atoms() + numberOfAtoms);
+        char* payloadBegin = std::bit_cast<char*>(block.atoms() + m_startAtom);
         RELEASE_ASSERT(static_cast<size_t>(payloadEnd - payloadBegin) <= payloadSize, payloadBegin, payloadEnd, &block, cellSize, m_startAtom);
 
         setBits(true);

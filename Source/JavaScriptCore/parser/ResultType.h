@@ -262,12 +262,12 @@ namespace JSC {
         uint16_t bits()
         {
             static_assert(sizeof(OperandTypes) == sizeof(uint16_t));
-            return bitwise_cast<uint16_t>(*this);
+            return std::bit_cast<uint16_t>(*this);
         }
 
         static OperandTypes fromBits(uint16_t bits)
         {
-            return bitwise_cast<OperandTypes>(bits);
+            return std::bit_cast<OperandTypes>(bits);
         }
 
         void dump(PrintStream& out) const

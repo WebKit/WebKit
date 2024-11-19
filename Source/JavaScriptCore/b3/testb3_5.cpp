@@ -2375,7 +2375,7 @@ void testCallSimpleFloat(float a, float b)
             floatValue1,
             floatValue2));
 
-    CHECK(isIdentical(compileAndRun<float>(proc, bitwise_cast<int32_t>(a), bitwise_cast<int32_t>(b)), a + b));
+    CHECK(isIdentical(compileAndRun<float>(proc, std::bit_cast<int32_t>(a), std::bit_cast<int32_t>(b)), a + b));
 }
 
 extern "C" {

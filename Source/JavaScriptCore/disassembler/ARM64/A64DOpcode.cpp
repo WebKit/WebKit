@@ -217,7 +217,7 @@ void A64DOpcode::appendPCRelativeOffset(uint32_t* pc, int32_t immediate)
     else
         targetInfo = " -> <unknown>";
 
-    bufferPrintf("0x%" PRIxPTR "%s", bitwise_cast<uintptr_t>(targetPC),  targetInfo);
+    bufferPrintf("0x%" PRIxPTR "%s", std::bit_cast<uintptr_t>(targetPC),  targetInfo);
 }
 
 void A64DOpcode::appendRegisterName(unsigned registerNumber, bool is64Bit)
@@ -1788,7 +1788,7 @@ typename Trait::ResultType A64DOpcodeMoveWide::parse()
         if (!doneBuildingConstant)
             return;
 
-        void* ptr = removeCodePtrTag(bitwise_cast<void*>(m_builtConstant));
+        void* ptr = removeCodePtrTag(std::bit_cast<void*>(m_builtConstant));
         if (!ptr)
             return;
 

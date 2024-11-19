@@ -185,7 +185,7 @@ public:
 
         DisjunctionContext* getDisjunctionContext()
         {
-            return bitwise_cast<DisjunctionContext*>(bitwise_cast<uintptr_t>(this) + allocationSize(m_numBackupIds));
+            return std::bit_cast<DisjunctionContext*>(std::bit_cast<uintptr_t>(this) + allocationSize(m_numBackupIds));
         }
 
         unsigned backupOffsetForDuplicateNamedGroup(unsigned duplicateNamedGroup)

@@ -62,7 +62,7 @@ public:
         const HashSet<MarkedBlock*>& set = heap.objectSpace().blocks().set();
         
         MarkedBlock* candidate = MarkedBlock::blockFor(pointer);
-        if (filter.ruleOut(bitwise_cast<uintptr_t>(candidate))) {
+        if (filter.ruleOut(std::bit_cast<uintptr_t>(candidate))) {
             ASSERT(!candidate || !set.contains(candidate));
             return false;
         }

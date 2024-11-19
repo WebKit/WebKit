@@ -81,19 +81,19 @@ struct EnumTaggingTraits {
         ASSERT(fromStorage(toStorage(tag)) == tag);
 #if CPU(ARM64) && CPU(ADDRESS64)
         // We could be re-encoding an old pointer so we need to strip any potential old tag.
-        return (bitwise_cast<StorageType>(ptr) & ptrMask) | toStorage(tag);
+        return (std::bit_cast<StorageType>(ptr) & ptrMask) | toStorage(tag);
 #else
-        return bitwise_cast<StorageType>(ptr) | toStorage(tag);
+        return std::bit_cast<StorageType>(ptr) | toStorage(tag);
 #endif
     }
 
 #if CPU(ARM64) && CPU(ADDRESS64)
     // This class relies on top byte ignore on ARM64 CPUs.
-    static T* extractPtr(StorageType storage) { return bitwise_cast<T*>(storage); }
+    static T* extractPtr(StorageType storage) { return std::bit_cast<T*>(storage); }
 #elif CPU(ADDRESS64)
-    static T* extractPtr(StorageType storage) { return bitwise_cast<T*>(storage & ptrMask); }
+    static T* extractPtr(StorageType storage) { return std::bit_cast<T*>(storage & ptrMask); }
 #else
-    static T* extractPtr(StorageType storage) { return bitwise_cast<T*>(storage & ~tagMask32Bit); }
+    static T* extractPtr(StorageType storage) { return std::bit_cast<T*>(storage & ~tagMask32Bit); }
 #endif
 
     static TagType extractTag(StorageType storage) { return fromStorage(storage); }
@@ -116,8 +116,8 @@ struct NoTaggingTraits {
     using StorageType = uintptr_t;
     using TagType = unsigned;
     static constexpr TagType defaultTag = 0;
-    static StorageType encode(const T* ptr, TagType) { return bitwise_cast<StorageType>(ptr); }
-    static T* extractPtr(StorageType storage) { return bitwise_cast<T*>(storage); }
+    static StorageType encode(const T* ptr, TagType) { return std::bit_cast<StorageType>(ptr); }
+    static T* extractPtr(StorageType storage) { return std::bit_cast<T*>(storage); }
     static TagType extractTag(StorageType) { return defaultTag; }
 };
 

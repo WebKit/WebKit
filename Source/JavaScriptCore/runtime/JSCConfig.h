@@ -125,7 +125,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 // Workaround to localize bounds safety warnings to this file.
 // FIXME: Use real types to make materializing JSC::Config* bounds-safe and type-safe.
-inline Config* addressOfJSCConfig() { return bitwise_cast<Config*>(&g_wtfConfig.spaceForExtensions); }
+inline Config* addressOfJSCConfig() { return std::bit_cast<Config*>(&g_wtfConfig.spaceForExtensions); }
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 

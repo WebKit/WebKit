@@ -174,16 +174,16 @@ ALWAYS_INLINE JSValue toJSValue(JSGlobalObject* globalObject, const Wasm::Type t
     case Wasm::TypeKind::I32:
         return jsNumber(static_cast<int32_t>(bits));
     case Wasm::TypeKind::F32:
-        return jsNumber(purifyNaN(bitwise_cast<float>(static_cast<int32_t>(bits))));
+        return jsNumber(purifyNaN(std::bit_cast<float>(static_cast<int32_t>(bits))));
     case Wasm::TypeKind::F64:
-        return jsNumber(purifyNaN(bitwise_cast<double>(bits)));
+        return jsNumber(purifyNaN(std::bit_cast<double>(bits)));
     case Wasm::TypeKind::I64:
         return JSBigInt::createFrom(globalObject, static_cast<int64_t>(bits));
     case Wasm::TypeKind::Ref:
     case Wasm::TypeKind::RefNull:
     case Wasm::TypeKind::Externref:
     case Wasm::TypeKind::Funcref:
-        return bitwise_cast<JSValue>(bits);
+        return std::bit_cast<JSValue>(bits);
     case Wasm::TypeKind::V128:
     default:
         break;
@@ -200,11 +200,11 @@ ALWAYS_INLINE uint64_t toWebAssemblyValue(JSGlobalObject* globalObject, const Wa
     case Wasm::TypeKind::I32:
         RELEASE_AND_RETURN(scope, value.toInt32(globalObject));
     case Wasm::TypeKind::I64:
-        RELEASE_AND_RETURN(scope, bitwise_cast<uint64_t>(value.toBigInt64(globalObject)));
+        RELEASE_AND_RETURN(scope, std::bit_cast<uint64_t>(value.toBigInt64(globalObject)));
     case Wasm::TypeKind::F32:
-        RELEASE_AND_RETURN(scope, bitwise_cast<uint32_t>(value.toFloat(globalObject)));
+        RELEASE_AND_RETURN(scope, std::bit_cast<uint32_t>(value.toFloat(globalObject)));
     case Wasm::TypeKind::F64:
-        RELEASE_AND_RETURN(scope, bitwise_cast<uint64_t>(value.toNumber(globalObject)));
+        RELEASE_AND_RETURN(scope, std::bit_cast<uint64_t>(value.toNumber(globalObject)));
     case Wasm::TypeKind::V128:
         RELEASE_ASSERT_NOT_REACHED();
     case Wasm::TypeKind::Ref:

@@ -54,7 +54,7 @@ uint32_t computeJSCBytecodeCacheVersion()
     static LazyNeverDestroyed<uint32_t> cacheVersion;
     static std::once_flag onceFlag;
     std::call_once(onceFlag, [] {
-        void* jsFunctionAddr = bitwise_cast<void*>(&computeJSCBytecodeCacheVersion);
+        void* jsFunctionAddr = std::bit_cast<void*>(&computeJSCBytecodeCacheVersion);
 #if OS(DARWIN)
         uuid_t uuid;
         if (const mach_header* header = dyld_image_header_containing_address(jsFunctionAddr); header && _dyld_get_image_uuid(header, uuid)) {
@@ -89,7 +89,7 @@ uint32_t computeJSCBytecodeCacheVersion()
                     void* start = nullptr;
                     for (unsigned i = 0; i < info->dlpi_phnum; ++i) {
                         if (info->dlpi_phdr[i].p_type == PT_LOAD) {
-                            start = bitwise_cast<void*>(static_cast<uintptr_t>(info->dlpi_addr + info->dlpi_phdr[i].p_vaddr));
+                            start = std::bit_cast<void*>(static_cast<uintptr_t>(info->dlpi_addr + info->dlpi_phdr[i].p_vaddr));
                             break;
                         }
                     }
@@ -104,14 +104,14 @@ uint32_t computeJSCBytecodeCacheVersion()
                         // https://refspecs.linuxbase.org/elf/gabi4+/ch5.pheader.html#note_section
                         using NoteHeader = ElfW(Nhdr);
 
-                        auto* payload = bitwise_cast<uint8_t*>(static_cast<uintptr_t>(info->dlpi_addr + info->dlpi_phdr[i].p_vaddr));
+                        auto* payload = std::bit_cast<uint8_t*>(static_cast<uintptr_t>(info->dlpi_addr + info->dlpi_phdr[i].p_vaddr));
                         size_t length = info->dlpi_phdr[i].p_filesz;
                         for (size_t index = 0; index < length;) {
                             auto* cursor  = payload + index;
                             if ((index + sizeof(NoteHeader)) > length)
                                 return 0;
 
-                            auto* note = bitwise_cast<NoteHeader*>(cursor);
+                            auto* note = std::bit_cast<NoteHeader*>(cursor);
                             size_t size = sizeof(NoteHeader) + roundUpToMultipleOf<4>(note->n_namesz) + roundUpToMultipleOf<4>(note->n_descsz);
                             if ((index + size) > length)
                                 return 0;

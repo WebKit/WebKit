@@ -41,7 +41,7 @@ void FreeList::clear()
 {
     m_intervalStart = nullptr;
     m_intervalEnd = nullptr;
-    m_nextInterval = bitwise_cast<FreeCell*>(static_cast<uintptr_t>(1));
+    m_nextInterval = std::bit_cast<FreeCell*>(static_cast<uintptr_t>(1));
     m_secret = 0;
     m_originalSize = 0;
 }

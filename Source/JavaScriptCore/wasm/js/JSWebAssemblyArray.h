@@ -155,7 +155,7 @@ public:
         case Wasm::TypeKind::Funcref:
         case Wasm::TypeKind::Ref:
         case Wasm::TypeKind::RefNull: {
-            WriteBarrier<Unknown>* pointer = bitwise_cast<WriteBarrier<Unknown>*>(m_payload64.mutableSpan().data());
+            WriteBarrier<Unknown>* pointer = std::bit_cast<WriteBarrier<Unknown>*>(m_payload64.mutableSpan().data());
             pointer += index;
             pointer->set(vm(), this, JSValue::decode(static_cast<EncodedJSValue>(value)));
             break;

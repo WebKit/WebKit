@@ -425,10 +425,10 @@ CString BytecodeDumper::formatConstant(Type type, uint64_t constant) const
     case TypeKind::I64:
         return toCString(constant);
     case TypeKind::F32:
-        return toCString(bitwise_cast<float>(static_cast<int32_t>(constant)));
+        return toCString(std::bit_cast<float>(static_cast<int32_t>(constant)));
         break;
     case TypeKind::F64:
-        return toCString(bitwise_cast<double>(constant));
+        return toCString(std::bit_cast<double>(constant));
         break;
     case TypeKind::V128:
         return toCString(constant);

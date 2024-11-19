@@ -2501,14 +2501,14 @@ JSC_DEFINE_HOST_FUNCTION(functionCpuClflush, (JSGlobalObject*, CallFrame* callFr
     uint32_t offset = callFrame->argument(1).asUInt32();
 
     if (JSArrayBufferView* view = jsDynamicCast<JSArrayBufferView*>(callFrame->argument(0)))
-        toFlush.append(bitwise_cast<char*>(view->vector()) + offset);
+        toFlush.append(std::bit_cast<char*>(view->vector()) + offset);
     else if (JSObject* object = jsDynamicCast<JSObject*>(callFrame->argument(0))) {
         switch (object->indexingType()) {
         case ALL_INT32_INDEXING_TYPES:
         case ALL_CONTIGUOUS_INDEXING_TYPES:
         case ALL_DOUBLE_INDEXING_TYPES:
-            toFlush.append(bitwise_cast<char*>(object->butterfly()) + Butterfly::offsetOfVectorLength());
-            toFlush.append(bitwise_cast<char*>(object->butterfly()) + Butterfly::offsetOfPublicLength());
+            toFlush.append(std::bit_cast<char*>(object->butterfly()) + Butterfly::offsetOfVectorLength());
+            toFlush.append(std::bit_cast<char*>(object->butterfly()) + Butterfly::offsetOfPublicLength());
         }
     }
 
@@ -3006,11 +3006,11 @@ JSC_DEFINE_HOST_FUNCTION(functionIsHavingABadTime, (JSGlobalObject* globalObject
 #if ENABLE(ASSEMBLER) && OS(DARWIN) && CPU(X86_64)
 static void callWithStackSizeProbeFunction(Probe::State* state)
 {
-    JSGlobalObject* globalObject = bitwise_cast<JSGlobalObject*>(state->arg);
+    JSGlobalObject* globalObject = std::bit_cast<JSGlobalObject*>(state->arg);
     // The bits loaded from state->probeFunction will be tagged like
     // a C function. So, we'll need to untag it to extract the bits
     // for the JSFunction*.
-    JSFunction* function = bitwise_cast<JSFunction*>(untagCodePtr<CFunctionPtrTag>(state->probeFunction));
+    JSFunction* function = std::bit_cast<JSFunction*>(untagCodePtr<CFunctionPtrTag>(state->probeFunction));
     state->initializeStackFunction = nullptr;
     state->initializeStackArg = nullptr;
 
@@ -3056,8 +3056,8 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
     size_t desiredStackSize = arg1.asNumber();
 
     const StackBounds& bounds = Thread::current().stack();
-    uint8_t* currentStackPosition = bitwise_cast<uint8_t*>(currentStackPointer());
-    uint8_t* end = bitwise_cast<uint8_t*>(bounds.end());
+    uint8_t* currentStackPosition = std::bit_cast<uint8_t*>(currentStackPointer());
+    uint8_t* end = std::bit_cast<uint8_t*>(bounds.end());
     uint8_t* desiredStart = end + desiredStackSize;
     if (desiredStart >= currentStackPosition)
         return throwVMError(globalObject, throwScope, "Unable to setup desired stack size"_s);
@@ -3070,7 +3070,7 @@ JSC_DEFINE_HOST_FUNCTION_WITH_ATTRIBUTES(functionCallWithStackSize, SUPPRESS_ASA
 
     // This is a hack to make the VM think it's stack limits are near the end
     // of the physical stack.
-    uint8_t* vmStackStart = bitwise_cast<uint8_t*>(vm.stackPointerAtVMEntry());
+    uint8_t* vmStackStart = std::bit_cast<uint8_t*>(vm.stackPointerAtVMEntry());
     uint8_t* vmStackEnd = vmStackStart - originalMaxPerThreadStackUsage;
     ptrdiff_t sizeDiff = vmStackEnd - end;
     RELEASE_ASSERT(sizeDiff >= 0);
@@ -3789,7 +3789,7 @@ JSC_DEFINE_HOST_FUNCTION(functionDeltaBetweenButterflies, (JSGlobalObject*, Call
     if (!a || !b)
         return JSValue::encode(jsNumber(PNaN));
 
-    ptrdiff_t delta = bitwise_cast<char*>(a->butterfly()) - bitwise_cast<char*>(b->butterfly());
+    ptrdiff_t delta = std::bit_cast<char*>(a->butterfly()) - std::bit_cast<char*>(b->butterfly());
     if (delta < 0)
         return JSValue::encode(jsNumber(PNaN));
     if (delta > std::numeric_limits<int32_t>::max())
@@ -4203,7 +4203,7 @@ JSC_DEFINE_HOST_FUNCTION(functionAssertFrameAligned, (JSGlobalObject*, CallFrame
 {
     DollarVMAssertScope assertScope;
 #if CPU(X86_64) || CPU(ARM64)
-    RELEASE_ASSERT(bitwise_cast<uintptr_t>(callFrame) % stackAlignmentBytes() == 0);
+    RELEASE_ASSERT(!(std::bit_cast<uintptr_t>(callFrame) % stackAlignmentBytes()));
 #else
     UNUSED_PARAM(callFrame);
 #endif

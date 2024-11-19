@@ -76,7 +76,7 @@ public:
         EncodedValueDescriptor ret;
         ret.asBits.tag = JSValue::NativeCalleeTag;
         ret.asBits.payload = reinterpret_cast<intptr_t>(boxedCallee);
-        return bitwise_cast<EncodedJSValue>(ret);
+        return std::bit_cast<EncodedJSValue>(ret);
     }
 
 #elif USE(JSVALUE64)
@@ -122,7 +122,7 @@ public:
     static void* boxNativeCallee(NativeCallee* callee)
     {
 #if USE(JSVALUE64)
-        auto bits = bitwise_cast<uintptr_t>(callee);
+        auto bits = std::bit_cast<uintptr_t>(callee);
 #if CPU(ARM64)
         bits &= nativeCalleeTopByteMask;
 #endif
@@ -130,7 +130,7 @@ public:
         ASSERT(result.isNativeCallee());
         return result.rawPtr();
 #elif USE(JSVALUE32_64)
-        return bitwise_cast<void*>(bitwise_cast<uintptr_t>(callee) - lowestAccessibleAddress());
+        return std::bit_cast<void*>(std::bit_cast<uintptr_t>(callee) - lowestAccessibleAddress());
 #endif
     }
 
@@ -154,9 +154,9 @@ public:
     {
         ASSERT(isNativeCallee());
 #if USE(JSVALUE64)
-        return bitwise_cast<NativeCallee*>(static_cast<uintptr_t>(bitwise_cast<uintptr_t>(m_ptr) & ~JSValue::NativeCalleeTag) + lowestAccessibleAddress());
+        return std::bit_cast<NativeCallee*>(static_cast<uintptr_t>(std::bit_cast<uintptr_t>(m_ptr) & ~JSValue::NativeCalleeTag) + lowestAccessibleAddress());
 #elif USE(JSVALUE32_64)
-        return bitwise_cast<NativeCallee*>(bitwise_cast<uintptr_t>(m_ptr) + lowestAccessibleAddress());
+        return std::bit_cast<NativeCallee*>(std::bit_cast<uintptr_t>(m_ptr) + lowestAccessibleAddress());
 #endif
     }
 

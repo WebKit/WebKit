@@ -114,7 +114,7 @@ BufferMemoryResult BufferMemoryManager::tryAllocateGrowableBoundsCheckingMemory(
         if (!result)
             return BufferMemoryResult(nullptr, BufferMemoryResult::SyncTryToReclaimMemory);
 
-        m_growableBoundsCheckingMemories.insert(std::make_pair(bitwise_cast<uintptr_t>(result), mappedCapacity));
+        m_growableBoundsCheckingMemories.insert(std::make_pair(std::bit_cast<uintptr_t>(result), mappedCapacity));
 
         return BufferMemoryResult(result, BufferMemoryResult::Success);
     }();
@@ -129,7 +129,7 @@ void BufferMemoryManager::freeGrowableBoundsCheckingMemory(void* basePtr, size_t
     {
         Locker locker { m_lock };
         Gigacage::freeVirtualPages(Gigacage::Primitive, basePtr, mappedCapacity);
-        m_growableBoundsCheckingMemories.erase(std::make_pair(bitwise_cast<uintptr_t>(basePtr), mappedCapacity));
+        m_growableBoundsCheckingMemories.erase(std::make_pair(std::bit_cast<uintptr_t>(basePtr), mappedCapacity));
     }
 
     dataLogLnIf(Options::logWasmMemory(), "Freed virtual; state: ", *this);
@@ -144,7 +144,7 @@ bool BufferMemoryManager::isInGrowableOrFastMemory(void* address)
         if (start <= address && address <= start + BufferMemoryHandle::fastMappedBytes())
             return true;
     }
-    uintptr_t addressValue = bitwise_cast<uintptr_t>(address);
+    uintptr_t addressValue = std::bit_cast<uintptr_t>(address);
     auto iterator = std::upper_bound(m_growableBoundsCheckingMemories.begin(), m_growableBoundsCheckingMemories.end(), std::make_pair(addressValue, 0),
         [](std::pair<uintptr_t, size_t> a, std::pair<uintptr_t, size_t> b) {
             return (a.first + a.second) < (b.first + b.second);

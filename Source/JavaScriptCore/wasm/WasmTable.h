@@ -160,7 +160,7 @@ public:
 private:
     FuncRefTable(uint32_t initial, std::optional<uint32_t> maximum, Type wasmType);
 
-    Function* tailPointer() { return bitwise_cast<Function*>(bitwise_cast<uint8_t*>(this) + offsetOfTail()); }
+    Function* tailPointer() { return std::bit_cast<Function*>(std::bit_cast<uint8_t*>(this) + offsetOfTail()); }
 
     static Ref<FuncRefTable> createFixedSized(uint32_t size, Type wasmType);
 

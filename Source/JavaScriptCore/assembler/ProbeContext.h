@@ -128,7 +128,7 @@ template<typename T, SavedFPWidth savedFPWidth>
 T CPUState::fpr(FPRegisterID id) const
 {
     CPUState* cpu = const_cast<CPUState*>(this);
-    return bitwise_cast<T>(cpu->fpr<savedFPWidth>(id));
+    return std::bit_cast<T>(cpu->fpr<savedFPWidth>(id));
 }
 
 inline void*& CPUState::pc()

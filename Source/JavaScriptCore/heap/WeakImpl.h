@@ -69,14 +69,14 @@ private:
 };
 
 inline WeakImpl::WeakImpl()
-    : m_weakHandleOwner(bitwise_cast<WeakHandleOwner*>(static_cast<uintptr_t>(Deallocated)))
+    : m_weakHandleOwner(std::bit_cast<WeakHandleOwner*>(static_cast<uintptr_t>(Deallocated)))
 {
 }
 
 inline void WeakImpl::clear()
 {
     ASSERT(Deallocated >= this->state());
-    m_weakHandleOwner = bitwise_cast<WeakHandleOwner*>(static_cast<uintptr_t>(Deallocated));
+    m_weakHandleOwner = std::bit_cast<WeakHandleOwner*>(static_cast<uintptr_t>(Deallocated));
 }
 
 inline WeakImpl::WeakImpl(JSValue jsValue, WeakHandleOwner* weakHandleOwner, void* context)

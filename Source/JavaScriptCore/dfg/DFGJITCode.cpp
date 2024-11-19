@@ -99,7 +99,7 @@ bool JITData::tryInitialize(VM& vm, CodeBlock* codeBlock, const JITCode& jitCode
         auto entry = jitCode.m_linkerIR.at(i);
         switch (entry.type()) {
         case LinkerIR::Type::CallLinkInfo: {
-            unsigned index = bitwise_cast<uintptr_t>(entry.pointer());
+            unsigned index = std::bit_cast<uintptr_t>(entry.pointer());
             const UnlinkedCallLinkInfo& unlinkedCallLinkInfo = jitCode.m_unlinkedCallLinkInfos[index];
             OptimizingCallLinkInfo& callLinkInfo = m_callLinkInfos[index];
             callLinkInfo.initializeFromDFGUnlinkedCallLinkInfo(vm, unlinkedCallLinkInfo, codeBlock);

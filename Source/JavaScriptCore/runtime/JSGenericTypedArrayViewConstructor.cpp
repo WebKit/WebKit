@@ -155,11 +155,11 @@ inline static WARN_UNUSED_RETURN size_t decodeHexImpl(std::span<CharacterType> s
         auto doStridedDecode = [&]() ALWAYS_INLINE_LAMBDA {
             if constexpr (sizeof(CharacterType) == 1) {
                 for (; cursor + (stride - 1) < end; cursor += stride, output += halfStride) {
-                    if (!vectorDecode8(SIMD::load(bitwise_cast<const uint8_t*>(cursor)), output))
+                    if (!vectorDecode8(SIMD::load(std::bit_cast<const uint8_t*>(cursor)), output))
                         return false;
                 }
                 if (cursor < end) {
-                    if (!vectorDecode8(SIMD::load(bitwise_cast<const uint8_t*>(end - stride)), outputEnd - halfStride))
+                    if (!vectorDecode8(SIMD::load(std::bit_cast<const uint8_t*>(end - stride)), outputEnd - halfStride))
                         return false;
                 }
                 return true;
@@ -171,11 +171,11 @@ inline static WARN_UNUSED_RETURN size_t decodeHexImpl(std::span<CharacterType> s
                 };
 
                 for (; cursor + (stride - 1) < end; cursor += stride, output += halfStride) {
-                    if (!vectorDecode16(simde_vld2q_u8(bitwise_cast<const uint8_t*>(cursor)), output))
+                    if (!vectorDecode16(simde_vld2q_u8(std::bit_cast<const uint8_t*>(cursor)), output))
                         return false;
                 }
                 if (cursor < end) {
-                    if (!vectorDecode16(simde_vld2q_u8(bitwise_cast<const uint8_t*>(end - stride)), outputEnd - halfStride))
+                    if (!vectorDecode16(simde_vld2q_u8(std::bit_cast<const uint8_t*>(end - stride)), outputEnd - halfStride))
                         return false;
                 }
                 return true;

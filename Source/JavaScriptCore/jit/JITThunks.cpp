@@ -205,7 +205,7 @@ MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiStub(CommonJITThunkID thunkI
 
 MacroAssemblerCodeRef<JITThunkPtrTag> JITThunks::ctiSlowPathFunctionStub(VM& vm, SlowPathFunction slowPathFunction)
 {
-    auto key = bitwise_cast<ThunkGenerator>(slowPathFunction);
+    auto key = std::bit_cast<ThunkGenerator>(slowPathFunction);
     return ctiStubImpl(key, [&] {
         return JITSlowPathCall::generateThunk(vm, slowPathFunction);
     });

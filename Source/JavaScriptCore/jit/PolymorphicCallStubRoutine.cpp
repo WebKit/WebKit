@@ -62,7 +62,7 @@ void PolymorphicCallNode::clear()
 
 PolymorphicCallStubRoutine* PolymorphicCallNode::owner()
 {
-    return bitwise_cast<PolymorphicCallStubRoutine*>(this - m_index + m_totalSize);
+    return std::bit_cast<PolymorphicCallStubRoutine*>(this - m_index + m_totalSize);
 }
 
 void PolymorphicCallCase::dump(PrintStream& out) const

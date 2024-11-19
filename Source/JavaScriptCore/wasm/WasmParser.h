@@ -269,7 +269,7 @@ ALWAYS_INLINE bool ParserBase::parseInt7(int8_t& result)
     if (m_offset >= m_source.size())
         return false;
     uint8_t v = m_source[m_offset++];
-    result = (v & 0x40) ? WTF::bitwise_cast<int8_t>(uint8_t(v | 0x80)) : v;
+    result = (v & 0x40) ? std::bit_cast<int8_t>(uint8_t(v | 0x80)) : v;
     return !(v & 0x80);
 }
 
@@ -278,7 +278,7 @@ ALWAYS_INLINE bool ParserBase::peekInt7(int8_t& result)
     if (m_offset >= m_source.size())
         return false;
     uint8_t v = m_source[m_offset];
-    result = (v & 0x40) ? WTF::bitwise_cast<int8_t>(uint8_t(v | 0x80)) : v;
+    result = (v & 0x40) ? std::bit_cast<int8_t>(uint8_t(v | 0x80)) : v;
     return !(v & 0x80);
 }
 

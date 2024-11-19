@@ -558,7 +558,7 @@ public:
     const FieldType* storage(StructFieldCount i) const { return const_cast<StructType*>(this)->storage(i); }
 
     // Returns the offset relative to `m_payload` (the internal vector of fields)
-    const unsigned* offsetOfField(StructFieldCount i) const { ASSERT(i < fieldCount()); return bitwise_cast<const unsigned*>(m_payload + m_fieldCount) + i; }
+    const unsigned* offsetOfField(StructFieldCount i) const { ASSERT(i < fieldCount()); return std::bit_cast<const unsigned*>(m_payload + m_fieldCount) + i; }
     unsigned* offsetOfField(StructFieldCount i) { return const_cast<unsigned*>(const_cast<const StructType*>(this)->offsetOfField(i)); }
 
     // Returns the offset relative to `m_payload.storage` (the internal storage for the internal vector of fields)
@@ -840,7 +840,7 @@ public:
 
 private:
     // Returns the TypeIndex of a potentially unowned (other than TypeInformation::m_typeSet) TypeDefinition.
-    TypeIndex unownedIndex() const { return bitwise_cast<TypeIndex>(this); }
+    TypeIndex unownedIndex() const { return std::bit_cast<TypeIndex>(this); }
 
     friend class TypeInformation;
     friend struct FunctionParameterTypes;

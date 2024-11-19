@@ -434,9 +434,9 @@ private:
     {
         ASSERT(tag() == Tag::CalculationValue);
 #if CPU(ADDRESS64)
-        bitwise_cast<CalculationValue*>(m_data & calculationValueMask)->ref();
+        std::bit_cast<CalculationValue*>(m_data & calculationValueMask)->ref();
 #else
-        bitwise_cast<CalculationValue*>(static_cast<uint32_t>(m_data & calculationValueMask))->ref();
+        std::bit_cast<CalculationValue*>(static_cast<uint32_t>(m_data & calculationValueMask))->ref();
 #endif
     }
 
@@ -444,9 +444,9 @@ private:
     {
         ASSERT(tag() == Tag::CalculationValue);
 #if CPU(ADDRESS64)
-        bitwise_cast<CalculationValue*>(m_data & calculationValueMask)->deref();
+        std::bit_cast<CalculationValue*>(m_data & calculationValueMask)->deref();
 #else
-        bitwise_cast<CalculationValue*>(static_cast<uint32_t>(m_data & calculationValueMask))->deref();
+        std::bit_cast<CalculationValue*>(static_cast<uint32_t>(m_data & calculationValueMask))->deref();
 #endif
     }
 
@@ -455,40 +455,40 @@ private:
     static uint64_t encodedCalculationValue(Ref<CalculationValue>&& calculationValue)
     {
 #if CPU(ADDRESS64)
-        return bitwise_cast<uint64_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
+        return std::bit_cast<uint64_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
 #else
-        return bitwise_cast<uint32_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
+        return std::bit_cast<uint32_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
 #endif
     }
 
     static Ref<CalculationValue> decodedCalculationValue(uint64_t value)
     {
 #if CPU(ADDRESS64)
-        Ref<CalculationValue> calculation = *bitwise_cast<CalculationValue*>(value & calculationValueMask);
+        Ref<CalculationValue> calculation = *std::bit_cast<CalculationValue*>(value & calculationValueMask);
 #else
-        Ref<CalculationValue> calculation = *bitwise_cast<CalculationValue*>(static_cast<uint32_t>(value & calculationValueMask));
+        Ref<CalculationValue> calculation = *std::bit_cast<CalculationValue*>(static_cast<uint32_t>(value & calculationValueMask));
 #endif
         return calculation;
     }
 
     static constexpr uint64_t encodedAngle(Angle<R> angle)
     {
-        return static_cast<uint64_t>(bitwise_cast<uint32_t>(angle.value));
+        return static_cast<uint64_t>(std::bit_cast<uint32_t>(angle.value));
     }
 
     static constexpr Angle<R> decodedAngle(uint64_t value)
     {
-        return { bitwise_cast<float>(static_cast<uint32_t>(value & angleMask)) };
+        return { std::bit_cast<float>(static_cast<uint32_t>(value & angleMask)) };
     }
 
     static constexpr uint64_t encodedPercentage(Percentage<R> percentage)
     {
-        return static_cast<uint64_t>(bitwise_cast<uint32_t>(percentage.value));
+        return static_cast<uint64_t>(std::bit_cast<uint32_t>(percentage.value));
     }
 
     static constexpr Percentage<R> decodedPercentage(uint64_t value)
     {
-        return { bitwise_cast<float>(static_cast<uint32_t>(value & percentageMask)) };
+        return { std::bit_cast<float>(static_cast<uint32_t>(value & percentageMask)) };
     }
 
     static Ref<CalculationValue> makeCalculationValue(Calculation::Child&& root)
@@ -750,9 +750,9 @@ private:
     {
         ASSERT(tag() == Tag::CalculationValue);
 #if CPU(ADDRESS64)
-        bitwise_cast<CalculationValue*>(m_data & calculationValueMask)->ref();
+        std::bit_cast<CalculationValue*>(m_data & calculationValueMask)->ref();
 #else
-        bitwise_cast<CalculationValue*>(static_cast<uint32_t>(m_data & calculationValueMask))->ref();
+        std::bit_cast<CalculationValue*>(static_cast<uint32_t>(m_data & calculationValueMask))->ref();
 #endif
     }
 
@@ -760,9 +760,9 @@ private:
     {
         ASSERT(tag() == Tag::CalculationValue);
 #if CPU(ADDRESS64)
-        bitwise_cast<CalculationValue*>(m_data & calculationValueMask)->deref();
+        std::bit_cast<CalculationValue*>(m_data & calculationValueMask)->deref();
 #else
-        bitwise_cast<CalculationValue*>(static_cast<uint32_t>(m_data & calculationValueMask))->deref();
+        std::bit_cast<CalculationValue*>(static_cast<uint32_t>(m_data & calculationValueMask))->deref();
 #endif
     }
 
@@ -771,40 +771,40 @@ private:
     static uint64_t encodedCalculationValue(Ref<CalculationValue>&& calculationValue)
     {
 #if CPU(ADDRESS64)
-        return bitwise_cast<uint64_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
+        return std::bit_cast<uint64_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
 #else
-        return bitwise_cast<uint32_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
+        return std::bit_cast<uint32_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
 #endif
     }
 
     static Ref<CalculationValue> decodedCalculationValue(uint64_t value)
     {
 #if CPU(ADDRESS64)
-        Ref<CalculationValue> calculation = *bitwise_cast<CalculationValue*>(value & calculationValueMask);
+        Ref<CalculationValue> calculation = *std::bit_cast<CalculationValue*>(value & calculationValueMask);
 #else
-        Ref<CalculationValue> calculation = *bitwise_cast<CalculationValue*>(static_cast<uint32_t>(value & calculationValueMask));
+        Ref<CalculationValue> calculation = *std::bit_cast<CalculationValue*>(static_cast<uint32_t>(value & calculationValueMask));
 #endif
         return calculation;
     }
 
     static constexpr uint64_t encodedLength(Length<R> length)
     {
-        return static_cast<uint64_t>(bitwise_cast<uint32_t>(length.value)) | (static_cast<uint64_t>(length.quirk) << lengthQuirkShift);
+        return static_cast<uint64_t>(std::bit_cast<uint32_t>(length.value)) | (static_cast<uint64_t>(length.quirk) << lengthQuirkShift);
     }
 
     static constexpr Length<R> decodedLength(uint64_t value)
     {
-        return { bitwise_cast<float>(static_cast<uint32_t>(value & lengthValueMask)), static_cast<bool>(value >> lengthQuirkShift) };
+        return { std::bit_cast<float>(static_cast<uint32_t>(value & lengthValueMask)), static_cast<bool>(value >> lengthQuirkShift) };
     }
 
     static constexpr uint64_t encodedPercentage(Percentage<R> percentage)
     {
-        return static_cast<uint64_t>(bitwise_cast<uint32_t>(percentage.value));
+        return static_cast<uint64_t>(std::bit_cast<uint32_t>(percentage.value));
     }
 
     static constexpr Percentage<R> decodedPercentage(uint64_t value)
     {
-        return { bitwise_cast<float>(static_cast<uint32_t>(value & percentageMask)) };
+        return { std::bit_cast<float>(static_cast<uint32_t>(value & percentageMask)) };
     }
 
     static Ref<CalculationValue> makeCalculationValue(Calculation::Child&& root)

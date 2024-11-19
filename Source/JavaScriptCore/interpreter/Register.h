@@ -196,12 +196,12 @@ namespace JSC {
 #if ENABLE(WEBASSEMBLY) && USE(JSVALUE32_64)
     ALWAYS_INLINE float Register::unboxedFloat() const
     {
-        return bitwise_cast<float>(payload());
+        return std::bit_cast<float>(payload());
     }
 
     SUPPRESS_ASAN ALWAYS_INLINE float Register::asanUnsafeUnboxedFloat() const
     {
-        return bitwise_cast<float>(payload());
+        return std::bit_cast<float>(payload());
     }
 #endif
 
@@ -220,7 +220,7 @@ namespace JSC {
 #if USE(JSVALUE64)
         return u.encodedValue.ptr;
 #else
-        return bitwise_cast<JSCell*>(payload());
+        return std::bit_cast<JSCell*>(payload());
 #endif
     }
 
@@ -229,7 +229,7 @@ namespace JSC {
 #if USE(JSVALUE64)
         return u.encodedValue.ptr;
 #else
-        return bitwise_cast<JSCell*>(payload());
+        return std::bit_cast<JSCell*>(payload());
 #endif
     }
 
@@ -238,7 +238,7 @@ namespace JSC {
 #if USE(JSVALUE64)
         return u.encodedValue.ptr;
 #else
-        return bitwise_cast<void*>(payload());
+        return std::bit_cast<void*>(payload());
 #endif
     }
 
@@ -247,7 +247,7 @@ namespace JSC {
 #if USE(JSVALUE64)
         return u.encodedValue.ptr;
 #else
-        return bitwise_cast<void*>(unsafePayload());
+        return std::bit_cast<void*>(unsafePayload());
 #endif
     }
 

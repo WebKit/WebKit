@@ -211,7 +211,7 @@ void JSWebAssemblyArray::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 
     if (isRefType(thisObject->elementType().type)) {
         for (unsigned i = 0; i < thisObject->size(); ++i)
-            visitor.append(bitwise_cast<WriteBarrier<Unknown>>(thisObject->get(i)));
+            visitor.append(std::bit_cast<WriteBarrier<Unknown>>(thisObject->get(i)));
     }
 }
 

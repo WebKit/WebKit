@@ -69,7 +69,7 @@ public:
     bool isEmpty() const
     {
 #if USE(JSVALUE64)
-        return bitwise_cast<Index>(m_indexName) & emptyTag;
+        return std::bit_cast<Index>(m_indexName) & emptyTag;
 #elif USE(JSVALUE32_64)
         return m_kind == Kind::Empty;
 #endif
@@ -78,7 +78,7 @@ public:
     bool isIndex() const
     {
 #if USE(JSVALUE64)
-        return bitwise_cast<Index>(m_indexName) & indexTag;
+        return std::bit_cast<Index>(m_indexName) & indexTag;
 #elif USE(JSVALUE32_64)
         return m_kind == Kind::Index;
 #endif

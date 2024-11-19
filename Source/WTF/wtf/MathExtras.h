@@ -389,7 +389,7 @@ inline void decomposeDouble(double number, bool& sign, int32_t& exponent, uint64
 
     sign = std::signbit(number);
 
-    uint64_t bits = WTF::bitwise_cast<uint64_t>(number);
+    uint64_t bits = std::bit_cast<uint64_t>(number);
     exponent = (static_cast<int32_t>(bits >> 52) & 0x7ff) - 0x3ff;
     mantissa = bits & 0xFFFFFFFFFFFFFull;
 
@@ -749,8 +749,8 @@ constexpr T negate(T v)
 template<typename BitsType, typename InputType>
 inline bool isIdentical(InputType left, InputType right)
 {
-    BitsType leftBits = bitwise_cast<BitsType>(left);
-    BitsType rightBits = bitwise_cast<BitsType>(right);
+    BitsType leftBits = std::bit_cast<BitsType>(left);
+    BitsType rightBits = std::bit_cast<BitsType>(right);
     return leftBits == rightBits;
 }
 

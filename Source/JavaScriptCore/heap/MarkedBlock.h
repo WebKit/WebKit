@@ -176,7 +176,7 @@ public:
         size_t markCount();
         size_t size();
 
-        size_t backingStorageSize() { return bitwise_cast<uintptr_t>(end()) - bitwise_cast<uintptr_t>(pageStart()); }
+        size_t backingStorageSize() { return std::bit_cast<uintptr_t>(end()) - std::bit_cast<uintptr_t>(pageStart()); }
         
         bool isAllocated();
         
@@ -406,7 +406,7 @@ public:
 
     void populatePage() const
     {
-        *bitwise_cast<volatile uint8_t*>(&header());
+        *std::bit_cast<volatile uint8_t*>(&header());
     }
     
     void setVerifierMemo(void*);
@@ -432,7 +432,7 @@ private:
 
 inline MarkedBlock::Header& MarkedBlock::header()
 {
-    return *bitwise_cast<MarkedBlock::Header*>(atoms() + headerAtom);
+    return *std::bit_cast<MarkedBlock::Header*>(atoms() + headerAtom);
 }
 
 inline const MarkedBlock::Header& MarkedBlock::header() const
@@ -704,7 +704,7 @@ inline void MarkedBlock::setVerifierMemo(void* p)
 template<typename T>
 T MarkedBlock::verifierMemo() const
 {
-    return bitwise_cast<T>(header().m_verifierMemo);
+    return std::bit_cast<T>(header().m_verifierMemo);
 }
 
 } // namespace JSC

@@ -848,8 +848,8 @@ void testLoadAddrShift(unsigned shift)
     uintptr_t arg = 0;
     for (unsigned i = sizeof(slots)/sizeof(slots[0]); i--;) {
         slot = slots + i;
-        arg = bitwise_cast<uintptr_t>(slot) >> shift;
-        if (bitwise_cast<int*>(arg << shift) == slot)
+        arg = std::bit_cast<uintptr_t>(slot) >> shift;
+        if (std::bit_cast<int*>(arg << shift) == slot)
             break;
     }
 
@@ -877,7 +877,7 @@ void testFramePointer()
 
     void* fp = compileAndRun<void*>(proc);
     CHECK(fp < &proc);
-    CHECK(fp >= bitwise_cast<char*>(&proc) - 10000);
+    CHECK(fp >= std::bit_cast<char*>(&proc) - 10000);
 }
 
 void testOverrideFramePointer()
@@ -927,7 +927,7 @@ void testStackSlot()
 
     void* stackSlot = compileAndRun<void*>(proc);
     CHECK(stackSlot < &proc);
-    CHECK(stackSlot >= bitwise_cast<char*>(&proc) - 10000);
+    CHECK(stackSlot >= std::bit_cast<char*>(&proc) - 10000);
 }
 
 void testLoadFromFramePointer()
@@ -951,7 +951,7 @@ void testLoadFromFramePointer()
 #endif
 
     CHECK(fp <= myFP);
-    CHECK(fp >= bitwise_cast<char*>(myFP) - 10000);
+    CHECK(fp >= std::bit_cast<char*>(myFP) - 10000);
 }
 
 void testStoreLoadStackSlot(int value)

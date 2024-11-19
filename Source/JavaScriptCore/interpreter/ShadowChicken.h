@@ -80,12 +80,12 @@ public:
         static constexpr intptr_t tailMarkerValue = static_cast<intptr_t>(unlikelyValue);
         static JSObject* tailMarker()
         {
-            return bitwise_cast<JSObject*>(tailMarkerValue);
+            return std::bit_cast<JSObject*>(tailMarkerValue);
         }
         
         static JSObject* throwMarker()
         {
-            return bitwise_cast<JSObject*>(static_cast<intptr_t>(unlikelyValue + 1));
+            return std::bit_cast<JSObject*>(static_cast<intptr_t>(unlikelyValue + 1));
         }
         
         static Packet prologue(JSObject* callee, CallFrame* frame, CallFrame* callerFrame, JSScope* scope)

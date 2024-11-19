@@ -46,7 +46,7 @@ MinifiedNode MinifiedNode::fromNode(Node* node)
         result.m_info = JSValue::encode(node->asJSValue());
     else {
         ASSERT(node->op() == PhantomDirectArguments || node->op() == PhantomClonedArguments);
-        result.m_info = bitwise_cast<uintptr_t>(node->origin.semantic.inlineCallFrame());
+        result.m_info = std::bit_cast<uintptr_t>(node->origin.semantic.inlineCallFrame());
     }
     return result;
 }

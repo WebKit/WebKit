@@ -103,8 +103,8 @@ protected:
         uint8_t shouldRestartWhenTimerFires : 1 { false }; // DeferrableOneShotTimer
     };
 
-    TimerBitfields bitfields() const { return bitwise_cast<TimerBitfields>(m_heapItemWithBitfields.type()); }
-    void setBitfields(const TimerBitfields& bitfields) { return m_heapItemWithBitfields.setType(bitwise_cast<uint8_t>(bitfields)); }
+    TimerBitfields bitfields() const { return std::bit_cast<TimerBitfields>(m_heapItemWithBitfields.type()); }
+    void setBitfields(const TimerBitfields& bitfields) { return m_heapItemWithBitfields.setType(std::bit_cast<uint8_t>(bitfields)); }
 
 private:
     virtual void fired() = 0;

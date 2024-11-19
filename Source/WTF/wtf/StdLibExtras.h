@@ -28,6 +28,7 @@
 #pragma once
 
 #include <algorithm>
+#include <bit>
 #include <climits>
 #include <concepts>
 #include <cstring>
@@ -152,20 +153,6 @@ inline bool isPointerAligned(void* p)
 inline bool is8ByteAligned(void* p)
 {
     return !((uintptr_t)(p) & (sizeof(double) - 1));
-}
-
-template<typename ToType, typename FromType>
-constexpr inline ToType bitwise_cast(FromType from)
-{
-    static_assert(sizeof(FromType) == sizeof(ToType), "bitwise_cast size of FromType and ToType must be equal!");
-#if COMPILER_SUPPORTS(BUILTIN_IS_TRIVIALLY_COPYABLE)
-    // Not all recent STL implementations support the std::is_trivially_copyable type trait. Work around this by only checking on toolchains which have the equivalent compiler intrinsic.
-    static_assert(__is_trivially_copyable(ToType), "bitwise_cast of non-trivially-copyable type!");
-    static_assert(__is_trivially_copyable(FromType), "bitwise_cast of non-trivially-copyable type!");
-#endif
-    typename std::remove_const<ToType>::type to { };
-    std::memcpy(static_cast<void*>(&to), static_cast<void*>(&from), sizeof(to));
-    return to;
 }
 
 template<typename ToType, typename FromType>
@@ -382,7 +369,7 @@ ResultType callStatelessLambda(ArgumentTypes&&... arguments)
 {
     uint64_t data[(sizeof(Func) + sizeof(uint64_t) - 1) / sizeof(uint64_t)];
     memset(data, 0, sizeof(data));
-    return (*bitwise_cast<Func*>(data))(std::forward<ArgumentTypes>(arguments)...);
+    return (*reinterpret_cast<Func*>(data))(std::forward<ArgumentTypes>(arguments)...);
 }
 
 template<typename T, typename U>
@@ -902,11 +889,11 @@ template<ByteType T> struct ByteCastTraits<T> {
 };
 
 template<ByteType T> struct ByteCastTraits<T*> {
-    template<ByteType U> static constexpr auto cast(T* pointer) { return bitwise_cast<U*>(pointer); }
+    template<ByteType U> static constexpr auto cast(T* pointer) { return std::bit_cast<U*>(pointer); }
 };
 
 template<ByteType T> struct ByteCastTraits<const T*> {
-    template<ByteType U> static constexpr auto cast(const T* pointer) { return bitwise_cast<const U*>(pointer); }
+    template<ByteType U> static constexpr auto cast(const T* pointer) { return std::bit_cast<const U*>(pointer); }
 };
 
 template<ByteType T, size_t Extent> struct ByteCastTraits<std::span<T, Extent>> {
@@ -1140,7 +1127,6 @@ using WTF::asByteSpan;
 using WTF::asMutableByteSpan;
 using WTF::asWritableBytes;
 using WTF::binarySearch;
-using WTF::bitwise_cast;
 using WTF::byteCast;
 using WTF::callStatelessLambda;
 using WTF::checkAndSet;

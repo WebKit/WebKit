@@ -338,7 +338,7 @@ private:
         // within this space that required compaction.
         if (location < static_cast<int>(sizeof(int32_t)))
             return 0;
-        return bitwise_cast<int32_t*>(m_assemblerStorage.buffer())[location / sizeof(int32_t) - 1];
+        return std::bit_cast<int32_t*>(m_assemblerStorage.buffer())[location / sizeof(int32_t) - 1];
     }
 #endif
     

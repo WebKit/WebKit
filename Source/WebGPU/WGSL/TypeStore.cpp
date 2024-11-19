@@ -37,7 +37,7 @@ struct VectorKey {
     const Type* elementType;
     uint8_t size;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Vector, size, 0, 0, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Vector, size, 0, 0, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct MatrixKey {
@@ -45,7 +45,7 @@ struct MatrixKey {
     uint8_t columns;
     uint8_t rows;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Matrix, columns, rows, 0, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Matrix, columns, rows, 0, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct ArrayKey {
@@ -64,7 +64,7 @@ struct ArrayKey {
             [&](AST::Expression*) -> unsigned {
                 RELEASE_ASSERT_NOT_REACHED();
             });
-        return std::tuple(TypeCache::Array, 0, 0, encodedSize, bitwise_cast<uintptr_t>(elementType));
+        return std::tuple(TypeCache::Array, 0, 0, encodedSize, std::bit_cast<uintptr_t>(elementType));
     }
 };
 
@@ -72,7 +72,7 @@ struct TextureKey {
     const Type* elementType;
     Texture::Kind kind;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Texture, WTF::enumToUnderlyingType(kind), 0, 0, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Texture, WTF::enumToUnderlyingType(kind), 0, 0, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct TextureStorageKey {
@@ -89,7 +89,7 @@ struct ReferenceKey {
     AccessMode accessMode;
     bool isVectorComponent;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Reference, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), isVectorComponent, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Reference, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), isVectorComponent, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct PointerKey {
@@ -97,14 +97,14 @@ struct PointerKey {
     AddressSpace addressSpace;
     AccessMode accessMode;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Pointer, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), 0, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::Pointer, WTF::enumToUnderlyingType(addressSpace), WTF::enumToUnderlyingType(accessMode), 0, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 struct PrimitiveStructKey {
     unsigned kind;
     const Type* elementType;
 
-    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::PrimitiveStruct, kind, 0, 0, bitwise_cast<uintptr_t>(elementType)); }
+    TypeCache::EncodedKey encode() const { return std::tuple(TypeCache::PrimitiveStruct, kind, 0, 0, std::bit_cast<uintptr_t>(elementType)); }
 };
 
 template<typename Key>

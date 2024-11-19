@@ -46,7 +46,7 @@ class ConstPtrValue : public ConstPtrValueBase {
 public:
     void* value() const
     {
-        return bitwise_cast<void*>(ConstPtrValueBase::value());
+        return std::bit_cast<void*>(ConstPtrValueBase::value());
     }
 
 private:
@@ -57,7 +57,7 @@ private:
     static Opcode opcodeFromConstructor(Origin, T*) { return ConstPtrValueBase::opcodeFromConstructor(); }
     template<typename T>
     ConstPtrValue(Origin origin, T* pointer)
-        : ConstPtrValueBase(origin, bitwise_cast<intptr_t>(pointer))
+        : ConstPtrValueBase(origin, std::bit_cast<intptr_t>(pointer))
     {
     }
     template<typename T>

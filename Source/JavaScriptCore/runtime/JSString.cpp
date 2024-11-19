@@ -76,7 +76,7 @@ void JSString::dumpToStream(const JSCell* cell, PrintStream& out)
         else
             out.printf("[rope]");
     } else {
-        if (WTF::StringImpl* ourImpl = bitwise_cast<StringImpl*>(pointer)) {
+        if (WTF::StringImpl* ourImpl = std::bit_cast<StringImpl*>(pointer)) {
             if (ourImpl->is8Bit())
                 out.printf("[8 %p]", ourImpl->span8().data());
             else
@@ -97,7 +97,7 @@ size_t JSString::estimatedSize(JSCell* cell, VM& vm)
     uintptr_t pointer = thisObject->fiberConcurrently();
     if (pointer & isRopeInPointer)
         return Base::estimatedSize(cell, vm);
-    return Base::estimatedSize(cell, vm) + bitwise_cast<StringImpl*>(pointer)->costDuringGC();
+    return Base::estimatedSize(cell, vm) + std::bit_cast<StringImpl*>(pointer)->costDuringGC();
 }
 
 template<typename Visitor>
@@ -117,7 +117,7 @@ void JSString::visitChildrenImpl(JSCell* cell, Visitor& visitor)
             JSString* fiber = nullptr;
             switch (index) {
             case 0:
-                fiber = bitwise_cast<JSString*>(pointer & JSRopeString::stringMask);
+                fiber = std::bit_cast<JSString*>(pointer & JSRopeString::stringMask);
                 break;
             case 1:
                 fiber = static_cast<JSRopeString*>(thisObject)->fiber1();
@@ -135,7 +135,7 @@ void JSString::visitChildrenImpl(JSCell* cell, Visitor& visitor)
         }
         return;
     }
-    if (StringImpl* impl = bitwise_cast<StringImpl*>(pointer))
+    if (StringImpl* impl = std::bit_cast<StringImpl*>(pointer))
         visitor.reportExtraMemoryVisited(impl->costDuringGC());
 }
 
@@ -166,7 +166,7 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
     }
 
     AtomString atomString;
-    uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
+    uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
     if (!isSubstring()) {
         if (is8Bit()) {
             LChar buffer[maxLengthForOnStackResolve];
@@ -207,7 +207,7 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
     
     RefPtr<AtomStringImpl> existingAtomString;
     if (!isSubstring()) {
-        uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
+        uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
         if (is8Bit()) {
             LChar buffer[maxLengthForOnStackResolve];
             resolveRopeInternalNoSubstring(buffer, stackLimit);
@@ -247,7 +247,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
         }
 
         size_t sizeToReport = newImpl->cost();
-        uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
+        uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
         resolveRopeInternalNoSubstring(buffer.data(), stackLimit);
         convertToNonRope(function(newImpl.releaseNonNull()));
         if constexpr (reportAllocation)
@@ -263,7 +263,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
     }
     
     size_t sizeToReport = newImpl->cost();
-    uint8_t* stackLimit = bitwise_cast<uint8_t*>(vm.softStackLimit());
+    uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
     resolveRopeInternalNoSubstring(buffer.data(), stackLimit);
     convertToNonRope(function(newImpl.releaseNonNull()));
     if constexpr (reportAllocation)

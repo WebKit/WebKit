@@ -36,7 +36,7 @@ IndexOrName::IndexOrName(Index index, std::pair<const Name*, RefPtr<NameSection>
 #if USE(JSVALUE64)
     static_assert(sizeof(m_indexName.index) == sizeof(m_indexName.name), "bit-tagging depends on sizes being equal");
     ASSERT(!(index & allTags));
-    ASSERT(!(bitwise_cast<Index>(name.first) & allTags));
+    ASSERT(!(std::bit_cast<Index>(name.first) & allTags));
     if (name.first)
         m_indexName.name = name.first;
     else
