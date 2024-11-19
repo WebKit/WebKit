@@ -1643,6 +1643,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     page/ProcessSyncClient.h
     page/ProcessWarming.h
     page/Quirks.h
+    page/QuirksData.h
     page/ReducedResolutionSeconds.h
     page/RemoteDOMWindow.h
     page/RemoteFrame.h

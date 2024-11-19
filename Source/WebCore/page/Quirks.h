@@ -26,6 +26,7 @@
 #pragma once
 
 #include "Event.h"
+#include "QuirksData.h"
 #include <optional>
 #include <wtf/Forward.h>
 #include <wtf/TZoneMalloc.h>
@@ -240,7 +241,13 @@ private:
     bool isYahooMail() const;
 
     bool isAmazon() const;
+    bool isESPN() const;
     bool isGoogleMaps() const;
+    bool isNetflix() const;
+    bool isSoundCloud() const;
+    bool isVimeo() const;
+    bool isYouTube() const;
+    bool isZoom() const;
 
     RefPtr<Document> protectedDocument() const;
 
@@ -248,72 +255,10 @@ private:
 
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_document;
 
-    mutable std::optional<bool> m_hasBrokenEncryptedMediaAPISupportQuirk;
-    mutable std::optional<bool> m_needsFullWidthHeightFullscreenStyleQuirk;
-#if PLATFORM(IOS_FAMILY)
-    mutable std::optional<bool> m_needsGMailOverflowScrollQuirk;
-    mutable std::optional<bool> m_needsIPadSkypeOverflowScrollQuirk;
-    mutable std::optional<bool> m_needsYouTubeOverflowScrollQuirk;
-    mutable std::optional<bool> m_needsPreloadAutoQuirk;
-    mutable std::optional<bool> m_needsFullscreenDisplayNoneQuirk;
-    mutable std::optional<bool> m_needsFullscreenObjectFitQuirk;
-    mutable std::optional<bool> m_shouldAvoidPastingImagesAsWebContent;
-    mutable std::optional<bool> m_mayNeedToIgnoreContentObservation;
-    mutable std::optional<bool> m_needsGoogleMapsScrollingQuirk;
-#endif
-#if ENABLE(TOUCH_EVENTS)
-    enum class ShouldDispatchSimulatedMouseEvents : uint8_t {
-        Unknown,
-        No,
-        DependingOnTargetFor_mybinder_org,
-        Yes,
-    };
-    mutable ShouldDispatchSimulatedMouseEvents m_shouldDispatchSimulatedMouseEventsQuirk { ShouldDispatchSimulatedMouseEvents::Unknown };
-    mutable std::optional<bool> m_shouldDispatchPointerOutAfterHandlingSyntheticClick;
-#endif
-    mutable std::optional<bool> m_needsCanPlayAfterSeekedQuirk;
-    mutable std::optional<bool> m_shouldBypassAsyncScriptDeferring;
-    mutable std::optional<bool> m_needsVP9FullRangeFlagQuirk;
-    mutable std::optional<bool> m_needsBlackFullscreenBackgroundQuirk;
-    mutable std::optional<bool> m_requiresUserGestureToPauseInPictureInPicture;
-    mutable std::optional<bool> m_requiresUserGestureToLoadInPictureInPicture;
-#if ENABLE(MEDIA_STREAM)
-    mutable std::optional<bool> m_shouldEnableLegacyGetUserMediaQuirk;
-    mutable std::optional<bool> m_shouldDisableImageCaptureQuirk;
-#endif
-    mutable std::optional<bool> m_blocksReturnToFullscreenFromPictureInPictureQuirk;
-    mutable std::optional<bool> m_blocksEnteringStandardFullscreenFromPictureInPictureQuirk;
-    mutable std::optional<bool> m_shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;
-    mutable std::optional<bool> m_shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk;
-#if PLATFORM(IOS) || PLATFORM(VISION)
-    mutable std::optional<bool> m_allowLayeredFullscreenVideos;
-#endif
-#if PLATFORM(IOS_FAMILY)
-    mutable std::optional<bool> m_shouldEnableApplicationCacheQuirk;
-#endif
-    mutable std::optional<bool> m_shouldEnableFontLoadingAPIQuirk;
-    mutable std::optional<bool> m_needsVideoShouldMaintainAspectRatioQuirk;
-    mutable std::optional<bool> m_shouldExposeShowModalDialog;
-#if PLATFORM(IOS_FAMILY)
-    mutable std::optional<bool> m_shouldNavigatorPluginsBeEmpty;
-#endif
-    mutable std::optional<bool> m_shouldDisableLazyIframeLoadingQuirk;
+    mutable QuirksData m_quirksData;
+
     bool m_needsConfigurableIndexedPropertiesQuirk { false };
     bool m_needsToCopyUserSelectNoneQuirk { false };
-    mutable std::optional<bool> m_shouldStarBePermissionsPolicyDefaultValueQuirk;
-    mutable std::optional<bool> m_shouldDisableDataURLPaddingValidation;
-    mutable std::optional<bool> m_needsDisableDOMPasteAccessQuirk;
-    mutable std::optional<bool> m_shouldDisableElementFullscreen;
-    mutable std::optional<bool> m_shouldIgnorePlaysInlineRequirementQuirk;
-    mutable std::optional<bool> m_needsRelaxedCorsMixedContentCheckQuirk;
-    mutable std::optional<bool> m_needsScrollbarWidthThinDisabledQuirk;
-    mutable std::optional<bool> m_needsBodyScrollbarWidthNoneDisabledQuirk;
-    mutable std::optional<bool> m_needsPrimeVideoUserSelectNoneQuirk;
-    mutable std::optional<bool> m_implicitMuteWhenVolumeSetToZero;
-#if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
-    mutable std::optional<bool> m_needsZeroMaxTouchPointsQuirk;
-#endif
-    mutable std::optional<bool> m_needsChromeMediaControlsPseudoElementQuirk;
 
     Vector<RegistrableDomain> m_subFrameDomainsForStorageAccessQuirk;
     URL m_topDocumentURLForTesting;
