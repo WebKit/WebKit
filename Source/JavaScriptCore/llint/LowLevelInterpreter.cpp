@@ -560,6 +560,15 @@ JSValue CLoop::execute(OpcodeID entryOpcodeID, void* executableAddress, VM* vm, 
     ".thumb\n"                                   \
     ".thumb_func " THUMB_FUNC_PARAM(label) "\n"  \
     SYMBOL_STRING(label) ":\n"
+#elif CPU(RISCV64)
+#define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY, ALIGNMENT, VISIBILITY) \
+    OFFLINE_ASM_TEXT_SECTION                    \
+    ALIGNMENT                                   \
+    ALT_ENTRY(label)                            \
+    ".globl " SYMBOL_STRING(label) "\n"         \
+    ".attribute arch, \"rv64gc\"" "\n"          \
+    VISIBILITY(label) "\n"                      \
+    SYMBOL_STRING(label) ":\n"
 #else
 #define OFFLINE_ASM_GLOBAL_LABEL_IMPL(label, ALT_ENTRY, ALIGNMENT, VISIBILITY) \
     OFFLINE_ASM_TEXT_SECTION                    \
