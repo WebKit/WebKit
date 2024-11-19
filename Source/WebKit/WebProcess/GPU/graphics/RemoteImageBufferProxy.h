@@ -74,7 +74,7 @@ public:
     void didCreateBackend(std::optional<ImageBufferBackendHandle>);
 
 private:
-    RemoteImageBufferProxy(Parameters, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&, std::unique_ptr<WebCore::ImageBufferBackend>&& = nullptr, WebCore::RenderingResourceIdentifier = WebCore::RenderingResourceIdentifier::generate());
+    RemoteImageBufferProxy(Parameters, const WebCore::ImageBufferBackend::Info&, RemoteRenderingBackendProxy&, std::unique_ptr<WebCore::ImageBufferBackend>&& = nullptr, WebCore::RenderingResourceIdentifier = WebCore::RenderingResourceIdentifier::generate(), bool needsFlush = true);
 
     RefPtr<WebCore::NativeImage> copyNativeImage() const final;
     RefPtr<WebCore::NativeImage> createNativeImageReference() const final;
@@ -117,7 +117,7 @@ public:
 
     WebCore::RenderingResourceIdentifier renderingResourceIdentifier() { return m_renderingResourceIdentifier; }
 
-    RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters, const WebCore::ImageBufferBackend::Info&, const WebCore::RenderingResourceIdentifier&, RemoteRenderingBackendProxy&);
+    RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters, const WebCore::ImageBufferBackend::Info&, const WebCore::RenderingResourceIdentifier&, bool, RemoteRenderingBackendProxy&);
 
     size_t memoryCost() const final
     {
@@ -137,6 +137,7 @@ private:
     WebCore::ImageBufferBackend::Info m_info;
     WebCore::RenderingResourceIdentifier m_renderingResourceIdentifier;
     RefPtr<IPC::Connection> m_connection;
+    bool m_needsFlush;
 };
 
 } // namespace WebKit

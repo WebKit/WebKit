@@ -54,10 +54,11 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteImageBufferProxy);
 
-RemoteImageBufferProxy::RemoteImageBufferProxy(Parameters parameters, const ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier identifier)
+RemoteImageBufferProxy::RemoteImageBufferProxy(Parameters parameters, const ImageBufferBackend::Info& info, RemoteRenderingBackendProxy& remoteRenderingBackendProxy, std::unique_ptr<ImageBufferBackend>&& backend, RenderingResourceIdentifier identifier, bool needsFlush)
     : ImageBuffer(parameters, info, { }, WTFMove(backend), identifier)
     , m_remoteRenderingBackendProxy(remoteRenderingBackendProxy)
     , m_remoteDisplayList(*this, remoteRenderingBackendProxy, { { }, ImageBuffer::logicalSize() }, ImageBuffer::baseTransform())
+    , m_needsFlush(needsFlush)
 {
     ASSERT(m_remoteRenderingBackendProxy);
     m_remoteRenderingBackendProxy->remoteResourceCacheProxy().cacheImageBuffer(*this);
@@ -141,6 +142,7 @@ void RemoteImageBufferProxy::backingStoreWillChange()
 
 void RemoteImageBufferProxy::didCreateBackend(std::optional<ImageBufferBackendHandle> backendHandle)
 {
+    clearBackend(); // in case serialization couldn't clearBackend because previous DidCreateBackend hadn't arrived
     ASSERT(!m_backend);
     // This should match RemoteImageBufferProxy::create<>() call site and RemoteImageBuffer::create<>() call site.
     // FIXME: this will be removed and backend be constructed in the contructor.
@@ -276,7 +278,6 @@ RefPtr<PixelBuffer> RemoteImageBufferProxy::getPixelBuffer(const PixelBufferForm
 
 void RemoteImageBufferProxy::clearBackend()
 {
-    m_needsFlush = false;
     if (m_backend)
         prepareForBackingStoreChange();
     m_backend = nullptr;
@@ -355,20 +356,14 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
 {
     ASSERT(hasOneRef());
 
-    flushDrawingContext();
     m_remoteDisplayList.disconnect();
 
     if (!m_remoteRenderingBackendProxy)
         return nullptr;
 
-    prepareForBackingStoreChange();
-
-    if (!ensureBackend())
-        return nullptr;
-
     m_remoteRenderingBackendProxy->remoteResourceCacheProxy().forgetImageBuffer(m_renderingResourceIdentifier);
 
-    auto result = makeUnique<RemoteSerializedImageBufferProxy>(parameters(), backendInfo(), m_renderingResourceIdentifier, *m_remoteRenderingBackendProxy);
+    auto result = makeUnique<RemoteSerializedImageBufferProxy>(parameters(), backendInfo(), m_renderingResourceIdentifier, m_needsFlush, *m_remoteRenderingBackendProxy);
 
     clearBackend();
     m_remoteRenderingBackendProxy = nullptr;
@@ -377,18 +372,19 @@ std::unique_ptr<SerializedImageBuffer> RemoteImageBufferProxy::sinkIntoSerialize
     return ret;
 }
 
-RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, RemoteRenderingBackendProxy& backend)
+RemoteSerializedImageBufferProxy::RemoteSerializedImageBufferProxy(WebCore::ImageBuffer::Parameters parameters, const WebCore::ImageBufferBackend::Info& info, const WebCore::RenderingResourceIdentifier& renderingResourceIdentifier, bool needsFlush, RemoteRenderingBackendProxy& backend)
     : m_parameters(parameters)
     , m_info(info)
     , m_renderingResourceIdentifier(renderingResourceIdentifier)
     , m_connection(nullptr/*backend.connection()*/)
+    , m_needsFlush(needsFlush)
 {
     backend.moveToSerializedBuffer(m_renderingResourceIdentifier);
 }
 
 RefPtr<ImageBuffer> RemoteSerializedImageBufferProxy::sinkIntoImageBuffer(std::unique_ptr<RemoteSerializedImageBufferProxy> buffer, RemoteRenderingBackendProxy& backend)
 {
-    auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend, nullptr, buffer->m_renderingResourceIdentifier));
+    auto result = adoptRef(new RemoteImageBufferProxy(buffer->m_parameters, buffer->m_info, backend, nullptr, buffer->m_renderingResourceIdentifier, buffer->m_needsFlush));
     backend.moveToImageBuffer(result->renderingResourceIdentifier());
     buffer->m_connection = nullptr;
     return result;
