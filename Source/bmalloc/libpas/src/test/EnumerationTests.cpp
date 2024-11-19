@@ -243,7 +243,7 @@ void testPGMEnumerationBasic() {
 
     pas_enumerator* enumerator = pas_enumerator_create(root, enumeratorReader, nullptr, enumeratorRecorder, nullptr, pas_enumerator_record_meta_records, pas_enumerator_record_payload_records, pas_enumerator_record_object_records);
     pas_enumerator_enumerate_all(enumerator);
-
+    CHECK(enumerator);
     pas_enumerator_destroy(enumerator);
 }
 
@@ -277,6 +277,7 @@ void testPGMEnumerationAddAndFree() {
     pas_enumerator* enumerator = pas_enumerator_create(root, enumeratorReader, nullptr, enumeratorRecorder, nullptr, pas_enumerator_record_meta_records, pas_enumerator_record_payload_records, pas_enumerator_record_object_records);
     pas_enumerator_enumerate_all(enumerator);
 
+    CHECK(enumerator);
     pas_enumerator_destroy(enumerator);
 
 }

@@ -51,10 +51,21 @@
 #include "pas_utils.h"
 #include "pas_large_heap.h"
 #include "pas_ptr_hash_map.h"
+#include "pas_large_map_entry.h"
 #include <stdbool.h>
 #include <stdint.h>
 
 PAS_BEGIN_EXTERN_C;
+
+#ifndef MAX_FRAMES
+#define MAX_FRAMES 31
+#endif
+
+/* structure for holding the allocation and deallocation backtraces */
+typedef struct {
+    int frame_size;
+    void* backtrace_buffer[MAX_FRAMES];
+} backtrace_metadata_t;
 
 /* structure for holding pgm metadata allocations */
 typedef struct pas_pgm_storage pas_pgm_storage;
@@ -62,6 +73,9 @@ struct pas_pgm_storage {
     size_t allocation_size_requested;
     size_t size_of_data_pages;
     uintptr_t start_of_data_pages;
+
+    backtrace_metadata_t alloc_backtrace;
+    backtrace_metadata_t dealloc_backtrace;
 
     /*
      * These parameter below rely on page sizes being less than 65536.

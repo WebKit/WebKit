@@ -36,6 +36,7 @@
 #ifdef __APPLE__
 #include <mach/mach_types.h>
 #include <mach/vm_types.h>
+#include "pas_probabilistic_guard_malloc_allocator.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,6 +55,8 @@ typedef struct {
     const char *alignment;
     vm_address_t fault_address;
     size_t allocation_size;
+    backtrace_metadata_t alloc_backtrace;
+    backtrace_metadata_t dealloc_backtrace;
 } pas_report_crash_pgm_report;
 #endif /* __APPLE__ */
 

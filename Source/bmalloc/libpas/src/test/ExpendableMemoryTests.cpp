@@ -307,8 +307,8 @@ void testRematerializeAfterSearchOfDecommitted()
 
 void testBasicSizeClass(unsigned firstSize, unsigned secondSize)
 {
-    static constexpr bool verbose = false;
-    
+    static constexpr bool verbose = true;
+
     pas_primitive_heap_ref heapRef = BMALLOC_FLEX_HEAP_REF_INITIALIZER(
         new bmalloc_type(BMALLOC_TYPE_INITIALIZER(1, 1, "test")));
 
@@ -320,14 +320,22 @@ void testBasicSizeClass(unsigned firstSize, unsigned secondSize)
     bmalloc_allocate_flex(&heapRef, secondSize, pas_non_compact_allocation_mode);
 
     if (verbose)
-        cout << "Doing some checks.\n";
+        cout << "Doing some checks1.\n\n";
     CHECK(pas_thread_local_cache_try_get());
+    if (verbose)
+        cout << "pass1.\n";
     CHECK_EQUAL(heapRef.cached_index, pas_segregated_heap_index_for_size(firstSize, BMALLOC_HEAP_CONFIG));
+    if (verbose)
+        cout << "pass2.\n";
     CHECK(heapRef.base.allocator_index);
+    if (verbose)
+        cout << "pass3.\n";
     CHECK(pas_thread_local_cache_try_get_local_allocator_or_unselected_for_uninitialized_index(
               pas_thread_local_cache_try_get(), heapRef.base.allocator_index).did_succeed);
     if (verbose)
-        cout << "Did some checks.\n";
+        cout << "pass4.\n";
+    if (verbose)
+        cout << "Did some checks2.\n\n";
 
     pas_segregated_view view = pas_segregated_view_for_object(
         reinterpret_cast<uintptr_t>(ptr), &bmalloc_heap_config);
