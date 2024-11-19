@@ -43,4 +43,13 @@ GMallocSpan<GParamSpec*> gObjectClassGetProperties(GObjectClass* objectClass)
     return adoptGMallocSpan(unsafeMakeSpan(properties, propertyCount));
 }
 
+GMallocSpan<const char*> gVariantGetStrv(const GRefPtr<GVariant>& variant)
+{
+    ASSERT(variant);
+
+    size_t stringCount = 0;
+    const char** strings = g_variant_get_strv(variant.get(), &stringCount);
+    return adoptGMallocSpan(unsafeMakeSpan(strings, stringCount));
+}
+
 } // namespace WTF

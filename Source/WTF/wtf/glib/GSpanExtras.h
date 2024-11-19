@@ -66,6 +66,7 @@ GMallocSpan<T, Malloc> adoptGMallocSpan(std::span<T> span)
 
 WTF_EXPORT_PRIVATE GMallocSpan<char*, GMallocStrv> gKeyFileGetKeys(GKeyFile*, const char* groupName, GUniqueOutPtr<GError>&);
 WTF_EXPORT_PRIVATE GMallocSpan<GParamSpec*> gObjectClassGetProperties(GObjectClass*);
+WTF_EXPORT_PRIVATE GMallocSpan<const char*> gVariantGetStrv(const GRefPtr<GVariant>&);
 
 inline std::span<const uint8_t> span(GBytes* bytes)
 {
