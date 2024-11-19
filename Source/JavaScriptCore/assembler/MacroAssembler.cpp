@@ -37,6 +37,7 @@
 
 namespace JSC {
 
+WTF_MAKE_TZONE_ALLOCATED_IMPL(MacroAssembler);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(MacroAssemblerBase);
 
 const double MacroAssembler::twoToThe32 = (double)0x100000000ull;

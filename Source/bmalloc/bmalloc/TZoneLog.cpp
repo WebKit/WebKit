@@ -41,6 +41,12 @@ void TZoneLog::init()
 {
     auto logEnv = getenv("TZONE_LOGGING");
 
+#if BUSE(OS_LOG)
+    // Enable OS Logging by default
+    if (!logEnv)
+        logEnv = const_cast<char*>("oslog");
+#endif
+
     if (logEnv) {
         if (!strcasecmp(logEnv, "stderr"))
             m_logDest = LogDestination::Stderr;

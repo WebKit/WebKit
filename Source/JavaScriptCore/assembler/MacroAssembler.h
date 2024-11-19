@@ -32,7 +32,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #if ENABLE(ASSEMBLER)
 
 #include "JSCJSValue.h"
-#include <wtf/TZoneMalloc.h>
+#include <wtf/TZoneMallocInlines.h>
 
 #define DEFINE_SIMD_FUNC(name, func, lane) \
     template <typename ...Args> \
@@ -124,7 +124,7 @@ typedef Vector<PrintRecord> PrintRecordList;
 using MacroAssemblerBase = TARGET_MACROASSEMBLER;
 
 class MacroAssembler : public MacroAssemblerBase {
-    WTF_MAKE_TZONE_ALLOCATED(MacroAssemblerBase);
+    WTF_MAKE_TZONE_ALLOCATED(MacroAssembler);
 public:
     using Base = MacroAssemblerBase;
 
