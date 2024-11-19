@@ -187,6 +187,7 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
         Vector<uint32_t> offsets;
         Vector<uint32_t> strides;
         for (unsigned i = 0; i < videoMeta->n_planes; ++i) {
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
             guint index, length;
             gsize skip;
             if (!gst_buffer_find_memory(buffer, videoMeta->offset[i], 1, &index, &length, &skip))
@@ -196,6 +197,7 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
             fds.append(UnixFileDescriptor { gst_dmabuf_memory_get_fd(planeMemory), UnixFileDescriptor::Duplicate });
             offsets.append(planeMemory->offset + skip);
             strides.append(videoMeta->stride[i]);
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
         dmabuf = DMABufBuffer::create(size, fourcc, WTFMove(fds), WTFMove(offsets), WTFMove(strides), modifier);
 
@@ -245,12 +247,14 @@ std::unique_ptr<CoordinatedPlatformLayerBuffer> CoordinatedPlatformLayerBufferVi
         std::array<GLuint, 4> planes;
         std::array<unsigned, 4> yuvPlane;
         std::array<unsigned, 4> yuvPlaneOffset;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         for (unsigned i = 0; i < numberOfPlanes; ++i)
             planes[i] = *static_cast<GLuint*>(m_videoFrame.data[i]);
         for (unsigned i = 0; i < numberOfPlanes; ++i) {
             yuvPlane[i] = GST_VIDEO_INFO_COMP_PLANE(&m_videoFrame.info, i);
             yuvPlaneOffset[i] = GST_VIDEO_INFO_COMP_POFFSET(&m_videoFrame.info, i);
         }
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         // Default to bt601. This is the same behaviour as GStreamer's glcolorconvert element.
         CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace yuvToRgbColorSpace = CoordinatedPlatformLayerBufferYUV::YuvToRgbColorSpace::BT601;
@@ -292,8 +296,10 @@ void CoordinatedPlatformLayerBufferVideo::paintToTextureMapper(TextureMapper& te
             }
 
             if (!m_buffer) {
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
                 int stride = GST_VIDEO_FRAME_PLANE_STRIDE(&m_videoFrame, 0);
                 const void* srcData = GST_VIDEO_FRAME_PLANE_DATA(&m_videoFrame, 0);
+                WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
                 texture->updateContents(srcData, IntRect(0, 0, m_size.width(), m_size.height()), IntPoint(0, 0), stride, PixelFormat::BGRA8);
                 m_buffer = CoordinatedPlatformLayerBufferRGB::create(WTFMove(texture), m_flags, nullptr);
                 gst_video_frame_unmap(&m_videoFrame);

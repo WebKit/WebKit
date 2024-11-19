@@ -64,9 +64,11 @@ String GStreamerMediaDescription::extractCodecName(const GRefPtr<GstCaps>& caps)
         for (int j = 0; j < gst_structure_n_fields(structure); ++j) {
             const char* fieldName = gst_structure_nth_field_name(structure, j);
 
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
             if (g_str_has_prefix(fieldName, "protection-system")
                 || g_str_has_prefix(fieldName, "original-media-type"))
                 gst_structure_remove_field(structure, fieldName);
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         }
     }
 

@@ -880,11 +880,13 @@ static GstURIType webKitWebSrcUriGetType(GType)
 
 const gchar* const* webKitWebSrcGetProtocols(GType)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     static const char* protocols[4];
     protocols[0] = "http";
     protocols[1] = "https";
     protocols[2] = "blob";
     protocols[3] = nullptr;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return protocols;
 }
 

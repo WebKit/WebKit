@@ -819,6 +819,8 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
 
             g_value_init(&intValue, G_TYPE_INT);
 
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
+
             switch (bitRateAllocation.scalabilityMode()) {
             case WebCore::VideoEncoderScalabilityMode::L1T1:
                 numberLayers = 1;
@@ -913,6 +915,7 @@ static void webkit_video_encoder_class_init(WebKitVideoEncoderClass* klass)
                 layerSyncFlags = { false, true, true, false, false, false, false, false };
                 break;
             }
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             g_value_unset(&intValue);
 
             GST_DEBUG_OBJECT(encoder, "Configuring for %s scalability mode", scalabilityString.characters());

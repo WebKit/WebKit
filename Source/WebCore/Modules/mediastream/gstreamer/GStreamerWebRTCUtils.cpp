@@ -310,6 +310,7 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
     String usernameFragment;
     auto tokens = sdp.convertToASCIILowercase().substring(10).split(' ');
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     for (auto it = tokens.begin(); it != tokens.end(); ++it) {
         auto i = std::distance(tokens.begin(), it);
         auto token = *it;
@@ -367,6 +368,7 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
             break;
         }
     }
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     if (type.isEmpty()) {
         GST_WARNING("Unable to parse candidate type");

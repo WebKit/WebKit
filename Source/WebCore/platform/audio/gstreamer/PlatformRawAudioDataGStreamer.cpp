@@ -204,6 +204,7 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
     const auto inputBuffer = mappedBuffer.get();
 
     if (self.format() == format) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         if (destinationLayout == GST_AUDIO_LAYOUT_NON_INTERLEAVED) {
             auto size = computeBytesPerSample(format) * inputBuffer->n_samples;
             memcpy(destination.data(), static_cast<uint8_t*>(inputBuffer->planes[planeIndex]) + sourceOffset, size);
@@ -211,6 +212,7 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
             GstMappedBuffer in(inputBuffer->buffer, GST_MAP_READ);
             memcpy(destination.data(), in.data() + sourceOffset, in.size() - sourceOffset);
         }
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return;
     }
 
@@ -236,7 +238,9 @@ void PlatformRawAudioData::copyTo(std::span<uint8_t> destination, AudioSampleFor
     gst_audio_converter_samples(converter, GST_AUDIO_CONVERTER_FLAG_NONE, inputBuffer->planes, inputBuffer->n_samples, outputBuffer->planes, outputBuffer->n_samples);
 
     auto planeSize = computeBytesPerSample(format) * outputBuffer->n_samples;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     memcpy(destination.data(), static_cast<uint8_t*>(outputBuffer->planes[planeIndex]) + sourceOffset, planeSize);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 } // namespace WebCore

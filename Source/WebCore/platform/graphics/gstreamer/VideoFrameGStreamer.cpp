@@ -42,9 +42,9 @@
 #include <skia/core/SkData.h>
 #include <skia/core/SkImage.h>
 
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkPixmap.h>
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 GST_DEBUG_CATEGORY(webkit_video_frame_debug);
@@ -159,6 +159,7 @@ RefPtr<VideoFrame> VideoFrame::fromNativeImage(NativeImage& image)
     return VideoFrameGStreamer::create(WTFMove(sample), presentationSize);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 static void copyToGstBufferPlane(uint8_t* destination, const GstVideoInfo& info, size_t planeIndex, const uint8_t* source, size_t height, uint32_t bytesPerRowSource)
 {
     destination += GST_VIDEO_INFO_PLANE_OFFSET(&info, planeIndex);
@@ -169,6 +170,7 @@ static void copyToGstBufferPlane(uint8_t* destination, const GstVideoInfo& info,
         destination += bytesPerRowDestination;
     }
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t width, size_t height, const ComputedPlaneLayout& planeY, const ComputedPlaneLayout& planeUV, PlatformVideoColorSpace&& colorSpace)
 {
@@ -182,7 +184,9 @@ RefPtr<VideoFrame> VideoFrame::createNV12(std::span<const uint8_t> span, size_t 
     auto buffer = adoptGRef(gst_buffer_new_allocate(nullptr, GST_VIDEO_INFO_SIZE(&info), nullptr));
     GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
     copyToGstBufferPlane(mappedBuffer.data(), info, 0, span.data(), height, planeY.sourceWidthBytes);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     copyToGstBufferPlane(mappedBuffer.data(), info, 1, span.data() + planeUV.destinationOffset, height / 2, planeUV.sourceWidthBytes);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_NV12, width, height);
 
     auto caps = adoptGRef(gst_video_info_to_caps(&info));
@@ -231,8 +235,10 @@ RefPtr<VideoFrame> VideoFrame::createI420(std::span<const uint8_t> span, size_t 
     gst_buffer_memset(buffer.get(), 0, 0, span.size_bytes());
     GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
     copyToGstBufferPlane(mappedBuffer.data(), info, 0, span.data(), height, planeY.sourceWidthBytes);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     copyToGstBufferPlane(mappedBuffer.data(), info, 1, span.data() + planeU.destinationOffset, height / 2, planeU.sourceWidthBytes);
     copyToGstBufferPlane(mappedBuffer.data(), info, 2, span.data() + planeV.destinationOffset, height / 2, planeV.sourceWidthBytes);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_I420, width, height);
 
     auto caps = adoptGRef(gst_video_info_to_caps(&info));
@@ -251,9 +257,11 @@ RefPtr<VideoFrame> VideoFrame::createI420A(std::span<const uint8_t> span, size_t
     gst_buffer_memset(buffer.get(), 0, 0, span.size_bytes());
     GstMappedBuffer mappedBuffer(buffer, GST_MAP_WRITE);
     copyToGstBufferPlane(mappedBuffer.data(), info, 0, span.data(), height, planeY.sourceWidthBytes);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     copyToGstBufferPlane(mappedBuffer.data(), info, 1, span.data() + planeU.destinationOffset, height / 2, planeU.sourceWidthBytes);
     copyToGstBufferPlane(mappedBuffer.data(), info, 2, span.data() + planeV.destinationOffset, height / 2, planeV.sourceWidthBytes);
     copyToGstBufferPlane(mappedBuffer.data(), info, 3, span.data() + planeA.destinationOffset, height, planeA.sourceWidthBytes);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     gst_buffer_add_video_meta(buffer.get(), GST_VIDEO_FRAME_FLAG_NONE, GST_VIDEO_FORMAT_A420, width, height);
 
     auto caps = adoptGRef(gst_video_info_to_caps(&info));
@@ -432,6 +440,7 @@ void VideoFrameGStreamer::setPresentationTime(const MediaTime& presentationTime)
     GST_BUFFER_PTS(buffer) = GST_BUFFER_DTS(buffer) = toGstClockTime(1_s / presentationTime.toDouble());
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 static void copyPlane(uint8_t* destination, const uint8_t* source, uint64_t sourceStride, const ComputedPlaneLayout& spanPlaneLayout)
 {
     uint64_t sourceOffset = spanPlaneLayout.sourceTop * sourceStride;
@@ -444,6 +453,7 @@ static void copyPlane(uint8_t* destination, const uint8_t* source, uint64_t sour
         destinationOffset += spanPlaneLayout.destinationStride;
     }
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFormat, Vector<ComputedPlaneLayout>&& computedPlaneLayout, CompletionHandler<void(std::optional<Vector<PlaneLayout>>&&)>&& callback)
 {
@@ -464,11 +474,15 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
     GST_TRACE("Copying frame data to pixel format %d", static_cast<int>(pixelFormat));
     if (pixelFormat == VideoPixelFormat::NV12) {
         auto spanPlaneLayoutY = computedPlaneLayout[0];
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         auto widthY = GST_VIDEO_FRAME_COMP_WIDTH(inputFrame.get(), 0);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         PlaneLayout planeLayoutY { spanPlaneLayoutY.destinationOffset, spanPlaneLayoutY.destinationStride ? spanPlaneLayoutY.destinationStride : widthY };
 
         auto spanPlaneLayoutUV = computedPlaneLayout[1];
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         auto widthUV = GST_VIDEO_FRAME_COMP_WIDTH(inputFrame.get(), 1);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         PlaneLayout planeLayoutUV { spanPlaneLayoutUV.destinationOffset, spanPlaneLayoutUV.destinationStride ? spanPlaneLayoutUV.destinationStride : widthUV };
 
         auto planeY = inputFrame.componentData(0);
@@ -488,14 +502,18 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
 
     if (pixelFormat == VideoPixelFormat::I420 || pixelFormat == VideoPixelFormat::I420A) {
         auto spanPlaneLayoutY = computedPlaneLayout[0];
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         auto widthY = GST_VIDEO_FRAME_COMP_WIDTH(inputFrame.get(), 0);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         PlaneLayout planeLayoutY { spanPlaneLayoutY.destinationOffset, spanPlaneLayoutY.destinationStride ? spanPlaneLayoutY.destinationStride : widthY };
         auto planeY = inputFrame.componentData(0);
         auto bytesPerRowY = inputFrame.componentStride(0);
         copyPlane(destination.data(), planeY, bytesPerRowY, spanPlaneLayoutY);
 
         auto spanPlaneLayoutU = computedPlaneLayout[1];
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         auto widthUV = GST_VIDEO_FRAME_COMP_WIDTH(inputFrame.get(), 1);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         PlaneLayout planeLayoutU { spanPlaneLayoutU.destinationOffset, spanPlaneLayoutU.destinationStride ? spanPlaneLayoutU.destinationStride : widthUV / 2 };
 
         auto spanPlaneLayoutV = computedPlaneLayout[2];
@@ -516,7 +534,9 @@ void VideoFrame::copyTo(std::span<uint8_t> destination, VideoPixelFormat pixelFo
 
         if (pixelFormat == VideoPixelFormat::I420A) {
             auto spanPlaneLayoutA = computedPlaneLayout[3];
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
             auto widthA = GST_VIDEO_FRAME_COMP_WIDTH(inputFrame.get(), 3);
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             PlaneLayout planeLayoutA { spanPlaneLayoutA.destinationOffset, spanPlaneLayoutA.destinationStride ? spanPlaneLayoutA.destinationStride : widthA };
             auto planeA = inputFrame.componentData(3);
             auto bytesPerRowA = inputFrame.componentStride(3);

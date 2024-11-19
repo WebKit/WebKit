@@ -370,11 +370,13 @@ bool ensureGStreamerInitialized()
 #if ENABLE(VIDEO) || ENABLE(WEB_AUDIO)
         Vector<String> parameters = s_UIProcessCommandLineOptions.value_or(extractGStreamerOptionsFromCommandLine());
         s_UIProcessCommandLineOptions.reset();
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         char** argv = g_new0(char*, parameters.size() + 2);
         int argc = parameters.size() + 1;
         argv[0] = g_strdup(FileSystem::currentExecutableName().data());
         for (unsigned i = 0; i < parameters.size(); i++)
             argv[i + 1] = g_strdup(parameters[i].utf8().data());
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         GUniqueOutPtr<GError> error;
         isGStreamerInitialized = gst_init_check(&argc, &argv, &error.outPtr());
@@ -461,7 +463,9 @@ void registerWebKitGStreamerElements()
 
         // Downrank the libav AAC decoders, due to their broken LC support, as reported in:
         // https://ffmpeg.org/pipermail/ffmpeg-devel/2019-July/247063.html
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         const char* const elementNames[] = { "avdec_aac", "avdec_aac_fixed", "avdec_aac_latm" };
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
             GRefPtr<GstElementFactory> avAACDecoderFactory = adoptGRef(gst_element_factory_find(elementNames[i]));
             if (avAACDecoderFactory)
@@ -488,7 +492,9 @@ void registerWebKitGStreamerElements()
         // base class does not abstract away network access. They can't work in a sandboxed
         // media process, so demote their rank in order to prevent decodebin3 from auto-plugging them.
         if (webkitGstCheckVersion(1, 22, 0)) {
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
             const char* const elementNames[] = { "dashdemux2", "hlsdemux2", "mssdemux2" };
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
                 if (auto factory = adoptGRef(gst_element_factory_find(elementNames[i])))
                     gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(factory.get()), GST_RANK_NONE);
@@ -729,6 +735,8 @@ GstVideoFrame* GstMappedFrame::get()
     return &m_frame;
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
+
 uint8_t* GstMappedFrame::componentData(int comp) const
 {
     RELEASE_ASSERT(isValid());
@@ -776,6 +784,8 @@ int GstMappedFrame::planeStride(uint32_t planeIndex) const
     RELEASE_ASSERT(isValid());
     return GST_VIDEO_FRAME_PLANE_STRIDE(&m_frame, planeIndex);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 GstMappedAudioBuffer::GstMappedAudioBuffer(GstBuffer* buffer, GstAudioInfo info, GstMapFlags flags)
 {

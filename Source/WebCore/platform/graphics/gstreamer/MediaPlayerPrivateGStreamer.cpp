@@ -122,6 +122,8 @@
 #include "MediaPlayerPrivateHolePunch.h"
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
+
 GST_DEBUG_CATEGORY(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
@@ -4310,5 +4312,7 @@ String MediaPlayerPrivateGStreamer::codecForStreamId(TrackID streamId)
 #undef GST_CAT_DEFAULT
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif //  ENABLE(VIDEO) && USE(GSTREAMER)

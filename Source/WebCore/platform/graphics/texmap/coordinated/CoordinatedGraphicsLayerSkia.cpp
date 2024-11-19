@@ -33,6 +33,7 @@
 #include "GraphicsContextSkia.h"
 #include "PlatformDisplay.h"
 #include "SkiaThreadedPaintingPool.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkCanvas.h>
 #include <skia/core/SkColorSpace.h>
 #include <skia/gpu/ganesh/GrBackendSurface.h>
@@ -40,6 +41,7 @@
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
 #include <skia/gpu/ganesh/gl/GrGLDirectContext.h>
 #include <skia/gpu/ganesh/gl/GrGLInterface.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/RunLoop.h>
 #include <wtf/SystemTracing.h>
 #include <wtf/Vector.h>

@@ -501,7 +501,9 @@ static Vector<GStreamerMediaEndpointTransceiverState> transceiverStatesFromWebRT
 
     states.reserveInitialCapacity(transceivers->len);
     for (unsigned i = 0; i < transceivers->len; i++) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         GstWebRTCRTPTransceiver* transceiver = g_array_index(transceivers.get(), GstWebRTCRTPTransceiver*, i);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         auto state = toGStreamerMediaEndpointTransceiverState(webrtcBin, transceiver);
         if (!state)
             continue;
@@ -968,7 +970,9 @@ GRefPtr<GstPad> GStreamerMediaEndpoint::requestPad(const GRefPtr<GstCaps>& allow
     g_signal_emit_by_name(m_webrtcBin.get(), "get-transceivers", &transceivers.outPtr());
     if (transceivers && transceivers->len) {
         for (unsigned i = 0; i < transceivers->len; i++) {
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
             GstWebRTCRTPTransceiver* transceiver = g_array_index(transceivers.get(), GstWebRTCRTPTransceiver*, i);
+            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
             GstWebRTCKind transceiverKind;
             g_object_get(transceiver, "kind", &transceiverKind, nullptr);
             if (transceiverKind != kind)
@@ -1310,7 +1314,9 @@ int GStreamerMediaEndpoint::pickAvailablePayloadType()
     g_signal_emit_by_name(m_webrtcBin.get(), "get-transceivers", &transceivers.outPtr());
     GST_DEBUG_OBJECT(m_pipeline.get(), "Looking for unused payload type in %u transceivers", transceivers->len);
     for (unsigned i = 0; i < transceivers->len; i++) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         GstWebRTCRTPTransceiver* current = g_array_index(transceivers.get(), GstWebRTCRTPTransceiver*, i);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         GRefPtr<GstCaps> codecPreferences;
         g_object_get(current, "codec-preferences", &codecPreferences.outPtr(), nullptr);
@@ -1590,7 +1596,9 @@ std::unique_ptr<GStreamerRtpTransceiverBackend> GStreamerMediaEndpoint::transcei
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Looking for sender %p in %u existing transceivers", backend.rtcSender(), transceivers->len);
     for (unsigned transceiverIndex = 0; transceiverIndex < transceivers->len; transceiverIndex++) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         GstWebRTCRTPTransceiver* current = g_array_index(transceivers.get(), GstWebRTCRTPTransceiver*, transceiverIndex);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         GRefPtr<GstWebRTCRTPSender> sender;
         g_object_get(current, "sender", &sender.outPtr(), nullptr);
 
@@ -1926,7 +1934,9 @@ void GStreamerMediaEndpoint::collectTransceivers()
         return;
 
     for (unsigned i = 0; i < transceivers->len; i++) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         auto current = adoptGRef(g_array_index(transceivers, GstWebRTCRTPTransceiver*, i));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         auto* existingTransceiver = m_peerConnectionBackend.existingTransceiver([&](auto& transceiverBackend) {
             return current == transceiverBackend.rtcTransceiver();
         });

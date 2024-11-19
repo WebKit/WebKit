@@ -296,8 +296,10 @@ static GRefPtr<GstBuffer> webKitWebAudioSrcAllocateBuffer(WebKitWebAudioSrc* src
     {
         GstMappedBuffer mappedBuffer(buffer.get(), GST_MAP_READ);
         ASSERT(mappedBuffer);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         for (unsigned channelIndex = 0; channelIndex < priv->bus->numberOfChannels(); channelIndex++)
             priv->bus->setChannelMemory(channelIndex, reinterpret_cast<float*>(mappedBuffer.data() + channelIndex * priv->bufferSize), priv->framesToPull);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 
     return buffer;

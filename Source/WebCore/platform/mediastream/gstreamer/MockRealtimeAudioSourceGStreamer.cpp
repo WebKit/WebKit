@@ -191,6 +191,7 @@ void MockRealtimeAudioSourceGStreamer::settingsDidChange(OptionSet<RealtimeMedia
     reconfigure();
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 void MockRealtimeAudioSourceGStreamer::addHum(float amplitude, float frequency, float sampleRate, uint64_t start, float *p, uint64_t count)
 {
     float humPeriod = sampleRate / frequency;
@@ -200,6 +201,7 @@ void MockRealtimeAudioSourceGStreamer::addHum(float amplitude, float frequency, 
         *p++ = a;
     }
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void MockRealtimeAudioSourceGStreamer::reconfigure()
 {
@@ -219,8 +221,11 @@ void MockRealtimeAudioSourceGStreamer::reconfigure()
     size_t bipStart = 0;
     size_t bopStart = rate;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     addHum(s_BipBopVolume, s_BipFrequency, rate, 0, m_bipBopBuffer.data() + bipStart, bipBopSampleCount);
     addHum(s_BipBopVolume, s_BopFrequency, rate, 0, m_bipBopBuffer.data() + bopStart, bipBopSampleCount);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
     if (!echoCancellation())
         addHum(s_NoiseVolume, s_NoiseFrequency, rate, 0, m_bipBopBuffer.data(), sampleCount);
 }

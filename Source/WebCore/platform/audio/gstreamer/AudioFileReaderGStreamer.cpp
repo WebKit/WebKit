@@ -113,7 +113,9 @@ int decodebinAutoplugSelectCallback(GstElement*, GstPad*, GstCaps*, GstElementFa
 
 static void copyGstreamerBuffersToAudioChannel(const GRefPtr<GstBufferList>& buffers, AudioChannel* audioChannel)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     float* destination = audioChannel->mutableData();
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     unsigned bufferCount = gst_buffer_list_length(buffers.get());
     for (unsigned i = 0; i < bufferCount; ++i) {
         GstBuffer* buffer = gst_buffer_list_get(buffers.get(), i);

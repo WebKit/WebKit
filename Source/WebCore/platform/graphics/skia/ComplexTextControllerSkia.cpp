@@ -61,8 +61,10 @@ ComplexTextController::ComplexTextRun::ComplexTextRun(hb_buffer_t* buffer, const
     m_glyphOrigins.grow(m_glyphCount);
     m_coreTextIndices.grow(m_glyphCount);
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
     hb_glyph_info_t* glyphInfos = hb_buffer_get_glyph_infos(buffer, nullptr);
     hb_glyph_position_t* glyphPositions = hb_buffer_get_glyph_positions(buffer, nullptr);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     // HarfBuzz returns the shaping result in visual order. We don't need to flip for RTL.
     for (unsigned i = 0; i < m_glyphCount; ++i) {

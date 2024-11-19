@@ -131,6 +131,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
     }
 
     // Probe platform early on for a working audio output device in autoaudiosink.
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     if (g_str_has_prefix(GST_OBJECT_NAME(audioSink.get()), "autoaudiosink")) {
         g_signal_connect(audioSink.get(), "child-added", G_CALLBACK(+[](GstChildProxy*, GObject* object, gchar*, gpointer) {
             if (GST_IS_AUDIO_BASE_SINK(object))
@@ -148,6 +149,7 @@ AudioDestinationGStreamer::AudioDestinationGStreamer(AudioIOCallback& callback, 
             return;
         }
     }
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     GstElement* audioConvert = makeGStreamerElement("audioconvert", nullptr);
     GstElement* audioResample = makeGStreamerElement("audioresample", nullptr);

@@ -36,6 +36,7 @@
 #include "IntRect.h"
 #include "NotImplemented.h"
 #include "PlatformDisplay.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColorFilter.h>
 #include <skia/core/SkImage.h>
 #include <skia/core/SkPath.h>
@@ -45,11 +46,10 @@
 #include <skia/core/SkPoint3.h>
 #include <skia/core/SkRRect.h>
 #include <skia/core/SkRegion.h>
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkSurface.h>
-IGNORE_CLANG_WARNINGS_END
 #include <skia/core/SkTileMode.h>
 #include <skia/effects/SkImageFilters.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include <wtf/MathExtras.h>
 
 #if USE(THEME_ADWAITA)

@@ -184,6 +184,8 @@ hb_position_t SkiaHarfBuzzFont::glyphWidth(hb_codepoint_t glyph)
 
 void SkiaHarfBuzzFont::glyphWidths(unsigned count, const hb_codepoint_t* glyphs, unsigned glyphStride, hb_position_t* advances, unsigned advanceStride)
 {
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // Glib/Win port
+
     Vector<SkGlyphID, 256> skGlyphs(count);
     for (unsigned i = 0; i < count; ++i) {
         skGlyphs[i] = *glyphs;
@@ -201,6 +203,8 @@ void SkiaHarfBuzzFont::glyphWidths(unsigned count, const hb_codepoint_t* glyphs,
         *advances = skScalarToHarfBuzzPosition(widths[i]);
         advances = reinterpret_cast<hb_position_t*>(reinterpret_cast<uint8_t*>(advances) + advanceStride);
     }
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 void SkiaHarfBuzzFont::glyphExtents(hb_codepoint_t glyph, hb_glyph_extents_t* extents)

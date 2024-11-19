@@ -32,9 +32,11 @@
 #include "GradientColorStops.h"
 #include "GraphicsContextSkia.h"
 #include "NotImplemented.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkColor.h>
 #include <skia/core/SkScalar.h>
 #include <skia/effects/SkGradientShader.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 
 namespace WebCore {
 

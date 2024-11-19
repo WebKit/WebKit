@@ -62,7 +62,9 @@ enum {
     LAST_SIGNAL
 };
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 static guint webkitVideoSinkSignals[LAST_SIGNAL] = { 0, };
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static void webkitVideoSinkRepaintRequested(WebKitVideoSink*, GstSample*);
 static GRefPtr<GstSample> webkitVideoSinkRequestRender(WebKitVideoSink*, GstBuffer*);

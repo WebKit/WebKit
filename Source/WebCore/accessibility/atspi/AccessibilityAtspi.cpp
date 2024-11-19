@@ -147,6 +147,7 @@ void AccessibilityAtspi::initializeRegistry()
     }, this);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 static GUniquePtr<char*> eventConvertingDetailToNonCamelCase(const char* eventName)
 {
     GUniquePtr<char*> event(g_strsplit(eventName, ":", 3));
@@ -193,6 +194,7 @@ static bool eventIsSubtype(char** needle, char** haystack)
 
     return true;
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 void AccessibilityAtspi::removeEventListener(const char* dbusName, const char* eventName)
 {

@@ -39,13 +39,12 @@
 #if USE(SKIA)
 #include "GLContext.h"
 #include "PlatformDisplay.h"
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/gpu/ganesh/GrBackendSurface.h>
 #include <skia/gpu/ganesh/SkImageGanesh.h>
 #include <skia/gpu/ganesh/gl/GrGLBackendSurface.h>
-
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkPixmap.h> // NOLINT
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 namespace WebCore {

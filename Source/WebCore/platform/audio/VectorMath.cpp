@@ -138,6 +138,8 @@ void linearToDecibels(const float* inputVector, float* outputVector, size_t numb
 
 #else
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
+
 static inline bool is16ByteAligned(const float* vector)
 {
     return !(reinterpret_cast<uintptr_t>(vector) & 0x0F);
@@ -826,6 +828,8 @@ void addVectorsThenMultiplyByScalar(const float* inputVector1, const float* inpu
     add(inputVector1, inputVector2, outputVector, numberOfElementsToProcess);
     multiplyByScalar(outputVector, scalar, outputVector, numberOfElementsToProcess);
 }
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(ACCELERATE)
 

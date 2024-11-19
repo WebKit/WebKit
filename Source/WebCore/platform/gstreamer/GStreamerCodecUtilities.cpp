@@ -51,10 +51,13 @@ std::pair<const char*, const char*> GStreamerCodecUtilities::parseH264ProfileAnd
 
     auto components = codec.split('.');
     long int spsAsInteger = strtol(components[1].utf8().data(), nullptr, 16);
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     uint8_t sps[3];
     sps[0] = spsAsInteger >> 16;
     sps[1] = spsAsInteger >> 8;
     sps[2] = spsAsInteger;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     const char* profile = gst_codec_utils_h264_get_profile(sps, 3);
     const char* level = gst_codec_utils_h264_get_level(sps, 3);
@@ -131,8 +134,10 @@ const char* GStreamerCodecUtilities::parseHEVCProfile(const String& codec)
         return nullptr;
     }
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     uint8_t profileTierLevel[11] = { 0, };
     memset(profileTierLevel, 0, 11);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     profileTierLevel[0] = parameters->generalProfileIDC;
 
     if (profileTierLevel[0] >= 4) {

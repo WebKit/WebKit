@@ -105,8 +105,10 @@ static ExceptionOr<bool> verifyEd25519(const Vector<uint8_t>& key, size_t keyLen
 
     // Construct the sig-val s-expression, extracting the r and s components from the signature vector.
     PAL::GCrypt::Handle<gcry_sexp_t> signatureSexp;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     gcry_error_t error = gcry_sexp_build(&signatureSexp, nullptr, "(sig-val(eddsa(r %b)(s %b)))",
         keyLengthInBytes, signature.data(), keyLengthInBytes, signature.data() + keyLengthInBytes);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (error != GPG_ERR_NO_ERROR) {
         PAL::GCrypt::logError(error);
         return false;

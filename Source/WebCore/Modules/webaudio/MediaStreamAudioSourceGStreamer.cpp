@@ -41,7 +41,9 @@ static void copyBusData(AudioBus& bus, GstBuffer* buffer, bool isMuted)
     for (size_t channelIndex = 0; channelIndex < bus.numberOfChannels(); ++channelIndex) {
         const auto& channel = *bus.channel(channelIndex);
         auto dataSize = sizeof(float) * channel.length();
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         memcpy(mappedBuffer.data() + offset, channel.data(), dataSize);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         offset += dataSize;
     }
 }

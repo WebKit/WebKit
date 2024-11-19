@@ -215,7 +215,9 @@ void TextureMapper::beginPainting(FlipY flipY, BitmapTexture* surface)
     data().didModifyStencil = false;
     glGetIntegerv(GL_VIEWPORT, data().viewport);
     glGetIntegerv(GL_SCISSOR_BOX, data().previousScissor);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
     m_clipStack.reset(IntRect(0, 0, data().viewport[2], data().viewport[3]), flipY == FlipY::Yes ? ClipStack::YAxisMode::Default : ClipStack::YAxisMode::Inverted);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     glGetIntegerv(GL_FRAMEBUFFER_BINDING, &data().targetFrameBuffer);
     data().flipY = flipY;
     bindSurface(surface);
@@ -231,7 +233,9 @@ void TextureMapper::endPainting()
 
     glUseProgram(data().previousProgram);
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
     glScissor(data().previousScissor[0], data().previousScissor[1], data().previousScissor[2], data().previousScissor[3]);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     if (data().previousScissorState)
         glEnable(GL_SCISSOR_TEST);
     else
@@ -368,7 +372,9 @@ static int computeGaussianKernel(float radius, std::array<float, SimplifiedGauss
     unsigned kernelHalfSize = blurRadiusToKernelHalfSize(radius);
     RELEASE_ASSERT(kernelHalfSize <= GaussianKernelMaxHalfSize);
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
     float fullKernel[GaussianKernelMaxHalfSize];
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     fullKernel[0] = 1; // gauss(0, radius);
     float sum = fullKernel[0];
@@ -1192,8 +1198,10 @@ TextureMapper::~TextureMapper()
 void TextureMapper::bindDefaultSurface()
 {
     glBindFramebuffer(GL_FRAMEBUFFER, data().targetFrameBuffer);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
     auto& viewport = data().viewport;
     glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     glDisable(GL_DEPTH_TEST);
     m_clipStack.apply();
     data().currentSurface = nullptr;
@@ -1414,7 +1422,9 @@ void TextureMapper::updateProjectionMatrix()
         size = data().currentSurface->size();
         flipY = true;
     } else {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
         size = IntSize(data().viewport[2], data().viewport[3]);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         flipY = data().flipY == FlipY::Yes;
     }
     data().projectionMatrix = createProjectionMatrix(size, flipY, data().zNear, data().zFar);

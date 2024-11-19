@@ -601,6 +601,8 @@ IntRect transformedBoundingBox(const TransformationMatrix& transform, FloatRect 
         transform.map4ComponentPoint(x, y, z, w);
         return { x, y, z, w };
     };
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
     Point vertex[] = {
         mapPoint(rect.minXMinYCorner()),
         mapPoint(rect.maxXMinYCorner()),
@@ -613,6 +615,7 @@ IntRect transformedBoundingBox(const TransformationMatrix& transform, FloatRect 
         vertex[2].w >= 0,
         vertex[3].w >= 0
     };
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     auto findFirstPositiveVertex = [&]() {
         int i = 0;

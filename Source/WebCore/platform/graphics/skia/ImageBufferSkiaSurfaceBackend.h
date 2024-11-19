@@ -28,11 +28,12 @@
 #if USE(SKIA)
 #include "GraphicsContextSkia.h"
 #include "ImageBufferSkiaBackend.h"
-#include <wtf/Forward.h>
 
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkSurface.h>
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
+
+#include <wtf/Forward.h>
 
 namespace WebCore {
 

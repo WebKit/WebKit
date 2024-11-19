@@ -36,7 +36,9 @@ typedef struct {
     GstAllocatorClass parent;
 } GstAllocatorFastMallocClass;
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
 G_DEFINE_TYPE(GstAllocatorFastMalloc, gst_allocator_fast_malloc, GST_TYPE_ALLOCATOR)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 static GstMemoryFastMalloc* gstMemoryFastMallocNew(GstAllocator* allocator, gsize size, gsize alignment, gsize offset, gsize padding, GstMemoryFlags flags)
 {
@@ -49,6 +51,8 @@ static GstMemoryFastMalloc* gstMemoryFastMallocNew(GstAllocator* allocator, gsiz
 
     gsize headerSize = (sizeof(GstMemoryFastMalloc) + alignment) & ~alignment;
     gsize allocationSize = offset + size + padding;
+
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     auto* memory = static_cast<GstMemoryFastMalloc*>(tryFastAlignedMalloc(alignment + 1, headerSize + allocationSize));
     if (!memory)
         return nullptr;
@@ -59,6 +63,7 @@ static GstMemoryFastMalloc* gstMemoryFastMallocNew(GstAllocator* allocator, gsiz
         std::memset(memory->data, 0, offset);
     if (padding && (flags & GST_MEMORY_FLAG_ZERO_PADDED))
         std::memset(memory->data + offset + size, 0, padding);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     gst_memory_init(GST_MEMORY_CAST(memory), flags, allocator, nullptr, allocationSize, alignment, offset, size);
 
@@ -101,7 +106,9 @@ static GstMemoryFastMalloc* gstAllocatorFastMallocMemCopy(GstMemoryFastMalloc* m
     if (!copy)
         return nullptr;
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     std::memcpy(copy->data, memory->data + memory->base.offset + offset, size);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return copy;
 }
 
@@ -133,7 +140,9 @@ static gboolean gstAllocatorFastMallocMemIsSpan(GstMemoryFastMalloc* memory, Gst
         *offset = memory->base.offset - parent->base.offset;
     }
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     return memory->data + memory->base.offset + memory->base.size == other->data + other->base.offset;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 static void gst_allocator_fast_malloc_class_init(GstAllocatorFastMallocClass* klass)

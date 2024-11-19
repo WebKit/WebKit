@@ -93,13 +93,16 @@ static bool matchesCURSignature(char* contents)
     return !memcmp(contents, "\x00\x00\x02\x00", 4);
 }
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static bool matchesWebPSignature(char* contents)
 {
     return !memcmp(contents, "RIFF", 4) && !memcmp(contents + 8, "WEBPVP", 6);
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
 
 #if USE(AVIF)
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 static bool matchesAVIFSignature(char* contents, FragmentedSharedBuffer& data)
 {
 #if USE(CG)
@@ -114,6 +117,7 @@ static bool matchesAVIFSignature(char* contents, FragmentedSharedBuffer& data)
     return !memcmp(contents + 4, "\x66\x74\x79\x70", 4);
 #endif
 }
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif // USE(AVIF)
 
 #if USE(JPEGXL)

@@ -45,10 +45,10 @@
 #endif
 
 #if USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN // GLib/Win port
 #include <skia/core/SkImage.h>
-IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkPixmap.h>
-IGNORE_CLANG_WARNINGS_END
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #endif
 
 #if OS(DARWIN)
@@ -171,6 +171,7 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
 
     // prepare temporaryData if necessary
     if (requireSubImageBuffer) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib/Win port
         temporaryData.resize(targetRect.width() * targetRect.height() * bytesPerPixel);
         auto dst = temporaryData.data();
         data = dst;
@@ -182,6 +183,7 @@ void BitmapTexture::updateContents(const void* srcData, const IntRect& targetRec
             src += bytesPerLine;
             dst += targetBytesPerLine;
         }
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         bytesPerLine = targetBytesPerLine;
         adjustedSourceOffset = IntPoint(0, 0);

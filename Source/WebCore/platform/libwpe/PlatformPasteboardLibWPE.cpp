@@ -58,7 +58,9 @@ void PlatformPasteboard::getTypes(Vector<String>& types) const
     wpe_pasteboard_get_types(m_pasteboard, &pasteboardTypes);
 
     for (unsigned i = 0; i < pasteboardTypes.length; ++i) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // WPE port
         auto& typeString = pasteboardTypes.strings[i];
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         const auto length = std::min(static_cast<size_t>(typeString.length), std::numeric_limits<size_t>::max());
         types.append(String({ typeString.data, length }));
     }
@@ -88,10 +90,12 @@ void PlatformPasteboard::write(const PasteboardWebContent& content)
     CString textString = content.text.utf8();
     CString markupString = content.markup.utf8();
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // WPE port
     struct wpe_pasteboard_string_pair pairs[] = {
         { { nullptr, 0 }, { nullptr, 0 } },
         { { nullptr, 0 }, { nullptr, 0 } },
     };
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     wpe_pasteboard_string_initialize(&pairs[0].type, plainText, strlen(plainText));
     wpe_pasteboard_string_initialize(&pairs[0].string, textString.data(), textString.length());
     wpe_pasteboard_string_initialize(&pairs[1].type, htmlText, strlen(htmlText));

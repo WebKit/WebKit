@@ -29,7 +29,9 @@
 #if USE(SKIA)
 #include "AffineTransform.h"
 #include <skia/core/SkImage.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <skia/core/SkMatrix.h>
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #include <skia/core/SkSamplingOptions.h>
 #include <skia/core/SkTileMode.h>
 

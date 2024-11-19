@@ -46,6 +46,8 @@
 #include <wtf/glib/GUniquePtr.h>
 #endif
 
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
+
 namespace WebCore {
 
 static const char* const gDictionaryDirectories[] = {
@@ -330,5 +332,7 @@ size_t lastHyphenLocation(StringView string, size_t beforeIndex, const AtomStrin
 }
 
 } // namespace WebCore
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #endif // USE(LIBHYPHEN)

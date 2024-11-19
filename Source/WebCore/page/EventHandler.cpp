@@ -4968,12 +4968,14 @@ HandleUserInputEventResult EventHandler::handleTouchEvent(const PlatformTouchEve
 
     // Array of touches per state, used to assemble the 'changedTouches' list in the JS event.
     typedef HashSet<RefPtr<EventTarget>> EventTargetSet;
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
     struct {
         // The touches corresponding to the particular change state this struct instance represents.
         RefPtr<TouchList> m_touches;
         // Set of targets involved in m_touches.
         EventTargetSet m_targets;
     } changedTouches[PlatformTouchPoint::TouchStateEnd];
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     const Vector<PlatformTouchPoint>& points = event.touchPoints();
 

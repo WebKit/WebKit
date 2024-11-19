@@ -63,6 +63,7 @@ String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain
     CString domainUTF8 = domain.utf8();
 
     // This function is expected to work with the format used by cookies, so skip any leading dots.
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     unsigned position = 0;
     while (domainUTF8.data()[position] == '.')
         position++;
@@ -73,6 +74,7 @@ String PublicSuffixStore::platformTopPrivatelyControlledDomain(StringView domain
     GUniqueOutPtr<GError> error;
     if (const char* baseDomain = soup_tld_get_base_domain(domainUTF8.data() + position, &error.outPtr()))
         return String::fromUTF8(baseDomain);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     if (g_error_matches(error.get(), SOUP_TLD_ERROR, SOUP_TLD_ERROR_NO_BASE_DOMAIN)) {
         if (domain.endsWithIgnoringASCIICase("web-platform.test"_s))

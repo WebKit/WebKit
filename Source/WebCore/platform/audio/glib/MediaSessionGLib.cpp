@@ -230,8 +230,10 @@ bool MediaSessionGLib::ensureMprisSessionRegistered()
         return false;
     }
 
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     m_playerRegistrationId = g_dbus_connection_register_object(m_connection.get(), DBUS_MPRIS_OBJECT_PATH, mprisInterface->interfaces[1],
         &gInterfaceVTable, this, nullptr, &error.outPtr());
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     if (!m_playerRegistrationId) {
         g_warning("Failed at MPRIS object registration: %s", error->message);
