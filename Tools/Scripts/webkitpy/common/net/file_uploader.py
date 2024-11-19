@@ -28,15 +28,11 @@
 
 import mimetypes
 import time
-import sys
 
 from webkitpy.common.net.networktransaction import NetworkTransaction, NetworkTimeout
 from webkitcorepy import string_utils, unicode
 
-if sys.version_info > (3, 0):
-    from urllib.request import Request, urlopen
-else:
-    from urllib2 import Request, urlopen
+from urllib.request import Request, urlopen
 
 def get_mime_type(filename):
     return mimetypes.guess_type(filename)[0] or 'application/octet-stream'

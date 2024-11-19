@@ -44,8 +44,7 @@ class ScmBase(object):
 
     @classmethod
     def gmtoffset(cls):
-        if sys.version_info >= (3, 0):
-            return int(time.localtime().tm_gmtoff * 100 / (60 * 60))
+        return int(time.localtime().tm_gmtoff * 100 / (60 * 60))
 
         ts = time.time()
         return int((datetime.fromtimestamp(ts) - datetime.utcfromtimestamp(ts)).total_seconds() * 100 / (60 * 60))

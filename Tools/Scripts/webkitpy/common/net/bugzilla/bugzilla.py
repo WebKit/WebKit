@@ -35,7 +35,6 @@ import logging
 import mimetypes
 import re
 import socket
-import sys
 
 from datetime import datetime  # used in timestamp()
 from webkitcorepy import BytesIO, StringIO, string_utils, unicode
@@ -49,10 +48,7 @@ from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.system.user import User
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup, BeautifulStoneSoup, SoupStrainer
 
-if sys.version_info > (3, 0):
-    from urllib.parse import quote as urlquote
-else:
-    from urllib import quote as urlquote
+from urllib.parse import quote as urlquote
 
 _log = logging.getLogger(__name__)
 
@@ -192,12 +188,8 @@ class Bugzilla(object):
     def _parse_attachment_element(self, element, bug_id):
         attachment = {}
         attachment['bug_id'] = bug_id
-        if sys.version_info > (3, 0):
-            attachment['is_obsolete'] = (element.has_attr('isobsolete') and element['isobsolete'] == "1")
-            attachment['is_patch'] = (element.has_attr('ispatch') and element['ispatch'] == "1")
-        else:
-            attachment['is_obsolete'] = (element.has_key('isobsolete') and element['isobsolete'] == "1")
-            attachment['is_patch'] = (element.has_key('ispatch') and element['ispatch'] == "1")
+        attachment['is_obsolete'] = (element.has_attr('isobsolete') and element['isobsolete'] == "1")
+        attachment['is_patch'] = (element.has_attr('ispatch') and element['ispatch'] == "1")
         attachment['id'] = int(element.find('attachid').string)
         # FIXME: No need to parse out the url here.
         attachment['url'] = self.attachment_url_for_id(attachment['id'])

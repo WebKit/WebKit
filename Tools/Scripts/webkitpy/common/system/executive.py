@@ -81,25 +81,6 @@ class ScriptError(Exception):
         return os.path.basename(command_path)
 
 
-class WrappedPopen(object):
-    def __init__(self, popen):
-        self._popen = popen
-        for attribute in dir(self._popen):
-            if attribute.startswith('__') or attribute == 'returncode':
-                continue
-            setattr(self, attribute, getattr(self._popen, attribute))
-
-    @property
-    def returncode(self):
-        return self._popen.returncode
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, *args):
-        self.wait()
-
-
 class Executive(AbstractExecutive):
     PIPE = subprocess.PIPE
     STDOUT = subprocess.STDOUT
@@ -109,23 +90,11 @@ class Executive(AbstractExecutive):
         self._is_native_win = sys.platform.startswith('win')
         self._is_cygwin = sys.platform == 'cygwin'
 
-    def _should_close_fds(self):
-        # We need to pass close_fds=True to work around Python bug #2320
-        # (otherwise we can hang when we kill DumpRenderTree when we are running
-        # multiple threads). See http://bugs.python.org/issue2320 .
-        # In Python 2.7.10, close_fds is also supported on Windows.
-        # However, "you cannot set close_fds to true and also redirect the standard
-        # handles by setting stdin, stdout or stderr.".
-        if self._is_native_win:
-            return False
-        else:
-            return True
-
     def _run_command_with_teed_output(self, args, teed_output, **kwargs):
         child_process = self.popen(args,
                                    stdout=self.PIPE,
                                    stderr=self.STDOUT,
-                                   close_fds=self._should_close_fds(),
+                                   close_fds=True,
                                    **kwargs)
 
         with child_process:
@@ -418,7 +387,7 @@ class Executive(AbstractExecutive):
                              stderr=stderr,
                              cwd=cwd,
                              env=env,
-                             close_fds=self._should_close_fds(),
+                             close_fds=True,
                              pass_fds=pass_fds)
         with process:
             if not string_to_communicate:
@@ -453,12 +422,6 @@ class Executive(AbstractExecutive):
             return output
 
     def _child_process_encoding(self):
-        # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
-        # to launch subprocesses, so we have to encode arguments using the
-        # current code page.
-        if self._is_native_win and sys.version < '3':
-            return 'mbcs'
-        # All other platforms use UTF-8.
         # FIXME: Using UTF-8 on Cygwin will confuse Windows-native commands
         # which will expect arguments to be encoded using the current code
         # page.
@@ -468,12 +431,6 @@ class Executive(AbstractExecutive):
         # Cygwin's Python's os.execv doesn't support unicode command
         # arguments, and neither does Cygwin's execv itself.
         if self._is_cygwin:
-            return True
-
-        # Win32 Python 2.x uses CreateProcessA rather than CreateProcessW
-        # to launch subprocesses, so we have to encode arguments using the
-        # current code page.
-        if self._is_native_win and sys.version < '3':
             return True
 
         return False
@@ -499,12 +456,7 @@ class Executive(AbstractExecutive):
             # Must include proper interpreter
             if self._needs_interpreter_check(args[0]):
                 try:
-                    # On Python 2 'encoding' is an invalid keyword argument for this function
-                    open_kwargs = {}
-                    if sys.version_info.major >= 3:
-                        open_kwargs['encoding'] = 'cp437'
-
-                    with open(args[0], 'r', **open_kwargs) as f:
+                    with open(args[0], 'r', encoding='cp437') as f:
                         line = f.readline()
                         if "perl" in line:
                             args.insert(0, "perl")
@@ -528,27 +480,15 @@ class Executive(AbstractExecutive):
         env = kwargs.pop('env', None)
         if self._is_native_win and env is not None:
             mod_env = {}
-            if sys.version_info.major >= 3:
-                for key, value in env.items():
-                    if not isinstance(key, str):
-                        key = key.decode('utf-8')
-                    if not isinstance(value, str):
-                        value = value.decode('utf-8')
-                    mod_env[key] = value
-            else:
-                for key, value in env.items():
-                    if not isinstance(key, bytes):
-                        key = key.encode('utf-8')
-                    if not isinstance(value, bytes):
-                        value = value.encode('utf-8')
-                    mod_env[key] = value
+            for key, value in env.items():
+                if not isinstance(key, str):
+                    key = key.decode('utf-8')
+                if not isinstance(value, str):
+                    value = value.decode('utf-8')
+                mod_env[key] = value
             env = mod_env
 
-        # Python 3 treats Popen as a context manager, we should allow this in Python 2
-        result = subprocess.Popen(string_args, env=env, **kwargs)
-        if not callable(getattr(result, "__enter__", None)) and not callable(getattr(result, "__exit__", None)):
-            return WrappedPopen(result)
-        return result
+        return subprocess.Popen(string_args, env=env, **kwargs)
 
     def run_in_parallel(self, command_lines_and_cwds, processes=None):
         """Runs a list of (cmd_line list, cwd string) tuples in parallel and returns a list of (retcode, stdout, stderr) tuples."""

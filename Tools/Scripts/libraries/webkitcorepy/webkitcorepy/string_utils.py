@@ -21,18 +21,14 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import io
-import sys
 
 
-basestring = str if sys.version_info > (3, 0) else basestring
+basestring = str
 BytesIO = io.BytesIO
-if sys.version_info > (3, 0):
-    StringIO = io.StringIO
-else:
-    from StringIO import StringIO
+StringIO = io.StringIO
 UnicodeIO = io.StringIO
 
-unicode = str if sys.version_info > (3, 0) else unicode
+unicode = str
 
 
 def encode(string, encoding='utf-8', errors='strict', target_type=bytes):

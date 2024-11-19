@@ -109,10 +109,9 @@ def main(
             help = filtered_call(program.help, classifier=provisional_classifier)
         else:
             help = program.help
-        kwargs = dict(help=help)
-        if sys.version_info > (3, 0):
-            kwargs['aliases'] = program.aliases
-        subparser = subparsers.add_parser(program.name, **kwargs)
+        subparser = subparsers.add_parser(
+            program.name, help=help, aliases=program.aliases
+        )
         subparser.set_defaults(main=program.main)
         subparser.set_defaults(program=program.name)
         subparser.set_defaults(aliases=program.aliases)

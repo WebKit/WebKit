@@ -84,12 +84,8 @@ class Upload(object):
             results = {}
 
             # FIXME: Python 2 removal, this dictionary is large enough that Python 2 can't just use items
-            if sys.version_info > (3, 0):
-                for test, data in obj.results.items():
-                    unpack_test(results, test.split('/'), data)
-            else:
-                for test, data in obj.results.iteritems():
-                    unpack_test(results, test.split('/'), data)
+            for test, data in obj.results.items():
+                unpack_test(results, test.split('/'), data)
 
             result = dict(
                 version=obj.VERSION,

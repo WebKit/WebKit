@@ -1,7 +1,6 @@
 import json
 import logging
 import shutil
-import sys
 import os
 from collections import defaultdict, OrderedDict
 
@@ -10,12 +9,8 @@ from webkitpy.benchmark_runner.benchmark_results import BenchmarkResults
 from webkitpy.benchmark_runner.browser_driver.browser_driver_factory import BrowserDriverFactory
 
 
-if sys.version_info > (3, 0):
-    def istext(a):
-        return isinstance(a, bytes) or isinstance(a, str)
-else:
-    def istext(a):
-        return isinstance(a, str) or isinstance(a, unicode)
+def istext(a):
+    return isinstance(a, bytes) or isinstance(a, str)
 
 
 _log = logging.getLogger(__name__)

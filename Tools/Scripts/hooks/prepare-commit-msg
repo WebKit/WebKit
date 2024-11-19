@@ -5,11 +5,7 @@ import re
 import subprocess
 import sys
 
-ENCODING_KWARGS = dict()
-if sys.version_info >= (3, 6):
-    ENCODING_KWARGS = dict(encoding='utf-8')
-
-TOPLEVEL = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], **ENCODING_KWARGS).strip()
+TOPLEVEL = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], encoding='utf-8').strip()
 
 LOCATION = os.path.join(TOPLEVEL, r'{{ location }}')
 SPACING = 8
@@ -40,7 +36,7 @@ from webkitpy.common.checkout.diff_parser import DiffParser
 from webkitbugspy import radar
 
 def set_env_variables_from_branch_config():
-    BRANCH = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], **ENCODING_KWARGS).strip()
+    BRANCH = subprocess.check_output(['git', 'rev-parse', '--abbrev-ref', 'HEAD'], encoding='utf-8').strip()
     for name, data in dict(
         title=('COMMIT_MESSAGE_TITLE', 1),
         bug=('COMMIT_MESSAGE_BUG', re.compile(r'^(\D+)\d+$')),
@@ -55,7 +51,7 @@ def set_env_variables_from_branch_config():
             for line in reversed(subprocess.check_output(
                 ['git', 'config', '--get-all', 'branch.{}.{}'.format(BRANCH, name)],
                 stderr=subprocess.PIPE,
-                **ENCODING_KWARGS
+                encoding='utf-8',
             ).strip().splitlines()):
                 if isinstance(mode, int) and count >= mode:
                     break
@@ -101,7 +97,7 @@ def parseChanges(command, commit_message):
     try:
         for line in subprocess.check_output(
             command,
-            **ENCODING_KWARGS
+            encoding='utf-8',
         ).splitlines():
             if line == '~':
                 dirname = None
@@ -162,14 +158,14 @@ def source_branches():
             ['git', 'rev-list', 'HEAD'],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            **ENCODING_KWARGS
+            encoding='utf-8',
         )
         outer_line = proc.stdout.readline()
         while outer_line:
             branches = set()
             for inner_line in subprocess.check_output(
                 ['git', 'branch', '--contains', outer_line.strip(), '-a', '--format', '%(refname)'],
-                **ENCODING_KWARGS
+                encoding='utf-8',
             ).splitlines():
                 if not inner_line.startswith('refs/remotes'):
                     continue
@@ -250,13 +246,13 @@ def cherry_pick(content):
         try:
             subprocess.check_output(
                 ['git', 'merge-base', '--is-ancestor', production_hash, DEFAULT_BRANCH],
-                **ENCODING_KWARGS
+                encoding='utf-8',
             )
         except subprocess.CalledProcessError:
             remotes = set()
             for line in subprocess.check_output(
                 ['git', 'branch', '--contains', production_hash, '-a', '--format', '%(refname)'],
-                **ENCODING_KWARGS
+                encoding='utf-8',
             ).splitlines():
                 match = REFNAME_RE.match(line.strip())
                 if not match:
@@ -340,7 +336,7 @@ def main(file_name=None, source=None, sha=None):
         if sha:
             commit_message_file.write(subprocess.check_output(
                 ['git', 'log', sha, '-1', '--pretty=format:%B'],
-                **ENCODING_KWARGS
+                encoding='utf-8',
             ))
         else:
             commit_message_file.write(message(source=source, sha=sha))
@@ -356,7 +352,7 @@ def main(file_name=None, source=None, sha=None):
             commit_message_file.write('\n')
         for line in subprocess.check_output(
             ['git', 'status'],
-            **ENCODING_KWARGS
+            encoding='utf-8',
         ).splitlines():
             commit_message_file.write('# {}\n'.format(line))
 

@@ -20,25 +20,14 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-
 
 def iteritems(dictionary):
-    if sys.version_info > (3, 0):
-        return dictionary.items()
-    else:
-        return dictionary.iteritems()
+    return dictionary.items()
 
 
 def iterkeys(dictionary):
-    if sys.version_info > (3, 0):
-        return dictionary.keys()
-    else:
-        return dictionary.iterkeys()
+    return dictionary.keys()
 
 
 def itervalues(dictionary):
-    if sys.version_info > (3, 0):
-        return dictionary.values()
-    else:
-        return dictionary.itervalues()
+    return dictionary.values()

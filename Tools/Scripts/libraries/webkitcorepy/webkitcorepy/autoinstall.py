@@ -42,14 +42,10 @@ from webkitcorepy import log
 from webkitcorepy.version import Version
 from webkitcorepy.file_lock import FileLock
 
-if sys.version_info > (3, 0):
-    from html.parser import HTMLParser
-    from importlib import machinery as importmachinery
-    from urllib.request import urlopen
-    from urllib.error import URLError
-else:
-    from urllib2 import urlopen, URLError
-    from HTMLParser import HTMLParser
+from html.parser import HTMLParser
+from importlib import machinery as importmachinery
+from urllib.request import urlopen
+from urllib.error import URLError
 
 
 class SimplyPypiIndexPageParser(HTMLParser):
@@ -213,11 +209,11 @@ class Package(object):
                                 # This is a subset of compatible tags, but these are the
                                 # only ones that are particularly common; we need these
                                 # to be able to install packaging and its dependencies.
-                                generic_tags = ["py2.py3-none-any", "py3.py2-none-any"]
-                                if sys.version_info >= (3,):
-                                    generic_tags.append("py3-none-any")
-                                else:
-                                    generic_tags.append("py2-none-any")
+                                generic_tags = [
+                                    "py2.py3-none-any",
+                                    "py3.py2-none-any",
+                                    "py3-none-any",
+                                ]
 
                                 if match.group(1) not in generic_tags:
                                     continue
@@ -465,9 +461,7 @@ class AutoInstall(object):
     CA_CERT_PATH_ENV_VAR = 'AUTOINSTALL_CA_CERT_PATH'
 
     # This list of libraries is required to install other libraries, and must be installed first
-    BASE_LIBRARIES = ['setuptools', 'wheel', 'six', 'pyparsing', 'packaging', 'setuptools_scm']
-    if sys.version_info >= (3, 0):
-        BASE_LIBRARIES.insert(-1, 'tomli')
+    BASE_LIBRARIES = ['setuptools', 'wheel', 'six', 'pyparsing', 'packaging', 'tomli', 'setuptools_scm']
 
     directory = None
     index = _default_pypi_index()
@@ -711,9 +705,6 @@ class AutoInstall(object):
             return None
 
         cls.install(name)
-        if sys.version_info < (3, 0):
-            # Python 2 works fine with the default module finder, once we've installed the module in question
-            return None
 
         path = cls.directory
         for part in fullname.split('.'):

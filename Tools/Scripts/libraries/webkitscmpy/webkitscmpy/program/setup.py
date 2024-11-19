@@ -81,13 +81,10 @@ class Setup(Command):
     def fetch(cls, repository):
         from webkitscmpy.mocks.local import Git as MockGit
 
-        kwargs = dict()
-        if sys.version_info >= (3, 6):
-            kwargs = dict(encoding='utf-8')
         remote_cmd = run(
             [repository.executable(), 'remote'],
             capture_output=True, cwd=repository.root_path,
-            **kwargs
+            encoding='utf-8',
         )
         if remote_cmd.returncode:
             sys.stderr.write('Failed to list remotes in repository\n')

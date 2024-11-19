@@ -31,8 +31,7 @@ if not sys.platform.startswith('win'):
 
 from webkitcorepy import StringIO, run, Timer, run
 
-if sys.version_info > (3, 0):
-    file = io.IOBase
+file = io.IOBase
 
 
 class Terminal(object):
@@ -48,9 +47,9 @@ class Terminal(object):
         try:
             if alert_after and cls.isatty(sys.stdout):
                 with Timer(alert_after, lambda: cls.ring(sys.stdout)):
-                    return (input if sys.version_info > (3, 0) else raw_input)(*args, **kwargs)
+                    return input(*args, **kwargs)
             else:
-                return (input if sys.version_info > (3, 0) else raw_input)(*args, **kwargs)
+                return input(*args, **kwargs)
         except KeyboardInterrupt:
             sys.stderr.write('\nUser interrupted program\n')
             sys.exit(1)

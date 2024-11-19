@@ -85,7 +85,7 @@ def are_simulators_booted():
     try:
         simctl_output = json.loads(subprocess.check_output(
             ['xcrun', 'simctl', 'list', '--json'],
-            **(dict(encoding='utf-8') if sys.version_info > (3, 0) else dict())
+            encoding='utf-8',
         ))
     except json.decoder.JSONDecodeError:
         return False

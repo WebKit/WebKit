@@ -21,7 +21,6 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import sys
-import types
 import warnings
 
 import pytest
@@ -85,9 +84,6 @@ def pytest_pycollect_makeitem(collector, name, obj):
                     "attribute %r already defined on %r; %r might hide %r"
                     % (new_attr_name, obj, method, existing_attr)
                 )
-
-        if sys.version_info < (3,) and isinstance(method, types.MethodType):
-            method = method.im_func
 
         if serial:
             method = pytest.mark.serial(method)

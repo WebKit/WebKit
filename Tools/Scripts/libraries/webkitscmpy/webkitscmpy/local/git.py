@@ -131,16 +131,13 @@ class Git(Scm):
             intersected = False
             log = None
             try:
-                kwargs = dict()
-                if sys.version_info >= (3, 6):
-                    kwargs = dict(encoding='utf-8')
                 self._last_populated[branch] = time.time()
                 log = subprocess.Popen(
                     [self.repo.executable(), 'log', '{}/{}'.format(remote, branch) if remote else branch, '--no-decorate', '--date=unix', '--'],
                     cwd=self.repo.root_path,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
-                    **kwargs
+                    encoding='utf-8',
                 )
                 if log.poll():
                     raise self.repo.Exception("Failed to construct branch history for '{}'".format(branch))
@@ -394,7 +391,7 @@ class Git(Scm):
             prod_branches=None,
             contributors=None,
             id=None,
-            cached=sys.version_info > (3, 0),
+            cached=True,
             classifier=None,
     ):
         super(Git, self).__init__(
@@ -924,7 +921,7 @@ class Git(Scm):
                 cwd=self.root_path,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                **(dict(encoding='utf-8') if sys.version_info > (3, 6) else dict())
+                encoding='utf-8',
             )
             if log.poll():
                 raise self.Exception("Failed to construct history for '{}'".format(end.branch))
@@ -1316,16 +1313,13 @@ class Git(Scm):
         else:
             command = [self.executable(), 'diff', '{}..{}'.format(base, head)]
 
-        kwargs = dict()
-        if sys.version_info >= (3, 6):
-            kwargs = dict(encoding='utf-8')
         target = '{}..{}'.format(base, head) if head else base
         proc = subprocess.Popen(
             command,
             cwd=self.root_path,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            **kwargs
+            encoding='utf-8',
         )
 
         if proc.poll():

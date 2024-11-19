@@ -20,12 +20,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-import sys
-
-if sys.version_info > (3, 0):
-    from threading import Timer as _Timer
-else:
-    from threading import _Timer
+from threading import Timer as _Timer
 
 
 class Timer(_Timer):

@@ -44,13 +44,6 @@ _log = logging.getLogger(__name__)
 
 
 class XvfbDriverTest(unittest.TestCase):
-    def assertRaisesRegex(self, *args, **kwargs):
-        try:
-            return super(XvfbDriverTest, self).assertRaisesRegex(*args, **kwargs)
-        except AttributeError:
-            # Python 2
-            return self.assertRaisesRegexp(*args, **kwargs)
-
     def make_driver(self, worker_number=0, xorg_running=False, executive=None, print_screen_size_process=None):
         port = Port(MockSystemHost(log_executive=True, executive=executive), 'xvfbdrivertestport', options=MockOptions(configuration='Release'))
         port._config.build_directory = lambda configuration: "/mock-build"

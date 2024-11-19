@@ -50,8 +50,7 @@ def offset_table_entry(offset):
 
 program_name = os.path.basename(__file__)
 if len(sys.argv) < 4 or sys.argv[1] != "-o":
-    # Python 3, change to: print("Usage: %s -o OUTPUT_FILE INPUT_FILE" % program_name, file=sys.stderr)
-    sys.stderr.write("Usage: %s -o OUTPUT_FILE INPUT_FILE\n" % program_name)
+    print("Usage: %s -o OUTPUT_FILE INPUT_FILE" % program_name, file=sys.stderr)
     exit(1)
 
 output_path = sys.argv[2]

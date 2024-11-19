@@ -21,7 +21,6 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import logging
-import sys
 import unittest
 
 from mock import patch
@@ -101,11 +100,7 @@ class TerminalTests(unittest.TestCase):
             print(output)
             raise KeyboardInterrupt
 
-        if sys.version_info > (3, 0):
-            mocked = patch('builtins.input', new=do_interrupt)
-        else:
-            import __builtin__
-            mocked = patch.object(__builtin__, 'raw_input', new=do_interrupt)
+        mocked = patch('builtins.input', new=do_interrupt)
 
         with OutputCapture() as captured, self.assertRaises(SystemExit) as caught, mocked:
             Terminal.choose('Continue')

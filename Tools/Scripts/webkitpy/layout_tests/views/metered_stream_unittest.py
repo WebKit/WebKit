@@ -30,7 +30,6 @@
 
 import logging
 import re
-import sys
 import unittest
 
 from webkitcorepy import StringIO
@@ -114,10 +113,7 @@ class RegularTest(unittest.TestCase):
         self.assertEqual(self.stream.getvalue()[-len('‘example’\n'):], '‘example’\n')
 
         self.logger.info(u'\u2713')
-        if sys.version_info > (3, 0):
-            self.assertEqual(self.stream.getvalue()[-2:], u'\u2713\n')
-        else:
-            self.assertEqual(self.stream.buflist[-1][-2:], u'\u2713\n')
+        self.assertEqual(self.stream.getvalue()[-2:], u'\u2713\n')
 
     def test_stream_with_encoding(self):
         class AsciiStream(StringIO):
@@ -133,10 +129,7 @@ class RegularTest(unittest.TestCase):
         try:
             meter = MeteredStream(stream, self.verbose, logger, self.time_fn, 8675, print_timestamps=self.print_timestamps)
             self.logger.info(u'\u2713')
-            if sys.version_info > (3, 0):
-                self.assertEqual(stream.getvalue()[-2:], '✓\n')
-            else:
-                self.assertEqual(stream.getvalue()[-2:], '?\n')
+            self.assertEqual(stream.getvalue()[-2:], '✓\n')
         finally:
             meter.cleanup()
 

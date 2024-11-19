@@ -119,8 +119,6 @@ class PyWebSocket(http_server_base.HttpServerBase):
         self._wsout = self._filesystem.open_text_file_for_writing(output_log)
 
         python_interp = sys.executable
-        if sys.version_info < (3, 0):
-            python_interp = 'python3'
 
         wpt_tools_base = self._filesystem.join(self._layout_tests, "imported", "w3c", "web-platform-tests", "tools")
         pywebsocket_base = self._filesystem.join(wpt_tools_base, "third_party", "pywebsocket3")
