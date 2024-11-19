@@ -27,5 +27,6 @@ angle_source_set("angle_wgpu_backend") {
     "${angle_dawn_dir}/src/dawn:cpp",
     "${angle_dawn_dir}/src/dawn:proc",
     "${angle_dawn_dir}/src/dawn/native",
+    "${angle_root}:translator",
   ]
 }

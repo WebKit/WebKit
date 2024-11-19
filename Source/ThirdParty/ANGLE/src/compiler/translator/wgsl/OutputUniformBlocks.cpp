@@ -6,6 +6,7 @@
 
 #include "compiler/translator/wgsl/OutputUniformBlocks.h"
 
+#include "angle_gl.h"
 #include "common/utilities.h"
 #include "compiler/translator/Compiler.h"
 #include "compiler/translator/InfoSink.h"
@@ -61,17 +62,22 @@ bool OutputUniformBlocks(TCompiler *compiler, TIntermBlock *root)
         const TVariable *astVar      = &ViewDeclaration(*declNode).symbol.variable();
         WriteWgslType(output, astVar->getType());
 
-        output << "\n";
+        output << ",\n";
     }
     // TODO(anglebug.com/42267100): might need string replacement for @group(0) and @binding(0)
     // annotations. All WGSL resources available to shaders share the same (group, binding) ID
     // space.
     if (outputStructHeader)
     {
+        ASSERT(compiler->getShaderType() == GL_VERTEX_SHADER ||
+               compiler->getShaderType() == GL_FRAGMENT_SHADER);
+        const uint32_t bindingIndex = compiler->getShaderType() == GL_VERTEX_SHADER
+                                          ? kDefaultVertexUniformBlockBinding
+                                          : kDefaultFragmentUniformBlockBinding;
         output << "};\n\n"
-               << "@group(" << kDefaultUniformBlockBindGroup << ") @binding("
-               << kDefaultUniformBlockBinding << ") var<uniform> " << kDefaultUniformBlockVarName
-               << " : " << kDefaultUniformBlockVarType << ";\n";
+               << "@group(" << kDefaultUniformBlockBindGroup << ") @binding(" << bindingIndex
+               << ") var<uniform> " << kDefaultUniformBlockVarName << " : "
+               << kDefaultUniformBlockVarType << ";\n";
     }
 
     return true;

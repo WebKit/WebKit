@@ -369,6 +369,10 @@ class ProgramExecutable final : public angle::Subject
         return mSamplerBoundTextureUnits;
     }
     const std::vector<ImageBinding> &getImageBindings() const { return mImageBindings; }
+    const std::vector<ShPixelLocalStorageFormat> &getPixelLocalStorageFormats() const
+    {
+        return mPixelLocalStorageFormats;
+    }
     std::vector<ImageBinding> *getImageBindings() { return &mImageBindings; }
     const RangeUI &getDefaultUniformRange() const { return mPod.defaultUniformRange; }
     const RangeUI &getSamplerUniformRange() const { return mPod.samplerUniformRange; }
@@ -982,6 +986,10 @@ class ProgramExecutable final : public angle::Subject
 
     // An array of the images that are used by the program
     std::vector<ImageBinding> mImageBindings;
+
+    // ANGLE_shader_pixel_local_storage: A mapping from binding index to the PLS uniform format at
+    // that index.
+    std::vector<ShPixelLocalStorageFormat> mPixelLocalStorageFormats;
 
     ShaderMap<std::vector<sh::ShaderVariable>> mLinkedOutputVaryings;
     ShaderMap<std::vector<sh::ShaderVariable>> mLinkedInputVaryings;

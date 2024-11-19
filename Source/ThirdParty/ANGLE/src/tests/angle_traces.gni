@@ -3,6 +3,10 @@
 # found in the LICENSE file.
 import("../../gni/angle.gni")
 
+declare_args() {
+  angle_enable_tracegz = false
+}
+
 template("angle_trace") {
   angle_shared_library(target_name) {
     testonly = true
@@ -52,6 +56,7 @@ set_defaults("angle_trace_libs") {
 }
 
 template("angle_trace_libs") {
+  _trace_list = []
   _trace_targets = []
   _trace_lib_files = []
 
@@ -63,6 +68,7 @@ template("angle_trace_libs") {
     _trace_and_version_arr = []
     _trace_and_version_arr = string_split(_trace_and_version)
     _trace = _trace_and_version_arr[0]
+    _trace_list += [ _trace ]
     if (defined(invoker.trace_dir)) {
       _trace_dir = invoker.trace_dir
     } else {
@@ -79,14 +85,16 @@ template("angle_trace_libs") {
       _target = "${target_name}_$_trace"
     }
 
-    _gen_target = "gen${target_name}_$_trace"
-    action(_gen_target) {
-      script = "//scripts/tracegz.py"
-      args = [
-        _trace,
-        rebase_path(_trace_dir, root_build_dir),
-      ]
-      outputs = [ "$root_gen_dir/tracegz_$_trace.gz" ]
+    if (angle_enable_tracegz) {
+      _gen_tracegz_target = "gen${target_name}_$_trace"
+      action(_gen_tracegz_target) {
+        script = "//scripts/tracegz.py"
+        args = [
+          _trace,
+          rebase_path(_trace_dir, root_build_dir),
+        ]
+        outputs = [ "$root_gen_dir/tracegz_$_trace.gz" ]
+      }
     }
 
     angle_trace(_target) {
@@ -95,10 +103,12 @@ template("angle_trace_libs") {
       data = [
         "$_trace_dir/$_trace.json",
         "$_trace_dir/$_trace.angledata.gz",
-        "$root_gen_dir/tracegz_$_trace.gz",
       ]
 
-      deps = [ ":$_gen_target" ]
+      if (angle_enable_tracegz) {
+        deps = [ ":$_gen_tracegz_target" ]
+        data += [ "$root_gen_dir/tracegz_$_trace.gz" ]
+      }
 
       if (invoker.short_names) {
         output_name = _trace
@@ -129,5 +139,12 @@ template("angle_trace_libs") {
       data =
           _trace_lib_files + [ "${root_out_dir}/libangle_trace_interpreter.so" ]
     }
+  }
+
+  group("gen_trace_list_json") {
+    _output_json_path = "$root_gen_dir/trace_list.json"
+    write_file(_output_json_path, _trace_list, "json")
+
+    data = [ _output_json_path ]
   }
 }

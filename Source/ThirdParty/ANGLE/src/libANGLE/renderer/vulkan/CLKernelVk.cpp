@@ -78,6 +78,15 @@ angle::Result CLKernelVk::init()
                     pcRange.size = arg.pushConstOffset + arg.pushConstantSize - pcRange.offset;
                 }
                 continue;
+            case NonSemanticClspvReflectionArgumentSampledImage:
+                descType = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
+                break;
+            case NonSemanticClspvReflectionArgumentStorageImage:
+                descType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+                break;
+            case NonSemanticClspvReflectionArgumentSampler:
+                descType = VK_DESCRIPTOR_TYPE_SAMPLER;
+                break;
             default:
                 continue;
         }

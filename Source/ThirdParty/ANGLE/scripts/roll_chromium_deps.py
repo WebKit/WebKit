@@ -70,6 +70,7 @@ ANGLE_CHROMIUM_DEPS = [
     'third_party/libdrm/src',
     'third_party/libjpeg_turbo',
     'third_party/libunwind/src',
+    'third_party/llvm-libc/src',
     'third_party/markupsafe',
     'third_party/nasm',
     'third_party/ninja',

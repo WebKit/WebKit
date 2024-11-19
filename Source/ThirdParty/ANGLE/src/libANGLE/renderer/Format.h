@@ -57,6 +57,10 @@ struct Format final : private angle::NonCopyable
     static FormatID CLRGFormatToID(cl_channel_type internalChannelType);
     static FormatID CLRGBFormatToID(cl_channel_type internalChannelType);
     static FormatID CLRGBAFormatToID(cl_channel_type internalChannelType);
+    static FormatID CLBGRAFormatToID(cl_channel_type internalChannelType);
+    static FormatID CLsRGBAFormatToID(cl_channel_type internalChannelType);
+    static FormatID CLDEPTHFormatToID(cl_channel_type internalChannelType);
+    static FormatID CLDEPTHSTENCILFormatToID(cl_channel_type internalChannelType);
 #endif  // ANGLE_ENABLE_CL
 
     constexpr bool hasDepthOrStencilBits() const;

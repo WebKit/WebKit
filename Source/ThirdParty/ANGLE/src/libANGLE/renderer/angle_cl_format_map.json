@@ -198,5 +198,37 @@
       "CL_FLOAT",
       "R32G32B32A32_FLOAT"
     ]
+  ],
+  "bgra": [
+    [
+      "CL_UNORM_INT8",
+      "B8G8R8A8_UNORM"
+    ]
+  ],
+  "srgba": [
+    [
+      "CL_UNORM_INT8",
+      "R8G8B8A8_UNORM_SRGB"
+    ]
+  ],
+  "depth": [
+    [
+      "CL_UNORM_INT16",
+      "D16_UNORM"
+    ],
+    [
+      "CL_FLOAT",
+      "D32_FLOAT"
+    ]
+  ],
+  "depth_stencil": [
+    [
+      "CL_UNORM_INT24",
+      "D24_UNORM_S8_UINT"
+    ],
+    [
+      "CL_FLOAT",
+      "D32_FLOAT_S8X24_UINT"
+    ]
   ]
 }

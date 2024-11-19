@@ -1068,6 +1068,8 @@ class BufferHelper : public ReadWriteResource
     void fillWithColor(const angle::Color<uint8_t> &color,
                        const gl::InternalFormat &internalFormat);
 
+    void fillWithPattern(const void *pattern, size_t patternSize, size_t offset, size_t size);
+
     // Special handling for VertexArray code so that we can create a dedicated VkBuffer for the
     // sub-range of memory of the actual buffer data size that user requested (i.e, excluding extra
     // paddings that we added for alignment, which will not get zero filled).
@@ -1634,6 +1636,12 @@ enum class ImagelessFramebuffer
 {
     No,
     Yes,
+};
+
+enum class ClearTextureMode
+{
+    FullClear,
+    PartialClear,
 };
 
 enum class RenderPassSource
@@ -2331,7 +2339,7 @@ class ImageHelper final : public Resource, public angle::Subject
     void deriveImageViewFormatFromCreateInfoPNext(VkImageCreateInfo &imageInfo,
                                                   ImageFormats &formatOut);
 
-    // Release the underlining VkImage object for garbage collection.
+    // Release the underlying VkImage object for garbage collection.
     void releaseImage(Renderer *renderer);
     // Similar to releaseImage, but also notify all contexts in the same share group to stop
     // accessing to it.
@@ -2350,7 +2358,7 @@ class ImageHelper final : public Resource, public angle::Subject
     // True if image contains both depth & stencil aspects
     bool isCombinedDepthStencilFormat() const;
     void destroy(Renderer *renderer);
-    void release(Renderer *renderer) { destroy(renderer); }
+    void release(Renderer *renderer) { releaseImage(renderer); }
 
     void init2DWeakReference(Context *context,
                              VkImage handle,
@@ -2424,15 +2432,7 @@ class ImageHelper final : public Resource, public angle::Subject
         return mImageSerial;
     }
 
-    void setCurrentImageLayout(ImageLayout newLayout)
-    {
-        // Once you transition to ImageLayout::SharedPresent, you never transition out of it.
-        if (mCurrentLayout == ImageLayout::SharedPresent)
-        {
-            return;
-        }
-        mCurrentLayout = newLayout;
-    }
+    void setCurrentImageLayout(Renderer *renderer, ImageLayout newLayout);
     ImageLayout getCurrentImageLayout() const { return mCurrentLayout; }
     VkImageLayout getCurrentLayout(Renderer *renderer) const;
     const QueueSerial &getBarrierQueueSerial() const { return mBarrierQueueSerial; }
@@ -2501,6 +2501,7 @@ class ImageHelper final : public Resource, public angle::Subject
 
     angle::Result stagePartialClear(ContextVk *contextVk,
                                     const gl::Box &clearArea,
+                                    const ClearTextureMode clearMode,
                                     gl::TextureType textureType,
                                     uint32_t levelIndex,
                                     uint32_t layerIndex,
@@ -3959,6 +3960,16 @@ class CommandBufferAccess : angle::NonCopyable
                                 aspectFlags, ImageLayout::TransferSrcDst, image);
         onImageWrite(writeLevelStart, writeLevelCount, writeLayerStart, writeLayerCount,
                      aspectFlags, ImageLayout::TransferSrcDst, image);
+    }
+    void onImageDrawMipmapGenerationWrite(gl::LevelIndex levelStart,
+                                          uint32_t levelCount,
+                                          uint32_t layerStart,
+                                          uint32_t layerCount,
+                                          VkImageAspectFlags aspectFlags,
+                                          ImageHelper *image)
+    {
+        onImageWrite(levelStart, levelCount, layerStart, layerCount, aspectFlags,
+                     ImageLayout::ColorWrite, image);
     }
     void onImageComputeShaderRead(VkImageAspectFlags aspectFlags, ImageHelper *image)
     {

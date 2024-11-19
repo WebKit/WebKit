@@ -451,13 +451,8 @@ TIntermSequence *GetMainSequence(TIntermBlock *root)
             kMaxXfbBuffers < 10,
             "ImmutableStringBuilder memory size below needs to accomodate the number of buffers");
 
-        ImmutableStringBuilder blockName(strlen("ANGLEXfbBuffer") + 2);
-        blockName << "ANGLEXfbBuffer";
-        blockName.appendDecimal(bufferIndex);
-
-        ImmutableStringBuilder varName(strlen("ANGLEXfb") + 2);
-        varName << "ANGLEXfb";
-        varName.appendDecimal(bufferIndex);
+        ImmutableString blockName = BuildConcatenatedImmutableString("ANGLEXfbBuffer", bufferIndex);
+        ImmutableString varName   = BuildConcatenatedImmutableString("ANGLEXfb", bufferIndex);
 
         TLayoutQualifier layoutQualifier = TLayoutQualifier::Create();
         layoutQualifier.blockStorage     = EbsStd430;

@@ -1972,24 +1972,6 @@ class DescriptorSetDescBuilder final
                                       const gl::ActiveTextureArray<TextureVk *> &textures,
                                       const gl::SamplerBindingVector &samplers);
 
-    angle::Result updateActiveTexturesForCacheMiss(
-        Context *context,
-        const ShaderInterfaceVariableInfoMap &variableInfoMap,
-        const WriteDescriptorDescs &writeDescriptorDescs,
-        const gl::ProgramExecutable &executable,
-        const gl::ActiveTextureArray<TextureVk *> &textures,
-        const gl::SamplerBindingVector &samplers,
-        PipelineType pipelineType,
-        const SharedDescriptorSetCacheKey &sharedCacheKey);
-
-    angle::Result updateFullActiveTextures(Context *context,
-                                           const ShaderInterfaceVariableInfoMap &variableInfoMap,
-                                           const WriteDescriptorDescs &writeDescriptorDescs,
-                                           const gl::ProgramExecutable &executable,
-                                           const gl::ActiveTextureArray<TextureVk *> &textures,
-                                           const gl::SamplerBindingVector &samplers,
-                                           PipelineType pipelineType);
-
     void updateDescriptorSet(Renderer *renderer,
                              const WriteDescriptorDescs &writeDescriptorDescs,
                              UpdateDescriptorSetsBuilder *updateBuilder,
@@ -2139,7 +2121,7 @@ CreateSharedFramebufferCacheKey(const FramebufferDesc &desc)
 class SamplerHelper final : angle::NonCopyable
 {
   public:
-    SamplerHelper(ContextVk *contextVk);
+    SamplerHelper(vk::Context *context);
     ~SamplerHelper();
 
     explicit SamplerHelper(SamplerHelper &&samplerHelper);

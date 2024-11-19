@@ -99,6 +99,16 @@ class EGLSurfaceTest : public ANGLETest<>
         mOSWindow->destroy();
         OSWindow::Delete(&mOSWindow);
 
+        for (OSWindow *win : mOtherWindows)
+        {
+            if (win != nullptr)
+            {
+                win->destroy();
+                OSWindow::Delete(&win);
+            }
+        }
+        mOtherWindows.clear();
+
         ASSERT_TRUE(mWindowSurface == EGL_NO_SURFACE && mContext == EGL_NO_CONTEXT);
     }
 
@@ -324,6 +334,7 @@ class EGLSurfaceTest : public ANGLETest<>
     EGLContext mSecondContext;
     EGLConfig mConfig;
     OSWindow *mOSWindow;
+    std::vector<OSWindow *> mOtherWindows;
 };
 
 class EGLFloatSurfaceTest : public EGLSurfaceTest
@@ -3020,6 +3031,44 @@ TEST_P(EGLSurfaceTest, DestroyAndRecreateWhileCurrent)
     EXPECT_PIXEL_COLOR_EQ(0, 0, GLColor::green);
     ASSERT_GL_NO_ERROR();
 }
+
+// Regression test for a bug where destroying more than 2 surfaces during termination
+// overflowed the unlocked tail call storage.
+TEST_P(EGLSurfaceTest, CreateMultiWindowsSurfaceNoDestroy)
+{
+    initializeDisplay();
+
+    // Initialize and create multi RGBA8 window surfaces
+    constexpr EGLint kSurfaceAttributes[] = {EGL_RED_SIZE,     8,
+                                             EGL_GREEN_SIZE,   8,
+                                             EGL_BLUE_SIZE,    8,
+                                             EGL_ALPHA_SIZE,   8,
+                                             EGL_SURFACE_TYPE, EGL_WINDOW_BIT | EGL_PBUFFER_BIT,
+                                             EGL_NONE};
+
+    EGLint configCount      = 0;
+    EGLConfig surfaceConfig = nullptr;
+    ASSERT_EGL_TRUE(eglChooseConfig(mDisplay, kSurfaceAttributes, &surfaceConfig, 1, &configCount));
+    ASSERT_NE(configCount, 0);
+    ASSERT_NE(surfaceConfig, nullptr);
+
+    initializeSurface(surfaceConfig);
+
+    // Create 3 window surfaces to trigger error
+    std::vector<EGLint> windowAttributes;
+    windowAttributes.push_back(EGL_NONE);
+
+    for (int i = 0; i < 3; i++)
+    {
+        OSWindow *w = OSWindow::New();
+        w->initialize("EGLSurfaceTest", 64, 64);
+
+        eglCreateWindowSurface(mDisplay, mConfig, w->getNativeWindow(), windowAttributes.data());
+        ASSERT_EGL_SUCCESS();
+        mOtherWindows.push_back(w);
+    }
+}
+
 }  // anonymous namespace
 
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(EGLSingleBufferTest);

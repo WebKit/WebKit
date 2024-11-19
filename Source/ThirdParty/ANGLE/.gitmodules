@@ -121,6 +121,10 @@
 	path = third_party/libc++abi/src
 	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libcxxabi
 	gclient-condition = not build_with_chromium
+[submodule "third_party/llvm-libc/src"]
+	path = third_party/llvm-libc/src
+	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libc
+	gclient-condition = not build_with_chromium
 [submodule "third_party/libunwind/src"]
 	path = third_party/libunwind/src
 	url = https://chromium.googlesource.com/external/github.com/llvm/llvm-project/libunwind

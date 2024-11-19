@@ -347,7 +347,7 @@ void WriteParamValueReplay<ParamType::TFramebufferID>(std::ostream &os,
                                                       const CallCapture &call,
                                                       gl::FramebufferID value)
 {
-    os << "gFramebufferMap[" << value.value << "]";
+    os << "gFramebufferMapPerContext[" << call.contextID.value << "][" << value.value << "]";
 }
 
 template <>

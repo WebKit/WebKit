@@ -225,7 +225,7 @@ std::string ShaderVk::getDebugInfo() const
     }
 
     blob << R"(
-Paste the following SPIR-V binary in https://www.khronos.org/spir/visualizer/
+Paste the following SPIR-V binary in https://www.khronos.org/spir/visualizer/ or pass to a recent build of `spirv-dis` (optionally with `--comment --nested-indent`)
 
 Setting the environment variable ANGLE_FEATURE_OVERRIDES_ENABLED=retainSPIRVDebugInfo will retain debug info
 

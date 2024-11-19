@@ -37,6 +37,11 @@ class TIntermBlock;
 // Output:
 //    struct s1234 { vec3 d; } a;
 //    s1234 b;
+// Input:
+//   struct Foo { int a; } foo();
+// Output:
+//   struct Foo { int a; };
+//   Foo foo();
 // Input with separateCompoundStructDeclarations=true:
 //    struct S { vec3 d; } a;
 // Output:

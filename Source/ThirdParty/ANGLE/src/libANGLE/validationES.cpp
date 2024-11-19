@@ -14,6 +14,7 @@
 #include "libANGLE/Framebuffer.h"
 #include "libANGLE/FramebufferAttachment.h"
 #include "libANGLE/Image.h"
+#include "libANGLE/PixelLocalStorage.h"
 #include "libANGLE/Program.h"
 #include "libANGLE/Query.h"
 #include "libANGLE/Texture.h"
@@ -614,6 +615,27 @@ const char *ValidateProgramDrawAdvancedBlendState(const Context *context,
     return nullptr;
 }
 
+ANGLE_INLINE GLenum ShPixelLocalStorageFormatToGLenum(ShPixelLocalStorageFormat format)
+{
+    switch (format)
+    {
+        case ShPixelLocalStorageFormat::NotPLS:
+            return GL_NONE;
+        case ShPixelLocalStorageFormat::RGBA8:
+            return GL_RGBA8;
+        case ShPixelLocalStorageFormat::RGBA8I:
+            return GL_RGBA8I;
+        case ShPixelLocalStorageFormat::RGBA8UI:
+            return GL_RGBA8UI;
+        case ShPixelLocalStorageFormat::R32UI:
+            return GL_R32UI;
+        case ShPixelLocalStorageFormat::R32F:
+            return GL_R32F;
+    }
+    UNREACHABLE();
+    return GL_NONE;
+}
+
 ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
                                                    const Extensions &extensions,
                                                    const ProgramExecutable &executable)
@@ -668,6 +690,55 @@ ANGLE_INLINE const char *ValidateProgramDrawStates(const Context *context,
         if (uniformBuffer->hasWebGLXFBBindingConflict(context->isWebGL()))
         {
             return gl::err::kUniformBufferBoundForTransformFeedback;
+        }
+    }
+
+    // ANGLE_shader_pixel_local_storage validation.
+    if (extensions.shaderPixelLocalStorageANGLE)
+    {
+        const Framebuffer *framebuffer = state.getDrawFramebuffer();
+        const PixelLocalStorage *pls   = framebuffer->peekPixelLocalStorage();
+        const auto &shaderPLSFormats   = executable.getPixelLocalStorageFormats();
+        size_t activePLSCount          = context->getState().getPixelLocalStorageActivePlanes();
+
+        if (shaderPLSFormats.size() > activePLSCount)
+        {
+            // INVALID_OPERATION is generated if a draw is issued with a fragment shader that has a
+            // pixel local uniform bound to an inactive pixel local storage plane.
+            return gl::err::kPLSDrawProgramPlanesInactive;
+        }
+
+        if (shaderPLSFormats.size() < activePLSCount)
+        {
+            // INVALID_OPERATION is generated if a draw is issued with a fragment shader that does
+            // _not_ have a pixel local uniform bound to an _active_ pixel local storage plane
+            // (i.e., the fragment shader must declare uniforms bound to every single active pixel
+            // local storage plane).
+            return gl::err::kPLSDrawProgramActivePlanesUnused;
+        }
+
+        for (size_t i = 0; i < activePLSCount; ++i)
+        {
+            const auto &plsPlane = pls->getPlane(static_cast<GLint>(i));
+            ASSERT(plsPlane.isActive());
+            if (shaderPLSFormats[i] == ShPixelLocalStorageFormat::NotPLS)
+            {
+                // INVALID_OPERATION is generated if a draw is issued with a fragment shader that
+                // does _not_ have a pixel local uniform bound to an _active_ pixel local storage
+                // plane (i.e., the fragment shader must declare uniforms bound to every single
+                // active pixel local storage plane).
+                return gl::err::kPLSDrawProgramActivePlanesUnused;
+            }
+
+            if (ShPixelLocalStorageFormatToGLenum(shaderPLSFormats[i]) !=
+                plsPlane.getInternalformat())
+            {
+                // INVALID_OPERATION is generated if a draw is issued with a fragment shader that
+                // has a pixel local storage uniform whose format layout qualifier does not
+                // identically match the internalformat of its associated pixel local storage plane
+                // on the current draw framebuffer, as enumerated in Table X.3.
+                return gl::err::kPLSDrawProgramFormatMismatch;
+            }
         }
     }
 

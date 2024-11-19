@@ -121,6 +121,42 @@ FormatID Format::CLRGBAFormatToID(cl_channel_type internalChannelType)
 {angle_rgba_format_switch}
     }}
 }}
+
+// static
+FormatID Format::CLBGRAFormatToID(cl_channel_type internalChannelType)
+{{
+    switch (internalChannelType)
+    {{
+{angle_bgra_format_switch}
+    }}
+}}
+
+// static
+FormatID Format::CLsRGBAFormatToID(cl_channel_type internalChannelType)
+{{
+    switch (internalChannelType)
+    {{
+{angle_srgba_format_switch}
+    }}
+}}
+
+// static
+FormatID Format::CLDEPTHFormatToID(cl_channel_type internalChannelType)
+{{
+    switch (internalChannelType)
+    {{
+{angle_depth_format_switch}
+    }}
+}}
+
+// static
+FormatID Format::CLDEPTHSTENCILFormatToID(cl_channel_type internalChannelType)
+{{
+    switch (internalChannelType)
+    {{
+{angle_depth_stencil_format_switch}
+    }}
+}}
 #endif  // ANGLE_ENABLE_CL
 
 const Format *GetFormatInfoTable()
@@ -466,6 +502,11 @@ def main():
     cl_rg_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "rg")
     cl_rgb_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "rgb")
     cl_rgba_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "rgba")
+    cl_bgra_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "bgra")
+    cl_srgba_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "srgba")
+    cl_depth_to_angle = angle_format.load_forward_table('angle_cl_format_map.json', "depth")
+    cl_depth_stencil_to_angle = angle_format.load_forward_table('angle_cl_format_map.json',
+                                                                "depth_stencil")
 
     angle_to_gl = angle_format.load_inverse_table('angle_format_map.json')
     data_source_name = 'angle_format_data.json'
@@ -479,6 +520,10 @@ def main():
     cl_rg_switch_data = gen_map_switch_string(cl_rg_to_angle)
     cl_rgb_switch_data = gen_map_switch_string(cl_rgb_to_angle)
     cl_rgba_switch_data = gen_map_switch_string(cl_rgba_to_angle)
+    cl_bgra_switch_data = gen_map_switch_string(cl_bgra_to_angle)
+    cl_srgba_switch_data = gen_map_switch_string(cl_srgba_to_angle)
+    cl_depth_switch_data = gen_map_switch_string(cl_depth_to_angle)
+    cl_depth_stencil_switch_data = gen_map_switch_string(cl_depth_stencil_to_angle)
 
     output_cpp = template_autogen_inl.format(
         script_name=os.path.basename(sys.argv[0]),
@@ -488,7 +533,11 @@ def main():
         angle_r_format_switch=cl_r_switch_data,
         angle_rg_format_switch=cl_rg_switch_data,
         angle_rgb_format_switch=cl_rgb_switch_data,
-        angle_rgba_format_switch=cl_rgba_switch_data)
+        angle_rgba_format_switch=cl_rgba_switch_data,
+        angle_bgra_format_switch=cl_bgra_switch_data,
+        angle_srgba_format_switch=cl_srgba_switch_data,
+        angle_depth_format_switch=cl_depth_switch_data,
+        angle_depth_stencil_format_switch=cl_depth_stencil_switch_data)
 
     with open('Format_table_autogen.cpp', 'wt') as out_file:
         out_file.write(output_cpp)

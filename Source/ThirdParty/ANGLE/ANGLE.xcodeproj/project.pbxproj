@@ -366,8 +366,6 @@
 		7B1538862BBC2C7A00B50C74 /* NodeType.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1538822BBC2C7A00B50C74 /* NodeType.h */; };
 		7B1538872BBC2C7A00B50C74 /* IntermRebuild.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1538832BBC2C7A00B50C74 /* IntermRebuild.h */; };
 		7B1538882BBC2C7A00B50C74 /* AsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B1538842BBC2C7A00B50C74 /* AsNode.h */; };
-		7B15388B2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B1538892BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp */; };
-		7B15388C2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B15388A2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h */; };
 		7B19599326C3C22000C09322 /* android_util.h in Headers */ = {isa = PBXBuildFile; fileRef = A303079F230625C6002DA972 /* android_util.h */; };
 		7B19599426C3C22000C09322 /* android_util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A303079E230625C6002DA972 /* android_util.cpp */; };
 		7B19599526C3C64E00C09322 /* xxhash.c in Sources */ = {isa = PBXBuildFile; fileRef = 5CCD594E2284ECD10018F2D8 /* xxhash.c */; };
@@ -387,14 +385,12 @@
 		7B359D9F2A7CEDAA0016DC59 /* RewriteOutArgs.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D7F2A7CEDA90016DC59 /* RewriteOutArgs.h */; };
 		7B359DA02A7CEDAA0016DC59 /* RewriteCaseDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D802A7CEDA90016DC59 /* RewriteCaseDeclarations.cpp */; };
 		7B359DA12A7CEDAA0016DC59 /* WrapMain.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D812A7CEDA90016DC59 /* WrapMain.h */; };
-		7B359DA22A7CEDAA0016DC59 /* NameEmbeddedUniformStructsMetal.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D822A7CEDA90016DC59 /* NameEmbeddedUniformStructsMetal.h */; };
 		7B359DA32A7CEDAA0016DC59 /* RewriteCaseDeclarations.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D832A7CEDA90016DC59 /* RewriteCaseDeclarations.h */; };
 		7B359DA42A7CEDAA0016DC59 /* RewriteUnaddressableReferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D842A7CEDA90016DC59 /* RewriteUnaddressableReferences.cpp */; };
 		7B359DA52A7CEDAA0016DC59 /* GuardFragDepthWrite.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D852A7CEDA90016DC59 /* GuardFragDepthWrite.cpp */; };
 		7B359DA72A7CEDAA0016DC59 /* HoistConstants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D872A7CEDA90016DC59 /* HoistConstants.cpp */; };
 		7B359DA82A7CEDAA0016DC59 /* RewriteInterpolants.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D882A7CEDA90016DC59 /* RewriteInterpolants.h */; };
 		7B359DA92A7CEDAA0016DC59 /* SeparateCompoundExpressions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D892A7CEDA90016DC59 /* SeparateCompoundExpressions.cpp */; };
-		7B359DAA2A7CEDAA0016DC59 /* NameEmbeddedUniformStructsMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D8A2A7CEDA90016DC59 /* NameEmbeddedUniformStructsMetal.cpp */; };
 		7B359DAB2A7CEDAA0016DC59 /* SeparateCompoundExpressions.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D8B2A7CEDA90016DC59 /* SeparateCompoundExpressions.h */; };
 		7B359DAC2A7CEDAA0016DC59 /* TransposeRowMajorMatrices.h in Headers */ = {isa = PBXBuildFile; fileRef = 7B359D8C2A7CEDAA0016DC59 /* TransposeRowMajorMatrices.h */; };
 		7B359DAE2A7CEDAA0016DC59 /* IntroduceVertexIndexID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D8E2A7CEDAA0016DC59 /* IntroduceVertexIndexID.cpp */; };
@@ -564,9 +560,7 @@
 		7BF5552C2C81F198002B101E /* ShaderVars.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C1DBC1A1B04375F00235552 /* ShaderVars.cpp */; };
 		7BF5552D2C81F198002B101E /* RemoveInvariantDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D62522826B9600B5BA2C /* RemoveInvariantDeclaration.cpp */; };
 		7BF5552E2C81F198002B101E /* IdGen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF81FF512581919700894E24 /* IdGen.cpp */; };
-		7BF5552F2C81F198002B101E /* SeparateStructFromFunctionDeclarations.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B1538892BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp */; };
 		7BF555302C81F198002B101E /* PackedEnums.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5C55D71C2282747700B5BA2C /* PackedEnums.cpp */; };
-		7BF555312C81F198002B101E /* NameEmbeddedUniformStructsMetal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7B359D8A2A7CEDA90016DC59 /* NameEmbeddedUniformStructsMetal.cpp */; };
 		7BF555322C81F198002B101E /* ValidateBarrierFunctionCall.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF194FC227432C4D006A97A3 /* ValidateBarrierFunctionCall.cpp */; };
 		7BF555332C81F198002B101E /* Input.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A264F89B16974DED006FAA5A /* Input.cpp */; };
 		7BF555342C81F198002B101E /* FindPreciseNodes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FF62F63827446DC800AD6EDC /* FindPreciseNodes.cpp */; };
@@ -1558,8 +1552,6 @@
 		7B1538822BBC2C7A00B50C74 /* NodeType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeType.h; sourceTree = "<group>"; };
 		7B1538832BBC2C7A00B50C74 /* IntermRebuild.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntermRebuild.h; sourceTree = "<group>"; };
 		7B1538842BBC2C7A00B50C74 /* AsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AsNode.h; sourceTree = "<group>"; };
-		7B1538892BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SeparateStructFromFunctionDeclarations.cpp; sourceTree = "<group>"; };
-		7B15388A2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeparateStructFromFunctionDeclarations.h; sourceTree = "<group>"; };
 		7B24C80B28D9A25000E2DDB1 /* SymbolTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SymbolTable.cpp; sourceTree = "<group>"; };
 		7B359D4B2A7CECAE0016DC59 /* DriverUniformMetal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DriverUniformMetal.cpp; sourceTree = "<group>"; };
 		7B359D4F2A7CECAE0016DC59 /* DriverUniformMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DriverUniformMetal.h; sourceTree = "<group>"; };
@@ -1589,14 +1581,12 @@
 		7B359D7F2A7CEDA90016DC59 /* RewriteOutArgs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteOutArgs.h; sourceTree = "<group>"; };
 		7B359D802A7CEDA90016DC59 /* RewriteCaseDeclarations.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteCaseDeclarations.cpp; sourceTree = "<group>"; };
 		7B359D812A7CEDA90016DC59 /* WrapMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WrapMain.h; sourceTree = "<group>"; };
-		7B359D822A7CEDA90016DC59 /* NameEmbeddedUniformStructsMetal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NameEmbeddedUniformStructsMetal.h; sourceTree = "<group>"; };
 		7B359D832A7CEDA90016DC59 /* RewriteCaseDeclarations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteCaseDeclarations.h; sourceTree = "<group>"; };
 		7B359D842A7CEDA90016DC59 /* RewriteUnaddressableReferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RewriteUnaddressableReferences.cpp; sourceTree = "<group>"; };
 		7B359D852A7CEDA90016DC59 /* GuardFragDepthWrite.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GuardFragDepthWrite.cpp; sourceTree = "<group>"; };
 		7B359D872A7CEDA90016DC59 /* HoistConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HoistConstants.cpp; sourceTree = "<group>"; };
 		7B359D882A7CEDA90016DC59 /* RewriteInterpolants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RewriteInterpolants.h; sourceTree = "<group>"; };
 		7B359D892A7CEDA90016DC59 /* SeparateCompoundExpressions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SeparateCompoundExpressions.cpp; sourceTree = "<group>"; };
-		7B359D8A2A7CEDA90016DC59 /* NameEmbeddedUniformStructsMetal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NameEmbeddedUniformStructsMetal.cpp; sourceTree = "<group>"; };
 		7B359D8B2A7CEDA90016DC59 /* SeparateCompoundExpressions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SeparateCompoundExpressions.h; sourceTree = "<group>"; };
 		7B359D8C2A7CEDAA0016DC59 /* TransposeRowMajorMatrices.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransposeRowMajorMatrices.h; sourceTree = "<group>"; };
 		7B359D8E2A7CEDAA0016DC59 /* IntroduceVertexIndexID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntroduceVertexIndexID.cpp; sourceTree = "<group>"; };
@@ -2682,8 +2672,6 @@
 				5C55D62B22826B9700B5BA2C /* RewriteTexelFetchOffset.h */,
 				5C55D60322826B9000B5BA2C /* SeparateDeclarations.cpp */,
 				5C55D61422826B9100B5BA2C /* SeparateDeclarations.h */,
-				7B1538892BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp */,
-				7B15388A2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h */,
 				FF194FD427432CC2006A97A3 /* SeparateStructFromUniformDeclarations.cpp */,
 				FF194FD627432CC2006A97A3 /* SeparateStructFromUniformDeclarations.h */,
 				5C55D61722826B9200B5BA2C /* SimplifyLoopConditions.cpp */,
@@ -2924,8 +2912,6 @@
 				7B359D912A7CEDAA0016DC59 /* HoistConstants.h */,
 				7B359D8E2A7CEDAA0016DC59 /* IntroduceVertexIndexID.cpp */,
 				7B359D932A7CEDAA0016DC59 /* IntroduceVertexIndexID.h */,
-				7B359D8A2A7CEDA90016DC59 /* NameEmbeddedUniformStructsMetal.cpp */,
-				7B359D822A7CEDA90016DC59 /* NameEmbeddedUniformStructsMetal.h */,
 				7B359D7D2A7CEDA90016DC59 /* ReduceInterfaceBlocks.cpp */,
 				7B359D992A7CEDAA0016DC59 /* ReduceInterfaceBlocks.h */,
 				7B359D802A7CEDA90016DC59 /* RewriteCaseDeclarations.cpp */,
@@ -3492,7 +3478,6 @@
 				3A0EBFBA2980B6C1002C72BC /* mtl_msl_utils.h in Headers */,
 				7B359DFF2A7CFC750016DC59 /* mtl_pipeline_cache.h in Headers */,
 				FF4BB3652769467600994EBF /* mtl_resource_spi.h in Headers */,
-				7B359DA22A7CEDAA0016DC59 /* NameEmbeddedUniformStructsMetal.h in Headers */,
 				3A0EBF9F2980B4A0002C72BC /* no_destructor.h in Headers */,
 				31CDFFB5249184A100486F27 /* NodeSearch.h in Headers */,
 				7B1538862BBC2C7A00B50C74 /* NodeType.h in Headers */,
@@ -3592,7 +3577,6 @@
 				31CD0030249184F400486F27 /* SemaphoreImpl.h in Headers */,
 				7B359DAB2A7CEDAA0016DC59 /* SeparateCompoundExpressions.h in Headers */,
 				31CDFF8E2491849800486F27 /* SeparateDeclarations.h in Headers */,
-				7B15388C2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.h in Headers */,
 				FF194FE427432CC3006A97A3 /* SeparateStructFromUniformDeclarations.h in Headers */,
 				31CD0031249184F400486F27 /* serial_utils.h in Headers */,
 				31CDFFD0249184A700486F27 /* Severity.h in Headers */,
@@ -4136,7 +4120,6 @@
 				DF83E37B2639FEB8000825EF /* mtl_state_cache.mm in Sources */,
 				DF83E3732639FEB8000825EF /* mtl_utils.mm in Sources */,
 				DF83E23A2639FCD5000825EF /* Name.cpp in Sources */,
-				7B359DAA2A7CEDAA0016DC59 /* NameEmbeddedUniformStructsMetal.cpp in Sources */,
 				DF83E2DE2639FE17000825EF /* Observer.cpp in Sources */,
 				DF83E2A12639FD83000825EF /* Operator.cpp in Sources */,
 				7B359DD72A7CEE9D0016DC59 /* OutputESSL.cpp in Sources */,
@@ -4222,7 +4205,6 @@
 				DF83E2FF2639FE17000825EF /* Semaphore.cpp in Sources */,
 				7B359DA92A7CEDAA0016DC59 /* SeparateCompoundExpressions.cpp in Sources */,
 				DF83E28A2639FD33000825EF /* SeparateDeclarations.cpp in Sources */,
-				7B15388B2BBC2CA600B50C74 /* SeparateStructFromFunctionDeclarations.cpp in Sources */,
 				FF194FE227432CC3006A97A3 /* SeparateStructFromUniformDeclarations.cpp in Sources */,
 				3A2C67032923766600FEDF46 /* serialize_mock.cpp in Sources */,
 				3A0EBF9C2980B49D002C72BC /* sha1.cc in Sources */,
@@ -4398,7 +4380,6 @@
 				7BF554F02C81F198002B101E /* ModifyStruct.cpp in Sources */,
 				7BF555182C81F198002B101E /* MonomorphizeUnsupportedFunctions.cpp in Sources */,
 				7BF5556E2C81F198002B101E /* Name.cpp in Sources */,
-				7BF555312C81F198002B101E /* NameEmbeddedUniformStructsMetal.cpp in Sources */,
 				7BF555002C81F198002B101E /* Operator.cpp in Sources */,
 				7BF5553A2C81F198002B101E /* OutputTree.cpp in Sources */,
 				7BF554FB2C81F198002B101E /* PackedEGLEnums_autogen.cpp in Sources */,
@@ -4447,7 +4428,6 @@
 				7BF5555C2C81F198002B101E /* RunAtTheEndOfShader.cpp in Sources */,
 				7BF5557F2C81F198002B101E /* SeparateCompoundExpressions.cpp in Sources */,
 				7BF555642C81F198002B101E /* SeparateDeclarations.cpp in Sources */,
-				7BF5552F2C81F198002B101E /* SeparateStructFromFunctionDeclarations.cpp in Sources */,
 				7BF555292C81F198002B101E /* SeparateStructFromUniformDeclarations.cpp in Sources */,
 				7BF554F42C81F198002B101E /* ShaderLang.cpp in Sources */,
 				7BF5552C2C81F198002B101E /* ShaderVars.cpp in Sources */,

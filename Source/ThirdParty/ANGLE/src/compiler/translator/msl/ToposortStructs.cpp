@@ -374,7 +374,7 @@ bool sh::ToposortStructs(TCompiler &compiler,
         for (auto &[declNode, structure] : declaredStructs)
         {
             newStmtNodes.push_back(declNode);
-            if (usedStructs.contains(structure))
+            if (usedStructs.find(structure) != usedStructs.end())
             {
                 TIntermFunctionDefinition *eq = CreateStructEqualityFunction(
                     compiler.getSymbolTable(), *structure, equalityFunctions);

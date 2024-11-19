@@ -1348,10 +1348,9 @@ class UnlockedTailCall final : angle::NonCopyable
     // with unMakeCurrent destroying both the read and draw surfaces, each adding a tail call in the
     // Vulkan backend.
     //
-    // The max count can be increased as necessary.  An assertion would fire inside FixedVector if
-    // the max count is surpassed.
-    static constexpr size_t kMaxCallCount = 2;
-    angle::FixedVector<CallType, kMaxCallCount> mCalls;
+    // Some apps will create multiple windows surfaces and not call corresponding destroy api, which
+    // cause many tail calls been added, so remove the max call count limitations.
+    std::vector<CallType> mCalls;
 };
 
 enum class JobThreadSafety

@@ -5,7 +5,7 @@
 import("//gni/angle.gni")
 import("//third_party/OpenCL-CTS/gn/angle_ocl_cts.gni")
 
-ocl_cts_binary("samplerless_reads") {
+ocl_cts_source_set("samplerless_reads") {
   include_dirs = [
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/samplerlessReads",
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/images/",

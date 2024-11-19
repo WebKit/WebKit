@@ -50,7 +50,6 @@
 #include "compiler/translator/tree_ops/RescopeGlobalVariables.h"
 #include "compiler/translator/tree_ops/RewritePixelLocalStorage.h"
 #include "compiler/translator/tree_ops/SeparateDeclarations.h"
-#include "compiler/translator/tree_ops/SeparateStructFromFunctionDeclarations.h"
 #include "compiler/translator/tree_ops/SimplifyLoopConditions.h"
 #include "compiler/translator/tree_ops/SplitSequenceOperator.h"
 #include "compiler/translator/tree_ops/glsl/RegenerateStructNames.h"
@@ -374,7 +373,6 @@ TCompiler::TCompiler(sh::GLenum type, ShShaderSpec spec, ShShaderOutput output)
       mTessEvaluationShaderInputPointType(EtetUndefined),
       mHasAnyPreciseType(false),
       mAdvancedBlendEquations(0),
-      mHasPixelLocalStorageUniforms(false),
       mUsesDerivatives(false),
       mCompileOptions{}
 {}
@@ -602,8 +600,17 @@ void TCompiler::setASTMetadata(const TParseContext &parseContext)
 
     if (mShaderType == GL_FRAGMENT_SHADER)
     {
-        mAdvancedBlendEquations       = parseContext.getAdvancedBlendEquations();
-        mHasPixelLocalStorageUniforms = !parseContext.pixelLocalStorageBindings().empty();
+        mAdvancedBlendEquations = parseContext.getAdvancedBlendEquations();
+        const std::map<int, ShPixelLocalStorageFormat> &plsFormats =
+            parseContext.pixelLocalStorageFormats();
+        // std::map keys are in sorted order, so the PLS uniform with the largest binding will be at
+        // rbegin().
+        mPixelLocalStorageFormats.resize(plsFormats.empty() ? 0 : plsFormats.rbegin()->first + 1,
+                                         ShPixelLocalStorageFormat::NotPLS);
+        for (auto [binding, format] : parseContext.pixelLocalStorageFormats())
+        {
+            mPixelLocalStorageFormats[binding] = format;
+        }
     }
     if (mShaderType == GL_GEOMETRY_SHADER_EXT)
     {
@@ -870,11 +877,6 @@ bool TCompiler::checkAndSimplifyAST(TIntermBlock *root,
         !DeferGlobalInitializers(this, root, initializeLocalsAndGlobals, canUseLoopsToInitialize,
                                  highPrecisionSupported, forceDeferNonConstGlobalInitializers,
                                  &mSymbolTable))
-    {
-        return false;
-    }
-
-    if (!SeparateStructFromFunctionDeclarations(*this, *root))
     {
         return false;
     }

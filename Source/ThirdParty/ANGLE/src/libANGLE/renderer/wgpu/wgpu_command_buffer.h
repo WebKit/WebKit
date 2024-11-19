@@ -122,7 +122,13 @@ struct PushDebugGroupCommand
 
 struct SetBindGroupCommand
 {
-    uint64_t pad;
+    uint32_t groupIndex;
+    uint32_t pad0;
+    union
+    {
+        const wgpu::BindGroup *bindGroup;
+        uint64_t pad1;  // Pad to 64 bits on 32-bit systems
+    };
 };
 
 struct SetBlendConstantCommand
@@ -231,6 +237,7 @@ class CommandBuffer
                      uint32_t firstIndex,
                      int32_t baseVertex,
                      uint32_t firstInstance);
+    void setBindGroup(uint32_t groupIndex, wgpu::BindGroup bindGroup);
     void setPipeline(wgpu::RenderPipeline pipeline);
     void setScissorRect(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
     void setViewport(float x, float y, float width, float height, float minDepth, float maxDepth);
@@ -291,6 +298,7 @@ class CommandBuffer
     // addresses in the set
     std::unordered_set<wgpu::RenderPipeline> mReferencedRenderPipelines;
     std::unordered_set<wgpu::Buffer> mReferencedBuffers;
+    std::unordered_set<wgpu::BindGroup> mReferencedBindGroups;
 
     void nextCommandBlock();
 

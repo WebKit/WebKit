@@ -362,10 +362,10 @@ struct ANGLE_Output_Annotated {
 };
 
 struct ANGLE_DefaultUniformBlock {
-  u_color : vec4<f32>
+  u_color : vec4<f32>,
 };
 
-@group(0) @binding(0) var<uniform> ANGLE_defaultUniformBlock : ANGLE_DefaultUniformBlock;
+@group(0) @binding(1) var<uniform> ANGLE_defaultUniformBlock : ANGLE_DefaultUniformBlock;
 ;
 
 fn _umain()

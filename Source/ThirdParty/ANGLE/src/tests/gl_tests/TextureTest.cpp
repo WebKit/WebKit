@@ -3866,7 +3866,8 @@ void main()
     std::vector<GLColor> textureColor(kTextureWidth * kTextureHeight, GLColor::red);
     constexpr uint32_t kIterationCount = 4096;
 
-    for (uint32_t i = 0; i < kIterationCount; i++)
+    uint32_t iteration = 0;
+    for (; iteration < kIterationCount; iteration++)
     {
         GLTexture texture;
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -3879,15 +3880,15 @@ void main()
         EXPECT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
         drawQuad(program, essl3_shaders::PositionAttrib(), 0.5f);
 
-        if (getPerfCounters().commandQueueSubmitCallsTotal == expectedSubmitCalls)
+        if (getPerfCounters().commandQueueSubmitCallsTotal >= expectedSubmitCalls)
         {
             break;
         }
     }
 
     glEndPerfMonitorAMD(monitor);
-
-    EXPECT_EQ(getPerfCounters().commandQueueSubmitCallsTotal, expectedSubmitCalls);
+    EXPECT_EQ(getPerfCounters().commandQueueSubmitCallsTotal, expectedSubmitCalls)
+        << "iteration " << iteration;
     EXPECT_EQ(getPerfCounters().deviceMemoryImageAllocationFallbacks,
               expectedDeviceMemoryFallbacks);
     ASSERT_GL_NO_ERROR();

@@ -906,6 +906,58 @@ FormatID Format::CLRGBAFormatToID(cl_channel_type internalChannelType)
             return FormatID::NONE;
     }
 }
+
+// static
+FormatID Format::CLBGRAFormatToID(cl_channel_type internalChannelType)
+{
+    switch (internalChannelType)
+    {
+        case CL_UNORM_INT8:
+            return FormatID::B8G8R8A8_UNORM;
+        default:
+            return FormatID::NONE;
+    }
+}
+
+// static
+FormatID Format::CLsRGBAFormatToID(cl_channel_type internalChannelType)
+{
+    switch (internalChannelType)
+    {
+        case CL_UNORM_INT8:
+            return FormatID::R8G8B8A8_UNORM_SRGB;
+        default:
+            return FormatID::NONE;
+    }
+}
+
+// static
+FormatID Format::CLDEPTHFormatToID(cl_channel_type internalChannelType)
+{
+    switch (internalChannelType)
+    {
+        case CL_FLOAT:
+            return FormatID::D32_FLOAT;
+        case CL_UNORM_INT16:
+            return FormatID::D16_UNORM;
+        default:
+            return FormatID::NONE;
+    }
+}
+
+// static
+FormatID Format::CLDEPTHSTENCILFormatToID(cl_channel_type internalChannelType)
+{
+    switch (internalChannelType)
+    {
+        case CL_FLOAT:
+            return FormatID::D32_FLOAT_S8X24_UINT;
+        case CL_UNORM_INT24:
+            return FormatID::D24_UNORM_S8_UINT;
+        default:
+            return FormatID::NONE;
+    }
+}
 #endif  // ANGLE_ENABLE_CL
 
 const Format *GetFormatInfoTable()

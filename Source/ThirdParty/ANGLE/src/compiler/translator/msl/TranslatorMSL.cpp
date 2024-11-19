@@ -33,7 +33,6 @@
 #include "compiler/translator/tree_ops/msl/FixTypeConstructors.h"
 #include "compiler/translator/tree_ops/msl/HoistConstants.h"
 #include "compiler/translator/tree_ops/msl/IntroduceVertexIndexID.h"
-#include "compiler/translator/tree_ops/msl/NameEmbeddedUniformStructsMetal.h"
 #include "compiler/translator/tree_ops/msl/ReduceInterfaceBlocks.h"
 #include "compiler/translator/tree_ops/msl/RewriteCaseDeclarations.h"
 #include "compiler/translator/tree_ops/msl/RewriteInterpolants.h"
@@ -673,11 +672,9 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
     const char *name                 = secondary ? secondaryFragDataEXT : fragData;
     for (int i = 0; i < maxDrawBuffers; i++)
     {
-        ImmutableStringBuilder builder(strlen(name) + 3);
-        builder << name << "_";
-        builder.appendDecimal(i);
+        ImmutableString varName = BuildConcatenatedImmutableString(name, '_', i);
         const TVariable *glFragData =
-            new TVariable(&symbolTable, builder, gl_FragDataType, SymbolType::AngleInternal,
+            new TVariable(&symbolTable, varName, gl_FragDataType, SymbolType::AngleInternal,
                           TExtension::UNDEFINED);
         glFragDataSlots.push_back(glFragData);
         declareGLFragdataSequence.push_back(new TIntermDeclaration{glFragData});
@@ -786,20 +783,18 @@ void AddFragDepthEXTDeclaration(TCompiler &compiler, TIntermBlock &root, TSymbol
 
     TIntermBlock *assignBlock = new TIntermBlock();
     size_t index              = FindMainIndex(root);
-    TIntermSymbol *arraySym   = new TIntermSymbol(clipDistanceVar);
     TType *type = new TType(EbtFloat, EbpHigh, fragment ? EvqFragmentIn : EvqVertexOut, 1, 1);
-    for (uint8_t i = 0; i < compiler->getClipDistanceArraySize(); i++)
+    for (int i = 0; i < compiler->getClipDistanceArraySize(); i++)
     {
-        std::stringstream name;
-        name << "ClipDistance_" << static_cast<int>(i);
-        TIntermSymbol *varyingSym = new TIntermSymbol(new TVariable(
-            symbolTable, ImmutableString(name.str()), type, SymbolType::AngleInternal));
-
+        TVariable *varyingVar =
+            new TVariable(symbolTable, BuildConcatenatedImmutableString("ClipDistance_", i), type,
+                          SymbolType::AngleInternal);
         TIntermDeclaration *varyingDecl = new TIntermDeclaration();
-        varyingDecl->appendDeclarator(varyingSym->deepCopy());
+        varyingDecl->appendDeclarator(new TIntermSymbol(varyingVar));
         root->insertStatement(index++, varyingDecl);
-
-        TIntermTyped *arrayAccess = new TIntermBinary(EOpIndexDirect, arraySym, CreateIndexNode(i));
+        TIntermSymbol *varyingSym = new TIntermSymbol(varyingVar);
+        TIntermTyped *arrayAccess = new TIntermBinary(
+            EOpIndexDirect, new TIntermSymbol(clipDistanceVar), CreateIndexNode(i));
         assignBlock->appendStatement(new TIntermBinary(
             EOpAssign, fragment ? arrayAccess : varyingSym, fragment ? varyingSym : arrayAccess));
     }
@@ -1012,18 +1007,7 @@ bool TranslatorMSL::translateImpl(TInfoSinkBase &sink,
 
     if (aggregateTypesUsedForUniforms > 0)
     {
-        if (!NameEmbeddedStructUniformsMetal(this, root, &symbolTable))
-        {
-            return false;
-        }
-
-        if (!SeparateStructFromUniformDeclarations(this, root, &getSymbolTable()))
-        {
-            return false;
-        }
-
         int removedUniformsCount;
-
         if (!RewriteStructSamplers(this, root, &getSymbolTable(), &removedUniformsCount))
         {
             return false;

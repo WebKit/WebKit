@@ -794,7 +794,7 @@
           '-v',
           '--shard-timeout=500',
         ],
-        'linux-args': [
+        'linux_args': [
           '--no-xvfb',
         ],
         'merge': {
@@ -814,7 +814,7 @@
           '-v',
           '--shard-timeout=500',
         ],
-        'linux-args': [
+        'linux_args': [
           '--no-xvfb',
         ],
         'merge': {
@@ -834,7 +834,7 @@
           '-v',
           '--shard-timeout=500',
         ],
-        'linux-args': [
+        'linux_args': [
           '--no-xvfb',
         ],
         'merge': {
@@ -996,24 +996,6 @@
           'shards': 6,
         },
       },
-    },
-
-    'angle_restricted_trace_gold_interpreted_isolated_scripts': {
-      'angle_restricted_trace_gold_interpreted_tests': {
-        'android_args': [
-          '-v',
-        ],
-        'args': [
-          '--test-machine-name',
-          '${buildername}',
-          '--trace-interpreter=gz',
-          '--filter=fishdom:geometry_dash:merge_dragons:minecraft_bedrock:new_legend_of_the_condor_heroes:street_fighter_duel:teslagrad:vainglory',
-        ],
-        'mixins': [
-          'angle_skia_gold_test',
-        ],
-        'test': 'angle_restricted_trace_gold_tests',
-      }
     },
 
     'angle_restricted_trace_gold_isolated_scripts': {
@@ -1368,24 +1350,6 @@
       },
     },
 
-    'swangle_deqp_khr_noctx_gles32_tests': {
-      'angle_deqp_khr_noctx_gles32_tests': {
-        'args': [
-          '--use-angle=swiftshader',
-        ],
-        'use_isolated_scripts_api': True,
-      },
-    },
-
-    'swangle_deqp_khr_single_gles32_tests': {
-      'angle_deqp_khr_single_gles32_tests': {
-        'args': [
-          '--use-angle=swiftshader',
-        ],
-        'use_isolated_scripts_api': True,
-      },
-    },
-
     'swangle_end2end_slow_tests': {
       'angle_end2end_tests': {
         'args': [
@@ -1501,7 +1465,6 @@
       'angle_capture_isolated_scripts',
       'angle_perf_smoke_isolated_scripts',
       'angle_restricted_trace_gold_isolated_scripts',
-      'angle_restricted_trace_gold_interpreted_isolated_scripts',
       'angle_trace_perf_native_smoke_isolated_scripts',
       'angle_trace_perf_vulkan_smoke_isolated_scripts',
     ],
@@ -1551,6 +1514,9 @@
       'angle_deqp_khr_gles31_vulkan_gtests',
       'angle_deqp_khr_gles32_vulkan_gtests',
       'angle_deqp_khr_gles3_vulkan_gtests',
+      'angle_deqp_khr_noctx_gles2_vulkan_gtests',
+      'angle_deqp_khr_noctx_gles32_vulkan_gtests',
+      'angle_deqp_khr_single_gles32_vulkan_gtests',
       'angle_end2end_gtests',
       'angle_gles1_conformance_gtests',
       'angle_unit_gtests',
@@ -1591,8 +1557,6 @@
       'swangle_deqp_khr_gles31_tests',
       'swangle_deqp_khr_gles3_tests',
       'swangle_deqp_khr_noctx_gles2_tests',
-      'swangle_deqp_khr_noctx_gles32_tests',
-      'swangle_deqp_khr_single_gles32_tests',
       'swangle_end2end_tests',
       'swangle_white_box_tests',
     ],
@@ -1610,8 +1574,6 @@
       'swangle_deqp_khr_gles31_tests',
       'swangle_deqp_khr_gles3_tests',
       'swangle_deqp_khr_noctx_gles2_tests',
-      'swangle_deqp_khr_noctx_gles32_tests',
-      'swangle_deqp_khr_single_gles32_tests',
       'swangle_end2end_slow_tests',
       'swangle_white_box_tests',
     ],
@@ -1631,8 +1593,6 @@
       'swangle_deqp_khr_gles31_tests',
       'swangle_deqp_khr_gles3_tests',
       'swangle_deqp_khr_noctx_gles2_tests',
-      'swangle_deqp_khr_noctx_gles32_tests',
-      'swangle_deqp_khr_single_gles32_tests',
       'swangle_end2end_slow_tests',
       'swangle_white_box_tests',
     ],

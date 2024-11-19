@@ -43,6 +43,17 @@ using namespace angle;
         EXPECT_EQ(nextError, GLenum(GL_NO_ERROR)); \
     }
 
+#define EXPECT_GL_SINGLE_ERROR_MSG(msg)                         \
+    if (mHasDebugKHR)                                           \
+    {                                                           \
+        EXPECT_EQ(mErrorMessages.size(), size_t(1));            \
+        if (mErrorMessages.size() == 1)                         \
+        {                                                       \
+            EXPECT_EQ(std::string(msg), mErrorMessages.back()); \
+        }                                                       \
+        mErrorMessages.clear();                                 \
+    }
+
 #define EXPECT_PIXEL_LOCAL_CLEAR_VALUE_FLOAT(plane, rgba)                             \
     {                                                                                 \
         std::array<GLfloat, 4> expected rgba;                                         \
@@ -429,6 +440,8 @@ class ShaderInfoLog
     }
 
     bool has(const char *subStr) const { return strstr(mInfoLog.c_str(), subStr); }
+
+    const char *c_str() const { return mInfoLog.c_str(); }
 
   private:
     std::string mInfoLog;
@@ -2859,6 +2872,200 @@ TEST_P(PixelLocalStorageTest, DeleteAttachments_read_framebuffer)
     EXPECT_PLS_INTEGER(1, GL_PIXEL_LOCAL_TEXTURE_NAME_ANGLE, 0);
 }
 
+// Checks that draw commands validate current PLS state against the shader's PLS uniforms.
+class DrawCommandValidationTest
+{
+  public:
+    DrawCommandValidationTest()
+    {
+        mHasDebugKHR = EnsureGLExtensionEnabled("GL_KHR_debug");
+        if (mHasDebugKHR)
+        {
+            glDebugMessageControlKHR(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR,
+                                     GL_DEBUG_SEVERITY_HIGH, 0, NULL, GL_TRUE);
+            glDebugMessageCallbackKHR(&ErrorMessageCallback, this);
+            glEnable(GL_DEBUG_OUTPUT);
+            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        }
+    }
+
+    void run()
+    {
+        PLSProgram p2;
+        p2.compile(R"(
+            layout(binding=0, rgba8) uniform lowp pixelLocalANGLE plane0;
+            layout(binding=2, r32ui) uniform highp upixelLocalANGLE plane2;
+            void main()
+            {
+                pixelLocalStoreANGLE(plane0, vec4(pixelLocalLoadANGLE(plane2).r));
+            })");
+
+        PLSProgram p;
+        p.compile(R"(
+            layout(binding=0, rgba8) uniform lowp pixelLocalANGLE plane0;
+            layout(binding=1, rgba8) uniform lowp pixelLocalANGLE plane1;
+            layout(binding=2, r32ui) uniform highp upixelLocalANGLE plane2;
+            void main()
+            {
+                pixelLocalStoreANGLE(plane0, pixelLocalLoadANGLE(plane1) *
+                                             vec4(pixelLocalLoadANGLE(plane2).r));
+            })");
+
+        ForAllDrawCalls([this]() {
+            // INVALID_OPERATION is generated if a draw is issued with a fragment shader that has a
+            // pixel local uniform bound to an inactive pixel local storage plane.
+            EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
+            EXPECT_GL_SINGLE_ERROR_MSG(
+                "Draw program references pixel local storage plane(s) that are not currently "
+                "active.");
+        });
+
+        PLSTestTexture tex0(GL_RGBA8);
+        PLSTestTexture tex1(GL_RGBA8);
+        PLSTestTexture tex2(GL_R32UI);
+        PLSTestTexture tex3(GL_R32UI);
+
+        GLFramebuffer fbo;
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+        glFramebufferTexturePixelLocalStorageANGLE(0, tex0, 0, 0);
+        glFramebufferTexturePixelLocalStorageANGLE(1, tex1, 0, 0);
+        glFramebufferTexturePixelLocalStorageANGLE(2, tex2, 0, 0);
+        glFramebufferTexturePixelLocalStorageANGLE(3, tex3, 0, 0);
+        glViewport(0, 0, W, H);
+        glDrawBuffers(0, nullptr);
+
+        glBeginPixelLocalStorageANGLE(2,
+                                      GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+        ASSERT_GL_NO_ERROR();
+
+        ForAllDrawCalls([this]() {
+            // INVALID_OPERATION is generated if a draw is issued with a fragment shader that has a
+            // pixel local uniform bound to an inactive pixel local storage plane.
+            EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
+            EXPECT_GL_SINGLE_ERROR_MSG(
+                "Draw program references pixel local storage plane(s) that are not currently "
+                "active.");
+        });
+
+        glEndPixelLocalStorageANGLE(
+            2, GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE}));
+
+        ASSERT_GL_NO_ERROR();
+
+        glBeginPixelLocalStorageANGLE(
+            4, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE,
+                            GL_LOAD_OP_ZERO_ANGLE}));
+        ASSERT_GL_NO_ERROR();
+
+        ForAllDrawCalls([this]() {
+            // INVALID_OPERATION is generated if a draw is issued with a fragment shader that does
+            // _not_ have a pixel local uniform bound to an _active_ pixel local storage plane
+            // (i.e., the fragment shader must declare uniforms bound to every single active pixel
+            // local storage plane).
+            EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
+            EXPECT_GL_SINGLE_ERROR_MSG(
+                "Active pixel local storage plane(s) are not referenced by the draw program.");
+        });
+
+        glEndPixelLocalStorageANGLE(
+            4, GLenumArray({GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE,
+                            GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE}));
+
+        ASSERT_GL_NO_ERROR();
+
+        glBeginPixelLocalStorageANGLE(
+            3, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+        ASSERT_GL_NO_ERROR();
+
+        p2.bind();
+        ForAllDrawCalls([this]() {
+            // INVALID_OPERATION is generated if a draw is issued with a fragment shader that does
+            // _not_ have a pixel local uniform bound to an _active_ pixel local storage plane
+            // (i.e., the fragment shader must declare uniforms bound to every single active pixel
+            // local storage plane).
+            EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
+            EXPECT_GL_SINGLE_ERROR_MSG(
+                "Active pixel local storage plane(s) are not referenced by the draw program.");
+        });
+        p.bind();
+
+        glEndPixelLocalStorageANGLE(
+            3, GLenumArray(
+                   {GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE}));
+
+        PLSTestTexture texWrongFormat(GL_RGBA8I);
+        glFramebufferTexturePixelLocalStorageANGLE(2, texWrongFormat, 0, 0);
+
+        glBeginPixelLocalStorageANGLE(
+            3, GLenumArray({GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE, GL_LOAD_OP_ZERO_ANGLE}));
+        ASSERT_GL_NO_ERROR();
+
+        ForAllDrawCalls([this]() {
+            // INVALID_OPERATION is generated if a draw is issued with a fragment shader that has a
+            // pixel local storage uniform whose format layout qualifier does not identically match
+            // the internalformat of its associated pixel local storage plane on the current draw
+            // framebuffer.
+            EXPECT_GL_SINGLE_ERROR(GL_INVALID_OPERATION);
+            EXPECT_GL_SINGLE_ERROR_MSG(
+                "Pixel local storage formats in the draw program do not match actively bound "
+                "planes.");
+        });
+
+        glEndPixelLocalStorageANGLE(
+            3, GLenumArray(
+                   {GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE, GL_STORE_OP_STORE_ANGLE}));
+
+        ASSERT_GL_NO_ERROR();
+    }
+
+  private:
+    static void ForAllDrawCalls(std::function<void()> checks)
+    {
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        checks();
+        ASSERT_GL_NO_ERROR();
+
+        glDrawElements(GL_TRIANGLES, 0, GL_UNSIGNED_SHORT, nullptr);
+        checks();
+        ASSERT_GL_NO_ERROR();
+
+        glDrawRangeElements(GL_TRIANGLES, 0, 0, 0, GL_UNSIGNED_SHORT, nullptr);
+        checks();
+        ASSERT_GL_NO_ERROR();
+
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 3, 1);
+        checks();
+        ASSERT_GL_NO_ERROR();
+
+        glDrawElementsInstanced(GL_TRIANGLES, 0, GL_UNSIGNED_SHORT, nullptr, 0);
+        checks();
+        ASSERT_GL_NO_ERROR();
+    }
+
+    static void GL_APIENTRY ErrorMessageCallback(GLenum source,
+                                                 GLenum type,
+                                                 GLuint id,
+                                                 GLenum severity,
+                                                 GLsizei length,
+                                                 const GLchar *message,
+                                                 const void *userParam)
+    {
+        auto test = const_cast<DrawCommandValidationTest *>(
+            static_cast<const DrawCommandValidationTest *>(userParam));
+        test->mErrorMessages.emplace_back(message);
+    }
+
+    bool mHasDebugKHR;
+    std::vector<std::string> mErrorMessages;
+};
+
+// Check that draw commands validate current PLS state against the shader's PLS uniforms.
+TEST_P(PixelLocalStorageTest, DrawCommandValidation)
+{
+    ANGLE_SKIP_TEST_IF(!EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));
+    DrawCommandValidationTest().run();
+}
+
 GTEST_ALLOW_UNINSTANTIATED_PARAMETERIZED_TEST(PixelLocalStorageTest);
 #define PLATFORM(API, BACKEND) API##_##BACKEND()
 #define PLS_INSTANTIATE_RENDERING_TEST_AND(TEST, API, ...)                                \
@@ -3307,17 +3514,6 @@ class ScopedEnable
   private:
     GLenum mFeature;
 };
-
-#define EXPECT_GL_SINGLE_ERROR_MSG(msg)                         \
-    if (mHasDebugKHR)                                           \
-    {                                                           \
-        EXPECT_EQ(mErrorMessages.size(), size_t(1));            \
-        if (mErrorMessages.size() == 1)                         \
-        {                                                       \
-            EXPECT_EQ(std::string(msg), mErrorMessages.back()); \
-        }                                                       \
-        mErrorMessages.clear();                                 \
-    }
 
 // Check that PLS state has the correct initial values.
 TEST_P(PixelLocalStorageValidationTest, InitialValues)
@@ -5222,30 +5418,13 @@ TEST_P(PixelLocalStorageValidationTest, BannedCommands)
     //
     // TODO(anglebug.com/40096838).
 
-    // INVALID_OPERATION is generated if a draw is issued with a fragment shader that has a
-    // pixel local uniform bound to an inactive pixel local storage plane.
-    //
-    // TODO(anglebug.com/40096838).
-
-    // INVALID_OPERATION is generated if a draw is issued with a fragment shader that does _not_
-    // have a pixel local uniform bound to an _active_ pixel local storage plane (i.e., the
-    // fragment shader must declare uniforms bound to every single active pixel local storage
-    // plane).
-    //
-    // This is because many backend implementations need to account for every active pixel local
-    // storage plane, even if the application code does not access it during a particular shader
-    // invocation.
-    //
-    // TODO(anglebug.com/40096838).
-
-    // INVALID_OPERATION is generated if a draw is issued with a fragment shader that has a
-    // pixel local storage uniform whose format layout qualifier does not identically match the
-    // internalformat of its associated pixel local storage plane on the current draw
-    // framebuffer, as enumerated in Table X.3.
-    //
-    // TODO(anglebug.com/40096838).
-
     ASSERT_GL_NO_ERROR();
+}
+
+// Check that draw commands validate current PLS state against the shader's PLS uniforms.
+TEST_P(PixelLocalStorageValidationTest, DrawCommandValidation)
+{
+    DrawCommandValidationTest().run();
 }
 
 // Check that PLS gets properly cleaned up when its framebuffer and textures are never deleted.
@@ -5571,9 +5750,21 @@ TEST_P(PixelLocalStorageCompilerTest, LayoutQualifiers)
         "ERROR: 0:11: 'layout qualifier' : pixel local storage requires a format specifier"));
     EXPECT_TRUE(log.has(
         "ERROR: 0:12: 'layout qualifier' : pixel local storage requires a format specifier"));
-    // TODO(anglebug.com/40096838): "PLS binding greater than gl_MaxPixelLocalStoragePlanesANGLE".
     EXPECT_TRUE(
         log.has("ERROR: 0:12: 'layout qualifier' : pixel local storage requires a binding index"));
+
+    // PLS handles must be within MAX_PIXEL_LOCAL_STORAGE_PLANES.
+    GLint MAX_PIXEL_LOCAL_STORAGE_PLANES;
+    glGetIntegerv(GL_MAX_PIXEL_LOCAL_STORAGE_PLANES_ANGLE, &MAX_PIXEL_LOCAL_STORAGE_PLANES);
+    std::ostringstream bindingTooLarge;
+    bindingTooLarge << "#version 310 es\n";
+    bindingTooLarge << "#extension GL_ANGLE_shader_pixel_local_storage : require\n";
+    bindingTooLarge << "layout(binding=" << MAX_PIXEL_LOCAL_STORAGE_PLANES
+                    << ", rgba8) highp uniform pixelLocalANGLE pls;\n";
+    bindingTooLarge << "void main() {}\n";
+    EXPECT_FALSE(log.compileFragmentShader(bindingTooLarge.str().c_str()));
+    EXPECT_TRUE(
+        log.has("ERROR: 0:3: 'layout qualifier' : pixel local storage binding out of range"));
 
     // PLS handles must use the correct type for the given format.
     constexpr char kPLSInvalidTypeForFormat[] = R"(#version 310 es
@@ -6196,10 +6387,7 @@ class PixelLocalStorageTestPreES3 : public ANGLETest<>
     PixelLocalStorageTestPreES3() { setExtensionsEnabled(false); }
 };
 
-// Check that GL_ANGLE_shader_pixel_local_storage is not advertised before ES 3.1.
-//
-// TODO(anglebug.com/40096838): we can relax the min supported version once the implementation
-// details are inside ANGLE.
+// Check that GL_ANGLE_shader_pixel_local_storage is not advertised before ES 3.0.
 TEST_P(PixelLocalStorageTestPreES3, UnsupportedClientVersion)
 {
     EXPECT_FALSE(EnsureGLExtensionEnabled("GL_ANGLE_shader_pixel_local_storage"));

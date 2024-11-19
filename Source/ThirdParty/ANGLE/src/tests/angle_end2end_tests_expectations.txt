@@ -29,7 +29,15 @@
 42266349 VULKAN : MultithreadingTestES3.UnsynchronizedTextureReads2/* = SKIP
 // Incorrectly handled pretty much in all backends
 42266871 : CopyTexImageTestES3.RedefineSameLevel/* = SKIP
+// Fails in Android with EGL_BAD_ALLOC
+374797737 : EGLSurfaceTest.CreateMultiWindowsSurfaceNoDestroy/* = SKIP
 // Currently fails on WebGPU as it's not fully implemented yet.
+
+// ES 3.2 tests are skipped on SwS.
+376899587 VULKAN SWIFTSHADER : */ES3_2* = SKIP
+
+// Advanced blend ops currently fail on Windows/Intel.
+376899587 WIN INTEL VULKAN : AdvancedBlendTest.*/* = SKIP
 
 // Fails AST validation
 342866374 : GLSLTest_ES31.PerVertexRedefinition/*_ForceInitShaderVariables* = SKIP
@@ -43,6 +51,19 @@
 359729255 D3D9 : VertexAttributeTest.VertexAttribPointerCopyBufferFromInvalid* = SKIP
 359729255 D3D11 : VertexAttributeTest.VertexAttribPointerCopyBufferFromInvalid* = SKIP
 359729255 METAL : VertexAttributeTest.VertexAttribPointerCopyBufferFromInvalid* = SKIP
+
+// Does not work due to SeparateDeclarations.
+// Would need a pass to name in-out structs based on the contents and dedupe the structs.
+42267047 GLES : GLSLTest_ES3.VaryingAnonymousStructEquality/* = SKIP
+42267047 GLES : GLSLTest_ES3.VaryingAnonymousStructWithInlineDefinition2/* = SKIP
+42267047 GLES : GLSLTest_ES3.VaryingAnonymousStructWithInlineDefinition3/* = SKIP
+42267047 OPENGL : GLSLTest_ES3.VaryingAnonymousStructEquality/* = SKIP
+42267047 OPENGL : GLSLTest_ES3.VaryingAnonymousStructWithInlineDefinition2/* = SKIP
+42267047 OPENGL : GLSLTest_ES3.VaryingAnonymousStructWithInlineDefinition3/* = SKIP
+// Crash
+42267047 PIXEL4ORXL VULKAN : GLSLTest_ES3.VaryingAnonymousStructEquality/* = SKIP
+42267047 PIXEL4ORXL VULKAN : GLSLTest_ES3.VaryingAnonymousStructWithInlineDefinition2/* = SKIP
+42267047 PIXEL4ORXL VULKAN : GLSLTest_ES3.VaryingAnonymousStructWithInlineDefinition3/* = SKIP
 
 // Shared context failing on OpenGL and D3D11
 42266326 METAL : MultithreadingTest.CreateMultiSharedContextAndDraw/* = SKIP
@@ -103,6 +124,7 @@ b/273271471 WIN INTEL VULKAN : ShaderAlgorithmTest.rgb_to_hsl_vertex_shader/* = 
 42266963 WIN NVIDIA OPENGL : PbufferTest.BindTexImageOverwriteNoCrashOnReleaseTexImage/* = SKIP
 42266963 WIN NVIDIA GLES : PbufferTest.UseAsFramebufferColorThenDeferredDestroy/* = SKIP
 42266963 WIN NVIDIA OPENGL : PbufferTest.UseAsFramebufferColorThenDeferredDestroy/* = SKIP
+377537290 WIN D3D11 : ReadPixelsMultisampleTest.DefaultFramebufferPBO/* = SKIP
 
 234602034 WIN INTEL D3D9 : ImageTest.SourceCubeAndSameTargetTextureWithEachCubeFace/* = SKIP
 234602034 WIN NVIDIA D3D9 : ImageTest.SourceCubeAndSameTargetTextureWithEachCubeFace/* = SKIP
@@ -942,6 +964,8 @@ b/330697097 PIXEL6 VULKAN : FramebufferTest_ES31.MultisampleResolveBothAttachmen
 // Flaky Generally on AsyncCommandQueue.
 42266015 VULKAN : TimerQueriesTest.TimeElapsed/*_AsyncCommandQueue* = SKIP
 42266015 VULKAN : TimerQueriesTest.Timestamp/*_AsyncCommandQueue* = SKIP
+// Rare flakes on win-x86
+377503738 WIN VULKAN : Texture2DMemoryTestES3.TextureDataInLoopManyTimes/*SwiftShader*_AsyncCommandQueue* = SKIP
 
 // Cubemap sampling with explicit derivatives
 42262458 PIXEL4ORXL VULKAN : CubeMapTextureTest.SampleCoordinateTransformGrad/* = SKIP
@@ -1221,6 +1245,7 @@ b/267953710 GALAXYS22 VULKAN : VulkanPerformanceCounterTest.PipelineCacheIsResto
 b/267953710 GALAXYS22 VULKAN : VulkanPerformanceCounterTest.PipelineCacheIsWarmedUpAtLinkTime/* = SKIP
 b/267953710 GALAXYS22 VULKAN : VulkanPerformanceCounterTest_ES31.ColorMaskedFramebufferFetchDrawThenClear/* = SKIP
 372059358 GALAXYS22 VULKAN : MultisampleTestES3.CopyTexImage2DFromMsaaDefaultFbo/* = SKIP
+40644776 GALAXYS22 VULKAN : ImageTestES3.SourceAHBTarget2DGenerateMipmap* = SKIP
 
 // Samsung Galaxy Qualcomm crashes and failures (perhaps with other non-Pixel Qualcomm as well):
 42266622 GALAXYQUALCOMM VULKAN : BlitFramebufferTest.BlitStencilScissoredScaled/* = SKIP
@@ -1339,7 +1364,7 @@ b/328156792 PINEAPPLE VULKAN : ClearTestES3.RepeatedStencilClearWithBlitInBetwee
 b/328156792 PINEAPPLE VULKAN : ClearTestES31.Bind3DTextureAndClearUsingAttachment0/* = SKIP
 b/328156792 PINEAPPLE VULKAN : ClearTest.MaskedClearThenDrawWithUniform/* = SKIP
 b/328156792 PINEAPPLE VULKAN : ClearTest.Stencil8Scissored/* = SKIP
-b/328156792 PINEAPPLE VULKAN : ClearTextureEXTTest.StencilTexture/* = SKIP
+b/328156792 PINEAPPLE VULKAN : ClearTextureEXTTest.Clear3D*/* = SKIP
 b/328156792 PINEAPPLE VULKAN : DepthStencilTestES3.FramebufferClearThenStencilAttachedThenStencilTestState/* = SKIP
 b/328156792 PINEAPPLE VULKAN : DepthStencilTestES3.FramebufferClearThenStencilTestStateThenStencilAttached/* = SKIP
 b/328156792 PINEAPPLE VULKAN : DepthStencilTestES3.StencilTestStateThenFramebufferClearThenStencilAttached/* = SKIP
@@ -1347,7 +1372,6 @@ b/328156792 PINEAPPLE VULKAN : DepthStencilTest.StencilOnlyDrawThenCopyThenDraw/
 b/328156792 PINEAPPLE VULKAN : DepthStencilTest.StencilOnlyEmulatedWithPacked/* = SKIP
 b/328156792 PINEAPPLE VULKAN : DrawBuffersTest.NoneWithStencil/* = SKIP
 b/328156792 PINEAPPLE VULKAN : FramebufferTest_ES31.* = SKIP
-b/328156792 PINEAPPLE VULKAN : FramebufferTest_ES31.ClearTextureEXT2DMSStencil = SKIP
 b/328156792 PINEAPPLE VULKAN : GeometryShaderTest.LayeredFramebuffer* = SKIP
 b/328156792 PINEAPPLE VULKAN : GLSLTest.ConstantFoldedConstantsRetainPrecision/* = SKIP
 b/328156792 PINEAPPLE VULKAN : GLSLTest_ES31.ArrayOfArrayOfSamplerInStructDynamicIndex/* = SKIP
@@ -1517,8 +1541,10 @@ b/292285899 PIXEL4ORXL GLES : EGLSurfaceTest.DestroyAndRecreateWhileCurrent/* = 
 40644776 MAC NVIDIA OPENGL    : SRGBTextureTestES3.SRGBDecodeTexelFetch* = SKIP
 40644776 ANDROID PIXEL6       : ImageTest.SourceRenderbufferTargetTexture* = SKIP
 40644776 ANDROID PIXEL6       : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3* = SKIP
+40644776 ANDROID PIXEL6       : ImageTestES3.SourceAHBTarget2DGenerateMipmap* = SKIP
 40644776 ANDROID PIXEL4ORXL   : ImageTest.SourceRenderbufferTargetTexture* = SKIP
 40644776 ANDROID PIXEL4ORXL   : ImageTestES3.SourceRenderbufferTargetTextureExternalESSL3* = SKIP
+40644776 ANDROID PIXEL4ORXL   : ImageTestES3.SourceAHBTarget2DGenerateMipmap* = SKIP
 40644776 ANDROID PIXEL4ORXL   : Texture3DCopy.UnsignedByteFormats/* = SKIP
 40644776 ANDROID PIXEL4ORXL   : Texture3DCopy.UnsizedFormats/* = SKIP
 

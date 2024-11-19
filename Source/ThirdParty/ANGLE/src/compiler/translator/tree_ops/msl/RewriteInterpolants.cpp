@@ -49,7 +49,7 @@ class FindInterpolantsTraverser : public TIntermTraverser
             return mFlipFunction->getFunction();
         }
 
-        const TType *vec2Type  = StaticType::GetBasic<EbtFloat, EbpHigh, 2>();
+        const TType *vec2Type  = StaticType::GetQualified<EbtFloat, EbpHigh, EvqParamIn, 2>();
         TVariable *offsetParam = new TVariable(mSymbolTable, ImmutableString("offset"), vec2Type,
                                                SymbolType::AngleInternal);
         TFunction *function =

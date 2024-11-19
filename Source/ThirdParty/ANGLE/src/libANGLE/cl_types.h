@@ -12,19 +12,20 @@
 #    include "libANGLE/CLBitField.h"
 #    include "libANGLE/CLRefPointer.h"
 #    include "libANGLE/Debug.h"
+#    include "libANGLE/angletypes.h"
 
 #    include "common/PackedCLEnums_autogen.h"
 #    include "common/angleutils.h"
 
 // Include frequently used standard headers
-#include <algorithm>
-#include <array>
-#include <functional>
-#include <list>
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
+#    include <algorithm>
+#    include <array>
+#    include <functional>
+#    include <list>
+#    include <memory>
+#    include <string>
+#    include <utility>
+#    include <vector>
 
 namespace cl
 {
@@ -69,6 +70,58 @@ using WorkgroupCount   = std::array<uint32_t, 3>;
 template <typename T>
 using EventStatusMap = std::array<T, 3>;
 
+using Extents = ::gl::Extents;
+using Offset  = ::gl::Offset;
+
+struct KernelArg
+{
+    bool isSet;
+    cl_uint index;
+    size_t size;
+    const void *valuePtr;
+};
+
+struct BufferBox
+{
+    BufferBox(const Offset &offset,
+              const Extents &size,
+              const size_t row_pitch,
+              const size_t slice_pitch,
+              const size_t element_size = 1)
+        : mOrigin(offset),
+          mSize(size),
+          mRowPitch(row_pitch == 0 ? element_size * size.width : row_pitch),
+          mSlicePitch(slice_pitch == 0 ? mRowPitch * size.height : slice_pitch),
+          mElementSize(element_size)
+    {}
+    bool valid() const
+    {
+        return mSize.width != 0 && mSize.height != 0 && mSize.depth != 0 &&
+               mRowPitch >= mSize.width * mElementSize && mSlicePitch >= mRowPitch * mSize.height &&
+               mElementSize > 0;
+    }
+    bool operator==(const BufferBox &other) const
+    {
+        return (mOrigin == other.mOrigin && mSize == other.mSize && mRowPitch == other.mRowPitch &&
+                mSlicePitch == other.mSlicePitch && mElementSize == other.mElementSize);
+    }
+    bool operator!=(const BufferBox &other) const { return !(*this == other); }
+
+    size_t getRowOffset(size_t slice, size_t row) const
+    {
+        return ((mRowPitch * (mOrigin.y + row)) + (mOrigin.x * mElementSize)) +  // row offset
+               (mSlicePitch * (mOrigin.z + slice));                              // slice offset
+    }
+
+    size_t getRowPitch() { return mRowPitch; }
+    size_t getSlicePitch() { return mSlicePitch; }
+    Offset mOrigin;
+    Extents mSize;
+    size_t mRowPitch;
+    size_t mSlicePitch;
+    size_t mElementSize;
+};
+
 struct ImageDescriptor
 {
     MemObjectType type;
@@ -105,7 +158,7 @@ struct ImageDescriptor
         {
             height = 1;
         }
-        if (type == MemObjectType::Image3D)
+        if (type == MemObjectType::Image2D)
         {
             depth = 1;
         }

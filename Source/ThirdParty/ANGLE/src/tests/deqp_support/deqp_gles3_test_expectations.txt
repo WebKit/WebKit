@@ -862,3 +862,17 @@ b/328156792 PINEAPPLE VULKAN : dEQP-GLES3.functional.uniform_api.value.assigned.
 // BGRA failures
 42267264 : dEQP-GLES3.functional.fbo.completeness.renderable.renderbuffer*bgra = FAIL
 42267264 MAC : dEQP-GLES3.functional.texture.filtering.2d_array.formats.bgra* = FAIL
+
+// Tests failing on SwS due to ES 3.2 being enabled for testing regardless of support.
+376899587 SWIFTSHADER : dEQP-GLES3.functional.negative_api.vertex_array.draw_elements = SKIP
+376899587 SWIFTSHADER : dEQP-GLES3.functional.negative_api.vertex_array.draw_elements_incomplete_primitive = SKIP
+376899587 SWIFTSHADER : dEQP-GLES3.functional.negative_api.vertex_array.draw_elements_instanced = SKIP
+376899587 SWIFTSHADER : dEQP-GLES3.functional.negative_api.vertex_array.draw_elements_instanced_incomplete_primitive = SKIP
+376899587 SWIFTSHADER : dEQP-GLES3.functional.negative_api.vertex_array.draw_range_elements = SKIP
+376899587 SWIFTSHADER : dEQP-GLES3.functional.negative_api.vertex_array.draw_range_elements_incomplete_primitive = SKIP
+376899587 PIXEL4ORXL : dEQP-GLES3.functional.negative_api.vertex_array.draw_elements = SKIP
+376899587 PIXEL4ORXL : dEQP-GLES3.functional.negative_api.vertex_array.draw_elements_incomplete_primitive = SKIP
+376899587 PIXEL4ORXL : dEQP-GLES3.functional.negative_api.vertex_array.draw_elements_instanced = SKIP
+376899587 PIXEL4ORXL : dEQP-GLES3.functional.negative_api.vertex_array.draw_elements_instanced_incomplete_primitive = SKIP
+376899587 PIXEL4ORXL : dEQP-GLES3.functional.negative_api.vertex_array.draw_range_elements = SKIP
+376899587 PIXEL4ORXL : dEQP-GLES3.functional.negative_api.vertex_array.draw_range_elements_incomplete_primitive = SKIP

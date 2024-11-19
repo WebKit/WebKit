@@ -105,7 +105,7 @@ gl::DrawBufferMask ClearValuesArray::getColorMask() const
     return gl::DrawBufferMask(mEnabled.bits() & kUnpackedColorBuffersMask);
 }
 
-void GenerateCaps(const wgpu::Device &device,
+void GenerateCaps(const wgpu::Limits &limitsWgpu,
                   gl::Caps *glCaps,
                   gl::TextureCapsMap *glTextureCapsMap,
                   gl::Extensions *glExtensions,
@@ -116,13 +116,6 @@ void GenerateCaps(const wgpu::Device &device,
 {
     // WebGPU does not support separate front/back stencil masks.
     glLimitations->noSeparateStencilRefsAndMasks = true;
-
-    wgpu::Limits limitsWgpu;
-    {
-        wgpu::SupportedLimits supportedLimits;
-        device.GetLimits(&supportedLimits);
-        limitsWgpu = supportedLimits.limits;
-    }
 
     // OpenGL ES extensions
     glExtensions->debugMarkerEXT              = true;

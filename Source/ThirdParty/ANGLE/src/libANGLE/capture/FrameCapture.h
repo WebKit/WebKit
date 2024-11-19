@@ -972,6 +972,7 @@ void CaptureShaderStrings(GLsizei count,
                           const GLint *length,
                           ParamCapture *paramCapture);
 
+bool IsTrackedPerContext(ResourceIDType type);
 }  // namespace angle
 
 template <typename T>

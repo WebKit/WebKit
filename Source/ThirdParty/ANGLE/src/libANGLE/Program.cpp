@@ -1050,11 +1050,11 @@ angle::Result Program::linkJobImpl(const Caps &caps,
     linkShaders();
 
     linkingVariables->initForProgram(mState);
-    resources->init(&mState.mExecutable->mUniformBlocks, &mState.mExecutable->mUniforms,
-                    &mState.mExecutable->mUniformNames, &mState.mExecutable->mUniformMappedNames,
-                    &mState.mExecutable->mShaderStorageBlocks,
-                    &mState.mExecutable->mBufferVariables,
-                    &mState.mExecutable->mAtomicCounterBuffers);
+    resources->init(
+        &mState.mExecutable->mUniformBlocks, &mState.mExecutable->mUniforms,
+        &mState.mExecutable->mUniformNames, &mState.mExecutable->mUniformMappedNames,
+        &mState.mExecutable->mShaderStorageBlocks, &mState.mExecutable->mBufferVariables,
+        &mState.mExecutable->mAtomicCounterBuffers, &mState.mExecutable->mPixelLocalStorageFormats);
 
     updateLinkedShaderStages();
 

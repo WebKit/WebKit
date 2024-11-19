@@ -25,15 +25,15 @@ class ImmutableStringBuilder
     {}
 
     ImmutableStringBuilder &operator<<(const ImmutableString &str);
-
     ImmutableStringBuilder &operator<<(const char *str) { return *this << ImmutableString(str); }
-
     ImmutableStringBuilder &operator<<(char c);
+    ImmutableStringBuilder &operator<<(int i) { return *this << static_cast<int64_t>(i); }
+    ImmutableStringBuilder &operator<<(unsigned i) { return *this << static_cast<uint64_t>(i); }
+    ImmutableStringBuilder &operator<<(int64_t i);
+    ImmutableStringBuilder &operator<<(uint64_t i);
 
     // This invalidates the ImmutableStringBuilder, so it should only be called once.
     operator ImmutableString();
-
-    void appendDecimal(uint32_t i);
 
     template <typename T>
     void appendHex(T number)
@@ -79,49 +79,65 @@ constexpr unsigned int kESSLMaxIdentifierLength = 1024u;
 
 namespace impl
 {
-inline size_t GetArgLength(const ImmutableString &str)
+
+constexpr inline size_t GetCharCount(uint64_t x)
+{
+    size_t digits = 1;
+    uint64_t max  = 10;
+    for (; digits < 19; ++digits)
+    {
+        if (x < max)
+            break;
+        max *= 10;
+    }
+    return digits;
+}
+
+constexpr inline size_t GetCharCount(int64_t x)
+{
+    if (x == INT64_MIN)
+    {
+        return 19 + 1;
+    }
+    if (x < 0)
+    {
+        return GetCharCount(static_cast<uint64_t>(-x)) + 1;
+    }
+    return GetCharCount(static_cast<uint64_t>(x));
+}
+
+constexpr inline size_t GetCharCount(int x)
+{
+    return GetCharCount(static_cast<int64_t>(x));
+}
+
+constexpr inline size_t GetCharCount(unsigned x)
+{
+    return GetCharCount(static_cast<int64_t>(x));
+}
+
+constexpr inline size_t GetCharCount(const ImmutableString &str)
 {
     return str.length();
 }
 
-inline size_t GetArgLength(const char *str)
+constexpr inline size_t GetCharCount(const char *str)
 {
-    return strlen(str);
+    return angle::ConstStrLen(str);
 }
 
-inline size_t GetArgLength(int number)
+constexpr inline size_t GetCharCount(char)
 {
-    std::ostringstream oss;
-    oss << number;
-    return oss.str().length();
+    return 1;
 }
 
-inline size_t GetArgsTotalSize()
-{
-    return 0;
-}
-
-template <typename T, typename... Rest>
-inline size_t GetArgsTotalSize(const T &firstArg, Rest... rest)
-{
-    return GetArgLength(firstArg) + GetArgsTotalSize(rest...);
-}
-
-inline void AppendStrings(ImmutableStringBuilder &builder) {}
-
-template <typename T, typename... Rest>
-inline void AppendStrings(ImmutableStringBuilder &builder, const T &firstArg, Rest... rest)
-{
-    builder << firstArg;
-    AppendStrings(builder, rest...);
-}
 }  // namespace impl
 
 template <typename... Args>
 ImmutableString BuildConcatenatedImmutableString(Args... args)
 {
-    ImmutableStringBuilder builder(impl::GetArgsTotalSize(args...));
-    impl::AppendStrings(builder, args...);
+    ImmutableStringBuilder builder((impl::GetCharCount(args) + ...));
+    (builder << ... << args);
     return builder;
 }
 

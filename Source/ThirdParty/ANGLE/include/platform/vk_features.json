@@ -670,6 +670,14 @@
             "issue": "http://anglebug.com/42263914"
         },
         {
+            "name": "expose_ES32_for_testing",
+            "category": "Workarounds",
+            "description": [
+                "Expose GLES 3.2 for testing purposes on platforms that currently do not fully support it."
+            ],
+            "issue": "http://issuetracker.google.com/376899587"
+        },
+        {
             "name": "emulate_R32f_image_atomic_exchange",
             "category": "Workarounds",
             "description": [

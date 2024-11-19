@@ -456,7 +456,7 @@ ImmutableString ArrayString(const TType &type)
         arrayString << "[";
         if (*arraySizeIter > 0)
         {
-            arrayString.appendDecimal(*arraySizeIter);
+            arrayString << *arraySizeIter;
         }
         arrayString << "]";
     }

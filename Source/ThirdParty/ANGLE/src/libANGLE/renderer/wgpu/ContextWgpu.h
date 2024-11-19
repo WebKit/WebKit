@@ -17,6 +17,7 @@
 #include "libANGLE/renderer/wgpu/DisplayWgpu.h"
 #include "libANGLE/renderer/wgpu/wgpu_command_buffer.h"
 #include "libANGLE/renderer/wgpu/wgpu_format_utils.h"
+#include "libANGLE/renderer/wgpu/wgpu_helpers.h"
 #include "libANGLE/renderer/wgpu/wgpu_pipeline_state.h"
 #include "libANGLE/renderer/wgpu/wgpu_utils.h"
 
@@ -307,6 +308,8 @@ class ContextWgpu : public ContextImpl
         DIRTY_BIT_VERTEX_BUFFERS,
         DIRTY_BIT_INDEX_BUFFER,
 
+        DIRTY_BIT_BIND_GROUPS,
+
         DIRTY_BIT_MAX,
     };
 
@@ -348,6 +351,7 @@ class ContextWgpu : public ContextImpl
                                            DirtyBits::Iterator *dirtyBitsIterator);
     angle::Result handleDirtyIndexBuffer(gl::DrawElementsType indexType,
                                          DirtyBits::Iterator *dirtyBitsIterator);
+    angle::Result handleDirtyBindGroups(DirtyBits::Iterator *dirtyBitsIterator);
 
     angle::Result handleDirtyRenderPass(DirtyBits::Iterator *dirtyBitsIterator);
 

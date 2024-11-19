@@ -11,6 +11,7 @@
 
 #include "common/debug.h"
 
+#include "compiler/translator/wgsl/OutputUniformBlocks.h"
 #include "libANGLE/Context.h"
 #include "libANGLE/renderer/OverlayImpl.h"
 #include "libANGLE/renderer/wgpu/BufferWgpu.h"
@@ -30,6 +31,7 @@
 #include "libANGLE/renderer/wgpu/TextureWgpu.h"
 #include "libANGLE/renderer/wgpu/TransformFeedbackWgpu.h"
 #include "libANGLE/renderer/wgpu/VertexArrayWgpu.h"
+#include "libANGLE/renderer/wgpu/wgpu_pipeline_state.h"
 #include "libANGLE/renderer/wgpu/wgpu_utils.h"
 
 namespace rx
@@ -68,6 +70,7 @@ ContextWgpu::ContextWgpu(const gl::State &state, gl::ErrorSet *errorSet, Display
         DIRTY_BIT_SCISSOR,
         DIRTY_BIT_VERTEX_BUFFERS,
         DIRTY_BIT_INDEX_BUFFER,
+        DIRTY_BIT_BIND_GROUPS,
     };
 }
 
@@ -81,6 +84,7 @@ void ContextWgpu::onDestroy(const gl::Context *context)
 angle::Result ContextWgpu::initialize(const angle::ImageLoadContext &imageLoadContext)
 {
     mImageLoadContext = imageLoadContext;
+
     return angle::Result::Continue;
 }
 
@@ -1029,6 +1033,12 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
         invalidateCurrentRenderPipeline();
     }
 
+    ProgramExecutableWgpu *executableWgpu = webgpu::GetImpl(mState.getProgramExecutable());
+    if (executableWgpu->checkDirtyUniforms())
+    {
+        mDirtyBits.set(DIRTY_BIT_BIND_GROUPS);
+    }
+
     const void *adjustedIndicesPtr = indices;
     if (mState.areClientArraysEnabled())
     {
@@ -1098,7 +1108,9 @@ angle::Result ContextWgpu::setupDraw(const gl::Context *context,
                         reAddDirtyIndexBufferBit = true;
                     }
                     break;
-
+                case DIRTY_BIT_BIND_GROUPS:
+                    ANGLE_TRY(handleDirtyBindGroups(&dirtyBitIter));
+                    break;
                 default:
                     UNREACHABLE();
                     break;
@@ -1257,6 +1269,17 @@ angle::Result ContextWgpu::handleDirtyIndexBuffer(gl::DrawElementsType indexType
     }
     mCommandBuffer.setIndexBuffer(buffer->getBuffer(), gl_wgpu::GetIndexFormat(indexType), 0, -1);
     mCurrentIndexBufferType = indexType;
+    return angle::Result::Continue;
+}
+
+angle::Result ContextWgpu::handleDirtyBindGroups(DirtyBits::Iterator *dirtyBitsIterator)
+{
+    ProgramExecutableWgpu *executableWgpu = webgpu::GetImpl(mState.getProgramExecutable());
+    wgpu::BindGroup bindGroup;
+    ANGLE_TRY(executableWgpu->updateUniformsAndGetBindGroup(this, &bindGroup));
+    // TODO(anglebug.com/376553328): need to set up every bind group here.
+    mCommandBuffer.setBindGroup(sh::kDefaultUniformBlockBindGroup, bindGroup);
+
     return angle::Result::Continue;
 }
 

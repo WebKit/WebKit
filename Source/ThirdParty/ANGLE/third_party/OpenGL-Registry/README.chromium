@@ -3,7 +3,6 @@ Short Name: OpenGL-Registry
 Version: N/A
 URL: https://github.com/KhronosGroup/OpenGL-Registry
 SOURCE CODE: git clone -b OpenGL-Registry https://github.com/KhronosGroup/OpenGL-Registry
-Date: N/A
 Revision: DEPS
 Security Critical: no
 Shipped: yes

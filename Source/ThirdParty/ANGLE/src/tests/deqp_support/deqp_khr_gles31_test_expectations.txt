@@ -25,6 +25,7 @@
 42264111 VULKAN NVIDIA : KHR-GLES31.core.geometry_shader.limits.max_invocations = FAIL
 345312771 VULKAN NVIDIA : KHR-GLES31.core.tessellation_shader.tessellation_shader_tessellation.gl_InvocationID_PatchVerticesIn_PrimitiveID = FAIL
 345312771 VULKAN WIN NVIDIA : KHR-GLES31.core.tessellation_shader.tessellation_control_to_tessellation_evaluation.gl_PatchVerticesIn = FAIL
+377993076 VULKAN WIN NVIDIA : KHR-GLES31.core.tessellation_shader.single.primitive_coverage = SKIP
 
 // XFB array elements capture:
 // These tests only fail with VK_EXT_transform_feedback
@@ -370,3 +371,9 @@ b/328156792 PINEAPPLE VULKAN : KHR-GLES31.core.texture_cube_map_array* = SKIP
 370792795 SWIFTSHADER : KHR-GLES31.core.tessellation_shader.* = SKIP
 370792795 PIXEL4ORXL VULKAN : KHR-GLES31.core.tessellation_shader.* = SKIP
 370792795 PIXEL6 VULKAN : KHR-GLES31.core.tessellation_shader.* = SKIP
+
+// Tests failing on SwS due to ES 3.2 being enabled for testing regardless of support.
+376899587 SWIFTSHADER : KHR-GLES31.core.draw_indirect.negative-xfb = SKIP
+376899587 SWIFTSHADER : KHR-GLES31.core.framebuffer_no_attachments.api = SKIP
+376899587 PIXEL4ORXL : KHR-GLES31.core.draw_indirect.negative-xfb = SKIP
+376899587 PIXEL4ORXL : KHR-GLES31.core.framebuffer_no_attachments.api = SKIP

@@ -734,15 +734,21 @@ enum class Indent
 void UpdateResourceIDBuffer(std::ostream &out,
                             Indent indent,
                             size_t bufferIndex,
-                            const char *mapName,
+                            ResourceIDType resourceIDType,
+                            gl::ContextID contextID,
                             GLuint resourceID)
 {
     if (indent == Indent::Indent)
     {
         out << "    ";
     }
-    out << "UpdateResourceIDBuffer(" << bufferIndex << ", g" << mapName << "Map[" << resourceID
-        << "]);\n";
+    out << "UpdateResourceIDBuffer(" << bufferIndex << ", g"
+        << GetResourceIDTypeName(resourceIDType) << "Map";
+    if (IsTrackedPerContext(resourceIDType))
+    {
+        out << "PerContext[" << contextID.value << "]";
+    }
+    out << "[" << resourceID << "]);\n";
 }
 
 template <typename ParamT>
@@ -755,7 +761,6 @@ void WriteResourceIDPointerParamReplay(ReplayWriter &replayWriter,
 {
     const ResourceIDType resourceIDType = GetResourceIDTypeFromParamType(param.type);
     ASSERT(resourceIDType != ResourceIDType::InvalidEnum);
-    const char *name = GetResourceIDTypeName(resourceIDType);
 
     if (param.dataNElements > 0)
     {
@@ -765,7 +770,8 @@ void WriteResourceIDPointerParamReplay(ReplayWriter &replayWriter,
         for (GLsizei resIndex = 0; resIndex < param.dataNElements; ++resIndex)
         {
             ParamT id = returnedIDs[resIndex];
-            UpdateResourceIDBuffer(header, Indent::NoIdent, resIndex, name, id.value);
+            UpdateResourceIDBuffer(header, Indent::NoIdent, resIndex, resourceIDType,
+                                   call.contextID, id.value);
         }
 
         *maxResourceIDBufferSize = std::max<size_t>(*maxResourceIDBufferSize, param.dataNElements);
@@ -1110,9 +1116,10 @@ void WriteInitReplayCall(bool compression,
 }
 
 void DeleteResourcesInReset(std::stringstream &out,
+                            const gl::ContextID contextID,
                             const ResourceSet &newResources,
                             const ResourceSet &resourcesToDelete,
-                            const char *resourceName,
+                            const ResourceIDType resourceIDType,
                             size_t *maxResourceIDBufferSize)
 {
     if (!newResources.empty() || !resourcesToDelete.empty())
@@ -1121,16 +1128,19 @@ void DeleteResourcesInReset(std::stringstream &out,
 
         for (GLuint oldResource : resourcesToDelete)
         {
-            UpdateResourceIDBuffer(out, Indent::Indent, count++, resourceName, oldResource);
+            UpdateResourceIDBuffer(out, Indent::Indent, count++, resourceIDType, contextID,
+                                   oldResource);
         }
 
         for (GLuint newResource : newResources)
         {
-            UpdateResourceIDBuffer(out, Indent::Indent, count++, resourceName, newResource);
+            UpdateResourceIDBuffer(out, Indent::Indent, count++, resourceIDType, contextID,
+                                   newResource);
         }
 
         // Delete all the new and old buffers at once
-        out << "    glDelete" << resourceName << "s(" << count << ", gResourceIDBuffer);\n";
+        out << "    glDelete" << GetResourceIDTypeName(resourceIDType) << "s(" << count
+            << ", gResourceIDBuffer);\n";
 
         *maxResourceIDBufferSize = std::max(*maxResourceIDBufferSize, count);
     }
@@ -1166,7 +1176,7 @@ void MaybeResetResources(egl::Display *display,
             BufferCalls &bufferMapCalls   = resourceTracker->getBufferMapCalls();
             BufferCalls &bufferUnmapCalls = resourceTracker->getBufferUnmapCalls();
 
-            DeleteResourcesInReset(out, newBuffers, buffersToDelete, "Buffer",
+            DeleteResourcesInReset(out, contextID, newBuffers, buffersToDelete, resourceIDType,
                                    maxResourceIDBufferSize);
 
             // If any of our starting buffers were deleted during the run, recreate them
@@ -1255,8 +1265,8 @@ void MaybeResetResources(egl::Display *display,
             ResourceCalls &framebufferRegenCalls   = trackedFramebuffers.getResourceRegenCalls();
             ResourceCalls &framebufferRestoreCalls = trackedFramebuffers.getResourceRestoreCalls();
 
-            DeleteResourcesInReset(out, newFramebuffers, framebuffersToDelete, "Framebuffer",
-                                   maxResourceIDBufferSize);
+            DeleteResourcesInReset(out, contextID, newFramebuffers, framebuffersToDelete,
+                                   resourceIDType, maxResourceIDBufferSize);
 
             for (GLuint id : framebuffersToRegen)
             {
@@ -1297,8 +1307,8 @@ void MaybeResetResources(egl::Display *display,
             ResourceCalls &renderbufferRestoreCalls =
                 trackedRenderbuffers.getResourceRestoreCalls();
 
-            DeleteResourcesInReset(out, newRenderbuffers, renderbuffersToDelete, "Renderbuffer",
-                                   maxResourceIDBufferSize);
+            DeleteResourcesInReset(out, contextID, newRenderbuffers, renderbuffersToDelete,
+                                   resourceIDType, maxResourceIDBufferSize);
 
             for (GLuint id : renderbuffersToRegen)
             {
@@ -1411,7 +1421,7 @@ void MaybeResetResources(egl::Display *display,
             ResourceCalls &textureRegenCalls   = trackedTextures.getResourceRegenCalls();
             ResourceCalls &textureRestoreCalls = trackedTextures.getResourceRestoreCalls();
 
-            DeleteResourcesInReset(out, newTextures, texturesToDelete, "Texture",
+            DeleteResourcesInReset(out, contextID, newTextures, texturesToDelete, resourceIDType,
                                    maxResourceIDBufferSize);
 
             // If any of our starting textures were deleted, regen them
@@ -1472,8 +1482,8 @@ void MaybeResetResources(egl::Display *display,
             ResourceCalls &vertexArrayRegenCalls   = trackedVertexArrays.getResourceRegenCalls();
             ResourceCalls &vertexArrayRestoreCalls = trackedVertexArrays.getResourceRestoreCalls();
 
-            DeleteResourcesInReset(out, newVertexArrays, vertexArraysToDelete, "VertexArray",
-                                   maxResourceIDBufferSize);
+            DeleteResourcesInReset(out, contextID, newVertexArrays, vertexArraysToDelete,
+                                   resourceIDType, maxResourceIDBufferSize);
 
             // If any of our starting vertex arrays were deleted during the run, recreate them
             for (GLuint id : vertexArraysToRegen)
@@ -2248,6 +2258,13 @@ void CaptureUpdateResourceIDs(const gl::Context *context,
 
     std::stringstream updateFuncNameStr;
     updateFuncNameStr << "Update" << resourceName << "ID";
+    bool trackedPerContext = IsTrackedPerContext(resourceIDType);
+    if (trackedPerContext)
+    {
+        // TODO (https://issuetracker.google.com/169868803) The '2' version can be removed after all
+        // context-local objects are tracked per-context
+        updateFuncNameStr << "2";
+    }
     std::string updateFuncName = updateFuncNameStr.str();
 
     const IDType *returnedIDs = reinterpret_cast<const IDType *>(param.data[0].data());
@@ -2260,6 +2277,10 @@ void CaptureUpdateResourceIDs(const gl::Context *context,
         IDType id                = returnedIDs[idIndex];
         GLsizei readBufferOffset = idIndex * sizeof(gl::RenderbufferID);
         ParamBuffer params;
+        if (trackedPerContext)
+        {
+            params.addValueParam("contextId", ParamType::TGLuint, context->id().value);
+        }
         params.addValueParam("id", ParamType::TGLuint, id.value);
         params.addValueParam("readBufferOffset", ParamType::TGLsizei, readBufferOffset);
         callsOut->emplace_back(updateFuncName, std::move(params));
@@ -4775,17 +4796,21 @@ void CaptureShareGroupMidExecutionSetup(
         {
             frameCaptureShared->setDeferredLinkProgram(id);
 
-            // Deferred attachment of shaders is not yet supported
-            ASSERT(program->getAttachedShadersCount());
-
-            // AttachShader calls will be generated at shader-handling time
-            for (gl::ShaderType shaderType : gl::AllShaderTypes())
+            if (program->getAttachedShadersCount() > 0)
             {
-                gl::Shader *shader = program->getAttachedShader(shaderType);
-                if (shader != nullptr)
+                // AttachShader calls will be generated at shader-handling time
+                for (gl::ShaderType shaderType : gl::AllShaderTypes())
                 {
-                    deferredAttachCalls[shader->getHandle()].push_back(id);
+                    gl::Shader *shader = program->getAttachedShader(shaderType);
+                    if (shader != nullptr)
+                    {
+                        deferredAttachCalls[shader->getHandle()].push_back(id);
+                    }
                 }
+            }
+            else
+            {
+                WARN() << "Deferred attachment of shaders is not yet supported";
             }
         }
 
@@ -5310,6 +5335,8 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         for (std::vector<CallCapture> *calls : framebufferSetupCalls)
         {
             Capture(calls, framebufferFuncs.bindFramebuffer(replayState, true, GL_FRAMEBUFFER, id));
+            // Set current context for this CallCapture
+            calls->back().contextID = context->id();
         }
         currentDrawFramebuffer = currentReadFramebuffer = id;
 
@@ -5490,9 +5517,13 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         }
     }
 
+    // Capture Queries
+    const gl::QueryMap &queryMap = context->getQueriesForCapture();
+
     // Create existing queries. Note that queries may be genned and not yet started. In that
     // case the queries will exist in the query map as nullptr entries.
-    const gl::QueryMap &queryMap = context->getQueriesForCapture();
+    // If any queries are active between frames, we want to defer creation and do them last,
+    // otherwise you'll get GL errors about starting a query while one is already active.
     for (gl::QueryMap::Iterator queryIter = gl::UnsafeResourceMapIter(queryMap).beginWithNull(),
                                 endIter   = gl::UnsafeResourceMapIter(queryMap).endWithNull();
          queryIter != endIter; ++queryIter)
@@ -5508,14 +5539,27 @@ void CaptureMidExecutionSetup(const gl::Context *context,
         {
             gl::QueryType queryType = query->getType();
 
+            // Defer active queries until we've created them all
+            if (IsQueryActive(apiState, queryID))
+            {
+                continue;
+            }
+
             // Begin the query to generate the object
             cap(CaptureBeginQuery(replayState, true, queryType, queryID));
 
             // End the query if it was not active
-            if (!IsQueryActive(apiState, queryID))
-            {
-                cap(CaptureEndQuery(replayState, true, queryType));
-            }
+            cap(CaptureEndQuery(replayState, true, queryType));
+        }
+    }
+
+    const gl::ActiveQueryMap &activeQueries = apiState.getActiveQueriesForCapture();
+    for (const auto &activeQueryIter : activeQueries)
+    {
+        const gl::Query *activeQuery = activeQueryIter.get();
+        if (activeQuery)
+        {
+            cap(CaptureBeginQuery(replayState, true, activeQuery->getType(), activeQuery->id()));
         }
     }
 
@@ -6367,6 +6411,29 @@ AddressRange::~AddressRange() = default;
 uintptr_t AddressRange::end()
 {
     return start + size;
+}
+
+bool IsTrackedPerContext(ResourceIDType type)
+{
+    // This helper function informs us which context-local (not shared) objects are tracked
+    // with per-context object maps.
+    if (IsSharedObjectResource(type))
+    {
+        return false;
+    }
+
+    // TODO (https://issuetracker.google.com/169868803): Remaining context-local resources (VAOs,
+    // PPOs, Transform Feedback Objects, and Query Objects) must also tracked per-context. Once all
+    // per-context resource handling is correctly updated then this function can be replaced with
+    // !IsSharedObjectResource().
+    switch (type)
+    {
+        case ResourceIDType::Framebuffer:
+            return true;
+
+        default:
+            return false;
+    }
 }
 
 CoherentBuffer::CoherentBuffer(uintptr_t start,
@@ -8351,9 +8418,15 @@ void FrameCaptureShared::maybeGenResourceOnBind(const gl::Context *context, Call
 
         std::stringstream updateFuncNameStr;
         updateFuncNameStr << "Set" << resourceName << "ID";
-        std::string updateFuncName = updateFuncNameStr.str();
-
         ParamBuffer params;
+        if (IsTrackedPerContext(resourceIDType))
+        {
+            // TODO (https://issuetracker.google.com/169868803) The '2' version can be removed after
+            // all context-local objects are tracked per-context
+            updateFuncNameStr << "2";
+            params.addValueParam("contextID", ParamType::TGLuint, context->id().value);
+        }
+        std::string updateFuncName = updateFuncNameStr.str();
         params.addValueParam("id", ParamType::TGLuint, id.value);
         mFrameCalls.emplace_back(updateFuncName, std::move(params));
     }

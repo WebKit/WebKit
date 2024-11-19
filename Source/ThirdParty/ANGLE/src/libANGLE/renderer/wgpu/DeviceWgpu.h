@@ -11,6 +11,7 @@
 #define LIBANGLE_RENDERER_WGPU_DEVICEWGPU_H_
 
 #include "libANGLE/renderer/DeviceImpl.h"
+#include "libANGLE/renderer/wgpu/wgpu_helpers.h"
 
 namespace rx
 {

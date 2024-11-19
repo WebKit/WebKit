@@ -491,7 +491,7 @@ TEMPLATE_EGL_ENTRY_POINT_WITH_RETURN = """\
     Thread *thread = egl::GetCurrentThread();
     {return_type} returnValue;
     {{
-        ANGLE_SCOPED_GLOBAL_LOCK();
+        {egl_lock}
         EGL_EVENT({name}, "{format_params}"{comma_if_needed}{pass_params});
 
         {packed_gl_enum_conversions}
@@ -1591,6 +1591,25 @@ def is_lockless_egl_entry_point(cmd_name):
     return False
 
 
+def is_egl_sync_entry_point(cmd_name):
+    if cmd_name in [
+            "eglClientWaitSync", "eglCreateSync", "eglDestroySync", "eglGetSyncAttrib",
+            "eglWaitSync", "eglCreateSyncKHR", "eglClientWaitSyncKHR",
+            "eglDupNativeFenceFDANDROID", "eglCopyMetalSharedEventANGLE", "eglDestroySyncKHR",
+            "eglGetSyncAttribKHR", "eglSignalSyncKHR", "eglWaitSyncKHR"
+    ]:
+        return True
+    return False
+
+
+# egl entry points whose code path writes to resources that can be accessed
+# by both EGL Sync APIs and EGL Non-Sync APIs
+def is_egl_entry_point_accessing_both_sync_and_non_sync_API_resources(cmd_name):
+    if cmd_name in ["eglTerminate", "eglLabelObjectKHR", "eglReleaseThread", "eglInitialize"]:
+        return True
+    return False
+
+
 def get_validation_expression(api, cmd_name, entry_point_name, internal_params, is_gles1):
     name = strip_api_prefix(cmd_name)
     private_params = ["context->getPrivateState()", "context->getMutableErrorSetForValidation()"]
@@ -1970,6 +1989,8 @@ def format_entry_point_def(api, command_node, cmd_name, proto, params, cmd_packe
             get_preamble(api, cmd_name, params),
         "epilog":
             get_epilog(api, cmd_name),
+        "egl_lock":
+            get_egl_lock(cmd_name),
     }
 
     template = get_def_template(api, cmd_name, return_type, has_errcode_ret)
@@ -3070,6 +3091,15 @@ def get_context_lock(api, cmd_name):
         return ""
 
     return "SCOPED_SHARE_CONTEXT_LOCK(context);"
+
+
+def get_egl_lock(cmd_name):
+    if is_egl_sync_entry_point(cmd_name):
+        return "ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();"
+    if is_egl_entry_point_accessing_both_sync_and_non_sync_API_resources(cmd_name):
+        return "ANGLE_SCOPED_GLOBAL_EGL_AND_EGL_SYNC_LOCK();"
+    else:
+        return "ANGLE_SCOPED_GLOBAL_LOCK();"
 
 
 def get_prepare_swap_buffers_call(api, cmd_name, params):

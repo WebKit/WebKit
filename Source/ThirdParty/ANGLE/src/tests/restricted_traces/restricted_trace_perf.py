@@ -16,14 +16,14 @@ Pixel 6 (ARM based) specific script that measures the following for each restric
 Setup:
 
   autoninja -C out/<config> angle_trace_perf_tests angle_apks
-  adb install -r --force-queryable ./out/<config>/apks/AngleLibraries.apk
-  adb install -r out/<config>/angle_trace_tests_apk/angle_trace_tests-debug.apk
-  (cd out/<config>; ../../src/tests/run_angle_android_test.py angle_trace_tests \
-   --verbose --local-output --verbose-logging --max-steps-performed 1 --log=debug)
 
 Recommended command to run:
 
-  python3 restricted_trace_perf.py --fixedtime 10 --power --output-tag android.$(date '+%Y%m%d') --loop-count 5
+  out/<config>/restricted_trace_perf --fixedtime 10 --power --memory --output-tag android.$(date '+%Y%m%d') --loop-count 5
+
+Alternatively, you can pass the build directory and run from anywhere:
+
+  python3 restricted_trace_perf.py --fixedtime 10 --power --output-tag android.$(date '+%Y%m%d') --loop-count 5 --build-dir ../../../out/<config>
 
 - This will run through all the traces 5 times with the native driver, then 5 times with vulkan (via ANGLE)
 - 10 second run time with one warmup loop
@@ -34,6 +34,7 @@ Of the 5 runs, the high and low for each data point will be dropped, average of 
 '''
 
 import argparse
+import contextlib
 import copy
 import csv
 import fcntl
@@ -41,6 +42,7 @@ import fnmatch
 import json
 import logging
 import os
+import pathlib
 import re
 import statistics
 import subprocess
@@ -52,9 +54,16 @@ from collections import defaultdict, namedtuple
 from datetime import datetime
 from psutil import process_iter
 
+PY_UTILS = str(pathlib.Path(__file__).resolve().parents[1] / 'py_utils')
+if PY_UTILS not in sys.path:
+    os.stat(PY_UTILS) and sys.path.insert(0, PY_UTILS)
+import android_helper
+import angle_path_util
+import angle_test_util
+
 DEFAULT_TEST_DIR = '.'
-DEFAULT_TEST_JSON = 'restricted_traces.json'
 DEFAULT_LOG_LEVEL = 'info'
+DEFAULT_ANGLE_PACKAGE = 'com.android.angle.test'
 
 Result = namedtuple('Result', ['stdout', 'stderr', 'time'])
 
@@ -68,7 +77,7 @@ class _global(object):
 def init():
     _global.current_user = run_adb_command('shell am get-current-user').stdout.strip()
     _global.storage_dir = '/data/user/' + _global.current_user + '/com.android.angle.test/files'
-    _global.cache_dir = '/data/user_de/' + _global.current_user + '/com.android.angle.test/cach'
+    _global.cache_dir = '/data/user_de/' + _global.current_user + '/com.android.angle.test/cache'
     logging.debug('Running with user %s, storage %s, cache %s', _global.current_user,
                   _global.storage_dir, _global.cache_dir)
 
@@ -198,6 +207,24 @@ def get_trace_width(mode):
         width += 10
 
     return width
+
+
+# This function changes to the target directory, then 'yield' passes execution to the inner part of
+# the 'with' block that invoked it. The 'finally' block is executed at the end of the 'with' block,
+# including when exceptions are raised.
+@contextlib.contextmanager
+def run_from_dir(dir):
+    # If not set, just run the command and return
+    if not dir:
+        yield
+        return
+    # Otherwise, change directories
+    cwd = os.getcwd()
+    os.chdir(dir)
+    try:
+        yield
+    finally:
+        os.chdir(cwd)
 
 
 def run_trace(trace, args):
@@ -549,7 +576,7 @@ def get_thermal_info():
             name = re.search('Name: ([^ ]*)', line).group(1)
             if ('VIRTUAL-SKIN' in name and
                     '-CHARGE-' not in name and  # only supposed to affect charging speed
-                    '-MODEL-' not in name):  # different units and not used for throttling
+                    'MODEL' not in name.split('-')):  # different units and not used for throttling
                 result.append(line)
 
     if not result:
@@ -701,6 +728,12 @@ def main():
         '--min-battery-level',
         help='Sleep between tests if battery level drops below this value (off by default)',
         type=int)
+    parser.add_argument(
+        '--angle-package',
+        help='Where to load ANGLE libraries from. This will load from the test APK by default, ' +
+        'but you can point to any APK that contains ANGLE. Specify \'system\' to use libraries ' +
+        'already on the device',
+        default=DEFAULT_ANGLE_PACKAGE)
 
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -713,10 +746,16 @@ def main():
         help='Whether to run the trace in offscreen mode',
         action='store_true',
         default=False)
+    parser.add_argument(
+        '--build-dir',
+        help='Where to find the APK on the host, i.e. out/Android. If unset, it is assumed you ' +
+        'are running from the build dir already, or are using the wrapper script ' +
+        'out/<config>/restricted_trace_perf.',
+        default='')
 
     args = parser.parse_args()
 
-    logging.basicConfig(level=args.log.upper())
+    angle_test_util.SetupLogging(args.log.upper())
 
     run_adb_command('root')
 
@@ -747,12 +786,9 @@ def logged_args():
 
 def run_traces(args):
     # Load trace names
-    with open(os.path.join(DEFAULT_TEST_DIR, DEFAULT_TEST_JSON)) as f:
+    test_json = os.path.join(args.build_dir, 'gen/trace_list.json')
+    with open(os.path.join(DEFAULT_TEST_DIR, test_json)) as f:
         traces = json.loads(f.read())
-
-    # Have to split the 'trace version' thing up
-    trace_and_version = traces['traces']
-    traces = [i.split(' ',)[0] for i in trace_and_version]
 
     failures = []
 
@@ -896,11 +932,18 @@ def run_traces(args):
             "\"process\npeak\nmem\ncompare\""
         ])
 
+    with run_from_dir(args.build_dir):
+        android_helper.Initialize("angle_trace_tests")
+        android_helper.PrepareTestSuite("angle_trace_tests")
+
     for trace in fnmatch.filter(traces, args.filter):
 
         print(
             "\nStarting run for %s loopcount %i with %s at %s\n" %
             (trace, int(args.loop_count), renderers, datetime.now().strftime('%Y-%m-%d %H:%M:%S')))
+
+        with run_from_dir(args.build_dir):
+            android_helper.PrepareRestrictedTraces([trace])
 
         # Start with clean data containers for each trace
         rows.clear()
@@ -921,16 +964,12 @@ def run_traces(args):
                 if renderer == "native":
                     # Force the settings to native
                     run_adb_command(
-                        'shell settings put global angle_debug_package org.chromium.angle')
-                    run_adb_command(
                         'shell settings put global angle_gl_driver_selection_pkgs com.android.angle.test'
                     )
                     run_adb_command(
                         'shell settings put global angle_gl_driver_selection_values native')
                 elif renderer == "vulkan":
                     # Force the settings to ANGLE
-                    run_adb_command(
-                        'shell settings put global angle_debug_package org.chromium.angle')
                     run_adb_command(
                         'shell settings put global angle_gl_driver_selection_pkgs com.android.angle.test'
                     )
@@ -948,6 +987,14 @@ def run_traces(args):
                 else:
                     logging.error('Unsupported renderer {}'.format(renderer))
                     exit()
+
+                if args.angle_package == 'system':
+                    # Clear the debug package so ANGLE will be loaded from /system/lib64
+                    run_adb_command('shell settings delete global angle_debug_package')
+                else:
+                    # Otherwise, load ANGLE from the specified APK
+                    run_adb_command('shell settings put global angle_debug_package ' +
+                                    args.angle_package)
 
                 # Remove any previous perf results
                 cleanup()

@@ -20,9 +20,6 @@ declare_args() {
   # Enables OpenCL support, off by default.
   angle_enable_cl = false
 
-  # Enables OpenCL testing support, off by default.
-  angle_enable_cl_testing = false
-
   angle_restricted_traces = []
 
   # Don't build dEQP by default.
@@ -34,6 +31,9 @@ declare_args() {
 declare_args() {
   # Only bundle traces in the APK if we're building a subset
   restricted_traces_outside_of_apk = is_android && angle_restricted_traces == []
+
+  # Enables OpenCL testing support
+  angle_enable_cl_testing = angle_enable_cl && (is_linux || is_android)
 }
 
 if (angle_has_build) {
@@ -177,7 +177,6 @@ declare_args() {
 
   angle_enable_vulkan =
       angle_has_build &&
-      !(is_android && build_with_chromium && is_official_build) &&
       ((is_win && !angle_is_winuwp) ||
        ((is_linux || is_chromeos) &&
         (angle_use_x11 || angle_use_wayland || angle_use_vulkan_display)) ||

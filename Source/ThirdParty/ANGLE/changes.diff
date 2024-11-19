@@ -47,17 +47,16 @@ index 005fd8d00feca1cf496e3e65f1633977294ab9d8..3ddedf7efd216ad25caa806f1517501e
  
  #endif  // INCLUDE_GLES2_GL2EXT_ANGLE_H_
 diff --git a/include/platform/autogen/FeaturesMtl_autogen.h b/include/platform/autogen/FeaturesMtl_autogen.h
-index 3eaee0ad0744cc9b01c235d16d29e7f55416f9c8..2aec835fe3b5a3815a8bdde30c0724766ba74a25 100644
+index 3eaee0ad0744cc9b01c235d16d29e7f55416f9c8..b6d521015840f78d626a0134af3375989c3bf28b 100644
 --- a/include/platform/autogen/FeaturesMtl_autogen.h
 +++ b/include/platform/autogen/FeaturesMtl_autogen.h
-@@ -74,6 +74,13 @@ struct FeaturesMtl : FeatureSetBase
+@@ -74,6 +74,12 @@ struct FeaturesMtl : FeatureSetBase
          &members,
      };
  
 +    FeatureInfo hasVariableRasterizationRate = {
 +        "hasVariableRasterizationRate",
 +        FeatureCategory::MetalFeatures,
-+        "The renderer supports variable rasterization rate",
 +        &members,
 +    };
 +
@@ -97,7 +96,7 @@ index b258660ba4367032e592ab8d6397ee5edca0a661..fe961d3125259b015d3d005a6d45443e
          "renderbuffer": "RenderbufferID"
      },
 diff --git a/scripts/generate_entry_points.py b/scripts/generate_entry_points.py
-index 102a64b4f43094c44cd08247d7d80e14139244f0..bba27e61d978eaaa40d35412b08b2480af4ad702 100755
+index af4835ed5fbc786624b6d5878bfd07d1500183f0..c98a72f0af0d06083055ea64f10a1009d16c39c0 100755
 --- a/scripts/generate_entry_points.py
 +++ b/scripts/generate_entry_points.py
 @@ -1006,6 +1006,7 @@ FORMAT_DICT = {
@@ -434,7 +433,7 @@ index 5ace655c9b730ed73cb4488940435d31e7ef7937..5ce717bc8ba251bf600f779ebcf83c0e
      return 0;
  }
 diff --git a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp b/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
-index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a8f2c6cf5 100644
+index d03039602a42956a7d60903f36bcc194012c4900..1059f9c6ae6090d8a8657b61077f07ed6af9e269 100644
 --- a/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
 +++ b/src/compiler/preprocessor/preprocessor_tab_autogen.cpp
 @@ -1,5 +1,8 @@
@@ -446,8 +445,20 @@ index a7607c9e529ce7a57bdc6c3c82134b144eb67130..c9ec1adec020589bd4fcfe226721042a
  /* Bison implementation for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+diff --git a/src/compiler/translator/Types.h b/src/compiler/translator/Types.h
+index 37d7e7a8f66a09114b52072dbb8873ca39ad5649..be68aef5cc91b150506447f880ed196fbf367647 100644
+--- a/src/compiler/translator/Types.h
++++ b/src/compiler/translator/Types.h
+@@ -253,6 +253,7 @@ class TType
+     }
+     bool isScalarFloat() const { return isScalar() && type == EbtFloat; }
+     bool isScalarInt() const { return isScalar() && (type == EbtInt || type == EbtUInt); }
++    bool isSignedIntegerValue() const { return (isScalar() || isVector()) && type == EbtInt; }
+ 
+     bool canBeConstructed() const;
+ 
 diff --git a/src/compiler/translator/glslang_tab_autogen.cpp b/src/compiler/translator/glslang_tab_autogen.cpp
-index 82c3a89e21a4aa48ff4d403f1933a1820761d9a2..0e6b7458c83234823f52ab5f51ff8e260a0caa30 100644
+index 67bf1134ef04cf5e23eba2ac5521f0c2913d36d2..340a8b123f7980deff57d3c4c4c30a1b12608727 100644
 --- a/src/compiler/translator/glslang_tab_autogen.cpp
 +++ b/src/compiler/translator/glslang_tab_autogen.cpp
 @@ -1,5 +1,8 @@
@@ -472,6 +483,443 @@ index d5a48edd40f382359db76acf1a1ce75b6a6dc6d5..907c62e0bb659292b391270790498186
  /* Bison interface for Yacc-like parsers in C
  
     Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
+diff --git a/src/compiler/translator/msl/EmitMetal.cpp b/src/compiler/translator/msl/EmitMetal.cpp
+index bc36973070ba2aa143ee536d8c5487f13fef6406..216a577c965c604b3f4e06b1f8982389e650a5e2 100644
+--- a/src/compiler/translator/msl/EmitMetal.cpp
++++ b/src/compiler/translator/msl/EmitMetal.cpp
+@@ -278,40 +278,12 @@ static const char *GetOperatorString(TOperator op,
+             return "=";
+         case TOperator::EOpInitialize:
+             return "=";
+-        case TOperator::EOpAddAssign:
+-            return "+=";
+-        case TOperator::EOpSubAssign:
+-            return "-=";
+-        case TOperator::EOpMulAssign:
+-            return "*=";
+-        case TOperator::EOpDivAssign:
+-            return "/=";
+-        case TOperator::EOpIModAssign:
+-            return "%=";
+-        case TOperator::EOpBitShiftLeftAssign:
+-            return "<<=";  // TODO: Check logical vs arithmetic shifting.
+-        case TOperator::EOpBitShiftRightAssign:
+-            return ">>=";  // TODO: Check logical vs arithmetic shifting.
+         case TOperator::EOpBitwiseAndAssign:
+             return "&=";
+         case TOperator::EOpBitwiseXorAssign:
+             return "^=";
+         case TOperator::EOpBitwiseOrAssign:
+             return "|=";
+-        case TOperator::EOpAdd:
+-            return "+";
+-        case TOperator::EOpSub:
+-            return "-";
+-        case TOperator::EOpMul:
+-            return "*";
+-        case TOperator::EOpDiv:
+-            return "/";
+-        case TOperator::EOpIMod:
+-            return "%";
+-        case TOperator::EOpBitShiftLeft:
+-            return "<<";  // TODO: Check logical vs arithmetic shifting.
+-        case TOperator::EOpBitShiftRight:
+-            return ">>";  // TODO: Check logical vs arithmetic shifting.
+         case TOperator::EOpBitwiseAnd:
+             return "&";
+         case TOperator::EOpBitwiseXor:
+@@ -386,6 +358,36 @@ static const char *GetOperatorString(TOperator op,
+         case TOperator::EOpNotEqualComponentWise:
+             return "!=";
+ 
++        case TOperator::EOpBitShiftRight:
++        case TOperator::EOpBitShiftRightAssign:
++            // TODO: Check logical vs arithmetic shifting.
++            return "ANGLE_rshift";
++
++        case TOperator::EOpBitShiftLeft:
++        case TOperator::EOpBitShiftLeftAssign:
++            // TODO: Check logical vs arithmetic shifting.
++            return resultType.isSignedIntegerValue() ? "ANGLE_ilshift" : "ANGLE_ulshift";
++
++        case TOperator::EOpAddAssign:
++        case TOperator::EOpAdd:
++            return resultType.isSignedIntegerValue() ? "ANGLE_iadd" : "+";
++
++        case TOperator::EOpSubAssign:
++        case TOperator::EOpSub:
++            return resultType.isSignedIntegerValue() ? "ANGLE_isub" : "-";
++
++        case TOperator::EOpMulAssign:
++        case TOperator::EOpMul:
++            return resultType.isSignedIntegerValue() ? "ANGLE_imul" : "*";
++
++        case TOperator::EOpDiv:
++        case TOperator::EOpDivAssign:
++            return resultType.isSignedIntegerValue() ? "ANGLE_div" : "/";
++
++        case TOperator::EOpIMod:
++        case TOperator::EOpIModAssign:
++            return resultType.isSignedIntegerValue() ? "ANGLE_imod" : "%";
++
+         case TOperator::EOpEqual:
+             if ((argType0->getStruct() && argType1->getStruct()) &&
+                 (argType0->isArray() && argType1->isArray()))
+@@ -1813,6 +1815,17 @@ bool GenMetalTraverser::visitBinary(Visit, TIntermBinary *binaryNode)
+         }
+         break;
+ 
++        case TOperator::EOpDivAssign:
++        case TOperator::EOpIModAssign:
++        case TOperator::EOpBitShiftRightAssign:
++        case TOperator::EOpBitShiftLeftAssign:
++        case TOperator::EOpAddAssign:
++        case TOperator::EOpSubAssign:
++        case TOperator::EOpMulAssign:
++            leftNode.traverse(this);
++            mOut << " = ";
++            [[fallthrough]];
++
+         default:
+         {
+             const TType &resultType = binaryNode->getType();
+@@ -2249,7 +2262,27 @@ bool GenMetalTraverser::visitAggregate(Visit, TIntermAggregate *aggregateNode)
+         }
+         else
+         {
++            bool isFtoi = [&]() {
++                if ((!retType.isScalar() && !retType.isVector()) ||
++                    !IsInteger(retType.getBasicType()))
++                    return false;
++                if (aggregateNode->getChildCount() != 1)
++                    return false;
++                auto &argType = aggregateNode->getChildNode(0)->getAsTyped()->getType();
++                return (argType.isScalar() || argType.isVector()) &&
++                       argType.getBasicType() == EbtFloat;
++            }();
++
++            if (isFtoi)
++            {
++                mOut << "ANGLE_ftoi<";
+                 emitType(retType, etConfig);
++                mOut << ">";
++            }
++            else
++            {
++                emitType(retType, etConfig);
++            }
+             emitArgList("(", ")");
+         }
+ 
+diff --git a/src/compiler/translator/msl/ProgramPrelude.cpp b/src/compiler/translator/msl/ProgramPrelude.cpp
+index 7347cadce9fd03495ce82210a6e49e8a81a0e35b..c0b0b9329c113ea4611490c05d3acd3852f38722 100644
+--- a/src/compiler/translator/msl/ProgramPrelude.cpp
++++ b/src/compiler/translator/msl/ProgramPrelude.cpp
+@@ -113,6 +113,15 @@ class ProgramPrelude : public TIntermTraverser
+     void degrees();
+     void radians();
+     void mod();
++    void div();
++    void imod();
++    void imul();
++    void iadd();
++    void isub();
++    void ilshift();
++    void ulshift();
++    void rshift();
++    void ftoi();
+     void mixBool();
+     void postIncrementMatrix();
+     void preIncrementMatrix();
+@@ -431,6 +440,134 @@ ANGLE_ALWAYS_INLINE X ANGLE_mod(X x, Y y)
+ }
+ )")
+ 
++// Avoid undefined behavior when:
++// - the divisor is 0
++// - the dividend is INT_MIN and the divisor is -1 (integer overflow)
++// When the behavior would be undefined the result is `x`.
++PROGRAM_PRELUDE_DECLARE(div,
++                        R"(
++template <typename X, typename Y>
++ANGLE_ALWAYS_INLINE X ANGLE_div(X x, Y y)
++{
++    auto predicate = X(y) == X(0);
++    if constexpr (metal::is_signed_v<X>)
++    {
++        predicate = predicate || (x == X(metal::numeric_limits<X>::lowest()) && X(y) == X(-1));
++    }
++    return x / metal::select(X(y), X(1), predicate);
++}
++)")
++
++// Avoid undefined behavior when:
++// - the divisor is 0
++// - the dividend is INT_MIN and the divisor is -1 (integer overflow)
++// - either of the operands is negative (undefined behavior in Metal)
++// When the behavior would be undefined the result is 0.
++PROGRAM_PRELUDE_DECLARE(imod,
++                        R"(
++template <typename X, typename Y>
++ANGLE_ALWAYS_INLINE X ANGLE_imod(X x, Y y)
++{
++    if constexpr (metal::is_signed_v<X>) {
++        X y_or_one = metal::select(X(y), X(1), ((X(y) == X(0)) | ((x == X(metal::numeric_limits<X>::lowest())) & (X(y) == X(-1)))));
++        if (metal::any((X(x | y_or_one) & X(2147483648u)) != X(0u)))
++        {
++            return as_type<X>(
++                as_type<metal::make_unsigned_t<X>>(x) - as_type<metal::make_unsigned_t<X>>(x / y_or_one) * as_type<metal::make_unsigned_t<X>>(y_or_one)
++            );
++        }
++        else
++        {
++            return x % y_or_one;
++        }
++    }
++    else
++    {
++        return x % metal::select(X(y), X(1u), X(y) == X(0u));
++    }
++}
++)")
++
++// Avoid undefined behavior when the operand is outside the range of values that can be represented.
++// When the behavior would be undefined the value is clamped to fit the target type.
++PROGRAM_PRELUDE_DECLARE(ftoi,
++                        R"(
++template <typename X, typename Y>
++ANGLE_ALWAYS_INLINE X ANGLE_ftoi(Y y)
++{
++    auto min = metal::numeric_limits<X>::min();
++    auto max = metal::numeric_limits<X>::max();
++    return X(metal::clamp(y, Y(min), Y(max)));
++}
++)")
++
++// Avoid undefined behavior due to integer overflow
++PROGRAM_PRELUDE_DECLARE(imul,
++                        R"(
++template <typename X, typename Y>
++ANGLE_ALWAYS_INLINE X ANGLE_imul(X x, Y y)
++{
++    return as_type<X>(as_type<metal::make_unsigned_t<X>>(x) * as_type<metal::make_unsigned_t<Y>>(y));
++}
++)")
++
++// Avoid undefined behavior due to integer overflow
++PROGRAM_PRELUDE_DECLARE(iadd,
++                        R"(
++template <typename X, typename Y>
++ANGLE_ALWAYS_INLINE X ANGLE_iadd(X x, Y y)
++{
++    return as_type<X>(as_type<metal::make_unsigned_t<X>>(x) + as_type<metal::make_unsigned_t<Y>>(y));
++}
++)")
++
++// Avoid undefined behavior due to integer underflow
++PROGRAM_PRELUDE_DECLARE(isub,
++                        R"(
++template <typename X, typename Y>
++ANGLE_ALWAYS_INLINE X ANGLE_isub(X x, Y y)
++{
++    return as_type<X>(as_type<metal::make_unsigned_t<X>>(x) - as_type<metal::make_unsigned_t<Y>>(y));
++}
++)")
++
++// Avoid undefined behavior in e1 << e2 when:
++// 1) e2 is larger than the bit width of the type
++// 2) e2 is a negative value.
++// 3) e1 is a negative value
++PROGRAM_PRELUDE_DECLARE(ilshift,
++                        R"(
++template <typename X, typename Y>
++ANGLE_ALWAYS_INLINE X ANGLE_ilshift(X x, Y y)
++{
++    return as_type<X>(metal::select(metal::make_unsigned_t<X>(0), as_type<metal::make_unsigned_t<X>>(x) << (y & Y(31)), as_type<metal::make_unsigned_t<Y>>(y) < metal::make_unsigned_t<Y>(32)));
++}
++)")
++
++// Avoid undefined behavior in e1 << e2 when:
++// 1) e2 is larger than the bit width of the type
++// 2) e2 is a negative value.
++PROGRAM_PRELUDE_DECLARE(ulshift,
++                        R"(
++template <typename X, typename Y>
++ANGLE_ALWAYS_INLINE X ANGLE_ulshift(X x, Y y)
++{
++    return metal::select(X(0), x << (y & Y(31)), as_type<metal::make_unsigned_t<Y>>(y) < metal::make_unsigned_t<Y>(32));
++}
++)")
++
++// Avoid undefined behavior in e1 >> e2 when:
++// 1) e2 is larger than the bit width of the type
++// 2) e2 is a negative value.
++PROGRAM_PRELUDE_DECLARE(rshift,
++                        R"(
++template <typename X, typename Y>
++ANGLE_ALWAYS_INLINE X ANGLE_rshift(X x, Y y)
++{
++    return metal::select(X(0), x >> (y & Y(31)), as_type<metal::make_unsigned_t<Y>>(y) < metal::make_unsigned_t<Y>(32));
++}
++)")
++
+ PROGRAM_PRELUDE_DECLARE(mixBool,
+                         R"(
+ template <typename T, int N>
+@@ -3273,6 +3410,10 @@ void ProgramPrelude::visitOperator(TOperator op,
+         case TOperator::EOpMod:
+             mod();
+             break;
++        case TOperator::EOpIModAssign:
++        case TOperator::EOpIMod:
++            imod();
++            break;
+         case TOperator::EOpRefract:
+             if (argType0->isScalar())
+             {
+@@ -3416,6 +3557,7 @@ void ProgramPrelude::visitOperator(TOperator op,
+             break;
+ 
+         case TOperator::EOpAdd:
++        case TOperator::EOpAddAssign:
+             if (argType0->isMatrix() && argType1->isScalar())
+             {
+                 addMatrixScalar();
+@@ -3424,16 +3566,14 @@ void ProgramPrelude::visitOperator(TOperator op,
+             {
+                 addScalarMatrix();
+             }
+-            break;
+-
+-        case TOperator::EOpAddAssign:
+-            if (argType0->isMatrix() && argType1->isScalar())
++            if (argType0->isSignedIntegerValue())
+             {
+-                addMatrixScalarAssign();
++                iadd();
+             }
+             break;
+ 
+         case TOperator::EOpSub:
++        case TOperator::EOpSubAssign:
+             if (argType0->isMatrix() && argType1->isScalar())
+             {
+                 subMatrixScalar();
+@@ -3442,16 +3582,22 @@ void ProgramPrelude::visitOperator(TOperator op,
+             {
+                 subScalarMatrix();
+             }
++            if (argType0->isSignedIntegerValue())
++            {
++                isub();
++            }
+             break;
+ 
+-        case TOperator::EOpSubAssign:
+-            if (argType0->isMatrix() && argType1->isScalar())
++        case TOperator::EOpMul:
++        case TOperator::EOpMulAssign:
++            if (argType0->isSignedIntegerValue())
+             {
+-                subMatrixScalarAssign();
++                imul();
+             }
+             break;
+ 
+         case TOperator::EOpDiv:
++        case TOperator::EOpDivAssign:
+             if (argType0->isMatrix())
+             {
+                 if (argType1->isMatrix())
+@@ -3463,26 +3609,17 @@ void ProgramPrelude::visitOperator(TOperator op,
+                     divMatrixScalar();
+                 }
+             }
+-            if (argType0->isScalar() && argType1->isMatrix())
++            else if (op == TOperator::EOpDiv && argType0->isScalar() && argType1->isMatrix())
+             {
+                 divScalarMatrix();
+             }
+-            break;
+-
+-        case TOperator::EOpDivAssign:
+-            if (argType0->isMatrix())
+-            {
+-                if (argType1->isMatrix())
+-                {
+-                    componentWiseDivideAssign();
+-                }
+-                else if (argType1->isScalar())
++            else
+             {
+-                    divMatrixScalarAssign();
+-                }
++                div();
+             }
+             break;
+ 
++
+         case TOperator::EOpMatrixCompMult:
+             if (argType0->isMatrix() && argType1->isMatrix())
+             {
+@@ -3550,20 +3687,31 @@ void ProgramPrelude::visitOperator(TOperator op,
+             }
+             break;
+ 
++        case TOperator::EOpBitShiftLeft:
++        case TOperator::EOpBitShiftLeftAssign:
++        {
++            if (argType0->isSignedIntegerValue())
++            {
++                ilshift();
++            }
++            else
++            {
++                ulshift();
++            }
++            break;
++        }
++
++        case TOperator::EOpBitShiftRight:
++        case TOperator::EOpBitShiftRightAssign:
++            rshift();
++            break;
++
+         case TOperator::EOpComma:
+         case TOperator::EOpAssign:
+         case TOperator::EOpInitialize:
+-        case TOperator::EOpMulAssign:
+-        case TOperator::EOpIModAssign:
+-        case TOperator::EOpBitShiftLeftAssign:
+-        case TOperator::EOpBitShiftRightAssign:
+         case TOperator::EOpBitwiseAndAssign:
+         case TOperator::EOpBitwiseXorAssign:
+         case TOperator::EOpBitwiseOrAssign:
+-        case TOperator::EOpMul:
+-        case TOperator::EOpIMod:
+-        case TOperator::EOpBitShiftLeft:
+-        case TOperator::EOpBitShiftRight:
+         case TOperator::EOpBitwiseAnd:
+         case TOperator::EOpBitwiseXor:
+         case TOperator::EOpBitwiseOr:
+@@ -3753,6 +3901,17 @@ bool ProgramPrelude::visitAggregate(Visit visit, TIntermAggregate *node)
+ 
+     const TFunction *func = node->getFunction();
+ 
++    if (node->isConstructor() && argCount == 1)
++    {
++        const TType &retType = node->getType();
++        const TType &argType = getArgType(0);
++        if (((retType.isScalar() || retType.isVector()) && IsInteger(retType.getBasicType())) &&
++            ((argType.isScalar() || argType.isVector()) && argType.getBasicType() == EbtFloat))
++        {
++            ftoi();
++        }
++    }
++
+     switch (node->getChildCount())
+     {
+         case 0:
 diff --git a/src/gpu_info_util/SystemInfo_internal.h b/src/gpu_info_util/SystemInfo_internal.h
 index 5cef5d49eea1b1f1e6c22543446b2e5391ee88f2..5bfff7a4587126abada2d0a2560fb32cce79bd37 100644
 --- a/src/gpu_info_util/SystemInfo_internal.h
@@ -491,10 +939,10 @@ index 5cef5d49eea1b1f1e6c22543446b2e5391ee88f2..5bfff7a4587126abada2d0a2560fb32c
  
  
 diff --git a/src/libANGLE/Context.cpp b/src/libANGLE/Context.cpp
-index b3a9c085103968ea61fc467f62e2ea7b6ffc783d..41df3f5a10a8c6f854405f7ab13601a9111a8691 100644
+index bd2c3dde0dac509d27e6aad7787a9b6a66e9da9b..1d0546f0a8cdc34d518b1fc4c2b90738b9482dc9 100644
 --- a/src/libANGLE/Context.cpp
 +++ b/src/libANGLE/Context.cpp
-@@ -9951,6 +9951,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
+@@ -9988,6 +9988,33 @@ void Context::textureFoveationParameters(TextureID texturePacked,
      texture->setFocalPoint(layer, focalPoint, focalX, focalY, gainX, gainY, foveaArea);
  }
  
@@ -528,7 +976,7 @@ index b3a9c085103968ea61fc467f62e2ea7b6ffc783d..41df3f5a10a8c6f854405f7ab13601a9
  void Context::endTiling(GLbitfield preserveMask)
  {
      ANGLE_CONTEXT_TRY(mImplementation->endTiling(this, preserveMask));
-@@ -10025,6 +10052,14 @@ void Context::blobCacheCallbacks(GLSETBLOBPROCANGLE set,
+@@ -10062,6 +10089,14 @@ void Context::blobCacheCallbacks(GLSETBLOBPROCANGLE set,
      mState.getBlobCacheCallbacks() = {set, get, userParam};
  }
  
@@ -569,7 +1017,7 @@ index c935ffc008436426ce5ef1d05e6d32f7dcc89edb..d9ba6f69911830dbf806391c42e96d8d
  
  #endif  // ANGLE_CONTEXT_API_EXT_AUTOGEN_H_
 diff --git a/src/libANGLE/Framebuffer.cpp b/src/libANGLE/Framebuffer.cpp
-index 858003abc470142cd0438b2065362f02cf626263..4ef5fab356094d591821066cdf61bf2c4d7e4c9e 100644
+index 858003abc470142cd0438b2065362f02cf626263..142cbd6abda737f985e3a02ffa299acd5c2728f2 100644
 --- a/src/libANGLE/Framebuffer.cpp
 +++ b/src/libANGLE/Framebuffer.cpp
 @@ -164,6 +164,47 @@ FramebufferStatus CheckAttachmentCompleteness(const Context *context,
@@ -787,25 +1235,7 @@ index 858003abc470142cd0438b2065362f02cf626263..4ef5fab356094d591821066cdf61bf2c
      }
  
      // Starting from ES 3.0 stencil and depth, if present, should be the same image
-@@ -1654,6 +1799,8 @@ angle::Result Framebuffer::discard(const Context *context, size_t count, const G
-     // Back-ends might make the contents of the FBO undefined. In WebGL 2.0, invalidate operations
-     // can be no-ops, so we should probably do that to ensure consistency.
-     // TODO(jmadill): WebGL behaviour, and robust resource init behaviour without WebGL.
-+    if (context->isRobustResourceInitEnabled())
-+        markDrawAttachmentsNeedInit(count, attachments);
- 
-     return mImpl->discard(context, count, attachments);
- }
-@@ -1665,6 +1812,8 @@ angle::Result Framebuffer::invalidate(const Context *context,
-     // Back-ends might make the contents of the FBO undefined. In WebGL 2.0, invalidate operations
-     // can be no-ops, so we should probably do that to ensure consistency.
-     // TODO(jmadill): WebGL behaviour, and robust resource init behaviour without WebGL.
-+    if (context->isRobustResourceInitEnabled())
-+        markDrawAttachmentsNeedInit(count, attachments);
- 
-     return mImpl->invalidate(context, count, attachments);
- }
-@@ -1997,6 +2146,66 @@ void Framebuffer::setAttachmentMultiview(const Context *context,
+@@ -1997,6 +2142,66 @@ void Framebuffer::setAttachmentMultiview(const Context *context,
                    FramebufferAttachment::kDefaultRenderToTextureSamples);
  }
  
@@ -872,7 +1302,7 @@ index 858003abc470142cd0438b2065362f02cf626263..4ef5fab356094d591821066cdf61bf2c
  void Framebuffer::commitWebGL1DepthStencilIfConsistent(const Context *context,
                                                         GLsizei numViews,
                                                         GLuint baseViewIndex,
-@@ -2174,11 +2383,40 @@ void Framebuffer::updateAttachment(const Context *context,
+@@ -2174,11 +2379,40 @@ void Framebuffer::updateAttachment(const Context *context,
      invalidateCompletenessCache();
  }
  
@@ -913,65 +1343,14 @@ index 858003abc470142cd0438b2065362f02cf626263..4ef5fab356094d591821066cdf61bf2c
  void Framebuffer::setWriteControlMode(SrgbWriteControlMode srgbWriteControlMode)
  {
      if (srgbWriteControlMode != mState.getWriteControlMode())
-@@ -2826,4 +3064,56 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
+@@ -2826,4 +3060,5 @@ angle::Result Framebuffer::syncAttachmentState(const Context *context,
  
      return angle::Result::Continue;
  }
 +
-+void Framebuffer::markDrawAttachmentsNeedInit(size_t count, const GLenum *attachments)
-+{
-+    bool stateChanged = false;
-+    for (size_t attachmentIdx = 0; attachmentIdx < count; attachmentIdx++)
-+    {
-+        GLenum attachmentBindPoint = attachments[attachmentIdx];
-+        switch (attachmentBindPoint)
-+        {
-+            case GL_DEPTH_ATTACHMENT:
-+            case GL_DEPTH_EXT:
-+                if (mState.mDepthAttachment.isAttached())
-+                {
-+                    mDirtyBits.set(DIRTY_BIT_DEPTH_ATTACHMENT);
-+                    mState.mResourceNeedsInit.set(DIRTY_BIT_DEPTH_ATTACHMENT);
-+                    mState.mDepthAttachment.setInitState(InitState::MayNeedInit);
-+                    stateChanged = true;
-+                }
-+                break;
-+            case GL_STENCIL_ATTACHMENT:
-+            case GL_STENCIL_EXT:
-+                if (mState.mStencilAttachment.isAttached())
-+                {
-+                    mDirtyBits.set(DIRTY_BIT_STENCIL_ATTACHMENT);
-+                    mState.mResourceNeedsInit.set(DIRTY_BIT_STENCIL_ATTACHMENT);
-+                    mState.mStencilAttachment.setInitState(InitState::MayNeedInit);
-+                    stateChanged = true;
-+                }
-+                break;
-+            default:
-+                if (attachmentBindPoint == GL_COLOR_EXT)
-+                {
-+                    attachmentBindPoint = GL_COLOR_ATTACHMENT0;
-+                }
-+                int colorDirtyBit = attachmentBindPoint - GL_COLOR_ATTACHMENT0;
-+                if (colorDirtyBit >= 0 && colorDirtyBit < IMPLEMENTATION_MAX_DRAW_BUFFERS &&
-+                    mState.mColorAttachments[colorDirtyBit].isAttached())
-+                {
-+                    mDirtyBits.set(colorDirtyBit);
-+                    mState.mResourceNeedsInit.set(colorDirtyBit);
-+                    mState.mColorAttachments[colorDirtyBit].setInitState(InitState::MayNeedInit);
-+                    stateChanged = true;
-+                }
-+                break;
-+        }
-+    }
-+
-+    if (stateChanged)
-+    {
-+        onStateChange(angle::SubjectMessage::DirtyBitsFlagged);
-+    }
-+}
  }  // namespace gl
 diff --git a/src/libANGLE/Framebuffer.h b/src/libANGLE/Framebuffer.h
-index c9c3df0decb50323ca437ef8b36547951b0e2eec..2e26d74bd103a345f584b12387113c4777f4be42 100644
+index c9c3df0decb50323ca437ef8b36547951b0e2eec..2ba87944ec0c600dba2ddb6c66e93629fe635987 100644
 --- a/src/libANGLE/Framebuffer.h
 +++ b/src/libANGLE/Framebuffer.h
 @@ -82,6 +82,13 @@ class FramebufferState final : angle::NonCopyable
@@ -1056,15 +1435,6 @@ index c9c3df0decb50323ca437ef8b36547951b0e2eec..2e26d74bd103a345f584b12387113c47
      void markAttachmentsInitialized(const DrawBufferMask &color, bool depth, bool stencil);
  
      // Checks that we have a partially masked clear:
-@@ -545,6 +588,8 @@ class Framebuffer final : public angle::ObserverInterface,
-                                       Command command,
-                                       const FramebufferAttachment *attachment) const;
- 
-+    void markDrawAttachmentsNeedInit(size_t count, const GLenum *attachments);
-+
-     FramebufferState mState;
-     rx::FramebufferImpl *mImpl;
- 
 diff --git a/src/libANGLE/State.cpp b/src/libANGLE/State.cpp
 index 30df50a7a1906a37504751c26a2dcf0dda9eef87..4e27f65f2710aa2de77ec39c90b547de816c753d 100644
 --- a/src/libANGLE/State.cpp
@@ -1596,7 +1966,7 @@ index 004dc07b5c05616155a45dd52cbaf5c0522be256..de757d25f1b9305f2e06b6cbd9724d51
      bool isAMDBronzeDriver() const;
      bool isAMDFireProDevice() const;
 diff --git a/src/libANGLE/renderer/metal/DisplayMtl.mm b/src/libANGLE/renderer/metal/DisplayMtl.mm
-index 6d24b3273bf2738aee3e1a716927e695f8bc5eca..00bc1c8d857c42a75e8e4063ccca335a9de52ab8 100644
+index 92d19572a78fe5e77fc7600dd7f202de0f2a12a1..d791304d52cf6cf4887e1fc382a7983dd19c8fad 100644
 --- a/src/libANGLE/renderer/metal/DisplayMtl.mm
 +++ b/src/libANGLE/renderer/metal/DisplayMtl.mm
 @@ -176,12 +176,22 @@ void DisplayMtl::terminate()
@@ -1646,7 +2016,7 @@ index 6d24b3273bf2738aee3e1a716927e695f8bc5eca..00bc1c8d857c42a75e8e4063ccca335a
      ANGLE_FEATURE_CONDITION((&mFeatures), allowMultisampleStoreAndResolve,
                              supportsEitherGPUFamily(3, 1));
  
-@@ -1389,6 +1409,17 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
+@@ -1391,6 +1411,17 @@ bool DisplayMtl::supportsDepth24Stencil8PixelFormat() const
      return false;
  #endif
  }
@@ -2705,10 +3075,10 @@ index 96d63ee854d4051a1cae862e6814aa515b4c8f9c..d5b50b7b3980445dcfb8518f0bc643f8
             blendable == other.blendable;
  }
 diff --git a/src/libANGLE/renderer/metal/mtl_utils.mm b/src/libANGLE/renderer/metal/mtl_utils.mm
-index 02b1d8a400b74f9a7ec843bd63f8e4eef07543c7..6c124bd80565c8166ee070633d5c8fa8ed579023 100644
+index 45040f7f590d36d2cd79d05815e2c7bb27209c15..314057cb3b38b075ba9d27f869b2432ec0dafa2f 100644
 --- a/src/libANGLE/renderer/metal/mtl_utils.mm
 +++ b/src/libANGLE/renderer/metal/mtl_utils.mm
-@@ -1508,6 +1508,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
+@@ -1477,6 +1477,24 @@ bool SupportsAppleGPUFamily(id<MTLDevice> device, uint8_t appleFamily)
      return [device supportsFamily:family];
  }
  
@@ -2733,7 +3103,7 @@ index 02b1d8a400b74f9a7ec843bd63f8e4eef07543c7..6c124bd80565c8166ee070633d5c8fa8
  bool SupportsMacGPUFamily(id<MTLDevice> device, uint8_t macFamily)
  {
  #if TARGET_OS_OSX || TARGET_OS_MACCATALYST
-@@ -1553,8 +1571,7 @@ static NSUInteger getNextLocationForAttachment(const mtl::RenderPassAttachmentDe
+@@ -1522,8 +1540,7 @@ static NSUInteger getNextLocationForAttachment(const mtl::RenderPassAttachmentDe
                                                 const Context *context,
                                                 NSUInteger currentRenderTargetSize)
  {
@@ -2815,10 +3185,10 @@ index 0000000000000000000000000000000000000000..23e8295bcc16412d3aef3fc8e85748fa
 +if __name__ == '__main__':
 +    sys.exit(main())
 diff --git a/src/libANGLE/renderer/vulkan/CLProgramVk.cpp b/src/libANGLE/renderer/vulkan/CLProgramVk.cpp
-index d34bf03a923a55adbc3ff5c867e8e232123f693c..85cf7e0da18c1ac500bfe7cf70e4360c77f77477 100644
+index e0d199eb48abcc06f1629a5faa2510b3b846eef8..8e10add83f7a3734316c563234489b5b2fc9f741 100644
 --- a/src/libANGLE/renderer/vulkan/CLProgramVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/CLProgramVk.cpp
-@@ -794,6 +794,11 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
+@@ -841,6 +841,11 @@ bool CLProgramVk::buildInternal(const cl::DevicePtrs &devices,
          // add clspv compiler options based on device features
          processedOptions += ClspvGetCompilerOptions(&device->getImpl<CLDeviceVk>());
  
@@ -2831,7 +3201,7 @@ index d34bf03a923a55adbc3ff5c867e8e232123f693c..85cf7e0da18c1ac500bfe7cf70e4360c
          {
              // Invoke clspv
 diff --git a/src/libANGLE/renderer/vulkan/ContextVk.cpp b/src/libANGLE/renderer/vulkan/ContextVk.cpp
-index 53e51a76fdc41717aaab06053dbd5c24b07ebf9d..d0c96b8ad3d60936d506a926bca993466f9c1bab 100644
+index 73f130d13bdb35b521c01e09806555f048ab02a3..ef027321ef7c98970ed8332f7a6c3eb59e144866 100644
 --- a/src/libANGLE/renderer/vulkan/ContextVk.cpp
 +++ b/src/libANGLE/renderer/vulkan/ContextVk.cpp
 @@ -6028,6 +6028,10 @@ angle::Result ContextVk::syncState(const gl::Context *context,
@@ -3287,10 +3657,10 @@ index 969cd2f96d302d74dd3515ac842b93eb51387cd2..730d0ffa536caf536ec750e2bac82c81
      window->makeCurrent();
  
 diff --git a/util/autogen/angle_features_autogen.cpp b/util/autogen/angle_features_autogen.cpp
-index 8be7c25d3fdd918681b4547764d4de0b52486350..ce8b38818f2a111d5b0002af46a4f960a1ee81f7 100644
+index 20b157a67a2d575c6de2e57b6dae4b98178ce2e7..7de2d09a5f4de9c8d10de08eaf2a46674681ffae 100644
 --- a/util/autogen/angle_features_autogen.cpp
 +++ b/util/autogen/angle_features_autogen.cpp
-@@ -207,6 +207,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
+@@ -208,6 +208,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
      {Feature::HasShaderStencilOutput, "hasShaderStencilOutput"},
      {Feature::HasStencilAutoResolve, "hasStencilAutoResolve"},
      {Feature::HasTextureSwizzle, "hasTextureSwizzle"},
@@ -3299,10 +3669,10 @@ index 8be7c25d3fdd918681b4547764d4de0b52486350..ce8b38818f2a111d5b0002af46a4f960
      {Feature::InitializeCurrentVertexAttributes, "initializeCurrentVertexAttributes"},
      {Feature::InjectAsmStatementIntoLoopBodies, "injectAsmStatementIntoLoopBodies"},
 diff --git a/util/autogen/angle_features_autogen.h b/util/autogen/angle_features_autogen.h
-index 6ea2f9eabc569f289f9ba2d85d14f269f57c9e73..7663ecb42c8eeedfd4a6f55ac033ed1deb9e7e78 100644
+index a5372ecd6e7bff982f38b33c1b07d10beee18759..96bc9d62a4422546283cafdb8081ce8e183f9f15 100644
 --- a/util/autogen/angle_features_autogen.h
 +++ b/util/autogen/angle_features_autogen.h
-@@ -207,6 +207,7 @@ enum class Feature
+@@ -208,6 +208,7 @@ enum class Feature
      HasShaderStencilOutput,
      HasStencilAutoResolve,
      HasTextureSwizzle,
@@ -3418,7 +3788,7 @@ index e27ea0482d85b762bbaafc435451c0a98ac83f3a..7c0c6968f90680698e5f5246ee7ab809
  ANGLE_TRACE_LOADER_EXPORT extern PFNGLDRAWTEXFVOESPROC t_glDrawTexfvOES;
  ANGLE_TRACE_LOADER_EXPORT extern PFNGLDRAWTEXIOESPROC t_glDrawTexiOES;
 diff --git a/util/capture/trace_interpreter_autogen.cpp b/util/capture/trace_interpreter_autogen.cpp
-index 33f25533c5156e61e8f8b23f278abfe5d4fa564b..821fe0047a1841976b574d834e9a9fa82a3afde1 100644
+index 42d5b6e595cccb79f6ada79911d17978606bbcbe..4c48a63c34d7b5a3cda1c8957934c89d184565f6 100644
 --- a/util/capture/trace_interpreter_autogen.cpp
 +++ b/util/capture/trace_interpreter_autogen.cpp
 @@ -896,6 +896,13 @@ CallCapture ParseCallCapture(const Token &nameToken,

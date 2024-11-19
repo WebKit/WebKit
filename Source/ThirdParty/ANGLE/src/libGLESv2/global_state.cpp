@@ -35,7 +35,7 @@ bool g_EGLValidationEnabled = true;
 {
     egl::Thread *thread = static_cast<egl::Thread *>(ptr);
     ASSERT(thread);
-    ANGLE_SCOPED_GLOBAL_LOCK();
+    ANGLE_SCOPED_GLOBAL_EGL_AND_EGL_SYNC_LOCK();
     // ReleaseThread() and makeCurrent() inside will perform:
     // - destroy Context if it was already marked for destruction;
     // - invalidate Context if Display was already terminated by app;
@@ -298,7 +298,7 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE instance, DWORD reason, LPVOID)
     switch (reason)
     {
         case DLL_PROCESS_ATTACH:
-            if (angle::GetEnvironmentVar("ANGLE_WAIT_FOR_DEBUGGER") == "1")
+            if (angle::GetBoolEnvironmentVar("ANGLE_WAIT_FOR_DEBUGGER"))
             {
                 WaitForDebugger(instance);
             }

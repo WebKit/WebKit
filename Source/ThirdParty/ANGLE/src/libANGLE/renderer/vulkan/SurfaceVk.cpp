@@ -2730,8 +2730,8 @@ bool WindowSurfaceVk::skipAcquireNextSwapchainImageForSharedPresentMode() const
     {
         ASSERT(mSwapchainImages.size());
         const SwapchainImage &image = mSwapchainImages[0];
-        if (image.image->valid() &&
-            image.image->getCurrentImageLayout() == vk::ImageLayout::SharedPresent)
+        ASSERT(image.image->valid());
+        if (image.image->getCurrentImageLayout() == vk::ImageLayout::SharedPresent)
         {
             return true;
         }
@@ -3306,15 +3306,6 @@ egl::Error WindowSurfaceVk::lockSurface(const egl::Display *display,
     ANGLE_TRACE_EVENT0("gpu.angle", "WindowSurfaceVk::lockSurface");
 
     vk::ImageHelper *image = mSwapchainImages[mCurrentSwapchainImageIndex].image.get();
-    if (!image->valid())
-    {
-        mAcquireOperation.needToAcquireNextSwapchainImage = true;
-        if (acquireNextSwapchainImage(vk::GetImpl(display)) != VK_SUCCESS)
-        {
-            return egl::EglBadAccess();
-        }
-    }
-    image = mSwapchainImages[mCurrentSwapchainImageIndex].image.get();
     ASSERT(image->valid());
 
     angle::Result result =

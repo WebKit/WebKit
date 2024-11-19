@@ -1578,6 +1578,7 @@ enum class RenderPassClosureReason
     OutOfReservedQueueSerialForOutsideCommands,
 
     // UtilsVk
+    GenerateMipmapWithDraw,
     PrepareForBlit,
     PrepareForImageCopy,
     TemporaryForClearTexture,

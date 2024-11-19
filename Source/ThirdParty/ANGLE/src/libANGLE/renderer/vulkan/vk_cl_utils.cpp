@@ -87,7 +87,7 @@ VkImageViewType GetImageViewType(cl::MemObjectType memObjectType)
 
 VkMemoryPropertyFlags GetMemoryPropertyFlags(cl::MemFlags memFlags)
 {
-    // TODO: http://anglebug.com/8588
+    // TODO: http://anglebug.com/42267018
     VkMemoryPropertyFlags propFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
 
     if (memFlags.intersects(CL_MEM_USE_HOST_PTR | CL_MEM_ALLOC_HOST_PTR | CL_MEM_COPY_HOST_PTR))
@@ -96,6 +96,14 @@ VkMemoryPropertyFlags GetMemoryPropertyFlags(cl::MemFlags memFlags)
     }
 
     return propFlags;
+}
+
+VkBufferUsageFlags GetBufferUsageFlags(cl::MemFlags memFlags)
+{
+    // The buffer usage flags don't particularly affect the buffer in any known drivers, use all the
+    // bits that ANGLE needs.
+    return VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+           VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
 }
 
 }  // namespace cl_vk

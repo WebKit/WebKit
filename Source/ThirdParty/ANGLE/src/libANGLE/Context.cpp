@@ -157,6 +157,8 @@ constexpr state::DirtyBits kTilingDirtyBits{state::DIRTY_BIT_DRAW_FRAMEBUFFER_BI
 constexpr state::ExtendedDirtyBits kTilingExtendedDirtyBits{};
 constexpr state::DirtyObjects kTilingDirtyObjects{state::DIRTY_OBJECT_DRAW_FRAMEBUFFER};
 
+constexpr bool kEnableAEPRequirementLogging = false;
+
 egl::ShareGroup *AllocateOrGetShareGroup(egl::Display *display, const gl::Context *shareContext)
 {
     if (shareContext)
@@ -477,16 +479,51 @@ bool CanSupportAEP(const gl::Version &version, const gl::Extensions &extensions)
     // * EXT_texture_buffer
     // * EXT_texture_cube_map_array
     // * EXT_texture_sRGB_decode
-    return (version >= ES_3_1 && extensions.debugKHR && extensions.textureCompressionAstcLdrKHR &&
-            extensions.blendEquationAdvancedKHR && extensions.sampleShadingOES &&
-            extensions.sampleVariablesOES && extensions.shaderImageAtomicOES &&
-            extensions.shaderMultisampleInterpolationOES && extensions.textureStencil8OES &&
-            extensions.textureStorageMultisample2dArrayOES && extensions.copyImageEXT &&
-            extensions.drawBuffersIndexedEXT && extensions.geometryShaderEXT &&
-            extensions.gpuShader5EXT && extensions.primitiveBoundingBoxEXT &&
-            extensions.shaderIoBlocksEXT && extensions.tessellationShaderEXT &&
-            extensions.textureBorderClampEXT && extensions.textureBufferEXT &&
-            extensions.textureCubeMapArrayEXT && extensions.textureSRGBDecodeEXT);
+    std::pair<const char *, bool> requirements[] = {
+        {"version >= ES_3_1", version >= ES_3_1},
+        {"extensions.debugKHR", extensions.debugKHR},
+        {"extensions.textureCompressionAstcLdrKHR", extensions.textureCompressionAstcLdrKHR},
+        {"extensions.blendEquationAdvancedKHR", extensions.blendEquationAdvancedKHR},
+        {"extensions.sampleShadingOES", extensions.sampleShadingOES},
+        {"extensions.sampleVariablesOES", extensions.sampleVariablesOES},
+        {"extensions.shaderImageAtomicOES", extensions.shaderImageAtomicOES},
+        {"extensions.shaderMultisampleInterpolationOES",
+         extensions.shaderMultisampleInterpolationOES},
+        {"extensions.textureStencil8OES", extensions.textureStencil8OES},
+        {"extensions.textureStorageMultisample2dArrayOES",
+         extensions.textureStorageMultisample2dArrayOES},
+        {"extensions.copyImageEXT", extensions.copyImageEXT},
+        {"extensions.drawBuffersIndexedEXT", extensions.drawBuffersIndexedEXT},
+        {"extensions.geometryShaderEXT", extensions.geometryShaderEXT},
+        {"extensions.gpuShader5EXT", extensions.gpuShader5EXT},
+        {"extensions.primitiveBoundingBoxEXT", extensions.primitiveBoundingBoxEXT},
+        {"extensions.shaderIoBlocksEXT", extensions.shaderIoBlocksEXT},
+        {"extensions.tessellationShaderEXT", extensions.tessellationShaderEXT},
+        {"extensions.textureBorderClampEXT", extensions.textureBorderClampEXT},
+        {"extensions.textureBufferEXT", extensions.textureBufferEXT},
+        {"extensions.textureCubeMapArrayEXT", extensions.textureCubeMapArrayEXT},
+        {"extensions.textureSRGBDecodeEXT", extensions.textureSRGBDecodeEXT},
+    };
+
+    bool result = true;
+    for (const auto &req : requirements)
+    {
+        result = result && req.second;
+    }
+
+    if (kEnableAEPRequirementLogging && !result)
+    {
+        INFO() << "CanSupportAEP() check failed for missing the following requirements:\n";
+        for (const auto &req : requirements)
+        {
+            if (!req.second)
+            {
+                INFO() << "- " << req.first << "\n";
+            }
+        }
+    }
+
+    return result;
 }
 }  // anonymous namespace
 
@@ -9756,7 +9793,7 @@ void Context::getPerfMonitorCounterData(GLuint monitor,
         case GL_PERFMON_RESULT_AMD:
         {
             PerfMonitorTriplet *resultsOut = reinterpret_cast<PerfMonitorTriplet *>(data);
-            GLsizei maxResults             = dataSize / (3 * sizeof(GLuint));
+            GLsizei maxResults             = dataSize / sizeof(PerfMonitorTriplet);
             GLsizei resultCount            = 0;
             for (size_t groupIndex = 0;
                  groupIndex < perfMonitorGroups.size() && resultCount < maxResults; ++groupIndex)

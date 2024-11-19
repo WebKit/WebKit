@@ -524,6 +524,12 @@ struct FeaturesVk : FeatureSetBase
         &members,
     };
 
+    FeatureInfo exposeES32ForTesting = {
+        "exposeES32ForTesting",
+        FeatureCategory::VulkanWorkarounds,
+        &members,
+    };
+
     FeatureInfo emulateR32fImageAtomicExchange = {
         "emulateR32fImageAtomicExchange",
         FeatureCategory::VulkanWorkarounds,

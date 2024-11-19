@@ -6919,7 +6919,7 @@ angle::Result ContextVk::acquireTextures(const gl::Context *context,
         // Image should not be accessed while unowned. Emulated formats may have staged updates
         // to clear the image after initialization.
         ASSERT(!image.hasStagedUpdatesInAllocatedLevels() || image.hasEmulatedImageChannels());
-        image.setCurrentImageLayout(layout);
+        image.setCurrentImageLayout(getRenderer(), layout);
     }
     return angle::Result::Continue;
 }

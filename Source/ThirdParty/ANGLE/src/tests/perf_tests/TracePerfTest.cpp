@@ -1318,7 +1318,7 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
 
     if (traceNameIs("mini_world"))
     {
-        if (IsQualcomm() && mParams->isVulkan())
+        if ((IsPixel4() || IsPixel4XL()) && mParams->isVulkan())
         {
             skipTest(
                 "TODO: http://anglebug.com/42264956 Vulkan Test failure on Pixel4XL due to vulkan "
@@ -1840,6 +1840,14 @@ TracePerfTest::TracePerfTest(std::unique_ptr<const TracePerfParams> params)
         if (isIntelWinANGLE)
         {
             skipTest("https://issuetracker.google.com/372513853 Nondeterministic on Windows Intel");
+        }
+    }
+
+    if (traceNameIs("solar_smash"))
+    {
+        if (isIntelWinANGLE)
+        {
+            skipTest("https://issuetracker.google.com/378900717 Nondeterministic on Windows Intel");
         }
     }
 
@@ -2824,13 +2832,16 @@ void RegisterTraceTests()
     // Load JSON data.
     std::vector<std::string> traces;
     {
-        std::stringstream tracesJsonStream;
-        tracesJsonStream << rootTracePath << GetPathSeparator() << "restricted_traces.json";
-        std::string tracesJsonPath = tracesJsonStream.str();
-
-        if (!LoadTraceNamesFromJSON(tracesJsonPath, &traces))
+        char traceListPath[kMaxPath] = {};
+        if (!angle::FindTestDataPath("gen/trace_list.json", traceListPath, kMaxPath))
         {
-            ERR() << "Unable to load traces from JSON file: " << tracesJsonPath;
+            ERR() << "Cannot find gen/trace_list.json";
+            return;
+        }
+
+        if (!LoadTraceNamesFromJSON(traceListPath, &traces))
+        {
+            ERR() << "Unable to load traces from JSON file: " << traceListPath;
             return;
         }
     }

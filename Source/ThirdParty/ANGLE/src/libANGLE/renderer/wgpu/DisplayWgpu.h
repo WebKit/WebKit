@@ -97,6 +97,8 @@ class DisplayWgpu : public DisplayImpl
     wgpu::Queue &getQueue() { return mQueue; }
     wgpu::Instance &getInstance() { return mInstance; }
 
+    const wgpu::Limits getLimitsWgpu() const { return mLimitsWgpu; }
+
     const gl::Caps &getGLCaps() const { return mGLCaps; }
     const gl::TextureCapsMap &getGLTextureCaps() const { return mGLTextureCaps; }
     const gl::Extensions &getGLExtensions() const { return mGLExtensions; }
@@ -120,6 +122,8 @@ class DisplayWgpu : public DisplayImpl
     wgpu::Instance mInstance;
     wgpu::Device mDevice;
     wgpu::Queue mQueue;
+
+    wgpu::Limits mLimitsWgpu;
 
     gl::Caps mGLCaps;
     gl::TextureCapsMap mGLTextureCaps;

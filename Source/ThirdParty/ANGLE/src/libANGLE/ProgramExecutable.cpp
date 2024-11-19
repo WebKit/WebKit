@@ -849,6 +849,7 @@ void ProgramExecutable::reset()
     mSamplerBindings.clear();
     mSamplerBoundTextureUnits.clear();
     mImageBindings.clear();
+    mPixelLocalStorageFormats.clear();
 
     mPostLinkSubTasks.clear();
     mPostLinkSubTaskWaitableEvents.clear();
@@ -948,6 +949,12 @@ void ProgramExecutable::load(gl::BinaryInputStream *stream)
             imageBinding.boundImageUnits[elementIndex] = stream->readInt<unsigned int>();
         }
     }
+
+    // ANGLE_shader_pixel_local_storage.
+    size_t plsCount = stream->readInt<size_t>();
+    ASSERT(mPixelLocalStorageFormats.empty());
+    mPixelLocalStorageFormats.resize(plsCount);
+    stream->readBytes(reinterpret_cast<uint8_t *>(mPixelLocalStorageFormats.data()), plsCount);
 
     // These values are currently only used by PPOs, so only load them when the program is marked
     // separable to save memory.
@@ -1049,6 +1056,11 @@ void ProgramExecutable::save(gl::BinaryOutputStream *stream) const
             stream->writeInt(imageBinding.boundImageUnits[i]);
         }
     }
+
+    // ANGLE_shader_pixel_local_storage.
+    stream->writeInt<size_t>(mPixelLocalStorageFormats.size());
+    stream->writeBytes(reinterpret_cast<const uint8_t *>(mPixelLocalStorageFormats.data()),
+                       mPixelLocalStorageFormats.size());
 
     // These values are currently only used by PPOs, so only save them when the program is marked
     // separable to save memory.

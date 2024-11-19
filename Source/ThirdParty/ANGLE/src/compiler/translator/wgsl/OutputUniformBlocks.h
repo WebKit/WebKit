@@ -18,7 +18,8 @@ namespace sh
 const char kDefaultUniformBlockVarType[]     = "ANGLE_DefaultUniformBlock";
 const char kDefaultUniformBlockVarName[]     = "ANGLE_defaultUniformBlock";
 const uint32_t kDefaultUniformBlockBindGroup = 0;
-const uint32_t kDefaultUniformBlockBinding   = 0;
+const uint32_t kDefaultVertexUniformBlockBinding   = 0;
+const uint32_t kDefaultFragmentUniformBlockBinding = 1;
 
 // TODO(anglebug.com/42267100): for now does not output all uniform blocks,
 // just the default block. (fails for  matCx2, bool, and arrays with stride less than 16.)

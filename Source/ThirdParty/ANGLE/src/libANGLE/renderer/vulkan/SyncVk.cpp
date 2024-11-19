@@ -270,8 +270,6 @@ angle::Result SyncHelper::submitSyncIfDeferred(ContextVk *contextVk, RenderPassC
 {
     if (contextVk == nullptr)
     {
-        // This is the case with EGLSync.  The implicit flush is never deferred, so there is nothing
-        // to do.
         return angle::Result::Continue;
     }
 

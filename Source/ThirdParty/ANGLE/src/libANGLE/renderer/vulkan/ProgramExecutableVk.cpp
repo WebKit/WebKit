@@ -247,6 +247,111 @@ vk::GraphicsPipelineSubset GetWarmUpSubset(const angle::FeaturesVk &features)
     return features.supportsGraphicsPipelineLibrary.enabled ? vk::GraphicsPipelineSubset::Shaders
                                                             : vk::GraphicsPipelineSubset::Complete;
 }
+
+angle::Result UpdateFullTexturesDescriptorSet(vk::Context *context,
+                                              const ShaderInterfaceVariableInfoMap &variableInfoMap,
+                                              const vk::WriteDescriptorDescs &writeDescriptorDescs,
+                                              UpdateDescriptorSetsBuilder *updateBuilder,
+                                              const gl::ProgramExecutable &executable,
+                                              const gl::ActiveTextureArray<TextureVk *> &textures,
+                                              const gl::SamplerBindingVector &samplers,
+                                              VkDescriptorSet descriptorSet)
+{
+    vk::Renderer *renderer                                 = context->getRenderer();
+    const std::vector<gl::SamplerBinding> &samplerBindings = executable.getSamplerBindings();
+    const std::vector<GLuint> &samplerBoundTextureUnits = executable.getSamplerBoundTextureUnits();
+    const std::vector<gl::LinkedUniform> &uniforms      = executable.getUniforms();
+    const gl::ActiveTextureTypeArray &textureTypes      = executable.getActiveSamplerTypes();
+
+    // Allocate VkWriteDescriptorSet and initialize the data structure
+    VkWriteDescriptorSet *writeDescriptorSets =
+        updateBuilder->allocWriteDescriptorSets(writeDescriptorDescs.size());
+    for (uint32_t writeIndex = 0; writeIndex < writeDescriptorDescs.size(); ++writeIndex)
+    {
+        ASSERT(writeDescriptorDescs[writeIndex].descriptorCount > 0);
+
+        VkWriteDescriptorSet &writeSet = writeDescriptorSets[writeIndex];
+        writeSet.descriptorCount       = writeDescriptorDescs[writeIndex].descriptorCount;
+        writeSet.descriptorType =
+            static_cast<VkDescriptorType>(writeDescriptorDescs[writeIndex].descriptorType);
+        writeSet.dstArrayElement  = 0;
+        writeSet.dstBinding       = writeIndex;
+        writeSet.dstSet           = descriptorSet;
+        writeSet.pBufferInfo      = nullptr;
+        writeSet.pImageInfo       = nullptr;
+        writeSet.pNext            = nullptr;
+        writeSet.pTexelBufferView = nullptr;
+        writeSet.sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        // Always allocate VkDescriptorImageInfo. In less common case that descriptorType is
+        // VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, this will not used.
+        writeSet.pImageInfo = updateBuilder->allocDescriptorImageInfos(
+            writeDescriptorDescs[writeIndex].descriptorCount);
+    }
+
+    for (uint32_t samplerIndex = 0; samplerIndex < samplerBindings.size(); ++samplerIndex)
+    {
+        uint32_t uniformIndex = executable.getUniformIndexFromSamplerIndex(samplerIndex);
+        const gl::LinkedUniform &samplerUniform = uniforms[uniformIndex];
+        if (samplerUniform.activeShaders().none())
+        {
+            continue;
+        }
+
+        const gl::ShaderType firstShaderType = samplerUniform.getFirstActiveShaderType();
+        const ShaderInterfaceVariableInfo &info =
+            variableInfoMap.getVariableById(firstShaderType, samplerUniform.getId(firstShaderType));
+
+        const gl::SamplerBinding &samplerBinding = samplerBindings[samplerIndex];
+        uint32_t arraySize = static_cast<uint32_t>(samplerBinding.textureUnitsCount);
+
+        VkWriteDescriptorSet &writeSet = writeDescriptorSets[info.binding];
+        // Now fill pImageInfo or pTexelBufferView for writeSet
+        for (uint32_t arrayElement = 0; arrayElement < arraySize; ++arrayElement)
+        {
+            GLuint textureUnit =
+                samplerBinding.getTextureUnit(samplerBoundTextureUnits, arrayElement);
+            TextureVk *textureVk = textures[textureUnit];
+
+            if (textureTypes[textureUnit] == gl::TextureType::Buffer)
+            {
+                ASSERT(writeSet.descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER);
+                const vk::BufferView *view = nullptr;
+                ANGLE_TRY(
+                    textureVk->getBufferView(context, nullptr, &samplerBinding, false, &view));
+
+                VkBufferView &bufferView  = updateBuilder->allocBufferView();
+                bufferView                = view->getHandle();
+                writeSet.pTexelBufferView = &bufferView;
+            }
+            else
+            {
+                ASSERT(writeSet.descriptorType == VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
+                bool isSamplerExternalY2Y =
+                    samplerBinding.samplerType == GL_SAMPLER_EXTERNAL_2D_Y2Y_EXT;
+                gl::Sampler *sampler       = samplers[textureUnit].get();
+                const SamplerVk *samplerVk = sampler ? vk::GetImpl(sampler) : nullptr;
+                const vk::SamplerHelper &samplerHelper =
+                    samplerVk ? samplerVk->getSampler()
+                              : textureVk->getSampler(isSamplerExternalY2Y);
+                const gl::SamplerState &samplerState =
+                    sampler ? sampler->getSamplerState() : textureVk->getState().getSamplerState();
+
+                vk::ImageLayout imageLayout    = textureVk->getImage().getCurrentImageLayout();
+                const vk::ImageView &imageView = textureVk->getReadImageView(
+                    samplerState.getSRGBDecode(), samplerUniform.isTexelFetchStaticUse(),
+                    isSamplerExternalY2Y);
+
+                VkDescriptorImageInfo *imageInfo = const_cast<VkDescriptorImageInfo *>(
+                    &writeSet.pImageInfo[arrayElement + samplerUniform.getOuterArrayOffset()]);
+                imageInfo->imageLayout = ConvertImageLayoutToVkImageLayout(renderer, imageLayout);
+                imageInfo->imageView   = imageView.getHandle();
+                imageInfo->sampler     = samplerHelper.get().getHandle();
+            }
+        }
+    }
+
+    return angle::Result::Continue;
+}
 }  // namespace
 
 class ProgramExecutableVk::WarmUpTaskCommon : public vk::Context, public LinkSubTask
@@ -1859,16 +1964,15 @@ angle::Result ProgramExecutableVk::updateTexturesDescriptorSet(
     PipelineType pipelineType,
     UpdateDescriptorSetsBuilder *updateBuilder)
 {
-    // We use textureSerial to optimize texture binding updates. Each permutation of a
-    // {VkImage/VkSampler} generates a unique serial. These object ids are combined to form a unique
-    // signature for each descriptor set. This allows us to keep a cache of descriptor sets and
-    // avoid calling vkAllocateDesctiporSets each texture update.
-    vk::DescriptorSetDescBuilder descriptorBuilder;
-
     if (context->getFeatures().descriptorSetCache.enabled)
     {
         vk::SharedDescriptorSetCacheKey newSharedCacheKey;
 
+        // We use textureSerial to optimize texture binding updates. Each permutation of a
+        // {VkImage/VkSampler} generates a unique serial. These object ids are combined to form a
+        // unique signature for each descriptor set. This allows us to keep a cache of descriptor
+        // sets and avoid calling vkAllocateDesctiporSets each texture update.
+        vk::DescriptorSetDescBuilder descriptorBuilder;
         descriptorBuilder.updatePreCacheActiveTextures(context, *mExecutable, textures, samplers);
 
         ANGLE_TRY(mDynamicDescriptorPools[DescriptorSetIndex::Texture]->getOrAllocateDescriptorSet(
@@ -1881,14 +1985,17 @@ angle::Result ProgramExecutableVk::updateTexturesDescriptorSet(
 
         if (newSharedCacheKey != nullptr)
         {
-            // Cache miss. A new cache entry has been created.
-            ANGLE_TRY(descriptorBuilder.updateActiveTexturesForCacheMiss(
-                context, mVariableInfoMap, mTextureWriteDescriptorDescs, *mExecutable, textures,
-                samplers, pipelineType, newSharedCacheKey));
+            ANGLE_TRY(UpdateFullTexturesDescriptorSet(
+                context, mVariableInfoMap, mTextureWriteDescriptorDescs, updateBuilder,
+                *mExecutable, textures, samplers,
+                mDescriptorSets[DescriptorSetIndex::Texture]->getDescriptorSet()));
 
-            descriptorBuilder.updateDescriptorSet(
-                context->getRenderer(), mTextureWriteDescriptorDescs, updateBuilder,
-                mDescriptorSets[DescriptorSetIndex::Texture]->getDescriptorSet());
+            const gl::ActiveTextureMask &activeTextureMask = mExecutable->getActiveSamplersMask();
+            for (size_t textureUnit : activeTextureMask)
+            {
+                ASSERT(textures[textureUnit] != nullptr);
+                textures[textureUnit]->onNewDescriptorSet(newSharedCacheKey);
+            }
         }
     }
     else
@@ -1898,13 +2005,9 @@ angle::Result ProgramExecutableVk::updateTexturesDescriptorSet(
             &mDescriptorSets[DescriptorSetIndex::Texture]));
         ASSERT(mDescriptorSets[DescriptorSetIndex::Texture]);
 
-        ANGLE_TRY(descriptorBuilder.updateFullActiveTextures(
-            context, mVariableInfoMap, mTextureWriteDescriptorDescs, *mExecutable, textures,
-            samplers, pipelineType));
-
-        descriptorBuilder.updateDescriptorSet(
-            context->getRenderer(), mTextureWriteDescriptorDescs, updateBuilder,
-            mDescriptorSets[DescriptorSetIndex::Texture]->getDescriptorSet());
+        ANGLE_TRY(UpdateFullTexturesDescriptorSet(
+            context, mVariableInfoMap, mTextureWriteDescriptorDescs, updateBuilder, *mExecutable,
+            textures, samplers, mDescriptorSets[DescriptorSetIndex::Texture]->getDescriptorSet()));
     }
 
     return angle::Result::Continue;

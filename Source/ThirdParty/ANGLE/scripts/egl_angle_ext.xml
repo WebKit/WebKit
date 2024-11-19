@@ -168,10 +168,7 @@
                 <command name="eglQueryDisplayAttribANGLE"/>
                 <enum name="EGL_FEATURE_NAME_ANGLE"/>
                 <enum name="EGL_FEATURE_CATEGORY_ANGLE"/>
-                <enum name="EGL_FEATURE_DESCRIPTION_ANGLE"/>
-                <enum name="EGL_FEATURE_BUG_ANGLE"/>
                 <enum name="EGL_FEATURE_STATUS_ANGLE"/>
-                <enum name="EGL_FEATURE_CONDITION_ANGLE"/>
                 <enum name="EGL_FEATURE_COUNT_ANGLE"/>
                 <enum name="EGL_FEATURE_OVERRIDES_ENABLED_ANGLE"/>
                 <enum name="EGL_FEATURE_OVERRIDES_DISABLED_ANGLE"/>
@@ -591,13 +588,10 @@
     <enums namespace="EGL" start="0x3460" end="0x346F" vendor="ANGLE">
         <enum value="0x3460" name="EGL_FEATURE_NAME_ANGLE"/>
         <enum value="0x3461" name="EGL_FEATURE_CATEGORY_ANGLE"/>
-        <enum value="0x3462" name="EGL_FEATURE_DESCRIPTION_ANGLE"/>
-        <enum value="0x3463" name="EGL_FEATURE_BUG_ANGLE"/>
         <enum value="0x3464" name="EGL_FEATURE_STATUS_ANGLE"/>
         <enum value="0x3465" name="EGL_FEATURE_COUNT_ANGLE"/>
         <enum value="0x3466" name="EGL_FEATURE_OVERRIDES_ENABLED_ANGLE"/>
         <enum value="0x3467" name="EGL_FEATURE_OVERRIDES_DISABLED_ANGLE"/>
-        <enum value="0x3468" name="EGL_FEATURE_CONDITION_ANGLE"/>
         <enum value="0x3469" name="EGL_FEATURE_ALL_DISABLED_ANGLE"/>
     </enums>
     <enums namespace="EGL" start="0x3480" end="0x348F" vendor="ANGLE">

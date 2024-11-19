@@ -3871,6 +3871,27 @@ TEST_P(ClearTextureEXTTest, Clear2DRGBA4)
     EXPECT_PIXEL_RECT_EQ(8, 8, 8, 8, GLColor::yellow);
 }
 
+// Test clearing a 2D RGB8 Snorm texture with GL_EXT_clear_texture.
+TEST_P(ClearTextureEXTTest, Clear2DRGB8Snorm)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+
+    // Create a 16x16 texture with no data.
+    GLTexture tex;
+    glBindTexture(GL_TEXTURE_2D, tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8_SNORM, 16, 16, 0, GL_RGB, GL_BYTE, nullptr);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+    // Clear the entire texture.
+    GLint colorGreenRGBSnorm = 0x007F00;
+    glClearTexImageEXT(tex, 0, GL_RGB, GL_BYTE, &colorGreenRGBSnorm);
+
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Texture2D(), essl1_shaders::fs::Texture2D());
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+    EXPECT_PIXEL_RECT_EQ(0, 0, getWindowWidth(), getWindowHeight(), GLColor::green);
+}
+
 // Test basic functionality of clearing 2D textures with GL_EXT_clear_texture using nullptr.
 TEST_P(ClearTextureEXTTest, Clear2DWithNull)
 {
@@ -4049,6 +4070,29 @@ TEST_P(ClearTextureEXTTest, Clear2DTexStorage)
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 3);
     ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
     EXPECT_PIXEL_RECT_EQ(0, 0, 2, 2, GLColor::magenta);
+}
+
+// Test that a single full clear for the 3D texture works.
+TEST_P(ClearTextureEXTTest, Clear3DSingleFull)
+{
+    ANGLE_SKIP_TEST_IF(!IsGLExtensionEnabled("GL_EXT_clear_texture"));
+    constexpr uint32_t kWidth  = 4;
+    constexpr uint32_t kHeight = 4;
+    constexpr uint32_t kDepth  = 4;
+
+    GLTexture texture;
+    glBindTexture(GL_TEXTURE_3D, texture);
+    glTexStorage3D(GL_TEXTURE_3D, 1, GL_RGBA8, kWidth, kHeight, kDepth);
+    glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAX_LEVEL, 0);
+
+    glClearTexImageEXT(texture, 0, GL_RGBA, GL_UNSIGNED_BYTE, &GLColor::white);
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    for (uint32_t z = 0; z < kDepth; ++z)
+    {
+        glFramebufferTextureLayer(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0, z);
+        EXPECT_PIXEL_RECT_EQ(0, 0, kWidth, kHeight, GLColor::white);
+    }
 }
 
 // Test that a simple clear for the entire texture works.

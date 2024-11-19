@@ -426,9 +426,6 @@
           "-v",
           "--shard-timeout=500"
         ],
-        "linux-args": [
-          "--no-xvfb"
-        ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
@@ -455,9 +452,6 @@
           "-v",
           "--shard-timeout=500"
         ],
-        "linux-args": [
-          "--no-xvfb"
-        ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
@@ -483,9 +477,6 @@
           "--use-angle=vulkan",
           "-v",
           "--shard-timeout=500"
-        ],
-        "linux-args": [
-          "--no-xvfb"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -1029,9 +1020,6 @@
           "-v",
           "--shard-timeout=500"
         ],
-        "linux-args": [
-          "--no-xvfb"
-        ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
@@ -1057,9 +1045,6 @@
           "-v",
           "--shard-timeout=500"
         ],
-        "linux-args": [
-          "--no-xvfb"
-        ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
@@ -1084,9 +1069,6 @@
           "--use-angle=vulkan",
           "-v",
           "--shard-timeout=500"
-        ],
-        "linux-args": [
-          "--no-xvfb"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -1680,9 +1662,6 @@
           "-v",
           "--shard-timeout=500"
         ],
-        "linux-args": [
-          "--no-xvfb"
-        ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
@@ -1708,9 +1687,6 @@
           "-v",
           "--shard-timeout=500"
         ],
-        "linux-args": [
-          "--no-xvfb"
-        ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
@@ -1735,9 +1711,6 @@
           "--use-angle=vulkan",
           "-v",
           "--shard-timeout=500"
-        ],
-        "linux-args": [
-          "--no-xvfb"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -1886,39 +1859,6 @@
         },
         "test": "angle_perftests",
         "test_id_prefix": "ninja://src/tests:angle_perftests/"
-      },
-      {
-        "args": [
-          "--test-machine-name",
-          "${buildername}",
-          "--trace-interpreter=gz",
-          "--filter=fishdom:geometry_dash:merge_dragons:minecraft_bedrock:new_legend_of_the_condor_heroes:street_fighter_duel:teslagrad:vainglory",
-          "-v",
-          "--git-revision=${got_angle_revision}"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_restricted_trace_gold_interpreted_tests",
-        "precommit_args": [
-          "--gerrit-issue=${patch_issue}",
-          "--gerrit-patchset=${patch_set}",
-          "--buildbucket-id=${buildbucket_build_id}",
-          "--use-permissive-pixel-comparison=${use_permissive_angle_pixel_comparison}"
-        ],
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "device_os": "RP1A.201105.002",
-            "device_os_type": "userdebug",
-            "device_type": "flame",
-            "os": "Android",
-            "pool": "chromium.tests.gpu"
-          },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_restricted_trace_gold_tests",
-        "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
       },
       {
         "args": [
@@ -2522,9 +2462,6 @@
           "-v",
           "--shard-timeout=500"
         ],
-        "linux-args": [
-          "--no-xvfb"
-        ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
@@ -2550,9 +2487,6 @@
           "-v",
           "--shard-timeout=500"
         ],
-        "linux-args": [
-          "--no-xvfb"
-        ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
@@ -2577,9 +2511,6 @@
           "--use-angle=vulkan",
           "-v",
           "--shard-timeout=500"
-        ],
-        "linux-args": [
-          "--no-xvfb"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -3352,6 +3283,72 @@
       },
       {
         "args": [
+          "--use-angle=vulkan",
+          "--no-xvfb"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_noctx_gles2_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "gpu": "10de:2184-535.183.01",
+            "os": "Ubuntu-22.04",
+            "pool": "chromium.tests.gpu"
+          },
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_noctx_gles2_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_noctx_gles2_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "--use-angle=vulkan",
+          "--no-xvfb"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_noctx_gles32_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "gpu": "10de:2184-535.183.01",
+            "os": "Ubuntu-22.04",
+            "pool": "chromium.tests.gpu"
+          },
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_noctx_gles32_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_noctx_gles32_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "--use-angle=vulkan",
+          "--no-xvfb"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_single_gles32_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "gpu": "10de:2184-535.183.01",
+            "os": "Ubuntu-22.04",
+            "pool": "chromium.tests.gpu"
+          },
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_single_gles32_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_single_gles32_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
           "--gtest_filter=-*Vulkan_SwiftShader*",
           "--max-processes=4",
           "--no-xvfb"
@@ -3486,36 +3483,6 @@
         },
         "test": "angle_perftests",
         "test_id_prefix": "ninja://src/tests:angle_perftests/"
-      },
-      {
-        "args": [
-          "--test-machine-name",
-          "${buildername}",
-          "--trace-interpreter=gz",
-          "--filter=fishdom:geometry_dash:merge_dragons:minecraft_bedrock:new_legend_of_the_condor_heroes:street_fighter_duel:teslagrad:vainglory",
-          "--git-revision=${got_angle_revision}"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_restricted_trace_gold_interpreted_tests",
-        "precommit_args": [
-          "--gerrit-issue=${patch_issue}",
-          "--gerrit-patchset=${patch_set}",
-          "--buildbucket-id=${buildbucket_build_id}",
-          "--use-permissive-pixel-comparison=${use_permissive_angle_pixel_comparison}"
-        ],
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "gpu": "10de:2184-535.183.01",
-            "os": "Ubuntu-22.04",
-            "pool": "chromium.tests.gpu"
-          },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_restricted_trace_gold_tests",
-        "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
       },
       {
         "args": [
@@ -3766,36 +3733,6 @@
         },
         "test": "angle_perftests",
         "test_id_prefix": "ninja://src/tests:angle_perftests/"
-      },
-      {
-        "args": [
-          "--test-machine-name",
-          "${buildername}",
-          "--trace-interpreter=gz",
-          "--filter=fishdom:geometry_dash:merge_dragons:minecraft_bedrock:new_legend_of_the_condor_heroes:street_fighter_duel:teslagrad:vainglory",
-          "--git-revision=${got_angle_revision}"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_restricted_trace_gold_interpreted_tests",
-        "precommit_args": [
-          "--gerrit-issue=${patch_issue}",
-          "--gerrit-patchset=${patch_set}",
-          "--buildbucket-id=${buildbucket_build_id}",
-          "--use-permissive-pixel-comparison=${use_permissive_angle_pixel_comparison}"
-        ],
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "gpu": "8086:9bc5-23.2.1",
-            "os": "Ubuntu-22.04",
-            "pool": "chromium.tests.gpu"
-          },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_restricted_trace_gold_tests",
-        "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
       },
       {
         "args": [
@@ -4533,6 +4470,72 @@
       },
       {
         "args": [
+          "--use-angle=vulkan",
+          "--no-xvfb"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_noctx_gles2_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "gpu": "10de:2184-440.100",
+            "os": "Ubuntu-18.04.5|Ubuntu-18.04.6",
+            "pool": "chromium.tests.gpu"
+          },
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_noctx_gles2_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_noctx_gles2_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "--use-angle=vulkan",
+          "--no-xvfb"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_noctx_gles32_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "gpu": "10de:2184-440.100",
+            "os": "Ubuntu-18.04.5|Ubuntu-18.04.6",
+            "pool": "chromium.tests.gpu"
+          },
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_noctx_gles32_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_noctx_gles32_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
+          "--use-angle=vulkan",
+          "--no-xvfb"
+        ],
+        "merge": {
+          "script": "//scripts/angle_deqp_test_merge.py"
+        },
+        "name": "angle_deqp_khr_single_gles32_vulkan_tests",
+        "swarming": {
+          "containment_type": "AUTO",
+          "dimensions": {
+            "gpu": "10de:2184-440.100",
+            "os": "Ubuntu-18.04.5|Ubuntu-18.04.6",
+            "pool": "chromium.tests.gpu"
+          },
+          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
+        },
+        "test": "angle_deqp_khr_single_gles32_tests",
+        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_single_gles32_tests/",
+        "use_isolated_scripts_api": true
+      },
+      {
+        "args": [
           "--gtest_filter=-*Vulkan_SwiftShader*",
           "--max-processes=4",
           "--no-xvfb"
@@ -4667,36 +4670,6 @@
         },
         "test": "angle_perftests",
         "test_id_prefix": "ninja://src/tests:angle_perftests/"
-      },
-      {
-        "args": [
-          "--test-machine-name",
-          "${buildername}",
-          "--trace-interpreter=gz",
-          "--filter=fishdom:geometry_dash:merge_dragons:minecraft_bedrock:new_legend_of_the_condor_heroes:street_fighter_duel:teslagrad:vainglory",
-          "--git-revision=${got_angle_revision}"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_restricted_trace_gold_interpreted_tests",
-        "precommit_args": [
-          "--gerrit-issue=${patch_issue}",
-          "--gerrit-patchset=${patch_set}",
-          "--buildbucket-id=${buildbucket_build_id}",
-          "--use-permissive-pixel-comparison=${use_permissive_angle_pixel_comparison}"
-        ],
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "gpu": "10de:2184-440.100",
-            "os": "Ubuntu-18.04.5|Ubuntu-18.04.6",
-            "pool": "chromium.tests.gpu"
-          },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_restricted_trace_gold_tests",
-        "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
       },
       {
         "args": [
@@ -5269,54 +5242,6 @@
       },
       {
         "args": [
-          "--use-angle=swiftshader"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_deqp_khr_noctx_gles32_tests",
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "cpu": "x86-64",
-            "gpu": "none",
-            "os": "Ubuntu-22.04",
-            "pool": "chromium.tests.gpu"
-          },
-          "hard_timeout": 900,
-          "io_timeout": 900,
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_deqp_khr_noctx_gles32_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_noctx_gles32_tests/",
-        "use_isolated_scripts_api": true
-      },
-      {
-        "args": [
-          "--use-angle=swiftshader"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_deqp_khr_single_gles32_tests",
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "cpu": "x86-64",
-            "gpu": "none",
-            "os": "Ubuntu-22.04",
-            "pool": "chromium.tests.gpu"
-          },
-          "hard_timeout": 900,
-          "io_timeout": 900,
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_deqp_khr_single_gles32_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_single_gles32_tests/",
-        "use_isolated_scripts_api": true
-      },
-      {
-        "args": [
           "--gtest_filter=*Vulkan_SwiftShader*"
         ],
         "merge": {
@@ -5754,54 +5679,6 @@
       },
       {
         "args": [
-          "--use-angle=swiftshader"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_deqp_khr_noctx_gles32_tests",
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "cpu": "x86-64",
-            "gpu": "none",
-            "os": "Ubuntu-22.04",
-            "pool": "chromium.tests.gpu"
-          },
-          "hard_timeout": 900,
-          "io_timeout": 900,
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_deqp_khr_noctx_gles32_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_noctx_gles32_tests/",
-        "use_isolated_scripts_api": true
-      },
-      {
-        "args": [
-          "--use-angle=swiftshader"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_deqp_khr_single_gles32_tests",
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "cpu": "x86-64",
-            "gpu": "none",
-            "os": "Ubuntu-22.04",
-            "pool": "chromium.tests.gpu"
-          },
-          "hard_timeout": 900,
-          "io_timeout": 900,
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_deqp_khr_single_gles32_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_single_gles32_tests/",
-        "use_isolated_scripts_api": true
-      },
-      {
-        "args": [
           "--gtest_filter=*Vulkan_SwiftShader*"
         ],
         "merge": {
@@ -6031,54 +5908,6 @@
         },
         "test": "angle_deqp_khr_noctx_gles2_tests",
         "test_id_prefix": "ninja://src/tests:angle_deqp_khr_noctx_gles2_tests/",
-        "use_isolated_scripts_api": true
-      },
-      {
-        "args": [
-          "--use-angle=swiftshader"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_deqp_khr_noctx_gles32_tests",
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "cpu": "x86-64",
-            "gpu": "none",
-            "os": "Ubuntu-22.04",
-            "pool": "chromium.tests.gpu"
-          },
-          "hard_timeout": 900,
-          "io_timeout": 900,
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_deqp_khr_noctx_gles32_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_noctx_gles32_tests/",
-        "use_isolated_scripts_api": true
-      },
-      {
-        "args": [
-          "--use-angle=swiftshader"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_deqp_khr_single_gles32_tests",
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "cpu": "x86-64",
-            "gpu": "none",
-            "os": "Ubuntu-22.04",
-            "pool": "chromium.tests.gpu"
-          },
-          "hard_timeout": 900,
-          "io_timeout": 900,
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_deqp_khr_single_gles32_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_single_gles32_tests/",
         "use_isolated_scripts_api": true
       },
       {
@@ -7220,37 +7049,6 @@
         "args": [
           "--test-machine-name",
           "${buildername}",
-          "--trace-interpreter=gz",
-          "--filter=fishdom:geometry_dash:merge_dragons:minecraft_bedrock:new_legend_of_the_condor_heroes:street_fighter_duel:teslagrad:vainglory",
-          "--git-revision=${got_angle_revision}"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_restricted_trace_gold_interpreted_tests",
-        "precommit_args": [
-          "--gerrit-issue=${patch_issue}",
-          "--gerrit-patchset=${patch_set}",
-          "--buildbucket-id=${buildbucket_build_id}",
-          "--use-permissive-pixel-comparison=${use_permissive_angle_pixel_comparison}"
-        ],
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "display_attached": "1",
-            "gpu": "8086:4680-31.0.101.5333",
-            "os": "Windows-10-19045.3930",
-            "pool": "chromium.tests.gpu"
-          },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_restricted_trace_gold_tests",
-        "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
-      },
-      {
-        "args": [
-          "--test-machine-name",
-          "${buildername}",
           "--git-revision=${got_angle_revision}"
         ],
         "merge": {
@@ -7497,37 +7295,6 @@
         },
         "test": "angle_perftests",
         "test_id_prefix": "ninja://src/tests:angle_perftests/"
-      },
-      {
-        "args": [
-          "--test-machine-name",
-          "${buildername}",
-          "--trace-interpreter=gz",
-          "--filter=fishdom:geometry_dash:merge_dragons:minecraft_bedrock:new_legend_of_the_condor_heroes:street_fighter_duel:teslagrad:vainglory",
-          "--git-revision=${got_angle_revision}"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_restricted_trace_gold_interpreted_tests",
-        "precommit_args": [
-          "--gerrit-issue=${patch_issue}",
-          "--gerrit-patchset=${patch_set}",
-          "--buildbucket-id=${buildbucket_build_id}",
-          "--use-permissive-pixel-comparison=${use_permissive_angle_pixel_comparison}"
-        ],
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "display_attached": "1",
-            "gpu": "8086:9bc5-31.0.101.2127",
-            "os": "Windows-10",
-            "pool": "chromium.tests.gpu"
-          },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_restricted_trace_gold_tests",
-        "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
       },
       {
         "args": [
@@ -8364,9 +8131,6 @@
         "args": [
           "--use-angle=vulkan"
         ],
-        "linux-args": [
-          "--no-xvfb"
-        ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
@@ -8389,9 +8153,6 @@
         "args": [
           "--use-angle=vulkan"
         ],
-        "linux-args": [
-          "--no-xvfb"
-        ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
         },
@@ -8413,9 +8174,6 @@
       {
         "args": [
           "--use-angle=vulkan"
-        ],
-        "linux-args": [
-          "--no-xvfb"
         ],
         "merge": {
           "script": "//scripts/angle_deqp_test_merge.py"
@@ -8568,37 +8326,6 @@
         },
         "test": "angle_perftests",
         "test_id_prefix": "ninja://src/tests:angle_perftests/"
-      },
-      {
-        "args": [
-          "--test-machine-name",
-          "${buildername}",
-          "--trace-interpreter=gz",
-          "--filter=fishdom:geometry_dash:merge_dragons:minecraft_bedrock:new_legend_of_the_condor_heroes:street_fighter_duel:teslagrad:vainglory",
-          "--git-revision=${got_angle_revision}"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_restricted_trace_gold_interpreted_tests",
-        "precommit_args": [
-          "--gerrit-issue=${patch_issue}",
-          "--gerrit-patchset=${patch_set}",
-          "--buildbucket-id=${buildbucket_build_id}",
-          "--use-permissive-pixel-comparison=${use_permissive_angle_pixel_comparison}"
-        ],
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "display_attached": "1",
-            "gpu": "10de:2184-27.21.14.5638",
-            "os": "Windows-10-18363",
-            "pool": "chromium.tests.gpu"
-          },
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_restricted_trace_gold_tests",
-        "test_id_prefix": "ninja://src/tests/restricted_traces:angle_restricted_trace_gold_tests/"
       },
       {
         "args": [
@@ -9177,54 +8904,6 @@
       },
       {
         "args": [
-          "--use-angle=swiftshader"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_deqp_khr_noctx_gles32_tests",
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "cpu": "x86-64",
-            "gpu": "none",
-            "os": "Windows-10",
-            "pool": "chromium.tests.gpu"
-          },
-          "hard_timeout": 900,
-          "io_timeout": 900,
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_deqp_khr_noctx_gles32_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_noctx_gles32_tests/",
-        "use_isolated_scripts_api": true
-      },
-      {
-        "args": [
-          "--use-angle=swiftshader"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_deqp_khr_single_gles32_tests",
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "cpu": "x86-64",
-            "gpu": "none",
-            "os": "Windows-10",
-            "pool": "chromium.tests.gpu"
-          },
-          "hard_timeout": 900,
-          "io_timeout": 900,
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_deqp_khr_single_gles32_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_single_gles32_tests/",
-        "use_isolated_scripts_api": true
-      },
-      {
-        "args": [
           "--gtest_filter=*Vulkan_SwiftShader*"
         ],
         "merge": {
@@ -9757,54 +9436,6 @@
         },
         "test": "angle_deqp_khr_noctx_gles2_tests",
         "test_id_prefix": "ninja://src/tests:angle_deqp_khr_noctx_gles2_tests/",
-        "use_isolated_scripts_api": true
-      },
-      {
-        "args": [
-          "--use-angle=swiftshader"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_deqp_khr_noctx_gles32_tests",
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "cpu": "x86-64",
-            "gpu": "none",
-            "os": "Windows-10",
-            "pool": "chromium.tests.gpu"
-          },
-          "hard_timeout": 900,
-          "io_timeout": 900,
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_deqp_khr_noctx_gles32_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_noctx_gles32_tests/",
-        "use_isolated_scripts_api": true
-      },
-      {
-        "args": [
-          "--use-angle=swiftshader"
-        ],
-        "merge": {
-          "script": "//testing/merge_scripts/standard_isolated_script_merge.py"
-        },
-        "name": "angle_deqp_khr_single_gles32_tests",
-        "swarming": {
-          "containment_type": "AUTO",
-          "dimensions": {
-            "cpu": "x86-64",
-            "gpu": "none",
-            "os": "Windows-10",
-            "pool": "chromium.tests.gpu"
-          },
-          "hard_timeout": 900,
-          "io_timeout": 900,
-          "service_account": "chromium-tester@chops-service-accounts.iam.gserviceaccount.com"
-        },
-        "test": "angle_deqp_khr_single_gles32_tests",
-        "test_id_prefix": "ninja://src/tests:angle_deqp_khr_single_gles32_tests/",
         "use_isolated_scripts_api": true
       },
       {

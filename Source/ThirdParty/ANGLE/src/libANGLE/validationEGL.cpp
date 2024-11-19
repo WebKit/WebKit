@@ -6054,10 +6054,7 @@ bool ValidateQueryStringiANGLE(const ValidationContext *val,
     {
         case EGL_FEATURE_NAME_ANGLE:
         case EGL_FEATURE_CATEGORY_ANGLE:
-        case EGL_FEATURE_DESCRIPTION_ANGLE:
-        case EGL_FEATURE_BUG_ANGLE:
         case EGL_FEATURE_STATUS_ANGLE:
-        case EGL_FEATURE_CONDITION_ANGLE:
             break;
         default:
             val->setError(EGL_BAD_PARAMETER, "name is not valid.");

@@ -334,7 +334,7 @@ EGLint EGLAPIENTRY EGL_DupNativeFenceFDANDROID(EGLDisplay dpy, EGLSyncKHR sync)
     Thread *thread = egl::GetCurrentThread();
     EGLint returnValue;
     {
-        ANGLE_SCOPED_GLOBAL_LOCK();
+        ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
         EGL_EVENT(DupNativeFenceFDANDROID, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR "",
                   (uintptr_t)dpy, (uintptr_t)sync);
 
@@ -604,7 +604,7 @@ void *EGLAPIENTRY EGL_CopyMetalSharedEventANGLE(EGLDisplay dpy, EGLSyncKHR sync)
     Thread *thread = egl::GetCurrentThread();
     void *returnValue;
     {
-        ANGLE_SCOPED_GLOBAL_LOCK();
+        ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
         EGL_EVENT(CopyMetalSharedEventANGLE, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR "",
                   (uintptr_t)dpy, (uintptr_t)sync);
 
@@ -1644,7 +1644,7 @@ EGLint EGLAPIENTRY EGL_LabelObjectKHR(EGLDisplay display,
     Thread *thread = egl::GetCurrentThread();
     EGLint returnValue;
     {
-        ANGLE_SCOPED_GLOBAL_LOCK();
+        ANGLE_SCOPED_GLOBAL_EGL_AND_EGL_SYNC_LOCK();
         EGL_EVENT(LabelObjectKHR,
                   "display = 0x%016" PRIxPTR ", objectType = 0x%X, object = 0x%016" PRIxPTR
                   ", label = 0x%016" PRIxPTR "",
@@ -1713,7 +1713,7 @@ EGLint EGLAPIENTRY EGL_ClientWaitSyncKHR(EGLDisplay dpy,
     Thread *thread = egl::GetCurrentThread();
     EGLint returnValue;
     {
-        ANGLE_SCOPED_GLOBAL_LOCK();
+        ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
         EGL_EVENT(ClientWaitSyncKHR,
                   "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR ", flags = %d, timeout = %llu",
                   (uintptr_t)dpy, (uintptr_t)sync, flags, static_cast<unsigned long long>(timeout));
@@ -1748,7 +1748,7 @@ EGLSyncKHR EGLAPIENTRY EGL_CreateSyncKHR(EGLDisplay dpy, EGLenum type, const EGL
     Thread *thread = egl::GetCurrentThread();
     EGLSyncKHR returnValue;
     {
-        ANGLE_SCOPED_GLOBAL_LOCK();
+        ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
         EGL_EVENT(CreateSyncKHR,
                   "dpy = 0x%016" PRIxPTR ", type = 0x%X, attrib_list = 0x%016" PRIxPTR "",
                   (uintptr_t)dpy, type, (uintptr_t)attrib_list);
@@ -1784,7 +1784,7 @@ EGLBoolean EGLAPIENTRY EGL_DestroySyncKHR(EGLDisplay dpy, EGLSyncKHR sync)
     Thread *thread = egl::GetCurrentThread();
     EGLBoolean returnValue;
     {
-        ANGLE_SCOPED_GLOBAL_LOCK();
+        ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
         EGL_EVENT(DestroySyncKHR, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR "",
                   (uintptr_t)dpy, (uintptr_t)sync);
 
@@ -1820,7 +1820,7 @@ EGLBoolean EGLAPIENTRY EGL_GetSyncAttribKHR(EGLDisplay dpy,
     Thread *thread = egl::GetCurrentThread();
     EGLBoolean returnValue;
     {
-        ANGLE_SCOPED_GLOBAL_LOCK();
+        ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
         EGL_EVENT(GetSyncAttribKHR,
                   "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR
                   ", attribute = %d, value = 0x%016" PRIxPTR "",
@@ -2092,7 +2092,7 @@ EGLBoolean EGLAPIENTRY EGL_SignalSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLenu
     Thread *thread = egl::GetCurrentThread();
     EGLBoolean returnValue;
     {
-        ANGLE_SCOPED_GLOBAL_LOCK();
+        ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
         EGL_EVENT(SignalSyncKHR, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR ", mode = 0x%X",
                   (uintptr_t)dpy, (uintptr_t)sync, mode);
 
@@ -2465,7 +2465,7 @@ EGLint EGLAPIENTRY EGL_WaitSyncKHR(EGLDisplay dpy, EGLSyncKHR sync, EGLint flags
     Thread *thread = egl::GetCurrentThread();
     EGLint returnValue;
     {
-        ANGLE_SCOPED_GLOBAL_LOCK();
+        ANGLE_SCOPED_GLOBAL_EGL_SYNC_LOCK();
         EGL_EVENT(WaitSyncKHR, "dpy = 0x%016" PRIxPTR ", sync = 0x%016" PRIxPTR ", flags = %d",
                   (uintptr_t)dpy, (uintptr_t)sync, flags);
 

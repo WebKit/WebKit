@@ -4,7 +4,7 @@
 
 import("//third_party/OpenCL-CTS/gn/angle_ocl_cts.gni")
 
-ocl_cts_binary("integer_ops") {
+ocl_cts_source_set("integer_ops") {
   include_dirs =
       [ "$angle_root/third_party/OpenCL-CTS/src/test_conformance/integer_ops" ]
   sources = [

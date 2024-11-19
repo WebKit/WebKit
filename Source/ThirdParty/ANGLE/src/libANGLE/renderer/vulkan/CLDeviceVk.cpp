@@ -92,7 +92,7 @@ CLDeviceVk::CLDeviceVk(const cl::Device &device, vk::Renderer *renderer)
         {cl::DeviceInfo::AddressBits, 32},
         {cl::DeviceInfo::EndianLittle, CL_TRUE},
         {cl::DeviceInfo::LocalMemType, CL_LOCAL},
-        {cl::DeviceInfo::MaxSamplers, 0},
+        {cl::DeviceInfo::MaxSamplers, props.limits.maxSamplerAllocationCount},
         {cl::DeviceInfo::MaxConstantArgs, 8},
         {cl::DeviceInfo::MaxNumSubGroups, 0},
         {cl::DeviceInfo::MaxComputeUnits, 4},
@@ -143,9 +143,7 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
     info.maxMemAllocSize  = 1 << 30;
     info.memBaseAddrAlign = 1024;
 
-    // TODO(aannestrand) Add image and sampler support later
-    // http://anglebug.com/42266936
-    info.imageSupport = CL_FALSE;
+    info.imageSupport = CL_TRUE;
 
     info.image2D_MaxWidth          = properties.limits.maxImageDimension2D;
     info.image2D_MaxHeight         = properties.limits.maxImageDimension2D;
@@ -168,20 +166,27 @@ CLDeviceImpl::Info CLDeviceVk::createInfo(cl::DeviceType type) const
                                  {CL_MAKE_VERSION(3, 0, 0), "OpenCL C"}};
 
     info.OpenCL_C_Features         = {};
-    info.extensionsWithVersion     = {};
     info.ILsWithVersion            = {};
     info.builtInKernelsWithVersion = {};
     info.partitionProperties       = {};
     info.partitionType             = {};
     info.IL_Version                = "";
 
-    // Below extensions are required as of OpenCL 1.1
-    info.extensions =
-        "cl_khr_byte_addressable_store "
-        "cl_khr_global_int32_base_atomics "
-        "cl_khr_global_int32_extended_atomics "
-        "cl_khr_local_int32_base_atomics "
-        "cl_khr_local_int32_extended_atomics ";
+    // Below extensions are required as of OpenCL 1.1, add their versioned strings
+    NameVersionVector versionedExtensionList = {
+        // Below extensions are required as of OpenCL 1.1
+        cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0),
+                        .name    = "cl_khr_byte_addressable_store"},
+        cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0),
+                        .name    = "cl_khr_global_int32_base_atomics"},
+        cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0),
+                        .name    = "cl_khr_global_int32_extended_atomics"},
+        cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0),
+                        .name    = "cl_khr_local_int32_base_atomics"},
+        cl_name_version{.version = CL_MAKE_VERSION(1, 0, 0),
+                        .name    = "cl_khr_local_int32_extended_atomics"},
+    };
+    info.initializeVersionedExtensions(std::move(versionedExtensionList));
 
     return info;
 }

@@ -920,6 +920,7 @@ void main()
 
     void ValidationGLEGLImage_helper(const EGLint *attribs);
     void SourceAHBTarget2D_helper(const EGLint *attribs);
+    void SourceAHBTarget2DImageStorageGenerateMipmap_helper(const EGLint *attribs);
     void SourceAHBTarget2DArray_helper(const EGLint *attribs);
     void SourceAHBTargetExternal_helper(const EGLint *attribs);
     void SourceAHBTargetExternalESSL3_helper(const EGLint *attribs);
@@ -942,7 +943,18 @@ void main()
     void SourceRenderbufferTargetTextureExternal_helper(const EGLint *attribs);
     void SourceRenderbufferTargetRenderbuffer_helper(const EGLint *attribs);
     void SourceRenderbufferTargetTextureExternalESSL3_helper(const EGLint *attribs);
-
+    void ImageStorageGenerateMipmap_helper(const EGLint *attribs,
+                                           const GLsizei width,
+                                           const GLsizei height,
+                                           AHardwareBuffer *srcAhb,
+                                           GLuint srcTexture,
+                                           EGLImageKHR *imageOut);
+    void verifyImageStorageMipmap(const EGLint *attribs,
+                                  EGLImageKHR image,
+                                  const GLsizei mipLevelCount);
+    void verifyImageStorageMipmapWithBlend(const EGLint *attribs,
+                                           EGLImageKHR image,
+                                           const GLsizei mipLevelCount);
     void verifyResultsTexture(GLuint texture,
                               const GLubyte referenceColor[4],
                               GLenum textureTarget,
@@ -2173,6 +2185,237 @@ void ImageTest::Source2DTarget2D_helper(const EGLint *attribs)
 
     // Clean up
     eglDestroyImageKHR(window->getDisplay(), image);
+}
+
+void ImageTest::ImageStorageGenerateMipmap_helper(const EGLint *attribs,
+                                                  const GLsizei width,
+                                                  const GLsizei height,
+                                                  AHardwareBuffer *srcAhb,
+                                                  GLuint srcTexture,
+                                                  EGLImageKHR *imageOut)
+{
+    ASSERT(srcAhb != nullptr || glIsTexture(srcTexture));
+
+    ANGLE_SKIP_TEST_IF(getClientMajorVersion() < 3 && !IsGLExtensionEnabled("GL_EXT_sRGB"));
+    ANGLE_SKIP_TEST_IF(!hasImageGLColorspaceExt());
+
+    ANGLE_SKIP_TEST_IF(!hasOESExt() || !hasBaseExt() || !has2DTextureExt());
+    ANGLE_SKIP_TEST_IF(!hasEglImageStorageExt());
+
+    constexpr int kNumTiles = 8;
+    const int tileWidth     = width / kNumTiles;
+    const int tileHeight    = height / kNumTiles;
+
+    // Create EGLImage and then a target texture from that image
+    EGLWindow *window = getEGLWindow();
+    if (srcAhb != nullptr)
+    {
+        *imageOut =
+            eglCreateImageKHR(window->getDisplay(), EGL_NO_CONTEXT, EGL_NATIVE_BUFFER_ANDROID,
+                              angle::android::AHardwareBufferToClientBuffer(srcAhb), attribs);
+    }
+    else
+    {
+        *imageOut =
+            eglCreateImageKHR(window->getDisplay(), window->getContext(), EGL_GL_TEXTURE_2D_KHR,
+                              reinterpret_cast<EGLClientBuffer>(srcTexture), attribs);
+    }
+    ASSERT_EGL_SUCCESS();
+
+    GLTexture dstTexture;
+    glBindTexture(GL_TEXTURE_2D, dstTexture);
+    // Setup for mipmapping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    ASSERT_GL_NO_ERROR();
+
+    glEGLImageTargetTexStorageEXT(GL_TEXTURE_2D, *imageOut, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // Create framebuffer, attach level 0 of target texture and render pattern
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, dstTexture, 0);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    glEnable(GL_SCISSOR_TEST);
+    for (int i = 0; i < kNumTiles; ++i)
+    {
+        for (int j = 0; j < kNumTiles; ++j)
+        {
+            const float v = (i & 1) ^ (j & 1) ? 0.5f : 0.f;
+            glClearColor(v, 0.f, v, v);
+            glScissor(i * tileWidth, j * tileHeight, tileWidth, tileHeight);
+            glClear(GL_COLOR_BUFFER_BIT);
+        }
+    }
+    glDisable(GL_SCISSOR_TEST);
+
+    // Generate mipmap for target texture
+    glGenerateMipmap(GL_TEXTURE_2D);
+}
+
+void ImageTest::verifyImageStorageMipmap(const EGLint *attribs,
+                                         EGLImageKHR image,
+                                         const GLsizei mipLevelCount)
+{
+    if (image == EGL_NO_IMAGE_KHR)
+    {
+        // Early return if image isn't valid
+        return;
+    }
+
+    GLubyte linearColor[] = {64, 0, 64, 64};
+    GLubyte srgbColor[]   = {137, 0, 137, 64};
+    GLubyte *expectedColor =
+        attribListHasSrgbColorspace(attribs, kColorspaceAttributeIndex) ? srgbColor : linearColor;
+
+    GLTexture targetTexture;
+    glBindTexture(GL_TEXTURE_2D, targetTexture);
+    // Setup for mipmapping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    ASSERT_GL_NO_ERROR();
+
+    glEGLImageTargetTexStorageEXT(GL_TEXTURE_2D, image, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // Create target framebuffer, attach "(mipLevelCount - 1)" level of target texture and verify
+    // data
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, targetTexture,
+                           mipLevelCount - 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+    EXPECT_PIXEL_NEAR(0, 0, expectedColor[0], expectedColor[1], expectedColor[2], expectedColor[3],
+                      1);
+
+    // Verify that the target texture generates linear color when sampled
+    glActiveTexture(GL_TEXTURE0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindTexture(GL_TEXTURE_2D, targetTexture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, mipLevelCount - 1);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, mipLevelCount - 1);
+    ASSERT_GL_NO_ERROR();
+
+    verifyResults2D(targetTexture, linearColor);
+}
+
+void ImageTest::verifyImageStorageMipmapWithBlend(const EGLint *attribs,
+                                                  EGLImageKHR image,
+                                                  const GLsizei mipLevelCount)
+{
+    if (image == EGL_NO_IMAGE_KHR)
+    {
+        // Early return if image isn't valid
+        return;
+    }
+
+    // Need to have atleast miplevel 1
+    ASSERT(mipLevelCount >= 1);
+    // Verification used by only those tests with colorspace overrides
+    ASSERT(attribListHasSrgbColorspace(attribs, kColorspaceAttributeIndex));
+
+    GLTexture targetTexture;
+    glBindTexture(GL_TEXTURE_2D, targetTexture);
+    // Setup for mipmapping
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    ASSERT_GL_NO_ERROR();
+
+    glEGLImageTargetTexStorageEXT(GL_TEXTURE_2D, image, nullptr);
+    ASSERT_GL_NO_ERROR();
+
+    // Create target framebuffer, attach mipLevel == 1 of target texture and verify
+    // data with blending enabled.
+    GLFramebuffer fbo;
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, targetTexture, 1);
+    ASSERT_GL_FRAMEBUFFER_COMPLETE(GL_FRAMEBUFFER);
+
+    // Blend green color with contents of mipLevel 1
+    // source color at (7, 11) of mipLevel 1 = [137, 0, 137, 64]
+    GLubyte blendedColor[] = {137, 255, 137, 255};
+    ANGLE_GL_PROGRAM(program, essl1_shaders::vs::Simple(), essl1_shaders::fs::Green());
+    glUseProgram(program);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    drawQuad(program, essl1_shaders::PositionAttrib(), 0.5f);
+
+    EXPECT_PIXEL_NEAR(7, 11, blendedColor[0], blendedColor[1], blendedColor[2], blendedColor[3], 1);
+}
+
+void ImageTest::SourceAHBTarget2DImageStorageGenerateMipmap_helper(const EGLint *attribs)
+{
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    constexpr GLsizei kWidth    = 40;
+    constexpr GLsizei kHeight   = 32;
+    constexpr GLsizei kDepth    = 1;
+    const GLsizei mipLevelCount = static_cast<GLsizei>(std::log2(std::max(kWidth, kHeight)) + 1);
+
+    ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
+        kWidth, kHeight, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+        kDefaultAHBUsage | kAHBUsageGPUMipMapComplete));
+
+    // Create source AHB
+    AHardwareBuffer *aHardwareBuffer =
+        createAndroidHardwareBuffer(kWidth, kHeight, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+                                    kDefaultAHBUsage | kAHBUsageGPUMipMapComplete, {});
+    EXPECT_NE(aHardwareBuffer, nullptr);
+
+    EGLImageKHR image = EGL_NO_IMAGE_KHR;
+    ImageStorageGenerateMipmap_helper(attribs, kWidth, kHeight, aHardwareBuffer, 0, &image);
+    verifyImageStorageMipmap(attribs, image, mipLevelCount);
+
+    // Clean up image
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), image);
+
+    // Clean up AHB
+    destroyAndroidHardwareBuffer(aHardwareBuffer);
+}
+
+// Test interaction between AHB, GL_EXT_EGL_image_storage and glGenerateMipmap
+TEST_P(ImageTestES3, SourceAHBTarget2DGenerateMipmap)
+{
+    SourceAHBTarget2DImageStorageGenerateMipmap_helper(kDefaultAttribs);
+}
+
+// Test interaction between AHB, GL_EXT_EGL_image_storage and glGenerateMipmap with colorspace
+// overrides This mirrors the SingleLayer_ColorTest_MipmapComplete_R8G8B8A8_UNORM_sRGB Android CTS
+// test
+TEST_P(ImageTestES3, SourceAHBTarget2DGenerateMipmap_Colorspace)
+{
+    SourceAHBTarget2DImageStorageGenerateMipmap_helper(kColorspaceAttribs);
+}
+
+// Test to ensure that Vulkan backend's LOAD_OP is correct for non-0 miplevels. A bug in
+// content tracking of mip levels will cause rendering artifacts and result in test failure.
+TEST_P(ImageTestES3, SourceAHBTarget2DGenerateMipmapColorspaceBlend)
+{
+    ANGLE_SKIP_TEST_IF(!hasAndroidImageNativeBufferExt() || !hasAndroidHardwareBufferSupport());
+
+    constexpr GLsizei kWidth    = 40;
+    constexpr GLsizei kHeight   = 32;
+    constexpr GLsizei kDepth    = 1;
+    const GLsizei mipLevelCount = static_cast<GLsizei>(std::log2(std::max(kWidth, kHeight)) + 1);
+
+    ANGLE_SKIP_TEST_IF(!isAndroidHardwareBufferConfigurationSupported(
+        kWidth, kHeight, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+        kDefaultAHBUsage | kAHBUsageGPUMipMapComplete));
+
+    // Create source AHB
+    AHardwareBuffer *aHardwareBuffer =
+        createAndroidHardwareBuffer(kWidth, kHeight, kDepth, AHARDWAREBUFFER_FORMAT_R8G8B8A8_UNORM,
+                                    kDefaultAHBUsage | kAHBUsageGPUMipMapComplete, {});
+    EXPECT_NE(aHardwareBuffer, nullptr);
+
+    EGLImageKHR image = EGL_NO_IMAGE_KHR;
+    ImageStorageGenerateMipmap_helper(kColorspaceAttribs, kWidth, kHeight, aHardwareBuffer, 0,
+                                      &image);
+    verifyImageStorageMipmapWithBlend(kColorspaceAttribs, image, mipLevelCount);
+
+    // Clean up image
+    eglDestroyImageKHR(getEGLWindow()->getDisplay(), image);
+
+    // Clean up AHB
+    destroyAndroidHardwareBuffer(aHardwareBuffer);
 }
 
 // Try to orphan image created with the GL_EXT_EGL_image_storage extension

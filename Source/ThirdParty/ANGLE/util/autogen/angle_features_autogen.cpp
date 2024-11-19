@@ -162,6 +162,7 @@ constexpr PackedEnumMap<Feature, const char *> kFeatureNames = {{
     {Feature::ExplicitFragmentLocations, "explicitFragmentLocations"},
     {Feature::ExplicitlyCastMediumpFloatTo16Bit, "explicitlyCastMediumpFloatTo16Bit"},
     {Feature::ExplicitlyEnablePerSampleShading, "explicitlyEnablePerSampleShading"},
+    {Feature::ExposeES32ForTesting, "exposeES32ForTesting"},
     {Feature::ExposeNonConformantExtensionsAndVersions, "exposeNonConformantExtensionsAndVersions"},
     {Feature::FinishDoesNotCauseQueriesToBeAvailable, "finishDoesNotCauseQueriesToBeAvailable"},
     {Feature::FlushAfterEndingTransformFeedback, "flushAfterEndingTransformFeedback"},

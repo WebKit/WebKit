@@ -96,6 +96,7 @@ class CLContextVk : public CLContextImpl, public vk::Context
 
   private:
     void handleDeviceLost() const;
+    VkFormat getVkFormatFromCL(cl_image_format format);
 
     // Caches for DescriptorSetLayout and PipelineLayout
     DescriptorSetLayoutCache mDescriptorSetLayoutCache;
@@ -110,6 +111,21 @@ class CLContextVk : public CLContextImpl, public vk::Context
     MutableData mAssociatedObjects;
 
     const cl::DevicePtrs mAssociatedDevices;
+
+    // Table of minimum required image formats for OpenCL
+    static constexpr cl_image_format kMinSupportedFormatsReadOrWrite[11] = {
+        {CL_RGBA, CL_UNORM_INT8},  {CL_RGBA, CL_UNSIGNED_INT8},  {CL_RGBA, CL_SIGNED_INT8},
+        {CL_RGBA, CL_UNORM_INT16}, {CL_RGBA, CL_UNSIGNED_INT16}, {CL_RGBA, CL_SIGNED_INT16},
+        {CL_RGBA, CL_HALF_FLOAT},  {CL_RGBA, CL_UNSIGNED_INT32}, {CL_RGBA, CL_SIGNED_INT32},
+        {CL_RGBA, CL_FLOAT},       {CL_BGRA, CL_UNORM_INT8}};
+
+    static constexpr cl_image_format kMinSupportedFormatsReadAndWrite[18] = {
+        {CL_R, CL_UNORM_INT8},        {CL_R, CL_UNSIGNED_INT8},    {CL_R, CL_SIGNED_INT8},
+        {CL_R, CL_UNSIGNED_INT16},    {CL_R, CL_SIGNED_INT16},     {CL_R, CL_HALF_FLOAT},
+        {CL_R, CL_UNSIGNED_INT32},    {CL_R, CL_SIGNED_INT32},     {CL_R, CL_FLOAT},
+        {CL_RGBA, CL_UNORM_INT8},     {CL_RGBA, CL_UNSIGNED_INT8}, {CL_RGBA, CL_SIGNED_INT8},
+        {CL_RGBA, CL_UNSIGNED_INT16}, {CL_RGBA, CL_SIGNED_INT16},  {CL_RGBA, CL_HALF_FLOAT},
+        {CL_RGBA, CL_UNSIGNED_INT32}, {CL_RGBA, CL_SIGNED_INT32},  {CL_RGBA, CL_FLOAT}};
 
     friend class CLMemoryVk;
 };

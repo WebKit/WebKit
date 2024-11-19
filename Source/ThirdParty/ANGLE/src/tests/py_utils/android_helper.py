@@ -106,7 +106,6 @@ def _InitializeAndroid(apk_path):
     _Global.traces_outside_of_apk = interpreter_so_lib not in apk_so_libs
 
     if logging.getLogger().isEnabledFor(logging.DEBUG):
-        logging.debug(_AdbShell('dumpsys nfc | grep mScreenState || true').decode())
         logging.debug(_AdbShell('df -h').decode())
 
 
@@ -131,7 +130,7 @@ def _EnsureTestSuite(suite_name):
     assert IsAndroid()
 
     if _Global.current_suite != suite_name:
-        _PrepareTestSuite(suite_name)
+        PrepareTestSuite(suite_name)
         _Global.current_suite = suite_name
 
 
@@ -148,7 +147,7 @@ def _Run(cmd):
 
 
 @functools.lru_cache()
-def _FindAdb():
+def FindAdb():
     platform_tools = (
         pathlib.Path(angle_path_util.ANGLE_ROOT_DIR) / 'third_party' / 'android_sdk' / 'public' /
         'platform-tools')
@@ -159,11 +158,11 @@ def _FindAdb():
 
 
 def _AdbRun(args):
-    return _Run([_FindAdb()] + args)
+    return _Run([FindAdb()] + args)
 
 
 def _AdbShell(cmd):
-    return _Run([_FindAdb(), 'shell', cmd])
+    return _Run([FindAdb(), 'shell', cmd])
 
 
 def _GetAdbRoot(shell_id, su_path):
@@ -233,7 +232,7 @@ def _MakeTar(path, patterns):
 def _AddRestrictedTracesJson():
     _MakeTar(_Global.external_storage + 't.tar', [
         '../../src/tests/restricted_traces/*/*.json',
-        '../../src/tests/restricted_traces/restricted_traces.json'
+        'gen/trace_list.json',
     ])
     _AdbShell('r=' + _Global.external_storage + '; tar -xf $r/t.tar -C $r/ && rm $r/t.tar')
 
@@ -320,7 +319,7 @@ def _CheckSameApkInstalled(apk_path):
     return False
 
 
-def _PrepareTestSuite(suite_name):
+def PrepareTestSuite(suite_name):
     apk_path = _ApkPath(suite_name)
 
     if _CheckSameApkInstalled(apk_path):
@@ -421,7 +420,8 @@ def PrepareRestrictedTraces(traces):
             _PushLibToAppDir(lib_name)
 
         tracegz = 'gen/tracegz_' + trace + '.gz'
-        _Push(tracegz, tracegz)
+        if os.path.exists(tracegz):  # Requires angle_enable_tracegz
+            _Push(tracegz, tracegz)
 
     # Push one additional file when running outside the APK
     if _Global.traces_outside_of_apk:

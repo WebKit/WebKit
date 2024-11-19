@@ -92,20 +92,34 @@ TInfoSinkBase &TInfoSinkBase::operator<<(const TType &type)
 
     if (type.getStruct() != nullptr)
     {
-        if (type.getStruct()->symbolType() == SymbolType::Empty)
-        {
-            *this << " <anonymous>";
-        }
-        else
-        {
-            *this << " '" << type.getStruct()->name() << "'";
-        }
+        *this << ' ' << static_cast<const TSymbol &>(*type.getStruct());
         if (type.isStructSpecifier())
         {
             *this << " (specifier)";
         }
     }
 
+    return *this;
+}
+
+TInfoSinkBase &TInfoSinkBase::operator<<(const TSymbol &symbol)
+{
+    switch (symbol.symbolType())
+    {
+        case (SymbolType::BuiltIn):
+            *this << symbol.name();
+            break;
+        case (SymbolType::Empty):
+            *this << "''";
+            break;
+        case (SymbolType::AngleInternal):
+            *this << '#' << symbol.name();
+            break;
+        case (SymbolType::UserDefined):
+            *this << '\'' << symbol.name() << '\'';
+            break;
+    }
+    *this << " (symbol id " << symbol.uniqueId().get() << ")";
     return *this;
 }
 

@@ -25,6 +25,7 @@ VkExtent3D GetExtentFromDescriptor(cl::ImageDescriptor desc);
 VkImageType GetImageType(cl::MemObjectType memObjectType);
 VkImageViewType GetImageViewType(cl::MemObjectType memObjectType);
 VkMemoryPropertyFlags GetMemoryPropertyFlags(cl::MemFlags memFlags);
+VkBufferUsageFlags GetBufferUsageFlags(cl::MemFlags memFlags);
 
 }  // namespace cl_vk
 }  // namespace rx

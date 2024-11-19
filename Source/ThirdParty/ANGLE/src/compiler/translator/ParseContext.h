@@ -100,9 +100,9 @@ class TParseContext : angle::NonCopyable
 
     int getNumViews() const { return mNumViews; }
 
-    const std::map<int, TLayoutImageInternalFormat> &pixelLocalStorageBindings() const
+    const std::map<int, ShPixelLocalStorageFormat> &pixelLocalStorageFormats() const
     {
-        return mPLSBindings;
+        return mPLSFormats;
     }
 
     void enterFunctionDeclaration() { mDeclaringFunction = true; }
@@ -170,9 +170,6 @@ class TParseContext : angle::NonCopyable
     void checkStd430IsForShaderStorageBlock(const TSourceLoc &location,
                                             const TLayoutBlockStorage &blockStorage,
                                             const TQualifier &qualifier);
-    void checkIsParameterQualifierValid(const TSourceLoc &line,
-                                        const TTypeQualifierBuilder &typeQualifierBuilder,
-                                        TType *type);
 
     // Check if at least one of the specified extensions can be used, and generate error/warning as
     // appropriate according to the spec.
@@ -340,15 +337,17 @@ class TParseContext : angle::NonCopyable
     TFunctionLookup *addNonConstructorFunc(const ImmutableString &name, const TSymbol *symbol);
     TFunctionLookup *addConstructorFunc(const TPublicType &publicType);
 
-    TParameter parseParameterDeclarator(const TPublicType &publicType,
+    TParameter parseParameterDeclarator(const TPublicType &type,
                                         const ImmutableString &name,
                                         const TSourceLoc &nameLoc);
-
-    TParameter parseParameterArrayDeclarator(const ImmutableString &name,
+    TParameter parseParameterArrayDeclarator(const TPublicType &elementType,
+                                             const ImmutableString &name,
                                              const TSourceLoc &nameLoc,
-                                             const TVector<unsigned int> &arraySizes,
-                                             const TSourceLoc &arrayLoc,
-                                             TPublicType *elementType);
+                                             TVector<unsigned int> *arraySizes,
+                                             const TSourceLoc &arrayLoc);
+    void parseParameterQualifier(const TSourceLoc &line,
+                                 const TTypeQualifierBuilder &typeQualifierBuilder,
+                                 TPublicType &type);
 
     TIntermTyped *addIndexExpression(TIntermTyped *baseExpression,
                                      const TSourceLoc &location,
@@ -567,10 +566,6 @@ class TParseContext : angle::NonCopyable
                                               const ImmutableString &identifier,
                                               TType *type);
 
-    TParameter parseParameterDeclarator(TType *type,
-                                        const ImmutableString &name,
-                                        const TSourceLoc &nameLoc);
-
     bool checkIsValidTypeAndQualifierForArray(const TSourceLoc &indexLocation,
                                               const TPublicType &elementType);
     // Done for all atomic counter declarations, whether empty or not.
@@ -579,10 +574,6 @@ class TParseContext : angle::NonCopyable
 
     // Assumes that multiplication op has already been set based on the types.
     bool isMultiplicationTypeCombinationValid(TOperator op, const TType &left, const TType &right);
-
-    void checkOutParameterIsNotOpaqueType(const TSourceLoc &line,
-                                          TQualifier qualifier,
-                                          const TType &type);
 
     void checkInternalFormatIsNotSpecified(const TSourceLoc &location,
                                            TLayoutImageInternalFormat internalFormat);
@@ -733,7 +724,7 @@ class TParseContext : angle::NonCopyable
     };
 
     // Generates an error if any pixel local storage uniforms have been declared (more specifically,
-    // if mPLSBindings is not empty).
+    // if mPLSFormats is not empty).
     //
     // If no pixel local storage uniforms have been declared, and if the PLS extension is enabled,
     // saves the potential error to mPLSPotentialErrors in case we encounter a PLS uniform later.
@@ -798,6 +789,7 @@ class TParseContext : angle::NonCopyable
     int mMaxAtomicCounterBindings;
     int mMaxAtomicCounterBufferSize;
     int mMaxShaderStorageBufferBindings;
+    int mMaxPixelLocalStoragePlanes;
 
     // keeps track whether we are declaring / defining a function
     bool mDeclaringFunction;
@@ -809,7 +801,7 @@ class TParseContext : angle::NonCopyable
     std::map<int, AtomicCounterBindingState> mAtomicCounterBindingStates;
 
     // Track the format of each pixel local storage binding.
-    std::map<int, TLayoutImageInternalFormat> mPLSBindings;
+    std::map<int, ShPixelLocalStorageFormat> mPLSFormats;
 
     // Potential errors to generate immediately upon encountering a pixel local storage uniform.
     std::vector<std::tuple<const TSourceLoc, PLSIllegalOperations>> mPLSPotentialErrors;

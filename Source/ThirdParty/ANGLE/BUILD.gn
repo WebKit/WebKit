@@ -115,9 +115,6 @@ if (angle_build_all) {
     if (angle_enable_cl) {
       deps += [ "$angle_root/src/libOpenCL:angle_cl" ]
     }
-    if (angle_enable_cl_testing) {
-      deps += [ "$angle_root/third_party/OpenCL-CTS/:opencl_cts" ]
-    }
     if (angle_enable_cl && angle_enable_vulkan) {
       # OpenCL through Vulkan in ANGLE requires clspv for online compiler
       deps += [ "$angle_clspv_dir:clspv" ]
@@ -726,116 +723,102 @@ angle_source_set("angle_translator_headers") {
   public_deps = [ ":includes" ]
 }
 
-template("translator_lib") {
-  angle_static_library(target_name) {
-    sources = angle_translator_sources
-    defines = []
+angle_static_library("translator") {
+  sources = angle_translator_sources
+  defines = []
 
-    _needs_glsl_base = false
-    _needs_glsl_and_vulkan_base = false
-    _uses_spirv = false
+  _needs_glsl_base = false
+  _needs_glsl_and_vulkan_base = false
+  _uses_spirv = false
 
-    # Frontend support:
-    sources += angle_translator_essl_symbol_table_sources
+  # Frontend support:
+  sources += angle_translator_essl_symbol_table_sources
 
-    # Backend support:
-    if (angle_enable_null) {
-      defines += [ "ANGLE_ENABLE_NULL" ]
-    }
+  # Backend support:
+  if (angle_enable_null) {
+    defines += [ "ANGLE_ENABLE_NULL" ]
+  }
 
-    if (angle_enable_essl || use_fuzzing_engine) {
-      _needs_glsl_base = true
-      sources += angle_translator_essl_sources
-      defines += [ "ANGLE_ENABLE_ESSL" ]
-    }
+  if (angle_enable_essl || use_fuzzing_engine) {
+    _needs_glsl_base = true
+    sources += angle_translator_essl_sources
+    defines += [ "ANGLE_ENABLE_ESSL" ]
+  }
 
-    if (angle_enable_glsl || use_fuzzing_engine) {
-      _needs_glsl_base = true
-      _needs_glsl_and_vulkan_base = true
-      sources += angle_translator_glsl_sources
-      defines += [ "ANGLE_ENABLE_GLSL" ]
+  if (angle_enable_glsl || use_fuzzing_engine) {
+    _needs_glsl_base = true
+    _needs_glsl_and_vulkan_base = true
+    sources += angle_translator_glsl_sources
+    defines += [ "ANGLE_ENABLE_GLSL" ]
 
-      if (is_apple) {
-        sources += angle_translator_glsl_apple_sources
-      }
-    }
-
-    if (angle_enable_hlsl || use_fuzzing_engine) {
-      sources += angle_translator_hlsl_sources
-      defines += [ "ANGLE_ENABLE_HLSL" ]
-    }
-
-    if (!invoker.gl_d3d_only) {
-      if (angle_enable_vulkan || use_fuzzing_engine) {
-        _needs_glsl_base = true
-        _needs_glsl_and_vulkan_base = true
-        _uses_spirv = true
-
-        sources += angle_translator_lib_spirv_sources
-      }
-
-      if (angle_enable_vulkan || use_fuzzing_engine) {
-        defines += [ "ANGLE_ENABLE_VULKAN" ]
-      }
-
-      if (angle_enable_metal) {
-        sources += angle_translator_lib_msl_sources
-        defines += [ "ANGLE_ENABLE_METAL" ]
-      }
-
-      if (angle_enable_wgpu) {
-        sources += angle_translator_lib_wgsl_sources
-        defines += [ "ANGLE_ENABLE_WGPU" ]
-      }
-    }
-
-    if (_needs_glsl_base) {
-      sources += angle_translator_glsl_base_sources
-    }
-    if (_needs_glsl_and_vulkan_base) {
-      sources += angle_translator_glsl_and_vulkan_base_sources
-    }
-
-    public_configs += [ ":external_config" ]
-
-    deps = [
-      ":angle_common_shader_state",
-      ":includes",
-      ":preprocessor",
-      "$angle_root/src/common/spirv:angle_spirv_headers",
-    ]
-
-    if (_uses_spirv) {
-      deps += [
-        "$angle_root/src/common/spirv:angle_spirv_base",
-        "$angle_root/src/common/spirv:angle_spirv_builder",
-        "${angle_spirv_headers_dir}:spv_headers",
-        "${angle_spirv_tools_dir}:spvtools_headers",
-        "${angle_spirv_tools_dir}:spvtools_val",
-      ]
-    }
-
-    public_deps = [
-      ":angle_common",
-      ":angle_translator_headers",
-      ":angle_version_info",
-    ]
-
-    if (is_win) {
-      # Necessary to suppress some system header xtree warnings in Release.
-      # For some reason this warning doesn't get triggered in Chromium
-      cflags = [ "/wd4718" ]
+    if (is_apple) {
+      sources += angle_translator_glsl_apple_sources
     }
   }
-}
 
-translator_lib("translator") {
-  gl_d3d_only = false
-}
+  if (angle_enable_hlsl || use_fuzzing_engine) {
+    sources += angle_translator_hlsl_sources
+    defines += [ "ANGLE_ENABLE_HLSL" ]
+  }
 
-if (angle_enable_essl || angle_enable_glsl || angle_enable_hlsl) {
-  translator_lib("translator_gl_d3d_only") {
-    gl_d3d_only = true
+  if (angle_enable_vulkan || use_fuzzing_engine) {
+    _needs_glsl_base = true
+    _needs_glsl_and_vulkan_base = true
+    _uses_spirv = true
+
+    sources += angle_translator_lib_spirv_sources
+  }
+
+  if (angle_enable_vulkan || use_fuzzing_engine) {
+    defines += [ "ANGLE_ENABLE_VULKAN" ]
+  }
+
+  if (angle_enable_metal) {
+    sources += angle_translator_lib_msl_sources
+    defines += [ "ANGLE_ENABLE_METAL" ]
+  }
+
+  if (angle_enable_wgpu) {
+    sources += angle_translator_lib_wgsl_sources
+    defines += [ "ANGLE_ENABLE_WGPU" ]
+  }
+
+  if (_needs_glsl_base) {
+    sources += angle_translator_glsl_base_sources
+  }
+  if (_needs_glsl_and_vulkan_base) {
+    sources += angle_translator_glsl_and_vulkan_base_sources
+  }
+
+  public_configs += [ ":external_config" ]
+
+  deps = [
+    ":angle_common_shader_state",
+    ":includes",
+    ":preprocessor",
+    "$angle_root/src/common/spirv:angle_spirv_headers",
+  ]
+
+  if (_uses_spirv) {
+    deps += [
+      "$angle_root/src/common/spirv:angle_spirv_base",
+      "$angle_root/src/common/spirv:angle_spirv_builder",
+      "${angle_spirv_headers_dir}:spv_headers",
+      "${angle_spirv_tools_dir}:spvtools_headers",
+      "${angle_spirv_tools_dir}:spvtools_val",
+    ]
+  }
+
+  public_deps = [
+    ":angle_common",
+    ":angle_translator_headers",
+    ":angle_version_info",
+  ]
+
+  if (is_win) {
+    # Necessary to suppress some system header xtree warnings in Release.
+    # For some reason this warning doesn't get triggered in Chromium
+    cflags = [ "/wd4718" ]
   }
 }
 

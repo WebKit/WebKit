@@ -4,7 +4,7 @@
 
 import("//third_party/OpenCL-CTS/gn/angle_ocl_cts.gni")
 
-ocl_cts_binary("non_uniform_work_group") {
+ocl_cts_source_set("non_uniform_work_group") {
   include_dirs = [ "$angle_root/third_party/OpenCL-CTS/src/test_conformance/non_uniform_work_group" ]
   sources = [
     "$angle_root/third_party/OpenCL-CTS/src/test_conformance/non_uniform_work_group/TestNonUniformWorkGroup.cpp",

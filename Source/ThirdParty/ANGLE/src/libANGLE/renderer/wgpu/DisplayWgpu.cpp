@@ -35,7 +35,11 @@ egl::Error DisplayWgpu::initialize(egl::Display *display)
     mQueue = mDevice.GetQueue();
     mFormatTable.initialize();
 
-    webgpu::GenerateCaps(mDevice, &mGLCaps, &mGLTextureCaps, &mGLExtensions, &mGLLimitations,
+    wgpu::SupportedLimits supportedLimits;
+    mDevice.GetLimits(&supportedLimits);
+    mLimitsWgpu = supportedLimits.limits;
+
+    webgpu::GenerateCaps(mLimitsWgpu, &mGLCaps, &mGLTextureCaps, &mGLExtensions, &mGLLimitations,
                          &mEGLCaps, &mEGLExtensions, &mMaxSupportedClientVersion);
 
     return egl::NoError();
