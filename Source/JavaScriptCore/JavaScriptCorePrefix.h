@@ -66,6 +66,7 @@
 #include <mutex>
 #include <string>
 #include <typeinfo>
+#include <wtf/TZoneMalloc.h>
 #endif
 
 #ifdef __cplusplus
