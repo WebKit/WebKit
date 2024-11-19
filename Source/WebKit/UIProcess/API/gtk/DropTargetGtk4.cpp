@@ -155,7 +155,7 @@ void DropTarget::accept(GdkDrop* drop, std::optional<WebCore::IntPoint> position
         // Reading from the File Transfer portal is a bit special. When either portal
         // mimetypes are present, GTK serializes them using the GdkFileList type. If
         // this type is present, ignore file:// URIs from the "text/uri-list" later on.
-        if (!transferredFilesFromPortal && std::ranges::contains(portalMIMETypes, mimeType)) {
+        if (!transferredFilesFromPortal && std::ranges::find(portalMIMETypes, mimeType) != portalMIMETypes.end()) {
             ASSERT(gdk_content_formats_contain_gtype(formats, GDK_TYPE_FILE_LIST));
 
             m_dataRequestCount++;
