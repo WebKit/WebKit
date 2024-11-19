@@ -348,6 +348,10 @@ bool gstStructureMapInPlace(GstStructure*, Function<bool(GstId, GValue*)>&&);
 StringView gstIdToString(GstId);
 void gstStructureFilterAndMapInPlace(GstStructure*, Function<bool(GstId, GValue*)>&&);
 
+#if USE(GBM)
+WARN_UNUSED_RETURN GRefPtr<GstCaps> buildDMABufCaps();
+#endif
+
 } // namespace WebCore
 
 #ifndef GST_BUFFER_DTS_OR_PTS

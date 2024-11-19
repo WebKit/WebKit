@@ -30,7 +30,6 @@
 
 #if USE(GBM)
 #include "DRMDeviceManager.h"
-#include <drm_fourcc.h>
 #endif
 
 // gstglapi.h may include eglplatform.h and it includes X.h, which
@@ -77,106 +76,6 @@ static void initializeDMABufAvailability()
         if (!s_isDMABufDisabled && !DRMDeviceManager::singleton().mainGBMDeviceNode(DRMDeviceManager::NodeType::Render))
             s_isDMABufDisabled = true;
     });
-}
-
-#if !GST_CHECK_VERSION(1, 24, 0)
-static GstVideoFormat drmFourccToGstVideoFormat(uint32_t fourcc)
-{
-    switch (fourcc) {
-    case DRM_FORMAT_XRGB8888:
-        return GST_VIDEO_FORMAT_BGRx;
-    case DRM_FORMAT_XBGR8888:
-        return GST_VIDEO_FORMAT_RGBx;
-    case DRM_FORMAT_ARGB8888:
-        return GST_VIDEO_FORMAT_BGRA;
-    case DRM_FORMAT_ABGR8888:
-        return GST_VIDEO_FORMAT_RGBA;
-    case DRM_FORMAT_YUV420:
-        return GST_VIDEO_FORMAT_I420;
-    case DRM_FORMAT_YVU420:
-        return GST_VIDEO_FORMAT_YV12;
-    case DRM_FORMAT_NV12:
-        return GST_VIDEO_FORMAT_NV12;
-    case DRM_FORMAT_NV21:
-        return GST_VIDEO_FORMAT_NV21;
-    case DRM_FORMAT_YUV444:
-        return GST_VIDEO_FORMAT_Y444;
-    case DRM_FORMAT_YUV411:
-        return GST_VIDEO_FORMAT_Y41B;
-    case DRM_FORMAT_YUV422:
-        return GST_VIDEO_FORMAT_Y42B;
-    case DRM_FORMAT_P010:
-        return GST_VIDEO_FORMAT_P010_10LE;
-    default:
-        break;
-    }
-
-    RELEASE_ASSERT_NOT_REACHED();
-    return GST_VIDEO_FORMAT_UNKNOWN;
-}
-#endif
-
-static GRefPtr<GstCaps> buildDMABufCaps()
-{
-    GRefPtr<GstCaps> caps = adoptGRef(gst_caps_from_string("video/x-raw(memory:DMABuf), width = " GST_VIDEO_SIZE_RANGE ", height = " GST_VIDEO_SIZE_RANGE ", framerate = " GST_VIDEO_FPS_RANGE));
-#if GST_CHECK_VERSION(1, 24, 0)
-    gst_caps_set_simple(caps.get(), "format", G_TYPE_STRING, "DMA_DRM", nullptr);
-
-    static const char* formats = g_getenv("WEBKIT_GST_DMABUF_FORMATS");
-    if (formats && *formats) {
-        GUniquePtr<char*> tokens(g_strsplit(formats, ",", -1));
-        GValue drmSupportedFormats = G_VALUE_INIT;
-        g_value_init(&drmSupportedFormats, GST_TYPE_LIST);
-        for (unsigned i = 0; tokens.get()[i]; ++i) {
-            GValue value = G_VALUE_INIT;
-            g_value_init(&value, G_TYPE_STRING);
-            g_value_set_string(&value, tokens.get()[i]);
-            gst_value_list_append_value(&drmSupportedFormats, &value);
-            g_value_unset(&value);
-        }
-        gst_caps_set_value(caps.get(), "drm-format", &drmSupportedFormats);
-        g_value_unset(&drmSupportedFormats);
-        return caps;
-    }
-#endif
-
-    GValue supportedFormats = G_VALUE_INIT;
-    g_value_init(&supportedFormats, GST_TYPE_LIST);
-    const auto& dmabufFormats = PlatformDisplay::sharedDisplay().dmabufFormatsForVideo();
-    for (const auto& format : dmabufFormats) {
-#if GST_CHECK_VERSION(1, 24, 0)
-        if (format.modifiers.isEmpty() || format.modifiers[0] == DRM_FORMAT_MOD_INVALID) {
-            GValue value = G_VALUE_INIT;
-            g_value_init(&value, G_TYPE_STRING);
-            g_value_take_string(&value, gst_video_dma_drm_fourcc_to_string(format.fourcc, DRM_FORMAT_MOD_LINEAR));
-            gst_value_list_append_value(&supportedFormats, &value);
-            g_value_unset(&value);
-        } else {
-            for (auto modifier : format.modifiers) {
-                GValue value = G_VALUE_INIT;
-                g_value_init(&value, G_TYPE_STRING);
-                g_value_take_string(&value, gst_video_dma_drm_fourcc_to_string(format.fourcc, modifier));
-                gst_value_list_append_value(&supportedFormats, &value);
-                g_value_unset(&value);
-            }
-        }
-#else
-        GValue value = G_VALUE_INIT;
-        g_value_init(&value, G_TYPE_STRING);
-        g_value_set_string(&value, gst_video_format_to_string(drmFourccToGstVideoFormat(format.fourcc)));
-        gst_value_list_append_value(&supportedFormats, &value);
-        g_value_unset(&value);
-#endif
-    }
-
-#if GST_CHECK_VERSION(1, 24, 0)
-    gst_caps_set_value(caps.get(), "drm-format", &supportedFormats);
-#else
-    gst_caps_set_value(caps.get(), "format", &supportedFormats);
-#endif
-    g_value_unset(&supportedFormats);
-
-    return caps;
 }
 #endif
 
