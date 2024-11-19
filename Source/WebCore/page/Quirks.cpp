@@ -1825,7 +1825,7 @@ bool Quirks::shouldFlipScreenDimensions() const
         return false;
 
     if (!m_quirksData.shouldFlipScreenDimensionsQuirk)
-        shouldFlipScreenDimensionsQuirk = shouldFlipScreenDimensionsInternal(topDocumentURL());
+        m_quirksData.shouldFlipScreenDimensionsQuirk = shouldFlipScreenDimensionsInternal(topDocumentURL());
 
     return *m_quirksData.shouldFlipScreenDimensionsQuirk;
 #else
