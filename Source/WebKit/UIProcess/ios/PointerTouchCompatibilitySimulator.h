@@ -28,6 +28,7 @@
 #if PLATFORM(IOS_FAMILY)
 
 #import "WKBrowserEngineDefinitions.h"
+#import "WKWebView.h"
 #import <WebCore/FloatPoint.h>
 #import <WebCore/FloatSize.h>
 #import <wtf/RunLoop.h>
@@ -37,7 +38,6 @@
 @class UIScrollEvent;
 @class UIWindow;
 @class WKBaseScrollView;
-@class WKWebView;
 
 namespace WebKit {
 class PointerTouchCompatibilitySimulator;

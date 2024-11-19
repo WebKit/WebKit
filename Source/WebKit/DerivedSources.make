@@ -599,6 +599,7 @@ SERIALIZATION_DESCRIPTION_FILES = \
 	Shared/Cocoa/SharedCARingBuffer.serialization.in \
 	Shared/Cocoa/WebCoreArgumentCodersCocoa.serialization.in \
 	Shared/CallbackID.serialization.in \
+	Shared/ContentWorldData.serialization.in \
 	Shared/ContextMenuContextData.serialization.in \
 	Shared/CoordinateSystem.serialization.in \
 	Shared/DebuggableInfoData.serialization.in \

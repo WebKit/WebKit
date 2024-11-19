@@ -53,6 +53,7 @@ public:
     WebCore::DOMWrapperWorld& coreWorld();
 
     void clearWrappers();
+    void setAllowAutofill();
     void makeAllShadowRootsOpen();
     void disableOverrideBuiltinsBehavior();
 

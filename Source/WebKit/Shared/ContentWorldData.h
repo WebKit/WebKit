@@ -23,50 +23,17 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "_WKWebPushSubscriptionDataInternal.h"
-#import <WebCore/WebCoreObjCExtras.h>
-#import <wtf/cocoa/SpanCocoa.h>
+#pragma once
 
-@implementation _WKWebPushSubscriptionData
+#include "ContentWorldShared.h"
+#include <wtf/OptionSet.h>
 
-- (void)dealloc
-{
-    if (WebCoreObjCScheduleDeallocateOnMainRunLoop(_WKWebPushSubscriptionData.class, self))
-        return;
+namespace WebKit {
 
-    _data->API::WebPushSubscriptionData::~WebPushSubscriptionData();
-    [super dealloc];
-}
+struct ContentWorldData {
+    ContentWorldIdentifier identifier;
+    String name;
+    OptionSet<WebKit::ContentWorldOption> options;
+};
 
-- (NSURL *)endpoint
-{
-    return self._protectedData->endpoint();
-}
-
-- (NSData *)applicationServerKey
-{
-    return toNSData(self._protectedData->applicationServerKey()).get();
-}
-
-- (NSData *)authenticationSecret
-{
-    return toNSData(self._protectedData->sharedAuthenticationSecret()).get();
-}
-
-- (NSData *)ecdhPublicKey
-{
-    return toNSData(self._protectedData->clientECDHPublicKey()).get();
-}
-
-- (API::Object&)_apiObject
-{
-    return *_data;
-}
-
-- (Ref<API::WebPushSubscriptionData>)_protectedData
-{
-    return *_data;
-}
-
-@end
+} // namespace WebKit
