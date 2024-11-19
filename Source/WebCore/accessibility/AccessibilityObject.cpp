@@ -827,7 +827,7 @@ Vector<BoundaryPoint> AccessibilityObject::previousLineStartBoundaryPoints(const
     return boundaryPoints;
 }
 
-std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>& boundaryPoints, const BoundaryPoint& startBoundary, const FloatRect& rect, int leftIndex, int rightIndex) const
+std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>& boundaryPoints, const BoundaryPoint& startBoundary, const FloatRect& rect, int leftIndex, int rightIndex, bool isFlippedWritingMode) const
 {
     if (leftIndex > rightIndex || boundaryPoints.isEmpty())
         return std::nullopt;
@@ -836,7 +836,7 @@ std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRe
         return index >= 0 && static_cast<size_t>(index) < boundaryPoints.size();
     };
     auto boundaryPointContainedInRect = [&] (const BoundaryPoint& boundary) {
-        return boundaryPointsContainedInRect(startBoundary, boundary, rect);
+        return boundaryPointsContainedInRect(startBoundary, boundary, rect, isFlippedWritingMode);
     };
 
     int midIndex = leftIndex + (rightIndex - leftIndex) / 2;
@@ -845,56 +845,72 @@ std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRe
         if (indexIsValid(midIndex - 1) && !boundaryPointContainedInRect(boundaryPoints.at(midIndex - 1)))
             return boundaryPoints.at(midIndex);
 
-        return lastBoundaryPointContainedInRect(boundaryPoints, startBoundary, rect, leftIndex, midIndex - 1);
+        return lastBoundaryPointContainedInRect(boundaryPoints, startBoundary, rect, leftIndex, midIndex - 1, isFlippedWritingMode);
     }
     // And vice versa, we have a match if the `midIndex` boundary point is not contained in the rect, but the one at `midIndex + 1` is.
     if (indexIsValid(midIndex + 1) && boundaryPointContainedInRect(boundaryPoints.at(midIndex + 1)))
         return boundaryPoints.at(midIndex + 1);
 
-    return lastBoundaryPointContainedInRect(boundaryPoints, startBoundary, rect, midIndex + 1, rightIndex);
+    return lastBoundaryPointContainedInRect(boundaryPoints, startBoundary, rect, midIndex + 1, rightIndex, isFlippedWritingMode);
 }
 
-bool AccessibilityObject::boundaryPointsContainedInRect(const BoundaryPoint& startBoundary, const BoundaryPoint& endBoundary, const FloatRect& rect) const
+static IntPoint textStartPoint(const IntRect& rect, bool isFlippedWritingMode)
+{
+    if (!isFlippedWritingMode)
+        return rect.minXMinYCorner();
+    return rect.maxXMinYCorner();
+}
+
+static IntPoint textEndPoint(const IntRect& rect, bool isFlippedWritingMode)
+{
+    if (!isFlippedWritingMode)
+        return rect.maxXMaxYCorner();
+    return rect.minXMaxYCorner();
+}
+
+bool AccessibilityObject::boundaryPointsContainedInRect(const BoundaryPoint& startBoundary, const BoundaryPoint& endBoundary, const FloatRect& rect, bool isFlippedWritingMode) const
 {
     auto elementRect = boundsForRange({ startBoundary, endBoundary });
-    return rect.contains(elementRect.location() + elementRect.size());
+    return rect.contains(textEndPoint(elementRect, isFlippedWritingMode));
 }
 
 std::optional<SimpleRange> AccessibilityObject::visibleCharacterRange() const
 {
     auto range = simpleRange();
+    if (!range)
+        return std::nullopt;
+
     auto contentRect = unobscuredContentRect();
     auto elementRect = snappedIntRect(this->elementRect());
-    auto inputs = std::make_tuple(range, contentRect, elementRect);
-    if (m_cachedVisibleCharacterRangeInputs && *m_cachedVisibleCharacterRangeInputs == inputs)
-        return m_cachedVisibleCharacterRange;
-
-    auto computedRange = visibleCharacterRangeInternal(range, contentRect, elementRect);
-    m_cachedVisibleCharacterRangeInputs = inputs;
-    m_cachedVisibleCharacterRange = computedRange;
-    return computedRange;
+    return visibleCharacterRangeInternal(*range, contentRect, elementRect);
 }
 
-std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(const std::optional<SimpleRange>& range, const FloatRect& contentRect, const IntRect& startingElementRect) const
+std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(SimpleRange& range, const FloatRect& contentRect, const IntRect& startingElementRect) const
 {
-    if (!range || !contentRect.intersects(startingElementRect))
+    if (!contentRect.intersects(startingElementRect))
         return std::nullopt;
 
     auto elementRect = startingElementRect;
-    auto startBoundary = range->start;
-    auto endBoundary = range->end;
+    auto startBoundary = range.start;
+    auto endBoundary = range.end;
+
+    const auto* style = this->style();
+    bool isFlipped = style && style->writingMode().isBlockFlipped();
+    // In vertical-rl writing-modes (e.g. some Japanese text), text lays out vertically from right-to-left, meaning the the start of the text
+    // has a larger `x`-coordinate than the end.
+    bool laysOutIntoNegativeX = isFlipped && style->writingMode().isVertical();
 
     // Origin isn't contained in visible rect, start moving forward by line.
-    while (!contentRect.contains(elementRect.location())) {
+    while (!contentRect.contains(textStartPoint(elementRect, isFlipped))) {
         auto nextLinePosition = nextLineEndPosition(VisiblePosition(makeContainerOffsetPosition(startBoundary)));
         auto testStartBoundary = makeBoundaryPoint(nextLinePosition);
-        if (!testStartBoundary || !contains(*range, *testStartBoundary))
+        if (!testStartBoundary || !contains(range, *testStartBoundary))
             break;
 
         // testStartBoundary is valid, so commit it and update the elementRect.
         startBoundary = *testStartBoundary;
-        elementRect = boundsForRange(SimpleRange(startBoundary, range->end));
-        if (elementRect.isEmpty() || elementRect.x() < 0 || elementRect.y() < 0)
+        elementRect = boundsForRange(SimpleRange(startBoundary, range.end));
+        if (elementRect.isEmpty() || (elementRect.x() < 0 && !laysOutIntoNegativeX) || elementRect.y() < 0)
             break;
     }
 
@@ -903,8 +919,8 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(co
     auto previousLineStartPosition = previousLineStartPositionInternal(VisiblePosition(makeContainerOffsetPosition(startBoundary)));
     if (previousLineStartPosition) {
         if (auto previousLineStartBoundaryPoint = makeBoundaryPoint(*previousLineStartPosition)) {
-            auto lineStartRect = boundsForRange(SimpleRange(*previousLineStartBoundaryPoint, range->end));
-            if (previousLineStartBoundaryPoint->container.ptr() == startBoundary.container.ptr() && contentRect.contains(lineStartRect.location())) {
+            auto lineStartRect = boundsForRange(SimpleRange(*previousLineStartBoundaryPoint, range.end));
+            if (previousLineStartBoundaryPoint->container.ptr() == startBoundary.container.ptr() && contentRect.contains(textStartPoint(lineStartRect, isFlipped))) {
                 elementRect = lineStartRect;
                 startBoundary = *previousLineStartBoundaryPoint;
                 didCorrectStartBoundary = true;
@@ -917,16 +933,16 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(co
         auto startBoundaryLineStartPosition = startOfLine(VisiblePosition(makeContainerOffsetPosition(startBoundary)));
         auto lineStartBoundaryPoint = makeBoundaryPoint(startBoundaryLineStartPosition);
         if (lineStartBoundaryPoint && lineStartBoundaryPoint->container.ptr() == startBoundary.container.ptr()) {
-            auto lineStartRect = boundsForRange(SimpleRange(*lineStartBoundaryPoint, range->end));
-            if (contentRect.contains(lineStartRect.location())) {
+            auto lineStartRect = boundsForRange(SimpleRange(*lineStartBoundaryPoint, range.end));
+            if (contentRect.contains(textStartPoint(lineStartRect, isFlipped))) {
                 elementRect = lineStartRect;
                 startBoundary = *lineStartBoundaryPoint;
             } else if (lineStartBoundaryPoint->offset < lineStartBoundaryPoint->container->length()) {
                 // Sometimes we're one character off from being in-bounds. Check for this too.
                 lineStartBoundaryPoint->offset = lineStartBoundaryPoint->offset + 1;
-                lineStartRect = boundsForRange(SimpleRange(*lineStartBoundaryPoint, range->end));
+                lineStartRect = boundsForRange(SimpleRange(*lineStartBoundaryPoint, range.end));
                 lineStartBoundaryPoint->offset = lineStartBoundaryPoint->offset - 1;
-                if (contentRect.contains(lineStartRect.location())) {
+                if (contentRect.contains(textStartPoint(lineStartRect, isFlipped))) {
                     elementRect = lineStartRect;
                     startBoundary = *lineStartBoundaryPoint;
                 }
@@ -940,7 +956,7 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(co
     do {
         // If the first boundary point is contained in contentRect, then it's a match because we know everything in the last batch
         // of lines was not contained in contentRect.
-        if (boundaryPointsContainedInRect(startBoundary, boundaryPoints.at(0), contentRect)) {
+        if (boundaryPointsContainedInRect(startBoundary, boundaryPoints.at(0), contentRect, isFlipped)) {
             endBoundary = boundaryPoints.at(0);
             break;
         }
@@ -951,11 +967,11 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(co
             break;
         // Otherwise if the last boundary point is contained in contentRect, then we know some boundary point in this batch is
         // our target end boundary point.
-        if (contentRect.contains(elementRect.location() + elementRect.size())) {
-            endBoundary = lastBoundaryPointContainedInRect(boundaryPoints, startBoundary, contentRect).value_or(lastBoundaryPoint);
+        if (contentRect.contains(textEndPoint(elementRect, isFlipped))) {
+            endBoundary = lastBoundaryPointContainedInRect(boundaryPoints, startBoundary, contentRect, isFlipped).value_or(lastBoundaryPoint);
             break;
         }
-        boundaryPoints = previousLineStartBoundaryPoints(VisiblePosition(makeContainerOffsetPosition(lastBoundaryPoint)), *range, 64);
+        boundaryPoints = previousLineStartBoundaryPoints(VisiblePosition(makeContainerOffsetPosition(lastBoundaryPoint)), range, 64);
     } while (!boundaryPoints.isEmpty());
 
     // Sometimes we shrink one line too far. Check the next line end to see if it's in bounds.
@@ -964,7 +980,7 @@ std::optional<SimpleRange> AccessibilityObject::visibleCharacterRangeInternal(co
     if (nextLineEndBoundaryPoint && nextLineEndBoundaryPoint->container.ptr() == endBoundary.container.ptr()) {
         auto lineEndRect = boundsForRange(SimpleRange(startBoundary, *nextLineEndBoundaryPoint));
 
-        if (contentRect.contains(lineEndRect.location() + lineEndRect.size()))
+        if (contentRect.contains(textEndPoint(lineEndRect, isFlipped)))
             endBoundary = *nextLineEndBoundaryPoint;
     }
 

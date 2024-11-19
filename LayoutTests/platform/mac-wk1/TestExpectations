@@ -1763,6 +1763,7 @@ accessibility/mixed-contenteditable-double-br-visible-character-range-hang.html 
 accessibility/visible-character-range-basic.html [ Skip ]
 accessibility/visible-character-range-height-changes.html [ Skip ]
 accessibility/visible-character-range-scrolling.html [ Skip ]
+accessibility/visible-character-range-vertical-rl.html [ Skip ]
 accessibility/visible-character-range-width-changes.html [ Skip ]
 accessibility/aria-description.html [ Skip ]
 

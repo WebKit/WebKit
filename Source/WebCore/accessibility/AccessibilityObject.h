@@ -895,12 +895,12 @@ private:
     std::optional<SimpleRange> rangeOfStringClosestToRangeInDirection(const SimpleRange&, AccessibilitySearchDirection, const Vector<String>&) const;
     std::optional<SimpleRange> selectionRange() const;
     std::optional<SimpleRange> findTextRange(const Vector<String>& searchStrings, const SimpleRange& start, AccessibilitySearchTextDirection) const;
-    std::optional<SimpleRange> visibleCharacterRangeInternal(const std::optional<SimpleRange>&, const FloatRect&, const IntRect&) const;
+    std::optional<SimpleRange> visibleCharacterRangeInternal(SimpleRange&, const FloatRect&, const IntRect&) const;
     Vector<BoundaryPoint> previousLineStartBoundaryPoints(const VisiblePosition&, const SimpleRange&, unsigned) const;
     std::optional<VisiblePosition> previousLineStartPositionInternal(const VisiblePosition&) const;
-    bool boundaryPointsContainedInRect(const BoundaryPoint&, const BoundaryPoint&, const FloatRect&) const;
-    std::optional<BoundaryPoint> lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>&, const BoundaryPoint&, const FloatRect&, int, int) const;
-    std::optional<BoundaryPoint> lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>& boundaryPoints, const BoundaryPoint& startBoundaryPoint, const FloatRect& targetRect) const;
+    bool boundaryPointsContainedInRect(const BoundaryPoint&, const BoundaryPoint&, const FloatRect&, bool isFlippedWritingMode) const;
+    std::optional<BoundaryPoint> lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>&, const BoundaryPoint&, const FloatRect&, int, int, bool isFlippedWritingMode) const;
+    std::optional<BoundaryPoint> lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>& boundaryPoints, const BoundaryPoint& startBoundaryPoint, const FloatRect& targetRect, bool isFlippedWritingMode) const;
 
     // Note that "withoutCache" refers to the lack of referencing AXComputedObjectAttributeCache in the function, not the AXObjectCache parameter we pass in here.
     bool isIgnoredWithoutCache(AXObjectCache*) const;
@@ -920,10 +920,6 @@ protected: // FIXME: Make the data members private.
 private:
     OptionSet<AXAncestorFlag> m_ancestorFlags;
     AccessibilityObjectInclusion m_lastKnownIsIgnoredValue { AccessibilityObjectInclusion::DefaultBehavior };
-    // std::nullopt is a valid cached value if this object has no visible characters.
-    mutable std::optional<SimpleRange> m_cachedVisibleCharacterRange;
-    // This is std::nullopt if we haven't cached any input yet.
-    mutable std::optional<std::tuple<std::optional<SimpleRange>, FloatRect, IntRect>> m_cachedVisibleCharacterRangeInputs;
 #if PLATFORM(IOS_FAMILY)
     InlineTextPrediction m_lastPresentedTextPrediction;
     InlineTextPrediction m_lastPresentedTextPredictionComplete;
@@ -947,9 +943,9 @@ inline void AccessibilityObject::recomputeIsIgnored()
     isIgnoredWithoutCache(axObjectCache());
 }
 
-inline std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>& boundaryPoints, const BoundaryPoint& startBoundaryPoint, const FloatRect& targetRect) const
+inline std::optional<BoundaryPoint> AccessibilityObject::lastBoundaryPointContainedInRect(const Vector<BoundaryPoint>& boundaryPoints, const BoundaryPoint& startBoundaryPoint, const FloatRect& targetRect, bool isFlippedWritingMode) const
 {
-    return lastBoundaryPointContainedInRect(boundaryPoints, startBoundaryPoint, targetRect, 0, boundaryPoints.size() - 1);
+    return lastBoundaryPointContainedInRect(boundaryPoints, startBoundaryPoint, targetRect, 0, boundaryPoints.size() - 1, isFlippedWritingMode);
 }
 
 inline VisiblePosition AccessibilityObject::previousLineStartPosition(const VisiblePosition& position) const

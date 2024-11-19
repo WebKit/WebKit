@@ -1,0 +1,108 @@
+
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../resources/accessibility-helper.js"></script>
+<script src="../resources/js-test.js"></script>
+<style>
+/* All of these styles are critical in reproducing the bug. */
+body { writing-mode: vertical-rl; }
+
+#content-wrapper {
+    overflow-wrap: break-word;
+    -webkit-line-break: after-white-space;
+}
+p {
+    line-height: 1.7999999999999998;
+    margin-top: 21pt;
+    margin-bottom: 21pt;
+}
+.text-style {
+    font-size: 20pt;
+    white-space: pre;
+}
+</style>
+</head>
+<body id="body" contenteditable="true" role="application" style="margin: 0 !important;">
+
+<div id="content-wrapper">
+<!-- This markup is of a similar style to that of a Google Docs document. -->
+<p>
+    <span class="text-style">Line one line one</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line two line two</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line three line three</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line four line four </span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line five line five</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line six line six</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line seven line seven</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line eight line eight </span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line nine line nine</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line ten line ten</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line eleven line eleven</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line twelve line twelve</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line thirteen line thirteen</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line fourteen line fourteen</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line fifteen line fifteen</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line sixteen line sixteen</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line seventeen line seventeen</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line eighteen line eighteen</span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line nineteen line nineteen</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line twenty line twenty </span><span contenteditable="false"></span>
+</p>
+<p>
+    <span class="text-style">Line twentyone line twentyone</span><span contenteditable="false"> <br role="presentation"/></span>
+    <span class="text-style">Line twentytwo line twentytwo</span><span contenteditable="false"></span>
+</p>
+</div>
+
+<script>
+var output = "This test ensures we compute the right visible character range for writing-mode: vertical-rl text.\n\n";
+
+var axBody;
+async function verifyRange(windowWidth, windowHeight, scrollBy, expectedRangeString) {
+    testRunner.setViewSize(windowWidth, windowHeight);
+    document.body.scrollTop = scrollBy;
+    output += `Testing window width ${windowWidth}px, height ${windowHeight}px, scrollTop ${scrollBy}px\n`;
+    await waitFor(() => axBody.stringDescriptionOfAttributeValue("AXVisibleCharacterRange").includes(expectedRangeString));
+}
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    setTimeout(async function() {
+        axBody = accessibilityController.accessibleElementById("body");
+
+        // These values are chosen because they exercise shrinking line-by-line from the end of the text to find the visible character range.
+        await verifyRange(/* width */ 623, /* height */ 1240, /* scrollTop */ 506, "{0, 240}");
+
+        // These values exercise shrinking line-by-line from the start of the text.
+        await verifyRange(/* width */ 305, /* height */ 1477, /* scrollTop */ 632, accessibilityController.platformName === "ios" ? "{0, 124}" : "{0, 106}");
+        await verifyRange(/* width */ 625, /* height */ 48, /* scrollTop */ 29, "{537, 500}");
+
+        debug(output);
+        document.getElementById("content-wrapper").style.display = "none";
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

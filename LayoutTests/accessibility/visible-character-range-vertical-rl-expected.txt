@@ -1,0 +1,10 @@
+This test ensures we compute the right visible character range for writing-mode: vertical-rl text.
+
+Testing window width 623px, height 1240px, scrollTop 506px
+Testing window width 305px, height 1477px, scrollTop 632px
+Testing window width 625px, height 48px, scrollTop 29px
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
