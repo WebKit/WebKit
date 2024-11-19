@@ -705,6 +705,7 @@ $(WEBCORE_PRIVATE_HEADERS_DIR)/PlatformMediaSession.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/PlatformScreen.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/PlatformWheelEvent.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/PlaybackSessionModel.serialization.in
+$(WEBCORE_PRIVATE_HEADERS_DIR)/ProcessSyncData.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ProtectionSpaceBase.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ScrollTypes.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/WebGPU.serialization.in

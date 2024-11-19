@@ -130,6 +130,7 @@
 #include "PointerCaptureController.h"
 #include "PointerLockController.h"
 #include "ProcessSyncClient.h"
+#include "ProcessSyncData.h"
 #include "ProgressTracker.h"
 #include "Range.h"
 #include "RemoteFrame.h"
@@ -778,6 +779,15 @@ void Page::setMainFrameURL(const URL& url)
 {
     m_mainFrameURL = url;
     m_mainFrameOrigin = SecurityOrigin::create(url);
+}
+
+void Page::updateProcessSyncData(const ProcessSyncData& data)
+{
+    switch (data.type) {
+    case ProcessSyncDataType::MainFrameURLChange:
+        setMainFrameURL(std::get<URL>(data.value));
+        break;
+    }
 }
 
 void Page::setMainFrameURLFragment(String&& fragment)

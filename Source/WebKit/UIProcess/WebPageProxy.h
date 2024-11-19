@@ -31,6 +31,7 @@
 #include <WebCore/LayerTreeAsTextOptions.h>
 #include <WebCore/NavigationIdentifier.h>
 #include <WebCore/NowPlayingMetadataObserver.h>
+#include <WebCore/ProcessSyncData.h>
 #include <pal/HysteresisActivity.h>
 #include <wtf/ApproximateTime.h>
 #include <wtf/CheckedRef.h>
@@ -2363,7 +2364,7 @@ public:
     WebProcessProxy* processForSite(const WebCore::Site&);
 
     void observeAndCreateRemoteSubframesInOtherProcesses(WebFrameProxy&, const String& frameName);
-    void broadcastMainFrameURLChangeToOtherProcesses(IPC::Connection&, const URL&);
+    void broadcastProcessSyncData(IPC::Connection&, const WebCore::ProcessSyncData&);
 
     void addOpenedPage(WebPageProxy&);
     bool hasOpenedPage() const;
