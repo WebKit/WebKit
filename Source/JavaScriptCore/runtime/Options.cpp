@@ -800,7 +800,7 @@ void Options::notifyOptionsChanged()
         Options::useJIT() = false; // We don't support JIT with !allowDoubleShape. So disable it.
 
     // When reenabling JITLess wasm we should unskip the tests disabled in https://bugs.webkit.org/show_bug.cgi?id=281857
-    if (!Options::useWasm() || !Options::useJIT())
+    if (!Options::useWasm() || (!Options::useJIT() && !OptionsHelper::wasOverridden(useWasmID)))
         disableAllWasmOptions();
 
     if (!Options::useJIT())

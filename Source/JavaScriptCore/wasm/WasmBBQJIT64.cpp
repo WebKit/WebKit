@@ -5130,7 +5130,9 @@ PartialResult WARN_UNUSED_RETURN BBQJIT::addCallRef(const TypeDefinition& origin
         {
             auto calleeTmp = calleeInstance;
             m_jit.loadPtr(Address(calleePtr, WebAssemblyFunctionBase::offsetOfBoxedWasmCalleeLoadLocation()), calleeTmp);
+            auto branch = m_jit.branchTestPtr(ResultCondition::Zero, calleeTmp);
             m_jit.loadPtr(Address(calleeTmp), calleeTmp);
+            branch.link(&m_jit);
             m_jit.storeWasmCalleeCallee(calleeTmp);
         }
 

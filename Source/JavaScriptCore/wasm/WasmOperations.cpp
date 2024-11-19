@@ -271,11 +271,9 @@ JSC_DEFINE_JIT_OPERATION(operationJSToWasmEntryWrapperBuildReturnFrame, EncodedJ
     OPERATION_RETURN(scope, JSValue::encode(resultArray));
 }
 
-JSC_DEFINE_JIT_OPERATION(operationGetWasmCalleeStackSize, EncodedJSValue, (JSWebAssemblyInstance* instance, Wasm::Callee* callee))
+JSC_DEFINE_NOEXCEPT_JIT_OPERATION(operationGetWasmCalleeStackSize, unsigned, (JSWebAssemblyInstance*, WasmCallableFunction* functionInfo))
 {
-    auto& module = instance->module();
-
-    auto typeIndex = module.moduleInformation().typeIndexFromFunctionIndexSpace(callee->index());
+    auto typeIndex = static_cast<WasmOrJSImportableFunction*>(functionInfo)->typeIndex;
     const TypeDefinition& typeDefinition = TypeInformation::get(typeIndex).expand();
     const auto& signature = *typeDefinition.as<FunctionSignature>();
     unsigned argCount = signature.argumentCount();
@@ -290,10 +288,7 @@ JSC_DEFINE_JIT_OPERATION(operationGetWasmCalleeStackSize, EncodedJSValue, (JSWeb
     const unsigned numberOfBytesForSavedResults = savedResultRegisters.sizeOfAreaInBytes();
     const unsigned stackOffset = WTF::roundUpToMultipleOf<stackAlignmentBytes()>(std::max(numberOfBytesForCall, numberOfBytesForSavedResults));
 
-    VM& vm = instance->vm();
-
-    auto scope = DECLARE_THROW_SCOPE(vm);
-    OPERATION_RETURN(scope, stackOffset);
+    return stackOffset;
 }
 
 JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, bool, (void* sp, CallFrame* cfr, void* argumentRegisters, JSWebAssemblyInstance* instance))
@@ -308,10 +303,10 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, bool, (void* sp,
     VM& vm = instance->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
 
-    Wasm::Callee* callee = *access.operator()<Wasm::Callee*>(cfr, -0x10);
-    auto functionIndex = callee->index();
-    auto& module = instance->module();
-    auto typeIndex = module.moduleInformation().typeIndexFromFunctionIndexSpace(functionIndex);
+    constexpr int codeBlockOffset = -0x18;
+
+    auto* importableFunction = *access.operator()<WasmOrJSImportableFunction*>(cfr, codeBlockOffset);
+    auto typeIndex = importableFunction->typeIndex;
     const TypeDefinition& typeDefinition = TypeInformation::get(typeIndex).expand();
     const auto& signature = *typeDefinition.as<FunctionSignature>();
     unsigned argCount = signature.argumentCount();
@@ -419,11 +414,10 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalArguments, bool, (void* sp,
     }
 
     // store this argument
-    *access.operator()<uint64_t>(calleeFrame, CallFrameSlot::thisArgument* static_cast<int>(sizeof(Register))) = JSValue::encode(jsUndefined());
+    *access.operator()<uint64_t>(calleeFrame, CallFrameSlot::thisArgument * static_cast<int>(sizeof(Register))) = JSValue::encode(jsUndefined());
 
     // materializeImportJSCell and store
-    auto* newCallee = instance->importFunctionInfo(functionIndex);
-    *access.operator()<uintptr_t>(calleeFrame, CallFrameSlot::callee * static_cast<int>(sizeof(Register))) = bitwise_cast<uintptr_t>(newCallee->importFunction);
+    *access.operator()<uintptr_t>(calleeFrame, CallFrameSlot::callee * static_cast<int>(sizeof(Register))) = bitwise_cast<uintptr_t>(importableFunction->importFunction);
     *access.operator()<uint32_t>(calleeFrame, CallFrameSlot::argumentCountIncludingThis * static_cast<int>(sizeof(Register)) + PayloadOffset) = argCount + 1; // including this = +1
 
     // set up codeblock
@@ -445,10 +439,10 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
 
     auto scope = DECLARE_THROW_SCOPE(instance->vm());
 
-    Wasm::Callee* callee = *access.operator()<Wasm::Callee*>(cfr, -0x10);
-    auto functionIndex = callee->index();
-    auto& module = instance->module();
-    auto typeIndex = module.moduleInformation().typeIndexFromFunctionIndexSpace(functionIndex);
+    constexpr int codeBlockOffset = -0x18;
+
+    auto* importableFunction = *access.operator()<WasmOrJSImportableFunction*>(cfr, codeBlockOffset);
+    auto typeIndex = importableFunction->typeIndex;
     const TypeDefinition& typeDefinition = TypeInformation::get(typeIndex).expand();
     const auto& signature = *typeDefinition.as<FunctionSignature>();
 
@@ -483,7 +477,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
             auto offset = GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(dest) * bytesForWidth(Width::Width64);
             if (returned.isNumber()) {
                 if (returned.isInt32()) {
-                    float result = static_cast<float>(*access.operator()<uint32_t>(registerSpace, 0));
+                    float result = static_cast<float>(*access.operator()<int32_t>(registerSpace, 0));
                     *access.operator()<float>(registerSpace, offset) = result;
                 } else {
 #if USE(JSVALUE64)
@@ -505,7 +499,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
             auto offset = GPRInfo::numberOfArgumentRegisters * sizeof(UCPURegister) + FPRInfo::toArgumentIndex(dest) * bytesForWidth(Width::Width64);
             if (returned.isNumber()) {
                 if (returned.isInt32()) {
-                    double result = static_cast<float>(*access.operator()<uint32_t>(registerSpace, 0));
+                    double result = static_cast<float>(*access.operator()<int32_t>(registerSpace, 0));
                     *access.operator()<double>(registerSpace, offset) = result;
                 } else {
 #if USE(JSVALUE64)
@@ -549,7 +543,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                     JSValue value = JSValue::decode(bitwise_cast<EncodedJSValue>(returned));
                     value = Wasm::internalizeExternref(value);
                     if (UNLIKELY(!Wasm::TypeInformation::castReference(value, returnType.isNullable(), returnType.index))) {
-                        throwTypeError(globalObject, scope, "Argument value did not match reference type"_s);
+                        throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
                         OPERATION_RETURN(scope);
                     }
                 }
@@ -625,7 +619,7 @@ JSC_DEFINE_JIT_OPERATION(operationWasmToJSExitMarshalReturnValues, void, (void* 
                         ASSERT(Options::useWasmGC());
                         value = Wasm::internalizeExternref(value);
                         if (UNLIKELY(!Wasm::TypeInformation::castReference(value, returnType.isNullable(), returnType.index))) {
-                            throwTypeError(globalObject, scope, "Argument value did not match reference type"_s);
+                            throwTypeError(globalObject, scope, "Argument value did not match the reference type"_s);
                             OPERATION_RETURN(scope);
                         }
                     }

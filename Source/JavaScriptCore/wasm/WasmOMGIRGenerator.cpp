@@ -5563,8 +5563,6 @@ auto OMGIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
     static_assert(sizeof(WasmToWasmImportableFunction::typeIndex) == sizeof(uint64_t), "Load codegen assumes i64");
     Value* calleeSignatureIndex = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, Int64, origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfSignatureIndex()));
     Value* calleeCodeLocation = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfEntrypointLoadLocation()));
-    Value* calleeCallee = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-        m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfBoxedWasmCalleeLoadLocation())));
     Value* calleeRTT = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfRTT()));
     Value* calleeInstance = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfInstance()));
 
@@ -5632,6 +5630,8 @@ auto OMGIRGenerator::addCallIndirect(unsigned tableIndex, const TypeDefinition& 
     throwException->effects.terminal = true;
 
     m_currentBlock = continuation;
+    Value* calleeCallee = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
+        m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callableFunction, safeCast<int32_t>(FuncRefTable::Function::offsetOfFunction() + WasmToWasmImportableFunction::offsetOfBoxedWasmCalleeLoadLocation())));
     Value* calleeCode = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), calleeCodeLocation);
     return emitIndirectCall(calleeInstance, calleeCode, calleeCallee, signature, args, results, callType);
 }
@@ -5668,9 +5668,25 @@ auto OMGIRGenerator::addCallRef(const TypeDefinition& originalSignature, Argumen
         m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callee,
         safeCast<int32_t>(WebAssemblyFunctionBase::offsetOfEntrypointLoadLocation())));
 
-    Value* calleeCallee = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(),
-        m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callee,
-        safeCast<int32_t>(WebAssemblyFunctionBase::offsetOfBoxedWasmCalleeLoadLocation())));
+    Value* calleeLoadLocation = m_currentBlock->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), callee, safeCast<int32_t>(WebAssemblyFunctionBase::offsetOfBoxedWasmCalleeLoadLocation()));
+
+    BasicBlock* nonzero = m_proc.addBlock();
+    BasicBlock* continuation = m_proc.addBlock();
+
+    UpsilonValue* zeroUpsilon = m_currentBlock->appendNew<UpsilonValue>(m_proc, origin(), constant(pointerType(), 0));
+    m_currentBlock->appendNewControlValue(m_proc, B3::Branch, origin(), calleeLoadLocation, FrequentedBlock(nonzero), FrequentedBlock(continuation, FrequencyClass::Rare));
+
+    Value* loadedCallee = nonzero->appendNew<MemoryValue>(m_proc, Load, pointerType(), origin(), calleeLoadLocation);
+    UpsilonValue* nonzeroUpsilon = nonzero->appendNew<UpsilonValue>(m_proc, origin(), loadedCallee);
+    nonzero->appendNewControlValue(m_proc, Jump, origin(), continuation);
+
+    continuation->addPredecessor(m_currentBlock);
+    continuation->addPredecessor(nonzero);
+
+    m_currentBlock = continuation;
+    Value* calleeCallee = m_currentBlock->appendNew<Value>(m_proc, Phi, pointerType(), origin());
+    nonzeroUpsilon->setPhi(calleeCallee);
+    zeroUpsilon->setPhi(calleeCallee);
 
     return emitIndirectCall(calleeInstance, calleeCode, calleeCallee, signature, args, results, callType);
 }

@@ -26,6 +26,8 @@
 #include "config.h"
 #include "WasmBinding.h"
 
+#include "CallFrame.h"
+
 #if ENABLE(WEBASSEMBLY) && ENABLE(JIT)
 
 #include "CCallHelpers.h"
@@ -49,7 +51,7 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     ASSERT(noOverlap(scratch, GPRInfo::wasmContextInstancePointer));
 
     JIT_COMMENT(jit, "Store Callee's wasm callee for import function ", importIndex);
-    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfBoxedTargetCalleeLoadLocation(importIndex)), scratch);
+    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfBoxedWasmCalleeLoadLocation(importIndex)), scratch);
     jit.loadPtr(JIT::Address(scratch), scratch);
     // We are halfway between being the caller and the callee: we have already made the call, but not yet completed the prologue.
     // On ARM64 this doesn't really matter, but on intel we need to worry about the pushed pc.
@@ -58,7 +60,8 @@ Expected<MacroAssemblerCodeRef<WasmEntryPtrTag>, BindingFailure> wasmToWasm(unsi
     // FIXME: This could be a load pair.
     // B3's call codegen ensures that the JSCell is a WebAssemblyFunction.
     // While we're accessing that cacheline, also get the wasm entrypoint so we can tail call to it below.
-    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfWasmEntrypointLoadLocation(importIndex)), scratch);
+
+    jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfEntrypointLoadLocation(importIndex)), scratch);
     // Get the callee's JSWebAssemblyInstance and set it as WasmContext's instance. The caller will take care of restoring its own JSWebAssemblyInstance.
     // This switches the current instance.
     jit.loadPtr(JIT::Address(GPRInfo::wasmContextInstancePointer, JSWebAssemblyInstance::offsetOfTargetInstance(importIndex)), GPRInfo::wasmContextInstancePointer); // JSWebAssemblyInstance*.

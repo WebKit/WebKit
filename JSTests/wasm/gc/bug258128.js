@@ -1,3 +1,4 @@
+//@ requireOptions("--useWasmSIMD=1")
 //@ skip if !$isSIMDPlatform
 //@ runWebAssemblySuite("--useWasmGC=true")
 

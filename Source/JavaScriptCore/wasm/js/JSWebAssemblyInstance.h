@@ -57,6 +57,7 @@ class WebAssemblyModuleRecord;
 
 class JSWebAssemblyInstance final : public JSNonFinalObject {
     friend class LLIntOffsetsExtractor;
+    using WasmOrJSImportableFunction = Wasm::WasmOrJSImportableFunction;
 
 public:
     using Base = JSNonFinalObject;
@@ -253,39 +254,23 @@ public:
     // Tail accessors.
     static constexpr size_t offsetOfTail() { return WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(JSWebAssemblyInstance)); }
 
-    static constexpr uintptr_t NullWasmCallee = 0;
-
-    struct ImportFunctionInfo {
-        // Target instance and entrypoint are only set for wasm->wasm calls, and are otherwise nullptr. The js-specific logic occurs through import function.
-        WriteBarrier<JSWebAssemblyInstance> targetInstance { };
-        WasmToWasmImportableFunction::LoadLocation wasmEntrypointLoadLocation { nullptr };
-        CodePtr<WasmEntryPtrTag> importFunctionStub;
-        WriteBarrier<JSObject> importFunction { };
-        // This is only used when we need to jump directly into the LLInt/IPInt.
-        const uintptr_t* boxedTargetCalleeLoadLocation { &NullWasmCallee };
-        DataOnlyCallLinkInfo callLinkInfo;
-#if CPU(ADDRESS32)
-        void* _ { nullptr }; // padding
-#endif
-        static constexpr ptrdiff_t offsetOfCallLinkInfo() { return OBJECT_OFFSETOF(ImportFunctionInfo, callLinkInfo); }
-    };
     unsigned numImportFunctions() const { return m_numImportFunctions; }
-    ImportFunctionInfo* importFunctionInfo(size_t importFunctionNum)
+    WasmOrJSImportableFunction* importFunctionInfo(size_t importFunctionNum)
     {
         RELEASE_ASSERT(importFunctionNum < m_numImportFunctions);
-        return &bitwise_cast<ImportFunctionInfo*>(bitwise_cast<char*>(this) + offsetOfTail())[importFunctionNum];
+        return &bitwise_cast<WasmOrJSImportableFunction*>(bitwise_cast<char*>(this) + offsetOfTail())[importFunctionNum];
     }
-    static size_t offsetOfTargetInstance(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, targetInstance); }
-    static size_t offsetOfWasmEntrypointLoadLocation(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, wasmEntrypointLoadLocation); }
-    static size_t offsetOfBoxedTargetCalleeLoadLocation(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, boxedTargetCalleeLoadLocation); }
-    static size_t offsetOfImportFunctionStub(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, importFunctionStub); }
-    static size_t offsetOfImportFunction(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + OBJECT_OFFSETOF(ImportFunctionInfo, importFunction); }
-    static size_t offsetOfCallLinkInfo(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(ImportFunctionInfo) + ImportFunctionInfo::offsetOfCallLinkInfo(); }
+    static size_t offsetOfTargetInstance(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(WasmOrJSImportableFunction) + OBJECT_OFFSETOF(Wasm::WasmOrJSImportableFunction, targetInstance); }
+    static size_t offsetOfEntrypointLoadLocation(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(WasmOrJSImportableFunction) + OBJECT_OFFSETOF(Wasm::WasmOrJSImportableFunction, entrypointLoadLocation); }
+    static size_t offsetOfBoxedWasmCalleeLoadLocation(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(WasmOrJSImportableFunction) + OBJECT_OFFSETOF(Wasm::WasmOrJSImportableFunction, boxedWasmCalleeLoadLocation); }
+    static size_t offsetOfImportFunctionStub(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(WasmOrJSImportableFunction) + OBJECT_OFFSETOF(WasmOrJSImportableFunction, importFunctionStub); }
+    static size_t offsetOfImportFunction(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(WasmOrJSImportableFunction) + OBJECT_OFFSETOF(WasmOrJSImportableFunction, importFunction); }
+    static size_t offsetOfCallLinkInfo(size_t importFunctionNum) { return offsetOfTail() + importFunctionNum * sizeof(WasmOrJSImportableFunction) + WasmOrJSImportableFunction::offsetOfCallLinkInfo(); }
     WriteBarrier<JSObject>& importFunction(unsigned importFunctionNum) { return importFunctionInfo(importFunctionNum)->importFunction; }
 
-    static_assert(sizeof(ImportFunctionInfo) == WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(ImportFunctionInfo)), "We rely on this for the alignment to be correct");
-    static constexpr size_t offsetOfTablePtr(unsigned numImportFunctions, unsigned i) { return offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Wasm::Table*) * i; }
-    static constexpr size_t offsetOfGlobalPtr(unsigned numImportFunctions, unsigned numTables, unsigned i) { return roundUpToMultipleOf<sizeof(Wasm::Global::Value)>(offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Wasm::Table*) * numTables) + sizeof(Wasm::Global::Value) * i; }
+    static_assert(sizeof(WasmOrJSImportableFunction) == WTF::roundUpToMultipleOf<sizeof(uint64_t)>(sizeof(WasmOrJSImportableFunction)), "We rely on this for the alignment to be correct");
+    static constexpr size_t offsetOfTablePtr(unsigned numImportFunctions, unsigned i) { return offsetOfTail() + sizeof(WasmOrJSImportableFunction) * numImportFunctions + sizeof(Wasm::Table*) * i; }
+    static constexpr size_t offsetOfGlobalPtr(unsigned numImportFunctions, unsigned numTables, unsigned i) { return roundUpToMultipleOf<sizeof(Wasm::Global::Value)>(offsetOfTail() + sizeof(WasmOrJSImportableFunction) * numImportFunctions + sizeof(Wasm::Table*) * numTables) + sizeof(Wasm::Global::Value) * i; }
 
     const Wasm::Tag& tag(unsigned i) const { return *m_tags[i]; }
     void setTag(unsigned, Ref<const Wasm::Tag>&&);
@@ -306,7 +291,7 @@ private:
 
     static size_t allocationSize(Checked<size_t> numImportFunctions, Checked<size_t> numTables, Checked<size_t> numGlobals)
     {
-        return roundUpToMultipleOf<sizeof(Wasm::Global::Value)>(offsetOfTail() + sizeof(ImportFunctionInfo) * numImportFunctions + sizeof(Wasm::Table*) * numTables) + sizeof(Wasm::Global::Value) * numGlobals;
+        return roundUpToMultipleOf<sizeof(Wasm::Global::Value)>(offsetOfTail() + sizeof(WasmOrJSImportableFunction) * numImportFunctions + sizeof(Wasm::Table*) * numTables) + sizeof(Wasm::Global::Value) * numGlobals;
     }
 
     bool evaluateConstantExpression(uint64_t, Wasm::Type, uint64_t&);
