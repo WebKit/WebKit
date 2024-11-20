@@ -626,7 +626,7 @@ static String agentClusterIDFromGlobalObject(JSGlobalObject& globalObject)
 
 const uint32_t currentKeyFormatVersion = 1;
 
-enum class CryptoKeyClassSubtag {
+enum class CryptoKeyClassSubtag : uint8_t {
     HMAC = 0,
     AES = 1,
     RSA = 2,
@@ -636,13 +636,13 @@ enum class CryptoKeyClassSubtag {
 };
 const uint8_t cryptoKeyClassSubtagMaximumValue = 5;
 
-enum class CryptoKeyAsymmetricTypeSubtag {
+enum class CryptoKeyAsymmetricTypeSubtag : bool {
     Public = 0,
     Private = 1
 };
 const uint8_t cryptoKeyAsymmetricTypeSubtagMaximumValue = 1;
 
-enum class CryptoKeyUsageTag {
+enum class CryptoKeyUsageTag : uint8_t {
     Encrypt = 0,
     Decrypt = 1,
     Sign = 2,
@@ -691,7 +691,7 @@ static unsigned countUsages(CryptoKeyUsageBitmap usages)
     return count;
 }
 
-enum class CryptoKeyOKPOpNameTag {
+enum class CryptoKeyOKPOpNameTag : bool {
     X25519 = 0,
     ED25519 = 1,
 };

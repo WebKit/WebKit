@@ -61,7 +61,7 @@ CryptoKeyOKP::CryptoKeyOKP(CryptoAlgorithmIdentifier identifier, NamedCurve curv
 
 ExceptionOr<CryptoKeyPair> CryptoKeyOKP::generatePair(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    if (!isPlatformSupportedCurve(namedCurve))
+    if (!supportsNamedCurve())
         return Exception { ExceptionCode::NotSupportedError };
 
     auto result = platformGeneratePair(identifier, namedCurve, extractable, usages);
@@ -73,7 +73,7 @@ ExceptionOr<CryptoKeyPair> CryptoKeyOKP::generatePair(CryptoAlgorithmIdentifier 
 
 RefPtr<CryptoKeyOKP> CryptoKeyOKP::importRaw(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    if (!isPlatformSupportedCurve(namedCurve))
+    if (!supportsNamedCurve())
         return nullptr;
 
     // FIXME: The Ed25519 spec states that import in raw format must be used only for Verify.
@@ -82,7 +82,7 @@ RefPtr<CryptoKeyOKP> CryptoKeyOKP::importRaw(CryptoAlgorithmIdentifier identifie
 
 RefPtr<CryptoKeyOKP> CryptoKeyOKP::importJwk(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, JsonWebKey&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    if (!isPlatformSupportedCurve(namedCurve))
+    if (!supportsNamedCurve())
         return nullptr;
 
     switch (namedCurve) {
@@ -201,7 +201,7 @@ auto CryptoKeyOKP::algorithm() const -> KeyAlgorithm
 
 #if !PLATFORM(COCOA) && !USE(GCRYPT)
 
-bool CryptoKeyOKP::isPlatformSupportedCurve(NamedCurve)
+bool CryptoKeyOKP::supportsNamedCurve()
 {
     return false;
 }

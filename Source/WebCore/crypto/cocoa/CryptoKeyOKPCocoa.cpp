@@ -40,14 +40,14 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace WebCore {
 
-bool CryptoKeyOKP::isPlatformSupportedCurve(NamedCurve namedCurve)
+bool CryptoKeyOKP::supportsNamedCurve()
 {
-    return namedCurve == NamedCurve::Ed25519 || namedCurve == NamedCurve::X25519;
+    return true;
 }
 
 std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    if (!isPlatformSupportedCurve(namedCurve))
+    if (!supportsNamedCurve())
         return { };
 #if !HAVE(SWIFT_CPP_INTEROP)
     ccec25519pubkey ccPublicKey;
@@ -129,9 +129,9 @@ std::optional<CryptoKeyPair> CryptoKeyOKP::platformGeneratePair(CryptoAlgorithmI
 #endif
 }
 
-bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, const Vector<uint8_t>& privateKey, const Vector<uint8_t>& publicKey)
+bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier identifier, NamedCurve, const Vector<uint8_t>& privateKey, const Vector<uint8_t>& publicKey)
 {
-    if (!isPlatformSupportedCurve(namedCurve))
+    if (!supportsNamedCurve())
         return false;
 
     if (privateKey.size() != 32 || publicKey.size() != 32)
@@ -185,7 +185,7 @@ bool CryptoKeyOKP::platformCheckPairedKeys(CryptoAlgorithmIdentifier identifier,
 // For all of the OIDs, the parameters MUST be absent.
 RefPtr<CryptoKeyOKP> CryptoKeyOKP::importSpki(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    if (!isPlatformSupportedCurve(namedCurve))
+    if (!supportsNamedCurve())
         return nullptr;
 
     // FIXME: We should use the underlying crypto library to import PKCS8 OKP keys.
@@ -313,7 +313,7 @@ ExceptionOr<Vector<uint8_t>> CryptoKeyOKP::exportSpki() const
 // For all of the OIDs, the parameters MUST be absent.
 RefPtr<CryptoKeyOKP> CryptoKeyOKP::importPkcs8(CryptoAlgorithmIdentifier identifier, NamedCurve namedCurve, Vector<uint8_t>&& keyData, bool extractable, CryptoKeyUsageBitmap usages)
 {
-    if (!isPlatformSupportedCurve(namedCurve))
+    if (!supportsNamedCurve())
         return nullptr;
 
     // FIXME: We should use the underlying crypto library to import PKCS8 OKP keys.
