@@ -1376,6 +1376,12 @@
                 "com.apple.iconservices"
                 "com.apple.iconservices.store"))))
 
+(with-filter (state-flag "BlockIconServicesInWebContentSandbox")
+    (deny mach-lookup (with telemetry-backtrace)
+        (global-name
+            "com.apple.iconservices"
+            "com.apple.iconservices.store")))
+
 (allow mach-lookup
     (require-all
         (extension "com.apple.webkit.extension.mach")
