@@ -707,6 +707,7 @@ public:
 
 #if USE(AVFOUNDATION)
     AVPlayer *objCAVFoundationAVPlayer() const;
+    void setDecompressionSessionPreferences(bool, bool);
 #endif
 
     bool performTaskAtTime(Function<void()>&&, const MediaTime&);
@@ -845,6 +846,10 @@ private:
 
     String m_lastErrorMessage;
     ProcessIdentity m_processIdentity;
+#if USE(AVFOUNDATION)
+    bool m_preferDecompressionSession { false };
+    bool m_canFallbackToDecompressionSession { false };
+#endif
 };
 
 class MediaPlayerFactory : public CanMakeWeakPtr<MediaPlayerFactory> {

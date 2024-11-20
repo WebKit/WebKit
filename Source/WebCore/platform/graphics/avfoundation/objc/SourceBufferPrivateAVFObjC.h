@@ -48,7 +48,6 @@
 
 OBJC_CLASS AVStreamDataParser;
 OBJC_CLASS AVSampleBufferAudioRenderer;
-OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS NSData;
 OBJC_CLASS NSError;
 OBJC_CLASS NSObject;
@@ -128,10 +127,10 @@ public:
     void registerForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
     void unregisterForErrorNotifications(SourceBufferPrivateAVFObjCErrorClient*);
 
-    void setVideoRenderer(WebSampleBufferVideoRendering *);
-    void stageVideoRenderer(WebSampleBufferVideoRendering *);
-
-    void setDecompressionSession(WebCoreDecompressionSession*);
+    void setVideoRenderer(VideoMediaSampleRenderer*);
+    void stageVideoRenderer(VideoMediaSampleRenderer*);
+    void videoRendererWillReconfigure(VideoMediaSampleRenderer&);
+    void videoRendererDidReconfigure(VideoMediaSampleRenderer&);
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     SharedBuffer* initData() { return m_initData.get(); }
@@ -235,7 +234,6 @@ ALLOW_NEW_API_WITHOUT_GUARDS_END
     Box<BinarySemaphore> m_hasSessionSemaphore;
     Box<Semaphore> m_abortSemaphore;
     const Ref<WTF::WorkQueue> m_appendQueue;
-    RefPtr<WebCoreDecompressionSession> m_decompressionSession;
 
 #if ENABLE(LEGACY_ENCRYPTED_MEDIA)
     RefPtr<SharedBuffer> m_initData;

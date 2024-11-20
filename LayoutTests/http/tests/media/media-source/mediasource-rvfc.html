@@ -17,11 +17,11 @@
                 test.expectEvent(sourceBuffer, 'updateend', 'sourceBuffer');
                 test.expectEvent(mediaElement, 'playing', 'Playing triggered');
                 sourceBuffer.appendBuffer(mediaData);
-                mediaElement.requestVideoFrameCallback((now, metadata) => {
-                   mediaElement.requestVideoFrameCallback((now, metadata) => {
-                        assert_greater_than(metadata.presentedFrames, 0);
-                        assert_equals(metadata.width, 320);
-                        assert_equals(metadata.height, 240);
+                mediaElement.requestVideoFrameCallback((now, metadata1) => {
+                   mediaElement.requestVideoFrameCallback((now, metadata2) => {
+                        assert_greater_than(metadata2.presentedFrames, metadata1.presentedFrames);
+                        assert_equals(metadata2.width, 320);
+                        assert_equals(metadata2.height, 240);
                         test.done();
                     });
                });

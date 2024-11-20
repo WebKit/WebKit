@@ -37,7 +37,6 @@
 #include <wtf/Vector.h>
 
 OBJC_CLASS AVAsset;
-OBJC_CLASS AVSampleBufferDisplayLayer;
 OBJC_CLASS AVStreamDataParser;
 OBJC_CLASS NSError;
 OBJC_CLASS NSObject;
@@ -52,7 +51,7 @@ class MediaPlayerPrivateMediaSourceAVFObjC;
 class MediaSourcePrivateClient;
 class SourceBufferPrivateAVFObjC;
 class TimeRanges;
-class WebCoreDecompressionSession;
+class VideoMediaSampleRenderer;
 
 class MediaSourcePrivateAVFObjC final
     : public MediaSourcePrivate
@@ -83,9 +82,10 @@ public:
     FloatSize naturalSize() const;
 
     void hasSelectedVideoChanged(SourceBufferPrivateAVFObjC&);
-    void setVideoRenderer(WebSampleBufferVideoRendering *);
-    void stageVideoRenderer(WebSampleBufferVideoRendering *);
-    void setDecompressionSession(WebCoreDecompressionSession*);
+    void setVideoRenderer(VideoMediaSampleRenderer*);
+    void stageVideoRenderer(VideoMediaSampleRenderer*);
+    void videoRendererWillReconfigure(VideoMediaSampleRenderer&);
+    void videoRendererDidReconfigure(VideoMediaSampleRenderer&);
 
     void flushActiveSourceBuffersIfNeeded();
 

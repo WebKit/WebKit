@@ -173,6 +173,11 @@ void VideoMediaSampleRenderer::setPrefersDecompressionSession(bool prefers)
     m_prefersDecompressionSession = prefers;
 }
 
+bool VideoMediaSampleRenderer::isUsingDecompressionSession() const
+{
+    return !!m_decompressionSession;
+}
+
 void VideoMediaSampleRenderer::setTimebase(RetainPtr<CMTimebaseRef>&& timebase)
 {
     if (!timebase)
@@ -608,12 +613,6 @@ WebSampleBufferVideoRendering *VideoMediaSampleRenderer::rendererOrDisplayLayer(
     }
     return nil;
 #endif
-}
-
-AVSampleBufferDisplayLayer *VideoMediaSampleRenderer::displayLayer() const
-{
-    assertIsMainThread();
-    return m_displayLayer.get();
 }
 
 auto VideoMediaSampleRenderer::copyDisplayedPixelBuffer() -> DisplayedPixelBufferEntry

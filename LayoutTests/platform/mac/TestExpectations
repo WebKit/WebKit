@@ -2370,8 +2370,6 @@ imported/w3c/web-platform-tests/fetch/metadata/generated/window-location.sub.htm
 [ Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/window-resize-aborts-transition.html [ Failure ]
 [ Ventura ] imported/w3c/web-platform-tests/css/css-view-transitions/navigation/hide-before-reveal.html [ Failure ]
 
-webkit.org/b/273308 http/tests/media/media-source/mediasource-rvfc.html [ Timeout ]
-
 # rdar://129424261 (REGRESSION (279443@main): [ Sonoma Release ] WindowServer watchdog timeout on Intel machine)
 [ Release arm64 ] http/tests/webgpu/webgpu [ Skip ]
 
@@ -2417,7 +2415,7 @@ imported/w3c/web-platform-tests/html/semantics/embedded-content/the-img-element/
 [ Sequoia arm64 ] http/tests/media/fairplay/fps-init-data-sinf.html [ Failure ]
 [ Sequoia arm64 ] http/tests/media/fairplay/fps-init-data-skd.html [ Failure ]
 [ Sequoia arm64 ] http/tests/media/fairplay/legacy-fairplay-mse-muxed-nowait.html [ Failure ]
-[ Sequoia arm64 ] http/tests/media/fairplay/fps-mse-play-while-not-in-dom.html [ Failure ]
+[ Sequoia arm64 ] http/tests/media/fairplay/fps-mse-play-while-not-in-dom.html [ Pass Failure ]
 [ Sequoia arm64 ] http/tests/media/fairplay/fps-mse-unmuxed-audio-only.html [ Failure ]
 [ Sequoia arm64 ] http/tests/media/fairplay/fps-mse-unmuxed-key-renewal.html [ Failure ]
 [ Sequoia arm64 ] http/tests/media/fairplay/fps-mse-unmuxed-multiple-keys.html [ Failure ]

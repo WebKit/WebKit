@@ -1,9 +1,9 @@
 <html>
 <head>
-<title>requestVideoFrameCallback with playing webm</title>
+<title>requestVideoFrameCallback with playing MSE in offscreen video element</title>
 <script src="../resources/testharness.js"></script>
-<script src="video-test.js"></script>
-<script src="utilities.js"></script>
+<script src="../video-test.js"></script>
+<script src="../utilities.js"></script>
 <script>
     var lastPresentationTime = -Number.MAX_NUMBER;
     var lastDisplayTime = -Number.MAX_NUMBER;
@@ -11,17 +11,29 @@
     var lastMediaTime = -Number.MAX_NUMBER;
     var frame;
 
+    async function setupMSE(element, url, mimeType)
+    {
+        const MediaSource = self.ManagedMediaSource || self.MediaSource;
+        let ms = new MediaSource();
+        element.disableRemotePlayback = true;
+        element.preload = "metadata";
+        element.src = URL.createObjectURL(ms);
+        await waitFor(ms, 'sourceopen');
+        let sb = ms.addSourceBuffer(mimeType);
+        await Promise.all([ waitFor(element, "loadedmetadata", true), fetchAndLoad(sb, url, [''], '')]);
+    }
+
     async function init()
     {
         if (window.testRunner)
             testRunner.waitUntilDone();
 
-        findMediaElement();
+        let video = document.createElement('video');
 
-        video.src = "content/test-vp8.webm";
+        await setupMSE(video, "content/test-fragmented-video.mp4", "video/mp4; codecs=avc1.4d401e");
+
         const tooLongTimeout = setTimeout(failTest.bind(null, "timeout"), 5000);
 
-        await waitFor(video, 'loadedmetadata');
         video.play();
 
         let counter = 0;
@@ -60,6 +72,5 @@
 </script>
 </head>
 <body onload="init();">
-<video muted/>
 </body>
 </html>
