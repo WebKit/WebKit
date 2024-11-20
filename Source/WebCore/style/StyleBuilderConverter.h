@@ -238,7 +238,8 @@ public:
     static Vector<ScrollAxis> convertScrollTimelineAxis(const BuilderState&, const CSSValue&);
     static Vector<ViewTimelineInsets> convertViewTimelineInset(const BuilderState&, const CSSValue&);
 
-    static Vector<AtomString> convertAnchorName(const BuilderState&, const CSSValue&);
+    static Vector<ScopedName> convertAnchorName(const BuilderState&, const CSSValue&);
+    static std::optional<ScopedName> convertPositionAnchor(const BuilderState&, const CSSValue&);
 
     static BlockEllipsis convertBlockEllipsis(const BuilderState&, const CSSValue&);
     static size_t convertMaxLines(const BuilderState&, const CSSValue&);
@@ -2088,12 +2089,18 @@ inline Vector<ViewTimelineInsets> BuilderConverter::convertViewTimelineInset(con
     });
 }
 
-inline Vector<AtomString> BuilderConverter::convertAnchorName(const BuilderState&, const CSSValue& value)
+inline Vector<ScopedName> BuilderConverter::convertAnchorName(const BuilderState& state, const CSSValue& value)
 {
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         if (value.valueID() == CSSValueNone)
             return { };
-        return { AtomString { primitiveValue->stringValue() } };
+
+        ScopedName scopedName {
+            .name = AtomString { primitiveValue->stringValue() },
+            .scopeOrdinal = state.styleScopeOrdinal()
+        };
+
+        return { scopedName };
     }
 
     auto* list = dynamicDowncast<CSSValueList>(value);
@@ -2101,8 +2108,24 @@ inline Vector<AtomString> BuilderConverter::convertAnchorName(const BuilderState
         return { };
 
     return WTF::map(*list, [&](auto& item) {
-        return AtomString { downcast<CSSPrimitiveValue>(item).stringValue() };
+        return ScopedName {
+            .name = AtomString { downcast<CSSPrimitiveValue>(item).stringValue() },
+            .scopeOrdinal = state.styleScopeOrdinal()
+        };
     });
+}
+
+inline std::optional<ScopedName> BuilderConverter::convertPositionAnchor(const BuilderState& state, const CSSValue& value)
+{
+    if (value.valueID() == CSSValueAuto)
+        return { };
+
+    const auto& primitiveValue = downcast<CSSPrimitiveValue>(value);
+
+    return ScopedName {
+        .name = AtomString { primitiveValue.stringValue() },
+        .scopeOrdinal = state.styleScopeOrdinal()
+    };
 }
 
 inline BlockEllipsis BuilderConverter::convertBlockEllipsis(const BuilderState& builderState, const CSSValue& value)

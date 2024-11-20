@@ -797,10 +797,11 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
     state.requiresConversionData = true;
 
     auto anchor = Anchor {
-        .elementName = AtomString { anchorElement },
+        .elementName = AtomString { WTFMove(anchorElement) },
         .side = WTFMove(*anchorSide),
         .fallback = WTFMove(fallback)
     };
+
     return TypedChild { makeChild(WTFMove(anchor), type), type };
 }
 

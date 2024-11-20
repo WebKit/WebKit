@@ -420,7 +420,7 @@ static LayoutUnit computeInsetValue(CSSPropertyID insetPropertyID, CheckedRef<co
     return removeBorderForInsetValue(insetValue, insetPropertySide, *containingBlock);
 }
 
-RefPtr<Element> AnchorPositionEvaluator::findAnchorAndAttemptResolution(const BuilderState& builderState, AtomString elementName)
+RefPtr<Element> AnchorPositionEvaluator::findAnchorAndAttemptResolution(const BuilderState& builderState, std::optional<ScopedName> elementName)
 {
     const auto& style = builderState.style();
 
@@ -445,12 +445,12 @@ RefPtr<Element> AnchorPositionEvaluator::findAnchorAndAttemptResolution(const Bu
         return WTF::makeUnique<AnchorPositionedState>();
     }).iterator->value.get();
 
-    if (elementName.isNull())
+    if (!elementName)
         elementName = builderState.style().positionAnchor();
 
-    if (!elementName.isNull()) {
+    if (elementName) {
         // Collect anchor names that this element refers to in anchor() or anchor-size()
-        bool isNewAnchorName = anchorPositionedState.anchorNames.add(elementName).isNewEntry;
+        bool isNewAnchorName = anchorPositionedState.anchorNames.add(elementName->name).isNewEntry;
 
         // If anchor resolution has progressed past Initial, and we pick up a new anchor name, set the
         // stage back to Initial. This restarts the resolution process to resolve newly added names.
@@ -475,7 +475,7 @@ RefPtr<Element> AnchorPositionEvaluator::findAnchorAndAttemptResolution(const Bu
 
     // Anchor value may now be resolved using layout information
 
-    RefPtr anchorElement = elementName.isNull() ? nullptr : anchorPositionedState.anchorElements.get(elementName);
+    RefPtr anchorElement = elementName ? anchorPositionedState.anchorElements.get(elementName->name) : nullptr;
     if (!anchorElement) {
         // See: https://drafts.csswg.org/css-anchor-position-1/#valid-anchor-function
         anchorPositionedState.stage = AnchorPositionResolutionStage::Resolved;
@@ -494,7 +494,7 @@ RefPtr<Element> AnchorPositionEvaluator::findAnchorAndAttemptResolution(const Bu
     return anchorElement;
 }
 
-std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& builderState, AtomString elementName, Side side)
+std::optional<double> AnchorPositionEvaluator::evaluate(const BuilderState& builderState, std::optional<ScopedName> elementName, Side side)
 {
     auto propertyID = builderState.cssPropertyID();
     const auto& style = builderState.style();
@@ -606,7 +606,7 @@ static BoxAxis anchorSizeDimensionToPhysicalDimension(AnchorSizeDimension dimens
     return BoxAxis::Horizontal;
 }
 
-std::optional<double> AnchorPositionEvaluator::evaluateSize(const BuilderState& builderState, AtomString elementName, std::optional<AnchorSizeDimension> dimension)
+std::optional<double> AnchorPositionEvaluator::evaluateSize(const BuilderState& builderState, std::optional<ScopedName> elementName, std::optional<AnchorSizeDimension> dimension)
 {
     auto propertyID = builderState.cssPropertyID();
     const auto& style = builderState.style();
@@ -735,8 +735,8 @@ static AnchorsForAnchorName collectAnchorsForAnchorName(const Document& document
 
     auto& anchors = document.renderView()->anchors();
     for (auto& anchorRenderer : anchors) {
-        for (auto& name : anchorRenderer.style().anchorNames()) {
-            anchorsForAnchorName.ensure(name, [&] {
+        for (auto& scopedName : anchorRenderer.style().anchorNames()) {
+            anchorsForAnchorName.ensure(scopedName.name, [&] {
                 return AnchorsForAnchorName::MappedType { };
             }).iterator->value.append(anchorRenderer);
         }
@@ -805,7 +805,7 @@ void AnchorPositionEvaluator::updateSnapshottedScrollOffsets(Document& document)
 
         auto needsScrollAdjustment = [&] {
             // FIXME: This is incomplete.
-            if (anchorPositionedRenderer->style().positionAnchor().isNull())
+            if (!anchorPositionedRenderer->style().positionAnchor())
                 return false;
 
             if (elementAndState.value->anchorElements.size() != 1)

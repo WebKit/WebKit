@@ -9415,7 +9415,7 @@
         },
         "position-anchor": {
             "codegen-properties": {
-                "converter": "StringOrAutoAtom",
+                "converter": "PositionAnchor",
                 "parser-grammar": "auto | <dashed-ident>",
                 "settings-flag": "cssAnchorPositioningEnabled"
             },

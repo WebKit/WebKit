@@ -27,6 +27,7 @@
 #include "CSSValueKeywords.h"
 #include "EventTarget.h"
 #include "LayoutUnit.h"
+#include "ScopedName.h"
 #include <wtf/HashMap.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/WeakHashMap.h>
@@ -89,11 +90,11 @@ class AnchorPositionEvaluator {
 public:
     // Find the anchor element indicated by `elementName` and update the associated anchor resolution data.
     // Returns nullptr if the anchor element can't be found.
-    static RefPtr<Element> findAnchorAndAttemptResolution(const BuilderState&, AtomString elementName);
+    static RefPtr<Element> findAnchorAndAttemptResolution(const BuilderState&, std::optional<ScopedName> elementName);
 
     using Side = std::variant<CSSValueID, double>;
-    static std::optional<double> evaluate(const BuilderState&, AtomString elementName, Side);
-    static std::optional<double> evaluateSize(const BuilderState&, AtomString elementName, std::optional<AnchorSizeDimension>);
+    static std::optional<double> evaluate(const BuilderState&, std::optional<ScopedName> elementName, Side);
+    static std::optional<double> evaluateSize(const BuilderState&, std::optional<ScopedName> elementName, std::optional<AnchorSizeDimension>);
 
     static void updateAnchorPositioningStatesAfterInterleavedLayout(const Document&);
     static void cleanupAnchorPositionedState(Element&);

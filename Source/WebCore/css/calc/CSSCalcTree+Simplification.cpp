@@ -1335,7 +1335,15 @@ std::optional<Child> simplify(AnchorSize& anchorSize, const SimplificationOption
 
     auto& builderState = *options.conversionData->styleBuilderState();
 
-    auto result = Style::AnchorPositionEvaluator::evaluateSize(builderState, anchorSize.elementName, anchorSize.dimension);
+    std::optional<Style::ScopedName> anchorSizeScopedName;
+    if (!anchorSize.elementName.isNull()) {
+        anchorSizeScopedName = Style::ScopedName {
+            .name = anchorSize.elementName,
+            .scopeOrdinal = builderState.styleScopeOrdinal()
+        };
+    }
+
+    auto result = Style::AnchorPositionEvaluator::evaluateSize(builderState, anchorSizeScopedName, anchorSize.dimension);
 
     if (!result) {
         if (!anchorSize.fallback)
