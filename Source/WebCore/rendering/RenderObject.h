@@ -58,6 +58,7 @@ class HitTestRequest;
 class HitTestResult;
 class HostWindow;
 class LegacyInlineBox;
+class LocalFrameViewLayoutContext;
 class Path;
 class Position;
 class ReferencedSVGResources;
@@ -739,6 +740,7 @@ public:
 
     RenderView& view() const { return *document().renderView(); }
     CheckedRef<RenderView> checkedView() const;
+    inline const LocalFrameViewLayoutContext& layoutContext() const;
 
     HostWindow* hostWindow() const;
 
@@ -1144,9 +1146,6 @@ public:
     void addPDFURLRect(const PaintInfo&, const LayoutPoint&) const;
 
     bool isSkippedContent() const;
-
-    bool isSkippedContentRoot() const;
-    bool isSkippedContentForLayout() const;
 
     PointerEvents usedPointerEvents() const;
 

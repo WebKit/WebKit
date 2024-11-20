@@ -75,7 +75,7 @@ inline bool RenderElement::shouldApplyAnyContainment() const
 
 inline bool RenderElement::shouldApplyInlineSizeContainment() const
 {
-    return WebCore::isSkippedContentRoot(style(), element()) || shouldApplySizeOrStyleContainment(style().containsInlineSize());
+    return isSkippedContentRoot(*this) || shouldApplySizeOrStyleContainment(style().containsInlineSize());
 }
 
 inline bool RenderElement::shouldApplyLayoutContainment() const
@@ -100,12 +100,12 @@ inline bool RenderElement::shouldApplyPaintContainment() const
 
 inline bool RenderElement::shouldApplySizeContainment() const
 {
-    return WebCore::isSkippedContentRoot(style(), element()) || shouldApplySizeOrStyleContainment(style().containsSize());
+    return isSkippedContentRoot(*this) || shouldApplySizeOrStyleContainment(style().containsSize());
 }
 
 inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
 {
-    return WebCore::isSkippedContentRoot(style(), element()) || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize());
+    return isSkippedContentRoot(*this) || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize());
 }
 
 // FIXME: try to avoid duplication with isSkippedContentRoot.
@@ -140,6 +140,20 @@ inline LayoutSize adjustLayoutSizeForAbsoluteZoom(LayoutSize size, const RenderE
 inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const RenderElement& renderer)
 {
     return adjustLayoutUnitForAbsoluteZoom(value, renderer.style());
+}
+
+inline bool isSkippedContentRoot(const RenderElement& renderer)
+{
+    auto& style = renderer.style();
+    if (style.contentVisibility() == ContentVisibility::Visible)
+        return false;
+    // content-visibility applies to elements for which size containment can apply (https://drafts.csswg.org/css-contain/#content-visibility)
+    if (!doesSizeContainmentApplyByDisplayType(style))
+        return false;
+    if (style.contentVisibility() == ContentVisibility::Hidden)
+        return true;
+    ASSERT(style.contentVisibility() == ContentVisibility::Auto);
+    return renderer.element() && !renderer.element()->isRelevantToUser();
 }
 
 } // namespace WebCore

@@ -751,8 +751,12 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
             adjustForTextAutosizing(style, *m_element);
 #endif
     }
-    if (isSkippedContentRoot(style, m_element.get()) && m_parentStyle.contentVisibility() != ContentVisibility::Hidden)
-        style.setUsedContentVisibility(style.contentVisibility());
+
+    if (m_parentStyle.contentVisibility() != ContentVisibility::Hidden) {
+        auto isSkippedContentRoot = style.contentVisibility() != ContentVisibility::Visible && doesSizeContainmentApplyByDisplayType(style) && m_element && !m_element->isRelevantToUser();
+        if (isSkippedContentRoot)
+            style.setUsedContentVisibility(style.contentVisibility());
+    }
 
     if (style.contentVisibility() == ContentVisibility::Auto) {
         style.containIntrinsicWidthAddAuto();

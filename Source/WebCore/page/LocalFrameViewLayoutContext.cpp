@@ -35,6 +35,7 @@
 #include "Quirks.h"
 #include "RenderElement.h"
 #include "RenderLayoutState.h"
+#include "RenderStyle.h"
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "ScriptDisallowedScope.h"
@@ -577,7 +578,21 @@ void LocalFrameViewLayoutContext::addLayoutDelta(const LayoutSize& delta)
     if (auto* layoutState = this->layoutState())
         layoutState->addLayoutDelta(delta);
 }
-    
+
+bool LocalFrameViewLayoutContext::isSkippedContentForLayout(const RenderElement& renderer) const
+{
+    if (needsSkippedContentLayout())
+        return false;
+    return renderer.isSkippedContent();
+}
+
+bool LocalFrameViewLayoutContext::isSkippedContentRootForLayout(const RenderElement& renderer) const
+{
+    if (needsSkippedContentLayout())
+        return false;
+    return isSkippedContentRoot(renderer);
+}
+
 #if ASSERT_ENABLED
 bool LocalFrameViewLayoutContext::layoutDeltaMatches(const LayoutSize& delta)
 {

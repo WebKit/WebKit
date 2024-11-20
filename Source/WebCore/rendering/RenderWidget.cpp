@@ -333,7 +333,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         clipToContentBoxShape(paintInfo.context(), adjustedPaintOffset, document().deviceScaleFactor());
     }
 
-    if (m_widget && !isSkippedContentRoot())
+    if (m_widget && !isSkippedContentRoot(*this))
         paintContents(paintInfo, paintOffset);
 
     if (style().hasBorderRadius())

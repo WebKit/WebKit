@@ -2948,11 +2948,6 @@ bool RenderObject::isSkippedContent() const
     return parent() && parent()->style().hasSkippedContent();
 }
 
-bool RenderObject::isSkippedContentForLayout() const
-{
-    return isSkippedContent() && !view().frameView().layoutContext().needsSkippedContentLayout();
-}
-
 TextStream& operator<<(TextStream& ts, const RenderObject& renderer)
 {
     ts << renderer.debugDescription();

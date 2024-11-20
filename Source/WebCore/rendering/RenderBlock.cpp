@@ -791,7 +791,7 @@ bool RenderBlock::simplifiedLayout()
         return false;
 
     bool canContainFixedPosObjects = canContainFixedPositionObjects();
-    if (isSkippedContentRoot() && (posChildNeedsLayout() || canContainFixedPosObjects))
+    if (layoutContext().isSkippedContentRootForLayout(*this) && (posChildNeedsLayout() || canContainFixedPosObjects))
         return false;
 
     // Lay out positioned descendants or objects that just need to recompute overflow.
@@ -876,7 +876,7 @@ LayoutUnit RenderBlock::marginIntrinsicLogicalWidthForChild(RenderBox& child) co
 
 void RenderBlock::layoutPositionedObject(RenderBox& r, bool relayoutChildren, bool fixedPositionObjectsOnly)
 {
-    if (isSkippedContentRoot()) {
+    if (layoutContext().isSkippedContentRootForLayout(*this)) {
         r.clearNeedsLayoutForSkippedContent();
         return;
     }
@@ -1029,7 +1029,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
 void RenderBlock::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (isSkippedContentRoot())
+    if (isSkippedContentRoot(*this))
         return;
 
     if (childrenInline())
@@ -3315,7 +3315,7 @@ RenderBox* RenderBlock::findFieldsetLegend(FieldsetFindLegendOption option) cons
 
 void RenderBlock::adjustBorderBoxRectForPainting(LayoutRect& paintRect)
 {
-    if (!isFieldset() || isSkippedContentRoot() || !intrinsicBorderForFieldset())
+    if (!isFieldset() || isSkippedContentRoot(*this) || !intrinsicBorderForFieldset())
         return;
     
     auto* legend = findFieldsetLegend();
@@ -3338,7 +3338,7 @@ void RenderBlock::adjustBorderBoxRectForPainting(LayoutRect& paintRect)
 LayoutRect RenderBlock::paintRectToClipOutFromBorder(const LayoutRect& paintRect)
 {
     LayoutRect clipRect;
-    if (!isFieldset() || isSkippedContentRoot())
+    if (!isFieldset() || isSkippedContentRoot(*this))
         return clipRect;
     auto* legend = findFieldsetLegend();
     if (!legend)
@@ -3494,7 +3494,7 @@ LayoutUnit RenderBlock::adjustIntrinsicLogicalHeightForBoxSizing(LayoutUnit heig
 
 void RenderBlock::paintExcludedChildrenInBorder(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (!isFieldset() || isSkippedContentRoot())
+    if (!isFieldset() || isSkippedContentRoot(*this))
         return;
     
     RenderBox* box = findFieldsetLegend();

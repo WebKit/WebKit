@@ -53,6 +53,7 @@
 #include "NodeTraversal.h"
 #include "Range.h"
 #include "RenderBoxInlines.h"
+#include "RenderElementInlines.h"
 #include "RenderImage.h"
 #include "RenderIterator.h"
 #include "RenderTableCell.h"
@@ -488,9 +489,9 @@ void TextIterator::advance()
             if (!isRendererVisible(renderer.get(), m_behaviors)) {
                 m_handledNode = true;
                 m_handledChildren = !hasDisplayContents(*protectedCurrentNode()) && !renderer;
-            } else if (is<Element>(m_currentNode.get()) && renderer->isSkippedContentRoot()) {
+            } else if (auto* renderElement = dynamicDowncast<RenderElement>(renderer.get()); renderElement && isSkippedContentRoot(*renderElement))
                 m_handledChildren = true;
-            } else {
+            else {
                 // handle current node according to its type
                 if (renderer->isRenderText() && m_currentNode->isTextNode())
                     m_handledNode = handleTextNode();

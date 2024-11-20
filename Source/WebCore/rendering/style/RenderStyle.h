@@ -2413,8 +2413,7 @@ inline bool pseudoElementRendererIsNeeded(const RenderStyle*);
 inline bool generatesBox(const RenderStyle&);
 inline bool isNonVisibleOverflow(Overflow);
 
-inline bool isSkippedContentRoot(const RenderStyle&, const Element*);
-
 inline bool isVisibleToHitTesting(const RenderStyle&, const HitTestRequest&);
+inline bool doesSizeContainmentApplyByDisplayType(const RenderStyle&);
 
 } // namespace WebCore

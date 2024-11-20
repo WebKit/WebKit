@@ -231,7 +231,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 
     if (paintInfo.phase == PaintPhase::EventRegion) {
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION)
-        if (isRenderOrLegacyRenderSVGRoot() && !isSkippedContentRoot())
+        if (isRenderOrLegacyRenderSVGRoot() && !isSkippedContentRoot(*this))
             paintReplaced(paintInfo, adjustedPaintOffset);
         else if (visibleToHitTesting()) {
 #else
@@ -316,7 +316,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     }
 
     if (!completelyClippedOut) {
-        if (!isSkippedContentRoot())
+        if (!isSkippedContentRoot(*this))
             paintReplaced(paintInfo, adjustedPaintOffset);
 
         if (style().hasBorderRadius())

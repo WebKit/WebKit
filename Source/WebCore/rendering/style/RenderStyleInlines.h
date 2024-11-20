@@ -976,6 +976,23 @@ constexpr bool RenderStyle::isRubyContainerOrInternalRubyBox(DisplayType display
         || display == DisplayType::RubyBase;
 }
 
+inline bool doesSizeContainmentApplyByDisplayType(const RenderStyle& style)
+{
+    // https://drafts.csswg.org/css-contain-2/#containment-size
+    // Giving an element size containment has no effect if any of the following are true:
+    // if the element does not generate a principal box (as is the case with display: contents or display: none)
+    // if its inner display type is table
+    // if its principal box is an internal table box
+    // if its principal box is an internal ruby box or a non-atomic inline-level box
+    auto displayType = style.display();
+    return displayType != DisplayType::None
+        && displayType != DisplayType::Contents
+        && displayType != DisplayType::Table
+        && displayType != DisplayType::InlineTable
+        && !style.isInternalTableBox()
+        && !style.isRubyContainerOrInternalRubyBox();
+}
+
 inline double RenderStyle::logicalAspectRatio() const
 {
     ASSERT(aspectRatioType() != AspectRatioType::Auto);
@@ -988,32 +1005,6 @@ constexpr bool RenderStyle::preserveNewline(WhiteSpace mode)
 {
     // Normal and nowrap do not preserve newlines.
     return mode != WhiteSpace::Normal && mode != WhiteSpace::NoWrap;
-}
-
-inline bool isSkippedContentRoot(const RenderStyle& style, const Element* element)
-{
-    if (style.contentVisibility() == ContentVisibility::Visible)
-        return false;
-
-    auto doesContentVisibilityApply = [&] {
-        // content-visibility applies to elements for which size containment can apply (https://drafts.csswg.org/css-contain/#content-visibility)
-
-        // https://drafts.csswg.org/css-contain-2/#containment-size
-        // Giving an element size containment has no effect if any of the following are true:
-        // if the element does not generate a principal box (as is the case with display: contents or display: none)
-        // if its inner display type is table
-        // if its principal box is an internal table box
-        // if its principal box is an internal ruby box or a non-atomic inline-level box
-        auto displayType = style.display();
-        auto doesNotApply = displayType == DisplayType::None || displayType == DisplayType::Contents || displayType == DisplayType::Table || displayType == DisplayType::InlineTable || style.isInternalTableBox() || style.isRubyContainerOrInternalRubyBox();
-        return !doesNotApply;
-    };
-    if (!doesContentVisibilityApply())
-        return false;
-    if (style.contentVisibility() == ContentVisibility::Hidden)
-        return true;
-    ASSERT(style.contentVisibility() == ContentVisibility::Auto);
-    return element && !element->isRelevantToUser();
 }
 
 inline float adjustFloatForAbsoluteZoom(float value, const RenderStyle& style)
