@@ -818,7 +818,7 @@ static std::optional<CalendarRecord> parseOneCalendar(StringParsingBuffer<Charac
     auto key(buffer.span().first(keyLength));
     buffer.advanceBy(keyLength);
     if (keyLength != 4
-        || key [0] != 'u' || key[1] != '-'
+        || key[0] != 'u' || key[1] != '-'
         || key[2] != 'c' || key[3] != 'a') {
         // Annotation is unknown
         // Consume the rest of the annotation
