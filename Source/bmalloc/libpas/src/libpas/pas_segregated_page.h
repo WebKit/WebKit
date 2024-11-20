@@ -275,7 +275,7 @@ pas_segregated_page_number_of_objects(unsigned object_size,
     if (verbose) {
         pas_log("first object offset = %u\n", pas_segregated_page_offset_from_page_boundary_to_first_object_exclusive(object_size, page_config));
         pas_log("end of last object offset = %u\n", pas_segregated_page_offset_from_page_boundary_to_end_of_last_object_exclusive(object_size, page_config));
-        pas_log("payload offset = %lu\n", pas_segregated_page_config_payload_offset_for_role(page_config, role));
+        pas_log("payload offset = %zu\n", pas_segregated_page_config_payload_offset_for_role(page_config, role));
         pas_log("object_size = %u, so number_of_objects = %u\n", object_size, result);
     }
     

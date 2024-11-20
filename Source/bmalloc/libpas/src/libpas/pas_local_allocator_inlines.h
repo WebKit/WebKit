@@ -1472,7 +1472,7 @@ pas_local_allocator_try_allocate_with_free_bits(
             pas_log("current_word = %llx\n", (unsigned long long)current_word);
         found_bit_index = (uintptr_t)__builtin_clzll(current_word);
         if (verbose)
-            pas_log("found_bit_index = %lu\n", found_bit_index);
+            pas_log("found_bit_index = %zu\n", found_bit_index);
         current_word &= ~(0x8000000000000000llu >> found_bit_index);
         if (verbose)
             pas_log("new current_word = %llx\n", (unsigned long long)current_word);

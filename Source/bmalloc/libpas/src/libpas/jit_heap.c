@@ -80,7 +80,7 @@ void* jit_heap_try_allocate(size_t size)
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_JIT_HEAPS);
     void* result;
     if (verbose)
-        pas_log("jit heap allocating %lu\n", size);
+        pas_log("jit heap allocating %zu\n", size);
     result = (void*)jit_try_allocate_common_primitive_impl(size, 1, pas_always_compact_allocation_mode).begin;
     if (verbose)
         pas_log("jit heap done allocating, returning %p\n", result);
@@ -91,7 +91,7 @@ void jit_heap_shrink(void* object, size_t new_size)
 {
     static const bool verbose = PAS_SHOULD_LOG(PAS_LOG_JIT_HEAPS);
     if (verbose)
-        pas_log("jit heap trying to shrink %p to %lu\n", object, new_size);
+        pas_log("jit heap trying to shrink %p to %zu\n", object, new_size);
     /* NOTE: the shrink call will fail (return false) for segregated allocations, and that's fine because we
        only use segregated allocations for smaller sizes (so the amount of potential memory savings from
        shrinking is small). */

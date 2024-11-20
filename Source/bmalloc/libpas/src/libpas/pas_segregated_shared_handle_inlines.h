@@ -42,7 +42,7 @@ pas_segregated_shared_handle_partial_view_ptr_for_index(
     
     index >>= page_config.sharing_shift;
     if (verbose)
-        pas_log("sharing index = %lu\n", index);
+        pas_log("sharing index = %zu\n", index);
     PAS_ASSERT(index < pas_segregated_shared_handle_num_views(page_config));
     return handle->partial_views + index;
 }
@@ -75,7 +75,7 @@ pas_segregated_shared_handle_partial_view_for_object(
     index = pas_page_base_index_of_object_at_offset_from_page_boundary(offset, page_config.base);
 
     if (verbose)
-        pas_log("offset = %lu, index = %lu\n", offset, index);
+        pas_log("offset = %zu, index = %zu\n", offset, index);
 
     return pas_segregated_shared_handle_partial_view_for_index(handle, index, page_config);
 }
