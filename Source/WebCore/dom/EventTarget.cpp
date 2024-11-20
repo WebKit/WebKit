@@ -354,6 +354,11 @@ void EventTarget::innerInvokeEventListeners(Event& event, EventListenerVector li
         JSC::EnsureStillAliveScope wrapperProtector(callback->wrapper());
         JSC::EnsureStillAliveScope jsFunctionProtector(callback->jsFunction());
 
+        if (UNLIKELY(event.isAutofillEvent())) {
+            if (!worldForDOMObject(*callback->jsFunction()).allowAutofill())
+                continue; // webkitrequestautofill only fires in a world with autofill capability.
+        }
+
         // Do this before invocation to avoid reentrancy issues.
         if (registeredListener->isOnce())
             removeEventListener(event.type(), callback, registeredListener->useCapture());

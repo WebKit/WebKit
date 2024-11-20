@@ -54,6 +54,7 @@ public:
 
     void clearWrappers();
     void setAllowAutofill();
+    void setAllowElementUserInfo();
     void makeAllShadowRootsOpen();
     void disableOverrideBuiltinsBehavior();
 

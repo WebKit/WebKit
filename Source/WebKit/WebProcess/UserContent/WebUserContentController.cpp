@@ -122,10 +122,12 @@ InjectedBundleScriptWorld* WebUserContentController::addContentWorld(const Conte
 
     if (addResult.isNewEntry) {
         Ref scriptWorld = addResult.iterator->value.first;
-        if (world.options.contains(ContentWorldOption::AllowAutofill))
-            scriptWorld->setAllowAutofill();
         if (world.options.contains(ContentWorldOption::AllowAccessToClosedShadowRoots))
             scriptWorld->makeAllShadowRootsOpen();
+        if (world.options.contains(ContentWorldOption::AllowAutofill))
+            scriptWorld->setAllowAutofill();
+        if (world.options.contains(ContentWorldOption::AllowElementUserInfo))
+            scriptWorld->setAllowElementUserInfo();
         if (world.options.contains(ContentWorldOption::DisableLegacyBuiltinOverrides))
             scriptWorld->disableOverrideBuiltinsBehavior();
         return scriptWorld.ptr();

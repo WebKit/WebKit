@@ -60,6 +60,9 @@ public:
     void setAllowAutofill() { m_allowAutofill = true; }
     bool allowAutofill() const { return m_allowAutofill; }
 
+    void setAllowElementUserInfo() { m_allowElementUserInfo = true; }
+    bool allowElementUserInfo() const { return m_allowElementUserInfo; }
+
     void setShadowRootIsAlwaysOpen() { m_shadowRootIsAlwaysOpen = true; }
     bool shadowRootIsAlwaysOpen() const { return m_shadowRootIsAlwaysOpen; }
 
@@ -88,6 +91,7 @@ private:
     Type m_type { Type::Internal };
 
     bool m_allowAutofill { false };
+    bool m_allowElementUserInfo { false };
     bool m_shadowRootIsAlwaysOpen { false };
     bool m_shouldDisableLegacyOverrideBuiltInsBehavior { false };
 };

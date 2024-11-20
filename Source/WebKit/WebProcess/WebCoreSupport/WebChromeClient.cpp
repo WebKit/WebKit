@@ -28,9 +28,13 @@
 #include "WebChromeClient.h"
 
 #include "APIArray.h"
+#include "APIDictionary.h"
 #include "APIInjectedBundleFormClient.h"
 #include "APIInjectedBundlePageUIClient.h"
+#include "APINumber.h"
+#include "APIObject.h"
 #include "APISecurityOrigin.h"
+#include "APIString.h"
 #include "DrawingArea.h"
 #include "FindController.h"
 #include "FrameInfoData.h"
@@ -103,6 +107,7 @@
 #include <WebCore/TextRecognitionOptions.h>
 #include <WebCore/ViewportConfiguration.h>
 #include <WebCore/WindowFeatures.h>
+#include <wtf/JSONValues.h>
 #include <wtf/TZoneMallocInlines.h>
 
 #if HAVE(WEBGPU_IMPLEMENTATION)
@@ -1564,6 +1569,37 @@ bool WebChromeClient::shouldDispatchFakeMouseMoveEvents() const
     return protectedPage()->shouldDispatchFakeMouseMoveEvents();
 }
 
+static RefPtr<API::Object> userDataFromJSONData(JSON::Value& value)
+{
+    switch (value.type()) {
+    case JSON::Value::Type::Null:
+        return API::String::createNull(); // FIXME: Encode nil properly.
+    case JSON::Value::Type::Boolean:
+        return API::Boolean::create(*value.asBoolean());
+    case JSON::Value::Type::Double:
+        return API::Double::create(*value.asDouble());
+    case JSON::Value::Type::Integer:
+        return API::Int64::create(*value.asInteger());
+    case JSON::Value::Type::String:
+        return API::String::create(value.asString());
+    case JSON::Value::Type::Object: {
+        auto result = API::Dictionary::create();
+        for (auto [key, value] : *value.asObject())
+            result->add(key, userDataFromJSONData(value));
+        return result;
+    }
+    case JSON::Value::Type::Array: {
+        auto array = value.asArray();
+        Vector<RefPtr<API::Object>> result;
+        for (auto& item : *value.asArray())
+            result.append(userDataFromJSONData(item));
+        return API::Array::create(WTFMove(result));
+    }
+    }
+    ASSERT_NOT_REACHED();
+    return nullptr;
+}
+
 void WebChromeClient::handleAutoFillButtonClick(HTMLInputElement& inputElement)
 {
     RefPtr<API::Object> userData;
@@ -1572,6 +1608,14 @@ void WebChromeClient::handleAutoFillButtonClick(HTMLInputElement& inputElement)
     auto nodeHandle = InjectedBundleNodeHandle::getOrCreate(inputElement);
     auto page = protectedPage();
     page->injectedBundleUIClient().didClickAutoFillButton(page, nodeHandle.get(), userData);
+
+    if (!userData) {
+        auto userInfo = inputElement.userInfo();
+        if (!userInfo.isNull()) {
+            if (auto data = JSON::Value::parseJSON(inputElement.userInfo()))
+                userData = userDataFromJSONData(*data);
+        }
+    }
 
     // Notify the UIProcess.
     page->send(Messages::WebPageProxy::HandleAutoFillButtonClick(UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get())));

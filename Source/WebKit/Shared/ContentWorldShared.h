@@ -40,9 +40,10 @@ inline ContentWorldIdentifier pageContentWorldIdentifier()
 }
 
 enum class ContentWorldOption : uint8_t {
-    AllowAutofill = 1 << 0,
-    AllowAccessToClosedShadowRoots = 1 << 1,
-    DisableLegacyBuiltinOverrides = 1 << 2,
+    AllowAccessToClosedShadowRoots = 1 << 0,
+    AllowAutofill = 1 << 1,
+    AllowElementUserInfo = 1 << 2,
+    DisableLegacyBuiltinOverrides = 1 << 3,
 };
 
 } // namespace WebKit

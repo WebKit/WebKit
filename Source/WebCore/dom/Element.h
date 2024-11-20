@@ -42,6 +42,7 @@
 
 namespace JSC {
 class JSGlobalObject;
+class JSValue;
 }
 
 namespace WebCore {
@@ -185,6 +186,9 @@ public:
     WEBCORE_EXPORT void setElementsArrayAttribute(const QualifiedName& attributeName, std::optional<Vector<Ref<Element>>>&& value);
     static bool isElementReflectionAttribute(const Settings&, const QualifiedName&);
     static bool isElementsArrayReflectionAttribute(const QualifiedName&);
+
+    WEBCORE_EXPORT void setUserInfo(JSC::JSGlobalObject&, JSC::JSValue);
+    WEBCORE_EXPORT String userInfo() const;
 
     // Call this to get the value of an attribute that is known not to be the style
     // attribute or one of the SVG animatable attributes.

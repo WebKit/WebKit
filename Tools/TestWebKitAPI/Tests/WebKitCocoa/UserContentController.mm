@@ -1331,6 +1331,81 @@ TEST(WKUserContentController, AllowAutofill)
     EXPECT_WK_STREQ(@"undefined", resultValue.get());
 }
 
+#if PLATFORM(MAC)
+bool didCallDidClickAutoFillButtonWithUserInfo = NO;
+
+@interface AutoFillDelegateForElementUserInfo : NSObject <WKUIDelegatePrivate>
+@end
+
+@implementation AutoFillDelegateForElementUserInfo
+
+- (void)_webView:(WKWebView *)webView didClickAutoFillButtonWithUserInfo:(id<NSSecureCoding>)userInfo
+{
+    auto *dictionary = (NSDictionary *)userInfo;
+    EXPECT_WK_STREQ(dictionary[@"string"], @"PASS");
+    EXPECT_EQ(((NSNumber *)dictionary[@"int"]).intValue, 123);
+    EXPECT_EQ(((NSNumber *)dictionary[@"double"]).doubleValue, 0.25);
+    EXPECT_EQ(((NSNumber *)dictionary[@"bool"]).boolValue, true);
+    EXPECT_WK_STREQ((NSString *)dictionary[@"null"], ""); // FIXME: This should be nil.
+    auto *array = (NSArray *)dictionary[@"array"];
+    EXPECT_EQ(array.count, 2UL);
+    EXPECT_EQ(((NSNumber *)array[0]).intValue, 1);
+    EXPECT_WK_STREQ((NSString *)array[1], @"abc");
+    didCallDidClickAutoFillButtonWithUserInfo = YES;
+}
+
+@end
+
+TEST(WKUserContentController, AllowElementUserInfo)
+{
+    scriptMessagesVector.clear();
+    isDoneWithNavigation = false;
+    receivedScriptMessage = false;
+
+    RetainPtr contentWorldConfiguration = adoptNS([[_WKContentWorldConfiguration alloc] init]);
+    [contentWorldConfiguration setName:@"TestWorldAllowingAutofill"];
+    [contentWorldConfiguration setAllowElementUserInfo:YES];
+    [contentWorldConfiguration setAllowAutofill:YES];
+
+    RetainPtr world = [WKContentWorld _worldWithConfiguration:contentWorldConfiguration.get()];
+    RetainPtr handler = adoptNS([[ScriptMessageHandler alloc] init]);
+    RetainPtr userScript = adoptNS([[WKUserScript alloc] _initWithSource:@"input.autofillButtonType = 'credentials';"
+        "input.addEventListener('webkitautofillrequest', () => { input.setUserInfo({'string': 'PASS', 'int': 123, 'double': 0.25, 'bool': true, 'null': null, 'array': [1, 'abc']});"
+        "result.textContent = 'true'; });"
+        injectionTime:WKUserScriptInjectionTimeAtDocumentEnd forMainFrameOnly:NO includeMatchPatternStrings:@[] excludeMatchPatternStrings:@[] associatedURL:nil contentWorld:world.get() deferRunningUntilNotification:NO]);
+
+    RetainPtr configuration = adoptNS([[WKWebViewConfiguration alloc] init]);
+    [[configuration userContentController] _addScriptMessageHandler:handler.get() name:@"testHandler" contentWorld:world.get()];
+    [[configuration userContentController] addUserScript:userScript.get()];
+
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configuration.get()]);
+    [webView addToTestWindow];
+    RetainPtr uiUelegate = adoptNS([[AutoFillDelegateForElementUserInfo alloc] init]);
+    [webView setUIDelegate:uiUelegate.get()];
+
+    [webView synchronouslyLoadHTMLString:@"<!DOCTYPE html><input id='input' style='width: 200px; height: 20px'><div id='result'></div>"];
+    [webView stringByEvaluatingJavaScript:@"didCallMainWorldEventListener = false; input.addEventListener('webkitautofillrequest', () => didCallMainWorldEventListener = true);"];
+
+    [webView waitForNextPresentationUpdate];
+
+    auto inputLeft = [webView stringByEvaluatingJavaScript:@"input.getBoundingClientRect().left"].floatValue;
+    auto inputTop = [webView stringByEvaluatingJavaScript:@"input.getBoundingClientRect().top"].floatValue;
+    auto inputWidth = [webView stringByEvaluatingJavaScript:@"input.getBoundingClientRect().width"].floatValue;
+    auto inputHeight = [webView stringByEvaluatingJavaScript:@"input.getBoundingClientRect().height"].floatValue;
+
+    auto point = NSMakePoint(inputLeft + inputWidth - inputHeight / 2, 600 - (inputTop + inputHeight / 2));
+    [webView sendClickAtPoint:point];
+    [webView waitForNextPresentationUpdate];
+
+    TestWebKitAPI::Util::run(&didCallDidClickAutoFillButtonWithUserInfo);
+    EXPECT_TRUE(didCallDidClickAutoFillButtonWithUserInfo);
+    EXPECT_WK_STREQ([webView stringByEvaluatingJavaScript:@"result.textContent"], @"true");
+    EXPECT_FALSE([[webView stringByEvaluatingJavaScript:@"didCallMainWorldEventListener"] boolValue]);
+    [webView stringByEvaluatingJavaScript:@"input.dispatchEvent(new Event('webkitautofillrequest'))"];
+    EXPECT_TRUE([[webView stringByEvaluatingJavaScript:@"didCallMainWorldEventListener"] boolValue]);
+}
+#endif
+
 TEST(WKUserContentController, AllowAccessToClosedShadowRoots)
 {
     scriptMessagesVector.clear();

@@ -38,11 +38,14 @@ WK_CLASS_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA), visionos(WK_XROS_TBA))
 
 @property (nonatomic, copy) NSString *name;
 
+/*! @abstract A boolean value indicating whether every shadow root should be treated as open mode shadow root or not. */
+@property (nonatomic) BOOL allowAccessToClosedShadowRoots;
+
 /*! @abstract A boolean value indicating whether the capability to trigger autofill is exposed to scripts or not. */
 @property (nonatomic) BOOL allowAutofill;
 
-/*! @abstract A boolean value indicating whether every shadow root should be treated as open mode shadow root or not. */
-@property (nonatomic) BOOL allowAccessToClosedShadowRoots;
+/*! @abstract A boolean value indicating whether the ability to attach user info on an element is exposed to scripts or not. */
+@property (nonatomic) BOOL allowElementUserInfo;
 
 /*! @abstract A boolean value indicating whether the behavior that elements with a name attribute overrides builtin methods on document object should be disabled or not. */
 @property (nonatomic) BOOL disableLegacyBuiltinOverrides;

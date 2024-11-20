@@ -159,6 +159,7 @@
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "markup.h"
+#include <JavaScriptCore/JSONObject.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -2182,6 +2183,24 @@ bool Element::isElementsArrayReflectionAttribute(const QualifiedName& name)
         break;
     }
     return false;
+}
+
+void Element::setUserInfo(JSC::JSGlobalObject& globalObject, JSC::JSValue userInfo)
+{
+    auto throwScope = DECLARE_THROW_SCOPE(globalObject.vm());
+
+    auto serializedData = JSONStringify(&globalObject, userInfo, 0);
+    if (throwScope.exception())
+        return;
+
+    ensureElementRareData().setUserInfo(WTFMove(serializedData));
+}
+
+String Element::userInfo() const
+{
+    if (!hasRareData())
+        return { };
+    return elementRareData()->userInfo();
 }
 
 void Element::notifyAttributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason reason)

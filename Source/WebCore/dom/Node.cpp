@@ -194,6 +194,8 @@ static ASCIILiteral stringForRareDataUseType(NodeRareData::UseType useType)
         return "ExplicitlySetAttrElementsMap"_s;
     case NodeRareData::UseType::Popover:
         return "Popover"_s;
+    case NodeRareData::UseType::UserInfo:
+        return "UserInfo"_s;
     }
     return { };
 }

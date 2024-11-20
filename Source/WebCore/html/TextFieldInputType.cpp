@@ -815,12 +815,17 @@ bool TextFieldInputType::shouldDrawAutoFillButton() const
 
 void TextFieldInputType::autoFillButtonElementWasClicked()
 {
-    ASSERT(element());
-    Page* page = element()->document().page();
+    RefPtr element = this->element();
+    ASSERT(element);
+    Page* page = element->document().page();
     if (!page)
         return;
 
-    page->chrome().client().handleAutoFillButtonClick(*element());
+    auto event = Event::create(eventNames().webkitautofillrequestEvent, Event::CanBubble::No, Event::IsCancelable::No);
+    event->setIsAutofillEvent();
+    element->dispatchEvent(WTFMove(event));
+
+    page->chrome().client().handleAutoFillButtonClick(*element);
 }
 
 void TextFieldInputType::createContainer(PreserveSelectionRange preserveSelection)

@@ -23,8 +23,9 @@
 header: "ContentWorldData.h"
 
 [OptionSet] enum class WebKit::ContentWorldOption : uint8_t {
-    AllowAutofill,
     AllowAccessToClosedShadowRoots,
+    AllowAutofill,
+    AllowElementUserInfo,
     DisableLegacyBuiltinOverrides,
 };
 

@@ -49,8 +49,9 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
     _WKContentWorldConfiguration *clone = [(_WKContentWorldConfiguration *)[[self class] allocWithZone:zone] init];
 
     clone.name = self.name;
-    clone.allowAutofill = self.allowAutofill;
     clone.allowAccessToClosedShadowRoots = self.allowAccessToClosedShadowRoots;
+    clone.allowAutofill = self.allowAutofill;
+    clone.allowElementUserInfo = self.allowElementUserInfo;
     clone.disableLegacyBuiltinOverrides = self.disableLegacyBuiltinOverrides;
 
     return clone;
@@ -66,8 +67,9 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
 - (void)encodeWithCoder:(NSCoder *)coder
 {
     [coder encodeObject:self.name forKey:@"name"];
-    [coder encodeBool:self.allowAutofill forKey:@"allowAutofill"];
     [coder encodeBool:self.allowAccessToClosedShadowRoots forKey:@"allowAccessToClosedShadowRoots"];
+    [coder encodeBool:self.allowAutofill forKey:@"allowAutofill"];
+    [coder encodeBool:self.allowElementUserInfo forKey:@"allowElementUserInfo"];
     [coder encodeBool:self.disableLegacyBuiltinOverrides forKey:@"disableLegacyBuiltinOverrides"];
 }
 
@@ -77,8 +79,9 @@ WK_OBJECT_DISABLE_DISABLE_KVC_IVAR_ACCESS;
         return nil;
 
     self.name = [coder decodeObjectOfClass:[NSString class] forKey:@"name"];
-    self.allowAutofill = [coder decodeBoolForKey:@"allowAutofill"];
     self.allowAccessToClosedShadowRoots = [coder decodeBoolForKey:@"allowAccessToClosedShadowRoots"];
+    self.allowAutofill = [coder decodeBoolForKey:@"allowAutofill"];
+    self.allowElementUserInfo = [coder decodeBoolForKey:@"allowElementUserInfo"];
     self.disableLegacyBuiltinOverrides = [coder decodeBoolForKey:@"disableLegacyBuiltinOverrides"];
 
     return self;

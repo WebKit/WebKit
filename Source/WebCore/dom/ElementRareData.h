@@ -95,6 +95,9 @@ public:
     NamedNodeMap* attributeMap() const { return m_attributeMap.get(); }
     void setAttributeMap(std::unique_ptr<NamedNodeMap>&& attributeMap) { m_attributeMap = WTFMove(attributeMap); }
 
+    String userInfo() const { return m_userInfo; }
+    void setUserInfo(String&& userInfo) { m_userInfo = WTFMove(userInfo); }
+
     RenderStyle* computedStyle() const { return m_computedStyle.get(); }
     void setComputedStyle(std::unique_ptr<RenderStyle>&& computedStyle) { m_computedStyle = WTFMove(computedStyle); }
 
@@ -215,6 +218,8 @@ public:
             result.add(UseType::ChildIndex);
         if (!m_customStateSet.isEmpty())
             result.add(UseType::CustomStateSet);
+        if (m_userInfo)
+            result.add(UseType::UserInfo);
         return result;
     }
 #endif
@@ -225,6 +230,8 @@ private:
 
     std::optional<OptionSet<ContentRelevancy>> m_contentRelevancy;
     ScrollPosition m_savedLayerScrollPosition;
+
+    String m_userInfo;
 
     std::unique_ptr<RenderStyle> m_computedStyle;
     std::unique_ptr<RenderStyle> m_displayContentsOrNoneStyle;

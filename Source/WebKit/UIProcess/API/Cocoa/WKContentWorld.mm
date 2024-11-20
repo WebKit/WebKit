@@ -31,10 +31,12 @@
 
 static void checkContentWorldOptions(API::ContentWorld& world, _WKContentWorldConfiguration *configuration)
 {
-    if (world.allowAutofill() != (configuration && configuration.allowAutofill))
-        [NSException raise:NSInternalInconsistencyException format:@"The value of allowAutofill does not match the existing world"];
     if (world.allowAccessToClosedShadowRoots() != (configuration && configuration.allowAccessToClosedShadowRoots))
         [NSException raise:NSInternalInconsistencyException format:@"The value of allowAccessToClosedShadowRoots does not match the existing world"];
+    if (world.allowAutofill() != (configuration && configuration.allowAutofill))
+        [NSException raise:NSInternalInconsistencyException format:@"The value of allowAutofill does not match the existing world"];
+    if (world.allowElementUserInfo() != (configuration && configuration.allowElementUserInfo))
+        [NSException raise:NSInternalInconsistencyException format:@"The value of allowElementUserInfo does not match the existing world"];
     if (world.disableLegacyBuiltinOverrides() != (configuration && configuration.disableLegacyBuiltinOverrides))
         [NSException raise:NSInternalInconsistencyException format:@"The value of disableLegacyBuiltinOverrides does not match the existing world"];
 }
@@ -99,10 +101,12 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 + (WKContentWorld *)_worldWithConfiguration:(_WKContentWorldConfiguration *)configuration
 {
     OptionSet<WebKit::ContentWorldOption> optionSet;
-    if (configuration.allowAutofill)
-        optionSet.add(WebKit::ContentWorldOption::AllowAutofill);
     if (configuration.allowAccessToClosedShadowRoots)
         optionSet.add(WebKit::ContentWorldOption::AllowAccessToClosedShadowRoots);
+    if (configuration.allowAutofill)
+        optionSet.add(WebKit::ContentWorldOption::AllowAutofill);
+    if (configuration.allowElementUserInfo)
+        optionSet.add(WebKit::ContentWorldOption::AllowElementUserInfo);
     if (configuration.disableLegacyBuiltinOverrides)
         optionSet.add(WebKit::ContentWorldOption::DisableLegacyBuiltinOverrides);
     Ref world = API::ContentWorld::sharedWorldWithName(configuration.name, optionSet);

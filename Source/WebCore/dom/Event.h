@@ -155,6 +155,9 @@ public:
 
     virtual String debugDescription() const;
 
+    bool isAutofillEvent() { return m_isAutofillEvent; }
+    void setIsAutofillEvent() { m_isAutofillEvent = true; }
+
 protected:
     explicit Event(enum EventInterfaceType, IsTrusted = IsTrusted::No);
     Event(enum EventInterfaceType, const AtomString& type, CanBubble, IsCancelable, IsComposed = IsComposed::No);
@@ -183,6 +186,7 @@ private:
     unsigned m_isTrusted : 1;
     unsigned m_isExecutingPassiveEventListener : 1;
     unsigned m_currentTargetIsInShadowTree : 1;
+    unsigned m_isAutofillEvent : 1;
 
     unsigned m_eventPhase : 2;
 
@@ -192,7 +196,7 @@ private:
 
     unsigned m_eventInterface : 7 { 0 };
 
-    // 10-bits left.
+    // 9-bits left.
 
     AtomString m_type;
 
