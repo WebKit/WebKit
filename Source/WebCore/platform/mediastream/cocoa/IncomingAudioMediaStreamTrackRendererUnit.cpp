@@ -55,6 +55,7 @@ IncomingAudioMediaStreamTrackRendererUnit::IncomingAudioMediaStreamTrackRenderer
 
 IncomingAudioMediaStreamTrackRendererUnit::~IncomingAudioMediaStreamTrackRendererUnit()
 {
+    ASSERT(isMainThread());
 }
 
 void IncomingAudioMediaStreamTrackRendererUnit::setAudioOutputDevice(const String& deviceID)
@@ -100,9 +101,9 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(Ref<AudioSampleDataSou
         m_mixedSource->setInputFormat(outputDescription);
         m_mixedSource->setOutputFormat(outputDescription);
         m_writeCount = 0;
-        callOnMainThread([this, protectedModule = Ref { m_audioModule }, source = m_mixedSource]() mutable {
-            m_registeredMixedSource = WTFMove(source);
-            start();
+        callOnMainThread([protectedThis = Ref { *this }, source = m_mixedSource]() mutable {
+            protectedThis->m_registeredMixedSource = WTFMove(source);
+            protectedThis->start();
         });
     });
 }
@@ -123,8 +124,8 @@ void IncomingAudioMediaStreamTrackRendererUnit::removeSource(AudioSampleDataSour
         if (!shouldStop)
             return;
 
-        callOnMainThread([this, protectedModule = Ref { m_audioModule }] {
-            stop();
+        callOnMainThread([protectedThis = Ref { *this }] {
+            protectedThis->stop();
         });
     });
 
@@ -136,7 +137,7 @@ void IncomingAudioMediaStreamTrackRendererUnit::start()
     ASSERT(isMainThread());
 
     AudioMediaStreamTrackRendererUnit::singleton().addSource(*m_registeredMixedSource);
-    m_audioModule.startIncomingAudioRendering();
+    m_audioModule.get()->startIncomingAudioRendering();
 }
 
 void IncomingAudioMediaStreamTrackRendererUnit::stop()
@@ -146,13 +147,12 @@ void IncomingAudioMediaStreamTrackRendererUnit::stop()
 
     AudioMediaStreamTrackRendererUnit::singleton().removeSource(*m_registeredMixedSource);
     m_registeredMixedSource = nullptr;
-    m_audioModule.stopIncomingAudioRendering();
+    m_audioModule.get()->stopIncomingAudioRendering();
 }
 
 void IncomingAudioMediaStreamTrackRendererUnit::postTask(Function<void()>&& callback)
 {
-    // We protect 'this' by taking a ref to its audio module.
-    m_queue->dispatch([protectedModule = Ref { m_audioModule }, callback = WTFMove(callback)]() mutable {
+    m_queue->dispatch([protectedThis = Ref { *this }, callback = WTFMove(callback)]() mutable {
         callback();
     });
 }

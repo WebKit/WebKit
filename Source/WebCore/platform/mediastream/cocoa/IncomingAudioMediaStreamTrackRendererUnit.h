@@ -29,6 +29,7 @@
 
 #include "BaseAudioMediaStreamTrackRendererUnit.h"
 #include "CAAudioStreamDescription.h"
+#include "LibWebRTCAudioModule.h"
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
 #include <wtf/LoggerHelper.h>
@@ -45,7 +46,6 @@ class AudioMediaStreamTrackRendererInternalUnit;
 class AudioSampleDataSource;
 class AudioSampleBufferList;
 class CAAudioStreamDescription;
-class LibWebRTCAudioModule;
 class WebAudioBufferList;
 
 class IncomingAudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRendererUnit
@@ -59,6 +59,9 @@ public:
     ~IncomingAudioMediaStreamTrackRendererUnit();
 
     void newAudioChunkPushed(uint64_t);
+
+    void ref() { m_audioModule.get()->ref(); };
+    void deref() { m_audioModule.get()->deref(); };
 
 private:
     void start();
@@ -80,9 +83,10 @@ private:
     uint64_t logIdentifier() const final;
 #endif
 
+    const ThreadSafeWeakPtr<LibWebRTCAudioModule> m_audioModule;
+    const Ref<WTF::WorkQueue> m_queue;
+
     // Main thread variables.
-    LibWebRTCAudioModule& m_audioModule;
-    Ref<WTF::WorkQueue> m_queue;
     HashSet<Ref<AudioSampleDataSource>> m_sources;
     RefPtr<AudioSampleDataSource> m_registeredMixedSource;
 

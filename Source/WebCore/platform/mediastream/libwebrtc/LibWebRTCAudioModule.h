@@ -29,8 +29,8 @@
 
 #include "LibWebRTCMacros.h"
 #include "Timer.h"
+#include <wtf/CheckedPtr.h>
 #include <wtf/MonotonicTime.h>
-#include <wtf/TZoneMalloc.h>
 #include <wtf/WorkQueue.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
@@ -48,15 +48,13 @@ class BaseAudioMediaStreamTrackRendererUnit;
 class IncomingAudioMediaStreamTrackRendererUnit;
 
 // LibWebRTCAudioModule is pulling streamed data to ensure audio data is passed to the audio track.
-class LibWebRTCAudioModule : public webrtc::AudioDeviceModule {
-    WTF_MAKE_TZONE_ALLOCATED(LibWebRTCAudioModule);
+class LibWebRTCAudioModule : public webrtc::AudioDeviceModule, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<LibWebRTCAudioModule, WTF::DestructionThread::Main> {
 public:
-    LibWebRTCAudioModule();
+    static Ref<LibWebRTCAudioModule> create() { return adoptRef(*new LibWebRTCAudioModule()); }
     ~LibWebRTCAudioModule();
 
     static constexpr unsigned PollSamplesCount = 1;
-    void ref() { AddRef(); }
-    void deref() { Release(); }
+    void stop() { Terminate(); }
 
 #if PLATFORM(COCOA)
     void startIncomingAudioRendering() { m_isRenderingIncomingAudio = true; }
@@ -65,7 +63,16 @@ public:
     uint64_t currentAudioSampleCount() const { return m_currentAudioSampleCount; }
 #endif
 
+    void AddRef() const final { ref(); }
+    webrtc::RefCountReleaseStatus Release() const final
+    {
+        deref();
+        return webrtc::RefCountReleaseStatus::kOtherRefsRemained;
+    }
+
 private:
+    LibWebRTCAudioModule();
+
     template<typename U> U shouldNotBeCalled(U value) const
     {
         ASSERT_NOT_REACHED();
@@ -146,7 +153,7 @@ private:
 
     static constexpr Seconds logTimerInterval = 2_s;
 
-    Ref<WorkQueue> m_queue;
+    const Ref<WorkQueue> m_queue;
     bool m_isPlaying { false };
     webrtc::AudioTransport* m_audioTransport { nullptr };
     MonotonicTime m_pollingTime;
