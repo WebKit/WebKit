@@ -33,7 +33,7 @@
 #include "InlineIteratorLineBox.h"
 #include "InlineIteratorTextBox.h"
 #include "LayoutIntegrationBoxGeometryUpdater.h"
-#include "LayoutIntegrationBoxTree.h"
+#include "LayoutIntegrationBoxTreeUpdater.h"
 #include "LayoutPoint.h"
 #include "LayoutState.h"
 #include "RenderObjectEnums.h"
@@ -121,8 +121,8 @@ public:
     InlineIterator::LineBoxIterator firstLineBox() const;
     InlineIterator::LineBoxIterator lastLineBox() const;
 
-    const RenderBlockFlow& flow() const { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
-    RenderBlockFlow& flow() { return downcast<RenderBlockFlow>(m_boxTree.rootRenderer()); }
+    const RenderBlockFlow& flow() const { return downcast<RenderBlockFlow>(*m_rootLayoutBox->rendererForIntegration()); }
+    RenderBlockFlow& flow() { return downcast<RenderBlockFlow>(*m_rootLayoutBox->rendererForIntegration()); }
 
     static void releaseCaches(RenderView&);
 
@@ -151,14 +151,14 @@ private:
 
     Layout::InlineDamage& ensureLineDamage();
 
-    const Layout::ElementBox& rootLayoutBox() const;
-    Layout::ElementBox& rootLayoutBox();
+    const Layout::ElementBox& rootLayoutBox() const { return *m_rootLayoutBox; }
+    Layout::ElementBox& rootLayoutBox() { return *m_rootLayoutBox; }
     void clearInlineContent();
     void releaseCachesAndResetDamage();
 
     LayoutUnit physicalBaselineForLine(const InlineDisplay::Line&) const;
     
-    BoxTree m_boxTree;
+    CheckedPtr<Layout::ElementBox> m_rootLayoutBox;
     WeakPtr<Layout::LayoutState> m_layoutState;
     Layout::BlockFormattingState& m_blockFormattingState;
     Layout::InlineContentCache& m_inlineContentCache;

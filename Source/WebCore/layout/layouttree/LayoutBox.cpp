@@ -409,6 +409,19 @@ bool Box::isDescendantOf(const ElementBox& ancestor) const
     return false;
 }
 
+bool Box::isInFormattingContextEstablishedBy(const ElementBox& formattingContextRoot) const
+{
+    ASSERT(formattingContextRoot.establishesFormattingContext());
+
+    auto* ancestor = &parent();
+    while (true) {
+        if (ancestor->establishesFormattingContext())
+            break;
+        ancestor = &ancestor->parent();
+    }
+    return ancestor == &formattingContextRoot;
+}
+
 bool Box::isOverflowVisible() const
 {
     auto isOverflowVisible = m_style.overflowX() == Overflow::Visible || m_style.overflowY() == Overflow::Visible;

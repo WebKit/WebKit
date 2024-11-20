@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "LayoutIntegrationBoxTree.h"
+#include "LayoutIntegrationBoxTreeUpdater.h"
 
 #include "FormattingContextBoxIterator.h"
 #include "InlineWalker.h"
@@ -89,30 +89,40 @@ static Layout::Box::ElementAttributes elementAttributes(const RenderElement& ren
     return { nodeType, isAnonymous(renderer) };
 }
 
-BoxTree::BoxTree(RenderBlock& rootRenderer)
+BoxTreeUpdater::BoxTreeUpdater(RenderBlock& rootRenderer)
     : m_rootRenderer(rootRenderer)
+{
+}
+
+BoxTreeUpdater::~BoxTreeUpdater()
+{
+}
+
+CheckedRef<Layout::ElementBox> BoxTreeUpdater::build()
 {
     auto* rootBox = m_rootRenderer.layoutBox();
     if (!rootBox) {
-        auto newRootBox = createLayoutBox(rootRenderer);
+        auto newRootBox = createLayoutBox(m_rootRenderer);
         rootBox = downcast<Layout::ElementBox>(newRootBox.ptr());
         m_rootRenderer.setLayoutBox(*rootBox);
         initialContainingBlock().appendChild(WTFMove(newRootBox));
     }
 
-    if (is<RenderBlockFlow>(rootRenderer))
+    if (is<RenderBlockFlow>(m_rootRenderer))
         rootBox->setIsInlineIntegrationRoot();
-    rootBox->setIsFirstChildForIntegration(!rootRenderer.parent() || rootRenderer.parent()->firstChild() == &rootRenderer);
+    rootBox->setIsFirstChildForIntegration(!m_rootRenderer.parent() || m_rootRenderer.parent()->firstChild() == &m_rootRenderer);
 
-    if (is<RenderBlockFlow>(rootRenderer))
+    if (is<RenderBlockFlow>(m_rootRenderer))
         buildTreeForInlineContent();
-    else if (is<RenderFlexibleBox>(rootRenderer))
+    else if (is<RenderFlexibleBox>(m_rootRenderer))
         buildTreeForFlexContent();
     else
         ASSERT_NOT_IMPLEMENTED_YET();
+
+    return rootLayoutBox();
 }
 
-BoxTree::~BoxTree()
+void BoxTreeUpdater::tearDown()
 {
     Vector<CheckedRef<Layout::Box>> boxesToDetach;
     for (auto& constLayoutBox : formattingContextBoxes(rootLayoutBox())) {
@@ -138,7 +148,7 @@ BoxTree::~BoxTree()
         rootLayoutBox().destroyChildren();
 }
 
-void BoxTree::adjustStyleIfNeeded(const RenderElement& renderer, RenderStyle& style, RenderStyle* firstLineStyle)
+void BoxTreeUpdater::adjustStyleIfNeeded(const RenderElement& renderer, RenderStyle& style, RenderStyle* firstLineStyle)
 {
     auto adjustStyle = [&] (auto& styleToAdjust) {
         if (is<RenderBlock>(renderer)) {
@@ -191,7 +201,7 @@ void BoxTree::adjustStyleIfNeeded(const RenderElement& renderer, RenderStyle& st
         adjustStyle(*firstLineStyle);
 }
 
-UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
+UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
 {
     std::unique_ptr<RenderStyle> firstLineStyle = firstLineStyleFor(renderer);
 
@@ -256,7 +266,7 @@ UniqueRef<Layout::Box> BoxTree::createLayoutBox(RenderObject& renderer)
     return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), WTFMove(style), WTFMove(firstLineStyle));
 };
 
-void BoxTree::buildTreeForInlineContent()
+void BoxTreeUpdater::buildTreeForInlineContent()
 {
     for (auto walker = InlineWalker(downcast<RenderBlockFlow>(m_rootRenderer)); !walker.atEnd(); walker.advance()) {
         auto& childRenderer = *walker.current();
@@ -269,7 +279,7 @@ void BoxTree::buildTreeForInlineContent()
     }
 }
 
-void BoxTree::buildTreeForFlexContent()
+void BoxTreeUpdater::buildTreeForFlexContent()
 {
     for (auto& flexItemRenderer : childrenOfType<RenderElement>(m_rootRenderer)) {
         if (auto existingChildBox = flexItemRenderer.layoutBox()) {
@@ -282,7 +292,7 @@ void BoxTree::buildTreeForFlexContent()
     }
 }
 
-void BoxTree::insertChild(UniqueRef<Layout::Box> childBox, RenderObject& childRenderer, const RenderObject* beforeChild)
+void BoxTreeUpdater::insertChild(UniqueRef<Layout::Box> childBox, RenderObject& childRenderer, const RenderObject* beforeChild)
 {
     auto& parentBox = *childRenderer.parent()->layoutBox();
     auto* beforeChildBox = beforeChild ? beforeChild->layoutBox() : nullptr;
@@ -326,7 +336,7 @@ static void updateListMarkerAttributes(const RenderListMarker& listMarkerRendere
     layoutBox.setListMarkerAttributes(listMarkerAttributes);
 }
 
-void BoxTree::updateStyle(const RenderObject& renderer)
+void BoxTreeUpdater::updateStyle(const RenderObject& renderer)
 {
     auto& rendererStyle = renderer.style();
     auto* layoutBox = const_cast<Layout::Box*>(renderer.layoutBox());
@@ -342,6 +352,7 @@ void BoxTree::updateStyle(const RenderObject& renderer)
             return;
         }
         ASSERT_NOT_REACHED();
+        return;
     }
 
     auto firstLineNewStyle = firstLineStyleFor(renderer);
@@ -352,7 +363,7 @@ void BoxTree::updateStyle(const RenderObject& renderer)
         updateListMarkerAttributes(*listMarkerRenderer, downcast<Layout::ElementBox>(*layoutBox));
 }
 
-void BoxTree::updateContent(const RenderText& textRenderer)
+void BoxTreeUpdater::updateContent(const RenderText& textRenderer)
 {
     auto& inlineTextBox = const_cast<Layout::InlineTextBox&>(*textRenderer.layoutBox());
     auto& style = inlineTextBox.style();
@@ -384,7 +395,7 @@ void BoxTree::updateContent(const RenderText& textRenderer)
     inlineTextBox.setContent(text, contentCharacteristic);
 }
 
-const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& child, const RenderObject* beforeChild)
+const Layout::Box& BoxTreeUpdater::insert(const RenderElement& parent, RenderObject& child, const RenderObject* beforeChild)
 {
     UNUSED_PARAM(parent);
 
@@ -392,7 +403,7 @@ const Layout::Box& BoxTree::insert(const RenderElement& parent, RenderObject& ch
     return *child.layoutBox();
 }
 
-UniqueRef<Layout::Box> BoxTree::remove(const RenderElement& parent, RenderObject& child)
+UniqueRef<Layout::Box> BoxTreeUpdater::remove(const RenderElement& parent, RenderObject& child)
 {
     UNUSED_PARAM(parent);
     ASSERT(child.layoutBox());
@@ -403,32 +414,17 @@ UniqueRef<Layout::Box> BoxTree::remove(const RenderElement& parent, RenderObject
     return layoutBox->removeFromParent();
 }
 
-const Layout::ElementBox& BoxTree::rootLayoutBox() const
+const Layout::ElementBox& BoxTreeUpdater::rootLayoutBox() const
 {
     return *m_rootRenderer.layoutBox();
 }
 
-Layout::ElementBox& BoxTree::rootLayoutBox()
+Layout::ElementBox& BoxTreeUpdater::rootLayoutBox()
 {
     return *m_rootRenderer.layoutBox();
 }
 
-bool BoxTree::contains(const RenderElement& rendererToFind) const
-{
-    auto* boxToFind = rendererToFind.layoutBox();
-    if (!boxToFind)
-        return false;
-
-    auto* ancestor = &boxToFind->parent();
-    while (true) {
-        if (ancestor->establishesFormattingContext())
-            break;
-        ancestor = &ancestor->parent();
-    }
-    return ancestor == &rootLayoutBox();
-}
-
-Layout::InitialContainingBlock& BoxTree::initialContainingBlock()
+Layout::InitialContainingBlock& BoxTreeUpdater::initialContainingBlock()
 {
     return m_rootRenderer.view().initialContainingBlock();
 }

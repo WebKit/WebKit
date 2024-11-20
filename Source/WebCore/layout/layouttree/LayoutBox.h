@@ -164,6 +164,7 @@ public:
     const Box* previousInFlowOrFloatingSibling() const;
     const Box* previousOutOfFlowSibling() const;
     bool isDescendantOf(const ElementBox&) const;
+    bool isInFormattingContextEstablishedBy(const ElementBox& formattingContextRoot) const;
 
     // FIXME: This is currently needed for style updates.
     Box* nextSibling() { return m_nextSibling.get(); }

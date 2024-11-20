@@ -47,13 +47,17 @@ namespace LayoutIntegration {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FlexLayout);
 
 FlexLayout::FlexLayout(RenderFlexibleBox& flexBoxRenderer)
-    : m_boxTree(flexBoxRenderer)
+    : m_flexBox(BoxTreeUpdater { flexBoxRenderer }.build())
     , m_layoutState(flexBoxRenderer.view().layoutState())
 {
 }
 
 FlexLayout::~FlexLayout()
 {
+    auto& renderer = flexBoxRenderer();
+    m_flexBox = nullptr;
+
+    BoxTreeUpdater { renderer }.tearDown();
 }
 
 static inline Layout::ConstraintsForFlexContent constraintsForFlexContent(const Layout::ElementBox& flexContainer)

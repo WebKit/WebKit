@@ -25,22 +25,8 @@
 
 #pragma once
 
-#include "LayoutInitialContainingBlock.h"
-#include <wtf/HashMap.h>
+#include <wtf/CheckedRef.h>
 #include <wtf/UniqueRef.h>
-#include <wtf/Vector.h>
-#include <wtf/WeakPtr.h>
-
-namespace WebCore {
-namespace LayoutIntegration {
-class BoxTree;
-}
-}
-
-namespace WTF {
-template<typename T> struct IsDeprecatedWeakRefSmartPointerException;
-template<> struct IsDeprecatedWeakRefSmartPointerException<WebCore::LayoutIntegration::BoxTree> : std::true_type { };
-}
 
 namespace WebCore {
 
@@ -57,26 +43,27 @@ namespace LayoutIntegration {
 struct InlineContent;
 #endif
 
-class BoxTree : public CanMakeWeakPtr<BoxTree> {
+class BoxTreeUpdater {
 public:
-    BoxTree(RenderBlock&);
-    ~BoxTree();
+    BoxTreeUpdater(RenderBlock&);
+    ~BoxTreeUpdater();
+
+    CheckedRef<Layout::ElementBox> build();
+    void tearDown();
 
     static void updateStyle(const RenderObject&);
-    void updateContent(const RenderText&);
+    static void updateContent(const RenderText&);
 
     const Layout::Box& insert(const RenderElement& parent, RenderObject& child, const RenderObject* beforeChild = nullptr);
     UniqueRef<Layout::Box> remove(const RenderElement& parent, RenderObject& child);
 
+private:
     const RenderBlock& rootRenderer() const { return m_rootRenderer; }
     RenderBlock& rootRenderer() { return m_rootRenderer; }
 
     const Layout::ElementBox& rootLayoutBox() const;
     Layout::ElementBox& rootLayoutBox();
 
-    bool contains(const RenderElement&) const;
-
-private:
     Layout::InitialContainingBlock& initialContainingBlock();
 
     static UniqueRef<Layout::Box> createLayoutBox(RenderObject&);

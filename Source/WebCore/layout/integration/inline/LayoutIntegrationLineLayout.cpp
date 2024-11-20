@@ -235,21 +235,28 @@ static const InlineDisplay::Line& lastLineWithInlineContent(const InlineDisplay:
 }
 
 LineLayout::LineLayout(RenderBlockFlow& flow)
-    : m_boxTree(flow)
+    : m_rootLayoutBox(BoxTreeUpdater { flow }.build())
     , m_layoutState(flow.view().layoutState())
     , m_blockFormattingState(layoutState().ensureBlockFormattingState(rootLayoutBox()))
     , m_inlineContentCache(layoutState().inlineContentCache(rootLayoutBox()))
-    , m_boxGeometryUpdater(flow.view().layoutState(), m_boxTree.rootLayoutBox())
+    , m_boxGeometryUpdater(flow.view().layoutState(), rootLayoutBox())
 {
 }
 
 LineLayout::~LineLayout()
 {
-    if (!isDamaged() && !flow().document().renderTreeBeingDestroyed())
-        Layout::InlineItemsBuilder::populateBreakingPositionCache(m_inlineContentCache.inlineItems().content(), flow().document());
+    auto& rootRenderer = flow();
+
+    if (!isDamaged() && !rootRenderer.document().renderTreeBeingDestroyed())
+        Layout::InlineItemsBuilder::populateBreakingPositionCache(m_inlineContentCache.inlineItems().content(), rootRenderer.document());
     clearInlineContent();
     layoutState().destroyInlineContentCache(rootLayoutBox());
     layoutState().destroyBlockFormattingState(rootLayoutBox());
+    m_boxGeometryUpdater.clear();
+    m_lineDamage = { };
+    m_rootLayoutBox = nullptr;
+
+    BoxTreeUpdater { rootRenderer }.tearDown();
 }
 
 static inline bool isContentRenderer(const RenderObject& renderer)
@@ -275,7 +282,9 @@ RenderBlockFlow* LineLayout::blockContainer(const RenderObject& renderer)
 
 bool LineLayout::contains(const RenderElement& renderer) const
 {
-    if (!m_boxTree.contains(renderer))
+    if (!renderer.layoutBox())
+        return false;
+    if (!renderer.layoutBox()->isInFormattingContextEstablishedBy(rootLayoutBox()))
         return false;
     return layoutState().hasBoxGeometry(*renderer.layoutBox());
 }
@@ -356,7 +365,7 @@ void LineLayout::updateFormattingContexGeometries(LayoutUnit availableLogicalWid
 
 void LineLayout::updateStyle(const RenderObject& renderer)
 {
-    BoxTree::updateStyle(renderer);
+    BoxTreeUpdater::updateStyle(renderer);
 }
 
 bool LineLayout::rootStyleWillChange(const RenderBlockFlow& root, const RenderStyle& newStyle)
@@ -393,7 +402,7 @@ bool LineLayout::boxContentWillChange(const RenderBox& renderer)
 
 void LineLayout::updateOverflow()
 {
-    InlineContentBuilder { flow(), m_boxTree }.updateLineOverflow(*m_inlineContent);
+    InlineContentBuilder { flow() }.updateLineOverflow(*m_inlineContent);
 }
 
 std::pair<LayoutUnit, LayoutUnit> LineLayout::computeIntrinsicWidthConstraints()
@@ -529,7 +538,7 @@ std::optional<LayoutRect> LineLayout::layout()
 
 FloatRect LineLayout::constructContent(const Layout::InlineLayoutState& inlineLayoutState, Layout::InlineLayoutResult&& layoutResult)
 {
-    auto damagedRect = InlineContentBuilder { flow(), m_boxTree }.build(WTFMove(layoutResult), ensureInlineContent(), m_lineDamage.get());
+    auto damagedRect = InlineContentBuilder { flow() }.build(WTFMove(layoutResult), ensureInlineContent(), m_lineDamage.get());
 
     m_inlineContent->clearGapBeforeFirstLine = inlineLayoutState.clearGapBeforeFirstLine();
     m_inlineContent->clearGapAfterLastLine = inlineLayoutState.clearGapAfterLastLine();
@@ -1032,16 +1041,6 @@ Vector<FloatRect> LineLayout::collectInlineBoxRects(const RenderInline& renderIn
     return result;
 }
 
-const Layout::ElementBox& LineLayout::rootLayoutBox() const
-{
-    return m_boxTree.rootLayoutBox();
-}
-
-Layout::ElementBox& LineLayout::rootLayoutBox()
-{
-    return m_boxTree.rootLayoutBox();
-}
-
 static LayoutPoint flippedContentOffsetIfNeeded(const RenderBlockFlow& root, const RenderBox& childRenderer, LayoutPoint contentOffset)
 {
     if (root.writingMode().isBlockFlipped())
@@ -1080,7 +1079,7 @@ void LineLayout::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, con
     if (!shouldPaintForPhase())
         return;
 
-    InlineContentPainter { paintInfo, paintOffset, layerRenderer, *m_inlineContent, m_boxTree }.paint();
+    InlineContentPainter { paintInfo, paintOffset, layerRenderer, *m_inlineContent, flow() }.paint();
 }
 
 bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction hitTestAction, const RenderInline* layerRenderer)
@@ -1095,7 +1094,7 @@ bool LineLayout::hitTest(const HitTestRequest& request, HitTestResult& result, c
     hitTestBoundingBox.moveBy(-accumulatedOffset);
     auto boxRange = m_inlineContent->boxesForRect(hitTestBoundingBox);
 
-    LayerPaintScope layerPaintScope(m_boxTree, layerRenderer);
+    LayerPaintScope layerPaintScope(layerRenderer);
 
     for (auto& box : makeReversedRange(boxRange)) {
         bool visibleForHitTesting = request.userTriggered() ? box.isVisible() : box.isVisibleIgnoringUsedVisibility();
@@ -1178,7 +1177,7 @@ bool LineLayout::insertedIntoTree(const RenderElement& parent, RenderObject& chi
         return false;
     }
 
-    auto& childLayoutBox = m_boxTree.insert(parent, child, child.previousSibling());
+    auto& childLayoutBox = BoxTreeUpdater { flow() }.insert(parent, child, child.previousSibling());
     if (auto* childInlineTextBox = dynamicDowncast<Layout::InlineTextBox>(childLayoutBox)) {
         auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
         return invalidation.textInserted(*childInlineTextBox);
@@ -1206,7 +1205,7 @@ bool LineLayout::removedFromTree(const RenderElement& parent, RenderObject& chil
     auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
     auto boxIsInvalidated = childInlineTextBox ? invalidation.textWillBeRemoved(*childInlineTextBox) : childLayoutBox.isLineBreakBox() ? invalidation.inlineLevelBoxWillBeRemoved(childLayoutBox) : false;
     if (boxIsInvalidated)
-        m_lineDamage->addDetachedBox(m_boxTree.remove(parent, child));
+        m_lineDamage->addDetachedBox(BoxTreeUpdater { flow() }.remove(parent, child));
     return boxIsInvalidated;
 }
 
@@ -1219,7 +1218,8 @@ bool LineLayout::updateTextContent(const RenderText& textRenderer, size_t offset
         return false;
     }
 
-    m_boxTree.updateContent(textRenderer);
+    BoxTreeUpdater::updateContent(textRenderer);
+
     auto invalidation = Layout::InlineInvalidation { ensureLineDamage(), m_inlineContentCache.inlineItems().content(), m_inlineContent->displayContent() };
     auto& inlineTextBox = *textRenderer.layoutBox();
     return delta >= 0 ? invalidation.textInserted(inlineTextBox, offset) : invalidation.textWillBeRemoved(inlineTextBox, offset);

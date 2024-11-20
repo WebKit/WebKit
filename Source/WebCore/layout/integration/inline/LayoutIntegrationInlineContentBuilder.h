@@ -35,12 +35,11 @@ class RenderBlockFlow;
 
 namespace LayoutIntegration {
 
-class BoxTree;
 struct InlineContent;
 
 class InlineContentBuilder {
 public:
-    InlineContentBuilder(const RenderBlockFlow&, BoxTree&);
+    InlineContentBuilder(const RenderBlockFlow&);
 
     FloatRect build(Layout::InlineLayoutResult&&, InlineContent&, const Layout::InlineDamage*) const;
     void updateLineOverflow(InlineContent&) const;
@@ -50,7 +49,6 @@ private:
     void computeIsFirstIsLastBoxAndBidiReorderingForInlineContent(InlineDisplay::Boxes&) const;
 
     const RenderBlockFlow& m_blockFlow;
-    BoxTree& m_boxTree;
 };
 
 }

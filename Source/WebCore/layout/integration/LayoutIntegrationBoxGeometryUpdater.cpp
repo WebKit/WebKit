@@ -123,6 +123,12 @@ BoxGeometryUpdater::BoxGeometryUpdater(Layout::LayoutState& layoutState, const L
 {
 }
 
+void BoxGeometryUpdater::clear()
+{
+    m_rootLayoutBox = nullptr;
+    m_nestedListMarkerOffsets.clear();
+}
+
 void BoxGeometryUpdater::setListMarkerOffsetForMarkerOutside(const RenderListMarker& listMarker)
 {
     auto& layoutBox = *listMarker.layoutBox();

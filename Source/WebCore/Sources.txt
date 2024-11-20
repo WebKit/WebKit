@@ -1913,7 +1913,7 @@ layout/integration/inline/LayoutIntegrationInlineContentPainter.cpp
 layout/integration/inline/LayoutIntegrationLineLayout.cpp
 layout/integration/inline/LayoutIntegrationPagination.cpp
 layout/integration/LayoutIntegrationBoxGeometryUpdater.cpp
-layout/integration/LayoutIntegrationBoxTree.cpp
+layout/integration/LayoutIntegrationBoxTreeUpdater.cpp
 layout/integration/LayoutIntegrationCoverage.cpp
 layout/integration/LayoutIntegrationFormattingContextLayout.cpp
 layout/integration/LayoutIntegrationUtils.cpp

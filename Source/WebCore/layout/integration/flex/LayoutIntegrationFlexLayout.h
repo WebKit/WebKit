@@ -25,7 +25,7 @@
 
 #pragma once
 
-#include "LayoutIntegrationBoxTree.h"
+#include "LayoutIntegrationBoxTreeUpdater.h"
 #include "LayoutState.h"
 #include "RenderObjectEnums.h"
 #include <wtf/CheckedPtr.h>
@@ -65,16 +65,16 @@ public:
 private:
     void updateRenderers();
 
-    const Layout::ElementBox& flexBox() const { return m_boxTree.rootLayoutBox(); }
-    Layout::ElementBox& flexBox() { return m_boxTree.rootLayoutBox(); }
+    const Layout::ElementBox& flexBox() const { return *m_flexBox; }
+    Layout::ElementBox& flexBox() { return *m_flexBox; }
 
-    const RenderFlexibleBox& flexBoxRenderer() const { return downcast<RenderFlexibleBox>(m_boxTree.rootRenderer()); }
-    RenderFlexibleBox& flexBoxRenderer() { return downcast<RenderFlexibleBox>(m_boxTree.rootRenderer()); }
+    const RenderFlexibleBox& flexBoxRenderer() const { return downcast<RenderFlexibleBox>(*m_flexBox->rendererForIntegration()); }
+    RenderFlexibleBox& flexBoxRenderer() { return downcast<RenderFlexibleBox>(*m_flexBox->rendererForIntegration()); }
 
     Layout::LayoutState& layoutState() { return *m_layoutState; }
     const Layout::LayoutState& layoutState() const { return *m_layoutState; }
 
-    BoxTree m_boxTree;
+    CheckedPtr<Layout::ElementBox> m_flexBox;
     WeakPtr<Layout::LayoutState> m_layoutState;
 };
 

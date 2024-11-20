@@ -1426,7 +1426,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     layout/formattingContexts/inline/text/TextUtil.h
 
-    layout/integration/LayoutIntegrationBoxTree.h
+    layout/integration/LayoutIntegrationBoxTreeUpdater.h
 
     layout/integration/flex/LayoutIntegrationFlexLayout.h
 
