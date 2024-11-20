@@ -72,6 +72,8 @@ public:
     template<TemporalUnit unit>
     std::optional<Int128> totalNanoseconds() const;
 
+    int32_t sign() const;
+
     Duration operator-() const
     {
         Duration result(*this);
@@ -85,6 +87,8 @@ public:
 private:
     std::array<double, numberOfTemporalUnits> m_data { };
 };
+
+class InternalDuration;
 
 class ExactTime {
     WTF_MAKE_TZONE_ALLOCATED(ExactTime);
@@ -168,8 +172,8 @@ public:
     }
 
     std::optional<ExactTime> add(Duration) const;
-    Int128 difference(ExactTime other, unsigned increment, TemporalUnit, RoundingMode) const;
-    ExactTime round(unsigned increment, TemporalUnit, RoundingMode) const;
+    InternalDuration difference(JSGlobalObject*, ExactTime other, unsigned increment, TemporalUnit, RoundingMode) const;
+    std::optional<ExactTime> round(unsigned increment, TemporalUnit, RoundingMode) const;
 
     static ExactTime now();
 
@@ -181,9 +185,46 @@ private:
         builder.append(static_cast<LChar>(static_cast<unsigned>(value % 10) + '0'));
     }
 
-    static Int128 round(Int128 quantity, unsigned increment, TemporalUnit, RoundingMode);
+    static std::optional<Int128> round(Int128 quantity, unsigned increment, TemporalUnit, RoundingMode);
 
     Int128 m_epochNanoseconds { };
+};
+
+// https://tc39.es/proposal-temporal/#sec-temporal-internal-duration-records
+// Represents a duration as an ISO8601::Duration (in which all time fields
+// are ignored) along with an Int128 time duration that represents the sum
+// of all time fields. Used to avoid losing precision in intermediate calculations.
+class InternalDuration final {
+public:
+    InternalDuration(Duration d, Int128 t)
+        : m_dateDuration(d), m_time(t) { }
+    InternalDuration()
+        : m_dateDuration(Duration()), m_time(0) { }
+    static constexpr Int128 maxTimeDuration = 9'007'199'254'740'992 * ExactTime::nsPerSecond - 1;
+
+    int32_t sign() const;
+
+    int32_t timeDurationSign() const
+    {
+        return m_time < 0 ? -1 : m_time > 0 ? 1 : 0;
+    }
+
+    Int128 time() const { return m_time; }
+
+    Duration dateDuration() const { return m_dateDuration; }
+
+    static InternalDuration combineDateAndTimeDuration(JSGlobalObject*, Duration, Int128);
+private:
+
+    // Time fields are ignored
+    Duration m_dateDuration;
+
+/* A time duration is an integer in the inclusive interval from -maxTimeDuration
+   to maxTimeDuration, where
+   maxTimeDuration = 2**53 × 10**9 - 1 = 9,007,199,254,740,991,999,999,999.
+   It represents the portion of a Temporal.Duration object that deals with time
+   units, but as a combined value of total nanoseconds.  */
+    Int128 m_time;
 };
 
 class PlainTime {
@@ -254,6 +295,14 @@ private:
 };
 static_assert(sizeof(PlainDate) == sizeof(int32_t));
 
+class PlainYearMonth final {
+public:
+    double year;
+    double month;
+    PlainYearMonth(double y, double m)
+        : year(y), month(m) { }
+};
+
 using TimeZone = std::variant<TimeZoneID, int64_t>;
 
 // https://tc39.es/proposal-temporal/#sec-temporal-parsetemporaltimezonestring
@@ -294,11 +343,15 @@ String monthCode(uint32_t);
 uint8_t monthFromCode(StringView);
 
 bool isValidDuration(const Duration&);
+bool isValidISODate(double, double, double);
+PlainDate createISODateRecord(double, double, double);
 
 std::optional<ExactTime> parseInstant(StringView);
 
 bool isDateTimeWithinLimits(int32_t year, uint8_t month, uint8_t day, unsigned hour, unsigned minute, unsigned second, unsigned millisecond, unsigned microsecond, unsigned nanosecond);
 bool isYearWithinLimits(double year);
+
+std::optional<Int128> roundTimeDuration(Int128 timeDuration, unsigned increment, TemporalUnit, RoundingMode);
 
 } // namespace ISO8601
 } // namespace JSC

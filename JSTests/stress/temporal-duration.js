@@ -188,6 +188,9 @@ for (const method of ['add', 'subtract']) {
 }
 shouldBe(Temporal.Duration.from('P1DT13H31M31S').add('P1DT13H31M31S').toString(), 'P3DT3H3M2S');
 shouldBe(Temporal.Duration.from('-PT1M59S').subtract('PT1M59S').toString(), '-PT3M58S');
+// Addition exceeds max duration
+shouldThrow(() => (new Temporal.Duration(0, 0, 0, 2, 0, 0, 0, 0, 0, 0)).add({ days: 104249991373 }), RangeError);
+
 
 shouldBe(Temporal.Duration.prototype.round.length, 1);
 shouldThrow(() => Temporal.Duration.prototype.round.call({}), TypeError);
@@ -220,6 +223,8 @@ shouldBe(Temporal.Duration.from('-PT31S').round({ smallestUnit: 'second', roundi
 shouldBe(Temporal.Duration.from('-PT31S').round({ smallestUnit: 'second', roundingIncrement: 30, roundingMode: 'floor' }).toString(), '-PT60S');
 shouldBe(Temporal.Duration.from('-PT45S').round({ smallestUnit: 'second', roundingIncrement: 30 }).toString(), '-PT60S');
 shouldBe(Temporal.Duration.from('-PT45S').round({ smallestUnit: 'second', roundingIncrement: 30, roundingMode: 'trunc' }).toString(), '-PT30S');
+// Rounding would exceed maxTimeDuration
+shouldThrow(() => Temporal.Duration.from({ seconds: Number.MAX_SAFE_INTEGER }).round({ smallestUnit: 'seconds', roundingMode: 'ceil', roundingIncrement: 30 }), RangeError);
 
 shouldBe(Temporal.Duration.prototype.total.length, 1);
 shouldThrow(() => Temporal.Duration.prototype.total.call({}), TypeError);

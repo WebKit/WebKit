@@ -74,7 +74,7 @@ static inline double toIntegerOrInfinity(double d)
 }
 
 // https://tc39.es/ecma262/#sec-makedate
-static inline double makeDate(double day, double time)
+double makeDate(double day, double time)
 {
 #if COMPILER(CLANG)
     #pragma STDC FP_CONTRACT OFF
@@ -83,7 +83,7 @@ static inline double makeDate(double day, double time)
 }
 
 // https://tc39.es/ecma262/#sec-maketime
-static inline double makeTime(double hour, double min, double sec, double ms)
+double makeTime(double hour, double min, double sec, double ms)
 {
 #if COMPILER(CLANG)
     #pragma STDC FP_CONTRACT OFF
@@ -92,7 +92,7 @@ static inline double makeTime(double hour, double min, double sec, double ms)
 }
 
 // https://tc39.es/ecma262/#sec-makeday
-static inline double makeDay(double year, double month, double date)
+double makeDay(double year, double month, double date)
 {
     double additionalYears = std::floor(month / 12);
     double ym = year + additionalYears;
