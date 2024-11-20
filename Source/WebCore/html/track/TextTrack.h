@@ -109,7 +109,11 @@ public:
     virtual bool isEasyToRead() const { return false; }
 
     int trackIndex();
-    void invalidateTrackIndex();
+    void invalidateTrackIndex()
+    {
+        m_trackIndex = std::nullopt;
+        m_renderedTrackIndex = std::nullopt;
+    }
 
     bool isRendered();
     bool isSpoken();

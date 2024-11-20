@@ -488,12 +488,6 @@ int TextTrack::trackIndex()
     return m_trackIndex.value();
 }
 
-void TextTrack::invalidateTrackIndex()
-{
-    m_trackIndex = std::nullopt;
-    m_renderedTrackIndex = std::nullopt;
-}
-
 bool TextTrack::isRendered()
 {
     return (m_kind == Kind::Captions || m_kind == Kind::Subtitles || m_kind == Kind::Forced || m_kind == Kind::Descriptions)
