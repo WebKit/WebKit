@@ -907,7 +907,7 @@ void GPUConnectionToWebProcess::releaseRemoteCommandListener(RemoteRemoteCommand
 
 void GPUConnectionToWebProcess::setMediaOverridesForTesting(MediaOverridesForTesting overrides)
 {
-    if (!allowTestOnlyIPC()) {
+    if (!m_sharedPreferencesForWebProcess.allowTestOnlyIPC) {
         MESSAGE_CHECK(!overrides.systemHasAC && !overrides.systemHasBattery && !overrides.vp9HardwareDecoderDisabled && !overrides.vp9DecoderDisabled && !overrides.vp9ScreenSizeAndScale);
 #if PLATFORM(COCOA)
 #if ENABLE(VP9)

@@ -99,8 +99,6 @@ private:
     void beginInterruptionRemote();
     void endInterruptionRemote(WebCore::AudioSession::MayResume);
 
-    bool allowTestOnlyIPC();
-
     RemoteAudioSessionProxyManager& audioSessionManager();
     Ref<RemoteAudioSessionProxyManager> protectedAudioSessionManager();
     Ref<IPC::Connection> protectedConnection() const;

@@ -169,8 +169,6 @@ public:
     bool isLockdownModeEnabled() const { return m_isLockdownModeEnabled; }
     bool isLockdownSafeFontParserEnabled() const { return sharedPreferencesForWebProcess() ? sharedPreferencesForWebProcess()->lockdownFontParserEnabled : false; }
 
-    bool allowTestOnlyIPC() const { return sharedPreferencesForWebProcess() ? sharedPreferencesForWebProcess()->allowTestOnlyIPC : false; }
-
     Logger& logger();
 
     const String& mediaCacheDirectory() const;
