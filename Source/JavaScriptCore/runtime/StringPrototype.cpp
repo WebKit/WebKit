@@ -1613,15 +1613,33 @@ JSC_DEFINE_HOST_FUNCTION(stringProtoFuncToUpperCase, (JSGlobalObject* globalObje
     auto scope = DECLARE_THROW_SCOPE(vm);
 
     JSValue thisValue = callFrame->thisValue();
-    if (!checkObjectCoercible(thisValue))
+    if (UNLIKELY(!checkObjectCoercible(thisValue)))
         return throwVMTypeError(globalObject, scope);
+
     JSString* sVal = thisValue.toString(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
+
+    if (sVal->isSubstring()) {
+        auto view = sVal->view(globalObject);
+        auto scanQuickly = [&](auto span) ALWAYS_INLINE_LAMBDA {
+            for (auto character : span) {
+                if (UNLIKELY(!isASCII(character) || isASCIILower(character)))
+                    return false;
+            }
+            return true;
+        };
+
+        if (view->is8Bit() ? scanQuickly(view->span8()) : scanQuickly(view->span16()))
+            return JSValue::encode(sVal);
+    }
+
     auto s = sVal->value(globalObject);
-    RETURN_IF_EXCEPTION(scope, encodedJSValue());
+    RETURN_IF_EXCEPTION(scope, { });
+
     String uppercasedString = s->convertToUppercaseWithoutLocale();
     if (uppercasedString.impl() == s->impl())
         return JSValue::encode(sVal);
+
     RELEASE_AND_RETURN(scope, JSValue::encode(jsString(vm, WTFMove(uppercasedString))));
 }
 
