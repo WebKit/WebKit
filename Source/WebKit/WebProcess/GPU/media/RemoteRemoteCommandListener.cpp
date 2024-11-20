@@ -54,15 +54,15 @@ RemoteRemoteCommandListener::RemoteRemoteCommandListener(RemoteCommandListenerCl
 
 RemoteRemoteCommandListener::~RemoteRemoteCommandListener()
 {
-    if (auto gpuProcessConnection = m_gpuProcessConnection.get()) {
-        gpuProcessConnection->messageReceiverMap().removeMessageReceiver(*this);
+    if (RefPtr gpuProcessConnection = m_gpuProcessConnection.get()) {
+        gpuProcessConnection->messageReceiverMap().removeMessageReceiver(Messages::RemoteRemoteCommandListener::messageReceiverName(), identifier().toUInt64());
         gpuProcessConnection->connection().send(Messages::GPUConnectionToWebProcess::ReleaseRemoteCommandListener(identifier()), 0);
     }
 }
 
 GPUProcessConnection& RemoteRemoteCommandListener::ensureGPUProcessConnection()
 {
-    auto gpuProcessConnection = m_gpuProcessConnection.get();
+    RefPtr gpuProcessConnection = m_gpuProcessConnection.get();
     if (!gpuProcessConnection) {
         gpuProcessConnection = &WebProcess::singleton().ensureGPUProcessConnection();
         m_gpuProcessConnection = gpuProcessConnection;
@@ -75,7 +75,9 @@ GPUProcessConnection& RemoteRemoteCommandListener::ensureGPUProcessConnection()
 
 void RemoteRemoteCommandListener::gpuProcessConnectionDidClose(GPUProcessConnection& gpuProcessConnection)
 {
-    gpuProcessConnection.messageReceiverMap().removeMessageReceiver(*this);
+    ASSERT(m_gpuProcessConnection.get() == &gpuProcessConnection);
+
+    gpuProcessConnection.messageReceiverMap().removeMessageReceiver(Messages::RemoteRemoteCommandListener::messageReceiverName(), identifier().toUInt64());
     m_gpuProcessConnection = nullptr;
 
     // FIXME: GPUProcess will be relaunched/RemoteCommandListener re-created when calling updateSupportedCommands().
