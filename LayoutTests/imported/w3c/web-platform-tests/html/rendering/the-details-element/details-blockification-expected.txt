@@ -3,5 +3,5 @@ bar
 foo
 bar
 
-PASS Summary and content should have display:block computed value
+FAIL Summary and content should have display:block computed value assert_equals: expected "block" but got "inline"
 

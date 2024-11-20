@@ -1743,7 +1743,6 @@ html/parser/HTMLTreeBuilder.cpp
 html/parser/TextDocumentParser.cpp
 html/shadow/AutoFillButtonElement.cpp
 html/shadow/DataListButtonElement.cpp
-html/shadow/DetailsMarkerControl.cpp
 html/shadow/DateTimeEditElement.cpp
 html/shadow/DateTimeFieldElement.cpp
 html/shadow/DateTimeFieldElements.cpp
@@ -2778,7 +2777,6 @@ rendering/RenderButton.cpp
 rendering/RenderCombineText.cpp
 rendering/RenderCounter.cpp
 rendering/RenderDeprecatedFlexibleBox.cpp
-rendering/RenderDetailsMarker.cpp
 rendering/RenderElement.cpp
 rendering/RenderEmbeddedObject.cpp
 rendering/RenderFileUploadControl.cpp

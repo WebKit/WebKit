@@ -1,5 +1,5 @@
 OPEN FILE PANEL
- anchor element
+anchor element
 SVG anchor element
 
 SVG foreignObject with HTML anchor element

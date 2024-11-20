@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DETAILS} at (0,0) size 784x18
-        RenderBlock {SUMMARY} at (0,0) size 784x18
-          RenderDetailsMarker {DIV} at (0,3) size 11x11: right
-          RenderText {#text} at (16,0) size 40x18
-            text run at (16,0) width 40: "new 1"
+        RenderListItem {SUMMARY} at (0,0) size 784x18
+          RenderListMarker at (0,0) size 13x18: "\x{25B8}"
+          RenderText {#text} at (12,0) size 40x18
+            text run at (12,0) width 40: "new 1"

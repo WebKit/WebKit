@@ -1418,8 +1418,6 @@ imported/w3c/web-platform-tests/css/css-transforms/ttwf-css-3d-polygon-cycle.htm
 imported/w3c/web-platform-tests/css/css-writing-modes/text-shadow-orientation-upright-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/html/canvas/element/manual/drawing-images-to-the-canvas/image-orientation/drawImage-with-src-rect.tentative.html [ ImageOnlyFailure ]
 
-imported/w3c/web-platform-tests/html/rendering/the-details-element/summary-text-decoration.html [ ImageOnlyFailure ]
-
 fast/canvas/webgl/lose-context-on-timeout-async.html [ Skip ] # Timeout.
 fast/canvas/webgl/lose-context-on-timeout.html [ Skip ] # Timeout.
 fast/encoding/backslash-encoding-jp.html [ Skip ] # Timeout.

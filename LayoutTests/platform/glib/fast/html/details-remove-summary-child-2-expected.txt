@@ -4,10 +4,11 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DETAILS} at (0,0) size 784x18
-        RenderBlock {SUMMARY} at (0,0) size 784x18
-          RenderDetailsMarker {DIV} at (0,3) size 11x11: down
-          RenderText {#text} at (16,0) size 63x17
-            text run at (16,0) width 63: "summary "
-          RenderInline {SPAN} at (78,0) size 182x17
-            RenderText {#text} at (78,0) size 182x17
-              text run at (78,0) width 182: "shouldn't have any bold text."
+        RenderListItem {SUMMARY} at (0,0) size 784x18
+          RenderListMarker at (0,0) size 12x17: "\x{25BE}"
+          RenderText {#text} at (12,0) size 62x17
+            text run at (12,0) width 62: "summary "
+          RenderInline {SPAN} at (74,0) size 181x17
+            RenderText {#text} at (74,0) size 181x17
+              text run at (74,0) width 181: "shouldn't have any bold text."
+        RenderBlock {SLOT} at (0,18) size 784x0

@@ -2127,15 +2127,21 @@ AccessibilityRole AccessibilityRenderObject::determineAccessibilityRole()
     if ((m_ariaRole = determineAriaRoleAttribute()) != AccessibilityRole::Unknown && !shouldIgnoreAttributeRole())
         return m_ariaRole;
 
-    if (m_renderer->isRenderListItem())
-        return AccessibilityRole::ListItem;
+    RefPtr node = m_renderer->node();
+    if (m_renderer->isRenderListItem()) {
+        // The details / summary disclosure triangle is implemented using RenderListItem
+        // but we want to return `AccessibilityRole::Summary` there, so skip them here.
+        RefPtr summary = dynamicDowncast<HTMLSummaryElement>(node);
+        if (!summary || !summary->isActiveSummary())
+            return AccessibilityRole::ListItem;
+    }
+
     if (m_renderer->isRenderListMarker())
         return AccessibilityRole::ListMarker;
 #if ENABLE(AX_THREAD_TEXT_APIS)
     if (m_renderer->isBR())
         return AccessibilityRole::LineBreak;
 #endif
-    RefPtr node = m_renderer->node();
     if (RefPtr img = dynamicDowncast<HTMLImageElement>(node); img && img->hasAttributeWithoutSynchronization(usemapAttr))
         return AccessibilityRole::ImageMap;
     if (m_renderer->isImage()) {

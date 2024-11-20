@@ -4,11 +4,12 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (0,0) size 800x600
       RenderBlock {DETAILS} at (0,0) size 800x36
-        RenderBlock {SUMMARY} at (0,0) size 800x18
-          RenderDetailsMarker {DIV} at (0,3) size 11x11: down
-          RenderText {#text} at (16,0) size 40x18
-            text run at (16,0) width 40: "new 2"
-        RenderBlock {SUMMARY} at (0,18) size 800x18
-          RenderText {#text} at (0,0) size 39x18
-            text run at (0,0) width 39: "new 1"
-caret: position 0 of child 0 {DIV} of {#document-fragment} of child 0 {SUMMARY} of child 1 {DETAILS} of body
+        RenderListItem {SUMMARY} at (0,0) size 800x18
+          RenderListMarker at (0,0) size 15x18: "\x{25BE}"
+          RenderText {#text} at (14,0) size 39x18
+            text run at (14,0) width 39: "new 2"
+        RenderBlock {SLOT} at (0,18) size 800x18
+          RenderBlock {SUMMARY} at (0,0) size 800x18
+            RenderText {#text} at (0,0) size 39x18
+              text run at (0,0) width 39: "new 1"
+caret: position 0 of child 0 {#text} of child 0 {SUMMARY} of child 1 {DETAILS} of body

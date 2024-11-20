@@ -1,21 +1,21 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x112
-  RenderBlock {HTML} at (0,0) size 800x112
-    RenderBody {BODY} at (8,8) size 784x96
-      RenderBlock {DETAILS} at (0,0) size 784x96 [border: (1px solid #000000)]
+layer at (0,0) size 800x130
+  RenderBlock {HTML} at (0,0) size 800x130
+    RenderBody {BODY} at (8,8) size 784x114
+      RenderBlock {DETAILS} at (0,0) size 784x114 [border: (1px solid #000000)]
         RenderBlock (anonymous) at (1,1) size 782x18
           RenderInline (generated) at (0,0) size 40x17
             RenderText at (0,0) size 40x17
               text run at (0,0) width 40: "before"
-        RenderBlock {SUMMARY} at (1,19) size 782x58 [border: (1px solid #000000)]
+        RenderListItem {SUMMARY} at (1,19) size 782x58 [border: (1px solid #000000)]
           RenderBlock (anonymous) at (1,1) size 780x18
-            RenderInline (generated) at (0,0) size 40x17
-              RenderText at (0,0) size 40x17
-                text run at (0,0) width 40: "before"
-            RenderDetailsMarker {DIV} at (40,3) size 11x11: down
-            RenderText {#text} at (56,0) size 62x17
-              text run at (56,0) width 62: "Summary"
+            RenderListMarker at (0,0) size 12x17: "\x{25BE}"
+            RenderInline (generated) at (12,0) size 40x17
+              RenderText at (12,0) size 40x17
+                text run at (12,0) width 40: "before"
+            RenderText {#text} at (52,0) size 61x17
+              text run at (52,0) width 61: "Summary"
           RenderBlock {DIV} at (1,19) size 780x20 [border: (1px solid #000000)]
             RenderText {#text} at (1,1) size 61x17
               text run at (1,1) width 61: "Inner Div"
@@ -23,9 +23,10 @@ layer at (0,0) size 800x112
             RenderInline (generated) at (0,0) size 28x17
               RenderText at (0,0) size 28x17
                 text run at (0,0) width 28: "after"
-        RenderBlock (anonymous) at (1,77) size 782x18
-          RenderText {#text} at (0,0) size 48x17
-            text run at (0,0) width 48: "Details "
-          RenderInline (generated) at (48,0) size 28x17
-            RenderText at (48,0) size 28x17
-              text run at (48,0) width 28: "after"
+        RenderBlock {SLOT} at (1,77) size 782x18
+          RenderText {#text} at (0,0) size 44x17
+            text run at (0,0) width 44: "Details"
+        RenderBlock (anonymous) at (1,95) size 782x18
+          RenderInline (generated) at (0,0) size 28x17
+            RenderText at (0,0) size 28x17
+              text run at (0,0) width 28: "after"

@@ -10,11 +10,14 @@ layer at (8,8) size 784x34
     RenderMultiColumnSet at (0,17) size 784x17
 layer at (8,8) size 117x34
   RenderMultiColumnFlowThread at (0,0) size 118x34
-    RenderBlock {SUMMARY} at (0,0) size 118x34 [color=#FFFFFF]
-      RenderBlock (anonymous) at (0,0) size 118x17
-        RenderText {#text} at (0,0) size 16x17
-          text run at (0,0) width 16: "a"
-      RenderMultiColumnSpannerPlaceholder at (0,17) size 0x0
-      RenderBlock (anonymous) at (0,17) size 118x17
-        RenderText {#text} at (0,0) size 16x17
-          text run at (0,0) width 16: "b"
+    RenderTable at (0,0) size 16x34
+      RenderTableSection (anonymous) at (0,0) size 16x34
+        RenderTableRow {SUMMARY} at (0,0) size 16x34 [color=#FFFFFF]
+          RenderTableCell (anonymous) at (0,0) size 16x34 [r=0 c=0 rs=1 cs=1]
+            RenderBlock (anonymous) at (0,0) size 16x17
+              RenderText {#text} at (0,0) size 16x17
+                text run at (0,0) width 16: "a"
+            RenderMultiColumnSpannerPlaceholder at (0,17) size 0x0
+            RenderBlock (anonymous) at (0,17) size 16x17
+              RenderText {#text} at (0,0) size 16x17
+                text run at (0,0) width 16: "b"

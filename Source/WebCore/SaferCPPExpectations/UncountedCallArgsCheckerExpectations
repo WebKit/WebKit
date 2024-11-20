@@ -1308,7 +1308,6 @@ html/parser/HTMLScriptRunner.cpp
 html/parser/HTMLTreeBuilder.cpp
 html/shadow/DateTimeEditElement.cpp
 html/shadow/DateTimeFieldElement.cpp
-html/shadow/DetailsMarkerControl.cpp
 html/shadow/MediaControlTextTrackContainerElement.cpp
 html/shadow/SliderThumbElement.cpp
 html/shadow/SpinButtonElement.cpp

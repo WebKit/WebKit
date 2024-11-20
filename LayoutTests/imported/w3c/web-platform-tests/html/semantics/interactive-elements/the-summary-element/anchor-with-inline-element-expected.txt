@@ -1,6 +1,5 @@
 Anchor text is wrapped with <i> tag permalink
 This one uses <span>. permalink
-
 <circle>
 
 PASS Clicking on anchor with embedded inline element should navigate instead of opening details

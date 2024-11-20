@@ -4,19 +4,18 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DETAILS} at (0,0) size 784x18
-        RenderBlock {SUMMARY} at (0,0) size 784x18
-          RenderDetailsMarker {DIV} at (0,3) size 11x11: down
-          RenderText {#text} at (16,0) size 5x17
-            text run at (16,0) width 5: " "
-          RenderBlock {SPAN} at (20,3) size 65x15
+        RenderListItem {SUMMARY} at (0,0) size 784x18
+          RenderListMarker at (0,0) size 12x17: "\x{25BE}"
+          RenderBlock {SPAN} at (12,3) size 64x15
             RenderText {#text} at (0,0) size 64x15
               text run at (0,0) width 64: "Details1"
-          RenderText {#text} at (84,0) size 5x17
-            text run at (84,0) width 5: " "
-          RenderBlock {SPAN} at (88,3) size 65x15
+          RenderText {#text} at (76,0) size 4x17
+            text run at (76,0) width 4: " "
+          RenderBlock {SPAN} at (80,3) size 64x15
             RenderText {#text} at (0,0) size 64x15
               text run at (0,0) width 64: "Details3"
           RenderText {#text} at (0,0) size 0x0
+        RenderBlock {SLOT} at (0,18) size 784x0
       RenderBlock (anonymous) at (0,18) size 784x27
         RenderButton {INPUT} at (0,0) size 46x27 [color=#000000CC] [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
           RenderBlock (anonymous) at (8,4) size 30x18

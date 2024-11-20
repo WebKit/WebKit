@@ -341,10 +341,6 @@
             "status": "non-standard",
             "user-agent-part": true
         },
-        "-webkit-details-marker": {
-            "status": "non-standard",
-            "user-agent-part": true
-        },
         "-webkit-generic-cue-root": {
             "status": "non-standard",
             "user-agent-part": true
