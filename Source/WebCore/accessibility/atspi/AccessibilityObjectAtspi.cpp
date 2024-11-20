@@ -71,13 +71,10 @@ OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfa
         interfaces.add(Interface::Text);
     else if (coreObject.isTextControl() || coreObject.isNonNativeTextControl())
         interfaces.add(Interface::Text);
-    else if (!coreObject.isWebArea()) {
-        if (coreObject.roleValue() != AccessibilityRole::Table) {
-            interfaces.add(Interface::Hypertext);
-            if ((renderer && renderer->childrenInline()) || roleIsTextType(coreObject.roleValue()) || coreObject.isMathToken())
-                interfaces.add(Interface::Text);
-        }
-    }
+    else if (coreObject.isWebArea())
+        interfaces.add(Interface::Text);
+    else if (coreObject.roleValue() != AccessibilityRole::Table && ((renderer && renderer->childrenInline()) || roleIsTextType(coreObject.roleValue()) || coreObject.isMathToken()))
+        interfaces.add(Interface::Text);
 
     if (coreObject.supportsRangeValue())
         interfaces.add(Interface::Value);
@@ -108,8 +105,18 @@ OptionSet<AccessibilityObjectAtspi::Interface> AccessibilityObjectAtspi::interfa
             interfaces.add(Interface::Image);
         else
             interfaces.add(Interface::Text);
-        interfaces.add(Interface::Hyperlink);
     }
+
+    // Anything that implements the Text interface should also implement the
+    // Hypertext interface
+    if (interfaces.contains(Interface::Text))
+        interfaces.add(Interface::Hypertext);
+
+    // All accessible objects beneath the web area should be linked by their
+    // parent. In practice, this means all objects except the root and the
+    // web area should be hyperlinks.
+    if (!coreObject.isWebArea() && coreObject.isDescendantOfRole(AccessibilityRole::WebArea))
+        interfaces.add(Interface::Hyperlink);
 
     return interfaces;
 }
