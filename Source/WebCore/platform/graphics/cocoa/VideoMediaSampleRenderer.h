@@ -100,9 +100,11 @@ private:
     void maybeQueueFrameForDisplay(CMSampleBufferRef);
     void flushCompressedSampleQueue();
     void flushDecodedSampleQueue();
-    void purgeDecodedSampleQueue();
-    CMBufferQueueRef ensureDecodedSampleQueue();
+    bool purgeDecodedSampleQueue();
+    size_t decodedSamplesCount() const;
     void assignResourceOwner(CMSampleBufferRef);
+    bool areSamplesQueuesReadyForMoreMediaData(size_t waterMark) const;
+    void queueMaybeBecomeReadyForMoreMediaData() const;
     void maybeBecomeReadyForMoreMediaData();
 
     void cancelTimer();
@@ -116,7 +118,7 @@ private:
     std::atomic<ssize_t> m_framesBeingDecoded { 0 };
     std::atomic<int> m_flushId { 0 };
     Deque<std::pair<RetainPtr<CMSampleBufferRef>, int>> m_compressedSampleQueue WTF_GUARDED_BY_CAPABILITY(m_workQueue.get());
-    RetainPtr<CMBufferQueueRef> m_decodedSampleQueue WTF_GUARDED_BY_CAPABILITY(m_workQueue.get());
+    RetainPtr<CMBufferQueueRef> m_decodedSampleQueue; // created on the main thread, immutable after creation.
     RefPtr<WebCoreDecompressionSession> m_decompressionSession;
     bool m_isDecodingSample WTF_GUARDED_BY_CAPABILITY(m_workQueue.get()) { false };
     bool m_isDisplayingSample WTF_GUARDED_BY_CAPABILITY(m_workQueue.get()) { false };
