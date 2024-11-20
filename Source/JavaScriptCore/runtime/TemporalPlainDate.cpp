@@ -27,6 +27,7 @@
 #include "config.h"
 #include "TemporalPlainDate.h"
 
+#include "DateConstructor.h"
 #include "IntlObjectInlines.h"
 #include "JSCInlines.h"
 #include "LazyPropertyInlines.h"
@@ -306,6 +307,49 @@ ISO8601::PlainDate TemporalPlainDate::with(JSGlobalObject* globalObject, JSObjec
     RELEASE_AND_RETURN(scope, TemporalCalendar::isoDateFromFields(globalObject, y, m, d, overflow));
 }
 
+// https://tc39.es/proposal-temporal/#sec-getutcepochnanoseconds
+static Int128 getUTCEpochNanoseconds(ISO8601::PlainDate isoDate)
+{
+    return getUTCEpochNanoseconds(
+        std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>(
+            isoDate, ISO8601::PlainTime()));
+}
+
+ISO8601::Duration TemporalPlainDate::differenceTemporalPlainDate(JSGlobalObject* globalObject, bool isSince, TemporalPlainDate* other, TemporalUnit smallestUnit, TemporalUnit largestUnit, RoundingMode roundingMode, double increment)
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    // Steps 1-4 already done
+    // Step 5
+    if (!TemporalCalendar::isoDateCompare(plainDate(), other->plainDate())) {
+        // 5a.
+        return ISO8601::Duration();
+    }
+    // Step 6
+    ISO8601::Duration dateDifference = TemporalCalendar::calendarDateUntil(plainDate(), other->plainDate(), largestUnit);
+    // Step 7
+    ISO8601::InternalDuration duration = ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject, dateDifference, 0);
+    RETURN_IF_EXCEPTION(scope, { });
+    if (smallestUnit != TemporalUnit::Day || increment != 1) {
+        // Step 8a.
+        auto isoDate = plainDate();
+        // Step 8b.
+        auto isoDateOther = other->plainDate();
+        // Step 8c.
+        Int128 destEpochNs = getUTCEpochNanoseconds(isoDateOther);
+        // Step 8d.
+        TemporalDuration::roundRelativeDuration(
+            globalObject, duration, destEpochNs, isoDate, largestUnit,
+            increment, smallestUnit, roundingMode);
+    }
+    // Step 9.
+    auto result = TemporalDuration::temporalDurationFromInternal(duration, TemporalUnit::Day);
+    if (isSince)
+        result = -result;
+    return result;
+}
+
 ISO8601::Duration TemporalPlainDate::until(JSGlobalObject* globalObject, TemporalPlainDate* other, JSValue optionsValue)
 {
     VM& vm = globalObject->vm();
@@ -326,24 +370,7 @@ ISO8601::Duration TemporalPlainDate::until(JSGlobalObject* globalObject, Tempora
     auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Date, TemporalUnit::Day, TemporalUnit::Day);
     RETURN_IF_EXCEPTION(scope, { });
 
-    auto result = TemporalCalendar::isoDateDifference(globalObject, plainDate(), other->plainDate(), largestUnit);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    if (smallestUnit != TemporalUnit::Day || increment != 1) {
-        if (smallestUnit != TemporalUnit::Day) {
-            throwRangeError(globalObject, scope, "unimplemented: depends on Duration relativeTo"_s);
-            return { };
-        }
-        result.setHours(0);
-        result.setMinutes(0);
-        result.setSeconds(0);
-        result.setMilliseconds(0);
-        result.setMicroseconds(0);
-        result.setNanoseconds(0);
-        TemporalDuration::round(result, increment, smallestUnit, roundingMode);
-    }
-
-    return result;
+    return differenceTemporalPlainDate(globalObject, false, other, smallestUnit, largestUnit, roundingMode, increment);
 }
 
 ISO8601::Duration TemporalPlainDate::since(JSGlobalObject* globalObject, TemporalPlainDate* other, JSValue optionsValue)
@@ -367,24 +394,7 @@ ISO8601::Duration TemporalPlainDate::since(JSGlobalObject* globalObject, Tempora
     RETURN_IF_EXCEPTION(scope, { });
     roundingMode = negateTemporalRoundingMode(roundingMode);
 
-    auto result = TemporalCalendar::isoDateDifference(globalObject, plainDate(), other->plainDate(), largestUnit);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    if (smallestUnit != TemporalUnit::Day || increment != 1) {
-        if (smallestUnit != TemporalUnit::Day) {
-            throwRangeError(globalObject, scope, "unimplemented: depends on Duration relativeTo"_s);
-            return { };
-        }
-        result.setHours(0);
-        result.setMinutes(0);
-        result.setSeconds(0);
-        result.setMilliseconds(0);
-        result.setMicroseconds(0);
-        result.setNanoseconds(0);
-        TemporalDuration::round(result, increment, smallestUnit, roundingMode);
-    }
-
-    return -result;
+    return differenceTemporalPlainDate(globalObject, true, other, smallestUnit, largestUnit, roundingMode, increment);
 }
 
 String TemporalPlainDate::monthCode() const

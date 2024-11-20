@@ -175,37 +175,37 @@ ISO8601::Duration TemporalPlainTime::roundTime(ISO8601::PlainTime plainTime, dou
     case TemporalUnit::Day: {
         double length = dayLengthNs.value_or(8.64 * 1e13);
         quantity = (((((plainTime.hour() * 60.0 + plainTime.minute()) * 60.0 + plainTime.second()) * 1000.0 + plainTime.millisecond()) * 1000.0 + plainTime.microsecond()) * 1000.0 + plainTime.nanosecond()) / length;
-        auto result = roundNumberToIncrement(quantity, increment, roundingMode);
+        auto result = roundNumberToIncrementDouble(quantity, increment, roundingMode);
         return ISO8601::Duration(0, 0, 0, result, 0, 0, 0, 0, 0, 0);
     }
     case TemporalUnit::Hour: {
         quantity = (fractionalSecond(plainTime) / 60.0 + plainTime.minute()) / 60.0 + plainTime.hour();
-        auto result = roundNumberToIncrement(quantity, increment, roundingMode);
+        auto result = roundNumberToIncrementDouble(quantity, increment, roundingMode);
         return balanceTime(result, 0, 0, 0, 0, 0);
     }
     case TemporalUnit::Minute: {
         quantity = fractionalSecond(plainTime) / 60.0 + plainTime.minute();
-        auto result = roundNumberToIncrement(quantity, increment, roundingMode);
+        auto result = roundNumberToIncrementDouble(quantity, increment, roundingMode);
         return balanceTime(plainTime.hour(), result, 0, 0, 0, 0);
     }
     case TemporalUnit::Second: {
         quantity = fractionalSecond(plainTime);
-        auto result = roundNumberToIncrement(quantity, increment, roundingMode);
+        auto result = roundNumberToIncrementDouble(quantity, increment, roundingMode);
         return balanceTime(plainTime.hour(), plainTime.minute(), result, 0, 0, 0);
     }
     case TemporalUnit::Millisecond: {
         quantity = plainTime.millisecond() + plainTime.microsecond() * 1e-3 + plainTime.nanosecond() * 1e-6;
-        auto result = roundNumberToIncrement(quantity, increment, roundingMode);
+        auto result = roundNumberToIncrementDouble(quantity, increment, roundingMode);
         return balanceTime(plainTime.hour(), plainTime.minute(), plainTime.second(), result, 0, 0);
     }
     case TemporalUnit::Microsecond: {
         quantity = plainTime.microsecond() + plainTime.nanosecond() * 1e-3;
-        auto result = roundNumberToIncrement(quantity, increment, roundingMode);
+        auto result = roundNumberToIncrementDouble(quantity, increment, roundingMode);
         return balanceTime(plainTime.hour(), plainTime.minute(), plainTime.second(), plainTime.millisecond(), result, 0);
     }
     case TemporalUnit::Nanosecond: {
         quantity = plainTime.nanosecond();
-        auto result = roundNumberToIncrement(quantity, increment, roundingMode);
+        auto result = roundNumberToIncrementDouble(quantity, increment, roundingMode);
         return balanceTime(plainTime.hour(), plainTime.minute(), plainTime.second(), plainTime.millisecond(), plainTime.microsecond(), result);
     }
     default:
@@ -517,7 +517,7 @@ ISO8601::PlainTime TemporalPlainTime::with(JSGlobalObject* globalObject, JSObjec
     RELEASE_AND_RETURN(scope, regulateTime(globalObject, WTFMove(duration), overflow));
 }
 
-static ISO8601::Duration differenceTime(ISO8601::PlainTime time1, ISO8601::PlainTime time2)
+static Int128 differenceTime(ISO8601::PlainTime time1, ISO8601::PlainTime time2)
 {
     double hours = static_cast<double>(time2.hour()) - static_cast<double>(time1.hour());
     double minutes = static_cast<double>(time2.minute()) - static_cast<double>(time1.minute());
@@ -526,52 +526,50 @@ static ISO8601::Duration differenceTime(ISO8601::PlainTime time1, ISO8601::Plain
     double microseconds = static_cast<double>(time2.microsecond()) - static_cast<double>(time1.microsecond());
     double nanoseconds = static_cast<double>(time2.nanosecond()) - static_cast<double>(time1.nanosecond());
     dataLogLnIf(TemporalPlainTimeInternal::verbose, "Diff ", hours, " ", minutes, " ", seconds, " ", milliseconds, " ", microseconds, " ", nanoseconds);
-    int32_t sign = TemporalDuration::sign(ISO8601::Duration(0, 0, 0, 0, hours, minutes, seconds, milliseconds, microseconds, nanoseconds));
-    auto duration = balanceTime(hours * sign, minutes * sign, seconds * sign, milliseconds * sign, microseconds * sign, nanoseconds * sign);
-    dataLogLnIf(TemporalPlainTimeInternal::verbose, "Balanced ", duration.days(), " ", duration.hours(), " ", duration.minutes(), " ", duration.seconds(), " ", duration.milliseconds(), " ", duration.microseconds(), " ", duration.nanoseconds());
-    if (sign == -1)
-        return -duration;
-    return duration;
+
+    return TemporalDuration::timeDurationFromComponents(hours, minutes, seconds, milliseconds, microseconds, nanoseconds);
+}
+
+// https://tc39.es/proposal-temporal/#sec-temporal-differencetemporalplaintime
+// DifferenceTemporalPlainTime ( operation, temporalTime, other, options )
+ISO8601::Duration TemporalPlainTime::differenceTemporalPlainTime(bool isSince, JSGlobalObject* globalObject, TemporalPlainTime* other, JSValue optionsValue) const
+{
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Time, TemporalUnit::Nanosecond, TemporalUnit::Hour);
+    RETURN_IF_EXCEPTION(scope, { });
+
+    Int128 timeDuration;
+
+    // The sign of the argument to roundTimeDuration() determines the choice
+    // of rounding mode, so the sign should be preserved here instead of
+    // negating the duration at the end
+    if (isSince)
+        timeDuration = differenceTime(other->plainTime(), plainTime());
+    else
+        timeDuration = differenceTime(plainTime(), other->plainTime());
+
+    auto maybeTimeDuration = ISO8601::roundTimeDuration(timeDuration, increment, smallestUnit, roundingMode);
+    if (!maybeTimeDuration) {
+        throwRangeError(globalObject, scope, "Rounded time duration out of range"_s);
+        return { };
+    }
+    auto duration = ISO8601::InternalDuration::combineDateAndTimeDuration(globalObject, ISO8601::Duration(), maybeTimeDuration.value());
+    RETURN_IF_EXCEPTION(scope, { });
+    auto result = TemporalDuration::temporalDurationFromInternal(duration, largestUnit);
+
+    return result;
 }
 
 ISO8601::Duration TemporalPlainTime::until(JSGlobalObject* globalObject, TemporalPlainTime* other, JSValue optionsValue) const
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Time, TemporalUnit::Nanosecond, TemporalUnit::Hour);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    auto result = differenceTime(plainTime(), other->plainTime());
-    result.setYears(0);
-    result.setMonths(0);
-    result.setWeeks(0);
-    result.setDays(0);
-    TemporalDuration::round(result, increment, smallestUnit, roundingMode);
-    TemporalDuration::balance(result, largestUnit);
-    return result;
+    return differenceTemporalPlainTime(false, globalObject, other, optionsValue);
 }
 
 ISO8601::Duration TemporalPlainTime::since(JSGlobalObject* globalObject, TemporalPlainTime* other, JSValue optionsValue) const
 {
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    auto [smallestUnit, largestUnit, roundingMode, increment] = extractDifferenceOptions(globalObject, optionsValue, UnitGroup::Time, TemporalUnit::Nanosecond, TemporalUnit::Hour);
-    RETURN_IF_EXCEPTION(scope, { });
-    roundingMode = negateTemporalRoundingMode(roundingMode);
-
-    auto result = differenceTime(other->plainTime(), plainTime());
-    result = -result;
-    result.setYears(0);
-    result.setMonths(0);
-    result.setWeeks(0);
-    result.setDays(0);
-    TemporalDuration::round(result, increment, smallestUnit, roundingMode);
-    result = -result;
-    result.setDays(0);
-    TemporalDuration::balance(result, largestUnit);
-    return result;
+    return differenceTemporalPlainTime(true, globalObject, other, optionsValue);
 }
 
 } // namespace JSC
