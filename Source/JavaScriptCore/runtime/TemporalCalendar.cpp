@@ -248,6 +248,15 @@ ISO8601::PlainDate TemporalCalendar::isoDateFromFields(JSGlobalObject* globalObj
     return plainDate;
 }
 
+
+// https://tc39.es/proposal-temporal/#sec-temporal-calendaryearmonthfromfields
+ISO8601::PlainDate TemporalCalendar::yearMonthFromFields(JSGlobalObject* globalObject, double year, double month, TemporalOverflow overflow)
+{
+    // 2. Let firstDayIndex be the 1-based index of the first day of the month described by fields
+    // (i.e., 1 unless the month's first day is skipped by this calendar.)
+    return isoDateFromFields(globalObject, year, month, 1, overflow);
+}
+
 static int epochTimeToEpochYear(double t)
 {
     return msToYear(t);
@@ -264,7 +273,7 @@ static int32_t epochTimeToDate(double t)
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-balanceisodate
-ISO8601::PlainDate TemporalCalendar::balanceISODate(double year, double month, double day)
+static ISO8601::PlainDate balanceISODate(double year, double month, double day)
 {
     auto epochDays = makeDay(year, month - 1, day);
     double ms = makeDate(epochDays, 0);
