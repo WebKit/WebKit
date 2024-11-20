@@ -698,16 +698,18 @@ bool supportsInitMethodConstructors()
     // There are no old clients on Apple TV, so there's no need for backwards compatibility.
     return true;
 #else
-    static const bool supportsInitMethodConstructors = []() -> bool {
+    static bool supportsInitMethodConstructors;
+    static std::once_flag once;
+    std::call_once(once, [] {
         // First check to see the version of JavaScriptCore we directly linked against.
         int32_t versionOfLinkTimeJavaScriptCore = NSVersionOfLinkTimeLibrary("JavaScriptCore");
 
         // Only do the link time version comparison if we linked directly with JavaScriptCore
         if (versionOfLinkTimeJavaScriptCore != -1)
-            return versionOfLinkTimeJavaScriptCore >= firstJavaScriptCoreVersionWithInitConstructorSupport;
-
-        return linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SupportsInitConstructors);
-    }();
+            supportsInitMethodConstructors = versionOfLinkTimeJavaScriptCore >= firstJavaScriptCoreVersionWithInitConstructorSupport;
+        else
+            supportsInitMethodConstructors = linkedOnOrAfterSDKWithBehavior(SDKAlignedBehavior::SupportsInitConstructors);
+    });
     return supportsInitMethodConstructors;
 #endif
 }
