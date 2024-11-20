@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../http/tests/inspector/resources/inspector-test.js"></script>
+<script>
+function readFile(method) {
+    let fileReader = new FileReader;
+    fileReader.addEventListener("loadend", (event) => {
+        TestPage.dispatchEventToFrontend("TestPage-FileReader-loadend-" + method);
+    });
+    fileReader[method](new Blob(['test']));
+}
+
+function test()
+{
+    let suite = InspectorTest.createAsyncSuite("Network.NoRequest.FileReader");
+
+    for (const method of ["readAsArrayBuffer", "readAsBinaryString", "readAsDataURL", "readAsText"]) {
+        suite.addTestCase({
+            name: `Network.NoRequest.FileReader.${method}`,
+            async test() {
+                let requestURL = null;
+
+                let listener = WI.Frame.addEventListener(WI.Frame.Event.ResourceWasAdded, (event) => {
+                    requestURL = event.data.resource.url;
+                });
+
+                InspectorTest.log(`Requesting via FileReader.prototype.${method}...`);
+                await Promise.all([
+                    InspectorTest.awaitEvent(`TestPage-FileReader-loadend-${method}`),
+                    InspectorTest.evaluateInPage(`readFile("${method}")`),
+                ]);
+
+                InspectorTest.expectNull(requestURL, "Should not notify the frontend.");
+
+                WI.Frame.removeEventListener(WI.Frame.Event.ResourceWasAdded, listener);
+            },
+        });
+    }
+
+    suite.runTestCasesAndFinish();
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that certain kinds of requests are not sent to the frontend.</p>
+</body>
+</html>

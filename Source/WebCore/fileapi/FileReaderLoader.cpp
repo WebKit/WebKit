@@ -102,6 +102,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, con
     // Construct and load the request.
     ResourceRequest request(m_urlForReading);
     request.setHTTPMethod("GET"_s);
+    request.setHiddenFromInspector(true);
 
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = SendCallbackPolicy::SendCallbacks;

@@ -1,0 +1,20 @@
+Tests that certain kinds of requests are not sent to the frontend.
+
+
+== Running test suite: Network.NoRequest.FileReader
+-- Running test case: Network.NoRequest.FileReader.readAsArrayBuffer
+Requesting via FileReader.prototype.readAsArrayBuffer...
+PASS: Should not notify the frontend.
+
+-- Running test case: Network.NoRequest.FileReader.readAsBinaryString
+Requesting via FileReader.prototype.readAsBinaryString...
+PASS: Should not notify the frontend.
+
+-- Running test case: Network.NoRequest.FileReader.readAsDataURL
+Requesting via FileReader.prototype.readAsDataURL...
+PASS: Should not notify the frontend.
+
+-- Running test case: Network.NoRequest.FileReader.readAsText
+Requesting via FileReader.prototype.readAsText...
+PASS: Should not notify the frontend.
+
