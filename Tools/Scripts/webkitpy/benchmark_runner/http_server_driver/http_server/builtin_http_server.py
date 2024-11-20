@@ -37,6 +37,11 @@ class Handler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.server_shutdown()
 
+    def end_headers(self):
+        self.send_header('Cross-Origin-Embedder-Policy', 'require-corp')
+        self.send_header('Cross-Origin-Opener-Policy', 'same-origin')
+        super().end_headers()
+
     def do_POST(self):
         report_path = self.web_root + '/report'
         if not self.translate_path(self.path).startswith(report_path):
