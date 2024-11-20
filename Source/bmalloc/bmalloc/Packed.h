@@ -26,8 +26,8 @@
 #pragma once
 
 #include "Algorithm.h"
-#include "StdLibExtras.h"
 #include <array>
+#include <bit>
 
 #if BOS(DARWIN)
 #include <mach/vm_param.h>
@@ -141,22 +141,22 @@ public:
 #if BCPU(LITTLE_ENDIAN)
         memcpy(&value, m_storage.data(), storageSize);
 #else
-        memcpy(bitwise_cast<uint8_t*>(&value) + (sizeof(void*) - storageSize), m_storage.data(), storageSize);
+        memcpy(std::bit_cast<uint8_t*>(&value) + (sizeof(void*) - storageSize), m_storage.data(), storageSize);
 #endif
         if (isAlignmentShiftProfitable)
             value <<= alignmentShiftSize;
-        return bitwise_cast<T*>(value);
+        return std::bit_cast<T*>(value);
     }
 
     void set(T* passedValue)
     {
-        uintptr_t value = bitwise_cast<uintptr_t>(passedValue);
+        uintptr_t value = std::bit_cast<uintptr_t>(passedValue);
         if (isAlignmentShiftProfitable)
             value >>= alignmentShiftSize;
 #if BCPU(LITTLE_ENDIAN)
         memcpy(m_storage.data(), &value, storageSize);
 #else
-        memcpy(m_storage.data(), bitwise_cast<uint8_t*>(&value) + (sizeof(void*) - storageSize), storageSize);
+        memcpy(m_storage.data(), std::bit_cast<uint8_t*>(&value) + (sizeof(void*) - storageSize), storageSize);
 #endif
     }
 

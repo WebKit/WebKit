@@ -27,7 +27,7 @@
 
 #include "Algorithm.h"
 #include "GigacageKind.h"
-#include "StdLibExtras.h"
+#include <bit>
 #include <inttypes.h>
 
 namespace WebConfig {
@@ -110,6 +110,6 @@ constexpr size_t alignmentOfGigacageConfig = std::alignment_of<Gigacage::Config>
 static_assert(sizeof(Gigacage::Config) + startOffsetOfGigacageConfig <= reservedBytesForGigacageConfig);
 static_assert(bmalloc::roundUpToMultipleOf<alignmentOfGigacageConfig>(startOffsetOfGigacageConfig) == startOffsetOfGigacageConfig);
 
-#define g_gigacageConfig (*bmalloc::bitwise_cast<Gigacage::Config*>(&WebConfig::g_config[Gigacage::startSlotOfGigacageConfig]))
+#define g_gigacageConfig (*std::bit_cast<Gigacage::Config*>(&WebConfig::g_config[Gigacage::startSlotOfGigacageConfig]))
 
 } // namespace Gigacage

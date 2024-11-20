@@ -286,7 +286,6 @@ set(bmalloc_PUBLIC_HEADERS
     bmalloc/SmallLine.h
     bmalloc/SmallPage.h
     bmalloc/StaticPerProcess.h
-    bmalloc/StdLibExtras.h
     bmalloc/TZoneHeap.h
     bmalloc/TZoneHeapInlines.h
     bmalloc/TZoneHeapManager.h

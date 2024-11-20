@@ -32,7 +32,7 @@
 #include "BPlatform.h"
 #include "GigacageConfig.h"
 #include "Sizes.h"
-#include "StdLibExtras.h"
+#include <bit>
 #include <cstddef>
 #include <inttypes.h>
 
