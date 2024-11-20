@@ -213,7 +213,7 @@ end
 macro argumINTDispatch()
     loadb [MC], argumINTTmp
     addq 1, MC
-    bbgteq argumINTTmp, 0x12, .err
+    bbgteq argumINTTmp, (constexpr IPInt::ArgumINTBytecode::NumOpcodes), .err
     lshiftq 6, argumINTTmp
 if ARM64 or ARM64E
     pcrtoaddr _argumINT_begin, argumINTDsp
@@ -366,7 +366,7 @@ macro uintDispatch()
 if ARM64 or ARM64E
     loadb [MC], sc2
     addq 1, MC
-    bilt sc2, 0x12, .safe
+    bilt sc2, (constexpr IPInt::UIntBytecode::NumOpcodes), .safe
     break
 .safe:
     lshiftq 6, sc2
@@ -490,7 +490,7 @@ instructionLabel(_call)
     move sp, a2
 
     # operation returns the entrypoint in r0 and the target instance in r1
-    operationCall(macro() cCall3(_ipint_extern_call) end)
+    operationCall(macro() cCall3(_ipint_extern_prepare_call) end)
     popQuad(sc1, t2)
 
     # call
@@ -508,7 +508,7 @@ instructionLabel(_call_indirect)
     # Get callIndirectMetadata
     move cfr, a1
     move MC, a3
-    operationCall(macro() cCall4(_ipint_extern_call_indirect) end)
+    operationCall(macro() cCall4(_ipint_extern_prepare_call_indirect) end)
     btpz r1, .ipint_call_indirect_throw
 
     loadb IPInt::CallIndirectMetadata::length[MC], t2
@@ -521,8 +521,53 @@ instructionLabel(_call_indirect)
 .ipint_call_indirect_throw:
     jmp _wasm_throw_from_slow_path_trampoline
 
-reservedOpcode(0x12)
-reservedOpcode(0x13)
+instructionLabel(_return_call)
+    loadp Wasm::IPIntCallee::m_bytecode[ws0], t0
+    move PC, t1
+    subq t0, t1
+    storei t1, CallSiteIndex[cfr]
+
+    loadb IPInt::TailCallMetadata::length[MC], t0
+    advancePCByReg(t0)
+
+    # get function index
+    loadi IPInt::TailCallMetadata::functionIndex[MC], a1
+
+    subq 16, sp
+    move sp, a2
+
+    # operation returns the entrypoint in r0 and the target instance in r1
+    # this operation stores the boxed Callee into *r2
+    operationCall(macro() cCall3(_ipint_extern_prepare_call) end)
+    popQuad(sc1, t2)
+
+    loadi IPInt::TailCallMetadata::callerStackArgSize[MC], t2
+    advanceMC(IPInt::TailCallMetadata::argumentBytecode)
+    jmp .ipint_tail_call_common
+
+instructionLabel(_return_call_indirect)
+    loadp Wasm::IPIntCallee::m_bytecode[ws0], t0
+    move PC, t1
+    subq t0, t1
+    storei t1, CallSiteIndex[cfr]
+
+    # Get function index by pointer, use it as a return for callee
+    move sp, a2
+
+    # Get callIndirectMetadata
+    move cfr, a1
+    move MC, a3
+    operationCall(macro() cCall4(_ipint_extern_prepare_call_indirect) end)
+    btpz r1, .ipint_call_indirect_throw
+
+    loadb IPInt::TailCallIndirectMetadata::length[MC], t2
+    advancePCByReg(t2)
+    popQuad(sc1, t2)
+
+    loadi IPInt::TailCallIndirectMetadata::callerStackArgSize[MC], t2
+    advanceMC(IPInt::TailCallIndirectMetadata::argumentBytecode)
+    jmp .ipint_tail_call_common
+
 reservedOpcode(0x14)
 reservedOpcode(0x15)
 reservedOpcode(0x16)
@@ -5055,7 +5100,7 @@ slowPathLabel(_local_tee)
 ##################################
 
 # time to use the safe for call registers!
-# sc0 = mINT shadow stack pointer (tracks the Wasm stack)
+# sc1 = mINT shadow stack pointer (tracks the Wasm stack)
 
 const mintSS = sc1
 
@@ -5072,7 +5117,7 @@ end
 macro mintArgDispatch()
     loadb [MC], sc0
     addq 1, MC
-    bilt sc0, 20, .safe
+    bilt sc0, (constexpr IPInt::CallArgumentBytecode::NumOpcodes), .safe
     break
 .safe:
     lshiftq 6, sc0
@@ -5092,7 +5137,7 @@ end
 macro mintRetDispatch()
     loadb [MC], sc0
     addq 1, MC
-    bilt sc0, 18, .safe
+    bilt sc0, (constexpr IPInt::CallResultBytecode::NumOpcodes), .safe
     break
 .safe:
     lshiftq 6, sc0
@@ -5123,7 +5168,10 @@ end
     # sc1 = target callee => wasmInstance to free up sc1
     # sc2 = target entrypoint
     # sc3 = target instance
-    move sc1, wasmInstance
+
+    const savedCallee = wasmInstance
+
+    move sc1, savedCallee
     move r0, targetEntrypoint
     move r1, targetInstance
 
@@ -5131,6 +5179,45 @@ end
 
     # MC is where it needs to be, go!
     mintArgDispatch()
+
+.ipint_tail_call_common:
+    # Free up r0 to be used as argument register
+
+    # sc1 = target callee => wasmInstance to free up sc1
+    move sc1, wasmInstance
+
+    # keep the top of IPInt stack in sc1 as shadow stack
+    move sp, sc1
+
+    # store entrypoint and target instance on the stack for now
+    push r0, r1
+
+    # determine new stack pointer
+    move cfr, sc2
+    addp CallFrameHeaderSize + 8, sc2
+    addp t2, sc2
+
+    # save the MC and PC
+
+    if ARM64 or ARM64E
+        loadpairq -0x10[cfr], t0, t1
+    elsif X86_64 or RISCV64
+        loadp -0x8[cfr], t0
+        loadp -0x10[cfr], t1
+    end
+
+    push t0, t1
+
+    # store the return address and CFR on the stack so we don't lose it
+    loadp ReturnPC[cfr], t0
+    loadp [cfr], t1
+
+    push t0, t1
+
+    mintArgDispatch()
+
+    # tail calls reuse most of mINT's argument logic, but exit into a different tail call stub.
+    # we use sc2 to keep the new stack frame
 
 mintAlign(_a0)
 _mint_begin:
@@ -5223,13 +5310,35 @@ mintAlign(_stackeight)
     pushQuad(PC)
     mintArgDispatch()
 
-mintAlign(_gap)
-    subq 16, sp
+mintAlign(_tail_stackzero)
+    mintPop(PC)
+    storeq PC, [sc2]
     mintArgDispatch()
+
+mintAlign(_tail_stackeight)
+    mintPop(PC)
+    subp 16, sc2
+    storeq PC, 8[sc2]
+    mintArgDispatch()
+
+mintAlign(_gap)
+    subp 16, sp
+    mintArgDispatch()
+
+mintAlign(_tail_gap)
+    subp 16, sc2
+    mintArgDispatch()
+
+mintAlign(_tail_call)
+    jmp .ipint_perform_tail_call
 
 mintAlign(_call)
     # Set up the rest of the stack frame
     subp FirstArgumentOffset - CallerFrameAndPCSize, sp
+
+    # Save stack pointer, if we tail call someone who changes the frame above's stack argument size
+    move sp, sc0
+    storep sc0, ArgumentCountIncludingThis[cfr]
 
     # Set up callee slot
     storeq wasmInstance, Callee - CallerFrameAndPCSize[sp]
@@ -5242,7 +5351,7 @@ mintAlign(_call)
     ipintReloadMemory()
     pop t3, t2
 
-    move sc2, ws0
+    move targetEntrypoint, ws0
 
     # Make the call
 if ARM64E
@@ -5259,6 +5368,8 @@ _wasm_ipint_call_return_location:
 _wasm_ipint_call_return_location_wide16:
 _wasm_ipint_call_return_location_wide32:
     # Restore the stack pointer
+    loadp ArgumentCountIncludingThis[cfr], sc0
+    move sc0, sp
     addp FirstArgumentOffset - CallerFrameAndPCSize, sp
     loadh [MC], sc0  # number of stack args
     leap [sp, sc0, 8], sp
@@ -5372,6 +5483,53 @@ mintAlign(_end)
     # Restore memory
     ipintReloadMemory()
     nextIPIntInstruction()
+
+.ipint_perform_tail_call:
+    # re-setup the call frame, and load our return address in
+    subp CallFrameHeaderSize + 8, sc2
+if X86_64
+    pop sc1, sc0
+    storep sc0, ReturnPC[sp]
+elsif ARM64 or ARM64E or ARMv7 or RISCV64
+    pop sc1, lr
+end
+
+    pop PC, MC
+
+    # take off the last two values we stored, and move SP down to make it look like a fresh frame
+    pop targetInstance, ws0
+    addp CallerFrameAndPCSize, sc2, sp
+
+if ARM64E
+    addp CallerFrameAndPCSize, cfr, ws2
+end
+    move sc1, cfr
+
+    # save new Callee
+    storeq savedCallee, Callee - CallerFrameAndPCSize[sp]
+
+    # swap instances
+    move targetInstance, wasmInstance
+
+    # set up memory
+    push t2, t3
+    ipintReloadMemory()
+    pop t3, t2
+
+    # go!
+if ARM64E
+    leap _g_config, ws1
+    jmp JSCConfigGateMapOffset + (constexpr Gate::wasmIPIntTailCallWasmEntryPtrTag) * PtrSize[ws1], NativeToJITGatePtrTag # WasmEntryPtrTag
+end
+
+_wasm_trampoline_wasm_ipint_tail_call:
+_wasm_trampoline_wasm_ipint_tail_call_wide16:
+_wasm_trampoline_wasm_ipint_tail_call_wide32:
+    jmp ws0, WasmEntryPtrTag
+
+###########################################
+# uINT: function return value interpreter #
+###########################################
 
 uintAlign(_r0)
 _uint_begin:

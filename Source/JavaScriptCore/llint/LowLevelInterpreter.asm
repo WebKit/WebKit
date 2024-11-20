@@ -2932,6 +2932,9 @@ _wasm_trampoline_wasm_tail_call_ref_wide32:
 _wasm_trampoline_wasm_ipint_call:
 _wasm_trampoline_wasm_ipint_call_wide16:
 _wasm_trampoline_wasm_ipint_call_wide32:
+_wasm_trampoline_wasm_ipint_tail_call:
+_wasm_trampoline_wasm_ipint_tail_call_wide16:
+_wasm_trampoline_wasm_ipint_tail_call_wide32:
 
 _wasm_ipint_call_return_location:
 _wasm_ipint_call_return_location_wide16:

@@ -208,8 +208,8 @@ unimplementedInstruction(_br_table)
 unimplementedInstruction(_return)
 unimplementedInstruction(_call)
 unimplementedInstruction(_call_indirect)
-reservedOpcode(0x12)
-reservedOpcode(0x13)
+unimplementedInstruction(_return_call)
+unimplementedInstruction(_return_call_indirect)
 reservedOpcode(0x14)
 reservedOpcode(0x15)
 reservedOpcode(0x16)
@@ -1011,7 +1011,19 @@ mintAlign(_stackzero)
 mintAlign(_stackeight)
     break
 
+mintAlign(_tail_stackzero)
+    break
+
+mintAlign(_tail_stackeight)
+    break
+
 mintAlign(_gap)
+    break
+
+mintAlign(_tail_gap)
+    break
+
+mintAlign(_tail_call)
     break
 
 mintAlign(_call)
@@ -1201,4 +1213,9 @@ _wasm_trampoline_wasm_ipint_call_wide32:
 _wasm_ipint_call_return_location:
 _wasm_ipint_call_return_location_wide16:
 _wasm_ipint_call_return_location_wide32:
+    break
+
+_wasm_trampoline_wasm_ipint_tail_call:
+_wasm_trampoline_wasm_ipint_tail_call_wide16:
+_wasm_trampoline_wasm_ipint_tail_call_wide32:
     break

@@ -146,17 +146,17 @@ void FunctionIPIntMetadataGenerator::addReturnData(const FunctionSignature& sig)
 
         if (loc.isGPR()) {
             ASSERT_UNUSED(NUM_UINT_GPRS, loc.jsr().payloadGPR() < NUM_UINT_GPRS);
-            m_uINTBytecode.append(loc.jsr().payloadGPR());
+            m_uINTBytecode.append(static_cast<uint8_t>(IPInt::UIntBytecode::RetGPR) + loc.jsr().payloadGPR());
         } else if (loc.isFPR()) {
             ASSERT_UNUSED(NUM_UINT_FPRS, fprToIndex(loc.fpr()) < NUM_UINT_FPRS);
-            m_uINTBytecode.append(0x08 + fprToIndex(loc.fpr()));
+            m_uINTBytecode.append(static_cast<uint8_t>(IPInt::UIntBytecode::RetFPR) + fprToIndex(loc.fpr()));
         } else if (loc.isStack()) {
             m_highestReturnStackOffset = loc.offsetFromFP();
-            m_uINTBytecode.append(0x10);
+            m_uINTBytecode.append(static_cast<uint8_t>(IPInt::UIntBytecode::Stack));
         }
     }
     m_uINTBytecode.reverse();
-    m_uINTBytecode.append(0x11);
+    m_uINTBytecode.append(static_cast<uint8_t>(IPInt::UIntBytecode::End));
 }
 
 } }

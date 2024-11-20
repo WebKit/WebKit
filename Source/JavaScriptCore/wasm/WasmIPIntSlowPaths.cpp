@@ -525,12 +525,12 @@ static inline UGPRPair doWasmCall(JSWebAssemblyInstance* instance, Wasm::Functio
     WASM_CALL_RETURN(instance, codePtr);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(call, unsigned functionIndex, EncodedJSValue* callee)
+WASM_IPINT_EXTERN_CPP_DECL(prepare_call, unsigned functionIndex, EncodedJSValue* callee)
 {
     return doWasmCall(instance, Wasm::FunctionSpaceIndex(functionIndex), callee);
 }
 
-WASM_IPINT_EXTERN_CPP_DECL(call_indirect, CallFrame* callFrame, Wasm::FunctionSpaceIndex* functionIndex, CallIndirectMetadata* call)
+WASM_IPINT_EXTERN_CPP_DECL(prepare_call_indirect, CallFrame* callFrame, Wasm::FunctionSpaceIndex* functionIndex, CallIndirectMetadata* call)
 {
     unsigned tableIndex = call->tableIndex;
     unsigned typeIndex = call->typeIndex;
