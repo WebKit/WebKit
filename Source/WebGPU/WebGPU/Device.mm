@@ -990,6 +990,14 @@ void Device::pauseErrorReporting(bool pauseReporting)
     m_supressAllErrors = pauseReporting;
 }
 
+id<MTLSharedEvent> Device::resolveTimestampsSharedEvent()
+{
+    if (!m_resolveTimestampsSharedEvent)
+        m_resolveTimestampsSharedEvent = [m_device newSharedEvent];
+
+    return m_resolveTimestampsSharedEvent;
+}
+
 } // namespace WebGPU
 
 #pragma mark WGPU Stubs

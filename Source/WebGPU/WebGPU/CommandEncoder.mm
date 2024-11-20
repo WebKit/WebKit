@@ -2115,13 +2115,20 @@ void CommandEncoder::resolveQuerySet(const QuerySet& querySet, uint32_t firstQue
     if (querySet.isDestroyed() || destination.isDestroyed() || !queryCount)
         return;
 
-    ensureBlitCommandEncoder();
     switch (querySet.type()) {
     case WGPUQueryType_Occlusion: {
+        ensureBlitCommandEncoder();
         [m_blitCommandEncoder copyFromBuffer:querySet.visibilityBuffer() sourceOffset:sizeof(uint64_t) * firstQuery toBuffer:destination.buffer() destinationOffset:destinationOffset size:sizeof(uint64_t) * queryCount];
         break;
     }
     case WGPUQueryType_Timestamp: {
+        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=283385 - https://bugs.webkit.org/show_bug.cgi?id=283088 should be reverted when the blocking issue is resolved
+        finalizeBlitCommandEncoder();
+        id<MTLSharedEvent> workaround = m_device->resolveTimestampsSharedEvent();
+        // The signal value does not matter, the event alone prevents reordering
+        [m_commandBuffer encodeSignalEvent:workaround value:1];
+        [m_commandBuffer encodeWaitForEvent:workaround value:1];
+        ensureBlitCommandEncoder();
         [m_blitCommandEncoder resolveCounters:querySet.counterSampleBuffer() inRange:NSMakeRange(0, querySet.count()) destinationBuffer:destination.buffer() destinationOffset:destinationOffset];
         break;
     }

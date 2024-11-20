@@ -196,6 +196,7 @@ public:
     bool enableEncoderTimestamps() const;
     id<MTLCounterSampleBuffer> timestampsBuffer(id<MTLCommandBuffer>, size_t);
     void resolveTimestampsForBuffer(id<MTLCommandBuffer>);
+    id<MTLSharedEvent> resolveTimestampsSharedEvent();
 
 private:
     Device(id<MTLDevice>, id<MTLCommandQueue> defaultQueue, HardwareCapabilities&&, Adapter&);
@@ -270,6 +271,7 @@ private:
 #endif
     NSMapTable<id<MTLCommandBuffer>, id<MTLCounterSampleBuffer>>* m_sampleCounterBuffers;
     NSMapTable<id<MTLCommandBuffer>, NSMutableArray<id<MTLBuffer>>*>* m_resolvedSampleCounterBuffers;
+    id<MTLSharedEvent> m_resolveTimestampsSharedEvent { nil };
     bool m_supressAllErrors { false };
 } SWIFT_SHARED_REFERENCE(retainDevice, releaseDevice);
 
