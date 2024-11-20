@@ -452,6 +452,15 @@ void VideoMediaSampleRenderer::requestMediaDataWhenReady(Function<void()>&& func
 void VideoMediaSampleRenderer::resetReadyForMoreSample()
 {
     assertIsMainThread();
+
+    if (m_decompressionSession) {
+        callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }] {
+            if (RefPtr protectedThis = weakThis.get())
+                protectedThis->maybeBecomeReadyForMoreMediaData();
+        });
+        return;
+    }
+
     ThreadSafeWeakPtr weakThis { *this };
     [renderer() requestMediaDataWhenReadyOnQueue:dispatch_get_main_queue() usingBlock:^{
         if (RefPtr protectedThis = weakThis.get())
