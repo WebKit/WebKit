@@ -242,6 +242,11 @@ void ThreadedCompositor::updateViewport()
     m_compositingRunLoop->scheduleUpdate();
 }
 
+const WebCore::Damage& ThreadedCompositor::addSurfaceDamage(const WebCore::Damage& damage)
+{
+    return m_surface->addDamage(damage);
+}
+
 void ThreadedCompositor::forceRepaint()
 {
     // FIXME: Implement this once it's possible to do these forced updates
@@ -317,7 +322,7 @@ void ThreadedCompositor::renderLayerTree()
     WTFEndSignpost(this, ApplyStateChanges);
 
     WTFBeginSignpost(this, PaintToGLContext);
-    m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_flipY);
+    m_scene->paintToCurrentGLContext(viewportTransform, FloatRect { FloatPoint { }, viewportSize }, m_damagePropagation == DamagePropagation::Unified, m_flipY);
     WTFEndSignpost(this, PaintToGLContext);
 
     WTFEmitSignpost(this, DidRenderFrame, "compositionResponseID %i", compositionRequestID);

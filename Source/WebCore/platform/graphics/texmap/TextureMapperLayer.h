@@ -119,6 +119,7 @@ public:
     WEBCORE_EXPORT bool descendantsOrSelfHaveRunningAnimations() const;
 
     WEBCORE_EXPORT void paint(TextureMapper&);
+    void collectDamage(TextureMapper&);
 
     void addChild(TextureMapperLayer*);
 
@@ -172,6 +173,7 @@ private:
 
     void paintRecursive(TextureMapperPaintOptions&);
     void paintFlattened(TextureMapperPaintOptions&);
+    void collectDamageRecursive(TextureMapperPaintOptions&);
     void paintWith3DRenderingContext(TextureMapperPaintOptions&);
     void paintSelfChildrenReplicaFilterAndMask(TextureMapperPaintOptions&);
     void paintUsingOverlapRegions(TextureMapperPaintOptions&);
@@ -180,6 +182,7 @@ private:
     void paintSelfAndChildrenWithIntermediateSurface(TextureMapperPaintOptions&, const IntRect&);
     void paintSelfChildrenFilterAndMask(TextureMapperPaintOptions&);
     void paintSelf(TextureMapperPaintOptions&);
+    void collectDamageSelf(TextureMapperPaintOptions&);
     void paintSelfAndChildren(TextureMapperPaintOptions&);
     void paintSelfAndChildrenWithReplica(TextureMapperPaintOptions&);
     void paintBackdrop(TextureMapperPaintOptions&);

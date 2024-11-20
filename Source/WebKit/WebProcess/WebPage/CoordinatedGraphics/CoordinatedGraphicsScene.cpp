@@ -30,6 +30,7 @@
 #include <WebCore/NicosiaScene.h>
 #include <WebCore/TextureMapperLayer.h>
 #include <wtf/Atomics.h>
+#include <wtf/SystemTracing.h>
 
 namespace WebKit {
 using namespace WebCore;
@@ -53,7 +54,7 @@ void CoordinatedGraphicsScene::applyStateChanges(const Vector<RefPtr<Nicosia::Sc
         commitSceneState(scene);
 }
 
-void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, const FloatRect& clipRect, bool flipY)
+void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatrix& matrix, const FloatRect& clipRect, bool unifyDamagedRegions, bool flipY)
 {
     updateSceneState();
 
@@ -67,13 +68,47 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
         currentRootLayer->setTransform(matrix);
 
     bool sceneHasRunningAnimations = currentRootLayer->applyAnimationsRecursively(MonotonicTime::now());
-    m_textureMapper->beginPainting(flipY ? TextureMapper::FlipY::Yes : TextureMapper::FlipY::No);
-    m_textureMapper->beginClip(TransformationMatrix(), FloatRoundedRect(clipRect));
 
+    FloatRoundedRect actualClipRect(clipRect);
+    if (m_propagateDamage != Damage::ShouldPropagate::No) {
+        WTFBeginSignpost(this, CollectDamage);
+        currentRootLayer->collectDamage(*m_textureMapper);
+        WTFEndSignpost(this, CollectDamage);
+
+        WebCore::Damage boundsDamage;
+        const auto& frameDamage = ([this, &boundsDamage, &unifyDamagedRegions]() -> const WebCore::Damage& {
+            const auto& damage = lastDamage();
+            if (m_propagateDamage != Damage::ShouldPropagate::No && !damage.isInvalid()) {
+                if (unifyDamagedRegions) {
+                    boundsDamage.add(damage.bounds());
+                    return boundsDamage;
+                }
+                return damage;
+            }
+            return WebCore::Damage::invalid();
+        })();
+        const Damage& damageSinceLastSurfaceUse = m_client->addSurfaceDamage(frameDamage);
+        if (!damageSinceLastSurfaceUse.isInvalid())
+            actualClipRect = static_cast<FloatRoundedRect>(damageSinceLastSurfaceUse.bounds());
+    }
+
+    WTFBeginSignpost(this, PaintTextureMapperLayerTree);
+    m_textureMapper->beginPainting(flipY ? TextureMapper::FlipY::Yes : TextureMapper::FlipY::No);
+    m_textureMapper->beginClip(TransformationMatrix(), actualClipRect);
     currentRootLayer->paint(*m_textureMapper);
-    m_fpsCounter.updateFPSAndDisplay(*m_textureMapper, clipRect.location(), matrix);
+    if (m_propagateDamage == Damage::ShouldPropagate::No)
+        m_fpsCounter.updateFPSAndDisplay(*m_textureMapper, clipRect.location(), matrix);
     m_textureMapper->endClip();
     m_textureMapper->endPainting();
+    WTFEndSignpost(this, PaintTextureMapperLayerTree);
+
+    if (m_propagateDamage != Damage::ShouldPropagate::No && m_fpsCounter.isActive()) {
+        m_textureMapper->beginPainting(flipY ? TextureMapper::FlipY::Yes : TextureMapper::FlipY::No);
+        m_textureMapper->beginClip(TransformationMatrix(), FloatRoundedRect(clipRect));
+        m_fpsCounter.updateFPSAndDisplay(*m_textureMapper, clipRect.location(), matrix);
+        m_textureMapper->endClip();
+        m_textureMapper->endPainting();
+    }
 
     if (sceneHasRunningAnimations)
         updateViewport();

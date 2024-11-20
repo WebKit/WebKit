@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/Damage.h>
 #include <WebCore/IntSize.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -60,6 +61,8 @@ public:
     virtual void finalize() { }
     virtual void willRenderFrame() { }
     virtual void didRenderFrame(WebCore::Region&&) { }
+
+    virtual const WebCore::Damage& addDamage(const WebCore::Damage&) { return WebCore::Damage::invalid(); };
 
     virtual void didCreateCompositingRunLoop(WTF::RunLoop&) { }
     virtual void willDestroyCompositingRunLoop() { }
