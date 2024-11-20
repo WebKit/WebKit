@@ -1533,6 +1533,40 @@ TEST(WKWebExtensionAPILocalization, i18nSpanishSpain)
     [manager loadAndRun];
 }
 
+TEST(WKWebExtensionAPILocalization, i18nSwedishDefaultToEnglish)
+{
+    // Temporarily set the current locale to Swedish (Sweden) for the test.
+    [NSUserDefaults.standardUserDefaults setVolatileDomain:@{ @"AppleLanguages": @[ @"sv-SE" ] } forName:NSArgumentDomain];
+
+    auto *backgroundScript = Util::constructScript(@[
+        @"browser.test.assertEq(browser.i18n.getMessage('extension_name'), 'Default English Name', 'Should fall back to the default English name.')",
+        @"browser.test.assertEq(browser.i18n.getMessage('default_description'), 'Default English Description', 'Should fall back to the default English description.')",
+
+        @"browser.test.notifyPass()",
+    ]);
+
+    auto *defaultMessages = @{
+        @"extension_name": @{
+            @"message": @"Default English Name",
+            @"description": @"The name of the extension in English."
+        },
+        @"default_description": @{
+            @"message": @"Default English Description",
+            @"description": @"A default description in English."
+        }
+    };
+
+    auto *resources = @{
+        @"background.js": backgroundScript,
+        @"_locales/en/messages.json": defaultMessages,
+    };
+
+    auto extension = adoptNS([[WKWebExtension alloc] _initWithManifestDictionary:localizationManifest resources:resources]);
+    auto manager = adoptNS([[TestWebExtensionManager alloc] initForExtension:extension.get()]);
+
+    [manager loadAndRun];
+}
+
 } // namespace TestWebKitAPI
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

@@ -42,7 +42,7 @@ size_t indexOfBestMatchingLanguageInList(const String& language, const Vector<St
     auto matchedLanguages = retainPtr([NSLocale matchedLanguagesFromAvailableLanguages:createNSArray(languageList).get() forPreferredLanguages:@[ static_cast<NSString *>(language) ]]);
     if (![matchedLanguages count]) {
         exactMatch = false;
-        return languageList.size();
+        return notFound;
     }
 
     String firstMatchedLanguage = [matchedLanguages firstObject];
