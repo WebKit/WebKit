@@ -563,10 +563,8 @@ static std::optional<CSSUnresolvedColorMix::Component> consumeColorMixComponent(
 
 static bool hasNonCalculatedZeroPercentage(const CSSUnresolvedColorMix::Component& mixComponent)
 {
-    if (auto percentage = mixComponent.percentage) {
-        if (auto* rawValue = percentage->raw())
-            return rawValue->value == 0.0;
-    }
+    if (auto percentage = mixComponent.percentage)
+        return percentage->isKnownZero();
     return false;
 }
 

@@ -31,15 +31,15 @@
 
 namespace WebCore {
 
-class CSSFunctionValue;
 class DOMMatrixReadOnly;
 template<typename> class ExceptionOr;
 
-class CSSMatrixComponent : public CSSTransformComponent {
+class CSSMatrixComponent final : public CSSTransformComponent {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSMatrixComponent);
 public:
     static Ref<CSSTransformComponent> create(Ref<DOMMatrixReadOnly>&&, CSSMatrixComponentOptions&& = { });
-    static ExceptionOr<Ref<CSSTransformComponent>> create(CSSFunctionValue&);
+    static ExceptionOr<Ref<CSSTransformComponent>> create(CSS::Matrix);
+    static ExceptionOr<Ref<CSSTransformComponent>> create(CSS::Matrix3D);
 
     DOMMatrix& matrix();
     void setMatrix(Ref<DOMMatrix>&&);
@@ -49,7 +49,7 @@ public:
     
     CSSTransformType getType() const final { return CSSTransformType::MatrixComponent; }
 
-    RefPtr<CSSValue> toCSSValue() const final;
+    std::optional<CSS::TransformFunction> toCSS() const final;
 
 private:
     CSSMatrixComponent(Ref<DOMMatrixReadOnly>&&, Is2D);

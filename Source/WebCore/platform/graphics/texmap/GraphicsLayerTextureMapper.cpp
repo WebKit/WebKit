@@ -24,7 +24,6 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayerFactory.h"
 #include "ImageBuffer.h"
-#include "TransformOperation.h"
 
 #if !USE(COORDINATED_GRAPHICS)
 
@@ -603,41 +602,55 @@ bool GraphicsLayerTextureMapper::filtersCanBeComposited(const FilterOperations& 
     return !filters.hasReferenceFilter();
 }
 
-bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList, const FloatSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)
+bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList<FloatAnimationValue>& valueList, const Animation* anim, const String& keyframesName, Seconds timeOffset)
 {
     ASSERT(!keyframesName.isEmpty());
 
-    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || (valueList.property() != AnimatedProperty::Transform && valueList.property() != AnimatedProperty::Opacity))
+    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || valueList.property() != GraphicsLayerAnimationProperty::Opacity)
         return false;
 
-    if (valueList.property() == AnimatedProperty::Filter) {
-        int listIndex = validateFilterOperations(valueList);
-        if (listIndex < 0)
-            return false;
-
-        const auto& filters = static_cast<const FilterAnimationValue&>(valueList.at(listIndex)).value();
-        if (!filtersCanBeComposited(filters))
-            return false;
-    }
-
     const MonotonicTime currentTime = MonotonicTime::now();
-    m_animations.add(TextureMapperAnimation(keyframesName, valueList, boxSize, *anim, currentTime - Seconds(timeOffset), 0_s, TextureMapperAnimation::State::Playing));
+    m_animations.add(TextureMapperAnimation(keyframesName, valueList, *anim, currentTime - timeOffset, 0_s, TextureMapperAnimationBase::State::Playing));
     // m_animationStartTime is the time of the first real frame of animation, now or delayed by a negative offset.
-    if (Seconds(timeOffset) > 0_s)
+    if (timeOffset > 0_s)
         m_animationStartTime = currentTime;
     else
-        m_animationStartTime = currentTime - Seconds(timeOffset);
+        m_animationStartTime = currentTime - timeOffset;
     notifyChange(AnimationChange);
     notifyChange(AnimationStarted);
     return true;
 }
 
-void GraphicsLayerTextureMapper::pauseAnimation(const String& animationName, double timeOffset)
+bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList<FilterAnimationValue>&, const Animation*, const String&, Seconds)
 {
-    m_animations.pause(animationName, Seconds(timeOffset));
+    return false;
 }
 
-void GraphicsLayerTextureMapper::removeAnimation(const String& animationName, std::optional<AnimatedProperty>)
+bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList<TransformAnimationValue>& valueList, const Animation* anim, const String& keyframesName, Seconds timeOffset)
+{
+    ASSERT(!keyframesName.isEmpty());
+
+    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2 || valueList.property() != GraphicsLayerAnimationProperty::Transform)
+        return false;
+
+    const MonotonicTime currentTime = MonotonicTime::now();
+    m_animations.add(TextureMapperAnimation(keyframesName, valueList, *anim, currentTime - timeOffset, 0_s, TextureMapperAnimationBase::State::Playing));
+    // m_animationStartTime is the time of the first real frame of animation, now or delayed by a negative offset.
+    if (timeOffset > 0_s)
+        m_animationStartTime = currentTime;
+    else
+        m_animationStartTime = currentTime - timeOffset;
+    notifyChange(AnimationChange);
+    notifyChange(AnimationStarted);
+    return true;
+}
+
+void GraphicsLayerTextureMapper::pauseAnimation(const String& animationName, Seconds timeOffset)
+{
+    m_animations.pause(animationName, timeOffset);
+}
+
+void GraphicsLayerTextureMapper::removeAnimation(const String& animationName, std::optional<GraphicsLayerAnimationProperty>)
 {
     m_animations.remove(animationName);
 }

@@ -85,7 +85,6 @@
 #include "StylePropertyShorthand.h"
 #include "StylePropertyShorthandFunctions.h"
 #include "TimingFunction.h"
-#include "TransformOperationsBuilder.h"
 #include <memory>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -535,7 +534,9 @@ RefPtr<CSSCustomPropertyValue> CSSPropertyParser::parseTypedCustomPropertyValue(
             return { serializeString(downcast<CSSPrimitiveValue>(value).stringValue()) };
         case CSSCustomPropertySyntax::Type::TransformFunction:
         case CSSCustomPropertySyntax::Type::TransformList:
-            return { CSSCustomPropertyValue::TransformSyntaxValue { Style::createTransformOperation(value, builderState.cssToLengthConversionData()) } };
+            return { CSSCustomPropertyValue::TransformSyntaxValue {
+                Style::toStyle(downcast<CSSTransformFunctionValue>(value).transformFunction(), builderState.cssToLengthConversionData())
+            } };
         case CSSCustomPropertySyntax::Type::Unknown:
             return { };
         }

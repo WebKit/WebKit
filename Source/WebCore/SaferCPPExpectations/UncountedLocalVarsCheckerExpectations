@@ -638,7 +638,6 @@ css/CSSStyleRule.cpp
 css/CSSStyleSheet.cpp
 css/CSSStyleSheetObservableArray.cpp
 css/CSSToStyleMap.cpp
-css/CSSValue.cpp
 css/CSSValueList.cpp
 css/CSSValueList.h
 css/CSSVariableReferenceValue.cpp
@@ -673,13 +672,8 @@ css/typedom/InlineStylePropertyMap.cpp
 css/typedom/MainThreadStylePropertyMapReadOnly.cpp
 css/typedom/StylePropertyMap.cpp
 css/typedom/numeric/CSSMathValue.h
-css/typedom/transform/CSSMatrixComponent.cpp
-css/typedom/transform/CSSPerspective.cpp
-css/typedom/transform/CSSRotate.cpp
 css/typedom/transform/CSSScale.cpp
 css/typedom/transform/CSSSkew.cpp
-css/typedom/transform/CSSTransformValue.cpp
-css/typedom/transform/CSSTranslate.cpp
 cssjit/SelectorCompiler.cpp
 dom/BroadcastChannel.cpp
 dom/CollectionIndexCache.cpp
@@ -1100,7 +1094,6 @@ platform/graphics/mac/controls/ImageControlsButtonMac.mm
 platform/graphics/mac/controls/MeterMac.mm
 platform/graphics/mac/controls/ProgressBarMac.mm
 platform/graphics/mac/controls/SliderTrackMac.mm
-platform/graphics/transforms/RotateTransformOperation.cpp
 platform/mac/ScrollAnimatorMac.mm
 platform/mac/ScrollbarsControllerMac.mm
 platform/mac/WidgetMac.mm
@@ -1237,7 +1230,6 @@ style/StyleSharingResolver.cpp
 style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
 style/Styleable.cpp
-style/TransformOperationsBuilder.cpp
 style/UserAgentStyle.cpp
 svg/SVGAnimateMotionElement.cpp
 svg/SVGClipPathElement.cpp

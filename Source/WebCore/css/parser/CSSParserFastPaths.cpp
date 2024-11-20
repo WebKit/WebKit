@@ -40,7 +40,7 @@
 #include "CSSPropertyParser.h"
 #include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParsing.h"
-#include "CSSTransformListValue.h"
+#include "CSSTransformPropertyValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePool.h"
 #include "ColorConversion.h"
@@ -808,75 +808,93 @@ static RefPtr<CSSValue> parseKeywordValue(CSSPropertyID propertyId, StringView s
     return nullptr;
 }
 
-template <typename CharType>
-static bool parseTransformTranslateArguments(CharType*& pos, CharType* end, unsigned expectedCount, CSSValueID transformType, CSSValueListBuilder& arguments)
+template<typename CharType> static std::optional<CSS::NumberRaw<>> parseTransformNumberArgument(CharType*& pos, CharType* end, char delimiterCharacter)
 {
-    while (expectedCount) {
-        size_t delimiter = find({ pos, end }, expectedCount == 1 ? ')' : ',');
-        if (delimiter == notFound)
-            return false;
-        unsigned argumentLength = static_cast<unsigned>(delimiter);
-        CSSUnitType unit = CSSUnitType::CSS_NUMBER;
-        double number;
-        if (!parseSimpleLength(std::span<const CharType> { pos, argumentLength }, unit, number))
-            return false;
-        if (!number && unit == CSSUnitType::CSS_NUMBER)
-            unit = CSSUnitType::CSS_PX;
-        if (unit == CSSUnitType::CSS_NUMBER || (unit == CSSUnitType::CSS_PERCENTAGE && (transformType == CSSValueTranslateZ || (transformType == CSSValueTranslate3d && expectedCount == 1))))
-            return false;
-        arguments.append(CSSPrimitiveValue::create(number, unit));
-        pos += argumentLength + 1;
-        --expectedCount;
-    }
-    return true;
+    size_t delimiter = find({ pos, end }, delimiterCharacter);
+    if (delimiter == notFound)
+        return { };
+    unsigned argumentLength = static_cast<unsigned>(delimiter);
+    auto number = parseCSSNumber(std::span<const CharType> { pos, argumentLength });
+    if (!number)
+        return { };
+    pos += argumentLength + 1;
+    return CSS::NumberRaw<> { *number };
 }
 
-template <typename CharType>
-static RefPtr<CSSValue> parseTransformAngleArgument(CharType*& pos, CharType* end)
+template<typename CharType> static std::optional<CSS::LengthPercentageRaw<>> parseTransformLengthPercentageArgument(CharType*& pos, CharType* end, char delimiterCharacter)
 {
-    size_t delimiter = find({ pos, end }, ')');
+    size_t delimiter = find({ pos, end }, delimiterCharacter);
     if (delimiter == notFound)
-        return nullptr;
+        return { };
+    unsigned argumentLength = static_cast<unsigned>(delimiter);
+    CSSUnitType unit = CSSUnitType::CSS_NUMBER;
+    double number;
+    if (!parseSimpleLength(std::span<const CharType> { pos, argumentLength }, unit, number))
+        return { };
+    if (!number && unit == CSSUnitType::CSS_NUMBER)
+        unit = CSSUnitType::CSS_PX;
+    if (unit == CSSUnitType::CSS_NUMBER)
+        return { };
+
+    pos += argumentLength + 1;
+    return CSS::LengthPercentageRaw<> { unit, number };
+}
+
+template<typename CharType> static std::optional<CSS::LengthRaw<>> parseTransformLengthArgument(CharType*& pos, CharType* end, char delimiterCharacter)
+{
+    size_t delimiter = find({ pos, end }, delimiterCharacter);
+    if (delimiter == notFound)
+        return { };
+    unsigned argumentLength = static_cast<unsigned>(delimiter);
+    CSSUnitType unit = CSSUnitType::CSS_NUMBER;
+    double number;
+    if (!parseSimpleLength(std::span<const CharType> { pos, argumentLength }, unit, number))
+        return { };
+    if (!number && unit == CSSUnitType::CSS_NUMBER)
+        unit = CSSUnitType::CSS_PX;
+    if (unit == CSSUnitType::CSS_NUMBER || unit == CSSUnitType::CSS_PERCENTAGE)
+        return { };
+
+    pos += argumentLength + 1;
+    return CSS::LengthRaw<> { unit, number };
+}
+
+template<typename CharType> static std::optional<CSS::AngleRaw<>> parseTransformAngleArgument(CharType*& pos, CharType* end, char delimiterCharacter)
+{
+    size_t delimiter = find({ pos, end }, delimiterCharacter);
+    if (delimiter == notFound)
+        return { };
 
     unsigned argumentLength = static_cast<unsigned>(delimiter);
     CSSUnitType unit = CSSUnitType::CSS_NUMBER;
     double number;
     if (!parseSimpleAngle(std::span<const CharType> { pos, argumentLength }, RequireUnits::Yes, unit, number))
-        return nullptr;
-
+        return { };
     if (!number && unit == CSSUnitType::CSS_NUMBER)
         unit = CSSUnitType::CSS_DEG;
 
     pos += argumentLength + 1;
-
-    return CSSPrimitiveValue::create(number, unit);
+    return CSS::AngleRaw<> { unit, number };
 }
 
-template <typename CharType>
-static bool parseTransformNumberArguments(CharType*& pos, CharType* end, unsigned expectedCount, CSSValueListBuilder& arguments)
+template<unsigned Count, typename CharType> static std::optional<std::array<std::optional<CSS::NumberRaw<>>, Count>> parseTransformNumberArguments(CharType*& pos, CharType* end)
 {
-    while (expectedCount) {
-        size_t delimiter = find({ pos, end }, expectedCount == 1 ? ')' : ',');
-        if (delimiter == notFound)
-            return false;
-        unsigned argumentLength = static_cast<unsigned>(delimiter);
-        auto number = parseCSSNumber(std::span<const CharType> { pos, argumentLength });
-        if (!number)
-            return false;
-        arguments.append(CSSPrimitiveValue::create(*number, CSSUnitType::CSS_NUMBER));
-        pos += argumentLength + 1;
-        --expectedCount;
+    std::array<std::optional<CSS::NumberRaw<>>, Count> arguments;
+    for (unsigned i = 0; i < Count; ++i) {
+        arguments[i] = parseTransformNumberArgument(pos, end, i == Count ? ')' : ',');
+        if (!arguments[i])
+            return { };
     }
-    return true;
+    return arguments;
 }
 
 static constexpr int kShortestValidTransformStringLength = 9; // "rotate(0)"
 
-template <typename CharType>
-static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharType* end)
+template<typename CharType>
+static bool parseSimpleTransformValue(CharType*& pos, CharType* end, CSS::TransformList::List::VariantList& list)
 {
     if (end - pos < kShortestValidTransformStringLength)
-        return nullptr;
+        return false;
 
     bool isTranslate = toASCIILower(pos[0]) == 't'
         && toASCIILower(pos[1]) == 'r'
@@ -889,32 +907,58 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
         && toASCIILower(pos[8]) == 'e';
 
     if (isTranslate) {
-        CSSValueID transformType;
-        unsigned expectedArgumentCount = 1;
-        unsigned argumentStart = 11;
         CharType c9 = toASCIILower(pos[9]);
         if (c9 == 'x' && pos[10] == '(') {
-            transformType = CSSValueTranslateX;
-        } else if (c9 == 'y' && pos[10] == '(') {
-            transformType = CSSValueTranslateY;
-        } else if (c9 == 'z' && pos[10] == '(') {
-            transformType = CSSValueTranslateZ;
-        } else if (c9 == '(') {
-            transformType = CSSValueTranslate;
-            expectedArgumentCount = 2;
-            argumentStart = 10;
-        } else if (c9 == '3' && toASCIILower(pos[10]) == 'd' && pos[11] == '(') {
-            transformType = CSSValueTranslate3d;
-            expectedArgumentCount = 3;
-            argumentStart = 12;
-        } else
-            return nullptr;
+            pos += 11;
+            auto parameter = parseTransformLengthPercentageArgument(pos, end, ')');
+            if (!parameter)
+                return false;
+            list.append(CSS::TranslateXFunction { { *parameter } });
+            return true;
+        }
+        if (c9 == 'y' && pos[10] == '(') {
+            pos += 11;
+            auto parameter = parseTransformLengthPercentageArgument(pos, end, ')');
+            if (!parameter)
+                return false;
+            list.append(CSS::TranslateYFunction { { *parameter } });
+            return true;
+        }
+        if (c9 == 'z' && pos[10] == '(') {
+            pos += 11;
+            auto parameter = parseTransformLengthArgument(pos, end, ')');
+            if (!parameter)
+                return false;
+            list.append(CSS::TranslateZFunction { { *parameter } });
+            return true;
+        }
+        if (c9 == '(') {
+            pos += 10;
+            auto x = parseTransformLengthPercentageArgument(pos, end, ',');
+            if (!x)
+                return false;
+            auto y = parseTransformLengthPercentageArgument(pos, end, ')');
+            if (!y)
+                return false;
+            list.append(CSS::TranslateFunction { { *x, CSS::LengthPercentage<> { *y } } });
+            return true;
+        }
+        if (c9 == '3' && toASCIILower(pos[10]) == 'd' && pos[11] == '(') {
+            pos += 12;
+            auto x = parseTransformLengthPercentageArgument(pos, end, ',');
+            if (!x)
+                return false;
+            auto y = parseTransformLengthPercentageArgument(pos, end, ',');
+            if (!y)
+                return false;
+            auto z = parseTransformLengthArgument(pos, end, ')');
+            if (!z)
+                return false;
+            list.append(CSS::Translate3DFunction { { *x, *y, *z } });
+            return true;
+        }
 
-        CSSValueListBuilder arguments;
-        pos += argumentStart;
-        if (!parseTransformTranslateArguments(pos, end, expectedArgumentCount, transformType, arguments))
-            return nullptr;
-        return CSSFunctionValue::create(transformType, WTFMove(arguments));
+        return false;
     }
 
     bool isMatrix3d = toASCIILower(pos[0]) == 'm'
@@ -929,10 +973,16 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
 
     if (isMatrix3d) {
         pos += 9;
-        CSSValueListBuilder arguments;
-        if (!parseTransformNumberArguments(pos, end, 16, arguments))
-            return nullptr;
-        return CSSFunctionValue::create(CSSValueMatrix3d, WTFMove(arguments));
+        auto arguments = parseTransformNumberArguments<16>(pos, end);
+        if (!arguments)
+            return false;
+        list.append(CSS::Matrix3DFunction { { CSS::CommaSeparatedArray<CSS::Number<>, 16> {
+            *(*arguments)[0],  *(*arguments)[1],  *(*arguments)[2],  *(*arguments)[3],
+            *(*arguments)[4],  *(*arguments)[5],  *(*arguments)[6],  *(*arguments)[7],
+            *(*arguments)[8],  *(*arguments)[9],  *(*arguments)[10], *(*arguments)[11],
+            *(*arguments)[12], *(*arguments)[13], *(*arguments)[14], *(*arguments)[15],
+         } } });
+        return true;
     }
 
     bool isScale3d = toASCIILower(pos[0]) == 's'
@@ -946,10 +996,11 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
 
     if (isScale3d) {
         pos += 8;
-        CSSValueListBuilder arguments;
-        if (!parseTransformNumberArguments(pos, end, 3, arguments))
-            return nullptr;
-        return CSSFunctionValue::create(CSSValueScale3d, WTFMove(arguments));
+        auto arguments = parseTransformNumberArguments<3>(pos, end);
+        if (!arguments)
+            return false;
+        list.append(CSS::Scale3DFunction { { { *(*arguments)[0] }, { *(*arguments)[1] }, { *(*arguments)[2] } } });
+        return true;
     }
 
     bool isRotate = toASCIILower(pos[0]) == 'r'
@@ -960,54 +1011,57 @@ static RefPtr<CSSFunctionValue> parseSimpleTransformValue(CharType*& pos, CharTy
         && toASCIILower(pos[5]) == 'e';
 
     if (isRotate) {
-        CSSValueID transformType;
-        unsigned argumentStart = 7;
         CharType c6 = toASCIILower(pos[6]);
         if (c6 == '(') {
-            transformType = CSSValueRotate;
-        } else if (c6 == 'z' && pos[7] == '(') {
-            transformType = CSSValueRotateZ;
-            argumentStart = 8;
-        } else
-            return nullptr;
+            pos += 7;
+            auto angle = parseTransformAngleArgument(pos, end, ')');
+            if (!angle)
+                return false;
+            list.append(CSS::RotateFunction { { *angle } });
+            return true;
+        }
+        if (c6 == 'z' && pos[7] == '(') {
+            pos += 8;
+            auto angle = parseTransformAngleArgument(pos, end, ')');
+            if (!angle)
+                return false;
+            list.append(CSS::RotateZFunction { { *angle } });
+            return true;
+        }
 
-        pos += argumentStart;
-        RefPtr angle = parseTransformAngleArgument(pos, end);
-        if (!angle)
-            return nullptr;
-        return CSSFunctionValue::create(transformType, angle.releaseNonNull());
+        return false;
     }
 
-    return nullptr;
+    return false;
 }
 
-template<typename CharacterType>
-static RefPtr<CSSValue> parseSimpleTransformList(std::span<const CharacterType> characters)
+template<typename CharacterType> static RefPtr<CSSValue> parseSimpleTransformProperty(std::span<const CharacterType> characters)
 {
     auto* pos = characters.data();
     auto* end = characters.data() + characters.size();
-    CSSValueListBuilder builder;
+
+    CSS::TransformList::List::VariantList list;
     while (pos < end) {
         while (pos < end && isCSSSpace(*pos))
             ++pos;
         if (pos >= end)
             break;
-        auto transformValue = parseSimpleTransformValue(pos, end);
-        if (!transformValue)
+        auto success = parseSimpleTransformValue(pos, end, list);
+        if (!success)
             return nullptr;
-        builder.append(transformValue.releaseNonNull());
     }
-    if (builder.isEmpty())
+    if (list.isEmpty())
         return nullptr;
-    return CSSTransformListValue::create(WTFMove(builder));
+    return CSSTransformPropertyValue::create(CSS::TransformProperty { { WTFMove(list) } });
 }
 
 static RefPtr<CSSValue> parseSimpleTransform(StringView string)
 {
     ASSERT(!string.isEmpty());
+
     if (string.is8Bit())
-        return parseSimpleTransformList(string.span8());
-    return parseSimpleTransformList(string.span16());
+        return parseSimpleTransformProperty(string.span8());
+    return parseSimpleTransformProperty(string.span16());
 }
 
 static RefPtr<CSSValue> parseDisplay(StringView string)

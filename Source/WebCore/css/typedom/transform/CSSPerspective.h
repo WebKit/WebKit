@@ -30,8 +30,11 @@
 
 namespace WebCore {
 
+namespace CSS {
+struct Perspective;
+}
+
 template<typename> class ExceptionOr;
-class CSSFunctionValue;
 class CSSKeywordValue;
 using CSSPerspectiveValue = std::variant<RefPtr<CSSNumericValue>, String, RefPtr<CSSKeywordValue>>;
 
@@ -39,7 +42,7 @@ class CSSPerspective : public CSSTransformComponent {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSPerspective);
 public:
     static ExceptionOr<Ref<CSSPerspective>> create(CSSPerspectiveValue);
-    static ExceptionOr<Ref<CSSPerspective>> create(CSSFunctionValue&);
+    static ExceptionOr<Ref<CSSPerspective>> create(CSS::Perspective);
 
     virtual ~CSSPerspective();
 
@@ -51,7 +54,7 @@ public:
     
     CSSTransformType getType() const final { return CSSTransformType::Perspective; }
 
-    RefPtr<CSSValue> toCSSValue() const final;
+    std::optional<CSS::TransformFunction> toCSS() const final;
 
 private:
     CSSPerspective(CSSPerspectiveValue);

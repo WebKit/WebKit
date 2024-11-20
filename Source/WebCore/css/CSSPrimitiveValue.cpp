@@ -1780,7 +1780,7 @@ bool CSSPrimitiveValue::addDerivedHash(Hasher& hasher) const
 }
 
 // https://drafts.css-houdini.org/css-properties-values-api/#dependency-cycles
-void CSSPrimitiveValue::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
+void CSSPrimitiveValue::customCollectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
 {
     auto unit = primitiveUnitType();
     switch (unit) {

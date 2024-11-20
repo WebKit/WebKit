@@ -40,7 +40,7 @@
 #include <WebCore/PlatformWheelEvent.h>
 #include <WebCore/TiledBacking.h>
 #include <WebCore/TimingFunction.h>
-#include <WebCore/TransformOperations.h>
+#include <WebCore/TransformList.h>
 #include <WebCore/TransformationMatrix.h>
 #include <pal/spi/mac/NSScrollViewSPI.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -486,29 +486,23 @@ void PDFDiscretePresentationController::startTransitionAnimation(PageTransitionS
     auto transitionDuration = defaultTransitionDuration;
 
     auto transformAnimationValueForTranslation = [](double keyTime, FloatSize offset) {
-        auto xLength = Length(offset.width(), LengthType::Fixed);
-        auto yLength = Length(offset.height(), LengthType::Fixed);
-
-        Vector<Ref<TransformOperation>> operations;
-        operations.reserveInitialCapacity(1);
-        operations.append(TranslateTransformOperation::create(xLength, yLength, Length(0, LengthType::Fixed), TransformOperationType::Translate));
-
-        return makeUnique<TransformAnimationValue>(keyTime, TransformOperations { WTFMove(operations) }, nullptr);
+        Vector<TransformFunction> functions = {
+            TransformFunction { Translate { offset.width(), offset.height() } }
+        };
+        return TransformAnimationValue(keyTime, TransformList { WTFMove(functions) }, nullptr);
     };
 
     auto createPositionKeyframesForAnimation = [&](TransitionDirection direction, FloatSize initialOffset, FloatSize finalOffset) {
-        auto keyframes = KeyframeValueList { AnimatedProperty::Translate };
-        auto initialValue = transformAnimationValueForTranslation(0, initialOffset);
-        auto finalValue = transformAnimationValueForTranslation(1, finalOffset);
-        keyframes.insert(WTFMove(initialValue));
-        keyframes.insert(WTFMove(finalValue));
+        auto keyframes = KeyframeValueList<TransformAnimationValue> { GraphicsLayerAnimationProperty::Translate };
+        keyframes.insert(transformAnimationValueForTranslation(0, initialOffset));
+        keyframes.insert(transformAnimationValueForTranslation(1, finalOffset));
         return keyframes;
     };
 
     auto createOpacityKeyframesForAnimation = [](TransitionDirection direction, std::array<float, 2> startEndOpacities) {
-        auto keyframes = KeyframeValueList { AnimatedProperty::Opacity };
-        keyframes.insert(makeUnique<FloatAnimationValue>(0, startEndOpacities[startIndex]));
-        keyframes.insert(makeUnique<FloatAnimationValue>(1, startEndOpacities[endIndex]));
+        auto keyframes = KeyframeValueList<FloatAnimationValue> { GraphicsLayerAnimationProperty::Opacity };
+        keyframes.insert(FloatAnimationValue(0, startEndOpacities[startIndex]));
+        keyframes.insert(FloatAnimationValue(1, startEndOpacities[endIndex]));
         return keyframes;
     };
 
@@ -539,16 +533,16 @@ void PDFDiscretePresentationController::startTransitionAnimation(PageTransitionS
         Ref moveAnimation = Animation::create();
         moveAnimation->setDuration(transitionDuration.seconds());
         moveAnimation->setTimingFunction(WTFMove(moveTimingFunction));
-        animatingRow.containerLayer->addAnimation(moveFrames, { }, moveAnimation.ptr(), "move"_s, 0);
+        animatingRow.containerLayer->addAnimation(moveFrames, moveAnimation.ptr(), "move"_s, Seconds(0));
 
         auto fadeKeyframes = createOpacityKeyframesForAnimation(direction, layerEndOpacities[topLayerIndex]);
         Ref fadeAnimation = Animation::create();
         fadeAnimation->setDuration(transitionDuration.seconds());
         fadeAnimation->setTimingFunction(WTFMove(fadeTimingFunction));
-        animatingRow.containerLayer->addAnimation(fadeKeyframes, { }, fadeAnimation.ptr(), "fade"_s, 0);
+        animatingRow.containerLayer->addAnimation(fadeKeyframes, fadeAnimation.ptr(), "fade"_s, Seconds(0));
 
         auto stationaryLayerFadeKeyframes = createOpacityKeyframesForAnimation(direction, layerEndOpacities[bottomLayerIndex]);
-        stationaryRow.containerLayer->addAnimation(stationaryLayerFadeKeyframes, { }, fadeAnimation.ptr(), "fade"_s, 0);
+        stationaryRow.containerLayer->addAnimation(stationaryLayerFadeKeyframes, fadeAnimation.ptr(), "fade"_s, Seconds(0));
 
         return transitionDuration;
     };

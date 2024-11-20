@@ -26,7 +26,6 @@
 #include "CSSUnevaluatedCalc.h"
 
 #include "CSSCalcSymbolTable.h"
-#include "FloatConversion.h"
 #include "StyleBuilderState.h"
 #include <wtf/text/StringBuilder.h>
 
@@ -58,36 +57,36 @@ Ref<CSSCalcValue> unevaluatedCalcSimplify(const Ref<CSSCalcValue>& calc, const C
     return calc->copySimplified(conversionData, symbolTable);
 }
 
-float unevaluatedCalcEvaluate(const Ref<CSSCalcValue>& calc, const Style::BuilderState& state, Calculation::Category category)
+double unevaluatedCalcEvaluate(const Ref<CSSCalcValue>& calc, const Style::BuilderState& state, Calculation::Category category)
 {
     return unevaluatedCalcEvaluate(calc, state.cssToLengthConversionData(), { }, category);
 }
 
-float unevaluatedCalcEvaluate(const Ref<CSSCalcValue>& calc, const Style::BuilderState& state, const CSSCalcSymbolTable& symbolTable, Calculation::Category category)
+double unevaluatedCalcEvaluate(const Ref<CSSCalcValue>& calc, const Style::BuilderState& state, const CSSCalcSymbolTable& symbolTable, Calculation::Category category)
 {
     return unevaluatedCalcEvaluate(calc, state.cssToLengthConversionData(), symbolTable, category);
 }
 
-float unevaluatedCalcEvaluate(const Ref<CSSCalcValue>& calc, const CSSToLengthConversionData& conversionData, Calculation::Category category)
+double unevaluatedCalcEvaluate(const Ref<CSSCalcValue>& calc, const CSSToLengthConversionData& conversionData, Calculation::Category category)
 {
     return unevaluatedCalcEvaluate(calc, conversionData, { }, category);
 }
 
-float unevaluatedCalcEvaluate(const Ref<CSSCalcValue>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable, Calculation::Category category)
+double unevaluatedCalcEvaluate(const Ref<CSSCalcValue>& calc, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable, Calculation::Category category)
 {
     ASSERT_UNUSED(category, calc->category() == category);
-    return narrowPrecisionToFloat(calc->doubleValue(conversionData, symbolTable));
+    return calc->doubleValue(conversionData, symbolTable);
 }
 
-float unevaluatedCalcEvaluateNoConversionDataRequired(const Ref<CSSCalcValue>& calc, Calculation::Category category)
+double unevaluatedCalcEvaluateNoConversionDataRequired(const Ref<CSSCalcValue>& calc, Calculation::Category category)
 {
     return unevaluatedCalcEvaluateNoConversionDataRequired(calc, { }, category);
 }
 
-float unevaluatedCalcEvaluateNoConversionDataRequired(const Ref<CSSCalcValue>& calc, const CSSCalcSymbolTable& symbolTable, Calculation::Category category)
+double unevaluatedCalcEvaluateNoConversionDataRequired(const Ref<CSSCalcValue>& calc, const CSSCalcSymbolTable& symbolTable, Calculation::Category category)
 {
     ASSERT_UNUSED(category, calc->category() == category);
-    return narrowPrecisionToFloat(calc->doubleValueNoConversionDataRequired(symbolTable));
+    return calc->doubleValueNoConversionDataRequired(symbolTable);
 }
 
 } // namespace CSS

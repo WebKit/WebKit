@@ -33,11 +33,8 @@
 #include "OffsetRotation.h"
 #include "PathOperation.h"
 #include "RenderStyleConstants.h"
-#include "RotateTransformOperation.h"
-#include "ScaleTransformOperation.h"
-#include "TransformOperations.h"
+#include "TransformList.h"
 #include "TransformationMatrix.h"
-#include "TranslateTransformOperation.h"
 
 namespace WebCore {
 
@@ -51,10 +48,10 @@ struct AcceleratedEffectValues {
     std::optional<TransformOperationData> transformOperationData;
     LengthPoint transformOrigin { };
     TransformBox transformBox { TransformBox::ContentBox };
-    TransformOperations transform { };
-    RefPtr<TransformOperation> translate;
-    RefPtr<TransformOperation> scale;
-    RefPtr<TransformOperation> rotate;
+    TransformList transform { };
+    TransformList translate { };
+    TransformList scale { };
+    TransformList rotate { };
     RefPtr<PathOperation> offsetPath;
     Length offsetDistance { };
     LengthPoint offsetPosition { };
@@ -65,7 +62,7 @@ struct AcceleratedEffectValues {
 
     AcceleratedEffectValues() = default;
     AcceleratedEffectValues(const RenderStyle&, const IntRect&, const RenderLayerModelObject* = nullptr);
-    AcceleratedEffectValues(float opacity, std::optional<TransformOperationData>&& transformOperationData, LengthPoint&& transformOrigin, TransformBox transformBox, TransformOperations&& transform, RefPtr<TransformOperation>&& translate, RefPtr<TransformOperation>&& scale, RefPtr<TransformOperation>&& rotate, RefPtr<PathOperation>&& offsetPath, Length&& offsetDistance, LengthPoint&& offsetPosition, LengthPoint&& offsetAnchor, OffsetRotation&& offsetRotate, FilterOperations&& filter, FilterOperations&& backdropFilter)
+    AcceleratedEffectValues(float opacity, std::optional<TransformOperationData>&& transformOperationData, LengthPoint&& transformOrigin, TransformBox transformBox, TransformList&& transform, TransformList&& translate, TransformList&& scale, TransformList&& rotate, RefPtr<PathOperation>&& offsetPath, Length&& offsetDistance, LengthPoint&& offsetPosition, LengthPoint&& offsetAnchor, OffsetRotation&& offsetRotate, FilterOperations&& filter, FilterOperations&& backdropFilter)
         : opacity(opacity)
         , transformOperationData(WTFMove(transformOperationData))
         , transformOrigin(WTFMove(transformOrigin))

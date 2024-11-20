@@ -80,9 +80,15 @@ template<auto R> struct Blending<LengthPercentage<R>> {
         //    dimension type and a percentage (each possibly zero) and interpolating each component
         //    individually (as a <length>/<frequency>/<angle>/<time> and as a <percentage>, respectively)
 
+
         if (from.value.isCalculationValue() || to.value.isCalculationValue() || (from.value.tag() != to.value.tag())) {
             if (context.compositeOperation != CompositeOperation::Replace)
                 return Calculation::add(copyCalculation(from), copyCalculation(to));
+
+            // 0% to 0px -> calc(0px + 0%) to calc(0px + 0%) -> 0px
+            // 0px to 0% -> calc(0px + 0%) to calc(0px + 0%) -> 0px
+            if (from.value.isZero() && to.value.isZero())
+                return Length<R> { 0 };
 
             if (!to.value.isCalculationValue() && !from.value.isPercentage() && (context.progress == 1 || from.value.isZero())) {
                 if (to.value.isLength())
@@ -108,6 +114,18 @@ template<auto R> struct Blending<LengthPercentage<R>> {
         if (to.value.isLength())
             return WebCore::Style::blend(from.value.asLength(), to.value.asLength(), context);
         return WebCore::Style::blend(from.value.asPercentage(), to.value.asPercentage(), context);
+    }
+};
+
+// `NumberOrPercentageResolvedToNumber` forwards to `Number<>`.
+template<> struct Blending<NumberOrPercentageResolvedToNumber> {
+    auto canBlend(const NumberOrPercentageResolvedToNumber& a, const NumberOrPercentageResolvedToNumber& b) -> bool
+    {
+        return Style::canBlend(Number<> { a.value }, Number<> { b.value });
+    }
+    auto blend(const NumberOrPercentageResolvedToNumber& a, const NumberOrPercentageResolvedToNumber& b, const BlendingContext& context) -> NumberOrPercentageResolvedToNumber
+    {
+        return Style::blend(Number<> { a.value }, Number<> { b.value }, context);
     }
 };
 

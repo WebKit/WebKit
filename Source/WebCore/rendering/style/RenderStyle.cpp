@@ -46,7 +46,6 @@
 #include "RenderObject.h"
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
-#include "ScaleTransformOperation.h"
 #include "ScrollAxis.h"
 #include "ScrollbarGutter.h"
 #include "ShadowData.h"
@@ -807,9 +806,9 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
     if (first.counterDirectives.map != second.counterDirectives.map)
         return true;
 
-    if (!arePointingToEqualData(first.scale, second.scale)
-        || !arePointingToEqualData(first.rotate, second.rotate)
-        || !arePointingToEqualData(first.translate, second.translate))
+    if (first.scale != second.scale
+        || first.rotate != second.rotate
+        || first.translate != second.translate)
         changedContextSensitiveProperties.add(StyleDifferenceContextSensitiveProperty::Transform);
 
     if (!arePointingToEqualData(first.offsetPath, second.offsetPath)
@@ -1576,7 +1575,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyTransformOriginZ);
         if (first.transformBox != second.transformBox)
             changingProperties.m_properties.set(CSSPropertyTransformBox);
-        if (first.operations != second.operations)
+        if (first.transform != second.transform)
             changingProperties.m_properties.set(CSSPropertyTransform);
     };
 
@@ -1864,11 +1863,11 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
             changingProperties.m_properties.set(CSSPropertyClipPath);
         if (first.textDecorationColor != second.textDecorationColor)
             changingProperties.m_properties.set(CSSPropertyTextDecorationColor);
-        if (!arePointingToEqualData(first.rotate, second.rotate))
+        if (first.rotate != second.rotate)
             changingProperties.m_properties.set(CSSPropertyRotate);
-        if (!arePointingToEqualData(first.scale, second.scale))
+        if (first.scale != second.scale)
             changingProperties.m_properties.set(CSSPropertyScale);
-        if (!arePointingToEqualData(first.translate, second.translate))
+        if (first.translate != second.translate)
             changingProperties.m_properties.set(CSSPropertyTranslate);
         if (!arePointingToEqualData(first.offsetPath, second.offsetPath))
             changingProperties.m_properties.set(CSSPropertyOffsetPath);
@@ -2216,17 +2215,17 @@ void RenderStyle::setWillChange(RefPtr<WillChangeData>&& willChangeData)
     m_nonInheritedData.access().rareData.access().willChange = WTFMove(willChangeData);
 }
 
-void RenderStyle::setScale(RefPtr<ScaleTransformOperation>&& t)
+void RenderStyle::setScale(Style::ScaleProperty t)
 {
     m_nonInheritedData.access().rareData.access().scale = WTFMove(t);
 }
 
-void RenderStyle::setRotate(RefPtr<RotateTransformOperation>&& t)
+void RenderStyle::setRotate(Style::RotateProperty t)
 {
     m_nonInheritedData.access().rareData.access().rotate = WTFMove(t);
 }
 
-void RenderStyle::setTranslate(RefPtr<TranslateTransformOperation>&& t)
+void RenderStyle::setTranslate(Style::TranslateProperty t)
 {
     m_nonInheritedData.access().rareData.access().translate = WTFMove(t);
 }
@@ -2315,15 +2314,15 @@ void RenderStyle::setHasAttrContent()
     SET_NESTED_VAR(m_nonInheritedData, miscData, hasAttrContent, true);
 }
 
-bool RenderStyle::affectedByTransformOrigin() const
+bool RenderStyle::isAffectedByTransformOrigin() const
 {
-    if (rotate() && !rotate()->isIdentity())
+    if (rotate().isAffectedByTransformOrigin())
         return true;
 
-    if (scale() && !scale()->isIdentity())
+    if (scale().isAffectedByTransformOrigin())
         return true;
 
-    if (transform().affectedByTransformOrigin())
+    if (transform().isAffectedByTransformOrigin())
         return true;
 
     if (offsetPath())
@@ -2375,7 +2374,7 @@ void RenderStyle::unapplyTransformOrigin(TransformationMatrix& transform, const 
 
 void RenderStyle::applyTransform(TransformationMatrix& transform, const TransformOperationData& transformData, OptionSet<RenderStyle::TransformOperationOption> options) const
 {
-    if (!options.contains(RenderStyle::TransformOperationOption::TransformOrigin) || !affectedByTransformOrigin()) {
+    if (!options.contains(RenderStyle::TransformOperationOption::TransformOrigin) || !isAffectedByTransformOrigin()) {
         applyCSSTransform(transform, transformData, options);
         return;
     }
@@ -2402,29 +2401,23 @@ void RenderStyle::applyCSSTransform(TransformationMatrix& transform, const Trans
     auto& boundingBox = operationData.boundingBox;
 
     // 3. Translate by the computed X, Y, and Z values of translate.
-    if (options.contains(RenderStyle::TransformOperationOption::Translate)) {
-        if (auto* translate = this->translate())
-            translate->apply(transform, boundingBox.size());
-    }
+    if (options.contains(RenderStyle::TransformOperationOption::Translate))
+        this->translate().applyTransform(transform, boundingBox.size());
 
     // 4. Rotate by the computed <angle> about the specified axis of rotate.
-    if (options.contains(RenderStyle::TransformOperationOption::Rotate)) {
-        if (auto* rotate = this->rotate())
-            rotate->apply(transform, boundingBox.size());
-    }
+    if (options.contains(RenderStyle::TransformOperationOption::Rotate))
+        this->rotate().applyTransform(transform, boundingBox.size());
 
     // 5. Scale by the computed X, Y, and Z values of scale.
-    if (options.contains(RenderStyle::TransformOperationOption::Scale)) {
-        if (auto* scale = this->scale())
-            scale->apply(transform, boundingBox.size());
-    }
+    if (options.contains(RenderStyle::TransformOperationOption::Scale))
+        this->scale().applyTransform(transform, boundingBox.size());
 
     // 6. Translate and rotate by the transform specified by offset.
     if (options.contains(RenderStyle::TransformOperationOption::Offset))
         MotionPath::applyMotionPathTransform(*this, operationData, transform);
 
     // 7. Multiply by each of the transform functions in transform from left to right.
-    this->transform().apply(transform, boundingBox.size());
+    this->transform().applyTransform(transform, boundingBox.size());
 
     // 8. Translate by the negated computed X, Y and Z values of transform-origin.
     // (implemented in unapplyTransformOrigin)
@@ -2435,7 +2428,7 @@ void RenderStyle::setPageScaleTransform(float scale)
     if (scale == 1)
         return;
 
-    setTransform(TransformOperations { ScaleTransformOperation::create(scale, scale, TransformOperation::Type::Scale) });
+    setTransform(Style::TransformProperty { Style::ScaleFunction { { scale, scale } } });
     setTransformOriginX(Length(0, LengthType::Fixed));
     setTransformOriginY(Length(0, LengthType::Fixed));
 }

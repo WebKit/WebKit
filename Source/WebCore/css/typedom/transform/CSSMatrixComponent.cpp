@@ -52,47 +52,44 @@ Ref<CSSTransformComponent> CSSMatrixComponent::create(Ref<DOMMatrixReadOnly>&& m
     return adoptRef(*new CSSMatrixComponent(WTFMove(matrix), is2D ? Is2D::Yes : Is2D::No));
 }
 
-ExceptionOr<Ref<CSSTransformComponent>> CSSMatrixComponent::create(CSSFunctionValue& cssFunctionValue)
+template<typename T, typename F> static ExceptionOr<Ref<CSSTransformComponent>> makeMatrix(const T& matrix, F&& create)
 {
-    auto makeMatrix = [&](const Function<Ref<CSSTransformComponent>(Vector<double>&&)>& create, size_t expectedNumberOfComponents) -> ExceptionOr<Ref<CSSTransformComponent>> {
-        Vector<double> components;
-        for (auto& componentCSSValue : cssFunctionValue) {
-            auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
-            if (valueOrException.hasException())
-                return valueOrException.releaseException();
-            RefPtr unitValue = dynamicDowncast<CSSUnitValue>(valueOrException.releaseReturnValue());
-            if (!unitValue)
-                return Exception { ExceptionCode::TypeError, "Expected a CSSUnitValue."_s };
-            components.append(unitValue->value());
-        }
-        if (components.size() != expectedNumberOfComponents) {
-            ASSERT_NOT_REACHED();
-            return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
-        }
-        return create(WTFMove(components));
-    };
-
-    switch (cssFunctionValue.name()) {
-    case CSSValueMatrix:
-        return makeMatrix([](Vector<double>&& components) {
-            auto domMatrix = DOMMatrixReadOnly::create({ components[0], components[1], components[2], components[3], components[4], components[5] }, DOMMatrixReadOnly::Is2D::Yes);
-            return CSSMatrixComponent::create(WTFMove(domMatrix));
-        }, 6);
-    case CSSValueMatrix3d:
-        return makeMatrix([](Vector<double>&& components) {
-            auto domMatrix = DOMMatrixReadOnly::create({
-                components[0], components[1], components[2], components[3],
-                components[4], components[5], components[6], components[7],
-                components[8], components[9], components[10], components[11],
-                components[12], components[13], components[14], components[15]
-            }, DOMMatrixReadOnly::Is2D::No);
-            return CSSMatrixComponent::create(WTFMove(domMatrix));
-        }, 16);
-    default:
-        ASSERT_NOT_REACHED();
-        auto domMatrix = DOMMatrixReadOnly::create({ }, DOMMatrixReadOnly::Is2D::Yes);
-        return { CSSMatrixComponent::create(WTFMove(domMatrix)) };
+    Vector<double> components;
+    for (const auto& number : matrix.value) {
+        auto raw = number.raw();
+        if (!raw)
+            return Exception { ExceptionCode::TypeError, "Expected a CSSUnitValue."_s };
+        components.append(raw->value);
     }
+    return create(WTFMove(components));
+};
+
+ExceptionOr<Ref<CSSTransformComponent>> CSSMatrixComponent::create(CSS::Matrix matrix)
+{
+    return makeMatrix(matrix, [](Vector<double>&& components) {
+        auto domMatrix = DOMMatrixReadOnly::create({
+            components[0],
+            components[1],
+            components[2],
+            components[3],
+            components[4],
+            components[5]
+        }, DOMMatrixReadOnly::Is2D::Yes);
+        return CSSMatrixComponent::create(WTFMove(domMatrix));
+    });
+}
+
+ExceptionOr<Ref<CSSTransformComponent>> CSSMatrixComponent::create(CSS::Matrix3D matrix)
+{
+    return makeMatrix(matrix, [](Vector<double>&& components) {
+        auto domMatrix = DOMMatrixReadOnly::create({
+            components[0],  components[1],  components[2],  components[3],
+            components[4],  components[5],  components[6],  components[7],
+            components[8],  components[9],  components[10], components[11],
+            components[12], components[13], components[14], components[15]
+        }, DOMMatrixReadOnly::Is2D::No);
+        return CSSMatrixComponent::create(WTFMove(domMatrix));
+    });
 }
 
 CSSMatrixComponent::CSSMatrixComponent(Ref<DOMMatrixReadOnly>&& matrix, Is2D is2D)
@@ -146,25 +143,33 @@ void CSSMatrixComponent::setMatrix(Ref<DOMMatrix>&& matrix)
     m_matrix = WTFMove(matrix);
 }
 
-RefPtr<CSSValue> CSSMatrixComponent::toCSSValue() const
+std::optional<CSS::TransformFunction> CSSMatrixComponent::toCSS() const
 {
     if (is2D()) {
-        double values[] = { m_matrix->a(), m_matrix->b(), m_matrix->c(), m_matrix->d(), m_matrix->e(), m_matrix->f() };
-        CSSValueListBuilder arguments;
-        for (double value : values)
-            arguments.append(CSSPrimitiveValue::create(value));
-        return CSSFunctionValue::create(CSSValueMatrix, WTFMove(arguments));
+        return CSS::TransformFunction {
+            CSS::MatrixFunction { {
+                .value = {
+                    CSS::NumberRaw<> { m_matrix->a() },
+                    CSS::NumberRaw<> { m_matrix->b() },
+                    CSS::NumberRaw<> { m_matrix->c() },
+                    CSS::NumberRaw<> { m_matrix->d() },
+                    CSS::NumberRaw<> { m_matrix->e() },
+                    CSS::NumberRaw<> { m_matrix->f() },
+                }
+            } }
+        };
     }
-    double values[] = {
-        m_matrix->m11(), m_matrix->m12(), m_matrix->m13(), m_matrix->m14(),
-        m_matrix->m21(), m_matrix->m22(), m_matrix->m23(), m_matrix->m24(),
-        m_matrix->m31(), m_matrix->m32(), m_matrix->m33(), m_matrix->m34(),
-        m_matrix->m41(), m_matrix->m42(), m_matrix->m43(), m_matrix->m44()
+
+    return CSS::TransformFunction {
+        CSS::Matrix3DFunction { {
+            .value = {
+                CSS::NumberRaw<> { m_matrix->m11() }, CSS::NumberRaw<> { m_matrix->m12() }, CSS::NumberRaw<> { m_matrix->m13() }, CSS::NumberRaw<> { m_matrix->m14() },
+                CSS::NumberRaw<> { m_matrix->m21() }, CSS::NumberRaw<> { m_matrix->m22() }, CSS::NumberRaw<> { m_matrix->m23() }, CSS::NumberRaw<> { m_matrix->m24() },
+                CSS::NumberRaw<> { m_matrix->m31() }, CSS::NumberRaw<> { m_matrix->m32() }, CSS::NumberRaw<> { m_matrix->m33() }, CSS::NumberRaw<> { m_matrix->m34() },
+                CSS::NumberRaw<> { m_matrix->m41() }, CSS::NumberRaw<> { m_matrix->m42() }, CSS::NumberRaw<> { m_matrix->m43() }, CSS::NumberRaw<> { m_matrix->m44() },
+            }
+        } }
     };
-    CSSValueListBuilder arguments;
-    for (double value : values)
-        arguments.append(CSSPrimitiveValue::create(value));
-    return CSSFunctionValue::create(CSSValueMatrix3d, WTFMove(arguments));
 }
 
 } // namespace WebCore

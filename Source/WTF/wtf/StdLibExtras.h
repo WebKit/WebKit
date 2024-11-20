@@ -155,6 +155,36 @@ inline bool is8ByteAligned(void* p)
     return !((uintptr_t)(p) & (sizeof(double) - 1));
 }
 
+inline std::byte* alignedBytes(std::byte* pointer, size_t alignment)
+{
+    return reinterpret_cast<std::byte*>((reinterpret_cast<uintptr_t>(pointer) - 1u + alignment) & -alignment);
+}
+
+inline const std::byte* alignedBytes(const std::byte* pointer, size_t alignment)
+{
+    return reinterpret_cast<const std::byte*>((reinterpret_cast<uintptr_t>(pointer) - 1u + alignment) & -alignment);
+}
+
+inline size_t alignedBytesCorrection(std::span<std::byte> buffer, size_t alignment)
+{
+    return reinterpret_cast<std::byte*>((reinterpret_cast<uintptr_t>(buffer.data()) - 1u + alignment) & -alignment) - buffer.data();
+}
+
+inline size_t alignedBytesCorrection(std::span<const std::byte> buffer, size_t alignment)
+{
+    return reinterpret_cast<const std::byte*>((reinterpret_cast<uintptr_t>(buffer.data()) - 1u + alignment) & -alignment) - buffer.data();
+}
+
+inline std::span<std::byte> alignedBytes(std::span<std::byte> buffer, size_t alignment)
+{
+    return buffer.subspan(alignedBytesCorrection(buffer, alignment));
+}
+
+inline std::span<const std::byte> alignedBytes(std::span<const std::byte> buffer, size_t alignment)
+{
+    return buffer.subspan(alignedBytesCorrection(buffer, alignment));
+}
+
 template<typename ToType, typename FromType>
 inline ToType safeCast(FromType value)
 {
@@ -492,7 +522,7 @@ template<size_t I = 0, class F, class V> ALWAYS_INLINE decltype(auto) visitOneVa
             if constexpr (I + N < size) {                                                           \
                 return std::invoke(std::forward<F>(f), std::get<I + N>(std::forward<V>(v)));        \
             } else {                                                                                \
-                WTF_UNREACHABLE()                                                                   \
+                WTF_UNREACHABLE();                                                                  \
             }                                                                                       \
         }                                                                                           \
 
@@ -832,6 +862,18 @@ T& reinterpretCastSpanStartTo(std::span<uint8_t, Extent> span)
     return spanReinterpretCast<T>(span.first(sizeof(T)))[0];
 }
 
+template<typename T, std::size_t Extent>
+const T& reinterpretCastSpanStartTo(std::span<const std::byte, Extent> span)
+{
+    return spanReinterpretCast<const T>(span.first(sizeof(T)))[0];
+}
+
+template<typename T, std::size_t Extent>
+T& reinterpretCastSpanStartTo(std::span<std::byte, Extent> span)
+{
+    return spanReinterpretCast<T>(span.first(sizeof(T)))[0];
+}
+
 template<typename T, std::size_t TExtent, typename U, std::size_t UExtent>
 bool equalSpans(std::span<T, TExtent> a, std::span<U, UExtent> b)
 {
@@ -913,28 +955,6 @@ template<ByteType T, typename U> constexpr auto byteCast(const U& value)
 template<typename Functor, typename Signature> concept Invocable = requires(std::decay_t<Functor>&& f, std::function<Signature> expected) {
     { expected = std::move(f) };
 };
-
-// Concept for constraining to user-defined "Tuple-like" types.
-//
-// Based on exposition-only text in https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2021/p2165r3.pdf
-// and https://stackoverflow.com/questions/68443804/c20-concept-to-check-tuple-like-types.
-
-template<class T, std::size_t N> concept HasTupleElement = requires(T t) {
-    typename std::tuple_element_t<N, std::remove_const_t<T>>;
-    { get<N>(t) } -> std::convertible_to<std::tuple_element_t<N, T>&>;
-};
-
-template<class T> concept TupleLike = !std::is_reference_v<T>
-    && requires(T t) {
-        typename std::tuple_size<T>::type;
-        requires std::derived_from<
-          std::tuple_size<T>,
-          std::integral_constant<std::size_t, std::tuple_size_v<T>>
-        >;
-      }
-    && []<std::size_t... N>(std::index_sequence<N...>) {
-        return (HasTupleElement<T, N> && ...);
-    }(std::make_index_sequence<std::tuple_size_v<T>>());
 
 // This is like std::apply, but works with user-defined "Tuple-like" types as well as the
 // standard ones. The only real difference between its implementation and the standard one

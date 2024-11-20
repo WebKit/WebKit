@@ -30,16 +30,18 @@
 
 namespace WebCore {
 
-class CSSFunctionValue;
-
 template<typename> class ExceptionOr;
 
-class CSSRotate : public CSSTransformComponent {
+class CSSRotate final : public CSSTransformComponent {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSRotate);
 public:
     static ExceptionOr<Ref<CSSRotate>> create(CSSNumberish, CSSNumberish, CSSNumberish, Ref<CSSNumericValue>);
     static ExceptionOr<Ref<CSSRotate>> create(Ref<CSSNumericValue>);
-    static ExceptionOr<Ref<CSSRotate>> create(CSSFunctionValue&);
+    static ExceptionOr<Ref<CSSRotate>> create(CSS::Rotate3D);
+    static ExceptionOr<Ref<CSSRotate>> create(CSS::Rotate);
+    static ExceptionOr<Ref<CSSRotate>> create(CSS::RotateX);
+    static ExceptionOr<Ref<CSSRotate>> create(CSS::RotateY);
+    static ExceptionOr<Ref<CSSRotate>> create(CSS::RotateZ);
 
     CSSNumberish x() { return { m_x.ptr() }; }
     CSSNumberish y() { return { m_y.ptr() }; }
@@ -56,7 +58,7 @@ public:
     
     CSSTransformType getType() const final { return CSSTransformType::Rotate; }
 
-    RefPtr<CSSValue> toCSSValue() const final;
+    std::optional<CSS::TransformFunction> toCSS() const final;
     
 private:
     CSSRotate(CSSTransformComponent::Is2D, Ref<CSSNumericValue>, Ref<CSSNumericValue>, Ref<CSSNumericValue>, Ref<CSSNumericValue>);

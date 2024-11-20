@@ -238,14 +238,14 @@ std::optional<LayoutRect> RenderLayerModelObject::cachedLayerClippedOverflowRect
     return hasLayer() ? layer()->cachedClippedOverflowRect() : std::nullopt;
 }
 
-bool RenderLayerModelObject::startAnimation(double timeOffset, const Animation& animation, const BlendingKeyframes& keyframes)
+bool RenderLayerModelObject::startAnimation(Seconds timeOffset, const Animation& animation, const BlendingKeyframes& keyframes)
 {
     if (!layer() || !layer()->backing())
         return false;
     return layer()->backing()->startAnimation(timeOffset, animation, keyframes);
 }
 
-void RenderLayerModelObject::animationPaused(double timeOffset, const String& name)
+void RenderLayerModelObject::animationPaused(Seconds timeOffset, const String& name)
 {
     if (!layer() || !layer()->backing())
         return;
@@ -395,7 +395,7 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
 
     // This check does not use style.hasTransformRelatedProperty() on purpose -- we only want to know if either the 'transform' property, an
     // offset path, or the individual transform operations are set (perspective / transform-style: preserve-3d are not relevant here).
-    bool hasCSSTransform = style.hasTransform() || style.rotate() || style.translate() || style.scale();
+    bool hasCSSTransform = style.hasTransform() || !style.rotate().isNone() || !style.translate().isNone() || !style.scale().isNone();
     bool hasSVGTransform = !svgTransform.isIdentity() || preApplySVGTransformMatrix || postApplySVGTransformMatrix || supplementalTransform;
 
     // Common case: 'viewBox' set on outermost <svg> element -> 'preApplySVGTransformMatrix'
@@ -405,7 +405,7 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
     if (!hasCSSTransform && !hasSVGTransform)
         return;
 
-    auto affectedByTransformOrigin = [&]() {
+    auto isAffectedByTransformOrigin = [&]() {
         if (preApplySVGTransformMatrix && !preApplySVGTransformMatrix->isIdentityOrTranslation())
             return true;
         if (postApplySVGTransformMatrix && !postApplySVGTransformMatrix->isIdentityOrTranslation())
@@ -413,12 +413,12 @@ void RenderLayerModelObject::applySVGTransform(TransformationMatrix& transform, 
         if (supplementalTransform && !supplementalTransform->isIdentityOrTranslation())
             return true;
         if (hasCSSTransform)
-            return style.affectedByTransformOrigin();
+            return style.isAffectedByTransformOrigin();
         return !svgTransform.isIdentityOrTranslation();
     };
 
     FloatPoint3D originTranslate;
-    if (options.contains(RenderStyle::TransformOperationOption::TransformOrigin) && affectedByTransformOrigin())
+    if (options.contains(RenderStyle::TransformOperationOption::TransformOrigin) && isAffectedByTransformOrigin())
         originTranslate = style.computeTransformOrigin(boundingBox);
 
     style.applyTransformOrigin(transform, originTranslate);

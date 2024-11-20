@@ -46,16 +46,20 @@ template<typename T> constexpr auto evaluateCalcNoConversionDataRequired(const T
 
 template<typename... Ts> auto evaluateCalcIfNoConversionDataRequired(const std::variant<Ts...>& component, const CSSCalcSymbolTable& symbolTable) -> std::variant<Ts...>
 {
-    return WTF::switchOn(component, [&](auto part) -> std::variant<Ts...> {
-        if (requiresConversionData(part))
-            return part;
-        return evaluateCalcNoConversionDataRequired(part, symbolTable);
+    return WTF::switchOn(component, [&](const auto& alternative) -> std::variant<Ts...> {
+        if (requiresConversionData(alternative))
+            return alternative;
+        return evaluateCalcNoConversionDataRequired(alternative, symbolTable);
     });
 }
 
 template<typename T> auto evaluateCalcIfNoConversionDataRequired(const PrimitiveNumeric<T>& component, const CSSCalcSymbolTable& symbolTable) -> PrimitiveNumeric<T>
 {
-    return { evaluateCalcIfNoConversionDataRequired(component.value, symbolTable) };
+    return WTF::switchOn(component, [&](const auto& alternative) -> PrimitiveNumeric<T> {
+        if (requiresConversionData(alternative))
+            return { alternative };
+        return { evaluateCalcNoConversionDataRequired(alternative, symbolTable) };
+    });
 }
 
 template<typename T> decltype(auto) evaluateCalcIfNoConversionDataRequired(const std::optional<T>& component, const CSSCalcSymbolTable& symbolTable)

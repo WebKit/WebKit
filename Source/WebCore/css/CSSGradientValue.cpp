@@ -99,7 +99,7 @@ template<RawNumeric CSSType> struct StyleImageIsUncacheable<UnevaluatedCalc<CSST
 };
 
 template<RawNumeric CSSType> struct StyleImageIsUncacheable<PrimitiveNumeric<CSSType>> {
-    constexpr bool operator()(const auto& value) { return styleImageIsUncacheable(value.value); }
+    constexpr bool operator()(const auto& value) { return WTF::switchOn(value, [&](const auto& value) { return styleImageIsUncacheable(value); }); }
 };
 
 template<CSSValueID C> struct StyleImageIsUncacheable<Constant<C>> {

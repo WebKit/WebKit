@@ -47,13 +47,10 @@
 #include "PlatformCALayerCocoa.h"
 #include "PlatformScreen.h"
 #include "Region.h"
-#include "RotateTransformOperation.h"
-#include "ScaleTransformOperation.h"
 #include "Settings.h"
 #include "TiledBacking.h"
-#include "TransformOperationsSharedPrimitivesPrefix.h"
+#include "TransformListSharedPrimitivesPrefix.h"
 #include "TransformState.h"
-#include "TranslateTransformOperation.h"
 #include <QuartzCore/CATransform3D.h>
 #include <limits.h>
 #include <pal/spi/cf/CFUtilitiesSPI.h>
@@ -107,166 +104,48 @@ static const unsigned cMaxScaledTiledLayerMemorySize = 1024 * 1024 * 156;
 // of 250ms. So send a very small value instead.
 static const float cAnimationAlmostZeroDuration = 1e-3f;
 
-static bool isTransformTypeTransformationMatrix(TransformOperation::Type transformType)
-{
-    switch (transformType) {
-    case TransformOperation::Type::SkewX:
-    case TransformOperation::Type::SkewY:
-    case TransformOperation::Type::Skew:
-    case TransformOperation::Type::Matrix:
-    case TransformOperation::Type::Rotate3D:
-    case TransformOperation::Type::Matrix3D:
-    case TransformOperation::Type::Perspective:
-    case TransformOperation::Type::Identity:
-    case TransformOperation::Type::None:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool isTransformTypeFloatPoint3D(TransformOperation::Type transformType)
-{
-    switch (transformType) {
-    case TransformOperation::Type::Scale:
-    case TransformOperation::Type::Scale3D:
-    case TransformOperation::Type::Translate:
-    case TransformOperation::Type::Translate3D:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool isTransformTypeNumber(TransformOperation::Type transformType)
-{
-    return !isTransformTypeTransformationMatrix(transformType) && !isTransformTypeFloatPoint3D(transformType);
-}
-
-static void getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::Type transformType, const FloatSize& size, float& value)
-{
-    switch (transformType) {
-    case TransformOperation::Type::Rotate:
-    case TransformOperation::Type::RotateX:
-    case TransformOperation::Type::RotateY:
-        value = transformOp ? narrowPrecisionToFloat(deg2rad(downcast<RotateTransformOperation>(*transformOp).angle())) : 0;
-        break;
-    case TransformOperation::Type::ScaleX:
-        value = transformOp ? narrowPrecisionToFloat(downcast<ScaleTransformOperation>(*transformOp).x()) : 1;
-        break;
-    case TransformOperation::Type::ScaleY:
-        value = transformOp ? narrowPrecisionToFloat(downcast<ScaleTransformOperation>(*transformOp).y()) : 1;
-        break;
-    case TransformOperation::Type::ScaleZ:
-        value = transformOp ? narrowPrecisionToFloat(downcast<ScaleTransformOperation>(*transformOp).z()) : 1;
-        break;
-    case TransformOperation::Type::TranslateX:
-        value = transformOp ? downcast<TranslateTransformOperation>(*transformOp).xAsFloat(size) : 0;
-        break;
-    case TransformOperation::Type::TranslateY:
-        value = transformOp ? downcast<TranslateTransformOperation>(*transformOp).yAsFloat(size) : 0;
-        break;
-    case TransformOperation::Type::TranslateZ:
-        value = transformOp ? downcast<TranslateTransformOperation>(*transformOp).zAsFloat() : 0;
-        break;
-    default:
-        break;
-    }
-}
-
-static void getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::Type transformType, const FloatSize& size, FloatPoint3D& value)
-{
-    switch (transformType) {
-    case TransformOperation::Type::Scale:
-    case TransformOperation::Type::Scale3D: {
-        const auto* scaleTransformOp = downcast<ScaleTransformOperation>(transformOp);
-        value.setX(scaleTransformOp ? narrowPrecisionToFloat(scaleTransformOp->x()) : 1);
-        value.setY(scaleTransformOp ? narrowPrecisionToFloat(scaleTransformOp->y()) : 1);
-        value.setZ(scaleTransformOp ? narrowPrecisionToFloat(scaleTransformOp->z()) : 1);
-        break;
-    }
-    case TransformOperation::Type::Translate:
-    case TransformOperation::Type::Translate3D: {
-        const auto* translateTransformOp = downcast<TranslateTransformOperation>(transformOp);
-        value.setX(translateTransformOp ? translateTransformOp->xAsFloat(size) : 0);
-        value.setY(translateTransformOp ? translateTransformOp->yAsFloat(size) : 0);
-        value.setZ(translateTransformOp ? translateTransformOp->zAsFloat() : 0);
-        break;
-    }
-    default:
-        break;
-    }
-}
-
-static void getTransformFunctionValue(const TransformOperation* transformOp, TransformOperation::Type transformType, const FloatSize& size, TransformationMatrix& value)
-{
-    switch (transformType) {
-    case TransformOperation::Type::SkewX:
-    case TransformOperation::Type::SkewY:
-    case TransformOperation::Type::Skew:
-    case TransformOperation::Type::Matrix:
-    case TransformOperation::Type::Rotate3D:
-    case TransformOperation::Type::Matrix3D:
-    case TransformOperation::Type::Perspective:
-    case TransformOperation::Type::Identity:
-    case TransformOperation::Type::None:
-        if (transformOp)
-            transformOp->applyUnrounded(value, size);
-        else
-            value.makeIdentity();
-        break;
-    default:
-        break;
-    }
-}
-
-static PlatformCAAnimation::ValueFunctionType getValueFunctionNameForTransformOperation(TransformOperation::Type transformType)
+static PlatformCAAnimation::ValueFunctionType valueFunctionNameForTransformOperation(TransformFunctionType transformType)
 {
     // Use literal strings to avoid link-time dependency on those symbols.
     switch (transformType) {
-    case TransformOperation::Type::RotateX:
+    case TransformFunctionType::RotateX:
         return PlatformCAAnimation::ValueFunctionType::RotateX;
-    case TransformOperation::Type::RotateY:
+    case TransformFunctionType::RotateY:
         return PlatformCAAnimation::ValueFunctionType::RotateY;
-    case TransformOperation::Type::Rotate:
+    case TransformFunctionType::Rotate:
         return PlatformCAAnimation::ValueFunctionType::RotateZ;
-    case TransformOperation::Type::ScaleX:
+    case TransformFunctionType::ScaleX:
         return PlatformCAAnimation::ValueFunctionType::ScaleX;
-    case TransformOperation::Type::ScaleY:
+    case TransformFunctionType::ScaleY:
         return PlatformCAAnimation::ValueFunctionType::ScaleY;
-    case TransformOperation::Type::ScaleZ:
+    case TransformFunctionType::ScaleZ:
         return PlatformCAAnimation::ValueFunctionType::ScaleZ;
-    case TransformOperation::Type::TranslateX:
+    case TransformFunctionType::TranslateX:
         return PlatformCAAnimation::ValueFunctionType::TranslateX;
-    case TransformOperation::Type::TranslateY:
+    case TransformFunctionType::TranslateY:
         return PlatformCAAnimation::ValueFunctionType::TranslateY;
-    case TransformOperation::Type::TranslateZ:
+    case TransformFunctionType::TranslateZ:
         return PlatformCAAnimation::ValueFunctionType::TranslateZ;
-    case TransformOperation::Type::Scale:
-    case TransformOperation::Type::Scale3D:
+    case TransformFunctionType::Scale:
+    case TransformFunctionType::Scale3D:
         return PlatformCAAnimation::ValueFunctionType::Scale;
-    case TransformOperation::Type::Translate:
-    case TransformOperation::Type::Translate3D:
+    case TransformFunctionType::Translate:
+    case TransformFunctionType::Translate3D:
         return PlatformCAAnimation::ValueFunctionType::Translate;
     default:
         return PlatformCAAnimation::ValueFunctionType::NoValueFunction;
     }
 }
 
-static bool animatedPropertyIsTransformOrRelated(AnimatedProperty property)
-{
-    return property == AnimatedProperty::Transform || property == AnimatedProperty::Translate || property == AnimatedProperty::Scale || property == AnimatedProperty::Rotate;
-}
-
-static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, const Animation* anim)
+template<typename T> static bool animationHasStepsTimingFunction(const KeyframeValueList<T>& keyframes, const Animation* anim)
 {
     if (is<StepsTimingFunction>(anim->timingFunction()))
         return true;
 
     bool hasStepsDefaultTimingFunctionForKeyframes = is<StepsTimingFunction>(anim->defaultTimingFunctionForKeyframes());
-    for (unsigned i = 0; i < valueList.size(); ++i) {
-        if (const TimingFunction* timingFunction = valueList.at(i).timingFunction()) {
-            if (is<StepsTimingFunction>(timingFunction))
+    for (const auto& keyframe : keyframes) {
+        if (RefPtr timingFunction = keyframe.timingFunction()) {
+            if (is<StepsTimingFunction>(*timingFunction))
                 return true;
         } else if (hasStepsDefaultTimingFunctionForKeyframes)
             return true;
@@ -688,9 +567,9 @@ void GraphicsLayerCA::moveOrCopyAnimations(MoveOrCopy operation, PlatformCALayer
 {
     for (auto& animationGroup : m_animationGroups) {
         if ((animatedPropertyIsTransformOrRelated(animationGroup.m_property)
-            || animationGroup.m_property == AnimatedProperty::Opacity
-            || animationGroup.m_property == AnimatedProperty::BackgroundColor
-            || animationGroup.m_property == AnimatedProperty::Filter))
+            || animationGroup.m_property == GraphicsLayerAnimationProperty::Opacity
+            || animationGroup.m_property == GraphicsLayerAnimationProperty::BackgroundColor
+            || animationGroup.m_property == GraphicsLayerAnimationProperty::Filter))
             moveOrCopyLayerAnimation(operation, animationGroup.animationIdentifier(), animationGroup.computedBeginTime(), fromLayer, toLayer);
     }
 }
@@ -1044,9 +923,9 @@ bool GraphicsLayerCA::animationIsRunning(const String& animationName) const
     return index != notFound && m_animations[index].m_playState == PlayState::Playing;
 }
 
-static bool timingFunctionIsCubicTimingFunctionWithYValueOutOfRange(const TimingFunction* timingFunction)
+static bool timingFunctionIsCubicTimingFunctionWithYValueOutOfRange(const RefPtr<TimingFunction> timingFunction)
 {
-    auto* cubicBezierTimingFunction = dynamicDowncast<CubicBezierTimingFunction>(timingFunction);
+    RefPtr cubicBezierTimingFunction = dynamicDowncast<CubicBezierTimingFunction>(timingFunction);
     if (!cubicBezierTimingFunction)
         return false;
 
@@ -1057,12 +936,12 @@ static bool timingFunctionIsCubicTimingFunctionWithYValueOutOfRange(const Timing
     return yValueIsOutOfRange(cubicBezierTimingFunction->y1()) || yValueIsOutOfRange(cubicBezierTimingFunction->y2());
 }
 
-static bool keyframeValueListHasSingleIntervalWithLinearOrEquivalentTimingFunction(const KeyframeValueList& valueList)
+template<typename T> static bool keyframeValueListHasSingleIntervalWithLinearOrEquivalentTimingFunction(const KeyframeValueList<T>& keyframes)
 {
-    if (valueList.size() != 2)
+    if (keyframes.size() != 2)
         return false;
 
-    auto* timingFunction = valueList.at(0).timingFunction();
+    RefPtr timingFunction = keyframes[0].timingFunction();
     if (!timingFunction)
         return true;
 
@@ -1075,50 +954,45 @@ static bool keyframeValueListHasSingleIntervalWithLinearOrEquivalentTimingFuncti
     return cubicBezierTimingFunction && cubicBezierTimingFunction->isLinear();
 }
 
-static bool animationCanBeAccelerated(const KeyframeValueList& valueList, const Animation* anim)
+template<typename T> static bool animationCanBeAccelerated(const KeyframeValueList<T>& keyframes, const Animation* anim)
 {
     if (anim->playbackRate() != 1 || !anim->directionIsForwards())
         return false;
 
-    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
+    if (!anim || anim->isEmptyOrZeroDuration() || keyframes.size() < 2)
         return false;
 
-    if (animationHasStepsTimingFunction(valueList, anim))
+    if (animationHasStepsTimingFunction(keyframes, anim))
         return false;
 
     return true;
 }
 
-bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const FloatSize& boxSize, const Animation* anim, const String& animationName, double timeOffset)
+template<typename T> static bool checkTimingFunctionAgainstKeyframes(const KeyframeValueList<T>& keyframes, const Animation* anim, bool& keyframesShouldUseAnimationWideTimingFunction)
 {
-    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " addAnimation " << anim << " " << animationName << " duration " << anim->duration() << " (can be accelerated " << animationCanBeAccelerated(valueList, anim) << ")");
-
-    ASSERT(!animationName.isEmpty());
-
-    if (!animationCanBeAccelerated(valueList, anim))
-        return false;
-
-    bool keyframesShouldUseAnimationWideTimingFunction = false;
     // Core Animation clips values outside of the [0-1] range for animation-wide cubic timing functions.
     if (timingFunctionIsCubicTimingFunctionWithYValueOutOfRange(anim->timingFunction())) {
-        if (!keyframeValueListHasSingleIntervalWithLinearOrEquivalentTimingFunction(valueList))
+        if (!keyframeValueListHasSingleIntervalWithLinearOrEquivalentTimingFunction(keyframes))
             return false;
         keyframesShouldUseAnimationWideTimingFunction = true;
     }
+    return true;
+}
 
-    bool createdAnimations = false;
-    if (animatedPropertyIsTransformOrRelated(valueList.property()))
-        createdAnimations = createTransformAnimationsFromKeyframes(valueList, anim, animationName, Seconds { timeOffset }, boxSize, keyframesShouldUseAnimationWideTimingFunction);
-    else if (valueList.property() == AnimatedProperty::Filter) {
-        if (supportsAcceleratedFilterAnimations())
-            createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, Seconds { timeOffset }, keyframesShouldUseAnimationWideTimingFunction);
-    }
-    else if (valueList.property() == AnimatedProperty::WebkitBackdropFilter) {
-        if (supportsAcceleratedFilterAnimations())
-            createdAnimations = createFilterAnimationsFromKeyframes(valueList, anim, animationName, Seconds { timeOffset }, keyframesShouldUseAnimationWideTimingFunction);
-    }
-    else
-        createdAnimations = createAnimationFromKeyframes(valueList, anim, animationName, Seconds { timeOffset }, keyframesShouldUseAnimationWideTimingFunction);
+bool GraphicsLayerCA::addAnimation(const KeyframeValueList<FloatAnimationValue>& keyframes, const Animation* anim, const String& animationName, Seconds timeOffset)
+{
+    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " addAnimation " << anim << " " << animationName << " duration " << anim->duration() << " (can be accelerated " << animationCanBeAccelerated(keyframes, anim) << ")");
+
+    ASSERT(!animationName.isEmpty());
+
+    if (!animationCanBeAccelerated(keyframes, anim))
+        return false;
+
+    bool keyframesShouldUseAnimationWideTimingFunction = false;
+    if (!checkTimingFunctionAgainstKeyframes(keyframes, anim, keyframesShouldUseAnimationWideTimingFunction))
+        return false;
+
+    bool createdAnimations = createAnimationFromKeyframes(keyframes, anim, animationName, timeOffset, keyframesShouldUseAnimationWideTimingFunction);
 
     if (createdAnimations)
         noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
@@ -1126,7 +1000,52 @@ bool GraphicsLayerCA::addAnimation(const KeyframeValueList& valueList, const Flo
     return createdAnimations;
 }
 
-void GraphicsLayerCA::pauseAnimation(const String& animationName, double timeOffset)
+bool GraphicsLayerCA::addAnimation(const KeyframeValueList<FilterAnimationValue>& keyframes, const Animation* anim, const String& animationName, Seconds timeOffset)
+{
+    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " addAnimation " << anim << " " << animationName << " duration " << anim->duration() << " (can be accelerated " << animationCanBeAccelerated(keyframes, anim) << ")");
+
+    ASSERT(!animationName.isEmpty());
+
+    if (!animationCanBeAccelerated(keyframes, anim))
+        return false;
+
+    bool keyframesShouldUseAnimationWideTimingFunction = false;
+    if (!checkTimingFunctionAgainstKeyframes(keyframes, anim, keyframesShouldUseAnimationWideTimingFunction))
+        return false;
+
+    bool createdAnimations = false;
+
+    if (supportsAcceleratedFilterAnimations())
+        createdAnimations = createFilterAnimationsFromKeyframes(keyframes, anim, animationName, timeOffset, keyframesShouldUseAnimationWideTimingFunction);
+
+    if (createdAnimations)
+        noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
+
+    return createdAnimations;
+}
+
+bool GraphicsLayerCA::addAnimation(const KeyframeValueList<TransformAnimationValue>& keyframes, const Animation* anim, const String& animationName, Seconds timeOffset)
+{
+    LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " addAnimation " << anim << " " << animationName << " duration " << anim->duration() << " (can be accelerated " << animationCanBeAccelerated(keyframes, anim) << ")");
+
+    ASSERT(!animationName.isEmpty());
+
+    if (!animationCanBeAccelerated(keyframes, anim))
+        return false;
+
+    bool keyframesShouldUseAnimationWideTimingFunction = false;
+    if (!checkTimingFunctionAgainstKeyframes(keyframes, anim, keyframesShouldUseAnimationWideTimingFunction))
+        return false;
+
+    bool createdAnimations = createTransformAnimationsFromKeyframes(keyframes, anim, animationName, timeOffset, keyframesShouldUseAnimationWideTimingFunction);
+
+    if (createdAnimations)
+        noteLayerPropertyChanged(AnimationChanged | CoverageRectChanged);
+
+    return createdAnimations;
+}
+
+void GraphicsLayerCA::pauseAnimation(const String& animationName, Seconds timeOffset)
 {
     LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " pauseAnimation " << animationName << " (is running " << animationIsRunning(animationName) << ")");
 
@@ -1142,7 +1061,7 @@ void GraphicsLayerCA::pauseAnimation(const String& animationName, double timeOff
     }
 }
 
-void GraphicsLayerCA::removeAnimation(const String& animationName, std::optional<AnimatedProperty> property)
+void GraphicsLayerCA::removeAnimation(const String& animationName, std::optional<GraphicsLayerAnimationProperty> property)
 {
     LOG_WITH_STREAM(Animations, stream << "GraphicsLayerCA " << this << " id " << primaryLayerID() << " removeAnimation " << animationName << " (is running " << animationIsRunning(animationName) << ")");
 
@@ -3233,7 +3152,7 @@ void GraphicsLayerCA::updateAnimations()
     auto infiniteDuration = std::numeric_limits<double>::max();
     auto currentTime = Seconds(CACurrentMediaTime());
 
-    auto addAnimationGroup = [&](AnimatedProperty property, const Vector<RefPtr<PlatformCAAnimation>>& animations) {
+    auto addAnimationGroup = [&](GraphicsLayerAnimationProperty property, const Vector<RefPtr<PlatformCAAnimation>>& animations) {
         auto caAnimationGroup = createPlatformCAAnimation(PlatformCAAnimation::AnimationType::Group, PlatformCAAnimation::makeGroupKeyPath());
         caAnimationGroup->setDuration(infiniteDuration);
         caAnimationGroup->setAnimations(animations);
@@ -3268,7 +3187,7 @@ void GraphicsLayerCA::updateAnimations()
     };
 
     enum class TransformationMatrixSource { UseIdentityMatrix, AskClient };
-    auto makeBaseValueTransformAnimation = [&](AnimatedProperty property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient, Seconds beginTimeOfEarliestPropertyAnimation = 0_s) -> LayerPropertyAnimation* {
+    auto makeBaseValueTransformAnimation = [&](GraphicsLayerAnimationProperty property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient, Seconds beginTimeOfEarliestPropertyAnimation = 0_s) -> LayerPropertyAnimation* {
         // A base value transform animation can either be set to the identity matrix or to read the underlying
         // value from the GraphicsLayerClient. If we didn't explicitly ask for an identity matrix, we can skip
         // the addition of this base value transform animation since it will be a no-op.
@@ -3294,7 +3213,7 @@ void GraphicsLayerCA::updateAnimations()
         return &m_baseValueTransformAnimations.last();
     };
 
-    auto addBaseValueTransformAnimation = [&](AnimatedProperty property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient, Seconds beginTimeOfEarliestPropertyAnimation = 0_s) {
+    auto addBaseValueTransformAnimation = [&](GraphicsLayerAnimationProperty property, TransformationMatrixSource matrixSource = TransformationMatrixSource::AskClient, Seconds beginTimeOfEarliestPropertyAnimation = 0_s) {
         // Additivity will depend on the source of the matrix, if it was explicitly provided as an identity matrix, it
         // is the initial base value transform animation and must override the current transform value for this layer.
         // Otherwise, it is meant to apply the underlying value for one specific transform-related property and be additive
@@ -3337,16 +3256,16 @@ void GraphicsLayerCA::updateAnimations()
 
     for (auto& animation : m_animations) {
         switch (animation.m_property) {
-        case AnimatedProperty::Translate:
+        case GraphicsLayerAnimationProperty::Translate:
             translateAnimation = &animation;
             break;
-        case AnimatedProperty::Scale:
+        case GraphicsLayerAnimationProperty::Scale:
             scaleAnimation = &animation;
             break;
-        case AnimatedProperty::Rotate:
+        case GraphicsLayerAnimationProperty::Rotate:
             rotateAnimation = &animation;
             break;
-        case AnimatedProperty::Transform:
+        case GraphicsLayerAnimationProperty::Transform:
             // In the case of animations targeting the "transform" CSS property, there may be several
             // animations created for a single KeyframeEffect, one for each transform component. In that
             // case the animation index starts at 0 and increases for each component. If we encounter an
@@ -3357,13 +3276,13 @@ void GraphicsLayerCA::updateAnimations()
                 transformAnimations.clear();
             transformAnimations.append(&animation);
             break;
-        case AnimatedProperty::Opacity:
-        case AnimatedProperty::BackgroundColor:
-        case AnimatedProperty::Filter:
-        case AnimatedProperty::WebkitBackdropFilter:
+        case GraphicsLayerAnimationProperty::Opacity:
+        case GraphicsLayerAnimationProperty::BackgroundColor:
+        case GraphicsLayerAnimationProperty::Filter:
+        case GraphicsLayerAnimationProperty::WebkitBackdropFilter:
             addLeafAnimation(animation);
             break;
-        case AnimatedProperty::Invalid:
+        case GraphicsLayerAnimationProperty::Invalid:
             ASSERT_NOT_REACHED();
         }
     }
@@ -3381,9 +3300,9 @@ void GraphicsLayerCA::updateAnimations()
     if (!translateAnimations.isEmpty() || !scaleAnimations.isEmpty() || !rotateAnimations.isEmpty() || !transformAnimations.isEmpty()) {
         // Start with a base identity transform to override the transform applied to the layer and have a
         // sound base to add animations on top of with additivity enabled.
-        addBaseValueTransformAnimation(AnimatedProperty::Transform, TransformationMatrixSource::UseIdentityMatrix);
+        addBaseValueTransformAnimation(GraphicsLayerAnimationProperty::Transform, TransformationMatrixSource::UseIdentityMatrix);
 
-        auto addAnimationsForProperty = [&](const Vector<LayerPropertyAnimation*>& animations, AnimatedProperty property) {
+        auto addAnimationsForProperty = [&](const Vector<LayerPropertyAnimation*>& animations, GraphicsLayerAnimationProperty property) {
             if (animations.isEmpty()) {
                 addBaseValueTransformAnimation(property);
                 return;
@@ -3421,10 +3340,10 @@ void GraphicsLayerCA::updateAnimations()
             addAnimationGroup(property, caAnimations);
         };
 
-        addAnimationsForProperty(transformAnimations, AnimatedProperty::Transform);
-        addAnimationsForProperty(scaleAnimations, AnimatedProperty::Scale);
-        addAnimationsForProperty(rotateAnimations, AnimatedProperty::Rotate);
-        addAnimationsForProperty(translateAnimations, AnimatedProperty::Translate);
+        addAnimationsForProperty(transformAnimations, GraphicsLayerAnimationProperty::Transform);
+        addAnimationsForProperty(scaleAnimations, GraphicsLayerAnimationProperty::Scale);
+        addAnimationsForProperty(rotateAnimations, GraphicsLayerAnimationProperty::Rotate);
+        addAnimationsForProperty(translateAnimations, GraphicsLayerAnimationProperty::Translate);
     }
 }
 
@@ -3558,14 +3477,14 @@ void GraphicsLayerCA::updateContentsNeedsDisplay()
         m_contentsLayer->setNeedsDisplay();
 }
 
-static bool isKeyframe(const KeyframeValueList& list)
+template<typename T> static bool isKeyframe(const KeyframeValueList<T>& list)
 {
     return list.size() > 1;
 }
 
-bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList<FloatAnimationValue>& keyframes, const Animation* animation, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    ASSERT(!animatedPropertyIsTransformOrRelated(valueList.property()) && (!supportsAcceleratedFilterAnimations() || valueList.property() != AnimatedProperty::Filter));
+    ASSERT(!animatedPropertyIsTransformOrRelated(keyframes.property()) && (!supportsAcceleratedFilterAnimations() || keyframes.property() != GraphicsLayerAnimationProperty::Filter));
 
     bool valuesOK;
     
@@ -3574,71 +3493,85 @@ bool GraphicsLayerCA::createAnimationFromKeyframes(const KeyframeValueList& valu
     
     RefPtr<PlatformCAAnimation> caAnimation;
 
-    if (isKeyframe(valueList)) {
-        caAnimation = createKeyframeAnimation(animation, PlatformCAAnimation::makeKeyPath(valueList.property()), additive, keyframesShouldUseAnimationWideTimingFunction);
-        valuesOK = setAnimationKeyframes(valueList, animation, caAnimation.get(), keyframesShouldUseAnimationWideTimingFunction);
+    if (isKeyframe(keyframes)) {
+        caAnimation = createKeyframeAnimation(animation, PlatformCAAnimation::makeKeyPath(keyframes.property()), additive, keyframesShouldUseAnimationWideTimingFunction);
+        valuesOK = setAnimationKeyframes(keyframes, animation, caAnimation.get(), keyframesShouldUseAnimationWideTimingFunction);
     } else {
         if (animation->timingFunction()->isSpringTimingFunction())
-            caAnimation = createSpringAnimation(animation, PlatformCAAnimation::makeKeyPath(valueList.property()), additive, keyframesShouldUseAnimationWideTimingFunction);
+            caAnimation = createSpringAnimation(animation, PlatformCAAnimation::makeKeyPath(keyframes.property()), additive, keyframesShouldUseAnimationWideTimingFunction);
         else
-            caAnimation = createBasicAnimation(animation, PlatformCAAnimation::makeKeyPath(valueList.property()), additive, keyframesShouldUseAnimationWideTimingFunction);
-        valuesOK = setAnimationEndpoints(valueList, animation, caAnimation.get());
+            caAnimation = createBasicAnimation(animation, PlatformCAAnimation::makeKeyPath(keyframes.property()), additive, keyframesShouldUseAnimationWideTimingFunction);
+        valuesOK = setAnimationEndpoints(keyframes, animation, caAnimation.get());
     }
 
     if (!valuesOK)
         return false;
 
-    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, timeOffset));
+    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, keyframes.property(), animationIndex, timeOffset));
 
     return true;
 }
 
-bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, TransformOperation::Type operationType, const Animation* animation, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList<TransformAnimationValue>& keyframes, TransformFunctionType operationType, const Animation* animation, const String& animationName, unsigned functionIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     RefPtr<PlatformCAAnimation> caAnimation;
     bool validMatrices = true;
-    if (isKeyframe(valueList)) {
-        caAnimation = createKeyframeAnimation(animation, PlatformCAAnimation::makeKeyPath(valueList.property()), false, keyframesShouldUseAnimationWideTimingFunction);
-        validMatrices = setTransformAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, operationType, isMatrixAnimation, boxSize, keyframesShouldUseAnimationWideTimingFunction);
+    if (isKeyframe(keyframes)) {
+        caAnimation = createKeyframeAnimation(animation, PlatformCAAnimation::makeKeyPath(keyframes.property()), false, keyframesShouldUseAnimationWideTimingFunction);
+        validMatrices = setTransformAnimationKeyframes(keyframes, animation, caAnimation.get(), functionIndex, operationType, isMatrixAnimation, keyframesShouldUseAnimationWideTimingFunction);
     } else {
         if (animation->timingFunction()->isSpringTimingFunction())
-            caAnimation = createSpringAnimation(animation, PlatformCAAnimation::makeKeyPath(valueList.property()), false, keyframesShouldUseAnimationWideTimingFunction);
+            caAnimation = createSpringAnimation(animation, PlatformCAAnimation::makeKeyPath(keyframes.property()), false, keyframesShouldUseAnimationWideTimingFunction);
         else
-            caAnimation = createBasicAnimation(animation, PlatformCAAnimation::makeKeyPath(valueList.property()), false, keyframesShouldUseAnimationWideTimingFunction);
-        validMatrices = setTransformAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex, operationType, isMatrixAnimation, boxSize);
+            caAnimation = createBasicAnimation(animation, PlatformCAAnimation::makeKeyPath(keyframes.property()), false, keyframesShouldUseAnimationWideTimingFunction);
+        validMatrices = setTransformAnimationEndpoints(keyframes, animation, caAnimation.get(), functionIndex, operationType, isMatrixAnimation);
     }
     
     if (!validMatrices)
         return false;
 
-    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, timeOffset));
+    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, keyframes.property(), functionIndex, timeOffset));
     return true;
 }
 
-static const TransformOperations& transformationAnimationValueAt(const KeyframeValueList& valueList, unsigned i)
+static bool hasBig3DRotation(const KeyframeValueList<TransformAnimationValue>& keyframes, const TransformListSharedPrimitivesPrefix& prefix)
 {
-    return static_cast<const TransformAnimationValue&>(valueList.at(i)).value();
-}
+    auto rotate3DAngle = [](const std::optional<TransformFunction>& function) -> double {
+        if (!function)
+            return 0;
+        return WTF::switchOn(*function,
+            [](const Rotate& op) -> double { return op.value; },
+            [](const Rotate3D& op) -> double { return op.angle; },
+            [](const auto&) -> double { ASSERT_NOT_REACHED(); return 0; }
+        );
+    };
 
-static bool hasBig3DRotation(const KeyframeValueList& valueList, const TransformOperationsSharedPrimitivesPrefix& prefix)
-{
     // Hardware non-matrix animations are used for every function in the shared primitives prefix.
     // These kind of animations have issues with large rotation angles, so for every function that
     // will be represented as a hardware non-matrix animation, check that for each of those functions
     // the animation that's created for it will not have two consecutive keyframes that have a large
     // rotation angle between them.
     const auto& primitives = prefix.primitives();
-    for (unsigned animationIndex = 0; animationIndex < primitives.size(); ++animationIndex) {
-        auto type = primitives[animationIndex];
-        if (type != TransformOperation::Type::Rotate3D)
+    for (unsigned functionIndex = 0; functionIndex < primitives.size(); ++functionIndex) {
+        auto type = primitives[functionIndex];
+
+        if (type != TransformFunctionType::Rotate3D)
             continue;
-        for (size_t i = 1; i < valueList.size(); ++i) {
+
+        for (size_t i = 1; i < keyframes.size(); ++i) {
             // Since the shared primitive at this index is a rotation, both of these transform
-            // functions should be RotateTransformOperations.
-            auto prevOperation = downcast<RotateTransformOperation>(transformationAnimationValueAt(valueList, i - 1).at(animationIndex));
-            auto operation = downcast<RotateTransformOperation>(transformationAnimationValueAt(valueList, i).at(animationIndex));
-            auto angle = std::abs((prevOperation ? prevOperation->angle() : 0.0) - (operation ? operation->angle() : 0.0));
-            if (angle > 180.0)
+            // functions should be Rotate3D functions.
+
+            const TransformList& transformsMinus1 = keyframes[i - 1].value();
+            const TransformList& transforms = keyframes[i].value();
+
+            std::optional<TransformFunction> prevFunction = transformsMinus1.at(functionIndex);
+            std::optional<TransformFunction> currentFunction = transforms.at(functionIndex);
+
+            double prevAngle = rotate3DAngle(prevFunction);
+            double currentAngle = rotate3DAngle(currentFunction);
+
+            if (std::abs(prevAngle - currentAngle) > 180.0)
                 return true;
         }
     }
@@ -3646,37 +3579,37 @@ static bool hasBig3DRotation(const KeyframeValueList& valueList, const Transform
     return false;
 }
 
-bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, Seconds timeOffset, const FloatSize& boxSize, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValueList<TransformAnimationValue>& keyframes, const Animation* animation, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    ASSERT(animatedPropertyIsTransformOrRelated(valueList.property()));
-
     // https://www.w3.org/TR/css-transforms-1/#interpolation-of-transforms
     // In the CSS Transform Level 1 and 2 Specification some transform functions can share a compatible transform
     // function primitive. For instance, the shared primitive of a translateX and translate3D operation is
-    // TransformOperation::Type::Translate3D. When the transform function list of every keyframe in an animation
+    // TransformFunctionType::Translate3D. When the transform function list of every keyframe in an animation
     // shares the same transform function primitive, we should interpolate between them without resorting
     // to matrix decomposition. The remaining parts of the transform function list should be interpolated
     // using matrix decomposition. The code below finds the shared primitives in this prefix.
+
     // FIXME: Currently, this only supports situations where every keyframe shares the same prefix of shared
     // transformation primitives, but the specification says direct interpolation should be determined by
     // the primitives shared between any two adjacent keyframes.
-    TransformOperationsSharedPrimitivesPrefix prefix;
-    for (size_t i = 0; i < valueList.size(); ++i)
-        prefix.update(transformationAnimationValueAt(valueList, i));
+
+    TransformListSharedPrimitivesPrefix prefix;
+    for (auto& keyframe : keyframes)
+        prefix.update(keyframe.value());
 
     // If this animation has a big rotation between two keyframes, fall back to software animation. CoreAnimation
     // will always take the shortest path between two rotations, which will result in incorrect animation when
     // the keyframes specify angles larger than one half rotation.
-    if (hasBig3DRotation(valueList, prefix))
+    if (hasBig3DRotation(keyframes, prefix))
         return false;
 
     const auto& primitives = prefix.primitives();
-    unsigned numberOfSharedPrimitives = valueList.size() > 1 ? primitives.size() : 0;
+    unsigned numberOfSharedPrimitives = keyframes.size() > 1 ? primitives.size() : 0;
 
-    removeAnimation(animationName, valueList.property());
+    removeAnimation(animationName, keyframes.property());
 
-    for (unsigned animationIndex = 0; animationIndex < numberOfSharedPrimitives; ++animationIndex) {
-        if (!appendToUncommittedAnimations(valueList, primitives[animationIndex], animation, animationName, boxSize, animationIndex, timeOffset, false /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction))
+    for (unsigned functionIndex = 0; functionIndex < numberOfSharedPrimitives; ++functionIndex) {
+        if (!appendToUncommittedAnimations(keyframes, primitives[functionIndex], animation, animationName, functionIndex, timeOffset, false /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction))
             return false;
     }
 
@@ -3685,10 +3618,10 @@ bool GraphicsLayerCA::createTransformAnimationsFromKeyframes(const KeyframeValue
 
     // If there were any incompatible transform functions, they will be appended to the animation list
     // as a single combined transformation matrix animation.
-    return appendToUncommittedAnimations(valueList, TransformOperation::Type::Matrix3D, animation, animationName, boxSize, primitives.size(), timeOffset, true /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction);
+    return appendToUncommittedAnimations(keyframes, TransformFunctionType::Matrix3D, animation, animationName, primitives.size(), timeOffset, true /* isMatrixAnimation */, keyframesShouldUseAnimationWideTimingFunction);
 }
 
-bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& valueList, const FilterOperation& operation, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList<FilterAnimationValue>& keyframes, const FilterOperation& operation, const Animation* animation, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     auto filterOp = operation.type();
     if (!PlatformCAFilters::isAnimatedFilterProperty(filterOp))
@@ -3696,32 +3629,30 @@ bool GraphicsLayerCA::appendToUncommittedAnimations(const KeyframeValueList& val
 
     bool valuesOK;
     RefPtr<PlatformCAAnimation> caAnimation;
-    auto keyPath = PlatformCAAnimation::makeKeyPath(AnimatedProperty::Filter, filterOp, animationIndex);
+    auto keyPath = PlatformCAAnimation::makeKeyPath(GraphicsLayerAnimationProperty::Filter, filterOp, animationIndex);
 
-    if (isKeyframe(valueList)) {
+    if (isKeyframe(keyframes)) {
         caAnimation = createKeyframeAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
-        valuesOK = setFilterAnimationKeyframes(valueList, animation, caAnimation.get(), animationIndex, filterOp, keyframesShouldUseAnimationWideTimingFunction);
+        valuesOK = setFilterAnimationKeyframes(keyframes, animation, caAnimation.get(), animationIndex, filterOp, keyframesShouldUseAnimationWideTimingFunction);
     } else {
         caAnimation = createBasicAnimation(animation, keyPath, false, keyframesShouldUseAnimationWideTimingFunction);
-        valuesOK = setFilterAnimationEndpoints(valueList, animation, caAnimation.get(), animationIndex);
+        valuesOK = setFilterAnimationEndpoints(keyframes, animation, caAnimation.get(), animationIndex);
     }
 
     ASSERT_UNUSED(valuesOK, valuesOK);
 
-    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, valueList.property(), animationIndex, timeOffset));
+    m_animations.append(LayerPropertyAnimation(caAnimation.releaseNonNull(), animationName, keyframes.property(), animationIndex, timeOffset));
 
     return true;
 }
 
-bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueList& valueList, const Animation* animation, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueList<FilterAnimationValue>& keyframes, const Animation* animation, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction)
 {
-    ASSERT(valueList.property() == AnimatedProperty::Filter || valueList.property() == AnimatedProperty::WebkitBackdropFilter);
-
-    int listIndex = validateFilterOperations(valueList);
+    int listIndex = validateFilterOperations(keyframes);
     if (listIndex < 0)
         return false;
 
-    const FilterOperations& operations = static_cast<const FilterAnimationValue&>(valueList.at(listIndex)).value();
+    const FilterOperations& operations = keyframes[listIndex].value();
     // Make sure the platform layer didn't fallback to using software filter compositing instead.
     if (!filtersCanBeComposited(operations))
         return false;
@@ -3730,11 +3661,11 @@ bool GraphicsLayerCA::createFilterAnimationsFromKeyframes(const KeyframeValueLis
     if (operations.hasFilterOfType<FilterOperation::Type::DropShadow>())
         return false;
 
-    removeAnimation(animationName, valueList.property());
+    removeAnimation(animationName, keyframes.property());
 
     int numberOfAnimations = operations.size();
     for (int animationIndex = 0; animationIndex < numberOfAnimations; ++animationIndex) {
-        if (!appendToUncommittedAnimations(valueList, operations[animationIndex], animation, animationName, animationIndex, timeOffset, keyframesShouldUseAnimationWideTimingFunction))
+        if (!appendToUncommittedAnimations(keyframes, operations[animationIndex], animation, animationName, animationIndex, timeOffset, keyframesShouldUseAnimationWideTimingFunction))
             return false;
     }
 
@@ -3805,7 +3736,7 @@ void GraphicsLayerCA::setupAnimation(PlatformCAAnimation* propertyAnim, const An
         propertyAnim->setTimingFunction(anim->timingFunction());
 }
 
-const TimingFunction& GraphicsLayerCA::timingFunctionForAnimationValue(const AnimationValue& animValue, const Animation& anim, bool keyframesShouldUseAnimationWideTimingFunction)
+template<typename AnimationValue> const TimingFunction& GraphicsLayerCA::timingFunctionForAnimationValue(const AnimationValue& animValue, const Animation& anim, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     if (keyframesShouldUseAnimationWideTimingFunction && anim.timingFunction()) {
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=215918
@@ -3822,17 +3753,17 @@ const TimingFunction& GraphicsLayerCA::timingFunctionForAnimationValue(const Ani
     return LinearTimingFunction::identity();
 }
 
-bool GraphicsLayerCA::setAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim)
+bool GraphicsLayerCA::setAnimationEndpoints(const KeyframeValueList<FloatAnimationValue>& keyframes, const Animation* animation, PlatformCAAnimation* basicAnim)
 {
     bool forwards = animation->directionIsForwards();
 
     unsigned fromIndex = !forwards;
     unsigned toIndex = forwards;
     
-    switch (valueList.property()) {
-    case AnimatedProperty::Opacity: {
-        basicAnim->setFromValue(static_cast<const FloatAnimationValue&>(valueList.at(fromIndex)).value());
-        basicAnim->setToValue(static_cast<const FloatAnimationValue&>(valueList.at(toIndex)).value());
+    switch (keyframes.property()) {
+    case GraphicsLayerAnimationProperty::Opacity: {
+        basicAnim->setFromValue(keyframes[fromIndex].value());
+        basicAnim->setToValue(keyframes[toIndex].value());
         break;
     }
     default:
@@ -3843,7 +3774,7 @@ bool GraphicsLayerCA::setAnimationEndpoints(const KeyframeValueList& valueList, 
     return true;
 }
 
-bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList<FloatAnimationValue>& keyframes, const Animation* animation, PlatformCAAnimation* keyframeAnim, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     Vector<float> keyTimes;
     Vector<float> values;
@@ -3851,15 +3782,14 @@ bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, 
 
     bool forwards = animation->directionIsForwards();
     
-    for (unsigned i = 0; i < valueList.size(); ++i) {
-        unsigned index = forwards ? i : (valueList.size() - i - 1);
-        const AnimationValue& curValue = valueList.at(index);
-        keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
+    for (unsigned i = 0; i < keyframes.size(); ++i) {
+        unsigned index = forwards ? i : (keyframes.size() - i - 1);
+        const FloatAnimationValue& currentValue = keyframes[index];
+        keyTimes.append(forwards ? currentValue.keyTime() : (1 - currentValue.keyTime()));
 
-        switch (valueList.property()) {
-        case AnimatedProperty::Opacity: {
-            const FloatAnimationValue& floatValue = static_cast<const FloatAnimationValue&>(curValue);
-            values.append(floatValue.value());
+        switch (keyframes.property()) {
+        case GraphicsLayerAnimationProperty::Opacity: {
+            values.append(currentValue.value());
             break;
         }
         default:
@@ -3867,8 +3797,8 @@ bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, 
             break;
         }
 
-        if (i < (valueList.size() - 1))
-            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
+        if (i < (keyframes.size() - 1))
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? currentValue : keyframes[index - 1], *animation, keyframesShouldUseAnimationWideTimingFunction));
     }
 
     keyframeAnim->setKeyTimes(keyTimes);
@@ -3878,22 +3808,164 @@ bool GraphicsLayerCA::setAnimationKeyframes(const KeyframeValueList& valueList, 
     return true;
 }
 
-bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex, TransformOperation::Type transformOpType, bool isMatrixAnimation, const FloatSize& boxSize)
+// MARK: - FloatTransform
+
+template<typename T> concept IsFloatTransform
+    = std::same_as<T, Rotate>;
+
+static bool isFloatValueTransformType(TransformFunctionType type)
 {
-    ASSERT(valueList.size() == 2);
+    switch (type) {
+    case TransformFunctionType::Rotate:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static float identityFloatValueForTransform(TransformFunctionType type)
+{
+    switch (type) {
+    case TransformFunctionType::Rotate:
+        return 0;
+    default:
+        ASSERT_NOT_REACHED();
+        return 0;
+    }
+}
+
+static float floatValueForTransform(const Rotate& op)
+{
+    return narrowPrecisionToFloat(deg2rad(op.value));
+}
+
+// MARK: - FloatPoint3DTransform
+
+template<typename T> concept IsFloatPoint3DTransform
+    = std::same_as<T, Scale>
+   || std::same_as<T, Scale3D>
+   || std::same_as<T, Translate>
+   || std::same_as<T, Translate3D>;
+
+
+static bool isFloatPoint3DValueTransformType(TransformFunctionType type)
+{
+    switch (type) {
+    case TransformFunctionType::Scale:
+    case TransformFunctionType::Scale3D:
+    case TransformFunctionType::Translate:
+    case TransformFunctionType::Translate3D:
+        return true;
+    default:
+        return false;
+    }
+}
+
+static FloatPoint3D identityFloatPoint3DValueForTransform(TransformFunctionType type)
+{
+    switch (type) {
+    case TransformFunctionType::Scale:
+    case TransformFunctionType::Scale3D:
+        return FloatPoint3D { 1, 1, 1 };
+    case TransformFunctionType::Translate:
+    case TransformFunctionType::Translate3D:
+        return FloatPoint3D { 0, 0, 0 };
+    default:
+        ASSERT_NOT_REACHED();
+        return FloatPoint3D { 0, 0, 0 };
+    }
+}
+
+static FloatPoint3D floatPoint3DValueForTransform(const Scale& op)
+{
+    return { narrowPrecisionToFloat(op.x), narrowPrecisionToFloat(op.y), 1 };
+}
+static FloatPoint3D floatPoint3DValueForTransform(const Scale3D& op)
+{
+    return { narrowPrecisionToFloat(op.x), narrowPrecisionToFloat(op.y), narrowPrecisionToFloat(op.z) };
+}
+static FloatPoint3D floatPoint3DValueForTransform(const Translate& op)
+{
+    return { narrowPrecisionToFloat(op.x), narrowPrecisionToFloat(op.y), 0 };
+}
+static FloatPoint3D floatPoint3DValueForTransform(const Translate3D& op)
+{
+    return { narrowPrecisionToFloat(op.x), narrowPrecisionToFloat(op.y), narrowPrecisionToFloat(op.z) };
+}
+
+// MARK: - MatrixTransform
+
+template<typename T> concept IsMatrixTransform
+    = std::same_as<T, Matrix>
+   || std::same_as<T, Matrix3D>
+   || std::same_as<T, Skew>
+   || std::same_as<T, SkewX>
+   || std::same_as<T, SkewY>
+   || std::same_as<T, Rotate3D>
+   || std::same_as<T, Perspective>;
+
+template<IsMatrixTransform T> TransformationMatrix matrixValueForTransform(const T& op)
+{
+    TransformationMatrix matrix;
+    op.applyTransform(matrix);
+    return matrix;
+}
+
+template<typename T, typename ExtractorVisitor>
+static void extractValueFromTransformFunctionOfType(const T& function, ExtractorVisitor&& extractor)
+{
+    if constexpr (IsFloatTransform<T>)
+        extractor(floatValueForTransform(function));
+    else if constexpr (IsFloatPoint3DTransform<T>)
+        extractor(floatPoint3DValueForTransform(function));
+    else if constexpr (IsMatrixTransform<T>)
+        extractor(matrixValueForTransform(function));
+}
+
+template<typename ExtractorVisitor>
+static void extractValueFromTransformFunction(const std::optional<TransformFunction>& transformFunction, TransformFunctionType transformOpType, ExtractorVisitor&& extractor)
+{
+    if (transformFunction) {
+        WTF::switchOn(*transformFunction,
+            [&]<typename T>(const T& transform) {
+                if constexpr (HasPrimitive3DTransform<T>) {
+                    if (Primitive3DTransform<T>::operationType == transformOpType)
+                        return extractValueFromTransformFunctionOfType(transform.toPrimitive3DTransform(), extractor);
+                }
+                if constexpr (HasPrimitive2DTransform<T>) {
+                    if (Primitive2DTransform<T>::operationType == transformOpType)
+                        return extractValueFromTransformFunctionOfType(transform.toPrimitive2DTransform(), extractor);
+                }
+                ASSERT(T::operationType == transformOpType);
+                return extractValueFromTransformFunctionOfType(transform, extractor);
+            }
+        );
+    } else {
+        if (isFloatValueTransformType(transformOpType))
+            extractor(identityFloatValueForTransform(transformOpType));
+        else if (isFloatPoint3DValueTransformType(transformOpType))
+            extractor(identityFloatPoint3DValueForTransform(transformOpType));
+        else
+            extractor(TransformationMatrix::identity);
+    }
+}
+
+bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList<TransformAnimationValue>& keyframes, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex, TransformFunctionType transformOpType, bool isMatrixAnimation)
+{
+    ASSERT(keyframes.size() == 2);
 
     bool forwards = animation->directionIsForwards();
     
     unsigned fromIndex = !forwards;
     unsigned toIndex = forwards;
     
-    const auto& startValue = transformationAnimationValueAt(valueList, fromIndex);
-    const auto& endValue = transformationAnimationValueAt(valueList, toIndex);
+    const TransformList& startValue = keyframes[fromIndex].value();
+    const TransformList& endValue = keyframes[toIndex].value();
 
     if (isMatrixAnimation) {
         TransformationMatrix fromTransform, toTransform;
-        startValue.apply(fromTransform, boxSize);
-        endValue.apply(toTransform, boxSize);
+        startValue.apply(fromTransform);
+        endValue.apply(toTransform);
 
         // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
         if (!fromTransform.isInvertible() || !toTransform.isInvertible())
@@ -3902,41 +3974,23 @@ bool GraphicsLayerCA::setTransformAnimationEndpoints(const KeyframeValueList& va
         basicAnim->setFromValue(fromTransform);
         basicAnim->setToValue(toTransform);
     } else {
-        if (isTransformTypeNumber(transformOpType)) {
-            float fromValue;
-            getTransformFunctionValue(startValue.at(functionIndex), transformOpType, boxSize, fromValue);
-            basicAnim->setFromValue(fromValue);
-            
-            float toValue;
-            getTransformFunctionValue(endValue.at(functionIndex), transformOpType, boxSize, toValue);
-            basicAnim->setToValue(toValue);
-        } else if (isTransformTypeFloatPoint3D(transformOpType)) {
-            FloatPoint3D fromValue;
-            getTransformFunctionValue(startValue.at(functionIndex), transformOpType, boxSize, fromValue);
-            basicAnim->setFromValue(fromValue);
-            
-            FloatPoint3D toValue;
-            getTransformFunctionValue(endValue.at(functionIndex), transformOpType, boxSize, toValue);
-            basicAnim->setToValue(toValue);
-        } else {
-            TransformationMatrix fromValue;
-            getTransformFunctionValue(startValue.at(functionIndex), transformOpType, boxSize, fromValue);
-            basicAnim->setFromValue(fromValue);
+        extractValueFromTransformFunction(startValue.at(functionIndex), transformOpType, WTF::makeVisitor(
+            [&](auto value) { basicAnim->setFromValue(value); }
+        ));
 
-            TransformationMatrix toValue;
-            getTransformFunctionValue(endValue.at(functionIndex), transformOpType, boxSize, toValue);
-            basicAnim->setToValue(toValue);
-        }
+        extractValueFromTransformFunction(endValue.at(functionIndex), transformOpType, WTF::makeVisitor(
+            [&](auto value) { basicAnim->setToValue(value); }
+        ));
     }
 
-    auto valueFunction = getValueFunctionNameForTransformOperation(transformOpType);
+    auto valueFunction = valueFunctionNameForTransformOperation(transformOpType);
     if (valueFunction != PlatformCAAnimation::ValueFunctionType::NoValueFunction)
         basicAnim->setValueFunction(valueFunction);
 
     return true;
 }
 
-bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, TransformOperation::Type transformOpType, bool isMatrixAnimation, const FloatSize& boxSize, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList<TransformAnimationValue>& keyframes, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, TransformFunctionType transformOpType, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     Vector<float> keyTimes;
     Vector<float> floatValues;
@@ -3946,14 +4000,14 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
 
     bool forwards = animation->directionIsForwards();
 
-    for (unsigned i = 0; i < valueList.size(); ++i) {
-        unsigned index = forwards ? i : (valueList.size() - i - 1);
-        const TransformAnimationValue& curValue = static_cast<const TransformAnimationValue&>(valueList.at(index));
-        keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
+    for (unsigned i = 0; i < keyframes.size(); ++i) {
+        unsigned index = forwards ? i : (keyframes.size() - i - 1);
+        const TransformAnimationValue& currentValue = keyframes[index];
+        keyTimes.append(forwards ? currentValue.keyTime() : (1 - currentValue.keyTime()));
 
         if (isMatrixAnimation) {
             TransformationMatrix transform;
-            curValue.value().apply(transform, boxSize, functionIndex);
+            currentValue.value().apply(transform, functionIndex);
 
             // If any matrix is singular, CA won't animate it correctly. So fall back to software animation
             if (!transform.isInvertible())
@@ -3961,55 +4015,46 @@ bool GraphicsLayerCA::setTransformAnimationKeyframes(const KeyframeValueList& va
 
             transformationMatrixValues.append(transform);
         } else {
-            const TransformOperation* transformOp = curValue.value().at(functionIndex);
-            if (isTransformTypeNumber(transformOpType)) {
-                float value;
-                getTransformFunctionValue(transformOp, transformOpType, boxSize, value);
-                floatValues.append(value);
-            } else if (isTransformTypeFloatPoint3D(transformOpType)) {
-                FloatPoint3D value;
-                getTransformFunctionValue(transformOp, transformOpType, boxSize, value);
-                floatPoint3DValues.append(value);
-            } else {
-                TransformationMatrix value;
-                getTransformFunctionValue(transformOp, transformOpType, boxSize, value);
-                transformationMatrixValues.append(value);
-            }
+            extractValueFromTransformFunction(currentValue.value().at(functionIndex), transformOpType, WTF::makeVisitor(
+                [&](float value) { floatValues.append(value); },
+                [&](FloatPoint3D value) { floatPoint3DValues.append(value); },
+                [&](TransformationMatrix value) { transformationMatrixValues.append(value); }
+            ));
         }
 
-        if (i < (valueList.size() - 1))
-            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
+        if (i < (keyframes.size() - 1))
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? currentValue : keyframes[index - 1], *animation, keyframesShouldUseAnimationWideTimingFunction));
     }
     
     keyframeAnim->setKeyTimes(keyTimes);
     
-    if (isTransformTypeNumber(transformOpType))
+    if (isFloatValueTransformType(transformOpType))
         keyframeAnim->setValues(floatValues);
-    else if (isTransformTypeFloatPoint3D(transformOpType))
+    else if (isFloatPoint3DValueTransformType(transformOpType))
         keyframeAnim->setValues(floatPoint3DValues);
     else
         keyframeAnim->setValues(transformationMatrixValues);
         
     keyframeAnim->setTimingFunctions(timingFunctions, !forwards);
 
-    PlatformCAAnimation::ValueFunctionType valueFunction = getValueFunctionNameForTransformOperation(transformOpType);
+    PlatformCAAnimation::ValueFunctionType valueFunction = valueFunctionNameForTransformOperation(transformOpType);
     if (valueFunction != PlatformCAAnimation::ValueFunctionType::NoValueFunction)
         keyframeAnim->setValueFunction(valueFunction);
 
     return true;
 }
 
-bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex)
+bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList<FilterAnimationValue>& keyframes, const Animation* animation, PlatformCAAnimation* basicAnim, int functionIndex)
 {
-    ASSERT(valueList.size() == 2);
+    ASSERT(keyframes.size() == 2);
 
     bool forwards = animation->directionIsForwards();
 
     unsigned fromIndex = !forwards;
     unsigned toIndex = forwards;
 
-    const FilterAnimationValue& fromValue = static_cast<const FilterAnimationValue&>(valueList.at(fromIndex));
-    const FilterAnimationValue& toValue = static_cast<const FilterAnimationValue&>(valueList.at(toIndex));
+    const FilterAnimationValue& fromValue = keyframes[fromIndex];
+    const FilterAnimationValue& toValue = keyframes[toIndex];
 
     const FilterOperation* fromOperation = fromValue.value().at(functionIndex);
     const FilterOperation* toOperation = toValue.value().at(functionIndex);
@@ -4035,7 +4080,7 @@ bool GraphicsLayerCA::setFilterAnimationEndpoints(const KeyframeValueList& value
     return true;
 }
 
-bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, FilterOperation::Type filterOp, bool keyframesShouldUseAnimationWideTimingFunction)
+bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList<FilterAnimationValue>& keyframes, const Animation* animation, PlatformCAAnimation* keyframeAnim, int functionIndex, FilterOperation::Type filterOp, bool keyframesShouldUseAnimationWideTimingFunction)
 {
     Vector<float> keyTimes;
     Vector<Ref<FilterOperation>> values;
@@ -4044,21 +4089,21 @@ bool GraphicsLayerCA::setFilterAnimationKeyframes(const KeyframeValueList& value
 
     bool forwards = animation->directionIsForwards();
 
-    for (unsigned i = 0; i < valueList.size(); ++i) {
-        unsigned index = forwards ? i : (valueList.size() - i - 1);
-        const FilterAnimationValue& curValue = static_cast<const FilterAnimationValue&>(valueList.at(index));
-        keyTimes.append(forwards ? curValue.keyTime() : (1 - curValue.keyTime()));
+    for (unsigned i = 0; i < keyframes.size(); ++i) {
+        unsigned index = forwards ? i : (keyframes.size() - i - 1);
+        const FilterAnimationValue& currentValue = keyframes[index];
+        keyTimes.append(forwards ? currentValue.keyTime() : (1 - currentValue.keyTime()));
 
-        if (curValue.value().size() > static_cast<size_t>(functionIndex))
-            values.append(curValue.value()[functionIndex].copyRef());
+        if (currentValue.value().size() > static_cast<size_t>(functionIndex))
+            values.append(currentValue.value()[functionIndex].copyRef());
         else {
             if (!defaultOperation)
                 defaultOperation = DefaultFilterOperation::create(filterOp);
             values.append(*defaultOperation);
         }
 
-        if (i < (valueList.size() - 1))
-            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), *animation, keyframesShouldUseAnimationWideTimingFunction));
+        if (i < (keyframes.size() - 1))
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? currentValue : keyframes[index - 1], *animation, keyframesShouldUseAnimationWideTimingFunction));
     }
     
     keyframeAnim->setKeyTimes(keyTimes);
@@ -4113,12 +4158,12 @@ PlatformCALayer* GraphicsLayerCA::layerForSuperlayer() const
     return m_structuralLayer ? m_structuralLayer.get() : m_layer.get();
 }
 
-PlatformCALayer* GraphicsLayerCA::animatedLayer(AnimatedProperty property) const
+PlatformCALayer* GraphicsLayerCA::animatedLayer(GraphicsLayerAnimationProperty property) const
 {
     switch (property) {
-    case AnimatedProperty::BackgroundColor:
+    case GraphicsLayerAnimationProperty::BackgroundColor:
         return m_contentsLayer.get();
-    case AnimatedProperty::WebkitBackdropFilter:
+    case GraphicsLayerAnimationProperty::WebkitBackdropFilter:
         // FIXME: Should be just m_backdropLayer.get(). Also, add an ASSERT(m_backdropLayer) here when https://bugs.webkit.org/show_bug.cgi?id=145322 is fixed.
         return m_backdropLayer ? m_backdropLayer.get() : primaryLayer();
     default:
@@ -4134,22 +4179,22 @@ GraphicsLayerCA::LayerMap* GraphicsLayerCA::primaryLayerClones() const
     return m_structuralLayer ? &m_layerClones->structuralLayerClones : &m_layerClones->primaryLayerClones;
 }
 
-GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(AnimatedProperty property) const
+GraphicsLayerCA::LayerMap* GraphicsLayerCA::animatedLayerClones(GraphicsLayerAnimationProperty property) const
 {
     if (!m_layerClones)
         return nullptr;
 
-    return (property == AnimatedProperty::BackgroundColor) ? &m_layerClones->contentsLayerClones : primaryLayerClones();
+    return (property == GraphicsLayerAnimationProperty::BackgroundColor) ? &m_layerClones->contentsLayerClones : primaryLayerClones();
 }
 
 void GraphicsLayerCA::updateRootRelativeScale()
 {
     // For CSS animations we could figure out the max scale level during the animation and only figure out the max content scale once.
-    // For JS driven animation, we need to be more clever to keep the peformance as before. Ideas:
+    // For JS driven animation, we need to be more clever to keep the performance as before. Ideas:
     // - only update scale factor when the change is 'significant' (to be defined, (orig - new)/orig > delta?)
     // - never update the scale factor when it gets smaller (unless we're under memory pressure) (or only periodcally)
     // - ...
-    // --> For now we disable this logic alltogether, but allow to turn it on selectively (for LBSE)
+    // --> For now we disable this logic altogether, but allow to turn it on selectively (for LBSE)
     if (!m_shouldUpdateRootRelativeScaleFactor)
         return;
 
@@ -4372,22 +4417,6 @@ void GraphicsLayerCA::dumpInnerLayer(TextStream& ts, PlatformCALayer* layer, Opt
     }
 
     ts << indent << ")\n"_s;
-}
-
-static TextStream& operator<<(TextStream& textStream, AnimatedProperty propertyID)
-{
-    switch (propertyID) {
-    case AnimatedProperty::Invalid: textStream << "invalid"; break;
-    case AnimatedProperty::Translate: textStream << "translate"; break;
-    case AnimatedProperty::Scale: textStream << "scale"; break;
-    case AnimatedProperty::Rotate: textStream << "rotate"; break;
-    case AnimatedProperty::Transform: textStream << "transform"; break;
-    case AnimatedProperty::Opacity: textStream << "opacity"; break;
-    case AnimatedProperty::BackgroundColor: textStream << "background-color"; break;
-    case AnimatedProperty::Filter: textStream << "filter"; break;
-    case AnimatedProperty::WebkitBackdropFilter: textStream << "backdrop-filter"; break;
-    }
-    return textStream;
 }
 
 void GraphicsLayerCA::dumpAnimations(WTF::TextStream& textStream, ASCIILiteral category, const Vector<LayerPropertyAnimation>& animations)

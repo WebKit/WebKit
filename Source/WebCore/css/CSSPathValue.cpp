@@ -53,4 +53,9 @@ IterationStatus CSSPathValue::customVisitChildren(const Function<IterationStatus
     return CSS::visitCSSValueChildren(func, m_path);
 }
 
+void CSSPathValue::customCollectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
+{
+    CSS::collectComputedStyleDependencies(dependencies, m_path);
+}
+
 } // namespace WebCore

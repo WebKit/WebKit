@@ -888,6 +888,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSValueList.h
     css/CSSVariableData.h
     css/CSSVariableReferenceValue.h
+    css/ComputedStyleDependencies.h
     css/Counter.h
     css/DeprecatedCSSOMCounter.h
     css/DeprecatedCSSOMPrimitiveValue.h
@@ -971,6 +972,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/values/shapes/CSSRectFunction.h
     css/values/shapes/CSSShapeFunction.h
     css/values/shapes/CSSXywhFunction.h
+
+    css/values/transforms/CSSRotateProperty.h
+    css/values/transforms/CSSScaleProperty.h
+    css/values/transforms/CSSTransformFunctions.h
+    css/values/transforms/CSSTransformList.h
+    css/values/transforms/CSSTransformProperty.h
+    css/values/transforms/CSSTranslateProperty.h
 
     css/values/CSSValueTypes.h
 
@@ -2048,6 +2056,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/GraphicsContextState.h
     platform/graphics/GraphicsContextStateSaver.h
     platform/graphics/GraphicsLayer.h
+    platform/graphics/GraphicsLayerAnimationProperty.h
+    platform/graphics/GraphicsLayerAnimationValue.h
     platform/graphics/GraphicsLayerClient.h
     platform/graphics/GraphicsLayerContentsDisplayDelegate.h
     platform/graphics/GraphicsLayerFactory.h
@@ -2270,19 +2280,13 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     platform/graphics/opentype/OpenTypeVerticalData.h
 
     platform/graphics/transforms/AffineTransform.h
-    platform/graphics/transforms/IdentityTransformOperation.h
-    platform/graphics/transforms/Matrix3DTransformOperation.h
-    platform/graphics/transforms/MatrixTransformOperation.h
-    platform/graphics/transforms/PerspectiveTransformOperation.h
     platform/graphics/transforms/Quaternion.h
-    platform/graphics/transforms/RotateTransformOperation.h
-    platform/graphics/transforms/ScaleTransformOperation.h
-    platform/graphics/transforms/SkewTransformOperation.h
-    platform/graphics/transforms/TransformOperation.h
-    platform/graphics/transforms/TransformOperations.h
+    platform/graphics/transforms/TransformFunctionType.h
+    platform/graphics/transforms/TransformFunctions.h
+    platform/graphics/transforms/TransformList.h
+    platform/graphics/transforms/TransformListSharedPrimitivesPrefix.h
     platform/graphics/transforms/TransformState.h
     platform/graphics/transforms/TransformationMatrix.h
-    platform/graphics/transforms/TranslateTransformOperation.h
 
     platform/mediacapabilities/AudioConfiguration.h
     platform/mediacapabilities/ColorGamut.h
@@ -2621,6 +2625,14 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     style/values/shapes/StyleShapeFunction.h
     style/values/shapes/StyleWindRuleComputation.h
     style/values/shapes/StyleXywhFunction.h
+
+    style/values/transforms/StyleRotateProperty.h
+    style/values/transforms/StyleScaleProperty.h
+    style/values/transforms/StyleTransformFunctions.h
+    style/values/transforms/StyleTransformInterfaces.h
+    style/values/transforms/StyleTransformList.h
+    style/values/transforms/StyleTransformProperty.h
+    style/values/transforms/StyleTranslateProperty.h
 
     style/values/StyleValueTypes.h
 

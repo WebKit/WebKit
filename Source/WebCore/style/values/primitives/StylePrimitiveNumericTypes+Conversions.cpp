@@ -41,5 +41,43 @@ float adjustForZoom(float value, const RenderStyle& style)
     return adjustFloatForAbsoluteZoom(value, style);
 }
 
+// Specialization for NumberOrPercentageResolvedToNumber
+
+auto ToStyle<CSS::NumberOrPercentageResolvedToNumber>::operator()(const CSS::NumberOrPercentageResolvedToNumber& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> NumberOrPercentageResolvedToNumber
+{
+    return WTF::switchOn(value.value,
+        [&](CSS::Number<> number) -> NumberOrPercentageResolvedToNumber {
+            return { toStyle(number, conversionData, symbolTable).value };
+        },
+        [&](CSS::Percentage<> percentage) -> NumberOrPercentageResolvedToNumber {
+            return { toStyle(percentage, conversionData, symbolTable).value / 100.0 };
+        }
+    );
+}
+
+auto ToStyle<CSS::NumberOrPercentageResolvedToNumber>::operator()(const CSS::NumberOrPercentageResolvedToNumber& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> NumberOrPercentageResolvedToNumber
+{
+    return WTF::switchOn(value.value,
+        [&](CSS::Number<> number) -> NumberOrPercentageResolvedToNumber {
+            return { toStyle(number, state, symbolTable).value };
+        },
+        [&](CSS::Percentage<> percentage) -> NumberOrPercentageResolvedToNumber {
+            return { toStyle(percentage, state, symbolTable).value / 100.0 };
+        }
+    );
+}
+
+auto ToStyle<CSS::NumberOrPercentageResolvedToNumber>::operator()(const CSS::NumberOrPercentageResolvedToNumber& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable) -> NumberOrPercentageResolvedToNumber
+{
+    return WTF::switchOn(value.value,
+        [&](CSS::Number<> number) -> NumberOrPercentageResolvedToNumber {
+            return { toStyleNoConversionDataRequired(number, symbolTable).value };
+        },
+        [&](CSS::Percentage<> percentage) -> NumberOrPercentageResolvedToNumber {
+            return { toStyleNoConversionDataRequired(percentage, symbolTable).value / 100.0 };
+        }
+    );
+}
+
 } // namespace CSS
 } // namespace WebCore

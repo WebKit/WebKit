@@ -1269,7 +1269,7 @@ bool TextureMapperLayer::applyAnimationsRecursively(MonotonicTime time)
 
 bool TextureMapperLayer::syncAnimations(MonotonicTime time)
 {
-    TextureMapperAnimation::ApplicationResult applicationResults;
+    TextureMapperAnimationBase::ApplicationResult applicationResults;
     m_animations.apply(applicationResults, time);
 
     m_layerTransforms.localTransform = applicationResults.transform.value_or(m_state.transform);
@@ -1278,8 +1278,8 @@ bool TextureMapperLayer::syncAnimations(MonotonicTime time)
 
 #if USE(COORDINATED_GRAPHICS)
     // Calculate localTransform 50ms in the future.
-    TextureMapperAnimation::ApplicationResult futureApplicationResults;
-    m_animations.apply(futureApplicationResults, time + 50_ms, TextureMapperAnimation::KeepInternalState::Yes);
+    TextureMapperAnimationBase::ApplicationResult futureApplicationResults;
+    m_animations.apply(futureApplicationResults, time + 50_ms, TextureMapperAnimationBase::KeepInternalState::Yes);
     m_layerTransforms.futureLocalTransform = futureApplicationResults.transform.value_or(m_layerTransforms.localTransform);
 #endif
 

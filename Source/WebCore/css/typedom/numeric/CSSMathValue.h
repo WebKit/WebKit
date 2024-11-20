@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSCalcValue.h"
 #include "CSSMathOperator.h"
 #include "CSSNumericArray.h"
 #include "CSSNumericValue.h"
@@ -44,6 +45,9 @@ public:
     template<typename T> bool equalsImpl(const CSSNumericValue&) const;
 
     RefPtr<CSSValue> toCSSValue() const final;
+
+    std::optional<CSSCalc::Tree> toCalcTree() const;
+    template<typename T> std::optional<T> toCSS() const;
 };
 
 template<typename T> bool CSSMathValue::equalsImpl(const CSSNumericValue& other) const
@@ -66,6 +70,15 @@ template<typename T> bool CSSMathValue::equalsImpl(const CSSNumericValue& other)
     }
 
     return true;
+}
+
+template<typename T> std::optional<T> CSSMathValue::toCSS() const
+{
+    auto tree = toCalcTree();
+    if (!tree)
+        return { };
+
+    return T { typename T::Calc { CSSCalcValue::create(WTFMove(*tree)) } };
 }
 
 } // namespace WebCore

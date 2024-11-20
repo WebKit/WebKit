@@ -66,7 +66,6 @@
 #include "StyleImageSet.h"
 #include "StyleNamedImage.h"
 #include "StylePaintImage.h"
-#include "TransformOperationsBuilder.h"
 
 namespace WebCore {
 namespace Style {

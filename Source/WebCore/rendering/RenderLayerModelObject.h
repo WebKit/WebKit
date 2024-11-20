@@ -68,8 +68,8 @@ public:
 
     std::optional<LayoutRect> cachedLayerClippedOverflowRect() const;
 
-    bool startAnimation(double timeOffset, const Animation&, const BlendingKeyframes&) override;
-    void animationPaused(double timeOffset, const String& name) override;
+    bool startAnimation(Seconds timeOffset, const Animation&, const BlendingKeyframes&) override;
+    void animationPaused(Seconds timeOffset, const String& name) override;
     void animationFinished(const String& name) override;
     void transformRelatedPropertyDidChange() override;
 

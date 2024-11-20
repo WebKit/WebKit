@@ -89,23 +89,23 @@ String PlatformCAAnimation::makeGroupKeyPath()
     return emptyString();
 }
 
-String PlatformCAAnimation::makeKeyPath(AnimatedProperty animatedProperty, FilterOperation::Type filterOperationType, int index)
+String PlatformCAAnimation::makeKeyPath(GraphicsLayerAnimationProperty animatedProperty, FilterOperation::Type filterOperationType, int index)
 {
     switch (animatedProperty) {
-    case AnimatedProperty::Translate:
-    case AnimatedProperty::Scale:
-    case AnimatedProperty::Rotate:
-    case AnimatedProperty::Transform:
+    case GraphicsLayerAnimationProperty::Translate:
+    case GraphicsLayerAnimationProperty::Scale:
+    case GraphicsLayerAnimationProperty::Rotate:
+    case GraphicsLayerAnimationProperty::Transform:
         return transformKeyPath;
-    case AnimatedProperty::Opacity:
+    case GraphicsLayerAnimationProperty::Opacity:
         return opacityKeyPath;
-    case AnimatedProperty::BackgroundColor:
+    case GraphicsLayerAnimationProperty::BackgroundColor:
         return backgroundColorKeyPath;
-    case AnimatedProperty::Filter:
+    case GraphicsLayerAnimationProperty::Filter:
         return makeString(filterKeyPathPrefix, index, '.', PlatformCAFilters::animatedFilterPropertyName(filterOperationType));
-    case AnimatedProperty::WebkitBackdropFilter:
+    case GraphicsLayerAnimationProperty::WebkitBackdropFilter:
         return backdropFiltersKeyPath;
-    case AnimatedProperty::Invalid:
+    case GraphicsLayerAnimationProperty::Invalid:
         ASSERT_NOT_REACHED();
         return emptyString();
     }

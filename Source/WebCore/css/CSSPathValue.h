@@ -50,6 +50,7 @@ public:
     bool equals(const CSSPathValue&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    void customCollectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
 private:
     CSSPathValue(CSS::PathFunction&& path)

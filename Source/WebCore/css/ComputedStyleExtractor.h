@@ -40,7 +40,6 @@ class RenderStyle;
 class ShadowData;
 class StyleColor;
 class StylePropertyShorthand;
-class TransformOperation;
 class TransformationMatrix;
 
 struct Length;
@@ -83,7 +82,7 @@ public:
     static Ref<CSSValue> valueForFilter(const RenderStyle&, const FilterOperations&, AdjustPixelValuesForComputedStyle = AdjustPixelValuesForComputedStyle::Yes);
 
     static Ref<CSSPrimitiveValue> currentColorOrValidColor(const RenderStyle&, const StyleColor&);
-    static Ref<CSSFunctionValue> matrixTransformValue(const TransformationMatrix&, const RenderStyle&);
+    static Ref<CSSValue> matrixTransformValue(const TransformationMatrix&, const RenderStyle&);
     static Ref<CSSPrimitiveValue> zoomAdjustedPixelValueForLength(const Length&, const RenderStyle&);
 
     static bool updateStyleIfNeededForProperty(Element&, CSSPropertyID);
@@ -115,7 +114,5 @@ private:
     std::optional<Style::PseudoElementIdentifier> m_pseudoElementIdentifier;
     bool m_allowVisitedStyle;
 };
-
-RefPtr<CSSFunctionValue> transformOperationAsCSSValue(const TransformOperation&, const RenderStyle&);
 
 } // namespace WebCore

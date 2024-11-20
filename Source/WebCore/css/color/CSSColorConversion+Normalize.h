@@ -86,7 +86,7 @@ auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const CSS::No
 template<typename Descriptor, unsigned Index, typename Raw>
 auto normalizeAndClampNumericComponentsIntoCanonicalRepresentation(const CSS::PrimitiveNumeric<Raw>& value) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>
 {
-    return WTF::switchOn(value.value,
+    return WTF::switchOn(value,
         [](Raw value) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index> {
             return normalizeAndClampNumericComponents<Descriptor, Index>(value);
         },
@@ -147,7 +147,7 @@ auto normalizeNumericComponentsIntoCanonicalRepresentation(const CSS::None& none
 template<typename Descriptor, unsigned Index, typename Raw>
 auto normalizeNumericComponentsIntoCanonicalRepresentation(const CSS::PrimitiveNumeric<Raw>& value) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index>
 {
-    return WTF::switchOn(value.value,
+    return WTF::switchOn(value,
         [](Raw value) -> GetCSSColorParseTypeWithCalcComponentResult<typename Descriptor::Canonical, Index> {
             return normalizeNumericComponents<Descriptor, Index>(value);
         },

@@ -217,7 +217,9 @@
 		AD89B6B71E6415080090707F /* MemoryPressureHandler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD89B6B51E6415080090707F /* MemoryPressureHandler.cpp */; };
 		AD89B6BA1E64150F0090707F /* MemoryPressureHandlerCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */; };
 		ADF2CE671E39F106006889DB /* MemoryFootprintCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */; };
+		BC05ACA62CEA70E500750CB1 /* VariantListOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = BC05ACA52CEA70E500750CB1 /* VariantListOperations.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5267672C2726D600E422DD /* MakeString.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5267662C2726D600E422DD /* MakeString.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BCEA08042CCFDB33000AC148 /* VariantList.h in Headers */ = {isa = PBXBuildFile; fileRef = BCEA08032CCFDB33000AC148 /* VariantList.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		C2BCFC401F61D13000C9222C /* Language.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC3E1F61D13000C9222C /* Language.cpp */; };
 		C2BCFC421F61D61600C9222C /* LanguageCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC411F61D61600C9222C /* LanguageCF.cpp */; };
 		C2BCFC551F621F3F00C9222C /* LineEnding.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C2BCFC531F621F3F00C9222C /* LineEnding.cpp */; };
@@ -1565,7 +1567,9 @@
 		AD89B6B91E64150F0090707F /* MemoryPressureHandlerCocoa.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryPressureHandlerCocoa.mm; sourceTree = "<group>"; };
 		ADF2CE641E39F106006889DB /* MemoryFootprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryFootprint.h; sourceTree = "<group>"; };
 		ADF2CE651E39F106006889DB /* MemoryFootprintCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MemoryFootprintCocoa.cpp; sourceTree = "<group>"; };
+		BC05ACA52CEA70E500750CB1 /* VariantListOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VariantListOperations.h; sourceTree = "<group>"; };
 		BC5267662C2726D600E422DD /* MakeString.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MakeString.h; sourceTree = "<group>"; };
+		BCEA08032CCFDB33000AC148 /* VariantList.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VariantList.h; sourceTree = "<group>"; };
 		C2BCFC3E1F61D13000C9222C /* Language.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Language.cpp; sourceTree = "<group>"; };
 		C2BCFC3F1F61D13000C9222C /* Language.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Language.h; sourceTree = "<group>"; };
 		C2BCFC411F61D61600C9222C /* LanguageCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LanguageCF.cpp; sourceTree = "<group>"; };
@@ -2575,6 +2579,8 @@
 				7AFEC6B01EB22B5900DADE36 /* UUID.cpp */,
 				7AFEC6AE1EB22AC600DADE36 /* UUID.h */,
 				A8A4736F151A825B004123FF /* ValueCheck.h */,
+				BCEA08032CCFDB33000AC148 /* VariantList.h */,
+				BC05ACA52CEA70E500750CB1 /* VariantListOperations.h */,
 				0F95B63420CB53C100479635 /* Vector.cpp */,
 				A8A47370151A825B004123FF /* Vector.h */,
 				E419F2E623AB9E2300B26129 /* VectorHash.h */,
@@ -3687,6 +3693,8 @@
 				DDF306F527C086CC006A526F /* utils.h in Headers */,
 				DD3DC8C227A4BF8E007E5B61 /* UUID.h in Headers */,
 				DD3DC86D27A4BF8E007E5B61 /* ValueCheck.h in Headers */,
+				BCEA08042CCFDB33000AC148 /* VariantList.h in Headers */,
+				BC05ACA62CEA70E500750CB1 /* VariantListOperations.h in Headers */,
 				DD3DC90B27A4BF8E007E5B61 /* Vector.h in Headers */,
 				4448265228D18CA600D916E8 /* VectorCF.h in Headers */,
 				DDF3079727C086CD006A526F /* VectorCocoa.h in Headers */,

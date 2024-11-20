@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSTransformFunctions.h"
 #include "DOMMatrix.h"
 #include <wtf/RefCounted.h>
 #include <wtf/TZoneMalloc.h>
@@ -59,7 +60,7 @@ public:
     virtual ~CSSTransformComponent() = default;
     virtual CSSTransformType getType() const = 0;
 
-    virtual RefPtr<CSSValue> toCSSValue() const = 0;
+    virtual std::optional<CSS::TransformFunction> toCSS() const = 0;
 
 private:
     Is2D m_is2D;

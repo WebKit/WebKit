@@ -39,7 +39,6 @@
 #include "ShapeValue.h"
 #include "StyleImage.h"
 #include "StyleReflection.h"
-#include "TransformOperationsBuilder.h"
 
 namespace WebCore {
 namespace Style {

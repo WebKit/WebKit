@@ -113,12 +113,17 @@ public:
     bool isRayValue() const { return m_classType == ClassType::Ray; }
     bool isRect() const { return m_classType == ClassType::Rect; }
     bool isReflectValue() const { return m_classType == ClassType::Reflect; }
+    bool isRotatePropertyValue() const { return m_classType == ClassType::RotateProperty; }
+    bool isScalePropertyValue() const { return m_classType == ClassType::ScaleProperty; }
     bool isScrollValue() const { return m_classType == ClassType::Scroll; }
     bool isShadowValue() const { return m_classType == ClassType::Shadow; }
     bool isSpringTimingFunctionValue() const { return m_classType == ClassType::SpringTimingFunction; }
     bool isStepsTimingFunctionValue() const { return m_classType == ClassType::StepsTimingFunction; }
     bool isSubgridValue() const { return m_classType == ClassType::Subgrid; }
+    bool isTransformFunctionValue() const { return m_classType == ClassType::TransformFunction; }
     bool isTransformListValue() const { return m_classType == ClassType::TransformList; }
+    bool isTransformPropertyValue() const { return m_classType == ClassType::TransformProperty; }
+    bool isTranslatePropertyValue() const { return m_classType == ClassType::TranslateProperty; }
     bool isUnicodeRangeValue() const { return m_classType == ClassType::UnicodeRange; }
     bool isValueList() const { return m_classType == ClassType::ValueList; }
     bool isVariableReferenceValue() const { return m_classType == ClassType::VariableReference; }
@@ -148,9 +153,7 @@ public:
     // What properties does this value rely on (eg, font-size for em units)
     ComputedStyleDependencies computedStyleDependencies() const;
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
-
-    // Checks to see if the provided conversion data is sufficient to resolve the provided dependencies.
-    static bool canResolveDependenciesWithConversionData(const ComputedStyleDependencies&, const CSSToLengthConversionData&);
+    void customCollectComputedStyleDependencies(ComputedStyleDependencies&) const { }
 
     // Checks to see if the provided conversion data is sufficient to resolve the dependencies of the CSSValue.
     bool canResolveDependenciesWithConversionData(const CSSToLengthConversionData&) const;
@@ -254,8 +257,13 @@ protected:
         Ray,
         Rect,
         Reflect,
+        RotateProperty,
+        ScaleProperty,
         Scroll,
         Shadow,
+        TransformFunction,
+        TransformProperty,
+        TranslateProperty,
         UnicodeRange,
         ValuePair,
         VariableReference,

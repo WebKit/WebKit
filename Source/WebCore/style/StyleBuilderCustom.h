@@ -57,6 +57,7 @@
 #include "StyleImageSet.h"
 #include "StyleResolver.h"
 #include "StyleScope.h"
+#include "StyleTransformFunctions.h"
 #include "TextSizeAdjustment.h"
 
 namespace WebCore {
@@ -73,7 +74,7 @@ inline LengthSize forwardInheritedValue(const LengthSize& value) { auto copy = v
 inline LengthBox forwardInheritedValue(const LengthBox& value) { auto copy = value; return copy; }
 inline GapLength forwardInheritedValue(const GapLength& value) { auto copy = value; return copy; }
 inline FilterOperations forwardInheritedValue(const FilterOperations& value) { auto copy = value; return copy; }
-inline TransformOperations forwardInheritedValue(const TransformOperations& value) { auto copy = value; return copy; }
+inline Style::TransformProperty forwardInheritedValue(const Style::TransformProperty& value) { auto copy = value; return copy; }
 
 // Note that we assume the CSS parser only allows valid CSSValue types.
 class BuilderCustom {

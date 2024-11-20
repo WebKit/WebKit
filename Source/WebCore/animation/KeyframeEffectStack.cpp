@@ -33,11 +33,8 @@
 #include "Document.h"
 #include "KeyframeEffect.h"
 #include "RenderStyleInlines.h"
-#include "RotateTransformOperation.h"
-#include "ScaleTransformOperation.h"
 #include "Settings.h"
-#include "TransformOperations.h"
-#include "TranslateTransformOperation.h"
+#include "StyleTransformFunctions.h"
 #include "WebAnimation.h"
 #include "WebAnimationUtilities.h"
 #include <wtf/PointerComparison.h>
@@ -158,9 +155,9 @@ OptionSet<AnimationImpact> KeyframeEffectStack::applyKeyframeEffects(RenderStyle
     auto& previousStyle = previousLastStyleChangeEventStyle ? *previousLastStyleChangeEventStyle : RenderStyle::defaultStyle();
 
     auto transformRelatedPropertyChanged = [&]() -> bool {
-        return !arePointingToEqualData(targetStyle.translate(), previousStyle.translate())
-            || !arePointingToEqualData(targetStyle.scale(), previousStyle.scale())
-            || !arePointingToEqualData(targetStyle.rotate(), previousStyle.rotate())
+        return targetStyle.translate() != previousStyle.translate()
+            || targetStyle.scale() != previousStyle.scale()
+            || targetStyle.rotate() != previousStyle.rotate()
             || targetStyle.transform() != previousStyle.transform();
     }();
 

@@ -54,8 +54,13 @@
 #include "CSSPropertyParserHelpers.h"
 #include "CSSRayValue.h"
 #include "CSSReflectValue.h"
+#include "CSSRotatePropertyValue.h"
+#include "CSSScalePropertyValue.h"
 #include "CSSSubgridValue.h"
 #include "CSSTimingFunctionValue.h"
+#include "CSSTransformFunctionValue.h"
+#include "CSSTransformPropertyValue.h"
+#include "CSSTranslatePropertyValue.h"
 #include "CSSValuePair.h"
 #include "CalculationValue.h"
 #include "FontPalette.h"
@@ -84,13 +89,16 @@
 #include "StyleRayFunction.h"
 #include "StyleReflection.h"
 #include "StyleResolveForFont.h"
+#include "StyleRotateProperty.h"
+#include "StyleScaleProperty.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleTextEdge.h"
+#include "StyleTransformProperty.h"
+#include "StyleTranslateProperty.h"
 #include "TabSize.h"
 #include "TextSpacing.h"
 #include "TimelineRange.h"
 #include "TouchAction.h"
-#include "TransformOperationsBuilder.h"
 #include "ViewTimeline.h"
 #include "WillChangeData.h"
 #include <wtf/text/MakeString.h>
@@ -124,10 +132,11 @@ public:
     static short convertWebkitHyphenateLimitLines(const BuilderState&, const CSSValue&);
     template<CSSPropertyID> static RefPtr<StyleImage> convertStyleImage(const BuilderState&, CSSValue&);
     static ImageOrientation convertImageOrientation(const BuilderState&, const CSSValue&);
-    static TransformOperations convertTransform(const BuilderState&, const CSSValue&);
-    static RefPtr<RotateTransformOperation> convertRotate(const BuilderState&, const CSSValue&);
-    static RefPtr<ScaleTransformOperation> convertScale(const BuilderState&, const CSSValue&);
-    static RefPtr<TranslateTransformOperation> convertTranslate(const BuilderState&, const CSSValue&);
+    static Style::TransformFunction convertTransformFunction(const BuilderState&, const CSSValue&);
+    static Style::TransformProperty convertTransform(const BuilderState&, const CSSValue&);
+    static Style::RotateProperty convertRotate(const BuilderState&, const CSSValue&);
+    static Style::ScaleProperty convertScale(const BuilderState&, const CSSValue&);
+    static Style::TranslateProperty convertTranslate(const BuilderState&, const CSSValue&);
 #if ENABLE(DARK_MODE_CSS)
     static Style::ColorScheme convertColorScheme(const BuilderState&, const CSSValue&);
 #endif
@@ -571,36 +580,56 @@ inline ImageOrientation BuilderConverter::convertImageOrientation(const BuilderS
     return ImageOrientation::Orientation::None;
 }
 
-inline TransformOperations BuilderConverter::convertTransform(const BuilderState& builderState, const CSSValue& value)
+inline Style::TransformFunction BuilderConverter::convertTransformFunction(const BuilderState& builderState, const CSSValue& value)
 {
     CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
         builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
         : builderState.cssToLengthConversionData();
-    return createTransformOperations(value, conversionData);
+    return toStyle(downcast<CSSTransformFunctionValue>(value).transformFunction(), conversionData);
 }
 
-inline RefPtr<TranslateTransformOperation> BuilderConverter::convertTranslate(const BuilderState& builderState, const CSSValue& value)
+inline Style::TransformProperty BuilderConverter::convertTransform(const BuilderState& builderState, const CSSValue& value)
 {
     CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
         builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
         : builderState.cssToLengthConversionData();
-    return createTranslate(value, conversionData);
+
+    if (value.valueID() == CSSValueNone)
+        return Style::TransformProperty { Style::None { } };
+    return toStyle(downcast<CSSTransformPropertyValue>(value).transform(), conversionData);
 }
 
-inline RefPtr<RotateTransformOperation> BuilderConverter::convertRotate(const BuilderState& builderState, const CSSValue& value)
+inline Style::TranslateProperty BuilderConverter::convertTranslate(const BuilderState& builderState, const CSSValue& value)
 {
     CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
         builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
         : builderState.cssToLengthConversionData();
-    return createRotate(value, conversionData);
+
+    if (value.valueID() == CSSValueNone)
+        return Style::TranslateProperty { Style::None { } };
+    return toStyle(downcast<CSSTranslatePropertyValue>(value).translate(), conversionData);
 }
 
-inline RefPtr<ScaleTransformOperation> BuilderConverter::convertScale(const BuilderState& builderState, const CSSValue& value)
+inline Style::RotateProperty BuilderConverter::convertRotate(const BuilderState& builderState, const CSSValue& value)
 {
     CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
         builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
         : builderState.cssToLengthConversionData();
-    return createScale(value, conversionData);
+
+    if (value.valueID() == CSSValueNone)
+        return Style::RotateProperty { Style::None { } };
+    return toStyle(downcast<CSSRotatePropertyValue>(value).rotate(), conversionData);
+}
+
+inline Style::ScaleProperty BuilderConverter::convertScale(const BuilderState& builderState, const CSSValue& value)
+{
+    CSSToLengthConversionData conversionData = builderState.useSVGZoomRulesForLength() ?
+        builderState.cssToLengthConversionData().copyWithAdjustedZoom(1.0f)
+        : builderState.cssToLengthConversionData();
+
+    if (value.valueID() == CSSValueNone)
+        return Style::ScaleProperty { Style::None { } };
+    return toStyle(downcast<CSSScalePropertyValue>(value).scale(), conversionData);
 }
 
 #if ENABLE(DARK_MODE_CSS)

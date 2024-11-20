@@ -48,7 +48,9 @@ public:
 
     String customCSSText() const;
     bool equals(const CSSRayValue&) const;
+
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    void customCollectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
 private:
     CSSRayValue(CSS::RayFunction ray, CSSBoxType coordinateBox)

@@ -34,8 +34,7 @@
 #include "MutableStyleProperties.h"
 #include "ScriptExecutionContext.h"
 #include "StyleProperties.h"
-#include "TransformOperations.h"
-#include "TransformOperationsBuilder.h"
+#include "StyleTransformProperty.h"
 #include <JavaScriptCore/GenericTypedArrayViewInlines.h>
 #include <JavaScriptCore/HeapInlines.h>
 #include <JavaScriptCore/JSGenericTypedArrayViewInlines.h>
@@ -230,19 +229,20 @@ ExceptionOr<DOMMatrixReadOnly::AbstractMatrix> DOMMatrixReadOnly::parseStringInt
         return AbstractMatrix { };
 
     CSSToLengthConversionData conversionData;
-    auto operations = CSSPropertyParserHelpers::parseTransformRaw(string, CSSParserContext(HTMLStandardMode), conversionData);
-    if (!operations)
+    auto transform = CSSPropertyParserHelpers::parseTransformRaw(string, CSSParserContext(HTMLStandardMode), conversionData);
+    if (!transform)
         return Exception { ExceptionCode::SyntaxError };
 
-    // Check for an empty transform operations list, in which case we can use the default identity matrix.
-    if (operations->isEmpty())
+    // Check for an empty transform list, in which case we can use the default identity matrix.
+    if (transform->isNone())
         return AbstractMatrix { };
 
     AbstractMatrix matrix;
-    for (auto& operation : *operations) {
-        if (operation->apply(matrix.matrix, { 0, 0 }))
+    for (auto function : *transform) {
+        if (Style::isSizeDependent(function))
             return Exception { ExceptionCode::SyntaxError };
-        if (operation->is3DOperation())
+        Style::applyTransform(function, matrix.matrix, { 0, 0 });
+        if (Style::is3D(function))
             matrix.is2D = false;
     }
 

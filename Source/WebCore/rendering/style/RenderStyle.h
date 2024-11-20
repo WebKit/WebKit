@@ -73,11 +73,9 @@ class PseudoIdSet;
 class QuotesData;
 class RenderObject;
 class RenderStyle;
-class RotateTransformOperation;
 class RoundedRect;
 class SVGLengthValue;
 class SVGRenderStyle;
-class ScaleTransformOperation;
 class ScrollTimeline;
 class ShadowData;
 class ShapeValue;
@@ -92,12 +90,12 @@ class StyleRareInheritedData;
 class StyleReflection;
 class StyleScrollSnapArea;
 class StyleSelfAlignmentData;
+class TextAutospace;
 class TextDecorationThickness;
 class TextSizeAdjustment;
+class TextSpacingTrim;
 class TextUnderlineOffset;
-class TransformOperations;
 class TransformationMatrix;
-class TranslateTransformOperation;
 class ViewTimeline;
 class WillChangeData;
 
@@ -258,20 +256,16 @@ struct MasonryAutoFlow;
 struct NamedGridAreaMap;
 struct NamedGridLinesMap;
 struct OrderedNamedGridLinesMap;
-struct SingleTimelineRange;
-
 struct ScrollSnapAlign;
 struct ScrollSnapType;
-struct ScrollbarGutter;
 struct ScrollbarColor;
-struct TimelineScope;
-struct ViewTimelineInsets;
-
+struct ScrollbarGutter;
+struct SingleTimelineRange;
 struct TabSize;
-class TextAutospace;
 struct TextEdge;
-class TextSpacingTrim;
+struct TimelineScope;
 struct TransformOperationData;
+struct ViewTimelineInsets;
 
 template<typename> class FontTaggedSettings;
 template<typename> class RectEdges;
@@ -282,12 +276,19 @@ using IntOutsets = RectEdges<int>;
 using LayoutBoxExtent = RectEdges<LayoutUnit>;
 
 namespace Style {
+
 class CustomPropertyRegistry;
 class ViewTransitionName;
+
 struct ColorScheme;
+struct RotateProperty;
+struct ScaleProperty;
 struct ScopedName;
+struct TransformProperty;
+struct TranslateProperty;
 
 enum class PositionTryOrder : uint8_t;
+
 }
 
 constexpr auto PublicPseudoIDBits = 17;
@@ -903,7 +904,7 @@ public:
     inline bool columnRuleIsTransparent() const;
     inline ColumnSpan columnSpan() const;
 
-    inline const TransformOperations& transform() const;
+    inline const Style::TransformProperty& transform() const;
     inline bool hasTransform() const;
     inline const Length& transformOriginX() const;
     inline const Length& transformOriginY() const;
@@ -912,9 +913,9 @@ public:
 
     inline TransformBox transformBox() const;
 
-    inline RotateTransformOperation* rotate() const;
-    inline ScaleTransformOperation* scale() const;
-    inline TranslateTransformOperation* translate() const;
+    inline const Style::RotateProperty& rotate() const;
+    inline const Style::ScaleProperty& scale() const;
+    inline const Style::TranslateProperty& translate() const;
 
     inline bool affectsTransform() const;
 
@@ -956,7 +957,7 @@ public:
     static constexpr OptionSet<TransformOperationOption> allTransformOperations();
     static constexpr OptionSet<TransformOperationOption> individualTransformOperations();
 
-    bool affectedByTransformOrigin() const;
+    bool isAffectedByTransformOrigin() const;
 
     FloatPoint computePerspectiveOrigin(const FloatRect& boundingBox) const;
     void applyPerspective(TransformationMatrix&, const FloatPoint& originTranslate) const;
@@ -1521,15 +1522,15 @@ public:
     inline void setColumnSpan(ColumnSpan);
     inline void inheritColumnPropertiesFrom(const RenderStyle& parent);
 
-    inline void setTransform(TransformOperations&&);
+    inline void setTransform(Style::TransformProperty&&);
     inline void setTransformOriginX(Length&&);
     inline void setTransformOriginY(Length&&);
     inline void setTransformOriginZ(float);
     inline void setTransformBox(TransformBox);
 
-    void setRotate(RefPtr<RotateTransformOperation>&&);
-    void setScale(RefPtr<ScaleTransformOperation>&&);
-    void setTranslate(RefPtr<TranslateTransformOperation>&&);
+    void setRotate(Style::RotateProperty);
+    void setScale(Style::ScaleProperty);
+    void setTranslate(Style::TranslateProperty);
 
     inline void setSpeakAs(OptionSet<SpeakAs>);
     inline void setTextCombine(TextCombine);
@@ -2019,13 +2020,13 @@ public:
     static constexpr ColumnSpan initialColumnSpan();
     static inline GapLength initialColumnGap();
     static inline GapLength initialRowGap();
-    static inline TransformOperations initialTransform();
+    static inline Style::TransformProperty initialTransform();
     static inline Length initialTransformOriginX();
     static inline Length initialTransformOriginY();
     static constexpr TransformBox initialTransformBox();
-    static RotateTransformOperation* initialRotate() { return nullptr; }
-    static ScaleTransformOperation* initialScale() { return nullptr; }
-    static TranslateTransformOperation* initialTranslate() { return nullptr; }
+    static Style::RotateProperty initialRotate();
+    static Style::ScaleProperty initialScale();
+    static Style::TranslateProperty initialTranslate();
     static constexpr PointerEvents initialPointerEvents();
     static float initialTransformOriginZ() { return 0; }
     static constexpr TransformStyle3D initialTransformStyle3D();

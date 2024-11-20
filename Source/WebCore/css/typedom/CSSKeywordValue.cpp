@@ -31,6 +31,7 @@
 #include "CSSKeywordValue.h"
 
 #include "CSSMarkup.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
 #include "CSSValuePool.h"
@@ -58,6 +59,16 @@ ExceptionOr<Ref<CSSKeywordValue>> CSSKeywordValue::create(const String& value)
         return Exception { ExceptionCode::TypeError };
     
     return adoptRef(*new CSSKeywordValue(value));
+}
+
+Ref<CSSKeywordValue> CSSKeywordValue::create(CSSValueID value)
+{
+    return adoptRef(*new CSSKeywordValue(nameLiteral(value)));
+}
+
+Ref<CSSKeywordValue> CSSKeywordValue::create(CSS::None)
+{
+    return adoptRef(*new CSSKeywordValue(nameLiteral(CSSValueNone)));
 }
 
 ExceptionOr<void> CSSKeywordValue::setValue(const String& value)

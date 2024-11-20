@@ -136,6 +136,7 @@ public:
 
     WEBCORE_EXPORT static const TransformationMatrix identity;
 
+    void setMatrix(AffineTransform);
     void setMatrix(double a, double b, double c, double d, double e, double f)
     {
         m_matrix[0][0] = a; m_matrix[0][1] = b; m_matrix[0][2] = 0; m_matrix[0][3] = 0; 
@@ -143,7 +144,7 @@ public:
         m_matrix[2][0] = 0; m_matrix[2][1] = 0; m_matrix[2][2] = 1; m_matrix[2][3] = 0; 
         m_matrix[3][0] = e; m_matrix[3][1] = f; m_matrix[3][2] = 0; m_matrix[3][3] = 1;
     }
-    
+
     void setMatrix(double m11, double m12, double m13, double m14,
                    double m21, double m22, double m23, double m24,
                    double m31, double m32, double m33, double m34,

@@ -30,9 +30,9 @@
 #include "config.h"
 #include "CSSSkew.h"
 
-#include "CSSFunctionValue.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericValue.h"
+#include "CSSPrimitiveNumericTypes+CSSOMConversion.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
 #include "DOMMatrix.h"
@@ -51,33 +51,16 @@ ExceptionOr<Ref<CSSSkew>> CSSSkew::create(Ref<CSSNumericValue> ax, Ref<CSSNumeri
     return adoptRef(*new CSSSkew(WTFMove(ax), WTFMove(ay)));
 }
 
-ExceptionOr<Ref<CSSSkew>> CSSSkew::create(CSSFunctionValue& cssFunctionValue)
+ExceptionOr<Ref<CSSSkew>> CSSSkew::create(CSS::Skew skew)
 {
-    if (cssFunctionValue.name() != CSSValueSkew) {
-        ASSERT_NOT_REACHED();
-        return CSSSkew::create(CSSNumericFactory::deg(0), CSSNumericFactory::deg(0));
-    }
+    auto ax = CSSNumericFactory::reifyNumeric(skew.x);
+    if (ax.hasException())
+        return ax.releaseException();
+    auto ay = skew.y ? CSSNumericFactory::reifyNumeric(*skew.y) : ExceptionOr<Ref<CSSNumericValue>> { CSSUnitValue::create(0.0, CSSUnitType::CSS_DEG) };
+    if (ay.hasException())
+        return ay.releaseException();
 
-    Vector<Ref<CSSNumericValue>> components;
-    for (auto& componentCSSValue : cssFunctionValue) {
-        auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
-        if (valueOrException.hasException())
-            return valueOrException.releaseException();
-        RefPtr numericValue = dynamicDowncast<CSSNumericValue>(valueOrException.releaseReturnValue());
-        if (!numericValue)
-            return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
-        components.append(numericValue.releaseNonNull());
-    }
-
-    auto numberOfComponents = components.size();
-    if (numberOfComponents < 1 || numberOfComponents > 2) {
-        ASSERT_NOT_REACHED();
-        return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
-    }
-
-    if (components.size() == 2)
-        return CSSSkew::create(components[0], components[1]);
-    return CSSSkew::create(components[0], CSSNumericFactory::deg(0));
+    return adoptRef(*new CSSSkew(ax.releaseReturnValue(), ay.releaseReturnValue()));
 }
 
 CSSSkew::CSSSkew(Ref<CSSNumericValue> ax, Ref<CSSNumericValue> ay)
@@ -136,15 +119,16 @@ ExceptionOr<Ref<DOMMatrix>> CSSSkew::toMatrix()
     return { DOMMatrix::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::Yes) };
 }
 
-RefPtr<CSSValue> CSSSkew::toCSSValue() const
+std::optional<CSS::TransformFunction> CSSSkew::toCSS() const
 {
-    auto ax = m_ax->toCSSValue();
-    auto ay = m_ay->toCSSValue();
-    if (!ax || !ay)
-        return nullptr;
-    if (auto* ayUnitValue = dynamicDowncast<CSSUnitValue>(m_ay.get()); ayUnitValue && !ayUnitValue->value())
-        return CSSFunctionValue::create(CSSValueSkew, ax.releaseNonNull());
-    return CSSFunctionValue::create(CSSValueSkew, ax.releaseNonNull(), ay.releaseNonNull());
+    auto ax = CSS::convertFromCSSOMValue<CSS::Angle<>>(m_ax);
+    if (!ax)
+        return { };
+    auto ay = CSS::convertFromCSSOMValue<CSS::Angle<>>(m_ay);
+    if (!ay)
+        return { };
+
+    return CSS::TransformFunction { CSS::SkewFunction { { WTFMove(*ax), WTFMove(*ay) } } };
 }
 
 } // namespace WebCore

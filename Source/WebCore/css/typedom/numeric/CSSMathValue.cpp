@@ -26,30 +26,38 @@
 #include "config.h"
 #include "CSSMathValue.h"
 
-#include "CSSCalcValue.h"
 #include "CSSPrimitiveValue.h"
 #include "Length.h"
 
 namespace WebCore {
 
-RefPtr<CSSValue> CSSMathValue::toCSSValue() const
+std::optional<CSSCalc::Tree> CSSMathValue::toCalcTree() const
 {
     auto node = toCalcTreeNode();
     if (!node)
-        return nullptr;
+        return { };
 
     auto type = CSSCalc::getType(*node);
     auto category = type.calculationCategory();
     if (!category)
-        return nullptr;
+        return { };
 
-    return CSSPrimitiveValue::create(CSSCalcValue::create(CSSCalc::Tree {
+    return CSSCalc::Tree {
         .root = WTFMove(*node),
         .type = type,
         .category = *category,
         .stage = CSSCalc::Stage::Specified,
         .range = CSS::All
-    }));
+    };
+}
+
+RefPtr<CSSValue> CSSMathValue::toCSSValue() const
+{
+    auto tree = toCalcTree();
+    if (!tree)
+        return nullptr;
+
+    return CSSPrimitiveValue::create(CSSCalcValue::create(WTFMove(*tree)));
 }
 
 } // namespace WebCore

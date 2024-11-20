@@ -2861,50 +2861,6 @@ header: <WebCore/KeyboardScroll.h>
     RefPtr<WebCore::Image> icon();
 };
 
-[RefCounted] class WebCore::IdentityTransformOperation {
-    [NotSerialized] WebCore::TransformOperationType type();
-}
-
-[RefCounted] class WebCore::TranslateTransformOperation {
-    WebCore::Length x();
-    WebCore::Length y();
-    WebCore::Length z();
-    [Validator='WebCore::TransformOperation::isTranslateTransformOperationType(*type)'] WebCore::TransformOperationType type();
-}
-
-[RefCounted] class WebCore::RotateTransformOperation {
-    double x();
-    double y();
-    double z();
-    double angle();
-    [Validator='WebCore::TransformOperation::isRotateTransformOperationType(*type)'] WebCore::TransformOperationType type();
-}
-
-[RefCounted] class WebCore::ScaleTransformOperation {
-    double x();
-    double y();
-    double z();
-    [Validator='WebCore::TransformOperation::isScaleTransformOperationType(*type)'] WebCore::TransformOperationType type();
-}
-
-[RefCounted] class WebCore::SkewTransformOperation {
-    double angleX();
-    double angleY();
-    [Validator='WebCore::TransformOperation::isSkewTransformOperationType(*type)'] WebCore::TransformOperationType type();
-}
-
-[RefCounted] class WebCore::PerspectiveTransformOperation {
-    std::optional<WebCore::Length> perspective();
-}
-
-[RefCounted] class WebCore::MatrixTransformOperation {
-    WebCore::TransformationMatrix matrix();
-}
-
-[RefCounted] class WebCore::Matrix3DTransformOperation {
-    WebCore::TransformationMatrix matrix();
-}
-
 #if PLATFORM(COCOA)
 struct AudioStreamBasicDescription {
     double mSampleRate;
@@ -2923,8 +2879,58 @@ class WebCore::CAAudioStreamDescription {
 }
 #endif
 
-class WebCore::TransformOperations {
-    Vector<Ref<WebCore::TransformOperation>> m_operations;
+header: <WebCore/TransformFunctions.h>
+[CustomHeader, Nested] struct WebCore::Matrix {
+    WebCore::AffineTransform value;
+};
+[CustomHeader, Nested] struct WebCore::Matrix3D {
+    WebCore::TransformationMatrix value;
+};
+[CustomHeader, Nested] struct WebCore::Rotate {
+    double value;
+};
+[CustomHeader, Nested] struct WebCore::Rotate3D {
+    double x;
+    double y;
+    double z;
+    double angle;
+};
+[CustomHeader, Nested] struct WebCore::Skew {
+    double x;
+    double y;
+};
+[CustomHeader, Nested] struct WebCore::SkewX {
+    double value;
+};
+[CustomHeader, Nested] struct WebCore::SkewY {
+    double value;
+};
+[CustomHeader, Nested] struct WebCore::Scale {
+    double x;
+    double y;
+};
+[CustomHeader, Nested] struct WebCore::Scale3D {
+    double x;
+    double y;
+    double z;
+};
+[CustomHeader, Nested] struct WebCore::Translate {
+    double x;
+    double y;
+};
+[CustomHeader, Nested] struct WebCore::Translate3D {
+    double x;
+    double y;
+    double z;
+};
+[CustomHeader, Nested] struct WebCore::Perspective {
+    std::optional<double> value;
+};
+
+using WebCore::TransformFunction = std::variant<WebCore::Matrix, WebCore::Matrix3D, WebCore::Rotate, WebCore::Rotate3D, WebCore::Skew, WebCore::SkewX, WebCore::SkewY, WebCore::Scale, WebCore::Scale3D, WebCore::Translate, WebCore::Translate3D, WebCore::Perspective>;
+
+struct WebCore::TransformList {
+    Vector<WebCore::TransformFunction> list;
 }
 
 [Nested, AdditionalEncoder=StreamConnectionEncoder] struct WebCore::Gradient::LinearData {
@@ -3029,17 +3035,6 @@ enum class WebCore::GraphicsContextGLSimulatedEventForTesting : uint8_t {
   WebCore::SpringTimingFunction
 }
 
-[RefCounted] class WebCore::TransformOperation subclasses {
-    WebCore::TranslateTransformOperation
-    WebCore::ScaleTransformOperation
-    WebCore::RotateTransformOperation
-    WebCore::SkewTransformOperation
-    WebCore::MatrixTransformOperation
-    WebCore::Matrix3DTransformOperation
-    WebCore::PerspectiveTransformOperation
-    WebCore::IdentityTransformOperation
-}
-
 struct WebCore::LengthPoint {
     WebCore::Length x;
     WebCore::Length y;
@@ -3056,10 +3051,10 @@ class WebCore::SVGPathByteStream {
 
 header: <WebCore/StylePrimitiveNumericTypes.h>
 [CustomHeader, Nested] struct WebCore::Style::Angle<WebCore::CSS::Nonnegative> {
-    float value;
+    double value;
 };
 [CustomHeader, Nested] struct WebCore::Style::Angle<WebCore::CSS::All> {
-    float value;
+    double value;
 };
 
 [CustomHeader, Nested] struct WebCore::Style::Length<WebCore::CSS::Nonnegative> {
@@ -3072,10 +3067,10 @@ header: <WebCore/StylePrimitiveNumericTypes.h>
 };
 
 [CustomHeader, Nested] struct WebCore::Style::Percentage<WebCore::CSS::Nonnegative> {
-    float value;
+    double value;
 };
 [CustomHeader, Nested] struct WebCore::Style::Percentage<WebCore::CSS::All> {
-    float value;
+    double value;
 };
 
 [CustomHeader, Nested] struct WebCore::Style::LengthPercentage<WebCore::CSS::All> {
@@ -6515,10 +6510,10 @@ struct WebCore::AcceleratedEffectValues {
     std::optional<WebCore::TransformOperationData> transformOperationData;
     WebCore::LengthPoint transformOrigin;
     WebCore::TransformBox transformBox;
-    WebCore::TransformOperations transform;
-    RefPtr<WebCore::TransformOperation> translate;
-    RefPtr<WebCore::TransformOperation> scale;
-    RefPtr<WebCore::TransformOperation> rotate;
+    WebCore::TransformList transform;
+    WebCore::TransformList translate;
+    WebCore::TransformList scale;
+    WebCore::TransformList rotate;
     RefPtr<WebCore::PathOperation> offsetPath;
     WebCore::Length offsetDistance;
     WebCore::LengthPoint offsetPosition;
@@ -8215,33 +8210,6 @@ enum class WebCore::PredefinedColorSpace : uint8_t {
 #if ENABLE(PREDEFINED_COLOR_SPACE_DISPLAY_P3)
     , DisplayP3
 #endif
-};
-
-header: <WebCore/TransformOperation.h>
-enum class WebCore::TransformOperationType : uint8_t {
-    ScaleX,
-    ScaleY,
-    Scale,
-    TranslateX,
-    TranslateY,
-    Translate,
-    RotateX,
-    RotateY,
-    Rotate,
-    SkewX,
-    SkewY,
-    Skew,
-    Matrix,
-    ScaleZ,
-    Scale3D,
-    TranslateZ,
-    Translate3D,
-    RotateZ,
-    Rotate3D,
-    Matrix3D,
-    Perspective,
-    Identity,
-    None
 };
 
 enum class WebCore::GraphicsContextGLSurfaceBuffer : bool;

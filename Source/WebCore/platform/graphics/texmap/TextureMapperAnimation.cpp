@@ -23,17 +23,17 @@
 #if USE(TEXTURE_MAPPER)
 
 #include "LayoutSize.h"
-#include "TranslateTransformOperation.h"
+#include <algorithm>
 #include <wtf/Scope.h>
 
 namespace WebCore {
 
-static RefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation& toOp, double progress, const FloatSize&, bool blendToPassthrough = false)
+static RefPtr<FilterOperation> blendFunc(FilterOperation* fromOp, FilterOperation& toOp, double progress, bool blendToPassthrough = false)
 {
     return toOp.blend(fromOp, progress, blendToPassthrough);
 }
 
-static FilterOperations applyFilterAnimation(const FilterOperations& from, const FilterOperations& to, double progress, const FloatSize& boxSize)
+static FilterOperations applyFilterAnimation(const FilterOperations& from, const FilterOperations& to, double progress)
 {
     // First frame of an animation.
     if (!progress)
@@ -56,7 +56,7 @@ static FilterOperations applyFilterAnimation(const FilterOperations& from, const
     for (size_t i = 0; i < size; i++) {
         RefPtr<FilterOperation> fromOp = (i < fromSize) ? from[i].ptr() : nullptr;
         RefPtr<FilterOperation> toOp = (i < toSize) ? to[i].ptr() : nullptr;
-        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), *toOp, progress, boxSize) : (fromOp ? blendFunc(nullptr, *fromOp, progress, boxSize, true) : nullptr);
+        RefPtr<FilterOperation> blendedOp = toOp ? blendFunc(fromOp.get(), *toOp, progress) : (fromOp ? blendFunc(nullptr, *fromOp, progress, true) : nullptr);
         if (blendedOp)
             operations.append(blendedOp.releaseNonNull());
         else {
@@ -119,64 +119,66 @@ static float applyOpacityAnimation(float fromOpacity, float toOpacity, double pr
     return fromOpacity + progress * (toOpacity - fromOpacity);
 }
 
-static TransformationMatrix applyTransformAnimation(const TransformOperations& from, const TransformOperations& to, double progress, const FloatSize& boxSize)
+static TransformationMatrix applyTransformAnimation(const TransformList& from, const TransformList& to, double progress)
 {
     TransformationMatrix matrix;
 
     // First frame of an animation.
     if (!progress) {
-        from.apply(matrix, boxSize);
+        from.apply(matrix);
         return matrix;
     }
 
     // Last frame of an animation.
     if (progress == 1) {
-        to.apply(matrix, boxSize);
+        to.apply(matrix);
         return matrix;
     }
 
-    to.blend(from, progress, LayoutSize { boxSize }).apply(matrix, boxSize);
+    blend(from, to, progress).apply(matrix);
+
     return matrix;
 }
 
-static const TimingFunction& timingFunctionForAnimationValue(const AnimationValue& animationValue, const TextureMapperAnimation& animation)
+KeyframeValueList<FloatAnimationValue> TextureMapperAnimationBase::createThreadsafeKeyFrames(const KeyframeValueList<FloatAnimationValue>& originalKeyframes)
 {
-    if (auto* function = animationValue.timingFunction())
-        return *function;
-    if (auto* function = animation.timingFunction())
-        return *function;
-    return CubicBezierTimingFunction::defaultTimingFunction();
+    return originalKeyframes;
 }
 
-static KeyframeValueList createThreadsafeKeyFrames(const KeyframeValueList& originalKeyframes, const FloatSize& boxSize)
+KeyframeValueList<FilterAnimationValue> TextureMapperAnimationBase::createThreadsafeKeyFrames(const KeyframeValueList<FilterAnimationValue>& originalKeyframes)
 {
-    if (originalKeyframes.property() != AnimatedProperty::Transform)
-        return originalKeyframes;
+    return originalKeyframes;
+}
 
-    // Currently translation operations are the only transform operations that store a non-fixed
-    // Length. Some Lengths, in particular those for calc() operations, are not thread-safe or
-    // multiprocess safe, because they maintain indices into a shared UncheckedKeyHashMap of CalculationValues.
-    // This code converts all possible unsafe Length parameters to fixed Lengths, which are safe to
-    // use in other threads and across IPC channels.
-    KeyframeValueList keyframes = originalKeyframes;
-    for (unsigned i = 0; i < keyframes.size(); i++) {
-        const auto& transformValue = static_cast<const TransformAnimationValue&>(keyframes.at(i));
-        for (auto& operation : transformValue.value()) {
-            if (RefPtr translation = dynamicDowncast<TranslateTransformOperation>(operation)) {
-                translation->setX(Length(translation->xAsFloat(boxSize), LengthType::Fixed));
-                translation->setY(Length(translation->yAsFloat(boxSize), LengthType::Fixed));
-                translation->setZ(Length(translation->zAsFloat(), LengthType::Fixed));
-            }
-        }
+KeyframeValueList<TransformAnimationValue> TextureMapperAnimationBase::createThreadsafeKeyFrames(const KeyframeValueList<TransformAnimationValue>& originalKeyframes)
+{
+    // FIXME: This copy is likely no longer needed now that transforms no longer use Length internally.
+
+    KeyframeValueList<TransformAnimationValue> newKeyframes(originalKeyframes.property());
+
+    for (const auto& originalKeyframe : originalKeyframes) {
+        auto newTransformFunctions = originalKeyframe.value().list.map([&](const auto& function) -> TransformFunction {
+            return WTF::switchOn(function,
+                [](const auto& function) -> TransformFunction {
+                    return function;
+                }
+            );
+        });
+
+        newKeyframes.insert(
+            TransformAnimationValue(
+                originalKeyframe.keyTime(),
+                TransformList { WTFMove(newTransformFunctions) },
+                originalKeyframe.timingFunction() ? RefPtr<TimingFunction> { originalKeyframe.timingFunction()->clone() } : nullptr
+            )
+        );
     }
 
-    return keyframes;
+    return newKeyframes;
 }
 
-TextureMapperAnimation::TextureMapperAnimation(const String& name, const KeyframeValueList& keyframes, const FloatSize& boxSize, const Animation& animation, MonotonicTime startTime, Seconds pauseTime, State state)
+TextureMapperAnimationBase::TextureMapperAnimationBase(const String& name, const Animation& animation, MonotonicTime startTime, Seconds pauseTime, State state)
     : m_name(name.isSafeToSendToAnotherThread() ? name : name.isolatedCopy())
-    , m_keyframes(createThreadsafeKeyFrames(keyframes, boxSize))
-    , m_boxSize(boxSize)
     , m_timingFunction(animation.timingFunction()->clone())
     , m_iterationCount(animation.iterationCount())
     , m_duration(animation.duration().value_or(0))
@@ -190,10 +192,8 @@ TextureMapperAnimation::TextureMapperAnimation(const String& name, const Keyfram
 {
 }
 
-TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& other)
+TextureMapperAnimationBase::TextureMapperAnimationBase(const TextureMapperAnimationBase& other)
     : m_name(other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy())
-    , m_keyframes(other.m_keyframes)
-    , m_boxSize(other.m_boxSize)
     , m_timingFunction(other.m_timingFunction->clone())
     , m_iterationCount(other.m_iterationCount)
     , m_duration(other.m_duration)
@@ -207,11 +207,9 @@ TextureMapperAnimation::TextureMapperAnimation(const TextureMapperAnimation& oth
 {
 }
 
-TextureMapperAnimation& TextureMapperAnimation::operator=(const TextureMapperAnimation& other)
+TextureMapperAnimationBase& TextureMapperAnimationBase::operator=(const TextureMapperAnimationBase& other)
 {
     m_name = other.m_name.isSafeToSendToAnotherThread() ? other.m_name : other.m_name.isolatedCopy();
-    m_keyframes = other.m_keyframes;
-    m_boxSize = other.m_boxSize;
     m_timingFunction = other.m_timingFunction->clone();
     m_iterationCount = other.m_iterationCount;
     m_duration = other.m_duration;
@@ -225,7 +223,7 @@ TextureMapperAnimation& TextureMapperAnimation::operator=(const TextureMapperAni
     return *this;
 }
 
-void TextureMapperAnimation::apply(ApplicationResult& applicationResults, MonotonicTime time, KeepInternalState keepInternalState)
+double TextureMapperAnimationBase::applyBase(ApplicationResult& applicationResults, MonotonicTime time, KeepInternalState keepInternalState)
 {
     MonotonicTime oldLastRefreshedTime = m_lastRefreshedTime;
     Seconds oldTotalRunningTime = m_totalRunningTime;
@@ -253,43 +251,33 @@ void TextureMapperAnimation::apply(ApplicationResult& applicationResults, Monoto
 
     applicationResults.hasRunningAnimations |= (m_state == State::Playing);
 
-    if (!normalizedValue) {
-        applyInternal(applicationResults, m_keyframes.at(0), m_keyframes.at(1), 0);
-        return;
-    }
-
-    if (normalizedValue == 1.0) {
-        applyInternal(applicationResults, m_keyframes.at(m_keyframes.size() - 2), m_keyframes.at(m_keyframes.size() - 1), 1);
-        return;
-    }
-    if (m_keyframes.size() == 2) {
-        auto& timingFunction = timingFunctionForAnimationValue(m_keyframes.at(0), *this);
-        normalizedValue = timingFunction.transformProgress(normalizedValue, m_duration);
-        applyInternal(applicationResults, m_keyframes.at(0), m_keyframes.at(1), normalizedValue);
-        return;
-    }
-
-    for (size_t i = 0; i < m_keyframes.size() - 1; ++i) {
-        const AnimationValue& from = m_keyframes.at(i);
-        const AnimationValue& to = m_keyframes.at(i + 1);
-        if (from.keyTime() > normalizedValue || to.keyTime() < normalizedValue)
-            continue;
-
-        normalizedValue = (normalizedValue - from.keyTime()) / (to.keyTime() - from.keyTime());
-        auto& timingFunction = timingFunctionForAnimationValue(from, *this);
-        normalizedValue = timingFunction.transformProgress(normalizedValue, m_duration);
-        applyInternal(applicationResults, from, to, normalizedValue);
-        break;
-    }
+    return normalizedValue;
 }
 
-void TextureMapperAnimation::pause(Seconds time)
+void TextureMapperAnimationBase::applyInternal(ApplicationResult& applicationResults, const FloatAnimationValue& from, const FloatAnimationValue& to, float progress)
+{
+    applicationResults.opacity = applyOpacityAnimation(from.value(), to.value(), progress);
+}
+
+void TextureMapperAnimationBase::applyInternal(ApplicationResult& applicationResults, const FilterAnimationValue& from, const FilterAnimationValue& to, float progress)
+{
+    applicationResults.filters = applyFilterAnimation(from.value(), to.value(), progress);
+}
+
+void TextureMapperAnimationBase::applyInternal(ApplicationResult& applicationResults, const TransformAnimationValue& from, const TransformAnimationValue& to, float progress)
+{
+    ASSERT(applicationResults.transform);
+    auto transform = applyTransformAnimation(from.value(), to.value(), progress);
+    applicationResults.transform->multiply(transform);
+}
+
+void TextureMapperAnimationBase::pause(Seconds time)
 {
     m_state = State::Paused;
     m_pauseTime = time;
 }
 
-void TextureMapperAnimation::resume()
+void TextureMapperAnimationBase::resume()
 {
     m_state = State::Playing;
     // FIXME: This seems wrong. m_totalRunningTime is cleared.
@@ -299,7 +287,16 @@ void TextureMapperAnimation::resume()
     m_lastRefreshedTime = MonotonicTime::now();
 }
 
-Seconds TextureMapperAnimation::computeTotalRunningTime(MonotonicTime time)
+RefPtr<const TimingFunction> TextureMapperAnimationBase::timingFunctionForAnimationValue(const AnimationValueBase& animationValue)
+{
+    if (RefPtr function = animationValue.timingFunction())
+        return function;
+    if (RefPtr function = this->timingFunction())
+        return function;
+    return &CubicBezierTimingFunction::defaultTimingFunction();
+}
+
+Seconds TextureMapperAnimationBase::computeTotalRunningTime(MonotonicTime time)
 {
     if (m_state == State::Paused)
         return m_pauseTime;
@@ -310,55 +307,67 @@ Seconds TextureMapperAnimation::computeTotalRunningTime(MonotonicTime time)
     return m_totalRunningTime;
 }
 
-void TextureMapperAnimation::applyInternal(ApplicationResult& applicationResults, const AnimationValue& from, const AnimationValue& to, float progress)
-{
-    switch (m_keyframes.property()) {
-    case AnimatedProperty::Translate:
-    case AnimatedProperty::Rotate:
-    case AnimatedProperty::Scale:
-    case AnimatedProperty::Transform: {
-        ASSERT(applicationResults.transform);
-        auto transform = applyTransformAnimation(static_cast<const TransformAnimationValue&>(from).value(), static_cast<const TransformAnimationValue&>(to).value(), progress, m_boxSize);
-        applicationResults.transform->multiply(transform);
-        return;
-    }
-    case AnimatedProperty::Opacity:
-        applicationResults.opacity = applyOpacityAnimation((static_cast<const FloatAnimationValue&>(from).value()), (static_cast<const FloatAnimationValue&>(to).value()), progress);
-        return;
-    case AnimatedProperty::Filter:
-    case AnimatedProperty::WebkitBackdropFilter:
-        applicationResults.filters = applyFilterAnimation(static_cast<const FilterAnimationValue&>(from).value(), static_cast<const FilterAnimationValue&>(to).value(), progress, m_boxSize);
-        return;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
-void TextureMapperAnimations::add(const TextureMapperAnimation& animation)
+void TextureMapperAnimations::add(const TextureMapperAnimation<FloatAnimationValue>& animation)
 {
     // Remove the old state if we are resuming a paused animation.
     remove(animation.name(), animation.keyframes().property());
 
-    m_animations.append(animation);
+    m_floatAnimations.append(animation);
+}
+
+void TextureMapperAnimations::add(const TextureMapperAnimation<FilterAnimationValue>& animation)
+{
+    // Remove the old state if we are resuming a paused animation.
+    remove(animation.name(), animation.keyframes().property());
+
+    m_filterAnimations.append(animation);
+}
+
+void TextureMapperAnimations::add(const TextureMapperAnimation<TransformAnimationValue>& animation)
+{
+    // Remove the old state if we are resuming a paused animation.
+    remove(animation.name(), animation.keyframes().property());
+
+    m_transformAnimations.append(animation);
 }
 
 void TextureMapperAnimations::remove(const String& name)
 {
-    m_animations.removeAllMatching([&name] (const auto& animation) {
+    m_floatAnimations.removeAllMatching([&name] (const auto& animation) {
+        return animation.name() == name;
+    });
+    m_filterAnimations.removeAllMatching([&name] (const auto& animation) {
+        return animation.name() == name;
+    });
+    m_transformAnimations.removeAllMatching([&name] (const auto& animation) {
         return animation.name() == name;
     });
 }
 
-void TextureMapperAnimations::remove(const String& name, AnimatedProperty property)
+void TextureMapperAnimations::remove(const String& name, GraphicsLayerAnimationProperty property)
 {
-    m_animations.removeAllMatching([&name, property] (const auto& animation) {
+    m_floatAnimations.removeAllMatching([&name, property] (const auto& animation) {
+        return animation.name() == name && animation.keyframes().property() == property;
+    });
+    m_filterAnimations.removeAllMatching([&name, property] (const auto& animation) {
+        return animation.name() == name && animation.keyframes().property() == property;
+    });
+    m_transformAnimations.removeAllMatching([&name, property] (const auto& animation) {
         return animation.name() == name && animation.keyframes().property() == property;
     });
 }
 
 void TextureMapperAnimations::pause(const String& name, Seconds offset)
 {
-    for (auto& animation : m_animations) {
+    for (auto& animation : m_floatAnimations) {
+        if (animation.name() == name)
+            animation.pause(offset);
+    }
+    for (auto& animation : m_filterAnimations) {
+        if (animation.name() == name)
+            animation.pause(offset);
+    }
+    for (auto& animation : m_transformAnimations) {
         if (animation.name() == name)
             animation.pause(offset);
     }
@@ -368,40 +377,54 @@ void TextureMapperAnimations::suspend(MonotonicTime time)
 {
     // FIXME: This seems wrong. `pause` takes time offset (Seconds), not MonotonicTime.
     // https://bugs.webkit.org/show_bug.cgi?id=183112
-    for (auto& animation : m_animations)
+    for (auto& animation : m_floatAnimations)
+        animation.pause(time.secondsSinceEpoch());
+    for (auto& animation : m_filterAnimations)
+        animation.pause(time.secondsSinceEpoch());
+    for (auto& animation : m_transformAnimations)
         animation.pause(time.secondsSinceEpoch());
 }
 
 void TextureMapperAnimations::resume()
 {
-    for (auto& animation : m_animations)
+    for (auto& animation : m_floatAnimations)
+        animation.resume();
+    for (auto& animation : m_filterAnimations)
+        animation.resume();
+    for (auto& animation : m_transformAnimations)
         animation.resume();
 }
 
-void TextureMapperAnimations::apply(TextureMapperAnimation::ApplicationResult& applicationResults, MonotonicTime time, TextureMapperAnimation::KeepInternalState keepInternalState)
+void TextureMapperAnimations::apply(TextureMapperAnimationBase::ApplicationResult& applicationResults, MonotonicTime time, TextureMapperAnimationBase::KeepInternalState keepInternalState)
 {
-    Vector<TextureMapperAnimation*> translateAnimations;
-    Vector<TextureMapperAnimation*> rotateAnimations;
-    Vector<TextureMapperAnimation*> scaleAnimations;
-    Vector<TextureMapperAnimation*> transformAnimations;
-    Vector<TextureMapperAnimation*> leafAnimations;
+    Vector<TextureMapperAnimation<TransformAnimationValue>*> translateAnimations;
+    Vector<TextureMapperAnimation<TransformAnimationValue>*> rotateAnimations;
+    Vector<TextureMapperAnimation<TransformAnimationValue>*> scaleAnimations;
+    Vector<TextureMapperAnimation<TransformAnimationValue>*> transformAnimations;
+    Vector<TextureMapperAnimation<FloatAnimationValue>*> floatAnimations;
+    Vector<TextureMapperAnimation<FilterAnimationValue>*> filterAnimations;
 
-    for (auto& animation : m_animations) {
+    for (auto& animation : m_floatAnimations)
+        floatAnimations.append(&animation);
+    for (auto& animation : m_filterAnimations)
+        filterAnimations.append(&animation);
+
+    for (auto& animation : m_transformAnimations) {
         switch (animation.keyframes().property()) {
-        case AnimatedProperty::Translate:
+        case GraphicsLayerAnimationProperty::Translate:
             translateAnimations.append(&animation);
             break;
-        case AnimatedProperty::Rotate:
+        case GraphicsLayerAnimationProperty::Rotate:
             rotateAnimations.append(&animation);
             break;
-        case AnimatedProperty::Scale:
+        case GraphicsLayerAnimationProperty::Scale:
             scaleAnimations.append(&animation);
             break;
-        case AnimatedProperty::Transform:
+        case GraphicsLayerAnimationProperty::Transform:
             transformAnimations.append(&animation);
             break;
         default:
-            leafAnimations.append(&animation);
+            ASSERT_NOT_REACHED();
         }
     }
 
@@ -435,40 +458,62 @@ void TextureMapperAnimations::apply(TextureMapperAnimation::ApplicationResult& a
             transformAnimations.last()->apply(applicationResults, time, keepInternalState);
     }
 
-    for (auto* animation : leafAnimations)
+    for (auto* animation : floatAnimations)
+        animation->apply(applicationResults, time, keepInternalState);
+    for (auto* animation : filterAnimations)
         animation->apply(applicationResults, time, keepInternalState);
 }
 
-bool TextureMapperAnimations::hasActiveAnimationsOfType(AnimatedProperty type) const
+bool TextureMapperAnimations::hasActiveAnimationsOfType(GraphicsLayerAnimationProperty type) const
 {
-    return std::any_of(m_animations.begin(), m_animations.end(), [&type](const auto& animation) {
-        return animation.keyframes().property() == type;
-    });
+    switch (type) {
+    case GraphicsLayerAnimationProperty::Translate:
+    case GraphicsLayerAnimationProperty::Scale:
+    case GraphicsLayerAnimationProperty::Rotate:
+    case GraphicsLayerAnimationProperty::Transform:
+        return std::ranges::any_of(m_transformAnimations, [&type](const auto& animation) {
+            return animation.keyframes().property() == type;
+        });
+
+    case GraphicsLayerAnimationProperty::Opacity:
+        return std::ranges::any_of(m_floatAnimations, [&type](const auto& animation) {
+            return animation.keyframes().property() == type;
+        });
+
+    case GraphicsLayerAnimationProperty::Filter:
+    case GraphicsLayerAnimationProperty::WebkitBackdropFilter:
+        return std::ranges::any_of(m_filterAnimations, [&type](const auto& animation) {
+            return animation.keyframes().property() == type;
+        });
+
+    default:
+        break;
+    }
+
+    return false;
 }
 
 bool TextureMapperAnimations::hasRunningAnimations() const
 {
-    return std::any_of(m_animations.begin(), m_animations.end(), [](const auto& animation) {
-        return animation.state() == TextureMapperAnimation::State::Playing;
+    bool hasRunningFloatAnimations = std::ranges::any_of(m_floatAnimations, [](const auto& animation) {
+        return animation.state() == TextureMapperAnimationBase::State::Playing;
     });
+    bool hasRunningFilterAnimations = std::ranges::any_of(m_filterAnimations, [](const auto& animation) {
+        return animation.state() == TextureMapperAnimationBase::State::Playing;
+    });
+    bool hasRunningTransformAnimations = std::ranges::any_of(m_transformAnimations, [](const auto& animation) {
+        return animation.state() == TextureMapperAnimationBase::State::Playing;
+    });
+
+    return hasRunningFloatAnimations || hasRunningFilterAnimations || hasRunningTransformAnimations;
 }
 
 bool TextureMapperAnimations::hasRunningTransformAnimations() const
 {
-    return std::any_of(m_animations.begin(), m_animations.end(), [](const auto& animation) {
-        switch (animation.keyframes().property()) {
-        case AnimatedProperty::Translate:
-        case AnimatedProperty::Rotate:
-        case AnimatedProperty::Scale:
-        case AnimatedProperty::Transform:
-            break;
-        default:
-            return false;
-        }
-
+    return std::ranges::any_of(m_transformAnimations, [](const auto& animation) {
         switch (animation.state()) {
-        case TextureMapperAnimation::State::Playing:
-        case TextureMapperAnimation::State::Paused:
+        case TextureMapperAnimationBase::State::Playing:
+        case TextureMapperAnimationBase::State::Paused:
             break;
         default:
             return false;

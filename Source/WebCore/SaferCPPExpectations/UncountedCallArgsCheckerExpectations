@@ -992,7 +992,6 @@ css/typedom/numeric/CSSMathNegate.cpp
 css/typedom/numeric/CSSMathProduct.cpp
 css/typedom/numeric/CSSMathSum.cpp
 css/typedom/numeric/CSSMathValue.h
-css/typedom/transform/CSSPerspective.cpp
 css/typedom/transform/CSSRotate.cpp
 css/typedom/transform/CSSScale.cpp
 css/typedom/transform/CSSSkew.cpp
@@ -1577,7 +1576,6 @@ platform/graphics/FontCascadeFonts.cpp
 platform/graphics/FontRanges.cpp
 platform/graphics/GradientImage.cpp
 platform/graphics/GraphicsLayer.cpp
-platform/graphics/GraphicsLayer.h
 platform/graphics/ImageAdapter.cpp
 platform/graphics/ImageBackingStore.h
 platform/graphics/ImageBufferContextSwitcher.cpp
@@ -1671,7 +1669,6 @@ platform/graphics/mac/LegacyDisplayRefreshMonitorMac.cpp
 platform/graphics/mac/PDFDocumentImageMac.mm
 platform/graphics/mac/controls/ControlMac.mm
 platform/graphics/opentype/OpenTypeMathData.cpp
-platform/graphics/transforms/TransformOperations.cpp
 platform/libwebrtc/LibWebRTCVPXVideoEncoder.cpp
 platform/mac/DataDetectorHighlight.mm
 platform/mac/PasteboardMac.mm
@@ -1926,7 +1923,6 @@ style/StyleTreeResolver.cpp
 style/StyleUpdate.cpp
 style/Styleable.cpp
 style/Styleable.h
-style/TransformOperationsBuilder.cpp
 style/UserAgentStyle.cpp
 svg/SVGAElement.cpp
 svg/SVGAElement.h

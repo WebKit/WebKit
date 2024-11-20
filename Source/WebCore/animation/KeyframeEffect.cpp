@@ -68,9 +68,8 @@
 #include "StyleScope.h"
 #include "StyledElement.h"
 #include "TimingFunction.h"
+#include "TransformListSharedPrimitivesPrefix.h"
 #include "TransformOperationData.h"
-#include "TransformOperationsSharedPrimitivesPrefix.h"
-#include "TranslateTransformOperation.h"
 #include <JavaScriptCore/Exception.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/UUID.h>
@@ -1102,7 +1101,7 @@ void KeyframeEffect::checkForMatchingTransformFunctionLists()
         return;
     }
 
-    TransformOperationsSharedPrimitivesPrefix prefix;
+    TransformListSharedPrimitivesPrefix prefix;
     for (const auto& keyframe : m_blendingKeyframes)
         prefix.update(keyframe.style()->transform());
 
@@ -2051,7 +2050,7 @@ void KeyframeEffect::applyPendingAcceleratedActions()
     // To simplify the code we use a default of 0s for an unresolved current time since for a Stop action that is acceptable.
     auto cssNumberishTimeOffset = animation()->currentTime().value_or(0_s) - delay();
     ASSERT(cssNumberishTimeOffset.time());
-    auto timeOffset = cssNumberishTimeOffset.time()->seconds();
+    auto timeOffset = *cssNumberishTimeOffset.time();
 
     auto startAnimation = [&]() -> RunningAccelerated {
         if (isRunningAccelerated())
@@ -2267,24 +2266,23 @@ bool KeyframeEffect::computeTransformedExtentViaTransformList(const FloatRect& r
     FloatRect floatBounds = bounds;
     FloatPoint transformOrigin;
 
-    bool applyTransformOrigin = style.transform().hasTransformOfType<TransformOperation::Type::Rotate>() || style.transform().affectedByTransformOrigin();
+    bool applyTransformOrigin = style.transform().hasTransformOfType<Style::RotateFunction>() || style.transform().isAffectedByTransformOrigin();
     if (applyTransformOrigin) {
         transformOrigin = style.computeTransformOrigin(rendererBox).xy();
         // Ignore transformOriginZ because we'll bail if we encounter any 3D transforms.
         floatBounds.moveBy(-transformOrigin);
     }
 
-    for (const auto& operation : style.transform()) {
-        if (operation->type() == TransformOperation::Type::Rotate) {
+    for (auto function : style.transform()) {
+        if (function.holds_alternative<Style::RotateFunction>()) {
             // For now, just treat this as a full rotation. This could take angle into account to reduce inflation.
             floatBounds = boundsOfRotatingRect(floatBounds);
         } else {
-            TransformationMatrix transform;
-            operation->apply(transform, rendererBox.size());
+            auto transform = Style::computeTransform(function, rendererBox.size());
             if (!transform.isAffine())
                 return false;
 
-            if (operation->type() == TransformOperation::Type::Matrix || operation->type() == TransformOperation::Type::Matrix3D) {
+            if (function.holds_alternative<Style::MatrixFunction>() || function.holds_alternative<Style::Matrix3DFunction>()) {
                 TransformationMatrix::Decomposed2Type toDecomp;
                 // Any rotation prevents us from using a simple start/end rect union.
                 if (!transform.decompose2(toDecomp) || toDecomp.angle)

@@ -266,9 +266,9 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && textDecorationColor == o.textDecorationColor
         && customProperties == o.customProperties
         && customPaintWatchedProperties == o.customPaintWatchedProperties
-        && arePointingToEqualData(rotate, o.rotate)
-        && arePointingToEqualData(scale, o.scale)
-        && arePointingToEqualData(translate, o.translate)
+        && rotate == o.rotate
+        && scale == o.scale
+        && translate == o.translate
         && arePointingToEqualData(offsetPath, o.offsetPath)
         && containerNames == o.containerNames
         && columnGap == o.columnGap

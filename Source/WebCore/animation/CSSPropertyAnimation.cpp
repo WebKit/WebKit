@@ -51,11 +51,8 @@
 #include "FontSelectionValueInlines.h"
 #include "FontTaggedSettings.h"
 #include "GridPositionsResolver.h"
-#include "IdentityTransformOperation.h"
 #include "LengthPoint.h"
 #include "Logging.h"
-#include "Matrix3DTransformOperation.h"
-#include "MatrixTransformOperation.h"
 #include "QuotesData.h"
 #include "RenderBox.h"
 #include "RenderStyleSetters.h"
@@ -66,9 +63,14 @@
 #include "StyleCachedImage.h"
 #include "StyleCrossfadeImage.h"
 #include "StyleFilterImage.h"
+#include "StylePrimitiveNumericTypes+Blending.h"
 #include "StylePropertyShorthand.h"
 #include "StyleResolver.h"
+#include "StyleRotateProperty.h"
+#include "StyleScaleProperty.h"
 #include "StyleTextEdge.h"
+#include "StyleTransformProperty.h"
+#include "StyleTranslateProperty.h"
 #include <algorithm>
 #include <memory>
 #include <wtf/MathExtras.h>
@@ -181,18 +183,17 @@ static inline std::unique_ptr<ShadowData> blendFunc(const ShadowData* from, cons
         blend(fromStyle.colorResolvingCurrentColor(from->color()), toStyle.colorResolvingCurrentColor(to->color()), context));
 }
 
-static inline TransformOperations blendFunc(const TransformOperations& from, const TransformOperations& to, const CSSPropertyBlendingContext& context)
+static inline Style::TransformProperty blendFunc(const Style::TransformProperty& from, const Style::TransformProperty& to, const CSSPropertyBlendingContext& context)
 {
     if (context.compositeOperation == CompositeOperation::Add) {
         ASSERT(context.progress == 1.0);
 
-        Vector<Ref<TransformOperation>> operations;
-        operations.reserveInitialCapacity(from.size() + to.size());
+        Style::SpaceSeparatedVariantList<Style::TransformFunction> functions;
 
-        operations.appendRange(from.begin(), from.end());
-        operations.appendRange(to.begin(), to.end());
+        functions.value.append(from.list.value.value);
+        functions.value.append(to.list.value.value);
 
-        return TransformOperations { WTFMove(operations) };
+        return Style::TransformProperty { { { WTFMove(functions) } } };
     }
 
     auto prefix = [&]() -> std::optional<unsigned> {
@@ -208,114 +209,27 @@ static inline TransformOperations blendFunc(const TransformOperations& from, con
 
     auto* renderBox = dynamicDowncast<RenderBox>(context.client.renderer());
     auto boxSize = renderBox ? renderBox->borderBoxRect().size() : LayoutSize();
-    return to.blend(from, context, boxSize, prefix());
+    return Style::blend(from, to, context, boxSize, prefix());
 }
 
-static RefPtr<ScaleTransformOperation> blendFunc(ScaleTransformOperation* from, ScaleTransformOperation* to, const CSSPropertyBlendingContext& context)
+static Style::TransformFunction blendFunc(const Style::TransformFunction& from, const Style::TransformFunction& to, const CSSPropertyBlendingContext& context)
 {
-    if (!from && !to)
-        return nullptr;
-
-    RefPtr<ScaleTransformOperation> identity;
-    if (!from) {
-        identity = ScaleTransformOperation::create(1, 1, 1, to->type());
-        from = identity.get();
-    } else if (!to) {
-        identity = ScaleTransformOperation::create(1, 1, 1, from->type());
-        to = identity.get();
-    }
-
-    // Ensure the two transforms have the same type.
-    if (!from->isSameType(*to)) {
-        RefPtr<ScaleTransformOperation> normalizedFrom;
-        RefPtr<ScaleTransformOperation> normalizedTo;
-        if (from->is3DOperation() || to->is3DOperation()) {
-            normalizedFrom = ScaleTransformOperation::create(from->x(), from->y(), from->z(), TransformOperation::Type::Scale3D);
-            normalizedTo = ScaleTransformOperation::create(to->x(), to->y(), to->z(), TransformOperation::Type::Scale3D);
-        } else {
-            normalizedFrom = ScaleTransformOperation::create(from->x(), from->y(), TransformOperation::Type::Scale);
-            normalizedTo = ScaleTransformOperation::create(to->x(), to->y(), TransformOperation::Type::Scale);
-        }
-        return blendFunc(normalizedFrom.get(), normalizedTo.get(), context);
-    }
-
-    auto blendedOperation = to->blend(from, context);
-    if (auto* scale = dynamicDowncast<ScaleTransformOperation>(blendedOperation.get()))
-        return ScaleTransformOperation::create(scale->x(), scale->y(), scale->z(), scale->type());
-    return nullptr;
+    return Style::blend(from, to, context);
 }
 
-static RefPtr<RotateTransformOperation> blendFunc(RotateTransformOperation* from, RotateTransformOperation* to, const CSSPropertyBlendingContext& context)
+static Style::ScaleProperty blendFunc(const Style::ScaleProperty& from, const Style::ScaleProperty& to, const CSSPropertyBlendingContext& context)
 {
-    if (!from && !to)
-        return nullptr;
-
-    RefPtr<RotateTransformOperation> identity;
-    if (!from) {
-        identity = RotateTransformOperation::create(0, to->type());
-        from = identity.get();
-    } else if (!to) {
-        identity = RotateTransformOperation::create(0, from->type());
-        to = identity.get();
-    }
-
-    // Ensure the two transforms have the same type.
-    if (!from->isSameType(*to)) {
-        RefPtr<RotateTransformOperation> normalizedFrom;
-        RefPtr<RotateTransformOperation> normalizedTo;
-        if (from->is3DOperation() || to->is3DOperation()) {
-            normalizedFrom = RotateTransformOperation::create(from->x(), from->y(), from->z(), from->angle(), TransformOperation::Type::Rotate3D);
-            normalizedTo = RotateTransformOperation::create(to->x(), to->y(), to->z(), to->angle(), TransformOperation::Type::Rotate3D);
-        } else {
-            normalizedFrom = RotateTransformOperation::create(from->angle(), TransformOperation::Type::Rotate);
-            normalizedTo = RotateTransformOperation::create(to->angle(), TransformOperation::Type::Rotate);
-        }
-        return blendFunc(normalizedFrom.get(), normalizedTo.get(), context);
-    }
-
-    auto blendedOperation = to->blend(from, context);
-    if (auto* rotate = dynamicDowncast<RotateTransformOperation>(blendedOperation.get()))
-        return RotateTransformOperation::create(rotate->x(), rotate->y(), rotate->z(), rotate->angle(), rotate->type());
-    return nullptr;
+    return Style::blend(from, to, context);
 }
 
-static RefPtr<TranslateTransformOperation> blendFunc(TranslateTransformOperation* from, TranslateTransformOperation* to, const CSSPropertyBlendingContext& context)
+static Style::RotateProperty blendFunc(const Style::RotateProperty& from, const Style::RotateProperty& to, const CSSPropertyBlendingContext& context)
 {
-    if (!from && !to)
-        return nullptr;
-
-    RefPtr<TranslateTransformOperation> identity;
-    if (!from) {
-        identity = TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(0, LengthType::Fixed), Length(0, LengthType::Fixed), to->type());
-        from = identity.get();
-    } else if (!to) {
-        identity = TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(0, LengthType::Fixed), Length(0, LengthType::Fixed), from->type());
-        to = identity.get();
-    }
-
-    // Ensure the two transforms have the same type.
-    if (!from->isSameType(*to)) {
-        RefPtr<TranslateTransformOperation> normalizedFrom;
-        RefPtr<TranslateTransformOperation> normalizedTo;
-        if (from->is3DOperation() || to->is3DOperation()) {
-            normalizedFrom = TranslateTransformOperation::create(from->x(), from->y(), from->z(), TransformOperation::Type::Translate3D);
-            normalizedTo = TranslateTransformOperation::create(to->x(), to->y(), to->z(), TransformOperation::Type::Translate3D);
-        } else {
-            normalizedFrom = TranslateTransformOperation::create(from->x(), from->y(), TransformOperation::Type::Translate);
-            normalizedTo = TranslateTransformOperation::create(to->x(), to->y(), TransformOperation::Type::Translate);
-        }
-        return blendFunc(normalizedFrom.get(), normalizedTo.get(), context);
-    }
-
-    Ref<TransformOperation> blendedOperation = to->blend(from, context);
-    if (auto* translate = dynamicDowncast<TranslateTransformOperation>(blendedOperation.get()))
-        return TranslateTransformOperation::create(translate->x(), translate->y(), translate->z(), translate->type());
-    return nullptr;
+    return Style::blend(from, to, context);
 }
 
-static Ref<TransformOperation> blendFunc(TransformOperation& from, TransformOperation& to, const CSSPropertyBlendingContext& context)
+static Style::TranslateProperty blendFunc(const Style::TranslateProperty& from, const Style::TranslateProperty& to, const CSSPropertyBlendingContext& context)
 {
-    return to.blend(&from, context);
+    return Style::blend(from, to, context);
 }
 
 static inline RefPtr<PathOperation> blendFunc(PathOperation* from, PathOperation* to, const CSSPropertyBlendingContext& context)
@@ -1465,18 +1379,18 @@ private:
     bool requiresBlendingForAccumulativeIteration(const RenderStyle&, const RenderStyle&) const final { return this->property() == CSSPropertyTransform; }
 };
 
-class AcceleratedTransformOperationsPropertyWrapper final : public PropertyWrapperGetter<const TransformOperations&> {
+class AcceleratedTransformPropertyWrapper final : public PropertyWrapperGetter<const Style::TransformProperty&> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
-    AcceleratedTransformOperationsPropertyWrapper()
-        : PropertyWrapperGetter<const TransformOperations&>(CSSPropertyTransform, &RenderStyle::transform)
+    AcceleratedTransformPropertyWrapper()
+        : PropertyWrapperGetter<const Style::TransformProperty&>(CSSPropertyTransform, &RenderStyle::transform)
     {
     }
 
     bool canInterpolate(const RenderStyle& from, const RenderStyle& to, CompositeOperation compositeOperation) const override
     {
         if (compositeOperation == CompositeOperation::Replace)
-            return !this->value(to).shouldFallBackToDiscreteAnimation(this->value(from), { });
+            return !Style::shouldFallBackToDiscreteAnimation(this->value(from), this->value(to), { });
         return true;
     }
 
@@ -1491,11 +1405,12 @@ private:
 };
 
 template <typename T>
-class AcceleratedIndividualTransformPropertyWrapper final : public RefCountedPropertyWrapper<T> {
+class AcceleratedIndividualTransformPropertyWrapper final : public PropertyWrapperGetter<const T&> {
     WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
 public:
-    AcceleratedIndividualTransformPropertyWrapper(CSSPropertyID property, T* (RenderStyle::*getter)() const, void (RenderStyle::*setter)(RefPtr<T>&&))
-        : RefCountedPropertyWrapper<T>(property, getter, setter)
+    AcceleratedIndividualTransformPropertyWrapper(CSSPropertyID property, const T& (RenderStyle::*getter)() const, void (RenderStyle::*setter)(T))
+        : PropertyWrapperGetter<const T&>(property, getter)
+        , m_setter(setter)
     {
     }
 
@@ -1504,8 +1419,15 @@ private:
 
     bool equals(const RenderStyle& a, const RenderStyle& b) const final
     {
-        return arePointingToEqualData(this->value(a), this->value(b));
+        return this->value(a) == this->value(b);
     }
+
+    void blend(RenderStyle& destination, const RenderStyle& from, const RenderStyle& to, const CSSPropertyBlendingContext& context) const override
+    {
+        (destination.*m_setter)(blendFunc(this->value(from), this->value(to), context));
+    }
+
+    void (RenderStyle::*m_setter)(T);
 };
 
 
@@ -3861,10 +3783,10 @@ CSSPropertyAnimationWrapperMap::CSSPropertyAnimationWrapperMap()
         new ClipWrapper,
 
         new AcceleratedPropertyWrapper<float>(CSSPropertyOpacity, &RenderStyle::opacity, &RenderStyle::setOpacity),
-        new AcceleratedTransformOperationsPropertyWrapper,
-        new AcceleratedIndividualTransformPropertyWrapper<ScaleTransformOperation>(CSSPropertyScale, &RenderStyle::scale, &RenderStyle::setScale),
-        new AcceleratedIndividualTransformPropertyWrapper<RotateTransformOperation>(CSSPropertyRotate, &RenderStyle::rotate, &RenderStyle::setRotate),
-        new AcceleratedIndividualTransformPropertyWrapper<TranslateTransformOperation>(CSSPropertyTranslate, &RenderStyle::translate, &RenderStyle::setTranslate),
+        new AcceleratedTransformPropertyWrapper,
+        new AcceleratedIndividualTransformPropertyWrapper<Style::ScaleProperty>(CSSPropertyScale, &RenderStyle::scale, &RenderStyle::setScale),
+        new AcceleratedIndividualTransformPropertyWrapper<Style::RotateProperty>(CSSPropertyRotate, &RenderStyle::rotate, &RenderStyle::setRotate),
+        new AcceleratedIndividualTransformPropertyWrapper<Style::TranslateProperty>(CSSPropertyTranslate, &RenderStyle::translate, &RenderStyle::setTranslate),
 
         new PropertyWrapperFilter(CSSPropertyFilter, &RenderStyle::filter, &RenderStyle::setFilter),
         new PropertyWrapperFilter(CSSPropertyBackdropFilter, &RenderStyle::backdropFilter, &RenderStyle::setBackdropFilter),
@@ -4426,6 +4348,7 @@ static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(cons
         auto& toStyleColor = std::get<StyleColor>(to);
         if (!fromStyleColor.isCurrentColor() || !toStyleColor.isCurrentColor())
             return blendFunc(fromStyle.colorResolvingCurrentColor(fromStyleColor), toStyle.colorResolvingCurrentColor(toStyleColor), blendingContext);
+        return std::nullopt;
     }
 
     if (std::holds_alternative<CSSCustomPropertyValue::NumericSyntaxValue>(from) && std::holds_alternative<CSSCustomPropertyValue::NumericSyntaxValue>(to)) {
@@ -4433,12 +4356,13 @@ static std::optional<CSSCustomPropertyValue::SyntaxValue> blendSyntaxValues(cons
         auto& toNumeric = std::get<CSSCustomPropertyValue::NumericSyntaxValue>(to);
         if (fromNumeric.unitType == toNumeric.unitType)
             return blendFunc(fromNumeric, toNumeric, blendingContext);
+        return std::nullopt;
     }
 
     if (std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(from) && std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(to)) {
-        auto& fromTransformOperation = std::get<CSSCustomPropertyValue::TransformSyntaxValue>(from).transform;
-        auto& toTransformOperation = std::get<CSSCustomPropertyValue::TransformSyntaxValue>(to).transform;
-        return CSSCustomPropertyValue::TransformSyntaxValue { blendFunc(fromTransformOperation, toTransformOperation, blendingContext) };
+        const auto& fromTransform = std::get<CSSCustomPropertyValue::TransformSyntaxValue>(from).transform;
+        const auto& toTransform = std::get<CSSCustomPropertyValue::TransformSyntaxValue>(to).transform;
+        return CSSCustomPropertyValue::TransformSyntaxValue { blendFunc(fromTransform, toTransform, blendingContext) };
     }
 
     return std::nullopt;
@@ -4468,22 +4392,23 @@ static std::optional<CSSCustomPropertyValue::SyntaxValueList> blendSyntaxValueLi
 
     // <transform-function> lists are special in that they don't require matching numbers of items.
     if (std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(*firstValue)) {
-        auto transformOperationsFromSyntaxValueList = [](const CSSCustomPropertyValue::SyntaxValueList& list) {
-            return TransformOperations {
-                list.values.map([](auto& syntaxValue) {
-                    ASSERT(std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(syntaxValue));
-                    return std::get<CSSCustomPropertyValue::TransformSyntaxValue>(syntaxValue).transform.copyRef();
-                })
-            };
+        auto transformFromSyntaxValueList = [](const CSSCustomPropertyValue::SyntaxValueList& syntaxValueList) {
+            Style::SpaceSeparatedVariantList<Style::TransformFunction> list;
+            for (const auto& syntaxValue : syntaxValueList.values) {
+                ASSERT(std::holds_alternative<CSSCustomPropertyValue::TransformSyntaxValue>(syntaxValue));
+                list.value.append(std::get<CSSCustomPropertyValue::TransformSyntaxValue>(syntaxValue).transform);
+            }
+
+            return Style::TransformProperty { { WTFMove(list) } };
         };
 
-        auto fromTransformOperations = transformOperationsFromSyntaxValueList(from);
-        auto toTransformOperations = transformOperationsFromSyntaxValueList(to);
-        auto blendedTransformOperations = blendFunc(fromTransformOperations, toTransformOperations, blendingContext);
+        Style::TransformProperty fromTransform = transformFromSyntaxValueList(from);
+        Style::TransformProperty toTransform = transformFromSyntaxValueList(to);
+        auto blendedTransform = blendFunc(fromTransform, toTransform, blendingContext);
 
-        auto blendedSyntaxValues = WTF::map(blendedTransformOperations, [](auto& transformOperation) -> CSSCustomPropertyValue::SyntaxValue {
-            return CSSCustomPropertyValue::TransformSyntaxValue { transformOperation.copyRef() };
-        });
+        Vector<CSSCustomPropertyValue::SyntaxValue> blendedSyntaxValues;
+        for (auto function : blendedTransform.list)
+            blendedSyntaxValues.append(CSSCustomPropertyValue::TransformSyntaxValue { function.asVariant() });
 
         return CSSCustomPropertyValue::SyntaxValueList { WTFMove(blendedSyntaxValues), from.separator };
     }
@@ -4580,16 +4505,30 @@ bool CSSPropertyAnimation::isPropertyAdditiveOrCumulative(const AnimatableCSSPro
 
 static bool syntaxValuesRequireBlendingForAccumulativeIteration(const CSSCustomPropertyValue::SyntaxValue& a, const CSSCustomPropertyValue::SyntaxValue& b, bool isList)
 {
-    return WTF::switchOn(a, [b, isList](const Length& aLength) {
-        ASSERT(std::holds_alternative<Length>(b));
-        return !isList && lengthsRequireBlendingForAccumulativeIteration(aLength, std::get<Length>(b));
-    }, [] (const RefPtr<TransformOperation>&) {
-        return true;
-    }, [] (const StyleColor&) {
-        return true;
-    }, [] (auto&) {
-        return false;
-    });
+    return WTF::switchOn(a,
+        [b, isList](const Length& aLength) {
+            ASSERT(std::holds_alternative<Length>(b));
+            return !isList && lengthsRequireBlendingForAccumulativeIteration(aLength, std::get<Length>(b));
+        },
+        [](const CSSCustomPropertyValue::NumericSyntaxValue&) {
+            return false;
+        },
+        [](const StyleColor&) {
+            return true;
+        },
+        [](const RefPtr<StyleImage>&) {
+            return false;
+        },
+        [](const URL&) {
+            return false;
+        },
+        [](const String&) {
+            return false;
+        },
+        [](const CSSCustomPropertyValue::TransformSyntaxValue&) {
+            return false;
+        }
+    );
 }
 
 bool CSSPropertyAnimation::propertyRequiresBlendingForAccumulativeIteration(const CSSPropertyBlendingClient&, const AnimatableCSSProperty& property, const RenderStyle& a, const RenderStyle& b)

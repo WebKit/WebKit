@@ -25,10 +25,11 @@
 
 #pragma once
 
+#include "CSSCalcValue.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSUnitValue.h"
 #include "CSSUnits.h"
 #include "Supplementable.h"
-
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -125,10 +126,24 @@ public:
     // <flex>
     static Ref<CSSUnitValue> fr(double value) { return CSSUnitValue::create(value, CSSUnitType::CSS_FR); }
 
+    // Converts an internal typed CSS numeric value to a typedom numeric value.
+    template<CSS::CSSNumeric T> static ExceptionOr<Ref<CSSNumericValue>> reifyNumeric(const T&);
 
 private:
     static CSSNumericFactory* from(DOMCSSNamespace&);
     static ASCIILiteral supplementName();
 };
+
+template<CSS::CSSNumeric T> ExceptionOr<Ref<CSSNumericValue>> CSSNumericFactory::reifyNumeric(const T& numeric)
+{
+    return WTF::switchOn(numeric,
+        [](const typename T::Raw& raw) -> ExceptionOr<Ref<CSSNumericValue>> {
+            return static_reference_cast<CSSNumericValue>(CSSUnitValue::create(raw.value, raw.type));
+        },
+        [](const typename T::Calc& calc) -> ExceptionOr<Ref<CSSNumericValue>> {
+            return CSSNumericValue::reifyMathExpression(calc.protectedCalc()->tree());
+        }
+    );
+}
 
 } // namespace WebCore

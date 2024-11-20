@@ -35,6 +35,10 @@
 #include "RenderElementInlines.h"
 #include "RenderLayerModelObject.h"
 #include "RenderStyleInlines.h"
+#include "StyleRotateProperty.h"
+#include "StyleScaleProperty.h"
+#include "StyleTransformProperty.h"
+#include "StyleTranslateProperty.h"
 #include "TransformOperationData.h"
 
 namespace WebCore {
@@ -46,19 +50,10 @@ AcceleratedEffectValues AcceleratedEffectValues::clone() const
         clonedTransformOperationData = transformOperationData;
 
     auto clonedTransformOrigin = transformOrigin;
-    auto clonedTransform = transform.clone();
-
-    RefPtr<TransformOperation> clonedTranslate;
-    if (auto* srcTranslate = translate.get())
-        clonedTranslate = srcTranslate->clone();
-
-    RefPtr<TransformOperation> clonedScale;
-    if (auto* srcScale = scale.get())
-        clonedScale = srcScale->clone();
-
-    RefPtr<TransformOperation> clonedRotate;
-    if (auto* srcRotate = rotate.get())
-        clonedRotate = srcRotate->clone();
+    auto clonedTransform = transform;
+    auto clonedTranslate = translate;
+    auto clonedScale = scale;
+    auto clonedRotate = rotate;
 
     RefPtr<PathOperation> clonedOffsetPath;
     if (auto* srcOffsetPath = offsetPath.get())
@@ -111,14 +106,12 @@ AcceleratedEffectValues::AcceleratedEffectValues(const RenderStyle& style, const
         transformOperationData = TransformOperationData(renderer->transformReferenceBoxRect(style), renderer);
 
     transformBox = style.transformBox();
-    transform = style.transform().selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
 
-    if (auto* srcTranslate = style.translate())
-        translate = srcTranslate->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
-    if (auto* srcScale = style.scale())
-        scale = srcScale->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
-    if (auto* srcRotate = style.rotate())
-        rotate = srcRotate->selfOrCopyWithResolvedCalculatedValues(borderBoxSize);
+    transform = Style::toPlatform(style.transform(), borderBoxSize);
+    translate = Style::toPlatform(style.translate(), borderBoxSize);
+    scale = Style::toPlatform(style.scale(), borderBoxSize);
+    rotate = Style::toPlatform(style.rotate(), borderBoxSize);
+
     transformOrigin = nonCalculatedLengthPoint(style.transformOriginXY(), borderBoxSize);
 
     offsetPath = style.offsetPath();
@@ -150,16 +143,13 @@ TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const
     // (not needed, the GraphicsLayer handles that)
 
     // 3. Translate by the computed X, Y, and Z values of translate.
-    if (translate)
-        translate->apply(matrix, boundingBox.size());
+    translate.apply(matrix);
 
     // 4. Rotate by the computed <angle> about the specified axis of rotate.
-    if (rotate)
-        rotate->apply(matrix, boundingBox.size());
+    rotate.apply(matrix);
 
     // 5. Scale by the computed X, Y, and Z values of scale.
-    if (scale)
-        scale->apply(matrix, boundingBox.size());
+    scale.apply(matrix);
 
     // 6. Translate and rotate by the transform specified by offset.
     if (transformOperationData && offsetPath) {
@@ -168,7 +158,7 @@ TransformationMatrix AcceleratedEffectValues::computedTransformationMatrix(const
     }
 
     // 7. Multiply by each of the transform functions in transform from left to right.
-    transform.apply(matrix, boundingBox.size());
+    transform.apply(matrix);
 
     // 8. Translate by the negated computed X, Y and Z values of transform-origin.
     // (not needed, the GraphicsLayer handles that)

@@ -46,11 +46,16 @@ css/CSSQuadValue.h
 css/CSSRayValue.h
 css/CSSRectValue.h
 css/CSSReflectValue.h
+css/CSSRotatePropertyValue.h
+css/CSSScalePropertyValue.h
 css/CSSScrollValue.h
 css/CSSShadowValue.h
 css/CSSSubgridValue.h
 css/CSSTimingFunctionValue.h
+css/CSSTransformFunctionValue.h
 css/CSSTransformListValue.h
+css/CSSTransformPropertyValue.h
+css/CSSTranslatePropertyValue.h
 css/CSSUnicodeRangeValue.h
 css/CSSValueList.h
 css/CSSValuePair.h

@@ -52,16 +52,25 @@ template<class> inline constexpr bool TreatAsNonConverting = false;
 // NOTE: This gets automatically specialized when using the STYLE_TUPLE_LIKE_CONFORMANCE macro.
 template<class> inline constexpr bool TreatAsTupleLike = false;
 
+// Types can specialize this and set the value to true to be treated as a "type wrapper"
+// for Style value type algorithms. "Type wrappers" must be simple structs with exactly one
+// member variable with the name "value".
+// NOTE: This gets automatically specialized when using the DEFINE_STYLE_TYPE_WRAPPER macro.
+template<class> inline constexpr bool TreatAsTypeWrapper = false;
+
+#define DEFINE_STYLE_TYPE_WRAPPER(t) \
+    template<> inline constexpr bool TreatAsTypeWrapper<t> = true;
+
 // Types that are treated as "tuple-like" can have their conversion operations defined
 // automatically by just defining their type mapping.
-template<typename> struct CSSToStyleMapping;
-template<typename> struct StyleToCSSMapping;
+template<typename> struct ToCSSMapping;
+template<typename> struct ToStyleMapping;
 
 // Macro to define two-way mapping between a CSS and Style type. This is only needed
 // for "tuple-like" types, in lieu of explicit ToCSS/ToStyle specializations.
 #define DEFINE_CSS_STYLE_MAPPING(css, style) \
-    template<> struct CSSToStyleMapping<css> { using type = style; }; \
-    template<> struct StyleToCSSMapping<style> { using type = css; }; \
+    template<> struct ToCSSMapping<style> { using type = css; }; \
+    template<> struct ToStyleMapping<css> { using type = style; }; \
 
 // All non-converting and non-tuple-like conforming types must implement the following for conversions:
 //
@@ -166,13 +175,71 @@ template<typename T, size_t inlineCapacity = 0> struct CommaSeparatedVector {
     WTF::Vector<T, inlineCapacity> value;
 };
 
+// Wraps a variable number of variable type elements, semantically marking them as serializing as "space separated".
+template<typename Variant, size_t inlineCapacity = 0> struct SpaceSeparatedVariantList {
+    using VariantList = WTF::VariantList<Variant, inlineCapacity>;
+    using const_iterator = typename VariantList::const_iterator;
+
+    SpaceSeparatedVariantList()
+        : value { }
+    {
+    }
+
+    SpaceSeparatedVariantList(VariantList&& value)
+        : value { WTFMove(value) }
+    {
+    }
+
+    const_iterator begin() const { return value.begin(); }
+    const_iterator end() const { return value.end(); }
+
+    // `forEach` provides a slightly more efficient looping construct for cases where early exit is not needed.
+    template<typename...F> void forEach(F&&... f) const { value.forEach(std::forward<F>(f)...); }
+
+    bool isEmpty() const { return value.isEmpty(); }
+
+    bool operator==(const SpaceSeparatedVariantList&) const = default;
+
+    VariantList value;
+};
+
+// Wraps a variable number of variable type elements, semantically marking them as serializing as "comma separated".
+template<typename Variant, size_t inlineCapacity = 0> struct CommaSeparatedVariantList {
+    using VariantList = WTF::VariantList<Variant, inlineCapacity>;
+    using const_iterator = typename VariantList::const_iterator;
+
+    CommaSeparatedVariantList()
+        : value { }
+    {
+    }
+
+    CommaSeparatedVariantList(VariantList&& value)
+        : value { WTFMove(value) }
+    {
+    }
+
+    const_iterator begin() const { return value.begin(); }
+    const_iterator end() const { return value.end(); }
+
+    // `forEach` provides a slightly more efficient looping construct for cases where early exit is not needed.
+    template<typename...F> void forEach(F&&... f) const { value.forEach(std::forward<F>(f)...); }
+
+    bool isEmpty() const { return value.isEmpty(); }
+
+    bool operator==(const CommaSeparatedVariantList&) const = default;
+
+    VariantList value;
+};
+
 // Wraps a fixed size list of elements of a single type, semantically marking them as serializing as "space separated".
 template<typename T, size_t N> struct SpaceSeparatedArray {
     using Array = std::array<T, N>;
+    using const_iterator = typename Array::const_iterator;
+    using const_reverse_iterator = typename Array::const_reverse_iterator;
     using value_type = T;
 
     template<typename...Ts>
-        requires (sizeof...(Ts) == N && WTF::all<std::is_same_v<T, Ts>...>)
+        requires (sizeof...(Ts) == N && WTF::all<std::convertible_to<Ts, T>...>)
     constexpr SpaceSeparatedArray(Ts... values)
         : value { std::forward<Ts>(values)... }
     {
@@ -183,13 +250,22 @@ template<typename T, size_t N> struct SpaceSeparatedArray {
     {
     }
 
+    const_iterator begin() const { return value.begin(); }
+    const_iterator end() const { return value.end(); }
+    const_reverse_iterator rbegin() const { return value.rbegin(); }
+    const_reverse_iterator rend() const { return value.rend(); }
+
+    bool isEmpty() const { return value.isEmpty(); }
+    size_t size() const { return value.size(); }
+    const T& operator[](size_t i) const { return value[i]; }
+
     constexpr bool operator==(const SpaceSeparatedArray<T, N>&) const = default;
 
     std::array<T, N> value;
 };
 
 template<class T, class... Ts>
-    requires (WTF::all<std::is_same_v<T, Ts>...>)
+    requires (WTF::all<std::convertible_to<Ts, T>...>)
 SpaceSeparatedArray(T, Ts...) -> SpaceSeparatedArray<T, 1 + sizeof...(Ts)>;
 
 template<size_t I, typename T, size_t N> decltype(auto) get(const SpaceSeparatedArray<T, N>& array)
@@ -202,10 +278,12 @@ template<typename T> using SpaceSeparatedPair = SpaceSeparatedArray<T, 2>;
 // Wraps a fixed size list of elements of a single type, semantically marking them as serializing as "comma separated".
 template<typename T, size_t N> struct CommaSeparatedArray {
     using Array = std::array<T, N>;
+    using const_iterator = typename Array::const_iterator;
+    using const_reverse_iterator = typename Array::const_reverse_iterator;
     using value_type = T;
 
     template<typename...Ts>
-        requires (sizeof...(Ts) == N && WTF::all<std::is_same_v<T, Ts>...>)
+        requires (sizeof...(Ts) == N && WTF::all<std::convertible_to<Ts, T>...>)
     constexpr CommaSeparatedArray(Ts... values)
         : value { std::forward<Ts>(values)... }
     {
@@ -216,13 +294,22 @@ template<typename T, size_t N> struct CommaSeparatedArray {
     {
     }
 
+    const_iterator begin() const { return value.begin(); }
+    const_iterator end() const { return value.end(); }
+    const_reverse_iterator rbegin() const { return value.rbegin(); }
+    const_reverse_iterator rend() const { return value.rend(); }
+
+    bool isEmpty() const { return value.isEmpty(); }
+    size_t size() const { return value.size(); }
+    const T& operator[](size_t i) const { return value[i]; }
+
     constexpr bool operator==(const CommaSeparatedArray<T, N>&) const = default;
 
     std::array<T, N> value;
 };
 
 template<class T, class... Ts>
-    requires (WTF::all<std::is_same_v<T, Ts>...>)
+    requires (WTF::all<std::convertible_to<Ts, T>...>)
 CommaSeparatedArray(T, Ts...) -> CommaSeparatedArray<T, 1 + sizeof...(Ts)>;
 
 template<size_t I, typename T, size_t N> decltype(auto) get(const CommaSeparatedArray<T, N>& array)
@@ -376,7 +463,15 @@ template<typename StyleType> requires (TreatAsNonConverting<StyleType>) struct T
 template<typename StyleType> requires (TreatAsTupleLike<StyleType>) struct ToCSS<StyleType> {
     decltype(auto) operator()(const StyleType& value, const RenderStyle& style)
     {
-        return toCSSOnTupleLike<typename StyleToCSSMapping<StyleType>::type>(value, style);
+        return toCSSOnTupleLike<typename ToCSSMapping<StyleType>::type>(value, style);
+    }
+};
+
+// Constrained for `TreatAsTypeWrapper`.
+template<typename StyleType> requires (TreatAsTypeWrapper<StyleType>) struct ToCSS<StyleType> {
+    decltype(auto) operator()(const StyleType& value, const RenderStyle& style)
+    {
+        return typename ToCSSMapping<StyleType>::type { toCSS(value.value, style) };
     }
 };
 
@@ -423,6 +518,40 @@ template<typename StyleType, size_t inlineCapacity> struct ToCSS<CommaSeparatedV
     decltype(auto) operator()(const CommaSeparatedVector<StyleType, inlineCapacity>& value, const RenderStyle& style)
     {
         return Result { value.value.template map<typename Result::Vector>([&](const auto& x) { return toCSS(x, style); }) };
+    }
+};
+
+// Specialization for `SpaceSeparatedVariantList`.
+template<typename StyleTypeVariant, size_t inlineCapacity> struct ToCSS<SpaceSeparatedVariantList<StyleTypeVariant, inlineCapacity>> {
+    using Result = CSS::SpaceSeparatedVariantList<CSSType<StyleTypeVariant>, inlineCapacity>;
+    using Sizer = typename Result::VariantList::Sizer;
+
+    decltype(auto) operator()(const SpaceSeparatedVariantList<StyleTypeVariant, inlineCapacity>& value, const RenderStyle& style)
+    {
+        Sizer sizer;
+        value.forEach([&](const auto& element) { sizer.template append<decltype(toCSS(element, style))>(); });
+
+        Result result(sizer);
+        value.forEach([&](const auto& element) { result.value.append(toCSS(element, style)); });
+
+        return result;
+    }
+};
+
+// Specialization for `CommaSeparatedVariantList`.
+template<typename StyleTypeVariant, size_t inlineCapacity> struct ToCSS<CommaSeparatedVariantList<StyleTypeVariant, inlineCapacity>> {
+    using Result = CSS::CommaSeparatedVariantList<CSSType<StyleTypeVariant>, inlineCapacity>;
+    using Sizer = typename Result::VariantList::Sizer;
+
+    decltype(auto) operator()(const CommaSeparatedVariantList<StyleTypeVariant, inlineCapacity>& value, const RenderStyle& style)
+    {
+        Sizer sizer;
+        value.forEach([&](const auto& element) { sizer.template append<decltype(toCSS(element, style))>(); });
+
+        Result result(sizer);
+        value.forEach([&](const auto& element) { result.value.append(toCSS(element, style)); });
+
+        return result;
     }
 };
 
@@ -554,15 +683,31 @@ template<typename CSSType> requires (TreatAsNonConverting<CSSType>) struct ToSty
 template<typename CSSType> requires (CSS::TreatAsTupleLike<CSSType>) struct ToStyle<CSSType> {
     decltype(auto) operator()(const CSSType& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
     {
-        return toStyleOnTupleLike<typename CSSToStyleMapping<CSSType>::type>(value, conversionData, symbolTable);
+        return toStyleOnTupleLike<typename ToStyleMapping<CSSType>::type>(value, conversionData, symbolTable);
     }
     decltype(auto) operator()(const CSSType& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
-        return toStyleOnTupleLike<typename CSSToStyleMapping<CSSType>::type>(value, builderState, symbolTable);
+        return toStyleOnTupleLike<typename ToStyleMapping<CSSType>::type>(value, builderState, symbolTable);
     }
     decltype(auto) operator()(const CSSType& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
     {
-        return toStyleNoConversionDataRequiredOnTupleLike<typename CSSToStyleMapping<CSSType>::type>(value, symbolTable);
+        return toStyleNoConversionDataRequiredOnTupleLike<typename ToStyleMapping<CSSType>::type>(value, symbolTable);
+    }
+};
+
+// Constrained for `TreatAsTypeWrapper`.
+template<typename CSSType> requires (CSS::TreatAsTypeWrapper<CSSType>) struct ToStyle<CSSType> {
+    decltype(auto) operator()(const CSSType& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+    {
+        return typename ToStyleMapping<CSSType>::type { toStyle(value.value, conversionData, symbolTable) };
+    }
+    decltype(auto) operator()(const CSSType& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    {
+        return typename ToStyleMapping<CSSType>::type { toStyle(value.value, builderState, symbolTable) };
+    }
+    decltype(auto) operator()(const CSSType& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
+    {
+        return typename ToStyleMapping<CSSType>::type { toStyleNoConversionDataRequired(value.value, symbolTable) };
     }
 };
 
@@ -649,6 +794,80 @@ template<typename CSSType, size_t inlineCapacity> struct ToStyle<CSS::CommaSepar
     decltype(auto) operator()(const CSS::CommaSeparatedVector<CSSType, inlineCapacity>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
     {
         return Result { value.value.template map<typename Result::Vector>([&](const auto& x) { return toStyleNoConversionDataRequired(x, symbolTable); }) };
+    }
+};
+
+// Specialization for `SpaceSeparatedVariantList`.
+template<typename CSSTypeVariant, size_t inlineCapacity> struct ToStyle<CSS::SpaceSeparatedVariantList<CSSTypeVariant, inlineCapacity>> {
+    using Result = SpaceSeparatedVariantList<StyleType<CSSTypeVariant>, inlineCapacity>;
+    using Sizer = typename Result::VariantList::Sizer;
+
+    decltype(auto) operator()(const CSS::SpaceSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+    {
+        Sizer sizer;
+        value.forEach([&](const auto& element) { sizer.template append<decltype(toStyle(element, conversionData, symbolTable))>(); });
+
+        Result result(sizer);
+        value.forEach([&](const auto& element) { result.value.append(toStyle(element, conversionData, symbolTable)); });
+
+        return result;
+    }
+    decltype(auto) operator()(const CSS::SpaceSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    {
+        Sizer sizer;
+        value.forEach([&](const auto& element) { sizer.template append<decltype(toStyle(element, builderState, symbolTable))>(); });
+
+        Result result(sizer);
+        value.forEach([&](const auto& element) { result.value.append(toStyle(element, builderState, symbolTable)); });
+
+        return result;
+    }
+    decltype(auto) operator()(const CSS::SpaceSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
+    {
+        Sizer sizer;
+        value.forEach([&](const auto& element) { sizer.template append<decltype(toStyleNoConversionDataRequired(element, symbolTable))>(); });
+
+        Result result(sizer);
+        value.forEach([&](const auto& element) { result.value.append(toStyleNoConversionDataRequired(element, symbolTable)); });
+
+        return result;
+    }
+};
+
+// Specialization for `CommaSeparatedVariantList`.
+template<typename CSSTypeVariant, size_t inlineCapacity> struct ToStyle<CSS::CommaSeparatedVariantList<CSSTypeVariant, inlineCapacity>> {
+    using Result = CommaSeparatedVariantList<StyleType<CSSTypeVariant>, inlineCapacity>;
+    using Sizer = typename Result::VariantList::Sizer;
+
+    decltype(auto) operator()(const CSS::CommaSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+    {
+        Sizer sizer;
+        value.forEach([&](const auto& element) { sizer.template append<decltype(toStyle(element, conversionData, symbolTable))>(); });
+
+        Result result(sizer);
+        value.forEach([&](const auto& element) { result.value.append(toStyle(element, conversionData, symbolTable)); });
+
+        return result;
+    }
+    decltype(auto) operator()(const CSS::CommaSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    {
+        Sizer sizer;
+        value.forEach([&](const auto& element) { sizer.template append<decltype(toStyle(element, builderState, symbolTable))>(); });
+
+        Result result(sizer);
+        value.forEach([&](const auto& element) { result.value.append(toStyle(element, builderState, symbolTable)); });
+
+        return result;
+    }
+    decltype(auto) operator()(const CSS::CommaSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
+    {
+        Sizer sizer;
+        value.forEach([&](const auto& element) { sizer.template append<decltype(toStyleNoConversionDataRequired(element, symbolTable))>(); });
+
+        Result result(sizer);
+        value.forEach([&](const auto& element) { result.value.append(toStyleNoConversionDataRequired(element, symbolTable)); });
+
+        return result;
     }
 };
 
@@ -806,6 +1025,18 @@ template<typename StyleType> requires (TreatAsTupleLike<StyleType>) struct Blend
     auto blend(const StyleType& a, const StyleType& b, const BlendingContext& context) -> StyleType
     {
         return blendOnTupleLike(a, b, context);
+    }
+};
+
+// Constrained for `TreatAsTypeWrapper`.
+template<typename StyleType> requires (TreatAsTypeWrapper<StyleType>) struct Blending<StyleType> {
+    constexpr auto canBlend(const StyleType& a, const StyleType& b) -> bool
+    {
+        return WebCore::Style::canBlend(a.value, b.value);
+    }
+    auto blend(const StyleType& a, const StyleType& b, const BlendingContext& context) -> StyleType
+    {
+        return { WebCore::Style::blend(a.value, b.value, context) };
     }
 };
 
@@ -997,6 +1228,23 @@ template<typename StyleType> struct Blending<Size<StyleType>> {
 
 } // namespace Style
 } // namespace WebCore
+
+namespace WTF {
+
+template<typename StyleVariantType> TextStream& operator<<(TextStream& ts, const WebCore::Style::SpaceSeparatedVariantList<StyleVariantType>& value)
+{
+    auto separator = ""_s;
+    for (const auto& element : value.value) {
+        WTF::switchOn(element, [&](const auto& style) {
+            ts << std::exchange(separator, " "_s);
+            ts << style;
+        });
+    }
+
+    return ts;
+}
+
+} // namespace WTF
 
 namespace std {
 

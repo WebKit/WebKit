@@ -48,6 +48,7 @@ public:
     bool equals(const CSSBasicShapeValue&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    void customCollectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
 private:
     CSSBasicShapeValue(CSS::BasicShape&& shape)
