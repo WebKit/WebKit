@@ -91,9 +91,6 @@ test/built-ins/Temporal/Duration/compare/relativeto-propertybag-timezone-string.
 test/built-ins/Temporal/Duration/compare/relativeto-string-limits.js:
   default: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
   strict mode: 'Test262Error: "-271821-04-19T23:00-01:00[-01:00]" is outside the representable range for a relativeTo parameter Expected a RangeError to be thrown but no exception was thrown at all'
-test/built-ins/Temporal/Duration/compare/throws-when-target-zoned-date-time-outside-valid-limits.js:
-  default: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
-  strict mode: "TypeError: undefined is not a constructor (evaluating 'new Temporal.ZonedDateTime(864n * 10n**19n, \"UTC\")')"
 test/built-ins/Temporal/Duration/prototype/round/accepts-datetime-strings-for-relative-to.js:
   default: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
   strict mode: 'Error: FIXME: years, months, or weeks rounding with relativeTo not implemented yet'
@@ -220,6 +217,9 @@ test/built-ins/Temporal/Instant/prototype/toString/timezone-wrong-type.js:
 test/built-ins/Temporal/Instant/prototype/until/order-of-operations.js:
   default: 'Test262Error: Actual [get other.toString, call other.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.toString, call other.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
   strict mode: 'Test262Error: Actual [get other.toString, call other.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf] and expected [get other.toString, call other.toString, get options.largestUnit, get options.largestUnit.toString, call options.largestUnit.toString, get options.roundingIncrement, get options.roundingIncrement.valueOf, call options.roundingIncrement.valueOf, get options.roundingMode, get options.roundingMode.toString, call options.roundingMode.toString, get options.smallestUnit, get options.smallestUnit.toString, call options.smallestUnit.toString] should have the same contents. order of operations'
+test/built-ins/Temporal/PlainDate/argument-convert.js:
+  default: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
+  strict mode: 'Test262Error: calendar must be string in canonicalizeCalendarEra Expected SameValue(«"undefined"», «"string"») to be true'
 test/built-ins/Temporal/PlainDate/calendar-case-insensitive.js:
   default: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «"iso8601"») to be true'
   strict mode: 'Test262Error: Calendar is case-insensitive Expected SameValue(«undefined», «"iso8601"») to be true'

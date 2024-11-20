@@ -231,4 +231,18 @@ enum class TemporalDateFormat : uint8_t {
     MonthDay
 };
 
+enum class TemporalDisambiguation : uint8_t {
+    Compatible,
+    Earlier,
+    Later,
+    Reject,
+};
+
+static constexpr Int128 absInt128(const Int128& value)
+{
+    if (value < 0)
+        return -value;
+    return value;
+}
+
 } // namespace JSC
