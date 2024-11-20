@@ -28,6 +28,7 @@
 
 #if ENABLE(MEDIA_STREAM) && USE(AVFOUNDATION)
 
+#import "AudioMediaStreamTrackRenderer.h"
 #import "AudioTrackPrivateMediaStream.h"
 #import "GraphicsContextCG.h"
 #import "LocalSampleBufferDisplayLayer.h"
@@ -1146,6 +1147,8 @@ void MediaPlayerPrivateMediaStreamAVFObjC::audioOutputDeviceChanged()
     if (!player)
         return;
     auto deviceId = player->audioOutputDeviceId();
+    if (deviceId.isEmpty())
+        deviceId = AudioMediaStreamTrackRenderer::defaultDeviceID();
     for (auto& audioTrack : m_audioTrackMap.values())
         audioTrack->setAudioOutputDevice(deviceId);
 }
