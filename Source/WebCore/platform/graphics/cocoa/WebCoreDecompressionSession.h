@@ -71,7 +71,6 @@ public:
     void requestMediaDataWhenReady(Function<void()>&&);
     void stopRequestingMediaData();
     void notifyWhenHasAvailableVideoFrame(Function<void()>&&);
-    void decodedFrameWhenAvailable(Function<void(RetainPtr<CMSampleBufferRef>&&)>&&);
 
     RetainPtr<CVPixelBufferRef> decodeSampleSync(CMSampleBufferRef);
 

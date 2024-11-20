@@ -145,9 +145,6 @@ media/media-source/media-source-vp8-webm-error-offscreen.html [ Pass ]
 
 webkit.org/b/269897 media/media-source/media-managedmse-poster.html [ Skip ]
 
-webkit.org/b/282969 media/media-video-fullrange.html [ Timeout Pass ]
-webkit.org/b/282969 media/media-video-videorange.html [ Timeout Pass ]
-
 fast/images/text-recognition [ Pass ]
 fast/images/text-recognition/ios [ Pass ]
 fast/images/text-recognition/mac [ Skip ]

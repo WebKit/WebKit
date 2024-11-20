@@ -122,7 +122,6 @@ private:
     bool paused() const final;
     bool timeIsProgressing() const final;
 
-    WebCoreDecompressionSession *decompressionSession() const { return m_decompressionSession.get(); }
     WebSampleBufferVideoRendering *layerOrVideoRenderer() const;
 
     FloatSize naturalSize() const final { return m_naturalSize; }
@@ -180,7 +179,7 @@ private:
     void setPresentationSize(const IntSize&) final;
     bool supportsAcceleratedRendering() const final { return true; }
     void acceleratedRenderingStateChanged() final;
-    void updateDisplayLayerAndDecompressionSession();
+    void updateDisplayLayer();
 
     RetainPtr<PlatformLayer> createVideoFullscreenLayer() final;
     void setVideoFullscreenLayer(PlatformLayer*, Function<void()>&& completionHandler) final;
@@ -238,13 +237,11 @@ private:
     bool shouldEnsureLayerOrVideoRenderer() const;
     void ensureLayer();
     void destroyLayer();
-    void ensureDecompressionSession();
-    MediaPlayerEnums::NeedsRenderingModeChanged destroyDecompressionSession();
     void ensureVideoRenderer();
     void destroyVideoRenderer();
 
     void ensureLayerOrVideoRenderer(MediaPlayerEnums::NeedsRenderingModeChanged);
-    void destroyLayerOrVideoRenderer();
+    void destroyLayerOrVideoRendererAndCreateRenderlessVideoMediaSampleRenderer();
     void configureLayerOrVideoRenderer(WebSampleBufferVideoRendering *);
 
     void addAudioRenderer(TrackID);
@@ -265,13 +262,12 @@ private:
     std::optional<VideoFrameMetadata> videoFrameMetadata() final { return std::exchange(m_videoFrameMetadata, { }); }
     void setResourceOwner(const ProcessIdentity& resourceOwner) final { m_resourceOwner = resourceOwner; }
 
-    void checkNewVideoFrameMetadata(CMTime);
+    void checkNewVideoFrameMetadata(MediaTime);
 
     // WebAVSampleBufferListenerParent
     // Methods are called on the WebMResourceClient's WorkQueue
     void videoRendererDidReceiveError(WebSampleBufferVideoRendering *, NSError *) final;
     void audioRendererDidReceiveError(AVSampleBufferAudioRenderer *, NSError *) final;
-    void videoRendererReadyForDisplayChanged(WebSampleBufferVideoRendering *, bool isReadyForDisplay) final;
 
     void setShouldDisableHDR(bool) final;
     void playerContentBoxRectChanged(const LayoutRect&) final;
@@ -325,7 +321,6 @@ private:
     MediaTime m_lastPixelBufferPresentationTimeStamp;
     RefPtr<NativeImage> m_lastImage;
     std::unique_ptr<PixelBufferConformerCV> m_rgbConformer;
-    RefPtr<WebCoreDecompressionSession> m_decompressionSession;
     RefPtr<WebMResourceClient> m_resourceClient;
 
     Vector<RefPtr<VideoTrackPrivateWebM>> m_videoTracks;
@@ -353,7 +348,6 @@ private:
     Ref<const Logger> m_logger;
     const uint64_t m_logIdentifier;
     std::unique_ptr<VideoLayerManagerObjC> m_videoLayerManager;
-    RetainPtr<id> m_videoFrameMetadataGatheringObserver;
     bool m_isGatheringVideoFrameMetadata { false };
     std::optional<VideoFrameMetadata> m_videoFrameMetadata;
     uint64_t m_lastConvertedSampleCount { 0 };

@@ -697,15 +697,6 @@ void WebCoreDecompressionSession::requestMediaDataWhenReady(Function<void()>&& n
     }
 }
 
-void WebCoreDecompressionSession::decodedFrameWhenAvailable(Function<void(RetainPtr<CMSampleBufferRef>&&)>&& callback)
-{
-    assertIsMainThread();
-    LOG(Media, "WebCoreDecompressionSession::decodedFrameWhenAvailable(%p), hasDecodedFrameWhenAvailable(%d)", this, !!callback);
-    m_newDecodedFrameCallback = WTFMove(callback);
-
-    m_deliverDecodedFrames = !!m_newDecodedFrameCallback;
-}
-
 void WebCoreDecompressionSession::stopRequestingMediaData()
 {
     assertIsMainThread();
