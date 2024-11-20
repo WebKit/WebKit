@@ -34,8 +34,8 @@ import re
 import socket
 import sys
 
-if sys.version_info < (3, 5):
-    print('ERROR: Please use Python 3. This code is not compatible with Python 2.')
+if sys.version_info < (3, 9):  # noqa: UP036
+    print('ERROR: Minimum supported Python version for this code is Python 3.9')
     sys.exit(1)
 
 CURRENT_HOSTNAME = socket.gethostname().strip()

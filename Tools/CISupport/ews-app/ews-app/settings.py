@@ -35,7 +35,7 @@ import os
 import sys
 import ews.common.util as util
 
-if sys.version_info < (3, 9):
+if sys.version_info < (3, 9):  # noqa: UP036
     print('ERROR: Minimum supported Python version for this code is Python 3.9')
     sys.exit(1)
 
