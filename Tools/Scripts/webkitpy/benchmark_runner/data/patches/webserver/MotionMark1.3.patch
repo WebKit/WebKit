@@ -40,10 +40,11 @@ index 8f7a3c10e907cfeead784f3b768633322fd9e603..78d2f300d0e61c60f07290273ae5a513
      updateLocalStorageFromJSON: function(results)
      {
          for (var suiteName in results[Strings.json.results.tests]) {
-@@ -679,16 +710,12 @@ Utilities.extendObject(window.benchmarkController, {
+@@ -679,16 +710,13 @@ Utilities.extendObject(window.benchmarkController, {
  
      startBenchmarkImmediatelyIfEncoded: function()
      {
++        benchmarkController.determineCanvasSize();
 -        benchmarkController.options = Utilities.convertQueryStringToObject(location.search);
 -        if (!benchmarkController.options)
 -            return false;
