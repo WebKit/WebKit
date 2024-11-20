@@ -728,8 +728,8 @@ protected:
         void clearDescendantsNeedStyleResolution() { m_flags = (flags() - NodeStyleFlag::DescendantNeedsStyleResolution - NodeStyleFlag::DirectChildNeedsStyleResolution).toRaw(); }
 
     private:
-        uint16_t m_styleValidity : 3;
-        uint16_t m_flags : 13;
+        uint16_t m_styleValidity : 3 { 0 };
+        uint16_t m_flags : 13 { 0 };
     };
 
     StyleBitfields styleBitfields() const { return m_styleBitfields; }
