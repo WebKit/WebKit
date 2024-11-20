@@ -162,7 +162,9 @@ Vector<RefPtr<PlatformSpeechSynthesisVoice>> SpielSpeechWrapper::initializeVoice
     while (auto item = g_list_model_get_item(voices, position++)) {
         auto voice = SPIEL_VOICE(item);
         auto name = makeString(span(spiel_voice_get_name(voice)));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN; // GLib port
         const char* const* languages = spiel_voice_get_languages(voice);
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END;
         for (unsigned i = 0; i < G_N_ELEMENTS(languages); i++) {
             auto language = makeString(span(languages[i]));
             bool isDefault = !i;
