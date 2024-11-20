@@ -5836,6 +5836,10 @@ void WebViewImpl::mouseUp(NSEvent *event)
 
     setLastMouseDownEvent(nil);
 
+#if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
+    fulfillDeferredImageAnalysisOverlayViewHierarchyTask();
+#endif
+
     for (auto& hud : _pdfHUDViews.values()) {
         if ([hud handleMouseUp:event])
             return;
@@ -6564,11 +6568,11 @@ CocoaImageAnalyzer *WebViewImpl::ensureImageAnalyzer()
     return m_imageAnalyzer.get();
 }
 
-int32_t WebViewImpl::processImageAnalyzerRequest(CocoaImageAnalyzerRequest *request, CompletionHandler<void(CocoaImageAnalysis *, NSError *)>&& completion)
+int32_t WebViewImpl::processImageAnalyzerRequest(CocoaImageAnalyzerRequest *request, CompletionHandler<void(RetainPtr<CocoaImageAnalysis>&&, NSError *)>&& completion)
 {
-    return [ensureImageAnalyzer() processRequest:request progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion)] (CocoaImageAnalysis *result, NSError *error) mutable {
-        callOnMainRunLoop([completion = WTFMove(completion), result = RetainPtr { result }, error = RetainPtr { error }] () mutable {
-            completion(result.get(), error.get());
+    return [ensureImageAnalyzer() processRequest:request progressHandler:nil completionHandler:makeBlockPtr([completion = WTFMove(completion)](CocoaImageAnalysis *result, NSError *error) mutable {
+        callOnMainRunLoop([completion = WTFMove(completion), result = RetainPtr { result }, error = RetainPtr { error }] mutable {
+            completion(WTFMove(result), error.get());
         });
     }).get()];
 }
@@ -6606,8 +6610,8 @@ void WebViewImpl::requestTextRecognition(const URL& imageURL, ShareableBitmap::H
 
     auto request = createImageAnalyzerRequest(cgImage.get(), imageURL, [NSURL _web_URLWithWTFString:m_page->currentURL()], VKAnalysisTypeText);
     auto startTime = MonotonicTime::now();
-    processImageAnalyzerRequest(request.get(), [completion = WTFMove(completion), startTime] (CocoaImageAnalysis *analysis, NSError *) mutable {
-        auto result = makeTextRecognitionResult(analysis);
+    processImageAnalyzerRequest(request.get(), [completion = WTFMove(completion), startTime](RetainPtr<CocoaImageAnalysis>&& analysis, NSError *) mutable {
+        auto result = makeTextRecognitionResult(analysis.get());
         RELEASE_LOG(ImageAnalysis, "Image analysis completed in %.0f ms (found text? %d)", (MonotonicTime::now() - startTime).milliseconds(), !result.isEmpty());
         completion(WTFMove(result));
     });
@@ -6657,7 +6661,7 @@ void WebViewImpl::beginTextRecognitionForVideoInElementFullscreen(ShareableBitma
         return;
 
     auto request = WebKit::createImageAnalyzerRequest(image.get(), VKAnalysisTypeText);
-    m_currentImageAnalysisRequestID = processImageAnalyzerRequest(request.get(), [this, weakThis = WeakPtr { *this }, bounds](CocoaImageAnalysis *result, NSError *error) {
+    m_currentImageAnalysisRequestID = processImageAnalyzerRequest(request.get(), [this, weakThis = WeakPtr { *this }, bounds](RetainPtr<CocoaImageAnalysis>&& result, NSError *error) {
         if (!weakThis || !m_currentImageAnalysisRequestID)
             return;
 
@@ -6666,7 +6670,7 @@ void WebViewImpl::beginTextRecognitionForVideoInElementFullscreen(ShareableBitma
             return;
 
         m_imageAnalysisInteractionBounds = bounds;
-        installImageAnalysisOverlayView(result);
+        installImageAnalysisOverlayView(WTFMove(result));
     });
 #else
     UNUSED_PARAM(bitmapHandle);
@@ -6685,31 +6689,56 @@ void WebViewImpl::cancelTextRecognitionForVideoInElementFullscreen()
 
 #if ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
 
-void WebViewImpl::installImageAnalysisOverlayView(VKCImageAnalysis *analysis)
+void WebViewImpl::installImageAnalysisOverlayView(RetainPtr<VKCImageAnalysis>&& analysis)
 {
-    if (!m_imageAnalysisOverlayView) {
-        m_imageAnalysisOverlayView = adoptNS([PAL::allocVKCImageAnalysisOverlayViewInstance() initWithFrame:[m_view bounds]]);
-        m_imageAnalysisOverlayViewDelegate = adoptNS([[WKImageAnalysisOverlayViewDelegate alloc] initWithWebViewImpl:*this]);
-        [m_imageAnalysisOverlayView setDelegate:m_imageAnalysisOverlayViewDelegate.get()];
-        prepareImageAnalysisForOverlayView(m_imageAnalysisOverlayView.get());
-        RELEASE_LOG(ImageAnalysis, "Installing image analysis overlay view at {{ %.0f, %.0f }, { %.0f, %.0f }}",
-            m_imageAnalysisInteractionBounds.x(), m_imageAnalysisInteractionBounds.y(), m_imageAnalysisInteractionBounds.width(), m_imageAnalysisInteractionBounds.height());
-    }
+    auto installTask = [this, weakThis = WeakPtr { *this }, analysis = WTFMove(analysis)] {
+        if (!weakThis)
+            return;
 
-    [m_imageAnalysisOverlayView setAnalysis:analysis];
-    [m_view addSubview:m_imageAnalysisOverlayView.get()];
+        if (!m_imageAnalysisOverlayView) {
+            m_imageAnalysisOverlayView = adoptNS([PAL::allocVKCImageAnalysisOverlayViewInstance() initWithFrame:[m_view bounds]]);
+            m_imageAnalysisOverlayViewDelegate = adoptNS([[WKImageAnalysisOverlayViewDelegate alloc] initWithWebViewImpl:*this]);
+            [m_imageAnalysisOverlayView setDelegate:m_imageAnalysisOverlayViewDelegate.get()];
+            prepareImageAnalysisForOverlayView(m_imageAnalysisOverlayView.get());
+            RELEASE_LOG(ImageAnalysis, "Installing image analysis overlay view at {{ %.0f, %.0f }, { %.0f, %.0f }}",
+                        m_imageAnalysisInteractionBounds.x(), m_imageAnalysisInteractionBounds.y(), m_imageAnalysisInteractionBounds.width(), m_imageAnalysisInteractionBounds.height());
+        }
+
+        [m_imageAnalysisOverlayView setAnalysis:analysis.get()];
+        [m_view addSubview:m_imageAnalysisOverlayView.get()];
+    };
+
+    performOrDeferImageAnalysisOverlayViewHierarchyTask(WTFMove(installTask));
 }
 
 void WebViewImpl::uninstallImageAnalysisOverlayView()
 {
-    if (!m_imageAnalysisOverlayView)
-        return;
+    auto uninstallTask = [this, weakThis = WeakPtr { *this }] {
+        if (!m_imageAnalysisOverlayView)
+            return;
 
-    RELEASE_LOG(ImageAnalysis, "Uninstalling image analysis overlay view");
-    [m_imageAnalysisOverlayView removeFromSuperview];
-    m_imageAnalysisOverlayViewDelegate = nil;
-    m_imageAnalysisOverlayView = nil;
-    m_imageAnalysisInteractionBounds = { };
+        RELEASE_LOG(ImageAnalysis, "Uninstalling image analysis overlay view");
+        [m_imageAnalysisOverlayView removeFromSuperview];
+        m_imageAnalysisOverlayViewDelegate = nil;
+        m_imageAnalysisOverlayView = nil;
+        m_imageAnalysisInteractionBounds = { };
+    };
+
+    performOrDeferImageAnalysisOverlayViewHierarchyTask(WTFMove(uninstallTask));
+}
+
+void WebViewImpl::performOrDeferImageAnalysisOverlayViewHierarchyTask(std::function<void()>&& task)
+{
+    if (m_lastMouseDownEvent)
+        m_imageAnalysisOverlayViewHierarchyDeferredTask = WTFMove(task);
+    else
+        task();
+}
+
+void WebViewImpl::fulfillDeferredImageAnalysisOverlayViewHierarchyTask()
+{
+    if (auto&& task = std::exchange(m_imageAnalysisOverlayViewHierarchyDeferredTask, nullptr))
+        task();
 }
 
 #endif // ENABLE(IMAGE_ANALYSIS_ENHANCEMENTS)
