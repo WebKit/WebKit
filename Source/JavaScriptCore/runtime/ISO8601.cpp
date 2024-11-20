@@ -815,9 +815,11 @@ static std::optional<CalendarRecord> parseOneCalendar(StringParsingBuffer<Charac
     unsigned keyLength = 0;
     while (buffer[keyLength] != '=')
         keyLength++;
-    Vector<LChar, maxCalendarLength> key(buffer.consume(keyLength));
+    auto key(buffer.span().first(keyLength));
+    buffer.advanceBy(keyLength);
     if (keyLength != 4
-        || key[0] != 'u' || key[1] != '-' || key[2] != 'c' || key[3] != 'a') {
+        || key [0] != 'u' || key[1] != '-'
+        || key[2] != 'c' || key[3] != 'a') {
         // Annotation is unknown
         // Consume the rest of the annotation
         while (!buffer.atEnd() && *buffer != ']')
