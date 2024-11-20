@@ -28,6 +28,7 @@
 
 #include <unicode/utf16.h>
 #include <unicode/utf8.h>
+#include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace URLPatternUtilities {

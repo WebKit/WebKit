@@ -28,6 +28,7 @@
 #include "config.h"
 #include "JSCustomElementInterface.h"
 
+#include "CustomElementRegistry.h"
 #include "DOMWrapperWorld.h"
 #include "ElementRareData.h"
 #include "EventLoop.h"

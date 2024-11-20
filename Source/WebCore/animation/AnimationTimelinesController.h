@@ -45,6 +45,7 @@ class Document;
 class Element;
 class ScrollTimeline;
 class ViewTimeline;
+class WeakPtrImplWithEventTargetData;
 class WebAnimation;
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)

@@ -32,6 +32,7 @@
 #include "DocumentTimeline.h"
 #include "ElementInlines.h"
 #include "EventLoop.h"
+#include "KeyframeEffect.h"
 #include "LocalDOMWindow.h"
 #include "Logging.h"
 #include "Page.h"
