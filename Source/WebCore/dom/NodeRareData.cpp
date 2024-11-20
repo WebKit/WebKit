@@ -50,6 +50,6 @@ static_assert(sizeof(NodeRareData) == sizeof(SameSizeAsNodeRareData), "NodeRareD
 static_assert(Page::maxNumberOfFrames < 1024, "Frame limit should fit in rare data count");
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NodeListsNodeData);
-DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(NodeRareData);
+DEFINE_COMPACT_ALLOCATOR_WITH_HEAP_IDENTIFIER(NodeRareData);
 
 } // namespace WebCore

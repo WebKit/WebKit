@@ -102,7 +102,7 @@ enum class RequiresFullRepaint : bool { No, Yes };
 
 // Base class for all rendering tree objects.
 class RenderObject : public CachedImageClient {
-    WTF_MAKE_COMPACT_TZONE_OR_ISO_ALLOCATED(RenderObject);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderObject);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderObject);
     friend class RenderBlock;
     friend class RenderBlockFlow;
@@ -1536,7 +1536,7 @@ inline RenderObject::SetLayoutNeededForbiddenScope::SetLayoutNeededForbiddenScop
 
 inline void Node::setRenderer(RenderObject* renderer)
 {
-    m_rendererWithStyleFlags.setPointer(renderer);
+    m_renderer = renderer;
 
     if (UNLIKELY(InspectorInstrumentationPublic::hasFrontends()))
         notifyInspectorOfRendererChange();
