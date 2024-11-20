@@ -224,11 +224,15 @@ tr.bz_secure td.first-child, a.bz_secure {
 .bz_buglist {
     width: 100%;
     margin: 0 auto;
+    table-layout: fixed;
+    word-wrap: break-word;
 }
+
 .bz_buglist .bz_row_odd,
 .bz_buglist .bz_row_even {
     color: var(--text-color);
 }
+
 .bz_buglist th,
 .bz_buglist td {
      overflow: hidden;
@@ -237,62 +241,61 @@ tr.bz_secure td.first-child, a.bz_secure {
 }
 
 .bz_buglist .bz_id_column {
-    /* width: 6rem; */
+    width: 5.8rem;
 }
+
 .bz_buglist .bz_product_column {
     width: 6rem;
 }
+
 .bz_buglist .bz_component_column {
-    width: 5%;
+    width: 9.2%;
 }
+
 .bz_buglist .bz_bug_status_column {
     width: 5rem;
 }
-.bz_buglist_header th:nth-child(6),
+
 .bz_buglist .bz_resolution_column {
     width: 5rem;
 }
 
+.bz_buglist .bz_reporter_column,
 .bz_buglist .bz_assigned_to_column {
-    width: 15%;
+    width: 12%;
 }
+
 .bz_buglist .bz_short_desc_column {
     white-space: normal;
 }
 
+.bz_buglist .bz_changeddate_column {
+    width: 10rem;
+    text-align: right;
+    padding-right: 0;
+}
+
 @media only screen and (max-width: 1500px) {
-    .bz_buglist_header th:nth-child(2), 
-    .bz_bugitem .bz_product_column {
+    .bz_buglist .bz_product_column {
         display: none;
     }
 
 }
 
-@media only screen and (max-width: 1500px) {
-    .bz_buglist_header th:nth-child(2), 
-    .bz_bugitem .bz_product_column {
-        display: none;
-    }    
-}
-
 @media only screen and (max-width: 1300px) {
-    .bz_buglist_header th:nth-child(4), 
-    .bz_bugitem .bz_assigned_to_column {
+    .bz_buglist .bz_assigned_to_column {
         display: none;
     }
 }
 
 @media only screen and (max-width: 900px) {
-    .bz_buglist_header th:nth-child(3), 
-    .bz_bugitem .bz_component_column {
+    .bz_buglist .bz_component_column {
         display: none;
     }
 }
 
-
 @media only screen and (max-width: 730px) {
-    .bz_buglist_header th:nth-child(5), 
-    .bz_bugitem .bz_bug_status_column {
+    .bz_buglist .bz_bug_status_column {
         display: none;
     }
     #header,
@@ -302,23 +305,23 @@ tr.bz_secure td.first-child, a.bz_secure {
 }
 
 @media only screen and (max-width: 600px) {
-
     .bz_buglist th, .bz_buglist td {
         display: none;
     }
+    
     .bz_buglist .bz_id_column {
     }
-    
+
     .bz_buglist .bz_id_column,
     .bz_buglist .bz_short_desc_column {
         display: table-cell;
         vertical-align: top;
         
     }
+
     .bz_buglist .bz_short_desc_column {
         max-width: 85vw;
     }
-
 }
 
 @media only screen and (max-width: 428px) {
@@ -329,12 +332,6 @@ tr.bz_secure td.first-child, a.bz_secure {
     
     .bz_buglist th, .bz_buglist td {
         font-size: 1.2rem;
-    }
-    
-    .bz_buglist .bz_id_column {
-    }
-    .bz_buglist .bz_short_desc_column {
-        max-width: 80vw;
     }
     
     .bug-list-meta {
