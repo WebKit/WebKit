@@ -328,7 +328,7 @@ static int32_t epochTimeToDate(double t)
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-balanceisodate
-ISO8601::PlainDate TemporalCalendar::balanceISODate(double year, double month, double day)
+static ISO8601::PlainDate balanceISODate(double year, double month, double day)
 {
     auto epochDays = makeDay(year, month - 1, day);
     double ms = makeDate(epochDays, 0);
