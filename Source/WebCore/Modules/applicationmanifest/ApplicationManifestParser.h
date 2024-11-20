@@ -51,6 +51,7 @@ private:
     ApplicationManifest::Direction parseDir(const JSON::Object&);
     ApplicationManifest::Display parseDisplay(const JSON::Object&);
     const std::optional<ScreenOrientationLockType> parseOrientation(const JSON::Object&);
+    String parseLang(const JSON::Object&);
     String parseName(const JSON::Object&);
     String parseDescription(const JSON::Object&);
     String parseShortName(const JSON::Object&);
