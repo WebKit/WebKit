@@ -251,6 +251,20 @@ void NetworkTaskCocoa::updateTaskWithFirstPartyForSameSiteCookies(NSURLSessionTa
 #endif
 }
 
+void NetworkTaskCocoa::updateTaskWithStoragePartitionIdentifier(const WebCore::ResourceRequest& request)
+{
+    CheckedPtr networkStorageSession = m_networkSession->networkStorageSession();
+    if (!networkStorageSession)
+        return;
+
+    if (!networkStorageSession->isOptInCookiePartitioningEnabled())
+        return;
+
+    // FIXME: Remove respondsToSelector when available with NWLoader. rdar://134913391
+    if ([task() respondsToSelector:@selector(set_storagePartitionIdentifier:)])
+        task()._storagePartitionIdentifier = networkStorageSession->cookiePartitionIdentifier(request);
+}
+
 void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& redirectResponse, WebCore::ResourceRequest&& request, RedirectCompletionHandler&& completionHandler)
 {
 #if ENABLE(APP_PRIVACY_REPORT)
@@ -272,6 +286,7 @@ void NetworkTaskCocoa::willPerformHTTPRedirection(WebCore::ResourceResponse&& re
 #endif
 
     updateTaskWithFirstPartyForSameSiteCookies(task(), request);
+    updateTaskWithStoragePartitionIdentifier(request);
     completionHandler(WTFMove(request));
 }
 

@@ -69,6 +69,8 @@ WebSocketTask::WebSocketTask(NetworkSocketChannel& channel, WebPageProxyIdentifi
 
     readNextMessage();
     protectedChannel()->didSendHandshakeRequest(ResourceRequest { [m_task currentRequest] });
+
+    updateTaskWithStoragePartitionIdentifier(request);
 }
 
 WebSocketTask::~WebSocketTask() = default;

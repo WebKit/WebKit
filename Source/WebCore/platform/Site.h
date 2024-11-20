@@ -42,6 +42,7 @@ public:
 
     const String& protocol() const { return m_protocol; }
     const RegistrableDomain& domain() const { return m_domain; }
+    String string() const;
     bool isEmpty() const { return m_domain.isEmpty(); }
     WEBCORE_EXPORT bool matches(const URL&) const;
 
