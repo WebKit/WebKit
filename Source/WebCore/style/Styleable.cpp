@@ -967,8 +967,11 @@ bool Styleable::capturedInViewTransition() const
 void Styleable::setCapturedInViewTransition(AtomString captureName)
 {
     element.setViewTransitionCapturedName(pseudoElementIdentifier, captureName);
-    if (CheckedPtr renderer = this->renderer())
-        renderer->setCapturedInViewTransition(!captureName.isNull());
+    if (CheckedPtr renderer = this->renderer()) {
+        bool changed = renderer->setCapturedInViewTransition(!captureName.isNull());
+        if (changed)
+            element.invalidateStyleAndLayerComposition();
+    }
 }
 
 

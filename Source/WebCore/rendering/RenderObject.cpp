@@ -1826,28 +1826,31 @@ bool RenderObject::isSelectionBorder() const
         || view().selection().end() == this;
 }
 
-void RenderObject::setCapturedInViewTransition(bool captured)
+bool RenderObject::setCapturedInViewTransition(bool captured)
 {
-    if (capturedInViewTransition() != captured) {
-        m_stateBitfields.setFlag(StateFlag::CapturedInViewTransition, captured);
+    if (capturedInViewTransition() == captured)
+        return false;
 
-        CheckedPtr<RenderLayer> layerToInvalidate;
-        if (isDocumentElementRenderer()) {
-            layerToInvalidate = view().layer();
-            view().compositor().setRootElementCapturedInViewTransition(captured);
-        } else if (hasLayer())
-            layerToInvalidate = downcast<RenderLayerModelObject>(*this).layer();
+    m_stateBitfields.setFlag(StateFlag::CapturedInViewTransition, captured);
 
-        if (layerToInvalidate) {
-            layerToInvalidate->setNeedsPostLayoutCompositingUpdate();
+    CheckedPtr<RenderLayer> layerToInvalidate;
+    if (isDocumentElementRenderer()) {
+        layerToInvalidate = view().layer();
+        view().compositor().setRootElementCapturedInViewTransition(captured);
+    } else if (hasLayer())
+        layerToInvalidate = downcast<RenderLayerModelObject>(*this).layer();
 
-            // Invalidate transform applied by `RenderLayerBacking::updateTransform`.
-            layerToInvalidate->setNeedsCompositingGeometryUpdate();
-        }
+    if (layerToInvalidate) {
+        layerToInvalidate->setNeedsPostLayoutCompositingUpdate();
 
-        if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*this))
-            renderBox->invalidateAncestorBackgroundObscurationStatus();
+        // Invalidate transform applied by `RenderLayerBacking::updateTransform`.
+        layerToInvalidate->setNeedsCompositingGeometryUpdate();
     }
+
+    if (CheckedPtr renderBox = dynamicDowncast<RenderBox>(*this))
+        renderBox->invalidateAncestorBackgroundObscurationStatus();
+
+    return true;
 }
 
 void RenderObject::willBeDestroyed()
