@@ -1015,16 +1015,16 @@ GStreamerRegistryScanner::RegistryLookupResult GStreamerRegistryScanner::isConfi
 #if USE(GSTREAMER_WEBRTC)
 RTCRtpCapabilities GStreamerRegistryScanner::audioRtpCapabilities(Configuration configuration)
 {
-    RTCRtpCapabilities capabilies;
-    fillAudioRtpCapabilities(configuration, capabilies);
-    return capabilies;
+    RTCRtpCapabilities capabilities;
+    fillAudioRtpCapabilities(configuration, capabilities);
+    return capabilities;
 }
 
 RTCRtpCapabilities GStreamerRegistryScanner::videoRtpCapabilities(Configuration configuration)
 {
-    RTCRtpCapabilities capabilies;
-    fillVideoRtpCapabilities(configuration, capabilies);
-    return capabilies;
+    RTCRtpCapabilities capabilities;
+    fillVideoRtpCapabilities(configuration, capabilities);
+    return capabilities;
 }
 
 static inline Vector<RTCRtpCapabilities::HeaderExtensionCapability> probeRtpExtensions(const Vector<ASCIILiteral>& candidates)
