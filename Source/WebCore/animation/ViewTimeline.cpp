@@ -236,6 +236,15 @@ RenderBox* ViewTimeline::sourceScrollerRenderer() const
     return subjectRenderer->enclosingScrollableContainer();
 }
 
+static FloatPoint pointForLocalToContainer(ScrollableArea& area)
+{
+    // For subscrollers we need to ajust the point fed into localToContainerPoint as the point
+    // it returns can be outside of the scroller
+    if (is<RenderLayerScrollableArea>(area))
+        return area.scrollOffset();
+    return FloatPoint();
+}
+
 ScrollTimeline::Data ViewTimeline::computeTimelineData(const TimelineRange& range) const
 {
     if (!m_subject)
@@ -260,10 +269,13 @@ ScrollTimeline::Data ViewTimeline::computeTimelineData(const TimelineRange& rang
     // - range is the scroll offset corresponding to the end of the cover range minus the scroll offset
     //   corresponding to the start of the cover range
 
-    float currentScrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->scrollPosition().y() : sourceScrollableArea->scrollPosition().x();
+    float currentScrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->scrollOffset().y() : sourceScrollableArea->scrollOffset().x();
     float scrollContainerSize = axis() == ScrollAxis::Block ? sourceScrollableArea->visibleHeight() : sourceScrollableArea->visibleWidth();
+    ALWAYS_LOG_WITH_STREAM(stream << "scrollContainerSize: height" << sourceScrollableArea->visibleHeight() << " width: " << sourceScrollableArea->visibleWidth());
 
-    auto subjectOffsetFromSource = subjectRenderer->localToContainerPoint(FloatPoint(), sourceScrollerRenderer());
+    auto subjectOffsetFromSource = subjectRenderer->localToContainerPoint(pointForLocalToContainer(*sourceScrollableArea), sourceScrollerRenderer());
+    ALWAYS_LOG_WITH_STREAM(stream << "offset: " << subjectOffsetFromSource << " scroll position: " << sourceScrollableArea->scrollOffset());
+//    ALWAYS_LOG_WITH_STREAM(stream << "computeTimelineData: " << sourceScrollerRenderer()->borderBox());
     float subjectOffset = axis() == ScrollAxis::Block ? subjectOffsetFromSource.y() : subjectOffsetFromSource.x();
 
     auto subjectBounds = [&] -> FloatSize {
