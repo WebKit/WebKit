@@ -2226,10 +2226,8 @@ ExceptionOr<void> Internals::setViewIsTransparent(bool transparent)
     Document* document = contextDocument();
     if (!document || !document->view())
         return Exception { ExceptionCode::InvalidAccessError };
-    std::optional<Color> backgroundColor;
-    if (transparent)
-        backgroundColor = Color(Color::transparentBlack);
-    document->view()->updateBackgroundRecursively(backgroundColor);
+
+    document->view()->setTransparent(transparent);
     return { };
 }
 
@@ -2238,6 +2236,9 @@ ExceptionOr<String> Internals::viewBaseBackgroundColor()
     Document* document = contextDocument();
     if (!document || !document->view())
         return Exception { ExceptionCode::InvalidAccessError };
+
+    document->updateLayout(LayoutOptions::IgnorePendingStylesheets);
+
     return serializationForCSS(document->view()->baseBackgroundColor());
 }
 

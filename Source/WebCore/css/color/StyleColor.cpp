@@ -419,7 +419,7 @@ void serializationForCSS(StringBuilder& builder, const StyleColor& color)
 
 // MARK: - TextStream.
 
-WTF::TextStream& operator<<(WTF::TextStream& out, const StyleColor& color)
+TextStream& operator<<(TextStream& out, const StyleColor& color)
 {
     out << "StyleColor[";
 
@@ -430,6 +430,17 @@ WTF::TextStream& operator<<(WTF::TextStream& out, const StyleColor& color)
     );
 
     out << "]";
+    return out;
+}
+
+TextStream& operator<<(TextStream& out, StyleColorOptions colorOptions)
+{
+    switch (colorOptions) {
+    case StyleColorOptions::ForVisitedLink: out << "ForVisitedLink"; break;
+    case StyleColorOptions::UseSystemAppearance: out << "UseSystemAppearance"; break;
+    case StyleColorOptions::UseDarkAppearance: out << "UseDarkAppearance"; break;
+    case StyleColorOptions::UseElevatedUserInterfaceLevel: out << "UseElevatedUserInterfaceLevel"; break;
+    }
     return out;
 }
 

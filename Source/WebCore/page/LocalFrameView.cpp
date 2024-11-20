@@ -383,23 +383,6 @@ void LocalFrameView::recalculateScrollbarOverlayStyle()
         setScrollbarOverlayStyle(style);
 }
 
-#if ENABLE(DARK_MODE_CSS)
-
-void LocalFrameView::recalculateBaseBackgroundColor()
-{
-    auto styleColorOptions = this->styleColorOptions();
-    if (m_styleColorOptions == styleColorOptions)
-        return;
-
-    m_styleColorOptions = styleColorOptions;
-    std::optional<Color> backgroundColor;
-    if (m_isTransparent)
-        backgroundColor = Color(Color::transparentBlack);
-    updateBackgroundRecursively(backgroundColor);
-}
-
-#endif
-
 void LocalFrameView::clear()
 {
     setCanBlitOnScroll(true);
@@ -3427,26 +3410,43 @@ void LocalFrameView::setBaseBackgroundColor(const Color& backgroundColor)
     setNeedsCompositingConfigurationUpdate();
 }
 
+#if ENABLE(DARK_MODE_CSS)
+void LocalFrameView::updateBaseBackgroundColorIfNecessary()
+{
+    auto styleColorOptions = this->styleColorOptions();
+    if (m_styleColorOptions == styleColorOptions)
+        return;
+
+    m_styleColorOptions = styleColorOptions;
+    std::optional<Color> backgroundColor;
+    if (m_isTransparent)
+        backgroundColor = Color(Color::transparentBlack);
+
+    updateBackgroundRecursively(backgroundColor);
+}
+#endif
+
 void LocalFrameView::updateBackgroundRecursively(const std::optional<Color>& backgroundColor)
 {
+    auto intrinsicBaseBackgroundColor = [](LocalFrameView& view) -> Color {
 #if HAVE(OS_DARK_MODE_SUPPORT)
 #if PLATFORM(COCOA)
-    static const auto cssValueControlBackground = CSSValueAppleSystemControlBackground;
+        static const auto cssValueControlBackground = CSSValueAppleSystemControlBackground;
 #else
-    static const auto cssValueControlBackground = CSSValueWindow;
+        static const auto cssValueControlBackground = CSSValueWindow;
 #endif
+        return RenderTheme::singleton().systemColor(cssValueControlBackground, view.styleColorOptions());
 #endif
+        return Color::white;
+    };
 
     for (Frame* frame = m_frame.ptr(); frame; frame = frame->tree().traverseNext(m_frame.ptr())) {
         auto* localFrame = dynamicDowncast<LocalFrame>(frame);
         if (!localFrame)
             continue;
-        if (auto* view = localFrame->view()) {
-#if HAVE(OS_DARK_MODE_SUPPORT)
-            auto baseBackgroundColor = backgroundColor.value_or(RenderTheme::singleton().systemColor(cssValueControlBackground, view->styleColorOptions()));
-#else
-            auto baseBackgroundColor = backgroundColor.value_or(Color::white);
-#endif
+
+        if (RefPtr view = localFrame->view()) {
+            auto baseBackgroundColor = backgroundColor.value_or(intrinsicBaseBackgroundColor(*view));
             view->setTransparent(!baseBackgroundColor.isVisible());
             view->setBaseBackgroundColor(baseBackgroundColor);
             if (view->needsLayout())

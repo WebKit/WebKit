@@ -2556,7 +2556,6 @@ private:
 
 #if ENABLE(DARK_MODE_CSS)
     OptionSet<ColorScheme> m_colorScheme;
-    bool m_allowsColorSchemeTransformations { true };
 #endif
 
     bool m_activeParserWasAborted { false };

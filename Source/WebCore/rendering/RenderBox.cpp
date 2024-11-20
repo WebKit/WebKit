@@ -384,10 +384,6 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     bool isBodyRenderer = isBody();
 
     if (isDocElementRenderer || isBodyRenderer) {
-#if ENABLE(DARK_MODE_CSS)
-        view().frameView().recalculateBaseBackgroundColor();
-#endif
-
         view().frameView().recalculateScrollbarOverlayStyle();
         
         if (diff != StyleDifference::Equal)

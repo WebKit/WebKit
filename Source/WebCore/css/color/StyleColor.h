@@ -178,5 +178,6 @@ void serializationForCSS(StringBuilder&, const StyleColor&);
 WEBCORE_EXPORT String serializationForCSS(const StyleColor&);
 
 WTF::TextStream& operator<<(WTF::TextStream&, const StyleColor&);
+WTF::TextStream& operator<<(WTF::TextStream&, StyleColorOptions);
 
 } // namespace WebCore

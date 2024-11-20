@@ -205,13 +205,15 @@ public:
     void prepareForDetach();
     void detachCustomScrollbars();
     WEBCORE_EXPORT void recalculateScrollbarOverlayStyle();
+
 #if ENABLE(DARK_MODE_CSS)
-    void recalculateBaseBackgroundColor();
+    void updateBaseBackgroundColorIfNecessary();
 #endif
 
     void clear();
     void resetLayoutMilestones();
 
+    // This represents externally-imposed transparency. iframes are transparent by default, but that's handled in RenderView::shouldPaintBaseBackground().
     WEBCORE_EXPORT bool isTransparent() const;
     WEBCORE_EXPORT void setTransparent(bool isTransparent);
     

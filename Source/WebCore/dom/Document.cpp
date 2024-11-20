@@ -2629,6 +2629,10 @@ void Document::resolveStyle(ResolveStyleType type)
     // check if they need to be resumed after layout.
     if (updatedCompositingLayers && !frameView->needsLayout())
         frameView->viewportContentsChanged();
+
+#if ENABLE(DARK_MODE_CSS)
+    frameView->updateBaseBackgroundColorIfNecessary();
+#endif
 }
 
 void Document::updateTextRenderer(Text& text, unsigned offsetOfReplacedText, unsigned lengthOfReplacedText)
@@ -4866,10 +4870,6 @@ void Document::processColorScheme(const String& colorSchemeString)
         colorScheme.add(ColorScheme::Light);
 
     m_colorScheme = colorScheme;
-    m_allowsColorSchemeTransformations = allowsTransformations;
-
-    if (RefPtr frameView = view())
-        frameView->recalculateBaseBackgroundColor();
 
     if (RefPtr page = this->page())
         page->updateStyleAfterChangeInEnvironment();
