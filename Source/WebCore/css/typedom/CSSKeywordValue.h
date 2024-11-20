@@ -31,6 +31,10 @@
 
 namespace WebCore {
 
+namespace CSS {
+struct None;
+}
+
 template<typename> class ExceptionOr;
 class CSSKeywordValue;
 using CSSKeywordish = std::variant<String, RefPtr<CSSKeywordValue>>;
@@ -39,7 +43,9 @@ class CSSKeywordValue final : public CSSStyleValue {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSKeywordValue);
 public:
     static ExceptionOr<Ref<CSSKeywordValue>> create(const String&);
-    
+    static Ref<CSSKeywordValue> create(CSSValueID);
+    static Ref<CSSKeywordValue> create(CSS::None);
+
     const String& value() const { return m_value; }
     ExceptionOr<void> setValue(const String&);
     

@@ -29,7 +29,6 @@
 #include "CSSFunctionValue.h"
 #include "CSSKeyframeRule.h"
 #include "CSSKeyframesRule.h"
-#include "CSSTransformListValue.h"
 #include "CSSValuePool.h"
 #include "CheckVisibilityOptions.h"
 #include "ComputedStyleExtractor.h"
@@ -846,8 +845,7 @@ Ref<MutableStyleProperties> ViewTransition::copyElementBaseProperties(RenderLaye
             transform->translate(size.width() / 2, size.height() / 2);
             transform->translateRight(-size.width() / 2, -size.height() / 2);
 
-            Ref transformListValue = CSSTransformListValue::create(ComputedStyleExtractor::matrixTransformValue(*transform, renderer.style()));
-            props->setProperty(CSSPropertyTransform, WTFMove(transformListValue));
+            props->setProperty(CSSPropertyTransform, ComputedStyleExtractor::matrixTransformValue(*transform, renderer.style()));
         }
     }
 

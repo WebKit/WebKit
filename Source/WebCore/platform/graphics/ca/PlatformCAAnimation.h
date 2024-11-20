@@ -162,7 +162,7 @@ public:
     bool isBasicAnimation() const;
 
     WEBCORE_EXPORT static String makeGroupKeyPath();
-    WEBCORE_EXPORT static String makeKeyPath(AnimatedProperty, FilterOperation::Type = FilterOperation::Type::None, int = 0);
+    WEBCORE_EXPORT static String makeKeyPath(GraphicsLayerAnimationProperty, FilterOperation::Type = FilterOperation::Type::None, int = 0);
     WEBCORE_EXPORT static bool isValidKeyPath(const String&, AnimationType = AnimationType::Basic);
 
 protected:

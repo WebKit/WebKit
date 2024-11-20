@@ -53,4 +53,9 @@ IterationStatus CSSBasicShapeValue::customVisitChildren(const Function<Iteration
     return CSS::visitCSSValueChildren(func, m_shape);
 }
 
+void CSSBasicShapeValue::customCollectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
+{
+    CSS::collectComputedStyleDependencies(dependencies, m_shape);
+}
+
 } // namespace WebCore

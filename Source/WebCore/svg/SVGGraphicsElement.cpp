@@ -101,7 +101,7 @@ AffineTransform SVGGraphicsElement::animatedLocalTransform() const
     bool hasSpecifiedTransform = style && style->hasTransform();
 
     // Honor any of the transform-related CSS properties if set.
-    if (hasSpecifiedTransform || (style && (style->translate() || style->scale() || style->rotate()))) {
+    if (hasSpecifiedTransform || (style && (!style->translate().isNone() || !style->scale().isNone() || !style->rotate().isNone()))) {
         // Note: objectBoundingBox is an emptyRect for elements like pattern or clipPath.
         // See the "Object bounding box units" section of http://dev.w3.org/csswg/css3-transforms/
         TransformationMatrix transform;

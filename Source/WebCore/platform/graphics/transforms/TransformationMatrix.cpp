@@ -1658,6 +1658,11 @@ void TransformationMatrix::flatten()
     m_matrix[3][2] = 0;
 }
 
+void TransformationMatrix::setMatrix(AffineTransform affine)
+{
+    setMatrix(affine.a(), affine.b(), affine.c(), affine.d(), affine.e(), affine.f());
+}
+
 AffineTransform TransformationMatrix::toAffineTransform() const
 {
     return AffineTransform(m_matrix[0][0], m_matrix[0][1], m_matrix[1][0],
@@ -1760,7 +1765,6 @@ void TransformationMatrix::blend4(const TransformationMatrix& from, double progr
 
 void TransformationMatrix::blend(const TransformationMatrix& from, double progress, CompositeOperation compositeOperation)
 {
-    
     if (!progress && compositeOperation == CompositeOperation::Replace) {
         *this = from;
         return;

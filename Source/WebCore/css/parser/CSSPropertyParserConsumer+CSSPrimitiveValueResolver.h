@@ -59,7 +59,7 @@ struct CSSPrimitiveValueResolverBase {
 
     template<typename T> static RefPtr<CSSPrimitiveValue> resolve(CSS::PrimitiveNumeric<T> value, const CSSCalcSymbolTable& symbolTable, CSSPropertyParserOptions options)
     {
-        return WTF::switchOn(WTFMove(value.value), [&](auto&& value) { return resolve(WTFMove(value), symbolTable, options); });
+        return WTF::switchOn(WTFMove(value), [&](auto&& value) { return resolve(WTFMove(value), symbolTable, options); });
     }
 };
 

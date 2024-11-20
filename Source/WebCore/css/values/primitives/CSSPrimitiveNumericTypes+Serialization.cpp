@@ -32,11 +32,24 @@
 namespace WebCore {
 namespace CSS {
 
-// MARK: - Serialization
-
 void rawNumericSerialization(StringBuilder& builder, double value, CSSUnitType type)
 {
     formatCSSNumberValue(builder, value, CSSPrimitiveValue::unitTypeString(type));
+}
+
+void Serialize<NumberOrPercentageResolvedToNumber>::operator()(StringBuilder& builder, const NumberOrPercentageResolvedToNumber& value)
+{
+    WTF::switchOn(value.value,
+        [&](const Number<>& number) {
+            serializationForCSS(builder, number);
+        },
+        [&](const Percentage<>& percentage) {
+            if (auto raw = percentage.raw())
+                serializationForCSS(builder, NumberRaw<> { raw->value / 100.0 });
+            else
+                serializationForCSS(builder, percentage);
+        }
+    );
 }
 
 void Serialize<SymbolRaw>::operator()(StringBuilder& builder, const SymbolRaw& value)

@@ -131,7 +131,6 @@
 #include "RenderView.h"
 #include "SVGClipPathElement.h"
 #include "SVGNames.h"
-#include "ScaleTransformOperation.h"
 #include "ScrollAnimator.h"
 #include "ScrollSnapOffsetsInfo.h"
 #include "Scrollbar.h"
@@ -145,7 +144,6 @@
 #include "Styleable.h"
 #include "TransformOperationData.h"
 #include "TransformationMatrix.h"
-#include "TranslateTransformOperation.h"
 #include "ViewTransition.h"
 #include "WheelEventTestMonitor.h"
 #include <stdio.h>
@@ -5991,41 +5989,103 @@ RenderStyle RenderLayer::createReflectionStyle()
 {
     auto newStyle = RenderStyle::create();
     newStyle.inheritFrom(renderer().style());
-    
+
     // Map in our transform.
-    Vector<Ref<TransformOperation>> operations;
+    Style::SpaceSeparatedVariantList<Style::TransformFunction> operations;
+
+    auto fromLength = [](const Length& length) -> Style::LengthPercentage<> {
+        if (length.isCalculated())
+            return Style::LengthPercentage<> { length.protectedCalculationValue() };
+        if (length.isPercent())
+            return Style::LengthPercentage<> { Style::Percentage<> { length.value() } };
+
+        ASSERT(length.isFixed());
+        return Style::LengthPercentage<> { Style::Length<> { length.value() } };
+    };
 
     switch (renderer().style().boxReflect()->direction()) {
     case ReflectionDirection::Below:
-        operations = {
-            TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(100., LengthType::Percent), TransformOperation::Type::Translate),
-            TranslateTransformOperation::create(Length(0, LengthType::Fixed), renderer().style().boxReflect()->offset(), TransformOperation::Type::Translate),
-            ScaleTransformOperation::create(1.0, -1.0, ScaleTransformOperation::Type::Scale)
-        };
+        operations.value.append(
+            Style::TranslateFunction { {
+                .x = Style::LengthPercentage<> { Style::Length<> { 0 } },
+                .y = Style::LengthPercentage<> { Style::Percentage<> { 100 } }
+            } }
+        );
+        operations.value.append(
+            Style::TranslateFunction { {
+                .x = Style::LengthPercentage<> { Style::Length<> { 0 } },
+                .y = fromLength(renderer().style().boxReflect()->offset())
+            } }
+        );
+        operations.value.append(
+            Style::ScaleFunction { {
+                .x = { 1.0 },
+                .y = { -1.0 }
+            } }
+        );
         break;
     case ReflectionDirection::Above:
-        operations = {
-            ScaleTransformOperation::create(1.0, -1.0, ScaleTransformOperation::Type::Scale),
-            TranslateTransformOperation::create(Length(0, LengthType::Fixed), Length(100., LengthType::Percent), TransformOperation::Type::Translate),
-            TranslateTransformOperation::create(Length(0, LengthType::Fixed), renderer().style().boxReflect()->offset(), TransformOperation::Type::Translate)
-        };
+        operations.value.append(
+            Style::ScaleFunction { {
+                .x = { 1.0 },
+                .y = { -1.0 }
+            } }
+        );
+        operations.value.append(
+            Style::TranslateFunction { {
+                .x = Style::LengthPercentage<> { Style::Length<> { 0 } },
+                .y = Style::LengthPercentage<> { Style::Percentage<> { 100 } }
+            } }
+        );
+        operations.value.append(
+            Style::TranslateFunction { {
+                .x = Style::LengthPercentage<> { Style::Length<> { 0 } },
+                .y = fromLength(renderer().style().boxReflect()->offset())
+            } }
+        );
         break;
     case ReflectionDirection::Right:
-        operations = {
-            TranslateTransformOperation::create(Length(100., LengthType::Percent), Length(0, LengthType::Fixed), TransformOperation::Type::Translate),
-            TranslateTransformOperation::create(renderer().style().boxReflect()->offset(), Length(0, LengthType::Fixed), TransformOperation::Type::Translate),
-            ScaleTransformOperation::create(-1.0, 1.0, ScaleTransformOperation::Type::Scale)
-        };
+        operations.value.append(
+            Style::TranslateFunction { {
+                .x = Style::LengthPercentage<> { Style::Percentage<> { 100 } },
+                .y = Style::LengthPercentage<> { Style::Length<> { 0 } }
+            } }
+        );
+        operations.value.append(
+            Style::TranslateFunction { {
+                .x = fromLength(renderer().style().boxReflect()->offset()),
+                .y = Style::LengthPercentage<> { Style::Length<> { 0 } }
+            } }
+        );
+        operations.value.append(
+            Style::ScaleFunction { {
+                .x = { -1.0 },
+                .y = { 1.0 }
+            } }
+        );
         break;
     case ReflectionDirection::Left:
-        operations = {
-            ScaleTransformOperation::create(-1.0, 1.0, ScaleTransformOperation::Type::Scale),
-            TranslateTransformOperation::create(Length(100., LengthType::Percent), Length(0, LengthType::Fixed), TransformOperation::Type::Translate),
-            TranslateTransformOperation::create(renderer().style().boxReflect()->offset(), Length(0, LengthType::Fixed), TransformOperation::Type::Translate)
-        };
+        operations.value.append(
+            Style::ScaleFunction { {
+                .x = Style::Number<> { -1.0 },
+                .y = Style::Number<> { 1.0 }
+            } }
+        );
+        operations.value.append(
+            Style::TranslateFunction { {
+                .x = Style::LengthPercentage<> { Style::Percentage<> { 100 } },
+                .y = Style::LengthPercentage<> { Style::Length<> { 0 } }
+            } }
+        );
+        operations.value.append(
+            Style::TranslateFunction { {
+                .x = fromLength(renderer().style().boxReflect()->offset()),
+                .y = Style::LengthPercentage<> { Style::Length<> { 0 } }
+            } }
+        );
         break;
     }
-    newStyle.setTransform(TransformOperations { WTFMove(operations) });
+    newStyle.setTransform(Style::TransformProperty { { WTFMove(operations) } });
 
     // Map in our mask.
     newStyle.setMaskBorder(renderer().style().boxReflect()->mask());

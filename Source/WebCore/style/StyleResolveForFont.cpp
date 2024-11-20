@@ -306,7 +306,7 @@ static ResolvedFontSize fontSizeFromUnresolvedFontSize(const CSSPropertyParserHe
             return { .size = 0.0f, .keyword = CSSValueInvalid };
         },
         [&](const CSS::LengthPercentage<CSS::Nonnegative>& lengthPercentage) -> ResolvedFontSize {
-            return WTF::switchOn(lengthPercentage.value,
+            return WTF::switchOn(lengthPercentage,
                 [&](const CSS::LengthPercentageRaw<CSS::Nonnegative>& lengthPercentage) -> ResolvedFontSize {
                     if (lengthPercentage.type == CSSUnitType::CSS_PERCENTAGE) {
                         return {

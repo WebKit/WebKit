@@ -26,7 +26,7 @@
 
 #include "LengthPoint.h"
 #include "RenderStyleConstants.h"
-#include "TransformOperations.h"
+#include "StyleTransformProperty.h"
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
@@ -41,11 +41,11 @@ public:
 
     bool operator==(const StyleTransformData&) const;
     
-    bool hasTransform() const { return operations.size(); }
+    bool hasTransform() const { return !transform.isNone(); }
 
     LengthPoint originXY() const { return { x, y }; }
 
-    TransformOperations operations;
+    Style::TransformProperty transform;
     Length x;
     Length y;
     float z;

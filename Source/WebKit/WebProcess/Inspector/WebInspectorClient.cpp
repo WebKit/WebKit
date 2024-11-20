@@ -202,15 +202,14 @@ void WebInspectorClient::showPaintRect(const FloatRect& rect)
     paintLayer->setSize(rect.size());
     paintLayer->setBackgroundColor(Color::red.colorWithAlphaByte(51));
 
-    KeyframeValueList fadeKeyframes(AnimatedProperty::Opacity);
-    fadeKeyframes.insert(makeUnique<FloatAnimationValue>(0, 1));
-
-    fadeKeyframes.insert(makeUnique<FloatAnimationValue>(0.25, 0));
+    KeyframeValueList<FloatAnimationValue> fadeKeyframes(GraphicsLayerAnimationProperty::Opacity);
+    fadeKeyframes.insert(FloatAnimationValue(0, 1));
+    fadeKeyframes.insert(FloatAnimationValue(0.25, 0));
     
     Ref opacityAnimation = Animation::create();
     opacityAnimation->setDuration(0.25);
 
-    paintLayer->addAnimation(fadeKeyframes, FloatSize(), opacityAnimation.ptr(), "opacity"_s, 0);
+    paintLayer->addAnimation(fadeKeyframes, opacityAnimation.ptr(), "opacity"_s, Seconds(0));
     
     GraphicsLayer& rawLayer = paintLayer.get();
     m_paintRectLayers.add(WTFMove(paintLayer));

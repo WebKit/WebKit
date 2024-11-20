@@ -176,8 +176,8 @@ public:
     void contentChanged(ContentChangeType);
 
     // Interface to start, finish, suspend and resume animations
-    bool startAnimation(double timeOffset, const Animation&, const BlendingKeyframes&);
-    void animationPaused(double timeOffset, const String& name);
+    bool startAnimation(Seconds timeOffset, const Animation&, const BlendingKeyframes&);
+    void animationPaused(Seconds timeOffset, const String& name);
     void animationFinished(const String& name);
     void transformRelatedPropertyDidChange();
     void suspendAnimations(MonotonicTime = MonotonicTime());
@@ -255,7 +255,7 @@ public:
 
     LayoutSize subpixelOffsetFromRenderer() const { return m_subpixelOffsetFromRenderer; }
 
-    TransformationMatrix transformMatrixForProperty(AnimatedProperty) const final;
+    TransformationMatrix transformMatrixForProperty(GraphicsLayerAnimationProperty) const final;
 
     void dumpProperties(const GraphicsLayer*, TextStream&, OptionSet<LayerTreeAsTextOptions>) const final;
 
@@ -406,8 +406,8 @@ private:
     
     void paintDebugOverlays(const GraphicsLayer*, GraphicsContext&);
 
-    static CSSPropertyID graphicsLayerToCSSProperty(AnimatedProperty);
-    static AnimatedProperty cssToGraphicsLayerProperty(CSSPropertyID);
+    static CSSPropertyID graphicsLayerToCSSProperty(GraphicsLayerAnimationProperty);
+    static GraphicsLayerAnimationProperty cssToGraphicsLayerProperty(CSSPropertyID);
 
     bool canIssueSetNeedsDisplay() const { return !paintsIntoWindow() && !paintsIntoCompositedAncestor(); }
     LayoutRect computeParentGraphicsLayerRect(const RenderLayer* compositedAncestor) const;

@@ -34,11 +34,15 @@ class CSSFunctionValue;
 
 template<typename> class ExceptionOr;
 
-class CSSTranslate : public CSSTransformComponent {
+class CSSTranslate final : public CSSTransformComponent {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSTranslate);
 public:
     static ExceptionOr<Ref<CSSTranslate>> create(Ref<CSSNumericValue> x, Ref<CSSNumericValue> y, RefPtr<CSSNumericValue> z);
-    static ExceptionOr<Ref<CSSTranslate>> create(CSSFunctionValue&);
+    static ExceptionOr<Ref<CSSTranslate>> create(CSS::Translate3D);
+    static ExceptionOr<Ref<CSSTranslate>> create(CSS::Translate);
+    static ExceptionOr<Ref<CSSTranslate>> create(CSS::TranslateX);
+    static ExceptionOr<Ref<CSSTranslate>> create(CSS::TranslateY);
+    static ExceptionOr<Ref<CSSTranslate>> create(CSS::TranslateZ);
 
     const CSSNumericValue& x() const { return m_x.get(); }
     const CSSNumericValue& y() const { return m_y.get(); }
@@ -51,7 +55,7 @@ public:
     void serialize(StringBuilder&) const final;
     ExceptionOr<Ref<DOMMatrix>> toMatrix() final;
 
-    RefPtr<CSSValue> toCSSValue() const final;
+    std::optional<CSS::TransformFunction> toCSS() const final;
 
 private:
     CSSTranslate(CSSTransformComponent::Is2D, Ref<CSSNumericValue>, Ref<CSSNumericValue>, Ref<CSSNumericValue>);

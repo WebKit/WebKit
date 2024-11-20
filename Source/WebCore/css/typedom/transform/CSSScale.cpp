@@ -30,10 +30,10 @@
 #include "config.h"
 #include "CSSScale.h"
 
-#include "CSSFunctionValue.h"
 #include "CSSMathValue.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericValue.h"
+#include "CSSPrimitiveNumericTypes+CSSOMConversion.h"
 #include "CSSStyleValueFactory.h"
 #include "CSSUnitValue.h"
 #include "CSSUnits.h"
@@ -63,54 +63,95 @@ ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSNumberish x, CSSNumberish y, std:
     return adoptRef(*new CSSScale(z ? Is2D::No : Is2D::Yes, WTFMove(rectifiedX), WTFMove(rectifiedY), WTFMove(rectifiedZ)));
 }
 
-ExceptionOr<Ref<CSSScale>> CSSScale::create(CSSFunctionValue& cssFunctionValue)
+static ExceptionOr<Ref<CSSNumericValue>> reifyScaleNumber(const CSS::NumberOrPercentageResolvedToNumber& numeric)
 {
-    auto makeScale = [&](const Function<ExceptionOr<Ref<CSSScale>>(Vector<RefPtr<CSSNumericValue>>&&)>& create, size_t minNumberOfComponents, std::optional<size_t> maxNumberOfComponents = std::nullopt) -> ExceptionOr<Ref<CSSScale>> {
-        Vector<RefPtr<CSSNumericValue>> components;
-        for (auto& componentCSSValue : cssFunctionValue) {
-            auto valueOrException = CSSStyleValueFactory::reifyValue(componentCSSValue, std::nullopt);
-            if (valueOrException.hasException())
-                return valueOrException.releaseException();
-            RefPtr numericValue = dynamicDowncast<CSSNumericValue>(valueOrException.releaseReturnValue());
-            if (!numericValue)
-                return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
-            components.append(WTFMove(numericValue));
-        }
-        if (!maxNumberOfComponents)
-            maxNumberOfComponents = minNumberOfComponents;
-        auto numberOfComponents = components.size();
-        if (numberOfComponents < minNumberOfComponents || numberOfComponents > maxNumberOfComponents) {
-            ASSERT_NOT_REACHED();
-            return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
-        }
-        return create(WTFMove(components));
-    };
+    // CSSScale only supports "number" types. Convert any raw percentage values ("as if" done at parse) and throw for
+    // any percentage calc() values.
 
-    switch (cssFunctionValue.name()) {
-    case CSSValueScaleX:
-        return makeScale([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSScale::create(components[0], CSSNumericFactory::number(1), std::nullopt);
-        }, 1);
-    case CSSValueScaleY:
-        return makeScale([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSScale::create(CSSNumericFactory::number(1), components[0], std::nullopt);
-        }, 1);
-    case CSSValueScaleZ:
-        return makeScale([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSScale::create(CSSNumericFactory::number(1), CSSNumericFactory::number(1), components[0]);
-        }, 1);
-    case CSSValueScale:
-        return makeScale([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSScale::create(components[0], components.size() == 2 ? components[1] : components[0], std::nullopt);
-        }, 1, 2);
-    case CSSValueScale3d:
-        return makeScale([](Vector<RefPtr<CSSNumericValue>>&& components) {
-            return CSSScale::create(components[0], components[1], components[2]);
-        }, 3);
-    default:
-        ASSERT_NOT_REACHED();
-        return CSSScale::create(CSSNumericFactory::number(1), CSSNumericFactory::number(1), std::nullopt);
-    }
+    return WTF::switchOn(numeric.value,
+        [](const CSS::Number<>& number) -> ExceptionOr<Ref<CSSNumericValue>> {
+            return CSSNumericFactory::reifyNumeric(number);
+        },
+        [](const CSS::Percentage<>& percentage) -> ExceptionOr<Ref<CSSNumericValue>> {
+            if (auto raw = percentage.raw())
+                return static_reference_cast<CSSNumericValue>(CSSNumericFactory::number(raw->value / 100.0));
+            return Exception { ExceptionCode::TypeError };
+        }
+    );
+}
+
+ExceptionOr<Ref<CSSScale>> CSSScale::create(CSS::Scale3D scale3D)
+{
+    auto x = reifyScaleNumber(scale3D.x);
+    if (x.hasException())
+        return x.releaseException();
+    auto y = reifyScaleNumber(scale3D.y);
+    if (y.hasException())
+        return y.releaseException();
+    auto z = reifyScaleNumber(scale3D.z);
+    if (z.hasException())
+        return z.releaseException();
+
+    return adoptRef(*new CSSScale(Is2D::No,
+        x.releaseReturnValue(),
+        y.releaseReturnValue(),
+        z.releaseReturnValue())
+    );
+}
+
+ExceptionOr<Ref<CSSScale>> CSSScale::create(CSS::Scale scale)
+{
+    auto x = reifyScaleNumber(scale.x);
+    if (x.hasException())
+        return x.releaseException();
+    auto y = scale.y ? reifyScaleNumber(*scale.y) : x;
+    if (y.hasException())
+        return y.releaseException();
+
+    return adoptRef(*new CSSScale(Is2D::Yes,
+        x.releaseReturnValue(),
+        y.releaseReturnValue(),
+        CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER))
+    );
+}
+
+ExceptionOr<Ref<CSSScale>> CSSScale::create(CSS::ScaleX scaleX)
+{
+    auto x = reifyScaleNumber(scaleX.value);
+    if (x.hasException())
+        return x.releaseException();
+
+    return adoptRef(*new CSSScale(Is2D::Yes,
+        x.releaseReturnValue(),
+        CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER),
+        CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER))
+    );
+}
+
+ExceptionOr<Ref<CSSScale>> CSSScale::create(CSS::ScaleY scaleY)
+{
+    auto y = reifyScaleNumber(scaleY.value);
+    if (y.hasException())
+        return y.releaseException();
+
+    return adoptRef(*new CSSScale(Is2D::Yes,
+        CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER),
+        y.releaseReturnValue(),
+        CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER))
+    );
+}
+
+ExceptionOr<Ref<CSSScale>> CSSScale::create(CSS::ScaleZ scaleZ)
+{
+    auto z = reifyScaleNumber(scaleZ.value);
+    if (z.hasException())
+        return z.releaseException();
+
+    return adoptRef(*new CSSScale(Is2D::No,
+        CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER),
+        CSSUnitValue::create(1.0, CSSUnitType::CSS_NUMBER),
+        z.releaseReturnValue())
+    );
 }
 
 CSSScale::CSSScale(CSSTransformComponent::Is2D is2D, Ref<CSSNumericValue> x, Ref<CSSNumericValue> y, Ref<CSSNumericValue> z)
@@ -172,21 +213,23 @@ ExceptionOr<Ref<DOMMatrix>> CSSScale::toMatrix()
     return { DOMMatrix::create(WTFMove(matrix), is2D() ? DOMMatrixReadOnly::Is2D::Yes : DOMMatrixReadOnly::Is2D::No) };
 }
 
-RefPtr<CSSValue> CSSScale::toCSSValue() const
+std::optional<CSS::TransformFunction> CSSScale::toCSS() const
 {
-    auto x = m_x->toCSSValue();
-    auto y = m_y->toCSSValue();
-    if (!x || !y)
-        return nullptr;
+    auto x = CSS::convertFromCSSOMValue<CSS::Number<>>(m_x);
+    if (!x)
+        return { };
+    auto y = CSS::convertFromCSSOMValue<CSS::Number<>>(m_y);
+    if (!y)
+        return { };
 
     if (is2D())
-        return CSSFunctionValue::create(CSSValueScale, x.releaseNonNull(), y.releaseNonNull());
+        return CSS::TransformFunction { CSS::ScaleFunction { { { WTFMove(*x) }, CSS::NumberOrPercentageResolvedToNumber { WTFMove(*y) } } } };
 
-    auto z = m_z->toCSSValue();
+    auto z = CSS::convertFromCSSOMValue<CSS::Number<>>(m_z);
     if (!z)
-        return nullptr;
+        return { };
 
-    return CSSFunctionValue::create(CSSValueScale3d, x.releaseNonNull(), y.releaseNonNull(), z.releaseNonNull());
+    return CSS::TransformFunction { CSS::Scale3DFunction { { { WTFMove(*x) }, { WTFMove(*y) }, { WTFMove(*z) } } } };
 }
 
 } // namespace WebCore

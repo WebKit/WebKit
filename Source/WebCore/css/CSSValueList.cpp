@@ -298,6 +298,12 @@ IterationStatus CSSValueContainingVector::customVisitChildren(const Function<Ite
     return IterationStatus::Continue;
 }
 
+void CSSValueContainingVector::customCollectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
+{
+    for (auto& value : *this)
+        value.collectComputedStyleDependencies(dependencies);
+}
+
 } // namespace WebCore
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

@@ -67,14 +67,11 @@
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "RenderViewTransitionCapture.h"
-#include "RotateTransformOperation.h"
 #include "SVGGraphicsElement.h"
-#include "ScaleTransformOperation.h"
 #include "ScrollingConstraints.h"
 #include "Settings.h"
 #include "TiledBacking.h"
 #include "TransformState.h"
-#include "TranslateTransformOperation.h"
 #include "ViewTransition.h"
 #include "WillChangeData.h"
 #include <wtf/HexNumber.h>
@@ -3739,17 +3736,17 @@ bool RenderLayerCompositor::requiresCompositingForAnimation(RenderLayerModelObje
 static bool styleHas3DTransformOperation(const RenderStyle& style)
 {
     return style.transform().has3DOperation()
-        || (style.translate() && style.translate()->is3DOperation())
-        || (style.scale() && style.scale()->is3DOperation())
-        || (style.rotate() && style.rotate()->is3DOperation());
+        || style.translate().has3DOperation()
+        || style.scale().has3DOperation()
+        || style.rotate().has3DOperation();
 }
 
 static bool styleTransformOperationsAreRepresentableIn2D(const RenderStyle& style)
 {
     return style.transform().isRepresentableIn2D()
-        && (!style.translate() || style.translate()->isRepresentableIn2D())
-        && (!style.scale() || style.scale()->isRepresentableIn2D())
-        && (!style.rotate() || style.rotate()->isRepresentableIn2D());
+        && style.translate().isRepresentableIn2D()
+        && style.scale().isRepresentableIn2D()
+        && style.rotate().isRepresentableIn2D();
 }
 
 bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObject& renderer) const
@@ -3758,7 +3755,7 @@ bool RenderLayerCompositor::requiresCompositingForTransform(RenderLayerModelObje
         return false;
 
     // Note that we ask the renderer if it has a transform, because the style may have transforms,
-    // but the renderer may be an inline that doesn't suppport them.
+    // but the renderer may be an inline that doesn't support them.
     if (!renderer.isTransformed())
         return false;
 

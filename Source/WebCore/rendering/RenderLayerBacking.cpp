@@ -81,6 +81,10 @@
 #include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "StyleResolver.h"
+#include "StyleRotateProperty.h"
+#include "StyleScaleProperty.h"
+#include "StyleTransformProperty.h"
+#include "StyleTranslateProperty.h"
 #include "Styleable.h"
 #include "TiledBacking.h"
 #include "ViewTransition.h"
@@ -1708,9 +1712,9 @@ static bool layerRendererStyleHas3DTransformOperation(RenderLayer& layer)
         renderer = downcast<RenderLayerModelObject>(renderer->parent());
     const RenderStyle& style = renderer->style();
     return style.transform().has3DOperation()
-        || (style.translate() && style.translate()->is3DOperation())
-        || (style.scale() && style.scale()->is3DOperation())
-        || (style.rotate() && style.rotate()->is3DOperation());
+        || style.translate().has3DOperation()
+        || style.scale().has3DOperation()
+        || style.rotate().has3DOperation();
 }
 
 void RenderLayerBacking::updateAfterDescendants()
@@ -4058,7 +4062,7 @@ void RenderLayerBacking::verifyNotPainting()
 }
 #endif
 
-bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& animation, const BlendingKeyframes& keyframes)
+bool RenderLayerBacking::startAnimation(Seconds timeOffset, const Animation& animation, const BlendingKeyframes& keyframes)
 {
     if (renderer().capturedInViewTransition())
         return false;
@@ -4078,13 +4082,17 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
     if (!hasOpacity && !hasRotate && !hasScale && !hasTranslate && !hasTransform && !hasFilter && !hasBackdropFilter)
         return false;
 
-    KeyframeValueList rotateVector(AnimatedProperty::Rotate);
-    KeyframeValueList scaleVector(AnimatedProperty::Scale);
-    KeyframeValueList translateVector(AnimatedProperty::Translate);
-    KeyframeValueList transformVector(AnimatedProperty::Transform);
-    KeyframeValueList opacityVector(AnimatedProperty::Opacity);
-    KeyframeValueList filterVector(AnimatedProperty::Filter);
-    KeyframeValueList backdropFilterVector(AnimatedProperty::WebkitBackdropFilter);
+    KeyframeValueList<TransformAnimationValue> rotateVector(GraphicsLayerAnimationProperty::Rotate);
+    KeyframeValueList<TransformAnimationValue> scaleVector(GraphicsLayerAnimationProperty::Scale);
+    KeyframeValueList<TransformAnimationValue> translateVector(GraphicsLayerAnimationProperty::Translate);
+    KeyframeValueList<TransformAnimationValue> transformVector(GraphicsLayerAnimationProperty::Transform);
+    KeyframeValueList<FloatAnimationValue> opacityVector(GraphicsLayerAnimationProperty::Opacity);
+    KeyframeValueList<FilterAnimationValue> filterVector(GraphicsLayerAnimationProperty::Filter);
+    KeyframeValueList<FilterAnimationValue> backdropFilterVector(GraphicsLayerAnimationProperty::WebkitBackdropFilter);
+
+    auto referenceBoxRect = renderer().transformReferenceBoxRect(renderer().style());
+    if (!renderer().isSVGLayerAwareRenderer())
+        referenceBoxRect = snappedIntRect(LayoutRect(referenceBoxRect));
 
     for (auto& currentKeyframe : keyframes) {
         const RenderStyle* keyframeStyle = currentKeyframe.style();
@@ -4093,55 +4101,51 @@ bool RenderLayerBacking::startAnimation(double timeOffset, const Animation& anim
         if (!keyframeStyle)
             continue;
             
-        auto* tf = currentKeyframe.timingFunction();
+        auto* timingFunction = currentKeyframe.timingFunction();
 
         if (currentKeyframe.animatesProperty(CSSPropertyRotate))
-            rotateVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->rotate(), tf));
+            rotateVector.insert(TransformAnimationValue(offset, Style::toPlatform(keyframeStyle->rotate(), referenceBoxRect.size()), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyScale))
-            scaleVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->scale(), tf));
+            scaleVector.insert(TransformAnimationValue(offset, Style::toPlatform(keyframeStyle->scale(), referenceBoxRect.size()), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyTranslate))
-            translateVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->translate(), tf));
+            translateVector.insert(TransformAnimationValue(offset, Style::toPlatform(keyframeStyle->translate(), referenceBoxRect.size()), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyTransform))
-            transformVector.insert(makeUnique<TransformAnimationValue>(offset, keyframeStyle->transform(), tf));
+            transformVector.insert(TransformAnimationValue(offset, Style::toPlatform(keyframeStyle->transform(), referenceBoxRect.size()), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyOpacity))
-            opacityVector.insert(makeUnique<FloatAnimationValue>(offset, keyframeStyle->opacity(), tf));
+            opacityVector.insert(FloatAnimationValue(offset, keyframeStyle->opacity(), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyFilter))
-            filterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->filter(), tf));
+            filterVector.insert(FilterAnimationValue(offset, keyframeStyle->filter(), timingFunction));
 
         if (currentKeyframe.animatesProperty(CSSPropertyWebkitBackdropFilter) || currentKeyframe.animatesProperty(CSSPropertyBackdropFilter))
-            backdropFilterVector.insert(makeUnique<FilterAnimationValue>(offset, keyframeStyle->backdropFilter(), tf));
+            backdropFilterVector.insert(FilterAnimationValue(offset, keyframeStyle->backdropFilter(), timingFunction));
     }
 
     bool didAnimate = false;
 
-    auto referenceBoxRect = renderer().transformReferenceBoxRect(renderer().style());
-    if (!renderer().isSVGLayerAwareRenderer())
-        referenceBoxRect = snappedIntRect(LayoutRect(referenceBoxRect));
-
-    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasRotate && m_graphicsLayer->addAnimation(rotateVector, &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasScale && m_graphicsLayer->addAnimation(scaleVector, &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasTranslate && m_graphicsLayer->addAnimation(translateVector, &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, referenceBoxRect.size(), &animation, keyframes.animationName(), timeOffset))
+    if (hasTransform && m_graphicsLayer->addAnimation(transformVector, &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, IntSize { }, &animation, keyframes.animationName(), timeOffset))
+    if (hasOpacity && m_graphicsLayer->addAnimation(opacityVector, &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasFilter && m_graphicsLayer->addAnimation(filterVector, IntSize { }, &animation, keyframes.animationName(), timeOffset))
+    if (hasFilter && m_graphicsLayer->addAnimation(filterVector, &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
-    if (hasBackdropFilter && m_graphicsLayer->addAnimation(backdropFilterVector, IntSize { }, &animation, keyframes.animationName(), timeOffset))
+    if (hasBackdropFilter && m_graphicsLayer->addAnimation(backdropFilterVector, &animation, keyframes.animationName(), timeOffset))
         didAnimate = true;
 
     if (didAnimate) {
@@ -4214,7 +4218,7 @@ bool RenderLayerBacking::updateAcceleratedEffectsAndBaseValues()
 }
 #endif
 
-void RenderLayerBacking::animationPaused(double timeOffset, const String& animationName)
+void RenderLayerBacking::animationPaused(Seconds timeOffset, const String& animationName)
 {
     m_graphicsLayer->pauseAnimation(animationName, timeOffset);
 }
@@ -4289,65 +4293,65 @@ LayoutRect RenderLayerBacking::compositedBoundsIncludingMargin() const
     return boundsIncludingMargin;
 }
 
-CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(AnimatedProperty property)
+CSSPropertyID RenderLayerBacking::graphicsLayerToCSSProperty(GraphicsLayerAnimationProperty property)
 {
     CSSPropertyID cssProperty = CSSPropertyInvalid;
     switch (property) {
-    case AnimatedProperty::Translate:
+    case GraphicsLayerAnimationProperty::Translate:
         cssProperty = CSSPropertyTranslate;
         break;
-    case AnimatedProperty::Scale:
+    case GraphicsLayerAnimationProperty::Scale:
         cssProperty = CSSPropertyScale;
         break;
-    case AnimatedProperty::Rotate:
+    case GraphicsLayerAnimationProperty::Rotate:
         cssProperty = CSSPropertyRotate;
         break;
-    case AnimatedProperty::Transform:
+    case GraphicsLayerAnimationProperty::Transform:
         cssProperty = CSSPropertyTransform;
         break;
-    case AnimatedProperty::Opacity:
+    case GraphicsLayerAnimationProperty::Opacity:
         cssProperty = CSSPropertyOpacity;
         break;
-    case AnimatedProperty::BackgroundColor:
+    case GraphicsLayerAnimationProperty::BackgroundColor:
         cssProperty = CSSPropertyBackgroundColor;
         break;
-    case AnimatedProperty::Filter:
+    case GraphicsLayerAnimationProperty::Filter:
         cssProperty = CSSPropertyFilter;
         break;
-    case AnimatedProperty::WebkitBackdropFilter:
+    case GraphicsLayerAnimationProperty::WebkitBackdropFilter:
         cssProperty = CSSPropertyWebkitBackdropFilter;
         break;
-    case AnimatedProperty::Invalid:
+    case GraphicsLayerAnimationProperty::Invalid:
         ASSERT_NOT_REACHED();
     }
     return cssProperty;
 }
 
-AnimatedProperty RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID cssProperty)
+GraphicsLayerAnimationProperty RenderLayerBacking::cssToGraphicsLayerProperty(CSSPropertyID cssProperty)
 {
     switch (cssProperty) {
     case CSSPropertyTranslate:
-        return AnimatedProperty::Translate;
+        return GraphicsLayerAnimationProperty::Translate;
     case CSSPropertyScale:
-        return AnimatedProperty::Scale;
+        return GraphicsLayerAnimationProperty::Scale;
     case CSSPropertyRotate:
-        return AnimatedProperty::Rotate;
+        return GraphicsLayerAnimationProperty::Rotate;
     case CSSPropertyTransform:
-        return AnimatedProperty::Transform;
+        return GraphicsLayerAnimationProperty::Transform;
     case CSSPropertyOpacity:
-        return AnimatedProperty::Opacity;
+        return GraphicsLayerAnimationProperty::Opacity;
     case CSSPropertyBackgroundColor:
-        return AnimatedProperty::BackgroundColor;
+        return GraphicsLayerAnimationProperty::BackgroundColor;
     case CSSPropertyFilter:
-        return AnimatedProperty::Filter;
+        return GraphicsLayerAnimationProperty::Filter;
     case CSSPropertyBackdropFilter:
     case CSSPropertyWebkitBackdropFilter:
-        return AnimatedProperty::WebkitBackdropFilter;
+        return GraphicsLayerAnimationProperty::WebkitBackdropFilter;
     default:
         // It's fine if we see other css properties here; they are just not accelerated.
         break;
     }
-    return AnimatedProperty::Invalid;
+    return GraphicsLayerAnimationProperty::Invalid;
 }
 
 CompositingLayerType RenderLayerBacking::compositingLayerType() const
@@ -4418,27 +4422,27 @@ TextStream& operator<<(TextStream& ts, const RenderLayerBacking& backing)
     return ts;
 }
 
-TransformationMatrix RenderLayerBacking::transformMatrixForProperty(AnimatedProperty property) const
+TransformationMatrix RenderLayerBacking::transformMatrixForProperty(GraphicsLayerAnimationProperty property) const
 {
-    TransformationMatrix matrix;
-
-    auto applyTransformOperation = [&](TransformOperation* operation) {
-        if (operation)
-            operation->apply(matrix, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size());
+    auto computeTransformOperation = [&](const auto& op) -> TransformationMatrix {
+        return Style::computeTransform(op, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size());
     };
 
-    if (property == AnimatedProperty::Translate)
-        applyTransformOperation(renderer().style().translate());
-    else if (property == AnimatedProperty::Scale)
-        applyTransformOperation(renderer().style().scale());
-    else if (property == AnimatedProperty::Rotate)
-        applyTransformOperation(renderer().style().rotate());
-    else if (property == AnimatedProperty::Transform)
-        renderer().style().transform().apply(matrix, snappedIntRect(m_owningLayer.rendererBorderBoxRect()).size());
-    else
-        ASSERT_NOT_REACHED();
+    switch (property) {
+    case GraphicsLayerAnimationProperty::Translate:
+        return computeTransformOperation(renderer().style().translate());
+    case GraphicsLayerAnimationProperty::Scale:
+        return computeTransformOperation(renderer().style().scale());
+    case GraphicsLayerAnimationProperty::Rotate:
+        return computeTransformOperation(renderer().style().rotate());
+    case GraphicsLayerAnimationProperty::Transform:
+        return computeTransformOperation(renderer().style().transform());
+    default:
+        break;
+    }
 
-    return matrix;
+    ASSERT_NOT_REACHED();
+    return { };
 }
 
 void RenderLayerBacking::purgeFrontBufferForTesting()

@@ -33,8 +33,6 @@
 #include "NinePieceImage.h"
 #include "OffsetRotation.h"
 #include "PathOperation.h"
-#include "RotateTransformOperation.h"
-#include "ScaleTransformOperation.h"
 #include "ScopedName.h"
 #include "ScrollAxis.h"
 #include "ScrollTimeline.h"
@@ -43,13 +41,15 @@
 #include "ShapeValue.h"
 #include "StyleColor.h"
 #include "StyleContentAlignmentData.h"
+#include "StyleRotateProperty.h"
+#include "StyleScaleProperty.h"
 #include "StyleScrollSnapPoints.h"
 #include "StyleSelfAlignmentData.h"
 #include "StyleTextEdge.h"
+#include "StyleTranslateProperty.h"
 #include "TextDecorationThickness.h"
 #include "TimelineScope.h"
 #include "TouchAction.h"
-#include "TranslateTransformOperation.h"
 #include "ViewTimeline.h"
 #include "ViewTransitionName.h"
 #include "WebAnimationTypes.h"
@@ -156,9 +156,9 @@ public:
     DataRef<StyleCustomPropertyData> customProperties;
     HashSet<AtomString> customPaintWatchedProperties;
 
-    RefPtr<RotateTransformOperation> rotate;
-    RefPtr<ScaleTransformOperation> scale;
-    RefPtr<TranslateTransformOperation> translate;
+    Style::RotateProperty rotate;
+    Style::ScaleProperty scale;
+    Style::TranslateProperty translate;
     RefPtr<PathOperation> offsetPath;
 
     Vector<Style::ScopedName> containerNames;

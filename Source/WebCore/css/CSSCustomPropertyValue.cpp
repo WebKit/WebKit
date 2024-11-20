@@ -30,10 +30,12 @@
 #include "CSSFunctionValue.h"
 #include "CSSMarkup.h"
 #include "CSSParserIdioms.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSTokenizer.h"
 #include "ColorSerialization.h"
 #include "ComputedStyleExtractor.h"
 #include "RenderStyle.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
 #include <wtf/NeverDestroyed.h>
 
 namespace WebCore {
@@ -91,10 +93,7 @@ String CSSCustomPropertyValue::customCSSText() const
         }, [&](const String& value) {
             return value;
         }, [&](const TransformSyntaxValue& value) {
-            auto cssValue = transformOperationAsCSSValue(value.transform, RenderStyle::defaultStyle());
-            if (!cssValue)
-                return emptyString();
-            return cssValue->cssText();
+            return CSS::serializationForCSS(Style::toCSS(value.transform, RenderStyle::defaultStyle()));
         });
     };
 

@@ -54,6 +54,8 @@ public:
     RefPtr<CSSValue> toCSSValueWithProperty(CSSPropertyID) const final;
     std::optional<CSSCalc::Child> toCalcTreeNode() const final;
 
+    template<typename T> std::optional<T> toCSS() const;
+
 private:
     CSSUnitValue(double, CSSUnitType);
 
@@ -64,6 +66,14 @@ private:
     double m_value;
     const CSSUnitType m_unit;
 };
+
+template<typename T> std::optional<T> CSSUnitValue::toCSS() const
+{
+    // FIXME: Refactor MetaConsumerDefinitions to validate and perform calc() wrapping.
+    if (!T::isSupported(m_unit))
+        return { };
+    return typename T::Raw { m_unit, m_value };
+}
 
 } // namespace WebCore
 

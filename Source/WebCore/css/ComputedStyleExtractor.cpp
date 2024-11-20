@@ -49,10 +49,13 @@
 #include "CSSRectValue.h"
 #include "CSSReflectValue.h"
 #include "CSSRegisteredCustomProperty.h"
+#include "CSSRotatePropertyValue.h"
+#include "CSSScalePropertyValue.h"
 #include "CSSScrollValue.h"
 #include "CSSShadowValue.h"
 #include "CSSTimingFunctionValue.h"
-#include "CSSTransformListValue.h"
+#include "CSSTransformPropertyValue.h"
+#include "CSSTranslatePropertyValue.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
 #include "CSSValuePool.h"
@@ -68,7 +71,6 @@
 #include "GridPositionsResolver.h"
 #include "HTMLFrameOwnerElement.h"
 #include "NodeRenderStyle.h"
-#include "PerspectiveTransformOperation.h"
 #include "PseudoElementIdentifier.h"
 #include "QuotesData.h"
 #include "RenderBlock.h"
@@ -76,12 +78,9 @@
 #include "RenderElementInlines.h"
 #include "RenderGrid.h"
 #include "RenderInline.h"
-#include "RotateTransformOperation.h"
 #include "SVGElement.h"
 #include "SVGRenderStyle.h"
-#include "ScaleTransformOperation.h"
 #include "ScrollTimeline.h"
-#include "SkewTransformOperation.h"
 #include "StyleColorScheme.h"
 #include "StylePathData.h"
 #include "StylePrimitiveNumericTypes+Conversions.h"
@@ -89,11 +88,14 @@
 #include "StylePropertyShorthandFunctions.h"
 #include "StyleReflection.h"
 #include "StyleResolver.h"
+#include "StyleRotateProperty.h"
+#include "StyleScaleProperty.h"
 #include "StyleScope.h"
+#include "StyleTransformProperty.h"
+#include "StyleTranslateProperty.h"
 #include "Styleable.h"
 #include "TimelineRange.h"
 #include "TransformOperationData.h"
-#include "TranslateTransformOperation.h"
 #include "ViewTimeline.h"
 #include "WebAnimationUtilities.h"
 
@@ -829,216 +831,52 @@ static LayoutRect sizingBox(RenderObject& renderer)
     return box->style().boxSizing() == BoxSizing::BorderBox ? box->borderBoxRect() : box->computedCSSContentBoxRect();
 }
 
-Ref<CSSFunctionValue> ComputedStyleExtractor::matrixTransformValue(const TransformationMatrix& transform, const RenderStyle& style)
+Ref<CSSValue> ComputedStyleExtractor::matrixTransformValue(const TransformationMatrix& transform, const RenderStyle& style)
 {
-    auto zoom = style.usedZoom();
-    if (transform.isAffine()) {
-        double values[] = { transform.a(), transform.b(), transform.c(), transform.d(), transform.e() / zoom, transform.f() / zoom };
-        CSSValueListBuilder arguments;
-        for (auto value : values)
-            arguments.append(CSSPrimitiveValue::create(value));
-        return CSSFunctionValue::create(CSSValueMatrix, WTFMove(arguments));
-    }
-
-    double values[] = {
-        transform.m11(), transform.m12(), transform.m13(), transform.m14() * zoom,
-        transform.m21(), transform.m22(), transform.m23(), transform.m24() * zoom,
-        transform.m31(), transform.m32(), transform.m33(), transform.m34() * zoom,
-        transform.m41() / zoom, transform.m42() / zoom, transform.m43() / zoom, transform.m44()
-    };
-    CSSValueListBuilder arguments;
-    for (auto value : values)
-        arguments.append(CSSPrimitiveValue::create(value));
-    return CSSFunctionValue::create(CSSValueMatrix3d, WTFMove(arguments));
-}
-
-RefPtr<CSSFunctionValue> transformOperationAsCSSValue(const TransformOperation& operation, const RenderStyle& style)
-{
-    auto translateLengthAsCSSValue = [&](const Length& length) {
-        if (length.isZero())
-            return CSSPrimitiveValue::create(0, CSSUnitType::CSS_PX);
-        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(length, style);
-    };
-
-    auto includeLength = [](const Length& length) -> bool {
-        return !length.isZero() || length.isPercent();
-    };
-
-    switch (operation.type()) {
-    // translate
-    case TransformOperation::Type::TranslateX:
-        return CSSFunctionValue::create(CSSValueTranslateX, translateLengthAsCSSValue(uncheckedDowncast<TranslateTransformOperation>(operation).x()));
-    case TransformOperation::Type::TranslateY:
-        return CSSFunctionValue::create(CSSValueTranslateY, translateLengthAsCSSValue(uncheckedDowncast<TranslateTransformOperation>(operation).y()));
-    case TransformOperation::Type::TranslateZ:
-        return CSSFunctionValue::create(CSSValueTranslateZ, translateLengthAsCSSValue(uncheckedDowncast<TranslateTransformOperation>(operation).z()));
-    case TransformOperation::Type::Translate:
-    case TransformOperation::Type::Translate3D: {
-        auto& translate = uncheckedDowncast<TranslateTransformOperation>(operation);
-        if (!translate.is3DOperation()) {
-            if (!includeLength(translate.y()))
-                return CSSFunctionValue::create(CSSValueTranslate, translateLengthAsCSSValue(translate.x()));
-            return CSSFunctionValue::create(CSSValueTranslate, translateLengthAsCSSValue(translate.x()),
-                translateLengthAsCSSValue(translate.y()));
-        }
-        return CSSFunctionValue::create(CSSValueTranslate3d,
-            translateLengthAsCSSValue(translate.x()),
-            translateLengthAsCSSValue(translate.y()),
-            translateLengthAsCSSValue(translate.z()));
-    }
-    // scale
-    case TransformOperation::Type::ScaleX:
-        return CSSFunctionValue::create(CSSValueScaleX, CSSPrimitiveValue::create(uncheckedDowncast<ScaleTransformOperation>(operation).x()));
-    case TransformOperation::Type::ScaleY:
-        return CSSFunctionValue::create(CSSValueScaleY, CSSPrimitiveValue::create(uncheckedDowncast<ScaleTransformOperation>(operation).y()));
-    case TransformOperation::Type::ScaleZ:
-        return CSSFunctionValue::create(CSSValueScaleZ, CSSPrimitiveValue::create(uncheckedDowncast<ScaleTransformOperation>(operation).z()));
-    case TransformOperation::Type::Scale:
-    case TransformOperation::Type::Scale3D: {
-        auto& scale = uncheckedDowncast<ScaleTransformOperation>(operation);
-        if (!scale.is3DOperation()) {
-            if (scale.x() == scale.y())
-                return CSSFunctionValue::create(CSSValueScale, CSSPrimitiveValue::create(scale.x()));
-            return CSSFunctionValue::create(CSSValueScale, CSSPrimitiveValue::create(scale.x()),
-                CSSPrimitiveValue::create(scale.y()));
-        }
-        return CSSFunctionValue::create(CSSValueScale3d,
-            CSSPrimitiveValue::create(scale.x()),
-            CSSPrimitiveValue::create(scale.y()),
-            CSSPrimitiveValue::create(scale.z()));
-    }
-    // rotate
-    case TransformOperation::Type::RotateX:
-        return CSSFunctionValue::create(CSSValueRotateX, CSSPrimitiveValue::create(uncheckedDowncast<RotateTransformOperation>(operation).angle(), CSSUnitType::CSS_DEG));
-    case TransformOperation::Type::RotateY:
-        return CSSFunctionValue::create(CSSValueRotateX, CSSPrimitiveValue::create(uncheckedDowncast<RotateTransformOperation>(operation).angle(), CSSUnitType::CSS_DEG));
-    case TransformOperation::Type::RotateZ:
-        return CSSFunctionValue::create(CSSValueRotateZ, CSSPrimitiveValue::create(uncheckedDowncast<RotateTransformOperation>(operation).angle(), CSSUnitType::CSS_DEG));
-    case TransformOperation::Type::Rotate:
-        return CSSFunctionValue::create(CSSValueRotate, CSSPrimitiveValue::create(uncheckedDowncast<RotateTransformOperation>(operation).angle(), CSSUnitType::CSS_DEG));
-    case TransformOperation::Type::Rotate3D: {
-        auto& rotate = uncheckedDowncast<RotateTransformOperation>(operation);
-        return CSSFunctionValue::create(CSSValueRotate3d, CSSPrimitiveValue::create(rotate.x()), CSSPrimitiveValue::create(rotate.y()), CSSPrimitiveValue::create(rotate.z()), CSSPrimitiveValue::create(rotate.angle(), CSSUnitType::CSS_DEG));
-    }
-    // skew
-    case TransformOperation::Type::SkewX:
-        return CSSFunctionValue::create(CSSValueSkewX, CSSPrimitiveValue::create(uncheckedDowncast<SkewTransformOperation>(operation).angleX(), CSSUnitType::CSS_DEG));
-    case TransformOperation::Type::SkewY:
-        return CSSFunctionValue::create(CSSValueSkewY, CSSPrimitiveValue::create(uncheckedDowncast<SkewTransformOperation>(operation).angleY(), CSSUnitType::CSS_DEG));
-    case TransformOperation::Type::Skew: {
-        auto& skew = uncheckedDowncast<SkewTransformOperation>(operation);
-        if (!skew.angleY())
-            return CSSFunctionValue::create(CSSValueSkew, CSSPrimitiveValue::create(skew.angleX(), CSSUnitType::CSS_DEG));
-        return CSSFunctionValue::create(CSSValueSkew, CSSPrimitiveValue::create(skew.angleX(), CSSUnitType::CSS_DEG),
-            CSSPrimitiveValue::create(skew.angleY(), CSSUnitType::CSS_DEG));
-    }
-    // perspective
-    case TransformOperation::Type::Perspective:
-        if (auto perspective = uncheckedDowncast<PerspectiveTransformOperation>(operation).perspective())
-            return CSSFunctionValue::create(CSSValuePerspective, ComputedStyleExtractor::zoomAdjustedPixelValueForLength(*perspective, style));
-        return CSSFunctionValue::create(CSSValuePerspective, CSSPrimitiveValue::create(CSSValueNone));
-    // matrix
-    case TransformOperation::Type::Matrix:
-    case TransformOperation::Type::Matrix3D: {
-        TransformationMatrix transform;
-        operation.apply(transform, { });
-        return ComputedStyleExtractor::matrixTransformValue(transform, style);
-    }
-    case TransformOperation::Type::Identity:
-    case TransformOperation::Type::None:
-        return nullptr;
-    }
-
-    ASSERT_NOT_REACHED();
-    return nullptr;
+    if (transform.isAffine())
+        return CSSTransformPropertyValue::create(Style::toCSS(Style::TransformProperty { Style::MatrixFunction { { transform.toAffineTransform() } } }, style));
+    return CSSTransformPropertyValue::create(Style::toCSS(Style::TransformProperty { Style::Matrix3DFunction { { transform } } }, style));
 }
 
 static Ref<CSSValue> computedTransform(RenderElement* renderer, const RenderStyle& style, ComputedStyleExtractor::PropertyValueType valueType)
 {
     if (!style.hasTransform())
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return CSSTransformPropertyValue::create(CSS::TransformProperty { CSS::None { } });
 
     if (renderer) {
         TransformationMatrix transform;
         style.applyTransform(transform, TransformOperationData(renderer->transformReferenceBoxRect(style), renderer), { });
-        return CSSTransformListValue::create(ComputedStyleExtractor::matrixTransformValue(transform, style));
+        return ComputedStyleExtractor::matrixTransformValue(transform, style);
     }
 
     // https://w3c.github.io/csswg-drafts/css-transforms-1/#serialization-of-the-computed-value
     // If we don't have a renderer, then the value should be "none" if we're asking for the
     // resolved value (such as when calling getComputedStyle()).
     if (valueType == ComputedStyleExtractor::PropertyValueType::Resolved)
-        return CSSPrimitiveValue::create(CSSValueNone);
+        return CSSTransformPropertyValue::create(CSS::TransformProperty { CSS::None { } });
 
-    CSSValueListBuilder list;
-    for (auto& operation : style.transform()) {
-        if (auto functionValue = transformOperationAsCSSValue(operation, style))
-            list.append(functionValue.releaseNonNull());
-    }
-    if (!list.isEmpty())
-        return CSSTransformListValue::create(WTFMove(list));
-
-    return CSSPrimitiveValue::create(CSSValueNone);
+    return CSSTransformPropertyValue::create(Style::toCSS(style.transform(), style));
 }
 
-// https://drafts.csswg.org/css-transforms-2/#propdef-translate
-// Computed value: the keyword none or a pair of computed <length-percentage> values and an absolute length
 static Ref<CSSValue> computedTranslate(RenderObject* renderer, const RenderStyle& style)
 {
-    auto* translate = style.translate();
-    if (!translate || is<RenderInline>(renderer))
-        return CSSPrimitiveValue::create(CSSValueNone);
-
-    auto includeLength = [](const Length& length) {
-        return !length.isZero() || length.isPercent();
-    };
-
-    auto value = [&](const Length& length) {
-        return ComputedStyleExtractor::zoomAdjustedPixelValueForLength(length, style);
-    };
-
-    if (includeLength(translate->z()))
-        return CSSValueList::createSpaceSeparated(value(translate->x()), value(translate->y()), value(translate->z()));
-    if (includeLength(translate->y()))
-        return CSSValueList::createSpaceSeparated(value(translate->x()), value(translate->y()));
-    if (!translate->x().isUndefined() && !translate->x().isEmptyValue())
-        return CSSValueList::createSpaceSeparated(value(translate->x()));
-
-    return CSSPrimitiveValue::create(CSSValueNone);
+    if (is<RenderInline>(renderer))
+        return CSSTranslatePropertyValue::create(CSS::TranslateProperty { CSS::None { } });
+    return CSSTranslatePropertyValue::create(Style::toCSS(style.translate(), style));
 }
 
 static Ref<CSSValue> computedScale(RenderObject* renderer, const RenderStyle& style)
 {
-    auto* scale = style.scale();
-    if (!scale || is<RenderInline>(renderer))
-        return CSSPrimitiveValue::create(CSSValueNone);
-
-    auto value = [](double number) {
-        return CSSPrimitiveValue::create(number);
-    };
-
-    if (scale->z() != 1)
-        return CSSValueList::createSpaceSeparated(value(scale->x()), value(scale->y()), value(scale->z()));
-    if (scale->x() != scale->y())
-        return CSSValueList::createSpaceSeparated(value(scale->x()), value(scale->y()));
-    return CSSValueList::createSpaceSeparated(value(scale->x()));
+    if (is<RenderInline>(renderer))
+        return CSSScalePropertyValue::create(CSS::ScaleProperty { CSS::None { } });
+    return CSSScalePropertyValue::create(Style::toCSS(style.scale(), style));
 }
 
 static Ref<CSSValue> computedRotate(RenderObject* renderer, const RenderStyle& style)
 {
-    auto* rotate = style.rotate();
-    if (!rotate || is<RenderInline>(renderer))
-        return CSSPrimitiveValue::create(CSSValueNone);
-
-    auto angle = CSSPrimitiveValue::create(rotate->angle(), CSSUnitType::CSS_DEG);
-    if (!rotate->is3DOperation() || (!rotate->x() && !rotate->y() && rotate->z()))
-        return angle;
-    if (rotate->x() && !rotate->y() && !rotate->z())
-        return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueX), WTFMove(angle));
-    if (!rotate->x() && rotate->y() && !rotate->z())
-        return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(CSSValueY), WTFMove(angle));
-    return CSSValueList::createSpaceSeparated(CSSPrimitiveValue::create(rotate->x()),
-        CSSPrimitiveValue::create(rotate->y()), CSSPrimitiveValue::create(rotate->z()), WTFMove(angle));
+    if (is<RenderInline>(renderer))
+        return CSSRotatePropertyValue::create(CSS::RotateProperty { CSS::None { } });
+    return CSSRotatePropertyValue::create(Style::toCSS(style.rotate(), style));
 }
 
 static inline Ref<CSSPrimitiveValue> adjustLengthForZoom(const Length& length, const RenderStyle& style, ComputedStyleExtractor::AdjustPixelValuesForComputedStyle adjust)

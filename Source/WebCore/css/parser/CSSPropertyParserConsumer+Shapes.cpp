@@ -47,12 +47,12 @@
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
-template<CSSValueID Name, typename T> CSS::BasicShape toBasicShape(T&& parameters)
+template<CSSValueID Name, typename T> static CSS::BasicShape toBasicShape(T&& parameters)
 {
     return CSS::BasicShape { CSS::FunctionNotation<Name, T> { WTFMove(parameters) } };
 }
 
-template<CSSValueID Name, typename T> std::optional<CSS::BasicShape> toBasicShape(std::optional<T>&& parameters)
+template<CSSValueID Name, typename T> static std::optional<CSS::BasicShape> toBasicShape(std::optional<T>&& parameters)
 {
     if (!parameters)
         return { };

@@ -30,9 +30,9 @@
 #include "config.h"
 #include "CSSSkewY.h"
 
-#include "CSSFunctionValue.h"
 #include "CSSNumericFactory.h"
 #include "CSSNumericValue.h"
+#include "CSSPrimitiveNumericTypes+CSSOMConversion.h"
 #include "CSSStyleValueFactory.h"
 #include "DOMMatrix.h"
 #include "ExceptionOr.h"
@@ -49,25 +49,13 @@ ExceptionOr<Ref<CSSSkewY>> CSSSkewY::create(Ref<CSSNumericValue> ay)
     return adoptRef(*new CSSSkewY(WTFMove(ay)));
 }
 
-ExceptionOr<Ref<CSSSkewY>> CSSSkewY::create(CSSFunctionValue& cssFunctionValue)
+ExceptionOr<Ref<CSSSkewY>> CSSSkewY::create(CSS::SkewY skewY)
 {
-    if (cssFunctionValue.name() != CSSValueSkewY) {
-        ASSERT_NOT_REACHED();
-        return CSSSkewY::create(CSSNumericFactory::deg(0));
-    }
+    auto ay = CSSNumericFactory::reifyNumeric(skewY.value);
+    if (ay.hasException())
+        return ay.releaseException();
 
-    if (cssFunctionValue.size() != 1 || !cssFunctionValue.item(0)) {
-        ASSERT_NOT_REACHED();
-        return Exception { ExceptionCode::TypeError, "Unexpected number of values."_s };
-    }
-
-    auto valueOrException = CSSStyleValueFactory::reifyValue(*cssFunctionValue.item(0), std::nullopt);
-    if (valueOrException.hasException())
-        return valueOrException.releaseException();
-    RefPtr numericValue = dynamicDowncast<CSSNumericValue>(valueOrException.releaseReturnValue());
-    if (!numericValue)
-        return Exception { ExceptionCode::TypeError, "Expected a CSSNumericValue."_s };
-    return CSSSkewY::create(numericValue.releaseNonNull());
+    return adoptRef(*new CSSSkewY(ay.releaseReturnValue()));
 }
 
 CSSSkewY::CSSSkewY(Ref<CSSNumericValue> ay)
@@ -109,14 +97,13 @@ ExceptionOr<Ref<DOMMatrix>> CSSSkewY::toMatrix()
     return { DOMMatrix::create(WTFMove(matrix), DOMMatrixReadOnly::Is2D::Yes) };
 }
 
-RefPtr<CSSValue> CSSSkewY::toCSSValue() const
+std::optional<CSS::TransformFunction> CSSSkewY::toCSS() const
 {
-    auto ay = m_ay->toCSSValue();
+    auto ay = CSS::convertFromCSSOMValue<CSS::Angle<>>(m_ay);
     if (!ay)
-        return nullptr;
-    CSSValueListBuilder arguments;
-    arguments.append(ay.releaseNonNull());
-    return CSSFunctionValue::create(CSSValueSkewY, WTFMove(arguments));
+        return { };
+
+    return CSS::TransformFunction { CSS::SkewYFunction { { WTFMove(*ay) } } };
 }
 
 } // namespace WebCore

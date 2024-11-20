@@ -40,7 +40,7 @@
 #include "CSSStyleImageValue.h"
 #include "CSSStyleValue.h"
 #include "CSSTokenizer.h"
-#include "CSSTransformListValue.h"
+#include "CSSTransformPropertyValue.h"
 #include "CSSTransformValue.h"
 #include "CSSUnitValue.h"
 #include "CSSUnparsedValue.h"
@@ -311,8 +311,10 @@ ExceptionOr<Ref<CSSStyleValue>> CSSStyleValueFactory::reifyValue(const CSSValue&
             CSSTokenizer tokenizer(customPropertyValue->customCSSText());
             return ExceptionOr<Ref<CSSStyleValue>> { CSSUnparsedValue::create(tokenizer.tokenRange()) };
         });
-    } else if (auto* transformList = dynamicDowncast<CSSTransformListValue>(cssValue)) {
-        auto transformValue = CSSTransformValue::create(*transformList);
+    } else if (RefPtr transformProperty = dynamicDowncast<CSSTransformPropertyValue>(cssValue)) {
+        if (transformProperty->transform().isNone())
+            return Ref<CSSStyleValue> { CSSKeywordValue::create(CSS::None { }) };
+        auto transformValue = CSSTransformValue::create(transformProperty->transform().list);
         if (transformValue.hasException())
             return transformValue.releaseException();
         return Ref<CSSStyleValue> { transformValue.releaseReturnValue() };

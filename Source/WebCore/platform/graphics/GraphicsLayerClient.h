@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "GraphicsLayerAnimationProperty.h"
 #include "LayerTreeAsTextOptions.h"
 #include "TiledBacking.h"
 #include "TransformationMatrix.h"
@@ -39,18 +40,6 @@ class GraphicsContext;
 class GraphicsLayer;
 class IntPoint;
 class IntRect;
-
-enum class AnimatedProperty : uint8_t {
-    Invalid,
-    Translate,
-    Scale,
-    Rotate,
-    Transform,
-    Opacity,
-    BackgroundColor,
-    Filter,
-    WebkitBackdropFilter,
-};
 
 enum class GraphicsLayerPaintingPhase {
     Background            = 1 << 0,
@@ -136,7 +125,7 @@ public:
 
     virtual void logFilledVisibleFreshTile(unsigned) { };
 
-    virtual TransformationMatrix transformMatrixForProperty(AnimatedProperty) const { return { }; }
+    virtual TransformationMatrix transformMatrixForProperty(GraphicsLayerAnimationProperty) const { return { }; }
 
     virtual bool layerContainsBitmapOnly(const GraphicsLayer*) const { return false; }
 

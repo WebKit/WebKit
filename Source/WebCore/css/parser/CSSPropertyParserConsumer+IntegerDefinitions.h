@@ -52,7 +52,7 @@ template<typename Integer, typename Validator> struct NumberConsumerForIntegerVa
         if (!Validator::isValid(numberValue, options))
             return std::nullopt;
 
-        return typename Integer::Raw { clampTo<typename Integer::Raw::IntType>(range.consumeIncludingWhitespace().numericValue()) };
+        return typename Integer::Raw { clampTo<typename Integer::Raw::ValueType>(range.consumeIncludingWhitespace().numericValue()) };
     }
 };
 

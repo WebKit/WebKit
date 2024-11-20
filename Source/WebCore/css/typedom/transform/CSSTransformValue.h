@@ -31,15 +31,18 @@
 
 namespace WebCore {
 
+namespace CSS {
+struct TransformList;
+}
+
 class CSSTransformComponent;
-class CSSTransformListValue;
 class DOMMatrix;
 template<typename> class ExceptionOr;
 
 class CSSTransformValue final : public CSSStyleValue {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSTransformValue);
 public:
-    static ExceptionOr<Ref<CSSTransformValue>> create(const CSSTransformListValue&);
+    static ExceptionOr<Ref<CSSTransformValue>> create(const CSS::TransformList&);
     static ExceptionOr<Ref<CSSTransformValue>> create(Vector<Ref<CSSTransformComponent>>&&);
 
     virtual ~CSSTransformValue();

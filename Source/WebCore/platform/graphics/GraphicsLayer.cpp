@@ -33,7 +33,6 @@
 #include "GraphicsLayerContentsDisplayDelegate.h"
 #include "LayoutRect.h"
 #include "MediaPlayerEnums.h"
-#include "RotateTransformOperation.h"
 #include <wtf/HashMap.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -52,11 +51,6 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL(AnimationValue);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatAnimationValue);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(TransformAnimationValue);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(FilterAnimationValue);
-WTF_MAKE_TZONE_ALLOCATED_IMPL(KeyframeValueList);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GraphicsLayer);
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
@@ -96,54 +90,11 @@ String acceleratedEffectPropertyIDAsString(AcceleratedEffectProperty property)
 }
 #endif
 
-String animatedPropertyIDAsString(AnimatedProperty property)
-{
-    switch (property) {
-    case AnimatedProperty::Translate:
-    case AnimatedProperty::Scale:
-    case AnimatedProperty::Rotate:
-    case AnimatedProperty::Transform:
-        return "transform"_s;
-    case AnimatedProperty::Opacity:
-        return "opacity"_s;
-    case AnimatedProperty::BackgroundColor:
-        return "background-color"_s;
-    case AnimatedProperty::Filter:
-        return "filter"_s;
-    case AnimatedProperty::WebkitBackdropFilter:
-        return "backdrop-filter"_s;
-    case AnimatedProperty::Invalid:
-        return "invalid"_s;
-    }
-    ASSERT_NOT_REACHED();
-    return ""_s;
-}
-
 typedef UncheckedKeyHashMap<const GraphicsLayer*, Vector<FloatRect>> RepaintMap;
 static RepaintMap& repaintRectMap()
 {
     static NeverDestroyed<RepaintMap> map;
     return map;
-}
-
-void KeyframeValueList::insert(std::unique_ptr<const AnimationValue> value)
-{
-    for (size_t i = 0; i < m_values.size(); ++i) {
-        const AnimationValue* curValue = m_values[i].get();
-        if (curValue->keyTime() == value->keyTime()) {
-            ASSERT_NOT_REACHED();
-            // insert after
-            m_values.insert(i + 1, WTFMove(value));
-            return;
-        }
-        if (curValue->keyTime() > value->keyTime()) {
-            // insert before
-            m_values.insert(i, WTFMove(value));
-            return;
-        }
-    }
-    
-    m_values.append(WTFMove(value));
 }
 
 #if !USE(CA)
@@ -712,7 +663,7 @@ FloatRect GraphicsLayer::adjustCoverageRectForMovement(const FloatRect& coverage
     return unionRect(coverageRect, expandedRect);
 }
 
-String GraphicsLayer::animationNameForTransition(AnimatedProperty property)
+String GraphicsLayer::animationNameForTransition(GraphicsLayerAnimationProperty property)
 {
     // | is not a valid identifier character in CSS, so this can never conflict with a keyframe identifier.
     return makeString("-|transition"_s, static_cast<int>(property), '-');
@@ -784,44 +735,6 @@ void GraphicsLayer::updateDebugIndicators()
 void GraphicsLayer::setZPosition(float position)
 {
     m_zPosition = position;
-}
-
-static inline const FilterOperations& filterOperationsAt(const KeyframeValueList& valueList, size_t index)
-{
-    return static_cast<const FilterAnimationValue&>(valueList.at(index)).value();
-}
-
-int GraphicsLayer::validateFilterOperations(const KeyframeValueList& valueList)
-{
-    ASSERT(valueList.property() == AnimatedProperty::Filter || valueList.property() == AnimatedProperty::WebkitBackdropFilter);
-
-    if (valueList.size() < 2)
-        return -1;
-
-    // Empty filters match anything, so find the first non-empty entry as the reference
-    size_t firstIndex = 0;
-    for ( ; firstIndex < valueList.size(); ++firstIndex) {
-        if (!filterOperationsAt(valueList, firstIndex).isEmpty())
-            break;
-    }
-
-    if (firstIndex >= valueList.size())
-        return -1;
-
-    const FilterOperations& firstVal = filterOperationsAt(valueList, firstIndex);
-    
-    for (size_t i = firstIndex + 1; i < valueList.size(); ++i) {
-        const FilterOperations& val = filterOperationsAt(valueList, i);
-        
-        // An empty filter list matches anything.
-        if (val.isEmpty())
-            continue;
-        
-        if (!firstVal.operationsMatch(val))
-            return -1;
-    }
-    
-    return firstIndex;
 }
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)

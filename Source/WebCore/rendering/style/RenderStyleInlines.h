@@ -66,7 +66,7 @@
 namespace WebCore {
 
 inline const StyleColor& RenderStyle::accentColor() const { return m_rareInheritedData->accentColor; }
-inline bool RenderStyle::affectsTransform() const { return hasTransform() || offsetPath() || rotate() || scale() || translate(); }
+inline bool RenderStyle::affectsTransform() const { return hasTransform() || offsetPath() || !rotate().isNone() || !scale().isNone() || !translate().isNone(); }
 inline const StyleContentAlignmentData& RenderStyle::alignContent() const { return m_nonInheritedData->miscData->alignContent; }
 inline const StyleSelfAlignmentData& RenderStyle::alignItems() const { return m_nonInheritedData->miscData->alignItems; }
 inline const StyleSelfAlignmentData& RenderStyle::alignSelf() const { return m_nonInheritedData->miscData->alignSelf; }
@@ -310,8 +310,8 @@ inline bool RenderStyle::hasPseudoStyle(PseudoId pseudo) const { return m_nonInh
 inline bool RenderStyle::hasStaticBlockPosition(bool horizontal) const { return horizontal ? hasAutoTopAndBottom() : hasAutoLeftAndRight(); }
 inline bool RenderStyle::hasStaticInlinePosition(bool horizontal) const { return horizontal ? hasAutoLeftAndRight() : hasAutoTopAndBottom(); }
 inline bool RenderStyle::hasTextCombine() const { return textCombine() != TextCombine::None; }
-inline bool RenderStyle::hasTransform() const { return !transform().isEmpty() || offsetPath(); }
-inline bool RenderStyle::hasTransformRelatedProperty() const { return hasTransform() || translate() || scale() || rotate() || transformStyle3D() == TransformStyle3D::Preserve3D || hasPerspective(); }
+inline bool RenderStyle::hasTransform() const { return !transform().isNone() || offsetPath(); }
+inline bool RenderStyle::hasTransformRelatedProperty() const { return hasTransform() || !translate().isNone() || !scale().isNone() || !rotate().isNone() || transformStyle3D() == TransformStyle3D::Preserve3D || hasPerspective(); }
 inline bool RenderStyle::hasTransitions() const { return transitions() && transitions()->size(); }
 inline bool RenderStyle::hasViewportConstrainedPosition() const { return position() == PositionType::Fixed || position() == PositionType::Sticky; }
 inline bool RenderStyle::hasVisibleBorder() const { return border().hasVisibleBorder(); }
@@ -502,8 +502,11 @@ constexpr TextWrapMode RenderStyle::initialTextWrapMode() { return TextWrapMode:
 constexpr TextWrapStyle RenderStyle::initialTextWrapStyle() { return TextWrapStyle::Auto; }
 constexpr TextZoom RenderStyle::initialTextZoom() { return TextZoom::Normal; }
 constexpr TouchAction RenderStyle::initialTouchActions() { return TouchAction::Auto; }
-inline TransformOperations RenderStyle::initialTransform() { return { }; }
 constexpr TransformBox RenderStyle::initialTransformBox() { return TransformBox::ViewBox; }
+inline Style::TransformProperty RenderStyle::initialTransform() { return { Style::None { } }; }
+inline Style::RotateProperty RenderStyle::initialRotate() { return { Style::None { } }; }
+inline Style::ScaleProperty RenderStyle::initialScale() { return { Style::None { } }; }
+inline Style::TranslateProperty RenderStyle::initialTranslate() { return { Style::None { } }; }
 inline Length RenderStyle::initialTransformOriginX() { return { 50.0f, LengthType::Percent }; }
 inline Length RenderStyle::initialTransformOriginY() { return { 50.0f, LengthType::Percent }; }
 constexpr TransformStyle3D RenderStyle::initialTransformStyle3D() { return TransformStyle3D::Flat; }
@@ -678,12 +681,12 @@ inline bool RenderStyle::preserves3D() const { return usedTransformStyle3D() == 
 inline QuotesData* RenderStyle::quotes() const { return m_rareInheritedData->quotes.get(); }
 inline Resize RenderStyle::resize() const { return static_cast<Resize>(m_nonInheritedData->miscData->resize); }
 inline const Length& RenderStyle::right() const { return m_nonInheritedData->surroundData->offset.right(); }
-inline RotateTransformOperation* RenderStyle::rotate() const { return m_nonInheritedData->rareData->rotate.get(); }
+inline const Style::RotateProperty& RenderStyle::rotate() const { return m_nonInheritedData->rareData->rotate; }
 inline const GapLength& RenderStyle::rowGap() const { return m_nonInheritedData->rareData->rowGap; }
 inline RubyPosition RenderStyle::rubyPosition() const { return static_cast<RubyPosition>(m_rareInheritedData->rubyPosition); }
 inline RubyAlign RenderStyle::rubyAlign() const { return static_cast<RubyAlign>(m_rareInheritedData->rubyAlign); }
 inline RubyOverhang RenderStyle::rubyOverhang() const { return static_cast<RubyOverhang>(m_rareInheritedData->rubyOverhang); }
-inline ScaleTransformOperation* RenderStyle::scale() const { return m_nonInheritedData->rareData->scale.get(); }
+inline const Style::ScaleProperty& RenderStyle::scale() const { return m_nonInheritedData->rareData->scale; }
 inline const Vector<Ref<ScrollTimeline>>& RenderStyle::scrollTimelines() const { return m_nonInheritedData->rareData->scrollTimelines; }
 inline const Vector<ScrollAxis>& RenderStyle::scrollTimelineAxes() const { return m_nonInheritedData->rareData->scrollTimelineAxes; }
 inline const Vector<AtomString>& RenderStyle::scrollTimelineNames() const { return m_nonInheritedData->rareData->scrollTimelineNames; }
@@ -742,7 +745,7 @@ inline OptionSet<TextUnderlinePosition> RenderStyle::textUnderlinePosition() con
 inline TextZoom RenderStyle::textZoom() const { return static_cast<TextZoom>(m_rareInheritedData->textZoom); }
 inline const Length& RenderStyle::top() const { return m_nonInheritedData->surroundData->offset.top(); }
 inline OptionSet<TouchAction> RenderStyle::touchActions() const { return m_nonInheritedData->rareData->touchActions; }
-inline const TransformOperations& RenderStyle::transform() const { return m_nonInheritedData->miscData->transform->operations; }
+inline const Style::TransformProperty& RenderStyle::transform() const { return m_nonInheritedData->miscData->transform->transform; }
 inline TransformBox RenderStyle::transformBox() const { return m_nonInheritedData->miscData->transform->transformBox; }
 inline const Length& RenderStyle::transformOriginX() const { return m_nonInheritedData->miscData->transform->x; }
 inline LengthPoint RenderStyle::transformOriginXY() const { return m_nonInheritedData->miscData->transform->originXY(); }
@@ -751,7 +754,7 @@ inline float RenderStyle::transformOriginZ() const { return m_nonInheritedData->
 inline TransformStyle3D RenderStyle::transformStyle3D() const { return static_cast<TransformStyle3D>(m_nonInheritedData->rareData->transformStyle3D); }
 inline const AnimationList* RenderStyle::transitions() const { return m_nonInheritedData->miscData->transitions.get(); }
 inline AnimationList* RenderStyle::transitions() { return m_nonInheritedData->miscData->transitions.get(); }
-inline TranslateTransformOperation* RenderStyle::translate() const { return m_nonInheritedData->rareData->translate.get(); }
+inline const Style::TranslateProperty& RenderStyle::translate() const { return m_nonInheritedData->rareData->translate; }
 inline bool RenderStyle::useSmoothScrolling() const { return m_nonInheritedData->rareData->useSmoothScrolling; }
 inline float RenderStyle::usedPerspective() const { return std::max(1.0f, perspective()); }
 inline TransformStyle3D RenderStyle::usedTransformStyle3D() const { return static_cast<bool>(m_nonInheritedData->rareData->transformStyleForcedToFlat) ? TransformStyle3D::Flat : transformStyle3D(); }

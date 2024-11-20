@@ -254,8 +254,8 @@ public:
     RenderObject* attachRendererInternal(RenderPtr<RenderObject> child, RenderObject* beforeChild);
     RenderPtr<RenderObject> detachRendererInternal(RenderObject&);
 
-    virtual bool startAnimation(double /* timeOffset */, const Animation&, const BlendingKeyframes&) { return false; }
-    virtual void animationPaused(double /* timeOffset */, const String& /* name */) { }
+    virtual bool startAnimation(Seconds /* timeOffset */, const Animation&, const BlendingKeyframes&) { return false; }
+    virtual void animationPaused(Seconds /* timeOffset */, const String& /* name */) { }
     virtual void animationFinished(const String& /* name */) { }
     virtual void transformRelatedPropertyDidChange() { }
 

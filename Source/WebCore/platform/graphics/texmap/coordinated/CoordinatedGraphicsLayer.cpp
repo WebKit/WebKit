@@ -37,7 +37,6 @@
 #include "GraphicsLayerFactory.h"
 #include "ScrollableArea.h"
 #include "TextureMapperPlatformLayerProxyProvider.h"
-#include "TransformOperation.h"
 #include <algorithm>
 #ifndef NDEBUG
 #include <wtf/SetForScope.h>
@@ -76,10 +75,10 @@ void CoordinatedGraphicsLayer::notifyFlushRequired()
 
 void CoordinatedGraphicsLayer::didChangeAnimations()
 {
-    m_animations.setTranslate(client().transformMatrixForProperty(AnimatedProperty::Translate));
-    m_animations.setRotate(client().transformMatrixForProperty(AnimatedProperty::Rotate));
-    m_animations.setScale(client().transformMatrixForProperty(AnimatedProperty::Scale));
-    m_animations.setTransform(client().transformMatrixForProperty(AnimatedProperty::Transform));
+    m_animations.setTranslate(client().transformMatrixForProperty(GraphicsLayerAnimationProperty::Translate));
+    m_animations.setRotate(client().transformMatrixForProperty(GraphicsLayerAnimationProperty::Rotate));
+    m_animations.setScale(client().transformMatrixForProperty(GraphicsLayerAnimationProperty::Scale));
+    m_animations.setTransform(client().transformMatrixForProperty(GraphicsLayerAnimationProperty::Transform));
 
     m_nicosia.delta.animationsChanged = true;
     notifyFlushRequired();
@@ -1251,8 +1250,8 @@ void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
     TransformationMatrix futureTransform = currentTransform;
     if (m_movingVisibleRect) {
         client().getCurrentTransform(this, currentTransform);
-        TextureMapperAnimation::ApplicationResult futureApplicationResults;
-        m_animations.apply(futureApplicationResults, MonotonicTime::now() + 50_ms, TextureMapperAnimation::KeepInternalState::Yes);
+        TextureMapperAnimationBase::ApplicationResult futureApplicationResults;
+        m_animations.apply(futureApplicationResults, MonotonicTime::now() + 50_ms, TextureMapperAnimationBase::KeepInternalState::Yes);
         futureTransform = futureApplicationResults.transform.value_or(currentTransform);
     }
     m_layerTransform.setLocalTransform(currentTransform);
@@ -1286,7 +1285,7 @@ void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
 bool CoordinatedGraphicsLayer::shouldHaveBackingStore() const
 {
     // If the CSS opacity value is 0 and there's no animation over the opacity property, the layer is invisible.
-    bool isInvisibleBecauseOpacityZero = !opacity() && !m_animations.hasActiveAnimationsOfType(AnimatedProperty::Opacity);
+    bool isInvisibleBecauseOpacityZero = !opacity() && !m_animations.hasActiveAnimationsOfType(GraphicsLayerAnimationProperty::Opacity);
 
     // Check if there's a filter that sets the opacity to zero.
     bool hasOpacityZeroFilter = std::ranges::any_of(filters(), [](auto& operation) {
@@ -1294,14 +1293,14 @@ bool CoordinatedGraphicsLayer::shouldHaveBackingStore() const
     });
 
     // If there's a filter that sets opacity to 0 and the filters are not being animated, the layer is invisible.
-    isInvisibleBecauseOpacityZero |= hasOpacityZeroFilter && !m_animations.hasActiveAnimationsOfType(AnimatedProperty::Filter);
+    isInvisibleBecauseOpacityZero |= hasOpacityZeroFilter && !m_animations.hasActiveAnimationsOfType(GraphicsLayerAnimationProperty::Filter);
 
     return drawsContent() && contentsAreVisible() && !m_size.isEmpty() && !isInvisibleBecauseOpacityZero;
 }
 
 bool CoordinatedGraphicsLayer::selfOrAncestorHasActiveTransformAnimation() const
 {
-    if (m_animations.hasActiveAnimationsOfType(AnimatedProperty::Transform))
+    if (m_animations.hasActiveAnimationsOfType(GraphicsLayerAnimationProperty::Transform))
         return true;
 
     if (!parent())
@@ -1321,7 +1320,21 @@ bool CoordinatedGraphicsLayer::selfOrAncestorHaveNonAffineTransforms() const
     return downcast<CoordinatedGraphicsLayer>(*parent()).selfOrAncestorHaveNonAffineTransforms();
 }
 
-bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, const FloatSize& boxSize, const Animation* anim, const String& keyframesName, double delayAsNegativeTimeOffset)
+bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList<FloatAnimationValue>& valueList, const Animation* anim, const String& keyframesName, Seconds delayAsNegativeTimeOffset)
+{
+    ASSERT(!keyframesName.isEmpty());
+
+    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
+        return false;
+
+    m_lastAnimationStartTime = MonotonicTime::now() - Seconds(delayAsNegativeTimeOffset);
+    m_animations.add(TextureMapperAnimation(keyframesName, valueList, *anim, m_lastAnimationStartTime, 0_s, TextureMapperAnimationBase::State::Playing));
+    m_animationStartedTimer.startOneShot(0_s);
+    didChangeAnimations();
+    return true;
+}
+
+bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList<FilterAnimationValue>& valueList, const Animation* anim, const String& keyframesName, Seconds delayAsNegativeTimeOffset)
 {
     ASSERT(!keyframesName.isEmpty());
 
@@ -1329,41 +1342,55 @@ bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList& valueList, 
         return false;
 
     switch (valueList.property()) {
-    case AnimatedProperty::WebkitBackdropFilter:
-    case AnimatedProperty::Filter: {
+    case GraphicsLayerAnimationProperty::WebkitBackdropFilter:
+    case GraphicsLayerAnimationProperty::Filter: {
         int listIndex = validateFilterOperations(valueList);
         if (listIndex < 0)
             return false;
 
-        const auto& filters = static_cast<const FilterAnimationValue&>(valueList.at(listIndex)).value();
+        const auto& filters = valueList[listIndex].value();
         if (!filtersCanBeComposited(filters))
             return false;
         break;
     }
-    case AnimatedProperty::Opacity:
-    case AnimatedProperty::Translate:
-    case AnimatedProperty::Rotate:
-    case AnimatedProperty::Scale:
-    case AnimatedProperty::Transform:
+    case GraphicsLayerAnimationProperty::Opacity:
+    case GraphicsLayerAnimationProperty::Translate:
+    case GraphicsLayerAnimationProperty::Rotate:
+    case GraphicsLayerAnimationProperty::Scale:
+    case GraphicsLayerAnimationProperty::Transform:
         break;
     default:
         return false;
     }
 
     m_lastAnimationStartTime = MonotonicTime::now() - Seconds(delayAsNegativeTimeOffset);
-    m_animations.add(TextureMapperAnimation(keyframesName, valueList, boxSize, *anim, m_lastAnimationStartTime, 0_s, TextureMapperAnimation::State::Playing));
+    m_animations.add(TextureMapperAnimation(keyframesName, valueList, *anim, m_lastAnimationStartTime, 0_s, TextureMapperAnimationBase::State::Playing));
     m_animationStartedTimer.startOneShot(0_s);
     didChangeAnimations();
     return true;
 }
 
-void CoordinatedGraphicsLayer::pauseAnimation(const String& animationName, double time)
+bool CoordinatedGraphicsLayer::addAnimation(const KeyframeValueList<TransformAnimationValue>& valueList, const Animation* anim, const String& keyframesName, Seconds delayAsNegativeTimeOffset)
 {
-    m_animations.pause(animationName, Seconds(time));
+    ASSERT(!keyframesName.isEmpty());
+
+    if (!anim || anim->isEmptyOrZeroDuration() || valueList.size() < 2)
+        return false;
+
+    m_lastAnimationStartTime = MonotonicTime::now() - Seconds(delayAsNegativeTimeOffset);
+    m_animations.add(TextureMapperAnimation(keyframesName, valueList, *anim, m_lastAnimationStartTime, 0_s, TextureMapperAnimationBase::State::Playing));
+    m_animationStartedTimer.startOneShot(0_s);
+    didChangeAnimations();
+    return true;
+}
+
+void CoordinatedGraphicsLayer::pauseAnimation(const String& animationName, Seconds time)
+{
+    m_animations.pause(animationName, time);
     didChangeAnimations();
 }
 
-void CoordinatedGraphicsLayer::removeAnimation(const String& animationName, std::optional<AnimatedProperty>)
+void CoordinatedGraphicsLayer::removeAnimation(const String& animationName, std::optional<GraphicsLayerAnimationProperty>)
 {
     m_animations.remove(animationName);
     didChangeAnimations();
@@ -1431,8 +1458,12 @@ Vector<std::pair<String, double>> CoordinatedGraphicsLayer::acceleratedAnimation
 {
     Vector<std::pair<String, double>> animations;
 
-    for (auto& animation : m_animations.animations())
-        animations.append({ animatedPropertyIDAsString(animation.keyframes().property()), animation.state() == TextureMapperAnimation::State::Playing ? 1 : 0 });
+    for (auto& animation : m_animations.floatAnimations())
+        animations.append({ animatedPropertyIDAsString(animation.keyframes().property()), animation.state() == TextureMapperAnimationBase::State::Playing ? 1 : 0 });
+    for (auto& animation : m_animations.filterAnimations())
+        animations.append({ animatedPropertyIDAsString(animation.keyframes().property()), animation.state() == TextureMapperAnimationBase::State::Playing ? 1 : 0 });
+    for (auto& animation : m_animations.transformAnimations())
+        animations.append({ animatedPropertyIDAsString(animation.keyframes().property()), animation.state() == TextureMapperAnimationBase::State::Playing ? 1 : 0 });
 
     return animations;
 }

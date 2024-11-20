@@ -31,7 +31,7 @@
 #include "Length.h"
 #include "StyleColor.h"
 #include "StyleImage.h"
-#include "TransformOperation.h"
+#include "StyleTransformFunctions.h"
 #include <wtf/PointerComparison.h>
 #include <wtf/URL.h>
 
@@ -49,8 +49,8 @@ public:
     };
 
     struct TransformSyntaxValue {
-        Ref<TransformOperation> transform;
-        bool operator==(const TransformSyntaxValue& other) const { return transform.get() == other.transform.get(); }
+        Style::TransformFunction transform;
+        bool operator==(const TransformSyntaxValue&) const = default;
     };
 
     using SyntaxValue = std::variant<Length, NumericSyntaxValue, StyleColor, RefPtr<StyleImage>, URL, String, TransformSyntaxValue>;

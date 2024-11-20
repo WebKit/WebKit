@@ -145,9 +145,11 @@ public:
     WEBCORE_EXPORT void suspendAnimations(MonotonicTime) override;
     WEBCORE_EXPORT void resumeAnimations() override;
 
-    WEBCORE_EXPORT bool addAnimation(const KeyframeValueList&, const FloatSize& boxSize, const Animation*, const String& animationName, double timeOffset) override;
-    WEBCORE_EXPORT void pauseAnimation(const String& animationName, double timeOffset) override;
-    WEBCORE_EXPORT void removeAnimation(const String& animationName, std::optional<AnimatedProperty>) override;
+    WEBCORE_EXPORT bool addAnimation(const KeyframeValueList<FloatAnimationValue>&, const Animation*, const String& animationName, Seconds timeOffset) override;
+    WEBCORE_EXPORT bool addAnimation(const KeyframeValueList<FilterAnimationValue>&, const Animation*, const String& animationName, Seconds timeOffset) override;
+    WEBCORE_EXPORT bool addAnimation(const KeyframeValueList<TransformAnimationValue>&, const Animation*, const String& animationName, Seconds timeOffset) override;
+    WEBCORE_EXPORT void pauseAnimation(const String& animationName, Seconds timeOffset) override;
+    WEBCORE_EXPORT void removeAnimation(const String& animationName, std::optional<GraphicsLayerAnimationProperty>) override;
     WEBCORE_EXPORT void transformRelatedPropertyDidChange() override;
     WEBCORE_EXPORT void setContentsToImage(Image*) override;
     WEBCORE_EXPORT void setContentsToImageBuffer(ImageBuffer*) override;
@@ -295,7 +297,7 @@ private:
     PlatformCALayer* primaryLayer() const { return m_structuralLayer.get() ? m_structuralLayer.get() : m_layer.get(); }
     PlatformCALayer* hostLayerForSublayers() const;
     PlatformCALayer* layerForSuperlayer() const;
-    PlatformCALayer* animatedLayer(AnimatedProperty) const;
+    PlatformCALayer* animatedLayer(GraphicsLayerAnimationProperty) const;
 
     WEBCORE_EXPORT void setTileCoverage(TileCoverage) override;
 
@@ -304,12 +306,12 @@ private:
 
     typedef UncheckedKeyHashMap<CloneID, RefPtr<PlatformCALayer>> LayerMap;
     LayerMap* primaryLayerClones() const;
-    LayerMap* animatedLayerClones(AnimatedProperty) const;
+    LayerMap* animatedLayerClones(GraphicsLayerAnimationProperty) const;
     static void clearClones(LayerMap&);
 
-    bool createAnimationFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
-    bool createTransformAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, Seconds timeOffset, const FloatSize& boxSize, bool keyframesShouldUseAnimationWideTimingFunction);
-    bool createFilterAnimationsFromKeyframes(const KeyframeValueList&, const Animation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool createAnimationFromKeyframes(const KeyframeValueList<FloatAnimationValue>&, const Animation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool createTransformAnimationsFromKeyframes(const KeyframeValueList<TransformAnimationValue>&, const Animation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool createFilterAnimationsFromKeyframes(const KeyframeValueList<FilterAnimationValue>&, const Animation*, const String& animationName, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
 
     // Return autoreleased animation (use RetainPtr?)
     Ref<PlatformCAAnimation> createBasicAnimation(const Animation*, const String& keyPath, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
@@ -317,16 +319,16 @@ private:
     Ref<PlatformCAAnimation> createSpringAnimation(const Animation*, const String&, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
     void setupAnimation(PlatformCAAnimation*, const Animation*, bool additive, bool keyframesShouldUseAnimationWideTimingFunction);
     
-    const TimingFunction& timingFunctionForAnimationValue(const AnimationValue&, const Animation&, bool keyframesShouldUseAnimationWideTimingFunction);
-    
-    bool setAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*);
-    bool setAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, bool keyframesShouldUseAnimationWideTimingFunction);
+    template<typename AnimationValue> const TimingFunction& timingFunctionForAnimationValue(const AnimationValue&, const Animation&, bool keyframesShouldUseAnimationWideTimingFunction);
 
-    bool setTransformAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::Type, bool isMatrixAnimation, const FloatSize& boxSize);
-    bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformOperation::Type, bool isMatrixAnimation, const FloatSize& boxSize, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool setAnimationEndpoints(const KeyframeValueList<FloatAnimationValue>&, const Animation*, PlatformCAAnimation*);
+    bool setAnimationKeyframes(const KeyframeValueList<FloatAnimationValue>&, const Animation*, PlatformCAAnimation*, bool keyframesShouldUseAnimationWideTimingFunction);
+
+    bool setTransformAnimationEndpoints(const KeyframeValueList<TransformAnimationValue>&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformFunctionType, bool isMatrixAnimation);
+    bool setTransformAnimationKeyframes(const KeyframeValueList<TransformAnimationValue>&, const Animation*, PlatformCAAnimation*, int functionIndex, TransformFunctionType, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
     
-    bool setFilterAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex);
-    bool setFilterAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformCAAnimation*, int functionIndex, FilterOperation::Type, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool setFilterAnimationEndpoints(const KeyframeValueList<FilterAnimationValue>&, const Animation*, PlatformCAAnimation*, int functionIndex);
+    bool setFilterAnimationKeyframes(const KeyframeValueList<FilterAnimationValue>&, const Animation*, PlatformCAAnimation*, int functionIndex, FilterOperation::Type, bool keyframesShouldUseAnimationWideTimingFunction);
 
     bool isRunningTransformAnimation() const;
 
@@ -527,7 +529,7 @@ private:
     // a single transition or keyframe animation, so index is used to distinguish these.
     enum class PlayState { Playing, PlayPending, Paused, PausePending };
     struct LayerPropertyAnimation {
-        LayerPropertyAnimation(Ref<PlatformCAAnimation>&& caAnimation, const String& animationName, AnimatedProperty property, int index, Seconds timeOffset)
+        LayerPropertyAnimation(Ref<PlatformCAAnimation>&& caAnimation, const String& animationName, GraphicsLayerAnimationProperty property, int index, Seconds timeOffset)
             : m_animation(WTFMove(caAnimation))
             , m_name(animationName)
             , m_property(property)
@@ -545,7 +547,7 @@ private:
 
         RefPtr<PlatformCAAnimation> m_animation;
         String m_name;
-        AnimatedProperty m_property;
+        GraphicsLayerAnimationProperty m_property;
         int m_index;
         Seconds m_timeOffset { 0_s };
         std::optional<Seconds> m_beginTime;
@@ -572,8 +574,8 @@ private:
         moveOrCopyAnimations(Copy, fromLayer, toLayer);
     }
 
-    bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperation::Type, const Animation*, const String& animationName, const FloatSize& boxSize, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
-    bool appendToUncommittedAnimations(const KeyframeValueList&, const FilterOperation&, const Animation*, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool appendToUncommittedAnimations(const KeyframeValueList<TransformAnimationValue>&, const TransformFunctionType, const Animation*, const String& animationName, unsigned animationIndex, Seconds timeOffset, bool isMatrixAnimation, bool keyframesShouldUseAnimationWideTimingFunction);
+    bool appendToUncommittedAnimations(const KeyframeValueList<FilterAnimationValue>&, const FilterOperation&, const Animation*, const String& animationName, int animationIndex, Seconds timeOffset, bool keyframesShouldUseAnimationWideTimingFunction);
 
     enum LayerChange : uint64_t {
         NoChange                                = 0,

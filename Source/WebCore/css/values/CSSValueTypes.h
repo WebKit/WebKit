@@ -25,14 +25,19 @@
 #pragma once
 
 #include "CSSValueKeywords.h"
+#include "ComputedStyleDependencies.h"
 #include "RectEdges.h"
 #include <optional>
 #include <tuple>
 #include <utility>
 #include <variant>
+#include <wtf/Markable.h>
+#include <wtf/Hasher.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/VariantList.h>
 #include <wtf/text/AtomString.h>
 #include <wtf/text/StringBuilder.h>
+#include <wtf/text/TextStream.h>
 
 namespace WebCore {
 
@@ -45,6 +50,15 @@ namespace CSS {
 // for CSS value type algorithms.
 // NOTE: This gets automatically specialized when using the CSS_TUPLE_LIKE_CONFORMANCE macro.
 template<class> inline constexpr bool TreatAsTupleLike = false;
+
+// Types can specialize this and set the value to true to be treated as a "type wrapper"
+// for CSS value type algorithms. "Type wrappers" must be simple structs with exactly one
+// member variable with the name "value".
+// NOTE: This gets automatically specialized when using the DEFINE_CSS_TYPE_WRAPPER macro.
+template<class> inline constexpr bool TreatAsTypeWrapper = false;
+
+#define DEFINE_CSS_TYPE_WRAPPER(t) \
+    template<> inline constexpr bool TreatAsTypeWrapper<t> = true;
 
 // Helper type used to represent a known constant identifier.
 template<CSSValueID C> struct Constant {
@@ -139,12 +153,70 @@ template<typename T, size_t inlineCapacity = 0> struct CommaSeparatedVector {
     WTF::Vector<T, inlineCapacity> value;
 };
 
+// Wraps a variable number of variable type elements, semantically marking them as serializing as "space separated".
+template<typename Variant, size_t inlineCapacity = 0> struct SpaceSeparatedVariantList {
+    using VariantList = WTF::VariantList<Variant, inlineCapacity>;
+    using const_iterator = typename VariantList::const_iterator;
+
+    SpaceSeparatedVariantList()
+        : value { }
+    {
+    }
+
+    SpaceSeparatedVariantList(VariantList&& value)
+        : value { WTFMove(value) }
+    {
+    }
+
+    const_iterator begin() const { return value.begin(); }
+    const_iterator end() const { return value.end(); }
+
+    // `forEach` provides a slightly more efficient looping construct for cases where early exit is not needed.
+    template<typename...F> void forEach(F&&... f) const { value.forEach(std::forward<F>(f)...); }
+
+    bool isEmpty() const { return value.isEmpty(); }
+
+    bool operator==(const SpaceSeparatedVariantList&) const = default;
+
+    VariantList value;
+};
+
+// Wraps a variable number of variable type elements, semantically marking them as serializing as "comma separated".
+template<typename Variant, size_t inlineCapacity = 0> struct CommaSeparatedVariantList {
+    using VariantList = WTF::VariantList<Variant, inlineCapacity>;
+    using const_iterator = typename VariantList::const_iterator;
+
+    CommaSeparatedVariantList()
+        : value { }
+    {
+    }
+
+    CommaSeparatedVariantList(VariantList&& value)
+        : value { WTFMove(value) }
+    {
+    }
+
+    const_iterator begin() const { return value.begin(); }
+    const_iterator end() const { return value.end(); }
+
+    // `forEach` provides a slightly more efficient looping construct for cases where early exit is not needed.
+    template<typename...F> void forEach(F&&... f) const { value.forEach(std::forward<F>(f)...); }
+
+    bool isEmpty() const { return value.isEmpty(); }
+
+    bool operator==(const CommaSeparatedVariantList&) const = default;
+
+    VariantList value;
+};
+
 // Wraps a fixed size list of elements of a single type, semantically marking them as serializing as "space separated".
 template<typename T, size_t N> struct SpaceSeparatedArray {
     using Array = std::array<T, N>;
+    using const_iterator = typename Array::const_iterator;
+    using const_reverse_iterator = typename Array::const_reverse_iterator;
     using value_type = T;
 
-    template<typename...Ts> requires (sizeof...(Ts) == N && WTF::all<std::is_same_v<T, Ts>...>)
+    template<typename...Ts> requires (sizeof...(Ts) == N && WTF::all<std::convertible_to<Ts, T>...>)
     constexpr SpaceSeparatedArray(Ts... values)
         : value { std::forward<Ts>(values)... }
     {
@@ -155,13 +227,22 @@ template<typename T, size_t N> struct SpaceSeparatedArray {
     {
     }
 
+    const_iterator begin() const { return value.begin(); }
+    const_iterator end() const { return value.end(); }
+    const_reverse_iterator rbegin() const { return value.rbegin(); }
+    const_reverse_iterator rend() const { return value.rend(); }
+
+    bool isEmpty() const { return value.isEmpty(); }
+    size_t size() const { return value.size(); }
+    const T& operator[](size_t i) const { return value[i]; }
+
     constexpr bool operator==(const SpaceSeparatedArray<T, N>&) const = default;
 
     std::array<T, N> value;
 };
 
 template<class T, class... Ts>
-    requires (WTF::all<std::is_same_v<T, Ts>...>)
+    requires (WTF::all<std::convertible_to<Ts, T>...>)
 SpaceSeparatedArray(T, Ts...) -> SpaceSeparatedArray<T, 1 + sizeof...(Ts)>;
 
 template<size_t I, typename T, size_t N> decltype(auto) get(const SpaceSeparatedArray<T, N>& array)
@@ -174,9 +255,11 @@ template<typename T> using SpaceSeparatedPair = SpaceSeparatedArray<T, 2>;
 // Wraps a fixed size list of elements of a single type, semantically marking them as serializing as "comma separated".
 template<typename T, size_t N> struct CommaSeparatedArray {
     using Array = std::array<T, N>;
+    using const_iterator = typename Array::const_iterator;
+    using const_reverse_iterator = typename Array::const_reverse_iterator;
     using value_type = T;
 
-    template<typename...Ts> requires (sizeof...(Ts) == N && WTF::all<std::is_same_v<T, Ts>...>)
+    template<typename...Ts> requires (sizeof...(Ts) == N && WTF::all<std::convertible_to<Ts, T>...>)
     constexpr CommaSeparatedArray(Ts... values)
         : value { std::forward<Ts>(values)... }
     {
@@ -187,6 +270,15 @@ template<typename T, size_t N> struct CommaSeparatedArray {
     {
     }
 
+    const_iterator begin() const { return value.begin(); }
+    const_iterator end() const { return value.end(); }
+    const_reverse_iterator rbegin() const { return value.rbegin(); }
+    const_reverse_iterator rend() const { return value.rend(); }
+
+    bool isEmpty() const { return value.isEmpty(); }
+    size_t size() const { return value.size(); }
+    const T& operator[](size_t i) const { return value[i]; }
+
     constexpr bool operator==(const CommaSeparatedArray<T, N>&) const = default;
 
     std::array<T, N> value;
@@ -194,7 +286,7 @@ template<typename T, size_t N> struct CommaSeparatedArray {
 
 
 template<class T, class... Ts>
-    requires (WTF::all<std::is_same_v<T, Ts>...>)
+    requires (WTF::all<std::convertible_to<Ts, T>...>)
 CommaSeparatedArray(T, Ts...) -> CommaSeparatedArray<T, 1 + sizeof...(Ts)>;
 
 template<size_t I, typename T, size_t N> decltype(auto) get(const CommaSeparatedArray<T, N>& array)
@@ -318,6 +410,207 @@ template<size_t I, typename T> decltype(auto) get(const Size<T>& size)
     return get<I>(size.value);
 }
 
+// MARK: - Hashing
+
+// All leaf types must implement the following conversions:
+//
+//    template<> struct WebCore::CSS::Hash<CSSType> {
+//        void operator()(StringBuilder&, const CSSType&);
+//    };
+
+template<typename CSSType> struct Hash;
+
+// Serialization Invokers
+template<typename CSSType> void hash(Hasher& hasher, const CSSType& value)
+{
+    Hash<CSSType>{}(hasher, value);
+}
+
+template<typename CSSType> unsigned hash(const CSSType& value)
+{
+    Hasher hasher;
+    hash(hasher, value);
+    return hasher.hash();
+}
+
+template<typename CSSType> auto hashTupleLike(Hasher& hasher, const CSSType& value)
+{
+    WTF::apply([&](const auto& ...x) { (..., hash(hasher, x)); }, value);
+}
+
+template<typename CSSType> auto hashRangeLike(Hasher& hasher, const CSSType& value)
+{
+    for (const auto& element : value)
+        hash(hasher, element);
+}
+
+// Constrained for `TreatAsTupleLike`.
+template<typename CSSType> requires (TreatAsTupleLike<CSSType>) struct Hash<CSSType> {
+    void operator()(Hasher& hasher, const CSSType& value)
+    {
+        hashTupleLike(hasher, value);
+    }
+};
+
+// Constrained for `TreatAsTypeWrapper`.
+template<typename CSSType> requires (TreatAsTypeWrapper<CSSType>) struct Hash<CSSType> {
+    void operator()(Hasher& hasher, const CSSType& value)
+    {
+        hash(hasher, value.value);
+    }
+};
+
+// Specialization for `std::optional`.
+template<typename CSSType> struct Hash<std::optional<CSSType>> {
+    void operator()(Hasher& hasher, const std::optional<CSSType>& value)
+    {
+        if (!value)
+            return;
+        hash(hasher, *value);
+    }
+};
+
+// Specialization for `Markable`.
+template<typename CSSType> struct Hash<Markable<CSSType>> {
+    void operator()(Hasher& hasher, const Markable<CSSType>& value)
+    {
+        if (!value)
+            return;
+        hash(hasher, *value);
+    }
+};
+
+// Specialization for `std::variant`.
+template<typename... CSSTypes> struct Hash<std::variant<CSSTypes...>> {
+    void operator()(Hasher& hasher, const std::variant<CSSTypes...>& value)
+    {
+        WTF::switchOn(value, [&](const auto& alternative) { hash(hasher, alternative); });
+    }
+};
+
+// Specialization for `VariantListProxy`.
+template<typename CSSTypeVariant> struct Hash<WTF::VariantListProxy<CSSTypeVariant>> {
+    void operator()(Hasher& hasher, const WTF::VariantListProxy<CSSTypeVariant>& value)
+    {
+        WTF::switchOn(value, [&](const auto& alternative) { hash(hasher, alternative); });
+    }
+};
+
+// Specialization for `Constant`.
+template<CSSValueID C> struct Hash<Constant<C>> {
+    constexpr void operator()(Hasher& hasher, const Constant<C>& value)
+    {
+        WTF::add(hasher, value.value);
+    }
+};
+
+// Specialization for `CustomIdentifier`.
+template<> struct Hash<CustomIdentifier> {
+    constexpr void operator()(Hasher& hasher, const CustomIdentifier& value)
+    {
+        WTF::add(hasher, value.value.existingHash());
+    }
+};
+
+// Specialization for `FunctionNotation`.
+template<CSSValueID Name, typename CSSType> struct Hash<FunctionNotation<Name, CSSType>> {
+    constexpr void operator()(Hasher& hasher, const FunctionNotation<Name, CSSType>& value)
+    {
+        hash(hasher, value.parameters);
+    }
+};
+
+// Specialization for `SpaceSeparatedVector`.
+template<typename CSSType, size_t inlineCapacity> struct Hash<SpaceSeparatedVector<CSSType, inlineCapacity>> {
+    void operator()(Hasher& hasher, const SpaceSeparatedVector<CSSType, inlineCapacity>& value)
+    {
+        hashRangeLike(hasher, value.value);
+    }
+};
+
+// Specialization for `CommaSeparatedVector`.
+template<typename CSSType, size_t inlineCapacity> struct Hash<CommaSeparatedVector<CSSType, inlineCapacity>> {
+    void operator()(Hasher& hasher, const CommaSeparatedVector<CSSType, inlineCapacity>& value)
+    {
+        hashRangeLike(hasher, value.value);
+    }
+};
+
+// Specialization for `SpaceSeparatedVariantList`.
+template<typename CSSTypeVariant, size_t inlineCapacity> struct Hash<SpaceSeparatedVariantList<CSSTypeVariant, inlineCapacity>> {
+    void operator()(Hasher& hasher, const SpaceSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value)
+    {
+        hashRangeLike(hasher, value.value);
+    }
+};
+
+// Specialization for `CommaSeparatedVariantList`.
+template<typename CSSTypeVariant, size_t inlineCapacity> struct Hash<CommaSeparatedVariantList<CSSTypeVariant, inlineCapacity>> {
+    void operator()(Hasher& hasher, const CommaSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value)
+    {
+        hashRangeLike(hasher, value.value);
+    }
+};
+
+// Specialization for `SpaceSeparatedArray`.
+template<typename CSSType, size_t N> struct Hash<SpaceSeparatedArray<CSSType, N>> {
+    void operator()(Hasher& hasher, const SpaceSeparatedArray<CSSType, N>& value)
+    {
+        hashTupleLike(hasher, value.value);
+    }
+};
+
+// Specialization for `CommaSeparatedArray`.
+template<typename CSSType, size_t N> struct Hash<CommaSeparatedArray<CSSType, N>> {
+    void operator()(Hasher& hasher, const CommaSeparatedArray<CSSType, N>& value)
+    {
+        hashTupleLike(hasher, value.value);
+    }
+};
+
+// Specialization for `SpaceSeparatedTuple`.
+template<typename... CSSTypes> struct Hash<SpaceSeparatedTuple<CSSTypes...>> {
+    void operator()(Hasher& hasher, const SpaceSeparatedTuple<CSSTypes...>& value)
+    {
+        hashTupleLike(hasher, value.value);
+    }
+};
+
+// Specialization for `CommaSeparatedTuple`.
+template<typename... CSSTypes> struct Hash<CommaSeparatedTuple<CSSTypes...>> {
+    void operator()(Hasher& hasher, const CommaSeparatedTuple<CSSTypes...>& value)
+    {
+        hashTupleLike(hasher, value.value);
+    }
+};
+
+// Specialization for `Point`.
+template<typename CSSType> struct Hash<Point<CSSType>> {
+    void operator()(Hasher& hasher, const Point<CSSType>& value)
+    {
+        hash(hasher, value.value);
+    }
+};
+
+// Specialization for `Size`.
+template<typename CSSType> struct Hash<Size<CSSType>> {
+    void operator()(Hasher& hasher, const Size<CSSType>& value)
+    {
+        hash(hasher, value.value);
+    }
+};
+
+// Specialization for `RectEdges`.
+template<typename CSSType> struct Hash<RectEdges<CSSType>> {
+    void operator()(Hasher& hasher, const RectEdges<CSSType>& value)
+    {
+        hash(hasher, value.top());
+        hash(hasher, value.right());
+        hash(hasher, value.bottom());
+        hash(hasher, value.left());
+    }
+};
+
 // MARK: - Serialization
 
 // All leaf types must implement the following conversions:
@@ -341,6 +634,14 @@ template<typename CSSType> String serializationForCSS(const CSSType& value)
     return builder.toString();
 }
 
+// Constrained for `TreatAsTypeWrapper`.
+template<typename CSSType> requires (TreatAsTypeWrapper<CSSType>) struct Serialize<CSSType> {
+    void operator()(StringBuilder& builder, const CSSType& value)
+    {
+        serializationForCSS(builder, value.value);
+    }
+};
+
 // Specialization for `std::optional`.
 template<typename CSSType> struct Serialize<std::optional<CSSType>> {
     void operator()(StringBuilder& builder, const std::optional<CSSType>& value)
@@ -351,9 +652,27 @@ template<typename CSSType> struct Serialize<std::optional<CSSType>> {
     }
 };
 
+// Specialization for `Markable`.
+template<typename CSSType> struct Serialize<Markable<CSSType>> {
+    void operator()(StringBuilder& builder, const Markable<CSSType>& value)
+    {
+        if (!value)
+            return;
+        serializationForCSS(builder, *value);
+    }
+};
+
 // Specialization for `std::variant`.
 template<typename... CSSTypes> struct Serialize<std::variant<CSSTypes...>> {
     void operator()(StringBuilder& builder, const std::variant<CSSTypes...>& value)
+    {
+        WTF::switchOn(value, [&](auto& alternative) { serializationForCSS(builder, alternative); });
+    }
+};
+
+// Specialization for `VariantListProxy`.
+template<typename CSSTypeVariant> struct Serialize<WTF::VariantListProxy<CSSTypeVariant>> {
+    void operator()(StringBuilder& builder, const WTF::VariantListProxy<CSSTypeVariant>& value)
     {
         WTF::switchOn(value, [&](auto& alternative) { serializationForCSS(builder, alternative); });
     }
@@ -376,7 +695,7 @@ template<> struct Serialize<CustomIdentifier> {
 template<CSSValueID Name, typename CSSType> struct Serialize<FunctionNotation<Name, CSSType>> {
     void operator()(StringBuilder& builder, const FunctionNotation<Name, CSSType>& value)
     {
-        builder.append(nameLiteralForSerialization(value.name), '(');
+        builder.append(nameLiteral(value.name), '(');
         serializationForCSS(builder, value.parameters);
         builder.append(')');
     }
@@ -386,7 +705,7 @@ template<CSSValueID Name, typename CSSType> struct Serialize<FunctionNotation<Na
 template<typename CSSType, size_t inlineCapacity> struct Serialize<SpaceSeparatedVector<CSSType, inlineCapacity>> {
     void operator()(StringBuilder& builder, const SpaceSeparatedVector<CSSType, inlineCapacity>& value)
     {
-        builder.append(interleave(value.value, [](auto& builder, auto& element) { serializationForCSS(builder, element); }, ' '));
+        builder.append(interleave(value.value, [](auto& builder, const auto& element) { serializationForCSS(builder, element); }, ' '));
     }
 };
 
@@ -394,7 +713,31 @@ template<typename CSSType, size_t inlineCapacity> struct Serialize<SpaceSeparate
 template<typename CSSType, size_t inlineCapacity> struct Serialize<CommaSeparatedVector<CSSType, inlineCapacity>> {
     void operator()(StringBuilder& builder, const CommaSeparatedVector<CSSType, inlineCapacity>& value)
     {
-        builder.append(interleave(value.value, [](auto& builder, auto& element) { serializationForCSS(builder, element); }, ", "_s));
+        builder.append(interleave(value.value, [](auto& builder, const auto& element) { serializationForCSS(builder, element); }, ", "_s));
+    }
+};
+
+// Specialization for `SpaceSeparatedVariantList`.
+template<typename CSSTypeVariant, size_t inlineCapacity> struct Serialize<SpaceSeparatedVariantList<CSSTypeVariant, inlineCapacity>> {
+    void operator()(StringBuilder& builder, const SpaceSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value)
+    {
+        auto separator = ""_s;
+        value.forEach([&](const auto& css) {
+            builder.append(std::exchange(separator, " "_s));
+            serializationForCSS(builder, css);
+        });
+    }
+};
+
+// Specialization for `CommaSeparatedVariantList`.
+template<typename CSSTypeVariant, size_t inlineCapacity> struct Serialize<CommaSeparatedVariantList<CSSTypeVariant, inlineCapacity>> {
+    void operator()(StringBuilder& builder, const CommaSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value)
+    {
+        auto separator = ""_s;
+        value.forEach([&](const auto& css) {
+            builder.append(std::exchange(separator, ", "_s));
+            serializationForCSS(builder, css);
+        });
     }
 };
 
@@ -420,13 +763,13 @@ template<typename... CSSTypes> struct Serialize<SpaceSeparatedTuple<CSSTypes...>
     {
         auto separator = ""_s;
         auto caller = WTF::makeVisitor(
-            [&]<typename T>(std::optional<T>& css) {
+            [&]<typename T>(const std::optional<T>& css) {
                 if (!css)
                     return;
                 builder.append(std::exchange(separator, " "_s));
                 serializationForCSS(builder, *css);
             },
-            [&](auto& css) {
+            [&](const auto& css) {
                 builder.append(std::exchange(separator, " "_s));
                 serializationForCSS(builder, css);
             }
@@ -442,13 +785,13 @@ template<typename... CSSTypes> struct Serialize<CommaSeparatedTuple<CSSTypes...>
     {
         auto separator = ""_s;
         auto caller = WTF::makeVisitor(
-            [&]<typename T>(std::optional<T>& css) {
+            [&]<typename T>(const std::optional<T>& css) {
                 if (!css)
                     return;
                 builder.append(std::exchange(separator, ", "_s));
                 serializationForCSS(builder, *css);
             },
-            [&](auto& css) {
+            [&](const auto& css) {
                 builder.append(std::exchange(separator, ", "_s));
                 serializationForCSS(builder, css);
             }
@@ -506,6 +849,13 @@ template<typename CSSType> void collectComputedStyleDependencies(ComputedStyleDe
     ComputedStyleDependenciesCollector<CSSType>{}(dependencies, value);
 }
 
+template<typename CSSType> ComputedStyleDependencies collectComputedStyleDependencies(const CSSType& value)
+{
+    ComputedStyleDependencies dependencies;
+    collectComputedStyleDependencies(dependencies, value);
+    return dependencies;
+}
+
 template<typename CSSType> auto collectComputedStyleDependenciesOnTupleLike(ComputedStyleDependencies& dependencies, const CSSType& value)
 {
     WTF::apply([&](const auto& ...x) { (..., collectComputedStyleDependencies(dependencies, x)); }, value);
@@ -513,7 +863,7 @@ template<typename CSSType> auto collectComputedStyleDependenciesOnTupleLike(Comp
 
 template<typename CSSType> auto collectComputedStyleDependenciesOnRangeLike(ComputedStyleDependencies& dependencies, const CSSType& value)
 {
-    for (auto& element : value)
+    for (const auto& element : value)
         collectComputedStyleDependencies(dependencies, element);
 }
 
@@ -522,6 +872,14 @@ template<typename CSSType> requires (TreatAsTupleLike<CSSType>) struct ComputedS
     void operator()(ComputedStyleDependencies& dependencies, const CSSType& value)
     {
         collectComputedStyleDependenciesOnTupleLike(dependencies, value);
+    }
+};
+
+// Constrained for `TreatAsTypeWrapper`.
+template<typename CSSType> requires (TreatAsTypeWrapper<CSSType>) struct ComputedStyleDependenciesCollector<CSSType> {
+    void operator()(ComputedStyleDependencies& dependencies, const CSSType& value)
+    {
+        collectComputedStyleDependencies(dependencies, value.value);
     }
 };
 
@@ -535,11 +893,29 @@ template<typename CSSType> struct ComputedStyleDependenciesCollector<std::option
     }
 };
 
+// Specialization for `Markable`.
+template<typename CSSType> struct ComputedStyleDependenciesCollector<Markable<CSSType>> {
+    void operator()(ComputedStyleDependencies& dependencies, const Markable<CSSType>& value)
+    {
+        if (!value)
+            return;
+        collectComputedStyleDependencies(dependencies, *value);
+    }
+};
+
 // Specialization for `std::variant`.
 template<typename... CSSTypes> struct ComputedStyleDependenciesCollector<std::variant<CSSTypes...>> {
     void operator()(ComputedStyleDependencies& dependencies, const std::variant<CSSTypes...>& value)
     {
-        WTF::switchOn(value, [&](auto& alternative) { collectComputedStyleDependencies(dependencies, alternative); });
+        WTF::switchOn(value, [&](const auto& alternative) { collectComputedStyleDependencies(dependencies, alternative); });
+    }
+};
+
+// Specialization for `VariantListProxy`.
+template<typename CSSTypeVariant> struct ComputedStyleDependenciesCollector<WTF::VariantListProxy<CSSTypeVariant>> {
+    void operator()(ComputedStyleDependencies& dependencies, const WTF::VariantListProxy<CSSTypeVariant>& value)
+    {
+        WTF::switchOn(value, [&](const auto& alternative) { collectComputedStyleDependencies(dependencies, alternative); });
     }
 };
 
@@ -578,6 +954,22 @@ template<typename CSSType, size_t inlineCapacity> struct ComputedStyleDependenci
 // Specialization for `CommaSeparatedVector`.
 template<typename CSSType, size_t inlineCapacity> struct ComputedStyleDependenciesCollector<CommaSeparatedVector<CSSType, inlineCapacity>> {
     void operator()(ComputedStyleDependencies& dependencies, const CommaSeparatedVector<CSSType, inlineCapacity>& value)
+    {
+        collectComputedStyleDependenciesOnRangeLike(dependencies, value.value);
+    }
+};
+
+// Specialization for `SpaceSeparatedVariantList`.
+template<typename CSSTypeVariant, size_t inlineCapacity> struct ComputedStyleDependenciesCollector<SpaceSeparatedVariantList<CSSTypeVariant, inlineCapacity>> {
+    void operator()(ComputedStyleDependencies& dependencies, const SpaceSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value)
+    {
+        collectComputedStyleDependenciesOnRangeLike(dependencies, value.value);
+    }
+};
+
+// Specialization for `CommaSeparatedVariantList`.
+template<typename CSSTypeVariant, size_t inlineCapacity> struct ComputedStyleDependenciesCollector<CommaSeparatedVariantList<CSSTypeVariant, inlineCapacity>> {
+    void operator()(ComputedStyleDependencies& dependencies, const CommaSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value)
     {
         collectComputedStyleDependenciesOnRangeLike(dependencies, value.value);
     }
@@ -691,6 +1083,14 @@ template<typename CSSType> requires (TreatAsTupleLike<CSSType>) struct CSSValueC
     }
 };
 
+// Constrained for `TreatAsTypeWrapper`.
+template<typename CSSType> requires (TreatAsTypeWrapper<CSSType>) struct CSSValueChildrenVisitor<CSSType> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const CSSType& value)
+    {
+        return visitCSSValueChildren(func, value.value);
+    }
+};
+
 // Specialization for `std::optional`.
 template<typename CSSType> struct CSSValueChildrenVisitor<std::optional<CSSType>> {
     IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const std::optional<CSSType>& value)
@@ -699,9 +1099,25 @@ template<typename CSSType> struct CSSValueChildrenVisitor<std::optional<CSSType>
     }
 };
 
+// Specialization for `Markable`.
+template<typename CSSType> struct CSSValueChildrenVisitor<Markable<CSSType>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const Markable<CSSType>& value)
+    {
+        return value ? visitCSSValueChildren(func, *value) : IterationStatus::Continue;
+    }
+};
+
 // Specialization for `std::variant`.
 template<typename... CSSTypes> struct CSSValueChildrenVisitor<std::variant<CSSTypes...>> {
     IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const std::variant<CSSTypes...>& value)
+    {
+        return WTF::switchOn(value, [&](const auto& alternative) { return visitCSSValueChildren(func, alternative); });
+    }
+};
+
+// Specialization for `VariantListProxy`.
+template<typename CSSTypeVariant> struct CSSValueChildrenVisitor<WTF::VariantListProxy<CSSTypeVariant>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const WTF::VariantListProxy<CSSTypeVariant>& value)
     {
         return WTF::switchOn(value, [&](const auto& alternative) { return visitCSSValueChildren(func, alternative); });
     }
@@ -742,6 +1158,22 @@ template<typename CSSType, size_t inlineCapacity> struct CSSValueChildrenVisitor
 // Specialization for `CommaSeparatedVector`.
 template<typename CSSType, size_t inlineCapacity> struct CSSValueChildrenVisitor<CommaSeparatedVector<CSSType, inlineCapacity>> {
     IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const CommaSeparatedVector<CSSType, inlineCapacity>& value)
+    {
+        return visitCSSValueChildrenOnRangeLike(func, value.value);
+    }
+};
+
+// Specialization for `SpaceSeparatedVariantList`.
+template<typename CSSTypeVariant, size_t inlineCapacity> struct CSSValueChildrenVisitor<SpaceSeparatedVariantList<CSSTypeVariant, inlineCapacity>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const SpaceSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value)
+    {
+        return visitCSSValueChildrenOnRangeLike(func, value.value);
+    }
+};
+
+// Specialization for `CommaSeparatedVariantList`.
+template<typename CSSTypeVariant, size_t inlineCapacity> struct CSSValueChildrenVisitor<CommaSeparatedVariantList<CSSTypeVariant, inlineCapacity>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const CommaSeparatedVariantList<CSSTypeVariant, inlineCapacity>& value)
     {
         return visitCSSValueChildrenOnRangeLike(func, value.value);
     }
@@ -813,7 +1245,14 @@ template<typename CSSType> struct CSSValueChildrenVisitor<RectEdges<CSSType>> {
 
 // MARK: - Text Stream
 
+// Overload for `CustomIdentifier`.
 WTF::TextStream& operator<<(WTF::TextStream&, const CustomIdentifier&);
+
+// Overload for `FunctionNotation`.
+template<WebCore::CSSValueID Name, typename T> TextStream& operator<<(TextStream& ts, const FunctionNotation<Name, T>& value)
+{
+    return ts << nameLiteral(value.name) << "(" << value.parameters << ")";
+}
 
 } // namespace CSS
 } // namespace WebCore

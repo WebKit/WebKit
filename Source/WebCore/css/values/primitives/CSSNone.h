@@ -43,6 +43,9 @@ struct None {
     constexpr bool operator==(const None&) const = default;
 };
 
+template<> struct Hash<NoneRaw> { void operator()(Hasher& hasher, const NoneRaw&) { WTF::add(hasher, CSSValueNone); } };
+template<> struct Hash<None> { void operator()(Hasher& hasher, const None&) { WTF::add(hasher, CSSValueNone); } };
+
 template<> struct Serialize<NoneRaw> { void operator()(StringBuilder&, const NoneRaw&); };
 template<> struct Serialize<None> { void operator()(StringBuilder&, const None&); };
 

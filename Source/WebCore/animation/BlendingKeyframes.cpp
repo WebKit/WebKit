@@ -38,8 +38,7 @@
 #include "RenderStyleInlines.h"
 #include "StyleProperties.h"
 #include "StyleResolver.h"
-#include "TransformOperations.h"
-#include "TranslateTransformOperation.h"
+#include "StyleTransformFunctions.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -343,23 +342,17 @@ void BlendingKeyframes::analyzeKeyframe(const BlendingKeyframe& keyframe)
             return;
 
         if (keyframe.animatesProperty(CSSPropertyTransform)) {
-            for (auto& operation : style->transform()) {
-                if (RefPtr translate = dynamicDowncast<TranslateTransformOperation>(operation.get())) {
-                    if (translate->x().isPercent())
-                        m_hasWidthDependentTransform = true;
-                    if (translate->y().isPercent())
-                        m_hasHeightDependentTransform = true;
-                }
-            }
+            if (style->transform().isWidthDependent())
+                m_hasWidthDependentTransform = true;
+            if (style->transform().isHeightDependent())
+                m_hasHeightDependentTransform = true;
         }
 
         if (keyframe.animatesProperty(CSSPropertyTranslate)) {
-            if (auto* translate = style->translate()) {
-                if (translate->x().isPercent())
-                    m_hasWidthDependentTransform = true;
-                if (translate->y().isPercent())
-                    m_hasHeightDependentTransform = true;
-            }
+            if (style->translate().isWidthDependent())
+                m_hasWidthDependentTransform = true;
+            if (style->translate().isHeightDependent())
+                m_hasHeightDependentTransform = true;
         }
     };
 

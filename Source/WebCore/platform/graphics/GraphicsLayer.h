@@ -32,9 +32,10 @@
 #include "FloatPoint3D.h"
 #include "FloatRoundedRect.h"
 #include "FloatSize.h"
+#include "GraphicsLayerAnimationProperty.h"
+#include "GraphicsLayerAnimationValue.h"
 #include "GraphicsLayerClient.h"
 #include "GraphicsTypes.h"
-#include "HTMLMediaElementIdentifier.h"
 #include "LayerHostingContextIdentifier.h"
 #include "MediaPlayerEnums.h"
 #include "Path.h"
@@ -43,10 +44,10 @@
 #include "ProcessIdentifier.h"
 #include "ProcessQualified.h"
 #include "Region.h"
-#include "ScrollableArea.h"
 #include "ScrollTypes.h"
+#include "ScrollableArea.h"
 #include "TimingFunction.h"
-#include "TransformOperations.h"
+#include "TransformList.h"
 #include "WindRule.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Function.h>
@@ -84,185 +85,11 @@ struct AcceleratedEffectValues;
 String acceleratedEffectPropertyIDAsString(AcceleratedEffectProperty);
 #endif
 
-String animatedPropertyIDAsString(AnimatedProperty);
-
 namespace DisplayList {
 enum class AsTextFlag : uint8_t;
 }
 
 using LayerHostingContextID = uint32_t;
-
-// Base class for animation values (also used for transitions). Here to
-// represent values for properties being animated via the GraphicsLayer,
-// without pulling in style-related data from outside of the platform directory.
-// FIXME: Should be moved to its own header file.
-class AnimationValue {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(AnimationValue, WEBCORE_EXPORT);
-public:
-    virtual ~AnimationValue() = default;
-
-    double keyTime() const { return m_keyTime; }
-    const TimingFunction* timingFunction() const { return m_timingFunction.get(); }
-    virtual std::unique_ptr<AnimationValue> clone() const = 0;
-
-protected:
-    AnimationValue(double keyTime, TimingFunction* timingFunction = nullptr)
-        : m_keyTime(keyTime)
-        , m_timingFunction(timingFunction)
-    {
-    }
-
-    AnimationValue(const AnimationValue& other)
-        : m_keyTime(other.m_keyTime)
-        , m_timingFunction(other.m_timingFunction ? RefPtr<TimingFunction> { other.m_timingFunction->clone() } : nullptr)
-    {
-    }
-
-    AnimationValue(AnimationValue&&) = default;
-
-private:
-    void operator=(const AnimationValue&) = delete;
-
-    double m_keyTime;
-    RefPtr<TimingFunction> m_timingFunction;
-};
-
-// Used to store one float value of an animation.
-// FIXME: Should be moved to its own header file.
-class FloatAnimationValue : public AnimationValue {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FloatAnimationValue, WEBCORE_EXPORT);
-public:
-    FloatAnimationValue(double keyTime, float value, TimingFunction* timingFunction = nullptr)
-        : AnimationValue(keyTime, timingFunction)
-        , m_value(value)
-    {
-    }
-
-    std::unique_ptr<AnimationValue> clone() const override
-    {
-        return makeUnique<FloatAnimationValue>(*this);
-    }
-
-    float value() const { return m_value; }
-
-private:
-    float m_value;
-};
-
-// Used to store one transform value in a keyframe list.
-// FIXME: Should be moved to its own header file.
-class TransformAnimationValue : public AnimationValue {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(TransformAnimationValue, WEBCORE_EXPORT);
-public:
-    TransformAnimationValue(double keyTime, const TransformOperations& value, TimingFunction* timingFunction = nullptr)
-        : AnimationValue(keyTime, timingFunction)
-        , m_value(value)
-    {
-    }
-
-    TransformAnimationValue(double keyTime, TransformOperation* value, TimingFunction* timingFunction = nullptr)
-        : AnimationValue(keyTime, timingFunction)
-        , m_value(value ? TransformOperations { *value } : TransformOperations { })
-    {
-    }
-
-    std::unique_ptr<AnimationValue> clone() const override
-    {
-        return makeUnique<TransformAnimationValue>(*this);
-    }
-
-    TransformAnimationValue(const TransformAnimationValue& other)
-        : AnimationValue(other)
-        , m_value(other.m_value.clone())
-    {
-    }
-
-    TransformAnimationValue(TransformAnimationValue&&) = default;
-
-    const TransformOperations& value() const { return m_value; }
-
-private:
-    TransformOperations m_value;
-};
-
-// Used to store one filter value in a keyframe list.
-// FIXME: Should be moved to its own header file.
-class FilterAnimationValue : public AnimationValue {
-    WTF_MAKE_TZONE_ALLOCATED_EXPORT(FilterAnimationValue, WEBCORE_EXPORT);
-public:
-    FilterAnimationValue(double keyTime, const FilterOperations& value, TimingFunction* timingFunction = nullptr)
-        : AnimationValue(keyTime, timingFunction)
-        , m_value(value)
-    {
-    }
-
-    std::unique_ptr<AnimationValue> clone() const override
-    {
-        return makeUnique<FilterAnimationValue>(*this);
-    }
-
-    FilterAnimationValue(const FilterAnimationValue& other)
-        : AnimationValue(other)
-        , m_value(other.m_value.clone())
-    {
-    }
-
-    FilterAnimationValue(FilterAnimationValue&&) = default;
-
-    const FilterOperations& value() const { return m_value; }
-
-private:
-    FilterOperations m_value;
-};
-
-// Used to store a series of values in a keyframe list.
-// Values will all be of the same type, which can be inferred from the property.
-// FIXME: Should be moved to its own header file.
-class KeyframeValueList {
-    WTF_MAKE_TZONE_ALLOCATED(KeyframeValueList);
-public:
-    explicit KeyframeValueList(AnimatedProperty property)
-        : m_property(property)
-    {
-    }
-
-    KeyframeValueList(const KeyframeValueList& other)
-        : m_property(other.property())
-    {
-        m_values = WTF::map(other.m_values, [](auto& value) -> std::unique_ptr<const AnimationValue> {
-            return value->clone();
-        });
-    }
-
-    KeyframeValueList(KeyframeValueList&&) = default;
-
-    KeyframeValueList& operator=(const KeyframeValueList& other)
-    {
-        KeyframeValueList copy(other);
-        swap(copy);
-        return *this;
-    }
-
-    KeyframeValueList& operator=(KeyframeValueList&&) = default;
-
-    void swap(KeyframeValueList& other)
-    {
-        std::swap(m_property, other.m_property);
-        m_values.swap(other.m_values);
-    }
-
-    AnimatedProperty property() const { return m_property; }
-
-    size_t size() const { return m_values.size(); }
-    const AnimationValue& at(size_t i) const { return *m_values.at(i); }
-
-    // Insert, sorted by keyTime.
-    WEBCORE_EXPORT void insert(std::unique_ptr<const AnimationValue>);
-
-protected:
-    Vector<std::unique_ptr<const AnimationValue>> m_values;
-    AnimatedProperty m_property;
-};
 
 // GraphicsLayer is an abstraction for a rendering surface with backing store,
 // which may have associated transformation and animations.
@@ -520,12 +347,14 @@ public:
     WEBCORE_EXPORT virtual void setEventRegion(EventRegion&&);
 
     // Transitions are identified by a special animation name that cannot clash with a keyframe identifier.
-    static String animationNameForTransition(AnimatedProperty);
+    static String animationNameForTransition(GraphicsLayerAnimationProperty);
 
     // Return true if the animation is handled by the compositing system.
-    virtual bool addAnimation(const KeyframeValueList&, const FloatSize& /*boxSize*/, const Animation*, const String& /*animationName*/, double /*timeOffset*/)  { return false; }
-    virtual void pauseAnimation(const String& /*animationName*/, double /*timeOffset*/) { }
-    virtual void removeAnimation(const String& /*animationName*/, std::optional<AnimatedProperty>) { }
+    virtual bool addAnimation(const KeyframeValueList<FloatAnimationValue>&, const Animation*, const String& /*animationName*/, Seconds /*timeOffset*/)  { return false; }
+    virtual bool addAnimation(const KeyframeValueList<FilterAnimationValue>&, const Animation*, const String& /*animationName*/, Seconds /*timeOffset*/)  { return false; }
+    virtual bool addAnimation(const KeyframeValueList<TransformAnimationValue>&, const Animation*, const String& /*animationName*/, Seconds /*timeOffset*/)  { return false; }
+    virtual void pauseAnimation(const String& /*animationName*/, Seconds /*timeOffset*/) { }
+    virtual void removeAnimation(const String& /*animationName*/, std::optional<GraphicsLayerAnimationProperty>) { }
     virtual void transformRelatedPropertyDidChange() { }
     WEBCORE_EXPORT virtual void suspendAnimations(MonotonicTime);
     WEBCORE_EXPORT virtual void resumeAnimations();
@@ -724,12 +553,9 @@ protected:
 
     // This method is used by platform GraphicsLayer classes to clear the filters
     // when compositing is not done in hardware. It is not virtual, so the caller
-    // needs to notifiy the change to the platform layer as needed.
+    // needs to notify the change to the platform layer as needed.
     void clearFilters() { m_filters = { }; }
     void clearBackdropFilters() { m_backdropFilters = { }; }
-
-    // Given a KeyframeValueList containing filterOperations, return true if the operations are valid.
-    static int validateFilterOperations(const KeyframeValueList&);
 
     virtual bool shouldRepaintOnSizeChange() const { return drawsContent(); }
 

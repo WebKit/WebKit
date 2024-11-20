@@ -30,15 +30,13 @@
 
 namespace WebCore {
 
-class CSSFunctionValue;
-
 template<typename> class ExceptionOr;
 
-class CSSSkewY : public CSSTransformComponent {
+class CSSSkewY final : public CSSTransformComponent {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(CSSSkewY);
 public:
     static ExceptionOr<Ref<CSSSkewY>> create(Ref<CSSNumericValue>);
-    static ExceptionOr<Ref<CSSSkewY>> create(CSSFunctionValue&);
+    static ExceptionOr<Ref<CSSSkewY>> create(CSS::SkewY);
 
     const CSSNumericValue& ay() const { return m_ay.get(); }
     ExceptionOr<void> setAy(Ref<CSSNumericValue>);
@@ -49,7 +47,7 @@ public:
 
     CSSTransformType getType() const final { return CSSTransformType::SkewY; }
 
-    RefPtr<CSSValue> toCSSValue() const final;
+    std::optional<CSS::TransformFunction> toCSS() const final;
 
 private:
     CSSSkewY(Ref<CSSNumericValue> ay);

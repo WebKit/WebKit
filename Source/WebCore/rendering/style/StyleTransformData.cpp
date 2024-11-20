@@ -29,7 +29,7 @@ namespace WebCore {
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleTransformData);
 
 StyleTransformData::StyleTransformData()
-    : operations(RenderStyle::initialTransform())
+    : transform(RenderStyle::initialTransform())
     , x(RenderStyle::initialTransformOriginX())
     , y(RenderStyle::initialTransformOriginY())
     , z(RenderStyle::initialTransformOriginZ())
@@ -39,7 +39,7 @@ StyleTransformData::StyleTransformData()
 
 inline StyleTransformData::StyleTransformData(const StyleTransformData& other)
     : RefCounted<StyleTransformData>()
-    , operations(other.operations)
+    , transform(other.transform)
     , x(other.x)
     , y(other.y)
     , z(other.z)
@@ -54,7 +54,7 @@ Ref<StyleTransformData> StyleTransformData::copy() const
 
 bool StyleTransformData::operator==(const StyleTransformData& other) const
 {
-    return x == other.x && y == other.y && z == other.z && transformBox == other.transformBox && operations == other.operations;
+    return x == other.x && y == other.y && z == other.z && transformBox == other.transformBox && transform == other.transform;
 }
 
 } // namespace WebCore

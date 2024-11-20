@@ -31,32 +31,32 @@ namespace TestWebKitAPI {
 
 TEST(PlatformCAAnimation, makeKeyPath)
 {
-    auto translate = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Translate);
+    auto translate = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::GraphicsLayerAnimationProperty::Translate);
     EXPECT_STREQ(translate.ascii().data(), "transform");
 
-    auto scale = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Scale);
+    auto scale = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::GraphicsLayerAnimationProperty::Scale);
     EXPECT_STREQ(scale.ascii().data(), "transform");
 
-    auto rotate = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Rotate);
+    auto rotate = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::GraphicsLayerAnimationProperty::Rotate);
     EXPECT_STREQ(rotate.ascii().data(), "transform");
 
-    auto transform = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Transform);
+    auto transform = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::GraphicsLayerAnimationProperty::Transform);
     EXPECT_STREQ(transform.ascii().data(), "transform");
 
-    auto opacity = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Opacity);
+    auto opacity = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::GraphicsLayerAnimationProperty::Opacity);
     EXPECT_STREQ(opacity.ascii().data(), "opacity");
 
-    auto backgroundColor = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::BackgroundColor);
+    auto backgroundColor = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::GraphicsLayerAnimationProperty::BackgroundColor);
     EXPECT_STREQ(backgroundColor.ascii().data(), "backgroundColor");
 
-    auto filter = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperation::Type::Grayscale, 2);
+    auto filter = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::GraphicsLayerAnimationProperty::Filter, WebCore::FilterOperation::Type::Grayscale, 2);
     EXPECT_STREQ(filter.ascii().data(), "filters.filter_2.inputAmount");
 
-    auto backdropFilter = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::WebkitBackdropFilter);
+    auto backdropFilter = WebCore::PlatformCAAnimation::makeKeyPath(WebCore::GraphicsLayerAnimationProperty::WebkitBackdropFilter);
     EXPECT_STREQ(backdropFilter.ascii().data(), "backdropFilters");
 }
 
-static void validateGeneratedKeyPath(WebCore::AnimatedProperty animatedProperty, WebCore::FilterOperation::Type filterOperationType = WebCore::FilterOperation::Type::None, int index = 0)
+static void validateGeneratedKeyPath(WebCore::GraphicsLayerAnimationProperty animatedProperty, WebCore::FilterOperation::Type filterOperationType = WebCore::FilterOperation::Type::None, int index = 0)
 {
     auto keyPath = WebCore::PlatformCAAnimation::makeKeyPath(animatedProperty, filterOperationType, index);
     EXPECT_TRUE(WebCore::PlatformCAAnimation::isValidKeyPath(keyPath));
@@ -64,12 +64,12 @@ static void validateGeneratedKeyPath(WebCore::AnimatedProperty animatedProperty,
 
 TEST(PlatformCAAnimation, isValidKeyPath)
 {
-    validateGeneratedKeyPath(WebCore::AnimatedProperty::Transform);
-    validateGeneratedKeyPath(WebCore::AnimatedProperty::Opacity);
-    validateGeneratedKeyPath(WebCore::AnimatedProperty::BackgroundColor);
-    validateGeneratedKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperation::Type::Grayscale, 2);
-    validateGeneratedKeyPath(WebCore::AnimatedProperty::Filter, WebCore::FilterOperation::Type::Sepia, 22);
-    validateGeneratedKeyPath(WebCore::AnimatedProperty::WebkitBackdropFilter);
+    validateGeneratedKeyPath(WebCore::GraphicsLayerAnimationProperty::Transform);
+    validateGeneratedKeyPath(WebCore::GraphicsLayerAnimationProperty::Opacity);
+    validateGeneratedKeyPath(WebCore::GraphicsLayerAnimationProperty::BackgroundColor);
+    validateGeneratedKeyPath(WebCore::GraphicsLayerAnimationProperty::Filter, WebCore::FilterOperation::Type::Grayscale, 2);
+    validateGeneratedKeyPath(WebCore::GraphicsLayerAnimationProperty::Filter, WebCore::FilterOperation::Type::Sepia, 22);
+    validateGeneratedKeyPath(WebCore::GraphicsLayerAnimationProperty::WebkitBackdropFilter);
 
     EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_"_s));
     EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_0"_s));
@@ -79,7 +79,7 @@ TEST(PlatformCAAnimation, isValidKeyPath)
     EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("filters.filter_-10.inputAmount"_s));
 
     EXPECT_TRUE(WebCore::PlatformCAAnimation::isValidKeyPath(emptyString(), WebCore::PlatformCAAnimation::AnimationType::Group));
-    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath(WebCore::PlatformCAAnimation::makeKeyPath(WebCore::AnimatedProperty::Translate), WebCore::PlatformCAAnimation::AnimationType::Group));
+    EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath(WebCore::PlatformCAAnimation::makeKeyPath(WebCore::GraphicsLayerAnimationProperty::Translate), WebCore::PlatformCAAnimation::AnimationType::Group));
     EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath(emptyString()));
 
     EXPECT_FALSE(WebCore::PlatformCAAnimation::isValidKeyPath("dealloc"_s));
