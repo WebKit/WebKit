@@ -2883,6 +2883,8 @@ function executeURLPatternConstructor(jsonArray) {
   // Iterate through each object in the array
   jsonArray.forEach(entry => {
 
+    debug("Testing: " + JSON.stringify(entry));
+
     const pattern = new URLPattern(...entry.pattern);
 
     entry.expected_obj = entry.expected_obj || {};
