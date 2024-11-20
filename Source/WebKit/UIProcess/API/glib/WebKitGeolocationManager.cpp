@@ -243,7 +243,7 @@ struct _WebKitGeolocationManagerPrivate {
     std::unique_ptr<GeoclueGeolocationProvider> geoclueProvider;
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitGeolocationManager, webkit_geolocation_manager, G_TYPE_OBJECT, GObject)
 

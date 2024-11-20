@@ -130,7 +130,7 @@ struct _WebKitWebProcessExtensionPrivate {
 #endif
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WebKitWebProcessExtension, webkit_web_process_extension, G_TYPE_OBJECT, GObject)
 
