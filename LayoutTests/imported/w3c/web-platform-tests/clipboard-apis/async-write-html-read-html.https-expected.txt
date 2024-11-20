@@ -1,4 +1,4 @@
 Body needed for test_driver.click()
 
-FAIL Verify read and write of some text/html content promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-read"."
+FAIL Verify read and write of some text/html content assert_equals: expected "<head> <title>Title of the\n                    document</title> </head> <body> <p>Hello World</p> </body>" but got "<head> </head> <body> <p style=\"caret-color: rgb(0, 0, 0); color: rgb(0, 0, 0); font-style: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: auto; text-align: start; text-indent: 0px; text-transform: none; white-space: normal; widows: auto; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration: none;\">Hello World</p> </body>"
 

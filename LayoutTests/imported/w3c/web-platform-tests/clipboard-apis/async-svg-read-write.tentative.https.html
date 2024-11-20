@@ -13,22 +13,18 @@
 <script>
 'use strict';
 // This function removes extra spaces between tags in svg. For example, the
-// following html: "<svg> <g> </g>   </svg>" would turn into this
-//           html: "<svg> <g> </g>   </svg>"
+// following svg: "<svg> <g> </g>     </svg>" would turn into this
+//           svg: "<svg> <g> </g> </svg>"
 // We remove the extra spaces because in svg they are considered equivalent,
 // but when we are comparing for equality the spaces make a difference.
-function reformatSvg(svg) {
-  const parser = new DOMParser();
-  const svgString =
-        parser.parseFromString(svg, 'text/html').documentElement.innerHTML;
-  const reformattedString = svgString.replace(/\>\s*\</g, '> <');
-  return reformattedString;
+function reformatSvg(svgString) {
+  return svgString.replace(/\>\s*\</g, '> <');
 }
 
 async function readWriteTest(textInput) {
   await test_driver.set_permission({name: 'clipboard-read'}, 'granted');
   await test_driver.set_permission({name: 'clipboard-write'}, 'granted');
-  const blobInput = new Blob([textInput], {type: 'image/svg+xml'});
+  const blobInput = new Blob([textInput.input], {type: 'image/svg+xml'});
   const clipboardItem = new ClipboardItem({'image/svg+xml': blobInput});
   await waitForUserActivation();
   await navigator.clipboard.write([clipboardItem]);
@@ -45,16 +41,36 @@ async function readWriteTest(textInput) {
 
   const blobText = await (new Response(blobOutput)).text();
   const outputSvg = reformatSvg(blobText);
-  const inputSvg = reformatSvg(textInput);
-  assert_equals(outputSvg, inputSvg);
+  if ("expected" in textInput) {
+    assert_equals(outputSvg, reformatSvg(textInput.expected));
+  } else {
+    assert_equals(outputSvg, reformatSvg(textInput.input));
+  }
 }
-const testCases = ['<svg></svg>',
-                   '<svg> <circle cx="50" cy="50" r="40" /> </svg>'];
+const testCases = [
+  { input: '<svg></svg>' },
+  { input: '<svg> <circle cx="50" cy="50" r="40"/> </svg>',
+    expected: '<svg> <circle cx="50" cy="50" r="40"> </circle> </svg>' },
+  { input: '<svg> <script>const a = 5;\<\/script> <a href="javascript:alert(2)"> test </a> </svg>',
+    expected: '<svg> <a> test </a> </svg>' },
+  { input: '<svg> <style>.foo {fill: green;}</style>' +
+            '<circle class=\"foo\" cx=\"50\" cy=\"50\" r=\"40\" /> </svg>',
+    // The extra style attributes is due to read-time sanitization.
+    // We would like to improve the expectation but need a better sanitizer first.
+    expected: '<svg style=\"color: rgb(0, 0, 0); font-size: medium;' +
+              ' font-style: normal; font-variant-ligatures: normal;' +
+              ' font-variant-caps: normal; font-weight: 400;' +
+              ' letter-spacing: normal; orphans: 2; text-align: start;' +
+              ' text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px;' +
+              ' -webkit-text-stroke-width: 0px; white-space: normal;' +
+              ' text-decoration-thickness: initial; text-decoration-style: initial;' +
+              ' text-decoration-color: initial;\"> <circle class=\"foo\" cx=\"50\"' +
+              ' cy=\"50\" r=\"40\"> </circle> </svg>' },
+];
 
 promise_test(async t => {
   for (const testCase of testCases) {
     await readWriteTest(testCase);
   }
 }, 'Verify read and write of some image/svg+xml content');
-
 </script>
