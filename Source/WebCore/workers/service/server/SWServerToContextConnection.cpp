@@ -137,7 +137,7 @@ void SWServerToContextConnection::setAsInspected(ServiceWorkerIdentifier identif
         worker->setAsInspected(isInspected);
 }
 
-void SWServerToContextConnection::terminateWhenPossible()
+bool SWServerToContextConnection::terminateWhenPossible()
 {
     m_shouldTerminateWhenPossible = true;
 
@@ -152,8 +152,7 @@ void SWServerToContextConnection::terminateWhenPossible()
 
     // FIXME: If there is a service worker with pending events and we don't close the connection right away, we'd ideally keep
     // track of this and close the connection once it becomes idle.
-    if (!hasServiceWorkerWithPendingEvents)
-        close();
+    return !hasServiceWorkerWithPendingEvents;
 }
 
 } // namespace WebCore

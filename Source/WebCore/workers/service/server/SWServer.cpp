@@ -917,7 +917,11 @@ void SWServer::terminateContextConnectionWhenPossible(const RegistrableDomain& r
     if (!contextConnection || contextConnection->webProcessIdentifier() != processIdentifier)
         return;
 
-    contextConnection->terminateWhenPossible();
+    if (!contextConnection->terminateWhenPossible())
+        return;
+
+    removeContextConnection(*contextConnection);
+    contextConnection->connectionIsNoLongerNeeded();
 }
 
 OptionSet<AdvancedPrivacyProtections> SWServer::advancedPrivacyProtectionsFromClient(const ClientOrigin& origin) const

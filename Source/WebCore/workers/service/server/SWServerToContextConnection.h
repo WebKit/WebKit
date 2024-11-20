@@ -64,7 +64,7 @@ public:
 
     // This flag gets set when the service worker process is no longer clean (because it has loaded several eTLD+1s).
     bool shouldTerminateWhenPossible() const { return m_shouldTerminateWhenPossible; }
-    void terminateWhenPossible();
+    bool terminateWhenPossible();
 
     // Messages to the SW host process
     virtual void installServiceWorkerContext(const ServiceWorkerContextData&, const ServiceWorkerData&, const String& userAgent, WorkerThreadMode, OptionSet<AdvancedPrivacyProtections>) = 0;
@@ -108,8 +108,6 @@ public:
 
 protected:
     WEBCORE_EXPORT SWServerToContextConnection(SWServer&, Site&&, std::optional<ScriptExecutionContextIdentifier> serviceWorkerPageIdentifier);
-
-    virtual void close() = 0;
 
 private:
     WeakPtr<WebCore::SWServer> m_server;

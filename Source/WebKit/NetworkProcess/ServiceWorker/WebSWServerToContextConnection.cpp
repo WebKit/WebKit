@@ -162,11 +162,6 @@ void WebSWServerToContextConnection::skipWaiting(ServiceWorkerIdentifier service
     callback();
 }
 
-void WebSWServerToContextConnection::close()
-{
-    send(Messages::WebSWContextManagerConnection::Close { });
-}
-
 void WebSWServerToContextConnection::installServiceWorkerContext(const ServiceWorkerContextData& contextData, const ServiceWorkerData& workerData, const String& userAgent, WorkerThreadMode workerThreadMode, OptionSet<AdvancedPrivacyProtections> advancedPrivacyProtections)
 {
     serviceWorkerNeedsRunning();
