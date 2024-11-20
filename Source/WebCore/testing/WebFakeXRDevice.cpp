@@ -173,6 +173,9 @@ void SimulatedXRDevice::frameTimerFired()
 
         auto layerData = makeUniqueRef<PlatformXR::FrameData::LayerData>(PlatformXR::FrameData::LayerData {
             .layerSetup = layerSetupData,
+            .renderingFrameIndex = 0,
+            .textureData = std::nullopt,
+            .requestDepth = false
         });
         data.layers.add(layer.key, WTFMove(layerData));
 #else
