@@ -983,6 +983,7 @@ BlockOpenDirectoryInWebContentSandbox:
   exposed: [ WebKit ]
   defaultValue:
     WebKit:
+      "ENABLE(REMOVE_XPC_AND_MACH_SANDBOX_EXTENSIONS_IN_WEBCONTENT)": true
       default: false
 
 BlockWebInspectorInWebContentSandbox:
