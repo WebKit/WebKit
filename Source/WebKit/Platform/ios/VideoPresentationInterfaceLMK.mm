@@ -41,6 +41,7 @@
 #import <WebCore/WebAVPlayerLayerView.h>
 #import <pal/spi/cocoa/QuartzCoreSPI.h>
 #import <wtf/BlockPtr.h>
+#import <wtf/TZoneMallocInlines.h>
 #import <wtf/UUID.h>
 #import <wtf/text/MakeString.h>
 
@@ -72,6 +73,8 @@
 @end
 
 namespace WebKit {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(VideoPresentationInterfaceLMK);
 
 VideoPresentationInterfaceLMK::~VideoPresentationInterfaceLMK()
 {
