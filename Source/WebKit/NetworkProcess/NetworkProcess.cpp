@@ -167,7 +167,7 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
     addSupplementWithoutRefCountedCheck<AuthenticationManager>();
     addSupplement<WebCookieManager>();
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    addSupplement<LegacyCustomProtocolManager>();
+    addSupplementWithoutRefCountedCheck<LegacyCustomProtocolManager>();
 #endif
 #if HAVE(LSDATABASECONTEXT)
     addSupplement<LaunchServicesDatabaseObserver>();
@@ -202,6 +202,13 @@ DownloadManager& NetworkProcess::downloadManager()
 {
     return m_downloadManager;
 }
+
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
+RefPtr<LegacyCustomProtocolManager> NetworkProcess::protectedLegacyCustomProtocolManager()
+{
+    return supplement<LegacyCustomProtocolManager>();
+}
+#endif
 
 void NetworkProcess::removeNetworkConnectionToWebProcess(NetworkConnectionToWebProcess& connection)
 {
@@ -1504,7 +1511,7 @@ void NetworkProcess::preconnectTo(PAL::SessionID sessionID, WebPageProxyIdentifi
 
 #if ENABLE(SERVER_PRECONNECT)
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    if (supplement<LegacyCustomProtocolManager>()->supportsScheme(url.protocol().toString()))
+    if (protectedLegacyCustomProtocolManager()->supportsScheme(url.protocol().toString()))
         return;
 #endif
 

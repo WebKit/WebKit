@@ -1473,7 +1473,7 @@ NetworkSessionCocoa::NetworkSessionCocoa(NetworkProcess& networkProcess, const N
 #endif
 
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    networkProcess.supplement<LegacyCustomProtocolManager>()->registerProtocolClass(configuration);
+    networkProcess.protectedLegacyCustomProtocolManager()->registerProtocolClass(configuration);
 #endif
 
     configuration._timingDataOptions = _TimingDataOptionsEnableW3CNavigationTiming;
