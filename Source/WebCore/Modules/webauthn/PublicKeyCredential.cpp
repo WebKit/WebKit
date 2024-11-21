@@ -28,6 +28,8 @@
 
 #if ENABLE(WEB_AUTHN)
 
+#include "AuthenticatorAssertionResponse.h"
+#include "AuthenticatorAttestationResponse.h"
 #include "AuthenticatorCoordinator.h"
 #include "AuthenticatorResponse.h"
 #include "BufferSource.h"
@@ -42,6 +44,7 @@
 #include "PublicKeyCredentialDescriptorJSON.h"
 #include "PublicKeyCredentialRequestOptionsJSON.h"
 #include "Settings.h"
+#include "WebAuthenticationUtils.h"
 #include <wtf/text/Base64.h>
 
 namespace WebCore {
