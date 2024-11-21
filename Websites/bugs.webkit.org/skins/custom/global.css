@@ -83,6 +83,16 @@
     --status-yellow-color: hsl(50, 100%, 25.1%);
     --status-red-color: hsl(0, 100%, 50%);
 
+    --diff-file-background-color: hsl(0, 0%, 86.7%);
+    --diff-linenum-background-color: hsl(0, 0%, 94.9%);
+    --diff-added-background-color: hsl(70, 90%, 86%);
+    --diff-added-text-color: hsl(70, 64%, 33%);
+    --diff-changed-background-color: hsl(200, 79.67%, 90.16%);
+    --diff-changed-text-color: hsl(200, 50%, 33%);
+    --diff-removed-background-color: hsl(0, 100%, 92%);
+    --diff-removed-text-color: hsl(360, 84%, 33%);
+    --diff-rule-color: hsl(0, 0%, 87.8%);
+
     --category-header-color: hsl(198, 100%, 20%);
     
     --font-size-tiny: 1.1rem;
@@ -90,8 +100,7 @@
     --font-size-small: 1.3rem;
     --font-size-medium: 1.4rem;
     --font-size-large: 1.6rem;
-    --font-size-xlarge: 1.8rem;
-    
+    --font-size-xlarge: 1.8rem;   
 }
 
 @media (prefers-color-scheme: dark) {
@@ -140,7 +149,7 @@
         --article-scrollable-border-color: hsl(120, 4.1%, 19.2%);
         --figure-caption-rule-color: hsl(0, 0%, 80%);
         --toc-border-color: hsl(0, 0%, 83.9%);
-        --table-top-rule-color: hsl(0, 0%, 73.3%);
+        --table-top-rule-color: hsl(0, 0%, 24%);
         --table-rule-color: hsl(0, 0%, 33%);
         --figure-mattewhite-background-color: hsl(0, 0%, 0%);
         
@@ -176,6 +185,16 @@
         --status-blue-color: hsl(211.3, 100%, 50%);
         --status-yellow-color: hsl(31.9, 20.5%, 33.1%);
         --status-red-color: hsl(0, 100%, 33%);
+
+        --diff-file-background-color: hsl(120, 1%, 24%);
+        --diff-linenum-background-color: hsl(120, 1%, 19.4%);
+        --diff-added-background-color: hsl(90, 40%, 19%);
+        --diff-added-text-color: hsl(70, 64%, 70%);
+        --diff-changed-background-color: hsl(200, 20%, 15%);
+        --diff-changed-text-color: hsl(200, 79.67%, 80.16%);
+        --diff-removed-background-color: hsl(5, 40%, 28%);
+        --diff-removed-text-color: hsl(0, 84%, 75%);
+        --diff-rule-color: hsl(0, 0%, 15%);
 
         --category-header-color: hsl(198, 100%, 42%);
     }
@@ -1653,6 +1672,10 @@ label.required, .required_explanation {
    display: none;
 }
 
+.bz_sort_order_primary {
+   color: var(--text-color);
+}
+
 /** Bug Status Pills **/
 .bug-status {
    display: inline-block;
@@ -2348,6 +2371,7 @@ table.attachment_entry {
     user-select: none;
     -webkit-user-select: none;
 }
+
 .bz_comment_actions .bz_collapse_comment:before {
     content: "\25BC";
     font-size: var(--font-size-xsmall);
@@ -2475,6 +2499,139 @@ form[name=login] table tr {
 .yui-skin-sam .yui-ac-content {
     background-color: var(--input-background-color);
     border-color: var(--input-border-color);
+}
+
+/** Attachment File Diff **/
+table.file_table {
+    table-layout: auto;
+    width: 100%;
+    min-width: 800px;
+    border-bottom: 1px solid var(--table-top-rule-color);
+}
+
+.file_table tr {
+    border-color: var(--diff-rule-color);
+}
+
+.file_table th,
+.file_table td {
+    padding: 0;
+}
+
+.file_table .file_head {
+    font-weight: normal;
+    font-size: var(--font-size-medium);
+    background-color: var(--diff-file-background-color);
+    border: 1px solid var(--diff-file-background-color);
+    padding: 0.8rem;
+}
+
+.file_table .link_here a,
+.file_table .link_here a:active,
+.file_table .link_here a:hover,
+.file_table .link_here a:visited {
+    color: var(--text-color-coolgrey);
+    text-decoration: none;
+    font-size: 0;
+}
+
+.file_table .link_here a::before {
+    content: "\00B7\00B7\00B7";
+    font-size: var(--font-size-medium);
+    color: var(--text-color-coolgrey);
+    text-decoration: none;
+}
+
+.file_head .file-name {
+    font-size: var(--font-size-large);
+    font-weight: 500;
+}
+
+.plus-minus-lines {
+    font-family: "SF Mono", monospace;
+    font-size-adjust: 0.53;
+    margin-left: 3rem;
+    display: block;
+}
+
+.plus-lines {
+    color: var(--diff-added-text-color);
+}
+
+.minus-lines {
+    color: var(--diff-removed-text-color);
+}
+
+.file_table .section_head {
+    background-color: var(--code-background-color);
+    border: none
+    border: 1px solid var(--table-top-rule-color);
+    text-align: left;
+}
+
+.file_table .section_head:first-child {
+    padding: 0.5rem;
+}
+
+.section_head .func_info,
+.section_head .lines_count {
+    font-family: "SF Mono", monospace;
+}
+
+.file_table .lines_count,
+.file_table .num {
+    background-color: var(--diff-linenum-background-color);
+    color: var(--text-color-coolgray);
+    text-align: right;
+    padding: 0 0.5rem;
+    min-width: 3rem;
+    vertical-align: middle;
+    font-family: "SF Mono", monospace;
+    font-size: var(--font-size-small);
+    font-weight: 600;
+}
+
+.file_table .added {
+    color: var(--diff-added-text-color);
+    background-color: var(--diff-added-background-color);
+}
+
+.file_table .changed {
+    color: var(--diff-changed-text-color);
+    background-color: var(--diff-changed-background-color);
+}
+
+.file_table .removed {
+    color: var(--diff-removed-text-color);
+    background-color: var(--diff-removed-background-color);
+}
+
+.file_table .toggle_file {
+    font-size: 0;
+    padding-inline-start: 0.5rem;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.file_table .toggle_file::before {
+    content: "\25BC";
+    font-size: var(--font-size-large);
+    display: inline-block;
+    width: 2rem;
+    height: 2.5rem;
+}
+
+.file_table:has(.file_collapse) .toggle_file::before {
+   content: "\25B6";
+}
+
+.attachment-links {
+    float: right;
+}
+
+.attachment-links,
+.attachment-collapse-toggles {
+    line-height: 3rem;
 }
 
 @media only screen and (max-width: 800px) {
@@ -2706,6 +2863,10 @@ form[name=login] table tr {
 
    .log-in-to-bugzilla .columns .column.second {
        border-top: 1px solid var(--horizontal-rule-color);
+   }
+   
+   .attachment-collapse-toggles {
+       clear: both;
    }
 }
 
