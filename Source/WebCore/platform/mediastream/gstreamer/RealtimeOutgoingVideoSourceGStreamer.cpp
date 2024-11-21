@@ -98,11 +98,6 @@ RTCRtpCapabilities RealtimeOutgoingVideoSourceGStreamer::rtpCapabilities() const
     return registryScanner.videoRtpCapabilities(GStreamerRegistryScanner::Configuration::Encoding);
 }
 
-bool RealtimeOutgoingVideoSourceGStreamer::linkTee()
-{
-    return gst_element_link_many(m_liveSync.get(), m_preProcessor.get(), m_tee.get(), nullptr);
-}
-
 GRefPtr<GstPad> RealtimeOutgoingVideoSourceGStreamer::outgoingSourcePad() const
 {
     if (WEBKIT_IS_MEDIA_STREAM_SRC(m_outgoingSource.get()))

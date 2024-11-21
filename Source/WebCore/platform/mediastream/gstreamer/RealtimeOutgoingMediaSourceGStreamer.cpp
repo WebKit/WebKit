@@ -48,19 +48,6 @@ RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer(Type 
 {
     initialize();
 
-    if (track.isCanvas()) {
-        m_liveSync = makeGStreamerElement("livesync", nullptr);
-        if (!m_liveSync) {
-            GST_WARNING_OBJECT(m_bin.get(), "GStreamer element livesync not found. Canvas streaming to PeerConnection will not work as expected, falling back to identity element.");
-            m_liveSync = gst_element_factory_make("identity", nullptr);
-        }
-    } else
-        m_liveSync = gst_element_factory_make("identity", nullptr);
-    gst_bin_add(GST_BIN_CAST(m_bin.get()), m_liveSync.get());
-
-    // Both livesync and identity have a single-segment property, so no need for checks here.
-    g_object_set(m_liveSync.get(), "single-segment", TRUE, nullptr);
-
     m_track = &track.privateTrack();
     m_outgoingSource = webkitMediaStreamSrcNew();
     GST_DEBUG_OBJECT(m_bin.get(), "Created outgoing source %" GST_PTR_FORMAT, m_outgoingSource.get());
@@ -75,10 +62,6 @@ RealtimeOutgoingMediaSourceGStreamer::RealtimeOutgoingMediaSourceGStreamer(Type 
     , m_ssrcGenerator(ssrcGenerator)
 {
     initialize();
-
-    m_liveSync = gst_element_factory_make("identity", nullptr);
-    g_object_set(m_liveSync.get(), "single-segment", TRUE, nullptr);
-    gst_bin_add(GST_BIN_CAST(m_bin.get()), m_liveSync.get());
 }
 
 RealtimeOutgoingMediaSourceGStreamer::~RealtimeOutgoingMediaSourceGStreamer()
@@ -147,14 +130,13 @@ void RealtimeOutgoingMediaSourceGStreamer::start()
     m_isStopped = false;
 
     if (m_transceiver) {
-        auto pad = adoptGRef(gst_element_get_static_pad(m_liveSync.get(), "src"));
+        auto pad = outgoingSourcePad();
         if (!gst_pad_is_linked(pad.get())) {
             GST_DEBUG_OBJECT(m_bin.get(), "Codec preferences haven't changed before startup, ensuring source is linked");
             codecPreferencesChanged();
         }
     }
 
-    gst_element_link(m_outgoingSource.get(), m_liveSync.get());
     gst_element_sync_state_with_parent(m_bin.get());
 
     startUpdatingStats();
@@ -186,7 +168,10 @@ void RealtimeOutgoingMediaSourceGStreamer::stopOutgoingSource()
 
     gst_element_set_locked_state(m_outgoingSource.get(), TRUE);
 
-    gst_element_unlink(m_outgoingSource.get(), m_liveSync.get());
+    if (m_preProcessor)
+        gst_element_unlink_many(m_outgoingSource.get(), m_preProcessor.get(), m_tee.get(), nullptr);
+    else
+        gst_element_unlink(m_outgoingSource.get(), m_tee.get());
 
     gst_element_set_state(m_outgoingSource.get(), GST_STATE_NULL);
     gst_bin_remove(GST_BIN_CAST(m_bin.get()), m_outgoingSource.get());
@@ -425,6 +410,14 @@ bool RealtimeOutgoingMediaSourceGStreamer::linkPacketizer(RefPtr<GStreamerRTPPac
     return true;
 }
 
+bool RealtimeOutgoingMediaSourceGStreamer::linkSource()
+{
+    if (m_preProcessor)
+        return gst_element_link_many(m_outgoingSource.get(), m_preProcessor.get(), m_tee.get(), nullptr);
+
+    return gst_element_link(m_outgoingSource.get(), m_tee.get());
+}
+
 bool RealtimeOutgoingMediaSourceGStreamer::configurePacketizers(GRefPtr<GstCaps>&& codecPreferences)
 {
     GST_DEBUG_OBJECT(m_bin.get(), "Configuring packetizers for caps %" GST_PTR_FORMAT, codecPreferences.get());
@@ -434,13 +427,7 @@ bool RealtimeOutgoingMediaSourceGStreamer::configurePacketizers(GRefPtr<GstCaps>
     if (m_outgoingSource) {
         auto srcPad = outgoingSourcePad();
         if (!gst_pad_is_linked(srcPad.get()))
-            gst_element_link(m_outgoingSource.get(), m_liveSync.get());
-    }
-
-    auto teeSinkPad = adoptGRef(gst_element_get_static_pad(m_tee.get(), "sink"));
-    if (!gst_pad_is_linked(teeSinkPad.get()) && !linkTee()) {
-        GST_ERROR_OBJECT(m_bin.get(), "Unable to link tee");
-        return false;
+            linkSource();
     }
 
     auto rtpCaps = adoptGRef(gst_caps_new_empty());
@@ -652,7 +639,7 @@ void RealtimeOutgoingMediaSourceGStreamer::teardown()
     m_packetizers.clear();
 
     m_bin.clear();
-    m_liveSync.clear();
+    m_preProcessor.clear();
     m_tee.clear();
     m_rtpFunnel.clear();
     m_allowedCaps.clear();

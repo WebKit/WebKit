@@ -48,7 +48,6 @@ private:
     void initialize();
 
     RTCRtpCapabilities rtpCapabilities() const final;
-    bool linkTee() final;
 };
 
 } // namespace WebCore

@@ -69,11 +69,6 @@ RTCRtpCapabilities RealtimeOutgoingAudioSourceGStreamer::rtpCapabilities() const
     return registryScanner.audioRtpCapabilities(GStreamerRegistryScanner::Configuration::Encoding);
 }
 
-bool RealtimeOutgoingAudioSourceGStreamer::linkTee()
-{
-    return gst_element_link(m_liveSync.get(), m_tee.get());
-}
-
 GRefPtr<GstPad> RealtimeOutgoingAudioSourceGStreamer::outgoingSourcePad() const
 {
     if (WEBKIT_IS_MEDIA_STREAM_SRC(m_outgoingSource.get()))
