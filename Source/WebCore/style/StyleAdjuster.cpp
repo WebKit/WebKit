@@ -754,11 +754,14 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     }
 
     if (m_parentStyle.contentVisibility() != ContentVisibility::Hidden) {
-        auto isSkippedContentRoot = style.contentVisibility() != ContentVisibility::Visible && doesSizeContainmentApplyByDisplayType(style) && m_element && !m_element->isRelevantToUser();
-        if (isSkippedContentRoot)
+        auto isSkippedContentRoot = [&] {
+            if (style.contentVisibility() == ContentVisibility::Visible || !doesSizeContainmentApplyByDisplayType(style))
+                return false;
+            return style.contentVisibility() == ContentVisibility::Hidden || (m_element && !m_element->isRelevantToUser());
+        };
+        if (isSkippedContentRoot())
             style.setUsedContentVisibility(style.contentVisibility());
     }
-
     if (style.contentVisibility() == ContentVisibility::Auto) {
         style.containIntrinsicWidthAddAuto();
         style.containIntrinsicHeightAddAuto();
