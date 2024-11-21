@@ -188,6 +188,7 @@ JSNVShaderNoperspectiveInterpolation.cpp
 JSNamedNodeMap.cpp
 JSNavigateEvent.cpp
 JSNavigation.cpp
+JSNavigationHistoryEntry.cpp
 JSNavigator.cpp
 JSNodeList.cpp
 JSNotification.cpp

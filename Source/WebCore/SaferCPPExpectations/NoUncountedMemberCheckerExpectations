@@ -120,7 +120,6 @@ platform/graphics/mac/controls/ControlMac.h
 platform/mediarecorder/MediaRecorderPrivate.h
 platform/mediastream/AudioMediaStreamTrackRenderer.h
 platform/mediastream/MediaStreamPrivate.h
-platform/mediastream/cocoa/IncomingAudioMediaStreamTrackRendererUnit.h
 platform/mediastream/mac/CoreAudioCaptureSource.h
 platform/mock/ScrollbarsControllerMock.h
 plugins/PluginData.h
