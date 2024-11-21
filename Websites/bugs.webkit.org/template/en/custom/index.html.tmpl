@@ -66,9 +66,11 @@
   
   <div class="intro">
     [% Hook.process('intro') %]
+    [% UNLESS user.id %]
     <p>The web browser engine used by Safari, Mail, Messages, and many other apps on macOS, iOS, iPadOS, watchOS, visionOS, and Linux.</p>
     
     <p><a href="/createaccount.cgi">Create an account</a> to <a href="/enter_bug.cgi?product=WebKit">report WebKit rendering engine bugs</a>, <a href="/enter_bug.cgi?product=WebKit&amp;component=JavaScriptCore">JavaScriptCore bugs</a>, <a href="/enter_bug.cgi?product=WebKit&amp;component=Accessibility">accessibility bugs</a>, or <a href="/enter_bug.cgi?product=WebKit&amp;component=Web+Inspector">Web Inspector bugs</a>.</p>
+    [% END %]
   </div>
 
   <form id="quick-search-form" name="quick-search-form" action="buglist.cgi">
