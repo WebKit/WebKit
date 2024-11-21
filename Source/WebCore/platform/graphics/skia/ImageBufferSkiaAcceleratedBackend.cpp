@@ -29,6 +29,7 @@
 #if USE(SKIA)
 #include "FontRenderOptions.h"
 #include "GLContext.h"
+#include "GLFence.h"
 #include "IntRect.h"
 #include "PixelBuffer.h"
 #include "PixelBufferConversion.h"
@@ -45,7 +46,6 @@ WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 #include "BitmapTexture.h"
 #include "CoordinatedPlatformLayerBufferNativeImage.h"
 #include "CoordinatedPlatformLayerBufferRGB.h"
-#include "GLFence.h"
 #include "GraphicsLayerContentsDisplayDelegateTextureMapper.h"
 #include "TextureMapperFlags.h"
 #include "TextureMapperPlatformLayerProxy.h"
