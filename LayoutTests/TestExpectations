@@ -7939,7 +7939,6 @@ imported/w3c/web-platform-tests/css/css-ruby/ruby-base-different-size.html [ Ima
 imported/blink/fast/ruby/ruby-first-letter.html [ ImageOnlyFailure ]
 # <rb> <rbc> inline boxes are not recognized as ruby base boxes.
 imported/w3c/web-platform-tests/css/css-ruby/ruby-line-breaking-003.html [ ImageOnlyFailure ]
-webkit.org/b/276007 [ Debug ] fast/ruby/ruby-with-continuation-crash.html [ Skip ]
 
 imported/w3c/web-platform-tests/css/css-ruby/break-within-bases/basic.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-ruby/break-within-bases/no-break-opportunity-at-end.html [ ImageOnlyFailure ]

@@ -35,6 +35,8 @@ class RenderBlockFlow;
 class RenderTreeBuilder::Block {
     WTF_MAKE_TZONE_ALLOCATED(Block);
 public:
+    static RenderBlock* continuationBefore(RenderBlock& parent, RenderObject* beforeChild);
+
     Block(RenderTreeBuilder&);
 
     void attach(RenderBlock& parent, RenderPtr<RenderObject> child, RenderObject* beforeChild);

@@ -57,7 +57,7 @@ static RenderBoxModelObject* nextContinuation(RenderObject* renderer)
     return downcast<RenderBlock>(*renderer).inlineContinuation();
 }
 
-static RenderBoxModelObject* continuationBefore(RenderInline& parent, RenderObject* beforeChild)
+RenderBoxModelObject* RenderTreeBuilder::Inline::continuationBefore(RenderInline& parent, RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() == &parent)
         return &parent;
@@ -84,9 +84,9 @@ static RenderBoxModelObject* continuationBefore(RenderInline& parent, RenderObje
 
 static RenderPtr<RenderInline> cloneAsContinuation(RenderInline& renderer)
 {
-    auto continuationStyle = RenderStyle::clone(renderer.style());
-    continuationStyle.setDisplay(DisplayType::Inline);
-    RenderPtr<RenderInline> cloneInline = createRenderer<RenderInline>(RenderObject::Type::Inline, *renderer.element(), WTFMove(continuationStyle));
+    RenderPtr<RenderInline> cloneInline = renderer.isAnonymous() ?
+    createRenderer<RenderInline>(RenderObject::Type::Inline, renderer.document(), RenderStyle::clone(renderer.style()))
+    : createRenderer<RenderInline>(RenderObject::Type::Inline, *renderer.element(), RenderStyle::clone(renderer.style()));
     cloneInline->initializeStyle();
     cloneInline->setFragmentedFlowState(renderer.fragmentedFlowState());
     cloneInline->setHasOutlineAutoAncestor(renderer.hasOutlineAutoAncestor());

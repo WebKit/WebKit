@@ -72,7 +72,7 @@ static bool canMergeContiguousAnonymousBlocks(const RenderObject& rendererToBeRe
     return previous && next && previous != anonymousDestroyRoot && next != anonymousDestroyRoot;
 }
 
-static RenderBlock* continuationBefore(RenderBlock& parent, RenderObject* beforeChild)
+RenderBlock* RenderTreeBuilder::Block::continuationBefore(RenderBlock& parent, RenderObject* beforeChild)
 {
     if (beforeChild && beforeChild->parent() == &parent)
         return &parent;
