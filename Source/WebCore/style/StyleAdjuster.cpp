@@ -978,6 +978,14 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             style.setUserSelect(UserSelect::None);
     }
 
+#if PLATFORM(IOS)
+    if (m_document->quirks().hideForbesVolumeSlider()) {
+        static MainThreadNeverDestroyed<const AtomString> localName("cnx-volume-slider"_s);
+        if (m_element->hasLocalName(localName))
+            style.setEffectiveDisplay(DisplayType::None);
+    }
+#endif
+
 #if PLATFORM(IOS_FAMILY)
     if (m_document->quirks().needsGoogleMapsScrollingQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> className("PUtLdf"_s);

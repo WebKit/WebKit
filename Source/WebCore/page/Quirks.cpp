@@ -2159,6 +2159,14 @@ bool Quirks::needsBingGestureEventQuirk(EventTarget* target) const
     return false;
 }
 
+#if PLATFORM(IOS)
+// forbes.com rdar://117093458
+bool Quirks::hideForbesVolumeSlider() const
+{
+    return needsQuirks() && !PAL::currentUserInterfaceIdiomIsSmallScreen() && m_document->url().host() == "www.forbes.com"_s;
+}
+#endif // PLATFORM(IOS)
+
 URL Quirks::topDocumentURL() const
 {
     if (UNLIKELY(!m_topDocumentURLForTesting.isEmpty()))
