@@ -1290,6 +1290,7 @@ dom/PendingScript.cpp
 dom/PointerEvent.cpp
 dom/PointerEventTypeNames.cpp
 dom/PopStateEvent.cpp
+dom/PopoverData.cpp
 dom/Position.cpp
 dom/PositionIterator.cpp
 dom/ProcessingInstruction.cpp
@@ -1332,6 +1333,7 @@ dom/TextEncoderStreamEncoder.cpp
 dom/TextEvent.cpp
 dom/TextNodeTraversal.cpp
 dom/ToggleEvent.cpp
+dom/ToggleEventTask.cpp
 dom/Touch.cpp @no-unify
 dom/TouchEvent.cpp @no-unify
 dom/TouchList.cpp @no-unify

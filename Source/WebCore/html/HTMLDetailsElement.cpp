@@ -38,6 +38,7 @@
 #include "SlotAssignment.h"
 #include "Text.h"
 #include "ToggleEvent.h"
+#include "ToggleEventTask.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "UserAgentStyle.h"
 #include "UserAgentStyleSheets.h"
@@ -138,21 +139,12 @@ bool HTMLDetailsElement::isActiveSummary(const HTMLSummaryElement& summary) cons
     return slot == m_summarySlot.get();
 }
 
-void HTMLDetailsElement::queueDetailsToggleEventTask(DetailsState oldState, DetailsState newState)
+void HTMLDetailsElement::queueDetailsToggleEventTask(ToggleState oldState, ToggleState newState)
 {
-    if (auto queuedEventData = queuedToggleEventData())
-        oldState = queuedEventData->oldState;
-    setQueuedToggleEventData({ oldState, newState });
-    queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [this, newState] {
-        auto queuedEventData = queuedToggleEventData();
-        if (!queuedEventData || queuedEventData->newState != newState)
-            return;
-        clearQueuedToggleEventData();
-        auto stringForState = [](DetailsState state) {
-            return state == DetailsState::Closed ? "closed"_s : "open"_s;
-        };
-        dispatchEvent(ToggleEvent::create(eventNames().toggleEvent, { EventInit { }, stringForState(queuedEventData->oldState), stringForState(queuedEventData->newState) }, Event::IsCancelable::No));
-    });
+    if (!m_toggleEventTask)
+        m_toggleEventTask = ToggleEventTask::create(*this);
+
+    m_toggleEventTask->queue(oldState, newState);
 }
 
 void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason attributeModificationReason)
@@ -164,7 +156,7 @@ void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomS
             ASSERT(root);
             if (!newValue.isNull()) {
                 m_defaultSlot->removeInlineStyleProperty(CSSPropertyContentVisibility);
-                queueDetailsToggleEventTask(DetailsState::Closed, DetailsState::Open);
+                queueDetailsToggleEventTask(ToggleState::Closed, ToggleState::Open);
                 if (document().settings().detailsNameAttributeEnabled() && !attributeWithoutSynchronization(nameAttr).isEmpty()) {
                     ShouldNotFireMutationEventsScope scope(document());
                     for (auto& otherDetailsElement : otherElementsInNameGroup())
@@ -172,7 +164,7 @@ void HTMLDetailsElement::attributeChanged(const QualifiedName& name, const AtomS
                 }
             } else {
                 m_defaultSlot->setInlineStyleProperty(CSSPropertyContentVisibility, CSSValueHidden);
-                queueDetailsToggleEventTask(DetailsState::Open, DetailsState::Closed);
+                queueDetailsToggleEventTask(ToggleState::Open, ToggleState::Closed);
             }
         }
     } else
