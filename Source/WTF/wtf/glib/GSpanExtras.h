@@ -102,6 +102,12 @@ inline std::span<const uint8_t> span(const GRefPtr<GVariant>& variant)
     return span(variant.get());
 }
 
+static inline std::span<char*> span(char** strv)
+{
+    auto size = g_strv_length(strv);
+    return unsafeMakeSpan(strv, size);
+}
+
 } // namespace WTF
 
 using WTF::gKeyFileGetKeys;

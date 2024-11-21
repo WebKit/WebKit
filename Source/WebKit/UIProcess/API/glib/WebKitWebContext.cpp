@@ -71,6 +71,7 @@
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/URLParser.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 #include <wtf/text/CString.h>
@@ -1636,13 +1637,15 @@ void webkit_web_context_set_preferred_languages(WebKitWebContext* context, const
     if (!languageList || !g_strv_length(const_cast<char**>(languageList)))
         return;
 
+    auto languagesSpan = span(const_cast<char**>(languageList));
+
     Vector<String> languages;
-    for (size_t i = 0; languageList[i]; ++i) {
+    for (auto language : languagesSpan) {
         // Do not propagate the C locale to WebCore.
-        if (!g_ascii_strcasecmp(languageList[i], "C") || !g_ascii_strcasecmp(languageList[i], "POSIX"))
+        if (!g_ascii_strcasecmp(language, "C") || !g_ascii_strcasecmp(language, "POSIX"))
             languages.append("en-US"_s);
         else
-            languages.append(makeStringByReplacingAll(String::fromUTF8(languageList[i]), '_', '-'));
+            languages.append(makeStringByReplacingAll(String::fromUTF8(language), '_', '-'));
     }
     context->priv->processPool->setOverrideLanguages(WTFMove(languages));
 }
