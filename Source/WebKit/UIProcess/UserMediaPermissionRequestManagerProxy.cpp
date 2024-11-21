@@ -894,14 +894,6 @@ bool UserMediaPermissionRequestManagerProxy::wasGrantedVideoOrAudioAccess(FrameI
     return m_grantedFrames.contains(frameID);
 }
 
-static inline bool haveMicrophoneDevice(const Vector<CaptureDeviceWithCapabilities>& devices, const String& deviceID)
-{
-    return std::any_of(devices.begin(), devices.end(), [&deviceID](auto& deviceWithCapabilities) {
-        auto& device = deviceWithCapabilities.device;
-        return device.persistentId() == deviceID && device.type() == CaptureDevice::DeviceType::Microphone;
-    });
-}
-
 #if !USE(GLIB)
 void UserMediaPermissionRequestManagerProxy::platformGetMediaStreamDevices(bool revealIdsAndLabels, CompletionHandler<void(Vector<CaptureDeviceWithCapabilities>&&)>&& completionHandler)
 {
@@ -957,10 +949,6 @@ void UserMediaPermissionRequestManagerProxy::computeFilteredDeviceList(bool reve
                 if (device.type() == WebCore::CaptureDevice::DeviceType::Microphone && ++microphoneCount > defaultMaximumMicrophoneCount)
                     continue;
                 if (device.type() != WebCore::CaptureDevice::DeviceType::Camera && device.type() != WebCore::CaptureDevice::DeviceType::Microphone)
-                    continue;
-            } else {
-                // We only expose speakers tied to a microphone for the moment.
-                if (device.type() == WebCore::CaptureDevice::DeviceType::Speaker && !haveMicrophoneDevice(devicesWithCapabilities, device.groupId()))
                     continue;
             }
 

@@ -23,8 +23,10 @@
     }, "Before gum, no audiooutput is exposed");
 
     promise_test(async (test) => {
+        window.internals.settings.setExposeSpeakersWithoutMicrophoneEnabled(false);
+
         await navigator.mediaDevices.getUserMedia({ audio:true, video:true })
-        const devices = await navigator.mediaDevices.enumerateDevices();
+        let devices = await navigator.mediaDevices.enumerateDevices();
         assert_true(devices.length > 2, "after getting permission, more than 1 camera and 1 microphone are exposed");
         devices.forEach((device) => {
             assert_not_equals(device.deviceId.length == 0 , "device.deviceId is empty before permission to capture");
@@ -37,7 +39,7 @@
         const mic2 = deviceFromLabel(devices, "Mock audio device 2");
         const speaker1 = deviceFromLabel(devices, "Mock speaker device 1");
         const speaker2 = deviceFromLabel(devices, "Mock speaker device 2");
-        const speaker3 = deviceFromLabel(devices, "Mock speaker device 3");
+        let speaker3 = deviceFromLabel(devices, "Mock speaker device 3");
 
         assert_equals(speaker1.kind, "audiooutput", "speaker1");
         assert_not_equals(speaker1.groupId, "", "speaker1 groupId");
@@ -49,6 +51,14 @@
 
         assert_equals(speaker1.groupId, mic1.groupId, "device 1");
         assert_equals(speaker2.groupId, mic2.groupId, "device 2");
+
+        window.internals.settings.setExposeSpeakersWithoutMicrophoneEnabled(true);
+
+        devices = await navigator.mediaDevices.enumerateDevices();
+        speaker3 = deviceFromLabel(devices, "Mock speaker device 3");
+        assert_equals(speaker3.kind, "audiooutput", "speaker3");
+        assert_not_equals(speaker1.groupId, speaker3.groupId, "speaker3.groupId 1");
+        assert_not_equals(speaker2.groupId, speaker3.groupId, "speaker3.groupId 2");
     }, "audiooutput devices");
     </script>
 </head>
