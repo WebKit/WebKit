@@ -23806,6 +23806,7 @@
 			buildConfigurationList = FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "libwebrtc" */;
 			buildPhases = (
 				FB39D77B1201110C00088E69 /* Headers */,
+				DD114ECB2CEFBDBA00125A79 /* Use WTF's derived Public SDK Headers */,
 				44C229C02A0AF12E0008308E /* Generate Export Files */,
 				FB39D0CE1200F0E300088E69 /* Sources */,
 				FB39D0CF1200F0E300088E69 /* Frameworks */,
@@ -23990,6 +23991,26 @@
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Scripts/create-symlink-to-altroot.sh\"\n";
+		};
+		DD114ECB2CEFBDBA00125A79 /* Use WTF's derived Public SDK Headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(WK_DERIVED_SDK_HEADERS_DIR)",
+			);
+			name = "Use WTF's derived Public SDK Headers";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/use-derived-public-sdk-headers.timestamp",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "[ -z \"${WK_DERIVED_SDK_HEADERS_DIR}\" -o -d \"${WK_DERIVED_SDK_HEADERS_DIR}\" ] && touch \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
