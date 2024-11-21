@@ -83,7 +83,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #endif
 
 @interface WebEffectiveRateChangedListenerObjCAdapter : NSObject
-@property (nonatomic, readonly, direct) RefPtr<WebCore::EffectiveRateChangedListener> protectedListener;
+@property (atomic, readonly, direct) RefPtr<WebCore::EffectiveRateChangedListener> protectedListener;
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithEffectiveRateChangedListener:(const WebCore::EffectiveRateChangedListener&)listener;
 @end
@@ -153,7 +153,7 @@ private:
 static void timebaseEffectiveRateChangedCallback(CFNotificationCenterRef, void* observer, CFNotificationName, const void*, CFDictionaryRef)
 {
     RetainPtr adapter { dynamic_objc_cast<WebEffectiveRateChangedListenerObjCAdapter>(reinterpret_cast<id>(observer)) };
-    if (RefPtr protectedListener = [adapter protectedListener])
+    if (auto protectedListener = [adapter protectedListener])
         protectedListener->effectiveRateChanged();
 }
 
@@ -164,7 +164,7 @@ void EffectiveRateChangedListener::stop(CMTimebaseRef timebase)
 
 EffectiveRateChangedListener::EffectiveRateChangedListener(MediaPlayerPrivateMediaSourceAVFObjC& client, CMTimebaseRef timebase)
     : m_client(client)
-    , m_objcAdapter([[WebEffectiveRateChangedListenerObjCAdapter alloc] initWithEffectiveRateChangedListener:*this])
+    , m_objcAdapter(adoptNS([[WebEffectiveRateChangedListenerObjCAdapter alloc] initWithEffectiveRateChangedListener:*this]))
 {
     // Observer removed MediaPlayerPrivateMediaSourceAVFObjC destructor.
     CFNotificationCenterAddObserver(CFNotificationCenterGetLocalCenter(), m_objcAdapter.get(), timebaseEffectiveRateChangedCallback, kCMTimebaseNotification_EffectiveRateChanged, timebase, static_cast<CFNotificationSuspensionBehavior>(_CFNotificationObserverIsObjC));
