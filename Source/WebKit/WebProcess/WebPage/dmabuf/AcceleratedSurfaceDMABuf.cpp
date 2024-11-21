@@ -428,6 +428,8 @@ void AcceleratedSurfaceDMABuf::SwapChain::setupBufferFormat(const Vector<DMABufR
     BufferFormat dmabufFormat;
     const auto& supportedFormats = WebCore::PlatformDisplay::sharedDisplay().dmabufFormats();
     for (const auto& bufferFormat : preferredFormats) {
+
+        auto matchesOpacity = false;
         for (const auto& format : supportedFormats) {
             auto index = bufferFormat.formats.findIf([&](const auto& item) {
                 return format.fourcc == item.fourcc;
@@ -435,7 +437,7 @@ void AcceleratedSurfaceDMABuf::SwapChain::setupBufferFormat(const Vector<DMABufR
             if (index != notFound) {
                 const auto& preferredFormat = bufferFormat.formats[index];
 
-                bool matchesOpacity = isOpaqueFormat(preferredFormat.fourcc) == isOpaque;
+                matchesOpacity = isOpaqueFormat(preferredFormat.fourcc) == isOpaque;
                 if (!matchesOpacity && dmabufFormat.fourcc)
                     continue;
 
@@ -457,7 +459,7 @@ void AcceleratedSurfaceDMABuf::SwapChain::setupBufferFormat(const Vector<DMABufR
             }
         }
 
-        if (dmabufFormat.fourcc)
+        if (dmabufFormat.fourcc && matchesOpacity)
             break;
     }
 
