@@ -43,6 +43,10 @@ class ContainerNode;
 class Document;
 class Element;
 
+namespace Style {
+struct SelectorMatchingState;
+};
+
 class SelectorDataList {
 public:
     explicit SelectorDataList(const CSSSelectorList&);
@@ -62,8 +66,8 @@ private:
 #endif
     };
 
-    bool selectorMatches(const SelectorData&, Element&, const ContainerNode& rootNode) const;
-    Element* selectorClosest(const SelectorData&, Element&, const ContainerNode& rootNode) const;
+    bool selectorMatches(const SelectorData&, Element&, const ContainerNode& rootNode, Style::SelectorMatchingState* = nullptr) const;
+    Element* selectorClosest(const SelectorData&, Element&, const ContainerNode& rootNode, Style::SelectorMatchingState* = nullptr) const;
 
     template <typename OutputType> void execute(ContainerNode& rootNode, OutputType&) const;
     template <typename OutputType> void executeFastPathForIdSelector(const ContainerNode& rootNode, const SelectorData&, const CSSSelector* idSelector, OutputType&) const;

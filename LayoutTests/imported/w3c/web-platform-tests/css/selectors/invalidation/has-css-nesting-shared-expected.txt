@@ -7,8 +7,8 @@ PASS add .test to trigger2 - check subject2_1
 PASS add .test to trigger2 - check subject2_2
 PASS remove .test from trigger2 - check subject2_1
 PASS remove .test from trigger2 - check subject2_2
-FAIL add .test to trigger3 - check subject3_1 assert_equals: expected "rgb(0, 0, 255)" but got "rgb(128, 128, 128)"
-FAIL add .test to trigger3 - check subject3_2 assert_equals: expected "rgb(135, 206, 235)" but got "rgb(128, 128, 128)"
+PASS add .test to trigger3 - check subject3_1
+PASS add .test to trigger3 - check subject3_2
 PASS remove .test from trigger3 - check subject3_1
 PASS remove .test from trigger3 - check subject3_2
 

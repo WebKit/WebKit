@@ -752,14 +752,8 @@ bool SelectorChecker::checkOne(CheckingContext& checkingContext, LocalContext& c
     }
 
     if (selector.match() == CSSSelector::Match::HasScope) {
-        bool matches = &element == checkingContext.hasScope || checkingContext.matchesAllHasScopes;
-
-        if (!matches && checkingContext.hasScope) {
-            if (element.isDescendantOf(*checkingContext.hasScope))
-                checkingContext.matchedInsideScope = true;
-        }
-
-        return matches;
+        checkingContext.matchedInsideScope = true;
+        return &element == checkingContext.hasScope || checkingContext.matchesAllHasScopes;
     }
 
     if (selector.match() == CSSSelector::Match::PseudoClass) {
@@ -1416,6 +1410,9 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
     auto checkDescendants = [&](const Element& descendantRoot) {
         for (auto it = descendantsOfType<Element>(descendantRoot).begin(); it;) {
             auto& descendant = *it;
+            if (checkRelative(descendant))
+                return true;
+
             if (cache && descendant.firstElementChild()) {
                 auto key = Style::makeHasPseudoClassCacheKey(descendant, hasSelector);
                 if (cache->get(key) == Style::HasPseudoClassMatch::FailsSubtree) {
@@ -1423,8 +1420,6 @@ bool SelectorChecker::matchHasPseudoClass(CheckingContext& checkingContext, cons
                     continue;
                 }
             }
-            if (checkRelative(descendant))
-                return true;
 
             it.traverseNext();
         }
