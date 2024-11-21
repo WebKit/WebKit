@@ -40,6 +40,7 @@
 #include "ToggleEvent.h"
 #include "ToggleEventTask.h"
 #include "TypedElementDescendantIteratorInlines.h"
+#include "UserAgentParts.h"
 #include "UserAgentStyle.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/NeverDestroyed.h>
@@ -114,6 +115,7 @@ void HTMLDetailsElement::didAddUserAgentShadowRoot(ShadowRoot& root)
     root.appendChild(summarySlot);
 
     m_defaultSlot = HTMLSlotElement::create(slotTag, document());
+    m_defaultSlot->setUserAgentPart(UserAgentParts::detailsContent());
     ASSERT(!hasAttribute(openAttr));
     m_defaultSlot->setInlineStyleProperty(CSSPropertyContentVisibility, CSSValueHidden);
     m_defaultSlot->setInlineStyleProperty(CSSPropertyDisplay, CSSValueBlock);

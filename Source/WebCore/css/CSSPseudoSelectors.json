@@ -518,6 +518,9 @@
             "conditional": "ENABLE(VIDEO)",
             "user-agent-part-string": true
         },
+        "details-content": {
+            "user-agent-part": true
+        },
         "-internal-cue-background": {
             "conditional": "ENABLE(VIDEO)",
             "status": "non-standard",

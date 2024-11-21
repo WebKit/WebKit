@@ -567,8 +567,9 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
         if (RefPtr input = dynamicDowncast<HTMLInputElement>(*element); input && input->isPasswordField())
             style.setTextSecurity(style.inputSecurity() == InputSecurity::Auto ? TextSecurity::Disc : TextSecurity::None);
 
-        // Disallow -webkit-user-modify on :pseudo and ::pseudo elements.
-        if (element->isInUserAgentShadowTree() && !element->userAgentPart().isNull())
+        // Disallow -webkit-user-modify on ::pseudo elements, except if that pseudo-element targets a slot,
+        // in which case we want the editability to be passed onto the slotted contents.
+        if (element->isInUserAgentShadowTree() && !element->userAgentPart().isNull() && !is<HTMLSlotElement>(element))
             style.setUserModify(UserModify::ReadOnly);
 
         if (is<HTMLMarqueeElement>(*element)) {
