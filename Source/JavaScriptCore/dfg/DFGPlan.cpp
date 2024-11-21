@@ -51,6 +51,7 @@
 #include "DFGLiveCatchVariablePreservationPhase.h"
 #include "DFGLivenessAnalysisPhase.h"
 #include "DFGLoopPreHeaderCreationPhase.h"
+#include "DFGLoopUnrollingPhase.h"
 #include "DFGMovHintRemovalPhase.h"
 #include "DFGOSRAvailabilityAnalysisPhase.h"
 #include "DFGOSREntrypointCreationPhase.h"
@@ -369,12 +370,26 @@ Plan::CompilationPath Plan::compileInThreadImpl()
             m_finalizer = makeUnique<FailedFinalizer>(*this);
             return FailPath;
         }
+
+        if (Options::useLoopUnrolling())
+            RUN_PHASE(performLoopUnrolling);
         
         RUN_PHASE(performCleanUp); // Reduce the graph size a bit.
         RUN_PHASE(performCriticalEdgeBreaking);
         if (Options::createPreHeaders())
             RUN_PHASE(performLoopPreHeaderCreation);
         RUN_PHASE(performCPSRethreading);
+
+        // if (Options::useLoopUnrolling()) {
+        //     RUN_PHASE(performLoopUnrolling); // TODO:  added here
+
+        //     RUN_PHASE(performCleanUp);
+        //     RUN_PHASE(performCriticalEdgeBreaking);
+        //     if (Options::createPreHeaders())
+        //         RUN_PHASE(performLoopPreHeaderCreation);
+        //     RUN_PHASE(performCPSRethreading);
+        // }
+
         RUN_PHASE(performSSAConversion);
         RUN_PHASE(performSSALowering);
         
@@ -416,7 +431,7 @@ Plan::CompilationPath Plan::compileInThreadImpl()
         // then we'd need to do some simple SSA fix-up.
         RUN_PHASE(performGraphPackingAndLivenessAnalysis);
         RUN_PHASE(performCFA);
-        RUN_PHASE(performLICM);
+        RUN_PHASE(performLICM); // TODO: LICM
 
         // FIXME: Currently: IntegerRangeOptimization *must* be run after LICM.
         //
