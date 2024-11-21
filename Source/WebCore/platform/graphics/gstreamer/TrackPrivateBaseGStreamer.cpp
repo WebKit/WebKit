@@ -334,7 +334,15 @@ void TrackPrivateBaseGStreamer::installUpdateConfigurationHandlers()
             });
         }), this);
 
+        // This signal can be triggered from the main thread
+        // (CanvasCaptureMediaStreamTrack::Source::captureCanvas() triggering the mediastreamsrc
+        // InternalSource::videoFrameAvailable() which can update the stream tags.)
         g_signal_connect_swapped(m_stream.get(), "notify::tags", G_CALLBACK(+[](TrackPrivateBaseGStreamer* track) {
+            if (isMainThread()) {
+                auto tags = adoptGRef(gst_stream_get_tags(track->m_stream.get()));
+                track->updateConfigurationFromTags(WTFMove(tags));
+                return;
+            }
             track->m_taskQueue.enqueueTask([track]() {
                 auto tags = adoptGRef(gst_stream_get_tags(track->m_stream.get()));
                 track->updateConfigurationFromTags(WTFMove(tags));
