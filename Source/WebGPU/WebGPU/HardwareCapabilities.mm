@@ -67,6 +67,13 @@ static constexpr auto workaroundCTSBindGroupLimit(auto valueToClamp)
     return valueToClamp > 1000 ? 1000 : valueToClamp;
 }
 
+#if CPU(X86_64)
+static bool isIntel(id<MTLDevice> device)
+{
+    return [device.name localizedCaseInsensitiveContainsString:@"intel"];
+}
+#endif
+
 // https://developer.apple.com/metal/Metal-Feature-Set-Tables.pdf
 
 static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> device)
@@ -74,12 +81,18 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
     id<MTLCounterSet> timestampCounterSet = nil;
     id<MTLCounterSet> statisticCounterSet = nil;
 
-    for (id<MTLCounterSet> counterSet in device.counterSets) {
-        if ([counterSet.name isEqualToString:MTLCommonCounterSetTimestamp])
-            timestampCounterSet = counterSet;
-        else if ([counterSet.name isEqualToString:MTLCommonCounterSetStatistic])
-            statisticCounterSet = counterSet;
+#if CPU(X86_64)
+    if (!isIntel(device)) {
+#endif
+        for (id<MTLCounterSet> counterSet in device.counterSets) {
+            if ([counterSet.name isEqualToString:MTLCommonCounterSetTimestamp])
+                timestampCounterSet = counterSet;
+            else if ([counterSet.name isEqualToString:MTLCommonCounterSetStatistic])
+                statisticCounterSet = counterSet;
+        }
+#if CPU(X86_64)
     }
+#endif
 
     return {
         .argumentBuffersTier = [device argumentBuffersSupport],
