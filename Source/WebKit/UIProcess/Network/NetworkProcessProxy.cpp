@@ -310,7 +310,7 @@ void NetworkProcessProxy::processWillShutDown(IPC::Connection& connection)
 
 void NetworkProcessProxy::getNetworkProcessConnection(WebProcessProxy& webProcessProxy, CompletionHandler<void(NetworkProcessConnectionInfo&&)>&& reply)
 {
-    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy is taking a background assertion because a web process is requesting a connection", this);
+    RELEASE_LOG(ProcessSuspension, "%p - NetworkProcessProxy::getNetworkProcessConnection: Taking a background assertion because web process pid %i (core identifier %" PRIu64 ") is requesting a connection", this, webProcessProxy.processID(), webProcessProxy.coreProcessIdentifier().toUInt64());
     startResponsivenessTimer(UseLazyStop::No);
     NetworkProcessConnectionParameters parameters;
 #if ENABLE(IPC_TESTING_API)

@@ -125,6 +125,7 @@
 #include <WebCore/PermissionController.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PlatformMediaSessionManager.h>
+#include <WebCore/ProcessIdentifier.h>
 #include <WebCore/ProcessWarming.h>
 #include <WebCore/Quirks.h>
 #include <WebCore/RegistrableDomain.h>
@@ -1186,6 +1187,7 @@ static NetworkProcessConnectionInfo getNetworkProcessConnection(IPC::Connection&
 {
     NetworkProcessConnectionInfo connectionInfo;
     auto requestConnection = [&]() -> bool {
+        RELEASE_LOG(Process, "getNetworkProcessConnection: Request connection for core identifier %" PRIu64, WebCore::Process::identifier().toUInt64());
         auto sendResult = connection.sendSync(Messages::WebProcessProxy::GetNetworkProcessConnection(), 0, IPC::Timeout::infinity(), IPC::SendSyncOption::MaintainOrderingWithAsyncMessages);
         if (!sendResult.succeeded()) {
             RELEASE_LOG_ERROR(Process, "getNetworkProcessConnection: Failed to send message or receive invalid message: error %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error()).characters());
