@@ -40,31 +40,19 @@ namespace WebKit {
 
 void TestWithEnabledByAndConjunction::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    bool runtimeEnablementCheckFailed = false;
-    UNUSED_VARIABLE(runtimeEnablementCheckFailed);
     auto sharedPreferences = sharedPreferencesForWebProcess();
     UNUSED_VARIABLE(sharedPreferences);
     if (!sharedPreferences || !(sharedPreferences->someFeature && sharedPreferences->otherFeature)) {
-#if ENABLE(IPC_TESTING_API)
-        if (connection.ignoreInvalidMessageForTesting())
-            return;
-#endif // ENABLE(IPC_TESTING_API)
-        ASSERT_NOT_REACHED_WITH_MESSAGE("Message %s received by a disabled message receiver TestWithEnabledByAndConjunction", IPC::description(decoder.messageName()).characters());
-        connection.markCurrentlyDispatchedMessageAsInvalid();
+        RELEASE_LOG_ERROR(IPC, "Message %s received by a disabled message receiver TestWithEnabledByAndConjunction", IPC::description(decoder.messageName()).characters());
+        decoder.markInvalid();
         return;
     }
     Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithEnabledByAndConjunction::AlwaysEnabled::name())
         return IPC::handleMessage<Messages::TestWithEnabledByAndConjunction::AlwaysEnabled>(connection, decoder, this, &TestWithEnabledByAndConjunction::alwaysEnabled);
     UNUSED_PARAM(connection);
-    UNUSED_PARAM(decoder);
-#if ENABLE(IPC_TESTING_API)
-    if (connection.ignoreInvalidMessageForTesting())
-        return;
-#endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
-    if (runtimeEnablementCheckFailed)
-        connection.markCurrentlyDispatchedMessageAsInvalid();
+    RELEASE_LOG_ERROR(IPC, "Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
+    decoder.markInvalid();
 }
 
 } // namespace WebKit

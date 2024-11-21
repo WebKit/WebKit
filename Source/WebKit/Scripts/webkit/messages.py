@@ -699,7 +699,8 @@ def async_message_statement(receiver, message):
         result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
         result.append('        if (%s)\n' % runtime_enablement)
         result.append('            return IPC::%s<Messages::%s::%s>(%s%s);\n' % (dispatch_function, receiver.name, message.name, connection, ', '.join(dispatch_function_args)))
-        result.append('        runtimeEnablementCheckFailed = true;\n')
+        result.append('        RELEASE_LOG_ERROR(IPC, "Message %s received by a disabled message endpoint", IPC::description(decoder.messageName()).characters());\n')
+        result.append('        return decoder.markInvalid();\n')
         result.append('    }\n')
     else:
         result.append('    if (decoder.messageName() == Messages::%s::%s::name())\n' % (receiver.name, message.name))
@@ -1324,13 +1325,9 @@ def generate_header_includes_from_conditions(header_conditions):
     return result
 
 
-def generate_enabled_by_for_receiver(receiver, messages, ignore_invalid_message_for_testing, return_value=None):
+def generate_enabled_by_for_receiver(receiver, messages, return_value=None):
     enabled_by = receiver.receiver_enabled_by
     enabled_by_conjunction = receiver.receiver_enabled_by_conjunction
-    enablement_check = [
-        '    bool runtimeEnablementCheckFailed = false;\n'
-        '    UNUSED_VARIABLE(runtimeEnablementCheckFailed);\n',
-    ]
     shared_preferences_retrieval = [
         '    auto sharedPreferences = sharedPreferencesForWebProcess(%s);\n' % ('connection' if receiver.shared_preferences_needs_connection else ''),
         '    UNUSED_VARIABLE(sharedPreferences);\n'
@@ -1338,27 +1335,19 @@ def generate_enabled_by_for_receiver(receiver, messages, ignore_invalid_message_
     result = []
     if not enabled_by:
         if any([message.enabled_by for message in messages]):
-            result += enablement_check
             result += shared_preferences_retrieval
-        elif any([message.enabled_if for message in messages]):
-            result += enablement_check
         return result
 
     runtime_enablement = generate_enabled_by(receiver, enabled_by, enabled_by_conjunction)
     return_statement_line = 'return %s' % return_value if return_value else 'return'
-    mark_message_invalid_line = 'connection.markCurrentlyDispatchedMessageAsInvalid()' if not receiver.has_attribute(STREAM_ATTRIBUTE) else ''
-    return enablement_check + shared_preferences_retrieval + [
+    mark_message_invalid_line = 'decoder.markInvalid()'
+    return shared_preferences_retrieval + [
         '    if (!sharedPreferences || !%s) {\n' % ('(%s)' % runtime_enablement if len(enabled_by) > 1 else runtime_enablement),
-        '#if ENABLE(IPC_TESTING_API)\n',
-        '        if (%s)\n' % ignore_invalid_message_for_testing,
-        '            %s;\n' % return_statement_line,
-        '#endif // ENABLE(IPC_TESTING_API)\n',
-        '        ASSERT_NOT_REACHED_WITH_MESSAGE("Message %s received by a disabled message receiver %s", IPC::description(decoder.messageName()).characters());\n' % ('%s', receiver.name),
-        '        %s;\n' % mark_message_invalid_line if mark_message_invalid_line else '',
+        '        RELEASE_LOG_ERROR(IPC, "Message %s received by a disabled message receiver %s", IPC::description(decoder.messageName()).characters());\n' % ('%s', receiver.name),
+        '        %s;\n' % mark_message_invalid_line,
         '        %s;\n' % return_statement_line,
         '    }\n',
     ]
-
 
 def header_for_receiver_name(name):
     # By default, the header name should usually be the same as the receiver name.
@@ -1423,7 +1412,7 @@ def generate_message_handler(receiver):
     if receiver.has_attribute(STREAM_ATTRIBUTE):
         result.append('void %s::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)\n' % (receiver.name))
         result.append('{\n')
-        result += generate_enabled_by_for_receiver(receiver, receiver.messages, 'connection.ignoreInvalidMessageForTesting()')
+        result += generate_enabled_by_for_receiver(receiver, receiver.messages)
         assert(receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE))
         assert(not receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE))
         assert(not receiver.has_attribute(WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE))
@@ -1432,13 +1421,8 @@ def generate_message_handler(receiver):
         if (receiver.superclass):
             result.append('    %s::didReceiveStreamMessage(connection, decoder);\n' % (receiver.superclass))
         else:
-            result.append('    UNUSED_PARAM(decoder);\n')
-            result.append('    UNUSED_PARAM(connection);\n')
-            result.append('#if ENABLE(IPC_TESTING_API)\n')
-            result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
-            result.append('        return;\n')
-            result.append('#endif // ENABLE(IPC_TESTING_API)\n')
-            result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());\n')
+            result.append('    RELEASE_LOG_ERROR(IPC, "Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());\n')
+            result.append('    decoder.markInvalid();\n')
         result.append('}\n')
     else:
         if receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
@@ -1446,7 +1430,7 @@ def generate_message_handler(receiver):
         else:
             result.append('void %s::didReceiveMessage(IPC::Connection& connection, IPC::Decoder& decoder)\n' % (receiver.name))
         result.append('{\n')
-        enable_by_statement = generate_enabled_by_for_receiver(receiver, async_messages, 'connection.ignoreInvalidMessageForTesting()')
+        enable_by_statement = generate_enabled_by_for_receiver(receiver, async_messages)
         result += enable_by_statement
         if not (receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE) or receiver.has_attribute(STREAM_ATTRIBUTE)):
             result.append('    Ref protectedThis { *this };\n')
@@ -1459,23 +1443,15 @@ def generate_message_handler(receiver):
         else:
             if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
                 result.append('    UNUSED_PARAM(connection);\n')
-            result.append('    UNUSED_PARAM(decoder);\n')
-            if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
-                result.append('#if ENABLE(IPC_TESTING_API)\n')
-                result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
-                result.append('        return;\n')
-                result.append('#endif // ENABLE(IPC_TESTING_API)\n')
-            result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());\n')
-            if enable_by_statement:
-                result.append('    if (runtimeEnablementCheckFailed)\n')
-                result.append('        connection.markCurrentlyDispatchedMessageAsInvalid();\n')
+            result.append('    RELEASE_LOG_ERROR(IPC, "Unhandled message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());\n')
+            result.append('    decoder.markInvalid();\n')
         result.append('}\n')
 
     if not receiver.has_attribute(STREAM_ATTRIBUTE) and (sync_messages or receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE)):
         result.append('\n')
         result.append('bool %s::didReceiveSyncMessage(IPC::Connection& connection, IPC::Decoder& decoder, UniqueRef<IPC::Encoder>& replyEncoder)\n' % (receiver.name))
         result.append('{\n')
-        result += generate_enabled_by_for_receiver(receiver, sync_messages, 'connection.ignoreInvalidMessageForTesting()', 'false')
+        result += generate_enabled_by_for_receiver(receiver, sync_messages, 'false')
         if not receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE):
             result.append('    Ref protectedThis { *this };\n')
         result += sync_message_statements
@@ -1487,15 +1463,9 @@ def generate_message_handler(receiver):
         else:
             if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
                 result.append('    UNUSED_PARAM(connection);\n')
-            result.append('    UNUSED_PARAM(decoder);\n')
             result.append('    UNUSED_PARAM(replyEncoder);\n')
-
-            if not receiver.has_attribute(NOT_USING_IPC_CONNECTION_ATTRIBUTE):
-                result.append('#if ENABLE(IPC_TESTING_API)\n')
-                result.append('    if (connection.ignoreInvalidMessageForTesting())\n')
-                result.append('        return false;\n')
-                result.append('#endif // ENABLE(IPC_TESTING_API)\n')
-            result.append('    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()).characters(), decoder.destinationID());\n')
+            result.append('    RELEASE_LOG_ERROR(IPC, "Unhandled synchronous message %s to %" PRIu64, description(decoder.messageName()).characters(), decoder.destinationID());\n')
+            result.append('    decoder.markInvalid();\n')
             result.append('    return false;\n')
         result.append('}\n')
 

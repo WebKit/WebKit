@@ -41,13 +41,8 @@ void TestWithStreamBatched::didReceiveStreamMessage(IPC::StreamServerConnection&
 {
     if (decoder.messageName() == Messages::TestWithStreamBatched::SendString::name())
         return IPC::handleMessage<Messages::TestWithStreamBatched::SendString>(connection, decoder, this, &TestWithStreamBatched::sendString);
-    UNUSED_PARAM(decoder);
-    UNUSED_PARAM(connection);
-#if ENABLE(IPC_TESTING_API)
-    if (connection.ignoreInvalidMessageForTesting())
-        return;
-#endif // ENABLE(IPC_TESTING_API)
-    ASSERT_NOT_REACHED_WITH_MESSAGE("Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
+    RELEASE_LOG_ERROR(IPC, "Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());
+    decoder.markInvalid();
 }
 
 } // namespace WebKit

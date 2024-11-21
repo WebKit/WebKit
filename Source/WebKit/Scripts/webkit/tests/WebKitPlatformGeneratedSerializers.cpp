@@ -239,10 +239,10 @@ std::optional<WebKit::CoreIPCNSSomeFoundationType> ArgumentCoder<WebKit::CoreIPC
 void ArgumentCoder<WebKit::CoreIPCclass NSSomeOtherFoundationType>::encode(Encoder& encoder, const WebKit::CoreIPCclass NSSomeOtherFoundationType& instance)
 {
     static_assert(std::is_same_v<std::remove_cvref_t<decltype(instance.m_DictionaryKey)>, RetainPtr<NSDictionary>>);
-    struct ShouldBeSameSizeAsclass NSSomeOtherFoundationType : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::CoreIPCclass NSSomeOtherFoundationType>, false> {
+    struct ShouldBeSameSizeAsclass_NSSomeOtherFoundationType : public VirtualTableAndRefCountOverhead<std::is_polymorphic_v<WebKit::CoreIPCclass NSSomeOtherFoundationType>, false> {
         RetainPtr<NSDictionary> DictionaryKey;
     };
-    static_assert(sizeof(ShouldBeSameSizeAsclass NSSomeOtherFoundationType) == sizeof(WebKit::CoreIPCclass NSSomeOtherFoundationType));
+    static_assert(sizeof(ShouldBeSameSizeAsclass_NSSomeOtherFoundationType) == sizeof(WebKit::CoreIPCclass NSSomeOtherFoundationType));
     static_assert(MembersInCorrectOrder < 0
         , offsetof(WebKit::CoreIPCclass NSSomeOtherFoundationType, m_DictionaryKey)
     >::value);
