@@ -49,8 +49,6 @@ private:
     void initializePreProcessor();
 
     RTCRtpCapabilities rtpCapabilities() const final;
-    bool linkTee() final;
-    GRefPtr<GstElement> m_preProcessor;
 };
 
 } // namespace WebCore
