@@ -72,11 +72,11 @@ String ProcessingInstruction::nodeName() const
     return m_target;
 }
 
-Ref<Node> ProcessingInstruction::cloneNodeInternal(Document& targetDocument, CloningOperation)
+Ref<Node> ProcessingInstruction::cloneNodeInternal(TreeScope& treeScope, CloningOperation)
 {
     // FIXME: Is it a problem that this does not copy m_localHref?
     // What about other data members?
-    return create(targetDocument, String { m_target }, String { data() });
+    return create(treeScope.documentScope(), String { m_target }, String { data() });
 }
 
 void ProcessingInstruction::checkStyleSheet()

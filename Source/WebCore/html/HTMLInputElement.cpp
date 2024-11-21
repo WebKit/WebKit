@@ -128,9 +128,9 @@ Ref<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Doc
     return adoptRef(*new HTMLInputElement(tagName, document, form, createdByParser ? CreationType::ByParser : CreationType::Normal));
 }
 
-Ref<Element> HTMLInputElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
+Ref<Element> HTMLInputElement::cloneElementWithoutAttributesAndChildren(TreeScope& treeScope)
 {
-    return adoptRef(*new HTMLInputElement(tagQName(), targetDocument, nullptr, CreationType::ByCloning));
+    return adoptRef(*new HTMLInputElement(tagQName(), treeScope.documentScope(), nullptr, CreationType::ByCloning));
 }
 
 HTMLImageLoader& HTMLInputElement::ensureImageLoader()

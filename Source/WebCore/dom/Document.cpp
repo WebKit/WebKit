@@ -1370,20 +1370,23 @@ void Document::childrenChanged(const ChildChange& change)
 static ALWAYS_INLINE CustomElementNameValidationStatus validateCustomElementNameWithoutCheckingStandardElementNames(const AtomString&);
 static ALWAYS_INLINE bool isStandardElementName(const AtomString& localName);
 
-static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, const QualifiedName& name)
+static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(TreeScope& treeScope, const QualifiedName& name)
 {
     ASSERT(!isStandardElementName(name.localName())); // HTMLTagNames.in lists builtin SVG/MathML elements with "-" in their names explicitly as HTMLUnknownElement.
     if (validateCustomElementNameWithoutCheckingStandardElementNames(name.localName()) != CustomElementNameValidationStatus::Valid)
-        return HTMLUnknownElement::create(name, document);
+        return HTMLUnknownElement::create(name, treeScope.documentScope());
 
-    Ref element = HTMLMaybeFormAssociatedCustomElement::create(name, document);
+    Ref element = HTMLMaybeFormAssociatedCustomElement::create(name, treeScope.documentScope());
+    auto* registry = treeScope.customElementRegistry();
+    if (registry && UNLIKELY(registry->isScoped()))
+        CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
     element->setIsCustomElementUpgradeCandidate();
     return element;
 }
 
-static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(Document& document, const AtomString& localName)
+static ALWAYS_INLINE Ref<HTMLElement> createUpgradeCandidateElement(TreeScope& treeScope, const AtomString& localName)
 {
-    return createUpgradeCandidateElement(document, QualifiedName { nullAtom(), localName, xhtmlNamespaceURI });
+    return createUpgradeCandidateElement(treeScope, QualifiedName { nullAtom(), localName, xhtmlNamespaceURI });
 }
 
 static inline bool isValidHTMLElementName(const AtomString& localName)
@@ -1411,7 +1414,7 @@ static ExceptionOr<Ref<Element>> createHTMLElementWithNameValidation(TreeScope& 
     if (UNLIKELY(!isValidHTMLElementName(name)))
         return Exception { ExceptionCode::InvalidCharacterError };
 
-    return Ref<Element> { createUpgradeCandidateElement(document, name) };
+    return Ref<Element> { createUpgradeCandidateElement(treeScope, name) };
 }
 
 ExceptionOr<Ref<Element>> TreeScope::createElementForBindings(const AtomString& name)
@@ -1477,33 +1480,6 @@ Ref<CSSStyleDeclaration> Document::createCSSStyleDeclaration()
     return propertySet->ensureCSSStyleDeclaration();
 }
 
-ExceptionOr<Ref<Node>> Document::importNode(Node& nodeToImport, bool deep)
-{
-    switch (nodeToImport.nodeType()) {
-    case DOCUMENT_FRAGMENT_NODE:
-        if (nodeToImport.isShadowRoot())
-            break;
-        FALLTHROUGH;
-    case ELEMENT_NODE:
-    case TEXT_NODE:
-    case CDATA_SECTION_NODE:
-    case PROCESSING_INSTRUCTION_NODE:
-    case COMMENT_NODE:
-        return nodeToImport.cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::OnlySelf);
-
-    case ATTRIBUTE_NODE: {
-        auto& attribute = uncheckedDowncast<Attr>(nodeToImport);
-        return Ref<Node> { Attr::create(*this, attribute.qualifiedName(), attribute.value()) };
-    }
-    case DOCUMENT_NODE: // Can't import a document into another document.
-    case DOCUMENT_TYPE_NODE: // FIXME: Support cloning a DocumentType node per DOM4.
-        break;
-    }
-
-    return Exception { ExceptionCode::NotSupportedError };
-}
-
-
 ExceptionOr<Ref<Node>> Document::adoptNode(Node& source)
 {
     EventQueueScope scope;
@@ -1563,21 +1539,20 @@ bool Document::hasValidNamespaceForAttributes(const QualifiedName& qName)
     return hasValidNamespaceForElements(qName);
 }
 
-static Ref<HTMLElement> createFallbackHTMLElement(Document& document, const QualifiedName& name)
+static Ref<HTMLElement> createFallbackHTMLElement(TreeScope& treeScope, const QualifiedName& name)
 {
-    if (RefPtr window = document.domWindow()) {
-        RefPtr registry = window->customElementRegistry();
-        if (UNLIKELY(registry)) {
-            if (RefPtr elementInterface = registry->findInterface(name)) {
-                Ref element = elementInterface->createElement(document);
-                element->setIsCustomElementUpgradeCandidate();
-                element->enqueueToUpgrade(*elementInterface);
-                return element;
-            }
+    if (RefPtr registry = treeScope.customElementRegistry()) {
+        if (RefPtr elementInterface = registry->findInterface(name)) {
+            Ref element = elementInterface->createElement(treeScope.documentScope());
+            if (UNLIKELY(registry->isScoped()))
+                CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
+            element->setIsCustomElementUpgradeCandidate();
+            element->enqueueToUpgrade(*elementInterface);
+            return element;
         }
     }
     // FIXME: Should we also check the equality of prefix between the custom element and name?
-    return createUpgradeCandidateElement(document, name);
+    return createUpgradeCandidateElement(treeScope, name);
 }
 
 // FIXME: This should really be in a possible ElementFactory class.
@@ -1590,7 +1565,7 @@ Ref<Element> TreeScope::createElement(const QualifiedName& name, bool createdByP
     if (name.namespaceURI() == xhtmlNamespaceURI) {
         element = HTMLElementFactory::createKnownElement(name, document, nullptr, createdByParser);
         if (UNLIKELY(!element))
-            element = createFallbackHTMLElement(document, name);
+            element = createFallbackHTMLElement(*this, name);
     } else if (name.namespaceURI() == SVGNames::svgNamespaceURI)
         element = SVGElementFactory::createElement(name, document, createdByParser);
 #if ENABLE(MATHML)
@@ -1781,9 +1756,9 @@ CustomElementNameValidationStatus Document::validateCustomElementName(const Atom
     return CustomElementNameValidationStatus::Valid;
 }
 
-void Document::setActiveCustomElementRegistry(CustomElementRegistry& registry)
+void Document::setActiveCustomElementRegistry(CustomElementRegistry* registry)
 {
-    m_activeCustomElementRegistry = &registry;
+    m_activeCustomElementRegistry = registry;
 }
 
 ExceptionOr<Ref<Element>> TreeScope::createElementNS(const AtomString& namespaceURI, const AtomString& qualifiedName)
@@ -5080,7 +5055,7 @@ bool Document::canAcceptChild(const Node& newChild, const Node* refChild, Accept
     return true;
 }
 
-Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type)
+Ref<Node> Document::cloneNodeInternal(TreeScope&, CloningOperation type)
 {
     Ref clone = cloneDocumentWithoutChildren();
     clone->cloneDataFromDocument(*this);
@@ -5089,7 +5064,7 @@ Ref<Node> Document::cloneNodeInternal(Document&, CloningOperation type)
     case CloningOperation::SelfWithTemplateContent:
         break;
     case CloningOperation::Everything:
-        cloneChildNodes(clone);
+        cloneChildNodes(clone, clone);
         break;
     }
     return clone;

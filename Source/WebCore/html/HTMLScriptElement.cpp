@@ -287,9 +287,9 @@ bool HTMLScriptElement::isScriptPreventedByAttributes() const
     return false;
 }
 
-Ref<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
+Ref<Element> HTMLScriptElement::cloneElementWithoutAttributesAndChildren(TreeScope& treeScope)
 {
-    return adoptRef(*new HTMLScriptElement(tagQName(), targetDocument, false, alreadyStarted()));
+    return adoptRef(*new HTMLScriptElement(tagQName(), treeScope.documentScope(), false, alreadyStarted()));
 }
 
 void HTMLScriptElement::setReferrerPolicyForBindings(const AtomString& value)

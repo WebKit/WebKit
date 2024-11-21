@@ -207,7 +207,7 @@ ExceptionOr<void> ShadowRoot::replaceChildrenWithMarkup(const String& markup, Op
         return { };
     }
 
-    auto fragment = createFragmentForInnerOuterHTML(*protectedHost(), markup, policy);
+    auto fragment = createFragmentForInnerOuterHTML(*protectedHost(), markup, policy, customElementRegistry());
     if (fragment.hasException())
         return fragment.releaseException();
     return replaceChildrenWithFragment(*this, fragment.releaseReturnValue());
@@ -257,13 +257,13 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
     }
 }
 
-Ref<Node> ShadowRoot::cloneNodeInternal(Document& targetDocument, CloningOperation type)
+Ref<Node> ShadowRoot::cloneNodeInternal(TreeScope& treeScope, CloningOperation type)
 {
     RELEASE_ASSERT(m_mode != ShadowRootMode::UserAgent);
     ASSERT(m_isClonable);
     switch (type) {
     case CloningOperation::SelfWithTemplateContent:
-        return create(targetDocument, m_mode, m_slotAssignmentMode,
+        return create(treeScope.documentScope(), m_mode, m_slotAssignmentMode,
             m_delegatesFocus ? DelegatesFocus::Yes : DelegatesFocus::No,
             Clonable::Yes,
             m_serializable ? Serializable::Yes : Serializable::No,

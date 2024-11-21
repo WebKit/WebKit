@@ -499,7 +499,7 @@ static void cloneDataAndChildren(SVGElement& replacementClone, SVGElement& origi
     ASSERT(!replacementClone.parentNode());
 
     replacementClone.cloneDataFromElement(originalClone);
-    originalClone.cloneChildNodes(replacementClone);
+    originalClone.cloneChildNodes(replacementClone.treeScope(), replacementClone);
     associateReplacementClonesWithOriginals(replacementClone, originalClone);
     removeDisallowedElementsFromSubtree(replacementClone);
 }

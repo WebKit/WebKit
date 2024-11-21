@@ -157,9 +157,10 @@ String Text::nodeName() const
     return "#text"_s;
 }
 
-Ref<Node> Text::cloneNodeInternal(Document& targetDocument, CloningOperation)
+Ref<Node> Text::cloneNodeInternal(TreeScope& treeScope, CloningOperation)
 {
-    return create(targetDocument, String { data() });
+    Ref document = treeScope.documentScope();
+    return create(document, String { data() });
 }
 
 static bool isSVGShadowText(const Text& text)

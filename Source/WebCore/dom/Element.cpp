@@ -610,12 +610,12 @@ bool Element::dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouse
     return simulateClick(*this, underlyingEvent, eventOptions, visualOptions, SimulatedClickSource::UserAgent);
 }
 
-Ref<Node> Element::cloneNodeInternal(Document& targetDocument, CloningOperation type)
+Ref<Node> Element::cloneNodeInternal(TreeScope& treeScope, CloningOperation type)
 {
     switch (type) {
     case CloningOperation::OnlySelf:
     case CloningOperation::SelfWithTemplateContent: {
-        Ref clone = cloneElementWithoutChildren(targetDocument);
+        Ref clone = cloneElementWithoutChildren(treeScope);
         ScriptDisallowedScope::EventAllowedScope eventAllowedScope { clone };
         cloneShadowTreeIfPossible(clone);
         return clone;
@@ -623,7 +623,7 @@ Ref<Node> Element::cloneNodeInternal(Document& targetDocument, CloningOperation 
     case CloningOperation::Everything:
         break;
     }
-    return cloneElementWithChildren(targetDocument);
+    return cloneElementWithChildren(treeScope);
 }
 
 void Element::cloneShadowTreeIfPossible(Element& newHost)
@@ -633,25 +633,25 @@ void Element::cloneShadowTreeIfPossible(Element& newHost)
         return;
 
     Ref clonedShadowRoot = [&] {
-        Ref clone = oldShadowRoot->cloneNodeInternal(newHost.document(), Node::CloningOperation::SelfWithTemplateContent);
+        Ref clone = oldShadowRoot->cloneNodeInternal(newHost.treeScope(), Node::CloningOperation::SelfWithTemplateContent);
         return downcast<ShadowRoot>(WTFMove(clone));
     }();
     newHost.addShadowRoot(clonedShadowRoot.copyRef());
-    oldShadowRoot->cloneChildNodes(clonedShadowRoot);
+    oldShadowRoot->cloneChildNodes(clonedShadowRoot, clonedShadowRoot);
 }
 
-Ref<Element> Element::cloneElementWithChildren(Document& targetDocument)
+Ref<Element> Element::cloneElementWithChildren(TreeScope& treeScope)
 {
-    Ref clone = cloneElementWithoutChildren(targetDocument);
+    Ref clone = cloneElementWithoutChildren(treeScope);
     ScriptDisallowedScope::EventAllowedScope eventAllowedScope { clone };
     cloneShadowTreeIfPossible(clone);
-    cloneChildNodes(clone);
+    cloneChildNodes(treeScope, clone);
     return clone;
 }
 
-Ref<Element> Element::cloneElementWithoutChildren(Document& targetDocument)
+Ref<Element> Element::cloneElementWithoutChildren(TreeScope& treeScope)
 {
-    Ref clone = cloneElementWithoutAttributesAndChildren(targetDocument);
+    Ref clone = cloneElementWithoutAttributesAndChildren(treeScope);
 
     // This will catch HTML elements in the wrong namespace that are not correctly copied.
     // This is a sanity check as HTML overloads some of the DOM methods.
@@ -661,9 +661,9 @@ Ref<Element> Element::cloneElementWithoutChildren(Document& targetDocument)
     return clone;
 }
 
-Ref<Element> Element::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
+Ref<Element> Element::cloneElementWithoutAttributesAndChildren(TreeScope& treeScope)
 {
-    return targetDocument.createElement(tagQName(), false);
+    return treeScope.createElement(tagQName(), false);
 }
 
 Ref<Attr> Element::detachAttribute(unsigned index)
@@ -2918,6 +2918,8 @@ Node::InsertedIntoAncestorResult Element::insertedIntoAncestor(InsertionType ins
             if (newHTMLDocument)
                 updateNameForDocument(*newHTMLDocument, nullAtom(), nameValue);
         }
+        if (parentOfInsertedTree.isInTreeScope() && usesScopedCustomElementRegistryMap())
+            CustomElementRegistry::removeFromScopedCustomElementRegistryMap(*this);
     }
 
     if (insertionType.connectedToDocument) {
@@ -3001,6 +3003,12 @@ void Element::removedFromAncestor(RemovalType removalType, ContainerNode& oldPar
             oldTreeScope.removeElementByName(nameValue, *this);
             if (oldHTMLDocument)
                 updateNameForDocument(*oldHTMLDocument, nameValue, nullAtom());
+        }
+        if (oldParentOfRemovedTree.isInShadowTree()) {
+            if (auto* registry = oldTreeScope.customElementRegistry()) {
+                if (UNLIKELY(registry->isScoped()))
+                    CustomElementRegistry::addToScopedCustomElementRegistryMap(*this, *registry);
+            }
         }
     }
 
@@ -4059,7 +4067,7 @@ ExceptionOr<void> Element::replaceChildrenWithMarkup(const String& markup, Optio
         return { };
     }
 
-    auto fragment = createFragmentForInnerOuterHTML(*this, markup, policy);
+    auto fragment = createFragmentForInnerOuterHTML(*this, markup, policy, CustomElementRegistry::registryForNodeOrTreeScope(container, container->treeScope()));
     if (fragment.hasException())
         return fragment.releaseException();
 
@@ -4119,7 +4127,7 @@ ExceptionOr<void> Element::setOuterHTML(std::variant<RefPtr<TrustedHTML>, String
     RefPtr previous = previousSibling();
     RefPtr next = nextSibling();
 
-    auto fragment = createFragmentForInnerOuterHTML(*parent, stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowScriptingContent });
+    auto fragment = createFragmentForInnerOuterHTML(*parent, stringValueHolder.releaseReturnValue(), { ParserContentPolicy::AllowScriptingContent }, CustomElementRegistry::registryForElement(*parent));
     if (fragment.hasException())
         return fragment.releaseException();
 
@@ -5652,7 +5660,8 @@ ExceptionOr<void> Element::insertAdjacentHTML(const String& where, const String&
     if (contextElement.hasException())
         return contextElement.releaseException();
     // Step 3.
-    auto fragment = createFragmentForInnerOuterHTML(contextElement.releaseReturnValue(), markup, { ParserContentPolicy::AllowScriptingContent });
+    RefPtr registry = CustomElementRegistry::registryForElement(contextElement.returnValue());
+    auto fragment = createFragmentForInnerOuterHTML(contextElement.releaseReturnValue(), markup, { ParserContentPolicy::AllowScriptingContent }, registry.get());
     if (fragment.hasException())
         return fragment.releaseException();
 

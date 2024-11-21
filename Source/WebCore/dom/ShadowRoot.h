@@ -109,7 +109,7 @@ public:
     String innerHTML() const;
     ExceptionOr<void> setInnerHTML(std::variant<RefPtr<TrustedHTML>, String>&&);
 
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    Ref<Node> cloneNodeInternal(TreeScope&, CloningOperation) override;
 
     Element* activeElement() const;
 

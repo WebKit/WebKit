@@ -58,7 +58,7 @@ private:
     ProcessingInstruction(Document&, String&& target, String&& data);
 
     String nodeName() const override;
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+    Ref<Node> cloneNodeInternal(TreeScope&, CloningOperation) override;
 
     InsertedIntoAncestorResult insertedIntoAncestor(InsertionType, ContainerNode&) override;
     void didFinishInsertingNode() override;

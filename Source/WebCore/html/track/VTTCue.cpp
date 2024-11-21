@@ -542,7 +542,7 @@ RefPtr<DocumentFragment> VTTCue::createCueRenderingTree()
     // The cloned fragment is never exposed to author scripts so it's safe to dispatch events here.
     ScriptDisallowedScope::EventAllowedScope allowedScope(clonedFragment);
 
-    m_webVTTNodeTree->cloneChildNodes(clonedFragment);
+    m_webVTTNodeTree->cloneChildNodes(*document, clonedFragment);
     return clonedFragment;
 }
 

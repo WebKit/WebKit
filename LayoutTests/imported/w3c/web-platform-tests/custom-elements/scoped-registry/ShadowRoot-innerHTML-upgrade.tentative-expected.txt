@@ -1,6 +1,3 @@
-CONSOLE MESSAGE: TypeError: new.target does not define a custom element
-
-Harness Error (FAIL), message = TypeError: new.target does not define a custom element
 
 PASS Upgrade into autonomous custom element when inserted via innerHTML
 PASS Upgrade into autonomous custom element when definition is added
