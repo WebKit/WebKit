@@ -468,15 +468,15 @@ class cpp_func(object):
     name: str
     args: cpp_arg_list
     return_type: cpp_type
-    attr: str
+    message_check: str
     cond: str
     overload_suffix: str
 
-    def __init__(self, name: str, return_type: cpp_type, args: cpp_arg_list, attr: str, cond: str):
+    def __init__(self, name: str, return_type: cpp_type, args: cpp_arg_list, message_check: str, cond: str):
         self.name = name
         self.return_type = return_type
         self.args = args
-        self.attr = attr
+        self.message_check = message_check
         self.cond = cond
         self.overload_suffix = ""
 
@@ -621,13 +621,12 @@ non_stream_types = set({"WebCore::GraphicsContextGL::ExternalImageSource&&", "We
 
 class webkit_ipc_msg(object):
     cond: str
-    attr: str
+    message_check: str
     name: str
     in_args: cpp_arg_list
     out_args: cpp_arg_list
 
     def __init__(self, func: cpp_func):
-        self.attr = func.attr
         self.cond = func.cond
         self.name = webkit_ipc_msg_name(func)
         in_args, out_args = func.get_args_categories()
@@ -649,11 +648,10 @@ class webkit_ipc_msg(object):
             self.tags += ["NotStreamEncodable"]
 
     def __str__(self):
-        attr = f"[{self.attr}] " if self.attr else ""
         tags = f" {' '.join(self.tags)}" if self.tags else ""
         if len(self.out_args.args):
-            return f"\n    {attr}void {self.name}({str(self.in_args)}) -> ({str(self.out_args)}) Synchronous{tags}"
-        return f"\n    {attr}void {self.name}({str(self.in_args)}){tags}"
+            return f"\n    void {self.name}({str(self.in_args)}) -> ({str(self.out_args)}) Synchronous{tags}"
+        return f"\n    void {self.name}({str(self.in_args)}){tags}"
 
 
 class webkit_ipc_cpp_proxy_impl(object):
@@ -867,6 +865,7 @@ class webkit_ipc_cpp_impl(object):
     def __init__(self, cpp_func: cpp_func):
         self.cond = cpp_func.cond
         self.name = cpp_func.name
+        self.message_check = cpp_func.message_check
         self.is_create = is_create_func(cpp_func)
         self.is_delete = is_delete_func(cpp_func)
         self.overload_suffix = cpp_func.overload_suffix
@@ -879,6 +878,8 @@ class webkit_ipc_cpp_impl(object):
         self.return_value_expr = None
 
         self.pre_call_stmts += ["assertIsCurrent(workQueue());"]
+        if self.message_check:
+            self.pre_call_stmts += [f"messageCheck({self.message_check});"]
         self.process_return_value(cpp_func.return_type)
         in_args, out_args = cpp_func.get_args_categories()
         self.process_args(cpp_func.args.args, set(in_args), set(out_args))
@@ -1079,8 +1080,8 @@ def create_cpp_arg_list(args_specs: Iterable[str]):
     return cpp_arg_list([create_cpp_arg(arg_spec=e, arg_index=i) for i, e in enumerate(args_specs)])
 
 
-def create_cpp_func(name: str, return_spec: str, args_specs: List[str], attr: str, cond: str):
-    return cpp_func(name=name, return_type=get_cpp_type(return_spec), args=create_cpp_arg_list(args_specs), attr=attr, cond=cond)
+def create_cpp_func(name: str, return_spec: str, args_specs: List[str], message_check: str, cond: str):
+    return cpp_func(name=name, return_type=get_cpp_type(return_spec), args=create_cpp_arg_list(args_specs), message_check=message_check, cond=cond)
 
 
 def read_lines_until(lines: Iterable[str], match: str) -> Generator[str, None, None]:
@@ -1100,6 +1101,7 @@ def main():
     funcs = []
     unimplemented = []
     cond = ""
+    message_checks = {}
     for fn in functions_input_fns:
         with open(fn) as f:
             lines = iter(f.readlines())
@@ -1116,14 +1118,14 @@ def main():
                 if m:
                     cond=""
                     continue
-                m = re.match(r"\s*(\S+)\s+(\w+)\((.*?)\)\s+(IPC_MESSAGE_ATTRIBUTE\((\S+?)\)\s+)?final;", line)
+                m = re.match(r"\s*(\S+)\s+(\w+)\((.*?)\)\s+(IPC_MESSAGE_CHECK\((\S+?)\)\s+)?final;", line)
                 if m:
                     func_name = m[2]
                     func = create_cpp_func(
                         name=func_name,
                         return_spec=m[1],
                         args_specs=cpp_split_args_specs(m[3]),
-                        attr=m[5],
+                        message_check=m[5],
                         cond=cond
                     )
                     if func.is_implemented():

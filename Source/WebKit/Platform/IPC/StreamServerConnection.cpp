@@ -258,7 +258,8 @@ bool StreamServerConnection::processOutOfStreamMessage(Decoder& decoder)
 bool StreamServerConnection::dispatchStreamMessage(Decoder& message, StreamMessageReceiver& receiver)
 {
     receiver.didReceiveStreamMessage(*this, message);
-    if (message.isValid())
+    auto didReceiveInvalidMessage = std::exchange(m_didReceiveInvalidMessage, false);
+    if (!didReceiveInvalidMessage && message.isValid())
         return true;
 
     Ref connection = m_connection;
@@ -279,6 +280,11 @@ bool StreamServerConnection::dispatchStreamMessage(Decoder& message, StreamMessa
     return false;
 }
 
+void StreamServerConnection::markCurrentlyDispatchedMessageAsInvalid()
+{
+    ASSERT(m_isProcessingStreamMessage);
+    m_didReceiveInvalidMessage = true;
+}
 
 RefPtr<StreamConnectionWorkQueue> StreamServerConnection::protectedWorkQueue() const
 {

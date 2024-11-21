@@ -46,6 +46,8 @@
 #include "RemoteVideoFrameObjectHeap.h"
 #endif
 
+#define MESSAGE_CHECK(assertion, connection) MESSAGE_CHECK_OPTIONAL_CONNECTION_BASE(assertion, connection)
+
 namespace WebKit {
 
 using namespace WebCore;
@@ -454,6 +456,13 @@ Ref<RemoteVideoFrameObjectHeap> RemoteGraphicsContextGL::protectedVideoFrameObje
 }
 #endif
 
+void RemoteGraphicsContextGL::messageCheck(bool assertion)
+{
+    MESSAGE_CHECK(assertion, m_streamConnection);
+}
+
 } // namespace WebKit
+
+#undef MESSAGE_CHECK
 
 #endif // ENABLE(GPU_PROCESS) && ENABLE(WEBGL)

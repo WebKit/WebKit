@@ -44,7 +44,7 @@
 #include <wtf/WeakPtr.h>
 
 // Used by generate-gpup-webgl
-#define IPC_MESSAGE_ATTRIBUTE(x)
+#define IPC_MESSAGE_CHECK(x)
 
 namespace WebKit {
 
@@ -361,20 +361,20 @@ public:
     void setDrawingBufferColorSpace(const WebCore::DestinationColorSpace&) final;
 
 #if ENABLE(WEBXR)
-    GCGLExternalImage createExternalImage(WebCore::GraphicsContextGL::ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
-    void deleteExternalImage(GCGLExternalImage handle) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
-    void bindExternalImage(GCGLenum target, GCGLExternalImage) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
-    GCGLExternalSync createExternalSync(WebCore::GraphicsContextGL::ExternalSyncSource&&) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
+    GCGLExternalImage createExternalImage(WebCore::GraphicsContextGL::ExternalImageSource&&, GCGLenum internalFormat, GCGLint layer) IPC_MESSAGE_CHECK(webXRPromptAccepted()) final;
+    void deleteExternalImage(GCGLExternalImage handle) IPC_MESSAGE_CHECK(webXRPromptAccepted()) final;
+    void bindExternalImage(GCGLenum target, GCGLExternalImage) IPC_MESSAGE_CHECK(webXRPromptAccepted()) final;
+    GCGLExternalSync createExternalSync(WebCore::GraphicsContextGL::ExternalSyncSource&&) IPC_MESSAGE_CHECK(webXRPromptAccepted()) final;
 #endif
-    void deleteExternalSync(GCGLExternalSync) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
+    void deleteExternalSync(GCGLExternalSync) IPC_MESSAGE_CHECK(webXRPromptAccepted()) final;
 
 #if ENABLE(WEBXR)
-    bool enableRequiredWebXRExtensions() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXREnabled()') final;
-    bool addFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
-    void enableFoveation(PlatformGLObject arg0) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
-    void disableFoveation() IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
-    void framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
-    void framebufferResolveRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject arg3) IPC_MESSAGE_ATTRIBUTE(EnabledIf='webXRPromptAccepted()') final;
+    bool enableRequiredWebXRExtensions() IPC_MESSAGE_CHECK(webXREnabled()) final;
+    bool addFoveation(WebCore::IntSize physicalSizeLeft, WebCore::IntSize physicalSizeRight, WebCore::IntSize screenSize, std::span<const GCGLfloat> horizontalSamplesLeft, std::span<const GCGLfloat> verticalSamples, std::span<const GCGLfloat> horizontalSamplesRight) IPC_MESSAGE_CHECK(webXRPromptAccepted()) final;
+    void enableFoveation(PlatformGLObject arg0) IPC_MESSAGE_CHECK(webXRPromptAccepted()) final;
+    void disableFoveation() IPC_MESSAGE_CHECK(webXRPromptAccepted()) final;
+    void framebufferDiscard(GCGLenum target, std::span<const GCGLenum> attachments) IPC_MESSAGE_CHECK(webXRPromptAccepted()) final;
+    void framebufferResolveRenderbuffer(GCGLenum target, GCGLenum attachment, GCGLenum renderbuffertarget, PlatformGLObject arg3) IPC_MESSAGE_CHECK(webXRPromptAccepted()) final;
 #endif
     // End of list used by generate-gpup-webgl script.
 
