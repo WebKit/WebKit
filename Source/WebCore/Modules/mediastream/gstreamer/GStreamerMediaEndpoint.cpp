@@ -1208,7 +1208,9 @@ void GStreamerMediaEndpoint::connectIncomingTrack(WebRTCTrackData& data)
 
     GRefPtr<GstWebRTCRTPTransceiver> rtcTransceiver(data.transceiver);
     auto trackId = data.trackId;
-    auto* transceiver = m_peerConnectionBackend.existingTransceiverForTrackId(trackId);
+    auto transceiver = m_peerConnectionBackend.existingTransceiver([&](auto& backend) -> bool {
+        return backend.rtcTransceiver() == rtcTransceiver.get();
+    });
     if (!transceiver) {
         unsigned mLineIndex;
         g_object_get(rtcTransceiver.get(), "mlineindex", &mLineIndex, nullptr);
@@ -1233,7 +1235,7 @@ void GStreamerMediaEndpoint::connectIncomingTrack(WebRTCTrackData& data)
             return;
     }
 
-    m_pendingIncomingTracks.append(trackId);
+    m_pendingIncomingTracks.append(&track.privateTrack());
 
     unsigned totalExpectedMediaTracks = 0;
     for (unsigned i = 0; i < gst_sdp_message_medias_len(description->sdp); i++) {
@@ -1250,13 +1252,10 @@ void GStreamerMediaEndpoint::connectIncomingTrack(WebRTCTrackData& data)
     }
 
     GST_DEBUG_OBJECT(m_pipeline.get(), "Incoming stream %s ready, notifying observers", data.mediaStreamId.ascii().data());
-    for (auto& trackId : m_pendingIncomingTracks) {
-        auto& mediaStream = mediaStreamFromRTCStream(trackId);
-        mediaStream.privateStream().forEachTrack([](auto& track) {
-            GST_DEBUG("Incoming stream has track %s", track.id().ascii().data());
-            track.dataFlowStarted();
-            track.source().setMuted(false);
-        });
+    for (auto& track : m_pendingIncomingTracks) {
+        GST_DEBUG_OBJECT(m_pipeline.get(), "Incoming stream has track %s", track->id().utf8().data());
+        track->dataFlowStarted();
+        track->source().setMuted(false);
     }
 
     m_pendingIncomingTracks.clear();
