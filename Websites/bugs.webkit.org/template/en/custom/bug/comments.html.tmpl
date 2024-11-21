@@ -162,15 +162,16 @@
           <a href="show_bug.cgi?id=[% bug.bug_id FILTER html %]#c[% comment.count FILTER html %]">
             [%- comment_label FILTER html %]</a>
           <span class="bz_comment_time torelativedatetime" data-ts="[%+ comment.creation_ts FILTER html %]">[%+ comment.creation_ts FILTER time %]</span>
+          
+          [% IF comment.collapsed %]
+            <span id="cr[% comment.count FILTER css_class_quote %]" class="bz_comment_collapse_reason"
+               title="[% comment.author.name || comment.author.login FILTER html %]
+                      [%~ %] [[% comment.creation_ts FILTER time %]]">
+              Comment hidden ([% comment.tags.join(', ') FILTER html %])
+            </span>
+          [% END %]
         </div>
 
-        [% IF comment.collapsed %]
-          <span id="cr[% comment.count FILTER css_class_quote %]" class="bz_comment_collapse_reason"
-             title="[% comment.author.name || comment.author.login FILTER html %]
-                    [%~ %] [[% comment.creation_ts FILTER time %]]">
-            Comment hidden ([% comment.tags.join(', ') FILTER html %])
-          </span>
-        [% END %]
       </div>
 
       [% IF user.is_timetracker &&
