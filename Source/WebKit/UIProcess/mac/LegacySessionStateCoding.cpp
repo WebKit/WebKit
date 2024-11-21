@@ -46,6 +46,9 @@ static const CFStringRef provisionalURLKey = CFSTR("ProvisionalURL");
 static const CFStringRef renderTreeSizeKey = CFSTR("RenderTreeSize");
 static const CFStringRef isAppInitiatedKey = CFSTR("IsAppInitiated");
 
+// Session storage keys
+static const CFStringRef sessionStorageKey = CFSTR("SessionStorage");
+
 // Session history keys.
 static const uint32_t sessionHistoryVersion = 1;
 
@@ -477,28 +480,31 @@ static RetainPtr<CFDictionaryRef> encodeSessionHistory(const BackForwardListStat
     return createDictionary({ { sessionHistoryVersionKey, sessionHistoryVersionNumber.get() }, { sessionHistoryCurrentIndexKey, currentIndexNumber.get() }, { sessionHistoryEntriesKey, entries.get() } });
 }
 
-RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
+RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState, std::optional<HashMap<WebCore::ClientOrigin, HashMap<String, String>>>&& sessionStorage)
 {
     auto sessionHistoryDictionary = encodeSessionHistory(sessionState.backForwardListState);
     auto provisionalURLString = sessionState.provisionalURL.isNull() ? nullptr : sessionState.provisionalURL.string().createCFString();
     RetainPtr<CFNumberRef> renderTreeSizeNumber(adoptCF(CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt64Type, &sessionState.renderTreeSize)));
     RetainPtr<CFBooleanRef> isAppInitiated = adoptCF(sessionState.isAppInitiated ? kCFBooleanTrue : kCFBooleanFalse);
 
-    RetainPtr<CFDictionaryRef> stateDictionary;
-    if (provisionalURLString) {
-        stateDictionary = createDictionary({
-            { sessionHistoryKey, sessionHistoryDictionary.get() },
-            { provisionalURLKey, provisionalURLString.get() },
-            { renderTreeSizeKey, renderTreeSizeNumber.get() },
-            { isAppInitiatedKey, isAppInitiated.get() }
-        });
-    } else {
-        stateDictionary = createDictionary({
-            { sessionHistoryKey, sessionHistoryDictionary.get() },
-            { renderTreeSizeKey, renderTreeSizeNumber.get() },
-            { isAppInitiatedKey, isAppInitiated.get() }
-        });
-    }
+    RetainPtr<CFDictionaryRef> sessionStorageDictionary;
+    // FIXME: Implement encodeSessionStorage() to create a CFDictionary from the HashMap.
+    // Do this by creating a dictionary with CFDictionaryCreateMutable and then adding the
+    // key-value pairs.
+    // if (sessionStorage)
+    //     sessionStorageDictionary = encodeSessionStorage(*sessionStorage);
+
+    auto stateDictionary = CFDictionaryCreateMutable(
+        kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+
+    CFDictionaryAddValue(stateDictionary, sessionHistoryKey, sessionHistoryDictionary.get());
+    CFDictionaryAddValue(stateDictionary, renderTreeSizeKey, renderTreeSizeNumber.get());
+    CFDictionaryAddValue(stateDictionary, isAppInitiatedKey, isAppInitiated.get());
+
+    if (provisionalURLString)
+        CFDictionaryAddValue(stateDictionary, provisionalURLKey, provisionalURLString.get());
+    if (sessionStorageDictionary)
+        CFDictionaryAddValue(stateDictionary, sessionStorageKey, sessionStorageDictionary.get());
 
     auto writeStream = adoptCF(CFWriteStreamCreateWithAllocatedBuffers(kCFAllocatorDefault, nullptr));
     if (!writeStream)
@@ -507,7 +513,7 @@ RefPtr<API::Data> encodeLegacySessionState(const SessionState& sessionState)
     if (!CFWriteStreamOpen(writeStream.get()))
         return nullptr;
 
-    if (!CFPropertyListWrite(stateDictionary.get(), writeStream.get(), kCFPropertyListBinaryFormat_v1_0, 0, nullptr))
+    if (!CFPropertyListWrite(stateDictionary, writeStream.get(), kCFPropertyListBinaryFormat_v1_0, 0, nullptr))
         return nullptr;
 
     auto data = adoptCF(checked_cf_cast<CFDataRef>(CFWriteStreamCopyProperty(writeStream.get(), kCFStreamPropertyDataWritten)));

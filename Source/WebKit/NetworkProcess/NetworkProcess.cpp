@@ -3101,4 +3101,15 @@ void NetworkProcess::setPersistedDomains(PAL::SessionID sessionID, HashSet<Regis
         session->setPersistedDomains(WTFMove(domains));
 }
 
+void NetworkProcess::fetchSessionStorage(PAL::SessionID sessionID, WebPageProxyIdentifier pageID, CompletionHandler<void(HashMap<WebCore::ClientOrigin, HashMap<String, String>>)>&& completionHandler)
+{
+    auto* session = networkSession(sessionID);
+    if (!session) {
+        completionHandler({ });
+        return;
+    }
+
+    session->protectedStorageManager()->fetchSessionStorageForWebPage(pageID, WTFMove(completionHandler));
+}
+
 } // namespace WebKit

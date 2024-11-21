@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,30 +23,29 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKSessionStateRef.h"
+#import "config.h"
 
-#include "APIData.h"
-#include "APISessionState.h"
-#include "LegacySessionStateCoding.h"
-#include "SessionState.h"
-#include "WKAPICast.h"
+#import "Test.h"
+#import "TestWKWebView.h"
+#import <WebKit/WKWebViewPrivate.h>
+#import <wtf/RetainPtr.h>
 
-WKTypeID WKSessionStateGetTypeID()
+namespace TestWebKitAPI {
+
+TEST(WebKit, RestoreSessionState)
 {
-    return WebKit::toAPI(API::SessionState::APIType);
+    RetainPtr webView = adoptNS([WKWebView new]);
+
+    RetainPtr set = [NSSet setWithObject:WKWebViewSessionStateTypeSessionStorage];
+
+    __block bool done = false;
+    [webView fetchSessionStateAndAdditionalData:set.get() completionHandler:^(NSData *data) {
+        EXPECT_NULL(data);
+        done = true;
+    }];
+
+    Util::run(&done);
 }
 
-WKSessionStateRef WKSessionStateCreateFromData(WKDataRef data)
-{
-    WebKit::SessionState sessionState;
-    if (!WebKit::decodeLegacySessionState(WebKit::toImpl(data)->span(), sessionState))
-        return nullptr;
+} // namespace TestWebKitAPI
 
-    return WebKit::toAPI(&API::SessionState::create(WTFMove(sessionState)).leakRef());
-}
-
-WKDataRef WKSessionStateCopyData(WKSessionStateRef sessionState)
-{
-    return WebKit::toAPI(WebKit::encodeLegacySessionState(WebKit::toImpl(sessionState)->sessionState(), std::nullopt).leakRef());
-}

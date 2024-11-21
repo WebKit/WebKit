@@ -15645,6 +15645,11 @@ FloatPoint WebPageProxy::mainFrameScrollPosition() const
 
 #endif // PLATFORM(COCOA) && ENABLE(ASYNC_SCROLLING)
 
+void WebPageProxy::fetchSessionStorage(CompletionHandler<void(HashMap<WebCore::ClientOrigin, HashMap<String, String>>)>&& completionHandler)
+{
+    protectedWebsiteDataStore()->protectedNetworkProcess()->sendWithAsyncReply(Messages::NetworkProcess::FetchSessionStorage(sessionID(), identifier()), WTFMove(completionHandler));
+}
+
 } // namespace WebKit
 
 #undef WEBPAGEPROXY_RELEASE_LOG
