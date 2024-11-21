@@ -499,6 +499,7 @@ static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudo
         return true;
 
     switch (compoundPseudoElement) {
+    case CSSSelector::PseudoElement::UserAgentPart:
     case CSSSelector::PseudoElement::Part:
         return !isTreeStructuralPseudoClass(pseudoClass);
     case CSSSelector::PseudoElement::Slotted:
@@ -518,7 +519,6 @@ static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudo
     case CSSSelector::PseudoElement::ViewTransitionNew:
     case CSSSelector::PseudoElement::ViewTransitionOld:
         return pseudoClass == CSSSelector::PseudoClass::OnlyChild;
-    case CSSSelector::PseudoElement::UserAgentPart:
     case CSSSelector::PseudoElement::UserAgentPartLegacyAlias:
     case CSSSelector::PseudoElement::WebKitUnknown:
         return isUserActionPseudoClass(pseudoClass);
@@ -530,11 +530,11 @@ static bool isPseudoClassValidAfterPseudoElement(CSSSelector::PseudoClass pseudo
 static bool isTreeAbidingPseudoElement(CSSSelector::PseudoElement pseudoElement)
 {
     switch (pseudoElement) {
-    // FIXME: This list should also include ::placeholder and ::file-selector-button
     case CSSSelector::PseudoElement::Before:
     case CSSSelector::PseudoElement::After:
     case CSSSelector::PseudoElement::Marker:
     case CSSSelector::PseudoElement::Backdrop:
+    case CSSSelector::PseudoElement::UserAgentPart:
         return true;
     default:
         return false;
@@ -543,6 +543,14 @@ static bool isTreeAbidingPseudoElement(CSSSelector::PseudoElement pseudoElement)
 
 static bool isSimpleSelectorValidAfterPseudoElement(const MutableCSSSelector& simpleSelector, CSSSelector::PseudoElement compoundPseudoElement)
 {
+    if (compoundPseudoElement == CSSSelector::PseudoElement::UserAgentPart) {
+        // An element-backed pseudo-element can define itself as representing a real element (possibly one not accessible in the current tree).
+        // If it does so, all pseudo-classes and pseudo-elements not otherwise disallowed (see above) match as they would on that real element.
+        // If it does not do so, it must define which pseudo-classes it matches and when; however, unless otherwise specified,
+        // any pseudo-classes allowed on tree-abiding pseudo-elements are always allowed on element-backed pseudo-elements.
+        if (simpleSelector.match() == CSSSelector::Match::PseudoElement)
+            return true;
+    }
     if (compoundPseudoElement == CSSSelector::PseudoElement::Part) {
         if (simpleSelector.match() == CSSSelector::Match::PseudoElement && simpleSelector.pseudoElement() != CSSSelector::PseudoElement::Part)
             return true;

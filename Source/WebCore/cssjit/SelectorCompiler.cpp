@@ -1482,7 +1482,8 @@ static FunctionType constructFragmentsInternal(const CSSSelector* rootSelector, 
             case CSSSelector::PseudoElement::ViewTransition:
             case CSSSelector::PseudoElement::UserAgentPart:
             case CSSSelector::PseudoElement::UserAgentPartLegacyAlias:
-                ASSERT(!fragment->pseudoElementSelector);
+                if (fragment->pseudoElementSelector)
+                    return FunctionType::CannotCompile;
                 fragment->pseudoElementSelector = selector;
                 break;
             case CSSSelector::PseudoElement::WebKitUnknown:
