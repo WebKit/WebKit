@@ -402,9 +402,9 @@ void DocumentThreadableLoader::responseReceived(CachedResource& resource, const 
     if (!m_responsesCanBeOpaque) {
         ResourceResponse responseWithoutTainting = responseWithCorrectFragmentIdentifier.isNull() ? response : responseWithCorrectFragmentIdentifier;
         responseWithoutTainting.setTainting(ResourceResponse::Tainting::Basic);
-        didReceiveResponse(*m_resource->identifier(), responseWithoutTainting);
+        didReceiveResponse(*m_resource->resourceLoaderIdentifier(), responseWithoutTainting);
     } else
-        didReceiveResponse(*m_resource->identifier(), responseWithCorrectFragmentIdentifier.isNull() ? response : responseWithCorrectFragmentIdentifier);
+        didReceiveResponse(*m_resource->resourceLoaderIdentifier(), responseWithCorrectFragmentIdentifier.isNull() ? response : responseWithCorrectFragmentIdentifier);
 
     if (completionHandler)
         completionHandler();
@@ -449,7 +449,7 @@ void DocumentThreadableLoader::didReceiveResponse(ResourceLoaderIdentifier ident
 void DocumentThreadableLoader::dataReceived(CachedResource& resource, const SharedBuffer& buffer)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
-    didReceiveData(*m_resource->identifier(), buffer);
+    didReceiveData(*m_resource->resourceLoaderIdentifier(), buffer);
 }
 
 void DocumentThreadableLoader::didReceiveData(ResourceLoaderIdentifier, const SharedBuffer& buffer)
@@ -483,9 +483,9 @@ void DocumentThreadableLoader::notifyFinished(CachedResource& resource, const Ne
     ASSERT_UNUSED(resource, &resource == m_resource);
 
     if (m_resource->errorOccurred())
-        didFail(m_resource->identifier(), m_resource->resourceError());
+        didFail(m_resource->resourceLoaderIdentifier(), m_resource->resourceError());
     else
-        didFinishLoading(m_resource->identifier(), metrics);
+        didFinishLoading(m_resource->resourceLoaderIdentifier(), metrics);
 }
 
 void DocumentThreadableLoader::didFinishLoading(std::optional<ResourceLoaderIdentifier> identifier, const NetworkLoadMetrics& metrics)
@@ -556,12 +556,13 @@ void DocumentThreadableLoader::preflightSuccess(ResourceRequest&& request)
     loadRequest(WTFMove(actualRequest), SecurityCheckPolicy::SkipSecurityCheck);
 }
 
-void DocumentThreadableLoader::preflightFailure(ResourceLoaderIdentifier identifier, const ResourceError& error)
+void DocumentThreadableLoader::preflightFailure(std::optional<ResourceLoaderIdentifier> identifier, const ResourceError& error)
 {
     m_preflightChecker = std::nullopt;
 
     RefPtr frame = m_document->frame();
-    InspectorInstrumentation::didFailLoading(frame.get(), frame->loader().protectedDocumentLoader().get(), identifier, error);
+    if (identifier)
+        InspectorInstrumentation::didFailLoading(frame.get(), frame->loader().protectedDocumentLoader().get(), *identifier, error);
 
     if (m_shouldLogError == ShouldLogError::Yes)
         logError(protectedDocument(), error, m_options.initiatorType);

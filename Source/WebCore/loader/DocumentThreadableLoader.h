@@ -102,7 +102,7 @@ class CachedRawResource;
         void makeSimpleCrossOriginAccessRequest(ResourceRequest&&);
         void makeCrossOriginAccessRequestWithPreflight(ResourceRequest&&);
         void preflightSuccess(ResourceRequest&&);
-        void preflightFailure(ResourceLoaderIdentifier, const ResourceError&);
+        void preflightFailure(std::optional<ResourceLoaderIdentifier>, const ResourceError&);
 
         void loadRequest(ResourceRequest&&, SecurityCheckPolicy);
         bool isAllowedRedirect(const URL&);

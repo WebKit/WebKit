@@ -231,8 +231,8 @@ void CachedRawResource::redirectReceived(ResourceRequest&& request, const Resour
 void CachedRawResource::responseReceived(const ResourceResponse& newResponse)
 {
     CachedResourceHandle protectedThis { this };
-    if (!m_identifier)
-        m_identifier = m_loader->identifier();
+    if (!m_resourceLoaderIdentifier)
+        m_resourceLoaderIdentifier = m_loader->identifier();
     CachedResource::responseReceived(newResponse);
     CachedResourceClientWalker<CachedRawResourceClient> walker(*this);
     while (CachedRawResourceClient* c = walker.next())
@@ -267,8 +267,8 @@ void CachedRawResource::switchClientsToRevalidatedResource()
 {
     ASSERT(m_loader);
     // If we're in the middle of a successful revalidation, responseReceived() hasn't been called, so we haven't set m_identifier.
-    ASSERT(!m_identifier);
-    downcast<CachedRawResource>(*resourceToRevalidate()).m_identifier = m_loader->identifier();
+    ASSERT(!m_resourceLoaderIdentifier);
+    downcast<CachedRawResource>(*resourceToRevalidate()).m_resourceLoaderIdentifier = m_loader->identifier();
     CachedResource::switchClientsToRevalidatedResource();
 }
 

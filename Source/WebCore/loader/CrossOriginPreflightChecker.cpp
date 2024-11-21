@@ -62,7 +62,7 @@ CrossOriginPreflightChecker::~CrossOriginPreflightChecker()
         resource->removeClient(*this);
 }
 
-void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLoader& loader, ResourceRequest&& request, ResourceLoaderIdentifier identifier, const ResourceResponse& response)
+void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLoader& loader, ResourceRequest&& request, std::optional<ResourceLoaderIdentifier> identifier, const ResourceResponse& response)
 {
     RefPtr frame = loader.document().frame();
     if (!frame) {
@@ -88,8 +88,8 @@ void CrossOriginPreflightChecker::validatePreflightResponse(DocumentThreadableLo
     // for preflight failures and distinguish them better from non-preflight requests.
     NetworkLoadMetrics emptyMetrics;
     RefPtr documentLoader = frame->loader().documentLoader();
-    InspectorInstrumentation::didReceiveResourceResponse(*frame, identifier, documentLoader.get(), response, nullptr);
-    InspectorInstrumentation::didFinishLoading(frame.get(), documentLoader.get(), identifier, emptyMetrics, nullptr);
+    InspectorInstrumentation::didReceiveResourceResponse(*frame, *identifier, documentLoader.get(), response, nullptr);
+    InspectorInstrumentation::didFinishLoading(frame.get(), documentLoader.get(), *identifier, emptyMetrics, nullptr);
 
     loader.preflightSuccess(WTFMove(request));
 }
@@ -107,10 +107,10 @@ void CrossOriginPreflightChecker::notifyFinished(CachedResource& resource, const
 
         if (!preflightError.isTimeout())
             loader->document().addConsoleMessage(MessageSource::Security, MessageLevel::Error, "CORS-preflight request was blocked"_s);
-        loader->preflightFailure(*m_resource->identifier(), preflightError);
+        loader->preflightFailure(m_resource->resourceLoaderIdentifier(), preflightError);
         return;
     }
-    validatePreflightResponse(loader, WTFMove(m_request), *m_resource->identifier(), m_resource->response());
+    validatePreflightResponse(loader, WTFMove(m_request), *m_resource->resourceLoaderIdentifier(), m_resource->response());
 }
 
 Ref<DocumentThreadableLoader> CrossOriginPreflightChecker::protectedLoader() const
@@ -121,7 +121,7 @@ Ref<DocumentThreadableLoader> CrossOriginPreflightChecker::protectedLoader() con
 void CrossOriginPreflightChecker::redirectReceived(CachedResource& resource, ResourceRequest&&, const ResourceResponse& response, CompletionHandler<void(ResourceRequest&&)>&& completionHandler)
 {
     ASSERT_UNUSED(resource, &resource == m_resource);
-    validatePreflightResponse(protectedLoader(), WTFMove(m_request), *m_resource->identifier(), response);
+    validatePreflightResponse(protectedLoader(), WTFMove(m_request), m_resource->resourceLoaderIdentifier(), response);
     completionHandler(ResourceRequest { });
 }
 

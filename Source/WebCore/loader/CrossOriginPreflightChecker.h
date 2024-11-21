@@ -58,7 +58,7 @@ private:
     void redirectReceived(CachedResource&, ResourceRequest&&, const ResourceResponse&, CompletionHandler<void(ResourceRequest&&)>&&) final;
 
     static void handleLoadingFailure(DocumentThreadableLoader&, unsigned long, const ResourceError&);
-    static void validatePreflightResponse(DocumentThreadableLoader&, ResourceRequest&&, ResourceLoaderIdentifier, const ResourceResponse&);
+    static void validatePreflightResponse(DocumentThreadableLoader&, ResourceRequest&&, std::optional<ResourceLoaderIdentifier>, const ResourceResponse&);
     Ref<DocumentThreadableLoader> protectedLoader() const;
 
     SingleThreadWeakRef<DocumentThreadableLoader> m_loader;
