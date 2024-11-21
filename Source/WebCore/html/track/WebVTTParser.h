@@ -63,7 +63,7 @@ public:
 };
 
 class WebVTTCueData final : public RefCounted<WebVTTCueData> {
-    WTF_MAKE_TZONE_ALLOCATED(WebVTTCueData);
+    WTF_MAKE_TZONE_ALLOCATED_EXPORT(WebVTTCueData, WEBCORE_EXPORT);
 public:
 
     static Ref<WebVTTCueData> create() { return adoptRef(*new WebVTTCueData()); }
