@@ -59,9 +59,7 @@ struct _JSCWeakValuePrivate {
     JSC::JSWeakValue weakValueRef;
 };
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-static guint signals[LAST_SIGNAL] = { 0, };
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(JSCWeakValue, jsc_weak_value, G_TYPE_OBJECT, GObject)
 

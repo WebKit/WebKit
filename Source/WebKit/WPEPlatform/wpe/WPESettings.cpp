@@ -110,7 +110,7 @@ enum {
     LAST_SIGNAL
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
+static std::array<unsigned, LAST_SIGNAL> signals;
 
 WEBKIT_DEFINE_FINAL_TYPE(WPESettings, wpe_settings, G_TYPE_OBJECT, GObject)
 

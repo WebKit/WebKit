@@ -62,7 +62,7 @@ enum {
     N_PROPERTIES
 };
 
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 static void wpeScreenSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
 {
@@ -252,7 +252,7 @@ static void wpe_screen_class_init(WPEScreenClass* screenClass)
             -1, G_MAXINT, -1,
             WEBKIT_PARAM_READWRITE);
 
-    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 }
 
 /**

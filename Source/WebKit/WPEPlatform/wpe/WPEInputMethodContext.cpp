@@ -179,8 +179,8 @@ enum {
     N_PROPERTIES
 };
 
-static guint signals[LAST_SIGNAL] = { 0, };
-static GParamSpec* sObjProperties[N_PROPERTIES] = { nullptr, };
+static std::array<unsigned, LAST_SIGNAL> signals;
+static std::array<GParamSpec*, N_PROPERTIES> sObjProperties;
 
 static void wpeInputMethodContextSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
 {
@@ -256,7 +256,7 @@ static void wpe_input_method_context_class_init(WPEInputMethodContextClass* klas
             WPE_INPUT_HINT_NONE,
             static_cast<GParamFlags>(G_PARAM_READWRITE | G_PARAM_STATIC_STRINGS | G_PARAM_EXPLICIT_NOTIFY));
 
-    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties);
+    g_object_class_install_properties(objectClass, N_PROPERTIES, sObjProperties.data());
 
      /**
      * WPEInputMethodContextClass::preedit-started:
