@@ -56,7 +56,7 @@ struct ViewTimelineInsets;
 struct TimelineMapAttachOperation {
     WeakPtr<Element, WeakPtrImplWithEventTargetData> element;
     AtomString name;
-    WeakPtr<WebAnimation, WeakPtrImplWithEventTargetData> animation;
+    Ref<WebAnimation> animation;
 };
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(AnimationTimelinesController);
@@ -101,6 +101,7 @@ private:
     Vector<Ref<ScrollTimeline>>& timelinesForName(const AtomString&);
     Vector<WeakPtr<Element, WeakPtrImplWithEventTargetData>> relatedTimelineScopeElements(const AtomString&);
     void attachPendingOperations();
+    bool isPendingTimelineAttachment(const WebAnimation&) const;
 
     Vector<TimelineMapAttachOperation> m_pendingAttachOperations;
     Vector<std::pair<TimelineScope, WeakPtr<Element, WeakPtrImplWithEventTargetData>>> m_timelineScopeEntries;
