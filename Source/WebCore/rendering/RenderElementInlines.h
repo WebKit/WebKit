@@ -50,7 +50,8 @@ inline bool RenderElement::canContainAbsolutelyPositionedObjects() const
         || (hasBackdropFilter() && !isDocumentElementRenderer())
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForAbsolutelyPositioned(isDocumentElementRenderer()))
         || isRenderOrLegacyRenderSVGForeignObject()
-        || shouldApplyLayoutOrPaintContainment();
+        || shouldApplyLayoutContainment()
+        || shouldApplyPaintContainment();
 }
 
 inline bool RenderElement::canContainFixedPositionObjects() const
@@ -60,7 +61,8 @@ inline bool RenderElement::canContainFixedPositionObjects() const
         || (hasBackdropFilter() && !isDocumentElementRenderer())
         || (isRenderBlock() && style().willChange() && style().willChange()->createsContainingBlockForOutOfFlowPositioned(isDocumentElementRenderer()))
         || isRenderOrLegacyRenderSVGForeignObject()
-        || shouldApplyLayoutOrPaintContainment();
+        || shouldApplyLayoutContainment()
+        || shouldApplyPaintContainment();
 }
 
 inline bool RenderElement::createsGroupForStyle(const RenderStyle& style)
@@ -70,53 +72,93 @@ inline bool RenderElement::createsGroupForStyle(const RenderStyle& style)
 
 inline bool RenderElement::shouldApplyAnyContainment() const
 {
-    return shouldApplyLayoutOrPaintContainment() || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize() || style().containsStyle());
-}
-
-inline bool RenderElement::shouldApplyInlineSizeContainment() const
-{
-    return isSkippedContentRoot(*this) || shouldApplySizeOrStyleContainment(style().containsInlineSize());
-}
-
-inline bool RenderElement::shouldApplyLayoutContainment() const
-{
-    return shouldApplyLayoutOrPaintContainment(style().containsLayout() || style().contentVisibility() != ContentVisibility::Visible);
-}
-
-inline bool RenderElement::shouldApplyLayoutOrPaintContainment(bool containsAccordingToStyle) const
-{
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && style().display() != DisplayType::RubyAnnotation && (!isTablePart() || isRenderBlockFlow());
-}
-
-inline bool RenderElement::shouldApplyLayoutOrPaintContainment() const
-{
-    return shouldApplyLayoutOrPaintContainment(style().containsLayoutOrPaint()) || shouldApplySizeOrStyleContainment(style().contentVisibility() != ContentVisibility::Visible);
-}
-
-inline bool RenderElement::shouldApplyPaintContainment() const
-{
-    return shouldApplyLayoutOrPaintContainment(style().containsPaint()) || shouldApplySizeOrStyleContainment(style().contentVisibility() != ContentVisibility::Visible);
-}
-
-inline bool RenderElement::shouldApplySizeContainment() const
-{
-    return isSkippedContentRoot(*this) || shouldApplySizeOrStyleContainment(style().containsSize());
+    return shouldApplyLayoutContainment() || shouldApplySizeContainment() || shouldApplyInlineSizeContainment() || shouldApplyStyleContainment() || shouldApplyPaintContainment();
 }
 
 inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
 {
-    return isSkippedContentRoot(*this) || shouldApplySizeOrStyleContainment(style().containsSizeOrInlineSize());
+    return shouldApplySizeContainment() || shouldApplyInlineSizeContainment();
 }
 
-// FIXME: try to avoid duplication with isSkippedContentRoot.
-inline bool RenderElement::shouldApplySizeOrStyleContainment(bool containsAccordingToStyle) const
+inline bool RenderElement::shouldApplyLayoutContainment() const
 {
-    return containsAccordingToStyle && (!isInline() || isAtomicInlineLevelBox()) && style().display() != DisplayType::RubyAnnotation && (!isTablePart() || isRenderTableCaption()) && !isRenderTable();
+    // content-visibility hidden and auto turns on layout containment.
+    auto& style = this->style();
+    auto hasContainment = style.containsLayout() || style.contentVisibility() == ContentVisibility::Hidden || style.contentVisibility() == ContentVisibility::Auto;
+    if (!hasContainment)
+        return false;
+    // Giving an element layout containment has no effect if any of the following are true:
+    //   if the element does not generate a principal box (as is the case with display: contents or display: none)
+    //   if its principal box is an internal table box other than table-cell
+    //   if its principal box is an internal ruby box or a non-atomic inline-level box
+    if (style.isInternalTableBox() && style.display() != DisplayType::TableCell)
+        return false;
+    if (style.isRubyContainerOrInternalRubyBox() || (isInline() && !isAtomicInlineLevelBox()))
+        return false;
+    return true;
+}
+
+inline bool RenderElement::shouldApplySizeContainment() const
+{
+    auto& style = this->style();
+    auto hasContainment = style.containsSize() || style.contentVisibility() == ContentVisibility::Hidden || (style.contentVisibility() == ContentVisibility::Auto && element() && !element()->isRelevantToUser());
+    if (!hasContainment)
+        return false;
+    // Giving an element size containment has no effect if any of the following are true:
+    //   if the element does not generate a principal box (as is the case with display: contents or display: none)
+    //   if its inner display type is table
+    //   if its principal box is an internal table box
+    //   if its principal box is an internal ruby box or a non-atomic inline-level box
+    if (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable)
+        return false;
+    if (style.isInternalTableBox())
+        return false;
+    if (style.isRubyContainerOrInternalRubyBox() || (isInline() && !isAtomicInlineLevelBox()))
+        return false;
+    return true;
+}
+
+inline bool RenderElement::shouldApplyInlineSizeContainment() const
+{
+    auto& style = this->style();
+    if (!style.containsInlineSize())
+        return false;
+    // Giving an element inline-size containment has no effect if any of the following are true:
+    //   if the element does not generate a principal box (as is the case with display: contents or display: none)
+    //   if its inner display type is table
+    //   if its principal box is an internal table box
+    //   if its principal box is an internal ruby box or a non-atomic inline-level box
+    if (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable)
+        return false;
+    if (style.isInternalTableBox())
+        return false;
+    if (style.isRubyContainerOrInternalRubyBox() || (isInline() && !isAtomicInlineLevelBox()))
+        return false;
+    return true;
 }
 
 inline bool RenderElement::shouldApplyStyleContainment() const
 {
-    return shouldApplySizeOrStyleContainment(style().containsStyle() || style().contentVisibility() != ContentVisibility::Visible);
+    // content-visibility hidden and auto turns on style containment.
+    return style().containsStyle() || style().contentVisibility() == ContentVisibility::Hidden || style().contentVisibility() == ContentVisibility::Auto;
+}
+
+inline bool RenderElement::shouldApplyPaintContainment() const
+{
+    // content-visibility hidden and auto turns on paint containment.
+    auto& style = this->style();
+    auto hasContainment = style.containsPaint() || style.contentVisibility() == ContentVisibility::Hidden || style.contentVisibility() == ContentVisibility::Auto;
+    if (!hasContainment)
+        return false;
+    // Giving an element paint containment has no effect if any of the following are true:
+    //   if the element does not generate a principal box (as is the case with display: contents or display: none)
+    //   if its principal box is an internal table box other than table-cell
+    //   if its principal box is an internal ruby box or a non-atomic inline-level box
+    if (style.isInternalTableBox() && style.display() != DisplayType::TableCell)
+        return false;
+    if (style.isRubyContainerOrInternalRubyBox() || (isInline() && !isAtomicInlineLevelBox()))
+        return false;
+    return true;
 }
 
 inline bool RenderElement::visibleToHitTesting(const std::optional<HitTestRequest>& request) const
@@ -144,16 +186,20 @@ inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const Render
 
 inline bool isSkippedContentRoot(const RenderElement& renderer)
 {
-    auto& style = renderer.style();
-    if (style.contentVisibility() == ContentVisibility::Visible)
+    if (!renderer.shouldApplySizeContainment())
         return false;
-    // content-visibility applies to elements for which size containment can apply (https://drafts.csswg.org/css-contain/#content-visibility)
-    if (!doesSizeContainmentApplyByDisplayType(style))
+
+    switch (renderer.style().contentVisibility()) {
+    case ContentVisibility::Visible:
         return false;
-    if (style.contentVisibility() == ContentVisibility::Hidden)
+    case ContentVisibility::Hidden:
         return true;
-    ASSERT(style.contentVisibility() == ContentVisibility::Auto);
-    return renderer.element() && !renderer.element()->isRelevantToUser();
+    case ContentVisibility::Auto:
+        return renderer.element() && !renderer.element()->isRelevantToUser();
+    default:
+        ASSERT_NOT_REACHED();
+        return false;
+    }
 }
 
 } // namespace WebCore

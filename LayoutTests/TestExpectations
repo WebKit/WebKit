@@ -5612,7 +5612,6 @@ imported/w3c/web-platform-tests/css/css-contain/contain-layout-button-002.tentat
 imported/w3c/web-platform-tests/css/css-contain/contain-style-counters-002.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-style-counters-004.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/contain-style-counters-005.html [ ImageOnlyFailure ]
-imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-095.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-vs-scrollIntoView-001.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-contain/content-visibility/content-visibility-vs-scrollIntoView-002.html [ ImageOnlyFailure ]
 

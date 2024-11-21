@@ -976,23 +976,6 @@ constexpr bool RenderStyle::isRubyContainerOrInternalRubyBox(DisplayType display
         || display == DisplayType::RubyBase;
 }
 
-inline bool doesSizeContainmentApplyByDisplayType(const RenderStyle& style)
-{
-    // https://drafts.csswg.org/css-contain-2/#containment-size
-    // Giving an element size containment has no effect if any of the following are true:
-    // if the element does not generate a principal box (as is the case with display: contents or display: none)
-    // if its inner display type is table
-    // if its principal box is an internal table box
-    // if its principal box is an internal ruby box or a non-atomic inline-level box
-    auto displayType = style.display();
-    return displayType != DisplayType::None
-        && displayType != DisplayType::Contents
-        && displayType != DisplayType::Table
-        && displayType != DisplayType::InlineTable
-        && !style.isInternalTableBox()
-        && !style.isRubyContainerOrInternalRubyBox();
-}
-
 inline double RenderStyle::logicalAspectRatio() const
 {
     ASSERT(aspectRatioType() != AspectRatioType::Auto);
