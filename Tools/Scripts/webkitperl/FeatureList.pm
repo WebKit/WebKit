@@ -157,6 +157,7 @@ my (
     $webAuthNSupport,
     $webCodecsSupport,
     $webRTCSupport,
+    $webdriverBidiSupport,
     $webdriverKeyboardInteractionsSupport,
     $webdriverMouseInteractionsSupport,
     $webdriverSupport,
@@ -428,6 +429,9 @@ my @features = (
 
     { option => "webdriver", desc => "Toggle WebDriver service process",
       define => "ENABLE_WEBDRIVER", value => \$webdriverSupport },
+
+    { option => "webdriver-bidi", desc => "Toggle WebDriver Bidi protocol support",
+      define => "ENABLE_WEBDRIVER_BIDI", value => \$webdriverBidiSupport},
 
     { option => "webdriver-keyboard-interactions", desc => "Toggle WebDriver keyboard interactions",
       define => "ENABLE_WEBDRIVER_KEYBOARD_INTERACTIONS", value => \$webdriverKeyboardInteractionsSupport },

@@ -533,6 +533,10 @@
 #define ENABLE_VIDEO_PRESENTATION_MODE 0
 #endif
 
+#if !defined(ENABLE_WEBDRIVER_BIDI)
+#define ENABLE_WEBDRIVER_BIDI 0
+#endif
+
 #if !defined(ENABLE_WEBGL)
 #define ENABLE_WEBGL 0
 #endif
