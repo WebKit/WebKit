@@ -1109,15 +1109,13 @@ void GStreamerRegistryScanner::fillVideoRtpCapabilities(Configuration configurat
                         continue;
                 } else {
                     auto spsAsInteger = parseInteger<uint64_t>(profileLevelId, 16).value_or(0);
-                    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-                    uint8_t sps[3];
+                    std::array<uint8_t, 3> sps;
                     sps[0] = spsAsInteger >> 16;
                     sps[1] = (spsAsInteger >> 8) & 0xff;
                     sps[2] = spsAsInteger & 0xff;
-                    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
                     auto caps = adoptGRef(gst_caps_new_empty_simple("video/x-h264"));
-                    gst_codec_utils_h264_caps_set_level_and_profile(caps.get(), sps, 3);
+                    gst_codec_utils_h264_caps_set_level_and_profile(caps.get(), sps.data(), 3);
                     if (!gst_element_factory_can_sink_any_caps(gst_element_get_factory(element.get()), caps.get()))
                         continue;
                 }

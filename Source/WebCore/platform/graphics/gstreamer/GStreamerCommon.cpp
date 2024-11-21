@@ -463,11 +463,9 @@ void registerWebKitGStreamerElements()
 
         // Downrank the libav AAC decoders, due to their broken LC support, as reported in:
         // https://ffmpeg.org/pipermail/ffmpeg-devel/2019-July/247063.html
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-        const char* const elementNames[] = { "avdec_aac", "avdec_aac_fixed", "avdec_aac_latm" };
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-        for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
-            GRefPtr<GstElementFactory> avAACDecoderFactory = adoptGRef(gst_element_factory_find(elementNames[i]));
+        std::array<ASCIILiteral, 3> elementNames { "avdec_aac"_s, "avdec_aac_fixed"_s, "avdec_aac_latm"_s };
+        for (auto& elementName : elementNames) {
+            GRefPtr<GstElementFactory> avAACDecoderFactory = adoptGRef(gst_element_factory_find(elementName));
             if (avAACDecoderFactory)
                 gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(avAACDecoderFactory.get()), GST_RANK_MARGINAL);
         }
@@ -492,11 +490,9 @@ void registerWebKitGStreamerElements()
         // base class does not abstract away network access. They can't work in a sandboxed
         // media process, so demote their rank in order to prevent decodebin3 from auto-plugging them.
         if (webkitGstCheckVersion(1, 22, 0)) {
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-            const char* const elementNames[] = { "dashdemux2", "hlsdemux2", "mssdemux2" };
-            WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-            for (unsigned i = 0; i < G_N_ELEMENTS(elementNames); i++) {
-                if (auto factory = adoptGRef(gst_element_factory_find(elementNames[i])))
+            std::array<ASCIILiteral, 3> elementNames = { "dashdemux2"_s, "hlsdemux2"_s, "mssdemux2"_s };
+            for (auto& elementName : elementNames) {
+                if (auto factory = adoptGRef(gst_element_factory_find(elementName)))
                     gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(factory.get()), GST_RANK_NONE);
             }
         }
