@@ -950,6 +950,7 @@ css/CSSVariableData.cpp
 css/CSSVariableReferenceValue.cpp
 css/CSSViewValue.cpp
 css/CSSViewTransitionRule.cpp
+css/ComputedStyleDependencies.cpp
 css/ComputedStyleExtractor.cpp
 css/DOMCSSNamespace.cpp
 css/DOMCSSPaintWorklet.cpp

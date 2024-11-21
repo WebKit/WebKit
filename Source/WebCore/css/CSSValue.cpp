@@ -296,26 +296,9 @@ void CSSValue::collectComputedStyleDependencies(ComputedStyleDependencies& depen
         asPrimitiveValue->collectComputedStyleDependencies(dependencies);
 }
 
-bool CSSValue::canResolveDependenciesWithConversionData(const ComputedStyleDependencies& dependencies, const CSSToLengthConversionData& conversionData)
-{
-    if (!dependencies.rootProperties.isEmpty() && !conversionData.rootStyle())
-        return false;
-
-    if (!dependencies.properties.isEmpty() && !conversionData.style())
-        return false;
-
-    if (dependencies.containerDimensions && !conversionData.elementForContainerUnitResolution())
-        return false;
-
-    if (dependencies.viewportDimensions && !conversionData.renderView())
-        return false;
-
-    return true;
-}
-
 bool CSSValue::canResolveDependenciesWithConversionData(const CSSToLengthConversionData& conversionData) const
 {
-    return canResolveDependenciesWithConversionData(computedStyleDependencies(), conversionData);
+    return computedStyleDependencies().canResolveDependenciesWithConversionData(conversionData);
 }
 
 bool CSSValue::equals(const CSSValue& other) const

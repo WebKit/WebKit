@@ -149,9 +149,6 @@ public:
     ComputedStyleDependencies computedStyleDependencies() const;
     void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
-    // Checks to see if the provided conversion data is sufficient to resolve the provided dependencies.
-    static bool canResolveDependenciesWithConversionData(const ComputedStyleDependencies&, const CSSToLengthConversionData&);
-
     // Checks to see if the provided conversion data is sufficient to resolve the dependencies of the CSSValue.
     bool canResolveDependenciesWithConversionData(const CSSToLengthConversionData&) const;
 
