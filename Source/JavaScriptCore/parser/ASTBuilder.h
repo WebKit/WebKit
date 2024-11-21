@@ -832,9 +832,9 @@ public:
         attributesList->append(key, value);
     }
 
-    StatementNode* createImportDeclaration(const JSTokenLocation& location, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
+    StatementNode* createImportDeclaration(const JSTokenLocation& location, ImportDeclarationNode::ImportType type, ImportSpecifierListNode* importSpecifierList, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)
     {
-        return new (m_parserArena) ImportDeclarationNode(location, importSpecifierList, moduleName, importAttributesList);
+        return new (m_parserArena) ImportDeclarationNode(location, type, importSpecifierList, moduleName, importAttributesList);
     }
 
     StatementNode* createExportAllDeclaration(const JSTokenLocation& location, ModuleNameNode* moduleName, ImportAttributesListNode* importAttributesList)

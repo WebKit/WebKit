@@ -320,6 +320,7 @@
     macro(continue) \
     macro(debugger) \
     macro(default) \
+    macro(defer) \
     macro(delete) \
     macro(do) \
     macro(else) \
