@@ -52,6 +52,7 @@ void WebExtensionContext::addListener(WebPageProxyIdentifier identifier, WebExte
     if (!protectedExtension()->backgroundContentIsPersistent() && isBackgroundPage(identifier))
         m_backgroundContentEventListeners.add(type);
 
+    // FIXME: <https://webkit.org/b/281516> This map should be for frames not pages.
     auto result = m_eventListenerPages.add({ type, contentWorldType }, WeakPageCountedSet { });
     result.iterator->value.add(*page);
 }
@@ -71,6 +72,7 @@ void WebExtensionContext::removeListener(WebPageProxyIdentifier identifier, WebE
             m_backgroundContentEventListeners.remove(type);
     }
 
+    // FIXME: <https://webkit.org/b/281516> This map should be for frames not pages.
     auto iterator = m_eventListenerPages.find({ type, contentWorldType });
     if (iterator == m_eventListenerPages.end())
         return;

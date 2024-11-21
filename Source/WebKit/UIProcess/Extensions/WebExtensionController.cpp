@@ -88,10 +88,15 @@ WebExtensionControllerParameters WebExtensionController::parameters() const
 
 WebExtensionController::WebProcessProxySet WebExtensionController::allProcesses() const
 {
-    WebProcessProxySet processes;
-    for (Ref page : m_pages)
-        processes.add(page->protectedLegacyMainFrameProcess());
-    return processes;
+    WebProcessProxySet result;
+
+    for (Ref page : m_pages) {
+        page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+            result.addVoid(webProcess);
+        });
+    }
+
+    return result;
 }
 
 } // namespace WebKit

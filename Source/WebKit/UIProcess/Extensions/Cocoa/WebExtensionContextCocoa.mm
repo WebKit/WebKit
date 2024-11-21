@@ -3290,7 +3290,9 @@ void WebExtensionContext::addPopupPage(WebPageProxy& page, WebExtensionAction& a
     auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
     Ref protectedPage = page;
-    protectedPage->protectedLegacyMainFrameProcess()->send(Messages::WebExtensionContextProxy::AddPopupPageIdentifier(protectedPage->webPageIDInMainFrameProcess(), tabIdentifier, windowIdentifier), identifier());
+    protectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebExtensionContextProxy::AddPopupPageIdentifier(pageID, tabIdentifier, windowIdentifier), identifier());
+    });
 }
 
 void WebExtensionContext::addExtensionTabPage(WebPageProxy& page, WebExtensionTab& tab)
@@ -3298,9 +3300,14 @@ void WebExtensionContext::addExtensionTabPage(WebPageProxy& page, WebExtensionTa
     m_extensionPageTabMap.set(page, tab.identifier());
 
     RefPtr window = tab.window();
+
+    auto tabIdentifier = tab.identifier();
     auto windowIdentifier = window ? std::optional(window->identifier()) : std::nullopt;
 
-    page.protectedLegacyMainFrameProcess()->send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(page.webPageIDInMainFrameProcess(), tab.identifier(), windowIdentifier), identifier());
+    Ref protectedPage = page;
+    protectedPage->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        webProcess.send(Messages::WebExtensionContextProxy::AddTabPageIdentifier(pageID, tabIdentifier, windowIdentifier), identifier());
+    });
 }
 
 void WebExtensionContext::enumerateExtensionPages(Function<void(WebPageProxy&, bool&)>&& action)
@@ -3523,13 +3530,13 @@ void WebExtensionContext::loadBackgroundWebView()
     m_backgroundContentLoadError = nil;
 
     Ref backgroundPage = *m_backgroundWebView.get()._page;
-    Ref backgroundProcess = backgroundPage->protectedLegacyMainFrameProcess();
+    Ref backgroundProcess = backgroundPage->siteIsolatedProcess();
 
     // Use foreground activity to keep background content responsive to events.
     m_backgroundWebViewActivity = backgroundProcess->protectedThrottler()->foregroundActivity("Web Extension background content"_s);
 
     if (!protectedExtension()->backgroundContentIsServiceWorker()) {
-        backgroundPage->protectedLegacyMainFrameProcess()->send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageIDInMainFrameProcess()), identifier());
+        backgroundProcess->send(Messages::WebExtensionContextProxy::SetBackgroundPageIdentifier(backgroundPage->webPageIDInMainFrameProcess()), identifier());
 
         [m_backgroundWebView loadRequest:[NSURLRequest requestWithURL:backgroundContentURL()]];
         return;
@@ -3998,7 +4005,7 @@ HashSet<Ref<WebProcessProxy>> WebExtensionContext::processes(const API::Inspecto
 
     const auto& inspectorContext = m_inspectorContextMap.get(*inspectorProxy);
     if (auto *backgroundWebView = inspectorContext.backgroundWebView.get())
-        result.add(backgroundWebView._page->legacyMainFrameProcess());
+        result.add(backgroundWebView._page->siteIsolatedProcess());
 
     return result;
 }
@@ -4152,6 +4159,7 @@ void WebExtensionContext::loadInspectorBackgroundPage(WebInspectorUIProxy& inspe
         Ref inspectorExtension = result.value().releaseNonNull();
         inspectorExtension->setClient(makeUniqueRef<InspectorExtensionClient>(inspectorExtension, *this));
 
+        // FIXME: <https://webkit.org/b/283442> Make Web Inspector extensions work in site isolation.
         Ref process = inspectorBackgroundWebView._page->legacyMainFrameProcess();
 
         // Use foreground activity to keep background content responsive to events.

@@ -841,11 +841,14 @@ WebExtensionTab::WebProcessProxySet WebExtensionTab::processes(WebExtensionEvent
     if (!extensionContext()->pageListensForEvent(*webView._page, type, contentWorldType))
         return { };
 
-    Ref process = webView._page->legacyMainFrameProcess();
-    if (!process->canSendMessage())
-        return { };
+    WebProcessProxySet result;
 
-    return { WTFMove(process) };
+    webView._page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+        if (webProcess.canSendMessage())
+            result.addVoid(webProcess);
+    });
+
+    return result;
 }
 
 } // namespace WebKit

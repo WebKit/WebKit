@@ -103,6 +103,7 @@ bool WebExtensionContext::pageListensForEvent(const WebPageProxy& page, WebExten
         return false;
 
     auto findAndCheckPage = [&](WebExtensionContentWorldType worldType) {
+        // FIXME: <https://webkit.org/b/281516> This map should be for frames not pages.
         auto entry = m_eventListenerPages.find({ type, worldType });
         return entry != m_eventListenerPages.end() && entry->value.contains(page);
     };
@@ -124,10 +125,8 @@ bool WebExtensionContext::pageListensForEvent(const WebPageProxy& page, WebExten
 
 WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventListenerTypeSet&& typeSet, ContentWorldTypeSet&& contentWorldTypeSet) const
 {
-    WebProcessProxySet result;
-
     if (!isLoaded())
-        return result;
+        return { };
 
 #if ENABLE(INSPECTOR_EXTENSIONS)
     // Inspector content world is a special alias of Main. Include it when Main is requested (and vice versa).
@@ -136,6 +135,8 @@ WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventList
     else if (contentWorldTypeSet.contains(WebExtensionContentWorldType::Inspector))
         contentWorldTypeSet.add(WebExtensionContentWorldType::Main);
 #endif
+
+    WebProcessProxySet result;
 
     for (auto type : typeSet) {
         for (auto contentWorldType : contentWorldTypeSet) {
@@ -148,9 +149,12 @@ WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventList
                 if (!hasAccessToPrivateData() && page->sessionID().isEphemeral())
                     continue;
 
-                Ref process = page->legacyMainFrameProcess();
-                if (process->canSendMessage())
-                    result.add(WTFMove(process));
+                // FIXME: <https://webkit.org/b/281516> This map should be for frames not pages and only include the interested frame process.
+                // For now consider all processes for every frame of the page as relevant.
+                page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
+                    if (webProcess.canSendMessage())
+                        result.add(webProcess);
+                });
             }
         }
     }
