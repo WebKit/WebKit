@@ -1,4 +1,6 @@
 
 EXPECTED (video.videoWidth == '1000') OK
 EXPECTED (video.videoHeight == '1400') OK
+EXPECTED (video.clientWidth == '1000') OK
+EXPECTED (video.clientHeight == '1400') OK
 
