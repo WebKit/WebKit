@@ -142,9 +142,9 @@ void JSString::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 DEFINE_VISIT_CHILDREN(JSString);
 
 template<typename CharacterType>
-void JSRopeString::resolveRopeInternalNoSubstring(CharacterType* buffer, uint8_t* stackLimit) const
+void JSRopeString::resolveRopeInternalNoSubstring(std::span<CharacterType> buffer, uint8_t* stackLimit) const
 {
-    resolveToBuffer(fiber0(), fiber1(), fiber2(), buffer, length(), stackLimit);
+    resolveToBuffer(fiber0(), fiber1(), fiber2(), buffer, stackLimit);
 }
 
 AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) const
@@ -169,13 +169,13 @@ AtomString JSRopeString::resolveRopeToAtomString(JSGlobalObject* globalObject) c
     uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
     if (!isSubstring()) {
         if (is8Bit()) {
-            LChar buffer[maxLengthForOnStackResolve];
-            resolveRopeInternalNoSubstring(buffer, stackLimit);
-            atomString = std::span<const LChar> { buffer, length() };
+            std::array<LChar, maxLengthForOnStackResolve> buffer;
+            resolveRopeInternalNoSubstring(std::span { buffer }.first(length()), stackLimit);
+            atomString = std::span<const LChar> { buffer }.first(length());
         } else {
-            UChar buffer[maxLengthForOnStackResolve];
-            resolveRopeInternalNoSubstring(buffer, stackLimit);
-            atomString = std::span<const UChar> { buffer, length() };
+            std::array<UChar, maxLengthForOnStackResolve> buffer;
+            resolveRopeInternalNoSubstring(std::span { buffer }.first(length()), stackLimit);
+            atomString = std::span<const UChar> { buffer }.first(length());
         }
     } else
         atomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toAtomString();
@@ -209,13 +209,13 @@ RefPtr<AtomStringImpl> JSRopeString::resolveRopeToExistingAtomString(JSGlobalObj
     if (!isSubstring()) {
         uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
         if (is8Bit()) {
-            LChar buffer[maxLengthForOnStackResolve];
-            resolveRopeInternalNoSubstring(buffer, stackLimit);
-            existingAtomString = AtomStringImpl::lookUp(std::span { buffer, length() });
+            std::array<LChar, maxLengthForOnStackResolve> buffer;
+            resolveRopeInternalNoSubstring(std::span { buffer }.first(length()), stackLimit);
+            existingAtomString = AtomStringImpl::lookUp(std::span { buffer }.first(length()));
         } else {
-            UChar buffer[maxLengthForOnStackResolve];
-            resolveRopeInternalNoSubstring(buffer, stackLimit);
-            existingAtomString = AtomStringImpl::lookUp(std::span { buffer, length() });
+            std::array<UChar, maxLengthForOnStackResolve> buffer;
+            resolveRopeInternalNoSubstring(std::span { buffer }.first(length()), stackLimit);
+            existingAtomString = AtomStringImpl::lookUp(std::span { buffer }.first(length()));
         }
     } else
         existingAtomString = StringView { substringBase()->valueInternal() }.substring(substringOffset(), length()).toExistingAtomString().releaseImpl();
@@ -248,7 +248,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
 
         size_t sizeToReport = newImpl->cost();
         uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
-        resolveRopeInternalNoSubstring(buffer.data(), stackLimit);
+        resolveRopeInternalNoSubstring(buffer, stackLimit);
         convertToNonRope(function(newImpl.releaseNonNull()));
         if constexpr (reportAllocation)
             vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
@@ -264,7 +264,7 @@ const String& JSRopeString::resolveRopeWithFunction(JSGlobalObject* nullOrGlobal
     
     size_t sizeToReport = newImpl->cost();
     uint8_t* stackLimit = std::bit_cast<uint8_t*>(vm.softStackLimit());
-    resolveRopeInternalNoSubstring(buffer.data(), stackLimit);
+    resolveRopeInternalNoSubstring(buffer, stackLimit);
     convertToNonRope(function(newImpl.releaseNonNull()));
     if constexpr (reportAllocation)
         vm.heap.reportExtraMemoryAllocated(this, sizeToReport);
