@@ -316,15 +316,6 @@ RTCRtpTransceiver* GStreamerPeerConnectionBackend::existingTransceiver(WTF::Func
     return nullptr;
 }
 
-RTCRtpTransceiver* GStreamerPeerConnectionBackend::existingTransceiverForTrackId(const String& trackId)
-{
-    for (auto& transceiver : protectedPeerConnection()->currentTransceivers()) {
-        if (transceiver->receiver().track().id() == trackId)
-            return transceiver.get();
-    }
-    return nullptr;
-}
-
 RTCRtpTransceiver& GStreamerPeerConnectionBackend::newRemoteTransceiver(std::unique_ptr<GStreamerRtpTransceiverBackend>&& transceiverBackend, RealtimeMediaSource::Type type, String&& receiverTrackId)
 {
     auto trackKind = type == RealtimeMediaSource::Type::Audio ? "audio"_s : "video"_s;

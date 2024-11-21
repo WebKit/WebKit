@@ -212,7 +212,7 @@ private:
 
     bool m_shouldIgnoreNegotiationNeededSignal { false };
 
-    Vector<String> m_pendingIncomingTracks;
+    Vector<RefPtr<MediaStreamTrackPrivate>> m_pendingIncomingTracks;
 
     Vector<RefPtr<RealtimeOutgoingMediaSourceGStreamer>> m_unlinkedOutgoingSources;
 };
