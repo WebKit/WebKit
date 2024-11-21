@@ -950,6 +950,7 @@ css/CSSVariableData.cpp
 css/CSSVariableReferenceValue.cpp
 css/CSSViewValue.cpp
 css/CSSViewTransitionRule.cpp
+css/ComputedStyleDependencies.cpp
 css/ComputedStyleExtractor.cpp
 css/DOMCSSNamespace.cpp
 css/DOMCSSPaintWorklet.cpp
@@ -1134,10 +1135,12 @@ css/values/images/CSSGradient.cpp
 css/values/motion/CSSRayFunction.cpp
 css/values/primitives/CSSNone.cpp
 css/values/primitives/CSSPosition.cpp
+css/values/primitives/CSSPrimitiveNumericTypes+Canonicalization.cpp
 css/values/primitives/CSSPrimitiveNumericTypes+ComputedStyleDependencies.cpp
 css/values/primitives/CSSPrimitiveNumericTypes+Serialization.cpp
 css/values/primitives/CSSPrimitiveNumericTypes+SymbolReplacement.cpp
 css/values/primitives/CSSPrimitiveNumericTypes.cpp
+css/values/primitives/CSSSymbol.cpp
 css/values/primitives/CSSUnevaluatedCalc.cpp
 css/values/shapes/CSSCircleFunction.cpp
 css/values/shapes/CSSEllipseFunction.cpp
@@ -3087,6 +3090,7 @@ style/UserAgentStyle.cpp
 style/values/backgrounds/StyleBorderRadius.cpp
 style/values/color-adjust/StyleColorScheme.cpp
 style/values/images/StyleGradient.cpp
+style/values/primitives/StyleNone.cpp
 style/values/primitives/StylePosition.cpp
 style/values/primitives/StylePrimitiveNumericTypes+Conversions.cpp
 style/values/shapes/StyleBasicShape.cpp

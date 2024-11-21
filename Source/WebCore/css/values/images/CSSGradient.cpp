@@ -29,6 +29,7 @@
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
+#include "CSSPrimitiveNumericTypes+Hashing.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CalculationValue.h"
@@ -85,7 +86,7 @@ void Serialize<GradientDeprecatedColorStop>::operator()(StringBuilder& builder, 
 
     WTF::switchOn(stop.position,
         [&](const Number<>& number) {
-            return WTF::switchOn(number.value,
+            return WTF::switchOn(number,
                 [&](NumberRaw<> raw) {
                     appendRaw(stop.color, raw);
                 },
@@ -95,7 +96,7 @@ void Serialize<GradientDeprecatedColorStop>::operator()(StringBuilder& builder, 
             );
         },
         [&](const Percentage<>& percentage) {
-            return WTF::switchOn(percentage.value,
+            return WTF::switchOn(percentage,
                 [&](PercentageRaw<> raw) {
                     appendRaw(stop.color, { raw.value / 100.0 });
                 },
@@ -153,7 +154,35 @@ IterationStatus CSSValueChildrenVisitor<GradientDeprecatedColorStop>::operator()
     return visitCSSValueChildrenOnColorStop(func, stop);
 }
 
+template<typename T> static void hashColorStop(Hasher& hasher, const GradientColorStop<T>& stop)
+{
+    if (RefPtr color = stop.color)
+        color->addHash(hasher);
+    addHash(hasher, stop.position);
+}
+
+void Hash<GradientAngularColorStop>::operator()(Hasher& hasher, const GradientAngularColorStop& stop)
+{
+    hashColorStop(hasher, stop);
+}
+
+void Hash<GradientLinearColorStop>::operator()(Hasher& hasher, const GradientLinearColorStop& stop)
+{
+    hashColorStop(hasher, stop);
+}
+
+void Hash<GradientDeprecatedColorStop>::operator()(Hasher& hasher, const GradientDeprecatedColorStop& stop)
+{
+    hashColorStop(hasher, stop);
+}
+
 // MARK: - Gradient Color Interpolation
+
+void Hash<GradientColorInterpolationMethod>::operator()(Hasher& hasher, const GradientColorInterpolationMethod& method)
+{
+    add(hasher, method.method);
+    add(hasher, method.defaultMethod);
+}
 
 static bool appendColorInterpolationMethod(StringBuilder& builder, CSS::GradientColorInterpolationMethod colorInterpolationMethod, bool needsLeadingSpace)
 {
@@ -189,7 +218,7 @@ void Serialize<LinearGradient>::operator()(StringBuilder& builder, const LinearG
 
     WTF::switchOn(gradient.gradientLine,
         [&](const Angle<>& angle) {
-            WTF::switchOn(angle.value,
+            WTF::switchOn(angle,
                 [&](const AngleRaw<>& angleRaw) {
                     if (CSSPrimitiveValue::computeDegrees(angleRaw.type, angleRaw.value) == 180)
                         return;
@@ -399,7 +428,7 @@ void Serialize<ConicGradient::GradientBox>::operator()(StringBuilder& builder, c
     bool wroteSomething = false;
 
     if (gradientBox.angle) {
-        WTF::switchOn(gradientBox.angle->value,
+        WTF::switchOn(*gradientBox.angle,
             [&](const AngleRaw<>& angleRaw) {
                 if (angleRaw.value) {
                     builder.append("from "_s);

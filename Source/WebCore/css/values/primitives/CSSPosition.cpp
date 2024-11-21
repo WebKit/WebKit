@@ -25,23 +25,17 @@
 #include "config.h"
 #include "CSSPosition.h"
 
-#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
-#include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
-#include "CSSPrimitiveNumericTypes+Serialization.h"
-#include "CSSValueKeywords.h"
-#include <wtf/text/StringBuilder.h>
-
 namespace WebCore {
 namespace CSS {
 
 bool isCenterPosition(const Position& position)
 {
     auto isCenter = [](const auto& component) {
-        return WTF::switchOn(component.offset,
+        return WTF::switchOn(component.value,
             [](auto)   { return false; },
             [](Center) { return true;  },
             [](const LengthPercentage<>& value) {
-                return WTF::switchOn(value.value,
+                return WTF::switchOn(value,
                     [](const LengthPercentageRaw<>& raw) { return raw.type == CSSUnitType::CSS_PERCENTAGE && raw.value == 50.0; },
                     [](const UnevaluatedCalc<LengthPercentageRaw<>>&) { return false; }
                 );
@@ -57,57 +51,6 @@ bool isCenterPosition(const Position& position)
             return false;
         }
     );
-}
-
-// MARK: - TwoComponentPositionHorizontal
-
-void Serialize<TwoComponentPositionHorizontal>::operator()(StringBuilder& builder, const TwoComponentPositionHorizontal& component)
-{
-    serializationForCSS(builder, component.offset);
-}
-
-void ComputedStyleDependenciesCollector<TwoComponentPositionHorizontal>::operator()(ComputedStyleDependencies& dependencies, const TwoComponentPositionHorizontal& component)
-{
-    collectComputedStyleDependencies(dependencies, component.offset);
-}
-
-IterationStatus CSSValueChildrenVisitor<TwoComponentPositionHorizontal>::operator()(const Function<IterationStatus(CSSValue&)>& func, const TwoComponentPositionHorizontal& component)
-{
-    return visitCSSValueChildren(func, component.offset);
-}
-
-// MARK: - TwoComponentPositionVertical
-
-void Serialize<TwoComponentPositionVertical>::operator()(StringBuilder& builder, const TwoComponentPositionVertical& component)
-{
-    serializationForCSS(builder, component.offset);
-}
-
-void ComputedStyleDependenciesCollector<TwoComponentPositionVertical>::operator()(ComputedStyleDependencies& dependencies, const TwoComponentPositionVertical& component)
-{
-    collectComputedStyleDependencies(dependencies, component.offset);
-}
-
-IterationStatus CSSValueChildrenVisitor<TwoComponentPositionVertical>::operator()(const Function<IterationStatus(CSSValue&)>& func, const TwoComponentPositionVertical& component)
-{
-    return visitCSSValueChildren(func, component.offset);
-}
-
-// MARK: - Position
-
-void Serialize<Position>::operator()(StringBuilder& builder, const Position& position)
-{
-    serializationForCSS(builder, position.value);
-}
-
-void ComputedStyleDependenciesCollector<Position>::operator()(ComputedStyleDependencies& dependencies, const Position& position)
-{
-    collectComputedStyleDependencies(dependencies, position.value);
-}
-
-IterationStatus CSSValueChildrenVisitor<Position>::operator()(const Function<IterationStatus(CSSValue&)>& func, const Position& position)
-{
-    return visitCSSValueChildren(func, position.value);
 }
 
 } // namespace CSS

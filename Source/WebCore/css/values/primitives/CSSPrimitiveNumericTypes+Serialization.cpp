@@ -26,27 +26,13 @@
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 
 #include "CSSPrimitiveValue.h"
-#include "CSSValueKeywords.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 namespace CSS {
 
-// MARK: - Serialization
-
 void rawNumericSerialization(StringBuilder& builder, double value, CSSUnitType type)
 {
     formatCSSNumberValue(builder, value, CSSPrimitiveValue::unitTypeString(type));
-}
-
-void Serialize<SymbolRaw>::operator()(StringBuilder& builder, const SymbolRaw& value)
-{
-    builder.append(nameLiteralForSerialization(value.value));
-}
-
-void Serialize<Symbol>::operator()(StringBuilder& builder, const Symbol& value)
-{
-    builder.append(nameLiteralForSerialization(value.value));
 }
 
 } // namespace CSS

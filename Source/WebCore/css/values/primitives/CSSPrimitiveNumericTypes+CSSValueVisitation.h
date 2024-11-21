@@ -41,6 +41,13 @@ template<RawNumeric RawType> struct CSSValueChildrenVisitor<RawType> {
 template<RawNumeric RawType> struct CSSValueChildrenVisitor<PrimitiveNumeric<RawType>> {
     IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const PrimitiveNumeric<RawType>& value)
     {
+        return WTF::switchOn(value, [&](const auto& value) { return visitCSSValueChildren(func, value); });
+    }
+};
+
+template<auto R> struct CSSValueChildrenVisitor<NumberOrPercentageResolvedToNumber<R>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const NumberOrPercentageResolvedToNumber<R>& value)
+    {
         return visitCSSValueChildren(func, value.value);
     }
 };

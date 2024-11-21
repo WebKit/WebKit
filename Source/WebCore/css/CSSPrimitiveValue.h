@@ -237,9 +237,8 @@ public:
     // True if computeNonCalcLengthDouble would produce identical results when resolved against both these styles.
     static bool equalForLengthResolution(const RenderStyle&, const RenderStyle&);
 
-    void collectComputedStyleDependencies(ComputedStyleDependencies&) const;
-
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    void customCollectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
 private:
     friend class CSSValuePool;

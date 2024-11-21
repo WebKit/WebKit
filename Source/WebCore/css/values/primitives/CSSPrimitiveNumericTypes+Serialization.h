@@ -35,21 +35,35 @@ namespace CSS {
 void rawNumericSerialization(StringBuilder&, double, CSSUnitType);
 
 template<RawNumeric RawType> struct Serialize<RawType> {
-    inline void operator()(StringBuilder& builder, const RawType& value)
+    void operator()(StringBuilder& builder, const RawType& value)
     {
         rawNumericSerialization(builder, value.value, value.type);
     }
 };
 
 template<RawNumeric RawType> struct Serialize<PrimitiveNumeric<RawType>> {
-    inline void operator()(StringBuilder& builder, const PrimitiveNumeric<RawType>& value)
+    void operator()(StringBuilder& builder, const PrimitiveNumeric<RawType>& value)
     {
-        serializationForCSS(builder, value.value);
+        WTF::switchOn(value, [&](const auto& value) { serializationForCSS(builder, value); });
     }
 };
 
-template<> struct Serialize<SymbolRaw> { void operator()(StringBuilder&, const SymbolRaw&); };
-template<> struct Serialize<Symbol> { void operator()(StringBuilder&, const Symbol&); };
+template<auto R> struct Serialize<NumberOrPercentageResolvedToNumber<R>> {
+    void operator()(StringBuilder& builder, const NumberOrPercentageResolvedToNumber<R>& value)
+    {
+        WTF::switchOn(value.value,
+            [&](const Number<R>& number) {
+                serializationForCSS(builder, number);
+            },
+            [&](const Percentage<R>& percentage) {
+                if (auto raw = percentage.raw())
+                    serializationForCSS(builder, NumberRaw<R> { raw->value / 100.0 });
+                else
+                    serializationForCSS(builder, percentage);
+            }
+        );
+    }
+};
 
 } // namespace CSS
 } // namespace WebCore

@@ -35,11 +35,14 @@ class CSSColorSchemeValue final : public CSSValue {
 public:
     static Ref<CSSColorSchemeValue> create(CSS::ColorScheme);
 
+    const CSS::ColorScheme& colorScheme() const { return m_colorScheme; }
+
     String customCSSText() const;
     bool equals(const CSSColorSchemeValue&) const;
-    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
 
-    const CSS::ColorScheme& colorScheme() const { return m_colorScheme; }
+    IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    void customCollectComputedStyleDependencies(ComputedStyleDependencies&) const;
+    bool addDerivedHash(Hasher&) const;
 
 private:
     CSSColorSchemeValue(CSS::ColorScheme);

@@ -698,7 +698,7 @@ static inline float positionFromValue(const LengthPercentage<>& coordinate, floa
     return evaluate(coordinate, widthOrHeight);
 }
 
-static inline float positionFromValue(const PercentageOrNumber& coordinate, float widthOrHeight)
+static inline float positionFromValue(const NumberOrPercentage<>& coordinate, float widthOrHeight)
 {
     return WTF::switchOn(coordinate,
         [&](Number<> number) -> float { return number.value; },
@@ -1196,7 +1196,7 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     auto secondRadius = radial.parameters.gradientBox.secondRadius.value;
     auto aspectRatio = 1.0f;
 
-    WebCore::Gradient::RadialData data { firstPoint, secondPoint, firstRadius, secondRadius, aspectRatio };
+    WebCore::Gradient::RadialData data { firstPoint, secondPoint, narrowPrecisionToFloat(firstRadius), narrowPrecisionToFloat(secondRadius), aspectRatio };
     RadialGradientAdapter adapter { data, size };
     auto stops = computeStopsForDeprecatedVariants(adapter, radial, style);
 

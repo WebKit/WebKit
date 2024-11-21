@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2004, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Samuel Weinig <sam@webkit.org>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +32,7 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Ref.h>
 #include <wtf/RefPtr.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/WeakPtr.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -259,6 +261,36 @@ TextStream& streamSizedContainer(TextStream& ts, const SizedContainer& sizedCont
         ts << ", ...";
 
     return ts << "]";
+}
+
+template<typename T> TextStream& streamSpaceSeparatedForTupleLike(TextStream& ts, const T& tupleLike)
+{
+    auto separator = ""_s;
+    auto caller = WTF::makeVisitor(
+        [&](const auto& value) {
+            ts << std::exchange(separator, " "_s);
+            ts << value;
+        }
+    );
+
+    WTF::apply([&](const auto& ...x) { (..., caller(x)); }, tupleLike);
+
+    return ts;
+}
+
+template<typename T> TextStream& streamCommaSeparatedForTupleLike(TextStream& ts, const T& tupleLike)
+{
+    auto separator = ""_s;
+    auto caller = WTF::makeVisitor(
+        [&](const auto& value) {
+            ts << std::exchange(separator, ", "_s);
+            ts << value;
+        }
+    );
+
+    WTF::apply([&](const auto& ...x) { (..., caller(x)); }, tupleLike);
+
+    return ts;
 }
 
 template<typename ItemType, size_t inlineCapacity>

@@ -27,6 +27,8 @@
 #include "CSSGradientValue.h"
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
+#include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
+#include "CSSPrimitiveNumericTypes+Hashing.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "ColorInterpolation.h"
 #include "StyleBuilderState.h"
@@ -99,7 +101,7 @@ template<RawNumeric CSSType> struct StyleImageIsUncacheable<UnevaluatedCalc<CSST
 };
 
 template<RawNumeric CSSType> struct StyleImageIsUncacheable<PrimitiveNumeric<CSSType>> {
-    constexpr bool operator()(const auto& value) { return styleImageIsUncacheable(value.value); }
+    constexpr bool operator()(const auto& value) { return WTF::switchOn(value, [&](const auto& value) { return styleImageIsUncacheable(value); }); }
 };
 
 template<CSSValueID C> struct StyleImageIsUncacheable<Constant<C>> {
@@ -108,18 +110,6 @@ template<CSSValueID C> struct StyleImageIsUncacheable<Constant<C>> {
 
 template<> struct StyleImageIsUncacheable<GradientColorInterpolationMethod> {
     constexpr bool operator()(const auto&) { return false; }
-};
-
-template<> struct StyleImageIsUncacheable<TwoComponentPositionHorizontal> {
-    bool operator()(const auto& value) { return styleImageIsUncacheable(value.offset); }
-};
-
-template<> struct StyleImageIsUncacheable<TwoComponentPositionVertical> {
-    bool operator()(const auto& value) { return styleImageIsUncacheable(value.offset); }
-};
-
-template<> struct StyleImageIsUncacheable<Position> {
-    bool operator()(const auto& value) { return styleImageIsUncacheable(value.value); }
 };
 
 template<typename CSSType> struct StyleImageIsUncacheable<GradientColorStop<CSSType>> {
@@ -135,6 +125,10 @@ template<typename CSSType> struct StyleImageIsUncacheable<GradientColorStop<CSST
 
 template<typename CSSType> requires (TreatAsTupleLike<CSSType>) struct StyleImageIsUncacheable<CSSType> {
     bool operator()(const auto& value) { return styleImageIsUncacheableOnTupleLike(value); }
+};
+
+template<typename CSSType> requires (TreatAsTypeWrapper<CSSType>) struct StyleImageIsUncacheable<CSSType> {
+    bool operator()(const auto& value) { return styleImageIsUncacheable(value.value); }
 };
 
 } // namespace (anonymous)
@@ -169,6 +163,17 @@ bool CSSGradientValue::equals(const CSSGradientValue& other) const
 IterationStatus CSSGradientValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_gradient);
+}
+
+void CSSGradientValue::customCollectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
+{
+    CSS::collectComputedStyleDependencies(dependencies, m_gradient);
+}
+
+bool CSSGradientValue::addDerivedHash(Hasher& hasher) const
+{
+    CSS::addHash(hasher, m_gradient);
+    return true;
 }
 
 } // namespace WebCore

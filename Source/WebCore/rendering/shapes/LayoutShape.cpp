@@ -95,8 +95,8 @@ static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode
 Ref<const LayoutShape> LayoutShape::createShape(const Style::BasicShape& basicShape, const LayoutPoint& borderBoxOffset, const LayoutSize& logicalBoxSize, WritingMode writingMode, float margin)
 {
     bool horizontalWritingMode = writingMode.isHorizontal();
-    auto boxWidth = horizontalWritingMode ? logicalBoxSize.width() : logicalBoxSize.height();
-    auto boxHeight = horizontalWritingMode ? logicalBoxSize.height() : logicalBoxSize.width();
+    float boxWidth = horizontalWritingMode ? logicalBoxSize.width() : logicalBoxSize.height();
+    float boxHeight = horizontalWritingMode ? logicalBoxSize.height() : logicalBoxSize.width();
 
     auto shape = WTF::switchOn(basicShape,
         [&](const Style::CircleFunction& circle) -> Ref<LayoutShape> {

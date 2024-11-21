@@ -37,30 +37,22 @@ using Bottom = CSS::Bottom;
 using Center = CSS::Center;
 
 struct TwoComponentPositionHorizontal {
-    LengthPercentage<> offset;
+    LengthPercentage<> value;
 
     bool operator==(const TwoComponentPositionHorizontal&) const = default;
 };
-template<size_t I> const auto& get(const TwoComponentPositionHorizontal& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
+DEFINE_STYLE_TYPE_WRAPPER(TwoComponentPositionHorizontal);
 
 struct TwoComponentPositionVertical {
-    LengthPercentage<> offset;
+    LengthPercentage<> value;
 
     bool operator==(const TwoComponentPositionVertical&) const = default;
 };
-template<size_t I> const auto& get(const TwoComponentPositionVertical& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
+DEFINE_STYLE_TYPE_WRAPPER(TwoComponentPositionVertical);
 
 struct Position  {
     Position(TwoComponentPositionHorizontal&& x, TwoComponentPositionVertical&& y)
-        : value { WTFMove(x.offset), WTFMove(y.offset) }
+        : value { WTFMove(x.value), WTFMove(y.value) }
     {
     }
 
@@ -113,5 +105,3 @@ float evaluate(const TwoComponentPositionVertical&, float referenceHeight);
 } // namespace WebCore
 
 STYLE_TUPLE_LIKE_CONFORMANCE(Position, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(TwoComponentPositionHorizontal, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(TwoComponentPositionVertical, 1)

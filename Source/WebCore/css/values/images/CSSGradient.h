@@ -36,7 +36,7 @@ namespace CSS {
 
 // MARK: - Common Types
 
-using DeprecatedGradientPosition = SpaceSeparatedArray<PercentageOrNumber, 2>;
+using DeprecatedGradientPosition = SpaceSeparatedArray<NumberOrPercentage<>, 2>;
 
 using Horizontal     = std::variant<Left, Right>;
 using Vertical       = std::variant<Top, Bottom>;
@@ -69,6 +69,7 @@ struct GradientColorInterpolationMethod {
 
 template<> struct ComputedStyleDependenciesCollector<GradientColorInterpolationMethod> { constexpr void operator()(ComputedStyleDependencies&, const GradientColorInterpolationMethod&) { } };
 template<> struct CSSValueChildrenVisitor<GradientColorInterpolationMethod> { constexpr IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const GradientColorInterpolationMethod&) { return IterationStatus::Continue; } };
+template<> struct Hash<GradientColorInterpolationMethod> { void operator()(Hasher&, const GradientColorInterpolationMethod&); };
 
 // MARK: - Gradient Color Stop Definitions.
 
@@ -99,7 +100,7 @@ using GradientLinearColorStopPosition = std::optional<LengthPercentage<>>;
 using GradientLinearColorStop = GradientColorStop<GradientLinearColorStopPosition>;
 using GradientLinearColorStopList = GradientColorStopList<GradientLinearColorStop>;
 
-using GradientDeprecatedColorStopPosition = PercentageOrNumber;
+using GradientDeprecatedColorStopPosition = NumberOrPercentage<>;
 using GradientDeprecatedColorStop = GradientColorStop<GradientDeprecatedColorStopPosition>;
 using GradientDeprecatedColorStopList = GradientColorStopList<GradientDeprecatedColorStop>;
 
@@ -114,6 +115,10 @@ template<> struct ComputedStyleDependenciesCollector<GradientDeprecatedColorStop
 template<> struct CSSValueChildrenVisitor<GradientAngularColorStop> { IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const GradientAngularColorStop&); };
 template<> struct CSSValueChildrenVisitor<GradientLinearColorStop> { IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const GradientLinearColorStop&); };
 template<> struct CSSValueChildrenVisitor<GradientDeprecatedColorStop> { IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const GradientDeprecatedColorStop&); };
+
+template<> struct Hash<GradientAngularColorStop> { void operator()(Hasher&, const GradientAngularColorStop&); };
+template<> struct Hash<GradientLinearColorStop> { void operator()(Hasher&, const GradientLinearColorStop&); };
+template<> struct Hash<GradientDeprecatedColorStop> { void operator()(Hasher&, const GradientDeprecatedColorStop&); };
 
 // MARK: - LinearGradient
 

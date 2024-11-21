@@ -36,46 +36,46 @@ namespace Style {
 
 auto ToCSS<TwoComponentPositionHorizontal>::operator()(const TwoComponentPositionHorizontal& value, const RenderStyle& style) -> CSS::TwoComponentPositionHorizontal
 {
-    return { .offset = toCSS(value.offset, style) };
+    return { .value = toCSS(value.value, style) };
 }
 
 auto ToStyle<CSS::TwoComponentPositionHorizontal>::operator()(const CSS::TwoComponentPositionHorizontal& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> TwoComponentPositionHorizontal
 {
-    return WTF::switchOn(value.offset,
+    return WTF::switchOn(value.value,
         [&](CSS::Left) {
-            return TwoComponentPositionHorizontal { .offset = LengthPercentage<> { Percentage<> { 0 } } };
+            return TwoComponentPositionHorizontal { .value = LengthPercentage<> { Percentage<> { 0 } } };
         },
         [&](CSS::Right)  {
-            return TwoComponentPositionHorizontal { .offset = LengthPercentage<> { Percentage<> { 100 } } };
+            return TwoComponentPositionHorizontal { .value = LengthPercentage<> { Percentage<> { 100 } } };
         },
         [&](CSS::Center)  {
-            return TwoComponentPositionHorizontal { .offset = LengthPercentage<> { Percentage<> { 50 } } };
+            return TwoComponentPositionHorizontal { .value = LengthPercentage<> { Percentage<> { 50 } } };
         },
         [&](const CSS::LengthPercentage<>& value) {
-            return TwoComponentPositionHorizontal { .offset = toStyle(value, state, symbolTable) };
+            return TwoComponentPositionHorizontal { .value = toStyle(value, state, symbolTable) };
         }
     );
 }
 
 auto ToCSS<TwoComponentPositionVertical>::operator()(const TwoComponentPositionVertical& value, const RenderStyle& style) -> CSS::TwoComponentPositionVertical
 {
-    return { .offset = toCSS(value.offset, style) };
+    return { .value = toCSS(value.value, style) };
 }
 
 auto ToStyle<CSS::TwoComponentPositionVertical>::operator()(const CSS::TwoComponentPositionVertical& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> TwoComponentPositionVertical
 {
-    return WTF::switchOn(value.offset,
+    return WTF::switchOn(value.value,
         [&](CSS::Top) {
-            return TwoComponentPositionVertical { .offset = LengthPercentage<> { Percentage<> { 0 } } };
+            return TwoComponentPositionVertical { .value = LengthPercentage<> { Percentage<> { 0 } } };
         },
         [&](CSS::Bottom) {
-            return TwoComponentPositionVertical { .offset = LengthPercentage<> { Percentage<> { 100 } } };
+            return TwoComponentPositionVertical { .value = LengthPercentage<> { Percentage<> { 100 } } };
         },
         [&](CSS::Center) {
-            return TwoComponentPositionVertical { .offset = LengthPercentage<> { Percentage<> { 50 } } };
+            return TwoComponentPositionVertical { .value = LengthPercentage<> { Percentage<> { 50 } } };
         },
         [&](const CSS::LengthPercentage<>& value) {
-            return TwoComponentPositionVertical { .offset = toStyle(value, state, symbolTable) };
+            return TwoComponentPositionVertical { .value = toStyle(value, state, symbolTable) };
         }
     );
 }
@@ -125,12 +125,12 @@ FloatPoint evaluate(const Position& position, FloatSize referenceBox)
 
 float evaluate(const TwoComponentPositionHorizontal& component, float referenceWidth)
 {
-    return evaluate(component.offset, referenceWidth);
+    return evaluate(component.value, referenceWidth);
 }
 
 float evaluate(const TwoComponentPositionVertical& component, float referenceHeight)
 {
-    return evaluate(component.offset, referenceHeight);
+    return evaluate(component.value, referenceHeight);
 }
 
 } // namespace CSS

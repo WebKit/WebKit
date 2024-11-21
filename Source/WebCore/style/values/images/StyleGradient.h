@@ -40,7 +40,7 @@ namespace Style {
 
 // MARK: - Common Types
 
-using DeprecatedGradientPosition = SpaceSeparatedArray<PercentageOrNumber, 2>;
+using DeprecatedGradientPosition = SpaceSeparatedArray<NumberOrPercentage<>, 2>;
 
 using Horizontal     = CSS::Horizontal;
 using Vertical       = CSS::Vertical;

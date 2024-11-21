@@ -25,9 +25,6 @@
 #include "config.h"
 #include "CSSNone.h"
 
-#include "CSSValueKeywords.h"
-#include <wtf/text/StringBuilder.h>
-
 namespace WebCore {
 namespace CSS {
 

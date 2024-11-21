@@ -80,6 +80,7 @@ public:
     const CSSValue* itemWithoutBoundsCheck(unsigned index) const { return &(*this)[index]; }
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    void customCollectComputedStyleDependencies(ComputedStyleDependencies&) const;
 
 protected:
     friend bool CSSValue::addHash(Hasher&) const;

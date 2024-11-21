@@ -46,6 +46,8 @@ public:
     RefPtr<StyleImage> createStyleImage(const Style::BuilderState&) const;
 
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    void customCollectComputedStyleDependencies(ComputedStyleDependencies&) const;
+    bool addDerivedHash(Hasher&) const;
 
 private:
     CSSGradientValue(CSS::Gradient&& gradient)

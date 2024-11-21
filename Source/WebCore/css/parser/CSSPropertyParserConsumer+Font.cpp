@@ -84,7 +84,7 @@ template<typename Result, typename... Ts> static Result forwardVariantTo(std::va
 
 template<typename T> static Ref<CSSPrimitiveValue> resolveToCSSPrimitiveValue(CSS::PrimitiveNumeric<T>&& primitive)
 {
-    return WTF::switchOn(WTFMove(primitive.value), [](auto&& alternative) { return CSSPrimitiveValueResolverBase::resolve(WTFMove(alternative), { }, { }); }).releaseNonNull();
+    return WTF::switchOn(WTFMove(primitive), [](auto&& alternative) { return CSSPrimitiveValueResolverBase::resolve(WTFMove(alternative), { }, { }); }).releaseNonNull();
 }
 
 static CSSParserMode parserMode(ScriptExecutionContext& context)

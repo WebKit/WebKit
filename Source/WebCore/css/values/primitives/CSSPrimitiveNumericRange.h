@@ -49,7 +49,7 @@ inline constexpr auto All = Range { -Range::infinity, Range::infinity };
 inline constexpr auto Nonnegative = Range { 0, Range::infinity };
 
 // Clamps a floating point value to within `range`.
-template<Range range, std::floating_point T> constexpr float clampToRange(T value)
+template<Range range, std::floating_point T> constexpr T clampToRange(T value)
 {
     return std::clamp<T>(value, range.min, range.max);
 }

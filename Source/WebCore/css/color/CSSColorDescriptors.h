@@ -25,10 +25,12 @@
 
 #pragma once
 
+#include "CSSPrimitiveNumericTypes+EvaluateCalc.h"
 #include "CSSPrimitiveNumericTypes.h"
 #include "CSSValueKeywords.h"
 #include "Color.h"
 #include "ColorTypes.h"
+#include "StylePrimitiveNumericTypes+CSSTypeTransform.h"
 #include "StylePrimitiveNumericTypes.h"
 #include <optional>
 #include <variant>

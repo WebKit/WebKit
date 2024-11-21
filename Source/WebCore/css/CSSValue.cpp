@@ -285,37 +285,14 @@ ComputedStyleDependencies CSSValue::computedStyleDependencies() const
 
 void CSSValue::collectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
 {
-    // FIXME: Unclear why it's OK that we do not cover CSSValuePair, CSSQuadValue, CSSRectValue, CSSBorderImageSliceValue, CSSBorderImageWidthValue, and others here. Probably should use visitDerived unless they don't allow the primitive values that can have dependencies. May want to base this on a traverseValues or forEachValue function instead.
-    // FIXME: Consider a non-recursive algorithm for walking this tree of dependencies.
-    if (auto* asList = dynamicDowncast<CSSValueContainingVector>(*this)) {
-        for (auto& listValue : *asList)
-            listValue.collectComputedStyleDependencies(dependencies);
-        return;
-    }
-    if (auto* asPrimitiveValue = dynamicDowncast<CSSPrimitiveValue>(*this))
-        asPrimitiveValue->collectComputedStyleDependencies(dependencies);
-}
-
-bool CSSValue::canResolveDependenciesWithConversionData(const ComputedStyleDependencies& dependencies, const CSSToLengthConversionData& conversionData)
-{
-    if (!dependencies.rootProperties.isEmpty() && !conversionData.rootStyle())
-        return false;
-
-    if (!dependencies.properties.isEmpty() && !conversionData.style())
-        return false;
-
-    if (dependencies.containerDimensions && !conversionData.elementForContainerUnitResolution())
-        return false;
-
-    if (dependencies.viewportDimensions && !conversionData.renderView())
-        return false;
-
-    return true;
+    return visitDerived([&](auto& value) {
+        return value.customCollectComputedStyleDependencies(dependencies);
+    });
 }
 
 bool CSSValue::canResolveDependenciesWithConversionData(const CSSToLengthConversionData& conversionData) const
 {
-    return canResolveDependenciesWithConversionData(computedStyleDependencies(), conversionData);
+    return computedStyleDependencies().canResolveDependenciesWithConversionData(conversionData);
 }
 
 bool CSSValue::equals(const CSSValue& other) const

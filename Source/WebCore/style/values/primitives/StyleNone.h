@@ -39,7 +39,9 @@ struct None {
 
 template<> struct ToPrimaryCSSTypeMapping<CSS::NoneRaw> { using type = CSS::None; };
 
-template<> struct ToCSS<None> { constexpr auto operator()(const None&, const RenderStyle&) -> CSS::None { return { }; } };
+template<> struct ToCSS<None> {
+    constexpr auto operator()(const None&, const RenderStyle&) -> CSS::None { return { }; }
+};
 
 template<> struct ToStyle<CSS::None> {
     auto operator()(const CSS::None&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&) -> None { return { }; }
@@ -51,6 +53,8 @@ template<> struct Blending<None> {
     constexpr auto canBlend(const None&, const None&) -> bool { return true; }
     constexpr auto blend(const None&, const None&, const BlendingContext&) -> None { return { }; }
 };
+
+WTF::TextStream& operator<<(WTF::TextStream&, const None&);
 
 } // namespace Style
 } // namespace WebCore

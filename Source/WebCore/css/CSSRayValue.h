@@ -42,13 +42,15 @@ public:
         return adoptRef(*new CSSRayValue(WTFMove(ray), coordinateBox));
     }
 
-
     const CSS::RayFunction& ray() const { return m_ray; }
     CSSBoxType coordinateBox() const { return m_coordinateBox; }
 
     String customCSSText() const;
     bool equals(const CSSRayValue&) const;
+
     IterationStatus customVisitChildren(const Function<IterationStatus(CSSValue&)>&) const;
+    void customCollectComputedStyleDependencies(ComputedStyleDependencies&) const;
+    bool addDerivedHash(Hasher&) const;
 
 private:
     CSSRayValue(CSS::RayFunction ray, CSSBoxType coordinateBox)

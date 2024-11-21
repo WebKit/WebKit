@@ -30,6 +30,7 @@
 #include "CSSFontFaceSource.h"
 #include "CSSFontSelector.h"
 #include "CSSParser.h"
+#include "CSSPrimitiveNumericTypes+EvaluateCalc.h"
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParserConsumer+Font.h"
 #include "CSSPropertyParserHelpers.h"

@@ -25,8 +25,6 @@
 #include "config.h"
 #include "CSSValueTypes.h"
 
-#include <wtf/text/TextStream.h>
-
 namespace WebCore {
 namespace CSS {
 

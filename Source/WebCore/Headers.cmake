@@ -888,6 +888,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/CSSValueList.h
     css/CSSVariableData.h
     css/CSSVariableReferenceValue.h
+    css/ComputedStyleDependencies.h
     css/Counter.h
     css/DeprecatedCSSOMCounter.h
     css/DeprecatedCSSOMPrimitiveValue.h
@@ -958,7 +959,9 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     css/values/primitives/CSSNone.h
     css/values/primitives/CSSPosition.h
     css/values/primitives/CSSPrimitiveNumericRange.h
+    css/values/primitives/CSSPrimitiveNumericTypes+EvaluateCalc.h
     css/values/primitives/CSSPrimitiveNumericTypes.h
+    css/values/primitives/CSSSymbol.h
     css/values/primitives/CSSUnevaluatedCalc.h
 
     css/values/shapes/CSSBasicShape.h
@@ -2608,6 +2611,7 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
 
     style/values/primitives/StyleNone.h
     style/values/primitives/StylePosition.h
+    style/values/primitives/StylePrimitiveNumericTypes+CSSTypeTransform.h
     style/values/primitives/StylePrimitiveNumericTypes.h
 
     style/values/shapes/StyleBasicShape.h

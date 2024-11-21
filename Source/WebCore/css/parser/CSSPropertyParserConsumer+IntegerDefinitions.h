@@ -52,14 +52,14 @@ template<typename Integer, typename Validator> struct NumberConsumerForIntegerVa
         if (!Validator::isValid(numberValue, options))
             return std::nullopt;
 
-        return typename Integer::Raw { clampTo<typename Integer::Raw::IntType>(range.consumeIncludingWhitespace().numericValue()) };
+        return typename Integer::Raw { clampTo<typename Integer::Raw::ValueType>(range.consumeIncludingWhitespace().numericValue()) };
     }
 };
 
-template<typename IntType, CSS::Range R>
-struct ConsumerDefinition<CSS::Integer<IntType, R>> {
-    using FunctionToken = FunctionConsumerForCalcValues<CSS::Integer<IntType, R>>;
-    using NumberToken = NumberConsumerForIntegerValues<CSS::Integer<IntType, R>, IntegerValidator>;
+template<CSS::Range R, typename IntType>
+struct ConsumerDefinition<CSS::Integer<R, IntType>> {
+    using FunctionToken = FunctionConsumerForCalcValues<CSS::Integer<R, IntType>>;
+    using NumberToken = NumberConsumerForIntegerValues<CSS::Integer<R, IntType>, IntegerValidator>;
 };
 
 } // namespace CSSPropertyParserHelpers

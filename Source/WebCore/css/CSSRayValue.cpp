@@ -30,10 +30,11 @@
 #include "CSSRayValue.h"
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
+#include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
+#include "CSSPrimitiveNumericTypes+Hashing.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSPrimitiveNumericTypes.h"
 #include "CSSPrimitiveValueMappings.h"
-#include "CSSValueKeywords.h"
-#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -57,6 +58,18 @@ bool CSSRayValue::equals(const CSSRayValue& other) const
 IterationStatus CSSRayValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_ray);
+}
+
+void CSSRayValue::customCollectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
+{
+    CSS::collectComputedStyleDependencies(dependencies, m_ray);
+}
+
+bool CSSRayValue::addDerivedHash(Hasher& hasher) const
+{
+    add(hasher, m_coordinateBox);
+    CSS::addHash(hasher, m_ray);
+    return true;
 }
 
 } // namespace WebCore

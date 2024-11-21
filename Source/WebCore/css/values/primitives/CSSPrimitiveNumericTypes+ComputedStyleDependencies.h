@@ -63,13 +63,17 @@ template<auto R> struct ComputedStyleDependenciesCollector<LengthPercentageRaw<R
 template<RawNumeric RawType> struct ComputedStyleDependenciesCollector<PrimitiveNumeric<RawType>> {
     void operator()(ComputedStyleDependencies& dependencies, const PrimitiveNumeric<RawType>& value)
     {
-        collectComputedStyleDependencies(dependencies, value.value);
+        WTF::switchOn(value, [&](const auto& value) { collectComputedStyleDependencies(dependencies, value); });
     }
 };
 
-// Symbol has trivially nothing to collect.
-template<> struct ComputedStyleDependenciesCollector<Symbol> { constexpr void operator()(ComputedStyleDependencies&, const SymbolRaw&) { } };
-template<> struct ComputedStyleDependenciesCollector<SymbolRaw> { constexpr void operator()(ComputedStyleDependencies&, const Symbol&) { } };
+// NumberOrPercentageResolvedToNumber trivially forwards to its inner variant.
+template<auto R> struct ComputedStyleDependenciesCollector<NumberOrPercentageResolvedToNumber<R>> {
+    void operator()(ComputedStyleDependencies& dependencies, const NumberOrPercentageResolvedToNumber<R>& value)
+    {
+        collectComputedStyleDependencies(dependencies, value.value);
+    }
+};
 
 } // namespace CSS
 } // namespace WebCore

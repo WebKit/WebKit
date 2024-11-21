@@ -25,6 +25,7 @@
 #pragma once
 
 #include "AnimationUtilities.h"
+#include "StylePrimitiveNumericTypes+Calculation.h"
 #include "StylePrimitiveNumericTypes.h"
 
 namespace WebCore {
@@ -84,16 +85,21 @@ template<auto R> struct Blending<LengthPercentage<R>> {
             if (context.compositeOperation != CompositeOperation::Replace)
                 return Calculation::add(copyCalculation(from), copyCalculation(to));
 
-            if (!to.value.isCalculationValue() && !from.value.isPercentage() && (context.progress == 1 || from.value.isZero())) {
-                if (to.value.isLength())
-                    return WebCore::Style::blend(Length<R> { 0 }, to.value.asLength(), context);
-                return WebCore::Style::blend(Percentage<R> { 0 }, to.value.asPercentage(), context);
+            // 0% to 0px -> calc(0px + 0%) to calc(0px + 0%) -> 0px
+            // 0px to 0% -> calc(0px + 0%) to calc(0px + 0%) -> 0px
+            if (from.isZero() && to.isZero())
+                return Length<R> { 0 };
+
+            if (!to.isCalculationValue() && !from.isPercentage() && (context.progress == 1 || from.isZero())) {
+                if (to.isLength())
+                    return WebCore::Style::blend(Length<R> { 0 }, to.asLength(), context);
+                return WebCore::Style::blend(Percentage<R> { 0 }, to.asPercentage(), context);
             }
 
-            if (!from.value.isCalculationValue() && !to.value.isPercentage() && (!context.progress || to.value.isZero())) {
-                if (from.value.isLength())
-                    return WebCore::Style::blend(from.value.asLength(), Length<R> { 0 }, context);
-                return WebCore::Style::blend(from.value.asPercentage(), Percentage<R> { 0 }, context);
+            if (!from.isCalculationValue() && !to.isPercentage() && (!context.progress || to.isZero())) {
+                if (from.isLength())
+                    return WebCore::Style::blend(from.asLength(), Length<R> { 0 }, context);
+                return WebCore::Style::blend(from.asPercentage(), Percentage<R> { 0 }, context);
             }
 
             return Calculation::blend(copyCalculation(from), copyCalculation(to), context.progress);
@@ -105,9 +111,21 @@ template<auto R> struct Blending<LengthPercentage<R>> {
         if (context.progress == 1 && context.isReplace())
             return to;
 
-        if (to.value.isLength())
-            return WebCore::Style::blend(from.value.asLength(), to.value.asLength(), context);
-        return WebCore::Style::blend(from.value.asPercentage(), to.value.asPercentage(), context);
+        if (to.isLength())
+            return WebCore::Style::blend(from.asLength(), to.asLength(), context);
+        return WebCore::Style::blend(from.asPercentage(), to.asPercentage(), context);
+    }
+};
+
+// `NumberOrPercentageResolvedToNumber<R>` forwards to `Number<R>`.
+template<auto R> struct Blending<NumberOrPercentageResolvedToNumber<R>> {
+    auto canBlend(const NumberOrPercentageResolvedToNumber<R>& a, const NumberOrPercentageResolvedToNumber<R>& b) -> bool
+    {
+        return Style::canBlend(Number<R> { a.value }, Number<R> { b.value });
+    }
+    auto blend(const NumberOrPercentageResolvedToNumber<R>& a, const NumberOrPercentageResolvedToNumber<R>& b, const BlendingContext& context) -> NumberOrPercentageResolvedToNumber<R>
+    {
+        return Style::blend(Number<R> { a.value }, Number<R> { b.value }, context);
     }
 };
 

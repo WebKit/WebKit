@@ -33,6 +33,7 @@
 
 #include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
 #include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
+#include "CSSPrimitiveNumericTypes+Hashing.h"
 #include "CSSPrimitiveNumericTypes+Serialization.h"
 #include "CSSPrimitiveNumericTypes.h"
 
@@ -51,6 +52,17 @@ bool CSSPathValue::equals(const CSSPathValue& other) const
 IterationStatus CSSPathValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_path);
+}
+
+void CSSPathValue::customCollectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
+{
+    CSS::collectComputedStyleDependencies(dependencies, m_path);
+}
+
+bool CSSPathValue::addDerivedHash(Hasher& hasher) const
+{
+    CSS::addHash(hasher, m_path);
+    return true;
 }
 
 } // namespace WebCore

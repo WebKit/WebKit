@@ -58,5 +58,10 @@ IterationStatus CSSValueChildrenVisitor<Path::Data>::operator()(const Function<I
     return IterationStatus::Continue;
 }
 
+void Hash<Path::Data>::operator()(Hasher&, const Path::Data&)
+{
+    // FIXME: If hashing Path is ever useful, consider hashing and/or storing the hash for SVGPathByteStream.
+}
+
 } // namespace CSS
 } // namespace WebCore

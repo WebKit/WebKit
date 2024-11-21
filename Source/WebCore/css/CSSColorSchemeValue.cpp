@@ -27,6 +27,12 @@
 
 #if ENABLE(DARK_MODE_CSS)
 
+#include "CSSPrimitiveNumericTypes+CSSValueVisitation.h"
+#include "CSSPrimitiveNumericTypes+ComputedStyleDependencies.h"
+#include "CSSPrimitiveNumericTypes+Hashing.h"
+#include "CSSPrimitiveNumericTypes+Serialization.h"
+#include "CSSPrimitiveNumericTypes.h"
+
 namespace WebCore {
 
 Ref<CSSColorSchemeValue> CSSColorSchemeValue::create(CSS::ColorScheme colorScheme)
@@ -53,6 +59,17 @@ bool CSSColorSchemeValue::equals(const CSSColorSchemeValue& other) const
 IterationStatus CSSColorSchemeValue::customVisitChildren(const Function<IterationStatus(CSSValue&)>& func) const
 {
     return CSS::visitCSSValueChildren(func, m_colorScheme);
+}
+
+void CSSColorSchemeValue::customCollectComputedStyleDependencies(ComputedStyleDependencies& dependencies) const
+{
+    CSS::collectComputedStyleDependencies(dependencies, m_colorScheme);
+}
+
+bool CSSColorSchemeValue::addDerivedHash(Hasher& hasher) const
+{
+    CSS::addHash(hasher, m_colorScheme);
+    return true;
 }
 
 } // namespace WebCore
