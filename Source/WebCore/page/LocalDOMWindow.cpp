@@ -1146,6 +1146,10 @@ void LocalDOMWindow::stop()
         return;
 
     SetForScope isStopping { m_isStopping, true };
+
+    if (frame->document() && frame->document()->settings().navigationAPIEnabled())
+        protectedNavigation()->abortOngoingNavigationIfNeeded();
+
     // We must check whether the load is complete asynchronously, because we might still be parsing
     // the document until the callstack unwinds.
     frame->protectedLoader()->stopForUserCancel(true);

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "ActiveDOMObject.h"
 #include "ContextDestructionObserver.h"
 #include "EventHandler.h"
 #include "EventTarget.h"
@@ -39,14 +40,14 @@ namespace WebCore {
 
 class SerializedScriptValue;
 
-class NavigationHistoryEntry final : public RefCounted<NavigationHistoryEntry>, public EventTarget, public ContextDestructionObserver {
+class NavigationHistoryEntry final : public RefCounted<NavigationHistoryEntry>, public EventTarget, public ActiveDOMObject {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(NavigationHistoryEntry);
 public:
-    using RefCounted<NavigationHistoryEntry>::ref;
-    using RefCounted<NavigationHistoryEntry>::deref;
-
-    static Ref<NavigationHistoryEntry> create(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem) { return adoptRef(*new NavigationHistoryEntry(context, WTFMove(historyItem), historyItem->urlString(), historyItem->uuidIdentifier())); }
+    static Ref<NavigationHistoryEntry> create(ScriptExecutionContext*, Ref<HistoryItem>&&);
     static Ref<NavigationHistoryEntry> create(ScriptExecutionContext*, const NavigationHistoryEntry&);
+
+    void ref() const final { RefCounted::ref(); }
+    void deref() const final { RefCounted::deref(); }
 
     const String& url() const;
     String key() const;

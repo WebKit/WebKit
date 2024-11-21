@@ -690,6 +690,9 @@ void WebLocalFrameLoaderClient::dispatchDidFailProvisionalLoad(const ResourceErr
         request = documentLoader->request();
     }
 
+    if (m_frame->isMainFrame())
+        completePageTransitionIfNeeded();
+
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidFailProvisionalLoadForFrame(m_frame->info(), request, navigationID, m_localFrame->loader().provisionalLoadErrorBeingHandledURL().string(), error, willContinueLoading, UserData(WebProcess::singleton().transformObjectsToHandles(userData.get()).get()), willInternallyHandleFailure));
 }

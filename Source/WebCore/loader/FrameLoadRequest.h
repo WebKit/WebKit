@@ -113,6 +113,10 @@ public:
 
     NavigationHistoryBehavior navigationHistoryBehavior() const { return m_navigationHistoryBehavior; }
     void setNavigationHistoryBehavior(NavigationHistoryBehavior historyHandling) { m_navigationHistoryBehavior = historyHandling; }
+
+    bool isFromNavigationAPI() const { return m_isFromNavigationAPI; }
+    void setIsFromNavigationAPI(bool isFromNavigationAPI) { m_isFromNavigationAPI = isFromNavigationAPI; }
+
 private:
     Ref<Document> m_requester;
     Ref<SecurityOrigin> m_requesterSecurityOrigin;
@@ -136,6 +140,7 @@ private:
     bool m_isInitialFrameSrcLoad { false };
     std::optional<OptionSet<AdvancedPrivacyProtections>> m_advancedPrivacyProtections;
     NavigationHistoryBehavior m_navigationHistoryBehavior { NavigationHistoryBehavior::Auto };
+    bool m_isFromNavigationAPI { false };
 };
 
 } // namespace WebCore

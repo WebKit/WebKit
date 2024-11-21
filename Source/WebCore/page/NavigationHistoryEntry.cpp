@@ -41,7 +41,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(NavigationHistoryEntry);
 
 NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem, String urlString, WTF::UUID key, RefPtr<SerializedScriptValue>&& state, WTF::UUID id)
-    : ContextDestructionObserver(context)
+    : ActiveDOMObject(context)
     , m_urlString(urlString)
     , m_key(key)
     , m_id(id)
@@ -50,13 +50,22 @@ NavigationHistoryEntry::NavigationHistoryEntry(ScriptExecutionContext* context, 
 {
 }
 
+Ref<NavigationHistoryEntry> NavigationHistoryEntry::create(ScriptExecutionContext* context, Ref<HistoryItem>&& historyItem)
+{
+    Ref entry = adoptRef(*new NavigationHistoryEntry(context, WTFMove(historyItem), historyItem->urlString(), historyItem->uuidIdentifier()));
+    entry->suspendIfNeeded();
+    return entry;
+}
+
 Ref<NavigationHistoryEntry> NavigationHistoryEntry::create(ScriptExecutionContext* context, const NavigationHistoryEntry& other)
 {
     Ref historyItem = other.m_associatedHistoryItem;
     RefPtr state = historyItem->navigationAPIStateObject();
     if (!state)
         state = other.m_state;
-    return adoptRef(*new NavigationHistoryEntry(context, WTFMove(historyItem), other.m_urlString, other.m_key, WTFMove(state), other.m_id));
+    Ref entry = adoptRef(*new NavigationHistoryEntry(context, WTFMove(historyItem), other.m_urlString, other.m_key, WTFMove(state), other.m_id));
+    entry->suspendIfNeeded();
+    return entry;
 }
 
 ScriptExecutionContext* NavigationHistoryEntry::scriptExecutionContext() const

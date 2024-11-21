@@ -150,6 +150,9 @@ public:
     std::optional<NavigationNavigationType> navigationAPIType() const { return m_navigationAPIType; }
     void setNavigationAPIType(NavigationNavigationType navigationAPIType) { m_navigationAPIType = navigationAPIType; }
 
+    bool isFromNavigationAPI() const { return m_isFromNavigationAPI; }
+    void setIsFromNavigationAPI(bool isFromNavigationAPI) { m_isFromNavigationAPI = isFromNavigationAPI; }
+
 private:
     // Do not add a strong reference to the originating document or a subobject that holds the
     // originating document. See comment above the class for more details.
@@ -177,6 +180,7 @@ private:
     LockHistory m_lockHistory { LockHistory::No };
     LockBackForwardList m_lockBackForwardList { LockBackForwardList::No };
     NewFrameOpenerPolicy m_newFrameOpenerPolicy { NewFrameOpenerPolicy::Allow };
+    bool m_isFromNavigationAPI { false };
 };
 
 } // namespace WebCore

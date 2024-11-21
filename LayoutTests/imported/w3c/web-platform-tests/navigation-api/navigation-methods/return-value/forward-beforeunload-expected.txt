@@ -1,8 +1,4 @@
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: Cannot go back
-CONSOLE MESSAGE: Unhandled Promise Rejection: InvalidStateError: Cannot go back
 
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT forward() inside onbeforeunload Test timed out
+PASS forward() inside onbeforeunload
 

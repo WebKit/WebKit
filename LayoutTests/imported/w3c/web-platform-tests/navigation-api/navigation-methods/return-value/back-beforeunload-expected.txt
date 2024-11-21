@@ -1,4 +1,4 @@
 
 
-FAIL back() inside onbeforeunload assert_equals: expected 2 but got 1
+PASS back() inside onbeforeunload
 

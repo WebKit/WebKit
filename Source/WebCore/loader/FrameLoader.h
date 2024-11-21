@@ -536,6 +536,7 @@ private:
     bool m_shouldRestoreScrollPositionAndViewState { false };
 
     bool m_errorOccurredInLoading { false };
+    bool m_doNotAbortNavigationAPI { false };
 };
 
 // This function is called by createWindow() in JSDOMWindowBase.cpp, for example, for

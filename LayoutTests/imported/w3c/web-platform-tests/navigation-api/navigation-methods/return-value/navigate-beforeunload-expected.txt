@@ -1,4 +1,4 @@
 
 
-FAIL navigate() inside onbeforeunload assert_not_equals: got disallowed value undefined
+PASS navigate() inside onbeforeunload
 
