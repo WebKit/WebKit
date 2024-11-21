@@ -687,8 +687,6 @@ private:
     AccessibilityObject* focusedObjectForNode(Node*);
     static AccessibilityObject* focusedImageMapUIElement(HTMLAreaElement&);
 
-    AXID generateNewObjectID();
-
     void notificationPostTimerFired();
 
     void liveRegionChangedNotificationPostTimerFired();
@@ -801,8 +799,6 @@ private:
     // Accessed on and off the main thread.
     static std::atomic<bool> gAccessibilityThreadTextApisEnabled;
 #endif
-
-    HashSet<AXID> m_idsInUse;
 
     Timer m_notificationPostTimer;
     Vector<std::pair<Ref<AccessibilityObject>, AXNotification>> m_notificationsToPost;
