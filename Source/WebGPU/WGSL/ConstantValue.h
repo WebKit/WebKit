@@ -38,7 +38,7 @@ using half = __fp16;
 #else
 // Wrap a struct around the supported fp16 type.
 struct half {
-#if PLATFORM(__APPLE__)
+#if PLATFORM(COCOA)
     using f16 = __fp16;
 #else
     // _Float16 is the 16bit float type in C++23, and is often available

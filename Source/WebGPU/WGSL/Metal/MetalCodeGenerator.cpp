@@ -28,12 +28,12 @@
 
 #include "AST.h"
 #include "MetalFunctionWriter.h"
-#if PLATFORM(__APPLE__)
-#include <notify.h>
-#endif
 #include <wtf/DataLog.h>
 #include <wtf/text/StringBuilder.h>
 
+#if PLATFORM(COCOA)
+#include <notify.h>
+#endif
 namespace WGSL {
 
 namespace Metal {
@@ -50,7 +50,7 @@ static StringView metalCodePrologue()
 
 }
 
-#if PLATFORM(__APPLE__)
+#if PLATFORM(COCOA)
 static void dumpMetalCodeIfNeeded(StringBuilder& stringBuilder)
 {
     static bool dumpMetalCode = false;
@@ -76,7 +76,7 @@ String generateMetalCode(ShaderModule& shaderModule, PrepareResult& prepareResul
 
     Metal::emitMetalFunctions(stringBuilder, shaderModule, prepareResult, constantValues);
 
-#if PLATFORM(__APPLE__)
+#if PLATFORM(COCOA)
     dumpMetalCodeIfNeeded(stringBuilder);
 #endif
 
