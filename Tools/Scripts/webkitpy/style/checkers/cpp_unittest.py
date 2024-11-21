@@ -2045,6 +2045,28 @@ class CppStyleTest(CppStyleTestBase):
             '  [softlink/header] [5]',
             file_name='foo.h')
 
+    def test_inlines_header(self):
+        self.assert_lint(
+            '''#include "FooInlines.h"''',
+            'Never put an Inlines.h header in a non-Inlines.h header.'
+            '  [build-speed/inlines] [4]',
+            file_name='foo.h')
+
+        self.assert_lint(
+            '''#include "FooInlines.h"''',
+            '',
+            file_name='foo.cpp')
+
+        self.assert_lint(
+            '''#include "FooInlines.h"''',
+            '',
+            file_name='foo.mm')
+
+        self.assert_lint(
+            '''#include "FooInlines.h"''',
+            '',
+            file_name='BarInlines.h')
+
     # Variable-length arrays are not permitted.
     def test_variable_length_array_detection(self):
         errmsg = ('Do not use variable-length arrays.  Use an appropriately named '
