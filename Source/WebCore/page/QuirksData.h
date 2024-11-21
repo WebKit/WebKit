@@ -37,7 +37,6 @@ struct WEBCORE_EXPORT QuirksData {
     std::optional<bool> isYouTube;
     std::optional<bool> isZoom;
 
-    std::optional<bool> hasBrokenEncryptedMediaAPISupportQuirk;
     std::optional<bool> implicitMuteWhenVolumeSetToZero;
     std::optional<bool> needsBingGestureEventQuirk;
     std::optional<bool> needsBodyScrollbarWidthNoneDisabledQuirk;
@@ -46,8 +45,6 @@ struct WEBCORE_EXPORT QuirksData {
     std::optional<bool> needsDisableDOMPasteAccessQuirk;
     std::optional<bool> needsMozillaFileTypeForDataTransferQuirk;
     std::optional<bool> needsRelaxedCorsMixedContentCheckQuirk;
-    std::optional<bool> needsScrollbarWidthThinDisabledQuirk;
-    std::optional<bool> needsSeekingSupportDisabledQuirk;
     std::optional<bool> needsVP9FullRangeFlagQuirk;
     std::optional<bool> needsVideoShouldMaintainAspectRatioQuirk;
     std::optional<bool> returnNullPictureInPictureElementDuringFullscreenChangeQuirk;
@@ -61,7 +58,6 @@ struct WEBCORE_EXPORT QuirksData {
     std::optional<bool> shouldDisableFetchMetadata;
     std::optional<bool> shouldDisableLazyIframeLoadingQuirk;
     std::optional<bool> shouldDisableWritingSuggestionsByDefaultQuirk;
-    std::optional<bool> shouldDispatchedSimulatedMouseEventsAssumeDefaultPreventedQuirk;
     std::optional<bool> shouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk;
     std::optional<bool> shouldEnableFontLoadingAPIQuirk;
     std::optional<bool> shouldExposeShowModalDialog;
@@ -77,9 +73,7 @@ struct WEBCORE_EXPORT QuirksData {
     std::optional<bool> needsFullscreenDisplayNoneQuirk;
     std::optional<bool> needsFullscreenObjectFitQuirk;
     std::optional<bool> needsGMailOverflowScrollQuirk;
-    std::optional<bool> needsGoogleMapsScrollingQuirk;
     std::optional<bool> needsIPadSkypeOverflowScrollQuirk;
-    std::optional<bool> needsPreloadAutoQuirk;
     std::optional<bool> needsYouTubeMouseOutQuirk;
     std::optional<bool> needsYouTubeOverflowScrollQuirk;
     std::optional<bool> shouldAvoidPastingImagesAsWebContent;
@@ -94,7 +88,6 @@ struct WEBCORE_EXPORT QuirksData {
 #if PLATFORM(IOS) || PLATFORM(VISION)
     std::optional<bool> allowLayeredFullscreenVideos;
     std::optional<bool> shouldSilenceMediaQueryListChangeEvents;
-    std::optional<bool> shouldSilenceResizeObservers;
     std::optional<bool> shouldSilenceWindowResizeEvents;
 #endif
 
@@ -147,12 +140,6 @@ struct WEBCORE_EXPORT QuirksData {
     std::optional<bool> requiresUserGestureToLoadInPictureInPictureQuirk;
     std::optional<bool> requiresUserGestureToPauseInPictureInPictureQuirk;
     std::optional<bool> shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk;
-    std::optional<bool> shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;
-#endif
-
-#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_PRESENTATION_MODE)
-    std::optional<bool> blocksEnteringStandardFullscreenFromPictureInPictureQuirk;
-    std::optional<bool> blocksReturnToFullscreenFromPictureInPictureQuirk;
 #endif
 };
 

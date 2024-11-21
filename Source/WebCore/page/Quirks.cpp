@@ -204,13 +204,7 @@ bool Quirks::needsAutoplayPlayPauseEvents() const
 // - iOS PiP
 bool Quirks::needsSeekingSupportDisabled() const
 {
-    if (!needsQuirks())
-        return false;
-
-    if (!m_quirksData.needsSeekingSupportDisabledQuirk)
-        m_quirksData.needsSeekingSupportDisabledQuirk = isNetflix();
-
-    return *m_quirksData.needsSeekingSupportDisabledQuirk;
+    return needsQuirks() && isNetflix();
 }
 
 // netflix.com https://bugs.webkit.org/show_bug.cgi?id=193301
@@ -246,14 +240,7 @@ bool Quirks::hasBrokenEncryptedMediaAPISupportQuirk() const
 #if ENABLE(THUNDER)
     return false;
 #else
-
-    if (!needsQuirks())
-        return false;
-
-    if (!m_quirksData.hasBrokenEncryptedMediaAPISupportQuirk)
-        m_quirksData.hasBrokenEncryptedMediaAPISupportQuirk = isYouTube();
-
-    return *m_quirksData.hasBrokenEncryptedMediaAPISupportQuirk;
+    return needsQuirks() && isYouTube();
 #endif
 }
 
@@ -593,10 +580,7 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
     if (!needsQuirks() || !shouldDispatchSimulatedMouseEvents(target))
         return false;
 
-    if (!m_quirksData.shouldDispatchedSimulatedMouseEventsAssumeDefaultPreventedQuirk)
-        m_quirksData.shouldDispatchedSimulatedMouseEventsAssumeDefaultPreventedQuirk = isAmazon() || isSoundCloud();
-
-    if (!m_quirksData.shouldDispatchedSimulatedMouseEventsAssumeDefaultPreventedQuirk.value())
+    if (!isAmazon() || !isSoundCloud())
         return false;
 
     RefPtr element = dynamicDowncast<Element>(target);
@@ -775,13 +759,7 @@ bool Quirks::needsPrimeVideoUserSelectNoneQuirk() const
 // NOTE: Also remove `BuilderConverter::convertScrollbarWidth` and related code when removing this quirk.
 bool Quirks::needsScrollbarWidthThinDisabledQuirk() const
 {
-    if (!needsQuirks())
-        return false;
-
-    if (!m_quirksData.needsScrollbarWidthThinDisabledQuirk)
-        m_quirksData.needsScrollbarWidthThinDisabledQuirk = isYouTube();
-
-    return *m_quirksData.needsScrollbarWidthThinDisabledQuirk;
+    return needsQuirks() && isYouTube();
 }
 
 // spotify.com rdar://138918575
@@ -842,13 +820,7 @@ bool Quirks::needsWeChatScrollingQuirk() const
 bool Quirks::needsGoogleMapsScrollingQuirk() const
 {
 #if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    if (!m_quirksData.needsGoogleMapsScrollingQuirk)
-        m_quirksData.needsGoogleMapsScrollingQuirk = isGoogleMaps();
-
-    return *m_quirksData.needsGoogleMapsScrollingQuirk;
+    return needsQuirks() && isGoogleMaps();
 #else
     return false;
 #endif
@@ -879,10 +851,7 @@ bool Quirks::shouldSilenceResizeObservers() const
     if (!page || !page->isTakingSnapshotsForApplicationSuspension())
         return false;
 
-    if (!m_quirksData.shouldSilenceResizeObservers)
-        m_quirksData.shouldSilenceResizeObservers = isYouTube();
-
-    return *m_quirksData.shouldSilenceResizeObservers;
+    return isYouTube();
 #else
     return false;
 #endif
@@ -1021,13 +990,7 @@ bool Quirks::shouldOpenAsAboutBlank(const String& stringToOpen) const
 bool Quirks::needsPreloadAutoQuirk() const
 {
 #if PLATFORM(IOS_FAMILY)
-    if (!needsQuirks())
-        return false;
-
-    if (!m_quirksData.needsPreloadAutoQuirk)
-        m_quirksData.needsPreloadAutoQuirk = isVimeo();
-
-    return *m_quirksData.needsPreloadAutoQuirk;
+    return needsQuirks() && isVimeo();
 #else
     return false;
 #endif
@@ -1492,13 +1455,7 @@ bool Quirks::blocksReturnToFullscreenFromPictureInPictureQuirk() const
     // returns to fullscreen from picture-in-picture. This quirk disables the "return to fullscreen
     // from picture-in-picture" feature for those sites. We should remove the quirk once
     // rdar://problem/73167931 has been fixed.
-    if (!needsQuirks())
-        return false;
-
-    if (!m_quirksData.blocksReturnToFullscreenFromPictureInPictureQuirk)
-        m_quirksData.blocksReturnToFullscreenFromPictureInPictureQuirk = isVimeo();
-
-    return *m_quirksData.blocksReturnToFullscreenFromPictureInPictureQuirk;
+    return needsQuirks() && isVimeo();
 #else
     return false;
 #endif
@@ -1509,13 +1466,7 @@ bool Quirks::blocksEnteringStandardFullscreenFromPictureInPictureQuirk() const
 #if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_PRESENTATION_MODE)
     // Vimeo enters fullscreen when starting playback from the inline play button while already in PIP.
     // This behavior is revealing a bug in the fullscreen handling. See rdar://107592139.
-    if (!needsQuirks())
-        return false;
-
-    if (!m_quirksData.blocksEnteringStandardFullscreenFromPictureInPictureQuirk)
-        m_quirksData.blocksEnteringStandardFullscreenFromPictureInPictureQuirk = isVimeo();
-
-    return *m_quirksData.blocksEnteringStandardFullscreenFromPictureInPictureQuirk;
+    return needsQuirks() && isVimeo();
 #else
     return false;
 #endif
@@ -1528,13 +1479,7 @@ bool Quirks::shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFull
     // from fullscreen for the sites which cannot handle the event properly in that case.
     // We should remove once the quirks have been fixed.
     // <rdar://90393832> vimeo.com
-    if (!needsQuirks())
-        return false;
-
-    if (!m_quirksData.shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk)
-        m_quirksData.shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk = isESPN() || isVimeo();
-
-    return *m_quirksData.shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk;
+    return needsQuirks() && (isESPN() || isVimeo());
 #else
     return false;
 #endif
@@ -1567,13 +1512,7 @@ bool Quirks::shouldAllowNavigationToCustomProtocolWithoutUserGesture(StringView 
 #if PLATFORM(IOS) || PLATFORM(VISION)
 bool Quirks::allowLayeredFullscreenVideos() const
 {
-    if (!needsQuirks())
-        return false;
-
-    if (!m_quirksData.allowLayeredFullscreenVideos)
-        m_quirksData.allowLayeredFullscreenVideos = isESPN();
-
-    return *m_quirksData.allowLayeredFullscreenVideos;
+    return needsQuirks() && isESPN();
 }
 #endif
 
