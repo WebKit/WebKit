@@ -3,10 +3,24 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
+		31339FA12CEEFECC0054D8D5 /* libwebrtc */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 31339FA22CEEFECC0054D8D5 /* Build configuration list for PBXAggregateTarget "libwebrtc" */;
+			buildPhases = (
+			);
+			dependencies = (
+				31339FA92CEEFEDC0054D8D5 /* PBXTargetDependency */,
+				31339FA72CEEFED90054D8D5 /* PBXTargetDependency */,
+			);
+			name = libwebrtc;
+			packageProductDependencies = (
+			);
+			productName = libwebrtc;
+		};
 		449CF1592ADEDE8500F22CAF /* Fuzzers (libwebrtc) */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 449CF15F2ADEDE8C00F22CAF /* Build configuration list for PBXAggregateTarget "Fuzzers (libwebrtc)" */;
@@ -5369,6 +5383,20 @@
 /* End PBXBuildRule section */
 
 /* Begin PBXContainerItemProxy section */
+		31339FA62CEEFED90054D8D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB39D0D01200F0E300088E69;
+			remoteInfo = libwebrtc.dylib;
+		};
+		31339FA82CEEFEDC0054D8D5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 449CF1592ADEDE8500F22CAF;
+			remoteInfo = "Fuzzers (libwebrtc)";
+		};
 		410B3826292B73E90003E515 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FB39D0701200ED9200088E69 /* Project object */;
@@ -5697,7 +5725,7 @@
 		};
 		41F77D14215BE45E00E72967 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 8;
 			dstPath = /usr/share/man/man1/;
 			dstSubfolderSpec = 0;
 			files = (
@@ -23801,9 +23829,9 @@
 			productReference = DDF30D0627C5C003006A526F /* libabsl.a */;
 			productType = "com.apple.product-type.library.static";
 		};
-		FB39D0D01200F0E300088E69 /* libwebrtc */ = {
+		FB39D0D01200F0E300088E69 /* libwebrtc.dylib */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "libwebrtc" */;
+			buildConfigurationList = FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "libwebrtc.dylib" */;
 			buildPhases = (
 				FB39D77B1201110C00088E69 /* Headers */,
 				DD114ECB2CEFBDBA00125A79 /* Use WTF's derived Public SDK Headers */,
@@ -23835,7 +23863,7 @@
 				5C4B4AC71E42C58B002651C8 /* PBXTargetDependency */,
 				5C63FC621E418449002CA531 /* PBXTargetDependency */,
 			);
-			name = libwebrtc;
+			name = libwebrtc.dylib;
 			productName = libwebrtc;
 			productReference = FB39D0D11200F0E300088E69 /* libwebrtc.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
@@ -23849,6 +23877,9 @@
 				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 1000;
 				TargetAttributes = {
+					31339FA12CEEFECC0054D8D5 = {
+						CreatedOnToolsVersion = 16.3;
+					};
 					41F77D15215BE45E00E72967 = {
 						CreatedOnToolsVersion = 10.0;
 						ProvisioningStyle = Manual;
@@ -23882,7 +23913,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				FB39D0D01200F0E300088E69 /* libwebrtc */,
+				31339FA12CEEFECC0054D8D5 /* libwebrtc */,
+				FB39D0D01200F0E300088E69 /* libwebrtc.dylib */,
 				5C63FA7A1E418411002CA531 /* boringssl */,
 				5C4B490E1E42C336002651C8 /* opus */,
 				5C08848B1E4A97E300403995 /* srtp */,
@@ -26663,6 +26695,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		31339FA72CEEFED90054D8D5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
+			targetProxy = 31339FA62CEEFED90054D8D5 /* PBXContainerItemProxy */;
+		};
+		31339FA92CEEFEDC0054D8D5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 449CF1592ADEDE8500F22CAF /* Fuzzers (libwebrtc) */;
+			targetProxy = 31339FA82CEEFEDC0054D8D5 /* PBXContainerItemProxy */;
+		};
 		410B3827292B73E90003E515 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = DDEBB11824C0187400ADBD44 /* aom */;
@@ -26680,7 +26722,7 @@
 		};
 		444A6EF12AEADFC9005FE121 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 444A6EF22AEADFC9005FE121 /* PBXContainerItemProxy */;
 		};
 		444A6F0C2AEAE064005FE121 /* PBXTargetDependency */ = {
@@ -26693,22 +26735,22 @@
 		};
 		4460B88D2B155AFD00392062 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 4460B88E2B155AFD00392062 /* PBXContainerItemProxy */;
 		};
 		4460B89C2B155B2E00392062 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 4460B89D2B155B2E00392062 /* PBXContainerItemProxy */;
 		};
 		4460B8AB2B155B4E00392062 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 4460B8AC2B155B4E00392062 /* PBXContainerItemProxy */;
 		};
 		4460B8BA2B155B6A00392062 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 4460B8BB2B155B6A00392062 /* PBXContainerItemProxy */;
 		};
 		4460B8C92B155B9200392062 /* PBXTargetDependency */ = {
@@ -26733,7 +26775,7 @@
 		};
 		446359C52AEA10F400551EEE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 446359C42AEA10F400551EEE /* PBXContainerItemProxy */;
 		};
 		446359E02AEA14F000551EEE /* PBXTargetDependency */ = {
@@ -26746,7 +26788,7 @@
 		};
 		4469C1002B5F24C500E32E5A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 4469C1012B5F24C500E32E5A /* PBXContainerItemProxy */;
 		};
 		4469C10E2B5F24DA00E32E5A /* PBXTargetDependency */ = {
@@ -26771,7 +26813,7 @@
 		};
 		449467A32AE05C9600A9FED0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 449467A42AE05C9600A9FED0 /* PBXContainerItemProxy */;
 		};
 		449467BF2AE05CA800A9FED0 /* PBXTargetDependency */ = {
@@ -26781,7 +26823,7 @@
 		};
 		449467C32AE05DA200A9FED0 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 449467C42AE05DA200A9FED0 /* PBXContainerItemProxy */;
 		};
 		449467D32AE05DD200A9FED0 /* PBXTargetDependency */ = {
@@ -26811,7 +26853,7 @@
 		};
 		44D88ABE2AF04946005C956E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 44D88ABF2AF04946005C956E /* PBXContainerItemProxy */;
 		};
 		44D88ACE2AF0495A005C956E /* PBXTargetDependency */ = {
@@ -26821,7 +26863,7 @@
 		};
 		44D88AD22AF04AA1005C956E /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 44D88AD32AF04AA1005C956E /* PBXContainerItemProxy */;
 		};
 		44D88AE32AF04AE4005C956E /* PBXTargetDependency */ = {
@@ -26831,7 +26873,7 @@
 		};
 		44D8D10D2B6AFBA900B3CF91 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 44D8D10E2B6AFBA900B3CF91 /* PBXContainerItemProxy */;
 		};
 		44D8D11C2B6AFBCF00B3CF91 /* PBXTargetDependency */ = {
@@ -26841,7 +26883,7 @@
 		};
 		44E7509C2AC726A600828AC4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = FB39D0D01200F0E300088E69 /* libwebrtc */;
+			target = FB39D0D01200F0E300088E69 /* libwebrtc.dylib */;
 			targetProxy = 44E7509B2AC726A600828AC4 /* PBXContainerItemProxy */;
 		};
 		5C0884E01E4A982000403995 /* PBXTargetDependency */ = {
@@ -26877,6 +26919,30 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		31339FA32CEEFECC0054D8D5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		31339FA42CEEFECC0054D8D5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		31339FA52CEEFECC0054D8D5 /* Production */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Production;
+		};
 		4105EB80212E01D2008C0C20 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 411ED035212E05DE004320BA /* libvpx.xcconfig */;
@@ -27491,6 +27557,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		31339FA22CEEFECC0054D8D5 /* Build configuration list for PBXAggregateTarget "libwebrtc" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				31339FA32CEEFECC0054D8D5 /* Debug */,
+				31339FA42CEEFECC0054D8D5 /* Release */,
+				31339FA52CEEFECC0054D8D5 /* Production */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
+		};
 		4105EB7F212E01D2008C0C20 /* Build configuration list for PBXNativeTarget "vpx" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -27761,7 +27837,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;
 		};
-		FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "libwebrtc" */ = {
+		FB39D0D61200F11E00088E69 /* Build configuration list for PBXNativeTarget "libwebrtc.dylib" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				FB39D0D21200F0E400088E69 /* Debug */,
