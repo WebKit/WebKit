@@ -137,7 +137,11 @@ public:
     void generateAnInternalError(String&& message);
 
     RefPtr<Instance> instance() const { return m_instance.get(); }
+#if CPU(X86_64)
+    bool hasUnifiedMemory() const { return false; }
+#else
     bool hasUnifiedMemory() const { return m_device.hasUnifiedMemory; }
+#endif
 
     uint32_t maxBuffersPlusVertexBuffersForVertexStage() const
     {
