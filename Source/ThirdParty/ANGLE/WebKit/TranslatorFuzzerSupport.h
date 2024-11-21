@@ -113,6 +113,64 @@
 void filterOptions(ShShaderOutput output, ShCompileOptions& options);
 ShShaderOutput resolveShaderOutput(ShShaderOutput output);
 
+#define FOR_EACH_SH_BUILT_IN_RESOURCES_EXTENSION_OPTION(MACRO) \
+    MACRO(OES_standard_derivatives, any) \
+    MACRO(OES_EGL_image_external, any) \
+    MACRO(OES_EGL_image_external_essl3, !msl) \
+    MACRO(NV_EGL_stream_consumer_external, !msl) \
+    MACRO(ARB_texture_rectangle, !msl) \
+    MACRO(EXT_blend_func_extended, any) \
+    MACRO(EXT_conservative_depth, any) \
+    MACRO(EXT_draw_buffers, any) \
+    MACRO(EXT_frag_depth, any) \
+    MACRO(EXT_shader_texture_lod, any) \
+    MACRO(EXT_shader_framebuffer_fetch, !msl) \
+    MACRO(EXT_shader_framebuffer_fetch_non_coherent, !msl) \
+    MACRO(NV_shader_framebuffer_fetch, !msl) \
+    MACRO(NV_shader_noperspective_interpolation, any) \
+    MACRO(ARM_shader_framebuffer_fetch, !msl) \
+    MACRO(ARM_shader_framebuffer_fetch_depth_stencil, !msl) \
+    MACRO(OVR_multiview, !msl) \
+    MACRO(OVR_multiview2, !msl) \
+    MACRO(EXT_multisampled_render_to_texture, any) \
+    MACRO(EXT_multisampled_render_to_texture2, !msl) \
+    MACRO(EXT_YUV_target, !msl) \
+    MACRO(EXT_geometry_shader, !msl) \
+    MACRO(OES_geometry_shader, !msl) \
+    MACRO(OES_shader_io_blocks, !msl) \
+    MACRO(EXT_shader_io_blocks, !msl) \
+    MACRO(EXT_gpu_shader5, !msl) \
+    MACRO(OES_gpu_shader5, !msl) \
+    MACRO(EXT_shader_non_constant_global_initializers, !msl) \
+    MACRO(OES_texture_storage_multisample_2d_array, !msl) \
+    MACRO(OES_texture_3D, any) \
+    MACRO(ANGLE_shader_pixel_local_storage, any) \
+    MACRO(ANGLE_texture_multisample, !msl) \
+    MACRO(ANGLE_multi_draw, !msl) \
+    MACRO(ANGLE_base_vertex_base_instance, any) \
+    MACRO(WEBGL_video_texture, !msl) \
+    MACRO(APPLE_clip_distance, any) \
+    MACRO(OES_texture_cube_map_array, !msl) \
+    MACRO(EXT_texture_cube_map_array, !msl) \
+    MACRO(EXT_texture_query_lod, !msl) \
+    MACRO(EXT_texture_shadow_lod, any) \
+    MACRO(EXT_shadow_samplers, !msl) \
+    MACRO(OES_shader_multisample_interpolation, any) \
+    MACRO(OES_shader_image_atomic, !msl) \
+    MACRO(EXT_tessellation_shader, !msl) \
+    MACRO(OES_tessellation_shader, !msl) \
+    MACRO(OES_texture_buffer, !msl) \
+    MACRO(EXT_texture_buffer, !msl) \
+    MACRO(OES_sample_variables, any) \
+    MACRO(EXT_clip_cull_distance, !msl) \
+    MACRO(ANGLE_clip_cull_distance, any) \
+    MACRO(EXT_primitive_bounding_box, !msl) \
+    MACRO(OES_primitive_bounding_box, !msl) \
+    MACRO(EXT_separate_shader_objects, !msl) \
+    MACRO(ANGLE_base_vertex_base_instance_shader_builtin, any) \
+    MACRO(ANDROID_extension_pack_es31a, !msl) \
+    MACRO(KHR_blend_equation_advanced, !msl)
+
 struct GLSLDumpHeader {
     static constexpr int kHeaderSize = 128;
     static constexpr int kBaseOptionsSize = offsetof(ShCompileOptions, metal);

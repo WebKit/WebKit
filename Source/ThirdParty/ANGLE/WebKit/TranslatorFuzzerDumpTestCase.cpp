@@ -143,6 +143,13 @@ int main(int argc, const char * argv[])
         filterOptions(header.output, header.options);
         std::cout << "TEST(CompilerWorksTest, Test" << i << ")";
         std::cout << testContent1;
+        const bool any = true;
+        const bool msl = header.output == SH_MSL_METAL_OUTPUT;
+#define COUT_EXTENSION(NAME, FORCE) if ((FORCE)) std::cout << "    resources." #NAME " = 1;" << std::endl;
+        FOR_EACH_SH_BUILT_IN_RESOURCES_EXTENSION_OPTION(COUT_EXTENSION);
+#undef COUT_EXTENSION
+        std::cout << "    resources.MaxDualSourceDrawBuffers = 1;" << std::endl;
+        std::cout << "    resources.MaxDrawBuffers = 8;" << std::endl;
 #define COUT_OPTION(NAME, I, ALLOW, FORCE) if (header.options.NAME) std::cout << "    options." #NAME " = true;" << std::endl;
         FOR_EACH_SH_COMPILE_OPTIONS_BOOL_OPTION(COUT_OPTION);
 #undef COUT_OPTION

@@ -169,30 +169,13 @@ bool initializeTranslators()
                 TCompiler* translator = ConstructCompiler(type, spec, output);
                 ShBuiltInResources resources;
                 sh::InitBuiltInResources(&resources);
-                // Enable all the extensions to have more coverage
-                resources.OES_standard_derivatives        = 1;
-                resources.OES_EGL_image_external          = 1;
-                resources.OES_EGL_image_external_essl3    = 1;
-                resources.NV_EGL_stream_consumer_external = 1;
-                resources.ARB_texture_rectangle           = 1;
-                resources.EXT_blend_func_extended         = 1;
-                resources.EXT_conservative_depth          = 1;
-                resources.EXT_draw_buffers                = 1;
-                resources.EXT_frag_depth                  = 1;
-                resources.EXT_shader_texture_lod          = 1;
-                resources.EXT_shader_framebuffer_fetch    = 1;
-                resources.NV_shader_framebuffer_fetch     = 1;
-                resources.ARM_shader_framebuffer_fetch    = 1;
-                resources.EXT_YUV_target                  = 1;
-                resources.APPLE_clip_distance             = 1;
-                resources.MaxDualSourceDrawBuffers        = 1;
-                resources.EXT_gpu_shader5                 = 1;
-                resources.MaxClipDistances                = 1;
-                resources.EXT_shadow_samplers             = 1;
-                resources.EXT_clip_cull_distance          = 1;
-                resources.ANGLE_clip_cull_distance        = 1;
-                resources.EXT_primitive_bounding_box      = 1;
-                resources.OES_primitive_bounding_box      = 1;
+                const bool any = true;
+                const bool msl = output == SH_MSL_METAL_OUTPUT;
+#define ENABLE_EXTENSION(name, forced) if ((forced)) resources.name = 1;
+                FOR_EACH_SH_BUILT_IN_RESOURCES_EXTENSION_OPTION(ENABLE_EXTENSION);
+#undef ENABLE_EXTENSION
+                resources.MaxDualSourceDrawBuffers = 1;
+                resources.MaxDrawBuffers = 8;
                 if (!translator->Init(resources))
                     return false;
                 translators[translatorsCount++] = { translator, type, spec, output };
