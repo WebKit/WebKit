@@ -31,15 +31,16 @@ import itertools
 
 
 class TestConfiguration(object):
-    def __init__(self, version, architecture, build_type):
+    def __init__(self, version, architecture, build_type, reality=''):
         self.version = version.lower().replace(' ', '') if version is not None else ''
         self.architecture = architecture
         self.build_type = build_type
+        self.reality = reality
 
     @classmethod
     def category_order(cls):
         """The most common human-readable order in which the configuration properties are listed."""
-        return ['version', 'architecture', 'build_type']
+        return ['version', 'architecture', 'build_type', 'reality']
 
     def items(self):
         return self.__dict__.items()
@@ -48,14 +49,14 @@ class TestConfiguration(object):
         return self.__dict__.keys()
 
     def __str__(self):
-        return ("<%(version)s, %(architecture)s, %(build_type)s>" %
+        return ("<%(version)s, %(architecture)s, %(build_type)s, %(reality)s>" %
                 self.__dict__)
 
     def __repr__(self):
-        return "TestConfig(version='%(version)s', architecture='%(architecture)s', build_type='%(build_type)s')" % self.__dict__
+        return "TestConfig(version='%(version)s', architecture='%(architecture)s', build_type='%(build_type)s', reality='%(reality)s')" % self.__dict__
 
     def __hash__(self):
-        return hash(self.version + self.architecture + self.build_type)
+        return hash(self.version + self.architecture + self.build_type + self.reality)
 
     def __eq__(self, other):
         return self.__hash__() == other.__hash__()

@@ -46,6 +46,8 @@ class ApplePort(Port):
     ARCHITECTURES = []
     _crash_logs_to_skip_for_host = {}
 
+    REALITIES = ['physical', 'virtual']
+
     @classmethod
     def determine_full_port_name(cls, host, options, port_name):
         options = options or {}
@@ -110,7 +112,8 @@ class ApplePort(Port):
                     for table in [PUBLIC_TABLE, INTERNAL_TABLE]:
                         version_name = VersionNameMap.map(self.host.platform).to_name(version, platform=self.port_name.split('-')[0], table=table)
                         if version_name:
-                            configurations.append(TestConfiguration(version=version_name, architecture=architecture, build_type=build_type))
+                            for reality in self.REALITIES:
+                                configurations.append(TestConfiguration(version=version_name, architecture=architecture, build_type=build_type, reality=reality))
         return configurations
 
     def all_baseline_search_paths(self, device_type=None):

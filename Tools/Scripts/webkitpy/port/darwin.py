@@ -275,3 +275,22 @@ class DarwinPort(ApplePort):
         # Suppress log message from <rdar://56920527>
         worthless_patterns.append((re.compile('.*nil host used in call to allows.+HTTPSCertificateForHost.*\n'), ''))
         return worthless_patterns
+
+    @property
+    @memoized
+    def hw_model(self) -> str:
+        '''
+        The model of the device running tests.
+
+        This passes through the simulator and gets the model of the host Mac.
+        '''
+
+        try:
+            return self._executive.run_command(['/usr/sbin/sysctl', '-n', 'hw.model']).rstrip()
+        except ScriptError:
+            return ''
+
+    @property
+    @memoized
+    def reality(self) -> str:
+        return 'virtual' if self.hw_model.lower().find('virtual') > -1 else 'physical'
