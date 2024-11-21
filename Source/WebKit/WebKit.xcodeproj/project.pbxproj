@@ -158,12 +158,15 @@
 		0792314C239CBCB8009598E2 /* RemoteMediaPlayerManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 07923146239CBCB7009598E2 /* RemoteMediaPlayerManagerProxyMessages.h */; };
 		079D1D9A26960CD300883577 /* SystemStatusSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 079D1D9926960CD300883577 /* SystemStatusSPI.h */; };
 		07A5EBBC1C7BA43E00B9CA69 /* WKFrameHandleRef.h in Headers */ = {isa = PBXBuildFile; fileRef = 07A5EBBA1C7BA43E00B9CA69 /* WKFrameHandleRef.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		07CB79962CE9435700199C49 /* WebPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CB79952CE9435700199C49 /* WebPage.swift */; };
+		07CB79982CE943E400199C49 /* WKNavigationDelegateAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07CB79972CE943E400199C49 /* WKNavigationDelegateAdapter.swift */; };
 		07CF2D512C2147A50064DF23 /* PlatformWritingToolsUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 07CA7FE92C20FAAA00798167 /* PlatformWritingToolsUtilities.h */; };
 		07E19EFB23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07E19EF823D401F00094FFB4 /* MediaPlayerPrivateRemoteMessageReceiver.cpp */; };
 		07E19EFC23D401F10094FFB4 /* MediaPlayerPrivateRemoteMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E19EF923D401F00094FFB4 /* MediaPlayerPrivateRemoteMessages.h */; };
 		07E4BDC72A3A7089000D5509 /* _WKWebViewTextInputNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 07E4BDC52A3A7089000D5509 /* _WKWebViewTextInputNotifications.h */; };
 		07E4BDC82A3A7089000D5509 /* _WKWebViewTextInputNotifications.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07E4BDC62A3A7089000D5509 /* _WKWebViewTextInputNotifications.mm */; };
 		07F327F22CB09B74006D9918 /* _WKTextPreview.h in Headers */ = {isa = PBXBuildFile; fileRef = 07F327F02CB085A4006D9918 /* _WKTextPreview.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		07FAA74B2CE947AA00128360 /* WebPage+Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FAA74A2CE947AA00128360 /* WebPage+Navigation.swift */; };
 		0E97D74D200E900400BF6643 /* SafeBrowsingSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E97D74C200E8FF300BF6643 /* SafeBrowsingSPI.h */; };
 		0EDE85032004E75D00030560 /* WebsitePopUpPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EDE85022004E74900030560 /* WebsitePopUpPolicy.h */; };
 		0F08CF521D63C13A00B48DF1 /* WKFormSelectPicker.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F08CF511D63C13A00B48DF1 /* WKFormSelectPicker.h */; };
@@ -3228,6 +3231,8 @@
 		07BAF35723A2CC190044257E /* RemoteMediaPlayerProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaPlayerProxy.cpp; sourceTree = "<group>"; };
 		07CA7FE92C20FAAA00798167 /* PlatformWritingToolsUtilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformWritingToolsUtilities.h; sourceTree = "<group>"; };
 		07CA7FEA2C20FAAA00798167 /* PlatformWritingToolsUtilities.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformWritingToolsUtilities.mm; sourceTree = "<group>"; };
+		07CB79952CE9435700199C49 /* WebPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebPage.swift; sourceTree = "<group>"; };
+		07CB79972CE943E400199C49 /* WKNavigationDelegateAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKNavigationDelegateAdapter.swift; sourceTree = "<group>"; };
 		07E19EF823D401F00094FFB4 /* MediaPlayerPrivateRemoteMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayerPrivateRemoteMessageReceiver.cpp; sourceTree = "<group>"; };
 		07E19EF923D401F00094FFB4 /* MediaPlayerPrivateRemoteMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateRemoteMessages.h; sourceTree = "<group>"; };
 		07E19F0523D4DC880094FFB4 /* TextTrackPrivateRemoteConfiguration.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextTrackPrivateRemoteConfiguration.h; sourceTree = "<group>"; };
@@ -3244,6 +3249,7 @@
 		07EF07592745A8160066EA04 /* DisplayCaptureSessionManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DisplayCaptureSessionManager.h; sourceTree = "<group>"; };
 		07F327F02CB085A4006D9918 /* _WKTextPreview.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = _WKTextPreview.h; sourceTree = "<group>"; };
 		07F327F12CB085A4006D9918 /* _WKTextPreview.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKTextPreview.mm; sourceTree = "<group>"; };
+		07FAA74A2CE947AA00128360 /* WebPage+Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebPage+Navigation.swift"; sourceTree = "<group>"; };
 		0867D6A5FE840307C02AAC07 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		089C1667FE841158C02AAC07 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		0D02BE3129B6D0F7005852BF /* WebGPUInternalError.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebGPUInternalError.h; sourceTree = "<group>"; };
@@ -8803,6 +8809,16 @@
 			path = media;
 			sourceTree = "<group>";
 		};
+		07CB79942CE9432D00199C49 /* Swift */ = {
+			isa = PBXGroup;
+			children = (
+				07FAA74A2CE947AA00128360 /* WebPage+Navigation.swift */,
+				07CB79952CE9435700199C49 /* WebPage.swift */,
+				07CB79972CE943E400199C49 /* WKNavigationDelegateAdapter.swift */,
+			);
+			path = Swift;
+			sourceTree = "<group>";
+		};
 		0867D691FE84028FC02AAC07 /* WebKit2 */ = {
 			isa = PBXGroup;
 			children = (
@@ -14349,6 +14365,7 @@
 				BC8A501311765F4500757573 /* cpp */,
 				0F45A32E239D896000294ABF /* ios */,
 				BC111B47112F616900337BAB /* mac */,
+				07CB79942CE9432D00199C49 /* Swift */,
 				6348424F1FB26E7100946E3C /* APIApplicationManifest.h */,
 				2E5C770D1FA7D429005932C3 /* APIAttachment.cpp */,
 				2E5C770C1FA7D429005932C3 /* APIAttachment.h */,
@@ -18620,7 +18637,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names WK _WK || exit $?\nfi\n";
+			shellScript = "if [ \"${ACTION}\" = \"installhdrs\" ] || [ \"${ACTION}\" = \"installapi\" ]; then\n    exit 0;\nfi\n\nif [ -f ../../Tools/Scripts/check-for-inappropriate-objc-class-names ]; then\n    ../../Tools/Scripts/check-for-inappropriate-objc-class-names WK _WK _TtC6WebKit27WK || exit $?\nfi\n";
 		};
 		3AB34B6228D4F01C009DAAB6 /* Update Info.plist for RunningBoard management */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -20164,6 +20181,8 @@
 				CDF1B91B267025550007EC10 /* WebKitSwiftSoftLink.mm in Sources */,
 				E3816B3D27E2463A005EAFC0 /* WebMockContentFilterManager.cpp in Sources */,
 				31BA924D148831260062EDB5 /* WebNotificationManagerMessageReceiver.cpp in Sources */,
+				07FAA74B2CE947AA00128360 /* WebPage+Navigation.swift in Sources */,
+				07CB79962CE9435700199C49 /* WebPage.swift in Sources */,
 				C0CE72A01247E71D00BC0EC4 /* WebPageMessageReceiver.cpp in Sources */,
 				BCBD3914125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp in Sources */,
 				C0CE72A01B47E71D00BC0EC4 /* WebPageTestingMessageReceiver.cpp in Sources */,
@@ -20203,6 +20222,7 @@
 				2D93116A212F61B500044BFE /* WKContentViewInteraction.mm in Sources */,
 				637281A321ADC744009E0DE6 /* WKDownloadProgress.mm in Sources */,
 				5CE9120D2293C219005BEC78 /* WKMain.mm in Sources */,
+				07CB79982CE943E400199C49 /* WKNavigationDelegateAdapter.swift in Sources */,
 				DF84CEE4249AA24D009096F6 /* WKPDFHUDView.mm in Sources */,
 				E31869C42B1A7C2400571519 /* WKProcessExtension.mm in Sources */,
 				1DB01944211CF005009FB3E8 /* WKShareSheet.mm in Sources */,

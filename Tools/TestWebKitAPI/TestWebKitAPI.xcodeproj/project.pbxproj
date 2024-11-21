@@ -59,6 +59,7 @@
 		07C046CA1E4262A8007201E7 /* CARingBufferTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07C046C91E42573E007201E7 /* CARingBufferTest.cpp */; };
 		07CE1CF31F06A7E000BF89F5 /* GetUserMediaNavigation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07CE1CF21F06A7E000BF89F5 /* GetUserMediaNavigation.mm */; };
 		07E499911F9E56DF002F1EF3 /* GetUserMediaReprompt.mm in Sources */ = {isa = PBXBuildFile; fileRef = 07E499901F9E56A1002F1EF3 /* GetUserMediaReprompt.mm */; };
+		07FAA74D2CE95E3200128360 /* WebPageNavigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 07FAA74C2CE95E3200128360 /* WebPageNavigation.swift */; };
 		0DE559ED2A6B0AAF009AA320 /* WKWebViewResize.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0DE559E52A6B0AAF009AA320 /* WKWebViewResize.mm */; };
 		0E404A8C2166DE0A008271BA /* InjectedBundleNodeHandleIsSelectElement.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0E404A8A2166DDF8008271BA /* InjectedBundleNodeHandleIsSelectElement.mm */; };
 		0F139E771A423A5B00F590F5 /* WeakObjCPtr.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F139E751A423A5300F590F5 /* WeakObjCPtr.mm */; };
@@ -2152,6 +2153,7 @@
 		07F4E92D20AF58D3002E3803 /* UserMediaSimulateFailedSandbox.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = UserMediaSimulateFailedSandbox.mm; sourceTree = "<group>"; };
 		07F7696C2CA8BAC500FF004B /* IOSMouseEventTestHarness.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOSMouseEventTestHarness.h; sourceTree = "<group>"; };
 		07F7696D2CA8BAC500FF004B /* IOSMouseEventTestHarness.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = IOSMouseEventTestHarness.mm; sourceTree = "<group>"; };
+		07FAA74C2CE95E3200128360 /* WebPageNavigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebPageNavigation.swift; sourceTree = "<group>"; };
 		0BCD833414857CE400EA2003 /* HashMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HashMap.cpp; sourceTree = "<group>"; };
 		0BCD85691485C98B00EA2003 /* SetForScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SetForScope.cpp; sourceTree = "<group>"; };
 		0DE559E52A6B0AAF009AA320 /* WKWebViewResize.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKWebViewResize.mm; sourceTree = "<group>"; };
@@ -3992,6 +3994,7 @@
 			isa = PBXGroup;
 			children = (
 				070721102CE2F4B8004D9EC8 /* TestWebKitAPIBundle-Bridging-Header.h */,
+				07FAA74C2CE95E3200128360 /* WebPageNavigation.swift */,
 				070721142CE2F5F6004D9EC8 /* WKWebViewSwiftOverlay.swift */,
 			);
 			path = "WebKit Swift";
@@ -7407,6 +7410,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A17C58472C9BF524009DD0B5 /* GoogleTests.mm in Sources */,
+				07FAA74D2CE95E3200128360 /* WebPageNavigation.swift in Sources */,
 				077489CC2CE4061A00133938 /* WKWebViewSwiftOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
