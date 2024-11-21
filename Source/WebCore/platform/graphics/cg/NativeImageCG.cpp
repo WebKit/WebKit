@@ -31,6 +31,7 @@
 #include "CGSubimageCacheWithTimer.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContextCG.h"
+#include "ImageBuffer.h"
 #include <limits>
 #include <pal/spi/cg/CoreGraphicsSPI.h>
 

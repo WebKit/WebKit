@@ -31,6 +31,7 @@
 #include "FloatRoundedRect.h"
 #include "GLContext.h"
 #include "GraphicsContext.h"
+#include "GraphicsTypesGL.h"
 #include "Image.h"
 #include "LengthFunctions.h"
 #include "TextureMapperFlags.h"

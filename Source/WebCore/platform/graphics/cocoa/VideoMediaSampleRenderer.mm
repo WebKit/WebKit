@@ -26,6 +26,7 @@
 #import "config.h"
 #import "VideoMediaSampleRenderer.h"
 
+#import "IOSurface.h"
 #import "MediaSampleAVFObjC.h"
 #import "WebCoreDecompressionSession.h"
 #import "WebSampleBufferVideoRendering.h"
@@ -35,6 +36,7 @@
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/Locker.h>
 #import <wtf/MainThreadDispatcher.h>
+#import <wtf/NativePromise.h>
 
 #pragma mark - Soft Linking
 

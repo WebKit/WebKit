@@ -29,6 +29,7 @@
 #if PLATFORM(MAC)
 
 #import "GraphicsContext.h"
+#import "ImageBuffer.h"
 #import "LocalDefaultSystemAppearance.h"
 #import "ProgressBarPart.h"
 #import <pal/spi/mac/CoreUISPI.h>

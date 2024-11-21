@@ -28,6 +28,8 @@
 #include "Pattern.h"
 
 #include "Image.h"
+#include "ImageBuffer.h"
+#include "NativeImage.h"
 
 namespace WebCore {
 
@@ -47,6 +49,26 @@ Pattern::~Pattern() = default;
 void Pattern::setPatternSpaceTransform(const AffineTransform& patternSpaceTransform)
 {
     m_parameters.patternSpaceTransform = patternSpaceTransform;
+}
+
+const SourceImage& Pattern::tileImage() const
+{
+    return m_tileImage;
+}
+
+RefPtr<NativeImage> Pattern::tileNativeImage() const
+{
+    return m_tileImage.nativeImage();
+}
+
+RefPtr<ImageBuffer> Pattern::tileImageBuffer() const
+{
+    return m_tileImage.imageBuffer();
+}
+
+void Pattern::setTileImage(SourceImage&& tileImage)
+{
+    m_tileImage = WTFMove(tileImage);
 }
 
 }

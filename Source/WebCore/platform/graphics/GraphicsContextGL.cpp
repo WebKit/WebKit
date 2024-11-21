@@ -36,6 +36,7 @@
 #include "GraphicsContext.h"
 #include "HostWindow.h"
 #include "Image.h"
+#include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "NotImplemented.h"
 #include "PixelBuffer.h"

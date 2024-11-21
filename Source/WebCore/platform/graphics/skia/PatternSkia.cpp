@@ -28,6 +28,8 @@
 
 #if USE(SKIA)
 #include "AffineTransform.h"
+#include "ImageBuffer.h"
+#include "NativeImage.h"
 #include <skia/core/SkImage.h>
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 #include <skia/core/SkMatrix.h>

@@ -46,7 +46,6 @@ typedef sk_sp<SkShader> PlatformPatternPtr;
 
 namespace WebCore {
 
-class AffineTransform;
 class GraphicsContext;
 
 class Pattern final : public ThreadSafeRefCounted<Pattern> {
@@ -66,9 +65,12 @@ public:
     WEBCORE_EXPORT static Ref<Pattern> create(SourceImage&& tileImage, const Parameters& = { });
     WEBCORE_EXPORT ~Pattern();
 
-    const SourceImage& tileImage() const { return m_tileImage; }
-    RefPtr<NativeImage> tileNativeImage() const { return m_tileImage.nativeImage(); }
-    RefPtr<ImageBuffer> tileImageBuffer() const { return m_tileImage.imageBuffer(); }
+    WEBCORE_EXPORT const SourceImage& tileImage() const;
+    WEBCORE_EXPORT void setTileImage(SourceImage&&);
+
+    RefPtr<NativeImage> tileNativeImage() const;
+    RefPtr<ImageBuffer> tileImageBuffer() const;
+
     const Parameters& parameters() const { return m_parameters; }
 
     // Pattern space is an abstract space that maps to the default user space by the transformation 'userSpaceTransform'
@@ -78,7 +80,6 @@ public:
     PlatformPatternPtr createPlatformPattern(const AffineTransform& userSpaceTransform) const;
 #endif
 
-    void setTileImage(SourceImage&& tileImage) { m_tileImage = WTFMove(tileImage); }
     void setPatternSpaceTransform(const AffineTransform&);
 
     const AffineTransform& patternSpaceTransform() const { return m_parameters.patternSpaceTransform; };

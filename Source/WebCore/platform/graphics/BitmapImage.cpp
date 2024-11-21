@@ -30,6 +30,7 @@
 #include "BitmapImageSource.h"
 #include "GeometryUtilities.h"
 #include "GraphicsContext.h"
+#include "ImageBuffer.h"
 #include "ImageObserver.h"
 #include "NativeImageSource.h"
 
