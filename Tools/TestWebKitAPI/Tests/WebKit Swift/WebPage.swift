@@ -23,9 +23,10 @@
 
 #if ENABLE_SWIFTUI && canImport(Testing) && compiler(>=6.0)
 
+import Observation
 import Testing
 import WebKit
-@_spi(Internal) import WebKit
+@_spi(Private) import WebKit
 @_spi(Testing) import WebKit
 
 // MARK: Helper extension functions
@@ -77,7 +78,7 @@ extension WebPage_v0.NavigationEvent: @retroactive Equatable {
 // MARK: Tests
 
 @MainActor
-struct WebPageNavigationTests {
+struct WebPageTests {
     @Test
     func basicNavigation() async throws {
         let page = WebPage_v0()
@@ -188,6 +189,30 @@ struct WebPageNavigationTests {
         }
 
         #expect(actualEventKinds == expectedEventKinds)
+    }
+
+    @Test
+    func observableProperties() async throws {
+        let page = WebPage_v0()
+
+        let html = """
+        <html>
+        <head>
+            <title>Title</title>
+        </head>
+        <body></body>
+        </html>
+        """
+
+        #expect(page.url == nil)
+        #expect(page.title == "")
+        #expect(!page.isLoading)
+        #expect(page.estimatedProgress == 0.0)
+        #expect(page.serverTrust == nil)
+        #expect(!page.hasOnlySecureContent)
+        #expect(page.themeColor == nil)
+
+        // FIXME: (283456) Make this test more comprehensive once Observation supports observing a stream of changes to properties.
     }
 }
 

@@ -21,16 +21,82 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_SWIFTUI
+#if ENABLE_SWIFTUI && compiler(>=6.0)
 
 import Foundation
+internal import Observation
+public import SwiftUI // FIXME: (283455) Do not import SwiftUI in WebKit proper.
 
-@_spi(Internal)
-@MainActor public class WebPage_v0 {
+@_spi(Private)
+@MainActor
+@Observable
+public class WebPage_v0 {
     public let navigations: Navigations
+
+    public var url: URL? {
+        self.access(keyPath: \.url)
+        return backingWebView.url
+    }
+
+    public var title: String {
+        self.access(keyPath: \.url)
+
+        // The title property is annotated as optional in WKWebView, but is never actually `nil`.
+        return backingWebView.title!
+    }
+
+    public var estimatedProgress: Double {
+        self.access(keyPath: \.estimatedProgress)
+        return backingWebView.estimatedProgress
+    }
+
+    public var isLoading: Bool {
+        self.access(keyPath: \.isLoading)
+        return backingWebView.isLoading
+    }
+
+    public var serverTrust: SecTrust? {
+        self.access(keyPath: \.serverTrust)
+        return backingWebView.serverTrust
+    }
+
+    public var hasOnlySecureContent: Bool {
+        self.access(keyPath: \.hasOnlySecureContent)
+        return backingWebView.hasOnlySecureContent
+    }
+
+    public var themeColor: Color? {
+        self.access(keyPath: \.themeColor)
+
+        // The themeColor property is a UIColor/NSColor in WKWebView.
+#if canImport(UIKit)
+        return backingWebView.themeColor.map(Color.init(uiColor:))
+#else
+        return backingWebView.themeColor.map(Color.init(nsColor:))
+#endif
+    }
+
+    public var mediaType: String? {
+        get { backingWebView.mediaType }
+        set { backingWebView.mediaType = newValue }
+    }
+
+    public var customUserAgent: String? {
+        get { backingWebView.customUserAgent }
+        set { backingWebView.customUserAgent = newValue }
+    }
+
+    public var isInspectable: Bool {
+        get { backingWebView.isInspectable }
+        set { backingWebView.isInspectable = newValue }
+    }
 
     private let backingNavigationDelegate: WKNavigationDelegateAdapter
 
+    @ObservationIgnored
+    private var observations = KeyValueObservations()
+
+    @ObservationIgnored
     private lazy var backingWebView: WKWebView = {
         let webView = WKWebView(frame: .zero)
         webView.navigationDelegate = backingNavigationDelegate
@@ -38,17 +104,53 @@ import Foundation
     }()
 
     public init() {
+        // FIXME: Consider whether we want to have a single value here or if the getter for `navigations` should return a fresh sequence every time.
         let (stream, continuation) = AsyncStream.makeStream(of: NavigationEvent.self)
-        self.navigations = Navigations(source: stream)
-        self.backingNavigationDelegate = WKNavigationDelegateAdapter(navigationProgressContinuation: continuation)
+        navigations = Navigations(source: stream)
+
+        backingNavigationDelegate = WKNavigationDelegateAdapter(navigationProgressContinuation: continuation)
+
+        observations.contents = [
+            createObservation(for: \.url, backedBy: \.url),
+            createObservation(for: \.title, backedBy: \.title),
+            createObservation(for: \.estimatedProgress, backedBy: \.estimatedProgress),
+            createObservation(for: \.isLoading, backedBy: \.isLoading),
+            createObservation(for: \.serverTrust, backedBy: \.serverTrust),
+            createObservation(for: \.hasOnlySecureContent, backedBy: \.hasOnlySecureContent),
+            createObservation(for: \.themeColor, backedBy: \.themeColor),
+        ]
     }
 
-    @discardableResult public func load(_ request: URLRequest) -> NavigationID? {
-        self.backingWebView.load(request).map(NavigationID.init(_:))
+    @discardableResult
+    public func load(_ request: URLRequest) -> NavigationID? {
+        backingWebView.load(request).map(NavigationID.init(_:))
     }
 
-    @discardableResult public func load(htmlString: String, baseURL: URL) -> NavigationID? {
-        self.backingWebView.loadHTMLString(htmlString, baseURL: baseURL).map(NavigationID.init(_:))
+    @discardableResult
+    public func load(htmlString: String, baseURL: URL) -> NavigationID? {
+        backingWebView.loadHTMLString(htmlString, baseURL: baseURL).map(NavigationID.init(_:))
+    }
+
+    private func createObservation<Value, BackingValue>(for keyPath: KeyPath<WebPage_v0, Value>, backedBy backingKeyPath: KeyPath<WKWebView, BackingValue>) -> NSKeyValueObservation {
+        return backingWebView.observe(backingKeyPath, options: [.prior, .old, .new]) { [_$observationRegistrar, unowned self] _, change in
+            if change.isPrior {
+                _$observationRegistrar.willSet(self, keyPath: keyPath)
+            } else {
+                _$observationRegistrar.didSet(self, keyPath: keyPath)
+            }
+        }
+    }
+}
+
+extension WebPage_v0 {
+    private struct KeyValueObservations: ~Copyable {
+        var contents: Set<NSKeyValueObservation> = []
+
+        deinit {
+            for observation in contents {
+                observation.invalidate()
+            }
+        }
     }
 }
 

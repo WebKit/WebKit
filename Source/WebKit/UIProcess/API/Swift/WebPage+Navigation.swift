@@ -21,7 +21,7 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-#if ENABLE_SWIFTUI
+#if ENABLE_SWIFTUI && compiler(>=6.0)
 
 import Foundation
 import SwiftUI
@@ -35,7 +35,7 @@ extension WebPage_v0 {
         }
     }
 
-    @_spi(Internal)
+    @_spi(Private)
     public struct NavigationEvent: Sendable {
         public enum Kind: Sendable {
             case startedProvisionalNavigation
@@ -62,7 +62,7 @@ extension WebPage_v0 {
         }
     }
 
-    @_spi(Internal)
+    @_spi(Private)
     public struct Navigations: AsyncSequence, Sendable {
         public typealias AsyncIterator = Iterator
         
@@ -83,7 +83,7 @@ extension WebPage_v0 {
 }
 
 extension WebPage_v0.Navigations {
-    @_spi(Internal)
+    @_spi(Private)
     public struct Iterator: AsyncIteratorProtocol {
         public typealias Element = WebPage_v0.NavigationEvent
 
