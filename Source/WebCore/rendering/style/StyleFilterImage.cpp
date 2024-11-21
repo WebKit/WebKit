@@ -169,4 +169,16 @@ void StyleFilterImage::imageChanged(CachedImage*, const IntRect*)
     }
 }
 
+void StyleFilterImage::didAddClient(RenderElement& renderer)
+{
+    if (m_image)
+        m_image->addClient(renderer);
+}
+
+void StyleFilterImage::didRemoveClient(RenderElement& renderer)
+{
+    if (m_image)
+        m_image->removeClient(renderer);
+}
+
 } // namespace WebCore

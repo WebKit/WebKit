@@ -61,8 +61,8 @@ private:
     RefPtr<Image> image(const RenderElement*, const FloatSize&, bool isForFirstLine) const final;
     bool knownToBeOpaque(const RenderElement&) const final;
     FloatSize fixedSize(const RenderElement&) const final;
-    void didAddClient(RenderElement&) final { }
-    void didRemoveClient(RenderElement&) final { }
+    void didAddClient(RenderElement&) final;
+    void didRemoveClient(RenderElement&) final;
 
     // CachedImageClient.
     void imageChanged(CachedImage*, const IntRect* = nullptr) final;
