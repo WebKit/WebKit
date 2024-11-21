@@ -28,6 +28,8 @@
 #if ENABLE(UNIFIED_PDF)
 
 #import "CGImagePixelReader.h"
+#import "IOSMouseEventTestHarness.h"
+#import "MouseSupportUIDelegate.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -248,6 +250,28 @@ UNIFIED_PDF_TEST(WebProcessShouldNotCrashWithUISideCompositingDisabled)
     });
     EXPECT_FALSE([delegate webProcessCrashed]);
 }
+
+#if HAVE(UIKIT_WITH_MOUSE_SUPPORT)
+
+UNIFIED_PDF_TEST(MouseDidMoveOverPDF)
+{
+    RetainPtr webView = adoptNS([[TestWKWebView alloc] initWithFrame:NSMakeRect(0, 0, 800, 600) configuration:configurationForWebViewTestingUnifiedPDF().get()]);
+    RetainPtr delegate = adoptNS([MouseSupportUIDelegate new]);
+
+    __block bool done = false;
+    [delegate setMouseDidMoveOverElementHandler:^(_WKHitTestResult *) {
+        done = true;
+    }];
+
+    RetainPtr request = [NSURLRequest requestWithURL:[NSBundle.test_resourcesBundle URLForResource:@"test" withExtension:@"pdf"]];
+    [webView synchronouslyLoadRequest:request.get()];
+    [webView setUIDelegate:delegate.get()];
+
+    TestWebKitAPI::MouseEventTestHarness { webView.get() }.mouseMove(50, 50);
+    TestWebKitAPI::Util::run(&done);
+}
+
+#endif
 
 } // namespace TestWebKitAPI
 

@@ -29,6 +29,7 @@
 
 #import "IOSMouseEventTestHarness.h"
 #import "InstanceMethodSwizzler.h"
+#import "MouseSupportUIDelegate.h"
 #import "PlatformUtilities.h"
 #import "Test.h"
 #import "TestNavigationDelegate.h"
@@ -55,26 +56,6 @@
 @end
 
 #endif
-
-@interface MouseSupportUIDelegate : NSObject <WKUIDelegatePrivate>
-@end
-
-@implementation MouseSupportUIDelegate {
-    BlockPtr<void(_WKHitTestResult *)> _mouseDidMoveOverElementHandler;
-}
-
-- (void)_webView:(WKWebView *)webview mouseDidMoveOverElement:(_WKHitTestResult *)hitTestResult withFlags:(UIKeyModifierFlags)flags userInfo:(id <NSSecureCoding>)userInfo
-{
-    if (_mouseDidMoveOverElementHandler)
-        _mouseDidMoveOverElementHandler(hitTestResult);
-}
-
-- (void)setMouseDidMoveOverElementHandler:(void(^)(_WKHitTestResult *))handler
-{
-    _mouseDidMoveOverElementHandler = handler;
-}
-
-@end
 
 #if HAVE(UI_POINTER_INTERACTION)
 
