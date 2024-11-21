@@ -463,7 +463,7 @@ static bool mediaSessionMayBeConfusedWithMainContent(const MediaElementSessionIn
 
 static bool defaultVolumeLocked()
 {
-#if PLATFORM(IOS) || PLATFORM(VISION)
+#if PLATFORM(IOS)
     return true;
 #else
     return false;
