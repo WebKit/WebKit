@@ -1939,3 +1939,4 @@ webkit.org/b/283210 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavai
 
 # webkit.org/b/283445 REGRESSION(286802@main?): [macOS Debug wk2] ASSERTION FAILED: !m_messageReceiverMapCount in webrtc/vp8-then-h264.html
 [ Debug ] webrtc/vp8-then-h264.html [ Skip ]
+[ Debug ] webrtc/vp8-then-h264-gpu-process-crash.html [ Skip ]
