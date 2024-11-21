@@ -258,8 +258,11 @@ RetainPtr<id> CoreIPCNSURLRequest::toID() const
         for (auto& headerPair : *m_data.headerFields) {
             WTF::switchOn(headerPair.second,
                 [&] (const String& s) {
-                    if (!s.isNull() && !headerPair.first.isNull())
-                        [headerFields setObject:(NSString *)s forKey:(NSString *)headerPair.first];
+                    auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:1]);
+                    if (!s.isNull() && !headerPair.first.isNull()) {
+                        [array addObject: s];
+                        [headerFields setObject:array.get() forKey:(NSString *)headerPair.first];
+                    }
                 },
                 [&] (const Vector<String>& vector) {
                     auto array = adoptNS([[NSMutableArray alloc] initWithCapacity:vector.size()]);
