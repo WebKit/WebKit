@@ -8,15 +8,11 @@ Platform/IPC/HandleMessage.h
 Platform/IPC/StreamConnectionWorkQueue.cpp
 UIProcess/AuxiliaryProcessProxy.cpp
 UIProcess/Cocoa/WebProcessPoolCocoa.mm
-UIProcess/Extensions/WebExtension.cpp
-UIProcess/Extensions/WebExtensionMenuItem.cpp
 UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm
 UIProcess/UserContent/WebUserContentControllerProxy.cpp
 UIProcess/UserMediaProcessManager.cpp
 UIProcess/WebPageProxy.cpp
 UIProcess/WebProcessProxy.cpp
-WebProcess/Extensions/Cocoa/WebExtensionContextProxyCocoa.mm
-WebProcess/Extensions/WebExtensionControllerProxy.cpp
 WebProcess/GPU/media/RemoteAudioDestinationProxy.cpp
 WebProcess/GPU/media/RemoteImageDecoderAVF.cpp
 WebProcess/GPU/media/RemoteMediaPlayerManager.cpp
