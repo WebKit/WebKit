@@ -61,7 +61,7 @@ if (self.testRunner) {
 
     // window.opener is a configurable property, so store it before we run anything.
     const orig_opener = window.opener;
-    const isRunInCrossOriginFrame = new URLSearchParams(window.location.search).has("runInCrossOriginFrame", "true");
+    const isRunInCrossOriginFrame = window.location.startsWith("http://127.0.0.1:8000/root/");
 
     /*  Using a callback function, test results will be added to the page in a
     *   manner that allows dumpAsText to produce readable test results

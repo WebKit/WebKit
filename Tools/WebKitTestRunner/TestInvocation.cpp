@@ -150,26 +150,14 @@ WKRetainPtr<WKMutableDictionaryRef> TestInvocation::createTestSettingsDictionary
     return beginTestMessageBody;
 }
 
-static String addQueryParameter(const String& urlString, ASCIILiteral parameter)
-{
-    auto index = urlString.find('?');
-    if (index != notFound)
-        return makeString(urlString.left(index + 1), parameter, '&', urlString.substring(index + 1));
-    index = urlString.find('#');
-    if (index == notFound)
-        index = urlString.length();
-    return makeString(urlString.left(index), '?', parameter, urlString.substring(index));
-}
-
 void TestInvocation::loadTestInCrossOriginIframe()
 {
     WKRetainPtr<WKURLRef> baseURL = adoptWK(WKURLCreateWithUTF8CString("http://localhost:8000"));
-    auto url = addQueryParameter(m_urlString, "runInCrossOriginFrame=true"_s);
     WKRetainPtr<WKStringRef> htmlString = toWK(makeString(
         "<script>"
         "    testRunner.dumpChildFramesAsText()"
         "</script>"
-        "<iframe src=\""_s, url.utf8().span(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"_s));
+        "<iframe src=\""_s, m_urlString.utf8().span(), "\" style=\"position:absolute; top:0; left:0; width:100%; height:100%; border:0\">"_s));
     WKPageLoadHTMLString(TestController::singleton().mainWebView()->page(), htmlString.get(), baseURL.get());
 }
 
