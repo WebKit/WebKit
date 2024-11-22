@@ -33,13 +33,10 @@
 #include "RemoteRemoteCommandListenerMessages.h"
 #include "RemoteRemoteCommandListenerProxyMessages.h"
 #include "WebProcess.h"
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebKit {
 
 using namespace WebCore;
-
-WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteRemoteCommandListener);
 
 Ref<RemoteRemoteCommandListener> RemoteRemoteCommandListener::create(RemoteCommandListenerClient& client)
 {
