@@ -65,11 +65,8 @@ struct ToPosition {
 
     bool operator==(const ToPosition&) const = default;
 };
-template<size_t I> const auto& get(const ToPosition& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
+DEFINE_CSS_TYPE_WRAPPER(ToPosition, offset);
+
 template<> struct Serialize<ToPosition> { void operator()(StringBuilder&, const ToPosition&); };
 
 // <by-coordinate-pair> = by <coordinate-pair>
@@ -80,11 +77,8 @@ struct ByCoordinatePair {
 
     bool operator==(const ByCoordinatePair&) const = default;
 };
-template<size_t I> const auto& get(const ByCoordinatePair& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
+DEFINE_CSS_TYPE_WRAPPER(ByCoordinatePair, offset);
+
 template<> struct Serialize<ByCoordinatePair> { void operator()(StringBuilder&, const ByCoordinatePair&); };
 
 // <relative-control-point> = [<coordinate-pair> [from [start | end | origin]]?]
@@ -136,11 +130,8 @@ struct MoveCommand {
 
     bool operator==(const MoveCommand&) const = default;
 };
-template<size_t I> const auto& get(const MoveCommand& value)
-{
-    if constexpr (!I)
-        return value.toBy;
-}
+DEFINE_CSS_TYPE_WRAPPER(MoveCommand, toBy);
+
 template<> struct Serialize<MoveCommand> { void operator()(StringBuilder&, const MoveCommand&); };
 
 // <line-command> = line [to <position>] | [by <coordinate-pair>]
@@ -154,11 +145,8 @@ struct LineCommand {
 
     bool operator==(const LineCommand&) const = default;
 };
-template<size_t I> const auto& get(const LineCommand& value)
-{
-    if constexpr (!I)
-        return value.toBy;
-}
+DEFINE_CSS_TYPE_WRAPPER(LineCommand, toBy);
+
 template<> struct Serialize<LineCommand> { void operator()(StringBuilder&, const LineCommand&); };
 
 // <horizontal-line-command> = hline [ to [ <length-percentage> | left | center | right | x-start | x-end ] | by <length-percentage> ]
@@ -185,21 +173,9 @@ struct HLineCommand {
 
     bool operator==(const HLineCommand&) const = default;
 };
-template<size_t I> const auto& get(const HLineCommand::To& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
-template<size_t I> const auto& get(const HLineCommand::By& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
-template<size_t I> const auto& get(const HLineCommand& value)
-{
-    if constexpr (!I)
-        return value.toBy;
-}
+DEFINE_CSS_TYPE_WRAPPER(HLineCommand::By, offset);
+DEFINE_CSS_TYPE_WRAPPER(HLineCommand::To, offset);
+DEFINE_CSS_TYPE_WRAPPER(HLineCommand, toBy);
 
 template<> struct Serialize<HLineCommand::To> { void operator()(StringBuilder&, const HLineCommand::To&); };
 template<> struct Serialize<HLineCommand::By> { void operator()(StringBuilder&, const HLineCommand::By&); };
@@ -228,21 +204,9 @@ struct VLineCommand {
 
     bool operator==(const VLineCommand&) const = default;
 };
-template<size_t I> const auto& get(const VLineCommand::To& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
-template<size_t I> const auto& get(const VLineCommand::By& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
-template<size_t I> const auto& get(const VLineCommand& value)
-{
-    if constexpr (!I)
-        return value.toBy;
-}
+DEFINE_CSS_TYPE_WRAPPER(VLineCommand::By, offset);
+DEFINE_CSS_TYPE_WRAPPER(VLineCommand::To, offset);
+DEFINE_CSS_TYPE_WRAPPER(VLineCommand, toBy);
 
 template<> struct Serialize<VLineCommand::To> { void operator()(StringBuilder&, const VLineCommand::To&); };
 template<> struct Serialize<VLineCommand::By> { void operator()(StringBuilder&, const VLineCommand::By&); };
@@ -294,11 +258,8 @@ template<size_t I> const auto& get(const CurveCommand::By& value)
     if constexpr (I == 2)
         return value.controlPoint2;
 }
-template<size_t I> const auto& get(const CurveCommand& value)
-{
-    if constexpr (!I)
-        return value.toBy;
-}
+DEFINE_CSS_TYPE_WRAPPER(CurveCommand, toBy);
+
 template<> struct Serialize<CurveCommand::To> { void operator()(StringBuilder&, const CurveCommand::To&); };
 template<> struct Serialize<CurveCommand::By> { void operator()(StringBuilder&, const CurveCommand::By&); };
 template<> struct Serialize<CurveCommand> { void operator()(StringBuilder&, const CurveCommand&); };
@@ -343,11 +304,8 @@ template<size_t I> const auto& get(const SmoothCommand::By& value)
     if constexpr (I == 1)
         return value.controlPoint;
 }
-template<size_t I> const auto& get(const SmoothCommand& value)
-{
-    if constexpr (!I)
-        return value.toBy;
-}
+DEFINE_CSS_TYPE_WRAPPER(SmoothCommand, toBy);
+
 template<> struct Serialize<SmoothCommand::To> { void operator()(StringBuilder&, const SmoothCommand::To&); };
 template<> struct Serialize<SmoothCommand::By> { void operator()(StringBuilder&, const SmoothCommand::By&); };
 template<> struct Serialize<SmoothCommand> { void operator()(StringBuilder&, const SmoothCommand&); };
@@ -422,23 +380,11 @@ template<> struct Serialize<Shape> { void operator()(StringBuilder&, const Shape
 } // namespace CSS
 } // namespace WebCore
 
-CSS_TUPLE_LIKE_CONFORMANCE(ToPosition, 1)
-CSS_TUPLE_LIKE_CONFORMANCE(ByCoordinatePair, 1)
 CSS_TUPLE_LIKE_CONFORMANCE(RelativeControlPoint, 2)
 CSS_TUPLE_LIKE_CONFORMANCE(AbsoluteControlPoint, 2)
-CSS_TUPLE_LIKE_CONFORMANCE(MoveCommand, 1)
-CSS_TUPLE_LIKE_CONFORMANCE(LineCommand, 1)
-CSS_TUPLE_LIKE_CONFORMANCE(HLineCommand::To, 1)
-CSS_TUPLE_LIKE_CONFORMANCE(HLineCommand::By, 1)
-CSS_TUPLE_LIKE_CONFORMANCE(HLineCommand, 1)
-CSS_TUPLE_LIKE_CONFORMANCE(VLineCommand::To, 1)
-CSS_TUPLE_LIKE_CONFORMANCE(VLineCommand::By, 1)
-CSS_TUPLE_LIKE_CONFORMANCE(VLineCommand, 1)
 CSS_TUPLE_LIKE_CONFORMANCE(CurveCommand::To, 3)
 CSS_TUPLE_LIKE_CONFORMANCE(CurveCommand::By, 3)
-CSS_TUPLE_LIKE_CONFORMANCE(CurveCommand, 1)
 CSS_TUPLE_LIKE_CONFORMANCE(SmoothCommand::To, 2)
 CSS_TUPLE_LIKE_CONFORMANCE(SmoothCommand::By, 2)
-CSS_TUPLE_LIKE_CONFORMANCE(SmoothCommand, 1)
 CSS_TUPLE_LIKE_CONFORMANCE(ArcCommand, 5)
 CSS_TUPLE_LIKE_CONFORMANCE(Shape, 3)

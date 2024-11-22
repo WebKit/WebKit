@@ -34,11 +34,6 @@
 namespace WebCore {
 namespace Style {
 
-auto ToCSS<TwoComponentPositionHorizontal>::operator()(const TwoComponentPositionHorizontal& value, const RenderStyle& style) -> CSS::TwoComponentPositionHorizontal
-{
-    return { .offset = toCSS(value.offset, style) };
-}
-
 auto ToStyle<CSS::TwoComponentPositionHorizontal>::operator()(const CSS::TwoComponentPositionHorizontal& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> TwoComponentPositionHorizontal
 {
     return WTF::switchOn(value.offset,
@@ -55,11 +50,6 @@ auto ToStyle<CSS::TwoComponentPositionHorizontal>::operator()(const CSS::TwoComp
             return TwoComponentPositionHorizontal { .offset = toStyle(value, state, symbolTable) };
         }
     );
-}
-
-auto ToCSS<TwoComponentPositionVertical>::operator()(const TwoComponentPositionVertical& value, const RenderStyle& style) -> CSS::TwoComponentPositionVertical
-{
-    return { .offset = toCSS(value.offset, style) };
 }
 
 auto ToStyle<CSS::TwoComponentPositionVertical>::operator()(const CSS::TwoComponentPositionVertical& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> TwoComponentPositionVertical

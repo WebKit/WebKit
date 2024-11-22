@@ -948,6 +948,23 @@ using LengthPercentagePointNonnegative = Point<LengthPercentageNonnegative>;
 using LengthPercentageSizeAll = Size<LengthPercentageAll>;
 using LengthPercentageSizeNonnegative = Size<LengthPercentageNonnegative>;
 
+// MARK: CSS type -> Style type mapping
+
+template<auto R> struct ToStyleMapping<CSS::Number<R>>           { using type = Number<R>; };
+template<auto R> struct ToStyleMapping<CSS::Percentage<R>>       { using type = Percentage<R>; };
+template<auto R> struct ToStyleMapping<CSS::Angle<R>>            { using type = Angle<R>; };
+template<auto R> struct ToStyleMapping<CSS::Length<R>>           { using type = Length<R>; };
+template<auto R> struct ToStyleMapping<CSS::Time<R>>             { using type = Time<R>; };
+template<auto R> struct ToStyleMapping<CSS::Frequency<R>>        { using type = Frequency<R>; };
+template<auto R> struct ToStyleMapping<CSS::Resolution<R>>       { using type = Resolution<R>; };
+template<auto R> struct ToStyleMapping<CSS::Flex<R>>             { using type = Flex<R>; };
+template<auto R> struct ToStyleMapping<CSS::AnglePercentage<R>>  { using type = AnglePercentage<R>; };
+template<auto R> struct ToStyleMapping<CSS::LengthPercentage<R>> { using type = LengthPercentage<R>; };
+
+// MARK: Style type mapping -> CSS type mappings
+
+template<StyleNumeric T> struct ToCSSMapping<T>                  { using type = typename T::CSS; };
+
 } // namespace Style
 
 namespace CSS {
@@ -957,26 +974,11 @@ namespace TypeTransform {
 
 namespace Type {
 
-// MARK: CSS type -> Style type mapping (Style type -> CSS type directly available via typename StyleType::CSS)
-
-template<typename> struct CSSToStyleMapping;
-template<auto R> struct CSSToStyleMapping<Number<R>> { using Style = Style::Number<R>; };
-template<auto R> struct CSSToStyleMapping<Percentage<R>> { using Style = Style::Percentage<R>; };
-template<auto R> struct CSSToStyleMapping<Angle<R>> { using Style = Style::Angle<R>; };
-template<auto R> struct CSSToStyleMapping<Length<R>> { using Style = Style::Length<R>; };
-template<auto R> struct CSSToStyleMapping<Time<R>> { using Style = Style::Time<R>; };
-template<auto R> struct CSSToStyleMapping<Frequency<R>> { using Style = Style::Frequency<R>; };
-template<auto R> struct CSSToStyleMapping<Resolution<R>> { using Style = Style::Resolution<R>; };
-template<auto R> struct CSSToStyleMapping<Flex<R>> { using Style = Style::Flex<R>; };
-template<auto R> struct CSSToStyleMapping<AnglePercentage<R>> { using Style = Style::AnglePercentage<R>; };
-template<auto R> struct CSSToStyleMapping<LengthPercentage<R>> { using Style = Style::LengthPercentage<R>; };
-template<> struct CSSToStyleMapping<None> { using Style = Style::None; };
-
 // MARK: Transform CSS type -> Style type.
 
 // Transform `css1`  -> `style1`
 template<typename T> struct CSSToStyleLazy {
-    using type = typename CSSToStyleMapping<T>::Style;
+    using type = typename Style::ToStyleMapping<T>::type;
 };
 template<typename T> using CSSToStyle = typename CSSToStyleLazy<T>::type;
 
@@ -984,7 +986,7 @@ template<typename T> using CSSToStyle = typename CSSToStyleLazy<T>::type;
 
 // Transform `raw1`  -> `style1`
 template<typename T> struct RawToStyleLazy {
-    using type = typename CSSToStyleMapping<typename RawToCSSMapping<T>::CSS>::Style;
+    using type = typename Style::ToStyleMapping<typename RawToCSSMapping<T>::CSS>::type;
 };
 template<typename T> using RawToStyle = typename RawToStyleLazy<T>::type;
 

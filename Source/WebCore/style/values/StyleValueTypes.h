@@ -52,16 +52,27 @@ template<class> inline constexpr bool TreatAsNonConverting = false;
 // NOTE: This gets automatically specialized when using the STYLE_TUPLE_LIKE_CONFORMANCE macro.
 template<class> inline constexpr bool TreatAsTupleLike = false;
 
+// Types can specialize this and set the value to true to be treated as a "type wrapper"
+// for Style value type algorithms. "Type wrappers" must be simple structs with exactly one
+// member variable accessible via `get<0>(...)`.
+// NOTE: This gets automatically specialized and the get function generated when using
+// the DEFINE_STYLE_TYPE_WRAPPER macro.
+template<class> inline constexpr bool TreatAsTypeWrapper = false;
+
+#define DEFINE_STYLE_TYPE_WRAPPER(t, name) \
+    template<> inline constexpr bool TreatAsTypeWrapper<t> = true; \
+    template<size_t> const auto& get(const t& value) { return value.name; }
+
 // Types that are treated as "tuple-like" can have their conversion operations defined
 // automatically by just defining their type mapping.
-template<typename> struct CSSToStyleMapping;
-template<typename> struct StyleToCSSMapping;
+template<typename> struct ToStyleMapping;
+template<typename> struct ToCSSMapping;
 
 // Macro to define two-way mapping between a CSS and Style type. This is only needed
 // for "tuple-like" types, in lieu of explicit ToCSS/ToStyle specializations.
 #define DEFINE_CSS_STYLE_MAPPING(css, style) \
-    template<> struct CSSToStyleMapping<css> { using type = style; }; \
-    template<> struct StyleToCSSMapping<style> { using type = css; }; \
+    template<> struct ToStyleMapping<css> { using type = style; }; \
+    template<> struct ToCSSMapping<style> { using type = css; }; \
 
 // All non-converting and non-tuple-like conforming types must implement the following for conversions:
 //
@@ -376,7 +387,15 @@ template<typename StyleType> requires (TreatAsNonConverting<StyleType>) struct T
 template<typename StyleType> requires (TreatAsTupleLike<StyleType>) struct ToCSS<StyleType> {
     decltype(auto) operator()(const StyleType& value, const RenderStyle& style)
     {
-        return toCSSOnTupleLike<typename StyleToCSSMapping<StyleType>::type>(value, style);
+        return toCSSOnTupleLike<typename ToCSSMapping<StyleType>::type>(value, style);
+    }
+};
+
+// Constrained for `TreatAsTypeWrapper`.
+template<typename StyleType> requires (TreatAsTypeWrapper<StyleType>) struct ToCSS<StyleType> {
+    decltype(auto) operator()(const StyleType& value, const RenderStyle& style)
+    {
+        return typename ToCSSMapping<StyleType>::type { toCSS(get<0>(value), style) };
     }
 };
 
@@ -554,15 +573,31 @@ template<typename CSSType> requires (TreatAsNonConverting<CSSType>) struct ToSty
 template<typename CSSType> requires (CSS::TreatAsTupleLike<CSSType>) struct ToStyle<CSSType> {
     decltype(auto) operator()(const CSSType& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
     {
-        return toStyleOnTupleLike<typename CSSToStyleMapping<CSSType>::type>(value, conversionData, symbolTable);
+        return toStyleOnTupleLike<typename ToStyleMapping<CSSType>::type>(value, conversionData, symbolTable);
     }
     decltype(auto) operator()(const CSSType& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
     {
-        return toStyleOnTupleLike<typename CSSToStyleMapping<CSSType>::type>(value, builderState, symbolTable);
+        return toStyleOnTupleLike<typename ToStyleMapping<CSSType>::type>(value, builderState, symbolTable);
     }
     decltype(auto) operator()(const CSSType& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
     {
-        return toStyleNoConversionDataRequiredOnTupleLike<typename CSSToStyleMapping<CSSType>::type>(value, symbolTable);
+        return toStyleNoConversionDataRequiredOnTupleLike<typename ToStyleMapping<CSSType>::type>(value, symbolTable);
+    }
+};
+
+// Constrained for `TreatAsTypeWrapper`.
+template<typename CSSType> requires (CSS::TreatAsTypeWrapper<CSSType>) struct ToStyle<CSSType> {
+    decltype(auto) operator()(const CSSType& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable)
+    {
+        return typename ToStyleMapping<CSSType>::type { toStyle(get<0>(value), conversionData, symbolTable) };
+    }
+    decltype(auto) operator()(const CSSType& value, const BuilderState& builderState, const CSSCalcSymbolTable& symbolTable)
+    {
+        return typename ToStyleMapping<CSSType>::type { toStyle(get<0>(value), builderState, symbolTable) };
+    }
+    decltype(auto) operator()(const CSSType& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable)
+    {
+        return typename ToStyleMapping<CSSType>::type { toStyleNoConversionDataRequired(get<0>(value), symbolTable) };
     }
 };
 
@@ -806,6 +841,18 @@ template<typename StyleType> requires (TreatAsTupleLike<StyleType>) struct Blend
     auto blend(const StyleType& a, const StyleType& b, const BlendingContext& context) -> StyleType
     {
         return blendOnTupleLike(a, b, context);
+    }
+};
+
+// Constrained for `TreatAsTypeWrapper`.
+template<typename StyleType> requires (TreatAsTypeWrapper<StyleType>) struct Blending<StyleType> {
+    constexpr auto canBlend(const StyleType& a, const StyleType& b) -> bool
+    {
+        return WebCore::Style::canBlend(get<0>(a), get<0>(b));
+    }
+    auto blend(const StyleType& a, const StyleType& b, const BlendingContext& context) -> StyleType
+    {
+        return { WebCore::Style::blend(get<0>(a), get<0>(b), context) };
     }
 };
 

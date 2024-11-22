@@ -110,18 +110,6 @@ template<> struct StyleImageIsUncacheable<GradientColorInterpolationMethod> {
     constexpr bool operator()(const auto&) { return false; }
 };
 
-template<> struct StyleImageIsUncacheable<TwoComponentPositionHorizontal> {
-    bool operator()(const auto& value) { return styleImageIsUncacheable(value.offset); }
-};
-
-template<> struct StyleImageIsUncacheable<TwoComponentPositionVertical> {
-    bool operator()(const auto& value) { return styleImageIsUncacheable(value.offset); }
-};
-
-template<> struct StyleImageIsUncacheable<Position> {
-    bool operator()(const auto& value) { return styleImageIsUncacheable(value.value); }
-};
-
 template<typename CSSType> struct StyleImageIsUncacheable<GradientColorStop<CSSType>> {
     bool operator()(const auto& value)
     {
@@ -135,6 +123,10 @@ template<typename CSSType> struct StyleImageIsUncacheable<GradientColorStop<CSST
 
 template<typename CSSType> requires (TreatAsTupleLike<CSSType>) struct StyleImageIsUncacheable<CSSType> {
     bool operator()(const auto& value) { return styleImageIsUncacheableOnTupleLike(value); }
+};
+
+template<typename CSSType> requires (TreatAsTypeWrapper<CSSType>) struct StyleImageIsUncacheable<CSSType> {
+    bool operator()(const auto& value) { return styleImageIsUncacheable(get<0>(value)); }
 };
 
 } // namespace (anonymous)

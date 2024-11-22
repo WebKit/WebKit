@@ -65,11 +65,7 @@ struct ToPosition {
 
     bool operator==(const ToPosition&) const = default;
 };
-template<size_t I> const auto& get(const ToPosition& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
+DEFINE_STYLE_TYPE_WRAPPER(ToPosition, offset);
 DEFINE_CSS_STYLE_MAPPING(CSS::ToPosition, ToPosition)
 
 // <by-coordinate-pair> = by <coordinate-pair>
@@ -80,11 +76,7 @@ struct ByCoordinatePair {
 
     bool operator==(const ByCoordinatePair&) const = default;
 };
-template<size_t I> const auto& get(const ByCoordinatePair& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
+DEFINE_STYLE_TYPE_WRAPPER(ByCoordinatePair, offset);
 DEFINE_CSS_STYLE_MAPPING(CSS::ByCoordinatePair, ByCoordinatePair)
 
 // <relative-control-point> = [<coordinate-pair> [from [start | end | origin]]?]
@@ -150,12 +142,7 @@ struct MoveCommand {
 
     bool operator==(const MoveCommand&) const = default;
 };
-template<size_t I> const auto& get(const MoveCommand& value)
-{
-    if constexpr (!I)
-        return value.toBy;
-}
-
+DEFINE_STYLE_TYPE_WRAPPER(MoveCommand, toBy);
 DEFINE_CSS_STYLE_MAPPING(CSS::MoveCommand, MoveCommand)
 
 // MARK: - Line Command
@@ -171,12 +158,7 @@ struct LineCommand {
 
     bool operator==(const LineCommand&) const = default;
 };
-template<size_t I> const auto& get(const LineCommand& value)
-{
-    if constexpr (!I)
-        return value.toBy;
-}
-
+DEFINE_STYLE_TYPE_WRAPPER(LineCommand, toBy);
 DEFINE_CSS_STYLE_MAPPING(CSS::LineCommand, LineCommand)
 
 // MARK: - HLine Command
@@ -204,22 +186,9 @@ struct HLineCommand {
 
     bool operator==(const HLineCommand&) const = default;
 };
-template<size_t I> const auto& get(const HLineCommand::To& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
-template<size_t I> const auto& get(const HLineCommand::By& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
-template<size_t I> const auto& get(const HLineCommand& value)
-{
-    if constexpr (!I)
-        return value.toBy;
-}
-
+DEFINE_CSS_TYPE_WRAPPER(HLineCommand::By, offset);
+DEFINE_CSS_TYPE_WRAPPER(HLineCommand::To, offset);
+DEFINE_CSS_TYPE_WRAPPER(HLineCommand, toBy);
 DEFINE_CSS_STYLE_MAPPING(CSS::HLineCommand::To, HLineCommand::To)
 DEFINE_CSS_STYLE_MAPPING(CSS::HLineCommand::By, HLineCommand::By)
 DEFINE_CSS_STYLE_MAPPING(CSS::HLineCommand, HLineCommand)
@@ -249,22 +218,9 @@ struct VLineCommand {
 
     bool operator==(const VLineCommand&) const = default;
 };
-template<size_t I> const auto& get(const VLineCommand::To& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
-template<size_t I> const auto& get(const VLineCommand::By& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
-template<size_t I> const auto& get(const VLineCommand& value)
-{
-    if constexpr (!I)
-        return value.toBy;
-}
-
+DEFINE_CSS_TYPE_WRAPPER(VLineCommand::By, offset);
+DEFINE_CSS_TYPE_WRAPPER(VLineCommand::To, offset);
+DEFINE_CSS_TYPE_WRAPPER(VLineCommand, toBy);
 DEFINE_CSS_STYLE_MAPPING(CSS::VLineCommand::To, VLineCommand::To)
 DEFINE_CSS_STYLE_MAPPING(CSS::VLineCommand::By, VLineCommand::By)
 DEFINE_CSS_STYLE_MAPPING(CSS::VLineCommand, VLineCommand)
@@ -299,11 +255,6 @@ struct CurveCommand {
 
     bool operator==(const CurveCommand&) const = default;
 };
-template<size_t I> const auto& get(const CurveCommand& value)
-{
-    if constexpr (!I)
-        return value.toBy;
-}
 template<size_t I> const auto& get(const CurveCommand::To& value)
 {
     if constexpr (!I)
@@ -322,6 +273,7 @@ template<size_t I> const auto& get(const CurveCommand::By& value)
     if constexpr (I == 2)
         return value.controlPoint2;
 }
+DEFINE_CSS_TYPE_WRAPPER(CurveCommand, toBy);
 
 DEFINE_CSS_STYLE_MAPPING(CSS::CurveCommand, CurveCommand)
 DEFINE_CSS_STYLE_MAPPING(CSS::CurveCommand::To, CurveCommand::To)
@@ -355,11 +307,6 @@ struct SmoothCommand {
 
     bool operator==(const SmoothCommand&) const = default;
 };
-template<size_t I> const auto& get(const SmoothCommand& value)
-{
-    if constexpr (!I)
-        return value.toBy;
-}
 template<size_t I> const auto& get(const SmoothCommand::To& value)
 {
     if constexpr (!I)
@@ -374,6 +321,7 @@ template<size_t I> const auto& get(const SmoothCommand::By& value)
     if constexpr (I == 1)
         return value.controlPoint;
 }
+DEFINE_CSS_TYPE_WRAPPER(SmoothCommand, toBy);
 
 DEFINE_CSS_STYLE_MAPPING(CSS::SmoothCommand, SmoothCommand)
 DEFINE_CSS_STYLE_MAPPING(CSS::SmoothCommand::To, SmoothCommand::To)
@@ -478,23 +426,11 @@ std::optional<Shape> makeShapeFromPath(const Path&);
 } // namespace Style
 } // namespace WebCore
 
-STYLE_TUPLE_LIKE_CONFORMANCE(ToPosition, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(ByCoordinatePair, 1)
 STYLE_TUPLE_LIKE_CONFORMANCE(RelativeControlPoint, 2)
 STYLE_TUPLE_LIKE_CONFORMANCE(AbsoluteControlPoint, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(MoveCommand, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(LineCommand, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(HLineCommand::To, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(HLineCommand::By, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(HLineCommand, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(VLineCommand::To, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(VLineCommand::By, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(VLineCommand, 1)
 STYLE_TUPLE_LIKE_CONFORMANCE(CurveCommand::To, 3)
 STYLE_TUPLE_LIKE_CONFORMANCE(CurveCommand::By, 3)
-STYLE_TUPLE_LIKE_CONFORMANCE(CurveCommand, 1)
 STYLE_TUPLE_LIKE_CONFORMANCE(SmoothCommand::To, 2)
 STYLE_TUPLE_LIKE_CONFORMANCE(SmoothCommand::By, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(SmoothCommand, 1)
 STYLE_TUPLE_LIKE_CONFORMANCE(ArcCommand, 5)
 STYLE_TUPLE_LIKE_CONFORMANCE(Shape, 3)

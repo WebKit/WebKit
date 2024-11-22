@@ -41,22 +41,14 @@ struct TwoComponentPositionHorizontal {
 
     bool operator==(const TwoComponentPositionHorizontal&) const = default;
 };
-template<size_t I> const auto& get(const TwoComponentPositionHorizontal& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
+DEFINE_STYLE_TYPE_WRAPPER(TwoComponentPositionHorizontal, offset);
 
 struct TwoComponentPositionVertical {
     LengthPercentage<> offset;
 
     bool operator==(const TwoComponentPositionVertical&) const = default;
 };
-template<size_t I> const auto& get(const TwoComponentPositionVertical& value)
-{
-    if constexpr (!I)
-        return value.offset;
-}
+DEFINE_STYLE_TYPE_WRAPPER(TwoComponentPositionVertical, offset);
 
 struct Position  {
     Position(TwoComponentPositionHorizontal&& x, TwoComponentPositionVertical&& y)
@@ -94,12 +86,13 @@ template<size_t I> const auto& get(const Position& position)
 
 // MARK: - Conversion
 
-template<> struct ToCSS<TwoComponentPositionHorizontal> { auto operator()(const TwoComponentPositionHorizontal&, const RenderStyle&) -> CSS::TwoComponentPositionHorizontal; };
+// Specialization is needed for ToStyle to implement resolution of keyword value to <length-percentage>.
+template<> struct ToCSSMapping<TwoComponentPositionHorizontal> { using type = CSS::TwoComponentPositionHorizontal; };
 template<> struct ToStyle<CSS::TwoComponentPositionHorizontal> { auto operator()(const CSS::TwoComponentPositionHorizontal&, const BuilderState&, const CSSCalcSymbolTable&) -> TwoComponentPositionHorizontal; };
-
-template<> struct ToCSS<TwoComponentPositionVertical> { auto operator()(const TwoComponentPositionVertical&, const RenderStyle&) -> CSS::TwoComponentPositionVertical; };
+template<> struct ToCSSMapping<TwoComponentPositionVertical> { using type = CSS::TwoComponentPositionVertical; };
 template<> struct ToStyle<CSS::TwoComponentPositionVertical> { auto operator()(const CSS::TwoComponentPositionVertical&, const BuilderState&, const CSSCalcSymbolTable&) -> TwoComponentPositionVertical; };
 
+// Specialization is needed for both ToCSS and ToStyle due to differences in type structure.
 template<> struct ToCSS<Position> { auto operator()(const Position&, const RenderStyle&) -> CSS::Position; };
 template<> struct ToStyle<CSS::Position> { auto operator()(const CSS::Position&, const BuilderState&, const CSSCalcSymbolTable&) -> Position; };
 
@@ -113,5 +106,3 @@ float evaluate(const TwoComponentPositionVertical&, float referenceHeight);
 } // namespace WebCore
 
 STYLE_TUPLE_LIKE_CONFORMANCE(Position, 2)
-STYLE_TUPLE_LIKE_CONFORMANCE(TwoComponentPositionHorizontal, 1)
-STYLE_TUPLE_LIKE_CONFORMANCE(TwoComponentPositionVertical, 1)
