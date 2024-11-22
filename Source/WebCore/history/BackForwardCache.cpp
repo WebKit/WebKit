@@ -529,7 +529,7 @@ bool BackForwardCache::addIfCacheable(HistoryItem& item, Page* page)
         // Make sure we don't fire any JS events in this scope.
         ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-        m_cachedPageMap.add(item.identifier(), makeUniqueRefFromNonNullUniquePtr(WTFMove(cachedPage)));
+        m_cachedPageMap.set(item.identifier(), makeUniqueRefFromNonNullUniquePtr(WTFMove(cachedPage)));
         m_items.add(item.identifier());
         item.notifyChanged();
     }
