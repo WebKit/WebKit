@@ -353,11 +353,13 @@ void WebSWServerToContextConnection::startFetch(ServiceWorkerFetchTask& task)
 
 void WebSWServerToContextConnection::didReceiveFetchTaskMessage(IPC::Connection& connection, IPC::Decoder& decoder)
 {
-    RefPtr fetch = m_ongoingFetches.get(ObjectIdentifier<FetchIdentifierType>(decoder.destinationID())).get();
-    if (!fetch)
-        return;
+    if (ObjectIdentifier<FetchIdentifierType>::isValidIdentifier(decoder.destinationID())) {
+        RefPtr fetch = m_ongoingFetches.get(ObjectIdentifier<FetchIdentifierType>(decoder.destinationID())).get();
+        if (!fetch)
+            return;
 
-    fetch->didReceiveMessage(connection, decoder);
+        fetch->didReceiveMessage(connection, decoder);
+    }
 }
 
 void WebSWServerToContextConnection::registerFetch(ServiceWorkerFetchTask& task)
