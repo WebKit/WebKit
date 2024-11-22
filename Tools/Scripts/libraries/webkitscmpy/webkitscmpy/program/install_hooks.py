@@ -21,14 +21,17 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import pprint
 import re
-import sys
 import shutil
+import sys
+
+from webkitbugspy import radar
+from webkitcorepy import Terminal, Version, run, string_utils
+
+from webkitscmpy import local, log, remote
 
 from .command import Command
-from webkitbugspy import radar
-from webkitcorepy import run, string_utils, Terminal, Version
-from webkitscmpy import log, local, remote
 
 
 class InstallHooks(Command):
@@ -182,6 +185,11 @@ class InstallHooks(Command):
         if early_exit:
             return 1
 
+        # Ensure security_levels has the readable, increasing, order.
+        security_levels = dict(
+            sorted(security_levels.items(), key=lambda x: (x[1], x[0]))
+        )
+
         trailers_to_strip = ['Identifier'] + ([identifier_template.split(':', 1)[0]] if identifier_template else [])
         source_remotes = repository.source_remotes() or ['origin']
         perl = 'perl'
@@ -220,15 +228,16 @@ class InstallHooks(Command):
                 continue
 
             log.info("Configuring and copying hook '{}' for this repository".format(hook))
+            from jinja2 import Template
+
             with open(source_path, 'r') as f:
-                from jinja2 import Template
                 contents = Template(f.read()).render(
                     location=os.path.relpath(source_path, repository.root_path),
                     perl=repr(perl),
                     python=os.path.basename(sys.executable),
                     prefer_radar=bool(radar.Tracker.radarclient()),
-                    default_pre_push_mode="'{}'".format(getattr(args, 'mode', cls.MODES[0])),
-                    security_levels=security_levels,
+                    default_pre_push_mode=repr(str(getattr(args, 'mode', cls.MODES[0]))),
+                    security_levels=pprint.pformat(security_levels, indent=1, width=1, sort_dicts=False),
                     remote_re=cls.REMOTE_RE.pattern,
                     default_branch=repository.default_branch,
                     trailers_to_strip=trailers_to_strip,
