@@ -2873,7 +2873,8 @@ table.file_table {
 
 @media only screen and (max-width: 415px) {
     #titles,
-    #header .links {
+    #header .links,
+    #footer .links {
        text-align: center;
     }
 
