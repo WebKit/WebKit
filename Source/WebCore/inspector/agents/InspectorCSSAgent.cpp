@@ -73,6 +73,7 @@
 #include "StyleScope.h"
 #include "StyleSheetContents.h"
 #include "StyleSheetList.h"
+#include "ViewTransition.h"
 #include <JavaScriptCore/InspectorProtocolObjects.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -489,7 +490,8 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
     // Matched rules.
     auto& styleResolver = element->styleResolver();
     auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, elementPseudoId == PseudoId::None ? std::nullopt : std::optional(Style::PseudoElementIdentifier { elementPseudoId }), Style::Resolver::AllCSSRules);
-    auto matchedCSSRules = buildArrayForMatchedRuleList(matchedRules, styleResolver, *element, elementPseudoId);
+    Ref matchedCSSRules = JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>::create();
+    collectRulesForRuleMatchArray(matchedCSSRules, matchedRules, styleResolver, *element, elementPseudoId);
     RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::PseudoIdMatches>> pseudoElements;
     RefPtr<JSON::ArrayOf<Inspector::Protocol::CSS::InheritedStyleEntry>> inherited;
 
@@ -504,14 +506,39 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
                 if (pseudoId == PseudoId::Backdrop && !element->isInTopLayer())
                     continue;
 
+                bool isNamedViewTransitionPseudo = isNamedViewTransitionPseudoElement(Style::PseudoElementIdentifier { pseudoId });
+                if ((pseudoId == PseudoId::ViewTransition || isNamedViewTransitionPseudo) && (!element->document().activeViewTransition() || element != element->document().documentElement()))
+                    continue;
+
+                // FIXME: Represent Style::PseudoElementIdentifier in the protocol and pass in the identifier directly, instead of PseudoId.
                 if (auto protocolPseudoId = protocolValueForPseudoId(pseudoId)) {
-                    auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, pseudoId, Style::Resolver::AllCSSRules);
-                    if (!matchedRules.isEmpty()) {
+                    auto addMatchesForPseudoId = [&](Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> protocolRuleMatches) {
                         auto matches = Inspector::Protocol::CSS::PseudoIdMatches::create()
                             .setPseudoId(protocolPseudoId.value())
-                            .setMatches(buildArrayForMatchedRuleList(matchedRules, styleResolver, *element, pseudoId))
+                            .setMatches(WTFMove(protocolRuleMatches))
                             .release();
                         pseudoElements->addItem(WTFMove(matches));
+                    };
+
+                    Ref protocolRuleMatches = JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>::create();
+                    if (isNamedViewTransitionPseudo) {
+                        RefPtr activeViewTransition = element->document().activeViewTransition();
+                        bool isEmpty = true;
+                        for (auto& name : activeViewTransition->namedElements().keys()) {
+                            auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, Style::PseudoElementIdentifier { pseudoId, name }, Style::Resolver::AllCSSRules);
+                            if (!matchedRules.isEmpty()) {
+                                isEmpty = false;
+                                collectRulesForRuleMatchArray(protocolRuleMatches, matchedRules, styleResolver, *element, pseudoId);
+                            }
+                        }
+                        if (!isEmpty)
+                            addMatchesForPseudoId(protocolRuleMatches);
+                    } else {
+                        auto matchedRules = styleResolver.pseudoStyleRulesForElement(element, pseudoId, Style::Resolver::AllCSSRules);
+                        if (!matchedRules.isEmpty()) {
+                            collectRulesForRuleMatchArray(protocolRuleMatches, matchedRules, styleResolver, *element, pseudoId);
+                            addMatchesForPseudoId(protocolRuleMatches);
+                        }
                     }
                 }
             }
@@ -522,8 +549,12 @@ Inspector::Protocol::ErrorStringOr<std::tuple<RefPtr<JSON::ArrayOf<Inspector::Pr
             for (auto& ancestor : ancestorsOfType<Element>(*element)) {
                 auto& parentStyleResolver = ancestor.styleResolver();
                 auto parentMatchedRules = parentStyleResolver.styleRulesForElement(&ancestor, Style::Resolver::AllCSSRules);
+
+                Ref protocolRuleMatches = JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>::create();
+                collectRulesForRuleMatchArray(protocolRuleMatches, parentMatchedRules, styleResolver, ancestor, PseudoId::None);
+
                 auto entry = Inspector::Protocol::CSS::InheritedStyleEntry::create()
-                    .setMatchedCSSRules(buildArrayForMatchedRuleList(parentMatchedRules, styleResolver, ancestor, PseudoId::None))
+                    .setMatchedCSSRules(WTFMove(protocolRuleMatches))
                     .release();
                 if (RefPtr styledElement = dynamicDowncast<StyledElement>(ancestor); styledElement && styledElement->cssomStyle().length()) {
                     auto& styleSheet = asInspectorStyleSheet(*styledElement);
@@ -1294,10 +1325,8 @@ RefPtr<Inspector::Protocol::CSS::CSSRule> InspectorCSSAgent::buildObjectForRule(
     return inspectorStyleSheet ? inspectorStyleSheet->buildObjectForRule(rule) : nullptr;
 }
 
-Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> InspectorCSSAgent::buildArrayForMatchedRuleList(const Vector<RefPtr<const StyleRule>>& matchedRules, Style::Resolver& styleResolver, Element& element, PseudoId pseudoId)
+void InspectorCSSAgent::collectRulesForRuleMatchArray(JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>& array, const Vector<RefPtr<const StyleRule>>& matchedRules, Style::Resolver& styleResolver, Element& element, PseudoId pseudoId)
 {
-    auto result = JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>::create();
-
     SelectorChecker::CheckingContext context(SelectorChecker::Mode::CollectingRules);
     context.pseudoId = pseudoId != PseudoId::None ? pseudoId : element.pseudoId();
     SelectorChecker selectorChecker(element.document());
@@ -1321,10 +1350,8 @@ Ref<JSON::ArrayOf<Inspector::Protocol::CSS::RuleMatch>> InspectorCSSAgent::build
             .setRule(ruleObject.releaseNonNull())
             .setMatchingSelectors(WTFMove(matchingSelectors))
             .release();
-        result->addItem(WTFMove(match));
+        array.addItem(WTFMove(match));
     }
-
-    return result;
 }
 
 RefPtr<Inspector::Protocol::CSS::CSSStyle> InspectorCSSAgent::buildObjectForAttributesStyle(StyledElement& element)
