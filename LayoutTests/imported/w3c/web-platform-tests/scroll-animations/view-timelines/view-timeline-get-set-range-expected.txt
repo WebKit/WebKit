@@ -1,3 +1,3 @@
 
-FAIL Getting and setting the animation range assert_equals: Initial value for rangeStart expected (string) "normal" but got (object) object "[object Object]"
+FAIL Getting and setting the animation range assert_equals: Opacity with range set to [normal, normal] expected "0.5" but got "1"
 

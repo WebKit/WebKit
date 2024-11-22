@@ -61,6 +61,8 @@ bool SingleTimelineRange::isOffsetValue(const CSSPrimitiveValue& value)
 
 TimelineRangeValue SingleTimelineRange::serialize() const
 {
+    if (name == Name::Normal)
+        return CSSPrimitiveValue::create(valueID(name))->stringValue();
     return TimelineRangeOffset { CSSPrimitiveValue::create(valueID(name))->stringValue(), offset.isPercentOrCalculated() ? CSSNumericFactory::percent(offset.percent()) : CSSNumericFactory::px(offset.value()) };
 }
 
