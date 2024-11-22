@@ -1940,3 +1940,6 @@ webkit.org/b/283210 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavai
 # webkit.org/b/283445 REGRESSION(286802@main?): [macOS Debug wk2] ASSERTION FAILED: !m_messageReceiverMapCount in webrtc/vp8-then-h264.html
 [ Debug ] webrtc/vp8-then-h264.html [ Skip ]
 [ Debug ] webrtc/vp8-then-h264-gpu-process-crash.html [ Skip ]
+
+# webkit.org/b/283537 REGRESSION(286884@main?): [macOS Debug] imported/w3c/web-platform-tests/html/semantics/popovers/popover-attribute-basic.html is consistent crash(flaky in EWS)
+[ Debug ] imported/w3c/web-platform-tests/html/semantics/popovers/popover-attribute-basic.html [ Skip ]
