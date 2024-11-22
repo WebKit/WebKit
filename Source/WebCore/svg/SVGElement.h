@@ -46,7 +46,6 @@ class SVGPropertyAnimatorFactory;
 class SVGResourceElementClient;
 class SVGSVGElement;
 class SVGUseElement;
-class Settings;
 class Timer;
 
 class SVGElement : public StyledElement, public SVGPropertyOwner {
@@ -184,7 +183,7 @@ protected:
     SVGElementRareData& ensureSVGRareData();
 
     void reportAttributeParsingError(SVGParsingError, const QualifiedName&, const AtomString&);
-    static CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName&, const Settings&);
+    virtual CSSPropertyID cssPropertyIdForSVGAttributeName(const QualifiedName&) const;
 
     bool hasPresentationalHintsForAttribute(const QualifiedName&) const override;
     void collectPresentationalHintsForAttribute(const QualifiedName&, const AtomString&, MutableStyleProperties&) override;
