@@ -53,6 +53,8 @@ PLATFORM_HEADER_DIR := $(realpath $(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLD
 PLATFORM_HEADER_DEPENDENCIES := $(filter $(PLATFORM_HEADER_DIR)/%,$(realpath $(shell $(call platform_h_compiler_command,-M) | $(PERL) -e "local \$$/; my (\$$target, \$$deps) = split(/:/, <>); print split(/\\\\/, \$$deps);")))
 FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = $(WebCore)/DerivedSources.make $(PLATFORM_HEADER_DEPENDENCIES)
 
+to-pattern = $(join $(basename $1), $(subst .,%,$(suffix $1)))
+
 # --------
 
 JS_BINDING_IDLS := \
@@ -1938,7 +1940,7 @@ CSS_PROPERTY_NAME_FILES = \
     StylePropertyShorthandFunctions.cpp \
     StylePropertyShorthandFunctions.h \
 #
-CSS_PROPERTY_NAME_FILES_PATTERNS = $(subst .,%,$(CSS_PROPERTY_NAME_FILES))
+CSS_PROPERTY_NAME_FILES_PATTERNS = $(call to-pattern, $(CSS_PROPERTY_NAME_FILES))
 
 all : $(CSS_PROPERTY_NAME_FILES)
 $(CSS_PROPERTY_NAME_FILES_PATTERNS) : $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/process-css-properties.py $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
@@ -1949,7 +1951,7 @@ CSS_VALUE_KEYWORD_FILES = \
     CSSValueKeywords.h \
     CSSValueKeywords.cpp \
 #
-CSS_VALUE_KEYWORD_FILES_PATTERNS = $(subst .,%,$(CSS_VALUE_KEYWORD_FILES))
+CSS_VALUE_KEYWORD_FILES_PATTERNS = $(call to-pattern, $(CSS_VALUE_KEYWORD_FILES))
 
 all : $(CSS_VALUE_KEYWORD_FILES)
 $(CSS_VALUE_KEYWORD_FILES_PATTERNS) : $(WEBCORE_CSS_VALUE_KEYWORDS) $(WebCore)/css/process-css-values.py $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
@@ -1971,7 +1973,7 @@ CSS_PSEUDO_SELECTOR_FILES = \
     UserAgentParts.h \
 
 #
-CSS_PSEUDO_SELECTOR_FILES_PATTERNS = $(subst .,%,$(CSS_PSEUDO_SELECTOR_FILES))
+CSS_PSEUDO_SELECTOR_FILES_PATTERNS = $(call to-pattern, $(CSS_PSEUDO_SELECTOR_FILES))
 all : $(CSS_PSEUDO_SELECTOR_FILES)
 $(CSS_PSEUDO_SELECTOR_FILES_PATTERNS) : $(WEBCORE_CSS_PSEUDO_SELECTORS) $(WebCore)/css/process-css-pseudo-selectors.py $(FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES)
 	$(PERL) -pe '' $(WEBCORE_CSS_PSEUDO_SELECTORS) > CSSPseudoSelectors.json
@@ -2024,7 +2026,7 @@ HTTP_HEADER_NAMES_FILES = \
     HTTPHeaderNames.gperf \
     HTTPHeaderNames.h \
 #
-HTTP_HEADER_NAMES_FILES_PATTERNS = $(subst .,%,$(HTTP_HEADER_NAMES_FILES))
+HTTP_HEADER_NAMES_FILES_PATTERNS = $(call to-pattern, $(HTTP_HEADER_NAMES_FILES))
 
 all : $(HTTP_HEADER_NAMES_FILES)
 $(HTTP_HEADER_NAMES_FILES_PATTERNS) : $(WebCore)/platform/network/HTTPHeaderNames.in $(WebCore)/platform/network/create-http-header-name-table
@@ -2119,7 +2121,7 @@ USER_AGENT_STYLE_SHEETS = \
 #
 
 USER_AGENT_STYLE_SHEETS_FILES = UserAgentStyleSheets.h UserAgentStyleSheetsData.cpp
-USER_AGENT_STYLE_SHEETS_FILES_PATTERNS = $(subst .,%,$(USER_AGENT_STYLE_SHEETS_FILES))
+USER_AGENT_STYLE_SHEETS_FILES_PATTERNS = $(call to-pattern, $(USER_AGENT_STYLE_SHEETS_FILES))
 
 all : $(USER_AGENT_STYLE_SHEETS_FILES)
 
@@ -2228,7 +2230,7 @@ USER_AGENT_SCRIPTS_FILES = \
     UserAgentScripts.h \
     UserAgentScriptsData.cpp \
 #
-USER_AGENT_SCRIPTS_FILES_PATTERNS = $(subst .,%,$(USER_AGENT_SCRIPTS_FILES))
+USER_AGENT_SCRIPTS_FILES_PATTERNS = $(call to-pattern, $(USER_AGENT_SCRIPTS_FILES))
 
 all : $(USER_AGENT_SCRIPTS_FILES)
 
@@ -2243,7 +2245,7 @@ PLUG_INS_RESOURCES = $(WebCore)/Resources/plugIns.js
 
 # order matters -- make-css-file-arrays.pl takes the header and then the source file path
 PLUG_INS_RESOURCES_FILES = PlugInsResources.h PlugInsResourcesData.cpp
-PLUG_INS_RESOURCES_FILES_PATTERNS = $(subst .,%,$(PLUG_INS_RESOURCES_FILES))
+PLUG_INS_RESOURCES_FILES_PATTERNS = $(call to-pattern, $(PLUG_INS_RESOURCES_FILES))
 
 all : $(PLUG_INS_RESOURCES_FILES)
 
@@ -2256,7 +2258,7 @@ WEBKIT_FONT_FAMILY_NAME_FILES = \
     WebKitFontFamilyNames.cpp \
     WebKitFontFamilyNames.h \
 #
-WEBKIT_FONT_FAMILY_NAME_FILES_PATTERNS = $(subst .,%,$(WEBKIT_FONT_FAMILY_NAME_FILES))
+WEBKIT_FONT_FAMILY_NAME_FILES_PATTERNS = $(call to-pattern, $(WEBKIT_FONT_FAMILY_NAME_FILES))
 
 all : $(WEBKIT_FONT_FAMILY_NAME_FILES)
 $(WEBKIT_FONT_FAMILY_NAME_FILES_PATTERNS): $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/css/WebKitFontFamilyNames.in
@@ -2273,7 +2275,7 @@ HTML_TAG_FILES = \
     HTMLNames.cpp \
     HTMLNames.h \
 #
-HTML_TAG_FILES_PATTERNS = $(subst .,%,$(HTML_TAG_FILES))
+HTML_TAG_FILES_PATTERNS = $(call to-pattern, $(HTML_TAG_FILES))
 
 all : $(HTML_TAG_FILES)
 
@@ -2281,7 +2283,7 @@ $(HTML_TAG_FILES_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/sc
 	$(PERL) $< --elements $(WebCore)/html/HTMLTagNames.in --attrs $(WebCore)/html/HTMLAttributeNames.in --factory --wrapperFactory
 
 XML_NS_NAMES_FILES = XMLNSNames.cpp XMLNSNames.h
-XML_NS_NAMES_FILES_PATTERNS = $(subst .,%,$(XML_NS_NAMES_FILES))
+XML_NS_NAMES_FILES_PATTERNS = $(call to-pattern, $(XML_NS_NAMES_FILES))
 
 all : $(XML_NS_NAMES_FILES)
 
@@ -2289,7 +2291,7 @@ $(XML_NS_NAMES_FILES_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/binding
 	$(PERL) $< --attrs $(WebCore)/xml/xmlnsattrs.in
 
 XML_NAMES_FILES = XMLNames.cpp XMLNames.h
-XML_NAMES_FILES_PATTERNS = $(subst .,%,$(XML_NAMES_FILES))
+XML_NAMES_FILES_PATTERNS = $(call to-pattern, $(XML_NAMES_FILES))
 
 all : $(XML_NAMES_FILES)
 
@@ -2309,7 +2311,7 @@ SVG_TAG_FILES = \
     SVGNames.cpp \
     SVGNames.h \
 #
-SVG_TAG_FILES_PATTERNS = $(subst .,%,$(SVG_TAG_FILES))
+SVG_TAG_FILES_PATTERNS = $(call to-pattern, $(SVG_TAG_FILES))
 
 all : $(SVG_TAG_FILES)
 
@@ -2317,7 +2319,7 @@ $(SVG_TAG_FILES_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scr
 	$(PERL) $< --elements $(WebCore)/svg/svgtags.in --attrs $(WebCore)/svg/svgattrs.in --factory --wrapperFactory
 
 XLINK_NAMES_FILES = XLinkNames.cpp XLinkNames.h
-XLINK_NAMES_FILES_PATTERNS = $(subst .,%,$(XLINK_NAMES_FILES))
+XLINK_NAMES_FILES_PATTERNS = $(call to-pattern, $(XLINK_NAMES_FILES))
 
 all : $(XLINK_NAMES_FILES)
 
@@ -2335,7 +2337,7 @@ EVENT_FACTORY_FILES = \
     EventHeaders.h \
     EventInterfaces.h \
 #
-EVENT_FACTORY_PATTERNS = $(subst .,%,$(EVENT_FACTORY_FILES))
+EVENT_FACTORY_PATTERNS = $(call to-pattern, $(EVENT_FACTORY_FILES))
 
 all : $(EVENT_FACTORY_FILES)
 $(EVENT_FACTORY_PATTERNS) : $(WebCore)/dom/make_event_factory.pl $(EVENT_INTERFACES)
@@ -2348,7 +2350,7 @@ EVENT_TARGET_FACTORY_FILES = \
     EventTargetHeaders.h \
     EventTargetInterfaces.h \
 #
-EVENT_TARGET_FACTORY_PATTERNS = $(subst .,%,$(EVENT_TARGET_FACTORY_FILES))
+EVENT_TARGET_FACTORY_PATTERNS = $(call to-pattern, $(EVENT_TARGET_FACTORY_FILES))
 
 all : $(EVENT_TARGET_FACTORY_FILES)
 $(EVENT_TARGET_FACTORY_PATTERNS) : $(WebCore)/dom/make_event_factory.pl $(EVENT_TARGET_FACTORY)
@@ -2364,7 +2366,7 @@ EVENT_NAME_FILES = \
     EventNames.cpp \
     EventNames.h \
 #
-EVENT_NAME_FILES_PATTERNS = $(subst .,%,$(EVENT_NAME_FILES))
+EVENT_NAME_FILES_PATTERNS = $(call to-pattern, $(EVENT_NAME_FILES))
 
 all : $(EVENT_NAME_FILES)
 $(EVENT_NAME_FILES_PATTERNS) : $(WebCore)/dom/make-event-names.py $(EVENT_NAME_JSON)
@@ -2383,7 +2385,7 @@ MATH_ML_GENERATED_FILES = \
     MathMLNames.cpp \
     MathMLNames.h \
 #
-MATH_ML_GENERATED_PATTERNS = $(subst .,%,$(MATH_ML_GENERATED_FILES))
+MATH_ML_GENERATED_PATTERNS = $(call to-pattern, $(MATH_ML_GENERATED_FILES))
 
 all : $(MATH_ML_GENERATED_FILES)
 $(MATH_ML_GENERATED_PATTERNS) : $(WebCore)/dom/make_names.pl $(WebCore)/bindings/scripts/Hasher.pm $(WebCore)/bindings/scripts/StaticString.pm $(WebCore)/mathml/mathtags.in $(WebCore)/mathml/mathattrs.in
@@ -2424,7 +2426,7 @@ TAG_NAME_GENERATED_FILES = \
     TagName.cpp \
     TagName.h \
 #
-TAG_NAME_GENERATED_PATTERNS = $(subst .,%,$(TAG_NAME_GENERATED_FILES))
+TAG_NAME_GENERATED_PATTERNS = $(call to-pattern, $(TAG_NAME_GENERATED_FILES))
 
 all : $(TAG_NAME_GENERATED_FILES)
 $(TAG_NAME_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
@@ -2434,7 +2436,7 @@ NODE_NAME_GENERATED_FILES = \
     NodeName.cpp \
     NodeName.h \
 #
-NODE_NAME_GENERATED_PATTERNS = $(subst .,%,$(NODE_NAME_GENERATED_FILES))
+NODE_NAME_GENERATED_PATTERNS = $(call to-pattern, $(NODE_NAME_GENERATED_FILES))
 
 all : $(NODE_NAME_GENERATED_FILES)
 $(NODE_NAME_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
@@ -2444,7 +2446,7 @@ NAMESPACE_GENERATED_FILES = \
     Namespace.cpp \
     Namespace.h \
 #
-NAMESPACE_GENERATED_PATTERNS = $(subst .,%,$(NAMESPACE_GENERATED_FILES))
+NAMESPACE_GENERATED_PATTERNS = $(call to-pattern, $(NAMESPACE_GENERATED_FILES))
 
 all : $(NAMESPACE_GENERATED_FILES)
 $(NAMESPACE_GENERATED_PATTERNS) : $(DOM_NAME_ENUM_DEPS)
@@ -2522,7 +2524,7 @@ IDL_INTERMEDIATE_FILES = \
     $(PAINTWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE) \
     $(AUDIOWORKLETGLOBALSCOPE_CONSTRUCTORS_FILE)
 #
-IDL_INTERMEDIATE_PATTERNS = $(subst .,%,$(IDL_INTERMEDIATE_FILES))
+IDL_INTERMEDIATE_PATTERNS = $(call to-pattern, $(IDL_INTERMEDIATE_FILES))
 
 IDL_FILE_NAMES_LIST = IDLFileNamesList.txt
 $(IDL_FILE_NAMES_LIST) : $(JS_BINDING_IDLS)
@@ -2650,7 +2652,7 @@ WebCore_BUILTINS_WRAPPERS += \
     WebCoreJSBuiltinInternals.h \
     WebCoreJSBuiltinInternals.cpp \
 #
-WebCore_BUILTINS_WRAPPERS_PATTERNS = $(subst .,%,$(WebCore_BUILTINS_WRAPPERS))
+WebCore_BUILTINS_WRAPPERS_PATTERNS = $(call to-pattern, $(WebCore_BUILTINS_WRAPPERS))
 
 # Adding/removing scripts should trigger regeneration, but changing which builtins are
 # generated should not affect other builtins when not passing '--combined' to the generator.

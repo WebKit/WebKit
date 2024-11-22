@@ -52,6 +52,8 @@ PLATFORM_HEADER_DIR := $(realpath $(BUILT_PRODUCTS_DIR)$(WK_LIBRARY_HEADERS_FOLD
 PLATFORM_HEADER_DEPENDENCIES := $(filter $(PLATFORM_HEADER_DIR)/%,$(realpath $(shell $(call platform_h_compiler_command,-M) | $(PERL) -e "local \$$/; my (\$$target, \$$deps) = split(/:/, <>); print split(/\\\\/, \$$deps);")))
 FEATURE_AND_PLATFORM_DEFINE_DEPENDENCIES = DerivedSources.make $(PLATFORM_HEADER_DEPENDENCIES)
 
+to-pattern = $(join $(basename $1), $(subst .,%,$(suffix $1)))
+
 # --------
 
 VPATH = \
@@ -149,7 +151,7 @@ JavaScriptCore_BUILTINS_SOURCES = \
 JavaScriptCore_BUILTINS_DEPENDENCIES_LIST : $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py DerivedSources.make
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/UpdateContents.py '$(JavaScriptCore_BUILTINS_SOURCES) $(BUILTINS_GENERATOR_SCRIPTS)' $@
 
-JSC_BUILTINS_FILES_PATTERNS = $(subst .,%,$(JSC_BUILTINS_FILES))
+JSC_BUILTINS_FILES_PATTERNS = $(call to-pattern, $(JSC_BUILTINS_FILES))
 
 $(JSC_BUILTINS_FILES_PATTERNS) : $(BUILTINS_GENERATOR_SCRIPTS) $(JavaScriptCore_BUILTINS_SOURCES) JavaScriptCore_BUILTINS_DEPENDENCIES_LIST
 	$(PYTHON) $(JavaScriptCore_SCRIPTS_DIR)/generate-js-builtins.py --combined --output-directory . --framework JavaScriptCore $(JavaScriptCore_BUILTINS_SOURCES)
@@ -275,7 +277,7 @@ BYTECODE_FILES = \
     InitWasm.asm \
     BytecodeDumperGenerated.cpp \
 #
-BYTECODE_FILES_PATTERNS = $(subst .,%,$(BYTECODE_FILES))
+BYTECODE_FILES_PATTERNS = $(call to-pattern, $(BYTECODE_FILES))
 
 all : $(BYTECODE_FILES)
 
@@ -354,7 +356,7 @@ INSPECTOR_DISPATCHER_FILES = \
     inspector/InspectorProtocolObjects.cpp \
     inspector/InspectorProtocolObjects.h \
 #
-INSPECTOR_DISPATCHER_FILES_PATTERNS = $(subst .,%,$(INSPECTOR_DISPATCHER_FILES))
+INSPECTOR_DISPATCHER_FILES_PATTERNS = $(call to-pattern, $(INSPECTOR_DISPATCHER_FILES))
 
 all : $(INSPECTOR_DISPATCHER_FILES)
 
@@ -377,7 +379,7 @@ AIR_OPCODE_FILES = \
     AirOpcodeUtils.h \
     AirOpcodeGenerated.h \
 #
-AIR_OPCODE_FILES_PATTERNS = $(subst .,%,$(AIR_OPCODE_FILES))
+AIR_OPCODE_FILES_PATTERNS = $(call to-pattern, $(AIR_OPCODE_FILES))
 
 all : $(AIR_OPCODE_FILES)
 
