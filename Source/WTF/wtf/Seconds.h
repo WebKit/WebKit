@@ -27,16 +27,13 @@
 
 #include <optional>
 #include <wtf/FastMalloc.h>
+#include <wtf/Forward.h>
 #include <wtf/MathExtras.h>
 
 namespace WTF {
 
 class ApproximateTime;
-class MonotonicTime;
-class PrintStream;
-class TextStream;
 class TimeWithDynamicClockType;
-class WallTime;
 
 class Seconds final {
     WTF_MAKE_FAST_ALLOCATED;
@@ -333,4 +330,3 @@ WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, Seconds);
 using WTF::sleep;
 
 using namespace WTF::seconds_literals;
-using WTF::Seconds;

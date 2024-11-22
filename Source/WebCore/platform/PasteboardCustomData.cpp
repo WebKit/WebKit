@@ -28,7 +28,8 @@
 
 #include "SharedBuffer.h"
 #include <wtf/URLParser.h>
-#include <wtf/persistence/PersistentCoders.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {

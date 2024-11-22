@@ -26,7 +26,7 @@
 #pragma once
 
 #include <WebCore/RegistrableDomain.h>
-#include <wtf/Forward.h>
+#include <wtf/Seconds.h>
 
 namespace WebKit {
 
@@ -37,7 +37,7 @@ struct ITPThirdPartyDataForSpecificFirstParty {
 
     String toString() const;
 
-    // FIXME: Since this ignores differences in decodedTimeLastUpdated it probably should be a named function, not operator==.
+    // FIXME: Since this intentionally ignores differences in decodedTimeLastUpdated it should be a named function, not operator==.
     bool operator==(const ITPThirdPartyDataForSpecificFirstParty&) const;
 };
 

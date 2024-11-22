@@ -31,7 +31,6 @@
 #include "ProfilerBytecodes.h"
 #include "ProfilerCompilation.h"
 #include "ProfilerDumper.h"
-#include "ProfilerUID.h"
 
 namespace JSC { namespace Profiler {
 

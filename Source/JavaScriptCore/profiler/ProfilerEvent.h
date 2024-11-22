@@ -26,7 +26,7 @@
 #pragma once
 
 #include "JSCJSValue.h"
-#include <wtf/PrintStream.h>
+#include <wtf/JSONValues.h>
 #include <wtf/WallTime.h>
 #include <wtf/text/CString.h>
 

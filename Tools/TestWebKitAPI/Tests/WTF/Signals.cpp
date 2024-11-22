@@ -27,6 +27,7 @@
 
 #include <type_traits>
 #include <wtf/DataLog.h>
+#include <wtf/Seconds.h>
 #include <wtf/Threading.h>
 #include <wtf/WTFConfig.h>
 #if OS(UNIX)

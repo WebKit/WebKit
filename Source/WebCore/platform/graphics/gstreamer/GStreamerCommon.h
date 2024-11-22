@@ -20,6 +20,7 @@
 #pragma once
 
 #if USE(GSTREAMER)
+
 #include "FloatSize.h"
 #include "GRefPtrGStreamer.h"
 #include "GUniquePtrGStreamer.h"
@@ -29,12 +30,12 @@
 #include <gst/video/video-info.h>
 #include <wtf/Logger.h>
 #include <wtf/MediaTime.h>
+#include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 
 namespace WebCore {
 
-class IntSize;
 class SharedBuffer;
 
 using TrackID = uint64_t;

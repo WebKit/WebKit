@@ -41,6 +41,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/WTFConfig.h>
+#include <wtf/WallTime.h>
 #include <wtf/WordLock.h>
 
 #if OS(LINUX)

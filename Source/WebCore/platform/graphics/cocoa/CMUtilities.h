@@ -30,6 +30,7 @@
 #include <memory>
 #include <wtf/Expected.h>
 #include <wtf/RetainPtr.h>
+#include <wtf/Seconds.h>
 #include <wtf/TZoneMalloc.h>
 
 typedef struct AudioFormatVorbisModeInfo AudioFormatVorbisModeInfo;

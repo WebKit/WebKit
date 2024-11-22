@@ -28,7 +28,7 @@
 #include "CodeBlockHash.h"
 #include "JSCJSValue.h"
 #include "ProfilerBytecodeSequence.h"
-#include <wtf/PrintStream.h>
+#include <wtf/JSONValues.h>
 #include <wtf/text/WTFString.h>
 
 namespace JSC { namespace Profiler {

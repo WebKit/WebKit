@@ -29,18 +29,12 @@
 #pragma once
 
 #include <wtf/FastMalloc.h>
-#include <wtf/JSONValues.h>
-#include <wtf/Seconds.h>
-#include <wtf/text/WTFString.h>
-
-#include <cmath>
-#include <limits>
-#include <math.h>
-#include <stdint.h>
 
 namespace WTF {
 
 class PrintStream;
+
+template<typename> struct LogArgument;
 
 class WTF_EXPORT_PRIVATE MediaTime final {
     WTF_MAKE_FAST_ALLOCATED;
@@ -62,7 +56,7 @@ public:
     static MediaTime createWithFloat(float floatTime, uint32_t timeScale);
     static MediaTime createWithDouble(double doubleTime);
     static MediaTime createWithDouble(double doubleTime, uint32_t timeScale);
-    static MediaTime createWithSeconds(Seconds seconds) { return createWithDouble(seconds.value()); }
+    static MediaTime createWithSeconds(Seconds);
 
     float toFloat() const;
     double toDouble() const;
@@ -111,7 +105,7 @@ public:
     const int64_t& timeValue() const { return m_timeValue; }
     const uint32_t& timeScale() const { return m_timeScale; }
 
-    void dump(PrintStream& out) const;
+    void dump(PrintStream&) const;
     String toString() const;
     String toJSONString() const;
     Ref<JSON::Object> toJSONObject() const;
@@ -189,13 +183,11 @@ struct WTF_EXPORT_PRIVATE MediaTimeRange {
     const MediaTime end;
 };
 
-template<typename> struct LogArgument;
-
 template<> struct LogArgument<MediaTime> {
-    static String toString(const MediaTime& time) { return time.toJSONString(); }
+    WTF_EXPORT_PRIVATE static String toString(const MediaTime&);
 };
 template<> struct LogArgument<MediaTimeRange> {
-    static String toString(const MediaTimeRange& range) { return range.toJSONString(); }
+    WTF_EXPORT_PRIVATE static String toString(const MediaTimeRange&);
 };
 
 WTF_EXPORT_PRIVATE TextStream& operator<<(TextStream&, const MediaTime&);

@@ -41,8 +41,8 @@
 #include "WebCorePersistentCoders.h"
 #include "WorkerType.h"
 #include <wtf/TZoneMallocInlines.h>
-#include <wtf/persistence/PersistentCoders.h>
 #include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/MakeString.h>
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN

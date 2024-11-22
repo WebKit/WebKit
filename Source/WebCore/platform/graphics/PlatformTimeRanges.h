@@ -143,10 +143,11 @@ private:
 } // namespace WebCore
 
 namespace WTF {
+
 template<typename> struct LogArgument;
 
 template<> struct LogArgument<WebCore::PlatformTimeRanges> {
-    static String toString(const WebCore::PlatformTimeRanges& platformTimeRanges) { return platformTimeRanges.toString(); }
+    WEBCORE_EXPORT static String toString(const WebCore::PlatformTimeRanges&);
 };
 
 } // namespace WTF

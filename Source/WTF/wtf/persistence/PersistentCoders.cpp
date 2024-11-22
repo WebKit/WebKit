@@ -28,6 +28,9 @@
 
 #include <wtf/StdLibExtras.h>
 #include <wtf/URL.h>
+#include <wtf/WallTime.h>
+#include <wtf/persistence/PersistentDecoder.h>
+#include <wtf/persistence/PersistentEncoder.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
@@ -154,19 +157,6 @@ std::optional<URL> Coder<URL>::decodeForPersistence(Decoder& decoder)
     if (!string)
         return std::nullopt;
     return URL(WTFMove(*string));
-}
-
-void Coder<SHA1::Digest>::encodeForPersistence(Encoder& encoder, const SHA1::Digest& digest)
-{
-    encoder.encodeFixedLengthData({ digest });
-}
-
-std::optional<SHA1::Digest> Coder<SHA1::Digest>::decodeForPersistence(Decoder& decoder)
-{
-    SHA1::Digest tmp;
-    if (!decoder.decodeFixedLengthData({ tmp }))
-        return std::nullopt;
-    return tmp;
 }
 
 void Coder<WallTime>::encodeForPersistence(Encoder& encoder, const WallTime& time)

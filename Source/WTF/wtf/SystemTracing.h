@@ -25,6 +25,8 @@
 
 #pragma once
 
+#include <wtf/Forward.h>
+
 #if USE(APPLE_INTERNAL_SDK)
 #include <sys/kdebug_private.h>
 #define HAVE_KDEBUG_H 1

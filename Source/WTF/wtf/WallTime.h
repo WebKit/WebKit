@@ -26,13 +26,11 @@
 #pragma once
 
 #include <wtf/ClockType.h>
+#include <wtf/Forward.h>
 #include <wtf/GenericTimeMixin.h>
 #include <wtf/Int128.h>
 
 namespace WTF {
-
-class MonotonicTime;
-class PrintStream;
 
 // The current time according to a wall clock (aka real time clock). This uses floating point
 // internally so that you can reason about infinity and other things that arise in math. It's
@@ -79,5 +77,3 @@ struct WallTime::MarkableTraits {
 WTF_EXPORT_PRIVATE Int128 currentTimeInNanoseconds();
 
 } // namespace WTF
-
-using WTF::WallTime;

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ITPThirdPartyDataForSpecificFirstParty.h"
 
+#include <wtf/WallTime.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebKit {

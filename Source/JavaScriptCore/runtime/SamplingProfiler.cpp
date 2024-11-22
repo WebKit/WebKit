@@ -1086,7 +1086,7 @@ static String tierName(SamplingProfiler::StackFrame& frame)
     return Tiers::unknownFrame;
 }
 
-Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
+String SamplingProfiler::stackTracesAsJSONString()
 {
     DeferGC deferGC(m_vm);
     Locker locker { m_lock };
@@ -1167,7 +1167,7 @@ Ref<JSON::Value> SamplingProfiler::stackTracesAsJSON()
 
     clearData();
 
-    return result;
+    return result->asString();
 }
 
 void SamplingProfiler::registerForReportAtExit()

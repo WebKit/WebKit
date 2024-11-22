@@ -32,6 +32,7 @@
 #include "NetworkCacheCoders.h"
 #include <WebCore/RegistrableDomain.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/persistence/PersistentDecoder.h>
 #include <wtf/persistence/PersistentEncoder.h>
 
 namespace WebKit {

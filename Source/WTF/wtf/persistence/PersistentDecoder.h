@@ -25,10 +25,9 @@
 
 #pragma once
 
-#include <span>
+#include <optional>
 #include <wtf/EnumTraits.h>
 #include <wtf/SHA1.h>
-#include <wtf/persistence/PersistentCoders.h>
 
 namespace WTF::Persistence {
 

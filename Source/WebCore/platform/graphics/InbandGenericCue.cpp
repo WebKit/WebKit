@@ -29,10 +29,9 @@
 #if ENABLE(VIDEO)
 
 #include "ColorSerialization.h"
-
+#include <wtf/JSONValues.h>
 
 namespace WebCore {
-
 
 InbandGenericCue::InbandGenericCue()
 {

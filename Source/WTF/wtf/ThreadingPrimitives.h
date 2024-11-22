@@ -32,9 +32,9 @@
 
 #include <limits.h>
 #include <wtf/FastMalloc.h>
+#include <wtf/Forward.h>
 #include <wtf/Locker.h>
 #include <wtf/Noncopyable.h>
-#include <wtf/WallTime.h>
 
 #if OS(WINDOWS)
 #include <windows.h>

@@ -456,11 +456,10 @@ JSC_DEFINE_HOST_FUNCTION(dumpAndClearSamplingProfilerSamples, (JSGlobalObject* g
         RETURN_IF_EXCEPTION(scope, { });
     }
 
-    auto json = vm.takeSamplingProfilerSamplesAsJSON();
-    if (UNLIKELY(!json))
+    auto samples = vm.takeSamplingProfilerSamplesAsJSONString();
+    if (samples.isNull())
         return JSValue::encode(jsUndefined());
 
-    auto jsonData = json->toJSONString();
     {
         auto [tempFilePath, fileHandle] = FileSystem::openTemporaryFile(filenamePrefix);
         if (!FileSystem::isHandleValid(fileHandle)) {
@@ -468,7 +467,7 @@ JSC_DEFINE_HOST_FUNCTION(dumpAndClearSamplingProfilerSamples, (JSGlobalObject* g
             return JSValue::encode(jsUndefined());
         }
 
-        CString utf8String = jsonData.utf8();
+        CString utf8String = samples.utf8();
 
         FileSystem::writeToFile(fileHandle, utf8String.span());
         FileSystem::closeFile(fileHandle);

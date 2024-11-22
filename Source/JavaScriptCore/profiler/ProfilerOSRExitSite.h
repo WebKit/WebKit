@@ -27,6 +27,7 @@
 
 #include "JSCJSValue.h"
 #include "MacroAssemblerCodeRef.h"
+#include <wtf/JSONValues.h>
 #include <wtf/Vector.h>
 
 namespace JSC { namespace Profiler {
