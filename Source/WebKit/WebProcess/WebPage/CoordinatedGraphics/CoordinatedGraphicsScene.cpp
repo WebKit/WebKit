@@ -87,9 +87,11 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
             }
             return WebCore::Damage::invalid();
         })();
-        const Damage& damageSinceLastSurfaceUse = m_client->addSurfaceDamage(frameDamage);
-        if (!damageSinceLastSurfaceUse.isInvalid())
-            actualClipRect = static_cast<FloatRoundedRect>(damageSinceLastSurfaceUse.bounds());
+        if (m_client) {
+            const Damage& damageSinceLastSurfaceUse = m_client->addSurfaceDamage(frameDamage);
+            if (!damageSinceLastSurfaceUse.isInvalid())
+                actualClipRect = static_cast<FloatRoundedRect>(damageSinceLastSurfaceUse.bounds());
+        }
     }
 
     WTFBeginSignpost(this, PaintTextureMapperLayerTree);
