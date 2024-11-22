@@ -95,6 +95,11 @@ bool performCriticalEdgeBreaking(Graph& graph)
     return runPhase<CriticalEdgeBreakingPhase>(graph);
 }
 
+bool isJumpPadBlock(BasicBlock* block)
+{
+    return block->size() == 1 && block->at(0)->op() == Jump;
+}
+
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
