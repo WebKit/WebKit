@@ -14,7 +14,6 @@ PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: 1, iterations: 100000, hash
 PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: undefined, hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Member Pbkdf2Params.iterations is required and must be an instance of unsigned long.
 PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: Symbol(), hash: "sha-1"}, baseKey, 128) rejected promise  with TypeError: Cannot convert a symbol to a number.
 PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 100000, hash: "sha-1"}, baseKey, null) rejected promise  with OperationError: The operation failed for an operation-specific reason.
-PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 100000, hash: "sha-1"}, baseKey, 0) rejected promise  with OperationError: The operation failed for an operation-specific reason.
 PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 100000, hash: "sha-1"}, baseKey, 5) rejected promise  with OperationError: The operation failed for an operation-specific reason.
 PASS crypto.subtle.deriveBits({name: "PBKDF2", salt: salt, iterations: 0, hash: "sha-1"}, baseKey, 128) rejected promise  with OperationError: The operation failed for an operation-specific reason.
 PASS successfullyParsed is true

@@ -46,14 +46,14 @@ CryptoAlgorithmIdentifier CryptoAlgorithmHKDF::identifier() const
 
 void CryptoAlgorithmHKDF::deriveBits(const CryptoAlgorithmParameters& parameters, Ref<CryptoKey>&& baseKey, std::optional<size_t> length, VectorCallback&& callback, ExceptionCallback&& exceptionCallback, ScriptExecutionContext& context, WorkQueue& workQueue)
 {
-    if (!length || !(*length) || *length % 8) {
+    if (!length || *length % 8) {
         exceptionCallback(ExceptionCode::OperationError);
         return;
     }
 
     dispatchOperationInWorkQueue(workQueue, context, WTFMove(callback), WTFMove(exceptionCallback),
         [parameters = crossThreadCopy(downcast<CryptoAlgorithmHkdfParams>(parameters)), baseKey = WTFMove(baseKey), length] {
-            return platformDeriveBits(parameters, downcast<CryptoKeyRaw>(baseKey.get()), *length);
+            return *length ? platformDeriveBits(parameters, downcast<CryptoKeyRaw>(baseKey.get()), *length) : Vector<uint8_t>();
         });
 }
 
