@@ -38,13 +38,11 @@ class BaseAudioMediaStreamTrackRendererUnit {
 public:
     virtual ~BaseAudioMediaStreamTrackRendererUnit() = default;
 
-    virtual void addSource(Ref<AudioSampleDataSource>&&) = 0;
-    virtual void removeSource(AudioSampleDataSource&) = 0;
-
-    virtual void setAudioOutputDevice(const String&) = 0;
+    virtual void addSource(const String&, Ref<AudioSampleDataSource>&&) = 0;
+    virtual void removeSource(const String&, AudioSampleDataSource&) = 0;
 
     using ResetObserver = Observer<void()>;
-    virtual void addResetObserver(ResetObserver&) = 0;
+    virtual void addResetObserver(const String&, ResetObserver&) = 0;
 };
 
 }

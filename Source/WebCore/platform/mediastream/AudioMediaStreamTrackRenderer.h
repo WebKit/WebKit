@@ -27,6 +27,10 @@
 
 #if ENABLE(MEDIA_STREAM)
 
+#if USE(LIBWEBRTC)
+#include "LibWebRTCAudioModule.h"
+#endif
+
 #include <wtf/Function.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/TZoneMalloc.h>
@@ -38,7 +42,6 @@ class MediaTime;
 namespace WebCore {
 
 class AudioStreamDescription;
-class LibWebRTCAudioModule;
 class PlatformAudioData;
 
 class WEBCORE_EXPORT AudioMediaStreamTrackRenderer : public LoggerHelper {
@@ -56,6 +59,8 @@ public:
     };
     static std::unique_ptr<AudioMediaStreamTrackRenderer> create(Init&&);
     virtual ~AudioMediaStreamTrackRenderer() = default;
+
+    static String defaultDeviceID();
 
     virtual void start(CompletionHandler<void()>&&) = 0;
     virtual void stop() = 0;

@@ -77,6 +77,7 @@ private:
     RefPtr<AudioSampleDataSource> m_registeredDataSource; // Used in main thread.
     bool m_shouldRecreateDataSource { false };
     WebCore::AudioMediaStreamTrackRendererUnit::ResetObserver m_resetObserver;
+    String m_deviceID;
 };
 
 }

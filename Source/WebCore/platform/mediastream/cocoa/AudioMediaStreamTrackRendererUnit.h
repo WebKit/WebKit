@@ -29,6 +29,7 @@
 
 #include "AudioMediaStreamTrackRendererInternalUnit.h"
 #include "BaseAudioMediaStreamTrackRendererUnit.h"
+#include "Timer.h"
 #include <wtf/HashSet.h>
 #include <wtf/Lock.h>
 #include <wtf/UniqueRef.h>
@@ -50,42 +51,68 @@ class AudioSampleDataSource;
 class AudioSampleBufferList;
 class CAAudioStreamDescription;
 
-class AudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRendererUnit, public AudioMediaStreamTrackRendererInternalUnit::Client {
+class AudioMediaStreamTrackRendererUnit : public BaseAudioMediaStreamTrackRendererUnit {
 public:
     WEBCORE_EXPORT static AudioMediaStreamTrackRendererUnit& singleton();
 
     ~AudioMediaStreamTrackRendererUnit();
 
-    // AudioMediaStreamTrackRendererInternalUnit
-    OSStatus render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&) final;
-    void reset() final;
-
     void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&);
 
     // BaseAudioMediaStreamTrackRendererUnit
-    void setAudioOutputDevice(const String&) final;
-    void addSource(Ref<AudioSampleDataSource>&&) final;
-    void removeSource(AudioSampleDataSource&) final;
-    void addResetObserver(ResetObserver& observer) final { m_resetObservers.add(observer); }
+    void addSource(const String&, Ref<AudioSampleDataSource>&&) final;
+    void removeSource(const String&, AudioSampleDataSource&) final;
+    void addResetObserver(const String&, ResetObserver&) final;
 
 private:
     AudioMediaStreamTrackRendererUnit();
 
-    void start();
-    void stop();
+    void deleteUnitsIfPossible();
 
-    void createAudioUnitIfNeeded();
-    void updateRenderSourcesIfNecessary();
+    class Unit : public AudioMediaStreamTrackRendererInternalUnit::Client {
+    public:
+        static Ref<Unit> create(const String& deviceID) { return adoptRef(*new Unit(deviceID)); }
+        ~Unit();
 
-    Ref<AudioMediaStreamTrackRendererInternalUnit> protectedInternalUnit() { return m_internalUnit; }
+        void addSource(Ref<AudioSampleDataSource>&&);
+        bool removeSource(AudioSampleDataSource&);
+        void addResetObserver(ResetObserver&);
+        bool hasSources() const
+        {
+            assertIsMainThread();
+            return !m_sources.isEmpty();
+        }
 
-    HashSet<Ref<AudioSampleDataSource>> m_sources;
-    Vector<Ref<AudioSampleDataSource>> m_pendingRenderSources WTF_GUARDED_BY_LOCK(m_pendingRenderSourcesLock);
-    Vector<Ref<AudioSampleDataSource>> m_renderSources;
-    bool m_hasPendingRenderSources WTF_GUARDED_BY_LOCK(m_pendingRenderSourcesLock) { false };
-    Lock m_pendingRenderSourcesLock;
-    Ref<AudioMediaStreamTrackRendererInternalUnit> m_internalUnit;
-    WeakHashSet<ResetObserver> m_resetObservers;
+        bool isDefault() const { return m_isDefaultUnit; }
+
+        void close();
+        void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&);
+
+    private:
+        explicit Unit(const String&);
+
+        void start();
+        void stop();
+        void updateRenderSourcesIfNecessary();
+
+        // AudioMediaStreamTrackRendererInternalUnit::Client
+        OSStatus render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&) final;
+        void reset() final;
+
+        HashSet<Ref<AudioSampleDataSource>> m_sources WTF_GUARDED_BY_CAPABILITY(mainThread);
+        Vector<Ref<AudioSampleDataSource>> m_renderSources;
+
+        Lock m_pendingRenderSourcesLock;
+        std::atomic<bool> m_hasPendingRenderSources WTF_GUARDED_BY_LOCK(m_pendingRenderSourcesLock) { false };
+        Vector<Ref<AudioSampleDataSource>> m_pendingRenderSources WTF_GUARDED_BY_LOCK(m_pendingRenderSourcesLock);
+
+        const Ref<AudioMediaStreamTrackRendererInternalUnit> m_internalUnit WTF_GUARDED_BY_CAPABILITY(mainThread);
+        WeakHashSet<ResetObserver> m_resetObservers WTF_GUARDED_BY_CAPABILITY(mainThread);
+        const bool m_isDefaultUnit { false };
+    };
+
+    HashMap<String, Ref<Unit>> m_units WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Timer m_deleteUnitsTimer;
 };
 
 }
