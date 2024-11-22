@@ -1400,6 +1400,9 @@ private:
                 break;
             }
 
+            if (handleBitRotation())
+                break;
+
             if (handleBitAndDistributivity())
                 break;
 
@@ -1449,7 +1452,7 @@ private:
                 replaceWithIdentity(m_value->child(0));
                 break;
             }
-                
+
             if (handleBitAndDistributivity())
                 break;
 
@@ -3401,6 +3404,114 @@ private:
             Value* bitOp = m_insertionSet.insert<Value>(m_index, m_value->opcode(), m_value->origin(), x2, x3);
             replaceWithNew<Value>(BitAnd, m_value->origin(), x1, bitOp);
             return true;
+        }
+        return false;
+    }
+
+    // For Op==BitOr, turn any of these:
+    //      Op(Shl(x1, x2), ZShr(x1, 32|64-x2))
+    //      Op(Shl(x1, x2), ZShr(x1, Sub(32|64, x2)))
+    //      Op(ZShr(x1, 32|64-x2), Shl(x1, x2))
+    //      Op(ZShr(x1, Sub(32|64, x2)), Shl(x1, x2))
+    // Into this: RotL(x1, x2)
+    // And any of these:
+    //      Op(ZShr(x1, x2), Shl(x1, 32|64-x2))
+    //      Op(ZShr(x1, x2), Shl(x1, Sub(32|64, x2)))
+    //      Op(Shl(x1, 32|64-x2), ZShr(x1, x2))
+    //      Op(Shl(x1, Sub(32|64, x2)), ZShr(x1, x2))
+    // Into this: RotR(x1, x2)
+    // This pattern is widely used to represent bitwise rotation in languages that don't support it natively,
+    // and appears in hot loops in cryptography algorithms, so we should try to match it when possible.
+    bool handleBitRotation()
+    {
+        ASSERT(m_value->opcode() == BitOr);
+        if ((m_value->child(0)->opcode() == Shl
+                && m_value->child(1)->opcode() == ZShr)
+            || (m_value->child(0)->opcode() == ZShr
+                && m_value->child(1)->opcode() == Shl)) {
+            Value* shl = m_value->child(0)->opcode() == Shl ? m_value->child(0) : m_value->child(1);
+            Value* shr = m_value->child(0)->opcode() == ZShr ? m_value->child(0) : m_value->child(1);
+
+            // Handle the cases where both shifts have a constant shift amount.
+            if (m_value->type() == Int32
+                && shl->child(1)->hasInt()
+                && shr->child(1)->hasInt()
+                && !sumOverflows<int32_t>(shl->child(1)->asInt(), shr->child(1)->asInt())
+                && shl->child(1)->asInt() + shr->child(1)->asInt() == 32
+                && shl->child(0) == shr->child(0)) {
+
+                replaceWithNew<Value>(RotR, m_value->origin(), shr->child(0), shr->child(1));
+                return true;
+            }
+
+            if (m_value->type() == Int64
+                && shl->child(1)->hasInt()
+                && shr->child(1)->hasInt()
+                && !sumOverflows<int64_t>(shl->child(1)->asInt(), shr->child(1)->asInt())
+                && shl->child(1)->asInt() + shr->child(1)->asInt() == 64
+                && shl->child(0) == shr->child(0)) {
+                replaceWithNew<Value>(RotR, m_value->origin(), shr->child(0), shr->child(1));
+                return true;
+            }
+
+            // Otherwise, see if one shift has a Sub operand. We also accept a Sub
+            // that is the single argument of a Trunc node - because this operand is
+            // the shift amount, it semantically acts masked anyway, so the observed
+            // behavior shouldn't change when truncated. This helps when trying to
+            // match this pattern against 64-bit expressions.
+            Value* sub = nullptr;
+            bool isRotL = false;
+            bool isRotR = false;
+            bool needsTrunc = false;
+            if (shl->child(1)->opcode() == Sub) {
+                isRotR = true;
+                sub = shl->child(1);
+            } else if (shl->child(1)->opcode() == Trunc && shl->child(1)->child(0)->opcode() == Sub) {
+                isRotR = true;
+                sub = shl->child(1)->child(0);
+                needsTrunc = true;
+            }
+            if (shr->child(1)->opcode() == Sub) {
+                isRotL = true;
+                sub = shr->child(1);
+            } else if (shr->child(1)->opcode() == Trunc && shr->child(1)->child(0)->opcode() == Sub) {
+                isRotL = true;
+                sub = shr->child(1)->child(0);
+                needsTrunc = true;
+            }
+
+            // Continue only if we have a Sub in exactly one of the two shifts, and
+            // it is subtracting from 32 or 64 respectively based on the type of
+            // this instruction.
+            if (isRotR != isRotL
+                && ((m_value->type() == Int64 && sub->child(0)->isInt(64))
+                    || (m_value->type() == Int32 && sub->child(0)->isInt(32)))) {
+                Value* x1 = shl->child(0);
+
+                // Check if the x1 used in each shift is the same.
+                if (x1 != shr->child(0))
+                    return false;
+
+                // Check if the x2 used in each shift is the same. As above, since
+                // these expressions are being used as the shift amount, all of this
+                // arithmetic is implicitly mod 32 or mod 64 - so we can safely
+                // ignore intermediate Trunc nodes.
+                Value* x2 = sub->child(1);
+                Value* innerX2 = x2;
+                if (innerX2->opcode() == Trunc)
+                    innerX2 = innerX2->child(0);
+                Value* shiftX2 = isRotL ? shl->child(1) : shr->child(1);
+                if (shiftX2->opcode() == Trunc)
+                    shiftX2 = shiftX2->child(0);
+                if (innerX2 != shiftX2)
+                    return false;
+
+                if (needsTrunc)
+                    x2 = m_insertionSet.insert<Value>(m_index, Trunc, m_value->origin(), x2);
+
+                replaceWithNew<Value>(isRotL ? RotL : RotR, m_value->origin(), x1, x2);
+                return true;
+            }
         }
         return false;
     }

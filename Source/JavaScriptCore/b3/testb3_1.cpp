@@ -747,6 +747,11 @@ void run(const TestConfig* config)
     RUN_BINARY(testRotLWithImmShift, int32Operands(), int32Operands());
     RUN_BINARY(testRotLWithImmShift, int64Operands(), int32Operands());
 
+    RUN(testBitOrToRotL32());
+    RUN(testBitOrToRotR32());
+    RUN(testBitOrToRotL64());
+    RUN(testBitOrToRotR64());
+
     RUN(testComputeDivisionMagic<int32_t>(2, -2147483647, 0));
     RUN(testTrivialInfiniteLoop());
     RUN(testFoldPathEqual());
