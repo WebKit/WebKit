@@ -21,21 +21,36 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
-import SwiftUI
-
-@_objcImplementation(Swift_Implementation) extension BrowserAppDelegate {
-    @nonobjc private static let windowSize = NSSize(width: 800, height: 600)
-
-    @MainActor @objc public func createSwiftUIWindow(_ sender: Any?) {
 #if compiler(>=6.0)
-        let hostingController = NSHostingController(rootView: MiniBrowserView())
 
-        let window = NSWindow(contentViewController: hostingController)
-        window.setContentSize(Self.windowSize)
+import Foundation
+import os
+import Observation
+@_spi(Private) import WebKit
 
-        let controller = NSWindowController(window: window)
-        controller.showWindow(sender)
-#endif
+@Observable
+@MainActor
+final class BrowserViewModel {
+    typealias WebPage = WebPage_v0
+
+    private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier!, category: String(describing: BrowserViewModel.self))
+
+    let page = WebPage()
+
+    var displayedURL: String = ""
+
+    func didReceiveNavigationEvent(_ event: WebPage.NavigationEvent) {
+        Self.logger.info("Did receive navigation event \(String(describing: event.kind)) for navigation \(String(describing: event.navigationID))")
+    }
+
+    func navigateToSubmittedURL() {
+        guard let url = URL(string: displayedURL) else {
+            return
+        }
+
+        let request = URLRequest(url: url)
+        self.page.load(request)
     }
 }
+
+#endif

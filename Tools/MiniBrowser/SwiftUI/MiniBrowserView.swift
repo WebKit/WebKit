@@ -21,21 +21,21 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-import Foundation
+#if compiler(>=6.0)
+
 import SwiftUI
 
-@_objcImplementation(Swift_Implementation) extension BrowserAppDelegate {
-    @nonobjc private static let windowSize = NSSize(width: 800, height: 600)
+struct MiniBrowserView: View {
+    @State private var viewModel = BrowserViewModel()
 
-    @MainActor @objc public func createSwiftUIWindow(_ sender: Any?) {
-#if compiler(>=6.0)
-        let hostingController = NSHostingController(rootView: MiniBrowserView())
-
-        let window = NSWindow(contentViewController: hostingController)
-        window.setContentSize(Self.windowSize)
-
-        let controller = NSWindowController(window: window)
-        controller.showWindow(sender)
-#endif
+    var body: some View {
+        ContentView()
+            .environment(viewModel)
     }
 }
+
+#Preview {
+    MiniBrowserView()
+}
+
+#endif
