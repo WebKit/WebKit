@@ -907,6 +907,23 @@ void RenderBlockFlow::layoutInlineChildren(bool relayoutChildren, LayoutUnit& re
     m_previousInlineLayoutContentBoxLogicalHeight = { };
 }
 
+static LayoutUnit computeExtraSpaceForBlockStepSizing(LayoutUnit stepSize, LayoutUnit boxOuterSize)
+{
+    if (!stepSize)
+        return { };
+
+    if (auto remainder = intMod(boxOuterSize, stepSize))
+        return stepSize - remainder;
+    return { };
+}
+
+void RenderBlockFlow::distributeExtraBlockStepSizingSpaceToChild(RenderBox& child, LayoutUnit extraSpace) const
+{
+    auto halfExtraSpace = extraSpace / 2;
+    setMarginBeforeForChild(child, marginBeforeForChild(child) + halfExtraSpace);
+    setMarginAfterForChild(child, marginAfterForChild(child) + halfExtraSpace);
+}
+
 void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom)
 {
     LayoutUnit oldPosMarginBefore = maxPositiveMarginBefore();
@@ -963,6 +980,16 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
     bool childNeededLayout = child.needsLayout();
     if (childNeededLayout)
         child.layout();
+
+    auto blockStepSizeForChild = child.style().blockStepSize().and_then([](Length stepSize) {
+        return std::make_optional(LayoutUnit(stepSize.value()));
+    });
+
+    if (blockStepSizeForChild) {
+        auto extraSpace = computeExtraSpaceForBlockStepSizing(*blockStepSizeForChild, logicalMarginBoxHeightForChild(child));
+        if (extraSpace)
+            distributeExtraBlockStepSizingSpaceToChild(child, extraSpace);
+    }
 
     // Cache if we are at the top of the block right now.
     bool atBeforeSideOfBlock = marginInfo.atBeforeSideOfBlock();
