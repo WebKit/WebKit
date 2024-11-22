@@ -1189,11 +1189,6 @@ public:
     inline void resetBorderBottomRightRadius();
 
     inline void setBackgroundColor(const StyleColor&);
-
-    inline void setBackgroundXPosition(Length&&);
-    inline void setBackgroundYPosition(Length&&);
-    inline void setBackgroundSize(FillSizeType);
-    inline void setBackgroundSizeLength(LengthSize&&);
     inline void setBackgroundAttachment(FillAttachment);
     inline void setBackgroundClip(FillBox);
     inline void setBackgroundOrigin(FillBox);

@@ -89,10 +89,6 @@ inline void RenderStyle::setBackgroundClip(FillBox fillBox) { SET_DOUBLY_NESTED_
 inline void RenderStyle::setBackgroundColor(const StyleColor& value) { SET_NESTED(m_nonInheritedData, backgroundData, color, value); }
 inline void RenderStyle::setBackgroundOrigin(FillBox fillBox) { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, backgroundData, background, m_origin, static_cast<unsigned>(fillBox), m_originSet, true); }
 inline void RenderStyle::setBackgroundRepeat(FillRepeatXY fillRepeat) { SET_DOUBLY_NESTED_PAIR(m_nonInheritedData, backgroundData, background, m_repeat, fillRepeat, m_repeatSet, true); }
-inline void RenderStyle::setBackgroundSize(FillSizeType b) { SET_DOUBLY_NESTED(m_nonInheritedData, backgroundData, background, m_sizeType, static_cast<unsigned>(b)); }
-inline void RenderStyle::setBackgroundSizeLength(LengthSize&& size) { SET_DOUBLY_NESTED(m_nonInheritedData, backgroundData, background, m_sizeLength, WTFMove(size)); }
-inline void RenderStyle::setBackgroundXPosition(Length&& length) { SET_DOUBLY_NESTED(m_nonInheritedData, backgroundData, background, m_xPosition, WTFMove(length)); }
-inline void RenderStyle::setBackgroundYPosition(Length&& length) { SET_DOUBLY_NESTED(m_nonInheritedData, backgroundData, background, m_yPosition, WTFMove(length)); }
 inline void RenderStyle::setBlockEllipsis(const BlockEllipsis& value) { SET(m_rareInheritedData, blockEllipsis, value); }
 inline void RenderStyle::setBlockStepInsert(BlockStepInsert newBlockStepInsert) { SET_NESTED(m_nonInheritedData, rareData, blockStepInsert, static_cast<unsigned>(newBlockStepInsert)); }
 inline void RenderStyle::setBlockStepSize(std::optional<Length> length) { SET_NESTED(m_nonInheritedData, rareData, blockStepSize, WTFMove(length)); }
