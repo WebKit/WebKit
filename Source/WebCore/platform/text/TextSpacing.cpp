@@ -138,5 +138,10 @@ CharacterClass characterClass(char32_t character)
     return CharacterClass::Undefined;
 }
 
+RefPtr<Font> getHalfWidthFontIfNeeded(const Font& font, const TextSpacingTrim& textSpacingTrim, CharactersData& charactersData)
+{
+    return textSpacingTrim.shouldTrimSpacing(charactersData) ? font.halfWidthFont() : nullptr;
+}
+
 } // namespace TextSpacing
 } // namespace WebCore

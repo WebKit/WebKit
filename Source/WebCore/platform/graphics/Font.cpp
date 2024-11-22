@@ -490,6 +490,10 @@ const Font* Font::smallCapsFont(const FontDescription& fontDescription) const
 
 const RefPtr<Font> Font::halfWidthFont() const
 {
+    if (isSystemFontFallbackPlaceholder()) {
+        ASSERT_NOT_REACHED();
+        return nullptr;
+    }
     DerivedFonts& derivedFontData = ensureDerivedFontData();
     if (!derivedFontData.halfWidthFont)
         derivedFontData.halfWidthFont = createHalfWidthFont();
