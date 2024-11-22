@@ -177,9 +177,9 @@ RefPtr<AcceleratedEffect> AcceleratedEffect::create(const KeyframeEffect& effect
     return adoptRef(*acceleratedEffect);
 }
 
-Ref<AcceleratedEffect> AcceleratedEffect::create(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime)
+Ref<AcceleratedEffect> AcceleratedEffect::create(AnimationEffectTiming timing, RefPtr<AcceleratedTimeline>&& timeline, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime)
 {
-    return adoptRef(*new AcceleratedEffect(WTFMove(timing), WTFMove(keyframes), type, composite, WTFMove(defaultKeyframeTimingFunction), WTFMove(animatedProperties), paused, playbackRate, startTime, holdTime));
+    return adoptRef(*new AcceleratedEffect(WTFMove(timing), WTFMove(timeline), WTFMove(keyframes), type, composite, WTFMove(defaultKeyframeTimingFunction), WTFMove(animatedProperties), paused, playbackRate, startTime, holdTime));
 }
 
 Ref<AcceleratedEffect> AcceleratedEffect::clone() const
@@ -194,7 +194,7 @@ Ref<AcceleratedEffect> AcceleratedEffect::clone() const
 
     auto clonedAnimatedProperties = m_animatedProperties;
 
-    return AcceleratedEffect::create(m_timing, WTFMove(clonedKeyframes), m_animationType, m_compositeOperation, WTFMove(clonedDefaultKeyframeTimingFunction), WTFMove(clonedAnimatedProperties), m_paused, m_playbackRate, m_startTime, m_holdTime);
+    return AcceleratedEffect::create(m_timing, m_timeline.copyRef(), WTFMove(clonedKeyframes), m_animationType, m_compositeOperation, WTFMove(clonedDefaultKeyframeTimingFunction), WTFMove(clonedAnimatedProperties), m_paused, m_playbackRate, m_startTime, m_holdTime);
 }
 
 Ref<AcceleratedEffect> AcceleratedEffect::copyWithProperties(OptionSet<AcceleratedEffectProperty>& propertyFilter) const
@@ -204,6 +204,10 @@ Ref<AcceleratedEffect> AcceleratedEffect::copyWithProperties(OptionSet<Accelerat
 
 AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect& borderBoxRect, const OptionSet<AcceleratedEffectProperty>& disallowedProperties)
 {
+    ASSERT(effect.animation());
+    if (RefPtr timeline = effect.animation()->timeline())
+        m_timeline = timeline->acceleratedRepresentation();
+
     m_timing = effect.timing();
     m_compositeOperation = effect.composite();
     m_animationType = effect.animationType();
@@ -213,8 +217,8 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
         m_paused = animation->playState() == WebAnimation::PlayState::Paused;
         m_playbackRate = animation->playbackRate();
         ASSERT(animation->holdTime() || animation->startTime());
-        m_holdTime = animation->holdTime() ? animation->holdTime()->time() : std::nullopt;
-        m_startTime = animation->startTime() ? animation->startTime()->time() : std::nullopt;
+        m_holdTime = animation->holdTime();
+        m_startTime = animation->startTime();
         if (auto* styleAnimation = dynamicDowncast<StyleOriginatedAnimation>(*animation)) {
             if (auto* defaultKeyframeTimingFunction = styleAnimation->backingAnimation().timingFunction())
                 m_defaultKeyframeTimingFunction = defaultKeyframeTimingFunction;
@@ -251,8 +255,9 @@ AcceleratedEffect::AcceleratedEffect(const KeyframeEffect& effect, const IntRect
     m_animatedProperties.remove(disallowedProperties);
 }
 
-AcceleratedEffect::AcceleratedEffect(AnimationEffectTiming timing, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime)
+AcceleratedEffect::AcceleratedEffect(AnimationEffectTiming timing, RefPtr<AcceleratedTimeline>&& timeline, Vector<Keyframe>&& keyframes, WebAnimationType type, CompositeOperation composite, RefPtr<TimingFunction>&& defaultKeyframeTimingFunction, OptionSet<WebCore::AcceleratedEffectProperty>&& animatedProperties, bool paused, double playbackRate, std::optional<WebAnimationTime> startTime, std::optional<WebAnimationTime> holdTime)
     : m_timing(timing)
+    , m_timeline(timeline)
     , m_keyframes(WTFMove(keyframes))
     , m_animationType(type)
     , m_compositeOperation(composite)
@@ -268,6 +273,7 @@ AcceleratedEffect::AcceleratedEffect(AnimationEffectTiming timing, Vector<Keyfra
 AcceleratedEffect::AcceleratedEffect(const AcceleratedEffect& source, OptionSet<AcceleratedEffectProperty>& propertyFilter)
 {
     m_timing = source.m_timing;
+    m_timeline = source.m_timeline.copyRef();
     m_animationType = source.m_animationType;
     m_compositeOperation = source.m_compositeOperation;
     m_paused = source.m_paused;
@@ -350,24 +356,29 @@ static void blend(AcceleratedEffectProperty property, AcceleratedEffectValues& o
     }
 }
 
-void AcceleratedEffect::apply(WebAnimationTime currentTime, AcceleratedEffectValues& values, const FloatRect& bounds)
+void AcceleratedEffect::apply(AcceleratedEffectValues& values, const FloatRect& bounds)
 {
+    ASSERT(m_timeline);
+    auto timelineTime = m_timeline->currentTime();
+    if (!timelineTime)
+        return;
+
     auto localTime = [&]() -> WebAnimationTime {
         ASSERT(m_holdTime || m_startTime);
         if (m_holdTime)
             return *m_holdTime;
-        return (currentTime - *m_startTime) * m_playbackRate;
+        ASSERT(timelineTime);
+        return (*timelineTime - *m_startTime) * m_playbackRate;
     }();
 
-    // FIXME: when we add threaded animaiton support support for scroll-driven animations,
-    // pass in the associated timeline's current time and duration.
     auto resolvedTiming = m_timing.resolve({
-        std::nullopt,
-        std::nullopt,
-        { m_holdTime ? *m_holdTime : *m_startTime },
-        { localTime },
+        timelineTime,
+        m_timeline->duration(),
+        m_holdTime ? *m_holdTime : *m_startTime,
+        localTime,
         m_playbackRate
     });
+
     if (!resolvedTiming.transformedProgress)
         return;
 

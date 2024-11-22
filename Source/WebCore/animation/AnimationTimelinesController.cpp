@@ -599,6 +599,15 @@ AcceleratedEffectStackUpdater& AnimationTimelinesController::acceleratedEffectSt
         m_acceleratedEffectStackUpdater = makeUnique<AcceleratedEffectStackUpdater>(m_document);
     return *m_acceleratedEffectStackUpdater;
 }
+
+void AnimationTimelinesController::updateAcceleratedEffectStacks()
+{
+    if (!m_acceleratedEffectStackUpdater)
+        return;
+    for (auto& timeline : m_timelines)
+        timeline.clearAcceleratedRepresentation();
+    m_acceleratedEffectStackUpdater->updateEffectStacks();
+}
 #endif
 
 } // namespace WebCore

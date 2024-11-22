@@ -23,37 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "AcceleratedTimeline.h"
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 
-#include "AcceleratedEffect.h"
-#include <wtf/HashSet.h>
-#include <wtf/Seconds.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
-class Document;
-class Element;
-struct Styleable;
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(AcceleratedTimeline);
 
-class AcceleratedEffectStackUpdater {
-    WTF_MAKE_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(Animation);
-public:
-    AcceleratedEffectStackUpdater(Document&);
+Ref<AcceleratedTimeline> AcceleratedTimeline::create(Seconds originTime)
+{
+    return adoptRef(*new AcceleratedTimeline(std::nullopt, originTime));
+}
 
-    void updateEffectStacks();
-    void updateEffectStackForTarget(const Styleable&);
+Ref<AcceleratedTimeline> AcceleratedTimeline::create(std::optional<WebAnimationTime>&& duration, Seconds originTime)
+{
+    return adoptRef(*new AcceleratedTimeline(WTFMove(duration), WTFMove(originTime)));
+}
 
-    Seconds originTime() const { return m_originTime; }
+AcceleratedTimeline::AcceleratedTimeline(std::optional<WebAnimationTime>&& duration, Seconds originTime)
+    : m_duration(WTFMove(duration))
+    , m_originTime(originTime)
+{
+}
 
-protected:
-
-private:
-    using HashedStyleable = std::pair<Element*, std::optional<Style::PseudoElementIdentifier>>;
-    HashSet<HashedStyleable> m_targetsPendingUpdate;
-    Seconds m_originTime;
-};
+void AcceleratedTimeline::setMonotonicTime(MonotonicTime now)
+{
+    m_currentTime = now.secondsSinceEpoch() - m_originTime;
+}
 
 } // namespace WebCore
 

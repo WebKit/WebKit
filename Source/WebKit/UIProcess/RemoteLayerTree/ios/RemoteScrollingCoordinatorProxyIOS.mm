@@ -408,6 +408,20 @@ RemoteLayerTreeDrawingAreaProxyIOS& RemoteScrollingCoordinatorProxyIOS::drawingA
 void RemoteScrollingCoordinatorProxyIOS::animationsWereAddedToNode(RemoteLayerTreeNode& node)
 {
     m_animatedNodeLayerIDs.add(node.layerID());
+
+    RefPtr effectStack = node.effectStack();
+    ASSERT(effectStack);
+
+    auto addEffectTimelines = [&](const WebCore::AcceleratedEffects& effects) {
+        for (auto& effect : effects) {
+            auto& timeline = effect->timeline();
+            if (timeline)
+                m_animationTimelines.add(*timeline);
+        }
+    };
+    addEffectTimelines(effectStack->primaryLayerEffects());
+    addEffectTimelines(effectStack->backdropLayerEffects());
+
     drawingAreaIOS().scheduleDisplayRefreshCallbacksForAnimation();
 }
 
@@ -418,12 +432,23 @@ void RemoteScrollingCoordinatorProxyIOS::animationsWereRemovedFromNode(RemoteLay
         drawingAreaIOS().pauseDisplayRefreshCallbacksForAnimation();
 }
 
+void RemoteScrollingCoordinatorProxyIOS::clearAnimationTimelines()
+{
+    m_animationTimelines.clear();
+}
+
+void RemoteScrollingCoordinatorProxyIOS::setAnimationTimelinesCurrentTime(MonotonicTime now)
+{
+    for (auto& timeline : m_animationTimelines)
+        timeline->setMonotonicTime(now);
+}
+
 void RemoteScrollingCoordinatorProxyIOS::updateAnimations()
 {
     // FIXME: Rather than using 'now' at the point this is called, we
     // should probably be using the timestamp of the (next?) display
     // link update or vblank refresh.
-    auto now = MonotonicTime::now();
+    setAnimationTimelinesCurrentTime(MonotonicTime::now());
 
     auto& layerTreeHost = drawingAreaIOS().remoteLayerTreeHost();
 
@@ -431,7 +456,7 @@ void RemoteScrollingCoordinatorProxyIOS::updateAnimations()
     for (auto animatedNodeLayerID : animatedNodeLayerIDs) {
         auto* animatedNode = layerTreeHost.nodeForID(animatedNodeLayerID);
         auto* effectStack = animatedNode->effectStack();
-        effectStack->applyEffectsFromMainThread(animatedNode->layer(), now, animatedNode->backdropRootIsOpaque());
+        effectStack->applyEffectsFromMainThread(animatedNode->layer(), animatedNode->backdropRootIsOpaque());
 
         // We can clear the effect stack if it's empty, but the previous
         // call to applyEffects() is important so that the base values

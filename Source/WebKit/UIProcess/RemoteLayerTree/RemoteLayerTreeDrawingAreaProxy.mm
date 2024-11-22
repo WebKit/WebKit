@@ -341,8 +341,7 @@ void RemoteLayerTreeDrawingAreaProxy::commitLayerTreeTransaction(IPC::Connection
     };
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
-    state.acceleratedTimelineTimeOrigin = layerTreeTransaction.acceleratedTimelineTimeOrigin();
-    state.animationCurrentTime = MonotonicTime::now();
+    setAnimationTimelinesCurrentTime(MonotonicTime::now());
 #endif
 
     webPageProxy->scrollingCoordinatorProxy()->willCommitLayerAndScrollingTrees();
@@ -690,6 +689,16 @@ void RemoteLayerTreeDrawingAreaProxy::sizeToContentAutoSizeMaximumSizeDidChange(
 }
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void RemoteLayerTreeDrawingAreaProxy::clearAnimationTimelines()
+{
+    protectedWebPageProxy()->scrollingCoordinatorProxy()->clearAnimationTimelines();
+}
+
+void RemoteLayerTreeDrawingAreaProxy::setAnimationTimelinesCurrentTime(MonotonicTime now)
+{
+    protectedWebPageProxy()->scrollingCoordinatorProxy()->setAnimationTimelinesCurrentTime(now);
+}
+
 void RemoteLayerTreeDrawingAreaProxy::animationsWereAddedToNode(RemoteLayerTreeNode& node)
 {
     protectedWebPageProxy()->scrollingCoordinatorProxy()->animationsWereAddedToNode(node);
@@ -699,19 +708,6 @@ void RemoteLayerTreeDrawingAreaProxy::animationsWereRemovedFromNode(RemoteLayerT
 {
     protectedWebPageProxy()->scrollingCoordinatorProxy()->animationsWereRemovedFromNode(node);
 }
-
-Seconds RemoteLayerTreeDrawingAreaProxy::acceleratedTimelineTimeOrigin(WebCore::ProcessIdentifier processIdentifier) const
-{
-    const auto& state = processStateForIdentifier(processIdentifier);
-    return state.acceleratedTimelineTimeOrigin;
-}
-
-MonotonicTime RemoteLayerTreeDrawingAreaProxy::animationCurrentTime(WebCore::ProcessIdentifier processIdentifier) const
-{
-    const auto& state = processStateForIdentifier(processIdentifier);
-    return state.animationCurrentTime;
-}
-
 #endif // ENABLE(THREADED_ANIMATION_RESOLUTION)
 
 } // namespace WebKit

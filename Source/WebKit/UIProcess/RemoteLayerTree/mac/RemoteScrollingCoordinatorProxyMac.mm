@@ -300,6 +300,16 @@ void RemoteScrollingCoordinatorProxyMac::applyScrollingTreeLayerPositionsAfterCo
 }
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
+void RemoteScrollingCoordinatorProxyMac::clearAnimationTimelines()
+{
+    m_eventDispatcher->clearAnimationTimelines();
+}
+
+void RemoteScrollingCoordinatorProxyMac::setAnimationTimelinesCurrentTime(MonotonicTime now)
+{
+    m_eventDispatcher->setAnimationTimelinesCurrentTime(now);
+}
+
 void RemoteScrollingCoordinatorProxyMac::animationsWereAddedToNode(RemoteLayerTreeNode& node)
 {
     m_eventDispatcher->animationsWereAddedToNode(node);

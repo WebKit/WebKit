@@ -106,4 +106,20 @@ bool AnimationTimeline::animationsAreSuspended() const
     return controller() && controller()->animationsAreSuspended();
 }
 
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+const RefPtr<AcceleratedTimeline>& AnimationTimeline::acceleratedRepresentation()
+{
+    if (!m_acceleratedRepresentation)
+        m_acceleratedRepresentation = createAcceleratedRepresentation();
+    return m_acceleratedRepresentation;
+}
+
+Ref<AcceleratedTimeline> AnimationTimeline::createAcceleratedRepresentation()
+{
+    ASSERT_NOT_REACHED();
+    return AcceleratedTimeline::create(0_s);
+}
+
+#endif
+
 } // namespace WebCore

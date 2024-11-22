@@ -92,8 +92,11 @@ private:
     DocumentTimeline(Document&, Seconds);
 
     bool isDocumentTimeline() const final { return true; }
-
     AnimationTimelinesController* controller() const override;
+#if ENABLE(THREADED_ANIMATION_RESOLUTION)
+    Ref<AcceleratedTimeline> createAcceleratedRepresentation() override;
+#endif
+
     void applyPendingAcceleratedAnimations();
     void scheduleInvalidationTaskIfNeeded();
     void scheduleAnimationResolution();

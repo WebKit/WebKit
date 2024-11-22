@@ -294,7 +294,7 @@ void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::Acce
     if (effects.isEmpty())
         return;
 
-    m_effectStack = RemoteAcceleratedEffectStack::create(layer().bounds, host.acceleratedTimelineTimeOrigin(m_layerID.processIdentifier()));
+    m_effectStack = RemoteAcceleratedEffectStack::create(layer().bounds);
 
     auto clonedEffects = effects;
     auto clonedBaseValues = baseValues.clone();
@@ -303,9 +303,9 @@ void RemoteLayerTreeNode::setAcceleratedEffectsAndBaseValues(const WebCore::Acce
     m_effectStack->setBaseValues(WTFMove(clonedBaseValues));
 
 #if PLATFORM(IOS_FAMILY)
-    m_effectStack->applyEffectsFromMainThread(layer(), host.animationCurrentTime(m_layerID.processIdentifier()), backdropRootIsOpaque());
+    m_effectStack->applyEffectsFromMainThread(layer(), backdropRootIsOpaque());
 #else
-    m_effectStack->initEffectsFromMainThread(layer(), host.animationCurrentTime(m_layerID.processIdentifier()));
+    m_effectStack->initEffectsFromMainThread(layer());
 #endif
 
     host.animationsWereAddedToNode(*this);

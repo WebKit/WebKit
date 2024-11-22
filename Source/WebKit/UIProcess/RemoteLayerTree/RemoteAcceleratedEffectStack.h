@@ -44,23 +44,23 @@ namespace WebKit {
 class RemoteAcceleratedEffectStack final : public WebCore::AcceleratedEffectStack {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RemoteAcceleratedEffectStack);
 public:
-    static Ref<RemoteAcceleratedEffectStack> create(WebCore::FloatRect, Seconds);
+    static Ref<RemoteAcceleratedEffectStack> create(WebCore::FloatRect);
 
     void setEffects(WebCore::AcceleratedEffects&&) final;
 
 #if PLATFORM(MAC)
-    void initEffectsFromMainThread(PlatformLayer*, MonotonicTime now);
-    void applyEffectsFromScrollingThread(MonotonicTime now) const;
+    void initEffectsFromMainThread(PlatformLayer*);
+    void applyEffectsFromScrollingThread() const;
 #endif
 
-    void applyEffectsFromMainThread(PlatformLayer*, MonotonicTime now, bool backdropRootIsOpaque) const;
+    void applyEffectsFromMainThread(PlatformLayer*, bool backdropRootIsOpaque) const;
 
     void clear(PlatformLayer*);
 
 private:
-    explicit RemoteAcceleratedEffectStack(WebCore::FloatRect, Seconds);
+    explicit RemoteAcceleratedEffectStack(WebCore::FloatRect);
 
-    WebCore::AcceleratedEffectValues computeValues(MonotonicTime now) const;
+    WebCore::AcceleratedEffectValues computeValues() const;
 
 #if PLATFORM(MAC)
     const WebCore::FilterOperations* longestFilterList() const;
@@ -75,7 +75,6 @@ private:
     OptionSet<LayerProperty> m_affectedLayerProperties;
 
     WebCore::FloatRect m_bounds;
-    Seconds m_acceleratedTimelineTimeOrigin;
 
 #if PLATFORM(MAC)
     RetainPtr<CAPresentationModifierGroup> m_presentationModifierGroup;

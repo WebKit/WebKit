@@ -74,6 +74,8 @@ public:
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     void animationsWereAddedToNode(RemoteLayerTreeNode&) override WTF_IGNORES_THREAD_SAFETY_ANALYSIS;
     void animationsWereRemovedFromNode(RemoteLayerTreeNode&) override;
+    void clearAnimationTimelines() override;
+    void setAnimationTimelinesCurrentTime(MonotonicTime) override;
     void updateAnimations();
 #endif
 
@@ -104,6 +106,7 @@ private:
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     HashSet<WebCore::PlatformLayerIdentifier> m_animatedNodeLayerIDs;
+    HashSet<Ref<WebCore::AcceleratedTimeline>> m_animationTimelines;
 #endif
 };
 
