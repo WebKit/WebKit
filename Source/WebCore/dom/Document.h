@@ -115,6 +115,7 @@ class CustomElementRegistry;
 class DOMImplementation;
 class DOMSelection;
 class LocalDOMWindow;
+class DOMAudioSession;
 class DOMWrapperWorld;
 class Database;
 class DatabaseThread;
@@ -1981,6 +1982,11 @@ public:
 
     unsigned unloadCounter() const { return m_unloadCounter; }
 
+#if ENABLE(DOM_AUDIO_SESSION)
+    void setDOMAudioSession(DOMAudioSession&);
+    RefPtr<DOMAudioSession> domAudioSession();
+#endif
+
 protected:
     enum class ConstructionFlag : uint8_t {
         Synthesized = 1 << 0,
@@ -2545,6 +2551,7 @@ private:
 
 #if ENABLE(DOM_AUDIO_SESSION)
     DOMAudioSessionType m_audioSessionType { };
+    WeakPtr<DOMAudioSession> m_audioSession;
 #endif
 
     OptionSet<ContentRelevancy> m_contentRelevancyUpdate;

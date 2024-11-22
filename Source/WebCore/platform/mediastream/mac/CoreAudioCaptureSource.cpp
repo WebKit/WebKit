@@ -35,6 +35,8 @@
 #include "CoreAudioCaptureDeviceManager.h"
 #include "CoreAudioSharedUnit.h"
 #include "Logging.h"
+#include "MockAudioSharedUnit.h"
+#include "MockRealtimeMediaSourceCenter.h"
 #include "PlatformMediaSessionManager.h"
 #include "Timer.h"
 #include "WebAudioSourceProviderCocoa.h"
