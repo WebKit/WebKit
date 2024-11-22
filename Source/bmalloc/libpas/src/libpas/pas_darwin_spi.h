@@ -31,9 +31,7 @@
 
 #if PAS_OS(DARWIN)
 #if defined(__has_include) && __has_include(<pthread/private.h>)
-PAS_BEGIN_EXTERN_C;
 #include <pthread/private.h>
-PAS_END_EXTERN_C;
 #define PAS_HAVE_PTHREAD_PRIVATE 1
 #else
 PAS_BEGIN_EXTERN_C;
