@@ -28,100 +28,121 @@
 namespace WebCore {
 
 struct WEBCORE_EXPORT QuirksData {
-    std::optional<bool> isAmazon;
-    std::optional<bool> isESPN;
-    std::optional<bool> isGoogleMaps;
-    std::optional<bool> isNetflix;
-    std::optional<bool> isSoundCloud;
-    std::optional<bool> isVimeo;
-    std::optional<bool> isYouTube;
-    std::optional<bool> isZoom;
+    bool isAmazon { false };
+    bool isBankOfAmerica { false };
+    bool isBing { false };
+    bool isESPN { false };
+    bool isGoogleProperty { false };
+    bool isGoogleMaps { false };
+    bool isNetflix { false };
+    bool isSoundCloud { false };
+    bool isVimeo { false };
+    bool isYouTube { false };
+    bool isZoom { false };
 
-    std::optional<bool> implicitMuteWhenVolumeSetToZero;
-    std::optional<bool> needsBingGestureEventQuirk;
-    std::optional<bool> needsBodyScrollbarWidthNoneDisabledQuirk;
-    std::optional<bool> needsCanPlayAfterSeekedQuirk;
-    std::optional<bool> needsChromeMediaControlsPseudoElementQuirk;
+    bool hasBrokenEncryptedMediaAPISupportQuirk { false };
+    bool implicitMuteWhenVolumeSetToZero { false };
+    bool maybeBypassBackForwardCache { false };
+    bool needsBingGestureEventQuirk { false };
+    bool needsBodyScrollbarWidthNoneDisabledQuirk { false };
+    bool needsCanPlayAfterSeekedQuirk { false };
+    bool needsChromeMediaControlsPseudoElementQuirk { false };
+    bool needsMozillaFileTypeForDataTransferQuirk { false };
+    bool needsRelaxedCorsMixedContentCheckQuirk { false };
+    bool needsResettingTransitionCancelsRunningTransitionQuirk { false };
+    bool needsScrollbarWidthThinDisabledQuirk { false };
+    bool needsSeekingSupportDisabledQuirk { false };
+    bool needsVP9FullRangeFlagQuirk { false };
+    bool needsVideoShouldMaintainAspectRatioQuirk { false };
+    bool returnNullPictureInPictureElementDuringFullscreenChangeQuirk { false };
+    bool shouldAllowDownloadsInSpiteOfCSPQuirk { false };
+    bool shouldAutoplayWebAudioForArbitraryUserGestureQuirk { false };
+    bool shouldAvoidResizingWhenInputViewBoundsChangeQuirk { false };
+    bool shouldAvoidScrollingWhenFocusedContentIsVisibleQuirk { false };
+    bool shouldBypassAsyncScriptDeferring { false };
+    bool shouldDisableDataURLPaddingValidation { false };
+    bool shouldDisableElementFullscreen { false };
+    bool shouldDisableFetchMetadata { false };
+    bool shouldDisableLazyIframeLoadingQuirk { false };
+    bool shouldDisablePushStateFilePathRestrictions { false };
+    bool shouldDisableWritingSuggestionsByDefaultQuirk { false };
+    bool shouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk { false };
+    bool shouldDispatchedSimulatedMouseEventsAssumeDefaultPreventedQuirk { false };
+    bool shouldEnableFontLoadingAPIQuirk { false };
+    bool shouldExposeShowModalDialog { false };
+    bool shouldIgnorePlaysInlineRequirementQuirk { false };
+    bool shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk { false };
+    bool shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk { false };
+    bool shouldStarBePermissionsPolicyDefaultValueQuirk { false };
+    bool shouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk { false };
+
+    // Requires check at moment of use
     std::optional<bool> needsDisableDOMPasteAccessQuirk;
-    std::optional<bool> needsMozillaFileTypeForDataTransferQuirk;
-    std::optional<bool> needsRelaxedCorsMixedContentCheckQuirk;
-    std::optional<bool> needsVP9FullRangeFlagQuirk;
-    std::optional<bool> needsVideoShouldMaintainAspectRatioQuirk;
-    std::optional<bool> returnNullPictureInPictureElementDuringFullscreenChangeQuirk;
-    std::optional<bool> shouldAllowDownloadsInSpiteOfCSPQuirk;
-    std::optional<bool> shouldAutoplayWebAudioForArbitraryUserGestureQuirk;
-    std::optional<bool> shouldAvoidResizingWhenInputViewBoundsChangeQuirk;
-    std::optional<bool> shouldAvoidScrollingWhenFocusedContentIsVisibleQuirk;
-    std::optional<bool> shouldBypassAsyncScriptDeferring;
-    std::optional<bool> shouldDisableDataURLPaddingValidation;
-    std::optional<bool> shouldDisableElementFullscreen;
-    std::optional<bool> shouldDisableFetchMetadata;
-    std::optional<bool> shouldDisableLazyIframeLoadingQuirk;
-    std::optional<bool> shouldDisableWritingSuggestionsByDefaultQuirk;
-    std::optional<bool> shouldDispatchSyntheticMouseEventsWhenModifyingSelectionQuirk;
-    std::optional<bool> shouldEnableFontLoadingAPIQuirk;
-    std::optional<bool> shouldExposeShowModalDialog;
-    std::optional<bool> shouldIgnorePlaysInlineRequirementQuirk;
-    std::optional<bool> shouldLayOutAtMinimumWindowWidthWhenIgnoringScalingConstraintsQuirk;
-    std::optional<bool> shouldPreventOrientationMediaQueryFromEvaluatingToLandscapeQuirk;
-    std::optional<bool> shouldStarBePermissionsPolicyDefaultValueQuirk;
-    std::optional<bool> shouldUseLegacySelectPopoverDismissalBehaviorInDataActivationQuirk;
 
 #if PLATFORM(IOS_FAMILY)
-    std::optional<bool> mayNeedToIgnoreContentObservation;
-    std::optional<bool> needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk;
-    std::optional<bool> needsFullscreenDisplayNoneQuirk;
-    std::optional<bool> needsFullscreenObjectFitQuirk;
-    std::optional<bool> needsGMailOverflowScrollQuirk;
-    std::optional<bool> needsIPadSkypeOverflowScrollQuirk;
-    std::optional<bool> needsYouTubeMouseOutQuirk;
-    std::optional<bool> needsYouTubeOverflowScrollQuirk;
-    std::optional<bool> shouldAvoidPastingImagesAsWebContent;
-    std::optional<bool> shouldDisablePointerEventsQuirk;
-    std::optional<bool> shouldEnableApplicationCacheQuirk;
-    std::optional<bool> shouldIgnoreAriaForFastPathContentObservationCheckQuirk;
-    std::optional<bool> shouldNavigatorPluginsBeEmpty;
-    std::optional<bool> shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk;
-    std::optional<bool> shouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk;
+    bool mayNeedToIgnoreContentObservation { false };
+    bool needsDeferKeyDownAndKeyPressTimersUntilNextEditingCommandQuirk { false };
+    bool needsFullscreenDisplayNoneQuirk { false };
+    bool needsFullscreenObjectFitQuirk { false };
+    bool needsGMailOverflowScrollQuirk { false };
+    bool needsGoogleMapsScrollingQuirk { false };
+    bool needsIPadSkypeOverflowScrollQuirk { false };
+    bool needsPreloadAutoQuirk { false };
+    bool needsYouTubeMouseOutQuirk { false };
+    bool needsYouTubeOverflowScrollQuirk { false };
+    bool shouldAvoidPastingImagesAsWebContent { false };
+    bool shouldDisablePointerEventsQuirk { false };
+    bool shouldEnableApplicationCacheQuirk { false };
+    bool shouldIgnoreAriaForFastPathContentObservationCheckQuirk { false };
+    bool shouldNavigatorPluginsBeEmpty { false };
+    bool shouldSuppressAutocorrectionAndAutocapitalizationInHiddenEditableAreasQuirk { false };
+    bool shouldSynthesizeTouchEventsAfterNonSyntheticClickQuirk { false };
+#endif
+
+#if PLATFORM(IOS)
+    bool hideForbesVolumeSlider { false };
+    bool hideIGNVolumeSlider { false };
+    bool needsGetElementsByNameQuirk { false };
 #endif
 
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    std::optional<bool> allowLayeredFullscreenVideos;
-    std::optional<bool> shouldSilenceMediaQueryListChangeEvents;
-    std::optional<bool> shouldSilenceWindowResizeEvents;
+    bool allowLayeredFullscreenVideos { false };
+    bool shouldSilenceMediaQueryListChangeEvents { false };
+    bool shouldSilenceResizeObservers { false };
+    bool shouldSilenceWindowResizeEvents { false };
 #endif
 
 #if PLATFORM(VISION)
-    std::optional<bool> shouldDisableFullscreenVideoAspectRatioAdaptiveSizingQuirk;
+    bool shouldDisableFullscreenVideoAspectRatioAdaptiveSizingQuirk { false };
 #endif
 
 #if PLATFORM(MAC)
-    std::optional<bool> isNeverRichlyEditableForTouchBarQuirk;
-    std::optional<bool> isTouchBarUpdateSuppressedForHiddenContentEditableQuirk;
-    std::optional<bool> needsFormControlToBeMouseFocusableQuirk;
-    std::optional<bool> needsPrimeVideoUserSelectNoneQuirk;
+    bool isNeverRichlyEditableForTouchBarQuirk { false };
+    bool isTouchBarUpdateSuppressedForHiddenContentEditableQuirk { false };
+    bool needsFormControlToBeMouseFocusableQuirk { false };
+    bool needsPrimeVideoUserSelectNoneQuirk { false };
 #endif
 
 #if ENABLE(DESKTOP_CONTENT_MODE_QUIRKS)
-    std::optional<bool> needsZeroMaxTouchPointsQuirk;
-    std::optional<bool> shouldHideCoarsePointerCharacteristicsQuirk;
+    bool needsZeroMaxTouchPointsQuirk { false };
+    bool shouldHideCoarsePointerCharacteristicsQuirk { false };
 #endif
 
 #if ENABLE(FLIP_SCREEN_DIMENSIONS_QUIRKS)
-    std::optional<bool> shouldFlipScreenDimensionsQuirk;
+    bool shouldFlipScreenDimensionsQuirk { false };
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    std::optional<bool> shouldDisableImageCaptureQuirk;
-    std::optional<bool> shouldEnableLegacyGetUserMediaQuirk;
+    bool shouldDisableImageCaptureQuirk { false };
+    bool shouldEnableLegacyGetUserMediaQuirk { false };
 #endif
 
 #if ENABLE(META_VIEWPORT)
-    std::optional<bool> shouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk;
+    bool shouldIgnoreViewportArgumentsToAvoidExcessiveZoomQuirk { false };
 #endif
 
 #if ENABLE(TEXT_AUTOSIZING)
-    std::optional<bool> shouldIgnoreTextAutoSizingQuirk;
+    bool shouldIgnoreTextAutoSizingQuirk { false };
 #endif
 
 #if ENABLE(TOUCH_EVENTS)
@@ -132,14 +153,20 @@ struct WEBCORE_EXPORT QuirksData {
         Yes,
     };
     ShouldDispatchSimulatedMouseEvents shouldDispatchSimulatedMouseEventsQuirk { ShouldDispatchSimulatedMouseEvents::Unknown };
-    std::optional<bool> shouldDispatchPointerOutAfterHandlingSyntheticClick;
-    std::optional<bool> shouldPreventDispatchOfTouchEventQuirk;
+    bool shouldDispatchPointerOutAfterHandlingSyntheticClick { false };
+    bool shouldPreventDispatchOfTouchEventQuirk { false };
+#endif
+
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO_PRESENTATION_MODE)
+    bool blocksEnteringStandardFullscreenFromPictureInPictureQuirk { false };
+    bool blocksReturnToFullscreenFromPictureInPictureQuirk { false };
 #endif
 
 #if ENABLE(VIDEO_PRESENTATION_MODE)
-    std::optional<bool> requiresUserGestureToLoadInPictureInPictureQuirk;
-    std::optional<bool> requiresUserGestureToPauseInPictureInPictureQuirk;
-    std::optional<bool> shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk;
+    bool requiresUserGestureToLoadInPictureInPictureQuirk { false };
+    bool requiresUserGestureToPauseInPictureInPictureQuirk { false };
+    bool shouldDelayFullscreenEventWhenExitingPictureInPictureQuirk { false };
+    bool shouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk { false };
 #endif
 };
 
