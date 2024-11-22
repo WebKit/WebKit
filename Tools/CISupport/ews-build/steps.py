@@ -1195,7 +1195,7 @@ class CheckOutPullRequest(steps.ShellSequence, ShellMixin):
             ['git', 'remote', 'set-url', remote, '{}{}.git'.format(GITHUB_URL, project)],
             ['git', 'fetch', remote, pr_branch],
             ['git', 'checkout', '-b', pr_branch],
-            ['git', 'cherry-pick', 'HEAD..remotes/{}/{}'.format(remote, pr_branch)],
+            ['git', 'cherry-pick', '--allow-empty', 'HEAD..remotes/{}/{}'.format(remote, pr_branch)],
         ]
         for command in commands:
             self.commands.append(util.ShellArg(command=command, logname='stdio', haltOnFailure=True))
