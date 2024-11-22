@@ -1234,6 +1234,24 @@ class TestCompileWebKit(BuildStepMixinAdditions, unittest.TestCase):
         self.expectOutcome(result=FAILURE, state_string='Failed to compile WebKit')
         return self.runStep()
 
+    def test_silent_failure(self):
+        self.setupStep(CompileWebKit())
+        self.setProperty('platform', 'mac')
+        self.setProperty('fullPlatform', 'mac-monterey')
+        self.setProperty('configuration', 'debug')
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        timeout=3600,
+                        logEnviron=False,
+                        command=['/bin/sh', '-c', 'perl Tools/Scripts/build-webkit --debug -hideShellScriptEnvironment WK_VALIDATE_DEPENDENCIES=YES 2>&1 | perl Tools/Scripts/filter-build-webkit -logfile build-log.txt'],
+                        )
+            + ExpectShell.log('stdio', stdout='1 error generated.')
+            + 0,
+        )
+        self.expectOutcome(result=FAILURE, state_string='Failed to compile WebKit')
+        rc = self.runStep()
+        return rc
+
     def test_skip_for_revert_patches_on_commit_queue(self):
         self.setupStep(CompileWebKit())
         self.setProperty('buildername', 'Commit-Queue')
