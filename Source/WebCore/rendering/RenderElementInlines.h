@@ -82,83 +82,27 @@ inline bool RenderElement::shouldApplySizeOrInlineSizeContainment() const
 
 inline bool RenderElement::shouldApplyLayoutContainment() const
 {
-    // content-visibility hidden and auto turns on layout containment.
-    auto& style = this->style();
-    auto hasContainment = style.containsLayout() || style.contentVisibility() == ContentVisibility::Hidden || style.contentVisibility() == ContentVisibility::Auto;
-    if (!hasContainment)
-        return false;
-    // Giving an element layout containment has no effect if any of the following are true:
-    //   if the element does not generate a principal box (as is the case with display: contents or display: none)
-    //   if its principal box is an internal table box other than table-cell
-    //   if its principal box is an internal ruby box or a non-atomic inline-level box
-    if (style.isInternalTableBox() && style.display() != DisplayType::TableCell)
-        return false;
-    if (style.isRubyContainerOrInternalRubyBox() || (isInline() && !isAtomicInlineLevelBox()))
-        return false;
-    return true;
+    return element() && WebCore::shouldApplyLayoutContainment(style(), *element());
 }
 
 inline bool RenderElement::shouldApplySizeContainment() const
 {
-    auto& style = this->style();
-    auto hasContainment = style.containsSize() || style.contentVisibility() == ContentVisibility::Hidden || (style.contentVisibility() == ContentVisibility::Auto && element() && !element()->isRelevantToUser());
-    if (!hasContainment)
-        return false;
-    // Giving an element size containment has no effect if any of the following are true:
-    //   if the element does not generate a principal box (as is the case with display: contents or display: none)
-    //   if its inner display type is table
-    //   if its principal box is an internal table box
-    //   if its principal box is an internal ruby box or a non-atomic inline-level box
-    if (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable)
-        return false;
-    if (style.isInternalTableBox())
-        return false;
-    if (style.isRubyContainerOrInternalRubyBox() || (isInline() && !isAtomicInlineLevelBox()))
-        return false;
-    return true;
+    return element() && WebCore::shouldApplySizeContainment(style(), *element());
 }
 
 inline bool RenderElement::shouldApplyInlineSizeContainment() const
 {
-    auto& style = this->style();
-    if (!style.containsInlineSize())
-        return false;
-    // Giving an element inline-size containment has no effect if any of the following are true:
-    //   if the element does not generate a principal box (as is the case with display: contents or display: none)
-    //   if its inner display type is table
-    //   if its principal box is an internal table box
-    //   if its principal box is an internal ruby box or a non-atomic inline-level box
-    if (style.display() == DisplayType::Table || style.display() == DisplayType::InlineTable)
-        return false;
-    if (style.isInternalTableBox())
-        return false;
-    if (style.isRubyContainerOrInternalRubyBox() || (isInline() && !isAtomicInlineLevelBox()))
-        return false;
-    return true;
+    return element() && WebCore::shouldApplyInlineSizeContainment(style(), *element());
 }
 
 inline bool RenderElement::shouldApplyStyleContainment() const
 {
-    // content-visibility hidden and auto turns on style containment.
-    return style().containsStyle() || style().contentVisibility() == ContentVisibility::Hidden || style().contentVisibility() == ContentVisibility::Auto;
+    return element() && WebCore::shouldApplyStyleContainment(style(), *element());
 }
 
 inline bool RenderElement::shouldApplyPaintContainment() const
 {
-    // content-visibility hidden and auto turns on paint containment.
-    auto& style = this->style();
-    auto hasContainment = style.containsPaint() || style.contentVisibility() == ContentVisibility::Hidden || style.contentVisibility() == ContentVisibility::Auto;
-    if (!hasContainment)
-        return false;
-    // Giving an element paint containment has no effect if any of the following are true:
-    //   if the element does not generate a principal box (as is the case with display: contents or display: none)
-    //   if its principal box is an internal table box other than table-cell
-    //   if its principal box is an internal ruby box or a non-atomic inline-level box
-    if (style.isInternalTableBox() && style.display() != DisplayType::TableCell)
-        return false;
-    if (style.isRubyContainerOrInternalRubyBox() || (isInline() && !isAtomicInlineLevelBox()))
-        return false;
-    return true;
+    return element() && WebCore::shouldApplyPaintContainment(style(), *element());
 }
 
 inline bool RenderElement::visibleToHitTesting(const std::optional<HitTestRequest>& request) const
@@ -186,20 +130,7 @@ inline LayoutUnit adjustLayoutUnitForAbsoluteZoom(LayoutUnit value, const Render
 
 inline bool isSkippedContentRoot(const RenderElement& renderer)
 {
-    if (!renderer.shouldApplySizeContainment())
-        return false;
-
-    switch (renderer.style().contentVisibility()) {
-    case ContentVisibility::Visible:
-        return false;
-    case ContentVisibility::Hidden:
-        return true;
-    case ContentVisibility::Auto:
-        return renderer.element() && !renderer.element()->isRelevantToUser();
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
+    return renderer.element() && WebCore::isSkippedContentRoot(renderer.style(), *renderer.element());
 }
 
 } // namespace WebCore
