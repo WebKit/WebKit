@@ -320,13 +320,19 @@ ScrollTimeline::Data ViewTimeline::computeTimelineData(const TimelineRange& rang
         return 0.f;
     };
 
-    auto rangeStart = computeRangeStart() + insetEnd.value();
-    auto rangeEnd = computeRangeEnd() - insetStart.value();
+    auto rangeStart = computeRangeStart();
+    auto rangeEnd = computeRangeEnd();
+
+    auto timelineInsetStart = ScrollTimeline::floatValueForOffset(insetStart, rangeEnd - rangeStart);
+    auto timelineInsetEnd = ScrollTimeline::floatValueForOffset(insetEnd, rangeEnd - rangeStart);
+
+    auto timelineRangeStart = ScrollTimeline::floatValueForOffset(range.start.offset, rangeEnd - rangeStart);
+    auto timelineRangeEnd = ScrollTimeline::floatValueForOffset(range.end.offset, rangeEnd - rangeStart);
 
     return {
         currentScrollOffset,
-        rangeStart + ScrollTimeline::floatValueForOffset(range.start.offset, rangeEnd - rangeStart),
-        rangeStart + ScrollTimeline::floatValueForOffset(range.end.offset, rangeEnd - rangeStart)
+        rangeStart + timelineRangeStart + timelineInsetEnd,
+        rangeStart + timelineRangeEnd - timelineInsetStart
     };
 }
 

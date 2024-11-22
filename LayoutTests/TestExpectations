@@ -7394,8 +7394,6 @@ imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-range-update
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-range-update.html [ Skip ]
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-subject-bounds-update.html [ Skip ]
 
-webkit.org/b/283149 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-inset-animation.html [ Skip ]
-
 # CSS @scope with shadow DOM
 imported/w3c/web-platform-tests/css/css-cascade/scope-visited.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-cascade/scope-shadow-sharing.html [ ImageOnlyFailure ]
