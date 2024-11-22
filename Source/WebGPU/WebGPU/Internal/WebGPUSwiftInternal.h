@@ -26,6 +26,16 @@
 #pragma once
 
 #include "SwiftCXXThunk.h"
+
+#if defined(ENABLE_WEBGPU_SWIFT) && ENABLE_WEBGPU_SWIFT
+#include "Buffer.h"
+#include "CommandEncoder.h"
+#include "CommandsMixin.h"
+#include "Device.h"
+#include "QuerySet.h"
+#include "Queue.h"
+#endif
+
 #include <span>
 #include <cstdint>
 

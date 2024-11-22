@@ -26,6 +26,8 @@
 #pragma once
 
 #import "Instance.h"
+#import "WebGPU.h"
+#import "WebGPUExt.h"
 #import <Metal/Metal.h>
 #import <utility>
 #import <wtf/CompletionHandler.h>

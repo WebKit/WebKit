@@ -25,6 +25,8 @@
 
 #pragma once
 
+#import "WebGPU.h"
+#import "WebGPUExt.h"
 #import <optional>
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
