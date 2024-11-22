@@ -21,6 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import os
+import unittest
 
 from webkitcorepy import OutputCapture, testing
 from webkitcorepy.mocks import Time as MockTime
@@ -61,6 +62,55 @@ class TestCanonicalize(testing.PathTestCase):
             ))
 
         self.assertEqual(captured.stdout.getvalue(), 'No local commits to be edited\n')
+
+    def assert_canonicalized_commit_message(self, *, message, expected):
+        with OutputCapture() as captured, mocks.local.Git(
+            self.path
+        ) as mock, mocks.local.Svn(), MockTime:
+            contributors = Contributor.Mapping()
+            contributors.create('Jonathan Bedard', 'jbedard@apple.com')
+
+            old_identifier = mock.commits[mock.default_branch][-3].identifier
+            new_identifier = mock.commits[mock.default_branch][-1].identifier + 1
+
+            formatted_message = message.format(
+                old_identifier=f'{old_identifier}@{mock.default_branch}',
+                new_identifier=f'{new_identifier}@{mock.default_branch}',
+            )
+
+            mock.commits[mock.default_branch].append(
+                Commit(
+                    hash='38ea50d28ae394c9c8b80e13c3fb21f1c262871f',
+                    branch=mock.default_branch,
+                    author=Contributor('Jonathan Bedard', emails=['jbedard@apple.com']),
+                    identifier=mock.commits[mock.default_branch][-1].identifier + 1,
+                    timestamp=1601669000,
+                    message=formatted_message,
+                )
+            )
+
+            self.assertEqual(
+                0,
+                program.main(
+                    args=(
+                        'canonicalize',
+                        '-v',
+                    ),
+                    path=self.path,
+                    contributors=contributors,
+                ),
+            )
+
+            commit = local.Git(self.path).commit(branch=mock.default_branch)
+            self.assertEqual(commit.author, contributors['jbedard@apple.com'])
+            self.assertEqual(commit.message, expected)
+
+        self.assertEqual(
+            captured.stdout.getvalue(),
+            'Rewrite 38ea50d28ae394c9c8b80e13c3fb21f1c262871f (1/1) (--- seconds passed, remaining --- predicted)\n'
+            'Overwriting 38ea50d28ae394c9c8b80e13c3fb21f1c262871f\n'
+            '1 commit successfully canonicalized!\n',
+        )
 
     def test_formated_identifier(self):
         with OutputCapture() as captured, mocks.local.Git(self.path) as mock, mocks.local.Svn(), MockTime:
@@ -126,6 +176,360 @@ class TestCanonicalize(testing.PathTestCase):
             'Rewrite 38ea50d28ae394c9c8b80e13c3fb21f1c262871f (1/1) (--- seconds passed, remaining --- predicted)\n'
             'Overwriting 38ea50d28ae394c9c8b80e13c3fb21f1c262871f\n'
             '1 commit successfully canonicalized!\n',
+        )
+
+    def test_multiple_existing_identifier_trailers(self):
+        # Only the final trailer gets updated.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {old_identifier}\n'
+                'Identifier: {old_identifier}'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {old_identifier}\n'
+                'Identifier: {new_identifier}'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {new_identifier}\n'
+                'Identifier: {old_identifier}'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 6@main\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {new_identifier}\n'
+                'Identifier: {new_identifier}'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 6@main\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+    def test_multiple_existing_identifier_single_trailer(self):
+        # Only the trailer gets updated.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {old_identifier}\n'
+                '\n'
+                'Identifier: {old_identifier}'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {old_identifier}\n'
+                '\n'
+                'Identifier: {new_identifier}'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {new_identifier}\n'
+                '\n'
+                'Identifier: {old_identifier}'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 6@main\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {new_identifier}\n'
+                '\n'
+                'Identifier: {new_identifier}'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 6@main\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+    def test_existing_non_trailer_identifier_regression(self):
+        # This behaviour is wrong, see test_existing_non_trailer_identifier
+        # below. Remove this test when the expectedFailure goes away.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {old_identifier}\n'
+                '\n'
+                'Commit message body'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                '\n'
+                'Commit message body\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {new_identifier}\n'
+                '\n'
+                'Commit message body'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                '\n'
+                'Commit message body\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+    @unittest.expectedFailure
+    def test_existing_non_trailer_identifier(self):
+        # A trailer gets added.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {old_identifier}\n'
+                '\n'
+                'Commit message body'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                '\n'
+                'Commit message body\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {new_identifier}\n'
+                '\n'
+                'Commit message body'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                '\n'
+                'Commit message body\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+    def test_existing_non_trailer_identifier_long(self):
+        # A trailer gets added.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {old_identifier}\n'
+                '\n'
+                'Kinda\n'
+                'long\n'
+                'commit\n'
+                'message\n'
+                'body'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                '\n'
+                'Kinda\n'
+                'long\n'
+                'commit\n'
+                'message\n'
+                'body\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {new_identifier}\n'
+                '\n'
+                'Kinda\n'
+                'long\n'
+                'commit\n'
+                'message\n'
+                'body'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 6@main\n'
+                '\n'
+                'Kinda\n'
+                'long\n'
+                'commit\n'
+                'message\n'
+                'body\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+    def test_existing_identifier_and_non_trailer_identifier(self):
+        # Only the trailer gets updated.
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {old_identifier}\n'
+                '\n'
+                'Commit message body\n'
+                '\n'
+                'Identifier: {old_identifier}'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                '\n'
+                'Commit message body\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {old_identifier}\n'
+                '\n'
+                'Commit message body\n'
+                '\n'
+                'Identifier: {new_identifier}'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 3@main\n'
+                '\n'
+                'Commit message body\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {new_identifier}\n'
+                '\n'
+                'Commit message body\n'
+                '\n'
+                'Identifier: {old_identifier}'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 6@main\n'
+                '\n'
+                'Commit message body\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'Identifier: {new_identifier}\n'
+                '\n'
+                'Commit message body\n'
+                '\n'
+                'Identifier: {new_identifier}'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'Identifier: 6@main\n'
+                '\n'
+                'Commit message body\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
         )
 
     def test_git_svn(self):
@@ -360,3 +764,253 @@ class TestCanonicalize(testing.PathTestCase):
             '    GIT_COMMITTER_EMAIL=jbedard@apple.com\n'
             '1 commit successfully canonicalized!\n',
         )
+
+    def test_not_alternate_trailer(self):
+        # Add a trailer group after the commit body.
+        non_trailer_lines = [
+            'not a trailer: line',
+            '* a: b',
+            '0a b: c',
+            '[0]: https://example.com',
+            '`a: b`',
+            '`a`: b',
+            'a b: https://example.com',
+        ]
+
+        for line in non_trailer_lines:
+            self.assert_canonicalized_commit_message(
+                message=(
+                    'New commit\n'
+                    '\n'
+                    f'{line}\n'
+                ),
+                expected=(
+                    'New commit\n'
+                    '\n'
+                    f'{line}\n'
+                    '\n'
+                    'Identifier: 6@main'
+                ),
+            )
+
+    def test_partial_trailer_group_unknown_trailer_regression(self):
+        # This behaviour is wrong, see test_partial_trailer_group_unknown_trailer
+        # below. Remove this test when the expectedFailure goes away.
+        non_trailer_lines = [
+            'not a trailer: line',
+            '* a: b',
+            '0a b: c',
+            '[0]: https://example.com',
+            '`a: b`',
+            '`a`: b',
+            'a b: https://example.com',
+        ]
+
+        for line in non_trailer_lines:
+            self.assert_canonicalized_commit_message(
+                message=(
+                    'New commit\n'
+                    '\n'
+                    f'{line}\n'
+                    'trailer: some metadata\n'
+                ),
+                expected=(
+                    'New commit\n'
+                    '\n'
+                    f'{line}\n'
+                    '\n'
+                    'trailer: some metadata\n'
+                    'Identifier: 6@main'
+                ),
+            )
+
+            self.assert_canonicalized_commit_message(
+                message=(
+                    'New commit\n'
+                    '\n'
+                    'trailer: some metadata\n'
+                    f'{line}\n'
+                ),
+                expected=(
+                    'New commit\n'
+                    '\n'
+                    'trailer: some metadata\n'
+                    f'{line}\n'
+                    '\n'
+                    'Identifier: 6@main'
+                ),
+            )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'I proposed this change in:\n'
+                'https://github.example.com/WebKit/WebKit/pull/19920\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'I proposed this change in:\n'
+                '\n'
+                'https://github.example.com/WebKit/WebKit/pull/19920\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+    @unittest.expectedFailure
+    def test_partial_trailer_group_unknown_trailer(self):
+        # Add a trailer group after the commit body.
+        non_trailer_lines = [
+            'not a trailer: line',
+            '* a: b',
+            '0a b: c',
+            '[0]: https://example.com',
+            '`a: b`',
+            '`a`: b',
+            'a b: https://example.com',
+        ]
+
+        for line in non_trailer_lines:
+            self.assert_canonicalized_commit_message(
+                message=(
+                    'New commit\n'
+                    '\n'
+                    f'{line}\n'
+                    'trailer: some metadata\n'
+                ),
+                expected=(
+                    'New commit\n'
+                    '\n'
+                    f'{line}\n'
+                    'trailer: some metadata\n'
+                    '\n'
+                    'Identifier: 6@main'
+                ),
+            )
+
+            self.assert_canonicalized_commit_message(
+                message=(
+                    'New commit\n'
+                    '\n'
+                    'trailer: some metadata\n'
+                    f'{line}\n'
+                ),
+                expected=(
+                    'New commit\n'
+                    '\n'
+                    'trailer: some metadata\n'
+                    f'{line}\n'
+                    '\n'
+                    'Identifier: 6@main'
+                ),
+            )
+
+        self.assert_canonicalized_commit_message(
+            message=(
+                'New commit\n'
+                '\n'
+                'I proposed this change in:\n'
+                'https://github.example.com/WebKit/WebKit/pull/19920\n'
+            ),
+            expected=(
+                'New commit\n'
+                '\n'
+                'I proposed this change in:\n'
+                'https://github.example.com/WebKit/WebKit/pull/19920\n'
+                '\n'
+                'Identifier: 6@main'
+            ),
+        )
+
+    def test_partial_trailer_group_known_trailer(self):
+        # Move the existing trailers to a proper group and append.
+        non_trailer_lines = [
+            'not a trailer: line',
+            '* a: b',
+            '0a b: c',
+            '[0]: https://example.com',
+            '`a: b`',
+            '`a`: b',
+            'a b: https://example.com',
+        ]
+
+        for line in non_trailer_lines:
+            self.assert_canonicalized_commit_message(
+                message=(
+                    'New commit\n'
+                    '\n'
+                    f'{line}\n'
+                    'Signed-off-by: Heather Letty <heather.letty@example.com>\n'
+                ),
+                expected=(
+                    'New commit\n'
+                    '\n'
+                    f'{line}\n'
+                    '\n'
+                    'Signed-off-by: Heather Letty <heather.letty@example.com>\n'
+                    'Identifier: 6@main'
+                ),
+            )
+
+            self.assert_canonicalized_commit_message(
+                message=(
+                    'New commit\n'
+                    '\n'
+                    'Signed-off-by: Heather Letty <heather.letty@example.com>\n'
+                    f'{line}\n'
+                ),
+                expected=(
+                    'New commit\n'
+                    '\n'
+                    'Signed-off-by: Heather Letty <heather.letty@example.com>\n'
+                    f'{line}\n'
+                    '\n'
+                    'Identifier: 6@main'
+                ),
+            )
+
+    def test_partial_trailer_group_known_identifier_trailer(self):
+        # Move the existing trailers to a property group and append.
+        non_trailer_lines = [
+            'not a trailer: line',
+            '* a: b',
+            '0a b: c',
+            '[0]: https://example.com',
+            '`a: b`',
+            '`a`: b',
+            'a b: https://example.com',
+        ]
+
+        for line in non_trailer_lines:
+            self.assert_canonicalized_commit_message(
+                message=(
+                    'New commit\n'
+                    '\n'
+                    f'{line}\n'
+                    'Identifier: {old_identifier}\n'
+                ),
+                expected=(
+                    'New commit\n'
+                    '\n'
+                    f'{line}\n'
+                    '\n'
+                    'Identifier: 6@main'
+                ),
+            )
+
+            self.assert_canonicalized_commit_message(
+                message=(
+                    'New commit\n'
+                    '\n'
+                    'Identifier: {old_identifier}\n'
+                    f'{line}\n'
+                ),
+                expected=(
+                    'New commit\n'
+                    '\n'
+                    f'{line}\n'
+                    '\n'
+                    'Identifier: 6@main'
+                ),
+            )
