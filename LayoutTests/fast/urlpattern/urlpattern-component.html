@@ -2882,8 +2882,13 @@ const kComponents = [
 function executeURLPatternConstructor(jsonArray) {
   // Iterate through each object in the array
   jsonArray.forEach(entry => {
-
     debug("Testing: " + JSON.stringify(entry));
+
+    errorEntry = entry;
+    if (errorEntry.expected_obj === 'error' && !entry.pattern[0]['pathname']) {
+      shouldThrow("var pattern = new URLPattern(...errorEntry.pattern)");
+      return;
+    }
 
     const pattern = new URLPattern(...entry.pattern);
 

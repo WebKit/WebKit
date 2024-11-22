@@ -2190,89 +2190,13 @@ PASS urlPatternComponent is "*"
 Component: hash
 PASS urlPatternComponent is "*"
 Testing: {"pattern":[{"protocol":"(cafÃ©)"}],"expected_obj":"error"}
-Component: protocol
-PASS urlPatternComponent is "(cafÃ©)"
-Component: username
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: hostname
-PASS urlPatternComponent is "*"
-Component: port
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: pathname
-PASS urlPatternComponent is "*"
-Component: search
-WARN: shouldBeEqualToString() expects string arguments
-WARN: shouldBe() expects function or string arguments
-FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
-Component: hash
-PASS urlPatternComponent is "*"
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
 Testing: {"pattern":[{"username":"(cafÃ©)"}],"expected_obj":"error"}
-Component: protocol
-PASS urlPatternComponent is "*"
-Component: username
-PASS urlPatternComponent is "(cafÃ©)"
-Component: password
-PASS urlPatternComponent is "*"
-Component: hostname
-PASS urlPatternComponent is "*"
-Component: port
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: pathname
-PASS urlPatternComponent is "*"
-Component: search
-WARN: shouldBeEqualToString() expects string arguments
-WARN: shouldBe() expects function or string arguments
-FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
-Component: hash
-PASS urlPatternComponent is "*"
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
 Testing: {"pattern":[{"password":"(cafÃ©)"}],"expected_obj":"error"}
-Component: protocol
-PASS urlPatternComponent is "*"
-Component: username
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "(cafÃ©)"
-Component: hostname
-PASS urlPatternComponent is "*"
-Component: port
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "(cafÃ©)"
-Component: pathname
-PASS urlPatternComponent is "*"
-Component: search
-WARN: shouldBeEqualToString() expects string arguments
-WARN: shouldBe() expects function or string arguments
-FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
-Component: hash
-PASS urlPatternComponent is "*"
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
 Testing: {"pattern":[{"hostname":"(cafÃ©)"}],"expected_obj":"error"}
-Component: protocol
-PASS urlPatternComponent is "*"
-Component: username
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: hostname
-PASS urlPatternComponent is "(cafÃ©)"
-Component: port
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: pathname
-PASS urlPatternComponent is "*"
-Component: search
-WARN: shouldBeEqualToString() expects string arguments
-WARN: shouldBe() expects function or string arguments
-FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
-Component: hash
-PASS urlPatternComponent is "*"
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
 Testing: {"pattern":[{"pathname":"(cafÃ©)"}],"expected_obj":"error"}
 Component: protocol
 PASS urlPatternComponent is "*"
@@ -2295,47 +2219,9 @@ FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type
 Component: hash
 PASS urlPatternComponent is "*"
 Testing: {"pattern":[{"search":"(cafÃ©)"}],"expected_obj":"error"}
-Component: protocol
-PASS urlPatternComponent is "*"
-Component: username
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: hostname
-PASS urlPatternComponent is "*"
-Component: port
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: pathname
-PASS urlPatternComponent is "*"
-Component: search
-WARN: shouldBeEqualToString() expects string arguments
-WARN: shouldBe() expects function or string arguments
-FAIL urlPatternComponent should be undefined (of type undefined). Was (cafÃ©) (of type string).
-Component: hash
-PASS urlPatternComponent is "*"
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
 Testing: {"pattern":[{"hash":"(cafÃ©)"}],"expected_obj":"error"}
-Component: protocol
-PASS urlPatternComponent is "*"
-Component: username
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: hostname
-PASS urlPatternComponent is "*"
-Component: port
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: pathname
-PASS urlPatternComponent is "*"
-Component: search
-WARN: shouldBeEqualToString() expects string arguments
-WARN: shouldBe() expects function or string arguments
-FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
-Component: hash
-PASS urlPatternComponent is "(cafÃ©)"
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
 Testing: {"pattern":[{"protocol":":cafÃ©"}],"inputs":[{"protocol":"foo"}],"expected_match":{"protocol":{"input":"foo","groups":{"cafÃ©":"foo"}}}}
 Component: protocol
 PASS urlPatternComponent is ":cafÃ©"
@@ -2737,7 +2623,7 @@ Component: hash
 PASS urlPatternComponent is ":㐀"
 Testing: {"pattern":[{"protocol":"(.*)"}],"inputs":[{"protocol":"cafÃ©"}],"expected_obj":{"protocol":"*"},"expected_match":null}
 Component: protocol
-FAIL urlPatternComponent should be *. Was (.*).
+PASS urlPatternComponent is "*"
 Component: username
 PASS urlPatternComponent is "*"
 Component: password
@@ -2756,7 +2642,7 @@ Component: hash
 PASS urlPatternComponent is "*"
 Testing: {"pattern":[{"protocol":"(.*)"}],"inputs":[{"protocol":"cafe"}],"expected_obj":{"protocol":"*"},"expected_match":{"protocol":{"input":"cafe","groups":{"0":"cafe"}}}}
 Component: protocol
-FAIL urlPatternComponent should be *. Was (.*).
+PASS urlPatternComponent is "*"
 Component: username
 PASS urlPatternComponent is "*"
 Component: password
@@ -2796,7 +2682,7 @@ Testing: {"pattern":[{"username":"caf%C3%A9"}],"inputs":[{"username":"cafÃ©"}]
 Component: protocol
 PASS urlPatternComponent is "*"
 Component: username
-PASS urlPatternComponent is "caf%C3%A9"
+FAIL urlPatternComponent should be caf%C3%A9. Was café.
 Component: password
 PASS urlPatternComponent is "*"
 Component: hostname
@@ -2834,7 +2720,7 @@ Testing: {"pattern":[{"username":"caf%c3%a9"}],"inputs":[{"username":"cafÃ©"}]
 Component: protocol
 PASS urlPatternComponent is "*"
 Component: username
-PASS urlPatternComponent is "caf%c3%a9"
+FAIL urlPatternComponent should be caf%c3%a9. Was café.
 Component: password
 PASS urlPatternComponent is "*"
 Component: hostname
@@ -2855,13 +2741,13 @@ PASS urlPatternComponent is "*"
 Component: username
 PASS urlPatternComponent is "*"
 Component: password
-PASS urlPatternComponent is "caf%C3%A9"
+FAIL urlPatternComponent should be caf%C3%A9. Was café.
 Component: hostname
 PASS urlPatternComponent is "*"
 Component: port
 PASS urlPatternComponent is "*"
 Component: password
-PASS urlPatternComponent is "caf%C3%A9"
+FAIL urlPatternComponent should be caf%C3%A9. Was café.
 Component: pathname
 PASS urlPatternComponent is "*"
 Component: search
@@ -2893,13 +2779,13 @@ PASS urlPatternComponent is "*"
 Component: username
 PASS urlPatternComponent is "*"
 Component: password
-PASS urlPatternComponent is "caf%c3%a9"
+FAIL urlPatternComponent should be caf%c3%a9. Was café.
 Component: hostname
 PASS urlPatternComponent is "*"
 Component: port
 PASS urlPatternComponent is "*"
 Component: password
-PASS urlPatternComponent is "caf%c3%a9"
+FAIL urlPatternComponent should be caf%c3%a9. Was café.
 Component: pathname
 PASS urlPatternComponent is "*"
 Component: search
@@ -3002,26 +2888,7 @@ PASS urlPatternComponent is "*"
 Component: hash
 PASS urlPatternComponent is "*"
 Testing: {"pattern":[{"protocol":"http","port":"80 "}],"inputs":[{"protocol":"http","port":"80"}],"expected_obj":"error"}
-Component: protocol
-PASS urlPatternComponent is "http"
-Component: username
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: hostname
-PASS urlPatternComponent is "*"
-Component: port
-FAIL urlPatternComponent should be 80 . Was .
-Component: password
-PASS urlPatternComponent is "*"
-Component: pathname
-PASS urlPatternComponent is "*"
-Component: search
-WARN: shouldBeEqualToString() expects string arguments
-WARN: shouldBe() expects function or string arguments
-FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
-Component: hash
-PASS urlPatternComponent is "*"
+FAIL var pattern = new URLPattern(...errorEntry.pattern) should throw an exception. Was undefined.
 Testing: {"pattern":[{"port":"80"}],"inputs":[{"protocol":"http","port":"80"}],"expected_match":null}
 Component: protocol
 PASS urlPatternComponent is "*"
@@ -3089,7 +2956,7 @@ PASS urlPatternComponent is "*"
 Component: hostname
 PASS urlPatternComponent is "*"
 Component: port
-FAIL urlPatternComponent should be *. Was (.*).
+PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
@@ -3437,7 +3304,7 @@ PASS urlPatternComponent is "*"
 Component: pathname
 PASS urlPatternComponent is "*"
 Component: search
-FAIL urlPatternComponent should be q=caf%C3%A9. Was q=cafÃ©.
+FAIL urlPatternComponent should be q=caf%C3%A9. Was q=caf%C3%83%C2%A9.
 Component: hash
 PASS urlPatternComponent is "*"
 Testing: {"pattern":[{"search":"q=caf%c3%a9"}],"inputs":[{"search":"q=cafÃ©"}],"expected_match":null}
@@ -3496,7 +3363,7 @@ PASS urlPatternComponent is "*"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
-FAIL urlPatternComponent should be caf%C3%A9. Was cafÃ©.
+FAIL urlPatternComponent should be caf%C3%A9. Was caf%C3%83%C2%A9.
 Testing: {"pattern":[{"hash":"caf%c3%a9"}],"inputs":[{"hash":"cafÃ©"}],"expected_match":null}
 Component: protocol
 PASS urlPatternComponent is "*"

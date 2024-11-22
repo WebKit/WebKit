@@ -115,20 +115,20 @@ FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo/bar/bar"}]
 FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo{/bar}*"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
-FAIL Pattern: [{"protocol":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"username":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"password":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"protocol":"(café)"}] Inputs: undefined
+PASS Pattern: [{"username":"(café)"}] Inputs: undefined
+PASS Pattern: [{"password":"(café)"}] Inputs: undefined
+PASS Pattern: [{"hostname":"(café)"}] Inputs: undefined
 FAIL Pattern: [{"pathname":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"search":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hash":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"protocol":":café"}] Inputs: [{"protocol":"foo"}] The operation is not supported.
-FAIL Pattern: [{"username":":café"}] Inputs: [{"username":"foo"}] The operation is not supported.
-FAIL Pattern: [{"password":":café"}] Inputs: [{"password":"foo"}] The operation is not supported.
-FAIL Pattern: [{"hostname":":café"}] Inputs: [{"hostname":"foo"}] The operation is not supported.
+PASS Pattern: [{"search":"(café)"}] Inputs: undefined
+PASS Pattern: [{"hash":"(café)"}] Inputs: undefined
+FAIL Pattern: [{"protocol":":café"}] Inputs: [{"protocol":"foo"}] Invalid input to canonicalize a URL protocol string.
+FAIL Pattern: [{"username":":café"}] Inputs: [{"username":"foo"}] assert_equals: compiled pattern property 'username' expected ":café" but got "{:caf}é"
+FAIL Pattern: [{"password":":café"}] Inputs: [{"password":"foo"}] assert_equals: compiled pattern property 'password' expected ":café" but got "{:caf}é"
+FAIL Pattern: [{"hostname":":café"}] Inputs: [{"hostname":"foo"}] assert_equals: compiled pattern property 'hostname' expected ":café" but got "{:caf}é"
 FAIL Pattern: [{"pathname":"/:café"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
-FAIL Pattern: [{"search":":café"}] Inputs: [{"search":"foo"}] The operation is not supported.
-FAIL Pattern: [{"hash":":café"}] Inputs: [{"hash":"foo"}] The operation is not supported.
+FAIL Pattern: [{"search":":café"}] Inputs: [{"search":"foo"}] assert_equals: compiled pattern property 'search' expected ":café" but got ":caf%C3%A9"
+FAIL Pattern: [{"hash":":café"}] Inputs: [{"hash":"foo"}] assert_equals: compiled pattern property 'hash' expected ":café" but got ":caf%C3%A9"
 FAIL Pattern: [{"protocol":":℘"}] Inputs: [{"protocol":"foo"}] The operation is not supported.
 FAIL Pattern: [{"username":":℘"}] Inputs: [{"username":"foo"}] The operation is not supported.
 FAIL Pattern: [{"password":":℘"}] Inputs: [{"password":"foo"}] The operation is not supported.
@@ -143,15 +143,15 @@ FAIL Pattern: [{"hostname":":㐀"}] Inputs: [{"hostname":"foo"}] The operation i
 FAIL Pattern: [{"pathname":"/:㐀"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
 FAIL Pattern: [{"search":":㐀"}] Inputs: [{"search":"foo"}] The operation is not supported.
 FAIL Pattern: [{"hash":":㐀"}] Inputs: [{"hash":"foo"}] The operation is not supported.
-FAIL Pattern: [{"protocol":"(.*)"}] Inputs: [{"protocol":"café"}] assert_equals: compiled pattern property 'protocol' expected "*" but got "(.*)"
-FAIL Pattern: [{"protocol":"(.*)"}] Inputs: [{"protocol":"cafe"}] assert_equals: compiled pattern property 'protocol' expected "*" but got "(.*)"
+FAIL Pattern: [{"protocol":"(.*)"}] Inputs: [{"protocol":"café"}] The operation is not supported.
+FAIL Pattern: [{"protocol":"(.*)"}] Inputs: [{"protocol":"cafe"}] The operation is not supported.
 FAIL Pattern: [{"protocol":"foo-bar"}] Inputs: [{"protocol":"foo-bar"}] The operation is not supported.
-FAIL Pattern: [{"username":"caf%C3%A9"}] Inputs: [{"username":"café"}] The operation is not supported.
+FAIL Pattern: [{"username":"caf%C3%A9"}] Inputs: [{"username":"café"}] assert_equals: compiled pattern property 'username' expected "caf%C3%A9" but got "café"
 FAIL Pattern: [{"username":"café"}] Inputs: [{"username":"café"}] assert_equals: compiled pattern property 'username' expected "caf%C3%A9" but got "café"
-FAIL Pattern: [{"username":"caf%c3%a9"}] Inputs: [{"username":"café"}] The operation is not supported.
-FAIL Pattern: [{"password":"caf%C3%A9"}] Inputs: [{"password":"café"}] The operation is not supported.
+FAIL Pattern: [{"username":"caf%c3%a9"}] Inputs: [{"username":"café"}] assert_equals: compiled pattern property 'username' expected "caf%c3%a9" but got "café"
+FAIL Pattern: [{"password":"caf%C3%A9"}] Inputs: [{"password":"café"}] assert_equals: compiled pattern property 'password' expected "caf%C3%A9" but got "café"
 FAIL Pattern: [{"password":"café"}] Inputs: [{"password":"café"}] assert_equals: compiled pattern property 'password' expected "caf%C3%A9" but got "café"
-FAIL Pattern: [{"password":"caf%c3%a9"}] Inputs: [{"password":"café"}] The operation is not supported.
+FAIL Pattern: [{"password":"caf%c3%a9"}] Inputs: [{"password":"café"}] assert_equals: compiled pattern property 'password' expected "caf%c3%a9" but got "café"
 FAIL Pattern: [{"hostname":"xn--caf-dma.com"}] Inputs: [{"hostname":"café.com"}] The operation is not supported.
 FAIL Pattern: [{"hostname":"café.com"}] Inputs: [{"hostname":"café.com"}] assert_equals: compiled pattern property 'hostname' expected "xn--caf-dma.com" but got "café.com"
 FAIL Pattern: [{"port":""}] Inputs: [{"protocol":"http","port":"80"}] The operation is not supported.
@@ -161,7 +161,7 @@ FAIL Pattern: [{"protocol":"http","port":"80 "}] Inputs: [{"protocol":"http","po
 FAIL Pattern: [{"port":"80"}] Inputs: [{"protocol":"http","port":"80"}] The operation is not supported.
 FAIL Pattern: [{"protocol":"http{s}?","port":"80"}] Inputs: [{"protocol":"http","port":"80"}] The operation is not supported.
 FAIL Pattern: [{"port":"80"}] Inputs: [{"port":"80"}] The operation is not supported.
-FAIL Pattern: [{"port":"(.*)"}] Inputs: [{"port":"invalid80"}] assert_equals: compiled pattern property 'port' expected "*" but got "(.*)"
+FAIL Pattern: [{"port":"(.*)"}] Inputs: [{"port":"invalid80"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/./bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/baz"}] Inputs: [{"pathname":"/foo/bar/../baz"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/caf%C3%A9"}] Inputs: [{"pathname":"/café"}] The operation is not supported.
@@ -179,10 +179,10 @@ FAIL Pattern: [{"pathname":"foo/bar"}] Inputs: ["https://example.com/foo/bar"] T
 FAIL Pattern: [{"pathname":"foo/bar","baseURL":"https://example.com"}] Inputs: ["https://example.com/foo/bar"] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "foo/bar"
 FAIL Pattern: [{"pathname":":name.html","baseURL":"https://example.com"}] Inputs: ["https://example.com/foo.html"] assert_equals: compiled pattern property 'pathname' expected "/:name.html" but got ":name.html"
 FAIL Pattern: [{"search":"q=caf%C3%A9"}] Inputs: [{"search":"q=café"}] The operation is not supported.
-FAIL Pattern: [{"search":"q=café"}] Inputs: [{"search":"q=café"}] assert_equals: compiled pattern property 'search' expected "q=caf%C3%A9" but got "q=café"
+FAIL Pattern: [{"search":"q=café"}] Inputs: [{"search":"q=café"}] The operation is not supported.
 FAIL Pattern: [{"search":"q=caf%c3%a9"}] Inputs: [{"search":"q=café"}] The operation is not supported.
 FAIL Pattern: [{"hash":"caf%C3%A9"}] Inputs: [{"hash":"café"}] The operation is not supported.
-FAIL Pattern: [{"hash":"café"}] Inputs: [{"hash":"café"}] assert_equals: compiled pattern property 'hash' expected "caf%C3%A9" but got "café"
+FAIL Pattern: [{"hash":"café"}] Inputs: [{"hash":"café"}] The operation is not supported.
 FAIL Pattern: [{"hash":"caf%c3%a9"}] Inputs: [{"hash":"café"}] The operation is not supported.
 FAIL Pattern: [{"protocol":"about","pathname":"(blank|sourcedoc)"}] Inputs: ["about:blank"] The operation is not supported.
 FAIL Pattern: [{"protocol":"data","pathname":":number([0-9]+)"}] Inputs: ["data:8675309"] The operation is not supported.
@@ -272,13 +272,13 @@ FAIL Pattern: ["http://[\\:\\:1]:8080/"] Inputs: ["http://[::1]:8080/"] Not impl
 FAIL Pattern: ["http://[\\:\\:a]/"] Inputs: ["http://[::a]/"] Not implemented.
 FAIL Pattern: ["http://[:address]/"] Inputs: ["http://[::1]/"] Not implemented.
 FAIL Pattern: ["http://[\\:\\:AB\\::num]/"] Inputs: ["http://[::ab:1]/"] Not implemented.
-FAIL Pattern: [{"hostname":"[\\:\\:AB\\::num]"}] Inputs: [{"hostname":"[::ab:1]"}] assert_equals: compiled pattern property 'hostname' expected "[\\:\\:ab\\::num]" but got "[\\:\\:AB\\::num]"
-FAIL Pattern: [{"hostname":"[\\:\\:xY\\::num]"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"{[\\:\\:ab\\::num]}"}] Inputs: [{"hostname":"[::ab:1]"}] The operation is not supported.
-FAIL Pattern: [{"hostname":"{[\\:\\:fé\\::num]}"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"{[\\:\\::num\\:1]}"}] Inputs: [{"hostname":"[::ab:1]"}] The operation is not supported.
-FAIL Pattern: [{"hostname":"{[\\:\\::num\\:fé]}"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"[*\\:1]"}] Inputs: [{"hostname":"[::ab:1]"}] The operation is not supported.
+FAIL Pattern: [{"hostname":"[\\:\\:AB\\::num]"}] Inputs: [{"hostname":"[::ab:1]"}] Invalid input to canonicalize a URL host string.
+PASS Pattern: [{"hostname":"[\\:\\:xY\\::num]"}] Inputs: undefined
+FAIL Pattern: [{"hostname":"{[\\:\\:ab\\::num]}"}] Inputs: [{"hostname":"[::ab:1]"}] Invalid input to canonicalize a URL host string.
+PASS Pattern: [{"hostname":"{[\\:\\:fé\\::num]}"}] Inputs: undefined
+FAIL Pattern: [{"hostname":"{[\\:\\::num\\:1]}"}] Inputs: [{"hostname":"[::ab:1]"}] Invalid input to canonicalize a URL host string.
+PASS Pattern: [{"hostname":"{[\\:\\::num\\:fé]}"}] Inputs: undefined
+FAIL Pattern: [{"hostname":"[*\\:1]"}] Inputs: [{"hostname":"[::ab:1]"}] Invalid input to canonicalize a URL host string.
 FAIL Pattern: [{"hostname":"*\\:1]"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
 FAIL Pattern: ["https://foo{{@}}example.com"] Inputs: ["https://foo@example.com"] assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
@@ -299,20 +299,20 @@ FAIL Pattern: [{"pathname":":name"}] Inputs: [{"pathname":"foobar"}] The operati
 FAIL Pattern: [{"protocol":":name*"}] Inputs: [{"protocol":"foobar"}] The operation is not supported.
 FAIL Pattern: [{"protocol":":name+"}] Inputs: [{"protocol":"foobar"}] The operation is not supported.
 FAIL Pattern: [{"protocol":":name"}] Inputs: [{"protocol":"foobar"}] The operation is not supported.
-FAIL Pattern: [{"hostname":"bad hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"hostname":"bad hostname"}] Inputs: undefined
 FAIL Pattern: [{"hostname":"bad#hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"bad%hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"hostname":"bad%hostname"}] Inputs: undefined
 FAIL Pattern: [{"hostname":"bad/hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
 FAIL Pattern: [{"hostname":"bad\\:hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"bad<hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"bad>hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"bad?hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"hostname":"bad<hostname"}] Inputs: undefined
+PASS Pattern: [{"hostname":"bad>hostname"}] Inputs: undefined
+PASS Pattern: [{"hostname":"bad?hostname"}] Inputs: undefined
 FAIL Pattern: [{"hostname":"bad@hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"bad[hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"bad]hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"hostname":"bad[hostname"}] Inputs: undefined
+PASS Pattern: [{"hostname":"bad]hostname"}] Inputs: undefined
 FAIL Pattern: [{"hostname":"bad\\\\hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"bad^hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
-FAIL Pattern: [{"hostname":"bad|hostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"hostname":"bad^hostname"}] Inputs: undefined
+PASS Pattern: [{"hostname":"bad|hostname"}] Inputs: undefined
 FAIL Pattern: [{"hostname":"bad\nhostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
 FAIL Pattern: [{"hostname":"bad\rhostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
 FAIL Pattern: [{"hostname":"bad\thostname"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw

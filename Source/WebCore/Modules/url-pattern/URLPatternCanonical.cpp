@@ -174,7 +174,7 @@ ExceptionOr<String> canonicalizePort(StringView portValue, const std::optional<S
 }
 
 // https://urlpattern.spec.whatwg.org/#canonicalize-an-opaque-pathname
-static ExceptionOr<String> canonicalizeOpaquePathname(StringView value)
+ExceptionOr<String> canonicalizeOpaquePathname(StringView value)
 {
     URL dummyURL(dummyURLCharacters);
     dummyURL.setPath(value);
@@ -186,7 +186,7 @@ static ExceptionOr<String> canonicalizeOpaquePathname(StringView value)
 }
 
 // https://urlpattern.spec.whatwg.org/#canonicalize-a-pathname
-static ExceptionOr<String> canonicalizePathname(StringView pathnameValue)
+ExceptionOr<String> canonicalizePathname(StringView pathnameValue)
 {
     if (pathnameValue.isEmpty())
         return pathnameValue.toString();
@@ -279,6 +279,8 @@ ExceptionOr<String> callEncodingCallback(EncodingCallbackType type, StringView i
         return canonicalizePort(input, { }, BaseURLStringType::URL);
     case EncodingCallbackType::Path:
         return canonicalizePathname(input);
+    case EncodingCallbackType::OpaquePath:
+        return canonicalizeOpaquePathname(input);
     case EncodingCallbackType::Search:
         return canonicalizeSearch(input, BaseURLStringType::URL);
     case EncodingCallbackType::Hash:

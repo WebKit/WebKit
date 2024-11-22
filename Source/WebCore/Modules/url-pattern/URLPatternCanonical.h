@@ -30,7 +30,7 @@
 namespace WebCore {
 
 enum class BaseURLStringType : bool;
-enum class EncodingCallbackType : uint8_t { Protocol, Username, Password, Host, IPv6Host, Port, Path, Search, Hash };
+enum class EncodingCallbackType : uint8_t { Protocol, Username, Password, Host, IPv6Host, Port, Path, OpaquePath, Search, Hash };
 
 bool isAbsolutePathname(StringView input, BaseURLStringType inputType);
 ExceptionOr<String> canonicalizeProtocol(StringView, BaseURLStringType valueType);
@@ -40,6 +40,8 @@ ExceptionOr<String> canonicalizeHostname(StringView value, BaseURLStringType val
 ExceptionOr<String> canonicalizeIPv6Hostname(StringView value, BaseURLStringType valueType);
 ExceptionOr<String> canonicalizePort(StringView portValue, const std::optional<StringView> protocolValue, BaseURLStringType portValueType);
 ExceptionOr<String> processPathname(StringView pathnameValue, const StringView protocolValue, BaseURLStringType pathnameValueType);
+ExceptionOr<String> canonicalizePathname(StringView pathnameValue);
+ExceptionOr<String> canonicalizeOpaquePathname(StringView value);
 ExceptionOr<String> canonicalizeSearch(StringView value, BaseURLStringType valueType);
 ExceptionOr<String> canonicalizeHash(StringView value, BaseURLStringType valueType);
 ExceptionOr<String> callEncodingCallback(EncodingCallbackType, StringView input);

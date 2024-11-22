@@ -826,6 +826,7 @@ public:
     class Iterator;
     Iterator begin() const;
     Iterator end() const;
+    Iterator codePointAt(unsigned index) const;
 
 private:
     StringView m_stringView;
@@ -900,6 +901,7 @@ private:
 class StringView::CodePoints::Iterator {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    using iterator_category = std::forward_iterator_tag;
     Iterator(StringView, unsigned index);
 
     char32_t operator*() const;
@@ -1034,6 +1036,11 @@ inline auto StringView::CodePoints::begin() const -> Iterator
 inline auto StringView::CodePoints::end() const -> Iterator
 {
     return Iterator(m_stringView, m_stringView.length());
+}
+
+inline auto StringView::CodePoints::codePointAt(unsigned index) const -> Iterator
+{
+    return Iterator(m_stringView, index);
 }
 
 inline StringView::CodeUnits::CodeUnits(StringView stringView)

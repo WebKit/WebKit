@@ -222,6 +222,7 @@ JSTextTrackList.cpp
 JSTrustedTypePolicy.cpp
 JSTrustedTypePolicyFactory.cpp
 JSUndoManager.cpp
+JSURLPattern.cpp
 JSUserMessageHandlersNamespace.cpp
 JSVTTCue.cpp
 JSVTTRegion.cpp

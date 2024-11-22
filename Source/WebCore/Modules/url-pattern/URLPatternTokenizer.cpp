@@ -26,21 +26,13 @@
 #include "config.h"
 #include "URLPatternTokenizer.h"
 
+#include "URLPatternParser.h"
 #include <unicode/utf16.h>
 #include <unicode/utf8.h>
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
 namespace URLPatternUtilities {
-
-// https://urlpattern.spec.whatwg.org/#is-a-valid-name-code-point
-static bool isValidNameCodepoint(UChar codepoint, bool first)
-{
-    if (first)
-        return u_isIDStart(codepoint);
-
-    return u_isIDPart(codepoint);
-}
 
 bool Token::isNull() const
 {
@@ -161,7 +153,7 @@ ExceptionOr<Vector<Token>> Tokenizer::tokenize()
             while (namePosition < m_input.length()) {
                 seekNextCodePoint(namePosition);
 
-                bool isValidCodepoint = isValidNameCodepoint(m_codepoint, namePosition == nameStart);
+                bool isValidCodepoint = isValidNameCodepoint(m_codepoint, namePosition == nameStart ? IsFirst::Yes : IsFirst::No);
 
                 if (!isValidCodepoint)
                     break;

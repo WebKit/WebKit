@@ -25,10 +25,12 @@
 
 #pragma once
 
-#include "URLPatternCanonical.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+enum class EncodingCallbackType : uint8_t;
+
 namespace URLPatternUtilities {
 
 struct Token;
@@ -36,6 +38,7 @@ enum class TokenType : uint8_t;
 
 enum class PartType : uint8_t { FixedText, Regexp, SegmentWildcard, FullWildcard };
 enum class Modifier : uint8_t { None, Optional, ZeroOrMore, OneOrMore };
+enum class IsFirst : bool { No, Yes };
 
 struct Part {
     PartType type;
@@ -47,8 +50,8 @@ struct Part {
 };
 
 struct URLPatternStringOptions {
-    String delimiterCodepoint;
-    String prefixCodepoint;
+    String delimiterCodepoint { };
+    String prefixCodepoint { };
     bool ignoreCase { false };
 };
 
@@ -58,7 +61,7 @@ public:
     ExceptionOr<void> performParse(const URLPatternStringOptions&);
 
     void setTokenList(Vector<Token>&& tokenList) { m_tokenList = WTFMove(tokenList); }
-    const Vector<Part>& getPartList() const { return m_partList; }
+    static ExceptionOr<Vector<Part>> parse(StringView, const URLPatternStringOptions&, EncodingCallbackType);
 
 private:
     Token tryToConsumeToken(TokenType);
@@ -73,6 +76,8 @@ private:
 
     bool isDuplicateName(StringView) const;
 
+    Vector<Part> takePartList() { return std::exchange(m_partList, { }); }
+
     Vector<Token> m_tokenList;
     Vector<Part> m_partList;
     EncodingCallbackType m_callbackType;
@@ -82,11 +87,15 @@ private:
     int m_nextNumericName { 0 };
 };
 
-ExceptionOr<const Vector<Part>&> parse(StringView, const URLPatternStringOptions&, EncodingCallbackType);
-
 // FIXME: Consider moving functions to somewhere generic, perhaps refactor Part to its own class.
 String generateSegmentWildcardRegexp(const URLPatternStringOptions&);
 String escapeRegexString(StringView);
+ASCIILiteral convertModifierToString(Modifier);
+std::pair<String, Vector<String>> generateRegexAndNameList(const Vector<Part>& partList, const URLPatternStringOptions&);
+String generatePatternString(const Vector<Part>& partList, const URLPatternStringOptions&);
+String escapePatternString(StringView input);
+bool isValidNameCodepoint(UChar codepoint, URLPatternUtilities::IsFirst);
+
 
 } // namespace URLPatternUtilities
 } // namespace WebCore
