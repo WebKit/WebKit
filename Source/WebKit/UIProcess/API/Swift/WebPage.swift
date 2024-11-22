@@ -33,6 +33,8 @@ public import SwiftUI // FIXME: (283455) Do not import SwiftUI in WebKit proper.
 public class WebPage_v0 {
     public let navigations: Navigations
 
+    public let configuration: Configuration
+
     public var url: URL? {
         self.access(keyPath: \.url)
         return backingWebView.url
@@ -101,12 +103,14 @@ public class WebPage_v0 {
 
     @ObservationIgnored
     lazy var backingWebView: WKWebView = {
-        let webView = WKWebView(frame: .zero)
+        let webView = WKWebView(frame: .zero, configuration: WKWebViewConfiguration(wrapping: configuration))
         webView.navigationDelegate = backingNavigationDelegate
         return webView
     }()
 
-    public init() {
+    public init(configuration: Configuration = Configuration()) {
+        self.configuration = configuration
+
         // FIXME: Consider whether we want to have a single value here or if the getter for `navigations` should return a fresh sequence every time.
         let (stream, continuation) = AsyncStream.makeStream(of: NavigationEvent.self)
         navigations = Navigations(source: stream)
