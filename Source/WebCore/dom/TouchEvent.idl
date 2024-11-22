@@ -38,6 +38,9 @@
     readonly attribute boolean shiftKey;
     readonly attribute boolean altKey;
     readonly attribute boolean metaKey;
+
+    readonly attribute long pageX;
+    readonly attribute long pageY;
 };
 
 dictionary TouchEventInit : UIEventInit {

@@ -86,16 +86,6 @@ int UIEvent::layerY()
     return 0;
 }
 
-int UIEvent::pageX() const
-{
-    return 0;
-}
-
-int UIEvent::pageY() const
-{
-    return 0;
-}
-
 unsigned UIEvent::which() const
 {
     return 0;
