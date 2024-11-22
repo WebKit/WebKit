@@ -6,6 +6,9 @@ import logging
 import sys
 import threading
 import socket
+import json
+
+import signposts # this import will succeed even if signposts module is not compiled
 
 
 _log = logging.getLogger(__name__)
@@ -38,21 +41,50 @@ class Handler(SimpleHTTPRequestHandler):
         self.server_shutdown()
 
     def do_POST(self):
+        signpost_path = self.web_root + '/signpost'
         report_path = self.web_root + '/report'
-        if not self.translate_path(self.path).startswith(report_path):
+        if self.translate_path(self.path).startswith(signpost_path):
+            length = int(self.headers['content-length'])
+            try:
+                content = self.rfile.read(length)
+                data = json.loads(content.decode('utf-8'))
+
+                # os signpost here
+                signpost_type = data['type']
+                testname = data['testname']
+                try:
+                    if signpost_type == 'signpostStart':
+                        signposts.interval_begin(testname)
+                    elif signpost_type == 'signpostStop':
+                        signposts.interval_end(testname)
+                    else:
+                        signposts.event_emit(testname)
+                    self.send_response(200)
+                except Exception as e:
+                    hint = ('\n\nTry compiling signposts module: '
+                            '`pushd Tools/Scripts/webkitpy/benchmark_runner/http_server_driver/http_server/signposts/; '
+                            'python3 setup.py install; popd`\n\n')
+                    _log.error(f'Error emitting signpost: {e}\n\n{hint}')
+                    self.send_response(500)
+            except Exception as e:
+                _log.error(f'Error emitting signpost: {e}')
+                self.send_response(500)
+            self.end_headers()
+        elif self.translate_path(self.path).startswith(report_path):
+            length = int(self.headers['content-length'])
+            try:
+                content = self.rfile.read(length)
+                sys.stdout.write(content.decode('utf-8'))
+                sys.stdout.flush()
+                self.send_response(200)
+            except Exception as e:
+                _log.error(f'Error reading and writing report: {e}')
+                self.send_response(500)
+            self.end_headers()
+            self.server_shutdown()
+        else:
             super().do_POST()
             return
-        length = int(self.headers['content-length'])
-        try:
-            content = self.rfile.read(length)
-            sys.stdout.write(content.decode('utf-8'))
-            sys.stdout.flush()
-            self.send_response(200)
-        except Exception as e:
-            _log.error(f'Error reading and writing report: {e}')
-            self.send_response(500)
-        self.end_headers()
-        self.server_shutdown()
 
 
 if __name__ == '__main__':
