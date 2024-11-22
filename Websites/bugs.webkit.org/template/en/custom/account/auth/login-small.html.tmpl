@@ -23,7 +23,7 @@
     [% connector = "&" %]
   [% END %]
   [% script_url = login_target _ connector _ "GoAheadAndLogIn=1" %]
-  <button id="login_link[% qs_suffix FILTER css_class_quote %]" href="[% script_url FILTER html %]" onclick="document.getElementById('login-dialog').show()">Log In</button>
+  <button id="login_link[% qs_suffix FILTER css_class_quote %]" href="[% script_url FILTER html %]" onclick="document.getElementById('login-dialog').showModal()">Log In</button>
   
   <dialog id="login-dialog">
   <div class="close">
@@ -37,7 +37,7 @@
   <form action="[% login_target FILTER html %]" method="POST"
         id="mini_login[% qs_suffix FILTER css_class_quote %]" class="mini_login dialog-grid">
         
-    <input id="Bugzilla_login[% qs_suffix FILTER css_class_quote %]" required
+    <input id="Bugzilla_login[% qs_suffix FILTER css_class_quote %]" required autofocus
            name="Bugzilla_login" class="bz_login"
       [% IF login_not_email %]
         placeholder="Login"
