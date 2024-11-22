@@ -243,7 +243,7 @@ SystemFontDatabaseCoreText::CascadeListParameters SystemFontDatabaseCoreText::sy
     result.allowUserInstalledFonts = allowUserInstalledFonts;
 
     result.weight = mapWeight(description.weight());
-    result.width = mapWidth(description.stretch());
+    result.width = mapWidth(description.width());
 
     switch (systemFontKind) {
     case SystemFontKind::SystemUI: {

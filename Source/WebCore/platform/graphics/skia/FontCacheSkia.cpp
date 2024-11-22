@@ -82,22 +82,22 @@ static SkFontStyle skiaFontStyle(const FontDescription& fontDescription)
         skWeight = static_cast<int>(weight);
 
     int skWidth = SkFontStyle::kNormal_Width;
-    auto stretch = fontDescription.stretch();
-    if (stretch <= ultraCondensedStretchValue())
+    auto width = fontDescription.width();
+    if (width <= ultraCondensedWidthValue())
         skWidth = SkFontStyle::kUltraCondensed_Width;
-    else if (stretch <= extraCondensedStretchValue())
+    else if (width <= extraCondensedWidthValue())
         skWidth = SkFontStyle::kExtraCondensed_Width;
-    else if (stretch <= condensedStretchValue())
+    else if (width <= condensedWidthValue())
         skWidth = SkFontStyle::kCondensed_Width;
-    else if (stretch <= semiCondensedStretchValue())
+    else if (width <= semiCondensedWidthValue())
         skWidth = SkFontStyle::kSemiCondensed_Width;
-    else if (stretch >= semiExpandedStretchValue())
+    else if (width >= semiExpandedWidthValue())
         skWidth = SkFontStyle::kSemiExpanded_Width;
-    else if (stretch >= expandedStretchValue())
+    else if (width >= expandedWidthValue())
         skWidth = SkFontStyle::kExpanded_Width;
-    if (stretch >= extraExpandedStretchValue())
+    if (width >= extraExpandedWidthValue())
         skWidth = SkFontStyle::kExtraExpanded_Width;
-    if (stretch >= ultraExpandedStretchValue())
+    if (width >= ultraExpandedWidthValue())
         skWidth = SkFontStyle::kUltraExpanded_Width;
 
     SkFontStyle::Slant skSlant = SkFontStyle::kUpright_Slant;

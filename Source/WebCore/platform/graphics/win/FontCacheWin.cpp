@@ -591,11 +591,11 @@ static int CALLBACK traitsInFamilyEnumProc(CONST LOGFONT* logFont, CONST TEXTMET
         break;
     }
 
-    FontSelectionValue stretch = normalStretchValue();
+    FontSelectionValue width = normalWidthValue();
 
     FontSelectionCapabilities result;
     result.weight = FontSelectionRange(weight, weight);
-    result.width = FontSelectionRange(stretch, stretch);
+    result.width = FontSelectionRange(width, width);
     result.slope = FontSelectionRange(italic, italic);
     procData->m_capabilities.append(WTFMove(result));
     return 1;

@@ -48,7 +48,7 @@ public:
     // Adjusted size regarding @font-face size-adjust but not regarding font-size-adjust. The latter adjustment is done with updateSizeWithFontSizeAdjust() after the font's creation.
     float adjustedSizeForFontFace(float) const;
     std::optional<FontSelectionValue> italic() const { return m_fontSelectionRequest.slope; }
-    FontSelectionValue stretch() const { return m_fontSelectionRequest.width; }
+    FontSelectionValue width() const { return m_fontSelectionRequest.width; }
     FontSelectionValue weight() const { return m_fontSelectionRequest.weight; }
     const FontSelectionRequest& fontSelectionRequest() const { return m_fontSelectionRequest; }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
@@ -115,7 +115,7 @@ public:
     void setTextSpacingTrim(TextSpacingTrim v) { m_textSpacingTrim = v; }
     void setTextAutospace(TextAutospace v) { m_textAutospace = v; }
     void setItalic(std::optional<FontSelectionValue> italic) { m_fontSelectionRequest.slope = italic; }
-    void setStretch(FontSelectionValue stretch) { m_fontSelectionRequest.width = stretch; }
+    void setWidth(FontSelectionValue width) { m_fontSelectionRequest.width = width; }
     void setIsItalic(bool isItalic) { setItalic(isItalic ? std::optional<FontSelectionValue> { italicValue() } : std::optional<FontSelectionValue> { }); }
     void setWeight(FontSelectionValue weight) { m_fontSelectionRequest.weight = weight; }
     void setTextRenderingMode(TextRenderingMode rendering) { m_textRendering = enumToUnderlyingType(rendering); }

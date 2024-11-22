@@ -43,14 +43,14 @@ FontSelectionAlgorithm::FontSelectionAlgorithm(FontSelectionRequest request, con
     }
 }
 
-auto FontSelectionAlgorithm::stretchDistance(Capabilities capabilities) const -> DistanceResult
+auto FontSelectionAlgorithm::widthDistance(Capabilities capabilities) const -> DistanceResult
 {
     auto width = capabilities.width;
     ASSERT(width.isValid());
     if (width.includes(m_request.width))
         return { FontSelectionValue(), m_request.width };
 
-    if (m_request.width > normalStretchValue()) {
+    if (m_request.width > normalWidthValue()) {
         if (width.minimum > m_request.width)
             return { width.minimum - m_request.width, width.minimum };
         ASSERT(width.maximum < m_request.width);
@@ -164,7 +164,7 @@ void FontSelectionAlgorithm::filterCapability(bool eliminated[], DistanceFunctio
 size_t FontSelectionAlgorithm::indexOfBestCapabilities()
 {
     Vector<bool, 256> eliminated(m_capabilities.size(), false);
-    filterCapability(eliminated.data(), &FontSelectionAlgorithm::stretchDistance, &Capabilities::width);
+    filterCapability(eliminated.data(), &FontSelectionAlgorithm::widthDistance, &Capabilities::width);
     filterCapability(eliminated.data(), &FontSelectionAlgorithm::styleDistance, &Capabilities::slope);
     filterCapability(eliminated.data(), &FontSelectionAlgorithm::weightDistance, &Capabilities::weight);
     return eliminated.find(false);

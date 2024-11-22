@@ -3,7 +3,7 @@ Font for '12px monospace':
 font-style: normal
 font-variant-caps: normal
 font-weight: normal
-font-stretch: normal
+font-width: normal
 font-size: 12px
 line-height: normal
 font-family: monospace
@@ -23,7 +23,7 @@ Font for '12px/24px serif':
 font-style: normal
 font-variant-caps: normal
 font-weight: normal
-font-stretch: normal
+font-width: normal
 font-size: 12px
 line-height: 24px
 font-family: serif
@@ -43,7 +43,7 @@ Font for 'normal 12px serif':
 font-style: normal
 font-variant-caps: normal
 font-weight: normal
-font-stretch: normal
+font-width: normal
 font-size: 12px
 line-height: normal
 font-family: serif
@@ -63,7 +63,7 @@ Font for 'normal normal 12px serif':
 font-style: normal
 font-variant-caps: normal
 font-weight: normal
-font-stretch: normal
+font-width: normal
 font-size: 12px
 line-height: normal
 font-family: serif
@@ -83,7 +83,7 @@ Font for 'normal normal normal 12px serif':
 font-style: normal
 font-variant-caps: normal
 font-weight: normal
-font-stretch: normal
+font-width: normal
 font-size: 12px
 line-height: normal
 font-family: serif
@@ -103,7 +103,7 @@ Font for 'italic small-caps 12px/24px serif':
 font-style: italic
 font-variant-caps: small-caps
 font-weight: normal
-font-stretch: normal
+font-width: normal
 font-size: 12px
 line-height: 24px
 font-family: serif
@@ -123,7 +123,7 @@ Font for 'italic bold 12px/24px serif':
 font-style: italic
 font-variant-caps: normal
 font-weight: bold
-font-stretch: normal
+font-width: normal
 font-size: 12px
 line-height: 24px
 font-family: serif
@@ -143,7 +143,7 @@ Font for 'small-caps bold 14px/28px Arial, sans-serif':
 font-style: normal
 font-variant-caps: small-caps
 font-weight: bold
-font-stretch: normal
+font-width: normal
 font-size: 14px
 line-height: 28px
 font-family: Arial, sans-serif
@@ -163,7 +163,7 @@ Font for 'italic small-caps bold 14px/28px Arial, sans-serif':
 font-style: italic
 font-variant-caps: small-caps
 font-weight: bold
-font-stretch: normal
+font-width: normal
 font-size: 14px
 line-height: 28px
 font-family: Arial, sans-serif

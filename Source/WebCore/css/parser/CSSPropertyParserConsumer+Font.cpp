@@ -1297,7 +1297,7 @@ RefPtr<CSSValue> consumeVariationTagValue(CSSParserTokenRange& range, const CSSP
 // MARK: @font-face 'font-stretch'
 // FIXME: Rename to 'font-width' to match spec. 'font-stretch' is now a legacy alias.
 
-RefPtr<CSSValue> parseFontFaceFontStretch(const String& string, ScriptExecutionContext& context)
+RefPtr<CSSValue> parseFontFaceFontWidth(const String& string, ScriptExecutionContext& context)
 {
     // <font-stretch> = auto | <'font-stretch'>{1,2}
     // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-width
@@ -1311,7 +1311,7 @@ RefPtr<CSSValue> parseFontFaceFontStretch(const String& string, ScriptExecutionC
     if (range.atEnd())
         return nullptr;
 
-    RefPtr parsedValue = consumeFontFaceFontStretch(range, parserContext);
+    RefPtr parsedValue = consumeFontFaceFontWidth(range, parserContext);
     if (!parsedValue || !range.atEnd())
         return nullptr;
 
@@ -1320,7 +1320,7 @@ RefPtr<CSSValue> parseFontFaceFontStretch(const String& string, ScriptExecutionC
 
 #if ENABLE(VARIATION_FONTS)
 
-RefPtr<CSSValue> consumeFontFaceFontStretch(CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> consumeFontFaceFontWidth(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <font-stretch> = auto | <'font-stretch'>{1,2}
     // https://drafts.csswg.org/css-fonts-4/#descdef-font-face-font-width
@@ -1328,7 +1328,7 @@ RefPtr<CSSValue> consumeFontFaceFontStretch(CSSParserTokenRange& range, const CS
     // FIXME: Missing support for "auto" identifier.
     // FIXME: Both stretch values should allow keyword identifiers, not just the first.
 
-    if (RefPtr result = CSSPropertyParsing::consumeFontStretchAbsolute(range))
+    if (RefPtr result = CSSPropertyParsing::consumeFontWidthAbsolute(range))
         return result;
 
     RefPtr firstPercent = consumePercentage(range, context, ValueRange::NonNegative);
@@ -1350,12 +1350,12 @@ RefPtr<CSSValue> consumeFontFaceFontStretch(CSSParserTokenRange& range, const CS
 
 #else
 
-RefPtr<CSSValue> consumeFontFaceFontStretch(CSSParserTokenRange& range, const CSSParserContext& context)
+RefPtr<CSSValue> consumeFontFaceFontWidth(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     // <font-stretch> = auto | <'font-stretch'>
     // NOTE: This is the pre-variation fonts definition.
 
-    if (RefPtr result = CSSPropertyParsing::consumeFontStretchAbsolute(range))
+    if (RefPtr result = CSSPropertyParsing::consumeFontWidthAbsolute(range))
         return result;
     if (RefPtr percent = consumePercentage(range, context, ValueRange::NonNegative))
         return percent;

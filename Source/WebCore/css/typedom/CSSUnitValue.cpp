@@ -178,7 +178,7 @@ static bool isValueOutOfRangeForProperty(CSSPropertyID propertyID, double value,
     case CSSPropertyFlexShrink:
     case CSSPropertyFontSize:
     case CSSPropertyFontSizeAdjust:
-    case CSSPropertyFontStretch:
+    case CSSPropertyFontWidth:
     case CSSPropertyGridAutoColumns:
     case CSSPropertyGridAutoRows:
     case CSSPropertyGridTemplateColumns:
@@ -252,7 +252,7 @@ static CSS::Range rangeForProperty(CSSPropertyID propertyID, CSSUnitType)
     case CSSPropertyFlexShrink:
     case CSSPropertyFontSize:
     case CSSPropertyFontSizeAdjust:
-    case CSSPropertyFontStretch:
+    case CSSPropertyFontWidth:
     case CSSPropertyGridAutoColumns:
     case CSSPropertyGridAutoRows:
     case CSSPropertyGridTemplateColumns:

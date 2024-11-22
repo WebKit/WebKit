@@ -37,8 +37,8 @@ String CSSFontValue::customCSSText() const
         result.append(result.isEmpty() ? ""_s : " "_s, variant->cssText());
     if (weight)
         result.append(result.isEmpty() ? ""_s : " "_s, weight->cssText());
-    if (stretch)
-        result.append(result.isEmpty() ? ""_s : " "_s, stretch->cssText());
+    if (width)
+        result.append(result.isEmpty() ? ""_s : " "_s, width->cssText());
     if (size)
         result.append(result.isEmpty() ? ""_s : " "_s, size->cssText());
     if (lineHeight)
@@ -53,7 +53,7 @@ bool CSSFontValue::equals(const CSSFontValue& other) const
     return compareCSSValuePtr(style, other.style)
         && compareCSSValuePtr(variant, other.variant)
         && compareCSSValuePtr(weight, other.weight)
-        && compareCSSValuePtr(stretch, other.stretch)
+        && compareCSSValuePtr(width, other.width)
         && compareCSSValuePtr(size, other.size)
         && compareCSSValuePtr(lineHeight, other.lineHeight)
         && compareCSSValuePtr(family, other.family);
@@ -73,8 +73,8 @@ IterationStatus CSSFontValue::customVisitChildren(const Function<IterationStatus
         if (func(*weight) == IterationStatus::Done)
             return IterationStatus::Done;
     }
-    if (stretch) {
-        if (func(*stretch) == IterationStatus::Done)
+    if (width) {
+        if (func(*width) == IterationStatus::Done)
             return IterationStatus::Done;
     }
     if (size) {

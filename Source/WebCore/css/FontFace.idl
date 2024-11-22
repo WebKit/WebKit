@@ -37,7 +37,7 @@ enum FontFaceLoadStatus {
 dictionary FontFaceDescriptors {
     DOMString style = "normal";
     DOMString weight = "normal";
-    DOMString stretch = "normal";
+    [ImplementedAs=width] DOMString stretch = "normal";
     DOMString unicodeRange = "U+0-10FFFF";
     DOMString featureSettings = "normal";
     DOMString display = "auto";
@@ -53,7 +53,8 @@ dictionary FontFaceDescriptors {
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString family;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString style;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString weight;
-    [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString stretch;
+    [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString width;
+    [ImplementedAs=width, SetterCallWith=CurrentScriptExecutionContext] attribute DOMString stretch;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString unicodeRange;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString featureSettings;
     [SetterCallWith=CurrentScriptExecutionContext] attribute DOMString display;

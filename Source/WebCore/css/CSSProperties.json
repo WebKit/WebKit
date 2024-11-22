@@ -621,7 +621,7 @@
                 "url": "https://www.w3.org/TR/css-fonts-4/#font-weight-prop"
             }
         },
-        "font-stretch": {
+        "font-width": {
             "inherited": true,
             "values": [
                 "normal",
@@ -637,19 +637,22 @@
             "codegen-properties": [
                 {
                     "enable-if": "ENABLE_VARIATION_FONTS",
-                    "name-for-methods": "Stretch",
+                    "aliases": ["font-stretch"],
+                    "enable-if": "ENABLE_VARIATION_FONTS",
+                    "name-for-methods": "Width",
                     "font-property": true,
                     "high-priority": true,
-                    "converter": "FontStretch",
-                    "parser-grammar": "<font-stretch-absolute> | <percentage [0,inf]>"
+                    "converter": "FontWidth",
+                    "parser-grammar": "<font-width-absolute> | <percentage [0,inf]>"
                 },
                 {
+                    "aliases": ["font-stretch"],
                     "enable-if": "!ENABLE_VARIATION_FONTS",
-                    "name-for-methods": "Stretch",
+                    "name-for-methods": "Width",
                     "font-property": true,
                     "high-priority": true,
-                    "converter": "FontStretch",
-                    "parser-grammar": "<font-stretch-absolute>"
+                    "converter": "FontWidth",
+                    "parser-grammar": "<font-width-absolute>"
                 }
             ],
             "specification": {
@@ -1067,7 +1070,7 @@
                     "font-style",
                     "font-variant-caps",
                     "font-weight",
-                    "font-stretch",
+                    "font-width",
                     "font-size",
                     "line-height",
                     "font-family",
@@ -9745,7 +9748,7 @@
                     "url": "https://www.w3.org/TR/css-fonts-4/#descdef-font-face-font-feature-settings"
                 }
             },
-            "font-stretch": {
+            "font-width": {
                 "values": [
                     {
                         "value": "auto",
@@ -9765,13 +9768,15 @@
                 "codegen-properties": [
                     {
                         "enable-if": "ENABLE_VARIATION_FONTS",
-                        "parser-function": "consumeFontFaceFontStretch",
-                        "parser-grammar-unused": "auto | [ <font-stretch-absolute> | <percentage [0,inf]> ]{1,2}",
-                        "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers and referencing style properties grammars (actual grammar uses <'font-stretch'>{1,2})."
+                        "aliases": ["font-stretch"],
+                        "parser-function": "consumeFontFaceFontWidth",
+                        "parser-grammar-unused": "auto | [ <font-width-absolute> | <percentage [0,inf]> ]{1,2}",
+                        "parser-grammar-unused-reason": "Needs support for '{A,B}' multipliers and referencing style properties grammars (actual grammar uses <'font-width'>{1,2})."
                     },
                     {
                         "enable-if": "!ENABLE_VARIATION_FONTS",
-                        "parser-grammar": "<font-stretch-absolute>"
+                        "aliases": ["font-stretch"],
+                        "parser-grammar": "<font-width-absolute>"
                     }
                 ],
                 "specification": {
@@ -10416,7 +10421,7 @@
                 "url": "https://drafts.csswg.org/css-fonts-4/#font-weight-absolute-values"
             }
         },
-        "<font-stretch-absolute>": {
+        "<font-width-absolute>": {
             "grammar": "normal | ultra-condensed | extra-condensed | condensed | semi-condensed | semi-expanded | expanded | extra-expanded | ultra-expanded",
             "exported": true,
             "specification": {

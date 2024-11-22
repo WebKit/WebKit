@@ -134,7 +134,6 @@ PASS font-optical-sizing
 PASS font-palette
 PASS font-size
 PASS font-size-adjust
-PASS font-stretch
 PASS font-style
 PASS font-synthesis-small-caps
 PASS font-synthesis-style
@@ -148,6 +147,7 @@ PASS font-variant-numeric
 PASS font-variant-position
 PASS font-variation-settings
 PASS font-weight
+PASS font-width
 PASS glyph-orientation-horizontal
 PASS glyph-orientation-vertical
 PASS grid-auto-columns
