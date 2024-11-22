@@ -81,6 +81,11 @@ WebExtensionMessagePort::WebExtensionMessagePort(WebExtensionContext& extensionC
 {
 }
 
+WebExtensionMessagePort::~WebExtensionMessagePort()
+{
+    remove();
+}
+
 bool WebExtensionMessagePort::operator==(const WebExtensionMessagePort& other) const
 {
     return this == &other || (m_extensionContext == other.m_extensionContext && m_applicationIdentifier == other.m_applicationIdentifier && m_channelIdentifier == other.m_channelIdentifier);

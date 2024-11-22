@@ -4207,6 +4207,7 @@
 		1C9F4C2A29E538550015819E /* RemoteTextDetectorProxy.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteTextDetectorProxy.cpp; sourceTree = "<group>"; };
 		1C9F4C2B29E538550015819E /* RemoteTextDetectorProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RemoteTextDetectorProxy.h; sourceTree = "<group>"; };
 		1CA45DF62C5D7375003A3F52 /* _WKWebExtension.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = _WKWebExtension.mm; sourceTree = "<group>"; };
+		1CA583E72CEFFDBD002C6DAD /* WebExtensionFrameIdentifier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebExtensionFrameIdentifier.cpp; sourceTree = "<group>"; };
 		1CA8B935127C774E00576C2B /* WebInspectorUIProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorUIProxyMac.mm; sourceTree = "<group>"; };
 		1CA8B943127C882A00576C2B /* WebInspectorUIProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebInspectorUIProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		1CA8B944127C882A00576C2B /* WebInspectorUIProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorUIProxyMessages.h; sourceTree = "<group>"; };
@@ -8418,6 +8419,20 @@
 		FEE43FD11E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebInspectorInterruptDispatcher.h; sourceTree = "<group>"; };
 		FEE43FD21E67AFC60077D6D1 /* WebInspectorInterruptDispatcher.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebInspectorInterruptDispatcher.messages.in; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1CA583EB2CF00409002C6DAD /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				WebExtensionFrameIdentifierCocoa.mm,
+			);
+			target = 8DC2EF4F0486A6940098B216 /* WebKit */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		1CA583E92CEFFE9D002C6DAD /* Cocoa */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (1CA583EB2CF00409002C6DAD /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Cocoa; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		2D56C1C428A367A00081BD25 /* Frameworks */ = {
@@ -13804,6 +13819,7 @@
 		B6114A8A293AE03600380B1B /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				1CA583E92CEFFE9D002C6DAD /* Cocoa */,
 				B6217BB0299C39F000498BF8 /* _WKWebExtensionLocalization.h */,
 				B6217BB1299C3AE300498BF8 /* _WKWebExtensionLocalization.mm */,
 				B6D75B1C2B1FD0BE00BC932E /* _WKWebExtensionRegisteredScriptsSQLiteStore.h */,
@@ -13841,6 +13857,7 @@
 				1C2BBF922B82BC5D001DBDFC /* WebExtensionError.h */,
 				B6114A8B293AE05200380B1B /* WebExtensionEventListenerType.h */,
 				8696CE2F297EB3C90081C800 /* WebExtensionEventListenerType.serialization.in */,
+				1CA583E72CEFFDBD002C6DAD /* WebExtensionFrameIdentifier.cpp */,
 				1C4A14C52ABB710E00A1018C /* WebExtensionFrameIdentifier.h */,
 				33B5A80B2AFD298100A15D40 /* WebExtensionFrameParameters.h */,
 				33B5A80D2AFD2B2300A15D40 /* WebExtensionFrameParameters.serialization.in */,
@@ -18215,6 +18232,9 @@
 				37F7407912721F740093869B /* PBXTargetDependency */,
 				2D11BA052126A5AE006F8878 /* PBXTargetDependency */,
 				7B9FC5BD28A5233B007570E7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1CA583E92CEFFE9D002C6DAD /* Cocoa */,
 			);
 			name = WebKit;
 			productInstallPath = "$(HOME)/Library/Frameworks";

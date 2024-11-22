@@ -50,6 +50,7 @@
 #import "WebExtensionTabParameters.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
+#import <WebCore/LocalizedStrings.h>
 #import <wtf/BlockPtr.h>
 
 #if PLATFORM(IOS_FAMILY)

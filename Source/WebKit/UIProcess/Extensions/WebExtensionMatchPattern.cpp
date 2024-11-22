@@ -30,6 +30,7 @@
 
 #import "WebProcessMessages.h"
 #import "WebProcessPool.h"
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/PublicSuffixStore.h>
 #import <wtf/HashMap.h>
 #import <wtf/HashSet.h>

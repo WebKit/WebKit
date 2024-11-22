@@ -30,6 +30,7 @@
 
 #include "WebExtensionPermission.h"
 #include "WebExtensionUtilities.h"
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/TextResourceDecoder.h>
 #include <wtf/Language.h>
 #include <wtf/text/StringToIntegerConversion.h>

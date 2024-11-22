@@ -39,6 +39,7 @@
 #import <wtf/ObjectIdentifier.h>
 #import <wtf/Range.h>
 #import <wtf/RangeSet.h>
+#import <wtf/Scope.h>
 #import <wtf/StdLibExtras.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/text/MakeString.h>

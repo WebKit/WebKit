@@ -49,9 +49,11 @@
 #include "WebEventConversion.h"
 #include "WebEventModifier.h"
 #include "WebEventType.h"
+#include "WebFrame.h"
 #include "WebHitTestResultData.h"
 #include "WebKeyboardEvent.h"
 #include "WebMouseEvent.h"
+#include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <CoreGraphics/CoreGraphics.h>
 #include <PDFKit/PDFKit.h>
@@ -80,6 +82,7 @@
 #include <WebCore/ImageBuffer.h>
 #include <WebCore/ImmediateActionStage.h>
 #include <WebCore/LocalFrame.h>
+#include <WebCore/LocalizedStrings.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageOverlay.h>

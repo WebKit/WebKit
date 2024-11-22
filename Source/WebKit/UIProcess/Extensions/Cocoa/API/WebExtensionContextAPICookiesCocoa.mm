@@ -35,6 +35,7 @@
 #import "APIHTTPCookieStore.h"
 #import "CocoaHelpers.h"
 #import "WKWebViewConfiguration.h"
+#import "WKWebViewPrivate.h"
 #import "WKWebsiteDataStoreInternal.h"
 #import "WebExtensionContextProxyMessages.h"
 #import "WebExtensionCookieParameters.h"

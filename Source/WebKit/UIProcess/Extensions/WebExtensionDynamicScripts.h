@@ -46,6 +46,7 @@ namespace WebKit {
 
 class WebExtensionContext;
 class WebExtensionTab;
+struct WebExtensionScriptInjectionParameters;
 
 namespace WebExtensionDynamicScripts {
 

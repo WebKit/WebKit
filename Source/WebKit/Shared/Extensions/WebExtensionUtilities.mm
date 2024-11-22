@@ -39,6 +39,10 @@
 #import "WebExtensionMessageSenderParameters.h"
 #import <objc/runtime.h>
 
+#if PLATFORM(IOS_FAMILY)
+#import <UIKit/UIKit.h>
+#endif
+
 namespace WebKit {
 
 static NSString *classToClassString(Class classType, bool plural = false)
