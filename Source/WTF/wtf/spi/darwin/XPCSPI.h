@@ -172,6 +172,7 @@ extern const struct _xpc_type_s _xpc_type_endpoint;
 extern const struct _xpc_type_s _xpc_type_error;
 extern const struct _xpc_type_s _xpc_type_string;
 
+xpc_object_t xpc_array_create_empty(void);
 xpc_object_t xpc_array_create(const xpc_object_t*, size_t count);
 #if COMPILER_SUPPORTS(BLOCKS)
 bool xpc_array_apply(xpc_object_t, XPC_NOESCAPE xpc_array_applier_t);
@@ -193,6 +194,7 @@ void xpc_connection_send_message(xpc_connection_t, xpc_object_t);
 void xpc_connection_send_message_with_reply(xpc_connection_t, xpc_object_t, dispatch_queue_t, xpc_handler_t);
 void xpc_connection_set_event_handler(xpc_connection_t, xpc_handler_t);
 void xpc_connection_set_target_queue(xpc_connection_t, dispatch_queue_t);
+xpc_object_t xpc_dictionary_create_empty(void);
 xpc_object_t xpc_dictionary_create(const char*  const* keys, const xpc_object_t*, size_t count);
 xpc_object_t xpc_dictionary_create_reply(xpc_object_t);
 int xpc_dictionary_dup_fd(xpc_object_t, const char* key);

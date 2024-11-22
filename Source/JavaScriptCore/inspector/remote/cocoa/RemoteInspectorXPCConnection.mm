@@ -185,7 +185,7 @@ void RemoteInspectorXPCConnection::sendMessage(NSString *messageName, NSDictiona
     if (!xpcDictionary)
         return;
 
-    auto msg = adoptOSObject(xpc_dictionary_create(nullptr, nullptr, 0));
+    auto msg = adoptOSObject(xpc_dictionary_create_empty());
     xpc_dictionary_set_value(msg.get(), RemoteInspectorXPCConnectionSerializedMessageKey, xpcDictionary.get());
     xpc_connection_send_message(m_connection.get(), msg.get());
 }
