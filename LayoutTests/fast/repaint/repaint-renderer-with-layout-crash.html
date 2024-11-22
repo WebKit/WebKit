@@ -1,0 +1,29 @@
+<style>
+listing { backdrop-filter: brightness(20%); column-span: all; }
+listing, section, fieldset, legend, body { min-height: 69vw; overflow-y: -webkit-paged-y; transform-style: preserve-3d; }
+section { outline-style: auto }
+</style>
+<script>
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+
+
+function main() {
+    document.querySelector('div').outerHTML = `A<listing></listing>`;
+    fieldset.addEventListener("DOMNodeInserted", () => {
+        document.execCommand("insertOrderedList",false,null);
+    });
+    document.designMode = "on";
+    document.execCommand("selectAll", false, null);
+    document.execCommand("fontName", false, "serif");
+}
+
+</script>
+<body onload="main()">
+<p>This test passes if WebKit does not crash.</p>
+<span>A<listing></listing></span>
+<section>
+<fieldset id="fieldset">
+<legend></legend>
+<div>

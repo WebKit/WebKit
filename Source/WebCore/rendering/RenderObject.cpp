@@ -985,6 +985,9 @@ void RenderObject::propagateRepaintToParentWithOutlineAutoIfNeeded(const RenderL
             renderer = WTFMove(renderMultiColumnPlaceholder);
         }
 
+        if (!renderer || !originalRenderer)
+            return;
+
         bool rendererHasOutlineAutoAncestor = renderer->hasOutlineAutoAncestor() || originalRenderer->hasOutlineAutoAncestor();
         ASSERT(rendererHasOutlineAutoAncestor
             || originalRenderer->outlineStyleForRepaint().outlineStyleIsAuto() == OutlineIsAuto::On
