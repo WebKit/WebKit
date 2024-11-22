@@ -183,6 +183,7 @@ private:
 
     // Rendering overrides.
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) final;
+    bool isReplaced(const RenderStyle&) const final { return true; }
     void didAttachRenderers() final;
 
     // CachedRawResourceClient overrides.

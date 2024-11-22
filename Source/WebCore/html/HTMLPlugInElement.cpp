@@ -248,6 +248,11 @@ RenderPtr<RenderElement> HTMLPlugInElement::createElementRenderer(RenderStyle&& 
     return createRenderer<RenderEmbeddedObject>(*this, WTFMove(style));
 }
 
+bool HTMLPlugInElement::isReplaced(const RenderStyle&) const
+{
+    return !m_pluginReplacement || !m_pluginReplacement->willCreateRenderer();
+}
+
 void HTMLPlugInElement::swapRendererTimerFired()
 {
     ASSERT(displayState() == PreparingPluginReplacement);

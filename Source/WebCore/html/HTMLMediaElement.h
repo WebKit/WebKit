@@ -716,6 +716,7 @@ protected:
     bool isMediaElement() const final { return true; }
 
     RenderPtr<RenderElement> createElementRenderer(RenderStyle&&, const RenderTreePosition&) override;
+    bool isReplaced(const RenderStyle&) const override { return true; }
 
     SecurityOriginData documentSecurityOrigin() const final;
 

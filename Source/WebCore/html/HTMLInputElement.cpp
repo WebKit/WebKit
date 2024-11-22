@@ -954,6 +954,11 @@ RenderPtr<RenderElement> HTMLInputElement::createElementRenderer(RenderStyle&& s
     return m_inputType->createInputRenderer(WTFMove(style));
 }
 
+bool HTMLInputElement::isReplaced(const RenderStyle&) const
+{
+    return m_inputType && m_inputType->isImageButton();
+}
+
 void HTMLInputElement::willAttachRenderers()
 {
     if (!m_hasType)
