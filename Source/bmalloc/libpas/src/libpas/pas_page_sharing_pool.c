@@ -389,7 +389,7 @@ get_current_participant(pas_page_sharing_pool* pool,
             pas_log("Starting with first_delta = %zu, size = %zu\n", (size_t)first_delta.value, size);
         
         /* FIXME: This loop could be so much more efficient. */
-        for (index = first_delta.value; index < size; ++index) {
+        for (index = (size_t)first_delta.value; index < size; ++index) {
             pas_page_sharing_participant_payload* payload;
             
             if (debug_min_heap)

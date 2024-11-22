@@ -1006,10 +1006,9 @@ pas_local_allocator_refill_with_known_config(
     if (verbose) {
         pas_log("old_view = %p.\n", old_view);
         if (old_view) {
-            pas_log("    index = %zu, first_eligible = %zu.\n",
+            pas_log("    index = %zu, first_eligible = %llu.\n",
                     pas_segregated_view_get_index(old_view),
-                    pas_segregated_directory_get_first_eligible(
-                        &pas_segregated_view_get_size_directory(old_view)->base).value);
+                    (unsigned long long)pas_segregated_directory_get_first_eligible(&pas_segregated_view_get_size_directory(old_view)->base).value);
         }
     }
 

@@ -649,7 +649,7 @@ process_deallocation_log_with_config(pas_thread_local_cache* cache,
                                      pas_segregated_page_config page_config,
                                      pas_segregated_page_role role,
                                      size_t* index,
-                                     uintptr_t encoded_begin,
+                                     uint64_t encoded_begin,
                                      pas_lock** held_lock)
 {
     static const bool verbose = false;
@@ -666,8 +666,7 @@ process_deallocation_log_with_config(pas_thread_local_cache* cache,
     last_held_lock = NULL;
 
     for (;;) {
-        uintptr_t begin;
-        begin = encoded_begin & ~PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_MASK;
+        uintptr_t begin = (uintptr_t)(encoded_begin & ~PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_MASK);
 
         switch (page_config.kind) {
         case pas_segregated_page_config_kind_null:
@@ -714,9 +713,7 @@ static PAS_ALWAYS_INLINE void flush_deallocation_log_without_resetting(
     held_lock = NULL;
 
     while (index) {
-        uintptr_t encoded_begin;
-
-        encoded_begin = thread_local_cache->deallocation_log[--index];
+        uint64_t encoded_begin = thread_local_cache->deallocation_log[--index];
 
         switch ((pas_segregated_page_config_kind_and_role)
                 ((encoded_begin & PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_MASK) >> PAS_SEGREGATED_PAGE_CONFIG_KIND_AND_ROLE_SHIFT)) {

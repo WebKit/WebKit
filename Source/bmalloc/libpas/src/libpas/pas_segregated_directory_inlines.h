@@ -263,7 +263,7 @@ pas_segregated_directory_iterate_forward_to_take_first_eligible(
         if (simple_eligibility)
             config->index = 0;
         else
-            config->index = first_eligible.value;
+            config->index = (size_t)first_eligible.value;
         
         if (verbose)
             pas_log("starting from index = %zu\n", config->index);
@@ -324,7 +324,7 @@ pas_segregated_directory_iterate_backward_to_take_last_empty(
     if (!last_empty_plus_one.value)
         return false;
     
-    config->index = last_empty_plus_one.value - 1;
+    config->index = (size_t)last_empty_plus_one.value - 1;
 
     did_find_something = pas_segregated_directory_iterate_backward(config);
 

@@ -167,7 +167,7 @@ void mbscavenge(void)
                    &pas_utility_segregated_heap));
         dump_summary(
             pas_large_sharing_pool_compute_summary(
-                pas_range_create(0, (uintptr_t)1 << PAS_ADDRESS_BITS),
+                pas_range_create(0, PAS_MAX_ADDRESS),
                 pas_large_sharing_pool_compute_summary_unknown_allocation_state,
                 pas_lock_is_not_held),
             "Large pool");
