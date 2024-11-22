@@ -40,7 +40,9 @@ typedef RetainPtr<CGPatternRef> PlatformPatternPtr;
 typedef struct _cairo_pattern cairo_pattern_t;
 typedef cairo_pattern_t* PlatformPatternPtr;
 #elif USE(SKIA)
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_BEGIN
 #include <skia/core/SkShader.h>
+WTF_IGNORE_WARNINGS_IN_THIRD_PARTY_CODE_END
 typedef sk_sp<SkShader> PlatformPatternPtr;
 #endif
 

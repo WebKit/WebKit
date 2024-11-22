@@ -104,10 +104,12 @@ static String drmRenderNodeFromPrimaryDeviceFile(const String& primaryDeviceFile
         if (!(device->available_nodes & (1 << DRM_NODE_PRIMARY | 1 << DRM_NODE_RENDER)))
             return true;
 
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE Port
         if (String::fromUTF8(device->nodes[DRM_NODE_PRIMARY]) == primaryDeviceFile) {
             renderNodeDeviceFile = String::fromUTF8(device->nodes[DRM_NODE_RENDER]);
             return false;
         }
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
         return true;
     });

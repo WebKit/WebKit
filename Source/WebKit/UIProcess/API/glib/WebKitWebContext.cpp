@@ -1455,7 +1455,9 @@ static bool pathIsBlocked(const char* path)
         return true;
 
     GUniquePtr<char*> splitPath(g_strsplit(path, G_DIR_SEPARATOR_S, 3));
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE Port
     return blockedPrefixes.contains(splitPath.get()[1]);
+    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 }
 
 /**

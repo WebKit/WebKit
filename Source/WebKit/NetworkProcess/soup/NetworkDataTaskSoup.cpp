@@ -589,8 +589,10 @@ void NetworkDataTaskSoup::didSniffContentCallback(SoupMessage* soupMessage, cons
     gpointer key, value;
     g_hash_table_iter_init(&iter, parameters);
     while (g_hash_table_iter_next(&iter, &key, &value)) {
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GTK/WPE Port
         g_string_append(sniffedType, "; ");
         soup_header_g_string_append_param(sniffedType, static_cast<const char*>(key), static_cast<const char*>(value));
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
     task->didSniffContent(sniffedType->str);
     g_string_free(sniffedType, TRUE);
