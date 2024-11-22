@@ -74,8 +74,8 @@ messages -> WebExtensionContext {
 #endif
 
     // Event APIs
-    [EnabledIf='isLoaded()'] AddListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType)
-    [EnabledIf='isLoaded()'] RemoveListener(WebKit::WebPageProxyIdentifier identifier, WebKit::WebExtensionEventListenerType type, WebKit::WebExtensionContentWorldType contentWorldType, size_t removedCount)
+    [EnabledIf='isLoaded()'] AddListener(WebCore::FrameIdentifier frameIdentifier, WebKit::WebExtensionEventListenerType listenerType, WebKit::WebExtensionContentWorldType contentWorldType)
+    [EnabledIf='isLoaded()'] RemoveListener(WebCore::FrameIdentifier frameIdentifier, WebKit::WebExtensionEventListenerType listenerType, WebKit::WebExtensionContentWorldType contentWorldType, size_t removedCount)
 
     // Extensions APIs
     [EnabledIf='isLoaded()'] ExtensionIsAllowedIncognitoAccess() -> (bool result)

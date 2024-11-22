@@ -94,36 +94,7 @@ const WebExtensionContext::UserContentControllerProxySet& WebExtensionContext::u
     return extensionController()->allNonPrivateUserContentControllers();
 }
 
-bool WebExtensionContext::pageListensForEvent(const WebPageProxy& page, WebExtensionEventListenerType type, WebExtensionContentWorldType contentWorldType) const
-{
-    if (!isLoaded())
-        return false;
-
-    if (!hasAccessToPrivateData() && page.sessionID().isEphemeral())
-        return false;
-
-    auto findAndCheckPage = [&](WebExtensionContentWorldType worldType) {
-        // FIXME: <https://webkit.org/b/281516> This map should be for frames not pages.
-        auto entry = m_eventListenerPages.find({ type, worldType });
-        return entry != m_eventListenerPages.end() && entry->value.contains(page);
-    };
-
-    bool found = findAndCheckPage(contentWorldType);
-
-#if ENABLE(INSPECTOR_EXTENSIONS)
-    if (!found) {
-        // Inspector content world is a special alias of Main. Check it when Main is requested (and vice versa).
-        found = findAndCheckPage(contentWorldType == WebExtensionContentWorldType::Main ? WebExtensionContentWorldType::Inspector : WebExtensionContentWorldType::Main);
-    }
-#endif
-
-    if (!found)
-        return false;
-
-    return page.legacyMainFrameProcess().canSendMessage();
-}
-
-WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventListenerTypeSet&& typeSet, ContentWorldTypeSet&& contentWorldTypeSet) const
+WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventListenerTypeSet&& typeSet, ContentWorldTypeSet&& contentWorldTypeSet, Function<bool(WebPageProxy&, WebFrameProxy&)>&& predicate) const
 {
     if (!isLoaded())
         return { };
@@ -140,21 +111,25 @@ WebExtensionContext::WebProcessProxySet WebExtensionContext::processes(EventList
 
     for (auto type : typeSet) {
         for (auto contentWorldType : contentWorldTypeSet) {
-            auto pagesEntry = m_eventListenerPages.find({ type, contentWorldType });
-            if (pagesEntry == m_eventListenerPages.end())
+            auto pagesEntry = m_eventListenerFrames.find({ type, contentWorldType });
+            if (pagesEntry == m_eventListenerFrames.end())
                 continue;
 
             for (auto entry : pagesEntry->value) {
-                Ref page = entry.key;
+                Ref frame = entry.key;
+                RefPtr page = frame->page();
+                if (!page)
+                    continue;
+
                 if (!hasAccessToPrivateData() && page->sessionID().isEphemeral())
                     continue;
 
-                // FIXME: <https://webkit.org/b/281516> This map should be for frames not pages and only include the interested frame process.
-                // For now consider all processes for every frame of the page as relevant.
-                page->forEachWebContentProcess([&](auto& webProcess, auto pageID) {
-                    if (webProcess.canSendMessage())
-                        result.add(webProcess);
-                });
+                if (predicate && !predicate(*page, frame))
+                    continue;
+
+                Ref webProcess = frame->process();
+                if (webProcess->canSendMessage())
+                    result.add(webProcess);
             }
         }
     }

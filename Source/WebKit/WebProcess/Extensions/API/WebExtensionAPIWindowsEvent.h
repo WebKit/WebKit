@@ -49,8 +49,8 @@ public:
 
     const ListenerVector& listeners() const { return m_listeners; }
 
-    void addListener(WebPage&, RefPtr<WebExtensionCallbackHandler>, NSDictionary *filter, NSString **outExceptionString);
-    void removeListener(WebPage&, RefPtr<WebExtensionCallbackHandler>);
+    void addListener(WebFrame&, RefPtr<WebExtensionCallbackHandler>, NSDictionary *filter, NSString **outExceptionString);
+    void removeListener(WebFrame&, RefPtr<WebExtensionCallbackHandler>);
     bool hasListener(RefPtr<WebExtensionCallbackHandler>);
 
     void removeAllListeners();
@@ -68,7 +68,7 @@ private:
         setPropertyPath(toAPIString(type), &parentObject);
     }
 
-    Markable<WebPageProxyIdentifier> m_pageProxyIdentifier;
+    Markable<WebCore::FrameIdentifier> m_frameIdentifier;
     WebExtensionEventListenerType m_type;
     ListenerVector m_listeners;
 };

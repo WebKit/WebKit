@@ -60,7 +60,7 @@ private:
     enum class ForUpdate : bool { No, Yes };
     bool parseCreateAndUpdateProperties(ForUpdate, NSDictionary *, const URL& baseURL, std::optional<WebExtensionMenuItemParameters>&, RefPtr<WebExtensionCallbackHandler>&, NSString **outExceptionString);
 
-    Markable<WebPageProxyIdentifier> m_pageProxyIdentifier;
+    Markable<WebCore::FrameIdentifier> m_frameIdentifier;
     RefPtr<WebExtensionAPIEvent> m_onClicked;
     ClickHandlerMap m_clickHandlerMap;
 #endif

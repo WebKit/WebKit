@@ -406,7 +406,7 @@ bool WebExtensionContext::unload(NSError **outError)
 
     m_actionsToPerformAfterBackgroundContentLoads.clear();
     m_backgroundContentEventListeners.clear();
-    m_eventListenerPages.clear();
+    m_eventListenerFrames.clear();
     m_installReason = InstallReason::None;
     m_previousVersion = nullString();
     m_safeToLoadBackgroundContent = false;
@@ -3479,6 +3479,19 @@ void WebExtensionContext::loadBackgroundWebViewDuringLoad()
             loadBackgroundWebView();
     } else
         loadBackgroundWebView();
+}
+
+bool WebExtensionContext::isBackgroundPage(WebCore::FrameIdentifier frameIdentifier) const
+{
+    RefPtr frame = WebFrameProxy::webFrame(frameIdentifier);
+    if (!frame)
+        return false;
+
+    RefPtr page = frame->page();
+    if (!page)
+        return false;
+
+    return isBackgroundPage(page->identifier());
 }
 
 bool WebExtensionContext::isBackgroundPage(WebPageProxyIdentifier pageProxyIdentifier) const

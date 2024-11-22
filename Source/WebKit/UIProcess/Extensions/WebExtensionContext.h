@@ -54,6 +54,7 @@
 #include "WebExtensionWindow.h"
 #include "WebExtensionWindowIdentifier.h"
 #include "WebExtensionWindowParameters.h"
+#include "WebFrameProxy.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxy.h"
 #include <WebCore/ContentRuleListResults.h>
@@ -177,9 +178,9 @@ public:
     using URLSet = HashSet<URL>;
     using URLVector = Vector<URL>;
 
-    using WeakPageCountedSet = WeakHashCountedSet<WebPageProxy>;
+    using WeakFrameCountedSet = WeakHashCountedSet<WebFrameProxy>;
     using EventListenerTypeCountedSet = HashCountedSet<WebExtensionEventListenerType>;
-    using EventListenerTypePageMap = HashMap<WebExtensionEventListenerTypeWorldPair, WeakPageCountedSet>;
+    using EventListenerTypeFrameMap = HashMap<WebExtensionEventListenerTypeWorldPair, WeakFrameCountedSet>;
     using EventListenerTypeSet = HashSet<WebExtensionEventListenerType>;
     using ContentWorldTypeSet = HashSet<WebExtensionContentWorldType>;
     using VoidCompletionHandlerVector = Vector<CompletionHandler<void()>>;
@@ -579,11 +580,9 @@ public:
         return processes(WTFMove(typeSet), ContentWorldTypeSet { contentWorldType });
     }
 
-    HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet&&, ContentWorldTypeSet&&) const;
+    HashSet<Ref<WebProcessProxy>> processes(EventListenerTypeSet&&, ContentWorldTypeSet&&, Function<bool(WebPageProxy&, WebFrameProxy&)>&& predicate = nullptr) const;
 
     const UserContentControllerProxySet& userContentControllers() const;
-
-    bool pageListensForEvent(const WebPageProxy&, WebExtensionEventListenerType, WebExtensionContentWorldType) const;
 
     template<typename T>
     void sendToProcesses(const WebProcessProxySet&, const T& message) const;
@@ -626,6 +625,7 @@ private:
 
     void populateWindowsAndTabs();
 
+    bool isBackgroundPage(WebCore::FrameIdentifier) const;
     bool isBackgroundPage(WebPageProxyIdentifier) const;
     bool backgroundContentIsLoaded() const;
 
@@ -789,8 +789,8 @@ private:
 #endif
 
     // Event APIs
-    void addListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType);
-    void removeListener(WebPageProxyIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType, size_t removedCount);
+    void addListener(WebCore::FrameIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType);
+    void removeListener(WebCore::FrameIdentifier, WebExtensionEventListenerType, WebExtensionContentWorldType, size_t removedCount);
 
     // Extension APIs
     void extensionIsAllowedIncognitoAccess(CompletionHandler<void(bool)>&&);
@@ -974,7 +974,7 @@ private:
 
     VoidCompletionHandlerVector m_actionsToPerformAfterBackgroundContentLoads;
     EventListenerTypeCountedSet m_backgroundContentEventListeners;
-    EventListenerTypePageMap m_eventListenerPages;
+    EventListenerTypeFrameMap m_eventListenerFrames;
 
     bool m_shouldFireStartupEvent { false };
     InstallReason m_installReason { InstallReason::None };
