@@ -24,6 +24,7 @@
  */
 
 import Metal
+import WebGPU_Internal
 
 private let WGPU_COPY_STRIDE_UNDEFINED = 0xffffffff
 private let MTLBlitOptionNone: UInt = 0
@@ -43,7 +44,313 @@ public func CommandEncoder_copyBufferToTexture_thunk(commandEncoder: WebGPU.Comm
     commandEncoder.copyBufferToTexture(source: source, destination: destination, copySize: copySize)
 }
 
+@_expose(Cxx)
+public func CommandEncoder_copyTextureToBuffer_thunk(commandEncoder: WebGPU.CommandEncoder, source: WGPUImageCopyTexture, destination: WGPUImageCopyBuffer, copySize: WGPUExtent3D){
+    commandEncoder.copyTextureToBuffer(source: source, destination: destination, copySize: copySize)
+}
+
 extension WebGPU.CommandEncoder {
+    static func hasValidDimensions(dimension: WGPUTextureDimension, width: UInt, height: UInt, depth: UInt) -> Bool {
+        switch (dimension.rawValue) {
+            case WGPUTextureDimension_1D.rawValue:
+                return width != 0
+            case WGPUTextureDimension_2D.rawValue:
+                return width != 0 && height != 0
+            case WGPUTextureDimension_3D.rawValue:
+                return width != 0 && height != 0 && depth != 0
+            default:
+                return true
+        }
+        return true
+    }
+    
+    public func copyTextureToBuffer(source: WGPUImageCopyTexture, destination: WGPUImageCopyBuffer, copySize: WGPUExtent3D) {
+        guard source.nextInChain == nil && destination.nextInChain == nil && destination.layout.nextInChain == nil else {
+            return
+        }
+
+        // https://gpuweb.github.io/gpuweb/#dom-gpucommandencoder-copytexturetobuffer
+
+        guard prepareTheEncoderState() else {
+            self.generateInvalidEncoderStateError()
+            return;
+        }
+
+        let sourceTexture = WebGPU.fromAPI(source.texture);
+        let error = self.errorValidatingCopyTextureToBuffer(source, destination, copySize)
+        guard error != nil else {
+            self.makeInvalid(error)
+            return
+        }
+
+        let apiDestinationBuffer = WebGPU.fromAPI(destination.buffer)
+        sourceTexture.setCommandEncoder(self)
+        apiDestinationBuffer.setCommandEncoder(self, false)
+        apiDestinationBuffer.indirectBufferInvalidated()
+        guard !sourceTexture.isDestroyed() && !apiDestinationBuffer.isDestroyed() else {
+            return
+        }
+
+        var options = MTLBlitOption(rawValue: MTLBlitOptionNone)
+        switch (source.aspect.rawValue) {
+        case WGPUTextureAspect_All.rawValue:
+            break
+        case WGPUTextureAspect_StencilOnly.rawValue:
+            options = MTLBlitOption.stencilFromDepthStencil
+        case WGPUTextureAspect_DepthOnly.rawValue:
+            options = MTLBlitOption.depthFromDepthStencil
+        case WGPUTextureAspect_Force32.rawValue:
+            return
+        default:
+            return
+        }
+
+        let logicalSize = sourceTexture.logicalMiplevelSpecificTextureExtent(source.mipLevel)
+        let widthForMetal = logicalSize.width < source.origin.x ? 0 : min(copySize.width, logicalSize.width - source.origin.x)
+        let heightForMetal = logicalSize.height < source.origin.y ? 0 : min(copySize.height, logicalSize.height - source.origin.y)
+        let depthForMetal = logicalSize.depthOrArrayLayers < source.origin.z ? 0 : min(copySize.depthOrArrayLayers, logicalSize.depthOrArrayLayers - source.origin.z)
+        
+        guard let destinationBuffer = apiDestinationBuffer.buffer() else {
+            return
+        }
+        var destinationBytesPerRow = UInt(destination.layout.bytesPerRow)
+        if (destinationBytesPerRow == WGPU_COPY_STRIDE_UNDEFINED) {
+            destinationBytesPerRow = UInt(destinationBuffer.length)
+        }
+
+        let sourceTextureFormat = sourceTexture.format()
+        let aspectSpecificFormat = WebGPU.Texture.aspectSpecificFormat(sourceTextureFormat, source.aspect)
+        let blockSize = WebGPU.Texture.texelBlockSize(aspectSpecificFormat)
+        let textureDimension = sourceTexture.dimension()
+        var didOverflow: Bool
+        switch (textureDimension.rawValue) {
+            case WGPUTextureDimension_1D.rawValue:
+                if !blockSize.hasOverflowed() {
+                    var product: UInt32 = blockSize.value()
+                    (product, didOverflow) = product.multipliedReportingOverflow(by: self.m_device.get().limitsCopy().maxTextureDimension1D)
+                    if !didOverflow {
+                        destinationBytesPerRow = min(destinationBytesPerRow, UInt(product))
+                    }
+                }
+            case WGPUTextureDimension_2D.rawValue, WGPUTextureDimension_3D.rawValue:
+                if !blockSize.hasOverflowed() {
+                    var product: UInt32 = blockSize.value()
+                    (product, didOverflow) = product.multipliedReportingOverflow(by: self.m_device.get().limitsCopy().maxTextureDimension2D)
+                    if !didOverflow {
+                        destinationBytesPerRow = min(destinationBytesPerRow, UInt(product))
+                    }
+                }
+            case WGPUTextureDimension_Force32.rawValue:
+                break
+            default:
+                break
+        }
+
+        destinationBytesPerRow = WebGPU_Internal.roundUpToMultipleOfNonPowerOfTwoCheckedUInt32UnsignedLong(blockSize, destinationBytesPerRow)
+        if textureDimension.rawValue == WGPUTextureDimension_3D.rawValue && copySize.depthOrArrayLayers <= 1 && copySize.height <= 1 {
+            destinationBytesPerRow = 0
+        }
+
+        var rowsPerImage = destination.layout.rowsPerImage
+        if rowsPerImage == WGPU_COPY_STRIDE_UNDEFINED {
+            rowsPerImage = heightForMetal != 0 ? heightForMetal : 1
+        }
+        var destinationBytesPerImage = UInt(rowsPerImage)
+        (destinationBytesPerImage, didOverflow) = destinationBytesPerImage.multipliedReportingOverflow(by: destinationBytesPerRow)
+        guard !didOverflow else {
+            return
+        }
+
+        let maxDestinationBytesPerRow: UInt = textureDimension.rawValue == WGPUTextureDimension_3D.rawValue ? (2048 * blockSize.value()) : destinationBytesPerRow
+        if destinationBytesPerRow > maxDestinationBytesPerRow {
+            for z in 0..<copySize.depthOrArrayLayers {
+                var zPlusOriginZ = z
+                (zPlusOriginZ, didOverflow) = zPlusOriginZ.addingReportingOverflow(source.origin.z)
+                guard !didOverflow else {
+                    return
+                }
+                var zTimesDestinationBytesPerImage = z
+                guard destinationBytesPerImage <= UInt32.max else {
+                    return
+                }
+                (zTimesDestinationBytesPerImage, didOverflow) = zTimesDestinationBytesPerImage.multipliedReportingOverflow(by: UInt32(destinationBytesPerImage))
+                guard !didOverflow else {
+                    return
+                }
+                for y in 0..<copySize.height {
+                    var yPlusOriginY = source.origin.y
+                    (yPlusOriginY, didOverflow) = yPlusOriginY.addingReportingOverflow(y)
+                    guard !didOverflow else {
+                        return
+                    }
+                    var yTimesDestinationBytesPerImage = y
+                    guard destinationBytesPerImage <= UInt32.max else {
+                        return
+                    }
+                    (yTimesDestinationBytesPerImage, didOverflow) = yTimesDestinationBytesPerImage.multipliedReportingOverflow(by: UInt32(destinationBytesPerImage))
+                    guard !didOverflow else {
+                        return
+                    }
+                    let newSource = WGPUImageCopyTexture(
+                        nextInChain: nil,
+                        texture: source.texture,
+                        mipLevel: source.mipLevel,
+                        origin: WGPUOrigin3D(x: source.origin.x, y: yPlusOriginY, z: zPlusOriginZ),
+                        aspect: source.aspect
+                    )
+                    var tripleSum = UInt64(destination.layout.offset)
+                    (tripleSum, didOverflow) = tripleSum.addingReportingOverflow(UInt64(zTimesDestinationBytesPerImage))
+                    guard !didOverflow else {
+                        return
+                    }
+                    (tripleSum, didOverflow) = tripleSum.addingReportingOverflow(UInt64(yTimesDestinationBytesPerImage))
+                    guard !didOverflow else {
+                        return
+                    }
+                    let newDestination = WGPUImageCopyBuffer(
+                        nextInChain: nil,
+                        layout: WGPUTextureDataLayout(
+                            nextInChain: nil,
+                            offset: tripleSum,
+                            bytesPerRow: UInt32(WGPU_COPY_STRIDE_UNDEFINED),
+                            rowsPerImage: UInt32(WGPU_COPY_STRIDE_UNDEFINED)
+                        ),
+                        buffer: destination.buffer
+                    )
+                    self.copyTextureToBuffer(source: newSource, destination: newDestination, copySize: WGPUExtent3D(
+                        width: copySize.width,
+                        height: 1,
+                        depthOrArrayLayers: 1
+                    ))
+                }
+            }
+            return
+        }
+
+        guard let blitCommandEncoder = ensureBlitCommandEncoder() else {
+            return
+        }
+        
+        for layer in 0..<copySize.depthOrArrayLayers {
+            var originZPlusLayer = UInt(source.origin.z)
+            (originZPlusLayer, didOverflow) = originZPlusLayer.addingReportingOverflow(UInt(layer))
+            guard !didOverflow else {
+                return
+            }
+            let sourceSlice = sourceTexture.dimension().rawValue == WGPUTextureDimension_3D.rawValue ? 0 : originZPlusLayer
+            if !sourceTexture.previouslyCleared(source.mipLevel, UInt32(sourceSlice)) {
+                clearTextureIfNeeded(source, sourceSlice)
+            }
+        }
+
+        guard Self.hasValidDimensions(dimension: sourceTexture.dimension(), width: UInt(widthForMetal), height: UInt(heightForMetal), depth: UInt(depthForMetal)) else {
+            return
+        }
+
+        guard destinationBuffer.length >= WebGPU.Texture.bytesPerRow(aspectSpecificFormat, widthForMetal, sourceTexture.sampleCount()) else {
+            return
+        }
+
+        switch (sourceTexture.dimension()) {
+            case WGPUTextureDimension_1D:
+                // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
+                // "When you copy to a 1D texture, height and depth must be 1."
+                let sourceSize = MTLSizeMake(Int(widthForMetal), 1, 1)
+                let sourceOrigin = MTLOriginMake(Int(source.origin.x), 0, 0)
+                for layer in 0..<copySize.depthOrArrayLayers {
+                    var layerTimesDestinationBytesPerImage = UInt(layer)
+                    (layerTimesDestinationBytesPerImage, didOverflow) = layerTimesDestinationBytesPerImage.multipliedReportingOverflow(by: destinationBytesPerImage)
+                    guard !didOverflow else {
+                        return
+                    }
+                    var destinationOffset = UInt(destination.layout.offset)
+                    (destinationOffset, didOverflow) = destinationOffset.addingReportingOverflow(layerTimesDestinationBytesPerImage)
+                    guard !didOverflow else {
+                        return
+                    }
+                    var sourceSlice = UInt(source.origin.z)
+                    (sourceSlice, didOverflow) = sourceSlice.addingReportingOverflow(UInt(layer))
+                    guard !didOverflow else {
+                        return
+                    }
+                    var widthTimesBlockSize = UInt(widthForMetal)
+                    (widthTimesBlockSize, didOverflow) = widthTimesBlockSize.multipliedReportingOverflow(by: blockSize.value())
+                    guard !didOverflow else {
+                        return
+                    }
+                    let sum = UInt(destinationOffset) + UInt(widthTimesBlockSize)
+                    if sum > destinationBuffer.length {
+                        continue
+                    }
+                    blitCommandEncoder.copy(
+                        from: sourceTexture.texture(),
+                        sourceSlice: Int(sourceSlice),
+                        sourceLevel: Int(source.mipLevel),
+                        sourceOrigin: sourceOrigin,
+                        sourceSize: sourceSize,
+                        to: destinationBuffer,
+                        destinationOffset: Int(destinationOffset),
+                        destinationBytesPerRow: Int(destinationBytesPerRow),
+                        destinationBytesPerImage: Int(destinationBytesPerImage),
+                        options: options)
+                }
+            case WGPUTextureDimension_2D:
+                // https://developer.apple.com/documentation/metal/mtlblitcommandencoder/1400756-copyfromtexture?language=objc
+                // "When you copy to a 2D texture, depth must be 1."
+                let sourceSize = MTLSizeMake(Int(widthForMetal), Int(heightForMetal), 1)
+                let sourceOrigin = MTLOriginMake(Int(source.origin.x), Int(source.origin.y), 0)
+                for layer in 0..<copySize.depthOrArrayLayers {
+                    var layerTimesBytesPerImage = UInt(layer)
+                    (layerTimesBytesPerImage, didOverflow) = layerTimesBytesPerImage.multipliedReportingOverflow(by: destinationBytesPerImage)
+                    guard !didOverflow else {
+                        return
+                    }
+                    var destinationOffset = UInt(destination.layout.offset)
+                    (destinationOffset, didOverflow) = destinationOffset.addingReportingOverflow(layerTimesBytesPerImage)
+                    guard !didOverflow else {
+                        return
+                    }
+                    var sourceSlice = UInt(source.origin.z)
+                    (sourceSlice, didOverflow) = sourceSlice.addingReportingOverflow(UInt(layer))
+                    guard !didOverflow else {
+                        return
+                    }
+                    blitCommandEncoder.copy(
+                        from: sourceTexture.texture(),
+                        sourceSlice: Int(sourceSlice),
+                        sourceLevel: Int(source.mipLevel),
+                        sourceOrigin: sourceOrigin,
+                        sourceSize: sourceSize,
+                        to: destinationBuffer,
+                        destinationOffset: Int(destinationOffset),
+                        destinationBytesPerRow: Int(destinationBytesPerRow),
+                        destinationBytesPerImage: Int(destinationBytesPerImage),
+                        options: options)
+               
+                }
+            
+            case WGPUTextureDimension_3D:
+                let sourceSize = MTLSizeMake(Int(widthForMetal), Int(heightForMetal), Int(depthForMetal))
+                let sourceOrigin = MTLOriginMake(Int(source.origin.x), Int(source.origin.y), Int(source.origin.z))
+                let destinationOffset = UInt(destination.layout.offset)
+                blitCommandEncoder.copy(
+                    from: sourceTexture.texture(),
+                    sourceSlice: 0,
+                    sourceLevel: Int(source.mipLevel),
+                    sourceOrigin: sourceOrigin,
+                    sourceSize: sourceSize,
+                    to: destinationBuffer,
+                    destinationOffset: Int(destinationOffset),
+                    destinationBytesPerRow: Int(destinationBytesPerRow),
+                    destinationBytesPerImage: Int(destinationBytesPerImage),
+                    options: options)
+            case WGPUTextureDimension_Force32:
+                return
+            default:
+                return
+        }
+    }
+    
     public func copyBufferToTexture(source: WGPUImageCopyBuffer, destination: WGPUImageCopyTexture, copySize: WGPUExtent3D) {
         guard source.nextInChain == nil && source.layout.nextInChain == nil && destination.nextInChain == nil else {
             return

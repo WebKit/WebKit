@@ -32,8 +32,7 @@
 #if PAS_OS(DARWIN)
 #if defined(__has_include) && __has_include(<pthread/private.h>)
 
-// Workaround for:
-// Import of C++ module 'DarwinPrivate.pthread' appears within extern "C" language linkage specification
+// FIXME: Workaround for rdar://140391194
 #if !defined(__swift__)
 PAS_BEGIN_EXTERN_C;
 #endif

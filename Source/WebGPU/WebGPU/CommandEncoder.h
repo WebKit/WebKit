@@ -75,7 +75,7 @@ public:
     Ref<RenderPassEncoder> beginRenderPass(const WGPURenderPassDescriptor&);
     void copyBufferToBuffer(const Buffer& source, uint64_t sourceOffset, Buffer& destination, uint64_t destinationOffset, uint64_t size);
     void copyBufferToTexture(const WGPUImageCopyBuffer& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize) HAS_SWIFTCXX_THUNK;
-    void copyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize);
+    void copyTextureToBuffer(const WGPUImageCopyTexture& source, const WGPUImageCopyBuffer& destination, const WGPUExtent3D& copySize) HAS_SWIFTCXX_THUNK;
     void copyTextureToTexture(const WGPUImageCopyTexture& source, const WGPUImageCopyTexture& destination, const WGPUExtent3D& copySize);
     void clearBuffer(Buffer&, uint64_t offset, uint64_t size);
     Ref<CommandBuffer> finish(const WGPUCommandBufferDescriptor&);
@@ -133,8 +133,8 @@ private:
     NSString* errorValidatingImageCopyBuffer(const WGPUImageCopyBuffer&) const;
 private PUBLIC_IN_WEBGPU_SWIFT:
     NSString* errorValidatingCopyBufferToTexture(const WGPUImageCopyBuffer&, const WGPUImageCopyTexture&, const WGPUExtent3D&) const;
-private:
     NSString* errorValidatingCopyTextureToBuffer(const WGPUImageCopyTexture&, const WGPUImageCopyBuffer&, const WGPUExtent3D&) const;
+private:
     void discardCommandBuffer();
 
     RefPtr<CommandBuffer> protectedCachedCommandBuffer() const { return m_cachedCommandBuffer.get(); }

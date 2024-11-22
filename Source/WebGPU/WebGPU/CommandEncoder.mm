@@ -101,6 +101,7 @@ static MTLStoreAction storeAction(WGPUStoreOp storeOp, bool hasResolveTarget = f
 #if ENABLE(WEBGPU_SWIFT)
 
 DEFINE_SWIFTCXX_THUNK(WebGPU::CommandEncoder, copyBufferToTexture, void, const WGPUImageCopyBuffer&, const WGPUImageCopyTexture&, const WGPUExtent3D&);
+DEFINE_SWIFTCXX_THUNK(WebGPU::CommandEncoder, copyTextureToBuffer, void, const WGPUImageCopyTexture&, const WGPUImageCopyBuffer&, const WGPUExtent3D&);
 #endif
 
 
@@ -1392,6 +1393,7 @@ void CommandEncoder::makeSubmitInvalid(NSString* errorString)
         protectedCachedCommandBuffer()->makeInvalid(errorString ?: m_lastErrorString);
 }
 
+#if !ENABLE(WEBGPU_SWIFT)
 static bool hasValidDimensions(WGPUTextureDimension dimension, NSUInteger width, NSUInteger height, NSUInteger depth)
 {
     switch (dimension) {
@@ -1639,6 +1641,7 @@ void CommandEncoder::copyTextureToBuffer(const WGPUImageCopyTexture& source, con
         return;
     }
 }
+#endif
 
 static bool areCopyCompatible(WGPUTextureFormat format1, WGPUTextureFormat format2)
 {
