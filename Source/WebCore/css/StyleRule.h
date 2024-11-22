@@ -167,7 +167,7 @@ DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting);
 class StyleRuleWithNesting final : public StyleRule {
     WTF_MAKE_STRUCT_FAST_ALLOCATED_WITH_HEAP_IDENTIFIER(StyleRuleWithNesting);
 public:
-    static Ref<StyleRuleWithNesting> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
+    static Ref<StyleRuleWithNesting> create(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&& original, CSSSelectorList&& resolved, Vector<Ref<StyleRuleBase>>&& nestedRules);
     static Ref<StyleRuleWithNesting> create(StyleRule&&);
     Ref<StyleRuleWithNesting> copy() const;
     ~StyleRuleWithNesting();
@@ -182,7 +182,7 @@ protected:
     StyleRuleWithNesting(const StyleRuleWithNesting&);
 
 private:
-    StyleRuleWithNesting(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&& nestedRules);
+    StyleRuleWithNesting(Ref<StyleProperties>&&, bool hasDocumentSecurityOrigin, CSSSelectorList&& original, CSSSelectorList&& resolved, Vector<Ref<StyleRuleBase>>&& nestedRules);
     StyleRuleWithNesting(StyleRule&&);
 
     Vector<Ref<StyleRuleBase>> m_nestedRules;
@@ -191,13 +191,13 @@ private:
 
 class StyleRuleNestedDeclarations final : public StyleRule {
 public:
-    static Ref<StyleRuleNestedDeclarations> create(Ref<StyleProperties>&& properties) { return adoptRef(*new StyleRuleNestedDeclarations(WTFMove(properties))); }
+    static Ref<StyleRuleNestedDeclarations> create(Ref<StyleProperties>&& properties, CSSSelectorList&& selectors) { return adoptRef(*new StyleRuleNestedDeclarations(WTFMove(properties), WTFMove(selectors))); }
     ~StyleRuleNestedDeclarations() = default;
     Ref<StyleRuleNestedDeclarations> copy() const { return adoptRef(*new StyleRuleNestedDeclarations(*this)); }
 
     String debugDescription() const;
 private:
-    explicit StyleRuleNestedDeclarations(Ref<StyleProperties>&&);
+    explicit StyleRuleNestedDeclarations(Ref<StyleProperties>&&, CSSSelectorList&&);
     StyleRuleNestedDeclarations(const StyleRuleNestedDeclarations&) = default;
 };
 
@@ -409,7 +409,7 @@ private:
 
 class StyleRuleScope final : public StyleRuleGroup {
 public:
-    static Ref<StyleRuleScope> create(CSSSelectorList&&, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&&);
+    static Ref<StyleRuleScope> create(CSSSelectorList&& originalScopeStart, CSSSelectorList&& originalScopeEnd, CSSSelectorList&& resolvedScopeStart, CSSSelectorList&& resolvedScopeEnd, Vector<Ref<StyleRuleBase>>&&);
     ~StyleRuleScope();
     Ref<StyleRuleScope> copy() const;
 
@@ -417,13 +417,11 @@ public:
     const CSSSelectorList& scopeEnd() const { return m_scopeEnd; }
     const CSSSelectorList& originalScopeStart() const { return m_originalScopeStart; }
     const CSSSelectorList& originalScopeEnd() const { return m_originalScopeEnd; }
-    void setScopeStart(CSSSelectorList&& scopeStart) { m_scopeStart = WTFMove(scopeStart); }
-    void setScopeEnd(CSSSelectorList&& scopeEnd) { m_scopeEnd = WTFMove(scopeEnd); }
     WeakPtr<const StyleSheetContents> styleSheetContents() const;
     void setStyleSheetContents(const StyleSheetContents&);
 
 private:
-    StyleRuleScope(CSSSelectorList&&, CSSSelectorList&&, Vector<Ref<StyleRuleBase>>&&);
+    StyleRuleScope(CSSSelectorList&& originalScopeStart, CSSSelectorList&& originalScopeEnd, CSSSelectorList&& resolvedScopeStart,CSSSelectorList&& resolvedScopeEnd, Vector<Ref<StyleRuleBase>>&&);
     StyleRuleScope(const StyleRuleScope&);
 
     // Resolved selector lists

@@ -68,6 +68,7 @@ private:
     String cssTextInternal(StringBuilder& declarations, StringBuilder& rules) const;
     void reattach(StyleRuleBase&) final;
     void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&) final;
+    void resolveChildSelectors() override final;
 
     String generateSelectorText() const;
     Vector<Ref<StyleRuleBase>> nestedRules() const;

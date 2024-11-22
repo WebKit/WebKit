@@ -55,6 +55,7 @@ public:
     bool hasStyleRuleAncestor() const;
     CSSParserEnum::NestedContext nestedContext() const;
     virtual RefPtr<StyleRuleWithNesting> prepareChildStyleRuleForNesting(StyleRule&);
+    virtual void resolveChildSelectors() { };
     virtual void getChildStyleSheets(HashSet<RefPtr<CSSStyleSheet>>&) { }
 
     WEBCORE_EXPORT ExceptionOr<void> setCssText(const String&);

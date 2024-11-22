@@ -31,8 +31,7 @@ namespace Style {
 class RuleSetBuilder {
 public:
     enum class ShrinkToFit : bool { Enable, Disable };
-    enum class ShouldResolveNesting : bool { No, Yes };
-    RuleSetBuilder(RuleSet&, const MQ::MediaQueryEvaluator&, Resolver* = nullptr, ShrinkToFit = ShrinkToFit::Enable, ShouldResolveNesting = ShouldResolveNesting::No);
+    RuleSetBuilder(RuleSet&, const MQ::MediaQueryEvaluator&, Resolver* = nullptr, ShrinkToFit = ShrinkToFit::Enable);
     ~RuleSetBuilder();
 
     void addRulesFromSheet(const StyleSheetContents&, const MQ::MediaQueryList& sheetQuery = { });
@@ -41,8 +40,8 @@ public:
 private:
     RuleSetBuilder(const MQ::MediaQueryEvaluator&);
 
-    void addStyleRule(StyleRuleWithNesting&);
-    void addStyleRule(StyleRuleNestedDeclarations&);
+    void addStyleRule(const StyleRuleWithNesting&);
+    void addStyleRule(const StyleRuleNestedDeclarations&);
     void addRulesFromSheetContents(const StyleSheetContents&);
     void addChildRules(const Vector<Ref<StyleRuleBase>>&);
     void addChildRule(Ref<StyleRuleBase>);
@@ -89,7 +88,6 @@ private:
     RuleSet::CascadeLayerIdentifier m_currentCascadeLayerIdentifier { 0 };
     Vector<const CSSSelectorList*> m_selectorListStack;
     Vector<CSSParserEnum::NestedContextType> m_ancestorStack;
-    const ShouldResolveNesting m_shouldResolveNesting { ShouldResolveNesting::No };
 
     RuleSet::ContainerQueryIdentifier m_currentContainerQueryIdentifier { 0 };
     RuleSet::ScopeRuleIdentifier m_currentScopeIdentifier { 0 };
