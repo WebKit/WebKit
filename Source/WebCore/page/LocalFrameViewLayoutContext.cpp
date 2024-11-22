@@ -34,6 +34,7 @@
 #include "Logging.h"
 #include "Quirks.h"
 #include "RenderElement.h"
+#include "RenderElementInlines.h"
 #include "RenderLayoutState.h"
 #include "RenderStyle.h"
 #include "RenderStyleInlines.h"

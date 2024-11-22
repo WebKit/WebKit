@@ -33,6 +33,7 @@
 namespace WebCore {
 
 class RenderBlock;
+class RenderBlockFlow;
 class RenderBox;
 class RenderInline;
 
@@ -60,7 +61,7 @@ private:
     void paintDisplayBox(const InlineDisplay::Box&);
     void paintEllipsis(size_t lineIndex);
     LayoutPoint flippedContentOffsetIfNeeded(const RenderBox&) const;
-    const RenderBlock& root() const { return m_root; }
+    const RenderBlock& root() const;
 
     PaintInfo& m_paintInfo;
     const LayoutPoint m_paintOffset;

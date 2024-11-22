@@ -157,6 +157,11 @@ LayoutPoint InlineContentPainter::flippedContentOffsetIfNeeded(const RenderBox& 
     return m_paintOffset;
 }
 
+const RenderBlock& InlineContentPainter::root() const
+{
+    return m_root;
+}
+
 LayerPaintScope::LayerPaintScope(const RenderInline* inlineBoxWithLayer)
     : m_inlineBoxWithLayer(inlineBoxWithLayer ? inlineBoxWithLayer->layoutBox() : nullptr)
 {

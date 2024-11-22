@@ -35,7 +35,14 @@ class RenderBoxModelObject;
 class RenderElement;
 class RenderObject;
 class RenderInline;
+class RenderStyle;
 class RenderText;
+
+namespace Layout {
+class Box;
+class ElementBox;
+class InitialContainingBlock;
+}
 
 namespace LayoutIntegration {
 

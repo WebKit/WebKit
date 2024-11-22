@@ -27,6 +27,7 @@
 #include "NavigateEvent.h"
 
 #include "AbortController.h"
+#include "CommonVM.h"
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "HTMLBodyElement.h"

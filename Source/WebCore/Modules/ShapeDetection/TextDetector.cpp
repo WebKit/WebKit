@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "ImageBitmap.h"
 #include "ImageBitmapOptions.h"
+#include "ImageBuffer.h"
 #include "JSDOMPromiseDeferred.h"
 #include "JSDetectedText.h"
 #include "Page.h"

@@ -20,9 +20,9 @@
 
 #pragma once
 
+#include "ImageBuffer.h"
 #include "RenderSVGResourceContainer.h"
 #include "SVGUnitTypes.h"
-
 #include <wtf/HashMap.h>
 
 namespace WebCore {
