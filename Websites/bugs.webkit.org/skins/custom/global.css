@@ -213,7 +213,7 @@ body {
     accent-color: var(--link-color);
 }
 
-body, #titles, td, th, input:not([type=button], [type=submit], [type=reset]), dt {
+body, #titles, td, th, input:not([type=button], [type=submit], [type=reset]), dt, textarea {
     font-family: -apple-system, "SF Pro Text", Helvetica, sans-serif;
     font-size: var(--font-size-medium);
 }
