@@ -984,7 +984,12 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
         if (m_element->hasLocalName(localName))
             style.setEffectiveDisplay(DisplayType::None);
     }
-#endif
+    if (m_document->quirks().hideIGNVolumeSlider()) {
+        static MainThreadNeverDestroyed<const AtomString> className("volume-slider"_s);
+        if (is<HTMLDivElement>(*m_element) && m_element->hasClassName(className))
+            style.setEffectiveDisplay(DisplayType::None);
+    }
+#endif // PLATFORM(IOS)
 
 #if PLATFORM(IOS_FAMILY)
     if (m_document->quirks().needsGoogleMapsScrollingQuirk()) {

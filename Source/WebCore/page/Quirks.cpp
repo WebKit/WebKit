@@ -2165,6 +2165,11 @@ bool Quirks::hideForbesVolumeSlider() const
 {
     return needsQuirks() && !PAL::currentUserInterfaceIdiomIsSmallScreen() && m_document->url().host() == "www.forbes.com"_s;
 }
+
+bool Quirks::hideIGNVolumeSlider() const
+{
+    return needsQuirks() && !PAL::currentUserInterfaceIdiomIsSmallScreen() && m_document->url().host() == "www.ign.com"_s;
+}
 #endif // PLATFORM(IOS)
 
 URL Quirks::topDocumentURL() const
