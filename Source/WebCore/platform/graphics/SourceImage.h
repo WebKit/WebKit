@@ -25,12 +25,12 @@
 
 #pragma once
 
+#include "ImageBuffer.h"
 #include "IntSize.h"
 #include "RenderingResourceIdentifier.h"
 
 namespace WebCore {
 
-class ImageBuffer;
 class NativeImage;
 
 class WEBCORE_EXPORT SourceImage {
