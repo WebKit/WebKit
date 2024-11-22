@@ -156,6 +156,7 @@
 #include <WebCore/UserMediaRequestIdentifier.h>
 #include <WebCore/WebSocketIdentifier.h>
 #include "TestWithCVPixelBufferMessages.h" // NOLINT
+#include "TestWithDeferSendingOptionMessages.h" // NOLINT
 #include "TestWithWantsDispatchMessages.h" // NOLINT
 #include "TestWithWantsDispatchNoSyncMessagesMessages.h" // NOLINT
 #include "TestWithWantsAsyncDispatchMessages.h" // NOLINT
@@ -194,6 +195,14 @@ std::optional<JSC::JSValue> jsValueForArguments(JSC::JSGlobalObject* globalObjec
     case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
         return jsValueForDecodedMessage<MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer>(globalObject, decoder);
 #endif
+    case MessageName::TestWithDeferSendingOption_NoOptions:
+        return jsValueForDecodedMessage<MessageName::TestWithDeferSendingOption_NoOptions>(globalObject, decoder);
+    case MessageName::TestWithDeferSendingOption_NoIndices:
+        return jsValueForDecodedMessage<MessageName::TestWithDeferSendingOption_NoIndices>(globalObject, decoder);
+    case MessageName::TestWithDeferSendingOption_OneIndex:
+        return jsValueForDecodedMessage<MessageName::TestWithDeferSendingOption_OneIndex>(globalObject, decoder);
+    case MessageName::TestWithDeferSendingOption_MultipleIndices:
+        return jsValueForDecodedMessage<MessageName::TestWithDeferSendingOption_MultipleIndices>(globalObject, decoder);
     case MessageName::TestWithWantsDispatch_TestMessage:
         return jsValueForDecodedMessage<MessageName::TestWithWantsDispatch_TestMessage>(globalObject, decoder);
     case MessageName::TestWithWantsDispatch_TestSyncMessage:
@@ -822,6 +831,25 @@ std::optional<Vector<ArgumentDescription>> messageArgumentDescriptions(MessageNa
     case MessageName::TestWithCVPixelBuffer_ReceiveCVPixelBuffer:
         return Vector<ArgumentDescription> { };
 #endif
+    case MessageName::TestWithDeferSendingOption_NoOptions:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithDeferSendingOption_NoIndices:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithDeferSendingOption_OneIndex:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+        };
+    case MessageName::TestWithDeferSendingOption_MultipleIndices:
+        return Vector<ArgumentDescription> {
+            { "url"_s, "String"_s, ASCIILiteral(), false },
+            { "foo"_s, "int"_s, ASCIILiteral(), false },
+            { "bar"_s, "int"_s, ASCIILiteral(), false },
+            { "baz"_s, "int"_s, ASCIILiteral(), false },
+        };
     case MessageName::TestWithWantsDispatch_TestMessage:
         return Vector<ArgumentDescription> {
             { "url"_s, "String"_s, ASCIILiteral(), false },

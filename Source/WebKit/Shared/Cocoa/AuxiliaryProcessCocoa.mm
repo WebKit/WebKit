@@ -225,16 +225,6 @@ void AuxiliaryProcess::preferenceDidUpdate(const String& domain, const String& k
     handlePreferenceChange(domain, key, value);
 }
 
-#if ENABLE(CFPREFS_DIRECT_MODE)
-void AuxiliaryProcess::preferencesDidUpdate(HashMap<String, std::optional<String>> domainlessPreferences, HashMap<std::pair<String, String>, std::optional<String>> preferences)
-{
-    for (auto& [key, value] : domainlessPreferences)
-        preferenceDidUpdate(String(), key, value);
-    for (auto& [key, value] : preferences)
-        preferenceDidUpdate(key.first, key.second, value);
-}
-#endif
-
 #if !HAVE(UPDATE_WEB_ACCESSIBILITY_SETTINGS) && PLATFORM(IOS_FAMILY)
 static const WTF::String& increaseContrastPreferenceKey()
 {

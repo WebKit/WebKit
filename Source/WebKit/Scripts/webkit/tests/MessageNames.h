@@ -32,29 +32,30 @@ namespace IPC {
 
 enum class ReceiverName : uint8_t {
     TestWithCVPixelBuffer = 1
-    , TestWithEnabledBy = 2
-    , TestWithEnabledByAndConjunction = 3
-    , TestWithEnabledByOrConjunction = 4
-    , TestWithEnabledIf = 5
-    , TestWithIfMessage = 6
-    , TestWithImageData = 7
-    , TestWithLegacyReceiver = 8
-    , TestWithSemaphore = 9
-    , TestWithStream = 10
-    , TestWithStreamBatched = 11
-    , TestWithStreamBuffer = 12
-    , TestWithStreamServerConnectionHandle = 13
-    , TestWithSuperclass = 14
-    , TestWithSuperclassAndWantsAsyncDispatch = 15
-    , TestWithSuperclassAndWantsDispatch = 16
-    , TestWithWantsAsyncDispatch = 17
-    , TestWithWantsDispatch = 18
-    , TestWithWantsDispatchNoSyncMessages = 19
-    , TestWithoutAttributes = 20
-    , TestWithoutUsingIPCConnection = 21
-    , IPC = 22
-    , AsyncReply = 23
-    , Invalid = 24
+    , TestWithDeferSendingOption = 2
+    , TestWithEnabledBy = 3
+    , TestWithEnabledByAndConjunction = 4
+    , TestWithEnabledByOrConjunction = 5
+    , TestWithEnabledIf = 6
+    , TestWithIfMessage = 7
+    , TestWithImageData = 8
+    , TestWithLegacyReceiver = 9
+    , TestWithSemaphore = 10
+    , TestWithStream = 11
+    , TestWithStreamBatched = 12
+    , TestWithStreamBuffer = 13
+    , TestWithStreamServerConnectionHandle = 14
+    , TestWithSuperclass = 15
+    , TestWithSuperclassAndWantsAsyncDispatch = 16
+    , TestWithSuperclassAndWantsDispatch = 17
+    , TestWithWantsAsyncDispatch = 18
+    , TestWithWantsDispatch = 19
+    , TestWithWantsDispatchNoSyncMessages = 20
+    , TestWithoutAttributes = 21
+    , TestWithoutUsingIPCConnection = 22
+    , IPC = 23
+    , AsyncReply = 24
+    , Invalid = 25
 };
 
 enum class MessageName : uint16_t {
@@ -62,6 +63,10 @@ enum class MessageName : uint16_t {
     TestWithCVPixelBuffer_ReceiveCVPixelBuffer,
     TestWithCVPixelBuffer_SendCVPixelBuffer,
 #endif
+    TestWithDeferSendingOption_MultipleIndices,
+    TestWithDeferSendingOption_NoIndices,
+    TestWithDeferSendingOption_NoOptions,
+    TestWithDeferSendingOption_OneIndex,
     TestWithEnabledByAndConjunction_AlwaysEnabled,
     TestWithEnabledByOrConjunction_AlwaysEnabled,
     TestWithEnabledBy_AlwaysEnabled,

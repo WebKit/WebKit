@@ -150,13 +150,7 @@ std::optional<AuxiliaryProcessProxy::TaskInfo> AuxiliaryProcessProxy::taskInfo()
 #if ENABLE(CFPREFS_DIRECT_MODE)
 void AuxiliaryProcessProxy::notifyPreferencesChanged(const String& domain, const String& key, const std::optional<String>& encodedValue)
 {
-    if (m_isSuspended) {
-        if (domain.isNull())
-            m_domainlessPreferencesUpdatedWhileSuspended.set(key, encodedValue);
-        else
-            m_preferencesUpdatedWhileSuspended.set(std::pair { domain , key }, encodedValue);
-    } else
-        send(Messages::AuxiliaryProcess::PreferenceDidUpdate(domain, key, encodedValue), 0);
+    send(Messages::AuxiliaryProcess::PreferenceDidUpdate(domain, key, encodedValue), 0);
 }
 #endif
 

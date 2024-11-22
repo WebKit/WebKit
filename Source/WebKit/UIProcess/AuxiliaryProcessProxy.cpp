@@ -35,6 +35,7 @@
 #include "WebPageProxy.h"
 #include "WebPageProxyIdentifier.h"
 #include "WebProcessProxy.h"
+#include <algorithm>
 #include <wtf/RunLoop.h>
 #include <wtf/Scope.h>
 #include <wtf/TZoneMallocInlines.h>
@@ -281,6 +282,19 @@ bool AuxiliaryProcessProxy::sendMessage(UniqueRef<IPC::Encoder>&& encoder, Optio
     }
     
     return false;
+}
+
+bool AuxiliaryProcessProxy::sendMessageAfterResuming(Vector<uint8_t>&& coalescingKey, UniqueRef<IPC::Encoder>&& encoder)
+{
+    ASSERT(m_isSuspended);
+
+    if (!canSendMessage())
+        return false;
+
+    LOG(ProcessSuspension, "%p - AuxiliaryProcessProxy::sendMessageAfterResuming: deferring sending message %s to destination %" PRIu64 " in pid %i because it is suspended", this, description(encoder->messageName()).characters(), encoder->destinationID(), processID());
+
+    m_messagesToSendOnResume.set(WTFMove(coalescingKey), std::make_pair(m_messagesToSendOnResumeIndex++, encoder.moveToUniquePtr()));
+    return true;
 }
 
 void AuxiliaryProcessProxy::addMessageReceiver(IPC::ReceiverName messageReceiverName, IPC::MessageReceiver& messageReceiver)
@@ -591,10 +605,28 @@ void AuxiliaryProcessProxy::didChangeThrottleState(ProcessThrottleState state)
     if (m_isSuspended == isNowSuspended)
         return;
     m_isSuspended = isNowSuspended;
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    if (!m_isSuspended && (!m_domainlessPreferencesUpdatedWhileSuspended.isEmpty() || !m_preferencesUpdatedWhileSuspended.isEmpty()))
-        send(Messages::AuxiliaryProcess::PreferencesDidUpdate(std::exchange(m_domainlessPreferencesUpdatedWhileSuspended, { }), std::exchange(m_preferencesUpdatedWhileSuspended, { })), 0);
-#endif
+
+    if (!isNowSuspended && !m_messagesToSendOnResume.isEmpty()) {
+        Vector<std::pair<unsigned, std::unique_ptr<IPC::Encoder>>> indexMessagePairs;
+        indexMessagePairs.reserveInitialCapacity(m_messagesToSendOnResume.size());
+
+        for (auto& indexMessagePair : m_messagesToSendOnResume.values())
+            indexMessagePairs.append(WTFMove(indexMessagePair));
+
+        // Send messages in the order that they were enqueued after coalescing.
+        std::sort(indexMessagePairs.begin(), indexMessagePairs.end(), [](const auto& pair1, const auto& pair2) {
+            return pair1.first < pair2.first;
+        });
+
+        for (auto& indexMessagePair : indexMessagePairs) {
+            auto& encoder = indexMessagePair.second;
+            LOG(ProcessSuspension, "%p - AuxiliaryProcessProxy::didChangeThrottleState: sending deferred message %s to destination %" PRIu64 " in pid %i because it resumed", this, description(encoder->messageName()).characters(), encoder->destinationID(), processID());
+            sendMessage(makeUniqueRefFromNonNullUniquePtr(WTFMove(encoder)), { });
+        }
+
+        m_messagesToSendOnResume.clear();
+        m_messagesToSendOnResumeIndex = 0;
+    }
 }
 
 AuxiliaryProcessProxy::InitializationActivityAndGrant AuxiliaryProcessProxy::initializationActivityAndGrant()

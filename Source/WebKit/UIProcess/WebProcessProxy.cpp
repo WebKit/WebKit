@@ -1850,11 +1850,8 @@ void WebProcessProxy::sendPrepareToSuspend(IsSuspensionImminent isSuspensionImmi
 void WebProcessProxy::sendProcessDidResume(ResumeReason)
 {
     WEBPROCESSPROXY_RELEASE_LOG(ProcessSuspension, "sendProcessDidResume:");
-    if (canSendMessage()) {
+    if (canSendMessage())
         send(Messages::WebProcess::ProcessDidResume(), 0);
-        if (RefPtr pool = processPoolIfExists())
-            send(Messages::WebProcess::SetHiddenPageDOMTimerThrottlingIncreaseLimit(pool->hiddenPageThrottlingAutoIncreaseLimit()), 0);
-    }
 }
 
 void WebProcessProxy::setThrottleStateForTesting(ProcessThrottleState state)

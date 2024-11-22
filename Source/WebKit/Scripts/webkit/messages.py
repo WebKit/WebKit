@@ -240,6 +240,7 @@ def message_to_struct_declaration(receiver, message):
     result.append('    static constexpr bool isSync = %s;\n' % ('false', 'true')[message.reply_parameters is not None and message.has_attribute(SYNCHRONOUS_ATTRIBUTE)])
     result.append('    static constexpr bool canDispatchOutOfOrder = %s;\n' % ('false', 'true')[message.has_attribute(CAN_DISPATCH_OUT_OF_ORDER_ATTRIBUTE)])
     result.append('    static constexpr bool replyCanDispatchOutOfOrder = %s;\n' % ('false', 'true')[message.reply_parameters is not None and message.has_attribute(REPLY_CAN_DISPATCH_OUT_OF_ORDER_ATTRIBUTE)])
+    result.append(f'    static constexpr bool deferSendingIfSuspended = {"true" if message.coalescing_key_indices is not None else "false"};\n')
     if receiver.has_attribute(STREAM_ATTRIBUTE):
         result.append('    static constexpr bool isStreamEncodable = %s;\n' % ('true', 'false')[message.has_attribute(NOT_STREAM_ENCODABLE_ATTRIBUTE)])
         if message.reply_parameters is not None:
@@ -272,6 +273,20 @@ def message_to_struct_declaration(receiver, message):
         result.append('\n        : m_arguments(%s)\n' % ', '.join(arguments_constructor_parameters))
         result.append('    {\n')
         result.append('    }\n\n')
+
+    if message.coalescing_key_indices is not None:
+        result.append('    // Not valid to call this after arguments() is called.\n')
+        if message.coalescing_key_indices:
+            result.append('    void encodeCoalescingKey(IPC::Encoder& encoder) const\n')
+            result.append('    {\n')
+            get_arguments_string = ' << '.join((f'std::get<{i}>(m_arguments)' for i in message.coalescing_key_indices))
+            result.append(f'        encoder << {get_arguments_string};\n')
+        else:
+            result.append('    void encodeCoalescingKey(IPC::Encoder&) const\n')
+            result.append('    {\n')
+        result.append('    }\n')
+        result.append('\n')
+
     result.append('    auto&& arguments()\n')
     result.append('    {\n')
     result.append('        return WTFMove(m_arguments);\n')

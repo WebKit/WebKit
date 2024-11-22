@@ -48,6 +48,7 @@ public:
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
     static constexpr bool isStreamEncodable = true;
     static constexpr bool isStreamBatched = true;
 

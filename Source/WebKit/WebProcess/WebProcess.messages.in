@@ -85,7 +85,7 @@ messages -> WebProcess : AuxiliaryProcess NotRefCounted WantsAsyncDispatchMessag
     ReloadExecutionContextsForOrigin(struct WebCore::ClientOrigin origin, std::optional<WebCore::FrameIdentifier> triggeringFrame) -> ()
     DeleteAllCookies() -> ()
 
-    SetHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds seconds)
+    [DeferSendingIfSuspended] SetHiddenPageDOMTimerThrottlingIncreaseLimit(Seconds seconds)
 
     SetMemoryCacheDisabled(bool disabled);
 

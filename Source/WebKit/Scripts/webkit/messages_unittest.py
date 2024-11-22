@@ -42,6 +42,7 @@ reset_results = False
 
 _test_receiver_names = [
     'TestWithCVPixelBuffer',
+    'TestWithDeferSendingOption',
     'TestWithWantsDispatch',
     'TestWithWantsDispatchNoSyncMessages',
     'TestWithWantsAsyncDispatch',

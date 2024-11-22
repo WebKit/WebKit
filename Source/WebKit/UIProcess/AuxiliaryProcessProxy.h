@@ -41,6 +41,7 @@
 #include <wtf/TZoneMalloc.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/UniqueRef.h>
+#include <wtf/VectorHash.h>
 
 namespace WebCore {
 class SharedBuffer;
@@ -124,7 +125,7 @@ public:
     {
         return send<T>(std::forward<T>(message), destinationID.toUInt64(), sendOptions);
     }
-    
+
     template<typename T, typename RawValue>
     SendSyncResult<T> sendSync(T&& message, const ObjectIdentifierGenericBase<RawValue>& destinationID, IPC::Timeout timeout = 1_s, OptionSet<IPC::SendSyncOption> sendSyncOptions = { })
     {
@@ -182,6 +183,7 @@ public:
 
     bool canSendMessage() const { return state() != State::Terminated;}
     bool sendMessage(UniqueRef<IPC::Encoder>&&, OptionSet<IPC::SendOption>, std::optional<IPC::Connection::AsyncReplyHandler> = std::nullopt, ShouldStartProcessThrottlerActivity = ShouldStartProcessThrottlerActivity::Yes);
+    bool sendMessageAfterResuming(Vector<uint8_t>&& coalescingKey, UniqueRef<IPC::Encoder>&&);
 
     void replyToPendingMessages();
 
@@ -329,10 +331,8 @@ private:
 #if ENABLE(EXTENSION_CAPABILITIES)
     ExtensionCapabilityGrantMap m_extensionCapabilityGrants;
 #endif
-#if ENABLE(CFPREFS_DIRECT_MODE)
-    HashMap<String, std::optional<String>> m_domainlessPreferencesUpdatedWhileSuspended;
-    HashMap<std::pair<String /* domain */, String /* key */>, std::optional<String>> m_preferencesUpdatedWhileSuspended;
-#endif
+    HashMap<Vector<uint8_t>, std::pair<unsigned, std::unique_ptr<IPC::Encoder>>> m_messagesToSendOnResume;
+    unsigned m_messagesToSendOnResumeIndex { 0 };
 };
 
 template<typename T>
@@ -340,9 +340,21 @@ bool AuxiliaryProcessProxy::send(T&& message, uint64_t destinationID, OptionSet<
 {
     static_assert(!T::isSync, "Async message expected");
 
+    if constexpr (T::deferSendingIfSuspended) {
+        if (UNLIKELY(m_isSuspended)) {
+            // encodeCoalescingKey must be called before arguments() below since arguments() takes ownership of the message's args tuple.
+            auto coalescingKeyEncoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
+            message.encodeCoalescingKey(coalescingKeyEncoder.get());
+            Vector<uint8_t> coalescingKey { coalescingKeyEncoder->mutableSpan() };
+
+            auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
+            encoder.get() << message.arguments();
+            return sendMessageAfterResuming(WTFMove(coalescingKey), WTFMove(encoder));
+        }
+    }
+
     auto encoder = makeUniqueRef<IPC::Encoder>(T::name(), destinationID);
     encoder.get() << message.arguments();
-
     return sendMessage(WTFMove(encoder), sendOptions);
 }
 

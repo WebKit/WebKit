@@ -48,6 +48,7 @@ public:
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
 
     explicit SendStreamServerConnection(IPC::StreamServerConnectionHandle&& handle)
         : m_arguments(WTFMove(handle))

@@ -33,24 +33,24 @@
 
 
 namespace Messages {
-namespace TestWithEnabledIf {
+namespace TestWithDeferSendingOption {
 
 static inline IPC::ReceiverName messageReceiverName()
 {
-    return IPC::ReceiverName::TestWithEnabledIf;
+    return IPC::ReceiverName::TestWithDeferSendingOption;
 }
 
-class AlwaysEnabled {
+class NoOptions {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledIf_AlwaysEnabled; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_NoOptions; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit AlwaysEnabled(const String& url)
+    explicit NoOptions(const String& url)
         : m_arguments(url)
     {
     }
@@ -64,18 +64,23 @@ private:
     std::tuple<const String&> m_arguments;
 };
 
-class OnlyEnabledIfFeatureEnabled {
+class NoIndices {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_NoIndices; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
-    static constexpr bool deferSendingIfSuspended = false;
+    static constexpr bool deferSendingIfSuspended = true;
 
-    explicit OnlyEnabledIfFeatureEnabled(const String& url)
+    explicit NoIndices(const String& url)
         : m_arguments(url)
+    {
+    }
+
+    // Not valid to call this after arguments() is called.
+    void encodeCoalescingKey(IPC::Encoder&) const
     {
     }
 
@@ -88,5 +93,65 @@ private:
     std::tuple<const String&> m_arguments;
 };
 
-} // namespace TestWithEnabledIf
+class OneIndex {
+public:
+    using Arguments = std::tuple<String>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_OneIndex; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = true;
+
+    explicit OneIndex(const String& url)
+        : m_arguments(url)
+    {
+    }
+
+    // Not valid to call this after arguments() is called.
+    void encodeCoalescingKey(IPC::Encoder& encoder) const
+    {
+        encoder << std::get<0>(m_arguments);
+    }
+
+    auto&& arguments()
+    {
+        return WTFMove(m_arguments);
+    }
+
+private:
+    std::tuple<const String&> m_arguments;
+};
+
+class MultipleIndices {
+public:
+    using Arguments = std::tuple<String, int, int, int>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithDeferSendingOption_MultipleIndices; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = true;
+
+    MultipleIndices(const String& url, const int& foo, const int& bar, const int& baz)
+        : m_arguments(url, foo, bar, baz)
+    {
+    }
+
+    // Not valid to call this after arguments() is called.
+    void encodeCoalescingKey(IPC::Encoder& encoder) const
+    {
+        encoder << std::get<2>(m_arguments) << std::get<0>(m_arguments) << std::get<1>(m_arguments);
+    }
+
+    auto&& arguments()
+    {
+        return WTFMove(m_arguments);
+    }
+
+private:
+    std::tuple<const String&, const int&, const int&, const int&> m_arguments;
+};
+
+} // namespace TestWithDeferSendingOption
 } // namespace Messages
