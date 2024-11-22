@@ -1253,9 +1253,9 @@ imported/w3c/web-platform-tests/video-rvfc [ Pass ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-before-xr-session.https.html [ Skip ]
 imported/w3c/web-platform-tests/video-rvfc/request-video-frame-callback-during-xr-session.https.html [ Skip ]
 
-# Expected to pass when we enable playbin3 by default.
-webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Timeout Crash ]
+webkit.org/b/233836 http/tests/media/media-blocked-by-willsendrequest.html [ Pass Timeout ]
 webkit.org/b/131546 media/track/track-in-band-mode.html [ Failure ]
+webkit.org/b/131546 media/track/track-in-band-cues-added-once.html [ Pass Timeout ]
 
 # Even with playbin3 enabled there is still a failure here, h264parse is unable
 # to calculate the framerate of test.mp4 and the calculated bitrate tag is too
@@ -1364,6 +1364,10 @@ http/wpt/mediasession/voiceActivityDetection.html [ Skip ]
 webkit.org/b/280069 imported/w3c/web-platform-tests/webvtt/api/VTTRegion/non-visible-cue-with-region.html [ Failure ]
 
 webkit.org/b/260455 http/tests/media/media-source/mediasource-rvfc.html [ Crash ]
+
+# Tweaking download buffering in a running uridecodebin3 is not supported.
+# https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/1419
+http/tests/media/video-play-stall-seek.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
@@ -2910,9 +2914,7 @@ media/video-does-not-loop.html [ WontFix Timeout Crash ]
 
 # No support for MPEG-4 caption support
 webkit.org/b/131546 media/track/track-forced-subtitles-in-band.html [ Timeout Failure Crash ]
-media/track/track-in-band-chapters.html [ Timeout Failure ]
-media/track/track-in-band-layout.html [ Skip ]
-media/track/track-paint-on-captions.html [ Skip ]
+media/track/track-in-band-chapters.html [ Skip ]
 
 # ENABLE(WEBVTT_REGIONS) is disabled
 webkit.org/b/109570 media/track/regions-webvtt [ Skip ]
@@ -3590,6 +3592,7 @@ webkit.org/b/282165 http/tests/media/video-webm-stall-seek.html [ Failure ]
 webkit.org/b/132262 http/tests/media/video-redirect.html [ Timeout Pass Crash ]
 
 webkit.org/b/137698 media/video-controls-drag.html [ Timeout ]
+
 webkit.org/b/113127 media/track/track-prefer-captions.html [ Timeout ]
 
 webkit.org/b/168373 media/media-fullscreen-loop-inline.html [ Timeout ]

@@ -454,6 +454,8 @@ private:
     void didEnd();
     void setPlaybackFlags(bool isMediaStream);
 
+    void maybeNotifyClientOfReadyAndNetworkChanges(MediaPlayerEnums::NetworkState, MediaPlayerEnums::ReadyState);
+
     GstElement* createVideoSink();
     GstElement* createAudioSink();
     GstElement* audioSink() const { return m_audioSink.get(); }
