@@ -118,7 +118,7 @@ private:
     Attribute replaceAttributeIfNecessary(const Element&, const Attribute&);
     bool appendURLAttributeForReplacementIfNecessary(StringBuilder&, const Element&, Namespaces*);
     const ShadowRoot* suitableShadowRoot(const Node&);
-    bool shouldExcludeElement(const Element&);
+    bool shouldExcludeElement(const Element&, Node& targetNode);
     void appendStartTagWithURLReplacement(StringBuilder&, const Element&, Namespaces*);
 
     StringBuilder m_markup;
