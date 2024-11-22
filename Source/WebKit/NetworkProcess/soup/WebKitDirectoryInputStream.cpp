@@ -28,6 +28,8 @@
 
 #include "WebKitDirectoryInputStreamData.h"
 #include <glib/gi18n-lib.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 #include <wtf/glib/WTFGType.h>
 
@@ -140,6 +142,7 @@ static gssize webkitDirectoryInputStreamRead(GInputStream* input, void* buffer, 
         return 0;
 
     gsize totalBytesRead = 0;
+    auto destinationSpan = unsafeMakeSpan(static_cast<uint8_t*>(buffer), count);
     while (totalBytesRead < count) {
         if (!stream->priv->buffer) {
             stream->priv->buffer = adoptGRef(webkitDirectoryInputStreamReadNextFile(stream, cancellable, error));
@@ -150,14 +153,13 @@ static gssize webkitDirectoryInputStreamRead(GInputStream* input, void* buffer, 
             }
         }
 
-        gsize bufferSize;
-        auto* bufferData = g_bytes_get_data(stream->priv->buffer.get(), &bufferSize);
-        gsize bytesRead = std::min(bufferSize, count - totalBytesRead);
-        memcpy(static_cast<char*>(buffer) + totalBytesRead, bufferData, bytesRead);
-        if (bytesRead == bufferSize)
+        auto sourceSpan = span(stream->priv->buffer);
+        unsigned bytesRead = std::min(sourceSpan.size(), count - totalBytesRead);
+        memcpySpan(destinationSpan.subspan(totalBytesRead, bytesRead), sourceSpan.subspan(0, bytesRead));
+        if (bytesRead == sourceSpan.size())
             stream->priv->buffer = nullptr;
         else
-            stream->priv->buffer = adoptGRef(g_bytes_new_from_bytes(stream->priv->buffer.get(), bytesRead, bufferSize - bytesRead));
+            stream->priv->buffer = adoptGRef(g_bytes_new_from_bytes(stream->priv->buffer.get(), bytesRead, sourceSpan.size() - bytesRead));
         totalBytesRead += bytesRead;
     }
 
