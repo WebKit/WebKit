@@ -24,30 +24,45 @@
 
 #pragma once
 
-#include "CSSPrimitiveNumericTypes.h"
+#include "CSSValueTypes.h"
 
 namespace WebCore {
 namespace CSS {
 
-// MARK: - Serialization
+struct SymbolRaw {
+    CSSValueID value;
 
-// Type-erased helper to allow for shared code.
-void rawNumericSerialization(StringBuilder&, double, CSSUnitType);
-
-template<RawNumeric RawType> struct Serialize<RawType> {
-    inline void operator()(StringBuilder& builder, const RawType& value)
-    {
-        rawNumericSerialization(builder, value.value, value.type);
-    }
+    constexpr bool operator==(const SymbolRaw&) const = default;
 };
 
-template<RawNumeric RawType> struct Serialize<PrimitiveNumeric<RawType>> {
-    inline void operator()(StringBuilder& builder, const PrimitiveNumeric<RawType>& value)
+struct Symbol {
+    using Raw = SymbolRaw;
+
+    CSSValueID value;
+
+    constexpr Symbol(SymbolRaw&& value)
+        : value { value.value }
     {
-        serializationForCSS(builder, value.value);
     }
+
+    constexpr Symbol(const SymbolRaw& value)
+        : value { value.value }
+    {
+    }
+
+    constexpr bool operator==(const Symbol&) const = default;
 };
 
+template<typename T> struct IsSymbol : public std::integral_constant<bool, std::is_same_v<T, Symbol>> { };
+
+template<> struct Serialize<SymbolRaw> { void operator()(StringBuilder&, const SymbolRaw&); };
+template<> struct Serialize<Symbol> { void operator()(StringBuilder&, const Symbol&); };
+
+template<> struct ComputedStyleDependenciesCollector<SymbolRaw> { constexpr void operator()(ComputedStyleDependencies&, const SymbolRaw&) { } };
+template<> struct ComputedStyleDependenciesCollector<Symbol> { constexpr void operator()(ComputedStyleDependencies&, const Symbol&) { } };
+
+template<> struct CSSValueChildrenVisitor<SymbolRaw> { constexpr IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const SymbolRaw&) { return IterationStatus::Continue; } };
+template<> struct CSSValueChildrenVisitor<Symbol> { constexpr IterationStatus operator()(const Function<IterationStatus(CSSValue&)>&, const Symbol&) { return IterationStatus::Continue; } };
 
 } // namespace CSS
 } // namespace WebCore

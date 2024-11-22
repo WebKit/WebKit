@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CSSNone.h"
+#include "CSSSymbol.h"
 #include "CSSPrimitiveNumericRange.h"
 #include "CSSUnevaluatedCalc.h"
 #include "CSSUnits.h"
@@ -185,14 +186,6 @@ template<Range R = All> struct LengthPercentageRaw {
     constexpr bool operator==(const LengthPercentageRaw<R>&) const = default;
 };
 
-// MARK: Additional Numeric Adjacent Types Raw
-
-struct SymbolRaw {
-    CSSValueID value;
-
-    constexpr bool operator==(const SymbolRaw&) const = default;
-};
-
 // MARK: - Numeric Primitives (Raw + UnevaluatedCalc)
 
 // Concept for use in generic contexts to filter on CSS types.
@@ -268,27 +261,6 @@ template<Range R = All> using Flex = PrimitiveNumeric<FlexRaw<R>>;
 
 template<Range R = All> using AnglePercentage = PrimitiveNumeric<AnglePercentageRaw<R>>;
 template<Range R = All> using LengthPercentage = PrimitiveNumeric<LengthPercentageRaw<R>>;
-
-// MARK: Additional Numeric Adjacent Types
-
-struct Symbol {
-    using Raw = SymbolRaw;
-
-    constexpr Symbol(SymbolRaw&& value)
-        : value { value.value }
-    {
-    }
-
-    constexpr Symbol(const SymbolRaw& value)
-        : value { value.value }
-    {
-    }
-
-    constexpr bool operator==(const Symbol&) const = default;
-
-    CSSValueID value;
-};
-template<typename T> struct IsSymbol : public std::integral_constant<bool, std::is_same_v<T, Symbol>> { };
 
 // MARK: Additional Common Groupings
 

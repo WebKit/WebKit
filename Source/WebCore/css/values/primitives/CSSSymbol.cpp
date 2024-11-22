@@ -22,32 +22,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
-
-#include "CSSPrimitiveNumericTypes.h"
+#include "config.h"
+#include "CSSSymbol.h"
 
 namespace WebCore {
 namespace CSS {
 
 // MARK: - Serialization
 
-// Type-erased helper to allow for shared code.
-void rawNumericSerialization(StringBuilder&, double, CSSUnitType);
+void Serialize<SymbolRaw>::operator()(StringBuilder& builder, const SymbolRaw& value)
+{
+    builder.append(nameLiteralForSerialization(value.value));
+}
 
-template<RawNumeric RawType> struct Serialize<RawType> {
-    inline void operator()(StringBuilder& builder, const RawType& value)
-    {
-        rawNumericSerialization(builder, value.value, value.type);
-    }
-};
-
-template<RawNumeric RawType> struct Serialize<PrimitiveNumeric<RawType>> {
-    inline void operator()(StringBuilder& builder, const PrimitiveNumeric<RawType>& value)
-    {
-        serializationForCSS(builder, value.value);
-    }
-};
-
+void Serialize<Symbol>::operator()(StringBuilder& builder, const Symbol& value)
+{
+    builder.append(nameLiteralForSerialization(value.value));
+}
 
 } // namespace CSS
 } // namespace WebCore

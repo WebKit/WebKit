@@ -67,9 +67,6 @@ template<RawNumeric RawType> struct ComputedStyleDependenciesCollector<Primitive
     }
 };
 
-// Symbol has trivially nothing to collect.
-template<> struct ComputedStyleDependenciesCollector<Symbol> { constexpr void operator()(ComputedStyleDependencies&, const SymbolRaw&) { } };
-template<> struct ComputedStyleDependenciesCollector<SymbolRaw> { constexpr void operator()(ComputedStyleDependencies&, const Symbol&) { } };
 
 } // namespace CSS
 } // namespace WebCore

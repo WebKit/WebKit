@@ -39,15 +39,5 @@ void rawNumericSerialization(StringBuilder& builder, double value, CSSUnitType t
     formatCSSNumberValue(builder, value, CSSPrimitiveValue::unitTypeString(type));
 }
 
-void Serialize<SymbolRaw>::operator()(StringBuilder& builder, const SymbolRaw& value)
-{
-    builder.append(nameLiteralForSerialization(value.value));
-}
-
-void Serialize<Symbol>::operator()(StringBuilder& builder, const Symbol& value)
-{
-    builder.append(nameLiteralForSerialization(value.value));
-}
-
 } // namespace CSS
 } // namespace WebCore
