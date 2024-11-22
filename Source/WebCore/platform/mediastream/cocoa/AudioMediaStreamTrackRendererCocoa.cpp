@@ -42,7 +42,6 @@ WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioMediaStreamTrackRendererCocoa);
 AudioMediaStreamTrackRendererCocoa::AudioMediaStreamTrackRendererCocoa(Init&& init)
     : AudioMediaStreamTrackRenderer(WTFMove(init))
     , m_resetObserver([this] { reset(); })
-    , m_deviceID(AudioMediaStreamTrackRenderer::defaultDeviceID())
 {
 }
 
@@ -78,7 +77,7 @@ void AudioMediaStreamTrackRendererCocoa::stop()
     ASSERT(isMainThread());
 
     if (m_registeredDataSource)
-        rendererUnit().removeSource(m_deviceID, *m_registeredDataSource);
+        rendererUnit().removeSource(*m_registeredDataSource);
 }
 
 void AudioMediaStreamTrackRendererCocoa::clear()
@@ -106,15 +105,10 @@ void AudioMediaStreamTrackRendererCocoa::reset()
         m_registeredDataSource->recomputeSampleOffset();
 }
 
-void AudioMediaStreamTrackRendererCocoa::setAudioOutputDevice(const String& deviceID)
+void AudioMediaStreamTrackRendererCocoa::setAudioOutputDevice(const String& deviceId)
 {
-    auto registeredDataSource = m_registeredDataSource;
-
-    setRegisteredDataSource(nullptr);
-
-    m_deviceID = deviceID;
-    setRegisteredDataSource(WTFMove(registeredDataSource));
-
+    // FIXME: We should create a unit for ourselves here or use the default unit if deviceId is matching.
+    rendererUnit().setAudioOutputDevice(deviceId);
     m_shouldRecreateDataSource = true;
 }
 
@@ -123,7 +117,7 @@ void AudioMediaStreamTrackRendererCocoa::setRegisteredDataSource(RefPtr<AudioSam
     ASSERT(isMainThread());
 
     if (m_registeredDataSource)
-        rendererUnit().removeSource(m_deviceID, *m_registeredDataSource);
+        rendererUnit().removeSource(*m_registeredDataSource);
 
     if (!m_outputDescription)
         return;
@@ -134,8 +128,8 @@ void AudioMediaStreamTrackRendererCocoa::setRegisteredDataSource(RefPtr<AudioSam
 
     m_registeredDataSource->setLogger(logger(), logIdentifier());
     m_registeredDataSource->setVolume(volume());
-    rendererUnit().addResetObserver(m_deviceID, m_resetObserver);
-    rendererUnit().addSource(m_deviceID, *m_registeredDataSource);
+    rendererUnit().addResetObserver(m_resetObserver);
+    rendererUnit().addSource(*m_registeredDataSource);
 }
 
 static unsigned pollSamplesCount()

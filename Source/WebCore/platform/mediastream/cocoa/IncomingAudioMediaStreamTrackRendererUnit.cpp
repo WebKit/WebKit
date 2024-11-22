@@ -58,25 +58,17 @@ IncomingAudioMediaStreamTrackRendererUnit::~IncomingAudioMediaStreamTrackRendere
     ASSERT(isMainThread());
 }
 
-void IncomingAudioMediaStreamTrackRendererUnit::addResetObserver(const String& deviceID, ResetObserver& observer)
+void IncomingAudioMediaStreamTrackRendererUnit::setAudioOutputDevice(const String& deviceID)
 {
-    AudioMediaStreamTrackRendererUnit::singleton().addResetObserver(deviceID, observer);
+    AudioMediaStreamTrackRendererUnit::singleton().setAudioOutputDevice(deviceID);
 }
 
-std::pair<bool, Vector<Ref<AudioSampleDataSource>>> IncomingAudioMediaStreamTrackRendererUnit::addSourceToMixer(const String& deviceID, Ref<AudioSampleDataSource>&& source)
+void IncomingAudioMediaStreamTrackRendererUnit::addResetObserver(ResetObserver& observer)
 {
-    assertIsMainThread();
-
-    ASSERT(!deviceID.isEmpty());
-    auto& mixer = m_mixers.ensure(deviceID, [] { return Mixer { }; }).iterator->value;
-
-    ASSERT(!mixer.sources.contains(source.get()));
-    bool shouldStart = mixer.sources.isEmpty();
-    mixer.sources.add(WTFMove(source));
-    return std::make_pair(shouldStart, copyToVector(mixer.sources));
+    AudioMediaStreamTrackRendererUnit::singleton().addResetObserver(observer);
 }
 
-void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& deviceID, Ref<AudioSampleDataSource>&& source)
+void IncomingAudioMediaStreamTrackRendererUnit::addSource(Ref<AudioSampleDataSource>&& source)
 {
 #if !RELEASE_LOG_DISABLED
     source->logger().logAlways(LogWebRTC, "IncomingAudioMediaStreamTrackRendererUnit::addSource ", source->logIdentifier());
@@ -92,99 +84,69 @@ void IncomingAudioMediaStreamTrackRendererUnit::addSource(const String& deviceID
         return;
     auto outputDescription = *source->outputDescription();
 
-    auto result = addSourceToMixer(deviceID, WTFMove(source));
-    bool shouldStart = result.first;
-    auto newSources = WTFMove(result.second);
+    ASSERT(!m_sources.contains(source.get()));
+    bool shouldStart = m_sources.isEmpty();
+    m_sources.add(WTFMove(source));
 
-    postTask([this, newSources = WTFMove(newSources), shouldStart, deviceID = deviceID.isolatedCopy(), outputDescription]() mutable {
-        assertIsCurrent(m_queue.get());
-
-        m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.inputSources = WTFMove(newSources);
-
+    postTask([this, newSources = copyToVector(m_sources), shouldStart, outputDescription]() mutable {
+        m_renderSources = WTFMove(newSources);
         if (!shouldStart)
             return;
 
-        if (!!m_outputStreamDescription) {
-            m_outputStreamDescription = outputDescription;
-            m_audioBufferList = makeUnique<WebAudioBufferList>(*m_outputStreamDescription);
-            m_sampleCount = m_outputStreamDescription->sampleRate() / 100;
-            m_audioBufferList->setSampleCount(m_sampleCount);
-        }
-
-        auto mixedSource = AudioSampleDataSource::create(m_outputStreamDescription->sampleRate() * 0.5, *this, LibWebRTCAudioModule::PollSamplesCount + 1);
-        mixedSource->setInputFormat(outputDescription);
-        mixedSource->setOutputFormat(outputDescription);
-
-        m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.mixedSource = mixedSource.ptr();
-
-        callOnMainThread([protectedThis = Ref { *this }, source = WTFMove(mixedSource), deviceID = deviceID.isolatedCopy()]() mutable {
-            assertIsMainThread();
-
-            auto& mixer = protectedThis->m_mixers.ensure(deviceID, [] { return Mixer { }; }).iterator->value;
-            mixer.registeredMixedSource = WTFMove(source);
-            mixer.deviceID = WTFMove(deviceID);
-            protectedThis->start(mixer);
+        m_outputStreamDescription = outputDescription;
+        m_audioBufferList = makeUnique<WebAudioBufferList>(*m_outputStreamDescription);
+        m_sampleCount = m_outputStreamDescription->sampleRate() / 100;
+        m_audioBufferList->setSampleCount(m_sampleCount);
+        m_mixedSource = AudioSampleDataSource::create(m_outputStreamDescription->sampleRate() * 0.5, *this, LibWebRTCAudioModule::PollSamplesCount + 1);
+        m_mixedSource->setInputFormat(outputDescription);
+        m_mixedSource->setOutputFormat(outputDescription);
+        m_writeCount = 0;
+        callOnMainThread([protectedThis = Ref { *this }, source = m_mixedSource]() mutable {
+            protectedThis->m_registeredMixedSource = WTFMove(source);
+            protectedThis->start();
         });
     });
 }
 
-std::pair<bool, Vector<Ref<AudioSampleDataSource>>> IncomingAudioMediaStreamTrackRendererUnit::removeSourceFromMixer(const String& deviceID, AudioSampleDataSource& source)
-{
-    assertIsMainThread();
-
-    auto& mixer = m_mixers.ensure(deviceID, [] { return Mixer { }; }).iterator->value;
-
-    ASSERT(mixer.sources.contains(source));
-    bool shouldStop = !mixer.sources.isEmpty();
-    mixer.sources.remove(WTFMove(source));
-    shouldStop &= mixer.sources.isEmpty();
-    return std::make_pair(shouldStop, copyToVector(mixer.sources));
-}
-
-void IncomingAudioMediaStreamTrackRendererUnit::removeSource(const String& deviceID, AudioSampleDataSource& source)
+void IncomingAudioMediaStreamTrackRendererUnit::removeSource(AudioSampleDataSource& source)
 {
 #if !RELEASE_LOG_DISABLED
     source.logger().logAlways(LogWebRTC, "IncomingAudioMediaStreamTrackRendererUnit::removeSource ", source.logIdentifier());
 #endif
     ASSERT(isMainThread());
 
-    auto result = removeSourceFromMixer(deviceID, source);
-    bool shouldStop = result.first;
-    auto newSources = WTFMove(result.second);
+    bool shouldStop = !m_sources.isEmpty();
+    m_sources.remove(source);
+    shouldStop &= m_sources.isEmpty();
 
-    postTask([this, newSources = WTFMove(newSources), shouldStop, deviceID = deviceID.isolatedCopy()]() mutable {
-        assertIsCurrent(m_queue.get());
-
-        m_renderMixers.ensure(deviceID, [] { return RenderMixer { }; }).iterator->value.inputSources = WTFMove(newSources);
+    postTask([this, newSources = copyToVector(m_sources), shouldStop]() mutable {
+        m_renderSources = WTFMove(newSources);
         if (!shouldStop)
             return;
 
-        callOnMainThread([protectedThis = Ref { *this }, deviceID = deviceID.isolatedCopy()]() mutable {
-            assertIsMainThread();
-
-            auto& mixer = protectedThis->m_mixers.ensure(deviceID, [] { return Mixer { }; }).iterator->value;
-            mixer.deviceID = WTFMove(deviceID);
-            protectedThis->stop(mixer);
+        callOnMainThread([protectedThis = Ref { *this }] {
+            protectedThis->stop();
         });
     });
+
 }
 
-void IncomingAudioMediaStreamTrackRendererUnit::start(Mixer& mixer)
+void IncomingAudioMediaStreamTrackRendererUnit::start()
 {
     RELEASE_LOG(WebRTC, "IncomingAudioMediaStreamTrackRendererUnit::start");
     ASSERT(isMainThread());
 
-    AudioMediaStreamTrackRendererUnit::singleton().addSource(mixer.deviceID, *mixer.registeredMixedSource);
+    AudioMediaStreamTrackRendererUnit::singleton().addSource(*m_registeredMixedSource);
     m_audioModule.get()->startIncomingAudioRendering();
 }
 
-void IncomingAudioMediaStreamTrackRendererUnit::stop(Mixer& mixer)
+void IncomingAudioMediaStreamTrackRendererUnit::stop()
 {
     RELEASE_LOG(WebRTC, "IncomingAudioMediaStreamTrackRendererUnit::stop");
     ASSERT(isMainThread());
 
-    AudioMediaStreamTrackRendererUnit::singleton().removeSource(mixer.deviceID, *mixer.registeredMixedSource);
-    mixer.registeredMixedSource = nullptr;
+    AudioMediaStreamTrackRendererUnit::singleton().removeSource(*m_registeredMixedSource);
+    m_registeredMixedSource = nullptr;
     m_audioModule.get()->stopIncomingAudioRendering();
 }
 
@@ -205,23 +167,21 @@ void IncomingAudioMediaStreamTrackRendererUnit::newAudioChunkPushed(uint64_t cur
 
 void IncomingAudioMediaStreamTrackRendererUnit::renderAudioChunk(uint64_t currentAudioSampleCount)
 {
-    assertIsCurrent(m_queue.get());
+    ASSERT(!isMainThread());
 
     uint64_t timeStamp = currentAudioSampleCount * m_outputStreamDescription->sampleRate() / LibWebRTCAudioFormat::sampleRate;
 
-    for (auto& renderMixer : m_renderMixers.values()) {
-        // Mix all sources.
-        bool hasCopiedData = false;
-        for (auto& source : renderMixer.inputSources) {
-            if (source->pullAvailableSampleChunk(*m_audioBufferList, m_sampleCount, timeStamp, hasCopiedData ? AudioSampleDataSource::Mix : AudioSampleDataSource::Copy))
-                hasCopiedData = true;
-        }
-
-        CMTime startTime = PAL::CMTimeMake(renderMixer.writeCount, m_outputStreamDescription->sampleRate());
-        if (hasCopiedData)
-            renderMixer.mixedSource->pushSamples(PAL::toMediaTime(startTime), *m_audioBufferList, m_sampleCount);
-        renderMixer.writeCount += m_sampleCount;
+    // Mix all sources.
+    bool hasCopiedData = false;
+    for (auto& source : m_renderSources) {
+        if (source->pullAvailableSampleChunk(*m_audioBufferList, m_sampleCount, timeStamp, hasCopiedData ? AudioSampleDataSource::Mix : AudioSampleDataSource::Copy))
+            hasCopiedData = true;
     }
+
+    CMTime startTime = PAL::CMTimeMake(m_writeCount, m_outputStreamDescription->sampleRate());
+    if (hasCopiedData)
+        m_mixedSource->pushSamples(PAL::toMediaTime(startTime), *m_audioBufferList, m_sampleCount);
+    m_writeCount += m_sampleCount;
 }
 
 #if !RELEASE_LOG_DISABLED

@@ -31,7 +31,6 @@
 #include "CAAudioStreamDescription.h"
 #include "LibWebRTCAudioModule.h"
 #include <wtf/Forward.h>
-#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/LoggerHelper.h>
 #include <wtf/TZoneMalloc.h>
@@ -65,19 +64,16 @@ public:
     void deref() { m_audioModule.get()->deref(); };
 
 private:
-    struct Mixer;
-    void start(Mixer&);
-    void stop(Mixer&);
+    void start();
+    void stop();
     void postTask(Function<void()>&&);
     void renderAudioChunk(uint64_t currentAudioSampleCount);
 
     // BaseAudioMediaStreamTrackRendererUnit
-    void addResetObserver(const String&, ResetObserver&) final;
-    void addSource(const String&, Ref<AudioSampleDataSource>&&) final;
-    void removeSource(const String&, AudioSampleDataSource&) final;
-
-    std::pair<bool, Vector<Ref<AudioSampleDataSource>>> addSourceToMixer(const String&, Ref<AudioSampleDataSource>&&);
-    std::pair<bool, Vector<Ref<AudioSampleDataSource>>> removeSourceFromMixer(const String&, AudioSampleDataSource&);
+    void setAudioOutputDevice(const String&) final;
+    void addResetObserver(ResetObserver&) final;
+    void addSource(Ref<AudioSampleDataSource>&&) final;
+    void removeSource(AudioSampleDataSource&) final;
 
 #if !RELEASE_LOG_DISABLED
     // LoggerHelper.
@@ -90,26 +86,17 @@ private:
     const ThreadSafeWeakPtr<LibWebRTCAudioModule> m_audioModule;
     const Ref<WTF::WorkQueue> m_queue;
 
-    struct Mixer {
-        HashSet<Ref<AudioSampleDataSource>> sources;
-        RefPtr<AudioSampleDataSource> registeredMixedSource;
-        String deviceID;
-    };
-
-    struct RenderMixer {
-        Vector<Ref<AudioSampleDataSource>> inputSources;
-        RefPtr<AudioSampleDataSource> mixedSource;
-        size_t writeCount { 0 };
-    };
-
-    HashMap<String, Mixer> m_mixers WTF_GUARDED_BY_CAPABILITY(mainThread);
+    // Main thread variables.
+    HashSet<Ref<AudioSampleDataSource>> m_sources;
+    RefPtr<AudioSampleDataSource> m_registeredMixedSource;
 
     // Background thread variables.
-    HashMap<String, RenderMixer> m_renderMixers WTF_GUARDED_BY_CAPABILITY(m_queue.get());
-
-    std::optional<CAAudioStreamDescription> m_outputStreamDescription WTF_GUARDED_BY_CAPABILITY(m_queue.get());
-    std::unique_ptr<WebAudioBufferList> m_audioBufferList WTF_GUARDED_BY_CAPABILITY(m_queue.get());
+    Vector<Ref<AudioSampleDataSource>> m_renderSources;
+    RefPtr<AudioSampleDataSource> m_mixedSource;
+    std::optional<CAAudioStreamDescription> m_outputStreamDescription;
+    std::unique_ptr<WebAudioBufferList> m_audioBufferList;
     size_t m_sampleCount { 0 };
+    size_t m_writeCount { 0 };
 
 #if !RELEASE_LOG_DISABLED
     RefPtr<const Logger> m_logger;

@@ -57,12 +57,6 @@ std::unique_ptr<AudioMediaStreamTrackRenderer> AudioMediaStreamTrackRenderer::cr
 #endif
 }
 
-String AudioMediaStreamTrackRenderer::defaultDeviceID()
-{
-    ASSERT(isMainThread());
-    return "default"_s;
-}
-
 AudioMediaStreamTrackRenderer::AudioMediaStreamTrackRenderer(Init&& init)
     : m_crashCallback(WTFMove(init.crashCallback))
 #if USE(LIBWEBRTC)

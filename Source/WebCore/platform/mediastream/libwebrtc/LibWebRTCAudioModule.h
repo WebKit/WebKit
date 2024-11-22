@@ -57,9 +57,8 @@ public:
     void stop() { Terminate(); }
 
 #if PLATFORM(COCOA)
-    void startIncomingAudioRendering() { ++m_isRenderingIncomingAudioCounter; }
-    void stopIncomingAudioRendering() { --m_isRenderingIncomingAudioCounter; }
-
+    void startIncomingAudioRendering() { m_isRenderingIncomingAudio = true; }
+    void stopIncomingAudioRendering() { m_isRenderingIncomingAudio = false; }
     BaseAudioMediaStreamTrackRendererUnit& incomingAudioMediaStreamTrackRendererUnit();
     uint64_t currentAudioSampleCount() const { return m_currentAudioSampleCount; }
 #endif
@@ -163,7 +162,7 @@ private:
 
 #if PLATFORM(COCOA)
     uint64_t m_currentAudioSampleCount { 0 };
-    std::atomic<uint64_t> m_isRenderingIncomingAudioCounter { 0 };
+    bool m_isRenderingIncomingAudio { false };
     std::unique_ptr<IncomingAudioMediaStreamTrackRendererUnit> m_incomingAudioMediaStreamTrackRendererUnit;
 #endif
 };

@@ -35,97 +35,31 @@ namespace WebCore {
 
 AudioMediaStreamTrackRendererUnit& AudioMediaStreamTrackRendererUnit::singleton()
 {
-    static LazyNeverDestroyed<std::unique_ptr<AudioMediaStreamTrackRendererUnit>> sharedUnit;
-    auto& unit = sharedUnit.get();
-    if (!unit)
-        unit = std::unique_ptr<AudioMediaStreamTrackRendererUnit>(new AudioMediaStreamTrackRendererUnit);
-    return *unit;
+    static NeverDestroyed<Ref<AudioMediaStreamTrackRendererUnit>> registry { adoptRef(*new AudioMediaStreamTrackRendererUnit()) };
+    return registry.get().get();
 }
 
 AudioMediaStreamTrackRendererUnit::AudioMediaStreamTrackRendererUnit()
-    : m_deleteUnitsTimer([] { AudioMediaStreamTrackRendererUnit::singleton().deleteUnitsIfPossible(); })
+    : m_internalUnit(AudioMediaStreamTrackRendererInternalUnit::create(*this))
 {
 }
 
-AudioMediaStreamTrackRendererUnit::~AudioMediaStreamTrackRendererUnit() = default;
-
-void AudioMediaStreamTrackRendererUnit::deleteUnitsIfPossible()
-{
-    assertIsMainThread();
-
-    m_units.removeIf([] (auto& keyValue) {
-        if (keyValue.value->isDefault() || keyValue.value->hasSources())
-            return false;
-
-        Ref unit = keyValue.value;
-        unit->close();
-        return true;
-    });
-}
-
-void AudioMediaStreamTrackRendererUnit::addSource(const String& deviceID, Ref<AudioSampleDataSource>&& source)
-{
-    assertIsMainThread();
-
-    Ref unit = m_units.ensure(deviceID, [&deviceID] { return Unit::create(deviceID); }).iterator->value;
-    unit->addSource(WTFMove(source));
-}
-
-void AudioMediaStreamTrackRendererUnit::removeSource(const String& deviceID, AudioSampleDataSource& source)
-{
-    assertIsMainThread();
-
-    auto iterator = m_units.find(deviceID);
-    if (iterator == m_units.end())
-        return;
-
-    static constexpr Seconds deleteUnitDelay = 10_s;
-
-    Ref unit = iterator->value;
-    if (unit->removeSource(source) && !unit->isDefault())
-        m_deleteUnitsTimer.startOneShot(deleteUnitDelay);
-}
-
-void AudioMediaStreamTrackRendererUnit::addResetObserver(const String& deviceID, ResetObserver& observer)
-{
-    assertIsMainThread();
-
-    Ref unit = m_units.ensure(deviceID, [&deviceID] { return Unit::create(deviceID); }).iterator->value;
-    unit->addResetObserver(observer);
-}
-
-void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&& callback)
-{
-    assertIsMainThread();
-
-    auto defaultDeviceID = AudioMediaStreamTrackRenderer::defaultDeviceID();
-    Ref unit = m_units.ensure(defaultDeviceID, [&defaultDeviceID] { return Unit::create(defaultDeviceID); }).iterator->value;
-    unit->retrieveFormatDescription(WTFMove(callback));
-}
-
-AudioMediaStreamTrackRendererUnit::Unit::Unit(const String& deviceID)
-    : m_internalUnit(AudioMediaStreamTrackRendererInternalUnit::create(deviceID, *this))
-    , m_isDefaultUnit(deviceID == AudioMediaStreamTrackRenderer::defaultDeviceID())
-{
-}
-
-AudioMediaStreamTrackRendererUnit::Unit::~Unit()
+AudioMediaStreamTrackRendererUnit::~AudioMediaStreamTrackRendererUnit()
 {
     stop();
 }
 
-void AudioMediaStreamTrackRendererUnit::Unit::close()
+void AudioMediaStreamTrackRendererUnit::setAudioOutputDevice(const String& deviceID)
 {
-    assertIsMainThread();
-    m_internalUnit->close();
+    protectedInternalUnit()->setAudioOutputDevice(deviceID);
 }
 
-void AudioMediaStreamTrackRendererUnit::Unit::addSource(Ref<AudioSampleDataSource>&& source)
+void AudioMediaStreamTrackRendererUnit::addSource(Ref<AudioSampleDataSource>&& source)
 {
 #if !RELEASE_LOG_DISABLED
     source->logger().logAlways(LogWebRTC, "AudioMediaStreamTrackRendererUnit::addSource ", source->logIdentifier());
 #endif
-    assertIsMainThread();
+    ASSERT(isMainThread());
 
     ASSERT(!m_sources.contains(source.get()));
     bool shouldStart = m_sources.isEmpty();
@@ -141,12 +75,12 @@ void AudioMediaStreamTrackRendererUnit::Unit::addSource(Ref<AudioSampleDataSourc
         start();
 }
 
-bool AudioMediaStreamTrackRendererUnit::Unit::removeSource(AudioSampleDataSource& source)
+void AudioMediaStreamTrackRendererUnit::removeSource(AudioSampleDataSource& source)
 {
 #if !RELEASE_LOG_DISABLED
     source.logger().logAlways(LogWebRTC, "AudioMediaStreamTrackRendererUnit::removeSource ", source.logIdentifier());
 #endif
-    assertIsMainThread();
+    ASSERT(isMainThread());
 
     bool shouldStop = !m_sources.isEmpty();
     m_sources.remove(source);
@@ -160,38 +94,25 @@ bool AudioMediaStreamTrackRendererUnit::Unit::removeSource(AudioSampleDataSource
 
     if (shouldStop)
         stop();
-    return shouldStop;
 }
 
-void AudioMediaStreamTrackRendererUnit::Unit::addResetObserver(ResetObserver& observer)
+void AudioMediaStreamTrackRendererUnit::start()
 {
-    assertIsMainThread();
-    m_resetObservers.add(observer);
-}
-
-void AudioMediaStreamTrackRendererUnit::Unit::retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&& callback)
-{
-    assertIsMainThread();
-    m_internalUnit->retrieveFormatDescription(WTFMove(callback));
-}
-
-void AudioMediaStreamTrackRendererUnit::Unit::start()
-{
-    assertIsMainThread();
     RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::start");
+    ASSERT(isMainThread());
 
-    m_internalUnit->start();
+    protectedInternalUnit()->start();
 }
 
-void AudioMediaStreamTrackRendererUnit::Unit::stop()
+void AudioMediaStreamTrackRendererUnit::stop()
 {
-    assertIsMainThread();
     RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::stop");
+    ASSERT(isMainThread());
 
-    m_internalUnit->stop();
+    protectedInternalUnit()->stop();
 }
 
-void AudioMediaStreamTrackRendererUnit::Unit::reset()
+void AudioMediaStreamTrackRendererUnit::reset()
 {
     RELEASE_LOG(WebRTC, "AudioMediaStreamTrackRendererUnit::reset");
     if (!isMainThread()) {
@@ -202,13 +123,18 @@ void AudioMediaStreamTrackRendererUnit::Unit::reset()
         return;
     }
 
-    assertIsMainThread();
     m_resetObservers.forEach([](auto& observer) {
         observer();
     });
 }
 
-void AudioMediaStreamTrackRendererUnit::Unit::updateRenderSourcesIfNecessary()
+void AudioMediaStreamTrackRendererUnit::retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&& callback)
+{
+    ASSERT(isMainThread());
+    protectedInternalUnit()->retrieveFormatDescription(WTFMove(callback));
+}
+
+void AudioMediaStreamTrackRendererUnit::updateRenderSourcesIfNecessary()
 {
     if (!m_pendingRenderSourcesLock.tryLock())
         return;
@@ -222,7 +148,7 @@ void AudioMediaStreamTrackRendererUnit::Unit::updateRenderSourcesIfNecessary()
     m_hasPendingRenderSources = false;
 }
 
-OSStatus AudioMediaStreamTrackRendererUnit::Unit::render(size_t sampleCount, AudioBufferList& ioData, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags& actionFlags)
+OSStatus AudioMediaStreamTrackRendererUnit::render(size_t sampleCount, AudioBufferList& ioData, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags& actionFlags)
 {
     // For performance reasons, we forbid heap allocations while doing rendering on the audio thread.
     ForbidMallocUseForCurrentThreadScope forbidMallocUse;

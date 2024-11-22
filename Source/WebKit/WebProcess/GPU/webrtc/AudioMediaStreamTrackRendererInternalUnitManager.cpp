@@ -51,9 +51,9 @@ namespace WebKit {
 class AudioMediaStreamTrackRendererInternalUnitManagerProxy final : public WebCore::AudioMediaStreamTrackRendererInternalUnit, public ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<AudioMediaStreamTrackRendererInternalUnitManagerProxy>, public Identified<AudioMediaStreamTrackRendererInternalUnitIdentifier> {
     WTF_MAKE_TZONE_ALLOCATED(AudioMediaStreamTrackRendererInternalUnitManagerProxy);
 public:
-    static Ref<AudioMediaStreamTrackRendererInternalUnitManagerProxy> create(const String& deviceID, Client& client)
+    static Ref<AudioMediaStreamTrackRendererInternalUnitManagerProxy> create(Client& client)
     {
-        return adoptRef(*new AudioMediaStreamTrackRendererInternalUnitManagerProxy(deviceID, client));
+        return adoptRef(*new AudioMediaStreamTrackRendererInternalUnitManagerProxy(client));
     }
 
     ~AudioMediaStreamTrackRendererInternalUnitManagerProxy();
@@ -65,14 +65,14 @@ public:
     void reset(IsClosed);
 
 private:
-    explicit AudioMediaStreamTrackRendererInternalUnitManagerProxy(const String&, Client&);
+    explicit AudioMediaStreamTrackRendererInternalUnitManagerProxy(Client&);
 
     // AudioMediaStreamTrackRendererUnit::InternalUnit API.
     void start() final;
     void stop() final;
-    void close() { stopThread(); }
-
     void retrieveFormatDescription(CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>&&) final;
+    void setAudioOutputDevice(const String&) final;
+    const String& audioOutputDeviceID() const final { return m_deviceId; }
 
     void initialize(const WebCore::CAAudioStreamDescription&, size_t frameChunkSize);
     void storageChanged(WebCore::SharedMemory*, const WebCore::CAAudioStreamDescription&, size_t);
@@ -81,11 +81,11 @@ private:
     void startThread();
     void createRemoteUnit();
 
-    String m_deviceID;
     ThreadSafeWeakPtr<Client> m_client;
 
     Deque<CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>> m_descriptionCallbacks;
 
+    String m_deviceId;
     bool m_isPlaying { false };
 
     std::optional<WebCore::CAAudioStreamDescription> m_description;
@@ -113,9 +113,9 @@ void AudioMediaStreamTrackRendererInternalUnitManager::remove(AudioMediaStreamTr
     m_proxies.remove(proxy.identifier());
 }
 
-Ref<WebCore::AudioMediaStreamTrackRendererInternalUnit> createRemoteAudioMediaStreamTrackRendererInternalUnitProxy(const String& deviceID, WebCore::AudioMediaStreamTrackRendererInternalUnit::Client& client)
+Ref<WebCore::AudioMediaStreamTrackRendererInternalUnit> createRemoteAudioMediaStreamTrackRendererInternalUnitProxy(WebCore::AudioMediaStreamTrackRendererInternalUnit::Client& client)
 {
-    return AudioMediaStreamTrackRendererInternalUnitManagerProxy::create(deviceID, client);
+    return AudioMediaStreamTrackRendererInternalUnitManagerProxy::create(client);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManager::reset(AudioMediaStreamTrackRendererInternalUnitIdentifier identifier)
@@ -136,9 +136,8 @@ void AudioMediaStreamTrackRendererInternalUnitManager::restartAllUnits()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AudioMediaStreamTrackRendererInternalUnitManagerProxy);
 
-AudioMediaStreamTrackRendererInternalUnitManagerProxy::AudioMediaStreamTrackRendererInternalUnitManagerProxy(const String& deviceID, Client& client)
-    : m_deviceID(deviceID)
-    , m_client(client)
+AudioMediaStreamTrackRendererInternalUnitManagerProxy::AudioMediaStreamTrackRendererInternalUnitManagerProxy(Client& client)
+    : m_client(client)
 {
     WebProcess::singleton().audioMediaStreamTrackRendererInternalUnitManager().add(*this);
     createRemoteUnit();
@@ -155,7 +154,7 @@ AudioMediaStreamTrackRendererInternalUnitManagerProxy::~AudioMediaStreamTrackRen
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::createRemoteUnit()
 {
-    WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::CreateUnit { identifier(), m_deviceID }, [weakThis = ThreadSafeWeakPtr { *this }](auto&& description, auto frameChunkSize) {
+    WebProcess::singleton().ensureGPUProcessConnection().connection().sendWithAsyncReply(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::CreateUnit { identifier() }, [weakThis = ThreadSafeWeakPtr { *this }](auto&& description, auto frameChunkSize) {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && description && frameChunkSize)
             protectedThis->initialize(*description, frameChunkSize);
     }, 0);
@@ -187,6 +186,8 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::start()
     if (m_didClose) {
         m_didClose = false;
         createRemoteUnit();
+        if (!m_deviceId.isEmpty())
+            setAudioOutputDevice(m_deviceId);
         m_isPlaying = true;
         return;
     }
@@ -212,6 +213,12 @@ void AudioMediaStreamTrackRendererInternalUnitManagerProxy::stop()
 {
     m_isPlaying = false;
     WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::StopUnit { identifier() }, 0);
+}
+
+void AudioMediaStreamTrackRendererInternalUnitManagerProxy::setAudioOutputDevice(const String& deviceId)
+{
+    m_deviceId = deviceId;
+    WebProcess::singleton().ensureGPUProcessConnection().connection().send(Messages::RemoteAudioMediaStreamTrackRendererInternalUnitManager::SetAudioOutputDevice { identifier(), deviceId }, 0);
 }
 
 void AudioMediaStreamTrackRendererInternalUnitManagerProxy::retrieveFormatDescription(CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>)>&& callback)

@@ -50,14 +50,15 @@ public:
         virtual OSStatus render(size_t sampleCount, AudioBufferList&, uint64_t sampleTime, double hostTime, AudioUnitRenderActionFlags&) = 0;
         virtual void reset() = 0;
     };
-    WEBCORE_EXPORT static Ref<AudioMediaStreamTrackRendererInternalUnit> create(const String&, Client&);
+    WEBCORE_EXPORT static Ref<AudioMediaStreamTrackRendererInternalUnit> create(Client&);
 
-    using CreateFunction = Ref<AudioMediaStreamTrackRendererInternalUnit>(*)(const String&, AudioMediaStreamTrackRendererInternalUnit::Client&);
+    using CreateFunction = Ref<AudioMediaStreamTrackRendererInternalUnit>(*)(AudioMediaStreamTrackRendererInternalUnit::Client&);
     WEBCORE_EXPORT static void setCreateFunction(CreateFunction);
     virtual void start() = 0;
     virtual void stop() = 0;
-    virtual void close() { };
     virtual void retrieveFormatDescription(CompletionHandler<void(std::optional<CAAudioStreamDescription>)>&&) = 0;
+    virtual void setAudioOutputDevice(const String&) = 0;
+    virtual const String& audioOutputDeviceID() const = 0;
 };
 
 }
