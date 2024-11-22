@@ -581,7 +581,8 @@ void MediaPlayerPrivateMediaSourceAVFObjC::seekInternal()
         ALWAYS_LOG(LOGIDENTIFIER);
         MediaTime synchronizerTime = PAL::toMediaTime([m_synchronizer currentTime]);
 
-        m_isSynchronizerSeeking = synchronizerTime != seekedTime;
+        m_isSynchronizerSeeking = m_isSynchronizerSeeking = std::abs((synchronizerTime - seekedTime).toMicroseconds()) > 1000;
+
         ALWAYS_LOG(LOGIDENTIFIER, "seekedTime = ", seekedTime, ", synchronizerTime = ", synchronizerTime, "synchronizer seeking = ", m_isSynchronizerSeeking);
 
         if (!m_isSynchronizerSeeking) {

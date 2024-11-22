@@ -430,7 +430,7 @@ void MediaPlayerPrivateWebM::seekInternal()
         if (RefPtr protectedThis = weakThis.get()) {
             MediaTime synchronizerTime = PAL::toMediaTime([m_synchronizer currentTime]);
 
-            m_isSynchronizerSeeking = synchronizerTime != m_lastSeekTime;
+            m_isSynchronizerSeeking = std::abs((synchronizerTime - m_lastSeekTime).toMicroseconds()) > 1000;
             ALWAYS_LOG(LOGIDENTIFIER, "seekedTime = ", m_lastSeekTime, ", synchronizerTime = ", synchronizerTime, "synchronizer seeking = ", m_isSynchronizerSeeking);
 
             if (!m_isSynchronizerSeeking) {
