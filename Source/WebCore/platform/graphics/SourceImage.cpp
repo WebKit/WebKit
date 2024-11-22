@@ -37,6 +37,10 @@ SourceImage::SourceImage(ImageVariant&& imageVariant)
 {
 }
 
+SourceImage::SourceImage(const SourceImage&) = default;
+SourceImage::SourceImage(SourceImage&&) = default;
+SourceImage& SourceImage::operator=(const SourceImage&) = default;
+SourceImage& SourceImage::operator=(SourceImage&&) = default;
 SourceImage::~SourceImage() = default;
 
 bool SourceImage::operator==(const SourceImage& other) const
