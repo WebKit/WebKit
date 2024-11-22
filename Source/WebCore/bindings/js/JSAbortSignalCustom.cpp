@@ -48,9 +48,15 @@ bool JSAbortSignalOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> ha
                 *reason = "Has Timeout And Abort Event Listener"_s;
             return true;
         }
-        if (!abortSignal.sourceSignals().isEmptyIgnoringNullReferences()) {
+        if (abortSignal.isDependent()) {
+            if (!abortSignal.sourceSignals().isEmptyIgnoringNullReferences()) {
+                if (UNLIKELY(reason))
+                    *reason = "Has Source Signals And Abort Event Listener"_s;
+                return true;
+            }
+        } else {
             if (UNLIKELY(reason))
-                *reason = "Has Source Signals And Abort Event Listener"_s;
+                *reason = "Has Abort Event Listener"_s;
             return true;
         }
     }

@@ -765,8 +765,8 @@ void Navigation::abortOngoingNavigation(NavigateEvent& event)
             errorInformation.sourceURL = scriptExecutionContext()->url().string();
     }
 
-    if (event.signal())
-        event.signal()->signalAbort(domException);
+    if (RefPtr signal = event.signal())
+        signal->signalAbort(domException);
 
     m_ongoingNavigateEvent = nullptr;
 
