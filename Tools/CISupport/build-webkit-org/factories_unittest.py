@@ -906,7 +906,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'extract-built-product',
             'jscore-test'
         ],
-        'Apple-iOS-17-Release-Build': [
+        'Apple-iOS-18-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -917,7 +917,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'delete-stale-build-files',
             'compile-webkit'
         ],
-        'Apple-iOS-17-Simulator-Release-Build': [
+        'Apple-iOS-18-Simulator-Release-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -929,7 +929,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'trigger'
         ],
-        'Apple-iOS-17-Simulator-Debug-Build': [
+        'Apple-iOS-18-Simulator-Debug-Build': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -941,7 +941,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'compile-webkit',
             'trigger'
         ],
-        'Apple-iOS-17-Simulator-Release-WK2-Tests': [
+        'Apple-iOS-18-Simulator-Release-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -966,7 +966,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iOS-17-Simulator-Debug-WK2-Tests': [
+        'Apple-iOS-18-Simulator-Debug-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -991,7 +991,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iPadOS-17-Simulator-Release-WK2-Tests': [
+        'Apple-iPadOS-18-Simulator-Release-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
@@ -1016,7 +1016,7 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'builtins-generator-tests',
             'trigger-crash-log-submission'
         ],
-        'Apple-iPadOS-17-Simulator-Debug-WK2-Tests': [
+        'Apple-iPadOS-18-Simulator-Debug-WK2-Tests': [
             'configure-build',
             'configuration',
             'clean-and-update-working-directory',
