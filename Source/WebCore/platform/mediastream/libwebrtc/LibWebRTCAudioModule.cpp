@@ -39,22 +39,13 @@ namespace WebCore {
 
 LibWebRTCAudioModule::LibWebRTCAudioModule()
     : m_queue(WorkQueue::create("WebKitWebRTCAudioModule"_s, WorkQueue::QOS::UserInteractive))
-    , m_logTimer(makeUnique<Timer>(*this, &LibWebRTCAudioModule::logTimerFired))
+    , m_logTimer(*this, &LibWebRTCAudioModule::logTimerFired)
 {
     ASSERT(isMainThread());
 }
 
 LibWebRTCAudioModule::~LibWebRTCAudioModule()
 {
-    ASSERT(!m_logTimer);
-}
-
-int32_t LibWebRTCAudioModule::Terminate()
-{
-    callOnMainThread([this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
-        m_logTimer = nullptr;
-    });
-    return 0;
 }
 
 int32_t LibWebRTCAudioModule::RegisterAudioCallback(webrtc::AudioTransport* audioTransport)
@@ -73,11 +64,11 @@ int32_t LibWebRTCAudioModule::StartPlayout()
         return 0;
 
     m_isPlaying = true;
-    callOnMainThread([this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
-        m_logTimer->startRepeating(logTimerInterval);
+    callOnMainThread([this, protectedThis = Ref { *this }] {
+        m_logTimer.startRepeating(logTimerInterval);
     });
 
-    m_queue->dispatch([this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
+    m_queue->dispatch([this, protectedThis = Ref { *this }] {
         m_pollingTime = MonotonicTime::now();
 #if PLATFORM(COCOA)
         m_currentAudioSampleCount = 0;
@@ -92,8 +83,8 @@ int32_t LibWebRTCAudioModule::StopPlayout()
     RELEASE_LOG(WebRTC, "LibWebRTCAudioModule::StopPlayout %d", m_isPlaying);
 
     m_isPlaying = false;
-    callOnMainThread([this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
-        m_logTimer->stop();
+    callOnMainThread([this, protectedThis = Ref { *this }] {
+        m_logTimer.stop();
     });
     return 0;
 }
@@ -126,7 +117,7 @@ void LibWebRTCAudioModule::pollAudioData()
     if (!m_isPlaying)
         return;
 
-    Function<void()> nextPollFunction = [this, protectedThis = rtc::scoped_refptr<webrtc::AudioDeviceModule>(this)] {
+    Function<void()> nextPollFunction = [this, protectedThis = Ref { *this }] {
         pollAudioData();
     };
 

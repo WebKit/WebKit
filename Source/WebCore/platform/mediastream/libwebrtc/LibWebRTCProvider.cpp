@@ -80,8 +80,6 @@ LibWebRTCProvider::LibWebRTCProvider()
 
 LibWebRTCProvider::~LibWebRTCProvider()
 {
-    if (RefPtr audioModule = std::exchange(m_audioModule, { }))
-        audioModule->stop();
 }
 
 #if !PLATFORM(COCOA)

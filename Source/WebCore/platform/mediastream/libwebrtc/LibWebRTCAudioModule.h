@@ -54,7 +54,6 @@ public:
     ~LibWebRTCAudioModule();
 
     static constexpr unsigned PollSamplesCount = 1;
-    void stop() { Terminate(); }
 
 #if PLATFORM(COCOA)
     void startIncomingAudioRendering() { m_isRenderingIncomingAudio = true; }
@@ -87,7 +86,7 @@ private:
 
     int32_t ActiveAudioLayer(AudioLayer*) const final { return shouldNotBeCalled(-1); }
     int32_t Init() final { return 0; }
-    int32_t Terminate() final;
+    int32_t Terminate() final { return 0; }
     bool Initialized() const final { return true; }
     int16_t PlayoutDevices() final { return 0; }
     int16_t RecordingDevices() final { return 0; }
@@ -157,7 +156,7 @@ private:
     bool m_isPlaying { false };
     webrtc::AudioTransport* m_audioTransport { nullptr };
     MonotonicTime m_pollingTime;
-    std::unique_ptr<Timer> m_logTimer;
+    Timer m_logTimer;
     int m_timeSpent { 0 };
 
 #if PLATFORM(COCOA)
