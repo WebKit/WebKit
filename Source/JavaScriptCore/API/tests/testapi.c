@@ -79,6 +79,7 @@ void testObjectiveCAPI(const char*);
 
 void configureJSCForTesting(void);
 int testCAPIViaCpp(const char* filter);
+unsigned testJSValueRefGCDebugging(const char* filter);
 
 bool assertTrue(bool value, const char* message);
 
@@ -1592,6 +1593,7 @@ int main(int argc, char* argv[])
 #endif
 
     RELEASE_ASSERT(!testCAPIViaCpp(filter));
+    RELEASE_ASSERT(!testJSValueRefGCDebugging(filter));
     if (filter)
         return 0;
 
