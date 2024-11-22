@@ -1,6 +1,12 @@
+Body needed for test_driver.click()
 
 PASS navigator.clipboard exists
+PASS navigator.clipboard.write(DOMString) succeeds
+PASS navigator.clipboard.write(Promise<DOMString>) succeeds
+PASS navigator.clipboard.write(web_custom_format) succeeds
+PASS validate GetType(type) on a contructed ClipboardItem returns Blob
 PASS navigator.clipboard.write([text/plain ClipboardItem]) succeeds
+FAIL navigator.clipboard.write([>1 ClipboardItems]) fails (not implemented) assert_unreached: Should have rejected: undefined Reached unreachable code
 PASS navigator.clipboard.write() fails (expect [ClipboardItem])
 PASS navigator.clipboard.write(null) fails (expect [ClipboardItem])
 PASS navigator.clipboard.write(DOMString) fails (expect [ClipboardItem])
@@ -15,6 +21,6 @@ FAIL navigator.clipboard.write(image/png DOMString) fails promise_rejects_js: fu
 }" ("TypeError")
 PASS navigator.clipboard.read() succeeds
 PASS navigator.clipboard.readText() succeeds
-FAIL navigator.clipboard.write(Promise<Blob>) succeeds promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: getPermissions"
-FAIL navigator.clipboard.write(Promise<Blob>s) succeeds promise_test: Unhandled rejection with value: object "ReferenceError: Can't find variable: getPermissions"
+PASS navigator.clipboard.write(Promise<Blob>) succeeds
+PASS navigator.clipboard.write(Promise<Blob>s) succeeds
 

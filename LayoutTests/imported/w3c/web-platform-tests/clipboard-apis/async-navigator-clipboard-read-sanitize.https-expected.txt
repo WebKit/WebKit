@@ -1,6 +1,8 @@
 Body needed for test_driver.click()
 Put payload in the clipboard
 
+Test
 
-FAIL Async Clipboard.read() should sanitize text/html promise_test: Unhandled rejection with value: object "Error: Unsupported permission name "clipboard-read"."
+
+PASS Async Clipboard.read() should sanitize text/html
 
