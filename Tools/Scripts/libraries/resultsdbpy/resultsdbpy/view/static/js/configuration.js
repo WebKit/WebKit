@@ -121,7 +121,7 @@ class Configuration {
                 return 'A';
             if (count < 700)
                 return 'B';
-            if (count < 800)
+            if (count < 810)
                 return 'C';
             return 'D';
         }
@@ -129,7 +129,7 @@ class Configuration {
             const count = parseInt(match[3]);
             if (count < 200)
                 return 'B';
-            if (count < 500)
+            if (count < 510)
                 return 'C';
             return 'D';
         }
