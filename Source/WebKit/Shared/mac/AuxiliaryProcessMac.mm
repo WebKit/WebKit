@@ -225,6 +225,10 @@ constexpr ASCIILiteral processStorageClass(WTF::AuxiliaryProcessType type)
     case WTF::AuxiliaryProcessType::GPU:
         return "WebKitGPUSandbox"_s;
 #endif
+#if ENABLE(MODEL_PROCESS)
+    case WebCore::AuxiliaryProcessType::Model:
+        return "WebKitModelSandbox"_s;
+#endif
     }
 }
 #endif // USE(APPLE_INTERNAL_SDK)
@@ -286,6 +290,11 @@ static String sandboxDirectory(WTF::AuxiliaryProcessType processType, const Stri
 #if ENABLE(GPU_PROCESS)
     case WTF::AuxiliaryProcessType::GPU:
         directory.append("/com.apple.WebKit.GPU.Sandbox"_s);
+        break;
+#endif
+#if ENABLE(MODEL_PROCESS)
+    case WebCore::AuxiliaryProcessType::Model:
+        directory.append("/com.apple.WebKit.Model.Sandbox"_s);
         break;
 #endif
     }

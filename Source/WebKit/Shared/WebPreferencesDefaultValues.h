@@ -64,6 +64,12 @@
 #define Backdropfilter_feature_status Testable
 #endif
 
+#if defined(ENABLE_MODEL_PROCESS) && ENABLE_MODEL_PROCESS
+#define Modelprocess_feature_status Stable
+#else
+#define Modelprocess_feature_status Unstable
+#endif
+
 namespace WebKit {
 
 #if PLATFORM(IOS_FAMILY)

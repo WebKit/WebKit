@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,27 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#import "config.h"
 
-#if PLATFORM(COCOA) && ((USE(SYSTEM_PREVIEW) && HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)) || (ENABLE(WEBXR) && USE(ARKITXR_IOS)) || (USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.h>) && __has_include(<ARKit/ARKit.h>)))
-
-#import <ARKit/ARKit.h>
-#import <pal/spi/cocoa/ARKitSPI.h>
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_FRAMEWORK_FOR_HEADER(WebKit, ARKit)
-
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, ARQuickLookPreviewItem);
-ALLOW_DEPRECATED_DECLARATIONS_BEGIN
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, ARSession);
-ALLOW_DEPRECATED_DECLARATIONS_END
-SOFT_LINK_CLASS_FOR_HEADER(WebKit, ARWorldTrackingConfiguration)
-
-SOFT_LINK_FUNCTION_FOR_HEADER(WebKit, ARKit, ARMatrixMakeLookAt, simd_float4x4, (simd_float3 origin, simd_float3 direction), (origin, direction))
-#define ARMatrixMakeLookAt WebKit::softLink_ARKit_ARMatrixMakeLookAt
-
-#if USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.h>)
-#import <WebKitAdditions/ARKitSoftLinkAdditions.h>
-#endif
-
+#if PLATFORM(COCOA) && !PLATFORM(VISION) && ENABLE(MODEL_PROCESS) && __has_include(<WebKitAdditions/CoreRESoftLinkAdditions.h>)
+#import <WebKitAdditions/CoreRESoftLinkAdditions.mm>
 #endif

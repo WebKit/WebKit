@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ((USE(SYSTEM_PREVIEW) && HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)) || ((PLATFORM(IOS) || PLATFORM(VISION)) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>)))
+#if ((USE(SYSTEM_PREVIEW) && HAVE(ARKIT_QUICK_LOOK_PREVIEW_ITEM)) || ((PLATFORM(IOS) || PLATFORM(VISION)) && USE(APPLE_INTERNAL_SDK) && __has_include(<WebKitAdditions/ARKitSoftLinkAdditions.mm>) && __has_include(<ARKit/ARKit.h>)))
 
 #import <simd/simd.h>
 #import <wtf/SoftLinking.h>
