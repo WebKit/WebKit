@@ -795,8 +795,8 @@ Ref<AccessibilityRenderObject> AXObjectCache::createObjectFromRenderer(RenderObj
 
     if (is<RenderListBox>(renderer))
         return AccessibilityListBox::create(AXID::generate(), renderer);
-    if (auto* renderMenuList = dynamicDowncast<RenderMenuList>(renderer))
-        return AccessibilityMenuList::create(AXID::generate(), *renderMenuList);
+    if (CheckedPtr renderMenuList = dynamicDowncast<RenderMenuList>(renderer))
+        return AccessibilityMenuList::create(AXID::generate(), *renderMenuList, *this);
 
     bool isAnonymous = false;
 #if USE(ATSPI)

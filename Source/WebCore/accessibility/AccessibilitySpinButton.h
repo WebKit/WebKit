@@ -54,6 +54,7 @@ private:
     LayoutRect elementRect() const override;
 
     WeakPtr<SpinButtonElement, WeakPtrImplWithEventTargetData> m_spinButtonElement;
+    // FIXME: Nothing calls AXObjectCache::remove for m_incrementor and m_decrementor.
     Ref<AccessibilitySpinButtonPart> m_incrementor;
     Ref<AccessibilitySpinButtonPart> m_decrementor;
 };
