@@ -81,6 +81,7 @@ Session::Session(Ref<SessionHost>&& host, WeakPtr<WebSocketServer>&& bidiServer)
     : Session(WTFMove(host))
 {
     m_bidiServer = WTFMove(bidiServer);
+    m_host->addEventHandler(this);
 }
 #endif
 
@@ -3143,5 +3144,185 @@ void Session::takeScreenshot(std::optional<String> elementID, std::optional<bool
         });
     });
 }
+
+#if ENABLE(WEBDRIVER_BIDI)
+void Session::dispatchEvent(RefPtr<JSON::Object>&& message)
+{
+    static String automationPrefix = "Automation."_s;
+    auto method = message->getString("method"_s);
+    if (!method.startsWith(automationPrefix)) {
+        WTFLogAlways("Unknown event domain: %s", method.utf8().data());
+        return;
+    }
+
+    if (method.substring(automationPrefix.length()) == "logEntryAdded"_s) {
+        doLogEntryAdded(WTFMove(message));
+        return;
+    }
+}
+
+void Session::doLogEntryAdded(RefPtr<JSON::Object>&& message)
+{
+    // https://w3c.github.io/webdriver-bidi/#event-log-entryAdded
+    auto params = message->getObject("params"_s);
+    auto method = params->getString("method"_s);
+
+    String level;
+    if (method == "error"_s || method == "assert"_s)
+        level = "error"_s;
+    else if (method == "debug"_s || method == "trace"_s)
+        level = "debug"_s;
+    else if (method == "warn"_s)
+        level = "warn"_s;
+    else
+        level = "info"_s;
+
+    // WebDriver uses the ECMA time format, which is the number of milliseconds since the Unix epoch.
+    // https://tc39.es/ecma262/#sec-time-values-and-time-range
+    RefPtr<JSON::Value> timestampValue;
+    if (auto timestampOpt = params->getDouble("timestamp"_s))
+        timestampValue = JSON::Value::create(round(*timestampOpt));
+    else
+        timestampValue = JSON::Value::create(0);
+
+    StringBuilder textBuilder;
+
+    // TODO Support formatter string
+    // https://bugs.webkit.org/show_bug.cgi?id=282976
+    auto formattedArgs = params->getArray("args"_s);
+    if (!formattedArgs) {
+        formattedArgs = JSON::Array::create();
+        formattedArgs->pushString(params->getString("text"_s));
+    }
+
+    for (unsigned i = 0; i < formattedArgs->length(); ++i) {
+        auto arg = formattedArgs->get(i);
+        if (i)
+            textBuilder.append(' ');
+        if (arg->type() == JSON::Value::Type::String)
+            textBuilder.append(arg->asString());
+        else
+            textBuilder.append("null"_s);
+    }
+
+    // TODO Implement the full serialization algorithm
+    // https://bugs.webkit.org/show_bug.cgi?id=282977
+    auto serializedArgs = JSON::Array::create();
+    for (unsigned i = 0; i < formattedArgs->length(); ++i) {
+        auto arg = formattedArgs->get(i);
+        auto serializedArg = JSON::Object::create();
+        switch (arg->type()) {
+        case JSON::Value::Type::String:
+            serializedArg->setString("type"_s, "string"_s);
+            serializedArg->setString("value"_s, arg->asString());
+            break;
+        case JSON::Value::Type::Double:
+            serializedArg->setString("type"_s, "number"_s);
+            serializedArg->setDouble("value"_s, *arg->asDouble());
+            break;
+        case JSON::Value::Type::Boolean:
+            serializedArg->setString("type"_s, "boolean"_s);
+            serializedArg->setBoolean("value"_s, *arg->asBoolean());
+            break;
+        case JSON::Value::Type::Null:
+            serializedArg->setString("type"_s, "null"_s);
+            break;
+        case JSON::Value::Type::Object:
+            serializedArg->setString("type"_s, "object"_s);
+            serializedArg->setString("value"_s, arg->toJSONString());
+            break;
+        case JSON::Value::Type::Array:
+            serializedArg->setString("type"_s, "array"_s);
+            serializedArg->setString("value"_s, arg->toJSONString());
+            break;
+        case JSON::Value::Type::Integer:
+            serializedArg->setString("type"_s, "number"_s);
+            serializedArg->setInteger("value"_s, *arg->asInteger());
+            break;
+        }
+        serializedArgs->pushObject(WTFMove(serializedArg));
+    }
+
+    // TODO Get the source from the current realm record
+    // https://bugs.webkit.org/show_bug.cgi?id=282978
+
+    // TODO Get the current stacktrace for assert, error, trace, and warn messages
+    // https://bugs.webkit.org/show_bug.cgi?id=282979
+
+    auto entry = JSON::Object::create();
+    entry->setString("type"_s, "console"_s);
+    entry->setString("level"_s, level);
+    entry->setString("text"_s, textBuilder.toString());
+    entry->setValue("timestamp"_s, *timestampValue);
+    entry->setString("method"_s, method);
+    entry->setArray("args"_s, serializedArgs);
+
+    auto body = JSON::Object::create();
+    body->setObject("params"_s, WTFMove(entry));
+
+    if (eventIsEnabled("log.entryAdded"_s, { m_toplevelBrowsingContext.value() }))
+        emitEvent("log.entryAdded"_s, WTFMove(body));
+    // TODO Implement event buffering, to save the log entries for later emission when the user subscribes to it
+    // https://bugs.webkit.org/show_bug.cgi?id=282980
+}
+
+void Session::emitEvent(const String& eventName, RefPtr<JSON::Object>&& body)
+{
+    // https://w3c.github.io/webdriver-bidi/#emit-an-event
+    body->setString("type"_s, "event"_s);
+    body->setString("method"_s, eventName);
+    m_bidiServer->sendMessage(this->id(), body->toJSONString());
+}
+
+Vector<String> Session::eventEnabledBrowsingContexts(const String& eventName)
+{
+    // https://w3c.github.io/webdriver-bidi/#event-enabled-navigables
+    Vector<String> contexts;
+    for (auto& context : m_browsingContextEventMap) {
+        auto& events = context.value;
+        if (events.contains(eventName))
+            contexts.append(context.key);
+    }
+    return contexts;
+}
+
+HashSet<String> Session::sessionsForWhichEventIsEnabled(const String& eventName, const Vector<String>& browsingContexts)
+{
+    // https://w3c.github.io/webdriver-bidi/#set-of-sessions-for-which-an-event-is-enabled
+    HashSet<String> sessions;
+    // Note: We currently support single sessions for now
+    if (eventIsEnabled(eventName, browsingContexts))
+        sessions.add(this->id());
+    return sessions;
+}
+
+bool Session::eventIsEnabled(const String& eventName, const Vector<String>& browsingContexts)
+{
+    // https://w3c.github.io/webdriver-bidi/#event-is-enabled
+    (void)browsingContexts;
+    HashSet<String> topLevelBrowsingContexts;
+    // FIXME Add support to subscribe to specific browsing contexts
+    // https://bugs.webkit.org/show_bug.cgi?id=282981
+    topLevelBrowsingContexts.add(m_toplevelBrowsingContext.value());
+
+    auto eventMap = m_browsingContextEventMap;
+
+    for (auto& topLevelBrowsingContext : topLevelBrowsingContexts) {
+        auto browsingContextEvents = eventMap.find(topLevelBrowsingContext);
+        if (!browsingContextEvents.get())
+            continue;
+        auto candidate = browsingContextEvents->value.find(eventName);
+        if (candidate.get())
+            return true;
+    }
+
+    return m_globalEventSet.contains(eventName);
+}
+
+void Session::enableGlobalEvent(const String& eventName)
+{
+    m_globalEventSet.add(eventName);
+}
+#endif
 
 } // namespace WebDriver

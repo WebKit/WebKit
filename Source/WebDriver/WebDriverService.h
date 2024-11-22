@@ -136,6 +136,7 @@ private:
 #if ENABLE(WEBDRIVER_BIDI)
     // BiDi message handlers
     void bidiSessionStatus(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
+    void bidiSessionSubscribe(unsigned id, RefPtr<JSON::Object>&&, Function<void (WebSocketMessageHandler::Message&&)>&&);
 #endif
 
     static Capabilities platformCapabilities();

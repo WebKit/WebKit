@@ -46,6 +46,7 @@
 #include "InspectorDOMDebuggerAgent.h"
 #include "InspectorDOMStorageAgent.h"
 #include "InspectorDatabaseAgent.h"
+#include "InspectorInstrumentationPublic.h"
 #include "InspectorLayerTreeAgent.h"
 #include "InspectorMemoryAgent.h"
 #include "InspectorNetworkAgent.h"
@@ -79,7 +80,12 @@
 #include <JavaScriptCore/InspectorDebuggerAgent.h>
 #include <JavaScriptCore/ScriptArguments.h>
 #include <JavaScriptCore/ScriptCallStack.h>
+#include <memory>
+#include <wtf/NeverDestroyed.h>
+#include <wtf/Observer.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
+#include <wtf/WeakHashSet.h>
 
 namespace WebCore {
 
@@ -87,6 +93,13 @@ using namespace Inspector;
 
 namespace {
 static HashSet<InstrumentingAgents*>* s_instrumentingAgentsSet = nullptr;
+#if ENABLE(WEBDRIVER_BIDI)
+static WeakHashSet<InspectorInstrumentationConsoleMessageObserver>& consoleMessageObservers()
+{
+    static NeverDestroyed<WeakHashSet<InspectorInstrumentationConsoleMessageObserver>> observers;
+    return observers;
+}
+#endif
 }
 
 void InspectorInstrumentation::firstFrontendCreated()
@@ -921,6 +934,21 @@ static bool isConsoleAssertMessage(MessageSource source, MessageType type)
     return source == MessageSource::ConsoleAPI && type == MessageType::Assert;
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+
+void InspectorInstrumentation::addConsoleMessageObserver(const InspectorInstrumentationConsoleMessageObserver& observer)
+{
+    ASSERT(!consoleMessageObservers().contains(observer));
+    consoleMessageObservers().add(observer);
+}
+
+void InspectorInstrumentation::removeConsoleMessageObserver(const InspectorInstrumentationConsoleMessageObserver& observer)
+{
+    ASSERT(consoleMessageObservers().contains(observer));
+    consoleMessageObservers().remove(observer);
+}
+#endif
+
 void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& instrumentingAgents, std::unique_ptr<ConsoleMessage> message)
 {
     if (LIKELY(!instrumentingAgents.inspectorEnvironment().developerExtrasEnabled()))
@@ -930,8 +958,14 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents& inst
     MessageType type = message->type();
     String messageText = message->message();
 
-    if (auto* consoleAgent = instrumentingAgents.webConsoleAgent())
+    if (auto* consoleAgent = instrumentingAgents.webConsoleAgent()) {
+#if ENABLE(WEBDRIVER_BIDI)
+        for (const InspectorInstrumentationConsoleMessageObserver& observer : consoleMessageObservers())
+            observer(*message);
+#endif
+
         consoleAgent->addMessageToConsole(WTFMove(message));
+    }
     // FIXME: This should just pass the message on to the debugger agent. JavaScriptCore InspectorDebuggerAgent should know Console MessageTypes.
     if (auto* webDebuggerAgent = instrumentingAgents.enabledWebDebuggerAgent()) {
         if (isConsoleAssertMessage(source, type))

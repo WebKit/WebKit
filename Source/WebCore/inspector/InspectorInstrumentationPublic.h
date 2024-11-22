@@ -25,7 +25,10 @@
 
 #pragma once
 
+#include <JavaScriptCore/ConsoleMessage.h>
 #include <atomic>
+#include <wtf/Observer.h>
+
 namespace WebCore {
 
 #define FAST_RETURN_IF_NO_FRONTENDS(value)                       \
@@ -37,5 +40,9 @@ public:
     static bool hasFrontends() { return s_frontendCounter; }
     static std::atomic<int> s_frontendCounter;
 };
+
+#if ENABLE(WEBDRIVER_BIDI)
+using InspectorInstrumentationConsoleMessageObserver = WTF::Observer<void(const Inspector::ConsoleMessage&)>;
+#endif
 
 }
