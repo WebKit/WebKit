@@ -200,6 +200,7 @@ private:
 
 #if PLATFORM(COCOA)
     NSURLRequest *applySniffingPoliciesIfNeeded(NSURLRequest *, bool shouldContentSniff, ContentEncodingSniffingPolicy);
+    NSURLRequest *applyTLSSettings(NSURLRequest *);
 #endif
 
     friend class ResourceHandleInternal;
