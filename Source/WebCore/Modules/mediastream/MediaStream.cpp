@@ -387,7 +387,7 @@ Ref<MediaStreamPrivate> MediaStream::protectedPrivateStream()
 #if !RELEASE_LOG_DISABLED
 WTFLogChannel& MediaStream::logChannel() const
 {
-    return LogWebRTC;
+    return LogMedia;
 }
 #endif
     
