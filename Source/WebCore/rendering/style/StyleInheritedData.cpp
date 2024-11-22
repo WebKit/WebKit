@@ -23,6 +23,7 @@
 #include "StyleInheritedData.h"
 
 #include "RenderStyleInlines.h"
+#include "StyleFontData.h"
 
 namespace WebCore {
 
@@ -35,6 +36,7 @@ StyleInheritedData::StyleInheritedData()
 #if ENABLE(TEXT_AUTOSIZING)
     , specifiedLineHeight(RenderStyle::initialLineHeight())
 #endif
+    , fontData(StyleFontData::create())
     , color(RenderStyle::initialColor())
     , visitedLinkColor(RenderStyle::initialColor())
 {
@@ -48,7 +50,7 @@ inline StyleInheritedData::StyleInheritedData(const StyleInheritedData& o)
 #if ENABLE(TEXT_AUTOSIZING)
     , specifiedLineHeight(o.specifiedLineHeight)
 #endif
-    , fontCascade(o.fontCascade)
+    , fontData(o.fontData)
     , color(o.color)
     , visitedLinkColor(o.visitedLinkColor)
 {
@@ -79,7 +81,7 @@ bool StyleInheritedData::nonFastPathInheritedEqual(const StyleInheritedData& oth
 #if ENABLE(TEXT_AUTOSIZING)
         && specifiedLineHeight == other.specifiedLineHeight
 #endif
-        && fontCascade == other.fontCascade
+        && fontData == other.fontData
         && horizontalBorderSpacing == other.horizontalBorderSpacing
         && verticalBorderSpacing == other.verticalBorderSpacing;
 }

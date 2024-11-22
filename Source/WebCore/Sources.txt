@@ -2919,6 +2919,7 @@ rendering/style/StyleDeprecatedFlexibleBoxData.cpp
 rendering/style/StyleFilterData.cpp
 rendering/style/StyleFilterImage.cpp
 rendering/style/StyleFlexibleBoxData.cpp
+rendering/style/StyleFontData.cpp
 rendering/style/StyleGeneratedImage.cpp
 rendering/style/StyleGradientImage.cpp
 rendering/style/StyleGridData.cpp
