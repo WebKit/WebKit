@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,9 @@
 #include "config.h"
 #include "NotificationEvent.h"
 
-#include <wtf/TZoneMallocInlines.h>
-
 #if ENABLE(NOTIFICATION_EVENT)
+
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 

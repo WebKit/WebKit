@@ -28,8 +28,8 @@
 
 #if ENABLE(WEBXR)
 
-#include <wtf/TZoneMallocInlines.h>
 #include "WebXRSession.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 

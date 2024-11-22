@@ -31,6 +31,7 @@
 #include "GPUTextureDescriptor.h"
 #include "GPUTextureFormat.h"
 #include "WebXRViewport.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 
