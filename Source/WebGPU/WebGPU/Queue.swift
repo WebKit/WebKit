@@ -35,7 +35,9 @@ public func writeBuffer(
 
 extension WebGPU.Queue {
     public func writeBuffer(_ buffer: WebGPU.Buffer, bufferOffset: UInt64, data: SpanUInt8) {
-        let device = self.device()
+        guard let device = self.m_device.get().get() else {
+            return
+        }
         guard let blitCommandEncoder = ensureBlitCommandEncoder() else {
             return
         }

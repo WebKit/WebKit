@@ -162,6 +162,16 @@ private:
     mutable WeakHashSet<CommandEncoder> m_commandEncoders;
     id<MTLSharedEvent> m_sharedEvent { nil };
     uint64_t m_sharedEventSignalValue { 0 };
-};
+} SWIFT_SHARED_REFERENCE(retainTexture, releaseTexture);
 
 } // namespace WebGPU
+
+inline void retainTexture(WebGPU::Texture* obj)
+{
+    WTF::retainRefCounted(obj);
+}
+
+inline void releaseTexture(WebGPU::Texture* obj)
+{
+    WTF::releaseRefCounted(obj);
+}

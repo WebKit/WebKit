@@ -177,12 +177,15 @@ WGPU_EXPORT void wgpuDeviceClearUncapturedErrorCallback(WGPUDevice device) WGPU_
 #define HAS_SWIFTCXX_THUNK  NS_REFINED_FOR_SWIFT
 
 #if defined(ENABLE_WEBGPU_SWIFT) && ENABLE_WEBGPU_SWIFT && defined(__WEBGPU__)
+#include <Metal/Metal.h>
+#include "APIConversions.h"
 #include "Buffer.h"
 #include "CommandEncoder.h"
 #include "CommandsMixin.h"
 #include "Device.h"
 #include "QuerySet.h"
 #include "Queue.h"
+#include "Texture.h"
 #endif
 
 #endif
