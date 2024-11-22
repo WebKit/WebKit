@@ -4,7 +4,8 @@
 <title>webm file with alternate reference frame</title>
 <script src="../resources/testharness.js"></script>
 <script>window.requirePixelDump = true</script>
-<script src=video-test.js></script>
+<script src="video-test.js"></script>
+<script src="utilities.js"></script>
 <script>
     // VP8 files were generated such that alternative reference frames were used:
     // $ ffmpeg -i dragon.webm -c:v libvpx -vf scale=320:-1 -auto-alt-ref 1 -arnr-maxframes 5 -arnr-strength 3 -pass 1 test-vp8-hiddenframes.webm
@@ -19,14 +20,14 @@
         let v = document.getElementsByTagName('video')[0];
         v.src = "content/test-vp8-hiddenframes.webm";
         await waitFor(v, 'loadedmetadata', true);
-        let promise = new Promise(resolve => v.requestVideoFrameCallback(resolve));
+        await waitForVideoFrame(v); // make sure the first frame got displayed before waiting for the last one.
         // duration of the last frame.
         v.currentTime = v.duration - 0.038;
+        let promise = new Promise(resolve => v.requestVideoFrameCallback(resolve));
         await waitFor(v, 'seeked', true);
         v.play();
         await waitFor(v, 'ended', true);
-        // FIXME: await promise; // this promise is never resolved due to webkit.org/b/282782 and webkit.org/b/282797
-        await sleepFor(1000);
+        await promise;
 
         if (window.testRunner)
             testRunner.notifyDone();

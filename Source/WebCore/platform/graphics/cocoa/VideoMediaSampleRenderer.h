@@ -101,8 +101,15 @@ private:
     void resetReadyForMoreSample();
     void initializeDecompressionSession();
     void decodeNextSample();
-    void decodedFrameAvailable(RetainPtr<CMSampleBufferRef>&&);
-    bool maybeQueueFrameForDisplay(CMSampleBufferRef);
+    using FlushId = int;
+    void decodedFrameAvailable(RetainPtr<CMSampleBufferRef>&&, FlushId);
+    enum class DecodedFrameResult : uint8_t {
+        TooEarly,
+        TooLate,
+        AlreadyDisplayed,
+        Displayed
+    };
+    DecodedFrameResult maybeQueueFrameForDisplay(CMSampleBufferRef, FlushId);
     void flushCompressedSampleQueue();
     void flushDecodedSampleQueue();
     bool purgeDecodedSampleQueue();
@@ -112,7 +119,7 @@ private:
     void maybeBecomeReadyForMoreMediaData();
     bool shouldDecodeSample(CMSampleBufferRef, bool displaying);
 
-    void notifyHasAvailableVideoFrame();
+    void notifyHasAvailableVideoFrame(FlushId);
     void notifyErrorHasOccurred(OSStatus);
 
     Ref<GuaranteedSerialFunctionDispatcher> dispatcher() const;
@@ -131,8 +138,8 @@ private:
     RetainPtr<CMTimebaseRef> m_timebase WTF_GUARDED_BY_LOCK(m_lock);
     OSObjectPtr<dispatch_source_t> m_timerSource WTF_GUARDED_BY_LOCK(m_lock);
     std::atomic<ssize_t> m_framesBeingDecoded { 0 };
-    std::atomic<int> m_flushId { 0 };
-    Deque<std::pair<RetainPtr<CMSampleBufferRef>, int>> m_compressedSampleQueue WTF_GUARDED_BY_CAPABILITY(dispatcher().get());
+    std::atomic<FlushId> m_flushId { 0 };
+    Deque<std::pair<RetainPtr<CMSampleBufferRef>, FlushId>> m_compressedSampleQueue WTF_GUARDED_BY_CAPABILITY(dispatcher().get());
     RetainPtr<CMBufferQueueRef> m_decodedSampleQueue; // created on the main thread, immutable after creation.
     RefPtr<WebCoreDecompressionSession> m_decompressionSession;
     bool m_isDecodingSample WTF_GUARDED_BY_CAPABILITY(dispatcher().get()) { false };

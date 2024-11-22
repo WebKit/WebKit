@@ -656,6 +656,9 @@ webkit.org/b/259658 http/tests/media/video-play-stall.html [ Pass Failure ]
 webkit.org/b/136708 http/tests/media/video-play-stall-seek.html
 webkit.org/b/136708 media/media-fullscreen-not-in-document.html
 
+webkit.org/b/283448 media/media-rvfc-paused-mp4.html [ Failure ]
+webkit.org/b/283448 media/media-rvfc-paused-offscreen-mp4.html [ Failure ]
+
 webkit.org/b/236722 http/tests/media/video-play-waiting.html [ Timeout ]
 
 # This test requires generation of progress events during loading

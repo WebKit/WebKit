@@ -1166,6 +1166,8 @@ media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failu
 media/media-source/media-source-vp8-webm-error.html [ Skip ]
 media/media-source/media-source-vp8-webm-error-offscreen.html [ Skip ]
 http/tests/media/video-webm-stall-seek.html [ Skip ]
+media/media-rvfc-paused-offscreen-webm.html [ Skip ]
+media/media-rvfc-paused-webm.html [ Skip ]
 
 # Managed MediaSource isn't enabled on WK1
 media/media-source/media-managedmse-append.html [ Skip ]

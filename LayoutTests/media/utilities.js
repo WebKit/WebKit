@@ -56,7 +56,7 @@ const delay = ms => new Promise(res => setTimeout(res, ms));
 
 function waitForVideoFrame(video, cb) {
     const p = new Promise((resolve) => {
-        video.requestVideoFrameCallback((now, metadata) => resolve(now, metadata));
+        video.requestVideoFrameCallback((now, metadata) => resolve([now, metadata]));
     });
     if (cb)
         p.then(cb);
@@ -67,7 +67,7 @@ function waitForVideoFrameUntil(video, time, cb) {
     const p = new Promise(resolve => {
         const callback = ((now, metadata) => {
             if (metadata.mediaTime >= time) {
-                resolve(now, metadata);
+                resolve([now, metadata]);
                 return;
             }
             video.requestVideoFrameCallback(callback);

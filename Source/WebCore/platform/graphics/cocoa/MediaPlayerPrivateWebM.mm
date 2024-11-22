@@ -746,7 +746,9 @@ void MediaPlayerPrivateWebM::setHasAvailableVideoFrame(bool hasAvailableVideoFra
     if (auto player = m_player.get())
         player->firstVideoFrameAvailable();
 
-    checkNewVideoFrameMetadata(currentTime());
+    if (m_isGatheringVideoFrameMetadata)
+        checkNewVideoFrameMetadata(currentTime());
+
     if (m_seekState == WaitingForAvailableFame)
         maybeCompleteSeek();
 
