@@ -50,17 +50,15 @@ std::pair<const char*, const char*> GStreamerCodecUtilities::parseH264ProfileAnd
     ensureDebugCategoryInitialized();
 
     auto components = codec.split('.');
-    long int spsAsInteger = strtol(components[1].utf8().data(), nullptr, 16);
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    uint8_t sps[3];
+    auto spsAsInteger = parseInteger<uint64_t>(components[1], 16).value_or(0);
+    std::array<uint8_t, 3> sps;
     sps[0] = spsAsInteger >> 16;
-    sps[1] = spsAsInteger >> 8;
-    sps[2] = spsAsInteger;
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+    sps[1] = (spsAsInteger >> 8) & 0xff;
+    sps[2] = spsAsInteger & 0xff;
 
-    const char* profile = gst_codec_utils_h264_get_profile(sps, 3);
-    const char* level = gst_codec_utils_h264_get_level(sps, 3);
+    const char* profile = gst_codec_utils_h264_get_profile(sps.data(), 3);
+    const char* level = gst_codec_utils_h264_get_level(sps.data(), 3);
 
     // To avoid going through a class hierarchy for such a simple
     // string conversion, we use a little trick here: See
