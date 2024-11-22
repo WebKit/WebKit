@@ -154,7 +154,6 @@ JSNVShaderNoperspectiveInterpolation.cpp
 JSNamedNodeMap.cpp
 JSNavigateEvent.cpp
 JSNavigation.cpp
-JSNavigationHistoryEntry.cpp
 JSNavigator.cpp
 JSNodeList.cpp
 JSNotification.cpp
@@ -221,8 +220,8 @@ JSTextTrackCueList.cpp
 JSTextTrackList.cpp
 JSTrustedTypePolicy.cpp
 JSTrustedTypePolicyFactory.cpp
-JSUndoManager.cpp
 JSURLPattern.cpp
+JSUndoManager.cpp
 JSUserMessageHandlersNamespace.cpp
 JSVTTCue.cpp
 JSVTTRegion.cpp

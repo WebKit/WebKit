@@ -9,7 +9,6 @@ Platform/IPC/StreamConnectionWorkQueue.cpp
 UIProcess/AuxiliaryProcessProxy.cpp
 UIProcess/Cocoa/WebProcessPoolCocoa.mm
 UIProcess/Extensions/WebExtension.cpp
-UIProcess/Extensions/WebExtensionContext.cpp
 UIProcess/Extensions/WebExtensionMenuItem.cpp
 UIProcess/RemoteLayerTree/mac/RemoteScrollingTreeMac.mm
 UIProcess/UserContent/WebUserContentControllerProxy.cpp

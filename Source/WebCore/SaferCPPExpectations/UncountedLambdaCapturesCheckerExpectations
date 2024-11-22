@@ -310,7 +310,7 @@ css/SelectorChecker.cpp
 css/StyleRule.cpp
 css/parser/CSSParserImpl.cpp
 css/typedom/transform/CSSMatrixComponent.cpp
-css/typedom/transform/CSSScale.cpp
+css/typedom/transform/CSSRotate.cpp
 dom/ContainerNode.cpp
 dom/CustomElementDefaultARIA.cpp
 dom/Document.cpp
