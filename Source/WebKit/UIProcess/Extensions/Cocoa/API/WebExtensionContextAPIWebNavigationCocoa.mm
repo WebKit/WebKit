@@ -50,7 +50,7 @@ static WebExtensionFrameParameters frameParametersForFrame(_WKFrameTreeNode *fra
     auto *frameURL = frameInfo.request.URL;
 
     return {
-        frameInfo._errorOccurred,
+        static_cast<bool>(frameInfo._errorOccurred),
         extensionContext->hasPermission(frameURL, tab) ? std::optional(frameURL) : std::nullopt,
         parentFrame ? toWebExtensionFrameIdentifier(parentFrame.info) : WebExtensionFrameConstants::NoneIdentifier,
         includeFrameIdentifier ? std::optional(toWebExtensionFrameIdentifier(frameInfo)) : std::nullopt
