@@ -222,7 +222,7 @@ dialog {
     color: var(--text-color);
 }
 
-a {
+a, .summ a, .summ_deep a {
     color: var(--link-color);
     text-decoration: none;
 }
@@ -2634,6 +2634,63 @@ table.file_table {
 .attachment-collapse-toggles {
     line-height: 3rem;
 }
+
+/** Tree & Graph pages **/
+ul.tree li a.b {
+    padding-left: 0;
+    margin-right: 0;
+    text-decoration: none;
+    font-size: 0;
+}
+
+ul.tree li a.b::before {
+    content: "\25B6";
+    font-size: var(--font-size-large);
+    display: inline-block;
+    width: 2rem;
+    height: 2.5rem;
+}
+
+ul.tree li a.b_open {
+    background: none;
+    cursor: pointer;
+}
+
+ul.tree li a.b_open::before {
+    content: "\25BC";
+}
+
+ul.tree li:has(ul) a.b:link {
+    color: var(--link-color);
+}
+
+ul.tree li:not(:has(ul)) a.b {
+    color: var(--text-color-light);
+}
+
+ul.tree li {
+    padding: 0.3rem 0.5rem;
+    text-indent: 0;
+    list-style-type: none;
+    background: none;
+}
+
+.tree_link {
+    margin-left: 0.3rem;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.tree_link svg {
+    display: block;
+    width: var(--font-size-medium);
+    height: auto;
+}
+
+ul.tree .bz_closed a:link {
+    color: var(--visited-color);
+}
+
 
 @media only screen and (max-width: 800px) {
     #bugzilla-body .navigation {
