@@ -37,7 +37,7 @@
 #include "ResourceResponse.h"
 #include <wtf/text/CString.h>
 
-#define PROGRESS_TRACKER_RELEASE_LOG(fmt, ...) RELEASE_LOG(Network, "%p - ProgressTracker::" fmt, this, ##__VA_ARGS__)
+#define PROGRESS_TRACKER_RELEASE_LOG(fmt, ...) RELEASE_LOG_FORWARDABLE(Network, fmt, ##__VA_ARGS__)
 
 namespace WebCore {
 
@@ -135,7 +135,7 @@ void ProgressTracker::progressStarted(LocalFrame& frame)
     }
     m_numProgressTrackedFrames++;
 
-    PROGRESS_TRACKER_RELEASE_LOG("progressStarted: frame %p, value %f, tracked frames %d, originating frame %p, isMainLoad %d", &frame, m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get(), m_isMainLoad);
+    PROGRESS_TRACKER_RELEASE_LOG(PROGRESSTRACKER_PROGRESSSTARTED, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame ? m_originatingProgressFrame->frameID().object().toUInt64() : 0, m_isMainLoad);
 
     m_client->didChangeEstimatedProgress();
     InspectorInstrumentation::frameStartedLoading(frame);
@@ -150,7 +150,7 @@ void ProgressTracker::progressEstimateChanged(LocalFrame& frame)
 void ProgressTracker::progressCompleted(LocalFrame& frame)
 {
     LOG(Progress, "Progress completed (%p) - frame %p(frameID %" PRIu64 "), value %f, tracked frames %d, originating frame %p", this, &frame, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get());
-    PROGRESS_TRACKER_RELEASE_LOG("progressCompleted: frame %p, value %f, tracked frames %d, originating frame %p, isMainLoad %d", &frame, m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get(), m_isMainLoad);
+    PROGRESS_TRACKER_RELEASE_LOG(PROGRESSTRACKER_PROGRESSCOMPLETED, frame.frameID().object().toUInt64(), m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame ? m_originatingProgressFrame->frameID().object().toUInt64() : 0, m_isMainLoad);
 
     if (m_numProgressTrackedFrames <= 0)
         return;
@@ -167,7 +167,7 @@ void ProgressTracker::progressCompleted(LocalFrame& frame)
 void ProgressTracker::finalProgressComplete()
 {
     LOG(Progress, "Final progress complete (%p)", this);
-    PROGRESS_TRACKER_RELEASE_LOG("finalProgressComplete: value %f, tracked frames %d, originating frame %p, isMainLoad %d, isMainLoadProgressing %d", m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame.get(), m_isMainLoad, isMainLoadProgressing());
+    PROGRESS_TRACKER_RELEASE_LOG(PROGRESSTRACKER_FINALPROGRESSCOMPLETE, m_progressValue, m_numProgressTrackedFrames, m_originatingProgressFrame ? m_originatingProgressFrame->frameID().object().toUInt64() : 0, m_isMainLoad, isMainLoadProgressing());
 
     RefPtr frame = std::exchange(m_originatingProgressFrame, nullptr);
 

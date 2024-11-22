@@ -2457,6 +2457,8 @@
 		E33E8FFD2C7FD2980002BEB3 /* UseDownloadPlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = E33E8FFC2C7FD2980002BEB3 /* UseDownloadPlaceholder.h */; };
 		E34DAD392B753FA700FABEE2 /* ExtensionProcess.mm in Sources */ = {isa = PBXBuildFile; fileRef = E34DAD372B753FA700FABEE2 /* ExtensionProcess.mm */; };
 		E34DAD3A2B753FA700FABEE2 /* ExtensionProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = E34DAD382B753FA700FABEE2 /* ExtensionProcess.h */; };
+		E350B8A52CDD312700CB9B51 /* WebKitLogClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E350B8A42CDD312700CB9B51 /* WebKitLogClient.h */; };
+		E350B8A72CDD314B00CB9B51 /* WebKitLogClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E350B8A62CDD314B00CB9B51 /* WebKitLogClient.cpp */; };
 		E3607DEA2C7FE92200956766 /* WKDownloadDelegatePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = E3607DE92C7FE92200956766 /* WKDownloadDelegatePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E36A00E329CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm in Sources */ = {isa = PBXBuildFile; fileRef = E36A00E229CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm */; };
 		E36FF00327F36FBD004BE21A /* SandboxStateVariables.h in Headers */ = {isa = PBXBuildFile; fileRef = E36FF00127F36FBD004BE21A /* SandboxStateVariables.h */; };
@@ -8037,6 +8039,7 @@
 		E1E552C316AE065E004ED653 /* SandboxInitializationParameters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SandboxInitializationParameters.h; sourceTree = "<group>"; };
 		E1EE53DC11F8CF9F00CCBEE4 /* InjectedBundlePageEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageEditorClient.h; sourceTree = "<group>"; };
 		E1EE53E611F8CFFB00CCBEE4 /* InjectedBundlePageEditorClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageEditorClient.cpp; sourceTree = "<group>"; };
+		E30604F92CCC0A730033AC72 /* generate-log-entries.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = "generate-log-entries.py"; sourceTree = "<group>"; };
 		E30CFB9D2660663C0094D9C0 /* com.apple.WebKit.WebContent.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file; path = com.apple.WebKit.WebContent.sb; sourceTree = "<group>"; };
 		E313664D265EE5AF0051084F /* com.apple.WebKit.WebContent.sb.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = com.apple.WebKit.WebContent.sb.in; sourceTree = "<group>"; };
 		E31586CB2AD610F30062ED2A /* ExtensionEventHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ExtensionEventHandler.h; path = Cocoa/ExtensionEventHandler.h; sourceTree = "<group>"; };
@@ -8046,7 +8049,6 @@
 		E326E356284E580E00157372 /* AuxiliaryProcessProxyCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AuxiliaryProcessProxyCocoa.mm; sourceTree = "<group>"; };
 		E326F4D92CA6C44F00182187 /* LogStream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LogStream.h; sourceTree = "<group>"; };
 		E326F4DA2CA6C44F00182187 /* LogStream.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LogStream.cpp; sourceTree = "<group>"; };
-		E326F4E12CA6F95B00182187 /* LogStream.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = LogStream.messages.in; sourceTree = "<group>"; };
 		E33E8FFC2C7FD2980002BEB3 /* UseDownloadPlaceholder.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = UseDownloadPlaceholder.h; sourceTree = "<group>"; };
 		E3439B632345463A0011DE0B /* NetworkProcessConnectionInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NetworkProcessConnectionInfo.h; path = Network/NetworkProcessConnectionInfo.h; sourceTree = "<group>"; };
 		E34B110C27C46BC6006D2F2E /* libWebCoreTestShim.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; path = libWebCoreTestShim.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -8056,6 +8058,9 @@
 		E350A7C52934F1C100A06C29 /* common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = common.sb; sourceTree = "<group>"; };
 		E350A7C82934F75F00A06C29 /* common.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = common.sb; sourceTree = "<group>"; };
 		E350A7DF29364D3800A06C29 /* util.sb */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = util.sb; sourceTree = "<group>"; };
+		E350B8A42CDD312700CB9B51 /* WebKitLogClient.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitLogClient.h; sourceTree = "<group>"; };
+		E350B8A62CDD314B00CB9B51 /* WebKitLogClient.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitLogClient.cpp; sourceTree = "<group>"; };
+		E350B8B42CE0385100CB9B51 /* WebKitLogEntries.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = WebKitLogEntries.in; sourceTree = "<group>"; };
 		E3607DE92C7FE92200956766 /* WKDownloadDelegatePrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WKDownloadDelegatePrivate.h; sourceTree = "<group>"; };
 		E36A00E129CF4EBA00AC4E8A /* TextTrackRepresentationCocoa.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TextTrackRepresentationCocoa.h; sourceTree = "<group>"; };
 		E36A00E229CF7AC000AC4E8A /* TextTrackRepresentationCocoa.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = TextTrackRepresentationCocoa.mm; sourceTree = "<group>"; };
@@ -9279,7 +9284,6 @@
 				46B9E2372B04228A008346A5 /* LoadParameters.serialization.in */,
 				E326F4DA2CA6C44F00182187 /* LogStream.cpp */,
 				E326F4D92CA6C44F00182187 /* LogStream.h */,
-				E326F4E12CA6F95B00182187 /* LogStream.messages.in */,
 				E3DC5B1A2C9AE09700D73BB3 /* LogStreamIdentifier.h */,
 				462CD80B28204DF100F0EA04 /* MarkSurfacesAsVolatileRequestIdentifier.h */,
 				49917DB0252E30750050313F /* MediaPlaybackState.h */,
@@ -9439,6 +9443,9 @@
 				0F4000FF2527D6F700E91DA7 /* WebKeyboardEvent.h */,
 				BC9BA5021697C45300E44616 /* WebKit2Initialize.cpp */,
 				BC9BA5031697C45300E44616 /* WebKit2Initialize.h */,
+				E350B8A62CDD314B00CB9B51 /* WebKitLogClient.cpp */,
+				E350B8A42CDD312700CB9B51 /* WebKitLogClient.h */,
+				E350B8B42CE0385100CB9B51 /* WebKitLogEntries.in */,
 				905620E812BC248B000799B6 /* WebMemorySampler.cpp */,
 				905620E912BC248B000799B6 /* WebMemorySampler.h */,
 				C0337DAF127A28D0008FF4F4 /* WebMouseEvent.cpp */,
@@ -15653,6 +15660,7 @@
 				0FC0856E187CE0A900780D86 /* __init__.py */,
 				E3A997B92AFFCEA2006C90F1 /* compile-sandbox.sh */,
 				4157853021276B6F00DD3800 /* copy-webcontent-resources-to-private-headers.sh */,
+				E30604F92CCC0A730033AC72 /* generate-log-entries.py */,
 				C0CE73361247F70E00BC0EC4 /* generate-message-receiver.py */,
 				5CD4F01C28B6ADDB00F9ECEA /* generate-serializers.py */,
 				0FC0856F187CE0A900780D86 /* messages.py */,
@@ -17261,6 +17269,7 @@
 				BCB63478116BF10600603215 /* WebKit2_C.h in Headers */,
 				BC9BA5051697C45300E44616 /* WebKit2Initialize.h in Headers */,
 				0744DA552CE05FE400AACC81 /* WebKitInternal.h in Headers */,
+				E350B8A52CDD312700CB9B51 /* WebKitLogClient.h in Headers */,
 				DD4BDE9C2CA73B60001A3339 /* WebKitSwiftOverlayMacros.h in Headers */,
 				BC032D7F10F4378D0058C15A /* WebLocalFrameLoaderClient.h in Headers */,
 				465FA7262757D93D0072362B /* WebLockRegistryProxy.h in Headers */,
@@ -20177,6 +20186,7 @@
 				1CA8B945127C882A00576C2B /* WebInspectorUIProxyMessageReceiver.cpp in Sources */,
 				1A6280F31919982A006AD9F9 /* WebKit.m in Sources */,
 				A181A79821ACC74B0059A316 /* WebKitAdditions.mm in Sources */,
+				E350B8A72CDD314B00CB9B51 /* WebKitLogClient.cpp in Sources */,
 				DD4BDE902CA38269001A3339 /* WebKitSwiftOverlay.swift in Sources */,
 				CDF1B91B267025550007EC10 /* WebKitSwiftSoftLink.mm in Sources */,
 				E3816B3D27E2463A005EAFC0 /* WebMockContentFilterManager.cpp in Sources */,

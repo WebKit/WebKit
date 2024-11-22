@@ -28,9 +28,52 @@
 #include <wtf/Assertions.h>
 #include <wtf/Forward.h>
 
+#if __has_include("WebCoreLogDefinitions.h")
+#include "WebCoreLogDefinitions.h"
+#endif
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#include "WebCoreLogClient.h"
+#endif
+
 namespace WebCore {
 
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+#define RELEASE_LOG_FORWARDABLE(category, logMessage, ...) do { \
+    if (webCoreLogClient()) \
+        webCoreLogClient()->webCoreLog(WebCoreLogMessage::logMessage __VA_OPT__(,) __VA_ARGS__); \
+    else \
+        RELEASE_LOG(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__); \
+} while (0)
+
+#define RELEASE_LOG_INFO_FORWARDABLE(category, logMessage, ...) do { \
+    if (webCoreLogClient()) \
+        webCoreLogClient()->webCoreLog(WebCoreLogMessage::logMessage __VA_OPT__(,) __VA_ARGS__); \
+    else \
+        RELEASE_LOG_INFO(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__); \
+} while (0)
+
+#define RELEASE_LOG_ERROR_FORWARDABLE(category, logMessage, ...) do { \
+    if (webCoreLogClient()) \
+        webCoreLogClient()->webCoreLog(WebCoreLogMessage::logMessage __VA_OPT__(,) __VA_ARGS__); \
+    else \
+        RELEASE_LOG_ERROR(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__); \
+} while (0)
+
+#define RELEASE_LOG_FAULT_FORWARDABLE(category, logMessage, ...) do { \
+    if (webCoreLogClient()) \
+        webCoreLogClient()->webCoreLog(WebCoreLogMessage::logMessage __VA_OPT__(,) __VA_ARGS__); \
+    else \
+        RELEASE_LOG_FAULT(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__); \
+} while (0)
+#else
+#define RELEASE_LOG_FORWARDABLE(category, logMessage, ...) RELEASE_LOG(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__)
+#define RELEASE_LOG_INFO_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_INFO(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__)
+#define RELEASE_LOG_ERROR_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_ERROR(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__)
+#define RELEASE_LOG_FAULT_FORWARDABLE(category, logMessage, ...) RELEASE_LOG_FAULT(category, MESSAGE_##logMessage  __VA_OPT__(,) __VA_ARGS__)
+#endif // ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
 
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX Log

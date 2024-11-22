@@ -1,0 +1,56 @@
+# Copyright (C) 2024 Apple Inc. All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions
+# are met:
+# 1.  Redistributions of source code must retain the above copyright
+#     notice, this list of conditions and the following disclaimer.
+# 2.  Redistributions in binary form must reproduce the above copyright
+#     notice, this list of conditions and the following disclaimer in the
+#     documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS'' AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS BE LIABLE FOR
+# ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# File format:
+#
+# Identifier, format string, parameters, Log type (DEFAULT, INFO, ERROR, FAULT), Category (Default, Process, Loading, etc) 
+
+LogEntries {
+    SUBRESOURCELOADER_DIDFINISHLOADING, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didFinishLoading", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because new request is invalid", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_CANCELLED_INVALID_NEW_REQUEST, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because new request is NULL (1)", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_CANCELLED_TERMINAL_STATE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because reached terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_TERMINAL_STATE_CALLING_COMPLETION_HANDLER, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: reached terminal state; calling completion handler", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_CANCELLED_INVALID_REQUEST, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because request is NULL (2)", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCELOAD_FINISHED, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load finished; calling completion handler", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCELOAD_CANCELLED_REDIRECT_NOT_ALLOWED, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because not allowed to follow a redirect", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_REACHED_TERMINAL_STATE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: reached terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_COMPLETED, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load completed", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_TOO_MANY_REDIRECTS, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because too many redirects", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_CANNOT_REQUEST_AFTER_REDIRECTION, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because CachedResourceLoader::updateRequestAfterRedirection (really CachedResourceLoader::canRequestAfterRedirection) said no", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_AFTER_USING_BLOCKED_PORT, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load (redirect) canceled because it attempted to use a blocked port", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_AFTER_REDIRECT_DENIED_BY_CORS_POLICY, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because cross-origin redirection denied by CORS policy", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_LOAD_CANCELLED_AFTER_IMAGE_BEING_DEFERRED, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource load canceled because it's an image that should be deferred", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLSENDREQUESTINTERNAL_RESOURCE_DONE_NOTIFYING_CLIENTS, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willSendRequestInternal: resource done notifying clients", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_DIDRECEIVERESPONSE_CANCELING_LOAD_BLOCKED_BY_CONTENT_POLICY, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didReceiveResponse: canceling load because not allowed by content policy", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_DIDRECEIVERESPONSE_CANCELING_LOAD_RECEIVED_UNEXPECTED_RANGE_RESPONSE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didReceiveResponse: canceling load because receiving a range requested response for a non-range request", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_DIDRECEIVERESPONSE_CANCELING_LOAD_BECAUSE_OF_CROSS_ORIGIN_ACCESS_CONTROL, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didReceiveResponse: canceling load because of cross origin access control", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_DIDRECEIVERESPONSE_CANCELING_LOAD_BECAUSE_OF_MULTIPART_NON_IMAGE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didReceiveResponse: canceling load because something about a multi-part non-image", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_DIDFINISHLOADING_CANCELED, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didFinishLoading: was canceled", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_DIDFINISHLOADING_REACHED_TERMINAL_STATE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didFinishLoading: reached terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_DIDFINISHLOADING_DID_NOT_REACH_TERMINAL_STATE, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didFinishLoading: Did not reach terminal state", (uint64_t, uint64_t, uint64_t), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_DIDFAIL, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::didFail: (type=%d, code=%d)", (uint64_t, uint64_t, uint64_t, int, int), DEFAULT, ResourceLoading
+    SUBRESOURCELOADER_WILLCANCEL, "[pageID=%llu, frameID=%llu, resourceID=%llu SubResourceLoader::willCancel: (type=%d, code=%d)", (uint64_t, uint64_t, uint64_t, int, int), DEFAULT, ResourceLoading
+    PROGRESSTRACKER_PROGRESSSTARTED, "ProgressTracker::progressStarted: frameID %llu, value %f, tracked frames %d, originating frameID %llu, isMainLoad %d", (uint64_t, double, int, uint64_t, int), DEFAULT, Network
+    PROGRESSTRACKER_PROGRESSCOMPLETED, "ProgressTracker::progressCompleted: frameID %llu, value %f, tracked frames %d, originating frameID %llu, isMainLoad %d", (uint64_t, double, int, uint64_t, int), DEFAULT, Network
+    PROGRESSTRACKER_FINALPROGRESSCOMPLETE, "ProgressTracker::finalProgressComplete: value %f, tracked frames %d, originating frameID %llu, isMainLoad %d, isMainLoadProgressing %d", (double, int, uint64_t, int, int), DEFAULT, Network
+}

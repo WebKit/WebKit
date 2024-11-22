@@ -337,11 +337,11 @@ static void setVideoDecoderBehaviors(OptionSet<VideoDecoderBehavior> videoDecode
 
 void WebProcess::platformInitializeWebProcess(WebProcessCreationParameters& parameters)
 {
-    WEBPROCESS_RELEASE_LOG(Process, "WebProcess::platformInitializeWebProcess");
-
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
     setupLogStream();
 #endif
+
+    RELEASE_LOG_FORWARDABLE(Process, PLATFORM_INITIALIZE_WEBPROCESS);
 
 #if USE(EXTENSIONKIT)
     // Workaround for crash seen when running tests. See rdar://118186487.
@@ -863,6 +863,10 @@ void WebProcess::setupLogStream()
         CRASH();
     auto [streamConnection, serverHandle] = WTFMove(*connectionPair);
     m_logStreamConnection = WTFMove(streamConnection);
+
+    webkitLogClient() = WTF::makeUnique<WebKitLogClient>(m_logStreamConnection.get(), m_logStreamIdentifier);
+    webCoreLogClient() = WTF::makeUnique<WebKitLogClient>(m_logStreamConnection.get(), m_logStreamIdentifier);
+
     if (RefPtr logStreamConnection = m_logStreamConnection)
         logStreamConnection->open(*this);
 

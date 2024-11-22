@@ -27,7 +27,21 @@
 #include "config.h"
 #include "Logging.h"
 
+#include <wtf/NeverDestroyed.h>
+
 #if !LOG_DISABLED || !RELEASE_LOG_DISABLED
+
+#if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
+namespace WebKit {
+
+std::unique_ptr<WebKitLogClient>& webkitLogClient()
+{
+    static LazyNeverDestroyed<std::unique_ptr<WebKitLogClient>> client;
+    return client;
+}
+
+}
+#endif
 
 #define DEFINE_WEBKIT2_LOG_CHANNEL(name) DEFINE_LOG_CHANNEL(name, LOG_CHANNEL_WEBKIT_SUBSYSTEM)
 WEBKIT2_LOG_CHANNELS(DEFINE_WEBKIT2_LOG_CHANNEL)

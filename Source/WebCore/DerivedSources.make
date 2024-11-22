@@ -2691,3 +2691,11 @@ $(GENERATED_PROCESS_SYNC_CLIENT_OUTPUT_PATTERNS) : $(WebCore)/Scripts/generate-p
 	$(PYTHON) $(WebCore)/Scripts/generate-process-sync-data.py $(PROCESS_SYNC_DATA_INPUT_FILES)
 
 # ------------------------
+
+# Log messages
+
+all : WebCoreLogDefinitions.h
+
+WebCoreLogDefinitions.h : $(WebCore)/platform/WebCoreLogEntries.in
+	@echo Creating WebCore log definitions $@
+	$(PYTHON) $(WebCore)/Scripts/generate-log-declarations.py WebCore $< $@
