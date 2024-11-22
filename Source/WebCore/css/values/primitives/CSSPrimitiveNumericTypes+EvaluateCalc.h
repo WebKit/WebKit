@@ -30,6 +30,13 @@
 namespace WebCore {
 namespace CSS {
 
+// MARK: - Requires Conversion Data
+
+template<typename T> bool requiresConversionData(const PrimitiveNumeric<T>& primitive)
+{
+    return WTF::switchOn(primitive, [&](const auto& value) { return requiresConversionData(value); });
+}
+
 // MARK: - Evaluation
 
 // FIXME: Remove "evaluateCalc" family of functions once color code has moved to the "toStyle" family of functions.
@@ -46,21 +53,39 @@ template<typename T> constexpr auto evaluateCalcNoConversionDataRequired(const T
 
 template<typename... Ts> auto evaluateCalcIfNoConversionDataRequired(const std::variant<Ts...>& component, const CSSCalcSymbolTable& symbolTable) -> std::variant<Ts...>
 {
-    return WTF::switchOn(component, [&](auto part) -> std::variant<Ts...> {
-        if (requiresConversionData(part))
-            return part;
-        return evaluateCalcNoConversionDataRequired(part, symbolTable);
+    return WTF::switchOn(component, [&](const auto& alternative) -> std::variant<Ts...> {
+        if (requiresConversionData(alternative))
+            return alternative;
+        return evaluateCalcNoConversionDataRequired(alternative, symbolTable);
     });
 }
 
 template<typename T> auto evaluateCalcIfNoConversionDataRequired(const PrimitiveNumeric<T>& component, const CSSCalcSymbolTable& symbolTable) -> PrimitiveNumeric<T>
 {
-    return { evaluateCalcIfNoConversionDataRequired(component.value, symbolTable) };
+    return WTF::switchOn(component, [&](const auto& alternative) -> PrimitiveNumeric<T> {
+        if (requiresConversionData(alternative))
+            return { alternative };
+        return { evaluateCalcNoConversionDataRequired(alternative, symbolTable) };
+    });
 }
 
 template<typename T> decltype(auto) evaluateCalcIfNoConversionDataRequired(const std::optional<T>& component, const CSSCalcSymbolTable& symbolTable)
 {
     return component ? std::make_optional(evaluateCalcIfNoConversionDataRequired(*component, symbolTable)) : std::nullopt;
+}
+
+// MARK: - Is UnevaluatedCalc
+
+template<typename T> bool isUnevaluatedCalc(const PrimitiveNumeric<T>& primitive)
+{
+    return WTF::switchOn(primitive, [&](const auto& value) { return isUnevaluatedCalc(value); });
+}
+
+// MARK: Simplify
+
+template<typename T> auto simplifyUnevaluatedCalc(const PrimitiveNumeric<T>& primitive, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> PrimitiveNumeric<T>
+{
+    WTF::switchOn(primitive, [&](const auto& value) { return simplifyUnevaluatedCalc(value, conversionData, symbolTable); });
 }
 
 } // namespace CSS

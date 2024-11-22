@@ -434,7 +434,7 @@ template<CSSValueID Name> static RefPtr<CSSValue> consumePrefixedLinearGradient(
     };
 
     if (auto angle = MetaConsumer<CSS::Angle<>>::consume(range, context, { }, angleConsumeOptions)) {
-        gradientLine = WTF::switchOn(WTFMove(angle->value), [](auto&& value) -> CSS::PrefixedLinearGradient::GradientLine { return value; });
+        gradientLine = WTF::switchOn(WTFMove(*angle), [](auto&& value) -> CSS::PrefixedLinearGradient::GradientLine { return value; });
         if (!consumeCommaIncludingWhitespace(range))
             return nullptr;
     } else if (auto keywordGradientLine = consumeKeywordGradientLine(range)) {

@@ -50,6 +50,11 @@ template<typename TupleLike> static bool styleImageIsUncacheableOnTupleLike(cons
     return WTF::apply([&](const auto& ...x) { return (styleImageIsUncacheable(x) || ...); }, tupleLike);
 }
 
+template<typename VariantLike> static bool styleImageIsUncacheableOnVariantLike(const VariantLike& variantLike)
+{
+    return WTF::switchOn(variantLike, [](const auto& alternative) { return styleImageIsUncacheable(alternative); });
+}
+
 template<typename CSSType> struct StyleImageIsUncacheable<std::optional<CSSType>> {
     bool operator()(const auto& value) { return value && styleImageIsUncacheable(*value); }
 };
@@ -83,7 +88,7 @@ template<typename... CSSTypes> struct StyleImageIsUncacheable<CommaSeparatedTupl
 };
 
 template<typename... CSSTypes> struct StyleImageIsUncacheable<std::variant<CSSTypes...>> {
-    bool operator()(const auto& value) { return WTF::switchOn(value, [](const auto& alternative) { return styleImageIsUncacheable(alternative); }); }
+    bool operator()(const auto& value) { return styleImageIsUncacheableOnVariantLike(value); }
 };
 
 template<> struct StyleImageIsUncacheable<CSSUnitType> {
@@ -99,7 +104,7 @@ template<RawNumeric CSSType> struct StyleImageIsUncacheable<UnevaluatedCalc<CSST
 };
 
 template<RawNumeric CSSType> struct StyleImageIsUncacheable<PrimitiveNumeric<CSSType>> {
-    constexpr bool operator()(const auto& value) { return styleImageIsUncacheable(value.value); }
+    constexpr bool operator()(const auto& value) { return styleImageIsUncacheableOnVariantLike(value); }
 };
 
 template<CSSValueID C> struct StyleImageIsUncacheable<Constant<C>> {

@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSPrimitiveNumericTypes+EvaluateCalc.h"
 #include "CSSPrimitiveNumericTypes.h"
 #include "CSSValueKeywords.h"
 #include "Color.h"

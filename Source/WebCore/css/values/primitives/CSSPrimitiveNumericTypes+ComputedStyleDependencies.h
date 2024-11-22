@@ -63,7 +63,7 @@ template<auto R> struct ComputedStyleDependenciesCollector<LengthPercentageRaw<R
 template<RawNumeric RawType> struct ComputedStyleDependenciesCollector<PrimitiveNumeric<RawType>> {
     void operator()(ComputedStyleDependencies& dependencies, const PrimitiveNumeric<RawType>& value)
     {
-        collectComputedStyleDependencies(dependencies, value.value);
+        WTF::switchOn(value, [&](const auto& value) { collectComputedStyleDependencies(dependencies, value); });
     }
 };
 

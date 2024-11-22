@@ -59,7 +59,7 @@ template<RawNumeric RawType> struct CSSValueCreation<UnevaluatedCalc<RawType>> {
 template<RawNumeric RawType> struct CSSValueCreation<PrimitiveNumeric<RawType>> {
     Ref<CSSValue> operator()(const PrimitiveNumeric<RawType>& value)
     {
-        return WTF::switchOn(value.value,
+        return WTF::switchOn(value,
             [](const typename PrimitiveNumeric<RawType>::Raw& raw) {
                 return CSSPrimitiveValue::create(raw.value, raw.type);
             },

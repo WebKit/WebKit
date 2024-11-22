@@ -133,7 +133,7 @@ template<auto R> struct ToStyle<CSS::AnglePercentage<R>> {
     }
     auto operator()(const From& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> To
     {
-        return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, conversionData, symbolTable); });
+        return WTF::switchOn(value, [&](const auto& value) { return (*this)(value, conversionData, symbolTable); });
     }
 
     auto operator()(const typename From::Raw& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
@@ -167,7 +167,7 @@ template<auto R> struct ToStyle<CSS::AnglePercentage<R>> {
     }
     auto operator()(const From& value, NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) -> To
     {
-        return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, token, symbolTable); });
+        return WTF::switchOn(value, [&](const auto& value) { return (*this)(value, token, symbolTable); });
     }
 };
 template<auto R> struct ToStyle<CSS::LengthPercentage<R>> {
@@ -192,7 +192,7 @@ template<auto R> struct ToStyle<CSS::LengthPercentage<R>> {
     }
     auto operator()(const From& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> To
     {
-        return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, conversionData, symbolTable); });
+        return WTF::switchOn(value, [&](const auto& value) { return (*this)(value, conversionData, symbolTable); });
     }
 
     auto operator()(const typename From::Raw& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
@@ -226,7 +226,7 @@ template<auto R> struct ToStyle<CSS::LengthPercentage<R>> {
     }
     auto operator()(const From& value, NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) -> To
     {
-        return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, token, symbolTable); });
+        return WTF::switchOn(value, [&](const auto& value) { return (*this)(value, token, symbolTable); });
     }
 };
 
@@ -245,7 +245,7 @@ template<CSS::RawNumeric RawType> struct ToStyle<CSS::PrimitiveNumeric<RawType>>
     }
     auto operator()(const From& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> To
     {
-        return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, conversionData, symbolTable); });
+        return WTF::switchOn(value, [&](const auto& value) { return (*this)(value, conversionData, symbolTable); });
     }
 
     auto operator()(const typename From::Raw& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> To
@@ -271,7 +271,7 @@ template<CSS::RawNumeric RawType> struct ToStyle<CSS::PrimitiveNumeric<RawType>>
     }
     auto operator()(const From& value, NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) -> To
     {
-        return WTF::switchOn(value.value, [&](const auto& value) { return (*this)(value, token, symbolTable); });
+        return WTF::switchOn(value, [&](const auto& value) { return (*this)(value, token, symbolTable); });
     }
 };
 

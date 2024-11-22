@@ -30,8 +30,8 @@
 #include "CSSColorConversion+ToTypedColor.h"
 #include "CSSColorDescriptors.h"
 #include "CSSPrimitiveNumericTypes+SymbolReplacement.h"
-#include "StylePrimitiveNumericTypes+Conversions.h"
 #include "Color.h"
+#include "StylePrimitiveNumericTypes+Conversions.h"
 #include <optional>
 
 namespace WebCore {
