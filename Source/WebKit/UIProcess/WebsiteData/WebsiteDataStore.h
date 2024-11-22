@@ -483,6 +483,8 @@ public:
 
     void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
 
+    void fetchLocalStorage(CompletionHandler<void(HashMap<WebCore::ClientOrigin, HashMap<String, String>>)>&&);
+
 private:
     enum class ForceReinitialization : bool { No, Yes };
 #if ENABLE(APP_BOUND_DOMAINS)

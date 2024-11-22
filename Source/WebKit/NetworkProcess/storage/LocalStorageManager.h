@@ -65,6 +65,8 @@ public:
     void cancelConnectToTransientLocalStorageArea(IPC::Connection::UniqueID);
     void disconnectFromStorageArea(IPC::Connection::UniqueID, StorageAreaIdentifier);
 
+    HashMap<String, String> fetchStorageMap() const;
+
 private:
     void connectionClosedForLocalStorageArea(IPC::Connection::UniqueID);
     void connectionClosedForTransientStorageArea(IPC::Connection::UniqueID);

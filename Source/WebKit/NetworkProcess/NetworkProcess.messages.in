@@ -257,4 +257,6 @@ messages -> NetworkProcess : AuxiliaryProcess WantsAsyncDispatchMessage {
     SetPersistedDomains(PAL::SessionID sessionsID, HashSet<WebCore::RegistrableDomain> domains)
 
     GetAppBadgeForTesting(PAL::SessionID sessionID) -> (std::optional<uint64_t> badge)
+
+    FetchLocalStorage(PAL::SessionID sessionID) -> (HashMap<WebCore::ClientOrigin, HashMap<String, String>> localStorageMap)
 }

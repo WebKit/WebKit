@@ -2001,6 +2001,16 @@ void NetworkProcessProxy::setEmulatedConditions(PAL::SessionID sessionID, std::o
 
 #endif // ENABLE(INSPECTOR_NETWORK_THROTTLING)
 
+void NetworkProcessProxy::fetchLocalStorage(PAL::SessionID sessionID, CompletionHandler<void(HashMap<WebCore::ClientOrigin, HashMap<String, String>>&&)>&& completionHandler)
+{
+    if (!canSendMessage()) {
+        completionHandler({ });
+        return;
+    }
+
+    sendWithAsyncReply(Messages::NetworkProcess::FetchLocalStorage(sessionID), WTFMove(completionHandler));
+}
+
 } // namespace WebKit
 
 #undef MESSAGE_CHECK_COMPLETION
