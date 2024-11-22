@@ -33,6 +33,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
         this._valueInputElement = null;
         this._domainInputElement = null;
         this._pathInputElement = null;
+        this._partitionKeyInputElement = null;
         this._sessionCheckboxElement = null;
         this._expiresInputElement = null;
         this._httpOnlyCheckboxElement = null;
@@ -63,6 +64,10 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
         if (!path)
             return null;
 
+        let partitionKey = this._partitionKeyInputElement.value || this._partitionKeyInputElement.placeholder;
+        if (partitionKey)
+            return null;
+
         let session = this._sessionCheckboxElement.checked;
         let expires = this._parseExpires();
         if (!session && isNaN(expires))
@@ -82,6 +87,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
             value: this._valueInputElement.value,
             domain,
             path,
+            partitionKey,
             httpOnly: this._httpOnlyCheckboxElement.checked,
             secure: this._secureCheckboxElement.checked,
             sameSite: this._sameSiteSelectElement.value,
@@ -132,6 +138,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
             data.value = cookie.value;
             data.domain = cookie.domain;
             data.path = cookie.path;
+            data.partitionKey = cookie.partitionKey;
             data.expires = formatDate(cookie.expires || this._defaultExpires());
             data.session = cookie.session;
             data.httpOnly = cookie.httpOnly;
@@ -143,6 +150,7 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
             data.value = "";
             data.domain = urlComponents.host;
             data.path = urlComponents.path;
+            data.partitionKey = null;
             data.expires = formatDate(this._defaultExpires());
             data.session = true;
             data.httpOnly = false;
@@ -210,6 +218,9 @@ WI.CookiePopover = class CookiePopover extends WI.Popover
         this._domainInputElement = createInputRow("domain", WI.unlocalizedString("Domain"), "text", data.domain).inputElement;
 
         this._pathInputElement = createInputRow("path", WI.unlocalizedString("Path"), "text", data.path).inputElement;
+
+        if (options.includePartitionKey)
+            this._partitionKeyInputElement = createInputRow("partitionKey", WI.unlocalizedString("Partition Key"), "text", data.partitionKey).inputElement;
 
         this._sessionCheckboxElement = createInputRow("session", WI.unlocalizedString("Session"), "checkbox", data.session).inputElement;
 

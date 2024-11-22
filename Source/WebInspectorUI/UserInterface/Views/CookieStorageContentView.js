@@ -271,6 +271,13 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             initialWidth: 100,
         });
 
+        this._partitionKeyColumn = new WI.TableColumn("partitionKey", WI.unlocalizedString("Partition Key"), {
+            minWidth: 40,
+            maxWidth: 300,
+            initialWidth: 70,
+            hidden: true,
+        });
+
         this._expiresColumn = new WI.TableColumn("expires", WI.unlocalizedString("Expires"), {
             minWidth: 100,
             maxWidth: 200,
@@ -311,6 +318,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         this._table.addColumn(this._sizeColumn);
         this._table.addColumn(this._secureColumn);
         this._table.addColumn(this._httpOnlyColumn);
+        this._table.addColumn(this._partitionKeyColumn);
         this._table.addColumn(this._sameSiteColumn);
 
         if (!this._table.sortColumnIdentifier) {
@@ -366,6 +374,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         case "domain":
         case "path":
         case "sameSite":
+        case "partitionKey":
             comparator = (a, b) => (a[sortColumnIdentifier] || "").extendedLocaleCompare(b[sortColumnIdentifier] || "");
             break;
 
@@ -398,7 +407,9 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
         console.assert(!this._editingCookie);
         this._editingCookie = cookie;
 
-        let options = {};
+        let options = {
+            "includePartitionKey": !this._partitionKeyColumn.hidden,
+        };
         if (columnIdentifier) {
             switch (columnIdentifier) {
             case "name":
@@ -406,6 +417,7 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             case "domain":
             case "path":
             case "secure":
+            case "partitionKey":
                 options.focusField = columnIdentifier;
                 break;
 
@@ -611,6 +623,8 @@ WI.CookieStorageContentView = class CookieStorageContentView extends WI.ContentV
             return cookie.domain || missingValue;
         case "path":
             return cookie.path || missingValue;
+        case "partitionKey":
+            return cookie.partitionKey || missingValue;
         case "expires":
             return (!cookie.session && cookie.expires) ? cookie.expires.toLocaleString() : WI.UIString("Session");
         case "size":

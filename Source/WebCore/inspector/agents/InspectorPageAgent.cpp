@@ -593,11 +593,13 @@ static Inspector::Protocol::Page::CookieSameSitePolicy cookieSameSitePolicyJSON(
 
 static Ref<Inspector::Protocol::Page::Cookie> buildObjectForCookie(const Cookie& cookie)
 {
+    // FIXME: Add partitionKey
     return Inspector::Protocol::Page::Cookie::create()
         .setName(cookie.name)
         .setValue(cookie.value)
         .setDomain(cookie.domain)
         .setPath(cookie.path)
+        .setPartitionKey({ })
         .setExpires(cookie.expires.value_or(0))
         .setSession(cookie.session)
         .setHttpOnly(cookie.httpOnly)
@@ -680,6 +682,8 @@ static std::optional<Cookie> parseCookieObject(Inspector::Protocol::ErrorString&
         errorString = "Invalid value for key path in given cookie"_s;
         return std::nullopt;
     }
+
+    // FIXME: Use partitionKey
 
     auto httpOnly = cookieObject->getBoolean("httpOnly"_s);
     if (!httpOnly) {
