@@ -1905,6 +1905,15 @@ std::unique_ptr<WebSocketTask> NetworkSessionCocoa::createWebSocketTask(WebPageP
             ensureMutableRequest()._privacyProxyFailClosedForUnreachableNonMainHosts = YES;
     }
 
+#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+    if ([mutableRequest respondsToSelector:@selector(_setAllowOnlyPartitionedCookies:)]) {
+        if (auto* storageSession = networkStorageSession(); storageSession && storageSession->isOptInCookiePartitioningEnabled()) {
+            bool shouldAllowOnlyPartitioned = storageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID, pageID, shouldRelaxThirdPartyCookieBlocking) == WebCore::ThirdPartyCookieBlockingDecision::AllExceptPartitioned;
+            [mutableRequest _setAllowOnlyPartitionedCookies:shouldAllowOnlyPartitioned];
+        }
+    }
+#endif
+
     enableAdvancedPrivacyProtections(ensureMutableRequest(), advancedPrivacyProtections);
 
     Ref sessionSet = sessionSetForPage(webPageProxyID);
