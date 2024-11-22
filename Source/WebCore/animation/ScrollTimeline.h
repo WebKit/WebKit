@@ -49,8 +49,7 @@ public:
     static Ref<ScrollTimeline> create(const AtomString&, ScrollAxis);
     static Ref<ScrollTimeline> createFromCSSValue(const CSSScrollValue&);
 
-    virtual Element* source() const { return m_source.get(); }
-    Element* sourceElementForProgressCalculation() const;
+    virtual Element* source() const;
     void setSource(const Element*);
 
     ScrollAxis axis() const { return m_axis; }
@@ -65,7 +64,6 @@ public:
     AnimationTimeline::ShouldUpdateAnimationsAndSendEvents documentWillUpdateAnimationsAndSendEvents() override;
 
     AnimationTimelinesController* controller() const override;
-    static ScrollableArea* scrollableAreaForSourceRenderer(RenderElement*, Ref<Document>);
 
     std::optional<WebAnimationTime> currentTime(const TimelineRange&) override;
     TimelineRange defaultRange() const override;
@@ -83,6 +81,8 @@ protected:
     };
     static float floatValueForOffset(const Length&, float);
     virtual Data computeTimelineData(const TimelineRange&) const;
+
+    static ScrollableArea* scrollableAreaForSourceRenderer(const RenderElement*, Document&);
 
 private:
     enum class Scroller : uint8_t { Nearest, Root, Self };
