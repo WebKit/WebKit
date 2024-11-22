@@ -925,7 +925,8 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
     // 2. If type contains a MIME type that is not supported ..., then throw a
     // NotSupportedError exception and abort these steps.
     Vector<ContentType> mediaContentTypesRequiringHardwareSupport;
-    if (RefPtr document = dynamicDowncast<Document>(context))
+    RefPtr document = dynamicDowncast<Document>(*context);
+    if (document)
         mediaContentTypesRequiringHardwareSupport.appendVector(document->settings().mediaContentTypesRequiringHardwareSupport());
 
     if (!isTypeSupported(*context, type, WTFMove(mediaContentTypesRequiringHardwareSupport)))
@@ -938,7 +939,6 @@ ExceptionOr<Ref<SourceBuffer>> MediaSource::addSourceBuffer(const String& type)
 
     // 5. Create a new SourceBuffer object and associated resources.
     ContentType contentType(type);
-    RefPtr document = dynamicDowncast<Document>(context);
     if (document && document->quirks().needsVP9FullRangeFlagQuirk())
         contentType = addVP9FullRangeVideoFlagToContentType(contentType);
 
@@ -1214,7 +1214,7 @@ bool MediaSource::isTypeSupported(ScriptExecutionContext& context, const String&
     parameters.isMediaSource = true;
     parameters.contentTypesRequiringHardwareSupport = WTFMove(contentTypesRequiringHardwareSupport);
 
-    if (RefPtr document = dynamicDowncast<Document>(context)) {
+    if (document) {
         if (!contentTypeMeetsContainerAndCodecTypeRequirements(contentType, document->settings().allowedMediaContainerTypes(), document->settings().allowedMediaCodecTypes()))
             return false;
 
@@ -1447,8 +1447,7 @@ ExceptionOr<Ref<SourceBufferPrivate>> MediaSource::createSourceBufferPrivate(con
 {
     ContentType type { incomingType };
 
-    RefPtr context = scriptExecutionContext();
-    RefPtr document = dynamicDowncast<Document>(context);
+    RefPtr document = dynamicDowncast<Document>(scriptExecutionContext());
     if (document && document->quirks().needsVP9FullRangeFlagQuirk())
         type = addVP9FullRangeVideoFlagToContentType(incomingType);
 

@@ -105,7 +105,7 @@ void CookieStore::MainThreadBridge::ensureOnMainThread(Function<void(ScriptExecu
         return;
     ASSERT(context->isContextThread());
 
-    if (RefPtr document = dynamicDowncast<Document>(*context)) {
+    if (is<Document>(*context)) {
         task(*context);
         return;
     }
