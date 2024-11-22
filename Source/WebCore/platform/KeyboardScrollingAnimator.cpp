@@ -122,8 +122,11 @@ const std::optional<ScrollGranularity> scrollGranularityForKeyboardEvent(const K
         return ScrollGranularity::Line;
     case KeyboardScrollingKey::UpArrow:
     case KeyboardScrollingKey::DownArrow:
-        if (event.metaKey())
-            return ScrollGranularity::Document;
+        if (event.metaKey()) {
+            if (event.modifierKeys().hasExactlyOneBitSet())
+                return ScrollGranularity::Document;
+            return { };
+        }
         if (event.altKey())
             return ScrollGranularity::Page;
         return ScrollGranularity::Line;
