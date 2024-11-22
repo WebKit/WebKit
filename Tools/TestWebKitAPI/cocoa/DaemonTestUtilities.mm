@@ -29,7 +29,9 @@
 #if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(VISION)
 
 #import <mach-o/dyld.h>
+#import <wtf/OSObjectPtr.h>
 #import <wtf/Vector.h>
+#import <wtf/spi/cocoa/CFXPCBridgeSPI.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -65,52 +67,11 @@ RetainPtr<NSURL> currentExecutableDirectory()
     return [currentExecutableLocation() URLByDeletingLastPathComponent];
 }
 
-#if PLATFORM(IOS) || PLATFORM(VISION)
-static RetainPtr<xpc_object_t> convertArrayToXPC(NSArray *array)
-{
-    auto xpc = adoptNS(xpc_array_create(nullptr, 0));
-    for (id value in array) {
-        if ([value isKindOfClass:NSString.class])
-            xpc_array_set_string(xpc.get(), XPC_ARRAY_APPEND, [value UTF8String]);
-        else
-            ASSERT_NOT_REACHED();
-    }
-    return xpc;
-}
-
-static RetainPtr<xpc_object_t> convertDictionaryToXPC(NSDictionary<NSString *, id> *dictionary)
-{
-    auto xpc = adoptNS(xpc_dictionary_create(nullptr, nullptr, 0));
-    for (NSString *key in dictionary) {
-        ASSERT([key isKindOfClass:NSString.class]);
-        const char* keyUTF8 = key.UTF8String;
-        id value = dictionary[key];
-        if ([value isKindOfClass:NSString.class])
-            xpc_dictionary_set_string(xpc.get(), keyUTF8, [value UTF8String]);
-        else if ([value isKindOfClass:NSNumber.class]) {
-            uint64_t uint64Value = [value unsignedLongLongValue];
-            if (uint64Value == 1)
-                xpc_dictionary_set_bool(xpc.get(), keyUTF8, uint64Value);
-            else {
-                ASSERT([value doubleValue] == uint64Value);
-                xpc_dictionary_set_uint64(xpc.get(), keyUTF8, uint64Value);
-            }
-        } else if ([value isKindOfClass:NSArray.class])
-            xpc_dictionary_set_value(xpc.get(), keyUTF8, convertArrayToXPC(value).get());
-        else if ([value isKindOfClass:NSDictionary.class])
-            xpc_dictionary_set_value(xpc.get(), keyUTF8, convertDictionaryToXPC(value).get());
-        else
-            ASSERT_NOT_REACHED();
-    }
-    return xpc;
-}
-#endif
-
 void registerPlistWithLaunchD(NSDictionary<NSString *, id> *plist, NSURL *tempDir)
 {
     NSError *error = nil;
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    auto xpcPlist = convertDictionaryToXPC(plist);
+    auto xpcPlist = adoptOSObject(_CFXPCCreateXPCObjectFromCFObject((__bridge CFDictionaryRef)plist));
     xpc_dictionary_set_string(xpcPlist.get(), "_ManagedBy", "TestWebKitAPI");
     xpc_dictionary_set_bool(xpcPlist.get(), "RootedSimulatorPath", true);
     auto launchDJob = adoptNS([[OSLaunchdJob alloc] initWithPlist:xpcPlist.get()]);
