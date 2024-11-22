@@ -1353,18 +1353,6 @@ class TestExpectedBuildSteps(unittest.TestCase):
             'API-tests',
             'webdriver-test'
         ],
-        'GTK-Linux-64-bit-Release-Debian-11-Build': [
-            'configure-build',
-            'configuration',
-            'clean-and-update-working-directory',
-            'checkout-specific-revision',
-            'show-identifier',
-            'kill-old-processes',
-            'delete-WebKitBuild-directory',
-            'delete-stale-build-files',
-            'jhbuild',
-            'compile-webkit'
-        ],
         'GTK-Linux-64-bit-Release-Debian-Stable-Build': [
             'configure-build',
             'configuration',

@@ -514,11 +514,6 @@
                     "workernames": ["gtk-linux-bot-9"]
                   },
                   {
-                    "name": "GTK-Linux-64-bit-Release-Debian-11-Build", "factory": "BuildFactory",
-                    "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
-                    "workernames": ["gtk-linux-bot-10"]
-                  },
-                  {
                     "name": "GTK-Linux-64-bit-Release-Debian-Stable-Build", "factory": "NoInstallDependenciesBuildFactory",
                     "platform": "gtk", "configuration": "release", "architectures": ["x86_64"],
                     "additionalArguments": ["--no-experimental-features"],
@@ -734,7 +729,6 @@
   "schedulers": [ { "type": "AnyBranchScheduler", "name": "main", "change_filter": "main_filter", "treeStableTimer": 45.0,
                     "builderNames": ["GTK-Linux-64-bit-Release-Build", "GTK-Linux-64-bit-Debug-Build",
                                      "GTK-Linux-64-bit-Release-Clang-Build",
-                                     "GTK-Linux-64-bit-Release-Debian-11-Build",
                                      "GTK-Linux-64-bit-Release-Debian-Stable-Build",
                                      "GTK-Linux-64-bit-Release-Ubuntu-2204-Build",
                                      "GTK-Linux-64-bit-Release-Ubuntu-LTS-Build",
