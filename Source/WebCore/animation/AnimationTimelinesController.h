@@ -86,6 +86,7 @@ public:
     void setTimelineForName(const AtomString&, const Element&, WebAnimation&);
     void updateNamedTimelineMapForTimelineScope(const TimelineScope&, const Element&);
     void updateTimelineForTimelineScope(const Ref<ScrollTimeline>&, const AtomString&);
+    void unregisterNamedTimelinesAssociatedWithElement(const Element&);
 
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
     AcceleratedEffectStackUpdater* existingAcceleratedEffectStackUpdater() const { return m_acceleratedEffectStackUpdater.get(); }

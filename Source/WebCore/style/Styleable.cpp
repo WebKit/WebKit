@@ -302,6 +302,8 @@ void Styleable::willChangeRenderer() const
 void Styleable::cancelStyleOriginatedAnimations() const
 {
     cancelStyleOriginatedAnimations({ });
+    if (CheckedPtr timelinesController = element.protectedDocument()->timelinesController())
+        timelinesController->unregisterNamedTimelinesAssociatedWithElement(element);
 }
 
 void Styleable::cancelStyleOriginatedAnimations(const WeakStyleOriginatedAnimations& animationsToCancelSilently) const

@@ -575,6 +575,23 @@ bool AnimationTimelinesController::isPendingTimelineAttachment(const WebAnimatio
     });
 }
 
+void AnimationTimelinesController::unregisterNamedTimelinesAssociatedWithElement(const Element& element)
+{
+    HashSet<AtomString> namesToClear;
+
+    for (auto& entry : m_nameToTimelineMap) {
+        auto& timelines = entry.value;
+        timelines.removeAllMatching([&] (const auto& timeline) {
+            return originatingElement(timeline) == &element;
+        });
+        if (timelines.isEmpty())
+            namesToClear.add(entry.key);
+    }
+
+    for (auto& name : namesToClear)
+        m_nameToTimelineMap.remove(name);
+}
+
 #if ENABLE(THREADED_ANIMATION_RESOLUTION)
 AcceleratedEffectStackUpdater& AnimationTimelinesController::acceleratedEffectStackUpdater()
 {
