@@ -700,8 +700,24 @@ bool MockRealtimeVideoSource::mockDisplayType(CaptureDevice::DeviceType type) co
     return std::get<MockDisplayProperties>(m_device.properties).type == type;
 }
 
+void MockRealtimeVideoSource::rotationAngleForHorizonLevelDisplayChanged(const String& persistentID, VideoFrameRotation rotation)
+{
+    if (this->persistentID() != persistentID)
+        return;
+
+    m_isUsingRotationAngleForHorizonLevelDisplayChanged = true;
+    if (rotation == m_deviceOrientation)
+        return;
+
+    m_deviceOrientation = rotation;
+    notifySettingsDidChangeObservers({ RealtimeMediaSourceSettings::Flag::Width, RealtimeMediaSourceSettings::Flag::Height });
+}
+
 void MockRealtimeVideoSource::orientationChanged(IntDegrees orientation)
 {
+    if (m_isUsingRotationAngleForHorizonLevelDisplayChanged)
+        return;
+
     auto deviceOrientation = m_deviceOrientation;
     switch (orientation) {
     case 0:

@@ -15,7 +15,7 @@
 promise_test(async (test) => {
     const localStream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } });
     if (window.testRunner)
-        window.testRunner.setMockCameraOrientation(90);
+        testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(localStream.getVideoTracks()[0]), 90);
 
     localVideo.srcObject = localStream;
     const remoteStream = await new Promise((resolve, reject) => {

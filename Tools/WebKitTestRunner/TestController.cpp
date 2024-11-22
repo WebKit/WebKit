@@ -1166,7 +1166,7 @@ bool TestController::resetStateToConsistentValues(const TestOptions& options, Re
     WKContextSetUseSeparateServiceWorkerProcess(TestController::singleton().context(), false);
     WKContextClearMockGamepadsForTesting(TestController::singleton().context());
 
-    WKPageSetMockCameraOrientation(m_mainWebView->page(), 0);
+    WKPageSetMockCameraRotation(m_mainWebView->page(), nullptr, 0);
     resetMockMediaDevices();
     WKPageSetMediaCaptureReportingDelayForTesting(m_mainWebView->page(), 0);
 
@@ -4166,9 +4166,9 @@ void TestController::resetMockMediaDevices()
     WKResetMockMediaDevices(platformContext());
 }
 
-void TestController::setMockCameraOrientation(uint64_t orientation)
+void TestController::setMockCameraRotation(WKStringRef persistentId, uint64_t rotation)
 {
-    WKPageSetMockCameraOrientation(m_mainWebView->page(), orientation);
+    WKPageSetMockCameraRotation(m_mainWebView->page(), persistentId, rotation);
 }
 
 bool TestController::isMockRealtimeMediaSourceCenterEnabled() const

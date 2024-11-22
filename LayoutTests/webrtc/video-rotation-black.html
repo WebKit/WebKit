@@ -49,7 +49,7 @@ function checkVideoBlack(expected, video, canvasId)
 promise_test(async (test) => {
     const localStream = await navigator.mediaDevices.getUserMedia({video: {width: 640, height: 480}});
     if (window.testRunner)
-        testRunner.setMockCameraOrientation(90);
+        testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(localStream.getVideoTracks()[0]), 90);
 
     localVideo.srcObject = localStream;
     await localVideo.play();

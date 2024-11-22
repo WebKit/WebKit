@@ -14441,6 +14441,20 @@ void WebPageProxy::getProcessDisplayName(CompletionHandler<void(String&&)>&& com
     sendWithAsyncReply(Messages::WebPage::GetProcessDisplayName(), WTFMove(completionHandler));
 }
 
+void WebPageProxy::setMediaCaptureRotationForTesting(const String& persistentId, WebCore::IntDegrees rotation)
+{
+    bool shouldCallRotationAngleForCaptureDeviceChanged = !persistentId.isEmpty();
+#if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+    if (shouldCallRotationAngleForCaptureDeviceChanged)
+        shouldCallRotationAngleForCaptureDeviceChanged = userMediaPermissionRequestManager().isMonitoringCaptureDeviceRotation(persistentId);
+#endif
+    if (shouldCallRotationAngleForCaptureDeviceChanged) {
+        rotationAngleForCaptureDeviceChanged(persistentId, static_cast<VideoFrameRotation>(rotation));
+        return;
+    }
+    setOrientationForMediaCapture(rotation);
+}
+
 void WebPageProxy::setOrientationForMediaCapture(WebCore::IntDegrees orientation)
 {
     m_orientationForMediaCapture = orientation;

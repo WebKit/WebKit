@@ -11,17 +11,10 @@
     let setup = async (test) => {
         if (!window.testRunner)
             return Promise.reject("test requires internal API");
-
-        test.add_cleanup(() => {
-            testRunner.resetMockMediaDevices();
-            testRunner.setMockCameraOrientation(0);
-        });
     }
 
     async function getSettingsBeforeAndAfterRotation(deviceId)
     {
-        testRunner.setMockCameraOrientation(0);
-
         const stream = await navigator.mediaDevices.getUserMedia({ video: { deviceId } });
         video.srcObject = stream;
         await video.play();
@@ -31,7 +24,7 @@
 
         video.srcObject = null;
 
-        testRunner.setMockCameraOrientation(90);
+        testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(stream.getVideoTracks()[0]), 90);
         await new Promise(resolve => setTimeout(resolve, 100));
 
         video.srcObject = stream;

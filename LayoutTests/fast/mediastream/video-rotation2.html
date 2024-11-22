@@ -18,9 +18,6 @@
         <image id='image' style="z-index: 0; position: absolute; top: 0px; left: 0px; background-color:red; width:200px; height:400px"></image>
         <canvas id='canvas' style="z-index: 0; position: absolute; top: 0px; left: 0px; background-color:red; width:200px; height:400px"></canvas>
         <script>
-if (window.testRunner)
-    testRunner.setMockCameraOrientation(90);
-
 async function getSnapshotData()
 {
     const dataURL = await new Promise(resolve => testRunner.takeViewPortSnapshot(resolve));
@@ -51,6 +48,8 @@ function isGreenPixel(data, i)
 
 promise_test(async () => {
     video.srcObject = await navigator.mediaDevices.getUserMedia({video: {width: 400, height: 200} });
+    if (window.testRunner)
+        testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(video.srcObject.getVideoTracks()[0]), 90);
     await video.play();
 
     if (!window.testRunner)
