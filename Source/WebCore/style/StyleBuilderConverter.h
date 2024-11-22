@@ -1805,7 +1805,9 @@ inline OptionSet<HangingPunctuation> BuilderConverter::convertHangingPunctuation
 
 inline GapLength BuilderConverter::convertGapLength(const BuilderState& builderState, const CSSValue& value)
 {
-    return (value.valueID() == CSSValueNormal) ? GapLength() : GapLength(convertLength(builderState, value));
+    if (!value.isPrimitiveValue())
+        return { };
+    return value.valueID() == CSSValueNormal ? GapLength() : convertLength(builderState, value);
 }
 
 inline OffsetRotation BuilderConverter::convertOffsetRotate(const BuilderState& builderState, const CSSValue& value)
