@@ -127,6 +127,7 @@ public:
     bool isValid() const { return m_device; }
     bool isLost() const { return m_isLost; }
     const WGPULimits& limits() const { return m_capabilities.limits; }
+    const WGPULimits limitsCopy() const { return m_capabilities.limits; }
     const Vector<WGPUFeatureName>& features() const { return m_capabilities.features; }
     const HardwareCapabilities::BaseCapabilities& baseCapabilities() const { return m_capabilities.baseCapabilities; }
 

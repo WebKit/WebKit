@@ -64,7 +64,7 @@ static PAS_ALWAYS_INLINE bool pas_msl_is_enabled(void)
 
 static PAS_ALWAYS_INLINE pas_allocation_result pas_msl_malloc_logging(size_t size, pas_allocation_result result)
 {
-#if PAS_OS(DARWIN)
+#if PAS_OS(DARWIN) && !defined(__swift__) // FIXME: Workaround for rdar://119319825
     if (PAS_UNLIKELY(malloc_logger))
         return pas_msl_malloc_logging_slow(size, result); /* Keep it tail-call to avoid messing up the fast path code. */
 #else
@@ -75,7 +75,8 @@ static PAS_ALWAYS_INLINE pas_allocation_result pas_msl_malloc_logging(size_t siz
 
 static PAS_ALWAYS_INLINE void pas_msl_free_logging(void* ptr)
 {
-#if PAS_OS(DARWIN)
+#if PAS_OS(DARWIN) && !defined(__swift__) // FIXME: Workaround for rdar://119319825
+
     if (PAS_UNLIKELY(malloc_logger))
         return pas_msl_free_logging_slow(ptr); /* Keep it tail-call to avoid messing up the fast path code. */
 #else
