@@ -1113,6 +1113,12 @@ class RunLLDBWebKitTests(RunPythonTests):
         "--verbose",
         "--no-build",
         WithProperties("--%(configuration)s"),
+        "--suite", "lldb-webkit-test",
+        "--buildbot-master", DNS_NAME,
+        "--builder-name", WithProperties("%(buildername)s"),
+        "--build-number", WithProperties("%(buildnumber)s"),
+        "--buildbot-worker", WithProperties("%(workername)s"),
+        "--report", RESULTS_WEBKIT_URL,
     ]
     failedTestsFormatString = "%d lldb test%s failed"
 

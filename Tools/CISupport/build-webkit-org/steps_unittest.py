@@ -726,48 +726,90 @@ class TestRunWebKitPyTests(BuildStepMixinAdditions, unittest.TestCase):
 class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
+        os.environ['RESULTS_SERVER_API_KEY'] = 'test-api-key'
         return self.setUpBuildStep()
 
     def tearDown(self):
+        del os.environ['RESULTS_SERVER_API_KEY']
         return self.tearDownBuildStep()
 
-    def test_success(self):
+    def configureStep(self):
         self.setupStep(RunLLDBWebKitTests())
         self.setProperty('configuration', 'release')
+        self.setProperty('buildername', 'LLDBWebKit-Tests-EWS')
+        self.setProperty('buildnumber', '101')
+        self.setProperty('workername', 'ews100')
+
+    def test_success(self):
+        self.configureStep()
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=[
+                    'python3',
+                    'Tools/Scripts/test-lldb-webkit',
+                    '--verbose',
+                    '--no-build',
+                    '--release',
+                    '--suite', 'lldb-webkit-test',
+                    '--buildbot-master', DNS_NAME,
+                    '--builder-name', 'LLDBWebKit-Tests-EWS',
+                    '--build-number', '101',
+                    '--buildbot-worker', 'ews100',
+                    '--report', RESULTS_WEBKIT_URL,
+                ],
             ) + 0,
         )
         self.expectOutcome(result=SUCCESS, state_string='lldb-webkit-test')
         return self.runStep()
 
     def test_unexpected_failure(self):
-        self.setupStep(RunLLDBWebKitTests())
-        self.setProperty('configuration', 'release')
+        self.configureStep()
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=[
+                    'python3',
+                    'Tools/Scripts/test-lldb-webkit',
+                    '--verbose',
+                    '--no-build',
+                    '--release',
+                    '--suite', 'lldb-webkit-test',
+                    '--buildbot-master', DNS_NAME,
+                    '--builder-name', 'LLDBWebKit-Tests-EWS',
+                    '--build-number', '101',
+                    '--buildbot-worker', 'ews100',
+                    '--report', RESULTS_WEBKIT_URL,
+                ],
             ) + 2,
         )
         self.expectOutcome(result=FAILURE, state_string='lldb-webkit-test (failure)')
         return self.runStep()
 
     def test_failure(self):
-        self.setupStep(RunLLDBWebKitTests())
-        self.setProperty('configuration', 'release')
+        self.configureStep()
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=[
+                    'python3',
+                    'Tools/Scripts/test-lldb-webkit',
+                    '--verbose',
+                    '--no-build',
+                    '--release',
+                    '--suite', 'lldb-webkit-test',
+                    '--buildbot-master', DNS_NAME,
+                    '--builder-name', 'LLDBWebKit-Tests-EWS',
+                    '--build-number', '101',
+                    '--buildbot-worker', 'ews100',
+                    '--report', RESULTS_WEBKIT_URL,
+                ],
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=2, errors=0)'),
         )
@@ -775,14 +817,25 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_errors(self):
-        self.setupStep(RunLLDBWebKitTests())
-        self.setProperty('configuration', 'release')
+        self.configureStep()
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=[
+                    'python3',
+                    'Tools/Scripts/test-lldb-webkit',
+                    '--verbose',
+                    '--no-build',
+                    '--release',
+                    '--suite', 'lldb-webkit-test',
+                    '--buildbot-master', DNS_NAME,
+                    '--builder-name', 'LLDBWebKit-Tests-EWS',
+                    '--build-number', '101',
+                    '--buildbot-worker', 'ews100',
+                    '--report', RESULTS_WEBKIT_URL,
+                ],
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=0, errors=2)'),
         )
@@ -790,14 +843,25 @@ class TestRunLLDBWebKitTests(BuildStepMixinAdditions, unittest.TestCase):
         return self.runStep()
 
     def test_lot_of_failures(self):
-        self.setupStep(RunLLDBWebKitTests())
-        self.setProperty('configuration', 'release')
+        self.configureStep()
         self.expectRemoteCommands(
             ExpectShell(
                 workdir='wkdir',
                 timeout=1200,
                 logEnviron=True,
-                command=['python3', 'Tools/Scripts/test-lldb-webkit', '--verbose', '--no-build', '--release'],
+                command=[
+                    'python3',
+                    'Tools/Scripts/test-lldb-webkit',
+                    '--verbose',
+                    '--no-build',
+                    '--release',
+                    '--suite', 'lldb-webkit-test',
+                    '--buildbot-master', DNS_NAME,
+                    '--builder-name', 'LLDBWebKit-Tests-EWS',
+                    '--build-number', '101',
+                    '--buildbot-worker', 'ews100',
+                    '--report', RESULTS_WEBKIT_URL,
+                ],
             ) + 2
             + ExpectShell.log('stdio', stdout='FAILED (failures=30, errors=2)'),
         )
