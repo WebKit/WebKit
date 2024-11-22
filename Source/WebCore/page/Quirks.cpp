@@ -560,7 +560,7 @@ bool Quirks::shouldDispatchSimulatedMouseEvents(const EventTarget* target) const
     case QuirksData::ShouldDispatchSimulatedMouseEvents::DependingOnTargetFor_mybinder_org:
         for (RefPtr node = dynamicDowncast<Node>(target); node; node = node->parentNode()) {
             // This uses auto* instead of RefPtr as otherwise GCC does not compile.
-            if (auto* element = dynamicDowncast<Element>(*node); element && const_cast<Element&>(*element).classList().contains("lm-DockPanel-tabBar"_s))
+            if (auto* element = dynamicDowncast<Element>(*node); element && element->hasClassName("lm-DockPanel-tabBar"_s))
                 return true;
         }
         return false;
@@ -597,7 +597,7 @@ bool Quirks::shouldDispatchedSimulatedMouseEventsAssumeDefaultPrevented(EventTar
     }
 
     if (isSoundCloud())
-        return element->classList().contains("sceneLayer"_s);
+        return element->hasClassName("sceneLayer"_s);
 
     return false;
 }
@@ -614,10 +614,8 @@ bool Quirks::shouldPreventDispatchOfTouchEvent(const AtomString& touchEventType,
     if (!m_quirksData.shouldPreventDispatchOfTouchEventQuirk.value())
         return false;
 
-    if (RefPtr element = dynamicDowncast<Element>(target); element && touchEventType == eventNames().touchendEvent) {
-        auto& classList = element->classList();
-        return classList.contains("DPvwYc"_s) && classList.contains("sm8sCf"_s);
-    }
+    if (RefPtr element = dynamicDowncast<Element>(target); element && touchEventType == eventNames().touchendEvent)
+        return element->hasClassName("DPvwYc"_s) && element->hasClassName("sm8sCf"_s);
 
     return false;
 }
