@@ -49,7 +49,7 @@ private:
     ToggleEventTask(Element& element)
         : m_element(element) { }
 
-    WeakPtr<Element, WeakPtrImplWithEventTargetData> m_element;
+    WeakRef<Element, WeakPtrImplWithEventTargetData> m_element;
     std::optional<ToggleEventData> m_data;
 };
 

@@ -41,22 +41,14 @@ void ToggleEventTask::queue(ToggleState oldState, ToggleState newState)
     if (m_data)
         oldState = m_data->oldState;
 
-    RefPtr element = m_element.get();
-    if (!element)
-        return;
-
     m_data = { oldState, newState };
-    element->queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [this, newState] {
+    m_element->queueTaskKeepingThisNodeAlive(TaskSource::DOMManipulation, [this, element = Ref { m_element.get() }, newState] {
         if (!m_data || m_data->newState != newState)
             return;
 
         auto stringForState = [](ToggleState state) {
             return state == ToggleState::Closed ? "closed"_s : "open"_s;
         };
-
-        RefPtr element = m_element.get();
-        if (!element)
-            return;
 
         auto data = *std::exchange(m_data, std::nullopt);
         element->dispatchEvent(ToggleEvent::create(eventNames().toggleEvent, { EventInit { }, stringForState(data.oldState), stringForState(data.newState) }, Event::IsCancelable::No));
