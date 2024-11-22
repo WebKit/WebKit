@@ -3977,10 +3977,9 @@ void WebPageProxy::sendWheelEvent(WebCore::FrameIdentifier frameID, const WebWhe
     internals().wheelEventActivityHysteresis.impulse();
 #endif
 
-    Ref connection = m_legacyMainFrameProcess->connection();
     if (drawingArea()->shouldSendWheelEventsToEventDispatcher()) {
         sendWheelEventScrollingAccelerationCurveIfNecessary(event);
-        connection->send(Messages::EventDispatcher::WheelEvent(webPageIDInMainFrameProcess(), event, rubberBandableEdges), 0, { }, Thread::QOS::UserInteractive);
+        send(Messages::EventDispatcher::WheelEvent(webPageIDInMainFrameProcess(), event, rubberBandableEdges));
     } else {
         sendWithAsyncReplyToProcessContainingFrame(frameID, Messages::WebPage::HandleWheelEvent(frameID, event, processingSteps, willStartSwipe), [weakThis = WeakPtr { *this }, frameID,  wheelEvent = event, processingSteps, rubberBandableEdges, willStartSwipe, wasHandledForScrolling](std::optional<ScrollingNodeID> nodeID, std::optional<WheelScrollGestureState> gestureState, bool handled, std::optional<RemoteUserInputEventData> remoteWheelEventData) mutable {
             RefPtr protectedThis = weakThis.get();
