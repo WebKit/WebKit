@@ -19,6 +19,8 @@
 
 #pragma once
 
+#include <glib.h>
+#include <sysprof-capture-types.h>
 #include <sysprof-capture.h>
 #include <wtf/HashMap.h>
 #include <wtf/Lock.h>
@@ -241,6 +243,60 @@ public:
         case GTKWPEPortRange:
             break;
         }
+    }
+
+    void setCounter(std::span<const char> name, double value)
+    {
+        Locker locker { m_countersLock };
+        std::optional<unsigned> id;
+
+        if (!(id = m_counters.getOptional(static_cast<const void*>(name.data())))) {
+            unsigned newId = sysprof_collector_request_counters(1);
+
+            m_counters.add(static_cast<const void*>(name.data()), newId);
+
+            SysprofCaptureCounter counter = { };
+            counter.id = newId;
+            counter.type = SYSPROF_CAPTURE_COUNTER_DOUBLE;
+            counter.value.vdbl = 0;
+            strlcpy(counter.category, m_processName.characters(), sizeof counter.category);
+            strlcpy(counter.name, name.data(), sizeof counter.name);
+            strlcpy(counter.description, "", sizeof counter.description);
+            sysprof_collector_define_counters(&counter, 1);
+
+            id = newId;
+        }
+
+        SysprofCaptureCounterValue counterValue;
+        counterValue.vdbl = value;
+        sysprof_collector_set_counters(&id.value(), &counterValue, 1);
+    }
+
+    void setCounter(std::span<const char> name, int64_t value)
+    {
+        Locker locker { m_countersLock };
+        std::optional<unsigned> id;
+
+        if (!(id = m_counters.getOptional(static_cast<const void*>(name.data())))) {
+            unsigned newId = sysprof_collector_request_counters(1);
+
+            m_counters.add(static_cast<const void*>(name.data()), newId);
+
+            SysprofCaptureCounter counter = { };
+            counter.id = newId;
+            counter.type = SYSPROF_CAPTURE_COUNTER_INT64;
+            counter.value.v64 = 0;
+            strlcpy(counter.category, m_processName.characters(), sizeof counter.category);
+            strlcpy(counter.name, name.data(), sizeof counter.name);
+            strlcpy(counter.description, "", sizeof counter.description);
+            sysprof_collector_define_counters(&counter, 1);
+
+            id = newId;
+        }
+
+        SysprofCaptureCounterValue counterValue;
+        counterValue.v64 = value;
+        sysprof_collector_set_counters(&id.value(), &counterValue, 1);
     }
 
     static void createIfNeeded(ASCIILiteral processName)
@@ -477,6 +533,8 @@ private:
     ASCIILiteral m_processName;
     Lock m_lock;
     UncheckedKeyHashMap<RawPointerPair, TimestampAndString> m_ongoingMarks WTF_GUARDED_BY_LOCK(m_lock);
+    Lock m_countersLock;
+    UncheckedKeyHashMap<const void*, unsigned> m_counters WTF_GUARDED_BY_LOCK(m_countersLock);
     static SysprofAnnotator* s_annotator;
 };
 

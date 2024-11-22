@@ -36,6 +36,7 @@
 #include <WebCore/NotImplemented.h>
 #include <string.h>
 #include <sys/sysinfo.h>
+#include <wtf/SystemTracing.h>
 #include <wtf/WallTime.h>
 #include <wtf/linux/CurrentProcessMemoryStatus.h>
 #include <wtf/text/WTFString.h>
@@ -77,6 +78,12 @@ static inline void appendKeyValuePair(WebMemoryStatistics& stats, const String& 
     stats.values.append(value);
 }
 
+#define appendKeyValuePairAndCounter(TracingName, stats, key, value) \
+    do { \
+        WTFSetCounterInt(TracingName, value); \
+        appendKeyValuePair(stats, key, value); \
+    } while (0)
+
 String WebMemorySampler::processName() const
 {
     char processPath[maxProcessPath];
@@ -104,13 +111,13 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     ProcessMemoryStatus processMemoryStatus;
     currentProcessMemoryStatus(processMemoryStatus);
 
-    appendKeyValuePair(webKitMemoryStats, "Total Program Bytes"_s, processMemoryStatus.size);
-    appendKeyValuePair(webKitMemoryStats, "Resident Set Bytes"_s, processMemoryStatus.resident);
-    appendKeyValuePair(webKitMemoryStats, "Resident Shared Bytes"_s, processMemoryStatus.shared);
-    appendKeyValuePair(webKitMemoryStats, "Text Bytes"_s, processMemoryStatus.text);
-    appendKeyValuePair(webKitMemoryStats, "Library Bytes"_s, processMemoryStatus.lib);
-    appendKeyValuePair(webKitMemoryStats, "Data + Stack Bytes"_s, processMemoryStatus.data);
-    appendKeyValuePair(webKitMemoryStats, "Dirty Bytes"_s, processMemoryStatus.dt);
+    appendKeyValuePairAndCounter(TotalMem, webKitMemoryStats, "Total Program Bytes"_s, processMemoryStatus.size);
+    appendKeyValuePairAndCounter(ResidentSet, webKitMemoryStats, "Resident Set Bytes"_s, processMemoryStatus.resident);
+    appendKeyValuePairAndCounter(ResidentShared, webKitMemoryStats, "Resident Shared Bytes"_s, processMemoryStatus.shared);
+    appendKeyValuePairAndCounter(Text, webKitMemoryStats, "Text Bytes"_s, processMemoryStatus.text);
+    appendKeyValuePairAndCounter(Library, webKitMemoryStats, "Library Bytes"_s, processMemoryStatus.lib);
+    appendKeyValuePairAndCounter(DataStackMem, webKitMemoryStats, "Data + Stack Bytes"_s, processMemoryStatus.data);
+    appendKeyValuePairAndCounter(DirtyMem, webKitMemoryStats, "Dirty Bytes"_s, processMemoryStatus.dt);
 
     size_t totalBytesInUse = 0;
     size_t totalBytesCommitted = 0;
@@ -122,7 +129,7 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     totalBytesCommitted += fastMallocBytesCommitted;
 
     appendKeyValuePair(webKitMemoryStats, "Fast Malloc In Use"_s, fastMallocBytesInUse);
-    appendKeyValuePair(webKitMemoryStats, "Fast Malloc Committed Memory"_s, fastMallocBytesCommitted);
+    appendKeyValuePairAndCounter(FastMallocCommitted, webKitMemoryStats, "Fast Malloc Committed Memory"_s, fastMallocBytesCommitted);
 
     size_t jscHeapBytesInUse = commonVM().heap.size();
     size_t jscHeapBytesCommitted = commonVM().heap.capacity();
@@ -133,14 +140,14 @@ WebMemoryStatistics WebMemorySampler::sampleWebKit() const
     totalBytesInUse += globalMemoryStats.stackBytes + globalMemoryStats.JITBytes;
     totalBytesCommitted += globalMemoryStats.stackBytes + globalMemoryStats.JITBytes;
 
-    appendKeyValuePair(webKitMemoryStats, "JavaScript Heap In Use"_s, jscHeapBytesInUse);
-    appendKeyValuePair(webKitMemoryStats, "JavaScript Heap Committed Memory"_s, jscHeapBytesCommitted);
-    
-    appendKeyValuePair(webKitMemoryStats, "JavaScript Stack Bytes"_s, globalMemoryStats.stackBytes);
-    appendKeyValuePair(webKitMemoryStats, "JavaScript JIT Bytes"_s, globalMemoryStats.JITBytes);
+    appendKeyValuePairAndCounter(JSCHeapInUse, webKitMemoryStats, "JavaScript Heap In Use"_s, jscHeapBytesInUse);
+    appendKeyValuePairAndCounter(JsCHeapCommitted, webKitMemoryStats, "JavaScript Heap Committed Memory"_s, jscHeapBytesCommitted);
 
-    appendKeyValuePair(webKitMemoryStats, "Total Memory In Use"_s, totalBytesInUse);
-    appendKeyValuePair(webKitMemoryStats, "Total Committed Memory"_s, totalBytesCommitted);
+    appendKeyValuePairAndCounter(JSCStack, webKitMemoryStats, "JavaScript Stack Bytes"_s, globalMemoryStats.stackBytes);
+    appendKeyValuePairAndCounter(JSCJit, webKitMemoryStats, "JavaScript JIT Bytes"_s, globalMemoryStats.JITBytes);
+
+    appendKeyValuePairAndCounter(TotalMem, webKitMemoryStats, "Total Memory In Use"_s, totalBytesInUse);
+    appendKeyValuePairAndCounter(TotalCommittedMem, webKitMemoryStats, "Total Committed Memory"_s, totalBytesCommitted);
 
     struct sysinfo systemInfo;
     if (!sysinfo(&systemInfo)) {
