@@ -3166,8 +3166,10 @@ public:
         // generate a specific number of instructions. Specifically, move(x, x)
         // would not generate an instruction, so the IT block would apply to
         // some later, unrelated instruction.
-        if (thenCase == elseCase)
+        if (thenCase == elseCase) {
+            move(thenCase, dest);
             return;
+        }
         m_assembler.tst(left, right);
         if (thenCase == dest) {
             m_assembler.it(armV7Condition(cond), false);
