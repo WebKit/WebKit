@@ -234,8 +234,8 @@ bool LegacyRenderSVGContainer::nodeAtFloatPoint(const HitTestRequest& request, H
 
     SVGVisitedRendererTracking::Scope recursionScope(recursionTracking, *this);
 
-    FloatPoint localPoint = valueOrDefault(localToParentTransform().inverse()).mapPoint(pointInParent);
-    if (!SVGRenderSupport::pointInClippingArea(*this, localPoint))
+    FloatPoint localPoint;
+    if (!SVGRenderSupport::transformToUserSpaceAndCheckClipping(*this, localToParentTransform(), pointInParent, localPoint))
         return false;
 
     for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {

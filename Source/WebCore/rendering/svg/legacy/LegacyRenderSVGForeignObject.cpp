@@ -174,7 +174,9 @@ bool LegacyRenderSVGForeignObject::nodeAtFloatPoint(const HitTestRequest& reques
     if (hitTestAction != HitTestForeground)
         return false;
 
-    FloatPoint localPoint = valueOrDefault(localTransform().inverse()).mapPoint(pointInParent);
+    FloatPoint localPoint;
+    if (!SVGRenderSupport::transformToUserSpaceAndCheckClipping(*this, localToParentTransform(), pointInParent, localPoint))
+        return false;
 
     // Early exit if local point is not contained in clipped viewport area
     if (SVGRenderSupport::isOverflowHidden(*this) && !m_viewport.contains(localPoint))
