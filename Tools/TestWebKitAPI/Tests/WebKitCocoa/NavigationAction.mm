@@ -328,6 +328,7 @@ TEST(WKNavigationAction, UserInputState)
     EXPECT_EQ(navigationAction.buttonNumber, 1);
     EXPECT_EQ(navigationAction.modifierFlags, NSEventModifierFlagCommand);
 #else
+    EXPECT_EQ(navigationAction.buttonNumber, UIEventButtonMaskPrimary);
     EXPECT_EQ(navigationAction.modifierFlags, UIKeyModifierCommand);
 #endif
 }
