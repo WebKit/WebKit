@@ -9,7 +9,7 @@ redirect_back_to = parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_value
 
 partitionedAttr = ""
 if parse_qs(os.environ.get('QUERY_STRING', ''), keep_blank_values=True).get('isPartitioned', [None])[0]:
-    partitionedAttr = "; Partitioned"
+    partitionedSecureSameSiteAttr = "; Partitioned; Secure; SameSite=None"
 
 sys.stdout.write('Content-Type: text/html\r\n')
 
@@ -18,7 +18,7 @@ if redirect_back_to:
     sys.stdout.write(
         'status: 302\r\n'
         'Set-Cookie: test_cookie=1; expires={} GMT; Max-Age=86400{}\r\n'
-        'Location: {}\r\n\r\n'.format(expires.strftime('%a, %d-%b-%Y %H:%M:%S'), partitionedAttr, redirect_back_to)
+        'Location: {}\r\n\r\n'.format(expires.strftime('%a, %d-%b-%Y %H:%M:%S'), partitionedSecureSameSiteAttr, redirect_back_to)
     )
 else:
     sys.stdout.write(

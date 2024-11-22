@@ -16,7 +16,7 @@ Cookies are: test_cookie = 1
 --------
 Frame: '<!--frame2-->'
 --------
-Cookies are: test_cookie = 1
+Cookies are:
 
 --------
 Frame: '<!--frame3-->'
@@ -25,5 +25,10 @@ Cookies are: test_cookie = 1
 
 --------
 Frame: '<!--frame4-->'
+--------
+Cookies are: test_cookie = 1
+
+--------
+Frame: '<!--frame5-->'
 --------
 

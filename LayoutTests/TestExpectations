@@ -3351,7 +3351,7 @@ webkit.org/b/3652 http/tests/misc/prefetch-purpose.html [ Skip ]
 # First-party-only cookie policy only supported on Cocoa platforms.
 http/tests/cookies/only-accept-first-party-cookies.html [ Skip ]
 # Enable on appropriate platforms: rdar://140222322
-http/tests/cookies/accept-partitioned-first-and-third-party-cookies.html [ Skip ]
+http/tests/cookies/accept-partitioned-first-and-third-party-cookies.https.html [ Skip ]
 
 # Disabled WPT tests
 webkit.org/b/185939 imported/w3c/web-platform-tests/css/WOFF2 [ Skip ]
