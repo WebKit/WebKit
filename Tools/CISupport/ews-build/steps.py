@@ -7134,6 +7134,88 @@ class FindUnexpectedStaticAnalyzerResults(shell.ShellCommandNewStyle):
         return {u'step': status}
 
 
+class DownloadUnexpectedResultsFromMaster(transfer.FileDownload):
+    mastersrc = WithProperties('public_html/results/%(buildername)s/%(change_id)s-%(buildnumber)s/unexpected_results.json')
+    workerdest = SCAN_BUILD_OUTPUT_DIR + '/unexpected_results.json'
+    name = 'download-unexpected-results-from-master'
+    description = ['downloading unexpected results from buildbot master']
+    descriptionDone = ['Downloaded unexpected results']
+    haltOnFailure = True
+    flunkOnFailure = True
+    test = False
+
+    def __init__(self, **kwargs):
+        # Allow the unit test to override mastersrc
+        if 'mastersrc' not in kwargs:
+            kwargs['mastersrc'] = self.mastersrc
+        kwargs['workerdest'] = self.workerdest
+        kwargs['mode'] = 0o0644
+        kwargs['blocksize'] = 1024 * 256
+        super().__init__(**kwargs)
+
+    def getResultSummary(self):
+        if self.results != SUCCESS:
+            return {'step': 'Failed to download unexpected results from build master'}
+        return super().getResultSummary()
+
+
+class DeleteStaticAnalyzerResults(shell.ShellCommandNewStyle, AddToLogMixin):
+    name = 'delete-static-analyzer-results'
+    description = ['deleting static analyzer results']
+    descriptionDone = ['deleted static analyzer results']
+    haltOnFailure = False
+    flunkOnFailure = False
+
+    def __init__(self, results_dir='StaticAnalyzer', **kwargs):
+        super().__init__(logEnviron=False, **kwargs)
+        self.results_dir = results_dir
+
+    @defer.inlineCallbacks
+    def run(self):
+        yield self._addToLog('stdio', f'Removing {SCAN_BUILD_OUTPUT_DIR}/{self.results_dir}...\n')
+        self.command = ['rm', '-r', os.path.join(self.getProperty('builddir'), f'build/{SCAN_BUILD_OUTPUT_DIR}/{self.results_dir}')]
+        rc = yield super().run()
+        return defer.returnValue(rc)
+
+
+class GenerateSaferCPPResultsIndex(shell.ShellCommandNewStyle):
+    name = 'generate-safer-cpp-results'
+    description = ['generating safer cpp results']
+    descriptionDone = ['generated safer cpp results']
+    output_dir = 'new'
+    scan_build_output = SCAN_BUILD_OUTPUT_DIR
+
+    def __init__(self, **kwargs):
+        super().__init__(logEnviron=False, **kwargs)
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.command = ['python3', 'Tools/Scripts/compare-static-analysis-results', os.path.join(self.getProperty('builddir'), 'build/new')]
+        self.command += ['--build-output', SCAN_BUILD_OUTPUT_DIR]
+        self.command += ['--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build']
+        self.command += ['--generate-results-only']
+
+        self.log_observer = logobserver.BufferLogObserver()
+        self.addLogObserver('stdio', self.log_observer)
+
+        rc = yield super().run()
+        if rc != SUCCESS:
+            return defer.returnValue(rc)
+
+        logText = self.log_observer.getStdout()
+        match = re.search(r'scan-build: (\d+) bugs? found', logText, re.MULTILINE)
+        if match:
+            num_issues = match.group(1)
+            self.setProperty('num_unexpected_issues', int(num_issues))
+        return defer.returnValue(rc)
+
+    def evaluateCommand(self, cmd):
+        if cmd.rc != 0:
+            self.commandFailed = True
+            return FAILURE
+        return SUCCESS
+
+
 class DisplaySaferCPPResults(buildstep.BuildStep, AddToLogMixin):
     name = 'display-safer-cpp-results'
     resultDirectory = ''
