@@ -1792,6 +1792,22 @@ CanvasLayersEnabled:
     WebCore:
       default: false
 
+CanvasPixelFormatEnabled:
+  type: bool
+  status: unstable
+  category: dom
+  humanReadableName: "CanvasRenderingContext2DSettings.pixelFormat"
+  humanReadableDescription: "Allow different pixel formats in 2D canvas"
+  defaultValue:
+    WebKitLegacy:
+      default: false
+    WebKit:
+      default: false
+    WebCore:
+      default: false
+  disableInLockdownMode: true
+  sharedPreferenceForWebProcess: true
+
 CanvasUsesAcceleratedDrawing:
   type: bool
   status: embedder

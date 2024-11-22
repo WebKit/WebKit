@@ -23,6 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+// https://github.com/w3c/ColorWeb-CG/blob/main/canvas_float.md with Chromium renaming (subject to change)
+enum CanvasPixelFormat {
+    "uint8",
+    "float16",
+};
+
 enum RenderingMode {
     "Unaccelerated",
     "Accelerated",
@@ -38,5 +44,6 @@ enum RenderingMode {
     boolean desynchronized = false;
     boolean willReadFrequently = false;
     [EnabledBySetting=CanvasColorSpaceEnabled] PredefinedColorSpace colorSpace = "srgb";
+    [EnabledBySetting=CanvasPixelFormatEnabled] CanvasPixelFormat pixelFormat = "uint8";
     [EnabledBySetting=DOMTestingAPIsEnabled] RenderingMode? renderingModeForTesting;
 };
