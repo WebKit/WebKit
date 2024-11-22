@@ -4885,6 +4885,23 @@ void Page::performOpportunisticallyScheduledTasks(MonotonicTime deadline)
     if (m_opportunisticTaskScheduler->hasImminentlyScheduledWork())
         options.add(JSC::VM::SchedulerOptions::HasImminentlyScheduledWork);
     commonVM().performOpportunisticallyScheduledTasks(deadline, options);
+
+    deleteRemovedChildNodes();
+}
+
+void Page::deleteRemovedChildNodes()
+{
+    auto* localMainFrame = dynamicDowncast<LocalFrame>(mainFrame());
+    RefPtr document = localMainFrame ? localMainFrame->document() : nullptr;
+    if (!document)
+        return;
+    Function<void (LocalFrame &)> deleteAllRemovedChildNodes = [] (LocalFrame& frame) {
+        Document* document = frame.document();
+        if (!document)
+            return;
+        document->childrenToBeDeleted().clear();
+    };
+    forEachLocalFrame(deleteAllRemovedChildNodes);
 }
 
 CheckedRef<ProgressTracker> Page::checkedProgress()

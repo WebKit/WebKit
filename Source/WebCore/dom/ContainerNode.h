@@ -32,6 +32,8 @@ class HTMLCollection;
 class RadioNodeList;
 class RenderElement;
 
+enum class IsCalledFromRemoveChildren : bool { No, Yes };
+
 class ContainerNode : public Node {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(ContainerNode);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(ContainerNode);
@@ -161,10 +163,10 @@ private:
     void executePreparedChildrenRemoval();
     enum class DeferChildrenChanged : bool { No, Yes };
     enum class DidRemoveElements : bool { No, Yes };
-    DidRemoveElements removeAllChildrenWithScriptAssertion(ChildChange::Source, NodeVector& children, DeferChildrenChanged = DeferChildrenChanged::No);
+    DidRemoveElements removeAllChildrenWithScriptAssertion(ChildChange::Source, NodeVector& children, DeferChildrenChanged = DeferChildrenChanged::No, const IsCalledFromRemoveChildren = IsCalledFromRemoveChildren::No);
     bool removeNodeWithScriptAssertion(Node&, ChildChange::Source);
     ExceptionOr<void> removeSelfOrChildNodesForInsertion(Node&, NodeVector&);
-
+    void delayDeletingRemovedChildren(NodeVector& removedChildren);
     void removeBetween(Node* previousChild, Node* nextChild, Node& oldChild);
     ExceptionOr<void> appendChildWithoutPreInsertionValidityCheck(Node&);
 

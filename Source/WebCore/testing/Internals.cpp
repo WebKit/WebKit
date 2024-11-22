@@ -3086,6 +3086,15 @@ unsigned Internals::numberOfLiveNodes() const
     return nodeCount;
 }
 
+ExceptionOr<void> Internals::forceDeleteRemovedChildNodes() const
+{
+    Document* document = contextDocument();
+    if (!document || !document->page())
+        return Exception { ExceptionCode::InvalidAccessError };
+    document->page()->deleteRemovedChildNodes();
+    return { };
+}
+
 unsigned Internals::numberOfLiveDocuments() const
 {
     return Document::allDocuments().size();

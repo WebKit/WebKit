@@ -511,6 +511,27 @@ public:
     WEBCORE_EXPORT DOMImplementation& implementation();
     
     Element* documentElement() const { return m_documentElement.get(); }
+
+    struct ChildrenToAsyncDelete {
+        Vector<Ref<Node>> childrenToBeDeleted;
+        int approximateMemoryStored = 0;
+
+        void add(NodeVector&& children)
+        {
+            // Put a limit on the memory held onto these nodes at 5MB
+            if (approximateMemoryStored > 5242880)
+                clear();
+            childrenToBeDeleted.appendVector(children);
+        }
+
+        void clear()
+        {
+            childrenToBeDeleted.clear();
+            approximateMemoryStored = 0;
+        }
+    };
+
+    ChildrenToAsyncDelete& childrenToBeDeleted() { return m_childrenToAsyncDelete; };
     inline RefPtr<Element> protectedDocumentElement() const; // Defined in DocumentInlines.h.
     static constexpr ptrdiff_t documentElementMemoryOffset() { return OBJECT_OFFSETOF(Document, m_documentElement); }
 
@@ -2156,6 +2177,7 @@ private:
     RefPtr<LocalDOMWindow> m_domWindow;
     WeakPtr<Document, WeakPtrImplWithEventTargetData> m_contextDocument;
     OptionSet<ParserContentPolicy> m_parserContentPolicy;
+    ChildrenToAsyncDelete m_childrenToAsyncDelete;
 
     RefPtr<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
