@@ -1,5 +1,3 @@
 
-Harness Error (TIMEOUT), message = null
-
-TIMEOUT Animation with scroll-timeline should be affected c-v Test timed out
+PASS Animation with scroll-timeline should be affected c-v
 

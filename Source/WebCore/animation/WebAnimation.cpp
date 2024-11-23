@@ -1816,6 +1816,8 @@ std::optional<Seconds> WebAnimation::convertAnimationTimeToTimelineTime(Seconds 
 
 bool WebAnimation::isSkippedContentAnimation() const
 {
+    if (pending())
+        return false;
     if (auto animation = dynamicDowncast<StyleOriginatedAnimation>(this)) {
         if (auto element = animation->owningElement())
             return element->element.renderer() && element->element.renderer()->isSkippedContent();
