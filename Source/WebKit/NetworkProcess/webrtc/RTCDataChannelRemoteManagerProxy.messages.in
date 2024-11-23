@@ -22,7 +22,7 @@
 
 #if ENABLE(WEB_RTC)
 
-messages -> RTCDataChannelRemoteManagerProxy NotRefCounted {
+messages -> RTCDataChannelRemoteManagerProxy {
     // To source
     SendData(struct WebCore::RTCDataChannelIdentifier source, bool isRaw, std::span<const uint8_t> text);
     Close(struct WebCore::RTCDataChannelIdentifier source);

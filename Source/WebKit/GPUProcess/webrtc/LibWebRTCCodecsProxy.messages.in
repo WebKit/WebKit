@@ -24,7 +24,7 @@
 #if USE(LIBWEBRTC) && PLATFORM(COCOA) && ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebCodecsVideoEnabled || PeerConnectionEnabled]
-messages -> LibWebRTCCodecsProxy NotRefCounted {
+messages -> LibWebRTCCodecsProxy {
     CreateDecoder(WebKit::VideoDecoderIdentifier id, enum:uint8_t WebCore::VideoCodecType codecType, String codecString, bool useRemoteFrames, bool enableAdditionalLogging) -> (bool success);
     ReleaseDecoder(WebKit::VideoDecoderIdentifier id)
     FlushDecoder(WebKit::VideoDecoderIdentifier id) -> ()

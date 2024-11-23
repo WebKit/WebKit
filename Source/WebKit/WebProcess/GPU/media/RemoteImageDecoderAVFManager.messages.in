@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
 
-messages -> RemoteImageDecoderAVFManager NotRefCounted {
+messages -> RemoteImageDecoderAVFManager {
     EncodedDataStatusChanged(WebCore::ImageDecoderIdentifier identifier, size_t frameCount, WebCore::IntSize size, bool hasTrack)
 }
 

@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteImageBufferProxy NotRefCounted  {
+messages -> RemoteImageBufferProxy  {
     DidCreateBackend(std::optional<WebKit::ImageBufferBackendHandle> handle) CanDispatchOutOfOrder
 }
 

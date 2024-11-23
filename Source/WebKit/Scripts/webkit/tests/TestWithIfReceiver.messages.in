@@ -24,7 +24,7 @@
 // top-level #if, avoiding generic #include for ApplePayPaymentAuthorizationResult.
 
 #if ENABLE(APPLE_PAY)
-messages -> TestWithIfReceiver NotRefCounted {
+messages -> TestWithIfReceiver {
     CompletePaymentSession(struct WebCore::ApplePayPaymentAuthorizationResult result)
 }
 #endif

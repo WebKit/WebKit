@@ -26,7 +26,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
 [EnabledBy=EncryptedMediaAPIEnabled]
-messages -> RemoteCDMProxy NotRefCounted {
+messages -> RemoteCDMProxy {
     GetSupportedConfiguration(struct WebCore::CDMKeySystemConfiguration candidateConfiguration, enum:bool WebCore::CDMPrivate::LocalStorageAccess access) -> (std::optional<WebCore::CDMKeySystemConfiguration> accumulatedConfiguration)
     CreateInstance() -> (std::optional<WebKit::RemoteCDMInstanceIdentifier> identifier, struct WebKit::RemoteCDMInstanceConfiguration configuration) Synchronous
     LoadAndInitialize()

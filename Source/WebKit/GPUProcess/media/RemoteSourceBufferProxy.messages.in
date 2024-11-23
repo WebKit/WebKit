@@ -26,7 +26,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(MEDIA_SOURCE)
 
 [EnabledBy=MediaSourceEnabled || ManagedMediaSourceEnabled]
-messages -> RemoteSourceBufferProxy NotRefCounted {
+messages -> RemoteSourceBufferProxy {
     SetActive(bool active)
     CanSwitchToType(WebCore::ContentType contentType) -> (bool canSwitch) Synchronous
     SetMode(WebCore::SourceBufferAppendMode appendMode)

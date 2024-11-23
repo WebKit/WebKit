@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [EnabledBy=WebTransportEnabled]
-messages -> NetworkTransportSession NotRefCounted {
+messages -> NetworkTransportSession {
     SendDatagram(std::span<const uint8_t> datagram) -> ()
     CreateOutgoingUnidirectionalStream() -> (std::optional<WebKit::WebTransportStreamIdentifier> identifier)
     CreateBidirectionalStream() -> (std::optional<WebKit::WebTransportStreamIdentifier> identifier)

@@ -22,7 +22,7 @@
 # THE POSSIBILITY OF SUCH DAMAGE.
 
 #if ENABLE(GPU_PROCESS) && ENABLE(VIDEO)
-messages -> RemoteVideoFrameObjectHeap NotRefCounted {
+messages -> RemoteVideoFrameObjectHeap {
 #if PLATFORM(COCOA)
     GetVideoFrameBuffer(WebKit::RemoteVideoFrameReadReference read, bool canSendIOSurface) AllowedWhenWaitingForSyncReply
     PixelBuffer(WebKit::RemoteVideoFrameReadReference read) -> (RetainPtr<CVPixelBufferRef> result) Synchronous

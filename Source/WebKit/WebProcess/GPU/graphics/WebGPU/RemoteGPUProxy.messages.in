@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteGPUProxy NotRefCounted {
+messages -> RemoteGPUProxy {
     void WasCreated(bool didSucceed, IPC::Semaphore streamWakeUpSemaphore, IPC::Semaphore streamClientWaitSemaphore) CanDispatchOutOfOrder
 }
 

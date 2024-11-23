@@ -26,7 +26,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(ENCRYPTED_MEDIA)
 
 [EnabledBy=EncryptedMediaAPIEnabled]
-messages -> RemoteCDMFactoryProxy NotRefCounted {
+messages -> RemoteCDMFactoryProxy {
     CreateCDM(String keySystem) -> (std::optional<WebKit::RemoteCDMIdentifier> identifier, struct WebKit::RemoteCDMConfiguration configuration) Synchronous
     SupportsKeySystem(String keySystem) -> (bool result) Synchronous
     RemoveInstance(WebKit::RemoteCDMInstanceIdentifier identifier)

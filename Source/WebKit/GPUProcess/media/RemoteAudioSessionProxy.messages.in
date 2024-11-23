@@ -26,7 +26,7 @@
 #if ENABLE(GPU_PROCESS) && USE(AUDIO_SESSION)
 
 [EnabledBy=MediaPlaybackEnabled]
-messages -> RemoteAudioSessionProxy NotRefCounted {
+messages -> RemoteAudioSessionProxy {
     SetCategory(enum:uint8_t WebCore::AudioSessionCategory type, enum:uint8_t WebCore::AudioSessionMode mode, enum:uint8_t WebCore::RouteSharingPolicy policy)
     SetPreferredBufferSize(uint64_t preferredBufferSize)
     TryToSetActive(bool active) -> (bool suceeded) Synchronous
