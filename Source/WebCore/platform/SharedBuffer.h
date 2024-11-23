@@ -52,8 +52,6 @@ typedef struct _GBytes GBytes;
 #include "GStreamerCommon.h"
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 #if USE(FOUNDATION)
 OBJC_CLASS NSArray;
 OBJC_CLASS NSData;
@@ -278,7 +276,7 @@ private:
 
     // Combines all the segments into a Vector and returns that vector after clearing the FragmentedSharedBuffer.
     WEBCORE_EXPORT Vector<uint8_t> takeData();
-    const DataSegmentVectorEntry* getSegmentForPosition(size_t position) const;
+    std::span<const DataSegmentVectorEntry> segmentForPosition(size_t position) const;
 
 #if ASSERT_ENABLED
     bool internallyConsistent() const;
@@ -428,5 +426,3 @@ RefPtr<SharedBuffer> utf8Buffer(const String&);
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::SharedBuffer)
     static bool isType(const WebCore::FragmentedSharedBuffer& buffer) { return buffer.isContiguous(); }
 SPECIALIZE_TYPE_TRAITS_END()
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
