@@ -36,6 +36,7 @@ class URLPatternComponent {
 public:
     static ExceptionOr<URLPatternComponent> compile(Ref<JSC::VM>, StringView, EncodingCallbackType, const URLPatternStringOptions&);
     const String& patternString() const { return m_patternString; }
+    bool matchSpecialSchemeProtocol(ScriptExecutionContext&) const;
     URLPatternComponent() = default;
 
 private:

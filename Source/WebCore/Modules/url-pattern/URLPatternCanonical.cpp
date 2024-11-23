@@ -192,7 +192,7 @@ ExceptionOr<String> canonicalizePathname(StringView pathnameValue)
         return pathnameValue.toString();
 
     bool hasLeadingSlash = pathnameValue[0] == '/';
-    auto maybeAddSlashPrefix = hasLeadingSlash ? pathnameValue : makeString("/-"_s, pathnameValue);
+    String maybeAddSlashPrefix = hasLeadingSlash ? pathnameValue.toString() : makeString("/-"_s, pathnameValue);
 
     URL dummyURL(dummyURLCharacters);
     dummyURL.setPath(maybeAddSlashPrefix);

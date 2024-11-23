@@ -62,7 +62,7 @@ public:
     const String& password() const { return m_passwordComponent.patternString(); }
     const String& hostname() const { return m_hostnameComponent.patternString(); }
     const String& port() const { return m_portComponent.patternString(); }
-    const String& pathname() const { return m_pathname; }
+    const String& pathname() const { return m_pathnameComponent.patternString(); }
     const String& search() const { return m_searchComponent.patternString(); }
     const String& hash() const { return m_hashComponent.patternString(); }
 
@@ -76,8 +76,7 @@ private:
     URLPatternUtilities::URLPatternComponent m_usernameComponent;
     URLPatternUtilities::URLPatternComponent m_passwordComponent;
     URLPatternUtilities::URLPatternComponent m_hostnameComponent;
-    // FIXME: Implement tracking pathname with URLPatternComponent
-    String m_pathname;
+    URLPatternUtilities::URLPatternComponent m_pathnameComponent;
     URLPatternUtilities::URLPatternComponent m_portComponent;
     URLPatternUtilities::URLPatternComponent m_searchComponent;
     URLPatternUtilities::URLPatternComponent m_hashComponent;

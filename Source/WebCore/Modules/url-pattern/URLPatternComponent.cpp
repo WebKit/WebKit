@@ -27,6 +27,8 @@
 #include "URLPatternComponent.h"
 
 #include "URLPatternCanonical.h"
+#include <JavaScriptCore/JSString.h>
+#include <JavaScriptCore/RegExpObject.h>
 
 namespace WebCore {
 namespace URLPatternUtilities {
@@ -53,7 +55,7 @@ ExceptionOr<URLPatternComponent> URLPatternComponent::compile(Ref<VM> vm, String
         flags.add(Yarr::Flags::IgnoreCase);
 
     RegExp* regularExpression = RegExp::create(vm, regularExpressionString, flags);
-    if (!regularExpression)
+    if (!regularExpression->isValid())
         return Exception { ExceptionCode::TypeError, "Unable to create RegExp object regular expression from provided URLPattern string."_s };
 
     String patternString = generatePatternString(partList, options);
@@ -63,6 +65,19 @@ ExceptionOr<URLPatternComponent> URLPatternComponent::compile(Ref<VM> vm, String
     });
 
     return URLPatternComponent { WTFMove(patternString), JSC::Strong<JSC::RegExp> { vm, regularExpression }, WTFMove(nameList), hasRegexGroups };
+}
+
+bool URLPatternComponent::matchSpecialSchemeProtocol(ScriptExecutionContext& context) const
+{
+    static constexpr std::array specialSchemeList { "ftp"_s, "file"_s, "http"_s, "https"_s, "ws"_s, "wss"_s };
+    auto protocolRegex = RegExpObject::create(context.vm(), context.globalObject()->regExpStructure(), m_regularExpression.get(), true);
+
+    bool isSchemeMatch = std::find_if(specialSchemeList.begin(), specialSchemeList.end(), [&](const String& scheme) {
+        auto maybeMatch = protocolRegex->exec(context.globalObject(), JSC::jsString(context.vm(), scheme));
+        return !maybeMatch.isNull();
+    });
+
+    return isSchemeMatch;
 }
 
 }
