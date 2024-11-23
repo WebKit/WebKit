@@ -27,7 +27,6 @@
 #import <dlfcn.h>
 #import <objc/runtime.h>
 #import <wtf/Assertions.h>
-#import <wtf/FileSystem.h>
 
 #pragma mark - Soft-link macros for use within a single source file
 

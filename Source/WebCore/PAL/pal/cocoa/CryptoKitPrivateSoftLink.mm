@@ -27,6 +27,7 @@
 
 #if HAVE(RSA_BSSA)
 
+#import <Foundation/Foundation.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_PRIVATE_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, CryptoKitPrivate, PAL_EXPORT);

@@ -24,6 +24,7 @@
  */
 
 #include "config.h"
+#include <wtf/FileSystem.h>
 #include <wtf/SoftLinking.h>
 
 namespace WebKit {

@@ -26,6 +26,7 @@
 
 #if HAVE(SCREEN_CAPTURE_KIT)
 
+#import <dispatch/dispatch.h>
 #import <wtf/SoftLinking.h>
 
 SOFT_LINK_FRAMEWORK_FOR_SOURCE_WITH_EXPORT(PAL, ScreenCaptureKit, PAL_EXPORT)
