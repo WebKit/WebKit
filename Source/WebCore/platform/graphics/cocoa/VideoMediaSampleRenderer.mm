@@ -37,6 +37,7 @@
 #import <pal/spi/cocoa/AVFoundationSPI.h>
 #import <wtf/Locker.h>
 #import <wtf/MainThreadDispatcher.h>
+#import <wtf/MonotonicTime.h>
 #import <wtf/NativePromise.h>
 
 #pragma mark - Soft Linking
@@ -380,6 +381,8 @@ void VideoMediaSampleRenderer::initializeDecompressionSession()
     m_decodedSampleQueue = WebCoreDecompressionSession::createBufferQueue();
     m_decompressionSession = WebCoreDecompressionSession::createOpenGL();
 
+    m_startupTime = MonotonicTime::now();
+
     resetReadyForMoreSample();
 }
 
@@ -404,8 +407,9 @@ VideoMediaSampleRenderer::DecodedFrameResult VideoMediaSampleRenderer::maybeQueu
 {
     assertIsCurrent(dispatcher().get());
 
+    CMTime presentationTime = PAL::CMSampleBufferGetOutputPresentationTimeStamp(sample);
+
     if (RetainPtr timebase = this->timebase()) {
-        CMTime presentationTime = PAL::CMSampleBufferGetOutputPresentationTimeStamp(sample);
         if (m_lastDisplayedTime) {
             auto comparisonResult = PAL::CMTimeCompare(presentationTime, *m_lastDisplayedTime);
             if (comparisonResult < 0)
@@ -435,10 +439,11 @@ VideoMediaSampleRenderer::DecodedFrameResult VideoMediaSampleRenderer::maybeQueu
         LOG(Media, "maybeQueueFrameForDisplay: currentTime:%f presentationTime:%f endTime:%f enqueuing", PAL::toMediaTime(currentTime).toDouble(), PAL::toMediaTime(presentationTime).toDouble(), PAL::toMediaTime(presentationEndTime).toDouble());
     }
 
+    ++m_presentedVideoFrames;
     [rendererOrDisplayLayer() enqueueSampleBuffer:sample];
     m_isDisplayingSample = true;
 
-    notifyHasAvailableVideoFrame(flushId);
+    notifyHasAvailableVideoFrame(PAL::toMediaTime(presentationTime), (MonotonicTime::now() - m_startupTime).seconds(), flushId);
 
     return DecodedFrameResult::Displayed;
 }
@@ -653,6 +658,11 @@ auto VideoMediaSampleRenderer::copyDisplayedPixelBuffer() -> DisplayedPixelBuffe
     return { WTFMove(imageBuffer), presentationTimeStamp };
 }
 
+unsigned VideoMediaSampleRenderer::totalDisplayedFrames() const
+{
+    return m_presentedVideoFrames;
+}
+
 unsigned VideoMediaSampleRenderer::totalVideoFrames() const
 {
     if (m_decompressionSession)
@@ -716,22 +726,22 @@ void VideoMediaSampleRenderer::assignResourceOwner(CMSampleBufferRef sampleBuffe
         IOSurface::setOwnershipIdentity(surface, m_resourceOwner);
 }
 
-void VideoMediaSampleRenderer::notifyWhenHasAvailableVideoFrame(Function<void()>&& callback)
+void VideoMediaSampleRenderer::notifyWhenHasAvailableVideoFrame(Function<void(const MediaTime&, double)>&& callback)
 {
     assertIsMainThread();
 
     m_hasAvailableFrameCallback = WTFMove(callback);
 }
 
-void VideoMediaSampleRenderer::notifyHasAvailableVideoFrame(FlushId flushId)
+void VideoMediaSampleRenderer::notifyHasAvailableVideoFrame(const MediaTime& presentationTime, double displayTime, FlushId flushId)
 {
     assertIsCurrent(dispatcher());
 
-    callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }, flushId] {
+    callOnMainThread([weakThis = ThreadSafeWeakPtr { *this }, flushId, presentationTime, displayTime] {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && flushId == protectedThis->m_flushId) {
             assertIsMainThread();
-            if (auto callback = std::exchange(protectedThis->m_hasAvailableFrameCallback, { }))
-                callback();
+            if (protectedThis->m_hasAvailableFrameCallback)
+                protectedThis->m_hasAvailableFrameCallback(presentationTime, displayTime);
         }
     });
 }

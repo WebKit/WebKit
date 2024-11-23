@@ -1,0 +1,65 @@
+<html>
+<head>
+<title>requestVideoFrameCallback with playing webm</title>
+<script src="../resources/testharness.js"></script>
+<script src=video-test.js></script>
+<script src=utilities.js></script>
+<script>
+    var lastPresentationTime = -Number.MAX_NUMBER;
+    var lastDisplayTime = -Number.MAX_NUMBER;
+    var lastPresentedFrames = -Number.MAX_NUMBER;
+    var lastMediaTime = -Number.MAX_NUMBER;
+    var frame;
+
+    async function init()
+    {
+        if (window.testRunner)
+            testRunner.waitUntilDone();
+
+        findMediaElement();
+
+        video.src = "content/test-vp8.webm";
+        const tooLongTimeout = setTimeout(failTest.bind(null, "timeout"), 5000);
+
+        await waitFor(video, 'loadedmetadata');
+        video.play();
+
+        let counter = 0;
+        while (counter++ < 10) {
+            frame = await waitForVideoFrame(video);
+            if (frame[1].presentationTime <= lastPresentationTime) {
+                testExpected(frame[1].presentationTime, lastPresentationTime, ">");
+                failTest("presentationTime isn't monotonically increasing");
+            }
+            lastPresentationTime = frame[1].presentationTime;
+
+            if (frame[1].expectedDisplayTime <= lastDisplayTime) {
+                testExpected(frame[1].expectedDisplayTime, lastDisplayTime, ">");
+                failTest("expectedDisplayTime isn't monotonically increasing");
+            }
+            lastDisplayTime = frame[1].expectedDisplayTime;
+
+            if (frame[1].presentedFrames <= lastPresentedFrames) {
+                testExpected(frame[1].presentedFrames, lastPresentedFrames, ">");
+                failTest("mediaTime isn't monotonically increasing");
+            }
+            lastPresentedFrames = frame[1].presentedFrames;
+
+            if (frame[1].mediaTime <= lastMediaTime) {
+                testExpected(frame[1].mediaTime, lastMediaTime, ">");
+                failTest("mediaTime isn't monotonically increasing");
+            }
+            lastMediaTime = frame[1].mediaTime;
+        }
+
+        clearTimeout(tooLongTimeout);
+
+        if (window.testRunner)
+            testRunner.notifyDone();
+    }
+</script>
+</head>
+<body onload="init();">
+<video muted/>
+</body>
+</html>

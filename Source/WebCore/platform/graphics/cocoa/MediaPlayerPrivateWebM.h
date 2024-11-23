@@ -255,14 +255,12 @@ private:
     void setVideoRenderer(WebSampleBufferVideoRendering *);
     void stageVideoRenderer(WebSampleBufferVideoRendering *);
 
-    void registerNotifyWhenHasAvailableVideoFrame();
-        
     void startVideoFrameMetadataGathering() final;
     void stopVideoFrameMetadataGathering() final;
     std::optional<VideoFrameMetadata> videoFrameMetadata() final { return std::exchange(m_videoFrameMetadata, { }); }
     void setResourceOwner(const ProcessIdentity& resourceOwner) final { m_resourceOwner = resourceOwner; }
 
-    void checkNewVideoFrameMetadata(MediaTime);
+    void checkNewVideoFrameMetadata(const MediaTime& presentationTime, double displayTime);
 
     // WebAVSampleBufferListenerParent
     // Methods are called on the WebMResourceClient's WorkQueue
@@ -351,7 +349,6 @@ private:
     bool m_isGatheringVideoFrameMetadata { false };
     std::optional<VideoFrameMetadata> m_videoFrameMetadata;
     uint64_t m_lastConvertedSampleCount { 0 };
-    uint64_t m_sampleCount { 0 };
     ProcessIdentity m_resourceOwner;
 
     FloatSize m_naturalSize;

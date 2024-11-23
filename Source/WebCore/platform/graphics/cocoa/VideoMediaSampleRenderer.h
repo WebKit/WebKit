@@ -30,6 +30,7 @@
 #include <CoreMedia/CMTime.h>
 #include <wtf/Function.h>
 #include <wtf/Lock.h>
+#include <wtf/MonotonicTime.h>
 #include <wtf/Ref.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/ThreadSafeWeakPtr.h>
@@ -67,7 +68,7 @@ public:
     void enqueueSample(const MediaSample&);
     void stopRequestingMediaData();
 
-    void notifyWhenHasAvailableVideoFrame(Function<void()>&&);
+    void notifyWhenHasAvailableVideoFrame(Function<void(const MediaTime&, double)>&&);
     void notifyWhenDecodingErrorOccurred(Function<void(OSStatus)>&&);
 
     void flush();
@@ -84,6 +85,7 @@ public:
     };
     DisplayedPixelBufferEntry copyDisplayedPixelBuffer();
 
+    unsigned totalDisplayedFrames() const;
     unsigned totalVideoFrames() const;
     unsigned droppedVideoFrames() const;
     unsigned corruptedVideoFrames() const;
@@ -119,7 +121,7 @@ private:
     void maybeBecomeReadyForMoreMediaData();
     bool shouldDecodeSample(CMSampleBufferRef, bool displaying);
 
-    void notifyHasAvailableVideoFrame(FlushId);
+    void notifyHasAvailableVideoFrame(const MediaTime&, double, FlushId);
     void notifyErrorHasOccurred(OSStatus);
 
     Ref<GuaranteedSerialFunctionDispatcher> dispatcher() const;
@@ -154,11 +156,13 @@ private:
     std::atomic<unsigned> m_totalVideoFrames { 0 };
     std::atomic<unsigned> m_droppedVideoFrames { 0 };
     std::atomic<unsigned> m_corruptedVideoFrames { 0 };
+    std::atomic<unsigned> m_presentedVideoFrames { 0 };
     MediaTime m_totalFrameDelay { MediaTime::zeroTime() };
 
-    Function<void()> m_hasAvailableFrameCallback WTF_GUARDED_BY_CAPABILITY(mainThread);
+    Function<void(const MediaTime&, double)> m_hasAvailableFrameCallback WTF_GUARDED_BY_CAPABILITY(mainThread);
     Function<void(OSStatus)> m_errorOccurredFunction WTF_GUARDED_BY_CAPABILITY(mainThread);
     ProcessIdentity m_resourceOwner;
+    MonotonicTime m_startupTime;
 };
 
 } // namespace WebCore
