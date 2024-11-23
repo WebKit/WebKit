@@ -4,7 +4,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS typesInSameDocument.includes("text/html") is true
-PASS htmlInSameDocument is "<meta content=\"secret\"><u style=\"content-visibility: hidden\">secret</u><b onmouseover=\"dangerousCode()\">hello</b><!-- secret-->, world<script>dangerousCode()</script>"
+PASS htmlInSameDocument is "<meta content=\"secret\"><div style=\"content-visibility: hidden\"><u>secret</u></div><b onmouseover=\"dangerousCode()\">hello</b><!-- secret-->, world<script>dangerousCode()</script>"
 PASS JSON.stringify(itemsInSameDocument[0]) is "{\"kind\":\"string\",\"type\":\"text/html\"}"
 PASS htmlInAnotherDocument.includes("secret") is false
 PASS htmlInAnotherDocument.includes("dangerousCode") is false

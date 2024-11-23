@@ -754,17 +754,7 @@ void Adjuster::adjust(RenderStyle& style, const RenderStyle* userAgentAppearance
     }
 
     if (m_parentStyle.contentVisibility() != ContentVisibility::Hidden) {
-        auto isSkippedContentRoot = [&] {
-            // FIXME: This can be removed soon after we can identify replaced elements using DOM.
-            if (style.contentVisibility() == ContentVisibility::Visible)
-                return false;
-            auto displayType = style.display();
-            auto doesSizeContainmentApplyByDisplayType = displayType != DisplayType::None && displayType != DisplayType::Contents && displayType != DisplayType::Table && displayType != DisplayType::InlineTable && !style.isInternalTableBox() && !style.isRubyContainerOrInternalRubyBox();
-            if (!doesSizeContainmentApplyByDisplayType)
-                return false;
-            return style.contentVisibility() == ContentVisibility::Hidden || (m_element && !m_element->isRelevantToUser());
-        };
-        if (isSkippedContentRoot())
+        if (m_element && isSkippedContentRoot(style, *m_element))
             style.setUsedContentVisibility(style.contentVisibility());
     }
     if (style.contentVisibility() == ContentVisibility::Auto) {

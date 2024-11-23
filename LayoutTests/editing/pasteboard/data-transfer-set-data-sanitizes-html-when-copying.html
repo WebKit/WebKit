@@ -22,7 +22,7 @@ iframe.src = `data:text/html;charset=utf-8,<!DOCTYPE html>
 <div id="destination" onpaste="doPaste(event)" contenteditable>2. Paste here</div>
 <script>
 
-const originalHTML = '<meta content="secret"><u style="content-visibility: hidden">secret</u><b onmouseover="dangerousCode()">hello</b><!-- secret-->, world<script>dangerousCode()</scr' + 'ipt>';
+const originalHTML = '<meta content="secret"><div style="content-visibility: hidden"><u>secret</u></div><b onmouseover="dangerousCode()">hello</b><!-- secret-->, world<script>dangerousCode()</scr' + 'ipt>';
 
 function runTest() {
     document.getElementById('source').focus();

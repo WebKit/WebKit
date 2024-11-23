@@ -9,7 +9,7 @@ PASS htmlInNullOrigin.includes("dangerousCode") is false
 PASS b = (new DOMParser).parseFromString(htmlInNullOrigin, "text/html").querySelector("b"); b.textContent is "hello"
 PASS b.parentNode.textContent is "hello, world"
 PASS JSON.stringify(itemsInNullOrigin[0]) is "{\"kind\":\"string\",\"type\":\"text/html\"}"
-PASS event.clipboardData.getData("text/html") is "<meta content=\"secret\"><u style=\"content-visibility: hidden\">secret</u><b onmouseover=\"dangerousCode()\">hello</b><!-- secret-->, world<script>dangerousCode()</script>"
+PASS event.clipboardData.getData("text/html") is "<meta content=\"secret\"><div style=\"content-visibility: hidden\"\"><u>secret</u></div><b onmouseover=\"dangerousCode()\">hello</b><!-- secret-->, world<script>dangerousCode()</script>"
 PASS event.clipboardData.types.includes("text/html") is true
 PASS JSON.stringify(pastedItems[0]) is "{\"kind\":\"string\",\"type\":\"text/html\"}"
 PASS successfullyParsed is true
