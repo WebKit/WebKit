@@ -64,6 +64,7 @@ class AccessibilityTable;
 class AccessibilityTableCell;
 class Document;
 class HTMLAreaElement;
+class HTMLDetailsElement;
 class HTMLTableElement;
 class HTMLTextFormControlElement;
 class Node;
@@ -344,6 +345,7 @@ public:
     void childrenChanged(AccessibilityObject*);
     void onEventListenerAdded(Node&, const AtomString& eventType);
     void onEventListenerRemoved(Node&, const AtomString& eventType);
+    void onExpandedChanged(HTMLDetailsElement&);
     void onFocusChange(Element* oldElement, Element* newElement);
     void onInertOrVisibilityChange(RenderElement&);
     void onPopoverToggle(const HTMLElement&);

@@ -78,6 +78,7 @@
 #include "HTMLAreaElement.h"
 #include "HTMLButtonElement.h"
 #include "HTMLCanvasElement.h"
+#include "HTMLDetailsElement.h"
 #include "HTMLDialogElement.h"
 #include "HTMLImageElement.h"
 #include "HTMLInputElement.h"
@@ -89,6 +90,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLProgressElement.h"
 #include "HTMLSelectElement.h"
+#include "HTMLSummaryElement.h"
 #include "HTMLTableElement.h"
 #include "HTMLTablePartElement.h"
 #include "HTMLTableRowElement.h"
@@ -1311,6 +1313,17 @@ void AXObjectCache::onEventListenerRemoved(Node& node, const AtomString& eventTy
     UNUSED_PARAM(node);
     UNUSED_PARAM(eventType);
 #endif // ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+}
+
+void AXObjectCache::onExpandedChanged(HTMLDetailsElement& detailsElement)
+{
+    postNotification(get(detailsElement), AXExpandedChanged);
+#if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
+    if (!AXIsolatedTree::treeForPageID(m_pageID))
+        return;
+    for (auto& summary : descendantsOfType<HTMLSummaryElement>(detailsElement))
+        updateIsolatedTree(get(summary), AXExpandedChanged);
+#endif
 }
 
 void AXObjectCache::updateLoadingProgress(double newProgressValue)

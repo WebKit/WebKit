@@ -214,9 +214,8 @@ void HTMLDetailsElement::toggleOpen()
 {
     setBooleanAttribute(openAttr, !hasAttribute(openAttr));
 
-    // We need to post to the document because toggling this element will delete it.
-    if (AXObjectCache* cache = document().existingAXObjectCache())
-        cache->postNotification(nullptr, &document(), AXObjectCache::AXExpandedChanged);
+    if (CheckedPtr cache = document().existingAXObjectCache())
+        cache->onExpandedChanged(*this);
 }
 
 }

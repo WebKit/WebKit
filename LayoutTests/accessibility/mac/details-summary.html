@@ -30,9 +30,10 @@
         window.jsTestIsAsync = true;
 
         var body = accessibilityController.rootElement.childAtIndex(0);
-        body.addNotificationListener(function(notification) {
-            if (notification == "AXExpandedChanged")
-                output += `Received ${notification} notification\n`;
+        accessibilityController.addNotificationListener(function(element, notification) {
+            if (notification != "AXExpandedChanged")
+                return;
+            output += `Got AXExpandedChanged notification for ${element.domIdentifier}\n`;
         });
 
         var details1 = accessibilityController.accessibleElementById("details1");
@@ -100,6 +101,7 @@
             output += expect("details3.isExpanded", "true");
 
             debug(output);
+            accessibilityController.removeNotificationListener();
             document.getElementById("content").style.visibility = "hidden";
             finishJSTest();
         }, 0);
