@@ -215,6 +215,8 @@ void MarkedBlock::Handle::resumeAllocating(FreeList& freeList)
 inline void MarkedBlock::setupTestForDumpInfoAndCrash()
 {
     static std::atomic<uint64_t> count = 0;
+    char* blockMem = std::bit_cast<char*>(this);
+
     // Option set to 0 disables testing.
     if (++count == Options::markedBlockDumpInfoCount()) {
         memset(&header(), 0, sizeof(uintptr_t));
@@ -229,13 +231,11 @@ inline void MarkedBlock::setupTestForDumpInfoAndCrash()
             break;
         case 3: // Test contiguous and total zero byte counts: start and end zeroed.
             dataLogLn("Zeroing start and end of MarkedBlock");
-            char* blockMem = std::bit_cast<char*>(this);
             memset(blockMem, 0, blockSize / 4);
             memset(blockMem + 3 * blockSize / 4, 0, blockSize / 4);
             break;
         case 4: // Test contiguous and total zero byte counts: entire block zeroed.
             dataLogLn("Zeroing MarkedBlock");
-            char* blockMem = std::bit_cast<char*>(this);
             memset(blockMem, 0, blockSize);
             break;
         }
@@ -564,6 +564,8 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
     size_t contiguousZeroBytesHeadOfBlock = 0;
     size_t totalZeroBytesInBlock = 0;
     uint64_t cellFirst8Bytes = 0;
+    unsigned subspaceHash = 0;
+    MarkedBlock::Handle* handle = nullptr;
 
     if (heapCell) {
         uint64_t* p = std::bit_cast<uint64_t*>(heapCell);
@@ -573,8 +575,8 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
     auto updateCrashLogMsg = [&](int line) {
 #if PLATFORM(COCOA)
         StringPrintStream out;
-        out.printf("INVALID HANDLE [%d]: markedBlock=%p; heapCell=%p; cellFirst8Bytes=%#llx; contiguousZeros=%lu; totalZeros=%lu; blockVM=%p; actualVM=%p; isBlockVMValid=%d; isBlockInSet=%d; isBlockInDir=%d; foundInBlockVM=%d;",
-            line, this, heapCell, cellFirst8Bytes, contiguousZeroBytesHeadOfBlock, totalZeroBytesInBlock, blockVM, actualVM, isBlockVMValid, isBlockInSet, isBlockInDirectory, foundInBlockVM);
+        out.printf("INVALID HANDLE [%d]: markedBlock=%p; heapCell=%p; cellFirst8Bytes=%#llx; subspaceHash=%#x; contiguousZeros=%lu; totalZeros=%lu; blockVM=%p; actualVM=%p; isBlockVMValid=%d; isBlockInSet=%d; isBlockInDir=%d; foundInBlockVM=%d;",
+            line, this, heapCell, cellFirst8Bytes, subspaceHash, contiguousZeroBytesHeadOfBlock, totalZeroBytesInBlock, blockVM, actualVM, isBlockVMValid, isBlockInSet, isBlockInDirectory, foundInBlockVM);
         const char* msg = out.toCString().data();
         WTF::setCrashLogMessage(msg);
         dataLogLn(msg);
@@ -615,7 +617,8 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
     if (isBlockVMValid) {
         MarkedSpace& objectSpace = blockVM->heap.objectSpace();
         isBlockInSet = objectSpace.blocks().set().contains(this);
-        isBlockInDirectory = !!objectSpace.findMarkedBlockHandleDebug(this);
+        handle = objectSpace.findMarkedBlockHandleDebug(this);
+        isBlockInDirectory = !!handle;
         foundInBlockVM = isBlockInSet || isBlockInDirectory;
         updateCrashLogMsg(__LINE__);
     }
@@ -625,7 +628,8 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
         VMInspector::forEachVM([&](VM& vm) {
             MarkedSpace& objectSpace = vm.heap.objectSpace();
             isBlockInSet = objectSpace.blocks().set().contains(this);
-            isBlockInDirectory = !!objectSpace.findMarkedBlockHandleDebug(this);
+            handle = objectSpace.findMarkedBlockHandleDebug(this);
+            isBlockInDirectory = !!handle;
             // Either of them is true indicates that the block belongs to the VM.
             if (isBlockInSet || isBlockInDirectory) {
                 actualVM = &vm;
@@ -635,6 +639,10 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
             return IterationStatus::Continue;
         });
     }
+    updateCrashLogMsg(__LINE__);
+
+    if (handle && handle->directory() && handle->directory()->subspace())
+        subspaceHash = handle->directory()->subspace()->nameHash();
     updateCrashLogMsg(__LINE__);
 
     uint64_t bitfield = 0xab00ab01ab020000;
@@ -650,8 +658,7 @@ NO_RETURN_DUE_TO_CRASH NEVER_INLINE void MarkedBlock::dumpInfoAndCrashForInvalid
     static_assert(MarkedBlock::blockSize < (1ull << 32));
     uint64_t zeroCounts = contiguousZeroBytesHeadOfBlock | (static_cast<uint64_t>(totalZeroBytesInBlock) << 32);
 
-    // NB: could save something other than 'this' since it can be derived from heapCell.
-    CRASH_WITH_INFO(heapCell, cellFirst8Bytes, zeroCounts, bitfield, this, blockVM, actualVM);
+    CRASH_WITH_INFO(heapCell, cellFirst8Bytes, zeroCounts, bitfield, subspaceHash, blockVM, actualVM);
 }
 
 } // namespace JSC
