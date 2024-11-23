@@ -85,11 +85,11 @@ WK_CLASS_AVAILABLE(macos(10.10), ios(8.0))
 
 /*! @abstract The modifier keys that were in effect when the navigation was requested.
  */
-@property (nonatomic, readonly) UIKeyModifierFlags modifierFlags WK_API_AVAILABLE(ios(WK_IOS_TBA), visionOS(WK_XROS_TBA));
+@property (nonatomic, readonly) UIKeyModifierFlags modifierFlags WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 /*! @abstract The button mask of the index of the mouse button causing the navigation to be requested.
  */
-@property (nonatomic, readonly) UIEventButtonMask buttonNumber WK_API_AVAILABLE(ios(WK_IOS_TBA), visionOS(WK_XROS_TBA));
+@property (nonatomic, readonly) UIEventButtonMask buttonNumber WK_API_AVAILABLE(ios(WK_IOS_TBA), visionos(WK_XROS_TBA));
 
 #else
 
