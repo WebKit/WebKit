@@ -185,6 +185,7 @@ private:
     };
     OptionSet<ButtonState> _buttonState;
 #endif
+    BOOL _isIgnoreFurtherHeuristic;
 }
 
 @synthesize prefersStatusBarHidden = _prefersStatusBarHidden;
@@ -223,6 +224,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 #if PLATFORM(VISION)
     _isInteractingWithSystemChrome = NO;
 #endif
+    _isIgnoreFurtherHeuristic = NO;
 
     return self;
 }
@@ -1028,7 +1030,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     ASSERT(_valid);
     if ([_touchGestureRecognizer state] == UIGestureRecognizerStateEnded && !self._webView._shouldAvoidSecurityHeuristicScoreUpdates) {
         double score = _secheuristic.scoreOfNextTouch([_touchGestureRecognizer locationInView:self.view]);
-        if (score > _secheuristic.requiredScore())
+        if (!_isIgnoreFurtherHeuristic && score > _secheuristic.requiredScore())
             [self _showPhishingAlert];
     }
     if (!self.animating)
@@ -1091,8 +1093,18 @@ ALLOW_DEPRECATED_DECLARATIONS_END
         _secheuristic.reset();
     }];
 
+    UIAlertAction* stayActionIgnore = [UIAlertAction actionWithTitle:WEB_UI_STRING_KEY("Stay in Full Screen & Trust the website", "Stay in Full Screen & Trust the website (Element Full Screen)", "Full Screen Deceptive Website Stay Action") style:UIAlertActionStyleDefault handler:^(UIAlertAction * action) {
+        if (auto page = [self._webView _page]) {
+            page->resumeActiveDOMObjectsAndAnimations();
+            page->resumeAllMediaPlayback([] { });
+        }
+        _secheuristic.reset();
+        _isIgnoreFurtherHeuristic = YES;
+    }];
+
     [alert addAction:exitAction];
     [alert addAction:stayAction];
+    [alert addAction:stayActionIgnore];
     [self presentViewController:alert.get() animated:YES completion:nil];
 }
 
