@@ -131,8 +131,8 @@ messages -> NetworkConnectionToWebProcess WantsDispatchMessage {
     NavigatorGetPushPermissionState(URL scopeURL) -> (Expected<uint8_t, WebCore::ExceptionData> result)
 #endif
 
-    [EnabledIf='isWebTransportEnabled()'] InitializeWebTransportSession(URL url) -> (std::optional<WebKit::WebTransportSessionIdentifier> identifier)
-    [EnabledIf='isWebTransportEnabled()'] DestroyWebTransportSession(WebKit::WebTransportSessionIdentifier identifier)
+    [EnabledBy=WebTransportEnabled] InitializeWebTransportSession(URL url) -> (std::optional<WebKit::WebTransportSessionIdentifier> identifier)
+    [EnabledBy=WebTransportEnabled] DestroyWebTransportSession(WebKit::WebTransportSessionIdentifier identifier)
 
     ClearFrameLoadRecordsForStorageAccess(WebCore::FrameIdentifier frameID)
 
