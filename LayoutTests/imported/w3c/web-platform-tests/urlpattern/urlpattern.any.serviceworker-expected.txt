@@ -34,13 +34,13 @@ FAIL Pattern: [{"pathname":"/foo/([^\\/]+?)"}] Inputs: [{"pathname":"/foo/bar"}]
 FAIL Pattern: [{"pathname":"/foo/:bar"}] Inputs: [{"pathname":"/foo/index.html"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/:bar"}] Inputs: [{"pathname":"/foo/bar/"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/:bar"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo/bar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*" but got "/foo/(.*)"
+FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo/bar/baz"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*" but got "/foo/(.*)"
+FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*" but got "/foo/(.*)"
+FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*" but got "/foo/(.*)"
+FAIL Pattern: [{"pathname":"/foo/(.*)"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/:bar(.*)"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/:bar(.*)"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
@@ -61,46 +61,46 @@ FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foo/bar/baz"}] 
 FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/:bar*"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo/bar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*?" but got "/foo/(.*)?"
+FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo/bar/baz"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*?" but got "/foo/(.*)?"
+FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*?" but got "/foo/(.*)?"
+FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*?" but got "/foo/(.*)?"
+FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foobar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*?" but got "/foo/(.*)?"
+FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/fo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*?" but got "/foo/(.*)?"
+FAIL Pattern: [{"pathname":"/foo/(.*)?"}] Inputs: [{"pathname":"/fo"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*?"}] Inputs: [{"pathname":"/fo"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo/bar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*+" but got "/foo/(.*)+"
+FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo/bar/baz"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*+" but got "/foo/(.*)+"
+FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*+" but got "/foo/(.*)+"
+FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*+" but got "/foo/(.*)+"
+FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foobar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*+" but got "/foo/(.*)+"
+FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/fo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/*+" but got "/foo/(.*)+"
+FAIL Pattern: [{"pathname":"/foo/(.*)+"}] Inputs: [{"pathname":"/fo"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/*+"}] Inputs: [{"pathname":"/fo"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo/bar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/**" but got "/foo/(.*)*"
+FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo/bar/baz"}] assert_equals: compiled pattern property 'pathname' expected "/foo/**" but got "/foo/(.*)*"
+FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/**" but got "/foo/(.*)*"
+FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/**" but got "/foo/(.*)*"
+FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foobar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/**" but got "/foo/(.*)*"
+FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/foobar"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/fo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/**" but got "/foo/(.*)*"
+FAIL Pattern: [{"pathname":"/foo/(.*)*"}] Inputs: [{"pathname":"/fo"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/**"}] Inputs: [{"pathname":"/fo"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo/bar"}] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "/foo{/bar}"
-FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo/bar/baz"}] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "/foo{/bar}"
-FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo"}] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "/foo{/bar}"
-FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "/foo{/bar}"
+FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/foo{/bar}"}] Inputs: [{"pathname":"/foo/"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo{/bar}?"}] Inputs: [{"pathname":"/foo/bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo{/bar}?"}] Inputs: [{"pathname":"/foo/bar/baz"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo{/bar}?"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
@@ -119,14 +119,14 @@ PASS Pattern: [{"protocol":"(café)"}] Inputs: undefined
 PASS Pattern: [{"username":"(café)"}] Inputs: undefined
 PASS Pattern: [{"password":"(café)"}] Inputs: undefined
 PASS Pattern: [{"hostname":"(café)"}] Inputs: undefined
-FAIL Pattern: [{"pathname":"(café)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"pathname":"(café)"}] Inputs: undefined
 PASS Pattern: [{"search":"(café)"}] Inputs: undefined
 PASS Pattern: [{"hash":"(café)"}] Inputs: undefined
 FAIL Pattern: [{"protocol":":café"}] Inputs: [{"protocol":"foo"}] Invalid input to canonicalize a URL protocol string.
 FAIL Pattern: [{"username":":café"}] Inputs: [{"username":"foo"}] assert_equals: compiled pattern property 'username' expected ":café" but got "{:caf}é"
 FAIL Pattern: [{"password":":café"}] Inputs: [{"password":"foo"}] assert_equals: compiled pattern property 'password' expected ":café" but got "{:caf}é"
 FAIL Pattern: [{"hostname":":café"}] Inputs: [{"hostname":"foo"}] assert_equals: compiled pattern property 'hostname' expected ":café" but got "{:caf}é"
-FAIL Pattern: [{"pathname":"/:café"}] Inputs: [{"pathname":"/foo"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"/:café"}] Inputs: [{"pathname":"/foo"}] assert_equals: compiled pattern property 'pathname' expected "/:café" but got "/:caf%C3%A9"
 FAIL Pattern: [{"search":":café"}] Inputs: [{"search":"foo"}] assert_equals: compiled pattern property 'search' expected ":café" but got ":caf%C3%A9"
 FAIL Pattern: [{"hash":":café"}] Inputs: [{"hash":"foo"}] assert_equals: compiled pattern property 'hash' expected ":café" but got ":caf%C3%A9"
 FAIL Pattern: [{"protocol":":℘"}] Inputs: [{"protocol":"foo"}] The operation is not supported.
@@ -165,15 +165,15 @@ FAIL Pattern: [{"port":"(.*)"}] Inputs: [{"port":"invalid80"}] The operation is 
 FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/./bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/baz"}] Inputs: [{"pathname":"/foo/bar/../baz"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/caf%C3%A9"}] Inputs: [{"pathname":"/café"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/café"}] Inputs: [{"pathname":"/café"}] assert_equals: compiled pattern property 'pathname' expected "/caf%C3%A9" but got "/café"
+FAIL Pattern: [{"pathname":"/café"}] Inputs: [{"pathname":"/café"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/caf%c3%a9"}] Inputs: [{"pathname":"/café"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"foo/bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"foo/bar","baseURL":"https://example.com"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo/../bar"}] Inputs: [{"pathname":"/bar"}] assert_equals: compiled pattern property 'pathname' expected "/bar" but got "/foo/../bar"
+FAIL Pattern: [{"pathname":"/foo/../bar"}] Inputs: [{"pathname":"/bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"./foo/bar","baseURL":"https://example.com"}] Inputs: [{"pathname":"foo/bar","baseURL":"https://example.com"}] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "./foo/bar"
 FAIL Pattern: [{"pathname":"","baseURL":"https://example.com"}] Inputs: [{"pathname":"/","baseURL":"https://example.com"}] assert_equals: compiled pattern property 'pathname' expected "/" but got ""
-FAIL Pattern: [{"pathname":"{/bar}","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./bar","baseURL":"https://example.com/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/bar" but got "{/bar}"
-FAIL Pattern: [{"pathname":"\\/bar","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./bar","baseURL":"https://example.com/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/bar" but got "\\/bar"
+FAIL Pattern: [{"pathname":"{/bar}","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./bar","baseURL":"https://example.com/foo/"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"\\/bar","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./bar","baseURL":"https://example.com/foo/"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"b","baseURL":"https://example.com/foo/"}] Inputs: [{"pathname":"./b","baseURL":"https://example.com/foo/"}] assert_equals: compiled pattern property 'pathname' expected "/foo/b" but got "b"
 FAIL Pattern: [{"pathname":"foo/bar"}] Inputs: ["https://example.com/foo/bar"] The operation is not supported.
 FAIL Pattern: [{"pathname":"foo/bar","baseURL":"https://example.com"}] Inputs: ["https://example.com/foo/bar"] assert_equals: compiled pattern property 'pathname' expected "/foo/bar" but got "foo/bar"
@@ -186,17 +186,17 @@ FAIL Pattern: [{"hash":"café"}] Inputs: [{"hash":"café"}] The operation is not
 FAIL Pattern: [{"hash":"caf%c3%a9"}] Inputs: [{"hash":"café"}] The operation is not supported.
 FAIL Pattern: [{"protocol":"about","pathname":"(blank|sourcedoc)"}] Inputs: ["about:blank"] The operation is not supported.
 FAIL Pattern: [{"protocol":"data","pathname":":number([0-9]+)"}] Inputs: ["data:8675309"] The operation is not supported.
-FAIL Pattern: [{"pathname":"/(\\m)"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"pathname":"/(\\m)"}] Inputs: undefined
 FAIL Pattern: [{"pathname":"/foo!"}] Inputs: [{"pathname":"/foo!"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo\\:"}] Inputs: [{"pathname":"/foo:"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/foo\\{"}] Inputs: [{"pathname":"/foo{"}] assert_equals: compiled pattern property 'pathname' expected "/foo%7B" but got "/foo\\{"
+FAIL Pattern: [{"pathname":"/foo\\{"}] Inputs: [{"pathname":"/foo{"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo\\("}] Inputs: [{"pathname":"/foo("}] The operation is not supported.
-FAIL Pattern: [{"protocol":"javascript","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] assert_equals: compiled pattern property 'pathname' expected "var%20x%20=%201;" but got "var x = 1;"
-FAIL Pattern: [{"protocol":"javascript","pathname":"var x = 1;"}] Inputs: [{"baseURL":"javascript:var x = 1;"}] The operation is not supported.
-FAIL Pattern: [{"protocol":"(data|javascript)","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] The operation is not supported.
-FAIL Pattern: [{"protocol":"(https|javascript)","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] assert_equals: compiled pattern property 'pathname' expected "var%20x%20=%201;" but got "var x = 1;"
-FAIL Pattern: [{"pathname":"var x = 1;"}] Inputs: [{"pathname":"var x = 1;"}] assert_equals: compiled pattern property 'pathname' expected "var%20x%20=%201;" but got "var x = 1;"
+FAIL Pattern: [{"protocol":"javascript","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] assert_equals: compiled pattern property 'pathname' expected "var x = 1;" but got "var%20x%20=%201;"
+FAIL Pattern: [{"pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] The operation is not supported.
+FAIL Pattern: [{"protocol":"javascript","pathname":"var x = 1;"}] Inputs: [{"baseURL":"javascript:var x = 1;"}] assert_equals: compiled pattern property 'pathname' expected "var x = 1;" but got "var%20x%20=%201;"
+FAIL Pattern: [{"protocol":"(data|javascript)","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] assert_equals: compiled pattern property 'pathname' expected "var x = 1;" but got "var%20x%20=%201;"
+FAIL Pattern: [{"protocol":"(https|javascript)","pathname":"var x = 1;"}] Inputs: [{"protocol":"javascript","pathname":"var x = 1;"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"var x = 1;"}] Inputs: [{"pathname":"var x = 1;"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: ["./foo/bar","https://example.com"] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/bar"}] Inputs: [{"pathname":"/foo/bar"},"https://example.com"] assert_throws_js: test() result function "_ => pattern.test(...entry.inputs)" threw object "NotSupportedError: The operation is not supported." ("NotSupportedError") expected instance of function "function TypeError() {
     [native code]
@@ -287,7 +287,7 @@ FAIL Pattern: ["https://foo{@example.com"] Inputs: ["https://foo@example.com"] a
     [native code]
 }" ("TypeError")
 FAIL Pattern: ["data\\:text/javascript,let x = 100/:tens?5;"] Inputs: ["data:text/javascript,let x = 100/5;"] Not implemented.
-FAIL Pattern: [{"pathname":"/:id/:id"}] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" did not throw
+PASS Pattern: [{"pathname":"/:id/:id"}] Inputs: undefined
 PASS Pattern: [{"pathname":"/foo","baseURL":""}] Inputs: undefined
 PASS Pattern: ["/foo",""] Inputs: undefined
 FAIL Pattern: [{"pathname":"/foo"},"https://example.com"] Inputs: undefined assert_throws_js: URLPattern() constructor function "_ => new URLPattern(...entry.pattern)" threw object "NotSupportedError: Not implemented." ("NotSupportedError") expected instance of function "function TypeError() {
@@ -322,27 +322,27 @@ FAIL Pattern: [] Inputs: [{}] Not implemented.
 FAIL Pattern: [] Inputs: [] Not implemented.
 FAIL Pattern: [{"pathname":"(foo)(.*)"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"{(foo)bar}(.*)"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"(foo)?(.*)"}] Inputs: [{"pathname":"foobarbaz"}] assert_equals: compiled pattern property 'pathname' expected "(foo)?*" but got "(foo)?(.*)"
+FAIL Pattern: [{"pathname":"(foo)?(.*)"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"{:foo}(.*)"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"{:foo}(barbaz)"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"{:foo}{(.*)}"}] Inputs: [{"pathname":"foobarbaz"}] assert_equals: compiled pattern property 'pathname' expected "{:foo}(.*)" but got "{:foo}{(.*)}"
-FAIL Pattern: [{"pathname":"{:foo}{(.*)bar}"}] Inputs: [{"pathname":"foobarbaz"}] assert_equals: compiled pattern property 'pathname' expected ":foo{*bar}" but got "{:foo}{(.*)bar}"
-FAIL Pattern: [{"pathname":"{:foo}{bar(.*)}"}] Inputs: [{"pathname":"foobarbaz"}] assert_equals: compiled pattern property 'pathname' expected ":foo{bar*}" but got "{:foo}{bar(.*)}"
-FAIL Pattern: [{"pathname":"{:foo}:bar(.*)"}] Inputs: [{"pathname":"foobarbaz"}] assert_equals: compiled pattern property 'pathname' expected ":foo:bar(.*)" but got "{:foo}:bar(.*)"
-FAIL Pattern: [{"pathname":"{:foo}?(.*)"}] Inputs: [{"pathname":"foobarbaz"}] assert_equals: compiled pattern property 'pathname' expected ":foo?*" but got "{:foo}?(.*)"
+FAIL Pattern: [{"pathname":"{:foo}{(.*)}"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"{:foo}{(.*)bar}"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"{:foo}{bar(.*)}"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"{:foo}:bar(.*)"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"{:foo}?(.*)"}] Inputs: [{"pathname":"foobarbaz"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"{:foo\\bar}"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"{:foo\\.bar}"}] Inputs: [{"pathname":"foo.bar"}] assert_equals: compiled pattern property 'pathname' expected "{:foo.bar}" but got "{:foo\\.bar}"
+FAIL Pattern: [{"pathname":"{:foo\\.bar}"}] Inputs: [{"pathname":"foo.bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"{:foo(foo)bar}"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"{:foo}bar"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
-FAIL Pattern: [{"pathname":":foo\\bar"}] Inputs: [{"pathname":"foobar"}] assert_equals: compiled pattern property 'pathname' expected "{:foo}bar" but got ":foo\\bar"
-FAIL Pattern: [{"pathname":":foo{}(.*)"}] Inputs: [{"pathname":"foobar"}] assert_equals: compiled pattern property 'pathname' expected "{:foo}(.*)" but got ":foo{}(.*)"
-FAIL Pattern: [{"pathname":":foo{}bar"}] Inputs: [{"pathname":"foobar"}] assert_equals: compiled pattern property 'pathname' expected "{:foo}bar" but got ":foo{}bar"
-FAIL Pattern: [{"pathname":":foo{}?bar"}] Inputs: [{"pathname":"foobar"}] assert_equals: compiled pattern property 'pathname' expected "{:foo}bar" but got ":foo{}?bar"
-FAIL Pattern: [{"pathname":"*{}**?"}] Inputs: [{"pathname":"foobar"}] assert_equals: compiled pattern property 'pathname' expected "*(.*)?" but got "*{}**?"
+FAIL Pattern: [{"pathname":":foo\\bar"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":":foo{}(.*)"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":":foo{}bar"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":":foo{}?bar"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
+FAIL Pattern: [{"pathname":"*{}**?"}] Inputs: [{"pathname":"foobar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":":foo(baz)(.*)"}] Inputs: [{"pathname":"bazbar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":":foo(baz)bar"}] Inputs: [{"pathname":"bazbar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"*/*"}] Inputs: [{"pathname":"foo/bar"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"*\\/*"}] Inputs: [{"pathname":"foo/bar"}] assert_equals: compiled pattern property 'pathname' expected "*/{*}" but got "*\\/*"
+FAIL Pattern: [{"pathname":"*\\/*"}] Inputs: [{"pathname":"foo/bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"*/{*}"}] Inputs: [{"pathname":"foo/bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"*//*"}] Inputs: [{"pathname":"foo/bar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/:foo."}] Inputs: [{"pathname":"/bar."}] The operation is not supported.
@@ -351,7 +351,7 @@ FAIL Pattern: [{"pathname":"./foo"}] Inputs: [{"pathname":"./foo"}] The operatio
 FAIL Pattern: [{"pathname":"../foo"}] Inputs: [{"pathname":"../foo"}] The operation is not supported.
 FAIL Pattern: [{"pathname":":foo./"}] Inputs: [{"pathname":"bar./"}] The operation is not supported.
 FAIL Pattern: [{"pathname":":foo../"}] Inputs: [{"pathname":"bar../"}] The operation is not supported.
-FAIL Pattern: [{"pathname":"/:foo\\bar"}] Inputs: [{"pathname":"/bazbar"}] assert_equals: compiled pattern property 'pathname' expected "{/:foo}bar" but got "/:foo\\bar"
+FAIL Pattern: [{"pathname":"/:foo\\bar"}] Inputs: [{"pathname":"/bazbar"}] The operation is not supported.
 FAIL Pattern: [{"pathname":"/foo/bar"},{"ignoreCase":true}] Inputs: [{"pathname":"/FOO/BAR"}] The operation is not supported.
 FAIL Pattern: [{"ignoreCase":true}] Inputs: [{"pathname":"/FOO/BAR"}] The operation is not supported.
 FAIL Pattern: ["https://example.com:8080/foo?bar#baz",{"ignoreCase":true}] Inputs: [{"pathname":"/FOO","search":"BAR","hash":"BAZ","baseURL":"https://example.com:8080"}] Not implemented.
