@@ -879,6 +879,16 @@ list(APPEND WebKit_HEADERS
     ${WebKit_DERIVED_SOURCES_DIR}/WebAutomationSessionProxyScriptSource.h
 )
 
+# Log messages
+add_custom_command(
+    OUTPUT ${WebKit_DERIVED_SOURCES_DIR}/WebKitLogDefinitions.h
+    MAIN_DEPENDENCY ${WEBKIT_DIR}/Shared/WebKitLogEntries.in
+    DEPENDS ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/generate-log-declarations.py
+    WORKING_DIRECTORY ${WebKit_DERIVED_SOURCES_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} ${WebCore_PRIVATE_FRAMEWORK_HEADERS_DIR}/WebCore/generate-log-declarations.py ${WEBKIT_DIR}/Shared/WebKitLogEntries.in ${WebKit_DERIVED_SOURCES_DIR}/WebKitLogDefinitions.h
+    VERBATIM)
+list(APPEND WebKit_HEADERS ${WebKit_DERIVED_SOURCES_DIR}/WebKitLogDefinitions.h)
+
 set(WebKit_WEB_PREFERENCES_TEMPLATES
     ${WEBKIT_DIR}/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.h.erb
     ${WEBKIT_DIR}/Scripts/PreferencesTemplates/SharedPreferencesForWebProcess.cpp.erb

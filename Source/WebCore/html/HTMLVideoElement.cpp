@@ -63,6 +63,8 @@
 #include "PictureInPictureObserver.h"
 #endif
 
+#define HTMLVIDEOELEMENT_RELEASE_LOG(fmt, ...) RELEASE_LOG_FORWARDABLE(Media, fmt, identifier().toUInt64(), ##__VA_ARGS__)
+
 namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(HTMLVideoElement);
@@ -130,7 +132,7 @@ bool HTMLVideoElement::supportsAcceleratedRendering() const
 
 void HTMLVideoElement::mediaPlayerRenderingModeChanged()
 {
-    ALWAYS_LOG(LOGIDENTIFIER);
+    HTMLVIDEOELEMENT_RELEASE_LOG(HTMLVIDEOELEMENT_MEDIAPLAYERRENDERINGMODECHANGED);
 
     // Kick off a fake recalcStyle that will update the compositing tree.
     computeAcceleratedRenderingStateAndUpdateMediaPlayer();

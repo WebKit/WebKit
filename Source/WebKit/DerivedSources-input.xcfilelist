@@ -320,7 +320,6 @@ $(PROJECT_DIR)/Shared/InspectorExtensionTypes.serialization.in
 $(PROJECT_DIR)/Shared/JavaScriptCore.serialization.in
 $(PROJECT_DIR)/Shared/LayerTreeContext.serialization.in
 $(PROJECT_DIR)/Shared/LoadParameters.serialization.in
-$(PROJECT_DIR)/Shared/LogStream.messages.in
 $(PROJECT_DIR)/Shared/MediaPlaybackState.serialization.in
 $(PROJECT_DIR)/Shared/Model.serialization.in
 $(PROJECT_DIR)/Shared/ModelProcessConnectionParameters.serialization.in
@@ -452,6 +451,7 @@ $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexBufferLayout.serialization.in
 $(PROJECT_DIR)/Shared/WebGPU/WebGPUVertexState.serialization.in
 $(PROJECT_DIR)/Shared/WebHitTestResultData.serialization.in
 $(PROJECT_DIR)/Shared/WebImage.serialization.in
+$(PROJECT_DIR)/Shared/WebKitLogEntries.in
 $(PROJECT_DIR)/Shared/WebNavigationDataStore.serialization.in
 $(PROJECT_DIR)/Shared/WebPageCreationParameters.serialization.in
 $(PROJECT_DIR)/Shared/WebPageGroupData.serialization.in
@@ -708,5 +708,6 @@ $(WEBCORE_PRIVATE_HEADERS_DIR)/PlaybackSessionModel.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ProcessSyncData.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ProtectionSpaceBase.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/ScrollTypes.serialization.in
+$(WEBCORE_PRIVATE_HEADERS_DIR)/WebCoreLogEntries.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/WebGPU.serialization.in
 $(WEBCORE_PRIVATE_HEADERS_DIR)/generate-bindings.pl

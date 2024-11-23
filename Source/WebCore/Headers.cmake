@@ -677,6 +677,8 @@ set(WebCore_PRIVATE_FRAMEWORK_HEADERS
     Modules/webtransport/WebTransportSession.h
     Modules/webtransport/WebTransportSessionClient.h
 
+    Scripts/generate-log-declarations.py
+
     accessibility/AXCoreObject.h
     accessibility/AXGeometryManager.h
     accessibility/AXLogger.h

@@ -43,12 +43,15 @@ namespace WebKit {
 
 LogStream::~LogStream()
 {
-    if (RefPtr logStreamConnection = m_logStreamConnection) {
-        logStreamConnection->stopReceivingMessages(Messages::LogStream::messageReceiverName(), m_logStreamIdentifier->toUInt64());
-        logStreamConnection->invalidate();
-    }
-    if (RefPtr logWorkQueue = m_logWorkQueue)
+    if (RefPtr logWorkQueue = m_logWorkQueue) {
+        logWorkQueue->dispatch([logStreamConnection = m_logStreamConnection, logStreamIdentifier = m_logStreamIdentifier]() {
+            if (logStreamConnection) {
+                logStreamConnection->stopReceivingMessages(Messages::LogStream::messageReceiverName(), logStreamIdentifier->toUInt64());
+                logStreamConnection->invalidate();
+            }
+        });
         logWorkQueue->stopAndWaitForCompletion();
+    }
 }
 
 void LogStream::logOnBehalfOfWebContent(std::span<const uint8_t> logSubsystem, std::span<const uint8_t> logCategory, std::span<const uint8_t> nullTerminatedLogString, uint8_t logType)
@@ -89,11 +92,14 @@ void LogStream::setup(uint64_t pid, IPC::StreamServerConnectionHandle&& serverCo
     m_logStreamConnection = IPC::StreamServerConnection::tryCreate(WTFMove(serverConnection), { });
     m_logWorkQueue = IPC::StreamConnectionWorkQueue::create("Log work queue"_s);
     if (RefPtr logStreamConnection = m_logStreamConnection) {
-        logStreamConnection->open(*m_logWorkQueue);
+        if (RefPtr logWorkQueue = m_logWorkQueue)
+            logStreamConnection->open(*logWorkQueue);
         logStreamConnection->startReceivingMessages(*this, Messages::LogStream::messageReceiverName(), m_logStreamIdentifier->toUInt64());
     }
     completionHandler(m_logWorkQueue->wakeUpSemaphore(), m_logStreamConnection->clientWaitSemaphore());
 }
+
+#include "LogEntriesImplementations.h"
 
 }
 

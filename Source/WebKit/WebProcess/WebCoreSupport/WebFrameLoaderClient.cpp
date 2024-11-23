@@ -51,8 +51,8 @@
 #define WebFrameLoaderClient_WEBPAGE (webFrame().page())
 #define WebFrameLoaderClient_WEBPAGEID (WebFrameLoaderClient_WEBPAGE ? WebFrameLoaderClient_WEBPAGE->identifier().toUInt64() : 0)
 
-#define WebFrameLoaderClient_RELEASE_LOG(channel, fmt, ...) RELEASE_LOG(channel, WebFrameLoaderClient_PREFIX_PARAMETERS fmt, this, WebFrameLoaderClient_WEBFRAME, WebFrameLoaderClient_WEBFRAMEID, WebFrameLoaderClient_WEBPAGE, WebFrameLoaderClient_WEBPAGEID, ##__VA_ARGS__)
-#define WebFrameLoaderClient_RELEASE_LOG_ERROR(channel, fmt, ...) RELEASE_LOG_ERROR(channel, WebFrameLoaderClient_PREFIX_PARAMETERS fmt, this, WebFrameLoaderClient_WEBFRAME, WebFrameLoaderClient_WEBFRAMEID, WebFrameLoaderClient_WEBPAGE, WebFrameLoaderClient_WEBPAGEID, ##__VA_ARGS__)
+#define WebFrameLoaderClient_RELEASE_LOG(fmt, ...) RELEASE_LOG_FORWARDABLE(Network, fmt, WebFrameLoaderClient_WEBFRAMEID, WebFrameLoaderClient_WEBPAGEID, ##__VA_ARGS__)
+#define WebFrameLoaderClient_RELEASE_LOG_ERROR(fmt, ...) RELEASE_LOG_ERROR_FORWARDABLE(Network, fmt, WebFrameLoaderClient_WEBFRAMEID, WebFrameLoaderClient_WEBPAGEID, ##__VA_ARGS__)
 
 namespace WebKit {
 using namespace WebCore;
@@ -69,13 +69,13 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
 {
     RefPtr webPage = m_frame->page();
     if (!webPage) {
-        WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because there's no web page");
+        WebFrameLoaderClient_RELEASE_LOG_ERROR(WEBFRAMELOADERCLIENT_NAVIGATIONACTIONDATA_NO_WEBPAGE);
         return std::nullopt;
     }
 
     // Always ignore requests with empty URLs.
     if (request.isEmpty()) {
-        WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because request is empty");
+        WebFrameLoaderClient_RELEASE_LOG_ERROR(WEBFRAMELOADERCLIENT_NAVIGATIONACTIONDATA_EMPTY_REQUEST);
         return std::nullopt;
     }
 
@@ -86,7 +86,7 @@ std::optional<NavigationActionData> WebFrameLoaderClient::navigationActionData(c
 
     auto& requester = *navigationAction.requester();
     if (!requester.frameID) {
-        WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because frame does not exist");
+        WebFrameLoaderClient_RELEASE_LOG_ERROR(WEBFRAMELOADERCLIENT_NAVIGATIONACTIONDATA_NO_FRAME);
         return std::nullopt;
     }
 
@@ -184,13 +184,13 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
         if (navigationAction.processingUserGesture() || navigationAction.isFromNavigationAPI() || shouldUseSyncIPCForFragmentNavigations) {
             auto sendResult = webPage->sendSync(Messages::WebPageProxy::DecidePolicyForNavigationActionSync(*navigationActionData));
             if (!sendResult.succeeded()) {
-                WebFrameLoaderClient_RELEASE_LOG_ERROR(Network, "dispatchDecidePolicyForNavigationAction: ignoring because of failing to send sync IPC with error %" PUBLIC_LOG_STRING, IPC::errorAsString(sendResult.error()).characters());
+                WebFrameLoaderClient_RELEASE_LOG_ERROR(WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_SYNC_IPC_FAILED, (uint8_t)sendResult.error());
                 m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { });
                 return;
             }
 
             auto [policyDecision] = sendResult.takeReply();
-            WebFrameLoaderClient_RELEASE_LOG(Network, "dispatchDecidePolicyForNavigationAction: Got policyAction %u from sync IPC", (unsigned)policyDecision.policyAction);
+            WebFrameLoaderClient_RELEASE_LOG(WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_SYNC_IPC, (unsigned)policyDecision.policyAction);
             m_frame->didReceivePolicyDecision(listenerID, PolicyDecision { policyDecision.isNavigatingToAppBoundDomain, policyDecision.policyAction, { }, policyDecision.downloadID });
             return;
         }
@@ -200,11 +200,8 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(const Navigat
     }
 
     ASSERT(policyDecisionMode == PolicyDecisionMode::Asynchronous);
-    webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(*navigationActionData), [thisPointerForLog = this, frame = m_frame, listenerID] (PolicyDecision&& policyDecision) {
-#if RELEASE_LOG_DISABLED
-        UNUSED_PARAM(thisPointerForLog);
-#endif
-        RELEASE_LOG(Network, WebFrameLoaderClient_PREFIX_PARAMETERS "dispatchDecidePolicyForNavigationAction: Got policyAction %u from async IPC", thisPointerForLog, frame.ptr(), frame->frameID().object().toUInt64(), frame->page(), frame->page() ? frame->page()->identifier().toUInt64() : 0, (unsigned)policyDecision.policyAction);
+    webPage->sendWithAsyncReply(Messages::WebPageProxy::DecidePolicyForNavigationActionAsync(*navigationActionData), [frame = m_frame, listenerID, webPageID = WebFrameLoaderClient_WEBPAGEID] (PolicyDecision&& policyDecision) {
+        RELEASE_LOG_ERROR_FORWARDABLE(Network, WEBFRAMELOADERCLIENT_DISPATCHDECIDEPOLICYFORNAVIGATIONACTION_GOT_POLICYACTION_FROM_ASYNC_IPC, frame->frameID().object().toUInt64(), webPageID, (unsigned)policyDecision.policyAction);
 
         frame->didReceivePolicyDecision(listenerID, WTFMove(policyDecision));
     });

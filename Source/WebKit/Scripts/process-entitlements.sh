@@ -271,6 +271,11 @@ function mac_process_webcontent_shared_entitlements()
         then
             plistbuddy Add :com.apple.private.xpc.domain-extension bool YES
         fi
+
+        if (( "${TARGET_MAC_OS_X_VERSION_MAJOR}" >= 150000 ))
+        then
+            plistbuddy Add :com.apple.private.disable-log-mach-ports bool YES
+        fi
     fi
 
     if [[ "${WK_XPC_SERVICE_VARIANT}" == Development ]]

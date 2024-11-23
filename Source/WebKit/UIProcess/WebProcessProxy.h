@@ -817,7 +817,7 @@ private:
     WebCore::ProcessIdentity m_processIdentity;
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-    LogStream m_logStream;
+    RefPtr<LogStream> m_logStream;
 #endif
 };
 

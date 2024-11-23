@@ -129,6 +129,7 @@ endif
 to-pattern = $(join $(basename $1), $(subst .,%,$(suffix $1)))
 
 MESSAGE_RECEIVERS = \
+	LogStream \
 	NetworkProcess/NetworkBroadcastChannelRegistry \
 	NetworkProcess/NetworkConnectionToWebProcess \
 	NetworkProcess/NetworkContentRuleListManager \
@@ -159,7 +160,6 @@ MESSAGE_RECEIVERS = \
 	Shared/IPCStreamTesterProxy \
 	Shared/IPCTester \
 	Shared/IPCTesterReceiver \
-	Shared/LogStream \
 	UIProcess/WebFullScreenManagerProxy \
 	UIProcess/RemoteLayerTree/RemoteLayerTreeDrawingAreaProxy \
 	UIProcess/GPU/GPUProcessProxy \
@@ -943,3 +943,35 @@ $(WEBKIT_ADDITIONS_SWIFT_FILES): %.swift : %.swift.in
 
 all : $(WEBKIT_ADDITIONS_SWIFT_FILES)
 endif
+
+# Log messages
+
+all : WebCoreLogDefinitions.h WebKitLogDefinitions.h
+
+WEBCORE_LOG_DECLARATIONS_FILES = \
+    WebCoreLogDefinitions.h \
+    WebCoreVirtualLogFunctions.h \
+
+$(WEBCORE_LOG_DECLARATIONS_FILES) : $(WebCorePrivateHeaders)/WebCoreLogEntries.in
+	@echo Creating WebCore log definitions $@
+	$(PYTHON) $(WebCorePrivateHeaders)/generate-log-declarations.py $< $(WEBCORE_LOG_DECLARATIONS_FILES)
+
+WEBKIT_LOG_DECLARATIONS_FILES = \
+    WebKitLogDefinitions.h \
+    WebKitVirtualLogFunctions.h \
+
+$(WEBKIT_LOG_DECLARATIONS_FILES) : Shared/WebKitLogEntries.in
+	@echo Creating WebKit log definitions $@
+	$(PYTHON) $(WebCorePrivateHeaders)/generate-log-declarations.py $< $(WEBKIT_LOG_DECLARATIONS_FILES)
+
+all : LogEntriesDeclarations.h LogEntriesImplementations.h WebKitLogClientDeclarations.h WebCoreLogClientDeclarations.h
+
+LOG_OUTPUT_FILES = \
+    LogStream.messages.in \
+    LogEntriesDeclarations.h \
+    LogEntriesImplementations.h \
+    WebKitLogClientDeclarations.h \
+    WebCoreLogClientDeclarations.h \
+
+$(LOG_OUTPUT_FILES) : Shared/WebKitLogEntries.in $(WebCorePrivateHeaders)/WebCoreLogEntries.in
+	PYTHONPATH=$(WebCorePrivateHeaders) $(PYTHON) $(WebKit2)/Scripts/generate-log-entries.py $^ $(LOG_OUTPUT_FILES)

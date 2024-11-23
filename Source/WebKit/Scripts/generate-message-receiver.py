@@ -23,6 +23,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from __future__ import with_statement
+import os
 import sys
 
 import webkit.messages
@@ -45,13 +46,19 @@ def main(argv):
             second_arg = False
             continue
 
-        receiver_name = parameter.rsplit('/', 1).pop()
+        message_receiver = parameter
+        receiver_name = message_receiver.rsplit('/', 1).pop()
 
-        with open('%s/%s.messages.in' % (base_dir, parameter)) as source_file:
-            receiver = webkit.parser.parse(source_file)
+        if os.path.exists('%s/%s.messages.in' % (os.getcwd(), message_receiver)):
+            with open('%s/%s.messages.in' % (os.getcwd(), message_receiver)) as source_file:
+                receiver = webkit.parser.parse(source_file)
+        else:
+            with open('%s/%s.messages.in' % (base_dir, message_receiver)) as source_file:
+                receiver = webkit.parser.parse(source_file)
+
         receivers.append(receiver)
         if receiver_name != receiver.name:
-            sys.stderr.write("Error: %s defined in file %s/%s.messages.in instead of %s.messages.in\n" % (receiver.name, base_dir, parameter, receiver.name))
+            sys.stderr.write("Error: %s defined in file %s/%s.messages.in instead of %s.messages.in\n" % (receiver.name, base_dir, message_receiver, receiver.name))
             sys.exit(1)
 
     errors = webkit.model.check_global_model_inputs(receivers)
