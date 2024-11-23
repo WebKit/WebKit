@@ -1,4 +1,4 @@
 
 
-FAIL The url of a document with no-referrer referrer meta tag is censored in NavigationHistoryEntry assert_equals: expected (object) null but got (string) "http://localhost:8800/navigation-api/navigation-history-entry/resources/no-referrer-meta.html"
+PASS The url of a document with no-referrer referrer meta tag is censored in NavigationHistoryEntry
 
