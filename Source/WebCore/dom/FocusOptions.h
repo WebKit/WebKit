@@ -34,7 +34,7 @@ enum class FocusRemovalEventsMode : bool { Dispatch, DoNotDispatch };
 
 enum class FocusTrigger : uint8_t { Other, Click, Bindings };
 
-enum class FocusVisibility : bool { Invisible, Visible };
+enum class FocusVisibility : uint8_t { Invisible, Visible, ForceInvisible };
 
 struct FocusOptions {
     SelectionRestorationMode selectionRestorationMode { SelectionRestorationMode::RestoreOrSelectAll };
@@ -43,6 +43,7 @@ struct FocusOptions {
     FocusTrigger trigger { FocusTrigger::Other };
     FocusVisibility visibility { FocusVisibility::Invisible };
     bool preventScroll { false };
+    std::optional<bool> focusVisible { std::nullopt };
 };
 
 } // namespace WebCore
