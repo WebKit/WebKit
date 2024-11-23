@@ -695,7 +695,6 @@ http/tests/contentdispositionattachmentsandbox [ Skip ]
 http/tests/contentfiltering [ Skip ]
 
 http/tests/cookies/double-quoted-value-with-semi-colon.html [ Failure ]
-http/tests/cookies/only-accept-first-party-cookies.html [ Pass ]
 
 http/tests/dom/document-attributes-null-handling.html [ Failure ]
 
@@ -4347,8 +4346,6 @@ streams/writable-stream-create-within-multiple-workers-crash.html [ Skip ]
 
 # Timeout only on Buildbot
 http/tests/misc/embed-image-load-outlives-gc-without-crashing.html [ Pass Timeout ]
-
-fast/dom/no-scroll-when-command-click-fragment-URL.html [ Failure ]
 
 [ Release ] imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-inset-animation.html [ Pass Failure ]
 imported/w3c/web-platform-tests/scroll-animations/css/view-timeline-lookup.html [ Pass Failure ]
