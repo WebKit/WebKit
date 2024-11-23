@@ -136,7 +136,7 @@ static std::optional<UnresolvedFontWeightNumber> consumeFontWeightNumberUnresolv
 
 #if !ENABLE(VARIATION_FONTS)
     // Additional validation is needed for the legacy path.
-    auto result = WTF::switchOn(WTFMove(number->value),
+    auto result = WTF::switchOn(WTFMove(*number),
         [](UnresolvedFontWeightNumber::Raw&& number) -> std::optional<UnresolvedFontWeightNumber> {
             if (auto validated = validateFontWeightNumber(WTFMove(number)))
                 return { { WTFMove(*validated) } };
