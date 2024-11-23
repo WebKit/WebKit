@@ -113,12 +113,16 @@ void PlatformXRSystemProxy::submitFrame()
 
 void PlatformXRSystemProxy::sessionDidEnd(XRDeviceIdentifier deviceIdentifier)
 {
+    RELEASE_ASSERT(webXREnabled());
+
     if (auto device = deviceByIdentifier(deviceIdentifier))
         device->sessionDidEnd();
 }
 
 void PlatformXRSystemProxy::sessionDidUpdateVisibilityState(XRDeviceIdentifier deviceIdentifier, PlatformXR::VisibilityState visibilityState)
 {
+    RELEASE_ASSERT(webXREnabled());
+
     if (auto device = deviceByIdentifier(deviceIdentifier))
         device->updateSessionVisibilityState(visibilityState);
 }
