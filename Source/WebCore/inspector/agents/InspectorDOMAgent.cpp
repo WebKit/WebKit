@@ -138,8 +138,6 @@
 #include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorDOMAgent);
@@ -180,11 +178,10 @@ static Color parseOptionalConfigColor(const String& fieldName, JSON::Object& con
 
 static bool parseQuad(Ref<JSON::Array>&& quadArray, FloatQuad* quad)
 {
-    const size_t coordinatesInQuad = 8;
-    double coordinates[coordinatesInQuad];
-    if (quadArray->length() != coordinatesInQuad)
+    std::array<double, 8> coordinates { };
+    if (quadArray->length() != coordinates.size())
         return false;
-    for (size_t i = 0; i < coordinatesInQuad; ++i) {
+    for (size_t i = 0; i < coordinates.size(); ++i) {
         auto coordinate = quadArray->get(i)->asDouble();
         if (!coordinate)
             return false;
@@ -3214,5 +3211,3 @@ Inspector::Protocol::ErrorStringOr<Ref<Inspector::Protocol::DOM::MediaStats>> In
 }
 
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
