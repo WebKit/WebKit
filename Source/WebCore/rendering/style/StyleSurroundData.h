@@ -29,6 +29,10 @@
 #include <wtf/Ref.h>
 #include <wtf/RefCounted.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(StyleSurroundData);
@@ -39,6 +43,10 @@ public:
     Ref<StyleSurroundData> copy() const;
     
     bool operator==(const StyleSurroundData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleSurroundData&) const;
+#endif
 
     // Here instead of in BorderData to pack up against the refcount.
     bool hasExplicitlySetBorderBottomLeftRadius : 1;

@@ -23,6 +23,7 @@
 #include "StyleBoxData.h"
 
 #include "RenderStyleConstants.h"
+#include "RenderStyleDifference.h"
 #include "RenderStyleInlines.h"
 
 namespace WebCore {
@@ -93,5 +94,31 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
         && m_boxDecorationBreak == o.m_boxDecorationBreak
         && m_verticalAlign == o.m_verticalAlign;
 }
+
+#if !LOG_DISABLED
+void StyleBoxData::dumpDifferences(TextStream& ts, const StyleBoxData& other) const
+{
+    LOG_IF_DIFFERENT(m_width);
+    LOG_IF_DIFFERENT(m_height);
+
+    LOG_IF_DIFFERENT(m_minWidth);
+    LOG_IF_DIFFERENT(m_maxWidth);
+
+    LOG_IF_DIFFERENT(m_minHeight);
+    LOG_IF_DIFFERENT(m_maxHeight);
+
+    LOG_IF_DIFFERENT(m_verticalAlignLength);
+
+    LOG_IF_DIFFERENT(m_specifiedZIndex);
+    LOG_IF_DIFFERENT(m_usedZIndex);
+
+    LOG_IF_DIFFERENT_WITH_CAST(bool, m_hasAutoSpecifiedZIndex);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, m_hasAutoUsedZIndex);
+
+    LOG_IF_DIFFERENT_WITH_CAST(BoxSizing, m_boxSizing);
+    LOG_IF_DIFFERENT_WITH_CAST(BoxDecorationBreak, m_boxDecorationBreak);
+    LOG_IF_DIFFERENT_WITH_CAST(VerticalAlign, m_verticalAlign);
+}
+#endif
 
 } // namespace WebCore

@@ -33,6 +33,10 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class AnimationList;
@@ -1813,6 +1817,10 @@ public:
     bool diffRequiresLayerRepaint(const RenderStyle&, bool isComposited) const;
     void conservativelyCollectChangedAnimatableProperties(const RenderStyle&, CSSPropertiesBitSet&) const;
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const RenderStyle&) const;
+#endif
+
     constexpr bool isDisplayInlineType() const;
     constexpr bool isOriginalDisplayInlineType() const;
     constexpr bool isDisplayFlexibleOrGridBox() const;
@@ -2275,6 +2283,10 @@ private:
         bool hasPseudoStyle(PseudoId) const;
         void setHasPseudoStyles(PseudoIdSet);
 
+#if !LOG_DISABLED
+        void dumpDifferences(TextStream&, const NonInheritedFlags&) const;
+#endif
+
         unsigned effectiveDisplay : 5; // DisplayType
         unsigned originalDisplay : 5; // DisplayType
         unsigned overflowX : 3; // Overflow
@@ -2305,6 +2317,10 @@ private:
 
     struct InheritedFlags {
         friend bool operator==(const InheritedFlags&, const InheritedFlags&) = default;
+
+#if !LOG_DISABLED
+        void dumpDifferences(TextStream&, const InheritedFlags&) const;
+#endif
 
         // Writing Mode = 8 bits (can be packed into 6 if needed)
         WritingMode writingMode;

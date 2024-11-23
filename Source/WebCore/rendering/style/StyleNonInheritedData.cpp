@@ -76,4 +76,16 @@ bool StyleNonInheritedData::operator==(const StyleNonInheritedData& other) const
         && rareData == other.rareData;
 }
 
+#if !LOG_DISABLED
+void StyleNonInheritedData::dumpDifferences(TextStream& ts, const StyleNonInheritedData& other) const
+{
+    boxData->dumpDifferences(ts, *other.boxData);
+    backgroundData->dumpDifferences(ts, *other.backgroundData);
+    surroundData->dumpDifferences(ts, *other.surroundData);
+
+    miscData->dumpDifferences(ts, *other.miscData);
+    rareData->dumpDifferences(ts, *other.rareData);
+}
+#endif
+
 } // namespace WebCore

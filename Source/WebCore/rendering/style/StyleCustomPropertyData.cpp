@@ -171,4 +171,12 @@ AtomString StyleCustomPropertyData::findKeyAtIndex(unsigned index) const
     return key;
 }
 
+#if !LOG_DISABLED
+void StyleCustomPropertyData::dumpDifferences(TextStream& ts, const StyleCustomPropertyData& other) const
+{
+    if (*this != other)
+        ts << "custom properies differ\n";
+}
+#endif // !LOG_DISABLED
+
 } // namespace WebCore

@@ -27,6 +27,7 @@
 #include "StyleVisitedLinkColorData.h"
 
 #include "RenderStyleInlines.h"
+#include "RenderStyleDifference.h"
 
 namespace WebCore {
 
@@ -72,5 +73,18 @@ bool StyleVisitedLinkColorData::operator==(const StyleVisitedLinkColorData& o) c
         && textDecoration == o.textDecoration
         && outline == o.outline;
 }
+
+#if !LOG_DISABLED
+void StyleVisitedLinkColorData::dumpDifferences(TextStream& ts, const StyleVisitedLinkColorData& other) const
+{
+    LOG_IF_DIFFERENT(background);
+    LOG_IF_DIFFERENT(borderLeft);
+    LOG_IF_DIFFERENT(borderRight);
+    LOG_IF_DIFFERENT(borderTop);
+    LOG_IF_DIFFERENT(borderBottom);
+    LOG_IF_DIFFERENT(textDecoration);
+    LOG_IF_DIFFERENT(outline);
+}
+#endif
 
 } // namespace WebCore

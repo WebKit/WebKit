@@ -44,6 +44,7 @@
 #include "QuotesData.h"
 #include "RenderBlock.h"
 #include "RenderObject.h"
+#include "RenderStyleDifference.h"
 #include "RenderStyleSetters.h"
 #include "RenderTheme.h"
 #include "ScaleTransformOperation.h"
@@ -63,6 +64,7 @@
 #include <wtf/MathExtras.h>
 #include <wtf/PointerComparison.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/TextStream.h>
 
 #if ENABLE(TEXT_AUTOSIZING)
 #include <wtf/text/StringHash.h>
@@ -804,7 +806,7 @@ static bool rareDataChangeRequiresLayout(const StyleRareNonInheritedData& first,
         return true;
 
     // If the counter directives change, trigger a relayout to re-calculate counter values and rebuild the counter node tree.
-    if (first.counterDirectives.map != second.counterDirectives.map)
+    if (first.counterDirectives != second.counterDirectives)
         return true;
 
     if (!arePointingToEqualData(first.scale, second.scale)
@@ -1839,7 +1841,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         }
         if (first.clip != second.clip)
             changingProperties.m_properties.set(CSSPropertyClip);
-        if (first.counterDirectives.map != second.counterDirectives.map) {
+        if (first.counterDirectives != second.counterDirectives) {
             changingProperties.m_properties.set(CSSPropertyCounterIncrement);
             changingProperties.m_properties.set(CSSPropertyCounterReset);
             changingProperties.m_properties.set(CSSPropertyCounterSet);
@@ -3970,6 +3972,93 @@ void RenderStyle::adjustViewTimelines()
         timelines.append(ViewTimeline::create(names[i], axis, WTFMove(inset)));
     }
 }
+
+#if !LOG_DISABLED
+void RenderStyle::NonInheritedFlags::dumpDifferences(TextStream& ts, const NonInheritedFlags& other) const
+{
+    if (*this == other)
+        return;
+
+    LOG_IF_DIFFERENT_WITH_CAST(DisplayType, effectiveDisplay);
+    LOG_IF_DIFFERENT_WITH_CAST(DisplayType, originalDisplay);
+    LOG_IF_DIFFERENT_WITH_CAST(Overflow, overflowX);
+    LOG_IF_DIFFERENT_WITH_CAST(Overflow, overflowY);
+    LOG_IF_DIFFERENT_WITH_CAST(Clear, clear);
+    LOG_IF_DIFFERENT_WITH_CAST(PositionType, position);
+    LOG_IF_DIFFERENT_WITH_CAST(UnicodeBidi, unicodeBidi);
+    LOG_IF_DIFFERENT_WITH_CAST(Float, floating);
+
+    LOG_IF_DIFFERENT(usesViewportUnits);
+    LOG_IF_DIFFERENT(usesContainerUnits);
+    LOG_IF_DIFFERENT(isUnique);
+    LOG_IF_DIFFERENT(hasContentNone);
+
+    LOG_IF_DIFFERENT_WITH_CAST(TextDecorationLine, textDecorationLine);
+
+    LOG_IF_DIFFERENT(hasExplicitlyInheritedProperties);
+    LOG_IF_DIFFERENT(disallowsFastPathInheritance);
+
+    LOG_IF_DIFFERENT(emptyState);
+    LOG_IF_DIFFERENT(firstChildState);
+    LOG_IF_DIFFERENT(lastChildState);
+    LOG_IF_DIFFERENT(isLink);
+
+    LOG_IF_DIFFERENT_WITH_CAST(PseudoId, pseudoElementType);
+    LOG_IF_DIFFERENT_WITH_CAST(unsigned, pseudoBits);
+}
+
+void RenderStyle::InheritedFlags::dumpDifferences(TextStream& ts, const InheritedFlags& other) const
+{
+    if (*this == other)
+        return;
+
+    LOG_IF_DIFFERENT(writingMode);
+
+    LOG_IF_DIFFERENT_WITH_CAST(WhiteSpaceCollapse, whiteSpaceCollapse);
+    LOG_IF_DIFFERENT_WITH_CAST(TextWrapMode, textWrapMode);
+    LOG_IF_DIFFERENT_WITH_CAST(TextAlignMode, textAlign);
+    LOG_IF_DIFFERENT_WITH_CAST(TextWrapStyle, textWrapStyle);
+
+    LOG_RAW_OPTIONSET_IF_DIFFERENT(TextTransform, textTransform);
+    LOG_RAW_OPTIONSET_IF_DIFFERENT(TextDecorationLine, textDecorationLines);
+
+    LOG_IF_DIFFERENT_WITH_CAST(PointerEvents, pointerEvents);
+    LOG_IF_DIFFERENT_WITH_CAST(Visibility, visibility);
+    LOG_IF_DIFFERENT_WITH_CAST(CursorType, cursor);
+
+#if ENABLE(CURSOR_VISIBILITY)
+    LOG_IF_DIFFERENT_WITH_CAST(bool, cursorVisibility);
+#endif
+
+    LOG_IF_DIFFERENT_WITH_CAST(ListStylePosition, listStylePosition);
+    LOG_IF_DIFFERENT_WITH_CAST(EmptyCell, emptyCells);
+    LOG_IF_DIFFERENT_WITH_CAST(BorderCollapse, borderCollapse);
+    LOG_IF_DIFFERENT_WITH_CAST(CaptionSide, captionSide);
+    LOG_IF_DIFFERENT_WITH_CAST(BoxDirection, boxDirection);
+    LOG_IF_DIFFERENT_WITH_CAST(Order, rtlOrdering);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasExplicitlySetColor);
+    LOG_IF_DIFFERENT_WITH_CAST(PrintColorAdjust, printColorAdjust);
+    LOG_IF_DIFFERENT_WITH_CAST(InsideLink, insideLink);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, insideDefaultButton);
+
+#if ENABLE(TEXT_AUTOSIZING)
+    LOG_IF_DIFFERENT_WITH_CAST(unsigned, autosizeStatus);
+#endif
+}
+
+void RenderStyle::dumpDifferences(TextStream& ts, const RenderStyle& other) const
+{
+    m_nonInheritedData->dumpDifferences(ts, *other.m_nonInheritedData);
+    m_nonInheritedFlags.dumpDifferences(ts, other.m_nonInheritedFlags);
+
+    m_rareInheritedData->dumpDifferences(ts, *other.m_rareInheritedData);
+    m_inheritedData->dumpDifferences(ts, *other.m_inheritedData);
+    m_inheritedFlags.dumpDifferences(ts, other.m_inheritedFlags);
+
+    m_svgStyle->dumpDifferences(ts, other.m_svgStyle);
+}
+#endif
+
 
 } // namespace WebCore
 

@@ -25,7 +25,7 @@
 #include "CursorList.h"
 #include "QuotesData.h"
 #include "RenderStyleConstants.h"
-#include "RenderStyleInlines.h"
+#include "RenderStyleDifference.h"
 #include "ShadowData.h"
 #include "StyleFilterData.h"
 #include "StyleImage.h"
@@ -382,5 +382,148 @@ bool StyleRareInheritedData::hasColorFilters() const
 {
     return !appleColorFilter->operations.isEmpty();
 }
+
+#if !LOG_DISABLED
+void StyleRareInheritedData::dumpDifferences(TextStream& ts, const StyleRareInheritedData& other) const
+{
+    customProperties->dumpDifferences(ts, other.customProperties);
+
+    LOG_IF_DIFFERENT(textStrokeWidth);
+
+    LOG_IF_DIFFERENT(listStyleImage);
+    LOG_IF_DIFFERENT(textStrokeColor);
+    LOG_IF_DIFFERENT(textFillColor);
+    LOG_IF_DIFFERENT(textEmphasisColor);
+
+    LOG_IF_DIFFERENT(visitedLinkTextStrokeColor);
+    LOG_IF_DIFFERENT(visitedLinkTextFillColor);
+    LOG_IF_DIFFERENT(visitedLinkTextEmphasisColor);
+
+    LOG_IF_DIFFERENT(caretColor);
+    LOG_IF_DIFFERENT(visitedLinkCaretColor);
+
+    LOG_IF_DIFFERENT(textShadow);
+
+    LOG_IF_DIFFERENT(cursorData);
+
+    LOG_IF_DIFFERENT(indent);
+    LOG_IF_DIFFERENT(usedZoom);
+
+    LOG_IF_DIFFERENT(textUnderlineOffset);
+
+    LOG_IF_DIFFERENT(textBoxEdge);
+    LOG_IF_DIFFERENT(lineFitEdge);
+
+    LOG_IF_DIFFERENT(wordSpacing);
+    LOG_IF_DIFFERENT(miterLimit);
+
+    LOG_IF_DIFFERENT(widows);
+    LOG_IF_DIFFERENT(orphans);
+    LOG_IF_DIFFERENT(hasAutoWidows);
+    LOG_IF_DIFFERENT(hasAutoOrphans);
+
+    LOG_IF_DIFFERENT_WITH_CAST(TextSecurity, textSecurity);
+    LOG_IF_DIFFERENT_WITH_CAST(UserModify, userModify);
+
+    LOG_IF_DIFFERENT_WITH_CAST(WordBreak, wordBreak);
+    LOG_IF_DIFFERENT_WITH_CAST(OverflowWrap, overflowWrap);
+    LOG_IF_DIFFERENT_WITH_CAST(NBSPMode, nbspMode);
+    LOG_IF_DIFFERENT_WITH_CAST(LineBreak, lineBreak);
+    LOG_IF_DIFFERENT_WITH_CAST(UserSelect, userSelect);
+    LOG_IF_DIFFERENT_WITH_CAST(ColorSpace, colorSpace);
+
+    LOG_RAW_OPTIONSET_IF_DIFFERENT(SpeakAs, speakAs);
+
+    LOG_IF_DIFFERENT_WITH_CAST(Hyphens, hyphens);
+    LOG_IF_DIFFERENT_WITH_CAST(TextCombine, textCombine);
+    LOG_IF_DIFFERENT_WITH_CAST(TextEmphasisFill, textEmphasisFill);
+    LOG_IF_DIFFERENT_WITH_CAST(TextEmphasisMark, textEmphasisMark);
+    LOG_IF_DIFFERENT_WITH_CAST(TextEmphasisPosition, textEmphasisPosition);
+    LOG_IF_DIFFERENT_WITH_CAST(TextIndentLine, textIndentLine);
+    LOG_IF_DIFFERENT_WITH_CAST(TextIndentType, textIndentType);
+    LOG_IF_DIFFERENT_WITH_CAST(TextUnderlinePosition, textUnderlinePosition);
+
+    LOG_RAW_OPTIONSET_IF_DIFFERENT(LineBoxContain, lineBoxContain);
+
+    LOG_IF_DIFFERENT_WITH_CAST(ImageOrientation, imageOrientation);
+    LOG_IF_DIFFERENT_WITH_CAST(ImageRendering, imageRendering);
+    LOG_IF_DIFFERENT_WITH_CAST(LineSnap, lineSnap);
+    LOG_IF_DIFFERENT_WITH_CAST(LineAlign, lineAlign);
+
+#if ENABLE(OVERFLOW_SCROLLING_TOUCH)
+    LOG_IF_DIFFERENT_WITH_CAST(bool, useTouchOverflowScrolling);
+#endif
+
+    LOG_IF_DIFFERENT_WITH_CAST(TextAlignLast, textAlignLast);
+    LOG_IF_DIFFERENT_WITH_CAST(TextJustify, textJustify);
+    LOG_IF_DIFFERENT_WITH_CAST(TextDecorationSkipInk, textDecorationSkipInk);
+
+    LOG_IF_DIFFERENT_WITH_CAST(RubyPosition, rubyPosition);
+    LOG_IF_DIFFERENT_WITH_CAST(RubyAlign, rubyAlign);
+    LOG_IF_DIFFERENT_WITH_CAST(RubyOverhang, rubyOverhang);
+
+    LOG_IF_DIFFERENT_WITH_CAST(TextZoom, textZoom);
+
+#if PLATFORM(IOS_FAMILY)
+    LOG_IF_DIFFERENT_WITH_CAST(bool, touchCalloutEnabled);
+#endif
+
+    LOG_RAW_OPTIONSET_IF_DIFFERENT(HangingPunctuation, hangingPunctuation);
+
+    LOG_IF_DIFFERENT_WITH_CAST(PaintOrder, paintOrder);
+    LOG_IF_DIFFERENT_WITH_CAST(LineCap, capStyle);
+    LOG_IF_DIFFERENT_WITH_CAST(LineJoin, joinStyle);
+
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasSetStrokeWidth);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasSetStrokeColor);
+
+    LOG_IF_DIFFERENT_WITH_CAST(MathStyle, mathStyle);
+
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasAutoCaretColor);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasVisitedLinkAutoCaretColor);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasAutoAccentColor);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, effectiveInert);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, isInSubtreeWithBlendMode);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, isInVisibilityAdjustmentSubtree);
+
+    LOG_IF_DIFFERENT_WITH_CAST(ContentVisibility, usedContentVisibility);
+
+
+    LOG_IF_DIFFERENT(usedTouchActions);
+    LOG_IF_DIFFERENT(eventListenerRegionTypes);
+
+    LOG_IF_DIFFERENT(strokeWidth);
+    LOG_IF_DIFFERENT(strokeColor);
+    LOG_IF_DIFFERENT(visitedLinkStrokeColor);
+
+    LOG_IF_DIFFERENT(hyphenationString);
+    LOG_IF_DIFFERENT(hyphenationLimitBefore);
+    LOG_IF_DIFFERENT(hyphenationLimitAfter);
+    LOG_IF_DIFFERENT(hyphenationLimitLines);
+
+#if ENABLE(DARK_MODE_CSS)
+    LOG_IF_DIFFERENT(colorScheme);
+#endif
+
+    LOG_IF_DIFFERENT(textEmphasisCustomMark);
+    LOG_IF_DIFFERENT(quotes);
+
+    appleColorFilter->dumpDifferences(ts, other.appleColorFilter);
+
+    LOG_IF_DIFFERENT(lineGrid);
+    LOG_IF_DIFFERENT(tabSize);
+
+#if ENABLE(TEXT_AUTOSIZING)
+    LOG_IF_DIFFERENT(textSizeAdjust);
+#endif
+#if ENABLE(TOUCH_EVENTS)
+    LOG_IF_DIFFERENT(tapHighlightColor);
+#endif
+
+    LOG_IF_DIFFERENT(listStyleType);
+    LOG_IF_DIFFERENT(scrollbarColor);
+    LOG_IF_DIFFERENT(blockEllipsis);
+}
+#endif
 
 } // namespace WebCore

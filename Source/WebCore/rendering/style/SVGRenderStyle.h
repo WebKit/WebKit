@@ -29,6 +29,10 @@
 #include "StyleRareInheritedData.h"
 #include "WindRule.h"
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 DECLARE_ALLOCATOR_WITH_HEAP_IDENTIFIER(SVGRenderStyle);
@@ -48,6 +52,10 @@ public:
     bool changeRequiresLayout(const SVGRenderStyle& other) const;
 
     bool operator==(const SVGRenderStyle&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const SVGRenderStyle&) const;
+#endif
 
     // Initial values for all the properties
     static AlignmentBaseline initialAlignmentBaseline() { return AlignmentBaseline::Baseline; }
@@ -195,6 +203,10 @@ private:
     struct InheritedFlags {
         friend bool operator==(const InheritedFlags&, const InheritedFlags&) = default;
 
+#if !LOG_DISABLED
+        void dumpDifferences(TextStream&, const InheritedFlags&) const;
+#endif
+
         unsigned shapeRendering : 2; // ShapeRendering
         unsigned clipRule : 1; // WindRule
         unsigned fillRule : 1; // WindRule
@@ -208,6 +220,10 @@ private:
     struct NonInheritedFlags {
         // 32 bit non-inherited, don't add to the struct, or the operator will break.
         bool operator==(const NonInheritedFlags& other) const { return flags == other.flags; }
+
+#if !LOG_DISABLED
+        void dumpDifferences(TextStream&, const NonInheritedFlags&) const;
+#endif
 
         union {
             struct {

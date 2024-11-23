@@ -97,10 +97,11 @@ public:
     static Ref<StyleGridData> create() { return adoptRef(*new StyleGridData); }
     Ref<StyleGridData> copy() const;
 
-    bool operator==(const StyleGridData& o) const
-    {
-        return m_columns == o.m_columns && m_rows == o.m_rows && implicitNamedGridColumnLines == o.implicitNamedGridColumnLines && implicitNamedGridRowLines == o.implicitNamedGridRowLines && gridAutoFlow == o.gridAutoFlow && gridAutoRows == o.gridAutoRows && gridAutoColumns == o.gridAutoColumns && namedGridArea == o.namedGridArea && namedGridAreaRowCount == o.namedGridAreaRowCount && namedGridAreaColumnCount == o.namedGridAreaColumnCount && m_masonryRows == o.m_masonryRows && m_masonryColumns == o.m_masonryColumns && masonryAutoFlow == o.masonryAutoFlow;
-    }
+    bool operator==(const StyleGridData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleGridData&) const;
+#endif
 
     void setRows(const GridTrackList&);
     void setColumns(const GridTrackList&);

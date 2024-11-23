@@ -22,6 +22,7 @@
 #include "config.h"
 #include "StyleMultiColData.h"
 
+#include "RenderStyleDifference.h"
 #include "RenderStyleInlines.h"
 
 namespace WebCore {
@@ -67,5 +68,23 @@ bool StyleMultiColData::operator==(const StyleMultiColData& other) const
         && fill == other.fill && columnSpan == other.columnSpan
         && axis == other.axis && progression == other.progression;
 }
+
+#if !LOG_DISABLED
+void StyleMultiColData::dumpDifferences(TextStream& ts, const StyleMultiColData& other) const
+{
+    LOG_IF_DIFFERENT(width);
+    LOG_IF_DIFFERENT(count);
+    LOG_IF_DIFFERENT(rule);
+    LOG_IF_DIFFERENT(visitedLinkColumnRuleColor);
+
+    LOG_IF_DIFFERENT(autoWidth);
+    LOG_IF_DIFFERENT(autoCount);
+
+    LOG_IF_DIFFERENT_WITH_CAST(ColumnFill, fill);
+    LOG_IF_DIFFERENT_WITH_CAST(ColumnSpan, columnSpan);
+    LOG_IF_DIFFERENT_WITH_CAST(ColumnAxis, axis);
+    LOG_IF_DIFFERENT_WITH_CAST(ColumnProgression, progression);
+}
+#endif // !LOG_DISABLED
 
 } // namespace WebCore

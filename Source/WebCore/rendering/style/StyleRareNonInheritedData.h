@@ -60,6 +60,10 @@
 #include <wtf/OptionSet.h>
 #include <wtf/Vector.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 class AnimationList;
@@ -101,6 +105,10 @@ public:
     ~StyleRareNonInheritedData();
     
     bool operator==(const StyleRareNonInheritedData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleRareNonInheritedData&) const;
+#endif
 
     LengthPoint perspectiveOrigin() const { return { perspectiveOriginX, perspectiveOriginY }; }
 
@@ -223,16 +231,16 @@ public:
 
     unsigned contentVisibility : 2; // ContentVisibility
 
-    unsigned effectiveBlendMode: 5; // EBlendMode
+    unsigned effectiveBlendMode: 5; // BlendMode
     unsigned isolation : 1; // Isolation
 
 #if ENABLE(APPLE_PAY)
-    unsigned applePayButtonStyle : 2;
-    unsigned applePayButtonType : 4;
+    unsigned applePayButtonStyle : 2; // ApplePayButtonStyle
+    unsigned applePayButtonType : 4; // ApplePayButtonType
 #endif
 
     unsigned breakBefore : 4; // BreakBetween
-    unsigned breakAfter : 4;
+    unsigned breakAfter : 4; // BreakBetween
     unsigned breakInside : 3; // BreakInside
 
     unsigned inputSecurity : 1; // InputSecurity

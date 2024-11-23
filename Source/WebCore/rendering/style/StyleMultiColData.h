@@ -29,6 +29,10 @@
 #include "RenderStyleConstants.h"
 #include <wtf/RefCounted.h>
 
+namespace WTF {
+class TextStream;
+}
+
 namespace WebCore {
 
 // CSS3 Multi Column Layout
@@ -41,6 +45,10 @@ public:
     Ref<StyleMultiColData> copy() const;
     
     bool operator==(const StyleMultiColData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleMultiColData&) const;
+#endif
 
     unsigned short ruleWidth() const
     {

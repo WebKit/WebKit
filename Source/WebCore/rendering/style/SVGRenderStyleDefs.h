@@ -151,6 +151,10 @@ public:
 
     bool operator==(const StyleFillData&) const;
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleFillData&) const;
+#endif
+
     float opacity;
     StyleColor paintColor;
     StyleColor visitedLinkPaintColor;
@@ -172,6 +176,10 @@ public:
     Ref<StyleStrokeData> copy() const;
 
     bool operator==(const StyleStrokeData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleStrokeData&) const;
+#endif
 
     float opacity;
 
@@ -201,6 +209,10 @@ public:
 
     bool operator==(const StyleStopData&) const;
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleStopData&) const;
+#endif
+
     float opacity;
     StyleColor color;
 
@@ -218,6 +230,10 @@ public:
     Ref<StyleMiscData> copy() const;
 
     bool operator==(const StyleMiscData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleMiscData&) const;
+#endif
 
     float floodOpacity;
     StyleColor floodColor;
@@ -239,6 +255,10 @@ public:
 
     bool operator==(const StyleShadowSVGData&) const;
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleShadowSVGData&) const;
+#endif
+
     std::unique_ptr<ShadowData> shadow;
 
 private:
@@ -255,6 +275,10 @@ public:
     Ref<StyleInheritedResourceData> copy() const;
 
     bool operator==(const StyleInheritedResourceData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleInheritedResourceData&) const;
+#endif
 
     String markerStart;
     String markerMid;
@@ -274,6 +298,10 @@ public:
     Ref<StyleLayoutData> copy() const;
 
     bool operator==(const StyleLayoutData&) const;
+
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleLayoutData&) const;
+#endif
 
     Length cx;
     Length cy;

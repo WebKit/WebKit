@@ -41,6 +41,10 @@ public:
 
     bool operator==(const StyleCustomPropertyData&) const;
 
+#if !LOG_DISABLED
+    void dumpDifferences(TextStream&, const StyleCustomPropertyData&) const;
+#endif
+
     const CSSCustomPropertyValue* get(const AtomString&) const;
     void set(const AtomString&, Ref<const CSSCustomPropertyValue>&&);
 

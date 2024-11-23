@@ -253,7 +253,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && clip == o.clip
         && scrollMargin == o.scrollMargin
         && scrollPadding == o.scrollPadding
-        && counterDirectives.map == o.counterDirectives.map
+        && counterDirectives == o.counterDirectives
         && arePointingToEqualData(willChange, o.willChange)
         && arePointingToEqualData(boxReflect, o.boxReflect)
         && maskBorder == o.maskBorder
@@ -354,5 +354,143 @@ bool StyleRareNonInheritedData::hasBackdropFilters() const
 {
     return !backdropFilter->operations.isEmpty();
 }
+
+#if !LOG_DISABLED
+void StyleRareNonInheritedData::dumpDifferences(TextStream& ts, const StyleRareNonInheritedData& other) const
+{
+    marquee->dumpDifferences(ts, other.marquee);
+    backdropFilter->dumpDifferences(ts, other.backdropFilter);
+    grid->dumpDifferences(ts, other.grid);
+    gridItem->dumpDifferences(ts, other.gridItem);
+
+    LOG_IF_DIFFERENT(containIntrinsicWidth);
+    LOG_IF_DIFFERENT(containIntrinsicHeight);
+
+    LOG_IF_DIFFERENT(perspectiveOriginX);
+    LOG_IF_DIFFERENT(perspectiveOriginY);
+
+    LOG_IF_DIFFERENT(lineClamp);
+    LOG_IF_DIFFERENT(maxLines);
+    LOG_IF_DIFFERENT(overflowContinue);
+
+    LOG_IF_DIFFERENT(initialLetter);
+
+    LOG_IF_DIFFERENT(clip);
+    LOG_IF_DIFFERENT(scrollMargin);
+    LOG_IF_DIFFERENT(scrollPadding);
+
+    LOG_IF_DIFFERENT(counterDirectives);
+
+    LOG_IF_DIFFERENT(willChange);
+    LOG_IF_DIFFERENT(boxReflect);
+
+    LOG_IF_DIFFERENT(maskBorder);
+    LOG_IF_DIFFERENT(pageSize);
+
+    LOG_IF_DIFFERENT(shapeOutside);
+
+    LOG_IF_DIFFERENT(shapeMargin);
+    LOG_IF_DIFFERENT(shapeImageThreshold);
+    LOG_IF_DIFFERENT(perspective);
+
+    LOG_IF_DIFFERENT(clipPath);
+
+    LOG_IF_DIFFERENT(textDecorationColor);
+
+    customProperties->dumpDifferences(ts, other.customProperties);
+    LOG_IF_DIFFERENT(customPaintWatchedProperties);
+
+    LOG_IF_DIFFERENT(rotate);
+    LOG_IF_DIFFERENT(scale);
+    LOG_IF_DIFFERENT(translate);
+    LOG_IF_DIFFERENT(offsetPath);
+
+    LOG_IF_DIFFERENT(containerNames);
+
+    LOG_IF_DIFFERENT(viewTransitionClasses);
+    LOG_IF_DIFFERENT(viewTransitionName);
+
+    LOG_IF_DIFFERENT(columnGap);
+    LOG_IF_DIFFERENT(rowGap);
+
+    LOG_IF_DIFFERENT(offsetDistance);
+    LOG_IF_DIFFERENT(offsetPosition);
+    LOG_IF_DIFFERENT(offsetAnchor);
+    LOG_IF_DIFFERENT(offsetRotate);
+
+    LOG_IF_DIFFERENT(textDecorationThickness);
+
+    LOG_IF_DIFFERENT(touchActions);
+    LOG_IF_DIFFERENT(marginTrim);
+    LOG_IF_DIFFERENT(contain);
+
+    LOG_IF_DIFFERENT(scrollSnapType);
+    LOG_IF_DIFFERENT(scrollSnapAlign);
+    LOG_IF_DIFFERENT(scrollSnapStop);
+
+    LOG_IF_DIFFERENT(scrollTimelines);
+    LOG_IF_DIFFERENT(scrollTimelineAxes);
+    LOG_IF_DIFFERENT(scrollTimelineNames);
+
+    LOG_IF_DIFFERENT(viewTimelines);
+    LOG_IF_DIFFERENT(viewTimelineAxes);
+    LOG_IF_DIFFERENT(viewTimelineInsets);
+    LOG_IF_DIFFERENT(viewTimelineNames);
+
+    LOG_IF_DIFFERENT(timelineScope);
+
+    LOG_IF_DIFFERENT(scrollbarGutter);
+    LOG_IF_DIFFERENT(scrollbarWidth);
+
+    LOG_IF_DIFFERENT(zoom);
+    LOG_IF_DIFFERENT(pseudoElementNameArgument);
+
+    LOG_IF_DIFFERENT(anchorNames);
+    LOG_IF_DIFFERENT(positionAnchor);
+
+    LOG_IF_DIFFERENT(blockStepSize);
+
+    LOG_IF_DIFFERENT_WITH_CAST(BlockStepInsert, blockStepInsert);
+
+    LOG_IF_DIFFERENT_WITH_CAST(OverscrollBehavior, overscrollBehaviorX);
+    LOG_IF_DIFFERENT_WITH_CAST(BlockStepInsert, overscrollBehaviorY);
+
+    LOG_IF_DIFFERENT_WITH_CAST(PageSizeType, pageSizeType);
+
+    LOG_IF_DIFFERENT_WITH_CAST(TransformStyle3D, transformStyle3D);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, transformStyleForcedToFlat);
+    LOG_IF_DIFFERENT_WITH_CAST(BackfaceVisibility, backfaceVisibility);
+
+    LOG_IF_DIFFERENT_WITH_CAST(ScrollBehavior, useSmoothScrolling);
+    LOG_IF_DIFFERENT_WITH_CAST(TextDecorationStyle, textDecorationStyle);
+    LOG_IF_DIFFERENT_WITH_CAST(TextGroupAlign, textGroupAlign);
+
+    LOG_IF_DIFFERENT_WITH_CAST(ContentVisibility, contentVisibility);
+    LOG_IF_DIFFERENT_WITH_CAST(BlendMode, effectiveBlendMode);
+
+    LOG_IF_DIFFERENT_WITH_CAST(Isolation, isolation);
+
+#if ENABLE(APPLE_PAY)
+    LOG_IF_DIFFERENT_WITH_CAST(ApplePayButtonStyle, applePayButtonStyle);
+    LOG_IF_DIFFERENT_WITH_CAST(ApplePayButtonType, applePayButtonType);
+#endif
+
+    LOG_IF_DIFFERENT_WITH_CAST(BreakBetween, breakBefore);
+    LOG_IF_DIFFERENT_WITH_CAST(BreakBetween, breakAfter);
+    LOG_IF_DIFFERENT_WITH_CAST(BreakInside, breakInside);
+
+    LOG_IF_DIFFERENT_WITH_CAST(InputSecurity, inputSecurity);
+
+    LOG_IF_DIFFERENT_WITH_CAST(ContainIntrinsicSizeType, containIntrinsicWidthType);
+    LOG_IF_DIFFERENT_WITH_CAST(ContainIntrinsicSizeType, containIntrinsicHeightType);
+
+    LOG_IF_DIFFERENT_WITH_CAST(ContainerType, containerType);
+    LOG_IF_DIFFERENT_WITH_CAST(TextBoxTrim, textBoxTrim);
+    LOG_IF_DIFFERENT_WITH_CAST(OverflowAnchor, overflowAnchor);
+    LOG_IF_DIFFERENT_WITH_CAST(bool, hasClip);
+    LOG_IF_DIFFERENT_WITH_CAST(Style::PositionTryOrder, positionTryOrder);
+    LOG_IF_DIFFERENT(fieldSizing);
+}
+#endif // !LOG_DISABLED
 
 } // namespace WebCore
