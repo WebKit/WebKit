@@ -1177,6 +1177,7 @@
 		BC575BD9126F58E2006F0F12 /* PlatformUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC575BBF126F5752006F0F12 /* PlatformUtilities.cpp */; };
 		BC575BE0126F590D006F0F12 /* PlatformUtilitiesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */; };
 		BCB68042126FBFF100642A61 /* DocumentStartUserScriptAlertCrash_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCB68041126FBFF100642A61 /* DocumentStartUserScriptAlertCrash_Bundle.cpp */; };
+		BCEA080E2CD00F5C000AC148 /* VariantList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCEA080D2CD00F5C000AC148 /* VariantList.cpp */; };
 		C0BD669F131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0BD669E131D3CFF00E18F2A /* ResponsivenessTimerDoesntFireEarly_Bundle.cpp */; };
 		C0C5D3C61459912900A802A6 /* GetBackingScaleFactor_Bundle.mm in Sources */ = {isa = PBXBuildFile; fileRef = C0C5D3BD14598B6F00A802A6 /* GetBackingScaleFactor_Bundle.mm */; };
 		C104BC1F2547237100C078C9 /* OverrideAppleLanguagesPreference.mm in Sources */ = {isa = PBXBuildFile; fileRef = C104BC1E2547237100C078C9 /* OverrideAppleLanguagesPreference.mm */; };
@@ -3381,6 +3382,7 @@
 		BCBD372E125ABBE600D2C29F /* icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = icon.png; sourceTree = "<group>"; };
 		BCBD3760125ABCFE00D2C29F /* FrameMIMETypePNG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FrameMIMETypePNG.cpp; sourceTree = "<group>"; };
 		BCC8B95A12611F4700DE46A4 /* FailedLoad.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FailedLoad.cpp; sourceTree = "<group>"; };
+		BCEA080D2CD00F5C000AC148 /* VariantList.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = VariantList.cpp; sourceTree = "<group>"; };
 		C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpacebarScrolling.cpp; sourceTree = "<group>"; };
 		C02B7853126613AE0026BF0F /* Carbon.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Carbon.framework; sourceTree = SDKROOT; };
 		C02B7882126615410026BF0F /* spacebar-scrolling.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "spacebar-scrolling.html"; sourceTree = "<group>"; };
@@ -5722,6 +5724,7 @@
 				E3A1E78421B25B91008C6007 /* URLParser.cpp */,
 				93C3647A2BDD8800006D8B55 /* UTF8Conversion.cpp */,
 				144D40EC221B46A7004B474F /* UUID.cpp */,
+				BCEA080D2CD00F5C000AC148 /* VariantList.cpp */,
 				BC55F5F814AD78EE00484BE1 /* Vector.cpp */,
 				1CB9BC371A67482300FE5678 /* WeakPtr.cpp */,
 				E388887020C9098100E632BC /* WorkerPool.cpp */,
@@ -6824,6 +6827,7 @@
 				7C83E03B1D0A602700FEBCF3 /* UtilitiesCocoa.mm in Sources */,
 				41D2A21F27906F9F0088FCCE /* UUID.cpp in Sources */,
 				3A31EA7D29C0D1AA0045E65B /* UUIDCocoa.mm in Sources */,
+				BCEA080E2CD00F5C000AC148 /* VariantList.cpp in Sources */,
 				7C83DF4C1D0A590C00FEBCF3 /* Vector.cpp in Sources */,
 				44B28A0728D18ADA0010172C /* VectorCF.cpp in Sources */,
 				A170E3AA2ABA7857009EA799 /* VectorCocoa.mm in Sources */,

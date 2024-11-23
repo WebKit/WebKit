@@ -155,6 +155,36 @@ inline bool is8ByteAligned(void* p)
     return !((uintptr_t)(p) & (sizeof(double) - 1));
 }
 
+inline std::byte* alignedBytes(std::byte* pointer, size_t alignment)
+{
+    return reinterpret_cast<std::byte*>((reinterpret_cast<uintptr_t>(pointer) - 1u + alignment) & -alignment);
+}
+
+inline const std::byte* alignedBytes(const std::byte* pointer, size_t alignment)
+{
+    return reinterpret_cast<const std::byte*>((reinterpret_cast<uintptr_t>(pointer) - 1u + alignment) & -alignment);
+}
+
+inline size_t alignedBytesCorrection(std::span<std::byte> buffer, size_t alignment)
+{
+    return reinterpret_cast<std::byte*>((reinterpret_cast<uintptr_t>(buffer.data()) - 1u + alignment) & -alignment) - buffer.data();
+}
+
+inline size_t alignedBytesCorrection(std::span<const std::byte> buffer, size_t alignment)
+{
+    return reinterpret_cast<const std::byte*>((reinterpret_cast<uintptr_t>(buffer.data()) - 1u + alignment) & -alignment) - buffer.data();
+}
+
+inline std::span<std::byte> alignedBytes(std::span<std::byte> buffer, size_t alignment)
+{
+    return buffer.subspan(alignedBytesCorrection(buffer, alignment));
+}
+
+inline std::span<const std::byte> alignedBytes(std::span<const std::byte> buffer, size_t alignment)
+{
+    return buffer.subspan(alignedBytesCorrection(buffer, alignment));
+}
+
 template<typename ToType, typename FromType>
 inline ToType safeCast(FromType value)
 {
@@ -492,7 +522,7 @@ template<size_t I = 0, class F, class V> ALWAYS_INLINE decltype(auto) visitOneVa
             if constexpr (I + N < size) {                                                           \
                 return std::invoke(std::forward<F>(f), std::get<I + N>(std::forward<V>(v)));        \
             } else {                                                                                \
-                WTF_UNREACHABLE()                                                                   \
+                WTF_UNREACHABLE();                                                                  \
             }                                                                                       \
         }                                                                                           \
 
@@ -828,6 +858,18 @@ const T& reinterpretCastSpanStartTo(std::span<const uint8_t, Extent> span)
 
 template<typename T, std::size_t Extent>
 T& reinterpretCastSpanStartTo(std::span<uint8_t, Extent> span)
+{
+    return spanReinterpretCast<T>(span.first(sizeof(T)))[0];
+}
+
+template<typename T, std::size_t Extent>
+const T& reinterpretCastSpanStartTo(std::span<const std::byte, Extent> span)
+{
+    return spanReinterpretCast<const T>(span.first(sizeof(T)))[0];
+}
+
+template<typename T, std::size_t Extent>
+T& reinterpretCastSpanStartTo(std::span<std::byte, Extent> span)
 {
     return spanReinterpretCast<T>(span.first(sizeof(T)))[0];
 }
