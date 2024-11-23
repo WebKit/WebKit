@@ -28,6 +28,7 @@
 
 #if ENABLE(WEBXR_LAYERS)
 
+#include "GPUDevice.h"
 #include "GPUTextureDescriptor.h"
 #include "GPUTextureFormat.h"
 #include "WebXRViewport.h"

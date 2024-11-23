@@ -29,6 +29,8 @@
 
 #include "GPUTexture.h"
 #include "GPUTextureViewDescriptor.h"
+#include "WebGPUXREye.h"
+#include "WebGPUXRSubImage.h"
 #include "XRSubImage.h"
 
 #include <wtf/TZoneMalloc.h>
