@@ -981,12 +981,8 @@ void RenderBlockFlow::layoutBlockChild(RenderBox& child, MarginInfo& marginInfo,
     if (childNeededLayout)
         child.layout();
 
-    auto blockStepSizeForChild = child.style().blockStepSize().and_then([](Length stepSize) {
-        return std::make_optional(LayoutUnit(stepSize.value()));
-    });
-
-    if (blockStepSizeForChild) {
-        auto extraSpace = computeExtraSpaceForBlockStepSizing(*blockStepSizeForChild, logicalMarginBoxHeightForChild(child));
+    if (auto blockStepSizeForChild = child.style().blockStepSize()) {
+        auto extraSpace = computeExtraSpaceForBlockStepSizing(LayoutUnit(blockStepSizeForChild->value()), logicalMarginBoxHeightForChild(child));
         if (extraSpace)
             distributeExtraBlockStepSizingSpaceToChild(child, extraSpace);
     }
