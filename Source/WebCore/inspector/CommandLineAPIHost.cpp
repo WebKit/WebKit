@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Matt Lilek <webkit@mattlilek.com>
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
@@ -63,7 +63,7 @@ namespace WebCore {
 using namespace JSC;
 using namespace Inspector;
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(CommandLineAPIHostInspectableObject, CommandLineAPIHost::InspectableObject);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(CommandLineAPIHost, InspectableObject);
 
 Ref<CommandLineAPIHost> CommandLineAPIHost::create()
 {

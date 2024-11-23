@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
- * Copyright (C) 2015-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -65,7 +65,7 @@ namespace WebCore {
 
 using namespace Inspector;
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorFrontendClientLocal);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorFrontendClientLocalSettings, InspectorFrontendClientLocal::Settings);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorFrontendClientLocal, Settings);
 
 static constexpr ASCIILiteral inspectorAttachedHeightSetting = "inspectorAttachedHeight"_s;
 static const unsigned defaultAttachedHeight = 300;

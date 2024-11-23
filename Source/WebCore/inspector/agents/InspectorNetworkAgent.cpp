@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -102,8 +102,8 @@ namespace WebCore {
 using namespace Inspector;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InspectorNetworkAgent);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorNetworkAgentPendingInterceptRequest, InspectorNetworkAgent::PendingInterceptRequest);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorNetworkAgentPendingInterceptResponse, InspectorNetworkAgent::PendingInterceptResponse);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorNetworkAgent, PendingInterceptRequest);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(InspectorNetworkAgent, PendingInterceptResponse);
 
 namespace {
 

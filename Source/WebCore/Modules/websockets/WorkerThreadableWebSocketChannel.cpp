@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011, 2012 Google Inc.  All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -149,7 +150,7 @@ void WorkerThreadableWebSocketChannel::resume()
         m_bridge->resume();
 }
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WorkerThreadableWebSocketChannelPeer, WorkerThreadableWebSocketChannel::Peer);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WorkerThreadableWebSocketChannel, Peer);
 
 WorkerThreadableWebSocketChannel::Peer::Peer(Ref<ThreadableWebSocketChannelClientWrapper>&& clientWrapper, ScriptExecutionContext& context, ScriptExecutionContextIdentifier workerContextIdentifier, const String& taskMode, SocketProvider& provider)
     : m_workerClientWrapper(clientWrapper.ptr())

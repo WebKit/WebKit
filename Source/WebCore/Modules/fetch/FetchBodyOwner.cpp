@@ -45,7 +45,7 @@
 namespace WebCore {
 
 DEFINE_ALLOCATOR_WITH_HEAP_IDENTIFIER(FetchBodyOwner);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FetchBodyOwnerBlobLoader, FetchBodyOwner::BlobLoader);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FetchBodyOwner, BlobLoader);
 
 FetchBodyOwner::FetchBodyOwner(ScriptExecutionContext* context, std::optional<FetchBody>&& body, Ref<FetchHeaders>&& headers)
     : ActiveDOMObject(context)

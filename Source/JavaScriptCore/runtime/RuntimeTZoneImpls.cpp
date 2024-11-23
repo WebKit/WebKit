@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2023-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -40,7 +40,7 @@ using ObjectPropertyChangeAdaptiveWatchpointInlineWatchpointSet = ObjectProperty
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL_TEMPLATE(ObjectPropertyChangeAdaptiveWatchpointInlineWatchpointSet);
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(JSGlobalObjectWeakGCSetJSCustomGetterFunction, JSGlobalObject::WeakGCSetJSCustomGetterFunction);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(JSGlobalObjectWeakGCSetJSCustomSetterFunction, JSGlobalObject::WeakGCSetJSCustomSetterFunction);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(JSGlobalObject, WeakGCSetJSCustomGetterFunction);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(JSGlobalObject, WeakGCSetJSCustomSetterFunction);
 
 } // namespace JSC

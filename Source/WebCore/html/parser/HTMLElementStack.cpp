@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2010 Google, Inc. All Rights Reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(HTMLElementStack);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(HTMLElementStackElementRecord, HTMLElementStack::ElementRecord);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(HTMLElementStack, ElementRecord);
 
 using namespace ElementNames;
 

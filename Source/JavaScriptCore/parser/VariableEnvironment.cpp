@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2023 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,7 +34,7 @@ namespace JSC {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(CompactTDZEnvironment);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(VariableEnvironment);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(VariableEnvironmentRareData, VariableEnvironment::RareData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(VariableEnvironment, RareData);
 
 void VariableEnvironmentEntry::dump(PrintStream& out) const
 {

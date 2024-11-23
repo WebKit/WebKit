@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -237,9 +237,9 @@ template<> struct LogArgument<webm::Id> {
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WebMParser);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParserTrackData, WebMParser::TrackData);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParserVideoTrackData, WebMParser::VideoTrackData);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParserAudioTrackData, WebMParser::AudioTrackData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParser, TrackData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParser, VideoTrackData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebMParser, AudioTrackData);
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SourceBufferParserWebM);
 
 // FIXME: Remove this once kCMVideoCodecType_VP9 is added to CMFormatDescription.h

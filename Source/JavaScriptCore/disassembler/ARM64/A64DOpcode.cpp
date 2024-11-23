@@ -48,7 +48,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace ARM64Disassembler {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(A64DOpcodeOpcodeGroup, A64DOpcode::OpcodeGroup);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(A64DOpcode, OpcodeGroup);
 
 A64DOpcode::OpcodeGroup* A64DOpcode::opcodeTable[32];
 

@@ -34,7 +34,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(GStreamerElementHarness);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(GStreamerElementHarnessStream, GStreamerElementHarness::Stream);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(GStreamerElementHarness, Stream);
 
 GST_DEBUG_CATEGORY(webkit_element_harness_debug);
 #define GST_CAT_DEFAULT webkit_element_harness_debug

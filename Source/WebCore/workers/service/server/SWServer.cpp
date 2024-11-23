@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2017-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -59,7 +59,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SWServer);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SWServerConnection, SWServer::Connection);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SWServer, Connection);
 
 static const unsigned defaultMaxRegistrationCount = 3;
 

@@ -1138,7 +1138,7 @@ private:
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FixedVMPoolExecutableAllocator);
 #if ENABLE(JUMP_ISLANDS)
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FixedVMPoolExecutableAllocatorIslands, FixedVMPoolExecutableAllocator::Islands);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FixedVMPoolExecutableAllocator, Islands);
 #endif // ENABLE(JUMP_ISLANDS)
 
 // Keep this pointer in a mutable global variable to help Leaks find it.

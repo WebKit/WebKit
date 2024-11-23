@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -70,7 +70,7 @@ void ResourceLoadDelegate::setDelegate(id <_WKResourceLoadDelegate> delegate)
     m_delegateMethods.didCompleteWithError = [delegate respondsToSelector:@selector(webView:resourceLoad:didCompleteWithError:response:)];
 }
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(ResourceLoadDelegateResourceLoadClient, ResourceLoadDelegate::ResourceLoadClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(ResourceLoadDelegate, ResourceLoadClient);
 
 ResourceLoadDelegate::ResourceLoadClient::ResourceLoadClient(ResourceLoadDelegate& delegate)
     : m_resourceLoadDelegate(delegate)

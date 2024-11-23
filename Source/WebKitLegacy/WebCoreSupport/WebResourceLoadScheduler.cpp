@@ -3,7 +3,7 @@
     Copyright (C) 2001 Dirk Mueller (mueller@kde.org)
     Copyright (C) 2002 Waldo Bastian (bastian@kde.org)
     Copyright (C) 2006 Samuel Weinig (sam.weinig@gmail.com)
-    Copyright (C) 2004-2008, 2015 Apple Inc. All rights reserved.
+    Copyright (C) 2004-2024 Apple Inc. All rights reserved.
     Copyright (C) 2010 Google Inc. All rights reserved.
 
     This library is free software; you can redistribute it and/or
@@ -324,7 +324,7 @@ void WebResourceLoadScheduler::requestTimerFired()
     servePendingRequests();
 }
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebResourceLoadSchedulerHostInformation, WebResourceLoadScheduler::HostInformation);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WebResourceLoadScheduler, HostInformation);
 
 WebResourceLoadScheduler::HostInformation::HostInformation(const String& name, unsigned maxRequestsInFlight)
     : m_name(name)

@@ -131,7 +131,7 @@ void MediaStreamTrackProcessor::VideoFrameObserverWrapper::start()
     });
 }
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(MediaStreamTrackProcessorVideoFrameObserver, MediaStreamTrackProcessor::VideoFrameObserver);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(MediaStreamTrackProcessor, VideoFrameObserver);
 
 MediaStreamTrackProcessor::VideoFrameObserver::VideoFrameObserver(ScriptExecutionContextIdentifier identifier, WeakPtr<MediaStreamTrackProcessor>&& processor, Ref<RealtimeMediaSource>&& source, unsigned short maxVideoFramesCount)
     : m_contextIdentifier(identifier)

@@ -53,7 +53,7 @@ WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_TEMPLATE(MemoryJSWebAssemblyInstanceWeakCGSet, Wasm::Memory::JSWebAssemblyInstanceWeakCGSet);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_2X_TEMPLATE(Wasm, Memory, JSWebAssemblyInstanceWeakCGSet);
 
 namespace Wasm {
 

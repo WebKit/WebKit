@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -140,7 +140,7 @@ private:
     Timer m_lifetimeTimer;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SpeculativeLoadManagerExpiringEntry, SpeculativeLoadManager::ExpiringEntry);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SpeculativeLoadManager, ExpiringEntry);
 
 
 class SpeculativeLoadManager::PreloadedEntry : private ExpiringEntry {
@@ -166,7 +166,7 @@ private:
     std::optional<ResourceRequest> m_speculativeValidationRequest;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SpeculativeLoadManagerPreloadedEntry, SpeculativeLoadManager::PreloadedEntry);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SpeculativeLoadManager, PreloadedEntry);
 
 class SpeculativeLoadManager::PendingFrameLoad : public RefCounted<PendingFrameLoad> {
 public:

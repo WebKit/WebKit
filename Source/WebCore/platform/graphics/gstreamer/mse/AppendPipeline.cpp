@@ -52,7 +52,7 @@ GST_DEBUG_CATEGORY_EXTERN(webkit_mse_debug);
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AppendPipeline);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(AppendPipelineTrack, AppendPipeline::Track);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(AppendPipeline, Track);
 
 GType AppendPipeline::s_endOfAppendMetaType = 0;
 const GstMetaInfo* AppendPipeline::s_webKitEndOfAppendMetaInfo = nullptr;

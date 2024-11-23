@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018-2022 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ using namespace WebCore;
 constexpr unsigned maxFireCountWithoutObservers { 20 };
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(DisplayLink);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(DisplayLinkClient, DisplayLink::Client);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(DisplayLink, Client);
 
 DisplayLink::DisplayLink(PlatformDisplayID displayID)
     : m_displayID(displayID)

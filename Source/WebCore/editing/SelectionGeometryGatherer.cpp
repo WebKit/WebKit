@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SelectionGeometryGatherer);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SelectionGeometryGathererNotifier, SelectionGeometryGatherer::Notifier);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SelectionGeometryGatherer, Notifier);
 
 SelectionGeometryGatherer::SelectionGeometryGatherer(RenderView& renderView)
     : m_renderView(renderView)

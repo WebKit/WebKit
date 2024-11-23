@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -128,8 +128,8 @@ private:
 
 namespace WebKit {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(ProcessThrottlerProcessAssertionCache, ProcessThrottler::ProcessAssertionCache);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(ProcessThrottlerProcessAssertionCacheCachedAssertion, ProcessThrottler::ProcessAssertionCache::CachedAssertion);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(ProcessThrottler, ProcessAssertionCache);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED_2X(ProcessThrottler, ProcessAssertionCache, CachedAssertion);
 
 static uint64_t generatePrepareToSuspendRequestID()
 {

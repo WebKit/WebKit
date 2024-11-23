@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -127,7 +127,7 @@ private:
     std::unique_ptr<ServiceWorkerStorageManager> m_serviceWorkerStorageManager;
 };
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(OriginStorageManagerStorageBucket, OriginStorageManager::StorageBucket);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(OriginStorageManager, StorageBucket);
 
 OriginStorageManager::StorageBucket::StorageBucket(const String& rootPath, const String& identifier, const String& localStoragePath, const String& idbStoragePath, const String& cacheStoragePath, UnifiedOriginStorageLevel level)
     : m_rootPath(rootPath)

@@ -53,7 +53,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(WritingToolsController);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WritingToolsControllerEditingScope, WritingToolsController::EditingScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(WritingToolsController, EditingScope);
 
 #pragma mark - EditingScope
 

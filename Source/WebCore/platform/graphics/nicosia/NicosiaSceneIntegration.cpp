@@ -35,7 +35,7 @@
 
 namespace Nicosia {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SceneIntegrationUpdateScope, SceneIntegration::UpdateScope);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(SceneIntegration, UpdateScope);
 
 SceneIntegration::SceneIntegration(Scene& scene, Client& client)
 {

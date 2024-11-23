@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Adobe Systems Incorporated. All rights reserved.
+ * Copyright (C) 2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +38,7 @@
 namespace WebCore {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(FloatRoundedRect);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FloatRoundedRectRadii, FloatRoundedRect::Radii);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FloatRoundedRect, Radii);
 
 FloatRoundedRect::FloatRoundedRect(const RoundedRect& rect)
     : m_rect(rect.rect())

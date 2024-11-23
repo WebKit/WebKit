@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -122,8 +122,8 @@ static WeakHashMap<WebPageProxy, WeakPtr<NavigationState>>& navigationStates()
 }
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NavigationState);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NavigationStateHistoryClient, NavigationState::HistoryClient);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NavigationStateNavigationClient, NavigationState::NavigationClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NavigationState, HistoryClient);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(NavigationState, NavigationClient);
 
 NavigationState::NavigationState(WKWebView *webView)
     : m_webView(webView)

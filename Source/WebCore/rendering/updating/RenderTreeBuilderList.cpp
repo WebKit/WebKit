@@ -1,7 +1,7 @@
 /**
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003-2006, 2010, 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Andrew Wellington (proton@wiretapped.net)
  *
  * This library is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeBuilderList, RenderTreeBuilder::List);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(RenderTreeBuilder, List);
 
 // FIXME: This shouldn't need LegacyInlineIterator
 static bool generatesLineBoxesForInlineChild(RenderBlock& current, RenderObject* inlineObj)

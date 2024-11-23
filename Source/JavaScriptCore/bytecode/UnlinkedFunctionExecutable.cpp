@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2022 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,8 +43,8 @@
 
 namespace JSC {
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(UnlinkedFunctionExecutableClassElementDefinition, UnlinkedFunctionExecutable::ClassElementDefinition);
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(UnlinkedFunctionExecutableRareData, UnlinkedFunctionExecutable::RareData);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(UnlinkedFunctionExecutable, ClassElementDefinition);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(UnlinkedFunctionExecutable, RareData);
 
 static_assert(sizeof(UnlinkedFunctionExecutable) <= 128, "UnlinkedFunctionExecutable should fit in a 128-byte cell to keep allocated blocks count to only one after initializing JSGlobalObject.");
 

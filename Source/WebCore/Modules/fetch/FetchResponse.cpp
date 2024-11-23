@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2016 Canon Inc.
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted, provided that the following conditions
@@ -301,7 +301,7 @@ const ResourceResponse& FetchResponse::filteredResponse() const
     return m_internalResponse;
 }
 
-WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FetchResponseLoader, FetchResponse::Loader);
+WTF_MAKE_TZONE_ALLOCATED_IMPL_NESTED(FetchResponse, Loader);
 
 void FetchResponse::Loader::didSucceed(const NetworkLoadMetrics& metrics)
 {
