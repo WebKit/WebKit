@@ -226,6 +226,15 @@ for this property.
 - (void)_frames:(void (^)(_WKFrameTreeNode *))completionHandler WK_API_AVAILABLE(macos(11.0), ios(14.0));
 - (void)_frameTrees:(void (^)(NSSet<_WKFrameTreeNode *> *))completionHandler WK_API_AVAILABLE(macos(14.0), ios(17.0));
 
+/*! @constant WKWebViewSessionStateTypeSessionStorage Session Storage. */
+WK_EXTERN NSString * const WKWebViewSessionStateTypeSessionStorage WK_API_AVAILABLE(macos(WK_MAC_TBA), ios(WK_IOS_TBA));
+
+/*! @abstract Fetches session state and additional data if specified.
+  @param dataTypes The additional types of data to fetch
+  @param completionHandler A block to invoke when the data has been fetched.
+*/
+- (void)fetchSessionStateAndAdditionalData:(NSSet<NSString *> *)dataTypes completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler;
+
 // FIXME: Remove these once nobody is using them.
 @property (nonatomic, readonly) NSData *_sessionStateData;
 - (void)_restoreFromSessionStateData:(NSData *)sessionStateData;

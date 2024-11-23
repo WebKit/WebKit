@@ -450,6 +450,8 @@ public:
 
     bool enableModernDownloadProgress() const { return m_enableModernDownloadProgress; }
 
+    void fetchSessionStorage(PAL::SessionID, WebPageProxyIdentifier, CompletionHandler<void(HashMap<WebCore::ClientOrigin, HashMap<String, String>>)>&&);
+
 private:
     void platformInitializeNetworkProcess(const NetworkProcessCreationParameters&);
 

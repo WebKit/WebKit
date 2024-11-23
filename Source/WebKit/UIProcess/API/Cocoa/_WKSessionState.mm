@@ -55,7 +55,7 @@
 
 - (NSData *)data
 {
-    return WebKit::encodeSessionState(_sessionState).autorelease();
+    return WebKit::encodeSessionState(_sessionState, std::nullopt).autorelease();
 }
 
 @end

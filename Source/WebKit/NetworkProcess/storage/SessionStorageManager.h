@@ -55,6 +55,8 @@ public:
     void disconnectFromStorageArea(IPC::Connection::UniqueID, StorageAreaIdentifier);
     void cloneStorageArea(StorageNamespaceIdentifier, StorageNamespaceIdentifier);
 
+    HashMap<String, String> fetchStorageMap(StorageNamespaceIdentifier);
+
 private:
     StorageAreaIdentifier addStorageArea(Ref<MemoryStorageArea>&&, StorageNamespaceIdentifier);
 

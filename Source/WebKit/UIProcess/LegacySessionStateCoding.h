@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <WebCore/ClientOrigin.h>
 #include <span>
 #include <wtf/Forward.h>
 
@@ -36,7 +37,7 @@ namespace WebKit {
 
 struct SessionState;
 
-RefPtr<API::Data> encodeLegacySessionState(const SessionState&);
+RefPtr<API::Data> encodeLegacySessionState(const SessionState&, std::optional<HashMap<WebCore::ClientOrigin, HashMap<String, String>>>&&);
 WARN_UNUSED_RETURN bool decodeLegacySessionState(std::span<const uint8_t> data, SessionState&);
 
 } // namespace WebKit

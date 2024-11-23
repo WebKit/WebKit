@@ -32,9 +32,9 @@
 
 namespace WebKit {
 
-RetainPtr<NSData> encodeSessionState(const SessionState& sessionState)
+RetainPtr<NSData> encodeSessionState(const SessionState& sessionState, std::optional<HashMap<WebCore::ClientOrigin, HashMap<String, String>>>&& sessionStorage)
 {
-    return wrapper(WebKit::encodeLegacySessionState(sessionState));
+    return wrapper(WebKit::encodeLegacySessionState(sessionState, WTFMove(sessionStorage)));
 }
 
 bool decodeSessionState(NSData *data, SessionState& state)

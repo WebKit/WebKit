@@ -26,13 +26,14 @@
 #ifndef SessionStateCoding_h
 #define SessionStateCoding_h
 
+#import <WebCore/ClientOrigin.h>
 #import <wtf/RetainPtr.h>
 
 namespace WebKit {
 
 struct SessionState;
 
-RetainPtr<NSData> encodeSessionState(const SessionState&);
+RetainPtr<NSData> encodeSessionState(const SessionState&, std::optional<HashMap<WebCore::ClientOrigin, HashMap<String, String>>>&&);
 WARN_UNUSED_RETURN bool decodeSessionState(NSData *, SessionState&);
 
 }

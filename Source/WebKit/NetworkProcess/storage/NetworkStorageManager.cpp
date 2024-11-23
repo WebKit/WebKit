@@ -805,6 +805,27 @@ void NetworkStorageManager::cloneSessionStorageNamespace(StorageNamespaceIdentif
     }
 }
 
+void NetworkStorageManager::fetchSessionStorageForWebPage(WebPageProxyIdentifier pageIdentifier, CompletionHandler<void(HashMap<WebCore::ClientOrigin, HashMap<String, String>>)>&& completionHandler)
+{
+    ASSERT(RunLoop::isMain());
+    ASSERT(!m_closed);
+
+    protectedWorkQueue()->dispatch([this, protectedThis = Ref { *this }, pageIdentifier, completionHandler = WTFMove(completionHandler)]() mutable {
+        assertIsCurrent(workQueue());
+
+        HashMap<WebCore::ClientOrigin, HashMap<String, String>> sessionStorageMap;
+
+        for (auto& [clientOrigin, manager] : m_originStorageManagers) {
+            if (auto* sessionStorageManager = manager->existingSessionStorageManager()) {
+                auto storageNameSpaceIdentifier = ObjectIdentifier<StorageNamespaceIdentifierType>(pageIdentifier.toUInt64());
+                sessionStorageMap.add(clientOrigin, sessionStorageManager->fetchStorageMap(storageNameSpaceIdentifier));
+            }
+        }
+
+        completionHandler(sessionStorageMap);
+    });
+}
+
 void NetworkStorageManager::didIncreaseQuota(WebCore::ClientOrigin&& origin, QuotaIncreaseRequestIdentifier identifier, std::optional<uint64_t> newQuota)
 {
     ASSERT(RunLoop::isMain());

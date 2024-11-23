@@ -1503,7 +1503,7 @@ inline OptionSet<WebKit::FindOptions> toFindOptions(WKFindConfiguration *configu
 
 - (id)interactionState
 {
-    return WebKit::encodeSessionState(_page->sessionState()).autorelease();
+    return WebKit::encodeSessionState(_page->sessionState(), std::nullopt).autorelease();
 }
 
 - (void)setInteractionState:(id)interactionState
@@ -3769,10 +3769,27 @@ static void convertAndAddHighlight(Vector<Ref<WebCore::SharedMemory>>& buffers, 
     });
 }
 
+NSString * const WKWebViewSessionStateTypeSessionStorage = @"WKWebViewSessionStateTypeSessionStorage";
+
+- (void)fetchSessionStateAndAdditionalData:(NSSet<NSString *> *)dataTypes completionHandler:(void (^)(NSData *))completionHandler
+{
+    if ([dataTypes containsObject:WKWebViewSessionStateTypeSessionStorage]) {
+        RefPtr page = [self _protectedPage];
+        page->fetchSessionStorage([protectedPage = page, completionHandler = makeBlockPtr(completionHandler)](HashMap<WebCore::ClientOrigin, HashMap<String, String>> sessionStorage) {
+            RetainPtr<NSData> result = WebKit::encodeSessionState(protectedPage->sessionState(), sessionStorage);
+            completionHandler(result.autorelease());
+        });
+
+        return;
+    }
+
+    completionHandler(nil);
+}
+
 - (NSData *)_sessionStateData
 {
     // FIXME: This should not use the legacy session state encoder.
-    return wrapper(WebKit::encodeLegacySessionState(_page->sessionState())).autorelease();
+    return wrapper(WebKit::encodeLegacySessionState(_page->sessionState(), std::nullopt)).autorelease();
 }
 
 - (_WKSessionState *)_sessionState

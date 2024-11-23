@@ -129,4 +129,17 @@ void SessionStorageManager::cloneStorageArea(StorageNamespaceIdentifier sourceNa
         addStorageArea(storageArea->clone(), targetNamespaceIdentifier);
 }
 
+HashMap<String, String> SessionStorageManager::fetchStorageMap(StorageNamespaceIdentifier namespaceIdentifier)
+{
+    auto identifier = m_storageAreasByNamespace.getOptional(namespaceIdentifier);
+    if (!identifier)
+        return { };
+
+    RefPtr storageArea = m_storageAreas.get(*identifier);
+    if (!storageArea)
+        return { };
+
+    return storageArea->allItems();
+}
+
 } // namespace WebKit

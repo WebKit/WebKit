@@ -579,7 +579,7 @@ WKTypeRef WKPageCopySessionState(WKPageRef pageRef, void* context, WKPageSession
         return true;
     });
 
-    auto data = encodeLegacySessionState(sessionState);
+    auto data = encodeLegacySessionState(sessionState, std::nullopt);
     if (shouldReturnData)
         return toAPI(data.leakRef());
 
