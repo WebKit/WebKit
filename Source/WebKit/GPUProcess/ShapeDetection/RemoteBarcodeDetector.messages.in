@@ -23,7 +23,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteBarcodeDetector NotRefCounted Stream {
+messages -> RemoteBarcodeDetector Stream {
     [EnabledBy=ShapeDetection] void Detect(WebCore::RenderingResourceIdentifier renderingResourceIdentifier) -> (Vector<WebCore::ShapeDetection::DetectedBarcode> detectedBarcodes)
 }
 

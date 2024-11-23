@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteRenderingBackend NotRefCounted Stream {
+messages -> RemoteRenderingBackend Stream {
     CreateImageBuffer(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::ImageBufferPixelFormat pixelFormat, WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     ReleaseImageBuffer(WebCore::RenderingResourceIdentifier renderingResourceIdentifier)
     GetImageBufferResourceLimitsForTesting() -> (struct WebCore::ImageBufferResourceLimits limits) Async

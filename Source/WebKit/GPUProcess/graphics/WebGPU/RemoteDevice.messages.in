@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebGPUEnabled]
-messages -> RemoteDevice NotRefCounted Stream {
+messages -> RemoteDevice Stream {
     void Destroy()
     void Destruct()
     void CreateXRBinding(WebKit::WebGPUIdentifier identifier)

@@ -22,7 +22,7 @@
  */
 
 #if ENABLE(LOGD_BLOCKING_IN_WEBCONTENT)
-messages -> LogStream NotRefCounted Stream {
+messages -> LogStream Stream {
     LogOnBehalfOfWebContent(std::span<const uint8_t> logChannel, std::span<const uint8_t> logCategory, std::span<const uint8_t> logString, uint8_t logType)
 }
 #endif

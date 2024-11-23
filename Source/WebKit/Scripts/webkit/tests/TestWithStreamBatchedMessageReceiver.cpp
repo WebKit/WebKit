@@ -39,6 +39,7 @@ namespace WebKit {
 
 void TestWithStreamBatched::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)
 {
+    Ref protectedThis { *this };
     if (decoder.messageName() == Messages::TestWithStreamBatched::SendString::name())
         return IPC::handleMessage<Messages::TestWithStreamBatched::SendString>(connection, decoder, this, &TestWithStreamBatched::sendString);
     RELEASE_LOG_ERROR(IPC, "Unhandled stream message %s to %" PRIu64, IPC::description(decoder.messageName()).characters(), decoder.destinationID());

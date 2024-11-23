@@ -1434,9 +1434,10 @@ def generate_message_handler(receiver):
         result.append('void %s::didReceiveStreamMessage(IPC::StreamServerConnection& connection, IPC::Decoder& decoder)\n' % (receiver.name))
         result.append('{\n')
         result += generate_enabled_by_for_receiver(receiver, receiver.messages)
-        assert(receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE))
         assert(not receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE))
         assert(not receiver.has_attribute(WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE))
+        if not receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE):
+            result.append('    Ref protectedThis { *this };\n')
         result += async_message_statements
         result += sync_message_statements
         if (receiver.superclass):
@@ -1453,7 +1454,7 @@ def generate_message_handler(receiver):
         result.append('{\n')
         enable_by_statement = generate_enabled_by_for_receiver(receiver, async_messages)
         result += enable_by_statement
-        if not (receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE) or receiver.has_attribute(STREAM_ATTRIBUTE)):
+        if not receiver.has_attribute(NOT_REFCOUNTED_RECEIVER_ATTRIBUTE):
             result.append('    Ref protectedThis { *this };\n')
         result += async_message_statements
         if receiver.has_attribute(WANTS_DISPATCH_MESSAGE_ATTRIBUTE) or receiver.has_attribute(WANTS_ASYNC_DISPATCH_MESSAGE_ATTRIBUTE):

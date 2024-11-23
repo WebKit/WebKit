@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteDisplayListRecorder NotRefCounted Stream {
+messages -> RemoteDisplayListRecorder Stream {
     Save() StreamBatched
     Restore() StreamBatched
     Translate(float x, float y) StreamBatched

@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebGPUEnabled]
-messages -> RemoteComputePassEncoder NotRefCounted Stream {
+messages -> RemoteComputePassEncoder Stream {
     void Destruct()
     void SetPipeline(WebKit::WebGPUIdentifier identifier)
     void Dispatch(WebCore::WebGPU::Size32 workgroupCountX, WebCore::WebGPU::Size32 workgroupCountY, WebCore::WebGPU::Size32 workgroupCountZ)

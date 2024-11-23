@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebGPUEnabled]
-messages -> RemoteRenderPassEncoder NotRefCounted Stream {
+messages -> RemoteRenderPassEncoder Stream {
     void Destruct()
     void SetPipeline(WebKit::WebGPUIdentifier identifier)
     void SetIndexBuffer(WebKit::WebGPUIdentifier identifier, WebCore::WebGPU::IndexFormat indexFormat, std::optional<WebCore::WebGPU::Size64> offset, std::optional<WebCore::WebGPU::Size64> size)

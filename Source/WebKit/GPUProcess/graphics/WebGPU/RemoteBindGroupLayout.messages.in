@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebGPUEnabled]
-messages -> RemoteBindGroupLayout NotRefCounted Stream {
+messages -> RemoteBindGroupLayout Stream {
     void Destruct()
     void SetLabel(String label)
 }

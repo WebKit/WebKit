@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebXRWebGPUBindingsEnabled]
-messages -> RemoteXRProjectionLayer NotRefCounted Stream {
+messages -> RemoteXRProjectionLayer Stream {
 #if PLATFORM(COCOA)
 void StartFrame(size_t frameIndex, MachSendRight colorBuffer, MachSendRight depthBuffer, MachSendRight completionSyncEvent, size_t textureIndex) NotStreamEncodable
 #endif

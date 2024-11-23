@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebXRWebGPUBindingsEnabled]
-messages -> RemoteXRBinding NotRefCounted Stream {
+messages -> RemoteXRBinding Stream {
 void Destruct()
 void CreateProjectionLayer(WebCore::WebGPU::TextureFormat colorFormat, std::optional<WebCore::WebGPU::TextureFormat> depthStencilFormat, WebCore::WebGPU::TextureUsageFlags textureUsage, double scaleFactor, WebKit::WebGPUIdentifier identifier)
 void GetViewSubImage(WebKit::WebGPUIdentifier projectionLayerIdentifier, WebKit::WebGPUIdentifier identifier)

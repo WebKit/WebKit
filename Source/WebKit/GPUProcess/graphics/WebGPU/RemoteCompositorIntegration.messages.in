@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebGPUEnabled]
-messages -> RemoteCompositorIntegration NotRefCounted Stream {
+messages -> RemoteCompositorIntegration Stream {
 #if PLATFORM(COCOA)
     void RecreateRenderBuffers(int width, int height, WebCore::DestinationColorSpace destinationColorSpace, enum:uint8_t WebCore::AlphaPremultiplication alphaMode, WebCore::WebGPU::TextureFormat textureFormat, WebKit::WebGPUIdentifier deviceIdentifier) -> (Vector<MachSendRight> renderBuffers) Synchronous NotStreamEncodableReply
 #endif

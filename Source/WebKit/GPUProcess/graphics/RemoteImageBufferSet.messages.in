@@ -22,7 +22,7 @@
 
 #if ENABLE(GPU_PROCESS)
 
-messages -> RemoteImageBufferSet NotRefCounted Stream {
+messages -> RemoteImageBufferSet Stream {
     UpdateConfiguration(WebCore::FloatSize logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, WebCore::DestinationColorSpace colorSpace, enum:uint8_t WebCore::ImageBufferPixelFormat pixelFormat)
     EndPrepareForDisplay(WebKit::RenderingUpdateID renderingUpdateID)
 

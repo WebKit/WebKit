@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS)
 
 [EnabledBy=WebXRWebGPUBindingsEnabled]
-messages -> RemoteXRSubImage NotRefCounted Stream {
+messages -> RemoteXRSubImage Stream {
 void Destruct()
 void GetColorTexture(WebKit::WebGPUIdentifier identifier)
 void GetDepthTexture(WebKit::WebGPUIdentifier identifier)
