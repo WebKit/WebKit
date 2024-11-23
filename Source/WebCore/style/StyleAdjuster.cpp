@@ -928,7 +928,7 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
     if (!m_element)
         return;
 
-    if (is<HTMLBodyElement>(m_element) && m_document->quirks().needsBodyScrollbarWidthNoneDisabledQuirk()) {
+    if (is<HTMLBodyElement>(*m_element) && m_document->quirks().needsBodyScrollbarWidthNoneDisabledQuirk()) {
         if (style.scrollbarWidth() == ScrollbarWidth::None)
             style.setScrollbarWidth(ScrollbarWidth::Auto);
     }
@@ -942,8 +942,8 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
     if (m_document->quirks().needsIPadSkypeOverflowScrollQuirk()) {
         // This makes the layout scrollable and makes visible the buttons hidden outside of the viewport.
         // static MainThreadNeverDestroyed<const AtomString> selectorValue(".app-container .noFocusOutline > div"_s);
-        if (RefPtr div = dynamicDowncast<HTMLDivElement>(m_element)) {
-            auto matchesNoFocus = div->matches(".app-container .noFocusOutline > div"_s);
+        if (is<HTMLDivElement>(*m_element)) {
+            auto matchesNoFocus = m_element->matches(".app-container .noFocusOutline > div"_s);
             if (matchesNoFocus.hasException())
                 return;
             if (matchesNoFocus.returnValue()) {
@@ -968,8 +968,8 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
             && style.flexShrink() == 1
             && (flexBasis.isPercent() || flexBasis.isFixed())
             && flexBasis.value() == 0
-            && const_cast<Element*>(m_element.get())->classList().contains(class1)
-            && const_cast<Element*>(m_element.get())->classList().contains(class2))
+            && m_element->hasClassName(class1)
+            && m_element->hasClassName(class2))
             style.setMinHeight(WebCore::Length(0, LengthType::Fixed));
     }
     if (m_document->quirks().needsPrimeVideoUserSelectNoneQuirk()) {
@@ -1001,12 +1001,12 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
 
 #if ENABLE(VIDEO)
     if (m_document->quirks().needsFullscreenDisplayNoneQuirk()) {
-        if (RefPtr div = dynamicDowncast<HTMLDivElement>(m_element); div && style.display() == DisplayType::None) {
+        if (is<HTMLDivElement>(*m_element) && style.display() == DisplayType::None) {
             static MainThreadNeverDestroyed<const AtomString> instreamNativeVideoDivClass("instream-native-video--mobile"_s);
             static MainThreadNeverDestroyed<const AtomString> videoElementID("vjs_video_3_html5_api"_s);
 
-            if (div->hasClassName(instreamNativeVideoDivClass)) {
-                RefPtr video = dynamicDowncast<HTMLVideoElement>(div->treeScope().getElementById(videoElementID));
+            if (m_element->hasClassName(instreamNativeVideoDivClass)) {
+                RefPtr video = dynamicDowncast<HTMLVideoElement>(m_element->treeScope().getElementById(videoElementID));
                 if (video && video->isFullscreen())
                     style.setEffectiveDisplay(DisplayType::Block);
             }
@@ -1016,8 +1016,7 @@ void Adjuster::adjustForSiteSpecificQuirks(RenderStyle& style) const
     if (CheckedPtr fullscreenManager = m_document->fullscreenManagerIfExists(); fullscreenManager && m_document->quirks().needsFullscreenObjectFitQuirk()) {
         static MainThreadNeverDestroyed<const AtomString> playerClassName("top-player-video-element"_s);
         bool isFullscreen = fullscreenManager->isFullscreen();
-        RefPtr video = dynamicDowncast<HTMLVideoElement>(m_element);
-        if (video && isFullscreen && video->hasClassName(playerClassName) && style.objectFit() == ObjectFit::Fill)
+        if (is<HTMLVideoElement>(*m_element) && isFullscreen && m_element->hasClassName(playerClassName) && style.objectFit() == ObjectFit::Fill)
             style.setObjectFit(ObjectFit::Contain);
     }
 #endif
