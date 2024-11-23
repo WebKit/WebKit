@@ -2150,7 +2150,7 @@ bool Quirks::needsBingGestureEventQuirk(EventTarget* target) const
         m_quirksData.needsBingGestureEventQuirk = url.host() == "www.bing.com"_s && startsWithLettersIgnoringASCIICase(url.path(), "/maps"_s);
     }
 
-    if (!!m_quirksData.needsBingGestureEventQuirk.value())
+    if (!m_quirksData.needsBingGestureEventQuirk.value())
         return false;
 
     if (RefPtr element = dynamicDowncast<Element>(target)) {
