@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2014 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,17 +32,22 @@
 #include <wtf/TZoneMalloc.h>
 
 OBJC_CLASS AVAsset;
+OBJC_CLASS AVAssetTrack;
 OBJC_CLASS AVMediaSelectionGroup;
 OBJC_CLASS AVMediaSelectionOption;
 
 namespace WebCore {
 
-class InbandTextTrackPrivateAVFObjC : public InbandTextTrackPrivateAVF {
+class InbandTextTrackPrivateAVFObjC final : public InbandTextTrackPrivateAVF {
     WTF_MAKE_TZONE_ALLOCATED(InbandTextTrackPrivateAVFObjC);
 public:
     static Ref<InbandTextTrackPrivateAVFObjC> create(AVFInbandTrackParent* player,  AVMediaSelectionGroup *group, AVMediaSelectionOption *selection, TrackID trackID, InbandTextTrackPrivate::CueFormat format)
     {
         return adoptRef(*new InbandTextTrackPrivateAVFObjC(player, group, selection, trackID, format));
+    }
+    static Ref<InbandTextTrackPrivateAVFObjC> create(AVAssetTrack* track, TrackID trackID, InbandTextTrackPrivate::CueFormat format)
+    {
+        return adoptRef(*new InbandTextTrackPrivateAVFObjC(track, trackID, format));
     }
 
     ~InbandTextTrackPrivateAVFObjC() = default;
@@ -59,15 +64,21 @@ public:
 
     void disconnect() override;
 
-    Category textTrackCategory() const override { return InBand; }
-    
+    Category textTrackCategory() const final { return InBand; }
+
     AVMediaSelectionOption *mediaSelectionOption() const { return m_mediaSelectionOption.get(); }
 
 protected:
     InbandTextTrackPrivateAVFObjC(AVFInbandTrackParent*, AVMediaSelectionGroup *, AVMediaSelectionOption *, TrackID, InbandTextTrackPrivate::CueFormat);
-    
+    InbandTextTrackPrivateAVFObjC(AVAssetTrack*, TrackID, InbandTextTrackPrivate::CueFormat);
+
+private:
+    String mediaType() const;
+    bool hasMediaCharacteristic(const String&) const;
+
     RetainPtr<AVMediaSelectionGroup> m_mediaSelectionGroup;
     RetainPtr<AVMediaSelectionOption> m_mediaSelectionOption;
+    RetainPtr<AVAssetTrack> m_assetTrack;
 };
 
 }

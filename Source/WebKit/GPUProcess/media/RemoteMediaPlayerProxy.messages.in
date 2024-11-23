@@ -28,7 +28,7 @@ messages -> RemoteMediaPlayerProxy {
 
     Load(URL url, std::optional<WebKit::SandboxExtensionHandle> sandboxExtension, WebCore::ContentType contentType, String keySystem, bool requiresRemotePlayback) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
 #if ENABLE(MEDIA_SOURCE)
-    [EnabledBy=MediaSourceEnabled || ManagedMediaSourceEnabled] LoadMediaSource(URL url, WebCore::ContentType contentType, bool webMParserEnabled, WebKit::RemoteMediaSourceIdentifier mediaSourceIdentifier) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
+    [EnabledBy=MediaSourceEnabled || ManagedMediaSourceEnabled] LoadMediaSource(URL url, WebCore::ContentType contentType, WebKit::RemoteMediaSourceIdentifier mediaSourceIdentifier) -> (struct WebKit::RemoteMediaPlayerConfiguration playerConfiguration)
 #endif
     CancelLoad()
 

@@ -1365,6 +1365,9 @@ webkit.org/b/280069 imported/w3c/web-platform-tests/webvtt/api/VTTRegion/non-vis
 
 webkit.org/b/260455 http/tests/media/media-source/mediasource-rvfc.html [ Crash ]
 
+# MSE text tracks not supported
+webkit.org/b/281343 media/media-source/media-managedmse-webvtt-track.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of GStreamer-related bugs
 #////////////////////////////////////////////////////////////////////////////////////////

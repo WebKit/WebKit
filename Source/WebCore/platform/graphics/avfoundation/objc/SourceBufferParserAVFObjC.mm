@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2020-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,6 @@
 #import "AVStreamDataParserMIMETypeCache.h"
 #import "AudioTrackPrivateMediaSourceAVFObjC.h"
 #import "FourCC.h"
-#import "InbandTextTrackPrivateAVFObjC.h"
 #import "MediaDescription.h"
 #import "MediaSample.h"
 #import "MediaSampleAVFObjC.h"
@@ -41,6 +40,7 @@
 #import "NotImplemented.h"
 #import "SharedBuffer.h"
 #import "SourceBufferPrivate.h"
+#import "TextTrackPrivateMediaSourceAVFObjC.h"
 #import "TimeRanges.h"
 #import "VideoTrackPrivateMediaSourceAVFObjC.h"
 #import <AVFoundation/AVAssetTrack.h>
@@ -174,10 +174,11 @@ public:
 private:
     MediaDescriptionAVFObjC(AVAssetTrack* track)
         : MediaDescription(extractCodecName(track))
-        , m_isVideo([track hasMediaCharacteristic:AVMediaCharacteristicVisual])
-        , m_isAudio([track hasMediaCharacteristic:AVMediaCharacteristicAudible])
-        , m_isText([track hasMediaCharacteristic:AVMediaCharacteristicLegible])
     {
+        NSString* mediaType = [track mediaType];
+        m_isVideo = [mediaType isEqualToString:AVMediaTypeVideo];
+        m_isAudio = [mediaType isEqualToString:AVMediaTypeAudio];
+        m_isText = [mediaType isEqualToString:AVMediaTypeText] || [mediaType isEqualToString:AVMediaTypeClosedCaption] || [mediaType isEqualToString:AVMediaTypeSubtitle];
     }
 
     String extractCodecName(AVAssetTrack* track)
@@ -192,9 +193,9 @@ private:
             CFNumberGetValue(originalFormat, kCFNumberSInt32Type, &originalCodec.value);
         return String::fromLatin1(originalCodec.string().data());
     }
-    bool m_isVideo;
-    bool m_isAudio;
-    bool m_isText;
+    bool m_isVideo { false };
+    bool m_isAudio { false };
+    bool m_isText { false };
 };
 
 #pragma mark -
@@ -216,8 +217,9 @@ MediaPlayerEnums::SupportsType SourceBufferParserAVFObjC::isContentTypeSupported
     return AVStreamDataParserMIMETypeCache::singleton().canDecodeType(extendedType);
 }
 
-SourceBufferParserAVFObjC::SourceBufferParserAVFObjC()
+SourceBufferParserAVFObjC::SourceBufferParserAVFObjC(const MediaSourceConfiguration& configuration)
     : m_parser(adoptNS([PAL::allocAVStreamDataParserInstance() init]))
+    , m_configuration(configuration)
 {
 #if USE(MODERN_AVCONTENTKEYSESSION)
     if (MediaSessionManagerCocoa::shouldUseModernAVContentKeySession())
@@ -285,8 +287,10 @@ void SourceBufferParserAVFObjC::setLogger(const Logger& newLogger, uint64_t newL
 
 void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
 {
-    INFO_LOG_IF_POSSIBLE(LOGIDENTIFIER, asset);
-    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, asset = retainPtr(asset)] {
+    auto identifier = LOGIDENTIFIER;
+    INFO_LOG_IF_POSSIBLE(identifier, asset);
+
+    m_callOnClientThreadCallback([this, protectedThis = Ref { *this }, asset = retainPtr(asset), identifier] {
         if (!m_didParseInitializationDataCallback)
             return;
 
@@ -299,24 +303,29 @@ void SourceBufferParserAVFObjC::didParseStreamDataAsAsset(AVAsset* asset)
             segment.duration = PAL::toMediaTime([asset duration]);
 
         for (AVAssetTrack* track in [asset tracks]) {
-            if ([track hasMediaCharacteristic:AVMediaCharacteristicLegible]) {
-                // FIXME(125161): Handle in-band text tracks.
-                continue;
-            }
-
-            if ([track hasMediaCharacteristic:AVMediaCharacteristicVisual]) {
+            NSString* mediaType = [track mediaType];
+            if ([mediaType isEqualToString:AVMediaTypeVideo]) {
                 SourceBufferPrivateClient::InitializationSegment::VideoTrackInformation info;
                 info.track = VideoTrackPrivateMediaSourceAVFObjC::create(track);
                 info.description = MediaDescriptionAVFObjC::create(track);
                 segment.videoTracks.append(WTFMove(info));
-            } else if ([track hasMediaCharacteristic:AVMediaCharacteristicAudible]) {
+            } else if ([mediaType isEqualToString:AVMediaTypeAudio]) {
                 SourceBufferPrivateClient::InitializationSegment::AudioTrackInformation info;
                 info.track = AudioTrackPrivateMediaSourceAVFObjC::create(track);
                 info.description = MediaDescriptionAVFObjC::create(track);
                 segment.audioTracks.append(WTFMove(info));
+            } else if ([mediaType isEqualToString:AVMediaTypeText] && m_configuration.textTracksEnabled) {
+                SourceBufferPrivateClient::InitializationSegment::TextTrackInformation info;
+                info.description = MediaDescriptionAVFObjC::create(track);
+                if (info.description->codec().toString() != "wvtt"_s) {
+                    ALWAYS_LOG_IF_POSSIBLE(identifier, "Ignoring text track of type ", info.description->codec());
+                    break;
+                }
+                info.track = TextTrackPrivateMediaSourceAVFObjC::create(track, InbandTextTrackPrivate::CueFormat::WebVTT);
+                segment.textTracks.append(WTFMove(info));
+            } else {
+                ALWAYS_LOG_IF_POSSIBLE(identifier, "Ignoring track of type ", String(mediaType));
             }
-
-            // FIXME(125161)    : Add TextTrack support
         }
 
         m_didParseInitializationDataCallback(WTFMove(segment));

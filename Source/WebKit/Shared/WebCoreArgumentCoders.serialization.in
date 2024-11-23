@@ -7962,6 +7962,12 @@ header: <WebCore/SourceBufferPrivateClient.h>
 
 using WebCore::SourceBufferPrivate::SamplesPromise::Result = Expected<Vector<String>, WebCore::PlatformMediaError>
 
+header: <WebCore/MediaSourceConfiguration.h>
+struct WebCore::MediaSourceConfiguration {
+    bool webMParserEnabled;
+    bool textTracksEnabled;
+};
+
 #endif
 
 header: <WebCore/Font.h>

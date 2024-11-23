@@ -45,13 +45,14 @@ namespace WebCore {
 class ContentType;
 class MediaSampleAVFObjC;
 class SharedBuffer;
+struct MediaSourceConfiguration;
 struct TrackInfo;
 
 class WEBCORE_EXPORT SourceBufferParser : public ThreadSafeRefCounted<SourceBufferParser, WTF::DestructionThread::Main> {
 public:
     static MediaPlayerEnums::SupportsType isContentTypeSupported(const ContentType&);
 
-    static RefPtr<SourceBufferParser> create(const ContentType&, bool webMParserEnabled);
+    static RefPtr<SourceBufferParser> create(const ContentType&, const MediaSourceConfiguration&);
     virtual ~SourceBufferParser() = default;
 
     enum class Type : uint8_t {

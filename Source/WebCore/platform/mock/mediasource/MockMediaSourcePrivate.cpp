@@ -58,7 +58,7 @@ MockMediaSourcePrivate::MockMediaSourcePrivate(MockMediaPlayerMediaSource& paren
 
 MockMediaSourcePrivate::~MockMediaSourcePrivate() = default;
 
-MediaSourcePrivate::AddStatus MockMediaSourcePrivate::addSourceBuffer(const ContentType& contentType, bool, RefPtr<SourceBufferPrivate>& outPrivate)
+MediaSourcePrivate::AddStatus MockMediaSourcePrivate::addSourceBuffer(const ContentType& contentType, const MediaSourceConfiguration&, RefPtr<SourceBufferPrivate>& outPrivate)
 {
     MediaEngineSupportParameters parameters;
     parameters.isMediaSource = true;

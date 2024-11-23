@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2014-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -52,7 +52,7 @@ public:
     
 protected:
     OutOfBandTextTrackPrivateAVF(AVFInbandTrackParent* player, AVMediaSelectionOption* selection, TrackID trackID)
-        : InbandTextTrackPrivateAVF(player, trackID, InbandTextTrackPrivate::CueFormat::Generic)
+        : InbandTextTrackPrivateAVF(trackID, InbandTextTrackPrivate::CueFormat::Generic, player)
         , m_mediaSelectionOption(selection)
     {
     }

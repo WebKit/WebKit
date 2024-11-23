@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012-2020 Apple Inc. All rights reserved.
+ * Copyright (C) 2012-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,6 +29,7 @@
 
 #import "InbandTextTrackPrivateAVFObjC.h"
 
+#import "AVTrackPrivateAVFObjCImpl.h"
 #import "FloatConversion.h"
 #import "InbandTextTrackPrivate.h"
 #import "InbandTextTrackPrivateAVF.h"
@@ -53,63 +54,70 @@ namespace WebCore {
 WTF_MAKE_TZONE_ALLOCATED_IMPL(InbandTextTrackPrivateAVFObjC);
 
 InbandTextTrackPrivateAVFObjC::InbandTextTrackPrivateAVFObjC(AVFInbandTrackParent* player, AVMediaSelectionGroup *group, AVMediaSelectionOption *selection, TrackID trackID, InbandTextTrackPrivate::CueFormat format)
-    : InbandTextTrackPrivateAVF(player, trackID, format)
+    : InbandTextTrackPrivateAVF(trackID, format, player)
     , m_mediaSelectionGroup(group)
     , m_mediaSelectionOption(selection)
 {
 }
 
+InbandTextTrackPrivateAVFObjC::InbandTextTrackPrivateAVFObjC(AVAssetTrack* track, TrackID trackID, InbandTextTrackPrivate::CueFormat format)
+    : InbandTextTrackPrivateAVF(trackID, format)
+    , m_assetTrack(track)
+{
+}
+
 void InbandTextTrackPrivateAVFObjC::disconnect()
 {
+    InbandTextTrackPrivateAVF::disconnect();
     m_mediaSelectionGroup = 0;
     m_mediaSelectionOption = 0;
-    InbandTextTrackPrivateAVF::disconnect();
+    m_assetTrack = nullptr;
+}
+
+String InbandTextTrackPrivateAVFObjC::mediaType() const
+{
+    if (m_mediaSelectionOption)
+        return [m_mediaSelectionOption mediaType];
+
+    if (m_assetTrack)
+        return [m_assetTrack mediaType];
+
+    return emptyString();
+}
+
+bool InbandTextTrackPrivateAVFObjC::hasMediaCharacteristic(const String& type) const
+{
+    if (m_mediaSelectionOption)
+        return [m_mediaSelectionOption hasMediaCharacteristic:type];
+
+    if (m_assetTrack)
+        return [m_assetTrack hasMediaCharacteristic:type];
+
+    return false;
 }
 
 InbandTextTrackPrivate::Kind InbandTextTrackPrivateAVFObjC::kind() const
 {
-    if (!m_mediaSelectionOption)
-        return Kind::None;
+    if (m_mediaSelectionOption)
+        return AVTrackPrivateAVFObjCImpl::textKindForAVMediaSelectionOption(m_mediaSelectionOption.get());
 
-    NSString *mediaType = [m_mediaSelectionOption mediaType];
-    
-    if ([mediaType isEqualToString:AVMediaTypeClosedCaption])
-        return Kind::Captions;
-    if ([mediaType isEqualToString:AVMediaTypeSubtitle]) {
+    if (m_assetTrack)
+        return AVTrackPrivateAVFObjCImpl::textKindForAVAssetTrack(m_assetTrack.get());
 
-        if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles])
-            return Kind::Forced;
-
-        // An "SDH" track is a subtitle track created for the deaf or hard-of-hearing. "captions" in WebVTT are
-        // "labeled as appropriate for the hard-of-hearing", so tag SDH sutitles as "captions".
-        if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility])
-            return Kind::Captions;
-        if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicDescribesMusicAndSoundForAccessibility])
-            return Kind::Captions;
-        
-        return Kind::Subtitles;
-    }
-
-    return Kind::Captions;
+    return Kind::None;
 }
 
 bool InbandTextTrackPrivateAVFObjC::isClosedCaptions() const
 {
-    if (!m_mediaSelectionOption)
-        return false;
-    
-    return [[m_mediaSelectionOption mediaType] isEqualToString:AVMediaTypeClosedCaption];
+    return mediaType() == String(AVMediaTypeClosedCaption);
 }
 
 bool InbandTextTrackPrivateAVFObjC::isSDH() const
 {
-    if (!m_mediaSelectionOption)
-        return false;
-    
-    if (![[m_mediaSelectionOption mediaType] isEqualToString:AVMediaTypeSubtitle])
+    if (mediaType() != String(AVMediaTypeSubtitle))
         return false;
 
-    if ([m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicTranscribesSpokenDialogForAccessibility] && [m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicDescribesMusicAndSoundForAccessibility])
+    if (hasMediaCharacteristic(AVMediaCharacteristicTranscribesSpokenDialogForAccessibility) && hasMediaCharacteristic(AVMediaCharacteristicDescribesMusicAndSoundForAccessibility))
         return true;
 
     return false;
@@ -117,36 +125,31 @@ bool InbandTextTrackPrivateAVFObjC::isSDH() const
     
 bool InbandTextTrackPrivateAVFObjC::containsOnlyForcedSubtitles() const
 {
-    if (!m_mediaSelectionOption)
-        return false;
-    
-    return [m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicContainsOnlyForcedSubtitles];
+    return hasMediaCharacteristic(AVMediaCharacteristicContainsOnlyForcedSubtitles);
 }
 
 bool InbandTextTrackPrivateAVFObjC::isMainProgramContent() const
 {
-    if (!m_mediaSelectionOption)
-        return false;
-    
-    return [m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicIsMainProgramContent];
+    return hasMediaCharacteristic(AVMediaCharacteristicIsMainProgramContent);
 }
 
 bool InbandTextTrackPrivateAVFObjC::isEasyToRead() const
 {
-    if (!m_mediaSelectionOption)
-        return false;
-
-    return [m_mediaSelectionOption hasMediaCharacteristic:AVMediaCharacteristicEasyToRead];
+    return hasMediaCharacteristic(AVMediaCharacteristicEasyToRead);
 }
 
 AtomString InbandTextTrackPrivateAVFObjC::label() const
 {
-    if (!m_mediaSelectionOption)
+    NSArray<AVMetadataItem*>* commonMetadata = nil;
+    if (m_mediaSelectionOption)
+        commonMetadata = [m_mediaSelectionOption commonMetadata];
+    else if (m_assetTrack)
+        commonMetadata = [m_assetTrack commonMetadata];
+    if (!commonMetadata)
         return emptyAtom();
 
     NSString *title = 0;
-
-    NSArray *titles = [PAL::getAVMetadataItemClass() metadataItemsFromArray:[m_mediaSelectionOption commonMetadata] withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
+    NSArray *titles = [PAL::getAVMetadataItemClass() metadataItemsFromArray:commonMetadata withKey:AVMetadataCommonKeyTitle keySpace:AVMetadataKeySpaceCommon];
     if ([titles count]) {
         // If possible, return a title in one of the user's preferred languages.
         NSArray *titlesForPreferredLanguages = [PAL::getAVMetadataItemClass() metadataItemsFromArray:titles filteredAndSortedAccordingToPreferredLanguages:[NSLocale preferredLanguages]];
@@ -162,15 +165,21 @@ AtomString InbandTextTrackPrivateAVFObjC::label() const
 
 AtomString InbandTextTrackPrivateAVFObjC::language() const
 {
-    if (!m_mediaSelectionOption)
-        return emptyAtom();
+    if (m_mediaSelectionOption)
+        return AtomString(AVTrackPrivateAVFObjCImpl::languageForAVMediaSelectionOption(m_mediaSelectionOption.get()));
 
-    return [[m_mediaSelectionOption locale] localeIdentifier];
+    if (m_assetTrack)
+        return AtomString(AVTrackPrivateAVFObjCImpl::languageForAVAssetTrack(m_assetTrack.get()));
+
+    return emptyAtom();
 }
 
 bool InbandTextTrackPrivateAVFObjC::isDefault() const
 {
-    return [m_mediaSelectionGroup defaultOption] == m_mediaSelectionOption.get();
+    if (m_mediaSelectionGroup && m_mediaSelectionOption)
+        return [m_mediaSelectionGroup defaultOption] == m_mediaSelectionOption.get();
+
+    return false;
 }
 
 } // namespace WebCore
