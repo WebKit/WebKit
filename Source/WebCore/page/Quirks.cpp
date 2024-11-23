@@ -1861,12 +1861,16 @@ bool Quirks::needsIPadMiniUserAgent(const URL& url)
     if (host == "roblox.com"_s || host.endsWith(".roblox.com"_s))
         return true;
 
-    // FIXME: Remove this quirk when <rdar://122481999> is complete
+    // FIXME: Remove this quirk when <rdar://122481999> is complete.
     if (host == "spotify.com"_s || host.endsWith(".spotify.com"_s) || host.endsWith(".spotifycdn.com"_s))
         return true;
 
     // FIXME: Remove this quirk if seatguru decides to adjust their site. See https://webkit.org/b/276947
     if (host == "seatguru.com"_s || host.endsWith(".seatguru.com"_s))
+        return true;
+
+    // FIXME: Remove this quirk once <rdar://113978106> is no longer happening.
+    if (host == "www.indiatimes.com"_s)
         return true;
 
     return false;
