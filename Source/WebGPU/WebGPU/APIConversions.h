@@ -204,142 +204,144 @@ inline String fromAPI(const char* string)
     return String::fromUTF8(string);
 }
 
-inline Ref<Adapter> protectedFromAPI(WGPUAdapter adapter)
+#define WGPU_PROTECTED_API_UNAVAILABLE NS_SWIFT_UNAVAILABLE("use fromAPI, reference couting is implicit")
+
+inline Ref<Adapter> protectedFromAPI(WGPUAdapter adapter) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<Adapter&>(*adapter);
 }
 
-inline Ref<BindGroup> protectedFromAPI(WGPUBindGroup bindGroup)
+inline Ref<BindGroup> protectedFromAPI(WGPUBindGroup bindGroup) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<BindGroup&>(*bindGroup);
 }
 
-inline Ref<BindGroupLayout> protectedFromAPI(WGPUBindGroupLayout bindGroupLayout)
+inline Ref<BindGroupLayout> protectedFromAPI(WGPUBindGroupLayout bindGroupLayout) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<BindGroupLayout&>(*bindGroupLayout);
 }
 
-inline Ref<Buffer> protectedFromAPI(WGPUBuffer buffer)
+inline Ref<Buffer> protectedFromAPI(WGPUBuffer buffer) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<Buffer&>(*buffer);
 }
 
-inline Ref<CommandBuffer> protectedFromAPI(WGPUCommandBuffer commandBuffer)
+inline Ref<CommandBuffer> protectedFromAPI(WGPUCommandBuffer commandBuffer) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<CommandBuffer&>(*commandBuffer);
 }
 
-inline Ref<CommandEncoder> protectedFromAPI(WGPUCommandEncoder commandEncoder)
+inline Ref<CommandEncoder> protectedFromAPI(WGPUCommandEncoder commandEncoder) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<CommandEncoder&>(*commandEncoder);
 }
 
-inline Ref<ComputePassEncoder> protectedFromAPI(WGPUComputePassEncoder computePassEncoder)
+inline Ref<ComputePassEncoder> protectedFromAPI(WGPUComputePassEncoder computePassEncoder) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<ComputePassEncoder&>(*computePassEncoder);
 }
 
-inline Ref<ComputePipeline> protectedFromAPI(WGPUComputePipeline computePipeline)
+inline Ref<ComputePipeline> protectedFromAPI(WGPUComputePipeline computePipeline) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<ComputePipeline&>(*computePipeline);
 }
 
-inline Ref<Device> protectedFromAPI(WGPUDevice device)
+inline Ref<Device> protectedFromAPI(WGPUDevice device) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<Device&>(*device);
 }
 
-inline Ref<ExternalTexture> protectedFromAPI(WGPUExternalTexture texture)
+inline Ref<ExternalTexture> protectedFromAPI(WGPUExternalTexture texture) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<ExternalTexture&>(*texture);
 }
 
-inline Ref<Instance> protectedFromAPI(WGPUInstance instance)
+inline Ref<Instance> protectedFromAPI(WGPUInstance instance) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<Instance&>(*instance);
 }
 
-inline Ref<PipelineLayout> protectedFromAPI(WGPUPipelineLayout pipelineLayout)
+inline Ref<PipelineLayout> protectedFromAPI(WGPUPipelineLayout pipelineLayout) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<PipelineLayout&>(*pipelineLayout);
 }
 
-inline Ref<QuerySet> protectedFromAPI(WGPUQuerySet querySet)
+inline Ref<QuerySet> protectedFromAPI(WGPUQuerySet querySet) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<QuerySet&>(*querySet);
 }
 
-inline Ref<Queue> protectedFromAPI(WGPUQueue queue)
+inline Ref<Queue> protectedFromAPI(WGPUQueue queue) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<Queue&>(*queue);
 }
 
-inline Ref<RenderBundle> protectedFromAPI(WGPURenderBundle renderBundle)
+inline Ref<RenderBundle> protectedFromAPI(WGPURenderBundle renderBundle) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<RenderBundle&>(*renderBundle);
 }
 
-inline Ref<RenderBundleEncoder> protectedFromAPI(WGPURenderBundleEncoder renderBundleEncoder)
+inline Ref<RenderBundleEncoder> protectedFromAPI(WGPURenderBundleEncoder renderBundleEncoder) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<RenderBundleEncoder&>(*renderBundleEncoder);
 }
 
-inline Ref<RenderPassEncoder> protectedFromAPI(WGPURenderPassEncoder renderPassEncoder)
+inline Ref<RenderPassEncoder> protectedFromAPI(WGPURenderPassEncoder renderPassEncoder) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<RenderPassEncoder&>(*renderPassEncoder);
 }
 
-inline Ref<RenderPipeline> protectedFromAPI(WGPURenderPipeline renderPipeline)
+inline Ref<RenderPipeline> protectedFromAPI(WGPURenderPipeline renderPipeline) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<RenderPipeline&>(*renderPipeline);
 }
 
-inline Ref<Sampler> protectedFromAPI(WGPUSampler sampler)
+inline Ref<Sampler> protectedFromAPI(WGPUSampler sampler) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<Sampler&>(*sampler);
 }
 
-inline Ref<ShaderModule> protectedFromAPI(WGPUShaderModule shaderModule)
+inline Ref<ShaderModule> protectedFromAPI(WGPUShaderModule shaderModule) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<ShaderModule&>(*shaderModule);
 }
 
-inline Ref<PresentationContext> protectedFromAPI(WGPUSurface surface)
+inline Ref<PresentationContext> protectedFromAPI(WGPUSurface surface) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<PresentationContext&>(*surface);
 }
 
-inline Ref<PresentationContext> protectedFromAPI(WGPUSwapChain swapChain)
+inline Ref<PresentationContext> protectedFromAPI(WGPUSwapChain swapChain) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<PresentationContext&>(*swapChain);
 }
 
-inline Ref<Texture> protectedFromAPI(WGPUTexture texture)
+inline Ref<Texture> protectedFromAPI(WGPUTexture texture) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<Texture&>(*texture);
 }
 
-inline Ref<TextureView> protectedFromAPI(WGPUTextureView textureView)
+inline Ref<TextureView> protectedFromAPI(WGPUTextureView textureView) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<TextureView&>(*textureView);
 }
 
-inline Ref<XRBinding> protectedFromAPI(WGPUXRBinding binding)
+inline Ref<XRBinding> protectedFromAPI(WGPUXRBinding binding) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<XRBinding&>(*binding);
 }
 
-inline Ref<XRSubImage> protectedFromAPI(WGPUXRSubImage subImage)
+inline Ref<XRSubImage> protectedFromAPI(WGPUXRSubImage subImage) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<XRSubImage&>(*subImage);
 }
 
-inline Ref<XRProjectionLayer> protectedFromAPI(WGPUXRProjectionLayer layer)
+inline Ref<XRProjectionLayer> protectedFromAPI(WGPUXRProjectionLayer layer) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<XRProjectionLayer&>(*layer);
 }
 
-inline Ref<XRView> protectedFromAPI(WGPUXRView view)
+inline Ref<XRView> protectedFromAPI(WGPUXRView view) WGPU_PROTECTED_API_UNAVAILABLE
 {
     return static_cast<XRView&>(*view);
 }
@@ -364,5 +366,7 @@ inline T* releaseToAPI(RefPtr<T>&& pointer)
         return pointer.leakRef();
     return nullptr;
 }
+
+#undef WGPU_PROTECTED_API_UNAVAILABLE
 
 } // namespace WebGPU
