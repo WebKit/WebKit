@@ -1,0 +1,40 @@
+
+PASS ReadableStream.from accepts an array of values
+PASS ReadableStream.from accepts an array of promises
+PASS ReadableStream.from accepts an array iterator
+PASS ReadableStream.from accepts a string
+PASS ReadableStream.from accepts a Set
+PASS ReadableStream.from accepts a Set iterator
+PASS ReadableStream.from accepts a sync generator
+PASS ReadableStream.from accepts an async generator
+PASS ReadableStream.from accepts a sync iterable of values
+PASS ReadableStream.from accepts a sync iterable of promises
+PASS ReadableStream.from accepts an async iterable
+FAIL ReadableStream.from accepts a ReadableStream promise_test: Unhandled rejection with value: object "TypeError: ReadableStream.from requires that the property of the first argument, iterable[Symbol.iterator], when exists, be a function"
+FAIL ReadableStream.from accepts a ReadableStream async iterator promise_test: Unhandled rejection with value: object "TypeError: undefined is not a function (near '...ymbol.asyncIterator]();...')"
+PASS ReadableStream.from throws on invalid iterables; specifically null
+PASS ReadableStream.from throws on invalid iterables; specifically undefined
+PASS ReadableStream.from throws on invalid iterables; specifically 0
+PASS ReadableStream.from throws on invalid iterables; specifically NaN
+PASS ReadableStream.from throws on invalid iterables; specifically true
+PASS ReadableStream.from throws on invalid iterables; specifically {}
+PASS ReadableStream.from throws on invalid iterables; specifically Object.create(null)
+PASS ReadableStream.from throws on invalid iterables; specifically a function
+PASS ReadableStream.from throws on invalid iterables; specifically a symbol
+PASS ReadableStream.from throws on invalid iterables; specifically an object with a non-callable @@iterator method
+PASS ReadableStream.from throws on invalid iterables; specifically an object with a non-callable @@asyncIterator method
+PASS ReadableStream.from re-throws errors from calling the @@iterator method
+PASS ReadableStream.from re-throws errors from calling the @@asyncIterator method
+PASS ReadableStream.from ignores @@iterator if @@asyncIterator exists
+PASS ReadableStream.from accepts an empty iterable
+PASS ReadableStream.from: stream errors when next() rejects
+PASS ReadableStream.from: stream stalls when next() never settles
+PASS ReadableStream.from: calls next() after first read()
+PASS ReadableStream.from: cancelling the returned stream calls and awaits return()
+PASS ReadableStream.from: return() is not called when iterator completes normally
+PASS ReadableStream.from: cancel() rejects when return() fulfills with a non-object
+PASS ReadableStream.from: reader.read() inside next()
+PASS ReadableStream.from: reader.cancel() inside next()
+PASS ReadableStream.from: reader.cancel() inside return()
+PASS ReadableStream.from(array), push() to array while reading
+

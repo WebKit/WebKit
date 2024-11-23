@@ -78,6 +78,23 @@ Ref<InternalReadableStream> InternalReadableStream::fromObject(JSDOMGlobalObject
     return adoptRef(*new InternalReadableStream(globalObject, object));
 }
 
+ExceptionOr<Ref<InternalReadableStream>> InternalReadableStream::createFromAsyncIterable(JSDOMGlobalObject& globalObject, JSC::JSValue asyncIterable)
+{
+    auto* clientData = static_cast<JSVMClientData*>(globalObject.vm().clientData);
+    auto& privateName = clientData->builtinFunctions().readableStreamInternalsBuiltins().createInternalReadableStreamFromAsyncIterablePrivateName();
+
+    JSC::MarkedArgumentBuffer arguments;
+    arguments.append(asyncIterable);
+    ASSERT(!arguments.hasOverflowed());
+
+    auto result = invokeReadableStreamFunction(globalObject, privateName, arguments);
+    if (UNLIKELY(result.hasException()))
+        return result.releaseException();
+
+    ASSERT(result.returnValue().isObject());
+    return adoptRef(*new InternalReadableStream(globalObject, *result.returnValue().toObject(&globalObject)));
+}
+
 bool InternalReadableStream::isLocked() const
 {
     auto* globalObject = this->globalObject();

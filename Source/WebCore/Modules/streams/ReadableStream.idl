@@ -35,6 +35,8 @@
 ] interface ReadableStream {
     [CallWith=CurrentGlobalObject] constructor(optional object underlyingSource, optional object options);
 
+    [CallWith=CurrentGlobalObject, EnabledBySetting=ReadableStreamFromAPIEnabled] static ReadableStream from(any asyncIterable);
+
     [Custom, ReturnsOwnPromise] Promise<any> cancel(optional any reason);
     [Custom] Object getReader(optional any options);
     [Custom, ReturnsOwnPromise] Promise<any> pipeTo(any streams, optional any options);

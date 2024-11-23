@@ -36,6 +36,7 @@ class InternalReadableStream final : public DOMGuarded<JSC::JSObject> {
 public:
     static ExceptionOr<Ref<InternalReadableStream>> createFromUnderlyingSource(JSDOMGlobalObject&, JSC::JSValue underlyingSink, JSC::JSValue strategy);
     static Ref<InternalReadableStream> fromObject(JSDOMGlobalObject&, JSC::JSObject&);
+    static ExceptionOr<Ref<InternalReadableStream>> createFromAsyncIterable(JSDOMGlobalObject&, JSC::JSValue asyncIterable);
 
     operator JSC::JSValue() const { return guarded(); }
 

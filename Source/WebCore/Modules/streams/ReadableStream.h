@@ -41,6 +41,8 @@ public:
     static ExceptionOr<Ref<ReadableStream>> create(JSDOMGlobalObject&, Ref<ReadableStreamSource>&&);
     static Ref<ReadableStream> create(Ref<InternalReadableStream>&&);
 
+    static ExceptionOr<Ref<ReadableStream>> from(JSDOMGlobalObject&, JSC::JSValue asyncIterable);
+
     ~ReadableStream() = default;
 
     void lock() { m_internalReadableStream->lock(); }
