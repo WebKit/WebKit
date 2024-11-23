@@ -85,8 +85,9 @@ TextStream& operator<<(TextStream& ts, BackfaceVisibility visibility)
 TextStream& operator<<(TextStream& ts, BlockStepInsert blockStepInsert)
 {
     switch (blockStepInsert) {
-    case BlockStepInsert::Margin: ts << "margin"; break;
-    case BlockStepInsert::Padding: ts << "padding"; break;
+    case BlockStepInsert::MarginBox: ts << "margin-box"; break;
+    case BlockStepInsert::PaddingBox: ts << "padding-box"; break;
+    case BlockStepInsert::ContentBox: ts << "content-box"; break;
     }
     return ts;
 }

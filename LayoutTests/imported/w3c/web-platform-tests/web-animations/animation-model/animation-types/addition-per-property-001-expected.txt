@@ -44,8 +44,12 @@ PASS background-repeat (type: discrete) has testAddition function
 PASS background-repeat: "round" onto "space"
 PASS background-repeat: "space" onto "round"
 PASS block-step-insert (type: discrete) has testAddition function
-PASS block-step-insert: "padding" onto "margin"
-PASS block-step-insert: "margin" onto "padding"
+PASS block-step-insert: "padding-box" onto "margin-box"
+PASS block-step-insert: "margin-box" onto "padding-box"
+PASS block-step-insert: "content-box" onto "margin-box"
+PASS block-step-insert: "margin-box" onto "content-box"
+PASS block-step-insert: "content-box" onto "padding-box"
+PASS block-step-insert: "padding-box" onto "content-box"
 PASS block-step-size (type: length) has testAddition function
 PASS block-step-size: length
 PASS block-step-size: length of rem

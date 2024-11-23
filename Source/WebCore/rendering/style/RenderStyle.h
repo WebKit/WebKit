@@ -113,7 +113,7 @@ enum class AutoRepeatType : uint8_t;
 enum class BackfaceVisibility : uint8_t;
 enum class BlendMode : uint8_t;
 enum class FlowDirection : uint8_t;
-enum class BlockStepInsert : bool;
+enum class BlockStepInsert : uint8_t;
 enum class BorderCollapse : bool;
 enum class BorderStyle : uint8_t;
 enum class BoxAlignment : uint8_t;

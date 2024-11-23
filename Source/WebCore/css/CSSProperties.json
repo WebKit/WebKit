@@ -282,8 +282,9 @@
         },
         "block-step-insert": {
             "values": [
-                "margin",
-                "padding"
+                "margin-box",
+                "padding-box",
+                "content-box"
             ],
             "codegen-properties": {
                 "settings-flag": "cssRhythmicSizingEnabled",

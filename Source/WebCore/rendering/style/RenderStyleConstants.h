@@ -1197,9 +1197,11 @@ enum class ContentVisibility : uint8_t {
     Hidden,
 };
 
-enum class BlockStepInsert : bool {
-    Margin,
-    Padding
+// Stored as unsigned : 2 in StyleRareNonInheritedData
+enum class BlockStepInsert : uint8_t {
+    MarginBox,
+    PaddingBox,
+    ContentBox
 };
 
 enum class FieldSizing : bool {

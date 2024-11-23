@@ -948,9 +948,6 @@ padding-box
 // text
 -webkit-text
 
-// block-step-insert
-margin
-
 //
 // CSS_PROP_MASK_CLIP
 //

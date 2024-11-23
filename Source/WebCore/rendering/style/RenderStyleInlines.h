@@ -337,7 +337,7 @@ constexpr AspectRatioType RenderStyle::initialAspectRatioType() { return AspectR
 constexpr BackfaceVisibility RenderStyle::initialBackfaceVisibility() { return BackfaceVisibility::Visible; }
 inline StyleColor RenderStyle::initialBackgroundColor() { return Color::transparentBlack; }
 inline BlockEllipsis RenderStyle::initialBlockEllipsis() { return { }; }
-constexpr BlockStepInsert RenderStyle::initialBlockStepInsert() { return BlockStepInsert::Margin; }
+constexpr BlockStepInsert RenderStyle::initialBlockStepInsert() { return BlockStepInsert::MarginBox; }
 inline std::optional<Length> RenderStyle::initialBlockStepSize() { return std::nullopt; }
 constexpr BorderCollapse RenderStyle::initialBorderCollapse() { return BorderCollapse::Separate; }
 inline LengthSize RenderStyle::initialBorderRadius() { return { zeroLength(), zeroLength() }; }
