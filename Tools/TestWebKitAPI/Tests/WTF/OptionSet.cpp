@@ -494,4 +494,15 @@ TEST(WTF_OptionSet, HashSet)
     EXPECT_TRUE(hashSet.add({ ExampleFlags::A, ExampleFlags::B }).isNewEntry);
 }
 
+TEST(WTF_OptionSet, Size)
+{
+    OptionSet<ExampleFlags> a { ExampleFlags::A, ExampleFlags::B };
+    OptionSet<ExampleFlags> b;
+    static constexpr OptionSet<ExampleFlags> c { ExampleFlags::B };
+
+    EXPECT_EQ(a.size(), 2ul);
+    EXPECT_EQ(b.size(), 0ul);
+    EXPECT_EQ(c.size(), 1ul);
+}
+
 } // namespace TestWebKitAPI

@@ -338,6 +338,7 @@ set(WTF_PUBLIC_HEADERS
     URL.h
     URLHelpers.h
     URLHash.h
+    URLMatch.h
     URLParser.h
     UUID.h
     UnalignedAccess.h
@@ -574,6 +575,7 @@ set(WTF_SOURCES
     TimingScope.cpp
     URL.cpp
     URLHelpers.cpp
+    URLMatch.cpp
     URLParser.cpp
     UUID.cpp
     UniqueArray.cpp

@@ -1268,6 +1268,7 @@
 		E5AA42F2259128AE00410A3D /* UserInterfaceIdiomUpdate.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5AA42F1259128AE00410A3D /* UserInterfaceIdiomUpdate.mm */; };
 		E5AA8D1D25151CC60051CC45 /* DateInputTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = E5AA8D1C25151CC60051CC45 /* DateInputTests.mm */; };
 		EB7067FC2CCC0E9900A94073 /* MixedContentChecker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB6836D32CC967E00073A8E5 /* MixedContentChecker.cpp */; };
+		EB7CE0FB2CF13C2200BECB13 /* URLMatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB7CE0FA2CF13C2200BECB13 /* URLMatch.cpp */; };
 		EB9AD8C727646E7400D893A4 /* PushDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB9AD8C627646E7300D893A4 /* PushDatabase.cpp */; };
 		EBA75C49275ED7C700D6D31C /* PushMessageCrypto.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EBA75C48275ED7BE00D6D31C /* PushMessageCrypto.cpp */; };
 		ECA680CE1E68CC0900731D20 /* StringUtilities.mm in Sources */ = {isa = PBXBuildFile; fileRef = ECA680CD1E68CC0900731D20 /* StringUtilities.mm */; };
@@ -3636,6 +3637,7 @@
 		EB4D320727C045430081A8E4 /* TestNotificationProvider.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = TestNotificationProvider.cpp; sourceTree = "<group>"; };
 		EB4D320827C045440081A8E4 /* TestNotificationProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestNotificationProvider.h; sourceTree = "<group>"; };
 		EB6836D32CC967E00073A8E5 /* MixedContentChecker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MixedContentChecker.cpp; sourceTree = "<group>"; };
+		EB7CE0FA2CF13C2200BECB13 /* URLMatch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = URLMatch.cpp; sourceTree = "<group>"; };
 		EB9AD8C627646E7300D893A4 /* PushDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PushDatabase.cpp; sourceTree = "<group>"; };
 		EBA75C48275ED7BE00D6D31C /* PushMessageCrypto.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PushMessageCrypto.cpp; sourceTree = "<group>"; };
 		EBCD30F72B7C075F00268DA5 /* MemoryFootprintThreshold.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MemoryFootprintThreshold.mm; sourceTree = "<group>"; };
@@ -5719,6 +5721,7 @@
 				5C5E633D1D0B67940085A025 /* UniqueRef.cpp */,
 				3A1337AB28F9177600F29B73 /* UniqueRefVector.cpp */,
 				E3A1E78021B25B79008C6007 /* URL.cpp */,
+				EB7CE0FA2CF13C2200BECB13 /* URLMatch.cpp */,
 				E3A1E78421B25B91008C6007 /* URLParser.cpp */,
 				93C3647A2BDD8800006D8B55 /* UTF8Conversion.cpp */,
 				144D40EC221B46A7004B474F /* UUID.cpp */,
@@ -6819,6 +6822,7 @@
 				3A1337B328F9177600F29B73 /* UniqueRefVector.cpp in Sources */,
 				E3A1E78221B25B7A008C6007 /* URL.cpp in Sources */,
 				E3C21A7C21B25CA2003B31A3 /* URLExtras.mm in Sources */,
+				EB7CE0FB2CF13C2200BECB13 /* URLMatch.cpp in Sources */,
 				E3A1E78521B25B91008C6007 /* URLParser.cpp in Sources */,
 				93C3647B2BDD8800006D8B55 /* UTF8Conversion.cpp in Sources */,
 				7C83E03B1D0A602700FEBCF3 /* UtilitiesCocoa.mm in Sources */,

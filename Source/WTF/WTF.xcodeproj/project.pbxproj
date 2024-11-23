@@ -882,6 +882,8 @@
 		E4A0AD3D1A96253C00536DF6 /* WorkQueueCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E4A0AD3C1A96253C00536DF6 /* WorkQueueCocoa.cpp */; };
 		EB2C86D9267B275D0052CB9A /* CPUTimePOSIX.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB2C86D8267B275C0052CB9A /* CPUTimePOSIX.cpp */; };
 		EB61EDC72409CCC1001EFE36 /* SystemTracingCocoa.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB61EDC62409CCC0001EFE36 /* SystemTracingCocoa.cpp */; };
+		EB7CE0EB2CEFB4A700BECB13 /* URLMatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = EB7CE0EA2CEFB4A700BECB13 /* URLMatch.cpp */; };
+		EB7CE0ED2CEFB4B400BECB13 /* URLMatch.h in Headers */ = {isa = PBXBuildFile; fileRef = EB7CE0EC2CEFB4B400BECB13 /* URLMatch.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FA0C387B2BEAD56B00583842 /* SmallMap.h in Headers */ = {isa = PBXBuildFile; fileRef = FA0C387A2BEAD56B00583842 /* SmallMap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		FE032AD22463E43B0012D7C7 /* WTFConfig.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FE032AD02463E43B0012D7C7 /* WTFConfig.cpp */; };
 		FE03831C2ABC04F700A576A2 /* TZoneMallocInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = FE03831A2ABC04F700A576A2 /* TZoneMallocInlines.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1891,6 +1893,8 @@
 		E4D2AE4D268A4C7F00DFEA02 /* SystemMalloc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SystemMalloc.h; sourceTree = "<group>"; };
 		EB2C86D8267B275C0052CB9A /* CPUTimePOSIX.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CPUTimePOSIX.cpp; sourceTree = "<group>"; };
 		EB61EDC62409CCC0001EFE36 /* SystemTracingCocoa.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemTracingCocoa.cpp; sourceTree = "<group>"; };
+		EB7CE0EA2CEFB4A700BECB13 /* URLMatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = URLMatch.cpp; sourceTree = "<group>"; };
+		EB7CE0EC2CEFB4B400BECB13 /* URLMatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = URLMatch.h; sourceTree = "<group>"; };
 		EB95E1EF161A72410089A2F5 /* ByteOrder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteOrder.h; sourceTree = "<group>"; };
 		EF7D6CD59D8642A8A0DA86AD /* StackTrace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StackTrace.h; sourceTree = "<group>"; };
 		F6D67D3226F90142006E0349 /* Int128.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Int128.h; sourceTree = "<group>"; };
@@ -2570,6 +2574,8 @@
 				5CC0EE772162A01000A1A842 /* URLHash.h */,
 				5FAD3AE121B9636600BEE178 /* URLHelpers.cpp */,
 				5FAD3AE021B9636600BEE178 /* URLHelpers.h */,
+				EB7CE0EA2CEFB4A700BECB13 /* URLMatch.cpp */,
+				EB7CE0EC2CEFB4B400BECB13 /* URLMatch.h */,
 				5CC0EE7321629F1900A1A842 /* URLParser.cpp */,
 				5CC0EE7221629F1900A1A842 /* URLParser.h */,
 				7AFEC6B01EB22B5900DADE36 /* UUID.cpp */,
@@ -3677,6 +3683,7 @@
 				DD3DC90327A4BF8E007E5B61 /* URL.h in Headers */,
 				DD3DC8ED27A4BF8E007E5B61 /* URLHash.h in Headers */,
 				DD3DC99A27A4BF8E007E5B61 /* URLHelpers.h in Headers */,
+				EB7CE0ED2CEFB4B400BECB13 /* URLMatch.h in Headers */,
 				DD3DC8BD27A4BF8E007E5B61 /* URLParser.h in Headers */,
 				DDF307D227C086DF006A526F /* UTextProvider.h in Headers */,
 				DDF307E227C086DF006A526F /* UTextProviderLatin1.h in Headers */,
@@ -4245,6 +4252,7 @@
 				5C1F0595216437B30039302C /* URLCF.cpp in Sources */,
 				5CC0EE892162BC2200A1A842 /* URLCocoa.mm in Sources */,
 				5FAD3AE221B9636600BEE178 /* URLHelpers.cpp in Sources */,
+				EB7CE0EB2CEFB4A700BECB13 /* URLMatch.cpp in Sources */,
 				5CC0EE7521629F1900A1A842 /* URLParser.cpp in Sources */,
 				1C181C8F1D307AB800F5FA16 /* UTextProvider.cpp in Sources */,
 				1C181C911D307AB800F5FA16 /* UTextProviderLatin1.cpp in Sources */,

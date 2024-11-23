@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include <bit>
 #include <initializer_list>
 #include <iterator>
 #include <optional>
@@ -143,9 +144,19 @@ public:
             remove(optionSet);
     }
 
+    constexpr void clear()
+    {
+        m_storage = 0;
+    }
+
     constexpr bool hasExactlyOneBitSet() const
     {
         return m_storage && !(m_storage & (m_storage - 1));
+    }
+
+    constexpr size_t size() const
+    {
+        return std::popcount(m_storage);
     }
 
     constexpr std::optional<E> toSingleValue() const
@@ -181,7 +192,7 @@ public:
         return fromRaw(lhs.m_storage ^ rhs.m_storage);
     }
 
-    static OptionSet all() { return fromRaw(-1); }
+    constexpr static OptionSet all() { return fromRaw(-1); }
 
 private:
     enum InitializationTag { FromRawValue };
