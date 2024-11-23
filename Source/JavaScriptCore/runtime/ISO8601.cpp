@@ -533,29 +533,61 @@ static bool canBeCalendar(const StringParsingBuffer<CharacterType>& buffer)
     // https://tc39.es/proposal-temporal/#sec-temporal-parseisodatetime
     // Step 4(a)(ii)(2)(a):
     //  Let key be the source text matched by the AnnotationKey Parse Node contained within annotation
+
+    // https://tc39.es/proposal-temporal/#prod-Annotation
+    // Annotation :::
+    //     [ AnnotationCriticalFlag_opt AnnotationKey = AnnotationValue ]
+
+    // https://tc39.es/proposal-temporal/#prod-AnnotationCriticalFlag
+    // AnnotationCriticalFlag :::
+    //     !
+
+    // https://tc39.es/proposal-temporal/#prod-AnnotationKey
+    // AnnotationKey :::
+    //     AKeyLeadingChar
+    //     AnnotationKey AKeyChar
+
+    // https://tc39.es/proposal-temporal/#prod-AKeyLeadingChar
+    // AKeyLeadingChar :::
+    //     LowercaseAlpha
+    //     _
+
+    // https://tc39.es/proposal-temporal/#prod-AKeyChar
+    // AKeyChar :::
+    //     AKeyLeadingChar
+    //     DecimalDigit
+    //     -
+
     // This just checks for '[', followed by an optional '!' (critical flag),
     // followed by a valid key, followed by an '='.
 
-    int32_t len = buffer.lengthRemaining();
-    // Check for [! or [, followed by any number of 'a'-'z' or '-', followed by '='
-    int32_t i = 0;
-    if (i < len) {
+    size_t length = buffer.lengthRemaining();
+    if (length == 0)
+        return false;
+    // Parse Annotation
+    size_t i = 0;
+    if (i < length) {
+        // Parse '[' in Annotation
         if (buffer[i] != '[')
             return false;
         i++;
     }
-    if (i < len) {
+    if (i < length) {
+        // Parse AnnotationCriticalFlag_opt
         if (buffer[i] == '!')
             i++;
     }
+    // Parse AKeyLeadingChar
     // '_' allowed as first char
-    if (i < len) {
+    if (i < length) {
         if (buffer[i] == '_')
             i++;
     }
-    while (i < len) {
+    // Parse '=' in Annotation
+    while (i < length) {
         if (buffer[i] == '=')
             return true;
+        // Parse AKeyLeadingChar or AKeyChar
         if (isASCIILower(buffer[i]) || isASCIIDigit(buffer[i]) || buffer[i] == '-')
             i++;
         else
@@ -790,20 +822,7 @@ static std::optional<TimeZoneRecord> parseTimeZone(StringParsingBuffer<Character
 template<typename CharacterType>
 static std::optional<CalendarRecord> parseOneCalendar(StringParsingBuffer<CharacterType>& buffer)
 {
-    // https://tc39.es/proposal-temporal/#prod-TimeZoneBracketedAnnotation
-    // Calendar :
-    //     [u-ca= CalendarName ]
-    //
-    // CalendarName :
-    //     CalendarNameComponent
-    //     CalendarNameComponent - CalendarName
-    //
-    // CalendarNameComponent :
-    //     CalChar CalChar CalChar CalChar[opt] CalChar[opt] CalChar[opt] CalChar[opt] CalChar[opt]
-    //
-    // CalChar :
-    //     Alpha
-    //     Digit
+    // For BNF, see comment in canBeCalendar()
 
     if (!canBeCalendar(buffer))
         return std::nullopt;
@@ -906,6 +925,10 @@ template<typename CharacterType>
 static std::tuple<std::optional<CalendarRecord>, std::optional<CalendarRecord>>
 parseCalendar(StringParsingBuffer<CharacterType>& buffer)
 {
+// https://tc39.es/proposal-temporal/#prod-Annotations
+//  Annotations :::
+//      Annotation Annotationsopt
+
     std::optional<CalendarRecord> first = parseOneCalendar(buffer);
     std::optional<CalendarRecord> second;
     if (first && canBeCalendar(buffer))
