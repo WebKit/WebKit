@@ -48,6 +48,12 @@
 
 namespace WebCore {
 
+Ref<ViewTimeline> ViewTimeline::create(Ref<ViewTimeline> timeline)
+{
+    auto insetCopy = timeline->insets();
+    return adoptRef(*new ViewTimeline(nullAtom(), timeline->axis(), WTFMove(insetCopy)));
+}
+
 Ref<ViewTimeline> ViewTimeline::create(ViewTimelineOptions&& options)
 {
     return adoptRef(*new ViewTimeline(WTFMove(options)));

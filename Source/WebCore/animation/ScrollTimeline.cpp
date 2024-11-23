@@ -38,6 +38,11 @@
 
 namespace WebCore {
 
+Ref<ScrollTimeline> ScrollTimeline::create(Ref<ScrollTimeline> timeline)
+{
+    return adoptRef(*new ScrollTimeline(timeline->scroller(), timeline->axis()));
+}
+
 Ref<ScrollTimeline> ScrollTimeline::create(ScrollTimelineOptions&& options)
 {
     return adoptRef(*new ScrollTimeline(WTFMove(options)));
