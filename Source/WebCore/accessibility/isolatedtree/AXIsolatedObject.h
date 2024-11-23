@@ -503,6 +503,7 @@ private:
     unsigned textLength() const final;
 #if PLATFORM(COCOA)
     RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const final;
+    AttributedStringStyle stylesForAttributedString() const final;
 #endif
     AXObjectCache* axObjectCache() const final;
     Element* actionElement() const final;

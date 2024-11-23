@@ -661,6 +661,9 @@ TextStream& operator<<(WTF::TextStream& stream, AXPropertyName property)
     case AXPropertyName::AutoCompleteValue:
         stream << "AutoCompleteValue";
         break;
+    case AXPropertyName::BackgroundColor:
+        stream << "BackgroundColor";
+        break;
     case AXPropertyName::BlockquoteLevel:
         stream << "BlockquoteLevel";
         break;
@@ -756,6 +759,14 @@ TextStream& operator<<(WTF::TextStream& stream, AXPropertyName property)
     case AXPropertyName::ExtendedDescription:
         stream << "ExtendedDescription";
         break;
+#if PLATFORM(COCOA)
+    case AXPropertyName::Font:
+        stream << "Font";
+        break;
+#endif // PLATFORM(COCOA)
+    case AXPropertyName::TextColor:
+        stream << "TextColor";
+        break;
     case AXPropertyName::HasApplePDFAnnotationAttribute:
         stream << "HasApplePDFAnnotationAttribute";
         break;
@@ -774,11 +785,23 @@ TextStream& operator<<(WTF::TextStream& stream, AXPropertyName property)
     case AXPropertyName::HasItalicFont:
         stream << "HasItalicFont";
         break;
+    case AXPropertyName::HasLinethrough:
+        stream << "HasLinethrough";
+        break;
     case AXPropertyName::HasPlainText:
         stream << "HasPlainText";
         break;
     case AXPropertyName::HasRemoteFrameChild:
         stream << "HasRemoteFrameChild";
+        break;
+    case AXPropertyName::IsSubscript:
+        stream << "IsSubscript";
+        break;
+    case AXPropertyName::IsSuperscript:
+        stream << "IsSuperscript";
+        break;
+    case AXPropertyName::HasTextShadow:
+        stream << "HasTextShadow";
         break;
     case AXPropertyName::HasUnderline:
         stream << "HasUnderline";
@@ -968,6 +991,9 @@ TextStream& operator<<(WTF::TextStream& stream, AXPropertyName property)
         break;
     case AXPropertyName::Language:
         stream << "Language";
+        break;
+    case AXPropertyName::LinethroughColor:
+        stream << "LinethroughColor";
         break;
     case AXPropertyName::LiveRegionAtomic:
         stream << "LiveRegionAtomic";
@@ -1177,6 +1203,9 @@ TextStream& operator<<(WTF::TextStream& stream, AXPropertyName property)
         break;
     case AXPropertyName::URL:
         stream << "URL";
+        break;
+    case AXPropertyName::UnderlineColor:
+        stream << "UnderlineColor";
         break;
     case AXPropertyName::ValueAutofillButtonType:
         stream << "ValueAutofillButtonType";

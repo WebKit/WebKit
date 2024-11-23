@@ -93,6 +93,7 @@ enum class AXPropertyName : uint16_t {
     ActionVerb,
     AncestorFlags,
     AutoCompleteValue,
+    BackgroundColor,
     BlockquoteLevel,
     BrailleLabel,
     BrailleRoleDescription,
@@ -126,14 +127,22 @@ enum class AXPropertyName : uint16_t {
     EmbeddedImageDescription,
     ExpandedTextValue,
     ExtendedDescription,
+#if PLATFORM(COCOA)
+    Font,
+#endif
+    TextColor,
     HasApplePDFAnnotationAttribute,
     HasBoldFont,
     HasBodyTag,
     HasClickHandler,
     HasHighlighting,
     HasItalicFont,
+    HasLinethrough,
     HasPlainText,
     HasRemoteFrameChild,
+    IsSubscript,
+    IsSuperscript,
+    HasTextShadow,
     HasUnderline,
     HeaderContainer,
     HeadingLevel,
@@ -197,6 +206,7 @@ enum class AXPropertyName : uint16_t {
     IsWidget,
     KeyShortcuts,
     Language,
+    LinethroughColor,
     LiveRegionAtomic,
     LiveRegionRelevant,
     LiveRegionStatus,
@@ -268,6 +278,7 @@ enum class AXPropertyName : uint16_t {
     Title,
     TitleAttributeValue,
     URL,
+    UnderlineColor,
     ValueAutofillButtonType,
     ValueDescription,
     ValueForRange,
@@ -286,6 +297,7 @@ using AXPropertyValueVariant = std::variant<std::nullptr_t, Markable<AXID>, Stri
     , RetainPtr<id>
 #endif
 #if ENABLE(AX_THREAD_TEXT_APIS)
+    , RetainPtr<CTFontRef>
     , AXTextRuns
 #endif
 >;
@@ -362,8 +374,8 @@ public:
     enum class ResolveNodeChanges : bool { No, Yes };
     void updateChildren(AccessibilityObject&, ResolveNodeChanges = ResolveNodeChanges::Yes);
     void updateChildrenForObjects(const ListHashSet<Ref<AccessibilityObject>>&);
-    void updateNodeProperty(AXCoreObject& object, AXPropertyName property) { updateNodeProperties(object, { property }); }
-    void updateNodeProperties(AXCoreObject&, const AXPropertyNameSet&);
+    void updateNodeProperty(AccessibilityObject& object, AXPropertyName property) { updateNodeProperties(object, { property }); }
+    void updateNodeProperties(AccessibilityObject&, const AXPropertyNameSet&);
     void updateNodeProperties(AccessibilityObject* axObject, const AXPropertyNameSet& properties)
     {
         if (axObject)

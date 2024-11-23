@@ -26,6 +26,7 @@
 #import "config.h"
 #import "AccessibilityObject.h"
 
+#import "AXObjectCache.h"
 #import "AXRemoteFrame.h"
 #import "AccessibilityLabel.h"
 #import "AccessibilityList.h"
@@ -562,14 +563,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 }
 
 // NSAttributedString support.
-
-static void attributedStringSetColor(NSMutableAttributedString *attrString, NSString *attribute, NSColor *color, const NSRange& range)
-{
-    if (color) {
-        // Use the CGColor instead of the passed NSColor because that's what the AX system framework expects. Using the NSColor causes that the AX client gets nil instead of a valid NSAttributedString.
-        [attrString addAttribute:attribute value:(__bridge id)color.CGColor range:range];
-    }
-}
 
 static void attributedStringSetStyle(NSMutableAttributedString *attrString, RenderObject* renderer, const NSRange& range)
 {

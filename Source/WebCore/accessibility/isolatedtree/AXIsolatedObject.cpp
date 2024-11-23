@@ -190,7 +190,9 @@ void AXIsolatedObject::initializeProperties(const Ref<AccessibilityObject>& axOb
     setProperty(AXPropertyName::HasBoldFont, object.hasBoldFont());
     setProperty(AXPropertyName::HasItalicFont, object.hasItalicFont());
     setProperty(AXPropertyName::HasPlainText, object.hasPlainText());
+#if !ENABLE(AX_THREAD_TEXT_APIS)
     setProperty(AXPropertyName::HasUnderline, object.hasUnderline());
+#endif
     setProperty(AXPropertyName::IsKeyboardFocusable, object.isKeyboardFocusable());
     setProperty(AXPropertyName::BrailleRoleDescription, object.brailleRoleDescription().isolatedCopy());
     setProperty(AXPropertyName::BrailleLabel, object.brailleLabel().isolatedCopy());
@@ -613,6 +615,7 @@ void AXIsolatedObject::setProperty(AXPropertyName propertyName, AXPropertyValueV
         },
 #if ENABLE(AX_THREAD_TEXT_APIS)
         [](AXTextRuns& runs) { return !runs.size(); },
+        [](RetainPtr<CTFontRef>& typedValue) { return !typedValue; },
 #endif
         [] (WallTime& time) { return !time; },
         [] (DateComponentsType& typedValue) { return typedValue == DateComponentsType::Invalid; },

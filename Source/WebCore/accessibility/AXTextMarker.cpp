@@ -542,7 +542,7 @@ CharacterRange AXTextMarker::characterRangeForLine(unsigned lineIndex) const
     RELEASE_ASSERT(!offset());
 
     auto* stopObject = object->nextUnignoredSiblingOrParent();
-    auto stopAtID = stopObject ? stopObject->objectID() : std::nullopt;
+    auto stopAtID = stopObject ? std::optional { stopObject->objectID() } : std::nullopt;
 
     auto textRunMarker = toTextRunMarker(stopAtID);
     // If we couldn't convert this object to a text-run marker, it means we are a text control with no text descendant.
@@ -585,7 +585,7 @@ int AXTextMarker::lineNumberForIndex(unsigned index) const
     if (!object)
         return -1;
     auto* stopObject = object->nextUnignoredSiblingOrParent();
-    auto stopAtID = stopObject ? stopObject->objectID() : std::nullopt;
+    auto stopAtID = stopObject ? std::optional { stopObject->objectID() } : std::nullopt;
 
     if (object->isTextControl() && index >= object->textMarkerRange().toString().length()) {
         // Mimic behavior of AccessibilityRenderObject::visiblePositionForIndex.

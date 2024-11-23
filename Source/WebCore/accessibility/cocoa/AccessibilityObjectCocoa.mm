@@ -33,26 +33,6 @@
 #import "WebAccessibilityObjectWrapperBase.h"
 #import <wtf/cocoa/TypeCastsCocoa.h>
 
-#if PLATFORM(IOS_FAMILY)
-#import <wtf/SoftLinking.h>
-
-SOFT_LINK_PRIVATE_FRAMEWORK(AXRuntime);
-
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenFontName, NSString *);
-#define AccessibilityTokenFontName getUIAccessibilityTokenFontName()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenFontFamily, NSString *);
-#define AccessibilityTokenFontFamily getUIAccessibilityTokenFontFamily()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenFontSize, NSString *);
-#define AccessibilityTokenFontSize getUIAccessibilityTokenFontSize()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenBold, NSString *);
-#define AccessibilityTokenBold getUIAccessibilityTokenBold()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenItalic, NSString *);
-#define AccessibilityTokenItalic getUIAccessibilityTokenItalic()
-SOFT_LINK_CONSTANT(AXRuntime, UIAccessibilityTokenAttachment, NSString *);
-#define AccessibilityTokenAttachment getUIAccessibilityTokenAttachment()
-
-#endif // PLATFORM(IOS_FAMILY)
-
 namespace WebCore {
 
 String AccessibilityObject::speechHintAttributeValue() const
@@ -119,13 +99,6 @@ static void addObjectWrapperToArray(const AccessibilityObject& object, NSMutable
     [array addObject:wrapper];
 }
 
-// When modifying attributed strings, the range can come from a source which may provide faulty information (e.g. the spell checker).
-// To protect against such cases, the range should be validated before adding or removing attributes.
-bool attributedStringContainsRange(NSAttributedString *attributedString, const NSRange& range)
-{
-    return NSMaxRange(range) <= attributedString.length;
-}
-
 void attributedStringSetNumber(NSMutableAttributedString *attrString, NSString *attribute, NSNumber *number, const NSRange& range)
 {
     if (!attributedStringContainsRange(attrString, range))
@@ -133,50 +106,6 @@ void attributedStringSetNumber(NSMutableAttributedString *attrString, NSString *
 
     if (number)
         [attrString addAttribute:attribute value:number range:range];
-}
-
-void attributedStringSetFont(NSMutableAttributedString *attributedString, CTFontRef font, const NSRange& range)
-{
-    if (!attributedStringContainsRange(attributedString, range) || !font)
-        return;
-
-    auto fontAttributes = adoptNS([[NSMutableDictionary alloc] init]);
-    auto familyName = adoptCF(CTFontCopyFamilyName(font));
-    NSNumber *size = [NSNumber numberWithFloat:CTFontGetSize(font)];
-
-#if PLATFORM(IOS_FAMILY)
-    auto fullName = adoptCF(CTFontCopyFullName(font));
-    if (fullName)
-        [fontAttributes setValue:bridge_cast(fullName.get()) forKey:AccessibilityTokenFontName];
-    if (familyName)
-        [fontAttributes setValue:bridge_cast(familyName.get()) forKey:AccessibilityTokenFontFamily];
-    if ([size boolValue])
-        [fontAttributes setValue:size forKey:AccessibilityTokenFontSize];
-    auto traits = CTFontGetSymbolicTraits(font);
-    if (traits & kCTFontTraitBold)
-        [fontAttributes setValue:@YES forKey:AccessibilityTokenBold];
-    if (traits & kCTFontTraitItalic)
-        [fontAttributes setValue:@YES forKey:AccessibilityTokenItalic];
-
-    [attributedString addAttributes:fontAttributes.get() range:range];
-#endif // PLATFORM(IOS_FAMILY)
-
-#if PLATFORM(MAC)
-    [fontAttributes setValue:size forKey:NSAccessibilityFontSizeKey];
-
-    if (familyName)
-        [fontAttributes setValue:bridge_cast(familyName.get()) forKey:NSAccessibilityFontFamilyKey];
-    auto postScriptName = adoptCF(CTFontCopyPostScriptName(font));
-    if (postScriptName)
-        [fontAttributes setValue:bridge_cast(postScriptName.get()) forKey:NSAccessibilityFontNameKey];
-    auto traits = CTFontGetSymbolicTraits(font);
-    if (traits & kCTFontTraitBold)
-        [fontAttributes setValue:@YES forKey:@"AXFontBold"];
-    if (traits & kCTFontTraitItalic)
-        [fontAttributes setValue:@YES forKey:@"AXFontItalic"];
-
-    [attributedString addAttribute:NSAccessibilityFontTextAttribute value:fontAttributes.get() range:range];
-#endif
 }
 
 static void attributedStringAppendWrapper(NSMutableAttributedString *attrString, WebAccessibilityObjectWrapper *wrapper)
@@ -251,6 +180,81 @@ RetainPtr<NSAttributedString> AccessibilityObject::attributedStringForRange(cons
     }
 
     return result;
+}
+
+RetainPtr<CTFontRef> fontFrom(const RenderStyle& style)
+{
+    return style.fontCascade().primaryFont().getCTFont();
+}
+
+Color textColorFrom(const RenderStyle& style)
+{
+    return style.visitedDependentColor(CSSPropertyColor);
+}
+
+Color backgroundColorFrom(const RenderStyle& style)
+{
+    return style.visitedDependentColor(CSSPropertyBackgroundColor);
+}
+
+RetainPtr<CTFontRef> AccessibilityObject::font() const
+{
+    const auto* style = this->style();
+    return style ? fontFrom(*style) : nil;
+}
+
+Color AccessibilityObject::textColor() const
+{
+    const auto* style = this->style();
+    return style ? textColorFrom(*style) : Color();
+}
+
+Color AccessibilityObject::backgroundColor() const
+{
+    const auto* style = this->style();
+    return style ? backgroundColorFrom(*style) : Color();
+}
+
+bool AccessibilityObject::isSubscript() const
+{
+    const auto* style = this->style();
+    return style && style->verticalAlign() == VerticalAlign::Sub;
+}
+
+bool AccessibilityObject::isSuperscript() const
+{
+    const auto* style = this->style();
+    return style && style->verticalAlign() == VerticalAlign::Super;
+}
+
+bool AccessibilityObject::hasTextShadow() const
+{
+    const auto* style = this->style();
+    return style && style->textShadow();
+}
+
+LineDecorationStyle AccessibilityObject::lineDecorationStyle() const
+{
+    CheckedPtr renderer = this->renderer();
+    return renderer ? LineDecorationStyle(*renderer) : LineDecorationStyle();
+}
+
+AttributedStringStyle AccessibilityObject::stylesForAttributedString() const
+{
+    const CheckedPtr style = this->style();
+    if (!style)
+        return { };
+
+    auto alignment = style->verticalAlign();
+    return {
+        fontFrom(*style),
+        textColorFrom(*style),
+        backgroundColorFrom(*style),
+        alignment == VerticalAlign::Sub,
+        alignment == VerticalAlign::Super,
+        !!style->textShadow(),
+        lineDecorationStyle()
+    };
 }
 
 } // namespace WebCore

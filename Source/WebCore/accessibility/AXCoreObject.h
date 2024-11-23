@@ -59,6 +59,7 @@ typedef WebAccessibilityObjectWrapper AccessibilityObjectWrapper;
 typedef struct _NSRange NSRange;
 typedef const struct __AXTextMarker* AXTextMarkerRef;
 typedef const struct __AXTextMarkerRange* AXTextMarkerRangeRef;
+typedef const struct __CTFont* CTFontRef;
 OBJC_CLASS NSAttributedString;
 #elif USE(ATSPI)
 
@@ -726,6 +727,41 @@ struct AccessibilityIsIgnoredFromParentData {
     bool isNull() const { return !parent; }
 };
 
+struct LineDecorationStyle {
+    bool hasUnderline { false };
+    Color underlineColor;
+    bool hasLinethrough { false };
+    Color linethroughColor;
+
+    LineDecorationStyle() = default;
+    explicit LineDecorationStyle(RenderObject& renderer);
+    explicit LineDecorationStyle(bool hasUnderline, Color underlineColor, bool hasLinethrough, Color linethroughColor)
+        : hasUnderline(hasUnderline)
+        , underlineColor(underlineColor)
+        , hasLinethrough(hasLinethrough)
+        , linethroughColor(linethroughColor)
+    { }
+
+    String debugDescription() const;
+};
+
+struct AttributedStringStyle {
+#if PLATFORM(COCOA)
+    RetainPtr<CTFontRef> font { nil };
+#endif
+    Color textColor;
+    Color backgroundColor;
+    bool isSubscript { false };
+    bool isSuperscript { false };
+    bool hasTextShadow { false };
+    LineDecorationStyle lineStyle;
+
+    bool hasUnderline() const { return lineStyle.hasUnderline; }
+    Color underlineColor() const { return lineStyle.underlineColor; }
+    bool hasLinethrough() const { return lineStyle.hasLinethrough; }
+    Color linethroughColor() const { return lineStyle.linethroughColor; }
+};
+
 enum class AXDebugStringOption {
     Ignored,
     RelativeFrame,
@@ -1084,6 +1120,10 @@ public:
 #if PLATFORM(COCOA)
     enum class SpellCheck : bool { No, Yes };
     virtual RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck) const = 0;
+    // Creates an attributed string for the given text (which should be the full or partial text belonging to `this`, depending on the
+    // calling context) based on the style of `this`.
+    RetainPtr<NSAttributedString> createAttributedString(String&& text) const;
+    virtual AttributedStringStyle stylesForAttributedString() const = 0;
 #endif
     virtual const String placeholderValue() const = 0;
 

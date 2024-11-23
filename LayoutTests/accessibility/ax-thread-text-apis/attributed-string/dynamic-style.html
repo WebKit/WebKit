@@ -1,0 +1,83 @@
+<!DOCTYPE HTML><!-- webkit-test-runner [ runSingly=true AccessibilityThreadTextApisEnabled=true ] -->
+<!-- New test added as part of the accessibilityThreadTextApisEnabled work. Move to LayoutTests/accessibility/mac/ after this feature is enabled by default. -->
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../resources/accessibility-helper.js"></script>
+<script src="../../../resources/js-test.js"></script>
+<style>
+.style {
+    color: orange;
+    background-color: lightgrey;
+    font-size: 24px;
+    text-shadow: 1px 1px 2px red, 0 0 1em blue, 0 0 0.2em blue;
+    text-decoration-line: underline line-through;
+    text-decoration-color: rebeccapurple;
+    vertical-align: super;
+}
+</style>
+</head>
+<body>
+
+<div id="container" class="style" role="group" aria-label="text-container">This is an attributed string.</div>
+
+<script>
+var output = "This test ensures we produce the right attributed string after dynamic style changes.\n\n";
+
+if (window.accessibilityController) {
+    window.jsTestIsAsync = true;
+
+    var container = document.getElementById("container");
+    var text = accessibilityController.accessibleElementById("container").childAtIndex(0);
+    var markerRange = text.textMarkerRangeForElement(text);
+    output += `${text.attributedStringForTextMarkerRange(markerRange)}\n\n`;
+
+    container.style.color = "red";
+    container.style.backgroundColor = "blue";
+    container.style.textDecorationColor = "yellow";
+    container.style.verticalAlign = "sub";
+    container.style.fontSize = "32px";
+    container.style.fontFamily = "Arial";
+    var expected = `Attributes in range {0, 29}:
+AXFont: {
+    AXFontFamily = Arial;
+    AXFontName = ArialMT;
+    AXFontSize = 32;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 1 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 1 1 )
+AXSuperscript: -1
+AXShadow: YES
+AXUnderline: YES
+AXUnderlineColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 1 1 0 1 )
+AXStrikethrough: YES
+AXStrikethroughColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 1 1 0 1 )
+This is an attributed string.`;
+    var actual;
+    setTimeout(async function() {
+        await waitFor(() => expected === text.attributedStringForTextMarkerRange(markerRange));
+        output += `PASS: The attributed string matched expectations after changing styles.\n`;
+
+        // Now remove all styles.
+        container.removeAttribute("class");
+        container.removeAttribute("style");
+        expected = `Attributes in range {0, 29}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 16;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0 0 0 0 )
+This is an attributed string.`;
+        await waitFor(() => expected === text.attributedStringForTextMarkerRange(markerRange));
+        output += `PASS: The attributed string matched expectations after removing all styles.`;
+
+        debug(output);
+        finishJSTest();
+    }, 0);
+}
+</script>
+</body>
+</html>
+

@@ -572,7 +572,7 @@ void AXIsolatedTree::updatePropertiesForSelfAndDescendants(AccessibilityObject& 
     });
 }
 
-void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXPropertyNameSet& properties)
+void AXIsolatedTree::updateNodeProperties(AccessibilityObject& axObject, const AXPropertyNameSet& properties)
 {
     AXTRACE("AXIsolatedTree::updateNodeProperties"_s);
     AXLOG(makeString("Updating properties for objectID "_s, axObject.objectID().loggingString(), ": "_s));
@@ -626,7 +626,7 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
             propertyMap.set(AXPropertyName::Cells, axIDs(axObject.cells()));
             break;
         case AXPropertyName::CellSlots:
-            propertyMap.set(AXPropertyName::CellSlots, dynamicDowncast<AccessibilityObject>(axObject)->cellSlots());
+            propertyMap.set(AXPropertyName::CellSlots, axObject.cellSlots());
             break;
         case AXPropertyName::ColumnIndex:
             propertyMap.set(AXPropertyName::ColumnIndex, axObject.columnIndex());
@@ -766,10 +766,40 @@ void AXIsolatedTree::updateNodeProperties(AXCoreObject& axObject, const AXProper
             break;
         }
 #if ENABLE(AX_THREAD_TEXT_APIS)
-        case AXPropertyName::TextRuns:
-            propertyMap.set(AXPropertyName::TextRuns, dynamicDowncast<AccessibilityObject>(axObject)->textRuns());
+        case AXPropertyName::BackgroundColor:
+            propertyMap.set(AXPropertyName::BackgroundColor, axObject.backgroundColor());
             break;
-#endif
+        case AXPropertyName::Font:
+            propertyMap.set(AXPropertyName::Font, axObject.font());
+            break;
+        case AXPropertyName::HasLinethrough:
+            propertyMap.set(AXPropertyName::HasLinethrough, axObject.lineDecorationStyle().hasLinethrough);
+            break;
+        case AXPropertyName::HasTextShadow:
+            propertyMap.set(AXPropertyName::HasTextShadow, axObject.hasTextShadow());
+            break;
+        case AXPropertyName::HasUnderline:
+            propertyMap.set(AXPropertyName::HasUnderline, axObject.lineDecorationStyle().hasUnderline);
+            break;
+        case AXPropertyName::IsSubscript:
+            propertyMap.set(AXPropertyName::IsSubscript, axObject.isSubscript());
+            break;
+        case AXPropertyName::IsSuperscript:
+            propertyMap.set(AXPropertyName::IsSuperscript, axObject.isSuperscript());
+            break;
+        case AXPropertyName::LinethroughColor:
+            propertyMap.set(AXPropertyName::LinethroughColor, axObject.lineDecorationStyle().linethroughColor);
+            break;
+        case AXPropertyName::TextColor:
+            propertyMap.set(AXPropertyName::TextColor, axObject.textColor());
+            break;
+        case AXPropertyName::TextRuns:
+            propertyMap.set(AXPropertyName::TextRuns, axObject.textRuns());
+            break;
+        case AXPropertyName::UnderlineColor:
+            propertyMap.set(AXPropertyName::UnderlineColor, axObject.lineDecorationStyle().underlineColor);
+            break;
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
         case AXPropertyName::Title:
             propertyMap.set(AXPropertyName::Title, axObject.title().isolatedCopy());
             break;

@@ -38,6 +38,31 @@ void AXIsolatedObject::initializePlatformProperties(const Ref<const Accessibilit
 {
     setProperty(AXPropertyName::HasApplePDFAnnotationAttribute, object->hasApplePDFAnnotationAttribute());
     setProperty(AXPropertyName::SpeechHint, object->speechHintAttributeValue().isolatedCopy());
+#if ENABLE(AX_THREAD_TEXT_APIS)
+    if (object->isStaticText()) {
+        auto style = object->stylesForAttributedString();
+        setProperty(AXPropertyName::BackgroundColor, WTFMove(style.backgroundColor));
+        setProperty(AXPropertyName::Font, style.font);
+        setProperty(AXPropertyName::HasLinethrough, style.hasLinethrough());
+        setProperty(AXPropertyName::HasTextShadow, style.hasTextShadow);
+        setProperty(AXPropertyName::HasUnderline, style.hasUnderline());
+        setProperty(AXPropertyName::IsSubscript, style.isSubscript);
+        setProperty(AXPropertyName::IsSuperscript, style.isSuperscript);
+        setProperty(AXPropertyName::LinethroughColor, style.linethroughColor());
+        // FIXME: We're going to end up caching a lot of the same TextColor properties over and over.
+        //  1. Should we implement some kind of Color interning?
+        //  2. Or maybe have a "main" text color mechanism, where when we create the isolated tree, we try to compute the
+        //     "main" text color by walking n-number of RenderTexts. Then AXIsolatedObject::setProperty, if the Color is
+        //     equivalent to the "main" one, we consider the color to be "isDefaultValue", thus not caching it.
+        //       - Probably want to do this for both TextColor and BackgroundColor.
+        //       - Maybe set this as an OpportunisticTask to re-compute the main colors, and if it has changed, walk all
+        //         objects and uncache properties for those with the new "main" color? Not sure if this is worth it...
+        //       - Only trigger the walk if font-color changes?
+        // Resolve this FIXME before shipping AX_THREAD_TEXT_APIS.
+        setProperty(AXPropertyName::TextColor, WTFMove(style.textColor));
+        setProperty(AXPropertyName::UnderlineColor, style.underlineColor());
+    }
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
 
     RetainPtr<NSAttributedString> attributedText;
     // FIXME: Don't eagerly cache textarea/contenteditable values longer than 12500 characters as rangeForCharacterRange is very expensive.
@@ -79,6 +104,24 @@ void AXIsolatedObject::initializePlatformProperties(const Ref<const Accessibilit
         m_platformWidget = object->platformWidget();
         m_remoteParent = object->remoteParentObject();
     }
+}
+
+AttributedStringStyle AXIsolatedObject::stylesForAttributedString() const
+{
+    return {
+        propertyValue<RetainPtr<CTFontRef>>(AXPropertyName::Font),
+        colorAttributeValue(AXPropertyName::TextColor),
+        colorAttributeValue(AXPropertyName::BackgroundColor),
+        boolAttributeValue(AXPropertyName::IsSubscript),
+        boolAttributeValue(AXPropertyName::IsSuperscript),
+        boolAttributeValue(AXPropertyName::HasTextShadow),
+        LineDecorationStyle(
+            boolAttributeValue(AXPropertyName::HasUnderline),
+            colorAttributeValue(AXPropertyName::UnderlineColor),
+            boolAttributeValue(AXPropertyName::HasLinethrough),
+            colorAttributeValue(AXPropertyName::LinethroughColor)
+        )
+    };
 }
 
 RemoteAXObjectRef AXIsolatedObject::remoteParentObject() const
@@ -157,7 +200,7 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
 
         auto thisMarker = AXTextMarker { *this, 0 };
         AXTextMarkerRange range { thisMarker, thisMarker };
-        auto endMarker = thisMarker.findLastBefore(stopObject ? stopObject->objectID() : std::nullopt);
+        auto endMarker = thisMarker.findLastBefore(stopObject ? std::optional { stopObject->objectID() } : std::nullopt);
         if (endMarker.isValid() && endMarker.isInTextRun()) {
             // One or more of our descendants have text, so let's form a range from the first and last text positions.
             range = { thisMarker.toTextRunMarker(), WTFMove(endMarker) };
