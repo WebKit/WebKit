@@ -35,6 +35,7 @@
 
 namespace WebCore {
 
+class ScriptExecutionContext;
 struct URLPatternInit;
 struct URLPatternOptions;
 struct URLPatternResult;

@@ -25,11 +25,14 @@
 
 #pragma once
 
+#include "URLPatternTokenizer.h"
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 enum class EncodingCallbackType : uint8_t;
+template<typename> class ExceptionOr;
 
 namespace URLPatternUtilities {
 

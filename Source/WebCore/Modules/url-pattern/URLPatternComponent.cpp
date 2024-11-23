@@ -27,6 +27,9 @@
 #include "URLPatternComponent.h"
 
 #include "URLPatternCanonical.h"
+#include "URLPatternParser.h"
+#include <JavaScriptCore/RegExp.h>
+#include <JavaScriptCore/YarrFlags.h>
 
 namespace WebCore {
 namespace URLPatternUtilities {
@@ -39,7 +42,7 @@ URLPatternComponent::URLPatternComponent(String&& patternString, JSC::Strong<JSC
 {
 }
 
-ExceptionOr<URLPatternComponent> URLPatternComponent::compile(Ref<VM> vm, StringView input, EncodingCallbackType type, const URLPatternUtilities::URLPatternStringOptions& options)
+ExceptionOr<URLPatternComponent> URLPatternComponent::compile(Ref<JSC::VM> vm, StringView input, EncodingCallbackType type, const URLPatternUtilities::URLPatternStringOptions& options)
 {
     auto maybePartList = URLPatternUtilities::URLPatternParser::parse(input, options, type);
     if (maybePartList.hasException())
@@ -48,11 +51,11 @@ ExceptionOr<URLPatternComponent> URLPatternComponent::compile(Ref<VM> vm, String
 
     auto [regularExpressionString, nameList] = generateRegexAndNameList(partList, options);
 
-    OptionSet<Yarr::Flags> flags = { Yarr::Flags::UnicodeSets };
+    OptionSet<JSC::Yarr::Flags> flags = { JSC::Yarr::Flags::UnicodeSets };
     if (options.ignoreCase)
-        flags.add(Yarr::Flags::IgnoreCase);
+        flags.add(JSC::Yarr::Flags::IgnoreCase);
 
-    RegExp* regularExpression = RegExp::create(vm, regularExpressionString, flags);
+    JSC::RegExp* regularExpression = JSC::RegExp::create(vm, regularExpressionString, flags);
     if (!regularExpression)
         return Exception { ExceptionCode::TypeError, "Unable to create RegExp object regular expression from provided URLPattern string."_s };
 

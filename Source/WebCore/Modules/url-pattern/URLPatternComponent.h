@@ -25,9 +25,18 @@
 
 #pragma once
 
+#include <JavaScriptCore/Strong.h>
+#include <JavaScriptCore/StrongInlines.h>
+
+namespace JSC {
+class RegExp;
+class VM;
+}
+
 namespace WebCore {
 
 enum class EncodingCallbackType : uint8_t;
+template<typename> class ExceptionOr;
 
 namespace URLPatternUtilities {
 struct URLPatternStringOptions;
