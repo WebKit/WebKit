@@ -33,6 +33,10 @@ class WebPageProxy;
 
 class WebNotificationManagerMessageHandler : public NotificationManagerMessageHandler {
     friend class WebPageProxy;
+public:
+    void ref() const final;
+    void deref() const final;
+
 private:
     explicit WebNotificationManagerMessageHandler(WebPageProxy&);
 
