@@ -1,13 +1,10 @@
 
 TESTS = \
     TestWithCVPixelBuffer \
-    TestWithWantsDispatch \
-    TestWithWantsDispatchNoSyncMessages \
-    TestWithWantsAsyncDispatch \
+    TestWithDeferSendingOption \
     TestWithEnabledBy \
     TestWithEnabledByAndConjunction \
     TestWithEnabledByOrConjunction \
-    TestWithEnabledIf \
     TestWithIfMessage \
     TestWithImageData \
     TestWithLegacyReceiver \
@@ -21,6 +18,10 @@ TESTS = \
     TestWithSuperclass \
     TestWithSuperclassAndWantsAsyncDispatch \
     TestWithSuperclassAndWantsDispatch \
+    TestWithValidator \
+    TestWithWantsAsyncDispatch \
+    TestWithWantsDispatch \
+    TestWithWantsDispatchNoSyncMessages \
 #
 
 all:

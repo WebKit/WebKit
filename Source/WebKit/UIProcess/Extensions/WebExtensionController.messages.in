@@ -26,19 +26,17 @@
 #if ENABLE(WK_WEB_EXTENSIONS)
 
 messages -> WebExtensionController {
-
-    [EnabledIf='hasLoadedContexts()'] DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
-    [EnabledIf='hasLoadedContexts()'] DidCommitLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
-    [EnabledIf='hasLoadedContexts()'] DidFinishLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
-    [EnabledIf='hasLoadedContexts()'] DidFailLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+    [Validator=hasLoadedContexts] DidStartProvisionalLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+    [Validator=hasLoadedContexts] DidCommitLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+    [Validator=hasLoadedContexts] DidFinishLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
+    [Validator=hasLoadedContexts] DidFailLoadForFrame(WebKit::WebPageProxyIdentifier pageID, WebKit::WebExtensionFrameIdentifier frameID, WebKit::WebExtensionFrameIdentifier parentFrameID, URL targetURL, WallTime timestamp)
 
     // Test APIs
-    [EnabledIf='inTestingMode()'] TestResult(bool result, String message, String sourceURL, unsigned lineNumber)
-    [EnabledIf='inTestingMode()'] TestEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber)
-    [EnabledIf='inTestingMode()'] TestMessage(String message, String sourceURL, unsigned lineNumber)
-    [EnabledIf='inTestingMode()'] TestYielded(String message, String sourceURL, unsigned lineNumber)
-    [EnabledIf='inTestingMode()'] TestFinished(bool result, String message, String sourceURL, unsigned lineNumber)
-
+    [Validator=inTestingMode] TestResult(bool result, String message, String sourceURL, unsigned lineNumber)
+    [Validator=inTestingMode] TestEqual(bool result, String expected, String actual, String message, String sourceURL, unsigned lineNumber)
+    [Validator=inTestingMode] TestMessage(String message, String sourceURL, unsigned lineNumber)
+    [Validator=inTestingMode] TestYielded(String message, String sourceURL, unsigned lineNumber)
+    [Validator=inTestingMode] TestFinished(bool result, String message, String sourceURL, unsigned lineNumber)
 }
 
 #endif // ENABLE(WK_WEB_EXTENSIONS)

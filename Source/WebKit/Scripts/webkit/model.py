@@ -53,14 +53,13 @@ class MessageReceiver(object):
 
 
 class Message(object):
-    def __init__(self, name, parameters, reply_parameters, attributes, condition, enabled_if=None, enabled_by=None, enabled_by_conjunction=None, coalescing_key_indices=None):
+    def __init__(self, name, parameters, reply_parameters, attributes, condition, validator=None, enabled_by=None, enabled_by_conjunction=None, coalescing_key_indices=None):
         self.name = name
         self.parameters = parameters
         self.reply_parameters = reply_parameters
         self.attributes = frozenset(attributes or [])
         self.condition = condition
-        assert(not enabled_if or not enabled_by)
-        self.enabled_if = enabled_if
+        self.validator = validator
         self.enabled_by = enabled_by
         self.enabled_by_conjunction = enabled_by_conjunction
         self.coalescing_key_indices = coalescing_key_indices

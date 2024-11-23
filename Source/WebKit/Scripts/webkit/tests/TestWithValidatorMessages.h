@@ -33,18 +33,18 @@
 
 
 namespace Messages {
-namespace TestWithEnabledIf {
+namespace TestWithValidator {
 
 static inline IPC::ReceiverName messageReceiverName()
 {
-    return IPC::ReceiverName::TestWithEnabledIf;
+    return IPC::ReceiverName::TestWithValidator;
 }
 
 class AlwaysEnabled {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledIf_AlwaysEnabled; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithValidator_AlwaysEnabled; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
@@ -64,17 +64,17 @@ private:
     std::tuple<const String&> m_arguments;
 };
 
-class OnlyEnabledIfFeatureEnabled {
+class EnabledIfPassValidation {
 public:
     using Arguments = std::tuple<String>;
 
-    static IPC::MessageName name() { return IPC::MessageName::TestWithEnabledIf_OnlyEnabledIfFeatureEnabled; }
+    static IPC::MessageName name() { return IPC::MessageName::TestWithValidator_EnabledIfPassValidation; }
     static constexpr bool isSync = false;
     static constexpr bool canDispatchOutOfOrder = false;
     static constexpr bool replyCanDispatchOutOfOrder = false;
     static constexpr bool deferSendingIfSuspended = false;
 
-    explicit OnlyEnabledIfFeatureEnabled(const String& url)
+    explicit EnabledIfPassValidation(const String& url)
         : m_arguments(url)
     {
     }
@@ -88,5 +88,29 @@ private:
     std::tuple<const String&> m_arguments;
 };
 
-} // namespace TestWithEnabledIf
+class EnabledIfSomeFeatureEnabledAndPassValidation {
+public:
+    using Arguments = std::tuple<String>;
+
+    static IPC::MessageName name() { return IPC::MessageName::TestWithValidator_EnabledIfSomeFeatureEnabledAndPassValidation; }
+    static constexpr bool isSync = false;
+    static constexpr bool canDispatchOutOfOrder = false;
+    static constexpr bool replyCanDispatchOutOfOrder = false;
+    static constexpr bool deferSendingIfSuspended = false;
+
+    explicit EnabledIfSomeFeatureEnabledAndPassValidation(const String& url)
+        : m_arguments(url)
+    {
+    }
+
+    auto&& arguments()
+    {
+        return WTFMove(m_arguments);
+    }
+
+private:
+    std::tuple<const String&> m_arguments;
+};
+
+} // namespace TestWithValidator
 } // namespace Messages

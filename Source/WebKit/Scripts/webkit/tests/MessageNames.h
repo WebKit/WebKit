@@ -36,18 +36,18 @@ enum class ReceiverName : uint8_t {
     , TestWithEnabledBy = 3
     , TestWithEnabledByAndConjunction = 4
     , TestWithEnabledByOrConjunction = 5
-    , TestWithEnabledIf = 6
-    , TestWithIfMessage = 7
-    , TestWithImageData = 8
-    , TestWithLegacyReceiver = 9
-    , TestWithSemaphore = 10
-    , TestWithStream = 11
-    , TestWithStreamBatched = 12
-    , TestWithStreamBuffer = 13
-    , TestWithStreamServerConnectionHandle = 14
-    , TestWithSuperclass = 15
-    , TestWithSuperclassAndWantsAsyncDispatch = 16
-    , TestWithSuperclassAndWantsDispatch = 17
+    , TestWithIfMessage = 6
+    , TestWithImageData = 7
+    , TestWithLegacyReceiver = 8
+    , TestWithSemaphore = 9
+    , TestWithStream = 10
+    , TestWithStreamBatched = 11
+    , TestWithStreamBuffer = 12
+    , TestWithStreamServerConnectionHandle = 13
+    , TestWithSuperclass = 14
+    , TestWithSuperclassAndWantsAsyncDispatch = 15
+    , TestWithSuperclassAndWantsDispatch = 16
+    , TestWithValidator = 17
     , TestWithWantsAsyncDispatch = 18
     , TestWithWantsDispatch = 19
     , TestWithWantsDispatchNoSyncMessages = 20
@@ -73,8 +73,6 @@ enum class MessageName : uint16_t {
     TestWithEnabledBy_ConditionallyEnabled,
     TestWithEnabledBy_ConditionallyEnabledAnd,
     TestWithEnabledBy_ConditionallyEnabledOr,
-    TestWithEnabledIf_AlwaysEnabled,
-    TestWithEnabledIf_OnlyEnabledIfFeatureEnabled,
 #if PLATFORM(COCOA) || PLATFORM(GTK)
     TestWithIfMessage_LoadURL,
 #endif
@@ -134,6 +132,9 @@ enum class MessageName : uint16_t {
     TestWithSuperclass_TestAsyncMessageWithMultipleArguments,
     TestWithSuperclass_TestAsyncMessageWithNoArguments,
 #endif
+    TestWithValidator_AlwaysEnabled,
+    TestWithValidator_EnabledIfPassValidation,
+    TestWithValidator_EnabledIfSomeFeatureEnabledAndPassValidation,
     TestWithWantsAsyncDispatch_TestMessage,
     TestWithWantsDispatchNoSyncMessages_TestMessage,
     TestWithWantsDispatch_TestMessage,

@@ -104,14 +104,14 @@ def parse(file):
             else:
                 parameters = []
 
-            enabled_if = None
+            validator = None
             enabled_by = None
             enabled_by_conjunction = None
             coalescing_key_indices = None
             if options_string:
-                match = re.search(r"(?:(?:, |^)+(?:EnabledIf='(.*)'))(?:, |$)?", options_string)
+                match = re.search(r"(?:(?:, |^)+(?:Validator=(.*)))(?:, |$)?", options_string)
                 if match:
-                    enabled_if = match.groups()[0]
+                    validator = match.groups()[0]
                 match = re.search(r"(?:(?:, |^)+(?:EnabledBy=([\w \&\|]+)))(?:, |$)?", options_string)
                 if match:
                     (enabled_by, enabled_by_conjunction) = parse_enabled_by_string(match.groups()[0])
@@ -136,7 +136,7 @@ def parse(file):
             if coalescing_key_indices is not None and reply_parameters is not None:
                 raise Exception(f"ERROR: DeferSendingIfSuspended not supported for message {name} since it contains reply parameters")
 
-            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), enabled_if, enabled_by, enabled_by_conjunction, coalescing_key_indices))
+            messages.append(model.Message(name, parameters, reply_parameters, attributes, combine_condition(conditions), validator, enabled_by, enabled_by_conjunction, coalescing_key_indices))
     return model.MessageReceiver(destination, superclass, receiver_attributes, receiver_enabled_by, receiver_enabled_by_conjunction, shared_preferences_needs_connection, messages, combine_condition(master_condition), namespace)
 
 
