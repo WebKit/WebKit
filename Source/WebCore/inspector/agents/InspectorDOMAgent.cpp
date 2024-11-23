@@ -178,7 +178,7 @@ static Color parseOptionalConfigColor(const String& fieldName, JSON::Object& con
 
 static bool parseQuad(Ref<JSON::Array>&& quadArray, FloatQuad* quad)
 {
-    std::array<double, 8> coordinates { };
+    std::array<double, 8> coordinates;
     if (quadArray->length() != coordinates.size())
         return false;
     for (size_t i = 0; i < coordinates.size(); ++i) {
