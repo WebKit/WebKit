@@ -65,6 +65,7 @@ private:
     bool canBeSelectionLeaf() const final { return true; }
     void styleWillChange(StyleDifference, const RenderStyle& newStyle) final;
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle) final;
+    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { ASSERT_NOT_REACHED(); }
 
     void element() const = delete;
 

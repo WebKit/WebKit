@@ -70,6 +70,7 @@ public:
 private:
     ASCIILiteral renderName() const override { return "RenderTableCol"_s; }
     void computePreferredLogicalWidths() override { ASSERT_NOT_REACHED(); }
+    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { ASSERT_NOT_REACHED(); }
 
     void insertedIntoTree() override;
     void willBeRemovedFromTree() override;

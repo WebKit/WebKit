@@ -70,6 +70,7 @@ public:
 
 private:
     void element() const = delete;
+    void computeIntrinsicLogicalWidths(LayoutUnit&, LayoutUnit&) const override { }
 
     static const int noSplit = -1;
 
