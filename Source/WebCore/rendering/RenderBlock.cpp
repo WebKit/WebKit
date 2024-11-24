@@ -1552,7 +1552,9 @@ GapRects RenderBlock::blockSelectionGaps(RenderBlock& rootBlock, const LayoutPoi
                 continue;
         }
 
-        bool paintsOwnSelection = curr->shouldPaintSelectionGaps() || curr->isRenderTable(); // FIXME: Eventually we won't special-case table like this.
+        // FIXME: Eventually we won't special-case table and other layout roots like this.
+        auto propagatesSelectionToChildren = is<RenderTable>(*curr) || is<RenderFlexibleBox>(*curr) || is<RenderDeprecatedFlexibleBox>(*curr) || is<RenderGrid>(*curr);
+        auto paintsOwnSelection = curr->shouldPaintSelectionGaps() || propagatesSelectionToChildren;
         bool fillBlockGaps = paintsOwnSelection || (curr->canBeSelectionLeaf() && childState != HighlightState::None);
         if (fillBlockGaps) {
             // We need to fill the vertical gap above this object.
