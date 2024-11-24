@@ -124,7 +124,8 @@ endif ()
   .. code-block:: cmake
 
     GI_DOCGEN(<namespace> <toml-file>
-              [CONTENT_TEMPLATES <file...>])
+              [CONTENT_TEMPLATES <file...>]
+              [CONTENT_PATH <path...>])
 
    Configures generating documentation for a GObject-Introspection
    ``<namespace>``, which needs to have been previously configured using
@@ -142,6 +143,10 @@ endif ()
    command:`configure_file` in ``@ONLY`` mode. The ``.in`` sufix must
    not be present.
 
+   ``CONTENT_PATH`` may be used to specify additional directories where
+   to look for additional content files that may be then listed in the
+   TOML configuration in the ``extra.content_files`` array.
+
    Documentation is generated in the ``Documentation/<pkgname>-<nsversion>/``
    subdirectory by the ``doc-<namespace>`` target added by the command.
    Additionally, a ``doc-check-<namespace>`` target is created as well,
@@ -156,7 +161,7 @@ function(GI_DOCGEN namespace toml)
     cmake_parse_arguments(PARSE_ARGV 1 opt
         ""
         ""
-        "CONTENT_TEMPLATES"
+        "CONTENT_TEMPLATES;CONTENT_PATH"
     )
     if (NOT TARGET "gir-${namespace}")
         message(FATAL_ERROR
@@ -216,6 +221,18 @@ function(GI_DOCGEN namespace toml)
         --add-include-path "${CMAKE_BINARY_DIR}"
     )
 
+    set(content_dir_flags
+        --content-dir "${contentdir}"
+        --content-dir "${toml_dir}"
+    )
+    foreach (item IN LISTS opt_CONTENT_PATH)
+        cmake_path(ABSOLUTE_PATH item OUTPUT_VARIABLE item_path)
+        if (NOT EXISTS "${item_path}")
+            message(FATAL_ERROR "Path does not exist: ${item_path}")
+        endif ()
+        list(APPEND content_dir_flags --content-dir "${item_path}")
+    endforeach ()
+
     # Documentation generation.
     add_custom_command(
         OUTPUT "${outdir}/index.html"
@@ -226,9 +243,8 @@ function(GI_DOCGEN namespace toml)
         VERBATIM
         COMMAND "${GIDocgen_EXE}" gen-deps
             ${common_flags}
-            --content-dir "${contentdir}"
-            --content-dir "${toml_dir}"
             --config "${toml_path}"
+            ${content_dir_flags}
             "${gir_path}"
             "${contentdir}.depfiles"
         COMMAND "${Python_EXECUTABLE}" -c
@@ -237,8 +253,7 @@ function(GI_DOCGEN namespace toml)
         COMMAND "${GIDocgen_EXE}" generate
             ${common_flags}
             --no-namespace-dir
-            --content-dir "${contentdir}"
-            --content-dir "${toml_dir}"
+            ${content_dir_flags}
             --output-dir "${outdir}"
             --config "${toml_path}"
             "${gir_path}"
