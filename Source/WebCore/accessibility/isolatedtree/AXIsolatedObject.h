@@ -555,7 +555,7 @@ private:
     Markable<AXID> m_parentID;
     bool m_childrenDirty { true };
     Vector<AXID> m_childrenIDs;
-    Vector<RefPtr<AXCoreObject>> m_children;
+    Vector<Ref<AXCoreObject>> m_children;
     AXPropertyMap m_propertyMap;
     OptionSet<AXPropertyFlag> m_propertyFlags;
     // Some objects (e.g. display:contents) form their geometry through their children.

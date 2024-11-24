@@ -585,16 +585,16 @@ AccessibilityObjectAtspi* AccessibilityObjectAtspi::childAt(unsigned index) cons
     return children[index]->wrapper();
 }
 
-Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::wrapperVector(const Vector<RefPtr<AXCoreObject>>& elements) const
+Vector<Ref<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::wrapperVector(const Vector<Ref<AXCoreObject>>& elements) const
 {
-    return WTF::compactMap(elements, [&](auto& element) -> std::optional<RefPtr<AccessibilityObjectAtspi>> {
+    return WTF::compactMap(elements, [&](auto& element) -> std::optional<Ref<AccessibilityObjectAtspi>> {
         if (RefPtr wrapper = element->wrapper())
-            return wrapper;
+            return wrapper.releaseNonNull();
         return std::nullopt;
     });
 }
 
-Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::children() const
+Vector<Ref<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::children() const
 {
     if (!m_coreObject)
         return { };
@@ -618,7 +618,7 @@ int AccessibilityObjectAtspi::indexInParent() const
     const auto& children = axParent->children();
     unsigned index = 0;
     for (const auto& child : children) {
-        if (child.get() == m_coreObject) {
+        if (child.ptr() == m_coreObject) {
             m_indexInParent = index;
             return m_indexInParent;
         }
@@ -1024,10 +1024,10 @@ RelationMap AccessibilityObjectAtspi::relationMap() const
         return map;
 
     auto addRelation = [&](Atspi::Relation relation, const AccessibilityObject::AccessibilityChildrenVector& children) {
-        Vector<RefPtr<AccessibilityObjectAtspi>> wrappers;
+        Vector<Ref<AccessibilityObjectAtspi>> wrappers;
         for (const auto& child : children) {
             if (auto* wrapper = child->wrapper())
-                wrappers.append(wrapper);
+                wrappers.append(*wrapper);
         }
         if (!wrappers.isEmpty())
             map.add(relation, WTFMove(wrappers));
@@ -1036,11 +1036,11 @@ RelationMap AccessibilityObjectAtspi::relationMap() const
     AccessibilityObject::AccessibilityChildrenVector ariaLabelledByElements;
     if (m_coreObject->isControl() || m_coreObject->isFieldset()) {
         if (auto* label = m_coreObject->titleUIElement())
-            ariaLabelledByElements.append(label);
+            ariaLabelledByElements.append(*label);
     } else if (m_coreObject->roleValue() == AccessibilityRole::Legend) {
         if (auto* renderFieldset = ancestorsOfType<RenderBlock>(*m_coreObject->renderer()).first()) {
             if (renderFieldset->isFieldset())
-                ariaLabelledByElements.append(m_coreObject->axObjectCache()->getOrCreate(renderFieldset));
+                ariaLabelledByElements.append(*m_coreObject->axObjectCache()->getOrCreate(renderFieldset));
         }
     } else {
         auto* liveObject = dynamicDowncast<AccessibilityObject>(m_coreObject.get());

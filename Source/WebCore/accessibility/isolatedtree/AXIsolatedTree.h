@@ -354,7 +354,7 @@ public:
     WEBCORE_EXPORT RefPtr<AXIsolatedObject> focusedNode();
 
     RefPtr<AXIsolatedObject> objectForID(std::optional<AXID>) const;
-    template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&);
+    template<typename U> Vector<Ref<AXCoreObject>> objectsForIDs(const U&);
 
     void generateSubtree(AccessibilityObject&);
     bool shouldCreateNodeChange(AccessibilityObject&);
@@ -592,16 +592,15 @@ inline RefPtr<AXIsolatedTree> AXIsolatedTree::treeForPageID(std::optional<PageId
 }
 
 template<typename U>
-inline Vector<RefPtr<AXCoreObject>> AXIsolatedTree::objectsForIDs(const U& axIDs)
+inline Vector<Ref<AXCoreObject>> AXIsolatedTree::objectsForIDs(const U& axIDs)
 {
     ASSERT(!isMainThread());
 
-    Vector<RefPtr<AXCoreObject>> result;
+    Vector<Ref<AXCoreObject>> result;
     result.reserveInitialCapacity(axIDs.size());
     for (const auto& axID : axIDs) {
-        RefPtr object = objectForID(axID);
-        if (object)
-            result.append(WTFMove(object));
+        if (RefPtr object = objectForID(axID))
+            result.append(object.releaseNonNull());
     }
     result.shrinkToFit();
     return result;

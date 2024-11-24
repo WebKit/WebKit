@@ -1277,9 +1277,8 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
     
     unsigned columnRangeIndex = static_cast<unsigned>(columnRange.first);
     if (columnRangeIndex < columnHeaders.size()) {
-        RefPtr<AXCoreObject> columnHeader = columnHeaders[columnRange.first];
-        AccessibilityObjectWrapper* wrapper = columnHeader->wrapper();
-        if (wrapper)
+        Ref columnHeader = columnHeaders[columnRange.first];
+        if (auto* wrapper = columnHeader->wrapper())
             [headers addObject:wrapper];
     }
 
@@ -1393,7 +1392,7 @@ static void appendStringToResult(NSMutableString *result, NSString *string)
         if (radioButtonSiblings.size() <= 1)
             return NSMakeRange(NSNotFound, 0);
 
-        return NSMakeRange(radioButtonSiblings.find(self.axBackingObject), radioButtonSiblings.size());
+        return NSMakeRange(radioButtonSiblings.find(Ref { *self.axBackingObject }), radioButtonSiblings.size());
     }
 
     AccessibilityTableCell* tableCell = [self tableCellParent];
@@ -1900,13 +1899,10 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
 {
     AXCoreObject::AccessibilityChildrenVector accessibleElements;
     for (const auto& object : objects) {
-        if (!object)
-            continue;
-
-        Accessibility::enumerateUnignoredDescendants<AXCoreObject>(*object, true, [&accessibleElements] (AXCoreObject& descendant) {
+        Accessibility::enumerateUnignoredDescendants<AXCoreObject>(object.get(), true, [&accessibleElements] (AXCoreObject& descendant) {
             auto* wrapper = descendant.wrapper();
             if (wrapper && wrapper.isAccessibilityElement)
-                accessibleElements.append(&descendant);
+                accessibleElements.append(descendant);
         });
     }
 
@@ -1938,7 +1934,7 @@ static NSArray *accessibleElementsForObjects(const AXCoreObject::AccessibilityCh
         backingObject = backingObject->parentObjectUnignored();
 
     auto linkedObjects = backingObject->linkedObjects();
-    if (linkedObjects.isEmpty() || !linkedObjects[0])
+    if (linkedObjects.isEmpty())
         return nil;
 
     // AXCoreObject::linkedObject may return an object that is exposed in other platforms but not on iOS, i.e., grouping or structure elements like <div> or <p>.
@@ -2804,7 +2800,7 @@ static RenderObject* rendererForView(WAKView* view)
     
     while (parent) {
         const auto& children = parent->unignoredChildren();
-        if (children.isEmpty() || children[0] != object)
+        if (children.isEmpty() || children[0].ptr() != object)
             return NO;
         if (parent->roleValue() == AccessibilityRole::Suggestion)
             return YES;
@@ -2824,7 +2820,7 @@ static RenderObject* rendererForView(WAKView* view)
     
     while (parent) {
         const auto& children = parent->unignoredChildren();
-        if (children.isEmpty() || children.last() != object)
+        if (children.isEmpty() || children.last().ptr() != object)
             return NO;
         if (parent->roleValue() == AccessibilityRole::Suggestion)
             return YES;

@@ -2176,7 +2176,7 @@ Ref<Inspector::Protocol::DOM::EventListener> InspectorDOMAgent::buildObjectForEv
 
 void InspectorDOMAgent::processAccessibilityChildren(AXCoreObject& axObject, JSON::ArrayOf<Inspector::Protocol::DOM::NodeId>& childNodeIds)
 {
-    const auto& children = axObject.children();
+    const auto& children = axObject.unignoredChildren();
     if (!children.size())
         return;
 
@@ -2184,7 +2184,7 @@ void InspectorDOMAgent::processAccessibilityChildren(AXCoreObject& axObject, JSO
         if (Node* childNode = childObject->node())
             childNodeIds.addItem(pushNodePathToFrontend(childNode));
         else
-            processAccessibilityChildren(*childObject, childNodeIds);
+            processAccessibilityChildren(childObject.get(), childNodeIds);
     }
 }
     

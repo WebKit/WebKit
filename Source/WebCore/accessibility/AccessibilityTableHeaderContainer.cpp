@@ -70,7 +70,7 @@ void AccessibilityTableHeaderContainer::addChildren()
         return;
 
     for (auto& columnHeader : parentTable->columnHeaders())
-        addChild(columnHeader.get());
+        addChild(columnHeader.ptr());
 
     for (const auto& child : m_children)
         m_headerRect.unite(child->elementRect());

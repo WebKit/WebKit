@@ -93,11 +93,11 @@ ExceptionOr<RefPtr<Node>> InspectorAuditAccessibilityObject::getActiveDescendant
 
 static void addChildren(AXCoreObject& parentObject, Vector<Ref<Node>>& childNodes)
 {
-    for (const auto& childObject : parentObject.children()) {
+    for (const auto& childObject : parentObject.unignoredChildren()) {
         if (RefPtr childNode = childObject->node())
             childNodes.append(childNode.releaseNonNull());
         else
-            addChildren(*childObject, childNodes);
+            addChildren(childObject.get(), childNodes);
     }
 }
 

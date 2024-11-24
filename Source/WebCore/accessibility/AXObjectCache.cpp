@@ -495,16 +495,15 @@ AccessibilityObject* AXObjectCache::focusedImageMapUIElement(HTMLAreaElement& ar
     if (!imageElement)
         return nullptr;
 
-    AccessibilityObject* axRenderImage = areaElement.protectedDocument()->axObjectCache()->getOrCreate(*imageElement);
+    RefPtr axRenderImage = areaElement.protectedDocument()->axObjectCache()->getOrCreate(*imageElement);
     if (!axRenderImage)
         return nullptr;
     
     for (const auto& child : axRenderImage->unignoredChildren()) {
-        auto* imageMapLink = dynamicDowncast<AccessibilityImageMapLink>(*child);
+        auto* imageMapLink = dynamicDowncast<AccessibilityImageMapLink>(child.get());
         if (imageMapLink && imageMapLink->areaElement() == &areaElement)
             return imageMapLink;
     }
-    
     return nullptr;
 }
 
@@ -1250,7 +1249,7 @@ void AXObjectCache::handleTextChanged(AccessibilityObject* object)
             // Any objects this ancestor labeled now also need new AccessibilityText.
             auto labeledObjects = ancestor->labelForObjects();
             for (const auto& labeledObject : labeledObjects)
-                postNotification(downcast<AccessibilityObject>(labeledObject.get()), nullptr, AXTextChanged);
+                postNotification(&downcast<AccessibilityObject>(labeledObject.get()), nullptr, AXTextChanged);
         }
     }
 
@@ -1388,7 +1387,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
             return;
 
         ASSERT(children.size() == 1);
-        handleChildrenChanged(downcast<AccessibilityObject>(*children[0]));
+        handleChildrenChanged(downcast<AccessibilityObject>(children[0].get()));
     } else if (auto* menuListPopup = dynamicDowncast<AccessibilityMenuListPopup>(object)) {
         menuListPopup->handleChildrenChanged();
         return;
@@ -1446,7 +1445,7 @@ void AXObjectCache::handleChildrenChanged(AccessibilityObject& object)
         }
 
         for (const auto& describedObject : parent->descriptionForObjects())
-            postNotification(downcast<AccessibilityObject>(describedObject.get()), nullptr, AXExtendedDescriptionChanged);
+            postNotification(&downcast<AccessibilityObject>(describedObject.get()), nullptr, AXExtendedDescriptionChanged);
 
         if (parent->hasTagName(captionTag))
             foundTableCaption = true;
@@ -2523,7 +2522,7 @@ void AXObjectCache::handleActiveDescendantChange(Element& element, const AtomStr
         auto controlledObjects = object->relatedObjects(AXRelationType::ControllerFor);
         if (controlledObjects.size()) {
             target = Accessibility::findAncestor(*activeDescendant, false, [&controlledObjects] (const auto& activeDescendantAncestor) {
-                return controlledObjects.contains(&activeDescendantAncestor);
+                return controlledObjects.contains(Ref { activeDescendantAncestor });
             });
         }
     }
@@ -2874,7 +2873,7 @@ void AXObjectCache::handleLabelChanged(AccessibilityObject* object)
         auto labeledObjects = object->labelForObjects();
         for (auto& labeledObject : labeledObjects) {
             updateLabeledBy(RefPtr { labeledObject->element() }.get());
-            postNotification(downcast<AccessibilityObject>(labeledObject.get()), protectedDocument().ptr(), AXValueChanged);
+            postNotification(&downcast<AccessibilityObject>(labeledObject.get()), protectedDocument().ptr(), AXValueChanged);
         }
     }
 
@@ -4836,9 +4835,9 @@ AXTreeData AXObjectCache::treeData()
     TextStream stream(TextStream::LineMode::MultipleLine);
 
     stream << "\nAXObjectTree:\n";
-    if (auto* root = get(document().view())) {
+    if (RefPtr root = get(document().view())) {
         constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID, AXStreamOptions::Role, AXStreamOptions::IdentifierAttribute, AXStreamOptions::OuterHTML };
-        streamSubtree(stream, root, options);
+        streamSubtree(stream, *root, options);
     } else
         stream << "No root!";
     data.liveTree = stream.release();
@@ -4846,9 +4845,10 @@ AXTreeData AXObjectCache::treeData()
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
     if (isIsolatedTreeEnabled()) {
         stream << "\nAXIsolatedTree:\n";
-        if (auto tree = getOrCreateIsolatedTree()) {
+        RefPtr tree = getOrCreateIsolatedTree();
+        if (RefPtr root = tree ? tree->rootNode() : nullptr) {
             constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::ParentID };
-            streamSubtree(stream, tree->rootNode(), options);
+            streamSubtree(stream, root.releaseNonNull(), options);
         } else
             stream << "No isolated tree!";
         data.isolatedTree = stream.release();

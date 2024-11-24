@@ -35,7 +35,7 @@ typedef struct _GVariantBuilder GVariantBuilder;
 
 namespace WebCore {
 
-using RelationMap = UncheckedKeyHashMap<Atspi::Relation, Vector<RefPtr<AccessibilityObjectAtspi>>, IntHash<Atspi::Relation>, WTF::StrongEnumHashTraits<Atspi::Relation>>;
+using RelationMap = UncheckedKeyHashMap<Atspi::Relation, Vector<Ref<AccessibilityObjectAtspi>>, IntHash<Atspi::Relation>, WTF::StrongEnumHashTraits<Atspi::Relation>>;
 
 class AccessibilityObjectAtspi final : public RefCounted<AccessibilityObjectAtspi> {
 public:
@@ -87,7 +87,7 @@ public:
     WEBCORE_EXPORT String locale() const;
     WEBCORE_EXPORT Atspi::Role role() const;
     WEBCORE_EXPORT unsigned childCount() const;
-    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> children() const;
+    WEBCORE_EXPORT Vector<Ref<AccessibilityObjectAtspi>> children() const;
     WEBCORE_EXPORT AccessibilityObjectAtspi* childAt(unsigned) const;
     WEBCORE_EXPORT OptionSet<Atspi::State> states() const;
     bool isDefunct() const;
@@ -145,7 +145,7 @@ public:
     void activeDescendantChanged();
 
     WEBCORE_EXPORT unsigned selectionCount() const;
-    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> selectedChildren() const;
+    WEBCORE_EXPORT Vector<Ref<AccessibilityObjectAtspi>> selectedChildren() const;
     WEBCORE_EXPORT AccessibilityObjectAtspi* selectedChild(unsigned) const;
     WEBCORE_EXPORT bool setChildSelected(unsigned, bool) const;
     WEBCORE_EXPORT bool clearSelection() const;
@@ -154,13 +154,13 @@ public:
     WEBCORE_EXPORT AccessibilityObjectAtspi* cell(unsigned row, unsigned column) const;
     WEBCORE_EXPORT unsigned rowCount() const;
     WEBCORE_EXPORT unsigned columnCount() const;
-    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> cells() const;
-    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> rows() const;
-    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> rowHeaders() const;
-    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> columnHeaders() const;
+    WEBCORE_EXPORT Vector<Ref<AccessibilityObjectAtspi>> cells() const;
+    WEBCORE_EXPORT Vector<Ref<AccessibilityObjectAtspi>> rows() const;
+    WEBCORE_EXPORT Vector<Ref<AccessibilityObjectAtspi>> rowHeaders() const;
+    WEBCORE_EXPORT Vector<Ref<AccessibilityObjectAtspi>> columnHeaders() const;
 
-    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> cellRowHeaders() const;
-    WEBCORE_EXPORT Vector<RefPtr<AccessibilityObjectAtspi>> cellColumnHeaders() const;
+    WEBCORE_EXPORT Vector<Ref<AccessibilityObjectAtspi>> cellRowHeaders() const;
+    WEBCORE_EXPORT Vector<Ref<AccessibilityObjectAtspi>> cellColumnHeaders() const;
     WEBCORE_EXPORT unsigned rowSpan() const;
     WEBCORE_EXPORT unsigned columnSpan() const;
     WEBCORE_EXPORT std::pair<std::optional<unsigned>, std::optional<unsigned>> cellPosition() const;
@@ -168,7 +168,7 @@ public:
 private:
     AccessibilityObjectAtspi(AXCoreObject*, AccessibilityRootAtspi*);
 
-    Vector<RefPtr<AccessibilityObjectAtspi>> wrapperVector(const Vector<RefPtr<AXCoreObject>>&) const;
+    Vector<Ref<AccessibilityObjectAtspi>> wrapperVector(const Vector<Ref<AXCoreObject>>&) const;
     void childAdded(AccessibilityObjectAtspi&);
     void childRemoved(AccessibilityObjectAtspi&);
 
@@ -260,8 +260,8 @@ private:
             Atspi::CollectionMatchType type;
         } interfaces;
     };
-    Vector<RefPtr<AccessibilityObjectAtspi>> matches(CollectionMatchRule&, Atspi::CollectionSortOrder, uint32_t maxResultCount, bool traverse);
-    void addMatchesInCanonicalOrder(Vector<RefPtr<AccessibilityObjectAtspi>>&, CollectionMatchRule&, uint32_t maxResultCount, bool traverse);
+    Vector<Ref<AccessibilityObjectAtspi>> matches(CollectionMatchRule&, Atspi::CollectionSortOrder, uint32_t maxResultCount, bool traverse);
+    void addMatchesInCanonicalOrder(Vector<Ref<AccessibilityObjectAtspi>>&, CollectionMatchRule&, uint32_t maxResultCount, bool traverse);
 
     static OptionSet<Interface> interfacesForObject(AXCoreObject&);
 

@@ -272,13 +272,13 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
 
     for (unsigned column = 0; column < colRange.first; column++) {
         RefPtr tableCell = parent->cellForColumnAndRow(column, rowRange.first);
-        if (!tableCell || tableCell == this || headers.contains(tableCell))
+        if (!tableCell || tableCell == this || headers.contains(Ref { *tableCell }))
             continue;
 
-        if (tableCell->cellScope() == "rowgroup"_s && isTableCellInSameRowGroup(tableCell.get()))
-            headers.append(tableCell);
+        if (tableCell->cellScope() == "rowgroup"_s && isTableCellInSameRowGroup(*tableCell))
+            headers.append(tableCell.releaseNonNull());
         else if (tableCell->isRowHeader())
-            headers.append(tableCell);
+            headers.append(tableCell.releaseNonNull());
     }
 
     return headers;
@@ -288,7 +288,7 @@ AccessibilityTableRow* AccessibilityTableCell::ariaOwnedByParent() const
 {
     auto owners = this->owners();
     if (owners.size() == 1 && owners[0]->isTableRow())
-        return downcast<AccessibilityTableRow>(owners[0].get());
+        return dynamicDowncast<AccessibilityTableRow>(owners[0].get());
     return nullptr;
 }
 

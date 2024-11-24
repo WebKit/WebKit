@@ -747,7 +747,7 @@ public:
     void detach(AccessibilityDetachmentType);
     virtual bool isDetached() const = 0;
 
-    typedef Vector<RefPtr<AXCoreObject>> AccessibilityChildrenVector;
+    typedef Vector<Ref<AXCoreObject>> AccessibilityChildrenVector;
 
     virtual bool isAccessibilityObject() const = 0;
     virtual bool isAccessibilityRenderObject() const = 0;
@@ -816,7 +816,7 @@ public:
     virtual bool isExposedTableCell() const = 0;
     virtual bool isColumnHeader() const { return false; }
     virtual bool isRowHeader() const { return false; }
-    bool isTableCellInSameRowGroup(AXCoreObject*);
+    bool isTableCellInSameRowGroup(AXCoreObject&);
     bool isTableCellInSameColGroup(AXCoreObject*);
     virtual std::optional<AXID> rowGroupAncestorID() const { return std::nullopt; }
     virtual String cellScope() const { return { }; }
@@ -1225,8 +1225,8 @@ public:
     virtual void setSelectedChildren(const AccessibilityChildrenVector&) = 0;
     virtual AccessibilityChildrenVector visibleChildren() = 0;
     AccessibilityChildrenVector tabChildren();
-    bool isDescendantOfObject(const AXCoreObject*) const;
-    bool isAncestorOfObject(const AXCoreObject*) const;
+    bool isDescendantOfObject(const AXCoreObject&) const;
+    bool isAncestorOfObject(const AXCoreObject&) const;
 
     virtual String nameAttribute() const = 0;
 
@@ -1627,7 +1627,7 @@ T* findUnignoredChild(T& object, F&& matches)
 {
     for (auto child : object.unignoredChildren()) {
         if (matches(child))
-            return downcast<T>(child.get());
+            return downcast<T>(child.ptr());
     }
     return nullptr;
 }
@@ -1649,7 +1649,7 @@ void enumerateDescendantsIncludingIgnored(T& object, bool includeSelf, const F& 
         lambda(object);
 
     for (const auto& child : object.childrenIncludingIgnored())
-        enumerateDescendantsIncludingIgnored(*child, true, lambda);
+        enumerateDescendantsIncludingIgnored(child.get(), true, lambda);
 }
 
 template<typename T, typename F>
@@ -1658,10 +1658,8 @@ void enumerateUnignoredDescendants(T& object, bool includeSelf, const F& lambda)
     if (includeSelf)
         lambda(object);
 
-    for (const auto& child : object.unignoredChildren()) {
-        if (child)
-            enumerateUnignoredDescendants(*child, true, lambda);
-    }
+    for (const auto& child : object.unignoredChildren())
+        enumerateUnignoredDescendants(child.get(), true, lambda);
 }
 
 template<typename U> inline void performFunctionOnMainThreadAndWait(U&& lambda)
@@ -1702,16 +1700,16 @@ bool inRenderTreeOrStyleUpdate(const Document&);
 
 } // namespace Accessibility
 
-inline bool AXCoreObject::isDescendantOfObject(const AXCoreObject* axObject) const
+inline bool AXCoreObject::isDescendantOfObject(const AXCoreObject& axObject) const
 {
-    return axObject && Accessibility::findAncestor<AXCoreObject>(*this, false, [axObject] (const AXCoreObject& object) {
-        return &object == axObject;
+    return Accessibility::findAncestor<AXCoreObject>(*this, false, [&axObject] (const AXCoreObject& object) {
+        return &object == &axObject;
     }) != nullptr;
 }
 
-inline bool AXCoreObject::isAncestorOfObject(const AXCoreObject* axObject) const
+inline bool AXCoreObject::isAncestorOfObject(const AXCoreObject& axObject) const
 {
-    return axObject && (this == axObject || axObject->isDescendantOfObject(this));
+    return this == &axObject || axObject.isDescendantOfObject(*this);
 }
 
 inline AXCoreObject* AXCoreObject::axScrollView() const

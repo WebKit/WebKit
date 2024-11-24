@@ -1366,9 +1366,8 @@ static void convertToVector(NSArray* array, AccessibilityObject::AccessibilityCh
     unsigned length = [array count];
     vector.reserveInitialCapacity(length);
     for (unsigned i = 0; i < length; ++i) {
-        AXCoreObject* obj = [[array objectAtIndex:i] axBackingObject];
-        if (obj)
-            vector.append(obj);
+        if (auto* object = [[array objectAtIndex:i] axBackingObject])
+            vector.append(*object);
     }
 }
 
@@ -1449,7 +1448,7 @@ static void WebTransformCGPathToNSBezierPath(void* info, const CGPathElement *el
 }
 
 // `unignoredChildren` must be the children of `backingObject`.
-static NSArray *transformSpecialChildrenCases(AXCoreObject& backingObject, const Vector<RefPtr<AXCoreObject>>& unignoredChildren)
+static NSArray *transformSpecialChildrenCases(AXCoreObject& backingObject, const Vector<Ref<AXCoreObject>>& unignoredChildren)
 {
 #if ENABLE(MODEL_ELEMENT)
     if (backingObject.isModel()) {
@@ -3902,8 +3901,6 @@ ALLOW_DEPRECATED_IMPLEMENTATIONS_END
     size_t childCount = children.size();
     for (size_t i = 0; i < childCount; i++) {
         const auto& child = children[i];
-        if (!child)
-            continue;
         WebAccessibilityObjectWrapper *childWrapper = child->wrapper();
         if (childWrapper == targetChild || (child->isAttachment() && [childWrapper attachmentView] == targetChild)
             || (child->isRemoteFrame() && child->remoteFramePlatformElement() == targetChild)) {

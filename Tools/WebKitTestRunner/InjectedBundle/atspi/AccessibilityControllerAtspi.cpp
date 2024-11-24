@@ -54,7 +54,7 @@ static WebCore::AccessibilityObjectAtspi* findAccessibleObjectById(WebCore::Acce
         return &axObject;
 
     for (const auto& child : axObject.children()) {
-        if (auto* element = findAccessibleObjectById(*child, elementID))
+        if (auto* element = findAccessibleObjectById(child, elementID))
             return element;
     }
 

@@ -371,7 +371,7 @@ bool AXTextMarkerRange::isConfinedTo(std::optional<AXID> objectID) const
 }
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
-static void appendChildren(RefPtr<AXCoreObject> object, bool isForward, RefPtr<AXCoreObject> startObject, AccessibilityObject::AccessibilityChildrenVector& vector)
+static void appendChildren(Ref<AXCoreObject> object, bool isForward, RefPtr<AXCoreObject> startObject, AccessibilityObject::AccessibilityChildrenVector& vector)
 {
     AccessibilityObject::AccessibilityChildrenVector captionAndRows;
     bool isExposedTable = object->isTable() && object->isExposable();
@@ -393,7 +393,7 @@ static void appendChildren(RefPtr<AXCoreObject> object, bool isForward, RefPtr<A
 
     size_t startIndex = isForward ? childrenSize : 0;
     size_t endIndex = isForward ? 0 : childrenSize;
-    size_t searchPosition = startObject ? children.find(startObject) : notFound;
+    size_t searchPosition = startObject ? children.find(Ref { *startObject }) : notFound;
 
     if (searchPosition != notFound) {
         if (isForward)
@@ -402,17 +402,12 @@ static void appendChildren(RefPtr<AXCoreObject> object, bool isForward, RefPtr<A
             endIndex = searchPosition;
     }
 
-    auto append = [&vector] (RefPtr<AXCoreObject> object) {
-        if (object)
-            vector.append(WTFMove(object));
-    };
-
     if (isForward) {
         for (size_t i = startIndex; i > endIndex; i--)
-            append(children.at(i - 1));
+            vector.append(children.at(i - 1));
     } else {
         for (size_t i = startIndex; i < endIndex; i++)
-            append(children.at(i));
+            vector.append(children.at(i));
     }
 }
 
@@ -452,12 +447,11 @@ static AXIsolatedObject* findObjectWithRuns(AXIsolatedObject& start, AXDirection
         // Only append the children after/before the previous element, so that the search does not check elements that are
         // already behind/ahead of start element.
         AXCoreObject::AccessibilityChildrenVector searchStack;
-        appendChildren(startObject, isForward, previousObject, searchStack);
+        appendChildren(*startObject, isForward, previousObject, searchStack);
 
         // This now does a DFS at the current level of the parent.
         while (!searchStack.isEmpty()) {
-            RefPtr searchObject = searchStack.takeLast();
-
+            Ref searchObject = searchStack.takeLast();
             if (stopAtID && searchObject->objectID() == *stopAtID)
                 return nullptr;
 
@@ -542,7 +536,7 @@ CharacterRange AXTextMarker::characterRangeForLine(unsigned lineIndex) const
     RELEASE_ASSERT(!offset());
 
     auto* stopObject = object->nextUnignoredSiblingOrParent();
-    auto stopAtID = stopObject ? stopObject->objectID() : std::nullopt;
+    auto stopAtID = stopObject ? std::optional { stopObject->objectID() } : std::nullopt;
 
     auto textRunMarker = toTextRunMarker(stopAtID);
     // If we couldn't convert this object to a text-run marker, it means we are a text control with no text descendant.
@@ -585,7 +579,7 @@ int AXTextMarker::lineNumberForIndex(unsigned index) const
     if (!object)
         return -1;
     auto* stopObject = object->nextUnignoredSiblingOrParent();
-    auto stopAtID = stopObject ? stopObject->objectID() : std::nullopt;
+    auto stopAtID = stopObject ? std::optional { stopObject->objectID() } : std::nullopt;
 
     if (object->isTextControl() && index >= object->textMarkerRange().toString().length()) {
         // Mimic behavior of AccessibilityRenderObject::visiblePositionForIndex.

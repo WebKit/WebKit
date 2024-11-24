@@ -90,7 +90,7 @@ GDBusInterfaceVTable AccessibilityObjectAtspi::s_tableCellFunctions = {
     { nullptr }
 };
 
-Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellRowHeaders() const
+Vector<Ref<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellRowHeaders() const
 {
     if (!m_coreObject)
         return { };
@@ -98,7 +98,7 @@ Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellRowHeader
     return wrapperVector(m_coreObject->rowHeaders());
 }
 
-Vector<RefPtr<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellColumnHeaders() const
+Vector<Ref<AccessibilityObjectAtspi>> AccessibilityObjectAtspi::cellColumnHeaders() const
 {
     if (!m_coreObject)
         return { };

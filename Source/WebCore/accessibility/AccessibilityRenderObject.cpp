@@ -1666,7 +1666,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
             RefPtr axObject = cache->getOrCreate(*renderer);
             ASSERT(axObject);
             if (!axObject->isIgnored() && axObject->isLink())
-                result.append(axObject);
+                result.append(axObject.releaseNonNull());
         } else {
             auto* parent = current->parentNode();
             if (auto* parentMap = dynamicDowncast<HTMLMapElement>(parent); parentMap && is<HTMLAreaElement>(*current)) {
@@ -1684,7 +1684,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityRenderObject::documentLin
                     areaObject.setHTMLAreaElement(uncheckedDowncast<HTMLAreaElement>(current));
                     areaObject.setHTMLMapElement(parentMap);
                     areaObject.setParent(associatedAXImage(*parentMap));
-                    result.append(&areaObject);
+                    result.append(areaObject);
                 }
             }
         }
@@ -2445,13 +2445,13 @@ void AccessibilityRenderObject::addNodeOnlyChildren()
             if (childObject && childObject->isIgnored()) {
                 const auto& children = childObject->unignoredChildren();
                 if (children.size())
-                    childObject = children.last().get();
+                    childObject = children.last().ptr();
                 else
                     childObject = nullptr;
             }
 
             if (childObject)
-                insertionIndex = m_children.find(childObject) + 1;
+                insertionIndex = m_children.find(Ref { *childObject }) + 1;
             continue;
         }
 
@@ -2562,7 +2562,7 @@ void AccessibilityRenderObject::addChildren()
             return;
 #endif
         auto owners = object.owners();
-        if (owners.size() && !owners.contains(this))
+        if (owners.size() && !owners.contains(Ref { *this }))
             return;
 
         addChild(&object);

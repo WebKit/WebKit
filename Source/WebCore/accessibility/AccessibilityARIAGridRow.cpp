@@ -76,22 +76,21 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityARIAGridRow::disclosedRow
 
     // Search for rows that match the correct level. 
     // Only take the subsequent rows from this one that are +1 from this row's level.
-    int index = rowIndex();
-    if (index < 0)
+    int rowIndex = this->rowIndex();
+    if (rowIndex < 0)
         return disclosedRows;
 
     unsigned level = hierarchicalLevel();
     auto allRows = parent->rows();
     int rowCount = allRows.size();
-    for (int k = index + 1; k < rowCount; ++k) {
-        RefPtr row = allRows[k].get();
+    for (int k = rowIndex + 1; k < rowCount; ++k) {
+        auto& row = allRows[k].get();
         // Stop at the first row that doesn't match the correct level.
-        if (row->hierarchicalLevel() != level + 1)
+        if (row.hierarchicalLevel() != level + 1)
             break;
 
         disclosedRows.append(row);
     }
-
     return disclosedRows;
 }
     
@@ -116,11 +115,10 @@ AXCoreObject* AccessibilityARIAGridRow::disclosedByRow() const
         return nullptr;
 
     for (int k = index - 1; k >= 0; --k) {
-        auto* row = allRows[k].get();
-        if (row->hierarchicalLevel() == level - 1)
-            return row;
+        auto& row = allRows[k].get();
+        if (row.hierarchicalLevel() == level - 1)
+            return &row;
     }
-
     return nullptr;
 }
 
@@ -142,9 +140,8 @@ AXCoreObject* AccessibilityARIAGridRow::rowHeader()
 {
     for (const auto& child : unignoredChildren()) {
         if (child->roleValue() == AccessibilityRole::RowHeader)
-            return child.get();
+            return child.ptr();
     }
-
     return nullptr;
 }
 

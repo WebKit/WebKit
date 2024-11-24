@@ -223,7 +223,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::unignoredChildren(bool u
     // and finding the first unignored descendant object of that child (or itself, if unignored).
     AXCoreObject::AccessibilityChildrenVector unignoredChildren;
     const auto& children = childrenIncludingIgnored(updateChildrenIfNeeded);
-    RefPtr descendant = children.size() ? children[0] : nullptr;
+    RefPtr descendant = children.size() ? children[0].ptr() : nullptr;
     while (descendant && descendant != this) {
         bool childIsValid = true;
         if (isExposedTable) {
@@ -236,7 +236,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::unignoredChildren(bool u
             continue;
         }
 
-        unignoredChildren.append(descendant);
+        unignoredChildren.append(*descendant);
         for (; descendant && descendant != this; descendant = descendant->parentObject()) {
             if (auto* nextSibling = descendant->nextSiblingIncludingIgnored(updateChildrenIfNeeded)) {
                 descendant = nextSibling;
@@ -259,7 +259,7 @@ AXCoreObject* AXCoreObject::nextInPreOrder(bool updateChildrenIfNeeded, AXCoreOb
         if (role != AccessibilityRole::Column && role != AccessibilityRole::TableHeaderContainer) {
             // Table columns and header containers add cells despite not being their "true" parent (which are the rows). Don't allow a pre-order traversal of these
             // object types to return cells to avoid an infinite loop.
-            return children[0].get();
+            return children[0].ptr();
         }
     }
 
@@ -283,11 +283,11 @@ AXCoreObject* AXCoreObject::nextSiblingIncludingIgnored(bool updateChildrenIfNee
         return nullptr;
 
     const auto& siblings = parent->childrenIncludingIgnored(updateChildrenIfNeeded);
-    size_t indexOfThis = siblings.find(this);
+    size_t indexOfThis = siblings.find(Ref { *this });
     if (indexOfThis == notFound)
         return nullptr;
 
-    return indexOfThis + 1 < siblings.size() ? siblings[indexOfThis + 1].get() : nullptr;
+    return indexOfThis + 1 < siblings.size() ? siblings[indexOfThis + 1].ptr() : nullptr;
 }
 
 AXCoreObject* AXCoreObject::nextUnignoredSibling(bool updateChildrenIfNeeded, AXCoreObject* unignoredParent) const
@@ -300,11 +300,11 @@ AXCoreObject* AXCoreObject::nextUnignoredSibling(bool updateChildrenIfNeeded, AX
     if (!parent)
         return nullptr;
     const auto& siblings = parent->unignoredChildren(updateChildrenIfNeeded);
-    size_t indexOfThis = siblings.find(this);
+    size_t indexOfThis = siblings.find(Ref { *this });
     if (indexOfThis == notFound)
         return nullptr;
 
-    return indexOfThis + 1 < siblings.size() ? siblings[indexOfThis + 1].get() : nullptr;
+    return indexOfThis + 1 < siblings.size() ? siblings[indexOfThis + 1].ptr() : nullptr;
 }
 
 AXCoreObject* AXCoreObject::nextUnignoredSiblingOrParent() const
@@ -324,7 +324,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::contents()
         // A scroll view's contents are everything except the scroll bars.
         AccessibilityChildrenVector nonScrollbarChildren;
         for (const auto& child : unignoredChildren()) {
-            if (child && !child->isScrollbar())
+            if (!child->isScrollbar())
                 nonScrollbarChildren.append(child);
         }
         return nonScrollbarChildren;
@@ -415,7 +415,7 @@ AXCoreObject* AXCoreObject::selectedRadioButton()
     // Find the child radio button that is selected (ie. the intValue == 1).
     for (const auto& child : unignoredChildren()) {
         if (child->roleValue() == AccessibilityRole::RadioButton && child->checkboxOrRadioValue() == AccessibilityButtonState::On)
-            return child.get();
+            return child.ptr();
     }
     return nullptr;
 }
@@ -429,7 +429,7 @@ AXCoreObject* AXCoreObject::selectedTabItem()
     // Find the child tab item that is selected (ie. the intValue == 1).
     for (const auto& child : unignoredChildren()) {
         if (child->isTabItem() && (child->isChecked() || child->isSelected()))
-            return child.get();
+            return child.ptr();
     }
     return nullptr;
 }
@@ -510,31 +510,28 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::columnHeaders()
         auto rowGroupAncestor = rowGroupAncestorID();
         for (unsigned row = 0; row < rowRange.first; row++) {
             RefPtr tableCell = parentTable->cellForColumnAndRow(colRange.first, row);
-            if (!tableCell || tableCell == this || headers.contains(tableCell))
+            if (!tableCell || tableCell == this || headers.contains(Ref { *tableCell }))
                 continue;
 
             if (tableCell->cellScope() == "colgroup"_s && tableCell->rowGroupAncestorID() == rowGroupAncestor)
-                headers.append(tableCell);
+                headers.append(tableCell.releaseNonNull());
             else if (tableCell->isColumnHeader())
-                headers.append(tableCell);
+                headers.append(tableCell.releaseNonNull());
         }
     } else if (isTable()) {
         auto columns = this->columns();
         for (const auto& column : columns) {
             if (auto* header = column->columnHeader())
-                headers.append(header);
+                headers.append(*header);
         }
     }
     return headers;
 }
 
-bool AXCoreObject::isTableCellInSameRowGroup(AXCoreObject* otherTableCell)
+bool AXCoreObject::isTableCellInSameRowGroup(AXCoreObject& otherTableCell)
 {
-    if (!otherTableCell)
-        return false;
-
     auto ancestorID = rowGroupAncestorID();
-    return ancestorID && *ancestorID == otherTableCell->rowGroupAncestorID();
+    return ancestorID && *ancestorID == otherTableCell.rowGroupAncestorID();
 }
 
 bool AXCoreObject::isTableCellInSameColGroup(AXCoreObject* tableCell)
@@ -660,7 +657,7 @@ AXCoreObject* AXCoreObject::activeDescendant() const
     auto activeDescendants = relatedObjects(AXRelationType::ActiveDescendant);
     ASSERT(activeDescendants.size() <= 1);
     if (!activeDescendants.isEmpty())
-        return activeDescendants[0].get();
+        return activeDescendants[0].ptr();
     return nullptr;
 }
 
@@ -676,8 +673,8 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::selectedCells()
     }
 
     if (RefPtr activeDescendant = this->activeDescendant()) {
-        if (activeDescendant->isExposedTableCell() && !selectedCells.contains(activeDescendant))
-            selectedCells.append(activeDescendant);
+        if (activeDescendant->isExposedTableCell() && !selectedCells.contains(Ref { *activeDescendant }))
+            selectedCells.append(activeDescendant.releaseNonNull());
     }
     return selectedCells;
 }
@@ -837,9 +834,9 @@ AXCoreObject* AXCoreObject::titleUIElement() const
 #if PLATFORM(COCOA)
     // We impose the restriction that if there is more than one label, then we should return none.
     // FIXME: the behavior should be the same in all platforms.
-    return labels.size() == 1 ? labels.first().get() : nullptr;
+    return labels.size() == 1 ? labels.first().ptr() : nullptr;
 #else
-    return labels.size() ? labels.first().get() : nullptr;
+    return labels.size() ? labels.first().ptr() : nullptr;
 #endif
 }
 
@@ -849,7 +846,7 @@ AXCoreObject::AccessibilityChildrenVector AXCoreObject::linkedObjects() const
 
     if (isLink()) {
         if (RefPtr linkedAXElement = internalLinkElement())
-            linkedObjects.append(linkedAXElement);
+            linkedObjects.append(linkedAXElement.releaseNonNull());
     } else if (isRadioButton())
         appendRadioButtonGroupMembers(linkedObjects);
 
@@ -865,7 +862,7 @@ void AXCoreObject::appendRadioButtonDescendants(AXCoreObject& parent, Accessibil
         if (child->isRadioButton())
             linkedUIElements.append(child);
         else
-            appendRadioButtonDescendants(*child, linkedUIElements);
+            appendRadioButtonDescendants(child.get(), linkedUIElements);
     }
 }
 

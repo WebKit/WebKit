@@ -139,18 +139,14 @@ void AXLogger::log(RefPtr<AXCoreObject> object)
     }
 }
 
-void AXLogger::log(const Vector<RefPtr<AXCoreObject>>& objects)
+void AXLogger::log(const Vector<Ref<AXCoreObject>>& objects)
 {
     if (shouldLog()) {
         TextStream stream(TextStream::LineMode::MultipleLine);
 
         stream << "[";
-        for (auto object : objects) {
-            if (object)
-                stream << *object;
-            else
-                stream << "null";
-        }
+        for (auto object : objects)
+            stream << object.get();
         stream << "]";
 
         LOG(Accessibility, "%s", stream.release().utf8().data());
@@ -1217,7 +1213,8 @@ TextStream& operator<<(TextStream& stream, AXIsolatedTree& tree)
     stream.dumpProperty("rootNodeID", tree.rootNode()->objectID());
     stream.dumpProperty("focusedNodeID", tree.m_focusedNodeID);
     constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::Role, AXStreamOptions::ParentID, AXStreamOptions::IdentifierAttribute, AXStreamOptions::OuterHTML, AXStreamOptions::DisplayContents, AXStreamOptions::Address };
-    streamSubtree(stream, tree.rootNode(), options);
+    if (RefPtr root = tree.rootNode())
+        streamSubtree(stream, root.releaseNonNull(), options);
     return stream;
 }
 
@@ -1247,9 +1244,9 @@ TextStream& operator<<(TextStream& stream, AXObjectCache& axObjectCache)
     TextStream::GroupScope groupScope(stream);
     stream << "AXObjectCache " << &axObjectCache;
 
-    if (auto* root = axObjectCache.get(axObjectCache.document().view())) {
+    if (RefPtr root = axObjectCache.get(axObjectCache.document().view())) {
         constexpr OptionSet<AXStreamOptions> options = { AXStreamOptions::ObjectID, AXStreamOptions::Role, AXStreamOptions::ParentID, AXStreamOptions::IdentifierAttribute, AXStreamOptions::OuterHTML, AXStreamOptions::DisplayContents, AXStreamOptions::Address };
-        streamSubtree(stream, root, options);
+        streamSubtree(stream, root.releaseNonNull(), options);
     } else
         stream << "No root!";
 
@@ -1325,15 +1322,12 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
     }
 }
 
-void streamSubtree(TextStream& stream, const RefPtr<AXCoreObject>& object, const OptionSet<AXStreamOptions>& options)
+void streamSubtree(TextStream& stream, const Ref<AXCoreObject>& object, const OptionSet<AXStreamOptions>& options)
 {
-    if (!object)
-        return;
-
     stream.increaseIndent();
 
     TextStream::GroupScope groupScope(stream);
-    streamAXCoreObject(stream, *object, options);
+    streamAXCoreObject(stream, object, options);
     for (auto& child : object->unignoredChildren(/* updateChildrenIfNeeded */ false))
         streamSubtree(stream, child, options);
 

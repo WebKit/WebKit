@@ -632,27 +632,23 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
 {
     if (!newChild)
         return;
-
-    auto* child = dynamicDowncast<AccessibilityObject>(*newChild);
-    ASSERT(child);
-    if (!child)
-        return;
+    auto& child = downcast<AccessibilityObject>(*newChild);
 
     // If the parent is asking for this child's children, then either it's the first time (and clearing is a no-op),
     // or its visibility has changed. In the latter case, this child may have a stale child cached.
     // This can prevent aria-hidden changes from working correctly. Hence, whenever a parent is getting children, ensure data is not stale.
     // Only clear the child's children when we know it's in the updating chain in order to avoid unnecessary work.
-    if (child->needsToUpdateChildren() || m_subtreeDirty) {
-        child->clearChildren();
+    if (child.needsToUpdateChildren() || m_subtreeDirty) {
+        child.clearChildren();
         // Pass m_subtreeDirty flag down to the child so that children cache gets reset properly.
         if (m_subtreeDirty)
-            child->setNeedsToUpdateSubtree();
+            child.setNeedsToUpdateSubtree();
     } else {
         // For some reason the grand children might be detached so that we need to regenerate the
         // children list of this child.
-        for (const auto& grandChild : child->unignoredChildren(/* updateChildrenIfNeeded */ false)) {
+        for (const auto& grandChild : child.unignoredChildren(/* updateChildrenIfNeeded */ false)) {
             if (grandChild->isDetachedFromParent()) {
-                child->clearChildren();
+                child.clearChildren();
                 break;
             }
         }
@@ -660,7 +656,7 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
 
 #if USE(ATSPI)
     // FIXME: Consider removing this ATSPI-only branch with https://bugs.webkit.org/show_bug.cgi?id=282117.
-    RefPtr displayContentsParent = child->displayContentsParent();
+    RefPtr displayContentsParent = child.displayContentsParent();
     // To avoid double-inserting a child of a `display: contents` element, only insert if `this` is the rightful parent.
     if (displayContentsParent && displayContentsParent != this) {
         // Make sure the display:contents parent object knows it has a child it needs to add.
@@ -679,39 +675,34 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
 #endif // USE(ATSPI)
 
     auto thisAncestorFlags = computeAncestorFlags();
-    child->initializeAncestorFlags(thisAncestorFlags);
+    child.initializeAncestorFlags(thisAncestorFlags);
     setIsIgnoredFromParentDataForChild(child);
-    if (!includeIgnoredInCoreTree() && child->isIgnored()) {
+    if (!includeIgnoredInCoreTree() && child.isIgnored()) {
         if (descendIfIgnored == DescendIfIgnored::Yes) {
             unsigned insertionIndex = index;
-            auto childAncestorFlags = child->computeAncestorFlags();
-            for (auto grandchildCoreObject : child->children()) {
-                if (grandchildCoreObject) {
-                    ASSERT(is<AccessibilityObject>(*grandchildCoreObject));
-                    RefPtr grandchild = dynamicDowncast<AccessibilityObject>(*grandchildCoreObject);
-                    if (!grandchild)
-                        continue;
+            auto childAncestorFlags = child.computeAncestorFlags();
+            for (auto grandchildCoreObject : child.children()) {
+                Ref grandchild = downcast<AccessibilityObject>(grandchildCoreObject.get());
 
-                    // Even though `child` is ignored, we still need to set ancestry flags based on it.
-                    grandchild->initializeAncestorFlags(childAncestorFlags);
-                    grandchild->addAncestorFlags(thisAncestorFlags);
-                    // Calls to `child->isIgnored()` or `child->children()` can cause layout, which in turn can cause this object to clear its m_children. This can cause `insertionIndex` to no longer be valid. Detect this and break early if necessary.
-                    if (insertionIndex > m_children.size())
-                        break;
-                    m_children.insert(insertionIndex, grandchild);
-                    ++insertionIndex;
-                }
+                // Even though `child` is ignored, we still need to set ancestry flags based on it.
+                grandchild->initializeAncestorFlags(childAncestorFlags);
+                grandchild->addAncestorFlags(thisAncestorFlags);
+                // Calls to `child.isIgnored()` or `child.children()` can cause layout, which in turn can cause this object to clear its m_children. This can cause `insertionIndex` to no longer be valid. Detect this and break early if necessary.
+                if (insertionIndex > m_children.size())
+                    break;
+                m_children.insert(insertionIndex, grandchild);
+                ++insertionIndex;
             }
         }
     } else {
         // Table component child-parent relationships often don't line up properly, hence the need for methods
         // like parentTable() and parentRow(). Exclude them from this ASSERT.
-        ASSERT(isTableComponent(*child) || isTableComponent(*this) || child->parentObject() == this);
+        ASSERT(isTableComponent(child) || isTableComponent(*this) || child.parentObject() == this);
         m_children.insert(index, child);
     }
     
     // Reset the child's m_isIgnoredFromParentData since we are done adding that child and its children.
-    child->clearIsIgnoredFromParentData();
+    child.clearIsIgnoredFromParentData();
 }
     
 void AccessibilityObject::addChild(AXCoreObject* child, DescendIfIgnored descendIfIgnored)
@@ -2251,8 +2242,7 @@ AccessibilityObject* AccessibilityObject::headingElementForNode(Node* node)
 void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows, AccessibilityChildrenVector& ancestors)
 {
     auto ownedObjects = this->ownedObjects();
-
-    ancestors.append(this);
+    ancestors.append(*this);
 
     // The ordering of rows is first DOM children *not* in aria-owns, followed by all specified
     // in aria-owns.
@@ -2273,8 +2263,7 @@ void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows, Access
         }
 
         // Now see if this item also has rows hiding inside of it.
-        if (auto* accessibilityObject = dynamicDowncast<AccessibilityObject>(*child))
-            accessibilityObject->ariaTreeRows(rows, ancestors);
+        downcast<AccessibilityObject>(child.get()).ariaTreeRows(rows, ancestors);
     }
 
     // Now go through the aria-owns elements.
@@ -2297,8 +2286,7 @@ void AccessibilityObject::ariaTreeRows(AccessibilityChildrenVector& rows, Access
         }
 
         // Now see if this item also has rows hiding inside of it.
-        if (auto* accessibilityObject = dynamicDowncast<AccessibilityObject>(*child))
-            accessibilityObject->ariaTreeRows(rows, ancestors);
+        downcast<AccessibilityObject>(child.get()).ariaTreeRows(rows, ancestors);
     }
 
     ancestors.removeLast();
@@ -4231,18 +4219,15 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityObject::ariaSelectedRows(
     // Prefer active descendant over aria-selected.
     auto* activeDescendant = this->activeDescendant();
     if (activeDescendant && (activeDescendant->isTreeItem() || activeDescendant->isTableRow())) {
-        result.append(activeDescendant);
+        result.append(*activeDescendant);
         if (!isMulti)
             return result;
     }
 
     auto rowsIteration = [&](const auto& rows) {
         for (auto& rowCoreObject : rows) {
-            auto* row = dynamicDowncast<AccessibilityObject>(rowCoreObject.get());
-            if (!row)
-                continue;
-
-            if (row->isSelected() || row->isActiveDescendantOfFocusedContainer()) {
+            auto& row = downcast<AccessibilityObject>(rowCoreObject.get());
+            if (row.isSelected() || row.isActiveDescendantOfFocusedContainer()) {
                 result.append(row);
                 if (!isMulti)
                     break;
@@ -4307,7 +4292,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityObject::se
     switch (roleValue()) {
     case AccessibilityRole::ComboBox:
         if (auto* descendant = activeDescendant())
-            return { { descendant } };
+            return { { *descendant } };
         break;
     case AccessibilityRole::ListBox:
         // Native list boxes would be AccessibilityListBoxes, so only check for aria list boxes.
@@ -4320,7 +4305,7 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityObject::se
         break;
     case AccessibilityRole::TabList:
         if (auto* selectedTab = selectedTabItem())
-            return { { selectedTab } };
+            return { { *selectedTab } };
         break;
     case AccessibilityRole::List: {
         auto selectedListItems = this->selectedListItems();
@@ -4331,9 +4316,9 @@ std::optional<AXCoreObject::AccessibilityChildrenVector> AccessibilityObject::se
     case AccessibilityRole::Menu:
     case AccessibilityRole::MenuBar:
         if (auto* descendant = activeDescendant())
-            return { { descendant } };
+            return { { *descendant } };
         else if (auto* focusedElement = focusedUIElement())
-            return { { focusedElement } };
+            return { { *focusedElement } };
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -4417,22 +4402,19 @@ bool AccessibilityObject::ariaRoleHasPresentationalChildren() const
     }
 }
 
-void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject* child)
+void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject& child)
 {
-    if (!child)
-        return;
-
     AccessibilityIsIgnoredFromParentData result = AccessibilityIsIgnoredFromParentData(this);
     if (!m_isIgnoredFromParentData.isNull()) {
-        result.isAXHidden = (m_isIgnoredFromParentData.isAXHidden || child->isARIAHidden()) && !child->isFocused();
+        result.isAXHidden = (m_isIgnoredFromParentData.isAXHidden || child.isARIAHidden()) && !child.isFocused();
         result.isPresentationalChildOfAriaRole = m_isIgnoredFromParentData.isPresentationalChildOfAriaRole || ariaRoleHasPresentationalChildren();
         result.isDescendantOfBarrenParent = m_isIgnoredFromParentData.isDescendantOfBarrenParent || !canHaveChildren();
     } else {
-        if (child->isARIAHidden())
+        if (child.isARIAHidden())
             result.isAXHidden = true;
 
-        bool ignoreARIAHidden = child->isFocused();
-        for (auto* object = child->parentObject(); object; object = object->parentObject()) {
+        bool ignoreARIAHidden = child.isFocused();
+        for (auto* object = child.parentObject(); object; object = object->parentObject()) {
             if (!result.isAXHidden && !ignoreARIAHidden && object->isARIAHidden())
                 result.isAXHidden = true;
 
@@ -4444,7 +4426,7 @@ void AccessibilityObject::setIsIgnoredFromParentDataForChild(AccessibilityObject
         }
     }
 
-    child->setIsIgnoredFromParentData(result);
+    child.setIsIgnoredFromParentData(result);
 }
 
 String AccessibilityObject::innerHTML() const

@@ -751,7 +751,7 @@ public:
     AccessibilityObject* containingWebArea() const;
 
     void clearIsIgnoredFromParentData() { m_isIgnoredFromParentData = { }; }
-    void setIsIgnoredFromParentDataForChild(AccessibilityObject*);
+    void setIsIgnoredFromParentDataForChild(AccessibilityObject&);
 
     AccessibilityChildrenVector documentLinks() override { return AccessibilityChildrenVector(); }
 

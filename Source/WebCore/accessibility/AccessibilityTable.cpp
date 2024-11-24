@@ -429,9 +429,9 @@ void AccessibilityTable::setCellSlotsDirty()
 void AccessibilityTable::updateChildrenRoles()
 {
     for (const auto& row : m_rows) {
-        downcast<AccessibilityObject>(*row).updateRole();
+        downcast<AccessibilityObject>(row.get()).updateRole();
         for (const auto& cell : row->unignoredChildren())
-            downcast<AccessibilityObject>(*cell).updateRole();
+            downcast<AccessibilityObject>(cell.get()).updateRole();
     }
 }
 
@@ -471,11 +471,11 @@ void AccessibilityTable::addChildren()
         return;
 
     for (unsigned i = 0; i < desiredColumnCount; ++i) {
-        RefPtr column = downcast<AccessibilityTableColumn>(cache->create(AccessibilityRole::Column));
+        Ref column = downcast<AccessibilityTableColumn>(*cache->create(AccessibilityRole::Column));
         column->setColumnIndex(i);
         column->setParent(this);
-        m_columns.append(column.get());
-        addChild(column.get(), DescendIfIgnored::No);
+        m_columns.append(column);
+        addChild(column.ptr(), DescendIfIgnored::No);
     }
     addChild(headerContainer(), DescendIfIgnored::No);
 
@@ -634,7 +634,7 @@ unsigned AccessibilityTable::computeCellSlots()
         }
 
         // Not specified: update some internal data structures.
-        m_rows.append(row);
+        m_rows.append(*row);
         row->setRowIndex(yCurrent);
 #if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
         addChild(row);
@@ -646,12 +646,10 @@ unsigned AccessibilityTable::computeCellSlots()
     auto needsToDescend = [&processedRows] (AXCoreObject& axObject) {
         return !axObject.isTableRow() && !processedRows.contains(&downcast<AccessibilityObject>(axObject));
     };
-    std::function<void(AXCoreObject*)> processRowDescendingIfNeeded = [&] (AXCoreObject* axObject) {
-        if (!axObject)
-            return;
+    std::function<void(AXCoreObject&)> processRowDescendingIfNeeded = [&] (AXCoreObject& axObject) {
         // Descend past anonymous renderers and non-rows.
-        if (needsToDescend(*axObject)) {
-            for (const auto& child : axObject->unignoredChildren())
+        if (needsToDescend(axObject)) {
+            for (const auto& child : axObject.unignoredChildren())
                 processRowDescendingIfNeeded(child.get());
         } else
             processRow(dynamicDowncast<AccessibilityTableRow>(axObject));
@@ -739,7 +737,7 @@ unsigned AccessibilityTable::computeCellSlots()
                 // We are forgiving with ARIA grid markup, descending past disallowed elements to build the grid structure (this is not specified, but consistent with other browsers).
                 if (RefPtr axObject = cache->getOrCreate(node); axObject && needsToDescend(*axObject)) {
                     for (const auto& child : axObject->childrenIncludingIgnored())
-                        processTableDescendant(child ? child->node() : nullptr);
+                        processTableDescendant(child->node());
                 }
             }
             return;
@@ -818,10 +816,9 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTable::rowHeaders()
     // Sometimes m_rows can be reset during the iteration, we cache it here to be safe.
     AccessibilityChildrenVector rowsCopy = m_rows;
     for (const auto& row : rowsCopy) {
-        if (auto* header = downcast<AccessibilityTableRow>(*row).rowHeader())
-            headers.append(header);
+        if (auto* header = downcast<AccessibilityTableRow>(row.get()).rowHeader())
+            headers.append(*header);
     }
-
     return headers;
 }
 
@@ -831,10 +828,9 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTable::visibleRows()
 
     AccessibilityChildrenVector rows;
     for (const auto& row : m_rows) {
-        if (row && !row->isOffScreen())
+        if (!row->isOffScreen())
             rows.append(row);
     }
-
     return rows;
 }
 

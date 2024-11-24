@@ -448,7 +448,7 @@ public:
     bool elementIsTextControl(const Element&);
 
     AccessibilityObject* objectForID(const AXID id) const { return m_objects.get(id); }
-    template<typename U> Vector<RefPtr<AXCoreObject>> objectsForIDs(const U&) const;
+    template<typename U> Vector<Ref<AXCoreObject>> objectsForIDs(const U&) const;
     Node* nodeForID(std::optional<AXID>) const;
 
 #if ENABLE(ACCESSIBILITY_ISOLATED_TREE)
@@ -872,13 +872,13 @@ private:
 };
 
 template<typename U>
-inline Vector<RefPtr<AXCoreObject>> AXObjectCache::objectsForIDs(const U& axIDs) const
+inline Vector<Ref<AXCoreObject>> AXObjectCache::objectsForIDs(const U& axIDs) const
 {
     ASSERT(isMainThread());
 
-    return WTF::compactMap(axIDs, [&](auto& axID) -> std::optional<RefPtr<AXCoreObject>> {
+    return WTF::compactMap(axIDs, [&](auto& axID) -> std::optional<Ref<AXCoreObject>> {
         if (auto* object = objectForID(axID))
-            return RefPtr { object };
+            return Ref { *object };
         return std::nullopt;
     });
 }

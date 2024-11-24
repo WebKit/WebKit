@@ -60,7 +60,7 @@ public:
     void log(const char*);
     void log(const AXCoreObject&);
     void log(RefPtr<AXCoreObject>);
-    void log(const Vector<RefPtr<AXCoreObject>>&);
+    void log(const Vector<Ref<AXCoreObject>>&);
     void log(const std::pair<Ref<AccessibilityObject>, AXObjectCache::AXNotification>&);
     void log(const std::pair<RefPtr<AXCoreObject>, AXObjectCache::AXNotification>&);
     void log(const AccessibilitySearchCriteria&);
@@ -91,6 +91,6 @@ private:
 #endif // !LOG_DISABLED
 
 void streamAXCoreObject(TextStream&, const AXCoreObject&, const OptionSet<AXStreamOptions>&);
-void streamSubtree(TextStream&, const RefPtr<AXCoreObject>&, const OptionSet<AXStreamOptions>&);
+void streamSubtree(TextStream&, const Ref<AXCoreObject>&, const OptionSet<AXStreamOptions>&);
 
 } // namespace WebCore

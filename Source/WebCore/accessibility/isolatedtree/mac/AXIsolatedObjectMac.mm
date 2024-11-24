@@ -157,7 +157,7 @@ AXTextMarkerRange AXIsolatedObject::textMarkerRange() const
 
         auto thisMarker = AXTextMarker { *this, 0 };
         AXTextMarkerRange range { thisMarker, thisMarker };
-        auto endMarker = thisMarker.findLastBefore(stopObject ? stopObject->objectID() : std::nullopt);
+        auto endMarker = thisMarker.findLastBefore(stopObject ? std::optional { stopObject->objectID() } : std::nullopt);
         if (endMarker.isValid() && endMarker.isInTextRun()) {
             // One or more of our descendants have text, so let's form a range from the first and last text positions.
             range = { thisMarker.toTextRunMarker(), WTFMove(endMarker) };

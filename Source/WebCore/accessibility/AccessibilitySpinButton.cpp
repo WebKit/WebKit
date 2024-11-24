@@ -59,14 +59,14 @@ AXCoreObject* AccessibilitySpinButton::incrementButton()
 {
     ASSERT(m_childrenInitialized);
     RELEASE_ASSERT(m_children.size() == 2);
-    return m_children[0].get();
+    return m_children[0].ptr();
 }
    
 AXCoreObject* AccessibilitySpinButton::decrementButton()
 {
     ASSERT(m_childrenInitialized);
     RELEASE_ASSERT(m_children.size() == 2);
-    return m_children[1].get();
+    return m_children[1].ptr();
 }
     
 LayoutRect AccessibilitySpinButton::elementRect() const

@@ -450,13 +450,13 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AccessibilityObject& axObject)
         Vector<AXID> axChildrenIDs;
         axChildrenIDs.reserveInitialCapacity(axChildrenCopy.size());
         for (const auto& axChild : axChildrenCopy) {
-            if (!axChild || axChild.get() == &axObject) {
+            if (axChild.ptr() == &axObject) {
                 ASSERT_NOT_REACHED();
                 continue;
             }
 
             axChildrenIDs.append(axChild->objectID());
-            collectNodeChangesForSubtree(downcast<AccessibilityObject>(*axChild));
+            collectNodeChangesForSubtree(downcast<AccessibilityObject>(axChild.get()));
         }
         axChildrenIDs.shrinkToFit();
 
@@ -478,11 +478,11 @@ void AXIsolatedTree::collectNodeChangesForSubtree(AccessibilityObject& axObject)
         iterator->value.parentID = parentID;
 
         for (const auto& axChild : axChildrenCopy) {
-            if (!axChild || axChild.get() == &axObject) {
+            if (axChild.ptr() == &axObject) {
                 ASSERT_NOT_REACHED();
                 continue;
             }
-            collectNodeChangesForSubtree(downcast<AccessibilityObject>(*axChild));
+            collectNodeChangesForSubtree(downcast<AccessibilityObject>(axChild.get()));
         }
     }
 }
@@ -807,15 +807,11 @@ void AXIsolatedTree::updateDependentProperties(AccessibilityObject& axObject)
     ASSERT(isMainThread());
 
     auto updateRelatedObjects = [this] (const AccessibilityObject& object) {
-        for (const auto& labeledObject : object.labelForObjects()) {
-            if (RefPtr axObject = downcast<AccessibilityObject>(labeledObject.get()))
-                queueNodeUpdate(axObject->objectID(), NodeUpdateOptions::nodeUpdate());
-        }
+        for (const auto& labeledObject : object.labelForObjects())
+            queueNodeUpdate(labeledObject->objectID(), NodeUpdateOptions::nodeUpdate());
 
-        for (const auto& describedByObject : object.descriptionForObjects()) {
-            if (RefPtr axObject = downcast<AccessibilityObject>(describedByObject.get()))
-                queueNodeUpdate(axObject->objectID(), { { AXPropertyName::AccessibilityText, AXPropertyName::ExtendedDescription } });
-        }
+        for (const auto& describedByObject : object.descriptionForObjects())
+            queueNodeUpdate(describedByObject->objectID(), { { AXPropertyName::AccessibilityText, AXPropertyName::ExtendedDescription } });
     };
     updateRelatedObjects(axObject);
 
@@ -894,7 +890,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
         // can cause this objects children to be invalidated as we iterate.
         auto childrenCopy = axObject.children();
         for (auto& child : childrenCopy) {
-            Ref liveChild = downcast<AccessibilityObject>(*child);
+            Ref liveChild = downcast<AccessibilityObject>(child.get());
             if (liveChild->childrenInitialized())
                 continue;
 
@@ -942,7 +938,7 @@ void AXIsolatedTree::updateChildren(AccessibilityObject& axObject, ResolveNodeCh
             childrenChanged = true;
             AXLOG(makeString("AXID "_s, axAncestor->objectID().loggingString(), " gaining new subtree, starting at ID "_s, newChildren[i]->objectID().loggingString(), ':'));
             AXLOG(newChildren[i]);
-            collectNodeChangesForSubtree(downcast<AccessibilityObject>(*newChildren[i]));
+            collectNodeChangesForSubtree(downcast<AccessibilityObject>(newChildren[i].get()));
         }
     }
     m_nodeMap.set(axAncestor->objectID(), ParentChildrenIDs { oldIDs.parentID, WTFMove(newChildrenIDs) });

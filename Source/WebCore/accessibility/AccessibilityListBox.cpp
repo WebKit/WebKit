@@ -148,7 +148,7 @@ AccessibilityObject* AccessibilityListBox::elementAccessibilityHitTest(const Int
         // The cast to HTMLElement below is safe because the only other possible listItem type
         // would be a WMLElement, but WML builds don't use accessibility features at all.
         if (rect.contains(point)) {
-            listBoxOption = downcast<AccessibilityObject>(children[i].get());
+            listBoxOption = &downcast<AccessibilityObject>(children[i].get());
             break;
         }
     }

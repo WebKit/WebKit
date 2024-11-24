@@ -275,7 +275,7 @@ AXCoreObject* AccessibilityMathMLElement::mathRootIndexObject()
     if (children.size() < 2)
         return nullptr;
 
-    return children[1].get();
+    return children[1].ptr();
 }
 
 AXCoreObject* AccessibilityMathMLElement::mathNumeratorObject()
@@ -287,7 +287,7 @@ AXCoreObject* AccessibilityMathMLElement::mathNumeratorObject()
     if (children.size() != 2)
         return nullptr;
 
-    return children[0].get();
+    return children[0].ptr();
 }
 
 AXCoreObject* AccessibilityMathMLElement::mathDenominatorObject()
@@ -299,7 +299,7 @@ AXCoreObject* AccessibilityMathMLElement::mathDenominatorObject()
     if (children.size() != 2)
         return nullptr;
 
-    return children[1].get();
+    return children[1].ptr();
 }
 
 AXCoreObject* AccessibilityMathMLElement::mathUnderObject()
@@ -312,7 +312,7 @@ AXCoreObject* AccessibilityMathMLElement::mathUnderObject()
         return nullptr;
 
     if (node()->hasTagName(MathMLNames::munderTag) || node()->hasTagName(MathMLNames::munderoverTag))
-        return children[1].get();
+        return children[1].ptr();
 
     return nullptr;
 }
@@ -322,13 +322,12 @@ AXCoreObject* AccessibilityMathMLElement::mathOverObject()
     if (!isMathUnderOver() || !node())
         return nullptr;
 
-    const auto& children = this->unignoredChildren();
-
+    const auto& children = unignoredChildren();
     if (children.size() >= 2 && node()->hasTagName(MathMLNames::moverTag))
-        return children[1].get();
+        return children[1].ptr();
 
     if (children.size() >= 3 && node()->hasTagName(MathMLNames::munderoverTag))
-        return children[2].get();
+        return children[2].ptr();
 
     return nullptr;
 }
@@ -338,10 +337,10 @@ AXCoreObject* AccessibilityMathMLElement::mathBaseObject()
     if (!isMathSubscriptSuperscript() && !isMathUnderOver() && !isMathMultiscript())
         return nullptr;
 
-    const auto& children = this->unignoredChildren();
+    const auto& children = unignoredChildren();
     // The base object in question is always the first child.
     if (children.size() > 0)
-        return children[0].get();
+        return children[0].ptr();
 
     return nullptr;
 }
@@ -351,12 +350,12 @@ AXCoreObject* AccessibilityMathMLElement::mathSubscriptObject()
     if (!isMathSubscriptSuperscript() || !node())
         return nullptr;
 
-    const auto& children = this->unignoredChildren();
+    const auto& children = unignoredChildren();
     if (children.size() < 2)
         return nullptr;
 
     if (node()->hasTagName(MathMLNames::msubTag) || node()->hasTagName(MathMLNames::msubsupTag))
-        return children[1].get();
+        return children[1].ptr();
 
     return nullptr;
 }
@@ -366,14 +365,14 @@ AXCoreObject* AccessibilityMathMLElement::mathSuperscriptObject()
     if (!isMathSubscriptSuperscript() || !node())
         return nullptr;
 
-    const auto& children = this->unignoredChildren();
+    const auto& children = unignoredChildren();
     unsigned count = children.size();
 
     if (count >= 2 && node()->hasTagName(MathMLNames::msupTag))
-        return children[1].get();
+        return children[1].ptr();
 
     if (count >= 3 && node()->hasTagName(MathMLNames::msubsupTag))
-        return children[2].get();
+        return children[2].ptr();
 
     return nullptr;
 }

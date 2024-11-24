@@ -563,11 +563,11 @@ void AccessibilityNodeObject::clearChildren()
 
 void AccessibilityNodeObject::updateOwnedChildren()
 {
-    for (RefPtr child : ownedObjects()) {
+    for (Ref child : ownedObjects()) {
         // If the child already exists as a DOM child, but is also in the owned objects, then
         // we need to re-order this child in the aria-owns order.
         m_children.removeFirst(child);
-        addChild(child.get());
+        addChild(child.ptr());
     }
 }
 
@@ -950,7 +950,7 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityNodeObject::radioButtonGr
             if (!cache)
                 break;
             if (auto* object = cache->getOrCreate(radioSibling.ptr()))
-                result.append(object);
+                result.append(*object);
         }
     }
 
@@ -1631,7 +1631,7 @@ String AccessibilityNodeObject::textAsLabelFor(const AccessibilityObject& labele
     if (isAccessibilityLabelInstance()) {
         StringBuilder builder;
         for (const auto& child : const_cast<AccessibilityNodeObject*>(this)->unignoredChildren()) {
-            if (child.get() == &labeledObject)
+            if (child.ptr() == &labeledObject)
                 continue;
 
             if (child->isListBox()) {
@@ -2416,7 +2416,7 @@ String AccessibilityNodeObject::stringValue() const
             if (!child->isListBox())
                 continue;
 
-            if (auto selection = child->selectedChildren(); selection && selection->size() && selection->first())
+            if (auto selection = child->selectedChildren(); selection && selection->size())
                 return selection->first()->stringValue();
             break;
         }
