@@ -28,10 +28,8 @@
 
 #if BPLATFORM(IOS_FAMILY)
 
-#if __has_include(<System/sys/kern_memorystatus.h>)
-extern "C" {
-#include <System/sys/kern_memorystatus.h>
-}
+#if __has_include(<sys/kern_memorystatus.h>)
+#include <sys/kern_memorystatus.h>
 #else
 extern "C" {
 
