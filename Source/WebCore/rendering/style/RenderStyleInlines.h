@@ -273,6 +273,7 @@ inline bool RenderStyle::hasAutoOrphans() const { return m_rareInheritedData->ha
 inline bool RenderStyle::hasAutoSpecifiedZIndex() const { return m_nonInheritedData->boxData->hasAutoSpecifiedZIndex(); }
 inline bool RenderStyle::hasAutoTopAndBottom() const { return top().isAuto() && bottom().isAuto(); }
 inline bool RenderStyle::hasAutoUsedZIndex() const { return m_nonInheritedData->boxData->hasAutoUsedZIndex(); }
+inline bool RenderStyle::hasAutoUserSelect() const { return m_nonInheritedData->miscData->hasAutoUserSelect; }
 inline bool RenderStyle::hasAutoWidows() const { return m_rareInheritedData->hasAutoWidows; }
 inline bool RenderStyle::hasBackground() const { return visitedDependentColor(CSSPropertyBackgroundColor).isVisible() || hasBackgroundImage(); }
 inline bool RenderStyle::hasBackgroundImage() const { return backgroundLayers().hasImage(); }
@@ -758,7 +759,7 @@ inline TransformStyle3D RenderStyle::usedTransformStyle3D() const { return stati
 inline int RenderStyle::usedZIndex() const { return m_nonInheritedData->boxData->usedZIndex(); }
 inline UserDrag RenderStyle::userDrag() const { return static_cast<UserDrag>(m_nonInheritedData->miscData->userDrag); }
 inline UserModify RenderStyle::userModify() const { return static_cast<UserModify>(m_rareInheritedData->userModify); }
-inline UserSelect RenderStyle::userSelect() const { return static_cast<UserSelect>(m_rareInheritedData->userSelect); }
+inline UserSelect RenderStyle::userSelect() const { return static_cast<UserSelect>(m_nonInheritedData->miscData->userSelect); }
 inline VerticalAlign RenderStyle::verticalAlign() const { return m_nonInheritedData->boxData->verticalAlign(); }
 inline const Length& RenderStyle::verticalAlignLength() const { return m_nonInheritedData->boxData->verticalAlignLength(); }
 inline const Vector<Style::ScopedName>& RenderStyle::viewTransitionClasses() const { return m_nonInheritedData->rareData->viewTransitionClasses; }

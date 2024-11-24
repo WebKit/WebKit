@@ -8789,7 +8789,6 @@
             "status": "non-standard"
         },
         "-webkit-user-select": {
-            "inherited": true,
             "values": [
                 "auto",
                 "text",
@@ -8801,6 +8800,7 @@
                 "all"
             ],
             "codegen-properties": {
+                "auto-functions": true,
                 "parser-grammar": "<<values>>"
             },
             "status": {

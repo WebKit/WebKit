@@ -1196,6 +1196,7 @@ static bool requiresPainting(const RenderStyle& style)
 static bool miscDataChangeRequiresRepaint(const StyleMiscNonInheritedData& first, const StyleMiscNonInheritedData& second, OptionSet<StyleDifferenceContextSensitiveProperty>&)
 {
     if (first.userDrag != second.userDrag
+        || first.userSelect != second.userSelect
         || first.objectFit != second.objectFit
         || first.objectPosition != second.objectPosition)
         return true;
@@ -1221,7 +1222,6 @@ static bool rareInheritedDataChangeRequiresRepaint(const StyleRareInheritedData&
 {
     return first.effectiveInert != second.effectiveInert
         || first.userModify != second.userModify
-        || first.userSelect != second.userSelect
         || first.appleColorFilter != second.appleColorFilter
         || first.imageRendering != second.imageRendering
         || first.accentColor != second.accentColor
@@ -1806,6 +1806,7 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // hasExplicitlySetWritingMode
         // usedAppearance
         // userDrag
+        // userSelect
     };
 
     auto conservativelyCollectChangedAnimatablePropertiesViaNonInheritedRareData = [&](auto& first, auto& second) {
@@ -2122,7 +2123,6 @@ void RenderStyle::conservativelyCollectChangedAnimatableProperties(const RenderS
         // nbspMode
         // useTouchOverflowScrolling
         // textSizeAdjust
-        // userSelect
         // isInSubtreeWithBlendMode
         // usedTouchActions
         // eventListenerRegionTypes

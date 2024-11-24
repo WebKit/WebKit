@@ -332,7 +332,9 @@ inline void RenderStyle::setUseSmoothScrolling(bool value) { SET_NESTED(m_nonInh
 inline void RenderStyle::setUsedZIndex(int index) { SET_NESTED_PAIR(m_nonInheritedData, boxData, m_usedZIndex, index, m_hasAutoUsedZIndex, false); }
 inline void RenderStyle::setUserDrag(UserDrag value) { SET_NESTED(m_nonInheritedData, miscData, userDrag, static_cast<unsigned>(value)); }
 inline void RenderStyle::setUserModify(UserModify value) { SET(m_rareInheritedData, userModify, static_cast<unsigned>(value)); }
-inline void RenderStyle::setUserSelect(UserSelect value) { SET(m_rareInheritedData, userSelect, static_cast<unsigned>(value)); }
+inline void RenderStyle::setHasAutoUserSelect() { SET_NESTED_PAIR(m_nonInheritedData, miscData, hasAutoUserSelect, true, userSelect, static_cast<unsigned>(RenderStyle::initialUserSelect())); }
+inline void RenderStyle::setUserSelect(UserSelect value) { SET_NESTED_PAIR(m_nonInheritedData, miscData, userSelect, static_cast<unsigned>(value), hasAutoUserSelect, false); }
+inline void RenderStyle::setUsedUserSelect(UserSelect value) { SET_NESTED(m_nonInheritedData, miscData, userSelect, static_cast<unsigned>(value)); }
 inline void RenderStyle::setViewTransitionClasses(const Vector<Style::ScopedName>& value) { SET_NESTED(m_nonInheritedData, rareData, viewTransitionClasses, value); }
 inline void RenderStyle::setViewTransitionName(Style::ViewTransitionName value) { SET_NESTED(m_nonInheritedData, rareData, viewTransitionName, value); }
 inline void RenderStyle::setVisitedLinkBackgroundColor(const StyleColor& value) { SET_DOUBLY_NESTED(m_nonInheritedData, miscData, visitedLinkColor, background, value); }

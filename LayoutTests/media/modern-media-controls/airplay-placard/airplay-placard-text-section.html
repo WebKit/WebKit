@@ -13,9 +13,10 @@ mediaControls.placard = mediaControls.airplayPlacard;
 document.body.appendChild(mediaControls.element);
 
 shouldBecomeEqual("!!document.querySelector('.placard')", "true", () => {
-    shouldBeEqualToString("window.getComputedStyle(document.querySelector('.title')).webkitUserSelect", "none");
+    shouldBeTrue("document.querySelector('.placard').querySelector('.title') == document.querySelector('.title')");
+    shouldBeTrue("document.querySelector('.placard').querySelector('.description') == document.querySelector('.description')");
+    shouldBeEqualToString("window.getComputedStyle(document.querySelector('.placard')).webkitUserSelect", "none");
     shouldBeEqualToString("window.getComputedStyle(document.querySelector('.title')).cursor", "default");
-    shouldBeEqualToString("window.getComputedStyle(document.querySelector('.description')).webkitUserSelect", "none");
     shouldBeEqualToString("window.getComputedStyle(document.querySelector('.description')).cursor", "default");
 
     mediaControls.element.remove();
