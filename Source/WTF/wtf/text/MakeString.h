@@ -33,8 +33,6 @@
 #include <wtf/text/StringConcatenateNumbers.h>
 #include <wtf/text/StringView.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 template<typename StringTypeAdapter> constexpr bool makeStringSlowPathRequiredForAdapter = requires(const StringTypeAdapter& adapter) {
@@ -173,5 +171,3 @@ using WTF::makeStringByInserting;
 using WTF::tryMakeAtomString;
 using WTF::tryMakeString;
 using WTF::SerializeUsingMakeString;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END

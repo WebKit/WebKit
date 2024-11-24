@@ -65,6 +65,23 @@ inline std::span<const char> span(const char* string)
     return unsafeMakeSpan(string, string ? strlen(string) : 0);
 }
 
+inline std::span<const LChar> span(const LChar* string)
+{
+    return unsafeMakeSpan(string, string ? strlen(byteCast<char>(string)) : 0);
+}
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+inline std::span<const UChar> span(const UChar* string)
+{
+    if (!string)
+        return { };
+    size_t length = 0;
+    while (string[length])
+        ++length;
+    return unsafeMakeSpan(string, length);
+}
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+
 #if !HAVE(MISSING_U8STRING)
 inline std::span<const char8_t> span(const std::u8string& string)
 {
