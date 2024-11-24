@@ -22,7 +22,7 @@
 
 #if ENABLE(PLATFORM_DRIVEN_TEXT_CHECKING)
 
-messages -> TextCheckingControllerProxy {
+messages -> TextCheckingControllerProxy NotRefCounted {
     ReplaceRelativeToSelection(struct WebCore::AttributedString annotatedString, int64_t selectionOffset, uint64_t length, uint64_t relativeReplacementLocation, uint64_t relativeReplacementLength)
 
     RemoveAnnotationRelativeToSelection(String annotationName, int64_t selectionOffset, uint64_t length)
