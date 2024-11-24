@@ -4207,7 +4207,7 @@ void EventHandler::invalidateDataTransfer()
 static void removeDraggedContentDocumentMarkersFromAllFramesInPage(Page& page)
 {
     page.forEachDocument([] (Document& document) {
-        document.markers().removeMarkers(DocumentMarker::Type::DraggedContent);
+        document.markers().removeMarkers(DocumentMarkerType::DraggedContent);
     });
 
     if (auto* localMainFrame = dynamicDowncast<LocalFrame>(page.mainFrame())) {

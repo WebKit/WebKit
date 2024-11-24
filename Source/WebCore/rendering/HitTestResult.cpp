@@ -252,7 +252,7 @@ String HitTestResult::spellingToolTip(TextDirection& dir) const
     CheckedPtr markers = m_innerNonSharedNode->document().markersIfExists();
     if (!markers)
         return String();
-    WeakPtr marker = markers->markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Type::Grammar);
+    WeakPtr marker = markers->markerContainingPoint(m_hitTestLocation.point(), DocumentMarkerType::Grammar);
     if (!marker)
         return String();
 
@@ -271,7 +271,7 @@ String HitTestResult::replacedString() const
     CheckedPtr markers = m_innerNonSharedNode->document().markersIfExists();
     if (!markers)
         return String();
-    WeakPtr marker = markers->markerContainingPoint(m_hitTestLocation.point(), DocumentMarker::Type::Replacement);
+    WeakPtr marker = markers->markerContainingPoint(m_hitTestLocation.point(), DocumentMarkerType::Replacement);
     if (!marker)
         return String();
     
@@ -820,7 +820,7 @@ Vector<String> HitTestResult::dictationAlternatives() const
     if (!markers)
         return Vector<String>();
 
-    WeakPtr marker = markers->markerContainingPoint(pointInInnerNodeFrame(), DocumentMarker::Type::DictationAlternatives);
+    WeakPtr marker = markers->markerContainingPoint(pointInInnerNodeFrame(), DocumentMarkerType::DictationAlternatives);
     if (!marker)
         return Vector<String>();
 

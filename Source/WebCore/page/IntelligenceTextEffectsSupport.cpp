@@ -47,7 +47,7 @@ Vector<FloatRect> writingToolsTextSuggestionRectsInRootViewCoordinates(Document&
     Vector<FloatRect> textRectsInRootViewCoordinates;
 
     auto& markers = document.markers();
-    markers.forEach(resolvedRange, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
+    markers.forEach(resolvedRange, { DocumentMarkerType::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
         auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
 
         auto markerRange = makeSimpleRange(node, marker);
@@ -65,7 +65,7 @@ Vector<FloatRect> writingToolsTextSuggestionRectsInRootViewCoordinates(Document&
 void updateTextVisibility(Document& document, const SimpleRange& scope, const CharacterRange& range, bool visible, const WTF::UUID& identifier)
 {
     if (visible) {
-        document.markers().removeMarkers({ WebCore::DocumentMarker::Type::TransparentContent }, [identifier](auto& marker) {
+        document.markers().removeMarkers({ WebCore::DocumentMarkerType::TransparentContent }, [identifier](auto& marker) {
             auto& data = std::get<WebCore::DocumentMarker::TransparentContentData>(marker.data());
             return data.uuid == identifier ? WebCore::FilterMarkerResult::Remove : WebCore::FilterMarkerResult::Keep;
         });
@@ -106,7 +106,7 @@ void decorateWritingToolsTextReplacements(Document& document, const SimpleRange&
 
     Vector<std::tuple<SimpleRange, DocumentMarker::WritingToolsTextSuggestionData>> markersToReinsert;
 
-    markers.forEach(resolvedRange, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
+    markers.forEach(resolvedRange, { DocumentMarkerType::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
         auto range = makeSimpleRange(node, marker);
         auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
 
@@ -115,11 +115,11 @@ void decorateWritingToolsTextReplacements(Document& document, const SimpleRange&
         return false;
     });
 
-    markers.removeMarkers(resolvedRange, { DocumentMarker::Type::WritingToolsTextSuggestion });
+    markers.removeMarkers(resolvedRange, { DocumentMarkerType::WritingToolsTextSuggestion });
 
     for (const auto& [range, oldData] : markersToReinsert) {
         auto newData = DocumentMarker::WritingToolsTextSuggestionData { oldData.originalText, oldData.suggestionID, oldData.state, DocumentMarker::WritingToolsTextSuggestionData::Decoration::Underline };
-        markers.addMarker(range, DocumentMarker::Type::WritingToolsTextSuggestion, newData);
+        markers.addMarker(range, DocumentMarkerType::WritingToolsTextSuggestion, newData);
     }
 }
 #endif

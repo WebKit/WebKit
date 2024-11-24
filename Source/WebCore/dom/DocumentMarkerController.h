@@ -62,47 +62,47 @@ public:
 
     void detach();
 
-    WEBCORE_EXPORT void addMarker(const SimpleRange&, DocumentMarker::Type, const DocumentMarker::Data& = { });
-    void addMarker(Text&, unsigned startOffset, unsigned length, DocumentMarker::Type, DocumentMarker::Data&& = { });
+    WEBCORE_EXPORT void addMarker(const SimpleRange&, DocumentMarkerType, const DocumentMarker::Data& = { });
+    void addMarker(Text&, unsigned startOffset, unsigned length, DocumentMarkerType, DocumentMarker::Data&& = { });
     WEBCORE_EXPORT void addMarker(Node&, DocumentMarker&&);
     void addDraggedContentMarker(const SimpleRange&);
     WEBCORE_EXPORT void addTransparentContentMarker(const SimpleRange&, WTF::UUID);
 
     void copyMarkers(Node& source, OffsetRange, Node& destination);
     bool hasMarkers() const;
-    WEBCORE_EXPORT bool hasMarkers(const SimpleRange&, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers());
+    WEBCORE_EXPORT bool hasMarkers(const SimpleRange&, OptionSet<DocumentMarkerType> = DocumentMarker::allMarkers());
 
     // When a marker partially overlaps with range, if removePartiallyOverlappingMarkers is true, we completely
     // remove the marker. If the argument is false, we will adjust the span of the marker so that it retains
     // the portion that is outside of the range.
-    WEBCORE_EXPORT void removeMarkers(const SimpleRange&, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
-    WEBCORE_EXPORT void removeMarkers(Node&, OffsetRange, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers(), const Function<FilterMarkerResult(const DocumentMarker&)>& filterFunction = nullptr, RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
+    WEBCORE_EXPORT void removeMarkers(const SimpleRange&, OptionSet<DocumentMarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
+    WEBCORE_EXPORT void removeMarkers(Node&, OffsetRange, OptionSet<DocumentMarkerType> = DocumentMarker::allMarkers(), const Function<FilterMarkerResult(const DocumentMarker&)>& filterFunction = nullptr, RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
 
-    WEBCORE_EXPORT void filterMarkers(const SimpleRange&, const Function<FilterMarkerResult(const DocumentMarker&)>& filterFunction, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
+    WEBCORE_EXPORT void filterMarkers(const SimpleRange&, const Function<FilterMarkerResult(const DocumentMarker&)>& filterFunction, OptionSet<DocumentMarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
 
-    WEBCORE_EXPORT void removeMarkers(OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers());
-    WEBCORE_EXPORT void removeMarkers(OptionSet<DocumentMarker::Type>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction);
-    void removeMarkers(Node&, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers());
-    void repaintMarkers(OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers());
+    WEBCORE_EXPORT void removeMarkers(OptionSet<DocumentMarkerType> = DocumentMarker::allMarkers());
+    WEBCORE_EXPORT void removeMarkers(OptionSet<DocumentMarkerType>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction);
+    void removeMarkers(Node&, OptionSet<DocumentMarkerType> = DocumentMarker::allMarkers());
+    void repaintMarkers(OptionSet<DocumentMarkerType> = DocumentMarker::allMarkers());
     void shiftMarkers(Node&, unsigned startOffset, int delta);
 
-    void dismissMarkers(OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers());
+    void dismissMarkers(OptionSet<DocumentMarkerType> = DocumentMarker::allMarkers());
 
-    WEBCORE_EXPORT Vector<WeakPtr<RenderedDocumentMarker>> markersFor(Node&, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers()) const;
-    WEBCORE_EXPORT Vector<WeakPtr<RenderedDocumentMarker>> markersInRange(const SimpleRange&, OptionSet<DocumentMarker::Type>);
-    WEBCORE_EXPORT Vector<SimpleRange> rangesForMarkersInRange(const SimpleRange&, OptionSet<DocumentMarker::Type>);
-    void clearDescriptionOnMarkersIntersectingRange(const SimpleRange&, OptionSet<DocumentMarker::Type>);
+    WEBCORE_EXPORT Vector<WeakPtr<RenderedDocumentMarker>> markersFor(Node&, OptionSet<DocumentMarkerType> = DocumentMarker::allMarkers()) const;
+    WEBCORE_EXPORT Vector<WeakPtr<RenderedDocumentMarker>> markersInRange(const SimpleRange&, OptionSet<DocumentMarkerType>);
+    WEBCORE_EXPORT Vector<SimpleRange> rangesForMarkersInRange(const SimpleRange&, OptionSet<DocumentMarkerType>);
+    void clearDescriptionOnMarkersIntersectingRange(const SimpleRange&, OptionSet<DocumentMarkerType>);
 
-    WEBCORE_EXPORT void updateRectsForInvalidatedMarkersOfType(DocumentMarker::Type);
+    WEBCORE_EXPORT void updateRectsForInvalidatedMarkersOfType(DocumentMarkerType);
 
     void invalidateRectsForAllMarkers();
     void invalidateRectsForMarkersInNode(Node&);
 
-    WeakPtr<DocumentMarker> markerContainingPoint(const LayoutPoint&, DocumentMarker::Type);
-    WEBCORE_EXPORT Vector<FloatRect> renderedRectsForMarkers(DocumentMarker::Type);
+    WeakPtr<DocumentMarker> markerContainingPoint(const LayoutPoint&, DocumentMarkerType);
+    WEBCORE_EXPORT Vector<FloatRect> renderedRectsForMarkers(DocumentMarkerType);
 
     template<IterationDirection = IterationDirection::Forwards>
-    WEBCORE_EXPORT void forEach(const SimpleRange&, OptionSet<DocumentMarker::Type>, Function<bool(Node&, RenderedDocumentMarker&)>&&);
+    WEBCORE_EXPORT void forEach(const SimpleRange&, OptionSet<DocumentMarkerType>, Function<bool(Node&, RenderedDocumentMarker&)>&&);
 
     WEBCORE_EXPORT static std::tuple<float, float> markerYPositionAndHeightForFont(const FontCascade&);
 
@@ -119,10 +119,10 @@ private:
 
     using MarkerMap = UncheckedKeyHashMap<Ref<Node>, std::unique_ptr<Vector<RenderedDocumentMarker>>>;
 
-    bool possiblyHasMarkers(OptionSet<DocumentMarker::Type>) const;
-    OptionSet<DocumentMarker::Type> removeMarkersFromList(MarkerMap::iterator, OptionSet<DocumentMarker::Type>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction = nullptr);
+    bool possiblyHasMarkers(OptionSet<DocumentMarkerType>) const;
+    OptionSet<DocumentMarkerType> removeMarkersFromList(MarkerMap::iterator, OptionSet<DocumentMarkerType>, const Function<FilterMarkerResult(const RenderedDocumentMarker&)>& filterFunction = nullptr);
 
-    void forEachOfTypes(OptionSet<DocumentMarker::Type>, Function<bool(Node&, RenderedDocumentMarker&)>&&);
+    void forEachOfTypes(OptionSet<DocumentMarkerType>, Function<bool(Node&, RenderedDocumentMarker&)>&&);
 
     void fadeAnimationTimerFired();
     void writingToolsTextSuggestionAnimationTimerFired();
@@ -131,7 +131,7 @@ private:
 
     MarkerMap m_markers;
     // Provide a quick way to determine whether a particular marker type is absent without going through the map.
-    OptionSet<DocumentMarker::Type> m_possiblyExistingMarkerTypes;
+    OptionSet<DocumentMarkerType> m_possiblyExistingMarkerTypes;
     WeakRef<Document, WeakPtrImplWithEventTargetData> m_document;
 
     Timer m_fadeAnimationTimer;
@@ -140,14 +140,14 @@ private:
 
 
 template<>
-WEBCORE_EXPORT void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirection::Forwards>(const SimpleRange&, OptionSet<DocumentMarker::Type>, Function<bool(Node&, RenderedDocumentMarker&)>&&);
+WEBCORE_EXPORT void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirection::Forwards>(const SimpleRange&, OptionSet<DocumentMarkerType>, Function<bool(Node&, RenderedDocumentMarker&)>&&);
 
 template<>
-WEBCORE_EXPORT void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirection::Backwards>(const SimpleRange&, OptionSet<DocumentMarker::Type>, Function<bool(Node&, RenderedDocumentMarker&)>&&);
+WEBCORE_EXPORT void DocumentMarkerController::forEach<DocumentMarkerController::IterationDirection::Backwards>(const SimpleRange&, OptionSet<DocumentMarkerType>, Function<bool(Node&, RenderedDocumentMarker&)>&&);
 
-WEBCORE_EXPORT void addMarker(const SimpleRange&, DocumentMarker::Type, const DocumentMarker::Data& = { });
-void addMarker(Text&, unsigned startOffset, unsigned length, DocumentMarker::Type, DocumentMarker::Data&& = { });
-void removeMarkers(const SimpleRange&, OptionSet<DocumentMarker::Type> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
+WEBCORE_EXPORT void addMarker(const SimpleRange&, DocumentMarkerType, const DocumentMarker::Data& = { });
+void addMarker(Text&, unsigned startOffset, unsigned length, DocumentMarkerType, DocumentMarker::Data&& = { });
+void removeMarkers(const SimpleRange&, OptionSet<DocumentMarkerType> = DocumentMarker::allMarkers(), RemovePartiallyOverlappingMarker = RemovePartiallyOverlappingMarker::No);
 
 WEBCORE_EXPORT SimpleRange makeSimpleRange(Node&, const DocumentMarker&);
 

@@ -1251,7 +1251,7 @@ void Page::unmarkAllTextMatches()
 {
     forEachDocument([] (Document& document) {
         if (CheckedPtr markers = document.markersIfExists())
-            markers->removeMarkers(DocumentMarker::Type::TextMatch);
+            markers->removeMarkers(DocumentMarkerType::TextMatch);
     });
 }
 

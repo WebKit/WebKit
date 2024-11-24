@@ -243,11 +243,11 @@ void SpellChecker::didCheckSucceed(TextCheckingRequestIdentifier identifier, con
 {
     TextCheckingRequestData requestData = m_processingRequest->data();
     if (requestData.identifier() == identifier) {
-        OptionSet<DocumentMarker::Type> markerTypes;
+        OptionSet<DocumentMarkerType> markerTypes;
         if (requestData.checkingTypes().contains(TextCheckingType::Spelling))
-            markerTypes.add(DocumentMarker::Type::Spelling);
+            markerTypes.add(DocumentMarkerType::Spelling);
         if (requestData.checkingTypes().contains(TextCheckingType::Grammar))
-            markerTypes.add(DocumentMarker::Type::Grammar);
+            markerTypes.add(DocumentMarkerType::Grammar);
         if (!markerTypes.isEmpty())
             removeMarkers(m_processingRequest->checkingRange(), markerTypes);
     }

@@ -164,7 +164,7 @@ void TextAnimationController::removeTransparentMarkersForTextAnimationID(const W
         return;
     }
 
-    document->markers().removeMarkers({ WebCore::DocumentMarker::Type::TransparentContent }, [&](const WebCore::DocumentMarker& marker) {
+    document->markers().removeMarkers({ WebCore::DocumentMarkerType::TransparentContent }, [&](const WebCore::DocumentMarker& marker) {
         return std::get<WebCore::DocumentMarker::TransparentContentData>(marker.data()).uuid == uuid ? WebCore::FilterMarkerResult::Remove : WebCore::FilterMarkerResult::Keep;
     });
 }

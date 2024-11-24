@@ -31,7 +31,6 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "ContextDestructionObserver.h"
 #include "Cookie.h"
-#include "DocumentMarker.h"
 #include "EpochTimeStamp.h"
 #include "EventTrackingRegions.h"
 #include "ExceptionOr.h"
@@ -145,6 +144,8 @@ class WebAnimation;
 class WebGLRenderingContext;
 class WindowProxy;
 class XMLHttpRequest;
+
+enum class DocumentMarkerType : uint32_t;
 
 #if ENABLE(ENCRYPTED_MEDIA)
 class MediaKeys;
@@ -1561,7 +1562,7 @@ private:
 
     CachedResource* resourceFromMemoryCache(const String& url);
 
-    bool hasMarkerFor(DocumentMarker::Type, int from, int length);
+    bool hasMarkerFor(DocumentMarkerType, int from, int length);
 
 #if ENABLE(MEDIA_STREAM)
     // RealtimeMediaSourceObserver API

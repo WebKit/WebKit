@@ -26,7 +26,6 @@
 #pragma once
 
 #include "CompositionUnderline.h"
-#include "DocumentMarker.h"
 #include "EditAction.h"
 #include "EditingBehavior.h"
 #include "EditingStyle.h"
@@ -65,6 +64,7 @@ class SharedBuffer;
 class CustomUndoStep;
 class DataTransfer;
 class DeleteButtonController;
+class DocumentMarker;
 class EditCommand;
 class EditCommandComposition;
 class EditorClient;
@@ -97,6 +97,8 @@ struct FontAttributes;
 struct PasteboardPlainText;
 struct PasteboardURL;
 struct TextCheckingResult;
+
+enum class DocumentMarkerType : uint32_t;
 
 #if ENABLE(ATTACHMENT_ELEMENT)
 struct PromisedAttachmentInfo;
@@ -522,8 +524,8 @@ public:
     enum class MatchStyle : bool { No, Yes };
     WEBCORE_EXPORT void replaceSelectionWithFragment(DocumentFragment&, SelectReplacement, SmartReplace, MatchStyle, EditAction = EditAction::Insert, MailBlockquoteHandling = MailBlockquoteHandling::RespectBlockquote);
     WEBCORE_EXPORT void replaceSelectionWithText(const String&, SelectReplacement, SmartReplace, EditAction = EditAction::Insert);
-    WEBCORE_EXPORT bool selectionStartHasMarkerFor(DocumentMarker::Type, int from, int length) const;
-    WEBCORE_EXPORT void selectionStartSetMarkerForTesting(DocumentMarker::Type, int from, int length, const String&);
+    WEBCORE_EXPORT bool selectionStartHasMarkerFor(DocumentMarkerType, int from, int length) const;
+    WEBCORE_EXPORT void selectionStartSetMarkerForTesting(DocumentMarkerType, int from, int length, const String&);
     void updateMarkersForWordsAffectedByEditing(bool doNotRemoveIfSelectionAtWordBoundary);
     void deletedAutocorrectionAtPosition(const Position&, const String& originalString);
     

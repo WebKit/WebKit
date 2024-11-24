@@ -413,7 +413,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 
     unsigned offset = position.deepEquivalent().deprecatedEditingOffset();
     auto& document = node->document();
-    for (auto& marker : document.markers().markersFor(*node, DocumentMarker::Type::DictationPhraseWithAlternatives)) {
+    for (auto& marker : document.markers().markersFor(*node, DocumentMarkerType::DictationPhraseWithAlternatives)) {
         if (marker->startOffset() <= offset && marker->endOffset() >= offset) {
             *alternatives = createNSArray(std::get<Vector<String>>(marker->data())).autorelease();
             return kit(makeSimpleRange(*node, *marker));
@@ -431,7 +431,7 @@ static inline SelectionDirection toSelectionDirection(WebTextAdjustmentDirection
 
     unsigned offset = position.deepEquivalent().deprecatedEditingOffset();
     auto& document = node->document();
-    for (auto& marker : document.markers().markersFor(*node, DocumentMarker::Type::Spelling)) {
+    for (auto& marker : document.markers().markersFor(*node, DocumentMarkerType::Spelling)) {
         if (marker->startOffset() <= offset && marker->endOffset() >= offset)
             return kit(makeSimpleRange(*node, *marker));
     }

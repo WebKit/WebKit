@@ -155,10 +155,10 @@ bool RenderReplaced::shouldDrawSelectionTint() const
 inline static bool contentContainsReplacedElement(const Vector<WeakPtr<RenderedDocumentMarker>>& markers, const Element& element)
 {
     for (auto& marker : markers) {
-        if (marker->type() == DocumentMarker::Type::DraggedContent) {
+        if (marker->type() == DocumentMarkerType::DraggedContent) {
             if (std::get<RefPtr<Node>>(marker->data()) == &element)
                 return true;
-        } else if (marker->type() == DocumentMarker::Type::TransparentContent) {
+        } else if (marker->type() == DocumentMarkerType::TransparentContent) {
             if (std::get<DocumentMarker::TransparentContentData>(marker->data()).node == &element)
                 return true;
         }
@@ -259,11 +259,11 @@ void RenderReplaced::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         ASSERT(parentContainer);
         CheckedPtr markers = document().markersIfExists();
         if (markers) {
-            if (contentContainsReplacedElement(markers->markersFor(*parentContainer, DocumentMarker::Type::DraggedContent), *element())) {
+            if (contentContainsReplacedElement(markers->markersFor(*parentContainer, DocumentMarkerType::DraggedContent), *element())) {
                 savedGraphicsContext.save();
                 paintInfo.context().setAlpha(0.25);
             }
-            if (contentContainsReplacedElement(markers->markersFor(*parentContainer, DocumentMarker::Type::TransparentContent), *element())) {
+            if (contentContainsReplacedElement(markers->markersFor(*parentContainer, DocumentMarkerType::TransparentContent), *element())) {
                 savedGraphicsContext.save();
                 paintInfo.context().setAlpha(0.0);
             }

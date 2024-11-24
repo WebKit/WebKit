@@ -956,7 +956,7 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
         return String();
 
     ScriptDisallowedScope::InMainThread scriptDisallowedScope;
-    for (auto& marker : protectedDocument()->markers().markersInRange(*rangeOfFirstCharacter, DocumentMarker::Type::Autocorrected)) {
+    for (auto& marker : protectedDocument()->markers().markersInRange(*rangeOfFirstCharacter, DocumentMarkerType::Autocorrected)) {
         int startOffset = marker->startOffset();
         if (startOffset == startOfSelection.deepEquivalent().offsetInContainerNode())
             return marker->description();

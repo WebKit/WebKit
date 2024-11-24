@@ -5913,7 +5913,7 @@ void WebPage::unmarkAllMisspellings()
         if (!localFrame)
             continue;
         if (RefPtr document = localFrame->document())
-            document->markers().removeMarkers(DocumentMarker::Type::Spelling);
+            document->markers().removeMarkers(DocumentMarkerType::Spelling);
     }
 }
 
@@ -5924,7 +5924,7 @@ void WebPage::unmarkAllBadGrammar()
         if (!localFrame)
             continue;
         if (RefPtr document = localFrame->document())
-            document->markers().removeMarkers(DocumentMarker::Type::Grammar);
+            document->markers().removeMarkers(DocumentMarkerType::Grammar);
     }
 }
 

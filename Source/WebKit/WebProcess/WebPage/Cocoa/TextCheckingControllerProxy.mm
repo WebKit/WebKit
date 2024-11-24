@@ -69,9 +69,9 @@ TextCheckingControllerProxy::~TextCheckingControllerProxy()
     WebProcess::singleton().removeMessageReceiver(Messages::TextCheckingControllerProxy::messageReceiverName(), m_page->identifier());
 }
 
-static OptionSet<DocumentMarker::Type> relevantMarkerTypes()
+static OptionSet<DocumentMarkerType> relevantMarkerTypes()
 {
-    return { DocumentMarker::Type::PlatformTextChecking, DocumentMarker::Type::Spelling, DocumentMarker::Type::Grammar };
+    return { DocumentMarkerType::PlatformTextChecking, DocumentMarkerType::Spelling, DocumentMarkerType::Grammar };
 }
 
 std::optional<TextCheckingControllerProxy::RangeAndOffset> TextCheckingControllerProxy::rangeAndOffsetRelativeToSelection(int64_t offset, uint64_t length)
@@ -141,17 +141,17 @@ void TextCheckingControllerProxy::replaceRelativeToSelection(const WebCore::Attr
         [attrs enumerateKeysAndObjectsUsingBlock:^(NSAttributedStringKey key, id value, BOOL *stop) {
             if (![value isKindOfClass:[NSString class]])
                 return;
-            markers.addMarker(attributeCoreRange, WebCore::DocumentMarker::Type::PlatformTextChecking,
+            markers.addMarker(attributeCoreRange, WebCore::DocumentMarkerType::PlatformTextChecking,
                 WebCore::DocumentMarker::PlatformTextCheckingData { key, (NSString *)value });
 
             // FIXME: Switch to constants after rdar://problem/48914153 is resolved.
             if ([key isEqualToString:@"NSSpellingState"]) {
                 NSSpellingState spellingState = (NSSpellingState)[value integerValue];
                 if (spellingState & NSSpellingStateSpellingFlag)
-                    markers.addMarker(attributeCoreRange, DocumentMarker::Type::Spelling);
+                    markers.addMarker(attributeCoreRange, DocumentMarkerType::Spelling);
                 if (spellingState & NSSpellingStateGrammarFlag) {
                     NSString *userDescription = [attrs objectForKey:@"NSGrammarUserDescription"];
-                    markers.addMarker(attributeCoreRange, DocumentMarker::Type::Grammar, String { userDescription });
+                    markers.addMarker(attributeCoreRange, DocumentMarkerType::Grammar, String { userDescription });
                 }
             }
         }];
@@ -165,7 +165,7 @@ void TextCheckingControllerProxy::removeAnnotationRelativeToSelection(const Stri
         return;
 
     auto removeCoreSpellingMarkers = annotation == "NSSpellingState"_s;
-    auto types = removeCoreSpellingMarkers ? relevantMarkerTypes() : WebCore::DocumentMarker::Type::PlatformTextChecking;
+    auto types = removeCoreSpellingMarkers ? relevantMarkerTypes() : WebCore::DocumentMarkerType::PlatformTextChecking;
     RefPtr focusedOrMainFrame = m_page->corePage()->checkedFocusController()->focusedOrMainFrame();
     if (!focusedOrMainFrame)
         return;
@@ -195,7 +195,7 @@ WebCore::AttributedString TextCheckingControllerProxy::annotatedSubstringBetween
             continue;
         [string appendAttributedString:adoptNS([[NSAttributedString alloc] initWithString:it.text().createNSStringWithoutCopying().get()]).get()];
         auto range = it.range();
-        for (auto& marker : range.start.document().markers().markersInRange(range, DocumentMarker::Type::PlatformTextChecking)) {
+        for (auto& marker : range.start.document().markers().markersInRange(range, DocumentMarkerType::PlatformTextChecking)) {
             auto& data = std::get<DocumentMarker::PlatformTextCheckingData>(marker->data());
             auto subrange = resolveCharacterRange(range, { marker->startOffset(), marker->endOffset() - marker->startOffset() });
             auto attributeRange = characterRange(*entireRange, subrange);

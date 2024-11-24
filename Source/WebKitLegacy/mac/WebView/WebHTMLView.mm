@@ -4638,8 +4638,8 @@ static RefPtr<WebCore::KeyboardEvent> currentKeyboardEvent(WebCore::LocalFrame* 
 
 #if PLATFORM(IOS_FAMILY)
         if (auto* document = coreFrame->document()) {
-            document->markers().removeMarkers(WebCore::DocumentMarker::Type::DictationPhraseWithAlternatives);
-            document->markers().removeMarkers(WebCore::DocumentMarker::Type::DictationResult);
+            document->markers().removeMarkers(WebCore::DocumentMarkerType::DictationPhraseWithAlternatives);
+            document->markers().removeMarkers(WebCore::DocumentMarkerType::DictationResult);
         }
 #endif
 
@@ -7123,7 +7123,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     auto* document = coreFrame->document();
     if (!document)
         return;
-    document->markers().removeMarkers(WebCore::DocumentMarker::Type::TextMatch);
+    document->markers().removeMarkers(WebCore::DocumentMarkerType::TextMatch);
 }
 
 - (NSArray *)rectsForTextMatches
@@ -7135,7 +7135,7 @@ static CGImageRef selectionImage(WebCore::LocalFrame* frame, bool forceBlackText
     if (!document)
         return @[];
 
-    return createNSArray(document->markers().renderedRectsForMarkers(WebCore::DocumentMarker::Type::TextMatch)).autorelease();
+    return createNSArray(document->markers().renderedRectsForMarkers(WebCore::DocumentMarkerType::TextMatch)).autorelease();
 }
 
 - (BOOL)_findString:(NSString *)string options:(WebFindOptions)options

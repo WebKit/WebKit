@@ -260,7 +260,7 @@ auto TextCheckingHelper::findMisspelledWords(Operation operation) const -> std::
         auto misspellingRange = resolveCharacterRange(m_range, CharacterRange(currentChunkOffset + misspellingLocation, misspellingLength));
 
         if (operation == Operation::MarkAll)
-            addMarker(misspellingRange, DocumentMarker::Type::Spelling);
+            addMarker(misspellingRange, DocumentMarkerType::Spelling);
 
         if (first.first.word.isNull()) {
             first = {
@@ -431,7 +431,7 @@ int TextCheckingHelper::findUngrammaticalPhrases(Operation operation, const Vect
         
         if (operation == Operation::MarkAll) {
             auto badGrammarRange = resolveCharacterRange(m_range, { badGrammarPhraseLocation - startOffset + detail->range.location, detail->range.length });
-            addMarker(badGrammarRange, DocumentMarker::Type::Grammar, detail->userDescription);
+            addMarker(badGrammarRange, DocumentMarkerType::Grammar, detail->userDescription);
         }
         
         // Remember this detail only if it's earlier than our current candidate (the details aren't in a guaranteed order)

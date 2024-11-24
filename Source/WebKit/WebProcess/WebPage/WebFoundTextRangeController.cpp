@@ -151,10 +151,10 @@ void WebFoundTextRangeController::decorateTextRangeWithStyle(const WebFoundTextR
     if (auto simpleRange = simpleRangeFromFoundTextRange(range)) {
         switch (style) {
         case FindDecorationStyle::Normal:
-            simpleRange->start.document().markers().removeMarkers(*simpleRange, WebCore::DocumentMarker::Type::TextMatch);
+            simpleRange->start.document().markers().removeMarkers(*simpleRange, WebCore::DocumentMarkerType::TextMatch);
             break;
         case FindDecorationStyle::Found:
-            simpleRange->start.document().markers().addMarker(*simpleRange, WebCore::DocumentMarker::Type::TextMatch);
+            simpleRange->start.document().markers().addMarker(*simpleRange, WebCore::DocumentMarkerType::TextMatch);
             break;
         case FindDecorationStyle::Highlighted: {
             m_highlightedRange = range;
@@ -477,7 +477,7 @@ Vector<WebCore::FloatRect> WebFoundTextRangeController::rectsForTextMatchesInRec
         if (!document)
             continue;
 
-        for (auto rect : document->markers().renderedRectsForMarkers(WebCore::DocumentMarker::Type::TextMatch)) {
+        for (auto rect : document->markers().renderedRectsForMarkers(WebCore::DocumentMarkerType::TextMatch)) {
             if (!localFrame->isMainFrame())
                 rect = mainFrameView->windowToContents(localFrame->view()->contentsToWindow(enclosingIntRect(rect)));
 

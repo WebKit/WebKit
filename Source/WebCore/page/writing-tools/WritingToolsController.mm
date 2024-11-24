@@ -309,7 +309,7 @@ void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const Writ
 
     HashSet<WTF::UUID> transparentContentMarkerIdentifiers;
 
-    document->markers().forEach(adjustedProcessedRangeBeforeReplacement, { DocumentMarker::Type::TransparentContent }, [&](auto&, auto marker) {
+    document->markers().forEach(adjustedProcessedRangeBeforeReplacement, { DocumentMarkerType::TransparentContent }, [&](auto&, auto marker) {
         auto& data = std::get<DocumentMarker::TransparentContentData>(marker.data());
         transparentContentMarkerIdentifiers.add(data.uuid);
 
@@ -347,7 +347,7 @@ void WritingToolsController::proofreadingSessionDidReceiveSuggestions(const Writ
         auto originalString = attributedTextString.substring(suggestion.originalRange.location, suggestion.originalRange.length);
 
         auto markerData = DocumentMarker::WritingToolsTextSuggestionData { originalString, suggestion.identifier, DocumentMarker::WritingToolsTextSuggestionData::State::Accepted, DocumentMarker::WritingToolsTextSuggestionData::Decoration::None };
-        addMarker(newResolvedRange, DocumentMarker::Type::WritingToolsTextSuggestion, markerData);
+        addMarker(newResolvedRange, DocumentMarkerType::WritingToolsTextSuggestion, markerData);
 
         state->replacementLocationOffset += static_cast<int>(suggestion.replacement.length()) - static_cast<int>(suggestion.originalRange.length);
     }
@@ -426,7 +426,7 @@ void WritingToolsController::proofreadingSessionDidUpdateStateForSuggestion(cons
         auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
 
         auto offsetRange = OffsetRange { marker.startOffset(), marker.endOffset() };
-        document->markers().removeMarkers(node, offsetRange, { DocumentMarker::Type::WritingToolsTextSuggestion });
+        document->markers().removeMarkers(node, offsetRange, { DocumentMarkerType::WritingToolsTextSuggestion });
 
         replaceContentsOfRangeInSession(*state, rangeToReplace, data.originalText);
 
@@ -702,13 +702,13 @@ void WritingToolsController::writingToolsSessionDidReceiveAction<WritingTools::S
 
     Vector<std::tuple<Ref<Node>, DocumentMarker::WritingToolsTextSuggestionData, unsigned, unsigned>> markerData;
 
-    markers.forEach(sessionRange, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
+    markers.forEach(sessionRange, { DocumentMarkerType::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
         auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
         markerData.append({ node, data, marker.startOffset(), marker.endOffset() });
         return false;
     });
 
-    markers.removeMarkers(sessionRange, { DocumentMarker::Type::WritingToolsTextSuggestion });
+    markers.removeMarkers(sessionRange, { DocumentMarkerType::WritingToolsTextSuggestion });
 
     for (auto& [node, oldData, startOffset, endOffset] : markerData | std::views::reverse) {
         auto rangeToReplace = SimpleRange { { node.get(), startOffset }, { node.get(), endOffset } };
@@ -721,7 +721,7 @@ void WritingToolsController::writingToolsSessionDidReceiveAction<WritingTools::S
         auto newData = DocumentMarker::WritingToolsTextSuggestionData { currentText, oldData.suggestionID, newState, oldData.decoration };
         auto newOffsetRange = OffsetRange { startOffset, endOffset + previousText.length() - currentText.length() };
 
-        markers.addMarker(node, DocumentMarker { DocumentMarker::Type::WritingToolsTextSuggestion, newOffsetRange, WTFMove(newData) });
+        markers.addMarker(node, DocumentMarker { DocumentMarkerType::WritingToolsTextSuggestion, newOffsetRange, WTFMove(newData) });
     }
 }
 
@@ -788,14 +788,14 @@ void WritingToolsController::willEndWritingToolsSession<WritingTools::Session::T
 
     // If the session as a whole is not accepted, revert all the suggestions to their original text.
 
-    markers.forEach<DocumentMarkerController::IterationDirection::Backwards>(sessionRange, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
+    markers.forEach<DocumentMarkerController::IterationDirection::Backwards>(sessionRange, { DocumentMarkerType::WritingToolsTextSuggestion }, [&](auto& node, auto& marker) {
         auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
 
         auto offsetRange = OffsetRange { marker.startOffset(), marker.endOffset() };
 
         auto rangeToReplace = makeSimpleRange(node, marker);
 
-        markers.removeMarkers(node, offsetRange, { DocumentMarker::Type::WritingToolsTextSuggestion });
+        markers.removeMarkers(node, offsetRange, { DocumentMarkerType::WritingToolsTextSuggestion });
 
         if (!accepted && data.state != DocumentMarker::WritingToolsTextSuggestionData::State::Rejected)
             replaceContentsOfRangeInSession(*state, rangeToReplace, data.originalText);
@@ -1084,7 +1084,7 @@ std::optional<std::tuple<Node&, DocumentMarker&>> WritingToolsController::findTe
     RefPtr<Node> targetNode;
     WeakPtr<DocumentMarker> targetMarker;
 
-    document->markers().forEach(outerRange, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&textSuggestionID, &targetNode, &targetMarker](auto& node, auto& marker) mutable {
+    document->markers().forEach(outerRange, { DocumentMarkerType::WritingToolsTextSuggestion }, [&textSuggestionID, &targetNode, &targetMarker](auto& node, auto& marker) mutable {
         auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
         if (data.suggestionID != textSuggestionID)
             return false;
@@ -1112,7 +1112,7 @@ std::optional<std::tuple<Node&, DocumentMarker&>> WritingToolsController::findTe
     RefPtr<Node> targetNode;
     WeakPtr<DocumentMarker> targetMarker;
 
-    document->markers().forEach(range, { DocumentMarker::Type::WritingToolsTextSuggestion }, [&range, &targetNode, &targetMarker](auto& node, auto& marker) mutable {
+    document->markers().forEach(range, { DocumentMarkerType::WritingToolsTextSuggestion }, [&range, &targetNode, &targetMarker](auto& node, auto& marker) mutable {
         auto data = std::get<DocumentMarker::WritingToolsTextSuggestionData>(marker.data());
 
         auto markerRange = makeSimpleRange(node, marker);

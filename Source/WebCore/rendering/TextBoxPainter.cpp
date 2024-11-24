@@ -317,13 +317,13 @@ void TextBoxPainter::paintForegroundAndDecorations()
 
             bool shouldPaintDraggedContent = !(m_paintInfo.paintBehavior.contains(PaintBehavior::ExcludeSelection));
             if (shouldPaintDraggedContent) {
-                auto markedTextsForDraggedContent = MarkedText::collectForDraggedAndTransparentContent(DocumentMarker::Type::DraggedContent, m_renderer, m_selectableRange);
+                auto markedTextsForDraggedContent = MarkedText::collectForDraggedAndTransparentContent(DocumentMarkerType::DraggedContent, m_renderer, m_selectableRange);
                 if (!markedTextsForDraggedContent.isEmpty()) {
                     shouldPaintSelectionForeground = false;
                     markedTexts.appendVector(WTFMove(markedTextsForDraggedContent));
                 }
             }
-            auto markedTextsForTransparentContent = MarkedText::collectForDraggedAndTransparentContent(DocumentMarker::Type::TransparentContent, m_renderer, m_selectableRange);
+            auto markedTextsForTransparentContent = MarkedText::collectForDraggedAndTransparentContent(DocumentMarkerType::TransparentContent, m_renderer, m_selectableRange);
             if (!markedTextsForTransparentContent.isEmpty())
                 markedTexts.appendVector(WTFMove(markedTextsForTransparentContent));
         }
@@ -1012,7 +1012,7 @@ void TextBoxPainter::paintPlatformDocumentMarkers()
         });
     }
 
-    auto transparentContentMarkedTexts = MarkedText::collectForDraggedAndTransparentContent(DocumentMarker::Type::TransparentContent, m_renderer, m_selectableRange);
+    auto transparentContentMarkedTexts = MarkedText::collectForDraggedAndTransparentContent(DocumentMarkerType::TransparentContent, m_renderer, m_selectableRange);
 
     // Ensure the transparent content marked texts go first in the vector, so that they take precedence over
     // the other marked texts when being subdivided so that they do not get painted.
