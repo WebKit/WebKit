@@ -116,8 +116,7 @@ static BOOL _allowsScriptsFullAccess = NO;
 
 - (id)retainObject:(id)obj
 {
-    CFRetain((__bridge CFTypeRef)obj);
-    return obj;
+    return [obj retain];
 }
 
 - (id)classOfObject:(id)obj

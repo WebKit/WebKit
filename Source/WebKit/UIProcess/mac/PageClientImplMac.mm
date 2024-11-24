@@ -966,12 +966,12 @@ WebCore::WebMediaSessionManager& PageClientImpl::mediaSessionManager()
 
 void PageClientImpl::refView()
 {
-    CFRetain((__bridge CFTypeRef)m_view);
+    [m_view retain];
 }
 
 void PageClientImpl::derefView()
 {
-    CFRelease((__bridge CFTypeRef)m_view);
+    [m_view release];
 }
 
 void PageClientImpl::startWindowDrag()
