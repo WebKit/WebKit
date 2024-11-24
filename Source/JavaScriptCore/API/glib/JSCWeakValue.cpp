@@ -76,9 +76,7 @@ public:
     {
         auto* weakValue = JSC_WEAK_VALUE(context);
         jscWeakValueClear(weakValue);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         g_signal_emit(weakValue, signals[CLEARED], 0, nullptr);
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     }
 };
 
