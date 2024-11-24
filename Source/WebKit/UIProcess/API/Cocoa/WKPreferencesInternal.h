@@ -25,6 +25,8 @@
 
 #import "WKPreferencesPrivate.h"
 
+#ifdef __cplusplus
+
 #import "WKObject.h"
 #import "WebPreferences.h"
 
@@ -40,5 +42,15 @@ template<> struct WrapperTraits<WebPreferences> {
 @package
     API::ObjectStorage<WebKit::WebPreferences> _preferences;
 }
+
+@end
+
+#endif
+
+@interface WKPreferences ()
+
+#if TARGET_OS_IPHONE
+@property (nonatomic) BOOL tabFocusesLinks;
+#endif
 
 @end

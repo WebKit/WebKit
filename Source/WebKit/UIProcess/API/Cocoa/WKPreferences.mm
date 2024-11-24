@@ -79,9 +79,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     
     [coder encodeBool:self.shouldPrintBackgrounds forKey:@"shouldPrintBackgrounds"];
 
-#if PLATFORM(MAC)
     [coder encodeBool:self.tabFocusesLinks forKey:@"tabFocusesLinks"];
-#endif
     [coder encodeBool:self.textInteractionEnabled forKey:@"textInteractionEnabled"];
 }
 
@@ -99,9 +97,7 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     
     self.shouldPrintBackgrounds = [coder decodeBoolForKey:@"shouldPrintBackgrounds"];
 
-#if PLATFORM(MAC)
     self.tabFocusesLinks = [coder decodeBoolForKey:@"tabFocusesLinks"];
-#endif
     if ([coder containsValueForKey:@"textInteractionEnabled"])
         self.textInteractionEnabled = [coder decodeBoolForKey:@"textInteractionEnabled"];
 
@@ -211,10 +207,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
     return _preferences->backgroundWebContentRunningBoardThrottlingEnabled() ? (_preferences->shouldTakeNearSuspendedAssertions() ? WKInactiveSchedulingPolicyThrottle : WKInactiveSchedulingPolicySuspend) : WKInactiveSchedulingPolicyNone;
 }
 
-#pragma mark OS X-specific methods
-
-#if PLATFORM(MAC)
-
 - (BOOL)tabFocusesLinks
 {
     return _preferences->tabsToLinks();
@@ -224,8 +216,6 @@ ALLOW_DEPRECATED_DECLARATIONS_END
 {
     _preferences->setTabsToLinks(tabFocusesLinks);
 }
-
-#endif
 
 #pragma mark WKObject protocol implementation
 
