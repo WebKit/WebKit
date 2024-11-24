@@ -27,8 +27,11 @@
 #include "Breakpoint.h"
 
 #include "Debugger.h"
+#include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
+
+WTF_MAKE_TZONE_ALLOCATED_IMPL(Breakpoint);
 
 Breakpoint::Action::Action(Breakpoint::Action::Type type)
     : type(type)
