@@ -66,6 +66,8 @@ public:
 
 private:
     JSIteratorHelper(VM&, Structure*);
+
+    void finishCreation(VM&, JSValue generator, JSValue underlyingIterator);
 };
 
 STATIC_ASSERT_IS_TRIVIALLY_DESTRUCTIBLE(JSIteratorHelper);
