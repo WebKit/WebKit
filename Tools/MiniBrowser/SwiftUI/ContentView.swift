@@ -26,15 +26,56 @@
 import SwiftUI
 @_spi(Private) import WebKit
 
-struct ContentView: View {
+fileprivate struct UnifiedBar: View {
     @Environment(BrowserViewModel.self) private var viewModel
 
     @FocusState private var urlFieldIsFocused: Bool
+
+    var body: some View {
+        @Bindable var viewModel = viewModel
+
+        VStack(spacing: 0) {
+            TextField("URL", text: $viewModel.displayedURL)
+                .textContentType(.URL)
+                .onSubmit {
+                    urlFieldIsFocused = false
+                    viewModel.navigateToSubmittedURL()
+                }
+                .textFieldStyle(.roundedBorder)
+                .focused($urlFieldIsFocused)
+
+            ProgressView(value: viewModel.page.estimatedProgress, total: 1.0)
+                .padding(.horizontal, 2)
+                .padding(.top, -4)
+                .padding(.bottom, -8)
+        }
+        .frame(minWidth: 300)
+
+        if viewModel.page.isLoading {
+            Button {
+                viewModel.page.stopLoading()
+            } label: {
+                Image(systemName: "xmark")
+            }
+        } else {
+            Button {
+                viewModel.page.reload()
+            } label: {
+                Image(systemName: "arrow.clockwise")
+            }
+        }
+    }
+}
+
+struct ContentView: View {
+    @Environment(BrowserViewModel.self) private var viewModel
 
     @AppStorage("DefaultURL") private var defaultURL = "https://www.webkit.org"
 
     var body: some View {
         WebView_v0(viewModel.page)
+            .webViewAllowsBackForwardNavigationGestures()
+            .webViewAllowsTabFocusingLinks()
             .task {
                 for await event in viewModel.page.navigations {
                     viewModel.didReceiveNavigationEvent(event)
@@ -46,27 +87,10 @@ struct ContentView: View {
             }
             .toolbar {
                 ToolbarItemGroup(placement: .principal) {
-                    VStack(spacing: 0) {
-                        @Bindable var viewModel = viewModel
-
-                        TextField("URL", text: $viewModel.displayedURL)
-                            .textContentType(.URL)
-                            .onSubmit {
-                                self.urlFieldIsFocused = false
-                                self.viewModel.navigateToSubmittedURL()
-                            }
-                            .textFieldStyle(.roundedBorder)
-                            .focused($urlFieldIsFocused)
-
-                        ProgressView(value: viewModel.page.estimatedProgress, total: 1.0)
-                            .padding(.horizontal, 2)
-                            .padding(.top, -4)
-                            .padding(.bottom, -8)
-                    }
-                    .frame(minWidth: 300)
+                    UnifiedBar()
                 }
             }
-            .navigationTitle(self.viewModel.page.title)
+            .navigationTitle(viewModel.page.title)
     }
 }
 

@@ -155,6 +155,8 @@
 		0772811D21234FF600C8EF2E /* UserMediaPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A410F4319AF7B27002EBAB5 /* UserMediaPermissionRequestManager.h */; };
 		077FD1A02CC7569200C5D9E0 /* WKIntelligenceTextEffectCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 077FD19F2CC7569200C5D9E0 /* WKIntelligenceTextEffectCoordinator.swift */; };
 		0785E8002CBCDFFD00F68126 /* PlatformIntelligenceTextEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0785E7FF2CBCDFFD00F68126 /* PlatformIntelligenceTextEffectView.swift */; };
+		078B04B42CF1A27F00B453A6 /* WebPage+FrameInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078B04B32CF1A27F00B453A6 /* WebPage+FrameInfo.swift */; };
+		078B04B62CF2B4D300B453A6 /* View+WebViewModifiers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 078B04B52CF2B4D300B453A6 /* View+WebViewModifiers.swift */; };
 		0792314B239CBCB8009598E2 /* RemoteMediaPlayerManagerProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 07923145239CBCB7009598E2 /* RemoteMediaPlayerManagerProxyMessageReceiver.cpp */; };
 		0792314C239CBCB8009598E2 /* RemoteMediaPlayerManagerProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 07923146239CBCB7009598E2 /* RemoteMediaPlayerManagerProxyMessages.h */; };
 		079D1D9A26960CD300883577 /* SystemStatusSPI.h in Headers */ = {isa = PBXBuildFile; fileRef = 079D1D9926960CD300883577 /* SystemStatusSPI.h */; };
@@ -3207,6 +3209,8 @@
 		077BA570260E8F630072F19F /* MediaSessionCoordinatorProxyPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaSessionCoordinatorProxyPrivate.h; sourceTree = "<group>"; };
 		077FD19F2CC7569200C5D9E0 /* WKIntelligenceTextEffectCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WKIntelligenceTextEffectCoordinator.swift; sourceTree = "<group>"; };
 		0785E7FF2CBCDFFD00F68126 /* PlatformIntelligenceTextEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlatformIntelligenceTextEffectView.swift; sourceTree = "<group>"; };
+		078B04B32CF1A27F00B453A6 /* WebPage+FrameInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WebPage+FrameInfo.swift"; sourceTree = "<group>"; };
+		078B04B52CF2B4D300B453A6 /* View+WebViewModifiers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+WebViewModifiers.swift"; sourceTree = "<group>"; };
 		07923130239B3B0C009598E2 /* RemoteMediaPlayerManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = RemoteMediaPlayerManager.cpp; sourceTree = "<group>"; };
 		07923131239B3B0C009598E2 /* MediaPlayerPrivateRemote.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayerPrivateRemote.cpp; sourceTree = "<group>"; };
 		07923132239B3B0C009598E2 /* MediaPlayerPrivateRemote.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateRemote.h; sourceTree = "<group>"; };
@@ -8816,6 +8820,8 @@
 		07CB79942CE9432D00199C49 /* Swift */ = {
 			isa = PBXGroup;
 			children = (
+				078B04B52CF2B4D300B453A6 /* View+WebViewModifiers.swift */,
+				078B04B32CF1A27F00B453A6 /* WebPage+FrameInfo.swift */,
 				07FAA74A2CE947AA00128360 /* WebPage+Navigation.swift */,
 				07CB79952CE9435700199C49 /* WebPage.swift */,
 				076CEF0B2CEEE79900E4ABD6 /* WebView.swift */,
@@ -20077,6 +20083,7 @@
 				CD491B171E73525500009066 /* UserMediaCaptureManagerProxyMessageReceiver.cpp in Sources */,
 				3F418EF91887BD97002795FD /* VideoPresentationManagerMessageReceiver.cpp in Sources */,
 				3F418EFB1887BD97002795FD /* VideoPresentationManagerProxyMessageReceiver.cpp in Sources */,
+				078B04B62CF2B4D300B453A6 /* View+WebViewModifiers.swift in Sources */,
 				2D1B5D5D185869C8006C6596 /* ViewGestureControllerMessageReceiver.cpp in Sources */,
 				2D819BA11862800E001F03D1 /* ViewGestureGeometryCollectorMessageReceiver.cpp in Sources */,
 				2684055218B86ED60022C38B /* ViewUpdateDispatcherMessageReceiver.cpp in Sources */,
@@ -20196,6 +20203,7 @@
 				CDF1B91B267025550007EC10 /* WebKitSwiftSoftLink.mm in Sources */,
 				E3816B3D27E2463A005EAFC0 /* WebMockContentFilterManager.cpp in Sources */,
 				31BA924D148831260062EDB5 /* WebNotificationManagerMessageReceiver.cpp in Sources */,
+				078B04B42CF1A27F00B453A6 /* WebPage+FrameInfo.swift in Sources */,
 				07FAA74B2CE947AA00128360 /* WebPage+Navigation.swift in Sources */,
 				07CB79962CE9435700199C49 /* WebPage.swift in Sources */,
 				C0CE72A01247E71D00BC0EC4 /* WebPageMessageReceiver.cpp in Sources */,

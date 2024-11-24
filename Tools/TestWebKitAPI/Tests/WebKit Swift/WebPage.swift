@@ -214,6 +214,22 @@ struct WebPageTests {
 
         // FIXME: (283456) Make this test more comprehensive once Observation supports observing a stream of changes to properties.
     }
+
+    @Test
+    func javaScriptEvaluation() async throws {
+        let page = WebPage_v0()
+
+        let arguments = [
+            "a": 1,
+            "b": 2,
+        ]
+
+        let result = try await page.callAsyncJavaScript("return a + b;", arguments: arguments) as! Int
+        #expect(result == 3)
+
+        let nilResult = try await page.callAsyncJavaScript("console.log('hi')")
+        #expect(nilResult == nil)
+    }
 }
 
 #endif
