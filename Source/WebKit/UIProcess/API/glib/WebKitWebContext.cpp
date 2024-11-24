@@ -1610,8 +1610,8 @@ void webkit_web_context_set_spell_checking_languages(WebKitWebContext* context, 
 
 #if ENABLE(SPELLCHECK)
     Vector<String> spellCheckingLanguages;
-    for (size_t i = 0; languages[i]; ++i)
-        spellCheckingLanguages.append(String::fromUTF8(languages[i]));
+    for (const char* language : span(const_cast<char**>(languages)))
+        spellCheckingLanguages.append(String::fromUTF8(language));
     TextChecker::setSpellCheckingLanguages(spellCheckingLanguages);
 #endif
 }
