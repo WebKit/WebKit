@@ -332,6 +332,8 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::balanceRangeWithNoLi
 
     // breakOpportunities holds the indices i such that a line break can occur before m_inlineItemList[i].
     auto breakOpportunities = computeBreakOpportunities(range);
+    if (breakOpportunities.size() == 1)
+        return { };
 
     // We need a dummy break opportunity at the beginning for algorithmic base case purposes
     breakOpportunities.insert(0, range.startIndex());
@@ -422,6 +424,8 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
 
     // breakOpportunities holds the indices i such that a line break can occur before m_inlineItemList[i].
     auto breakOpportunities = computeBreakOpportunities(range);
+    if (breakOpportunities.size() == 1)
+        return { };
 
     // We need a dummy break opportunity at the beginning for algorithmic base case purposes
     breakOpportunities.insert(0, range.startIndex());
@@ -431,7 +435,6 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
     auto previousLineEndsWithLineBreak = isFirstChunk ? std::nullopt : std::optional<bool> { true };
     auto firstLineTextIndent = m_inlineFormattingContext.formattingUtils().computedTextIndent(InlineFormattingUtils::IsIntrinsicWidthMode::No, previousLineEndsWithLineBreak, m_maximumLineWidth);
     auto textIndent = m_inlineFormattingContext.formattingUtils().computedTextIndent(InlineFormattingUtils::IsIntrinsicWidthMode::No, false, m_maximumLineWidth);
-
 
     struct Entry {
         float accumulatedCost { std::numeric_limits<float>::infinity() };
@@ -518,6 +521,10 @@ std::optional<Vector<LayoutUnit>> InlineContentConstrainer::prettifyRange(Inline
     }
 
     auto bestSolution = [&](const auto& solutions) {
+        if (solutions.isEmpty()) {
+            ASSERT_NOT_REACHED();
+            return Entry { };
+        }
         auto bestSolution = *solutions.begin();
         for (const auto& solution : solutions)
             bestSolution = std::min(bestSolution, solution);
@@ -682,6 +689,7 @@ Vector<size_t> InlineContentConstrainer::computeBreakOpportunities(InlineItemRan
     size_t currentIndex = range.startIndex();
     while (currentIndex < range.endIndex()) {
         currentIndex = m_inlineFormattingContext.formattingUtils().nextWrapOpportunity(currentIndex, range, m_inlineItemList.span());
+        // FIXME: we should not consider the range end as breaking opportunity.
         breakOpportunities.append(currentIndex);
     }
     return breakOpportunities;
