@@ -24,7 +24,7 @@
  */
 
 [EnabledBy=ScreenOrientationAPIEnabled]
-messages -> WebScreenOrientationManagerProxy NotRefCounted {
+messages -> WebScreenOrientationManagerProxy {
     CurrentOrientation() -> (enum:uint8_t WebCore::ScreenOrientationType orientation) Synchronous
     Lock(enum:uint8_t WebCore::ScreenOrientationLockType orientation) -> (std::optional<WebCore::Exception> exception)
     Unlock()

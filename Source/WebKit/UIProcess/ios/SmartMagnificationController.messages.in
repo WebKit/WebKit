@@ -22,7 +22,7 @@
 
 #if PLATFORM(IOS_FAMILY)
 
-messages -> SmartMagnificationController NotRefCounted {
+messages -> SmartMagnificationController {
     DidCollectGeometryForSmartMagnificationGesture(WebCore::FloatPoint origin, WebCore::FloatRect renderRect, WebCore::FloatRect visibleContentBounds, bool fitEntireRect, double viewportMinimumScale, double viewportMaximumScale)
     ScrollToRect(WebCore::FloatPoint origin, WebCore::FloatRect targetRect)
 }

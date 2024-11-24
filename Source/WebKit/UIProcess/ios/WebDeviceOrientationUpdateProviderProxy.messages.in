@@ -21,7 +21,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if PLATFORM(IOS_FAMILY) && ENABLE(DEVICE_ORIENTATION)
-messages -> WebDeviceOrientationUpdateProviderProxy NotRefCounted {
+messages -> WebDeviceOrientationUpdateProviderProxy {
     StartUpdatingDeviceOrientation();
     StopUpdatingDeviceOrientation();
     StartUpdatingDeviceMotion();

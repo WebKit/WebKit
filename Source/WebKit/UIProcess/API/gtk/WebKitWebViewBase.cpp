@@ -359,7 +359,7 @@ struct _WebKitWebViewBasePrivate {
 #endif
 
     GtkGesture* touchGestureGroup;
-    std::unique_ptr<ViewGestureController> viewGestureController;
+    RefPtr<ViewGestureController> viewGestureController;
     bool isBackForwardNavigationGestureEnabled { false };
 
 #if GTK_CHECK_VERSION(3, 24, 0)
@@ -2945,7 +2945,7 @@ void webkitWebViewBaseDidRelaunchWebProcess(WebKitWebViewBase* webkitWebViewBase
     if (priv->viewGestureController)
         priv->viewGestureController->connectToProcess();
     else {
-        priv->viewGestureController = makeUnique<WebKit::ViewGestureController>(*priv->pageProxy);
+        priv->viewGestureController = WebKit::ViewGestureController::create(*priv->pageProxy);
         priv->viewGestureController->setSwipeGestureEnabled(priv->isBackForwardNavigationGestureEnabled);
     }
     if (priv->displayID)

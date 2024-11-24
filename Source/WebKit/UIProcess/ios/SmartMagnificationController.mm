@@ -53,6 +53,11 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(SmartMagnificationController);
 
+Ref<SmartMagnificationController> SmartMagnificationController::create(WKContentView *contentView)
+{
+    return adoptRef(*new SmartMagnificationController(contentView));
+}
+
 SmartMagnificationController::SmartMagnificationController(WKContentView *contentView)
     : m_webPageProxy(*contentView.page)
     , m_contentView(contentView)
@@ -62,12 +67,14 @@ SmartMagnificationController::SmartMagnificationController(WKContentView *conten
 
 SmartMagnificationController::~SmartMagnificationController()
 {
-    m_webPageProxy->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::SmartMagnificationController::messageReceiverName(), m_webPageProxy->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_webPageProxy.get())
+        page->protectedLegacyMainFrameProcess()->removeMessageReceiver(Messages::SmartMagnificationController::messageReceiverName(), page->webPageIDInMainFrameProcess());
 }
 
 void SmartMagnificationController::handleSmartMagnificationGesture(FloatPoint origin)
 {
-    m_webPageProxy->protectedLegacyMainFrameProcess()->send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(origin), m_webPageProxy->webPageIDInMainFrameProcess());
+    if (RefPtr page = m_webPageProxy.get())
+        page->protectedLegacyMainFrameProcess()->send(Messages::ViewGestureGeometryCollector::CollectGeometryForSmartMagnificationGesture(origin), page->webPageIDInMainFrameProcess());
 }
 
 void SmartMagnificationController::handleResetMagnificationGesture(FloatPoint origin)
@@ -114,6 +121,10 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
         [m_contentView _zoomToInitialScaleWithOrigin:origin];
         return;
     }
+    RefPtr page = m_webPageProxy.get();
+    if (!page)
+        return;
+
     auto [adjustedTargetRect, minimumScale, maximumScale] = smartMagnificationTargetRectAndZoomScales(absoluteTargetRect, viewportMinimumScale, viewportMaximumScale, !fitEntireRect);
 
     // FIXME: Check if text selection wants to consume the double tap before we attempt magnification.
@@ -121,7 +132,7 @@ void SmartMagnificationController::didCollectGeometryForSmartMagnificationGestur
     // If the content already fits in the scroll view and we're already zoomed in to the target scale,
     // it is most likely that the user intended to scroll, so use a small distance threshold to initiate panning.
     float minimumScrollDistance;
-    if ([m_contentView bounds].size.width <= m_webPageProxy->unobscuredContentRect().width())
+    if ([m_contentView bounds].size.width <= page->unobscuredContentRect().width())
         minimumScrollDistance = smartMagnificationPanScrollThresholdZoomedOut;
     else if (PAL::currentUserInterfaceIdiomIsSmallScreen())
         minimumScrollDistance = smartMagnificationPanScrollThresholdIPhone;

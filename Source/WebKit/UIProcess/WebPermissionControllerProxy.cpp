@@ -55,6 +55,16 @@ WebPermissionControllerProxy::~WebPermissionControllerProxy()
     protectedProcess()->removeMessageReceiver(Messages::WebPermissionControllerProxy::messageReceiverName());
 }
 
+void WebPermissionControllerProxy::ref() const
+{
+    m_process->ref();
+}
+
+void WebPermissionControllerProxy::deref() const
+{
+    m_process->deref();
+}
+
 Ref<WebProcessProxy> WebPermissionControllerProxy::protectedProcess() const
 {
     return m_process.get();

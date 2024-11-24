@@ -66,6 +66,10 @@ public:
     void addWebProcessProxy(WebProcessProxy&);
     void removeWebProcessProxy(WebProcessProxy&);
 
+    // Do nothing since this is a singleton.
+    void ref() const { }
+    void deref() const { }
+
 #if PLATFORM(COCOA)
     void revokeAccess(WebProcessProxy&);
     std::optional<IPC::AsyncReplyID> grantAccessToCurrentData(WebProcessProxy&, const String& pasteboardName, CompletionHandler<void()>&&);

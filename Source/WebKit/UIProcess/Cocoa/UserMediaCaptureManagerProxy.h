@@ -56,7 +56,7 @@ namespace WebKit {
 class WebProcessProxy;
 class UserMediaCaptureManagerProxySourceProxy;
 
-class UserMediaCaptureManagerProxy : public IPC::MessageReceiver {
+class UserMediaCaptureManagerProxy : public IPC::MessageReceiver, public RefCounted<UserMediaCaptureManagerProxy> {
     WTF_MAKE_TZONE_ALLOCATED(UserMediaCaptureManagerProxy);
 public:
     class ConnectionProxy {
@@ -83,7 +83,7 @@ public:
         virtual void startMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&) { }
         virtual void stopMonitoringCaptureDeviceRotation(WebCore::PageIdentifier, const String&) { }
     };
-    explicit UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&&);
+    static Ref<UserMediaCaptureManagerProxy> create(UniqueRef<ConnectionProxy>&&);
     ~UserMediaCaptureManagerProxy();
 
     void close();
@@ -98,6 +98,8 @@ public:
     bool hasSourceProxies() const;
 
 private:
+    explicit UserMediaCaptureManagerProxy(UniqueRef<ConnectionProxy>&&);
+
     // IPC::MessageReceiver
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&) final;
 

@@ -337,7 +337,10 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 {
     ASSERT(targetItem);
 
-    Ref webPageProxy = m_webPageProxy.get();
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy)
+        return;
+
     webPageProxy->navigationGestureDidBegin();
 
     willBeginGesture(ViewGestureType::Swipe);
@@ -425,7 +428,8 @@ void ViewGestureController::beginSwipeGesture(WebBackForwardListItem* targetItem
 
 void ViewGestureController::handleSwipeGesture(WebBackForwardListItem*, double, SwipeDirection)
 {
-    gtk_widget_queue_draw(protectedWebPageProxy()->viewWidget());
+    if (RefPtr page = m_webPageProxy.get())
+        gtk_widget_queue_draw(page->viewWidget());
 }
 
 void ViewGestureController::cancelSwipe()
@@ -443,7 +447,10 @@ void ViewGestureController::snapshot(GtkSnapshot* snapshot, GskRenderNode* pageR
 {
     bool swipingLeft = isPhysicallySwipingLeft(m_swipeProgressTracker.direction());
     bool swipingBack = m_swipeProgressTracker.direction() == SwipeDirection::Back;
-    Ref webPageProxy = m_webPageProxy.get();
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy)
+        return;
+
     bool isRTL = webPageProxy->userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
     float progress = m_swipeProgressTracker.progress();
 
@@ -523,7 +530,10 @@ void ViewGestureController::draw(cairo_t* cr, cairo_pattern_t* pageGroup)
 {
     bool swipingLeft = isPhysicallySwipingLeft(m_swipeProgressTracker.direction());
     bool swipingBack = m_swipeProgressTracker.direction() == SwipeDirection::Back;
-    Ref webPageProxy = m_webPageProxy.get();
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy)
+        return;
+
     bool isRTL = webPageProxy->userInterfaceLayoutDirection() == WebCore::UserInterfaceLayoutDirection::RTL;
     float progress = m_swipeProgressTracker.progress();
 
@@ -631,7 +641,8 @@ void ViewGestureController::removeSwipeSnapshot()
 
     m_currentSwipeSnapshot = nullptr;
 
-    protectedWebPageProxy()->navigationGestureSnapshotWasRemoved();
+    if (RefPtr page = m_webPageProxy.get())
+        page->navigationGestureSnapshotWasRemoved();
 
     m_backgroundColorForCurrentSnapshot = Color();
 
@@ -683,7 +694,10 @@ void ViewGestureController::setMagnification(double scale, FloatPoint origin)
 
     willBeginGesture(ViewGestureType::Magnification);
 
-    Ref webPageProxy = m_webPageProxy.get();
+    RefPtr webPageProxy = m_webPageProxy.get();
+    if (!webPageProxy)
+        return;
+
     auto minMagnification = webPageProxy->minPageZoomFactor();
     auto maxMagnification = webPageProxy->maxPageZoomFactor();
 

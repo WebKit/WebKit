@@ -20,7 +20,7 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> WebPasteboardProxy NotRefCounted {
+messages -> WebPasteboardProxy {
 #if PLATFORM(IOS_FAMILY)
     WriteURLToPasteboard(struct WebCore::PasteboardURL url, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID)
     WriteWebContentToPasteboard(struct WebCore::PasteboardWebContent content, String pasteboardName, std::optional<WebCore::PageIdentifier> pageID)

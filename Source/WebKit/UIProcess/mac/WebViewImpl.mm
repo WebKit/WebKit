@@ -4658,7 +4658,7 @@ void WebViewImpl::hideTextAnimationView()
 ViewGestureController& WebViewImpl::ensureGestureController()
 {
     if (!m_gestureController)
-        m_gestureController = makeUnique<ViewGestureController>(m_page);
+        m_gestureController = ViewGestureController::create(m_page);
     return *m_gestureController;
 }
 

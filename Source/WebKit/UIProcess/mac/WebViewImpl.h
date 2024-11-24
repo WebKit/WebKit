@@ -956,7 +956,7 @@ ALLOW_DEPRECATED_DECLARATIONS_BEGIN
     RetainPtr<WKBrowsingContextController> m_browsingContextController;
 ALLOW_DEPRECATED_DECLARATIONS_END
 
-    std::unique_ptr<ViewGestureController> m_gestureController;
+    RefPtr<ViewGestureController> m_gestureController;
     bool m_allowsBackForwardNavigationGestures { false };
     bool m_allowsMagnification { false };
 

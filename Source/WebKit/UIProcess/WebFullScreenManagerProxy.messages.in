@@ -22,7 +22,7 @@
 
 #if ENABLE(FULLSCREEN_API)
 [EnabledBy=FullScreenEnabled || VideoFullscreenRequiresElementFullscreen]
-messages -> WebFullScreenManagerProxy NotRefCounted {
+messages -> WebFullScreenManagerProxy {
     SupportsFullScreen(bool withKeyboard) -> (bool supportsFullScreen) Synchronous
     EnterFullScreen(bool blocksReturnToFullscreenFromPictureInPicture, struct WebKit::FullScreenMediaDetails mediaDetails)
 #if ENABLE(QUICKLOOK_FULLSCREEN)

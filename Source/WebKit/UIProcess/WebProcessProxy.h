@@ -430,7 +430,8 @@ public:
     void setThrottleStateForTesting(ProcessThrottleState);
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    UserMediaCaptureManagerProxy* userMediaCaptureManagerProxy() { return m_userMediaCaptureManagerProxy.get(); }
+    UserMediaCaptureManagerProxy& userMediaCaptureManagerProxy() { return m_userMediaCaptureManagerProxy.get(); }
+    Ref<UserMediaCaptureManagerProxy> protectedUserMediaCaptureManagerProxy();
 #endif
 
 #if ENABLE(GPU_PROCESS)
@@ -731,7 +732,7 @@ private:
     SystemMemoryPressureStatus m_memoryPressureStatus { SystemMemoryPressureStatus::Normal };
 
 #if PLATFORM(COCOA) && ENABLE(MEDIA_STREAM)
-    std::unique_ptr<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
+    const Ref<UserMediaCaptureManagerProxy> m_userMediaCaptureManagerProxy;
 #endif
 
     bool m_hasCommittedAnyProvisionalLoads { false };
@@ -786,7 +787,7 @@ private:
     std::unique_ptr<SpeechRecognitionRemoteRealtimeMediaSourceManager> m_speechRecognitionRemoteRealtimeMediaSourceManager;
 #endif
     std::unique_ptr<WebLockRegistryProxy> m_webLockRegistry;
-    std::unique_ptr<WebPermissionControllerProxy> m_webPermissionController;
+    UniqueRef<WebPermissionControllerProxy> m_webPermissionController;
 #if ENABLE(ROUTING_ARBITRATION)
     std::unique_ptr<AudioSessionRoutingArbitratorProxy> m_routingArbitrator;
 #endif

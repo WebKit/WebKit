@@ -23,6 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-messages -> WebPermissionControllerProxy NotRefCounted {
+messages -> WebPermissionControllerProxy {
     Query(struct WebCore::ClientOrigin origin, struct WebCore::PermissionDescriptor descriptor, std::optional<WebKit::WebPageProxyIdentifier> identifier, enum:uint8_t WebCore::PermissionQuerySource source) -> (std::optional<WebCore::PermissionState> state)
 }

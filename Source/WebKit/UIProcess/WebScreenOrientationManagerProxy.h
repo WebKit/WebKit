@@ -40,10 +40,10 @@ namespace WebKit {
 class WebPageProxy;
 struct SharedPreferencesForWebProcess;
 
-class WebScreenOrientationManagerProxy final : public IPC::MessageReceiver {
+class WebScreenOrientationManagerProxy final : public IPC::MessageReceiver, public RefCounted<WebScreenOrientationManagerProxy> {
     WTF_MAKE_TZONE_ALLOCATED(WebScreenOrientationManagerProxy);
 public:
-    WebScreenOrientationManagerProxy(WebPageProxy&, WebCore::ScreenOrientationType);
+    static Ref<WebScreenOrientationManagerProxy> create(WebPageProxy&, WebCore::ScreenOrientationType);
     ~WebScreenOrientationManagerProxy();
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
@@ -56,6 +56,8 @@ public:
     void setCurrentOrientation(WebCore::ScreenOrientationType);
 
 private:
+    WebScreenOrientationManagerProxy(WebPageProxy&, WebCore::ScreenOrientationType);
+
     std::optional<WebCore::Exception> platformShouldRejectLockRequest() const;
 
     // IPC message handlers.

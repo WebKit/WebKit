@@ -176,12 +176,16 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     if (m_activeGestureType != ViewGestureType::None)
         return;
 
+    RefPtr page = m_webPageProxy.get();
+    if (!page)
+        return;
+
     willBeginGesture(ViewGestureType::Swipe);
 
-    m_webPageProxy->recordAutomaticNavigationSnapshot();
+    page->recordAutomaticNavigationSnapshot();
 
     RefPtr<WebPageProxy> alternateBackForwardListSourcePage = m_alternateBackForwardListSourcePage.get();
-    m_webPageProxyForBackForwardListForCurrentSwipe = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage.get() : m_webPageProxy.ptr();
+    m_webPageProxyForBackForwardListForCurrentSwipe = alternateBackForwardListSourcePage ? alternateBackForwardListSourcePage.get() : page.get();
 
     auto& backForwardList = m_webPageProxyForBackForwardListForCurrentSwipe->backForwardList();
     RefPtr targetItem = direction == SwipeDirection::Back ? backForwardList.goBackItemSkippingItemsWithoutUserGesture() : backForwardList.goForwardItemSkippingItemsWithoutUserGesture();
@@ -192,13 +196,13 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
     }
 
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidBegin();
-    if (m_webPageProxy.ptr() != m_webPageProxyForBackForwardListForCurrentSwipe)
-        m_webPageProxy->navigationGestureDidBegin();
+    if (page.get() != m_webPageProxyForBackForwardListForCurrentSwipe)
+        page->navigationGestureDidBegin();
 
     // Copy the snapshot from this view to the one that owns the back forward list, so that
     // swiping forward will have the correct snapshot.
-    if (m_webPageProxyForBackForwardListForCurrentSwipe != m_webPageProxy.ptr()) {
-        if (auto* currentViewHistoryItem = m_webPageProxy->backForwardList().currentItem())
+    if (m_webPageProxyForBackForwardListForCurrentSwipe != page.get()) {
+        if (auto* currentViewHistoryItem = page->backForwardList().currentItem())
             backForwardList.currentItem()->setSnapshot(currentViewHistoryItem->snapshot());
     }
 
@@ -215,12 +219,12 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
 
     RetainPtr<UIColor> backgroundColor = [UIColor whiteColor];
     if (ViewSnapshot* snapshot = targetItem->snapshot()) {
-        float deviceScaleFactor = m_webPageProxy->deviceScaleFactor();
+        float deviceScaleFactor = page->deviceScaleFactor();
         WebCore::FloatSize swipeLayerSizeInDeviceCoordinates(liveSwipeViewFrame.size);
         swipeLayerSizeInDeviceCoordinates.scale(deviceScaleFactor);
         
         BOOL shouldRestoreScrollPosition = targetItem->rootFrameState().shouldRestoreScrollPosition;
-        WebCore::IntPoint currentScrollPosition = WebCore::roundedIntPoint(m_webPageProxy->viewScrollPosition());
+        WebCore::IntPoint currentScrollPosition = WebCore::roundedIntPoint(page->viewScrollPosition());
 
         if (snapshot->hasImage() && snapshot->size() == swipeLayerSizeInDeviceCoordinates && deviceScaleFactor == snapshot->deviceScaleFactor() && (shouldRestoreScrollPosition || (currentScrollPosition == snapshot->viewScrollPosition())))
             [m_snapshotView layer].contents = snapshot->asLayerContents();
@@ -269,7 +273,7 @@ void ViewGestureController::beginSwipeGesture(_UINavigationInteractiveTransition
         if (finish)
             willEndSwipeGesture(*targetItem, !transitionCompleted);
     }];
-    auto pageID = m_webPageProxy->identifier();
+    auto pageID = page->identifier();
     GestureID gestureID = m_currentGestureID;
     [m_swipeTransitionContext _setCompletionHandler:[pageID, gestureID, targetItem] (_UIViewControllerTransitionContext *context, BOOL didComplete) {
         if (auto gestureController = controllerForGesture(pageID, gestureID))
@@ -313,7 +317,8 @@ void ViewGestureController::willEndSwipeGesture(WebBackForwardListItem& targetIt
 
     if (ViewSnapshot* snapshot = targetItem.snapshot()) {
         m_backgroundColorForCurrentSnapshot = snapshot->backgroundColor();
-        m_webPageProxy->didChangeBackgroundColor();
+        if (RefPtr page = m_webPageProxy.get())
+            page->didChangeBackgroundColor();
     }
 }
 
@@ -336,21 +341,22 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
     [m_transitionContainerView removeFromSuperview];
     m_transitionContainerView = nullptr;
 
+    RefPtr page = m_webPageProxy.get();
     if (cancelled) {
         // removeSwipeSnapshot will clear m_webPageProxyForBackForwardListForCurrentSwipe, so hold on to it here.
         RefPtr<WebPageProxy> webPageProxyForBackForwardListForCurrentSwipe = m_webPageProxyForBackForwardListForCurrentSwipe;
         removeSwipeSnapshot();
         webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidEnd(false, *targetItem);
-        if (m_webPageProxy.ptr() != webPageProxyForBackForwardListForCurrentSwipe)
-            m_webPageProxy->navigationGestureDidEnd();
+        if (page.get() != webPageProxyForBackForwardListForCurrentSwipe)
+            page->navigationGestureDidEnd();
         return;
     }
 
     m_webPageProxyForBackForwardListForCurrentSwipe->navigationGestureDidEnd(true, *targetItem);
-    if (m_webPageProxy.ptr() != m_webPageProxyForBackForwardListForCurrentSwipe)
-        m_webPageProxy->navigationGestureDidEnd();
+    if (page.get() != m_webPageProxyForBackForwardListForCurrentSwipe)
+        page->navigationGestureDidEnd();
 
-    if (!m_webPageProxy->provisionalDrawingArea()) {
+    if (!page->provisionalDrawingArea()) {
         removeSwipeSnapshot();
         return;
     }
@@ -362,17 +368,18 @@ void ViewGestureController::endSwipeGesture(WebBackForwardListItem* targetItem, 
         return;
     }
 
-    auto pageID = m_webPageProxy->identifier();
+    auto pageID = page->identifier();
     GestureID gestureID = m_currentGestureID;
 
     auto doAfterLoadStart = [this, pageID, gestureID] {
-        auto* drawingArea = m_webPageProxy->provisionalDrawingArea();
+        RefPtr page = m_webPageProxy.get();
+        auto* drawingArea = page ? page->provisionalDrawingArea() : nullptr;
         if (!drawingArea) {
             removeSwipeSnapshot();
             return;
         }
 
-        m_webPageProxy->callAfterNextPresentationUpdate([pageID, gestureID] {
+        page->callAfterNextPresentationUpdate([pageID, gestureID] {
             if (auto gestureController = controllerForGesture(pageID, gestureID))
                 gestureController->willCommitPostSwipeTransitionLayerTree(true);
         });

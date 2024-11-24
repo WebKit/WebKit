@@ -274,7 +274,7 @@ struct PerWebProcessState {
 #if PLATFORM(IOS_FAMILY)
     RetainPtr<WKScrollView> _scrollView;
     RetainPtr<WKContentView> _contentView;
-    std::unique_ptr<WebKit::ViewGestureController> _gestureController;
+    RefPtr<WebKit::ViewGestureController> _gestureController;
     Vector<BlockPtr<void ()>> _visibleContentRectUpdateCallbacks;
     RetainPtr<WKWebViewContentProviderRegistry> _contentProviderRegistry;
 #if ENABLE(FULLSCREEN_API)
