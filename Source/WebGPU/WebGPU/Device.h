@@ -29,6 +29,8 @@
 #import "Adapter.h"
 #import "HardwareCapabilities.h"
 #import "Queue.h"
+#import "WebGPU.h"
+#import "WebGPUExt.h"
 #import <CoreVideo/CVMetalTextureCache.h>
 #import <CoreVideo/CoreVideo.h>
 #import <IOSurface/IOSurfaceRef.h>

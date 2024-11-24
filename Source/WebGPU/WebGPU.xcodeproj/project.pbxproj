@@ -143,6 +143,7 @@
 		94200C522CADBE5200484401 /* CommandsMixin.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C582FF827E04131009B40F0 /* CommandsMixin.h */; };
 		9478714A2C98CECB003DB695 /* Buffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 947871492C98CEC6003DB695 /* Buffer.swift */; };
 		94CC0FE62CA203B300CB3264 /* WebGPUSwiftInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 94CC0FE52CA203AB00CB3264 /* WebGPUSwiftInternal.h */; };
+		94E02AFC2CF03B580052068F /* Buffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1C5ACAA5273A426D0095F8D5 /* Buffer.h */; };
 		97099AC12AA60D58003B41F8 /* ASTElaboratedTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABE2AA60D58003B41F8 /* ASTElaboratedTypeExpression.h */; };
 		97099AC22AA60D58003B41F8 /* ASTReferenceTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099ABF2AA60D58003B41F8 /* ASTReferenceTypeExpression.h */; };
 		97099AC32AA60D58003B41F8 /* ASTArrayTypeExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 97099AC02AA60D58003B41F8 /* ASTArrayTypeExpression.h */; };
@@ -913,6 +914,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1CEBD7E72716AFBA00A5254D /* WebGPU.h in Headers */,
+				94E02AFC2CF03B580052068F /* Buffer.h in Headers */,
 				94200C4F2CADBCAD00484401 /* CommandEncoder.h in Headers */,
 				94200C522CADBE5200484401 /* CommandsMixin.h in Headers */,
 				941C64B72CAB4A0700A63214 /* Device.h in Headers */,

@@ -27,6 +27,8 @@
 
 #import "CommandBuffer.h"
 #import "CommandsMixin.h"
+#import "WebGPU.h"
+#import "WebGPUExt.h"
 #import <wtf/FastMalloc.h>
 #import <wtf/Ref.h>
 #import <wtf/RefCounted.h>
