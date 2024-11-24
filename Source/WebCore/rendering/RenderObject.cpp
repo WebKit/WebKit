@@ -30,6 +30,7 @@
 #include "AXObjectCache.h"
 #include "DocumentInlines.h"
 #include "Editing.h"
+#include "Editor.h"
 #include "ElementAncestorIteratorInlines.h"
 #include "FloatQuad.h"
 #include "FrameSelection.h"
@@ -2546,7 +2547,7 @@ static bool areOnSameLine(const SelectionGeometry& a, const SelectionGeometry& b
 
 static void makeBidiSelectionVisuallyContiguousIfNeeded(const SimpleRange& range, Vector<SelectionGeometry>& geometries)
 {
-    if (!range.startContainer().document().settings().visuallyContiguousBidiTextSelectionEnabled())
+    if (!range.startContainer().document().editor().shouldDrawVisuallyContiguousBidiSelection())
         return;
 
     FloatPoint selectionStartTop;
@@ -2597,7 +2598,6 @@ static void makeBidiSelectionVisuallyContiguousIfNeeded(const SimpleRange& range
         // For a single line selection, simply merge the end into the start and remove other selection geometries on the same line.
         startGeometry->setQuad({ selectionStartTop, selectionEndTop, selectionEndBottom, selectionStartBottom });
         startGeometry->setContainsEnd(true);
-        startGeometry->setMayAppearLogicallyDiscontiguous(true);
         geometries.append(WTFMove(*startGeometry));
         return;
     }
@@ -2637,7 +2637,6 @@ static void makeBidiSelectionVisuallyContiguousIfNeeded(const SimpleRange& range
         selectionEndBottom = endRect.maxXMaxYCorner();
     }
 
-    startGeometry->setMayAppearLogicallyDiscontiguous(true);
     startGeometry->setQuad({
         selectionStartTop,
         selectionExtents.p2(),
@@ -2645,7 +2644,6 @@ static void makeBidiSelectionVisuallyContiguousIfNeeded(const SimpleRange& range
         selectionStartBottom,
     });
 
-    endGeometry->setMayAppearLogicallyDiscontiguous(true);
     endGeometry->setQuad({
         selectionExtents.p1(),
         selectionEndTop,

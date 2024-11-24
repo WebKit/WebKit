@@ -40,14 +40,17 @@ addEventListener("load", async () => {
 
     isVisuallyContiguous = await UIHelper.isSelectionVisuallyContiguous();
     await UIHelper.sendEventStream(new UIHelper.EventStreamBuilder().end().takeResult());
+    await UIHelper.ensurePresentationUpdate();
 
     shouldBeTrue("isVisuallyContiguous");
+    shouldBeEqualToString("getSelection().toString()", "مثل هذا النص, is right to left");
+
     finishJSTest();
 });
 </script>
 </head>
 <body>
-    <p>Arabic, <span class="stop">مثل</span> هذا النص, is right to <span class="start">left</span>.</p>
+    <p>Arabic, مثل هذا <span class="stop">النص</span>, is right to <span class="start">left</span>.</p>
     <div id="description"></div>
     <div id="console"></div>
 </body>

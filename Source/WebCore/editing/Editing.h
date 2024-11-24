@@ -106,7 +106,12 @@ Element* elementIfEquivalent(const Element&, Node&);
 
 bool positionBeforeOrAfterNodeIsCandidate(Node&);
 
+// -------------------------------------------------------------------------
+// SimpleRange
+// -------------------------------------------------------------------------
+
 WEBCORE_EXPORT HashSet<RefPtr<HTMLImageElement>> visibleImageElementsInRangeWithNonLoadedImages(const SimpleRange&);
+WEBCORE_EXPORT SimpleRange adjustToVisuallyContiguousRange(const SimpleRange&);
 
 // -------------------------------------------------------------------------
 // Position

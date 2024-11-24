@@ -168,7 +168,6 @@ public:
     void willBeRemovedFromFrame();
 
     void updateAppearanceAfterUpdatingRendering();
-    void scheduleAppearanceUpdateAfterStyleChange();
 
     enum class RevealSelectionAfterUpdate : bool { NotForced, Forced };
     void setNeedsSelectionUpdate(RevealSelectionAfterUpdate = RevealSelectionAfterUpdate::NotForced);

@@ -204,6 +204,10 @@ private:
     bool performTwoStepDrop(WebCore::DocumentFragment&, const WebCore::SimpleRange&, bool isMove) final;
     bool supportsGlobalSelection() final;
 
+#if PLATFORM(IOS_FAMILY)
+    bool shouldDrawVisuallyContiguousBidiSelection() const final;
+#endif
+
     WeakPtr<WebPage> m_page;
 };
 

@@ -359,6 +359,12 @@ bool Editor::writingSuggestionsSupportsSuffix()
     return false;
 }
 
+bool Editor::shouldDrawVisuallyContiguousBidiSelection() const
+{
+    CheckedPtr client = this->client();
+    return client && client->shouldDrawVisuallyContiguousBidiSelection();
+}
+
 } // namespace WebCore
 
 #endif // PLATFORM(IOS_FAMILY)

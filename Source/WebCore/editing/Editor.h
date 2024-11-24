@@ -639,6 +639,10 @@ public:
 
     WEBCORE_EXPORT void closeTyping();
 
+#if PLATFORM(IOS_FAMILY)
+    bool shouldDrawVisuallyContiguousBidiSelection() const;
+#endif
+
 private:
     bool canDeleteRange(const SimpleRange&) const;
     bool canSmartReplaceWithPasteboard(Pasteboard&);

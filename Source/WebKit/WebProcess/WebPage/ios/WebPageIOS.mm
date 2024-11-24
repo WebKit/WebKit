@@ -1936,11 +1936,38 @@ void WebPage::clearSelectionAfterTappingSelectionHighlightIfNeeded(WebCore::Floa
         clearSelection();
 }
 
+void WebPage::setShouldDrawVisuallyContiguousBidiSelection(bool value)
+{
+    if (m_shouldDrawVisuallyContiguousBidiSelection == value)
+        return;
+
+    m_shouldDrawVisuallyContiguousBidiSelection = value;
+    scheduleFullEditorStateUpdate();
+}
+
 void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch selectionTouch, bool baseIsStart, CompletionHandler<void(const WebCore::IntPoint&, SelectionTouch, OptionSet<SelectionFlags>)>&& completionHandler)
 {
     RefPtr frame = m_page->checkedFocusController()->focusedOrMainFrame();
     if (!frame)
         return;
+
+    bool shouldExpandBidiSelection = false;
+    if (m_page->settings().visuallyContiguousBidiTextSelectionEnabled()) {
+        switch (selectionTouch) {
+        case SelectionTouch::Started:
+            setShouldDrawVisuallyContiguousBidiSelection(true);
+            break;
+        case SelectionTouch::Moved:
+            break;
+        case SelectionTouch::Ended:
+        case SelectionTouch::EndedMovingForward:
+        case SelectionTouch::EndedMovingBackward:
+        case SelectionTouch::EndedNotMoving:
+            shouldExpandBidiSelection = true;
+            setShouldDrawVisuallyContiguousBidiSelection(false);
+            break;
+        }
+    }
 
     IntPoint pointInDocument = RefPtr(frame->view())->rootViewToContents(point);
     VisiblePosition position = frame->visiblePositionForPoint(pointInDocument);
@@ -1974,6 +2001,12 @@ void WebPage::updateSelectionWithTouches(const IntPoint& point, SelectionTouch s
     case SelectionTouch::Moved:
         std::tie(range, selectionFlipped) = rangeForPointInRootViewCoordinates(*frame, point, baseIsStart, selectionFlippingEnabled());
         break;
+    }
+
+    if (shouldExpandBidiSelection) {
+        range = range ?: frame->selection().selection().toNormalizedRange();
+        if (range)
+            range = adjustToVisuallyContiguousRange(*range);
     }
 
     if (range)

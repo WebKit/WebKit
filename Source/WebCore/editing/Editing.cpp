@@ -58,6 +58,7 @@
 #include "RenderStyleInlines.h"
 #include "RenderTableCell.h"
 #include "RenderTextControlSingleLine.h"
+#include "RenderedPosition.h"
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
@@ -1220,6 +1221,133 @@ HashSet<RefPtr<HTMLImageElement>> visibleImageElementsInRangeWithNonLoadedImages
             result.add(WTFMove(imageElement));
     }
     return result;
+}
+
+static std::optional<unsigned> visualDistanceOnSameLine(const RenderedPosition& first, const RenderedPosition& second)
+{
+    if (first.isNull() || second.isNull())
+        return std::nullopt;
+
+    if (first.box() == second.box())
+        return std::max(first.offset(), second.offset()) - std::min(first.offset(), second.offset());
+
+    enum class VisualBoundary : bool { Left, Right };
+    auto distanceFromOffsetToVisualBoundary = [](const RenderedPosition& position, VisualBoundary boundary) {
+        auto box = position.box();
+        auto offset = position.offset();
+        return (boundary == VisualBoundary::Left) == (box->direction() == TextDirection::LTR)
+            ? std::max(box->minimumCaretOffset(), offset) - box->minimumCaretOffset()
+            : std::max(box->maximumCaretOffset(), offset) - offset;
+    };
+
+    unsigned distance = 0;
+    bool foundFirst = false;
+    bool foundSecond = false;
+    for (auto box = first.lineBox()->firstLeafBox(); box; box = box->nextOnLine()) {
+        if (box == first.box()) {
+            distance += distanceFromOffsetToVisualBoundary(first, foundSecond ? VisualBoundary::Left : VisualBoundary::Right);
+            foundFirst = true;
+        } else if (box == second.box()) {
+            distance += distanceFromOffsetToVisualBoundary(second, foundFirst ? VisualBoundary::Left : VisualBoundary::Right);
+            foundSecond = true;
+        } else if (foundFirst || foundSecond)
+            distance += box->maximumCaretOffset() - box->minimumCaretOffset();
+
+        if (foundFirst && foundSecond)
+            return distance;
+    }
+
+    return std::nullopt;
+}
+
+static std::optional<BoundaryPoint> visuallyClosestBidiBoundary(const RenderedPosition& position, unsigned bidiLevel)
+{
+    auto leftBoundary = position.leftBoundaryOfBidiRun(bidiLevel);
+    auto visualDistanceToLeft = visualDistanceOnSameLine(position, leftBoundary);
+    if (!visualDistanceToLeft)
+        return std::nullopt;
+
+    auto rightBoundary = position.rightBoundaryOfBidiRun(bidiLevel);
+    auto visualDistanceToRight = visualDistanceOnSameLine(position, rightBoundary);
+    if (!visualDistanceToRight)
+        return std::nullopt;
+
+    if (*visualDistanceToLeft < *visualDistanceToRight) {
+        if (RefPtr node = rightBoundary.box()->renderer().node())
+            return BoundaryPoint { *node, rightBoundary.offset() };
+
+        return std::nullopt;
+    }
+
+    if (RefPtr node = leftBoundary.box()->renderer().node())
+        return BoundaryPoint { *node, leftBoundary.offset() };
+
+    return std::nullopt;
+}
+
+SimpleRange adjustToVisuallyContiguousRange(const SimpleRange& range)
+{
+    if (range.collapsed())
+        return range;
+
+    auto start = makeContainerOffsetPosition(range.start).downstream();
+    auto firstLineDirection = start.primaryDirection();
+    RenderedPosition renderedStart { start };
+    if (renderedStart.isNull() || renderedStart.lineBox().atEnd())
+        return range;
+
+    auto end = makeContainerOffsetPosition(range.end).upstream();
+    auto lastLineDirection = end.primaryDirection();
+    RenderedPosition renderedEnd { end };
+    if (renderedEnd.isNull() || renderedEnd.lineBox().atEnd())
+        return range;
+
+    if (renderedStart.box() == renderedEnd.box())
+        return range;
+
+    auto bidiLevelAtStart = renderedStart.box()->bidiLevel();
+    auto bidiLevelAtEnd = renderedEnd.box()->bidiLevel();
+    auto targetBidiLevelAtStart = bidiLevelAtStart;
+    auto targetBidiLevelAtEnd = bidiLevelAtEnd;
+    if (inSameLine(start, end)) {
+        bool foundEndpoint = false;
+        for (auto box = renderedStart.lineBox()->firstLeafBox(); box; box = box->nextOnLine()) {
+            bool atEndpoint = box == renderedStart.box() || box == renderedEnd.box();
+            if (!atEndpoint && !foundEndpoint)
+                continue;
+
+            auto bidiLevel = box->bidiLevel();
+            targetBidiLevelAtStart = std::min(targetBidiLevelAtStart, bidiLevel);
+            targetBidiLevelAtEnd = std::min(targetBidiLevelAtEnd, bidiLevel);
+            if (atEndpoint && foundEndpoint)
+                break;
+
+            foundEndpoint = true;
+        }
+    } else {
+        auto advanceInDirection = [](InlineIterator::LeafBoxIterator box, TextDirection direction, bool forwards) {
+            return forwards == (direction == TextDirection::LTR) ? box->nextOnLine() : box->previousOnLine();
+        };
+
+        for (auto box = renderedStart.box(); box; box = advanceInDirection(box, firstLineDirection, true))
+            targetBidiLevelAtStart = std::min(targetBidiLevelAtStart, box->bidiLevel());
+
+        for (auto box = renderedEnd.box(); box; box = advanceInDirection(box, lastLineDirection, false))
+            targetBidiLevelAtEnd = std::min(targetBidiLevelAtEnd, box->bidiLevel());
+    }
+
+    auto adjustedRange = range;
+    if (bidiLevelAtStart > targetBidiLevelAtStart && start != logicalStartOfLine(start)) {
+        if (auto adjustedStart = visuallyClosestBidiBoundary(renderedStart, targetBidiLevelAtStart + 1))
+            adjustedRange.start = WTFMove(*adjustedStart);
+    }
+
+    if (bidiLevelAtEnd > targetBidiLevelAtEnd && end != logicalEndOfLine(end)) {
+        if (auto adjustedEnd = visuallyClosestBidiBoundary(renderedEnd, targetBidiLevelAtEnd + 1))
+            adjustedRange.end = WTFMove(*adjustedEnd);
+    }
+
+    return adjustedRange;
 }
 
 } // namespace WebCore

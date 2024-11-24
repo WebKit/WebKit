@@ -1020,7 +1020,9 @@ public:
     void updateSelectionWithDelta(int64_t locationDelta, int64_t lengthDelta, CompletionHandler<void()>&&);
     void requestDocumentEditingContext(WebKit::DocumentEditingContextRequest&&, CompletionHandler<void(WebKit::DocumentEditingContext&&)>&&);
     bool shouldAllowSingleClickToChangeSelection(WebCore::Node& targetNode, const WebCore::VisibleSelection& newSelection);
-#endif
+    bool shouldDrawVisuallyContiguousBidiSelection() const { return m_shouldDrawVisuallyContiguousBidiSelection; }
+    void setShouldDrawVisuallyContiguousBidiSelection(bool value);
+#endif // PLATFORM(IOS_FAMILY)
 
     void willChangeSelectionForAccessibility() { m_isChangingSelectionForAccessibility = true; }
     void didChangeSelectionForAccessibility() { m_isChangingSelectionForAccessibility = false; }
@@ -2765,6 +2767,7 @@ private:
     std::unique_ptr<WebCore::IgnoreSelectionChangeForScope> m_ignoreSelectionChangeScopeForDictation;
 
     bool m_isMobileDoctype { false };
+    bool m_shouldDrawVisuallyContiguousBidiSelection { false };
 #endif // PLATFORM(IOS_FAMILY)
 
     WebCore::Timer m_layerVolatilityTimer;

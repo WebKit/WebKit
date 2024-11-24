@@ -5,6 +5,7 @@ This test verifies that the text selection appears visually contiguous when sele
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 PASS isVisuallyContiguous is true
+PASS getSelection().toString() is "مثل هذا النص, is right to left"
 PASS successfullyParsed is true
 
 TEST COMPLETE
