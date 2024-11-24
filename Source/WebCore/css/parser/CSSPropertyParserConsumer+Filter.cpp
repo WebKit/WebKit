@@ -40,7 +40,6 @@
 #include "CSSPropertyParserConsumer+Percentage.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+URL.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSShadowValue.h"
 #include "CSSToLengthConversionData.h"
 #include "CSSTokenizer.h"

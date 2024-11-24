@@ -35,7 +35,6 @@
 #include "CSSPropertyParserConsumer+Ident.h"
 #include "CSSPropertyParserConsumer+LengthPercentage.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSPropertyParsing.h"
 #include "CSSUnits.h"
 #include "CalculationCategory.h"
@@ -737,6 +736,9 @@ static std::optional<TypedChild> consumeAnchor(CSSParserTokenRange& tokens, int 
     // <anchor()> = anchor( <anchor-element>? && <anchor-side>, <length-percentage>? )
 
     if (state.parserOptions.propertyOptions.anchorPolicy != AnchorPolicy::Allow)
+        return { };
+
+    if (!state.parserContext.propertySettings.cssAnchorPositioningEnabled)
         return { };
 
     auto anchorElement = CSSPropertyParserHelpers::consumeDashedIdentRaw(tokens);

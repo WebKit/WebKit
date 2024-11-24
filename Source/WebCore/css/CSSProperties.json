@@ -3012,14 +3012,14 @@
                     "name": "inset",
                     "resolver": "bottom"
                 },
-                "parser-function": "consumeSide",
+                "parser-function": "consumeInsetPhysical",
                 "parser-function-requires-current-shorthand": true,
-                "parser-grammar-unused": "<length-percentage> | auto",
+                "parser-grammar-unused": "auto | <length-percentage anchor-allowed anchor-size-allowed>",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/visuren.html#propdef-bottom"
+                "category": "css-position-3",
+                "url": "https://drafts.csswg.org/css-position-3/#insets"
             }
         },
         "box-shadow": {
@@ -3521,7 +3521,7 @@
                 "custom": "All",
                 "svg": true,
                 "color-property": true,
-                "parser-function": "consumePaintStroke",
+                "parser-function": "consumePaint",
                 "parser-grammar-unused": "none | <color> | [ <url> [ none | <color> ]? ] | context-fill | context-stroke",
                 "parser-grammar-unused-reason": "Needs support for ordered groups and optionals. Also spec grammar does not match the current implementation.",
                 "comment": "Also specified (with different grammar) in CSS Fill and Stroke Module Level 3"
@@ -3785,9 +3785,7 @@
                     "name": "inset",
                     "resolver": "block-end"
                 },
-                "parser-function": "consumeInsetLogicalStartEnd",
-                "parser-grammar-unused": "<length-percentage> | auto",
-                "parser-grammar-unused-reason": "Needs support for different parsing based on CSSAnchorPositioningEnabled feature flag."
+                "parser-grammar": "auto | <length-percentage anchor-allowed anchor-size-allowed>"
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3801,9 +3799,7 @@
                     "name": "inset",
                     "resolver": "block-start"
                 },
-                "parser-function": "consumeInsetLogicalStartEnd",
-                "parser-grammar-unused": "<length-percentage> | auto",
-                "parser-grammar-unused-reason": "Needs support for different parsing based on CSSAnchorPositioningEnabled feature flag."
+                "parser-grammar": "auto | <length-percentage anchor-allowed anchor-size-allowed>"
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3829,9 +3825,7 @@
                     "name": "inset",
                     "resolver": "inline-end"
                 },
-                "parser-function": "consumeInsetLogicalStartEnd",
-                "parser-grammar-unused": "<length-percentage> | auto",
-                "parser-grammar-unused-reason": "Needs support for different parsing based on CSSAnchorPositioningEnabled feature flag."
+                "parser-grammar": "auto | <length-percentage anchor-allowed anchor-size-allowed>"
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3845,9 +3839,7 @@
                     "name": "inset",
                     "resolver": "inline-start"
                 },
-                "parser-function": "consumeInsetLogicalStartEnd",
-                "parser-grammar-unused": "<length-percentage> | auto",
-                "parser-grammar-unused-reason": "Needs support for different parsing based on CSSAnchorPositioningEnabled feature flag."
+                "parser-grammar": "auto | <length-percentage anchor-allowed anchor-size-allowed>"
             },
             "specification": {
                 "category": "css-logical-props",
@@ -3865,14 +3857,14 @@
                     "name": "inset",
                     "resolver": "left"
                 },
-                "parser-function": "consumeSide",
+                "parser-function": "consumeInsetPhysical",
                 "parser-function-requires-current-shorthand": true,
-                "parser-grammar-unused": "<length-percentage> | auto",
+                "parser-grammar-unused": "auto | <length-percentage anchor-allowed anchor-size-allowed>",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/visuren.html#propdef-left"
+                "category": "css-position-3",
+                "url": "https://drafts.csswg.org/css-position-3/#insets"
             }
         },
         "letter-spacing": {
@@ -4128,7 +4120,7 @@
                     "name": "margin",
                     "resolver": "block-end"
                 },
-                "parser-grammar": "<margin-logical-start-end>"
+                "parser-grammar": "<margin-logical>"
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4145,7 +4137,7 @@
                     "name": "margin",
                     "resolver": "block-start"
                 },
-                "parser-grammar": "<margin-logical-start-end>"
+                "parser-grammar": "<margin-logical>"
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4163,14 +4155,14 @@
                     "name": "margin",
                     "resolver": "bottom"
                 },
-                "parser-function": "consumeMarginSide",
+                "parser-function": "consumeMarginPhysical",
                 "parser-function-requires-current-shorthand": true,
                 "parser-grammar-unused": "<length-percentage> | auto",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/box.html#propdef-margin-bottom"
+                "category": "css-box-4",
+                "url": "https://drafts.csswg.org/css-box-4/#margin-physical"
             }
         },
         "margin-inline": {
@@ -4195,7 +4187,7 @@
                     "name": "margin",
                     "resolver": "inline-end"
                 },
-                "parser-grammar": "<margin-logical-start-end>"
+                "parser-grammar": "<margin-logical>"
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4212,7 +4204,7 @@
                     "name": "margin",
                     "resolver": "inline-start"
                 },
-                "parser-grammar": "<margin-logical-start-end>"
+                "parser-grammar": "<margin-logical>"
             },
             "specification": {
                 "category": "css-logical-props",
@@ -4230,14 +4222,14 @@
                     "name": "margin",
                     "resolver": "left"
                 },
-                "parser-function": "consumeMarginSide",
+                "parser-function": "consumeMarginPhysical",
                 "parser-function-requires-current-shorthand": true,
                 "parser-grammar-unused": "<length-percentage> | auto",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/box.html#propdef-margin-left"
+                "category": "css-box-4",
+                "url": "https://drafts.csswg.org/css-box-4/#margin-physical"
             }
         },
         "margin-right": {
@@ -4251,14 +4243,14 @@
                     "name": "margin",
                     "resolver": "right"
                 },
-                "parser-function": "consumeMarginSide",
+                "parser-function": "consumeMarginPhysical",
                 "parser-function-requires-current-shorthand": true,
                 "parser-grammar-unused": "<length-percentage> | auto",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/box.html#propdef-margin-right"
+                "category": "css-box-4",
+                "url": "https://drafts.csswg.org/css-box-4/#margin-physical"
             }
         },
         "margin-top": {
@@ -4272,14 +4264,14 @@
                     "name": "margin",
                     "resolver": "top"
                 },
-                "parser-function": "consumeMarginSide",
+                "parser-function": "consumeMarginPhysical",
                 "parser-function-requires-current-shorthand": true,
                 "parser-grammar-unused": "<length-percentage> | auto",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/box.html#propdef-margin-top"
+                "category": "css-box-4",
+                "url": "https://drafts.csswg.org/css-box-4/#margin-physical"
             }
         },
         "margin-trim": {
@@ -5552,14 +5544,14 @@
                     "name": "inset",
                     "resolver": "right"
                 },
-                "parser-function": "consumeSide",
+                "parser-function": "consumeInsetPhysical",
                 "parser-function-requires-current-shorthand": true,
-                "parser-grammar-unused": "<length-percentage> | auto",
+                "parser-grammar-unused": "auto | <length-percentage anchor-allowed anchor-size-allowed>",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/visuren.html#propdef-right"
+                "category": "css-position-3",
+                "url": "https://drafts.csswg.org/css-position-3/#insets"
             }
         },
         "ruby-align": {
@@ -5669,7 +5661,7 @@
                 "custom": "All",
                 "svg": true,
                 "color-property": true,
-                "parser-function": "consumePaintStroke",
+                "parser-function": "consumePaint",
                 "parser-grammar-unused": "none | <color> | [ <url> [ none | <color> ]? ] | context-fill | context-stroke",
                 "parser-grammar-unused-reason": "Needs support for ordered groups and optionals. Also spec grammar does not match the current implementation.",
                 "comment": "Also specified (with different grammar) in CSS Fill and Stroke Module Level 3"
@@ -6124,14 +6116,14 @@
                     "name": "inset",
                     "resolver": "top"
                 },
-                "parser-function": "consumeSide",
+                "parser-function": "consumeInsetPhysical",
                 "parser-function-requires-current-shorthand": true,
-                "parser-grammar-unused": "<length-percentage> | auto",
+                "parser-grammar-unused": "auto | <length-percentage anchor-allowed anchor-size-allowed>",
                 "parser-grammar-unused-reason": "Needs support for different parsing based on the current shorthand."
             },
             "specification": {
-                "category": "css-22",
-                "url": "https://www.w3.org/TR/CSS22/visuren.html#propdef-top"
+                "category": "css-position-3",
+                "url": "https://drafts.csswg.org/css-position-3/#insets"
             }
         },
         "transition": {
@@ -7889,7 +7881,7 @@
             "inherited": true,
             "codegen-properties": {
                 "converter": "LineBoxContain",
-                "parser-function": "consumeLineBoxContain",
+                "parser-function": "consumeWebkitLineBoxContain",
                 "parser-grammar-unused": "none | [ block || inline || font || glyphs || replaced || inline-box || initial-letter ]",
                 "parser-grammar-unused-reason": "Needs support for '||' groups."
             },
@@ -10266,6 +10258,11 @@
             "longname": "CSS Paged Media Module",
             "url": "https://www.w3.org/TR/css3-page/"
         },
+        "css-position-3": {
+            "shortname": "CSS Positioned Layout",
+            "longname": "CSS Positioned Layout Module Level 3",
+            "url": "https://drafts.csswg.org/css-position-3/"
+        },
         "css-properties-and-values": {
             "shortname": "CSS Properties and Values API",
             "longname": "CSS Properties and Values API",
@@ -10566,7 +10563,7 @@
             
             }
         },
-        "<margin-logical-start-end>": {
+        "<margin-logical>": {
             "grammar": "auto | <length-percentage anchor-size-allowed>",
             "specification": {
                 "category": "css-logical-props",

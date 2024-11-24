@@ -35,7 +35,6 @@
 #include "CSSPropertyParserConsumer+Number.h"
 #include "CSSPropertyParserConsumer+Primitives.h"
 #include "CSSPropertyParserConsumer+Resolution.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSValue.h"
 #include "CSSVariableParser.h"
 #include "MediaQueryParserContext.h"

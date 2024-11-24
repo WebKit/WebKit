@@ -34,7 +34,6 @@
 #include "CSSParserTokenRange.h"
 #include "CSSPendingSubstitutionValue.h"
 #include "CSSPropertyParser.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSSelectorParser.h"
 #include "CSSSupportsParser.h"
 #include "CSSTokenizer.h"

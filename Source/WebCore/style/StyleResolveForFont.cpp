@@ -39,7 +39,6 @@
 #include "CSSFontVariationValue.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSPropertyParserConsumer+Font.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSUnevaluatedCalc.h"
 #include "CSSValueList.h"
 #include "CSSValuePair.h"
@@ -58,7 +57,6 @@
 #include "WebKitFontFamilyNames.h"
 
 namespace WebCore {
-
 namespace Style {
 
 using namespace WebKitFontFamilyNames;

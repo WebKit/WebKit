@@ -27,7 +27,7 @@
 
 #include "CSSPrimitiveValue.h"
 #include "CSSPropertyParser.h"
-#include "CSSPropertyParserHelpers.h"
+#include "CSSPropertyParserConsumer+Conditional.h"
 #include "ContainerQueryFeatures.h"
 #include "MediaQueryParserContext.h"
 

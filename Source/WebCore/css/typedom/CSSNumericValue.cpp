@@ -45,7 +45,6 @@
 #include "CSSNumericType.h"
 #include "CSSParserContext.h"
 #include "CSSParserTokenRange.h"
-#include "CSSPropertyParserHelpers.h"
 #include "CSSTokenizer.h"
 #include "CSSUnitValue.h"
 #include "CalculationCategory.h"

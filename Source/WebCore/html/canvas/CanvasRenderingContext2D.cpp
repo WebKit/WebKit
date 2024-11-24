@@ -38,7 +38,6 @@
 #include "CSSPropertyNames.h"
 #include "CSSPropertyParserConsumer+Filter.h"
 #include "CSSPropertyParserConsumer+Font.h"
-#include "CSSPropertyParserHelpers.h"
 #include "DocumentInlines.h"
 #include "Gradient.h"
 #include "ImageBuffer.h"
