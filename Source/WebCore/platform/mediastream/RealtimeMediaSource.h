@@ -227,6 +227,7 @@ public:
     virtual const RealtimeMediaSourceCapabilities& capabilities() = 0;
     virtual const RealtimeMediaSourceSettings& settings() = 0;
     virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;
+    virtual size_t weakRefCount() const = 0;
 
     using TakePhotoNativePromise = NativePromise<std::pair<Vector<uint8_t>, String>, String>;
     virtual Ref<TakePhotoNativePromise> takePhoto(PhotoSettings&&);
