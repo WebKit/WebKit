@@ -24,6 +24,7 @@
 
 #include "CursorList.h"
 #include "QuotesData.h"
+#include "RenderStyleInlines.h"
 #include "RenderStyleConstants.h"
 #include "RenderStyleDifference.h"
 #include "ShadowData.h"
