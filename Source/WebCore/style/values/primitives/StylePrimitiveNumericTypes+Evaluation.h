@@ -26,33 +26,68 @@
 
 #include "FloatPoint.h"
 #include "FloatSize.h"
+#include "StylePrimitiveNumericTypes+Calculation.h"
 #include "StylePrimitiveNumericTypes.h"
 
 namespace WebCore {
 namespace Style {
 
+// MARK: - Number
+
+template<auto R> constexpr double evaluate(const Number<R>& number, double)
+{
+    return number.value;
+}
+
+template<auto R> constexpr float evaluate(const Number<R>& number, float)
+{
+    return narrowPrecisionToFloat(number.value);
+}
+
 // MARK: - Percentage
 
 template<auto R> constexpr float evaluate(const Percentage<R>& percentage, float referenceLength)
 {
-    return percentage.value / 100.0f * referenceLength;
+    return narrowPrecisionToFloat(percentage.value) / 100.0f * referenceLength;
 }
 
-// MARK: - StylePercentageDimension (e.g. AnglePercentage/LengthPercentage)
-
-template<StylePercentageDimension T> float evaluate(const T& value, float referenceValue)
+template<auto R> constexpr double evaluate(const Percentage<R>& percentage, double referenceLength)
 {
-    return value.value.switchOn(
-        [&](typename T::Dimension dimension) -> float {
-            return dimension.value;
-        },
-        [&]<auto R>(Percentage<R> percentage) -> float {
-            return evaluate(percentage, referenceValue);
-        },
-        [&](const CalculationValue& calculation) -> float {
-            return calculation.evaluate(referenceValue);
-        }
-    );
+    return percentage.value / 100.0 * referenceLength;
+}
+
+// MARK: - StyleNumericPrimitive
+
+template<StyleNumericPrimitive T> constexpr float evaluate(const T& value, float)
+{
+    return value.value;
+}
+
+template<StyleNumericPrimitive T> constexpr double evaluate(const T& value, double)
+{
+    return value.value;
+}
+
+inline float evaluate(const CalculationValue& calculation, float referenceValue)
+{
+    return calculation.evaluate(referenceValue);
+}
+
+inline double evaluate(const CalculationValue& calculation, double referenceValue)
+{
+    return calculation.evaluate(referenceValue);
+}
+
+// MARK: - StyleDimensionPercentage (e.g. AnglePercentage/LengthPercentage)
+
+template<StyleDimensionPercentage T> float evaluate(const T& value, float referenceValue)
+{
+    return WTF::switchOn(value, [&referenceValue](const auto& value) -> float { return evaluate(value, referenceValue); });
+}
+
+template<StyleDimensionPercentage T> double evaluate(const T& value, double referenceValue)
+{
+    return WTF::switchOn(value, [&referenceValue](const auto& value) -> double { return evaluate(value, referenceValue); });
 }
 
 // MARK: - Point
@@ -80,7 +115,7 @@ template<typename T> FloatSize evaluate(const Size<T>& value, FloatSize referenc
 // Convert to `calc(100% - value)`.
 template<auto R> LengthPercentage<R> reflect(const LengthPercentage<R>& value)
 {
-    return value.value.switchOn(
+    return WTF::switchOn(value,
         [&](Length<R> value) -> LengthPercentage<R> {
             // If `value` is 0, we can avoid the `calc` altogether.
             if (value.value == 0)

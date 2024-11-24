@@ -1192,8 +1192,8 @@ template<CSSValueID Name> static Ref<WebCore::Gradient> createPlatformGradient(c
     auto firstPoint = computeEndPoint(radial.parameters.gradientBox.first, size);
     auto secondPoint = computeEndPoint(radial.parameters.gradientBox.second, size);
 
-    auto firstRadius = radial.parameters.gradientBox.firstRadius.value;
-    auto secondRadius = radial.parameters.gradientBox.secondRadius.value;
+    auto firstRadius = narrowPrecisionToFloat(radial.parameters.gradientBox.firstRadius.value);
+    auto secondRadius = narrowPrecisionToFloat(radial.parameters.gradientBox.secondRadius.value);
     auto aspectRatio = 1.0f;
 
     WebCore::Gradient::RadialData data { firstPoint, secondPoint, firstRadius, secondRadius, aspectRatio };

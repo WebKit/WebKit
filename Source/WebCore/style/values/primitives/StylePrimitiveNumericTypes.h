@@ -42,15 +42,15 @@ template<typename T> concept StyleNumeric = requires {
 };
 
 // Concept for use in generic contexts to filter on base, single type
-// primitives, excluding "percentage-dimension" types.
+// primitives, excluding "dimension-percentage" types.
 template<typename T> concept StyleNumericPrimitive = StyleNumeric<T> && requires {
     T::unit;
 };
 
-// Concept for use in generic contexts to filter on "percentage-dimension"
+// Concept for use in generic contexts to filter on "dimension-percentage"
 // types such as `<length-percentage>`.
-template<typename T> concept StylePercentageDimension = StyleNumeric<T> && requires {
-    T::isPercentageDimension;
+template<typename T> concept StyleDimensionPercentage = StyleNumeric<T> && requires {
+    typename T::Dimension;
 };
 
 // MARK: Number Primitive
@@ -60,21 +60,13 @@ template<CSS::Range R = CSS::All> struct Number {
     static constexpr auto unit = CSSUnitType::CSS_NUMBER;
     using CSS = WebCore::CSS::Number<R>;
     using Raw = WebCore::CSS::NumberRaw<R>;
+    using ValueType = double;
 
-    float value { 0 };
+    ValueType value { 0 };
 
     constexpr bool operator==(const Number<R>&) const = default;
+    constexpr bool operator==(ValueType other) const { return value == other; };
 };
-
-template<auto R> constexpr Number<R> canonicalizeNoConversionDataRequired(const CSS::NumberRaw<R>& raw)
-{
-    return { narrowPrecisionToFloat(raw.value) };
-}
-
-template<auto R> constexpr Number<R> canonicalize(const CSS::NumberRaw<R>& raw, const CSSToLengthConversionData&)
-{
-    return canonicalizeNoConversionDataRequired(raw);
-}
 
 // MARK: Percentage Primitive
 
@@ -83,20 +75,13 @@ template<CSS::Range R = CSS::All> struct Percentage {
     static constexpr auto unit = CSSUnitType::CSS_PERCENTAGE;
     using CSS = WebCore::CSS::Percentage<R>;
     using Raw = WebCore::CSS::PercentageRaw<R>;
+    using ValueType = double;
 
-    float value { 0 };
+    ValueType value { 0 };
 
     constexpr bool operator==(const Percentage<R>&) const = default;
+    constexpr bool operator==(ValueType other) const { return value == other; };
 };
-template<auto R> constexpr Percentage<R> canonicalizeNoConversionDataRequired(const CSS::PercentageRaw<R>& raw)
-{
-    return { narrowPrecisionToFloat(raw.value) };
-}
-
-template<auto R> constexpr Percentage<R> canonicalize(const CSS::PercentageRaw<R>& raw, const CSSToLengthConversionData&)
-{
-    return canonicalizeNoConversionDataRequired(raw);
-}
 
 // MARK: Dimension Primitives
 
@@ -105,20 +90,13 @@ template<CSS::Range R = CSS::All> struct Angle {
     static constexpr auto unit = CSSUnitType::CSS_DEG;
     using CSS = WebCore::CSS::Angle<R>;
     using Raw = WebCore::CSS::AngleRaw<R>;
+    using ValueType = double;
 
-    float value { 0 };
+    ValueType value { 0 };
 
     constexpr bool operator==(const Angle<R>&) const = default;
+    constexpr bool operator==(ValueType other) const { return value == other; };
 };
-
-template<auto R> Angle<R> canonicalizeNoConversionDataRequired(const CSS::AngleRaw<R>& raw)
-{
-    return { narrowPrecisionToFloat(CSS::canonicalizeAngle(raw.value, raw.type)) };
-}
-template<auto R> Angle<R> canonicalize(const CSS::AngleRaw<R>& raw, const CSSToLengthConversionData&)
-{
-    return canonicalizeNoConversionDataRequired(raw);
-}
 
 template<CSS::Range R = CSS::All> struct Length {
     static constexpr auto range = R;
@@ -126,71 +104,41 @@ template<CSS::Range R = CSS::All> struct Length {
     using CSS = WebCore::CSS::Length<R>;
     using Raw = WebCore::CSS::LengthRaw<R>;
 
-    float value { 0 };
-    bool quirk { false };
+    // NOTE: Unlike the other primitive numeric types, Length<> uses a `float`,
+    // not a `double` for its value type.
+    using ValueType = float;
 
-    constexpr bool hasQuirk() const { return quirk; }
+    ValueType value { 0 };
+
     constexpr bool operator==(const Length<R>&) const = default;
+    constexpr bool operator==(ValueType other) const { return value == other; };
 };
-
-template<auto R> Length<R> canonicalizeNoConversionDataRequired(const CSS::LengthRaw<R>& raw)
-{
-    ASSERT(!requiresConversionData(raw));
-    return {
-        .value = CSS::canonicalizeAndClampLengthNoConversionDataRequired(raw.value, raw.type),
-        .quirk = raw.type == CSSUnitType::CSS_QUIRKY_EM
-    };
-}
-
-template<auto R> Length<R> canonicalize(const CSS::LengthRaw<R>& raw, const CSSToLengthConversionData& conversionData)
-{
-    return {
-        .value = CSS::canonicalizeAndClampLength(raw.value, raw.type, conversionData),
-        .quirk = raw.type == CSSUnitType::CSS_QUIRKY_EM
-    };
-}
 
 template<CSS::Range R = CSS::All> struct Time {
     static constexpr auto range = R;
     static constexpr auto unit = CSSUnitType::CSS_S;
     using CSS = WebCore::CSS::Time<R>;
     using Raw = WebCore::CSS::TimeRaw<R>;
+    using ValueType = double;
 
-    float value { 0 };
+    ValueType value { 0 };
 
     constexpr bool operator==(const Time<R>&) const = default;
+    constexpr bool operator==(ValueType other) const { return value == other; };
 };
-
-template<auto R> Time<R> canonicalizeNoConversionDataRequired(const CSS::TimeRaw<R>& raw)
-{
-    return { narrowPrecisionToFloat(CSS::canonicalizeTime(raw.value, raw.type)) };
-}
-
-template<auto R> Time<R> canonicalize(const CSS::TimeRaw<R>& raw, const CSSToLengthConversionData&)
-{
-    return canonicalizeNoConversionDataRequired(raw);
-}
 
 template<CSS::Range R = CSS::All> struct Frequency {
     static constexpr auto range = R;
     static constexpr auto unit = CSSUnitType::CSS_HZ;
     using CSS = WebCore::CSS::Frequency<R>;
     using Raw = WebCore::CSS::FrequencyRaw<R>;
+    using ValueType = double;
 
-    float value { 0 };
+    ValueType value { 0 };
 
     constexpr bool operator==(const Frequency<R>&) const = default;
+    constexpr bool operator==(ValueType other) const { return value == other; };
 };
-
-template<auto R> Frequency<R> canonicalizeNoConversionDataRequired(const CSS::FrequencyRaw<R>& raw)
-{
-    return { narrowPrecisionToFloat(CSS::canonicalizeFrequency(raw.value, raw.type)) };
-}
-
-template<auto R> Frequency<R> canonicalize(const CSS::FrequencyRaw<R>& raw, const CSSToLengthConversionData&)
-{
-    return canonicalizeNoConversionDataRequired(raw);
-}
 
 template<CSS::Range R = CSS::Nonnegative> struct Resolution {
     static_assert(R.min >= 0, "<resolution> values must always have a minimum range of at least 0.");
@@ -198,86 +146,85 @@ template<CSS::Range R = CSS::Nonnegative> struct Resolution {
     static constexpr auto unit = CSSUnitType::CSS_DPPX;
     using CSS = WebCore::CSS::Resolution<R>;
     using Raw = WebCore::CSS::ResolutionRaw<R>;
+    using ValueType = double;
 
-    float value { 0 };
+    ValueType value { 0 };
 
     constexpr bool operator==(const Resolution<R>&) const = default;
+    constexpr bool operator==(ValueType other) const { return value == other; };
 };
-
-template<auto R> Resolution<R> canonicalizeNoConversionDataRequired(const CSS::ResolutionRaw<R>& raw)
-{
-    return { narrowPrecisionToFloat(CSS::canonicalizeResolution(raw.value, raw.type)) };
-}
-
-template<auto R> Resolution<R> canonicalize(const CSS::ResolutionRaw<R>& raw, const CSSToLengthConversionData&)
-{
-    return canonicalizeNoConversionDataRequired(raw);
-}
 
 template<CSS::Range R = CSS::All> struct Flex {
     static constexpr auto range = R;
     static constexpr auto unit = CSSUnitType::CSS_FR;
     using CSS = WebCore::CSS::Flex<R>;
     using Raw = WebCore::CSS::FlexRaw<R>;
+    using ValueType = double;
 
-    float value { 0 };
+    ValueType value { 0 };
 
     constexpr bool operator==(const Flex<R>&) const = default;
+    constexpr bool operator==(ValueType other) const { return value == other; };
 };
-
-template<auto R> constexpr Flex<R> canonicalizeNoConversionDataRequired(const CSS::FlexRaw<R>& raw)
-{
-    return { narrowPrecisionToFloat(raw.value) };
-}
-
-template<auto R> constexpr Flex<R> canonicalize(const CSS::FlexRaw<R>& raw, const CSSToLengthConversionData&)
-{
-    return canonicalizeNoConversionDataRequired(raw);
-}
 
 // MARK: Dimension + Percentage Primitives
 
-// Compact representation of std::variant<Angle, Percentage, Ref<CalculationValue>> that takes
-// up only 64 bits. Utilizes the knowledge that pointers are at most 48 bits, allowing for the
-// storage of the type tag in the remaining space.
-// FIXME: Abstract into a generic CompactPointerVariant type.
-template<CSS::Range R = CSS::All> class AnglePercentageValue {
-public:
-    enum class Tag : uint8_t { Angle, Percentage, CalculationValue };
+template<typename T> struct PrimitiveDimensionPercentageCategory;
 
-    constexpr AnglePercentageValue(Angle<R> angle)
-        : m_data { encodedPayload(angle) | encodedTag(Tag::Angle) }
+template<auto R> struct PrimitiveDimensionPercentageCategory<Angle<R>> {
+    static constexpr auto category = Calculation::Category::AnglePercentage;
+};
+
+template<auto R> struct PrimitiveDimensionPercentageCategory<Length<R>> {
+    static constexpr auto category = Calculation::Category::LengthPercentage;
+};
+
+// Compact representation of std::variant<Dimension<R>, Percentage<R>, Ref<CalculationValue>> that
+// takes up only 64 bits. To make this possible, the Dimension and Percentage are both stored as
+// float values, matching the precedent set by WebCore::Length. Additionally, it utilizes the knowledge
+// that pointers are at most 48 bits, allowing for the storage of the type tag in the remaining space.
+//
+// FIXME: Abstract into a generic CompactPointerVariant<Ts...> type.
+
+template<typename D> class PrimitiveDimensionPercentage {
+public:
+    static constexpr auto R = D::range;
+
+    enum class Tag : uint8_t { Dimension, Percentage, CalculationValue };
+
+    constexpr PrimitiveDimensionPercentage(D dimension)
+        : m_data { encodedPayload(dimension) | encodedTag(Tag::Dimension) }
     {
     }
 
-    constexpr AnglePercentageValue(Percentage<R> percentage)
+    constexpr PrimitiveDimensionPercentage(Percentage<R> percentage)
         : m_data { encodedPayload(percentage) | encodedTag(Tag::Percentage) }
     {
     }
 
-    AnglePercentageValue(Ref<CalculationValue>&& calculationValue)
+    PrimitiveDimensionPercentage(Ref<CalculationValue>&& calculationValue)
         : m_data { encodedPayload(WTFMove(calculationValue)) | encodedTag(Tag::CalculationValue) }
     {
     }
 
-    AnglePercentageValue(Calculation::Child&& root)
-        : AnglePercentageValue(makeCalculationValue(WTFMove(root)))
+    PrimitiveDimensionPercentage(Calculation::Child&& root)
+        : PrimitiveDimensionPercentage(makeCalculationValue(WTFMove(root)))
     {
     }
 
-    AnglePercentageValue(const AnglePercentageValue<R>& other)
+    PrimitiveDimensionPercentage(const PrimitiveDimensionPercentage<D>& other)
         : m_data { other.m_data }
     {
         if (tag() == Tag::CalculationValue)
             refCalculationValue(); // Balanced by deref() in destructor.
     }
 
-    AnglePercentageValue(AnglePercentageValue<R>&& other)
+    PrimitiveDimensionPercentage(PrimitiveDimensionPercentage<D>&& other)
     {
         *this = WTFMove(other);
     }
 
-    AnglePercentageValue<R>& operator=(const AnglePercentageValue<R>& other)
+    PrimitiveDimensionPercentage<D>& operator=(const PrimitiveDimensionPercentage<D>& other)
     {
         if (*this == other)
             return *this;
@@ -293,7 +240,7 @@ public:
         return *this;
     }
 
-    AnglePercentageValue<R>& operator=(AnglePercentageValue<R>&& other)
+    PrimitiveDimensionPercentage<D>& operator=(PrimitiveDimensionPercentage<D>&& other)
     {
         if (*this == other)
             return *this;
@@ -307,36 +254,22 @@ public:
         return *this;
     }
 
-    ~AnglePercentageValue()
+    ~PrimitiveDimensionPercentage()
     {
         if (tag() == Tag::CalculationValue)
             derefCalculationValue(); // Balanced by leakRef() in encodedCalculationValue.
     }
 
-    constexpr Tag tag() const
-    {
-        return decodedTag(m_data);
-    }
+    constexpr Tag tag() const { return decodedTag(m_data); }
 
-    constexpr bool isAngle() const
-    {
-        return tag() == Tag::Angle;
-    }
+    constexpr bool isDimension() const { return tag() == Tag::Dimension; }
+    constexpr bool isPercentage() const { return tag() == Tag::Percentage; }
+    constexpr bool isCalculationValue() const { return tag() == Tag::CalculationValue; }
 
-    constexpr bool isPercentage() const
+    constexpr D asDimension() const
     {
-        return tag() == Tag::Percentage;
-    }
-
-    constexpr bool isCalculationValue() const
-    {
-        return tag() == Tag::CalculationValue;
-    }
-
-    constexpr Angle<R> asAngle() const
-    {
-        ASSERT(tag() == Tag::Angle);
-        return decodedAngle(m_data);
+        ASSERT(tag() == Tag::Dimension);
+        return decodedDimension(m_data);
     }
 
     constexpr Percentage<R> asPercentage() const
@@ -354,8 +287,8 @@ public:
     template<typename F> decltype(auto) visit(F&& functor) const
     {
         switch (tag()) {
-        case Tag::Angle:
-            return std::invoke(std::forward<F>(functor), asAngle());
+        case Tag::Dimension:
+            return std::invoke(std::forward<F>(functor), asDimension());
         case Tag::Percentage:
             return std::invoke(std::forward<F>(functor), asPercentage());
         case Tag::CalculationValue:
@@ -372,8 +305,8 @@ public:
     constexpr bool isZero() const
     {
         switch (tag()) {
-        case Tag::Angle:
-            return asAngle().value == 0;
+        case Tag::Dimension:
+            return asDimension().value == 0;
         case Tag::Percentage:
             return asPercentage().value == 0;
         case Tag::CalculationValue:
@@ -382,7 +315,21 @@ public:
         WTF_UNREACHABLE();
     }
 
-    constexpr bool operator==(const AnglePercentageValue<R>&) const = default;
+    bool operator==(const PrimitiveDimensionPercentage<D>& other) const
+    {
+        if (tag() != other.tag())
+            return false;
+
+        switch (tag()) {
+        case Tag::Dimension:
+            return asDimension() == other.asDimension();
+        case Tag::Percentage:
+            return asPercentage() == other.asPercentage();
+        case Tag::CalculationValue:
+            return asCalculationValue().get() == other.asCalculationValue().get();
+        }
+        WTF_UNREACHABLE();
+    }
 
 private:
 #if CPU(ADDRESS64)
@@ -390,34 +337,38 @@ private:
 #else
     static constexpr unsigned maxNumberOfBitsInPointer = 32;
 #endif
+    static constexpr uint64_t dimensionSize = sizeof(float) * 8;
+    static constexpr uint64_t dimensionMask = (1ULL << dimensionSize) - 1;
+    static constexpr uint64_t percentageSize = sizeof(float) * 8;
+    static constexpr uint64_t percentageMask = (1ULL << percentageSize) - 1;
     static constexpr uint64_t calculationValueSize = maxNumberOfBitsInPointer;
     static constexpr uint64_t calculationValueMask = (1ULL << calculationValueSize) - 1;
-    static constexpr uint64_t angleSize = sizeof(Angle<R>) * 8;
-    static constexpr uint64_t angleMask = (1ULL << angleSize) - 1;
-    static constexpr uint64_t percentageSize = sizeof(Percentage<R>) * 8;
-    static constexpr uint64_t percentageMask = (1ULL << percentageSize) - 1;
     static constexpr uint64_t tagSize = sizeof(Tag) * 8;
-    static constexpr uint64_t tagShift = std::max({ calculationValueSize, angleSize, percentageSize });
+    static constexpr uint64_t tagShift = std::max({ dimensionSize, percentageSize, calculationValueSize });
     static_assert(tagShift + tagSize <= 64);
 
     static constexpr uint64_t movedFromValue()
     {
-        return encodedPayload(Angle<R> { 0 }) | encodedTag(Tag::Angle);
+        return encodedPayload(D { 0 }) | encodedTag(Tag::Dimension);
     }
 
-    static uint64_t encodedPayload(Ref<CalculationValue>&& calculationValue)
+    static constexpr uint64_t encodedPayload(D dimension)
     {
-        return encodedCalculationValue(WTFMove(calculationValue));
-    }
-
-    static constexpr uint64_t encodedPayload(Angle<R> angle)
-    {
-        return encodedAngle(angle);
+        return static_cast<uint64_t>(std::bit_cast<uint32_t>(clampTo<float>(dimension.value)));
     }
 
     static constexpr uint64_t encodedPayload(Percentage<R> percentage)
     {
-        return encodedPercentage(percentage);
+        return static_cast<uint64_t>(std::bit_cast<uint32_t>(clampTo<float>(percentage.value)));
+    }
+
+    static uint64_t encodedPayload(Ref<CalculationValue>&& calculationValue)
+    {
+#if CPU(ADDRESS64)
+        return std::bit_cast<uint64_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
+#else
+        return std::bit_cast<uint32_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
+#endif
     }
 
     static constexpr uint64_t encodedTag(Tag tag)
@@ -429,6 +380,30 @@ private:
     {
         return static_cast<Tag>(static_cast<uint8_t>(value >> tagShift));
     }
+
+    // Payload specific decoding.
+
+    static constexpr D decodedDimension(uint64_t value)
+    {
+        return { std::bit_cast<float>(static_cast<uint32_t>(value & dimensionMask)) };
+    }
+
+    static constexpr Percentage<R> decodedPercentage(uint64_t value)
+    {
+        return { std::bit_cast<float>(static_cast<uint32_t>(value & percentageMask)) };
+    }
+
+    static Ref<CalculationValue> decodedCalculationValue(uint64_t value)
+    {
+#if CPU(ADDRESS64)
+        Ref<CalculationValue> calculation = *std::bit_cast<CalculationValue*>(value & calculationValueMask);
+#else
+        Ref<CalculationValue> calculation = *std::bit_cast<CalculationValue*>(static_cast<uint32_t>(value & calculationValueMask));
+#endif
+        return calculation;
+    }
+
+    // CalculationValue specific handling.
 
     void refCalculationValue()
     {
@@ -450,53 +425,12 @@ private:
 #endif
     }
 
-    // Payload specific coding.
-
-    static uint64_t encodedCalculationValue(Ref<CalculationValue>&& calculationValue)
-    {
-#if CPU(ADDRESS64)
-        return std::bit_cast<uint64_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
-#else
-        return std::bit_cast<uint32_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
-#endif
-    }
-
-    static Ref<CalculationValue> decodedCalculationValue(uint64_t value)
-    {
-#if CPU(ADDRESS64)
-        Ref<CalculationValue> calculation = *std::bit_cast<CalculationValue*>(value & calculationValueMask);
-#else
-        Ref<CalculationValue> calculation = *std::bit_cast<CalculationValue*>(static_cast<uint32_t>(value & calculationValueMask));
-#endif
-        return calculation;
-    }
-
-    static constexpr uint64_t encodedAngle(Angle<R> angle)
-    {
-        return static_cast<uint64_t>(std::bit_cast<uint32_t>(angle.value));
-    }
-
-    static constexpr Angle<R> decodedAngle(uint64_t value)
-    {
-        return { std::bit_cast<float>(static_cast<uint32_t>(value & angleMask)) };
-    }
-
-    static constexpr uint64_t encodedPercentage(Percentage<R> percentage)
-    {
-        return static_cast<uint64_t>(std::bit_cast<uint32_t>(percentage.value));
-    }
-
-    static constexpr Percentage<R> decodedPercentage(uint64_t value)
-    {
-        return { std::bit_cast<float>(static_cast<uint32_t>(value & percentageMask)) };
-    }
-
     static Ref<CalculationValue> makeCalculationValue(Calculation::Child&& root)
     {
         return CalculationValue::create(
             Calculation::Tree {
                 .root = WTFMove(root),
-                .category = Calculation::Category::AnglePercentage,
+                .category = PrimitiveDimensionPercentageCategory<D>::category,
                 .range = { R.min, R.max }
             }
         );
@@ -506,16 +440,15 @@ private:
 };
 
 template<CSS::Range R = CSS::All> struct AnglePercentage {
-    static constexpr bool isPercentageDimension = true;
     static constexpr auto range = R;
     using CSS = WebCore::CSS::AnglePercentage<R>;
     using Raw = WebCore::CSS::AnglePercentageRaw<R>;
     using Dimension = Angle<R>;
 
-    AnglePercentageValue<R> value;
+    PrimitiveDimensionPercentage<Angle<R>> value;
 
-    AnglePercentage(Angle<R> length)
-        : value { WTFMove(length) }
+    AnglePercentage(Angle<R> angle)
+        : value { WTFMove(angle) }
     {
     }
 
@@ -534,301 +467,31 @@ template<CSS::Range R = CSS::All> struct AnglePercentage {
     {
     }
 
-    constexpr bool operator==(const AnglePercentage<R>&) const = default;
-};
+    bool isAngle() const { return value.isDimension(); }
+    bool isPercentage() const { return value.isPercentage(); }
+    bool isCalculationValue() const { return value.isCalculationValue(); }
 
-template<auto R> AnglePercentage<R> canonicalizeNoConversionDataRequired(const CSS::AnglePercentageRaw<R>& raw)
-{
-    if (raw.type == CSSUnitType::CSS_PERCENTAGE)
-        return { canonicalizeNoConversionDataRequired(CSS::PercentageRaw<R> { raw.value }) };
-    return { canonicalizeNoConversionDataRequired(CSS::AngleRaw<R> { raw.type, raw.value }) };
-}
-
-template<auto R> AnglePercentage<R> canonicalize(const CSS::AnglePercentageRaw<R>& raw, const CSSToLengthConversionData&)
-{
-    return canonicalizeNoConversionDataRequired(raw);
-}
-
-
-// Compact representation of std::variant<Length, Percentage, Ref<CalculationValue>> that takes
-// up only 64 bits. Utilizes the knowledge that pointers are at most 48 bits, allowing for the
-// storage of the type tag in the remaining space.
-// FIXME: Abstract into a generic CompactPointerVariant type.
-template<CSS::Range R = CSS::All> class LengthPercentageValue {
-public:
-    enum class Tag : uint8_t { Length, Percentage, CalculationValue };
-
-    constexpr LengthPercentageValue(Length<R> length)
-        : m_data { encodedPayload(length) | encodedTag(Tag::Length) }
-    {
-    }
-
-    constexpr LengthPercentageValue(Percentage<R> percentage)
-        : m_data { encodedPayload(percentage) | encodedTag(Tag::Percentage) }
-    {
-    }
-
-    LengthPercentageValue(Ref<CalculationValue>&& calculationValue)
-        : m_data { encodedPayload(WTFMove(calculationValue)) | encodedTag(Tag::CalculationValue) }
-    {
-    }
-
-    LengthPercentageValue(Calculation::Child&& root)
-        : LengthPercentageValue(makeCalculationValue(WTFMove(root)))
-    {
-    }
-
-    LengthPercentageValue(const LengthPercentageValue<R>& other)
-        : m_data { other.m_data }
-    {
-        if (tag() == Tag::CalculationValue)
-            refCalculationValue(); // Balanced by deref() in destructor.
-    }
-
-    LengthPercentageValue(LengthPercentageValue<R>&& other)
-    {
-        *this = WTFMove(other);
-    }
-
-    LengthPercentageValue<R>& operator=(const LengthPercentageValue<R>& other)
-    {
-        if (*this == other)
-            return *this;
-
-        if (tag() == Tag::CalculationValue)
-            derefCalculationValue();
-
-        m_data = other.m_data;
-
-        if (tag() == Tag::CalculationValue)
-            refCalculationValue();
-
-        return *this;
-    }
-
-    LengthPercentageValue<R>& operator=(LengthPercentageValue<R>&& other)
-    {
-        if (*this == other)
-            return *this;
-
-        if (tag() == Tag::CalculationValue)
-            derefCalculationValue();
-
-        m_data = other.m_data;
-        other.m_data = movedFromValue();
-
-        return *this;
-    }
-
-    ~LengthPercentageValue()
-    {
-        if (tag() == Tag::CalculationValue)
-            derefCalculationValue(); // Balanced by leakRef() in encodedCalculationValue.
-    }
-
-    constexpr Tag tag() const
-    {
-        return decodedTag(m_data);
-    }
-
-    constexpr bool isLength() const
-    {
-        return tag() == Tag::Length;
-    }
-
-    constexpr bool isPercentage() const
-    {
-        return tag() == Tag::Percentage;
-    }
-
-    constexpr bool isCalculationValue() const
-    {
-        return tag() == Tag::CalculationValue;
-    }
-
-    constexpr Length<R> asLength() const
-    {
-        ASSERT(tag() == Tag::Length);
-        return decodedLength(m_data);
-    }
-
-    constexpr Percentage<R> asPercentage() const
-    {
-        ASSERT(tag() == Tag::Percentage);
-        return decodedPercentage(m_data);
-    }
-
-    Ref<CalculationValue> asCalculationValue() const
-    {
-        ASSERT(tag() == Tag::CalculationValue);
-        return decodedCalculationValue(m_data);
-    }
-
-    template<typename F> decltype(auto) visit(F&& functor) const
-    {
-        switch (tag()) {
-        case Tag::Length:
-            return std::invoke(std::forward<F>(functor), asLength());
-        case Tag::Percentage:
-            return std::invoke(std::forward<F>(functor), asPercentage());
-        case Tag::CalculationValue:
-            return std::invoke(std::forward<F>(functor), asCalculationValue());
-        }
-        WTF_UNREACHABLE();
-    }
+    auto asAngle() const -> Angle<R> { return value.asDimension(); }
+    auto asPercentage() const -> Percentage<R> { return value.asPercentage(); }
+    auto asCalculationValue() const -> Ref<CalculationValue> { return value.asCalculationValue(); }
 
     template<typename... F> decltype(auto) switchOn(F&&... functors) const
     {
-        return visit(WTF::makeVisitor(std::forward<F>(functors)...));
+        return value.switchOn(std::forward<F>(functors)...);
     }
 
-    constexpr bool isZero() const
-    {
-        switch (tag()) {
-        case Tag::Length:
-            return asLength().value == 0;
-        case Tag::Percentage:
-            return asPercentage().value == 0;
-        case Tag::CalculationValue:
-            return false;
-        }
-        WTF_UNREACHABLE();
-    }
+    bool isZero() const { return value.isZero(); }
 
-    bool operator==(const LengthPercentageValue<R>&) const = default;
-
-private:
-#if CPU(ADDRESS64)
-    static constexpr unsigned maxNumberOfBitsInPointer = 48;
-#else
-    static constexpr unsigned maxNumberOfBitsInPointer = 32;
-#endif
-    static constexpr uint64_t calculationValueSize = maxNumberOfBitsInPointer;
-    static constexpr uint64_t calculationValueMask = (1ULL << calculationValueSize) - 1;
-    static constexpr uint64_t lengthValueSize = sizeof(float) * 8;
-    static constexpr uint64_t lengthValueMask = (1ULL << lengthValueSize) - 1;
-    static constexpr uint64_t lengthQuirkSize = sizeof(bool) * 8;
-    static constexpr uint64_t lengthQuirkShift = lengthValueSize;
-    static constexpr uint64_t lengthSize = lengthValueSize + lengthQuirkSize;
-    static constexpr uint64_t percentageSize = sizeof(Percentage<R>) * 8;
-    static constexpr uint64_t percentageMask = (1ULL << percentageSize) - 1;
-    static constexpr uint64_t tagSize = sizeof(Tag) * 8;
-    static constexpr uint64_t tagShift = std::max({ calculationValueSize, lengthSize, percentageSize });
-    static_assert(tagShift + tagSize <= 64);
-
-    static constexpr uint64_t movedFromValue()
-    {
-        return encodedPayload(Length<R> { 0 }) | encodedTag(Tag::Length);
-    }
-
-    static uint64_t encodedPayload(Ref<CalculationValue>&& calculationValue)
-    {
-        return encodedCalculationValue(WTFMove(calculationValue));
-    }
-
-    static constexpr uint64_t encodedPayload(Length<R> length)
-    {
-        return encodedLength(length);
-    }
-
-    static constexpr uint64_t encodedPayload(Percentage<R> percentage)
-    {
-        return encodedPercentage(percentage);
-    }
-
-    static constexpr uint64_t encodedTag(Tag tag)
-    {
-        return static_cast<uint64_t>(tag) << tagShift;
-    }
-
-    static constexpr Tag decodedTag(uint64_t value)
-    {
-        return static_cast<Tag>(static_cast<uint8_t>(value >> tagShift));
-    }
-
-    void refCalculationValue()
-    {
-        ASSERT(tag() == Tag::CalculationValue);
-#if CPU(ADDRESS64)
-        std::bit_cast<CalculationValue*>(m_data & calculationValueMask)->ref();
-#else
-        std::bit_cast<CalculationValue*>(static_cast<uint32_t>(m_data & calculationValueMask))->ref();
-#endif
-    }
-
-    void derefCalculationValue()
-    {
-        ASSERT(tag() == Tag::CalculationValue);
-#if CPU(ADDRESS64)
-        std::bit_cast<CalculationValue*>(m_data & calculationValueMask)->deref();
-#else
-        std::bit_cast<CalculationValue*>(static_cast<uint32_t>(m_data & calculationValueMask))->deref();
-#endif
-    }
-
-    // Payload specific coding.
-
-    static uint64_t encodedCalculationValue(Ref<CalculationValue>&& calculationValue)
-    {
-#if CPU(ADDRESS64)
-        return std::bit_cast<uint64_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
-#else
-        return std::bit_cast<uint32_t>(&calculationValue.leakRef()); // Balanced by deref() in destructor.
-#endif
-    }
-
-    static Ref<CalculationValue> decodedCalculationValue(uint64_t value)
-    {
-#if CPU(ADDRESS64)
-        Ref<CalculationValue> calculation = *std::bit_cast<CalculationValue*>(value & calculationValueMask);
-#else
-        Ref<CalculationValue> calculation = *std::bit_cast<CalculationValue*>(static_cast<uint32_t>(value & calculationValueMask));
-#endif
-        return calculation;
-    }
-
-    static constexpr uint64_t encodedLength(Length<R> length)
-    {
-        return static_cast<uint64_t>(std::bit_cast<uint32_t>(length.value)) | (static_cast<uint64_t>(length.quirk) << lengthQuirkShift);
-    }
-
-    static constexpr Length<R> decodedLength(uint64_t value)
-    {
-        return { std::bit_cast<float>(static_cast<uint32_t>(value & lengthValueMask)), static_cast<bool>(value >> lengthQuirkShift) };
-    }
-
-    static constexpr uint64_t encodedPercentage(Percentage<R> percentage)
-    {
-        return static_cast<uint64_t>(std::bit_cast<uint32_t>(percentage.value));
-    }
-
-    static constexpr Percentage<R> decodedPercentage(uint64_t value)
-    {
-        return { std::bit_cast<float>(static_cast<uint32_t>(value & percentageMask)) };
-    }
-
-    static Ref<CalculationValue> makeCalculationValue(Calculation::Child&& root)
-    {
-        return CalculationValue::create(
-            Calculation::Tree {
-                .root = WTFMove(root),
-                .category = Calculation::Category::LengthPercentage,
-                .range = { R.min, R.max }
-            }
-        );
-    }
-
-    uint64_t m_data { 0 };
+    bool operator==(const AnglePercentage<R>&) const = default;
 };
 
 template<CSS::Range R = CSS::All> struct LengthPercentage {
-    static constexpr bool isPercentageDimension = true;
     static constexpr auto range = R;
     using CSS = WebCore::CSS::LengthPercentage<R>;
     using Raw = WebCore::CSS::LengthPercentageRaw<R>;
     using Dimension = Length<R>;
 
-    LengthPercentageValue<R> value;
+    PrimitiveDimensionPercentage<Length<R>> value;
 
     LengthPercentage(Length<R> length)
         : value { WTFMove(length) }
@@ -853,69 +516,41 @@ template<CSS::Range R = CSS::All> struct LengthPercentage {
     // CalculatedValue is intentionally not part of IPCData.
     using IPCData = std::variant<Length<R>, Percentage<R>>;
     LengthPercentage(IPCData&& data)
-        : value { WTF::switchOn(data, [&](auto&& data) -> LengthPercentageValue<R> { return { data }; }) }
+        : value { WTF::switchOn(data, [&](auto&& data) -> PrimitiveDimensionPercentage<Length<R>> { return { data }; }) }
     {
     }
 
     IPCData ipcData() const
     {
         switch (value.tag()) {
-        case LengthPercentageValue<R>::Tag::Length:
-            return value.asLength();
-        case LengthPercentageValue<R>::Tag::Percentage:
-            return value.asPercentage();
-        case LengthPercentageValue<R>::Tag::CalculationValue:
+        case PrimitiveDimensionPercentage<Length<R>>::Tag::Dimension:
+            return asLength();
+        case PrimitiveDimensionPercentage<Length<R>>::Tag::Percentage:
+            return asPercentage();
+        case PrimitiveDimensionPercentage<Length<R>>::Tag::CalculationValue:
             ASSERT_NOT_REACHED();
             return Length<R> { 0 };
         }
         WTF_UNREACHABLE();
     }
 
-    bool hasQuirk() const { return value.tag() == LengthPercentageValue<R>::Tag::Length && value.asLength().hasQuirk(); }
+    bool isLength() const { return value.isDimension(); }
+    bool isPercentage() const { return value.isPercentage(); }
+    bool isCalculationValue() const { return value.isCalculationValue(); }
 
-    constexpr bool operator==(const LengthPercentage<R>&) const = default;
+    auto asLength() const -> Length<R> { return value.asDimension(); }
+    auto asPercentage() const -> Percentage<R> { return value.asPercentage(); }
+    auto asCalculationValue() const -> Ref<CalculationValue> { return value.asCalculationValue(); }
+
+    template<typename... F> decltype(auto) switchOn(F&&... functors) const
+    {
+        return value.switchOn(std::forward<F>(functors)...);
+    }
+
+    bool isZero() const { return value.isZero(); }
+
+    bool operator==(const LengthPercentage<R>&) const = default;
 };
-
-template<auto R> LengthPercentage<R> canonicalizeNoConversionDataRequired(const CSS::LengthPercentageRaw<R>& raw)
-{
-    if (raw.type == CSSUnitType::CSS_PERCENTAGE)
-        return { canonicalizeNoConversionDataRequired(CSS::PercentageRaw<R> { raw.value }) };
-    return { canonicalizeNoConversionDataRequired(CSS::LengthRaw<R> { raw.type, raw.value }) };
-}
-
-template<auto R> LengthPercentage<R> canonicalize(const CSS::LengthPercentageRaw<R>& raw, const CSSToLengthConversionData& conversionData)
-{
-    if (raw.type == CSSUnitType::CSS_PERCENTAGE)
-        return { canonicalize(CSS::PercentageRaw<R> { raw.value }, conversionData) };
-    return { canonicalize(CSS::LengthRaw<R> { raw.type, raw.value }, conversionData) };
-}
-
-// MARK: - Conversion to `Calculation::Child`.
-
-inline Calculation::Child copyCalculation(Ref<CalculationValue> value)
-{
-    return value->copyRoot();
-}
-
-template<auto R> Calculation::Child copyCalculation(const Number<R>& value)
-{
-    return Calculation::number(value.value);
-}
-
-template<auto R> Calculation::Child copyCalculation(const Percentage<R>& value)
-{
-    return Calculation::percentage(value.value);
-}
-
-template<StyleNumericPrimitive Dimension> Calculation::Child copyCalculation(const Dimension& value)
-{
-    return Calculation::dimension(value.value);
-}
-
-template<StylePercentageDimension PercentageDimension> Calculation::Child copyCalculation(const PercentageDimension& value)
-{
-    return value.value.switchOn([](const auto& value) { return copyCalculation(value); });
-}
 
 // MARK: Additional Common Type and Groupings
 
@@ -940,11 +575,11 @@ using LengthPercentageNonnegative = LengthPercentage<CSS::Nonnegative>;
 // Standard Percentages
 using Percentage0To100 = LengthPercentage<CSS::Range{0,100}>;
 
-// Standing Points
+// Standard Points
 using LengthPercentagePointAll = Point<LengthPercentageAll>;
 using LengthPercentagePointNonnegative = Point<LengthPercentageNonnegative>;
 
-// Standing Sizes
+// Standard Sizes
 using LengthPercentageSizeAll = Size<LengthPercentageAll>;
 using LengthPercentageSizeNonnegative = Size<LengthPercentageNonnegative>;
 
@@ -1017,3 +652,19 @@ template<typename TypeList> using RawToStyle = typename RawToStyleLazy<TypeList>
 
 } // namespace CSS
 } // namespace WebCore
+
+namespace WTF {
+
+// Overload WTF::switchOn to make it so `WebCore::Style::StyleDimensionPercentage` conforming types can be used directly.
+
+template<WebCore::Style::StyleDimensionPercentage T, class... F> ALWAYS_INLINE auto switchOn(const T& percentageDimension, F&&... f) -> decltype(percentageDimension.switchOn(std::forward<F>(f)...))
+{
+    return percentageDimension.switchOn(std::forward<F>(f)...);
+}
+
+template<WebCore::Style::StyleDimensionPercentage T, class... F> ALWAYS_INLINE auto switchOn(T&& percentageDimension, F&&... f) -> decltype(percentageDimension.switchOn(std::forward<F>(f)...))
+{
+    return percentageDimension.switchOn(std::forward<F>(f)...);
+}
+
+} // namespace WTF

@@ -3055,26 +3055,24 @@ class WebCore::SVGPathByteStream {
 
 header: <WebCore/StylePrimitiveNumericTypes.h>
 [CustomHeader, Nested] struct WebCore::Style::Angle<WebCore::CSS::Nonnegative> {
-    float value;
+    double value;
 };
 [CustomHeader, Nested] struct WebCore::Style::Angle<WebCore::CSS::All> {
-    float value;
+    double value;
 };
 
 [CustomHeader, Nested] struct WebCore::Style::Length<WebCore::CSS::Nonnegative> {
     float value;
-    bool quirk;
 };
 [CustomHeader, Nested] struct WebCore::Style::Length<WebCore::CSS::All> {
     float value;
-    bool quirk;
 };
 
 [CustomHeader, Nested] struct WebCore::Style::Percentage<WebCore::CSS::Nonnegative> {
-    float value;
+    double value;
 };
 [CustomHeader, Nested] struct WebCore::Style::Percentage<WebCore::CSS::All> {
-    float value;
+    double value;
 };
 
 [CustomHeader, Nested] struct WebCore::Style::LengthPercentage<WebCore::CSS::All> {

@@ -59,12 +59,12 @@ void unevaluatedCalcCollectComputedStyleDependencies(ComputedStyleDependencies&,
 
 Ref<CSSCalcValue> unevaluatedCalcSimplify(const Ref<CSSCalcValue>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&);
 
-float unevaluatedCalcEvaluate(const Ref<CSSCalcValue>&, const Style::BuilderState&, Calculation::Category);
-float unevaluatedCalcEvaluate(const Ref<CSSCalcValue>&, const Style::BuilderState&, const CSSCalcSymbolTable&, Calculation::Category);
-float unevaluatedCalcEvaluate(const Ref<CSSCalcValue>&, const CSSToLengthConversionData&, Calculation::Category);
-float unevaluatedCalcEvaluate(const Ref<CSSCalcValue>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&, Calculation::Category);
-float unevaluatedCalcEvaluateNoConversionDataRequired(const Ref<CSSCalcValue>&, Calculation::Category);
-float unevaluatedCalcEvaluateNoConversionDataRequired(const Ref<CSSCalcValue>&, const CSSCalcSymbolTable&, Calculation::Category);
+double unevaluatedCalcEvaluate(const Ref<CSSCalcValue>&, const Style::BuilderState&, Calculation::Category);
+double unevaluatedCalcEvaluate(const Ref<CSSCalcValue>&, const Style::BuilderState&, const CSSCalcSymbolTable&, Calculation::Category);
+double unevaluatedCalcEvaluate(const Ref<CSSCalcValue>&, const CSSToLengthConversionData&, Calculation::Category);
+double unevaluatedCalcEvaluate(const Ref<CSSCalcValue>&, const CSSToLengthConversionData&, const CSSCalcSymbolTable&, Calculation::Category);
+double unevaluatedCalcEvaluateNoConversionDataRequired(const Ref<CSSCalcValue>&, Calculation::Category);
+double unevaluatedCalcEvaluateNoConversionDataRequired(const Ref<CSSCalcValue>&, const CSSCalcSymbolTable&, Calculation::Category);
 
 // `UnevaluatedCalc` annotates a `CSSCalcValue` with the raw value type that it
 // will be evaluated to, allowing the processing of calc in generic code.

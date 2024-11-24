@@ -25,6 +25,7 @@
 #include "config.h"
 #include "StyleShapeFunction.h"
 
+#include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GeometryUtilities.h"
 #include "Path.h"
@@ -239,7 +240,7 @@ private:
         return ArcToSegment {
             .rx = radius.width(),
             .ry = radius.height(),
-            .angle = arcCommand.rotation.value,
+            .angle = narrowPrecisionToFloat(arcCommand.rotation.value),
             .largeArc = std::holds_alternative<Large>(arcCommand.arcSize),
             .sweep = std::holds_alternative<Cw>(arcCommand.arcSweep),
             .targetPoint = evaluate(arcCommand.toBy, m_boxSize)

@@ -25,6 +25,7 @@
 #pragma once
 
 #include "CSSValueKeywords.h"
+#include "ComputedStyleDependencies.h"
 #include "RectEdges.h"
 #include <optional>
 #include <tuple>
@@ -37,7 +38,6 @@
 namespace WebCore {
 
 class CSSValue;
-struct ComputedStyleDependencies;
 
 namespace CSS {
 
@@ -523,6 +523,13 @@ template<typename CSSType> struct ComputedStyleDependenciesCollector;
 template<typename CSSType> void collectComputedStyleDependencies(ComputedStyleDependencies& dependencies, const CSSType& value)
 {
     ComputedStyleDependenciesCollector<CSSType>{}(dependencies, value);
+}
+
+template<typename CSSType> ComputedStyleDependencies collectComputedStyleDependencies(const CSSType& value)
+{
+    ComputedStyleDependencies dependencies;
+    collectComputedStyleDependencies(dependencies, value);
+    return dependencies;
 }
 
 template<typename CSSType> auto collectComputedStyleDependenciesOnTupleLike(ComputedStyleDependencies& dependencies, const CSSType& value)

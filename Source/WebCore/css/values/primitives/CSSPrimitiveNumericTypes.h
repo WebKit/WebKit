@@ -121,8 +121,6 @@ template<Range R = All> struct AngleRaw {
     constexpr bool operator==(const AngleRaw<R>&) const = default;
 };
 
-double canonicalizeAngle(double value, CSSUnitType);
-
 template<Range R = All> struct LengthRaw {
     using ValueType = double;
     static constexpr auto range = R;
@@ -132,11 +130,6 @@ template<Range R = All> struct LengthRaw {
 
     constexpr bool operator==(const LengthRaw<R>&) const = default;
 };
-
-double canonicalizeLengthNoConversionDataRequired(double, CSSUnitType);
-double canonicalizeLength(double, CSSUnitType, const CSSToLengthConversionData&);
-float canonicalizeAndClampLengthNoConversionDataRequired(double, CSSUnitType);
-float canonicalizeAndClampLength(double, CSSUnitType, const CSSToLengthConversionData&);
 
 template<Range R = All> struct TimeRaw {
     using ValueType = double;
@@ -148,8 +141,6 @@ template<Range R = All> struct TimeRaw {
     constexpr bool operator==(const TimeRaw<R>&) const = default;
 };
 
-double canonicalizeTime(double, CSSUnitType);
-
 template<Range R = All> struct FrequencyRaw {
     using ValueType = double;
     static constexpr auto range = R;
@@ -159,8 +150,6 @@ template<Range R = All> struct FrequencyRaw {
 
     constexpr bool operator==(const FrequencyRaw<R>&) const = default;
 };
-
-double canonicalizeFrequency(double, CSSUnitType);
 
 template<Range R = Nonnegative> struct ResolutionRaw {
     using ValueType = double;
@@ -172,8 +161,6 @@ template<Range R = Nonnegative> struct ResolutionRaw {
 
     constexpr bool operator==(const ResolutionRaw<R>&) const = default;
 };
-
-double canonicalizeResolution(double, CSSUnitType);
 
 template<Range R = All> struct FlexRaw {
     using ValueType = double;

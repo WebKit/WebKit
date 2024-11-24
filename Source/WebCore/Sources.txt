@@ -1159,6 +1159,7 @@ css/values/images/CSSGradient.cpp
 css/values/motion/CSSRayFunction.cpp
 css/values/primitives/CSSNone.cpp
 css/values/primitives/CSSPosition.cpp
+css/values/primitives/CSSPrimitiveNumericTypes+Canonicalization.cpp
 css/values/primitives/CSSPrimitiveNumericTypes+ComputedStyleDependencies.cpp
 css/values/primitives/CSSPrimitiveNumericTypes+Serialization.cpp
 css/values/primitives/CSSPrimitiveNumericTypes+SymbolReplacement.cpp

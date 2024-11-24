@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "CSSPrimitiveNumericTypes+Canonicalization.h"
 #include "CSSPropertyParserConsumer+MetaConsumerDefinitions.h"
 
 namespace WebCore {
@@ -47,7 +48,7 @@ struct ResolutionValidator {
     template<auto R> static bool isValid(CSS::ResolutionRaw<R> raw, CSSPropertyParserOptions)
     {
         return isValidDimensionValue(raw, [&] {
-            auto canonicalValue = CSS::canonicalizeResolution(raw.value, raw.type);
+            auto canonicalValue = CSS::canonicalize(raw);
             return canonicalValue >= raw.range.min && canonicalValue <= raw.range.max;
         });
     }

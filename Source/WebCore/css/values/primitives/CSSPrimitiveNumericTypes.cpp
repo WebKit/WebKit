@@ -25,67 +25,10 @@
 #include "config.h"
 #include "CSSPrimitiveNumericTypes.h"
 
-#include "CSSPrimitiveValue.h"
-#include "CSSToLengthConversionData.h"
-#include "FloatConversion.h"
-
 namespace WebCore {
 namespace CSS {
 
-// MARK: Angle
-
-double canonicalizeAngle(double value, CSSUnitType type)
-{
-    return CSSPrimitiveValue::computeAngle<CSSPrimitiveValue::AngleUnit::Degrees>(type, value);
-}
-
-// MARK: Length
-
-double canonicalizeLengthNoConversionDataRequired(double value, CSSUnitType type)
-{
-    return CSSPrimitiveValue::computeNonCalcLengthDouble({ }, type, value);
-}
-
-double canonicalizeLength(double value, CSSUnitType type, const CSSToLengthConversionData& conversionData)
-{
-    return CSSPrimitiveValue::computeNonCalcLengthDouble(conversionData, type, value);
-}
-
-static float clampLengthToAllowedLimits(double value)
-{
-    return clampTo<float>(narrowPrecisionToFloat(value), minValueForCssLength, maxValueForCssLength);
-}
-
-float canonicalizeAndClampLengthNoConversionDataRequired(double value, CSSUnitType type)
-{
-    return clampLengthToAllowedLimits(canonicalizeLengthNoConversionDataRequired(value, type));
-}
-
-float canonicalizeAndClampLength(double value, CSSUnitType type, const CSSToLengthConversionData& conversionData)
-{
-    return clampLengthToAllowedLimits(canonicalizeLength(value, type, conversionData));
-}
-
-// MARK: Time
-
-double canonicalizeTime(double value, CSSUnitType type)
-{
-    return CSSPrimitiveValue::computeTime<CSSPrimitiveValue::TimeUnit::Seconds>(type, value);
-}
-
-// MARK: Frequency
-
-double canonicalizeFrequency(double value, CSSUnitType type)
-{
-    return CSSPrimitiveValue::computeFrequency<CSSPrimitiveValue::FrequencyUnit::Hz>(type, value);
-}
-
-// MARK: Resolution
-
-double canonicalizeResolution(double value, CSSUnitType type)
-{
-    return CSSPrimitiveValue::computeResolution<CSSPrimitiveValue::ResolutionUnit::Dppx>(type, value);
-}
+// isSupportedUnitForCategory will go here.
 
 // MARK: Unit Validation
 
