@@ -52,6 +52,7 @@
 #include "Text.h"
 #include "TypedElementDescendantIteratorInlines.h"
 #include "ViewTransition.h"
+#include "ViewTransitionTypeSet.h"
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
@@ -62,6 +63,29 @@ using namespace HTMLNames;
 enum class VisitedMatchType : unsigned char {
     Disabled, Enabled
 };
+
+static bool matchesActiveViewTransitionTypePseudoClass(const Element& element, const FixedVector<AtomString>& types)
+{
+    // This pseudo class only matches the root element.
+    if (&element != element.document().documentElement())
+        return false;
+
+    if (const auto* viewTransition = element.document().activeViewTransition()) {
+        const auto& activeTypes = viewTransition->types();
+
+        for (const auto& type : types) {
+            // https://github.com/w3c/csswg-drafts/issues/9534#issuecomment-1802364085
+            // RESOLVED: type can accept any idents, except 'none' or '-ua-' prefixes
+            if (type.convertToASCIILowercase() == "none"_s || type.convertToASCIILowercase().startsWith("-ua-"_s))
+                continue;
+
+            if (activeTypes.hasType(type))
+                return true;
+        }
+    }
+
+    return false;
+}
 
 struct SelectorChecker::LocalContext {
     LocalContext(const CSSSelector& selector, const Element& element, VisitedMatchType visitedMatchType, std::optional<Style::PseudoElementIdentifier> pseudoElementIdentifier)

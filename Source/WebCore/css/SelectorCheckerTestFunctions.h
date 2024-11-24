@@ -590,27 +590,4 @@ ALWAYS_INLINE bool matchesActiveViewTransitionPseudoClass(const Element& element
     return !!element.document().activeViewTransition();
 }
 
-ALWAYS_INLINE bool matchesActiveViewTransitionTypePseudoClass(const Element& element, const FixedVector<AtomString>& types)
-{
-    // This pseudo class only matches the root element.
-    if (&element != element.document().documentElement())
-        return false;
-
-    if (const auto* viewTransition = element.document().activeViewTransition()) {
-        const auto& activeTypes = viewTransition->types();
-
-        for (const auto& type : types) {
-            // https://github.com/w3c/csswg-drafts/issues/9534#issuecomment-1802364085
-            // RESOLVED: type can accept any idents, except 'none' or '-ua-' prefixes
-            if (type.convertToASCIILowercase() == "none"_s || type.convertToASCIILowercase().startsWith("-ua-"_s))
-                continue;
-
-            if (activeTypes.hasType(type))
-                return true;
-        }
-    }
-
-    return false;
-}
-
 } // namespace WebCore

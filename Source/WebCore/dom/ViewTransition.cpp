@@ -52,6 +52,7 @@
 #include "StyleResolver.h"
 #include "StyleScope.h"
 #include "Styleable.h"
+#include "ViewTransitionTypeSet.h"
 #include "WebAnimation.h"
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/MakeString.h>
@@ -920,6 +921,11 @@ ExceptionOr<void> ViewTransition::updatePseudoElementSizes()
         document->styleScope().didChangeStyleSheetContents();
 
     return { };
+}
+
+void ViewTransition::setTypes(Ref<ViewTransitionTypeSet>&& newTypes)
+{
+    m_types = WTFMove(newTypes);
 }
 
 RenderViewTransitionCapture* ViewTransition::viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject& renderer)

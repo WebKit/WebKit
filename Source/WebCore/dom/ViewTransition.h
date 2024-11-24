@@ -30,16 +30,18 @@
 #include "Element.h"
 #include "ExceptionOr.h"
 #include "ImageBuffer.h"
-#include "JSValueInWrappedObject.h"
 #include "MutableStyleProperties.h"
 #include "Styleable.h"
-#include "ViewTransitionTypeSet.h"
 #include "ViewTransitionUpdateCallback.h"
 #include "VisibilityChangeClient.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/Ref.h>
 #include <wtf/TZoneMalloc.h>
 #include <wtf/text/AtomString.h>
+
+namespace JSC {
+class JSValue;
+}
 
 namespace WebCore {
 
@@ -48,6 +50,7 @@ class DeferredPromise;
 class RenderLayerModelObject;
 class RenderViewTransitionCapture;
 class RenderLayerModelObject;
+class ViewTransitionTypeSet;
 
 enum class ViewTransitionPhase : uint8_t {
     PendingCapture,
@@ -190,11 +193,12 @@ public:
     bool documentElementIsCaptured() const;
 
     const ViewTransitionTypeSet& types() const { return m_types; }
-    void setTypes(Ref<ViewTransitionTypeSet>&& newTypes) { m_types = WTFMove(newTypes); }
+    void setTypes(Ref<ViewTransitionTypeSet>&&);
 
     RenderViewTransitionCapture* viewTransitionNewPseudoForCapturedElement(RenderLayerModelObject&);
 
     static constexpr Seconds defaultTimeout = 4_s;
+
 private:
     ViewTransition(Document&, RefPtr<ViewTransitionUpdateCallback>&&, Vector<AtomString>&&);
     ViewTransition(Document&, Vector<AtomString>&&);
