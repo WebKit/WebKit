@@ -117,9 +117,7 @@ Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
     auto utf8Word = word.utf8();
     for (auto& dictionary : m_enchantDictionaries) {
         size_t numberOfSuggestions;
-        size_t i;
 
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
         char** suggestions = enchant_dict_suggest(dictionary.get(), utf8Word.data(), utf8Word.length(), &numberOfSuggestions);
         if (numberOfSuggestions <= 0)
             continue;
@@ -127,9 +125,8 @@ Vector<String> TextCheckerEnchant::getGuessesForWord(const String& word)
         if (numberOfSuggestions > maximumNumberOfSuggestions)
             numberOfSuggestions = maximumNumberOfSuggestions;
 
-        for (i = 0; i < numberOfSuggestions; i++)
-            guesses.append(String::fromUTF8(suggestions[i]));
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        for (const auto suggestion : unsafeMakeSpan(suggestions, numberOfSuggestions))
+            guesses.append(String::fromUTF8(suggestion));
 
         enchant_dict_free_string_list(dictionary.get(), suggestions);
     }
