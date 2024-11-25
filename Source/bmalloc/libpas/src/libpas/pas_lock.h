@@ -124,6 +124,14 @@ PAS_END_EXTERN_C;
 #define OS_UNFAIR_LOCK_INLINE 1
 #endif
 #include <os/lock_private.h>
+
+// Swift Cpp Interop cannot import the inline variants.
+#if defined(__swift__)
+#define os_unfair_lock_lock_with_options_inline os_unfair_lock_lock_with_options
+#define os_unfair_lock_trylock_inline os_unfair_lock_trylock
+#define os_unfair_lock_unlock_inline os_unfair_lock_unlock
+#endif
+
 #else
 #define PAS_USE_ULOCK_SPI 0
 #include <os/lock.h>

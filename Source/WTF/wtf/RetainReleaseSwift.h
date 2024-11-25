@@ -27,9 +27,7 @@
 
 #if HAVE(SWIFT_CPP_INTEROP) // FIXME: rdar://136787800
 #include <swift/bridging>
-#endif
-
-#if !HAVE(SWIFT_CPP_INTEROP)
+#else
 
 #ifndef SWIFT_SHARED_REFERENCE // FIXME: rdar://136787800
 #define SWIFT_SHARED_REFERENCE(__retain, __release)

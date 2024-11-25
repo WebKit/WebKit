@@ -26,8 +26,8 @@
 #pragma once
 
 #include "SwiftCXXThunk.h"
-#include <span>
 #include <cstdint>
+#include <span>
 
 using SpanConstUInt8 = std::span<const uint8_t>;
 using SpanUInt8 = std::span<uint8_t>;
