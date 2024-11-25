@@ -233,6 +233,7 @@ Tests/WebKitCocoa/ResourceLoadDelegate.mm
 Tests/WebKitCocoa/ResourceLoadStatistics.mm
 Tests/WebKitCocoa/ResponsivenessTimer.mm
 Tests/WebKitCocoa/ResponsivenessTimerDoesntFireEarly.mm
+Tests/WebKitCocoa/RestoreLocalStorage.mm
 Tests/WebKitCocoa/RestoreScrollPosition.mm
 Tests/WebKitCocoa/RestoreSessionStateWithoutNavigation.mm
 Tests/WebKitCocoa/RunOpenPanel.mm

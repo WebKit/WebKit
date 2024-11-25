@@ -2710,4 +2710,15 @@ void WebsiteDataStore::setRestrictedOpenerTypeForDomainForTesting(const WebCore:
     m_restrictedOpenerTypesForTesting.set(domain, type);
 }
 
+void WebsiteDataStore::fetchLocalStorage(CompletionHandler<void(HashMap<WebCore::ClientOrigin, HashMap<String, String>>)>&& completionHandler)
+{
+    RefPtr networkProcessProxy = m_networkProcess;
+    if (!networkProcessProxy) {
+        completionHandler({ });
+        return;
+    }
+
+    networkProcessProxy->fetchLocalStorage(m_sessionID, WTFMove(completionHandler));
+}
+
 } // namespace WebKit

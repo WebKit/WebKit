@@ -3102,4 +3102,15 @@ void NetworkProcess::setPersistedDomains(PAL::SessionID sessionID, HashSet<Regis
         session->setPersistedDomains(WTFMove(domains));
 }
 
+void NetworkProcess::fetchLocalStorage(PAL::SessionID sessionID, CompletionHandler<void(HashMap<WebCore::ClientOrigin, HashMap<String, String>>&&)>&& completionHandler)
+{
+    auto* session = networkSession(sessionID);
+    if (!session) {
+        completionHandler({ });
+        return;
+    }
+
+    session->protectedStorageManager()->fetchLocalStorage(WTFMove(completionHandler));
+}
+
 } // namespace WebKit

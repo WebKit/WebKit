@@ -243,4 +243,9 @@ void LocalStorageManager::disconnectFromStorageArea(IPC::Connection::UniqueID co
         connectionClosedForTransientStorageArea(connection);
 }
 
+HashMap<String, String> LocalStorageManager::fetchStorageMap() const
+{
+    return m_localStorageArea->allItems();
+}
+
 } // namespace WebKit

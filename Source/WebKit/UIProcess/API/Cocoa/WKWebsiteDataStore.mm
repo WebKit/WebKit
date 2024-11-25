@@ -61,12 +61,14 @@
 #import <WebCore/SerializedCryptoKeyWrap.h>
 #import <WebCore/ServiceWorkerClientData.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/WebCorePersistentCoders.h>
 #import <wtf/BlockPtr.h>
 #import <wtf/TZoneMallocInlines.h>
 #import <wtf/URL.h>
 #import <wtf/Vector.h>
 #import <wtf/WeakObjCPtr.h>
 #import <wtf/cocoa/RuntimeApplicationChecksCocoa.h>
+#import <wtf/cocoa/SpanCocoa.h>
 #import <wtf/cocoa/VectorCocoa.h>
 
 #if HAVE(NW_PROXY_CONFIG)
@@ -1424,6 +1426,24 @@ static Vector<WebKit::WebsiteDataRecord> toWebsiteDataRecords(NSArray *dataRecor
     _websiteDataStore->runningOrTerminatingServiceWorkerCountForTesting([completionHandlerCopy = WTFMove(completionHandlerCopy)](auto result) {
         completionHandlerCopy(result);
     });
+}
+
+- (void)_fetchDataOfTypes:(NSSet<NSString *> *)dataTypes completionHandler:(WK_SWIFT_UI_ACTOR void (^)(NSData *))completionHandler
+{
+    if ([dataTypes containsObject:WKWebsiteDataTypeLocalStorage]) {
+        _websiteDataStore->fetchLocalStorage([completionHandler = makeBlockPtr(completionHandler)](HashMap<WebCore::ClientOrigin, HashMap<String, String>>&& localStorage) {
+            constexpr unsigned currentLocalStorageSerializationVersion = 1;
+
+            WTF::Persistence::Encoder encoder;
+            encoder << currentLocalStorageSerializationVersion;
+            encoder << localStorage;
+            completionHandler(toNSData(encoder.span()).get());
+        });
+
+        return;
+    }
+
+    completionHandler(nil);
 }
 
 @end
