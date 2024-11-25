@@ -76,8 +76,6 @@ public:
 #if ENABLE(VP9)
     WEBCORE_EXPORT static void setShouldEnableVP9Decoder(bool);
     WEBCORE_EXPORT static bool shouldEnableVP9Decoder();
-    WEBCORE_EXPORT static void setShouldEnableVP8Decoder(bool);
-    WEBCORE_EXPORT static bool shouldEnableVP8Decoder();
     WEBCORE_EXPORT static void setSWVPDecodersAlwaysEnabled(bool);
     WEBCORE_EXPORT static bool swVPDecodersAlwaysEnabled();
 #endif
@@ -283,7 +281,6 @@ private:
 
 #if ENABLE(VP9)
     static bool m_vp9DecoderEnabled;
-    static bool m_vp8DecoderEnabled;
     static bool m_swVPDecodersAlwaysEnabled;
 #endif
 

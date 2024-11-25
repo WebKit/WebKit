@@ -87,11 +87,6 @@ void MediaSessionManagerCocoa::ensureCodecsRegistered()
     dispatch_once(&onceToken, ^{
         if (shouldEnableVP9Decoder())
             registerSupplementalVP9Decoder();
-        if (swVPDecodersAlwaysEnabled()) {
-            registerWebKitVP9Decoder();
-            registerWebKitVP8Decoder();
-        } else if (shouldEnableVP8Decoder())
-            registerWebKitVP8Decoder();
     });
 #endif
 }

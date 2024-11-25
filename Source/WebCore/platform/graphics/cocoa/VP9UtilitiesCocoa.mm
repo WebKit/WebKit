@@ -37,6 +37,7 @@
 #import "SharedBuffer.h"
 #import "SystemBattery.h"
 #import "VideoConfiguration.h"
+#import "VideoDecoder.h"
 #import <JavaScriptCore/DataView.h>
 #import <webm/common/vp9_header_parser.h>
 #import <wtf/text/StringToIntegerConversion.h>
@@ -125,16 +126,6 @@ static ResolutionCategory resolutionCategory(const FloatSize& size)
     return ResolutionCategory::R_480p;
 }
 
-void registerWebKitVP9Decoder()
-{
-    LibWebRTCProvider::registerWebKitVP9Decoder();
-}
-
-void registerWebKitVP8Decoder()
-{
-    LibWebRTCProvider::registerWebKitVP8Decoder();
-}
-
 void registerSupplementalVP9Decoder()
 {
     if (!VideoToolboxLibrary(true))
@@ -153,23 +144,16 @@ bool isVP9DecoderAvailable()
 {
     if (isSWDecodersAlwaysEnabled())
         return true;
-
 #if PLATFORM(IOS) || PLATFORM(VISION)
-    return canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9);
+    return vp9HardwareDecoderAvailable();
 #else
-    if (!VideoToolboxLibrary(true))
-        return false;
-    return noErr == VTSelectAndCreateVideoDecoderInstance(kCMVideoCodecType_VP9, kCFAllocatorDefault, nullptr, nullptr);
+    return VideoDecoder::isVPXSupported() || vp9HardwareDecoderAvailable();
 #endif
 }
 
 bool isVP8DecoderAvailable()
 {
-    if (isSWDecodersAlwaysEnabled())
-        return true;
-    if (!VideoToolboxLibrary(true))
-        return false;
-    return noErr == VTSelectAndCreateVideoDecoderInstance('vp08', kCFAllocatorDefault, nullptr, nullptr);
+    return VideoDecoder::isVPXSupported();
 }
 
 bool vp9HardwareDecoderAvailable()

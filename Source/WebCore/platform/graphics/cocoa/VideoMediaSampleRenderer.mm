@@ -29,6 +29,7 @@
 #import "IOSurface.h"
 #import "Logging.h"
 #import "MediaSampleAVFObjC.h"
+#import "VP9UtilitiesCocoa.h"
 #import "WebCoreDecompressionSession.h"
 #import "WebSampleBufferVideoRendering.h"
 #import <AVFoundation/AVFoundation.h>
@@ -277,18 +278,18 @@ void VideoMediaSampleRenderer::enqueueSample(const MediaSample& sample)
 
     auto cmSampleBuffer = sample.platformSample().sample.cmSampleBuffer;
 
-#if PLATFORM(IOS_FAMILY)
+    bool needsDecompressionSession = false;
+#if ENABLE(VP9)
     if (!m_decompressionSession && !m_currentCodec) {
         // Only use a decompression session for vp8 or vp9 when software decoded.
         CMVideoFormatDescriptionRef videoFormatDescription = PAL::CMSampleBufferGetFormatDescription(cmSampleBuffer);
         auto fourCC = PAL::CMFormatDescriptionGetMediaSubType(videoFormatDescription);
-        if (fourCC == 'vp08' || (fourCC == 'vp09' && !(canLoad_VideoToolbox_VTIsHardwareDecodeSupported() && VTIsHardwareDecodeSupported(kCMVideoCodecType_VP9))))
-            initializeDecompressionSession();
+        needsDecompressionSession = fourCC == 'vp08' || (fourCC == 'vp09' && !vp9HardwareDecoderAvailable());
         m_currentCodec = fourCC;
     }
 #endif
 
-    if (!m_decompressionSession && (!renderer() || (prefersDecompressionSession() && !sample.isProtected())))
+    if (!m_decompressionSession && (!renderer() || ((prefersDecompressionSession() || needsDecompressionSession) && !sample.isProtected())))
         initializeDecompressionSession();
 
     if (!m_decompressionSession) {

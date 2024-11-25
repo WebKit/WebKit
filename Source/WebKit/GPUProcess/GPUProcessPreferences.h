@@ -65,7 +65,6 @@ struct GPUProcessPreferences {
 #endif
 
 #if ENABLE(VP9)
-    std::optional<bool> vp8DecoderEnabled;
     std::optional<bool> vp9DecoderEnabled;
     bool swVPDecodersAlwaysEnabled { false };
 #endif

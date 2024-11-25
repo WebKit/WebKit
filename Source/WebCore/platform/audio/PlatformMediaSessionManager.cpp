@@ -61,7 +61,6 @@ bool PlatformMediaSessionManager::s_useSCContentSharingPicker;
 
 #if ENABLE(VP9)
 bool PlatformMediaSessionManager::m_vp9DecoderEnabled;
-bool PlatformMediaSessionManager::m_vp8DecoderEnabled;
 bool PlatformMediaSessionManager::m_swVPDecodersAlwaysEnabled;
 #endif
 
@@ -805,16 +804,6 @@ void PlatformMediaSessionManager::setShouldEnableVP9Decoder(bool vp9DecoderEnabl
 bool PlatformMediaSessionManager::shouldEnableVP9Decoder()
 {
     return m_vp9DecoderEnabled;
-}
-
-void PlatformMediaSessionManager::setShouldEnableVP8Decoder(bool vp8DecoderEnabled)
-{
-    m_vp8DecoderEnabled = vp8DecoderEnabled;
-}
-
-bool PlatformMediaSessionManager::shouldEnableVP8Decoder()
-{
-    return m_vp8DecoderEnabled;
 }
 
 void PlatformMediaSessionManager::setSWVPDecodersAlwaysEnabled(bool swVPDecodersAlwaysEnabled)

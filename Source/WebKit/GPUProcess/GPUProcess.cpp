@@ -319,15 +319,6 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
 #endif
 
 #if ENABLE(VP9)
-    if (updatePreference(m_preferences.vp8DecoderEnabled, preferences.vp8DecoderEnabled)) {
-        PlatformMediaSessionManager::setShouldEnableVP8Decoder(*m_preferences.vp8DecoderEnabled);
-#if PLATFORM(COCOA)
-        if (!m_haveEnabledVP8Decoder && *m_preferences.vp8DecoderEnabled) {
-            m_haveEnabledVP8Decoder = true;
-            WebCore::registerWebKitVP8Decoder();
-        }
-#endif
-    }
     if (updatePreference(m_preferences.vp9DecoderEnabled, preferences.vp9DecoderEnabled)) {
         PlatformMediaSessionManager::setShouldEnableVP9Decoder(*m_preferences.vp9DecoderEnabled);
 #if PLATFORM(COCOA)
@@ -337,22 +328,8 @@ void GPUProcess::updateGPUProcessPreferences(GPUProcessPreferences&& preferences
         }
 #endif
     }
-    if (preferences.swVPDecodersAlwaysEnabled != std::exchange(m_preferences.swVPDecodersAlwaysEnabled, preferences.swVPDecodersAlwaysEnabled)) {
+    if (preferences.swVPDecodersAlwaysEnabled != std::exchange(m_preferences.swVPDecodersAlwaysEnabled, preferences.swVPDecodersAlwaysEnabled))
         PlatformMediaSessionManager::setSWVPDecodersAlwaysEnabled(m_preferences.swVPDecodersAlwaysEnabled);
-#if PLATFORM(COCOA)
-        if (!m_haveEnabledSWVPDecoders && m_preferences.swVPDecodersAlwaysEnabled) {
-            m_haveEnabledSWVPDecoders = true;
-            if (!m_haveEnabledVP9Decoder) {
-                WebCore::registerWebKitVP9Decoder();
-                m_haveEnabledVP9Decoder = true;
-            }
-            if (!m_haveEnabledVP8Decoder) {
-                WebCore::registerWebKitVP8Decoder();
-                m_haveEnabledVP8Decoder = true;
-            }
-        }
-#endif
-    }
 #endif
 }
 
