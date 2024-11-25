@@ -1351,7 +1351,8 @@ bool RenderStyle::changeRequiresRepaintIfText(const RenderStyle& other, OptionSe
             || m_rareInheritedData->textEmphasisColor != other.m_rareInheritedData->textEmphasisColor
             || m_rareInheritedData->textEmphasisFill != other.m_rareInheritedData->textEmphasisFill
             || m_rareInheritedData->strokeColor != other.m_rareInheritedData->strokeColor
-            || m_rareInheritedData->caretColor != other.m_rareInheritedData->caretColor)
+            || m_rareInheritedData->caretColor != other.m_rareInheritedData->caretColor
+            || m_rareInheritedData->textUnderlineOffset != other.m_rareInheritedData->textUnderlineOffset)
             return true;
     }
 
