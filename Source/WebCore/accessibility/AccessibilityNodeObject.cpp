@@ -318,7 +318,7 @@ AccessibilityRole AccessibilityNodeObject::determineAccessibilityRoleFromNode(Tr
         return AccessibilityRole::WebCoreLink;
     if (RefPtr selectElement = dynamicDowncast<HTMLSelectElement>(*element))
         return selectElement->multiple() ? AccessibilityRole::ListBox : AccessibilityRole::PopUpButton;
-    if (RefPtr imgElement = dynamicDowncast<HTMLImageElement>(*element); imgElement && imgElement->hasAttributeWithoutSynchronization(usemapAttr))
+    if (is<HTMLImageElement>(*element) && element->hasAttributeWithoutSynchronization(usemapAttr))
         return AccessibilityRole::ImageMap;
 
     if (element->hasTagName(liTag))
@@ -2180,13 +2180,10 @@ static bool needsSpaceFromDisplay(AXCoreObject& coreObject)
 {
     // We should always be dealing with non-isolated objects here. Ideally in the future we can strengthen the types
     // to make this issue impossible.
-    RELEASE_ASSERT(is<AccessibilityObject>(coreObject));
-    RefPtr axObject = dynamicDowncast<AccessibilityObject>(coreObject);
-    if (!axObject)
-        return false;
+    Ref axObject = downcast<AccessibilityObject>(coreObject);
 
     CheckedPtr renderer = axObject->renderer();
-    if (is<RenderText>(renderer.get())) {
+    if (is<RenderText>(renderer)) {
         // Never add a space for RenderTexts. They are inherently inline, but take their parent's style, which may
         // be block, erroneously adding a space.
         return false;

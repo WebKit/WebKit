@@ -706,7 +706,7 @@ unsigned AccessibilityTable::computeCellSlots()
 
 #if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
         // Not needed for ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE) because we add captions via AccessibilityRenderObject::addChildren().
-        if (auto* caption = dynamicDowncast<HTMLTableCaptionElement>(node)) {
+        if (auto* caption = dynamicDowncast<HTMLTableCaptionElement>(element)) {
             // Step 6: Associate the first caption element child of the table element with the table.
             if (!didAddCaption) {
                 if (RefPtr axCaption = cache->getOrCreate(*caption)) {

@@ -1270,7 +1270,8 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
     if (options & AXStreamOptions::Role)
         stream.dumpProperty("role", object.roleValue());
 
-    if (auto* axObject = dynamicDowncast<AccessibilityObject>(object)) {
+    auto* axObject = dynamicDowncast<AccessibilityObject>(object);
+    if (axObject) {
         if (auto* renderer = axObject->renderer())
             stream.dumpProperty("renderer", renderer->debugDescription());
         else if (auto* node = axObject->node())
@@ -1301,18 +1302,18 @@ void streamAXCoreObject(TextStream& stream, const AXCoreObject& object, const Op
 
 #if ENABLE(AX_THREAD_TEXT_APIS)
     if (options & AXStreamOptions::TextRuns) {
-        if (auto* isolatedObject = dynamicDowncast<AXIsolatedObject>(&object)) {
+        if (auto* isolatedObject = dynamicDowncast<AXIsolatedObject>(object)) {
             if (auto* runs = isolatedObject->textRuns(); runs && runs->size())
                 streamTextRuns(stream, *runs);
-        } else if (auto* liveObject = dynamicDowncast<AccessibilityObject>(&object)) {
-            if (auto runs = const_cast<AccessibilityObject*>(liveObject)->textRuns(); runs.size())
+        } else if (axObject) {
+            if (auto runs = const_cast<AccessibilityObject*>(axObject)->textRuns(); runs.size())
                 streamTextRuns(stream, runs);
         }
     }
 #endif // ENABLE(AX_THREAD_TEXT_APIS)
 
     if (options & AXStreamOptions::DisplayContents) {
-        if (auto* axObject = dynamicDowncast<AccessibilityObject>(&object); axObject && axObject->hasDisplayContents())
+        if (axObject && axObject->hasDisplayContents())
             stream.dumpProperty("hasDisplayContents", true);
     }
 
