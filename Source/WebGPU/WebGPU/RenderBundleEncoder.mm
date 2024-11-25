@@ -128,9 +128,12 @@ static RenderBundleICBWithResources* makeRenderBundleICBWithResources(id<MTLIndi
     id<MTLArgumentEncoder> argumentEncoder =
         [device.icbCommandClampFunction(MTLIndexTypeUInt32) newArgumentEncoderWithBufferIndex:device.bufferIndexForICBContainer()];
     id<MTLBuffer> container = device.safeCreateBuffer(argumentEncoder.encodedLength);
+    id<MTLBuffer> outOfBoundsRead = device.safeCreateBuffer(sizeof(uint32_t));
+    outOfBoundsRead.label = @"Out of bounds read flag";
     container.label = @"ICB Argument Buffer";
     [argumentEncoder setArgumentBuffer:container offset:0];
-    [argumentEncoder setIndirectCommandBuffer:icb atIndex:0];
+    [argumentEncoder setBuffer:outOfBoundsRead offset:0 atIndex:0];
+    [argumentEncoder setIndirectCommandBuffer:icb atIndex:1];
 
     RenderBundleICBWithResources* renderBundle = [[RenderBundleICBWithResources alloc] initWithICB:icb containerBuffer:container pipelineState:renderPipelineState depthStencilState:depthStencilState cullMode:cullMode frontFace:frontFace depthClipMode:depthClipMode depthBias:depthBias depthBiasSlopeScale:depthBiasSlopeScale depthBiasClamp:depthBiasClamp fragmentDynamicOffsetsBuffer:fragmentDynamicOffsetsBuffer pipeline:pipeline minVertexCounts:&vertexCountContainer];
 
@@ -686,7 +689,7 @@ RenderBundleEncoder::FinalizeRenderCommand RenderBundleEncoder::drawIndexed(uint
     RefPtr renderPassEncoder = m_renderPassEncoder.get();
     if (renderPassEncoder) {
         auto [minVertexCount, minInstanceCount] = computeMininumVertexInstanceCount();
-        useIndirectCall = RenderPassEncoder::clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes, m_indexBuffer.get(), minVertexCount, minInstanceCount, renderPassEncoder->renderCommandEncoder(), m_device.get(), m_descriptor.sampleCount, m_primitiveType);
+        useIndirectCall = RenderPassEncoder::clampIndexBufferToValidValues(indexCount, instanceCount, baseVertex, firstInstance, m_indexType, indexBufferOffsetInBytes, m_indexBuffer.get(), minVertexCount, minInstanceCount, *renderPassEncoder, m_device.get(), m_descriptor.sampleCount, m_primitiveType);
         if (useIndirectCall == RenderPassEncoder::IndexCall::IndirectDraw)
             renderPassEncoder->splitRenderPass();
     }

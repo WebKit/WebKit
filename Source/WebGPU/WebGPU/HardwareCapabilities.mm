@@ -84,11 +84,13 @@ static HardwareCapabilities::BaseCapabilities baseCapabilities(id<MTLDevice> dev
 #if CPU(X86_64)
     if (!isIntel(device)) {
 #endif
-        for (id<MTLCounterSet> counterSet in device.counterSets) {
-            if ([counterSet.name isEqualToString:MTLCommonCounterSetTimestamp])
-                timestampCounterSet = counterSet;
-            else if ([counterSet.name isEqualToString:MTLCommonCounterSetStatistic])
-                statisticCounterSet = counterSet;
+        if ([device supportsCounterSampling:MTLCounterSamplingPointAtStageBoundary]) {
+            for (id<MTLCounterSet> counterSet in device.counterSets) {
+                if ([counterSet.name isEqualToString:MTLCommonCounterSetTimestamp])
+                    timestampCounterSet = counterSet;
+                else if ([counterSet.name isEqualToString:MTLCommonCounterSetStatistic])
+                    statisticCounterSet = counterSet;
+            }
         }
 #if CPU(X86_64)
     }

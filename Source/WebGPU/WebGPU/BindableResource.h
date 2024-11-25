@@ -88,7 +88,7 @@ struct IndexData {
 };
 
 struct IndexBufferAndIndexData {
-    WeakPtr<Buffer> indexBuffer;
+    RefPtr<Buffer> indexBuffer;
     MTLIndexType indexType { MTLIndexTypeUInt16 };
     NSUInteger indexBufferOffsetInBytes { 0 };
     IndexData indexData;

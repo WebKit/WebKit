@@ -91,6 +91,8 @@ public:
     id<MTLBlitCommandEncoder> ensureBlitCommandEncoder();
     void finalizeBlitCommandEncoder();
 
+    // This can be called on a background thread.
+    void scheduleWork(Instance::WorkItem&&);
 private:
     Queue(id<MTLCommandQueue>, Device&);
     Queue(Device&);
@@ -103,8 +105,6 @@ private:
     bool isSchedulingIdle() const { return m_submittedCommandBufferCount == m_scheduledCommandBufferCount; }
     void removeMTLCommandBufferInternal(id<MTLCommandBuffer>);
 
-    // This can be called on a background thread.
-    void scheduleWork(Instance::WorkItem&&);
     NSString* errorValidatingWriteTexture(const WGPUImageCopyTexture&, const WGPUTextureDataLayout&, const WGPUExtent3D&, size_t, const Texture&) const;
 
     id<MTLCommandQueue> m_commandQueue { nil };
