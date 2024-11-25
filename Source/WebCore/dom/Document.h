@@ -1413,10 +1413,10 @@ public:
 #if ENABLE(FULLSCREEN_API)
     FullscreenManager* fullscreenManagerIfExists() { return m_fullscreenManager.get(); }
     const FullscreenManager* fullscreenManagerIfExists() const { return m_fullscreenManager.get(); }
-    inline FullscreenManager& fullscreenManager();
-    inline const FullscreenManager& fullscreenManager() const;
-    inline CheckedRef<FullscreenManager> checkedFullscreenManager(); // Defined in DocumentInlines.h.
-    inline CheckedRef<const FullscreenManager> checkedFullscreenManager() const; // Defined in DocumentInlines.h.
+    WEBCORE_EXPORT FullscreenManager& fullscreenManager();
+    WEBCORE_EXPORT const FullscreenManager& fullscreenManager() const;
+    CheckedRef<FullscreenManager> checkedFullscreenManager(); // Defined in DocumentInlines.h.
+    CheckedRef<const FullscreenManager> checkedFullscreenManager() const; // Defined in DocumentInlines.h.
 #endif
 
 #if ENABLE(POINTER_LOCK)
@@ -1651,7 +1651,7 @@ public:
     void setActiveSpeechRecognition(SpeechRecognition*);
     MediaProducerMediaStateFlags mediaState() const { return m_mediaState; }
     void noteUserInteractionWithMediaElement();
-    inline bool isCapturing() const;
+    bool isCapturing() const;
     WEBCORE_EXPORT void updateIsPlayingMedia();
 
 #if ENABLE(MEDIA_STREAM) && ENABLE(MEDIA_SESSION)

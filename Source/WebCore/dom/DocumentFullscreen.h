@@ -27,8 +27,6 @@
 
 #if ENABLE(FULLSCREEN_API)
 
-#include "Document.h"
-#include "FullscreenManager.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -42,13 +40,13 @@ public:
     static void exitFullscreen(Document&, RefPtr<DeferredPromise>&&);
     static bool fullscreenEnabled(Document&);
 
-    static bool webkitFullscreenEnabled(Document& document) { return document.fullscreenManager().isFullscreenEnabled(); }
-    static Element* webkitFullscreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().fullscreenElement()); }
+    WEBCORE_EXPORT static bool webkitFullscreenEnabled(Document&);
+    WEBCORE_EXPORT static Element* webkitFullscreenElement(Document&);
     WEBCORE_EXPORT static void webkitExitFullscreen(Document&);
-    static bool webkitIsFullScreen(Document& document) { return document.fullscreenManager().isFullscreen(); }
-    static bool webkitFullScreenKeyboardInputAllowed(Document& document) { return document.fullscreenManager().isFullscreenKeyboardInputAllowed(); }
-    static Element* webkitCurrentFullScreenElement(Document& document) { return document.ancestorElementInThisScope(document.fullscreenManager().currentFullscreenElement()); }
-    static void webkitCancelFullScreen(Document& document) { document.fullscreenManager().cancelFullscreen(); }
+    WEBCORE_EXPORT static bool webkitIsFullScreen(Document&);
+    WEBCORE_EXPORT static bool webkitFullScreenKeyboardInputAllowed(Document&);
+    WEBCORE_EXPORT static Element* webkitCurrentFullScreenElement(Document&);
+    WEBCORE_EXPORT static void webkitCancelFullScreen(Document&);
 };
 
 } // namespace WebCore

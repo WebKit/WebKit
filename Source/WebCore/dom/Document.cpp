@@ -5374,6 +5374,11 @@ void Document::noteUserInteractionWithMediaElement()
     updateIsPlayingMedia();
 }
 
+bool Document::isCapturing() const
+{
+    return MediaProducer::isCapturing(m_mediaState);
+}
+
 #if ENABLE(MEDIA_STREAM)
 MediaProducerMediaStateFlags Document::computeCaptureState() const
 {
@@ -8369,6 +8374,31 @@ void Document::addDefaultSpatialTrackingLabelChangedObserver(const DefaultSpatia
 }
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+FullscreenManager& Document::fullscreenManager()
+{
+    if (!m_fullscreenManager)
+        return ensureFullscreenManager();
+    return *m_fullscreenManager;
+}
+
+const FullscreenManager& Document::fullscreenManager() const
+{
+    if (!m_fullscreenManager)
+        return const_cast<Document&>(*this).ensureFullscreenManager();
+    return *m_fullscreenManager;
+}
+
+CheckedRef<FullscreenManager> Document::checkedFullscreenManager()
+{
+    return fullscreenManager();
+}
+
+CheckedRef<const FullscreenManager> Document::checkedFullscreenManager() const
+{
+    return fullscreenManager();
+}
+#endif
 
 #if ENABLE(DEVICE_ORIENTATION) && PLATFORM(IOS_FAMILY)
 
