@@ -61,7 +61,7 @@ private:
     explicit SliderThumbElement(Document&);
     bool isSliderThumbElement() const final { return true; }
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document&) final;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(TreeScope&) final;
     bool isDisabledFormControl() const final;
     bool matchesReadWritePseudoClass() const final;
 

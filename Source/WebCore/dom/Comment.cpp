@@ -44,9 +44,10 @@ String Comment::nodeName() const
     return "#comment"_s;
 }
 
-Ref<Node> Comment::cloneNodeInternal(Document& targetDocument, CloningOperation)
+Ref<Node> Comment::cloneNodeInternal(TreeScope& treeScope, CloningOperation)
 {
-    return create(targetDocument, String { data() });
+    Ref document = treeScope.documentScope();
+    return create(document, String { data() });
 }
 
 } // namespace WebCore

@@ -185,8 +185,8 @@ public:
         SelfWithTemplateContent,
         Everything,
     };
-    virtual Ref<Node> cloneNodeInternal(Document&, CloningOperation) = 0;
-    Ref<Node> cloneNode(bool deep) { return cloneNodeInternal(document(), deep ? CloningOperation::Everything : CloningOperation::OnlySelf); }
+    virtual Ref<Node> cloneNodeInternal(TreeScope&, CloningOperation) = 0;
+    Ref<Node> cloneNode(bool deep) { return cloneNodeInternal(treeScope(), deep ? CloningOperation::Everything : CloningOperation::OnlySelf); }
     WEBCORE_EXPORT ExceptionOr<Ref<Node>> cloneNodeForBindings(bool deep);
 
     virtual const AtomString& localName() const;
@@ -290,6 +290,10 @@ public:
     bool isInCustomElementReactionQueue() const { return hasElementStateFlag(ElementStateFlag::IsInCustomElementReactionQueue); }
     void setIsInCustomElementReactionQueue() { setElementStateFlag(ElementStateFlag::IsInCustomElementReactionQueue); }
     void clearIsInCustomElementReactionQueue() { clearElementStateFlag(ElementStateFlag::IsInCustomElementReactionQueue); }
+
+    bool usesScopedCustomElementRegistryMap() const { return hasElementStateFlag(ElementStateFlag::UsesScopedCustomElementRegistryMap); }
+    void setUsesScopedCustomElementRegistryMap() { setElementStateFlag(ElementStateFlag::UsesScopedCustomElementRegistryMap); }
+    void clearUsesScopedCustomElementRegistryMap() { clearElementStateFlag(ElementStateFlag::UsesScopedCustomElementRegistryMap); }
 
     // Returns null, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();
@@ -643,7 +647,8 @@ protected:
 #if ENABLE(FULLSCREEN_API)
         IsFullscreen = 1 << 6,
 #endif
-        // 9-bits free.
+        UsesScopedCustomElementRegistryMap = 1 << 7,
+        // 8-bits free.
     };
 
     enum class TabIndexState : uint8_t {

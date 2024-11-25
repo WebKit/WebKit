@@ -75,11 +75,11 @@ Ref<HTMLDocumentParser> HTMLDocumentParser::create(HTMLDocument& document, Optio
     return adoptRef(*new HTMLDocumentParser(document, policy));
 }
 
-inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> rawPolicy)
+inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> rawPolicy, CustomElementRegistry* registry)
     : ScriptableDocumentParser(fragment.document(), rawPolicy)
     , m_options(fragment.document())
     , m_tokenizer(m_options)
-    , m_treeBuilder(makeUnique<HTMLTreeBuilder>(*this, fragment, contextElement, parserContentPolicy(), m_options))
+    , m_treeBuilder(makeUnique<HTMLTreeBuilder>(*this, fragment, contextElement, parserContentPolicy(), m_options, registry))
     , m_shouldEmitTracePoints(false) // Avoid emitting trace points when parsing fragments like outerHTML.
 {
     // https://html.spec.whatwg.org/multipage/syntax.html#parsing-html-fragments
@@ -87,9 +87,9 @@ inline HTMLDocumentParser::HTMLDocumentParser(DocumentFragment& fragment, Elemen
         m_tokenizer.updateStateFor(contextElement.tagQName().localName());
 }
 
-inline Ref<HTMLDocumentParser> HTMLDocumentParser::create(DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
+inline Ref<HTMLDocumentParser> HTMLDocumentParser::create(DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry)
 {
-    return adoptRef(*new HTMLDocumentParser(fragment, contextElement, parserContentPolicy));
+    return adoptRef(*new HTMLDocumentParser(fragment, contextElement, parserContentPolicy, registry));
 }
 
 HTMLDocumentParser::~HTMLDocumentParser()
@@ -622,9 +622,9 @@ void HTMLDocumentParser::executeScriptsWaitingForStylesheets()
         resumeParsingAfterScriptExecution();
 }
 
-void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy)
+void HTMLDocumentParser::parseDocumentFragment(const String& source, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry)
 {
-    auto parser = create(fragment, contextElement, parserContentPolicy);
+    auto parser = create(fragment, contextElement, parserContentPolicy, registry);
     parser->insert(source); // Use insert() so that the parser will not yield.
     parser->finish();
     ASSERT(!parser->processingData());

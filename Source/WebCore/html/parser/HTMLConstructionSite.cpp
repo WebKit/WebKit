@@ -267,10 +267,11 @@ HTMLConstructionSite::HTMLConstructionSite(Document& document, OptionSet<ParserC
 {
 }
 
-HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet<ParserContentPolicy> parserContentPolicy, unsigned maximumDOMTreeDepth)
+HTMLConstructionSite::HTMLConstructionSite(DocumentFragment& fragment, OptionSet<ParserContentPolicy> parserContentPolicy, unsigned maximumDOMTreeDepth, CustomElementRegistry* registry)
     : m_document(fragment.document())
     , m_attachmentRoot(fragment)
     , m_parserContentPolicy(parserContentPolicy)
+    , m_registry(registry)
     , m_isParsingFragment(true)
     , m_redirectAttachToFosterParent(false)
     , m_maximumDOMTreeDepth(maximumDOMTreeDepth)
@@ -809,19 +810,23 @@ std::tuple<RefPtr<HTMLElement>, RefPtr<JSCustomElementInterface>, RefPtr<CustomE
     bool insideTemplateElement = !ownerDocument->frame();
     RefPtr element = HTMLElementFactory::createKnownElement(token.tagName(), ownerDocument, insideTemplateElement ? nullptr : form(), true);
     if (UNLIKELY(!element)) {
-        RefPtr<CustomElementRegistry> registry = treeScope->customElementRegistry();
+        RefPtr<CustomElementRegistry> registry = m_openElements.stackDepth() > 1 ? CustomElementRegistry::registryForNodeOrTreeScope(currentNode(), treeScope) : m_registry;
         auto* elementInterface = registry ? registry->findInterface(token.name()) : nullptr;
         if (UNLIKELY(elementInterface)) {
             if (!m_isParsingFragment)
                 return { nullptr, elementInterface, WTFMove(registry) };
             ASSERT(qualifiedNameForHTMLTag(token) == elementInterface->name());
             element = elementInterface->createElement(ownerDocument);
+            if (UNLIKELY(registry->isScoped()))
+                CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
             element->setIsCustomElementUpgradeCandidate();
             element->enqueueToUpgrade(*elementInterface);
         } else {
             auto qualifiedName = qualifiedNameForHTMLTag(token);
             if (Document::validateCustomElementName(token.name()) == CustomElementNameValidationStatus::Valid) {
                 element = HTMLMaybeFormAssociatedCustomElement::create(qualifiedName, ownerDocument);
+                if (UNLIKELY(registry && registry->isScoped()))
+                    CustomElementRegistry::addToScopedCustomElementRegistryMap(*element, *registry);
                 element->setIsCustomElementUpgradeCandidate();
             } else
                 element = HTMLUnknownElement::create(qualifiedName, ownerDocument);

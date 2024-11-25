@@ -70,7 +70,7 @@ private:
 
     ExceptionOr<void> setPrefix(const AtomString&) final;
 
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation) final;
+    Ref<Node> cloneNodeInternal(TreeScope&, CloningOperation) final;
 
     bool isAttributeNode() const final { return true; }
 

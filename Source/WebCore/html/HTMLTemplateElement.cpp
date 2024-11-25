@@ -110,21 +110,24 @@ void HTMLTemplateElement::setDeclarativeShadowRoot(ShadowRoot& shadowRoot)
     m_declarativeShadowRoot = shadowRoot;
 }
 
-Ref<Node> HTMLTemplateElement::cloneNodeInternal(Document& targetDocument, CloningOperation type)
+Ref<Node> HTMLTemplateElement::cloneNodeInternal(TreeScope& treeScope, CloningOperation type)
 {
     RefPtr<Node> clone;
     switch (type) {
     case CloningOperation::OnlySelf:
-        return cloneElementWithoutChildren(targetDocument);
+        return cloneElementWithoutChildren(treeScope);
     case CloningOperation::SelfWithTemplateContent:
-        clone = cloneElementWithoutChildren(targetDocument);
+        clone = cloneElementWithoutChildren(treeScope);
         break;
     case CloningOperation::Everything:
-        clone = cloneElementWithChildren(targetDocument);
+        clone = cloneElementWithChildren(treeScope);
         break;
     }
-    if (m_content)
-        content().cloneChildNodes(downcast<HTMLTemplateElement>(clone.get())->content());
+    if (m_content) {
+        auto& templateElement = downcast<HTMLTemplateElement>(*clone);
+        Ref fragment = templateElement.content();
+        content().cloneChildNodes(fragment->document(), fragment);
+    }
     return clone.releaseNonNull();
 }
 

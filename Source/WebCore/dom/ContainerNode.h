@@ -77,7 +77,7 @@ public:
 
     void takeAllChildrenFrom(ContainerNode*);
 
-    void cloneChildNodes(ContainerNode& clone);
+    void cloneChildNodes(TreeScope&, ContainerNode& clone);
 
     struct ChildChange {
         enum class Type : uint8_t { ElementInserted, ElementRemoved, TextInserted, TextRemoved, TextChanged, AllChildrenRemoved, NonContentsChildRemoved, NonContentsChildInserted, AllChildrenReplaced };

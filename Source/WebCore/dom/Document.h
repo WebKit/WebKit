@@ -521,10 +521,9 @@ public:
     WEBCORE_EXPORT ExceptionOr<Ref<ProcessingInstruction>> createProcessingInstruction(String&& target, String&& data);
     WEBCORE_EXPORT ExceptionOr<Ref<Attr>> createAttribute(const AtomString& name);
     WEBCORE_EXPORT ExceptionOr<Ref<Attr>> createAttributeNS(const AtomString& namespaceURI, const AtomString& qualifiedName, bool shouldIgnoreNamespaceChecks = false);
-    WEBCORE_EXPORT ExceptionOr<Ref<Node>> importNode(Node& nodeToImport, bool deep);
 
     static CustomElementNameValidationStatus validateCustomElementName(const AtomString&);
-    void setActiveCustomElementRegistry(CustomElementRegistry&);
+    void setActiveCustomElementRegistry(CustomElementRegistry*);
     CustomElementRegistry* activeCustomElementRegistry() { return m_activeCustomElementRegistry.get(); }
 
     WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y, HitTestSource = HitTestSource::Script);
@@ -2047,7 +2046,7 @@ private:
 
     String nodeName() const final;
     bool childTypeAllowed(NodeType) const final;
-    Ref<Node> cloneNodeInternal(Document&, CloningOperation) final;
+    Ref<Node> cloneNodeInternal(TreeScope&, CloningOperation) final;
     void cloneDataFromDocument(const Document&);
 
     Seconds minimumDOMTimerInterval() const final;

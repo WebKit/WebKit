@@ -100,18 +100,19 @@ enum WhitespaceMode {
 };
 
 class AtomHTMLToken;
-struct CustomElementConstructionData;
+class CustomElementRegistry;
 class Document;
 class Element;
 class HTMLFormElement;
 class HTMLTemplateElement;
 class JSCustomElementInterface;
+struct CustomElementConstructionData;
 
 class HTMLConstructionSite {
     WTF_MAKE_NONCOPYABLE(HTMLConstructionSite);
 public:
     HTMLConstructionSite(Document&, OptionSet<ParserContentPolicy>, unsigned maximumDOMTreeDepth);
-    HTMLConstructionSite(DocumentFragment&, OptionSet<ParserContentPolicy>, unsigned maximumDOMTreeDepth);
+    HTMLConstructionSite(DocumentFragment&, OptionSet<ParserContentPolicy>, unsigned maximumDOMTreeDepth, CustomElementRegistry*);
     ~HTMLConstructionSite();
 
     void executeQueuedTasks();
@@ -242,6 +243,7 @@ private:
     TaskQueue m_taskQueue;
 
     OptionSet<ParserContentPolicy> m_parserContentPolicy;
+    RefPtr<CustomElementRegistry> m_registry;
     bool m_isParsingFragment;
 
     // http://www.whatwg.org/specs/web-apps/current-work/multipage/tokenization.html#parsing-main-intable

@@ -1006,19 +1006,17 @@ void ContainerNode::childrenChanged(const ChildChange& change)
     }
 }
 
-void ContainerNode::cloneChildNodes(ContainerNode& clone)
+void ContainerNode::cloneChildNodes(TreeScope& treeScope, ContainerNode& clone)
 {
-    Ref targetDocument = clone.document();
-
     NodeVector postInsertionNotificationTargets;
     bool hadElement = false;
     for (RefPtr child = firstChild(); child; child = child->nextSibling()) {
-        Ref clonedChild = child->cloneNodeInternal(targetDocument, CloningOperation::SelfWithTemplateContent);
+        Ref clonedChild = child->cloneNodeInternal(treeScope, CloningOperation::SelfWithTemplateContent);
         {
             WidgetHierarchyUpdatesSuspensionScope suspendWidgetHierarchyUpdates;
             ScriptDisallowedScope::InMainThread scriptDisallowedScope;
 
-            clonedChild->setTreeScopeRecursively(clone.treeScope());
+            clonedChild->setTreeScopeRecursively(treeScope);
 
             clone.appendChildCommon(clonedChild);
             notifyChildNodeInserted(clone, clonedChild, postInsertionNotificationTargets);
@@ -1026,7 +1024,7 @@ void ContainerNode::cloneChildNodes(ContainerNode& clone)
             hadElement = hadElement || is<Element>(clonedChild);
         }
         if (RefPtr childAsContainerNode = dynamicDowncast<ContainerNode>(*child))
-            childAsContainerNode->cloneChildNodes(downcast<ContainerNode>(clonedChild));
+            childAsContainerNode->cloneChildNodes(treeScope, downcast<ContainerNode>(clonedChild));
     }
     clone.childrenChanged(makeChildChangeForCloneInsertion(hadElement ? ClonedChildIncludesElements::Yes : ClonedChildIncludesElements::No));
 

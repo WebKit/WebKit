@@ -190,6 +190,28 @@ void CustomElementRegistry::upgrade(Node& root)
     upgradeElementsInShadowIncludingDescendants(*containerNode);
 }
 
+void CustomElementRegistry::addToScopedCustomElementRegistryMap(Element& element, CustomElementRegistry& registry)
+{
+    ASSERT(!element.usesScopedCustomElementRegistryMap());
+    element.setUsesScopedCustomElementRegistryMap();
+    auto result = scopedCustomElementRegistryMap().add(element, registry);
+    ASSERT_UNUSED(result, result.isNewEntry);
+}
+
+void CustomElementRegistry::removeFromScopedCustomElementRegistryMap(Element& element)
+{
+    ASSERT(element.usesScopedCustomElementRegistryMap());
+    element.clearUsesScopedCustomElementRegistryMap();
+    auto didRemove = scopedCustomElementRegistryMap().remove(element);
+    ASSERT_UNUSED(didRemove, didRemove);
+}
+
+WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>& CustomElementRegistry::scopedCustomElementRegistryMap()
+{
+    static NeverDestroyed<WeakHashMap<Element, Ref<CustomElementRegistry>, WeakPtrImplWithEventTargetData>> map;
+    return map.get();
+}
+
 template<typename Visitor>
 void CustomElementRegistry::visitJSCustomElementInterfaces(Visitor& visitor) const
 {

@@ -268,11 +268,11 @@ HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, HTMLDocument& docum
 #endif
 }
 
-HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, const HTMLParserOptions& options)
+HTMLTreeBuilder::HTMLTreeBuilder(HTMLDocumentParser& parser, DocumentFragment& fragment, Element& contextElement, OptionSet<ParserContentPolicy> parserContentPolicy, const HTMLParserOptions& options, CustomElementRegistry* registry)
     : m_parser(parser)
     , m_options(options)
     , m_fragmentContext(fragment, contextElement)
-    , m_tree(fragment, parserContentPolicy, options.maximumDOMTreeDepth)
+    , m_tree(fragment, parserContentPolicy, options.maximumDOMTreeDepth, registry)
     , m_scriptToProcessStartPosition(uninitializedPositionValue1())
 {
     ASSERT(isMainThread());

@@ -88,6 +88,8 @@ EncodedJSValue constructJSHTMLElement(JSGlobalObject* lexicalGlobalObject, CallF
         RETURN_IF_EXCEPTION(scope, { });
 
         Ref element = elementInterface->createElement(document);
+        if (registry->isScoped())
+            CustomElementRegistry::addToScopedCustomElementRegistryMap(element, *registry);
         element->setIsDefinedCustomElement(*elementInterface);
         auto* jsElement = JSHTMLElement::create(newElementStructure, newTargetGlobalObject, element.get());
         cacheWrapper(newTargetGlobalObject->world(), element.ptr(), jsElement);

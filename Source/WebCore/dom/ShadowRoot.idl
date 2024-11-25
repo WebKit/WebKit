@@ -41,6 +41,7 @@
     // FIXME: Move to DocumentOrShadowRoot.idl once it's always enabled
     [EnabledBySetting=ScopedCustomElementRegistryEnabled, NewObject, ImplementedAs=createElementForBindings] Element createElement([AtomString] DOMString localName);
     [EnabledBySetting=ScopedCustomElementRegistryEnabled, NewObject] Element createElementNS([AtomString] DOMString? namespaceURI, [AtomString] DOMString qualifiedName);
+    [EnabledBySetting=ScopedCustomElementRegistryEnabled, CEReactions=Needed, NewObject] Node importNode(Node node, optional boolean deep = false);
 
     [ImplementedAs=registryForBindings, EnabledBySetting=ScopedCustomElementRegistryEnabled] readonly attribute CustomElementRegistry? registry;
 };

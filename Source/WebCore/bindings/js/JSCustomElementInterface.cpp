@@ -124,10 +124,9 @@ RefPtr<Element> JSCustomElementInterface::tryToConstructCustomElement(Document& 
     if (!lexicalGlobalObject)
         return nullptr;
     auto* oldRegistry = document.activeCustomElementRegistry();
-    document.setActiveCustomElementRegistry(registry);
+    document.setActiveCustomElementRegistry(&registry);
     auto element = constructCustomElementSynchronously(document, vm, *lexicalGlobalObject, m_constructor.get(), localName, parserConstructElementWithEmptyStack);
-    if (oldRegistry)
-        document.setActiveCustomElementRegistry(*oldRegistry);
+    document.setActiveCustomElementRegistry(oldRegistry);
     EXCEPTION_ASSERT(!!scope.exception() == !element);
     if (!element) {
         auto* exception = scope.exception();
@@ -223,7 +222,8 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         return;
     JSGlobalObject* lexicalGlobalObject = globalObject;
 
-    RefPtr registry = element.treeScope().customElementRegistry();
+    RefPtr registry = CustomElementRegistry::registryForElement(element);
+    ASSERT(registry);
     Ref document = downcast<Document>(*context);
     auto constructData = JSC::getConstructData(m_constructor.get());
     if (constructData.type == CallData::Type::None) {
@@ -249,8 +249,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
         downcast<HTMLMaybeFormAssociatedCustomElement>(element).willUpgradeFormAssociated();
 
     auto* oldRegistry = document->activeCustomElementRegistry();
-    if (registry)
-        document->setActiveCustomElementRegistry(*registry);
+    document->setActiveCustomElementRegistry(registry.get());
 
     MarkedArgumentBuffer args;
     ASSERT(!args.hasOverflowed());
@@ -258,8 +257,7 @@ void JSCustomElementInterface::upgradeElement(Element& element)
     JSValue returnedElement = construct(lexicalGlobalObject, m_constructor.get(), constructData, args);
     InspectorInstrumentation::didCallFunction(context);
 
-    if (oldRegistry)
-        document->setActiveCustomElementRegistry(*oldRegistry);
+    document->setActiveCustomElementRegistry(oldRegistry);
 
     m_constructionStack.removeLast();
 

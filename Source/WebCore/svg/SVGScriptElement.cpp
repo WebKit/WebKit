@@ -92,9 +92,9 @@ void SVGScriptElement::addSubresourceAttributeURLs(ListHashSet<URL>& urls) const
 
     addSubresourceURL(urls, document().completeURL(href()));
 }
-Ref<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren(Document& targetDocument)
+Ref<Element> SVGScriptElement::cloneElementWithoutAttributesAndChildren(TreeScope& treeScope)
 {
-    return adoptRef(*new SVGScriptElement(tagQName(), targetDocument, false, alreadyStarted()));
+    return adoptRef(*new SVGScriptElement(tagQName(), treeScope.documentScope(), false, alreadyStarted()));
 }
 
 void SVGScriptElement::dispatchErrorEvent()

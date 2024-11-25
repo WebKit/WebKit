@@ -40,6 +40,7 @@
 #include "Comment.h"
 #include "CommonAtomStrings.h"
 #include "ComposedTreeIterator.h"
+#include "CustomElementRegistry.h"
 #include "DeprecatedGlobalSettings.h"
 #include "Document.h"
 #include "DocumentFragment.h"
@@ -1397,13 +1398,13 @@ String urlToMarkup(const URL& url, const String& title)
 }
 
 enum class DocumentFragmentMode : bool { New, ReuseForInnerOuterHTML };
-static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(Element& contextElement, const String& markup, DocumentFragmentMode mode, OptionSet<ParserContentPolicy> parserContentPolicy)
+static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(Element& contextElement, const String& markup, DocumentFragmentMode mode, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry = nullptr)
 {
     Ref document = contextElement.hasTagName(templateTag) ? contextElement.document().ensureTemplateDocument() : contextElement.document();
     auto fragment = mode == DocumentFragmentMode::New ? DocumentFragment::create(document.get()) : document->documentFragmentForInnerOuterHTML();
     ASSERT(!fragment->hasChildNodes());
     if (document->isHTMLDocument() || parserContentPolicy.contains(ParserContentPolicy::AlwaysParseAsHTML)) {
-        fragment->parseHTML(markup, contextElement, parserContentPolicy);
+        fragment->parseHTML(markup, contextElement, parserContentPolicy, registry);
         return fragment;
     }
 
@@ -1413,9 +1414,9 @@ static ALWAYS_INLINE ExceptionOr<Ref<DocumentFragment>> createFragmentForMarkup(
     return fragment;
 }
 
-ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element& contextElement, const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
+ExceptionOr<Ref<DocumentFragment>> createFragmentForInnerOuterHTML(Element& contextElement, const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy, CustomElementRegistry* registry)
 {
-    return createFragmentForMarkup(contextElement, markup, DocumentFragmentMode::ReuseForInnerOuterHTML, parserContentPolicy);
+    return createFragmentForMarkup(contextElement, markup, DocumentFragmentMode::ReuseForInnerOuterHTML, parserContentPolicy, registry);
 }
 
 RefPtr<DocumentFragment> createFragmentForTransformToFragment(Document& outputDoc, String&& sourceString, const String& sourceMIMEType)
@@ -1484,7 +1485,7 @@ static void removeElementFromFragmentPreservingChildren(DocumentFragment& fragme
 
 ExceptionOr<Ref<DocumentFragment>> createContextualFragment(Element& element, const String& markup, OptionSet<ParserContentPolicy> parserContentPolicy)
 {
-    auto result = createFragmentForMarkup(element, markup, DocumentFragmentMode::New, parserContentPolicy);
+    auto result = createFragmentForMarkup(element, markup, DocumentFragmentMode::New, parserContentPolicy, CustomElementRegistry::registryForElement(element));
     if (result.hasException())
         return result.releaseException();
 

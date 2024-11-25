@@ -45,9 +45,10 @@ String CDATASection::nodeName() const
     return "#cdata-section"_s;
 }
 
-Ref<Node> CDATASection::cloneNodeInternal(Document& targetDocument, CloningOperation)
+Ref<Node> CDATASection::cloneNodeInternal(TreeScope& treeScope, CloningOperation)
 {
-    return create(targetDocument, String { data() });
+    Ref document = treeScope.documentScope();
+    return create(document, String { data() });
 }
 
 Ref<Text> CDATASection::virtualCreate(String&& data)

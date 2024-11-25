@@ -81,7 +81,7 @@ private:
     AttachmentAssociatedElementType attachmentAssociatedElementType() const final { return AttachmentAssociatedElementType::Source; }
 #endif
 
-    Ref<Element> cloneElementWithoutAttributesAndChildren(Document& targetDocument) final;
+    Ref<Element> cloneElementWithoutAttributesAndChildren(TreeScope&) final;
     void copyNonAttributePropertiesFromElement(const Element&) final;
 
     void attributeChanged(const QualifiedName&, const AtomString& oldValue, const AtomString& newValue, AttributeModificationReason) final;
