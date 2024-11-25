@@ -270,7 +270,7 @@ bool NetworkConnectionToWebProcess::dispatchMessage(IPC::Connection& connection,
     if (decoder.messageReceiverName() == Messages::NotificationManagerMessageHandler::messageReceiverName()) {
         MESSAGE_CHECK_WITH_RETURN_VALUE(m_networkProcess->builtInNotificationsEnabled(), false);
         if (auto* networkSession = this->networkSession())
-            networkSession->notificationManager().didReceiveMessage(connection, decoder);
+            networkSession->protectedNotificationManager()->didReceiveMessage(connection, decoder);
         return true;
     }
 #endif
@@ -399,7 +399,7 @@ bool NetworkConnectionToWebProcess::dispatchSyncMessage(IPC::Connection& connect
     if (decoder.messageReceiverName() == Messages::NotificationManagerMessageHandler::messageReceiverName()) {
         MESSAGE_CHECK_WITH_RETURN_VALUE(m_networkProcess->builtInNotificationsEnabled(), false);
         if (auto* networkSession = this->networkSession())
-            return networkSession->notificationManager().didReceiveSyncMessage(connection, decoder, reply);
+            return networkSession->protectedNotificationManager()->didReceiveSyncMessage(connection, decoder, reply);
         return false;
     }
 #endif
@@ -1594,7 +1594,7 @@ void NetworkConnectionToWebProcess::navigatorSubscribeToPushService(URL&& scopeU
     }
 
     auto registrableDomain = RegistrableDomain(scopeURL);
-    session->notificationManager().subscribeToPushService(WTFMove(scopeURL), WTFMove(applicationServerKey), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), registrableDomain = WTFMove(registrableDomain)] (Expected<PushSubscriptionData, ExceptionData>&& result) mutable {
+    session->protectedNotificationManager()->subscribeToPushService(WTFMove(scopeURL), WTFMove(applicationServerKey), [weakThis = WeakPtr { *this }, completionHandler = WTFMove(completionHandler), registrableDomain = WTFMove(registrableDomain)] (Expected<PushSubscriptionData, ExceptionData>&& result) mutable {
         if (auto resourceLoadStatistics = weakThis && weakThis->networkSession() ? weakThis->networkSession()->resourceLoadStatistics() : nullptr; result && resourceLoadStatistics) {
             return resourceLoadStatistics->setMostRecentWebPushInteractionTime(WTFMove(registrableDomain), [result = WTFMove(result), completionHandler = WTFMove(completionHandler)]() mutable {
                 completionHandler(WTFMove(result));
@@ -1612,7 +1612,7 @@ void NetworkConnectionToWebProcess::navigatorUnsubscribeFromPushService(URL&& sc
         return;
     }
 
-    session->notificationManager().unsubscribeFromPushService(WTFMove(scopeURL), subscriptionIdentifier, WTFMove(completionHandler));
+    session->protectedNotificationManager()->unsubscribeFromPushService(WTFMove(scopeURL), subscriptionIdentifier, WTFMove(completionHandler));
 
 }
 
@@ -1624,7 +1624,7 @@ void NetworkConnectionToWebProcess::navigatorGetPushSubscription(URL&& scopeURL,
         return;
     }
 
-    session->notificationManager().getPushSubscription(WTFMove(scopeURL), WTFMove(completionHandler));
+    session->protectedNotificationManager()->getPushSubscription(WTFMove(scopeURL), WTFMove(completionHandler));
 }
 
 void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeURL, CompletionHandler<void(Expected<uint8_t, WebCore::ExceptionData>&&)>&& completionHandler)
@@ -1635,7 +1635,7 @@ void NetworkConnectionToWebProcess::navigatorGetPushPermissionState(URL&& scopeU
         return;
     }
 
-    session->notificationManager().getPermissionState(SecurityOriginData::fromURL(scopeURL), [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState state) mutable {
+    session->protectedNotificationManager()->getPermissionState(SecurityOriginData::fromURL(scopeURL), [completionHandler = WTFMove(completionHandler)](WebCore::PushPermissionState state) mutable {
         completionHandler(static_cast<uint8_t>(state));
     });
 }

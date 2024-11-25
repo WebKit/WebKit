@@ -927,7 +927,7 @@ void WebPageProxy::addAllMessageReceivers()
 {
     Ref process = m_legacyMainFrameProcess;
     internals().messageReceiverRegistration.startReceivingMessages(process, m_webPageID, *this);
-    process->addMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_webPageID, internals().notificationManagerMessageHandler);
+    process->addMessageReceiver(Messages::NotificationManagerMessageHandler::messageReceiverName(), m_webPageID, Ref { internals().notificationManagerMessageHandler });
 }
 
 void WebPageProxy::removeAllMessageReceivers()

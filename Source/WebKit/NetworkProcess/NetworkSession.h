@@ -260,7 +260,8 @@ public:
 #endif
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    NetworkNotificationManager& notificationManager() { return m_notificationManager; }
+    NetworkNotificationManager* notificationManager() { return m_notificationManager.get(); }
+    RefPtr<NetworkNotificationManager> protectedNotificationManager() { return m_notificationManager; }
 #endif
 
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
@@ -380,7 +381,7 @@ protected:
     HashMap<WebPageProxyIdentifier, String> m_attributedBundleIdentifierFromPageIdentifiers;
 
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
-    NetworkNotificationManager m_notificationManager;
+    RefPtr<NetworkNotificationManager> m_notificationManager;
 #endif
 #if ENABLE(INSPECTOR_NETWORK_THROTTLING)
     std::optional<int64_t> m_bytesPerSecondLimit;
