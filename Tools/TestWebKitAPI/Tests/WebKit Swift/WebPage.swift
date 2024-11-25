@@ -29,25 +29,6 @@ import WebKit
 @_spi(Private) import WebKit
 @_spi(Testing) import WebKit
 
-// MARK: Helper extension functions
-
-extension Array {
-    @MainActor
-    fileprivate init(async sequence: some AsyncSequence<Element, Never>) async {
-        self.init()
-
-        for try await element in sequence {
-            append(element)
-        }
-    }
-}
-
-extension URL {
-    fileprivate static var aboutBlank: URL {
-        URL(string: "about:blank")!
-    }
-}
-
 extension WebPage_v0.NavigationEvent.Kind: @retroactive Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
