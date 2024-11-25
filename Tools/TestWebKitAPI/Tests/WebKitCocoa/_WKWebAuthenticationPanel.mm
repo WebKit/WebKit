@@ -2259,6 +2259,105 @@ TEST(WebAuthenticationPanel, EncodeCTAPCreation)
     EXPECT_WK_STREQ([command base64EncodedStringWithOptions:0], "AaQBWCABAgMEAQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAKhZG5hbWVrZXhhbXBsZS5jb20Do2JpZEQBAgMEZG5hbWV2amFwcGxlc2VlZEBleGFtcGxlLmNvbWtkaXNwbGF5TmFtZWtKIEFwcGxlc2VlZASBomNhbGcmZHR5cGVqcHVibGljLWtleQ==");
 }
 
+TEST(WebAuthenticationPanel, EncodeCTAPCreationTrimmedParametersGetInfoNoneES256)
+{
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
+    RetainPtr nsIdentifier = toNSData(identifier);
+    auto es256Parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
+    auto rs256Parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-257]);
+    auto ec2Parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@2]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ es256Parameters.get(), rs256Parameters.get(), ec2Parameters.get()];
+    NSArray<_WKPublicKeyCredentialParameters *> *authenticatorSupportedCredentialParamaters = @[];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+
+    auto *command = [_WKWebAuthenticationPanel encodeMakeCredentialCommandWithClientDataHash:nsHash.get() options: options.get() userVerificationAvailability:_WKWebAuthenticationUserVerificationAvailabilityNotSupported authenticatorSupportedCredentialParameters:authenticatorSupportedCredentialParamaters];
+
+    // Base64 of the following CBOR:
+    // 1, {1: h'0102030401020304010203040102030401020304010203040102030401020304', 2: {"name": "example.com"}, 3: {"id": h'01020304', "name": "jappleseed@example.com", "displayName": "J Appleseed"}, 4: [{"alg": -7, "type": "public-key"}]}
+    // We can trim in this case because we know the authenticator supports ES256 implicitly.
+    EXPECT_WK_STREQ([command base64EncodedStringWithOptions:0], "AaQBWCABAgMEAQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAKhZG5hbWVrZXhhbXBsZS5jb20Do2JpZEQBAgMEZG5hbWV2amFwcGxlc2VlZEBleGFtcGxlLmNvbWtkaXNwbGF5TmFtZWtKIEFwcGxlc2VlZASBomNhbGcmZHR5cGVqcHVibGljLWtleQ==");
+}
+
+TEST(WebAuthenticationPanel, EncodeCTAPCreationTrimmedParametersGetInfoNoneRS256)
+{
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
+    RetainPtr nsIdentifier = toNSData(identifier);
+    auto rs256Parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-257]);
+    auto ec2Parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@2]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ rs256Parameters.get(), ec2Parameters.get() ];
+    NSArray<_WKPublicKeyCredentialParameters *> *authenticatorSupportedCredentialParamaters = @[];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+
+    auto *command = [_WKWebAuthenticationPanel encodeMakeCredentialCommandWithClientDataHash:nsHash.get() options: options.get() userVerificationAvailability:_WKWebAuthenticationUserVerificationAvailabilityNotSupported authenticatorSupportedCredentialParameters:authenticatorSupportedCredentialParamaters];
+
+    // Base64 of the following CBOR:
+    // 1, {1: h'0102030401020304010203040102030401020304010203040102030401020304', 2: {"name": "example.com"}, 3: {"id": h'01020304', "name": "jappleseed@example.com", "displayName": "J Appleseed"}, 4: [{"alg": -257, "type": "public-key"}, {"alg": 2, "type": "public-key"}]}
+    // We can't trim in this case because we don't know if the authenticator supports any of the requseted algorithms.
+    EXPECT_WK_STREQ([command base64EncodedStringWithOptions:0], "AaQBWCABAgMEAQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAKhZG5hbWVrZXhhbXBsZS5jb20Do2JpZEQBAgMEZG5hbWV2amFwcGxlc2VlZEBleGFtcGxlLmNvbWtkaXNwbGF5TmFtZWtKIEFwcGxlc2VlZASComNhbGc5AQBkdHlwZWpwdWJsaWMta2V5omNhbGcCZHR5cGVqcHVibGljLWtleQ==");
+}
+
+TEST(WebAuthenticationPanel, EncodeCTAPCreationTrimmedParametersGetInfoSupportsEC2)
+{
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
+    RetainPtr nsIdentifier = toNSData(identifier);
+    auto es256Parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
+    auto rs256Parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-257]);
+    auto ec2Parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@2]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ es256Parameters.get(), rs256Parameters.get(), ec2Parameters.get()];
+    NSArray<_WKPublicKeyCredentialParameters *> *authenticatorSupportedCredentialParamaters = @[ ec2Parameters.get() ];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+
+    auto *command = [_WKWebAuthenticationPanel encodeMakeCredentialCommandWithClientDataHash:nsHash.get() options: options.get() userVerificationAvailability:_WKWebAuthenticationUserVerificationAvailabilityNotSupported authenticatorSupportedCredentialParameters:authenticatorSupportedCredentialParamaters];
+
+    // Base64 of the following CBOR:
+    // 1, {1: h'0102030401020304010203040102030401020304010203040102030401020304', 2: {"name": "example.com"}, 3: {"id": h'01020304', "name": "jappleseed@example.com", "displayName": "J Appleseed"}, 4: [{"alg": 2, "type": "public-key"}]}
+    // We can trim in this case because we know the authenticator supports EC2 from it's getInfo
+    EXPECT_WK_STREQ([command base64EncodedStringWithOptions:0], "AaQBWCABAgMEAQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAKhZG5hbWVrZXhhbXBsZS5jb20Do2JpZEQBAgMEZG5hbWV2amFwcGxlc2VlZEBleGFtcGxlLmNvbWtkaXNwbGF5TmFtZWtKIEFwcGxlc2VlZASBomNhbGcmZHR5cGVqcHVibGljLWtleQ==");
+}
+
+TEST(WebAuthenticationPanel, EncodeCTAPCreationTrimmedParametersGetInfoSupportsDisjoint)
+{
+    uint8_t hash[] = { 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04, 0x01, 0x02, 0x03, 0x04 };
+    auto nsHash = adoptNS([[NSData alloc] initWithBytes:hash length:sizeof(hash)]);
+    auto identifier = std::to_array<uint8_t>({ 0x01, 0x02, 0x03, 0x04 });
+    RetainPtr nsIdentifier = toNSData(identifier);
+    auto rs256Parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-257]);
+    auto ec2Parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@2]);
+    auto es256Parameters = adoptNS([[_WKPublicKeyCredentialParameters alloc] initWithAlgorithm:@-7]);
+
+    auto rp = adoptNS([[_WKPublicKeyCredentialRelyingPartyEntity alloc] initWithName:@"example.com"]);
+    auto user = adoptNS([[_WKPublicKeyCredentialUserEntity alloc] initWithName:@"jappleseed@example.com" identifier:nsIdentifier.get() displayName:@"J Appleseed"]);
+    NSArray<_WKPublicKeyCredentialParameters *> *publicKeyCredentialParamaters = @[ rs256Parameters.get(), ec2Parameters.get()];
+    NSArray<_WKPublicKeyCredentialParameters *> *authenticatorSupportedCredentialParamaters = @[ es256Parameters.get() ];
+
+    auto options = adoptNS([[_WKPublicKeyCredentialCreationOptions alloc] initWithRelyingParty:rp.get() user:user.get() publicKeyCredentialParamaters:publicKeyCredentialParamaters]);
+
+    auto *command = [_WKWebAuthenticationPanel encodeMakeCredentialCommandWithClientDataHash:nsHash.get() options: options.get() userVerificationAvailability:_WKWebAuthenticationUserVerificationAvailabilityNotSupported authenticatorSupportedCredentialParameters:authenticatorSupportedCredentialParamaters];
+
+    // Base64 of the following CBOR:
+    // 1, {1: h'0102030401020304010203040102030401020304010203040102030401020304', 2: {"name": "example.com"}, 3: {"id": h'01020304', "name": "jappleseed@example.com", "displayName": "J Appleseed"}, 4: [{"alg": -257, "type": "public-key"}]}
+    // We can trim in this case because we know the authenticator doesn't support any of the requested algorithms.
+    EXPECT_WK_STREQ([command base64EncodedStringWithOptions:0], "AaQBWCABAgMEAQIDBAECAwQBAgMEAQIDBAECAwQBAgMEAQIDBAKhZG5hbWVrZXhhbXBsZS5jb20Do2JpZEQBAgMEZG5hbWV2amFwcGxlc2VlZEBleGFtcGxlLmNvbWtkaXNwbGF5TmFtZWtKIEFwcGxlc2VlZASBomNhbGc5AQBkdHlwZWpwdWJsaWMta2V5");
+}
+
 TEST(WebAuthenticationPanel, UpdateCredentialDisplayName)
 {
     reset();

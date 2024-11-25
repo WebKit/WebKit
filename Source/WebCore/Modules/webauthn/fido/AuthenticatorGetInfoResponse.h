@@ -34,6 +34,7 @@
 #include "AuthenticatorSupportedOptions.h"
 #include "AuthenticatorTransport.h"
 #include "FidoConstants.h"
+#include "PublicKeyCredentialParameters.h"
 #include <wtf/StdSet.h>
 
 namespace fido {
@@ -54,6 +55,7 @@ public:
     AuthenticatorGetInfoResponse& setExtensions(Vector<String>&&);
     AuthenticatorGetInfoResponse& setOptions(AuthenticatorSupportedOptions&&);
     AuthenticatorGetInfoResponse& setTransports(Vector<WebCore::AuthenticatorTransport>&&);
+    AuthenticatorGetInfoResponse& setAlgorithms(Vector<WebCore::AuthenticatorTransport>&&);
     AuthenticatorGetInfoResponse& setRemainingDiscoverableCredentials(uint32_t);
 
     const StdSet<ProtocolVersion>& versions() const { return m_versions; }
@@ -63,6 +65,7 @@ public:
     const std::optional<Vector<String>>& extensions() const { return m_extensions; }
     const AuthenticatorSupportedOptions& options() const { return m_options; }
     const std::optional<Vector<WebCore::AuthenticatorTransport>>& transports() const { return m_transports; }
+    const std::optional<Vector<WebCore::PublicKeyCredentialParameters>>& algorithms() const { return m_algorithms; }
     const std::optional<uint32_t>& remainingDiscoverableCredentials() const { return m_remainingDiscoverableCredentials; }
 
 private:
@@ -73,6 +76,7 @@ private:
     std::optional<Vector<String>> m_extensions;
     AuthenticatorSupportedOptions m_options;
     std::optional<Vector<WebCore::AuthenticatorTransport>> m_transports;
+    std::optional<Vector<WebCore::PublicKeyCredentialParameters>> m_algorithms;
     std::optional<uint32_t> m_remainingDiscoverableCredentials;
 };
 
