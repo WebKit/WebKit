@@ -1,0 +1,18 @@
+
+EVENT(load)
+RUN(video.src = "content/test-vp8.webm")
+EVENT(canplaythrough)
+RUN(originalQuality = video.getVideoPlaybackQuality())
+EXPECTED (originalQuality.totalVideoFrames >= '0') OK
+EXPECTED (originalQuality.droppedVideoFrames == '0') OK
+EXPECTED (originalQuality.totalFrameDelay == '0') OK
+RUN(video.play())
+EVENT(playing)
+RUN(newQuality = video.getVideoPlaybackQuality())
+EXPECTED (newQuality.creationTime > originalQuality.creationTime == 'true') OK
+EXPECTED (newQuality.totalVideoFrames >= originalQuality.totalVideoFrames == 'true') OK
+EXPECTED (newQuality.totalVideoFrames > '0') OK
+EXPECTED (newQuality.droppedVideoFrames >= originalQuality.droppedVideoFrames == 'true') OK
+EXPECTED (newQuality.droppedVideoFrames <= originalQuality.totalVideoFrames == 'true') OK
+END OF TEST
+

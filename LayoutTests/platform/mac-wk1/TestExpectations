@@ -1157,6 +1157,7 @@ media/media-video-fullrange.html [ Skip ]
 media/media-video-videorange.html [ Skip ]
 media/media-video-fullrange-offscreen.html [ Skip ]
 media/media-video-videorange-offscreen.html [ Skip ]
+media/video-playback-quality-webm.html [ Skip ]
 
 # VP9/VP8 are not supported on WK1 and turned off by default
 media/media-source/media-source-vp8-hiddenframes.html [ Skip ]

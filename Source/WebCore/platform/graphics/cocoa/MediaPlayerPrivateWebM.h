@@ -198,6 +198,8 @@ private:
     bool wirelessVideoPlaybackDisabled() const final { return false; }
 #endif
 
+    std::optional<VideoPlaybackQualityMetrics> videoPlaybackQualityMetrics() final;
+
     void enqueueSample(Ref<MediaSample>&&, TrackID);
     enum class NeedsFlush: bool {
         No = 0,

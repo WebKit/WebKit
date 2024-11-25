@@ -1987,6 +1987,20 @@ void MediaPlayerPrivateWebM::isInFullscreenOrPictureInPictureChanged(bool isInFu
 #endif
 }
 
+std::optional<VideoPlaybackQualityMetrics> MediaPlayerPrivateWebM::videoPlaybackQualityMetrics()
+{
+    if (!m_videoRenderer)
+        return std::nullopt;
+
+    return VideoPlaybackQualityMetrics {
+        m_videoRenderer->totalVideoFrames(),
+        m_videoRenderer->droppedVideoFrames(),
+        m_videoRenderer->corruptedVideoFrames(),
+        m_videoRenderer->totalFrameDelay().toDouble(),
+        m_videoRenderer->totalDisplayedFrames()
+    };
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(ALTERNATE_WEBM_PLAYER)
