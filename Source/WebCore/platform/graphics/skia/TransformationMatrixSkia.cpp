@@ -44,20 +44,20 @@ TransformationMatrix::operator SkM44() const
 {
     return SkM44 {
         SkDoubleToScalar(m11()),
-        SkDoubleToScalar(m12()),
-        SkDoubleToScalar(m13()),
-        SkDoubleToScalar(m14()),
         SkDoubleToScalar(m21()),
-        SkDoubleToScalar(m22()),
-        SkDoubleToScalar(m23()),
-        SkDoubleToScalar(m24()),
         SkDoubleToScalar(m31()),
-        SkDoubleToScalar(m32()),
-        SkDoubleToScalar(m33()),
-        SkDoubleToScalar(m34()),
         SkDoubleToScalar(m41()),
+        SkDoubleToScalar(m12()),
+        SkDoubleToScalar(m22()),
+        SkDoubleToScalar(m32()),
         SkDoubleToScalar(m42()),
+        SkDoubleToScalar(m13()),
+        SkDoubleToScalar(m23()),
+        SkDoubleToScalar(m33()),
         SkDoubleToScalar(m43()),
+        SkDoubleToScalar(m14()),
+        SkDoubleToScalar(m24()),
+        SkDoubleToScalar(m34()),
         SkDoubleToScalar(m44())
     };
 }
