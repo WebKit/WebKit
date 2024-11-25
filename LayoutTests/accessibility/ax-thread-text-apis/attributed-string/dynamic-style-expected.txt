@@ -1,0 +1,24 @@
+This test ensures we produce the right attributed string after dynamic style changes.
+
+Attributes in range {0, 29}:
+AXFont: {
+    AXFontFamily = Times;
+    AXFontName = "Times-Roman";
+    AXFontSize = 24;
+}
+AXForegroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 1 0.647059 0 1 )
+AXBackgroundColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0.827451 0.827451 0.827451 1 )
+AXSuperscript: 1
+AXShadow: YES
+AXUnderline: YES
+AXUnderlineColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0.4 0.2 0.6 1 )
+AXStrikethrough: YES
+AXStrikethroughColor: (kCGColorSpaceICCBased; kCGColorSpaceModelRGB; sRGB IEC61966-2.1) ( 0.4 0.2 0.6 1 )
+This is an attributed string.
+
+PASS: The attributed string matched expectations after changing styles.
+PASS: The attributed string matched expectations after removing all styles.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+This is an attributed string.

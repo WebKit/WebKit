@@ -290,7 +290,10 @@ public:
 #if ENABLE(AX_THREAD_TEXT_APIS)
     // Traverses from m_start to m_end, collecting all text along the way.
     String toString() const;
-#endif
+#if PLATFORM(COCOA)
+    RetainPtr<NSAttributedString> toAttributedString() const;
+#endif // PLATFORM(COCOA)
+#endif // ENABLE(AX_THREAD_TEXT_APIS)
 
     String debugDescription() const;
 private:

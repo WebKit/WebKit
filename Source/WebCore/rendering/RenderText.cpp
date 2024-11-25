@@ -386,6 +386,9 @@ void RenderText::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
     auto needsLayoutBoxStyleUpdate = layoutBox() && (diff >= StyleDifference::Repaint || (&style() != &firstLineStyle()));
     if (needsLayoutBoxStyleUpdate)
         LayoutIntegration::LineLayout::updateStyle(*this);
+
+    if (CheckedPtr cache = document().existingAXObjectCache())
+        cache->onStyleChange(*this, diff, oldStyle, newStyle);
 }
 
 void RenderText::removeAndDestroyLegacyTextBoxes()

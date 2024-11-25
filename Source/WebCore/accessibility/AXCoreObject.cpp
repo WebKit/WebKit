@@ -30,6 +30,8 @@
 #include "AXCoreObject.h"
 
 #include "LocalFrameView.h"
+#include "RenderObject.h"
+#include "TextDecorationPainter.h"
 #include <wtf/text/MakeString.h>
 
 namespace WebCore {
@@ -895,6 +897,38 @@ AXCoreObject* AXCoreObject::parentObjectUnignored() const
     return Accessibility::findAncestor<AXCoreObject>(*this, false, [&] (const AXCoreObject& object) {
         return !object.isIgnored();
     });
+}
+
+// LineDecorationStyle implementations.
+
+LineDecorationStyle::LineDecorationStyle(RenderObject& renderer)
+{
+    const auto& style = renderer.style();
+    auto decor = style.textDecorationsInEffect();
+    if (decor & TextDecorationLine::Underline || decor & TextDecorationLine::LineThrough) {
+        auto decorationStyles = TextDecorationPainter::stylesForRenderer(renderer, decor);
+        if (decor & TextDecorationLine::Underline) {
+            hasUnderline = true;
+            underlineColor = decorationStyles.underline.color;
+        }
+
+        if (decor & TextDecorationLine::LineThrough) {
+            hasLinethrough = true;
+            linethroughColor = decorationStyles.linethrough.color;
+        }
+    }
+}
+
+String LineDecorationStyle::debugDescription() const
+{
+    return makeString(
+        "{"_s,
+        "hasUnderline: "_s, hasUnderline,
+        ", underlineColor: "_s, underlineColor.debugDescription(),
+        ", hasLinethrough: "_s, hasLinethrough,
+        ", linethroughColor: "_s, linethroughColor.debugDescription(),
+        "}"_s
+    );
 }
 
 namespace Accessibility {

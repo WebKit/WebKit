@@ -401,6 +401,16 @@ public:
     RetainPtr<NSArray> contentForRange(const SimpleRange&, SpellCheck = SpellCheck::No) const;
     RetainPtr<NSAttributedString> attributedStringForRange(const SimpleRange&, SpellCheck) const;
     RetainPtr<NSAttributedString> attributedStringForTextMarkerRange(AXTextMarkerRange&&, SpellCheck = SpellCheck::No) const override;
+    // The following functions are PLATFORM(COCOA) because these are currently only used to power a
+    // Cocoa API (attributed strings).
+    AttributedStringStyle stylesForAttributedString() const final;
+    RetainPtr<CTFontRef> font() const;
+    Color textColor() const;
+    Color backgroundColor() const;
+    bool isSubscript() const;
+    bool isSuperscript() const;
+    bool hasTextShadow() const;
+    LineDecorationStyle lineDecorationStyle() const;
 #endif
     virtual String ariaLabeledByAttribute() const { return String(); }
     virtual String ariaDescribedByAttribute() const { return String(); }
@@ -1002,6 +1012,13 @@ public:
 private:
     Ref<const AccessibilityObject> m_parent;
 }; // class AXChildIterator
+
+#if PLATFORM(COCOA)
+// Helpers to extract information from RenderStyle needed for accessibility purposes.
+RetainPtr<CTFontRef> fontFrom(const RenderStyle&);
+Color textColorFrom(const RenderStyle&);
+Color backgroundColorFrom(const RenderStyle&);
+#endif // PLATFORM(COCOA)
 
 } // namespace WebCore
 
