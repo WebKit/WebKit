@@ -9268,6 +9268,107 @@ class TestFindUnexpectedStaticAnalyzerResults(BuildStepMixinAdditions, unittest.
             return self.runStep()
 
 
+class TestDownloadUnexpectedResultsfromMaster(BuildStepMixinAdditions, unittest.TestCase):
+    READ_LIMIT = 1000
+
+    def setUp(self):
+        self.longMessage = True
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(DownloadUnexpectedResultsFromMaster(mastersrc=__file__))
+        self.setProperty('buildername', 'Safer-CPP-EWS')
+        self.setProperty('change_id', '123456')
+        self.setProperty('buildnumber', '123')
+
+    @staticmethod
+    def downloadFileRecordingContents(limit, recorder):
+        def behavior(command):
+            reader = command.args['reader']
+            data = reader.remote_read(limit)
+            recorder(data)
+            reader.remote_close()
+        return behavior
+
+    @defer.inlineCallbacks
+    def test_success(self):
+        self.configureStep()
+        self.expectHidden(False)
+        buf = []
+        self.expectRemoteCommands(
+            Expect('downloadFile', dict(
+                workerdest=f'{SCAN_BUILD_OUTPUT_DIR}/unexpected_results.json', workdir='wkdir',
+                blocksize=1024 * 256, maxsize=None, mode=0o0644,
+                reader=ExpectRemoteRef(remotetransfer.FileReader),
+            ))
+            + Expect.behavior(self.downloadFileRecordingContents(self.READ_LIMIT, buf.append))
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='downloading to unexpected_results.json')
+
+        yield self.runStep()
+
+        buf = b''.join(buf)
+        self.assertEqual(len(buf), self.READ_LIMIT)
+        with open(__file__, 'rb') as masterFile:
+            data = masterFile.read(self.READ_LIMIT)
+            if data != buf:
+                self.assertEqual(buf, data)
+
+
+class TestDeleteStaticAnalyzerResults(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(DeleteStaticAnalyzerResults())
+        self.setProperty('builddir', 'wkdir')
+
+    def test_success(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['rm', '-r', os.path.join(self.getProperty('builddir'), f'build/{SCAN_BUILD_OUTPUT_DIR}/StaticAnalyzer')])
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='deleted static analyzer results')
+        return self.runStep()
+
+
+class TestGenerateSaferCPPResultsIndex(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        os.environ['RESULTS_SERVER_API_KEY'] = 'test-api-key'
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def configureStep(self):
+        self.setupStep(GenerateSaferCPPResultsIndex())
+        self.setProperty('builddir', 'wkdir')
+
+    def test_success(self):
+        self.configureStep()
+        self.expectRemoteCommands(
+            ExpectShell(workdir='wkdir',
+                        logEnviron=False,
+                        command=['python3', 'Tools/Scripts/compare-static-analysis-results', 'wkdir/build/new', '--build-output', SCAN_BUILD_OUTPUT_DIR, '--scan-build-path', '../llvm-project/clang/tools/scan-build/bin/scan-build', '--generate-results-only'])
+            + ExpectShell.log('stdio', stdout='scan-build: 1 bug found\n')
+            + 0,
+        )
+        self.expectOutcome(result=SUCCESS, state_string='generated safer cpp results')
+        rc = self.runStep()
+        self.assertEqual(self.getProperty('num_unexpected_issues'), 1)
+        return rc
+
+
 class TestDisplaySaferCPPResults(BuildStepMixinAdditions, unittest.TestCase):
     HEADER = '### Safer C++ Build [#123](http://localhost:8080/#/builders/1/builds/13)\n'
 
