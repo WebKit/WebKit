@@ -743,9 +743,11 @@ inline void BuilderCustom::applyInitialFontFamily(BuilderState& builderState)
         if (CSSValueID sizeIdentifier = fontDescription.keywordSizeAsIdentifier())
             builderState.setFontSize(fontDescription, Style::fontSizeForKeyword(sizeIdentifier, false, builderState.document()));
     }
+
+    auto value = AtomString("initial"_s);
+    initialDesc.setOneFamily(value);
     if (!initialDesc.firstFamily().isEmpty())
         fontDescription.setFamilies(initialDesc.families());
-
     builderState.setFontDescription(WTFMove(fontDescription));
 }
 
