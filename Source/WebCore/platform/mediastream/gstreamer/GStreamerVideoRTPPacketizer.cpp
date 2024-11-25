@@ -84,14 +84,14 @@ RefPtr<GStreamerVideoRTPPacketizer> GStreamerVideoRTPPacketizer::create(RefPtr<U
         g_object_set(payloader.get(), "config-interval", -1, nullptr);
 
         auto profileValue = gstStructureGetString(codecParameters, "profile"_s);
-        auto profile = profileValue ? profileValue : "baseline"_s;
+        auto profile = profileValue ? profileValue : "constrained-baseline"_s;
 
         AVCParameters parameters;
         if (profile == "baseline"_s)
             parameters.profileIDC = 66;
         else if (profile == "constrained-baseline"_s) {
             parameters.profileIDC = 66;
-            parameters.constraintsFlags |= 0x40 << 6;
+            parameters.constraintsFlags |= 1 << 6;
         } else if (profile == "main"_s)
             parameters.profileIDC = 77;
 
