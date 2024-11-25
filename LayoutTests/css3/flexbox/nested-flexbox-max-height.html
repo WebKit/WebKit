@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<link href="resources/flexbox.css" rel="stylesheet">
+<script src="../../resources/testharness.js"></script>
+<script src="../../resources/testharnessreport.js"></script>
+<script src="../../resources/check-layout-th.js"></script>
+<script>
+function run() {
+  checkLayout('#container');
+}
+</script>
+<body onload="run()">
+<p>Only red square should be visible</p>
+<div id="log"></div>
+<div id="container" class="flexbox column" style="max-height: 100px; height: 100px; width: 100px; background: green">
+    <div class="flexbox column justify-content-center" style="height: 400px; background: red" data-expected-height="100">A</div>
+</div>

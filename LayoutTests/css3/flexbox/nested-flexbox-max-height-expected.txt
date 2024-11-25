@@ -1,0 +1,5 @@
+Only red square should be visible
+
+
+PASS #container 1
+A
