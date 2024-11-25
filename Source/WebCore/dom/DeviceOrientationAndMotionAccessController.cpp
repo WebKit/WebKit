@@ -32,6 +32,7 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "FrameLoader.h"
 #include "LocalDOMWindow.h"
 #include "LocalFrame.h"
 #include "Page.h"

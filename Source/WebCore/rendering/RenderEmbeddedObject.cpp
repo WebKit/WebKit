@@ -151,20 +151,20 @@ void RenderEmbeddedObject::didAttachScrollingNode()
 }
 
 #if !PLATFORM(IOS_FAMILY)
-static String unavailablePluginReplacementText(RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason)
+static String unavailablePluginReplacementText(PluginUnavailabilityReason pluginUnavailabilityReason)
 {
     switch (pluginUnavailabilityReason) {
-    case RenderEmbeddedObject::PluginMissing:
+    case PluginUnavailabilityReason::PluginMissing:
         return missingPluginText();
-    case RenderEmbeddedObject::PluginCrashed:
+    case PluginUnavailabilityReason::PluginCrashed:
         return crashedPluginText();
-    case RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy:
+    case PluginUnavailabilityReason::PluginBlockedByContentSecurityPolicy:
         return blockedPluginByContentSecurityPolicyText();
-    case RenderEmbeddedObject::InsecurePluginVersion:
+    case PluginUnavailabilityReason::InsecurePluginVersion:
         return insecurePluginVersionText();
-    case RenderEmbeddedObject::UnsupportedPlugin:
+    case PluginUnavailabilityReason::UnsupportedPlugin:
         return unsupportedPluginText();
-    case RenderEmbeddedObject::PluginTooSmall:
+    case PluginUnavailabilityReason::PluginTooSmall:
         return pluginTooSmallText();
     }
 
@@ -173,7 +173,7 @@ static String unavailablePluginReplacementText(RenderEmbeddedObject::PluginUnava
 }
 #endif
 
-static bool shouldUnavailablePluginMessageBeButton(Page& page, RenderEmbeddedObject::PluginUnavailabilityReason pluginUnavailabilityReason)
+static bool shouldUnavailablePluginMessageBeButton(Page& page, PluginUnavailabilityReason pluginUnavailabilityReason)
 {
     return page.chrome().client().shouldUnavailablePluginMessageBeButton(pluginUnavailabilityReason);
 }

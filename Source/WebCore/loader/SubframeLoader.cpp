@@ -420,7 +420,7 @@ bool FrameLoader::SubframeLoader::loadPlugin(HTMLPlugInImageElement& pluginEleme
 
     if (!widget) {
         if (!renderer->isPluginUnavailable())
-            CheckedRef { *renderer }->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginMissing);
+            CheckedRef { *renderer }->setPluginUnavailabilityReason(PluginUnavailabilityReason::PluginMissing);
         return false;
     }
 

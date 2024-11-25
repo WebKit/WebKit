@@ -62,6 +62,7 @@
 #include "FocusController.h"
 #include "FocusEvent.h"
 #include "FormAssociatedCustomElement.h"
+#include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FullscreenManager.h"
 #include "FullscreenOptions.h"

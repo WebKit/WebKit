@@ -36,6 +36,7 @@
 #include "Page.h"
 #include "RenderBlockFlow.h"
 #include "RenderLayer.h"
+#include "RenderReplaced.h"
 #include "RenderText.h"
 #include "RenderedDocumentMarker.h"
 #include "TextIterator.h"

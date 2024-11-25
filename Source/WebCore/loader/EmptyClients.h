@@ -225,7 +225,7 @@ class EmptyChromeClient : public ChromeClient {
     void didAssociateFormControls(const Vector<RefPtr<Element>>&, LocalFrame&) final { }
     bool shouldNotifyOnFormChanges() final { return false; }
 
-    RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final { return nullptr; }
+    RefPtr<Icon> createIconForFiles(const Vector<String>& /* filenames */) final;
 
     void requestCookieConsent(CompletionHandler<void(CookieConsentDecisionResult)>&&) final;
 };

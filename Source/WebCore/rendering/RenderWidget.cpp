@@ -34,6 +34,7 @@
 #include "RemoteFrameView.h"
 #include "RenderBoxInlines.h"
 #include "RenderElementInlines.h"
+#include "RenderEmbeddedObject.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderLayerScrollableArea.h"

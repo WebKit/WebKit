@@ -30,6 +30,15 @@ class LayoutSize;
 class MouseEvent;
 class TextRun;
 
+enum class PluginUnavailabilityReason : uint8_t {
+    PluginMissing,
+    PluginCrashed,
+    PluginBlockedByContentSecurityPolicy,
+    InsecurePluginVersion,
+    UnsupportedPlugin,
+    PluginTooSmall
+};
+
 // Renderer for embeds and objects, often, but not always, rendered via plug-ins.
 // For example, <embed src="foo.html"> does not invoke a plug-in.
 class RenderEmbeddedObject final : public RenderWidget {
@@ -39,14 +48,6 @@ public:
     RenderEmbeddedObject(HTMLFrameOwnerElement&, RenderStyle&&);
     virtual ~RenderEmbeddedObject();
 
-    enum PluginUnavailabilityReason {
-        PluginMissing,
-        PluginCrashed,
-        PluginBlockedByContentSecurityPolicy,
-        InsecurePluginVersion,
-        UnsupportedPlugin,
-        PluginTooSmall
-    };
     PluginUnavailabilityReason pluginUnavailabilityReason() const { return m_pluginUnavailabilityReason; };
     WEBCORE_EXPORT void setPluginUnavailabilityReason(PluginUnavailabilityReason);
     WEBCORE_EXPORT void setPluginUnavailabilityReasonWithDescription(PluginUnavailabilityReason, const String& description);

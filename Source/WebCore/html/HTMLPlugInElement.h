@@ -72,7 +72,7 @@ public:
     virtual bool isPlugInImageElement() const = 0;
 
     // Return whether or not the replacement content for blocked plugins is accessible to the user.
-    WEBCORE_EXPORT bool setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason, const String& unavailabilityDescription);
+    WEBCORE_EXPORT bool setReplacement(PluginUnavailabilityReason, const String& unavailabilityDescription);
 
     WEBCORE_EXPORT bool isReplacementObscured();
 

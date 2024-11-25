@@ -49,6 +49,8 @@ class ScrollingCoordinator;
 class StickyPositionViewportConstraints;
 class TiledBacking;
 
+enum class ScrollingNodeType : uint8_t;
+
 enum class CompositingUpdateType {
     AfterStyleChange,
     AfterLayout,

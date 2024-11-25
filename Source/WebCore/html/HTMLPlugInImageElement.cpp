@@ -313,7 +313,7 @@ bool HTMLPlugInImageElement::requestObject(const String& relativeURL, const Stri
         return false;
 
     if (!canLoadPlugInContent(relativeURL, mimeType)) {
-        renderEmbeddedObject()->setPluginUnavailabilityReason(RenderEmbeddedObject::PluginBlockedByContentSecurityPolicy);
+        renderEmbeddedObject()->setPluginUnavailabilityReason(PluginUnavailabilityReason::PluginBlockedByContentSecurityPolicy);
         return false;
     }
 

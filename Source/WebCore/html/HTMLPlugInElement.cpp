@@ -374,7 +374,7 @@ bool HTMLPlugInElement::requestObject(const String& relativeURL, const String& m
     return true;
 }
 
-bool HTMLPlugInElement::setReplacement(RenderEmbeddedObject::PluginUnavailabilityReason reason, const String& unavailabilityDescription)
+bool HTMLPlugInElement::setReplacement(PluginUnavailabilityReason reason, const String& unavailabilityDescription)
 {
     Ref protectedThis { *this };
     {
@@ -382,7 +382,7 @@ bool HTMLPlugInElement::setReplacement(RenderEmbeddedObject::PluginUnavailabilit
         if (!renderer)
             return false;
 
-        if (reason == RenderEmbeddedObject::UnsupportedPlugin)
+        if (reason == PluginUnavailabilityReason::UnsupportedPlugin)
             document().addConsoleMessage(MessageSource::JS, MessageLevel::Warning, "Tried to use an unsupported plug-in."_s);
 
         renderer->setPluginUnavailabilityReasonWithDescription(reason, unavailabilityDescription);
