@@ -65,6 +65,11 @@ public class WebPage_v0 {
         return backingWebView.hasOnlySecureContent
     }
 
+    public var isWritingToolsActive: Bool {
+        self.access(keyPath: \.isWritingToolsActive)
+        return backingWebView.isWritingToolsActive
+    }
+
     public var themeColor: Color? {
         self.access(keyPath: \.themeColor)
 
@@ -120,8 +125,13 @@ public class WebPage_v0 {
             createObservation(for: \.isLoading, backedBy: \.isLoading),
             createObservation(for: \.serverTrust, backedBy: \.serverTrust),
             createObservation(for: \.hasOnlySecureContent, backedBy: \.hasOnlySecureContent),
+            createObservation(for: \.isWritingToolsActive, backedBy: \.isWritingToolsActive),
             createObservation(for: \.themeColor, backedBy: \.themeColor),
         ]
+    }
+
+    public static func handlesURLScheme(_ scheme: String) -> Bool {
+        WKWebView.handlesURLScheme(scheme)
     }
 
     @discardableResult
@@ -130,8 +140,108 @@ public class WebPage_v0 {
     }
 
     @discardableResult
+    public func load(_ data: Data, mimeType: String, characterEncoding: String.Encoding, baseURL: URL) -> NavigationID? {
+        let cfEncoding = CFStringConvertNSStringEncodingToEncoding(characterEncoding.rawValue)
+        guard cfEncoding != kCFStringEncodingInvalidId else {
+            preconditionFailure("\(characterEncoding) is not a valid character encoding")
+        }
+
+        guard let convertedEncoding = CFStringConvertEncodingToIANACharSetName(cfEncoding) as? String else {
+            preconditionFailure("\(characterEncoding) is not a valid character encoding")
+        }
+
+        return backingWebView.load(data, mimeType: mimeType, characterEncodingName: convertedEncoding, baseURL: baseURL).map(NavigationID.init(_:))
+    }
+
+    @discardableResult
     public func load(htmlString: String, baseURL: URL) -> NavigationID? {
         backingWebView.loadHTMLString(htmlString, baseURL: baseURL).map(NavigationID.init(_:))
+    }
+
+    @discardableResult
+    public func load(_ request: URLRequest, allowingReadAccessTo readAccessURL: URL) -> NavigationID? {
+        // `WKWebView` annotates this method as returning non-nil, but it may return nil.
+
+        let navigation = backingWebView.loadFileRequest(request, allowingReadAccessTo: readAccessURL) as WKNavigation?
+        return navigation.map(NavigationID.init(_:))
+    }
+
+    @discardableResult
+    public func loadSimulatedRequest(_ request: URLRequest, response: URLResponse, responseData: Data) -> NavigationID? {
+        // `WKWebView` annotates this method as returning non-nil, but it may return nil.
+
+        let navigation = backingWebView.loadSimulatedRequest(request, response: response, responseData: responseData) as WKNavigation?
+        return navigation.map(NavigationID.init(_:))
+    }
+
+    @discardableResult
+    public func loadSimulatedRequest(_ request: URLRequest, responseHTML: String) -> NavigationID? {
+        // `WKWebView` annotates this method as returning non-nil, but it may return nil.
+
+        let navigation = backingWebView.loadSimulatedRequest(request, responseHTML: responseHTML) as WKNavigation?
+        return navigation.map(NavigationID.init(_:))
+    }
+
+    @discardableResult
+    public func reload(fromOrigin: Bool = false) -> NavigationID? {
+        let navigation = fromOrigin ? backingWebView.reloadFromOrigin() : backingWebView.reload()
+        return navigation.map(NavigationID.init(_:))
+    }
+
+    public func stopLoading() {
+        backingWebView.stopLoading()
+    }
+
+    public func callAsyncJavaScript(_ functionBody: String, arguments: [String : Any] = [:], in frame: FrameInfo? = nil, contentWorld: WKContentWorld? = nil) async throws -> Any? {
+        try await backingWebView.callAsyncJavaScript(functionBody, arguments: arguments, in: frame?.wrapped, contentWorld: contentWorld ?? .defaultClient)
+    }
+
+#if canImport(UIKit)
+    public func snapshot(configuration: WKSnapshotConfiguration? = nil) async throws -> UIImage {
+        try await withCheckedThrowingContinuation { continuation in
+            backingWebView.takeSnapshot(with: configuration) { image, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+
+                guard let image else {
+                    preconditionFailure()
+                }
+
+                continuation.resume(returning: image)
+            }
+        }
+    }
+#else
+    public func snapshot(configuration: WKSnapshotConfiguration? = nil) async throws -> NSImage {
+        try await withCheckedThrowingContinuation { continuation in
+            backingWebView.takeSnapshot(with: configuration) { image, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+
+                guard let image else {
+                    preconditionFailure()
+                }
+
+                continuation.resume(returning: image)
+            }
+        }
+    }
+#endif
+
+    public func pdf(configuration: WKPDFConfiguration? = nil) async throws -> Data {
+        try await backingWebView.pdf(configuration: configuration ?? .init())
+    }
+
+    public func webArchiveData() async throws -> Data {
+        try await withCheckedThrowingContinuation { continuation in
+            backingWebView.createWebArchiveData {
+                continuation.resume(with: $0)
+            }
+        }
     }
 
     private func createObservation<Value, BackingValue>(for keyPath: KeyPath<WebPage_v0, Value>, backedBy backingKeyPath: KeyPath<WKWebView, BackingValue>) -> NSKeyValueObservation {

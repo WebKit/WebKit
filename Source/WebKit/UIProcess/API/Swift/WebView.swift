@@ -103,7 +103,20 @@ fileprivate struct WebViewRepresentable {
     }
 
     func updatePlatformView(_ platformView: WebViewWrapper, context: Context) {
-        platformView.webView = owner.page.backingWebView
+        let webView = owner.page.backingWebView
+        let environment = context.environment
+
+        platformView.webView = webView
+
+        webView.allowsBackForwardNavigationGestures = environment.webViewAllowsBackForwardNavigationGestures
+        webView.allowsLinkPreview = environment.webViewAllowsLinkPreview
+
+        webView.configuration.preferences.isTextInteractionEnabled = environment.webViewAllowsTextInteraction
+
+#if os(macOS)
+        // FIXME: (283651) Expose `WKPreferences/tabFocusesLinks` internally on iOS.
+        webView.configuration.preferences.tabFocusesLinks = environment.webViewAllowsTabFocusingLinks
+#endif
     }
 }
 
