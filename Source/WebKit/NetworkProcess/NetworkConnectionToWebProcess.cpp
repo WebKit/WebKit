@@ -688,7 +688,7 @@ void NetworkConnectionToWebProcess::preconnectTo(std::optional<WebCore::Resource
     };
 
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    if (protectedNetworkProcess()->supplement<LegacyCustomProtocolManager>()->supportsScheme(loadParameters.request.url().protocol().toString())) {
+    if (protectedNetworkProcess()->protectedLegacyCustomProtocolManager()->supportsScheme(loadParameters.request.url().protocol().toString())) {
         completionHandler(internalError(loadParameters.request.url()));
         return;
     }

@@ -44,6 +44,16 @@ ASCIILiteral LegacyCustomProtocolManager::supplementName()
     return "LegacyCustomProtocolManager"_s;
 }
 
+void LegacyCustomProtocolManager::ref() const
+{
+    m_networkProcess->ref();
+}
+
+void LegacyCustomProtocolManager::deref() const
+{
+    m_networkProcess->deref();
+}
+
 LegacyCustomProtocolManager::LegacyCustomProtocolManager(NetworkProcess& networkProcess)
     : m_networkProcess(networkProcess)
 {

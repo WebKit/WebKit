@@ -53,14 +53,14 @@ static RefPtr<NetworkProcess> protectedFirstNetworkProcess()
 
 void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkProcess)
 {
-    auto hasRegisteredSchemes = [] (auto* legacyCustomProtocolManager) {
+    auto hasRegisteredSchemes = [] (auto legacyCustomProtocolManager) {
         if (!legacyCustomProtocolManager)
             return false;
         Locker locker { legacyCustomProtocolManager->m_registeredSchemesLock };
         return !legacyCustomProtocolManager->m_registeredSchemes.isEmpty();
     };
 
-    RELEASE_ASSERT(!firstNetworkProcess() || !hasRegisteredSchemes(protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>()));
+    RELEASE_ASSERT(!firstNetworkProcess() || !hasRegisteredSchemes(protectedFirstNetworkProcess()->protectedLegacyCustomProtocolManager()));
     firstNetworkProcess() = &networkProcess;
 }
 
@@ -79,7 +79,7 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
 
 + (BOOL)canInitWithRequest:(NSURLRequest *)request
 {
-    if (auto* customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
+    if (RefPtr customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
         return customProtocolManager->supportsScheme([[[request URL] scheme] lowercaseString]);
     return NO;
 }
@@ -100,7 +100,7 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
     if (!self)
         return nil;
 
-    if (auto* customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
+    if (RefPtr customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
         _customProtocolID = customProtocolManager->addCustomProtocol(self);
     _initializationRunLoop = CFRunLoopGetCurrent();
 
@@ -115,7 +115,7 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
 - (void)startLoading
 {
     ensureOnMainRunLoop([customProtocolID = *self.customProtocolID, request = retainPtr([self request])] {
-        if (auto* customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
+        if (RefPtr customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>())
             customProtocolManager->startLoading(customProtocolID, request.get());
     });
 }
@@ -123,7 +123,7 @@ void LegacyCustomProtocolManager::networkProcessCreated(NetworkProcess& networkP
 - (void)stopLoading
 {
     ensureOnMainRunLoop([customProtocolID = *self.customProtocolID] {
-        if (auto* customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>()) {
+        if (RefPtr customProtocolManager = protectedFirstNetworkProcess()->supplement<LegacyCustomProtocolManager>()) {
             customProtocolManager->stopLoading(customProtocolID);
             customProtocolManager->removeCustomProtocol(customProtocolID);
         }

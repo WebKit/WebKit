@@ -105,6 +105,7 @@ struct SoupNetworkProxySettings;
 namespace WebKit {
 
 class AuthenticationManager;
+class LegacyCustomProtocolManager;
 class NetworkConnectionToWebProcess;
 class NetworkProcessSupplement;
 class NetworkProximityManager;
@@ -184,6 +185,10 @@ public:
     AuthenticationManager& authenticationManager();
     Ref<AuthenticationManager> protectedAuthenticationManager();
     DownloadManager& downloadManager();
+
+#if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
+    RefPtr<LegacyCustomProtocolManager> protectedLegacyCustomProtocolManager();
+#endif
 
     void setSession(PAL::SessionID, std::unique_ptr<NetworkSession>&&);
     NetworkSession* networkSession(PAL::SessionID) const final;
