@@ -1597,6 +1597,78 @@ void testSShrCompare64(int64_t constantValue)
     testWithOpcode(BelowEqual, [](uint64_t shiftAmount, uint64_t constantValue, int64_t value) { return static_cast<uint64_t>(value >> shiftAmount) <= constantValue; });
 }
 
+void testBitOrToRotL32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+    auto* sub = root->appendNew<Value>(proc, Sub, Origin(), root->appendNew<Const32Value>(proc, Origin(), 32), arguments[1]);
+    auto* shl = root->appendNew<Value>(proc, Shl, Origin(), arguments[0], arguments[1]);
+    auto* shr = root->appendNew<Value>(proc, ZShr, Origin(), arguments[0], sub);
+    auto* bitOr = root->appendNew<Value>(proc, BitOr, Origin(), shl, shr);
+    root->appendNewControlValue(proc, Return, Origin(), bitOr);
+    auto code = compileProc(proc);
+
+    for (auto input : int32OperandsMore()) {
+        for (int32_t shift = 0; shift < 32; ++shift)
+            CHECK_EQ(invoke<int32_t>(*code, input.value, shift), rotateLeft(input.value, shift));
+    }
+}
+
+void testBitOrToRotR32()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int32_t, int32_t>(proc, root);
+    auto* sub = root->appendNew<Value>(proc, Sub, Origin(), root->appendNew<Const32Value>(proc, Origin(), 32), arguments[1]);
+    auto* shl = root->appendNew<Value>(proc, Shl, Origin(), arguments[0], sub);
+    auto* shr = root->appendNew<Value>(proc, ZShr, Origin(), arguments[0], arguments[1]);
+    auto* bitOr = root->appendNew<Value>(proc, BitOr, Origin(), shl, shr);
+    root->appendNewControlValue(proc, Return, Origin(), bitOr);
+    auto code = compileProc(proc);
+
+    for (auto input : int32OperandsMore()) {
+        for (int32_t shift = 0; shift < 32; ++shift)
+            CHECK_EQ(invoke<int32_t>(*code, input.value, shift), rotateRight(input.value, shift));
+    }
+}
+
+void testBitOrToRotL64()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, root);
+    auto* sub = root->appendNew<Value>(proc, Sub, Origin(), root->appendNew<Const64Value>(proc, Origin(), 64), arguments[1]);
+    auto* shl = root->appendNew<Value>(proc, Shl, Origin(), arguments[0], root->appendNew<Value>(proc, Trunc, Origin(), arguments[1]));
+    auto* shr = root->appendNew<Value>(proc, ZShr, Origin(), arguments[0], root->appendNew<Value>(proc, Trunc, Origin(), sub));
+    auto* bitOr = root->appendNew<Value>(proc, BitOr, Origin(), shl, shr);
+    root->appendNewControlValue(proc, Return, Origin(), bitOr);
+    auto code = compileProc(proc);
+
+    for (auto input : int64OperandsMore()) {
+        for (int64_t shift = 0; shift < 64; ++shift)
+            CHECK_EQ(invoke<int64_t>(*code, input.value, shift), rotateLeft(input.value, shift));
+    }
+}
+
+void testBitOrToRotR64()
+{
+    Procedure proc;
+    BasicBlock* root = proc.addBlock();
+    auto arguments = cCallArgumentValues<int64_t, int64_t>(proc, root);
+    auto* sub = root->appendNew<Value>(proc, Sub, Origin(), root->appendNew<Const64Value>(proc, Origin(), 64), arguments[1]);
+    auto* shl = root->appendNew<Value>(proc, Shl, Origin(), arguments[0], root->appendNew<Value>(proc, Trunc, Origin(), sub));
+    auto* shr = root->appendNew<Value>(proc, ZShr, Origin(), arguments[0], root->appendNew<Value>(proc, Trunc, Origin(), arguments[1]));
+    auto* bitOr = root->appendNew<Value>(proc, BitOr, Origin(), shl, shr);
+    root->appendNewControlValue(proc, Return, Origin(), bitOr);
+    auto code = compileProc(proc);
+
+    for (auto input : int64OperandsMore()) {
+        for (int64_t shift = 0; shift < 64; ++shift)
+            CHECK_EQ(invoke<int64_t>(*code, input.value, shift), rotateRight(input.value, shift));
+    }
+}
+
 #endif // ENABLE(B3_JIT)
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
