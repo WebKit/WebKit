@@ -305,8 +305,10 @@ void VideoMediaSampleRenderer::decodeNextSample()
 
         m_isDecodingSample = false;
 
-        if (flushId != m_flushId)
+        if (flushId != m_flushId) {
+            decodeNextSample();
             return;
+        }
 
         --m_framesBeingDecoded;
         ASSERT(m_framesBeingDecoded >= 0);
