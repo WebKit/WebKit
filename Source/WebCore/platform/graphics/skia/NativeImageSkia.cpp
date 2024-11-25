@@ -33,6 +33,9 @@
 #include "PlatformDisplay.h"
 #include <skia/core/SkData.h>
 #include <skia/core/SkImage.h>
+#include <skia/gpu/ganesh/GrBackendSurface.h>
+#include <skia/gpu/ganesh/SkImageGanesh.h>
+#include <skia/private/chromium/SkImageChromium.h>
 
 IGNORE_CLANG_WARNINGS_BEGIN("cast-align")
 #include <skia/core/SkPixmap.h>
@@ -42,6 +45,10 @@ namespace WebCore {
 
 void PlatformImageNativeImageBackend::finishAcceleratedRenderingAndCreateFence()
 {
+    Locker locker { m_fenceLock };
+    if (m_fence)
+        return;
+
     auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
     if (!glContext || !glContext->makeContextCurrent())
         return;
@@ -62,11 +69,37 @@ void PlatformImageNativeImageBackend::finishAcceleratedRenderingAndCreateFence()
 
 void PlatformImageNativeImageBackend::waitForAcceleratedRenderingFenceCompletion()
 {
+    Locker locker { m_fenceLock };
     if (!m_fence)
         return;
 
     m_fence->serverWait();
     m_fence = nullptr;
+}
+
+const GrDirectContext* PlatformImageNativeImageBackend::skiaGrContext() const
+{
+    return SkImages::GetContext(platformImage());
+}
+
+RefPtr<NativeImage> PlatformImageNativeImageBackend::copyAcceleratedNativeImageBorrowingBackendTexture() const
+{
+    auto image = platformImage();
+    if (!image)
+        return nullptr;
+
+    auto* glContext = PlatformDisplay::sharedDisplay().skiaGLContext();
+    if (!glContext || !glContext->makeContextCurrent())
+        return nullptr;
+
+    auto* grContext = PlatformDisplay::sharedDisplay().skiaGrContext();
+    RELEASE_ASSERT(grContext);
+
+    GrBackendTexture backendTexture;
+    if (!SkImages::GetBackendTextureFromImage(image, &backendTexture, false))
+        return nullptr;
+
+    return NativeImage::create(SkImages::BorrowTextureFrom(grContext, backendTexture, kTopLeft_GrSurfaceOrigin, image->colorType(), image->alphaType(), image->refColorSpace()));
 }
 
 IntSize PlatformImageNativeImageBackend::size() const

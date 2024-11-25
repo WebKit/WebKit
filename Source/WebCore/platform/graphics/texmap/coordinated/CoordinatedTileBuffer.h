@@ -66,9 +66,9 @@ public:
 
     bool supportsAlpha() const { return m_flags & SupportsAlpha; }
 
-    virtual void beginPainting() = 0;
-    virtual void completePainting() = 0;
-    virtual void waitUntilPaintingComplete() = 0;
+    virtual void beginPainting();
+    virtual void completePainting();
+    virtual void waitUntilPaintingComplete();
 
 #if USE(SKIA)
     SkCanvas* canvas();
@@ -88,6 +88,17 @@ protected:
     static Lock s_layersMemoryUsageLock;
     static double s_currentLayersMemoryUsage;
     static double s_maxLayersMemoryUsage;
+
+    enum class PaintingState {
+        InProgress,
+        Complete
+    };
+
+    struct {
+        Lock lock;
+        Condition condition;
+        PaintingState state { PaintingState::Complete };
+    } m_painting;
 
 private:
     Flags m_flags;
@@ -114,9 +125,6 @@ private:
 #if USE(SKIA)
     bool tryEnsureSurface() final;
 #endif
-    void beginPainting() final;
-    void completePainting() final;
-    void waitUntilPaintingComplete() final;
 
     MallocSpan<unsigned char> m_data;
     IntSize m_size;
@@ -148,7 +156,6 @@ private:
     IntSize size() const final;
 
     bool tryEnsureSurface() final;
-    void beginPainting() final { }
     void completePainting() final;
     void waitUntilPaintingComplete() final;
 

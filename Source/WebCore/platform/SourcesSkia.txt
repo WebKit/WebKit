@@ -61,6 +61,6 @@ platform/graphics/skia/PlatformDisplaySkia.cpp
 platform/graphics/skia/ShareableBitmapSkia.cpp
 platform/graphics/skia/SkiaHarfBuzzFont.cpp
 platform/graphics/skia/SkiaHarfBuzzFontCache.cpp
-platform/graphics/skia/SkiaThreadedPaintingPool.cpp
+platform/graphics/skia/SkiaPaintingEngine.cpp
 
 platform/skia/SharedBufferSkia.cpp

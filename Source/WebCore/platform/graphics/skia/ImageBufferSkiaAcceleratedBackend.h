@@ -26,9 +26,9 @@
 #pragma once
 
 #if USE(SKIA)
-
 #include "ImageBuffer.h"
 #include "ImageBufferSkiaSurfaceBackend.h"
+#include <wtf/Lock.h>
 #include <wtf/TZoneMalloc.h>
 
 namespace WebCore {
@@ -46,6 +46,7 @@ public:
     static constexpr RenderingMode renderingMode = RenderingMode::Accelerated;
 
 private:
+    static std::unique_ptr<ImageBufferSkiaAcceleratedBackend> create(const Parameters&, const ImageBufferCreationContext&, sk_sp<SkSurface>&&);
     ImageBufferSkiaAcceleratedBackend(const Parameters&, sk_sp<SkSurface>&&);
 
     RefPtr<NativeImage> copyNativeImage() final;
@@ -57,13 +58,18 @@ private:
     void finishAcceleratedRenderingAndCreateFence() final;
     void waitForAcceleratedRenderingFenceCompletion() final;
 
+    const GrDirectContext* skiaGrContext() const final { return m_skiaGrContext; }
+    RefPtr<ImageBuffer> copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImageBuffer&) const final;
+
 #if USE(COORDINATED_GRAPHICS)
     RefPtr<GraphicsLayerContentsDisplayDelegate> layerContentsDisplayDelegate() const final;
 
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_layerContentsDisplayDelegate;
 #endif
 
-    std::unique_ptr<GLFence> m_fence;
+    const GrDirectContext* m_skiaGrContext { nullptr };
+    std::unique_ptr<GLFence> m_fence WTF_GUARDED_BY_LOCK(m_fenceLock);
+    Lock m_fenceLock;
 };
 
 } // namespace WebCore
