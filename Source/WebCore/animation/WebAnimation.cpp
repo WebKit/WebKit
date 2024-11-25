@@ -1825,17 +1825,17 @@ bool WebAnimation::isSkippedContentAnimation() const
     return false;
 }
 
-std::optional<double> WebAnimation::progress() const
+std::optional<double> WebAnimation::overallProgress() const
 {
-    // https://drafts.csswg.org/web-animations-2/#the-progress-of-an-animation
-    // An animation’s progress is the ratio of its current time to its associated effect end.
+    // https://drafts.csswg.org/web-animations-2/#the-overall-progress-of-an-animation
+    // An animation's overallProgress is the ratio of its current time to its associated effect end.
     //
-    // The progress of an animation, animation, is calculated as follows:
+    // The overallProgress of an animation, animation, is calculated as follows:
     //
     // If any of the following are true:
     //     - animation does not have an associated effect, or
-    //     - animation’s current time is an unresolved time value,
-    // animation’s progress is null.
+    //     - animation's current time is an unresolved time value,
+    // animation's overallProgress is null.
     if (!m_effect)
         return std::nullopt;
 
@@ -1845,17 +1845,17 @@ std::optional<double> WebAnimation::progress() const
 
     auto endTime = effectEndTime();
 
-    // If animation’s associated effect end is zero,
-    //     - If animation’s current time is negative, animation’s progress is zero.
-    //     - Otherwise, animation’s progress is one.
+    // If animation's associated effect end is zero,
+    //     - If animation's current time is negative, animation's overallProgress is zero.
+    //     - Otherwise, animation's overallProgress is one.
     if (endTime.isZero())
         return *currentTime < zeroTime() ? 0 : 1;
 
-    // If animation’s associated effect end is infinite, animation’s progress is zero.
+    // If animation's associated effect end is infinite, animation's overallProgress is zero.
     if (endTime.isInfinity())
         return 0;
 
-    // Otherwise, progress = min(max(current time / animation’s associated effect end, 0), 1)
+    // Otherwise, overallProgress = min(max(current time / animation's associated effect end, 0), 1)
     return std::min(std::max(*currentTime / endTime, 0.0), 1.0);
 }
 

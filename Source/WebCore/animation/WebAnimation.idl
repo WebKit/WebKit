@@ -57,7 +57,7 @@ typedef (double or CSSNumericValue) CSSNumberish;
     [ImplementedAs=bindingsRangeStart, EnabledBySetting=ScrollDrivenAnimationsEnabled] attribute (TimelineRangeOffset or CSSNumericValue or CSSKeywordValue or DOMString) rangeStart;
     [ImplementedAs=bindingsRangeEnd, EnabledBySetting=ScrollDrivenAnimationsEnabled] attribute (TimelineRangeOffset or CSSNumericValue or CSSKeywordValue or DOMString) rangeEnd;
     attribute double playbackRate;
-    [EnabledBySetting=ScrollDrivenAnimationsEnabled] readonly attribute double? progress;
+    [EnabledBySetting=WebAnimationsOverallProgressPropertyEnabled] readonly attribute double? overallProgress;
     [ImplementedAs=bindingsFrameRate, EnabledBySetting=WebAnimationsCustomFrameRateEnabled] attribute (FramesPerSecond or AnimationFrameRatePreset) frameRate;
     [ImplementedAs=bindingsPlayState] readonly attribute AnimationPlayState playState;
     [ImplementedAs=bindingsReplaceState] readonly attribute AnimationReplaceState replaceState;

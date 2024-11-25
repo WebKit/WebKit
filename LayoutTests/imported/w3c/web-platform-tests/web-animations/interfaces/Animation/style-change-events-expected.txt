@@ -8,7 +8,7 @@ PASS Animation.currentTime produces expected style change events
 PASS Animation.rangeStart produces expected style change events
 PASS Animation.rangeEnd produces expected style change events
 PASS Animation.playbackRate produces expected style change events
-PASS Animation.progress produces expected style change events
+PASS Animation.overallProgress produces expected style change events
 FAIL Animation.frameRate produces expected style change events assert_own_property: Should have a test for 'frameRate' property expected property "frameRate" missing
 PASS Animation.playState produces expected style change events
 PASS Animation.replaceState produces expected style change events

@@ -126,7 +126,7 @@ public:
     void setStartTime(std::optional<WebAnimationTime>);
     virtual std::optional<WebAnimationTime> bindingsCurrentTime() const { return currentTime(); };
     virtual ExceptionOr<void> setBindingsCurrentTime(const std::optional<WebAnimationTime>&);
-    std::optional<double> progress() const;
+    std::optional<double> overallProgress() const;
     virtual PlayState bindingsPlayState() const { return playState(); }
     virtual ReplaceState bindingsReplaceState() const { return replaceState(); }
     virtual bool bindingsPending() const { return pending(); }

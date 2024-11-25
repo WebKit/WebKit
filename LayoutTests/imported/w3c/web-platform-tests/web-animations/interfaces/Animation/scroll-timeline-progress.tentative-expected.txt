@@ -1,6 +1,0 @@
-
-PASS animation.progress reflects the progress of a scroll animation as a number between 0 and 1
-FAIL animation.progress reflects the overall progress of a scroll animation with multiple iterations. assert_equals: 'actual' unit type must be 'percent' for "undefined" expected (string) "percent" but got (undefined) undefined
-FAIL animation.progress reflects the overall progress of a scroll animation that uses a view-timeline. assert_approx_equals: values do not match for "currentTime reflects progress as a percentage" expected 10.666666666666671 +/- 0.125 but got 100
-FAIL progresss of a view-timeline is bounded between 0 and 1. assert_less_than: currentTime is negative expected a number less than 0 but got 100
-
