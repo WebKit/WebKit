@@ -2176,13 +2176,9 @@ static bool displayTypeNeedsSpace(DisplayType type)
         || type == DisplayType::TableCell;
 }
 
-static bool needsSpaceFromDisplay(AXCoreObject& coreObject)
+static bool needsSpaceFromDisplay(AccessibilityObject& axObject)
 {
-    // We should always be dealing with non-isolated objects here. Ideally in the future we can strengthen the types
-    // to make this issue impossible.
-    Ref axObject = downcast<AccessibilityObject>(coreObject);
-
-    CheckedPtr renderer = axObject->renderer();
+    CheckedPtr renderer = axObject.renderer();
     if (is<RenderText>(renderer)) {
         // Never add a space for RenderTexts. They are inherently inline, but take their parent's style, which may
         // be block, erroneously adding a space.
@@ -2191,12 +2187,12 @@ static bool needsSpaceFromDisplay(AXCoreObject& coreObject)
 
     const auto* style = renderer ? &renderer->style() : nullptr;
     if (!style)
-        style = axObject->style();
+        style = axObject.style();
 
     return style ? displayTypeNeedsSpace(style->display()) : false;
 }
 
-static bool shouldPrependSpace(AXCoreObject& object, AXCoreObject* previousObject)
+static bool shouldPrependSpace(AccessibilityObject& object, AccessibilityObject* previousObject)
 {
     return needsSpaceFromDisplay(object)
         || (previousObject && needsSpaceFromDisplay(*previousObject))
@@ -2233,7 +2229,7 @@ String AccessibilityNodeObject::textUnderElement(TextUnderElementMode mode) cons
     }
 
     StringBuilder builder;
-    RefPtr<AXCoreObject> previous;
+    RefPtr<AccessibilityObject> previous;
     bool previousRequiresSpace = false;
     auto appendTextUnderElement = [&] (auto& object) {
         // We don't want to trim whitespace in these intermediate calls to textUnderElement, as doing so will wipe out
