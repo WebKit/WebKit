@@ -46,17 +46,31 @@ class CoordinatedGraphicsSceneClient {
 public:
     virtual ~CoordinatedGraphicsSceneClient() { }
     virtual void updateViewport() = 0;
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     virtual const WebCore::Damage& addSurfaceDamage(const WebCore::Damage&) = 0;
+#endif
 };
 
 class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphicsScene>, public WebCore::TextureMapperPlatformLayerProxy::Compositor
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     , public WebCore::TextureMapperLayerDamageVisitor {
+#else
+{
+#endif
 public:
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient*, WebCore::Damage::ShouldPropagate);
+#else
+    CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient*);
+#endif
     virtual ~CoordinatedGraphicsScene();
 
     void applyStateChanges(const Vector<RefPtr<Nicosia::Scene>>&);
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::FloatRect&, bool unifyDamagedRegions, bool flipY = false);
+#else
+    void paintToCurrentGLContext(const WebCore::TransformationMatrix&, const WebCore::FloatRect&, bool flipY = false);
+#endif
     void updateSceneState();
     void detach();
 
@@ -67,8 +81,10 @@ public:
     bool isActive() const { return m_isActive; }
     void setActive(bool active) { m_isActive = active; }
 
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     const WebCore::Damage& lastDamage() const { return m_damage; }
     void recordDamage(const WebCore::FloatRect&) override;
+#endif
 
 private:
     void commitSceneState(const RefPtr<Nicosia::Scene>&);
@@ -94,8 +110,10 @@ private:
     CoordinatedGraphicsSceneClient* m_client;
     bool m_isActive { false };
 
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     WebCore::Damage::ShouldPropagate m_propagateDamage;
     WebCore::Damage m_damage;
+#endif
 
     std::unique_ptr<WebCore::TextureMapperLayer> m_rootLayer;
 

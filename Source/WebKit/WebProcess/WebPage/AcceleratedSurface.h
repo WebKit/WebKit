@@ -60,9 +60,13 @@ public:
     virtual void willDestroyGLContext() { }
     virtual void finalize() { }
     virtual void willRenderFrame() { }
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     virtual void didRenderFrame(WebCore::Region&&) { }
 
     virtual const WebCore::Damage& addDamage(const WebCore::Damage&) { return WebCore::Damage::invalid(); };
+#else
+    virtual void didRenderFrame() { }
+#endif
 
     virtual void didCreateCompositingRunLoop(WTF::RunLoop&) { }
     virtual void willDestroyCompositingRunLoop() { }

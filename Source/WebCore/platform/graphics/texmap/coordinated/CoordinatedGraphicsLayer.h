@@ -124,7 +124,9 @@ public:
     void setNeedsDisplay() override;
     void setNeedsDisplayInRect(const FloatRect&, ShouldClipToLayer = ClipToLayer) override;
     void setContentsNeedsDisplay() override;
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     void markDamageRectsUnreliable() override;
+#endif
     void deviceOrPageScaleFactorChanged() override;
     void flushCompositingState(const FloatRect&) override;
     void flushCompositingStateForThisLayerOnly() override;
@@ -232,7 +234,9 @@ private:
         bool completeLayer { false };
         Vector<FloatRect> rects;
     } m_needsDisplay;
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     bool m_damagedRectsAreUnreliable { false };
+#endif
 
     Timer m_animationStartedTimer;
     RunLoop::Timer m_requestPendingTileCreationTimer;

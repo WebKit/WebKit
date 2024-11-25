@@ -49,7 +49,11 @@ public:
     void clientResize(const WebCore::IntSize&) override;
     void finalize() override;
     void willRenderFrame() override;
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     void didRenderFrame(WebCore::Region&&) override;
+#else
+    void didRenderFrame() override;
+#endif
 
 private:
     AcceleratedSurfaceLibWPE(WebPage&, Function<void()>&& frameCompleteHandler);

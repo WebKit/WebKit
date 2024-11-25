@@ -101,7 +101,9 @@ private:
 
     // CoordinatedGraphicsSceneClient
     void updateViewport() override;
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     const WebCore::Damage& addSurfaceDamage(const WebCore::Damage&) override;
+#endif
 
     void renderLayerTree();
     void frameComplete();
@@ -119,7 +121,9 @@ private:
     std::unique_ptr<WebCore::GLContext> m_context;
 
     bool m_flipY { false };
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     DamagePropagation m_damagePropagation { DamagePropagation::None };
+#endif
     unsigned m_suspendedCount { 0 };
 
     std::unique_ptr<CompositingRunLoop> m_compositingRunLoop;

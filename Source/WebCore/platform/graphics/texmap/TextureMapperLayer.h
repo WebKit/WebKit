@@ -43,16 +43,22 @@ class TextureMapperFlattenedLayer;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
 
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
 class TextureMapperLayerDamageVisitor {
 public:
     virtual void recordDamage(const FloatRect&) = 0;
 };
+#endif
 
 class TextureMapperLayer : public CanMakeWeakPtr<TextureMapperLayer> {
     WTF_MAKE_TZONE_ALLOCATED(TextureMapperLayer);
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
 public:
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     WEBCORE_EXPORT TextureMapperLayer(Damage::ShouldPropagate = Damage::ShouldPropagate::No);
+#else
+    WEBCORE_EXPORT TextureMapperLayer();
+#endif
     WEBCORE_EXPORT virtual ~TextureMapperLayer();
 
 #if USE(COORDINATED_GRAPHICS)
@@ -119,9 +125,11 @@ public:
     WEBCORE_EXPORT bool descendantsOrSelfHaveRunningAnimations() const;
 
     WEBCORE_EXPORT void paint(TextureMapper&);
-    void collectDamage(TextureMapper&);
 
     void addChild(TextureMapperLayer*);
+
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
+    void collectDamage(TextureMapper&);
 
     void acceptDamageVisitor(TextureMapperLayerDamageVisitor&);
     void dismissDamageVisitor();
@@ -130,6 +138,7 @@ public:
     ALWAYS_INLINE void invalidateDamage();
     ALWAYS_INLINE void addDamage(const Damage&);
     ALWAYS_INLINE void addDamage(const FloatRect&);
+#endif
 
     FloatRect effectiveLayerRect() const;
 
@@ -173,7 +182,6 @@ private:
 
     void paintRecursive(TextureMapperPaintOptions&);
     void paintFlattened(TextureMapperPaintOptions&);
-    void collectDamageRecursive(TextureMapperPaintOptions&);
     void paintWith3DRenderingContext(TextureMapperPaintOptions&);
     void paintSelfChildrenReplicaFilterAndMask(TextureMapperPaintOptions&);
     void paintUsingOverlapRegions(TextureMapperPaintOptions&);
@@ -182,13 +190,17 @@ private:
     void paintSelfAndChildrenWithIntermediateSurface(TextureMapperPaintOptions&, const IntRect&);
     void paintSelfChildrenFilterAndMask(TextureMapperPaintOptions&);
     void paintSelf(TextureMapperPaintOptions&);
-    void collectDamageSelf(TextureMapperPaintOptions&);
     void paintSelfAndChildren(TextureMapperPaintOptions&);
     void paintSelfAndChildrenWithReplica(TextureMapperPaintOptions&);
     void paintBackdrop(TextureMapperPaintOptions&);
     void applyMask(TextureMapperPaintOptions&);
-    void recordDamage(const FloatRect&, const TransformationMatrix&, const TextureMapperPaintOptions&);
     void collect3DSceneLayers(Vector<TextureMapperLayer*>&);
+
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
+    void collectDamageRecursive(TextureMapperPaintOptions&);
+    void collectDamageSelf(TextureMapperPaintOptions&);
+    void recordDamage(const FloatRect&, const TransformationMatrix&, const TextureMapperPaintOptions&);
+#endif
 
     bool isVisible() const;
 
@@ -275,10 +287,12 @@ private:
     bool m_isBackdrop { false };
     bool m_isReplica { false };
 
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     Damage::ShouldPropagate m_propagateDamage;
     Damage m_damage;
 
     TextureMapperLayerDamageVisitor* m_visitor { nullptr };
+#endif
 
     struct {
         TransformationMatrix localTransform;
@@ -291,6 +305,8 @@ private:
 #endif
     } m_layerTransforms;
 };
+
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
 
 ALWAYS_INLINE void TextureMapperLayer::clearDamage()
 {
@@ -317,5 +333,7 @@ ALWAYS_INLINE void TextureMapperLayer::addDamage(const FloatRect& rect)
 
     m_damage.add(rect);
 }
+
+#endif
 
 } // namespace WebCore

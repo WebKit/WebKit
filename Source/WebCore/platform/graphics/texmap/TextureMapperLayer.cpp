@@ -142,8 +142,12 @@ private:
     Vector<RefPtr<BitmapTexture>> m_textures;
 };
 
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
 TextureMapperLayer::TextureMapperLayer(Damage::ShouldPropagate propagateDamage)
     : m_propagateDamage(propagateDamage)
+#else
+    TextureMapperLayer::TextureMapperLayer()
+#endif
 {
 }
 
@@ -351,12 +355,14 @@ void TextureMapperLayer::paint(TextureMapper& textureMapper)
     destroyFlattenedDescendantLayers();
 }
 
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
 void TextureMapperLayer::collectDamage(TextureMapper& textureMapper)
 {
     TextureMapperPaintOptions options(textureMapper);
     options.surface = textureMapper.currentSurface();
     collectDamageRecursive(options);
 }
+#endif
 
 void TextureMapperLayer::paintSelf(TextureMapperPaintOptions& options)
 {
@@ -427,6 +433,7 @@ void TextureMapperLayer::paintSelf(TextureMapperPaintOptions& options)
         contentsLayer->drawBorder(options.textureMapper, m_state.debugBorderColor, m_state.debugBorderWidth, m_state.contentsRect, transform);
 }
 
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
 void TextureMapperLayer::collectDamageSelf(TextureMapperPaintOptions& options)
 {
     if (!m_state.visible || !m_state.contentsVisible)
@@ -466,6 +473,7 @@ void TextureMapperLayer::collectDamageSelf(TextureMapperPaintOptions& options)
         clearDamage();
     }
 }
+#endif
 
 void TextureMapperLayer::paintBackdrop(TextureMapperPaintOptions& options)
 {
@@ -1027,6 +1035,7 @@ void TextureMapperLayer::paintFlattened(TextureMapperPaintOptions& options)
     paintSelf(options);
 }
 
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
 void TextureMapperLayer::collectDamageRecursive(TextureMapperPaintOptions& options)
 {
     if (!isVisible())
@@ -1039,6 +1048,7 @@ void TextureMapperLayer::collectDamageRecursive(TextureMapperPaintOptions& optio
     for (auto* child : m_children)
         child->collectDamageRecursive(options);
 }
+#endif
 
 void TextureMapperLayer::paintWith3DRenderingContext(TextureMapperPaintOptions& options)
 {
@@ -1093,13 +1103,17 @@ void TextureMapperLayer::addChild(TextureMapperLayer* childLayer)
     childLayer->m_parent = this;
     m_children.append(childLayer);
 
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     if (m_visitor)
         childLayer->acceptDamageVisitor(*m_visitor);
+#endif
 }
 
 void TextureMapperLayer::removeFromParent()
 {
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     dismissDamageVisitor();
+#endif
 
     if (m_parent) {
         size_t index = m_parent->m_children.find(this);
@@ -1114,7 +1128,9 @@ void TextureMapperLayer::removeAllChildren()
 {
     auto oldChildren = WTFMove(m_children);
     for (auto* child : oldChildren) {
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
         child->dismissDamageVisitor();
+#endif
         child->m_parent = nullptr;
     }
 }
@@ -1294,8 +1310,10 @@ bool TextureMapperLayer::descendantsOrSelfHaveRunningAnimations() const
 bool TextureMapperLayer::applyAnimationsRecursively(MonotonicTime time)
 {
     bool hasRunningAnimations = syncAnimations(time);
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
     if (hasRunningAnimations) // FIXME Too broad?
         addDamage(layerRect());
+#endif
     if (m_state.replicaLayer)
         hasRunningAnimations |= m_state.replicaLayer->applyAnimationsRecursively(time);
     if (m_state.backdropLayer)
@@ -1324,6 +1342,7 @@ bool TextureMapperLayer::syncAnimations(MonotonicTime time)
     return applicationResults.hasRunningAnimations;
 }
 
+#if ENABLE(WPE_PLATFORM) || PLATFORM(GTK)
 void TextureMapperLayer::acceptDamageVisitor(TextureMapperLayerDamageVisitor& visitor)
 {
     if (&visitor == m_visitor)
@@ -1360,6 +1379,7 @@ void TextureMapperLayer::recordDamage(const FloatRect& rect, const Transformatio
 
     m_visitor->recordDamage(transformedRect);
 }
+#endif
 
 FloatRect TextureMapperLayer::effectiveLayerRect() const
 {
