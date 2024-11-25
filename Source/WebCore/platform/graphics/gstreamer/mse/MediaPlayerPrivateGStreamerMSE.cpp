@@ -170,6 +170,11 @@ void MediaPlayerPrivateGStreamerMSE::play()
 void MediaPlayerPrivateGStreamerMSE::pause()
 {
     GST_DEBUG_OBJECT(pipeline(), "Pause requested");
+    if (m_playbackRatePausedState == PlaybackRatePausedState::ManuallyPaused) {
+        GST_DEBUG_OBJECT(pipeline(), "Player is paused already.");
+        return;
+    }
+
     m_isPaused = true;
     m_playbackRatePausedState = PlaybackRatePausedState::ManuallyPaused;
     updateStates();
