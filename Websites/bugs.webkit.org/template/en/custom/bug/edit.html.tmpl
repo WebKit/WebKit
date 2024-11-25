@@ -587,7 +587,7 @@
 
   [% IF bug.dependson.size || bug.blocked.size %]
     <div class="section-dependencies">
-      <label class="field_label">Dependancies</label>
+      <label class="field_label">Dependencies</label>
 
       <div id="show_dependency_tree_or_graph">
         <a href="showdependencytree.cgi?id=[% bug.bug_id %]&amp;hide_resolved=1" class="tab">tree</a>[% IF Param('webdotbase') %]<a href="showdependencygraph.cgi?id=[% bug.bug_id %]" class="tab">graph</a>[% END %]
