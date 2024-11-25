@@ -33,6 +33,7 @@
 #include <ResourceResponse.h>
 #include <libsoup/soup.h>
 #include <wtf/glib/GRefPtr.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/glib/GUniquePtr.h>
 
 namespace WebCore {
@@ -128,9 +129,7 @@ std::optional<CertificateSummary> CertificateInfo::summary() const
             WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
             GBytes* bytes = static_cast<GBytes*>(dnsNames->pdata[i]);
             WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
-            gsize dataLength;
-            const auto* data = g_bytes_get_data(bytes, &dataLength);
-            summaryInfo.dnsNames.append(String({ static_cast<const char*>(data), dataLength }));
+            summaryInfo.dnsNames.append(String(WTF::span(bytes)));
         }
     }
     if (ipAddresses) {

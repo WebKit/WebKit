@@ -39,7 +39,7 @@ namespace IPC {
 
 void ArgumentCoder<SkString>::encode(Encoder& encoder, const SkString& string)
 {
-    encoder << std::span { string.data(), string.size() };
+    encoder << unsafeMakeSpan(string.data(), string.size());
 }
 
 std::optional<SkString> ArgumentCoder<SkString>::decode(Decoder& decoder)

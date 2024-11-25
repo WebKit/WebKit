@@ -203,7 +203,7 @@ void NetworkStorageSession::getCredentialFromPersistentStorage(const ProtectionS
             size_t length;
             GRefPtr<SecretValue> secretValue = adoptGRef(secret_item_get_secret(secretItem.get()));
             const char* passwordData = secret_value_get(secretValue.get(), &length);
-            data->completionHandler(Credential(user, String::fromUTF8({ passwordData, length }), CredentialPersistence::Permanent));
+            data->completionHandler(Credential(user, String::fromUTF8(unsafeMakeSpan(passwordData, length)), CredentialPersistence::Permanent));
         }, data.release());
 #else
     UNUSED_PARAM(protectionSpace);

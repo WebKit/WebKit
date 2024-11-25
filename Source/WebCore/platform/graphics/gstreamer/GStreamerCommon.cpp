@@ -340,7 +340,7 @@ Vector<String> extractGStreamerOptionsFromCommandLine()
         return { };
 
     Vector<String> options;
-    auto optionsString = String::fromUTF8(std::span(contents.get(), length));
+    auto optionsString = String::fromUTF8(unsafeMakeSpan(contents.get(), length));
     optionsString.split('\0', [&options](StringView item) {
         if (item.startsWith("--gst"_s))
             options.append(item.toString());
@@ -910,7 +910,7 @@ void connectSimpleBusMessageCallback(GstElement* pipeline, Function<void(GstMess
 template<>
 Vector<uint8_t> GstMappedBuffer::createVector() const
 {
-    return std::span<const uint8_t> { data(), size() };
+    return unsafeMakeSpan<const uint8_t>(data(), size());
 }
 
 bool isGStreamerPluginAvailable(const char* name)

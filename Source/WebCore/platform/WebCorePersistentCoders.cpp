@@ -45,6 +45,10 @@
 #include <wtf/spi/cocoa/SecuritySPI.h>
 #endif
 
+#if USE(GLIB)
+#include <wtf/glib/GSpanExtras.h>
+#endif
+
 namespace WTF::Persistence {
 
 #if ENABLE(APP_HIGHLIGHTS)
@@ -434,7 +438,7 @@ template<> struct Coder<GRefPtr<GByteArray>> {
     static void encodeForPersistence(Encoder &encoder, const GRefPtr<GByteArray>& byteArray)
     {
         encoder << static_cast<uint32_t>(byteArray->len);
-        encoder.encodeFixedLengthData({ byteArray->data, byteArray->len });
+        encoder.encodeFixedLengthData(WTF::span(byteArray));
     }
 
     static std::optional<GRefPtr<GByteArray>> decodeForPersistence(Decoder& decoder)
@@ -446,8 +450,13 @@ template<> struct Coder<GRefPtr<GByteArray>> {
 
         GRefPtr<GByteArray> byteArray = adoptGRef(g_byte_array_sized_new(*size));
         g_byte_array_set_size(byteArray.get(), *size);
+
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // WPE/GTK ports
+        // FIXME: Can't use WTF::span here because it returns std::span<const uint8_t>
+        // but we need std::span<uint8_t>.
         if (!decoder.decodeFixedLengthData({ byteArray->data, *size }))
             return std::nullopt;
+        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
         return byteArray;
     }
 };

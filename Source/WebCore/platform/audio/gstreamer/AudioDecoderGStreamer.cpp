@@ -128,7 +128,7 @@ GStreamerAudioDecoder::~GStreamerAudioDecoder()
 Ref<AudioDecoder::DecodePromise> GStreamerAudioDecoder::decode(EncodedData&& data)
 {
     return invokeAsync(gstDecoderWorkQueue(), [value = Vector<uint8_t> { data.data }, isKeyFrame = data.isKeyFrame, timestamp = data.timestamp, duration = data.duration, decoder = m_internalDecoder] {
-        return decoder->decode({ value.data(), value.size() }, isKeyFrame, timestamp, duration);
+        return decoder->decode(value.span(), isKeyFrame, timestamp, duration);
     });
 }
 

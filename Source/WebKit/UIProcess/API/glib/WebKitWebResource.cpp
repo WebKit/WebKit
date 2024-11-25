@@ -362,7 +362,7 @@ static void resourceDataCallback(API::Data* wkData, GTask* task)
     ResourceGetDataAsyncData* data = static_cast<ResourceGetDataAsyncData*>(g_task_get_task_data(task));
     data->webData = wkData;
     if (!wkData->span().data())
-        data->webData = API::Data::create({ reinterpret_cast<const uint8_t*>(""), 1 });
+        data->webData = API::Data::create(unsafeMakeSpan(reinterpret_cast<const uint8_t*>(""), 1));
     g_task_return_boolean(task, TRUE);
 }
 

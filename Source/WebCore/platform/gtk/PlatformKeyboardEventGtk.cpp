@@ -1320,7 +1320,7 @@ String PlatformKeyboardEvent::singleCharacterString(unsigned val)
 
         String retVal;
         if (uchar16)
-            retVal = String({ (UChar*)uchar16, static_cast<size_t>(nwc) });
+            retVal = String(unsafeMakeSpan((UChar*)uchar16, static_cast<size_t>(nwc)));
         else
             retVal = String();
 

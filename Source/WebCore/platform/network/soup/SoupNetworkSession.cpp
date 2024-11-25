@@ -41,6 +41,7 @@
 #include <wtf/HashSet.h>
 #include <wtf/NeverDestroyed.h>
 #include <wtf/TZoneMallocInlines.h>
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/text/Base64.h>
 #include <wtf/text/CString.h>
 
@@ -88,7 +89,7 @@ private:
             return String();
 
         auto digest = PAL::CryptoDigest::create(PAL::CryptoDigest::Algorithm::SHA_256);
-        digest->addBytes(std::span { certificateData->data, certificateData->len });
+        digest->addBytes(WTF::span(certificateData));
 
         return base64EncodeToString(digest->computeHash());
     }
