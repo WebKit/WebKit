@@ -114,7 +114,12 @@ private:
     DecodedFrameResult maybeQueueFrameForDisplay(CMSampleBufferRef, FlushId);
     void flushCompressedSampleQueue();
     void flushDecodedSampleQueue();
-    bool purgeDecodedSampleQueue();
+    enum class ShouldReschedule : bool {
+        No,
+        Yes
+    };
+    bool purgeDecodedSampleQueue(ShouldReschedule);
+    void maybeReschedulePurge();
     size_t decodedSamplesCount() const;
     void assignResourceOwner(CMSampleBufferRef);
     bool areSamplesQueuesReadyForMoreMediaData(size_t waterMark) const;
@@ -147,6 +152,8 @@ private:
     bool m_isDecodingSample WTF_GUARDED_BY_CAPABILITY(dispatcher().get()) { false };
     bool m_isDisplayingSample WTF_GUARDED_BY_CAPABILITY(dispatcher().get()) { false };
     std::optional<CMTime> m_lastDisplayedTime WTF_GUARDED_BY_CAPABILITY(dispatcher().get());
+    std::optional<CMTime> m_nextScheduledPurge WTF_GUARDED_BY_CAPABILITY(dispatcher().get());
+
     Function<void()> m_readyForMoreSampleFunction;
     bool m_prefersDecompressionSession { false };
     std::optional<uint32_t> m_currentCodec;
