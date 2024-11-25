@@ -293,6 +293,8 @@ SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBufferQueueMarkEndOfData, OSStat
 #define CMBufferQueueMarkEndOfData softLink_CoreMedia_CMBufferQueueMarkEndOfData
 SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBufferQueueGetDuration, CMTime, (CMBufferQueueRef queue), (queue))
 #define CMBufferQueueGetDuration softLink_CoreMedia_CMBufferQueueGetDuration
+SOFT_LINK_FUNCTION_FOR_HEADER(PAL, CoreMedia, CMBufferQueueCallForEachBuffer, OSStatus, (CMBufferQueueRef queue, OSStatus (* CF_NOESCAPE callback)(CMBufferRef buffer, void* refcon ), void* refcon), (queue, callback, refcon))
+#define CMBufferQueueCallForEachBuffer softLink_CoreMedia_CMBufferQueueCallForEachBuffer
 
 SOFT_LINK_CONSTANT_FOR_HEADER(PAL, CoreMedia, kCMSampleAttachmentKey_DoNotDisplay, CFStringRef)
 #define kCMSampleAttachmentKey_DoNotDisplay get_CoreMedia_kCMSampleAttachmentKey_DoNotDisplay()
