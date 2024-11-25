@@ -501,12 +501,12 @@ PASS CanvasRenderingContext2D interface: attribute font
 PASS CanvasRenderingContext2D interface: attribute textAlign
 PASS CanvasRenderingContext2D interface: attribute textBaseline
 PASS CanvasRenderingContext2D interface: attribute direction
-FAIL CanvasRenderingContext2D interface: attribute letterSpacing assert_true: The prototype object must have a property "letterSpacing" expected true got false
+PASS CanvasRenderingContext2D interface: attribute letterSpacing
 FAIL CanvasRenderingContext2D interface: attribute fontKerning assert_true: The prototype object must have a property "fontKerning" expected true got false
 FAIL CanvasRenderingContext2D interface: attribute fontStretch assert_true: The prototype object must have a property "fontStretch" expected true got false
 FAIL CanvasRenderingContext2D interface: attribute fontVariantCaps assert_true: The prototype object must have a property "fontVariantCaps" expected true got false
 FAIL CanvasRenderingContext2D interface: attribute textRendering assert_true: The prototype object must have a property "textRendering" expected true got false
-FAIL CanvasRenderingContext2D interface: attribute wordSpacing assert_true: The prototype object must have a property "wordSpacing" expected true got false
+PASS CanvasRenderingContext2D interface: attribute wordSpacing
 PASS CanvasRenderingContext2D interface: operation closePath()
 PASS CanvasRenderingContext2D interface: operation moveTo(unrestricted double, unrestricted double)
 PASS CanvasRenderingContext2D interface: operation lineTo(unrestricted double, unrestricted double)
@@ -625,12 +625,12 @@ PASS CanvasRenderingContext2D interface: document.createElement("canvas").getCon
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textAlign" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textBaseline" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "direction" with the proper type
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "letterSpacing" with the proper type assert_inherits: property "letterSpacing" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "letterSpacing" with the proper type
 FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fontKerning" with the proper type assert_inherits: property "fontKerning" not found in prototype chain
 FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fontStretch" with the proper type assert_inherits: property "fontStretch" not found in prototype chain
 FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "fontVariantCaps" with the proper type assert_inherits: property "fontVariantCaps" not found in prototype chain
 FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "textRendering" with the proper type assert_inherits: property "textRendering" not found in prototype chain
-FAIL CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "wordSpacing" with the proper type assert_inherits: property "wordSpacing" not found in prototype chain
+PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "wordSpacing" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "closePath()" with the proper type
 PASS CanvasRenderingContext2D interface: document.createElement("canvas").getContext("2d") must inherit property "moveTo(unrestricted double, unrestricted double)" with the proper type
 PASS CanvasRenderingContext2D interface: calling moveTo(unrestricted double, unrestricted double) on document.createElement("canvas").getContext("2d") with too few arguments must throw TypeError
@@ -813,12 +813,12 @@ PASS OffscreenCanvasRenderingContext2D interface: attribute font
 PASS OffscreenCanvasRenderingContext2D interface: attribute textAlign
 PASS OffscreenCanvasRenderingContext2D interface: attribute textBaseline
 PASS OffscreenCanvasRenderingContext2D interface: attribute direction
-FAIL OffscreenCanvasRenderingContext2D interface: attribute letterSpacing assert_true: The prototype object must have a property "letterSpacing" expected true got false
+PASS OffscreenCanvasRenderingContext2D interface: attribute letterSpacing
 FAIL OffscreenCanvasRenderingContext2D interface: attribute fontKerning assert_true: The prototype object must have a property "fontKerning" expected true got false
 FAIL OffscreenCanvasRenderingContext2D interface: attribute fontStretch assert_true: The prototype object must have a property "fontStretch" expected true got false
 FAIL OffscreenCanvasRenderingContext2D interface: attribute fontVariantCaps assert_true: The prototype object must have a property "fontVariantCaps" expected true got false
 FAIL OffscreenCanvasRenderingContext2D interface: attribute textRendering assert_true: The prototype object must have a property "textRendering" expected true got false
-FAIL OffscreenCanvasRenderingContext2D interface: attribute wordSpacing assert_true: The prototype object must have a property "wordSpacing" expected true got false
+PASS OffscreenCanvasRenderingContext2D interface: attribute wordSpacing
 PASS OffscreenCanvasRenderingContext2D interface: operation closePath()
 PASS OffscreenCanvasRenderingContext2D interface: operation moveTo(unrestricted double, unrestricted double)
 PASS OffscreenCanvasRenderingContext2D interface: operation lineTo(unrestricted double, unrestricted double)

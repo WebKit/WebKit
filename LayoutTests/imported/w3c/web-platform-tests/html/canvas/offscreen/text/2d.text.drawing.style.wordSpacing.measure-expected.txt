@@ -3,5 +3,5 @@
 Testing word spacing with different length units
 
 
-FAIL Testing word spacing with different length units assert_equals: ctx.letterSpacing === '0px' (got [undefined], expected 0px[string]) expected (string) "0px" but got (undefined) undefined
+FAIL Testing word spacing with different length units assert_approx_equals: word spacing doesn't work. expected 73.9583203125 +/- 0.2 but got 75.5283203125
 
