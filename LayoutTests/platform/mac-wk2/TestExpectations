@@ -1934,5 +1934,4 @@ webkit.org/b/283210 http/wpt/mediarecorder/MediaRecorder-AV-audio-video-dataavai
 # webkit.org/b/283368 [macOS Debug ] fast/css/view-transitions-hide-under-page-background-color.html is a flaky crash (flaky in EWS)
 [ Sonoma+ Debug ] fast/css/view-transitions-hide-under-page-background-color.html [ Pass Crash ]
 
-# webkit.org/b/283596 REGRESSION(286883@main): [Sequoia Debug] ipc/create-connection-and-s end-async.html is a constant crash (flaky failure in EWS)
-[ Sequoia+ Debug ] ipc/create-connection-and-send-async.html [ Skip ]
+webkit.org/b/283596 [ Sequoia+ Debug ] ipc/cfnetwork-crashes-with-string-to-string-http-headers.html [ Skip ]
