@@ -30,6 +30,8 @@
 #if ENABLE(REMOTE_INSPECTOR)
 #include "APIAutomationClient.h"
 #include "APIAutomationSessionClient.h"
+#include "APIUIClient.h"
+#include "WebView.h"
 #include <JavaScriptCore/RemoteInspectorServer.h>
 #endif
 
@@ -46,8 +48,14 @@ public:
     void requestNewPageWithOptions(WebKit::WebAutomationSession&, API::AutomationSessionBrowsingContextOptions, CompletionHandler<void(WebKit::WebPageProxy*)>&&) override;
     void didDisconnectFromRemote(WebKit::WebAutomationSession&) override;
 
+    void retainWebView(Ref<WebView>&&);
+    void releaseWebView(WebPageProxy*);
+
 private:
     String m_sessionIdentifier;
+
+    static void close(WKPageRef, const void*);
+    HashSet<Ref<WebView>> m_webViews;
 };
 
 class AutomationClient final : public API::AutomationClient, Inspector::RemoteInspector::Client {

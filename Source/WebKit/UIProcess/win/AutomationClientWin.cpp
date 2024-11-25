@@ -27,6 +27,8 @@
 #include "AutomationClientWin.h"
 
 #if ENABLE(REMOTE_INSPECTOR)
+#include "APIPageConfiguration.h"
+#include "WKAPICast.h"
 #include "WebAutomationSession.h"
 #include "WebPageProxy.h"
 #include <wtf/RunLoop.h>
@@ -42,22 +44,35 @@ AutomationSessionClient::AutomationSessionClient(const String& sessionIdentifier
     m_sessionIdentifier = sessionIdentifier;
 }
 
-void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSession& session, API::AutomationSessionBrowsingContextOptions, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler)
+void AutomationSessionClient::close(WKPageRef pageRef, const void* clientInfo)
 {
-    bool found = false;
-    auto processPool = session.protectedProcessPool();
-    if (processPool && processPool->processes().size()) {
-        // Set controlledByAutomation flag to all pages in all processes
-        processPool->setPagesControlledByAutomation(true);
-        // The default page for automation target is the first page of the first process
-        auto& processProxy = processPool->processes()[0];
-        if (processProxy->pageCount()) {
-            found = true;
-            completionHandler(processProxy->pages()[0].ptr());
-        }
-    }
-    if (!found)
-        completionHandler(nullptr);
+    auto page = WebKit::toImpl(pageRef);
+    page->setControlledByAutomation(false);
+
+    auto sessionClient = static_cast<AutomationSessionClient*>(const_cast<void*>(clientInfo));
+    sessionClient->releaseWebView(page);
+}
+
+void AutomationSessionClient::requestNewPageWithOptions(WebKit::WebAutomationSession& session, API::AutomationSessionBrowsingContextOptions options, CompletionHandler<void(WebKit::WebPageProxy*)>&& completionHandler)
+{
+    auto pageConfiguration = API::PageConfiguration::create();
+    pageConfiguration->setProcessPool(session.protectedProcessPool());
+
+    RECT r { };
+    Ref newWindow = WebView::create(r, pageConfiguration, 0);
+
+    auto newPage = newWindow->page();
+    newPage->setControlledByAutomation(true);
+
+    WKPageUIClientV0 uiClient = { };
+    uiClient.base.version = 0;
+    uiClient.base.clientInfo = this;
+    uiClient.close = close;
+    WKPageSetPageUIClient(toAPI(newPage), &uiClient.base);
+
+    retainWebView(WTFMove(newWindow));
+
+    completionHandler(newPage);
 }
 
 void AutomationSessionClient::didDisconnectFromRemote(WebKit::WebAutomationSession& session)
@@ -70,6 +85,22 @@ void AutomationSessionClient::didDisconnectFromRemote(WebKit::WebAutomationSessi
             processPool->setAutomationSession(nullptr);
             processPool->setPagesControlledByAutomation(false);
         }
+    });
+}
+
+void AutomationSessionClient::retainWebView(Ref<WebView>&& webView)
+{
+    m_webViews.add(WTFMove(webView));
+}
+
+void AutomationSessionClient::releaseWebView(WebPageProxy* page)
+{
+    m_webViews.removeIf([&](auto& view) {
+        if (view->page() == page) {
+            view->close();
+            return true;
+        }
+        return false;
     });
 }
 

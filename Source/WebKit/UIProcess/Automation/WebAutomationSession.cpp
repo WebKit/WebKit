@@ -432,13 +432,7 @@ Inspector::Protocol::ErrorStringOr<void> WebAutomationSession::closeBrowsingCont
     if (!page)
         SYNC_FAIL_WITH_PREDEFINED_ERROR(WindowNotFound);
 
-#if PLATFORM(WIN) // FIXME: also PLATFORM(PLAYSTATION) should be added
-    // We don't have to close page/window/application, but want to disconnect to automation frontend.
-    terminate();
-#else
     page->closePage();
-#endif
-
     return { };
 }
 

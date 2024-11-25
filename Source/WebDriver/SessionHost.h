@@ -39,6 +39,10 @@ typedef struct _GSubprocess GSubprocess;
 #include <JavaScriptCore/RemoteInspectorConnectionClient.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+
+#if PLATFORM(WIN)
+#include <wtf/win/Win32Handle.h>
+#endif
 #endif
 
 namespace WebDriver {
@@ -135,16 +139,19 @@ private:
 
     String m_targetIp;
     uint16_t m_targetPort { 0 };
+    bool m_isRemoteBrowser { false };
 
 #if USE(GLIB)
     Function<void (bool, std::optional<String>)> m_startSessionCompletionHandler;
     GRefPtr<GSubprocess> m_browser;
     RefPtr<SocketConnection> m_socketConnection;
     GRefPtr<GCancellable> m_cancellable;
-    bool m_isRemoteBrowser { false };
 #elif USE(INSPECTOR_SOCKET_SERVER)
     Function<void(bool, std::optional<String>)> m_startSessionCompletionHandler;
     std::optional<Inspector::ConnectionID> m_clientID;
+#if PLATFORM(WIN)
+    WTF::Win32Handle m_browserHandle;
+#endif
 #endif
 };
 

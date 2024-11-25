@@ -105,12 +105,10 @@ void SessionHost::dispatchMessage(const String& message)
     responseHandler(WTFMove(response));
 }
 
-#if !USE(GLIB)
 bool SessionHost::isRemoteBrowser() const
 {
-    return false;
+    return m_isRemoteBrowser;
 }
-#endif
 
 #if ENABLE(WEBDRIVER_BIDI)
 void SessionHost::addBrowserTerminatedObserver(const BrowserTerminatedObserver& observer)

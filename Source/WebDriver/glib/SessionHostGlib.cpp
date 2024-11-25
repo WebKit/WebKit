@@ -392,9 +392,4 @@ void SessionHost::sendMessageToBackend(const String& message)
     m_socketConnection->sendMessage("SendMessageToBackend", g_variant_new("(tts)", m_connectionID, m_target.id, message.utf8().data()));
 }
 
-bool SessionHost::isRemoteBrowser() const
-{
-    return m_isRemoteBrowser;
-}
-
 } // namespace WebDriver
