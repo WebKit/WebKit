@@ -1,0 +1,14 @@
+
+FAIL dialog.show() should fire beforetoggle and toggle events. assert_true: Opening beforetoggle should fire synchronously. expected true got false
+FAIL dialog.show() should fire cancelable beforetoggle which does not open dialog if canceled assert_true: Opening beforetoggle should fire synchronously. expected true got false
+FAIL dialog.show() should coalesce asynchronous toggle events. assert_true: Toggle event should have fired after tick. expected true got false
+PASS dialog.show() should not double-set open/close if beforetoggle re-opens
+FAIL dialog.show() should not open if beforetoggle removes assert_false: Dialog is not connected expected false got true
+FAIL dialog.show() should not open if beforetoggle calls showPopover assert_equals: toggle event was fired for show+showPopover expected 2 but got 0
+FAIL dialog.showModal() should fire beforetoggle and toggle events. assert_true: Opening beforetoggle should fire synchronously. expected true got false
+FAIL dialog.showModal() should fire cancelable beforetoggle which does not open dialog if canceled assert_true: Opening beforetoggle should fire synchronously. expected true got false
+FAIL dialog.showModal() should coalesce asynchronous toggle events. assert_true: Toggle event should have fired after tick. expected true got false
+PASS dialog.showModal() should not double-set open/close if beforetoggle re-opens
+FAIL dialog.showModal() should not open if beforetoggle removes assert_false: Dialog is not connected expected false got true
+FAIL dialog.showModal() should not open if beforetoggle calls showPopover assert_false: Dialog did not open expected false got true
+

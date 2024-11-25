@@ -1,0 +1,21 @@
+Outside
+
+FAIL closedby=any, Non-modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=any, Modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=closerequest, Non-modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=closerequest, Modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=none, Non-modal assert_false: Dialog should NOT respond to light dismiss expected false got true
+FAIL closedby=none, Modal assert_false: Dialog should NOT respond to light dismiss expected false got true
+FAIL closedby=, Non-modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=, Modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=invalid, Non-modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=invalid, Modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=null, Non-modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=null, Modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=AnY, Non-modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=AnY, Modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=ClOsErEqUeSt, Non-modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=ClOsErEqUeSt, Modal assert_true: Dialog should respond to ESC expected true got false
+FAIL closedby=NoNe, Non-modal assert_false: Dialog should NOT respond to light dismiss expected false got true
+FAIL closedby=NoNe, Modal assert_false: Dialog should NOT respond to light dismiss expected false got true
+
