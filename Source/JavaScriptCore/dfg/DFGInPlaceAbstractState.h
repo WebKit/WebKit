@@ -394,13 +394,14 @@ private:
     Vector<AbstractValue> m_tupleAbstractValues;
     FastBitVector m_activeVariables;
     BasicBlock* m_block;
+    HashMap<Node*, VirtualRegister> m_nodeForVariableAtTail; // This is a simple cache to help speed up sparse conditional propagation.
 
     bool m_isValid;
     AbstractInterpreterClobberState m_clobberState;
     StructureClobberState m_structureClobberState;
     AbstractValueClobberEpoch m_epochAtHead;
     AbstractValueClobberEpoch m_effectEpoch;
-    
+
     BranchDirection m_branchDirection; // This is only set for blocks that end in Branch and that execute to completion (i.e. m_isValid == true).
 };
 
