@@ -371,6 +371,8 @@ private:
                 return;
             Vector<Value*> args;
             size_t gprCount = 0;
+            size_t fprCount = 0;
+            size_t stackOffset = 0;
             for (size_t index = 1; index < m_value->numChildren(); ++index) {
                 Value* child = m_value->child(index);
                 if (child->type() == Int32 || child->type() == Int64) {
@@ -380,6 +382,21 @@ private:
                         args.append(insert<Const32Value>(m_index, m_origin, 0));
                         ++gprCount;
                     }
+
+                    if (gprCount < GPRInfo::numberOfArgumentRegisters)
+                        gprCount += Air::cCallArgumentRegisterCount(child->type());
+                    else {
+                        // This argument goes on the stack.
+                        size_t modulo = 0;
+                        if (stackOffset)
+                            modulo = stackOffset % sizeofType(child->type());
+                        if (modulo) {
+                            RELEASE_ASSERT(modulo == 4);
+                            args.append(insert<Const32Value>(m_index, m_origin, 0));
+                            stackOffset += 4;
+                        }
+                        stackOffset += sizeofType(child->type());
+                    }
                     if (child->type() == Int32)
                         args.append(child);
                     else {
@@ -388,8 +405,11 @@ private:
                         args.append(childParts.first);
                         args.append(childParts.second);
                     }
-                    gprCount += Air::cCallArgumentRegisterCount(child->type());
                 } else {
+                    if (fprCount < FPRInfo::numberOfArgumentRegisters)
+                        fprCount += Air::cCallArgumentRegisterCount(child->type());
+                    else
+                        stackOffset += sizeofType(child->type());
                     args.append(child);
                 }
             }
