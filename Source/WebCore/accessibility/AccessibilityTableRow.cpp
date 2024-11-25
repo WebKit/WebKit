@@ -127,7 +127,7 @@ void AccessibilityTableRow::setRowIndex(unsigned rowIndex)
 #endif
 }
 
-AXCoreObject* AccessibilityTableRow::rowHeader()
+AccessibilityObject* AccessibilityTableRow::rowHeader()
 {
     const auto& rowChildren = unignoredChildren();
     if (rowChildren.isEmpty())
@@ -142,7 +142,7 @@ AXCoreObject* AccessibilityTableRow::rowHeader()
     for (const auto& child : rowChildren) {
         // We found a non-header cell, so this is not an entire row of headers -- return the original header cell.
         if (child->node() && !child->node()->hasTagName(thTag))
-            return firstCell.ptr();
+            return &downcast<AccessibilityObject>(firstCell.get());
     }
     return nullptr;
 }
@@ -153,7 +153,7 @@ void AccessibilityTableRow::addChildren()
     auto ownedObjects = this->ownedObjects();
     if (ownedObjects.size()) {
         for (auto& object : ownedObjects)
-            addChild(object.ptr(), DescendIfIgnored::No);
+            addChild(downcast<AccessibilityObject>(object.get()), DescendIfIgnored::No);
         m_childrenInitialized = true;
         m_subtreeDirty = false;
     }

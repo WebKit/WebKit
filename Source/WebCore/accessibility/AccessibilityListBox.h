@@ -37,19 +37,19 @@ public:
     static Ref<AccessibilityListBox> create(AXID, RenderObject&);
     virtual ~AccessibilityListBox();
 
-    WEBCORE_EXPORT void setSelectedChildren(const AccessibilityChildrenVector&) override;
+    WEBCORE_EXPORT void setSelectedChildren(const AccessibilityChildrenVector&) final;
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::ListBox; }
 
     std::optional<AccessibilityChildrenVector> selectedChildren() final;
     AccessibilityChildrenVector visibleChildren() final;
     
-    void addChildren() override;
+    void addChildren() final;
 
 private:
     explicit AccessibilityListBox(AXID, RenderObject&);
 
-    bool isAccessibilityListBoxInstance() const override { return true; }
+    bool isAccessibilityListBoxInstance() const final { return true; }
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
     AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const final;
 };

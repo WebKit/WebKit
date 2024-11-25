@@ -94,12 +94,12 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityARIAGridRow::disclosedRow
     return disclosedRows;
 }
     
-AXCoreObject* AccessibilityARIAGridRow::disclosedByRow() const
+AccessibilityObject* AccessibilityARIAGridRow::disclosedByRow() const
 {
     // The row that discloses this one is the row in the table
     // that is aria-level subtract 1 from this row.
-    RefPtr parent = parentObjectUnignored();
-    if (auto* axTable = dynamicDowncast<AccessibilityTable>(*parent); !axTable || !axTable->isExposable())
+    RefPtr parent = dynamicDowncast<AccessibilityTable>(parentObjectUnignored());
+    if (!parent || !parent->isExposable())
         return nullptr;
 
     // If the level is 1 or less, than nothing discloses this row.
@@ -117,7 +117,7 @@ AXCoreObject* AccessibilityARIAGridRow::disclosedByRow() const
     for (int k = index - 1; k >= 0; --k) {
         auto& row = allRows[k].get();
         if (row.hierarchicalLevel() == level - 1)
-            return &row;
+            return &downcast<AccessibilityObject>(row);
     }
     return nullptr;
 }
@@ -136,11 +136,11 @@ AccessibilityTable* AccessibilityARIAGridRow::parentTable() const
     }));
 }
 
-AXCoreObject* AccessibilityARIAGridRow::rowHeader()
+AccessibilityObject* AccessibilityARIAGridRow::rowHeader()
 {
     for (const auto& child : unignoredChildren()) {
         if (child->roleValue() == AccessibilityRole::RowHeader)
-            return child.ptr();
+            return &downcast<AccessibilityObject>(child.get());
     }
     return nullptr;
 }

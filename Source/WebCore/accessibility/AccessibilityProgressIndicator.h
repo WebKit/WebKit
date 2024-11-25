@@ -41,16 +41,16 @@ private:
 
     AccessibilityRole determineAccessibilityRole() final;
 
-    String valueDescription() const override;
+    String valueDescription() const final;
     String gaugeRegionValueDescription() const;
-    float valueForRange() const override;
-    float maxValueForRange() const override;
-    float minValueForRange() const override;
+    float valueForRange() const final;
+    float maxValueForRange() const final;
+    float minValueForRange() const final;
 
     HTMLProgressElement* progressElement() const;
     HTMLMeterElement* meterElement() const;
     
-    bool computeIsIgnored() const override;
+    bool computeIsIgnored() const final;
 };
 
 } // namespace WebCore

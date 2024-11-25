@@ -117,7 +117,7 @@ void AccessibilityMenuListPopup::addChildren()
     for (const auto& listItem : select->listItems()) {
         if (auto* menuListOptionObject = menuListOptionAccessibilityObject(listItem.get())) {
             menuListOptionObject->setParent(this);
-            addChild(menuListOptionObject, DescendIfIgnored::No);
+            addChild(*menuListOptionObject, DescendIfIgnored::No);
         }
     }
 }

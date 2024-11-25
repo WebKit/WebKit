@@ -41,7 +41,7 @@ public:
     virtual ~AccessibilityTableRow();
 
     // retrieves the "row" header (a th tag in the rightmost column)
-    AXCoreObject* rowHeader() override;
+    AccessibilityObject* rowHeader() override;
     virtual AccessibilityTable* parentTable() const;
 
     void setRowIndex(unsigned);
@@ -51,10 +51,10 @@ public:
     // in the row, but their col/row spans overlap into it
     void appendChild(AccessibilityObject*);
     
-    void addChildren() override;
+    void addChildren() final;
 
-    int axColumnIndex() const override;
-    int axRowIndex() const override;
+    int axColumnIndex() const final;
+    int axRowIndex() const final;
 
 protected:
     explicit AccessibilityTableRow(AXID, RenderObject&);

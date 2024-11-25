@@ -567,7 +567,7 @@ void AccessibilityNodeObject::updateOwnedChildren()
         // If the child already exists as a DOM child, but is also in the owned objects, then
         // we need to re-order this child in the aria-owns order.
         m_children.removeFirst(child);
-        addChild(child.ptr());
+        addChild(downcast<AccessibilityObject>(child.get()));
     }
 }
 
@@ -854,12 +854,6 @@ bool AccessibilityNodeObject::isChecked() const
     return false;
 }
 
-bool AccessibilityNodeObject::isHovered() const
-{
-    RefPtr element = dynamicDowncast<Element>(node());
-    return element && element->hovered();
-}
-
 bool AccessibilityNodeObject::isMultiSelectable() const
 {
     const AtomString& ariaMultiSelectable = getAttribute(aria_multiselectableAttr);
@@ -1141,7 +1135,7 @@ RefPtr<Element> AccessibilityNodeObject::popoverTargetElement() const
     return formControlElement ? formControlElement->popoverTargetElement() : nullptr;
 }
 
-AXCoreObject* AccessibilityNodeObject::internalLinkElement() const
+AccessibilityObject* AccessibilityNodeObject::internalLinkElement() const
 {
     // We don't currently support ARIA links as internal link elements, so exit early if anchorElement() is not a native HTMLAnchorElement.
     WeakPtr anchor = dynamicDowncast<HTMLAnchorElement>(anchorElement());

@@ -148,11 +148,6 @@ Element* AccessibilityListBoxOption::actionElement() const
     return dynamicDowncast<Element>(m_node.get());
 }
 
-Node* AccessibilityListBoxOption::node() const
-{
-    return m_node.get();
-}
-
 AccessibilityObject* AccessibilityListBoxOption::parentObject() const
 {
     auto* parentNode = listBoxOptionParentNode();

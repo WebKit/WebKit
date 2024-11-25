@@ -46,12 +46,12 @@ private:
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::Button; }
 
-    bool isAttachmentElement() const override { return true; }
+    bool isAttachmentElement() const final { return true; }
 
-    String roleDescription() const override;
-    float valueForRange() const override;
-    bool computeIsIgnored() const override;
-    void accessibilityText(Vector<AccessibilityText>&) const override;
+    String roleDescription() const final;
+    float valueForRange() const final;
+    bool computeIsIgnored() const final;
+    void accessibilityText(Vector<AccessibilityText>&) const final;
 };
     
 } // namespace WebCore

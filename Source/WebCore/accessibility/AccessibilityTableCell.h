@@ -44,8 +44,8 @@ public:
 
     bool isExposedTableCell() const final;
     bool isTableHeaderCell() const;
-    bool isColumnHeader() const override;
-    bool isRowHeader() const override;
+    bool isColumnHeader() const final;
+    bool isRowHeader() const final;
 
     std::optional<AXID> rowGroupAncestorID() const final;
 
@@ -56,10 +56,10 @@ public:
     // Returns the start location and column span of the cell.
     std::pair<unsigned, unsigned> columnIndexRange() const final;
 
-    AccessibilityChildrenVector rowHeaders() override;
+    AccessibilityChildrenVector rowHeaders() final;
 
-    int axColumnIndex() const override;
-    int axRowIndex() const override;
+    int axColumnIndex() const final;
+    int axRowIndex() const final;
     unsigned colSpan() const;
     unsigned rowSpan() const;
     void incrementEffectiveRowSpan() { ++m_effectiveRowSpan; }
@@ -87,7 +87,6 @@ private:
     bool computeIsIgnored() const final;
     String expandedTextValue() const final;
     bool supportsExpandedTextValue() const final;
-    AccessibilityTableRow* ariaOwnedByParent() const;
     void ensureIndexesUpToDate() const;
 
     unsigned m_rowIndex { 0 };

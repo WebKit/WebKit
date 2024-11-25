@@ -38,7 +38,7 @@ public:
 
 protected:
     explicit AccessibilitySVGObject(AXID, RenderObject&, AXObjectCache*);
-    AXObjectCache* axObjectCache() const override { return m_axObjectCache.get(); }
+    AXObjectCache* axObjectCache() const final { return m_axObjectCache.get(); }
     AccessibilityRole determineAriaRoleAttribute() const final;
 
 private:

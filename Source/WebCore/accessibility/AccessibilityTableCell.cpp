@@ -284,18 +284,8 @@ AXCoreObject::AccessibilityChildrenVector AccessibilityTableCell::rowHeaders()
     return headers;
 }
 
-AccessibilityTableRow* AccessibilityTableCell::ariaOwnedByParent() const
-{
-    auto owners = this->owners();
-    if (owners.size() == 1 && owners[0]->isTableRow())
-        return dynamicDowncast<AccessibilityTableRow>(owners[0].get());
-    return nullptr;
-}
-
 AccessibilityTableRow* AccessibilityTableCell::parentRow() const
 {
-    if (auto ownerParent = ariaOwnedByParent())
-        return ownerParent;
     return dynamicDowncast<AccessibilityTableRow>(parentObjectUnignored());
 }
 

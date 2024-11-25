@@ -48,7 +48,7 @@ protected:
 
 private:
     bool isMockObject() const final { return true; }
-    bool isDetachedFromParent() override { return !m_parent; }
+    bool isDetachedFromParent() final { return !m_parent; }
 
     bool computeIsIgnored() const override;
 };

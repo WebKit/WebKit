@@ -102,7 +102,7 @@ void AccessibilitySlider::addChildren()
     if (thumb->isIgnored())
         cache->remove(thumb->objectID());
     else
-        addChild(thumb.ptr());
+        addChild(thumb.get());
 }
 
 AccessibilityObject* AccessibilitySlider::elementAccessibilityHitTest(const IntPoint& point) const

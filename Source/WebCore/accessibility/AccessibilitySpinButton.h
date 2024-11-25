@@ -39,8 +39,8 @@ public:
 
     void setSpinButtonElement(SpinButtonElement* spinButton) { m_spinButtonElement = spinButton; }
 
-    AXCoreObject* incrementButton() final;
-    AXCoreObject* decrementButton() final;
+    AccessibilitySpinButtonPart* incrementButton() final;
+    AccessibilitySpinButtonPart* decrementButton() final;
 
     void step(int amount);
 
@@ -48,10 +48,10 @@ private:
     explicit AccessibilitySpinButton(AXID, AXObjectCache&);
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::SpinButton; }
-    bool isNativeSpinButton() const override { return true; }
+    bool isNativeSpinButton() const final { return true; }
     void clearChildren() final { };
     void addChildren() final;
-    LayoutRect elementRect() const override;
+    LayoutRect elementRect() const final;
 
     WeakPtr<SpinButtonElement, WeakPtrImplWithEventTargetData> m_spinButtonElement;
     // FIXME: Nothing calls AXObjectCache::remove for m_incrementor and m_decrementor.

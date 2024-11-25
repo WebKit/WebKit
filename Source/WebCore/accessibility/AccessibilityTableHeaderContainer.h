@@ -41,14 +41,14 @@ public:
     
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::TableHeaderContainer; }
 
-    void addChildren() override;
-    
-    LayoutRect elementRect() const override;
-    
+    void addChildren() final;
+
+    LayoutRect elementRect() const final;
+
 private:
     explicit AccessibilityTableHeaderContainer(AXID);
     
-    bool computeIsIgnored() const override;
+    bool computeIsIgnored() const final;
 
     LayoutRect m_headerRect;
 }; 

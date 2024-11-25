@@ -41,19 +41,19 @@ public:
 private:
     explicit AccessibilityScrollbar(AXID, Scrollbar&);
 
-    bool canSetValueAttribute() const override { return true; }
+    bool canSetValueAttribute() const final { return true; }
 
-    bool isAccessibilityScrollbar() const override { return true; }
-    LayoutRect elementRect() const override;
-    
+    bool isAccessibilityScrollbar() const final { return true; }
+    LayoutRect elementRect() const final;
+
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::ScrollBar; }
-    AccessibilityOrientation orientation() const override;
-    Document* document() const override;
-    bool isEnabled() const override;
-    
+    AccessibilityOrientation orientation() const final;
+    Document* document() const final;
+    bool isEnabled() const final;
+
     // Assumes float [0..1]
-    bool setValue(float) override;
-    float valueForRange() const override;
+    bool setValue(float) final;
+    float valueForRange() const final;
 
     Ref<Scrollbar> m_scrollbar;
 };

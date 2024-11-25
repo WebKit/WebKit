@@ -475,7 +475,7 @@ void AccessibilityTable::addChildren()
         column->setColumnIndex(i);
         column->setParent(this);
         m_columns.append(column);
-        addChild(column.ptr(), DescendIfIgnored::No);
+        addChild(column.get(), DescendIfIgnored::No);
     }
     addChild(headerContainer(), DescendIfIgnored::No);
 
@@ -637,7 +637,7 @@ unsigned AccessibilityTable::computeCellSlots()
         m_rows.append(*row);
         row->setRowIndex(yCurrent);
 #if !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
-        addChild(row);
+        addChild(*row);
 #endif // !ENABLE(INCLUDE_IGNORED_IN_CORE_AX_TREE)
 
         // Step 16: If current cell is the last td or th element child in the tr element being processed, then increase ycurrent by 1, abort this set of steps, and return to the algorithm above.
@@ -710,7 +710,7 @@ unsigned AccessibilityTable::computeCellSlots()
             // Step 6: Associate the first caption element child of the table element with the table.
             if (!didAddCaption) {
                 if (RefPtr axCaption = cache->getOrCreate(*caption)) {
-                    addChild(axCaption.get(), DescendIfIgnored::No);
+                    addChild(*axCaption, DescendIfIgnored::No);
                     didAddCaption = true;
                 }
             }
@@ -778,7 +778,7 @@ unsigned AccessibilityTable::computeCellSlots()
     return xWidth;
 }
 
-AXCoreObject* AccessibilityTable::headerContainer()
+AccessibilityObject* AccessibilityTable::headerContainer()
 {
     if (m_headerContainer)
         return m_headerContainer.get();
