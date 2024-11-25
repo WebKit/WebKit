@@ -86,10 +86,11 @@ IPC::StreamConnectionWorkQueue& RemoteImageBufferSet::workQueue() const
     return m_backend->workQueue();
 }
 
-void RemoteImageBufferSet::updateConfiguration(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode renderingMode, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferPixelFormat pixelFormat)
+void RemoteImageBufferSet::updateConfiguration(const WebCore::FloatSize& logicalSize, WebCore::RenderingMode renderingMode, WebCore::RenderingPurpose renderingPurpose, float resolutionScale, const WebCore::DestinationColorSpace& colorSpace, WebCore::ImageBufferPixelFormat pixelFormat)
 {
     m_logicalSize = logicalSize;
     m_renderingMode = renderingMode;
+    m_renderingPurpose = renderingPurpose;
     m_resolutionScale = resolutionScale;
     m_colorSpace = colorSpace;
     m_pixelFormat = pixelFormat;
@@ -147,10 +148,10 @@ void RemoteImageBufferSet::ensureBufferForDisplay(ImageBufferSetPrepareBufferFor
     if (!m_frontBuffer) {
         WebCore::ImageBufferCreationContext creationContext;
 #if ENABLE(RE_DYNAMIC_CONTENT_SCALING)
-        creationContext.dynamicContentScalingResourceCache = ensureDynamicContentScalingResourceCache();
+        if (m_renderingPurpose == RenderingPurpose::LayerBacking || m_renderingPurpose == RenderingPurpose::DOM)
+            creationContext.dynamicContentScalingResourceCache = ensureDynamicContentScalingResourceCache();
 #endif
-
-        m_frontBuffer = backend->allocateImageBuffer(m_logicalSize, m_renderingMode, WebCore::RenderingPurpose::LayerBacking, m_resolutionScale, m_colorSpace, m_pixelFormat, WTFMove(creationContext), WebCore::RenderingResourceIdentifier::generate());
+        m_frontBuffer = backend->allocateImageBuffer(m_logicalSize, m_renderingMode, m_renderingPurpose, m_resolutionScale, m_colorSpace, m_pixelFormat, WTFMove(creationContext), WebCore::RenderingResourceIdentifier::generate());
         m_frontBufferIsCleared = true;
     }
 
