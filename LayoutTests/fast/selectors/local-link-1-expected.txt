@@ -1,0 +1,10 @@
+Test the basic matching of the :local-link selector.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getComputedStyle(document.getElementById("target-tag-1")).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.getElementById("target-tag-2")).backgroundColor is "rgb(255, 0, 0)"
+PASS getComputedStyle(document.getElementById("target-tag-3")).backgroundColor is "rgb(255, 255, 255)"
+PASS getComputedStyle(document.getElementById("target-tag-4")).backgroundColor is "rgb(255, 255, 255)"
+
