@@ -38,7 +38,9 @@
 #include "CSSMarkup.h"
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
+#include "CSSPropertyParserConsumer+LengthPercentage.h"
 #include "CSSStyleImageValue.h"
+#include "CSSTokenizer.h"
 #include "CachedImage.h"
 #include "CanvasFilterContextSwitcher.h"
 #include "CanvasGradient.h"
@@ -331,6 +333,8 @@ CanvasRenderingContext2DBase::State::State()
     , textBaseline(AlphabeticTextBaseline)
     , direction(Direction::Inherit)
     , filterString("none"_s)
+    , letterSpacing("0px"_s)
+    , wordSpacing("0px"_s)
     , unparsedFont(DefaultFont)
 {
 }
@@ -3056,6 +3060,42 @@ std::optional<CanvasRenderingContext2DBase::RenderingMode> CanvasRenderingContex
             return buffer->renderingMode();
     }
     return std::nullopt;
+}
+
+void CanvasRenderingContext2DBase::setLetterSpacing(const String& letterSpacing)
+{
+    if (state().letterSpacing == letterSpacing)
+        return;
+    realizeSaves();
+    CSSTokenizer tokenizer(letterSpacing);
+    auto tokenRange = tokenizer.tokenRange();
+    tokenRange.consumeWhitespace();
+    RefPtr<CSSPrimitiveValue> parsedValue = CSSPropertyParserHelpers::consumeLengthPercentage(tokenRange, HTMLStandardMode);
+    if (!parsedValue || parsedValue->isCalculated() || !parsedValue->isLength())
+        return;
+    auto newStyle = RenderStyle::createPtr();
+    newStyle->setFontSize(fontProxy()->fontCascade().size());
+    int pixels = parsedValue->resolveAsLength<int>(CSSToLengthConversionData { *newStyle, nullptr, nullptr, nullptr });
+    modifiableState().font.setLetterSpacing(Length(pixels, LengthType::Fixed));
+    modifiableState().letterSpacing = parsedValue->cssText();
+}
+
+void CanvasRenderingContext2DBase::setWordSpacing(const String& wordSpacing)
+{
+    if (state().wordSpacing == wordSpacing)
+        return;
+    realizeSaves();
+    CSSTokenizer tokenizer(wordSpacing);
+    auto tokenRange = tokenizer.tokenRange();
+    tokenRange.consumeWhitespace();
+    RefPtr<CSSPrimitiveValue> parsedValue = CSSPropertyParserHelpers::consumeLengthPercentage(tokenRange, HTMLStandardMode);
+    if (!parsedValue || parsedValue->isCalculated() || !parsedValue->isLength())
+        return;
+    auto newStyle = RenderStyle::createPtr();
+    newStyle->setFontSize(fontProxy()->fontCascade().size());
+    int pixels = parsedValue->resolveAsLength<int>(CSSToLengthConversionData { *newStyle, nullptr, nullptr, nullptr });
+    modifiableState().font.setWordSpacing(Length(pixels, LengthType::Fixed));
+    modifiableState().wordSpacing = parsedValue->cssText();
 }
 
 } // namespace WebCore

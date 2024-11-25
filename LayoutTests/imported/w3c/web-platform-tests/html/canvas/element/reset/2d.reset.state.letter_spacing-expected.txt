@@ -2,5 +2,5 @@
 check that the state is reset
 Actual output:
 
-FAIL check that the state is reset assert_true: ctx.letterSpacing == default_value expected true got false
+PASS check that the state is reset
 

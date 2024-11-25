@@ -3,5 +3,5 @@
 Testing letter spacing and word spacing with nonfinite inputs
 
 
-FAIL Testing letter spacing and word spacing with nonfinite inputs assert_equals: ctx.letterSpacing === '0px' (got [undefined], expected 0px[string]) expected (string) "0px" but got (undefined) undefined
+PASS Testing letter spacing and word spacing with nonfinite inputs
 
