@@ -78,7 +78,7 @@ Color CanvasStyleColorResolutionDelegate::currentColor() const
     return color;
 }
 
-static OptionSet<StyleColor::CSSColorType> allowedColorTypes(ScriptExecutionContext* scriptExecutionContext)
+AllowedColorTypes canvasAllowedColorTypes(ScriptExecutionContext* scriptExecutionContext)
 {
     if (scriptExecutionContext && scriptExecutionContext->isDocument())
         return { StyleColor::CSSColorType::Absolute, StyleColor::CSSColorType::Current, StyleColor::CSSColorType::System };
@@ -93,7 +93,7 @@ static LazySlowPathColorParsingParameters elementlessColorParsingParameters(Scri
 {
     return {
         CSSPropertyParserHelpers::CSSColorParsingOptions {
-            .allowedColorTypes = allowedColorTypes(scriptExecutionContext)
+            .allowedColorTypes = canvasAllowedColorTypes(scriptExecutionContext)
         },
         CSSUnresolvedColorResolutionState {
             .resolvedCurrentColor = Color::black

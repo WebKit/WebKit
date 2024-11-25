@@ -1,0 +1,32 @@
+<meta name="fuzzy" content="maxDifference=0-10; totalPixels=0-10438" />
+<style>
+     canvas {
+         width: 350px;
+         height: 200px;
+     }
+ </style>
+ <body>
+    <h3>This tests the filter is drawn to the detached canvas.</h3>
+    <canvas id="canvas"></canvas>
+    <script>
+        const detachedCanvas = document.createElement('canvas');
+        detachedCanvas.width  = 350;
+        detachedCanvas.height = 200;
+        const detachedContext = detachedCanvas.getContext("2d");
+
+        detachedContext.fillStyle = 'green';
+
+        detachedContext.filter = 'drop-shadow(10px 10px 0 #666)';
+        detachedContext.fillRect(20, 20, 100, 100);
+
+        detachedContext.filter = 'blur(5px)';
+        detachedContext.fillRect(200, 20, 100, 100);
+
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = 350;
+        canvas.height = 200;
+
+        context.drawImage(detachedCanvas, 0, 0);
+    </script>
+</body>

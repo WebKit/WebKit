@@ -25,6 +25,7 @@
 
 #pragma once
 
+#include "CSSPropertyParserConsumer+Color.h"
 #include "FilterOperations.h"
 #include <optional>
 
@@ -35,9 +36,12 @@ class CSSValue;
 class Document;
 class RenderStyle;
 
+struct CSSParserContext;
+
 namespace Style {
 
-FilterOperations createFilterOperations(const Document&, RenderStyle&, const CSSToLengthConversionData&, const CSSValue&);
+FilterOperations createFilterOperations(const CSSValue&, const CSSToLengthConversionData&, const Document&, RenderStyle&);
+FilterOperations createFilterOperations(const CSSValue&, const CSSParserContext&, AllowedColorTypes, const CSSToLengthConversionData&, const Document&);
 
 } // namespace Style
 

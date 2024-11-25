@@ -60,7 +60,7 @@ template<CSSValueID function> static double processNumberOrPercentFilterParamete
     return filterFunctionDefaultValue<function>().value;
 }
 
-static Ref<FilterOperation> createFilterFunctionBlur(const CSSFunctionValue& filter, const Document&, RenderStyle&, const CSSToLengthConversionData& conversionData)
+static Ref<FilterOperation> createFilterFunctionBlur(const CSSFunctionValue& filter, const CSSToLengthConversionData& conversionData)
 {
     // blur() = blur( <length>? )
 
@@ -75,7 +75,7 @@ static Ref<FilterOperation> createFilterFunctionBlur(const CSSFunctionValue& fil
     return BlurFilterOperation::create(stdDeviation);
 }
 
-static Ref<FilterOperation> createFilterFunctionBrightness(const CSSFunctionValue& filter, const Document&, RenderStyle&, const CSSToLengthConversionData& conversionData)
+static Ref<FilterOperation> createFilterFunctionBrightness(const CSSFunctionValue& filter, const CSSToLengthConversionData& conversionData)
 {
     // brightness() = brightness( [ <number> |  <percentage> ]? )
 
@@ -87,7 +87,7 @@ static Ref<FilterOperation> createFilterFunctionBrightness(const CSSFunctionValu
     );
 }
 
-static Ref<FilterOperation> createFilterFunctionContrast(const CSSFunctionValue& filter, const Document&, RenderStyle&, const CSSToLengthConversionData& conversionData)
+static Ref<FilterOperation> createFilterFunctionContrast(const CSSFunctionValue& filter, const CSSToLengthConversionData& conversionData)
 {
     // contrast() = contrast( [ <number> |  <percentage> ]? )
 
@@ -99,7 +99,7 @@ static Ref<FilterOperation> createFilterFunctionContrast(const CSSFunctionValue&
     );
 }
 
-static Ref<FilterOperation> createFilterFunctionDropShadow(const CSSFunctionValue& filter, const Document& document, RenderStyle& style, const CSSToLengthConversionData& conversionData)
+static Ref<FilterOperation> createFilterFunctionDropShadow(const CSSFunctionValue& filter, const CSSToLengthConversionData& conversionData, const Function<Color(const CSSPrimitiveValue*)>& resolveFilterColor)
 {
     // drop-shadow() = drop-shadow( [ <color>? && <length>{2,3} ] )
     // NOTE: The drop shadow parameters are all stored as a single CSSShadowValue.
@@ -111,12 +111,12 @@ static Ref<FilterOperation> createFilterFunctionDropShadow(const CSSFunctionValu
     int x = shadow.x->resolveAsLength<int>(conversionData);
     int y = shadow.y->resolveAsLength<int>(conversionData);
     int blur = shadow.blur ? shadow.blur->resolveAsLength<int>(conversionData) : 0;
-    auto color = shadow.color ? colorFromPrimitiveValueWithResolvedCurrentColor(document, style, conversionData, *shadow.color) : style.color();
+    auto color = resolveFilterColor(shadow.color.get());
 
     return DropShadowFilterOperation::create(IntPoint(x, y), blur, color.isValid() ? color : Color::transparentBlack);
 }
 
-static Ref<FilterOperation> createFilterFunctionGrayscale(const CSSFunctionValue& filter, const Document&, RenderStyle&, const CSSToLengthConversionData& conversionData)
+static Ref<FilterOperation> createFilterFunctionGrayscale(const CSSFunctionValue& filter, const CSSToLengthConversionData& conversionData)
 {
     // grayscale() = grayscale( [ <number> |  <percentage> ]? )
 
@@ -128,7 +128,7 @@ static Ref<FilterOperation> createFilterFunctionGrayscale(const CSSFunctionValue
     );
 }
 
-static Ref<FilterOperation> createFilterFunctionHueRotate(const CSSFunctionValue& filter, const Document&, RenderStyle&, const CSSToLengthConversionData& conversionData)
+static Ref<FilterOperation> createFilterFunctionHueRotate(const CSSFunctionValue& filter, const CSSToLengthConversionData& conversionData)
 {
     // hue-rotate() = hue-rotate( [ <angle> | <zero> ]? )
 
@@ -146,7 +146,7 @@ static Ref<FilterOperation> createFilterFunctionHueRotate(const CSSFunctionValue
     );
 }
 
-static Ref<FilterOperation> createFilterFunctionInvert(const CSSFunctionValue& filter, const Document&, RenderStyle&, const CSSToLengthConversionData& conversionData)
+static Ref<FilterOperation> createFilterFunctionInvert(const CSSFunctionValue& filter, const CSSToLengthConversionData& conversionData)
 {
     // invert() = invert( [ <number> |  <percentage> ]? )
 
@@ -158,7 +158,7 @@ static Ref<FilterOperation> createFilterFunctionInvert(const CSSFunctionValue& f
     );
 }
 
-static Ref<FilterOperation> createFilterFunctionOpacity(const CSSFunctionValue& filter, const Document&, RenderStyle&, const CSSToLengthConversionData& conversionData)
+static Ref<FilterOperation> createFilterFunctionOpacity(const CSSFunctionValue& filter, const CSSToLengthConversionData& conversionData)
 {
     // opacity() = opacity( [ <number> |  <percentage> ]? )
 
@@ -170,7 +170,7 @@ static Ref<FilterOperation> createFilterFunctionOpacity(const CSSFunctionValue& 
     );
 }
 
-static Ref<FilterOperation> createFilterFunctionSaturate(const CSSFunctionValue& filter, const Document&, RenderStyle&, const CSSToLengthConversionData& conversionData)
+static Ref<FilterOperation> createFilterFunctionSaturate(const CSSFunctionValue& filter, const CSSToLengthConversionData& conversionData)
 {
     // saturate() = saturate( [ <number> |  <percentage> ]? )
 
@@ -182,7 +182,7 @@ static Ref<FilterOperation> createFilterFunctionSaturate(const CSSFunctionValue&
     );
 }
 
-static Ref<FilterOperation> createFilterFunctionSepia(const CSSFunctionValue& filter, const Document&, RenderStyle&, const CSSToLengthConversionData& conversionData)
+static Ref<FilterOperation> createFilterFunctionSepia(const CSSFunctionValue& filter, const CSSToLengthConversionData& conversionData)
 {
     // sepia() = sepia( [ <number> |  <percentage> ]? )
 
@@ -194,7 +194,7 @@ static Ref<FilterOperation> createFilterFunctionSepia(const CSSFunctionValue& fi
     );
 }
 
-static Ref<FilterOperation> createFilterFunctionAppleInvertLightness(const CSSFunctionValue&, const Document&, RenderStyle&, const CSSToLengthConversionData&)
+static Ref<FilterOperation> createFilterFunctionAppleInvertLightness(const CSSFunctionValue&, const CSSToLengthConversionData&)
 {
     // <-apple-invert-lightness()> = -apple-invert-lightness()
 
@@ -211,7 +211,7 @@ static Ref<FilterOperation> createFilterFunctionReference(const CSSPrimitiveValu
     return ReferenceFilterOperation::create(filterURL, WTFMove(fragment));
 }
 
-static Ref<FilterOperation> createFilterOperation(const CSSValue& value, const Document& document, RenderStyle& style, const CSSToLengthConversionData& conversionData)
+static Ref<FilterOperation> createFilterOperation(const CSSValue& value, const CSSToLengthConversionData& conversionData, const Document& document, const Function<Color(const CSSPrimitiveValue*)>& resolveFilterColor)
 {
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value))
         return createFilterFunctionReference(*primitiveValue, document);
@@ -220,27 +220,27 @@ static Ref<FilterOperation> createFilterOperation(const CSSValue& value, const D
 
     switch (filter.name()) {
     case CSSValueBlur:
-        return createFilterFunctionBlur(filter, document, style, conversionData);
+        return createFilterFunctionBlur(filter, conversionData);
     case CSSValueBrightness:
-        return createFilterFunctionBrightness(filter, document, style, conversionData);
+        return createFilterFunctionBrightness(filter, conversionData);
     case CSSValueContrast:
-        return createFilterFunctionContrast(filter, document, style, conversionData);
+        return createFilterFunctionContrast(filter, conversionData);
     case CSSValueDropShadow:
-        return createFilterFunctionDropShadow(filter, document, style, conversionData);
+        return createFilterFunctionDropShadow(filter, conversionData, resolveFilterColor);
     case CSSValueGrayscale:
-        return createFilterFunctionGrayscale(filter, document, style, conversionData);
+        return createFilterFunctionGrayscale(filter, conversionData);
     case CSSValueHueRotate:
-        return createFilterFunctionHueRotate(filter, document, style, conversionData);
+        return createFilterFunctionHueRotate(filter, conversionData);
     case CSSValueInvert:
-        return createFilterFunctionInvert(filter, document, style, conversionData);
+        return createFilterFunctionInvert(filter, conversionData);
     case CSSValueOpacity:
-        return createFilterFunctionOpacity(filter, document, style, conversionData);
+        return createFilterFunctionOpacity(filter, conversionData);
     case CSSValueSaturate:
-        return createFilterFunctionSaturate(filter, document, style, conversionData);
+        return createFilterFunctionSaturate(filter, conversionData);
     case CSSValueSepia:
-        return createFilterFunctionSepia(filter, document, style, conversionData);
+        return createFilterFunctionSepia(filter, conversionData);
     case CSSValueAppleInvertLightness:
-        return createFilterFunctionAppleInvertLightness(filter, document, style, conversionData);
+        return createFilterFunctionAppleInvertLightness(filter, conversionData);
     default:
         break;
     }
@@ -248,7 +248,7 @@ static Ref<FilterOperation> createFilterOperation(const CSSValue& value, const D
     RELEASE_ASSERT_NOT_REACHED();
 }
 
-FilterOperations createFilterOperations(const Document& document, RenderStyle& style, const CSSToLengthConversionData& conversionData, const CSSValue& value)
+static FilterOperations createFilterOperations(const CSSValue& value, const CSSToLengthConversionData& conversionData, const Document& document, const Function<Color(const CSSPrimitiveValue*)>& resolveFilterColor)
 {
     if (auto* primitiveValue = dynamicDowncast<CSSPrimitiveValue>(value)) {
         ASSERT_UNUSED(primitiveValue, primitiveValue->valueID() == CSSValueNone);
@@ -256,8 +256,30 @@ FilterOperations createFilterOperations(const Document& document, RenderStyle& s
     }
 
     return FilterOperations { WTF::map(downcast<CSSValueList>(value), [&](const auto& value) {
-        return createFilterOperation(value, document, style, conversionData);
+        return createFilterOperation(value, conversionData, document, resolveFilterColor);
     }) };
+}
+
+FilterOperations createFilterOperations(const CSSValue& inValue, const CSSToLengthConversionData& conversionData, const Document& document, RenderStyle& style)
+{
+    return createFilterOperations(inValue, conversionData, document, [&](const auto* primitiveValue) -> Color {
+        return primitiveValue ? colorFromPrimitiveValueWithResolvedCurrentColor(document, style, conversionData, *primitiveValue) : style.color();
+    });
+}
+
+FilterOperations createFilterOperations(const CSSValue& inValue, const CSSParserContext& context, AllowedColorTypes allowedColorTypes, const CSSToLengthConversionData& conversionData, const Document& document)
+{
+    auto options = CSSPropertyParserHelpers::CSSColorParsingOptions {
+        .allowedColorTypes = allowedColorTypes
+    };
+
+    auto resolutionState = CSSUnresolvedColorResolutionState {
+        .resolvedCurrentColor = Color::black
+    };
+
+    return createFilterOperations(inValue, conversionData, document, [&](const auto* primitiveValue) -> Color {
+        return primitiveValue ? CSSPropertyParserHelpers::parseColorRawSlow(primitiveValue->cssText(), context, options, resolutionState) : Color::black;
+    });
 }
 
 } // namespace Style

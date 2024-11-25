@@ -38,7 +38,7 @@ class RenderElement;
 class CSSFilter final : public Filter {
     WTF_MAKE_TZONE_ALLOCATED(CSSFilter);
 public:
-    static RefPtr<CSSFilter> create(RenderElement&, const FilterOperations&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
+    static RefPtr<CSSFilter> create(const FilterOperations&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatSize& filterScale, const Element& targetElement, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
     WEBCORE_EXPORT static Ref<CSSFilter> create(Vector<Ref<FilterFunction>>&&);
     WEBCORE_EXPORT static Ref<CSSFilter> create(Vector<Ref<FilterFunction>>&&, OptionSet<FilterRenderingMode>, const FloatSize& filterScale, const FloatRect& filterRegion);
 
@@ -54,15 +54,15 @@ public:
     RefPtr<FilterImage> apply(FilterImage* sourceImage, FilterResults&) final;
     FilterStyleVector createFilterStyles(GraphicsContext&, const FilterStyle& sourceStyle) const final;
 
-    static bool isIdentity(RenderElement&, const FilterOperations&);
-    static IntOutsets calculateOutsets(RenderElement&, const FilterOperations&, const FloatRect& targetBoundingBox);
+    static bool isIdentity(const FilterOperations&, const Element& targetElement);
+    static IntOutsets calculateOutsets(const FilterOperations&, const Element& targetElement, const FloatRect& targetBoundingBox);
 
 private:
     CSSFilter(const FloatSize& filterScale, bool hasFilterThatMovesPixels, bool hasFilterThatShouldBeRestrictedBySecurityOrigin);
     CSSFilter(Vector<Ref<FilterFunction>>&&);
     CSSFilter(Vector<Ref<FilterFunction>>&&, const FloatSize& filterScale, const FloatRect& filterRegion);
 
-    bool buildFilterFunctions(RenderElement&, const FilterOperations&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
+    bool buildFilterFunctions(const FilterOperations&, OptionSet<FilterRenderingMode> preferredFilterRenderingModes, const Element& targetElement, const FloatRect& targetBoundingBox, const GraphicsContext& destinationContext);
 
     OptionSet<FilterRenderingMode> supportedFilterRenderingModes() const final;
 

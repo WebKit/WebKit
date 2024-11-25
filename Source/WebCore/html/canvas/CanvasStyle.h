@@ -26,6 +26,7 @@
 
 #pragma once
 
+#include "CSSPropertyParserConsumer+Color.h"
 #include "CanvasGradient.h"
 #include "CanvasPattern.h"
 #include "Color.h"
@@ -80,6 +81,8 @@ public:
 private:
     std::variant<Color, Ref<CanvasGradient>, Ref<CanvasPattern>> m_style;
 };
+
+AllowedColorTypes canvasAllowedColorTypes(ScriptExecutionContext*);
 
 Color parseColor(const String& colorString, CanvasBase&);
 Color parseColor(const String& colorString, ScriptExecutionContext&);
