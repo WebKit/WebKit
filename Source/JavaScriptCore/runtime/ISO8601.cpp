@@ -562,7 +562,7 @@ static bool canBeCalendar(const StringParsingBuffer<CharacterType>& buffer)
     // followed by a valid key, followed by an '='.
 
     size_t length = buffer.lengthRemaining();
-    if (length == 0)
+    if (!length)
         return false;
     // Parse Annotation
     size_t i = 0;
