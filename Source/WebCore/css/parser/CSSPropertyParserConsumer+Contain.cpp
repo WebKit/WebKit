@@ -32,8 +32,6 @@
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 namespace CSSPropertyParserHelpers {
 
@@ -44,12 +42,13 @@ RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range, const CSSParserConte
 
     if (auto singleValue = consumeIdent<CSSValueNone, CSSValueStrict, CSSValueContent>(range))
         return singleValue;
-    RefPtr<CSSPrimitiveValue> values[5];
-    auto& size = values[0];
-    auto& inlineSize = values[1];
-    auto& layout = values[2];
-    auto& style = values[3];
-    auto& paint = values[4];
+
+    RefPtr<CSSPrimitiveValue> size;
+    RefPtr<CSSPrimitiveValue> inlineSize;
+    RefPtr<CSSPrimitiveValue> layout;
+    RefPtr<CSSPrimitiveValue> style;
+    RefPtr<CSSPrimitiveValue> paint;
+
     while (!range.atEnd()) {
         switch (range.peek().id()) {
         case CSSValueSize:
@@ -81,11 +80,19 @@ RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range, const CSSParserConte
             return nullptr;
         }
     }
+
     CSSValueListBuilder list;
-    for (auto& value : values) {
-        if (value)
-            list.append(value.releaseNonNull());
-    }
+    if (size)
+        list.append(size.releaseNonNull());
+    if (inlineSize)
+        list.append(inlineSize.releaseNonNull());
+    if (layout)
+        list.append(layout.releaseNonNull());
+    if (style)
+        list.append(style.releaseNonNull());
+    if (paint)
+        list.append(paint.releaseNonNull());
+
     if (list.isEmpty())
         return nullptr;
     return CSSValueList::createSpaceSeparated(WTFMove(list));
@@ -93,5 +100,3 @@ RefPtr<CSSValue> consumeContain(CSSParserTokenRange& range, const CSSParserConte
 
 } // namespace CSSPropertyParserHelpers
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
