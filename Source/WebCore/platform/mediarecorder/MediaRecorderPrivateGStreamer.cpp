@@ -319,6 +319,19 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateBackend::containerProfi
         auto audioCaps = adoptGRef(gst_caps_from_string(audioCapsName.utf8().data()));
         GST_DEBUG("Creating audio encoding profile for caps %" GST_PTR_FORMAT, audioCaps.get());
         m_audioEncodingProfile = adoptGRef(GST_ENCODING_PROFILE(gst_encoding_audio_profile_new(audioCaps.get(), nullptr, nullptr, 1)));
+
+        auto& settings = selectedTracks.audioTrack->settings();
+        if (settings.supportsSampleRate()) {
+            // opusenc doesn't support the default 44.1 kHz sample rate, so fallback to 48 kHz. This
+            // appears to be an unexpected behaviour from the encoding profile "restriction" API.
+            // https://gitlab.freedesktop.org/gstreamer/gstreamer/-/issues/4054
+            auto sampleRate = audioCapsName == "audio/x-opus"_s ? 48000 : settings.sampleRate();
+
+            auto restrictionCaps = adoptGRef(gst_caps_new_simple("audio/x-raw", "rate", G_TYPE_INT, sampleRate, nullptr));
+            GST_DEBUG("Setting audio restriction caps to %" GST_PTR_FORMAT, restrictionCaps.get());
+            gst_encoding_profile_set_restriction(m_audioEncodingProfile.get(), restrictionCaps.leakRef());
+        }
+
         gst_encoding_container_profile_add_profile(profile.get(), m_audioEncodingProfile.get());
     }
 
