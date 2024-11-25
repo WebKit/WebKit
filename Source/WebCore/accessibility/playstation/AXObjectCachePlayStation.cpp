@@ -63,7 +63,7 @@ static AXCoreObject* notifyChildrenSelectionChange(AXCoreObject* object)
     const AccessibilityObject::AccessibilityChildrenVector& items = object->children();
     if (changedItemIndex < 0 || changedItemIndex >= static_cast<int>(items.size()))
         return object;
-    return items.at(changedItemIndex).get();
+    return items.at(changedItemIndex).ptr();
 }
 
 static AXObjectCache::AXNotification checkInteractableObjects(AXCoreObject* object)
