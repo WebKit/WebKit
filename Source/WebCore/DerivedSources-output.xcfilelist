@@ -577,6 +577,10 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTransform.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasTransform.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasUserInterface.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCanvasUserInterface.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCaretPosition.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCaretPosition.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCaretPositionFromPointOptions.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSCaretPositionFromPointOptions.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelCountMode.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelCountMode.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSChannelInterpretation.cpp
@@ -869,6 +873,8 @@ $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDistanceModelType.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDistanceModelType.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+CSSOMView.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+CSSOMView.h
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+CaretPositionFromPoint.cpp
+$(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+CaretPositionFromPoint.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+Fullscreen.cpp
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+Fullscreen.h
 $(BUILT_PRODUCTS_DIR)/DerivedSources/WebCore/JSDocument+HTML.cpp

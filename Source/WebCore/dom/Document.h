@@ -107,6 +107,7 @@ class CachedResourceLoader;
 class CachedScript;
 class CanvasRenderingContext;
 class CanvasRenderingContext2D;
+class CaretPosition;
 class CharacterData;
 class Comment;
 class ConstantPropertyMap;
@@ -273,6 +274,7 @@ class DOMTimerHoldingTank;
 struct ApplicationManifest;
 struct BoundaryPoint;
 struct CSSParserContext;
+struct CaretPositionFromPointOptions;
 struct ClientOrigin;
 struct FocusOptions;
 struct IntersectionObserverData;
@@ -527,6 +529,7 @@ public:
 
     WEBCORE_EXPORT RefPtr<Range> caretRangeFromPoint(int x, int y, HitTestSource = HitTestSource::Script);
     std::optional<BoundaryPoint> caretPositionFromPoint(const LayoutPoint& clientPoint, HitTestSource);
+    RefPtr<CaretPosition> caretPositionFromPoint(double x, double y, CaretPositionFromPointOptions);
 
     WEBCORE_EXPORT Element* scrollingElementForAPI();
     WEBCORE_EXPORT Element* scrollingElement();

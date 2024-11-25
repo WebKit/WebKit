@@ -1384,6 +1384,8 @@ $(PROJECT_DIR)/dom/Attr.idl
 $(PROJECT_DIR)/dom/BeforeUnloadEvent.idl
 $(PROJECT_DIR)/dom/BroadcastChannel.idl
 $(PROJECT_DIR)/dom/CDATASection.idl
+$(PROJECT_DIR)/dom/CaretPosition.idl
+$(PROJECT_DIR)/dom/CaretPositionFromPointOptions.idl
 $(PROJECT_DIR)/dom/CharacterData.idl
 $(PROJECT_DIR)/dom/CheckVisibilityOptions.idl
 $(PROJECT_DIR)/dom/ChildNode.idl
@@ -1418,6 +1420,7 @@ $(PROJECT_DIR)/dom/DeviceMotionEvent.idl
 $(PROJECT_DIR)/dom/DeviceOrientationEvent.idl
 $(PROJECT_DIR)/dom/DeviceOrientationOrMotionEvent.idl
 $(PROJECT_DIR)/dom/DeviceOrientationOrMotionPermissionState.idl
+$(PROJECT_DIR)/dom/Document+CaretPositionFromPoint.idl
 $(PROJECT_DIR)/dom/Document+CSSOMView.idl
 $(PROJECT_DIR)/dom/Document+Fullscreen.idl
 $(PROJECT_DIR)/dom/Document+HTML.idl

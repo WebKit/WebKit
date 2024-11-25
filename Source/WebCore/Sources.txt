@@ -1187,6 +1187,7 @@ dom/BeforeUnloadEvent.cpp
 dom/BoundaryPoint.cpp
 dom/BroadcastChannel.cpp
 dom/CDATASection.cpp
+dom/CaretPosition.cpp
 dom/CharacterData.cpp
 dom/ChildListMutationScope.cpp
 dom/ChildNodeList.cpp
@@ -3565,6 +3566,8 @@ JSCanvasTextBaseline.cpp
 JSCanvasTextDrawingStyles.cpp
 JSCanvasTransform.cpp
 JSCanvasUserInterface.cpp
+JSCaretPosition.cpp
+JSCaretPositionFromPointOptions.cpp
 JSChannelCountMode.cpp
 JSChannelInterpretation.cpp
 JSChannelMergerNode.cpp

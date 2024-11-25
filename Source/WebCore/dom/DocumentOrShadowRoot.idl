@@ -36,5 +36,4 @@ interface mixin DocumentOrShadowRoot {
     // We should get this resolved in the CSSOM spec and move these to the correct IDL files.
     Element? elementFromPoint(double x, double y);
     sequence<Element> elementsFromPoint(double x, double y);
-    // CaretPosition? caretPositionFromPoint(double x, double y); // FIXME: Implement this.
 };

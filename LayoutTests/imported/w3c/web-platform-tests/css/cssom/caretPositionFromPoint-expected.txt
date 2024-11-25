@@ -1,8 +1,8 @@
 aaa
 
 PASS document.caretPositionFromPoint() throws when called without the correct parameters
-FAIL document.caretPositionFromPoint() should return null for a document with no viewport doc.caretPositionFromPoint is not a function. (In 'doc.caretPositionFromPoint(0, 0)', 'doc.caretPositionFromPoint' is undefined)
-FAIL document.caretPositionFromPoint() should return null if given coordinates outside of the viewport document.caretPositionFromPoint is not a function. (In 'document.caretPositionFromPoint(-5, 5)', 'document.caretPositionFromPoint' is undefined)
-FAIL document.caretPositionFromPoint() should return a CaretPosition at the specified location document.caretPositionFromPoint is not a function. (In 'document.caretPositionFromPoint(x, y)', 'document.caretPositionFromPoint' is undefined)
-FAIL CaretRange.getClientRect() should return a DOMRect that matches one obtained from a manually constructed Range document.caretPositionFromPoint is not a function. (In 'document.caretPositionFromPoint(x, y)', 'document.caretPositionFromPoint' is undefined)
+PASS document.caretPositionFromPoint() should return null for a document with no viewport
+PASS document.caretPositionFromPoint() should return null if given coordinates outside of the viewport
+PASS document.caretPositionFromPoint() should return a CaretPosition at the specified location
+PASS CaretRange.getClientRect() should return a DOMRect that matches one obtained from a manually constructed Range
 
