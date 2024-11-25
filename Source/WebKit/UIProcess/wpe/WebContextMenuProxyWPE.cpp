@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 Apple Inc. All rights reserved.
+ * Copyright (C) 2024 Christian Duerr
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -10,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -23,27 +23,28 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#pragma once
+#include "config.h"
+#include "WebContextMenuProxyWPE.h"
 
 #if ENABLE(CONTEXT_MENUS)
 
-#include "WebContextMenuProxy.h"
-
 namespace WebKit {
+using namespace WebCore;
 
-class WebContextMenuProxyWPE final : public WebContextMenuProxy {
-public:
-    static auto create(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
-    {
-        return adoptRef(*new WebContextMenuProxyWPE(page, WTFMove(context), userData));
-    }
+WebContextMenuProxyWPE::WebContextMenuProxyWPE(WebPageProxy& page, ContextMenuContextData&& context, const UserData& userData)
+    : WebContextMenuProxy(page, WTFMove(context), userData)
+{
+}
 
-private:
-    WebContextMenuProxyWPE(WebPageProxy&, ContextMenuContextData&&, const UserData&);
-    void showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&&) override;
-    void show() override;
-};
+void WebContextMenuProxyWPE::show()
+{
+    WebContextMenuProxy::show();
+}
+
+void WebContextMenuProxyWPE::showContextMenuWithItems(Vector<Ref<WebContextMenuItem>>&& items)
+{
+    notImplemented();
+}
 
 } // namespace WebKit
-
 #endif // ENABLE(CONTEXT_MENUS)
