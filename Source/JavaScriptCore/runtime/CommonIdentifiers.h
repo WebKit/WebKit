@@ -87,6 +87,7 @@
     macro(bytecodes) \
     macro(bytecodesID) \
     macro(calendar) \
+    macro(calendarName) \
     macro(callee) \
     macro(caller) \
     macro(captureStackTrace) \

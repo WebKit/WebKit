@@ -48,7 +48,7 @@ public:
 
     DECLARE_INFO;
 
-    static TemporalPlainDateTime* from(JSGlobalObject*, JSValue, std::optional<TemporalOverflow>);
+    static TemporalPlainDateTime* from(JSGlobalObject*, JSValue, std::optional<JSObject*>);
     static int32_t compare(TemporalPlainDateTime*, TemporalPlainDateTime*);
 
     TemporalCalendar* calendar() { return m_calendar.get(this); }

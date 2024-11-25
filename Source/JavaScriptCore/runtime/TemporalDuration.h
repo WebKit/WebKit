@@ -100,10 +100,18 @@ public:
     static int sign(const ISO8601::Duration&);
     static ISO8601::InternalDuration round(JSGlobalObject*, ISO8601::InternalDuration, double increment, TemporalUnit, RoundingMode);
     static void roundRelativeDuration(JSGlobalObject*, ISO8601::InternalDuration&, Int128, ISO8601::PlainDate, TemporalUnit, double, TemporalUnit, RoundingMode);
+    static std::tuple<ISO8601::PlainDate, ISO8601::PlainTime>
+        combineISODateAndTimeRecord(ISO8601::PlainDate, ISO8601::PlainTime);
     static std::optional<ISO8601::PlainDate> regulateISODate(double, double, double, TemporalOverflow);
     static ISO8601::Duration toDateDurationRecordWithoutTime(JSGlobalObject*, const ISO8601::Duration&);
     static std::optional<double> balance(ISO8601::Duration&, TemporalUnit largestUnit);
-
+    static ISO8601::Duration toDateDurationWithoutTime(ISO8601::Duration);
+    static Nudged nudgeToCalendarUnit(JSGlobalObject* globalObject,
+        int32_t sign, const ISO8601::InternalDuration& duration, Int128 destEpochNs,
+        ISO8601::PlainDate isoDate, double increment, TemporalUnit unit, RoundingMode roundingMode);
+    static ISO8601::InternalDuration bubbleRelativeDuration(JSGlobalObject* globalObject,
+        int32_t sign, ISO8601::InternalDuration duration, Int128 nudgedEpochNs,
+        ISO8601::PlainDate isoDate, TemporalUnit largestUnit, TemporalUnit smallestUnit);
 private:
     TemporalDuration(VM&, Structure*, ISO8601::Duration&&);
     DECLARE_DEFAULT_FINISH_CREATION;

@@ -32,7 +32,6 @@ skip:
     - test/built-ins/Temporal/PlainDateTime/prototype/until
     - test/built-ins/Temporal/PlainDateTime/prototype/withCalendar
     - test/built-ins/Temporal/PlainMonthDay
-    - test/built-ins/Temporal/PlainYearMonth
     - test/built-ins/Temporal/ZonedDateTime
     - test/intl402/Temporal/Instant/prototype/toZonedDateTimeISO
     - test/intl402/Temporal/Now
@@ -152,6 +151,7 @@ skip:
     - test/built-ins/Temporal/Duration/prototype/total/relativeto-wrong-type.js
     - test/built-ins/Temporal/Duration/prototype/total/unit-plurals-accepted.js
     - test/built-ins/Temporal/PlainDateTime/datetime-math.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/round-cross-unit-boundary.js
     - test/intl402/Temporal/Duration/compare/relativeto-hour.js
     - test/intl402/Temporal/Duration/prototype/round/relativeto-infinity-throws-rangeerror.js
     - test/intl402/Temporal/Duration/prototype/round/relativeto-string-datetime.js
@@ -160,6 +160,7 @@ skip:
 
     # Depends on Calendar support
     - test/built-ins/Temporal/PlainDate/basic.js
+    - test/built-ins/Temporal/PlainDate/calendar-case-insensitive.js
     - test/built-ins/Temporal/PlainDate/calendar-number.js
     - test/built-ins/Temporal/PlainDate/calendar-wrong-type.js
     - test/built-ins/Temporal/PlainDate/compare/argument-propertybag-calendar-leap-second.js
@@ -250,8 +251,51 @@ skip:
     - test/built-ins/Temporal/PlainTime/prototype/equals/argument-string-time-designator-required-for-disambiguation.js
     - test/built-ins/Temporal/PlainTime/prototype/since/argument-string-time-designator-required-for-disambiguation.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-string-time-designator-required-for-disambiguation.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-always.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-invalid.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-number.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-string.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-undefined.js
+    - test/built-ins/Temporal/PlainYearMonth/calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-string-critical-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/limits.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/toString/calendarname-auto.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/toString/calendarname-critical.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/toString/calendarname-never.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/toString/calendarname-wrong-type.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/toString/order-of-operations.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-case-insensitive.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-iso-string.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-leap-second.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-number.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-propertybag-calendar-wrong-type.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/refisoday-undefined.js
 
-    # Depends on PlainMonthDay, PlainYearMonth
+    # Depends on PlainMonthDay
     - test/built-ins/Temporal/Duration/prototype/round/largestunit-plurals-accepted.js
     - test/built-ins/Temporal/Duration/prototype/round/smallestunit-plurals-accepted.js
     - test/built-ins/Temporal/Duration/prototype/toString/smallestunit-plurals-accepted.js
@@ -262,6 +306,11 @@ skip:
     - test/built-ins/Temporal/PlainTime/prototype/round/smallestunit-plurals-accepted.js
     - test/built-ins/Temporal/PlainTime/prototype/toString/smallestunit-plurals-accepted.js
     - test/built-ins/Temporal/PlainTime/prototype/with/plaintimelike-invalid.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/from/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/calendar-temporal-object.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/calendar-temporal-object.js
     - test/intl402/DateTimeFormat/prototype/format/temporal-objects-resolved-time-zone.js
     - test/intl402/DateTimeFormat/prototype/formatRange/temporal-objects-resolved-time-zone.js
     - test/intl402/DateTimeFormat/prototype/formatRangeToParts/temporal-objects-resolved-time-zone.js
@@ -331,6 +380,16 @@ skip:
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-string-calendar-annotation.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-string-time-zone-annotation.js
     - test/built-ins/Temporal/PlainTime/prototype/until/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/compare/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-string-unknown-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/from/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/equals/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/since/argument-string-date-with-utc-offset.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-calendar-annotation.js
+    - test/built-ins/Temporal/PlainYearMonth/prototype/until/argument-string-date-with-utc-offset.js
 
     # Depends on Temporal.ZonedDateTime
     - test/built-ins/Temporal/Duration/compare/relativeto-zoneddatetime-negative-epochnanoseconds.js

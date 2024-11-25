@@ -44,6 +44,9 @@
 #include "TemporalPlainTime.h"
 #include "TemporalPlainTimeConstructor.h"
 #include "TemporalPlainTimePrototype.h"
+#include "TemporalPlainYearMonth.h"
+#include "TemporalPlainYearMonthConstructor.h"
+#include "TemporalPlainYearMonthPrototype.h"
 #include "TemporalTimeZoneConstructor.h"
 #include "TemporalTimeZonePrototype.h"
 #include <wtf/Int128.h>
@@ -105,6 +108,13 @@ static JSValue createPlainTimeConstructor(VM& vm, JSObject* object)
     return TemporalPlainTimeConstructor::create(vm, TemporalPlainTimeConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalPlainTimePrototype*>(globalObject->plainTimeStructure()->storedPrototypeObject()));
 }
 
+static JSValue createPlainYearMonthConstructor(VM& vm, JSObject* object)
+{
+    TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
+    auto* globalObject = temporalObject->globalObject();
+    return TemporalPlainYearMonthConstructor::create(vm, TemporalPlainYearMonthConstructor::createStructure(vm, globalObject, globalObject->functionPrototype()), jsCast<TemporalPlainYearMonthPrototype*>(globalObject->plainYearMonthStructure()->storedPrototypeObject()));
+}
+
 static JSValue createTimeZoneConstructor(VM& vm, JSObject* object)
 {
     TemporalObject* temporalObject = jsCast<TemporalObject*>(object);
@@ -127,6 +137,7 @@ namespace JSC {
   PlainDate      createPlainDateConstructor      DontEnum|PropertyCallback
   PlainDateTime  createPlainDateTimeConstructor  DontEnum|PropertyCallback
   PlainTime      createPlainTimeConstructor      DontEnum|PropertyCallback
+  PlainYearMonth createPlainYearMonthConstructor DontEnum|PropertyCallback
   TimeZone       createTimeZoneConstructor       DontEnum|PropertyCallback
 @end
 */
@@ -302,6 +313,33 @@ std::optional<TemporalUnit> temporalSmallestUnit(JSGlobalObject* globalObject, J
     return unitType;
 }
 
+double doubleNumberOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, double defaultValue)
+{
+    // https://tc39.es/proposal-temporal/#sec-getoption
+    // 'number' case.
+    VM& vm = globalObject->vm();
+    auto scope = DECLARE_THROW_SCOPE(vm);
+
+    if (!options)
+        return defaultValue;
+
+    JSValue value = options->get(globalObject, property);
+    RETURN_IF_EXCEPTION(scope, 0);
+
+    if (value.isUndefined())
+        return defaultValue;
+
+    double doubleValue = value.toNumber(globalObject);
+    RETURN_IF_EXCEPTION(scope, 0);
+
+    if (std::isnan(doubleValue)) {
+        throwRangeError(globalObject, scope, makeString(property.publicName(), " is NaN"_s));
+        return 0;
+    }
+
+    return doubleValue;
+}
+
 // https://tc39.es/proposal-temporal/#sec-temporal-getdifferencesettings
 std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOptions(JSGlobalObject* globalObject, JSValue optionsValue, UnitGroup unitGroup, TemporalUnit defaultSmallestUnit, TemporalUnit defaultLargestUnit)
 {
@@ -317,25 +355,25 @@ std::tuple<TemporalUnit, TemporalUnit, RoundingMode, double> extractDifferenceOp
     JSObject* options = intlGetOptionsObject(globalObject, optionsValue);
     RETURN_IF_EXCEPTION(scope, { });
 
+    auto largest = temporalLargestUnit(globalObject, options, disallowedUnits[static_cast<uint8_t>(unitGroup)], defaultLargestUnit);
+    RETURN_IF_EXCEPTION(scope, { });
+    double increment = doubleNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1);
+    RETURN_IF_EXCEPTION(scope, { });
+    auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::Trunc);
+    RETURN_IF_EXCEPTION(scope, { });
     auto smallest = temporalSmallestUnit(globalObject, options, disallowedUnits[static_cast<uint8_t>(unitGroup)]);
     RETURN_IF_EXCEPTION(scope, { });
     TemporalUnit smallestUnit = smallest.value_or(defaultSmallestUnit);
     defaultLargestUnit = std::min(defaultLargestUnit, smallestUnit);
 
-    auto largest = temporalLargestUnit(globalObject, options, disallowedUnits[static_cast<uint8_t>(unitGroup)], defaultLargestUnit);
+    increment = temporalRoundingIncrement(globalObject, increment, maximumRoundingIncrement(smallestUnit), false);
     RETURN_IF_EXCEPTION(scope, { });
-    TemporalUnit largestUnit = largest.value_or(defaultLargestUnit);
 
+    TemporalUnit largestUnit = largest.value_or(defaultLargestUnit);
     if (smallestUnit < largestUnit) {
         throwRangeError(globalObject, scope, "smallestUnit must be smaller than largestUnit"_s);
         return { };
     }
-
-    auto roundingMode = temporalRoundingMode(globalObject, options, RoundingMode::Trunc);
-    RETURN_IF_EXCEPTION(scope, { });
-
-    auto increment = temporalRoundingIncrement(globalObject, options, maximumRoundingIncrement(smallestUnit), false);
-    RETURN_IF_EXCEPTION(scope, { });
 
     return { smallestUnit, largestUnit, roundingMode, increment };
 }
@@ -524,36 +562,9 @@ std::optional<double> maximumRoundingIncrement(TemporalUnit unit)
     return 1000;
 }
 
-static double doubleNumberOption(JSGlobalObject* globalObject, JSObject* options, PropertyName property, double defaultValue)
-{
-    // https://tc39.es/proposal-temporal/#sec-getoption
-    // 'number' case.
-    VM& vm = globalObject->vm();
-    auto scope = DECLARE_THROW_SCOPE(vm);
-
-    if (!options)
-        return defaultValue;
-
-    JSValue value = options->get(globalObject, property);
-    RETURN_IF_EXCEPTION(scope, 0);
-
-    if (value.isUndefined())
-        return defaultValue;
-
-    double doubleValue = value.toNumber(globalObject);
-    RETURN_IF_EXCEPTION(scope, 0);
-
-    if (std::isnan(doubleValue)) {
-        throwRangeError(globalObject, scope, makeString(property.publicName(), " is NaN"_s));
-        return 0;
-    }
-
-    return doubleValue;
-}
-
 // ToTemporalRoundingIncrement ( normalizedOptions, dividend, inclusive )
 // https://tc39.es/proposal-temporal/#sec-temporal-totemporalroundingincrement
-double temporalRoundingIncrement(JSGlobalObject* globalObject, JSObject* options, std::optional<double> dividend, bool inclusive)
+double temporalRoundingIncrement(JSGlobalObject* globalObject, double increment, std::optional<double> dividend, bool inclusive)
 {
     VM& vm = globalObject->vm();
     auto scope = DECLARE_THROW_SCOPE(vm);
@@ -568,8 +579,6 @@ double temporalRoundingIncrement(JSGlobalObject* globalObject, JSObject* options
     else
         maximum = 1;
 
-    double increment = doubleNumberOption(globalObject, options, vm.propertyNames->roundingIncrement, 1);
-    RETURN_IF_EXCEPTION(scope, 0);
 
     increment = std::trunc(increment);
     if (increment < 1 || increment > maximum) {
@@ -705,6 +714,13 @@ TemporalOverflow toTemporalOverflow(JSGlobalObject* globalObject, JSObject* opti
     return intlOption<TemporalOverflow>(globalObject, options, globalObject->vm().propertyNames->overflow,
         { { "constrain"_s, TemporalOverflow::Constrain }, { "reject"_s, TemporalOverflow::Reject } },
         "overflow must be either \"constrain\" or \"reject\""_s, TemporalOverflow::Constrain);
+}
+
+String toTemporalCalendarName(JSGlobalObject* globalObject, JSObject* options)
+{
+    return intlOption<String>(globalObject, options, globalObject->vm().propertyNames->calendarName,
+        { { ""_s, ""_s }, { "always"_s, "always"_s } },
+        "calendarName must be empty or \"always\""_s, ""_s);
 }
 
 // https://tc39.es/proposal-temporal/#sec-temporal-rejectobjectwithcalendarortimezone

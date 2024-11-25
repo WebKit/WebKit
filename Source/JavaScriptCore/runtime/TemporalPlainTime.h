@@ -54,7 +54,7 @@ public:
     static ISO8601::PlainTime regulateTime(JSGlobalObject*, ISO8601::Duration&&, TemporalOverflow);
     static ISO8601::Duration addTime(const ISO8601::PlainTime&, const ISO8601::Duration&);
 
-    static TemporalPlainTime* from(JSGlobalObject*, JSValue, std::optional<TemporalOverflow>);
+    static TemporalPlainTime* from(JSGlobalObject*, JSValue, std::optional<JSObject*>);
     static int32_t compare(const ISO8601::PlainTime&, const ISO8601::PlainTime&);
 
     TemporalCalendar* calendar() { return m_calendar.get(this); }

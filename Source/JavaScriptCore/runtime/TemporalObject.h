@@ -32,6 +32,9 @@ namespace JSC {
     macro(month, Month) \
     macro(day, Day) \
 
+#define JSC_TEMPORAL_PLAIN_YEAR_MONTH_UNITS(macro) \
+    macro(year, Year) \
+    macro(month, Month)
 
 #define JSC_TEMPORAL_PLAIN_TIME_UNITS(macro) \
     macro(hour, Hour) \
@@ -59,6 +62,7 @@ enum class TemporalUnit : uint8_t {
 static constexpr unsigned numberOfTemporalUnits = 0 JSC_TEMPORAL_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 static constexpr unsigned numberOfTemporalPlainDateUnits = 0 JSC_TEMPORAL_PLAIN_DATE_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 static constexpr unsigned numberOfTemporalPlainTimeUnits = 0 JSC_TEMPORAL_PLAIN_TIME_UNITS(JSC_COUNT_TEMPORAL_UNITS);
+static constexpr unsigned numberOfTemporalPlainYearMonthUnits = 0 JSC_TEMPORAL_PLAIN_YEAR_MONTH_UNITS(JSC_COUNT_TEMPORAL_UNITS);
 #undef JSC_COUNT_TEMPORAL_UNITS
 
 extern const TemporalUnit temporalUnitsInTableOrder[numberOfTemporalUnits];
@@ -138,7 +142,8 @@ RoundingMode negateTemporalRoundingMode(RoundingMode);
 void formatSecondsStringFraction(StringBuilder&, unsigned fraction, std::tuple<Precision, unsigned>);
 void formatSecondsStringPart(StringBuilder&, unsigned second, unsigned fraction, PrecisionData);
 std::optional<double> maximumRoundingIncrement(TemporalUnit);
-double temporalRoundingIncrement(JSGlobalObject*, JSObject* options, std::optional<double> dividend, bool inclusive);
+double doubleNumberOption(JSGlobalObject*, JSObject*, PropertyName, double);
+double temporalRoundingIncrement(JSGlobalObject*, double, std::optional<double> dividend, bool inclusive);
 double roundNumberToIncrementDouble(double, double increment, RoundingMode);
 Int128 roundNumberToIncrementInt128(Int128, Int128 increment, RoundingMode);
 Int128 roundNumberToIncrementAsIfPositive(Int128, Int128, RoundingMode);
@@ -198,6 +203,7 @@ enum class TemporalOverflow : bool {
 };
 
 TemporalOverflow toTemporalOverflow(JSGlobalObject*, JSObject*);
+String toTemporalCalendarName(JSGlobalObject*, JSObject*);
 
 enum class TemporalDisambiguation : uint8_t {
     Compatible,
