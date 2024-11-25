@@ -72,8 +72,10 @@ class NativeExecutable;
     macro(PolymorphicTopTierThunk, polymorphicTopTierThunk) \
     macro(PolymorphicTopTierThunkForClosure, polymorphicTopTierThunkForClosure) \
     macro(ReturnFromBaseline, returnFromBaselineGenerator) \
-    macro(GetByIdLoadOwnPropertyHandler, getByIdLoadOwnPropertyHandler) \
-    macro(GetByIdLoadPrototypePropertyHandler, getByIdLoadPrototypePropertyHandler) \
+    macro(GetByIdLoadOwnInLinePropertyHandler, getByIdLoadOwnInLinePropertyHandler) \
+    macro(GetByIdLoadOwnOutOfLinePropertyHandler, getByIdLoadOwnOutOfLinePropertyHandler) \
+    macro(GetByIdLoadPrototypeInLinePropertyHandler, getByIdLoadPrototypeInLinePropertyHandler) \
+    macro(GetByIdLoadPrototypeOutOfLinePropertyHandler, getByIdLoadPrototypeOutOfLinePropertyHandler) \
     macro(GetByIdMissHandler, getByIdMissHandler) \
     macro(GetByIdCustomAccessorHandler, getByIdCustomAccessorHandler) \
     macro(GetByIdCustomValueHandler, getByIdCustomValueHandler) \
