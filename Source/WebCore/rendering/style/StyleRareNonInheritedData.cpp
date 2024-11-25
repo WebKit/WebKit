@@ -22,6 +22,7 @@
 #include "StyleRareNonInheritedData.h"
 
 #include "RenderCounter.h"
+#include "RenderStyleDifference.h"
 #include "RenderStyleInlines.h"
 #include "ShadowData.h"
 #include "StyleImage.h"

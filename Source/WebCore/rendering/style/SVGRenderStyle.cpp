@@ -32,6 +32,7 @@
 #include "CSSValueList.h"
 #include "IntRect.h"
 #include "NodeRenderStyle.h"
+#include "RenderStyleDifference.h"
 #include "SVGElement.h"
 #include <wtf/NeverDestroyed.h>
 #include <wtf/text/TextStream.h>
