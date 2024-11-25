@@ -446,13 +446,15 @@ class SingleTestRunner(object):
         if test_output.image is None:
             # The driver is misbehaving, kill it so the error doesn't propagate to subsequent tests
             self._driver.stop()
-            return TestResult(
+            test_result = TestResult(
                 self._test_input,
                 self._handle_error(test_output) + [test_failures.FailureReftestNoImagesGenerated(self._test_name)],
                 test_output.test_time,
                 test_output.has_stderr(),
                 pid=test_output.pid,
             )
+            test_result_writer.write_test_result(self._filesystem, self._port, self._results_directory, self._test_name, test_output, None, test_result.failures)
+            return test_result
 
         total_test_time = 0
         reference_output = None
