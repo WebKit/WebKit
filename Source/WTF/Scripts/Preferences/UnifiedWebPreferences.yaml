@@ -2627,6 +2627,8 @@ DigitalCredentialsEnabled:
       default: false
     WebCore:
       default: false
+  sharedPreferenceForWebProcess: true
+  richJavaScript: true
 
 DirectoryUploadEnabled:
   type: bool
