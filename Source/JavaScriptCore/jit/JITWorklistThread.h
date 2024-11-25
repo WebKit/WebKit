@@ -56,7 +56,7 @@ public:
     const Safepoint* safepoint() const { return m_safepoint; }
 
 private:
-    PollResult poll(const AbstractLocker&) final;
+    PollResult poll(const AbstractLocker&, unsigned spinCount) final;
     WorkResult work() final;
 
     void threadDidStart() final;

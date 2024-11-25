@@ -275,6 +275,7 @@ bool hasCapacityToUseLargeGigacage();
     v(Int32, priorityDeltaOfDFGCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
     v(Int32, priorityDeltaOfFTLCompilerThreads, computePriorityDeltaOfWorkerThreads(-2, 0), Normal, nullptr) \
     v(Int32, priorityDeltaOfWasmCompilerThreads, computePriorityDeltaOfWorkerThreads(-1, 0), Normal, nullptr) \
+    v(Unsigned, spinCountForWorklistThreads, 40, Normal, nullptr) \
     \
     v(Bool, useProfiler, false, Normal, nullptr) \
     v(Bool, dumpProfilerDataAtExit, false, Normal, nullptr) \
