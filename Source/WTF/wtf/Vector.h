@@ -60,7 +60,7 @@ struct VectorDestructor;
 template<typename T>
 struct VectorDestructor<false, T>
 {
-    static void destruct(T*, T*) {}
+    static void destruct(T*, T*) { }
 };
 
 template<typename T>
@@ -255,6 +255,11 @@ struct VectorTypeOperations
         VectorDestructor<!std::is_trivially_destructible<T>::value, T>::destruct(begin, end);
     }
 
+    static void destruct(std::span<T> span)
+    {
+        VectorDestructor<!std::is_trivially_destructible<T>::value, T>::destruct(std::to_address(span.begin()), std::to_address(span.end()));
+    }
+
     static void initializeIfNonPOD(T* begin, T* end)
     {
         VectorInitializer<VectorTraits<T>::needsInitialization, VectorTraits<T>::canInitializeWithMemset, T>::initializeIfNonPOD(begin, end);
@@ -276,14 +281,29 @@ struct VectorTypeOperations
         VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::move(src, srcEnd, dst);
     }
 
+    static void move(std::span<T> src, std::span<T> dst)
+    {
+        VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::move(std::to_address(src.begin()), std::to_address(src.end()), std::to_address(dst.begin()));
+    }
+
     static void moveOverlapping(T* src, T* srcEnd, T* dst)
     {
         VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::moveOverlapping(src, srcEnd, dst);
     }
 
+    static void moveOverlapping(std::span<T> src, std::span<T> dst)
+    {
+        VectorMover<VectorTraits<T>::canMoveWithMemcpy, T>::moveOverlapping(std::to_address(src.begin()), std::to_address(src.end()), std::to_address(dst.begin()));
+    }
+
     static void uninitializedCopy(const T* src, const T* srcEnd, T* dst)
     {
         VectorCopier<VectorTraits<T>::canCopyWithMemcpy, T>::uninitializedCopy(src, srcEnd, dst);
+    }
+
+    static void uninitializedCopy(std::span<const T> src, std::span<T> dst)
+    {
+        VectorCopier<VectorTraits<T>::canCopyWithMemcpy, T>::uninitializedCopy(std::to_address(src.begin()), std::to_address(src.end()), std::to_address(dst.begin()));
     }
 
     static void uninitializedFill(T* dst, T* dstEnd, const T& val)
@@ -368,6 +388,9 @@ public:
     static constexpr ptrdiff_t bufferMemoryOffset() { return OBJECT_OFFSETOF(VectorBufferBase, m_buffer); }
     size_t capacity() const { return m_capacity; }
 
+    std::span<T> capacitySpan() { return unsafeMakeSpan(m_buffer, m_capacity); }
+    std::span<const T> capacitySpan() const { return unsafeMakeSpan(m_buffer, m_capacity); }
+
     MallocSpan<T, Malloc> releaseBuffer()
     {
         m_capacity = 0;
@@ -450,6 +473,7 @@ public:
     using Base::bufferMemoryOffset;
 
     using Base::releaseBuffer;
+    using Base::capacitySpan;
 
 protected:
     using Base::m_size;
@@ -577,6 +601,7 @@ public:
 #endif
 
     using Base::buffer;
+    using Base::capacitySpan;
     using Base::capacity;
     using Base::bufferMemoryOffset;
 
