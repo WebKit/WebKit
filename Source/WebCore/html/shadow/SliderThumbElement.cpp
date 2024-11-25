@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2006-2024 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -87,7 +87,7 @@ inline static bool hasVerticalAppearance(HTMLInputElement& input)
 // FIXME: Find a way to cascade appearance and adjust heights, and get rid of this class.
 // http://webkit.org/b/62535
 class RenderSliderContainer final : public RenderFlexibleBox {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_INLINE(RenderSliderContainer);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(RenderSliderContainer);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(RenderSliderContainer);
 public:
     RenderSliderContainer(SliderContainerElement& element, RenderStyle&& style)
@@ -102,6 +102,8 @@ private:
     void layout() override;
     bool isFlexibleBoxImpl() const override { return true; }
 };
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderSliderContainer);
 
 RenderBox::LogicalExtentComputedValues RenderSliderContainer::computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop) const
 {

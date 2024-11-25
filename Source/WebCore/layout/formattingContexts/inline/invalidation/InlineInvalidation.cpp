@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2021 Apple Inc. All rights reserved.
+ * Copyright (C) 2021-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,9 +33,12 @@
 #include "TextBreakingPositionContext.h"
 #include "WritingMode.h"
 #include <wtf/Range.h>
+#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
+
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InlineDamage);
 
 InlineInvalidation::InlineInvalidation(InlineDamage& inlineDamage, const InlineItemList& inlineItemList, const InlineDisplay::Content& displayContent)
     : m_inlineDamage(inlineDamage)

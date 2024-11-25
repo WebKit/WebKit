@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -62,6 +62,7 @@
 namespace WebCore {
 namespace Layout {
 
+WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InlineContentCache);
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(InlineFormattingContext);
 
 static std::optional<InlineItemRange> partialRangeForDamage(const InlineItemList& inlineItemList, const InlineDamage& lineDamage)

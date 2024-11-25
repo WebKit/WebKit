@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 Apple Inc. All rights reserved.
+ * Copyright (C) 2018-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,15 +30,13 @@
 #include "InlineItem.h"
 #include "LineLayoutResult.h"
 #include <wtf/HashMap.h>
-#include <wtf/TZoneMalloc.h>
-#include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
 namespace Layout {
 
 // InlineContentCache is used to cache content for subsequent layouts.
 class InlineContentCache {
-    WTF_MAKE_TZONE_OR_ISO_ALLOCATED_INLINE(InlineContentCache);
+    WTF_MAKE_TZONE_OR_ISO_ALLOCATED(InlineContentCache);
 public:
     struct InlineItems {
         InlineItemList& content() { return m_inlineItemList; }
