@@ -62,6 +62,7 @@ class StyleRuleLayer;
 class StyleRuleMedia;
 class StyleRuleNamespace;
 class StyleRulePage;
+class StyleRulePositionTry;
 class StyleRuleSupports;
 class StyleRuleViewport;
 class StyleRuleViewTransition;
@@ -166,6 +167,7 @@ private:
     RefPtr<StyleRuleScope> consumeScopeRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleStartingStyle> consumeStartingStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleViewTransition> consumeViewTransitionRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
+    RefPtr<StyleRulePositionTry> consumePositionTryRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
 
     RefPtr<StyleRuleKeyframe> consumeKeyframeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);
     RefPtr<StyleRuleBase> consumeStyleRule(CSSParserTokenRange prelude, CSSParserTokenRange block);

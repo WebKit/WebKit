@@ -85,7 +85,10 @@ public:
     static UChar listValuedPropertySeparator(CSSPropertyID);
     static bool isListValuedProperty(CSSPropertyID propertyID) { return !!listValuedPropertySeparator(propertyID); }
     static bool allowsNumberOrIntegerInput(CSSPropertyID);
+
     static bool isInsetProperty(CSSPropertyID);
+    static bool isMarginProperty(CSSPropertyID);
+    static bool isSizingProperty(CSSPropertyID);
 
     const StylePropertyMetadata& metadata() const { return m_metadata; }
     static bool isColorProperty(CSSPropertyID propertyId)

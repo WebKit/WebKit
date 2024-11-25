@@ -37,6 +37,7 @@
 #include "CSSNamespaceRule.h"
 #include "CSSNestedDeclarations.h"
 #include "CSSPageRule.h"
+#include "CSSPositionTryRule.h"
 #include "CSSPropertyRule.h"
 #include "CSSScopeRule.h"
 #include "CSSStartingStyleRule.h"
@@ -130,6 +131,8 @@ template<typename Visitor> constexpr decltype(auto) StyleRuleBase::visitDerived(
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleStartingStyle>(*this));
     case StyleRuleType::ViewTransition:
         return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRuleViewTransition>(*this));
+    case StyleRuleType::PositionTry:
+        return std::invoke(std::forward<Visitor>(visitor), uncheckedDowncast<StyleRulePositionTry>(*this));
     case StyleRuleType::Margin:
         break;
     case StyleRuleType::Unknown:
@@ -228,6 +231,9 @@ Ref<CSSRule> StyleRuleBase::createCSSOMWrapper(CSSStyleSheet* parentSheet, CSSRu
         },
         [&](StyleRuleViewTransition& rule) -> Ref<CSSRule> {
             return CSSViewTransitionRule::create(rule, parentSheet);
+        },
+        [&](StyleRulePositionTry& rule) -> Ref<CSSRule> {
+            return CSSPositionTryRule::create(rule, parentSheet);
         },
         [](StyleRuleCharset&) -> Ref<CSSRule> {
             RELEASE_ASSERT_NOT_REACHED();

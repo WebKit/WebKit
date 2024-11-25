@@ -49,49 +49,6 @@ namespace WebCore::Style {
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(AnchorPositionedState);
 
-static bool isSizingProperty(CSSPropertyID propertyID)
-{
-    switch (propertyID) {
-    case CSSPropertyWidth:
-    case CSSPropertyMinWidth:
-    case CSSPropertyMaxWidth:
-
-    case CSSPropertyHeight:
-    case CSSPropertyMinHeight:
-    case CSSPropertyMaxHeight:
-
-    case CSSPropertyBlockSize:
-    case CSSPropertyMinBlockSize:
-    case CSSPropertyMaxBlockSize:
-
-    case CSSPropertyInlineSize:
-    case CSSPropertyMinInlineSize:
-    case CSSPropertyMaxInlineSize:
-        return true;
-    default:
-        return false;
-    }
-}
-
-static bool isMarginProperty(CSSPropertyID propertyID)
-{
-    switch (propertyID) {
-    case CSSPropertyMarginLeft:
-    case CSSPropertyMarginRight:
-    case CSSPropertyMarginTop:
-    case CSSPropertyMarginBottom:
-
-    case CSSPropertyMarginBlockStart:
-    case CSSPropertyMarginBlockEnd:
-    case CSSPropertyMarginInlineStart:
-    case CSSPropertyMarginInlineEnd:
-        return true;
-
-    default:
-        return false;
-    }
-}
-
 static BoxAxis mapInsetPropertyToPhysicalAxis(CSSPropertyID id, const WritingMode writingMode)
 {
     switch (id) {
@@ -613,7 +570,7 @@ std::optional<double> AnchorPositionEvaluator::evaluateSize(const BuilderState& 
 
     auto isValidAnchorSize = [&] {
         // It’s being used in a sizing property, an inset property, or a margin property...
-        if (!isSizingProperty(propertyID) && !CSSProperty::isInsetProperty(propertyID) && !isMarginProperty(propertyID))
+        if (!CSSProperty::isSizingProperty(propertyID) && !CSSProperty::isInsetProperty(propertyID) && !CSSProperty::isMarginProperty(propertyID))
             return false;
 
         // ...on an absolutely-positioned element.

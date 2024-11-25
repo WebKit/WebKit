@@ -3,6 +3,6 @@ anchored
 
 PASS position-try-fallbacks initially not matching any rules
 FAIL Enable @position-try rule stylesheet assert_equals: expected 100 but got 999999
-FAIL Insert overriding @position-try rule The index is not in the allowed range.
+FAIL Insert overriding @position-try rule assert_equals: expected 200 but got 999999
 PASS Disable the @position-try rules
 

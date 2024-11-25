@@ -92,6 +92,9 @@ private:
     // @view-transition descriptors.
     bool parseViewTransitionDescriptor(CSSPropertyID);
 
+    // @position-try descriptors.
+    bool parsePositionTryDescriptor(CSSPropertyID, bool important);
+
     void addProperty(CSSPropertyID longhand, CSSPropertyID shorthand, RefPtr<CSSValue>&&, bool important, bool implicit = false);
     void addExpandedProperty(CSSPropertyID shorthand, RefPtr<CSSValue>&&, bool important, bool implicit = false);
 
