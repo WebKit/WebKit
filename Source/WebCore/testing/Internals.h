@@ -586,6 +586,7 @@ public:
     unsigned numberOfLiveNodes() const;
     unsigned numberOfLiveDocuments() const;
     unsigned referencingNodeCount(const Document&) const;
+    ExceptionOr<void> forceDeleteRemovedChildNodes() const;
 
 #if ENABLE(WEB_AUDIO)
     // BaseAudioContext lifetime testing.

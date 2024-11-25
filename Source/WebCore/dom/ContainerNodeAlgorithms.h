@@ -67,7 +67,7 @@ enum class RemovedSubtreeObservability : bool {
     NotObservable,
     MaybeObservableByRefPtr,
 };
-RemovedSubtreeObservability notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTree, Node&);
+RemovedSubtreeObservability notifyChildNodeRemoved(ContainerNode& oldParentOfRemovedTree, Node&, const IsCalledFromRemoveChildren = IsCalledFromRemoveChildren::No);
 void removeDetachedChildrenInContainer(ContainerNode&);
 
 enum class SubframeDisconnectPolicy : bool {

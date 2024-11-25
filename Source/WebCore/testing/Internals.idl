@@ -810,6 +810,7 @@ enum RenderingMode {
     unsigned long scrollableAreaWidth(Node node);
 
     unsigned long numberOfLiveNodes();
+    undefined forceDeleteRemovedChildNodes();
     unsigned long numberOfLiveDocuments();
     unsigned long referencingNodeCount(Document document);
     unsigned long numberOfIntersectionObservers(Document document);

@@ -86,7 +86,7 @@ unsigned ScriptDisallowedScope::s_count = 0;
 ScriptDisallowedScope::EventAllowedScope* ScriptDisallowedScope::EventAllowedScope::s_currentScope = nullptr;
 #endif
 
-ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChange::Source source, NodeVector& children, DeferChildrenChanged deferChildrenChanged) -> DidRemoveElements
+ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChange::Source source, NodeVector& children, DeferChildrenChanged deferChildrenChanged, const IsCalledFromRemoveChildren isCalledFromRemoveChildren) -> DidRemoveElements
 {
     ASSERT(children.isEmpty());
     collectChildNodes(*this, children);
@@ -142,7 +142,7 @@ ALWAYS_INLINE auto ContainerNode::removeAllChildrenWithScriptAssertion(ChildChan
                 hadElementChild = true;
 
             removeBetween(nullptr, child->protectedNextSibling().get(), *child);
-            auto subtreeObservability = notifyChildNodeRemoved(*this, *child);
+            auto subtreeObservability = notifyChildNodeRemoved(*this, *child, isCalledFromRemoveChildren);
             if (source == ChildChange::Source::API && subtreeObservability == RemovedSubtreeObservability::MaybeObservableByRefPtr)
                 willCreatePossiblyOrphanedTreeByRemoval(*child);
         }
@@ -827,10 +827,18 @@ void ContainerNode::removeChildren()
 
     Ref protectedThis { *this };
     NodeVector removedChildren;
-    removeAllChildrenWithScriptAssertion(ChildChange::Source::API, removedChildren);
-
+    removeAllChildrenWithScriptAssertion(ChildChange::Source::API, removedChildren, DeferChildrenChanged::No, IsCalledFromRemoveChildren::Yes);
+    delayDeletingRemovedChildren(removedChildren);
     rebuildSVGExtensionsElementsIfNecessary();
     dispatchSubtreeModifiedEvent();
+}
+
+void ContainerNode::delayDeletingRemovedChildren(NodeVector& removedChildren)
+{
+    // do not unintentionally keep a document alive.
+    if (this == &rootNode())
+        return;
+    this->document().childrenToBeDeleted().add(WTFMove(removedChildren));
 }
 
 ExceptionOr<void> ContainerNode::appendChild(Node& newChild)
