@@ -1,0 +1,18 @@
+<style>
+div {
+ font-family: Ahem;
+  height: 200px;
+}
+span {
+  text-decoration: underline;
+  text-underline-offset: 100px;
+}
+</style>
+<div><span id=foobar>PASS if there's only one underline visible.</span></div>
+<script src="resources/text-based-repaint.js" type="text/javascript"></script>
+<script>
+  repaintTest = function() {
+    foobar.style.textUnderlineOffset = "30px";
+  };
+runRepaintTest();
+</script>

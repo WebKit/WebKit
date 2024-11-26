@@ -1,0 +1,5 @@
+PASS if there's only one underline visible.
+(repaint rects
+  (rect 8 8 784 117)
+)
+

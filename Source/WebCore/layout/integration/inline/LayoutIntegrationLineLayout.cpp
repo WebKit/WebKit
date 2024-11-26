@@ -768,7 +768,7 @@ std::optional<LayoutUnit> LineLayout::clampedContentLogicalHeight() const
     return LayoutUnit { contentHeight + additionalHeight };
 }
 
-LayoutUnit LineLayout::contentBoxLogicalHeight() const
+LayoutUnit LineLayout::contentLogicalHeight() const
 {
     if (!m_inlineContent)
         return { };
