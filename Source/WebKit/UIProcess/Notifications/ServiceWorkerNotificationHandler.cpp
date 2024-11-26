@@ -27,6 +27,7 @@
 #include "ServiceWorkerNotificationHandler.h"
 
 #include "Logging.h"
+#include "WebProcessProxy.h"
 #include "WebsiteDataStore.h"
 #include <WebCore/NotificationData.h>
 #include <wtf/Scope.h>
@@ -69,14 +70,6 @@ void ServiceWorkerNotificationHandler::cancelNotification(WebCore::SecurityOrigi
         dataStore->cancelServiceWorkerNotification(notificationID);
 }
 
-void ServiceWorkerNotificationHandler::clearNotifications(const Vector<WTF::UUID>& notificationIDs)
-{
-    for (auto& notificationID : notificationIDs) {
-        if (auto* dataStore = dataStoreForNotificationID(notificationID))
-            dataStore->clearServiceWorkerNotification(notificationID);
-    }
-}
-
 void ServiceWorkerNotificationHandler::didDestroyNotification(const WTF::UUID& notificationID)
 {
     if (auto* dataStore = dataStoreForNotificationID(notificationID))
@@ -96,6 +89,15 @@ void ServiceWorkerNotificationHandler::getPermissionState(WebCore::SecurityOrigi
 void ServiceWorkerNotificationHandler::getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&)
 {
     RELEASE_ASSERT_NOT_REACHED();
+}
+
+std::optional<SharedPreferencesForWebProcess> ServiceWorkerNotificationHandler::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
+{
+    if (auto webProcessProxy = WebProcessProxy::processForConnection(connection))
+        return webProcessProxy->sharedPreferencesForWebProcess();
+
+    ASSERT_NOT_REACHED();
+    return std::nullopt;
 }
 
 } // namespace WebKit

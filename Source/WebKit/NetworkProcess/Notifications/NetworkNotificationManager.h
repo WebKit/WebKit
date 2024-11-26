@@ -28,6 +28,7 @@
 #if ENABLE(WEB_PUSH_NOTIFICATIONS)
 
 #include "NotificationManagerMessageHandler.h"
+#include "SharedPreferencesForWebProcess.h"
 #include "WebPushDaemonConnection.h"
 #include "WebPushDaemonConnectionConfiguration.h"
 #include "WebPushMessage.h"
@@ -71,7 +72,6 @@ public:
 
     void showNotification(const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&);
     void getNotifications(const URL& registrationURL, const String& tag, CompletionHandler<void(Expected<Vector<WebCore::NotificationData>, WebCore::ExceptionData>&&)>&&);
-    void clearNotifications(const Vector<WTF::UUID>& notificationIDs) final;
 
     void getAppBadgeForTesting(CompletionHandler<void(std::optional<uint64_t>)>&&);
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t> badge) final;
@@ -82,7 +82,7 @@ private:
     void didDestroyNotification(const WTF::UUID& notificationID) final;
     void pageWasNotifiedOfNotificationPermission() final { }
     void getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
-
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const final;
     RefPtr<WebPushD::Connection> protectedConnection() const;
 
     RefPtr<WebPushD::Connection> m_connection;

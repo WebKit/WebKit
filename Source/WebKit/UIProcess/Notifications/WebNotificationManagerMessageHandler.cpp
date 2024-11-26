@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "ServiceWorkerNotificationHandler.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 #include <WebCore/NotificationData.h>
 #include <wtf/CompletionHandler.h>
 
@@ -66,26 +67,6 @@ void WebNotificationManagerMessageHandler::cancelNotification(WebCore::SecurityO
     protectedPage()->cancelNotification(notificationID);
 }
 
-void WebNotificationManagerMessageHandler::clearNotifications(const Vector<WTF::UUID>& notificationIDs)
-{
-    auto& serviceWorkerNotificationHandler = ServiceWorkerNotificationHandler::singleton();
-
-    Vector<WTF::UUID> persistentNotifications;
-    Vector<WTF::UUID> pageNotifications;
-    persistentNotifications.reserveInitialCapacity(notificationIDs.size());
-    pageNotifications.reserveInitialCapacity(notificationIDs.size());
-    for (auto& notificationID : notificationIDs) {
-        if (serviceWorkerNotificationHandler.handlesNotification(notificationID))
-            persistentNotifications.append(notificationID);
-        else
-            pageNotifications.append(notificationID);
-    }
-    if (!persistentNotifications.isEmpty())
-        serviceWorkerNotificationHandler.clearNotifications(persistentNotifications);
-    if (!pageNotifications.isEmpty())
-        protectedPage()->clearNotifications(pageNotifications);
-}
-
 void WebNotificationManagerMessageHandler::didDestroyNotification(const WTF::UUID& notificationID)
 {
     auto& serviceWorkerNotificationHandler = ServiceWorkerNotificationHandler::singleton();
@@ -117,6 +98,11 @@ void WebNotificationManagerMessageHandler::getPermissionStateSync(WebCore::Secur
 {
     ASSERT_NOT_REACHED();
     completionHandler({ });
+}
+
+std::optional<SharedPreferencesForWebProcess> WebNotificationManagerMessageHandler::sharedPreferencesForWebProcess(const IPC::Connection&) const
+{
+    return protectedPage()->protectedLegacyMainFrameProcess()->sharedPreferencesForWebProcess();
 }
 
 } // namespace WebKit
