@@ -93,6 +93,9 @@ class PeerConnectionBackend
     : public CanMakeWeakPtr<PeerConnectionBackend>
 #if !RELEASE_LOG_DISABLED
     , private LoggerHelper
+#if PLATFORM(WPE) || PLATFORM(GTK)
+    , public Logger::MessageHandlerObserver
+#endif
 #endif
 {
 public:
@@ -172,6 +175,9 @@ public:
     const void* logIdentifier() const final { return m_logIdentifier; }
     ASCIILiteral logClassName() const override { return "PeerConnectionBackend"_s; }
     WTFLogChannel& logChannel() const final;
+#if PLATFORM(WPE) || PLATFORM(GTK)
+    void handleLogMessage(const WTFLogChannel&, WTFLogLevel, Vector<JSONLogValue>&&) final;
+#endif
 #endif
 
     virtual bool isLocalDescriptionSet() const = 0;
@@ -241,6 +247,20 @@ protected:
 
     void validateSDP(const String&) const;
 
+#if PLATFORM(WPE) || PLATFORM(GTK)
+    bool isJSONLogStreamingEnabled() const { return !m_jsonFilePath.isEmpty(); }
+#endif
+
+    struct MessageLogEvent {
+        String message;
+        std::optional<std::span<const uint8_t>> payload;
+    };
+    using StatsLogEvent = String;
+
+    using LogEvent = std::variant<MessageLogEvent, StatsLogEvent>;
+    String generateJSONLogEvent(LogEvent&&, bool isForGatherLogs);
+    void emitJSONLogEvent(String&&);
+
 private:
     virtual void doCreateOffer(RTCOfferOptions&&) = 0;
     virtual void doCreateAnswer(RTCAnswerOptions&&) = 0;
@@ -261,9 +281,14 @@ private:
 #if !RELEASE_LOG_DISABLED
     Ref<const Logger> m_logger;
     const void* m_logIdentifier;
+    String m_logIdentifierString;
 #endif
     bool m_finishedGatheringCandidates { false };
     bool m_isProcessingLocalDescriptionAnswer { false };
+
+#if PLATFORM(WPE) || PLATFORM(GTK)
+    String m_jsonFilePath;
+#endif
 };
 
 inline PeerConnectionBackend::DescriptionStates PeerConnectionBackend::DescriptionStates::isolatedCopy() &&
