@@ -256,6 +256,17 @@ if (USE_JPEGXL)
     endif ()
 endif ()
 
+include(WOFF2Checks)
+if (FREETYPE_WOFF2_SUPPORT_IS_AVAILABLE)
+    SET_AND_EXPOSE_TO_BUILD(HAVE_WOFF_SUPPORT ON)
+
+    # Turn off use of libwoff2
+    if (USE_WOFF2)
+        message(STATUS "Using FreeType's WOFF2 support")
+        set(USE_WOFF2 OFF)
+    endif ()
+endif ()
+
 if (USE_WOFF2)
     find_package(WOFF2 1.0.2 COMPONENTS dec)
     if (NOT WOFF2_FOUND)
