@@ -30,6 +30,8 @@
 #include <JavaScriptCore/JSBase.h>
 #include <JavaScriptCore/PrivateName.h>
 #include <WebCore/FrameIdentifier.h>
+#include <WebCore/InspectorInstrumentationPublic.h>
+#include <WebCore/InspectorInstrumentationWebKit.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/PageIdentifier.h>
 #include <wtf/TZoneMalloc.h>
@@ -52,7 +54,7 @@ class WebAutomationSessionProxy : public IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(WebAutomationSessionProxy);
 public:
     WebAutomationSessionProxy(const String& sessionIdentifier);
-    ~WebAutomationSessionProxy();
+    ~WebAutomationSessionProxy() override;
 
     String sessionIdentifier() const { return m_sessionIdentifier; }
 
@@ -92,11 +94,19 @@ private:
     void getCookiesForFrame(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, CompletionHandler<void(std::optional<String>, Vector<WebCore::Cookie>)>&&);
     void deleteCookie(WebCore::PageIdentifier, std::optional<WebCore::FrameIdentifier>, String cookieName, CompletionHandler<void(std::optional<String>)>&&);
 
+#if ENABLE(WEBDRIVER_BIDI)
+    void addMessageToConsole(const Inspector::ConsoleMessage&);
+#endif
+
     String m_sessionIdentifier;
     JSC::PrivateName m_scriptObjectIdentifier;
 
     HashMap<WebCore::FrameIdentifier, HashMap<JSCallbackIdentifier, CompletionHandler<void(String&&, String&&)>>> m_webFramePendingEvaluateJavaScriptCallbacksMap;
     HashMap<WebCore::FrameIdentifier, RefPtr<WebAutomationDOMWindowObserver>> m_frameObservers;
+
+#if ENABLE(WEBDRIVER_BIDI)
+    WebCore::InspectorInstrumentationConsoleMessageObserver m_consoleMessageObserver;
+#endif
 };
 
 } // namespace WebKit

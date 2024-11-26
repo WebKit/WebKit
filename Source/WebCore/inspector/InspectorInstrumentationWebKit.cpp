@@ -50,4 +50,16 @@ void InspectorInstrumentationWebKit::interceptResponseInternal(const LocalFrame&
     InspectorInstrumentation::interceptResponse(frame, response, identifier, WTFMove(handler));
 }
 
+#if ENABLE(WEBDRIVER_BIDI)
+void InspectorInstrumentationWebKit::addConsoleMessageObserverInternal(InspectorInstrumentationConsoleMessageObserver& observer)
+{
+    InspectorInstrumentation::addConsoleMessageObserver(observer);
+}
+
+void InspectorInstrumentationWebKit::removeConsoleMessageObserverInternal(InspectorInstrumentationConsoleMessageObserver& observer)
+{
+    InspectorInstrumentation::removeConsoleMessageObserver(observer);
+}
+#endif
+
 } // namespace WebCore

@@ -888,6 +888,18 @@
             "parameters": [
                 { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle" }
             ]
+        },
+        {
+            "name": "logEntryAdded",
+            "description": "Fired when a new log entry is added.",
+            "parameters": [
+                { "name": "browsingContextHandle", "$ref": "BrowsingContextHandle", "description": "Optional handle for the browsing context." },
+                { "name": "method", "type": "string", "description": "The log entry method."},
+                { "name": "level", "type": "string", "description": "The log entry level." },
+                { "name": "source", "type": "string", "description": "The source script" },
+                { "name": "text", "type": "string", "description": "The log entry message." },
+                { "name": "timestamp", "type": "number", "description": "The timestamp of the log entry." }
+            ]
         }
     ]
 }

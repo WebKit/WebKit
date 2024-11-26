@@ -29,10 +29,12 @@
 #include "AutomationBackendDispatchers.h"
 #include "AutomationFrontendDispatchers.h"
 #include "Connection.h"
+#include "MessageReceiver.h"
 #include "MessageSender.h"
 #include "SimulatedInputDispatcher.h"
 #include "WebEvent.h"
 #include "WebPageProxyIdentifier.h"
+#include <JavaScriptCore/ConsoleTypes.h>
 #include <WebCore/FrameIdentifier.h>
 #include <WebCore/ShareableBitmap.h>
 #include <wtf/CheckedPtr.h>
@@ -102,7 +104,9 @@ public:
 
 using AutomationCompletionHandler = WTF::CompletionHandler<void(std::optional<AutomationCommandError>)>;
 
-class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::AutomationSession>, public Inspector::AutomationBackendDispatcherHandler, public CanMakeWeakPtr<WebAutomationSession>
+class WebAutomationSession final : public API::ObjectImpl<API::Object::Type::AutomationSession>
+    , public IPC::MessageReceiver
+    , public Inspector::AutomationBackendDispatcherHandler
 #if ENABLE(WEBDRIVER_ACTIONS_API)
     , public SimulatedInputDispatcher::Client
 #endif
@@ -276,6 +280,12 @@ private:
     void restoreWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
     void maximizeWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
     void hideWindowForPage(WebPageProxy&, WTF::CompletionHandler<void()>&&);
+
+    // IPC::MessageReceiver (Implemented by generated code in WebAutomationSessionMessageReceiver.cpp).
+    void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+
+    // Called by WebAutomationSession messages.
+    void logEntryAdded(JSC::MessageType, JSC::MessageLevel, JSC::MessageSource, const String& message, WallTime timestamp);
 
     // Platform-dependent implementations.
 #if ENABLE(WEBDRIVER_MOUSE_INTERACTIONS)

@@ -44,12 +44,20 @@ public:
     static bool shouldInterceptResponse(const LocalFrame*, const ResourceResponse&);
     static void interceptRequest(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponse(const LocalFrame*, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&);
+#if ENABLE(WEBDRIVER_BIDI)
+    static void addConsoleMessageObserver(InspectorInstrumentationConsoleMessageObserver&);
+    static void removeConsoleMessageObserver(InspectorInstrumentationConsoleMessageObserver&);
+#endif
 
 private:
     static bool shouldInterceptRequestInternal(const ResourceLoader&);
     static bool shouldInterceptResponseInternal(const LocalFrame&, const ResourceResponse&);
     static void interceptRequestInternal(ResourceLoader&, Function<void(const ResourceRequest&)>&&);
     static void interceptResponseInternal(const LocalFrame&, const ResourceResponse&, ResourceLoaderIdentifier, CompletionHandler<void(const ResourceResponse&, RefPtr<FragmentedSharedBuffer>)>&&);
+#if ENABLE(WEBDRIVER_BIDI)
+    static void addConsoleMessageObserverInternal(InspectorInstrumentationConsoleMessageObserver&);
+    static void removeConsoleMessageObserverInternal(InspectorInstrumentationConsoleMessageObserver&);
+#endif
 };
 
 inline bool InspectorInstrumentationWebKit::shouldInterceptRequest(const ResourceLoader& loader)
@@ -78,5 +86,17 @@ inline void InspectorInstrumentationWebKit::interceptResponse(const LocalFrame* 
     ASSERT(InspectorInstrumentationWebKit::shouldInterceptResponse(frame, response));
     interceptResponseInternal(*frame, response, identifier, WTFMove(handler));
 }
+
+#if ENABLE(WEBDRIVER_BIDI)
+inline void InspectorInstrumentationWebKit::addConsoleMessageObserver(InspectorInstrumentationConsoleMessageObserver& observer)
+{
+    return addConsoleMessageObserverInternal(observer);
+}
+
+inline void InspectorInstrumentationWebKit::removeConsoleMessageObserver(InspectorInstrumentationConsoleMessageObserver& observer)
+{
+    return removeConsoleMessageObserverInternal(observer);
+}
+#endif
 
 }

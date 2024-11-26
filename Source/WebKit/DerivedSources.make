@@ -186,6 +186,7 @@ MESSAGE_RECEIVERS = \
 	UIProcess/Cocoa/VideoPresentationManagerProxy \
 	UIProcess/ViewGestureController \
 	UIProcess/WebProcessProxy \
+	UIProcess/Automation/WebAutomationSession \
 	UIProcess/WebProcessPool \
 	UIProcess/WebScreenOrientationManagerProxy \
 	UIProcess/Downloads/DownloadProxy \
