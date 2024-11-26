@@ -34,6 +34,7 @@
 namespace WTF {
 
 Lock loggerObserverLock;
+Lock messageHandlerLoggerObserverLock;
 
 String Logger::LogSiteIdentifier::toString() const
 {
@@ -50,6 +51,16 @@ String LogArgument<const void*>::toString(const void* argument)
 Vector<std::reference_wrapper<Logger::Observer>>& Logger::observers()
 {
     static LazyNeverDestroyed<Vector<std::reference_wrapper<Observer>>> observers;
+    static std::once_flag onceKey;
+    std::call_once(onceKey, [&] {
+        observers.construct();
+    });
+    return observers;
+}
+
+Vector<std::reference_wrapper<Logger::MessageHandlerObserver>>& Logger::messageHandlerObservers()
+{
+    static LazyNeverDestroyed<Vector<std::reference_wrapper<MessageHandlerObserver>>> observers;
     static std::once_flag onceKey;
     std::call_once(onceKey, [&] {
         observers.construct();

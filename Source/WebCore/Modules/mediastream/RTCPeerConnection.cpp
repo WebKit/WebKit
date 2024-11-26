@@ -54,6 +54,7 @@
 #include "RTCConfiguration.h"
 #include "RTCController.h"
 #include "RTCDataChannel.h"
+#include "RTCDataChannelEvent.h"
 #include "RTCDtlsTransport.h"
 #include "RTCDtlsTransportBackend.h"
 #include "RTCIceCandidate.h"
@@ -978,6 +979,19 @@ void RTCPeerConnection::dispatchEvent(Event& event)
 {
     INFO_LOG(LOGIDENTIFIER, "dispatching '", event.type(), "'");
     EventTarget::dispatchEvent(event);
+}
+
+void RTCPeerConnection::dispatchDataChannelEvent(UniqueRef<RTCDataChannelHandler>&& channelHandler, String&& label, RTCDataChannelInit&& channelInit)
+{
+    queueTaskKeepingObjectAlive(*this, TaskSource::Networking, [this, label = WTFMove(label), channelHandler = WTFMove(channelHandler), channelInit = WTFMove(channelInit)]() mutable {
+        if (isClosed())
+            return;
+
+        auto channel = RTCDataChannel::create(*document(), channelHandler.moveToUniquePtr(), WTFMove(label), WTFMove(channelInit), RTCDataChannelState::Open);
+        ALWAYS_LOG(LOGIDENTIFIER, makeString("Dispatching data-channel event for channel "_s, channel->label()));
+        dispatchEvent(RTCDataChannelEvent::create(eventNames().datachannelEvent, Event::CanBubble::No, Event::IsCancelable::No, Ref { channel }));
+        channel->fireOpenEventIfNeeded();
+    });
 }
 
 static inline ExceptionOr<PeerConnectionBackend::CertificateInformation> certificateTypeFromAlgorithmIdentifier(JSC::JSGlobalObject& lexicalGlobalObject, RTCPeerConnection::AlgorithmIdentifier&& algorithmIdentifier)

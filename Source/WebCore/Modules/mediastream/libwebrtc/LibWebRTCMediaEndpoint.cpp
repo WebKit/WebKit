@@ -839,8 +839,18 @@ void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const web
 
         for (auto iterator = report->begin(); iterator != report->end(); ++iterator) {
             RTCStatsLogger statsLogger { *iterator };
-            if (m_isGatheringRTCLogs)
-                protectedPeerConnectionBackend()->provideStatLogs(statsLogger.toJSONString());
+            auto backend = protectedPeerConnectionBackend();
+            if (m_isGatheringRTCLogs) {
+                auto event = backend->generateJSONLogEvent(String::fromLatin1(iterator->ToJson().c_str()), true);
+                backend->provideStatLogs(WTFMove(event));
+            }
+
+#if PLATFORM(WPE) || PLATFORM(GTK)
+            if (backend->isJSONLogStreamingEnabled()) {
+                auto event = backend->generateJSONLogEvent(String::fromLatin1(iterator->ToJson().c_str()), false);
+                backend->emitJSONLogEvent(WTFMove(event));
+            }
+#endif
 
             if (logger().willLog(logChannel(), WTFLogLevel::Debug)) {
                 // Stats are very verbose, let's only display them in inspector console in verbose mode.
@@ -849,8 +859,6 @@ void LibWebRTCMediaEndpoint::OnStatsDelivered(const rtc::scoped_refptr<const web
                 logger().logAlways(LogWebRTCStats, Logger::LogSiteIdentifier("LibWebRTCMediaEndpoint"_s, "OnStatsDelivered"_s, logIdentifier()), statsLogger);
         }
     });
-#else
-    UNUSED_PARAM(report);
 #endif
 }
 

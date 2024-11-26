@@ -2089,8 +2089,6 @@ GUniquePtr<GstStructure> GStreamerMediaEndpoint::preprocessStats(const GRefPtr<G
 #if !RELEASE_LOG_DISABLED
 void GStreamerMediaEndpoint::gatherStatsForLogging()
 {
-    auto* holder = createGStreamerMediaEndpointHolder();
-    holder->endPoint = this;
     g_signal_emit_by_name(m_webrtcBin.get(), "get-stats", nullptr, gst_promise_new_with_change_func([](GstPromise* rawPromise, gpointer userData) {
         auto promise = adoptGRef(rawPromise);
         auto result = gst_promise_wait(promise.get());
@@ -2102,12 +2100,17 @@ void GStreamerMediaEndpoint::gatherStatsForLogging()
         if (gst_structure_has_field(reply, "error"))
             return;
 
-        auto* holder = static_cast<GStreamerMediaEndpointHolder*>(userData);
-        callOnMainThreadAndWait([holder, reply] {
-            auto stats = holder->endPoint->preprocessStats(nullptr, reply);
-            holder->endPoint->onStatsDelivered(WTFMove(stats));
+        auto weakSelf = static_cast<ThreadSafeWeakPtr<GStreamerMediaEndpoint>*>(userData);
+        callOnMainThreadAndWait([weakSelf, reply] {
+            auto self = weakSelf->get();
+            if (!self)
+                return;
+            auto stats = self->preprocessStats(nullptr, reply);
+            self->onStatsDelivered(stats.get());
         });
-    }, holder, reinterpret_cast<GDestroyNotify>(destroyGStreamerMediaEndpointHolder)));
+    }, new ThreadSafeWeakPtr<GStreamerMediaEndpoint> { *this }, reinterpret_cast<GDestroyNotify>(+[](gpointer data) {
+        delete static_cast<ThreadSafeWeakPtr<GStreamerMediaEndpoint>*>(data);
+    })));
 }
 
 class RTCStatsLogger {
@@ -2145,25 +2148,30 @@ void GStreamerMediaEndpoint::processStatsItem(const GValue* value)
         }
     }
 
+    RTCStatsLogger statsLogger { structure };
+
+    if (m_peerConnectionBackend.isJSONLogStreamingEnabled()) {
+        auto event = m_peerConnectionBackend.generateJSONLogEvent(gstStructureToJSONString(structure), false);
+        m_peerConnectionBackend.emitJSONLogEvent(WTFMove(event));
+    }
+
+    if (m_isGatheringRTCLogs) {
+        auto event = m_peerConnectionBackend.generateJSONLogEvent(gstStructureToJSONString(structure), true);
+        m_peerConnectionBackend.provideStatLogs(WTFMove(event));
+    }
+
     if (logger().willLog(logChannel(), WTFLogLevel::Debug)) {
         // Stats are very verbose, let's only display them in inspector console in verbose mode.
-        logger().debug(LogWebRTC,
-            Logger::LogSiteIdentifier("GStreamerMediaEndpoint"_s, "onStatsDelivered"_s, logIdentifier()),
-            RTCStatsLogger { structure });
-    } else {
-        logger().logAlways(LogWebRTCStats,
-            Logger::LogSiteIdentifier("GStreamerMediaEndpoint"_s, "onStatsDelivered"_s, logIdentifier()),
-            RTCStatsLogger { structure });
-    }
+        logger().debug(LogWebRTC, Logger::LogSiteIdentifier("GStreamerMediaEndpoint"_s, "OnStatsDelivered"_s, logIdentifier()), statsLogger);
+    } else
+        logger().logAlways(LogWebRTCStats, Logger::LogSiteIdentifier("GStreamerMediaEndpoint"_s, "OnStatsDelivered"_s, logIdentifier()), statsLogger);
 }
 
-void GStreamerMediaEndpoint::onStatsDelivered(GUniquePtr<GstStructure>&& stats)
+void GStreamerMediaEndpoint::onStatsDelivered(const GstStructure* stats)
 {
-    callOnMainThread([protectedThis = Ref(*this), this, stats = WTFMove(stats)] {
-        gstStructureForeach(stats.get(), [&](auto, const auto value) -> bool {
-            processStatsItem(value);
-            return TRUE;
-        });
+    gstStructureForeach(stats, [&](auto, const auto value) -> bool {
+        processStatsItem(value);
+        return true;
     });
 }
 
@@ -2186,6 +2194,9 @@ WTFLogChannel& GStreamerMediaEndpoint::logChannel() const
 
 Seconds GStreamerMediaEndpoint::statsLogInterval(Seconds reportTimestamp) const
 {
+    if (m_isGatheringRTCLogs)
+        return 1_s;
+
     if (logger().willLog(logChannel(), WTFLogLevel::Info))
         return 2_s;
 
@@ -2222,6 +2233,17 @@ std::optional<bool> GStreamerMediaEndpoint::canTrickleIceCandidates() const
             return true;
     }
     return false;
+}
+
+void GStreamerMediaEndpoint::startRTCLogs()
+{
+    m_isGatheringRTCLogs = true;
+    startLoggingStats();
+}
+
+void GStreamerMediaEndpoint::stopRTCLogs()
+{
+    m_isGatheringRTCLogs = false;
 }
 
 } // namespace WebCore

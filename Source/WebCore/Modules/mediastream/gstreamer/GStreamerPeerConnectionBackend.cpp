@@ -30,6 +30,7 @@
 #include "GStreamerRtpTransceiverBackend.h"
 #include "IceCandidate.h"
 #include "JSRTCStatsReport.h"
+#include "Logging.h"
 #include "MediaEndpointConfiguration.h"
 #include "NotImplemented.h"
 #include "RTCIceCandidate.h"
@@ -388,6 +389,27 @@ void GStreamerPeerConnectionBackend::tearDown()
         auto& backend = backendFromRTPTransceiver(*transceiver);
         backend.tearDown();
     }
+}
+
+void GStreamerPeerConnectionBackend::startGatheringStatLogs(Function<void(String&&)>&& callback)
+{
+    if (!m_rtcStatsLogCallback)
+        m_endpoint->startRTCLogs();
+    m_rtcStatsLogCallback = WTFMove(callback);
+}
+
+void GStreamerPeerConnectionBackend::stopGatheringStatLogs()
+{
+    if (m_rtcStatsLogCallback) {
+        m_endpoint->stopRTCLogs();
+        m_rtcStatsLogCallback = { };
+    }
+}
+
+void GStreamerPeerConnectionBackend::provideStatLogs(String&& stats)
+{
+    if (m_rtcStatsLogCallback)
+        m_rtcStatsLogCallback(WTFMove(stats));
 }
 
 #undef GST_CAT_DEFAULT

@@ -139,6 +139,7 @@ platform/mediastream/gstreamer/GStreamerRTPPacketizer.cpp
 platform/mediastream/gstreamer/GStreamerVideoCaptureSource.cpp
 platform/mediastream/gstreamer/GStreamerVideoCapturer.cpp
 platform/mediastream/gstreamer/GStreamerVideoRTPPacketizer.cpp
+platform/mediastream/gstreamer/GStreamerWebRTCLogSink.cpp
 platform/mediastream/gstreamer/GStreamerWebRTCProvider.cpp
 platform/mediastream/gstreamer/MockDisplayCaptureSourceGStreamer.cpp
 platform/mediastream/gstreamer/MockRealtimeAudioSourceGStreamer.cpp
