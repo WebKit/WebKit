@@ -38,14 +38,13 @@ private:
 
     void showNotification(IPC::Connection&, const WebCore::NotificationData&, RefPtr<WebCore::NotificationResources>&&, CompletionHandler<void()>&&) final;
     void cancelNotification(WebCore::SecurityOriginData&&, const WTF::UUID& notificationID) final;
-    void clearNotifications(const Vector<WTF::UUID>& notificationIDs) final;
     void didDestroyNotification(const WTF::UUID& notificationID) final;
     void pageWasNotifiedOfNotificationPermission() final;
     void requestPermission(WebCore::SecurityOriginData&&, CompletionHandler<void(bool)>&&) final;
     void setAppBadge(const WebCore::SecurityOriginData&, std::optional<uint64_t>) final { }
     void getPermissionState(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
     void getPermissionStateSync(WebCore::SecurityOriginData&&, CompletionHandler<void(WebCore::PushPermissionState)>&&) final;
-
+    std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess(const IPC::Connection&) const final;
     Ref<WebPageProxy> protectedPage() const;
 
     WeakRef<WebPageProxy> m_webPageProxy;

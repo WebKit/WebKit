@@ -43,6 +43,12 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkNotificationManager);
 
+static inline Ref<NetworkConnectionToWebProcess> connectionToWebProcess(const IPC::Connection& connection)
+{
+    // FIXME: Check the type.
+    return static_cast<NetworkConnectionToWebProcess&>(*connection.client());
+}
+
 NetworkNotificationManager::NetworkNotificationManager(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 {
     if (!webPushMachServiceName.isEmpty())
@@ -114,12 +120,6 @@ void NetworkNotificationManager::cancelNotification(WebCore::SecurityOriginData&
         return;
 
     connection->sendWithoutUsingIPCConnection(Messages::PushClientConnection::CancelNotification { WTFMove(origin), notificationID });
-}
-
-void NetworkNotificationManager::clearNotifications(const Vector<WTF::UUID>&)
-{
-    if (!m_connection)
-        return;
 }
 
 void NetworkNotificationManager::didDestroyNotification(const WTF::UUID&)
@@ -241,6 +241,11 @@ void NetworkNotificationManager::getPermissionState(WebCore::SecurityOriginData&
 void NetworkNotificationManager::getPermissionStateSync(WebCore::SecurityOriginData&& origin, CompletionHandler<void(WebCore::PushPermissionState)>&& completionHandler)
 {
     getPushPermissionStateImpl(protectedConnection().get(), WTFMove(origin), WTFMove(completionHandler));
+}
+
+std::optional<SharedPreferencesForWebProcess> NetworkNotificationManager::sharedPreferencesForWebProcess(const IPC::Connection& connection) const
+{
+    return connectionToWebProcess(connection)->sharedPreferencesForWebProcess();
 }
 
 RefPtr<WebPushD::Connection> NetworkNotificationManager::protectedConnection() const
