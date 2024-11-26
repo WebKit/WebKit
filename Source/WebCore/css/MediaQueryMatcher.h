@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "ContextDestructionObserver.h"
 #include <memory>
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -41,7 +42,7 @@ using MediaQueryList = Vector<MediaQuery>;
 // is needed and dispatch "change" event on MediaQueryLists if the corresponding
 // query has changed. MediaQueryLists are invoked in the order in which they were added.
 
-class MediaQueryMatcher final : public RefCounted<MediaQueryMatcher> {
+class MediaQueryMatcher final : public ContextDestructionObserver, public RefCounted<MediaQueryMatcher> {
 public:
     static Ref<MediaQueryMatcher> create(Document& document) { return adoptRef(*new MediaQueryMatcher(document)); }
     ~MediaQueryMatcher();
