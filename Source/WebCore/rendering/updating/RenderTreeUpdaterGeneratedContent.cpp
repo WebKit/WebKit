@@ -97,9 +97,6 @@ static KeyframeEffectStack* keyframeEffectStackForElementAndPseudoId(const Eleme
 
 static bool elementIsTargetedByKeyframeEffectRequiringPseudoElement(const Element* element, PseudoId pseudoId)
 {
-    if (auto* pseudoElement = dynamicDowncast<PseudoElement>(element))
-        return elementIsTargetedByKeyframeEffectRequiringPseudoElement(pseudoElement->hostElement(), pseudoId);
-
     if (element) {
         if (auto* stack = keyframeEffectStackForElementAndPseudoId(*element, pseudoId))
             return stack->requiresPseudoElement();

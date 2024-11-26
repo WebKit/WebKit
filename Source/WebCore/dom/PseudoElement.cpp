@@ -42,14 +42,14 @@ namespace WebCore {
 
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(PseudoElement);
 
-const QualifiedName& pseudoElementTagName()
+const String& pseudoElementNodeName()
 {
-    static NeverDestroyed<QualifiedName> name(nullAtom(), "<pseudo>"_s, nullAtom());
+    static NeverDestroyed<String> name = "<pseudo>"_s;
     return name;
 }
 
 PseudoElement::PseudoElement(Element& host, PseudoId pseudoId)
-    : Element(pseudoElementTagName(), host.document(), TypeFlag::HasCustomStyleResolveCallbacks)
+    : Node(host.document(), 0, TypeFlag::HasCustomStyleResolveCallbacks)
     , m_hostElement(host)
     , m_pseudoId(pseudoId)
 {
@@ -71,6 +71,7 @@ Ref<PseudoElement> PseudoElement::create(Element& host, PseudoId pseudoId)
     return pseudoElement;
 }
 
+
 void PseudoElement::clearHostElement()
 {
     InspectorInstrumentation::pseudoElementDestroyed(document().protectedPage().get(), *this);
@@ -90,6 +91,37 @@ bool PseudoElement::rendererIsNeeded(const RenderStyle& style)
             return stack->requiresPseudoElement();
     }
     return false;
+}
+
+void PseudoElement::storeDisplayContentsOrNoneStyle(std::unique_ptr<RenderStyle> style)
+{
+    // This is used by RenderTreeBuilder to store the style for Elements with display:{contents|none}.
+    // Normally style is held in renderers but display:contents doesn't generate one.
+    // This is kept distinct from ElementRareData::computedStyle() which can update outside style resolution.
+    // This way renderOrDisplayContentsStyle() always returns consistent styles matching the rendering state.
+    ASSERT(style && (style->display() == DisplayType::Contents || style->display() == DisplayType::None));
+    m_displayContentsOrNoneStyle = WTFMove(style);
+}
+
+void PseudoElement::clearDisplayContentsOrNoneStyle()
+{
+    m_displayContentsOrNoneStyle = nullptr;
+}
+
+Ref<Node> PseudoElement::cloneNodeInternal(Document& targetDocument, CloningOperation type)
+{
+    switch (type) {
+    case CloningOperation::OnlySelf:
+    case CloningOperation::SelfWithTemplateContent: {
+        Ref clone = cloneElementWithoutChildren(targetDocument);
+        ScriptDisallowedScope::EventAllowedScope eventAllowedScope { clone };
+        cloneShadowTreeIfPossible(clone);
+        return clone;
+    }
+    case CloningOperation::Everything:
+        break;
+    }
+    return cloneElementWithChildren(targetDocument);
 }
 
 } // namespace

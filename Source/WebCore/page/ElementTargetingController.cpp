@@ -464,35 +464,9 @@ static String computeHasChildSelector(Element& element)
 }
 
 // Returns multiple CSS selectors that uniquely match the target element.
-static Vector<Vector<String>> selectorsForTarget(Element& element, ElementSelectorCache& cache)
+static Vector<Vector<String>> selectorsForTarget(Node& element, ElementSelectorCache& cache)
 {
-    if (RefPtr pseudoElement = dynamicDowncast<PseudoElement>(element)) {
-        RefPtr host = pseudoElement->hostElement();
-        if (!host)
-            return { };
-
-        auto pseudoSelector = [&]() -> String {
-            if (element.isBeforePseudoElement())
-                return "::before"_s;
-
-            if (element.isAfterPseudoElement())
-                return "::after"_s;
-
-            return { };
-        }();
-
-        if (pseudoSelector.isEmpty())
-            return { };
-
-        auto selectors = selectorsForTarget(*host, cache);
-        if (selectors.isEmpty())
-            return { };
-
-        for (auto& selector : selectors.last())
-            selector = makeString(selector, pseudoSelector);
-
-        return selectors;
-    }
+    // FIXME: Support pseudo-elements.
 
     Vector<Vector<String>> selectorsIncludingShadowHost;
     if (RefPtr shadowHost = element.shadowHost()) {

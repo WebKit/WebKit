@@ -60,7 +60,7 @@ private:
     void updateRenderTree(ContainerNode& root);
     void updateTextRenderer(Text&, const Style::TextUpdate*, const ContainerNode* root = nullptr);
     void createTextRenderer(Text&, const Style::TextUpdate*);
-    void updateElementRenderer(Element&, const Style::ElementUpdate&);
+    void updateElementRenderer(std::variant<PseudoElement, Element>&, const Style::ElementUpdate&);
     void updateSVGRenderer(Element&);
     void updateRendererStyle(RenderElement&, RenderStyle&&, StyleDifference);
     void updateRenderViewStyle();
@@ -95,8 +95,8 @@ private:
 
     // FIXME: Use OptionSet.
     enum class TeardownType { Full, FullAfterSlotOrShadowRootChange, RendererUpdate, RendererUpdateCancelingAnimations };
-    static void tearDownRenderers(Element&, TeardownType);
-    static void tearDownRenderers(Element&, TeardownType, RenderTreeBuilder&);
+    static void tearDownRenderers(std::variant<PseudoElement, Element>&, TeardownType);
+    static void tearDownRenderers(std::variant<PseudoElement, Element>&, TeardownType, RenderTreeBuilder&);
     enum class NeedsRepaintAndLayout : bool { No, Yes };
     static void tearDownTextRenderer(Text&, const ContainerNode* root, RenderTreeBuilder&, NeedsRepaintAndLayout = NeedsRepaintAndLayout::Yes);
     static void tearDownLeftoverChildrenOfComposedTree(Element&, RenderTreeBuilder&);

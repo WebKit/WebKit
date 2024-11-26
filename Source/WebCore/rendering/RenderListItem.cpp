@@ -97,8 +97,7 @@ bool isHTMLListElement(const Node& node)
 static Element* enclosingList(const RenderListItem& listItem)
 {
     auto& element = listItem.element();
-    auto* pseudoElement = dynamicDowncast<PseudoElement>(element);
-    auto* parent = pseudoElement ? pseudoElement->hostElement() : element.parentElement();
+    auto* parent = element.parentElement();
     for (auto* ancestor = parent; ancestor; ancestor = ancestor->parentElement()) {
         if (isHTMLListElement(*ancestor) || (ancestor->renderer() && ancestor->renderer()->shouldApplyStyleContainment()))
             return ancestor;
