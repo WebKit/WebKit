@@ -375,15 +375,15 @@ String CSSCounterStyle::initialRepresentation(int value, WritingMode writingMode
     case CSSCounterStyleDescriptors::System::DisclosureOpen:
         return counterForSystemDisclosureOpen(writingMode);
     case CSSCounterStyleDescriptors::System::SimplifiedChineseInformal:
-        return CSSCounterStyle::counterForSystemSimplifiedChineseInformal(value);
+        return counterForSystemSimplifiedChineseInformal(value);
     case CSSCounterStyleDescriptors::System::SimplifiedChineseFormal:
-        return CSSCounterStyle::counterForSystemSimplifiedChineseFormal(value);
+        return counterForSystemSimplifiedChineseFormal(value);
     case CSSCounterStyleDescriptors::System::TraditionalChineseInformal:
-        return CSSCounterStyle::counterForSystemTraditionalChineseInformal(value);
+        return counterForSystemTraditionalChineseInformal(value);
     case CSSCounterStyleDescriptors::System::TraditionalChineseFormal:
-        return CSSCounterStyle::counterForSystemTraditionalChineseFormal(value);
+        return counterForSystemTraditionalChineseFormal(value);
     case CSSCounterStyleDescriptors::System::EthiopicNumeric:
-        return CSSCounterStyle::counterForSystemEthiopicNumeric(value);
+        return counterForSystemEthiopicNumeric(value);
     case CSSCounterStyleDescriptors::System::Extends:
         // CounterStyle with extends system should have been promoted to another system at this point
         ASSERT_NOT_REACHED();
