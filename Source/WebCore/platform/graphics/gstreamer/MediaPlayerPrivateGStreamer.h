@@ -313,7 +313,7 @@ protected:
 #endif
 
 #if USE(TEXTURE_MAPPER)
-    void pushTextureToCompositor();
+    void pushTextureToCompositor(bool isDuplicateSample);
 #if USE(NICOSIA)
     void swapBuffersIfNeeded() final;
 #else
@@ -682,6 +682,8 @@ private:
 
     RefPtr<GStreamerQuirksManager> m_quirksManagerForTesting;
     HashMap<const GStreamerQuirk*, std::unique_ptr<GStreamerQuirkBase::GStreamerQuirkState>> m_quirkStates;
+
+    MediaTime m_estimatedVideoFrameDuration { MediaTime::zeroTime() };
 };
 
 }
