@@ -1,0 +1,38 @@
+<head>
+    <style>
+        .hidden { visibility: hidden; }
+    </style>
+<script>
+   function jsfuzzer() {
+        const jsdiv = document.createRange();
+        jsdiv.selectNodeContents(htmlvar_div); 
+        quoteid.before(htmlvar_div);
+        jsdiv.surroundContents(nestedpid);
+
+        testRunner.notifyDone();
+   }
+
+   if (window.testRunner) {
+      testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+   }
+
+</script>
+</head>
+<body onload=jsfuzzer()>
+    <u class="hidden">
+        <div id="htmlvar_div">
+        </div>
+        <svg id="svgid" arabic-form="isolated">
+            <foreignObject filter="url(#filterid)">
+            </foreignObject>
+            <filter id="filterid" height="0px">
+                <feImage xlink:href="#svgid" />
+                <q id="quoteid">
+                    <p id="nestedpid">inside SVG filter</p>
+                </q>
+            </filter>
+        </svg>
+    </u>
+    <p>PASS</p>
+</body>
