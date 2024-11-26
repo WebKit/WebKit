@@ -113,5 +113,17 @@ template<auto R> struct Blending<LengthPercentage<R>> {
     }
 };
 
+// `NumberOrPercentageResolvedToNumber<R>` forwards to `Number<R>`.
+template<auto R> struct Blending<NumberOrPercentageResolvedToNumber<R>> {
+    auto canBlend(const NumberOrPercentageResolvedToNumber<R>& a, const NumberOrPercentageResolvedToNumber<R>& b) -> bool
+    {
+        return Style::canBlend(a.value, b.value);
+    }
+    auto blend(const NumberOrPercentageResolvedToNumber<R>& a, const NumberOrPercentageResolvedToNumber<R>& b, const BlendingContext& context) -> NumberOrPercentageResolvedToNumber<R>
+    {
+        return Style::blend(a.value, b.value, context);
+    }
+};
+
 } // namespace Style
 } // namespace WebCore

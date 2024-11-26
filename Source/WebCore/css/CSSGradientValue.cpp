@@ -107,6 +107,10 @@ template<RawNumeric CSSType> struct StyleImageIsUncacheable<PrimitiveNumeric<CSS
     constexpr bool operator()(const auto& value) { return styleImageIsUncacheableOnVariantLike(value); }
 };
 
+template<auto R> struct StyleImageIsUncacheable<NumberOrPercentageResolvedToNumber<R>> {
+    constexpr bool operator()(const auto& value) { return styleImageIsUncacheableOnVariantLike(value); }
+};
+
 template<CSSValueID C> struct StyleImageIsUncacheable<Constant<C>> {
     constexpr bool operator()(const auto&) { return false; }
 };

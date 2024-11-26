@@ -48,6 +48,22 @@ template<RawNumeric RawType> struct Serialize<PrimitiveNumeric<RawType>> {
     }
 };
 
+template<auto R> struct Serialize<NumberOrPercentageResolvedToNumber<R>> {
+    void operator()(StringBuilder& builder, const NumberOrPercentageResolvedToNumber<R>& value)
+    {
+        WTF::switchOn(value.value,
+            [&](const Number<R>& number) {
+                serializationForCSS(builder, number);
+            },
+            [&](const Percentage<R>& percentage) {
+                if (auto raw = percentage.raw())
+                    serializationForCSS(builder, NumberRaw<R> { raw->value / 100.0 });
+                else
+                    serializationForCSS(builder, percentage);
+            }
+        );
+    }
+};
 
 } // namespace CSS
 } // namespace WebCore

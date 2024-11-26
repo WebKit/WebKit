@@ -43,9 +43,6 @@ namespace CSSPropertyParserHelpers {
 // MARK: - Percent
 RefPtr<CSSPrimitiveValue> consumePercentage(CSSParserTokenRange&, const CSSParserContext&, ValueRange = ValueRange::All);
 
-// MARK: - Percent or Number
-RefPtr<CSSPrimitiveValue> consumePercentageOrNumber(CSSParserTokenRange&, const CSSParserContext&, ValueRange = ValueRange::All);
-
 // FIXME: Users of this function are likely getting incorrect results when used with calc() producing a percent, as it is not getting divided by 100.
 RefPtr<CSSPrimitiveValue> consumePercentageDividedBy100OrNumber(CSSParserTokenRange&, const CSSParserContext&, ValueRange = ValueRange::All);
 

@@ -413,7 +413,38 @@ template<Range R = All> using LengthPercentage = PrimitiveNumeric<LengthPercenta
 // MARK: Additional Common Groupings
 
 // NOTE: This is spelled with an explicit "Or" to distinguish it from types like AnglePercentage/LengthPercentage that have behavior distinctions beyond just being a union of the two types (specifically, calc() has specific behaviors for those types).
-using PercentageOrNumber = std::variant<Percentage<>, Number<>>;
+template<Range R = All> using NumberOrPercentage = std::variant<Number<R>, Percentage<R>>;
+
+template<Range R = All> struct NumberOrPercentageResolvedToNumber {
+    NumberOrPercentage<R> value;
+
+    NumberOrPercentageResolvedToNumber(NumberOrPercentage<R> value)
+        : value { WTFMove(value) }
+    {
+    }
+
+    NumberOrPercentageResolvedToNumber(NumberRaw<R> value)
+        : value { Number<R> { WTFMove(value) } }
+    {
+    }
+
+    NumberOrPercentageResolvedToNumber(Number<R> value)
+        : value { WTFMove(value) }
+    {
+    }
+
+    NumberOrPercentageResolvedToNumber(PercentageRaw<R> value)
+        : value { Percentage<R> { WTFMove(value) } }
+    {
+    }
+
+    NumberOrPercentageResolvedToNumber(Percentage<R> value)
+        : value { WTFMove(value) }
+    {
+    }
+
+    bool operator==(const NumberOrPercentageResolvedToNumber<R>&) const = default;
+};
 
 // MARK: - Type List Modifiers
 
@@ -514,6 +545,18 @@ template<WebCore::CSS::RawNumeric T, class... F> ALWAYS_INLINE auto switchOn(con
 template<WebCore::CSS::RawNumeric T, class... F> ALWAYS_INLINE auto switchOn(WebCore::CSS::PrimitiveNumeric<T>&& value, F&&... f) -> decltype(value.switchOn(std::forward<F>(f)...))
 {
     return value.switchOn(std::forward<F>(f)...);
+}
+
+// Overload WTF::switchOn to make it so CSS::NumberOrPercentageResolvedToNumber<R> can be used directly.
+
+template<auto R, class... F> ALWAYS_INLINE auto switchOn(const WebCore::CSS::NumberOrPercentageResolvedToNumber<R>& value, F&&... f) -> decltype(switchOn(value.value, std::forward<F>(f)...))
+{
+    return switchOn(value.value, std::forward<F>(f)...);
+}
+
+template<auto R, class... F> ALWAYS_INLINE auto switchOn(WebCore::CSS::NumberOrPercentageResolvedToNumber<R>&& value, F&&... f) -> decltype(switchOn(value.value, std::forward<F>(f)...))
+{
+    return switchOn(value.value, std::forward<F>(f)...);
 }
 
 } // namespace WTF

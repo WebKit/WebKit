@@ -230,6 +230,14 @@ template<StyleNumeric StylePrimitive> struct ToCSS<StylePrimitive> {
     }
 };
 
+// Specialization for NumberOrPercentageResolvedToNumber.
+template<auto R> struct ToCSS<NumberOrPercentageResolvedToNumber<R>> {
+    auto operator()(const NumberOrPercentageResolvedToNumber<R>& value, const RenderStyle& style) -> CSS::NumberOrPercentageResolvedToNumber<R>
+    {
+        return { toCSS(value.value, style) };
+    }
+};
+
 // MARK: - Conversion from CSS -> Style
 
 // Define the CSS (a.k.a. primitive) type the primary representation of `Raw` and `UnevaluatedCalc` types.
@@ -442,6 +450,45 @@ template<CSS::RawNumeric RawType> struct ToStyle<CSS::PrimitiveNumeric<RawType>>
     auto operator()(const From& value, NoConversionDataRequiredToken token, const CSSCalcSymbolTable& symbolTable) -> To
     {
         return WTF::switchOn(value, [&](const auto& value) { return (*this)(value, token, symbolTable); });
+    }
+};
+
+// NumberOrPercentageResolvedToNumber, as the name implies, resolves its percentage to a number.
+template<auto R> struct ToStyle<CSS::NumberOrPercentageResolvedToNumber<R>> {
+    auto operator()(const CSS::NumberOrPercentageResolvedToNumber<R>& value, const CSSToLengthConversionData& conversionData, const CSSCalcSymbolTable& symbolTable) -> NumberOrPercentageResolvedToNumber<R>
+    {
+        return WTF::switchOn(value.value,
+            [&](CSS::Number<R> number) -> NumberOrPercentageResolvedToNumber<R> {
+                return { toStyle(number, conversionData, symbolTable) };
+            },
+            [&](CSS::Percentage<R> percentage) -> NumberOrPercentageResolvedToNumber<R> {
+                return { toStyle(percentage, conversionData, symbolTable).value / 100.0 };
+            }
+        );
+    }
+
+    auto operator()(const CSS::NumberOrPercentageResolvedToNumber<R>& value, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> NumberOrPercentageResolvedToNumber<R>
+    {
+        return WTF::switchOn(value.value,
+            [&](CSS::Number<R> number) -> NumberOrPercentageResolvedToNumber<R> {
+                return { toStyle(number, state, symbolTable) };
+            },
+            [&](CSS::Percentage<R> percentage) -> NumberOrPercentageResolvedToNumber<R> {
+                return { toStyle(percentage, state, symbolTable).value / 100.0 };
+            }
+        );
+    }
+
+    auto operator()(const CSS::NumberOrPercentageResolvedToNumber<R>& value, NoConversionDataRequiredToken, const CSSCalcSymbolTable& symbolTable) -> NumberOrPercentageResolvedToNumber<R>
+    {
+        return WTF::switchOn(value.value,
+            [&](CSS::Number<R> number) -> NumberOrPercentageResolvedToNumber<R> {
+                return { toStyleNoConversionDataRequired(number, symbolTable) };
+            },
+            [&](CSS::Percentage<R> percentage) -> NumberOrPercentageResolvedToNumber<R> {
+                return { toStyleNoConversionDataRequired(percentage, symbolTable).value / 100.0 };
+            }
+        );
     }
 };
 

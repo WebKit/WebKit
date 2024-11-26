@@ -43,13 +43,6 @@ RefPtr<CSSPrimitiveValue> consumePercentage(CSSParserTokenRange& range, const CS
     return CSSPrimitiveValueResolver<CSS::Percentage<CSS::Nonnegative>>::consumeAndResolve(range, context, { }, { }, { });
 }
 
-RefPtr<CSSPrimitiveValue> consumePercentageOrNumber(CSSParserTokenRange& range, const CSSParserContext& context, ValueRange valueRange)
-{
-    if (valueRange == ValueRange::All)
-        return CSSPrimitiveValueResolver<CSS::Percentage<CSS::All>, CSS::Number<CSS::All>>::consumeAndResolve(range, context, { }, { }, { });
-    return CSSPrimitiveValueResolver<CSS::Percentage<CSS::Nonnegative>, CSS::Number<CSS::Nonnegative>>::consumeAndResolve(range, context, { }, { }, { });
-}
-
 template<auto R> static RefPtr<CSSPrimitiveValue> consumePercentageDividedBy100OrNumber(CSSParserTokenRange& range, const CSSParserContext& context)
 {
     using NumberConsumer = ConsumerDefinition<CSS::Number<R>>;

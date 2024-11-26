@@ -40,7 +40,7 @@ namespace Style {
 
 // MARK: - Common Types
 
-using DeprecatedGradientPosition = SpaceSeparatedArray<PercentageOrNumber, 2>;
+using DeprecatedGradientPosition = SpaceSeparatedArray<NumberOrPercentage<>, 2>;
 
 using Horizontal     = CSS::Horizontal;
 using Vertical       = CSS::Vertical;
@@ -84,7 +84,7 @@ using GradientLinearColorStopPosition = std::optional<LengthPercentage<>>;
 using GradientLinearColorStop = GradientColorStop<GradientLinearColorStopPosition>;
 using GradientLinearColorStopList = GradientColorStopList<GradientLinearColorStop>;
 
-using GradientDeprecatedColorStopPosition = Number<>;
+using GradientDeprecatedColorStopPosition = NumberOrPercentageResolvedToNumber<>;
 using GradientDeprecatedColorStop = GradientColorStop<GradientDeprecatedColorStopPosition>;
 using GradientDeprecatedColorStopList = GradientColorStopList<GradientDeprecatedColorStop>;
 

@@ -45,5 +45,12 @@ template<RawNumeric RawType> struct CSSValueChildrenVisitor<PrimitiveNumeric<Raw
     }
 };
 
+template<auto R> struct CSSValueChildrenVisitor<NumberOrPercentageResolvedToNumber<R>> {
+    IterationStatus operator()(const Function<IterationStatus(CSSValue&)>& func, const NumberOrPercentageResolvedToNumber<R>& value)
+    {
+        return visitCSSValueChildren(func, value.value);
+    }
+};
+
 } // namespace CSS
 } // namespace WebCore

@@ -67,6 +67,13 @@ template<RawNumeric RawType> struct ComputedStyleDependenciesCollector<Primitive
     }
 };
 
+// NumberOrPercentageResolvedToNumber trivially forwards to its inner variant.
+template<auto R> struct ComputedStyleDependenciesCollector<NumberOrPercentageResolvedToNumber<R>> {
+    void operator()(ComputedStyleDependencies& dependencies, const NumberOrPercentageResolvedToNumber<R>& value)
+    {
+        collectComputedStyleDependencies(dependencies, value.value);
+    }
+};
 
 } // namespace CSS
 } // namespace WebCore

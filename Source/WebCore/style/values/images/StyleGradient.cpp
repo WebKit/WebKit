@@ -30,6 +30,7 @@
 
 #include "ColorInterpolation.h"
 #include "ComputedStyleExtractor.h"
+#include "FloatConversion.h"
 #include "GeometryUtilities.h"
 #include "Gradient.h"
 #include "GradientColorStop.h"
@@ -75,9 +76,9 @@ static auto toCSSColorStopPosition(const GradientAngularColorStop::Position& pos
     return toCSS(position, style);
 }
 
-static auto toCSSColorStopPosition(const GradientDeprecatedColorStop::Position& position, const RenderStyle&) -> CSS::GradientDeprecatedColorStopPosition
+static auto toCSSColorStopPosition(const GradientDeprecatedColorStop::Position& position, const RenderStyle& style) -> CSS::GradientDeprecatedColorStopPosition
 {
-    return CSS::NumberRaw<> { position.value };
+    return toCSS(position, style);
 }
 
 template<typename CSSStop, typename StyleStop> static auto toCSSColorStop(const StyleStop& stop, const RenderStyle& style) -> CSSStop
@@ -112,33 +113,11 @@ static auto toStyleStopColor(const RefPtr<CSSPrimitiveValue>& color, const Build
     return state.colorFromPrimitiveValue(*color);
 }
 
-static auto toStyleStopPosition(const CSS::GradientLinearColorStopPosition& position, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientLinearColorStopPosition
-{
-    return toStyle(position, state, symbolTable);
-}
-
-static auto toStyleStopPosition(const CSS::GradientAngularColorStopPosition& position, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientAngularColorStopPosition
-{
-    return toStyle(position, state, symbolTable);
-}
-
-static auto toStyleStopPosition(const CSS::GradientDeprecatedColorStopPosition& position, const BuilderState& state, const CSSCalcSymbolTable& symbolTable) -> GradientDeprecatedColorStopPosition
-{
-    return WTF::switchOn(position,
-        [&](const CSS::Number<>& number) {
-            return toStyle(number, state, symbolTable);
-        },
-        [&](const CSS::Percentage<>& percentage) {
-            return Number<> { toStyle(percentage, state, symbolTable).value / 100.0f };
-        }
-    );
-}
-
 template<typename T> decltype(auto) toStyleColorStop(const T& stop, const BuilderState& state, const CSSCalcSymbolTable& symbolTable)
 {
     return GradientColorStop {
         toStyleStopColor(stop.color, state, symbolTable),
-        toStyleStopPosition(stop.position, state, symbolTable)
+        toStyle(stop.position, state, symbolTable)
     };
 }
 
@@ -211,7 +190,7 @@ static std::optional<float> resolveColorStopPosition(const GradientAngularColorS
 
 static float resolveColorStopPosition(const GradientDeprecatedColorStop::Position& position)
 {
-    return static_cast<float>(position.value);
+    return narrowPrecisionToFloat(position.value.value);
 }
 
 struct ResolvedGradientStop {
@@ -698,7 +677,7 @@ static inline float positionFromValue(const LengthPercentage<>& coordinate, floa
     return evaluate(coordinate, widthOrHeight);
 }
 
-static inline float positionFromValue(const PercentageOrNumber& coordinate, float widthOrHeight)
+static inline float positionFromValue(const NumberOrPercentage<>& coordinate, float widthOrHeight)
 {
     return WTF::switchOn(coordinate,
         [&](Number<> number) -> float { return number.value; },
