@@ -34,8 +34,6 @@
 #include <wtf/text/NullTextBreakIterator.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 #if PLATFORM(COCOA)
@@ -283,9 +281,9 @@ public:
             return result;
         }
 
-        const UChar* characters() const
+        std::span<const UChar> characters() const
         {
-            return m_priorContext.data() + (m_priorContext.size() - length());
+            return std::span<const UChar>(m_priorContext).last(length());
         }
 
         friend bool operator==(const PriorContext&, const PriorContext&) = default;
@@ -310,11 +308,11 @@ public:
 
     CachedTextBreakIterator& get()
     {
-        const UChar* priorContext = m_priorContext.characters();
+        auto priorContext = m_priorContext.characters();
         if (!m_iterator) {
-            m_iterator = CachedTextBreakIterator(m_stringView, std::span { priorContext, m_priorContext.length() }, WTF::TextBreakIterator::LineMode { m_mode }, m_locale, m_contentAnalysis);
-            m_cachedPriorContext = priorContext;
-        } else if (priorContext != m_cachedPriorContext) {
+            m_iterator = CachedTextBreakIterator(m_stringView, priorContext, WTF::TextBreakIterator::LineMode { m_mode }, m_locale, m_contentAnalysis);
+            m_cachedPriorContext = priorContext.data();
+        } else if (priorContext.data() != m_cachedPriorContext) {
             resetStringAndReleaseIterator(m_stringView, m_locale, m_mode, m_contentAnalysis);
             return get();
         }
@@ -389,5 +387,3 @@ using WTF::NonSharedCharacterBreakIterator;
 using WTF::TextBreakIterator;
 using WTF::TextBreakIteratorCache;
 using WTF::isWordTextBreak;
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
