@@ -36,6 +36,7 @@
 #import "MediaSourcePrivateClient.h"
 #import "SourceBufferParserAVFObjC.h"
 #import "SourceBufferPrivateAVFObjC.h"
+#import "VideoMediaSampleRenderer.h"
 #import <objc/runtime.h>
 #import <wtf/Algorithms.h>
 #import <wtf/NativePromise.h>
@@ -203,22 +204,28 @@ void MediaSourcePrivateAVFObjC::hasSelectedVideoChanged(SourceBufferPrivateAVFOb
         setSourceBufferWithSelectedVideo(&sourceBuffer);
 }
 
-void MediaSourcePrivateAVFObjC::setVideoRenderer(WebSampleBufferVideoRendering *renderer)
+void MediaSourcePrivateAVFObjC::setVideoRenderer(VideoMediaSampleRenderer* renderer)
 {
     if (m_sourceBufferWithSelectedVideo)
         m_sourceBufferWithSelectedVideo->setVideoRenderer(renderer);
 }
 
-void MediaSourcePrivateAVFObjC::stageVideoRenderer(WebSampleBufferVideoRendering *renderer)
+void MediaSourcePrivateAVFObjC::stageVideoRenderer(VideoMediaSampleRenderer* renderer)
 {
     if (m_sourceBufferWithSelectedVideo)
         m_sourceBufferWithSelectedVideo->stageVideoRenderer(renderer);
 }
 
-void MediaSourcePrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSession* decompressionSession)
+void MediaSourcePrivateAVFObjC::videoRendererWillReconfigure(VideoMediaSampleRenderer& renderer)
 {
     if (m_sourceBufferWithSelectedVideo)
-        m_sourceBufferWithSelectedVideo->setDecompressionSession(decompressionSession);
+        m_sourceBufferWithSelectedVideo->videoRendererWillReconfigure(renderer);
+}
+
+void MediaSourcePrivateAVFObjC::videoRendererDidReconfigure(VideoMediaSampleRenderer& renderer)
+{
+    if (m_sourceBufferWithSelectedVideo)
+        m_sourceBufferWithSelectedVideo->videoRendererDidReconfigure(renderer);
 }
 
 void MediaSourcePrivateAVFObjC::flushActiveSourceBuffersIfNeeded()
@@ -271,17 +278,13 @@ void MediaSourcePrivateAVFObjC::outputObscuredDueToInsufficientExternalProtectio
 
 void MediaSourcePrivateAVFObjC::setSourceBufferWithSelectedVideo(SourceBufferPrivateAVFObjC* sourceBuffer)
 {
-    if (m_sourceBufferWithSelectedVideo) {
+    if (m_sourceBufferWithSelectedVideo)
         m_sourceBufferWithSelectedVideo->setVideoRenderer(nullptr);
-        m_sourceBufferWithSelectedVideo->setDecompressionSession(nullptr);
-    }
 
     m_sourceBufferWithSelectedVideo = sourceBuffer;
 
-    if (auto player = platformPlayer(); m_sourceBufferWithSelectedVideo && player) {
-        m_sourceBufferWithSelectedVideo->setVideoRenderer(player->layerOrVideoRenderer());
-        m_sourceBufferWithSelectedVideo->setDecompressionSession(player->decompressionSession());
-    }
+    if (auto player = platformPlayer(); m_sourceBufferWithSelectedVideo && player)
+        m_sourceBufferWithSelectedVideo->setVideoRenderer(player->layerOrVideoRenderer().get());
 }
 
 #if !RELEASE_LOG_DISABLED

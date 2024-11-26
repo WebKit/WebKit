@@ -1187,6 +1187,11 @@ webkit.org/b/283457 media/media-rvfc-paused-offscreen-mp4.html [ Failure ]
 webkit.org/b/283457 media/media-rvfc-paused-offscreen-webm.html [ Failure ]
 webkit.org/b/283457 media/media-rvfc-paused-webm.html [ Failure ]
 
+webkit.org/b/283624 media/media-source/media-source-rvfc-playing.html [ Pass Failure ]
+webkit.org/b/283624 media/media-source/media-source-rvfc-playing-offscreen.html [ Failure ]
+webkit.org/b/283624 media/media-source/media-source-rvfc-paused.html [ Timeout ]
+webkit.org/b/283624 media/media-source/media-source-rvfc-paused-offscreen.html [ Timeout ]
+
 # GStreamer (< 1.24) doesn't set the track's id to the container's value.
 webkit.org/b/265919 media/track/media-audio-track.html [ Failure ]
 webkit.org/b/265919 media/track/media-source-audio-track.html [ Failure ]

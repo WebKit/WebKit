@@ -504,9 +504,6 @@ void SourceBufferPrivateAVFObjC::destroyRenderers()
     if (m_videoRenderer)
         setVideoRenderer(nullptr);
 
-    if (m_decompressionSession)
-        setDecompressionSession(nullptr);
-
     for (auto& pair : m_audioRenderers) {
         RetainPtr renderer = pair.second;
         if (auto player = this->player())
@@ -564,19 +561,10 @@ void SourceBufferPrivateAVFObjC::trackDidChangeSelected(VideoTrackPrivate& track
 
     ALWAYS_LOG(LOGIDENTIFIER, "video trackID = ", trackID, ", selected = ", selected);
 
-    if (!selected && isEnabledVideoTrackID(trackID)) {
+    if (!selected && isEnabledVideoTrackID(trackID))
         m_enabledVideoTrackID.reset();
-        if (m_decompressionSession)
-            m_decompressionSession->stopRequestingMediaData();
-    } else if (selected) {
+    else if (selected)
         m_enabledVideoTrackID = trackID;
-        if (m_decompressionSession) {
-            m_decompressionSession->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }, trackID] {
-                if (RefPtr protectedThis = weakThis.get())
-                    protectedThis->didBecomeReadyForMoreSamples(trackID);
-            });
-        }
-    }
 
     if (RefPtr player = this->player())
         player->needsVideoLayerChanged();
@@ -685,8 +673,8 @@ void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
 
     if (m_cdmInstance) {
         if (shouldAddContentKeyRecipients()) {
-            if (m_videoRenderer)
-                [m_cdmInstance->contentKeySession() removeContentKeyRecipient:m_videoRenderer->displayLayer()];
+            if (RetainPtr renderer = m_videoRenderer ? dynamic_objc_cast<AVSampleBufferDisplayLayer>(m_videoRenderer->renderer()) : nullptr)
+                [m_cdmInstance->contentKeySession() removeContentKeyRecipient:renderer.get()];
 
             for (auto& pair : m_audioRenderers)
                 [m_cdmInstance->contentKeySession() removeContentKeyRecipient:pair.second.get()];
@@ -698,8 +686,8 @@ void SourceBufferPrivateAVFObjC::setCDMInstance(CDMInstance* instance)
 
     if (m_cdmInstance) {
         if (shouldAddContentKeyRecipients()) {
-            if (m_videoRenderer)
-                [m_cdmInstance->contentKeySession() addContentKeyRecipient:m_videoRenderer->displayLayer()];
+            if (RetainPtr renderer = m_videoRenderer ? dynamic_objc_cast<AVSampleBufferDisplayLayer>(m_videoRenderer->renderer()) : nullptr)
+                [m_cdmInstance->contentKeySession() addContentKeyRecipient:renderer.get()];
 
             for (auto& pair : m_audioRenderers)
                 [m_cdmInstance->contentKeySession() addContentKeyRecipient:pair.second.get()];
@@ -778,11 +766,6 @@ void SourceBufferPrivateAVFObjC::flushIfNeeded()
     if (m_videoTracks.size())
         flushVideo();
 
-    // We initiatively enqueue samples instead of waiting for the
-    // media data requests from m_decompressionSession and m_displayLayer.
-    // In addition, we need to enqueue a sync sample (IDR video frame) first.
-    if (m_decompressionSession)
-        m_decompressionSession->stopRequestingMediaData();
     if (m_videoRenderer)
         m_videoRenderer->stopRequestingMediaData();
 
@@ -921,16 +904,6 @@ void SourceBufferPrivateAVFObjC::flushVideo()
     DEBUG_LOG(LOGIDENTIFIER);
     if (m_videoRenderer)
         m_videoRenderer->flush();
-
-    if (m_decompressionSession) {
-        m_decompressionSession->flush();
-        m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = ThreadSafeWeakPtr { *this }] {
-            if (RefPtr protectedThis = weakThis.get()) {
-                if (RefPtr player = protectedThis->player())
-                    player->setHasAvailableVideoFrame(true);
-            }
-        });
-    }
 
     m_cachedSize = std::nullopt;
 
@@ -1079,9 +1052,6 @@ void SourceBufferPrivateAVFObjC::enqueueSample(Ref<MediaSampleAVFObjC>&& sample,
             }
         }
 
-        if (m_decompressionSession)
-            m_decompressionSession->enqueueSample(platformSample.sample.cmSampleBuffer);
-
         if (!m_videoRenderer)
             return;
 
@@ -1117,11 +1087,17 @@ void SourceBufferPrivateAVFObjC::enqueueSampleBuffer(MediaSampleAVFObjC& sample)
         // Enqueuing a sample for display my synchronously fire an error, which can cause m_videoRenderer to become null.
         if (!m_videoRenderer)
             return;
+
+        // If the VideoMediaSampleRenderer is backed by a decompression session, we will receive a notification that a new frame has been displayed.
+        if (m_videoRenderer->isUsingDecompressionSession())
+            return;
+
         renderer = m_videoRenderer->renderer();
+
 #if HAVE(AVSAMPLEBUFFERDISPLAYLAYER_READYFORDISPLAY)
-        if (AVSampleBufferDisplayLayer *displayLayer = m_videoRenderer->displayLayer()) {
+        if (RetainPtr displayLayer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(renderer)) {
             // FIXME (117934497): Remove staging code once -[AVSampleBufferDisplayLayer isReadyForDisplay] is available in SDKs used by WebKit builders
-            if ([displayLayer respondsToSelector:@selector(isReadyForDisplay)])
+            if ([displayLayer.get() respondsToSelector:@selector(isReadyForDisplay)])
                 return;
         }
 #endif
@@ -1170,9 +1146,6 @@ bool SourceBufferPrivateAVFObjC::isReadyForMoreSamples(TrackID trackID)
         if (requiresFlush())
             return false;
 
-        if (m_decompressionSession)
-            return m_decompressionSession->isReadyForMoreMediaData();
-
         return m_videoRenderer && m_videoRenderer->isReadyForMoreMediaData();
     }
 
@@ -1217,8 +1190,6 @@ void SourceBufferPrivateAVFObjC::didBecomeReadyForMoreSamples(TrackID trackID)
     INFO_LOG(LOGIDENTIFIER, trackID);
 
     if (isEnabledVideoTrackID(trackID)) {
-        if (m_decompressionSession)
-            m_decompressionSession->stopRequestingMediaData();
         if (m_videoRenderer)
             m_videoRenderer->stopRequestingMediaData();
     } else if (auto renderer = audioRendererForTrackID(trackID))
@@ -1238,12 +1209,6 @@ void SourceBufferPrivateAVFObjC::notifyClientWhenReadyForMoreSamples(TrackID tra
         return;
 
     if (isEnabledVideoTrackID(trackID)) {
-        if (m_decompressionSession) {
-            m_decompressionSession->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }, trackID] {
-                if (RefPtr protectedThis = weakThis.get())
-                    protectedThis->didBecomeReadyForMoreSamples(trackID);
-            });
-        }
         if (m_videoRenderer) {
             m_videoRenderer->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }, trackID] {
                 if (RefPtr protectedThis = weakThis.get())
@@ -1296,39 +1261,42 @@ bool SourceBufferPrivateAVFObjC::isSeeking() const
 void SourceBufferPrivateAVFObjC::configureVideoRenderer(VideoMediaSampleRenderer& videoRenderer)
 {
     videoRenderer.setResourceOwner(m_resourceOwner);
+    RetainPtr displayLayer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(videoRenderer.renderer());
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    if (m_cdmInstance && shouldAddContentKeyRecipients())
-        [m_cdmInstance->contentKeySession() addContentKeyRecipient:videoRenderer.displayLayer()];
+    if (m_cdmInstance && shouldAddContentKeyRecipients() && displayLayer)
+        [m_cdmInstance->contentKeySession() addContentKeyRecipient:displayLayer.get()];
 #endif
     videoRenderer.requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }] {
         if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_enabledVideoTrackID)
             protectedThis->didBecomeReadyForMoreSamples(*protectedThis->m_enabledVideoTrackID);
     });
-    m_listener->beginObservingVideoRenderer(videoRenderer.renderer());
+    if (displayLayer)
+        m_listener->beginObservingVideoRenderer(displayLayer.get());
 }
 
 void SourceBufferPrivateAVFObjC::invalidateVideoRenderer(VideoMediaSampleRenderer& videoRenderer)
 {
     videoRenderer.flush();
     videoRenderer.stopRequestingMediaData();
-    m_listener->stopObservingVideoRenderer(videoRenderer.renderer());
+    if (RetainPtr renderer = videoRenderer.renderer())
+        m_listener->stopObservingVideoRenderer(renderer.get());
 
 #if ENABLE(ENCRYPTED_MEDIA) && HAVE(AVCONTENTKEYSESSION)
-    if (m_cdmInstance && shouldAddContentKeyRecipients())
-        [m_cdmInstance->contentKeySession() removeContentKeyRecipient:videoRenderer.displayLayer()];
+    RetainPtr displayLayer = dynamic_objc_cast<AVSampleBufferDisplayLayer>(videoRenderer.renderer());
+    if (displayLayer && m_cdmInstance && shouldAddContentKeyRecipients())
+        [m_cdmInstance->contentKeySession() removeContentKeyRecipient:displayLayer.get()];
 #endif
 }
 
-void SourceBufferPrivateAVFObjC::setVideoRenderer(WebSampleBufferVideoRendering *renderer)
+void SourceBufferPrivateAVFObjC::setVideoRenderer(VideoMediaSampleRenderer* renderer)
 {
-    if (m_videoRenderer && renderer == m_videoRenderer->renderer()) {
+    if (renderer == m_videoRenderer) {
         if (RefPtr expiringVideoRenderer = std::exchange(m_expiringVideoRenderer, nullptr))
             invalidateVideoRenderer(*expiringVideoRenderer);
         return;
     }
 
     ALWAYS_LOG(LOGIDENTIFIER, "!!renderer = ", !!renderer);
-    ASSERT(!renderer || !m_decompressionSession || hasSelectedVideo());
 
     if (m_videoRenderer)
         invalidateVideoRenderer(*std::exchange(m_videoRenderer, nullptr));
@@ -1336,59 +1304,43 @@ void SourceBufferPrivateAVFObjC::setVideoRenderer(WebSampleBufferVideoRendering 
     if (!renderer)
         return;
 
-    m_videoRenderer = VideoMediaSampleRenderer::create(renderer);
+    m_videoRenderer = renderer;
+
     configureVideoRenderer(*m_videoRenderer);
     if (m_enabledVideoTrackID)
         reenqueSamples(*m_enabledVideoTrackID);
 }
 
-void SourceBufferPrivateAVFObjC::stageVideoRenderer(WebSampleBufferVideoRendering *renderer)
+void SourceBufferPrivateAVFObjC::stageVideoRenderer(VideoMediaSampleRenderer* renderer)
 {
-    if (m_videoRenderer && renderer == m_videoRenderer->renderer())
+    if (renderer == m_videoRenderer)
         return;
 
     ALWAYS_LOG(LOGIDENTIFIER, "!!renderer = ", !!renderer);
-    ASSERT(!renderer || !m_decompressionSession || hasSelectedVideo());
 
     if (m_expiringVideoRenderer)
         invalidateVideoRenderer(*std::exchange(m_expiringVideoRenderer, nullptr));
 
     m_expiringVideoRenderer = WTFMove(m_videoRenderer);
-    m_videoRenderer = VideoMediaSampleRenderer::create(renderer);
     configureVideoRenderer(*m_videoRenderer);
     if (m_enabledVideoTrackID)
         reenqueSamples(*m_enabledVideoTrackID, NeedsFlush::No);
 }
 
-void SourceBufferPrivateAVFObjC::setDecompressionSession(WebCoreDecompressionSession* decompressionSession)
+void SourceBufferPrivateAVFObjC::videoRendererWillReconfigure(VideoMediaSampleRenderer& renderer)
 {
-    if (m_decompressionSession == decompressionSession)
+    if (&renderer != m_videoRenderer)
         return;
+    renderer.stopRequestingMediaData();
+    flushVideo();
+}
 
-    ALWAYS_LOG(LOGIDENTIFIER);
-
-    if (m_decompressionSession) {
-        m_decompressionSession->stopRequestingMediaData();
-        m_decompressionSession->invalidate();
-    }
-
-    m_decompressionSession = decompressionSession;
-
-    if (!m_decompressionSession)
+void SourceBufferPrivateAVFObjC::videoRendererDidReconfigure(VideoMediaSampleRenderer& renderer)
+{
+    if (&renderer != m_videoRenderer)
         return;
-
-    m_decompressionSession->requestMediaDataWhenReady([weakThis = ThreadSafeWeakPtr { *this }] {
-        if (RefPtr protectedThis = weakThis.get(); protectedThis && protectedThis->m_enabledVideoTrackID)
-            protectedThis->didBecomeReadyForMoreSamples(*protectedThis->m_enabledVideoTrackID);
-    });
-    m_decompressionSession->notifyWhenHasAvailableVideoFrame([weakThis = ThreadSafeWeakPtr { *this }] {
-        if (RefPtr protectedThis = weakThis.get()) {
-            if (auto player = protectedThis->player())
-                player->setHasAvailableVideoFrame(true);
-        }
-    });
     if (m_enabledVideoTrackID)
-        reenqueSamples(*m_enabledVideoTrackID);
+        reenqueSamples(*m_enabledVideoTrackID, NeedsFlush::No);
 }
 
 RefPtr<MediaPlayerPrivateMediaSourceAVFObjC> SourceBufferPrivateAVFObjC::player() const
