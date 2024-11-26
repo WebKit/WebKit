@@ -143,7 +143,7 @@ void SWServerRegistration::fireUpdateFoundEvent()
 void SWServerRegistration::forEachConnection(const Function<void(SWServer::Connection&)>& apply)
 {
     for (auto connectionIdentifierWithClients : m_connectionsWithClientRegistrations.values()) {
-        if (CheckedPtr connection = protectedServer()->connection(connectionIdentifierWithClients))
+        if (RefPtr connection = protectedServer()->connection(connectionIdentifierWithClients))
             apply(*connection);
     }
 }
@@ -202,7 +202,7 @@ void SWServerRegistration::notifyClientsOfControllerChange()
 {
     std::optional<ServiceWorkerData> newController = activeWorker() ? std::optional { activeWorker()->data() } : std::nullopt;
     for (auto& item : m_clientsUsingRegistration) {
-        if (CheckedPtr connection = protectedServer()->connection(item.key))
+        if (RefPtr connection = protectedServer()->connection(item.key))
             connection->notifyClientsOfControllerChange(item.value, newController);
     }
 }

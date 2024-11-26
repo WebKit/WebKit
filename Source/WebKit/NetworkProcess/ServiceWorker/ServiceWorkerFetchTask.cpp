@@ -452,7 +452,7 @@ void ServiceWorkerFetchTask::timeoutTimerFired()
 
     cannotHandle();
 
-    if (CheckedPtr swServerConnection = m_swServerConnection.get())
+    if (RefPtr swServerConnection = m_swServerConnection.get())
         swServerConnection->fetchTaskTimedOut(*serviceWorkerIdentifier());
 }
 
@@ -462,10 +462,13 @@ void ServiceWorkerFetchTask::softUpdateIfNeeded()
     if (!m_shouldSoftUpdate)
         return;
     Ref loader = *m_loader;
-    CheckedPtr swConnection = loader->connectionToWebProcess().swConnection();
+    RefPtr swConnection = loader->connectionToWebProcess().swConnection();
     if (!swConnection)
         return;
-    if (RefPtr registration = swConnection->protectedServer()->getRegistration(*m_serviceWorkerRegistrationIdentifier))
+    RefPtr server = swConnection->server();
+    if (!server)
+        return;
+    if (RefPtr registration = server->getRegistration(*m_serviceWorkerRegistrationIdentifier))
         registration->scheduleSoftUpdate(loader->isAppInitiated() ? WebCore::IsAppInitiated::Yes : WebCore::IsAppInitiated::No);
 }
 
@@ -559,7 +562,8 @@ void ServiceWorkerFetchTask::cancelPreloadIfNecessary()
 
 NetworkSession* ServiceWorkerFetchTask::session()
 {
-    return m_swServerConnection ? m_swServerConnection->session() : nullptr;
+    RefPtr swServerConnection = m_swServerConnection.get();
+    return swServerConnection ? swServerConnection->session() : nullptr;
 }
 
 bool ServiceWorkerFetchTask::convertToDownload(DownloadManager& manager, DownloadID downloadID, const ResourceRequest& request, const ResourceResponse& response)

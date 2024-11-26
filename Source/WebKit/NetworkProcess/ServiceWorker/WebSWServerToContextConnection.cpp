@@ -148,7 +148,7 @@ uint64_t WebSWServerToContextConnection::messageSenderDestinationID() const
 void WebSWServerToContextConnection::postMessageToServiceWorkerClient(const ScriptExecutionContextIdentifier& destinationIdentifier, const MessageWithMessagePorts& message, ServiceWorkerIdentifier sourceIdentifier, const String& sourceOrigin)
 {
     RefPtr server = this->server();
-    if (CheckedPtr connection = server ? server->connection(destinationIdentifier.processIdentifier()) : nullptr)
+    if (RefPtr connection = server ? server->connection(destinationIdentifier.processIdentifier()) : nullptr)
         connection->postMessageToServiceWorkerClient(destinationIdentifier, message, sourceIdentifier, sourceOrigin);
 }
 
@@ -386,7 +386,7 @@ void WebSWServerToContextConnection::unregisterDownload(ServiceWorkerDownloadTas
 void WebSWServerToContextConnection::focus(ScriptExecutionContextIdentifier clientIdentifier, CompletionHandler<void(std::optional<WebCore::ServiceWorkerClientData>&&)>&& callback)
 {
     RefPtr server = this->server();
-    CheckedPtr connection = server ? server->connection(clientIdentifier.processIdentifier()) : nullptr;
+    RefPtr connection = server ? server->connection(clientIdentifier.processIdentifier()) : nullptr;
     if (!connection) {
         callback({ });
         return;

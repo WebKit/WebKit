@@ -520,10 +520,8 @@ Vector<RefPtr<WebCore::BlobDataFileReference>> NetworkConnectionToWebProcess::re
 
 RefPtr<ServiceWorkerFetchTask> NetworkConnectionToWebProcess::createFetchTask(NetworkResourceLoader& loader, const ResourceRequest& request)
 {
-    auto* swConnection = this->swConnection();
-    if (!swConnection)
-        return nullptr;
-    return swConnection->createFetchTask(loader, request);
+    RefPtr swConnection = this->swConnection();
+    return swConnection ? swConnection->createFetchTask(loader, request) : nullptr;
 }
 
 void NetworkConnectionToWebProcess::scheduleResourceLoad(NetworkResourceLoadParameters&& loadParameters, std::optional<NetworkResourceLoadIdentifier> existingLoaderToResume)
@@ -1398,8 +1396,8 @@ Ref<NetworkSchemeRegistry> NetworkConnectionToWebProcess::protectedSchemeRegistr
 
 void NetworkConnectionToWebProcess::unregisterSWConnection()
 {
-    if (m_swConnection)
-        m_swConnection->protectedServer()->removeConnection(m_swConnection->identifier());
+    if (RefPtr swServer = m_swConnection ? m_swConnection->server() : nullptr)
+        swServer->removeConnection(m_swConnection->identifier());
 }
 
 void NetworkConnectionToWebProcess::establishSWServerConnection()
@@ -1412,9 +1410,9 @@ void NetworkConnectionToWebProcess::establishSWServerConnection()
         return;
 
     Ref server = session->ensureSWServer();
-    auto connection = makeUnique<WebSWServerConnection>(*this, server, m_connection.get(), m_webProcessIdentifier);
+    Ref connection = WebSWServerConnection::create(*this, server, m_connection.get(), m_webProcessIdentifier);
 
-    m_swConnection = *connection;
+    m_swConnection = connection.get();
     server->addConnection(WTFMove(connection));
 }
 

@@ -252,6 +252,7 @@ public:
 
 #if ENABLE(WEB_RTC)
     NetworkMDNSRegister& mdnsRegister() { return m_mdnsRegister; }
+    Ref<NetworkMDNSRegister> protectedMDNSRegister() { return m_mdnsRegister; }
 #endif
 
     WebSWServerToContextConnection* swContextConnection() { return m_swContextConnection.get(); }

@@ -182,7 +182,7 @@ void NetworkRTCProvider::createResolver(LibWebRTCResolverIdentifier identifier, 
     }
 
     RefPtr connection = m_connection.get();
-    if (connection && connection->mdnsRegister().hasRegisteredName(address)) {
+    if (connection && connection->protectedMDNSRegister()->hasRegisteredName(address)) {
         Vector<WebKit::RTC::Network::IPAddress> ipAddresses;
         Ref rtcMonitor = m_rtcMonitor;
         if (!rtcMonitor->ipv4().isUnspecified())

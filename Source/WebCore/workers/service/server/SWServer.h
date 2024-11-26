@@ -86,9 +86,8 @@ struct WorkerFetchResult;
 class SWServer : public RefCounted<SWServer>, public CanMakeWeakPtr<SWServer> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(SWServer, WEBCORE_EXPORT);
 public:
-    class Connection : public CanMakeWeakPtr<Connection>, public CanMakeCheckedPtr<Connection> {
+    class Connection : public CanMakeWeakPtr<Connection>, public RefCounted<Connection> {
         WTF_MAKE_TZONE_ALLOCATED_EXPORT(Connection, WEBCORE_EXPORT);
-        WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(Connection);
         friend class SWServer;
     public:
         WEBCORE_EXPORT virtual ~Connection();
@@ -127,10 +126,8 @@ public:
 
         virtual void contextConnectionCreated(SWServerToContextConnection&) = 0;
 
-        SWServer& server() { return m_server.get(); }
-        const SWServer& server() const { return m_server.get(); }
-
-        Ref<SWServer> protectedServer() const { return m_server.get(); }
+        SWServer* server() { return m_server.get(); }
+        const SWServer* server() const { return m_server.get(); }
 
     protected:
         WEBCORE_EXPORT Connection(SWServer&, Identifier);
@@ -155,7 +152,7 @@ public:
             CompletionHandler<void(std::optional<ServiceWorkerRegistrationData>&&)> callback;
         };
 
-        WeakRef<SWServer> m_server;
+        WeakPtr<SWServer> m_server;
         Identifier m_identifier;
         Vector<RegistrationReadyRequest> m_registrationReadyRequests;
     };
@@ -197,11 +194,11 @@ public:
 
     WEBCORE_EXPORT void markAllWorkersForRegistrableDomainAsTerminated(const RegistrableDomain&);
 
-    WEBCORE_EXPORT void addConnection(std::unique_ptr<Connection>&&);
+    WEBCORE_EXPORT void addConnection(Ref<Connection>&&);
     WEBCORE_EXPORT void removeConnection(SWServerConnectionIdentifier);
     Connection* connection(SWServerConnectionIdentifier identifier) const { return m_connections.get(identifier); }
 
-    const HashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>>& connections() const { return m_connections; }
+    const HashMap<SWServerConnectionIdentifier, Ref<Connection>>& connections() const { return m_connections; }
     WEBCORE_EXPORT bool canHandleScheme(StringView) const;
 
     SWOriginStore& originStore() { return m_originStore; }
@@ -342,7 +339,7 @@ private:
 
     WeakPtr<SWServerDelegate> m_delegate;
 
-    HashMap<SWServerConnectionIdentifier, std::unique_ptr<Connection>> m_connections;
+    HashMap<SWServerConnectionIdentifier, Ref<Connection>> m_connections;
     HashMap<ServiceWorkerRegistrationKey, WeakRef<SWServerRegistration>> m_scopeToRegistrationMap;
     HashMap<ServiceWorkerRegistrationIdentifier, Ref<SWServerRegistration>> m_registrations;
     HashMap<ServiceWorkerRegistrationKey, std::unique_ptr<SWServerJobQueue>> m_jobQueues;

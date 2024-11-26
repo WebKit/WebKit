@@ -68,6 +68,9 @@ public:
     NetworkMDNSRegister(NetworkConnectionToWebProcess&);
     ~NetworkMDNSRegister();
 
+    void ref() const;
+    void deref() const;
+
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
 
 #if ENABLE_MDNS

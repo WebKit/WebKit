@@ -131,10 +131,10 @@ void WebSharedWorkerServerToContextConnection::launchSharedWorker(WebSharedWorke
     if (auto contextIdentifier = initializationData.clientIdentifier) {
         initializationData.clientIdentifier = WebCore::ScriptExecutionContextIdentifier { contextIdentifier->object(), *webProcessIdentifier() };
         if (RefPtr serviceWorkerOldConnection = connection->protectedNetworkProcess()->webProcessConnection(contextIdentifier->processIdentifier())) {
-            if (CheckedPtr swOldConnection = serviceWorkerOldConnection->swConnection()) {
+            if (RefPtr swOldConnection = serviceWorkerOldConnection->swConnection()) {
                 if (auto clientData = swOldConnection->gatherClientData(*contextIdentifier)) {
                     swOldConnection->unregisterServiceWorkerClient(*contextIdentifier);
-                    if (CheckedPtr swNewConnection = connection->swConnection()) {
+                    if (RefPtr swNewConnection = connection->swConnection()) {
                         clientData->serviceWorkerClientData.identifier = *initializationData.clientIdentifier;
                         swNewConnection->registerServiceWorkerClient(WTFMove(clientData->clientOrigin), WTFMove(clientData->serviceWorkerClientData), clientData->controllingServiceWorkerRegistrationIdentifier, WTFMove(clientData->userAgent));
                     }
