@@ -1313,6 +1313,17 @@ std::optional<PlatformLayerIdentifier> GraphicsLayerCA::contentsLayerIDForModel(
 
 #endif
 
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+void GraphicsLayerCA::setIsSeparatedImage(bool isSeparatedImage)
+{
+    if (m_isSeparatedImage == isSeparatedImage)
+        return;
+    m_isSeparatedImage = isSeparatedImage;
+    if (m_isSeparatedImage)
+        changeLayerTypeTo(PlatformCALayer::LayerType::LayerTypeSeparatedImageLayer);
+}
+#endif
+
 void GraphicsLayerCA::setContentsToPlatformLayer(PlatformLayer* platformLayer, ContentsLayerPurpose purpose)
 {
     if (m_contentsLayer && platformLayer == m_contentsLayer->platformLayer())
@@ -4318,6 +4329,8 @@ ASCIILiteral GraphicsLayerCA::purposeNameForInnerLayer(PlatformCALayer& layer) c
             return "contents layer (plugin)"_s;
         case ContentsLayerPurpose::Model:
             return "contents layer (model)"_s;
+        case ContentsLayerPurpose::SeparatedImage:
+            return "contents layer (separated image)"_s;
         case ContentsLayerPurpose::HostedModel:
             return "contents layer (hosted model)"_s;
         case ContentsLayerPurpose::Host:
@@ -4657,6 +4670,9 @@ void GraphicsLayerCA::changeLayerTypeTo(PlatformCALayer::LayerType newLayerType)
         | EventRegionChanged
         | NameChanged
         | DebugIndicatorsChanged
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+        | SeparatedChanged
+#endif
 #if ENABLE(INTERACTION_REGIONS_IN_EVENT_REGION) || HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
         | CoverageRectChanged);
 #else

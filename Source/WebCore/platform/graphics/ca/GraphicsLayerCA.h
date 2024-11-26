@@ -166,6 +166,10 @@ public:
     WEBCORE_EXPORT void setContentsToModel(RefPtr<Model>&&, ModelInteraction) override;
     WEBCORE_EXPORT std::optional<PlatformLayerIdentifier> contentsLayerIDForModel() const override;
 #endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    WEBCORE_EXPORT void setIsSeparatedImage(bool) override;
+#endif
+
     WEBCORE_EXPORT void setContentsMinificationFilter(ScalingFilter) override;
     WEBCORE_EXPORT void setContentsMagnificationFilter(ScalingFilter) override;
 
@@ -690,6 +694,9 @@ private:
 
 #if ENABLE(MODEL_ELEMENT)
     RefPtr<Model> m_contentsModel;
+#endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    bool m_isSeparatedImage;
 #endif
     RefPtr<GraphicsLayerContentsDisplayDelegate> m_contentsDisplayDelegate;
 

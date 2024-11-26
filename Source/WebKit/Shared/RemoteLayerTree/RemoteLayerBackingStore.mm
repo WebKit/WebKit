@@ -65,6 +65,10 @@
 #import <wtf/cocoa/TypeCastsCocoa.h>
 #import <wtf/text/TextStream.h>
 
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+#import "WKSeparatedImageView.h"
+#endif
+
 
 namespace WebKit {
 
@@ -415,6 +419,9 @@ void RemoteLayerBackingStore::drawInContext(GraphicsContext& context)
     // FIXME: This should be moved to PlatformCALayerRemote for better layering.
     switch (m_layer->layerType()) {
     case PlatformCALayer::LayerType::LayerTypeSimpleLayer:
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    case PlatformCALayer::LayerType::LayerTypeSeparatedImageLayer:
+#endif
     case PlatformCALayer::LayerType::LayerTypeTiledBackingTileLayer:
         m_layer->owner()->platformCALayerPaintContents(m_layer.ptr(), context, dirtyBounds, paintBehavior);
         break;
@@ -501,12 +508,26 @@ RetainPtr<id> RemoteLayerBackingStoreProperties::layerContentsBufferFromBackendH
     return contents;
 }
 
-void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier, bool replayDynamicContentScalingDisplayListsIntoBackingStore)
+void RemoteLayerBackingStoreProperties::applyBackingStoreToLayer(CALayer *layer, LayerContentsType contentsType, std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier, bool replayDynamicContentScalingDisplayListsIntoBackingStore, UIView *hostingView)
 {
     if (asyncContentsIdentifier && m_contentsRenderingResourceIdentifier && *asyncContentsIdentifier >= m_contentsRenderingResourceIdentifier)
         return;
 
     layer.contentsOpaque = m_isOpaque;
+
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    if (hostingView && [hostingView isKindOfClass:[WKSeparatedImageView class]] && contentsType == LayerContentsType::CachedIOSurface) {
+        auto machSendRight = std::get<MachSendRight>(WTFMove(*m_bufferHandle));
+        auto surface = WebCore::IOSurface::createFromSendRight(WTFMove(machSendRight));
+        if (surface) {
+            auto context = surface->createPlatformContext();
+            auto image = surface->createImage(context.get());
+            [(WKSeparatedImageView *)hostingView setCGImage:image.get()];
+        } else
+            [(WKSeparatedImageView *)hostingView setCGImage:nil];
+        return;
+    }
+#endif
 
     RetainPtr<id> contents;
     // m_bufferHandle can be unset here if IPC with the GPU process timed out.

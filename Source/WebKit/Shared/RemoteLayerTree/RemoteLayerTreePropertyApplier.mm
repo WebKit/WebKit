@@ -262,12 +262,14 @@ void RemoteLayerTreePropertyApplier::applyPropertiesToLayer(CALayer *layer, Remo
         auto* backingStore = properties.backingStoreOrProperties.properties.get();
         if (backingStore && properties.backingStoreAttached) {
             std::optional<WebCore::RenderingResourceIdentifier> asyncContentsIdentifier;
+            UIView* hostingView = nullptr;
             if (layerTreeNode) {
                 backingStore->updateCachedBuffers(*layerTreeNode, layerContentsType);
                 asyncContentsIdentifier = layerTreeNode->asyncContentsIdentifier();
+                hostingView = layerTreeNode->uiView();
             }
 
-            backingStore->applyBackingStoreToLayer(layer, layerContentsType, asyncContentsIdentifier, layerTreeHost->replayDynamicContentScalingDisplayListsIntoBackingStore());
+            backingStore->applyBackingStoreToLayer(layer, layerContentsType, asyncContentsIdentifier, layerTreeHost->replayDynamicContentScalingDisplayListsIntoBackingStore(), hostingView);
         } else
             [layer _web_clearContents];
     }
