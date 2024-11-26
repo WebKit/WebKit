@@ -1,0 +1,13 @@
+PASS getComputedStyle(DivElement1).fontFamily is "fantasy"
+PASS getComputedStyle(DivElement2).fontFamily is "serif"
+PASS getComputedStyle(SpanElement1).fontFamily is "initial"
+PASS getComputedStyle(SpanElement2).fontFamily is "initial"
+PASS getComputedStyle(SpanElement3).fontFamily is "initial"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+The following two lines should look the same:
+
+test
+
+Test1 Test2 Test3
