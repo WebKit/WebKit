@@ -314,9 +314,8 @@ bool MediaControlsHost::inWindowFullscreen() const
     if (!m_mediaElement)
         return false;
 
-    auto& mediaElement = *m_mediaElement;
-    if (is<HTMLVideoElement>(mediaElement))
-        return downcast<HTMLVideoElement>(mediaElement).webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::InWindow;
+    if (RefPtr videoElement = dynamicDowncast<HTMLVideoElement>(*m_mediaElement))
+        return videoElement->webkitPresentationMode() == HTMLVideoElement::VideoPresentationMode::InWindow;
 #endif
     return false;
 }
