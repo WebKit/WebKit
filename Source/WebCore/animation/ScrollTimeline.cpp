@@ -84,8 +84,10 @@ ScrollTimeline::ScrollTimeline(ScrollTimelineOptions&& options)
     , m_source(WTFMove(options.source))
     , m_axis(options.axis)
 {
-    if (m_source)
+    if (m_source) {
         m_source->protectedDocument()->ensureTimelinesController().addTimeline(*this);
+        cacheCurrentTime();
+    }
 }
 
 ScrollTimeline::ScrollTimeline(const AtomString& name, ScrollAxis axis)
@@ -198,8 +200,28 @@ AnimationTimelinesController* ScrollTimeline::controller() const
     return nullptr;
 }
 
+void ScrollTimeline::cacheCurrentTime()
+{
+    m_cachedCurrentTimeData = [&] -> CurrentTimeData {
+        RefPtr source = this->source();
+        if (!source)
+            return { };
+        auto* sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document());
+        if (!sourceScrollableArea)
+            return { };
+        float scrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->scrollOffset().y() : sourceScrollableArea->scrollOffset().x();
+        float maxScrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->maximumScrollOffset().y() : sourceScrollableArea->maximumScrollOffset().x();
+        // Chrome appears to clip the current time of a scroll timeline in the [0-100] range.
+        // We match this behavior for compatibility reasons, see https://github.com/w3c/csswg-drafts/issues/11033.
+        if (maxScrollOffset > 0)
+            scrollOffset = std::clamp(scrollOffset, 0.f, maxScrollOffset);
+        return { scrollOffset, maxScrollOffset };
+    }();
+}
+
 AnimationTimeline::ShouldUpdateAnimationsAndSendEvents ScrollTimeline::documentWillUpdateAnimationsAndSendEvents()
 {
+    cacheCurrentTime();
     if (m_source && m_source->isConnected())
         return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::Yes;
     return AnimationTimeline::ShouldUpdateAnimationsAndSendEvents::No;
@@ -236,26 +258,11 @@ TimelineRange ScrollTimeline::defaultRange() const
 
 ScrollTimeline::Data ScrollTimeline::computeTimelineData(const TimelineRange& range) const
 {
+    if (!m_cachedCurrentTimeData.scrollOffset && !m_cachedCurrentTimeData.maxScrollOffset)
+        return { };
     if ((range.start.name != SingleTimelineRange::Name::Normal && range.start.name != SingleTimelineRange::Name::Omitted) || (range.end.name != SingleTimelineRange::Name::Normal && range.end.name != SingleTimelineRange::Name::Omitted))
         return { };
-
-    RefPtr source = this->source();
-    if (!source)
-        return { };
-
-    auto* sourceScrollableArea = scrollableAreaForSourceRenderer(source->renderer(), source->document());
-    if (!sourceScrollableArea)
-        return { };
-
-    float maxScrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->maximumScrollOffset().y() : sourceScrollableArea->maximumScrollOffset().x();
-    float scrollOffset = axis() == ScrollAxis::Block ? sourceScrollableArea->scrollOffset().y() : sourceScrollableArea->scrollOffset().x();
-
-    // Chrome appears to clip the current time of a scroll timeline in the [0-100] range.
-    // We match this behavior for compatibility reasons, see https://github.com/w3c/csswg-drafts/issues/11033.
-    if (maxScrollOffset > 0)
-        scrollOffset = std::clamp(scrollOffset, 0.f, maxScrollOffset);
-
-    return { scrollOffset, floatValueForOffset(range.start.offset, maxScrollOffset), floatValueForOffset(range.end.offset, maxScrollOffset) };
+    return { m_cachedCurrentTimeData.scrollOffset, floatValueForOffset(range.start.offset, m_cachedCurrentTimeData.maxScrollOffset), floatValueForOffset(range.end.offset, m_cachedCurrentTimeData.maxScrollOffset) };
 }
 
 std::optional<WebAnimationTime> ScrollTimeline::currentTime(const TimelineRange& timelineRange)

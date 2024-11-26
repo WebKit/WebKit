@@ -94,11 +94,19 @@ private:
 
     void animationTimingDidChange(WebAnimation&) override;
 
+    struct CurrentTimeData {
+        float scrollOffset { 0 };
+        float maxScrollOffset { 0 };
+    };
+
+    void cacheCurrentTime();
+
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_source;
     ScrollAxis m_axis { ScrollAxis::Block };
     AtomString m_name;
     Scroller m_scroller { Scroller::Self };
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_timelineScopeElement;
+    CurrentTimeData m_cachedCurrentTimeData { };
 };
 
 } // namespace WebCore

@@ -23,10 +23,12 @@ promise_test(async () => {
 
     await UIHelper.scrollTo(0, -100, unconstrained);
     await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
 
     assert_equals(scrollTimeline.currentTime.toString(), "0%");
 
     await UIHelper.scrollTo(0, 2100, unconstrained);
+    await UIHelper.renderingUpdate();
     await UIHelper.renderingUpdate();
 
     assert_equals(scrollTimeline.currentTime.toString(), "100%");

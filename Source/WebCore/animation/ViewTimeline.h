@@ -26,6 +26,7 @@
 #pragma once
 
 #include "CSSNumericValue.h"
+#include "Length.h"
 #include "ScrollTimeline.h"
 #include "ViewTimelineOptions.h"
 #include <wtf/Ref.h>
@@ -80,8 +81,20 @@ private:
     Ref<CSSValue> toCSSValue(const RenderStyle&) const final;
     bool isViewTimeline() const final { return true; }
 
+    struct CurrentTimeData {
+        float scrollOffset { 0 };
+        float scrollContainerSize { 0 };
+        float subjectOffset { 0 };
+        float subjectSize { 0 };
+        Length insetStart { };
+        Length insetEnd { };
+    };
+
+    void cacheCurrentTime();
+
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_subject;
     ViewTimelineInsets m_insets;
+    CurrentTimeData m_cachedCurrentTimeData { };
 };
 
 } // namespace WebCore

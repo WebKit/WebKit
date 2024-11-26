@@ -79,6 +79,7 @@ promise_test(async () => {
 
     await scrollToRubberBand();
     await UIHelper.renderingUpdate();
+    await UIHelper.renderingUpdate();
 
     assert_equals(scrollTimeline.currentTime.toString(), "0%");
 }, "The current time of a scroll timeline remains at 0% while rubber-banding.");
