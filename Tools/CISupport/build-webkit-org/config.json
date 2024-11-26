@@ -149,7 +149,12 @@
                   { "name": "wpe-linux-bot-33", "platform": "wpe" },
                   { "name": "wpe-linux-bot-34", "platform": "wpe" },
                   { "name": "wpe-linux-bot-35", "platform": "wpe" },
-                  { "name": "wpe-linux-bot-37", "platform": "wpe" }
+
+                  { "name": "wpe-linux-queue-1-bot-1", "platform": "wpe" },
+                  { "name": "wpe-linux-queue-1-bot-2", "platform": "wpe" },
+                  { "name": "wpe-linux-queue-1-bot-3", "platform": "wpe" },
+                  { "name": "wpe-linux-queue-1-bot-4", "platform": "wpe" },
+                  { "name": "wpe-linux-queue-1-bot-5", "platform": "wpe" }
                 ],
 
   "builders":   [
@@ -722,7 +727,7 @@
                   {
                     "name": "WPE-Linux-64-bit-Release-SDK-Container", "factory": "BuildAndTestAndArchiveAllButJSCFactory",
                     "platform": "wpe", "configuration": "release", "architectures": ["x86_64"],
-                    "workernames": ["wpe-linux-bot-37"]
+                    "workernames": ["wpe-linux-queue-1-bot-1", "wpe-linux-queue-1-bot-2", "wpe-linux-queue-1-bot-3", "wpe-linux-queue-1-bot-4", "wpe-linux-queue-1-bot-5"]
                   }
                 ],
 
