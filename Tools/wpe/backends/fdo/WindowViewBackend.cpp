@@ -434,7 +434,6 @@ const struct wl_touch_listener WindowViewBackend::s_touchListener = {
             return;
 
         auto& seatData = window.m_seatData;
-        seatData.touch.tracking = true;
         struct wpe_input_touch_event_raw rawEvent = { wpe_input_touch_event_type_down,
             time, id, wl_fixed_to_int(x), wl_fixed_to_int(y) };
         memcpy(&seatData.touch.points[id], &rawEvent, sizeof(struct wpe_input_touch_event_raw));
@@ -448,10 +447,8 @@ const struct wl_touch_listener WindowViewBackend::s_touchListener = {
     {
         auto& window = *static_cast<WindowViewBackend*>(data);
         auto& seatData = window.m_seatData;
-        if (!seatData.touch.tracking || id < 0 || id >= 10)
+        if (id < 0 || id >= 10)
             return;
-
-        seatData.touch.tracking = false;
 
         struct wpe_input_touch_event_raw rawEvent = { wpe_input_touch_event_type_up,
             time, id, seatData.touch.points[id].x, seatData.touch.points[id].y };
@@ -468,7 +465,7 @@ const struct wl_touch_listener WindowViewBackend::s_touchListener = {
     {
         auto& window = *static_cast<WindowViewBackend*>(data);
         auto& seatData = window.m_seatData;
-        if (!seatData.touch.tracking || id < 0 || id >= 10)
+        if (id < 0 || id >= 10)
             return;
 
         struct wpe_input_touch_event_raw rawEvent = { wpe_input_touch_event_type_motion,
