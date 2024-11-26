@@ -88,9 +88,7 @@ public:
         NamespaceRules,
         RegularRules,
         KeyframeRules,
-        CounterStyleRules,
         FontFeatureValuesRules,
-        ViewTransitionRules,
         NoRules, // For parsing at-rules inside declaration lists (without nesting support)
     };
 
