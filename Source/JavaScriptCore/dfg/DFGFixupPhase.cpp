@@ -1641,6 +1641,7 @@ private:
         }
 
         case StringReplace:
+        case StringReplaceAll:
         case StringReplaceRegExp: {
             if (op == StringReplace
                 && node->child1()->shouldSpeculateString()
@@ -1661,7 +1662,7 @@ private:
                     m_indexInBlock, SpecNone, Check, node->origin,
                     Edge(node->child2().node(), StringUse));
                 fixEdge<StringUse>(node->child2());
-            } else if (op == StringReplace) {
+            } else if (op == StringReplace || op == StringReplaceAll) {
                 if (node->child2()->shouldSpeculateRegExpObject() && m_graph.isWatchingRegExpPrimordialPropertiesWatchpoint(node))
                     addStringReplacePrimordialChecks(node->child2().node());
                 else 
