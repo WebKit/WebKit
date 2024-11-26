@@ -1191,7 +1191,7 @@ private:
     struct SelectionGeometries {
         Vector<SelectionGeometry> geometries;
         int maxLineNumber { 0 };
-        bool hasAnyRightToLeftText { false };
+        bool hasBidirectionalText { false };
     };
     WEBCORE_EXPORT static SelectionGeometries collectSelectionGeometriesInternal(const SimpleRange&);
 #endif

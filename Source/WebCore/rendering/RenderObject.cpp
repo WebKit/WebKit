@@ -77,6 +77,7 @@
 #include "RenderView.h"
 #include "RenderWidget.h"
 #include "SVGRenderSupport.h"
+#include "Settings.h"
 #include "StyleResolver.h"
 #include "TransformState.h"
 #include <algorithm>
@@ -2654,13 +2655,40 @@ static void makeBidiSelectionVisuallyContiguousIfNeeded(const SimpleRange& range
     geometries.appendList({ WTFMove(*startGeometry), WTFMove(*endGeometry) });
 }
 
+static void adjustTextDirectionForCoalescedGeometries(const SimpleRange& range, Vector<SelectionGeometry>& geometries)
+{
+    if (!range.protectedStartContainer()->protectedDocument()->settings().visuallyContiguousBidiTextSelectionEnabled())
+        return;
+
+    auto [start, end] = positionsForRange(range);
+    if (inSameLine(start, end)) {
+        auto direction = primaryDirectionForSingleLineRange(start, end);
+        for (auto& geometry : geometries)
+            geometry.setDirection(direction);
+        return;
+    }
+
+    for (auto& geometry : geometries) {
+        if (geometry.containsStart()) {
+            auto endOfFirstLine = logicalEndOfLine(start).deepEquivalent();
+            geometry.setDirection(primaryDirectionForSingleLineRange(start, endOfFirstLine));
+        }
+
+        if (geometry.containsEnd()) {
+            auto startOfLastLine = logicalStartOfLine(end).deepEquivalent();
+            geometry.setDirection(primaryDirectionForSingleLineRange(startOfLastLine, end));
+        }
+    }
+}
+
 auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) -> SelectionGeometries
 {
     Vector<SelectionGeometry> geometries;
     Vector<SelectionGeometry> newGeometries;
     bool hasFlippedWritingMode = range.start.container->renderer() && range.start.container->renderer()->writingMode().isBlockFlipped();
     bool containsDifferentWritingModes = false;
-    bool hasAnyRightToLeftText = false;
+    bool hasLeftToRightText = false;
+    bool hasRightToLeftText = false;
     for (Ref node : intersectingNodesWithDeprecatedZeroOffsetStartQuirk(range)) {
         CheckedPtr renderer = node->renderer();
         // Only ask leaf render objects for their line box rects.
@@ -2686,7 +2714,9 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
                 if (selectionGeometry.logicalWidth() || selectionGeometry.logicalHeight())
                     geometries.append(selectionGeometry);
                 if (selectionGeometry.direction() == TextDirection::RTL)
-                    hasAnyRightToLeftText = true;
+                    hasRightToLeftText = true;
+                else
+                    hasLeftToRightText = true;
             }
             newGeometries.shrink(0);
         }
@@ -2815,7 +2845,7 @@ auto RenderObject::collectSelectionGeometriesInternal(const SimpleRange& range) 
             selectionGeometry.setLogicalWidth(selectionGeometry.maxX() - selectionGeometry.logicalLeft());
     }
 
-    return { WTFMove(geometries), maxLineNumber, hasAnyRightToLeftText };
+    return { WTFMove(geometries), maxLineNumber, hasRightToLeftText && hasLeftToRightText };
 }
 
 static bool coalesceSelectionGeometryWithAdjacentQuadsIfPossible(SelectionGeometry& current, const SelectionGeometry& next)
@@ -2850,7 +2880,7 @@ static bool coalesceSelectionGeometryWithAdjacentQuadsIfPossible(SelectionGeomet
 
 Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleRange& range)
 {
-    auto [geometries, maxLineNumber, hasAnyRightToLeftText] = RenderObject::collectSelectionGeometriesInternal(range);
+    auto [geometries, maxLineNumber, hasBidirectionalText] = RenderObject::collectSelectionGeometriesInternal(range);
     auto numberOfGeometries = geometries.size();
 
     // Union all the rectangles on interior lines (i.e. not first or last).
@@ -2914,8 +2944,10 @@ Vector<SelectionGeometry> RenderObject::collectSelectionGeometries(const SimpleR
         }
     }
 
-    if (hasAnyRightToLeftText)
+    if (hasBidirectionalText) {
         makeBidiSelectionVisuallyContiguousIfNeeded(range, coalescedGeometries);
+        adjustTextDirectionForCoalescedGeometries(range, coalescedGeometries);
+    }
 
     return coalescedGeometries;
 }
