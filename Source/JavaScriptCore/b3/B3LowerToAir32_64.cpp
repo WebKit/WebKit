@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015-2019 Apple Inc. All rights reserved.
+ * Copyright (C) 2015-2024 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,6 +65,8 @@
 #if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 #endif
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
 
 namespace JSC { namespace B3 {
 
@@ -5601,6 +5603,8 @@ void lowerToAir(Procedure& procedure)
 }
 
 } } // namespace JSC::B3
+
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
 #if !ASSERT_ENABLED
 IGNORE_RETURN_TYPE_WARNINGS_END

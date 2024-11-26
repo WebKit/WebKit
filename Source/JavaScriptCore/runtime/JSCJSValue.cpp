@@ -270,12 +270,14 @@ void JSValue::dumpInContextAssumingStructure(
 #if USE(JSVALUE64)
         out.printf("Double: %lld, %lf", (long long)reinterpretDoubleToInt64(asDouble()), asDouble());
 #else
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
         union {
             double asDouble;
             uint32_t asTwoInt32s[2];
         } u;
         u.asDouble = asDouble();
         out.printf("Double: %08x:%08x, %lf", u.asTwoInt32s[1], u.asTwoInt32s[0], asDouble());
+WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 #endif
     } else if (isCell()) {
         if (structure->classInfoForCells()->isSubClassOf(JSString::info())) {
