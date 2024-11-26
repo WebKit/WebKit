@@ -26,6 +26,7 @@
 #include "config.h"
 #include "KeyedDecoderGlib.h"
 
+#include <wtf/glib/GSpanExtras.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -69,7 +70,7 @@ bool KeyedDecoderGlib::decodeBytes(const String& key, std::span<const uint8_t>& 
     if (!value)
         return false;
 
-    bytes = { static_cast<const uint8_t*>(g_variant_get_data(value.get())), g_variant_get_size(value.get()) };
+    bytes = WTF::span(value);
     return true;
 }
 

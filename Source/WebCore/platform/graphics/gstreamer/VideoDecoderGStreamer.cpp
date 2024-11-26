@@ -131,7 +131,7 @@ GStreamerVideoDecoder::~GStreamerVideoDecoder()
 Ref<VideoDecoder::DecodePromise> GStreamerVideoDecoder::decode(EncodedFrame&& frame)
 {
     return invokeAsync(gstDecoderWorkQueue(), [value = Vector<uint8_t> { frame.data }, isKeyFrame = frame.isKeyFrame, timestamp = frame.timestamp, duration = frame.duration, decoder = m_internalDecoder] {
-        return decoder->decode({ value.data(), value.size() }, isKeyFrame, timestamp, duration);
+        return decoder->decode(value.span(), isKeyFrame, timestamp, duration);
     });
 }
 

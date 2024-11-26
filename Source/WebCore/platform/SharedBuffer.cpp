@@ -41,6 +41,10 @@
 #include <wtf/cf/VectorCF.h>
 #endif
 
+#if USE(GLIB)
+#include <wtf/glib/GSpanExtras.h>
+#endif
+
 static constexpr size_t minimumPageSize = 4096;
 #if USE(UNIX_DOMAIN_SOCKETS)
 static constexpr bool useUnixDomainSockets = true;
@@ -620,13 +624,13 @@ std::span<const uint8_t> DataSegment::span() const
         [](const RetainPtr<CFDataRef>& data) { return WTF::span(data.get()); },
 #endif
 #if USE(GLIB)
-        [](const GRefPtr<GBytes>& data) -> std::span<const uint8_t> { return { static_cast<const uint8_t*>(g_bytes_get_data(data.get(), nullptr)), g_bytes_get_size(data.get()) }; },
+        [](const GRefPtr<GBytes>& data) -> std::span<const uint8_t> { return WTF::span(data); },
 #endif
 #if USE(GSTREAMER)
-        [](const RefPtr<GstMappedOwnedBuffer>& data) -> std::span<const uint8_t> { return { data->data(), data->size() }; },
+        [](const RefPtr<GstMappedOwnedBuffer>& data) -> std::span<const uint8_t> { return unsafeMakeSpan(data->data(), data->size()); },
 #endif
 #if USE(SKIA)
-        [](const sk_sp<SkData>& data) -> std::span<const uint8_t> { return { data->bytes(), data->size() }; },
+        [](const sk_sp<SkData>& data) -> std::span<const uint8_t> { return unsafeMakeSpan(data->bytes(), data->size()); },
 #endif
         [](const FileSystem::MappedFileData& data) { return data.span(); },
         [](const Provider& provider) { return provider.span(); }
