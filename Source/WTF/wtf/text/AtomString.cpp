@@ -30,8 +30,6 @@
 #include <wtf/text/StringBuilder.h>
 #include <wtf/unicode/CharacterNames.h>
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WTF {
 
 const StaticAtomString nullAtomData { nullptr };
@@ -60,12 +58,12 @@ ALWAYS_INLINE AtomString AtomString::convertASCIICase() const
         }
         return *this;
 SlowPath:
-        LChar localBuffer[localBufferSize];
+        std::array<LChar, localBufferSize> localBuffer;
         for (unsigned i = 0; i < failingIndex; ++i)
             localBuffer[i] = characters[i];
         for (unsigned i = failingIndex; i < length; ++i)
             localBuffer[i] = type == CaseConvertType::Lower ? toASCIILower(characters[i]) : toASCIIUpper(characters[i]);
-        return std::span<const LChar> { localBuffer, length };
+        return std::span<const LChar> { localBuffer }.first(length);
     }
 
     Ref<StringImpl> convertedString = type == CaseConvertType::Lower ? impl->convertToASCIILowercase() : impl->convertToASCIIUppercase();
@@ -168,5 +166,3 @@ String replaceUnpairedSurrogatesWithReplacementCharacter(String&& string)
 }
 
 } // namespace WTF
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
