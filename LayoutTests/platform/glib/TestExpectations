@@ -4338,7 +4338,6 @@ webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-page-not-prop
 webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-page-propagated.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/gesture/touch-gesture-scroll-sideways.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/multi-touch-grouped-targets.html [ Timeout ]
-webkit.org/b/278719 fast/events/touch/multi-touch-inside-iframes.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/multi-touch-inside-nested-iframes.html [ Timeout ]
 webkit.org/b/278719 fast/events/touch/multi-touch-some-without-handlers.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/ontouchstart-active-selector.html [ Failure ]

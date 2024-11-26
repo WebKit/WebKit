@@ -1652,7 +1652,6 @@ imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-004.htm
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-005.html [ ImageOnlyFailure ]
 imported/w3c/web-platform-tests/css/css-scrollbars/scrollbar-width-paint-006.html [ ImageOnlyFailure ]
 
-webkit.org/b/278719 fast/events/touch/basic-single-touch-events.html [ Failure ]
 webkit.org/b/278719 fast/events/touch/touch-event-frames.html [ Failure ]
 
 webkit.org/b/278719 fast/events/touch/basic-multi-touch-events.html [ Failure ]
