@@ -85,6 +85,7 @@ public:
 #if ENABLE(MEDIA_STREAM)
     static void forEach(const WTF::Function<void(UserMediaPermissionRequestManagerProxy&)>&);
 #if HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+    bool isMonitoringCaptureDeviceRotation(const String&);
     void startMonitoringCaptureDeviceRotation(const String&);
     void stopMonitoringCaptureDeviceRotation(const String&);
     void rotationAngleForCaptureDeviceChanged(const String&, WebCore::VideoFrameRotation);

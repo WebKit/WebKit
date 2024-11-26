@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Testing video rotation</title>
+        <script src="../../resources/testharness.js"></script>
+        <script src="../../resources/testharnessreport.js"></script>
+    </head>
+    <body>
+        <video id=video autoplay playsInline controls></video>
+        <script>
+promise_test(async() => {
+    video.srcObject = await navigator.mediaDevices.getUserMedia({video: {width: 400, height: 200} });
+    await video.play();
+
+    const clone = video.srcObject.getVideoTracks()[0].clone();
+
+    if (!window.testRunner)
+        return;
+    testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(video.srcObject.getVideoTracks()[0]), 0);
+
+    clone.stop();
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(video.srcObject.getVideoTracks()[0]), 90);
+    let counter = 0;
+    while (video.videoWidth !== 200 && ++counter < 100)
+        await new Promise(resolve => setTimeout(resolve, 50));
+    assert_less_than(counter, 100);
+}, "Stopping a track clone should not prevent rotation handling");
+        </script>
+    </body>
+</html>

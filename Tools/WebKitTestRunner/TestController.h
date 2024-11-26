@@ -340,7 +340,7 @@ public:
     void removeMockMediaDevice(WKStringRef persistentID);
     void setMockMediaDeviceIsEphemeral(WKStringRef, bool);
     void resetMockMediaDevices();
-    void setMockCameraOrientation(uint64_t);
+    void setMockCameraRotation(WKStringRef, uint64_t);
     bool isMockRealtimeMediaSourceCenterEnabled() const;
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay);

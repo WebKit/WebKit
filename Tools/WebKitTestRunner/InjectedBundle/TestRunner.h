@@ -504,7 +504,7 @@ public:
     void removeMockMediaDevice(JSStringRef persistentId);
     void setMockMediaDeviceIsEphemeral(JSStringRef persistentId, bool isEphemeral);
     void resetMockMediaDevices();
-    void setMockCameraOrientation(unsigned);
+    void setMockCameraRotation(JSStringRef persistentId, unsigned);
     bool isMockRealtimeMediaSourceCenterEnabled();
     void setMockCaptureDevicesInterrupted(bool isCameraInterrupted, bool isMicrophoneInterrupted);
     void triggerMockCaptureConfigurationChange(bool forMicrophone, bool forDisplay);

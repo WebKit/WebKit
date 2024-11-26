@@ -135,10 +135,10 @@ async function testUserMediaToCanvas(t, subcase) {
         // Reset orientation for the next test by going to 0.
         if (subcase.angle == 180) {
             // 180 -> 0 cannot detect rotation via video size change. Go via 90.
-            const [angle, videoSize] = setMockCameraImageOrientation(90, realVideoSize);
+            const [angle, videoSize] = setMockCameraImageOrientation(90, video.srcObject.getVideoTracks()[0], realVideoSize);
             await waitForVideoSize(video, videoSize[0], videoSize[1]);
         }
-        setMockCameraImageOrientation(0);
+        setMockCameraImageOrientation(0, video.srcObject.getVideoTracks()[0]);
         await waitForVideoSize(video, realVideoSize[0], realVideoSize[1]);
         debuge.removeChild(video);
         video.srcObject = null;
@@ -146,10 +146,10 @@ async function testUserMediaToCanvas(t, subcase) {
 
     if (subcase.angle == 180) {
         // 0 -> 180 cannot detect rotation via video size change. Go via 90.
-        const [angle, videoSize] = setMockCameraImageOrientation(90, realVideoSize);
+        const [angle, videoSize] = setMockCameraImageOrientation(90, video.srcObject.getVideoTracks()[0], realVideoSize);
         await waitForVideoSize(video, videoSize[0], videoSize[1]);
     }
-    const [angle, videoSize] = setMockCameraImageOrientation(subcase.angle, realVideoSize);
+    const [angle, videoSize] = setMockCameraImageOrientation(subcase.angle, video.srcObject.getVideoTracks()[0], realVideoSize);
     await waitForVideoSize(video, videoSize[0], videoSize[1]);
 
     const canvas = createVerifyCanvas(video);

@@ -108,7 +108,7 @@ promise_test(async (test) => {
     if (window.internals)
         window.internals.setCameraMediaStreamTrackOrientation(track, 90);
     if (window.testRunner)
-        testRunner.setMockCameraOrientation(90);
+        testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(track), 90);
 
     await checkVideoBlack(false, localVideo, "canvas1");
     await waitForVideoSize(localVideo, 240, 320);
@@ -118,7 +118,7 @@ promise_test(async (test) => {
     if (window.internals)
         window.internals.setCameraMediaStreamTrackOrientation(track, 90);
     if (window.testRunner)
-        testRunner.setMockCameraOrientation(90);
+        testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(track), 90);
 
     await checkVideoBlack(false, remoteVideo, "canvas2").then(() => {
         return waitForVideoSize(remoteVideo, 240, 320);
@@ -131,7 +131,7 @@ promise_test(async (test) => {
     if (window.internals)
         window.internals.setCameraMediaStreamTrackOrientation(track, 180);
     if (window.testRunner)
-        testRunner.setMockCameraOrientation(180);
+        testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(track), 180);
 
     await checkVideoBlack(false, remoteVideo, "canvas3").then(() => {
         return waitForVideoSize(remoteVideo, 320, 240);

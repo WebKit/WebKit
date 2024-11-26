@@ -329,11 +329,11 @@ const testColors = {
 
 // Sets the camera image orientation if running on test runner.
 // angle: orientation angle of the camera image in degrees
-function setMockCameraImageOrientation(angle, videoSize) {
+function setMockCameraImageOrientation(angle, track, videoSize) {
     if ([0, 90, 180, 270].indexOf(angle) == -1)
         throw "invalid angle";
     if (window.testRunner) {
-        testRunner.setMockCameraOrientation(angle);
+        testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(track), angle);
         if (videoSize && (angle == 90 || angle == 270))
             videoSize = [videoSize[1], videoSize[0]];
         return [angle, videoSize];

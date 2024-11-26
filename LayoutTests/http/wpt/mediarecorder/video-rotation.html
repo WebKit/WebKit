@@ -16,7 +16,7 @@ promise_test(async (test) => {
 
     if (window.internals) {
         window.internals.setCameraMediaStreamTrackOrientation(stream.getVideoTracks()[0], 90);
-        testRunner.setMockCameraOrientation(90);
+        testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(stream.getVideoTracks()[0]), 90);
 
         expectedWidth = 480;
         expectedHeight = 640;

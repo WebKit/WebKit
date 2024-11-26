@@ -84,7 +84,7 @@ onload = async () => {
         if (!window.testRunner)
             return;
 
-        testRunner.setMockCameraOrientation(90);
+        testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(video.srcObject.getVideoTracks()[0]), 90);
         let counter = 0;
         while (video.videoWidth !== 200 && ++counter < 100)
             await new Promise(resolve => setTimeout(resolve, 50));
@@ -100,7 +100,7 @@ onload = async () => {
             log.innerHTML = "FAIL first part";
         else {
             testRunner.terminateGPUProcess();
-            testRunner.setMockCameraOrientation(90);
+            testRunner.setMockCameraRotation(internals.mediaStreamTrackPersistentId(video.srcObject.getVideoTracks()[0]), 90);
             await new Promise(resolve => setTimeout(resolve, 1000));
 
             counter = 0;

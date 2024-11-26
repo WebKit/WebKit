@@ -205,7 +205,7 @@ WK_EXPORT void WKPageSetPCMFraudPreventionValuesForTesting(WKPageRef page, WKStr
 typedef void (*WKPageSetPrivateClickMeasurementAppBundleIDForTestingFunction)(void* functionContext);
 WK_EXPORT void WKPageSetPrivateClickMeasurementAppBundleIDForTesting(WKPageRef pageRef, WKStringRef appBundleIDForTesting, WKPageSetPrivateClickMeasurementAppBundleIDForTestingFunction callback, void* callbackContext);
 
-WK_EXPORT void WKPageSetMockCameraOrientation(WKPageRef page, uint64_t orientation);
+WK_EXPORT void WKPageSetMockCameraRotation(WKPageRef page, WKStringRef persistentId, uint64_t rotation);
 WK_EXPORT bool WKPageIsMockRealtimeMediaSourceCenterEnabled(WKPageRef page);
 WK_EXPORT void WKPageSetMockCaptureDevicesInterrupted(WKPageRef page, bool isCameraInterrupted, bool isMicrophoneInterrupted);
 WK_EXPORT void WKPageTriggerMockCaptureConfigurationChange(WKPageRef page, bool forMicrophone, bool forDisplay);

@@ -70,6 +70,7 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
 
 -(id)initWithRequestManagerProxy:(WeakPtr<WebKit::UserMediaPermissionRequestManagerProxy>&&)managerProxy;
 -(void)observeValueForKeyPath:keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context;
+-(bool)isMonitoringCaptureDeviceRotation:(const String&)persistentId;
 -(std::optional<WebCore::VideoFrameRotation>)start:(const String&)persistentId layer:(CALayer*)layer;
 -(void)stop:(const String&)persistentId;
 @end
@@ -100,6 +101,10 @@ static WebCore::VideoFrameRotation computeVideoFrameRotation(int rotation)
         if (_managerProxy)
             _managerProxy->rotationAngleForCaptureDeviceChanged(persistentId, rotation);
     });
+}
+
+-(bool)isMonitoringCaptureDeviceRotation:(const String&)persistentId {
+    return m_coordinators.contains(persistentId);
 }
 
 -(std::optional<WebCore::VideoFrameRotation>)start:(const String&)persistentId layer:(CALayer*)layer {
@@ -192,6 +197,14 @@ void UserMediaPermissionRequestManagerProxy::requestSystemValidation(const WebPa
 }
 
 #if ENABLE(MEDIA_STREAM) && HAVE(AVCAPTUREDEVICEROTATIONCOORDINATOR)
+bool UserMediaPermissionRequestManagerProxy::isMonitoringCaptureDeviceRotation(const String& persistentId)
+{
+    if (!m_objcObserver)
+        return false;
+    RetainPtr observer = m_objcObserver;
+    return [observer isMonitoringCaptureDeviceRotation:persistentId];
+}
+
 void UserMediaPermissionRequestManagerProxy::startMonitoringCaptureDeviceRotation(const String& persistentId)
 {
     RefPtr page = this->page();
