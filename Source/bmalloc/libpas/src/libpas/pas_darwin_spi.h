@@ -31,9 +31,16 @@
 
 #if PAS_OS(DARWIN)
 #if defined(__has_include) && __has_include(<pthread/private.h>)
+
+// FIXME: Workaround for rdar://140391194
+#if !defined(__swift__)
 PAS_BEGIN_EXTERN_C;
+#endif
 #include <pthread/private.h>
+#if !defined(__swift__)
 PAS_END_EXTERN_C;
+#endif
+
 #define PAS_HAVE_PTHREAD_PRIVATE 1
 #else
 PAS_BEGIN_EXTERN_C;
@@ -76,7 +83,10 @@ typedef void(malloc_logger_t)(uint32_t type,
                               uintptr_t arg3,
                               uintptr_t result,
                               uint32_t num_hot_frames_to_skip);
+// FIXME: Workaround for rdar://119319825
+#if !defined(__swift__)
 extern malloc_logger_t* malloc_logger;
+#endif
 
 PAS_END_EXTERN_C;
 

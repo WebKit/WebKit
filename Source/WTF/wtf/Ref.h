@@ -29,6 +29,7 @@
 #include <wtf/Forward.h>
 #include <wtf/GetPtr.h>
 #include <wtf/RawPtrTraits.h>
+#include <wtf/RetainReleaseSwift.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/TypeCasts.h>
 
@@ -132,7 +133,7 @@ public:
 
     T* operator->() const { ASSERT(m_ptr); return PtrTraits::unwrap(m_ptr); }
     T* ptr() const RETURNS_NONNULL { ASSERT(m_ptr); return PtrTraits::unwrap(m_ptr); }
-    T& get() const { ASSERT(m_ptr); return *PtrTraits::unwrap(m_ptr); }
+    T& get() const SWIFT_RETURNS_INDEPENDENT_VALUE { ASSERT(m_ptr); return *PtrTraits::unwrap(m_ptr); }
     operator T&() const { ASSERT(m_ptr); return *PtrTraits::unwrap(m_ptr); }
     bool operator!() const { ASSERT(m_ptr); return !*m_ptr; }
 
