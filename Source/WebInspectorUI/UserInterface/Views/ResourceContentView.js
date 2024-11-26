@@ -201,6 +201,24 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
         this.element.appendChild(WI.createMessageTextView(message));
     }
 
+    showBanner(text)
+    {
+        if (!this._banner) {
+            this._banner = document.createElement("div");
+            this._banner.classList.add("local-resource-override-label-view");
+            this.element.insertBefore(this._banner, this.element.firstChild);
+        }
+        this._banner.textContent = text;
+    }
+
+    hideBanner()
+    {
+        if (this._banner) {
+            this.element.removeChild(this._banner);
+            this._banner = undefined;
+        }
+    }
+
     addIssue(issue)
     {
         // This generically shows only the last issue, subclasses can override for better handling.
@@ -280,6 +298,17 @@ WI.ResourceContentView = class ResourceContentView extends WI.ContentView
 
         if (this._createLocalResourceOverrideButtonNavigationItem)
             this._createLocalResourceOverrideButtonNavigationItem.enabled = WI.networkManager.canBeOverridden(this._resource);
+
+        if (this._resource.type === WI.Resource.Type.StyleSheet) {
+            requestAnimationFrame(() => {
+                WI.cssManager.lookupStyleSheetForResource(this._resource, (cssStyleSheet) => {
+                    if (cssStyleSheet.wasMutatedByJS)
+                        this.showBanner(WI.UIString("This style sheet has been modified by CSSOM in JavaScript"));
+                    else
+                        this.hideBanner();
+                });
+            });
+        }
     }
 
     _contentError(error)

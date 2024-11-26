@@ -36,6 +36,7 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
         this._origin = null;
         this._startLineNumber = 0;
         this._startColumnNumber = 0;
+        this._wasMutatedByJS = false;
 
         this._inlineStyleAttribute = false;
         this._inlineStyleTag = false;
@@ -107,6 +108,11 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
         return this._startColumnNumber;
     }
 
+    get wasMutatedByJS()
+    {
+        return this._wasMutatedByJS;
+    }
+
     hasInfo()
     {
         return this._hasInfo;
@@ -148,7 +154,7 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
 
     // Protected
 
-    updateInfo(url, parentFrame, origin, inlineStyle, startLineNumber, startColumnNumber)
+    updateInfo(url, parentFrame, origin, inlineStyle, startLineNumber, startColumnNumber, wasMutatedByJS)
     {
         this._hasInfo = true;
 
@@ -161,6 +167,7 @@ WI.CSSStyleSheet = class CSSStyleSheet extends WI.SourceCode
         this._inlineStyleTag = inlineStyle;
         this._startLineNumber = startLineNumber;
         this._startColumnNumber = startColumnNumber;
+        this._wasMutatedByJS = wasMutatedByJS;
     }
 
     get revisionForRequestedContent()
