@@ -1,0 +1,9 @@
+
+PASS requestClose() with no user activation
+PASS destroy() then requestClose()
+PASS close() then requestClose()
+PASS requestClose() then destroy()
+PASS close() then destroy()
+PASS destroy() then close request
+FAIL Close request then destroy() assert_array_equals: lengths differ, expected array ["cancel[cancelable=false]", "close"] length 2, got [] length 0
+
