@@ -4535,6 +4535,36 @@ bool EventHandler::tabsToLinks(KeyboardEvent* event) const
     return (event && eventInvertsTabsToLinksClientCallResult(*event)) ? !tabsToLinksClientCallResult : tabsToLinksClientCallResult;
 }
 
+bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
+{
+#if PLATFORM(COCOA)
+    RefPtr page = m_frame->page();
+    if (!page)
+        return false;
+
+    KeyboardUIMode keyboardUIMode = page->chrome().client().keyboardUIMode();
+    bool handlingOptionTab = event && isKeyboardOptionTab(*event);
+
+    // If tab-to-links is off, option-tab always highlights all controls
+    if (!(keyboardUIMode & KeyboardAccessTabsToLinks) && handlingOptionTab)
+        return true;
+
+    // If system preferences say to include all controls, we always include all controls
+    if (keyboardUIMode & KeyboardAccessFull)
+        return true;
+
+    // Otherwise tab-to-links includes all controls, unless the sense is flipped via option-tab.
+    if (keyboardUIMode & KeyboardAccessTabsToLinks)
+        return !handlingOptionTab;
+
+    return handlingOptionTab;
+#else
+    UNUSED_PARAM(event);
+    // We always allow tabs to all controls
+    return true;
+#endif
+}
+
 void EventHandler::defaultTextInputEventHandler(TextEvent& event)
 {
     if (m_frame->editor().handleTextEvent(event))
@@ -5253,12 +5283,6 @@ bool EventHandler::passWheelEventToWidget(const PlatformWheelEvent& event, Widge
         return false;
 
     return frameView->frame().eventHandler().handleWheelEvent(event, processingSteps).wasHandled();
-}
-
-bool EventHandler::tabsToAllFormControls(KeyboardEvent*) const
-{
-    // We always allow tabs to all controls
-    return true;
 }
 
 bool EventHandler::passWidgetMouseDownEventToWidget(RenderWidget* renderWidget)

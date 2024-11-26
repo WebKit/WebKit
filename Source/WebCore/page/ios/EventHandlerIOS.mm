@@ -145,30 +145,6 @@ void EventHandler::touchEvent(WebEvent *event)
 }
 #endif
 
-bool EventHandler::tabsToAllFormControls(KeyboardEvent* event) const
-{
-    RefPtr page = m_frame->page();
-    if (!page)
-        return false;
-
-    KeyboardUIMode keyboardUIMode = page->chrome().client().keyboardUIMode();
-    bool handlingOptionTab = event && isKeyboardOptionTab(*event);
-
-    // If tab-to-links is off, option-tab always highlights all controls.
-    if ((keyboardUIMode & KeyboardAccessTabsToLinks) == 0 && handlingOptionTab)
-        return true;
-
-    // If system preferences say to include all controls, we always include all controls.
-    if (keyboardUIMode & KeyboardAccessFull)
-        return true;
-
-    // Otherwise tab-to-links includes all controls, unless the sense is flipped via option-tab.
-    if (keyboardUIMode & KeyboardAccessTabsToLinks)
-        return !handlingOptionTab;
-
-    return handlingOptionTab;
-}
-
 bool EventHandler::keyEvent(WebEvent *event)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS

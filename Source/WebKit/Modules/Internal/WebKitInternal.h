@@ -25,4 +25,5 @@
 
 // Add project-level Objective-C header files here to be able to access them from within Swift sources.
 
+#import "WKPreferencesInternal.h"
 #import "WKWebViewInternal.h"
