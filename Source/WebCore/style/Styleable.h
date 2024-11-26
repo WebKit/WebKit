@@ -56,8 +56,6 @@ struct Styleable {
 
     static const Styleable fromElement(Element& element)
     {
-        if (auto* pseudoElement = dynamicDowncast<PseudoElement>(element))
-            return Styleable(*pseudoElement->hostElement(), Style::PseudoElementIdentifier { element.pseudoId() });
         ASSERT(element.pseudoId() == PseudoId::None);
         return Styleable(element, std::nullopt);
     }

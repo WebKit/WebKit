@@ -939,10 +939,6 @@ bool Scope::updateQueryContainerState(QueryContainerUpdateContext& context)
     for (auto& containerRenderer : m_document->renderView()->containerQueryBoxes()) {
         CheckedPtr containerElement = containerRenderer.element();
 
-        // Invalidation uses real elements, replace ::before/::after with its host.
-        if (auto* pseudoElement = dynamicDowncast<PseudoElement>(containerElement.get()))
-            containerElement = pseudoElement->hostElement();
-
         if (!containerElement)
             continue;
 

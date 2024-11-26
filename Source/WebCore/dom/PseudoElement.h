@@ -31,17 +31,27 @@
 
 namespace WebCore {
 
-class PseudoElement final : public Element {
+const String& pseudoElementNodeName();
+
+class PseudoElement final : public ContainerNode {
     WTF_MAKE_TZONE_OR_ISO_ALLOCATED(PseudoElement);
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(PseudoElement);
 public:
     static Ref<PseudoElement> create(Element& host, PseudoId);
     virtual ~PseudoElement();
 
+    String nodeName() const override { return pseudoElementNodeName(); }
+
+    Ref<Node> cloneNodeInternal(Document&, CloningOperation) override;
+
     Element* hostElement() const { return m_hostElement.get(); }
     void clearHostElement();
 
-    bool rendererIsNeeded(const RenderStyle&) override;
+    bool rendererIsNeeded(const RenderStyle&);
+
+    const RenderStyle* renderOrDisplayContentsStyle() { return m_displayContentsOrNoneStyle.get(); };
+    void storeDisplayContentsOrNoneStyle(std::unique_ptr<RenderStyle>);
+    void clearDisplayContentsOrNoneStyle();
 
     bool canStartSelection() const override { return false; }
     bool canContainRangeEndPoint() const override { return false; }
@@ -53,9 +63,8 @@ private:
 
     WeakPtr<Element, WeakPtrImplWithEventTargetData> m_hostElement;
     PseudoId m_pseudoId;
+    std::unique_ptr<RenderStyle> m_displayContentsOrNoneStyle;
 };
-
-const QualifiedName& pseudoElementTagName();
 
 } // namespace WebCore
 

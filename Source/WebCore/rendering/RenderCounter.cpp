@@ -61,8 +61,7 @@ static CounterMaps& counterMaps()
 
 static Element* ancestorStyleContainmentObject(const Element& element)
 {
-    auto* pseudoElement = dynamicDowncast<PseudoElement>(element);
-    Element* ancestor = pseudoElement ? pseudoElement->hostElement() : element.parentElement();
+    auto* ancestor = element.parentElement();
     while (ancestor) {
         if (auto* style = ancestor->existingComputedStyle()) {
             if (style->containsStyle())
@@ -119,14 +118,6 @@ static Element* previousSiblingOrParentElement(const Element& element)
             return previous;
     }
 
-    if (auto* pseudoElement = dynamicDowncast<PseudoElement>(element)) {
-        auto* hostElement = pseudoElement->hostElement();
-        ASSERT(hostElement);
-        if (hostElement->renderer())
-            return hostElement;
-        return previousSiblingOrParentElement(*hostElement);
-    }
-    
     auto* parent = element.parentElement();
     if (parent && !parent->renderer())
         parent = previousSiblingOrParentElement(*parent);

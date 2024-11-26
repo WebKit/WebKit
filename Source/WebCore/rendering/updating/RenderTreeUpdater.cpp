@@ -416,7 +416,7 @@ void RenderTreeUpdater::updateSVGRenderer(Element& element)
     LegacyRenderSVGResource::markForLayoutAndParentResourceInvalidation(*renderer);
 }
 
-void RenderTreeUpdater::updateElementRenderer(Element& element, const Style::ElementUpdate& elementUpdate)
+void RenderTreeUpdater::updateElementRenderer(std::variant<PseudoElement, Element>& element, const Style::ElementUpdate& elementUpdate)
 {
     if (!elementUpdate.style)
         return;
@@ -671,7 +671,7 @@ static void invalidateRebuildRootIfNeeded(Node& node)
     ancestor->invalidateRenderer();
 }
 
-void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownType)
+void RenderTreeUpdater::tearDownRenderers(std::variant<PseudoElement, Element>& root, TeardownType teardownType)
 {
     if (!root.renderer() && !root.hasDisplayContents())
         return;
@@ -684,7 +684,7 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
     invalidateRebuildRootIfNeeded(root);
 }
 
-void RenderTreeUpdater::tearDownRenderers(Element& root)
+void RenderTreeUpdater::tearDownRenderers(std::variant<PseudoElement, Element>& root)
 {
     tearDownRenderers(root, TeardownType::Full);
 }
@@ -828,14 +828,9 @@ void RenderTreeUpdater::tearDownRenderers(Element& root, TeardownType teardownTy
             GeneratedContent::removeBeforePseudoElement(element, builder);
             GeneratedContent::removeAfterPseudoElement(element, builder);
 
-            if (!is<PseudoElement>(element)) {
-                // ::before and ::after cannot have a ::marker pseudo-element addressable via
-                // CSS selectors, and as such cannot possibly have animations on them. Additionally,
-                // we cannot create a Styleable with a PseudoElement.
-                if (auto* renderListItem = dynamicDowncast<RenderListItem>(element.renderer())) {
-                    if (renderListItem->markerRenderer())
-                        Styleable(element, Style::PseudoElementIdentifier { PseudoId::Marker }).cancelStyleOriginatedAnimations();
-                }
+            if (auto* renderListItem = dynamicDowncast<RenderListItem>(element.renderer())) {
+                if (renderListItem->markerRenderer())
+                    Styleable(element, Style::PseudoElementIdentifier { PseudoId::Marker }).cancelStyleOriginatedAnimations();
             }
 
             if (auto* renderer = element.renderer()) {
