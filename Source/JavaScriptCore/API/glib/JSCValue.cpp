@@ -2145,3 +2145,31 @@ char* jsc_value_to_json(JSCValue* value, unsigned indent)
 
     return json;
 }
+
+/**
+ * jsc_value_new_deferred_promise:
+ * @context: a #JSCContext
+ * @value: a #JSCValue
+ * @resolve: (out) (transfer full) (nullable): a callable #JSCValue.
+ * @reject: (out) (transfer full) (nullable): a callable #JSCValue.
+ *
+ * Create a new Promise returning handles to resolve and reject method
+ *
+ * Returns: (transfer full): a deferred promise object
+ *
+ * Since: 2.48
+ */
+JSCValue* jsc_value_new_deferred_promise(JSCContext* context, JSCValue **resolve, JSCValue **reject)
+{
+    g_return_val_if_fail(JSC_IS_CONTEXT(context), nullptr);
+    auto* jsContext = jscContextGetJSContext(context);
+    JSObjectRef resolveObj = nullptr;
+    JSObjectRef rejectObj = nullptr;
+    JSCValue* ret = jscContextGetOrCreateValue(context, JSObjectMakeDeferredPromise(jsContext, resolve ? &resolveObj : nullptr, reject ? &rejectObj : nullptr, nullptr)).leakRef();
+
+    if (resolve)
+        *resolve = jscContextGetOrCreateValue(context, resolveObj).leakRef();
+    if (reject)
+        *reject = jscContextGetOrCreateValue(context, rejectObj).leakRef();
+    return ret;
+}
