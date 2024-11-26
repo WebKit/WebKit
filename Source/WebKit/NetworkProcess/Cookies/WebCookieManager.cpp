@@ -60,6 +60,16 @@ WebCookieManager::WebCookieManager(NetworkProcess& process)
 
 WebCookieManager::~WebCookieManager() = default;
 
+void WebCookieManager::ref() const
+{
+    m_process->ref();
+}
+
+void WebCookieManager::deref() const
+{
+    m_process->deref();
+}
+
 Ref<NetworkProcess> WebCookieManager::protectedProcess()
 {
     ASSERT(RunLoop::isMain());

@@ -165,9 +165,9 @@ NetworkProcess::NetworkProcess(AuxiliaryProcessInitializationParameters&& parame
     NetworkProcessPlatformStrategies::initialize();
 
     addSupplementWithoutRefCountedCheck<AuthenticationManager>();
-    addSupplement<WebCookieManager>();
+    addSupplementWithoutRefCountedCheck<WebCookieManager>();
 #if ENABLE(LEGACY_CUSTOM_PROTOCOL_MANAGER)
-    addSupplement<LegacyCustomProtocolManager>();
+    addSupplementWithoutRefCountedCheck<LegacyCustomProtocolManager>();
 #endif
 #if HAVE(LSDATABASECONTEXT)
     addSupplement<LaunchServicesDatabaseObserver>();

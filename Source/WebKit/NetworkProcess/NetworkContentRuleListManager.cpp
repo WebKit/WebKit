@@ -53,6 +53,16 @@ NetworkContentRuleListManager::~NetworkContentRuleListManager()
     }
 }
 
+void NetworkContentRuleListManager::ref() const
+{
+    m_networkProcess->ref();
+}
+
+void NetworkContentRuleListManager::deref() const
+{
+    m_networkProcess->deref();
+}
+
 Ref<NetworkProcess> NetworkContentRuleListManager::protectedNetworkProcess() const
 {
     ASSERT(RunLoop::isMain());

@@ -66,6 +66,9 @@ public:
     void unregisterScheme(const String&);
     bool supportsScheme(const String&);
 
+    void ref() const;
+    void deref() const;
+
 #if PLATFORM(COCOA)
     typedef RetainPtr<WKCustomProtocol> CustomProtocol;
 #endif

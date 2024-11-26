@@ -345,7 +345,7 @@ protected:
     RefPtr<NetworkCache::Cache> m_cache;
     RefPtr<NetworkLoadScheduler> m_networkLoadScheduler;
     WebCore::BlobRegistryImpl m_blobRegistry;
-    UniqueRef<NetworkBroadcastChannelRegistry> m_broadcastChannelRegistry;
+    Ref<NetworkBroadcastChannelRegistry> m_broadcastChannelRegistry;
     unsigned m_testSpeedMultiplier { 1 };
     bool m_allowsServerPreconnect { true };
     bool m_shouldRunServiceWorkersOnMainThreadForTesting { false };
