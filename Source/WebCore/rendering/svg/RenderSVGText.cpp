@@ -32,6 +32,8 @@
 #include "GraphicsContext.h"
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
+#include "InlineIteratorSVGTextBox.h"
+#include "LayoutIntegrationLineLayout.h"
 #include "LayoutRepainter.h"
 #include "LegacyRenderSVGResource.h"
 #include "LegacyRenderSVGRoot.h"
@@ -46,8 +48,10 @@
 #include "SVGElementTypeHelpers.h"
 #include "SVGLengthList.h"
 #include "SVGRenderStyle.h"
+#include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include "SVGRootInlineBox.h"
+#include "SVGTextBoxPainter.h"
 #include "SVGTextElement.h"
 #include "SVGURIReference.h"
 #include "SVGVisitedRendererTracking.h"
@@ -563,6 +567,61 @@ void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         blockInfo.phase = PaintPhase::SelfOutline;
         RenderBlock::paint(blockInfo, LayoutPoint());
     }
+}
+
+void RenderSVGText::paintInlineChildren(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    ASSERT(!paintInfo.context().paintingDisabled());
+
+    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection)
+        return;
+
+    bool isPrinting = document().printing();
+    bool hasSelection = !isPrinting && selectionState() != RenderObject::HighlightState::None;
+    bool shouldPaintSelectionHighlight = !(paintInfo.paintBehavior.contains(PaintBehavior::SkipSelectionHighlight));
+
+    PaintInfo childPaintInfo(paintInfo);
+    childPaintInfo.updateSubtreePaintRootForChildren(this);
+
+    auto boxes = InlineIterator::boxesFor(*this);
+
+    if (hasSelection && shouldPaintSelectionHighlight) {
+        for (auto& box : boxes) {
+            if (auto* textBox = dynamicDowncast<InlineIterator::SVGTextBox>(box)) {
+                if (textBox->legacyInlineBox()) {
+                    LegacySVGTextBoxPainter painter(*textBox->legacyInlineBox(), paintInfo, paintOffset);
+                    painter.paintSelectionBackground();
+                }
+            }
+        }
+    }
+
+    Vector<SVGRenderingContext> contextStack;
+
+    for (auto box = boxes.begin(); box != boxes.end();) {
+        while (!contextStack.isEmpty() && contextStack.last().renderer() != box->renderer().parent())
+            contextStack.removeLast();
+
+        if (auto* textBox = dynamicDowncast<InlineIterator::SVGTextBox>(*box)) {
+            if (textBox->legacyInlineBox()) {
+                LegacySVGTextBoxPainter painter(*textBox->legacyInlineBox(), paintInfo, paintOffset);
+                painter.paint();
+            }
+        } else {
+            auto* renderer = dynamicDowncast<RenderElement>(box->renderer());
+            contextStack.append({ const_cast<RenderElement&>(*renderer), paintInfo, SVGRenderingContext::SaveGraphicsContext });
+
+            if (!contextStack.last().isRenderingPrepared() || renderer->hasSelfPaintingLayer()) {
+                box.traverseNextOnLineSkippingChildren();
+                continue;
+            }
+        }
+
+        box.traverseNextOnLine();
+    }
+
+    while (!contextStack.isEmpty())
+        contextStack.removeLast();
 }
 
 FloatRect RenderSVGText::strokeBoundingBox() const

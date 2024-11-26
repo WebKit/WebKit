@@ -39,14 +39,11 @@
 #include "RenderStyleInlines.h"
 #include "RenderView.h"
 #include "SVGInlineTextBoxInlines.h"
-#include "SVGPaintServerHandling.h"
 #include "SVGRenderStyle.h"
 #include "SVGRenderingContext.h"
 #include "SVGResourcesCache.h"
 #include "SVGRootInlineBox.h"
-#include "SVGTextBoxPainter.h"
 #include "TextBoxSelectableRange.h"
-#include "TextPainter.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
@@ -160,18 +157,6 @@ LayoutRect SVGInlineTextBox::localSelectionRect(unsigned start, unsigned end) co
     }
 
     return enclosingIntRect(selectionRect);
-}
-
-void SVGInlineTextBox::paintSelectionBackground(PaintInfo& paintInfo)
-{
-    auto painter = LegacySVGTextBoxPainter { *this, paintInfo, { } };
-    painter.paintSelectionBackground();
-}
-
-void SVGInlineTextBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit, LayoutUnit)
-{
-    auto painter = LegacySVGTextBoxPainter { *this, paintInfo, paintOffset };
-    painter.paint();
 }
 
 TextRun SVGInlineTextBox::constructTextRun(const RenderStyle& style, const SVGTextFragment& fragment) const

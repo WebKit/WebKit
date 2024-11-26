@@ -226,11 +226,8 @@ bool RenderInline::mayAffectLayout() const
 
 void RenderInline::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this)) {
+    if (auto* lineLayout = LayoutIntegration::LineLayout::containing(*this))
         lineLayout->paint(paintInfo, paintOffset, this);
-        return;
-    }
-    m_legacyLineBoxes.paint(this, paintInfo, paintOffset);
 }
 
 template<typename GeneratorContext>

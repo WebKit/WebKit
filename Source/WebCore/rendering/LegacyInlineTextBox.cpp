@@ -42,7 +42,6 @@
 #include "InlineTextBoxStyle.h"
 #include "LocalFrame.h"
 #include "Page.h"
-#include "PaintInfo.h"
 #include "RenderBlock.h"
 #include "RenderCombineText.h"
 #include "RenderElementInlines.h"
@@ -57,8 +56,6 @@
 #include "Text.h"
 #include "TextBoxPainter.h"
 #include "TextBoxSelectableRange.h"
-#include "TextDecorationPainter.h"
-#include "TextPaintStyle.h"
 #include <stdio.h>
 #include <wtf/TZoneMallocInlines.h>
 #include <wtf/text/CString.h>
@@ -248,11 +245,6 @@ bool LegacyInlineTextBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
             return true;
     }
     return false;
-}
-
-void LegacyInlineTextBox::paint(PaintInfo&, const LayoutPoint&, LayoutUnit /*lineTop*/, LayoutUnit /*lineBottom*/)
-{
-    ASSERT_NOT_REACHED();
 }
 
 TextBoxSelectableRange LegacyInlineTextBox::selectableRange() const

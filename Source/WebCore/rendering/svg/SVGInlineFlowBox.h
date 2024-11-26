@@ -41,12 +41,10 @@ public:
     FloatRect calculateBoundaries() const;
 
     void setLogicalHeight(float h) { m_logicalHeight = h; }
-    void paintSelectionBackground(PaintInfo&);
 
 private:
     bool isSVGInlineFlowBox() const override { return true; }
     float virtualLogicalHeight() const override { return m_logicalHeight; }
-    void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
 
     float m_logicalHeight;
 };

@@ -50,6 +50,17 @@ static inline bool isRenderingMaskImage(const RenderObject& object)
     return object.view().frameView().paintBehavior().contains(PaintBehavior::RenderingSVGClipOrMask);
 }
 
+SVGRenderingContext::SVGRenderingContext(SVGRenderingContext&& other)
+    : m_renderer { other.m_renderer }
+    , m_paintInfo { other.m_paintInfo }
+    , m_savedContext { other.m_savedContext }
+    , m_filter { other.m_filter }
+    , m_savedPaintRect { other.m_savedPaintRect }
+    , m_renderingFlags { std::exchange(other.m_renderingFlags, 0) }
+    , m_pathClippingIsEntirelyWithinRendererContents { other.m_pathClippingIsEntirelyWithinRendererContents }
+{
+}
+
 SVGRenderingContext::~SVGRenderingContext()
 {
     // Fast path if we don't need to restore anything.

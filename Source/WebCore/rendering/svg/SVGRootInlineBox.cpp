@@ -52,52 +52,6 @@ RenderSVGText& SVGRootInlineBox::renderSVGText() const
     return downcast<RenderSVGText>(blockFlow());
 }
 
-void SVGRootInlineBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
-{
-    ASSERT(paintInfo.phase == PaintPhase::Foreground || paintInfo.phase == PaintPhase::Selection);
-    ASSERT(!paintInfo.context().paintingDisabled());
-
-    if (renderer().document().settings().layerBasedSVGEngineEnabled()) {
-        auto overflowRect(visualOverflowRect(lineTop, lineBottom));
-        flipForWritingMode(overflowRect);
-        overflowRect.moveBy(paintOffset);
-
-        if (!paintInfo.rect.intersects(overflowRect))
-            return;
-    }
-
-    bool isPrinting = renderSVGText().document().printing();
-    bool hasSelection = !isPrinting && selectionState() != RenderObject::HighlightState::None;
-    bool shouldPaintSelectionHighlight = !(paintInfo.paintBehavior.contains(PaintBehavior::SkipSelectionHighlight));
-
-    PaintInfo childPaintInfo(paintInfo);
-    childPaintInfo.updateSubtreePaintRootForChildren(&renderer());
-
-    if (hasSelection && shouldPaintSelectionHighlight) {
-        for (auto* child = firstChild(); child; child = child->nextOnLine()) {
-            if (auto* textBox = dynamicDowncast<SVGInlineTextBox>(*child))
-                textBox->paintSelectionBackground(childPaintInfo);
-            else if (auto* flowBox = dynamicDowncast<SVGInlineFlowBox>(*child))
-                flowBox->paintSelectionBackground(childPaintInfo);
-        }
-    }
-
-    if (renderer().document().settings().layerBasedSVGEngineEnabled()) {
-        for (auto* child = firstChild(); child; child = child->nextOnLine()) {
-            if (child->renderer().isRenderText() || !child->boxModelObject()->hasSelfPaintingLayer())
-                child->paint(childPaintInfo, paintOffset, lineTop, lineBottom);
-        }
-
-        return;
-    }
-
-    SVGRenderingContext renderingContext(renderSVGText(), paintInfo, SVGRenderingContext::SaveGraphicsContext);
-    if (renderingContext.isRenderingPrepared()) {
-        for (auto* child = firstChild(); child; child = child->nextOnLine())
-            child->paint(paintInfo, paintOffset, 0, 0);
-    }
-}
-
 void SVGRootInlineBox::computePerCharacterLayoutInformation()
 {
     auto& textRoot = downcast<RenderSVGText>(blockFlow());

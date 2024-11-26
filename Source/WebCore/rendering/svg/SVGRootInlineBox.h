@@ -39,8 +39,6 @@ public:
     float virtualLogicalHeight() const override { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
 
-    void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
-
     void computePerCharacterLayoutInformation();
 
     LegacyInlineBox* closestLeafChildForPosition(const LayoutPoint&);

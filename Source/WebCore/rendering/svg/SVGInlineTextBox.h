@@ -24,14 +24,12 @@
 
 #include "LegacyInlineTextBox.h"
 #include "LegacyRenderSVGResource.h"
-#include "RenderSVGResourcePaintServer.h"
 #include "SVGTextFragment.h"
 
 namespace WebCore {
 
 class LegacyRenderSVGResource;
 class RenderSVGInlineText;
-class SVGPaintServerHandling;
 class SVGRootInlineBox;
 
 class SVGInlineTextBox final : public LegacyInlineTextBox {
@@ -44,8 +42,6 @@ public:
     float virtualLogicalHeight() const override { return m_logicalHeight; }
     void setLogicalHeight(float height) { m_logicalHeight = height; }
 
-    void paintSelectionBackground(PaintInfo&);
-    void paint(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) override;
     LayoutRect localSelectionRect(unsigned startPosition, unsigned endPosition) const override;
 
     bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, unsigned& startPosition, unsigned& endPosition) const;
@@ -70,7 +66,6 @@ private:
     bool isSVGInlineTextBox() const override { return true; }
 
     TextRun constructTextRun(const RenderStyle&, const SVGTextFragment&) const;
-
 
     bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, LayoutUnit lineTop, LayoutUnit lineBottom, HitTestAction) override;
 

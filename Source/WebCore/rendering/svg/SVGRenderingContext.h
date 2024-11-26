@@ -48,6 +48,9 @@ public:
     {
     }
 
+    SVGRenderingContext(SVGRenderingContext&&);
+    SVGRenderingContext(const SVGRenderingContext&) = delete;
+
     SVGRenderingContext(RenderElement& object, PaintInfo& paintinfo, NeedsGraphicsContextSave needsGraphicsContextSave = DontSaveGraphicsContext)
     {
         prepareToRenderSVGContent(object, paintinfo, needsGraphicsContextSave);
@@ -75,6 +78,8 @@ public:
 
     // Support for the buffered-rendering hint.
     bool bufferForeground(RefPtr<ImageBuffer>&);
+
+    const RenderElement* renderer() const { return m_renderer; }
 
 private:
     // To properly revert partially successful initializtions in the destructor, we record all successful steps.

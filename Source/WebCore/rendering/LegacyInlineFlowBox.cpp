@@ -366,40 +366,6 @@ bool LegacyInlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResu
     return false;
 }
 
-void LegacyInlineFlowBox::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset, LayoutUnit lineTop, LayoutUnit lineBottom)
-{
-    if (paintInfo.phase != PaintPhase::Foreground && paintInfo.phase != PaintPhase::Selection && paintInfo.phase != PaintPhase::Outline && paintInfo.phase != PaintPhase::SelfOutline && paintInfo.phase != PaintPhase::ChildOutlines && paintInfo.phase != PaintPhase::TextClip && paintInfo.phase != PaintPhase::Mask && paintInfo.phase != PaintPhase::EventRegion && paintInfo.phase != PaintPhase::Accessibility)
-        return;
-
-    LayoutRect overflowRect(visualOverflowRect(lineTop, lineBottom));
-    flipForWritingMode(overflowRect);
-    overflowRect.moveBy(paintOffset);
-    
-    if (!paintInfo.rect.intersects(snappedIntRect(overflowRect)))
-        return;
-
-    if (paintInfo.phase != PaintPhase::ChildOutlines) {
-        InlineBoxPainter painter(*this, paintInfo, paintOffset);
-        painter.paint();
-    }
-
-    if (paintInfo.phase == PaintPhase::Mask)
-        return;
-
-    PaintPhase paintPhase = paintInfo.phase == PaintPhase::ChildOutlines ? PaintPhase::Outline : paintInfo.phase;
-    PaintInfo childInfo(paintInfo);
-    childInfo.phase = paintPhase;
-    childInfo.updateSubtreePaintRootForChildren(&renderer());
-    
-    // Paint our children.
-    if (paintPhase != PaintPhase::SelfOutline) {
-        for (auto* curr = firstChild(); curr; curr = curr->nextOnLine()) {
-            if (curr->renderer().isRenderText() || !curr->boxModelObject()->hasSelfPaintingLayer())
-                curr->paint(childInfo, paintOffset, lineTop, lineBottom);
-        }
-    }
-}
-
 LegacyInlineBox* LegacyInlineFlowBox::firstLeafDescendant() const
 {
     LegacyInlineBox* leaf = nullptr;
