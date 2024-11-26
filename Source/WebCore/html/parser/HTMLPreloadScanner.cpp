@@ -61,17 +61,17 @@ using namespace HTMLNames;
 TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVector& data)
 {
     static constexpr std::pair<PackedASCIILiteral<uint64_t>, TokenPreloadScanner::TagId> mappings[] = {
-        { "base", TagId::Base },
-        { "img", TagId::Img },
-        { "input", TagId::Input },
-        { "link", TagId::Link },
-        { "meta", TagId::Meta },
-        { "picture", TagId::Picture },
-        { "script", TagId::Script },
-        { "source", TagId::Source },
-        { "style", TagId::Style },
-        { "template", TagId::Template },
-        { "video", TagId::Video },
+        { "base"_s, TagId::Base },
+        { "img"_s, TagId::Img },
+        { "input"_s, TagId::Input },
+        { "link"_s, TagId::Link },
+        { "meta"_s, TagId::Meta },
+        { "picture"_s, TagId::Picture },
+        { "script"_s, TagId::Script },
+        { "source"_s, TagId::Source },
+        { "style"_s, TagId::Style },
+        { "template"_s, TagId::Template },
+        { "video"_s, TagId::Video },
     };
     static constexpr SortedArrayMap map { mappings };
     return map.get(data.span(), TagId::Unknown);

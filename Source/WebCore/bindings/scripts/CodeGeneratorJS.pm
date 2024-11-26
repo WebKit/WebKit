@@ -2570,7 +2570,7 @@ sub GenerateEnumerationImplementationContent
     $result .= "    static constexpr std::array<std::pair<ComparableASCIILiteral, $className>, " . scalar(@sortedEnumerationValues) . "> mappings {\n";
     for my $value (@sortedEnumerationValues) {
         my $enumerationValueName = GetEnumerationValueName($value);
-        $result .= "        std::pair<ComparableASCIILiteral, $className> { \"$value\", ${className}::$enumerationValueName },\n";
+        $result .= "        std::pair<ComparableASCIILiteral, $className> { \"$value\"_s, ${className}::$enumerationValueName },\n";
     }
     $result .= "    };\n";
     $result .= "    static constexpr SortedArrayMap enumerationMapping { mappings };\n";

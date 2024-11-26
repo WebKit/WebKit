@@ -68,6 +68,7 @@ public:
 
     constexpr const char* characters() const { return m_charactersWithNullTerminator.data(); }
     constexpr size_t length() const { return !m_charactersWithNullTerminator.empty() ? m_charactersWithNullTerminator.size() - 1 : 0; }
+    constexpr std::span<const char> span() const { return m_charactersWithNullTerminator.first(length()); }
     std::span<const LChar> span8() const { return byteCast<LChar>(m_charactersWithNullTerminator.first(length())); }
     std::span<const char> spanIncludingNullTerminator() const { return m_charactersWithNullTerminator; }
     size_t isEmpty() const { return m_charactersWithNullTerminator.size() <= 1; }

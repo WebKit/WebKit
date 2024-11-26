@@ -202,19 +202,19 @@ static void dumpSeparatedLayerProperties(TextStream&, CALayer *) { }
 static String allowListedClassToString(UIView *view)
 {
     static constexpr ComparableASCIILiteral allowedClassesArray[] = {
-        "UIView",
-        "WKBackdropView",
-        "WKCompositingView",
-        "WKContentView",
-        "WKModelView",
-        "WKScrollView",
-        "WKSeparatedModelView",
-        "WKShapeView",
-        "WKSimpleBackdropView",
-        "WKTransformView",
-        "WKUIRemoteView",
-        "WKWebView",
-        "_UILayerHostView",
+        "UIView"_s,
+        "WKBackdropView"_s,
+        "WKCompositingView"_s,
+        "WKContentView"_s,
+        "WKModelView"_s,
+        "WKScrollView"_s,
+        "WKSeparatedModelView"_s,
+        "WKShapeView"_s,
+        "WKSimpleBackdropView"_s,
+        "WKTransformView"_s,
+        "WKUIRemoteView"_s,
+        "WKWebView"_s,
+        "_UILayerHostView"_s,
     };
     static constexpr SortedArraySet allowedClasses { allowedClassesArray };
 

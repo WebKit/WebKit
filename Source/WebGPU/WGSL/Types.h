@@ -172,8 +172,8 @@ public:
         static constexpr unsigned exp = 1;
 
         static constexpr std::pair<ComparableASCIILiteral, unsigned> mapEntries[] {
-            { "exp", exp },
-            { "fract", fract },
+            { "exp"_s, exp },
+            { "fract"_s, fract },
         };
 
         static constexpr SortedArrayMap map { mapEntries };
@@ -185,8 +185,8 @@ public:
         static constexpr unsigned whole = 1;
 
         static constexpr std::pair<ComparableASCIILiteral, unsigned> mapEntries[] {
-            { "fract", fract },
-            { "whole", whole },
+            { "fract"_s, fract },
+            { "whole"_s, whole },
         };
 
         static constexpr SortedArrayMap map { mapEntries };
@@ -198,8 +198,8 @@ public:
         static constexpr unsigned exchanged = 1;
 
         static constexpr std::pair<ComparableASCIILiteral, unsigned> mapEntries[] {
-            { "exchanged", exchanged },
-            { "old_value", oldValue },
+            { "exchanged"_s, exchanged },
+            { "old_value"_s, oldValue },
         };
 
         static constexpr SortedArrayMap map { mapEntries };

@@ -54,14 +54,14 @@ const std::optional<KeyboardScrollingKey> keyboardScrollingKeyForKeyboardEvent(c
         return { };
 
     static constexpr std::pair<PackedASCIILiteral<uint64_t>, KeyboardScrollingKey> mappings[] = {
-        { "Down", KeyboardScrollingKey::DownArrow },
-        { "End", KeyboardScrollingKey::End },
-        { "Home", KeyboardScrollingKey::Home },
-        { "Left", KeyboardScrollingKey::LeftArrow },
-        { "PageDown", KeyboardScrollingKey::PageDown },
-        { "PageUp", KeyboardScrollingKey::PageUp },
-        { "Right", KeyboardScrollingKey::RightArrow },
-        { "Up", KeyboardScrollingKey::UpArrow },
+        { "Down"_s, KeyboardScrollingKey::DownArrow },
+        { "End"_s, KeyboardScrollingKey::End },
+        { "Home"_s, KeyboardScrollingKey::Home },
+        { "Left"_s, KeyboardScrollingKey::LeftArrow },
+        { "PageDown"_s, KeyboardScrollingKey::PageDown },
+        { "PageUp"_s, KeyboardScrollingKey::PageUp },
+        { "Right"_s, KeyboardScrollingKey::RightArrow },
+        { "Up"_s, KeyboardScrollingKey::UpArrow },
     };
     static constexpr SortedArrayMap map { mappings };
 

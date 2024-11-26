@@ -68,17 +68,17 @@ static WebGPU::DeviceDescriptor convertToBacking(const std::optional<GPUDeviceDe
 static GPUFeatureName convertFeatureNameToEnum(const String& stringValue)
 {
     static constexpr std::pair<ComparableASCIILiteral, GPUFeatureName> mappings[] = {
-        { "bgra8unorm-storage", GPUFeatureName::Bgra8unormStorage },
-        { "depth-clip-control", GPUFeatureName::DepthClipControl },
-        { "depth32float-stencil8", GPUFeatureName::Depth32floatStencil8 },
-        { "float32-filterable", GPUFeatureName::Float32Filterable },
-        { "indirect-first-instance", GPUFeatureName::IndirectFirstInstance },
-        { "rg11b10ufloat-renderable", GPUFeatureName::Rg11b10ufloatRenderable },
-        { "shader-f16", GPUFeatureName::ShaderF16 },
-        { "texture-compression-astc", GPUFeatureName::TextureCompressionAstc },
-        { "texture-compression-bc", GPUFeatureName::TextureCompressionBc },
-        { "texture-compression-etc2", GPUFeatureName::TextureCompressionEtc2 },
-        { "timestamp-query", GPUFeatureName::TimestampQuery },
+        { "bgra8unorm-storage"_s, GPUFeatureName::Bgra8unormStorage },
+        { "depth-clip-control"_s, GPUFeatureName::DepthClipControl },
+        { "depth32float-stencil8"_s, GPUFeatureName::Depth32floatStencil8 },
+        { "float32-filterable"_s, GPUFeatureName::Float32Filterable },
+        { "indirect-first-instance"_s, GPUFeatureName::IndirectFirstInstance },
+        { "rg11b10ufloat-renderable"_s, GPUFeatureName::Rg11b10ufloatRenderable },
+        { "shader-f16"_s, GPUFeatureName::ShaderF16 },
+        { "texture-compression-astc"_s, GPUFeatureName::TextureCompressionAstc },
+        { "texture-compression-bc"_s, GPUFeatureName::TextureCompressionBc },
+        { "texture-compression-etc2"_s, GPUFeatureName::TextureCompressionEtc2 },
+        { "timestamp-query"_s, GPUFeatureName::TimestampQuery },
     };
     static constexpr SortedArrayMap enumerationMapping { mappings };
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))

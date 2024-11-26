@@ -51,8 +51,8 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestDefaultToJSONEnum enumer
 template<> std::optional<TestDefaultToJSONEnum> parseEnumerationFromString<TestDefaultToJSONEnum>(const String& stringValue)
 {
     static constexpr std::array<std::pair<ComparableASCIILiteral, TestDefaultToJSONEnum>, 2> mappings {
-        std::pair<ComparableASCIILiteral, TestDefaultToJSONEnum> { "EnumValue1", TestDefaultToJSONEnum::EnumValue1 },
-        std::pair<ComparableASCIILiteral, TestDefaultToJSONEnum> { "EnumValue2", TestDefaultToJSONEnum::EnumValue2 },
+        std::pair<ComparableASCIILiteral, TestDefaultToJSONEnum> { "EnumValue1"_s, TestDefaultToJSONEnum::EnumValue1 },
+        std::pair<ComparableASCIILiteral, TestDefaultToJSONEnum> { "EnumValue2"_s, TestDefaultToJSONEnum::EnumValue2 },
     };
     static constexpr SortedArrayMap enumerationMapping { mappings };
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))

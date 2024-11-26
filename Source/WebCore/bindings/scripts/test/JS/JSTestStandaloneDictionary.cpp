@@ -374,8 +374,8 @@ template<> JSString* convertEnumerationToJS(VM& vm, TestStandaloneDictionary::En
 template<> std::optional<TestStandaloneDictionary::EnumInStandaloneDictionaryFile> parseEnumerationFromString<TestStandaloneDictionary::EnumInStandaloneDictionaryFile>(const String& stringValue)
 {
     static constexpr std::array<std::pair<ComparableASCIILiteral, TestStandaloneDictionary::EnumInStandaloneDictionaryFile>, 2> mappings {
-        std::pair<ComparableASCIILiteral, TestStandaloneDictionary::EnumInStandaloneDictionaryFile> { "enumValue1", TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1 },
-        std::pair<ComparableASCIILiteral, TestStandaloneDictionary::EnumInStandaloneDictionaryFile> { "enumValue2", TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue2 },
+        std::pair<ComparableASCIILiteral, TestStandaloneDictionary::EnumInStandaloneDictionaryFile> { "enumValue1"_s, TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue1 },
+        std::pair<ComparableASCIILiteral, TestStandaloneDictionary::EnumInStandaloneDictionaryFile> { "enumValue2"_s, TestStandaloneDictionary::EnumInStandaloneDictionaryFile::EnumValue2 },
     };
     static constexpr SortedArrayMap enumerationMapping { mappings };
     if (auto* enumerationValue = enumerationMapping.tryGet(stringValue); LIKELY(enumerationValue))

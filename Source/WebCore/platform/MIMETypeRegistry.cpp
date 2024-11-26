@@ -79,77 +79,77 @@ static String normalizedImageMIMEType(const String&);
 // and we fix sniffing so that it corrects items such as image/jpg -> image/jpeg.
 constexpr ComparableCaseFoldingASCIILiteral supportedImageMIMETypeArray[] = {
 #if PLATFORM(IOS_FAMILY)
-    "application/bmp",
-    "application/jpg",
-    "application/png",
-    "application/tif",
-    "application/tiff",
-    "application/x-bmp",
-    "application/x-jpg",
-    "application/x-png",
-    "application/x-tif",
-    "application/x-tiff",
-    "application/x-win-bitmap",
+    "application/bmp"_s,
+    "application/jpg"_s,
+    "application/png"_s,
+    "application/tif"_s,
+    "application/tiff"_s,
+    "application/x-bmp"_s,
+    "application/x-jpg"_s,
+    "application/x-png"_s,
+    "application/x-tif"_s,
+    "application/x-tiff"_s,
+    "application/x-win-bitmap"_s,
 #endif
-    "image/apng",
+    "image/apng"_s,
 #if HAVE(AVIF) || USE(AVIF)
-    "image/avif",
+    "image/avif"_s,
 #endif
-    "image/bmp",
+    "image/bmp"_s,
 #if PLATFORM(IOS_FAMILY)
-    "image/gi_",
+    "image/gi_"_s,
 #endif
-    "image/gif",
+    "image/gif"_s,
 #if HAVE(HEIC)
-    "image/heic",
-    "image/heic-sequence",
-    "image/heif",
-    "image/heif-sequence",
+    "image/heic"_s,
+    "image/heic-sequence"_s,
+    "image/heif"_s,
+    "image/heif-sequence"_s,
 #endif
 #if PLATFORM(IOS_FAMILY)
-    "image/jp_",
-    "image/jpe_",
+    "image/jp_"_s,
+    "image/jpe_"_s,
 #endif
-    "image/jpeg",
-    "image/jpg",
+    "image/jpeg"_s,
+    "image/jpg"_s,
 #if HAVE(JPEGXL) || USE(JPEGXL)
-    "image/jxl",
+    "image/jxl"_s,
 #endif
 #if PLATFORM(IOS_FAMILY)
-    "image/ms-bmp",
-    "image/pipeg",
+    "image/ms-bmp"_s,
+    "image/pipeg"_s,
 #endif
 #if USE(CG)
-    "image/pjpeg",
+    "image/pjpeg"_s,
 #endif
-    "image/png",
+    "image/png"_s,
 #if PLATFORM(IOS_FAMILY)
-    "image/tif",
+    "image/tif"_s,
 #endif
 #if USE(CG)
-    "image/tiff",
+    "image/tiff"_s,
 #endif
-    "image/vnd.microsoft.icon",
+    "image/vnd.microsoft.icon"_s,
 #if PLATFORM(IOS_FAMILY)
-    "image/vnd.switfview-jpeg",
+    "image/vnd.switfview-jpeg"_s,
 #endif
-    "image/webp",
+    "image/webp"_s,
 #if ENABLE(MULTI_REPRESENTATION_HEIC)
-    "image/x-apple-adaptive-glyph",
+    "image/x-apple-adaptive-glyph"_s,
 #endif
 #if PLATFORM(IOS_FAMILY)
-    "image/x-bmp",
+    "image/x-bmp"_s,
 #endif
-    "image/x-icon",
+    "image/x-icon"_s,
 #if PLATFORM(IOS_FAMILY)
-    "image/x-ms-bmp",
-    "image/x-tif",
-    "image/x-tiff",
-    "image/x-win-bitmap",
-    "image/x-windows-bmp",
+    "image/x-ms-bmp"_s,
+    "image/x-tif"_s,
+    "image/x-tiff"_s,
+    "image/x-win-bitmap"_s,
+    "image/x-windows-bmp"_s,
 #endif
 #if PLATFORM(IOS_FAMILY) || !USE(CG)
-    "image/x-xbitmap",
+    "image/x-xbitmap"_s,
 #endif
 };
 
@@ -175,22 +175,22 @@ HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::additionalSupported
 
 // https://html.spec.whatwg.org/multipage/scripting.html#javascript-mime-type
 constexpr ComparableLettersLiteral supportedJavaScriptMIMETypeArray[] = {
-    "application/ecmascript",
-    "application/javascript",
-    "application/x-ecmascript",
-    "application/x-javascript",
-    "text/ecmascript",
-    "text/javascript",
-    "text/javascript1.0",
-    "text/javascript1.1",
-    "text/javascript1.2",
-    "text/javascript1.3",
-    "text/javascript1.4",
-    "text/javascript1.5",
-    "text/jscript",
-    "text/livescript",
-    "text/x-ecmascript",
-    "text/x-javascript",
+    "application/ecmascript"_s,
+    "application/javascript"_s,
+    "application/x-ecmascript"_s,
+    "application/x-javascript"_s,
+    "text/ecmascript"_s,
+    "text/javascript"_s,
+    "text/javascript1.0"_s,
+    "text/javascript1.1"_s,
+    "text/javascript1.2"_s,
+    "text/javascript1.3"_s,
+    "text/javascript1.4"_s,
+    "text/javascript1.5"_s,
+    "text/jscript"_s,
+    "text/livescript"_s,
+    "text/x-ecmascript"_s,
+    "text/x-javascript"_s,
 };
 
 HashSet<String, ASCIICaseInsensitiveHash>& MIMETypeRegistry::supportedNonImageMIMETypes()
@@ -241,8 +241,8 @@ const HashSet<String>& MIMETypeRegistry::supportedMediaMIMETypes()
 }
 
 constexpr ComparableLettersLiteral pdfMIMETypeArray[] = {
-    "application/pdf",
-    "text/pdf",
+    "application/pdf"_s,
+    "text/pdf"_s,
 };
 
 FixedVector<ASCIILiteral> MIMETypeRegistry::pdfMIMETypes()
@@ -251,24 +251,24 @@ FixedVector<ASCIILiteral> MIMETypeRegistry::pdfMIMETypes()
 }
 
 constexpr ComparableLettersLiteral unsupportedTextMIMETypeArray[] = {
-    "text/calendar",
-    "text/directory",
-    "text/ldif",
-    "text/qif",
+    "text/calendar"_s,
+    "text/directory"_s,
+    "text/ldif"_s,
+    "text/qif"_s,
 #if !PLATFORM(IOS_FAMILY)
-    "text/rtf",
+    "text/rtf"_s,
 #endif
-    "text/vcalendar",
-    "text/vcard",
+    "text/vcalendar"_s,
+    "text/vcard"_s,
 #if PLATFORM(IOS_FAMILY)
-    "text/vnd.sun.j2me.app-descriptor",
+    "text/vnd.sun.j2me.app-descriptor"_s,
 #endif
-    "text/x-calendar",
-    "text/x-csv",
-    "text/x-qif",
-    "text/x-vcalendar",
-    "text/x-vcard",
-    "text/x-vcf",
+    "text/x-calendar"_s,
+    "text/x-csv"_s,
+    "text/x-qif"_s,
+    "text/x-vcalendar"_s,
+    "text/x-vcard"_s,
+    "text/x-vcf"_s,
 };
 
 FixedVector<ASCIILiteral> MIMETypeRegistry::unsupportedTextMIMETypes()
@@ -676,10 +676,10 @@ const String& defaultMIMEType()
 }
 
 constexpr ComparableLettersLiteral usdMIMETypeArray[] = {
-    "model/usd", // Unofficial, but supported because we documented this.
-    "model/vnd.pixar.usd", // Unofficial, but supported because we documented this.
-    "model/vnd.reality",
-    "model/vnd.usdz+zip", // The official type: https://www.iana.org/assignments/media-types/model/vnd.usdz+zip
+    "model/usd"_s, // Unofficial, but supported because we documented this.
+    "model/vnd.pixar.usd"_s, // Unofficial, but supported because we documented this.
+    "model/vnd.reality"_s,
+    "model/vnd.usdz+zip"_s, // The official type: https://www.iana.org/assignments/media-types/model/vnd.usdz+zip
 };
 
 FixedVector<ASCIILiteral> MIMETypeRegistry::usdMIMETypes()
@@ -704,52 +704,52 @@ static String normalizedImageMIMEType(const String& mimeType)
 #if USE(CURL)
     // FIXME: Since this is only used in isSupportedImageMIMEType, we should consider removing the non-image types below.
     static constexpr std::pair<ComparableLettersLiteral, ASCIILiteral> mimeTypeAssociationArray[] = {
-        { "application/ico", "image/vnd.microsoft.icon"_s },
-        { "application/java", "application/java-archive"_s },
-        { "application/x-java-archive", "application/java-archive"_s },
-        { "application/x-zip-compressed", "application/zip"_s },
-        { "audio/flac", "audio/x-flac"_s },
-        { "audio/m4a", "audio/mp4"_s },
-        { "audio/mid", "audio/midi"_s },
-        { "audio/mp3", "audio/mpeg"_s },
-        { "audio/mpeg3", "audio/mpeg"_s },
-        { "audio/mpegurl", "audio/x-mpegurl"_s },
-        { "audio/mpg", "audio/mpeg"_s },
-        { "audio/mpg3", "audio/mpeg"_s },
-        { "audio/qcp", "audio/qcelp"_s },
-        { "audio/sp-midi", "audio/midi"_s },
-        { "audio/vnd.qcelp", "audio/qcelp"_s },
-        { "audio/vnd.qcp", "audio/qcelp"_s },
-        { "audio/vnd.wave", "audio/x-wav"_s },
-        { "audio/wav", "audio/x-wav"_s },
-        { "audio/x-aac", "audio/aac"_s },
-        { "audio/x-amr", "audio/amr"_s },
-        { "audio/x-m4a", "audio/mp4"_s },
-        { "audio/x-mid", "audio/midi"_s },
-        { "audio/x-midi", "audio/midi"_s },
-        { "audio/x-mp3", "audio/mpeg"_s },
-        { "audio/x-mp4", "audio/mp4"_s },
-        { "audio/x-mpeg", "audio/mpeg"_s },
-        { "audio/x-mpeg3", "audio/mpeg"_s },
-        { "audio/x-mpg", "audio/mpeg"_s },
-        { "image/ico", "image/vnd.microsoft.icon"_s },
-        { "image/icon", "image/vnd.microsoft.icon"_s },
-        { "image/jpg", "image/jpeg"_s },
-        { "image/pjpeg", "image/jpeg"_s },
-        { "image/vnd.rim.png", "image/png"_s },
-        { "image/x-bitmap", "image/bmp"_s },
-        { "image/x-bmp", "image/bmp"_s },
-        { "image/x-icon", "image/vnd.microsoft.icon"_s },
-        { "image/x-ms-bitmap", "image/bmp"_s },
-        { "image/x-ms-bmp", "image/bmp"_s },
-        { "image/x-png", "image/png"_s },
-        { "image/x-windows-bmp", "image/bmp"_s },
-        { "text/cache-manifest", "text/plain"_s },
-        { "text/ico", "image/vnd.microsoft.icon"_s },
-        { "video/3gp", "video/3gpp"_s },
-        { "video/avi", "video/x-msvideo"_s },
-        { "video/x-m4v", "video/mp4"_s },
-        { "video/x-quicktime", "video/quicktime"_s },
+        { "application/ico"_s, "image/vnd.microsoft.icon"_s },
+        { "application/java"_s, "application/java-archive"_s },
+        { "application/x-java-archive"_s, "application/java-archive"_s },
+        { "application/x-zip-compressed"_s, "application/zip"_s },
+        { "audio/flac"_s, "audio/x-flac"_s },
+        { "audio/m4a"_s, "audio/mp4"_s },
+        { "audio/mid"_s, "audio/midi"_s },
+        { "audio/mp3"_s, "audio/mpeg"_s },
+        { "audio/mpeg3"_s, "audio/mpeg"_s },
+        { "audio/mpegurl"_s, "audio/x-mpegurl"_s },
+        { "audio/mpg"_s, "audio/mpeg"_s },
+        { "audio/mpg3"_s, "audio/mpeg"_s },
+        { "audio/qcp"_s, "audio/qcelp"_s },
+        { "audio/sp-midi"_s, "audio/midi"_s },
+        { "audio/vnd.qcelp"_s, "audio/qcelp"_s },
+        { "audio/vnd.qcp"_s, "audio/qcelp"_s },
+        { "audio/vnd.wave"_s, "audio/x-wav"_s },
+        { "audio/wav"_s, "audio/x-wav"_s },
+        { "audio/x-aac"_s, "audio/aac"_s },
+        { "audio/x-amr"_s, "audio/amr"_s },
+        { "audio/x-m4a"_s, "audio/mp4"_s },
+        { "audio/x-mid"_s, "audio/midi"_s },
+        { "audio/x-midi"_s, "audio/midi"_s },
+        { "audio/x-mp3"_s, "audio/mpeg"_s },
+        { "audio/x-mp4"_s, "audio/mp4"_s },
+        { "audio/x-mpeg"_s, "audio/mpeg"_s },
+        { "audio/x-mpeg3"_s, "audio/mpeg"_s },
+        { "audio/x-mpg"_s, "audio/mpeg"_s },
+        { "image/ico"_s, "image/vnd.microsoft.icon"_s },
+        { "image/icon"_s, "image/vnd.microsoft.icon"_s },
+        { "image/jpg"_s, "image/jpeg"_s },
+        { "image/pjpeg"_s, "image/jpeg"_s },
+        { "image/vnd.rim.png"_s, "image/png"_s },
+        { "image/x-bitmap"_s, "image/bmp"_s },
+        { "image/x-bmp"_s, "image/bmp"_s },
+        { "image/x-icon"_s, "image/vnd.microsoft.icon"_s },
+        { "image/x-ms-bitmap"_s, "image/bmp"_s },
+        { "image/x-ms-bmp"_s, "image/bmp"_s },
+        { "image/x-png"_s, "image/png"_s },
+        { "image/x-windows-bmp"_s, "image/bmp"_s },
+        { "text/cache-manifest"_s, "text/plain"_s },
+        { "text/ico"_s, "image/vnd.microsoft.icon"_s },
+        { "video/3gp"_s, "video/3gpp"_s },
+        { "video/avi"_s, "video/x-msvideo"_s },
+        { "video/x-m4v"_s, "video/mp4"_s },
+        { "video/x-quicktime"_s, "video/quicktime"_s },
     };
     static constexpr SortedArrayMap associationMap { mimeTypeAssociationArray };
     auto normalizedType = associationMap.tryGet(mimeType);
