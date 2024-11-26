@@ -85,9 +85,6 @@ public:
     std::optional<WebCore::TextIndicatorData> createTextIndicatorForRange(const WebCore::SimpleRange&);
     void createTextIndicatorForTextAnimationID(const WTF::UUID&, CompletionHandler<void(std::optional<WebCore::TextIndicatorData>&&)>&&);
 
-    void enableSourceTextAnimationAfterElementWithID(const String& elementID);
-    void enableTextAnimationTypeForElementWithID(const String& elementID);
-
 private:
     std::optional<WebCore::SimpleRange> contextRangeForTextAnimationID(const WTF::UUID&) const;
     std::optional<WebCore::SimpleRange> contextRangeForActiveWritingToolsSession() const;
@@ -102,7 +99,6 @@ private:
     std::optional<WTF::UUID> m_initialAnimationID;
     std::optional<TextAnimationUnanimatedRangeData> m_unanimatedRangeData;
     std::optional<ReplacedRangeAndString> m_alreadyReplacedRange;
-    RefPtr<WebCore::Range> m_manuallyEnabledAnimationRange;
     Vector<TextAnimationRange> m_textAnimationRanges;
     std::optional<WTF::UUID> m_activeAnimation;
     std::optional<CompletionHandler<void(WebCore::TextAnimationRunMode)>> m_finalReplaceHandler;

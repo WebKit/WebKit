@@ -120,9 +120,6 @@ std::optional<WebCore::SimpleRange> TextAnimationController::contextRangeForActi
 
 std::optional<WebCore::SimpleRange> TextAnimationController::contextRangeForTextAnimationID(const WTF::UUID& animationUUID) const
 {
-    if (RefPtr manuallyEnabledAnimationRange = m_manuallyEnabledAnimationRange; manuallyEnabledAnimationRange)
-        return WebCore::makeSimpleRange(*manuallyEnabledAnimationRange);
-
     if (m_initialAnimationID == animationUUID)
         return unreplacedRangeForActiveWritingToolsSession();
 
@@ -424,59 +421,6 @@ void TextAnimationController::createTextIndicatorForTextAnimationID(const WTF::U
     }
 
     completionHandler(createTextIndicatorForRange(*sessionRange));
-}
-
-void TextAnimationController::enableSourceTextAnimationAfterElementWithID(const String& elementID)
-{
-    RefPtr document = this->document();
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr root = document->documentElement();
-    if (!root) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    WebCore::VisibleSelection fullDocumentSelection(WebCore::VisibleSelection::selectionFromContentsOfNode(root.get()));
-    auto simpleRange = fullDocumentSelection.range();
-    if (!simpleRange) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    if (RefPtr element = document->getElementById(elementID)) {
-        auto elementRange = WebCore::makeRangeSelectingNodeContents(*element);
-        if (!elementRange.collapsed())
-            simpleRange->start = elementRange.end;
-    }
-
-    m_manuallyEnabledAnimationRange = createLiveRange(*simpleRange);
-}
-
-void TextAnimationController::enableTextAnimationTypeForElementWithID(const String& elementID)
-{
-    RefPtr document = this->document();
-    if (!document) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    RefPtr element = document->getElementById(elementID);
-    if (!element) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    auto elementRange = WebCore::makeRangeSelectingNodeContents(*element);
-    if (elementRange.collapsed()) {
-        ASSERT_NOT_REACHED();
-        return;
-    }
-
-    m_manuallyEnabledAnimationRange = createLiveRange(elementRange);
 }
 
 } // namespace WebKit

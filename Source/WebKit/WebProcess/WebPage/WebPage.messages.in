@@ -822,9 +822,6 @@ GenerateSyntheticEditingCommand(enum:uint8_t WebKit::SyntheticEditingCommandType
     CreateTextIndicatorForTextAnimationID(WTF::UUID uuid) -> (std::optional<WebCore::TextIndicatorData> textIndicator)
     UpdateUnderlyingTextVisibilityForTextAnimationID(WTF::UUID uuid, bool visible) -> ()
 
-    EnableSourceTextAnimationAfterElementWithID(String elementID);
-    EnableTextAnimationTypeForElementWithID(String elementID);
-
     IntelligenceTextAnimationsDidComplete();
 #endif
 
