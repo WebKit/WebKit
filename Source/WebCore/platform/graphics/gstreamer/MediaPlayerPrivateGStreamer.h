@@ -286,7 +286,7 @@ protected:
     GstElement* createVideoSinkGL();
 
 #if USE(TEXTURE_MAPPER)
-    void pushTextureToCompositor();
+    void pushTextureToCompositor(bool isDuplicateSample);
 #endif
 
     GstElement* videoSink() const { return m_videoSink.get(); }
@@ -637,6 +637,8 @@ private:
 
     RefPtr<GStreamerQuirksManager> m_quirksManagerForTesting;
     UncheckedKeyHashMap<const GStreamerQuirk*, std::unique_ptr<GStreamerQuirkBase::GStreamerQuirkState>> m_quirkStates;
+
+    MediaTime m_estimatedVideoFrameDuration { MediaTime::zeroTime() };
 };
 
 } // namespace WebCore

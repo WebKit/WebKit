@@ -3411,13 +3411,17 @@ PlatformLayer* MediaPlayerPrivateGStreamer::platformLayer() const
     return m_platformLayer.get();
 }
 
-void MediaPlayerPrivateGStreamer::pushTextureToCompositor()
+void MediaPlayerPrivateGStreamer::pushTextureToCompositor(bool isDuplicateSample)
 {
     Locker sampleLocker { m_sampleMutex };
     if (!GST_IS_SAMPLE(m_sample.get()))
         return;
 
-    ++m_sampleCount;
+    // The GL video appsink reports the sample following a preroll with the same buffer, so don't
+    // account for this scenario, this is important for rvfc, ensuring timestamps in metadata
+    // increase monotonically during playback.
+    if (!isDuplicateSample)
+        ++m_sampleCount;
 
     if (!m_platformLayer->isActive()) {
         GST_ERROR_OBJECT(pipeline(), "TextureMapperPlatformLayerProxy is inactive");
@@ -3622,6 +3626,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
     ASSERT(!isMainThread());
 
     GstBuffer* buffer = gst_sample_get_buffer(sample.get());
+    RELEASE_ASSERT(buffer);
     if (buffer && GST_BUFFER_PTS_IS_VALID(buffer)) {
         // Heuristic to avoid asking for playbackPosition() from a non-main thread.
         MediaTime currentTime = MediaTime(gst_segment_to_stream_time(gst_sample_get_segment(sample.get()), GST_FORMAT_TIME, GST_BUFFER_PTS(buffer)), GST_SECOND);
@@ -3631,9 +3636,15 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
     }
 
     bool shouldTriggerResize;
+    bool isDuplicateSample = false;
     {
         Locker sampleLocker { m_sampleMutex };
         shouldTriggerResize = !m_sample;
+        if (!shouldTriggerResize) {
+            auto previousBuffer = gst_sample_get_buffer(m_sample.get());
+            RELEASE_ASSERT(previousBuffer);
+            isDuplicateSample = buffer == previousBuffer;
+        }
         m_sample = WTFMove(sample);
     }
 
@@ -3646,6 +3657,22 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
             if (!caps) {
                 GST_ERROR_OBJECT(pipeline(), "Received sample without caps: %" GST_PTR_FORMAT, m_sample.get());
                 return;
+            }
+
+            if (UNLIKELY(!gst_caps_is_empty(caps.get()) && !gst_caps_is_any(caps.get()))) {
+                auto structure = gst_caps_get_structure(caps.get(), 0);
+                int framerateNumerator, framerateDenominator;
+                if (gst_structure_get_fraction(structure, "framerate", &framerateNumerator, &framerateDenominator)) {
+                    // In case the framerate is unknown, the frame duration won't be set on buffers. In that
+                    // case, estimate it. Otherwise use 0 and expect the PTS to be set depending on the
+                    // framerate when computing the rvfc frame mediaTime.
+                    if (!framerateNumerator) {
+                        if (GST_BUFFER_PTS_IS_VALID(buffer) && !GST_BUFFER_DURATION_IS_VALID(buffer)) {
+                            GST_DEBUG_OBJECT(pipeline(), "Video framerate is unknown, estimating from first buffer PTS");
+                            m_estimatedVideoFrameDuration = fromGstClockTime(GST_BUFFER_PTS(buffer));
+                        }
+                    }
+                }
             }
         }
         RunLoop::main().dispatch([weakThis = ThreadSafeWeakPtr { *this }, this, caps = WTFMove(caps)] {
@@ -3678,7 +3705,7 @@ void MediaPlayerPrivateGStreamer::triggerRepaint(GRefPtr<GstSample>&& sample)
     }
 
 #if USE(TEXTURE_MAPPER)
-    pushTextureToCompositor();
+    pushTextureToCompositor(isDuplicateSample);
 #endif // USE(TEXTURE_MAPPER)
 }
 
@@ -4242,14 +4269,14 @@ WTFLogChannel& MediaPlayerPrivateGStreamer::logChannel() const
 
 std::optional<VideoFrameMetadata> MediaPlayerPrivateGStreamer::videoFrameMetadata()
 {
+    Locker sampleLocker { m_sampleMutex };
+    if (!GST_IS_SAMPLE(m_sample.get()))
+        return { };
+
     if (m_sampleCount == m_lastVideoFrameMetadataSampleCount)
         return { };
 
     m_lastVideoFrameMetadataSampleCount = m_sampleCount;
-
-    Locker sampleLocker { m_sampleMutex };
-    if (!GST_IS_SAMPLE(m_sample.get()))
-        return { };
 
     auto* buffer = gst_sample_get_buffer(m_sample.get());
     auto metadata = webkitGstBufferGetVideoFrameMetadata(buffer);
@@ -4258,9 +4285,15 @@ std::optional<VideoFrameMetadata> MediaPlayerPrivateGStreamer::videoFrameMetadat
     metadata.height = size.height();
     metadata.presentedFrames = m_sampleCount;
 
-    // FIXME: presentationTime and expectedDisplayTime might not always have the same value, we should try getting more precise values.
-    metadata.presentationTime = MonotonicTime::now().secondsSinceEpoch().seconds();
-    metadata.expectedDisplayTime = metadata.presentationTime;
+    if (GST_BUFFER_PTS_IS_VALID(buffer)) {
+        auto bufferPts = fromGstClockTime(GST_BUFFER_PTS(buffer));
+        metadata.mediaTime = (bufferPts - m_estimatedVideoFrameDuration).toDouble();
+
+        // FIXME: presentationTime and expectedDisplayTime might not always have the same value, we should try getting more precise values.
+        const auto currentTime = this->currentTime();
+        metadata.presentationTime = MonotonicTime::now().secondsSinceEpoch().seconds() - (currentTime - bufferPts).toDouble();
+        metadata.expectedDisplayTime = metadata.presentationTime;
+    }
 
     return metadata;
 }

@@ -161,8 +161,6 @@ VideoFrameMetadata webkitGstBufferGetVideoFrameMetadata(GstBuffer* buffer)
         return { };
 
     VideoFrameMetadata videoFrameMetadata;
-    if (GST_BUFFER_PTS_IS_VALID(buffer))
-        videoFrameMetadata.mediaTime = fromGstClockTime(GST_BUFFER_PTS(buffer)).toDouble();
 
     auto* meta = getInternalVideoFrameMetadata(buffer);
     if (!meta)
