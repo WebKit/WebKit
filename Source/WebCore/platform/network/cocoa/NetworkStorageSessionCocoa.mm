@@ -616,9 +616,19 @@ void NetworkStorageSession::deleteCookiesMatching(const Function<bool(NSHTTPCook
 
 void NetworkStorageSession::deleteCookies(const ClientOrigin& origin, CompletionHandler<void()>&& completionHandler)
 {
-    auto cachePartition = origin.topOrigin == origin.clientOrigin ? emptyString() : ResourceRequest::partitionName(origin.topOrigin.host());
-    deleteCookiesMatching([domain = origin.clientOrigin.host(), &cachePartition](NSHTTPCookie* cookie) {
-        return String(cookie.domain) == domain && equalIgnoringNullity(String(cookie._storagePartition), cachePartition);
+    auto cachePartition = cookiePartitionIdentifier(origin.topOrigin);
+    bool isMainFrame = origin.topOrigin == origin.clientOrigin;
+    deleteCookiesMatching([domain = origin.clientOrigin.host(), &cachePartition, isMainFrame](NSHTTPCookie* cookie) {
+        if (isMainFrame) {
+            if (String(cookie.domain) == domain && !cookie._storagePartition)
+                return true;
+            if (!cachePartition.isNull() && equalIgnoringNullity(String(cookie._storagePartition), cachePartition))
+                return true;
+        } else {
+            if (String(cookie.domain) == domain && !cachePartition.isNull() && equalIgnoringNullity(String(cookie._storagePartition), cachePartition))
+                return true;
+        }
+        return false;
     }, WTFMove(completionHandler));
 }
 

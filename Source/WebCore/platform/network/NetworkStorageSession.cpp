@@ -210,6 +210,17 @@ String NetworkStorageSession::cookiePartitionIdentifier(const ResourceRequest& r
     return cookiePartitionIdentifier(request.firstPartyForCookies());
 }
 
+String NetworkStorageSession::cookiePartitionIdentifier(const SecurityOriginData& origin)
+{
+    ASSERT(std::holds_alternative<SecurityOriginData::Tuple>(origin.data()));
+
+    return switchOn(origin.data(), [&origin](const SecurityOriginData::Tuple&) {
+        return cookiePartitionIdentifier(origin.toURL());
+    }, [](const ProcessQualified<OpaqueOriginIdentifier>&) {
+        return String { };
+    });
+}
+
 std::optional<Seconds> NetworkStorageSession::maxAgeCacheCap(const ResourceRequest& request)
 {
     if (m_cacheMaxAgeCapForPrevalentResources && shouldBlockCookies(request, std::nullopt, std::nullopt, ShouldRelaxThirdPartyCookieBlocking::No))
