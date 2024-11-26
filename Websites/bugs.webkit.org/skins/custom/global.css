@@ -599,11 +599,11 @@ ul.links li {
     border-radius: 0.5rem;
     text-align: left;
     max-width: 60rem;
-    min-width: 40rem;
+    min-width: 30rem;
     width: 50%;
     max-height: 80vh;
     z-index: 999;
-    margin-top: 2rem;
+    margin-top: 4rem;
 }
 
 #login-dialog form,
@@ -642,12 +642,15 @@ form .button.github svg {
     font-weight: bold;
     display: block;
     position: absolute;
-    top: -0.5rem;
-    right: -0.5rem;
+    top: -0.1rem;
+    right: -0.2rem;
     box-sizing: border-box;
-    padding: 0rem 0.7rem 0.2rem;
-    border-radius: 100%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    padding: 0rem 0.7rem 0.3rem;
+    border-bottom-left-radius: 0.5rem;
+}
+
+#login-dialog a.close:hover {
+    box-shadow: var(--button-hover-shadow);
     background-color: var(--button-background-color);
 }
 
@@ -670,17 +673,17 @@ form .button.github svg {
 
 #login-dialog::backdrop {
     background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8));
-    /* animation: fade-in 1s; */
+    animation: fade-in 0.5s;
 }
 
-/* @keyframes fade-in {
+@keyframes fade-in {
     from {
         opacity: 0;
     }
     to {
         opacity: 1;
     }
-} */
+}
 
 #login-dialog .links {
     text-align: center;
@@ -737,6 +740,10 @@ form .button.github svg {
 
 #login-form input[type=checkbox] {
     width: auto;
+}
+
+#Bugzilla_remember_top {
+   vertical-align: baseline;
 }
 
 .button.create-account {
