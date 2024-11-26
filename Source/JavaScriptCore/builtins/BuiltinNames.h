@@ -162,9 +162,11 @@ namespace JSC {
     macro(setPrototypeDirectOrThrow) \
     macro(regExpBuiltinExec) \
     macro(regExpMatchFast) \
+    macro(regExpProtoDotAllGetter) \
     macro(regExpProtoFlagsGetter) \
     macro(regExpProtoHasIndicesGetter) \
     macro(regExpProtoGlobalGetter) \
+    macro(regExpProtoHasIndicesGetter) \
     macro(regExpProtoIgnoreCaseGetter) \
     macro(regExpProtoMultilineGetter) \
     macro(regExpProtoSourceGetter) \

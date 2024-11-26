@@ -75,9 +75,26 @@ function hasObservableSideEffectsForRegExpMatch(regexp)
     if (regexpExec !== @regExpBuiltinExec)
         return true;
 
+    var regexpHasIndices = @tryGetById(regexp, "hasIndices");
+    if (regexpHasIndices !== @regExpProtoHasIndicesGetter)
+        return true;
+
     var regexpGlobal = @tryGetById(regexp, "global");
     if (regexpGlobal !== @regExpProtoGlobalGetter)
         return true;
+
+    var regexpIgnoreCase = @tryGetById(regexp, "ignoreCase");
+    if (regexpIgnoreCase !== @regExpProtoIgnoreCaseGetter)
+        return true;
+
+    var regexpMultiline = @tryGetById(regexp, "multiline");
+    if (regexpMultiline !== @regExpProtoMultilineGetter)
+        return true;
+
+    var regexpDotAll = @tryGetById(regexp, "dotAll");
+    if (regexpDotAll !== @regExpProtoDotAllGetter)
+        return true;
+
     var regexpUnicode = @tryGetById(regexp, "unicode");
     if (regexpUnicode !== @regExpProtoUnicodeGetter)
         return true;
@@ -85,6 +102,14 @@ function hasObservableSideEffectsForRegExpMatch(regexp)
     var regexpUnicodeSets = @tryGetById(regexp, "unicodeSets");
     if (regexpUnicodeSets !== @regExpProtoUnicodeSetsGetter)
         return true;
+
+    var regexpSticky = @tryGetById(regexp, "sticky");
+    if (regexpSticky !== @regExpProtoStickyGetter)
+        return true;
+
+    var regexpFlags = @tryGetById(regexp, "flags");
+    if (regexpFlags !== @regExpProtoFlagsGetter)
+        return true
 
     return typeof regexp.lastIndex !== "number";
 }
@@ -94,10 +119,14 @@ function matchSlow(regexp, str)
 {
     "use strict";
 
-    if (!regexp.global)
+    var flags = @toString(regexp.flags);
+    var global = @stringIncludesInternal.@call(flags, "g");
+
+    if (!global)
         return @regExpExec(regexp, str);
-    
-    var unicode = regexp.unicode;
+
+    var unicode = @stringIncludesInternal.@call(flags, "u") || @stringIncludesInternal.@call(flags, "v");
+
     regexp.lastIndex = 0;
     var resultList = [];
 
