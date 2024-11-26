@@ -264,20 +264,34 @@ GRefPtr<GstEncodingContainerProfile> MediaRecorderPrivateBackend::containerProfi
     if (scanner.isContentTypeSupported(GStreamerRegistryScanner::Configuration::Encoding, contentType, { }) == MediaPlayerEnums::SupportsType::IsNotSupported)
         return nullptr;
 
-    const char* containerCapsDescription = "";
+    auto mp4Variant = isGStreamerPluginAvailable("fmp4") ? "iso-fragmented"_s : "iso"_s;
+    StringBuilder containerCapsDescriptionBuilder;
     auto containerType = contentType.containerType();
     if (containerType.endsWith("mp4"_s))
-        containerCapsDescription = "video/quicktime, variant=iso";
+        containerCapsDescriptionBuilder.append("video/quicktime, variant="_s, mp4Variant);
     else if (containerType.endsWith("webm"_s))
-        containerCapsDescription = selectedTracks.videoTrack ? "video/webm"_s : "audio/webm"_s;
+        containerCapsDescriptionBuilder.append(selectedTracks.videoTrack ? "video/webm"_s : "audio/webm"_s);
     else
-        containerCapsDescription = containerType.utf8().data();
+        containerCapsDescriptionBuilder.append(containerType);
 
-    auto containerCaps = adoptGRef(gst_caps_from_string(containerCapsDescription));
+    auto containerCapsDescription = containerCapsDescriptionBuilder.toString();
+    auto containerCaps = adoptGRef(gst_caps_from_string(containerCapsDescription.ascii().data()));
+    GST_DEBUG("Creating container profile for caps %" GST_PTR_FORMAT, containerCaps.get());
     auto profile = adoptGRef(gst_encoding_container_profile_new(nullptr, nullptr, containerCaps.get(), nullptr));
 
-    if (containerType.endsWith("mp4"_s))
-        gst_encoding_profile_set_element_properties(GST_ENCODING_PROFILE(profile.get()), gst_structure_from_string("element-properties-map, map={[mp4mux,fragment-duration=1000,fragment-mode=0,streamable=0,force-create-timecode-trak=1]}", nullptr));
+    if (containerType.endsWith("mp4"_s)) {
+        StringBuilder propertiesBuilder;
+        propertiesBuilder.append("element-properties-map, map={["_s);
+        if (mp4Variant == "iso-fragmented"_s)
+            propertiesBuilder.append("isofmp4mux,fragment-duration=1000000000,write-mfra=1"_s);
+        else {
+            GST_WARNING("isofmp4mux (shipped by gst-plugins-rs) is not available, falling back to mp4mux, duration on resulting file will be invalid");
+            propertiesBuilder.append("mp4mux,fragment-duration=1000,fragment-mode=0,streamable=0,force-create-timecode-trak=1"_s);
+        }
+        propertiesBuilder.append("]}"_s);
+        auto properties = propertiesBuilder.toString();
+        gst_encoding_profile_set_element_properties(GST_ENCODING_PROFILE(profile.get()), gst_structure_from_string(properties.ascii().data(), nullptr));
+    }
 
     auto codecs = contentType.codecs();
     if (selectedTracks.videoTrack) {

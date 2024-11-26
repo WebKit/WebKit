@@ -497,6 +497,10 @@ void registerWebKitGStreamerElements()
             }
         }
 
+        // Make sure isofmp4mux is auto-plugged in transcodebin pipelines.
+        if (auto factory = adoptGRef(gst_element_factory_find("isofmp4mux")))
+            gst_plugin_feature_set_rank(GST_PLUGIN_FEATURE_CAST(factory.get()), GST_RANK_PRIMARY + 1);
+
         // The VAAPI plugin is not much maintained anymore and prone to rendering issues. In the
         // mid-term we will leverage the new stateless VA decoders. Disable the legacy plugin,
         // unless the WEBKIT_GST_ENABLE_LEGACY_VAAPI environment variable is set to 1.
