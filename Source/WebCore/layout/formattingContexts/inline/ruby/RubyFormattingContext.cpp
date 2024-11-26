@@ -146,17 +146,18 @@ size_t RubyFormattingContext::applyRubyAlignOnBaseContent(size_t rubyBaseStart, 
         return rubyBaseStart;
     }
     auto& rubyBaseLayoutBox = runs[rubyBaseStart].layoutBox();
-    auto rubyBaseEnd = [&] {
+    auto rubyBaseEnd = [&]() -> std::optional<size_t> {
         auto& rubyBox = rubyBaseLayoutBox.parent();
         for (auto index = rubyBaseStart + 1; index < runs.size(); ++index) {
             if (&runs[index].layoutBox().parent() == &rubyBox)
                 return index;
         }
-        return runs.size() - 1;
+        // We somehow managed to break content inside the base.
+        return { };
     }();
-    if (rubyBaseEnd - rubyBaseStart == 1) {
+    if (rubyBaseEnd && *rubyBaseEnd - rubyBaseStart == 1) {
         // Blank base needs no alignment.
-        return rubyBaseEnd;
+        return *rubyBaseEnd;
     }
     auto* annotationBox = rubyBaseLayoutBox.associatedRubyAnnotationBox();
     if (!annotationBox)
@@ -165,20 +166,22 @@ size_t RubyFormattingContext::applyRubyAlignOnBaseContent(size_t rubyBaseStart, 
     inlineFormattingContext.integrationUtils().layoutWithFormattingContextForBox(*annotationBox);
 
     auto annotationBoxLogicalWidth = InlineLayoutUnit { inlineFormattingContext.geometryForBox(*annotationBox).marginBoxWidth() };
-    auto baseContentLogicalWidth = runs[rubyBaseEnd].logicalLeft() - runs[rubyBaseStart].logicalRight();
+    auto baseContentLogicalWidth = (rubyBaseEnd ? runs[*rubyBaseEnd].logicalLeft() : runs.last().logicalRight()) - runs[rubyBaseStart].logicalRight();
     if (annotationBoxLogicalWidth <= baseContentLogicalWidth)
         return rubyBaseStart + 1;
 
     auto spaceToDistribute = annotationBoxLogicalWidth - baseContentLogicalWidth;
-    auto alignmentOffset = InlineContentAligner::applyRubyAlign(rubyBaseLayoutBox.style().rubyAlign(), line.runs(), { rubyBaseStart, rubyBaseEnd + 1 }, spaceToDistribute);
-    // Reset the spacing we added at LineBuilder.
-    auto& rubyBaseEndRun = runs[rubyBaseEnd];
-    rubyBaseEndRun.shrinkHorizontally(spaceToDistribute);
-    rubyBaseEndRun.moveHorizontally(2 * alignmentOffset);
+    auto alignmentOffset = InlineContentAligner::applyRubyAlign(rubyBaseLayoutBox.style().rubyAlign(), line.runs(), { rubyBaseStart, rubyBaseEnd ? *rubyBaseEnd + 1 : runs.size() }, spaceToDistribute);
+    if (rubyBaseEnd) {
+        // Reset the spacing we added at LineBuilder.
+        auto& rubyBaseEndRun = runs[*rubyBaseEnd];
+        rubyBaseEndRun.shrinkHorizontally(spaceToDistribute);
+        rubyBaseEndRun.moveHorizontally(2 * alignmentOffset);
+    }
 
     ASSERT(!alignmentOffsetList.contains(&rubyBaseLayoutBox));
     alignmentOffsetList.add(&rubyBaseLayoutBox, alignmentOffset);
-    return rubyBaseEnd;
+    return rubyBaseEnd.value_or(runs.size());
 }
 
 UncheckedKeyHashMap<const Box*, InlineLayoutUnit> RubyFormattingContext::applyRubyAlign(Line& line, InlineFormattingContext& inlineFormattingContext)
