@@ -1,0 +1,14 @@
+Arabic is left to right مث لهذا النص
+الإنجليزية من اليسار إلى اليمين like this text
+This test verifies that the text selection appears visually contiguous when selecting across bidi text boundaries that span multiple lines.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS selectionRectsBeforeEndingTouch.length is 3
+PASS selectionRectsBeforeEndingTouch[2]?.width is >= 100
+PASS selectedText.startsWith('Arabic') is true
+PASS selectedText.endsWith('text') is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
