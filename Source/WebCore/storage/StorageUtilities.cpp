@@ -38,8 +38,6 @@
 #include <wtf/RunLoop.h>
 #endif
 
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
-
 namespace WebCore {
 namespace StorageUtilities {
 
@@ -62,7 +60,7 @@ std::optional<ClientOrigin> readOriginFromFile(const String& filePath)
     if (!originContent)
         return std::nullopt;
 
-    WTF::Persistence::Decoder decoder({ originContent->data(), originContent->size() });
+    WTF::Persistence::Decoder decoder(originContent->span());
     std::optional<ClientOrigin> origin;
     decoder >> origin;
     return origin;
@@ -101,5 +99,3 @@ String encodeSecurityOriginForFileName(FileSystem::Salt salt, const SecurityOrig
 
 } // namespace StorageUtilities
 } // namespace WebCore
-
-WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
