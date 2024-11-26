@@ -62,15 +62,14 @@ String MIMETypeRegistry::preferredExtensionForMIMEType(const String& mimeType)
     if (mimeType.startsWith("text/plain"_s))
         return String();
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     String returnValue;
     char* extension;
     if (xdg_mime_get_simple_globs(mimeType.utf8().data(), &extension, 1)) {
-        if (extension[0] == '.' && extension[1])
-            returnValue = String::fromUTF8(extension + 1);
+        auto view = std::string_view(extension);
+        if (view[0] == '.' && view.size() > 1)
+            returnValue = String::fromUTF8(view.substr(1).data());
         free(extension);
     }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return returnValue;
 }
 
@@ -79,15 +78,13 @@ Vector<String> MIMETypeRegistry::extensionsForMIMEType(const String& mimeType)
     if (mimeType.isEmpty())
         return { };
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
     Vector<String> returnValue;
-    char* extensions[MAX_EXTENSION_COUNT];
-    int n = xdg_mime_get_simple_globs(mimeType.utf8().data(), extensions, MAX_EXTENSION_COUNT);
+    std::array <char*, MAX_EXTENSION_COUNT> extensions;
+    int n = xdg_mime_get_simple_globs(mimeType.utf8().data(), extensions.data(), MAX_EXTENSION_COUNT);
     for (int i = 0; i < n; ++i) {
         returnValue.append(String::fromUTF8(extensions[i]));
         free(extensions[i]);
     }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
     return returnValue;
 }
 
