@@ -398,6 +398,8 @@ void JIT::emit_op_iterator_open(const JSInstruction* instruction)
 
     emitJumpSlowCaseIfNotJSCell(baseJSR);
 
+    addSlowCase(branchIfNotObject(baseJSR.payloadGPR()));
+
     static_assert(noOverlap(returnValueJSR, stubInfoGPR));
 
     const Identifier* ident = &vm().propertyNames->next;
