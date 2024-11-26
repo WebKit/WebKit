@@ -1,4 +1,19 @@
 ================
+WebKitGTK 2.47.2
+================
+
+What's new in WebKitGTK 2.47.2?
+
+  - Move tiles rendering to a secondary thread when using the GPU.
+  - Use the damage information when collected to improve composition in WebKit.
+  - Improve performance of canvas putImageData by avoiding buffer copies.
+  - Fix preserve-3D intersection rendering.
+  - Fix video dimensions since GStreamer 1.24.9.
+  - Fix opening links with window.open() when noopener is present.
+  - Fix several crashes and rendering issues.
+  - Translation updates: Indonesian.
+
+================
 WebKitGTK 2.47.1
 ================
 
