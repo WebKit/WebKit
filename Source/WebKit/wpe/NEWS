@@ -1,4 +1,30 @@
 =================
+WPE WebKit 2.46.4
+=================
+
+What's new in WPE WebKit 2.46.4?
+
+  - Improve memory consumption and performance of Canvas getImageData.
+  - Improve reliability and latency of audio/video MediaStream pipeplines.
+  - Improve detection of accelerated H.264 decoders.
+  - Add WebM audio capture bitrate configuration with GStreamer 1.24.9
+    and newer.
+  - Fix multi-touch input event handling.
+  - Fix getDisplayMedia() buffer format negotiation with PipeWire.
+  - Fix wrong video dimensions with GStreamer 1.34.9 and newer.
+  - Fix intersection and filter rendering for scenes with CSS
+    "transform-tyle: preserve-3d".
+  - Fix the HTTP-based remote Web Inspector not loading in Chromium.
+  - Fix Office 365 using an User-Agent quirk.
+  - Fix content filters not working on about:blank iframes.
+  - Fix logging in the memory pressure handler monitor.
+  - Fix the JSCOnly build with the GLib event loop enabled.
+  - Fix hole-punching media player when using fixed HTML body position.
+  - Fix the build with GCC 12.x when libwebrtc support is enabled.
+  - Fix the build with libsoup2.
+  - Fix several crashes and rendering issues.
+
+=================
 WPE WebKit 2.46.3
 =================
 
