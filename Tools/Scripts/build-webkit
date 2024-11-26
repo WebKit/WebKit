@@ -81,7 +81,6 @@ my $ltoMode = "default";
 my $useWorkspace = 1;
 my $startTime = time();
 my $archs32bit = 0;
-my $skipLibraryUpdate = 0;
 my $useCCache = -1;
 my $exportCompileCommands = 0;
 
@@ -170,7 +169,6 @@ my %options = (
     'no-experimental-features' => \$noExperimentalFeatures,
     'lto-mode=s' => \$ltoMode,
     'use-workspace!' => \$useWorkspace,
-    'skip-library-update' => \$skipLibraryUpdate,
     'use-ccache!' => \$useCCache,
     'export-compile-commands' => \$exportCompileCommands
 );
@@ -287,9 +285,6 @@ if (isAppleCocoaWebKit()) {
         # Build Tools needed for Apple ports (except for tvOS)
         push @projects, ("Tools/DumpRenderTree", "Tools/WebKitTestRunner", "Source/ThirdParty/gtest", "Tools/TestWebKitAPI");
     }
-
-} elsif (isWin() && !$skipLibraryUpdate) {
-    (system("python Tools/Scripts/update-webkit-win-libs.py") == 0) or die;
 }
 
 # If asked to build just the WebKit project, overwrite the projects

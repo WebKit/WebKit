@@ -2805,7 +2805,10 @@ sub generateBuildSystemFromCMakeProject
 
     push @args, "-DLTO_MODE=$ltoMode" if ltoMode();
 
-    if (isPlayStation()) {
+    if (isAnyWindows()) {
+        push @args, '-DCMAKE_TOOLCHAIN_FILE="' . $ENV{VCPKG_ROOT} . '\\scripts\\buildsystems\\vcpkg.cmake"';
+        push @args, '-DVCPKG_MANIFEST_FEATURES=web;cairo;lcms;woff2;jpeg-xl'
+    } elsif (isPlayStation()) {
         my $toolChainFile = $ENV{'CMAKE_TOOLCHAIN_FILE'} || "Platform/PlayStation5";
         push @args, '-DCMAKE_TOOLCHAIN_FILE=' . $toolChainFile;
     }
