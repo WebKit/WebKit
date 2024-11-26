@@ -28,6 +28,7 @@
 
 #include "DOMRect.h"
 #include "Range.h"
+#include "SimpleRange.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace WebCore {
