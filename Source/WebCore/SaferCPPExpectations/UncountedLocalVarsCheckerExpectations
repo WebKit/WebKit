@@ -646,7 +646,6 @@ dom/EventTarget.cpp
 dom/FragmentDirectiveGenerator.cpp
 dom/FragmentDirectiveRangeFinder.cpp
 dom/FullscreenManager.cpp
-dom/ImageOverlay.cpp
 dom/InlineStyleSheetOwner.cpp
 dom/KeyboardEvent.cpp
 dom/MessageEvent.cpp
