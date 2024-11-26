@@ -1,8 +1,8 @@
 
 PASS dialog element with autofocus should get initial focus.
-FAIL Only keyboard-focusable elements should get dialog initial focus. assert_equals: showModal: the target element did not receive initial focus. expected Element node <button class="target">keyboard focusable button</button> but got Element node <button tabindex="-1">mouse focusable button</button>
+FAIL Only keyboard-focusable elements should get dialog initial focus. assert_equals: showModal: the target element did not receive initial focus. expected Element node <button tabindex="0" class="target">keyboard focusable bu... but got Element node <button tabindex="-1">mouse focusable button</button>
 PASS Autofocus takes precedence over keyboard-focusable requirement.
-FAIL Only keyboard-focusable elements should get dialog initial focus including in subtrees. assert_equals: showModal: the target element did not receive initial focus. expected Element node <button class="target">keyboard focusable button</button> but got Element node <button tabindex="-1">mouse focusable button</button>
-FAIL Only keyboard-focusable elements should get dialog initial focus including in nested buttons. assert_equals: showModal: the target element did not receive initial focus. expected Element node <button class="target">keyboard focusable button</button> but got Element node <button tabindex="-1">
+FAIL Only keyboard-focusable elements should get dialog initial focus including in subtrees. assert_equals: showModal: the target element did not receive initial focus. expected Element node <button tabindex="0" class="target">keyboard focusable bu... but got Element node <button tabindex="-1">mouse focusable button</button>
+FAIL Only keyboard-focusable elements should get dialog initial focus including in nested buttons. assert_equals: showModal: the target element did not receive initial focus. expected Element node <button tabindex="0" class="target">keyboard focusable bu... but got Element node <button tabindex="-1">
     <span>mouse focusable button</...
 

@@ -7550,3 +7550,6 @@ media/media-vp8-webm-seek-to-start.html [ Pass ImageOnlyFailure ]
 css3/color-filters/color-filter-animation.html [ Pass ImageOnlyFailure ]
 css3/color-filters/svg/color-filter-inline-svg.html [ Pass ImageOnlyFailure ]
 css3/filters/hidpi-backdrop-filter-rasterization-scale.html [ Pass ImageOnlyFailure ]
+
+# webkit.org/b/283668 ([ iOS ] Flakey dialog closedby tests)
+imported/w3c/web-platform-tests/html/semantics/interactive-elements/the-dialog-element/dialog-closedby.tentative.html [ Skip ]
