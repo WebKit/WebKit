@@ -203,12 +203,7 @@ TEST(ResourceLoadDelegate, ResourceType)
         EXPECT_EQ(loadInfos[i].get().resourceType, expectedTypes[i]);
 }
 
-// rdar://136524076
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
-TEST(ResourceLoadDelegate, DISABLED_LoadInfo)
-#else
 TEST(ResourceLoadDelegate, LoadInfo)
-#endif
 {
     __block bool clearedStore = false;
     [[WKWebsiteDataStore defaultDataStore] removeDataOfTypes:[WKWebsiteDataStore allWebsiteDataTypes] modifiedSince:[NSDate distantPast] completionHandler:^() {
@@ -312,8 +307,10 @@ TEST(ResourceLoadDelegate, LoadInfo)
     checkFrames(7, sub, main, _WKResourceLoadInfoResourceTypeFetch);
     checkFrames(8, sub, main, _WKResourceLoadInfoResourceTypeFetch);
 
+    String requestClass = NSStringFromClass([otherParameters[0] class]);
+
     EXPECT_EQ(otherParameters.size(), 12ull);
-    EXPECT_WK_STREQ(NSStringFromClass([otherParameters[0] class]), "NSMutableURLRequest");
+    EXPECT_TRUE(requestClass == "NSURLRequest"_s || requestClass == "NSMutableURLRequest"_s);
     EXPECT_WK_STREQ([otherParameters[0] URL].path, "/");
     EXPECT_WK_STREQ(NSStringFromClass([otherParameters[1] class]), "NSHTTPURLResponse");
     EXPECT_WK_STREQ([otherParameters[1] URL].path, "/");

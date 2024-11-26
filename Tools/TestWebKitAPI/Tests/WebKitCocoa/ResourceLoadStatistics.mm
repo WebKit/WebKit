@@ -1713,12 +1713,7 @@ TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithOutQuirk)
     TestWebKitAPI::Util::run(&done);
 }
 
-// rdar://136524076
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
-TEST(ResourceLoadStatistics, DISABLED_StorageAccessOnRedirectSitesWithQuirk)
-#else
 TEST(ResourceLoadStatistics, StorageAccessOnRedirectSitesWithQuirk)
-#endif
 {
     using namespace TestWebKitAPI;
     HTTPServer httpServer({
@@ -2009,12 +2004,7 @@ TEST(ResourceLoadStatistics, StorageAccessSupportMultipleSubFrameDomains)
     gotRequestStorageAccessPanelForQuirksForDomain = false;
 }
 
-// rdar://136524076
-#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 150000
-TEST(ResourceLoadStatistics, DISABLED_StorageAccessGrantMultipleSubFrameDomains)
-#else
 TEST(ResourceLoadStatistics, StorageAccessGrantMultipleSubFrameDomains)
-#endif
 {
     using namespace TestWebKitAPI;
 
