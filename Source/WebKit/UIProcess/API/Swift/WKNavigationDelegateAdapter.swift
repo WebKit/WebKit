@@ -24,9 +24,13 @@
 #if ENABLE_SWIFTUI && compiler(>=6.0)
 
 import Foundation
+internal import WebKit_Private
 
+@MainActor
 final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate {
     private let navigationProgressContinuation: AsyncStream<WebPage_v0.NavigationEvent>.Continuation
+
+    weak var owner: WebPage_v0? = nil
 
     init(navigationProgressContinuation: AsyncStream<WebPage_v0.NavigationEvent>.Continuation) {
         self.navigationProgressContinuation = navigationProgressContinuation
@@ -61,6 +65,13 @@ final class WKNavigationDelegateAdapter: NSObject, WKNavigationDelegate {
 
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: any Error) {
         yieldNavigationProgress(kind: .failed(underlyingError: error), cocoaNavigation: navigation)
+    }
+
+    // MARK: Back-forward list support
+
+    @objc(_webView:backForwardListItemAdded:removed:)
+    func _webView(_ webView: WKWebView!, backForwardListItemAdded itemAdded: WKBackForwardListItem!, removed itemsRemoved: [WKBackForwardListItem]!) {
+        owner?.backForwardList = .init(wrapping: webView.backForwardList)
     }
 }
 

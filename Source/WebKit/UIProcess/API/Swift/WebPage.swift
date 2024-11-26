@@ -33,6 +33,8 @@ public import SwiftUI // FIXME: (283455) Do not import SwiftUI in WebKit proper.
 public class WebPage_v0 {
     public let navigations: Navigations
 
+    public internal(set) var backForwardList: BackForwardList = BackForwardList()
+
     public var url: URL? {
         self.access(keyPath: \.url)
         return backingWebView.url
@@ -112,6 +114,7 @@ public class WebPage_v0 {
         navigations = Navigations(source: stream)
 
         backingNavigationDelegate = WKNavigationDelegateAdapter(navigationProgressContinuation: continuation)
+        backingNavigationDelegate.owner = self
 
         observations.contents = [
             createObservation(for: \.url, backedBy: \.url),
@@ -132,6 +135,11 @@ public class WebPage_v0 {
     @discardableResult
     public func load(htmlString: String, baseURL: URL) -> NavigationID? {
         backingWebView.loadHTMLString(htmlString, baseURL: baseURL).map(NavigationID.init(_:))
+    }
+
+    @discardableResult
+    public func load(backForwardItem: BackForwardList.Item) -> NavigationID? {
+        backingWebView.go(to: backForwardItem.wrapped).map(NavigationID.init(_:))
     }
 
     private func createObservation<Value, BackingValue>(for keyPath: KeyPath<WebPage_v0, Value>, backedBy backingKeyPath: KeyPath<WKWebView, BackingValue>) -> NSKeyValueObservation {

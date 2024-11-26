@@ -29,8 +29,6 @@ import SwiftUI
 struct ContentView: View {
     @Environment(BrowserViewModel.self) private var viewModel
 
-    @FocusState private var urlFieldIsFocused: Bool
-
     @AppStorage("DefaultURL") private var defaultURL = "https://www.webkit.org"
 
     var body: some View {
@@ -44,29 +42,8 @@ struct ContentView: View {
                 viewModel.displayedURL = defaultURL
                 viewModel.navigateToSubmittedURL()
             }
-            .toolbar {
-                ToolbarItemGroup(placement: .principal) {
-                    VStack(spacing: 0) {
-                        @Bindable var viewModel = viewModel
-
-                        TextField("URL", text: $viewModel.displayedURL)
-                            .textContentType(.URL)
-                            .onSubmit {
-                                self.urlFieldIsFocused = false
-                                self.viewModel.navigateToSubmittedURL()
-                            }
-                            .textFieldStyle(.roundedBorder)
-                            .focused($urlFieldIsFocused)
-
-                        ProgressView(value: viewModel.page.estimatedProgress, total: 1.0)
-                            .padding(.horizontal, 2)
-                            .padding(.top, -4)
-                            .padding(.bottom, -8)
-                    }
-                    .frame(minWidth: 300)
-                }
-            }
-            .navigationTitle(self.viewModel.page.title)
+            .modifier(BrowserToolbar(viewModel: viewModel))
+            .navigationTitle(viewModel.page.title)
     }
 }
 
