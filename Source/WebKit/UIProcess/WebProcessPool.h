@@ -928,9 +928,6 @@ private:
     Vector<int> m_notifyTokens;
     Vector<RetainPtr<NSObject>> m_notificationObservers;
 #endif
-#if ENABLE(IPC_TESTING_API)
-    IPCTester m_ipcTester;
-#endif
 
 #if ENABLE(EXTENSION_CAPABILITIES)
     RefPtr<ExtensionCapabilityGranter> m_extensionCapabilityGranter;
@@ -952,6 +949,10 @@ private:
 #if ENABLE(WEB_PROCESS_SUSPENSION_DELAY)
     ApproximateTime m_lastCriticalMemoryPressureStatusTime;
     RunLoop::Timer m_checkMemoryPressureStatusTimer;
+#endif
+
+#if ENABLE(IPC_TESTING_API)
+    const Ref<IPCTester> m_ipcTester;
 #endif
 };
 

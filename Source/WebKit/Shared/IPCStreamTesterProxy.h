@@ -44,6 +44,11 @@ class IPCStreamTesterProxy final : public IPC::MessageReceiver {
 public:
     // IPC::MessageReceiver overrides.
     void didReceiveMessage(IPC::Connection&, IPC::Decoder&);
+
+    // Do nothing since this class is never instantiated.
+    void ref() const { }
+    void deref() const { }
+
 private:
     IPCStreamTesterProxy() = default;
     ~IPCStreamTesterProxy() = default;
