@@ -304,6 +304,7 @@ static bool isType(const WebCore::PlatformCALayer& layer)
     case WebCore::PlatformCALayer::Type::RemoteCustom:
     case WebCore::PlatformCALayer::Type::RemoteHost:
     case WebCore::PlatformCALayer::Type::RemoteModel:
+    case WebCore::PlatformCALayer::Type::RemoteSeparatedImage:
         return true;
     };
     return false;

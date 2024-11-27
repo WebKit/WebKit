@@ -307,6 +307,11 @@ String RemoteLayerTreeTransaction::description() const
                     ts << " (model " << model->get() << ")";
                 break;
 #endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+            case WebCore::PlatformCALayer::LayerType::LayerTypeSeparatedImageLayer:
+                ts << " (separated image)";
+                break;
+#endif
             default:
                 break;
             }

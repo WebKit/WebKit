@@ -1229,6 +1229,12 @@ bool RenderLayerBacking::updateConfiguration(const RenderLayer* compositingAnces
         layerConfigChanged = true;
     }
 #endif // ENABLE(MODEL_ELEMENT)
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    else if (is<RenderImage>(renderer()) && renderer().style().transformStyle3D() == TransformStyle3D::Separated) {
+        m_graphicsLayer->setIsSeparatedImage(true);
+        layerConfigChanged = true;
+    }
+#endif // HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
     // FIXME: Why do we do this twice?
     if (CheckedPtr widget = dynamicDowncast<RenderWidget>(renderer())) {
         if (compositor.attachWidgetContentLayersIfNecessary(*widget).layerHierarchyChanged) {

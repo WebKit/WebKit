@@ -208,6 +208,7 @@ static String allowListedClassToString(UIView *view)
         "WKContentView"_s,
         "WKModelView"_s,
         "WKScrollView"_s,
+        "WKSeparatedImageView",
         "WKSeparatedModelView"_s,
         "WKShapeView"_s,
         "WKSimpleBackdropView"_s,
@@ -223,6 +224,21 @@ static String allowListedClassToString(UIView *view)
         return classString;
 
     return "<class not in allowed list of classes>"_s;
+}
+
+static bool shouldDumpSeparatedDetails(UIView *view)
+{
+    static constexpr ComparableASCIILiteral deniedClassesArray[] = {
+        "WKCompositingView",
+        "WKSeparatedImageView",
+    };
+    static constexpr SortedArraySet deniedClasses { deniedClassesArray };
+
+    String classString { NSStringFromClass(view.class) };
+    if (deniedClasses.contains(classString))
+        return false;
+
+    return true;
 }
 
 static void dumpUIView(TextStream& ts, UIView *view)
@@ -271,7 +287,8 @@ static void dumpUIView(TextStream& ts, UIView *view)
     if (view.layer.separated) {
         TextStream::GroupScope scope(ts);
         ts << "separated";
-        dumpSeparatedLayerProperties(ts, view.layer);
+        if (shouldDumpSeparatedDetails(view))
+            dumpSeparatedLayerProperties(ts, view.layer);
     }
 #endif
 

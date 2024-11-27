@@ -554,6 +554,7 @@ public:
         Model,
         HostedModel,
         Host,
+        SeparatedImage,
     };
 
     // Pass an invalid color to remove the contents layer.
@@ -569,7 +570,11 @@ public:
     virtual void setContentsToModel(RefPtr<Model>&&, ModelInteraction) { }
     virtual std::optional<PlatformLayerIdentifier> contentsLayerIDForModel() const { return std::nullopt; }
 #endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    virtual void setIsSeparatedImage(bool) { }
+#endif
     virtual bool usesContentsLayer() const { return false; }
+
 
     // Callback from the underlying graphics system to draw layer contents.
     WEBCORE_EXPORT void paintGraphicsLayerContents(GraphicsContext&, const FloatRect& clip, OptionSet<GraphicsLayerPaintBehavior> = { }) const;

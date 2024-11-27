@@ -419,6 +419,9 @@ RefPtr<RemoteLayerTreeNode> RemoteLayerTreeHost::makeNode(const RemoteLayerTreeT
 #if ENABLE(MODEL_ELEMENT)
     case PlatformCALayer::LayerType::LayerTypeModelLayer:
 #endif
+#if HAVE(CORE_ANIMATION_SEPARATED_LAYERS)
+    case PlatformCALayer::LayerType::LayerTypeSeparatedImageLayer:
+#endif
     case PlatformCALayer::LayerType::LayerTypeHost:
     case PlatformCALayer::LayerType::LayerTypeContentsProvidedLayer: {
         auto layer = RemoteLayerTreeNode::createWithPlainLayer(*properties.layerID);

@@ -2,6 +2,7 @@
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalFeatureDefines.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalPlatform.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/AdditionalPlatformHave.h
+$(BUILT_PRODUCTS_DIR)/usr/local/include/WebKitAdditions/WKSeparatedImageView.swift.in
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Compiler.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/Platform.h
 $(BUILT_PRODUCTS_DIR)/usr/local/include/wtf/PlatformCPU.h
