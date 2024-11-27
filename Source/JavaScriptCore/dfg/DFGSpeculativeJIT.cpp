@@ -2506,10 +2506,15 @@ void SpeculativeJIT::compileGetCharCodeAt(Node* node)
 
 void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std::tuple<JSValueRegs, DataFormat>(DataFormat preferredFormat, bool needsFlush)>& prefix)
 {
+    ASSERT(node->op() == GetByVal || node->op() == StringCharAt || node->op() == StringAt);
+
     SpeculateCellOperand base(this, m_graph.child(node, 0));
     SpeculateStrictInt32Operand property(this, m_graph.child(node, 1));
+    GPRTemporary propertyTemp(this);
+
     GPRReg baseReg = base.gpr();
     GPRReg propertyReg = property.gpr();
+    GPRReg propertyTempReg = propertyTemp.gpr();
 
     JumpList doneCases;
 
@@ -2519,21 +2524,31 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
     std::tie(resultRegs, format) = prefix(node->arrayMode().isOutOfBounds() ? DataFormatJS : DataFormatCell, needsFlush);
     GPRReg scratchReg = resultRegs.payloadGPR();
 
+    move(propertyReg, propertyTempReg);
+
+    if (node->op() == StringAt) {
+        Jump isNotNegativeIndex = branch32(GreaterThanOrEqual, propertyTempReg, TrustedImm32(0));
+
+        loadPtr(Address(baseReg, JSString::offsetOfValue()), scratchReg);
+        load32(Address(scratchReg, StringImpl::lengthMemoryOffset()), scratchReg);
+        add32(scratchReg, propertyTempReg, propertyTempReg);
+
+        isNotNegativeIndex.link(this);
+    }
+
     // unsigned comparison so we can filter out negative indices and indices that are too large
     loadPtr(Address(baseReg, JSString::offsetOfValue()), scratchReg);
     Jump outOfBounds = branch32(
-        AboveOrEqual, propertyReg,
+        AboveOrEqual, propertyTempReg,
         Address(scratchReg, StringImpl::lengthMemoryOffset()));
-    if (node->op() != StringCharAt) {
-        if (node->arrayMode().isInBounds())
-            speculationCheck(OutOfBounds, JSValueRegs(), nullptr, outOfBounds);
-    }
+    if (node->op() != StringCharAt && node->arrayMode().isInBounds())
+        speculationCheck(OutOfBounds, JSValueRegs(), nullptr, outOfBounds);
 
     // Load the character into scratchReg
     Jump is16Bit = branchTest32(Zero, Address(scratchReg, StringImpl::flagsOffset()), TrustedImm32(StringImpl::flagIs8Bit()));
 
     loadPtr(Address(scratchReg, StringImpl::dataOffset()), scratchReg);
-    load8(BaseIndex(scratchReg, propertyReg, TimesOne, 0), scratchReg);
+    load8(BaseIndex(scratchReg, propertyTempReg, TimesOne, 0), scratchReg);
     Jump cont8Bit = jump();
 
     if (node->op() == StringCharAt) {
@@ -2546,10 +2561,17 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
         doneCases.append(jump());
     }
 
+    if (node->op() == StringAt && node->arrayMode().isOutOfBounds()) {
+        ASSERT(format == DataFormatJS);
+        outOfBounds.link(this);
+        moveTrustedValue(jsUndefined(), resultRegs);
+        doneCases.append(jump());
+    }
+
     is16Bit.link(this);
 
     loadPtr(Address(scratchReg, StringImpl::dataOffset()), scratchReg);
-    load16(BaseIndex(scratchReg, propertyReg, TimesTwo, 0), scratchReg);
+    load16(BaseIndex(scratchReg, propertyTempReg, TimesTwo, 0), scratchReg);
 
     Jump bigCharacter =
         branch32(Above, scratchReg, TrustedImm32(maxSingleCharacterString));
@@ -2566,7 +2588,7 @@ void SpeculativeJIT::compileGetByValOnString(Node* node, const ScopedLambda<std:
         slowPathCall(
             bigCharacter, this, operationSingleCharacterString, scratchReg, TrustedImmPtr(&vm), scratchReg));
 
-    if (node->op() != StringCharAt && node->arrayMode().isOutOfBounds()) {
+    if (node->op() == GetByVal && node->arrayMode().isOutOfBounds()) {
         ASSERT(format == DataFormatJS);
 #if USE(JSVALUE32_64)
         move(TrustedImm32(JSValue::CellTag), resultRegs.tagGPR());

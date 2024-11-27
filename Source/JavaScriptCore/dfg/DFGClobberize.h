@@ -170,6 +170,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         case StringCharAt:
         case StringCharCodeAt:
         case StringCodePointAt:
+        case StringAt:
         case Arrayify:
         case ArrayifyToStructure:
         case ArrayPush:
@@ -2020,6 +2021,7 @@ void clobberize(Graph& graph, Node* node, const ReadFunctor& read, const WriteFu
         return;
 
     case StringCharAt:
+    case StringAt:
         def(PureValue(node));
         return;
 

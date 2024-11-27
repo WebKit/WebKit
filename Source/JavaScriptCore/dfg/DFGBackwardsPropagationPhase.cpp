@@ -336,7 +336,8 @@ private:
             
         case StringCharAt:
         case StringCharCodeAt:
-        case StringCodePointAt: {
+        case StringCodePointAt:
+        case StringAt: {
             node->child1()->mergeFlags(NodeBytecodeUsesAsValue);
             node->child2()->mergeFlags(NodeBytecodeUsesAsValue | NodeBytecodeUsesAsInt | NodeBytecodePrefersArrayIndex);
             break;

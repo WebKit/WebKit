@@ -138,6 +138,17 @@ public:
         u.asBytes.mayBeLargeTypedArray = false;
         u.asBytes.mayBeResizableOrGrowableSharedTypedArray = false;
     }
+
+    ArrayMode(Array::Type type, Array::Action action, Array::Speculation speculation)
+    {
+        u.asBytes.type = type;
+        u.asBytes.arrayClass = Array::NonArray;
+        u.asBytes.speculation = speculation;
+        u.asBytes.conversion = Array::AsIs;
+        u.asBytes.action = action;
+        u.asBytes.mayBeLargeTypedArray = false;
+        u.asBytes.mayBeResizableOrGrowableSharedTypedArray = false;
+    }
     
     ArrayMode(Array::Type type, Array::Class arrayClass, Array::Action action)
     {
