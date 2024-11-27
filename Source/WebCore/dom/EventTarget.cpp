@@ -39,6 +39,8 @@
 #include "EventTargetConcrete.h"
 #include "HTMLBodyElement.h"
 #include "HTMLHtmlElement.h"
+#include "HTMLSelectElement.h"
+#include "HTMLTextAreaElement.h"
 #include "InspectorInstrumentation.h"
 #include "JSErrorHandler.h"
 #include "JSEventListener.h"
@@ -82,11 +84,38 @@ bool EventTarget::isPaymentRequest() const
     return false;
 }
 
+static AtomString eventTypeToString(WebCore::EventType type)
+{
+    switch (type) {
+    case WebCore::EventType::keydown: return AtomString::fromLatin1("keydown");
+    case WebCore::EventType::keyup: return AtomString::fromLatin1("keyup");
+    case WebCore::EventType::keypress: return AtomString::fromLatin1("keypress");
+    case WebCore::EventType::input: return AtomString::fromLatin1("input");
+    case WebCore::EventType::beforeinput: return AtomString::fromLatin1("beforeinput");
+    default: return AtomString::fromLatin1("");
+    }
+}
+
 bool EventTarget::addEventListener(const AtomString& eventType, Ref<EventListener>&& listener, const AddEventListenerOptions& options)
 {
 #if ASSERT_ENABLED
     listener->checkValidityForEventTarget(*this);
 #endif
+
+    if (is<Node>(*this)) {
+        auto& node = downcast<Node>(*this);
+        auto* document = &node.document();
+
+        if (document && document->requiresScriptExecutionTelemetry(ScriptTelemetryCategory::FormControls)) {
+            if (eventType == eventTypeToString(EventType::keydown)
+                || eventType == eventTypeToString(EventType::keyup)
+                || eventType == eventTypeToString(EventType::keypress)
+                || eventType == eventTypeToString(EventType::input)
+                || eventType == eventTypeToString(EventType::beforeinput)) {
+                return false;
+            }
+        }
+    }
 
     if (options.signal && options.signal->aborted())
         return false;
