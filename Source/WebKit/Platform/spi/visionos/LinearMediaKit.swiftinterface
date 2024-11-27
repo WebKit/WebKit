@@ -9,11 +9,19 @@ import Swift
 import UIKit
 
 @_inheritsConvenienceInitializers @_hasMissingDesignatedInitializers @objc(LMPlayableViewController) @_Concurrency.MainActor(unsafe) public class PlayableViewController : UIKit.UIViewController {
+@_Concurrency.MainActor(unsafe) public var playable: (any LinearMediaKit.Playable)? {
+  get
+  set
+}
 @_Concurrency.MainActor(unsafe) public var prefersAutoDimming: Swift.Bool {
   get
   set
 }
 }
+
+public protocol Playable : AnyObject {
+}
+
 public enum ContentType : Swift.Equatable, Swift.CaseIterable, Swift.Codable, Swift.Sendable {
  case immersive
  case spatial
