@@ -42,9 +42,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteLegacyCDMSessionProxy> RemoteLegacyCDMSessionProxy::create(RemoteLegacyCDMFactoryProxy& factory, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier sessionIdentifier, WebCore::LegacyCDM& cdm)
+Ref<RemoteLegacyCDMSessionProxy> RemoteLegacyCDMSessionProxy::create(RemoteLegacyCDMFactoryProxy& factory, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier sessionIdentifier, WebCore::LegacyCDM& cdm)
 {
-    return std::unique_ptr<RemoteLegacyCDMSessionProxy>(new RemoteLegacyCDMSessionProxy(factory, logIdentifier, sessionIdentifier, cdm));
+    return adoptRef(*new RemoteLegacyCDMSessionProxy(factory, logIdentifier, sessionIdentifier, cdm));
 }
 
 RemoteLegacyCDMSessionProxy::RemoteLegacyCDMSessionProxy(RemoteLegacyCDMFactoryProxy& factory, uint64_t parentLogIdentifier, RemoteLegacyCDMSessionIdentifier sessionIdentifier, WebCore::LegacyCDM& cdm)

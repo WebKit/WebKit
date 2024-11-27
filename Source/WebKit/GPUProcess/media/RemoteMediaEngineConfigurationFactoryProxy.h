@@ -36,13 +36,18 @@
 
 namespace WebKit {
 
+class GPUConnectionToWebProcess;
+
 class RemoteMediaEngineConfigurationFactoryProxy final : private IPC::MessageReceiver {
     WTF_MAKE_TZONE_ALLOCATED(RemoteMediaEngineConfigurationFactoryProxy);
 public:
-    RemoteMediaEngineConfigurationFactoryProxy();
+    explicit RemoteMediaEngineConfigurationFactoryProxy(GPUConnectionToWebProcess&);
     virtual ~RemoteMediaEngineConfigurationFactoryProxy();
 
     void didReceiveMessageFromWebProcess(IPC::Connection& connection, IPC::Decoder& decoder) { didReceiveMessage(connection, decoder); }
+
+    void ref() const;
+    void deref() const;
 
 private:
     friend class GPUProcessConnection;
@@ -52,6 +57,8 @@ private:
     // Messages
     void createDecodingConfiguration(WebCore::MediaDecodingConfiguration&&, CompletionHandler<void(WebCore::MediaCapabilitiesDecodingInfo&&)>&&);
     void createEncodingConfiguration(WebCore::MediaEncodingConfiguration&&, CompletionHandler<void(WebCore::MediaCapabilitiesEncodingInfo&&)>&&);
+
+    ThreadSafeWeakPtr<GPUConnectionToWebProcess> m_connection; // Cannot be null.
 };
 
 }

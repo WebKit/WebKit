@@ -36,9 +36,9 @@ namespace WebKit {
 
 using namespace WebCore;
 
-std::unique_ptr<RemoteLegacyCDMProxy> RemoteLegacyCDMProxy::create(WeakPtr<RemoteLegacyCDMFactoryProxy> factory, std::optional<MediaPlayerIdentifier> playerId, Ref<WebCore::LegacyCDM>&& cdm)
+Ref<RemoteLegacyCDMProxy> RemoteLegacyCDMProxy::create(WeakPtr<RemoteLegacyCDMFactoryProxy> factory, std::optional<MediaPlayerIdentifier> playerId, Ref<WebCore::LegacyCDM>&& cdm)
 {
-    return std::unique_ptr<RemoteLegacyCDMProxy>(new RemoteLegacyCDMProxy(WTFMove(factory), playerId, WTFMove(cdm)));
+    return adoptRef(*new RemoteLegacyCDMProxy(WTFMove(factory), playerId, WTFMove(cdm)));
 }
 
 RemoteLegacyCDMProxy::RemoteLegacyCDMProxy(WeakPtr<RemoteLegacyCDMFactoryProxy>&& factory, std::optional<MediaPlayerIdentifier> playerId, Ref<WebCore::LegacyCDM>&& cdm)
@@ -68,7 +68,7 @@ void RemoteLegacyCDMProxy::createSession(const String& keySystem, uint64_t logId
     }
 
     auto sessionIdentifier = RemoteLegacyCDMSessionIdentifier::generate();
-    auto session = RemoteLegacyCDMSessionProxy::create(*factory, logIdentifier, sessionIdentifier, protectedCDM());
+    Ref session = RemoteLegacyCDMSessionProxy::create(*factory, logIdentifier, sessionIdentifier, protectedCDM());
     factory->addSession(sessionIdentifier, WTFMove(session));
     callback(WTFMove(sessionIdentifier));
 }

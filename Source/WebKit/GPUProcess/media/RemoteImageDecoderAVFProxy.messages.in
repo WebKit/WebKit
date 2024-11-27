@@ -27,7 +27,7 @@
 
 #if ENABLE(GPU_PROCESS) && HAVE(AVASSETREADER)
 
-messages -> RemoteImageDecoderAVFProxy NotRefCounted {
+messages -> RemoteImageDecoderAVFProxy {
     CreateDecoder(IPC::SharedBufferReference data, String mimeType) -> (std::optional<WebCore::ImageDecoderIdentifier> identifier) Synchronous
     DeleteDecoder(WebCore::ImageDecoderIdentifier identifier)
     SetExpectedContentSize(WebCore::ImageDecoderIdentifier identifier, long long expectedContentSize)

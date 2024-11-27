@@ -23,7 +23,7 @@
 
 #if ENABLE(GPU_PROCESS) && PLATFORM(IOS_FAMILY)
 
-messages -> RemoteMediaSessionHelperProxy NotRefCounted {
+messages -> RemoteMediaSessionHelperProxy {
 #if !PLATFORM(WATCHOS)
     [EnabledBy=MediaSessionEnabled] StartMonitoringWirelessRoutes()
     [EnabledBy=MediaSessionEnabled] StopMonitoringWirelessRoutes()

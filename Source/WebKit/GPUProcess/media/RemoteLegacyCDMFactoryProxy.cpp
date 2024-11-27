@@ -126,13 +126,13 @@ bool RemoteLegacyCDMFactoryProxy::didReceiveSyncCDMSessionMessage(IPC::Connectio
     return false;
 }
 
-void RemoteLegacyCDMFactoryProxy::addProxy(RemoteLegacyCDMIdentifier identifier, std::unique_ptr<RemoteLegacyCDMProxy>&& proxy)
+void RemoteLegacyCDMFactoryProxy::addProxy(RemoteLegacyCDMIdentifier identifier, Ref<RemoteLegacyCDMProxy>&& proxy)
 {
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
         return;
 
-    connection->messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), identifier.toUInt64(), *proxy);
+    connection->messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMProxy::messageReceiverName(), identifier.toUInt64(), proxy.get());
 
     ASSERT(!m_proxies.contains(identifier));
     m_proxies.set(identifier, WTFMove(proxy));
@@ -150,13 +150,13 @@ void RemoteLegacyCDMFactoryProxy::removeProxy(RemoteLegacyCDMIdentifier identifi
     m_proxies.remove(identifier);
 }
 
-void RemoteLegacyCDMFactoryProxy::addSession(RemoteLegacyCDMSessionIdentifier identifier, std::unique_ptr<RemoteLegacyCDMSessionProxy>&& session)
+void RemoteLegacyCDMFactoryProxy::addSession(RemoteLegacyCDMSessionIdentifier identifier, Ref<RemoteLegacyCDMSessionProxy>&& session)
 {
     auto connection = m_gpuConnectionToWebProcess.get();
     if (!connection)
         return;
 
-    connection->messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), identifier.toUInt64(), *session);
+    connection->messageReceiverMap().addMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), identifier.toUInt64(), session.get());
 
     ASSERT(!m_sessions.contains(identifier));
     m_sessions.set(identifier, WTFMove(session));
@@ -173,7 +173,7 @@ void RemoteLegacyCDMFactoryProxy::removeSession(RemoteLegacyCDMSessionIdentifier
     connection->messageReceiverMap().removeMessageReceiver(Messages::RemoteLegacyCDMSessionProxy::messageReceiverName(), identifier.toUInt64());
 
     ASSERT(m_sessions.contains(identifier));
-    if (std::unique_ptr session = m_sessions.take(identifier))
+    if (RefPtr session = m_sessions.take(identifier))
         session->invalidate();
 
     if (connection && allowsExitUnderMemoryPressure())
@@ -186,7 +186,7 @@ RemoteLegacyCDMSessionProxy* RemoteLegacyCDMFactoryProxy::getSession(const Remot
 {
     auto results = m_sessions.find(identifier);
     if (results != m_sessions.end())
-        return results->value.get();
+        return results->value.ptr();
     return nullptr;
 }
 

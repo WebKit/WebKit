@@ -55,9 +55,9 @@ IPC::StreamConnectionWorkQueue& remoteGraphicsStreamWorkQueue()
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(RemoteWCLayerTreeHost);
 
-std::unique_ptr<RemoteWCLayerTreeHost> RemoteWCLayerTreeHost::create(GPUConnectionToWebProcess& connectionToWebProcess, WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering)
+Ref<RemoteWCLayerTreeHost> RemoteWCLayerTreeHost::create(GPUConnectionToWebProcess& connectionToWebProcess, WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering)
 {
-    return makeUnique<RemoteWCLayerTreeHost>(connectionToWebProcess, identifier, nativeWindow, usesOffscreenRendering);
+    return adoptRef(*new RemoteWCLayerTreeHost(connectionToWebProcess, identifier, nativeWindow, usesOffscreenRendering));
 }
 
 RemoteWCLayerTreeHost::RemoteWCLayerTreeHost(GPUConnectionToWebProcess& connectionToWebProcess, WebKit::WCLayerTreeHostIdentifier identifier, uint64_t nativeWindow, bool usesOffscreenRendering)

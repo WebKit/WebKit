@@ -30,6 +30,7 @@
 #include "RemoteLegacyCDMSessionIdentifier.h"
 #include <WebCore/LegacyCDMSession.h>
 #include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 #include <wtf/UniqueRef.h>
 
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
@@ -45,11 +46,10 @@ namespace WebKit {
 class RemoteLegacyCDMProxy;
 class RemoteMediaPlayerProxy;
 
-class RemoteLegacyCDMSessionProxy
-    : public IPC::MessageReceiver
-    , public WebCore::LegacyCDMSessionClient {
+class RemoteLegacyCDMSessionProxy : public IPC::MessageReceiver, public WebCore::LegacyCDMSessionClient, public RefCounted<RemoteLegacyCDMSessionProxy> {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    static std::unique_ptr<RemoteLegacyCDMSessionProxy> create(RemoteLegacyCDMFactoryProxy&, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier, WebCore::LegacyCDM&);
+    static Ref<RemoteLegacyCDMSessionProxy> create(RemoteLegacyCDMFactoryProxy&, uint64_t logIdentifier, RemoteLegacyCDMSessionIdentifier, WebCore::LegacyCDM&);
     ~RemoteLegacyCDMSessionProxy();
 
     void invalidate();
