@@ -61,9 +61,7 @@ public:
     }
     bool shouldEmitLogMessage(const WTFLogChannel& channel) const final
     {
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib
-        return g_str_has_prefix(channel.name, "WebRTC");
-        WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
+        return StringView::fromLatin1(channel.name).startsWith("WebRTC"_s);
     }
 };
 

@@ -288,6 +288,15 @@ static void ensureDebugCategoryInitialized()
     });
 }
 
+enum NextSDPField {
+    None,
+    Typ,
+    Raddr,
+    Rport,
+    TcpType,
+    Ufrag
+};
+
 std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
 {
     ensureDebugCategoryInitialized();
@@ -308,67 +317,82 @@ std::optional<RTCIceCandidate::Fields> parseIceCandidateSDP(const String& sdp)
     String relatedAddress;
     guint16 relatedPort = 0;
     String usernameFragment;
-    auto tokens = sdp.convertToASCIILowercase().substring(10).split(' ');
+    StringView view(sdp.convertToASCIILowercase().substring(10));
+    unsigned i = 0;
+    NextSDPField nextSdpField { None };
 
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN // GLib port
-    for (auto it = tokens.begin(); it != tokens.end(); ++it) {
-        auto i = std::distance(tokens.begin(), it);
-        auto token = *it;
+    for (auto token : view.split(' ')) {
+        auto tokenString = token.toStringWithoutCopying();
         switch (i) {
         case 0:
-            foundation = token;
+            foundation = tokenString;
             break;
         case 1:
             if (auto value = parseInteger<unsigned>(token))
                 componentId = *value;
             else {
-                GST_WARNING("Invalid SDP candidate component ID: %s", token.ascii().data());
+                GST_WARNING("Invalid SDP candidate component ID: %s", tokenString.utf8().data());
                 return { };
             }
             break;
         case 2:
-            transport = token;
+            transport = tokenString;
             break;
         case 3:
             if (auto value = parseInteger<unsigned>(token))
                 priority = *value;
             else {
-                GST_WARNING("Invalid SDP candidate priority: %s", token.ascii().data());
+                GST_WARNING("Invalid SDP candidate priority: %s", tokenString.utf8().data());
                 return { };
             }
             break;
         case 4:
-            address = token;
+            address = tokenString;
             break;
         case 5:
             if (auto value = parseInteger<unsigned>(token))
                 port = *value;
             else {
-                GST_WARNING("Invalid SDP candidate port: %s", token.ascii().data());
+                GST_WARNING("Invalid SDP candidate port: %s", tokenString.utf8().data());
                 return { };
             }
             break;
         default:
-            if (it + 1 == tokens.end()) {
-                GST_WARNING("Incomplete SDP candidate");
-                return { };
-            }
-
-            it++;
             if (token == "typ"_s)
-                type = *it;
+                nextSdpField = Typ;
             else if (token == "raddr"_s)
-                relatedAddress = *it;
+                nextSdpField = Raddr;
             else if (token == "rport"_s)
-                relatedPort = parseInteger<unsigned>(*it).value_or(0);
+                nextSdpField = Rport;
             else if (token == "tcptype"_s)
-                tcptype = *it;
+                nextSdpField = TcpType;
             else if (token == "ufrag"_s)
-                usernameFragment = *it;
+                nextSdpField = Ufrag;
+            else {
+                switch (nextSdpField) {
+                case None:
+                    break;
+                case Typ:
+                    type = tokenString;
+                    break;
+                case Raddr:
+                    relatedAddress = tokenString;
+                    break;
+                case Rport:
+                    relatedPort = parseInteger<unsigned>(token).value_or(0);
+                    break;
+                case TcpType:
+                    tcptype = tokenString;
+                    break;
+                case Ufrag:
+                    usernameFragment = tokenString;
+                    break;
+                }
+            }
             break;
         }
+        i++;
     }
-    WTF_ALLOW_UNSAFE_BUFFER_USAGE_END
 
     if (type.isEmpty()) {
         GST_WARNING("Unable to parse candidate type");
