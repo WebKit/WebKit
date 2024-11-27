@@ -66,6 +66,8 @@ public:
         std::optional<uint64_t> duration;
     };
 
+    static bool isVPXSupported();
+
     using OutputCallback = Function<void(Expected<DecodedFrame, String>&&)>;
     using CreateResult = Expected<UniqueRef<VideoDecoder>, String>;
     using CreatePromise = NativePromise<UniqueRef<VideoDecoder>, String>;

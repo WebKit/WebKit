@@ -1713,8 +1713,6 @@
 		414037B524AB359700BCE9B2 /* vp9_frame_scale_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = 414037B124AB359700BCE9B2 /* vp9_frame_scale_neon.c */; };
 		414037B624AB359700BCE9B2 /* vp9_quantize_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = 414037B224AB359700BCE9B2 /* vp9_quantize_neon.c */; };
 		414037B824AB35E200BCE9B2 /* sum_squares_neon.c in Sources */ = {isa = PBXBuildFile; fileRef = 414037B724AB35E100BCE9B2 /* sum_squares_neon.c */; };
-		414037BB24AC76EA00BCE9B2 /* WebKitVP9Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 414037B924AC76E900BCE9B2 /* WebKitVP9Decoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		414037BC24AC76EA00BCE9B2 /* WebKitVP9Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 414037BA24AC76E900BCE9B2 /* WebKitVP9Decoder.cpp */; };
 		4140B8201E4E3383007409E6 /* audio_encoder_pcm.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4140B8181E4E3383007409E6 /* audio_encoder_pcm.cc */; };
 		4140B8211E4E3383007409E6 /* audio_encoder_pcm.h in Headers */ = {isa = PBXBuildFile; fileRef = 4140B8191E4E3383007409E6 /* audio_encoder_pcm.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		4140B8221E4E3383007409E6 /* audio_decoder_pcm.cc in Sources */ = {isa = PBXBuildFile; fileRef = 4140B81A1E4E3383007409E6 /* audio_decoder_pcm.cc */; };
@@ -4452,10 +4450,6 @@
 		5CFD53941E4BD3A300482908 /* scale_neon64.cc in Sources */ = {isa = PBXBuildFile; fileRef = 5CFD538C1E4BD3A300482908 /* scale_neon64.cc */; };
 		9869CBB42A4D5B820031C401 /* video_rtp_depacketizer_h265.h in Headers */ = {isa = PBXBuildFile; fileRef = 9869CBB22A4D5B820031C401 /* video_rtp_depacketizer_h265.h */; };
 		9869CBB52A4D5B820031C401 /* video_rtp_depacketizer_h265.cc in Sources */ = {isa = PBXBuildFile; fileRef = 9869CBB32A4D5B820031C401 /* video_rtp_depacketizer_h265.cc */; };
-		CD381F272581591F0077DEC8 /* WebKitVP8Decoder.h in Headers */ = {isa = PBXBuildFile; fileRef = CD381F252581591F0077DEC8 /* WebKitVP8Decoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		CD381F292581591F0077DEC8 /* WebKitVP8Decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD381F282581591F0077DEC8 /* WebKitVP8Decoder.cpp */; };
-		CD381F2B2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD381F2A2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp */; };
-		CD381F2D2581FF0B0077DEC8 /* WebKitDecoderReceiver.h in Headers */ = {isa = PBXBuildFile; fileRef = CD381F2C2581FF0B0077DEC8 /* WebKitDecoderReceiver.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDC1F47625CF69EA0084CA16 /* opus_defines.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC1F47425CF69E40084CA16 /* opus_defines.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDC1F47725CF6A640084CA16 /* opus_types.h in Headers */ = {isa = PBXBuildFile; fileRef = CDC1F47325CF69E40084CA16 /* opus_types.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		CDEBB4B624C019C400ADBD44 /* unknown_parser.cc in Sources */ = {isa = PBXBuildFile; fileRef = CDEBB46424C0191A00ADBD44 /* unknown_parser.cc */; };
@@ -7734,8 +7728,6 @@
 		414037B124AB359700BCE9B2 /* vp9_frame_scale_neon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vp9_frame_scale_neon.c; sourceTree = "<group>"; };
 		414037B224AB359700BCE9B2 /* vp9_quantize_neon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = vp9_quantize_neon.c; sourceTree = "<group>"; };
 		414037B724AB35E100BCE9B2 /* sum_squares_neon.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sum_squares_neon.c; sourceTree = "<group>"; };
-		414037B924AC76E900BCE9B2 /* WebKitVP9Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitVP9Decoder.h; sourceTree = "<group>"; };
-		414037BA24AC76E900BCE9B2 /* WebKitVP9Decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitVP9Decoder.cpp; sourceTree = "<group>"; };
 		4140B8181E4E3383007409E6 /* audio_encoder_pcm.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = audio_encoder_pcm.cc; sourceTree = "<group>"; };
 		4140B8191E4E3383007409E6 /* audio_encoder_pcm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = audio_encoder_pcm.h; sourceTree = "<group>"; };
 		4140B81A1E4E3383007409E6 /* audio_decoder_pcm.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = audio_decoder_pcm.cc; sourceTree = "<group>"; };
@@ -10710,10 +10702,6 @@
 		72CDC3792AB0CEFE00640E85 /* vpx_integer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = vpx_integer.h; sourceTree = "<group>"; };
 		9869CBB22A4D5B820031C401 /* video_rtp_depacketizer_h265.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video_rtp_depacketizer_h265.h; sourceTree = "<group>"; };
 		9869CBB32A4D5B820031C401 /* video_rtp_depacketizer_h265.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = video_rtp_depacketizer_h265.cc; sourceTree = "<group>"; };
-		CD381F252581591F0077DEC8 /* WebKitVP8Decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitVP8Decoder.h; sourceTree = "<group>"; };
-		CD381F282581591F0077DEC8 /* WebKitVP8Decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitVP8Decoder.cpp; sourceTree = "<group>"; };
-		CD381F2A2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitDecoderReceiver.cpp; sourceTree = "<group>"; };
-		CD381F2C2581FF0B0077DEC8 /* WebKitDecoderReceiver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitDecoderReceiver.h; sourceTree = "<group>"; };
 		CDC1F47025CF69E40084CA16 /* opus.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus.h; sourceTree = "<group>"; };
 		CDC1F47125CF69E40084CA16 /* opus_multistream.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_multistream.h; sourceTree = "<group>"; };
 		CDC1F47225CF69E40084CA16 /* opus_custom.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opus_custom.h; sourceTree = "<group>"; };
@@ -14830,16 +14818,10 @@
 				412FF935253D8F0A001DF036 /* VTVideoDecoderSPI.h */,
 				41E84BC92434C4A200D34E41 /* WebKitDecoder.h */,
 				41E84BCA2434C4A300D34E41 /* WebKitDecoder.mm */,
-				CD381F2A2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp */,
-				CD381F2C2581FF0B0077DEC8 /* WebKitDecoderReceiver.h */,
 				4158649623BE05E800A0A61E /* WebKitEncoder.h */,
 				4158649723BE05E900A0A61E /* WebKitEncoder.mm */,
 				41ECEABB206403C1009D5141 /* WebKitUtilities.h */,
 				41ECEABD20640498009D5141 /* WebKitUtilities.mm */,
-				CD381F282581591F0077DEC8 /* WebKitVP8Decoder.cpp */,
-				CD381F252581591F0077DEC8 /* WebKitVP8Decoder.h */,
-				414037BA24AC76E900BCE9B2 /* WebKitVP9Decoder.cpp */,
-				414037B924AC76E900BCE9B2 /* WebKitVP9Decoder.h */,
 			);
 			path = WebKit;
 			sourceTree = "<group>";
@@ -23314,11 +23296,8 @@
 				5C4B4C841E431F9C002651C8 /* wav_header.h in Headers */,
 				4131C163234B89E20028A615 /* weak_ptr.h in Headers */,
 				DDF30CF427C5A742006A526F /* WebKitDecoder.h in Headers */,
-				CD381F2D2581FF0B0077DEC8 /* WebKitDecoderReceiver.h in Headers */,
 				4158649823BE05E900A0A61E /* WebKitEncoder.h in Headers */,
 				41ECEABC206403C2009D5141 /* WebKitUtilities.h in Headers */,
-				CD381F272581591F0077DEC8 /* WebKitVP8Decoder.h in Headers */,
-				414037BB24AC76EA00BCE9B2 /* WebKitVP9Decoder.h in Headers */,
 				5CDD8CAB1E43C6F700621E92 /* webrtc_cng.h in Headers */,
 				416B09F32A3C7F180017367B /* webrtc_key_value_config.h in Headers */,
 				4145E4911EF88EF700FCF6E6 /* webrtc_libyuv.h in Headers */,
@@ -26635,11 +26614,8 @@
 				5C4B4C831E431F9C002651C8 /* wav_header.cc in Sources */,
 				4131C0F9234B89E20028A615 /* weak_ptr.cc in Sources */,
 				41E84BD524373F7200D34E41 /* WebKitDecoder.mm in Sources */,
-				CD381F2B2581FEBA0077DEC8 /* WebKitDecoderReceiver.cpp in Sources */,
 				4158649923BE05E900A0A61E /* WebKitEncoder.mm in Sources */,
 				41ECEABE20640498009D5141 /* WebKitUtilities.mm in Sources */,
-				CD381F292581591F0077DEC8 /* WebKitVP8Decoder.cpp in Sources */,
-				414037BC24AC76EA00BCE9B2 /* WebKitVP9Decoder.cpp in Sources */,
 				5CDD8CAA1E43C6F700621E92 /* webrtc_cng.cc in Sources */,
 				5CDD83671E4325D500621E92 /* webrtc_libyuv.cc in Sources */,
 				4131C27A234B8CC40028A615 /* webrtc_media_engine.cc in Sources */,

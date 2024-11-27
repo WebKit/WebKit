@@ -28,6 +28,7 @@
 
 #if USE(LIBWEBRTC) && PLATFORM(COCOA)
 #include "LibWebRTCVPXVideoDecoder.h"
+#include "WebRTCProvider.h"
 #endif
 
 #if USE(GSTREAMER)
@@ -44,6 +45,17 @@ VideoDecoder::CreatorFunction VideoDecoder::s_customCreator = nullptr;
 void VideoDecoder::setCreatorCallback(CreatorFunction&& function)
 {
     s_customCreator = WTFMove(function);
+}
+
+bool VideoDecoder::isVPXSupported()
+{
+#if USE(LIBWEBRTC) && PLATFORM(COCOA)
+    return WebRTCProvider::webRTCAvailable();
+#elif USE(GSTREAMER)
+    return true;
+#else
+    return false;
+#endif
 }
 
 Ref<VideoDecoder::CreatePromise> VideoDecoder::create(const String& codecName, const Config& config, OutputCallback&& outputCallback)

@@ -2116,11 +2116,8 @@ if (APPLE)
         Source/webrtc/rtc_base/system/cocoa_threading.mm
 
         Source/webrtc/sdk/WebKit/WebKitUtilities.mm
-        Source/webrtc/sdk/WebKit/WebKitVP8Decoder.cpp
-        Source/webrtc/sdk/WebKit/WebKitVP9Decoder.cpp
         Source/webrtc/sdk/WebKit/WebKitDecoder.mm
         Source/webrtc/sdk/WebKit/WebKitEncoder.mm
-        Source/webrtc/sdk/WebKit/WebKitDecoderReceiver.cpp
 
         Source/webrtc/sdk/objc/api/peerconnection/RTCVideoEncoderSettings+Private.mm
         Source/webrtc/sdk/objc/api/video_codec/RTCVideoCodecConstants.mm

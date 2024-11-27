@@ -478,12 +478,12 @@ AlternateWebMPlayerEnabled:
   condition: ENABLE(ALTERNATE_WEBM_PLAYER) && ENABLE(MEDIA_SOURCE)
   defaultValue:
     WebKitLegacy:
-     default: true
+      default: true
     WebKit:
       default: true
     WebCore:
       default: true
-      
+
 AltitudeAngleEnabled:
   type: bool
   status: stable
@@ -7892,17 +7892,6 @@ UsesSingleWebProcess:
     WebKit:
       default: false
   sharedPreferenceForWebProcess: true
-
-VP8DecoderEnabled:
-  type: bool
-  status: embedder
-  webcoreBinding: none
-  condition: ENABLE(VP9)
-  defaultValue:
-    WebKitLegacy:
-      default: false
-    WebKit:
-      default: true
 
 VP9DecoderEnabled:
   type: bool

@@ -449,7 +449,7 @@ void MediaPlayerPrivateWebM::seekInternal()
                 auto trackId = trackBufferPair.first;
 
                 trackBuffer.setNeedsReenqueueing(true);
-                reenqueueMediaForTime(trackBuffer, trackId, m_lastSeekTime);
+                reenqueueMediaForTime(trackBuffer, trackId, m_lastSeekTime, NeedsFlush::No);
             }
 
             maybeCompleteSeek();

@@ -97,6 +97,8 @@ private:
     VideoMediaSampleRenderer(WebSampleBufferVideoRendering *);
 
     void clearTimebase();
+    using TimebaseAndTimerSource = std::pair<RetainPtr<CMTimebaseRef>, OSObjectPtr<dispatch_source_t>>;
+    TimebaseAndTimerSource timebaseAndTimerSource() const;
 
     WebSampleBufferVideoRendering *rendererOrDisplayLayer() const;
 
@@ -120,7 +122,11 @@ private:
     };
     bool purgeDecodedSampleQueue(ShouldReschedule);
     void maybeReschedulePurge();
+    void enqueueDecodedSample(RetainPtr<CMSampleBufferRef>&&);
     size_t decodedSamplesCount() const;
+    RetainPtr<CMSampleBufferRef> nextDecodedSample() const;
+    CMTime nextDecodedSampleEndTime() const;
+
     void assignResourceOwner(CMSampleBufferRef);
     bool areSamplesQueuesReadyForMoreMediaData(size_t waterMark) const;
     void maybeBecomeReadyForMoreMediaData();
@@ -142,8 +148,7 @@ private:
     RetainPtr<AVSampleBufferVideoRenderer> m_renderer;
 #endif
     mutable Lock m_lock;
-    RetainPtr<CMTimebaseRef> m_timebase WTF_GUARDED_BY_LOCK(m_lock);
-    OSObjectPtr<dispatch_source_t> m_timerSource WTF_GUARDED_BY_LOCK(m_lock);
+    TimebaseAndTimerSource m_timebaseAndTimerSource WTF_GUARDED_BY_LOCK(m_lock);
     std::atomic<ssize_t> m_framesBeingDecoded { 0 };
     std::atomic<FlushId> m_flushId { 0 };
     Deque<std::pair<RetainPtr<CMSampleBufferRef>, FlushId>> m_compressedSampleQueue WTF_GUARDED_BY_CAPABILITY(dispatcher().get());

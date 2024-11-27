@@ -11328,10 +11328,6 @@ WebPageCreationParameters WebPageProxy::creationParameters(WebProcessProxy& proc
 
     // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
     parameters.shouldEnableVP9Decoder = preferences->vp9DecoderEnabled();
-#if ENABLE(VP9) && PLATFORM(COCOA)
-    // FIXME: This is also being passed over the to WebProcess via the PreferencesStore.
-    parameters.shouldEnableVP8Decoder = preferences->vp8DecoderEnabled();
-#endif
     parameters.shouldCaptureDisplayInUIProcess = m_legacyMainFrameProcess->processPool().configuration().shouldCaptureDisplayInUIProcess();
     parameters.shouldCaptureDisplayInGPUProcess = preferences->useGPUProcessForDisplayCapture();
 #if ENABLE(APP_BOUND_DOMAINS)

@@ -69,8 +69,6 @@ void GPUProcessPreferences::copyEnabledWebPreferences(const WebPreferences& webP
 #endif
 
 #if ENABLE(VP9)
-    if (webPreferences.vp8DecoderEnabled())
-        vp8DecoderEnabled = true;
     if (webPreferences.vp9DecoderEnabled())
         vp9DecoderEnabled = true;
     if (webPreferences.sWVPDecodersAlwaysEnabled())

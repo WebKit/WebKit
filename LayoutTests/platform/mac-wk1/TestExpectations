@@ -1158,14 +1158,6 @@ media/media-video-videorange.html [ Skip ]
 media/media-video-fullrange-offscreen.html [ Skip ]
 media/media-video-videorange-offscreen.html [ Skip ]
 media/video-playback-quality-webm.html [ Skip ]
-
-# VP9/VP8 are not supported on WK1 and turned off by default
-media/media-source/media-source-vp8-hiddenframes.html [ Skip ]
-media/media-source/media-source-webm-configuration-change.html [ Failure ]
-media/media-source/media-source-webm-configuration-framerate.html [ Failure ]
-media/media-source/media-source-webm-configuration-vp9-header-color.html [ Failure ]
-media/media-source/media-source-vp8-webm-error.html [ Skip ]
-media/media-source/media-source-vp8-webm-error-offscreen.html [ Skip ]
 http/tests/media/video-webm-stall-seek.html [ Skip ]
 media/media-rvfc-paused-offscreen-webm.html [ Skip ]
 media/media-rvfc-paused-webm.html [ Skip ]
@@ -2306,10 +2298,6 @@ webkit.org/b/215778 fast/overflow/horizontal-scroll-after-back.html [ Pass Timeo
 
 webkit.org/b/215926 svg/custom/object-sizing.xhtml [ Pass Failure ]
 
-# rdar://problem/66487888 media/media-source/media-source-webm.html is a constant failure
-media/media-source/media-source-webm.html [ Failure ]
-media/media-source/media-source-seek-back-after-ended.html [ Skip ]
-
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-45.html [ Slow ]
 webkit.org/b/216492 imported/w3c/web-platform-tests/selection/collapse-15.html [ Slow ]
 
@@ -2522,9 +2510,6 @@ webkit.org/b/244637 imported/w3c/web-platform-tests/content-security-policy/gene
 webkit.org/b/244649 [ Debug ] imported/w3c/web-platform-tests/css/css-align/baseline-rules/synthesized-baseline-flexbox-001.html [ Pass Crash ]
 
 webkit.org/b/244652 [ Debug ] imported/w3c/web-platform-tests/html/semantics/embedded-content/bfcache/embedded-mp4.html [ Pass Crash ]
-
-# VP8/VP9 aren't supported on WK1
-media/media-source/media-source-istypesupported-vp8-without-vp9.html [ Failure ]
 
 webkit.org/b/244714 [ Debug ] imported/w3c/web-platform-tests/html/browsers/browsing-the-web/read-media/pageload-video.html [ Skip ]
 
@@ -2922,16 +2907,6 @@ webkit.org/b/273577 [ Ventura ] http/tests/media/hls/track-webvtt-multitracks.ht
 
 # rdar://65188503
 platform/mac/media/mediacapabilities/vp9-decodingInfo-sw.html [ Skip ]
-
-webkit.org/b/221369 media/media-source/media-source-webm-append-buffer-after-abort.html [ Skip ]
-webkit.org/b/220552 media/media-source/media-source-webm-init-inside-segment.html [ Skip ]
-
-webkit.org/b/222493 media/media-source/media-source-webm-vp8-malformed-header.html [ Skip ]
-
-# webkit.org/b/221300 vp8 unsupported on WK1
-imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-bitrate.html [ Skip ]
-imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framerate.html [ Skip ]
-imported/w3c/web-platform-tests/media-source/mediasource-config-change-webm-v-framesize.html [ Skip ]
 
 # webkit.org/b/235733 Skip 2 editing/execCommand tests for making subsequent tests fail on wk1 Apple Silicon macs.
 [ release ] editing/execCommand/insert-newline-in-quoted-content-crash.html [ Skip ]
