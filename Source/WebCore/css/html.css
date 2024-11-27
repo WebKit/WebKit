@@ -2,7 +2,7 @@
  * The default style sheet used to render HTML.
  *
  * Copyright (C) 2000 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003-2023 Apple Inc. All rights reserved.
+ * Copyright (C) 2003-2024 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -399,6 +399,23 @@ dt {
     font-variant-numeric: tabular-nums;
     white-space: pre;
     text-transform: none;
+}
+
+/* FIXME: Remove this quirk (webkit.org/b/283738) */
+
+/* Force inside position for orphaned lis */
+li {
+    list-style-position: inside;
+}
+
+/* Restore outside position for lists inside lis */
+li :is(ul, ol) {
+    list-style-position: outside;
+}
+
+/* Undo previous two rules for properly nested lists */
+:is(ul, ol) :is(ul, ol, li) {
+    list-style-position: unset;
 }
 
 /* form elements */
