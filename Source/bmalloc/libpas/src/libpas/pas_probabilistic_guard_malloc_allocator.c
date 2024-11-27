@@ -28,6 +28,7 @@
 
 #if LIBPAS_ENABLED
 
+#include <execinfo.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
@@ -144,14 +145,15 @@ pas_allocation_result pas_probabilistic_guard_malloc_allocate(pas_large_heap* la
     /* create struct to hold hash map value */
     pas_pgm_storage *value = pas_utility_heap_try_allocate(sizeof(pas_pgm_storage), "pas_pgm_hash_map_VALUE");
     PAS_ASSERT(value);
-
-    value->mem_to_waste              = mem_to_waste;
-    value->size_of_data_pages        = size + mem_to_waste;
-    value->start_of_data_pages       = result.begin + page_size;
-    value->allocation_size_requested = size;
-    value->page_size                 = page_size;
-    value->large_heap                = large_heap;
-    value->right_align               = right_align;
+    
+    value->alloc_backtrace.frame_size = backtrace(value->alloc_backtrace.backtrace_buffer, MAX_FRAMES);
+    value->mem_to_waste               = mem_to_waste;
+    value->size_of_data_pages         = size + mem_to_waste;
+    value->start_of_data_pages        = result.begin + page_size;
+    value->allocation_size_requested  = size;
+    value->page_size                  = page_size;
+    value->large_heap                 = large_heap;
+    value->right_align                = right_align;
 
     pas_ptr_hash_map_add_result add_result = pas_ptr_hash_map_add(&pas_pgm_hash_map, (void*)key, NULL, &pas_large_utility_free_heap_allocation_config);
     PAS_ASSERT(add_result.is_new_entry);
@@ -185,13 +187,16 @@ void pas_probabilistic_guard_malloc_deallocate(void* mem)
     uintptr_t key = (uintptr_t) mem;
     PAS_PROFILE(PGM_DEALLOCATE, key);
 
-    pas_ptr_hash_map_entry * entry = pas_ptr_hash_map_find(&pas_pgm_hash_map, (void*)key);
+    pas_ptr_hash_map_entry* entry = pas_ptr_hash_map_find(&pas_pgm_hash_map, (void*)key);
     if (!entry || !entry->value)
         return;
 
-    pas_pgm_storage * value = (pas_pgm_storage *) entry->value;
+    pas_pgm_storage* value = (pas_pgm_storage*) entry->value;
     int mprotect_res = mprotect( (void *) value->start_of_data_pages, value->size_of_data_pages, PROT_NONE);
     PAS_ASSERT(!mprotect_res);
+
+    /* capture deallocation backtrace */
+    value->dealloc_backtrace.frame_size = backtrace(value->dealloc_backtrace.backtrace_buffer, MAX_FRAMES);
 
     /*
      * ensure physical addresses are released
@@ -224,7 +229,7 @@ bool pas_probabilistic_guard_malloc_check_exists(uintptr_t mem)
     if (verbose)
         printf("Checking if is PGM entry\n");
 
-    pas_ptr_hash_map_entry * entry = pas_ptr_hash_map_find(&pas_pgm_hash_map, (void *) mem);
+    pas_ptr_hash_map_entry* entry = pas_ptr_hash_map_find(&pas_pgm_hash_map, (void*) mem);
     return (entry && entry->value);
 }
 
@@ -293,16 +298,18 @@ pas_ptr_hash_map_entry** pas_probabilistic_guard_malloc_get_metadata_array(void)
  */
 void pas_probabilistic_guard_malloc_initialize_pgm(void)
 {
-    if (!pas_probabilistic_guard_malloc_is_initialized) {
-        pas_probabilistic_guard_malloc_is_initialized = true;
+    // if (!pas_probabilistic_guard_malloc_is_initialized) {
+    //     pas_probabilistic_guard_malloc_is_initialized = true;
 
-        if (PAS_LIKELY(pas_get_fast_random(1000) >= 1)) {
-            pas_probabilistic_guard_malloc_can_use = false;
-            return;
-        }
+    //     if (PAS_LIKELY(pas_get_fast_random(1000) >= 1)) {
+    //         pas_probabilistic_guard_malloc_can_use = false;
+    //         return;
+    //     }
 
-        pas_probabilistic_guard_malloc_random = pas_get_secure_random(1000) + 4000;
-    }
+    //     pas_probabilistic_guard_malloc_random = pas_get_secure_random(1000) + 4000;
+    // }
+    /* force PGM on for testing */
+    pas_probabilistic_guard_malloc_initialize_pgm_as_enabled();
 }
 
 /*
@@ -360,7 +367,7 @@ void pas_probabilistic_guard_malloc_pgm_metadata_buffer_remove(void)
     pgm_metadata_count--;
 }
 
-void pas_probabilistic_guard_malloc_manage_metadata(pas_ptr_hash_map_entry * entry)
+void pas_probabilistic_guard_malloc_manage_metadata(pas_ptr_hash_map_entry* entry)
 {
     /*
      * Check if PGM metadata circular buffer is full if so free first metadata entry per "FIFO".

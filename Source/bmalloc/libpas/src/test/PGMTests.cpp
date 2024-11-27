@@ -23,11 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <execinfo.h>
+#include <mach/arm/kern_return.h>
 #include <unistd.h>
 #include <stdlib.h>
 
 #include "TestHarness.h"
 
+#include "pas_root.h"
+#include "pas_ptr_hash_map.h"
+#include "pas_report_crash.h"
 #include "bmalloc_heap.h"
 #include "pas_probabilistic_guard_malloc_allocator.h"
 #include "pas_heap.h"
@@ -252,6 +257,104 @@ void testPGMErrors() {
     pas_heap_lock_unlock();
 }
 
+void testPGMBmallocAllocationBacktrace() {
+    pas_probabilistic_guard_malloc_initialize_pgm_as_enabled();
+
+    pas_heap_lock_lock();
+    pas_root* root = pas_root_create();
+    pas_heap_lock_unlock();
+
+    // Allocate and check arrays of various sizes
+    int* int_arr1 = static_cast<int*>(bmalloc_allocate(30000 * sizeof(int), pas_non_compact_allocation_mode));
+    CHECK(int_arr1);
+
+    int* int_arr2 = static_cast<int*>(bmalloc_allocate(20000 * sizeof(int), pas_non_compact_allocation_mode));
+    CHECK(int_arr2);
+
+    bmalloc_deallocate(int_arr1);
+    bmalloc_deallocate(int_arr2);
+
+    int* int_arr3 = static_cast<int*>(bmalloc_allocate(499999 * sizeof(int), pas_non_compact_allocation_mode));
+    CHECK(int_arr3);
+
+    bmalloc_deallocate(int_arr3);
+
+    char* char_arr4 = static_cast<char*>(bmalloc_allocate(500000 * sizeof(char), pas_non_compact_allocation_mode));
+    CHECK(char_arr4);
+
+    char* char_arr5 = static_cast<char*>(bmalloc_allocate(399999 * sizeof(char), pas_non_compact_allocation_mode));
+    CHECK(char_arr5);
+    bmalloc_deallocate(char_arr5);
+
+    pas_ptr_hash_map* hash_map = root->pas_pgm_hash_map_instance;
+    CHECK(hash_map);
+
+    size_t table_size = hash_map->table_size;
+
+    // Check number of entries we have is 5
+    CHECK_EQUAL(hash_map->key_count, static_cast<size_t>(5));
+
+    // Traverse through hash_map entries
+    for (size_t i = 0; i < table_size; ++i) {
+        pas_ptr_hash_map_entry* hash_map_entry = &hash_map->table[i];
+
+        // Skip entry if key is invalid
+        if (hash_map_entry->key == (void*)UINTPTR_MAX)
+            continue;
+
+        pas_pgm_storage* pgm_metadata = static_cast<pas_pgm_storage*>(hash_map_entry->value);
+        if (!pgm_metadata) continue;
+
+        const backtrace_metadata_t alloc_metadata = pgm_metadata->alloc_backtrace;
+        CHECK(alloc_metadata.frame_size > 0);
+
+        const backtrace_metadata_t dealloc_metadata = pgm_metadata->dealloc_backtrace;
+        if (pgm_metadata->free_status)
+            CHECK(dealloc_metadata.frame_size > 0);
+    }
+}
+
+void testPGMAllocMetadataOnly() {
+    pas_probabilistic_guard_malloc_initialize_pgm_as_enabled();
+
+    pas_heap_lock_lock();
+    pas_root* root = pas_root_create();
+    pas_heap_lock_unlock();
+
+    // Allocate and check arrays of various sizes
+    int* int_arr1 = static_cast<int*>(bmalloc_allocate(30000 * sizeof(int), pas_non_compact_allocation_mode));
+    CHECK(int_arr1);
+
+    pas_ptr_hash_map* hash_map = root->pas_pgm_hash_map_instance;
+    CHECK(hash_map);
+
+    size_t table_size = hash_map->table_size;
+
+    // Check number of entries we have is 1
+    CHECK_EQUAL(hash_map->key_count, static_cast<size_t>(1));
+
+    // Traverse through hash_map entries
+    for (size_t i = 0; i < table_size; ++i) {
+        pas_ptr_hash_map_entry* hash_map_entry = &hash_map->table[i];
+
+        // Skip entry if key is invalid
+        if (hash_map_entry->key == (void*)UINTPTR_MAX)
+            continue;
+
+        pas_pgm_storage* pgm_metadata = static_cast<pas_pgm_storage*>(hash_map_entry->value);
+        if (!pgm_metadata) continue;
+
+        // Verify we do have metadata for an eallocation.
+        const backtrace_metadata_t alloc_metadata = pgm_metadata->alloc_backtrace;
+        CHECK(alloc_metadata.frame_size > 0);
+
+        // Verify we do not have any metadata for a deallocation.
+        const backtrace_metadata_t dealloc_metadata = pgm_metadata->dealloc_backtrace;
+        CHECK(!pgm_metadata->free_status);
+        CHECK(dealloc_metadata.frame_size == 0);
+    }
+}
+
 } // anonymous namespace
 
 void addPGMTests() {
@@ -260,4 +363,6 @@ void addPGMTests() {
     ADD_TEST(testPGMRealloc());
     ADD_TEST(testPGMErrors());
     ADD_TEST(testPGMMetaData());
+    ADD_TEST(testPGMBmallocAllocationBacktrace());
+    ADD_TEST(testPGMAllocMetadataOnly());
 }
