@@ -44,7 +44,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .content-view.tab.graphics .navigation-bar > .item .graphics-overview .icon {
+    .content-view.tab.graphics .navigation-bar > .item .canvas-overview .icon {
         filter: invert(60%);
     }
 
