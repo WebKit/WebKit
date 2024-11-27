@@ -293,22 +293,12 @@ WI.SpreadsheetRulesStyleDetailsPanel = class SpreadsheetRulesStyleDetailsPanel e
                 return;
 
             // Add all pseudo styles before any inherited rules.
-            let beforePseudoId = null;
-            let afterPseudoId = null;
-            if (InspectorBackend.Enum.CSS.PseudoId) {
-                beforePseudoId = WI.CSSManager.PseudoSelectorNames.Before;
-                afterPseudoId = WI.CSSManager.PseudoSelectorNames.After;
-            } else {
-                // Compatibility (iOS 12.2): CSS.PseudoId did not exist.
-                beforePseudoId = 4;
-                afterPseudoId = 5;
-            }
 
             for (let [pseudoId, pseudoElementInfo] of this.nodeStyles.pseudoElements) {
                 let pseudoElement = null;
-                if (pseudoId === beforePseudoId)
+                if (pseudoId === WI.CSSManager.PseudoSelectorNames.Before)
                     pseudoElement = this.nodeStyles.node.beforePseudoElement();
-                else if (pseudoId === afterPseudoId)
+                else if (pseudoId === WI.CSSManager.PseudoSelectorNames.After)
                     pseudoElement = this.nodeStyles.node.afterPseudoElement();
                 addHeader(WI.UIString("Pseudo-Element"), pseudoElement || pseudoId);
 

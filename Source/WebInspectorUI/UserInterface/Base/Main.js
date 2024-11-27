@@ -416,15 +416,12 @@ WI.contentLoaded = function()
     WI._inspectModeTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._toggleInspectMode, WI);
     inspectedPageControlNavigationItems.push(WI._inspectModeTabBarButton);
 
-    // COMPATIBILITY (iOS 12.2): Page.overrideSetting did not exist.
-    if (InspectorBackend.hasCommand("Page.overrideUserAgent") && InspectorBackend.hasCommand("Page.overrideSetting")) {
-        const deviceSettingsTooltip = WI.UIString("Device Settings");
-        WI._deviceSettingsTabBarButton = new WI.ActivateButtonNavigationItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, InspectorFrontendHost.isRemote ? "Images/Device.svg" : "Images/Computer.svg");
-        WI._deviceSettingsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsTabBarButtonClicked, WI);
-        inspectedPageControlNavigationItems.push(WI._deviceSettingsTabBarButton);
+    const deviceSettingsTooltip = WI.UIString("Device Settings");
+    WI._deviceSettingsTabBarButton = new WI.ActivateButtonNavigationItem("device-settings", deviceSettingsTooltip, deviceSettingsTooltip, InspectorFrontendHost.isRemote ? "Images/Device.svg" : "Images/Computer.svg");
+    WI._deviceSettingsTabBarButton.addEventListener(WI.ButtonNavigationItem.Event.Clicked, WI._handleDeviceSettingsTabBarButtonClicked, WI);
+    inspectedPageControlNavigationItems.push(WI._deviceSettingsTabBarButton);
 
-        WI._deviceSettingsPopover = null;
-    }
+    WI._deviceSettingsPopover = null;
 
     if (InspectorFrontendHost.isRemote || WI.isDebugUIEnabled()) {
         let reloadToolTip;

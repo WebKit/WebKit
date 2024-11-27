@@ -272,11 +272,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
         this._setBlackboxBreakpointEvaluations(target);
 
-        if (WI.engineeringSettingsAllowed()) {
-            // COMPATIBILITY (iOS 12): DebuggerAgent.setPauseForInternalScripts did not exist yet.
-            if (target.hasCommand("Debugger.setPauseForInternalScripts"))
-                target.DebuggerAgent.setPauseForInternalScripts(WI.settings.engineeringPauseForInternalScripts.value);
-        }
+        if (WI.engineeringSettingsAllowed())
+            target.DebuggerAgent.setPauseForInternalScripts(WI.settings.engineeringPauseForInternalScripts.value);
 
         if (this.paused)
             targetData.pauseIfNeeded();
@@ -303,7 +300,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     static supportsBlackboxingBreakpointEvaluations()
     {
-        // COMPATIBILITY (macOS 12.3, iOS 15.4): Debugger.setBlackboxBreakpointEvaluations did not exist yet.
+        // COMPATIBILITY (iOS 15.4): Debugger.setBlackboxBreakpointEvaluations did not exist yet.
         return InspectorBackend.hasCommand("Debugger.setBlackboxBreakpointEvaluations");
     }
 
@@ -1456,7 +1453,7 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     _setBlackboxBreakpointEvaluations(target)
     {
-        // COMPATIBILITY (macOS 12.3, iOS 15.4): Debugger.setBlackboxBreakpointEvaluations did not exist yet.
+        // COMPATIBILITY (iOS 15.4): Debugger.setBlackboxBreakpointEvaluations did not exist yet.
         if (target.hasCommand("Debugger.setBlackboxBreakpointEvaluations"))
             target.DebuggerAgent.setBlackboxBreakpointEvaluations(WI.settings.blackboxBreakpointEvaluations.value);
     }
@@ -1663,10 +1660,8 @@ WI.DebuggerManager = class DebuggerManager extends WI.Object
 
     _handleEngineeringPauseForInternalScriptsSettingChanged(event)
     {
-        for (let target of WI.targets) {
-            if (target.hasCommand("Debugger.setPauseForInternalScripts"))
-                target.DebuggerAgent.setPauseForInternalScripts(WI.settings.engineeringPauseForInternalScripts.value);
-        }
+        for (let target of WI.targets)
+            target.DebuggerAgent.setPauseForInternalScripts(WI.settings.engineeringPauseForInternalScripts.value);
     }
 
     _mainResourceDidChange(event)

@@ -752,11 +752,8 @@ WI.DOMManager = class DOMManager extends WI.Object
 
     getSupportedEventNames(callback)
     {
-        let target = WI.assumingMainTarget();
-        if (!target.hasCommand("DOM.getSupportedEventNames"))
-            return Promise.resolve(new Set);
-
         if (!this._getSupportedEventNamesPromise) {
+            let target = WI.assumingMainTarget();
             this._getSupportedEventNamesPromise = target.DOMAgent.getSupportedEventNames()
             .then(({eventNames}) => new Set(eventNames));
         }

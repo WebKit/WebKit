@@ -189,14 +189,8 @@ WI.AuditTestBase = class AuditTestBase extends WI.Object
         try {
             let response = await agentCommandFunction.invoke(agentCommandArguments);
 
-            if (response.result.type === "object" && response.result.className === "Promise") {
-                if (WI.RuntimeManager.supportsAwaitPromise())
-                    response = await target.RuntimeAgent.awaitPromise(response.result.objectId);
-                else {
-                    response = null;
-                    WI.AuditManager.synthesizeError(WI.UIString("Async audits are not supported."));
-                }
-            }
+            if (response.result.type === "object" && response.result.className === "Promise")
+                response = await target.RuntimeAgent.awaitPromise(response.result.objectId);
 
             if (response) {
                 let remoteObject = WI.RemoteObject.fromPayload(response.result, WI.mainTarget);

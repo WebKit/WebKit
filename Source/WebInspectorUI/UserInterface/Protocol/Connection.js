@@ -169,7 +169,7 @@ InspectorBackend.Connection = class InspectorBackendConnection
         let qualifiedName = messageObject.method;
         let [domainName, eventName] = qualifiedName.split(".");
 
-        // COMPATIBILITY (iOS 12.2 and iOS 13): because the multiplexing target isn't created until
+        // COMPATIBILITY (iOS 13): because the multiplexing target isn't created until
         // `Target.exists` returns, any `Target.targetCreated` won't have a dispatcher for the
         // message, so create a multiplexing target here to force this._target._agents.Target.
         if (!this._target && this === InspectorBackend.backendConnection && WI.sharedApp.debuggableType === WI.DebuggableType.WebPage && qualifiedName === "Target.targetCreated")

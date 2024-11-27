@@ -264,13 +264,6 @@ WI.EventListenerSectionGroup = class EventListenerSectionGroup extends WI.Detail
         let anonymous = false;
         let functionName = this._eventListener.handlerName;
 
-        // COMPATIBILITY (iOS 12.2): DOM.EventListener.handlerBody was replaced by DOM.EventListener.handlerName.
-        if (!functionName && this._eventListener.handlerBody) {
-            let match = this._eventListener.handlerBody.match(/function ([^\(]+?)\(/);
-            if (match)
-                functionName = match[1];
-        }
-
         if (!functionName) {
             anonymous = true;
             functionName = WI.UIString("(anonymous function)");

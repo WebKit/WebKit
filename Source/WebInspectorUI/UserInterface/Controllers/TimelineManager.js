@@ -128,9 +128,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         defaultTypes.push(WI.TimelineRecord.Type.Layout);
         defaultTypes.push(WI.TimelineRecord.Type.Script);
         defaultTypes.push(WI.TimelineRecord.Type.RenderingFrame);
-
-        if (WI.CPUInstrument.supported())
-            defaultTypes.push(WI.TimelineRecord.Type.CPU);
+        defaultTypes.push(WI.TimelineRecord.Type.CPU);
 
         return defaultTypes;
     }
@@ -144,10 +142,7 @@ WI.TimelineManager = class TimelineManager extends WI.Object
         types.push(WI.TimelineRecord.Type.Memory);
         types.push(WI.TimelineRecord.Type.HeapAllocations);
 
-        if (WI.MediaInstrument.supported()) {
-            let insertionIndex = types.indexOf(WI.TimelineRecord.Type.Layout) + 1;
-            types.insertAtIndex(WI.TimelineRecord.Type.Media, insertionIndex || types.length);
-        }
+        types.insertAtIndex(WI.TimelineRecord.Type.Media, types.indexOf(WI.TimelineRecord.Type.Layout) + 1);
 
         return types;
     }

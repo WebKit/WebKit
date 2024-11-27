@@ -41,14 +41,4 @@ WI.ScriptProfilerObserver = class ScriptProfilerObserver extends InspectorBacken
     {
         WI.timelineManager.scriptProfilerTrackingCompleted(timestamp, samples);
     }
-
-    programmaticCaptureStarted()
-    {
-        // COMPATIBILITY (iOS 12.2): ScriptProfiler.programmaticCaptureStarted was removed after iOS 12.2.
-    }
-
-    programmaticCaptureStopped()
-    {
-        // COMPATIBILITY (iOS 12.2): ScriptProfiler.programmaticCaptureStopped was removed after iOS 12.2.
-    }
 };
