@@ -218,8 +218,10 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
         return thirdPartyCookieBlockingDecision == WebCore::ThirdPartyCookieBlockingDecision::All;
     };
 
+    bool isOptInCookiePartitioningEnabled { false };
     auto thirdPartyCookieBlockingDecision = m_storedCredentialsPolicy == WebCore::StoredCredentialsPolicy::EphemeralStateless ? WebCore::ThirdPartyCookieBlockingDecision::All : WebCore::ThirdPartyCookieBlockingDecision::None;
     if (auto* networkStorageSession = session.networkStorageSession()) {
+        isOptInCookiePartitioningEnabled = networkStorageSession->isOptInCookiePartitioningEnabled();
         if (!shouldBlockCookies(thirdPartyCookieBlockingDecision))
             thirdPartyCookieBlockingDecision = networkStorageSession->thirdPartyCookieBlockingDecisionForRequest(request, frameID(), pageID(), shouldRelaxThirdPartyCookieBlocking());
     }
@@ -260,6 +262,15 @@ NetworkDataTaskCocoa::NetworkDataTaskCocoa(NetworkSession& session, NetworkDataT
 #if HAVE(ALLOW_PRIVATE_ACCESS_TOKENS_FOR_THIRD_PARTY)
     if ([mutableRequest respondsToSelector:@selector(_setAllowPrivateAccessTokensForThirdParty:)] && parameters.request.isPrivateTokenUsageByThirdPartyAllowed())
         [mutableRequest _setAllowPrivateAccessTokensForThirdParty:YES];
+#endif
+
+#if HAVE(ALLOW_ONLY_PARTITIONED_COOKIES)
+    if (isOptInCookiePartitioningEnabled && [mutableRequest respondsToSelector:@selector(_setAllowOnlyPartitionedCookies:)]) {
+        auto shouldAllowOnlyPartitioned = thirdPartyCookieBlockingDecision == WebCore::ThirdPartyCookieBlockingDecision::AllExceptPartitioned ? YES : NO;
+        [mutableRequest _setAllowOnlyPartitionedCookies:shouldAllowOnlyPartitioned];
+    }
+#else
+    UNUSED_PARAM(isOptInCookiePartitioningEnabled);
 #endif
 
 #if ENABLE(APP_PRIVACY_REPORT)
