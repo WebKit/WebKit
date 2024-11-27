@@ -43,8 +43,8 @@ public:
 private:
     explicit AccessibilitySVGRoot(AXID, RenderObject&, AXObjectCache*);
 
-    AccessibilityObject* parentObject() const override;
-    bool isAccessibilitySVGRoot() const override { return true; }
+    AccessibilityObject* parentObject() const final;
+    bool isAccessibilitySVGRoot() const final { return true; }
 
     AccessibilityRole determineAccessibilityRole() final;
 

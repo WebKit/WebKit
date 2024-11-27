@@ -80,7 +80,7 @@ void AccessibilityMathMLElement::addChildren()
     // browsers, so it's already unlikely to be used by web developers, even more so with `display:contents` mixed in.
     m_childrenInitialized = true;
     for (auto& object : AXChildIterator(*this))
-        addChild(&object);
+        addChild(object);
 
     m_subtreeDirty = false;
 }
@@ -218,7 +218,7 @@ bool AccessibilityMathMLElement::isMathTableCell() const
 
 bool AccessibilityMathMLElement::isMathScriptObject(AccessibilityMathScriptObjectType type) const
 {
-    AXCoreObject* parent = parentObjectUnignored();
+    RefPtr parent = parentObjectUnignored();
     if (!parent)
         return false;
 
@@ -227,7 +227,7 @@ bool AccessibilityMathMLElement::isMathScriptObject(AccessibilityMathScriptObjec
 
 bool AccessibilityMathMLElement::isMathMultiscriptObject(AccessibilityMathMultiscriptObjectType type) const
 {
-    AXCoreObject* parent = parentObjectUnignored();
+    RefPtr parent = parentObjectUnignored();
     if (!parent || !parent->isMathMultiscript())
         return false;
 

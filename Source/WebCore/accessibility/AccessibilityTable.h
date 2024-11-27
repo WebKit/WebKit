@@ -66,7 +66,7 @@ public:
     AccessibilityChildrenVector visibleRows() final;
 
     // Returns an object that contains, as children, all the objects that act as headers.
-    AXCoreObject* headerContainer() final;
+    AccessibilityObject* headerContainer() final;
 
     bool isTable() const final { return true; }
     // Returns whether it is exposed as an AccessibilityTable to the platform.

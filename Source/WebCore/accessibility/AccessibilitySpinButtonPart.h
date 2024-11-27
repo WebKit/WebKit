@@ -51,5 +51,10 @@ private:
 } // namespace WebCore
 
 SPECIALIZE_TYPE_TRAITS_BEGIN(WebCore::AccessibilitySpinButtonPart) \
+    static bool isType(const WebCore::AXCoreObject& object) \
+    { \
+        auto* axObject = dynamicDowncast<WebCore::AccessibilityObject>(object); \
+        return axObject && axObject->isSpinButtonPart(); \
+    } \
     static bool isType(const WebCore::AccessibilityObject& object) { return object.isSpinButtonPart(); } \
 SPECIALIZE_TYPE_TRAITS_END()

@@ -38,13 +38,13 @@ public:
     static Ref<AccessibilityTreeItem> create(AXID, Node&);
     virtual ~AccessibilityTreeItem();
 
-    bool supportsCheckedState() const override;
+    bool supportsCheckedState() const final;
 
 private:
     explicit AccessibilityTreeItem(AXID, RenderObject&);
     explicit AccessibilityTreeItem(AXID, Node&);
     bool shouldIgnoreAttributeRole() const final { return !m_isTreeItemValid; }
-    AccessibilityRole determineAccessibilityRole() override;
+    AccessibilityRole determineAccessibilityRole() final;
     bool m_isTreeItemValid;
 };
     

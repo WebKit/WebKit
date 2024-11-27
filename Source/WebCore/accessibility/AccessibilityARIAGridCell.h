@@ -41,10 +41,10 @@ public:
 private:
     explicit AccessibilityARIAGridCell(AXID, RenderObject&);
     explicit AccessibilityARIAGridCell(AXID, Node&);
-    bool isAccessibilityARIAGridCellInstance() const override { return true; }
+    bool isAccessibilityARIAGridCellInstance() const final { return true; }
 
-    AccessibilityTable* parentTable() const override;
-    String readOnlyValue() const override;
+    AccessibilityTable* parentTable() const final;
+    String readOnlyValue() const final;
 }; 
 
 } // namespace WebCore 

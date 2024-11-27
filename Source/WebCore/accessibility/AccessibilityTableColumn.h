@@ -39,23 +39,23 @@ public:
     static Ref<AccessibilityTableColumn> create(AXID);
     virtual ~AccessibilityTableColumn();
 
-    AXCoreObject* columnHeader() override;
+    AccessibilityObject* columnHeader() final;
 
     AccessibilityRole determineAccessibilityRole() final { return AccessibilityRole::Column; }
 
     void setColumnIndex(unsigned);
-    unsigned columnIndex() const override { return m_columnIndex; }
+    unsigned columnIndex() const final { return m_columnIndex; }
 
-    void addChildren() override;
-    void setParent(AccessibilityObject*) override;
-    
-    LayoutRect elementRect() const override;
-    
+    void addChildren() final;
+    void setParent(AccessibilityObject*) final;
+
+    LayoutRect elementRect() const final;
+
 private:
     explicit AccessibilityTableColumn(AXID);
     
-    bool computeIsIgnored() const override;
-    bool isTableColumn() const override { return true; }
+    bool computeIsIgnored() const final;
+    bool isTableColumn() const final { return true; }
 
     bool isAccessibilityTableColumnInstance() const final { return true; }
     unsigned m_columnIndex;

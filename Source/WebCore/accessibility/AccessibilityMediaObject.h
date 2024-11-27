@@ -55,11 +55,11 @@ private:
     bool computeIsIgnored() const final;
     bool isMediaObject() const final { return true; }
     
-    String stringValue() const override;
-    bool press() override;
-    void increment() override;
-    void decrement() override;
-    
+    String stringValue() const final;
+    bool press() final;
+    void increment() final;
+    void decrement() final;
+
     HTMLMediaElement* mediaElement() const;
     
     void mediaSeek(AXSeekDirection);

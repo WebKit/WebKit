@@ -628,12 +628,8 @@ static bool isTableComponent(AXCoreObject& axObject)
 }
 #endif
 
-void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, DescendIfIgnored descendIfIgnored)
+void AccessibilityObject::insertChild(AccessibilityObject& child, unsigned index, DescendIfIgnored descendIfIgnored)
 {
-    if (!newChild)
-        return;
-    auto& child = downcast<AccessibilityObject>(*newChild);
-
     // If the parent is asking for this child's children, then either it's the first time (and clearing is a no-op),
     // or its visibility has changed. In the latter case, this child may have a stale child cached.
     // This can prevent aria-hidden changes from working correctly. Hence, whenever a parent is getting children, ensure data is not stale.
@@ -705,11 +701,6 @@ void AccessibilityObject::insertChild(AXCoreObject* newChild, unsigned index, De
     child.clearIsIgnoredFromParentData();
 }
     
-void AccessibilityObject::addChild(AXCoreObject* child, DescendIfIgnored descendIfIgnored)
-{
-    insertChild(child, m_children.size(), descendIfIgnored);
-}
-
 AXCoreObject::AccessibilityChildrenVector AccessibilityObject::findMatchingObjects(AccessibilitySearchCriteria&& criteria)
 {
     if (auto* cache = axObjectCache())

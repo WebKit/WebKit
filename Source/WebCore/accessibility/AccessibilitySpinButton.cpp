@@ -48,25 +48,25 @@ AccessibilitySpinButton::AccessibilitySpinButton(AXID axID, AXObjectCache& cache
     m_decrementor->setIsIncrementor(false);
     m_decrementor->setParent(this);
 
-    addChild(m_incrementor.ptr());
-    addChild(m_decrementor.ptr());
+    addChild(m_incrementor.get());
+    addChild(m_decrementor.get());
     m_childrenInitialized = true;
 }
 
 AccessibilitySpinButton::~AccessibilitySpinButton() = default;
     
-AXCoreObject* AccessibilitySpinButton::incrementButton()
+AccessibilitySpinButtonPart* AccessibilitySpinButton::incrementButton()
 {
     ASSERT(m_childrenInitialized);
     RELEASE_ASSERT(m_children.size() == 2);
-    return m_children[0].ptr();
+    return &downcast<AccessibilitySpinButtonPart>(m_children[0].get());
 }
    
-AXCoreObject* AccessibilitySpinButton::decrementButton()
+AccessibilitySpinButtonPart* AccessibilitySpinButton::decrementButton()
 {
     ASSERT(m_childrenInitialized);
     RELEASE_ASSERT(m_children.size() == 2);
-    return m_children[1].ptr();
+    return &downcast<AccessibilitySpinButtonPart>(m_children[1].get());
 }
     
 LayoutRect AccessibilitySpinButton::elementRect() const

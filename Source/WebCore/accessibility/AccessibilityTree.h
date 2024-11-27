@@ -44,8 +44,8 @@ public:
 private:
     explicit AccessibilityTree(AXID, RenderObject&);
     explicit AccessibilityTree(AXID, Node&);
-    bool computeIsIgnored() const override;
-    AccessibilityRole determineAccessibilityRole() override;
+    bool computeIsIgnored() const final;
+    AccessibilityRole determineAccessibilityRole() final;
     bool isTreeValid() const;
 };
     

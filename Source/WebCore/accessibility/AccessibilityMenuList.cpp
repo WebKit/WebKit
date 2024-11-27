@@ -39,7 +39,7 @@ AccessibilityMenuList::AccessibilityMenuList(AXID axID, RenderMenuList& renderer
 {
     m_popup->setParent(this);
 
-    addChild(m_popup.ptr());
+    addChild(m_popup.get());
     m_childrenInitialized = true;
 }
 
