@@ -322,6 +322,11 @@ JSC_API char *
 jsc_value_to_json                         (JSCValue             *value,
                                            guint                 indent);
 
+JSC_API JSCValue *
+jsc_value_new_deferred_promise            (JSCContext           *context,
+                                           JSCValue             **resolve,
+                                           JSCValue             **reject);
+
 G_END_DECLS
 
 #endif /* JSCValue_h */
