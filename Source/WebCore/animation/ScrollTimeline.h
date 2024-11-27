@@ -45,6 +45,7 @@ struct TimelineRange;
 
 class ScrollTimeline : public AnimationTimeline {
 public:
+    static Ref<ScrollTimeline> create(Ref<ScrollTimeline>);
     static Ref<ScrollTimeline> create(ScrollTimelineOptions&& = { });
     static Ref<ScrollTimeline> create(const AtomString&, ScrollAxis);
     static Ref<ScrollTimeline> createFromCSSValue(const CSSScrollValue&);
@@ -72,6 +73,9 @@ public:
     void clearTimelineScopeDeclaredElement() { m_timelineScopeElement = nullptr; }
 
 protected:
+    enum class Scroller : uint8_t { Nearest, Root, Self };
+    Scroller scroller() const { return m_scroller; }
+
     explicit ScrollTimeline(const AtomString&, ScrollAxis);
 
     struct Data {
@@ -85,8 +89,6 @@ protected:
     static ScrollableArea* scrollableAreaForSourceRenderer(const RenderElement*, Document&);
 
 private:
-    enum class Scroller : uint8_t { Nearest, Root, Self };
-
     explicit ScrollTimeline(ScrollTimelineOptions&& = { });
     explicit ScrollTimeline(Scroller, ScrollAxis);
 

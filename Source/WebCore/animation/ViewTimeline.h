@@ -51,6 +51,7 @@ struct ViewTimelineInsets {
 
 class ViewTimeline final : public ScrollTimeline {
 public:
+    static Ref<ViewTimeline> create(Ref<ViewTimeline>);
     static Ref<ViewTimeline> create(ViewTimelineOptions&& = { });
     static Ref<ViewTimeline> create(const AtomString&, ScrollAxis, ViewTimelineInsets&&);
     static Ref<ViewTimeline> createFromCSSValue(const Style::BuilderState&, const CSSViewValue&);
