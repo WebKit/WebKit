@@ -446,7 +446,7 @@ bool InlineFormattingUtils::isAtSoftWrapOpportunity(const InlineItem& previous, 
     }
     if (previous.layoutBox().isListMarkerBox()) {
         auto& listMarkerBox = downcast<ElementBox>(previous.layoutBox());
-        return !listMarkerBox.isListMarkerInsideList() || !listMarkerBox.isListMarkerOutside();
+        return !listMarkerBox.isListMarkerOutside();
     }
     if (next.layoutBox().isListMarkerBox()) {
         // FIXME: SHould this ever be the case?

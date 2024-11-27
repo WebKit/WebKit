@@ -257,8 +257,6 @@ UniqueRef<Layout::Box> BoxTreeUpdater::createLayoutBox(RenderObject& renderer)
             listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
         if (!listMarkerRenderer->isInside())
             listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Outside);
-        if (listMarkerRenderer->listItem() && !listMarkerRenderer->listItem()->notInList())
-            listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::HasListElementAncestor);
         return makeUniqueRef<Layout::ElementBox>(elementAttributes(renderElement), listMarkerAttributes, WTFMove(style), WTFMove(firstLineStyle));
     }
 
@@ -329,8 +327,6 @@ static void updateListMarkerAttributes(const RenderListMarker& listMarkerRendere
         listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Image);
     if (!listMarkerRenderer.isInside())
         listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::Outside);
-    if (listMarkerRenderer.listItem() && !listMarkerRenderer.listItem()->notInList())
-        listMarkerAttributes.add(Layout::ElementBox::ListMarkerAttribute::HasListElementAncestor);
 
     layoutBox.setListMarkerAttributes(listMarkerAttributes);
 }
