@@ -29,15 +29,14 @@
 
 [
     Exposed=*,
-    JSBuiltin,
     PrivateIdentifier,
     PublicIdentifier
 ] interface ReadableStreamDefaultReader {
-    constructor(ReadableStream stream);
+    [CallWith=CurrentGlobalObject] constructor(ReadableStream stream);
 
-    Promise<any> read();
+    [Custom, ReturnsOwnPromise] Promise<any> read();
     undefined releaseLock();
 
-    readonly attribute Promise<boolean> closed;
-    Promise<any> cancel(optional any reason);
+    [Custom] readonly attribute Promise<boolean> closed;
+    [Custom, ReturnsOwnPromise] Promise<any> cancel(optional any reason);
 };

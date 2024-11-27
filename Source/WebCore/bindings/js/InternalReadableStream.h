@@ -46,8 +46,9 @@ public:
     void pipeTo(ReadableStreamSink&);
     ExceptionOr<std::pair<Ref<InternalReadableStream>, Ref<InternalReadableStream>>> tee(bool shouldClone);
 
+    ExceptionOr<JSC::Strong<JSC::JSObject>> getByobReader();
+
     JSC::JSValue cancelForBindings(JSC::JSGlobalObject& globalObject, JSC::JSValue value) { return cancel(globalObject, value, Use::Bindings); }
-    JSC::JSValue getReader(JSC::JSGlobalObject&, JSC::JSValue);
     JSC::JSValue pipeTo(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue);
     JSC::JSValue pipeThrough(JSC::JSGlobalObject&, JSC::JSValue, JSC::JSValue);
 
