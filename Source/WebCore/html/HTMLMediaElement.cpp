@@ -3758,6 +3758,10 @@ void HTMLMediaElement::seekWithTolerance(const SeekTarget& target, bool fromDOM)
     refreshCachedTime();
     MediaTime now = currentMediaTime();
 
+    // Needed to detect a special case in updatePlayState().
+    if (now >= durationMediaTime())
+        m_seekAfterPlaybackEnded = true;
+
     // 3 - If the element's seeking IDL attribute is true, then another instance of this algorithm is
     // already running. Abort that other instance of the algorithm without waiting for the step that
     // it is running to complete.
@@ -3945,6 +3949,8 @@ void HTMLMediaElement::finishSeek()
 #endif
     if (wasPlayingBeforeSeeking)
         playInternal();
+
+    m_seekAfterPlaybackEnded = false;
 }
 
 HTMLMediaElement::ReadyState HTMLMediaElement::readyState() const
@@ -4390,8 +4396,10 @@ void HTMLMediaElement::playInternal()
     if (!m_player || m_networkState == NETWORK_EMPTY)
         selectMediaResource();
 
-    if (endedPlayback())
+    if (endedPlayback()) {
+        m_seekAfterPlaybackEnded = true;
         seekInternal(MediaTime::zeroTime());
+    }
 
     if (RefPtr mediaController = m_mediaController)
         mediaController->bringElementUpToSpeed(*this);
@@ -6416,7 +6424,9 @@ void HTMLMediaElement::updatePlayState()
     if (shouldBePlaying) {
         invalidateCachedTime();
 
-        if (playerPaused) {
+        if (playerPaused && (!m_seeking || (m_seeking && (m_firstTimePlaying
+            || (loop() && m_lastSeekTime == MediaTime::zeroTime())
+            || m_isResumingPlayback || m_seekAfterPlaybackEnded)))) {
             mediaSession().clientWillBeginPlayback();
 
             // Set rate, muted and volume before calling play in case they were set before the media engine was set up.
@@ -8975,8 +8985,11 @@ void HTMLMediaElement::resumeAutoplaying()
 void HTMLMediaElement::mayResumePlayback(bool shouldResume)
 {
     ALWAYS_LOG(LOGIDENTIFIER, "paused = ", paused());
-    if (!ended() && paused() && shouldResume)
+    if (!ended() && paused() && shouldResume) {
+        m_isResumingPlayback = true;
         play();
+        m_isResumingPlayback = false;
+    }
 }
 
 String HTMLMediaElement::mediaSessionTitle() const
