@@ -2431,7 +2431,9 @@ bool CanvasRenderingContext2DBase::needsPreparationForDisplay() const
 
 static void initializeEmptyImageData(const ImageData& imageData)
 {
-    imageData.data().zeroFill();
+    imageData.data().visit([](auto& array) {
+        array.zeroFill();
+    });
 }
 
 ExceptionOr<Ref<ImageData>> CanvasRenderingContext2DBase::createImageData(ImageData& existingImageData) const
@@ -2495,7 +2497,7 @@ RefPtr<ByteArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossi
     ConstPixelBufferConversionView source {
         .format = { AlphaPremultiplication::Unpremultiplied, PixelFormat::RGBA8, colorSpace },
         .bytesPerRow = bytesPerRow,
-        .rows = imageData.data().data(),
+        .rows = imageData.data().asUint8ClampedArray()->data(),
     };
     PixelBufferConversionView destination {
         .format = cachedFormat,
@@ -2510,10 +2512,7 @@ RefPtr<ByteArrayPixelBuffer> CanvasRenderingContext2DBase::cacheImageDataIfPossi
 RefPtr<ImageData> CanvasRenderingContext2DBase::makeImageDataIfContentsCached(const IntRect& sourceRect, PredefinedColorSpace colorSpace) const
 {
     if (std::holds_alternative<CachedContentsTransparent>(m_cachedContents)) {
-        auto imageData = ImageData::create(sourceRect.size(), colorSpace);
-        if (imageData)
-            imageData->data().zeroFill();
-        return imageData;
+        return ImageData::createZeroFilled(sourceRect.size(), colorSpace);
     }
     if (std::holds_alternative<CachedContentsUnknown>(m_cachedContents))
         return nullptr;
@@ -2621,7 +2620,7 @@ void CanvasRenderingContext2DBase::putImageData(ImageData& data, int dx, int dy,
     if (!buffer)
         return;
 
-    if (data.data().isDetached())
+    if (data.data()->isDetached())
         return;
 
     if (dirtyWidth < 0) {

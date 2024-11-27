@@ -896,7 +896,7 @@ void ImageBitmap::createCompletionHandler(ScriptExecutionContext& scriptExecutio
     //      internal slot.
     // 6.2. If IsDetachedBuffer(buffer) is true, then return p rejected with an
     //      "InvalidStateError" DOMException.
-    if (imageData->data().isDetached()) {
+    if (imageData->data()->isDetached()) {
         completionHandler(Exception { ExceptionCode::InvalidStateError, "ImageData's viewed buffer has been detached"_s });
         return;
     }

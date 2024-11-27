@@ -4061,6 +4061,7 @@ JSImageBitmapRenderingContextSettings.cpp
 JSImageCapture.cpp
 JSImageData.cpp
 JSImageDataSettings.cpp
+JSImageDataStorageFormat.cpp
 JSImageSmoothingQuality.cpp
 JSInputDeviceInfo.cpp
 JSInputEvent.cpp

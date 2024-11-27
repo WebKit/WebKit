@@ -1871,13 +1871,13 @@ private:
                 }
                 write(static_cast<uint32_t>(data->width()));
                 write(static_cast<uint32_t>(data->height()));
-                CheckedUint32 dataLength = data->data().length();
+                CheckedUint32 dataLength = data->data()->byteLength();
                 if (dataLength.hasOverflowed()) {
                     code = SerializationReturnCode::DataCloneError;
                     return true;
                 }
                 write(dataLength);
-                write(data->data().span());
+                write(data->data()->span());
                 write(data->colorSpace());
                 return true;
             }
@@ -4966,10 +4966,12 @@ private:
                 fail();
                 return JSValue();
             }
-            if (length)
-                memcpy(result.returnValue()->data().data(), bufferStart, length);
-            else
-                result.returnValue()->data().zeroFill();
+            result.returnValue()->data().visit([&](auto& array) {
+                if (length)
+                    memcpy(array.data(), bufferStart, length);
+                else
+                    array.zeroFill();
+            });
             m_imageDataPool.append(result.returnValue().copyRef());
             return getJSValue(result.releaseReturnValue());
         }
