@@ -2039,6 +2039,55 @@ class ValidateChange(buildstep.BuildStep, BugzillaMixin, GitHubMixin):
         return defer.returnValue(None)
 
 
+class ValidateUserForQueue(buildstep.BuildStep, AddToLogMixin):
+    name = 'validate-user-for-queue'
+    description = ['validate-user-for-queue running']
+    descriptionDone = ['Validated user for queue']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.contributors = {}
+
+    def getResultSummary(self):
+        if self.results == [FAILURE, SKIPPED]:
+            return {'step': self.descriptionDone}
+        return buildstep.BuildStep.getResultSummary(self)
+
+    def is_committer(self, email):
+        contributor = self.contributors.get(email.lower())
+        return contributor and contributor['status'] in ['reviewer', 'committer']
+
+    @defer.inlineCallbacks
+    def run(self):
+        self.contributors, errors = yield Contributors.load(use_network=True)
+        for error in errors:
+            yield self._addToLog('stdio', error)
+
+        if not self.contributors:
+            self.descriptionDone = 'Failed to get contributors information'
+            self.build.buildFinished(['Failed to get contributors information'], FAILURE)
+            defer.returnValue(FAILURE)
+            return
+
+        pr_number = self.getProperty('github.number', '')
+        if pr_number:
+            committer = (self.getProperty('owners', []) or [''])[0]
+        else:
+            committer = self.getProperty('patch_committer', '').lower()
+
+        # For now, we assume that the requisite status is "committer".
+        if not self.is_committer(committer):
+            yield self._addToLog('stdio', f'{committer} does not have committer status.\n')
+            self.descriptionDone = f'Skipping queue, as {committer} lacks committer status'
+            self.build.results = SKIPPED
+            self.build.buildFinished([f'Skipping queue, as {committer} lacks committer status'], SKIPPED)
+            defer.returnValue(FAILURE)
+            return
+
+        yield self._addToLog('stdio', f'{committer} has committer status.\n')
+        defer.returnValue(SUCCESS)
+
+
 class ValidateCommitterAndReviewer(buildstep.BuildStep, GitHubMixin, AddToLogMixin):
     name = 'validate-committer-and-reviewer'
     descriptionDone = ['Validated committer and reviewer']

@@ -6587,6 +6587,57 @@ class TestRemoveAndAddLabels(BuildStepMixinAdditions, unittest.TestCase):
         return rc
 
 
+class TestValidateUserForQueue(BuildStepMixinAdditions, unittest.TestCase):
+    def setUp(self):
+        self.longMessage = True
+        Contributors.load = mock_load_contributors
+        return self.setUpBuildStep()
+
+    def tearDown(self):
+        return self.tearDownBuildStep()
+
+    def test_success_patch(self):
+        self.setupStep(ValidateUserForQueue())
+        self.setProperty('patch_committer', 'committer@webkit.org')
+        self.expectOutcome(result=SUCCESS, state_string='Validated user for queue')
+        return self.runStep()
+
+    def test_success_pr(self):
+        self.setupStep(ValidateUserForQueue())
+        self.setProperty('github.number', '1234')
+        self.setProperty('owners', ['webkit-commit-queue'])
+        self.expectOutcome(result=SUCCESS, state_string='Validated user for queue')
+        return self.runStep()
+
+    def test_failure_load_contributors_patch(self):
+        self.setupStep(ValidateUserForQueue())
+        self.setProperty('patch_committer', 'abc@webkit.org')
+        Contributors.load = lambda *args, **kwargs: ({}, [])
+        self.expectOutcome(result=FAILURE, state_string='Failed to get contributors information (failure)')
+        return self.runStep()
+
+    def test_failure_load_contributors_pr(self):
+        self.setupStep(ValidateUserForQueue())
+        self.setProperty('github.number', '1234')
+        self.setProperty('owners', ['abc'])
+        Contributors.load = lambda *args, **kwargs: ({}, [])
+        self.expectOutcome(result=FAILURE, state_string='Failed to get contributors information (failure)')
+        return self.runStep()
+
+    def test_failure_invalid_committer_patch(self):
+        self.setupStep(ValidateUserForQueue())
+        self.setProperty('patch_committer', 'abc@webkit.org')
+        self.expectOutcome(result=FAILURE, state_string='Skipping queue, as abc@webkit.org lacks committer status (failure)')
+        return self.runStep()
+
+    def test_failure_invalid_committer_pr(self):
+        self.setupStep(ValidateUserForQueue())
+        self.setProperty('github.number', '1234')
+        self.setProperty('owners', ['abc'])
+        self.expectOutcome(result=FAILURE, state_string='Skipping queue, as abc lacks committer status (failure)')
+        return self.runStep()
+
+
 class TestValidateCommitterAndReviewer(BuildStepMixinAdditions, unittest.TestCase):
     def setUp(self):
         self.longMessage = True
