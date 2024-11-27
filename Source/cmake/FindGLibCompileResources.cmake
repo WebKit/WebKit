@@ -48,10 +48,15 @@ function(GLIB_COMPILE_RESOURCES)
             ${ARG_SOURCE_XML} ${ARG_OUTPUT} ${ARG_OUTPUT}.deps)
     endif ()
 
+    get_filename_component(output_dir "${ARG_OUTPUT}" DIRECTORY)
+    get_filename_component(output_dir "${output_dir}" ABSOLUTE)
+    get_filename_component(ARG_OUTPUT "${ARG_OUTPUT}" ABSOLUTE)
+
     add_custom_command(
         OUTPUT  ${ARG_OUTPUT} ${ARG_OUTPUT}.deps
         DEPENDS ${ARG_SOURCE_XML}
         DEPFILE ${ARG_OUTPUT}.deps
+        COMMAND ${CMAKE_COMMAND} -E make_directory "${output_dir}"
         COMMAND ${GLIB_COMPILE_RESOURCES_EXECUTABLE}
                 --generate
                 --target=${ARG_OUTPUT}
