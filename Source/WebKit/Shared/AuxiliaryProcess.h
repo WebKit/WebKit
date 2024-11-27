@@ -31,6 +31,7 @@
 #include "SandboxExtension.h"
 #include <WebCore/ProcessIdentifier.h>
 #include <WebCore/UserActivity.h>
+#include <wtf/AbstractRefCounted.h>
 #include <wtf/HashMap.h>
 #include <wtf/RunLoop.h>
 #include <wtf/RuntimeApplicationChecks.h>
@@ -54,7 +55,7 @@ class SandboxInitializationParameters;
 struct AuxiliaryProcessInitializationParameters;
 struct AuxiliaryProcessCreationParameters;
 
-class AuxiliaryProcess : public IPC::Connection::Client, public IPC::MessageSender {
+class AuxiliaryProcess : public IPC::Connection::Client, public IPC::MessageSender, public AbstractRefCounted {
     WTF_MAKE_NONCOPYABLE(AuxiliaryProcess);
     WTF_MAKE_FAST_ALLOCATED;
     WTF_OVERRIDE_DELETE_FOR_CHECKED_PTR(AuxiliaryProcess);

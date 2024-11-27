@@ -39,6 +39,16 @@ WebNotificationManagerMessageHandler::WebNotificationManagerMessageHandler(WebPa
 {
 }
 
+void WebNotificationManagerMessageHandler::ref() const
+{
+    m_webPageProxy->ref();
+}
+
+void WebNotificationManagerMessageHandler::deref() const
+{
+    m_webPageProxy->deref();
+}
+
 Ref<WebPageProxy> WebNotificationManagerMessageHandler::protectedPage() const
 {
     return m_webPageProxy.get();

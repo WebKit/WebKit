@@ -346,8 +346,8 @@ public:
 
     const String& uiProcessBundleIdentifier() const;
 
-    void ref() const override { ThreadSafeRefCounted<NetworkProcess>::ref(); }
-    void deref() const override { ThreadSafeRefCounted<NetworkProcess>::deref(); }
+    void ref() const final { ThreadSafeRefCounted<NetworkProcess>::ref(); }
+    void deref() const final { ThreadSafeRefCounted<NetworkProcess>::deref(); }
 
     void storePrivateClickMeasurement(PAL::SessionID, WebCore::PrivateClickMeasurement&&);
     void dumpPrivateClickMeasurement(PAL::SessionID, CompletionHandler<void(String)>&&);

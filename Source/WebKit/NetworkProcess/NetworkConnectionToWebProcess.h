@@ -517,7 +517,7 @@ private:
     SharedPreferencesForWebProcess m_sharedPreferencesForWebProcess;
     HashSet<String> m_allowedFilePaths;
 #if ENABLE(IPC_TESTING_API)
-    IPCTester m_ipcTester;
+    const Ref<IPCTester> m_ipcTester;
 #endif
 
     HashMap<WebTransportSessionIdentifier, Ref<NetworkTransportSession>> m_networkTransportSessions;

@@ -393,6 +393,7 @@ private:
     JSIPC(WebPage& webPage, WebFrame& webFrame)
         : m_webPage(webPage)
         , m_webFrame(webFrame)
+        , m_testerProxy(IPCTesterReceiver::create())
     { }
 
     static JSIPC* unwrap(JSObjectRef);
@@ -438,7 +439,7 @@ private:
     WeakPtr<WebPage> m_webPage;
     WeakPtr<WebFrame> m_webFrame;
     Vector<Ref<JSMessageListener>> m_messageListeners;
-    IPCTesterReceiver m_testerProxy;
+    Ref<IPCTesterReceiver> m_testerProxy;
     RefPtr<JSIPCConnection> m_uiConnection;
     RefPtr<JSIPCConnection> m_networkConnection;
     RefPtr<JSIPCConnection> m_gpuConnection;
@@ -2710,7 +2711,7 @@ JSValueRef JSIPC::addTesterReceiver(JSContextRef context, JSObjectRef, JSObjectR
         return JSValueMakeUndefined(context);
     }
     // Currently supports only UI process, as there's no uniform way to add message receivers.
-    WebProcess::singleton().addMessageReceiver(Messages::IPCTesterReceiver::messageReceiverName(), jsIPC->m_testerProxy);
+    WebProcess::singleton().addMessageReceiver(Messages::IPCTesterReceiver::messageReceiverName(), jsIPC->m_testerProxy.get());
     return JSValueMakeUndefined(context);
 }
 

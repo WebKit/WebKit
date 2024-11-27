@@ -85,6 +85,9 @@ public:
     static GPUProcess& singleton();
     static constexpr WTF::AuxiliaryProcessType processType = WTF::AuxiliaryProcessType::GPU;
 
+    void ref() const final { ThreadSafeRefCounted::ref(); }
+    void deref() const final { ThreadSafeRefCounted::deref(); }
+
     void removeGPUConnectionToWebProcess(GPUConnectionToWebProcess&);
 
     void prepareToSuspend(bool isSuspensionImminent, MonotonicTime estimatedSuspendTime, CompletionHandler<void()>&&);

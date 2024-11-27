@@ -207,8 +207,8 @@ public:
 
     // ref() & deref() do nothing since WebProcess is a singleton object.
     // This is for objects owned by the WebProcess to forward their refcounting to their owner.
-    void ref() const { }
-    void deref() const { }
+    void ref() const final { }
+    void deref() const final { }
 
     WebPage* webPage(WebCore::PageIdentifier) const;
     void createWebPage(WebCore::PageIdentifier, WebPageCreationParameters&&);

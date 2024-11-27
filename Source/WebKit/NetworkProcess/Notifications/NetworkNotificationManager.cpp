@@ -43,6 +43,11 @@ using namespace WebCore;
 
 WTF_MAKE_TZONE_ALLOCATED_IMPL(NetworkNotificationManager);
 
+Ref<NetworkNotificationManager> NetworkNotificationManager::create(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
+{
+    return adoptRef(*new NetworkNotificationManager(webPushMachServiceName, WTFMove(configuration)));
+}
+
 NetworkNotificationManager::NetworkNotificationManager(const String& webPushMachServiceName, WebPushD::WebPushDaemonConnectionConfiguration&& configuration)
 {
     if (!webPushMachServiceName.isEmpty())

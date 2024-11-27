@@ -22,7 +22,7 @@
 
 #if ENABLE(IPC_TESTING_API)
 
-messages -> IPCTesterReceiver NotRefCounted {
+messages -> IPCTesterReceiver {
     void AsyncMessage(uint32_t arg1) -> (uint32_t reply) Asynchronous
 }
 
