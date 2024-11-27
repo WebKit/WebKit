@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 55;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -27,7 +27,6 @@
 		440034682AD8C1C50081CD73 /* gmock-generated-actions.h in Copy Headers Internal Custom */ = {isa = PBXBuildFile; fileRef = 44E750F02AC7298A00828AC4 /* gmock-generated-actions.h */; };
 		440034692AD8C1C80081CD73 /* gmock-matchers.h in Copy Headers Internal Custom */ = {isa = PBXBuildFile; fileRef = 44E750EF2AC7298A00828AC4 /* gmock-matchers.h */; };
 		4400346A2AD8C1CA0081CD73 /* gmock-port.h in Copy Headers Internal Custom */ = {isa = PBXBuildFile; fileRef = 44E750EE2AC7298A00828AC4 /* gmock-port.h */; };
-		444CE6852AE2DCA90075179E /* libgtest.a in Product Dependencies */ = {isa = PBXBuildFile; fileRef = 44E751542AC72B2200828AC4 /* libgtest.a */; };
 		44E751152AC7298A00828AC4 /* gmock-matchers.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E750E72AC7298A00828AC4 /* gmock-matchers.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		44E751162AC7298A00828AC4 /* gmock-more-actions.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E750E82AC7298A00828AC4 /* gmock-more-actions.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		44E7511D2AC7298A00828AC4 /* gmock-function-mocker.h in Headers */ = {isa = PBXBuildFile; fileRef = 44E750F22AC7298A00828AC4 /* gmock-function-mocker.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -41,6 +40,62 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		44480C242CF02D2700809A5C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 44480C192CF02D2600809A5C /* gtest.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4539C8FF0EC27F6400A70F4C;
+			remoteInfo = "gtest-framework";
+		};
+		44480C262CF02D2700809A5C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 44480C192CF02D2600809A5C /* gtest.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 40C848FA101A209C0083642A;
+			remoteInfo = "gtest-static";
+		};
+		44480C282CF02D2700809A5C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 44480C192CF02D2600809A5C /* gtest.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 40C8490B101A217E0083642A;
+			remoteInfo = "gtest_main-static";
+		};
+		44480C2A2CF02D2700809A5C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 44480C192CF02D2600809A5C /* gtest.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 40899F430FFA7184000B29AE;
+			remoteInfo = "gtest_unittest-framework";
+		};
+		44480C2C2CF02D2700809A5C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 44480C192CF02D2600809A5C /* gtest.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 40C84987101A36850083642A;
+			remoteInfo = "gtest_unittest-static";
+		};
+		44480C2E2CF02D2700809A5C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 44480C192CF02D2600809A5C /* gtest.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4089A0130FFACEFC000B29AE;
+			remoteInfo = "sample1_unittest-framework";
+		};
+		44480C302CF02D2700809A5C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 44480C192CF02D2600809A5C /* gtest.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 40C84997101A36A60083642A;
+			remoteInfo = "sample1_unittest-static";
+		};
+		44480C322CF02D3500809A5C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 44480C192CF02D2600809A5C /* gtest.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 40C848F9101A209C0083642A;
+			remoteInfo = "gtest-static";
+		};
 		44E7514B2AC72C7700828AC4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 44E750BA2AC7291000828AC4 /* Project object */;
@@ -77,20 +132,10 @@
 			name = "Copy Headers Internal Custom";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		448631492AE2D94C00F9BC42 /* Product Dependencies */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 16;
-			files = (
-				444CE6852AE2DCA90075179E /* libgtest.a in Product Dependencies */,
-			);
-			name = "Product Dependencies";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		44480C192CF02D2600809A5C /* gtest.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = gtest.xcodeproj; path = ../gtest/xcode/gtest.xcodeproj; sourceTree = "<group>"; };
 		44E750C22AC7291000828AC4 /* libgmock.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libgmock.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		44E750CC2AC7298A00828AC4 /* gmock_leak_test.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gmock_leak_test.py; sourceTree = "<group>"; };
 		44E750CD2AC7298A00828AC4 /* gmock_all_test.cc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gmock_all_test.cc; sourceTree = "<group>"; };
@@ -158,6 +203,20 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		44480C1A2CF02D2600809A5C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				44480C252CF02D2700809A5C /* gtest.framework */,
+				44480C272CF02D2700809A5C /* libgtest.a */,
+				44480C292CF02D2700809A5C /* libgtest_main.a */,
+				44480C2B2CF02D2700809A5C /* gtest_unittest-framework */,
+				44480C2D2CF02D2700809A5C /* gtest_unittest */,
+				44480C2F2CF02D2700809A5C /* sample1_unittest-framework */,
+				44480C312CF02D2700809A5C /* sample1_unittest-static */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		444CE6842AE2DBB00075179E /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -169,6 +228,7 @@
 		44E750B92AC7291000828AC4 = {
 			isa = PBXGroup;
 			children = (
+				44480C192CF02D2600809A5C /* gtest.xcodeproj */,
 				44E750C92AC7294F00828AC4 /* Configurations */,
 				444CE6842AE2DBB00075179E /* Frameworks */,
 				44E750CA2AC7296800828AC4 /* Source */,
@@ -324,7 +384,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 44E750C62AC7291000828AC4 /* Build configuration list for PBXNativeTarget "gmock" */;
 			buildPhases = (
-				448631492AE2D94C00F9BC42 /* Product Dependencies */,
 				44E750BE2AC7291000828AC4 /* Headers */,
 				440034632AD8C08D0081CD73 /* Copy Headers Internal */,
 				440034642AD8C0AE0081CD73 /* Copy Headers Internal Custom */,
@@ -334,6 +393,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				44480C332CF02D3500809A5C /* PBXTargetDependency */,
 			);
 			name = gmock;
 			productName = gmock;
@@ -368,6 +428,12 @@
 			mainGroup = 44E750B92AC7291000828AC4;
 			productRefGroup = 44E750C32AC7291000828AC4 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 44480C1A2CF02D2600809A5C /* Products */;
+					ProjectRef = 44480C192CF02D2600809A5C /* gtest.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				44E751472AC72C6300828AC4 /* All */,
@@ -375,6 +441,58 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		44480C252CF02D2700809A5C /* gtest.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = gtest.framework;
+			remoteRef = 44480C242CF02D2700809A5C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		44480C272CF02D2700809A5C /* libgtest.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libgtest.a;
+			remoteRef = 44480C262CF02D2700809A5C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		44480C292CF02D2700809A5C /* libgtest_main.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libgtest_main.a;
+			remoteRef = 44480C282CF02D2700809A5C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		44480C2B2CF02D2700809A5C /* gtest_unittest-framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "gtest_unittest-framework";
+			remoteRef = 44480C2A2CF02D2700809A5C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		44480C2D2CF02D2700809A5C /* gtest_unittest */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = gtest_unittest;
+			remoteRef = 44480C2C2CF02D2700809A5C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		44480C2F2CF02D2700809A5C /* sample1_unittest-framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "sample1_unittest-framework";
+			remoteRef = 44480C2E2CF02D2700809A5C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		44480C312CF02D2700809A5C /* sample1_unittest-static */ = {
+			isa = PBXReferenceProxy;
+			fileType = "compiled.mach-o.executable";
+			path = "sample1_unittest-static";
+			remoteRef = 44480C302CF02D2700809A5C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		44E750BF2AC7291000828AC4 /* Sources */ = {
@@ -388,6 +506,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		44480C332CF02D3500809A5C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "gtest-static";
+			targetProxy = 44480C322CF02D3500809A5C /* PBXContainerItemProxy */;
+		};
 		44E7514C2AC72C7700828AC4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 44E750C12AC7291000828AC4 /* gmock */;
