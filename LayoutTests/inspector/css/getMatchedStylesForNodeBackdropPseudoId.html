@@ -54,7 +54,7 @@ function test()
         description: "A non-dialog should have no `::backdrop` rules.",
         selector: "#test-div",
         async domNodeStylesHandler(styles) {
-            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.Marker), undefined, "Expected no rules entry for selector `*::backdrop`.");
+            InspectorTest.expectEqual(styles.pseudoElements.get(WI.CSSManager.PseudoSelectorNames.Backdrop), undefined, "Expected no rules entry for selector `*::backdrop`.");
         }
     });
 
