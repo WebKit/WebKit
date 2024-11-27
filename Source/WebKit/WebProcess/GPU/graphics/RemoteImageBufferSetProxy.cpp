@@ -273,7 +273,7 @@ void RemoteImageBufferSetProxy::willPrepareForDisplay()
         return;
 
     if (m_remoteNeedsConfigurationUpdate) {
-        send(Messages::RemoteImageBufferSet::UpdateConfiguration(m_size, m_renderingMode, m_scale, m_colorSpace, m_pixelFormat));
+        send(Messages::RemoteImageBufferSet::UpdateConfiguration(m_size, m_renderingMode, m_renderingPurpose, m_scale, m_colorSpace, m_pixelFormat));
 
         OptionSet<WebCore::ImageBufferOptions> options;
         if (m_renderingMode == RenderingMode::Accelerated)
