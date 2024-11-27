@@ -27,6 +27,7 @@
 
 #if ENABLE(JIT)
 
+#include "JITOpaqueByproducts.h"
 #include "MacroAssemblerCodeRef.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/TZoneMalloc.h>
@@ -34,8 +35,6 @@
 namespace JSC {
 
 class VM;
-
-class OpaqueByproducts;
 
 // This class is a way to keep the result of a compilation alive and runnable.
 

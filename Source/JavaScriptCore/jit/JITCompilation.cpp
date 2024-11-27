@@ -28,7 +28,6 @@
 
 #if ENABLE(JIT)
 
-#include "JITOpaqueByproducts.h"
 #include <wtf/TZoneMallocInlines.h>
 
 namespace JSC {
