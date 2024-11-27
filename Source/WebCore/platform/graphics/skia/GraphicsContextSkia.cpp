@@ -316,8 +316,9 @@ void GraphicsContextSkia::drawNativeImageInternal(NativeImage& nativeImage, cons
         // If we encounter an accelerated NativeImage (skiaGrContext() != nullptr), we are in the threaded GPU rendering painting mode, verify that.
         ASSERT(m_renderingMode == RenderingMode::Accelerated);
         ASSERT(ProcessCapabilities::canUseAcceleratedBuffers());
+#if USE(COORDINATED_GRAPHICS)
         ASSERT(SkiaPaintingEngine::numberOfGPUPaintingThreads() > 0);
-
+#endif
         // The 'nativeImage' was produced on another thread -- to use it here, we need to create a new NativeImage, that wraps the existing GPU resource.
         if (auto newNativeImage = nativeImage.backend().copyAcceleratedNativeImageBorrowingBackendTexture())
             drawSkiaImage(newNativeImage->platformImage(), newNativeImage->size(), destRect, srcRect, options);
@@ -334,8 +335,9 @@ void GraphicsContextSkia::drawFilteredImageBuffer(ImageBuffer* sourceImage, cons
         // If we encounter an accelerated ImageBuffer (skiaGrContext() != nullptr), we are in the threaded GPU rendering painting mode, verify that.
         ASSERT(m_renderingMode == RenderingMode::Accelerated);
         ASSERT(ProcessCapabilities::canUseAcceleratedBuffers());
+#if USE(COORDINATED_GRAPHICS)
         ASSERT(SkiaPaintingEngine::numberOfGPUPaintingThreads() > 0);
-
+#endif
         // The 'image' was produced on another thread -- to use it here, we need to create a new ImageBuffer, that wraps the existing GPU resource.
         auto newSourceImage = sourceImage->copyAcceleratedImageBufferBorrowingBackendRenderTarget();
         GraphicsContext::drawFilteredImageBuffer(newSourceImage.get(), sourceImageRect, filter, results);
@@ -1046,8 +1048,9 @@ void GraphicsContextSkia::drawPattern(NativeImage& nativeImage, const FloatRect&
         // If we encounter an accelerated NativeImage (skiaGrContext() != nullptr), we are in the threaded GPU rendering painting mode, verify that.
         ASSERT(m_renderingMode == RenderingMode::Accelerated);
         ASSERT(ProcessCapabilities::canUseAcceleratedBuffers());
+#if USE(COORDINATED_GRAPHICS)
         ASSERT(SkiaPaintingEngine::numberOfGPUPaintingThreads() > 0);
-
+#endif
         // The 'nativeImage' was produced on another thread -- to use it here, we need to create a new NativeImage, that wraps the existing GPU resource.
         if (auto newNativeImage = nativeImage.backend().copyAcceleratedNativeImageBorrowingBackendTexture())
             drawSkiaPattern(newNativeImage->platformImage(), newNativeImage->size(), destRect, tileRect, patternTransform, phase, spacing, options);
