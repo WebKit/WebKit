@@ -1318,22 +1318,6 @@ void WebPageProxy::setSelectionForActiveWritingToolsSession(const WebCore::Chara
     protectedLegacyMainFrameProcess()->sendWithAsyncReply(Messages::WebPage::SetSelectionForActiveWritingToolsSession(rangeRelativeToSessionRange), WTFMove(completionHandler), webPageIDInMainFrameProcess());
 }
 
-void WebPageProxy::enableSourceTextAnimationAfterElementWithID(const String& elementID)
-{
-    if (!hasRunningProcess())
-        return;
-
-    protectedLegacyMainFrameProcess()->send(Messages::WebPage::EnableSourceTextAnimationAfterElementWithID(elementID), webPageIDInMainFrameProcess());
-}
-
-void WebPageProxy::enableTextAnimationTypeForElementWithID(const String& elementID)
-{
-    if (!hasRunningProcess())
-        return;
-
-    protectedLegacyMainFrameProcess()->send(Messages::WebPage::EnableTextAnimationTypeForElementWithID(elementID), webPageIDInMainFrameProcess());
-}
-
 void WebPageProxy::addTextAnimationForAnimationID(IPC::Connection& connection, const WTF::UUID& uuid, const WebCore::TextAnimationData& styleData, const WebCore::TextIndicatorData& indicatorData)
 {
     addTextAnimationForAnimationIDWithCompletionHandler(connection, uuid, styleData, indicatorData, { });

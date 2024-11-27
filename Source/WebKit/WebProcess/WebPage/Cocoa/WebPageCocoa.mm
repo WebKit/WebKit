@@ -1044,16 +1044,6 @@ void WebPage::updateUnderlyingTextVisibilityForTextAnimationID(const WTF::UUID& 
     m_textAnimationController->updateUnderlyingTextVisibilityForTextAnimationID(uuid, visible, WTFMove(completionHandler));
 }
 
-void WebPage::enableSourceTextAnimationAfterElementWithID(const String& elementID)
-{
-    m_textAnimationController->enableSourceTextAnimationAfterElementWithID(elementID);
-}
-
-void WebPage::enableTextAnimationTypeForElementWithID(const String& elementID)
-{
-    m_textAnimationController->enableTextAnimationTypeForElementWithID(elementID);
-}
-
 void WebPage::proofreadingSessionSuggestionTextRectsInRootViewCoordinates(const WebCore::CharacterRange& enclosingRangeRelativeToSessionRange, CompletionHandler<void(Vector<FloatRect>&&)>&& completionHandler) const
 {
     auto rects = corePage()->proofreadingSessionSuggestionTextRectsInRootViewCoordinates(enclosingRangeRelativeToSessionRange);
