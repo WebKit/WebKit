@@ -128,6 +128,7 @@
     macro(exitKind) \
     macro(exports) \
     macro(fallback) \
+    macro(fill) \
     macro(flags) \
     macro(firstDayOfWeek) \
     macro(forEach) \

@@ -199,43 +199,6 @@ function some(callback /*, thisArg */)
     return false;
 }
 
-function fill(value /* [, start [, end]] */)
-{
-    "use strict";
-
-    var array = @toObject(this, "Array.prototype.fill requires that |this| not be null or undefined");
-    var length = @toLength(array.length);
-
-    var relativeStart = @toIntegerOrInfinity(@argument(1));
-    var k = 0;
-    if (relativeStart < 0) {
-        k = length + relativeStart;
-        if (k < 0)
-            k = 0;
-    } else {
-        k = relativeStart;
-        if (k > length)
-            k = length;
-    }
-    var relativeEnd = length;
-    var end = @argument(2);
-    if (end !== @undefined)
-        relativeEnd = @toIntegerOrInfinity(end);
-    var final = 0;
-    if (relativeEnd < 0) {
-        final = length + relativeEnd;
-        if (final < 0)
-            final = 0;
-    } else {
-        final = relativeEnd;
-        if (final > length)
-            final = length;
-    }
-    for (; k < final; k++)
-        array[k] = value;
-    return array;
-}
-
 function find(callback /*, thisArg */)
 {
     "use strict";
