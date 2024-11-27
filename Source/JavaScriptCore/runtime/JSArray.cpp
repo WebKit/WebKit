@@ -481,6 +481,63 @@ bool JSArray::setLengthWithArrayStorage(JSGlobalObject* globalObject, unsigned n
     return true;
 }
 
+bool JSArray::fastFill(VM& vm, unsigned startIndex, unsigned endIndex, JSValue value)
+{
+    if (isCopyOnWrite(indexingMode()))
+        convertFromCopyOnWrite(vm);
+
+    IndexingType type = indexingType();
+    IndexingType nextType = [type, value]() {
+        if (!(type & IsArray))
+            return NonArray;
+        if (hasAnyArrayStorage(type))
+            return NonArray;
+        switch (type) {
+        case ArrayWithInt32:
+        case ArrayWithUndecided:
+            if (value.isInt32())
+                return ArrayWithInt32;
+            if (value.isNumber())
+                return ArrayWithDouble;
+            return ArrayWithContiguous;
+        case ArrayWithDouble:
+            if (value.isNumber())
+                return type;
+            return ArrayWithContiguous;
+        case ArrayWithContiguous:
+            return type;
+        default:
+            return NonArray;
+        }
+    }();
+    if (type == ArrayWithUndecided) {
+        if (nextType == ArrayWithInt32)
+            convertUndecidedToInt32(vm);
+        else if (nextType == ArrayWithDouble)
+            convertUndecidedToDouble(vm);
+        else if (nextType == ArrayWithContiguous)
+            convertUndecidedToContiguous(vm);
+        else {
+            ASSERT_NOT_REACHED();
+            return false;
+        }
+    } else if (type != nextType)
+        return false;
+
+    ASSERT(nextType == indexingType());
+
+    if (nextType == ArrayWithDouble) {
+        auto* data = butterfly()->contiguousDouble().data();
+        std::fill(data + startIndex, data + endIndex, value.asNumber());
+    } else {
+        for (unsigned i = startIndex; i < endIndex; ++i)
+            butterfly()->contiguous().at(this, i) = std::bit_cast<const WriteBarrier<Unknown>>(JSValue::encode(value));
+        vm.writeBarrier(this);
+    }
+
+    return true;
+}
+
 bool JSArray::appendMemcpy(JSGlobalObject* globalObject, VM& vm, unsigned startIndex, IndexingType otherType, std::span<const EncodedJSValue> values)
 {
     auto scope = DECLARE_THROW_SCOPE(vm);
