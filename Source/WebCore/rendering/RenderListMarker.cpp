@@ -251,7 +251,7 @@ void RenderListMarker::layout()
     m_lineOffsetForListItem = writingMode().isLogicalLeftInlineStart() ? m_lineLogicalOffsetForListItem : m_listItem->logicalRightOffsetForLine(blockOffset, 0_lu);
 
     if (isImage()) {
-        updateMarginsAndContent();
+        updateInlineMarginsAndContent();
         setWidth(m_image->imageSize(this, style().usedZoom()).width());
         setHeight(m_image->imageSize(this, style().usedZoom()).height());
     } else {
@@ -285,12 +285,12 @@ void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
     RenderBox::imageChanged(o, rect);
 }
 
-void RenderListMarker::updateMarginsAndContent()
+void RenderListMarker::updateInlineMarginsAndContent()
 {
     // FIXME: It's messy to use the preferredLogicalWidths dirty bit for this optimization, also unclear if this is premature optimization.
     if (preferredLogicalWidthsDirty())
         updateContent();
-    updateMargins();
+    updateInlineMargins();
 }
 
 void RenderListMarker::updateContent()
@@ -360,7 +360,7 @@ void RenderListMarker::computePreferredLogicalWidths()
         LayoutSize imageSize = LayoutSize(m_image->imageSize(this, style().usedZoom()));
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = writingMode().isHorizontal() ? imageSize.width() : imageSize.height();
         setPreferredLogicalWidthsDirty(false);
-        updateMargins();
+        updateInlineMargins();
         return;
     }
 
@@ -377,44 +377,42 @@ void RenderListMarker::computePreferredLogicalWidths()
 
     setPreferredLogicalWidthsDirty(false);
 
-    updateMargins();
+    updateInlineMargins();
 }
 
-void RenderListMarker::updateMargins()
+void RenderListMarker::updateInlineMargins()
 {
     constexpr int markerPadding = 7;
-
     const FontMetrics& fontMetrics = style().metricsOfPrimaryFont();
 
-    LayoutUnit marginStart;
-    LayoutUnit marginEnd;
-
-    if (isInside()) {
+    auto marginsForInsideMarker = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
         if (isImage())
-            marginEnd = markerPadding;
-        else if (widthUsesMetricsOfPrimaryFont()) {
-            marginStart = -1;
-            marginEnd = fontMetrics.intAscent() - minPreferredLogicalWidth() + 1;
-        }
-    } else if (isImage()) {
-        marginStart = -minPreferredLogicalWidth() - markerPadding;
-        marginEnd = markerPadding;
-    } else {
-        int offset = fontMetrics.intAscent() * 2 / 3;
-        if (widthUsesMetricsOfPrimaryFont()) {
-            marginStart = -offset - markerPadding - 1;
-            marginEnd = offset + markerPadding + 1 - minPreferredLogicalWidth();
-        } else if (style().listStyleType().type == ListStyleType::Type::String) {
-            if (!m_textContent.isEmpty())
-                marginStart = -minPreferredLogicalWidth();
-        } else {
-            if (!m_textContent.isEmpty()) {
-                marginStart = -minPreferredLogicalWidth() - offset / 2;
-                marginEnd = offset / 2;
-            }
-        }
-    }
+            return { 0, markerPadding };
 
+        if (widthUsesMetricsOfPrimaryFont())
+            return { -1, fontMetrics.intAscent() - minPreferredLogicalWidth() + 1 };
+
+        return { };
+    };
+
+    auto marginsForOutsideMarker = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
+        if (isImage())
+            return { -minPreferredLogicalWidth() - markerPadding, markerPadding };
+
+        int offset = fontMetrics.intAscent() * 2 / 3;
+        if (widthUsesMetricsOfPrimaryFont())
+            return { -offset - markerPadding - 1, offset + markerPadding + 1 - minPreferredLogicalWidth() };
+
+        if (m_textContent.isEmpty())
+            return { };
+
+        if (style().listStyleType().type == ListStyleType::Type::String)
+            return { -minPreferredLogicalWidth(), 0 };
+
+        return { -minPreferredLogicalWidth() - offset / 2, offset / 2 };
+    };
+
+    auto [marginStart, marginEnd] = isInside() ? marginsForInsideMarker() : marginsForOutsideMarker();
     mutableStyle().setMarginStart(Length(marginStart, LengthType::Fixed));
     mutableStyle().setMarginEnd(Length(marginEnd, LengthType::Fixed));
 }

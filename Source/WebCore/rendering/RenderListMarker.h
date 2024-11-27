@@ -59,7 +59,7 @@ public:
 
     bool isInside() const;
 
-    void updateMarginsAndContent();
+    void updateInlineMarginsAndContent();
 
     bool isImage() const final;
 
@@ -84,7 +84,7 @@ private:
 
     void element() const = delete;
 
-    void updateMargins();
+    void updateInlineMargins();
     void updateContent();
     RenderBox* parentBox(RenderBox&);
     FloatRect relativeMarkerRect();

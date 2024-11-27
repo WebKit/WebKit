@@ -280,9 +280,9 @@ void RenderListItem::layout()
 
 void RenderListItem::computePreferredLogicalWidths()
 {
-    // FIXME: RenderListMarker::updateMargins() mutates margin style which affects preferred widths.
+    // FIXME: RenderListMarker::updateInlineMargins() mutates margin style which affects preferred widths.
     if (m_marker && m_marker->preferredLogicalWidthsDirty())
-        m_marker->updateMarginsAndContent();
+        m_marker->updateInlineMarginsAndContent();
 
     RenderBlockFlow::computePreferredLogicalWidths();
 }
