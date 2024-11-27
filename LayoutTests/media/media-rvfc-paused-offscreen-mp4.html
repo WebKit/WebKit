@@ -23,7 +23,7 @@
         // time of the last video frame.
         v.currentTime = 6.009;
 
-        const seekPromise = waitFor(v, 'seeked');
+        const seekPromise = waitFor(v, 'seeked', true);
         const frame2 = await waitForVideoFrame(v);
         testExpected(v.currentTime, 6.009);
         testExpected(frame2[1].mediaTime, 6.009);
