@@ -52,6 +52,16 @@ RemoteMediaSessionHelperProxy::~RemoteMediaSessionHelperProxy()
     MediaSessionHelper::sharedHelper().removeClient(*this);
 }
 
+void RemoteMediaSessionHelperProxy::ref() const
+{
+    m_gpuConnection.get()->ref();
+}
+
+void RemoteMediaSessionHelperProxy::deref() const
+{
+    m_gpuConnection.get()->deref();
+}
+
 void RemoteMediaSessionHelperProxy::startMonitoringWirelessRoutes()
 {
     if (m_isMonitoringWirelessRoutes)

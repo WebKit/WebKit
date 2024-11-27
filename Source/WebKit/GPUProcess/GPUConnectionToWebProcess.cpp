@@ -631,7 +631,7 @@ Ref<UserMediaCaptureManagerProxy> GPUConnectionToWebProcess::protectedUserMediaC
 RemoteAudioMediaStreamTrackRendererInternalUnitManager& GPUConnectionToWebProcess::audioMediaStreamTrackRendererInternalUnitManager()
 {
     if (!m_audioMediaStreamTrackRendererInternalUnitManager)
-        m_audioMediaStreamTrackRendererInternalUnitManager = makeUnique<RemoteAudioMediaStreamTrackRendererInternalUnitManager>(*this);
+        m_audioMediaStreamTrackRendererInternalUnitManager = makeUniqueWithoutRefCountedCheck<RemoteAudioMediaStreamTrackRendererInternalUnitManager>(*this);
 
     return *m_audioMediaStreamTrackRendererInternalUnitManager;
 }
@@ -674,7 +674,7 @@ Ref<RemoteAudioSessionProxy> GPUConnectionToWebProcess::protectedAudioSessionPro
 RemoteImageDecoderAVFProxy& GPUConnectionToWebProcess::imageDecoderAVFProxy()
 {
     if (!m_imageDecoderAVFProxy)
-        m_imageDecoderAVFProxy = makeUnique<RemoteImageDecoderAVFProxy>(*this);
+        m_imageDecoderAVFProxy = makeUniqueWithoutRefCountedCheck<RemoteImageDecoderAVFProxy>(*this);
 
     return *m_imageDecoderAVFProxy;
 }
@@ -845,7 +845,7 @@ void GPUConnectionToWebProcess::ensureAudioSession(EnsureAudioSessionCompletion&
 RemoteMediaSessionHelperProxy& GPUConnectionToWebProcess::mediaSessionHelperProxy()
 {
     if (!m_mediaSessionHelperProxy)
-        m_mediaSessionHelperProxy = makeUnique<RemoteMediaSessionHelperProxy>(*this);
+        m_mediaSessionHelperProxy = makeUniqueWithoutRefCountedCheck<RemoteMediaSessionHelperProxy>(*this);
     return *m_mediaSessionHelperProxy;
 }
 
@@ -879,7 +879,7 @@ Ref<RemoteLegacyCDMFactoryProxy> GPUConnectionToWebProcess::protectedLegacyCdmFa
 RemoteMediaEngineConfigurationFactoryProxy& GPUConnectionToWebProcess::mediaEngineConfigurationFactoryProxy()
 {
     if (!m_mediaEngineConfigurationFactoryProxy)
-        m_mediaEngineConfigurationFactoryProxy = makeUnique<RemoteMediaEngineConfigurationFactoryProxy>();
+        m_mediaEngineConfigurationFactoryProxy = makeUniqueWithoutRefCountedCheck<RemoteMediaEngineConfigurationFactoryProxy>(*this);
     return *m_mediaEngineConfigurationFactoryProxy;
 }
 #endif

@@ -24,7 +24,7 @@
 #if ENABLE(GPU_PROCESS) && ENABLE(LEGACY_ENCRYPTED_MEDIA)
 
 [EnabledBy=LegacyEncryptedMediaAPIEnabled]
-messages -> RemoteLegacyCDMProxy NotRefCounted {
+messages -> RemoteLegacyCDMProxy {
     SupportsMIMEType(String mimeType) -> (bool supports) Synchronous
     CreateSession(String mediaKeysStorageDirectory, uint64_t logIdentifier) -> (std::optional<WebKit::RemoteLegacyCDMSessionIdentifier> identifier) Synchronous
     SetPlayerId(std::optional<WebCore::MediaPlayerIdentifier> playerId)

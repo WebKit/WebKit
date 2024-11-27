@@ -62,6 +62,9 @@ public:
 
     void notifyLastToCaptureAudioChanged();
 
+    void ref() const;
+    void deref() const;
+
 private:
     // Messages
     void createUnit(AudioMediaStreamTrackRendererInternalUnitIdentifier, const String&, CompletionHandler<void(std::optional<WebCore::CAAudioStreamDescription>, size_t)>&& callback);

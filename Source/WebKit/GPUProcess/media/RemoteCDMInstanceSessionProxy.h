@@ -33,6 +33,7 @@
 #include "RemoteCDMProxy.h"
 #include <WebCore/CDMInstanceSession.h>
 #include <wtf/CompletionHandler.h>
+#include <wtf/RefCounted.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
@@ -41,9 +42,9 @@ class SharedBuffer;
 
 namespace WebKit {
 
-class RemoteCDMInstanceSessionProxy final : private IPC::MessageReceiver, private WebCore::CDMInstanceSessionClient {
+class RemoteCDMInstanceSessionProxy final : private IPC::MessageReceiver, private WebCore::CDMInstanceSessionClient, public RefCounted<RemoteCDMInstanceSessionProxy> {
 public:
-    static std::unique_ptr<RemoteCDMInstanceSessionProxy> create(WeakPtr<RemoteCDMProxy>&&, Ref<WebCore::CDMInstanceSession>&&, uint64_t logIdentifier, RemoteCDMInstanceSessionIdentifier);
+    static Ref<RemoteCDMInstanceSessionProxy> create(WeakPtr<RemoteCDMProxy>&&, Ref<WebCore::CDMInstanceSession>&&, uint64_t logIdentifier, RemoteCDMInstanceSessionIdentifier);
     virtual ~RemoteCDMInstanceSessionProxy();
     std::optional<SharedPreferencesForWebProcess> sharedPreferencesForWebProcess() const;
 
