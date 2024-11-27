@@ -322,7 +322,7 @@ void CSSParserImpl::parseStyleSheetForInspector(const String& string, const CSSP
 
 static CSSParserImpl::AllowedRules computeNewAllowedRules(CSSParserImpl::AllowedRules allowedRules, StyleRuleBase* rule)
 {
-    if (!rule || allowedRules == CSSParserImpl::AllowedRules::FontFeatureValuesRules || allowedRules == CSSParserImpl::AllowedRules::KeyframeRules || allowedRules == CSSParserImpl::AllowedRules::CounterStyleRules || allowedRules == CSSParserImpl::AllowedRules::ViewTransitionRules || allowedRules == CSSParserImpl::AllowedRules::NoRules)
+    if (!rule || allowedRules == CSSParserImpl::AllowedRules::FontFeatureValuesRules || allowedRules == CSSParserImpl::AllowedRules::KeyframeRules || allowedRules == CSSParserImpl::AllowedRules::NoRules)
         return allowedRules;
 
     ASSERT(allowedRules <= CSSParserImpl::AllowedRules::RegularRules);
