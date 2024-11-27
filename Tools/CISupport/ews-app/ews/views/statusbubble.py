@@ -43,7 +43,7 @@ class StatusBubble(View):
     # These queue names are from shortname in https://trac.webkit.org/browser/webkit/trunk/Tools/CISupport/ews-build/config.json
     # FIXME: Auto-generate this list https://bugs.webkit.org/show_bug.cgi?id=195640
     # Note: This list is sorted in the order of which bubbles appear in bugzilla.
-    ALL_QUEUES = ['style', 'ios', 'ios-sim', 'mac', 'mac-AS-debug', 'vision', 'vision-sim', 'tv', 'tv-sim', 'watch', 'watch-sim', 'gtk', 'wpe', 'wpe-cairo', 'win', 'win-tests',
+    ALL_QUEUES = ['style', 'ios', 'ios-sim', 'mac', 'mac-AS-debug', 'vision', 'vision-sim', 'tv', 'tv-sim', 'watch', 'watch-sim', 'gtk', 'wpe', 'wpe-cairo', 'playstation', 'win', 'win-tests',
                   'ios-wk2', 'ios-wk2-wpt', 'mac-wk1', 'mac-wk2', 'mac-wk2-stress', 'mac-intel-wk2', 'mac-AS-debug-wk2', 'mac-safer-cpp', 'vision-wk2', 'gtk-wk2', 'wpe-wk2', 'api-ios', 'api-mac',
                   'api-gtk', 'api-wpe', 'bindings', 'jsc', 'jsc-arm64', 'jsc-armv7', 'jsc-armv7-tests', 'webkitperl', 'webkitpy', 'services']
 

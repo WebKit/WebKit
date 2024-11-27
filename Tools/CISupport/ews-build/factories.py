@@ -289,6 +289,10 @@ class macOSWK2Factory(TestFactory):
     willTriggerCrashLogSubmission = True
 
 
+class PlayStationBuildFactory(BuildFactory):
+    branches = [r'main']
+
+
 class WinBuildFactory(BuildFactory):
     branches = [r'main']
 

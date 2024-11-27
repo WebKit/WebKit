@@ -41,6 +41,7 @@
     { "name": "igalia18-wpe-ews", "platform": "wpe" },
     { "name": "igalia19-wpe-ews", "platform": "wpe" },
     { "name": "aperez-wpe-ews", "platform": "wpe" },
+    { "name": "playstation-ews-01", "platform": "playstation" },
     { "name": "win-tests-ews-001", "platform": "win" },
     { "name": "win-tests-ews-002", "platform": "win" },
     { "name": "win-tests-ews-003", "platform": "win" },
@@ -348,6 +349,12 @@
       "workernames": ["ews226", "ews227", "ews228", "ews229", "ews230"]
     },
     {
+      "name": "PlayStation-Build-EWS", "shortname": "playstation", "icon": "buildOnly",
+      "factory": "PlayStationBuildFactory", "configuration": "release",
+      "architectures": ["x86_64"], "platform": "playstation",
+      "workernames": ["playstation-ews-01"]
+    },
+    {
       "name": "Win-Build-EWS", "shortname": "win", "icon": "buildOnly",
       "factory": "WinBuildFactory", "configuration": "release",
       "architectures": ["x86_64"], "platform": "win",
@@ -485,7 +492,7 @@
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-Sequoia-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "tvOS-18-Build-EWS", "tvOS-18-Simulator-Build-EWS", "visionOS-2-Build-EWS", "visionOS-2-Simulator-Build-EWS",
-            "watchOS-11-Build-EWS", "watchOS-11-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
+            "watchOS-11-Build-EWS", "watchOS-11-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "PlayStation-Build-EWS", "Win-Build-EWS",
             "WPE-Cairo-Build-EWS"
       ]
     },
@@ -500,7 +507,7 @@
             "JSC-ARMv7-32bits-Build-EWS", "JSC-Tests-EWS", "JSC-Tests-arm64-EWS",
             "macOS-Sequoia-Debug-Build-EWS", "macOS-Ventura-Release-Build-EWS", "macOS-Safer-CPP-Checks-EWS",
             "Services-EWS", "Style-EWS", "Style-EWS", "tvOS-18-Build-EWS", "tvOS-18-Simulator-Build-EWS", "visionOS-2-Build-EWS", "visionOS-2-Simulator-Build-EWS",
-            "watchOS-11-Build-EWS", "watchOS-11-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "Win-Build-EWS",
+            "watchOS-11-Build-EWS", "watchOS-11-Simulator-Build-EWS", "WPE-Build-EWS", "WebKitPerl-Tests-EWS", "WebKitPy-Tests-EWS", "PlayStation-Build-EWS", "Win-Build-EWS",
             "WPE-Cairo-Build-EWS"
       ]
     },
