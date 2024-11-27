@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<title>Verify srcset attribute setting order does not impact the outcome</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+async function attribute_order_test(set_attributes, unexpected_request, description) {
+  promise_test(async t => {
+    const img = new Image();
+    set_attributes(img);
+    await new Promise((resolve, reject) => {
+      const observer = new PerformanceObserver(list => {
+        const entries = list.getEntries();
+        for (const entry of entries) {
+          if (entry.name.endsWith(unexpected_request)) {
+            reject(`The ${unexpected_request} resource should not be fetched`);
+            observer.disconnect();
+          }
+        }
+      });
+      observer.observe({entryTypes: ["resource"]});
+      t.step_timeout(resolve, 500);
+    });
+  }, description);
+}
+
+async function microtask_test(set_attributes_once, set_attributes_twice, expected_requests, unexpected_requests, description) {
+  promise_test(async t => {
+    const img = new Image();
+    set_attributes_once(img);
+    await window.queueMicrotask(()=>{});
+    set_attributes_twice(img);
+    let expected_requests_counter = 0;
+    await new Promise((resolve, reject) => {
+      const observer = new PerformanceObserver(list => {
+        const entries = list.getEntries();
+        for (const entry of entries) {
+          for (const unexpected_request of unexpected_requests) {
+            if (entry.name.endsWith(unexpected_request)) {
+              reject(`The ${unexpected_request} resource should not be fetched`);
+              observer.disconnect();
+            }
+          }
+          for (const expected_request of expected_requests) {
+            if (entry.name.endsWith(expected_request)) {
+              ++expected_requests_counter;
+            }
+          }
+        }
+      });
+      observer.observe({entryTypes: ["resource"]});
+      t.step_timeout(resolve, 500);
+    });
+    assert_equals(expected_requests_counter, expected_requests.length);
+  }, description);
+}
+
+attribute_order_test(img => {
+  img.src = "/images/green.png?src";
+  img.srcset = "/images/green.png?srcset 1x";
+}, "?src", "srcset and src setting order does not matter");
+
+attribute_order_test(img => {
+  img.srcset = "/images/green.png?tiny 100w, /images/green.png?huge 1000w";
+  img.sizes = "1vw";
+}, "?huge", "srcset and sizes setting order does not matter");
+
+attribute_order_test(img => {
+  img.srcset = "/images/green.png?srcset_lazy 1x";
+  img.loading = "lazy"
+}, "?srcset_lazy", "srcset and loading setting order does not matter");
+
+microtask_test(img => {
+  img.src = "/images/green.png?src1";
+  img.srcset = "/images/green.png?srcset1 1x";
+},
+img => {
+  img.src = "/images/green.png?src2";
+  img.srcset = "/images/green.png?srcset2 1x";
+}, ["?srcset1", "?srcset2"],
+["?src1", "?src2"], "Image loading is triggered after a microtask");
+</script>
+

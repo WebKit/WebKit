@@ -29,6 +29,7 @@
 
 #include "Color.h"
 #include "ContainerNode.h"
+#include "ContentSecurityPolicy.h"
 #include "ContextDestructionObserverInlines.h"
 #include "DocumentEventTiming.h"
 #include "FontSelectorClient.h"
@@ -1141,6 +1142,9 @@ public:
 
     void overrideLastModified(const std::optional<WallTime>&);
     WEBCORE_EXPORT String lastModified() const;
+
+    std::optional<CodePosition> getCodePosition() { return m_codePosition; }
+    void setCodePosition(std::optional<CodePosition> position) { m_codePosition = position; }
 
     // The cookieURL is used to query the cookie database for this document's
     // cookies. For example, if the cookie URL is http://example.com, we'll
@@ -2689,6 +2693,7 @@ private:
 
     mutable std::unique_ptr<CSSParserContext> m_cachedCSSParserContext;
     mutable std::unique_ptr<PermissionsPolicy> m_permissionsPolicy;
+    std::optional<CodePosition> m_codePosition;
 };
 
 Element* eventTargetElementForDocument(Document*);
