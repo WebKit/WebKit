@@ -142,7 +142,7 @@ public:
     virtual void waitForAcceleratedRenderingFenceCompletion() { }
 
     virtual const GrDirectContext* skiaGrContext() const { return nullptr; }
-    virtual RefPtr<ImageBuffer> copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImageBuffer&) const;
+    WEBCORE_EXPORT virtual RefPtr<ImageBuffer> copyAcceleratedImageBufferBorrowingBackendRenderTarget(const ImageBuffer&) const;
 #endif
 
     virtual bool isInUse() const { return false; }
