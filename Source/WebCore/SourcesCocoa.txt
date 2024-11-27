@@ -324,6 +324,7 @@ platform/cocoa/ThemeCocoa.mm
 platform/cocoa/ThermalMitigationNotifier.mm
 platform/cocoa/UserAgentCocoa.mm
 platform/cocoa/VideoPresentationModelVideoElement.mm
+platform/cocoa/VideoPresentationLayerProvider.mm
 platform/cocoa/VideoToolboxSoftLink.cpp
 platform/cocoa/WebCoreAdditions.mm @no-unify
 platform/cocoa/WebCoreNSErrorExtras.mm

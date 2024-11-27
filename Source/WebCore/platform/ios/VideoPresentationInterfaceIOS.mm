@@ -136,7 +136,7 @@ void VideoPresentationInterfaceIOS::setVideoPresentationModel(VideoPresentationM
     videoDimensionsChanged(model ? model->videoDimensions() : FloatSize());
 }
 
-void VideoPresentationInterfaceIOS::setupFullscreen(UIView& videoView, const FloatRect& initialRect, const FloatSize&, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
+void VideoPresentationInterfaceIOS::setupFullscreen(const FloatRect& initialRect, const FloatSize&, UIView* parentView, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback, bool standby, bool blocksReturnToFullscreenFromPictureInPicture)
 {
     ASSERT(standby || mode != HTMLMediaElementEnums::VideoFullscreenModeNone);
     LOG(Fullscreen, "VideoPresentationInterfaceIOS::setupFullscreen(%p)", this);
@@ -145,7 +145,6 @@ void VideoPresentationInterfaceIOS::setupFullscreen(UIView& videoView, const Flo
 
     m_changingStandbyOnly = mode == HTMLMediaElementEnums::VideoFullscreenModeNone && standby;
     m_allowsPictureInPicturePlayback = allowsPictureInPicturePlayback;
-    m_videoView = &videoView;
     m_parentView = parentView;
     m_parentWindow = parentView.window;
 
@@ -235,20 +234,9 @@ void VideoPresentationInterfaceIOS::doSetup()
     }
 #endif // !PLATFORM(WATCHOS)
 
-    if (!m_playerLayerView)
-        m_playerLayerView = adoptNS([allocWebAVPlayerLayerViewInstance() init]);
-    [m_playerLayerView setHidden:isExternalPlaybackActive()];
-    [m_playerLayerView setBackgroundColor:clearUIColor()];
-
-    if (willRenderToLayer()) {
-        [m_playerLayerView setVideoView:m_videoView.get()];
-        if (!m_currentMode.hasPictureInPicture() && !m_changingStandbyOnly) {
-            ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER, "Moving videoView to fullscreen WebAVPlayerLayerView");
-            [m_playerLayerView addSubview:m_videoView.get()];
-        }
-    }
-
-    playerLayer().presentationModel = videoPresentationModel().get();
+    RetainPtr playerLayerView = this->playerLayerView();
+    [playerLayerView setHidden:isExternalPlaybackActive()];
+    [playerLayerView setBackgroundColor:clearUIColor()];
 
     setupPlayerViewController();
 
@@ -285,10 +273,10 @@ void VideoPresentationInterfaceIOS::videoDimensionsChanged(const FloatSize& vide
 
     playerLayer().videoDimensions = videoDimensions;
     setContentDimensions(videoDimensions);
-    [m_playerLayerView setNeedsLayout];
+    [playerLayerView() setNeedsLayout];
 
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
-    WebAVPictureInPicturePlayerLayerView *pipView = (WebAVPictureInPicturePlayerLayerView *)[m_playerLayerView pictureInPicturePlayerLayerView];
+    WebAVPictureInPicturePlayerLayerView *pipView = (WebAVPictureInPicturePlayerLayerView *)[playerLayerView() pictureInPicturePlayerLayerView];
     WebAVPlayerLayer *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
     [pipPlayerLayer setVideoDimensions:playerLayer().videoDimensions];
     [pipView setNeedsLayout];
@@ -297,7 +285,7 @@ void VideoPresentationInterfaceIOS::videoDimensionsChanged(const FloatSize& vide
 
 void VideoPresentationInterfaceIOS::externalPlaybackChanged(bool enabled, PlaybackSessionModel::ExternalPlaybackTargetType, const String&)
 {
-    [m_playerLayerView setHidden:enabled];
+    [playerLayerView() setHidden:enabled];
 }
 
 void VideoPresentationInterfaceIOS::setInlineRect(const FloatRect& inlineRect, bool visible)
@@ -324,11 +312,6 @@ void VideoPresentationInterfaceIOS::setInlineRect(const FloatRect& inlineRect, b
 WebAVPlayerController *VideoPresentationInterfaceIOS::playerController() const
 {
     return m_playbackSessionInterface->playerController();
-}
-
-WebAVPlayerLayer *VideoPresentationInterfaceIOS::playerLayer() const
-{
-    return (WebAVPlayerLayer *)[m_playerLayerView playerLayer];
 }
 
 void VideoPresentationInterfaceIOS::applicationDidBecomeActive()
@@ -384,7 +367,7 @@ void VideoPresentationInterfaceIOS::doEnterFullscreen()
     FloatSize size;
 #if HAVE(PICTUREINPICTUREPLAYERLAYERVIEW)
     if (m_currentMode.hasPictureInPicture()) {
-        auto *pipView = (WebAVPictureInPicturePlayerLayerView *)[m_playerLayerView pictureInPicturePlayerLayerView];
+        auto *pipView = (WebAVPictureInPicturePlayerLayerView *)[playerLayerView() pictureInPicturePlayerLayerView];
         auto *pipPlayerLayer = (WebAVPlayerLayer *)[pipView layer];
         auto videoFrame = [pipPlayerLayer calculateTargetVideoFrame];
         size = FloatSize(videoFrame.size());
@@ -499,7 +482,7 @@ void VideoPresentationInterfaceIOS::exitFullscreenHandler(BOOL success, NSError*
     } else {
         [CATransaction begin];
         [CATransaction setDisableActions:YES];
-        [m_playerLayerView setBackgroundColor:clearUIColor()];
+        [playerLayerView() setBackgroundColor:clearUIColor()];
         [playerViewController().view setBackgroundColor:clearUIColor()];
         [CATransaction commit];
     }
@@ -548,13 +531,9 @@ void VideoPresentationInterfaceIOS::cleanupFullscreen()
     [[playerViewController view] removeFromSuperview];
     [playerViewController removeFromParentViewController];
 
-    [m_playerLayerView setVideoView:nil];
-    [m_playerLayerView removeFromSuperview];
     [[m_viewController view] removeFromSuperview];
 
-    m_playerLayerView = nil;
     m_window = nil;
-    m_videoView = nil;
     m_parentView = nil;
     m_parentWindow = nil;
 
@@ -720,7 +699,7 @@ void VideoPresentationInterfaceIOS::didStopPictureInPicture()
 
     clearMode(HTMLMediaElementEnums::VideoFullscreenModePictureInPicture, !m_exitFullscreenNeedsExitPictureInPicture);
 
-    [m_playerLayerView setBackgroundColor:clearUIColor()];
+    [playerLayerView() setBackgroundColor:clearUIColor()];
     playerViewController().view.backgroundColor = clearUIColor();
 
     if (m_enterFullscreenNeedsExitPictureInPicture)
@@ -732,8 +711,7 @@ void VideoPresentationInterfaceIOS::didStopPictureInPicture()
     if (!m_targetMode.hasFullscreen() && !m_currentMode.hasFullscreen() && !m_hasVideoContentLayer) {
         // We have just exited pip and not entered fullscreen in turn. To avoid getting
         // stuck holding the video content layer, explicitly return it here:
-        if (auto model = videoPresentationModel())
-            model->returnVideoView();
+        returnVideoView();
     }
 }
 
@@ -866,13 +844,17 @@ void VideoPresentationInterfaceIOS::returnToStandby()
     ALWAYS_LOG_IF_POSSIBLE(LOGIDENTIFIER);
     m_returningToStandby = false;
 
-    auto model = videoPresentationModel();
-    if (model)
-        model->returnVideoView();
+    returnVideoView();
 
     // Continue processing exit picture-in-picture now that
     // it is safe to do so:
     didStopPictureInPicture();
+}
+
+void VideoPresentationInterfaceIOS::returnVideoView()
+{
+    if (auto model = videoPresentationModel())
+        model->returnVideoView();
 }
 
 void VideoPresentationInterfaceIOS::setMode(HTMLMediaElementEnums::VideoFullscreenMode mode, bool shouldNotifyModel)

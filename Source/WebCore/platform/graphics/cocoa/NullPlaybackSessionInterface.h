@@ -54,7 +54,6 @@ public:
 
     PlaybackSessionModel* playbackSessionModel() const { return m_model.get(); }
 
-    void setupFullscreen(UIView&, const FloatRect&, const FloatSize&, UIView*, HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) { }
     void enterFullscreen() { }
     bool exitFullscreen(const FloatRect&) { return false; }
     void cleanupFullscreen() { }

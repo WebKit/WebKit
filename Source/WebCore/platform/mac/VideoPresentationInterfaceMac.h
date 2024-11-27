@@ -32,6 +32,7 @@
 #include "PlaybackSessionInterfaceMac.h"
 #include "PlaybackSessionModel.h"
 #include "VideoFullscreenCaptions.h"
+#include "VideoPresentationLayerProvider.h"
 #include "VideoPresentationModel.h"
 #include <wtf/CheckedRef.h>
 #include <wtf/RefCounted.h>
@@ -53,6 +54,7 @@ class VideoPresentationInterfaceMac final
     : public VideoPresentationModelClient
     , private PlaybackSessionModelClient
     , public VideoFullscreenCaptions
+    , public VideoPresentationLayerProvider
     , public RefCounted<VideoPresentationInterfaceMac>
     , public CanMakeCheckedPtr<VideoPresentationInterfaceMac> {
     WTF_MAKE_TZONE_ALLOCATED_EXPORT(VideoPresentationInterfaceMac, WEBCORE_EXPORT);
@@ -78,7 +80,7 @@ public:
     WEBCORE_EXPORT void videoDimensionsChanged(const FloatSize&) final;
     void setPlayerIdentifier(std::optional<MediaPlayerIdentifier> identifier) final { m_playerIdentifier = identifier; }
 
-    WEBCORE_EXPORT void setupFullscreen(NSView& layerHostedView, const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback);
+    WEBCORE_EXPORT void setupFullscreen(const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode, bool allowsPictureInPicturePlayback);
     WEBCORE_EXPORT void enterFullscreen();
     WEBCORE_EXPORT bool exitFullscreen(const IntRect& finalRect, NSWindow *parentWindow);
     WEBCORE_EXPORT void exitFullscreenWithoutAnimationToMode(HTMLMediaElementEnums::VideoFullscreenMode);

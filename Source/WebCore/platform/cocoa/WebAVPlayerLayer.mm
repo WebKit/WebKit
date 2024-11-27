@@ -158,7 +158,18 @@ private:
 
 - (void)setVideoSublayer:(CALayer *)videoSublayer
 {
+    if (videoSublayer == _videoSublayer)
+        return;
+
+    if (_videoSublayer)
+        [_videoSublayer removeFromSuperlayer];
+
     _videoSublayer = videoSublayer;
+
+    if (_videoSublayer) {
+        [self addSublayer:_videoSublayer.get()];
+        [self resolveBounds];
+    }
 }
 
 - (CALayer*)videoSublayer

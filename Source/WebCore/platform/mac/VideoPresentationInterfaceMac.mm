@@ -461,7 +461,7 @@ WebVideoPresentationInterfaceMacObjC *VideoPresentationInterfaceMac::videoPresen
     return m_webVideoPresentationInterfaceObjC.get();
 }
 
-void VideoPresentationInterfaceMac::setupFullscreen(NSView& layerHostedView, const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback)
+void VideoPresentationInterfaceMac::setupFullscreen(const IntRect& initialRect, NSWindow *parentWindow, HTMLMediaElementEnums::VideoFullscreenMode mode, bool allowsPictureInPicturePlayback)
 {
     LOG(Fullscreen, "VideoPresentationInterfaceMac::setupFullscreen(%p), initialRect:{%d, %d, %d, %d}, parentWindow:%p, mode:%d", this, initialRect.x(), initialRect.y(), initialRect.width(), initialRect.height(), parentWindow, mode);
 
@@ -470,7 +470,7 @@ void VideoPresentationInterfaceMac::setupFullscreen(NSView& layerHostedView, con
 
     m_mode |= mode;
 
-    [videoPresentationInterfaceObjC() setUpPIPForVideoView:&layerHostedView withFrame:(NSRect)initialRect inWindow:parentWindow];
+    [videoPresentationInterfaceObjC() setUpPIPForVideoView:layerHostView() withFrame:(NSRect)initialRect inWindow:parentWindow];
 
     RunLoop::main().dispatch([protectedThis = Ref { *this }, this] {
         if (RefPtr model = videoPresentationModel()) {

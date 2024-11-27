@@ -58,7 +58,7 @@ private:
     bool pictureInPictureWasStartedWhenEnteringBackground() const final { return false; }
     bool mayAutomaticallyShowVideoPictureInPicture() const final { return false; }
     bool isPlayingVideoInEnhancedFullscreen() const final { return false; }
-    void setupFullscreen(UIView&, const WebCore::FloatRect&, const WebCore::FloatSize&, UIView*, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) final;
+    void setupFullscreen(const WebCore::FloatRect&, const WebCore::FloatSize&, UIView*, WebCore::HTMLMediaElementEnums::VideoFullscreenMode, bool, bool, bool) final;
     void hasVideoChanged(bool) final { }
     void finalizeSetup() final;
     void updateRouteSharingPolicy() final { }
