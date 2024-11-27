@@ -791,9 +791,9 @@ String AccessibilityRenderObject::stringValue() const
 
     if (auto* renderListMarker = dynamicDowncast<RenderListMarker>(m_renderer.get())) {
 #if USE(ATSPI)
-        return renderListMarker->textWithSuffix().toString();
+        return renderListMarker->textWithSuffix();
 #else
-        return renderListMarker->textWithoutSuffix().toString();
+        return renderListMarker->textWithoutSuffix();
 #endif
     }
 

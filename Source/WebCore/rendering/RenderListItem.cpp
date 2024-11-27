@@ -295,14 +295,14 @@ void RenderListItem::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     RenderBlockFlow::paint(paintInfo, paintOffset);
 }
 
-StringView RenderListItem::markerTextWithoutSuffix() const
+String RenderListItem::markerTextWithoutSuffix() const
 {
     if (!m_marker)
         return { };
     return m_marker->textWithoutSuffix();
 }
 
-StringView RenderListItem::markerTextWithSuffix() const
+String RenderListItem::markerTextWithSuffix() const
 {
     if (!m_marker)
         return { };

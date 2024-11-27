@@ -30,6 +30,21 @@ class CSSCounterStyle;
 class RenderListItem;
 class StyleRuleCounterStyle;
 
+struct ListMarkerTextContent {
+    String textWithoutSuffix;
+    String suffix;
+    TextDirection textDirection { TextDirection::LTR };
+    bool isEmpty() const
+    {
+        return textWithoutSuffix.isEmpty() && suffix.isEmpty();
+    }
+
+    String textWithSuffix() const
+    {
+        return makeString(textWithoutSuffix, suffix);
+    }
+};
+
 // Used to render the list item's marker.
 // The RenderListMarker always has to be a child of a RenderListItem.
 class RenderListMarker final : public RenderBox {
@@ -39,8 +54,8 @@ public:
     RenderListMarker(RenderListItem&, RenderStyle&&);
     virtual ~RenderListMarker();
 
-    StringView textWithoutSuffix() const;
-    StringView textWithSuffix() const { return m_textWithSuffix; }
+    String textWithoutSuffix() const { return m_textContent.textWithoutSuffix; };
+    String textWithSuffix() const { return m_textContent.textWithSuffix(); };
 
     bool isInside() const;
 
@@ -75,16 +90,12 @@ private:
     FloatRect relativeMarkerRect();
     LayoutRect localSelectionRect();
 
-    struct TextRunWithUnderlyingString;
-    TextRunWithUnderlyingString textRun() const;
-
     RefPtr<CSSCounterStyle> counterStyle() const;
     bool widthUsesMetricsOfPrimaryFont() const;
 
-    String m_textWithSuffix;
-    uint8_t m_textWithoutSuffixLength { 0 };
-    bool m_textIsLeftToRightDirection { true };
+    ListMarkerTextContent m_textContent;
     RefPtr<StyleImage> m_image;
+
     SingleThreadWeakPtr<RenderListItem> m_listItem;
     LayoutUnit m_lineOffsetForListItem;
     LayoutUnit m_lineLogicalOffsetForListItem;

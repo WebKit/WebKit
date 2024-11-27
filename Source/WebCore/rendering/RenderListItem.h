@@ -44,8 +44,8 @@ public:
     void setNotInList(bool notInList) { m_notInList = notInList; }
     bool notInList() const { return m_notInList; }
 
-    WEBCORE_EXPORT StringView markerTextWithoutSuffix() const;
-    StringView markerTextWithSuffix() const;
+    WEBCORE_EXPORT String markerTextWithoutSuffix() const;
+    String markerTextWithSuffix() const;
 
     void updateListMarkerNumbers();
 
