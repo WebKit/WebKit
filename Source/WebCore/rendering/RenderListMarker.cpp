@@ -47,7 +47,7 @@ namespace WebCore {
 WTF_MAKE_TZONE_OR_ISO_ALLOCATED_IMPL(RenderListMarker);
 
 RenderListMarker::RenderListMarker(RenderListItem& listItem, RenderStyle&& style)
-    : RenderBox(Type::ListMarker, listItem.document(), WTFMove(style))
+    : RenderBlockFlow(Type::ListMarker, listItem.document(), WTFMove(style))
     , m_listItem(listItem)
 {
     setInline(true);
@@ -62,7 +62,7 @@ void RenderListMarker::willBeDestroyed()
 {
     if (m_image)
         m_image->removeClient(*this);
-    RenderBox::willBeDestroyed();
+    RenderBlockFlow::willBeDestroyed();
 }
 
 static StyleDifference adjustedStyleDifference(StyleDifference diff, const RenderStyle& oldStyle, const RenderStyle& newStyle)
@@ -76,14 +76,14 @@ static StyleDifference adjustedStyleDifference(StyleDifference diff, const Rende
 
 void RenderListMarker::styleWillChange(StyleDifference diff, const RenderStyle& newStyle)
 {
-    RenderBox::styleWillChange(adjustedStyleDifference(diff, style(), newStyle), newStyle);
+    RenderBlockFlow::styleWillChange(adjustedStyleDifference(diff, style(), newStyle), newStyle);
 }
 
 void RenderListMarker::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     if (oldStyle)
         diff = adjustedStyleDifference(diff, *oldStyle, style());
-    RenderBox::styleDidChange(diff, oldStyle);
+    RenderBlockFlow::styleDidChange(diff, oldStyle);
 
     if (m_image != style().listStyleImage()) {
         if (m_image)
@@ -151,6 +151,11 @@ void RenderListMarker::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffse
 
     if (style().usedVisibility() != Visibility::Visible)
         return;
+
+    if (style().hasContent()) {
+        RenderBlock::paint(paintInfo, paintOffset);
+        return;
+    }
 
     LayoutPoint boxOrigin(paintOffset + location());
     LayoutRect overflowRect(visualOverflowRect());
@@ -243,22 +248,6 @@ void RenderListMarker::layout()
     StackStats::LayoutCheckPoint layoutCheckPoint;
     ASSERT(needsLayout());
 
-    LayoutUnit blockOffset;
-    for (auto* ancestor = parentBox(*this); ancestor && ancestor != m_listItem.get(); ancestor = parentBox(*ancestor))
-        blockOffset += ancestor->logicalTop();
-
-    m_lineLogicalOffsetForListItem = m_listItem->logicalLeftOffsetForLine(blockOffset, 0_lu);
-    m_lineOffsetForListItem = writingMode().isLogicalLeftInlineStart() ? m_lineLogicalOffsetForListItem : m_listItem->logicalRightOffsetForLine(blockOffset, 0_lu);
-
-    if (isImage()) {
-        updateInlineMarginsAndContent();
-        setWidth(m_image->imageSize(this, style().usedZoom()).width());
-        setHeight(m_image->imageSize(this, style().usedZoom()).height());
-    } else {
-        setLogicalWidth(minPreferredLogicalWidth());
-        setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
-    }
-
     setMarginStart(0);
     setMarginEnd(0);
 
@@ -269,7 +258,26 @@ void RenderListMarker::layout()
     if (endMargin.isFixed())
         setMarginEnd(LayoutUnit(endMargin.value()));
 
-    clearNeedsLayout();
+    if (style().hasContent()) {
+        RenderBlockFlow::layout();
+    } else {
+        LayoutUnit blockOffset;
+        for (auto* ancestor = parentBox(*this); ancestor && ancestor != m_listItem.get(); ancestor = parentBox(*ancestor))
+            blockOffset += ancestor->logicalTop();
+
+        m_lineLogicalOffsetForListItem = m_listItem->logicalLeftOffsetForLine(blockOffset, 0_lu);
+        m_lineOffsetForListItem = writingMode().isLogicalLeftInlineStart() ? m_lineLogicalOffsetForListItem : m_listItem->logicalRightOffsetForLine(blockOffset, 0_lu);
+
+        if (isImage()) {
+            updateInlineMarginsAndContent();
+            setWidth(m_image->imageSize(this, style().usedZoom()).width());
+            setHeight(m_image->imageSize(this, style().usedZoom()).height());
+        } else {
+            setLogicalWidth(minPreferredLogicalWidth());
+            setLogicalHeight(style().metricsOfPrimaryFont().intHeight());
+        }
+        clearNeedsLayout();
+    }
 }
 
 void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
@@ -282,7 +290,7 @@ void RenderListMarker::imageChanged(WrappedImagePtr o, const IntRect* rect)
                 repaint();
         }
     }
-    RenderBox::imageChanged(o, rect);
+    RenderBlockFlow::imageChanged(o, rect);
 }
 
 void RenderListMarker::updateInlineMarginsAndContent()
@@ -295,6 +303,15 @@ void RenderListMarker::updateInlineMarginsAndContent()
 
 void RenderListMarker::updateContent()
 {
+    if (style().hasContent()) {
+        m_textContent = {
+            .textWithoutSuffix = emptyString(),
+            .suffix = emptyString(),
+            .textDirection = TextDirection::LTR,
+        };
+        return;
+    }
+
     if (isImage()) {
         // FIXME: This is a somewhat arbitrary width.
         LayoutUnit bulletWidth = style().metricsOfPrimaryFont().intAscent() / 2_lu;
@@ -354,6 +371,13 @@ void RenderListMarker::updateContent()
 void RenderListMarker::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
+
+    if (style().hasContent()) {
+        RenderBlockFlow::computePreferredLogicalWidths();
+        updateInlineMargins();
+        return;
+    }
+
     updateContent();
 
     if (isImage()) {
@@ -386,6 +410,9 @@ void RenderListMarker::updateInlineMargins()
     const FontMetrics& fontMetrics = style().metricsOfPrimaryFont();
 
     auto marginsForInsideMarker = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
+        if (style().hasContent())
+            return { };
+
         if (isImage())
             return { 0, markerPadding };
 
@@ -396,6 +423,9 @@ void RenderListMarker::updateInlineMargins()
     };
 
     auto marginsForOutsideMarker = [&]() -> std::pair<LayoutUnit, LayoutUnit> {
+        if (style().hasContent())
+            return { -minPreferredLogicalWidth(), 0 };
+
         if (isImage())
             return { -minPreferredLogicalWidth() - markerPadding, markerPadding };
 
@@ -419,9 +449,9 @@ void RenderListMarker::updateInlineMargins()
 
 LayoutUnit RenderListMarker::lineHeight(bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
-    if (!isImage())
+    if (!style().hasContent() && !isImage())
         return m_listItem->lineHeight(firstLine, direction, PositionOfInteriorLineBoxes);
-    return RenderBox::lineHeight(firstLine, direction, linePositionMode);
+    return RenderBlockFlow::lineHeight(firstLine, direction, linePositionMode);
 }
 
 LayoutUnit RenderListMarker::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
@@ -443,6 +473,8 @@ const RenderListItem* RenderListMarker::listItem() const
 
 FloatRect RenderListMarker::relativeMarkerRect()
 {
+    ASSERT(!style().hasContent());
+
     if (isImage())
         return FloatRect(0, 0, m_image->imageSize(this, style().usedZoom()).width(), m_image->imageSize(this, style().usedZoom()).height());
 
