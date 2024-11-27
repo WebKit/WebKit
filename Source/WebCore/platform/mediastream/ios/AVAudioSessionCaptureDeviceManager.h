@@ -75,7 +75,7 @@ private:
 
     enum class AudioSessionState { NotNeeded, Inactive, Active };
 
-    std::optional<Vector<CaptureDevice>> m_devices;
+    std::optional<Vector<CaptureDevice>> m_captureDevices;
     Vector<CaptureDevice> m_speakerDevices;
     std::optional<Vector<AVAudioSessionCaptureDevice>> m_audioSessionCaptureDevices;
     RetainPtr<WebAVAudioSessionAvailableInputsListener> m_listener;
