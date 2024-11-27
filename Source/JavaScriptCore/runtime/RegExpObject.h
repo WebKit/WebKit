@@ -101,7 +101,7 @@ public:
 
     bool test(JSGlobalObject* globalObject, JSString* string) { return !!match(globalObject, string); }
     bool testInline(JSGlobalObject* globalObject, JSString* string) { return !!matchInline(globalObject, string); }
-    JSValue exec(JSGlobalObject*, JSString*);
+    JS_EXPORT_PRIVATE JSValue exec(JSGlobalObject*, JSString*);
     JSValue execInline(JSGlobalObject*, JSString*);
     MatchResult match(JSGlobalObject*, JSString*);
     JSValue matchGlobal(JSGlobalObject*, JSString*);

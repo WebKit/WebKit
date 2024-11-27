@@ -303,8 +303,12 @@ ExceptionOr<void> URLPattern::compileAllComponents(ScriptExecutionContext& conte
 
     URLPatternUtilities::URLPatternStringOptions compileOptions { .ignoreCase = options.ignoreCase };
 
-    // FIXME: Implement https://urlpattern.spec.whatwg.org/#protocol-component-matches-a-special-scheme
-    m_pathname = processedInit.pathname;
+    auto maybePathnameComponent = m_protocolComponent.matchSpecialSchemeProtocol(context)
+    ? URLPatternUtilities::URLPatternComponent::compile(vm, processedInit.pathname, EncodingCallbackType::Path, URLPatternUtilities::URLPatternStringOptions  { "/"_s, "/"_s, options.ignoreCase })
+    : URLPatternUtilities::URLPatternComponent::compile(vm, processedInit.pathname, EncodingCallbackType::OpaquePath, compileOptions);
+    if (maybePathnameComponent.hasException())
+        return maybePathnameComponent.releaseException();
+    m_pathnameComponent = maybePathnameComponent.releaseReturnValue();
 
     auto maybeSearchComponent = URLPatternUtilities::URLPatternComponent::compile(vm, processedInit.search, EncodingCallbackType::Search, compileOptions);
     if (maybeSearchComponent.hasException())

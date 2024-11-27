@@ -664,7 +664,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*. Was /foo/(.*).
+PASS urlPatternComponent is "/foo/*"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -702,7 +702,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*. Was /foo/(.*).
+PASS urlPatternComponent is "/foo/*"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -740,7 +740,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*. Was /foo/(.*).
+PASS urlPatternComponent is "/foo/*"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -778,7 +778,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*. Was /foo/(.*).
+PASS urlPatternComponent is "/foo/*"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1177,7 +1177,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+PASS urlPatternComponent is "/foo/*?"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1215,7 +1215,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+PASS urlPatternComponent is "/foo/*?"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1253,7 +1253,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+PASS urlPatternComponent is "/foo/*?"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1291,7 +1291,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+PASS urlPatternComponent is "/foo/*?"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1329,7 +1329,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+PASS urlPatternComponent is "/foo/*?"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1367,7 +1367,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*?. Was /foo/(.*)?.
+PASS urlPatternComponent is "/foo/*?"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1405,7 +1405,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+PASS urlPatternComponent is "/foo/*+"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1443,7 +1443,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+PASS urlPatternComponent is "/foo/*+"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1481,7 +1481,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+PASS urlPatternComponent is "/foo/*+"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1519,7 +1519,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+PASS urlPatternComponent is "/foo/*+"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1557,7 +1557,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+PASS urlPatternComponent is "/foo/*+"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1595,7 +1595,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/*+. Was /foo/(.*)+.
+PASS urlPatternComponent is "/foo/*+"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1633,7 +1633,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+PASS urlPatternComponent is "/foo/**"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1671,7 +1671,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+PASS urlPatternComponent is "/foo/**"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1709,7 +1709,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+PASS urlPatternComponent is "/foo/**"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1747,7 +1747,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+PASS urlPatternComponent is "/foo/**"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1785,7 +1785,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+PASS urlPatternComponent is "/foo/**"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1823,7 +1823,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/**. Was /foo/(.*)*.
+PASS urlPatternComponent is "/foo/**"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1861,7 +1861,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/bar. Was /foo{/bar}.
+PASS urlPatternComponent is "/foo/bar"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1880,7 +1880,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/bar. Was /foo{/bar}.
+PASS urlPatternComponent is "/foo/bar"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1899,7 +1899,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/bar. Was /foo{/bar}.
+PASS urlPatternComponent is "/foo/bar"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -1918,7 +1918,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo/bar. Was /foo{/bar}.
+PASS urlPatternComponent is "/foo/bar"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -2198,26 +2198,7 @@ PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeErr
 Testing: {"pattern":[{"hostname":"(cafÃ©)"}],"expected_obj":"error"}
 PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
 Testing: {"pattern":[{"pathname":"(cafÃ©)"}],"expected_obj":"error"}
-Component: protocol
-PASS urlPatternComponent is "*"
-Component: username
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: hostname
-PASS urlPatternComponent is "*"
-Component: port
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: pathname
-PASS urlPatternComponent is "(cafÃ©)"
-Component: search
-WARN: shouldBeEqualToString() expects string arguments
-WARN: shouldBe() expects function or string arguments
-FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
-Component: hash
-PASS urlPatternComponent is "*"
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
 Testing: {"pattern":[{"search":"(cafÃ©)"}],"expected_obj":"error"}
 PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Current codepoint is not ascii.
 Testing: {"pattern":[{"hash":"(cafÃ©)"}],"expected_obj":"error"}
@@ -3036,7 +3017,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /caf%C3%A9. Was /cafÃ©.
+FAIL urlPatternComponent should be /caf%C3%A9. Was /caf%C3%83%C2%A9.
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -3112,7 +3093,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /bar. Was /foo/../bar.
+PASS urlPatternComponent is "/bar"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -3169,7 +3150,7 @@ PASS urlPatternComponent is ""
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /bar. Was {/bar}.
+PASS urlPatternComponent is "/bar"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -3188,7 +3169,7 @@ PASS urlPatternComponent is ""
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /bar. Was \/bar.
+PASS urlPatternComponent is "/bar"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -3422,26 +3403,7 @@ PASS urlPatternComponent is "*"
 Component: hash
 PASS urlPatternComponent is "*"
 Testing: {"pattern":[{"pathname":"/(\\m)"}],"expected_obj":"error"}
-Component: protocol
-PASS urlPatternComponent is "*"
-Component: username
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: hostname
-PASS urlPatternComponent is "*"
-Component: port
-PASS urlPatternComponent is "*"
-Component: password
-PASS urlPatternComponent is "*"
-Component: pathname
-PASS urlPatternComponent is "/(\\m)"
-Component: search
-WARN: shouldBeEqualToString() expects string arguments
-WARN: shouldBe() expects function or string arguments
-FAIL urlPatternComponent should be undefined (of type undefined). Was * (of type string).
-Component: hash
-PASS urlPatternComponent is "*"
+PASS var pattern = new URLPattern(...errorEntry.pattern) threw exception TypeError: Unable to create RegExp object regular expression from provided URLPattern string..
 Testing: {"pattern":[{"pathname":"/foo!"}],"inputs":[{"pathname":"/foo!"}],"expected_match":{"pathname":{"input":"/foo!","groups":{}}}}
 Component: protocol
 PASS urlPatternComponent is "*"
@@ -3494,7 +3456,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be /foo%7B. Was /foo\{.
+PASS urlPatternComponent is "/foo%7B"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -3532,7 +3494,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-PASS urlPatternComponent is "var x = 1;"
+FAIL urlPatternComponent should be var x = 1;. Was var%20x%20=%201;.
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -3551,7 +3513,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be var%20x%20=%201;. Was var x = 1;.
+PASS urlPatternComponent is "var%20x%20=%201;"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -3570,7 +3532,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-PASS urlPatternComponent is "var x = 1;"
+FAIL urlPatternComponent should be var x = 1;. Was var%20x%20=%201;.
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -3589,7 +3551,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-PASS urlPatternComponent is "var x = 1;"
+FAIL urlPatternComponent should be var x = 1;. Was var%20x%20=%201;.
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -3608,7 +3570,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be var%20x%20=%201;. Was var x = 1;.
+PASS urlPatternComponent is "var%20x%20=%201;"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash
@@ -3627,7 +3589,7 @@ PASS urlPatternComponent is "*"
 Component: password
 PASS urlPatternComponent is "*"
 Component: pathname
-FAIL urlPatternComponent should be var%20x%20=%201;. Was var x = 1;.
+PASS urlPatternComponent is "var%20x%20=%201;"
 Component: search
 PASS urlPatternComponent is "*"
 Component: hash

@@ -2885,7 +2885,7 @@ function executeURLPatternConstructor(jsonArray) {
     debug("Testing: " + JSON.stringify(entry));
 
     errorEntry = entry;
-    if (errorEntry.expected_obj === 'error' && !entry.pattern[0]['pathname']) {
+    if (errorEntry.expected_obj === 'error') {
       shouldThrow("var pattern = new URLPattern(...errorEntry.pattern)");
       return;
     }

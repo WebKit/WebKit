@@ -461,7 +461,7 @@ String generatePatternString(const Vector<Part>& partList, const URLPatternStrin
 
         if (!needsGrouping && part.prefix.isEmpty() && previousPart && previousPart->type == PartType::FixedText) {
             if (options.prefixCodepoint.length() == 1
-                && options.prefixCodepoint.startsWith(*StringView(nextPart->value).codePoints().codePointAt(nextPart->value.length() - 1)))
+                && options.prefixCodepoint.startsWith(*StringView(previousPart->value).codePoints().codePointAt(previousPart->value.length() - 1)))
                 needsGrouping = true;
         }
 
