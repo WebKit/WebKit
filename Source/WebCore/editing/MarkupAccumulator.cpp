@@ -42,10 +42,13 @@
 #include "HTMLFrameElement.h"
 #include "HTMLHeadElement.h"
 #include "HTMLIFrameElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLLinkElement.h"
 #include "HTMLNames.h"
+#include "HTMLSelectElement.h"
 #include "HTMLStyleElement.h"
 #include "HTMLTemplateElement.h"
+#include "HTMLTextAreaElement.h"
 #include "NodeName.h"
 #include "ProcessingInstruction.h"
 #include "ScriptController.h"
@@ -284,7 +287,7 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node& targetNode, Serialize
     RefPtr<const Node> current = &targetNode;
     do {
         bool shouldSkipNode = false;
-        if (RefPtr element = dynamicDowncast<const Element>(current); element && shouldExcludeElement(*element))
+        if (RefPtr element = dynamicDowncast<const Element>(current); element && shouldExcludeElement(*element, targetNode))
             shouldSkipNode = true;
 
         bool shouldAppendNode = !shouldSkipNode && !(current == &targetNode && root != SerializedNodes::SubtreeIncludingNode);
@@ -876,8 +879,12 @@ static bool isElementExcludedByRule(const MarkupExclusionRule& rule, const Eleme
     return matchedAttributes == rule.attributes.size();
 }
 
-bool MarkupAccumulator::shouldExcludeElement(const Element& element)
+bool MarkupAccumulator::shouldExcludeElement(const Element& element, Node& targetNode)
 {
+    if (targetNode.document().requiresScriptExecutionTelemetry(ScriptTelemetryCategory::FormControls)) {
+        if (is<HTMLInputElement>(element) || is<HTMLSelectElement>(element) || is<HTMLTextAreaElement>(element))
+            return true;
+    }
     return WTF::anyOf(m_exclusionRules, [&](auto& rule) {
         return isElementExcludedByRule(rule, element);
     });
