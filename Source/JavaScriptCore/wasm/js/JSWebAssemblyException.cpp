@@ -54,6 +54,13 @@ JSWebAssemblyException::JSWebAssemblyException(VM& vm, Structure* structure, con
 {
 }
 
+void JSWebAssemblyException::finishCreation(VM& vm)
+{
+    Base::finishCreation(vm);
+    ASSERT(inherits(info()));
+    vm.heap.reportExtraMemoryAllocated(this, payload().byteSize());
+}
+
 template<typename Visitor>
 void JSWebAssemblyException::visitChildrenImpl(JSCell* cell, Visitor& visitor)
 {
@@ -67,6 +74,7 @@ void JSWebAssemblyException::visitChildrenImpl(JSCell* cell, Visitor& visitor)
             visitor.append(std::bit_cast<WriteBarrier<Unknown>>(exception->payload()[offset]));
         offset += tagType.argumentType(i).kind == Wasm::TypeKind::V128 ? 2 : 1;
     }
+    visitor.reportExtraMemoryVisited(exception->payload().size());
 }
 
 DEFINE_VISIT_CHILDREN(JSWebAssemblyException);
