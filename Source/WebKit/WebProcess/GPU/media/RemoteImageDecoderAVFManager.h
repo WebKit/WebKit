@@ -59,6 +59,7 @@ public:
     void ref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteImageDecoderAVFManager>::ref(); }
     void deref() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteImageDecoderAVFManager>::deref(); }
     ThreadSafeWeakPtrControlBlock& controlBlock() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteImageDecoderAVFManager>::controlBlock(); }
+    size_t weakRefCount() const final { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RemoteImageDecoderAVFManager>::weakRefCount(); }
 
 private:
     RemoteImageDecoderAVFManager();

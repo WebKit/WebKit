@@ -163,7 +163,7 @@ private:
 std::unique_ptr<SerializedImageBuffer> ImageBuffer::sinkIntoSerializedImageBuffer()
 {
     ASSERT(hasOneRef());
-    ASSERT(!controlBlock().weakReferenceCount());
+    ASSERT(!controlBlock().weakRefCount());
     return makeUnique<DefaultSerializedImageBuffer>(this);
 }
 

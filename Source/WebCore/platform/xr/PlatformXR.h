@@ -368,7 +368,7 @@ public:
 
     void ref() const { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device>::ref(); }
     void deref() const { ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device>::deref(); }
-    ThreadSafeWeakPtrControlBlock& controlBlock() const { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device>::controlBlock(); }
+    ThreadSafeWeakPtrControlBlock& controlBlock() const { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device>::controlBlock(); }    size_t weakRefCount() const { return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<Device>::weakRefCount(); }
 
     using FeatureList = Vector<SessionFeature>;
     bool supports(SessionMode mode) const { return m_supportedFeaturesMap.contains(mode); }

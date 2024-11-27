@@ -54,6 +54,7 @@ public:
     void ref() const final;
     void deref() const final;
     ThreadSafeWeakPtrControlBlock& controlBlock() const final;
+    size_t weakRefCount() const final;
 
 protected:
     RealtimeVideoCaptureSource(const CaptureDevice&, MediaDeviceHashSalts&&, std::optional<PageIdentifier>);

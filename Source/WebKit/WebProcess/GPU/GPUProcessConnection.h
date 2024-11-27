@@ -129,6 +129,7 @@ public:
         virtual ~Client() = default;
 
         virtual ThreadSafeWeakPtrControlBlock& controlBlock() const = 0;
+        virtual size_t weakRefCount() const = 0;
 
         virtual void gpuProcessConnectionDidClose(GPUProcessConnection&) { }
     };

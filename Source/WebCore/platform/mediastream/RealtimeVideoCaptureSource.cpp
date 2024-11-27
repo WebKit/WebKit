@@ -59,6 +59,11 @@ ThreadSafeWeakPtrControlBlock& RealtimeVideoCaptureSource::controlBlock() const
     return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeVideoCaptureSource, WTF::DestructionThread::MainRunLoop>::controlBlock();
 }
 
+size_t RealtimeVideoCaptureSource::weakRefCount() const
+{
+    return ThreadSafeRefCountedAndCanMakeThreadSafeWeakPtr<RealtimeVideoCaptureSource, WTF::DestructionThread::MainRunLoop>::weakRefCount();
+}
+
 const Vector<VideoPreset>& RealtimeVideoCaptureSource::presets()
 {
     if (m_presets.isEmpty())
