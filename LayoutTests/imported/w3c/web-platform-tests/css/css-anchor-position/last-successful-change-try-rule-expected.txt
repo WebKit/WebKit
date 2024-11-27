@@ -1,5 +1,5 @@
 
 FAIL Starts rendering with --try assert_equals: expected 200 but got 100
 FAIL No successful position, keep --try assert_equals: expected 250 but got 100
-FAIL No successful position, last successful invalidated by @position-try change promise_test: Unhandled rejection with value: object "TypeError: undefined is not an object (evaluating 'anchor_sheet.sheet.cssRules[3].style')"
+FAIL No successful position, last successful invalidated by @position-try change assert_equals: expected -50 but got 100
 

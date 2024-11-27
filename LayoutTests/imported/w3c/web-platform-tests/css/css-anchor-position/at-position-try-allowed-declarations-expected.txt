@@ -1,58 +1,58 @@
 
-FAIL top: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL bottom: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL left: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL right: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL inset-block-start: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL inset-block-end: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL inset-inline-start: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL inset-inline-end: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL inset-block: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL inset-inline: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL inset: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL position-area: span-all is allowed in @position-try The string did not match the expected pattern.
-FAIL margin-top: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL margin-bottom: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL margin-left: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL margin-right: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL margin-block-start: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL margin-block-end: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL margin-inline-start: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL margin-inline-end: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL margin-block: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL margin-inline: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL margin: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL width: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL height: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL block-size: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL inline-size: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL min-width: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL min-height: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL min-block-size: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL min-inline-size: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL max-width: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL max-height: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL max-block-size: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL max-inline-size: 1px is allowed in @position-try The string did not match the expected pattern.
-FAIL justify-self: normal is allowed in @position-try The string did not match the expected pattern.
-FAIL align-self: normal is allowed in @position-try The string did not match the expected pattern.
-FAIL place-self: normal is allowed in @position-try The string did not match the expected pattern.
-FAIL position-anchor: --anchor is allowed in @position-try The string did not match the expected pattern.
-FAIL --custom: 1px is disallowed in @position-try The string did not match the expected pattern.
-FAIL font-size: 1px is disallowed in @position-try The string did not match the expected pattern.
-FAIL border-width: 1px is disallowed in @position-try The string did not match the expected pattern.
-FAIL padding: 1px is disallowed in @position-try The string did not match the expected pattern.
-FAIL display: 1px is disallowed in @position-try The string did not match the expected pattern.
-FAIL position: 1px is disallowed in @position-try The string did not match the expected pattern.
-FAIL float: 1px is disallowed in @position-try The string did not match the expected pattern.
-FAIL justify-content: normal is disallowed in @position-try The string did not match the expected pattern.
-FAIL align-content: normal is disallowed in @position-try The string did not match the expected pattern.
-FAIL justify-items: normal is disallowed in @position-try The string did not match the expected pattern.
-FAIL align-items: normal is disallowed in @position-try The string did not match the expected pattern.
-FAIL top: revert is allowed in @position-try The string did not match the expected pattern.
-FAIL top: revert-layer is allowed in @position-try The string did not match the expected pattern.
-FAIL inset: revert is allowed in @position-try The string did not match the expected pattern.
-FAIL inset: revert-layer is allowed in @position-try The string did not match the expected pattern.
-FAIL top: 1px !important is disallowed in @position-try The string did not match the expected pattern.
-FAIL inset: 1px !important is disallowed in @position-try The string did not match the expected pattern.
+PASS top: 1px is allowed in @position-try
+PASS bottom: 1px is allowed in @position-try
+PASS left: 1px is allowed in @position-try
+PASS right: 1px is allowed in @position-try
+PASS inset-block-start: 1px is allowed in @position-try
+PASS inset-block-end: 1px is allowed in @position-try
+PASS inset-inline-start: 1px is allowed in @position-try
+PASS inset-inline-end: 1px is allowed in @position-try
+PASS inset-block: 1px is allowed in @position-try
+PASS inset-inline: 1px is allowed in @position-try
+PASS inset: 1px is allowed in @position-try
+FAIL position-area: span-all is allowed in @position-try assert_equals: expected "@position-try --foo { position-area: span-all; }" but got "@position-try --foo { }"
+PASS margin-top: 1px is allowed in @position-try
+PASS margin-bottom: 1px is allowed in @position-try
+PASS margin-left: 1px is allowed in @position-try
+PASS margin-right: 1px is allowed in @position-try
+PASS margin-block-start: 1px is allowed in @position-try
+PASS margin-block-end: 1px is allowed in @position-try
+PASS margin-inline-start: 1px is allowed in @position-try
+PASS margin-inline-end: 1px is allowed in @position-try
+PASS margin-block: 1px is allowed in @position-try
+PASS margin-inline: 1px is allowed in @position-try
+PASS margin: 1px is allowed in @position-try
+PASS width: 1px is allowed in @position-try
+PASS height: 1px is allowed in @position-try
+PASS block-size: 1px is allowed in @position-try
+PASS inline-size: 1px is allowed in @position-try
+PASS min-width: 1px is allowed in @position-try
+PASS min-height: 1px is allowed in @position-try
+PASS min-block-size: 1px is allowed in @position-try
+PASS min-inline-size: 1px is allowed in @position-try
+PASS max-width: 1px is allowed in @position-try
+PASS max-height: 1px is allowed in @position-try
+PASS max-block-size: 1px is allowed in @position-try
+PASS max-inline-size: 1px is allowed in @position-try
+PASS justify-self: normal is allowed in @position-try
+PASS align-self: normal is allowed in @position-try
+PASS place-self: normal is allowed in @position-try
+PASS position-anchor: --anchor is allowed in @position-try
+PASS --custom: 1px is disallowed in @position-try
+PASS font-size: 1px is disallowed in @position-try
+PASS border-width: 1px is disallowed in @position-try
+PASS padding: 1px is disallowed in @position-try
+PASS display: 1px is disallowed in @position-try
+PASS position: 1px is disallowed in @position-try
+PASS float: 1px is disallowed in @position-try
+PASS justify-content: normal is disallowed in @position-try
+PASS align-content: normal is disallowed in @position-try
+PASS justify-items: normal is disallowed in @position-try
+PASS align-items: normal is disallowed in @position-try
+PASS top: revert is allowed in @position-try
+PASS top: revert-layer is allowed in @position-try
+PASS inset: revert is allowed in @position-try
+PASS inset: revert-layer is allowed in @position-try
+PASS top: 1px !important is disallowed in @position-try
+PASS inset: 1px !important is disallowed in @position-try
 

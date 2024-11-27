@@ -53,6 +53,7 @@ CSSAtRuleID cssAtRuleID(StringView name)
         { "namespace"_s,             CSSAtRuleNamespace },
         { "ornaments"_s,             CSSAtRuleOrnaments },
         { "page"_s,                  CSSAtRulePage },
+        { "position-try"_s,          CSSAtRulePositionTry },
         { "property"_s,              CSSAtRuleProperty },
         { "scope"_s,                 CSSAtRuleScope },
         { "starting-style"_s,        CSSAtRuleStartingStyle },

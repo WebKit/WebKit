@@ -40,6 +40,7 @@
 #include "CSSNamespaceRule.h"
 #include "CSSNestedDeclarations.h"
 #include "CSSPageRule.h"
+#include "CSSPositionTryRule.h"
 #include "CSSPropertyRule.h"
 #include "CSSScopeRule.h"
 #include "CSSStartingStyleRule.h"
@@ -60,6 +61,7 @@
 #include "JSCSSNamespaceRule.h"
 #include "JSCSSNestedDeclarations.h"
 #include "JSCSSPageRule.h"
+#include "JSCSSPositionTryRule.h"
 #include "JSCSSPropertyRule.h"
 #include "JSCSSScopeRule.h"
 #include "JSCSSStartingStyleRule.h"
@@ -127,6 +129,8 @@ JSValue toJSNewlyCreated(JSGlobalObject*, JSDOMGlobalObject* globalObject, Ref<C
         return createWrapper<CSSStartingStyleRule>(globalObject, WTFMove(rule));
     case StyleRuleType::ViewTransition:
         return createWrapper<CSSViewTransitionRule>(globalObject, WTFMove(rule));
+    case StyleRuleType::PositionTry:
+        return createWrapper<CSSPositionTryRule>(globalObject, WTFMove(rule));
     case StyleRuleType::Unknown:
     case StyleRuleType::Charset:
     case StyleRuleType::Margin:

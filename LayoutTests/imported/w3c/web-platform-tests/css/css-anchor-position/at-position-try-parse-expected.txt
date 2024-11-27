@@ -1,14 +1,14 @@
 
-FAIL @position-try --foo { } should be a valid rule The string did not match the expected pattern.
-FAIL @position-try --foo { top: 1px; } should be a valid rule The string did not match the expected pattern.
+PASS @position-try --foo { } should be a valid rule
+PASS @position-try --foo { top: 1px; } should be a valid rule
 PASS @position-try { } should be an invalid rule
 PASS @position-try foo { } should be an invalid rule
 PASS @position-try --foo --bar { } should be an invalid rule
 PASS @position-try --foo, --bar { } should be an invalid rule
-FAIL @position-try --foo { backround-color: green; } should be a valid rule The string did not match the expected pattern.
-FAIL @position-try --foo { @keyframes bar {} } should be a valid rule The string did not match the expected pattern.
-FAIL @position-try --foo { @font-face {} } should be a valid rule The string did not match the expected pattern.
-FAIL @position-try --foo { @media print {} } should be a valid rule The string did not match the expected pattern.
-FAIL @position-try --foo { & {} } should be a valid rule The string did not match the expected pattern.
-FAIL @position-try --foo { arbitrary garbage } should be a valid rule The string did not match the expected pattern.
+PASS @position-try --foo { backround-color: green; } should be a valid rule
+PASS @position-try --foo { @keyframes bar {} } should be a valid rule
+PASS @position-try --foo { @font-face {} } should be a valid rule
+PASS @position-try --foo { @media print {} } should be a valid rule
+PASS @position-try --foo { & {} } should be a valid rule
+PASS @position-try --foo { arbitrary garbage } should be a valid rule
 

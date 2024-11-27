@@ -45,15 +45,21 @@ CSSPropertyID StylePropertyMetadata::shorthandID() const
 }
 
 // FIXME: Generate from logical property groups.
+// https://drafts.csswg.org/css-logical-1/#inset-properties
 bool CSSProperty::isInsetProperty(CSSPropertyID propertyID)
 {
     switch (propertyID) {
+    case CSSPropertyInset:
     case CSSPropertyLeft:
     case CSSPropertyRight:
     case CSSPropertyTop:
     case CSSPropertyBottom:
+
+    case CSSPropertyInsetInline:
     case CSSPropertyInsetInlineStart:
     case CSSPropertyInsetInlineEnd:
+
+    case CSSPropertyInsetBlock:
     case CSSPropertyInsetBlockStart:
     case CSSPropertyInsetBlockEnd:
         return true;
@@ -61,5 +67,53 @@ bool CSSProperty::isInsetProperty(CSSPropertyID propertyID)
         return false;
     }
 };
+
+bool CSSProperty::isSizingProperty(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+    case CSSPropertyWidth:
+    case CSSPropertyMinWidth:
+    case CSSPropertyMaxWidth:
+
+    case CSSPropertyHeight:
+    case CSSPropertyMinHeight:
+    case CSSPropertyMaxHeight:
+
+    case CSSPropertyBlockSize:
+    case CSSPropertyMinBlockSize:
+    case CSSPropertyMaxBlockSize:
+
+    case CSSPropertyInlineSize:
+    case CSSPropertyMinInlineSize:
+    case CSSPropertyMaxInlineSize:
+        return true;
+    default:
+        return false;
+    }
+}
+
+bool CSSProperty::isMarginProperty(CSSPropertyID propertyID)
+{
+    switch (propertyID) {
+    case CSSPropertyMargin:
+    case CSSPropertyMarginLeft:
+    case CSSPropertyMarginRight:
+    case CSSPropertyMarginTop:
+    case CSSPropertyMarginBottom:
+
+    case CSSPropertyMarginBlock:
+    case CSSPropertyMarginBlockStart:
+    case CSSPropertyMarginBlockEnd:
+
+    case CSSPropertyMarginInline:
+    case CSSPropertyMarginInlineStart:
+    case CSSPropertyMarginInlineEnd:
+        return true;
+
+    default:
+        return false;
+    }
+}
+
 
 } // namespace WebCore

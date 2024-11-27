@@ -1,7 +1,6 @@
-CONSOLE MESSAGE: SyntaxError: The string did not match the expected pattern.
-
-Harness Error (FAIL), message = SyntaxError: The string did not match the expected pattern.
 
 PASS #host is initially left: 999999px
 PASS #slotted is initially left: 999999px
+FAIL #host with inserted @position-try applied assert_equals: expected 100 but got 999999
+FAIL #slotted with inserted @position-try applied assert_equals: expected 100 but got 999999
 

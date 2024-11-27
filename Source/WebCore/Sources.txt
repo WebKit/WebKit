@@ -913,6 +913,7 @@ css/CSSPageRule.cpp
 css/CSSPaintImageValue.cpp
 css/CSSPathValue.cpp
 css/CSSPendingSubstitutionValue.cpp
+css/CSSPositionTryRule.cpp
 css/CSSPrimitiveValue.cpp
 css/CSSProperty.cpp
 css/CSSPropertyRule.cpp
@@ -3523,6 +3524,7 @@ JSCSSNestedDeclarations.cpp
 JSCSSPageRule.cpp
 JSCSSPaintCallback.cpp
 JSCSSPaintSize.cpp
+JSCSSPositionTryRule.cpp
 JSCSSPropertyRule.cpp
 JSCSSRule.cpp
 JSCSSRuleList.cpp

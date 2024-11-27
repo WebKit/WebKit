@@ -33,6 +33,7 @@
 #include "CSSCounterStyleRule.h"
 #include "CSSFontSelector.h"
 #include "CSSKeyframesRule.h"
+#include "CSSPositionTryRule.h"
 #include "CSSSelectorParser.h"
 #include "CSSViewTransitionRule.h"
 #include "CustomPropertyRegistry.h"
@@ -217,6 +218,8 @@ void RuleSetBuilder::addChildRule(Ref<StyleRuleBase> rule)
     case StyleRuleType::Keyframes:
     case StyleRuleType::Property:
     case StyleRuleType::ViewTransition:
+    // FIXME: correct? or it should be handled separately
+    case StyleRuleType::PositionTry:
         disallowDynamicMediaQueryEvaluationIfNeeded();
         if (m_resolver)
             m_collectedResolverMutatingRules.append({ rule, m_currentCascadeLayerIdentifier });
@@ -515,6 +518,10 @@ void RuleSetBuilder::addMutatingRulesToResolver()
         if (auto* styleRuleViewTransition = dynamicDowncast<StyleRuleViewTransition>(rule.get())) {
             if (m_ruleSet)
                 m_ruleSet->setViewTransitionRule(*styleRuleViewTransition);
+        }
+        if (auto* styleRulePositionTry = dynamicDowncast<StyleRulePositionTry>(rule.get())) {
+            // FIXME: do something here...
+            // FIXME: newline to make style checker happy for the time being
         }
     }
 }

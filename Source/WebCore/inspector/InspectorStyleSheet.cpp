@@ -119,6 +119,8 @@ static RuleFlatteningStrategy flatteningStrategyForStyleRuleType(StyleRuleType s
     case StyleRuleType::FontFeatureValues:
     case StyleRuleType::FontFeatureValuesBlock:
     case StyleRuleType::FontPaletteValues:
+    // FIXME: probably should implement this?
+    case StyleRuleType::PositionTry:
     case StyleRuleType::Property:
     case StyleRuleType::ViewTransition:
     case StyleRuleType::NestedDeclarations:
