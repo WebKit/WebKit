@@ -245,14 +245,22 @@ private:
     bool isYoutubeEmbedDomain() const;
     bool isYahooMail() const;
 
-    bool isAmazon() const;
-    bool isESPN() const;
-    bool isGoogleMaps() const;
-    bool isNetflix() const;
-    bool isSoundCloud() const;
-    bool isVimeo() const;
-    bool isYouTube() const;
-    bool isZoom() const;
+    void determineRelevantQuirks();
+
+    static bool isAmazon(const URL&, QuirksData&);
+    static bool isESPN(const URL&, QuirksData&);
+    static bool isGoogleMaps(const URL&, QuirksData&);
+    static bool isNetflix(const URL&, QuirksData&);
+    static bool isSoundCloud(const URL&, QuirksData&);
+    static bool isVimeo(const URL&, QuirksData&);
+    static bool isYouTube(const URL&, QuirksData&);
+    static bool isZoom(const URL&, QuirksData&);
+
+    static bool domainNeedsAvoidResizingWhenInputViewBoundsChangeQuirk(const URL&, QuirksData&);
+    static bool domainNeedsScrollbarWidthThinDisabledQuirk(const URL&, QuirksData&);
+#if ENABLE(VIDEO_PRESENTATION_MODE)
+    static bool domainShouldDisableEndFullscreenEventWhenEnteringPictureInPictureFromFullscreenQuirk(const URL&, QuirksData&);
+#endif
 
     RefPtr<Document> protectedDocument() const;
 
