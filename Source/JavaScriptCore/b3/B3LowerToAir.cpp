@@ -45,7 +45,6 @@
 #undef LoadFence
 #undef MemoryFence
 
-#if USE(JSVALUE64)
 #include "AirBlockInsertionSet.h"
 #include "AirCCallSpecial.h"
 #include "AirCode.h"
@@ -85,6 +84,8 @@ IGNORE_RETURN_TYPE_WARNINGS_BEGIN
 #endif
 
 WTF_ALLOW_UNSAFE_BUFFER_USAGE_BEGIN
+
+#if USE(JSVALUE64)
 
 namespace JSC { namespace B3 {
 
