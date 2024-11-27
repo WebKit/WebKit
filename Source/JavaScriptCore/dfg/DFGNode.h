@@ -2542,6 +2542,7 @@ public:
         case EnumeratorHasOwnProperty:
         case StringCharAt:
         case StringCharCodeAt:
+        case StringAt:
         case StringCodePointAt:
         case CheckArray:
         case CheckArrayOrEmpty:

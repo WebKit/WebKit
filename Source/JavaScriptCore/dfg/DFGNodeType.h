@@ -353,6 +353,7 @@ namespace JSC { namespace DFG {
     macro(StringCodePointAt, NodeResultInt32) \
     macro(StringCharAt, NodeResultJS) \
     macro(StringFromCharCode, NodeResultJS | NodeMustGenerate) \
+    macro(StringAt, NodeResultJS) \
     \
     /* Nodes for comparison operations. */\
     macro(CompareLess, NodeResultBoolean | NodeMustGenerate) \
