@@ -2128,7 +2128,11 @@ namespace JSC {
 
     class ImportDeclarationNode final : public ModuleDeclarationNode {
     public:
-        ImportDeclarationNode(const JSTokenLocation&, ImportSpecifierListNode*, ModuleNameNode*, ImportAttributesListNode*);
+        enum class ImportType : uint8_t {
+            Normal,
+            Deferred
+        };
+        ImportDeclarationNode(const JSTokenLocation&, ImportType, ImportSpecifierListNode*, ModuleNameNode*, ImportAttributesListNode*);
 
         ImportSpecifierListNode* specifierList() const { return m_specifierList; }
         ModuleNameNode* moduleName() const { return m_moduleName; }
@@ -2141,6 +2145,7 @@ namespace JSC {
         ImportSpecifierListNode* m_specifierList;
         ModuleNameNode* m_moduleName;
         ImportAttributesListNode* m_attributesList;
+        ImportType m_type;
     };
 
     class ExportAllDeclarationNode final : public ModuleDeclarationNode {

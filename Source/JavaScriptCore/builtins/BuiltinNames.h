@@ -91,6 +91,7 @@ namespace JSC {
     macro(set) \
     macro(clear) \
     macro(context) \
+    macro(defer) \
     macro(delete) \
     macro(size) \
     macro(shift) \

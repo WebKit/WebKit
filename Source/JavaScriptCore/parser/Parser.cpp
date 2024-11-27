@@ -3675,6 +3675,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
     next();
 
     auto specifierList = context.createImportSpecifierList();
+    auto type = ImportDeclarationNode::ImportType::Normal;
 
     if (match(STRING)) {
         // import ModuleSpecifier ;
@@ -3690,11 +3691,26 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
         }
 
         failIfFalse(autoSemiColon(), "Expected a ';' following a targeted import declaration");
-        return context.createImportDeclaration(importLocation, specifierList, moduleName, attributesList);
+        return context.createImportDeclaration(importLocation, type, specifierList, moduleName, attributesList);
     }
 
     bool isFinishedParsingImport = false;
-    if (matchSpecIdentifier()) {
+    if (Options::useImportDefer() && matchContextualKeyword(m_vm.propertyNames->deferKeyword)) {
+        // import defer NameSpaceImport FromClause ;
+        // import defer FromClause ;
+        JSTokenLocation deferLocation(tokenLocation());
+        next();
+        if (match(TIMES))
+            type = ImportDeclarationNode::ImportType::Deferred;
+        else {
+            auto specifier = context.createImportSpecifier(deferLocation, m_vm.propertyNames->defaultKeyword, m_vm.propertyNames->deferKeyword);
+            context.appendImportSpecifier(specifierList, specifier);
+            if (match(COMMA))
+                next();
+            else
+                isFinishedParsingImport = true;
+        }
+    } else if (matchSpecIdentifier()) {
         // ImportedDefaultBinding :
         // ImportedBinding
         auto specifier = parseImportClauseItem(context, ImportSpecifierType::DefaultImport);
@@ -3749,7 +3765,7 @@ template <class TreeBuilder> TreeStatement Parser<LexerType>::parseImportDeclara
 
     failIfFalse(autoSemiColon(), "Expected a ';' following a targeted import declaration");
 
-    return context.createImportDeclaration(importLocation, specifierList, moduleName, attributesList);
+    return context.createImportDeclaration(importLocation, type, specifierList, moduleName, attributesList);
 }
 
 template <typename LexerType>
