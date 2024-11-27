@@ -359,6 +359,8 @@ Vector<Inst> emitShuffle(
         result.append(Inst(move, origin, pair.src(), pair.dst()));
     };
 
+    bool freezeScratches = false;
+
     auto handleShift = [&] (Vector<ShufflePair>& shift) {
         // FIXME: We could optimize the spill behavior of the shifter by checking if any of the
         // shifts need spills. If they do, then we could try to get a register out here. Note that
@@ -372,7 +374,7 @@ Vector<Inst> emitShuffle(
             handleShiftPair(shift[i], 0);
 
         Arg lastDst = shift.last().dst();
-        if (lastDst.isTmp()) {
+        if (!freezeScratches && lastDst.isTmp()) {
             for (Arg& scratch : scratches) {
                 ASSERT(scratch != lastDst);
                 if (!scratch.isTmp()) {
@@ -401,6 +403,12 @@ Vector<Inst> emitShuffle(
             handleShift(shift);
         commitResult();
     }
+
+    // From now on, we cannot use new shift destinations as scratches.
+    // The final order of these operations after all of the reversing is:
+    // [Fringe, Rotate]*, [Shift]*
+    // A fringe's last destination should not be clobbered.
+    freezeScratches = true;
 
     for (Rotate& rotate : rotates) {
         if (!rotate.fringe.isEmpty()) {
