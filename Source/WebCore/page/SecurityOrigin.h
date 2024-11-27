@@ -179,7 +179,7 @@ public:
     // For access checks, use isSameOriginDomain().
     // FIXME: If this method is really only useful for hash table keys, it
     // should be refactored into SecurityOriginHash.
-    WEBCORE_EXPORT bool equal(const SecurityOrigin*) const;
+    WEBCORE_EXPORT bool equal(const SecurityOrigin&) const;
 
     // This method checks for equality, ignoring the value of document.domain
     // (and whether it was set) but considering the host. It is used for postMessage.

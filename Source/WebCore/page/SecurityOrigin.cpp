@@ -588,22 +588,21 @@ Ref<SecurityOrigin> SecurityOrigin::create(WebCore::SecurityOriginData&& data, S
     return origin;
 }
 
-// FIXME: other should be a const SecurityOrigin& because we assume it is non-null.
-bool SecurityOrigin::equal(const SecurityOrigin* other) const
+bool SecurityOrigin::equal(const SecurityOrigin& other) const
 {
-    if (other == this)
+    if (&other == this)
         return true;
 
-    if (isOpaque() || other->isOpaque())
-        return data().opaqueOriginIdentifier() == other->data().opaqueOriginIdentifier();
+    if (isOpaque() || other.isOpaque())
+        return data().opaqueOriginIdentifier() == other.data().opaqueOriginIdentifier();
     
-    if (!isSameSchemeHostPort(*other))
+    if (!isSameSchemeHostPort(other))
         return false;
 
-    if (m_domainWasSetInDOM != other->m_domainWasSetInDOM)
+    if (m_domainWasSetInDOM != other.m_domainWasSetInDOM)
         return false;
 
-    if (m_domainWasSetInDOM && m_domain != other->m_domain)
+    if (m_domainWasSetInDOM && m_domain != other.m_domain)
         return false;
 
     return true;

@@ -53,7 +53,7 @@ static void dispatchStorageEvents(const String& key, const String& oldValue, con
             return;
         if (isSourceStorage(*storage))
             return;
-        if (!securityOrigin.equal(window.securityOrigin()))
+        if (!securityOrigin.equal(*window.securityOrigin()))
             return;
         windows.append(window);
     });

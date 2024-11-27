@@ -551,7 +551,7 @@ void MemoryCache::removeResourcesWithOrigin(const SecurityOrigin& origin, const 
                 continue;
             }
             auto resourceOrigin = SecurityOrigin::create(resource.url());
-            if (resourceOrigin->equal(&origin))
+            if (resourceOrigin->equal(origin))
                 resourcesWithOrigin.append(resource);
         }
     }

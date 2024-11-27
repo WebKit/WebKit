@@ -245,7 +245,7 @@ String DatabaseManager::fullPathForDatabase(SecurityOrigin& origin, const String
     {
         Locker locker { m_proposedDatabasesLock };
         for (auto* proposedDatabase : m_proposedDatabases) {
-            if (proposedDatabase->details().name() == name && proposedDatabase->origin().equal(&origin))
+            if (proposedDatabase->details().name() == name && proposedDatabase->origin().equal(origin))
                 return String();
         }
     }
@@ -257,7 +257,7 @@ DatabaseDetails DatabaseManager::detailsForNameAndOrigin(const String& name, Sec
     {
         Locker locker { m_proposedDatabasesLock };
         for (auto* proposedDatabase : m_proposedDatabases) {
-            if (proposedDatabase->details().name() == name && proposedDatabase->origin().equal(&origin)) {
+            if (proposedDatabase->details().name() == name && proposedDatabase->origin().equal(origin)) {
                 ASSERT(&proposedDatabase->details().thread() == &Thread::current() || isMainThread());
                 return proposedDatabase->details();
             }
