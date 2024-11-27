@@ -58,6 +58,7 @@ void webKitWebSrcSetResourceLoader(WebKitWebSrc*, WebCore::PlatformMediaResource
 void webKitWebSrcSetReferrer(WebKitWebSrc*, const String&);
 bool webKitSrcPassedCORSAccessCheck(WebKitWebSrc*);
 bool webKitSrcIsCrossOrigin(WebKitWebSrc*, const WebCore::SecurityOrigin&);
+bool webKitSrcDidGetEOS(WebKitWebSrc*);
 
 G_END_DECLS
 
