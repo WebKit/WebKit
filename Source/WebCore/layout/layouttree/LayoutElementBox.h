@@ -46,7 +46,6 @@ public:
     enum class ListMarkerAttribute : uint8_t {
         Image = 1 << 0,
         Outside = 1 << 1,
-        HasListElementAncestor = 1 << 2
     };
     ElementBox(ElementAttributes&&, OptionSet<ListMarkerAttribute>, RenderStyle&&, std::unique_ptr<RenderStyle>&& firstLineStyle = nullptr);
 
@@ -95,7 +94,6 @@ public:
 
     bool isListMarkerImage() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::Image); }
     bool isListMarkerOutside() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::Outside); }
-    bool isListMarkerInsideList() const { return m_replacedData && m_replacedData->listMarkerAttributes.contains(ListMarkerAttribute::HasListElementAncestor); }
 
     // FIXME: This doesn't belong.
     CachedImage* cachedImage() const { return m_replacedData ? m_replacedData->cachedImage : nullptr; }
