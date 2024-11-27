@@ -80,7 +80,7 @@ public:
 
     IPC::Connection& connection() { return m_connection.get(); }
     Ref<IPC::Connection> protectedConnection() { return m_connection; }
-    IPC::MessageReceiverMap& messageReceiverMap() { return m_messageReceiverMap; }
+    IPC::MessageReceiverMap& messageReceiverMap() { RELEASE_ASSERT(isMainThread()); return m_messageReceiverMap; }
 
     void didBecomeUnresponsive();
 #if HAVE(AUDIT_TOKEN)
